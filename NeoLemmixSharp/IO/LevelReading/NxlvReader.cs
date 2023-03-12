@@ -18,8 +18,6 @@ public sealed class NxlvReader
 
     private readonly LevelData _levelData = new();
 
-    private ParseState _parseState = ParseState.General;
-
     private readonly Dictionary<string, Texture2D> _textureCache = new();
 
     private readonly List<TerrainData> _allTerrainData = new();
@@ -27,6 +25,10 @@ public sealed class NxlvReader
 
     private TerrainData? _currentTerrainData;
     private TerrainGroup? _currentTerrainGroup;
+
+    private bool ParsingTerrainData => _currentTerrainData != null;
+    private bool ParsingTerrainGroup => _currentTerrainGroup != null;
+    private bool _settingDataForGroup;
 
     public NxlvReader(GraphicsDevice graphicsDevice,
         SpriteBatch spriteBatch,
@@ -50,9 +52,13 @@ public sealed class NxlvReader
             ProcessTerrainGroupTexture(terrainGroup);
         }
 
-        DrawTerrain();
+        DrawTerrain(_allTerrainData, _levelData.LevelTexture(_graphicsDevice));
 
-        return new LevelScreen(_levelData.LevelTitle)
+        var adjustedTitle = string.IsNullOrWhiteSpace(_levelData.LevelTitle)
+            ? "Untitled"
+            : _levelData.LevelTitle;
+
+        return new LevelScreen(adjustedTitle)
         {
             LevelObjects = _levelData.LevelObjects.ToArray(),
             LevelSprites = _levelData.LevelSprites.ToArray(),
@@ -69,19 +75,19 @@ public sealed class NxlvReader
 
         var tokens = line.Trim().Split(' ', StringSplitOptions.TrimEntries);
 
-        if (_parseState.HasFlag(ParseState.ParseTerrainGroup))
+        if (ParsingTerrainGroup)
         {
             ParseTerrainGroup(tokens);
             return;
         }
 
-        if (_parseState == ParseState.ParseTerrain)
+        if (ParsingTerrainData)
         {
             ParseTerrain(tokens);
             return;
         }
 
-        if (_parseState == ParseState.ParseObject)
+        if (false)
         {
             ParseObject(tokens);
             return;
@@ -133,10 +139,15 @@ public sealed class NxlvReader
 
     private void ParseTerrainGroup(string[] tokens)
     {
+        if (ParsingTerrainData)
+        {
+            ParseTerrain(tokens);
+            return;
+        }
+
         switch (tokens[0])
         {
             case "$TERRAINGROUP":
-                _parseState |= ParseState.ParseTerrainGroup;
                 _currentTerrainGroup = new TerrainGroup(_allTerrainGroups.Count);
                 _allTerrainGroups.Add(_currentTerrainGroup);
                 _allTerrainData.Add(_currentTerrainGroup.DataPlaceholder);
@@ -144,6 +155,7 @@ public sealed class NxlvReader
 
             case "NAME":
                 _currentTerrainGroup!.GroupId = tokens[1];
+                _currentTerrainGroup.DataPlaceholder.GroupId = tokens[1];
                 break;
 
             case "$TERRAIN":
@@ -151,7 +163,6 @@ public sealed class NxlvReader
                 break;
 
             case "$END":
-                _parseState ^= ParseState.ParseTerrainGroup;
                 _currentTerrainGroup = null;
                 break;
         }
@@ -162,7 +173,6 @@ public sealed class NxlvReader
         switch (tokens[0])
         {
             case "$TERRAIN":
-                _parseState |= ParseState.ParseTerrain;
                 _currentTerrainData = new TerrainData(_allTerrainData.Count);
                 if (_currentTerrainGroup == null)
                 {
@@ -178,14 +188,25 @@ public sealed class NxlvReader
                 if (tokens[1][0] == '*')
                 {
                     _allTerrainData.Remove(_currentTerrainData!);
-                    goto case "$END";
+                    _settingDataForGroup = true;
+
+                    break;
                 }
 
                 _currentTerrainData!.CurrentParsingPath = Path.Combine(_rootDirectory, "styles", tokens[1]);
                 break;
 
             case "PIECE":
-                _currentTerrainData!.CurrentParsingPath = Path.Combine(_currentTerrainData!.CurrentParsingPath, "terrain", $"{tokens[1]}.png");
+                if (_settingDataForGroup)
+                {
+                    var group = _allTerrainGroups.First(tg => tg.GroupId == tokens[1]);
+                    
+                    _currentTerrainData = group.DataPlaceholder;
+                }
+                else
+                {
+                    _currentTerrainData!.CurrentParsingPath = Path.Combine(_currentTerrainData!.CurrentParsingPath, "terrain", $"{tokens[1]}.png");
+                }
                 break;
 
             case "X":
@@ -220,8 +241,8 @@ public sealed class NxlvReader
                 break;
 
             case "$END":
-                _parseState ^= ParseState.ParseTerrain;
                 _currentTerrainData = null;
+                _settingDataForGroup = false;
                 break;
 
             default:
@@ -237,20 +258,46 @@ public sealed class NxlvReader
 
     private void ProcessTerrainGroupTexture(TerrainGroup terrainGroup)
     {
-        var minX = terrainGroup.TerrainDatas.MinBy(td => td.X);
-        var minY = terrainGroup.TerrainDatas.MinBy(td => td.Y);
+        var minX = terrainGroup.TerrainDatas.Select(td => td.X).Min();
+        var minY = terrainGroup.TerrainDatas.Select(td => td.Y).Min();
+
+        foreach (var terrainData in terrainGroup.TerrainDatas)
+        {
+            terrainData.X -= minX;
+            terrainData.Y -= minY;
+        }
+
+        var maxX = terrainGroup.TerrainDatas.Select(GetMaxX).Max();
+        var maxY = terrainGroup.TerrainDatas.Select(GetMaxY).Max();
+
+        var texture = new RenderTarget2D(_graphicsDevice, maxX, maxY);
+
+        DrawTerrain(terrainGroup.TerrainDatas, texture);
+
+        terrainGroup.DataPlaceholder.GroupTexture = texture;
     }
 
-    private void DrawTerrain()
+    private int GetMaxX(TerrainData terrainData)
     {
-        _allTerrainData.Sort(SortTerrainEntries);
+        var texture = GetOrLoadTexture(terrainData.CurrentParsingPath);
+        return terrainData.X + texture.Width;
+    }
 
-        var renderTarget = _levelData.LevelTexture(_graphicsDevice);
+    private int GetMaxY(TerrainData terrainData)
+    {
+        var texture = GetOrLoadTexture(terrainData.CurrentParsingPath);
+        return terrainData.Y + texture.Height;
+    }
+
+    private void DrawTerrain(List<TerrainData> terrainDataList, RenderTarget2D renderTarget)
+    {
+        terrainDataList.Sort(SortTerrainEntries);
+
         _graphicsDevice.SetRenderTarget(renderTarget);
         _graphicsDevice.Clear(Color.Transparent);
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-        foreach (var terrainData in _allTerrainData)
+        foreach (var terrainData in terrainDataList)
         {
             ApplyTerrainPiece(terrainData);
         }
