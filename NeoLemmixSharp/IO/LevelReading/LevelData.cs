@@ -26,7 +26,7 @@ public sealed class LevelData
             return _levelRenderTarget;
         
         _levelRenderTarget = new RenderTarget2D(graphicsDevice, LevelWidth, LevelHeight);
-
+        
         return _levelRenderTarget;
     }
 

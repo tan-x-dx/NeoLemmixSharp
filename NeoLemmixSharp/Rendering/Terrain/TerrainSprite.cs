@@ -14,6 +14,9 @@ public sealed class TerrainSprite : NeoLemmixSprite
     {
         _texture = texture;
 
+        var x = new int[width * height];
+        _texture.GetData(x);
+
         BoundingBox = new Rectangle(0, 0, width, height);
     }
 
