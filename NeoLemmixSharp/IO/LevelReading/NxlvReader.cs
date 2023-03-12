@@ -28,6 +28,7 @@ public sealed class NxlvReader
 
     private bool ParsingTerrainData => _currentTerrainData != null;
     private bool ParsingTerrainGroup => _currentTerrainGroup != null;
+    private bool ParsingLevelObject { get; set; }
     private bool _settingDataForGroup;
 
     public NxlvReader(GraphicsDevice graphicsDevice,
@@ -87,9 +88,9 @@ public sealed class NxlvReader
             return;
         }
 
-        if (false)
+        if (ParsingLevelObject)
         {
-            ParseObject(tokens);
+            ParseLevelObject(tokens);
             return;
         }
 
@@ -133,6 +134,10 @@ public sealed class NxlvReader
 
             case "$TERRAINGROUP":
                 ParseTerrainGroup(tokens);
+                break;
+
+            case "$GADGET":
+                ParseLevelObject(tokens);
                 break;
         }
     }
@@ -200,7 +205,6 @@ public sealed class NxlvReader
                 if (_settingDataForGroup)
                 {
                     var group = _allTerrainGroups.First(tg => tg.GroupId == tokens[1]);
-                    
                     _currentTerrainData = group.DataPlaceholder;
                 }
                 else
@@ -251,9 +255,22 @@ public sealed class NxlvReader
         }
     }
 
-    private void ParseObject(string[] tokens)
+    private void ParseLevelObject(string[] tokens)
     {
-        if (tokens[0] == "") { }
+        switch (tokens[0])
+        {
+            case "$GADGET":
+                ParsingLevelObject = true;
+                break;
+
+            case "$END":
+                ParsingLevelObject = false;
+                break;
+
+            default:
+                ;
+                break;
+        }
     }
 
     private void ProcessTerrainGroupTexture(TerrainGroup terrainGroup)
@@ -322,14 +339,30 @@ public sealed class NxlvReader
         return x.Id.CompareTo(y.Id) * mult;
     }
 
-    private void RenderTerrainGroup(IEnumerable<TerrainData> terrainData)
-    {
-
-    }
-
     private void ApplyTerrainPiece(TerrainData terrainData)
     {
         var texture = terrainData.GroupTexture ?? GetOrLoadTexture(terrainData.CurrentParsingPath);
+
+        var color = terrainData.Erase
+            ? Color.Transparent
+            : Color.White;
+
+        float rotation;
+        float rotX;
+        float rotY;
+
+        if (terrainData.Rotate)
+        {
+            rotation = (float)(Math.PI / 2);
+            rotX = (float)texture.Width;
+            rotY = (float)texture.Height ;
+        }
+        else
+        {
+            rotation = 0f;
+            rotX = 0f;
+            rotY = 0f;
+        }
 
         var s = SpriteEffects.None;
 
@@ -337,22 +370,16 @@ public sealed class NxlvReader
         {
             s |= SpriteEffects.FlipVertically;
         }
-
         if (terrainData.FlipHorizontal)
         {
             s |= SpriteEffects.FlipHorizontally;
+            (rotX, rotY) = (rotY, rotX);
         }
 
-        var rotation = terrainData.Rotate
-            ? (float)(Math.PI / 2)
-            : 0f;
-
-        var color = terrainData.Erase
-            ? Color.Transparent
-            : Color.White;
+        var rotPos = new Vector2(rotX, rotY);
 
         var pos = new Vector2(terrainData.X, terrainData.Y);
-        _spriteBatch.Draw(texture, pos, null, color, rotation, Vector2.Zero, Vector2.One, s, 1f);
+        _spriteBatch.Draw(texture, pos, null, color, rotation, rotPos, Vector2.One, s, 1f);
     }
 
     private Texture2D GetOrLoadTexture(string filePath)
