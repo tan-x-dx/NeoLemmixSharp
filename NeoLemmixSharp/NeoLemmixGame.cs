@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using NeoLemmixSharp.Engine;
+using NeoLemmixSharp.IO.LevelReading;
 using NeoLemmixSharp.Screen;
 using System;
 
@@ -25,7 +25,7 @@ public sealed class NeoLemmixGame : Game
         IsFixedTimeStep = true;
         TargetElapsedTime = TimeSpan.FromSeconds(1d / 17d);
 
-        Screen = new LevelScreen();
+
     }
 
     protected override void Initialize()
@@ -38,8 +38,12 @@ public sealed class NeoLemmixGame : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+        
+        var path = "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Lemmings\\Fun\\01_Just_dig!.nxlv";
 
-        Console.WriteLine("Hello world");
+        var levelReader = new NxlvReader(GraphicsDevice, _spriteBatch, path);
+        Screen = levelReader.CreateLevelFromFile();
+        Window.Title = Screen.ScreenTitle;
 
         // TODO: use this.Content to load your game content here
     }

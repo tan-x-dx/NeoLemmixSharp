@@ -9,6 +9,13 @@ namespace NeoLemmixSharp.Screen;
 
 public abstract class BaseScreen : ITickable, IRenderable, IDisposable
 {
+    public string ScreenTitle { get; }
+
+    protected BaseScreen(string screenTitle)
+    {
+        ScreenTitle = screenTitle;
+    }
+
     public abstract void Tick(MouseState mouseState);
     public abstract void Render(SpriteBatch spriteBatch);
 

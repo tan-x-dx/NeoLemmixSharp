@@ -25,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Engine\" />
+    <Folder Include="Rendering\Terrain\" />
     <Folder Include="Screen\" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
