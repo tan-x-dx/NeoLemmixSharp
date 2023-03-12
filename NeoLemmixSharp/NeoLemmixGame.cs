@@ -1,25 +1,37 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using NeoLemmixSharp.Engine;
+using NeoLemmixSharp.Screen;
+using System;
 
 namespace NeoLemmixSharp;
-public class Game1 : Game
+
+public sealed class NeoLemmixGame : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
-    public Game1()
+    public BaseScreen Screen { get; set; }
+
+    public NeoLemmixGame()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+
+        Window.AllowUserResizing = true;
+
+        IsFixedTimeStep = true;
+        TargetElapsedTime = TimeSpan.FromSeconds(1d / 17d);
+
+        Screen = new LevelScreen();
     }
 
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
-        
+
         base.Initialize();
     }
 
@@ -34,10 +46,7 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
-        // TODO: Add your update logic here
+        Screen.Tick(Mouse.GetState(Window));
 
         base.Update(gameTime);
     }
@@ -46,7 +55,11 @@ public class Game1 : Game
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        // TODO: Add your drawing code here
+        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+
+        Screen.Render(_spriteBatch);
+
+        _spriteBatch.End();
 
         base.Draw(gameTime);
     }
