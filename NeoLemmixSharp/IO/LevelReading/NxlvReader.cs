@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.Terrain;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,27 +10,18 @@ using System.Linq;
 
 namespace NeoLemmixSharp.IO.LevelReading;
 
-public sealed class NxlvReader
+public sealed class NxlvReader : IDisposable
 {
     private readonly GraphicsDevice _graphicsDevice;
     private readonly SpriteBatch _spriteBatch;
     private readonly string _filePath;
-    private readonly string _rootDirectory = "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5";
 
-    private readonly LevelData _levelData = new();
+    private const string _rootDirectory = "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5";
 
-    private readonly Dictionary<string, Texture2D> _textureCache = new();
+    private readonly DataParser _dataParser = new(_rootDirectory);
+    private readonly Dictionary<string, TerrainTextureBundle> _textureBundleCache = new();
 
-    private readonly List<TerrainData> _allTerrainData = new();
-    private readonly List<TerrainGroup> _allTerrainGroups = new();
-
-    private TerrainData? _currentTerrainData;
-    private TerrainGroup? _currentTerrainGroup;
-
-    private bool ParsingTerrainData => _currentTerrainData != null;
-    private bool ParsingTerrainGroup => _currentTerrainGroup != null;
-    private bool ParsingLevelObject { get; set; }
-    private bool _settingDataForGroup;
+    private bool _disposed;
 
     public NxlvReader(GraphicsDevice graphicsDevice,
         SpriteBatch spriteBatch,
@@ -43,234 +35,37 @@ public sealed class NxlvReader
     public LevelScreen CreateLevelFromFile()
     {
         var lines = File.ReadAllLines(_filePath);
-        for (var i = 0; i < lines.Length; i++)
-        {
-            ProcessLine(lines[i]);
-        }
 
-        foreach (var terrainGroup in _allTerrainGroups)
+        _dataParser.ParseLevel(lines);
+
+        var width = _dataParser.GetIntDataByToken("WIDTH");
+        var height = _dataParser.GetIntDataByToken("HEIGHT");
+        var levelTitle = _dataParser.GetStringDataByToken("TITLE");
+
+        foreach (var terrainGroup in _dataParser.TerrainGroups)
         {
             ProcessTerrainGroupTexture(terrainGroup);
         }
 
-        DrawTerrain(_allTerrainData, _levelData.LevelTexture(_graphicsDevice));
+        var levelTerrainTexture = new RenderTarget2D(
+            _graphicsDevice,
+            width,
+            height);
 
-        var adjustedTitle = string.IsNullOrWhiteSpace(_levelData.LevelTitle)
+        DrawTerrain(_dataParser.TerrainData, levelTerrainTexture);
+
+        levelTitle = string.IsNullOrWhiteSpace(levelTitle)
             ? "Untitled"
-            : _levelData.LevelTitle;
+            : levelTitle;
 
-        return new LevelScreen(adjustedTitle)
+        return new LevelScreen(levelTitle)
         {
-            LevelObjects = _levelData.LevelObjects.ToArray(),
-            LevelSprites = _levelData.LevelSprites.ToArray(),
+            LevelObjects = new ITickable[0],
+            LevelSprites = new IRenderable[0],
 
-            TerrainSprite = _levelData.TerrainSprite,
+            TerrainSprite = new TerrainSprite(width, height, levelTerrainTexture),
             Viewport = new NeoLemmixViewPort()
         };
-    }
-
-    private void ProcessLine(string line)
-    {
-        if (string.IsNullOrWhiteSpace(line) || line[0] == '#')
-            return;
-
-        var tokens = line.Trim().Split(' ', StringSplitOptions.TrimEntries);
-
-        if (ParsingTerrainGroup)
-        {
-            ParseTerrainGroup(tokens);
-            return;
-        }
-
-        if (ParsingTerrainData)
-        {
-            ParseTerrain(tokens);
-            return;
-        }
-
-        if (ParsingLevelObject)
-        {
-            ParseLevelObject(tokens);
-            return;
-        }
-
-        switch (tokens[0])
-        {
-            case "TITLE":
-                _levelData.LevelTitle = string.Join(' ', tokens[1..]);
-                break;
-
-            case "AUTHOR":
-                _levelData.LevelAuthor = string.Join(' ', tokens[1..]);
-                break;
-
-            case "START_X":
-                _levelData.LevelStartX = int.Parse(tokens[1]);
-                break;
-
-            case "START_Y":
-                _levelData.LevelStartY = int.Parse(tokens[1]);
-                break;
-
-            case "THEME":
-                //    _levelData.LevelAuthor = string.Join(' ', tokens[1..]);
-                break;
-
-            case "BACKGROUND":
-                //    _levelData.LevelAuthor = string.Join(' ', tokens[1..]);
-                break;
-
-            case "WIDTH":
-                _levelData.LevelWidth = int.Parse(tokens[1]);
-                break;
-
-            case "HEIGHT":
-                _levelData.LevelHeight = int.Parse(tokens[1]);
-                break;
-
-            case "$TERRAIN":
-                ParseTerrain(tokens);
-                break;
-
-            case "$TERRAINGROUP":
-                ParseTerrainGroup(tokens);
-                break;
-
-            case "$GADGET":
-                ParseLevelObject(tokens);
-                break;
-        }
-    }
-
-    private void ParseTerrainGroup(string[] tokens)
-    {
-        if (ParsingTerrainData)
-        {
-            ParseTerrain(tokens);
-            return;
-        }
-
-        switch (tokens[0])
-        {
-            case "$TERRAINGROUP":
-                _currentTerrainGroup = new TerrainGroup(_allTerrainGroups.Count);
-                _allTerrainGroups.Add(_currentTerrainGroup);
-                _allTerrainData.Add(_currentTerrainGroup.DataPlaceholder);
-                break;
-
-            case "NAME":
-                _currentTerrainGroup!.GroupId = tokens[1];
-                _currentTerrainGroup.DataPlaceholder.GroupId = tokens[1];
-                break;
-
-            case "$TERRAIN":
-                ParseTerrain(tokens);
-                break;
-
-            case "$END":
-                _currentTerrainGroup = null;
-                break;
-        }
-    }
-
-    private void ParseTerrain(string[] tokens)
-    {
-        switch (tokens[0])
-        {
-            case "$TERRAIN":
-                _currentTerrainData = new TerrainData(_allTerrainData.Count);
-                if (_currentTerrainGroup == null)
-                {
-                    _allTerrainData.Add(_currentTerrainData);
-                }
-                else
-                {
-                    _currentTerrainGroup.TerrainDatas.Add(_currentTerrainData);
-                }
-                break;
-
-            case "STYLE":
-                if (tokens[1][0] == '*')
-                {
-                    _allTerrainData.Remove(_currentTerrainData!);
-                    _settingDataForGroup = true;
-
-                    break;
-                }
-
-                _currentTerrainData!.CurrentParsingPath = Path.Combine(_rootDirectory, "styles", tokens[1]);
-                break;
-
-            case "PIECE":
-                if (_settingDataForGroup)
-                {
-                    var group = _allTerrainGroups.First(tg => tg.GroupId == tokens[1]);
-                    _currentTerrainData = group.DataPlaceholder;
-                }
-                else
-                {
-                    _currentTerrainData!.CurrentParsingPath = Path.Combine(_currentTerrainData!.CurrentParsingPath, "terrain", $"{tokens[1]}.png");
-                }
-                break;
-
-            case "X":
-                _currentTerrainData!.X = int.Parse(tokens[1]);
-                break;
-
-            case "Y":
-                _currentTerrainData!.Y = int.Parse(tokens[1]);
-                break;
-
-            case "NO_OVERWRITE":
-                _currentTerrainData!.NoOverwrite = true;
-                break;
-
-            case "ONE_WAY":
-                break;
-
-            case "FLIP_VERTICAL":
-                _currentTerrainData!.FlipVertical = true;
-                break;
-
-            case "FLIP_HORIZONTAL":
-                _currentTerrainData!.FlipHorizontal = true;
-                break;
-
-            case "ROTATE":
-                _currentTerrainData!.Rotate = true;
-                break;
-
-            case "ERASE":
-                _currentTerrainData!.Erase = true;
-                break;
-
-            case "$END":
-                _currentTerrainData = null;
-                _settingDataForGroup = false;
-                break;
-
-            default:
-                ;
-                break;
-        }
-    }
-
-    private void ParseLevelObject(string[] tokens)
-    {
-        switch (tokens[0])
-        {
-            case "$GADGET":
-                ParsingLevelObject = true;
-                break;
-
-            case "$END":
-                ParsingLevelObject = false;
-                break;
-
-            default:
-                ;
-                break;
-        }
     }
 
     private void ProcessTerrainGroupTexture(TerrainGroup terrainGroup)
@@ -287,23 +82,44 @@ public sealed class NxlvReader
         var maxX = terrainGroup.TerrainDatas.Select(GetMaxX).Max();
         var maxY = terrainGroup.TerrainDatas.Select(GetMaxY).Max();
 
-        var texture = new RenderTarget2D(_graphicsDevice, maxX, maxY);
+        var texture = new RenderTarget2D(
+            _graphicsDevice,
+            maxX,
+            maxY,
+            false,
+            _graphicsDevice.PresentationParameters.BackBufferFormat,
+            DepthFormat.Depth24Stencil8);
 
         DrawTerrain(terrainGroup.TerrainDatas, texture);
 
-        terrainGroup.DataPlaceholder.GroupTexture = texture;
+        var textureBundle = new TerrainTextureBundle(texture);
+        terrainGroup.TerrainTextureBundle = textureBundle;
     }
 
     private int GetMaxX(TerrainData terrainData)
     {
-        var texture = GetOrLoadTexture(terrainData.CurrentParsingPath);
-        return terrainData.X + texture.Width;
+        var textureBundle = GetOrLoadTextureBundle(terrainData);
+        var terrainTexture = textureBundle.GetTransformedTexture(
+            _graphicsDevice,
+            terrainData.FlipHorizontal,
+            terrainData.FlipVertical,
+            terrainData.Rotate,
+            terrainData.Erase);
+
+        return terrainData.X + terrainTexture.Width;
     }
 
     private int GetMaxY(TerrainData terrainData)
     {
-        var texture = GetOrLoadTexture(terrainData.CurrentParsingPath);
-        return terrainData.Y + texture.Height;
+        var textureBundle = GetOrLoadTextureBundle(terrainData);
+        var terrainTexture = textureBundle.GetTransformedTexture(
+            _graphicsDevice,
+            terrainData.FlipHorizontal,
+            terrainData.FlipVertical,
+            terrainData.Rotate,
+            terrainData.Erase);
+
+        return terrainData.Y + terrainTexture.Height;
     }
 
     private void DrawTerrain(List<TerrainData> terrainDataList, RenderTarget2D renderTarget)
@@ -312,14 +128,12 @@ public sealed class NxlvReader
 
         _graphicsDevice.SetRenderTarget(renderTarget);
         _graphicsDevice.Clear(Color.Transparent);
-        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
         foreach (var terrainData in terrainDataList)
         {
-            ApplyTerrainPiece(terrainData);
+            ApplyTerrainPiece(terrainData, renderTarget);
         }
 
-        _spriteBatch.End();
         _graphicsDevice.SetRenderTarget(null);
     }
 
@@ -339,57 +153,85 @@ public sealed class NxlvReader
         return x.Id.CompareTo(y.Id) * mult;
     }
 
-    private void ApplyTerrainPiece(TerrainData terrainData)
+    private void ApplyTerrainPiece(TerrainData terrainData, RenderTarget2D renderTarget2D)
     {
-        var texture = terrainData.GroupTexture ?? GetOrLoadTexture(terrainData.CurrentParsingPath);
+        var textureBundle = GetOrLoadTextureBundle(terrainData);
 
-        var color = terrainData.Erase
-            ? Color.Transparent
-            : Color.White;
+        var terrainTexture = textureBundle.GetTransformedTexture(
+            _graphicsDevice,
+            terrainData.FlipHorizontal,
+            terrainData.FlipVertical,
+            terrainData.Rotate,
+            terrainData.Erase);
 
-        float rotation;
-        float rotX;
-        float rotY;
-
-        if (terrainData.Rotate)
+        var pos = new Vector2(terrainData.X, terrainData.Y);
+        if (terrainData.Erase)
         {
-            rotation = (float)(Math.PI / 2);
-            rotX = (float)texture.Width;
-            rotY = (float)texture.Height ;
+            using var s1 = new DepthStencilState
+            {
+                StencilEnable = true,
+                StencilFunction = CompareFunction.Always,
+                StencilPass = StencilOperation.Replace,
+                ReferenceStencil = 1,
+                DepthBufferEnable = false,
+            };
+
+            using var s2 = new DepthStencilState
+            {
+                StencilEnable = true,
+                StencilFunction = CompareFunction.LessEqual,
+                StencilPass = StencilOperation.Keep,
+                ReferenceStencil = 1,
+                DepthBufferEnable = false,
+            };
+
+            _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+            _spriteBatch.Draw(terrainTexture, pos, Color.White);
+            _spriteBatch.End();
+            _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+            _spriteBatch.Draw(terrainTexture, pos, Color.White);
+            _spriteBatch.End();
         }
         else
         {
-            rotation = 0f;
-            rotX = 0f;
-            rotY = 0f;
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            _spriteBatch.Draw(terrainTexture, pos, Color.White);
+            _spriteBatch.End();
         }
-
-        var s = SpriteEffects.None;
-
-        if (terrainData.FlipVertical)
-        {
-            s |= SpriteEffects.FlipVertically;
-        }
-        if (terrainData.FlipHorizontal)
-        {
-            s |= SpriteEffects.FlipHorizontally;
-            (rotX, rotY) = (rotY, rotX);
-        }
-
-        var rotPos = new Vector2(rotX, rotY);
-
-        var pos = new Vector2(terrainData.X, terrainData.Y);
-        _spriteBatch.Draw(texture, pos, null, color, rotation, rotPos, Vector2.One, s, 1f);
     }
 
-    private Texture2D GetOrLoadTexture(string filePath)
+    private TerrainTextureBundle GetOrLoadTextureBundle(TerrainData terrainData)
     {
-        if (_textureCache.TryGetValue(filePath, out var result))
+        if (terrainData.CurrentParsingPath == null)
+        {
+            var textureGroup = _dataParser.TerrainGroups.Find(tg => tg.GroupId == terrainData.GroupId)!;
+
+            return textureGroup.TerrainTextureBundle!;
+        }
+
+        var filePath = terrainData.CurrentParsingPath!;
+
+        if (_textureBundleCache.TryGetValue(filePath, out var result))
             return result;
 
-        result = Texture2D.FromFile(_graphicsDevice, filePath);
-        _textureCache.Add(filePath, result);
+        var mainTexture = Texture2D.FromFile(_graphicsDevice, filePath);
+        result = new TerrainTextureBundle(mainTexture);
+        _textureBundleCache.Add(filePath, result);
 
         return result;
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        _dataParser.Dispose();
+        foreach (var terrainTextureBundle in _textureBundleCache.Values)
+        {
+            terrainTextureBundle.Dispose();
+        }
+        _textureBundleCache.Clear();
+        _disposed = true;
     }
 }

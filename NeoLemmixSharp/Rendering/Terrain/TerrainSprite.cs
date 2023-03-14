@@ -29,7 +29,7 @@ public sealed class TerrainSprite : NeoLemmixSprite
     public override bool ShouldRender => true;
     public override void Render(SpriteBatch spriteBatch)
     {
-        var zoom = LevelScreen.CurrentLevel.Viewport.Zoom;
+        var zoom = LevelScreen.CurrentLevel!.Viewport.Zoom;
         
         spriteBatch.Draw(
             _texture,
