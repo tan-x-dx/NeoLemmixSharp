@@ -65,14 +65,15 @@ public sealed class NxlvReader : IDisposable
         lemming.X = 160;
         lemming.Y = 80;
 
-        return new LevelScreen(levelTitle, width, height, bools)
+      /*  return new LevelScreen(levelTitle, width, height, bools)
         {
             LevelObjects = new ITickable[] { lemming },
             LevelSprites = new IRenderable[] { new LemmingSprite(_graphicsDevice, lemming) },
 
             TerrainSprite = new TerrainSprite(width, height, levelTerrainTexture),
             Viewport = new NeoLemmixViewPort()
-        };
+        };*/
+      return null;
     }
 
     private void ProcessTerrainGroupTexture(TerrainGroup terrainGroup)
