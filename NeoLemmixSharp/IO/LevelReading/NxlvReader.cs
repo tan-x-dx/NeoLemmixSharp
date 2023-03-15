@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.Lemming;
 using NeoLemmixSharp.Rendering.Terrain;
 using System;
 using System.Collections.Generic;
@@ -52,16 +53,22 @@ public sealed class NxlvReader : IDisposable
             width,
             height);
 
-        DrawTerrain(_dataParser.TerrainData, levelTerrainTexture);
+        var bools = new bool[width * height];
+
+        DrawTerrain(_dataParser.TerrainData, levelTerrainTexture, bools);
 
         levelTitle = string.IsNullOrWhiteSpace(levelTitle)
             ? "Untitled"
             : levelTitle;
 
-        return new LevelScreen(levelTitle)
+        var lemming = new Lemming();
+        lemming.X = 160;
+        lemming.Y = 80;
+
+        return new LevelScreen(levelTitle, width, height, bools)
         {
-            LevelObjects = new ITickable[0],
-            LevelSprites = new IRenderable[0],
+            LevelObjects = new ITickable[] { lemming },
+            LevelSprites = new IRenderable[] { new LemmingSprite(_graphicsDevice, lemming) },
 
             TerrainSprite = new TerrainSprite(width, height, levelTerrainTexture),
             Viewport = new NeoLemmixViewPort()
@@ -90,7 +97,9 @@ public sealed class NxlvReader : IDisposable
             _graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24Stencil8);
 
-        DrawTerrain(terrainGroup.TerrainDatas, texture);
+        var bools = new bool[maxX * maxY];
+
+        DrawTerrain(terrainGroup.TerrainDatas, texture, bools);
 
         var textureBundle = new TerrainTextureBundle(texture);
         terrainGroup.TerrainTextureBundle = textureBundle;
@@ -122,22 +131,22 @@ public sealed class NxlvReader : IDisposable
         return terrainData.Y + terrainTexture.Height;
     }
 
-    private void DrawTerrain(List<TerrainData> terrainDataList, RenderTarget2D renderTarget)
+    private void DrawTerrain(List<TerrainData> terrainDataList, RenderTarget2D renderTarget, bool[] bools)
     {
-        terrainDataList.Sort(SortTerrainEntries);
+      //  terrainDataList.Sort(SortTerrainEntries);
 
         _graphicsDevice.SetRenderTarget(renderTarget);
         _graphicsDevice.Clear(Color.Transparent);
 
         foreach (var terrainData in terrainDataList)
         {
-            ApplyTerrainPiece(terrainData, renderTarget);
+            ApplyTerrainPiece(terrainData, renderTarget, bools);
         }
 
         _graphicsDevice.SetRenderTarget(null);
     }
 
-    private static int SortTerrainEntries(TerrainData x, TerrainData y)
+    /*private static int SortTerrainEntries(TerrainData x, TerrainData y)
     {
         if (x.NoOverwrite != y.NoOverwrite)
         {
@@ -151,9 +160,9 @@ public sealed class NxlvReader : IDisposable
             : 1;
 
         return x.Id.CompareTo(y.Id) * mult;
-    }
+    }*/
 
-    private void ApplyTerrainPiece(TerrainData terrainData, RenderTarget2D renderTarget2D)
+    private void ApplyTerrainPiece(TerrainData terrainData, RenderTarget2D renderTarget2D, bool[] bools)
     {
         var textureBundle = GetOrLoadTextureBundle(terrainData);
 
@@ -197,6 +206,65 @@ public sealed class NxlvReader : IDisposable
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
             _spriteBatch.Draw(terrainTexture, pos, Color.White);
             _spriteBatch.End();
+
+            var data = new int[terrainTexture.Height * terrainTexture.Width];
+            terrainTexture.GetData(data);
+            var currentBools = Array.ConvertAll(data, ToBoolData);
+
+            ApplySmallerArrayOntoBigger(
+                currentBools,
+                terrainTexture.Width,
+                terrainTexture.Height,
+                bools,
+                renderTarget2D.Width,
+                renderTarget2D.Height,
+                terrainData.Erase,
+                terrainData.X,
+                terrainData.Y);
+        }
+    }
+
+    private static bool ToBoolData(int pixel)
+    {
+        var alpha = (pixel >> 24) & 0xff;
+        var colourData = pixel & 0x00ffffff;
+        return alpha > 32 && colourData != 0;
+    }
+
+    private void ApplySmallerArrayOntoBigger(
+        bool[] smallerBools,
+        int smallerWidth,
+        int smallerHeight,
+        bool[] biggerBools,
+        int biggerWidth,
+        int biggerHeight,
+        bool erase,
+        int posX,
+        int posY)
+    {
+        var wrappedSmallerBools = new ArrayWrapper2D<bool>(smallerWidth, smallerHeight, smallerBools);
+        var wrappedBiggerBools = new ArrayWrapper2D<bool>(biggerWidth, biggerHeight, biggerBools);
+        for (var x = 0; x < smallerWidth; x++)
+        {
+            for (var y = 0; y < smallerHeight; y++)
+            {
+                var newX = x + posX;
+                if (newX < 0 || newX >= biggerWidth)
+                    continue;
+                var newY = y + posY;
+                if (newY < 0 || newY >= biggerHeight)
+                    continue;
+
+                var val = wrappedSmallerBools.Get(x, y);
+                if (erase)
+                {
+                    wrappedBiggerBools.Set(newX, newY, !val);
+                }
+                else
+                {
+                    wrappedBiggerBools.Set(newX, newY, val);
+                }
+            }
         }
     }
 

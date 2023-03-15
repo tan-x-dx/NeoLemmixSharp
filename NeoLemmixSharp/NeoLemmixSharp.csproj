@@ -24,7 +24,8 @@
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Engine\" />
+    <Folder Include="Engine\LemmingStates\" />
+    <Folder Include="Rendering\Lemming\" />
     <Folder Include="Rendering\Terrain\" />
     <Folder Include="Screen\" />
   </ItemGroup>

@@ -1,0 +1,47 @@
+﻿using Microsoft.Xna.Framework;
+
+namespace NeoLemmixSharp.Engine.Directions.Orientations;
+
+public sealed class DownOrientation : IOrientation
+{
+    public static DownOrientation Instance { get; } = new();
+
+    private DownOrientation()
+    {
+    }
+
+    public LevelPosition MoveRight(LevelPosition position, int step)
+    {
+        position.X += step;
+        return position;
+    }
+
+    public LevelPosition MoveUp(LevelPosition position, int step)
+    {
+        position.Y += step;
+        return position;
+    }
+
+    public LevelPosition MoveLeft(LevelPosition position, int step)
+    {
+        position.X -= step;
+        return position;
+    }
+
+    public LevelPosition MoveDown(LevelPosition position, int step)
+    {
+        position.Y -= step;
+        return position;
+    }
+
+    public LevelPosition Move(LevelPosition position, LevelPosition relativeDirection)
+    {
+        return position + relativeDirection;
+    }
+
+    public bool Equals(IOrientation? other) => other is DownOrientation;
+    public override bool Equals(object? obj) => obj is DownOrientation;
+    public override int GetHashCode() => nameof(DownOrientation).GetHashCode();
+
+    public override string ToString() => "Down";
+}

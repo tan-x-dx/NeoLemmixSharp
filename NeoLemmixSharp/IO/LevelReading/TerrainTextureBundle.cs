@@ -114,8 +114,8 @@ public sealed class TerrainTextureBundle : IDisposable
         _mainTexture.GetData(originalData);
         var newData = new int[size];
 
-        var originalWrapper = new ArrayWrapper2D(_mainTexture.Width, _mainTexture.Height, originalData);
-        var newWrapper = new ArrayWrapper2D(textureToDraw.Width, textureToDraw.Height, newData);
+        var originalWrapper = new ArrayWrapper2D<int>(_mainTexture.Width, _mainTexture.Height, originalData);
+        var newWrapper = new ArrayWrapper2D<int>(textureToDraw.Width, textureToDraw.Height, newData);
 
         if (erase)
         {
@@ -130,8 +130,8 @@ public sealed class TerrainTextureBundle : IDisposable
     }
 
     private void DrawErase(
-        ArrayWrapper2D originalData,
-        ArrayWrapper2D newData,
+        ArrayWrapper2D<int> originalData,
+        ArrayWrapper2D<int> newData,
         bool flipHorizontally,
         int rotNum)
     {
@@ -207,8 +207,8 @@ public sealed class TerrainTextureBundle : IDisposable
     }
 
     private static void DrawNormal(
-        ArrayWrapper2D originalData,
-        ArrayWrapper2D newData,
+        ArrayWrapper2D<int> originalData,
+        ArrayWrapper2D<int> newData,
         bool flipHorizontally,
         int rotNum)
     {
