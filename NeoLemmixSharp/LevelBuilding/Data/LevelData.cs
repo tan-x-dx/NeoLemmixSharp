@@ -5,6 +5,7 @@ public sealed class LevelData
     public string LevelTitle { get; set; }
     public string LevelAuthor { get; set; }
     public ulong LevelId { get; set; }
+    public ulong Version { get; set; }
     public int LevelWidth { get; set; }
     public int LevelHeight { get; set; }
     public int LevelStartPositionX { get; set; }

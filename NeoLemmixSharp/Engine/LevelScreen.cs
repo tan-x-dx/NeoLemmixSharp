@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Rendering.Terrain;
 using NeoLemmixSharp.Screen;
@@ -21,9 +22,9 @@ public sealed class LevelScreen : BaseScreen
     public int Height => Terrain.Height;
 
     public LevelScreen(
-        string title,
+        LevelData levelData,
         LevelTerrain terrain)
-        : base(title)
+        : base(levelData.LevelTitle)
     {
         Terrain = terrain;
 
@@ -34,13 +35,13 @@ public sealed class LevelScreen : BaseScreen
     {
         Viewport.Tick(mouseState);
 
-        for (var i = 0; i < LevelObjects.Length; i++)
+      /*  for (var i = 0; i < LevelObjects.Length; i++)
         {
             if (LevelObjects[i].ShouldTick)
             {
                 LevelObjects[i].Tick(mouseState);
             }
-        }
+        }*/
     }
 
     public override void Render(SpriteBatch spriteBatch)

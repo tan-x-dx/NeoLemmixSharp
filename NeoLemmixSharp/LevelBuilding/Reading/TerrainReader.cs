@@ -60,6 +60,15 @@ public sealed class TerrainReader : IDataReader
                 _currentTerrainData!.Y = int.Parse(tokens[1]);
                 break;
 
+            case "RGB":
+                var a = int.Parse(tokens[1]);
+                var r = int.Parse(tokens[2]);
+                var g = int.Parse(tokens[3]);
+                var b = int.Parse(tokens[4]);
+
+                _currentTerrainData!.Tint = (uint)((a << 24) | (r << 16) | (g << 8) | b);
+                break;
+
             case "NO_OVERWRITE":
                 _currentTerrainData!.NoOverwrite = true;
                 break;

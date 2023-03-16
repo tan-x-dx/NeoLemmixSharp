@@ -12,6 +12,8 @@ public sealed class TerrainData
     public bool Erase { get; set; }
     public bool Rotate { get; set; }
 
+    public uint? Tint { get; set; }
+
     public string? GroupId { get; set; }
     public string? Style { get; set; }
     public string? TerrainName { get; set; }

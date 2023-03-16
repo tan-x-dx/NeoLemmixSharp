@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NeoLemmixSharp.IO.LevelReading;
+namespace NeoLemmixSharp.Util;
 
 public sealed class ArrayWrapper2D<T>
 {

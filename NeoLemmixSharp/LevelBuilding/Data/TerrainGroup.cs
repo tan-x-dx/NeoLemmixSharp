@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.LevelReading;
+﻿using NeoLemmixSharp.LevelBuilding.Painting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ public sealed class TerrainGroup : IDisposable
 
     public string? GroupId { get; set; }
     public List<TerrainData> TerrainDatas { get; } = new();
-    public TerrainTextureBundle? TerrainTextureBundle { get; set; }
+    public TextureData? TextureData { get; set; }
 
     public bool IsPrimitive => TerrainDatas.All(td => td.GroupId == null);
 
@@ -20,8 +20,7 @@ public sealed class TerrainGroup : IDisposable
         if (_disposed)
             return;
 
-        TerrainTextureBundle?.Dispose();
-        TerrainTextureBundle = null;
+        TextureData = null;
         TerrainDatas.Clear();
         _disposed = true;
     }

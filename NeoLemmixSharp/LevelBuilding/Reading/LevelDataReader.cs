@@ -42,12 +42,21 @@ public sealed class LevelDataReader : IDataReader
                 break;
 
             case "ID":
-                var hexPart = tokens[1];
-                if (hexPart[0] == 'x')
+                var idHexPart = tokens[1];
+                if (idHexPart[0] == 'x')
                 {
-                    hexPart = $"0{hexPart}";
+                    idHexPart = $"0{idHexPart}";
                 }
-                _levelData.LevelId = Convert.ToUInt64(hexPart, 16);
+                _levelData.LevelId = Convert.ToUInt64(idHexPart, 16);
+                break;
+
+            case "VERSION":
+                var versionHexPart = tokens[1];
+                if (versionHexPart[0] == 'x')
+                {
+                    versionHexPart = $"0{versionHexPart}";
+                }
+                _levelData.Version = Convert.ToUInt64(versionHexPart, 16);
                 break;
 
             case "START_X":
@@ -64,6 +73,10 @@ public sealed class LevelDataReader : IDataReader
 
             case "BACKGROUND":
                 _levelData.LevelBackground = string.Join(' ', tokens[1..]);
+                break;
+
+            case "MUSIC":
+
                 break;
 
             case "WIDTH":
@@ -84,6 +97,10 @@ public sealed class LevelDataReader : IDataReader
 
             case "TIME_LIMIT":
                 _levelData.TimeLimit = int.Parse(tokens[1]);
+                break;
+
+            case "SPAWN_INTERVAL_LOCKED":
+
                 break;
 
             case "MAX_SPAWN_INTERVAL":
