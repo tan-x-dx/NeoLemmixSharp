@@ -121,12 +121,6 @@ public sealed class LevelPainter : IDisposable
     {
         var sourceData = GetOrLoadTextureBundle(terrainData);
 
-        if (terrainData.X == 173 &&
-            terrainData.Y == 141)
-        {
-            ;
-        }
-
         var dihedralTransformation = DihedralTransformation.GetForTransformation(
             terrainData.FlipHorizontal,
             terrainData.FlipVertical,
@@ -137,8 +131,6 @@ public sealed class LevelPainter : IDisposable
             for (var y = 0; y < sourceData.Height; y++)
             {
                 dihedralTransformation.Transform(
-                    targetData.Width - 1,
-                    targetData.Height - 1,
                     sourceData.Width - 1,
                     sourceData.Height - 1,
                     x,

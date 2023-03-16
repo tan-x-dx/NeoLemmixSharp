@@ -55,15 +55,15 @@ public sealed class DihedralTransformation
             ? 1
             : 0;
 
+        if (flipVertically)
+        {
+            flipHorizontally = !flipHorizontally;
+            rotNum += 2;
+        }
+
         var flipNum = flipHorizontally
             ? 4
             : 0;
-
-        if (flipVertically)
-        {
-            flipNum = 4 - flipNum;
-            rotNum += 2;
-        }
 
         return flipNum | rotNum;
     }
@@ -71,7 +71,7 @@ public sealed class DihedralTransformation
     private readonly Rotation _rotation;
     private readonly Reflection _reflection;
 
-    public int Key => _rotation.R | _reflection.F << 2;
+    private int Key => _rotation.R | (_reflection.F << 2);
 
     private DihedralTransformation(Rotation rotation, Reflection reflection)
     {
@@ -79,20 +79,20 @@ public sealed class DihedralTransformation
         _reflection = reflection;
     }
 
+    public override string ToString() => $"{_rotation}|{_reflection}";
+
     public void Transform(
         int width0,
         int height0,
-        int width1,
-        int height1,
         int x,
         int y,
         out int x0,
         out int y0)
     {
-        var s = _reflection.S(width1);
         var m = _reflection.M;
         var w = _rotation.W(width0, height0);
         var h = _rotation.H(width0, height0);
+        var s = _reflection.S(_rotation.Choose(width0, height0));
         x0 = s + m * (_rotation.A * x - _rotation.B * y + w);
         y0 = _rotation.B * x + _rotation.A * y + h;
     }
@@ -145,6 +145,12 @@ public sealed class DihedralTransformation
             3 => w,
             _ => 0
         };
+
+        public int Choose(int w, int h) => (R & 1) == 0
+            ? w
+            : h;
+
+        public override string ToString() => $"Rot {R}";
     }
 
     private sealed class Reflection
@@ -152,12 +158,24 @@ public sealed class DihedralTransformation
         public int F { get; }
         public int M { get; }
 
-        public Reflection(bool f)
+        public Reflection(bool flip)
         {
-            F = f ? 1 : 0;
-            M = 1 - (F << 1);
+            if (flip)
+            {
+                F = 1;
+                M = -1;
+            }
+            else
+            {
+                F = 0;
+                M = 1;
+            }
         }
 
-        public int S(int w) => F * w;
+        public int S(int k) => F * k;
+
+        public override string ToString() => F == 0
+            ? string.Empty
+            : "Flip";
     }
 }
