@@ -10,9 +10,18 @@ namespace NeoLemmixSharp.LevelBuilding;
 
 public sealed class LevelAssembler : IDisposable
 {
+    private readonly GraphicsDevice _graphicsDevice;
+    private readonly SpriteBatch _spriteBatch;
+
     private Lemming[] _lemmings;
 
-    public LevelAssembler()
+    public LevelAssembler(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+    {
+        _graphicsDevice = graphicsDevice;
+        _spriteBatch = spriteBatch;
+    }
+
+    public void AssembleLevel()
     {
         var lemming0 = new Lemming
         {
@@ -44,15 +53,22 @@ public sealed class LevelAssembler : IDisposable
         _lemmings = new[] { lemming0, lemming1, lemming2, lemming3 };
     }
 
+    public SpriteBank GetSpriteBank()
+    {
+        return null;
+    }
+
     public ITickable[] GetLevelTickables()
     {
         return _lemmings.ToArray<ITickable>();
     }
 
-    public IRenderable[] GetLevelRenderables(GraphicsDevice graphicsDevice)
+    public IRenderable[] GetLevelRenderables()
     {
-        return _lemmings.Select(l => new LemmingSprite(graphicsDevice, l))
-            .ToArray<IRenderable>(); //new IRenderable[] { new LemmingSprite(graphicsDevice, _lemming0) };
+        return _lemmings
+            .Select(l => new LemmingSprite(_graphicsDevice, l))
+            .ToArray<IRenderable>();
+        //new IRenderable[] { new LemmingSprite(graphicsDevice, _lemming0) };
     }
 
     public void Dispose()

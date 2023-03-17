@@ -7,21 +7,15 @@ namespace NeoLemmixSharp.LevelBuilding;
 
 public sealed class LevelBuilder : IDisposable
 {
-    private readonly GraphicsDevice _graphicsDevice;
-    private readonly SpriteBatch _spriteBatch;
-
     private readonly LevelReader _levelReader;
     private readonly LevelPainter _levelPainter;
     private readonly LevelAssembler _levelAssembler;
 
     public LevelBuilder(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
-        _graphicsDevice = graphicsDevice;
-        _spriteBatch = spriteBatch;
-
         _levelReader = new LevelReader();
-        _levelPainter = new LevelPainter(graphicsDevice, spriteBatch);
-        _levelAssembler = new LevelAssembler();
+        _levelPainter = new LevelPainter(graphicsDevice);
+        _levelAssembler = new LevelAssembler(graphicsDevice, spriteBatch);
     }
 
     public LevelScreen BuildLevel(string levelFilePath)
@@ -32,18 +26,20 @@ public sealed class LevelBuilder : IDisposable
             _levelReader.LevelData,
             _levelReader.AllTerrainGroups,
             _levelReader.AllTerrainData);
-        
+
         if (string.IsNullOrWhiteSpace(_levelReader.LevelData.LevelTitle))
         {
             _levelReader.LevelData.LevelTitle = "Untitled";
         }
 
+        _levelAssembler.AssembleLevel();
+
         return new LevelScreen(
             _levelReader.LevelData,
-            _levelPainter.GetLevelTerrain())
+            _levelPainter.GetTerrainData())
         {
             LevelObjects = _levelAssembler.GetLevelTickables(),
-            LevelSprites = _levelAssembler.GetLevelRenderables(_graphicsDevice),
+            LevelSprites = _levelAssembler.GetLevelRenderables(),
             TerrainSprite = _levelPainter.GetTerrainSprite(),
             Viewport = new NeoLemmixViewPort()
         };

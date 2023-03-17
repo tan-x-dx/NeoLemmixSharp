@@ -3,7 +3,6 @@ using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.LemmingStates;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Painting;
-using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Rendering.Terrain;
 using NeoLemmixSharp.Util;
 using System;
@@ -18,20 +17,18 @@ public sealed class LevelPainter : IDisposable
     private const string _rootDirectory = "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5";
 
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly SpriteBatch _spriteBatch;
-    private readonly Dictionary<string, TextureData> _textureBundleCache = new();
+    private readonly Dictionary<string, PixelColourData> _textureBundleCache = new();
 
     private readonly List<TerrainGroup> _terrainGroups = new();
 
     private bool _disposed;
 
     private TerrainSprite? _terrainSprite;
-    private LevelTerrain? _levelTerrain;
+    private LevelTerrain? _terrainData;
 
-    public LevelPainter(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+    public LevelPainter(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;
-        _spriteBatch = spriteBatch;
     }
 
     public void PaintLevel(
@@ -51,12 +48,12 @@ public sealed class LevelPainter : IDisposable
             levelData.LevelWidth,
             levelData.LevelHeight);
 
-        _levelTerrain = new LevelTerrain(
+        _terrainData = new LevelTerrain(
             levelData.LevelWidth,
             levelData.LevelHeight);
 
         var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
-        var textureData = new TextureData(
+        var textureData = new PixelColourData(
             levelData.LevelWidth,
             levelData.LevelHeight,
             uintData,
@@ -84,7 +81,7 @@ public sealed class LevelPainter : IDisposable
 
     private void DrawTerrain(
         IEnumerable<TerrainData> terrainDataList,
-        TextureData targetData,
+        PixelColourData targetData,
         int dx = 0,
         int dy = 0)
     {
@@ -112,24 +109,24 @@ public sealed class LevelPainter : IDisposable
 
     private void ApplyTerrainPiece(
         TerrainData terrainData,
-        TextureData targetData,
+        PixelColourData targetPixelColourData,
         int dx,
         int dy)
     {
-        var sourceData = GetOrLoadTextureBundle(terrainData);
+        var sourcePixelColourData = GetOrLoadPixelColourData(terrainData);
 
         var dihedralTransformation = DihedralTransformation.GetForTransformation(
             terrainData.FlipHorizontal,
             terrainData.FlipVertical,
             terrainData.Rotate);
 
-        for (var x = 0; x < sourceData.Width; x++)
+        for (var x = 0; x < sourcePixelColourData.Width; x++)
         {
-            for (var y = 0; y < sourceData.Height; y++)
+            for (var y = 0; y < sourcePixelColourData.Height; y++)
             {
                 dihedralTransformation.Transform(
-                    sourceData.Width - 1,
-                    sourceData.Height - 1,
+                    sourcePixelColourData.Width - 1,
+                    sourcePixelColourData.Height - 1,
                     x,
                     y,
                     out var x0,
@@ -138,47 +135,47 @@ public sealed class LevelPainter : IDisposable
                 x0 = x0 + terrainData.X + dx;
                 y0 = y0 + terrainData.Y + dy;
 
-                if (x0 < 0 || x0 >= targetData.Width ||
-                    y0 < 0 || y0 >= targetData.Height)
+                if (x0 < 0 || x0 >= targetPixelColourData.Width ||
+                    y0 < 0 || y0 >= targetPixelColourData.Height)
                     continue;
 
-                var pixel = sourceData.Get(x, y);
+                var sourcePixelColour = sourcePixelColourData.Get(x, y);
 
-                if (pixel != 0U && terrainData.Tint.HasValue)
+                if (sourcePixelColour != 0U && terrainData.Tint.HasValue)
                 {
-                    pixel = BlendColours(terrainData.Tint.Value, pixel);
+                    sourcePixelColour = BlendColours(terrainData.Tint.Value, sourcePixelColour);
                 }
 
-                var targetPixel = targetData.Get(x0, y0);
+                var targetPixelColour = targetPixelColourData.Get(x0, y0);
+                var targetPixelData = _terrainData!.GetPixelData(x0, y0);
 
                 if (terrainData.Erase)
                 {
-                    if (pixel != 0U)
+                    if (sourcePixelColour != 0U)
                     {
-                        targetPixel = 0U;
+                        targetPixelColour = 0U;
                     }
                 }
                 else if (terrainData.NoOverwrite)
                 {
-                    targetPixel = BlendColours(targetPixel, pixel);
+                    targetPixelColour = BlendColours(targetPixelColour, sourcePixelColour);
                 }
                 else
                 {
-                    targetPixel = BlendColours(pixel, targetPixel);
+                    targetPixelColour = BlendColours(sourcePixelColour, targetPixelColour);
                 }
 
-                targetData.Set(x0, y0, targetPixel);
+                targetPixelColourData.Set(x0, y0, targetPixelColour);
 
-                var levelPixel = _levelTerrain!.GetPixelData(x0, y0);
-                if (ColourPixelIsSubstantial(targetPixel))
+                if (PixelColourIsSubstantial(targetPixelColour))
                 {
-                    levelPixel.IsSolid = true;
-                    levelPixel.IsSteel = sourceData.IsSteel;
+                    targetPixelData.IsSolid = true;
+                    targetPixelData.IsSteel = sourcePixelColourData.IsSteel;
                 }
                 else
                 {
-                    levelPixel.IsSolid = false;
-                    levelPixel.IsSteel = false;
+                    targetPixelData.IsSolid = false;
+                    targetPixelData.IsSteel = false;
                 }
             }
         }
@@ -206,15 +203,16 @@ public sealed class LevelPainter : IDisposable
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
-    private static bool ColourPixelIsSubstantial(uint colour)
+    private static bool PixelColourIsSubstantial(uint colour)
     {
         var alpha = (colour >> 24) & 0xffU;
         return alpha > LemmingConstants.MinimumSubstantialAlphaValue;
     }
 
-    private TextureData GetOrLoadTextureBundle(TerrainData terrainData)
+    private PixelColourData GetOrLoadPixelColourData(TerrainData terrainData)
     {
-        var rootFilePath = Path.Combine(_rootDirectory, "styles", terrainData.Style!, "terrain", terrainData.TerrainName!);
+        var rootFilePath =
+            Path.Combine(_rootDirectory, "styles", terrainData.Style!, "terrain", terrainData.TerrainName!);
 
         if (_textureBundleCache.TryGetValue(rootFilePath, out var result))
             return result;
@@ -222,14 +220,14 @@ public sealed class LevelPainter : IDisposable
         var png = Path.ChangeExtension(rootFilePath, "png");
         var isSteel = File.Exists(Path.ChangeExtension(rootFilePath, "nxmt"));
 
-        var mainTexture = Texture2D.FromFile(_graphicsDevice, png);
-        result = GetTextureData(mainTexture, isSteel);
+        using var mainTexture = Texture2D.FromFile(_graphicsDevice, png);
+        result = GetPixelColourData(mainTexture, isSteel);
         _textureBundleCache.Add(rootFilePath, result);
 
         return result;
     }
 
-    private static TextureData GetTextureData(Texture2D texture, bool isSteel)
+    private static PixelColourData GetPixelColourData(Texture2D texture, bool isSteel)
     {
         var width = texture.Width;
         var height = texture.Height;
@@ -237,17 +235,12 @@ public sealed class LevelPainter : IDisposable
 
         texture.GetData(data);
 
-        return new TextureData(width, height, data, isSteel);
+        return new PixelColourData(width, height, data, isSteel);
     }
 
-    public SpriteBank GetSpriteBank()
+    public LevelTerrain GetTerrainData()
     {
-        return null;
-    }
-
-    public LevelTerrain GetLevelTerrain()
-    {
-        return _levelTerrain!;
+        return _terrainData!;
     }
 
     public TerrainSprite GetTerrainSprite()

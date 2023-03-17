@@ -18,7 +18,7 @@ public sealed class WalkerState : ILemmingState
 
         var deltaX = lemming.FacingDirection.DeltaX(WalkerStep);
         var pixelQueryPosition = lemming.Orientation.MoveRight(originalPosition, deltaX);
-        var pixel = ILemmingState.LevelTerrain.GetPixelData(pixelQueryPosition);
+        var pixel = ILemmingState.Terrain.GetPixelData(pixelQueryPosition);
 
         if (pixel.IsSolid) // Check pixels going up (negative Y)
         {
@@ -27,7 +27,7 @@ public sealed class WalkerState : ILemmingState
             {
                 var candidate = pixelQueryPosition;
                 pixelQueryPosition = lemming.Orientation.MoveUp(pixelQueryPosition, 1);
-                pixel = ILemmingState.LevelTerrain.GetPixelData(pixelQueryPosition);
+                pixel = ILemmingState.Terrain.GetPixelData(pixelQueryPosition);
 
                 if (!pixel.IsSolid)
                 {
@@ -41,7 +41,7 @@ public sealed class WalkerState : ILemmingState
             while (i < MinimumWallHeight) // Ascender step up
             {
                 pixelQueryPosition = lemming.Orientation.MoveUp(pixelQueryPosition, 1);
-                pixel = ILemmingState.LevelTerrain.GetPixelData(pixelQueryPosition);
+                pixel = ILemmingState.Terrain.GetPixelData(pixelQueryPosition);
 
                 if (!pixel.IsSolid)
                 {
@@ -62,7 +62,7 @@ public sealed class WalkerState : ILemmingState
             while (i < FallDistanceFall)
             {
                 pixelQueryPosition = lemming.Orientation.MoveDown(pixelQueryPosition, 1);
-                pixel = ILemmingState.LevelTerrain.GetPixelData(pixelQueryPosition);
+                pixel = ILemmingState.Terrain.GetPixelData(pixelQueryPosition);
 
                 if (pixel.IsSolid)
                 {

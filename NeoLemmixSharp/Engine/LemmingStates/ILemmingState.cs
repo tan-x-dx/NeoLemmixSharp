@@ -3,7 +3,7 @@
 public interface ILemmingState
 {
     protected static LevelScreen Level => LevelScreen.CurrentLevel!;
-    protected static LevelTerrain LevelTerrain => LevelScreen.CurrentLevel!.Terrain;
+    protected static LevelTerrain Terrain => LevelScreen.CurrentLevel!.Terrain;
 
     int LemmingStateId { get; }
 

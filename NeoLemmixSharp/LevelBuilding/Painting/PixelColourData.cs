@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.LevelBuilding.Painting;
 
-public sealed class TextureData
+public sealed class PixelColourData
 {
     private readonly uint[] _terrainData;
 
@@ -8,7 +8,7 @@ public sealed class TextureData
     public int Height { get; }
     public bool IsSteel { get; }
 
-    public TextureData(int width, int height, uint[] terrainData, bool isSteel)
+    public PixelColourData(int width, int height, uint[] terrainData, bool isSteel)
     {
         Width = width;
         Height = height;
