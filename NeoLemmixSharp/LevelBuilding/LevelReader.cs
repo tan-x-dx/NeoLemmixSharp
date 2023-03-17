@@ -41,7 +41,7 @@ public sealed class LevelReader : IDisposable
             ProcessLine(line);
         }
 
-        AllTerrainGroups.Sort(SortTerrainGroups);
+       // AllTerrainGroups.Sort(SortTerrainGroups);
     }
 
     private void ProcessLine(string line)

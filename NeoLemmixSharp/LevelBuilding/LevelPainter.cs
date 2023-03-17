@@ -41,7 +41,7 @@ public sealed class LevelPainter : IDisposable
 
         foreach (var terrainGroup in _terrainGroups)
         {
-            ProcessTerrainGroupTexture(terrainGroup);
+            ProcessTerrainGroup(terrainGroup);
         }
 
         var levelTerrainTexture = new Texture2D(
@@ -64,7 +64,7 @@ public sealed class LevelPainter : IDisposable
             levelTerrainTexture);
     }
 
-    private void ProcessTerrainGroupTexture(TerrainGroup terrainGroup)
+    private void ProcessTerrainGroup(TerrainGroup terrainGroup)
     {
         var minX = terrainGroup.TerrainDatas.Select(td => td.X).Min();
         var minY = terrainGroup.TerrainDatas.Select(td => td.Y).Min();
@@ -75,49 +75,73 @@ public sealed class LevelPainter : IDisposable
             terrainData.Y -= minY;
         }
 
-        var maxX = terrainGroup.TerrainDatas.Select(GetMaxX).Max();
-        var maxY = terrainGroup.TerrainDatas.Select(GetMaxY).Max();
+        /*   var maxX = terrainGroup.TerrainDatas.Select(GetMaxX).Max();
+           var maxY = terrainGroup.TerrainDatas.Select(GetMaxY).Max();
 
-        var textureData = new TextureData(
-            maxX,
-            maxY,
-            new uint[maxX * maxY],
-            false);
+           var textureData = new TextureData(
+               maxX,
+               maxY,
+               new uint[maxX * maxY],
+               false);
 
-        DrawTerrain(terrainGroup.TerrainDatas, textureData);
+           DrawTerrain(terrainGroup.TerrainDatas, textureData);
 
-        terrainGroup.TextureData = textureData;
+           terrainGroup.TextureData = textureData;*/
     }
 
-    private int GetMaxX(TerrainData terrainData)
-    {
-        var textureBundle = GetOrLoadTextureBundle(terrainData);
-        var w = terrainData.Rotate
-            ? textureBundle.Height
-            : textureBundle.Width;
+    /* private int GetMaxX(TerrainData terrainData)
+     {
+         var textureBundle = GetOrLoadTextureBundle(terrainData);
+         var w = terrainData.Rotate
+             ? textureBundle.Height
+             : textureBundle.Width;
 
-        return terrainData.X + w;
-    }
+         return terrainData.X + w;
+     }
 
-    private int GetMaxY(TerrainData terrainData)
-    {
-        var textureBundle = GetOrLoadTextureBundle(terrainData);
-        var h = terrainData.Rotate
-            ? textureBundle.Width
-            : textureBundle.Height;
+     private int GetMaxY(TerrainData terrainData)
+     {
+         var textureBundle = GetOrLoadTextureBundle(terrainData);
+         var h = terrainData.Rotate
+             ? textureBundle.Width
+             : textureBundle.Height;
 
-        return terrainData.Y + h;
-    }
-
-    private void DrawTerrain(IEnumerable<TerrainData> terrainDataList, TextureData targetData)
+         return terrainData.Y + h;
+     }
+    */
+    private void DrawTerrain(
+        IEnumerable<TerrainData> terrainDataList,
+        TextureData targetData,
+        int dx = 0,
+        int dy = 0)
     {
         foreach (var terrainData in terrainDataList)
         {
-            ApplyTerrainPiece(terrainData, targetData);
+            if (terrainData.GroupId == null)
+            {
+                ApplyTerrainPiece(
+                    terrainData,
+                    targetData,
+                    dx,
+                    dy);
+            }
+            else
+            {
+                var textureGroup = _terrainGroups.First(tg => tg.GroupId == terrainData.GroupId);
+                DrawTerrain(
+                    textureGroup.TerrainDatas,
+                    targetData,
+                    dx + terrainData.X,
+                    dy + terrainData.Y);
+            }
         }
     }
 
-    private void ApplyTerrainPiece(TerrainData terrainData, TextureData targetData)
+    private void ApplyTerrainPiece(
+        TerrainData terrainData,
+        TextureData targetData,
+        int dx,
+        int dy)
     {
         var sourceData = GetOrLoadTextureBundle(terrainData);
 
@@ -138,8 +162,8 @@ public sealed class LevelPainter : IDisposable
                     out var x0,
                     out var y0);
 
-                x0 += terrainData.X;
-                y0 += terrainData.Y;
+                x0 = x0 + terrainData.X + dx;
+                y0 = y0 + terrainData.Y + dy;
 
                 if (x0 < 0 || x0 >= targetData.Width ||
                     y0 < 0 || y0 >= targetData.Height)
@@ -198,13 +222,6 @@ public sealed class LevelPainter : IDisposable
 
     private TextureData GetOrLoadTextureBundle(TerrainData terrainData)
     {
-        if (terrainData.GroupId != null)
-        {
-            var textureGroup = _terrainGroups.First(tg => tg.GroupId == terrainData.GroupId);
-
-            return textureGroup.TextureData!;
-        }
-
         var rootFilePath = Path.Combine(_rootDirectory, "styles", terrainData.Style!, "terrain", terrainData.TerrainName!);
 
         if (_textureBundleCache.TryGetValue(rootFilePath, out var result))
