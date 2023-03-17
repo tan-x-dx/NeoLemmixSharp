@@ -14,8 +14,10 @@ public sealed class AscenderState : ILemmingState
     public void UpdateLemming(Lemming lemming)
     {
         int levitation = CommonMethods.AboveGround(lemming);
-        if (levitation > JumperStep)
-            lemming.Y -= JumperStep;
+        if (levitation > AscenderStep)
+        {
+            lemming.Y -= AscenderStep;
+        }
         else
         {
             // conversion to walker

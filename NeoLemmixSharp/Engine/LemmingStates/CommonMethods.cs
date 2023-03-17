@@ -4,8 +4,14 @@ namespace NeoLemmixSharp.Engine.LemmingStates;
 
 public static class CommonMethods
 {
-    public static int FreeBelow(Lemming lemming, int step)
+    public static int NumberOfNonSolidPixelsBelow(
+        Lemming lemming,
+        LevelPosition pos,
+        int step)
     {
+        
+
+
         return 0;
         /* int free = 0;
          int pos = lemming.X;

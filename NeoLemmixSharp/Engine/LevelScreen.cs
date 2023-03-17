@@ -35,13 +35,13 @@ public sealed class LevelScreen : BaseScreen
     {
         Viewport.Tick(mouseState);
 
-      /*  for (var i = 0; i < LevelObjects.Length; i++)
+        for (var i = 0; i < LevelObjects.Length; i++)
         {
             if (LevelObjects[i].ShouldTick)
             {
                 LevelObjects[i].Tick(mouseState);
             }
-        }*/
+        }
     }
 
     public override void Render(SpriteBatch spriteBatch)

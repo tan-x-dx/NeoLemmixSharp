@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
+using NeoLemmixSharp.Engine.LemmingStates;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Painting;
 using NeoLemmixSharp.Rendering;
@@ -25,6 +26,7 @@ public sealed class LevelPainter : IDisposable
     private bool _disposed;
 
     private TerrainSprite? _terrainSprite;
+    private LevelTerrain? _levelTerrain;
 
     public LevelPainter(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
@@ -49,6 +51,10 @@ public sealed class LevelPainter : IDisposable
             levelData.LevelWidth,
             levelData.LevelHeight);
 
+        _levelTerrain = new LevelTerrain(
+            levelData.LevelWidth,
+            levelData.LevelHeight);
+
         var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
         var textureData = new TextureData(
             levelData.LevelWidth,
@@ -64,7 +70,7 @@ public sealed class LevelPainter : IDisposable
             levelTerrainTexture);
     }
 
-    private void ProcessTerrainGroup(TerrainGroup terrainGroup)
+    private static void ProcessTerrainGroup(TerrainGroup terrainGroup)
     {
         var minX = terrainGroup.TerrainDatas.Select(td => td.X).Min();
         var minY = terrainGroup.TerrainDatas.Select(td => td.Y).Min();
@@ -74,41 +80,8 @@ public sealed class LevelPainter : IDisposable
             terrainData.X -= minX;
             terrainData.Y -= minY;
         }
-
-        /*   var maxX = terrainGroup.TerrainDatas.Select(GetMaxX).Max();
-           var maxY = terrainGroup.TerrainDatas.Select(GetMaxY).Max();
-
-           var textureData = new TextureData(
-               maxX,
-               maxY,
-               new uint[maxX * maxY],
-               false);
-
-           DrawTerrain(terrainGroup.TerrainDatas, textureData);
-
-           terrainGroup.TextureData = textureData;*/
     }
 
-    /* private int GetMaxX(TerrainData terrainData)
-     {
-         var textureBundle = GetOrLoadTextureBundle(terrainData);
-         var w = terrainData.Rotate
-             ? textureBundle.Height
-             : textureBundle.Width;
-
-         return terrainData.X + w;
-     }
-
-     private int GetMaxY(TerrainData terrainData)
-     {
-         var textureBundle = GetOrLoadTextureBundle(terrainData);
-         var h = terrainData.Rotate
-             ? textureBundle.Width
-             : textureBundle.Height;
-
-         return terrainData.Y + h;
-     }
-    */
     private void DrawTerrain(
         IEnumerable<TerrainData> terrainDataList,
         TextureData targetData,
@@ -171,7 +144,7 @@ public sealed class LevelPainter : IDisposable
 
                 var pixel = sourceData.Get(x, y);
 
-                if (terrainData.Tint.HasValue)
+                if (pixel != 0U && terrainData.Tint.HasValue)
                 {
                     pixel = BlendColours(terrainData.Tint.Value, pixel);
                 }
@@ -193,7 +166,20 @@ public sealed class LevelPainter : IDisposable
                 {
                     targetPixel = BlendColours(pixel, targetPixel);
                 }
+
                 targetData.Set(x0, y0, targetPixel);
+
+                var levelPixel = _levelTerrain!.GetPixelData(x0, y0);
+                if (ColourPixelIsSubstantial(targetPixel))
+                {
+                    levelPixel.IsSolid = true;
+                    levelPixel.IsSteel = sourceData.IsSteel;
+                }
+                else
+                {
+                    levelPixel.IsSolid = false;
+                    levelPixel.IsSteel = false;
+                }
             }
         }
     }
@@ -218,6 +204,12 @@ public sealed class LevelPainter : IDisposable
         var b = (uint)Math.Round(newB * 255);
 
         return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    private static bool ColourPixelIsSubstantial(uint colour)
+    {
+        var alpha = (colour >> 24) & 0xffU;
+        return alpha > LemmingConstants.MinimumSubstantialAlphaValue;
     }
 
     private TextureData GetOrLoadTextureBundle(TerrainData terrainData)
@@ -255,7 +247,7 @@ public sealed class LevelPainter : IDisposable
 
     public LevelTerrain GetLevelTerrain()
     {
-        return new LevelTerrain(0, 0);
+        return _levelTerrain!;
     }
 
     public TerrainSprite GetTerrainSprite()

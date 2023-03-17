@@ -2,6 +2,8 @@
 
 public static class LemmingConstants
 {
+    public const uint MinimumSubstantialAlphaValue = 31;
+
     /// <summary>
     /// a walker walks one pixel per frame
     /// </summary>
@@ -35,13 +37,17 @@ public static class LemmingConstants
     /// </summary>
     public const int FloaterStep = 2;
     /// <summary>
-    /// a jumper moves up two pixels per frame
+    /// Minimum height for a wall to turn a lemming around
     /// </summary>
-    public const int JumperStep = 2;
+    public const int MinimumWallHeight = 7;
     /// <summary>
-    /// if a walker jumps up 6 pixels, it becomes a jumper
+    /// an ascender moves up two pixels per frame
     /// </summary>
-    public const int JumperJump = 4;
+    public const int AscenderStep = 2;
+    /// <summary>
+    /// if a walker jumps up 3 pixels, it becomes an ascender
+    /// </summary>
+    public const int AscenderJump = 3;
     /// <summary>
     /// pixels a floater falls before the parachute begins to open
     /// </summary>
@@ -49,7 +55,7 @@ public static class LemmingConstants
     /// <summary>
     /// number of free pixels below needed to convert a lemming to a faller
     /// </summary>
-    public const int FallDistanceFall = 8;
+    public const int FallDistanceFall = 4;
     /// <summary>
     /// used as "free below" value to convert most skills into a faller
     /// </summary>
@@ -61,5 +67,5 @@ public static class LemmingConstants
     /// <summary>
     /// number of steps before the warning sound is played
     /// </summary>
-    public const int StepsWarning = 9;
+    public const int StepsWarning = StepsMax - 3;
 }

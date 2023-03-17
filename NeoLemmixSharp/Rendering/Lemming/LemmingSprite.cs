@@ -40,6 +40,6 @@ public sealed class LemmingSprite : NeoLemmixSprite
     {
         var zoom = LevelScreen.CurrentLevel!.Viewport.Zoom;
 
-        return new Rectangle((_lemming.X - 1) * zoom.ScaleMultiplier, _lemming.Y * zoom.ScaleMultiplier, 3 * zoom.ScaleMultiplier, 3 * zoom.ScaleMultiplier);
+        return new Rectangle((_lemming.X - 1) * zoom.ScaleMultiplier, (_lemming.Y - 1) * zoom.ScaleMultiplier, 3 * zoom.ScaleMultiplier, 3 * zoom.ScaleMultiplier);
     }
 }

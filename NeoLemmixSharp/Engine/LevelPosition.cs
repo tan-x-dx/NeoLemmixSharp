@@ -16,6 +16,8 @@ public struct LevelPosition : IEquatable<LevelPosition>
     public static LevelPosition operator +(LevelPosition left, LevelPosition right) => new(left.X + right.X, left.Y + right.Y);
     public static LevelPosition operator -(LevelPosition left, LevelPosition right) => new(left.X - right.X, left.Y - right.Y);
 
+    public override string ToString() => $"X:{X} Y:{Y}";
+
     public bool Equals(LevelPosition other) =>
         X == other.X &&
         Y == other.Y;

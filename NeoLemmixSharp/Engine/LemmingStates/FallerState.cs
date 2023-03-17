@@ -13,7 +13,7 @@ public sealed class FallerState : ILemmingState
     public int LemmingStateId => 2;
     public void UpdateLemming(Lemming lemming)
     {
-        var free = CommonMethods.FreeBelow(lemming, FallerStep);
+      /*  var free = CommonMethods.NumberOfNonSolidPixelsBelow(lemming, FallerStep);
         if (free == FallDistanceForceFall)
         {
             lemming.Y += FallerStep;
@@ -32,6 +32,6 @@ public sealed class FallerState : ILemmingState
         { // check ground hit
             lemming.CurrentState = WalkerState.Instance;
             // counter = 0;
-        }
+        }*/
     }
 }

@@ -11,51 +11,119 @@ public sealed class WalkerState : ILemmingState
     }
 
     public int LemmingStateId => 1;
+
     public void UpdateLemming(Lemming lemming)
     {
-        var oldX = lemming.X;
+        var originalPosition = lemming.LevelPosition;
 
-        lemming.LevelPosition = lemming.FacingDirection.MoveInDirection(lemming.Orientation, lemming.LevelPosition, WalkerStep);
-      //  lemming.X += lemming.FacingDirection.DeltaX(WalkerStep);
-        var free = CommonMethods.FreeBelow(lemming, FallDistanceFall);
-        if (free >= FallDistanceFall)
-        {
-            lemming.Y += FallerStep;
-        }
-        else
-        {
-            lemming.Y += free;
-            //  counter = free;
-            //					if (free == 0)
-            //						counter = 0; // reset fall counter
-        }
+        var deltaX = lemming.FacingDirection.DeltaX(WalkerStep);
+        var pixelQueryPosition = lemming.Orientation.MoveRight(originalPosition, deltaX);
+        var pixel = ILemmingState.LevelTerrain.GetPixelData(pixelQueryPosition);
 
-        int levitation = CommonMethods.AboveGround(lemming);
-        // check for flip direction
-        if (levitation < WalkerObstacleHeight)
+        if (pixel.IsSolid) // Check pixels going up (negative Y)
         {
-            //y -= levitation;
-            if (levitation >= JumperJump)
+            var i = 0;
+            while (i < AscenderJump) // Simple step up
             {
-                lemming.Y -= JumperStep;
-                lemming.CurrentState = AscenderState.Instance;
-                return;
+                var candidate = pixelQueryPosition;
+                pixelQueryPosition = lemming.Orientation.MoveUp(pixelQueryPosition, 1);
+                pixel = ILemmingState.LevelTerrain.GetPixelData(pixelQueryPosition);
+
+                if (!pixel.IsSolid)
+                {
+                    lemming.LevelPosition = candidate;
+                    return;
+                }
+
+                i++;
             }
 
-            lemming.Y -= levitation;
-        }
-        else
-        {
-            lemming.X = oldX;
-            //y = oldY;
-            /* if (canClimb)
-             {
-                 newType = Type.CLIMBER;
-                 break;
-             }
-             else
-             {*/
+            while (i < MinimumWallHeight) // Ascender step up
+            {
+                pixelQueryPosition = lemming.Orientation.MoveUp(pixelQueryPosition, 1);
+                pixel = ILemmingState.LevelTerrain.GetPixelData(pixelQueryPosition);
+
+                if (!pixel.IsSolid)
+                {
+                    lemming.CurrentState = AscenderState.Instance;
+                    lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, new LevelPosition(deltaX, -AscenderStep));
+                    return;
+                }
+
+                i++;
+            }
+
+            // Hit a wall! Turn around!
             lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
+        }
+        else// Check pixels going down (positive Y)
+        {
+            var i = 0;
+            while (i < FallDistanceFall)
+            {
+                pixelQueryPosition = lemming.Orientation.MoveDown(pixelQueryPosition, 1);
+                pixel = ILemmingState.LevelTerrain.GetPixelData(pixelQueryPosition);
+
+                if (pixel.IsSolid)
+                {
+                    lemming.LevelPosition = pixelQueryPosition;
+                    return;
+                }
+
+                i++;
+            }
+
+            lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, new LevelPosition(deltaX, FallDistanceFall));
+            lemming.CurrentState = FallerState.Instance;
+        }
+    }
+
+
+
+    /*
+    var oldX = lemming.X;
+
+    lemming.LevelPosition = lemming.FacingDirection.MoveInDirection(lemming.Orientation, lemming.LevelPosition, WalkerStep);
+  //  lemming.X += lemming.FacingDirection.DeltaX(WalkerStep);
+    var free = CommonMethods.NumberOfNonSolidPixelsBelow(lemming, FallDistanceFall);
+    if (free >= FallDistanceFall)
+    {
+        lemming.Y += FallerStep;
+    }
+    else
+    {
+        lemming.Y += free;
+        //  counter = free;
+        //					if (free == 0)
+        //						counter = 0; // reset fall counter
+    }
+
+    int levitation = CommonMethods.AboveGround(lemming);
+    // check for flip direction
+    if (levitation < WalkerObstacleHeight)
+    {
+        //y -= levitation;
+        if (levitation >= JumperJump)
+        {
+            lemming.Y -= AscenderStep;
+            lemming.CurrentState = AscenderState.Instance;
+            return;
+        }
+
+        lemming.Y -= levitation;
+    }
+    else
+    {
+        lemming.X = oldX;
+        //y = oldY;
+     if (canClimb)
+         {
+             newType = Type.CLIMBER;
+             break;
+         }
+         else
+         {
+    lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
             //}
         }
         if (free > 0)
@@ -67,7 +135,7 @@ public sealed class WalkerState : ILemmingState
                 lemming.CurrentState = FallerState.Instance;
             }
         }
-    }
+    }*/
 
     /*
      void Foo()
