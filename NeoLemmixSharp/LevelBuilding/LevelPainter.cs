@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.LemmingStates;
 using NeoLemmixSharp.LevelBuilding.Data;
-using NeoLemmixSharp.LevelBuilding.Painting;
 using NeoLemmixSharp.Rendering.Terrain;
 using NeoLemmixSharp.Util;
 using System;
@@ -211,8 +210,7 @@ public sealed class LevelPainter : IDisposable
 
     private PixelColourData GetOrLoadPixelColourData(TerrainData terrainData)
     {
-        var rootFilePath =
-            Path.Combine(_rootDirectory, "styles", terrainData.Style!, "terrain", terrainData.TerrainName!);
+        var rootFilePath = Path.Combine(_rootDirectory, "styles", terrainData.Style!, "terrain", terrainData.TerrainName!);
 
         if (_textureBundleCache.TryGetValue(rootFilePath, out var result))
             return result;

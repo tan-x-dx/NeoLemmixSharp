@@ -17,4 +17,6 @@ public sealed class LevelData
     public int SaveRequirement { get; set; }
     public int? TimeLimit { get; set; }
     public int MaxSpawnInterval { get; set; }
+
+    public string LemmingSpritesFilePath { get; set; }
 }

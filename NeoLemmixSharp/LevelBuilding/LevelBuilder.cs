@@ -27,12 +27,7 @@ public sealed class LevelBuilder : IDisposable
             _levelReader.AllTerrainGroups,
             _levelReader.AllTerrainData);
 
-        if (string.IsNullOrWhiteSpace(_levelReader.LevelData.LevelTitle))
-        {
-            _levelReader.LevelData.LevelTitle = "Untitled";
-        }
-
-        _levelAssembler.AssembleLevel();
+        _levelAssembler.AssembleLevel(_levelReader.LevelData);
 
         return new LevelScreen(
             _levelReader.LevelData,

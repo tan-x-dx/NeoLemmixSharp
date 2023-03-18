@@ -36,7 +36,7 @@ public sealed class TerrainReader : IDataReader
                 }
                 else
                 {
-                    _currentTerrainData!.Style = string.Join(' ', tokens[1..]);
+                    _currentTerrainData!.Style = ReadingHelpers.ReadFormattedString(tokens[1..]);
                 }
 
                 break;
@@ -48,25 +48,20 @@ public sealed class TerrainReader : IDataReader
                 }
                 else
                 {
-                    _currentTerrainData!.TerrainName = string.Join(' ', tokens[1..]);
+                    _currentTerrainData!.TerrainName = ReadingHelpers.ReadFormattedString(tokens[1..]);
                 }
                 break;
 
             case "X":
-                _currentTerrainData!.X = int.Parse(tokens[1]);
+                _currentTerrainData!.X = ReadingHelpers.ReadInt(tokens[1]);
                 break;
 
             case "Y":
-                _currentTerrainData!.Y = int.Parse(tokens[1]);
+                _currentTerrainData!.Y = ReadingHelpers.ReadInt(tokens[1]);
                 break;
 
             case "RGB":
-                var a = int.Parse(tokens[1]);
-                var r = int.Parse(tokens[2]);
-                var g = int.Parse(tokens[3]);
-                var b = int.Parse(tokens[4]);
-
-                _currentTerrainData!.Tint = (uint)((a << 24) | (r << 16) | (g << 8) | b);
+                _currentTerrainData!.Tint = ReadingHelpers.ReadUint(tokens[1], true);
                 break;
 
             case "NO_OVERWRITE":

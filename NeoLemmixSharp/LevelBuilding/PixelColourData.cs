@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.LevelBuilding.Painting;
+﻿namespace NeoLemmixSharp.LevelBuilding;
 
 public sealed class PixelColourData
 {

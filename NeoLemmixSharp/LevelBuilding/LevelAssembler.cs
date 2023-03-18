@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Rendering.Lemming;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NeoLemmixSharp.LevelBuilding;
@@ -13,7 +15,7 @@ public sealed class LevelAssembler : IDisposable
     private readonly GraphicsDevice _graphicsDevice;
     private readonly SpriteBatch _spriteBatch;
 
-    private Lemming[] _lemmings;
+    private readonly List<Lemming> _lemmings = new();
 
     public LevelAssembler(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
@@ -21,7 +23,35 @@ public sealed class LevelAssembler : IDisposable
         _spriteBatch = spriteBatch;
     }
 
-    public void AssembleLevel()
+    public void AssembleLevel(LevelData levelData)
+    {
+        SetUpTestLemmings();
+    }
+
+    public SpriteBank GetSpriteBank()
+    {
+        return null;
+    }
+
+    public ITickable[] GetLevelTickables()
+    {
+        return _lemmings.ToArray<ITickable>();
+    }
+
+    public IRenderable[] GetLevelRenderables()
+    {
+        return _lemmings
+            .Select(l => new LemmingSprite(_graphicsDevice, l))
+            .ToArray<IRenderable>();
+        //new IRenderable[] { new LemmingSprite(graphicsDevice, _lemming0) };
+    }
+
+    public void Dispose()
+    {
+
+    }
+
+    private void SetUpTestLemmings()
     {
         var lemming0 = new Lemming
         {
@@ -50,29 +80,9 @@ public sealed class LevelAssembler : IDisposable
             Orientation = RightOrientation.Instance
         };
 
-        _lemmings = new[] { lemming0, lemming1, lemming2, lemming3 };
-    }
-
-    public SpriteBank GetSpriteBank()
-    {
-        return null;
-    }
-
-    public ITickable[] GetLevelTickables()
-    {
-        return _lemmings.ToArray<ITickable>();
-    }
-
-    public IRenderable[] GetLevelRenderables()
-    {
-        return _lemmings
-            .Select(l => new LemmingSprite(_graphicsDevice, l))
-            .ToArray<IRenderable>();
-        //new IRenderable[] { new LemmingSprite(graphicsDevice, _lemming0) };
-    }
-
-    public void Dispose()
-    {
-
+        _lemmings.Add(lemming0);
+        _lemmings.Add(lemming1);
+        _lemmings.Add(lemming2);
+        _lemmings.Add(lemming3);
     }
 }

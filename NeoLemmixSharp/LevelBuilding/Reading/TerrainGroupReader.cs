@@ -41,7 +41,7 @@ public sealed class TerrainGroupReader : IDataReader
         switch (tokens[0])
         {
             case "NAME":
-                _currentTerrainGroup!.GroupId = string.Join(' ', tokens[1..]);
+                _currentTerrainGroup!.GroupId = ReadingHelpers.ReadFormattedString(tokens[1..]);
                 break;
 
             case "$TERRAIN":

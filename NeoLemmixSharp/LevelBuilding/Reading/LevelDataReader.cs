@@ -10,8 +10,8 @@ public sealed class LevelDataReader : IDataReader
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => _indentedFormat
-    ? "$LEVELDATA"
-    : "TITLE";
+        ? "$LEVELDATA"
+        : "TITLE";
 
     public LevelDataReader(
         LevelData levelData,
@@ -26,7 +26,7 @@ public sealed class LevelDataReader : IDataReader
         FinishedReading = false;
         if (_indentedFormat)
             return;
-        _levelData.LevelTitle = string.Join(' ', tokens[1..]);
+        _levelData.LevelTitle = ReadingHelpers.ReadFormattedString(tokens[1..]);
     }
 
     public void ReadNextLine(string[] tokens)
@@ -34,45 +34,35 @@ public sealed class LevelDataReader : IDataReader
         switch (tokens[0])
         {
             case "TITLE":
-                _levelData.LevelTitle = string.Join(' ', tokens[1..]);
+                _levelData.LevelTitle = ReadingHelpers.ReadFormattedString(tokens[1..]); //string.Join(' ', tokens[1..]);
                 break;
 
             case "AUTHOR":
-                _levelData.LevelAuthor = string.Join(' ', tokens[1..]);
+                _levelData.LevelAuthor = ReadingHelpers.ReadFormattedString(tokens[1..]);
                 break;
 
             case "ID":
-                var idHexPart = tokens[1];
-                if (idHexPart[0] == 'x')
-                {
-                    idHexPart = $"0{idHexPart}";
-                }
-                _levelData.LevelId = Convert.ToUInt64(idHexPart, 16);
+                _levelData.LevelId = ReadingHelpers.ReadUlong(tokens[1]);
                 break;
 
             case "VERSION":
-                var versionHexPart = tokens[1];
-                if (versionHexPart[0] == 'x')
-                {
-                    versionHexPart = $"0{versionHexPart}";
-                }
-                _levelData.Version = Convert.ToUInt64(versionHexPart, 16);
+                _levelData.Version = ReadingHelpers.ReadUlong(tokens[1]);
                 break;
 
             case "START_X":
-                _levelData.LevelStartPositionX = int.Parse(tokens[1]);
+                _levelData.LevelStartPositionX = ReadingHelpers.ReadInt(tokens[1]);
                 break;
 
             case "START_Y":
-                _levelData.LevelStartPositionY = int.Parse(tokens[1]);
+                _levelData.LevelStartPositionY = ReadingHelpers.ReadInt(tokens[1]);
                 break;
 
             case "THEME":
-                _levelData.LevelTheme = string.Join(' ', tokens[1..]);
+                _levelData.LevelTheme = ReadingHelpers.ReadFormattedString(tokens[1..]);
                 break;
 
             case "BACKGROUND":
-                _levelData.LevelBackground = string.Join(' ', tokens[1..]);
+                _levelData.LevelBackground = ReadingHelpers.ReadFormattedString(tokens[1..]);
                 break;
 
             case "MUSIC":
@@ -80,23 +70,23 @@ public sealed class LevelDataReader : IDataReader
                 break;
 
             case "WIDTH":
-                _levelData.LevelWidth = int.Parse(tokens[1]);
+                _levelData.LevelWidth = ReadingHelpers.ReadInt(tokens[1]);
                 break;
 
             case "HEIGHT":
-                _levelData.LevelHeight = int.Parse(tokens[1]);
+                _levelData.LevelHeight = ReadingHelpers.ReadInt(tokens[1]);
                 break;
 
             case "LEMMINGS":
-                _levelData.NumberOfLemmings = int.Parse(tokens[1]);
+                _levelData.NumberOfLemmings = ReadingHelpers.ReadInt(tokens[1]);
                 break;
 
             case "SAVE_REQUIREMENT":
-                _levelData.SaveRequirement = int.Parse(tokens[1]);
+                _levelData.SaveRequirement = ReadingHelpers.ReadInt(tokens[1]);
                 break;
 
             case "TIME_LIMIT":
-                _levelData.TimeLimit = int.Parse(tokens[1]);
+                _levelData.TimeLimit = ReadingHelpers.ReadInt(tokens[1]);
                 break;
 
             case "SPAWN_INTERVAL_LOCKED":
@@ -104,7 +94,7 @@ public sealed class LevelDataReader : IDataReader
                 break;
 
             case "MAX_SPAWN_INTERVAL":
-                _levelData.MaxSpawnInterval = int.Parse(tokens[1]);
+                _levelData.MaxSpawnInterval = ReadingHelpers.ReadInt(tokens[1]);
 
                 if (_indentedFormat)
                     break;

@@ -20,7 +20,7 @@ public sealed class WalkerState : ILemmingState
         var pixelQueryPosition = lemming.Orientation.MoveRight(originalPosition, deltaX);
         var pixel = ILemmingState.Terrain.GetPixelData(pixelQueryPosition);
 
-        if (pixel.IsSolid) // Check pixels going up (negative Y)
+        if (pixel.IsSolid) // Check pixels going up
         {
             var i = 0;
             while (i < AscenderJump) // Simple step up
@@ -56,7 +56,7 @@ public sealed class WalkerState : ILemmingState
             // Hit a wall! Turn around!
             lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
         }
-        else// Check pixels going down (positive Y)
+        else // Check pixels going down
         {
             var i = 0;
             while (i < FallDistanceFall)

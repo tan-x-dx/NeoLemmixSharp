@@ -43,8 +43,8 @@ public sealed class NeoLemmixGame : Game
 
         var path =
             //    "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
-            //   "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\rotation test.nxlv";
-            // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\render test.nxlv";
+             //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\rotation test.nxlv";
+           //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\render test.nxlv";
              "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\movement test.nxlv";
             // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
             //    "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
@@ -53,7 +53,7 @@ public sealed class NeoLemmixGame : Game
             //   "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Lemmings\\Tricky\\04_Here's_one_I_prepared_earlier.nxlv";
             //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\LemRunner\\Mona\\ACaeloUsqueAdCentrum.nxlv";
             // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\groupTest.nxlv";
-            //"C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\eraseTest.nxlv";
+        //    "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\eraseTest.nxlv";
             //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Lemmings\\Fun\\19_Take_good_care_of_my_Lemmings.nxlv";
 
         /* using (var levelReader = new NxlvReader(GraphicsDevice, _spriteBatch, path))
