@@ -12,7 +12,7 @@ public sealed class RightOrientation : IOrientation
 
     public LevelPosition MoveRight(LevelPosition position, int step)
     {
-        position.Y += step;
+        position.Y -= step;
         return position;
     }
 
@@ -24,7 +24,7 @@ public sealed class RightOrientation : IOrientation
 
     public LevelPosition MoveLeft(LevelPosition position, int step)
     {
-        position.Y -= step;
+        position.Y += step;
         return position;
     }
 
@@ -38,7 +38,7 @@ public sealed class RightOrientation : IOrientation
     {
         return new LevelPosition(
             position.X - relativeDirection.Y,
-            position.Y + relativeDirection.X);
+            position.Y - relativeDirection.X);
     }
 
     public bool Equals(IOrientation? other) => other is RightOrientation;

@@ -115,13 +115,7 @@ public sealed class SpriteBank : IDisposable
 
         foreach (var spriteDrawingData in spriteDrawingDatas)
         {
-            var f = facingDirection;
-            if ((spriteDrawingData.Orientation.RotNum & 1) == 1)
-            {
-                f = f.OppositeDirection;
-            }
-
-            var key = $"{stateName}_{f}_{spriteDrawingData.Orientation}";
+            var key = $"{stateName}_{facingDirection}_{spriteDrawingData.Orientation}";
 
             var texture = spriteDrawingData.ToTexture(_graphicsDevice);
 
