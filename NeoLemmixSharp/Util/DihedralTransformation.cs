@@ -46,6 +46,18 @@ public sealed class DihedralTransformation
         return Lookup[key];
     }
 
+    public static DihedralTransformation GetForTransformation(
+        bool flipHorizontally,
+        int rotNum)
+    {
+        var flipNum = flipHorizontally
+            ? 4
+            : 0;
+
+        var key = flipNum | rotNum;
+        return Lookup[key];
+    }
+
     private static int GetKey(
         bool flipHorizontally,
         bool flipVertically,

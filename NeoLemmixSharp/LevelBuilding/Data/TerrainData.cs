@@ -9,6 +9,7 @@ public sealed class TerrainData
     public bool NoOverwrite { get; set; }
     public bool FlipVertical { get; set; }
     public bool FlipHorizontal { get; set; }
+    public bool IsSteel { get; set; }
     public bool Erase { get; set; }
     public bool Rotate { get; set; }
 

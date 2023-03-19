@@ -55,8 +55,7 @@ public sealed class LevelPainter : IDisposable
         var textureData = new PixelColourData(
             levelData.LevelWidth,
             levelData.LevelHeight,
-            uintData,
-            false);
+            uintData);
 
         DrawTerrain(terrainData, textureData);
         levelTerrainTexture.SetData(uintData);
@@ -169,7 +168,7 @@ public sealed class LevelPainter : IDisposable
                 if (PixelColourIsSubstantial(targetPixelColour))
                 {
                     targetPixelData.IsSolid = true;
-                    targetPixelData.IsSteel = sourcePixelColourData.IsSteel;
+                    targetPixelData.IsSteel = terrainData.IsSteel;
                 }
                 else
                 {
@@ -217,23 +216,13 @@ public sealed class LevelPainter : IDisposable
 
         var png = Path.ChangeExtension(rootFilePath, "png");
         var isSteel = File.Exists(Path.ChangeExtension(rootFilePath, "nxmt"));
+        terrainData.IsSteel = isSteel;
 
         using var mainTexture = Texture2D.FromFile(_graphicsDevice, png);
-        result = GetPixelColourData(mainTexture, isSteel);
+        result = PixelColourData.GetPixelColourDataFromTexture(mainTexture);
         _textureBundleCache.Add(rootFilePath, result);
 
         return result;
-    }
-
-    private static PixelColourData GetPixelColourData(Texture2D texture, bool isSteel)
-    {
-        var width = texture.Width;
-        var height = texture.Height;
-        var data = new uint[width * height];
-
-        texture.GetData(data);
-
-        return new PixelColourData(width, height, data, isSteel);
     }
 
     public LevelTerrain GetTerrainData()

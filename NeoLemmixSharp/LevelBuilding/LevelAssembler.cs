@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Engine.LemmingStates;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
-using NeoLemmixSharp.Rendering.Lemming;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using NeoLemmixSharp.Engine.Directions.FacingDirections;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
@@ -14,6 +16,8 @@ public sealed class LevelAssembler : IDisposable
 {
     private readonly GraphicsDevice _graphicsDevice;
     private readonly SpriteBatch _spriteBatch;
+
+    private SpriteBank? _spriteBank;
 
     private readonly List<Lemming> _lemmings = new();
 
@@ -23,14 +27,38 @@ public sealed class LevelAssembler : IDisposable
         _spriteBatch = spriteBatch;
     }
 
-    public void AssembleLevel(LevelData levelData)
+    public void AssembleLevel(LevelData levelData, ThemeData themeData)
     {
+        _spriteBank = new SpriteBank(_graphicsDevice, _spriteBatch);
+
+        LoadLemmingSprites(levelData, themeData);
+
         SetUpTestLemmings();
+    }
+
+    private void LoadLemmingSprites(LevelData levelData, ThemeData themeData)
+    {
+        foreach (var lemmingState in ILemmingSkill.AllLemmingStates)
+        {
+            var pngFilePath = Path.Combine(themeData.LemmingSpritesFilePath, $"{lemmingState.LemmingStateName}.png");
+
+            var spriteIdentifier = GetSpriteIdentifier(lemmingState.LemmingStateName);
+            var spriteData = themeData.LemmingSpriteDataLookup[spriteIdentifier];
+
+            var texture = Texture2D.FromFile(_graphicsDevice, pngFilePath);
+
+            _spriteBank!.ProcessLemmingStateTexture(lemmingState.LemmingStateName, spriteData, texture);
+        }
+    }
+
+    private static string GetSpriteIdentifier(string lemmingStateName)
+    {
+        return $"${lemmingStateName.ToUpperInvariant()}";
     }
 
     public SpriteBank GetSpriteBank()
     {
-        return null;
+        return _spriteBank!;
     }
 
     public ITickable[] GetLevelTickables()
@@ -41,42 +69,44 @@ public sealed class LevelAssembler : IDisposable
     public IRenderable[] GetLevelRenderables()
     {
         return _lemmings
-            .Select(l => new LemmingSprite(_graphicsDevice, l))
+            .Select(GetLemmingSprite)
             .ToArray<IRenderable>();
-        //new IRenderable[] { new LemmingSprite(graphicsDevice, _lemming0) };
+    }
+
+    private LemmingSprite GetLemmingSprite(Lemming lemming)
+    {
+        return new LemmingSprite(lemming);
     }
 
     public void Dispose()
     {
-
+        _spriteBank = null;
+        _lemmings.Clear();
     }
 
     private void SetUpTestLemmings()
     {
         var lemming0 = new Lemming
         {
-            X = 213,
-            Y = 0
+            LevelPosition = new LevelPosition(200, 0),
+        //    FacingDirection = LeftFacingDirection.Instance
         };
 
         var lemming1 = new Lemming
         {
-            X = 126,
-            Y = 42,
+            LevelPosition = new LevelPosition(126, 42),
             Orientation = UpOrientation.Instance
         };
 
         var lemming2 = new Lemming
         {
-            X = 60,
-            Y = 20,
+            LevelPosition = new LevelPosition(60, 20),
             Orientation = LeftOrientation.Instance
         };
 
         var lemming3 = new Lemming
         {
-            X = 145,
-            Y = 134,
+            LevelPosition = new LevelPosition(145, 134),
             Orientation = RightOrientation.Instance
         };
 

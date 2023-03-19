@@ -1,32 +1,43 @@
-﻿namespace NeoLemmixSharp.LevelBuilding;
+﻿using Microsoft.Xna.Framework.Graphics;
+
+namespace NeoLemmixSharp.LevelBuilding;
 
 public sealed class PixelColourData
 {
-    private readonly uint[] _terrainData;
+    public uint[] ColourData { get; }
 
     public int Width { get; }
     public int Height { get; }
-    public bool IsSteel { get; }
 
-    public PixelColourData(int width, int height, uint[] terrainData, bool isSteel)
+    public static PixelColourData GetPixelColourDataFromTexture(Texture2D texture)
+    {
+        var width = texture.Width;
+        var height = texture.Height;
+        var data = new uint[width * height];
+
+        texture.GetData(data);
+
+        return new PixelColourData(width, height, data);
+    }
+
+    public PixelColourData(int width, int height, uint[] colourData)
     {
         Width = width;
         Height = height;
-        _terrainData = terrainData;
-        IsSteel = isSteel;
+        ColourData = colourData;
     }
 
     public uint Get(int x, int y)
     {
         var i = Width * y + x;
 
-        return _terrainData[i];
+        return ColourData[i];
     }
 
     public void Set(int x, int y, uint pixel)
     {
         var i = Width * y + x;
 
-        _terrainData[i] = pixel;
+        ColourData[i] = pixel;
     }
 }

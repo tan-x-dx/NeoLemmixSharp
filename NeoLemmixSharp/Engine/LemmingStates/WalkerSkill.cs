@@ -2,15 +2,16 @@
 
 namespace NeoLemmixSharp.Engine.LemmingStates;
 
-public sealed class WalkerState : ILemmingState
+public sealed class WalkerSkill : ILemmingSkill
 {
-    public static WalkerState Instance { get; } = new();
+    public static WalkerSkill Instance { get; } = new();
 
-    private WalkerState()
+    private WalkerSkill()
     {
     }
 
     public int LemmingStateId => 1;
+    public string LemmingStateName => "walker";
 
     public void UpdateLemming(Lemming lemming)
     {
@@ -18,7 +19,7 @@ public sealed class WalkerState : ILemmingState
 
         var deltaX = lemming.FacingDirection.DeltaX(WalkerStep);
         var pixelQueryPosition = lemming.Orientation.MoveRight(originalPosition, deltaX);
-        var pixel = ILemmingState.Terrain.GetPixelData(pixelQueryPosition);
+        var pixel = LevelScreen.CurrentLevel!.Terrain.GetPixelData(pixelQueryPosition);
 
         if (pixel.IsSolid) // Check pixels going up
         {
@@ -27,7 +28,7 @@ public sealed class WalkerState : ILemmingState
             {
                 var candidate = pixelQueryPosition;
                 pixelQueryPosition = lemming.Orientation.MoveUp(pixelQueryPosition, 1);
-                pixel = ILemmingState.Terrain.GetPixelData(pixelQueryPosition);
+                pixel = LevelScreen.CurrentLevel.Terrain.GetPixelData(pixelQueryPosition);
 
                 if (!pixel.IsSolid)
                 {
@@ -41,12 +42,14 @@ public sealed class WalkerState : ILemmingState
             while (i < MinimumWallHeight) // Ascender step up
             {
                 pixelQueryPosition = lemming.Orientation.MoveUp(pixelQueryPosition, 1);
-                pixel = ILemmingState.Terrain.GetPixelData(pixelQueryPosition);
+                pixel = LevelScreen.CurrentLevel.Terrain.GetPixelData(pixelQueryPosition);
 
                 if (!pixel.IsSolid)
                 {
-                    lemming.CurrentState = AscenderState.Instance;
-                    lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, new LevelPosition(deltaX, -AscenderStep));
+                    lemming.CurrentSkill = AscenderSkill.Instance;
+                    lemming.AnimationFrame = 0;
+                    lemming.AscenderProgress = AscenderStep;
+                    lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, new LevelPosition(deltaX, AscenderStep));
                     return;
                 }
 
@@ -62,7 +65,7 @@ public sealed class WalkerState : ILemmingState
             while (i < FallDistanceFall)
             {
                 pixelQueryPosition = lemming.Orientation.MoveDown(pixelQueryPosition, 1);
-                pixel = ILemmingState.Terrain.GetPixelData(pixelQueryPosition);
+                pixel = LevelScreen.CurrentLevel.Terrain.GetPixelData(pixelQueryPosition);
 
                 if (pixel.IsSolid)
                 {
@@ -73,8 +76,9 @@ public sealed class WalkerState : ILemmingState
                 i++;
             }
 
-            lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, new LevelPosition(deltaX, FallDistanceFall));
-            lemming.CurrentState = FallerState.Instance;
+            lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, new LevelPosition(deltaX, -FallDistanceFall));
+            lemming.CurrentSkill = FallerSkill.Instance;
+            lemming.AnimationFrame = 0;
         }
     }
 
@@ -106,7 +110,7 @@ public sealed class WalkerState : ILemmingState
         if (levitation >= JumperJump)
         {
             lemming.Y -= AscenderStep;
-            lemming.CurrentState = AscenderState.Instance;
+            lemming.CurrentSkill = AscenderSkill.Instance;
             return;
         }
 
@@ -132,7 +136,7 @@ public sealed class WalkerState : ILemmingState
             //      counter += FALLER_STEP; // @check: is this ok? increasing counter, but using free???
             if (free >= FallDistanceFall)
             {
-                lemming.CurrentState = FallerState.Instance;
+                lemming.CurrentSkill = FallerSkill.Instance;
             }
         }
     }*/

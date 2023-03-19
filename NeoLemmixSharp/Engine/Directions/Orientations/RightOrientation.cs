@@ -8,6 +8,8 @@ public sealed class RightOrientation : IOrientation
     {
     }
 
+    public int RotNum => 3;
+
     public LevelPosition MoveRight(LevelPosition position, int step)
     {
         position.Y += step;
@@ -43,5 +45,5 @@ public sealed class RightOrientation : IOrientation
     public override bool Equals(object? obj) => obj is RightOrientation;
     public override int GetHashCode() => nameof(RightOrientation).GetHashCode();
 
-    public override string ToString() => "Right";
+    public override string ToString() => "right";
 }

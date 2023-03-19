@@ -6,6 +6,7 @@ namespace NeoLemmixSharp.LevelBuilding.Data;
 public sealed class ThemeData
 {
     public string BaseStyle { get; set; }
+    public string LemmingSpritesFilePath { get; set; }
 
     public uint Mask { get; set; }
     public uint Minimap { get; set; }

@@ -96,7 +96,7 @@ public sealed class LevelReader : IDisposable
             ProcessThemeLine(line);
         }
 
-        LevelData.LemmingSpritesFilePath = Path.Combine(_rootDirectory, "styles", ThemeData.BaseStyle, "lemmings");
+        ThemeData.LemmingSpritesFilePath = Path.Combine(_rootDirectory, "styles", ThemeData.BaseStyle, "lemmings");
     }
 
     private void ProcessThemeLine(string line)
@@ -144,7 +144,7 @@ public sealed class LevelReader : IDisposable
 
     private void ReadSpriteData()
     {
-        var schemeFilePath = Path.Combine(LevelData.LemmingSpritesFilePath, "scheme.nxmi");
+        var schemeFilePath = Path.Combine(ThemeData.LemmingSpritesFilePath, "scheme.nxmi");
 
         var schemeLines = File.ReadAllLines(schemeFilePath);
 

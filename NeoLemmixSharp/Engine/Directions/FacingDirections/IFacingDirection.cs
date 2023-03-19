@@ -21,7 +21,7 @@ public sealed class RightFacingDirection : IFacingDirection
     public IFacingDirection OppositeDirection => LeftFacingDirection.Instance;
     public LevelPosition MoveInDirection(IOrientation orientation, LevelPosition pos, int step) => orientation.MoveRight(pos, step);
 
-    public override string ToString() => "Facing Right";
+    public override string ToString() => "right";
 }
 
 public sealed class LeftFacingDirection : IFacingDirection
@@ -36,5 +36,5 @@ public sealed class LeftFacingDirection : IFacingDirection
     public IFacingDirection OppositeDirection => RightFacingDirection.Instance;
     public LevelPosition MoveInDirection(IOrientation orientation, LevelPosition pos, int step) => orientation.MoveLeft(pos, step);
 
-    public override string ToString() => "Facing Left";
+    public override string ToString() => "left";
 }

@@ -11,26 +11,19 @@ public sealed class Lemming : ITickable
     public bool IsAlive = true;
     public bool HasExited;
 
-    public int X
-    {
-        get => LevelPosition.X;
-        set => LevelPosition.X = value;
-    }
-
-    public int Y
-    {
-        get => LevelPosition.Y;
-        set => LevelPosition.Y = value;
-    }
+    public int X => LevelPosition.X;
+    public int Y => LevelPosition.Y;
 
     public LevelPosition LevelPosition;
 
     public int AnimationFrame;
+    public int AscenderProgress;
 
     public IFacingDirection FacingDirection = RightFacingDirection.Instance;
     public IOrientation Orientation = DownOrientation.Instance;
 
-    public ILemmingState CurrentState = WalkerState.Instance;
+    public ILemmingSkill CurrentSkill = WalkerSkill.Instance;
+    public LemmingState CurrentState = new();
 
     public Lemming()
     {
@@ -40,6 +33,8 @@ public sealed class Lemming : ITickable
 
     public void Tick(MouseState mouseState)
     {
-        CurrentState.UpdateLemming(this);
+        CurrentSkill.UpdateLemming(this);
+
+        AnimationFrame++;
     }
 }

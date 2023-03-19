@@ -4,11 +4,12 @@ namespace NeoLemmixSharp.Rendering;
 
 public sealed class Zoom
 {
+    private const int MinScale = 1;
     private const int MaxScale = 10;
 
     private int _previousScrollWheelValue;
 
-    public int ScaleMultiplier { get; private set; } = 1;
+    public int ScaleMultiplier { get; private set; } = 6;
 
     public void TrackScrollWheel(MouseState mouseState)
     {
@@ -39,9 +40,9 @@ public sealed class Zoom
 
     private void ZoomOut()
     {
-        if (ScaleMultiplier <= 1)
+        if (ScaleMultiplier <= MinScale)
         {
-            ScaleMultiplier = 1;
+            ScaleMultiplier = MinScale;
         }
         else
         {
