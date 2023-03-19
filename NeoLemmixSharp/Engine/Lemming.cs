@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
-using NeoLemmixSharp.Engine.LemmingStates;
+using NeoLemmixSharp.Engine.LemmingSkills;
 
 namespace NeoLemmixSharp.Engine;
 

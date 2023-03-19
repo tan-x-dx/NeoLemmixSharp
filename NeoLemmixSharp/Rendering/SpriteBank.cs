@@ -45,11 +45,8 @@ public sealed class SpriteBank : IDisposable
         _textureLookup.Add("anchor", anchorTexture);
     }
 
-    public void ProcessLemmingStateTexture(string stateName, LemmingSpriteData spriteData, Texture2D texture)
+    public void ProcessLemmingSpriteTexture(string stateName, LemmingSpriteData spriteData, Texture2D texture)
     {
-        var spriteWidth = texture.Width / 2;
-        var spriteHeight = texture.Height / spriteData.NumberOfFrames;
-
         var originalPixelColourData = PixelColourData.GetPixelColourDataFromTexture(texture);
 
         ProcessLefts(stateName, spriteData, originalPixelColourData);
@@ -216,7 +213,7 @@ public sealed class SpriteBank : IDisposable
 
     public SkillSprite GetSkillSprite(Lemming lemming)
     {
-        var key = $"{lemming.CurrentSkill.LemmingStateName}_{lemming.FacingDirection}_{lemming.Orientation}";
+        var key = $"{lemming.CurrentSkill.LemmingSkillName}_{lemming.FacingDirection}_{lemming.Orientation}";
 
         return _skillSpriteLookup[key];
     }

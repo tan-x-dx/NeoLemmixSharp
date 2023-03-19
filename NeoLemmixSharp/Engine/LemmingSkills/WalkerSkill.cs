@@ -1,6 +1,6 @@
-﻿using static NeoLemmixSharp.Engine.LemmingStates.LemmingConstants;
+﻿using static NeoLemmixSharp.Engine.LemmingSkills.LemmingConstants;
 
-namespace NeoLemmixSharp.Engine.LemmingStates;
+namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class WalkerSkill : ILemmingSkill
 {
@@ -10,8 +10,8 @@ public sealed class WalkerSkill : ILemmingSkill
     {
     }
 
-    public int LemmingStateId => 1;
-    public string LemmingStateName => "walker";
+    public int LemmingSkillId => 1;
+    public string LemmingSkillName => "walker";
 
     public void UpdateLemming(Lemming lemming)
     {

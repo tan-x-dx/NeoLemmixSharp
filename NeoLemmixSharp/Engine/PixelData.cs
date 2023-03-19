@@ -4,6 +4,7 @@ namespace NeoLemmixSharp.Engine;
 
 public sealed class PixelData
 {
+    public bool IsVoid;
     public bool IsSolid;
     public bool IsSteel;
 

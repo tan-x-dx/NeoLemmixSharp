@@ -1,6 +1,4 @@
-﻿using static NeoLemmixSharp.Engine.LemmingStates.LemmingConstants;
-
-namespace NeoLemmixSharp.Engine.LemmingStates;
+﻿namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public static class CommonMethods
 {

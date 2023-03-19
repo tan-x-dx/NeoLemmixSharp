@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.LemmingStates;
+﻿namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public static class LemmingConstants
 {

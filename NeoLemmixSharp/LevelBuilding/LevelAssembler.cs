@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.Directions.Orientations;
-using NeoLemmixSharp.Engine.LemmingStates;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
 using System;
@@ -9,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NeoLemmixSharp.Engine.Directions.FacingDirections;
+using NeoLemmixSharp.Engine.LemmingSkills;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
@@ -40,14 +40,14 @@ public sealed class LevelAssembler : IDisposable
     {
         foreach (var lemmingState in ILemmingSkill.AllLemmingStates)
         {
-            var pngFilePath = Path.Combine(themeData.LemmingSpritesFilePath, $"{lemmingState.LemmingStateName}.png");
+            var pngFilePath = Path.Combine(themeData.LemmingSpritesFilePath, $"{lemmingState.LemmingSkillName}.png");
 
-            var spriteIdentifier = GetSpriteIdentifier(lemmingState.LemmingStateName);
+            var spriteIdentifier = GetSpriteIdentifier(lemmingState.LemmingSkillName);
             var spriteData = themeData.LemmingSpriteDataLookup[spriteIdentifier];
 
             var texture = Texture2D.FromFile(_graphicsDevice, pngFilePath);
 
-            _spriteBank!.ProcessLemmingStateTexture(lemmingState.LemmingStateName, spriteData, texture);
+            _spriteBank!.ProcessLemmingSpriteTexture(lemmingState.LemmingSkillName, spriteData, texture);
         }
     }
 
@@ -110,9 +110,9 @@ public sealed class LevelAssembler : IDisposable
             Orientation = RightOrientation.Instance
         };
 
-        _lemmings.Add(lemming0);
-        _lemmings.Add(lemming1);
+     //   _lemmings.Add(lemming0);
+      //  _lemmings.Add(lemming1);
         _lemmings.Add(lemming2);
-        _lemmings.Add(lemming3);
+       // _lemmings.Add(lemming3);
     }
 }
