@@ -26,6 +26,7 @@ public sealed class SpriteBank : IDisposable
         _spriteBatch = spriteBatch;
 
         CreateAnchorTexture();
+        CreateBoxTexture();
     }
 
     private void CreateAnchorTexture()
@@ -43,6 +44,22 @@ public sealed class SpriteBank : IDisposable
         x[7] = red.PackedValue;
         anchorTexture.SetData(x);
         _textureLookup.Add("anchor", anchorTexture);
+    }
+
+    private void CreateBoxTexture()
+    {
+        var anchorTexture = new Texture2D(_graphicsDevice, 20, 20);
+
+        var white = Color.White;
+
+        var x = new uint[20 * 20];
+        for (var i = 0; i < x.Length; i++)
+        {
+            x[i] = white.PackedValue;
+        }
+
+        anchorTexture.SetData(x);
+        _textureLookup.Add("box", anchorTexture);
     }
 
     public void ProcessLemmingSpriteTexture(string stateName, LemmingSpriteData spriteData, Texture2D texture)
@@ -209,6 +226,11 @@ public sealed class SpriteBank : IDisposable
     public Texture2D GetAnchorTexture()
     {
         return _textureLookup["anchor"];
+    }
+
+    public Texture2D GetBox()
+    {
+        return _textureLookup["box"];
     }
 
     public SkillSprite GetSkillSprite(Lemming lemming)

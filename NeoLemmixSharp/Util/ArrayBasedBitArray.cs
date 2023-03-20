@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Numerics;
 
 namespace NeoLemmixSharp.Util;
 
-public sealed class NeoLemmixBitArray : ICollection<int>, IReadOnlyCollection<int>, ICloneable
+public sealed class ArrayBasedBitArray : IBitArray
 {
     private readonly uint[] _uints;
 
@@ -14,7 +13,7 @@ public sealed class NeoLemmixBitArray : ICollection<int>, IReadOnlyCollection<in
     public int Count { get; private set; }
     public bool AnyBitsSet => Count > 0;
 
-    public NeoLemmixBitArray(int length, bool initialBitFlag = false)
+    public ArrayBasedBitArray(int length, bool initialBitFlag = false)
     {
         if (length < 1)
             throw new ArgumentException("length must be greater than zero", nameof(length));
@@ -37,7 +36,7 @@ public sealed class NeoLemmixBitArray : ICollection<int>, IReadOnlyCollection<in
         Count = ((_uints.Length - 1) << 5) + shift;
     }
 
-    private NeoLemmixBitArray(int length, uint[] bits, int count)
+    private ArrayBasedBitArray(int length, uint[] bits, int count)
     {
         Length = length;
         _uints = (uint[])bits.Clone();
@@ -108,13 +107,15 @@ public sealed class NeoLemmixBitArray : ICollection<int>, IReadOnlyCollection<in
     }
 
     object ICloneable.Clone() => Clone();
-    public NeoLemmixBitArray Clone() => new(Length, _uints, Count);
+    public ArrayBasedBitArray Clone() => new(Length, _uints, Count);
 
     public Enumerator GetEnumerator() => new(this);
+    IEnumerator<int> IEnumerable<int>.GetEnumerator() => GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public struct Enumerator : IEnumerator<int>
     {
-        private readonly NeoLemmixBitArray _neoLemmixBitArray;
+        private readonly ArrayBasedBitArray _arrayBasedBitArray;
 
         private uint _v;
         private int _remaining;
@@ -122,11 +123,11 @@ public sealed class NeoLemmixBitArray : ICollection<int>, IReadOnlyCollection<in
 
         public int Current { get; private set; }
 
-        public Enumerator(NeoLemmixBitArray neoLemmixBitArray)
+        public Enumerator(ArrayBasedBitArray arrayBasedBitArray)
         {
-            _neoLemmixBitArray = neoLemmixBitArray;
-            _v = _neoLemmixBitArray._uints[0];
-            _remaining = _neoLemmixBitArray.Count;
+            _arrayBasedBitArray = arrayBasedBitArray;
+            _v = _arrayBasedBitArray._uints[0];
+            _remaining = _arrayBasedBitArray.Count;
             _index = 0;
             Current = -1;
         }
@@ -140,7 +141,7 @@ public sealed class NeoLemmixBitArray : ICollection<int>, IReadOnlyCollection<in
 
                 do
                 {
-                    _v = _neoLemmixBitArray._uints[++_index];
+                    _v = _arrayBasedBitArray._uints[++_index];
                 }
                 while (_v == 0U);
             }
@@ -155,8 +156,8 @@ public sealed class NeoLemmixBitArray : ICollection<int>, IReadOnlyCollection<in
 
         public void Reset()
         {
-            _v = _neoLemmixBitArray._uints[0];
-            _remaining = _neoLemmixBitArray.Count;
+            _v = _arrayBasedBitArray._uints[0];
+            _remaining = _arrayBasedBitArray.Count;
             _index = 0;
         }
 
@@ -164,13 +165,4 @@ public sealed class NeoLemmixBitArray : ICollection<int>, IReadOnlyCollection<in
         void IDisposable.Dispose() { }
     }
 
-    IEnumerator<int> IEnumerable<int>.GetEnumerator() => GetEnumerator();
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    void ICollection<int>.Add(int i) => SetBit(i);
-    bool ICollection<int>.Contains(int i) => GetBit(i);
-    bool ICollection<int>.Remove(int i) => ClearBit(i);
-
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    bool ICollection<int>.IsReadOnly => false;
 }
