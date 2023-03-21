@@ -1,13 +1,17 @@
-﻿namespace NeoLemmixSharp.Engine;
+﻿using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 
-public sealed class LevelTerrain
+namespace NeoLemmixSharp.Engine;
+
+public sealed class PixelManager
 {
+    private readonly PixelData[] _data;
+    private readonly ILevelBoundaryBehaviour _leftRightBoundaryBehaviour;
+    private readonly ILevelBoundaryBehaviour _upDownBoundaryBehaviour;
+
     public int Width { get; }
     public int Height { get; }
 
-    private readonly PixelData[] _data;
-
-    public LevelTerrain(int width, int height)
+    public PixelManager(int width, int height)
     {
         Width = width;
         Height = height;

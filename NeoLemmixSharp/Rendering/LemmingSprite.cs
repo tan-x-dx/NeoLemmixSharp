@@ -47,19 +47,19 @@ public sealed class LemmingSprite : NeoLemmixSprite
 
     private Rectangle GetSpriteDestinationRectangle(SkillSprite skillSprite)
     {
-        var zoom = LevelScreen.CurrentLevel!.Viewport.Zoom;
+        var viewport = LevelScreen.CurrentLevel!.Viewport;
 
         var spriteAnchor = skillSprite.GetAnchorPoint();
         var x0 = _lemming.X - spriteAnchor.X;
         var y0 = _lemming.Y - spriteAnchor.Y;
 
-        return new Rectangle(x0 * zoom.ScaleMultiplier, y0 * zoom.ScaleMultiplier, skillSprite.SpriteWidth * zoom.ScaleMultiplier, skillSprite.SpriteHeight * zoom.ScaleMultiplier);
+        return new Rectangle(x0 * viewport.ScaleMultiplier, y0 * viewport.ScaleMultiplier, skillSprite.SpriteWidth * viewport.ScaleMultiplier, skillSprite.SpriteHeight * viewport.ScaleMultiplier);
     }
 
     private Rectangle GetAnchorPointSpriteDestinationRectangle()
     {
-        var zoom = LevelScreen.CurrentLevel!.Viewport.Zoom;
+        var viewport = LevelScreen.CurrentLevel!.Viewport;
 
-        return new Rectangle((_lemming.X - 1) * zoom.ScaleMultiplier, (_lemming.Y - 1) * zoom.ScaleMultiplier, 3 * zoom.ScaleMultiplier, 3 * zoom.ScaleMultiplier);
+        return new Rectangle((_lemming.X - 1) * viewport.ScaleMultiplier, (_lemming.Y - 1) * viewport.ScaleMultiplier, 3 * viewport.ScaleMultiplier, 3 * viewport.ScaleMultiplier);
     }
 }

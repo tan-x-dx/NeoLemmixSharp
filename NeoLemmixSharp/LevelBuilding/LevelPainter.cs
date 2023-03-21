@@ -23,7 +23,7 @@ public sealed class LevelPainter : IDisposable
     private bool _disposed;
 
     private TerrainSprite? _terrainSprite;
-    private LevelTerrain? _terrainData;
+    private PixelManager? _terrainData;
 
     public LevelPainter(GraphicsDevice graphicsDevice)
     {
@@ -47,7 +47,7 @@ public sealed class LevelPainter : IDisposable
             levelData.LevelWidth,
             levelData.LevelHeight);
 
-        _terrainData = new LevelTerrain(
+        _terrainData = new PixelManager(
             levelData.LevelWidth,
             levelData.LevelHeight);
 
@@ -225,7 +225,7 @@ public sealed class LevelPainter : IDisposable
         return result;
     }
 
-    public LevelTerrain GetTerrainData()
+    public PixelManager GetTerrainData()
     {
         return _terrainData!;
     }

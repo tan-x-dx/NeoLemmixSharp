@@ -38,8 +38,7 @@ public sealed class LevelBuilder : IDisposable
         {
             LevelObjects = _levelAssembler.GetLevelTickables(),
             LevelSprites = _levelAssembler.GetLevelRenderables(),
-            TerrainSprite = _levelPainter.GetTerrainSprite(),
-            Viewport = new NeoLemmixViewPort()
+            TerrainSprite = _levelPainter.GetTerrainSprite()
         };
     }
 

@@ -25,16 +25,17 @@ public sealed class TerrainSprite : NeoLemmixSprite
 
     public override Texture2D GetTexture() => _texture;
     public override Rectangle GetBoundingBox() => _bounds;
-    public override LevelPosition GetAnchorPoint() => new (0, 0);
+    public override LevelPosition GetAnchorPoint() => new(0, 0);
 
     public override bool ShouldRender => true;
     public override void Render(SpriteBatch spriteBatch)
     {
-        var zoom = LevelScreen.CurrentLevel!.Viewport.Zoom;
+        var viewport = LevelScreen.CurrentLevel!.Viewport;
 
         spriteBatch.Draw(
             _texture,
-            new Rectangle(0, 0, _width * zoom.ScaleMultiplier, _height * zoom.ScaleMultiplier),
+            viewport.DestinationBounds,
+            viewport.SourceBounds,
             Color.White);
     }
 }

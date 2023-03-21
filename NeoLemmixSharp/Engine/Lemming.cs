@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
-using NeoLemmixSharp.Engine.Directions.FacingDirections;
+﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingSkills;
 
@@ -31,7 +30,7 @@ public sealed class Lemming : ITickable
 
     public bool ShouldTick => true;
 
-    public void Tick(MouseState mouseState)
+    public void Tick()
     {
         CurrentSkill.UpdateLemming(this);
 

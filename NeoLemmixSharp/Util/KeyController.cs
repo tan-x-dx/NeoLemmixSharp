@@ -23,7 +23,7 @@ public abstract class KeyController<T> : ITickable
         _previousActions = new IntBasedBitArray();
     }
 
-    public void Tick(MouseState mouseState)
+    public void Tick()
     {
         _currentActions.Clear();
 

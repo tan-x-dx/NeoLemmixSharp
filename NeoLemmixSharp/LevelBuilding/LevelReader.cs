@@ -43,9 +43,10 @@ public sealed class LevelReader : IDisposable
     {
         var lines = File.ReadAllLines(levelFilePath);
 
-        foreach (var line in lines)
+        for (var index = 0; index < lines.Length; index++)
         {
-            ProcessLine(line);
+            var line = lines[index];
+            ProcessLine(line, index);
         }
 
         if (string.IsNullOrWhiteSpace(LevelData.LevelTitle))
@@ -57,7 +58,7 @@ public sealed class LevelReader : IDisposable
         ReadSpriteData();
     }
 
-    private void ProcessLine(string line)
+    private void ProcessLine(string line, int index)
     {
         if (!ReadingHelpers.TrySplitIntoTokens(line, out var tokens))
             return;
@@ -81,7 +82,7 @@ public sealed class LevelReader : IDisposable
             return;
         }
 
-        throw new InvalidOperationException($"Unknown token: [{tokens[0]}] - line: \"{line}\"");
+        throw new InvalidOperationException($"Unknown token: [{tokens[0]}] - line {index}: \"{line}\"");
     }
 
     private void ReadStyle()
@@ -148,9 +149,10 @@ public sealed class LevelReader : IDisposable
 
         var schemeLines = File.ReadAllLines(schemeFilePath);
 
-        foreach (var line in schemeLines)
+        for (var index = 0; index < schemeLines.Length; index++)
         {
-            ProcessLine(line);
+            var line = schemeLines[index];
+            ProcessLine(line, index);
         }
     }
 
