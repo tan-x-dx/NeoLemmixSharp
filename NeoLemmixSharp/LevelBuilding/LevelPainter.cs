@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.LevelBuilding.Data;
-using NeoLemmixSharp.Rendering.Terrain;
+using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;

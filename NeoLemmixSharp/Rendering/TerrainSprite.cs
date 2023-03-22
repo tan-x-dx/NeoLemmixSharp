@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 
-namespace NeoLemmixSharp.Rendering.Terrain;
+namespace NeoLemmixSharp.Rendering;
 
 public sealed class TerrainSprite : IRenderable
 {

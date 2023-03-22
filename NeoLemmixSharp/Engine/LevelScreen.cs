@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
-using NeoLemmixSharp.Rendering.Terrain;
 using NeoLemmixSharp.Screen;
 using NeoLemmixSharp.Util;
 
