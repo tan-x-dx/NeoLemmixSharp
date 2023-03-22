@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.Directions.FacingDirections;
+using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NeoLemmixSharp.Engine.Directions.Orientations;
 
 namespace NeoLemmixSharp.LevelBuilding;
 

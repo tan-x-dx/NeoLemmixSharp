@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine;
 public sealed class LevelViewPort
 {
     private const int MinScale = 1;
-    private const int MaxScale = 16;
+    private const int MaxScale = 12;
 
     private readonly int _levelWidth;
     private readonly int _levelHeight;

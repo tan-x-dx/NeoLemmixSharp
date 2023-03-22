@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
-using NeoLemmixSharp.Rendering;
 using System;
 
 namespace NeoLemmixSharp.LevelBuilding;

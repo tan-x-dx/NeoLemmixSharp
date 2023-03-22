@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
-
-namespace NeoLemmixSharp.Engine;
+﻿namespace NeoLemmixSharp.Engine;
 
 public interface ITickable
 {

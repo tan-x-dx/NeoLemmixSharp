@@ -7,7 +7,7 @@ public static class CommonMethods
         LevelPosition pos,
         int step)
     {
-        
+
 
 
         return 0;
