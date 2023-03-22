@@ -180,9 +180,11 @@ public sealed class LevelViewPort
         }
     }
 
-    public bool IsVisible(Rectangle rectangle)
+    public bool IsOnScreen(Rectangle rectangle)
     {
-        return true;
+        return rectangle.X < SourceX + SourceWidth &&
+               SourceX < rectangle.X + rectangle.Width &&
+               rectangle.Y < SourceY + SourceHeight &&
+               SourceY < rectangle.Y + rectangle.Height;
     }
-
 }

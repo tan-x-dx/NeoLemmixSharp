@@ -7,15 +7,15 @@ namespace NeoLemmixSharp.Rendering;
 
 public sealed class ActionSprite : IDisposable
 {
-    private readonly LevelPosition _anchorPoint;
     public int SpriteWidth { get; }
     public int SpriteHeight { get; }
     public int NumberOfFrames { get; }
 
     public Texture2D Texture { get; }
     public Rectangle BoundingBox { get; }
-    public Rectangle GetBoundingBox() => new(0, 0, SpriteWidth, SpriteHeight);
-    public LevelPosition GetAnchorPoint() => _anchorPoint;
+    public LevelPosition AnchorPoint { get; }
+    public int AnchorPointX { get; }
+    public int AnchorPointY { get; }
 
     public ActionSprite(
         Texture2D texture,
@@ -29,8 +29,9 @@ public sealed class ActionSprite : IDisposable
         SpriteHeight = spriteHeight;
         BoundingBox = new Rectangle(0, 0, spriteWidth, spriteHeight);
         NumberOfFrames = numberOfFrames;
-
-        _anchorPoint = anchorPoint;
+        AnchorPoint = anchorPoint;
+        AnchorPointX = anchorPoint.X;
+        AnchorPointY = anchorPoint.Y;
     }
 
     public Rectangle GetSourceRectangleForFrame(int frame)

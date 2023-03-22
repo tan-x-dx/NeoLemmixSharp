@@ -13,54 +13,48 @@ public sealed class LemmingSprite : IRenderable
         _lemming = lemming;
     }
 
-    public Rectangle GetBoundingBox() => new();
+    private Rectangle GetBoundingBox() => new();
 
-    public bool ShouldRender => LevelScreen.CurrentLevel!.Viewport.IsVisible(GetBoundingBox());
+    private bool ShouldRender => LevelScreen.CurrentLevel!.Viewport.IsOnScreen(GetBoundingBox());
     public void Render(SpriteBatch spriteBatch)
     {
         var actionSprite = _lemming.Orientation.GetActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.FacingDirection);
 
+        var rect = new Rectangle(
+            _lemming.X - actionSprite.AnchorPointX,
+            _lemming.Y - actionSprite.AnchorPointY,
+            actionSprite.SpriteWidth,
+            actionSprite.SpriteHeight);
+
+        var viewport = LevelScreen.CurrentLevel!.Viewport;
+
+        if (!viewport.IsOnScreen(rect))
+            return;
+
         spriteBatch.Draw(
             actionSprite.Texture,
-            GetSpriteDestinationRectangle(actionSprite),
+            GetDestinationRectangle(viewport, rect.X, rect.Y, rect.Width, rect.Height),
             actionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame),
             Color.White);
 
-        var spriteBank = LevelScreen.CurrentLevel!.SpriteBank;
+        var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
 
         spriteBatch.Draw(
             spriteBank.AnchorTexture,
-            GetAnchorPointSpriteDestinationRectangle(),
+            GetDestinationRectangle(viewport, _lemming.X - 1, _lemming.Y - 1, 3, 3),
             Color.White);
     }
 
-    private Rectangle GetSpriteDestinationRectangle(ActionSprite actionSprite)
+    private static Rectangle GetDestinationRectangle(LevelViewPort viewport, int x, int y, int w, int h)
     {
-        var viewport = LevelScreen.CurrentLevel!.Viewport;
-
-        var spriteAnchor = actionSprite.GetAnchorPoint();
-        var x0 = (_lemming.X - spriteAnchor.X - viewport.SourceX) * viewport.ScaleMultiplier + viewport.TargetX;
-        var y0 = (_lemming.Y - spriteAnchor.Y - viewport.SourceY) * viewport.ScaleMultiplier + viewport.TargetY;
+        var x0 = (x - viewport.SourceX) * viewport.ScaleMultiplier + viewport.TargetX;
+        var y0 = (y - viewport.SourceY) * viewport.ScaleMultiplier + viewport.TargetY;
 
         return new Rectangle(
             x0,
             y0,
-            actionSprite.SpriteWidth * viewport.ScaleMultiplier,
-            actionSprite.SpriteHeight * viewport.ScaleMultiplier);
-    }
-
-    private Rectangle GetAnchorPointSpriteDestinationRectangle()
-    {
-        var viewport = LevelScreen.CurrentLevel!.Viewport;
-
-        var x0 = (_lemming.X - 1 - viewport.SourceX) * viewport.ScaleMultiplier + viewport.TargetX;
-        var y0 = (_lemming.Y - 1 - viewport.SourceY) * viewport.ScaleMultiplier + viewport.TargetY;
-
-        return new Rectangle(
-            x0,
-            y0,
-            3 * viewport.ScaleMultiplier,
-            3 * viewport.ScaleMultiplier);
+            w * viewport.ScaleMultiplier,
+            h * viewport.ScaleMultiplier);
     }
 
     public void Dispose()

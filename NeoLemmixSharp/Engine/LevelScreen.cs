@@ -135,6 +135,7 @@ public sealed class LevelScreen : BaseScreen
 
     public override void Dispose()
     {
+        SpriteBank.Dispose();
     }
 
     private bool Pause => Controller.CheckKeyDown(Controller.Pause) == KeyStatus.KeyPressed;
