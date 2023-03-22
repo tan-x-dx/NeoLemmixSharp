@@ -1,12 +1,10 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.Directions.FacingDirections;
-using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace NeoLemmixSharp.LevelBuilding;
@@ -26,33 +24,15 @@ public sealed class LevelAssembler : IDisposable
         _spriteBatch = spriteBatch;
     }
 
-    public void AssembleLevel(LevelData levelData, ThemeData themeData)
+    public void AssembleLevel(
+        LevelData levelData,
+        ThemeData themeData,
+        TerrainSprite terrainSprite)
     {
-        _spriteBank = new SpriteBank(_graphicsDevice, _spriteBatch);
-
-        LoadLemmingSprites(levelData, themeData);
+        var spriteBankBuilder = new SpriteBankBuilder(_graphicsDevice);
+        _spriteBank = spriteBankBuilder.BuildSpriteBank(themeData, terrainSprite);
 
         SetUpTestLemmings();
-    }
-
-    private void LoadLemmingSprites(LevelData levelData, ThemeData themeData)
-    {
-        foreach (var lemmingState in ILemmingAction.AllLemmingActions)
-        {
-            var pngFilePath = Path.Combine(themeData.LemmingSpritesFilePath, $"{lemmingState.LemmingActionName}.png");
-
-            var spriteIdentifier = GetSpriteIdentifier(lemmingState.LemmingActionName);
-            var spriteData = themeData.LemmingSpriteDataLookup[spriteIdentifier];
-
-            var texture = Texture2D.FromFile(_graphicsDevice, pngFilePath);
-
-            _spriteBank!.ProcessLemmingSpriteTexture(lemmingState.LemmingActionName, spriteData, texture);
-        }
-    }
-
-    private static string GetSpriteIdentifier(string lemmingStateName)
-    {
-        return $"${lemmingStateName.ToUpperInvariant()}";
     }
 
     public SpriteBank GetSpriteBank()

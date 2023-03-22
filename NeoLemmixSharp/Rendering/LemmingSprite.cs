@@ -29,7 +29,7 @@ public sealed class LemmingSprite : IRenderable
         var spriteBank = LevelScreen.CurrentLevel!.SpriteBank;
 
         spriteBatch.Draw(
-            spriteBank.GetAnchorTexture(),
+            spriteBank.AnchorTexture,
             GetAnchorPointSpriteDestinationRectangle(),
             Color.White);
     }

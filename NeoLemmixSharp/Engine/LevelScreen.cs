@@ -20,7 +20,6 @@ public sealed class LevelScreen : BaseScreen
 
     public LevelController Controller { get; }
     public LevelViewPort Viewport { get; }
-    public TerrainSprite TerrainSprite { get; init; }
 
     public int Width => Terrain.Width;
     public int Height => Terrain.Height;
@@ -121,25 +120,12 @@ public sealed class LevelScreen : BaseScreen
 
     public override void Render(SpriteBatch spriteBatch)
     {
-        TerrainSprite.Render(spriteBatch);
+        SpriteBank.Render(spriteBatch);
 
         for (var i = 0; i < LevelSprites.Length; i++)
         {
             LevelSprites[i].Render(spriteBatch);
         }
-
-        /* int r = _mouseX == 0
-             ? 255
-             : 0;
-
-         int b = _mouseY == 0
-             ? 255
-             : 0;
-
-         var colour = new Color(r, 255, b);
-
-         spriteBatch.Draw(SpriteBank.GetBox(), new Rectangle(_mouseX, _mouseY, 20, 20), colour);*/
-
     }
 
     public override void OnWindowSizeChanged()

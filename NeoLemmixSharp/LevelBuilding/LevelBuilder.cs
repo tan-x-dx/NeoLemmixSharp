@@ -29,7 +29,8 @@ public sealed class LevelBuilder : IDisposable
 
         _levelAssembler.AssembleLevel(
             _levelReader.LevelData,
-            _levelReader.ThemeData);
+            _levelReader.ThemeData,
+            _levelPainter.GetTerrainSprite());
 
         return new LevelScreen(
             _levelReader.LevelData,
@@ -37,8 +38,7 @@ public sealed class LevelBuilder : IDisposable
             _levelAssembler.GetSpriteBank())
         {
             LevelObjects = _levelAssembler.GetLevelTickables(),
-            LevelSprites = _levelAssembler.GetLevelRenderables(),
-            TerrainSprite = _levelPainter.GetTerrainSprite()
+            LevelSprites = _levelAssembler.GetLevelRenderables()
         };
     }
 
