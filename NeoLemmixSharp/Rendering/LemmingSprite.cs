@@ -4,27 +4,19 @@ using NeoLemmixSharp.Engine;
 
 namespace NeoLemmixSharp.Rendering;
 
-public sealed class LemmingSprite : NeoLemmixSprite
+public sealed class LemmingSprite : IRenderable
 {
     private readonly Lemming _lemming;
-    // private Texture2D _lemmingTexture;
 
     public LemmingSprite(Lemming lemming)
     {
         _lemming = lemming;
     }
 
-    public override Texture2D GetTexture()
-    {
-        throw new System.NotImplementedException();
-    }
+    public Rectangle GetBoundingBox() => new();
 
-    public override Rectangle GetBoundingBox() => new();
-
-    public override LevelPosition GetAnchorPoint() => _lemming.LevelPosition;
-
-    public override bool ShouldRender => LevelScreen.CurrentLevel!.Viewport.IsVisible(GetBoundingBox());
-    public override void Render(SpriteBatch spriteBatch)
+    public bool ShouldRender => LevelScreen.CurrentLevel!.Viewport.IsVisible(GetBoundingBox());
+    public void Render(SpriteBatch spriteBatch)
     {
         var actionSprite = _lemming.Orientation.GetActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.FacingDirection);
 
@@ -69,5 +61,9 @@ public sealed class LemmingSprite : NeoLemmixSprite
             y0,
             3 * viewport.ScaleMultiplier,
             3 * viewport.ScaleMultiplier);
+    }
+
+    public void Dispose()
+    {
     }
 }

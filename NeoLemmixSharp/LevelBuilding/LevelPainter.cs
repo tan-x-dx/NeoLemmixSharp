@@ -59,10 +59,7 @@ public sealed class LevelPainter : IDisposable
 
         DrawTerrain(terrainData, textureData);
         levelTerrainTexture.SetData(uintData);
-        _terrainSprite = new TerrainSprite(
-            levelData.LevelWidth,
-            levelData.LevelHeight,
-            levelTerrainTexture);
+        _terrainSprite = new TerrainSprite(levelTerrainTexture);
     }
 
     private static void ProcessTerrainGroup(TerrainGroup terrainGroup)

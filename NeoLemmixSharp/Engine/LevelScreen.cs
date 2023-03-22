@@ -126,10 +126,7 @@ public sealed class LevelScreen : BaseScreen
 
         for (var i = 0; i < LevelSprites.Length; i++)
         {
-            if (LevelSprites[i].ShouldRender)
-            {
-                LevelSprites[i].Render(spriteBatch);
-            }
+            LevelSprites[i].Render(spriteBatch);
         }
 
         /* int r = _mouseX == 0
