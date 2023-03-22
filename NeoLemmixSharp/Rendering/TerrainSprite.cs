@@ -19,8 +19,8 @@ public sealed class TerrainSprite : IRenderable
 
         spriteBatch.Draw(
             _texture,
-            new Rectangle(viewport.TargetX, viewport.TargetY, viewport.TargetWidth, viewport.TargetHeight),
-            new Rectangle(viewport.SourceX, viewport.SourceY, viewport.SourceWidth, viewport.SourceHeight),
+            new Rectangle(viewport.ScreenX, viewport.ScreenY, viewport.ScreenWidth, viewport.ScreenHeight),
+            new Rectangle(viewport.ViewPortX, viewport.ViewPortY, viewport.ViewPortWidth, viewport.ViewPortHeight),
             Color.White);
     }
 
