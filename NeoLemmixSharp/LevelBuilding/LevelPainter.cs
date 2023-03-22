@@ -1,13 +1,13 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
+using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.LevelBuilding.Data;
-using NeoLemmixSharp.Rendering.Terrain;
+using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using NeoLemmixSharp.Engine.LemmingSkills;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
@@ -59,10 +59,7 @@ public sealed class LevelPainter : IDisposable
 
         DrawTerrain(terrainData, textureData);
         levelTerrainTexture.SetData(uintData);
-        _terrainSprite = new TerrainSprite(
-            levelData.LevelWidth,
-            levelData.LevelHeight,
-            levelTerrainTexture);
+        _terrainSprite = new TerrainSprite(levelTerrainTexture);
     }
 
     private static void ProcessTerrainGroup(TerrainGroup terrainGroup)

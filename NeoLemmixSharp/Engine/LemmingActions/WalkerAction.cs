@@ -1,17 +1,19 @@
-﻿using static NeoLemmixSharp.Engine.LemmingSkills.LemmingConstants;
+﻿using NeoLemmixSharp.Rendering;
+using static NeoLemmixSharp.Engine.LemmingActions.LemmingConstants;
 
-namespace NeoLemmixSharp.Engine.LemmingSkills;
+namespace NeoLemmixSharp.Engine.LemmingActions;
 
-public sealed class WalkerSkill : ILemmingSkill
+public sealed class WalkerAction : ILemmingAction
 {
-    public static WalkerSkill Instance { get; } = new();
+    public static WalkerAction Instance { get; } = new();
 
-    private WalkerSkill()
+    private WalkerAction()
     {
     }
 
-    public int LemmingSkillId => 1;
-    public string LemmingSkillName => "walker";
+    public int LemmingActionId => 1;
+    public string LemmingActionName => "walker";
+    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
 
     public void UpdateLemming(Lemming lemming)
     {
@@ -46,8 +48,8 @@ public sealed class WalkerSkill : ILemmingSkill
 
                 if (!pixel.IsSolid)
                 {
-                    lemming.CurrentSkill = AscenderSkill.Instance;
-                    lemming.AnimationFrame = 0;
+                    lemming.CurrentAction = AscenderAction.Instance;
+                    lemming.AnimationFrame = -1;
                     lemming.AscenderProgress = AscenderStep;
                     lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, new LevelPosition(deltaX, AscenderStep));
                     return;
@@ -77,8 +79,8 @@ public sealed class WalkerSkill : ILemmingSkill
             }
 
             lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, new LevelPosition(deltaX, -FallDistanceFall));
-            lemming.CurrentSkill = FallerSkill.Instance;
-            lemming.AnimationFrame = 0;
+            lemming.CurrentAction = FallerAction.Instance;
+            lemming.AnimationFrame = -1;
         }
     }
 
@@ -110,7 +112,7 @@ public sealed class WalkerSkill : ILemmingSkill
         if (levitation >= JumperJump)
         {
             lemming.Y -= AscenderStep;
-            lemming.CurrentSkill = AscenderSkill.Instance;
+            lemming.CurrentAction = AscenderAction.Instance;
             return;
         }
 
@@ -136,7 +138,7 @@ public sealed class WalkerSkill : ILemmingSkill
             //      counter += FALLER_STEP; // @check: is this ok? increasing counter, but using free???
             if (free >= FallDistanceFall)
             {
-                lemming.CurrentSkill = FallerSkill.Instance;
+                lemming.CurrentAction = FallerAction.Instance;
             }
         }
     }*/

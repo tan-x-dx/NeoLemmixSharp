@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
-using NeoLemmixSharp.Rendering.Terrain;
 using NeoLemmixSharp.Screen;
 using NeoLemmixSharp.Util;
 
@@ -21,7 +20,6 @@ public sealed class LevelScreen : BaseScreen
 
     public LevelController Controller { get; }
     public LevelViewPort Viewport { get; }
-    public TerrainSprite TerrainSprite { get; init; }
 
     public int Width => Terrain.Width;
     public int Height => Terrain.Height;
@@ -48,20 +46,12 @@ public sealed class LevelScreen : BaseScreen
     {
         Controller.Tick();
 
-        HandleMouseInput();
         HandleKeyboardInput();
 
-        if (_stopMotion)
-        {
-            if (_doTick)
-            {
-                _doTick = false;
-            }
-            else
-            {
-                return;
-            }
-        }
+        var shouldTickLevel = HandleMouseInput();
+
+        if (!shouldTickLevel)
+            return;
 
         for (var i = 0; i < LevelObjects.Length; i++)
         {
@@ -72,23 +62,31 @@ public sealed class LevelScreen : BaseScreen
         }
     }
 
-    private void HandleMouseInput()
+    private bool HandleMouseInput()
     {
         if (!GameWindow.IsActive)
-            return;
+            return false;
 
         var mouseState = Mouse.GetState();
 
         _mouseX = mouseState.X;
         _mouseY = mouseState.Y;
 
+        Viewport.HandleMouseInput(mouseState);
+
         if (mouseState.LeftButton == ButtonState.Pressed)
         {
             _doTick = true;
-            return;
         }
 
-        Viewport.HandleMouseInput(mouseState);
+        if (!_stopMotion)
+            return _doTick;
+
+        if (!_doTick)
+            return false;
+
+        _doTick = false;
+        return true;
     }
 
     private void HandleKeyboardInput()
@@ -122,28 +120,12 @@ public sealed class LevelScreen : BaseScreen
 
     public override void Render(SpriteBatch spriteBatch)
     {
-        TerrainSprite.Render(spriteBatch);
+        SpriteBank.Render(spriteBatch);
 
         for (var i = 0; i < LevelSprites.Length; i++)
         {
-            if (LevelSprites[i].ShouldRender)
-            {
-                LevelSprites[i].Render(spriteBatch);
-            }
+            LevelSprites[i].Render(spriteBatch);
         }
-
-        /* int r = _mouseX == 0
-             ? 255
-             : 0;
-
-         int b = _mouseY == 0
-             ? 255
-             : 0;
-
-         var colour = new Color(r, 255, b);
-
-         spriteBatch.Draw(SpriteBank.GetBox(), new Rectangle(_mouseX, _mouseY, 20, 20), colour);*/
-
     }
 
     public override void OnWindowSizeChanged()
@@ -153,6 +135,7 @@ public sealed class LevelScreen : BaseScreen
 
     public override void Dispose()
     {
+        SpriteBank.Dispose();
     }
 
     private bool Pause => Controller.CheckKeyDown(Controller.Pause) == KeyStatus.KeyPressed;

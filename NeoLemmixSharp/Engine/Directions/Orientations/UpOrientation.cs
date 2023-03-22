@@ -1,4 +1,7 @@
-﻿namespace NeoLemmixSharp.Engine.Directions.Orientations;
+﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
+using NeoLemmixSharp.Rendering;
+
+namespace NeoLemmixSharp.Engine.Directions.Orientations;
 
 public sealed class UpOrientation : IOrientation
 {
@@ -39,6 +42,24 @@ public sealed class UpOrientation : IOrientation
         return new LevelPosition(
             position.X - relativeDirection.X,
             position.Y + relativeDirection.Y);
+    }
+
+    public ActionSprite GetActionSprite(LemmingActionSpriteBundle actionSpriteBundle, IFacingDirection facingDirection)
+    {
+        var left = actionSpriteBundle.UpLeftSprite;
+        var right = actionSpriteBundle.UpRightSprite;
+
+        return facingDirection.ChooseActionSprite(left, right);
+    }
+
+    public void SetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite leftSprite)
+    {
+        actionSpriteBundle.UpLeftSprite = leftSprite;
+    }
+
+    public void SetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite rightSprite)
+    {
+        actionSpriteBundle.UpRightSprite = rightSprite;
     }
 
     public bool Equals(IOrientation? other) => other is UpOrientation;

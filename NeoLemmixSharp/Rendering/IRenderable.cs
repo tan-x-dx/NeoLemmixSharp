@@ -1,10 +1,9 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Rendering;
 
-public interface IRenderable
+public interface IRenderable : IDisposable
 {
-    bool ShouldRender { get; }
-
     void Render(SpriteBatch spriteBatch);
 }

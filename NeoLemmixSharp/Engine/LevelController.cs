@@ -38,12 +38,10 @@ public sealed class LevelController : KeyController<LevelKeyboardAction>
 
 public sealed class LevelKeyboardAction : IKeyAction
 {
-    private readonly int _id;
-
-    int IKeyAction.Id => _id;
+    public int Id { get; }
 
     public LevelKeyboardAction(int id)
     {
-        _id = id;
+        Id = id;
     }
 }
