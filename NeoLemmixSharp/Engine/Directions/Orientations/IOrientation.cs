@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
+using NeoLemmixSharp.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -28,4 +30,8 @@ public interface IOrientation : IEquatable<IOrientation>
     LevelPosition MoveLeft(LevelPosition position, int step);
     LevelPosition MoveDown(LevelPosition position, int step);
     LevelPosition Move(LevelPosition position, LevelPosition relativeDirection);
+
+    ActionSprite GetActionSprite(LemmingActionSpriteBundle actionSpriteBundle, IFacingDirection facingDirection);
+    void SetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite leftSprite);
+    void SetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite rightSprite);
 }

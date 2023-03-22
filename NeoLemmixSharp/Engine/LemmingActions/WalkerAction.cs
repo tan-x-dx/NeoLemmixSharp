@@ -1,4 +1,5 @@
-﻿using static NeoLemmixSharp.Engine.LemmingActions.LemmingConstants;
+﻿using NeoLemmixSharp.Rendering;
+using static NeoLemmixSharp.Engine.LemmingActions.LemmingConstants;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
@@ -12,6 +13,8 @@ public sealed class WalkerAction : ILemmingAction
 
     public int LemmingActionId => 1;
     public string LemmingActionName => "walker";
+    public int NumberOfAnimationFrames { get; set; }
+    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
 
     public void UpdateLemming(Lemming lemming)
     {

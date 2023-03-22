@@ -9,6 +9,7 @@ using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NeoLemmixSharp.Engine.LemmingActions;
 
 namespace NeoLemmixSharp.Rendering;
 
@@ -74,11 +75,18 @@ public sealed class SpriteBank : IDisposable
     {
         var originalPixelColourData = PixelColourData.GetPixelColourDataFromTexture(texture);
 
-        ProcessLefts(stateName, spriteData, originalPixelColourData);
-        ProcessRights(stateName, spriteData, originalPixelColourData);
+        var actionSpriteBundle = new LemmingActionSpriteBundle();
+        ILemmingAction.LemmingActions[stateName].ActionSpriteBundle = actionSpriteBundle;
+
+        ProcessLefts(stateName, spriteData, originalPixelColourData, actionSpriteBundle);
+        ProcessRights(stateName, spriteData, originalPixelColourData, actionSpriteBundle);
     }
 
-    private void ProcessLefts(string stateName, LemmingSpriteData spriteData, PixelColourData originalPixelColourData)
+    private void ProcessLefts(
+        string stateName, 
+        LemmingSpriteData spriteData,
+        PixelColourData originalPixelColourData,
+        LemmingActionSpriteBundle actionSpriteBundle)
     {
         CreateSprites(
             stateName,
@@ -87,10 +95,16 @@ public sealed class SpriteBank : IDisposable
             originalPixelColourData,
             0,
             spriteData.LeftFootX,
-            spriteData.LeftFootY);
+            spriteData.LeftFootY,
+            actionSpriteBundle,
+            (o, b, a) => o.SetLeftActionSprite(b, a));
     }
 
-    private void ProcessRights(string stateName, LemmingSpriteData spriteData, PixelColourData originalPixelColourData)
+    private void ProcessRights(
+        string stateName,
+        LemmingSpriteData spriteData, 
+        PixelColourData originalPixelColourData,
+        LemmingActionSpriteBundle actionSpriteBundle)
     {
         CreateSprites(
             stateName,
@@ -99,7 +113,9 @@ public sealed class SpriteBank : IDisposable
             originalPixelColourData,
             originalPixelColourData.Width / 2,
             spriteData.RightFootX,
-            spriteData.RightFootY);
+            spriteData.RightFootY,
+            actionSpriteBundle,
+            (o, b, a) => o.SetRightActionSprite(b, a));
     }
 
     private void CreateSprites(
@@ -109,7 +125,9 @@ public sealed class SpriteBank : IDisposable
         PixelColourData originalPixelColourData,
         int dx0,
         int footX,
-        int footY)
+        int footY,
+        LemmingActionSpriteBundle actionSpriteBundle,
+        Action<IOrientation, LemmingActionSpriteBundle, ActionSprite> setSprite)
     {
         var spriteWidth = originalPixelColourData.Width / 2;
         var spriteHeight = originalPixelColourData.Height / spriteData.NumberOfFrames;
@@ -137,8 +155,6 @@ public sealed class SpriteBank : IDisposable
 
         foreach (var spriteDrawingData in spriteDrawingDatas)
         {
-            var key = $"{stateName}_{facingDirection}_{spriteDrawingData.Orientation}";
-
             var texture = spriteDrawingData.ToTexture(_graphicsDevice);
 
             spriteDrawingData.DihedralTransformation.Transform(
@@ -154,10 +170,10 @@ public sealed class SpriteBank : IDisposable
                 spriteDrawingData.ThisSpriteWidth,
                 spriteDrawingData.ThisSpriteHeight,
                 spriteData.NumberOfFrames,
-                new LevelPosition(footX1, footY1),
-                spriteDrawingData.Orientation,
-                facingDirection);
-            _actionSpriteLookup.Add(key, actionSprite);
+                new LevelPosition(footX1, footY1));
+
+            setSprite(spriteDrawingData.Orientation, actionSpriteBundle, actionSprite);
+        //    _actionSpriteLookup.Add(key, actionSprite);
         }
     }
 

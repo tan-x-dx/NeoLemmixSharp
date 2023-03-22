@@ -26,15 +26,15 @@ public sealed class LemmingSprite : NeoLemmixSprite
     public override bool ShouldRender => LevelScreen.CurrentLevel!.Viewport.IsVisible(GetBoundingBox());
     public override void Render(SpriteBatch spriteBatch)
     {
-        var spriteBank = LevelScreen.CurrentLevel!.SpriteBank;
-
-        var actionSprite = spriteBank.GetActionSprite(_lemming);
+        var actionSprite = _lemming.Orientation.GetActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.FacingDirection);
 
         spriteBatch.Draw(
             actionSprite.GetTexture(),
             GetSpriteDestinationRectangle(actionSprite),
             actionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame),
             Color.White);
+
+        var spriteBank = LevelScreen.CurrentLevel!.SpriteBank;
 
         spriteBatch.Draw(
             spriteBank.GetAnchorTexture(),

@@ -13,8 +13,6 @@ public sealed class ActionSprite : NeoLemmixSprite
     public int SpriteWidth{get;}
     public int SpriteHeight { get; }
     public int NumberOfFrames { get; }
-    public IOrientation Orientation { get; }
-    public IFacingDirection FacingDirection { get; }
 
     public override Texture2D GetTexture() => _texture;
     public override Rectangle GetBoundingBox() => new(0, 0, SpriteWidth, SpriteHeight);
@@ -27,9 +25,7 @@ public sealed class ActionSprite : NeoLemmixSprite
         int spriteWidth,
         int spriteHeight,
         int numberOfFrames,
-        LevelPosition anchorPoint,
-        IOrientation orientation,
-        IFacingDirection facingDirection)
+        LevelPosition anchorPoint)
     {
         _texture = texture;
         SpriteWidth = spriteWidth;
@@ -37,8 +33,6 @@ public sealed class ActionSprite : NeoLemmixSprite
         NumberOfFrames = numberOfFrames;
 
         _anchorPoint = anchorPoint;
-        Orientation = orientation;
-        FacingDirection = facingDirection;
     }
 
     public override void Render(SpriteBatch spriteBatch)

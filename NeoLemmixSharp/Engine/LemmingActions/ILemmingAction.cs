@@ -1,31 +1,36 @@
-﻿using System.Collections.Generic;
+﻿using NeoLemmixSharp.Rendering;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
 public interface ILemmingAction
 {
-    private static Dictionary<int, ILemmingAction> LemmingActions { get; } = RegisterAllLemmingActions();
+    public static ReadOnlyDictionary<string, ILemmingAction> LemmingActions { get; } = RegisterAllLemmingActions();
 
-    private static Dictionary<int, ILemmingAction> RegisterAllLemmingActions()
+    private static ReadOnlyDictionary<string, ILemmingAction> RegisterAllLemmingActions()
     {
-        var result = new Dictionary<int, ILemmingAction>();
+        var result = new Dictionary<string, ILemmingAction>();
 
         RegisterLemmingAction(result, WalkerAction.Instance);
         RegisterLemmingAction(result, FallerAction.Instance);
         RegisterLemmingAction(result, AscenderAction.Instance);
 
-        return result;
+        return new ReadOnlyDictionary<string, ILemmingAction>(result);
     }
 
-    private static void RegisterLemmingAction(IDictionary<int, ILemmingAction> dict, ILemmingAction lemmingAction)
+    private static void RegisterLemmingAction(IDictionary<string, ILemmingAction> dict, ILemmingAction lemmingAction)
     {
-        dict.Add(lemmingAction.LemmingActionId, lemmingAction);
+        dict.Add(lemmingAction.LemmingActionName, lemmingAction);
     }
 
     public static ICollection<ILemmingAction> AllLemmingActions => LemmingActions.Values;
 
+    LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
+
     string LemmingActionName { get; }
     int LemmingActionId { get; }
+    int NumberOfAnimationFrames { get; set; }
 
     void UpdateLemming(Lemming lemming);
 }
