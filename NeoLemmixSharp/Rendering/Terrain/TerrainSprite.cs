@@ -34,8 +34,8 @@ public sealed class TerrainSprite : NeoLemmixSprite
 
         spriteBatch.Draw(
             _texture,
-            viewport.DestinationBounds,
-            viewport.SourceBounds,
+            new Rectangle(viewport.TargetX, viewport.TargetY, viewport.TargetWidth, viewport.TargetHeight),
+            new Rectangle(viewport.SourceX, viewport.SourceY, viewport.SourceWidth, viewport.SourceHeight),
             Color.White);
     }
 }

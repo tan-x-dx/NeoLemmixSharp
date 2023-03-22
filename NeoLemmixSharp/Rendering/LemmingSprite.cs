@@ -19,14 +19,11 @@ public sealed class LemmingSprite : NeoLemmixSprite
         throw new System.NotImplementedException();
     }
 
-    public override Rectangle GetBoundingBox()
-    {
-        throw new System.NotImplementedException();
-    }
+    public override Rectangle GetBoundingBox() => new();
 
     public override LevelPosition GetAnchorPoint() => _lemming.LevelPosition;
 
-    public override bool ShouldRender => IsOnScreen();
+    public override bool ShouldRender => LevelScreen.CurrentLevel!.Viewport.IsVisible(GetBoundingBox());
     public override void Render(SpriteBatch spriteBatch)
     {
         var spriteBank = LevelScreen.CurrentLevel!.SpriteBank;
@@ -50,16 +47,27 @@ public sealed class LemmingSprite : NeoLemmixSprite
         var viewport = LevelScreen.CurrentLevel!.Viewport;
 
         var spriteAnchor = skillSprite.GetAnchorPoint();
-        var x0 = _lemming.X - spriteAnchor.X;
-        var y0 = _lemming.Y - spriteAnchor.Y;
+        var x0 = (_lemming.X - spriteAnchor.X - viewport.SourceX) * viewport.ScaleMultiplier + viewport.TargetX;
+        var y0 = (_lemming.Y - spriteAnchor.Y - viewport.SourceY) * viewport.ScaleMultiplier + viewport.TargetY;
 
-        return new Rectangle(x0 * viewport.ScaleMultiplier, y0 * viewport.ScaleMultiplier, skillSprite.SpriteWidth * viewport.ScaleMultiplier, skillSprite.SpriteHeight * viewport.ScaleMultiplier);
+        return new Rectangle(
+            x0,
+            y0,
+            skillSprite.SpriteWidth * viewport.ScaleMultiplier,
+            skillSprite.SpriteHeight * viewport.ScaleMultiplier);
     }
 
     private Rectangle GetAnchorPointSpriteDestinationRectangle()
     {
         var viewport = LevelScreen.CurrentLevel!.Viewport;
 
-        return new Rectangle((_lemming.X - 1) * viewport.ScaleMultiplier, (_lemming.Y - 1) * viewport.ScaleMultiplier, 3 * viewport.ScaleMultiplier, 3 * viewport.ScaleMultiplier);
+        var x0 = (_lemming.X - 1 - viewport.SourceX) * viewport.ScaleMultiplier + viewport.TargetX;
+        var y0 = (_lemming.Y - 1 - viewport.SourceY) * viewport.ScaleMultiplier + viewport.TargetY;
+
+        return new Rectangle(
+            x0,
+            y0,
+            3 * viewport.ScaleMultiplier,
+            3 * viewport.ScaleMultiplier);
     }
 }

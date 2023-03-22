@@ -16,15 +16,15 @@ public sealed class LevelViewPort
     private int _windowWidth;
     private int _windowHeight;
 
-    private int _sourceX;
-    private int _sourceY;
-    private int _sourceWidth;
-    private int _sourceHeight;
+    public int SourceX { get; private set; }
+    public int SourceY { get; private set; }
+    public int SourceWidth { get; private set; }
+    public int SourceHeight { get; private set; }
 
-    private int _targetX;
-    private int _targetY;
-    private int _targetWidth;
-    private int _targetHeight;
+    public int TargetX { get; private set; }
+    public int TargetY { get; private set; }
+    public int TargetWidth { get; private set; }
+    public int TargetHeight { get; private set; }
 
     public LevelViewPort(int levelWidth, int levelHeight)
     {
@@ -33,9 +33,6 @@ public sealed class LevelViewPort
     }
 
     public int ScaleMultiplier { get; private set; } = 6;
-
-    public Rectangle DestinationBounds => new(_targetX, _targetY, _targetWidth, _targetHeight);
-    public Rectangle SourceBounds => new(_sourceX, _sourceY, _sourceWidth, _sourceHeight);
 
     public void SetWindowDimensions(int gameWindowWidth, int gameWindowHeight)
     {
@@ -70,39 +67,39 @@ public sealed class LevelViewPort
 
     private void ScrollHorizontally(int dx)
     {
-        if (_sourceWidth >= _levelWidth)
+        if (SourceWidth >= _levelWidth)
         {
-            _sourceX = 0;
+            SourceX = 0;
             return;
         }
 
-        _sourceX += dx;
-        if (_sourceX < 0)
+        SourceX += dx;
+        if (SourceX < 0)
         {
-            _sourceX = 0;
+            SourceX = 0;
         }
-        else if (_sourceX + _sourceWidth >= _levelWidth)
+        else if (SourceX + SourceWidth >= _levelWidth)
         {
-            _sourceX = _levelWidth - _sourceWidth;
+            SourceX = _levelWidth - SourceWidth;
         }
     }
 
     private void ScrollVertically(int dy)
     {
-        if (_sourceHeight >= _levelHeight)
+        if (SourceHeight >= _levelHeight)
         {
-            _sourceY = 0;
+            SourceY = 0;
             return;
         }
 
-        _sourceY += dy;
-        if (_sourceY < 0)
+        SourceY += dy;
+        if (SourceY < 0)
         {
-            _sourceY = 0;
+            SourceY = 0;
         }
-        else if (_sourceY + _sourceHeight >= _levelHeight)
+        else if (SourceY + SourceHeight >= _levelHeight)
         {
-            _sourceY = _levelHeight - _sourceHeight;
+            SourceY = _levelHeight - SourceHeight;
         }
     }
 
@@ -155,31 +152,31 @@ public sealed class LevelViewPort
 
     private void RecalculateDimensions()
     {
-        _sourceWidth = _windowWidth / ScaleMultiplier;
-        _sourceHeight = (_windowHeight - 64) / ScaleMultiplier;
+        SourceWidth = _windowWidth / ScaleMultiplier;
+        SourceHeight = (_windowHeight - 64) / ScaleMultiplier;
 
-        if (_sourceWidth < _levelWidth)
+        if (SourceWidth < _levelWidth)
         {
-            _targetX = 0;
-            _targetWidth = _windowWidth;
+            TargetX = 0;
+            TargetWidth = SourceWidth * ScaleMultiplier;
         }
         else
         {
-            _targetX = ScaleMultiplier * (_sourceWidth - _levelWidth) / 2;
-            _targetWidth = _levelWidth * ScaleMultiplier;
-            _sourceWidth = _levelWidth;
+            TargetX = ScaleMultiplier * (SourceWidth - _levelWidth) / 2;
+            TargetWidth = _levelWidth * ScaleMultiplier;
+            SourceWidth = _levelWidth;
         }
 
-        if (_sourceHeight < _levelHeight)
+        if (SourceHeight < _levelHeight)
         {
-            _targetY = 0;
-            _targetHeight = _windowHeight - 64;
+            TargetY = 0;
+            TargetHeight = SourceHeight * ScaleMultiplier;
         }
         else
         {
-            _targetY = ScaleMultiplier * (_sourceHeight - _levelHeight) / 2;
-            _targetHeight = _levelHeight * ScaleMultiplier;
-            _sourceHeight = _levelHeight;
+            TargetY = ScaleMultiplier * (SourceHeight - _levelHeight) / 2;
+            TargetHeight = _levelHeight * ScaleMultiplier;
+            SourceHeight = _levelHeight;
         }
     }
 

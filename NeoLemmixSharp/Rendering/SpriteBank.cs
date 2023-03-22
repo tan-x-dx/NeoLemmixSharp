@@ -48,14 +48,22 @@ public sealed class SpriteBank : IDisposable
 
     private void CreateBoxTexture()
     {
-        var anchorTexture = new Texture2D(_graphicsDevice, 1, 1);
+        var anchorTexture = new Texture2D(_graphicsDevice, 10, 10);
 
         var white = Color.White;
+        var red = Color.Red;
 
-        var x = new uint[1];
+        var x = new uint[10 * 10];
         for (var i = 0; i < x.Length; i++)
         {
-            x[i] = white.PackedValue;
+            if (i % 10 == 0)
+            {
+                x[i] = red.PackedValue;
+            }
+            else
+            {
+                x[i] = white.PackedValue;
+            }
         }
 
         anchorTexture.SetData(x);

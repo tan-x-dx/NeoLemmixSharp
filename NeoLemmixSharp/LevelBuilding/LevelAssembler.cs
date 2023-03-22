@@ -88,31 +88,36 @@ public sealed class LevelAssembler : IDisposable
     {
         var lemming0 = new Lemming
         {
-            LevelPosition = new LevelPosition(200, 0),
-        //    FacingDirection = LeftFacingDirection.Instance
+               LevelPosition = new LevelPosition(470, 76),
+            //   LevelPosition = new LevelPosition(200, 0),
+            //    FacingDirection = LeftFacingDirection.Instance
         };
 
         var lemming1 = new Lemming
         {
-            LevelPosition = new LevelPosition(126, 42),
-            Orientation = UpOrientation.Instance
+            LevelPosition = new LevelPosition(770, 10),
+            // LevelPosition = new LevelPosition(126, 42),
+            //     Orientation = UpOrientation.Instance,
+                FacingDirection = LeftFacingDirection.Instance
         };
 
         var lemming2 = new Lemming
         {
-            LevelPosition = new LevelPosition(60, 20),
-            Orientation = LeftOrientation.Instance
+            LevelPosition = new LevelPosition(692, 72),
+       //     LevelPosition = new LevelPosition(60, 20),
+        //    Orientation = LeftOrientation.Instance
         };
 
         var lemming3 = new Lemming
         {
-            LevelPosition = new LevelPosition(145, 134),
-            Orientation = RightOrientation.Instance
+            LevelPosition = new LevelPosition(612, 42),
+        //    LevelPosition = new LevelPosition(145, 134),
+            //    Orientation = RightOrientation.Instance
         };
 
-       // _lemmings.Add(lemming0);
-       // _lemmings.Add(lemming1);
-       // _lemmings.Add(lemming2);
-       // _lemmings.Add(lemming3);
+        _lemmings.Add(lemming0);
+        _lemmings.Add(lemming1);
+        _lemmings.Add(lemming2);
+        _lemmings.Add(lemming3);
     }
 }
