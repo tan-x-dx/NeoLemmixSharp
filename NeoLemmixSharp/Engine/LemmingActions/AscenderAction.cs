@@ -1,17 +1,17 @@
-﻿using static NeoLemmixSharp.Engine.LemmingSkills.LemmingConstants;
+﻿using static NeoLemmixSharp.Engine.LemmingActions.LemmingConstants;
 
-namespace NeoLemmixSharp.Engine.LemmingSkills;
+namespace NeoLemmixSharp.Engine.LemmingActions;
 
-public sealed class AscenderSkill : ILemmingSkill
+public sealed class AscenderAction : ILemmingAction
 {
-    public static AscenderSkill Instance { get; } = new();
+    public static AscenderAction Instance { get; } = new();
 
-    private AscenderSkill()
+    private AscenderAction()
     {
     }
 
-    public int LemmingSkillId => 3;
-    public string LemmingSkillName => "ascender";
+    public int LemmingActionId => 3;
+    public string LemmingActionName => "ascender";
 
     public void UpdateLemming(Lemming lemming)
     {
@@ -38,8 +38,8 @@ public sealed class AscenderSkill : ILemmingSkill
         {
             lemming.LevelPosition = lemming.Orientation.MoveDown(pixelQueryPosition, 1);
             lemming.AscenderProgress = 0;
-            lemming.CurrentSkill = WalkerSkill.Instance;
-            lemming.AnimationFrame = 0;
+            lemming.CurrentAction = WalkerAction.Instance;
+            lemming.AnimationFrame = -1;
 
             return;
         }

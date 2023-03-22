@@ -1,17 +1,17 @@
-﻿using static NeoLemmixSharp.Engine.LemmingSkills.LemmingConstants;
+﻿using static NeoLemmixSharp.Engine.LemmingActions.LemmingConstants;
 
-namespace NeoLemmixSharp.Engine.LemmingSkills;
+namespace NeoLemmixSharp.Engine.LemmingActions;
 
-public sealed class FallerSkill : ILemmingSkill
+public sealed class FallerAction : ILemmingAction
 {
-    public static FallerSkill Instance { get; } = new();
+    public static FallerAction Instance { get; } = new();
 
-    private FallerSkill()
+    private FallerAction()
     {
     }
 
-    public int LemmingSkillId => 2;
-    public string LemmingSkillName => "faller";
+    public int LemmingActionId => 2;
+    public string LemmingActionName => "faller";
 
     public void UpdateLemming(Lemming lemming)
     {
@@ -25,8 +25,8 @@ public sealed class FallerSkill : ILemmingSkill
             if (pixel.IsSolid)
             {
                 lemming.LevelPosition = pixelQueryPosition;
-                lemming.CurrentSkill = WalkerSkill.Instance;
-                lemming.AnimationFrame = 0;
+                lemming.CurrentAction = WalkerAction.Instance;
+                lemming.AnimationFrame = -1;
                 return;
             }
         }

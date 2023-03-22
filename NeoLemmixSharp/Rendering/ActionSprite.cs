@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Directions.Orientations;
 
 namespace NeoLemmixSharp.Rendering;
 
-public sealed class SkillSprite : NeoLemmixSprite
+public sealed class ActionSprite : NeoLemmixSprite
 {
     private readonly Texture2D _texture;
     private readonly LevelPosition _anchorPoint;
@@ -22,7 +22,7 @@ public sealed class SkillSprite : NeoLemmixSprite
 
     public override bool ShouldRender => false;
 
-    public SkillSprite(
+    public ActionSprite(
         Texture2D texture,
         int spriteWidth,
         int spriteHeight,

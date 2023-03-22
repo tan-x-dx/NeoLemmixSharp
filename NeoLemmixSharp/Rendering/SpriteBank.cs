@@ -18,7 +18,7 @@ public sealed class SpriteBank : IDisposable
     private readonly SpriteBatch _spriteBatch;
 
     private readonly Dictionary<string, Texture2D> _textureLookup = new();
-    private readonly Dictionary<string, SkillSprite> _skillSpriteLookup = new();
+    private readonly Dictionary<string, ActionSprite> _actionSpriteLookup = new();
 
     public SpriteBank(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
@@ -149,7 +149,7 @@ public sealed class SpriteBank : IDisposable
                 out var footX1,
                 out var footY1);
 
-            var skillSprite = new SkillSprite(
+            var actionSprite = new ActionSprite(
                 texture,
                 spriteDrawingData.ThisSpriteWidth,
                 spriteDrawingData.ThisSpriteHeight,
@@ -157,17 +157,17 @@ public sealed class SpriteBank : IDisposable
                 new LevelPosition(footX1, footY1),
                 spriteDrawingData.Orientation,
                 facingDirection);
-            _skillSpriteLookup.Add(key, skillSprite);
+            _actionSpriteLookup.Add(key, actionSprite);
         }
     }
 
     public void Dispose()
     {
-        foreach (var texture in _skillSpriteLookup.Values)
+        foreach (var texture in _actionSpriteLookup.Values)
         {
             texture.Dispose();
         }
-        _skillSpriteLookup.Clear();
+        _actionSpriteLookup.Clear();
     }
 
     private sealed class SpriteDrawingData
@@ -241,10 +241,10 @@ public sealed class SpriteBank : IDisposable
         return _textureLookup["box"];
     }
 
-    public SkillSprite GetSkillSprite(Lemming lemming)
+    public ActionSprite GetActionSprite(Lemming lemming)
     {
-        var key = $"{lemming.CurrentSkill.LemmingSkillName}_{lemming.FacingDirection}_{lemming.Orientation}";
+        var key = $"{lemming.CurrentAction.LemmingActionName}_{lemming.FacingDirection}_{lemming.Orientation}";
 
-        return _skillSpriteLookup[key];
+        return _actionSpriteLookup[key];
     }
 }

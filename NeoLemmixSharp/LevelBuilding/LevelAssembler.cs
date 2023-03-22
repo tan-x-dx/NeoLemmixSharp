@@ -1,14 +1,13 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
-using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Engine.Directions.FacingDirections;
+using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using NeoLemmixSharp.Engine.Directions.FacingDirections;
-using NeoLemmixSharp.Engine.LemmingSkills;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
@@ -38,16 +37,16 @@ public sealed class LevelAssembler : IDisposable
 
     private void LoadLemmingSprites(LevelData levelData, ThemeData themeData)
     {
-        foreach (var lemmingState in ILemmingSkill.AllLemmingStates)
+        foreach (var lemmingState in ILemmingAction.AllLemmingActions)
         {
-            var pngFilePath = Path.Combine(themeData.LemmingSpritesFilePath, $"{lemmingState.LemmingSkillName}.png");
+            var pngFilePath = Path.Combine(themeData.LemmingSpritesFilePath, $"{lemmingState.LemmingActionName}.png");
 
-            var spriteIdentifier = GetSpriteIdentifier(lemmingState.LemmingSkillName);
+            var spriteIdentifier = GetSpriteIdentifier(lemmingState.LemmingActionName);
             var spriteData = themeData.LemmingSpriteDataLookup[spriteIdentifier];
 
             var texture = Texture2D.FromFile(_graphicsDevice, pngFilePath);
 
-            _spriteBank!.ProcessLemmingSpriteTexture(lemmingState.LemmingSkillName, spriteData, texture);
+            _spriteBank!.ProcessLemmingSpriteTexture(lemmingState.LemmingActionName, spriteData, texture);
         }
     }
 
@@ -88,7 +87,7 @@ public sealed class LevelAssembler : IDisposable
     {
         var lemming0 = new Lemming
         {
-               LevelPosition = new LevelPosition(470, 76),
+            LevelPosition = new LevelPosition(470, 76),
             //   LevelPosition = new LevelPosition(200, 0),
             //    FacingDirection = LeftFacingDirection.Instance
         };
@@ -98,20 +97,20 @@ public sealed class LevelAssembler : IDisposable
             LevelPosition = new LevelPosition(770, 10),
             // LevelPosition = new LevelPosition(126, 42),
             //     Orientation = UpOrientation.Instance,
-                FacingDirection = LeftFacingDirection.Instance
+            FacingDirection = LeftFacingDirection.Instance
         };
 
         var lemming2 = new Lemming
         {
             LevelPosition = new LevelPosition(692, 72),
-       //     LevelPosition = new LevelPosition(60, 20),
-        //    Orientation = LeftOrientation.Instance
+            //     LevelPosition = new LevelPosition(60, 20),
+            //    Orientation = LeftOrientation.Instance
         };
 
         var lemming3 = new Lemming
         {
             LevelPosition = new LevelPosition(612, 42),
-        //    LevelPosition = new LevelPosition(145, 134),
+            //    LevelPosition = new LevelPosition(145, 134),
             //    Orientation = RightOrientation.Instance
         };
 

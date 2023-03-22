@@ -48,20 +48,12 @@ public sealed class LevelScreen : BaseScreen
     {
         Controller.Tick();
 
-        HandleMouseInput();
         HandleKeyboardInput();
 
-        if (_stopMotion)
-        {
-            if (_doTick)
-            {
-                _doTick = false;
-            }
-            else
-            {
-                return;
-            }
-        }
+        var shouldTickLevel = HandleMouseInput();
+
+        if (!shouldTickLevel)
+            return;
 
         for (var i = 0; i < LevelObjects.Length; i++)
         {
@@ -72,23 +64,31 @@ public sealed class LevelScreen : BaseScreen
         }
     }
 
-    private void HandleMouseInput()
+    private bool HandleMouseInput()
     {
         if (!GameWindow.IsActive)
-            return;
+            return false;
 
         var mouseState = Mouse.GetState();
 
         _mouseX = mouseState.X;
         _mouseY = mouseState.Y;
 
+        Viewport.HandleMouseInput(mouseState);
+
         if (mouseState.LeftButton == ButtonState.Pressed)
         {
             _doTick = true;
-            return;
         }
 
-        Viewport.HandleMouseInput(mouseState);
+        if (!_stopMotion)
+            return _doTick;
+
+        if (!_doTick)
+            return false;
+
+        _doTick = false;
+        return true;
     }
 
     private void HandleKeyboardInput()
