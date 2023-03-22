@@ -6,5 +6,5 @@ public interface ITickable
 {
     bool ShouldTick { get; }
 
-    void Tick(MouseState mouseState);
+    void Tick();
 }
