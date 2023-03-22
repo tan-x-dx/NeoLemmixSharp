@@ -1,13 +1,13 @@
 ﻿namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 
-public sealed class VoidBoundaryBehaviour : ILevelBoundaryBehaviour
+public sealed class HorizontalWrapBehaviour : ILevelBoundaryBehaviour
 {
     private readonly int _width;
     private readonly int _height;
     private readonly PixelData _voidPixel;
     private readonly PixelData[] _data;
 
-    public VoidBoundaryBehaviour(int width, int height, PixelData voidPixel, PixelData[] data)
+    public HorizontalWrapBehaviour(int width, int height, PixelData voidPixel, PixelData[] data)
     {
         _width = width;
         _height = height;
@@ -17,11 +17,25 @@ public sealed class VoidBoundaryBehaviour : ILevelBoundaryBehaviour
 
     public PixelData GetPixel(ref LevelPosition levelPosition)
     {
-        if (levelPosition.X < 0 || levelPosition.X >= _width ||
-            levelPosition.Y < 0 || levelPosition.Y >= _height)
+        if (levelPosition.Y < 0 || levelPosition.Y >= _height)
             return _voidPixel;
 
-        var index = _width * levelPosition.Y + levelPosition.X;
+        var x = levelPosition.X;
+        var y = levelPosition.Y;
+
+        if (x < 0)
+        {
+            x += _width;
+        }
+
+        if (x >= _width)
+        {
+            x -= _width;
+        }
+
+        levelPosition = new LevelPosition(x, y);
+
+        var index = _width * y + x;
         return _data[index];
     }
 

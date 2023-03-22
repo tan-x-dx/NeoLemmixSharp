@@ -15,7 +15,7 @@ public sealed class LevelViewPort
 
     private int _windowWidth;
     private int _windowHeight;
-
+    
     public int ViewPortX { get; private set; }
     public int ViewPortY { get; private set; }
     public int ViewPortWidth { get; private set; }

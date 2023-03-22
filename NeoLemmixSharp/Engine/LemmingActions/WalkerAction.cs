@@ -21,7 +21,7 @@ public sealed class WalkerAction : ILemmingAction
 
         var deltaX = lemming.FacingDirection.DeltaX(WalkerStep);
         var pixelQueryPosition = lemming.Orientation.MoveRight(originalPosition, deltaX);
-        var pixel = LevelScreen.CurrentLevel!.Terrain.GetPixelData(pixelQueryPosition);
+        var pixel = LevelScreen.CurrentLevel!.Terrain.GetPixelData(ref pixelQueryPosition);
 
         if (pixel.IsSolid) // Check pixels going up
         {
@@ -30,7 +30,7 @@ public sealed class WalkerAction : ILemmingAction
             {
                 var candidate = pixelQueryPosition;
                 pixelQueryPosition = lemming.Orientation.MoveUp(pixelQueryPosition, 1);
-                pixel = LevelScreen.CurrentLevel.Terrain.GetPixelData(pixelQueryPosition);
+                pixel = LevelScreen.CurrentLevel.Terrain.GetPixelData(ref pixelQueryPosition);
 
                 if (!pixel.IsSolid)
                 {
@@ -44,7 +44,7 @@ public sealed class WalkerAction : ILemmingAction
             while (i < MinimumWallHeight) // Ascender step up
             {
                 pixelQueryPosition = lemming.Orientation.MoveUp(pixelQueryPosition, 1);
-                pixel = LevelScreen.CurrentLevel.Terrain.GetPixelData(pixelQueryPosition);
+                pixel = LevelScreen.CurrentLevel.Terrain.GetPixelData(ref pixelQueryPosition);
 
                 if (!pixel.IsSolid)
                 {
@@ -67,7 +67,7 @@ public sealed class WalkerAction : ILemmingAction
             while (i < FallDistanceFall)
             {
                 pixelQueryPosition = lemming.Orientation.MoveDown(pixelQueryPosition, 1);
-                pixel = LevelScreen.CurrentLevel.Terrain.GetPixelData(pixelQueryPosition);
+                pixel = LevelScreen.CurrentLevel.Terrain.GetPixelData(ref pixelQueryPosition);
 
                 if (pixel.IsSolid)
                 {

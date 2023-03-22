@@ -6,11 +6,15 @@ namespace NeoLemmixSharp.Rendering;
 
 public sealed class TerrainSprite : IRenderable
 {
+    private readonly int _textureWidth;
+    private readonly int _textureHeight;
     private readonly Texture2D _texture;
 
     public TerrainSprite(Texture2D texture)
     {
         _texture = texture;
+        _textureWidth = texture.Width;
+        _textureHeight = texture.Height;
     }
 
     public void Render(SpriteBatch spriteBatch)
@@ -22,6 +26,13 @@ public sealed class TerrainSprite : IRenderable
             new Rectangle(viewport.ScreenX, viewport.ScreenY, viewport.ScreenWidth, viewport.ScreenHeight),
             new Rectangle(viewport.ViewPortX, viewport.ViewPortY, viewport.ViewPortWidth, viewport.ViewPortHeight),
             Color.White);
+    }
+
+    public void SetPixelColour(int x, int y, uint colour)
+    {
+        var pixel = new[] { colour };
+        
+        _texture.SetData(0, new Rectangle(x, y, 1, 1), pixel, 0, 1);
     }
 
     public void Dispose()

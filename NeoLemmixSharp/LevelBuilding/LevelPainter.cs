@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
@@ -49,7 +50,9 @@ public sealed class LevelPainter : IDisposable
 
         _terrainData = new PixelManager(
             levelData.LevelWidth,
-            levelData.LevelHeight);
+            levelData.LevelHeight,
+            BoundaryBehaviourType.Void,
+            BoundaryBehaviourType.Void);
 
         var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
         var textureData = new PixelColourData(
@@ -60,6 +63,8 @@ public sealed class LevelPainter : IDisposable
         DrawTerrain(terrainData, textureData);
         levelTerrainTexture.SetData(uintData);
         _terrainSprite = new TerrainSprite(levelTerrainTexture);
+
+        _terrainData.SetTerrainSprite(_terrainSprite);
     }
 
     private static void ProcessTerrainGroup(TerrainGroup terrainGroup)

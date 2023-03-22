@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
@@ -69,14 +70,19 @@ public sealed class LevelScreen : BaseScreen
 
         var mouseState = Mouse.GetState();
 
-        _mouseX = mouseState.X;
-        _mouseY = mouseState.Y;
+        _mouseX = (mouseState.X - Viewport.ScreenX) / Viewport.ScaleMultiplier + Viewport.ViewPortX;
+        _mouseY = (mouseState.Y - Viewport.ScreenY) / Viewport.ScaleMultiplier + Viewport.ViewPortY;
 
         Viewport.HandleMouseInput(mouseState);
 
         if (mouseState.LeftButton == ButtonState.Pressed)
         {
             _doTick = true;
+        }
+
+        if (mouseState.RightButton == ButtonState.Pressed)
+        {
+            Terrain.ErasePixels(new[] { new LevelPosition(_mouseX, _mouseY) });
         }
 
         if (!_stopMotion)
@@ -126,6 +132,11 @@ public sealed class LevelScreen : BaseScreen
         {
             LevelSprites[i].Render(spriteBatch);
         }
+
+        spriteBatch.Draw(
+            SpriteBank.BoxTexture,
+            new Rectangle(_mouseX * Viewport.ScaleMultiplier, _mouseY * Viewport.ScaleMultiplier, 2 * Viewport.ScaleMultiplier, 2 * Viewport.ScaleMultiplier),
+            Color.White);
     }
 
     public override void OnWindowSizeChanged()

@@ -95,9 +95,18 @@ public sealed class LevelAssembler : IDisposable
             Orientation = RightOrientation.Instance
         };
 
-        _lemmings.Add(lemming0);
-        _lemmings.Add(lemming1);
-        _lemmings.Add(lemming2);
-        _lemmings.Add(lemming3);
+        var lemming4 = new Lemming
+        {
+            //     LevelPosition = new LevelPosition(612, 42),
+            LevelPosition = new LevelPosition(240, 80),
+            Orientation = DownOrientation.Instance,
+            FacingDirection = LeftFacingDirection.Instance
+        };
+
+       // _lemmings.Add(lemming0);
+       // _lemmings.Add(lemming1);
+       // _lemmings.Add(lemming2);
+      //  _lemmings.Add(lemming3);
+        _lemmings.Add(lemming4);
     }
 }
