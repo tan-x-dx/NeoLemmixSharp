@@ -1,24 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
-using NeoLemmixSharp.Engine.Directions.FacingDirections;
-using NeoLemmixSharp.Engine.Directions.Orientations;
+using System;
 
 namespace NeoLemmixSharp.Rendering;
 
-public sealed class ActionSprite : NeoLemmixSprite
+public sealed class ActionSprite : IDisposable
 {
-    private readonly Texture2D _texture;
     private readonly LevelPosition _anchorPoint;
-    public int SpriteWidth{get;}
+    public int SpriteWidth { get; }
     public int SpriteHeight { get; }
     public int NumberOfFrames { get; }
 
-    public override Texture2D GetTexture() => _texture;
-    public override Rectangle GetBoundingBox() => new(0, 0, SpriteWidth, SpriteHeight);
-    public override LevelPosition GetAnchorPoint() => _anchorPoint;
-
-    public override bool ShouldRender => false;
+    public Texture2D Texture { get; }
+    public Rectangle BoundingBox { get; }
+    public Rectangle GetBoundingBox() => new(0, 0, SpriteWidth, SpriteHeight);
+    public LevelPosition GetAnchorPoint() => _anchorPoint;
 
     public ActionSprite(
         Texture2D texture,
@@ -27,20 +24,22 @@ public sealed class ActionSprite : NeoLemmixSprite
         int numberOfFrames,
         LevelPosition anchorPoint)
     {
-        _texture = texture;
+        Texture = texture;
         SpriteWidth = spriteWidth;
         SpriteHeight = spriteHeight;
+        BoundingBox = new Rectangle(0, 0, spriteWidth, spriteHeight);
         NumberOfFrames = numberOfFrames;
 
         _anchorPoint = anchorPoint;
     }
 
-    public override void Render(SpriteBatch spriteBatch)
-    {
-    }
-
     public Rectangle GetSourceRectangleForFrame(int frame)
     {
-        return new Rectangle(0, (frame % NumberOfFrames) * SpriteHeight, SpriteWidth, SpriteHeight);
+        return new Rectangle(0, frame * SpriteHeight, SpriteWidth, SpriteHeight);
+    }
+
+    public void Dispose()
+    {
+        Texture.Dispose();
     }
 }

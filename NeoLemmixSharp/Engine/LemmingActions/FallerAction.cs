@@ -13,7 +13,6 @@ public sealed class FallerAction : ILemmingAction
 
     public int LemmingActionId => 2;
     public string LemmingActionName => "faller";
-    public int NumberOfAnimationFrames { get; set; }
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
 
     public void UpdateLemming(Lemming lemming)

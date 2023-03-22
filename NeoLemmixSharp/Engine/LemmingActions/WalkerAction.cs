@@ -13,7 +13,6 @@ public sealed class WalkerAction : ILemmingAction
 
     public int LemmingActionId => 1;
     public string LemmingActionName => "walker";
-    public int NumberOfAnimationFrames { get; set; }
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
 
     public void UpdateLemming(Lemming lemming)

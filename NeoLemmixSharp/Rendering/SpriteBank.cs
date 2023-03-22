@@ -1,15 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
-using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.LevelBuilding;
 using NeoLemmixSharp.LevelBuilding.Data.SpriteSet;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NeoLemmixSharp.Engine.LemmingActions;
 
 namespace NeoLemmixSharp.Rendering;
 
@@ -19,7 +18,7 @@ public sealed class SpriteBank : IDisposable
     private readonly SpriteBatch _spriteBatch;
 
     private readonly Dictionary<string, Texture2D> _textureLookup = new();
-    private readonly Dictionary<string, ActionSprite> _actionSpriteLookup = new();
+    private readonly Dictionary<string, LemmingActionSpriteBundle> _actionSpriteBundleLookup = new();
 
     public SpriteBank(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
@@ -75,22 +74,21 @@ public sealed class SpriteBank : IDisposable
     {
         var originalPixelColourData = PixelColourData.GetPixelColourDataFromTexture(texture);
 
-        var actionSpriteBundle = new LemmingActionSpriteBundle();
+        var actionSpriteBundle = new LemmingActionSpriteBundle(spriteData.NumberOfFrames);
         ILemmingAction.LemmingActions[stateName].ActionSpriteBundle = actionSpriteBundle;
 
-        ProcessLefts(stateName, spriteData, originalPixelColourData, actionSpriteBundle);
-        ProcessRights(stateName, spriteData, originalPixelColourData, actionSpriteBundle);
+        _actionSpriteBundleLookup.Add(stateName, actionSpriteBundle);
+
+        ProcessLefts(spriteData, originalPixelColourData, actionSpriteBundle);
+        ProcessRights(spriteData, originalPixelColourData, actionSpriteBundle);
     }
 
     private void ProcessLefts(
-        string stateName, 
         LemmingSpriteData spriteData,
         PixelColourData originalPixelColourData,
         LemmingActionSpriteBundle actionSpriteBundle)
     {
         CreateSprites(
-            stateName,
-            LeftFacingDirection.Instance,
             spriteData,
             originalPixelColourData,
             0,
@@ -101,14 +99,11 @@ public sealed class SpriteBank : IDisposable
     }
 
     private void ProcessRights(
-        string stateName,
-        LemmingSpriteData spriteData, 
+        LemmingSpriteData spriteData,
         PixelColourData originalPixelColourData,
         LemmingActionSpriteBundle actionSpriteBundle)
     {
         CreateSprites(
-            stateName,
-            RightFacingDirection.Instance,
             spriteData,
             originalPixelColourData,
             originalPixelColourData.Width / 2,
@@ -119,8 +114,6 @@ public sealed class SpriteBank : IDisposable
     }
 
     private void CreateSprites(
-        string stateName,
-        IFacingDirection facingDirection,
         LemmingSpriteData spriteData,
         PixelColourData originalPixelColourData,
         int dx0,
@@ -173,17 +166,16 @@ public sealed class SpriteBank : IDisposable
                 new LevelPosition(footX1, footY1));
 
             setSprite(spriteDrawingData.Orientation, actionSpriteBundle, actionSprite);
-        //    _actionSpriteLookup.Add(key, actionSprite);
         }
     }
 
     public void Dispose()
     {
-        foreach (var texture in _actionSpriteLookup.Values)
+        foreach (var actionSpriteBundle in _actionSpriteBundleLookup.Values)
         {
-            texture.Dispose();
+            actionSpriteBundle.Dispose();
         }
-        _actionSpriteLookup.Clear();
+        _actionSpriteBundleLookup.Clear();
     }
 
     private sealed class SpriteDrawingData
@@ -255,12 +247,5 @@ public sealed class SpriteBank : IDisposable
     public Texture2D GetBox()
     {
         return _textureLookup["box"];
-    }
-
-    public ActionSprite GetActionSprite(Lemming lemming)
-    {
-        var key = $"{lemming.CurrentAction.LemmingActionName}_{lemming.FacingDirection}_{lemming.Orientation}";
-
-        return _actionSpriteLookup[key];
     }
 }

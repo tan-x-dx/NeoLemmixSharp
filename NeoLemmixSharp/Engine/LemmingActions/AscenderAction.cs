@@ -12,7 +12,6 @@ public sealed class AscenderAction : ILemmingAction
     }
 
     public int LemmingActionId => 3;
-    public int NumberOfAnimationFrames { get; set; }
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
 
     public string LemmingActionName => "ascender";

@@ -29,7 +29,7 @@ public sealed class LemmingSprite : NeoLemmixSprite
         var actionSprite = _lemming.Orientation.GetActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.FacingDirection);
 
         spriteBatch.Draw(
-            actionSprite.GetTexture(),
+            actionSprite.Texture,
             GetSpriteDestinationRectangle(actionSprite),
             actionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame),
             Color.White);

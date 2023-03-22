@@ -24,10 +24,6 @@ public sealed class Lemming : ITickable
     public ILemmingAction CurrentAction = WalkerAction.Instance;
     public LemmingState CurrentState = new();
 
-    public Lemming()
-    {
-    }
-
     public bool ShouldTick => true;
 
     public void Tick()
@@ -35,5 +31,9 @@ public sealed class Lemming : ITickable
         CurrentAction.UpdateLemming(this);
 
         AnimationFrame++;
+        if (AnimationFrame == CurrentAction.NumberOfAnimationFrames)
+        {
+            AnimationFrame = 0;
+        }
     }
 }

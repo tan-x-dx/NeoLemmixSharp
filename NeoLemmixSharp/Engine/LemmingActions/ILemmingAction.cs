@@ -30,7 +30,7 @@ public interface ILemmingAction
 
     string LemmingActionName { get; }
     int LemmingActionId { get; }
-    int NumberOfAnimationFrames { get; set; }
+    int NumberOfAnimationFrames => ActionSpriteBundle.NumberOfAnimationFrames;
 
     void UpdateLemming(Lemming lemming);
 }

@@ -4,6 +4,8 @@ namespace NeoLemmixSharp.Rendering;
 
 public sealed class LemmingActionSpriteBundle : IDisposable
 {
+    public int NumberOfAnimationFrames { get; }
+
     public ActionSprite DownLeftSprite { get; set; }
     public ActionSprite DownRightSprite { get; set; }
 
@@ -15,6 +17,11 @@ public sealed class LemmingActionSpriteBundle : IDisposable
 
     public ActionSprite RightLeftSprite { get; set; }
     public ActionSprite RightRightSprite { get; set; }
+
+    public LemmingActionSpriteBundle(int numberOfAnimationFrames)
+    {
+        NumberOfAnimationFrames = numberOfAnimationFrames;
+    }
 
     public void Dispose()
     {
