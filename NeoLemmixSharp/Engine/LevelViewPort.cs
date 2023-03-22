@@ -8,23 +8,42 @@ public sealed class LevelViewPort
     private const int MinScale = 1;
     private const int MaxScale = 16;
 
+    private readonly int _levelWidth;
+    private readonly int _levelHeight;
+
     private int _previousScrollWheelValue;
 
     private int _windowWidth;
     private int _windowHeight;
 
-    private int _pixelWidth;
-    private int _pixelHeight;
-
     private int _sourceX;
     private int _sourceY;
+    private int _sourceWidth;
+    private int _sourceHeight;
+
+    private int _targetX;
+    private int _targetY;
+    private int _targetWidth;
+    private int _targetHeight;
+
+    public LevelViewPort(int levelWidth, int levelHeight)
+    {
+        _levelWidth = levelWidth;
+        _levelHeight = levelHeight;
+    }
 
     public int ScaleMultiplier { get; private set; } = 6;
 
-    private int InverseScale => 1 + MaxScale - ScaleMultiplier;
+    public Rectangle DestinationBounds => new(_targetX, _targetY, _targetWidth, _targetHeight);
+    public Rectangle SourceBounds => new(_sourceX, _sourceY, _sourceWidth, _sourceHeight);
 
-    public Rectangle DestinationBounds => new(0, 0, _windowWidth, _windowHeight);
-    public Rectangle SourceBounds => new(_sourceX, _sourceY, _pixelWidth, _pixelHeight);
+    public void SetWindowDimensions(int gameWindowWidth, int gameWindowHeight)
+    {
+        _windowWidth = gameWindowWidth;
+        _windowHeight = gameWindowHeight;
+
+        RecalculateDimensions();
+    }
 
     public void HandleMouseInput(MouseState mouseState)
     {
@@ -34,7 +53,7 @@ public sealed class LevelViewPort
         {
             ScrollHorizontally(-4 * MaxScale / ScaleMultiplier);
         }
-        else if (mouseState.X == LevelScreen.CurrentLevel!.GameWindow.WindowWidth - 1)
+        else if (mouseState.X == _windowWidth - 1)
         {
             ScrollHorizontally(4 * MaxScale / ScaleMultiplier);
         }
@@ -43,7 +62,7 @@ public sealed class LevelViewPort
         {
             ScrollVertically(-4 * MaxScale / ScaleMultiplier);
         }
-        else if (mouseState.Y == LevelScreen.CurrentLevel!.GameWindow.WindowHeight - 1)
+        else if (mouseState.Y == _windowHeight - 1)
         {
             ScrollVertically(4 * MaxScale / ScaleMultiplier);
         }
@@ -51,27 +70,39 @@ public sealed class LevelViewPort
 
     private void ScrollHorizontally(int dx)
     {
+        if (_sourceWidth >= _levelWidth)
+        {
+            _sourceX = 0;
+            return;
+        }
+
         _sourceX += dx;
         if (_sourceX < 0)
         {
             _sourceX = 0;
         }
-        else if (_sourceX + _pixelWidth >= LevelScreen.CurrentLevel!.Width)
+        else if (_sourceX + _sourceWidth >= _levelWidth)
         {
-            _sourceX = LevelScreen.CurrentLevel.Width - _pixelWidth;
+            _sourceX = _levelWidth - _sourceWidth;
         }
     }
 
     private void ScrollVertically(int dy)
     {
+        if (_sourceHeight >= _levelHeight)
+        {
+            _sourceY = 0;
+            return;
+        }
+
         _sourceY += dy;
         if (_sourceY < 0)
         {
             _sourceY = 0;
         }
-        else if (_sourceY + _pixelHeight >= LevelScreen.CurrentLevel!.Height)
+        else if (_sourceY + _sourceHeight >= _levelHeight)
         {
-            _sourceY = LevelScreen.CurrentLevel.Height - _pixelHeight;
+            _sourceY = _levelHeight - _sourceHeight;
         }
     }
 
@@ -124,8 +155,32 @@ public sealed class LevelViewPort
 
     private void RecalculateDimensions()
     {
-        _pixelWidth = _windowWidth / ScaleMultiplier;
-        _pixelHeight = _windowHeight / ScaleMultiplier;
+        _sourceWidth = _windowWidth / ScaleMultiplier;
+        _sourceHeight = (_windowHeight - 64) / ScaleMultiplier;
+
+        if (_sourceWidth < _levelWidth)
+        {
+            _targetX = 0;
+            _targetWidth = _windowWidth;
+        }
+        else
+        {
+            _targetX = ScaleMultiplier * (_sourceWidth - _levelWidth) / 2;
+            _targetWidth = _levelWidth * ScaleMultiplier;
+            _sourceWidth = _levelWidth;
+        }
+
+        if (_sourceHeight < _levelHeight)
+        {
+            _targetY = 0;
+            _targetHeight = _windowHeight - 64;
+        }
+        else
+        {
+            _targetY = ScaleMultiplier * (_sourceHeight - _levelHeight) / 2;
+            _targetHeight = _levelHeight * ScaleMultiplier;
+            _sourceHeight = _levelHeight;
+        }
     }
 
     public bool IsVisible(Rectangle rectangle)
@@ -133,11 +188,4 @@ public sealed class LevelViewPort
         return true;
     }
 
-    public void SetWindowDimensions(int gameWindowWidth, int gameWindowHeight)
-    {
-        _windowWidth = gameWindowWidth;
-        _windowHeight = gameWindowHeight;
-
-        RecalculateDimensions();
-    }
 }
