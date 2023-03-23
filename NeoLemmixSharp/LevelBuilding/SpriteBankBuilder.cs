@@ -97,7 +97,7 @@ public sealed class SpriteBankBuilder
     {
         var originalPixelColourData = PixelColourData.GetPixelColourDataFromTexture(texture);
 
-        var actionSpriteBundle = new LemmingActionSpriteBundle(spriteData.NumberOfFrames);
+        var actionSpriteBundle = new LemmingActionSpriteBundle();
         ILemmingAction.LemmingActions[stateName].ActionSpriteBundle = actionSpriteBundle;
 
         _actionSpriteBundleLookup.Add(stateName, actionSpriteBundle);

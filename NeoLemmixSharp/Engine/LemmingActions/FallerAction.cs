@@ -5,15 +5,21 @@ namespace NeoLemmixSharp.Engine.LemmingActions;
 
 public sealed class FallerAction : ILemmingAction
 {
+    public const int NumberOfFallerAnimationFrames = 4;
+
     public static FallerAction Instance { get; } = new();
 
     private FallerAction()
     {
     }
 
-    public int LemmingActionId => 2;
-    public string LemmingActionName => "faller";
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
+    public string LemmingActionName => "faller";
+    public int NumberOfAnimationFrames => NumberOfFallerAnimationFrames;
+
+    public bool Equals(ILemmingAction? other) => other is FallerAction;
+    public override bool Equals(object? obj) => obj is FallerAction;
+    public override int GetHashCode() => nameof(FallerAction).GetHashCode();
 
     public void UpdateLemming(Lemming lemming)
     {
@@ -34,5 +40,9 @@ public sealed class FallerAction : ILemmingAction
         }
 
         lemming.LevelPosition = pixelQueryPosition;
+    }
+
+    public void OnTransitionToAction(Lemming lemming)
+    {
     }
 }

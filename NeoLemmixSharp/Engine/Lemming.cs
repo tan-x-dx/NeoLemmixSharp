@@ -15,8 +15,12 @@ public sealed class Lemming : ITickable
 
     public LevelPosition LevelPosition;
 
+    public bool Debug;
+
     public int AnimationFrame;
     public int AscenderProgress;
+    public int NumberOfBricksLeft;
+    public bool ConstructivePositionFreeze;
 
     public IFacingDirection FacingDirection = RightFacingDirection.Instance;
     public IOrientation Orientation = DownOrientation.Instance;
@@ -28,12 +32,18 @@ public sealed class Lemming : ITickable
 
     public void Tick()
     {
-        CurrentAction.UpdateLemming(this);
+        if (Debug)
+        {
+            ;
+        }
 
         AnimationFrame++;
         if (AnimationFrame == CurrentAction.NumberOfAnimationFrames)
         {
             AnimationFrame = 0;
         }
+
+        CurrentAction.UpdateLemming(this);
+
     }
 }

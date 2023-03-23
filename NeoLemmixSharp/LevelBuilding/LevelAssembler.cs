@@ -7,6 +7,7 @@ using NeoLemmixSharp.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NeoLemmixSharp.Engine.LemmingActions;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
@@ -98,15 +99,18 @@ public sealed class LevelAssembler : IDisposable
         var lemming4 = new Lemming
         {
             //     LevelPosition = new LevelPosition(612, 42),
-            LevelPosition = new LevelPosition(240, 80),
-            Orientation = DownOrientation.Instance,
-            FacingDirection = LeftFacingDirection.Instance
+            LevelPosition = new LevelPosition(232, 130),
+            Orientation = LeftOrientation.Instance,
+            FacingDirection = LeftFacingDirection.Instance,
+            NumberOfBricksLeft = LemmingConstants.StepsMax,
+            CurrentAction = BuilderAction.Instance,
+            Debug = true
         };
 
-       // _lemmings.Add(lemming0);
-       // _lemmings.Add(lemming1);
-       // _lemmings.Add(lemming2);
-      //  _lemmings.Add(lemming3);
+        _lemmings.Add(lemming0);
+        _lemmings.Add(lemming1);
+        _lemmings.Add(lemming2);
+        _lemmings.Add(lemming3);
         _lemmings.Add(lemming4);
     }
 }

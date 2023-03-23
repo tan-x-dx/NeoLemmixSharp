@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Rendering;
 using System.Collections.Generic;
 
@@ -43,6 +44,17 @@ public sealed class PixelManager
         _terrainSprite = terrainSprite;
     }
 
+    public PixelData GetPixelData(
+        LevelPosition startPosition,
+        IOrientation orientation,
+        int dx,
+        int dy)
+    {
+        startPosition = orientation.Move(startPosition, dx, dy);
+
+        return _boundaryBehaviour.GetPixel(ref startPosition);
+    }
+
     public PixelData GetPixelData(ref LevelPosition pos)
     {
         return _boundaryBehaviour.GetPixel(ref pos);
@@ -82,6 +94,16 @@ public sealed class PixelManager
 
                 _terrainSprite.SetPixelColour(pos.X, pos.Y, 0U);
             }
+        }
+    }
+
+    public void SetSolidPixel(LevelPosition pixelToSet, uint colour)
+    {
+        var pixel = GetPixelData(ref pixelToSet);
+        if (pixel is { IsVoid: false, IsSolid: false })
+        {
+            pixel.IsSolid = true;
+            _terrainSprite.SetPixelColour(pixelToSet.X, pixelToSet.Y, colour);
         }
     }
 }

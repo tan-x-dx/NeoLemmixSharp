@@ -43,6 +43,14 @@ public sealed class RightOrientation : IOrientation
             position.Y - relativeDirection.X);
     }
 
+    public LevelPosition Move(LevelPosition position, int dx, int dy)
+    {
+        position.X -= dy;
+        position.Y -= dx;
+
+        return position;
+    }
+
     public ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle)
     {
         return actionSpriteBundle.RightLeftSprite;

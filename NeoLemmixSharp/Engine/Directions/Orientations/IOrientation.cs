@@ -37,6 +37,14 @@ public interface IOrientation : IEquatable<IOrientation>
     /// <param name="relativeDirection"></param>
     /// <returns></returns>
     LevelPosition Move(LevelPosition position, LevelPosition relativeDirection);
+    /// <summary>
+    /// Note: Positive dx -> right, positive dy -> up
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="dx"></param>
+    /// <param name="dy"></param>
+    /// <returns></returns>
+    LevelPosition Move(LevelPosition position, int dx, int dy);
 
     ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle);
     ActionSprite GetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle);

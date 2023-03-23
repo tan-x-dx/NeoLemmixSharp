@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
-using NeoLemmixSharp.Rendering;
+﻿using NeoLemmixSharp.Rendering;
 
 namespace NeoLemmixSharp.Engine.Directions.Orientations;
 
@@ -42,6 +41,14 @@ public sealed class LeftOrientation : IOrientation
         return new LevelPosition(
             position.X + relativeDirection.Y,
             position.Y + relativeDirection.X);
+    }
+
+    public LevelPosition Move(LevelPosition position, int dx, int dy)
+    {
+        position.X += dy;
+        position.Y += dx;
+
+        return position;
     }
 
     public ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle)
