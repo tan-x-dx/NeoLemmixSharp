@@ -8,7 +8,7 @@ public interface IBitArray : ICollection<int>, IReadOnlyCollection<int>, IClonea
 {
     public int Length { get; }
     public bool AnyBitsSet { get; }
-    
+
     public bool GetBit(int index);
     public bool SetBit(int index);
     public bool ClearBit(int index);

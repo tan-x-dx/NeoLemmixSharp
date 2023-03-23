@@ -44,12 +44,14 @@ public sealed class LeftOrientation : IOrientation
             position.Y + relativeDirection.X);
     }
 
-    public ActionSprite GetActionSprite(LemmingActionSpriteBundle actionSpriteBundle, IFacingDirection facingDirection)
+    public ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle)
     {
-        var left = actionSpriteBundle.LeftLeftSprite;
-        var right = actionSpriteBundle.LeftRightSprite;
+        return actionSpriteBundle.LeftLeftSprite;
+    }
 
-        return facingDirection.ChooseActionSprite(left, right);
+    public ActionSprite GetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle)
+    {
+        return actionSpriteBundle.LeftRightSprite;
     }
 
     public void SetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite leftSprite)

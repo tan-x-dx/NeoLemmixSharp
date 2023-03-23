@@ -13,12 +13,9 @@ public sealed class LemmingSprite : IRenderable
         _lemming = lemming;
     }
 
-    private Rectangle GetBoundingBox() => new();
-
-    private bool ShouldRender => LevelScreen.CurrentLevel!.Viewport.IsOnScreen(GetBoundingBox());
     public void Render(SpriteBatch spriteBatch)
     {
-        var actionSprite = _lemming.Orientation.GetActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.FacingDirection);
+        var actionSprite = _lemming.FacingDirection.ChooseActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.Orientation);
 
         var rect = new Rectangle(
             _lemming.X - actionSprite.AnchorPointX,
@@ -28,33 +25,23 @@ public sealed class LemmingSprite : IRenderable
 
         var viewport = LevelScreen.CurrentLevel!.Viewport;
 
-        if (!viewport.IsOnScreen(rect))
+        if (!viewport.GetRenderDestinationRectangle(rect, out var renderDestination))
             return;
 
         spriteBatch.Draw(
             actionSprite.Texture,
-            GetDestinationRectangle(viewport, rect.X, rect.Y, rect.Width, rect.Height),
+            renderDestination,
             actionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame),
             Color.White);
 
         var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
 
+        viewport.GetRenderDestinationRectangle(new Rectangle(_lemming.X - 1, _lemming.Y - 1, 3, 3), out renderDestination);
+
         spriteBatch.Draw(
             spriteBank.AnchorTexture,
-            GetDestinationRectangle(viewport, _lemming.X - 1, _lemming.Y - 1, 3, 3),
+            renderDestination,
             Color.White);
-    }
-
-    private static Rectangle GetDestinationRectangle(LevelViewPort viewport, int x, int y, int w, int h)
-    {
-        var x0 = (x - viewport.SourceX) * viewport.ScaleMultiplier + viewport.TargetX;
-        var y0 = (y - viewport.SourceY) * viewport.ScaleMultiplier + viewport.TargetY;
-
-        return new Rectangle(
-            x0,
-            y0,
-            w * viewport.ScaleMultiplier,
-            h * viewport.ScaleMultiplier);
     }
 
     public void Dispose()

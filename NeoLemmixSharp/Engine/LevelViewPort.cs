@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine;
 public sealed class LevelViewPort
 {
     private const int MinScale = 1;
-    private const int MaxScale = 16;
+    private const int MaxScale = 12;
 
     private readonly int _levelWidth;
     private readonly int _levelHeight;
@@ -15,16 +15,16 @@ public sealed class LevelViewPort
 
     private int _windowWidth;
     private int _windowHeight;
+    
+    public int ViewPortX { get; private set; }
+    public int ViewPortY { get; private set; }
+    public int ViewPortWidth { get; private set; }
+    public int ViewPortHeight { get; private set; }
 
-    public int SourceX { get; private set; }
-    public int SourceY { get; private set; }
-    public int SourceWidth { get; private set; }
-    public int SourceHeight { get; private set; }
-
-    public int TargetX { get; private set; }
-    public int TargetY { get; private set; }
-    public int TargetWidth { get; private set; }
-    public int TargetHeight { get; private set; }
+    public int ScreenX { get; private set; }
+    public int ScreenY { get; private set; }
+    public int ScreenWidth { get; private set; }
+    public int ScreenHeight { get; private set; }
 
     public LevelViewPort(int levelWidth, int levelHeight)
     {
@@ -67,39 +67,39 @@ public sealed class LevelViewPort
 
     private void ScrollHorizontally(int dx)
     {
-        if (SourceWidth >= _levelWidth)
+        if (ViewPortWidth >= _levelWidth)
         {
-            SourceX = 0;
+            ViewPortX = 0;
             return;
         }
 
-        SourceX += dx;
-        if (SourceX < 0)
+        ViewPortX += dx;
+        if (ViewPortX < 0)
         {
-            SourceX = 0;
+            ViewPortX = 0;
         }
-        else if (SourceX + SourceWidth >= _levelWidth)
+        else if (ViewPortX + ViewPortWidth >= _levelWidth)
         {
-            SourceX = _levelWidth - SourceWidth;
+            ViewPortX = _levelWidth - ViewPortWidth;
         }
     }
 
     private void ScrollVertically(int dy)
     {
-        if (SourceHeight >= _levelHeight)
+        if (ViewPortHeight >= _levelHeight)
         {
-            SourceY = 0;
+            ViewPortY = 0;
             return;
         }
 
-        SourceY += dy;
-        if (SourceY < 0)
+        ViewPortY += dy;
+        if (ViewPortY < 0)
         {
-            SourceY = 0;
+            ViewPortY = 0;
         }
-        else if (SourceY + SourceHeight >= _levelHeight)
+        else if (ViewPortY + ViewPortHeight >= _levelHeight)
         {
-            SourceY = _levelHeight - SourceHeight;
+            ViewPortY = _levelHeight - ViewPortHeight;
         }
     }
 
@@ -152,39 +152,53 @@ public sealed class LevelViewPort
 
     private void RecalculateDimensions()
     {
-        SourceWidth = _windowWidth / ScaleMultiplier;
-        SourceHeight = (_windowHeight - 64) / ScaleMultiplier;
+        ViewPortWidth = _windowWidth / ScaleMultiplier;
+        ViewPortHeight = (_windowHeight - 64) / ScaleMultiplier;
 
-        if (SourceWidth < _levelWidth)
+        if (ViewPortWidth < _levelWidth)
         {
-            TargetX = 0;
-            TargetWidth = SourceWidth * ScaleMultiplier;
+            ScreenX = 0;
+            ScreenWidth = ViewPortWidth * ScaleMultiplier;
         }
         else
         {
-            TargetX = ScaleMultiplier * (SourceWidth - _levelWidth) / 2;
-            TargetWidth = _levelWidth * ScaleMultiplier;
-            SourceWidth = _levelWidth;
+            ScreenX = ScaleMultiplier * (ViewPortWidth - _levelWidth) / 2;
+            ScreenWidth = _levelWidth * ScaleMultiplier;
+            ViewPortWidth = _levelWidth;
         }
 
-        if (SourceHeight < _levelHeight)
+        if (ViewPortHeight < _levelHeight)
         {
-            TargetY = 0;
-            TargetHeight = SourceHeight * ScaleMultiplier;
+            ScreenY = 0;
+            ScreenHeight = ViewPortHeight * ScaleMultiplier;
         }
         else
         {
-            TargetY = ScaleMultiplier * (SourceHeight - _levelHeight) / 2;
-            TargetHeight = _levelHeight * ScaleMultiplier;
-            SourceHeight = _levelHeight;
+            ScreenY = ScaleMultiplier * (ViewPortHeight - _levelHeight) / 2;
+            ScreenHeight = _levelHeight * ScaleMultiplier;
+            ViewPortHeight = _levelHeight;
         }
     }
 
-    public bool IsOnScreen(Rectangle rectangle)
+    public bool GetRenderDestinationRectangle(Rectangle rectangle, out Rectangle renderDestination)
     {
-        return rectangle.X < SourceX + SourceWidth &&
-               SourceX < rectangle.X + rectangle.Width &&
-               rectangle.Y < SourceY + SourceHeight &&
-               SourceY < rectangle.Y + rectangle.Height;
+        if (rectangle.X < ViewPortX + ViewPortWidth &&
+            ViewPortX < rectangle.X + rectangle.Width &&
+            rectangle.Y < ViewPortY + ViewPortHeight &&
+            ViewPortY < rectangle.Y + rectangle.Height)
+        {
+            var x0 = (rectangle.X - ViewPortX) * ScaleMultiplier + ScreenX;
+            var y0 = (rectangle.Y - ViewPortY) * ScaleMultiplier + ScreenY;
+
+            renderDestination = new Rectangle(
+                x0,
+                y0,
+                rectangle.Width * ScaleMultiplier,
+                rectangle.Height * ScaleMultiplier);
+            return true;
+        }
+
+        renderDestination = Rectangle.Empty;
+        return false;
     }
 }

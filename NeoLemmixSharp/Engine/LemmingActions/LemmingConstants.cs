@@ -13,10 +13,6 @@ public static class LemmingConstants
     /// </summary>
     public const int ClimberStep = 1;
     /// <summary>
-    /// at this height a walker will turn around
-    /// </summary>
-    public const int WalkerObstacleHeight = 14;
-    /// <summary>
     /// check N pixels above the lemming's feet
     /// </summary>
     public const int BasherCheckStep = 12;

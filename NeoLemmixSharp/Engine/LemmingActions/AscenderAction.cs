@@ -26,7 +26,7 @@ public sealed class AscenderAction : ILemmingAction
         for (var i = 0; i < limit; i++)
         {
             pixelQueryPosition = lemming.Orientation.MoveUp(pixelQueryPosition, 1);
-            var pixel = LevelScreen.CurrentLevel!.Terrain.GetPixelData(pixelQueryPosition);
+            var pixel = LevelScreen.CurrentLevel!.Terrain.GetPixelData(ref pixelQueryPosition);
             if (pixel.IsSolid)
             {
                 numberOfSolidPixelsAboveCurrentPosition++;

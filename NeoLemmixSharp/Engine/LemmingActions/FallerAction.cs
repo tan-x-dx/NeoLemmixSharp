@@ -23,7 +23,7 @@ public sealed class FallerAction : ILemmingAction
         for (var i = 0; i < FallerStep; i++)
         {
             pixelQueryPosition = lemming.Orientation.MoveDown(pixelQueryPosition, 1);
-            var pixel = LevelScreen.CurrentLevel!.Terrain.GetPixelData(pixelQueryPosition);
+            var pixel = LevelScreen.CurrentLevel!.Terrain.GetPixelData(ref pixelQueryPosition);
             if (pixel.IsSolid)
             {
                 lemming.LevelPosition = pixelQueryPosition;
