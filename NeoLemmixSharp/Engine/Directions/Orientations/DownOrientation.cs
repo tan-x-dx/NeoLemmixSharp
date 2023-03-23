@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
-using NeoLemmixSharp.Rendering;
+﻿using NeoLemmixSharp.Rendering;
 
 namespace NeoLemmixSharp.Engine.Directions.Orientations;
 
@@ -44,12 +43,14 @@ public sealed class DownOrientation : IOrientation
             position.Y - relativeDirection.Y);
     }
 
-    public ActionSprite GetActionSprite(LemmingActionSpriteBundle actionSpriteBundle, IFacingDirection facingDirection)
+    public ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle)
     {
-        var left = actionSpriteBundle.DownLeftSprite;
-        var right = actionSpriteBundle.DownRightSprite;
+        return actionSpriteBundle.DownLeftSprite;
+    }
 
-        return facingDirection.ChooseActionSprite(left, right);
+    public ActionSprite GetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle)
+    {
+        return actionSpriteBundle.DownRightSprite;
     }
 
     public void SetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite leftSprite)

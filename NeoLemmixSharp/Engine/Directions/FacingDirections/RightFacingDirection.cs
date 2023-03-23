@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Rendering;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Rendering;
 
 namespace NeoLemmixSharp.Engine.Directions.FacingDirections;
 
@@ -12,7 +13,10 @@ public sealed class RightFacingDirection : IFacingDirection
 
     public int DeltaX(int deltaX) => deltaX;
     public IFacingDirection OppositeDirection => LeftFacingDirection.Instance;
-    public ActionSprite ChooseActionSprite(ActionSprite left, ActionSprite right) => right;
+    public ActionSprite ChooseActionSprite(LemmingActionSpriteBundle actionSpriteBundle, IOrientation orientation)
+    {
+        return orientation.GetRightActionSprite(actionSpriteBundle);
+    }
 
     public override string ToString() => "right";
 }

@@ -15,7 +15,7 @@ public sealed class LemmingSprite : IRenderable
 
     public void Render(SpriteBatch spriteBatch)
     {
-        var actionSprite = _lemming.Orientation.GetActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.FacingDirection);
+        var actionSprite = _lemming.FacingDirection.ChooseActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.Orientation);
 
         var rect = new Rectangle(
             _lemming.X - actionSprite.AnchorPointX,

@@ -38,7 +38,8 @@ public interface IOrientation : IEquatable<IOrientation>
     /// <returns></returns>
     LevelPosition Move(LevelPosition position, LevelPosition relativeDirection);
 
-    ActionSprite GetActionSprite(LemmingActionSpriteBundle actionSpriteBundle, IFacingDirection facingDirection);
+    ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle);
+    ActionSprite GetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle);
     void SetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite leftSprite);
     void SetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite rightSprite);
 }
