@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Rendering;
+using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
@@ -22,9 +23,47 @@ public sealed class StackerAction : ILemmingAction
 
     public void UpdateLemming(Lemming lemming)
     {
+        if (lemming.AnimationFrame == 7)
+        {
+            lemming.PlacedBrick = CommonMethods.LayStackBrick(lemming);
+        }
+        else if (lemming.AnimationFrame == 0)
+        {
+            lemming.NumberOfBricksLeft--;
+
+            if (lemming.NumberOfBricksLeft < 3)
+            {
+                // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position); ??
+            }
+
+            if (!lemming.PlacedBrick)
+            {
+                // Relax the check on the first brick
+                // for details see http://www.lemmingsforums.net/index.php?topic=2862.0
+                if (lemming.NumberOfBricksLeft < 7 ||
+                    !MayPlaceNextBrick(lemming))
+                {
+                    CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, true);
+                }
+            }
+            else if (lemming.NumberOfBricksLeft == 0)
+            {
+                CommonMethods.TransitionToNewAction(lemming, ShruggerAction.Instance, false);
+            }
+        }
     }
 
-    public void OnTransitionToAction(Lemming lemming)
+    private static bool MayPlaceNextBrick(Lemming lemming)
+    {
+        var brickPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 9 - lemming.NumberOfBricksLeft);
+        var dx = lemming.FacingDirection.DeltaX;
+
+        return !(Terrain.GetPixelData(lemming.Orientation.MoveRight(brickPosition, dx)).IsSolid &&
+                 Terrain.GetPixelData(lemming.Orientation.MoveRight(brickPosition, dx + dx)).IsSolid &&
+                 Terrain.GetPixelData(lemming.Orientation.MoveRight(brickPosition, dx + dx + dx)).IsSolid);
+    }
+
+    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
         lemming.NumberOfBricksLeft = 8;
     }

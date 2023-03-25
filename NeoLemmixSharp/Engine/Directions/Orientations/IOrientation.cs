@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
-using NeoLemmixSharp.Rendering;
+﻿using NeoLemmixSharp.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,6 +21,8 @@ public interface IOrientation : IEquatable<IOrientation>
 
         return new ReadOnlyCollection<IOrientation>(list);
     }
+
+    protected static PixelManager Terrain => LevelScreen.CurrentLevel!.Terrain;
 
     int RotNum { get; }
 

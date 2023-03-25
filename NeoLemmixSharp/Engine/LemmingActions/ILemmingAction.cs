@@ -55,11 +55,13 @@ public interface ILemmingAction : IEquatable<ILemmingAction>
 
     public static ICollection<ILemmingAction> AllLemmingActions => LemmingActions.Values;
 
+    protected static PixelManager Terrain => LevelScreen.CurrentLevel!.Terrain;
+
     LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
 
     string LemmingActionName { get; }
     int NumberOfAnimationFrames { get; }
 
     void UpdateLemming(Lemming lemming);
-    void OnTransitionToAction(Lemming lemming);
+    void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction);
 }

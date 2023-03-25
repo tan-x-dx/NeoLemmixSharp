@@ -82,7 +82,7 @@ public sealed class LevelScreen : BaseScreen
 
         if (mouseState.RightButton == ButtonState.Pressed)
         {
-            Terrain.ErasePixels(new[] { new LevelPosition(_mouseX, _mouseY) });
+            Terrain.ErasePixel(new LevelPosition(_mouseX, _mouseY));
         }
 
         if (!_stopMotion)

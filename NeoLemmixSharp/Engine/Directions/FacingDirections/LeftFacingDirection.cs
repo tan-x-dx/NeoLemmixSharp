@@ -11,7 +11,7 @@ public sealed class LeftFacingDirection : IFacingDirection
     {
     }
 
-    public int DeltaX(int deltaX) => -deltaX;
+    public int DeltaX => -1;
     public IFacingDirection OppositeDirection => RightFacingDirection.Instance;
     public ActionSprite ChooseActionSprite(LemmingActionSpriteBundle actionSpriteBundle, IOrientation orientation)
     {

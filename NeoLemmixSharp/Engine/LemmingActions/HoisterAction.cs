@@ -24,7 +24,8 @@ public sealed class HoisterAction : ILemmingAction
     {
     }
 
-    public void OnTransitionToAction(Lemming lemming)
+    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
+        lemming.IsStartingAction = previouslyStartingAction;
     }
 }

@@ -15,28 +15,27 @@ public sealed class HorizontalWrapBehaviour : ILevelBoundaryBehaviour
         _data = data;
     }
 
-    public PixelData GetPixel(ref LevelPosition levelPosition)
+    public PixelData GetPixel(LevelPosition levelPosition)
     {
         if (levelPosition.Y < 0 || levelPosition.Y >= _height)
             return _voidPixel;
 
-        var x = levelPosition.X;
-        var y = levelPosition.Y;
-
-        if (x < 0)
-        {
-            x += _width;
-        }
-
-        if (x >= _width)
-        {
-            x -= _width;
-        }
-
-        levelPosition = new LevelPosition(x, y);
-
-        var index = _width * y + x;
+        var index = _width * levelPosition.Y + levelPosition.X;
         return _data[index];
+    }
+
+    public LevelPosition NormalisePosition(LevelPosition levelPosition)
+    {
+        if (levelPosition.X < 0)
+        {
+            levelPosition.X += _width;
+        }
+        else if (levelPosition.X >= _width)
+        {
+            levelPosition.X -= _width;
+        }
+
+        return levelPosition;
     }
 
     public void ScrollViewPortHorizontally(LevelViewPort viewPort, int dx)

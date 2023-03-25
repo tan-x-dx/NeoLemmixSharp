@@ -2,20 +2,59 @@
 
 public static class CommonMethods
 {
+    private static PixelManager Terrain => LevelScreen.CurrentLevel!.Terrain;
+
+    public static bool LemmingCanPlatform(Lemming lemming)
+    {
+        var result = false;
+
+        result = result ||
+                 !Terrain.GetPixelData(lemming.LevelPosition).IsSolid ||
+                 !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 1)).IsSolid ||
+                 !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 2)).IsSolid ||
+                 !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 3)).IsSolid ||
+                 !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 4)).IsSolid;
+
+        var dx = lemming.FacingDirection.DeltaX;
+        result = result && !Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx, 1)).IsSolid;
+        result = result && !Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx + dx, 1)).IsSolid;
+        return result;
+    }
+
     public static void LayBrick(Lemming lemming)
     {
-        var brickPosition = lemming.LevelPosition;
-        if (lemming.CurrentAction == BuilderAction.Instance)
-        {
-            brickPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
-        }
+        var dx = lemming.FacingDirection.DeltaX;
+        var brickPosition = lemming.CurrentAction == BuilderAction.Instance
+            ? lemming.Orientation.MoveUp(lemming.LevelPosition, 1)
+            : lemming.LevelPosition;
 
-        var deltaX = lemming.FacingDirection.DeltaX(1);
         for (var i = 0; i < 5; i++)
         {
-            LevelScreen.CurrentLevel!.Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
-            brickPosition = lemming.Orientation.MoveRight(brickPosition, deltaX);
+            Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+            brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
         }
+    }
+
+    public static bool LayStackBrick(Lemming lemming)
+    {
+        var dx = lemming.FacingDirection.DeltaX;
+        var dy = lemming.StackLow ? -1 : 0;
+        var brickPosition = lemming.Orientation.Move(lemming.LevelPosition, dx, 9 + dy - lemming.NumberOfBricksLeft);
+
+        var result = false;
+
+        for (var i = 0; i < 3; i++)
+        {
+            if (!Terrain.GetPixelData(brickPosition).IsSolid)
+            {
+                Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+                result = true;
+            }
+
+            brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        }
+
+        return result;
     }
 
     public static void TransitionToNewAction(
@@ -28,8 +67,7 @@ public static class CommonMethods
             lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
         }
 
-
-        var pixel = LevelScreen.CurrentLevel!.Terrain.GetPixelData(ref lemming.LevelPosition);
+        var pixel = Terrain.GetPixelData(lemming.LevelPosition);
         if (!pixel.IsSolid)
         {
             newAction = FallerAction.Instance;
@@ -38,84 +76,98 @@ public static class CommonMethods
         if (lemming.CurrentAction == newAction)
             return;
 
-       /* if (newAction == FallerAction.Instance)
+        if (newAction == FallerAction.Instance)
         {
             if (lemming.CurrentAction != SwimmerAction.Instance)
             {
                 if (lemming.CurrentAction == WalkerAction.Instance ||
                      lemming.CurrentAction == BasherAction.Instance)
                 {
-                    lemming.LemFallen = 3;
+                    lemming.DistanceFallen = 3;
                 }
                 else if (lemming.CurrentAction == MinerAction.Instance ||
                          lemming.CurrentAction == DiggerAction.Instance)
                 {
-                    lemming.LemFallen = 0;
+                    lemming.DistanceFallen = 0;
                 }
                 else if (lemming.CurrentAction == BlockerAction.Instance ||
                          lemming.CurrentAction == JumperAction.Instance ||
                          lemming.CurrentAction == LasererAction.Instance)
                 {
-                    lemming.LemFallen = -1;
+                    lemming.DistanceFallen = -1;
                 }
                 else
                 {
-                    lemming.LemFallen = 1;
+                    lemming.DistanceFallen = 1;
                 }
             }
 
-            lemming.LemTrueFallen = lemming.LemFallen;
-        }*/
+            lemming.TrueDistanceFallen = lemming.DistanceFallen;
+        }
+
+        if ((lemming.CurrentAction == ClimberAction.Instance &&
+             (newAction == ShimmierAction.Instance ||
+              newAction == JumperAction.Instance)) ||
+            (lemming.CurrentAction == SliderAction.Instance &&
+             newAction == JumperAction.Instance))
+        {
+            lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
+            lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX);
+
+            if (newAction == ShimmierAction.Instance &&
+                Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 8)).IsSolid)
+            {
+                lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 1);
+            }
+        }
+
+        if (newAction == ShimmierAction.Instance)
+        {
+            if (lemming.CurrentAction == SliderAction.Instance ||
+                lemming.CurrentAction == DehoisterAction.Instance)
+            {
+                lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 2);
+                if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 8)).IsSolid)
+                {
+                    lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 1);
+                }
+            }
+            else if (lemming.CurrentAction == JumperAction.Instance)
+            {
+                for (var i = -1; i < 4; i++)
+                {
+                    if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 9 + i)).IsSolid &&
+                        !Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 8 + i)).IsSolid)
+                    {
+                        lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, i);
+                    }
+                }
+            }
+        }
+
+        if (newAction == DehoisterAction.Instance)
+        {
+            lemming.DehoistPin = lemming.LevelPosition;
+        }
+        else if (newAction == SliderAction.Instance)
+        {
+            lemming.DehoistPin = new LevelPosition(-1, -1);
+        }
+
+        lemming.CurrentAction = newAction;
+        lemming.AnimationFrame = 0;
+        lemming.NumberOfBricksLeft = 0;
+        var previouslyStartingAction = lemming.IsStartingAction;
+        lemming.IsStartingAction = true;
+        lemming.InitialFall = false;
+
+        newAction.OnTransitionToAction(lemming, previouslyStartingAction);
     }
 
     /*
-
-    -------------------------------------------------------------------------------
+    procedure TLemmingGame.Transition(L: TLemming; NewAction: TBasicLemmingAction; DoTurn: Boolean = False);
+{-------------------------------------------------------------------------------
   Handling of a transition and/or turnaround
--------------------------------------------------------------------------------}
-var
-  i: Integer;
-  OldIsStartingAction: Boolean;
-const
-  // Number of physics frames for the various lemming actions.
-  ANIM_FRAMECOUNT: array[TBasicLemmingAction] of Integer =
-    (
-     0, //baNone,
-     4, //baWalking,
-     1, //baAscending,
-    16, //baDigging,
-     8, //baClimbing,
-    16, //baDrowning,
-     8, //baHoisting,
-    16, //baBuilding,
-    16, //baBashing,
-    24, //baMining,
-     4, //baFalling,
-    17, //baFloating,
-    16, //baSplatting,
-     8, //baExiting,
-    14, //baVaporizing,
-    16, //baBlocking,
-     8, //baShrugging,
-    16, //baOhnoing,
-     1, //baExploding,
-     0, //baToWalking,
-    16, //baPlatforming,
-     8, //baStacking,
-    16, //baStoning,
-     1, //baStoneFinish,
-     8, //baSwimming,
-    17, //baGliding,
-    16, //baFixing,
-     0, //baCloning,
-    16, //baFencing,
-     8, //baReaching,
-    20, //baShimmying
-    13, //baJumping
-     7, //baDehoisting
-     1, //baSliding
-    12  //baLasering - it's, ironically, this high for rendering purposes
-    );
 begin
   if DoTurn then TurnAround(L);
 
@@ -255,6 +307,9 @@ begin
   end;
 end;
 
-
     */
+    public static bool LemmingCanDehoist(Lemming lemming, bool b)
+    {
+        return false;
+    }
 }

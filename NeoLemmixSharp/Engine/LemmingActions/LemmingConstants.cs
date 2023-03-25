@@ -4,6 +4,8 @@ public static class LemmingConstants
 {
     public const uint MinimumSubstantialAlphaValue = 31;
 
+    public const int MaxFallDistance = 62;
+
     /// <summary>
     /// a walker walks one pixel per frame
     /// </summary>

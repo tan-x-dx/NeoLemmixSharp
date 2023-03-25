@@ -22,9 +22,13 @@ public sealed class DrownerAction : ILemmingAction
 
     public void UpdateLemming(Lemming lemming)
     {
+        if (lemming.AnimationFrame == NumberOfDrownerAnimationFrames)
+        {
+            // remove lemming
+        }
     }
 
-    public void OnTransitionToAction(Lemming lemming)
+    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

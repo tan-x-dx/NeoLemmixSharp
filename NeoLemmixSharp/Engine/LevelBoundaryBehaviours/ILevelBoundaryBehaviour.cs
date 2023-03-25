@@ -2,7 +2,7 @@
 
 public interface ILevelBoundaryBehaviour
 {
-    PixelData GetPixel(ref LevelPosition levelPosition);
+    LevelPosition NormalisePosition(LevelPosition levelPosition);
 
     void ScrollViewPortHorizontally(LevelViewPort viewPort, int dx);
     void ScrollViewPortVertically(LevelViewPort viewPort, int dy);

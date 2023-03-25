@@ -1,5 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
-using static NeoLemmixSharp.Engine.LemmingActions.LemmingConstants;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Rendering;
+using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
@@ -23,76 +24,85 @@ public sealed class WalkerAction : ILemmingAction
 
     public void UpdateLemming(Lemming lemming)
     {
-        var originalPosition = lemming.LevelPosition;
+        var dx = lemming.FacingDirection.DeltaX;
+        lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, dx);
+        var dy = FindGroundPixel(lemming.Orientation, lemming.LevelPosition);
 
-        var deltaX = lemming.FacingDirection.DeltaX(WalkerStep);
-        var pixelQueryPosition = lemming.Orientation.MoveRight(originalPosition, deltaX);
-        var pixel = LevelScreen.CurrentLevel!.Terrain.GetPixelData(ref pixelQueryPosition);
-
-        if (pixel.IsSolid) // Check pixels going up
+        if (dy > 0 &&
+            lemming.IsSlider &&
+            CommonMethods.LemmingCanDehoist(lemming, true))
         {
-            var i = 0;
-            while (i < AscenderJump) // Simple step up
-            {
-                var previousQueryPosition = pixelQueryPosition;
-                pixelQueryPosition = lemming.Orientation.MoveUp(pixelQueryPosition, 1);
-                pixel = LevelScreen.CurrentLevel.Terrain.GetPixelData(ref pixelQueryPosition);
-
-                if (!pixel.IsSolid)
-                {
-                    lemming.LevelPosition = previousQueryPosition;
-                    return;
-                }
-
-                i++;
-            }
-
-            while (i < MinimumWallHeight) // Ascender step up
-            {
-                pixelQueryPosition = lemming.Orientation.MoveUp(pixelQueryPosition, 1);
-                pixel = LevelScreen.CurrentLevel.Terrain.GetPixelData(ref pixelQueryPosition);
-
-                if (!pixel.IsSolid)
-                {
-                    CommonMethods.TransitionToNewAction(lemming, AscenderAction.Instance, false);
-                    /*lemming.CurrentAction = AscenderAction.Instance;
-                    lemming.AnimationFrame = -1;
-                    lemming.AscenderProgress = AscenderStep;*/
-                    lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, new LevelPosition(deltaX, AscenderStep));
-                    return;
-                }
-
-                i++;
-            }
-
-            // Hit a wall! Turn around!
-            lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
+            lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
+            CommonMethods.TransitionToNewAction(lemming, DehoisterAction.Instance, true);
+            return;
         }
-        else // Check pixels going down
+
+        if (dy < -6)
         {
-            var i = 0;
-            while (i < FallDistanceFall)
+            if (lemming.IsClimber)
             {
-                pixelQueryPosition = lemming.Orientation.MoveDown(pixelQueryPosition, 1);
-                pixel = LevelScreen.CurrentLevel.Terrain.GetPixelData(ref pixelQueryPosition);
-
-                if (pixel.IsSolid)
-                {
-                    lemming.LevelPosition = pixelQueryPosition;
-                    return;
-                }
-
-                i++;
+                CommonMethods.TransitionToNewAction(lemming, ClimberAction.Instance, false);
             }
+            else
+            {
+                lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
+                lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
+            }
+        }
+        else if (dy < -2)
+        {
+            CommonMethods.TransitionToNewAction(lemming, AscenderAction.Instance, false);
+            lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 2);
+        }
+        else if (dy < 1)
+        {
+            lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, dy);
+        }
 
+        // Get new ground pixel again in case the Lem has turned
+        dy = FindGroundPixel(lemming.Orientation, lemming.LevelPosition);
+
+        if (dy > 3)
+        {
+            lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 4);
             CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, false);
-            /*lemming.CurrentAction = FallerAction.Instance;
-            lemming.AnimationFrame = -1;*/
-            lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, new LevelPosition(deltaX, -FallDistanceFall));
+        }
+        else if (dy > 0)
+        {
+            lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, dy);
         }
     }
 
-    public void OnTransitionToAction(Lemming lemming)
+    private static int FindGroundPixel(
+        IOrientation orientation,
+        LevelPosition levelPosition)
+    {
+        // Find the new ground pixel
+        // If Result = 4, then at least 4 pixels are air below (X, Y)
+        // If Result = -7, then at least 7 pixels are terrain above (X, Y)
+        var result = 0;
+        if (Terrain.GetPixelData(levelPosition).IsSolid)
+        {
+            while (Terrain.GetPixelData(orientation.MoveUp(levelPosition, 1 - result)).IsSolid &&
+                   result > -7)
+            {
+                result--;
+            }
+
+            return result;
+        }
+
+        result = 1;
+        while (!Terrain.GetPixelData(orientation.MoveDown(levelPosition, result)).IsSolid &&
+               result < 4)
+        {
+            result++;
+        }
+
+        return result;
+    }
+
+    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

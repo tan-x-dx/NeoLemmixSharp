@@ -15,7 +15,7 @@ public sealed class VoidBoundaryBehaviour : ILevelBoundaryBehaviour
         _data = data;
     }
 
-    public PixelData GetPixel(ref LevelPosition levelPosition)
+    public PixelData GetPixel(LevelPosition levelPosition)
     {
         if (levelPosition.X < 0 || levelPosition.X >= _width ||
             levelPosition.Y < 0 || levelPosition.Y >= _height)
@@ -23,6 +23,11 @@ public sealed class VoidBoundaryBehaviour : ILevelBoundaryBehaviour
 
         var index = _width * levelPosition.Y + levelPosition.X;
         return _data[index];
+    }
+
+    public LevelPosition NormalisePosition(LevelPosition levelPosition)
+    {
+        return levelPosition;
     }
 
     public void ScrollViewPortHorizontally(LevelViewPort viewPort, int dx)

@@ -22,9 +22,38 @@ public sealed class DisarmerAction : ILemmingAction
 
     public void UpdateLemming(Lemming lemming)
     {
+        lemming.DisarmingFrames--;
+        if (lemming.DisarmingFrames <= 0)
+        {
+            /* ??
+            if L.LemActionNew <> baNone then Transition(L, L.LemActionNew)
+            else Transition(L, baWalking);
+            L.LemActionNew := baNone;
+            */
+        }
+        else if ((lemming.AnimationFrame & 7) == 0)
+        {
+            // ?? CueSoundEffect(SFX_FIXING, L.Position); ??
+        }
     }
 
-    public void OnTransitionToAction(Lemming lemming)
+    /*
+        function TLemmingGame.HandleDisarming(L: TLemming): Boolean;
+begin
+  Result := False;
+  Dec(L.LemDisarmingFrames);
+  if L.LemDisarmingFrames <= 0 then
+  begin
+    if L.LemActionNew <> baNone then Transition(L, L.LemActionNew)
+    else Transition(L, baWalking);
+    L.LemActionNew := baNone;
+  end
+  else if L.LemPhysicsFrame mod 8 = 0 then
+    CueSoundEffect(SFX_FIXING, L.Position);
+end;
+    */
+
+    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

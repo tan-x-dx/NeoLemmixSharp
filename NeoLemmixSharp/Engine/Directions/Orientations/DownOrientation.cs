@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Rendering;
+using static NeoLemmixSharp.Engine.Directions.Orientations.IOrientation;
 
 namespace NeoLemmixSharp.Engine.Directions.Orientations;
 
@@ -15,32 +16,32 @@ public sealed class DownOrientation : IOrientation
     public LevelPosition MoveRight(LevelPosition position, int step)
     {
         position.X += step;
-        return position;
+        return Terrain.NormalisePosition(position);
     }
 
     public LevelPosition MoveUp(LevelPosition position, int step)
     {
         position.Y -= step;
-        return position;
+        return Terrain.NormalisePosition(position);
     }
 
     public LevelPosition MoveLeft(LevelPosition position, int step)
     {
         position.X -= step;
-        return position;
+        return Terrain.NormalisePosition(position);
     }
 
     public LevelPosition MoveDown(LevelPosition position, int step)
     {
         position.Y += step;
-        return position;
+        return Terrain.NormalisePosition(position);
     }
 
     public LevelPosition Move(LevelPosition position, LevelPosition relativeDirection)
     {
-        return new LevelPosition(
+        return Terrain.NormalisePosition(new LevelPosition(
             position.X + relativeDirection.X,
-            position.Y - relativeDirection.Y);
+            position.Y - relativeDirection.Y));
     }
 
     public LevelPosition Move(LevelPosition position, int dx, int dy)
@@ -48,7 +49,7 @@ public sealed class DownOrientation : IOrientation
         position.X += dx;
         position.Y -= dy;
 
-        return position;
+        return Terrain.NormalisePosition(position);
     }
 
     public ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle)

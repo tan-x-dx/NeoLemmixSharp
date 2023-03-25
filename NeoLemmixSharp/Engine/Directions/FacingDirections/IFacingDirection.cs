@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Directions.FacingDirections;
 
 public interface IFacingDirection
 {
-    int DeltaX(int deltaX);
+    int DeltaX { get; }
     IFacingDirection OppositeDirection { get; }
 
     ActionSprite ChooseActionSprite(LemmingActionSpriteBundle actionSpriteBundle, IOrientation orientation);

@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Rendering;
+using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
@@ -9,8 +10,6 @@ public sealed class BasherAction : ILemmingAction
     public const int NumberOfBasherAnimationFrames = 16;
 
     public static BasherAction Instance { get; } = new();
-
-    private static PixelManager Terrain => LevelScreen.CurrentLevel!.Terrain;
 
     private BasherAction()
     {
@@ -33,16 +32,16 @@ public sealed class BasherAction : ILemmingAction
         IOrientation orientation,
         IFacingDirection facingDirection)
     {
-        return Terrain.GetPixelData(pos, orientation, 0, 3).IsIndestructible(orientation, facingDirection, this) ||
-               Terrain.GetPixelData(pos, orientation, 0, 4).IsIndestructible(orientation, facingDirection, this) ||
-               Terrain.GetPixelData(pos, orientation, 0, 5).IsIndestructible(orientation, facingDirection, this);
+        return Terrain.GetPixelData(orientation.MoveUp(pos, 3)).IsIndestructible(orientation, facingDirection, this) ||
+               Terrain.GetPixelData(orientation.MoveUp(pos, 4)).IsIndestructible(orientation, facingDirection, this) ||
+               Terrain.GetPixelData(orientation.MoveUp(pos, 5)).IsIndestructible(orientation, facingDirection, this);
     }
 
     private void BasherTurn(
         Lemming lemming,
         bool playSound)
     {
-        var dx = lemming.FacingDirection.DeltaX(1);
+        var dx = lemming.FacingDirection.DeltaX;
         lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
         CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, true);
 
@@ -58,13 +57,13 @@ public sealed class BasherAction : ILemmingAction
         int dx,
         int step)
     {
-        var p1X1Y = Terrain.GetPixelData(pos, orientation, dx, 1).IsSolid;
-        var p1X2Y = Terrain.GetPixelData(pos, orientation, dx, 2).IsSolid;
-        var p1X3Y = Terrain.GetPixelData(pos, orientation, dx, 3).IsSolid;
+        var p1X1Y = Terrain.GetPixelData(orientation.Move(pos, dx, 1)).IsSolid;
+        var p1X2Y = Terrain.GetPixelData(orientation.Move(pos, dx, 2)).IsSolid;
+        var p1X3Y = Terrain.GetPixelData(orientation.Move(pos, dx, 3)).IsSolid;
 
-        var p2X1Y = Terrain.GetPixelData(pos, orientation, dx + dx, 1).IsSolid;
-        var p2X2Y = Terrain.GetPixelData(pos, orientation, dx + dx, 2).IsSolid;
-        var p2X3Y = Terrain.GetPixelData(pos, orientation, dx + dx, 3).IsSolid;
+        var p2X1Y = Terrain.GetPixelData(orientation.Move(pos, dx + dx, 1)).IsSolid;
+        var p2X2Y = Terrain.GetPixelData(orientation.Move(pos, dx + dx, 2)).IsSolid;
+        var p2X3Y = Terrain.GetPixelData(orientation.Move(pos, dx + dx, 3)).IsSolid;
 
         if (step == 1)
         {
@@ -122,7 +121,7 @@ public sealed class BasherAction : ILemmingAction
         return true;
     }
 
-    public void OnTransitionToAction(Lemming lemming)
+    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

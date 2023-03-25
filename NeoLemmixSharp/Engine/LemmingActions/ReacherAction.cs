@@ -24,7 +24,7 @@ public sealed class ReacherAction : ILemmingAction
     {
     }
 
-    public void OnTransitionToAction(Lemming lemming)
+    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

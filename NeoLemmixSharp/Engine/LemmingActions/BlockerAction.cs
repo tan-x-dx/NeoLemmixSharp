@@ -24,7 +24,7 @@ public sealed class BlockerAction : ILemmingAction
     {
     }
 
-    public void OnTransitionToAction(Lemming lemming)
+    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

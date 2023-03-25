@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Rendering;
+using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
@@ -22,16 +23,12 @@ public sealed class BuilderAction : ILemmingAction
 
     public void UpdateLemming(Lemming lemming)
     {
-        if (lemming.NumberOfBricksLeft == 0)
-        {
-            ;
-        }
-
         if (lemming.AnimationFrame == 9)
         {
             CommonMethods.LayBrick(lemming);
         }
-        else if (lemming.AnimationFrame == 10 && lemming.NumberOfBricksLeft <= 3)
+        else if (lemming.AnimationFrame == 10 &&
+                 lemming.NumberOfBricksLeft <= 3)
         {
             // play sound/make visual cue
         }
@@ -44,124 +41,46 @@ public sealed class BuilderAction : ILemmingAction
 
     private static void BuilderFrame0(Lemming lemming)
     {
-        var originalPosition = lemming.LevelPosition;
-
         lemming.NumberOfBricksLeft--;
-        var deltaX = lemming.FacingDirection.DeltaX(1);
-        var checkPositionDelta = new LevelPosition(deltaX, 2);
-        var pixelQueryPosition = lemming.Orientation.Move(originalPosition, checkPositionDelta);
-        var pixel = LevelScreen.CurrentLevel!.Terrain.GetPixelData(ref pixelQueryPosition);
 
-        if (pixel.IsSolid)
+        var dx = lemming.FacingDirection.DeltaX;
+        if (Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx, 2)).IsSolid)
         {
             CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, true);
-            return;
         }
-
-        if (lemming.NumberOfBricksLeft > 0 &&
-            (PixelIsSolid(lemming, deltaX, 3) ||
-             PixelIsSolid(lemming, deltaX + deltaX, 2) ||
-             PixelIsSolid(lemming, deltaX + deltaX, 10)))
+        else if (Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx, 3)).IsSolid ||
+                 Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx + dx, 2)).IsSolid ||
+                 (Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx + dx, 10)).IsSolid &&
+                  lemming.NumberOfBricksLeft > 0))
         {
-            lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, new LevelPosition(deltaX, 1));
+            lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, dx, 1);
             CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, true);
-            return;
         }
-
-        if (!lemming.ConstructivePositionFreeze)
+        else
         {
-            lemming.LevelPosition = lemming.Orientation.Move(originalPosition, new LevelPosition(deltaX + deltaX, 1));
-            return;
-        }
+            if (!lemming.ConstructivePositionFreeze)
+            {
+                lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, dx + dx, 1);
+            }
 
-        if (lemming.NumberOfBricksLeft > 0 &&
-            (PixelIsSolid(lemming, 0, 2) ||
-             PixelIsSolid(lemming, 0, 3) ||
-             PixelIsSolid(lemming, deltaX, 3) ||
-             PixelIsSolid(lemming, deltaX, 9)))
-        {
-            CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, true);
-            return;
-        }
-
-        if (lemming.NumberOfBricksLeft == 0)
-        {
-            CommonMethods.TransitionToNewAction(lemming, ShruggerAction.Instance, false);
+            if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 2)).IsSolid ||
+                Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 3)).IsSolid ||
+                Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx, 3)).IsSolid ||
+                (Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx + dx, 10)).IsSolid &&
+                 lemming.NumberOfBricksLeft > 0))
+            {
+                CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, true);
+            }
+            else if (lemming.NumberOfBricksLeft == 0)
+            {
+                CommonMethods.TransitionToNewAction(lemming, ShruggerAction.Instance, false);
+            }
         }
     }
 
-    public void OnTransitionToAction(Lemming lemming)
+    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
         lemming.NumberOfBricksLeft = 12;
         lemming.ConstructivePositionFreeze = false;
-    }
-
-
-    /*
-
-    begin
-      Result := True;
-
-      if L.LemPhysicsFrame = 9 then
-        LayBrick(L)
-
-      else if (L.LemPhysicsFrame = 10) and (L.LemNumberOfBricksLeft <= 3) then
-        CueSoundEffect(SFX_BUILDER_WARNING, L.Position)
-
-      else if L.LemPhysicsFrame = 0 then
-      begin
-        Dec(L.LemNumberOfBricksLeft);
-
-        if HasPixelAt(L.LemX + L.LemDx, L.LemY - 2) then
-          Transition(L, baWalking, True)  // turn around as well
-
-        else if (     HasPixelAt(L.LemX + L.LemDx, L.LemY - 3)
-                  or  HasPixelAt(L.LemX + 2*L.LemDx, L.LemY - 2)
-                  or (HasPixelAt(L.LemX + 2*L.LemDx, L.LemY - 10) and (L.LemNumberOfBricksLeft > 0))
-                ) then
-        begin
-          Dec(L.LemY);
-          Inc(L.LemX, L.LemDx);
-          Transition(L, baWalking, True)  // turn around as well
-        end
-
-        else
-        begin
-          if not L.LemConstructivePositionFreeze then
-          begin
-            Dec(L.LemY);
-            Inc(L.LemX, 2*L.LemDx);
-          end;
-
-          if (     HasPixelAt(L.LemX, L.LemY - 2)
-               or  HasPixelAt(L.LemX, L.LemY - 3)
-               or  HasPixelAt(L.LemX + L.LemDx, L.LemY - 3)
-               or (HasPixelAt(L.LemX + L.LemDx, L.LemY - 9) and (L.LemNumberOfBricksLeft > 0))
-             ) then
-             Transition(L, baWalking, True)  // turn around as well
-
-          else if L.LemNumberOfBricksLeft = 0 then
-             Transition(L, baShrugging);
-        end;
-      end;
-
-      if L.LemPhysicsFrame = 0 then
-        L.LemConstructivePositionFreeze := false;
-    end;
-
-    */
-    private static bool PixelIsSolid(Lemming lemming, int dx, int dy)
-    {
-        var pixelQueryPosition = lemming.Orientation.Move(lemming.LevelPosition, new LevelPosition(dx, dy));
-        var pixel = LevelScreen.CurrentLevel!.Terrain.GetPixelData(ref pixelQueryPosition);
-        return pixel.IsSolid;
-    }
-
-    private static void QuitBuildingAndTurnAround(Lemming lemming)
-    {
-        lemming.CurrentAction = WalkerAction.Instance;
-        lemming.AnimationFrame = -1;
-        lemming.NumberOfBricksLeft = 0;
-        lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
     }
 }
