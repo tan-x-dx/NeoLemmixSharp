@@ -15,13 +15,15 @@ public sealed class FencerAction : ILemmingAction
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
     public string LemmingActionName => "fencer";
     public int NumberOfAnimationFrames => NumberOfFencerAnimationFrames;
+    public bool IsOneTimeAction => false;
 
     public bool Equals(ILemmingAction? other) => other is FencerAction;
     public override bool Equals(object? obj) => obj is FencerAction;
     public override int GetHashCode() => nameof(FencerAction).GetHashCode();
 
-    public void UpdateLemming(Lemming lemming)
+    public bool UpdateLemming(Lemming lemming)
     {
+        return false;
     }
 
     public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)

@@ -16,12 +16,13 @@ public sealed class FallerAction : ILemmingAction
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
     public string LemmingActionName => "faller";
     public int NumberOfAnimationFrames => NumberOfFallerAnimationFrames;
+    public bool IsOneTimeAction => false;
 
     public bool Equals(ILemmingAction? other) => other is FallerAction;
     public override bool Equals(object? obj) => obj is FallerAction;
     public override int GetHashCode() => nameof(FallerAction).GetHashCode();
 
-    public void UpdateLemming(Lemming lemming)
+    public bool UpdateLemming(Lemming lemming)
     {
         var currentFallDistance = 0;
         var maxFallDistance = 3;
@@ -32,14 +33,14 @@ public sealed class FallerAction : ILemmingAction
         }
 
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistance))
-            return;
+            return true;
 
         while (currentFallDistance < maxFallDistance &&
                !Terrain.GetPixelData(lemming.LevelPosition).IsSolid)
         {
             if (currentFallDistance > 0 &&
                 CheckFloaterOrGliderTransition(lemming, currentFallDistance))
-                return;
+                return true;
 
             lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 1);
             currentFallDistance++;
@@ -63,16 +64,13 @@ public sealed class FallerAction : ILemmingAction
         }
 
         if (currentFallDistance >= LemmingConstants.MaxFallDistance)
-            return;
+            return true;
 
-        if (IsFallFatal(lemming))
-        {
-            // ?? fLemNextAction := baSplatting ??
-        }
-        else
-        {
-            // ?? fLemNextAction := baWalking ??
-        }
+        lemming.NextAction = IsFallFatal(lemming)
+            ? SplatterAction.Instance
+            : WalkerAction.Instance;
+
+        return true;
     }
 
     private static bool IsFallFatal(Lemming lemming)

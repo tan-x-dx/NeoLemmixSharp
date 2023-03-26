@@ -16,12 +16,13 @@ public sealed class StackerAction : ILemmingAction
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
     public string LemmingActionName => "stacker";
     public int NumberOfAnimationFrames => NumberOfStackerAnimationFrames;
+    public bool IsOneTimeAction => false;
 
     public bool Equals(ILemmingAction? other) => other is StackerAction;
     public override bool Equals(object? obj) => obj is StackerAction;
     public override int GetHashCode() => nameof(StackerAction).GetHashCode();
 
-    public void UpdateLemming(Lemming lemming)
+    public bool UpdateLemming(Lemming lemming)
     {
         if (lemming.AnimationFrame == 7)
         {
@@ -51,6 +52,8 @@ public sealed class StackerAction : ILemmingAction
                 CommonMethods.TransitionToNewAction(lemming, ShruggerAction.Instance, false);
             }
         }
+
+        return true;
     }
 
     private static bool MayPlaceNextBrick(Lemming lemming)

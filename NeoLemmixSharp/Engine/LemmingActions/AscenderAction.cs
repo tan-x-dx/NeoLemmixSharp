@@ -16,12 +16,13 @@ public sealed class AscenderAction : ILemmingAction
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
     public string LemmingActionName => "ascender";
     public int NumberOfAnimationFrames => NumberOfAscenderAnimationFrames;
+    public bool IsOneTimeAction => false;
 
     public bool Equals(ILemmingAction? other) => other is AscenderAction;
     public override bool Equals(object? obj) => obj is AscenderAction;
     public override int GetHashCode() => nameof(AscenderAction).GetHashCode();
 
-    public void UpdateLemming(Lemming lemming)
+    public bool UpdateLemming(Lemming lemming)
     {
         var dy = 0;
         while (dy < 2 &&
@@ -39,7 +40,7 @@ public sealed class AscenderAction : ILemmingAction
         if (dy < 2 &&
             !pixel1.IsSolid)
         {
-            // ?? fLemNextAction := baWalking ??
+            lemming.NextAction = WalkerAction.Instance;
         }
         else if ((lemming.AscenderProgress == 4 &&
                   pixel1.IsSolid &&
@@ -51,6 +52,8 @@ public sealed class AscenderAction : ILemmingAction
             lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
             CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, true);
         }
+
+        return true;
     }
 
     public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)

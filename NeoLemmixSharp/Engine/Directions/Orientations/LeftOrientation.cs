@@ -12,6 +12,10 @@ public sealed class LeftOrientation : IOrientation
     }
 
     public int RotNum => 1;
+    public LevelPosition TopLeftCornerOfLevel() => new(LevelScreen.CurrentLevel.Width, 0);
+    public LevelPosition TopRightCornerOfLevel() => new(LevelScreen.CurrentLevel.Width, LevelScreen.CurrentLevel.Height);
+    public LevelPosition BottomLeftCornerOfLevel() => new(0, 0);
+    public LevelPosition BottomRightCornerOfLevel() => new(0, LevelScreen.CurrentLevel.Height);
 
     public LevelPosition MoveRight(LevelPosition position, int step)
     {
@@ -51,6 +55,13 @@ public sealed class LeftOrientation : IOrientation
 
         return Terrain.NormalisePosition(position);
     }
+
+    public bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y == secondPosition.Y;
+    public bool MatchesVertically(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X == secondPosition.X;
+    public bool FirstIsAboveSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X > secondPosition.X;
+    public bool FirstIsBelowSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X < secondPosition.X;
+    public bool FirstIsToLeftOfSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y < secondPosition.Y;
+    public bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y > secondPosition.Y;
 
     public ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle)
     {

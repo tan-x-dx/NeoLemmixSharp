@@ -18,6 +18,7 @@ public sealed class Lemming : ITickable
     public bool IsFloater;
     public bool IsGlider;
     public bool IsSlider;
+    public bool IsSwimmer;
 
     public int AnimationFrame;
     public int AscenderProgress;
@@ -28,9 +29,13 @@ public sealed class Lemming : ITickable
     public bool PlacedBrick;
     public bool StackLow;
     public bool InitialFall;
+    public bool EndOfAnimation;
     public int DistanceFallen;
     public int TrueDistanceFallen;
     public LevelPosition DehoistPin;
+    public LevelPosition LaserHitPoint;
+    public bool LaserHit;
+    public int LaserRemainTime;
 
     public int X => LevelPosition.X;
     public int Y => LevelPosition.Y;
@@ -43,6 +48,7 @@ public sealed class Lemming : ITickable
     public IOrientation Orientation = DownOrientation.Instance;
 
     public ILemmingAction CurrentAction = WalkerAction.Instance;
+    public ILemmingAction? NextAction = null;
 
     public bool ShouldTick => true;
 
@@ -53,13 +59,57 @@ public sealed class Lemming : ITickable
             ;
         }
 
+        var continueWithLemming = true;
+        var oldLevelPosition = LevelPosition;
+        var oldFacingDirection = FacingDirection;
+        var oldAction = CurrentAction;
+        NextAction = null;
+
+        if (!continueWithLemming)
+            return;
+        continueWithLemming = HandleLemmingAction();
+        if (!continueWithLemming)
+            return;
+        continueWithLemming = CheckLevelBoundaries();
+        if (!continueWithLemming)
+            return;
+        CheckTriggerArea(false);
+    }
+
+    private bool HandleLemmingAction()
+    {
         AnimationFrame++;
         if (AnimationFrame == CurrentAction.NumberOfAnimationFrames)
         {
-            AnimationFrame = 0;
+            if (CurrentAction == FloaterAction.Instance ||
+                CurrentAction == GliderAction.Instance)
+            {
+                AnimationFrame = 9;
+            }
+            else
+            {
+                AnimationFrame = 0;
+            }
+
+            if (CurrentAction.IsOneTimeAction)
+            {
+                EndOfAnimation = true;
+            }
         }
 
-        CurrentAction.UpdateLemming(this);
+        var result = CurrentAction.UpdateLemming(this);
 
+        return result;
+    }
+
+    private bool CheckLevelBoundaries()
+    {
+        return true;
+    }
+
+    private bool CheckTriggerArea(bool isPostTeleportCheck)
+    {
+
+        return true;
     }
 }

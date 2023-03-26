@@ -15,13 +15,15 @@ public sealed class JumperAction : ILemmingAction
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
     public string LemmingActionName => "jumper";
     public int NumberOfAnimationFrames => NumberOfJumperAnimationFrames;
+    public bool IsOneTimeAction => false;
 
     public bool Equals(ILemmingAction? other) => other is JumperAction;
     public override bool Equals(object? obj) => obj is JumperAction;
     public override int GetHashCode() => nameof(JumperAction).GetHashCode();
 
-    public void UpdateLemming(Lemming lemming)
+    public bool UpdateLemming(Lemming lemming)
     {
+        return false;
     }
 
     public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)

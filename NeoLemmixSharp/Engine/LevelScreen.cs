@@ -12,7 +12,7 @@ public sealed class LevelScreen : BaseScreen
 {
     private bool _stopMotion = true;
     private bool _doTick;
-    public static LevelScreen? CurrentLevel { get; private set; }
+    public static LevelScreen CurrentLevel { get; private set; }
 
     public ITickable[] LevelObjects { private get; init; }
     public IRenderable[] LevelSprites { private get; init; }

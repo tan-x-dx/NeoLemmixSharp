@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LemmingActions;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+
+namespace NeoLemmixSharp.Engine.LemmingActions;
 
 public static class CommonMethods
 {
@@ -52,6 +54,35 @@ public static class CommonMethods
             }
 
             brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        }
+
+        return result;
+    }
+
+    public static int FindGroundPixel(
+        IOrientation orientation,
+        LevelPosition levelPosition)
+    {
+        // Find the new ground pixel
+        // If Result = 4, then at least 4 pixels are air below (X, Y)
+        // If Result = -7, then at least 7 pixels are terrain above (X, Y)
+        var result = 0;
+        if (Terrain.GetPixelData(levelPosition).IsSolid)
+        {
+            while (Terrain.GetPixelData(orientation.MoveUp(levelPosition, 1 - result)).IsSolid &&
+                   result > -7)
+            {
+                result--;
+            }
+
+            return result;
+        }
+
+        result = 1;
+        while (!Terrain.GetPixelData(orientation.MoveDown(levelPosition, result)).IsSolid &&
+               result < 4)
+        {
+            result++;
         }
 
         return result;

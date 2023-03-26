@@ -17,12 +17,13 @@ public sealed class PlatformerAction : ILemmingAction
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
     public string LemmingActionName => "platformer";
     public int NumberOfAnimationFrames => NumberOfPlatformerAnimationFrames;
+    public bool IsOneTimeAction => false;
 
     public bool Equals(ILemmingAction? other) => other is PlatformerAction;
     public override bool Equals(object? obj) => obj is PlatformerAction;
     public override int GetHashCode() => nameof(PlatformerAction).GetHashCode();
 
-    public void UpdateLemming(Lemming lemming)
+    public bool UpdateLemming(Lemming lemming)
     {
         var dx = lemming.FacingDirection.DeltaX;
 
@@ -91,6 +92,8 @@ public sealed class PlatformerAction : ILemmingAction
         {
             lemming.ConstructivePositionFreeze = false;
         }
+
+        return true;
     }
 
     private static bool PlatformerTerrainCheck(

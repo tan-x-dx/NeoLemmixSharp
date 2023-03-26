@@ -61,7 +61,9 @@ public interface ILemmingAction : IEquatable<ILemmingAction>
 
     string LemmingActionName { get; }
     int NumberOfAnimationFrames { get; }
+    bool IsOneTimeAction { get; }
 
-    void UpdateLemming(Lemming lemming);
+    bool UpdateLemming(Lemming lemming);
     void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction);
+
 }

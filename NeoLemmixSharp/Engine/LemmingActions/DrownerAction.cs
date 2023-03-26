@@ -15,17 +15,20 @@ public sealed class DrownerAction : ILemmingAction
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
     public string LemmingActionName => "drowner";
     public int NumberOfAnimationFrames => NumberOfDrownerAnimationFrames;
+    public bool IsOneTimeAction => true;
 
     public bool Equals(ILemmingAction? other) => other is DrownerAction;
     public override bool Equals(object? obj) => obj is DrownerAction;
     public override int GetHashCode() => nameof(DrownerAction).GetHashCode();
 
-    public void UpdateLemming(Lemming lemming)
+    public bool UpdateLemming(Lemming lemming)
     {
-        if (lemming.AnimationFrame == NumberOfDrownerAnimationFrames)
+        if (lemming.EndOfAnimation)
         {
             // remove lemming
         }
+
+        return false;
     }
 
     public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)

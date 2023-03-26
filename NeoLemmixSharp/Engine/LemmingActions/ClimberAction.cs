@@ -16,6 +16,7 @@ public sealed class ClimberAction : ILemmingAction
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
     public string LemmingActionName => "climber";
     public int NumberOfAnimationFrames => NumberOfClimberAnimationFrames;
+    public bool IsOneTimeAction => false;
 
     public bool Equals(ILemmingAction? other) => other is ClimberAction;
     public override bool Equals(object? obj) => obj is ClimberAction;
@@ -23,7 +24,7 @@ public sealed class ClimberAction : ILemmingAction
 
     // Be very careful when changing the terrain/hoister checks for climbers!
     // See http://www.lemmingsforums.net/index.php?topic=2506.0 first!
-    public void UpdateLemming(Lemming lemming)
+    public bool UpdateLemming(Lemming lemming)
     {
         if (lemming.AnimationFrame <= 3)
         {
@@ -62,6 +63,8 @@ public sealed class ClimberAction : ILemmingAction
         {
 
         }
+
+        return true;
     }
 
     /*

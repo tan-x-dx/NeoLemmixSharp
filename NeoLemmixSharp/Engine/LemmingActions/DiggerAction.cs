@@ -17,12 +17,13 @@ public sealed class DiggerAction : ILemmingAction
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
     public string LemmingActionName => "digger";
     public int NumberOfAnimationFrames => NumberOfDiggerAnimationFrames;
+    public bool IsOneTimeAction => false;
 
     public bool Equals(ILemmingAction? other) => other is DiggerAction;
     public override bool Equals(object? obj) => obj is DiggerAction;
     public override int GetHashCode() => nameof(DiggerAction).GetHashCode();
 
-    public void UpdateLemming(Lemming lemming)
+    public bool UpdateLemming(Lemming lemming)
     {
         if (lemming.IsStartingAction)
         {
@@ -33,7 +34,7 @@ public sealed class DiggerAction : ILemmingAction
             lemming.AnimationFrame--;
         }
 
-        if (lemming.AnimationFrame >= 0 && 
+        if (lemming.AnimationFrame >= 0 &&
             lemming.AnimationFrame <= 8)
         {
             var continueWork = DigOneRow(lemming.LevelPosition, lemming.Orientation);
@@ -49,6 +50,8 @@ public sealed class DiggerAction : ILemmingAction
             else if not ContinueWork then
             Transition(L, baFalling);*/
         }
+
+        return true;
     }
 
     private static bool DigOneRow(

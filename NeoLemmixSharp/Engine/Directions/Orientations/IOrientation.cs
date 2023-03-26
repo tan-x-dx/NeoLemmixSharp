@@ -26,6 +26,11 @@ public interface IOrientation : IEquatable<IOrientation>
 
     int RotNum { get; }
 
+    LevelPosition TopLeftCornerOfLevel();
+    LevelPosition TopRightCornerOfLevel();
+    LevelPosition BottomLeftCornerOfLevel();
+    LevelPosition BottomRightCornerOfLevel();
+
     LevelPosition MoveRight(LevelPosition position, int step);
     LevelPosition MoveUp(LevelPosition position, int step);
     LevelPosition MoveLeft(LevelPosition position, int step);
@@ -46,6 +51,13 @@ public interface IOrientation : IEquatable<IOrientation>
     /// <param name="dy"></param>
     /// <returns></returns>
     LevelPosition Move(LevelPosition position, int dx, int dy);
+
+    bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition);
+    bool MatchesVertically(LevelPosition firstPosition, LevelPosition secondPosition);
+    bool FirstIsAboveSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+    bool FirstIsBelowSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+    bool FirstIsToLeftOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+    bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
 
     ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle);
     ActionSprite GetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle);

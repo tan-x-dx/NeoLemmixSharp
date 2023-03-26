@@ -16,12 +16,13 @@ public sealed class BuilderAction : ILemmingAction
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
     public string LemmingActionName => "builder";
     public int NumberOfAnimationFrames => NumberOfBuilderAnimationFrames;
+    public bool IsOneTimeAction => false;
 
     public bool Equals(ILemmingAction? other) => other is BuilderAction;
     public override bool Equals(object? obj) => obj is BuilderAction;
     public override int GetHashCode() => nameof(BuilderAction).GetHashCode();
 
-    public void UpdateLemming(Lemming lemming)
+    public bool UpdateLemming(Lemming lemming)
     {
         if (lemming.AnimationFrame == 9)
         {
@@ -37,6 +38,8 @@ public sealed class BuilderAction : ILemmingAction
             BuilderFrame0(lemming);
             lemming.ConstructivePositionFreeze = false;
         }
+
+        return true;
     }
 
     private static void BuilderFrame0(Lemming lemming)

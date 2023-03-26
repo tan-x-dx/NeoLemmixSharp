@@ -18,13 +18,15 @@ public sealed class BasherAction : ILemmingAction
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
     public string LemmingActionName => "basher";
     public int NumberOfAnimationFrames => NumberOfBasherAnimationFrames;
+    public bool IsOneTimeAction => false;
 
     public bool Equals(ILemmingAction? other) => other is BasherAction;
     public override bool Equals(object? obj) => obj is BasherAction;
     public override int GetHashCode() => nameof(BasherAction).GetHashCode();
 
-    public void UpdateLemming(Lemming lemming)
+    public bool UpdateLemming(Lemming lemming)
     {
+        return false;
     }
 
     private bool BasherIndestructibleCheck(

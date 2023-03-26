@@ -47,6 +47,14 @@ public sealed class PixelManager
         return _boundaryBehaviour.NormalisePosition(levelPosition);
     }
 
+    public bool PositionOutOfBounds(LevelPosition levelPosition)
+    {
+        return levelPosition.X < 0 ||
+               levelPosition.X >= Width ||
+               levelPosition.Y < 0 ||
+               levelPosition.Y >= Height;
+    }
+
     public PixelData GetPixelData(LevelPosition levelPosition)
     {
         if (levelPosition.X < 0 || levelPosition.X >= Width ||
