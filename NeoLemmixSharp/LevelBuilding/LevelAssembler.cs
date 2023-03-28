@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.LevelBuilding.Data;
+using NeoLemmixSharp.LevelBuilding.Sprites;
 using NeoLemmixSharp.Rendering;
 using System;
 using System.Collections.Generic;
@@ -28,11 +29,10 @@ public sealed class LevelAssembler : IDisposable
 
     public void AssembleLevel(
         LevelData levelData,
-        ThemeData themeData,
         TerrainSprite terrainSprite)
     {
         var spriteBankBuilder = new SpriteBankBuilder(_graphicsDevice);
-        _spriteBank = spriteBankBuilder.BuildSpriteBank(themeData, terrainSprite);
+        _spriteBank = spriteBankBuilder.BuildSpriteBank(levelData.ThemeData, terrainSprite, levelData.AllGadgetData);
 
         SetUpTestLemmings();
     }

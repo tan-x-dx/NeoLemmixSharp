@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.LevelBuilding.Data;
+﻿using System.Collections.Generic;
+
+namespace NeoLemmixSharp.LevelBuilding.Data;
 
 public sealed class LevelData
 {
@@ -17,4 +19,9 @@ public sealed class LevelData
     public int SaveRequirement { get; set; }
     public int? TimeLimit { get; set; }
     public int MaxSpawnInterval { get; set; }
+
+    public ThemeData ThemeData { get; } = new();
+    public List<TerrainData> AllTerrainData { get; } = new();
+    public List<TerrainGroup> AllTerrainGroups { get; } = new();
+    public List<GadgetData> AllGadgetData { get; } = new();
 }

@@ -22,13 +22,10 @@ public sealed class LevelBuilder : IDisposable
         _levelReader.ReadLevel(levelFilePath);
 
         _levelPainter.PaintLevel(
-            _levelReader.LevelData,
-            _levelReader.AllTerrainGroups,
-            _levelReader.AllTerrainData);
+            _levelReader.LevelData);
 
         _levelAssembler.AssembleLevel(
             _levelReader.LevelData,
-            _levelReader.ThemeData,
             _levelPainter.GetTerrainSprite());
 
         return new LevelScreen(

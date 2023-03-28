@@ -14,24 +14,24 @@ public sealed class LevelReader : IDisposable
 
     private IDataReader? _currentDataReader;
 
-    public LevelData LevelData { get; } = new();
-    public ThemeData ThemeData { get; } = new();
-    public List<TerrainData> AllTerrainData { get; } = new();
-    public List<TerrainGroup> AllTerrainGroups { get; } = new();
+    public LevelData LevelData { get; }
 
     public LevelReader()
     {
+        LevelData = new LevelData();
+
         AddDataReader(new LevelDataReader(LevelData, false));
         AddDataReader(new LevelDataReader(LevelData, true));
         AddDataReader(new SkillSetReader());
-        AddDataReader(new TerrainGroupReader(AllTerrainGroups));
-        AddDataReader(new GadgetReader());
-        AddDataReader(new TerrainReader(AllTerrainData));
+        AddDataReader(new TerrainGroupReader(LevelData.AllTerrainGroups));
+        AddDataReader(new GadgetReader(LevelData.AllGadgetData));
+        AddDataReader(new TerrainReader(LevelData.AllTerrainData));
+        AddDataReader(new LemmingReader());
 
-        AddDataReader(new SpriteSetRecolouringReader(ThemeData.LemmingSpriteSetRecolouring));
-        AddDataReader(new StateRecolouringReader(ThemeData));
+        AddDataReader(new SpriteSetRecolouringReader(LevelData.ThemeData.LemmingSpriteSetRecolouring));
+        AddDataReader(new StateRecolouringReader(LevelData.ThemeData));
         AddDataReader(new ShadesReader());
-        AddDataReader(new AnimationDataReader(ThemeData));
+        AddDataReader(new AnimationDataReader(LevelData.ThemeData));
     }
 
     private void AddDataReader(IDataReader dataReader)
@@ -97,7 +97,7 @@ public sealed class LevelReader : IDisposable
             ProcessThemeLine(line);
         }
 
-        ThemeData.LemmingSpritesFilePath = Path.Combine(_rootDirectory, "styles", ThemeData.BaseStyle, "lemmings");
+        LevelData.ThemeData.LemmingSpritesFilePath = Path.Combine(_rootDirectory, "styles", LevelData.ThemeData.BaseStyle, "lemmings");
     }
 
     private void ProcessThemeLine(string line)
@@ -108,34 +108,34 @@ public sealed class LevelReader : IDisposable
         switch (tokens[0])
         {
             case "LEMMINGS":
-                ThemeData.BaseStyle = tokens[1];
+                LevelData.ThemeData.BaseStyle = tokens[1];
                 break;
 
             case "$COLORS":
                 break;
 
             case "MASK":
-                ThemeData.Mask = ReadingHelpers.ReadUint(tokens[1], false);
+                LevelData.ThemeData.Mask = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "MINIMAP":
-                ThemeData.Minimap = ReadingHelpers.ReadUint(tokens[1], false);
+                LevelData.ThemeData.Minimap = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "BACKGROUND":
-                ThemeData.Background = ReadingHelpers.ReadUint(tokens[1], false);
+                LevelData.ThemeData.Background = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "ONE_WAYS":
-                ThemeData.OneWays = ReadingHelpers.ReadUint(tokens[1], false);
+                LevelData.ThemeData.OneWays = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "PICKUP_BORDER":
-                ThemeData.PickupBorder = ReadingHelpers.ReadUint(tokens[1], false);
+                LevelData.ThemeData.PickupBorder = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "PICKUP_INSIDE":
-                ThemeData.PickupInside = ReadingHelpers.ReadUint(tokens[1], false);
+                LevelData.ThemeData.PickupInside = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "END":
@@ -145,7 +145,7 @@ public sealed class LevelReader : IDisposable
 
     private void ReadSpriteData()
     {
-        var schemeFilePath = Path.Combine(ThemeData.LemmingSpritesFilePath, "scheme.nxmi");
+        var schemeFilePath = Path.Combine(LevelData.ThemeData.LemmingSpritesFilePath, "scheme.nxmi");
 
         var schemeLines = File.ReadAllLines(schemeFilePath);
 
@@ -158,7 +158,7 @@ public sealed class LevelReader : IDisposable
 
     public void Dispose()
     {
-        foreach (var terrainGroup in AllTerrainGroups)
+        foreach (var terrainGroup in LevelData.AllTerrainGroups)
         {
             terrainGroup.Dispose();
         }
