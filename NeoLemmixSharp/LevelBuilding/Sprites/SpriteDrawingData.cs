@@ -45,13 +45,10 @@ public sealed class SpriteDrawingData
 
     public void Set(uint pixel, int x0, int y0, int frame)
     {
-        DihedralTransformation.Transform(
-            _originalSpriteWidth - 1,
-            _originalSpriteHeight - 1,
-            x0,
+        DihedralTransformation.Transform(x0,
             y0,
-            out var x1,
-            out var y1);
+            _originalSpriteWidth - 1,
+            _originalSpriteHeight - 1, out var x1, out var y1);
 
         var y2 = y1 + ThisSpriteHeight * frame;
         _colourData.Set(x1, y2, pixel);

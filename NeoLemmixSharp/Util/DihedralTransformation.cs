@@ -94,17 +94,17 @@ public sealed class DihedralTransformation
     public override string ToString() => $"{_rotation}|{_reflection}";
 
     public void Transform(
-        int width0,
-        int height0,
         int x,
         int y,
+        int width,
+        int height,
         out int x0,
         out int y0)
     {
         var m = _reflection.M;
-        var w = _rotation.W(width0, height0);
-        var h = _rotation.H(width0, height0);
-        var s = _reflection.S(_rotation.Choose(width0, height0));
+        var w = _rotation.W(width, height);
+        var h = _rotation.H(width, height);
+        var s = _reflection.S(_rotation.Choose(width, height));
         x0 = s + m * (_rotation.A * x - _rotation.B * y + w);
         y0 = _rotation.B * x + _rotation.A * y + h;
     }

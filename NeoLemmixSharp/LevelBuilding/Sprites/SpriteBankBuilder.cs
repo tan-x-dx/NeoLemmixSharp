@@ -176,13 +176,10 @@ public sealed class SpriteBankBuilder
         {
             var texture = spriteDrawingData.ToTexture(_graphicsDevice);
 
-            spriteDrawingData.DihedralTransformation.Transform(
-                spriteWidth - 1,
-                spriteHeight - 1,
-                footX,
+            spriteDrawingData.DihedralTransformation.Transform(footX,
                 footY,
-                out var footX1,
-                out var footY1);
+                spriteWidth - 1,
+                spriteHeight - 1, out var footX1, out var footY1);
 
             var actionSprite = new ActionSprite(
                 texture,

@@ -122,13 +122,10 @@ public sealed class LevelPainter : IDisposable
         {
             for (var y = 0; y < sourcePixelColourData.Height; y++)
             {
-                dihedralTransformation.Transform(
-                    sourcePixelColourData.Width - 1,
-                    sourcePixelColourData.Height - 1,
-                    x,
+                dihedralTransformation.Transform(x,
                     y,
-                    out var x0,
-                    out var y0);
+                    sourcePixelColourData.Width - 1,
+                    sourcePixelColourData.Height - 1, out var x0, out var y0);
 
                 x0 = x0 + terrainData.X + dx;
                 y0 = y0 + terrainData.Y + dy;
