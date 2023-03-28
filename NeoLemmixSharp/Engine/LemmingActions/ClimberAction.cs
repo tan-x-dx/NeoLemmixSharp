@@ -26,16 +26,19 @@ public sealed class ClimberAction : ILemmingAction
     // See http://www.lemmingsforums.net/index.php?topic=2506.0 first!
     public bool UpdateLemming(Lemming lemming)
     {
+        var dx = lemming.FacingDirection.DeltaX;
         if (lemming.AnimationFrame <= 3)
         {
-            var dx = lemming.FacingDirection.DeltaX;
-            var foundClip = Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, -dx, 6 + lemming.AnimationFrame)).IsSolid ||
-                            Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, -dx, 5 + lemming.AnimationFrame)).IsSolid &&
-                            !lemming.IsStartingAction;
+            var foundClip =
+                Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, -dx, 6 + lemming.AnimationFrame))
+                    .IsSolid ||
+                Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, -dx, 5 + lemming.AnimationFrame))
+                    .IsSolid &&
+                !lemming.IsStartingAction;
 
-            if (lemming.AnimationFrame == 0)// first triggered after 8 frames!
+            if (lemming.AnimationFrame == 0) // first triggered after 8 frames!
             {
-                foundClip &= Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, -dx, 7 + lemming.AnimationFrame)).IsSolid;
+                foundClip &= Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, -dx, 7)).IsSolid;
             }
 
             if (foundClip)
@@ -43,11 +46,11 @@ public sealed class ClimberAction : ILemmingAction
                 // Don't fall below original position on hitting terrain in first cycle
                 if (!lemming.IsStartingAction)
                 {
-                    lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, lemming.AnimationFrame - 3);
+                    lemming.LevelPosition =
+                        lemming.Orientation.MoveDown(lemming.LevelPosition, lemming.AnimationFrame - 3);
                 }
 
-                var isSlider = false;//TODO
-                if (isSlider)
+                if (lemming.IsSlider)
                 {
                     lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
                     CommonMethods.TransitionToNewAction(lemming, SliderAction.Instance, false);
@@ -56,12 +59,47 @@ public sealed class ClimberAction : ILemmingAction
                 {
                     lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
                     CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, true);
+                    lemming.DistanceFallen++; // Least-impact way to fix a fall distance inconsistency. See https://www.lemmingsforums.net/index.php?topic=5794.0
                 }
+            }
+            else if (!Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 7 + lemming.AnimationFrame)).IsSolid)
+            {
+                // if-case prevents too deep bombing, see http://www.lemmingsforums.net/index.php?topic=2620.0
+                if (!(lemming.IsStartingAction && lemming.AnimationFrame == 1))
+                {
+                    lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 2 - lemming.AnimationFrame);
+                    lemming.IsStartingAction = false;
+                }
+
+                CommonMethods.TransitionToNewAction(lemming, HoisterAction.Instance, false);
             }
         }
         else
         {
+            lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
+            lemming.IsStartingAction = false;
 
+            var foundClip = Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, -dx, 7)).IsSolid;
+
+            if (lemming.AnimationFrame == 7)
+            {
+                foundClip = foundClip && Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 7)).IsSolid;
+            }
+
+            if (foundClip)
+            {
+                lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 1);
+
+                if (lemming.IsSlider)
+                {
+                    CommonMethods.TransitionToNewAction(lemming, SliderAction.Instance, false);
+                }
+                else
+                {
+                    lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
+                    CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, true);
+                }
+            }
         }
 
         return true;

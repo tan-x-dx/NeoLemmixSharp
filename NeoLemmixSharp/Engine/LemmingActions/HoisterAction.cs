@@ -30,11 +30,11 @@ public sealed class HoisterAction : ILemmingAction
         // special case due to http://www.lemmingsforums.net/index.php?topic=2620.0
         else if (lemming.AnimationFrame == 1 && lemming.IsStartingAction)
         {
-            lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 1);
+            lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
         }
         else if (lemming.AnimationFrame <=4)
         {
-            lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 2);
+            lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 2);
         }
 
         return true;

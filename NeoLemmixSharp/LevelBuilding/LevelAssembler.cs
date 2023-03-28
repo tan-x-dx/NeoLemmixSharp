@@ -86,14 +86,16 @@ public sealed class LevelAssembler : IDisposable
         {
             //  LevelPosition = new LevelPosition(692, 72),
             LevelPosition = new LevelPosition(60, 20),
-            Orientation = LeftOrientation.Instance
+            Orientation = LeftOrientation.Instance,
+            IsClimber = true
         };
 
         var lemming3 = new Lemming
         {
             //     LevelPosition = new LevelPosition(612, 42),
             LevelPosition = new LevelPosition(145, 134),
-            Orientation = RightOrientation.Instance
+            Orientation = RightOrientation.Instance,
+            IsFloater = true
         };
 
         var lemming4 = new Lemming

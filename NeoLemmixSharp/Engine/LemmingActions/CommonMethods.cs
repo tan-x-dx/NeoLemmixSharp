@@ -98,8 +98,8 @@ public static class CommonMethods
             lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
         }
 
-        var pixel = Terrain.GetPixelData(lemming.LevelPosition);
-        if (!pixel.IsSolid)
+        if (newAction == WalkerAction.Instance &&
+            !Terrain.GetPixelData(lemming.LevelPosition).IsSolid)
         {
             newAction = FallerAction.Instance;
         }
@@ -107,9 +107,10 @@ public static class CommonMethods
         if (lemming.CurrentAction == newAction)
             return;
 
+        // Set initial fall heights according to previous skill
         if (newAction == FallerAction.Instance)
         {
-            if (lemming.CurrentAction != SwimmerAction.Instance)
+            if (lemming.CurrentAction != SwimmerAction.Instance)// for Swimming it's set in HandleSwimming as there is no single universal value
             {
                 if (lemming.CurrentAction == WalkerAction.Instance ||
                      lemming.CurrentAction == BasherAction.Instance)
@@ -187,8 +188,9 @@ public static class CommonMethods
 
         lemming.CurrentAction = newAction;
         lemming.AnimationFrame = 0;
+        lemming.EndOfAnimation = false;
         lemming.NumberOfBricksLeft = 0;
-        var previouslyStartingAction = lemming.IsStartingAction;
+        var previouslyStartingAction = lemming.IsStartingAction;// because for some actions (eg baHoisting) we need to restore previous value
         lemming.IsStartingAction = true;
         lemming.InitialFall = false;
 
