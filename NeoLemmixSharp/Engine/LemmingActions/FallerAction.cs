@@ -24,26 +24,26 @@ public sealed class FallerAction : ILemmingAction
 
     public bool UpdateLemming(Lemming lemming)
     {
-        var currentFallDistance = 0;
-        var maxFallDistance = 3;
+        var currentFallDistanceStep = 0;
+        var maxFallDistanceStep = 3; // A lemming falls 3 pixels each frame
 
         if (false)//if HasTriggerAt(L.LemX, L.LemY, trUpdraft)
         {
-            maxFallDistance = 2;
+            maxFallDistanceStep = 2;
         }
 
-        if (CheckFloaterOrGliderTransition(lemming, currentFallDistance))
+        if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
             return true;
 
-        while (currentFallDistance < maxFallDistance &&
+        while (currentFallDistanceStep < maxFallDistanceStep &&
                !Terrain.GetPixelData(lemming.LevelPosition).IsSolid)
         {
-            if (currentFallDistance > 0 &&
-                CheckFloaterOrGliderTransition(lemming, currentFallDistance))
+            if (currentFallDistanceStep > 0 &&
+                CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
                 return true;
 
             lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 1);
-            currentFallDistance++;
+            currentFallDistanceStep++;
             lemming.DistanceFallen++;
             lemming.TrueDistanceFallen++;
 
@@ -63,12 +63,12 @@ public sealed class FallerAction : ILemmingAction
             lemming.TrueDistanceFallen = LemmingConstants.MaxFallDistance + 1;
         }
 
-        if (currentFallDistance >= LemmingConstants.MaxFallDistance)
-            return true;
-
-        lemming.NextAction = IsFallFatal(lemming)
-            ? SplatterAction.Instance
-            : WalkerAction.Instance;
+        if (currentFallDistanceStep < maxFallDistanceStep)
+        {
+            lemming.NextAction = IsFallFatal(lemming)
+                ? SplatterAction.Instance
+                : WalkerAction.Instance;
+        }
 
         return true;
     }
