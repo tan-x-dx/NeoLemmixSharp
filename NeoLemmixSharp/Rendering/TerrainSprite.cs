@@ -10,6 +10,8 @@ public sealed class TerrainSprite : IRenderable
     private readonly int _textureHeight;
     private readonly Texture2D _texture;
 
+    private readonly uint[] _colourSetter = new uint[1];
+
     public TerrainSprite(Texture2D texture)
     {
         _texture = texture;
@@ -30,9 +32,8 @@ public sealed class TerrainSprite : IRenderable
 
     public void SetPixelColour(int x, int y, uint colour)
     {
-        var pixel = new[] { colour };
-        
-        _texture.SetData(0, new Rectangle(x, y, 1, 1), pixel, 0, 1);
+        _colourSetter[0] = colour;
+        _texture.SetData(0, new Rectangle(x, y, 1, 1), _colourSetter, 0, 1);
     }
 
     public void Dispose()

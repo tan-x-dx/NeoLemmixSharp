@@ -1,4 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Rendering;
 
 namespace NeoLemmixSharp.Engine;
@@ -7,7 +9,8 @@ public sealed class PixelManager
 {
     private readonly PixelData _voidPixel;
     private readonly PixelData[] _data;
-    private readonly ILevelBoundaryBehaviour _boundaryBehaviour;
+    public IHorizontalBoundaryBehaviour HorizontalBoundaryBehaviour { get; }
+    public IVerticalBoundaryBehaviour VerticalBoundaryBehaviour { get; }
 
     private TerrainSprite _terrainSprite;
 
@@ -17,8 +20,8 @@ public sealed class PixelManager
     public PixelManager(
         int width,
         int height,
-        BoundaryBehaviourType leftRightBoundaryBehaviourType,
-        BoundaryBehaviourType upDownBoundaryBehaviourType)
+        BoundaryBehaviourType horizontalBoundaryBehaviourType,
+        BoundaryBehaviourType verticalBoundaryBehaviourType)
     {
         Width = width;
         Height = height;
@@ -26,10 +29,15 @@ public sealed class PixelManager
 
         _data = new PixelData[Width * Height];
 
-        _boundaryBehaviour = GetBoundaryBehaviour(
-            leftRightBoundaryBehaviourType,
-            upDownBoundaryBehaviourType,
-            width, height, _voidPixel, _data);
+        HorizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(
+            horizontalBoundaryBehaviourType,
+            width,
+            height);
+
+        VerticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(
+            verticalBoundaryBehaviourType,
+            width,
+            height);
 
         for (var i = 0; i < _data.Length; i++)
         {
@@ -44,7 +52,9 @@ public sealed class PixelManager
 
     public LevelPosition NormalisePosition(LevelPosition levelPosition)
     {
-        return _boundaryBehaviour.NormalisePosition(levelPosition);
+        return new LevelPosition(
+            HorizontalBoundaryBehaviour.NormaliseX(levelPosition.X),
+            VerticalBoundaryBehaviour.NormaliseY(levelPosition.Y));
     }
 
     public bool PositionOutOfBounds(LevelPosition levelPosition)
@@ -57,8 +67,7 @@ public sealed class PixelManager
 
     public PixelData GetPixelData(LevelPosition levelPosition)
     {
-        if (levelPosition.X < 0 || levelPosition.X >= Width ||
-            levelPosition.Y < 0 || levelPosition.Y >= Height)
+        if (PositionOutOfBounds(levelPosition))
             return _voidPixel;
 
         var index = Width * levelPosition.Y + levelPosition.X;
@@ -69,17 +78,6 @@ public sealed class PixelManager
     {
         var index = Width * y + x;
         return _data[index];
-    }
-
-    private static ILevelBoundaryBehaviour GetBoundaryBehaviour(
-        BoundaryBehaviourType leftRightBoundaryBehaviourType,
-        BoundaryBehaviourType upDownBoundaryBehaviourType,
-        int width,
-        int height,
-        PixelData voidPixel,
-        PixelData[] levelData)
-    {
-        return new HorizontalWrapBehaviour(width, height, voidPixel, levelData);
     }
 
     public void ErasePixel(LevelPosition pixelToErase)

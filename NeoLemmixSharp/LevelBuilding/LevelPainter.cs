@@ -49,8 +49,8 @@ public sealed class LevelPainter : IDisposable
         _terrainData = new PixelManager(
             levelData.LevelWidth,
             levelData.LevelHeight,
-            BoundaryBehaviourType.Void,
-            BoundaryBehaviourType.Void);
+            BoundaryBehaviourType.Wrap,
+            BoundaryBehaviourType.Wrap);
 
         var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
         var textureData = new PixelColourData(
@@ -188,8 +188,8 @@ public sealed class LevelPainter : IDisposable
         var bgB = (background & 0xffU) / 255d;
         var newA = 1.0 - (1.0 - fgA) * (1.0 - bgA);
         var newR = fgR * fgA / newA + bgR * bgA * (1.0 - fgA) / newA;
-        var newG = fgG * fgA / newA + bgG * bgA * (1 - fgA) / newA;
-        var newB = fgB * fgA / newA + bgB * bgA * (1 - fgA) / newA;
+        var newG = fgG * fgA / newA + bgG * bgA * (1.0 - fgA) / newA;
+        var newB = fgB * fgA / newA + bgB * bgA * (1.0 - fgA) / newA;
         var a = (uint)Math.Round(newA * 255);
         var r = (uint)Math.Round(newR * 255);
         var g = (uint)Math.Round(newG * 255);

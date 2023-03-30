@@ -36,7 +36,7 @@ public sealed class LevelScreen : BaseScreen
     {
         Terrain = terrain;
         SpriteBank = spriteBank;
-        Viewport = new LevelViewPort(Width, Height);
+        Viewport = new LevelViewPort(terrain);
 
         Controller = new LevelController();
 

@@ -15,7 +15,7 @@ public sealed class LevelViewPort
 
     private int _windowWidth;
     private int _windowHeight;
-    
+
     public int ViewPortX { get; private set; }
     public int ViewPortY { get; private set; }
     public int ViewPortWidth { get; private set; }
@@ -26,10 +26,11 @@ public sealed class LevelViewPort
     public int ScreenWidth { get; private set; }
     public int ScreenHeight { get; private set; }
 
-    public LevelViewPort(int levelWidth, int levelHeight)
+    public LevelViewPort(PixelManager terrain)
     {
-        _levelWidth = levelWidth;
-        _levelHeight = levelHeight;
+        _levelWidth = terrain.Width;
+        _levelHeight = terrain.Height;
+
     }
 
     public int ScaleMultiplier { get; private set; } = 6;

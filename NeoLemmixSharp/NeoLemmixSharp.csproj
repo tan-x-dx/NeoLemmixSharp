@@ -24,7 +24,6 @@
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Engine\LevelBoundaryBehaviours\" />
     <Folder Include="Screen\" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
