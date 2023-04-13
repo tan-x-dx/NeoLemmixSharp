@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Engine.Directions.Orientations;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
@@ -61,7 +62,7 @@ public static class CommonMethods
 
     public static int FindGroundPixel(
         IOrientation orientation,
-        LevelPosition levelPosition)
+        Point levelPosition)
     {
         // Find the new ground pixel
         // If Result = 4, then at least 4 pixels are air below (X, Y)
@@ -183,7 +184,7 @@ public static class CommonMethods
         }
         else if (newAction == SliderAction.Instance)
         {
-            lemming.DehoistPin = new LevelPosition(-1, -1);
+            lemming.DehoistPin = new Point(-1, -1);
         }
 
         lemming.CurrentAction = newAction;

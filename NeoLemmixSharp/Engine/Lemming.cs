@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 
@@ -32,15 +33,15 @@ public sealed class Lemming : ITickable
     public bool EndOfAnimation;
     public int DistanceFallen;
     public int TrueDistanceFallen;
-    public LevelPosition DehoistPin;
-    public LevelPosition LaserHitPoint;
+    public Point DehoistPin;
+    public Point LaserHitPoint;
     public bool LaserHit;
     public int LaserRemainTime;
 
     public int X => LevelPosition.X;
     public int Y => LevelPosition.Y;
 
-    public LevelPosition LevelPosition;
+    public Point LevelPosition;
 
     public bool Debug;
 

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Rendering;
 using System;
 using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
@@ -12,7 +13,7 @@ public sealed class LasererAction : ILemmingAction
 
     public static LasererAction Instance { get; } = new();
 
-    private readonly LevelPosition[] _offsetChecksRight =
+    private readonly Point[] _offsetChecksRight =
     {
         new(1, -1),
         new(0, -1),
@@ -27,7 +28,7 @@ public sealed class LasererAction : ILemmingAction
         new(1, 1)
     };
 
-    private readonly LevelPosition[] _offsetChecksLeft =
+    private readonly Point[] _offsetChecksLeft =
     {
         new(-1, -1),
         new(0, -1),
@@ -126,7 +127,7 @@ public sealed class LasererAction : ILemmingAction
     }
 
     private LaserHitType CheckForHit(
-        LevelPosition target,
+        Point target,
         IOrientation orientation,
         int dx)
     {

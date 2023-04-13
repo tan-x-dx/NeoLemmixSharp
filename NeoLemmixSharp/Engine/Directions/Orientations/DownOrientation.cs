@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Rendering;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Rendering;
 using static NeoLemmixSharp.Engine.Directions.Orientations.IOrientation;
 
 namespace NeoLemmixSharp.Engine.Directions.Orientations;
@@ -12,43 +13,43 @@ public sealed class DownOrientation : IOrientation
     }
 
     public int RotNum => 0;
-    public LevelPosition TopLeftCornerOfLevel() => new(0, 0);
-    public LevelPosition TopRightCornerOfLevel() => new(LevelScreen.CurrentLevel.Width, 0);
-    public LevelPosition BottomLeftCornerOfLevel() => new(0, LevelScreen.CurrentLevel.Height);
-    public LevelPosition BottomRightCornerOfLevel() => new(LevelScreen.CurrentLevel.Width, LevelScreen.CurrentLevel.Height);
+    public Point TopLeftCornerOfLevel() => new(0, 0);
+    public Point TopRightCornerOfLevel() => new(LevelScreen.CurrentLevel.Width, 0);
+    public Point BottomLeftCornerOfLevel() => new(0, LevelScreen.CurrentLevel.Height);
+    public Point BottomRightCornerOfLevel() => new(LevelScreen.CurrentLevel.Width, LevelScreen.CurrentLevel.Height);
 
-    public LevelPosition MoveRight(LevelPosition position, int step)
+    public Point MoveRight(Point position, int step)
     {
         position.X += step;
         return Terrain.NormalisePosition(position);
     }
 
-    public LevelPosition MoveUp(LevelPosition position, int step)
+    public Point MoveUp(Point position, int step)
     {
         position.Y -= step;
         return Terrain.NormalisePosition(position);
     }
 
-    public LevelPosition MoveLeft(LevelPosition position, int step)
+    public Point MoveLeft(Point position, int step)
     {
         position.X -= step;
         return Terrain.NormalisePosition(position);
     }
 
-    public LevelPosition MoveDown(LevelPosition position, int step)
+    public Point MoveDown(Point position, int step)
     {
         position.Y += step;
         return Terrain.NormalisePosition(position);
     }
 
-    public LevelPosition Move(LevelPosition position, LevelPosition relativeDirection)
+    public Point Move(Point position, Point relativeDirection)
     {
-        return Terrain.NormalisePosition(new LevelPosition(
+        return Terrain.NormalisePosition(new Point(
             position.X + relativeDirection.X,
             position.Y - relativeDirection.Y));
     }
 
-    public LevelPosition Move(LevelPosition position, int dx, int dy)
+    public Point Move(Point position, int dx, int dy)
     {
         position.X += dx;
         position.Y -= dy;
@@ -56,12 +57,12 @@ public sealed class DownOrientation : IOrientation
         return Terrain.NormalisePosition(position);
     }
 
-    public bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X == secondPosition.X;
-    public bool MatchesVertically(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y == secondPosition.Y;
-    public bool FirstIsAboveSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y < secondPosition.Y;
-    public bool FirstIsBelowSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y > secondPosition.Y;
-    public bool FirstIsToLeftOfSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X < secondPosition.X;
-    public bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X > secondPosition.X;
+    public bool MatchesHorizontally(Point firstPosition, Point secondPosition) => firstPosition.X == secondPosition.X;
+    public bool MatchesVertically(Point firstPosition, Point secondPosition) => firstPosition.Y == secondPosition.Y;
+    public bool FirstIsAboveSecond(Point firstPosition, Point secondPosition) => firstPosition.Y < secondPosition.Y;
+    public bool FirstIsBelowSecond(Point firstPosition, Point secondPosition) => firstPosition.Y > secondPosition.Y;
+    public bool FirstIsToLeftOfSecond(Point firstPosition, Point secondPosition) => firstPosition.X < secondPosition.X;
+    public bool FirstIsToRightOfSecond(Point firstPosition, Point secondPosition) => firstPosition.X > secondPosition.X;
 
     public ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle)
     {

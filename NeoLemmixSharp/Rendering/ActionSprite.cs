@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine;
 using System;
 
 namespace NeoLemmixSharp.Rendering;
@@ -13,7 +12,7 @@ public sealed class ActionSprite : IDisposable
 
     public Texture2D Texture { get; }
     public Rectangle BoundingBox { get; }
-    public LevelPosition AnchorPoint { get; }
+    public Point AnchorPoint { get; }
     public int AnchorPointX { get; }
     public int AnchorPointY { get; }
 
@@ -22,7 +21,7 @@ public sealed class ActionSprite : IDisposable
         int spriteWidth,
         int spriteHeight,
         int numberOfFrames,
-        LevelPosition anchorPoint)
+        Point anchorPoint)
     {
         Texture = texture;
         SpriteWidth = spriteWidth;

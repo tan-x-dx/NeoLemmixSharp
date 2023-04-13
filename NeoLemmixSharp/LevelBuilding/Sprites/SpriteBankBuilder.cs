@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.LevelBuilding.Data;
@@ -186,7 +185,7 @@ public sealed class SpriteBankBuilder
                 spriteDrawingData.ThisSpriteWidth,
                 spriteDrawingData.ThisSpriteHeight,
                 spriteData.NumberOfFrames,
-                new LevelPosition(footX1, footY1));
+                new Point(footX1, footY1));
 
             setSprite(spriteDrawingData.Orientation, actionSpriteBundle, actionSprite);
         }

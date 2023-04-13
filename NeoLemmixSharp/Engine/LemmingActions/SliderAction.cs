@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Rendering;
 using System;
 using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
@@ -90,8 +91,8 @@ public sealed class SliderAction : ILemmingAction
     }
     private static bool SliderHasPixelAt(
         IOrientation orientation,
-        LevelPosition levelPosition,
-        LevelPosition dehoistPin)
+        Point levelPosition,
+        Point dehoistPin)
     {
         if (Terrain.GetPixelData(dehoistPin).IsSolid)
             return true;

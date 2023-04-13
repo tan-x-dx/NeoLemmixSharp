@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Rendering;
 using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
 
@@ -97,7 +98,7 @@ public sealed class PlatformerAction : ILemmingAction
     }
 
     private static bool PlatformerTerrainCheck(
-        LevelPosition pos,
+        Point pos,
         IOrientation orientation)
     {
         return Terrain.GetPixelData(orientation.MoveUp(pos, 1)).IsSolid ||
