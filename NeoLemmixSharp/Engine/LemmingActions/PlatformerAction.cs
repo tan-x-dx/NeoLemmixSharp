@@ -1,11 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Engine.Directions.Orientations;
-using NeoLemmixSharp.Rendering;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
-public sealed class PlatformerAction : ILemmingAction
+public sealed class PlatformerAction : LemmingAction
 {
     public const int NumberOfPlatformerAnimationFrames = 16;
 
@@ -15,16 +13,11 @@ public sealed class PlatformerAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "platformer";
-    public int NumberOfAnimationFrames => NumberOfPlatformerAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "platformer";
+    public override int NumberOfAnimationFrames => NumberOfPlatformerAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is PlatformerAction;
-    public override bool Equals(object? obj) => obj is PlatformerAction;
-    public override int GetHashCode() => nameof(PlatformerAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         var dx = lemming.FacingDirection.DeltaX;
 
@@ -105,7 +98,7 @@ public sealed class PlatformerAction : ILemmingAction
                Terrain.GetPixelData(orientation.MoveUp(pos, 2)).IsSolid;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
         lemming.NumberOfBricksLeft = LemmingConstants.StepsMax;
         lemming.ConstructivePositionFreeze = false;

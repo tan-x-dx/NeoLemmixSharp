@@ -1,9 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class BuilderAction : ILemmingAction
+public sealed class BuilderAction : LemmingAction
 {
     public const int NumberOfBuilderAnimationFrames = 16;
 
@@ -13,16 +10,11 @@ public sealed class BuilderAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "builder";
-    public int NumberOfAnimationFrames => NumberOfBuilderAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "builder";
+    public override int NumberOfAnimationFrames => NumberOfBuilderAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is BuilderAction;
-    public override bool Equals(object? obj) => obj is BuilderAction;
-    public override int GetHashCode() => nameof(BuilderAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         if (lemming.AnimationFrame == 9)
         {
@@ -81,7 +73,7 @@ public sealed class BuilderAction : ILemmingAction
         }
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
         lemming.NumberOfBricksLeft = 12;
         lemming.ConstructivePositionFreeze = false;

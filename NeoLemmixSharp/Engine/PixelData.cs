@@ -16,7 +16,7 @@ public sealed class PixelData
     public bool IsIndestructible(
         IOrientation orientation,
         IFacingDirection facingDirection,
-        ILemmingAction lemmingAction)
+        LemmingAction lemmingAction)
     {
         if (IsSteel)
             return true;

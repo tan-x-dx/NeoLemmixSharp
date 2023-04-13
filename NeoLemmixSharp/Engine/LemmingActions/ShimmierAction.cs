@@ -1,9 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class ShimmierAction : ILemmingAction
+public sealed class ShimmierAction : LemmingAction
 {
     public const int NumberOfShimmierAnimationFrames = 20;
 
@@ -13,16 +10,11 @@ public sealed class ShimmierAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "shimmier";
-    public int NumberOfAnimationFrames => NumberOfShimmierAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "shimmier";
+    public override int NumberOfAnimationFrames => NumberOfShimmierAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is ShimmierAction;
-    public override bool Equals(object? obj) => obj is ShimmierAction;
-    public override int GetHashCode() => nameof(ShimmierAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         var dx = lemming.FacingDirection.DeltaX;
         if ((lemming.AnimationFrame & 1) == 0)
@@ -125,7 +117,7 @@ public sealed class ShimmierAction : ILemmingAction
         return true;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

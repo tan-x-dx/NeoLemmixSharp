@@ -1,12 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Engine.Directions.Orientations;
-using NeoLemmixSharp.Rendering;
 using System;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
-public sealed class SliderAction : ILemmingAction
+public sealed class SliderAction : LemmingAction
 {
     public const int NumberOfSliderAnimationFrames = 1;
 
@@ -16,16 +14,11 @@ public sealed class SliderAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "slider";
-    public int NumberOfAnimationFrames => NumberOfSliderAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "slider";
+    public override int NumberOfAnimationFrames => NumberOfSliderAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is SliderAction;
-    public override bool Equals(object? obj) => obj is SliderAction;
-    public override int GetHashCode() => nameof(SliderAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         // if ((L.LemX <= 0) and(L.LemDX = -1)) or((L.LemX >= Level.Info.Width - 1) and(L.LemDX = 1)) then
         //      RemoveLemming(L, RM_NEUTRAL); // shouldn't get to this point but just in case
@@ -108,7 +101,7 @@ public sealed class SliderAction : ILemmingAction
         return result;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

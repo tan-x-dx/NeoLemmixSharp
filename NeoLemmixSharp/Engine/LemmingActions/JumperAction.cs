@@ -1,8 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class JumperAction : ILemmingAction
+public sealed class JumperAction : LemmingAction
 {
     public const int NumberOfJumperAnimationFrames = 13;
 
@@ -12,21 +10,16 @@ public sealed class JumperAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "jumper";
-    public int NumberOfAnimationFrames => NumberOfJumperAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "jumper";
+    public override int NumberOfAnimationFrames => NumberOfJumperAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is JumperAction;
-    public override bool Equals(object? obj) => obj is JumperAction;
-    public override int GetHashCode() => nameof(JumperAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         return false;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

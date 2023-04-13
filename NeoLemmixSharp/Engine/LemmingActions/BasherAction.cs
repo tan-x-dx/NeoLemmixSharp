@@ -1,12 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
-using NeoLemmixSharp.Rendering;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
-public sealed class BasherAction : ILemmingAction
+public sealed class BasherAction : LemmingAction
 {
     public const int NumberOfBasherAnimationFrames = 16;
 
@@ -16,16 +14,11 @@ public sealed class BasherAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "basher";
-    public int NumberOfAnimationFrames => NumberOfBasherAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "basher";
+    public override int NumberOfAnimationFrames => NumberOfBasherAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is BasherAction;
-    public override bool Equals(object? obj) => obj is BasherAction;
-    public override int GetHashCode() => nameof(BasherAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         return false;
     }
@@ -124,7 +117,7 @@ public sealed class BasherAction : ILemmingAction
         return true;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

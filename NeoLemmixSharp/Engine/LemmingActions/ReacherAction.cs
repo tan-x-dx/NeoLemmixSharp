@@ -1,9 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class ReacherAction : ILemmingAction
+public sealed class ReacherAction : LemmingAction
 {
     public const int NumberOfReacherAnimationFrames = 8;
 
@@ -18,16 +15,11 @@ public sealed class ReacherAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "reacher";
-    public int NumberOfAnimationFrames => NumberOfReacherAnimationFrames;
-    public bool IsOneTimeAction => true;
+    public override string LemmingActionName => "reacher";
+    public override int NumberOfAnimationFrames => NumberOfReacherAnimationFrames;
+    public override bool IsOneTimeAction => true;
 
-    public bool Equals(ILemmingAction? other) => other is ReacherAction;
-    public override bool Equals(object? obj) => obj is ReacherAction;
-    public override int GetHashCode() => nameof(ReacherAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         int emptyPixels;
         if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 10)).IsSolid)
@@ -80,7 +72,7 @@ public sealed class ReacherAction : ILemmingAction
         return true;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

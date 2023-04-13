@@ -1,9 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class BlockerAction : ILemmingAction
+public sealed class BlockerAction : LemmingAction
 {
     public const int NumberOfBlockerAnimationFrames = 16;
 
@@ -13,16 +10,11 @@ public sealed class BlockerAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "blocker";
-    public int NumberOfAnimationFrames => NumberOfBlockerAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "blocker";
+    public override int NumberOfAnimationFrames => NumberOfBlockerAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is BlockerAction;
-    public override bool Equals(object? obj) => obj is BlockerAction;
-    public override int GetHashCode() => nameof(BlockerAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         if (!Terrain.GetPixelData(lemming.LevelPosition).IsSolid)
         {
@@ -32,7 +24,7 @@ public sealed class BlockerAction : ILemmingAction
         return true;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

@@ -1,9 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class StackerAction : ILemmingAction
+public sealed class StackerAction : LemmingAction
 {
     public const int NumberOfStackerAnimationFrames = 8;
 
@@ -13,16 +10,11 @@ public sealed class StackerAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "stacker";
-    public int NumberOfAnimationFrames => NumberOfStackerAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "stacker";
+    public override int NumberOfAnimationFrames => NumberOfStackerAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is StackerAction;
-    public override bool Equals(object? obj) => obj is StackerAction;
-    public override int GetHashCode() => nameof(StackerAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         if (lemming.AnimationFrame == 7)
         {
@@ -66,7 +58,7 @@ public sealed class StackerAction : ILemmingAction
                  Terrain.GetPixelData(lemming.Orientation.MoveRight(brickPosition, dx + dx + dx)).IsSolid);
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
         lemming.NumberOfBricksLeft = 8;
     }

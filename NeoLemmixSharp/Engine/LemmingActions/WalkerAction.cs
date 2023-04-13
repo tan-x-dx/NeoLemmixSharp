@@ -1,8 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class WalkerAction : ILemmingAction
+public sealed class WalkerAction : LemmingAction
 {
     public const int NumberOfWalkerAnimationFrames = 8;
 
@@ -12,16 +10,11 @@ public sealed class WalkerAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "walker";
-    public int NumberOfAnimationFrames => NumberOfWalkerAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "walker";
+    public override int NumberOfAnimationFrames => NumberOfWalkerAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is WalkerAction;
-    public override bool Equals(object? obj) => obj is WalkerAction;
-    public override int GetHashCode() => nameof(WalkerAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         var dx = lemming.FacingDirection.DeltaX;
         lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, dx);
@@ -74,7 +67,7 @@ public sealed class WalkerAction : ILemmingAction
         return true;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

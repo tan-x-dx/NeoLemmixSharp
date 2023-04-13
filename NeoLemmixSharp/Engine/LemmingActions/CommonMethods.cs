@@ -91,7 +91,7 @@ public static class CommonMethods
 
     public static void TransitionToNewAction(
         Lemming lemming,
-        ILemmingAction newAction,
+        LemmingAction newAction,
         bool turnAround)
     {
         if (turnAround)

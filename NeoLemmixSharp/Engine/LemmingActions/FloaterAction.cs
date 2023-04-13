@@ -1,9 +1,8 @@
-﻿using NeoLemmixSharp.Rendering;
-using System;
+﻿using System;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
-public sealed class FloaterAction : ILemmingAction
+public sealed class FloaterAction : LemmingAction
 {
     public const int NumberOfFloaterAnimationFrames = 17;
 
@@ -18,16 +17,11 @@ public sealed class FloaterAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "floater";
-    public int NumberOfAnimationFrames => NumberOfFloaterAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "floater";
+    public override int NumberOfAnimationFrames => NumberOfFloaterAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is FloaterAction;
-    public override bool Equals(object? obj) => obj is FloaterAction;
-    public override int GetHashCode() => nameof(FloaterAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         var maxFallDistance = _floaterFallTable[lemming.AnimationFrame - 1];
 
@@ -50,8 +44,7 @@ public sealed class FloaterAction : ILemmingAction
         return true;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
-
 }

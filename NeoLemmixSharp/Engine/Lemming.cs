@@ -48,8 +48,8 @@ public sealed class Lemming : ITickable
     public IFacingDirection FacingDirection = RightFacingDirection.Instance;
     public IOrientation Orientation = DownOrientation.Instance;
 
-    public ILemmingAction CurrentAction = WalkerAction.Instance;
-    public ILemmingAction? NextAction = null;
+    public LemmingAction CurrentAction = WalkerAction.Instance;
+    public LemmingAction? NextAction = null;
 
     public bool ShouldTick => true;
 

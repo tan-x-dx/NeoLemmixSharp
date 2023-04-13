@@ -45,7 +45,7 @@ public sealed class SpriteBankBuilder
 
     private void LoadLemmingSprites(ThemeData themeData)
     {
-        foreach (var lemmingState in ILemmingAction.AllLemmingActions)
+        foreach (var lemmingState in LemmingAction.AllLemmingActions)
         {
             var pngFilePath = Path.Combine(themeData.LemmingSpritesFilePath, $"{lemmingState.LemmingActionName}.png");
 
@@ -100,7 +100,7 @@ public sealed class SpriteBankBuilder
         var originalPixelColourData = PixelColourData.GetPixelColourDataFromTexture(texture);
 
         var actionSpriteBundle = new LemmingActionSpriteBundle();
-        ILemmingAction.LemmingActions[stateName].ActionSpriteBundle = actionSpriteBundle;
+        LemmingAction.LemmingActions[stateName].ActionSpriteBundle = actionSpriteBundle;
 
         _actionSpriteBundleLookup.Add(stateName, actionSpriteBundle);
 

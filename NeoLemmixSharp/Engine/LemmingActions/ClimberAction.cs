@@ -1,9 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class ClimberAction : ILemmingAction
+public sealed class ClimberAction : LemmingAction
 {
     public const int NumberOfClimberAnimationFrames = 8;
 
@@ -13,18 +10,13 @@ public sealed class ClimberAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "climber";
-    public int NumberOfAnimationFrames => NumberOfClimberAnimationFrames;
-    public bool IsOneTimeAction => false;
-
-    public bool Equals(ILemmingAction? other) => other is ClimberAction;
-    public override bool Equals(object? obj) => obj is ClimberAction;
-    public override int GetHashCode() => nameof(ClimberAction).GetHashCode();
+    public override string LemmingActionName => "climber";
+    public override int NumberOfAnimationFrames => NumberOfClimberAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
     // Be very careful when changing the terrain/hoister checks for climbers!
     // See http://www.lemmingsforums.net/index.php?topic=2506.0 first!
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         var dx = lemming.FacingDirection.DeltaX;
         if (lemming.AnimationFrame <= 3)
@@ -176,7 +168,7 @@ end;
 
     */
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

@@ -5,13 +5,13 @@ using System.Collections.ObjectModel;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
-public interface ILemmingAction : IEquatable<ILemmingAction>
+public abstract class LemmingAction : IEquatable<LemmingAction>
 {
-    public static ReadOnlyDictionary<string, ILemmingAction> LemmingActions { get; } = RegisterAllLemmingActions();
+    public static ReadOnlyDictionary<string, LemmingAction> LemmingActions { get; } = RegisterAllLemmingActions();
 
-    private static ReadOnlyDictionary<string, ILemmingAction> RegisterAllLemmingActions()
+    private static ReadOnlyDictionary<string, LemmingAction> RegisterAllLemmingActions()
     {
-        var result = new Dictionary<string, ILemmingAction>();
+        var result = new Dictionary<string, LemmingAction>();
 
         RegisterLemmingAction(result, AscenderAction.Instance);
         RegisterLemmingAction(result, BasherAction.Instance);
@@ -45,25 +45,42 @@ public interface ILemmingAction : IEquatable<ILemmingAction>
         RegisterLemmingAction(result, VaporiserAction.Instance);
         RegisterLemmingAction(result, WalkerAction.Instance);
 
-        return new ReadOnlyDictionary<string, ILemmingAction>(result);
+        return new ReadOnlyDictionary<string, LemmingAction>(result);
     }
 
-    private static void RegisterLemmingAction(IDictionary<string, ILemmingAction> dict, ILemmingAction lemmingAction)
+    private static void RegisterLemmingAction(IDictionary<string, LemmingAction> dict, LemmingAction lemmingAction)
     {
         dict.Add(lemmingAction.LemmingActionName, lemmingAction);
     }
 
-    public static ICollection<ILemmingAction> AllLemmingActions => LemmingActions.Values;
+    public static ICollection<LemmingAction> AllLemmingActions => LemmingActions.Values;
 
     protected static PixelManager Terrain => LevelScreen.CurrentLevel!.Terrain;
 
-    LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
+    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
 
-    string LemmingActionName { get; }
-    int NumberOfAnimationFrames { get; }
-    bool IsOneTimeAction { get; }
+    public abstract string LemmingActionName { get; }
+    public abstract int NumberOfAnimationFrames { get; }
+    public abstract bool IsOneTimeAction { get; }
 
-    bool UpdateLemming(Lemming lemming);
-    void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction);
+    public abstract bool UpdateLemming(Lemming lemming);
+    public abstract void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction);
 
+    public bool Equals(LemmingAction? other)
+    {
+        throw new NotImplementedException();
+    }
+
+    public sealed override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((LemmingAction)obj);
+    }
+
+    public sealed override int GetHashCode()
+    {
+        throw new NotImplementedException();
+    }
 }

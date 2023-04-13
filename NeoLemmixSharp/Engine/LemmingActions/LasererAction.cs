@@ -1,12 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Engine.Directions.Orientations;
-using NeoLemmixSharp.Rendering;
 using System;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
-public sealed class LasererAction : ILemmingAction
+public sealed class LasererAction : LemmingAction
 {
     private const int DistanceCap = 112;
     public const int NumberOfLasererAnimationFrames = 12;
@@ -55,16 +53,11 @@ public sealed class LasererAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "laserer";
-    public int NumberOfAnimationFrames => NumberOfLasererAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "laserer";
+    public override int NumberOfAnimationFrames => NumberOfLasererAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is LasererAction;
-    public override bool Equals(object? obj) => obj is LasererAction;
-    public override int GetHashCode() => nameof(LasererAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         if (!Terrain.GetPixelData(lemming.LevelPosition).IsSolid)
         {
@@ -162,7 +155,7 @@ public sealed class LasererAction : ILemmingAction
         return result;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

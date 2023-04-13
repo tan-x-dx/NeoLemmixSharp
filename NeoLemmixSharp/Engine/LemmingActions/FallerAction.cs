@@ -1,9 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class FallerAction : ILemmingAction
+public sealed class FallerAction : LemmingAction
 {
     public const int NumberOfFallerAnimationFrames = 4;
 
@@ -13,16 +10,11 @@ public sealed class FallerAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "faller";
-    public int NumberOfAnimationFrames => NumberOfFallerAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "faller";
+    public override int NumberOfAnimationFrames => NumberOfFallerAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is FallerAction;
-    public override bool Equals(object? obj) => obj is FallerAction;
-    public override int GetHashCode() => nameof(FallerAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         var currentFallDistanceStep = 0;
         var maxFallDistanceStep = 3; // A lemming falls 3 pixels each frame
@@ -105,7 +97,7 @@ public sealed class FallerAction : ILemmingAction
         return false;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

@@ -1,9 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class AscenderAction : ILemmingAction
+public sealed class AscenderAction : LemmingAction
 {
     public const int NumberOfAscenderAnimationFrames = 1;
 
@@ -13,16 +10,11 @@ public sealed class AscenderAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "ascender";
-    public int NumberOfAnimationFrames => NumberOfAscenderAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "ascender";
+    public override int NumberOfAnimationFrames => NumberOfAscenderAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is AscenderAction;
-    public override bool Equals(object? obj) => obj is AscenderAction;
-    public override int GetHashCode() => nameof(AscenderAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         var dy = 0;
         while (dy < 2 &&
@@ -56,7 +48,7 @@ public sealed class AscenderAction : ILemmingAction
         return true;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
         lemming.AscenderProgress = 0;
     }

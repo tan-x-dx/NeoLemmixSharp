@@ -1,8 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class DisarmerAction : ILemmingAction
+public sealed class DisarmerAction : LemmingAction
 {
     public const int NumberOfDisarmerAnimationFrames = 16;
 
@@ -12,16 +10,11 @@ public sealed class DisarmerAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "disarmer";
-    public int NumberOfAnimationFrames => NumberOfDisarmerAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "disarmer";
+    public override int NumberOfAnimationFrames => NumberOfDisarmerAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is DisarmerAction;
-    public override bool Equals(object? obj) => obj is DisarmerAction;
-    public override int GetHashCode() => nameof(DisarmerAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         lemming.DisarmingFrames--;
         if (lemming.DisarmingFrames <= 0)
@@ -40,7 +33,7 @@ public sealed class DisarmerAction : ILemmingAction
         return false;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

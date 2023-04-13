@@ -1,8 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class FencerAction : ILemmingAction
+public sealed class FencerAction : LemmingAction
 {
     public const int NumberOfFencerAnimationFrames = 16;
 
@@ -12,21 +10,16 @@ public sealed class FencerAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "fencer";
-    public int NumberOfAnimationFrames => NumberOfFencerAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "fencer";
+    public override int NumberOfAnimationFrames => NumberOfFencerAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is FencerAction;
-    public override bool Equals(object? obj) => obj is FencerAction;
-    public override int GetHashCode() => nameof(FencerAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         return false;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

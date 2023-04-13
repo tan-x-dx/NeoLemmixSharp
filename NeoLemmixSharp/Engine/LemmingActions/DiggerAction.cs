@@ -1,11 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Engine.Directions.Orientations;
-using NeoLemmixSharp.Rendering;
-using static NeoLemmixSharp.Engine.LemmingActions.ILemmingAction;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
-public sealed class DiggerAction : ILemmingAction
+public sealed class DiggerAction : LemmingAction
 {
     public const int NumberOfDiggerAnimationFrames = 16;
 
@@ -15,16 +13,11 @@ public sealed class DiggerAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "digger";
-    public int NumberOfAnimationFrames => NumberOfDiggerAnimationFrames;
-    public bool IsOneTimeAction => false;
+    public override string LemmingActionName => "digger";
+    public override int NumberOfAnimationFrames => NumberOfDiggerAnimationFrames;
+    public override bool IsOneTimeAction => false;
 
-    public bool Equals(ILemmingAction? other) => other is DiggerAction;
-    public override bool Equals(object? obj) => obj is DiggerAction;
-    public override int GetHashCode() => nameof(DiggerAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         if (lemming.IsStartingAction)
         {
@@ -89,7 +82,7 @@ public sealed class DiggerAction : ILemmingAction
         return result;
     }
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
     }
 }

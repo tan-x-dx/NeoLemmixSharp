@@ -1,8 +1,6 @@
-﻿using NeoLemmixSharp.Rendering;
+﻿namespace NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LemmingActions;
-
-public sealed class HoisterAction : ILemmingAction
+public sealed class HoisterAction : LemmingAction
 {
     public const int NumberOfHoisterAnimationFrames = 8;
 
@@ -12,16 +10,11 @@ public sealed class HoisterAction : ILemmingAction
     {
     }
 
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
-    public string LemmingActionName => "hoister";
-    public int NumberOfAnimationFrames => NumberOfHoisterAnimationFrames;
-    public bool IsOneTimeAction => true;
+    public override string LemmingActionName => "hoister";
+    public override int NumberOfAnimationFrames => NumberOfHoisterAnimationFrames;
+    public override bool IsOneTimeAction => true;
 
-    public bool Equals(ILemmingAction? other) => other is HoisterAction;
-    public override bool Equals(object? obj) => obj is HoisterAction;
-    public override int GetHashCode() => nameof(HoisterAction).GetHashCode();
-
-    public bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming)
     {
         if (lemming.EndOfAnimation)
         {
@@ -32,7 +25,7 @@ public sealed class HoisterAction : ILemmingAction
         {
             lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
         }
-        else if (lemming.AnimationFrame <=4)
+        else if (lemming.AnimationFrame <= 4)
         {
             lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 2);
         }
@@ -55,7 +48,7 @@ end;
 
     */
 
-    public void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
     {
         lemming.IsStartingAction = previouslyStartingAction;
     }
