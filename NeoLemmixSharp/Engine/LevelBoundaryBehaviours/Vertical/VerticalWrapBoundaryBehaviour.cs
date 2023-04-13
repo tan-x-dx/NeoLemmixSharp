@@ -24,6 +24,14 @@ public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
 
     public void ScrollViewPortVertically(LevelViewPort viewPort, int dy)
     {
-        throw new System.NotImplementedException();
+        viewPort.ViewPortY += dy;
+        if (viewPort.ViewPortY < 0)
+        {
+            viewPort.ViewPortY += _height;
+        }
+        else if (viewPort.ViewPortY >= _height)
+        {
+            viewPort.ViewPortY -= _height;
+        }
     }
 }

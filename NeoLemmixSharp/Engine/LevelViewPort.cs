@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 
 namespace NeoLemmixSharp.Engine;
 
@@ -11,13 +13,16 @@ public sealed class LevelViewPort
     private readonly int _levelWidth;
     private readonly int _levelHeight;
 
+    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
+
     private int _previousScrollWheelValue;
 
     private int _windowWidth;
     private int _windowHeight;
 
-    public int ViewPortX { get; private set; }
-    public int ViewPortY { get; private set; }
+    public int ViewPortX { get; set; }
+    public int ViewPortY { get; set; }
     public int ViewPortWidth { get; private set; }
     public int ViewPortHeight { get; private set; }
 
@@ -31,6 +36,8 @@ public sealed class LevelViewPort
         _levelWidth = terrain.Width;
         _levelHeight = terrain.Height;
 
+        _horizontalBoundaryBehaviour = terrain.HorizontalBoundaryBehaviour;
+        _verticalBoundaryBehaviour = terrain.VerticalBoundaryBehaviour;
     }
 
     public int ScaleMultiplier { get; private set; } = 6;
@@ -49,58 +56,20 @@ public sealed class LevelViewPort
 
         if (mouseState.X == 0)
         {
-            ScrollHorizontally(-4 * MaxScale / ScaleMultiplier);
+            _horizontalBoundaryBehaviour.ScrollViewPortHorizontally(this, -4 * MaxScale / ScaleMultiplier);
         }
         else if (mouseState.X == _windowWidth - 1)
         {
-            ScrollHorizontally(4 * MaxScale / ScaleMultiplier);
+            _horizontalBoundaryBehaviour.ScrollViewPortHorizontally(this, 4 * MaxScale / ScaleMultiplier);
         }
 
         if (mouseState.Y == 0)
         {
-            ScrollVertically(-4 * MaxScale / ScaleMultiplier);
+            _verticalBoundaryBehaviour.ScrollViewPortVertically(this, -4 * MaxScale / ScaleMultiplier);
         }
         else if (mouseState.Y == _windowHeight - 1)
         {
-            ScrollVertically(4 * MaxScale / ScaleMultiplier);
-        }
-    }
-
-    private void ScrollHorizontally(int dx)
-    {
-        if (ViewPortWidth >= _levelWidth)
-        {
-            ViewPortX = 0;
-            return;
-        }
-
-        ViewPortX += dx;
-        if (ViewPortX < 0)
-        {
-            ViewPortX = 0;
-        }
-        else if (ViewPortX + ViewPortWidth >= _levelWidth)
-        {
-            ViewPortX = _levelWidth - ViewPortWidth;
-        }
-    }
-
-    private void ScrollVertically(int dy)
-    {
-        if (ViewPortHeight >= _levelHeight)
-        {
-            ViewPortY = 0;
-            return;
-        }
-
-        ViewPortY += dy;
-        if (ViewPortY < 0)
-        {
-            ViewPortY = 0;
-        }
-        else if (ViewPortY + ViewPortHeight >= _levelHeight)
-        {
-            ViewPortY = _levelHeight - ViewPortHeight;
+            _verticalBoundaryBehaviour.ScrollViewPortVertically(this, 4 * MaxScale / ScaleMultiplier);
         }
     }
 
@@ -131,8 +100,8 @@ public sealed class LevelViewPort
         }
 
         RecalculateDimensions();
-        ScrollHorizontally(0);
-        ScrollVertically(0);
+        _horizontalBoundaryBehaviour.ScrollViewPortHorizontally(this, 0);
+        _verticalBoundaryBehaviour.ScrollViewPortVertically(this, 0);
     }
 
     private void ZoomOut()
@@ -147,8 +116,8 @@ public sealed class LevelViewPort
         }
 
         RecalculateDimensions();
-        ScrollHorizontally(0);
-        ScrollVertically(0);
+        _horizontalBoundaryBehaviour.ScrollViewPortHorizontally(this, 0);
+        _verticalBoundaryBehaviour.ScrollViewPortVertically(this, 0);
     }
 
     private void RecalculateDimensions()

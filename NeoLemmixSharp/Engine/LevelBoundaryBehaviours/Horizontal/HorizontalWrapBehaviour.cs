@@ -24,6 +24,14 @@ public sealed class HorizontalWrapBehaviour : IHorizontalBoundaryBehaviour
 
     public void ScrollViewPortHorizontally(LevelViewPort viewPort, int dx)
     {
-        throw new System.NotImplementedException();
+        viewPort.ViewPortX += dx;
+        if (viewPort.ViewPortX < 0)
+        {
+            viewPort.ViewPortX += _width;
+        }
+        else if (viewPort.ViewPortX >= _width)
+        {
+            viewPort.ViewPortX -= _width;
+        }
     }
 }

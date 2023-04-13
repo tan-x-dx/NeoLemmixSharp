@@ -18,6 +18,20 @@ public sealed class HorizontalVoidBoundaryBehaviour : IHorizontalBoundaryBehavio
 
     public void ScrollViewPortHorizontally(LevelViewPort viewPort, int dx)
     {
-        throw new System.NotImplementedException();
+        if (viewPort.ViewPortWidth >= _width)
+        {
+            viewPort.ViewPortX = 0;
+            return;
+        }
+
+        viewPort.ViewPortX += dx;
+        if (viewPort.ViewPortX < 0)
+        {
+            viewPort.ViewPortX = 0;
+        }
+        else if (viewPort.ViewPortX + viewPort.ViewPortWidth >= _width)
+        {
+            viewPort.ViewPortX = _width - viewPort.ViewPortWidth;
+        }
     }
 }
