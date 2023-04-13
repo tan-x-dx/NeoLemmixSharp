@@ -43,13 +43,13 @@ public sealed class SliderAction : LemmingAction
         if (hasPixelAtLemmingPosition &&
             !SliderHasPixelAt(lemming.Orientation, lemming.LevelPosition, lemming.Orientation.MoveDown(lemming.DehoistPin, 1)))
         {
-            CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, false);
+            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             return false;
         }
 
         if (!SliderHasPixelAt(lemming.Orientation, lemming.Orientation.MoveUp(lemming.LevelPosition, Math.Min(maxYOffset, 7)), lemming.DehoistPin))
         {
-            CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, false);
+            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return false;
         }
 
@@ -63,12 +63,12 @@ public sealed class SliderAction : LemmingAction
             lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
             if (lemming.IsSwimmer)
             {
-                CommonMethods.TransitionToNewAction(lemming, SwimmerAction.Instance, true);
+                SwimmerAction.Instance.TransitionLemmingToAction(lemming, true);
                 // ?? CueSoundEffect(SFX_SWIMMING, L.Position); ??
             }
             else
             {
-                CommonMethods.TransitionToNewAction(lemming, DrownerAction.Instance, true);
+                DrownerAction.Instance.TransitionLemmingToAction(lemming, true);
                 // ?? CueSoundEffect(SFX_DROWNING, L.Position); ??
             }
 
@@ -80,7 +80,7 @@ public sealed class SliderAction : LemmingAction
             return true;
 
         lemming.LevelPosition = leftPos;
-        CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, true);
+        WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
         return false;
     }
     private static bool SliderHasPixelAt(
@@ -102,7 +102,10 @@ public sealed class SliderAction : LemmingAction
         return result;
     }
 
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
+        lemming.DehoistPin = new Point(-1, -1);
+
+        base.TransitionLemmingToAction(lemming, turnAround);
     }
 }

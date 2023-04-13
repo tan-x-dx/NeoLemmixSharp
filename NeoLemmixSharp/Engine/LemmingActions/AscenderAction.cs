@@ -43,14 +43,16 @@ public sealed class AscenderAction : LemmingAction
         {
             var dx = lemming.FacingDirection.DeltaX;
             lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
-            CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, true);
+            FallerAction.Instance.TransitionLemmingToAction(lemming, true);
         }
 
         return true;
     }
 
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
+        base.TransitionLemmingToAction(lemming, turnAround);
+
         lemming.AscenderProgress = 0;
     }
 }

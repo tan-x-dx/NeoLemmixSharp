@@ -19,13 +19,9 @@ public sealed class ShruggerAction : LemmingAction
     {
         if (lemming.EndOfAnimation)
         {
-            CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, false);
+            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
 
         return true;
-    }
-
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
     }
 }

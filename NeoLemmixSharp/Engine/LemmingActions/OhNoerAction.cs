@@ -66,8 +66,4 @@ begin
   end;
 end;
     */
-
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
-    }
 }

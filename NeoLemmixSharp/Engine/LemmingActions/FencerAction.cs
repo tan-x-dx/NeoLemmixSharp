@@ -19,8 +19,4 @@ public sealed class FencerAction : LemmingAction
     {
         return false;
     }
-
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
-    }
 }

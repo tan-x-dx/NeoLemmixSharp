@@ -19,8 +19,4 @@ public sealed class ExploderAction : LemmingAction
     {
         return false;
     }
-
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
-    }
 }

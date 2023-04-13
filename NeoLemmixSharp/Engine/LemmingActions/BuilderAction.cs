@@ -19,7 +19,7 @@ public sealed class BuilderAction : LemmingAction
     {
         if (lemming.AnimationFrame == 9)
         {
-            CommonMethods.LayBrick(lemming);
+            LayBrick(lemming);
         }
         else if (lemming.AnimationFrame == 10 &&
                  lemming.NumberOfBricksLeft <= 3)
@@ -42,7 +42,7 @@ public sealed class BuilderAction : LemmingAction
         var dx = lemming.FacingDirection.DeltaX;
         if (Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx, 2)).IsSolid)
         {
-            CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, true);
+            WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
         }
         else if (Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx, 3)).IsSolid ||
                  Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx + dx, 2)).IsSolid ||
@@ -50,7 +50,7 @@ public sealed class BuilderAction : LemmingAction
                   lemming.NumberOfBricksLeft > 0))
         {
             lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, dx, 1);
-            CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, true);
+            WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
         }
         else
         {
@@ -65,17 +65,19 @@ public sealed class BuilderAction : LemmingAction
                 (Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx + dx, 10)).IsSolid &&
                  lemming.NumberOfBricksLeft > 0))
             {
-                CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, true);
+                WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
             }
             else if (lemming.NumberOfBricksLeft == 0)
             {
-                CommonMethods.TransitionToNewAction(lemming, ShruggerAction.Instance, false);
+                ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);
             }
         }
     }
 
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
+        base.TransitionLemmingToAction(lemming, turnAround);
+
         lemming.NumberOfBricksLeft = 12;
         lemming.ConstructivePositionFreeze = false;
     }

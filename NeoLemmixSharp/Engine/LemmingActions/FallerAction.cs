@@ -82,7 +82,7 @@ public sealed class FallerAction : LemmingAction
             lemming.TrueDistanceFallen > 16 &&
             currentFallDistance == 0)
         {
-            CommonMethods.TransitionToNewAction(lemming, FloaterAction.Instance, false);
+            FloaterAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
@@ -91,14 +91,40 @@ public sealed class FallerAction : LemmingAction
              (lemming.InitialFall &&
               lemming.TrueDistanceFallen > 6)))
         {
-            CommonMethods.TransitionToNewAction(lemming, GliderAction.Instance, false);
+            GliderAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
         return false;
     }
 
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
+        // for Swimming it's set in HandleSwimming as there is no single universal value
+
+        if (lemming.CurrentAction == WalkerAction.Instance ||
+            lemming.CurrentAction == BasherAction.Instance)
+        {
+            lemming.DistanceFallen = 3;
+        }
+        else if (lemming.CurrentAction == MinerAction.Instance ||
+                 lemming.CurrentAction == DiggerAction.Instance)
+        {
+            lemming.DistanceFallen = 0;
+        }
+        else if (lemming.CurrentAction == BlockerAction.Instance ||
+                 lemming.CurrentAction == JumperAction.Instance ||
+                 lemming.CurrentAction == LasererAction.Instance)
+        {
+            lemming.DistanceFallen = -1;
+        }
+        else
+        {
+            lemming.DistanceFallen = 1;
+        }
+
+        lemming.TrueDistanceFallen = lemming.DistanceFallen;
+
+        base.TransitionLemmingToAction(lemming, turnAround);
     }
 }

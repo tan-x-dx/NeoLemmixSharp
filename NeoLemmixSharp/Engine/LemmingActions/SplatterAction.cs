@@ -24,8 +24,4 @@ public sealed class SplatterAction : LemmingAction
 
         return false;
     }
-
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
-    }
 }

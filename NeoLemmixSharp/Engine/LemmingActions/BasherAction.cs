@@ -40,7 +40,7 @@ public sealed class BasherAction : LemmingAction
     {
         var dx = lemming.FacingDirection.DeltaX;
         lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
-        CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, true);
+        WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
         if (playSound)
         {
@@ -116,10 +116,6 @@ public sealed class BasherAction : LemmingAction
         }
 
         return true;
-    }
-
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
     }
 }
 

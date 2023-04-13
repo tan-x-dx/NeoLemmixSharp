@@ -19,8 +19,4 @@ public sealed class StonerAction : LemmingAction
     {
         return true;
     }
-
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
-    }
 }

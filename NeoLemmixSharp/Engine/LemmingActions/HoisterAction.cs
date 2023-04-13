@@ -19,7 +19,7 @@ public sealed class HoisterAction : LemmingAction
     {
         if (lemming.EndOfAnimation)
         {
-            CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, false);
+            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
         // special case due to http://www.lemmingsforums.net/index.php?topic=2620.0
         else if (lemming.AnimationFrame == 1 && lemming.IsStartingAction)
@@ -49,8 +49,10 @@ end;
 
     */
 
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
+        var previouslyStartingAction = lemming.IsStartingAction;
+        base.TransitionLemmingToAction(lemming, turnAround);
         lemming.IsStartingAction = previouslyStartingAction;
     }
 }

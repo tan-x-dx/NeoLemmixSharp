@@ -109,7 +109,7 @@ public sealed class LevelAssembler : IDisposable
             Debug = true
         };
 
-        BuilderAction.Instance.OnTransitionToAction(lemming4, false);
+        BuilderAction.Instance.TransitionLemmingToAction(lemming4, false);
 
         _lemmings.Add(lemming0);
         _lemmings.Add(lemming1);

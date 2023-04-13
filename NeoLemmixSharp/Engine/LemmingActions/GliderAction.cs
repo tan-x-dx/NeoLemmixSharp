@@ -210,7 +210,4 @@ begin
 end;
 
     */
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
-    }
 }

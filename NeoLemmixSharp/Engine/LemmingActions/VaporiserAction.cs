@@ -24,8 +24,4 @@ public sealed class VaporiserAction : LemmingAction
 
         return false;
     }
-
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
-    }
 }

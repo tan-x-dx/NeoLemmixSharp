@@ -20,7 +20,10 @@ public sealed class DehoisterAction : LemmingAction
         return true;
     }
 
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
+        lemming.DehoistPin = lemming.LevelPosition;
+
+        base.TransitionLemmingToAction(lemming, turnAround);
     }
 }

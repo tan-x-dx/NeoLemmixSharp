@@ -19,13 +19,9 @@ public sealed class BlockerAction : LemmingAction
     {
         if (!Terrain.GetPixelData(lemming.LevelPosition).IsSolid)
         {
-            CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, false);
+            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
 
         return true;
-    }
-
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
     }
 }

@@ -19,14 +19,14 @@ public sealed class WalkerAction : LemmingAction
     {
         var dx = lemming.FacingDirection.DeltaX;
         lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, dx);
-        var dy = CommonMethods.FindGroundPixel(lemming.Orientation, lemming.LevelPosition);
+        var dy = FindGroundPixel(lemming.Orientation, lemming.LevelPosition);
 
         if (dy > 0 &&
             lemming.IsSlider &&
-            CommonMethods.LemmingCanDehoist(lemming, true))
+            LemmingCanDehoist(lemming, true))
         {
             lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
-            CommonMethods.TransitionToNewAction(lemming, DehoisterAction.Instance, true);
+            DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
             return true;
         }
 
@@ -34,7 +34,7 @@ public sealed class WalkerAction : LemmingAction
         {
             if (lemming.IsClimber)
             {
-                CommonMethods.TransitionToNewAction(lemming, ClimberAction.Instance, false);
+                ClimberAction.Instance.TransitionLemmingToAction(lemming, false);
             }
             else
             {
@@ -44,7 +44,7 @@ public sealed class WalkerAction : LemmingAction
         }
         else if (dy < -2)
         {
-            CommonMethods.TransitionToNewAction(lemming, AscenderAction.Instance, false);
+            AscenderAction.Instance.TransitionLemmingToAction(lemming, false);
             lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 2);
         }
         else if (dy < 1)
@@ -53,12 +53,12 @@ public sealed class WalkerAction : LemmingAction
         }
 
         // Get new ground pixel again in case the Lem has turned
-        dy = CommonMethods.FindGroundPixel(lemming.Orientation, lemming.LevelPosition);
+        dy = FindGroundPixel(lemming.Orientation, lemming.LevelPosition);
 
         if (dy > 3)
         {
             lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 4);
-            CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, false);
+            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
         else if (dy > 0)
         {
@@ -68,7 +68,14 @@ public sealed class WalkerAction : LemmingAction
         return true;
     }
 
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
+        if (Terrain.GetPixelData(lemming.LevelPosition).IsSolid)
+        {
+            base.TransitionLemmingToAction(lemming, turnAround);
+            return;
+        }
+
+        FallerAction.Instance.TransitionLemmingToAction(lemming, turnAround);
     }
 }

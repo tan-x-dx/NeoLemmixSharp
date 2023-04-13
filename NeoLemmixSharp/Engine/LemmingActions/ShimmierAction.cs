@@ -28,7 +28,7 @@ public sealed class ShimmierAction : LemmingAction
                     !Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx, i + 1)).IsSolid)
                 {
                     lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, dx, i);
-                    CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, false);
+                    WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
                     return true;
                 }
             }
@@ -41,7 +41,7 @@ public sealed class ShimmierAction : LemmingAction
                 {
                     lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, dx, i - 4);
                     lemming.IsStartingAction = false;
-                    CommonMethods.TransitionToNewAction(lemming, HoisterAction.Instance, false);
+                    HoisterAction.Instance.TransitionLemmingToAction(lemming, false);
                     lemming.AnimationFrame += 2;
                     return true;
                 }
@@ -54,11 +54,11 @@ public sealed class ShimmierAction : LemmingAction
                 {
                     if (lemming.IsSlider)
                     {
-                        CommonMethods.TransitionToNewAction(lemming, SliderAction.Instance, false);
+                        SliderAction.Instance.TransitionLemmingToAction(lemming, false);
                     }
                     else
                     {
-                        CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, false);
+                        FallerAction.Instance.TransitionLemmingToAction(lemming, false);
                     }
 
                     return true;
@@ -71,7 +71,7 @@ public sealed class ShimmierAction : LemmingAction
         if (!pixel9AboveIsSolid &&
             !Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx, 10)).IsSolid)
         {
-            CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, false);
+            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
@@ -79,7 +79,7 @@ public sealed class ShimmierAction : LemmingAction
         if (Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx, 8)).IsSolid &&
             !pixel9AboveIsSolid)
         {
-            CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, false);
+            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
@@ -92,7 +92,7 @@ public sealed class ShimmierAction : LemmingAction
 
             if (Terrain.GetPixelData(lemming.LevelPosition).IsSolid)
             {
-                CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, false);
+                WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
                 return true;
             }
 
@@ -112,13 +112,45 @@ public sealed class ShimmierAction : LemmingAction
         if (Terrain.GetPixelData(pos).IsSolid)
         {
             lemming.LevelPosition = pos;
-            CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, false);
+            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
 
         return true;
     }
 
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
+        if (lemming.CurrentAction == ClimberAction.Instance)
+        {
+            lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
+            lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX);
+
+            if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 8)).IsSolid)
+            {
+                lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 1);
+            }
+        }
+        else if (lemming.CurrentAction == SliderAction.Instance ||
+                 lemming.CurrentAction == DehoisterAction.Instance)
+        {
+            lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 2);
+            if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 8)).IsSolid)
+            {
+                lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 1);
+            }
+        }
+        else if (lemming.CurrentAction == JumperAction.Instance)
+        {
+            for (var i = -1; i < 4; i++)
+            {
+                if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 9 + i)).IsSolid &&
+                    !Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 8 + i)).IsSolid)
+                {
+                    lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, i);
+                }
+            }
+        }
+
+        base.TransitionLemmingToAction(lemming, turnAround);
     }
 }

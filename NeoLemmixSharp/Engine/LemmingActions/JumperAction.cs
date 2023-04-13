@@ -20,7 +20,15 @@ public sealed class JumperAction : LemmingAction
         return false;
     }
 
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
+        if (lemming.CurrentAction == ClimberAction.Instance ||
+            lemming.CurrentAction == SliderAction.Instance)
+        {
+            lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
+            lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX);
+        }
+
+        base.TransitionLemmingToAction(lemming, turnAround);
     }
 }

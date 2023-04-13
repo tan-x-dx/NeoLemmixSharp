@@ -49,31 +49,27 @@ public sealed class ReacherAction : LemmingAction
             Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 7)).IsSolid ||
             Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 8)).IsSolid)
         {
-            CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, false);
+            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
         else if (lemming.AnimationFrame == 1 &&
                  Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 9)).IsSolid)
         {
-            CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, false);
+            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
         else if (emptyPixels <= _movementList[lemming.AnimationFrame])
         {
             lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, emptyPixels + 1);
-            CommonMethods.TransitionToNewAction(lemming, ShimmierAction.Instance, false);
+            ShimmierAction.Instance.TransitionLemmingToAction(lemming, false);
         }
         else
         {
             lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, _movementList[lemming.AnimationFrame]);
             if (lemming.AnimationFrame == 7)
             {
-                CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, false);
+                FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             }
         }
 
         return true;
-    }
-
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
     }
 }

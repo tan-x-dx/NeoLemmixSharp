@@ -19,7 +19,7 @@ public sealed class StackerAction : LemmingAction
     {
         if (lemming.AnimationFrame == 7)
         {
-            lemming.PlacedBrick = CommonMethods.LayStackBrick(lemming);
+            lemming.PlacedBrick = LayStackBrick(lemming);
         }
         else if (lemming.AnimationFrame == 0)
         {
@@ -37,12 +37,12 @@ public sealed class StackerAction : LemmingAction
                 if (lemming.NumberOfBricksLeft < 7 ||
                     !MayPlaceNextBrick(lemming))
                 {
-                    CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, true);
+                    WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
                 }
             }
             else if (lemming.NumberOfBricksLeft == 0)
             {
-                CommonMethods.TransitionToNewAction(lemming, ShruggerAction.Instance, false);
+                ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);
             }
         }
 
@@ -59,8 +59,32 @@ public sealed class StackerAction : LemmingAction
                  Terrain.GetPixelData(lemming.Orientation.MoveRight(brickPosition, dx + dx + dx)).IsSolid);
     }
 
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
+    private static bool LayStackBrick(Lemming lemming)
     {
+        var dx = lemming.FacingDirection.DeltaX;
+        var dy = lemming.StackLow ? -1 : 0;
+        var brickPosition = lemming.Orientation.Move(lemming.LevelPosition, dx, 9 + dy - lemming.NumberOfBricksLeft);
+
+        var result = false;
+
+        for (var i = 0; i < 3; i++)
+        {
+            if (!Terrain.GetPixelData(brickPosition).IsSolid)
+            {
+                Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+                result = true;
+            }
+
+            brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        }
+
+        return result;
+    }
+
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    {
+        base.TransitionLemmingToAction(lemming, turnAround);
+
         lemming.NumberOfBricksLeft = 8;
     }
 }

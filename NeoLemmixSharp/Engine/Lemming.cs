@@ -117,10 +117,7 @@ public sealed class Lemming : ITickable
 
         // var checkPosition = GetGadgetCheckPositions();
 
-        if (NextAction != null)
-        {
-            CommonMethods.TransitionToNewAction(this, NextAction, false);
-        }
+        NextAction?.TransitionLemmingToAction(this, false);
 
         return true;
     }

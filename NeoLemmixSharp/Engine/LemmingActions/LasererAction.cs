@@ -62,7 +62,7 @@ public sealed class LasererAction : LemmingAction
     {
         if (!Terrain.GetPixelData(lemming.LevelPosition).IsSolid)
         {
-            CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, false);
+            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
@@ -113,7 +113,7 @@ public sealed class LasererAction : LemmingAction
             lemming.LaserRemainTime--;
             if (lemming.LaserRemainTime <= 0)
             {
-                CommonMethods.TransitionToNewAction(lemming, WalkerAction.Instance, false);
+                WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             }
         }
 
@@ -154,9 +154,5 @@ public sealed class LasererAction : LemmingAction
         }
 
         return result;
-    }
-
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
     }
 }

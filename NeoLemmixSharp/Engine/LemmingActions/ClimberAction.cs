@@ -46,12 +46,12 @@ public sealed class ClimberAction : LemmingAction
                 if (lemming.IsSlider)
                 {
                     lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
-                    CommonMethods.TransitionToNewAction(lemming, SliderAction.Instance, false);
+                    SliderAction.Instance.TransitionLemmingToAction(lemming, false);
                 }
                 else
                 {
                     lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
-                    CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, true);
+                    FallerAction.Instance.TransitionLemmingToAction(lemming, true);
                     lemming.DistanceFallen++; // Least-impact way to fix a fall distance inconsistency. See https://www.lemmingsforums.net/index.php?topic=5794.0
                 }
             }
@@ -64,7 +64,7 @@ public sealed class ClimberAction : LemmingAction
                     lemming.IsStartingAction = false;
                 }
 
-                CommonMethods.TransitionToNewAction(lemming, HoisterAction.Instance, false);
+                HoisterAction.Instance.TransitionLemmingToAction(lemming, false);
             }
         }
         else
@@ -85,12 +85,12 @@ public sealed class ClimberAction : LemmingAction
 
                 if (lemming.IsSlider)
                 {
-                    CommonMethods.TransitionToNewAction(lemming, SliderAction.Instance, false);
+                    SliderAction.Instance.TransitionLemmingToAction(lemming, false);
                 }
                 else
                 {
                     lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
-                    CommonMethods.TransitionToNewAction(lemming, FallerAction.Instance, true);
+                    FallerAction.Instance.TransitionLemmingToAction(lemming, true);
                 }
             }
         }
@@ -168,8 +168,4 @@ begin
 end;
 
     */
-
-    public override void OnTransitionToAction(Lemming lemming, bool previouslyStartingAction)
-    {
-    }
 }
