@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
-using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Sprites;
@@ -15,6 +14,8 @@ namespace NeoLemmixSharp.LevelBuilding;
 
 public sealed class LevelPainter : IDisposable
 {
+    public const uint MinimumSubstantialAlphaValue = 31;
+
     private const string _rootDirectory = "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5";
 
     private readonly GraphicsDevice _graphicsDevice;
@@ -201,7 +202,7 @@ public sealed class LevelPainter : IDisposable
     private static bool PixelColourIsSubstantial(uint colour)
     {
         var alpha = (colour >> 24) & 0xffU;
-        return alpha > LemmingConstants.MinimumSubstantialAlphaValue;
+        return alpha > MinimumSubstantialAlphaValue;
     }
 
     private PixelColourData GetOrLoadPixelColourData(TerrainData terrainData)

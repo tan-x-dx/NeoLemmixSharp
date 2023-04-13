@@ -3,6 +3,7 @@
 public sealed class FallerAction : LemmingAction
 {
     public const int NumberOfFallerAnimationFrames = 4;
+    public const int MaxFallDistance = 62;
 
     public static FallerAction Instance { get; } = new();
 
@@ -46,14 +47,14 @@ public sealed class FallerAction : LemmingAction
             }
         }
 
-        if (lemming.DistanceFallen > LemmingConstants.MaxFallDistance)
+        if (lemming.DistanceFallen > MaxFallDistance)
         {
-            lemming.DistanceFallen = LemmingConstants.MaxFallDistance + 1;
+            lemming.DistanceFallen = MaxFallDistance + 1;
         }
 
-        if (lemming.TrueDistanceFallen > LemmingConstants.MaxFallDistance)
+        if (lemming.TrueDistanceFallen > MaxFallDistance)
         {
-            lemming.TrueDistanceFallen = LemmingConstants.MaxFallDistance + 1;
+            lemming.TrueDistanceFallen = MaxFallDistance + 1;
         }
 
         if (currentFallDistanceStep < maxFallDistanceStep)
@@ -70,7 +71,7 @@ public sealed class FallerAction : LemmingAction
     {
         return (!(lemming.IsFloater || lemming.IsGlider)) &&
                (true) && //not HasTriggerAt(L.LemX, L.LemY, trNoSplat)
-               ((lemming.DistanceFallen > LemmingConstants.MaxFallDistance) ||
+               ((lemming.DistanceFallen > MaxFallDistance) ||
                 false); // HasTriggerAt(L.LemX, L.LemY, trSplat);
     }
 

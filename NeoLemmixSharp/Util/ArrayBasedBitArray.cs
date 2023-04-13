@@ -110,8 +110,8 @@ public sealed class ArrayBasedBitArray : IBitArray
     public ArrayBasedBitArray Clone() => new(Length, _uints, Count);
 
     public Enumerator GetEnumerator() => new(this);
-    IEnumerator<int> IEnumerable<int>.GetEnumerator() => GetEnumerator();
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    IEnumerator<int> IEnumerable<int>.GetEnumerator() => new Enumerator(this);
+    IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
 
     public struct Enumerator : IEnumerator<int>
     {
@@ -164,5 +164,4 @@ public sealed class ArrayBasedBitArray : IBitArray
         object IEnumerator.Current => Current;
         void IDisposable.Dispose() { }
     }
-
 }

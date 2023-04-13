@@ -120,7 +120,7 @@ public sealed class PlatformerAction : LemmingAction
     {
         base.TransitionLemmingToAction(lemming, turnAround);
 
-        lemming.NumberOfBricksLeft = LemmingConstants.StepsMax;
+        lemming.NumberOfBricksLeft = 12;
         lemming.ConstructivePositionFreeze = false;
     }
 }
