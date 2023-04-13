@@ -17,6 +17,7 @@ public sealed class FloaterAction : LemmingAction
     {
     }
 
+    protected override int ActionId => 14;
     public override string LemmingActionName => "floater";
     public override int NumberOfAnimationFrames => NumberOfFloaterAnimationFrames;
     public override bool IsOneTimeAction => false;

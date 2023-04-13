@@ -10,6 +10,7 @@ public sealed class StackerAction : LemmingAction
     {
     }
 
+    protected override int ActionId => 27;
     public override string LemmingActionName => "stacker";
     public override int NumberOfAnimationFrames => NumberOfStackerAnimationFrames;
     public override bool IsOneTimeAction => false;

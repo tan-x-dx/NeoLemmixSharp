@@ -53,6 +53,7 @@ public sealed class LasererAction : LemmingAction
     {
     }
 
+    protected override int ActionId => 18;
     public override string LemmingActionName => "laserer";
     public override int NumberOfAnimationFrames => NumberOfLasererAnimationFrames;
     public override bool IsOneTimeAction => false;

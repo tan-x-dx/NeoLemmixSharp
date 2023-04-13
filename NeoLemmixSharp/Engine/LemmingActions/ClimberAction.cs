@@ -10,6 +10,7 @@ public sealed class ClimberAction : LemmingAction
     {
     }
 
+    protected override int ActionId => 5;
     public override string LemmingActionName => "climber";
     public override int NumberOfAnimationFrames => NumberOfClimberAnimationFrames;
     public override bool IsOneTimeAction => false;

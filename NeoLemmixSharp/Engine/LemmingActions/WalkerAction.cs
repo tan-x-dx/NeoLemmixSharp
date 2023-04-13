@@ -10,6 +10,7 @@ public sealed class WalkerAction : LemmingAction
     {
     }
 
+    protected override int ActionId => 31;
     public override string LemmingActionName => "walker";
     public override int NumberOfAnimationFrames => NumberOfWalkerAnimationFrames;
     public override bool IsOneTimeAction => false;

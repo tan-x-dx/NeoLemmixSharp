@@ -10,6 +10,7 @@ public sealed class DehoisterAction : LemmingAction
     {
     }
 
+    protected override int ActionId => 6;
     public override string LemmingActionName => "dehoister";
     public override int NumberOfAnimationFrames => NumberOfDehoisterAnimationFrames;
     public override bool IsOneTimeAction => true;

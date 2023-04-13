@@ -14,6 +14,7 @@ public sealed class BasherAction : LemmingAction
     {
     }
 
+    protected override int ActionId => 2;
     public override string LemmingActionName => "basher";
     public override int NumberOfAnimationFrames => NumberOfBasherAnimationFrames;
     public override bool IsOneTimeAction => false;

@@ -13,6 +13,7 @@ public sealed class DiggerAction : LemmingAction
     {
     }
 
+    protected override int ActionId => 7;
     public override string LemmingActionName => "digger";
     public override int NumberOfAnimationFrames => NumberOfDiggerAnimationFrames;
     public override bool IsOneTimeAction => false;

@@ -10,6 +10,7 @@ public sealed class DisarmerAction : LemmingAction
     {
     }
 
+    protected override int ActionId => 8;
     public override string LemmingActionName => "disarmer";
     public override int NumberOfAnimationFrames => NumberOfDisarmerAnimationFrames;
     public override bool IsOneTimeAction => false;

@@ -14,6 +14,7 @@ public sealed class SliderAction : LemmingAction
     {
     }
 
+    protected override int ActionId => 25;
     public override string LemmingActionName => "slider";
     public override int NumberOfAnimationFrames => NumberOfSliderAnimationFrames;
     public override bool IsOneTimeAction => false;

@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.LemmingActions;
 
 public static class CommonMethods
 {
-    private static PixelManager Terrain => LevelScreen.CurrentLevel!.Terrain;
+    private static PixelManager Terrain => LevelScreen.CurrentLevel.Terrain;
 
     public static bool LemmingCanPlatform(Lemming lemming)
     {
