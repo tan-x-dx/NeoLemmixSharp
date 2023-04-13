@@ -23,7 +23,7 @@ public interface IOrientation : IEquatable<IOrientation>
         return new ReadOnlyCollection<IOrientation>(list);
     }
 
-    protected static PixelManager Terrain => LevelScreen.CurrentLevel!.Terrain;
+    protected static PixelManager Terrain => LevelScreen.CurrentLevel.Terrain;
 
     int RotNum { get; }
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NeoLemmixSharp.LevelBuilding.Reading;
+﻿namespace NeoLemmixSharp.LevelBuilding.Reading;
 
 public sealed class LemmingReader : IDataReader
 {
@@ -19,9 +17,9 @@ public sealed class LemmingReader : IDataReader
                 FinishedReading = true;
                 break;
 
-          /*  default:
-                throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{tokens[0]}] line: \"{string.Join(' ', tokens)}\"");*/
+                /*  default:
+                      throw new InvalidOperationException(
+                          $"Unknown token when parsing {IdentifierToken}: [{tokens[0]}] line: \"{string.Join(' ', tokens)}\"");*/
         }
     }
 }

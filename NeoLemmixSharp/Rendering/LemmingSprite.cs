@@ -23,7 +23,7 @@ public sealed class LemmingSprite : IRenderable
             actionSprite.SpriteWidth,
             actionSprite.SpriteHeight);
 
-        var viewport = LevelScreen.CurrentLevel!.Viewport;
+        var viewport = LevelScreen.CurrentLevel.Viewport;
 
         if (!viewport.GetRenderDestinationRectangle(rect, out var renderDestination))
             return;

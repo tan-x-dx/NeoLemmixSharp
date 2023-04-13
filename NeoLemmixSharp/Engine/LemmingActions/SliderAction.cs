@@ -83,6 +83,7 @@ public sealed class SliderAction : LemmingAction
         WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
         return false;
     }
+
     private static bool SliderHasPixelAt(
         IOrientation orientation,
         Point levelPosition,

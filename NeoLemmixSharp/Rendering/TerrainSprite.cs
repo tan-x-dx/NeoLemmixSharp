@@ -21,7 +21,7 @@ public sealed class TerrainSprite : IRenderable
 
     public void Render(SpriteBatch spriteBatch)
     {
-        var viewport = LevelScreen.CurrentLevel!.Viewport;
+        var viewport = LevelScreen.CurrentLevel.Viewport;
 
         spriteBatch.Draw(
             _texture,
