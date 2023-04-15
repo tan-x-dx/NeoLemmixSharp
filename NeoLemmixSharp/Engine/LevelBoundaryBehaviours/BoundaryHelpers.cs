@@ -6,27 +6,27 @@ namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 
 public static class BoundaryHelpers
 {
-    public static IHorizontalBoundaryBehaviour GetHorizontalBoundaryBehaviour(
+    public static IHorizontalViewPortBehaviour GetHorizontalBoundaryBehaviour(
         BoundaryBehaviourType boundaryBehaviourType,
         int width,
         int height) => boundaryBehaviourType switch
         {
-            BoundaryBehaviourType.Void => new HorizontalVoidBoundaryBehaviour(width, height),
+            BoundaryBehaviourType.Void => new HorizontalVoidViewPortBehaviour(width),
             //   BoundaryBehaviourType.Solid => expr,
             //   BoundaryBehaviourType.Reflect => expr,
-            BoundaryBehaviourType.Wrap => new HorizontalWrapBehaviour(width, height),
+            BoundaryBehaviourType.Wrap => new HorizontalWrapBehaviour(width),
             _ => throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType, "Unknown boundary behaviour type")
         };
 
-    public static IVerticalBoundaryBehaviour GetVerticalBoundaryBehaviour(
+    public static IVerticalViewPortBehaviour GetVerticalBoundaryBehaviour(
         BoundaryBehaviourType boundaryBehaviourType,
         int width,
         int height) => boundaryBehaviourType switch
         {
-            BoundaryBehaviourType.Void => new VerticalVoidBoundaryBehaviour(width, height),
+            BoundaryBehaviourType.Void => new VerticalVoidViewPortBehaviour(height),
             //   BoundaryBehaviourType.Solid => expr,
             //   BoundaryBehaviourType.Reflect => expr,
-            BoundaryBehaviourType.Wrap => new VerticalWrapBoundaryBehaviour(width, height),
+            BoundaryBehaviourType.Wrap => new VerticalWrapViewPortBehaviour(height),
             _ => throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType, "Unknown boundary behaviour type")
         };
 }

@@ -1,30 +1,22 @@
-﻿using System;
+﻿namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 
-namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
-
-public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
+public sealed class HorizontalVoidViewPortBehaviour : IHorizontalViewPortBehaviour
 {
     private readonly int _width;
 
     public int ViewPortX { get; private set; }
     public int ViewPortWidth { get; private set; }
-    public int ScreenX => 0;
+    public int ScreenX { get; private set; }
     public int ScreenWidth { get; private set; }
-    public int NumberOfHorizontalTilings { get; private set; }
+    public int NumberOfHorizontalTilings => 1;
 
-    public HorizontalWrapBehaviour(int width)
+    public HorizontalVoidViewPortBehaviour(int width)
     {
         _width = width;
     }
 
     public int NormaliseX(int x)
     {
-        if (x < 0)
-            return x + _width;
-
-        if (x >= _width)
-            return x - _width;
-
         return x;
     }
 
@@ -34,10 +26,12 @@ public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
 
         if (ViewPortWidth < _width)
         {
+            ScreenX = 0;
             ScreenWidth = ViewPortWidth * scaleMultiplier;
         }
         else
         {
+            ScreenX = scaleMultiplier * (ViewPortWidth - _width) / 2;
             ScreenWidth = _width * scaleMultiplier;
             ViewPortWidth = _width;
         }
@@ -47,19 +41,20 @@ public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
 
     public void ScrollHorizontally(int dx)
     {
+        if (ViewPortWidth >= _width)
+        {
+            ViewPortX = 0;
+            return;
+        }
+
         ViewPortX += dx;
         if (ViewPortX < 0)
         {
-            ViewPortX += _width;
+            ViewPortX = 0;
         }
-        else if (ViewPortX >= _width)
+        else if (ViewPortX + ViewPortWidth >= _width)
         {
-            ViewPortX -= _width;
+            ViewPortX = _width - ViewPortWidth;
         }
-    }
-    
-    public int GetNumberOfHorizontalRepeats()
-    {
-        return Math.Clamp(1 + (ScreenWidth + ScreenX) / _width, 1, 5);
     }
 }

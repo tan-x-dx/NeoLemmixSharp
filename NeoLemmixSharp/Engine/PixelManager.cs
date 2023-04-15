@@ -10,8 +10,8 @@ public sealed class PixelManager
 {
     private readonly PixelData _voidPixel;
     private readonly PixelData[] _data;
-    public IHorizontalBoundaryBehaviour HorizontalBoundaryBehaviour { get; }
-    public IVerticalBoundaryBehaviour VerticalBoundaryBehaviour { get; }
+    public IHorizontalViewPortBehaviour HorizontalViewPortBehaviour { get; }
+    public IVerticalViewPortBehaviour VerticalViewPortBehaviour { get; }
 
     private TerrainSprite _terrainSprite;
 
@@ -30,12 +30,12 @@ public sealed class PixelManager
 
         _data = new PixelData[Width * Height];
 
-        HorizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(
+        HorizontalViewPortBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(
             horizontalBoundaryBehaviourType,
             width,
             height);
 
-        VerticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(
+        VerticalViewPortBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(
             verticalBoundaryBehaviourType,
             width,
             height);
@@ -54,8 +54,8 @@ public sealed class PixelManager
     public Point NormalisePosition(Point levelPosition)
     {
         return new Point(
-            HorizontalBoundaryBehaviour.NormaliseX(levelPosition.X),
-            VerticalBoundaryBehaviour.NormaliseY(levelPosition.Y));
+            HorizontalViewPortBehaviour.NormaliseX(levelPosition.X),
+            VerticalViewPortBehaviour.NormaliseY(levelPosition.Y));
     }
 
     public bool PositionOutOfBounds(Point levelPosition)

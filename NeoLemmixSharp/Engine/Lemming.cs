@@ -37,10 +37,7 @@ public sealed class Lemming : ITickable
     public Point LaserHitPoint;
     public bool LaserHit;
     public int LaserRemainTime;
-
-    public int X => LevelPosition.X;
-    public int Y => LevelPosition.Y;
-
+    
     public Point LevelPosition;
 
     public bool Debug;

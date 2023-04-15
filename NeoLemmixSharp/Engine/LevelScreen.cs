@@ -63,6 +63,35 @@ public sealed class LevelScreen : BaseScreen
         }
     }
 
+    private void HandleKeyboardInput()
+    {
+        if (!GameWindow.IsActive)
+            return;
+
+        var keyboardState = Keyboard.GetState();
+        Controller.ControllerKeysDown(keyboardState.GetPressedKeys());
+
+        if (Pause)
+        {
+            _stopMotion = !_stopMotion;
+        }
+
+        if (Quit)
+        {
+            GameWindow.Escape();
+        }
+
+        if (ToggleFastForwards)
+        {
+            GameWindow.SetFastForwards(!GameWindow.IsFastForwards);
+        }
+
+        if (ToggleFullScreen)
+        {
+            GameWindow.ToggleFullScreen();
+        }
+    }
+
     private bool HandleMouseInput()
     {
         if (!GameWindow.IsActive)
@@ -93,35 +122,6 @@ public sealed class LevelScreen : BaseScreen
 
         _doTick = false;
         return true;
-    }
-
-    private void HandleKeyboardInput()
-    {
-        if (!GameWindow.IsActive)
-            return;
-
-        var keyboardState = Keyboard.GetState();
-        Controller.ControllerKeysDown(keyboardState.GetPressedKeys());
-
-        if (Pause)
-        {
-            _stopMotion = !_stopMotion;
-        }
-
-        if (Quit)
-        {
-            GameWindow.Escape();
-        }
-
-        if (ToggleFastForwards)
-        {
-            GameWindow.SetFastForwards(!GameWindow.IsFastForwards);
-        }
-
-        if (ToggleFullScreen)
-        {
-            GameWindow.ToggleFullScreen();
-        }
     }
 
     public override void Render(SpriteBatch spriteBatch)

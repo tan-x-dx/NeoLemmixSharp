@@ -6,6 +6,7 @@ namespace NeoLemmixSharp.Rendering;
 
 public sealed class ActionSprite : IDisposable
 {
+    public Point Size { get; }
     public int SpriteWidth { get; }
     public int SpriteHeight { get; }
     public int NumberOfFrames { get; }
@@ -26,6 +27,7 @@ public sealed class ActionSprite : IDisposable
         Texture = texture;
         SpriteWidth = spriteWidth;
         SpriteHeight = spriteHeight;
+        Size = new Point(spriteWidth, spriteHeight);
         BoundingBox = new Rectangle(0, 0, spriteWidth, spriteHeight);
         NumberOfFrames = numberOfFrames;
         AnchorPoint = anchorPoint;

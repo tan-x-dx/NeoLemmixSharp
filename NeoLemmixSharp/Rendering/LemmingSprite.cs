@@ -18,10 +18,8 @@ public sealed class LemmingSprite : IRenderable
         var actionSprite = _lemming.FacingDirection.ChooseActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.Orientation);
 
         var rect = new Rectangle(
-            _lemming.X - actionSprite.AnchorPointX,
-            _lemming.Y - actionSprite.AnchorPointY,
-            actionSprite.SpriteWidth,
-            actionSprite.SpriteHeight);
+            _lemming.LevelPosition - actionSprite.AnchorPoint,
+            actionSprite.Size);
 
         var viewport = LevelScreen.CurrentLevel.Viewport;
 
@@ -34,10 +32,9 @@ public sealed class LemmingSprite : IRenderable
             actionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame),
             Color.White);
 
+        viewport.GetRenderDestinationRectangle(new Rectangle(_lemming.LevelPosition - new Point(1, 1), new Point(3, 3)), out renderDestination);
+
         var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
-
-        viewport.GetRenderDestinationRectangle(new Rectangle(_lemming.X - 1, _lemming.Y - 1, 3, 3), out renderDestination);
-
         spriteBatch.Draw(
             spriteBank.AnchorTexture,
             renderDestination,

@@ -21,13 +21,15 @@ public sealed class TerrainSprite : IRenderable
 
     public void Render(SpriteBatch spriteBatch)
     {
-        var viewport = LevelScreen.CurrentLevel.Viewport;
+        LevelScreen.CurrentLevel.Viewport.RenderTerrain(spriteBatch, _texture);
 
-        spriteBatch.Draw(
-            _texture,
-            new Rectangle(viewport.ScreenX, viewport.ScreenY, viewport.ScreenWidth, viewport.ScreenHeight),
-            new Rectangle(viewport.ViewPortX, viewport.ViewPortY, viewport.ViewPortWidth, viewport.ViewPortHeight),
-            Color.White);
+        /* var viewport = LevelScreen.CurrentLevel.Viewport;
+
+         spriteBatch.Draw(
+             _texture,
+             new Rectangle(viewport.ScreenX, viewport.ScreenY, viewport.ScreenWidth, viewport.ScreenHeight),
+             new Rectangle(viewport.ViewPortX, viewport.ViewPortY, viewport.ViewPortWidth, viewport.ViewPortHeight),
+             Color.White);*/
     }
 
     public void SetPixelColour(int x, int y, uint colour)
