@@ -4,26 +4,31 @@ namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 
 public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
 {
-    private readonly int _width;
+    private readonly int _levelWidthInPixels;
+
+    private int _numberOfHorizontalRenderIntervals = 1;
 
     public int ViewPortX { get; private set; }
     public int ViewPortWidth { get; private set; }
     public int ScreenX => 0;
     public int ScreenWidth { get; private set; }
-    public int NumberOfHorizontalTilings { get; private set; }
 
-    public HorizontalWrapBehaviour(int width)
+    public RenderInterval[] HorizontalRenderIntervals { get; private set; }
+
+    public HorizontalWrapBehaviour(int levelWidthInPixels)
     {
-        _width = width;
+        _levelWidthInPixels = levelWidthInPixels;
+
+        HorizontalRenderIntervals = new RenderInterval[1];
     }
 
     public int NormaliseX(int x)
     {
         if (x < 0)
-            return x + _width;
+            return x + _levelWidthInPixels;
 
-        if (x >= _width)
-            return x - _width;
+        if (x >= _levelWidthInPixels)
+            return x - _levelWidthInPixels;
 
         return x;
     }
@@ -32,17 +37,14 @@ public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
     {
         ViewPortWidth = windowWidth / scaleMultiplier;
 
-        if (ViewPortWidth < _width)
+        if (ViewPortWidth < _levelWidthInPixels)
         {
             ScreenWidth = ViewPortWidth * scaleMultiplier;
         }
         else
         {
-            ScreenWidth = _width * scaleMultiplier;
-            ViewPortWidth = _width;
+            ScreenWidth = _levelWidthInPixels * scaleMultiplier;
         }
-
-        ScrollHorizontally(0);
     }
 
     public void ScrollHorizontally(int dx)
@@ -50,16 +52,46 @@ public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
         ViewPortX += dx;
         if (ViewPortX < 0)
         {
-            ViewPortX += _width;
+            ViewPortX += _levelWidthInPixels;
         }
-        else if (ViewPortX >= _width)
+        else if (ViewPortX >= _levelWidthInPixels)
         {
-            ViewPortX -= _width;
+            ViewPortX -= _levelWidthInPixels;
         }
     }
-    
-    public int GetNumberOfHorizontalRepeats()
+
+    public void RecalculateHorizontalRenderIntervals(int scaleMultiplier)
     {
-        return Math.Clamp(1 + (ScreenWidth + ScreenX) / _width, 1, 5);
+        var previousNumberOfHorizontalRenderIntervals = _numberOfHorizontalRenderIntervals;
+        _numberOfHorizontalRenderIntervals = Math.Clamp(1 + (ViewPortX + ViewPortWidth - 1) / _levelWidthInPixels, 1, 5);
+
+        if (_numberOfHorizontalRenderIntervals != previousNumberOfHorizontalRenderIntervals)
+        {
+            HorizontalRenderIntervals = new RenderInterval[_numberOfHorizontalRenderIntervals];
+        }
+
+        if (_numberOfHorizontalRenderIntervals == 1)
+        {
+            HorizontalRenderIntervals[0] = new RenderInterval(ViewPortX, ViewPortWidth, ScreenX, ScreenWidth);
+
+            return;
+        }
+
+        var width = _levelWidthInPixels - ViewPortX;
+        HorizontalRenderIntervals[0] = new RenderInterval(ViewPortX, width, 0, width * scaleMultiplier);
+
+        var limit = _numberOfHorizontalRenderIntervals - 1;
+        var screenStart = -(scaleMultiplier * ViewPortX);
+
+        for (var i = 1; i < limit; i++)
+        {
+            screenStart += ScreenWidth;
+            HorizontalRenderIntervals[i] = new RenderInterval(0, _levelWidthInPixels, screenStart, ScreenWidth);
+        }
+
+        var pixelLength = ViewPortWidth + ViewPortX - limit * _levelWidthInPixels;
+        screenStart += ScreenWidth;
+        var screenWidth = pixelLength * scaleMultiplier;
+        HorizontalRenderIntervals[_numberOfHorizontalRenderIntervals - 1] = new RenderInterval(0, pixelLength, screenStart, screenWidth);
     }
 }

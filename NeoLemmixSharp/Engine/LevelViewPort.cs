@@ -8,27 +8,16 @@ namespace NeoLemmixSharp.Engine;
 
 public sealed class LevelViewPort
 {
-    private const int MaxNumberOfRenderTilings = 5;
-
     private const int MinScale = 1;
     private const int MaxScale = 12;
 
-    private readonly int _levelWidth;
-    private readonly int _levelHeight;
-
     private readonly IHorizontalViewPortBehaviour _horizontalViewPortBehaviour;
     private readonly IVerticalViewPortBehaviour _verticalViewPortBehaviour;
-
-    private readonly Interval[] _horizontalTilingIntervals = new Interval[MaxNumberOfRenderTilings];
-    private readonly Interval[] _verticalTilingIntervals = new Interval[MaxNumberOfRenderTilings];
 
     private int _previousScrollWheelValue;
 
     private int _windowWidth;
     private int _windowHeight;
-
-    private int _screenTileX;
-    private int _screenTileY;
 
     private int _scrollDelta;
 
@@ -46,25 +35,25 @@ public sealed class LevelViewPort
 
     public LevelViewPort(PixelManager terrain)
     {
-        _levelWidth = terrain.Width;
-        _levelHeight = terrain.Height;
-
         _horizontalViewPortBehaviour = terrain.HorizontalViewPortBehaviour;
         _verticalViewPortBehaviour = terrain.VerticalViewPortBehaviour;
 
         _scrollDelta = 4 * MaxScale / ScaleMultiplier;
     }
 
-    public int ScaleMultiplier { get; private set; } = 6;
+    public int ScaleMultiplier { get; private set; } = 1;
 
     public void SetWindowDimensions(int gameWindowWidth, int gameWindowHeight)
     {
         _windowWidth = gameWindowWidth;
         _windowHeight = gameWindowHeight;
 
-        RecalculateDimensions();
-        RecalculateHorizontalScreenTiling();
-        RecalculateVerticalScreenTiling();
+        _horizontalViewPortBehaviour.RecalculateHorizontalDimensions(ScaleMultiplier, _windowWidth);
+        _horizontalViewPortBehaviour.ScrollHorizontally(0);
+        _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
+        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight);
+        _verticalViewPortBehaviour.ScrollVertically(0);
+        _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
     }
 
     public void HandleMouseInput(MouseState mouseState)
@@ -74,23 +63,23 @@ public sealed class LevelViewPort
         if (mouseState.X == 0)
         {
             _horizontalViewPortBehaviour.ScrollHorizontally(-_scrollDelta);
-            RecalculateHorizontalScreenTiling();
+            _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
         }
         else if (mouseState.X == _windowWidth - 1)
         {
             _horizontalViewPortBehaviour.ScrollHorizontally(_scrollDelta);
-            RecalculateHorizontalScreenTiling();
+            _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
         }
 
         if (mouseState.Y == 0)
         {
             _verticalViewPortBehaviour.ScrollVertically(-_scrollDelta);
-            RecalculateVerticalScreenTiling();
+            _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
         }
         else if (mouseState.Y == _windowHeight - 1)
         {
             _verticalViewPortBehaviour.ScrollVertically(_scrollDelta);
-            RecalculateVerticalScreenTiling();
+            _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
         }
     }
 
@@ -124,11 +113,12 @@ public sealed class LevelViewPort
         if (ScaleMultiplier == previousValue)
             return;
 
-        RecalculateDimensions();
+        _horizontalViewPortBehaviour.RecalculateHorizontalDimensions(ScaleMultiplier, _windowWidth);
         _horizontalViewPortBehaviour.ScrollHorizontally(0);
+        _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
+        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight);
         _verticalViewPortBehaviour.ScrollVertically(0);
-        RecalculateHorizontalScreenTiling();
-        RecalculateVerticalScreenTiling();
+        _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
 
         _scrollDelta = 4 * MaxScale / ScaleMultiplier;
     }
@@ -148,63 +138,14 @@ public sealed class LevelViewPort
         if (ScaleMultiplier == previousValue)
             return;
 
-        RecalculateDimensions();
+        _horizontalViewPortBehaviour.RecalculateHorizontalDimensions(ScaleMultiplier, _windowWidth);
         _horizontalViewPortBehaviour.ScrollHorizontally(0);
+        _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
+        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight);
         _verticalViewPortBehaviour.ScrollVertically(0);
-        RecalculateHorizontalScreenTiling();
-        RecalculateVerticalScreenTiling();
+        _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
 
         _scrollDelta = 4 * MaxScale / ScaleMultiplier;
-    }
-
-    private void RecalculateDimensions()
-    {
-        _horizontalViewPortBehaviour.RecalculateHorizontalDimensions(ScaleMultiplier, _windowWidth);
-        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight);
-    }
-
-    private void RecalculateHorizontalScreenTiling()
-    {
-        _screenTileX = 1;//_horizontalViewPortBehaviour.GetNumberOfHorizontalRepeats();
-
-        if (_screenTileX == 1)
-        {
-            _horizontalTilingIntervals[0] = new Interval(ViewPortX, ViewPortWidth, ScreenX, ScreenWidth);
-        }
-        else
-        {
-            _horizontalTilingIntervals[0] = new Interval(ViewPortX, _levelWidth - ViewPortX, 0, ScaleMultiplier * (_levelWidth - ViewPortX));
-            var x = 0;
-            for (var i = 1; i < _screenTileX - 1; i++)
-            {
-                x += _horizontalTilingIntervals[i - 1].DestB;
-                _horizontalTilingIntervals[i] = new Interval(0, _levelWidth, x, _levelWidth * ScaleMultiplier);
-            }
-            x += _horizontalTilingIntervals[_screenTileX - 2].DestB;
-            _horizontalTilingIntervals[_screenTileX - 1] = new Interval(0, _screenTileX * _levelWidth + ViewPortX - ViewPortWidth, x, 200);
-        }
-    }
-
-    private void RecalculateVerticalScreenTiling()
-    {
-        _screenTileY = 1;//_verticalViewPortBehaviour.GetNumberOfVerticalRepeats();
-
-        if (_screenTileY == 1)
-        {
-            _verticalTilingIntervals[0] = new Interval(ViewPortY, ViewPortHeight, ScreenY, ScreenHeight);
-        }
-        else
-        {
-            _verticalTilingIntervals[0] = new Interval(ViewPortY, _levelHeight - ViewPortY, 0, ScaleMultiplier * (_levelHeight - ViewPortY));
-            var y = 0;
-            for (var i = 1; i < _screenTileY - 1; i++)
-            {
-                y += _verticalTilingIntervals[i - 1].DestB;
-                _verticalTilingIntervals[i] = new Interval(0, _levelHeight, y, _levelHeight * ScaleMultiplier);
-            }
-            y += _verticalTilingIntervals[_screenTileY - 2].DestB;
-            _verticalTilingIntervals[_screenTileY - 1] = new Interval(0, _screenTileY * _levelHeight + ViewPortY - ViewPortHeight, y, 200);
-        }
     }
 
     public bool GetRenderDestinationRectangle(Rectangle rectangle, out Rectangle renderDestination)
@@ -231,54 +172,39 @@ public sealed class LevelViewPort
 
     public void RenderTerrain(SpriteBatch spriteBatch, Texture2D texture)
     {
-        /*for (var i = 0; i < _screenTileX; i++)
+        var horizontalRenderIntervals = _horizontalViewPortBehaviour.HorizontalRenderIntervals;
+        var verticalRenderIntervals = _verticalViewPortBehaviour.VerticalRenderIntervals;
+
+        for (var i = 0; i < horizontalRenderIntervals.Length; i++)
         {
-            var hInterval = _horizontalTilingIntervals[i];
-            for (var j = 0; j < _screenTileY; j++)
+            var hInterval = horizontalRenderIntervals[i];
+            for (var j = 0; j < verticalRenderIntervals.Length; j++)
             {
-                var vInterval = _verticalTilingIntervals[j];
-                var sourceRect = new Rectangle(hInterval.SourceA, vInterval.SourceA, hInterval.SourceB, vInterval.SourceB);
-                var screenRect = new Rectangle(hInterval.DestA, vInterval.DestA, hInterval.DestB, vInterval.DestB);
+                var vInterval = verticalRenderIntervals[j];
+                var sourceRect = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
+                var screenRect = new Rectangle(hInterval.ScreenStart, vInterval.ScreenStart, hInterval.ScreenLength, vInterval.ScreenLength);
 
                 spriteBatch.Draw(texture, screenRect, sourceRect, Color.White);
             }
-        }*/
-
-
-
-
-
-
-
-
-
-        for (var i = 0; i < _screenTileX; i++)
-        {
-            for (var j = 0; j < _screenTileY; j++)
-            {
-                spriteBatch.Draw(
-                    texture,
-                    new Rectangle((i + 1) * ScreenX, (j + 1) * ScreenY, ScreenWidth, ScreenHeight),
-                    Color.White);
-            }
         }
-    }
 
-    private readonly struct Interval
-    {
-        public readonly int SourceA;
-        public readonly int SourceB;
 
-        public readonly int DestA;
-        public readonly int DestB;
 
-        public Interval(int sourceA, int sourceB, int destA, int destB)
-        {
-            SourceA = sourceA;
-            SourceB = sourceB;
-            DestA = destA;
-            DestB = destB;
-        }
+
+
+
+
+        /*
+                for (var i = 0; i < _screenTileX; i++)
+                {
+                    for (var j = 0; j < _screenTileY; j++)
+                    {
+                        spriteBatch.Draw(
+                            texture,
+                            new Rectangle((i + 1) * ScreenX, (j + 1) * ScreenY, ScreenWidth, ScreenHeight),
+                            Color.White);
+                    }
+                }*/
     }
 
     /* var viewport = LevelScreen.CurrentLevel.Viewport;

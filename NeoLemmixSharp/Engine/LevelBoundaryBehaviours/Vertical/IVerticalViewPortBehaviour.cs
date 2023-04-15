@@ -9,10 +9,11 @@ public interface IVerticalViewPortBehaviour
     // Stretched to fit the screen
     int ScreenY { get; }
     int ScreenHeight { get; }
-
-    int NumberOfVerticalTilings { get; }
+    
+    RenderInterval[] VerticalRenderIntervals { get; }
 
     int NormaliseY(int y);
     void RecalculateVerticalDimensions(int scaleMultiplier, int windowHeight);
     void ScrollVertically(int dy);
+    void RecalculateVerticalRenderIntervals(int scaleMultiplier);
 }

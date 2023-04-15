@@ -2,17 +2,23 @@
 
 public sealed class HorizontalVoidViewPortBehaviour : IHorizontalViewPortBehaviour
 {
-    private readonly int _width;
+    private readonly int _levelWidthInPixels;
 
     public int ViewPortX { get; private set; }
     public int ViewPortWidth { get; private set; }
     public int ScreenX { get; private set; }
     public int ScreenWidth { get; private set; }
-    public int NumberOfHorizontalTilings => 1;
 
-    public HorizontalVoidViewPortBehaviour(int width)
+    public RenderInterval[] HorizontalRenderIntervals { get; }
+
+    public HorizontalVoidViewPortBehaviour(int levelWidthInPixels)
     {
-        _width = width;
+        _levelWidthInPixels = levelWidthInPixels;
+
+        HorizontalRenderIntervals = new[]
+        {
+            new RenderInterval(ViewPortX, ViewPortWidth, ScreenX, ScreenWidth)
+        };
     }
 
     public int NormaliseX(int x)
@@ -24,37 +30,41 @@ public sealed class HorizontalVoidViewPortBehaviour : IHorizontalViewPortBehavio
     {
         ViewPortWidth = windowWidth / scaleMultiplier;
 
-        if (ViewPortWidth < _width)
+        if (ViewPortWidth < _levelWidthInPixels)
         {
             ScreenX = 0;
             ScreenWidth = ViewPortWidth * scaleMultiplier;
         }
         else
         {
-            ScreenX = scaleMultiplier * (ViewPortWidth - _width) / 2;
-            ScreenWidth = _width * scaleMultiplier;
-            ViewPortWidth = _width;
+            ScreenX = scaleMultiplier * (ViewPortWidth - _levelWidthInPixels) / 2;
+            ScreenWidth = _levelWidthInPixels * scaleMultiplier;
+            ViewPortWidth = _levelWidthInPixels;
         }
-
-        ScrollHorizontally(0);
     }
 
     public void ScrollHorizontally(int dx)
     {
-        if (ViewPortWidth >= _width)
+        if (ViewPortWidth >= _levelWidthInPixels)
         {
             ViewPortX = 0;
-            return;
         }
+        else
+        {
+            ViewPortX += dx;
+            if (ViewPortX < 0)
+            {
+                ViewPortX = 0;
+            }
+            else if (ViewPortX + ViewPortWidth >= _levelWidthInPixels)
+            {
+                ViewPortX = _levelWidthInPixels - ViewPortWidth;
+            }
+        }
+    }
 
-        ViewPortX += dx;
-        if (ViewPortX < 0)
-        {
-            ViewPortX = 0;
-        }
-        else if (ViewPortX + ViewPortWidth >= _width)
-        {
-            ViewPortX = _width - ViewPortWidth;
-        }
+    public void RecalculateHorizontalRenderIntervals(int scaleMultiplier)
+    {
+        HorizontalRenderIntervals[0] = new RenderInterval(ViewPortX, ViewPortWidth, ScreenX, ScreenWidth);
     }
 }

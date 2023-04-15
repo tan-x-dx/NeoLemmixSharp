@@ -9,10 +9,11 @@ public interface IHorizontalViewPortBehaviour
     // Stretched to fit the screen
     int ScreenX { get; }
     int ScreenWidth { get; }
-
-    int NumberOfHorizontalTilings { get; }
+    
+    RenderInterval[] HorizontalRenderIntervals { get; }
 
     int NormaliseX(int x);
     void RecalculateHorizontalDimensions(int scaleMultiplier, int windowWidth);
     void ScrollHorizontally(int dx);
+    void RecalculateHorizontalRenderIntervals(int scaleMultiplier);
 }

@@ -4,26 +4,29 @@ namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 
 public sealed class VerticalWrapViewPortBehaviour : IVerticalViewPortBehaviour
 {
-    private readonly int _height;
+    private readonly int _levelHeightInPixels;
 
     public int ViewPortY { get; private set; }
     public int ViewPortHeight { get; private set; }
     public int ScreenY => 0;
     public int ScreenHeight { get; private set; }
-    public int NumberOfVerticalTilings { get; private set; }
 
-    public VerticalWrapViewPortBehaviour(int height)
+    public RenderInterval[] VerticalRenderIntervals { get; private set; }
+
+    public VerticalWrapViewPortBehaviour(int levelHeightInPixels)
     {
-        _height = height;
+        _levelHeightInPixels = levelHeightInPixels;
+
+        VerticalRenderIntervals = new RenderInterval[1];
     }
 
     public int NormaliseY(int y)
     {
         if (y < 0)
-            return y + _height;
+            return y + _levelHeightInPixels;
 
-        if (y >= _height)
-            return y - _height;
+        if (y >= _levelHeightInPixels)
+            return y - _levelHeightInPixels;
 
         return y;
     }
@@ -32,17 +35,15 @@ public sealed class VerticalWrapViewPortBehaviour : IVerticalViewPortBehaviour
     {
         ViewPortHeight = (windowHeight - 64) / scaleMultiplier;
 
-        if (ViewPortHeight < _height)
+        if (ViewPortHeight < _levelHeightInPixels)
         {
             ScreenHeight = ViewPortHeight * scaleMultiplier;
         }
         else
         {
-            ScreenHeight = _height * scaleMultiplier;
-            ViewPortHeight = _height;
+            ScreenHeight = _levelHeightInPixels * scaleMultiplier;
+            ViewPortHeight = _levelHeightInPixels;
         }
-
-        ScrollVertically(0);
     }
 
     public void ScrollVertically(int dy)
@@ -50,16 +51,25 @@ public sealed class VerticalWrapViewPortBehaviour : IVerticalViewPortBehaviour
         ViewPortY += dy;
         if (ViewPortY < 0)
         {
-            ViewPortY += _height;
+            ViewPortY += _levelHeightInPixels;
         }
-        else if (ViewPortY >= _height)
+        else if (ViewPortY >= _levelHeightInPixels)
         {
-            ViewPortY -= _height;
+            ViewPortY -= _levelHeightInPixels;
         }
+    }
+
+    public void RecalculateVerticalRenderIntervals(int scaleMultiplier)
+    {
+        var numberOfVerticalRenderIntervals = 0;
+
+        var result = new RenderInterval[numberOfVerticalRenderIntervals];
+
+       // return result;
     }
 
     public int GetNumberOfVerticalRepeats()
     {
-        return Math.Clamp(1 + (ScreenHeight + ScreenY) / _height, 1, 5);
+        return Math.Clamp(1 + (ScreenHeight + ScreenY) / _levelHeightInPixels, 1, 5);
     }
 }
