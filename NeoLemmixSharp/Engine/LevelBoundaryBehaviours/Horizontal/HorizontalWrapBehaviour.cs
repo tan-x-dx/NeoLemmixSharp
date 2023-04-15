@@ -78,19 +78,18 @@ public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
         }
 
         var width = _levelWidthInPixels - ViewPortX;
-        HorizontalRenderIntervals[0] = new RenderInterval(ViewPortX, width, 0, width * scaleMultiplier);
+        var screenStart = width * scaleMultiplier;
+        HorizontalRenderIntervals[0] = new RenderInterval(ViewPortX, width, 0, screenStart);
 
         var limit = _numberOfHorizontalRenderIntervals - 1;
-        var screenStart = -(scaleMultiplier * ViewPortX);
 
         for (var i = 1; i < limit; i++)
         {
-            screenStart += ScreenWidth;
             HorizontalRenderIntervals[i] = new RenderInterval(0, _levelWidthInPixels, screenStart, ScreenWidth);
+            screenStart += ScreenWidth;
         }
 
         var pixelLength = ViewPortWidth + ViewPortX - limit * _levelWidthInPixels;
-        screenStart += ScreenWidth;
         var screenWidth = pixelLength * scaleMultiplier;
         HorizontalRenderIntervals[_numberOfHorizontalRenderIntervals - 1] = new RenderInterval(0, pixelLength, screenStart, screenWidth);
     }

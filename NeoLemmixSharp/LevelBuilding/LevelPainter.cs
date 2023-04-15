@@ -51,7 +51,7 @@ public sealed class LevelPainter : IDisposable
             levelData.LevelWidth,
             levelData.LevelHeight,
             BoundaryBehaviourType.Wrap,
-            BoundaryBehaviourType.Void);
+            BoundaryBehaviourType.Wrap);
 
         var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
         var textureData = new PixelColourData(
