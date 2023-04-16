@@ -192,12 +192,12 @@ public sealed class LevelViewPort
 
     public void RenderSprite(SpriteBatch spriteBatch, IRenderable sprite)
     {
-        var textureRectangle = sprite.GetTextureSourceRectangle();
-        var texture = sprite.RenderTexture;
+        //var textureRectangle = sprite.GetTextureSourceRectangle();
+        //var texture = sprite.RenderTexture;
         var spriteLocation = sprite.GetLocationRectangle();
 
-        var spriteWidth = spriteLocation.Width * ScaleMultiplier;
-        var spriteHeight = spriteLocation.Height * ScaleMultiplier;
+        //var spriteWidth = spriteLocation.Width * ScaleMultiplier;
+        //var spriteHeight = spriteLocation.Height * ScaleMultiplier;
 
         var horizontalRenderIntervals = _horizontalViewPortBehaviour.HorizontalRenderIntervals;
         var verticalRenderIntervals = _verticalViewPortBehaviour.VerticalRenderIntervals;
@@ -219,13 +219,14 @@ public sealed class LevelViewPort
                     var vInterval = verticalRenderIntervals[j];
                     if (vInterval.Overlaps(spriteLocation.Y, spriteLocation.Height))
                     {
-                        var screenRect = new Rectangle(
-                            x0,
-                            y1,
-                            spriteWidth,
-                            spriteHeight);
+                        /*  var screenRect = new Rectangle(
+                              x0,
+                              y1,
+                              spriteWidth,
+                              spriteHeight);*/
 
-                        spriteBatch.Draw(texture, screenRect, textureRectangle, Color.White);
+                        sprite.RenderAtPosition(spriteBatch, x0, y1);
+                        // spriteBatch.Draw(texture, screenRect, textureRectangle, Color.White);
                     }
 
                     y1 += h;

@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace NeoLemmixSharp.Rendering;
 
 public interface IRenderable : IDisposable
 {
-    Texture2D RenderTexture { get; }
     Rectangle GetLocationRectangle();
-    Rectangle GetTextureSourceRectangle();
+
+    void RenderAtPosition(SpriteBatch spriteBatch, int x, int y);
 }
