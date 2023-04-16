@@ -21,32 +21,33 @@ public sealed class Lemming : ITickable
     public bool IsSlider;
     public bool IsSwimmer;
 
-    public int AnimationFrame;
-    public int AscenderProgress;
-    public int NumberOfBricksLeft;
-    public int DisarmingFrames;
     public bool ConstructivePositionFreeze;
     public bool IsStartingAction;
     public bool PlacedBrick;
     public bool StackLow;
     public bool InitialFall;
     public bool EndOfAnimation;
-    public int DistanceFallen;
-    public int TrueDistanceFallen;
-    public LevelPosition DehoistPin;
-    public LevelPosition LaserHitLevelPosition;
     public bool LaserHit;
-    public int LaserRemainTime;
-
-    public LevelPosition LevelPosition;
 
     public bool Debug;
+
+    public int AnimationFrame;
+    public int AscenderProgress;
+    public int NumberOfBricksLeft;
+    public int DisarmingFrames;
+    public int DistanceFallen;
+    public int TrueDistanceFallen;
+    public int LaserRemainTime;
+
+    public LevelPosition DehoistPin;
+    public LevelPosition LaserHitLevelPosition;
+    public LevelPosition LevelPosition;
 
     public IFacingDirection FacingDirection = RightFacingDirection.Instance;
     public IOrientation Orientation = DownOrientation.Instance;
 
     public LemmingAction CurrentAction = WalkerAction.Instance;
-    public LemmingAction? NextAction = null;
+    public LemmingAction? NextAction;
 
     public bool ShouldTick => true;
 
