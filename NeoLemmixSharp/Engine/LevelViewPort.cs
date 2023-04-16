@@ -25,14 +25,10 @@ public sealed class LevelViewPort
     // Raw pixels, one-to-one with game
     public int ViewPortX => _horizontalViewPortBehaviour.ViewPortX;
     public int ViewPortY => _verticalViewPortBehaviour.ViewPortY;
-    public int ViewPortWidth => _horizontalViewPortBehaviour.ViewPortWidth;
-    public int ViewPortHeight => _verticalViewPortBehaviour.ViewPortHeight;
 
     // Stretched to fit the screen
     public int ScreenX => _horizontalViewPortBehaviour.ScreenX;
     public int ScreenY => _verticalViewPortBehaviour.ScreenY;
-    public int ScreenWidth => _horizontalViewPortBehaviour.ScreenWidth;
-    public int ScreenHeight => _verticalViewPortBehaviour.ScreenHeight;
 
     public LevelViewPort(PixelManager terrain)
     {
@@ -149,28 +145,6 @@ public sealed class LevelViewPort
         _scrollDelta = 4 * MaxScale / ScaleMultiplier;
     }
 
-    public bool GetRenderDestinationRectangle(Rectangle rectangle, out Rectangle renderDestination)
-    {
-        if (rectangle.X < ViewPortX + ViewPortWidth &&
-            ViewPortX < rectangle.X + rectangle.Width &&
-            rectangle.Y < ViewPortY + ViewPortHeight &&
-            ViewPortY < rectangle.Y + rectangle.Height)
-        {
-            var x0 = (rectangle.X - ViewPortX) * ScaleMultiplier + ScreenX;
-            var y0 = (rectangle.Y - ViewPortY) * ScaleMultiplier + ScreenY;
-
-            renderDestination = new Rectangle(
-                x0,
-                y0,
-                rectangle.Width * ScaleMultiplier,
-                rectangle.Height * ScaleMultiplier);
-            return true;
-        }
-
-        renderDestination = Rectangle.Empty;
-        return false;
-    }
-
     public void RenderTerrain(SpriteBatch spriteBatch, Texture2D texture)
     {
         var horizontalRenderIntervals = _horizontalViewPortBehaviour.HorizontalRenderIntervals;
@@ -192,12 +166,7 @@ public sealed class LevelViewPort
 
     public void RenderSprite(SpriteBatch spriteBatch, IRenderable sprite)
     {
-        //var textureRectangle = sprite.GetTextureSourceRectangle();
-        //var texture = sprite.RenderTexture;
         var spriteLocation = sprite.GetLocationRectangle();
-
-        //var spriteWidth = spriteLocation.Width * ScaleMultiplier;
-        //var spriteHeight = spriteLocation.Height * ScaleMultiplier;
 
         var horizontalRenderIntervals = _horizontalViewPortBehaviour.HorizontalRenderIntervals;
         var verticalRenderIntervals = _verticalViewPortBehaviour.VerticalRenderIntervals;
@@ -219,14 +188,7 @@ public sealed class LevelViewPort
                     var vInterval = verticalRenderIntervals[j];
                     if (vInterval.Overlaps(spriteLocation.Y, spriteLocation.Height))
                     {
-                        /*  var screenRect = new Rectangle(
-                              x0,
-                              y1,
-                              spriteWidth,
-                              spriteHeight);*/
-
                         sprite.RenderAtPosition(spriteBatch, x0, y1);
-                        // spriteBatch.Draw(texture, screenRect, textureRectangle, Color.White);
                     }
 
                     y1 += h;
