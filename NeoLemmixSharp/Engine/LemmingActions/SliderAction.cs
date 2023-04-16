@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Util;
 using System;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
@@ -86,8 +87,8 @@ public sealed class SliderAction : LemmingAction
 
     private static bool SliderHasPixelAt(
         IOrientation orientation,
-        Point levelPosition,
-        Point dehoistPin)
+        LevelPosition levelPosition,
+        LevelPosition dehoistPin)
     {
         if (Terrain.GetPixelData(dehoistPin).IsSolid)
             return true;
@@ -105,7 +106,7 @@ public sealed class SliderAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        lemming.DehoistPin = new Point(-1, -1);
+        lemming.DehoistPin = new LevelPosition(-1, -1);
 
         base.TransitionLemmingToAction(lemming, turnAround);
     }

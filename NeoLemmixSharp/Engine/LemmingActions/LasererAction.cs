@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Engine.Directions.Orientations;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Util;
 using System;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
@@ -11,7 +11,7 @@ public sealed class LasererAction : LemmingAction
 
     public static LasererAction Instance { get; } = new();
 
-    private readonly Point[] _offsetChecksRight =
+    private readonly LevelPosition[] _offsetChecksRight =
     {
         new(1, -1),
         new(0, -1),
@@ -26,7 +26,7 @@ public sealed class LasererAction : LemmingAction
         new(1, 1)
     };
 
-    private readonly Point[] _offsetChecksLeft =
+    private readonly LevelPosition[] _offsetChecksLeft =
     {
         new(-1, -1),
         new(0, -1),
@@ -93,7 +93,7 @@ public sealed class LasererAction : LemmingAction
             }
         }
 
-        lemming.LaserHitPoint = target;
+        lemming.LaserHitLevelPosition = target;
 
         if (hit)
         {
@@ -121,7 +121,7 @@ public sealed class LasererAction : LemmingAction
     }
 
     private LaserHitType CheckForHit(
-        Point target,
+        LevelPosition target,
         IOrientation orientation,
         int dx)
     {
@@ -136,9 +136,9 @@ public sealed class LasererAction : LemmingAction
 
         for (var i = 0; i < offsetChecks.Length; i++)
         {
-            var checkPoint = orientation.Move(target, offsetChecks[i]);
+            var checkLevelPosition = orientation.Move(target, offsetChecks[i]);
 
-            var pixel = Terrain.GetPixelData(checkPoint);
+            var pixel = Terrain.GetPixelData(checkLevelPosition);
 
             if (pixel.IsSolid)
             {

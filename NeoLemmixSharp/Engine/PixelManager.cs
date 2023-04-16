@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
+﻿using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
 
@@ -51,14 +51,14 @@ public sealed class PixelManager
         _terrainSprite = terrainSprite;
     }
 
-    public Point NormalisePosition(Point levelPosition)
+    public LevelPosition NormalisePosition(LevelPosition levelPosition)
     {
-        return new Point(
+        return new LevelPosition(
             HorizontalViewPortBehaviour.NormaliseX(levelPosition.X),
             VerticalViewPortBehaviour.NormaliseY(levelPosition.Y));
     }
 
-    public bool PositionOutOfBounds(Point levelPosition)
+    public bool PositionOutOfBounds(LevelPosition levelPosition)
     {
         return levelPosition.X < 0 ||
                levelPosition.X >= Width ||
@@ -66,7 +66,7 @@ public sealed class PixelManager
                levelPosition.Y >= Height;
     }
 
-    public PixelData GetPixelData(Point levelPosition)
+    public PixelData GetPixelData(LevelPosition levelPosition)
     {
         if (PositionOutOfBounds(levelPosition))
             return _voidPixel;
@@ -81,7 +81,7 @@ public sealed class PixelManager
         return _data[index];
     }
 
-    public void ErasePixel(Point pixelToErase)
+    public void ErasePixel(LevelPosition pixelToErase)
     {
         var index = Width * pixelToErase.Y + pixelToErase.X;
         var pixel = _data[index];
@@ -94,7 +94,7 @@ public sealed class PixelManager
         }
     }
 
-    public void SetSolidPixel(Point pixelToSet, uint colour)
+    public void SetSolidPixel(LevelPosition pixelToSet, uint colour)
     {
         var pixel = GetPixelData(pixelToSet);
         if (pixel is { IsVoid: false, IsSolid: false })

@@ -18,7 +18,10 @@ public sealed class LemmingSprite : IRenderable
     public Rectangle GetLocationRectangle()
     {
         var actionSprite = ActionSprite;
-        return new Rectangle(_lemming.LevelPosition - actionSprite.AnchorPoint, actionSprite.Size);
+        var p = _lemming.LevelPosition - actionSprite.AnchorPoint;
+        var s = actionSprite.Size;
+
+        return new Rectangle(p.X, p.Y, s.X, s.Y);
     }
 
     public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y)
@@ -38,15 +41,15 @@ public sealed class LemmingSprite : IRenderable
             actionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame),
             Color.White);
 
-      /*  var x0 = 
+        /*  var x0 = 
 
-        renderDestination = new Rectangle(_lemming.LevelPosition - new Point(1, 1), new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
+          renderDestination = new Rectangle(_lemming.LevelPosition - new Point(1, 1), new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
 
-        var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
-        spriteBatch.Draw(
-            spriteBank.AnchorTexture,
-            renderDestination,
-            Color.White);*/
+          var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
+          spriteBatch.Draw(
+              spriteBank.AnchorTexture,
+              renderDestination,
+              Color.White);*/
     }
 
     public void Dispose()

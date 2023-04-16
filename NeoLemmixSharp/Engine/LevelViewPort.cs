@@ -38,7 +38,7 @@ public sealed class LevelViewPort
         _scrollDelta = 4 * MaxScale / ScaleMultiplier;
     }
 
-    public int ScaleMultiplier { get; private set; } = 1;
+    public int ScaleMultiplier { get; private set; } = 6;
 
     public void SetWindowDimensions(int gameWindowWidth, int gameWindowHeight)
     {

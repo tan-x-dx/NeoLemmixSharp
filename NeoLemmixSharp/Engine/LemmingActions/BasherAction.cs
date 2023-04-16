@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Engine.Directions.FacingDirections;
+﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
@@ -25,7 +25,7 @@ public sealed class BasherAction : LemmingAction
     }
 
     private bool BasherIndestructibleCheck(
-        Point pos,
+        LevelPosition pos,
         IOrientation orientation,
         IFacingDirection facingDirection)
     {
@@ -49,7 +49,7 @@ public sealed class BasherAction : LemmingAction
     }
 
     private bool StepUpCheck(
-        Point pos,
+        LevelPosition pos,
         IOrientation orientation,
         int dx,
         int step)
