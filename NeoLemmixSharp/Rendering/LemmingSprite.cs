@@ -15,31 +15,25 @@ public sealed class LemmingSprite : IRenderable
 
     private ActionSprite ActionSprite => _lemming.FacingDirection.ChooseActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.Orientation);
 
-    public Texture2D RenderTexture => ActionSprite.Texture;
-
     public Rectangle GetLocationRectangle()
     {
         var actionSprite = ActionSprite;
-        return new Rectangle(_lemming.LevelPosition - actionSprite.AnchorPoint, actionSprite.Size);
+        var p = _lemming.LevelPosition - actionSprite.AnchorPoint;
+        var s = actionSprite.Size;
+
+        return new Rectangle(p.X, p.Y, s.X, s.Y);
     }
 
-    public Rectangle GetTextureSourceRectangle()
+    public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y)
     {
-        return ActionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame);
-    }
+        var scaleMultiplier = LevelScreen.CurrentLevel.Viewport.ScaleMultiplier;
+        var actionSprite = ActionSprite;
 
-    /*public void Render(SpriteBatch spriteBatch)
-    {
-        var actionSprite = _lemming.FacingDirection.ChooseActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.Orientation);
-
-        var rect = new Rectangle(
-            _lemming.LevelPosition - actionSprite.AnchorPoint,
-            actionSprite.Size);
-
-        var viewport = LevelScreen.CurrentLevel.Viewport;
-
-        if (!viewport.GetRenderDestinationRectangle(rect, out var renderDestination))
-            return;
+        var renderDestination = new Rectangle(
+            x,
+            y,
+            actionSprite.SpriteWidth * scaleMultiplier,
+            actionSprite.SpriteHeight * scaleMultiplier);
 
         spriteBatch.Draw(
             actionSprite.Texture,
@@ -47,14 +41,16 @@ public sealed class LemmingSprite : IRenderable
             actionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame),
             Color.White);
 
-        viewport.GetRenderDestinationRectangle(new Rectangle(_lemming.LevelPosition - new Point(1, 1), new Point(3, 3)), out renderDestination);
+        /*  var x0 = 
 
-        var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
-        spriteBatch.Draw(
-            spriteBank.AnchorTexture,
-            renderDestination,
-            Color.White);
-    }*/
+          renderDestination = new Rectangle(_lemming.LevelPosition - new Point(1, 1), new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
+
+          var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
+          spriteBatch.Draw(
+              spriteBank.AnchorTexture,
+              renderDestination,
+              Color.White);*/
+    }
 
     public void Dispose()
     {

@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Data.SpriteSet;
 using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -185,7 +186,7 @@ public sealed class SpriteBankBuilder
                 spriteDrawingData.ThisSpriteWidth,
                 spriteDrawingData.ThisSpriteHeight,
                 spriteData.NumberOfFrames,
-                new Point(footX1, footY1));
+                new LevelPosition(footX1, footY1));
 
             setSprite(spriteDrawingData.Orientation, actionSpriteBundle, actionSprite);
         }

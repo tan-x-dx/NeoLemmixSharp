@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Engine.Directions.FacingDirections;
+﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
+using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
 
@@ -21,32 +21,33 @@ public sealed class Lemming : ITickable
     public bool IsSlider;
     public bool IsSwimmer;
 
-    public int AnimationFrame;
-    public int AscenderProgress;
-    public int NumberOfBricksLeft;
-    public int DisarmingFrames;
     public bool ConstructivePositionFreeze;
     public bool IsStartingAction;
     public bool PlacedBrick;
     public bool StackLow;
     public bool InitialFall;
     public bool EndOfAnimation;
-    public int DistanceFallen;
-    public int TrueDistanceFallen;
-    public Point DehoistPin;
-    public Point LaserHitPoint;
     public bool LaserHit;
-    public int LaserRemainTime;
-    
-    public Point LevelPosition;
 
     public bool Debug;
+
+    public int AnimationFrame;
+    public int AscenderProgress;
+    public int NumberOfBricksLeft;
+    public int DisarmingFrames;
+    public int DistanceFallen;
+    public int TrueDistanceFallen;
+    public int LaserRemainTime;
+
+    public LevelPosition DehoistPin;
+    public LevelPosition LaserHitLevelPosition;
+    public LevelPosition LevelPosition;
 
     public IFacingDirection FacingDirection = RightFacingDirection.Instance;
     public IOrientation Orientation = DownOrientation.Instance;
 
     public LemmingAction CurrentAction = WalkerAction.Instance;
-    public LemmingAction? NextAction = null;
+    public LemmingAction? NextAction;
 
     public bool ShouldTick => true;
 

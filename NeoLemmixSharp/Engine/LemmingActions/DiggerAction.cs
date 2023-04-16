@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Engine.Directions.Orientations;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
@@ -50,7 +50,7 @@ public sealed class DiggerAction : LemmingAction
     }
 
     private static bool DigOneRow(
-        Point levelPosition,
+        LevelPosition levelPosition,
         IOrientation orientation)
     {
         var result = false;

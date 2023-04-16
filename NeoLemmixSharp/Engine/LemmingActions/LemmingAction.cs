@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Engine.Directions.Orientations;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -161,7 +161,7 @@ end;
 
     protected static int FindGroundPixel(
         IOrientation orientation,
-        Point levelPosition)
+        LevelPosition levelPosition)
     {
         // Find the new ground pixel
         // If Result = 4, then at least 4 pixels are air below (X, Y)
