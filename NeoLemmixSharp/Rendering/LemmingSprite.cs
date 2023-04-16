@@ -13,7 +13,22 @@ public sealed class LemmingSprite : IRenderable
         _lemming = lemming;
     }
 
-    public void Render(SpriteBatch spriteBatch)
+    private ActionSprite ActionSprite => _lemming.FacingDirection.ChooseActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.Orientation);
+
+    public Texture2D RenderTexture => ActionSprite.Texture;
+
+    public Rectangle GetLocationRectangle()
+    {
+        var actionSprite = ActionSprite;
+        return new Rectangle(_lemming.LevelPosition - actionSprite.AnchorPoint, actionSprite.Size);
+    }
+
+    public Rectangle GetTextureSourceRectangle()
+    {
+        return ActionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame);
+    }
+
+    /*public void Render(SpriteBatch spriteBatch)
     {
         var actionSprite = _lemming.FacingDirection.ChooseActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.Orientation);
 
@@ -39,7 +54,7 @@ public sealed class LemmingSprite : IRenderable
             spriteBank.AnchorTexture,
             renderDestination,
             Color.White);
-    }
+    }*/
 
     public void Dispose()
     {

@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 
 namespace NeoLemmixSharp.Rendering;
 
-public sealed class SpriteBank : IRenderable
+public sealed class SpriteBank : IDisposable
 {
     private readonly Dictionary<string, LemmingActionSpriteBundle> _actionSpriteBundleLookup;
 

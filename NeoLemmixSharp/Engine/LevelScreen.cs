@@ -111,7 +111,7 @@ public sealed class LevelScreen : BaseScreen
 
         if (mouseState.RightButton == ButtonState.Pressed)
         {
-            Terrain.ErasePixel(new Point(_mouseX, _mouseY));
+            Terrain.ErasePixel(Terrain.NormalisePosition(new Point(_mouseX, _mouseY)));
         }
 
         if (!_stopMotion)
@@ -130,7 +130,7 @@ public sealed class LevelScreen : BaseScreen
 
         for (var i = 0; i < LevelSprites.Length; i++)
         {
-            LevelSprites[i].Render(spriteBatch);
+            Viewport.RenderSprite(spriteBatch, LevelSprites[i]);
         }
 
         spriteBatch.Draw(

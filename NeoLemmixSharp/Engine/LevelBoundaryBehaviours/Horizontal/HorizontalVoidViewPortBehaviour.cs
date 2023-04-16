@@ -1,24 +1,24 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
+﻿using System.Collections.Generic;
+
+namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 
 public sealed class HorizontalVoidViewPortBehaviour : IHorizontalViewPortBehaviour
 {
-    private readonly int _levelWidthInPixels;
+    private readonly SimpleList _horizontalRenderIntervals;
 
+    public int LevelWidthInPixels { get; }
     public int ViewPortX { get; private set; }
     public int ViewPortWidth { get; private set; }
     public int ScreenX { get; private set; }
     public int ScreenWidth { get; private set; }
 
-    public RenderInterval[] HorizontalRenderIntervals { get; }
+    public IReadOnlyList<RenderInterval> HorizontalRenderIntervals => _horizontalRenderIntervals;
 
     public HorizontalVoidViewPortBehaviour(int levelWidthInPixels)
     {
-        _levelWidthInPixels = levelWidthInPixels;
+        LevelWidthInPixels = levelWidthInPixels;
 
-        HorizontalRenderIntervals = new[]
-        {
-            new RenderInterval(ViewPortX, ViewPortWidth, ScreenX, ScreenWidth)
-        };
+        _horizontalRenderIntervals = new SimpleList(1, 1);
     }
 
     public int NormaliseX(int x)
@@ -30,22 +30,22 @@ public sealed class HorizontalVoidViewPortBehaviour : IHorizontalViewPortBehavio
     {
         ViewPortWidth = windowWidth / scaleMultiplier;
 
-        if (ViewPortWidth < _levelWidthInPixels)
+        if (ViewPortWidth < LevelWidthInPixels)
         {
             ScreenX = 0;
             ScreenWidth = ViewPortWidth * scaleMultiplier;
         }
         else
         {
-            ScreenX = scaleMultiplier * (ViewPortWidth - _levelWidthInPixels) / 2;
-            ScreenWidth = _levelWidthInPixels * scaleMultiplier;
-            ViewPortWidth = _levelWidthInPixels;
+            ScreenX = scaleMultiplier * (ViewPortWidth - LevelWidthInPixels) / 2;
+            ScreenWidth = LevelWidthInPixels * scaleMultiplier;
+            ViewPortWidth = LevelWidthInPixels;
         }
     }
 
     public void ScrollHorizontally(int dx)
     {
-        if (ViewPortWidth >= _levelWidthInPixels)
+        if (ViewPortWidth >= LevelWidthInPixels)
         {
             ViewPortX = 0;
         }
@@ -56,15 +56,15 @@ public sealed class HorizontalVoidViewPortBehaviour : IHorizontalViewPortBehavio
             {
                 ViewPortX = 0;
             }
-            else if (ViewPortX + ViewPortWidth >= _levelWidthInPixels)
+            else if (ViewPortX + ViewPortWidth >= LevelWidthInPixels)
             {
-                ViewPortX = _levelWidthInPixels - ViewPortWidth;
+                ViewPortX = LevelWidthInPixels - ViewPortWidth;
             }
         }
     }
 
     public void RecalculateHorizontalRenderIntervals(int scaleMultiplier)
     {
-        HorizontalRenderIntervals[0] = new RenderInterval(ViewPortX, ViewPortWidth, ScreenX, ScreenWidth);
+        _horizontalRenderIntervals.SetData(0, ViewPortX, ViewPortWidth, ScreenX, ScreenWidth);
     }
 }

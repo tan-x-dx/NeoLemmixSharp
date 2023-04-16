@@ -1,34 +1,41 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 
 public sealed class VerticalWrapViewPortBehaviour : IVerticalViewPortBehaviour
 {
-    private readonly int _levelHeightInPixels;
+    private readonly SimpleList _verticalRenderIntervals;
 
     private int _numberOfVerticalRenderIntervals = 1;
 
+    public int LevelHeightInPixels { get; }
     public int ViewPortY { get; private set; }
     public int ViewPortHeight { get; private set; }
     public int ScreenY => 0;
     public int ScreenHeight { get; private set; }
 
-    public RenderInterval[] VerticalRenderIntervals { get; private set; }
+    public IReadOnlyList<RenderInterval> VerticalRenderIntervals => _verticalRenderIntervals;
 
     public VerticalWrapViewPortBehaviour(int levelHeightInPixels)
     {
-        _levelHeightInPixels = levelHeightInPixels;
+        LevelHeightInPixels = levelHeightInPixels;
 
-        VerticalRenderIntervals = new RenderInterval[1];
+        _verticalRenderIntervals = new SimpleList(5, 1);
     }
 
     public int NormaliseY(int y)
     {
         if (y < 0)
-            return y + _levelHeightInPixels;
+            return y + LevelHeightInPixels;
 
-        if (y >= _levelHeightInPixels)
-            return y - _levelHeightInPixels;
+        if (y < LevelHeightInPixels)
+            return y;
+
+        y -= LevelHeightInPixels;
+
+        if (y >= LevelHeightInPixels)
+            return y % LevelHeightInPixels;
 
         return y;
     }
@@ -37,13 +44,13 @@ public sealed class VerticalWrapViewPortBehaviour : IVerticalViewPortBehaviour
     {
         ViewPortHeight = (windowHeight - 64) / scaleMultiplier;
 
-        if (ViewPortHeight < _levelHeightInPixels)
+        if (ViewPortHeight < LevelHeightInPixels)
         {
             ScreenHeight = ViewPortHeight * scaleMultiplier;
         }
         else
         {
-            ScreenHeight = _levelHeightInPixels * scaleMultiplier;
+            ScreenHeight = LevelHeightInPixels * scaleMultiplier;
         }
     }
 
@@ -52,44 +59,44 @@ public sealed class VerticalWrapViewPortBehaviour : IVerticalViewPortBehaviour
         ViewPortY += dy;
         if (ViewPortY < 0)
         {
-            ViewPortY += _levelHeightInPixels;
+            ViewPortY += LevelHeightInPixels;
         }
-        else if (ViewPortY >= _levelHeightInPixels)
+        else if (ViewPortY >= LevelHeightInPixels)
         {
-            ViewPortY -= _levelHeightInPixels;
+            ViewPortY -= LevelHeightInPixels;
         }
     }
 
     public void RecalculateVerticalRenderIntervals(int scaleMultiplier)
     {
         var previousNumberOfVerticalRenderIntervals = _numberOfVerticalRenderIntervals;
-        _numberOfVerticalRenderIntervals = Math.Clamp(1 + (ViewPortY + ViewPortHeight - 1) / _levelHeightInPixels, 1, 5);
+        _numberOfVerticalRenderIntervals = Math.Clamp(1 + (ViewPortY + ViewPortHeight - 1) / LevelHeightInPixels, 1, 5);
 
         if (_numberOfVerticalRenderIntervals != previousNumberOfVerticalRenderIntervals)
         {
-            VerticalRenderIntervals = new RenderInterval[_numberOfVerticalRenderIntervals];
+            _verticalRenderIntervals.SetSize(_numberOfVerticalRenderIntervals);
         }
 
         if (_numberOfVerticalRenderIntervals == 1)
         {
-            VerticalRenderIntervals[0] = new RenderInterval(ViewPortY, ViewPortHeight, ScreenY, ScreenHeight);
+            _verticalRenderIntervals.SetData(0, ViewPortY, ViewPortHeight, ScreenY, ScreenHeight);
             return;
         }
 
-        var height = _levelHeightInPixels - ViewPortY;
+        var height = LevelHeightInPixels - ViewPortY;
         var screenStart = height * scaleMultiplier;
-        VerticalRenderIntervals[0] = new RenderInterval(ViewPortY, height, 0, screenStart);
+        _verticalRenderIntervals.SetData(0, ViewPortY, height, 0, screenStart);
 
         var limit = _numberOfVerticalRenderIntervals - 1;
 
         for (var i = 1; i < limit; i++)
         {
-            VerticalRenderIntervals[i] = new RenderInterval(0, _levelHeightInPixels, screenStart, ScreenHeight);
+            _verticalRenderIntervals.SetData(i, 0, LevelHeightInPixels, screenStart, ScreenHeight);
             screenStart += ScreenHeight;
         }
 
-        var pixelLength = ViewPortHeight + ViewPortY - limit * _levelHeightInPixels;
+        var pixelLength = ViewPortHeight + ViewPortY - limit * LevelHeightInPixels;
         var screenHeight = pixelLength * scaleMultiplier;
-        VerticalRenderIntervals[_numberOfVerticalRenderIntervals - 1] = new RenderInterval(0, pixelLength, screenStart, screenHeight);
+        _verticalRenderIntervals.SetData(_numberOfVerticalRenderIntervals - 1, 0, pixelLength, screenStart, screenHeight);
     }
 }

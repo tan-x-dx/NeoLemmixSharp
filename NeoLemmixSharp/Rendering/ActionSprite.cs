@@ -12,10 +12,7 @@ public sealed class ActionSprite : IDisposable
     public int NumberOfFrames { get; }
 
     public Texture2D Texture { get; }
-    public Rectangle BoundingBox { get; }
     public Point AnchorPoint { get; }
-    public int AnchorPointX { get; }
-    public int AnchorPointY { get; }
 
     public ActionSprite(
         Texture2D texture,
@@ -28,11 +25,8 @@ public sealed class ActionSprite : IDisposable
         SpriteWidth = spriteWidth;
         SpriteHeight = spriteHeight;
         Size = new Point(spriteWidth, spriteHeight);
-        BoundingBox = new Rectangle(0, 0, spriteWidth, spriteHeight);
         NumberOfFrames = numberOfFrames;
         AnchorPoint = anchorPoint;
-        AnchorPointX = anchorPoint.X;
-        AnchorPointY = anchorPoint.Y;
     }
 
     public Rectangle GetSourceRectangleForFrame(int frame)

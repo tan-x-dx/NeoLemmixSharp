@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Rendering;
 
 namespace NeoLemmixSharp.Engine;
 
@@ -175,10 +176,10 @@ public sealed class LevelViewPort
         var horizontalRenderIntervals = _horizontalViewPortBehaviour.HorizontalRenderIntervals;
         var verticalRenderIntervals = _verticalViewPortBehaviour.VerticalRenderIntervals;
 
-        for (var i = 0; i < horizontalRenderIntervals.Length; i++)
+        for (var i = 0; i < horizontalRenderIntervals.Count; i++)
         {
             var hInterval = horizontalRenderIntervals[i];
-            for (var j = 0; j < verticalRenderIntervals.Length; j++)
+            for (var j = 0; j < verticalRenderIntervals.Count; j++)
             {
                 var vInterval = verticalRenderIntervals[j];
                 var sourceRect = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
@@ -187,31 +188,50 @@ public sealed class LevelViewPort
                 spriteBatch.Draw(texture, screenRect, sourceRect, Color.White);
             }
         }
-
-
-
-
-
-
-
-        /*
-                for (var i = 0; i < _screenTileX; i++)
-                {
-                    for (var j = 0; j < _screenTileY; j++)
-                    {
-                        spriteBatch.Draw(
-                            texture,
-                            new Rectangle((i + 1) * ScreenX, (j + 1) * ScreenY, ScreenWidth, ScreenHeight),
-                            Color.White);
-                    }
-                }*/
     }
 
-    /* var viewport = LevelScreen.CurrentLevel.Viewport;
+    public void RenderSprite(SpriteBatch spriteBatch, IRenderable sprite)
+    {
+        var textureRectangle = sprite.GetTextureSourceRectangle();
+        var texture = sprite.RenderTexture;
+        var spriteLocation = sprite.GetLocationRectangle();
 
-     spriteBatch.Draw(
-         _texture,
-         new Rectangle(viewport.ScreenX, viewport.ScreenY, viewport.ScreenWidth, viewport.ScreenHeight),
-         new Rectangle(viewport.ViewPortX, viewport.ViewPortY, viewport.ViewPortWidth, viewport.ViewPortHeight),
-         Color.White);*/
+        var spriteWidth = spriteLocation.Width * ScaleMultiplier;
+        var spriteHeight = spriteLocation.Height * ScaleMultiplier;
+
+        var horizontalRenderIntervals = _horizontalViewPortBehaviour.HorizontalRenderIntervals;
+        var verticalRenderIntervals = _verticalViewPortBehaviour.VerticalRenderIntervals;
+
+        var x0 = (spriteLocation.X - ViewPortX) * ScaleMultiplier + ScreenX;
+        var y0 = (spriteLocation.Y - ViewPortY) * ScaleMultiplier + ScreenY;
+
+        var w = _horizontalViewPortBehaviour.LevelWidthInPixels * ScaleMultiplier;
+        var h = _verticalViewPortBehaviour.LevelHeightInPixels * ScaleMultiplier;
+
+        for (var i = 0; i < horizontalRenderIntervals.Count; i++)
+        {
+            var hInterval = horizontalRenderIntervals[i];
+            if (hInterval.Overlaps(spriteLocation.X, spriteLocation.Width))
+            {
+                for (var j = 0; j < verticalRenderIntervals.Count; j++)
+                {
+                    var vInterval = verticalRenderIntervals[j];
+                    if (vInterval.Overlaps(spriteLocation.Y, spriteLocation.Height))
+                    {
+                        var screenRect = new Rectangle(
+                            x0,
+                            y0,
+                            spriteWidth,
+                            spriteHeight);
+
+                        spriteBatch.Draw(texture, screenRect, textureRectangle, Color.White);
+                    }
+
+                    y0 += h;
+                }
+            }
+
+            x0 += w;
+        }
+    }
 }

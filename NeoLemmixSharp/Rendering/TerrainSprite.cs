@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
+using System;
 
 namespace NeoLemmixSharp.Rendering;
 
-public sealed class TerrainSprite : IRenderable
+public sealed class TerrainSprite : IDisposable
 {
-    private readonly int _textureWidth;
-    private readonly int _textureHeight;
     private readonly Texture2D _texture;
 
     private readonly uint[] _colourSetter = new uint[1];
@@ -15,8 +14,6 @@ public sealed class TerrainSprite : IRenderable
     public TerrainSprite(Texture2D texture)
     {
         _texture = texture;
-        _textureWidth = texture.Width;
-        _textureHeight = texture.Height;
     }
 
     public void Render(SpriteBatch spriteBatch)

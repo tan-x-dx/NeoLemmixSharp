@@ -1,23 +1,24 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+﻿using System.Collections.Generic;
+
+namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 
 public sealed class VerticalVoidViewPortBehaviour : IVerticalViewPortBehaviour
 {
-    private readonly int _levelHeightInPixels;
+    private readonly SimpleList _verticalRenderIntervals;
 
+    public int LevelHeightInPixels { get; }
     public int ViewPortY { get; private set; }
     public int ViewPortHeight { get; private set; }
     public int ScreenY { get; private set; }
     public int ScreenHeight { get; private set; }
 
-    public RenderInterval[] VerticalRenderIntervals { get; }
+    public IReadOnlyList<RenderInterval> VerticalRenderIntervals => _verticalRenderIntervals;
 
     public VerticalVoidViewPortBehaviour(int levelHeightInPixels)
     {
-        _levelHeightInPixels = levelHeightInPixels;
-        VerticalRenderIntervals = new[]
-        {
-            new RenderInterval(ViewPortY, ViewPortHeight, ScreenY, ScreenHeight)
-        };
+        LevelHeightInPixels = levelHeightInPixels;
+
+        _verticalRenderIntervals = new SimpleList(1, 1);
     }
 
     public int NormaliseY(int y)
@@ -29,22 +30,22 @@ public sealed class VerticalVoidViewPortBehaviour : IVerticalViewPortBehaviour
     {
         ViewPortHeight = (windowHeight - 64) / scaleMultiplier;
 
-        if (ViewPortHeight < _levelHeightInPixels)
+        if (ViewPortHeight < LevelHeightInPixels)
         {
             ScreenY = 0;
             ScreenHeight = ViewPortHeight * scaleMultiplier;
         }
         else
         {
-            ScreenY = scaleMultiplier * (ViewPortHeight - _levelHeightInPixels) / 2;
-            ScreenHeight = _levelHeightInPixels * scaleMultiplier;
-            ViewPortHeight = _levelHeightInPixels;
+            ScreenY = scaleMultiplier * (ViewPortHeight - LevelHeightInPixels) / 2;
+            ScreenHeight = LevelHeightInPixels * scaleMultiplier;
+            ViewPortHeight = LevelHeightInPixels;
         }
     }
 
     public void ScrollVertically(int dy)
     {
-        if (ViewPortHeight >= _levelHeightInPixels)
+        if (ViewPortHeight >= LevelHeightInPixels)
         {
             ViewPortY = 0;
         }
@@ -55,15 +56,18 @@ public sealed class VerticalVoidViewPortBehaviour : IVerticalViewPortBehaviour
             {
                 ViewPortY = 0;
             }
-            else if (ViewPortY + ViewPortHeight >= _levelHeightInPixels)
+            else if (ViewPortY + ViewPortHeight >= LevelHeightInPixels)
             {
-                ViewPortY = _levelHeightInPixels - ViewPortHeight;
+                ViewPortY = LevelHeightInPixels - ViewPortHeight;
             }
         }
     }
 
     public void RecalculateVerticalRenderIntervals(int scaleMultiplier)
     {
-        VerticalRenderIntervals[0] = new RenderInterval(ViewPortY, ViewPortHeight, ScreenY, ScreenHeight);
+        VerticalRenderIntervals[0].PixelStart = ViewPortY;
+        VerticalRenderIntervals[0].PixelLength = ViewPortHeight;
+        VerticalRenderIntervals[0].ScreenStart = ScreenY;
+        VerticalRenderIntervals[0].ScreenLength = ScreenHeight;
     }
 }
