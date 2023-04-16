@@ -115,11 +115,17 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     protected static void LayBrick(Lemming lemming)
     {
         var dx = lemming.FacingDirection.DeltaX;
-        var brickDelta = lemming.CurrentAction == BuilderAction.Instance
+        var dy = lemming.CurrentAction == BuilderAction.Instance
             ? 1
             : 0;
 
-        var brickPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, brickDelta);
+        var brickPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, dy);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+
+        brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+
+        brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
 
         brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
@@ -131,6 +137,27 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
     }
+
+    /*
+    procedure TLemmingGame.LayBrick(L: TLemming);
+{-------------------------------------------------------------------------------
+  bricks are in the lemming area so will automatically be copied to the screen
+  during drawlemmings
+-------------------------------------------------------------------------------}
+var
+  BrickPosY, n: Integer;
+begin
+  Assert((L.LemNumberOfBricksLeft > 0) and (L.LemNumberOfBricksLeft < 13),
+            'Number bricks out of bounds');
+
+  If L.LemAction = baBuilding then BrickPosY := L.LemY - 1
+  else BrickPosY := L.LemY; // for platformers
+
+  for n := 0 to 5 do
+    AddConstructivePixel(L.LemX + n*L.LemDx, BrickPosY, BrickPixelColors[12 - L.LemNumberOfBricksLeft]);
+end;
+
+    */
 
     protected static int FindGroundPixel(
         IOrientation orientation,
