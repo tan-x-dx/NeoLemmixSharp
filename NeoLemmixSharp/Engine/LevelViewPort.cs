@@ -205,6 +205,7 @@ public sealed class LevelViewPort
         var x0 = (spriteLocation.X - ViewPortX) * ScaleMultiplier + ScreenX;
         var y0 = (spriteLocation.Y - ViewPortY) * ScaleMultiplier + ScreenY;
 
+        var y1 = y0;
         var w = _horizontalViewPortBehaviour.LevelWidthInPixels * ScaleMultiplier;
         var h = _verticalViewPortBehaviour.LevelHeightInPixels * ScaleMultiplier;
 
@@ -220,18 +221,19 @@ public sealed class LevelViewPort
                     {
                         var screenRect = new Rectangle(
                             x0,
-                            y0,
+                            y1,
                             spriteWidth,
                             spriteHeight);
 
                         spriteBatch.Draw(texture, screenRect, textureRectangle, Color.White);
                     }
 
-                    y0 += h;
+                    y1 += h;
                 }
             }
 
             x0 += w;
+            y1 = y0;
         }
     }
 }
