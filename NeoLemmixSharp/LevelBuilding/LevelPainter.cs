@@ -1,19 +1,21 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
-using NeoLemmixSharp.Engine.LemmingActions;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.LevelBuilding.Data;
+using NeoLemmixSharp.LevelBuilding.Sprites;
 using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
 public sealed class LevelPainter : IDisposable
 {
+    public const uint MinimumSubstantialAlphaValue = 31;
+
     private const string _rootDirectory = "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5";
 
     private readonly GraphicsDevice _graphicsDevice;
@@ -31,12 +33,9 @@ public sealed class LevelPainter : IDisposable
         _graphicsDevice = graphicsDevice;
     }
 
-    public void PaintLevel(
-        LevelData levelData,
-        IEnumerable<TerrainGroup> terrainGroups,
-        IEnumerable<TerrainData> terrainData)
+    public void PaintLevel(LevelData levelData)
     {
-        _terrainGroups.AddRange(terrainGroups);
+        _terrainGroups.AddRange(levelData.AllTerrainGroups);
 
         foreach (var terrainGroup in _terrainGroups)
         {
@@ -51,8 +50,8 @@ public sealed class LevelPainter : IDisposable
         _terrainData = new PixelManager(
             levelData.LevelWidth,
             levelData.LevelHeight,
-            BoundaryBehaviourType.Void,
-            BoundaryBehaviourType.Void);
+            BoundaryBehaviourType.Wrap,
+            BoundaryBehaviourType.Wrap);
 
         var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
         var textureData = new PixelColourData(
@@ -60,7 +59,7 @@ public sealed class LevelPainter : IDisposable
             levelData.LevelHeight,
             uintData);
 
-        DrawTerrain(terrainData, textureData);
+        DrawTerrain(levelData.AllTerrainData, textureData);
         levelTerrainTexture.SetData(uintData);
         _terrainSprite = new TerrainSprite(levelTerrainTexture);
 
@@ -124,13 +123,10 @@ public sealed class LevelPainter : IDisposable
         {
             for (var y = 0; y < sourcePixelColourData.Height; y++)
             {
-                dihedralTransformation.Transform(
-                    sourcePixelColourData.Width - 1,
-                    sourcePixelColourData.Height - 1,
-                    x,
+                dihedralTransformation.Transform(x,
                     y,
-                    out var x0,
-                    out var y0);
+                    sourcePixelColourData.Width - 1,
+                    sourcePixelColourData.Height - 1, out var x0, out var y0);
 
                 x0 = x0 + terrainData.X + dx;
                 y0 = y0 + terrainData.Y + dy;
@@ -193,8 +189,8 @@ public sealed class LevelPainter : IDisposable
         var bgB = (background & 0xffU) / 255d;
         var newA = 1.0 - (1.0 - fgA) * (1.0 - bgA);
         var newR = fgR * fgA / newA + bgR * bgA * (1.0 - fgA) / newA;
-        var newG = fgG * fgA / newA + bgG * bgA * (1 - fgA) / newA;
-        var newB = fgB * fgA / newA + bgB * bgA * (1 - fgA) / newA;
+        var newG = fgG * fgA / newA + bgG * bgA * (1.0 - fgA) / newA;
+        var newB = fgB * fgA / newA + bgB * bgA * (1.0 - fgA) / newA;
         var a = (uint)Math.Round(newA * 255);
         var r = (uint)Math.Round(newR * 255);
         var g = (uint)Math.Round(newG * 255);
@@ -206,7 +202,7 @@ public sealed class LevelPainter : IDisposable
     private static bool PixelColourIsSubstantial(uint colour)
     {
         var alpha = (colour >> 24) & 0xffU;
-        return alpha > LemmingConstants.MinimumSubstantialAlphaValue;
+        return alpha > MinimumSubstantialAlphaValue;
     }
 
     private PixelColourData GetOrLoadPixelColourData(TerrainData terrainData)

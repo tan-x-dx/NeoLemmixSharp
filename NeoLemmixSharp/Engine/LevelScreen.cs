@@ -12,7 +12,7 @@ public sealed class LevelScreen : BaseScreen
 {
     private bool _stopMotion = true;
     private bool _doTick;
-    public static LevelScreen? CurrentLevel { get; private set; }
+    public static LevelScreen CurrentLevel { get; private set; }
 
     public ITickable[] LevelObjects { private get; init; }
     public IRenderable[] LevelSprites { private get; init; }
@@ -36,7 +36,7 @@ public sealed class LevelScreen : BaseScreen
     {
         Terrain = terrain;
         SpriteBank = spriteBank;
-        Viewport = new LevelViewPort(Width, Height);
+        Viewport = new LevelViewPort(terrain);
 
         Controller = new LevelController();
 
@@ -61,38 +61,6 @@ public sealed class LevelScreen : BaseScreen
                 LevelObjects[i].Tick();
             }
         }
-    }
-
-    private bool HandleMouseInput()
-    {
-        if (!GameWindow.IsActive)
-            return false;
-
-        var mouseState = Mouse.GetState();
-
-        _mouseX = (mouseState.X - Viewport.ScreenX) / Viewport.ScaleMultiplier + Viewport.ViewPortX;
-        _mouseY = (mouseState.Y - Viewport.ScreenY) / Viewport.ScaleMultiplier + Viewport.ViewPortY;
-
-        Viewport.HandleMouseInput(mouseState);
-
-        if (mouseState.LeftButton == ButtonState.Pressed)
-        {
-            _doTick = true;
-        }
-
-        if (mouseState.RightButton == ButtonState.Pressed)
-        {
-            Terrain.ErasePixels(new[] { new LevelPosition(_mouseX, _mouseY) });
-        }
-
-        if (!_stopMotion)
-            return _doTick;
-
-        if (!_doTick)
-            return false;
-
-        _doTick = false;
-        return true;
     }
 
     private void HandleKeyboardInput()
@@ -124,13 +92,45 @@ public sealed class LevelScreen : BaseScreen
         }
     }
 
+    private bool HandleMouseInput()
+    {
+        if (!GameWindow.IsActive)
+            return false;
+
+        var mouseState = Mouse.GetState();
+
+        _mouseX = (mouseState.X - Viewport.ScreenX) / Viewport.ScaleMultiplier + Viewport.ViewPortX;
+        _mouseY = (mouseState.Y - Viewport.ScreenY) / Viewport.ScaleMultiplier + Viewport.ViewPortY;
+
+        Viewport.HandleMouseInput(mouseState);
+
+        if (mouseState.LeftButton == ButtonState.Pressed)
+        {
+            _doTick = true;
+        }
+
+        if (mouseState.RightButton == ButtonState.Pressed)
+        {
+            Terrain.ErasePixel(Terrain.NormalisePosition(new Point(_mouseX, _mouseY)));
+        }
+
+        if (!_stopMotion)
+            return _doTick;
+
+        if (!_doTick)
+            return false;
+
+        _doTick = false;
+        return true;
+    }
+
     public override void Render(SpriteBatch spriteBatch)
     {
         SpriteBank.Render(spriteBatch);
 
         for (var i = 0; i < LevelSprites.Length; i++)
         {
-            LevelSprites[i].Render(spriteBatch);
+            Viewport.RenderSprite(spriteBatch, LevelSprites[i]);
         }
 
         spriteBatch.Draw(

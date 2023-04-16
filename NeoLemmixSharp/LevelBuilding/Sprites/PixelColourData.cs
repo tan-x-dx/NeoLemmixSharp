@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace NeoLemmixSharp.LevelBuilding;
+namespace NeoLemmixSharp.LevelBuilding.Sprites;
 
 public sealed class PixelColourData
 {

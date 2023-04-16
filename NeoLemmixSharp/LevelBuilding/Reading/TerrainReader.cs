@@ -21,7 +21,7 @@ public sealed class TerrainReader : IDataReader
 
     public void BeginReading(string[] tokens)
     {
-        _currentTerrainData = new TerrainData(_allTerrainData.Count);
+        _currentTerrainData = new TerrainData();
         FinishedReading = false;
     }
 

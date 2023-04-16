@@ -1,18 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Data.SpriteSet;
 using NeoLemmixSharp.Rendering;
-using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace NeoLemmixSharp.LevelBuilding;
+namespace NeoLemmixSharp.LevelBuilding.Sprites;
 
 public sealed class SpriteBankBuilder
 {
@@ -27,23 +25,27 @@ public sealed class SpriteBankBuilder
 
     public SpriteBank BuildSpriteBank(
         ThemeData themeData,
-        TerrainSprite terrainSprite)
+        TerrainSprite terrainSprite,
+        ICollection<GadgetData> allGadgetData)
     {
         var boxTexture = CreateBoxTexture();
         var anchorTexture = CreateAnchorTexture();
 
         LoadLemmingSprites(themeData);
+        LoadGadgetSprites(allGadgetData);
 
         return new SpriteBank(
             _actionSpriteBundleLookup,
-            terrainSprite,
-            boxTexture,
-            anchorTexture);
+            terrainSprite)
+        {
+            BoxTexture = boxTexture,
+            AnchorTexture = anchorTexture
+        };
     }
 
     private void LoadLemmingSprites(ThemeData themeData)
     {
-        foreach (var lemmingState in ILemmingAction.AllLemmingActions)
+        foreach (var lemmingState in LemmingAction.AllLemmingActions)
         {
             var pngFilePath = Path.Combine(themeData.LemmingSpritesFilePath, $"{lemmingState.LemmingActionName}.png");
 
@@ -97,8 +99,8 @@ public sealed class SpriteBankBuilder
     {
         var originalPixelColourData = PixelColourData.GetPixelColourDataFromTexture(texture);
 
-        var actionSpriteBundle = new LemmingActionSpriteBundle(spriteData.NumberOfFrames);
-        ILemmingAction.LemmingActions[stateName].ActionSpriteBundle = actionSpriteBundle;
+        var actionSpriteBundle = new LemmingActionSpriteBundle();
+        LemmingAction.LemmingActions[stateName].ActionSpriteBundle = actionSpriteBundle;
 
         _actionSpriteBundleLookup.Add(stateName, actionSpriteBundle);
 
@@ -173,83 +175,23 @@ public sealed class SpriteBankBuilder
         {
             var texture = spriteDrawingData.ToTexture(_graphicsDevice);
 
-            spriteDrawingData.DihedralTransformation.Transform(
-                spriteWidth - 1,
-                spriteHeight - 1,
-                footX,
+            spriteDrawingData.DihedralTransformation.Transform(footX,
                 footY,
-                out var footX1,
-                out var footY1);
+                spriteWidth - 1,
+                spriteHeight - 1, out var footX1, out var footY1);
 
             var actionSprite = new ActionSprite(
                 texture,
                 spriteDrawingData.ThisSpriteWidth,
                 spriteDrawingData.ThisSpriteHeight,
                 spriteData.NumberOfFrames,
-                new LevelPosition(footX1, footY1));
+                new Point(footX1, footY1));
 
             setSprite(spriteDrawingData.Orientation, actionSpriteBundle, actionSprite);
         }
     }
 
-    private sealed class SpriteDrawingData
+    private void LoadGadgetSprites(ICollection<GadgetData> allGadgetData)
     {
-        private readonly int _originalSpriteWidth;
-        private readonly int _originalSpriteHeight;
-
-        private readonly PixelColourData _colourData;
-        public IOrientation Orientation { get; }
-        public DihedralTransformation DihedralTransformation { get; }
-        public int ThisSpriteWidth { get; }
-        public int ThisSpriteHeight { get; }
-
-        public SpriteDrawingData(
-            IOrientation orientation,
-            int originalSpriteWidth,
-            int originalSpriteHeight,
-            int numberOfFrames)
-        {
-            Orientation = orientation;
-            _originalSpriteWidth = originalSpriteWidth;
-            _originalSpriteHeight = originalSpriteHeight;
-
-            var rotNum = orientation.RotNum;
-
-            if ((rotNum & 1) == 0)
-            {
-                ThisSpriteWidth = _originalSpriteWidth;
-                ThisSpriteHeight = _originalSpriteHeight;
-            }
-            else
-            {
-                ThisSpriteWidth = _originalSpriteHeight;
-                ThisSpriteHeight = _originalSpriteWidth;
-            }
-
-            var uints = new uint[originalSpriteWidth * originalSpriteHeight * numberOfFrames];
-            _colourData = new PixelColourData(ThisSpriteWidth, ThisSpriteHeight * numberOfFrames, uints);
-            DihedralTransformation = DihedralTransformation.GetForTransformation(false, rotNum);
-        }
-
-        public void Set(uint pixel, int x0, int y0, int frame)
-        {
-            DihedralTransformation.Transform(
-                _originalSpriteWidth - 1,
-                _originalSpriteHeight - 1,
-                x0,
-                y0,
-                out var x1,
-                out var y1);
-
-            var y2 = y1 + ThisSpriteHeight * frame;
-            _colourData.Set(x1, y2, pixel);
-        }
-
-        public Texture2D ToTexture(GraphicsDevice graphicsDevice)
-        {
-            var result = new Texture2D(graphicsDevice, _colourData.Width, _colourData.Height);
-            result.SetData(_colourData.ColourData);
-            return result;
-        }
     }
 }

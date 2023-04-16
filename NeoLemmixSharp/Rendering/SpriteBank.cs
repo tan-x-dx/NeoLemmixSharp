@@ -1,26 +1,23 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 
 namespace NeoLemmixSharp.Rendering;
 
-public sealed class SpriteBank : IRenderable
+public sealed class SpriteBank : IDisposable
 {
     private readonly Dictionary<string, LemmingActionSpriteBundle> _actionSpriteBundleLookup;
 
     public TerrainSprite TerrainSprite { get; }
-    public Texture2D BoxTexture { get; }
-    public Texture2D AnchorTexture { get; }
+    public Texture2D BoxTexture { get; init; }
+    public Texture2D AnchorTexture { get; init; }
 
     public SpriteBank(
         Dictionary<string, LemmingActionSpriteBundle> actionSpriteBundleLookup,
-        TerrainSprite terrainSprite,
-        Texture2D boxTexture,
-        Texture2D anchorTexture)
+        TerrainSprite terrainSprite)
     {
         _actionSpriteBundleLookup = actionSpriteBundleLookup;
         TerrainSprite = terrainSprite;
-        BoxTexture = boxTexture;
-        AnchorTexture = anchorTexture;
     }
 
     public void Render(SpriteBatch spriteBatch)

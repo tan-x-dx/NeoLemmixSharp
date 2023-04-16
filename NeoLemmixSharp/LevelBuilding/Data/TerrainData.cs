@@ -2,8 +2,6 @@
 
 public sealed class TerrainData
 {
-    public int Id { get; }
-
     public int X { get; set; }
     public int Y { get; set; }
     public bool NoOverwrite { get; set; }
@@ -18,12 +16,7 @@ public sealed class TerrainData
     public string? GroupId { get; set; }
     public string? Style { get; set; }
     public string? TerrainName { get; set; }
-
-    public TerrainData(int id)
-    {
-        Id = id;
-    }
-
+    
     public override string ToString()
     {
         var horzString = FlipHorizontal ? "H" : string.Empty;

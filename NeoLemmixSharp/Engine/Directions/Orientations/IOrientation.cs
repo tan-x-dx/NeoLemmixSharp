@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
+﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Rendering;
 using System;
 using System.Collections.Generic;
@@ -23,12 +23,19 @@ public interface IOrientation : IEquatable<IOrientation>
         return new ReadOnlyCollection<IOrientation>(list);
     }
 
+    protected static PixelManager Terrain => LevelScreen.CurrentLevel.Terrain;
+
     int RotNum { get; }
 
-    LevelPosition MoveRight(LevelPosition position, int step);
-    LevelPosition MoveUp(LevelPosition position, int step);
-    LevelPosition MoveLeft(LevelPosition position, int step);
-    LevelPosition MoveDown(LevelPosition position, int step);
+    Point TopLeftCornerOfLevel();
+    Point TopRightCornerOfLevel();
+    Point BottomLeftCornerOfLevel();
+    Point BottomRightCornerOfLevel();
+
+    Point MoveRight(Point position, int step);
+    Point MoveUp(Point position, int step);
+    Point MoveLeft(Point position, int step);
+    Point MoveDown(Point position, int step);
 
     /// <summary>
     /// Note for the relativeDirection parameter - Positive x -> right, positive y -> up
@@ -36,7 +43,22 @@ public interface IOrientation : IEquatable<IOrientation>
     /// <param name="position"></param>
     /// <param name="relativeDirection"></param>
     /// <returns></returns>
-    LevelPosition Move(LevelPosition position, LevelPosition relativeDirection);
+    Point Move(Point position, Point relativeDirection);
+    /// <summary>
+    /// Note: Positive dx -> right, positive dy -> up
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="dx"></param>
+    /// <param name="dy"></param>
+    /// <returns></returns>
+    Point Move(Point position, int dx, int dy);
+
+    bool MatchesHorizontally(Point firstPosition, Point secondPosition);
+    bool MatchesVertically(Point firstPosition, Point secondPosition);
+    bool FirstIsAboveSecond(Point firstPosition, Point secondPosition);
+    bool FirstIsBelowSecond(Point firstPosition, Point secondPosition);
+    bool FirstIsToLeftOfSecond(Point firstPosition, Point secondPosition);
+    bool FirstIsToRightOfSecond(Point firstPosition, Point secondPosition);
 
     ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle);
     ActionSprite GetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle);

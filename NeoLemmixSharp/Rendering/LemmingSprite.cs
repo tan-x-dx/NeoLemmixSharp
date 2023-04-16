@@ -13,17 +13,30 @@ public sealed class LemmingSprite : IRenderable
         _lemming = lemming;
     }
 
-    public void Render(SpriteBatch spriteBatch)
+    private ActionSprite ActionSprite => _lemming.FacingDirection.ChooseActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.Orientation);
+
+    public Texture2D RenderTexture => ActionSprite.Texture;
+
+    public Rectangle GetLocationRectangle()
+    {
+        var actionSprite = ActionSprite;
+        return new Rectangle(_lemming.LevelPosition - actionSprite.AnchorPoint, actionSprite.Size);
+    }
+
+    public Rectangle GetTextureSourceRectangle()
+    {
+        return ActionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame);
+    }
+
+    /*public void Render(SpriteBatch spriteBatch)
     {
         var actionSprite = _lemming.FacingDirection.ChooseActionSprite(_lemming.CurrentAction.ActionSpriteBundle, _lemming.Orientation);
 
         var rect = new Rectangle(
-            _lemming.X - actionSprite.AnchorPointX,
-            _lemming.Y - actionSprite.AnchorPointY,
-            actionSprite.SpriteWidth,
-            actionSprite.SpriteHeight);
+            _lemming.LevelPosition - actionSprite.AnchorPoint,
+            actionSprite.Size);
 
-        var viewport = LevelScreen.CurrentLevel!.Viewport;
+        var viewport = LevelScreen.CurrentLevel.Viewport;
 
         if (!viewport.GetRenderDestinationRectangle(rect, out var renderDestination))
             return;
@@ -34,15 +47,14 @@ public sealed class LemmingSprite : IRenderable
             actionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame),
             Color.White);
 
+        viewport.GetRenderDestinationRectangle(new Rectangle(_lemming.LevelPosition - new Point(1, 1), new Point(3, 3)), out renderDestination);
+
         var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
-
-        viewport.GetRenderDestinationRectangle(new Rectangle(_lemming.X - 1, _lemming.Y - 1, 3, 3), out renderDestination);
-
         spriteBatch.Draw(
             spriteBank.AnchorTexture,
             renderDestination,
             Color.White);
-    }
+    }*/
 
     public void Dispose()
     {

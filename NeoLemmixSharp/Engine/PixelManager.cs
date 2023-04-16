@@ -1,6 +1,8 @@
-﻿using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Rendering;
-using System.Collections.Generic;
 
 namespace NeoLemmixSharp.Engine;
 
@@ -8,7 +10,8 @@ public sealed class PixelManager
 {
     private readonly PixelData _voidPixel;
     private readonly PixelData[] _data;
-    private readonly ILevelBoundaryBehaviour _boundaryBehaviour;
+    public IHorizontalViewPortBehaviour HorizontalViewPortBehaviour { get; }
+    public IVerticalViewPortBehaviour VerticalViewPortBehaviour { get; }
 
     private TerrainSprite _terrainSprite;
 
@@ -18,8 +21,8 @@ public sealed class PixelManager
     public PixelManager(
         int width,
         int height,
-        BoundaryBehaviourType leftRightBoundaryBehaviourType,
-        BoundaryBehaviourType upDownBoundaryBehaviourType)
+        BoundaryBehaviourType horizontalBoundaryBehaviourType,
+        BoundaryBehaviourType verticalBoundaryBehaviourType)
     {
         Width = width;
         Height = height;
@@ -27,10 +30,15 @@ public sealed class PixelManager
 
         _data = new PixelData[Width * Height];
 
-        _boundaryBehaviour = GetBoundaryBehaviour(
-            leftRightBoundaryBehaviourType,
-            upDownBoundaryBehaviourType,
-            width, height, _voidPixel, _data);
+        HorizontalViewPortBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(
+            horizontalBoundaryBehaviourType,
+            width,
+            height);
+
+        VerticalViewPortBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(
+            verticalBoundaryBehaviourType,
+            width,
+            height);
 
         for (var i = 0; i < _data.Length; i++)
         {
@@ -43,12 +51,28 @@ public sealed class PixelManager
         _terrainSprite = terrainSprite;
     }
 
-    public PixelData GetPixelData(ref LevelPosition pos)
+    public Point NormalisePosition(Point levelPosition)
     {
-        return _boundaryBehaviour.GetPixel(ref pos);
+        return new Point(
+            HorizontalViewPortBehaviour.NormaliseX(levelPosition.X),
+            VerticalViewPortBehaviour.NormaliseY(levelPosition.Y));
+    }
 
-        /*  var index = Width * pos.Y + pos.X;
-          return _data[index];*/
+    public bool PositionOutOfBounds(Point levelPosition)
+    {
+        return levelPosition.X < 0 ||
+               levelPosition.X >= Width ||
+               levelPosition.Y < 0 ||
+               levelPosition.Y >= Height;
+    }
+
+    public PixelData GetPixelData(Point levelPosition)
+    {
+        if (PositionOutOfBounds(levelPosition))
+            return _voidPixel;
+
+        var index = Width * levelPosition.Y + levelPosition.X;
+        return _data[index];
     }
 
     public PixelData GetPixelData(int x, int y)
@@ -57,31 +81,26 @@ public sealed class PixelManager
         return _data[index];
     }
 
-    private static ILevelBoundaryBehaviour GetBoundaryBehaviour(
-        BoundaryBehaviourType leftRightBoundaryBehaviourType,
-        BoundaryBehaviourType upDownBoundaryBehaviourType,
-        int width,
-        int height,
-        PixelData voidPixel,
-        PixelData[] levelData)
+    public void ErasePixel(Point pixelToErase)
     {
-        return new HorizontalWrapBehaviour(width, height, voidPixel, levelData);
+        var index = Width * pixelToErase.Y + pixelToErase.X;
+        var pixel = _data[index];
+
+        if (pixel is { IsVoid: false, IsSolid: true, IsSteel: false })
+        {
+            pixel.IsSolid = false;
+
+            _terrainSprite.SetPixelColour(pixelToErase.X, pixelToErase.Y, 0U);
+        }
     }
 
-    public void ErasePixels(IList<LevelPosition> pixelsToErase)
+    public void SetSolidPixel(Point pixelToSet, uint colour)
     {
-        for (var i = 0; i < pixelsToErase.Count; i++)
+        var pixel = GetPixelData(pixelToSet);
+        if (pixel is { IsVoid: false, IsSolid: false })
         {
-            var pos = pixelsToErase[i];
-            var index = Width * pos.Y + pos.X;
-            var pixel = _data[index];
-
-            if (pixel is { IsVoid: false, IsSolid: true, IsSteel: false })
-            {
-                pixel.IsSolid = false;
-
-                _terrainSprite.SetPixelColour(pos.X, pos.Y, 0U);
-            }
+            pixel.IsSolid = true;
+            _terrainSprite.SetPixelColour(pixelToSet.X, pixelToSet.Y, colour);
         }
     }
 }
