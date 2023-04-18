@@ -5,15 +5,14 @@ namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 
 public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
 {
-    private readonly SimpleList _horizontalRenderIntervals;
-
-    private int _numberOfHorizontalRenderIntervals = 1;
+    private readonly RenderInterval[] _horizontalRenderIntervals;
 
     public int LevelWidthInPixels { get; }
     public int ViewPortX { get; private set; }
     public int ViewPortWidth { get; private set; }
     public int ScreenX => 0;
     public int ScreenWidth { get; private set; }
+    public int NumberOfHorizontalRenderIntervals { get; private set; } = 1;
 
     public IReadOnlyList<RenderInterval> HorizontalRenderIntervals => _horizontalRenderIntervals;
 
@@ -21,8 +20,14 @@ public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
     {
         LevelWidthInPixels = levelWidthInPixels;
 
-        _horizontalRenderIntervals = new SimpleList(5, 1);
+        _horizontalRenderIntervals = new RenderInterval[5];
+        for (var i = 0; i < _horizontalRenderIntervals.Length; i++)
+        {
+            _horizontalRenderIntervals[i] = new RenderInterval();
+        }
     }
+
+    public RenderInterval GetHorizontalRenderInterval(int i) => _horizontalRenderIntervals[i];
 
     public int NormaliseX(int x)
     {
@@ -69,35 +74,38 @@ public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
 
     public void RecalculateHorizontalRenderIntervals(int scaleMultiplier)
     {
-        var previousNumberOfHorizontalRenderIntervals = _numberOfHorizontalRenderIntervals;
-        _numberOfHorizontalRenderIntervals = Math.Clamp(1 + (ViewPortX + ViewPortWidth - 1) / LevelWidthInPixels, 1, 5);
+        NumberOfHorizontalRenderIntervals = Math.Clamp(1 + (ViewPortX + ViewPortWidth - 1) / LevelWidthInPixels, 1, 5);
 
-        if (_numberOfHorizontalRenderIntervals != previousNumberOfHorizontalRenderIntervals)
+        if (NumberOfHorizontalRenderIntervals == 1)
         {
-            _horizontalRenderIntervals.SetSize(_numberOfHorizontalRenderIntervals);
-        }
-
-        if (_numberOfHorizontalRenderIntervals == 1)
-        {
-            _horizontalRenderIntervals.SetData(0, ViewPortX, ViewPortWidth, ScreenX, ScreenWidth);
+            SetRenderIntervalData(0, ViewPortX, ViewPortWidth, ScreenX, ScreenWidth);
 
             return;
         }
 
         var width = LevelWidthInPixels - ViewPortX;
         var screenStart = width * scaleMultiplier;
-        _horizontalRenderIntervals.SetData(0, ViewPortX, width, 0, screenStart);
+        SetRenderIntervalData(0, ViewPortX, width, 0, screenStart);
 
-        var limit = _numberOfHorizontalRenderIntervals - 1;
+        var limit = NumberOfHorizontalRenderIntervals - 1;
 
         for (var i = 1; i < limit; i++)
         {
-            _horizontalRenderIntervals.SetData(i, 0, LevelWidthInPixels, screenStart, ScreenWidth);
+            SetRenderIntervalData(i, 0, LevelWidthInPixels, screenStart, ScreenWidth);
             screenStart += ScreenWidth;
         }
 
         var pixelLength = ViewPortWidth + ViewPortX - limit * LevelWidthInPixels;
         var screenWidth = pixelLength * scaleMultiplier;
-        _horizontalRenderIntervals.SetData(_numberOfHorizontalRenderIntervals - 1, 0, pixelLength, screenStart, screenWidth);
+        SetRenderIntervalData(NumberOfHorizontalRenderIntervals - 1, 0, pixelLength, screenStart, screenWidth);
+    }
+
+    private void SetRenderIntervalData(int index, int pixelStart, int pixelLength, int screenStart, int screenLength)
+    {
+        var item = _horizontalRenderIntervals[index];
+        item.PixelStart = pixelStart;
+        item.PixelLength = pixelLength;
+        item.ScreenStart = screenStart;
+        item.ScreenLength = screenLength;
     }
 }

@@ -1,30 +1,26 @@
-﻿using System.Collections.Generic;
-
-namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
+﻿namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 
 public sealed class HorizontalVoidViewPortBehaviour : IHorizontalViewPortBehaviour
 {
-    private readonly SimpleList _horizontalRenderIntervals;
+    private readonly RenderInterval _renderInterval;
 
     public int LevelWidthInPixels { get; }
     public int ViewPortX { get; private set; }
     public int ViewPortWidth { get; private set; }
     public int ScreenX { get; private set; }
     public int ScreenWidth { get; private set; }
-
-    public IReadOnlyList<RenderInterval> HorizontalRenderIntervals => _horizontalRenderIntervals;
+    public int NumberOfHorizontalRenderIntervals => 1;
 
     public HorizontalVoidViewPortBehaviour(int levelWidthInPixels)
     {
         LevelWidthInPixels = levelWidthInPixels;
 
-        _horizontalRenderIntervals = new SimpleList(1, 1);
+        _renderInterval = new RenderInterval();
     }
 
-    public int NormaliseX(int x)
-    {
-        return x;
-    }
+    public RenderInterval GetHorizontalRenderInterval(int i) => _renderInterval;
+
+    public int NormaliseX(int x) => x;
 
     public void RecalculateHorizontalDimensions(int scaleMultiplier, int windowWidth)
     {
@@ -65,6 +61,9 @@ public sealed class HorizontalVoidViewPortBehaviour : IHorizontalViewPortBehavio
 
     public void RecalculateHorizontalRenderIntervals(int scaleMultiplier)
     {
-        _horizontalRenderIntervals.SetData(0, ViewPortX, ViewPortWidth, ScreenX, ScreenWidth);
+        _renderInterval.PixelStart = ViewPortX;
+        _renderInterval.PixelLength = ViewPortWidth;
+        _renderInterval.ScreenStart = ScreenX;
+        _renderInterval.ScreenLength = ScreenWidth;
     }
 }

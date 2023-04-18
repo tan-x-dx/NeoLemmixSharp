@@ -147,15 +147,12 @@ public sealed class LevelViewPort
 
     public void RenderTerrain(SpriteBatch spriteBatch, Texture2D texture)
     {
-        var horizontalRenderIntervals = _horizontalViewPortBehaviour.HorizontalRenderIntervals;
-        var verticalRenderIntervals = _verticalViewPortBehaviour.VerticalRenderIntervals;
-
-        for (var i = 0; i < horizontalRenderIntervals.Count; i++)
+        for (var i = 0; i < _horizontalViewPortBehaviour.NumberOfHorizontalRenderIntervals; i++)
         {
-            var hInterval = horizontalRenderIntervals[i];
-            for (var j = 0; j < verticalRenderIntervals.Count; j++)
+            var hInterval = _horizontalViewPortBehaviour.GetHorizontalRenderInterval(i);
+            for (var j = 0; j < _verticalViewPortBehaviour.NumberOfVerticalRenderIntervals; j++)
             {
-                var vInterval = verticalRenderIntervals[j];
+                var vInterval = _verticalViewPortBehaviour.GetVerticalRenderInterval(j);
                 var sourceRect = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
                 var screenRect = new Rectangle(hInterval.ScreenStart, vInterval.ScreenStart, hInterval.ScreenLength, vInterval.ScreenLength);
 
@@ -168,9 +165,6 @@ public sealed class LevelViewPort
     {
         var spriteLocation = sprite.GetLocationRectangle();
 
-        var horizontalRenderIntervals = _horizontalViewPortBehaviour.HorizontalRenderIntervals;
-        var verticalRenderIntervals = _verticalViewPortBehaviour.VerticalRenderIntervals;
-
         var x0 = (spriteLocation.X - ViewPortX) * ScaleMultiplier + ScreenX;
         var y0 = (spriteLocation.Y - ViewPortY) * ScaleMultiplier + ScreenY;
 
@@ -178,14 +172,14 @@ public sealed class LevelViewPort
         var w = _horizontalViewPortBehaviour.LevelWidthInPixels * ScaleMultiplier;
         var h = _verticalViewPortBehaviour.LevelHeightInPixels * ScaleMultiplier;
 
-        for (var i = 0; i < horizontalRenderIntervals.Count; i++)
+        for (var i = 0; i < _horizontalViewPortBehaviour.NumberOfHorizontalRenderIntervals; i++)
         {
-            var hInterval = horizontalRenderIntervals[i];
+            var hInterval = _horizontalViewPortBehaviour.GetHorizontalRenderInterval(i);
             if (hInterval.Overlaps(spriteLocation.X, spriteLocation.Width))
             {
-                for (var j = 0; j < verticalRenderIntervals.Count; j++)
+                for (var j = 0; j < _verticalViewPortBehaviour.NumberOfVerticalRenderIntervals; j++)
                 {
-                    var vInterval = verticalRenderIntervals[j];
+                    var vInterval = _verticalViewPortBehaviour.GetVerticalRenderInterval(j);
                     if (vInterval.Overlaps(spriteLocation.Y, spriteLocation.Height))
                     {
                         sprite.RenderAtPosition(spriteBatch, x0, y1);
