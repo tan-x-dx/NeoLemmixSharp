@@ -86,7 +86,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     public abstract bool UpdateLemming(Lemming lemming);
 
     public bool Equals(LemmingAction? other) => ActionId == (other?.ActionId ?? -1);
-    public sealed override bool Equals(object? obj) => obj is LemmingAction other && Equals(other);
+    public sealed override bool Equals(object? obj) => obj is LemmingAction other && ActionId == other.ActionId;
     public sealed override int GetHashCode() => ActionId;
     public sealed override string ToString() => LemmingActionName;
 

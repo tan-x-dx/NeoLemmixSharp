@@ -66,8 +66,9 @@ public abstract class Orientation : IEquatable<Orientation>
     public abstract void SetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite rightSprite);
 
     public bool Equals(Orientation? other) => RotNum == (other?.RotNum ?? -1);
-    public sealed override bool Equals(object? obj) => obj is Orientation other && Equals(other);
+    public sealed override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;
     public sealed override int GetHashCode() => RotNum;
+    public abstract override string ToString();
 
     public static bool operator ==(Orientation left, Orientation right) => left.RotNum == right.RotNum;
     public static bool operator !=(Orientation left, Orientation right) => left.RotNum != right.RotNum;

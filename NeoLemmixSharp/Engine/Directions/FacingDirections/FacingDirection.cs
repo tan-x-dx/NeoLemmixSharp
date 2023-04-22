@@ -11,7 +11,7 @@ public abstract class FacingDirection : IEquatable<FacingDirection>
     public abstract ActionSprite ChooseActionSprite(LemmingActionSpriteBundle actionSpriteBundle, Orientation orientation);
 
     public bool Equals(FacingDirection? other) => DeltaX == (other?.DeltaX ?? 0);
-    public sealed override bool Equals(object? obj) => obj is FacingDirection other && Equals(other);
+    public sealed override bool Equals(object? obj) => obj is FacingDirection other && DeltaX == other.DeltaX;
     public sealed override int GetHashCode() => DeltaX;
     public abstract override string ToString();
 
