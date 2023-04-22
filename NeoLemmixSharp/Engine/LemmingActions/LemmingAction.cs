@@ -61,7 +61,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
                 .Select(la => la.ActionId)
                 .OrderBy(i => i));
 
-            throw new Exception($"Duplicated ID: {ids}");
+            throw new Exception($"Duplicated action ID: {ids}");
         }
 
         return new ReadOnlyDictionary<string, LemmingAction>(result);
