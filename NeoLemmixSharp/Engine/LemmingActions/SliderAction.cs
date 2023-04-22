@@ -86,7 +86,7 @@ public sealed class SliderAction : LemmingAction
     }
 
     private static bool SliderHasPixelAt(
-        IOrientation orientation,
+        Orientation orientation,
         LevelPosition levelPosition,
         LevelPosition dehoistPin)
     {

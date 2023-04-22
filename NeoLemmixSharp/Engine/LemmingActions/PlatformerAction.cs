@@ -110,7 +110,7 @@ public sealed class PlatformerAction : LemmingAction
 
     private static bool PlatformerTerrainCheck(
         LevelPosition pos,
-        IOrientation orientation)
+        Orientation orientation)
     {
         return Terrain.GetPixelData(orientation.MoveUp(pos, 1)).IsSolid ||
                Terrain.GetPixelData(orientation.MoveUp(pos, 2)).IsSolid;

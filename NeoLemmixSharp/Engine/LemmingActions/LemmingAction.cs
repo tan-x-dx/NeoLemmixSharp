@@ -88,6 +88,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     public bool Equals(LemmingAction? other) => ActionId == (other?.ActionId ?? -1);
     public sealed override bool Equals(object? obj) => obj is LemmingAction other && Equals(other);
     public sealed override int GetHashCode() => ActionId;
+    public sealed override string ToString() => LemmingActionName;
 
     public static bool operator ==(LemmingAction left, LemmingAction right) => left.ActionId == right.ActionId;
     public static bool operator !=(LemmingAction left, LemmingAction right) => left.ActionId != right.ActionId;
@@ -160,7 +161,7 @@ end;
     */
 
     protected static int FindGroundPixel(
-        IOrientation orientation,
+        Orientation orientation,
         LevelPosition levelPosition)
     {
         // Find the new ground pixel

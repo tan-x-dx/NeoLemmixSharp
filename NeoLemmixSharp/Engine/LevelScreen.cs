@@ -18,6 +18,7 @@ public sealed class LevelScreen : BaseScreen
     public ISprite[] LevelSprites { private get; init; }
     public PixelManager Terrain { get; }
     public SpriteBank SpriteBank { get; }
+    public LevelControlPanel ControlPanel { get; }
 
     public LevelController Controller { get; }
     public LevelViewPort Viewport { get; }

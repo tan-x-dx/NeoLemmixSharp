@@ -122,7 +122,7 @@ public sealed class LasererAction : LemmingAction
 
     private LaserHitType CheckForHit(
         LevelPosition target,
-        IOrientation orientation,
+        Orientation orientation,
         int dx)
     {
         if (Terrain.PositionOutOfBounds(target))

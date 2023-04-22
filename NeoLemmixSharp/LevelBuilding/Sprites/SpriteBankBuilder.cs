@@ -146,12 +146,12 @@ public sealed class SpriteBankBuilder
         int footX,
         int footY,
         LemmingActionSpriteBundle actionSpriteBundle,
-        Action<IOrientation, LemmingActionSpriteBundle, ActionSprite> setSprite)
+        Action<Orientation, LemmingActionSpriteBundle, ActionSprite> setSprite)
     {
         var spriteWidth = originalPixelColourData.Width / 2;
         var spriteHeight = originalPixelColourData.Height / spriteData.NumberOfFrames;
 
-        var spriteDrawingDatas = IOrientation
+        var spriteDrawingDatas = Orientation
             .AllOrientations
             .Select(o => new SpriteDrawingData(o, spriteWidth, spriteHeight, spriteData.NumberOfFrames))
             .ToArray();

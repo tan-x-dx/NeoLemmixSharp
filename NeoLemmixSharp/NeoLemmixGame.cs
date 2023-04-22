@@ -125,7 +125,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
         Screen.Render(_spriteBatch);
 
-        _menuFont.RenderText(_spriteBatch, "Test lol :)", 30, 20);
+     //   _menuFont.RenderText(_spriteBatch, "Test lol :)", 30, 20);
 
         _spriteBatch.End();
 
