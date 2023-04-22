@@ -14,7 +14,7 @@ public sealed class LevelViewPort
 
     private readonly IHorizontalViewPortBehaviour _horizontalViewPortBehaviour;
     private readonly IVerticalViewPortBehaviour _verticalViewPortBehaviour;
-
+    
     private int _previousScrollWheelValue;
 
     private int _windowWidth;
@@ -161,7 +161,7 @@ public sealed class LevelViewPort
         }
     }
 
-    public void RenderSprite(SpriteBatch spriteBatch, IRenderable sprite)
+    public void RenderSprite(SpriteBatch spriteBatch, ISprite sprite)
     {
         var spriteLocation = sprite.GetLocationRectangle();
 
@@ -182,7 +182,7 @@ public sealed class LevelViewPort
                     var vInterval = _verticalViewPortBehaviour.GetVerticalRenderInterval(j);
                     if (vInterval.Overlaps(spriteLocation.Y, spriteLocation.Height))
                     {
-                        sprite.RenderAtPosition(spriteBatch, x0, y1);
+                        sprite.RenderAtPosition(spriteBatch, new Rectangle(8, 0, 16, 10), x0, y1);
                     }
 
                     y1 += h;

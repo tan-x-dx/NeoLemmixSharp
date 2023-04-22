@@ -30,8 +30,10 @@ public sealed class ActionSprite : IDisposable
         AnchorPoint = anchorPoint;
     }
 
-    public Rectangle GetSourceRectangleForFrame(int frame)
+    public Rectangle GetSourceRectangleForFrame(Rectangle sourceRectangle, int frame)
     {
+        sourceRectangle.Y += frame * SpriteHeight;
+
         return new Rectangle(0, frame * SpriteHeight, SpriteWidth, SpriteHeight);
     }
 

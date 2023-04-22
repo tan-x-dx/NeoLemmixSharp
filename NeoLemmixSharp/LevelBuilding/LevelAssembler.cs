@@ -48,11 +48,11 @@ public sealed class LevelAssembler : IDisposable
         return _lemmings.ToArray<ITickable>();
     }
 
-    public IRenderable[] GetLevelRenderables()
+    public ISprite[] GetLevelRenderables()
     {
         return _lemmings
             .Select(GetLemmingSprite)
-            .ToArray<IRenderable>();
+            .ToArray<ISprite>();
     }
 
     private LemmingSprite GetLemmingSprite(Lemming lemming)

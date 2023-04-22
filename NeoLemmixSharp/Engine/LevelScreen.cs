@@ -15,7 +15,7 @@ public sealed class LevelScreen : BaseScreen
     public static LevelScreen CurrentLevel { get; private set; }
 
     public ITickable[] LevelObjects { private get; init; }
-    public IRenderable[] LevelSprites { private get; init; }
+    public ISprite[] LevelSprites { private get; init; }
     public PixelManager Terrain { get; }
     public SpriteBank SpriteBank { get; }
 
