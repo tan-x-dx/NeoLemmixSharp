@@ -170,16 +170,18 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
     protected static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
     {
-        var currentPosition = lemming.LevelPosition;
-        var nextPosition = currentPosition;
         var dx = lemming.FacingDirection.DeltaX;
+        LevelPosition currentPosition;
+        LevelPosition nextPosition;
         if (alreadyMoved)
         {
-            currentPosition = lemming.Orientation.MoveLeft(currentPosition, dx);
+            currentPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
+            nextPosition = lemming.LevelPosition;
         }
         else
         {
-            nextPosition = lemming.Orientation.MoveRight(nextPosition, dx);
+            currentPosition = lemming.LevelPosition;
+            nextPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, dx);
         }
 
         if (Terrain.PositionOutOfBounds(nextPosition) ||
@@ -204,9 +206,6 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
         if (Terrain.GetPixelData(lemming.Orientation.MoveDown(nextPosition, 4)).IsSolid)
             return false;
-        if (!Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, 4)).IsSolid)
-            return true;
-
-        return true;
+        return !Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, 4)).IsSolid;
     }
 }
