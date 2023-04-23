@@ -14,11 +14,17 @@ public sealed class StonerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        return LemmingActionCanBeAssignedPermanentSkill(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        /*
+            lemming.LemExplosionTimer : = 1;
+            lemming.LemTimerToStone : = True;
+            lemming.LemHideCountdown : = True;
+            */
+
+        return true;
     }
 }

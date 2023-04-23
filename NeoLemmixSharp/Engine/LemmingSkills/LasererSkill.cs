@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LemmingSkills;
+﻿using NeoLemmixSharp.Engine.LemmingActions;
+
+namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class LasererSkill : LemmingSkill
 {
@@ -14,11 +16,20 @@ public sealed class LasererSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        return lemming.CurrentAction == WalkerAction.Instance ||
+               lemming.CurrentAction == ShruggerAction.Instance ||
+               lemming.CurrentAction == PlatformerAction.Instance ||
+               lemming.CurrentAction == BuilderAction.Instance ||
+               lemming.CurrentAction == StackerAction.Instance ||
+               lemming.CurrentAction == BasherAction.Instance ||
+               lemming.CurrentAction == FencerAction.Instance ||
+               lemming.CurrentAction == MinerAction.Instance ||
+               lemming.CurrentAction == DiggerAction.Instance;
     }
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        LasererAction.Instance.TransitionLemmingToAction(lemming, false);
+        return true;
     }
 }

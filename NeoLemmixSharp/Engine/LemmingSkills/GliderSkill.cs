@@ -19,6 +19,7 @@ public sealed class GliderSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        lemming.IsGlider = true;
+        return true;
     }
 }

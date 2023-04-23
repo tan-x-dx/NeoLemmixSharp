@@ -30,6 +30,7 @@ public sealed class PlatformerSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        PlatformerAction.Instance.TransitionLemmingToAction(lemming, false);
+        return true;
     }
 }

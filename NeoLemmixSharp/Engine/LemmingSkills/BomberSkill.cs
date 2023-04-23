@@ -19,6 +19,12 @@ public sealed class BomberSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        /*
+            lemming.ExplosionTimer : = 1;
+            lemming.TimerToStone : = False;
+            lemming.HideCountdown : = True;
+            */
+
+        return true;
     }
 }

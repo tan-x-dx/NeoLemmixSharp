@@ -29,6 +29,7 @@ public sealed class BasherSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        BasherAction.Instance.TransitionLemmingToAction(lemming, false);
+        return true;
     }
 }

@@ -19,6 +19,7 @@ public sealed class FloaterSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        lemming.IsFloater = true;
+        return true;
     }
 }

@@ -32,6 +32,7 @@ public sealed class MinerSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        MinerAction.Instance.TransitionLemmingToAction(lemming, false);
+        return true;
     }
 }

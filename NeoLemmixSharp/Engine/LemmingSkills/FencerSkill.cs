@@ -29,6 +29,7 @@ public sealed class FencerSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        FencerAction.Instance.TransitionLemmingToAction(lemming, false);
+        return true;
     }
 }

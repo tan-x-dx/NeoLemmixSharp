@@ -30,6 +30,18 @@ public sealed class ShimmierSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        if (lemming.CurrentAction == ClimberAction.Instance ||
+            lemming.CurrentAction == SliderAction.Instance ||
+            lemming.CurrentAction == JumperAction.Instance ||
+            lemming.CurrentAction == DehoisterAction.Instance)
+        {
+            ShimmierAction.Instance.TransitionLemmingToAction(lemming, false);
+        }
+        else
+        {
+            ReacherAction.Instance.TransitionLemmingToAction(lemming, false);
+        }
+
+        return true;
     }
 }

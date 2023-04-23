@@ -19,6 +19,7 @@ public sealed class DisarmerSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        lemming.IsDisarmer = true;
+        return true;
     }
 }

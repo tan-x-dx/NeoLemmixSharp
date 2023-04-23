@@ -80,11 +80,6 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
                lemming.CurrentAction != ExiterAction.Instance;
     }
 
-    /*public bool AssignNewSkill()
-    {
-
-    }*/
-
     public abstract bool CanAssignToLemming(Lemming lemming);
     public abstract bool AssignToLemming(Lemming lemming);
 

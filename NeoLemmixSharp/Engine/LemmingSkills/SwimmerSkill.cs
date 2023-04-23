@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LemmingSkills;
+﻿using NeoLemmixSharp.Engine.LemmingActions;
+
+namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class SwimmerSkill : LemmingSkill
 {
@@ -19,6 +21,12 @@ public sealed class SwimmerSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        lemming.IsSwimmer = true;
+        if (lemming.CurrentAction == DrownerAction.Instance)
+        {
+            SwimmerAction.Instance.TransitionLemmingToAction(lemming, false);
+        }
+
+        return true;
     }
 }

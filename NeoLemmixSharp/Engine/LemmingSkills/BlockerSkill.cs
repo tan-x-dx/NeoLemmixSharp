@@ -31,6 +31,7 @@ public sealed class BlockerSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        BlockerAction.Instance.TransitionLemmingToAction(lemming, false);
+        return true;
     }
 }

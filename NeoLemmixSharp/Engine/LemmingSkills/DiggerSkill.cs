@@ -27,9 +27,10 @@ public sealed class DiggerSkill : LemmingSkill
                 lemming.CurrentAction == LasererAction.Instance)
                && (true); // HasIndestructibleAt ;
     }
-    
+
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        DiggerAction.Instance.TransitionLemmingToAction(lemming, false);
+        return true;
     }
 }

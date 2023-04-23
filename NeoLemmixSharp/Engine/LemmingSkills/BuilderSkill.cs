@@ -29,6 +29,7 @@ public sealed class BuilderSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        BuilderAction.Instance.TransitionLemmingToAction(lemming, false);
+        return true;
     }
 }

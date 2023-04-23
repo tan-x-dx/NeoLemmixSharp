@@ -1,6 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LemmingActions;
-
-namespace NeoLemmixSharp.Engine.LemmingSkills;
+﻿namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class SliderSkill : LemmingSkill
 {
@@ -21,6 +19,8 @@ public sealed class SliderSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        lemming.IsSlider = true;
+
+        return true;
     }
 }
