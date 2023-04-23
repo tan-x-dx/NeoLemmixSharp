@@ -20,6 +20,7 @@ public sealed class Lemming : ITickable
     public bool IsGlider;
     public bool IsSlider;
     public bool IsSwimmer;
+    public bool IsDisarmer;
 
     public bool ConstructivePositionFreeze;
     public bool IsStartingAction;

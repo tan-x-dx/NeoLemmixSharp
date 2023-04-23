@@ -91,16 +91,13 @@ public sealed class PlatformerAction : LemmingAction
         return true;
     }
 
-    private static bool LemmingCanPlatform(Lemming lemming)
+    public static bool LemmingCanPlatform(Lemming lemming)
     {
-        var result = false;
-
-        result = result ||
-                 !Terrain.GetPixelData(lemming.LevelPosition).IsSolid ||
-                 !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 1)).IsSolid ||
-                 !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 2)).IsSolid ||
-                 !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 3)).IsSolid ||
-                 !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 4)).IsSolid;
+        var result = !Terrain.GetPixelData(lemming.LevelPosition).IsSolid ||
+                     !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 1)).IsSolid ||
+                     !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 2)).IsSolid ||
+                     !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 3)).IsSolid ||
+                     !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 4)).IsSolid;
 
         var dx = lemming.FacingDirection.DeltaX;
         result = result && !Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx, 1)).IsSolid;

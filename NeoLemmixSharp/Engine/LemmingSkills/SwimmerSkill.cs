@@ -10,10 +10,11 @@ public sealed class SwimmerSkill : LemmingSkill
 
     public override int LemmingSkillId => 19;
     public override string LemmingSkillName => "swimmer";
+    public override bool IsPermanentSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        return !lemming.IsSwimmer && LemmingActionCanBeAssignedPermanentSkill(lemming, false);
     }
 
     public override bool AssignToLemming(Lemming lemming)

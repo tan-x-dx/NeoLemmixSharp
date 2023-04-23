@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LemmingSkills;
+﻿using NeoLemmixSharp.Engine.LemmingActions;
+
+namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class ClimberSkill : LemmingSkill
 {
@@ -10,10 +12,11 @@ public sealed class ClimberSkill : LemmingSkill
 
     public override int LemmingSkillId => 4;
     public override string LemmingSkillName => "climber";
+    public override bool IsPermanentSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        return !lemming.IsClimber && LemmingActionCanBeAssignedPermanentSkill(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)

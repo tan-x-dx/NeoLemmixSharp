@@ -10,10 +10,11 @@ public sealed class FloaterSkill : LemmingSkill
 
     public override int LemmingSkillId => 9;
     public override string LemmingSkillName => "floater";
+    public override bool IsPermanentSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        return !(lemming.IsGlider || lemming.IsFloater) && LemmingActionCanBeAssignedPermanentSkill(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)

@@ -10,6 +10,7 @@ public sealed class LasererSkill : LemmingSkill
 
     public override int LemmingSkillId => 12;
     public override string LemmingSkillName => "laserer";
+    public override bool IsPermanentSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

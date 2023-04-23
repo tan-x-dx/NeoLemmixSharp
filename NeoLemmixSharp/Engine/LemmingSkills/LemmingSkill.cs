@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeoLemmixSharp.Engine.LemmingActions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -61,8 +62,28 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 
     public static ICollection<LemmingSkill> AllLemmingSkills => LemmingSkills.Values;
 
+    protected static PixelManager Terrain => LevelScreen.CurrentLevel.Terrain;
+
     public abstract int LemmingSkillId { get; }
     public abstract string LemmingSkillName { get; }
+    public abstract bool IsPermanentSkill { get; }
+
+    protected static bool LemmingActionCanBeAssignedPermanentSkill(Lemming lemming, bool includeDrowner = true)
+    {
+        return lemming.CurrentAction != OhNoerAction.Instance &&
+               lemming.CurrentAction != StonerAction.Instance &&
+               lemming.CurrentAction != ExploderAction.Instance &&
+               lemming.CurrentAction != StonerAction.Instance &&
+               (!includeDrowner || lemming.CurrentAction != DrownerAction.Instance) &&
+               lemming.CurrentAction != VaporiserAction.Instance &&
+               lemming.CurrentAction != SplatterAction.Instance &&
+               lemming.CurrentAction != ExiterAction.Instance;
+    }
+
+    /*public bool AssignNewSkill()
+    {
+
+    }*/
 
     public abstract bool CanAssignToLemming(Lemming lemming);
     public abstract bool AssignToLemming(Lemming lemming);

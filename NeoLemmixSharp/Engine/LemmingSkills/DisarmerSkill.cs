@@ -10,10 +10,11 @@ public sealed class DisarmerSkill : LemmingSkill
 
     public override int LemmingSkillId => 7;
     public override string LemmingSkillName => "disarmer";
+    public override bool IsPermanentSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        return !lemming.IsDisarmer && LemmingActionCanBeAssignedPermanentSkill(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)

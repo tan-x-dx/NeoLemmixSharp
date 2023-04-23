@@ -10,10 +10,11 @@ public sealed class BomberSkill : LemmingSkill
 
     public override int LemmingSkillId => 2;
     public override string LemmingSkillName => "bomber";
+    public override bool IsPermanentSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        throw new System.NotImplementedException();
+        return LemmingActionCanBeAssignedPermanentSkill(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)

@@ -139,27 +139,6 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
     }
 
-    /*
-    procedure TLemmingGame.LayBrick(L: TLemming);
-{-------------------------------------------------------------------------------
-  bricks are in the lemming area so will automatically be copied to the screen
-  during drawlemmings
--------------------------------------------------------------------------------}
-var
-  BrickPosY, n: Integer;
-begin
-  Assert((L.LemNumberOfBricksLeft > 0) and (L.LemNumberOfBricksLeft < 13),
-            'Number bricks out of bounds');
-
-  If L.LemAction = baBuilding then BrickPosY := L.LemY - 1
-  else BrickPosY := L.LemY; // for platformers
-
-  for n := 0 to 5 do
-    AddConstructivePixel(L.LemX + n*L.LemDx, BrickPosY, BrickPixelColors[12 - L.LemNumberOfBricksLeft]);
-end;
-
-    */
-
     protected static int FindGroundPixel(
         Orientation orientation,
         LevelPosition levelPosition)
