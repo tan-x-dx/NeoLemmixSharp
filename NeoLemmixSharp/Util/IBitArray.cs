@@ -6,12 +6,12 @@ namespace NeoLemmixSharp.Util;
 
 public interface IBitArray : ICollection<int>, IReadOnlyCollection<int>, ICloneable
 {
-    public int Length { get; }
-    public bool AnyBitsSet { get; }
+    int Length { get; }
+    bool AnyBitsSet { get; }
 
-    public bool GetBit(int index);
-    public bool SetBit(int index);
-    public bool ClearBit(int index);
+    bool GetBit(int index);
+    bool SetBit(int index);
+    bool ClearBit(int index);
 
     void ICollection<int>.Add(int i) => SetBit(i);
     bool ICollection<int>.Contains(int i) => GetBit(i);

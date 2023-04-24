@@ -29,7 +29,7 @@ public sealed class IntBasedBitArray : IBitArray
 
     public bool GetBit(int index)
     {
-        return (_bits >> index & 1U) != 0U;
+        return (_bits & (1U << index)) != 0U;
     }
 
     public bool SetBit(int index)

@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Engine.Directions.Orientations;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Util;
 using System;
 
