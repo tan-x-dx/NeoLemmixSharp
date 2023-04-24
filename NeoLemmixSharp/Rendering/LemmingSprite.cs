@@ -24,9 +24,13 @@ public sealed class LemmingSprite : ISprite
         return new Rectangle(p.X, p.Y, s.X, s.Y);
     }
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int x, int y)
+    public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
     {
-        var scaleMultiplier = LevelScreen.CurrentLevel.Viewport.ScaleMultiplier;
+        RenderAtPosition(spriteBatch, ActionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame), x, y, scaleMultiplier);
+    }
+
+    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int x, int y, int scaleMultiplier)
+    {
         var actionSprite = ActionSprite;
 
         var renderDestination = new Rectangle(

@@ -15,6 +15,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
     private readonly TimeSpan _standardGameUps = TimeSpan.FromSeconds(1d / 17d);
     private readonly TimeSpan _fastForwardsGameUps = TimeSpan.FromSeconds(1d / 68d);
 
+    private FontBank _fontBank;
     private Point _gameResolution = new(960, 720);
     private SpriteBatch _spriteBatch;
     private MenuFont _menuFont;
@@ -71,7 +72,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
     protected override void LoadContent()
     {
-        _menuFont = new MenuFont(Content);
+        _fontBank = new FontBank(Content);
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _graphics.PreferredBackBufferWidth = _gameResolution.X;
@@ -98,7 +99,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
         //    "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\eraseTest.nxlv";
         //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Lemmings\\Fun\\19_Take_good_care_of_my_Lemmings.nxlv";
 
-        using (var levelBuilder = new LevelBuilder(GraphicsDevice, _spriteBatch))
+        using (var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, _fontBank))
         {
             Screen = levelBuilder.BuildLevel(path);
             Screen.GameWindow = this;
@@ -125,7 +126,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
         Screen.Render(_spriteBatch);
 
-     //   _menuFont.RenderText(_spriteBatch, "Test lol :)", 30, 20);
+        //   _menuFont.RenderText(_spriteBatch, "Test lol :)", 30, 20);
 
         _spriteBatch.End();
 

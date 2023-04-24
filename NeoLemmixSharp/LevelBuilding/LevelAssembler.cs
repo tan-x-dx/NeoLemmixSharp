@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
@@ -29,11 +30,12 @@ public sealed class LevelAssembler : IDisposable
     }
 
     public void AssembleLevel(
+        ContentManager content,
         LevelData levelData,
         TerrainSprite terrainSprite)
     {
         var spriteBankBuilder = new SpriteBankBuilder(_graphicsDevice);
-        _spriteBank = spriteBankBuilder.BuildSpriteBank(levelData.ThemeData, terrainSprite, levelData.AllGadgetData);
+        _spriteBank = spriteBankBuilder.BuildSpriteBank(content, levelData.ThemeData, terrainSprite, levelData.AllGadgetData);
 
         SetUpTestLemmings();
     }

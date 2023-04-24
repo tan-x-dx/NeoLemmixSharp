@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
@@ -25,6 +26,7 @@ public sealed class SpriteBankBuilder
     }
 
     public SpriteBank BuildSpriteBank(
+        ContentManager content,
         ThemeData themeData,
         TerrainSprite terrainSprite,
         ICollection<GadgetData> allGadgetData)
@@ -32,6 +34,7 @@ public sealed class SpriteBankBuilder
         var boxTexture = CreateBoxTexture();
         var anchorTexture = CreateAnchorTexture();
 
+        var cursorSprite = LoadCursorSprites(content);
         LoadLemmingSprites(themeData);
         LoadGadgetSprites(allGadgetData);
 
@@ -40,8 +43,17 @@ public sealed class SpriteBankBuilder
             terrainSprite)
         {
             BoxTexture = boxTexture,
-            AnchorTexture = anchorTexture
+            AnchorTexture = anchorTexture,
+            CursorSprite = cursorSprite
         };
+    }
+
+    private static CursorSprite LoadCursorSprites(ContentManager content)
+    {
+        var standardCursorTexture = content.Load<Texture2D>("cursor/standard");
+        var focusedCursorTexture = content.Load<Texture2D>("cursor/focused");
+
+        return new CursorSprite(standardCursorTexture, focusedCursorTexture);
     }
 
     private void LoadLemmingSprites(ThemeData themeData)
