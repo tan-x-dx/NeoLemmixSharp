@@ -6,8 +6,8 @@ namespace NeoLemmixSharp.Rendering;
 
 public sealed class CursorSprite : ISprite
 {
-    private const int CursorSizeInPixels = 16;
-    private const int HalfCursorSizeInPixels = CursorSizeInPixels / 2;
+    public const int CursorSizeInPixels = 16;
+    public const int HalfCursorSizeInPixels = CursorSizeInPixels / 2;
 
     public Texture2D StandardCursorTexture { get; }
     public Texture2D FocusedCursorTexture { get; }
@@ -26,11 +26,14 @@ public sealed class CursorSprite : ISprite
             ? FocusedCursorTexture
             : StandardCursorTexture;
 
+        var d = HalfCursorSizeInPixels * scaleMultiplier;
+        var s = CursorSizeInPixels * scaleMultiplier;
+
         var destRectangle = new Rectangle(
-            (x - HalfCursorSizeInPixels) * scaleMultiplier,
-            (y - HalfCursorSizeInPixels) * scaleMultiplier,
-            CursorSizeInPixels * scaleMultiplier,
-            CursorSizeInPixels * scaleMultiplier);
+            x - d,
+            y - d,
+            s,
+            s);
 
         spriteBatch.Draw(texture, destRectangle, GetLocationRectangle(), Color.White);
     }

@@ -92,11 +92,17 @@ public sealed class LevelViewPort
             _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
         }
 
-        ScreenMouseX = (mouseState.X - _horizontalViewPortBehaviour.ScreenX) / ScaleMultiplier + _horizontalViewPortBehaviour.ViewPortX;
-        ScreenMouseY = (mouseState.Y - _verticalViewPortBehaviour.ScreenY) / ScaleMultiplier + _verticalViewPortBehaviour.ViewPortY;
+        ScreenMouseX = mouseState.X;
+        ScreenMouseY = mouseState.Y;
 
-        ViewportMouseX = _horizontalViewPortBehaviour.NormaliseX(ScreenMouseX);
-        ViewportMouseY = _verticalViewPortBehaviour.NormaliseY(ScreenMouseY);
+        ViewportMouseX = (ScreenMouseX - _horizontalViewPortBehaviour.ScreenX) / ScaleMultiplier + _horizontalViewPortBehaviour.ViewPortX;
+        ViewportMouseY = (ScreenMouseY - _verticalViewPortBehaviour.ScreenY) / ScaleMultiplier + _verticalViewPortBehaviour.ViewPortY;
+        
+        ScreenMouseX -= ScreenMouseX % ScaleMultiplier;
+        ScreenMouseY -= ScreenMouseY % ScaleMultiplier;
+
+        ViewportMouseX = _horizontalViewPortBehaviour.NormaliseX(ViewportMouseX);
+        ViewportMouseY = _verticalViewPortBehaviour.NormaliseY(ViewportMouseY);
 
         _mouseCoords = $"({ScreenMouseX},{ScreenMouseY}) - ({ViewportMouseX},{ViewportMouseY})";
     }
