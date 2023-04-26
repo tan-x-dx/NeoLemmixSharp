@@ -13,9 +13,9 @@ public sealed class DownOrientation : Orientation
 
     public override int RotNum => 0;
     public override LevelPosition TopLeftCornerOfLevel() => new(0, 0);
-    public override LevelPosition TopRightCornerOfLevel() => new(LevelScreen.CurrentLevel.Width, 0);
-    public override LevelPosition BottomLeftCornerOfLevel() => new(0, LevelScreen.CurrentLevel.Height);
-    public override LevelPosition BottomRightCornerOfLevel() => new(LevelScreen.CurrentLevel.Width, LevelScreen.CurrentLevel.Height);
+    public override LevelPosition TopRightCornerOfLevel() => new(Terrain.Width, 0);
+    public override LevelPosition BottomLeftCornerOfLevel() => new(0, Terrain.Height);
+    public override LevelPosition BottomRightCornerOfLevel() => new(Terrain.Width, Terrain.Height);
 
     public override LevelPosition MoveRight(LevelPosition position, int step)
     {

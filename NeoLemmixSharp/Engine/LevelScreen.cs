@@ -10,9 +10,11 @@ namespace NeoLemmixSharp.Engine;
 
 public sealed class LevelScreen : BaseScreen
 {
+    public static LevelScreen CurrentLevel { get; private set; }
+
     private bool _stopMotion = true;
     private bool _doTick;
-    public static LevelScreen CurrentLevel { get; private set; }
+    private string _mouseCoords = string.Empty;
 
     public ITickable[] LevelObjects { private get; init; }
     public ISprite[] LevelSprites { private get; init; }
@@ -23,11 +25,6 @@ public sealed class LevelScreen : BaseScreen
 
     public LevelController Controller { get; }
     public LevelViewPort Viewport { get; }
-
-    public int Width => Terrain.Width;
-    public int Height => Terrain.Height;
-
-    private string _mouseCoords = string.Empty;
 
     public LevelScreen(
         LevelData levelData,
@@ -142,8 +139,8 @@ public sealed class LevelScreen : BaseScreen
 
     private void RenderSprites(SpriteBatch spriteBatch)
     {
-        var w = Width * Viewport.ScaleMultiplier;
-        var h = Height * Viewport.ScaleMultiplier;
+        var w = Terrain.Width * Viewport.ScaleMultiplier;
+        var h = Terrain.Height * Viewport.ScaleMultiplier;
         var maxX = Viewport.NumberOfHorizontalRenderIntervals;
         var maxY = Viewport.NumberOfVerticalRenderIntervals;
 

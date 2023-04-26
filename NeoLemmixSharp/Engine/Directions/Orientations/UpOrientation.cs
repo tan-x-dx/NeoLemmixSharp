@@ -12,9 +12,9 @@ public sealed class UpOrientation : Orientation
     }
 
     public override int RotNum => 2;
-    public override LevelPosition TopLeftCornerOfLevel() => new(LevelScreen.CurrentLevel.Width, LevelScreen.CurrentLevel.Height);
-    public override LevelPosition TopRightCornerOfLevel() => new(0, LevelScreen.CurrentLevel.Height);
-    public override LevelPosition BottomLeftCornerOfLevel() => new(LevelScreen.CurrentLevel.Width, 0);
+    public override LevelPosition TopLeftCornerOfLevel() => new(Terrain.Width, Terrain.Height);
+    public override LevelPosition TopRightCornerOfLevel() => new(0, Terrain.Height);
+    public override LevelPosition BottomLeftCornerOfLevel() => new(Terrain.Width, 0);
     public override LevelPosition BottomRightCornerOfLevel() => new(0, 0);
 
     public override LevelPosition MoveRight(LevelPosition position, int step)
