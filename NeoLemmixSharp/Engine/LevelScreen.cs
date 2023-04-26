@@ -18,6 +18,7 @@ public sealed class LevelScreen : BaseScreen
     public ISprite[] LevelSprites { private get; init; }
     public PixelManager Terrain { get; }
     public SpriteBank SpriteBank { get; }
+    public FontBank FontBank { get; }
     public LevelControlPanel ControlPanel { get; } = new();
 
     public LevelController Controller { get; }
@@ -25,6 +26,8 @@ public sealed class LevelScreen : BaseScreen
 
     public int Width => Terrain.Width;
     public int Height => Terrain.Height;
+
+    private string _mouseCoords = string.Empty;
 
     public LevelScreen(
         LevelData levelData,
@@ -35,7 +38,8 @@ public sealed class LevelScreen : BaseScreen
     {
         Terrain = terrain;
         SpriteBank = spriteBank;
-        Viewport = new LevelViewPort(terrain, fontBank, spriteBank);
+        FontBank = fontBank;
+        Viewport = new LevelViewPort(terrain);
 
         Controller = new LevelController();
 
@@ -49,6 +53,8 @@ public sealed class LevelScreen : BaseScreen
         HandleKeyboardInput();
 
         var shouldTickLevel = HandleMouseInput();
+
+        //CheckLemmingsUnderCursor();
 
         if (!shouldTickLevel)
             return;
@@ -99,6 +105,7 @@ public sealed class LevelScreen : BaseScreen
         var mouseState = Mouse.GetState();
 
         Viewport.HandleMouseInput(mouseState);
+        _mouseCoords = $"({Viewport.ScreenMouseX},{Viewport.ScreenMouseY}) - ({Viewport.ViewportMouseX},{Viewport.ViewportMouseY})";
 
         if (mouseState.LeftButton == ButtonState.Pressed)
         {
@@ -113,7 +120,7 @@ public sealed class LevelScreen : BaseScreen
         }
 
         if (!_stopMotion)
-            return _doTick;
+            return true;
 
         if (!_doTick)
             return false;
@@ -126,12 +133,55 @@ public sealed class LevelScreen : BaseScreen
     {
         SpriteBank.Render(spriteBatch);
 
-        for (var i = 0; i < LevelSprites.Length; i++)
-        {
-            Viewport.RenderSprite(spriteBatch, LevelSprites[i]);
-        }
+        RenderSprites(spriteBatch);
 
-        Viewport.RenderCursor(spriteBatch, SpriteBank.CursorSprite);
+        RenderCursor(spriteBatch, SpriteBank.CursorSprite);
+
+        FontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20);
+    }
+
+    private void RenderSprites(SpriteBatch spriteBatch)
+    {
+        var w = Width * Viewport.ScaleMultiplier;
+        var h = Height * Viewport.ScaleMultiplier;
+        var maxX = Viewport.NumberOfHorizontalRenderIntervals;
+        var maxY = Viewport.NumberOfVerticalRenderIntervals;
+
+        for (var t = 0; t < LevelSprites.Length; t++)
+        {
+            var sprite = LevelSprites[t];
+            var spriteLocation = sprite.GetLocationRectangle();
+
+            var x0 = (spriteLocation.X - Viewport.ViewPortX) * Viewport.ScaleMultiplier + Viewport.ScreenX;
+            var y0 = (spriteLocation.Y - Viewport.ViewPortY) * Viewport.ScaleMultiplier + Viewport.ScreenY;
+
+            var y1 = y0;
+            for (var i = 0; i < maxX; i++)
+            {
+                var hInterval = Viewport.GetHorizontalRenderInterval(i);
+                if (hInterval.Overlaps(spriteLocation.X, spriteLocation.Width))
+                {
+                    for (var j = 0; j < maxY; j++)
+                    {
+                        var vInterval = Viewport.GetVerticalRenderInterval(j);
+                        if (vInterval.Overlaps(spriteLocation.Y, spriteLocation.Height))
+                        {
+                            sprite.RenderAtPosition(spriteBatch, x0, y1, Viewport.ScaleMultiplier);
+                        }
+
+                        y1 += h;
+                    }
+                }
+
+                x0 += w;
+                y1 = y0;
+            }
+        }
+    }
+
+    private void RenderCursor(SpriteBatch spriteBatch, ISprite cursorSprite)
+    {
+        cursorSprite.RenderAtPosition(spriteBatch, Viewport.ScreenMouseX, Viewport.ScreenMouseY, Viewport.ScaleMultiplier);
     }
 
     public override void OnWindowSizeChanged()

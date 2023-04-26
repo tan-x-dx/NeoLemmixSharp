@@ -18,15 +18,22 @@ public sealed class TerrainSprite : IDisposable
 
     public void Render(SpriteBatch spriteBatch)
     {
-        LevelScreen.CurrentLevel.Viewport.RenderTerrain(spriteBatch, _texture);
+        var viewport = LevelScreen.CurrentLevel.Viewport;
+        var maxX = viewport.NumberOfHorizontalRenderIntervals;
+        var maxY = viewport.NumberOfVerticalRenderIntervals;
 
-        /* var viewport = LevelScreen.CurrentLevel.Viewport;
+        for (var i = 0; i < maxX; i++)
+        {
+            var hInterval = viewport.GetHorizontalRenderInterval(i);
+            for (var j = 0; j < maxY; j++)
+            {
+                var vInterval = viewport.GetVerticalRenderInterval(j);
+                var sourceRect = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
+                var screenRect = new Rectangle(hInterval.ScreenStart, vInterval.ScreenStart, hInterval.ScreenLength, vInterval.ScreenLength);
 
-         spriteBatch.Draw(
-             _texture,
-             new Rectangle(viewport.ScreenX, viewport.ScreenY, viewport.ScreenWidth, viewport.ScreenHeight),
-             new Rectangle(viewport.ViewPortX, viewport.ViewPortY, viewport.ViewPortWidth, viewport.ViewPortHeight),
-             Color.White);*/
+                spriteBatch.Draw(_texture, screenRect, sourceRect, Color.White);
+            }
+        }
     }
 
     public void SetPixelColour(int x, int y, uint colour)
