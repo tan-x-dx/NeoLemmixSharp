@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Engine.Directions.Orientations;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Util;
 using System;
 
@@ -86,7 +85,7 @@ public sealed class SliderAction : LemmingAction
     }
 
     private static bool SliderHasPixelAt(
-        IOrientation orientation,
+        Orientation orientation,
         LevelPosition levelPosition,
         LevelPosition dehoistPin)
     {

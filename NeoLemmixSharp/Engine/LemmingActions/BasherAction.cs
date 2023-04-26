@@ -26,8 +26,8 @@ public sealed class BasherAction : LemmingAction
 
     private bool BasherIndestructibleCheck(
         LevelPosition pos,
-        IOrientation orientation,
-        IFacingDirection facingDirection)
+        Orientation orientation,
+        FacingDirection facingDirection)
     {
         return Terrain.GetPixelData(orientation.MoveUp(pos, 3)).IsIndestructible(orientation, facingDirection, this) ||
                Terrain.GetPixelData(orientation.MoveUp(pos, 4)).IsIndestructible(orientation, facingDirection, this) ||
@@ -50,7 +50,7 @@ public sealed class BasherAction : LemmingAction
 
     private bool StepUpCheck(
         LevelPosition pos,
-        IOrientation orientation,
+        Orientation orientation,
         int dx,
         int step)
     {

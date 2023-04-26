@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine;
 
 namespace NeoLemmixSharp.Rendering;
 
-public sealed class LemmingSprite : IRenderable
+public sealed class LemmingSprite : ISprite
 {
     private readonly Lemming _lemming;
 
@@ -24,9 +24,13 @@ public sealed class LemmingSprite : IRenderable
         return new Rectangle(p.X, p.Y, s.X, s.Y);
     }
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y)
+    public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
     {
-        var scaleMultiplier = LevelScreen.CurrentLevel.Viewport.ScaleMultiplier;
+        RenderAtPosition(spriteBatch, ActionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame), x, y, scaleMultiplier);
+    }
+
+    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int x, int y, int scaleMultiplier)
+    {
         var actionSprite = ActionSprite;
 
         var renderDestination = new Rectangle(
@@ -38,18 +42,17 @@ public sealed class LemmingSprite : IRenderable
         spriteBatch.Draw(
             actionSprite.Texture,
             renderDestination,
-            actionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame),
+            actionSprite.GetSourceRectangleForFrame(sourceRectangle, _lemming.AnimationFrame),
             Color.White);
 
-        /*  var x0 = 
+        var p = new Point(x - scaleMultiplier, y - scaleMultiplier);
+        renderDestination = new Rectangle(p, new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
 
-          renderDestination = new Rectangle(_lemming.LevelPosition - new Point(1, 1), new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
-
-          var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
-          spriteBatch.Draw(
-              spriteBank.AnchorTexture,
-              renderDestination,
-              Color.White);*/
+        var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
+        spriteBatch.Draw(
+            spriteBank.AnchorTexture,
+            renderDestination,
+            Color.White);
     }
 
     public void Dispose()

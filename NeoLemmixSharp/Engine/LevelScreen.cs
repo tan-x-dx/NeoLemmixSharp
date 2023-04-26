@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.Text;
 using NeoLemmixSharp.Screen;
 using NeoLemmixSharp.Util;
 
@@ -15,9 +15,10 @@ public sealed class LevelScreen : BaseScreen
     public static LevelScreen CurrentLevel { get; private set; }
 
     public ITickable[] LevelObjects { private get; init; }
-    public IRenderable[] LevelSprites { private get; init; }
+    public ISprite[] LevelSprites { private get; init; }
     public PixelManager Terrain { get; }
     public SpriteBank SpriteBank { get; }
+    public LevelControlPanel ControlPanel { get; } = new();
 
     public LevelController Controller { get; }
     public LevelViewPort Viewport { get; }
@@ -25,18 +26,16 @@ public sealed class LevelScreen : BaseScreen
     public int Width => Terrain.Width;
     public int Height => Terrain.Height;
 
-    private int _mouseX;
-    private int _mouseY;
-
     public LevelScreen(
         LevelData levelData,
         PixelManager terrain,
-        SpriteBank spriteBank)
+        SpriteBank spriteBank,
+        FontBank fontBank)
         : base(levelData.LevelTitle)
     {
         Terrain = terrain;
         SpriteBank = spriteBank;
-        Viewport = new LevelViewPort(terrain);
+        Viewport = new LevelViewPort(terrain, fontBank, spriteBank);
 
         Controller = new LevelController();
 
@@ -99,9 +98,6 @@ public sealed class LevelScreen : BaseScreen
 
         var mouseState = Mouse.GetState();
 
-        _mouseX = (mouseState.X - Viewport.ScreenX) / Viewport.ScaleMultiplier + Viewport.ViewPortX;
-        _mouseY = (mouseState.Y - Viewport.ScreenY) / Viewport.ScaleMultiplier + Viewport.ViewPortY;
-
         Viewport.HandleMouseInput(mouseState);
 
         if (mouseState.LeftButton == ButtonState.Pressed)
@@ -109,9 +105,11 @@ public sealed class LevelScreen : BaseScreen
             _doTick = true;
         }
 
-        if (mouseState.RightButton == ButtonState.Pressed)
+        var mouseCoords = new LevelPosition(Viewport.ViewportMouseX, Viewport.ViewportMouseY);
+        if (mouseState.RightButton == ButtonState.Pressed &&
+            !Terrain.PositionOutOfBounds(mouseCoords))
         {
-            Terrain.ErasePixel(Terrain.NormalisePosition(new LevelPosition(_mouseX, _mouseY)));
+            Terrain.ErasePixel(mouseCoords);
         }
 
         if (!_stopMotion)
@@ -133,10 +131,7 @@ public sealed class LevelScreen : BaseScreen
             Viewport.RenderSprite(spriteBatch, LevelSprites[i]);
         }
 
-        spriteBatch.Draw(
-            SpriteBank.BoxTexture,
-            new Rectangle(_mouseX * Viewport.ScaleMultiplier, _mouseY * Viewport.ScaleMultiplier, 2 * Viewport.ScaleMultiplier, 2 * Viewport.ScaleMultiplier),
-            Color.White);
+        Viewport.RenderCursor(spriteBatch, SpriteBank.CursorSprite);
     }
 
     public override void OnWindowSizeChanged()
@@ -153,4 +148,5 @@ public sealed class LevelScreen : BaseScreen
     private bool Quit => Controller.CheckKeyDown(Controller.Quit) == KeyStatus.KeyPressed;
     private bool ToggleFullScreen => Controller.CheckKeyDown(Controller.ToggleFullScreen) == KeyStatus.KeyPressed;
     private bool ToggleFastForwards => Controller.CheckKeyDown(Controller.ToggleFastForwards) == KeyStatus.KeyPressed;
+    public bool LemmingsUnderCursor { get; set; }
 }

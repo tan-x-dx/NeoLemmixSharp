@@ -51,7 +51,7 @@ public sealed class DiggerAction : LemmingAction
 
     private static bool DigOneRow(
         LevelPosition levelPosition,
-        IOrientation orientation)
+        Orientation orientation)
     {
         var result = false;
 

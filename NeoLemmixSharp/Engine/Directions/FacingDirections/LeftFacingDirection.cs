@@ -3,7 +3,7 @@ using NeoLemmixSharp.Rendering;
 
 namespace NeoLemmixSharp.Engine.Directions.FacingDirections;
 
-public sealed class LeftFacingDirection : IFacingDirection
+public sealed class LeftFacingDirection : FacingDirection
 {
     public static LeftFacingDirection Instance { get; } = new();
 
@@ -11,9 +11,9 @@ public sealed class LeftFacingDirection : IFacingDirection
     {
     }
 
-    public int DeltaX => -1;
-    public IFacingDirection OppositeDirection => RightFacingDirection.Instance;
-    public ActionSprite ChooseActionSprite(LemmingActionSpriteBundle actionSpriteBundle, IOrientation orientation)
+    public override int DeltaX => -1;
+    public override FacingDirection OppositeDirection => RightFacingDirection.Instance;
+    public override ActionSprite ChooseActionSprite(LemmingActionSpriteBundle actionSpriteBundle, Orientation orientation)
     {
         return orientation.GetLeftActionSprite(actionSpriteBundle);
     }

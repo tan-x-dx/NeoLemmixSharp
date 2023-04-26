@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+﻿namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 
 public interface IVerticalViewPortBehaviour
 {
@@ -13,7 +11,8 @@ public interface IVerticalViewPortBehaviour
     int ScreenY { get; }
     int ScreenHeight { get; }
 
-    IReadOnlyList<RenderInterval> VerticalRenderIntervals { get; }
+    int NumberOfVerticalRenderIntervals { get; }
+    RenderInterval GetVerticalRenderInterval(int i);
 
     int NormaliseY(int y);
     void RecalculateVerticalDimensions(int scaleMultiplier, int windowHeight);

@@ -61,7 +61,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
                 .Select(la => la.ActionId)
                 .OrderBy(i => i));
 
-            throw new Exception($"Duplicated ID: {ids}");
+            throw new Exception($"Duplicated action ID: {ids}");
         }
 
         return new ReadOnlyDictionary<string, LemmingAction>(result);
@@ -86,8 +86,9 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     public abstract bool UpdateLemming(Lemming lemming);
 
     public bool Equals(LemmingAction? other) => ActionId == (other?.ActionId ?? -1);
-    public sealed override bool Equals(object? obj) => obj is LemmingAction other && Equals(other);
+    public sealed override bool Equals(object? obj) => obj is LemmingAction other && ActionId == other.ActionId;
     public sealed override int GetHashCode() => ActionId;
+    public sealed override string ToString() => LemmingActionName;
 
     public static bool operator ==(LemmingAction left, LemmingAction right) => left.ActionId == right.ActionId;
     public static bool operator !=(LemmingAction left, LemmingAction right) => left.ActionId != right.ActionId;
@@ -138,29 +139,8 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
     }
 
-    /*
-    procedure TLemmingGame.LayBrick(L: TLemming);
-{-------------------------------------------------------------------------------
-  bricks are in the lemming area so will automatically be copied to the screen
-  during drawlemmings
--------------------------------------------------------------------------------}
-var
-  BrickPosY, n: Integer;
-begin
-  Assert((L.LemNumberOfBricksLeft > 0) and (L.LemNumberOfBricksLeft < 13),
-            'Number bricks out of bounds');
-
-  If L.LemAction = baBuilding then BrickPosY := L.LemY - 1
-  else BrickPosY := L.LemY; // for platformers
-
-  for n := 0 to 5 do
-    AddConstructivePixel(L.LemX + n*L.LemDx, BrickPosY, BrickPixelColors[12 - L.LemNumberOfBricksLeft]);
-end;
-
-    */
-
     protected static int FindGroundPixel(
-        IOrientation orientation,
+        Orientation orientation,
         LevelPosition levelPosition)
     {
         // Find the new ground pixel
@@ -190,16 +170,18 @@ end;
 
     protected static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
     {
-        var currentPosition = lemming.LevelPosition;
-        var nextPosition = currentPosition;
         var dx = lemming.FacingDirection.DeltaX;
+        LevelPosition currentPosition;
+        LevelPosition nextPosition;
         if (alreadyMoved)
         {
-            currentPosition = lemming.Orientation.MoveLeft(currentPosition, dx);
+            currentPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
+            nextPosition = lemming.LevelPosition;
         }
         else
         {
-            nextPosition = lemming.Orientation.MoveRight(nextPosition, dx);
+            currentPosition = lemming.LevelPosition;
+            nextPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, dx);
         }
 
         if (Terrain.PositionOutOfBounds(nextPosition) ||
@@ -224,9 +206,6 @@ end;
 
         if (Terrain.GetPixelData(lemming.Orientation.MoveDown(nextPosition, 4)).IsSolid)
             return false;
-        if (!Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, 4)).IsSolid)
-            return true;
-
-        return true;
+        return !Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, 4)).IsSolid;
     }
 }

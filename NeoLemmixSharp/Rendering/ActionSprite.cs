@@ -35,6 +35,13 @@ public sealed class ActionSprite : IDisposable
         return new Rectangle(0, frame * SpriteHeight, SpriteWidth, SpriteHeight);
     }
 
+    public Rectangle GetSourceRectangleForFrame(Rectangle sourceRectangle, int frame)
+    {
+        sourceRectangle.Y += frame * SpriteHeight;
+
+        return new Rectangle(0, frame * SpriteHeight, SpriteWidth, SpriteHeight);
+    }
+
     public void Dispose()
     {
         Texture.Dispose();

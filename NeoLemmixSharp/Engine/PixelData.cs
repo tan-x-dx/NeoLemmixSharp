@@ -14,8 +14,8 @@ public sealed class PixelData
     public readonly int[] GadgetIds = Array.Empty<int>();
 
     public bool IsIndestructible(
-        IOrientation orientation,
-        IFacingDirection facingDirection,
+        Orientation orientation,
+        FacingDirection facingDirection,
         LemmingAction lemmingAction)
     {
         if (IsSteel)

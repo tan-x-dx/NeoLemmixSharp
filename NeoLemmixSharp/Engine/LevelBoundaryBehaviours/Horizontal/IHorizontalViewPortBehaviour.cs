@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
+﻿namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 
 public interface IHorizontalViewPortBehaviour
 {
@@ -13,7 +11,8 @@ public interface IHorizontalViewPortBehaviour
     int ScreenX { get; }
     int ScreenWidth { get; }
 
-    IReadOnlyList<RenderInterval> HorizontalRenderIntervals { get; }
+    int NumberOfHorizontalRenderIntervals { get; }
+    RenderInterval GetHorizontalRenderInterval(int i);
 
     int NormaliseX(int x);
     void RecalculateHorizontalDimensions(int scaleMultiplier, int windowWidth);

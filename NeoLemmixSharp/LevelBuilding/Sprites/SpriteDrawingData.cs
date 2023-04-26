@@ -10,13 +10,13 @@ public sealed class SpriteDrawingData
     private readonly int _originalSpriteHeight;
 
     private readonly PixelColourData _colourData;
-    public IOrientation Orientation { get; }
+    public Orientation Orientation { get; }
     public DihedralTransformation DihedralTransformation { get; }
     public int ThisSpriteWidth { get; }
     public int ThisSpriteHeight { get; }
 
     public SpriteDrawingData(
-        IOrientation orientation,
+        Orientation orientation,
         int originalSpriteWidth,
         int originalSpriteHeight,
         int numberOfFrames)

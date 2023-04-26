@@ -1,30 +1,25 @@
-﻿using System.Collections.Generic;
-
-namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+﻿namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 
 public sealed class VerticalVoidViewPortBehaviour : IVerticalViewPortBehaviour
 {
-    private readonly SimpleList _verticalRenderIntervals;
+    private readonly RenderInterval _renderInterval;
 
     public int LevelHeightInPixels { get; }
     public int ViewPortY { get; private set; }
     public int ViewPortHeight { get; private set; }
     public int ScreenY { get; private set; }
     public int ScreenHeight { get; private set; }
-
-    public IReadOnlyList<RenderInterval> VerticalRenderIntervals => _verticalRenderIntervals;
+    public int NumberOfVerticalRenderIntervals => 1;
 
     public VerticalVoidViewPortBehaviour(int levelHeightInPixels)
     {
         LevelHeightInPixels = levelHeightInPixels;
-
-        _verticalRenderIntervals = new SimpleList(1, 1);
+        _renderInterval = new RenderInterval();
     }
 
-    public int NormaliseY(int y)
-    {
-        return y;
-    }
+    public RenderInterval GetVerticalRenderInterval(int i) => _renderInterval;
+
+    public int NormaliseY(int y) => y;
 
     public void RecalculateVerticalDimensions(int scaleMultiplier, int windowHeight)
     {
@@ -65,9 +60,9 @@ public sealed class VerticalVoidViewPortBehaviour : IVerticalViewPortBehaviour
 
     public void RecalculateVerticalRenderIntervals(int scaleMultiplier)
     {
-        VerticalRenderIntervals[0].PixelStart = ViewPortY;
-        VerticalRenderIntervals[0].PixelLength = ViewPortHeight;
-        VerticalRenderIntervals[0].ScreenStart = ScreenY;
-        VerticalRenderIntervals[0].ScreenLength = ScreenHeight;
+        _renderInterval.PixelStart = ViewPortY;
+        _renderInterval.PixelLength = ViewPortHeight;
+        _renderInterval.ScreenStart = ScreenY;
+        _renderInterval.ScreenLength = ScreenHeight;
     }
 }

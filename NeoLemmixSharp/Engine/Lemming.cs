@@ -20,6 +20,7 @@ public sealed class Lemming : ITickable
     public bool IsGlider;
     public bool IsSlider;
     public bool IsSwimmer;
+    public bool IsDisarmer;
 
     public bool ConstructivePositionFreeze;
     public bool IsStartingAction;
@@ -43,8 +44,8 @@ public sealed class Lemming : ITickable
     public LevelPosition LaserHitLevelPosition;
     public LevelPosition LevelPosition;
 
-    public IFacingDirection FacingDirection = RightFacingDirection.Instance;
-    public IOrientation Orientation = DownOrientation.Instance;
+    public FacingDirection FacingDirection = RightFacingDirection.Instance;
+    public Orientation Orientation = DownOrientation.Instance;
 
     public LemmingAction CurrentAction = WalkerAction.Instance;
     public LemmingAction? NextAction;
