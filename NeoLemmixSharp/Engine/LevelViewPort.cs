@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 
 namespace NeoLemmixSharp.Engine;
 
-public sealed class LevelViewPort
+public sealed class LevelViewport
 {
     private const int MinScale = 1;
     private const int MaxScale = 12;
@@ -38,7 +38,7 @@ public sealed class LevelViewPort
     public int NumberOfHorizontalRenderIntervals => _horizontalViewPortBehaviour.NumberOfHorizontalRenderIntervals;
     public int NumberOfVerticalRenderIntervals => _verticalViewPortBehaviour.NumberOfVerticalRenderIntervals;
 
-    public LevelViewPort(PixelManager terrain)
+    public LevelViewport(PixelManager terrain)
     {
         _horizontalViewPortBehaviour = terrain.HorizontalViewPortBehaviour;
         _verticalViewPortBehaviour = terrain.VerticalViewPortBehaviour;

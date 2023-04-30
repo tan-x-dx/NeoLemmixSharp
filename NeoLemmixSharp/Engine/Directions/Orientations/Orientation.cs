@@ -8,6 +8,8 @@ namespace NeoLemmixSharp.Engine.Directions.Orientations;
 
 public abstract class Orientation : IEquatable<Orientation>
 {
+    protected static PixelManager Terrain { get; private set; }
+
     public static ReadOnlyCollection<Orientation> AllOrientations { get; } = GenerateRotationCollection();
 
     private static ReadOnlyCollection<Orientation> GenerateRotationCollection()
@@ -23,7 +25,10 @@ public abstract class Orientation : IEquatable<Orientation>
         return new ReadOnlyCollection<Orientation>(list);
     }
 
-    protected static PixelManager Terrain => LevelScreen.CurrentLevel.Terrain;
+    public static void SetTerrain(PixelManager terrain)
+    {
+        Terrain = terrain;
+    }
 
     public abstract int RotNum { get; }
 

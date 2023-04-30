@@ -1,5 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Engine.LemmingActions;
+using NeoLemmixSharp.Engine.LemmingSkills;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Rendering.Text;
@@ -16,15 +19,16 @@ public sealed class LevelScreen : BaseScreen
     private bool _doTick;
     private string _mouseCoords = string.Empty;
 
+    private readonly PixelManager _terrain;
+    private readonly LevelController _controller;
+    private readonly LevelViewport _viewport;
+
     public ITickable[] LevelObjects { private get; init; }
     public ISprite[] LevelSprites { private get; init; }
-    public PixelManager Terrain { get; }
     public SpriteBank SpriteBank { get; }
     public FontBank FontBank { get; }
     public LevelControlPanel ControlPanel { get; } = new();
-
-    public LevelController Controller { get; }
-    public LevelViewPort Viewport { get; }
+    public LevelCursor LevelCursor { get; } = new();
 
     public LevelScreen(
         LevelData levelData,
@@ -33,19 +37,24 @@ public sealed class LevelScreen : BaseScreen
         FontBank fontBank)
         : base(levelData.LevelTitle)
     {
-        Terrain = terrain;
+        _terrain = terrain;
         SpriteBank = spriteBank;
         FontBank = fontBank;
-        Viewport = new LevelViewPort(terrain);
+        _viewport = new LevelViewport(terrain);
 
-        Controller = new LevelController();
+        _controller = new LevelController();
 
         CurrentLevel = this;
+        Orientation.SetTerrain(terrain);
+        LemmingAction.SetTerrain(terrain);
+        LemmingSkill.SetTerrain(terrain);
+        spriteBank.TerrainSprite.SetViewport(_viewport);
+        spriteBank.LevelCursorSprite.SetLevelCursor(LevelCursor);
     }
 
     public override void Tick()
     {
-        Controller.Tick();
+        _controller.Tick();
 
         HandleKeyboardInput();
 
@@ -71,7 +80,7 @@ public sealed class LevelScreen : BaseScreen
             return;
 
         var keyboardState = Keyboard.GetState();
-        Controller.ControllerKeysDown(keyboardState.GetPressedKeys());
+        _controller.ControllerKeysDown(keyboardState.GetPressedKeys());
 
         if (Pause)
         {
@@ -101,19 +110,22 @@ public sealed class LevelScreen : BaseScreen
 
         var mouseState = Mouse.GetState();
 
-        Viewport.HandleMouseInput(mouseState);
-        _mouseCoords = $"({Viewport.ScreenMouseX},{Viewport.ScreenMouseY}) - ({Viewport.ViewportMouseX},{Viewport.ViewportMouseY})";
+        _viewport.HandleMouseInput(mouseState);
+        _mouseCoords = $"({_viewport.ScreenMouseX},{_viewport.ScreenMouseY}) - ({_viewport.ViewportMouseX},{_viewport.ViewportMouseY})";
+        LevelCursor.CursorX = _viewport.ViewPortX;
+        LevelCursor.CursorY = _viewport.ViewPortY;
+        LevelCursor.Tick();
 
         if (mouseState.LeftButton == ButtonState.Pressed)
         {
             _doTick = true;
         }
 
-        var mouseCoords = new LevelPosition(Viewport.ViewportMouseX, Viewport.ViewportMouseY);
+        var mouseCoords = new LevelPosition(_viewport.ViewportMouseX, _viewport.ViewportMouseY);
         if (mouseState.RightButton == ButtonState.Pressed &&
-            !Terrain.PositionOutOfBounds(mouseCoords))
+            !_terrain.PositionOutOfBounds(mouseCoords))
         {
-            Terrain.ErasePixel(mouseCoords);
+            _terrain.ErasePixel(mouseCoords);
         }
 
         if (!_stopMotion)
@@ -132,38 +144,38 @@ public sealed class LevelScreen : BaseScreen
 
         RenderSprites(spriteBatch);
 
-        RenderCursor(spriteBatch, SpriteBank.CursorSprite);
+        SpriteBank.LevelCursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
 
         FontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20);
     }
 
     private void RenderSprites(SpriteBatch spriteBatch)
     {
-        var w = Terrain.Width * Viewport.ScaleMultiplier;
-        var h = Terrain.Height * Viewport.ScaleMultiplier;
-        var maxX = Viewport.NumberOfHorizontalRenderIntervals;
-        var maxY = Viewport.NumberOfVerticalRenderIntervals;
+        var w = _terrain.Width * _viewport.ScaleMultiplier;
+        var h = _terrain.Height * _viewport.ScaleMultiplier;
+        var maxX = _viewport.NumberOfHorizontalRenderIntervals;
+        var maxY = _viewport.NumberOfVerticalRenderIntervals;
 
         for (var t = 0; t < LevelSprites.Length; t++)
         {
             var sprite = LevelSprites[t];
             var spriteLocation = sprite.GetLocationRectangle();
 
-            var x0 = (spriteLocation.X - Viewport.ViewPortX) * Viewport.ScaleMultiplier + Viewport.ScreenX;
-            var y0 = (spriteLocation.Y - Viewport.ViewPortY) * Viewport.ScaleMultiplier + Viewport.ScreenY;
+            var x0 = (spriteLocation.X - _viewport.ViewPortX) * _viewport.ScaleMultiplier + _viewport.ScreenX;
+            var y0 = (spriteLocation.Y - _viewport.ViewPortY) * _viewport.ScaleMultiplier + _viewport.ScreenY;
 
             var y1 = y0;
             for (var i = 0; i < maxX; i++)
             {
-                var hInterval = Viewport.GetHorizontalRenderInterval(i);
+                var hInterval = _viewport.GetHorizontalRenderInterval(i);
                 if (hInterval.Overlaps(spriteLocation.X, spriteLocation.Width))
                 {
                     for (var j = 0; j < maxY; j++)
                     {
-                        var vInterval = Viewport.GetVerticalRenderInterval(j);
+                        var vInterval = _viewport.GetVerticalRenderInterval(j);
                         if (vInterval.Overlaps(spriteLocation.Y, spriteLocation.Height))
                         {
-                            sprite.RenderAtPosition(spriteBatch, x0, y1, Viewport.ScaleMultiplier);
+                            sprite.RenderAtPosition(spriteBatch, x0, y1, _viewport.ScaleMultiplier);
                         }
 
                         y1 += h;
@@ -176,24 +188,26 @@ public sealed class LevelScreen : BaseScreen
         }
     }
 
-    private void RenderCursor(SpriteBatch spriteBatch, ISprite cursorSprite)
-    {
-        cursorSprite.RenderAtPosition(spriteBatch, Viewport.ScreenMouseX, Viewport.ScreenMouseY, Viewport.ScaleMultiplier);
-    }
-
     public override void OnWindowSizeChanged()
     {
-        Viewport.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight);
+        _viewport.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight);
     }
 
     public override void Dispose()
     {
         SpriteBank.Dispose();
+#pragma warning disable CS8625
+        CurrentLevel = null;
+        Orientation.SetTerrain(null);
+        LemmingAction.SetTerrain(null);
+        LemmingSkill.SetTerrain(null);
+        SpriteBank.TerrainSprite.SetViewport(null);
+        SpriteBank.LevelCursorSprite.SetLevelCursor(null);
+#pragma warning restore CS8625
     }
 
-    private bool Pause => Controller.CheckKeyDown(Controller.Pause) == KeyStatus.KeyPressed;
-    private bool Quit => Controller.CheckKeyDown(Controller.Quit) == KeyStatus.KeyPressed;
-    private bool ToggleFullScreen => Controller.CheckKeyDown(Controller.ToggleFullScreen) == KeyStatus.KeyPressed;
-    private bool ToggleFastForwards => Controller.CheckKeyDown(Controller.ToggleFastForwards) == KeyStatus.KeyPressed;
-    public bool LemmingsUnderCursor { get; set; }
+    private bool Pause => _controller.CheckKeyDown(_controller.Pause) == KeyStatus.KeyPressed;
+    private bool Quit => _controller.CheckKeyDown(_controller.Quit) == KeyStatus.KeyPressed;
+    private bool ToggleFullScreen => _controller.CheckKeyDown(_controller.ToggleFullScreen) == KeyStatus.KeyPressed;
+    private bool ToggleFastForwards => _controller.CheckKeyDown(_controller.ToggleFastForwards) == KeyStatus.KeyPressed;
 }

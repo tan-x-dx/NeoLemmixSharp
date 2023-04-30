@@ -8,6 +8,8 @@ namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public abstract class LemmingSkill : IEquatable<LemmingSkill>
 {
+    protected static PixelManager Terrain { get; private set; }
+
     public static ReadOnlyDictionary<string, LemmingSkill> LemmingSkills { get; } = RegisterAllLemmingSkills();
 
     private static ReadOnlyDictionary<string, LemmingSkill> RegisterAllLemmingSkills()
@@ -62,7 +64,10 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 
     public static ICollection<LemmingSkill> AllLemmingSkills => LemmingSkills.Values;
 
-    protected static PixelManager Terrain => LevelScreen.CurrentLevel.Terrain;
+    public static void SetTerrain(PixelManager terrain)
+    {
+        Terrain = terrain;
+    }
 
     public abstract int LemmingSkillId { get; }
     public abstract string LemmingSkillName { get; }

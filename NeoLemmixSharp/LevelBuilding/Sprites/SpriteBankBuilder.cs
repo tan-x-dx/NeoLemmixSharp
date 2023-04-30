@@ -44,16 +44,16 @@ public sealed class SpriteBankBuilder
         {
             BoxTexture = boxTexture,
             AnchorTexture = anchorTexture,
-            CursorSprite = cursorSprite
+            LevelCursorSprite = cursorSprite
         };
     }
 
-    private static CursorSprite LoadCursorSprites(ContentManager content)
+    private static LevelCursorSprite LoadCursorSprites(ContentManager content)
     {
         var standardCursorTexture = content.Load<Texture2D>("cursor/standard");
         var focusedCursorTexture = content.Load<Texture2D>("cursor/focused");
 
-        return new CursorSprite(standardCursorTexture, focusedCursorTexture);
+        return new LevelCursorSprite(standardCursorTexture, focusedCursorTexture);
     }
 
     private void LoadLemmingSprites(ThemeData themeData)
@@ -80,15 +80,15 @@ public sealed class SpriteBankBuilder
     {
         var anchorTexture = new Texture2D(_graphicsDevice, 3, 3);
 
-        var red = new Color(200, 0, 0, 255);
-        var yellow = new Color(200, 200, 0, 255);
+        var red = new Color(200, 0, 0, 255).PackedValue;
+        var yellow = new Color(200, 200, 0, 255).PackedValue;
 
         var x = new uint[9];
-        x[1] = red.PackedValue;
-        x[3] = red.PackedValue;
-        x[4] = yellow.PackedValue;
-        x[5] = red.PackedValue;
-        x[7] = red.PackedValue;
+        x[1] = red;
+        x[3] = red;
+        x[4] = yellow;
+        x[5] = red;
+        x[7] = red;
         anchorTexture.SetData(x);
         return anchorTexture;
     }

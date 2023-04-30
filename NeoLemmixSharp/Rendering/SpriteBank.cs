@@ -11,7 +11,7 @@ public sealed class SpriteBank : IDisposable
     public TerrainSprite TerrainSprite { get; }
     public Texture2D BoxTexture { get; init; }
     public Texture2D AnchorTexture { get; init; }
-    public CursorSprite CursorSprite { get; init; }
+    public LevelCursorSprite LevelCursorSprite { get; init; }
 
     public SpriteBank(
         Dictionary<string, LemmingActionSpriteBundle> actionSpriteBundleLookup,

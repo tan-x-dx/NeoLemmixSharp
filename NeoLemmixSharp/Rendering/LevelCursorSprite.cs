@@ -4,25 +4,34 @@ using NeoLemmixSharp.Engine;
 
 namespace NeoLemmixSharp.Rendering;
 
-public sealed class CursorSprite : ISprite
+public sealed class LevelCursorSprite : ISprite
 {
     public const int CursorSizeInPixels = 16;
     public const int HalfCursorSizeInPixels = CursorSizeInPixels / 2;
 
+    private LevelCursor _levelCursor;
+
     public Texture2D StandardCursorTexture { get; }
     public Texture2D FocusedCursorTexture { get; }
 
-    public CursorSprite(Texture2D standardCursorTexture, Texture2D focusedCursorTexture)
+    public LevelCursorSprite(
+        Texture2D standardCursorTexture,
+        Texture2D focusedCursorTexture)
     {
         StandardCursorTexture = standardCursorTexture;
         FocusedCursorTexture = focusedCursorTexture;
+    }
+
+    public void SetLevelCursor(LevelCursor levelCursor)
+    {
+        _levelCursor = levelCursor;
     }
 
     public Rectangle GetLocationRectangle() => new(0, 0, CursorSizeInPixels, CursorSizeInPixels);
 
     public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
     {
-        var texture = LevelScreen.CurrentLevel.LemmingsUnderCursor
+        var texture = _levelCursor.LemmingsUnderCursor
             ? FocusedCursorTexture
             : StandardCursorTexture;
 

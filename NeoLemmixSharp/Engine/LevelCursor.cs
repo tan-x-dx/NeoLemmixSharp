@@ -1,7 +1,19 @@
-﻿namespace NeoLemmixSharp.Engine;
+﻿using System.Diagnostics;
 
-public sealed class LevelCursor
+namespace NeoLemmixSharp.Engine;
+
+public sealed class LevelCursor : ITickable
 {
+    public bool HighlightLemming { get; private set; }
+    public bool LemmingsUnderCursor { get; set; }
+
+    public int CursorX { get; set; }
+    public int CursorY { get; set; }
+
+    public void Tick()
+    {
+        CheckLemmingsUnderCursor();
+    }
 
     private void CheckLemmingsUnderCursor()
     {
@@ -143,4 +155,7 @@ end;
 
 
     */
+
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    bool ITickable.ShouldTick => true;
 }

@@ -9,6 +9,8 @@ public sealed class TerrainSprite : IDisposable
 {
     private readonly Texture2D _texture;
 
+    private LevelViewport _viewport;
+
     private readonly uint[] _colourSetter = new uint[1];
 
     public TerrainSprite(Texture2D texture)
@@ -16,18 +18,22 @@ public sealed class TerrainSprite : IDisposable
         _texture = texture;
     }
 
+    public void SetViewport(LevelViewport viewport)
+    {
+        _viewport = viewport;
+    }
+
     public void Render(SpriteBatch spriteBatch)
     {
-        var viewport = LevelScreen.CurrentLevel.Viewport;
-        var maxX = viewport.NumberOfHorizontalRenderIntervals;
-        var maxY = viewport.NumberOfVerticalRenderIntervals;
+        var maxX = _viewport.NumberOfHorizontalRenderIntervals;
+        var maxY = _viewport.NumberOfVerticalRenderIntervals;
 
         for (var i = 0; i < maxX; i++)
         {
-            var hInterval = viewport.GetHorizontalRenderInterval(i);
+            var hInterval = _viewport.GetHorizontalRenderInterval(i);
             for (var j = 0; j < maxY; j++)
             {
-                var vInterval = viewport.GetVerticalRenderInterval(j);
+                var vInterval = _viewport.GetVerticalRenderInterval(j);
                 var sourceRect = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
                 var screenRect = new Rectangle(hInterval.ScreenStart, vInterval.ScreenStart, hInterval.ScreenLength, vInterval.ScreenLength);
 
