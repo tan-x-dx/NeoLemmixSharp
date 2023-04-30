@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using System;
 
-namespace NeoLemmixSharp.Rendering;
+namespace NeoLemmixSharp.Rendering.LevelRendering;
 
 public sealed class TerrainSprite : IDisposable
 {

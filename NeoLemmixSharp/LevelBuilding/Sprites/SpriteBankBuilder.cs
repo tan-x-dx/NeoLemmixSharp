@@ -6,6 +6,7 @@ using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Data.SpriteSet;
 using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;

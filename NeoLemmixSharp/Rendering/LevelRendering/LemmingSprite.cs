@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 
-namespace NeoLemmixSharp.Rendering;
+namespace NeoLemmixSharp.Rendering.LevelRendering;
 
 public sealed class LemmingSprite : ISprite
 {

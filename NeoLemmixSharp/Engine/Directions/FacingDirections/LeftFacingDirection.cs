@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Directions.Orientations;
-using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.LevelRendering;
 
 namespace NeoLemmixSharp.Engine.Directions.FacingDirections;
 

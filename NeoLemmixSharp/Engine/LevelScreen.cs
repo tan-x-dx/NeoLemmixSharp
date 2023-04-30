@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LemmingSkills;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Rendering.Text;
 using NeoLemmixSharp.Screen;
 using NeoLemmixSharp.Util;

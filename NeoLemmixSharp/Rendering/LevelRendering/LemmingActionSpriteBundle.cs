@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NeoLemmixSharp.Rendering;
+namespace NeoLemmixSharp.Rendering.LevelRendering;
 
 public sealed class LemmingActionSpriteBundle : IDisposable
 {
