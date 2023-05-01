@@ -35,7 +35,7 @@ public sealed class LevelRenderer : ScreenRenderer
         _levelSprites = levelSprites;
         _spriteBank = spriteBank;
         _fontBank = fontBank;
-        _controlPanelRenderer = new ClassicControlPanelRenderer(spriteBank, levelControlPanel);
+        _controlPanelRenderer = new ClassicControlPanelRenderer(spriteBank, fontBank, levelControlPanel);
     }
 
     public override void RenderScreen(SpriteBatch spriteBatch)

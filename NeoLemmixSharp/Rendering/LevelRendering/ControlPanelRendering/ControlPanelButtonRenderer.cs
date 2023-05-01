@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Rendering.LevelRendering.ControlPanelRendering;
 
-public abstract class ControlPanelButtonRenderer : ISprite
+public abstract class ControlPanelButtonRenderer
 {
     public void Dispose()
     {
@@ -15,11 +15,7 @@ public abstract class ControlPanelButtonRenderer : ISprite
         return Rectangle.Empty;
     }
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
-    {
-    }
+    public abstract void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier);
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int x, int y, int scaleMultiplier)
-    {
-    }
+    public abstract void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int x, int y, int scaleMultiplier);
 }

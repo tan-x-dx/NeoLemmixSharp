@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.ControlPanel;
+using NeoLemmixSharp.Rendering.Text;
 using System;
 using System.Linq;
 
@@ -27,9 +28,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
     private readonly Texture2D _iconRrMinus;
     private readonly Texture2D _iconRrPlus;
     private readonly Texture2D _minimapRegion;
-    private readonly Texture2D _panelFront;
     private readonly Texture2D _panelIcons;
-    private readonly Texture2D _skillCountDigits;
     private readonly Texture2D _skillCountErase;
     private readonly Texture2D _skillPanels;
     private readonly Texture2D _skillSelected;
@@ -47,11 +46,14 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
     private int _controlPanelInfoScreenHeight = ControlPanelInfoPixelHeight;
     private int _controlPanelTotalScreenHeight = ControlPanelTotalPixelHeight;
 
-    public ClassicControlPanelRenderer(SpriteBank spriteBank, LevelControlPanel levelControlPanel)
+    public ClassicControlPanelRenderer(
+        SpriteBank spriteBank,
+        FontBank fontBank,
+        LevelControlPanel levelControlPanel)
     {
         _skillAssignButtonRenderers = levelControlPanel
             .SkillAssignButtons
-            .Select(b => new SkillAssignButtonRenderer(b))
+            .Select(b => new SkillAssignButtonRenderer(spriteBank, fontBank, b))
             .ToArray();
 
         _emptySlot = spriteBank.TextureLookup["panel/empty_slot"];
@@ -65,9 +67,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
         _iconRrMinus = spriteBank.TextureLookup["panel/icon_rr_minus"];
         _iconRrPlus = spriteBank.TextureLookup["panel/icon_rr_plus"];
         _minimapRegion = spriteBank.TextureLookup["panel/minimap_region"];
-        _panelFront = spriteBank.TextureLookup["panel/panel_font"];
         _panelIcons = spriteBank.TextureLookup["panel/panel_icons"];
-        _skillCountDigits = spriteBank.TextureLookup["panel/skill_count_digits"];
         _skillCountErase = spriteBank.TextureLookup["panel/skill_count_erase"];
         _skillPanels = spriteBank.TextureLookup["panel/skill_panels"];
         _skillSelected = spriteBank.TextureLookup["panel/skill_selected"];
@@ -115,8 +115,11 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
         var t = 0;
         for (; t < buttonLimit; t++)
         {
-            spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
-            spriteBatch.Draw(_skillCountErase, destRectangle, Color.White);
+            _skillAssignButtonRenderers[t].RenderAtPosition(
+                spriteBatch,
+                destRectangle,
+                panelButtonBackgroundSourceRectangle,
+                _controlPanelScale);
 
             destRectangle.X += _controlPanelButtonScreenWidth;
             i = (i + 1) & 7;

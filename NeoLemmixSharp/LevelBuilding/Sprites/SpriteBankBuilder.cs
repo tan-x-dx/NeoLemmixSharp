@@ -225,9 +225,7 @@ public sealed class SpriteBankBuilder
         RegisterTexture("panel/icon_rr_minus");
         RegisterTexture("panel/icon_rr_plus");
         RegisterTexture("panel/minimap_region");
-        RegisterTexture("panel/panel_font");
         RegisterTexture("panel/panel_icons");
-        RegisterTexture("panel/skill_count_digits");
         RegisterTexture("panel/skill_count_erase");
         RegisterTexture("panel/skill_panels");
         RegisterTexture("panel/skill_selected");

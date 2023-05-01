@@ -6,13 +6,14 @@ public sealed class SkillAssignButton : ControlPanelButton
 {
     private readonly LemmingSkill _lemmingSkill;
 
-    private int _numberOfSkillsAvailable;
+    public int NumberOfSkillsAvailable { get; }
+    public bool IsSelected { get; }
 
     public SkillAssignButton(
         LemmingSkill lemmingSkill,
         int numberOfSkillsAvailable)
     {
         _lemmingSkill = lemmingSkill;
-        _numberOfSkillsAvailable = numberOfSkillsAvailable;
+        NumberOfSkillsAvailable = numberOfSkillsAvailable;
     }
 }
