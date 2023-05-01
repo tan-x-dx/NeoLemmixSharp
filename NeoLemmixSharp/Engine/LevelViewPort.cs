@@ -17,6 +17,7 @@ public sealed class LevelViewport
 
     private int _windowWidth;
     private int _windowHeight;
+    private int _controlPanelHeight;
 
     private int _scrollDelta;
 
@@ -46,22 +47,32 @@ public sealed class LevelViewport
         _scrollDelta = 4 * MaxScale / ScaleMultiplier;
     }
 
-    public void SetWindowDimensions(int gameWindowWidth, int gameWindowHeight)
+    public void SetWindowDimensions(int gameWindowWidth, int gameWindowHeight, int controlPanelHeight)
     {
         _windowWidth = gameWindowWidth;
         _windowHeight = gameWindowHeight;
+        _controlPanelHeight = controlPanelHeight;
 
         _horizontalViewPortBehaviour.RecalculateHorizontalDimensions(ScaleMultiplier, _windowWidth);
         _horizontalViewPortBehaviour.ScrollHorizontally(0);
         _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
-        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight);
+        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight, _controlPanelHeight);
         _verticalViewPortBehaviour.ScrollVertically(0);
         _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
     }
 
-    public void HandleMouseInput(MouseState mouseState)
+    public bool HandleMouseInput(MouseState mouseState)
     {
-        TrackScrollWheel(mouseState.ScrollWheelValue);
+        bool result;
+        if (MouseIsInLevelViewport(mouseState))
+        {
+            result = true;
+            TrackScrollWheel(mouseState.ScrollWheelValue);
+        }
+        else
+        {
+            result = false;
+        }
 
         if (mouseState.X == 0)
         {
@@ -96,6 +107,14 @@ public sealed class LevelViewport
 
         ViewportMouseX = _horizontalViewPortBehaviour.NormaliseX(ViewportMouseX);
         ViewportMouseY = _verticalViewPortBehaviour.NormaliseY(ViewportMouseY);
+
+        return result;
+    }
+
+    private bool MouseIsInLevelViewport(MouseState mouseState)
+    {
+        return mouseState.X >= 0 && mouseState.X <= _windowWidth &&
+               mouseState.Y >= 0 && mouseState.Y <= _windowHeight - _controlPanelHeight;
     }
 
     private void TrackScrollWheel(int scrollWheelValue)
@@ -131,7 +150,7 @@ public sealed class LevelViewport
         _horizontalViewPortBehaviour.RecalculateHorizontalDimensions(ScaleMultiplier, _windowWidth);
         _horizontalViewPortBehaviour.ScrollHorizontally(0);
         _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
-        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight);
+        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight, _controlPanelHeight);
         _verticalViewPortBehaviour.ScrollVertically(0);
         _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
 
@@ -156,7 +175,7 @@ public sealed class LevelViewport
         _horizontalViewPortBehaviour.RecalculateHorizontalDimensions(ScaleMultiplier, _windowWidth);
         _horizontalViewPortBehaviour.ScrollHorizontally(0);
         _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
-        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight);
+        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight, _controlPanelHeight);
         _verticalViewPortBehaviour.ScrollVertically(0);
         _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
 

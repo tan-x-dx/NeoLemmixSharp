@@ -1,8 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Rendering.Text;
-using System;
 using System.Linq;
 
 namespace NeoLemmixSharp.Rendering.LevelRendering.ControlPanelRendering;
@@ -94,86 +92,91 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
     public void RenderControlPanel(SpriteBatch spriteBatch)
     {
-        var destRectangle = new Rectangle(_controlPanelX, _controlPanelButtonsY, _controlPanelButtonScreenWidth, _controlPanelButtonScreenHeight);
-        var panelButtonBackgroundSourceRectangle = new Rectangle(0, 0, ControlPanelButtonPixelWidth, ControlPanelButtonPixelHeight);
-        spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
-        spriteBatch.Draw(_skillCountErase, destRectangle, Color.White);
-        spriteBatch.Draw(_iconRrMinus, destRectangle, Color.White);
-
-        destRectangle.X += _controlPanelButtonScreenWidth;
-        panelButtonBackgroundSourceRectangle.X = ControlPanelButtonPixelWidth;
-
-        spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
-        spriteBatch.Draw(_skillCountErase, destRectangle, Color.White);
-        spriteBatch.Draw(_iconRrPlus, destRectangle, Color.White);
-
-        destRectangle.X += _controlPanelButtonScreenWidth;
-        panelButtonBackgroundSourceRectangle.X += ControlPanelButtonPixelWidth;
-
-        var buttonLimit = Math.Min(_skillAssignButtonRenderers.Length, MaxNumberOfSkillButtons);
-        var i = 3;
-        var t = 0;
-        for (; t < buttonLimit; t++)
+        for (var i = 0; i < _skillAssignButtonRenderers.Length; i++)
         {
-            _skillAssignButtonRenderers[t].RenderAtPosition(
-                spriteBatch,
-                destRectangle,
-                panelButtonBackgroundSourceRectangle,
-                _controlPanelScale);
-
-            destRectangle.X += _controlPanelButtonScreenWidth;
-            i = (i + 1) & 7;
-            panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+            _skillAssignButtonRenderers[i].Render(spriteBatch);
         }
 
-        for (; t < MaxNumberOfSkillButtons; t++)
-        {
-            spriteBatch.Draw(_emptySlot, destRectangle, Color.White);
+        /*   var destRectangle = new Rectangle(_controlPanelX, _controlPanelButtonsY, _controlPanelButtonScreenWidth, _controlPanelButtonScreenHeight);
+           var panelButtonBackgroundSourceRectangle = new Rectangle(0, 0, ControlPanelButtonPixelWidth, ControlPanelButtonPixelHeight);
+           spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
+           spriteBatch.Draw(_skillCountErase, destRectangle, Color.White);
+           spriteBatch.Draw(_iconRrMinus, destRectangle, Color.White);
 
-            destRectangle.X += _controlPanelButtonScreenWidth;
-        }
+           destRectangle.X += _controlPanelButtonScreenWidth;
+           panelButtonBackgroundSourceRectangle.X = ControlPanelButtonPixelWidth;
 
-        spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
-        spriteBatch.Draw(_iconPause, destRectangle, Color.White);
-        destRectangle.X += _controlPanelButtonScreenWidth;
-        i = (i + 1) & 7;
-        panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+           spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
+           spriteBatch.Draw(_skillCountErase, destRectangle, Color.White);
+           spriteBatch.Draw(_iconRrPlus, destRectangle, Color.White);
 
-        spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
-        spriteBatch.Draw(_iconNuke, destRectangle, Color.White);
-        destRectangle.X += _controlPanelButtonScreenWidth;
-        i = (i + 1) & 7;
-        panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+           destRectangle.X += _controlPanelButtonScreenWidth;
+           panelButtonBackgroundSourceRectangle.X += ControlPanelButtonPixelWidth;
 
-        spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
-        spriteBatch.Draw(_iconFf, destRectangle, Color.White);
-        destRectangle.X += _controlPanelButtonScreenWidth;
-        i = (i + 1) & 7;
-        panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+           var buttonLimit = Math.Min(_skillAssignButtonRenderers.Length, MaxNumberOfSkillButtons);
+           var i = 3;
+           var t = 0;
+           for (; t < buttonLimit; t++)
+           {
+               _skillAssignButtonRenderers[t].RenderAtPosition(
+                   spriteBatch,
+                   destRectangle,
+                   panelButtonBackgroundSourceRectangle,
+                   _controlPanelScale);
 
-        spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
-        spriteBatch.Draw(_iconRestart, destRectangle, Color.White);
-        destRectangle.X += _controlPanelButtonScreenWidth;
-        i = (i + 1) & 7;
-        panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+               destRectangle.X += _controlPanelButtonScreenWidth;
+               i = (i + 1) & 7;
+               panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+           }
 
-        spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
-        spriteBatch.Draw(_iconFrameskip, destRectangle, Color.White);
-        destRectangle.X += _controlPanelButtonScreenWidth;
-        i = (i + 1) & 7;
-        panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+           for (; t < MaxNumberOfSkillButtons; t++)
+           {
+               spriteBatch.Draw(_emptySlot, destRectangle, Color.White);
 
-        spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
-        spriteBatch.Draw(_iconDirectional, destRectangle, Color.White);
-        destRectangle.X += _controlPanelButtonScreenWidth;
-        i = (i + 1) & 7;
-        panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+               destRectangle.X += _controlPanelButtonScreenWidth;
+           }
 
-        spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
-        spriteBatch.Draw(_iconCpmAndReplay, destRectangle, Color.White);
-        destRectangle.X += _controlPanelButtonScreenWidth;
-        i = (i + 1) & 7;
-        panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+           spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
+           spriteBatch.Draw(_iconPause, destRectangle, Color.White);
+           destRectangle.X += _controlPanelButtonScreenWidth;
+           i = (i + 1) & 7;
+           panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+
+           spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
+           spriteBatch.Draw(_iconNuke, destRectangle, Color.White);
+           destRectangle.X += _controlPanelButtonScreenWidth;
+           i = (i + 1) & 7;
+           panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+
+           spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
+           spriteBatch.Draw(_iconFf, destRectangle, Color.White);
+           destRectangle.X += _controlPanelButtonScreenWidth;
+           i = (i + 1) & 7;
+           panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+
+           spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
+           spriteBatch.Draw(_iconRestart, destRectangle, Color.White);
+           destRectangle.X += _controlPanelButtonScreenWidth;
+           i = (i + 1) & 7;
+           panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+
+           spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
+           spriteBatch.Draw(_iconFrameskip, destRectangle, Color.White);
+           destRectangle.X += _controlPanelButtonScreenWidth;
+           i = (i + 1) & 7;
+           panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+
+           spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
+           spriteBatch.Draw(_iconDirectional, destRectangle, Color.White);
+           destRectangle.X += _controlPanelButtonScreenWidth;
+           i = (i + 1) & 7;
+           panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;
+
+           spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
+           spriteBatch.Draw(_iconCpmAndReplay, destRectangle, Color.White);
+           destRectangle.X += _controlPanelButtonScreenWidth;
+           i = (i + 1) & 7;
+           panelButtonBackgroundSourceRectangle.X = i * ControlPanelButtonPixelWidth;*/
     }
 
     public void Dispose()

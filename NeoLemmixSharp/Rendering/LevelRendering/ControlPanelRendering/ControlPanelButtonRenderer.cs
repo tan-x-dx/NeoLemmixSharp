@@ -5,17 +5,13 @@ namespace NeoLemmixSharp.Rendering.LevelRendering.ControlPanelRendering;
 
 public abstract class ControlPanelButtonRenderer
 {
-    public void Dispose()
-    {
+    private const int ControlPanelButtonPixelWidth = 16;
+    private const int ControlPanelButtonPixelHeight = 23;
 
+    protected static Rectangle GetPanelButtonBackgroundSourceRectangle(int frame)
+    {
+        return new Rectangle(frame * ControlPanelButtonPixelWidth, 0, ControlPanelButtonPixelWidth, ControlPanelButtonPixelHeight);
     }
 
-    public Rectangle GetLocationRectangle()
-    {
-        return Rectangle.Empty;
-    }
-
-    public abstract void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier);
-
-    public abstract void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int x, int y, int scaleMultiplier);
+    public abstract void Render(SpriteBatch spriteBatch);
 }

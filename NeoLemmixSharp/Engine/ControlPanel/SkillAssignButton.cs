@@ -7,11 +7,14 @@ public sealed class SkillAssignButton : ControlPanelButton
     private readonly LemmingSkill _lemmingSkill;
 
     public int NumberOfSkillsAvailable { get; }
-    public bool IsSelected { get; }
+    public bool IsSelected { get; set; }
+    public bool ShouldRender { get; set; }
 
     public SkillAssignButton(
         LemmingSkill lemmingSkill,
-        int numberOfSkillsAvailable)
+        int numberOfSkillsAvailable,
+        int skillPanelFrame)
+        : base(skillPanelFrame)
     {
         _lemmingSkill = lemmingSkill;
         NumberOfSkillsAvailable = numberOfSkillsAvailable;

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine;
 
@@ -20,6 +21,9 @@ public sealed class LevelCursor : ITickable
 
     }
 
+    public void HandleMouseInput(MouseState mouseState)
+    {
+    }
 
     /*
 

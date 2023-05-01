@@ -15,7 +15,7 @@ public interface IVerticalViewPortBehaviour
     RenderInterval GetVerticalRenderInterval(int i);
 
     int NormaliseY(int y);
-    void RecalculateVerticalDimensions(int scaleMultiplier, int windowHeight);
+    void RecalculateVerticalDimensions(int scaleMultiplier, int windowHeight, int controlPanelHeight);
     void ScrollVertically(int dy);
     void RecalculateVerticalRenderIntervals(int scaleMultiplier);
 }

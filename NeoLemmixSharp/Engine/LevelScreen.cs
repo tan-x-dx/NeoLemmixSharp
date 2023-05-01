@@ -111,15 +111,21 @@ public sealed class LevelScreen : BaseScreen
 
         var mouseState = Mouse.GetState();
 
-        _viewport.HandleMouseInput(mouseState);
+        if (_viewport.HandleMouseInput(mouseState))
+        {
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                _doTick = true;
+            }
+        }
+        else
+        {
+            ControlPanel.HandleMouseInput(mouseState);
+        }
+
         LevelCursor.CursorX = _viewport.ViewPortX;
         LevelCursor.CursorY = _viewport.ViewPortY;
         LevelCursor.Tick();
-
-        if (mouseState.LeftButton == ButtonState.Pressed)
-        {
-            _doTick = true;
-        }
 
         if (!_stopMotion)
             return true;
@@ -133,7 +139,8 @@ public sealed class LevelScreen : BaseScreen
 
     public override void OnWindowSizeChanged()
     {
-        _viewport.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight);
+        ControlPanel.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight);
+        _viewport.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight, ControlPanel.ControlPanelScreenHeight);
     }
 
     public override void Dispose()

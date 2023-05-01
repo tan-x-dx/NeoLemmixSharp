@@ -29,30 +29,32 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
         _skillAssignButton = skillAssignButton;
     }
 
-    public override void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
+    public override void Render(SpriteBatch spriteBatch)
     {
-    }
+        if (!_skillAssignButton.ShouldRender)
+            return;
 
-    public void RenderAtPosition(
-        SpriteBatch spriteBatch,
-        Rectangle destRectangle,
-        Rectangle panelButtonBackgroundSourceRectangle,
-        int scaleMultiplier)
-    {
-        spriteBatch.Draw(_skillPanels, destRectangle, panelButtonBackgroundSourceRectangle, Color.White);
+        var destRectangle = new Rectangle(
+                  _skillAssignButton.ScreenX,
+                  _skillAssignButton.ScreenY,
+                  _skillAssignButton.ScreenWidth,
+                  _skillAssignButton.ScreenHeight);
+
+        spriteBatch.Draw(_skillPanels, destRectangle, GetPanelButtonBackgroundSourceRectangle(_skillAssignButton.SkillPanelFrame), Color.White);
         spriteBatch.Draw(_skillCountErase, destRectangle, Color.White);
 
-        var dx = 3 * scaleMultiplier;
+        var dx = 3 * _skillAssignButton.ScaleMultiplier;
 
-        _skillCountDigitFont.RenderText(spriteBatch, _skillAssignButton.NumberOfSkillsAvailable.ToString(), destRectangle.X + dx, destRectangle.Y + scaleMultiplier, scaleMultiplier);
+        _skillCountDigitFont.RenderText(
+            spriteBatch,
+            _skillAssignButton.NumberOfSkillsAvailable.ToString(),
+            destRectangle.X + dx,
+            destRectangle.Y + _skillAssignButton.ScaleMultiplier,
+            _skillAssignButton.ScaleMultiplier);
 
         if (_skillAssignButton.IsSelected)
         {
             spriteBatch.Draw(_skillSelected, destRectangle, Color.White);
         }
-    }
-
-    public override void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int x, int y, int scaleMultiplier)
-    {
     }
 }
