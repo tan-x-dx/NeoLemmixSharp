@@ -14,6 +14,8 @@ public sealed class LevelControlPanel
     private const int ControlPanelButtonPixelHeight = 23;
     private const int ControlPanelInfoPixelHeight = 16;
     private const int ControlPanelTotalPixelHeight = ControlPanelButtonPixelHeight + ControlPanelInfoPixelHeight;
+    private const int MinControlPanelScaleMultiplier = 1;
+    private const int MaxControlPanelScaleMultiplier = 6;
 
     private readonly ControlPanelButton _releaseRateMinusButton;
     private readonly ControlPanelButton _releaseRatePlusButton;
@@ -112,11 +114,23 @@ public sealed class LevelControlPanel
 
     public void SetWindowDimensions(int screenWidth, int screenHeight)
     {
-        // 19 = 10 skill buttons + 9 other buttons
-        HorizontalButtonScreenSpace = 19 * ControlPanelButtonPixelWidth * _controlPanelScale;
-
         ControlPanelX = (screenWidth - HorizontalButtonScreenSpace) / 2;
         ControlPanelY = screenHeight - (ControlPanelTotalPixelHeight * _controlPanelScale);
+
+        RecalculateButtonDimensions();
+    }
+
+    public void SetPanelScale(int scale)
+    {
+        _controlPanelScale = Math.Clamp(scale, MinControlPanelScaleMultiplier, MaxControlPanelScaleMultiplier);
+
+        RecalculateButtonDimensions();
+    }
+
+    private void RecalculateButtonDimensions()
+    {
+        // 19 = 10 skill buttons + 9 other buttons
+        HorizontalButtonScreenSpace = 19 * ControlPanelButtonPixelWidth * _controlPanelScale;
 
         ControlPanelButtonScreenWidth = ControlPanelButtonPixelWidth * _controlPanelScale;
         ControlPanelButtonScreenHeight = ControlPanelButtonPixelHeight * _controlPanelScale;
