@@ -51,11 +51,6 @@ public sealed class LevelRenderer : ScreenRenderer
         _fontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20);
     }
 
-    public override void OnWindowSizeChanged()
-    {
-        _controlPanelRenderer.SetScreenDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight);
-    }
-
     private void RenderSprites(SpriteBatch spriteBatch)
     {
         var w = _levelWidth * _viewport.ScaleMultiplier;

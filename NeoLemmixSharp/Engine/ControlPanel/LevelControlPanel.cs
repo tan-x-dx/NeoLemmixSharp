@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Engine.ControlPanel;
 
 public sealed class LevelControlPanel
 {
-    private const int MaxNumberOfSkillButtons = 10;
+    public const int MaxNumberOfSkillButtons = 10;
     private const int ControlPanelButtonPixelWidth = 16;
     private const int ControlPanelButtonPixelHeight = 23;
     private const int ControlPanelInfoPixelHeight = 16;
@@ -36,15 +36,15 @@ public sealed class LevelControlPanel
     private int _controlPanelScale = 4;
     private SkillAssignButton? _selectedSkillAssignButton;
 
-    private int _horizontalButtonScreenSpace;
-    private int _controlPanelX;
-    private int _controlPanelY;
-    private int _controlPanelButtonScreenWidth;
-    private int _controlPanelButtonScreenHeight;
-    private int _controlPanelInfoScreenHeight;
-    private int _controlPanelButtonY;
+    public int HorizontalButtonScreenSpace { get; private set; }
+    public int ControlPanelX { get; private set; }
+    public int ControlPanelY { get; private set; }
+    public int ControlPanelButtonScreenWidth { get; private set; }
+    public int ControlPanelButtonScreenHeight { get; private set; }
+    public int ControlPanelInfoScreenHeight { get; private set; }
+    public int ControlPanelButtonY { get; private set; }
 
-    private int _skillPanelScroll;
+    public int SkillPanelScroll { get; private set; }
     private int _previousScrollWheelValue;
 
     public int ControlPanelScreenHeight { get; private set; }
@@ -113,38 +113,38 @@ public sealed class LevelControlPanel
     public void SetWindowDimensions(int screenWidth, int screenHeight)
     {
         // 19 = 10 skill buttons + 9 other buttons
-        _horizontalButtonScreenSpace = 19 * ControlPanelButtonPixelWidth * _controlPanelScale;
+        HorizontalButtonScreenSpace = 19 * ControlPanelButtonPixelWidth * _controlPanelScale;
 
-        _controlPanelX = (screenWidth - _horizontalButtonScreenSpace) / 2;
-        _controlPanelY = screenHeight - (ControlPanelTotalPixelHeight * _controlPanelScale);
+        ControlPanelX = (screenWidth - HorizontalButtonScreenSpace) / 2;
+        ControlPanelY = screenHeight - (ControlPanelTotalPixelHeight * _controlPanelScale);
 
-        _controlPanelButtonScreenWidth = ControlPanelButtonPixelWidth * _controlPanelScale;
-        _controlPanelButtonScreenHeight = ControlPanelButtonPixelHeight * _controlPanelScale;
-        _controlPanelInfoScreenHeight = ControlPanelInfoPixelHeight * _controlPanelScale;
+        ControlPanelButtonScreenWidth = ControlPanelButtonPixelWidth * _controlPanelScale;
+        ControlPanelButtonScreenHeight = ControlPanelButtonPixelHeight * _controlPanelScale;
+        ControlPanelInfoScreenHeight = ControlPanelInfoPixelHeight * _controlPanelScale;
         ControlPanelScreenHeight = ControlPanelTotalPixelHeight * _controlPanelScale;
 
-        _controlPanelButtonY = _controlPanelY + _controlPanelInfoScreenHeight;
+        ControlPanelButtonY = ControlPanelY + ControlPanelInfoScreenHeight;
 
-        var x0 = _controlPanelX;
-        var y0 = _controlPanelButtonY;
-        var h0 = _controlPanelButtonScreenHeight;
+        var x0 = ControlPanelX;
+        var y0 = ControlPanelButtonY;
+        var h0 = ControlPanelButtonScreenHeight;
 
         UpdateButtonDimensions(_releaseRateMinusButton);
-        x0 += _controlPanelButtonScreenWidth;
+        x0 += ControlPanelButtonScreenWidth;
         UpdateButtonDimensions(_releaseRatePlusButton);
 
         UpdateSkillAssignButtonDimensions();
 
-        x0 = _controlPanelButtonScreenWidth * 12;
+        x0 = ControlPanelButtonScreenWidth * 12;
 
         UpdateButtonDimensions(_pauseButton);
-        x0 += _controlPanelButtonScreenWidth;
+        x0 += ControlPanelButtonScreenWidth;
         UpdateButtonDimensions(_nukeButton);
-        x0 += _controlPanelButtonScreenWidth;
+        x0 += ControlPanelButtonScreenWidth;
         UpdateButtonDimensions(_fastForwardButton);
-        x0 += _controlPanelButtonScreenWidth;
+        x0 += ControlPanelButtonScreenWidth;
         UpdateButtonDimensions(_restartButton);
-        x0 += _controlPanelButtonScreenWidth;
+        x0 += ControlPanelButtonScreenWidth;
         h0 /= 2;
 
         UpdateButtonDimensions(_frameSkipBackButton);
@@ -152,14 +152,14 @@ public sealed class LevelControlPanel
         UpdateButtonDimensions(_frameSkipForwardButton);
 
         y0 -= h0;
-        x0 += _controlPanelButtonScreenWidth;
+        x0 += ControlPanelButtonScreenWidth;
 
         UpdateButtonDimensions(_directionSelectLeftButton);
         y0 += h0;
         UpdateButtonDimensions(_directionSelectRightButton);
 
         y0 -= h0;
-        x0 += _controlPanelButtonScreenWidth;
+        x0 += ControlPanelButtonScreenWidth;
 
         UpdateButtonDimensions(_clearPhysicsButton);
         y0 += h0;
@@ -169,7 +169,7 @@ public sealed class LevelControlPanel
         {
             button.ScreenX = x0;
             button.ScreenY = y0;
-            button.ScreenWidth = _controlPanelButtonScreenWidth;
+            button.ScreenWidth = ControlPanelButtonScreenWidth;
             button.ScreenHeight = h0;
             button.ScaleMultiplier = _controlPanelScale;
         }
@@ -177,20 +177,20 @@ public sealed class LevelControlPanel
 
     private void UpdateSkillAssignButtonDimensions()
     {
-        var indexOfLastSkillAssignButtonToRender = _skillPanelScroll + MaxNumberOfSkillButtons;
+        var indexOfLastSkillAssignButtonToRender = SkillPanelScroll + MaxNumberOfSkillButtons;
 
-        var x0 = _controlPanelButtonScreenWidth * (2 - _skillPanelScroll);
+        var x0 = ControlPanelButtonScreenWidth * (2 - SkillPanelScroll);
 
         for (var i = 0; i < _skillAssignButtons.Length; i++)
         {
             var button = _skillAssignButtons[i];
             button.ScreenX = x0;
-            button.ScreenY = _controlPanelButtonY;
-            button.ScreenWidth = _controlPanelButtonScreenWidth;
-            button.ScreenHeight = _controlPanelButtonScreenHeight;
+            button.ScreenY = ControlPanelButtonY;
+            button.ScreenWidth = ControlPanelButtonScreenWidth;
+            button.ScreenHeight = ControlPanelButtonScreenHeight;
             button.ScaleMultiplier = _controlPanelScale;
-            _skillAssignButtons[i].ShouldRender = i >= _skillPanelScroll && i < indexOfLastSkillAssignButtonToRender;
-            x0 += _controlPanelButtonScreenWidth;
+            _skillAssignButtons[i].ShouldRender = i >= SkillPanelScroll && i < indexOfLastSkillAssignButtonToRender;
+            x0 += ControlPanelButtonScreenWidth;
         }
     }
 
@@ -229,9 +229,12 @@ public sealed class LevelControlPanel
 
     private void ScrollSkillPanel(int delta)
     {
-        var previousValue = _skillPanelScroll;
-        _skillPanelScroll = Math.Clamp(_skillPanelScroll + delta, 0, _maxSkillPanelScroll);
-        if (_skillPanelScroll == previousValue)
+        if (_skillAssignButtons.Length <= MaxNumberOfSkillButtons)
+            return;
+
+        var previousValue = SkillPanelScroll;
+        SkillPanelScroll = Math.Clamp(SkillPanelScroll + delta, 0, _maxSkillPanelScroll);
+        if (SkillPanelScroll == previousValue)
             return;
 
         UpdateSkillAssignButtonDimensions();
