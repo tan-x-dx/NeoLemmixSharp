@@ -39,6 +39,31 @@ public sealed class LevelAssembler : IDisposable
         _spriteBank = spriteBankBuilder.BuildSpriteBank(content, levelData.ThemeData, terrainSprite, levelData.AllGadgetData);
 
         SetUpTestLemmings();
+
+        levelData.SkillSet = new SkillSet()
+        {
+            NumberOfBashers = 20,
+            NumberOfDisarmers = 20,
+            NumberOfFencers = 20,
+            NumberOfFloaters = 20,
+            NumberOfGliders = 20,
+            NumberOfJumpers = 20,
+            NumberOfLaserers = 20,
+            NumberOfMiners = 20,
+            NumberOfPlatformers = 20,
+            NumberOfShimmiers = 20,
+            NumberOfSliders = 20,
+            NumberOfStackers = 20,
+            NumberOfStoners = 20,
+            NumberOfSwimmers = 20,
+            NumberOfWalkers = 20,
+            NumberOfBlockers = 20,
+            NumberOfBombers = 20,
+            NumberOfBuilders = 20,
+            NumberOfClimbers = 20,
+            NumberOfCloners = 20,
+            NumberOfDiggers = 20,
+        };
     }
 
     public SpriteBank GetSpriteBank()

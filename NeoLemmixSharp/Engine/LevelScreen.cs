@@ -27,7 +27,7 @@ public sealed class LevelScreen : BaseScreen
     public ISprite[] LevelSprites { private get; init; }
     public SpriteBank SpriteBank { get; }
     public FontBank FontBank { get; }
-    public LevelControlPanel ControlPanel { get; } = new();
+    public LevelControlPanel ControlPanel { get; }
     public LevelCursor LevelCursor { get; } = new();
 
     public LevelScreen(
@@ -38,11 +38,12 @@ public sealed class LevelScreen : BaseScreen
         : base(levelData.LevelTitle)
     {
         _terrain = terrain;
-        SpriteBank = spriteBank;
-        FontBank = fontBank;
+        _controller = new LevelController();
         _viewport = new LevelViewport(terrain);
 
-        _controller = new LevelController();
+        SpriteBank = spriteBank;
+        FontBank = fontBank;
+        ControlPanel = new LevelControlPanel(levelData.SkillSet);
 
         CurrentLevel = this;
         Orientation.SetTerrain(terrain);
@@ -120,13 +121,6 @@ public sealed class LevelScreen : BaseScreen
             _doTick = true;
         }
 
-        var mouseCoords = new LevelPosition(_viewport.ViewportMouseX, _viewport.ViewportMouseY);
-        if (mouseState.RightButton == ButtonState.Pressed &&
-            !_terrain.PositionOutOfBounds(mouseCoords))
-        {
-            _terrain.ErasePixel(mouseCoords);
-        }
-
         if (!_stopMotion)
             return true;
 
@@ -162,7 +156,8 @@ public sealed class LevelScreen : BaseScreen
             _viewport,
             LevelSprites,
             SpriteBank,
-            FontBank);
+            FontBank,
+            ControlPanel);
     }
 
     private bool Pause => _controller.CheckKeyDown(_controller.Pause) == KeyStatus.KeyPressed;

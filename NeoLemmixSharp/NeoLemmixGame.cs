@@ -54,6 +54,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
     {
         CaptureCursor();
         Screen.OnWindowSizeChanged();
+        ScreenRenderer.OnWindowSizeChanged();
     }
 
     protected override void OnActivated(object sender, EventArgs args)
@@ -107,6 +108,8 @@ public sealed class NeoLemmixGame : Game, IGameWindow
             Screen.GameWindow = this;
             Screen.OnWindowSizeChanged();
             ScreenRenderer = Screen.CreateScreenRenderer();
+            ScreenRenderer.GameWindow = this;
+            ScreenRenderer.OnWindowSizeChanged();
         }
 
         Window.Title = Screen.ScreenTitle;

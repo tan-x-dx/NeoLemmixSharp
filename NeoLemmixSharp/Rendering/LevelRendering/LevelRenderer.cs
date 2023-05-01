@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
+using NeoLemmixSharp.Engine.ControlPanel;
+using NeoLemmixSharp.Rendering.LevelRendering.ControlPanelRendering;
 using NeoLemmixSharp.Rendering.Text;
 
 namespace NeoLemmixSharp.Rendering.LevelRendering;
@@ -12,16 +14,19 @@ public sealed class LevelRenderer : ScreenRenderer
     private readonly SpriteBank _spriteBank;
     private readonly FontBank _fontBank;
 
-    private readonly int _levelWidth, _levelHeight;
+    private readonly IControlPanelRenderer _controlPanelRenderer;
+
+    private readonly int _levelWidth;
+    private readonly int _levelHeight;
 
     private string _mouseCoords = string.Empty;
 
-    public LevelRenderer(
-        PixelManager terrain,
+    public LevelRenderer(PixelManager terrain,
         LevelViewport viewport,
         ISprite[] levelSprites,
         SpriteBank spriteBank,
-        FontBank fontBank)
+        FontBank fontBank,
+        LevelControlPanel levelControlPanel)
     {
         _levelWidth = terrain.Width;
         _levelHeight = terrain.Height;
@@ -30,6 +35,7 @@ public sealed class LevelRenderer : ScreenRenderer
         _levelSprites = levelSprites;
         _spriteBank = spriteBank;
         _fontBank = fontBank;
+        _controlPanelRenderer = new ClassicControlPanelRenderer(spriteBank, levelControlPanel);
     }
 
     public override void RenderScreen(SpriteBatch spriteBatch)
@@ -38,10 +44,16 @@ public sealed class LevelRenderer : ScreenRenderer
 
         RenderSprites(spriteBatch);
 
+        _controlPanelRenderer.RenderControlPanel(spriteBatch);
         _spriteBank.LevelCursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
 
         _mouseCoords = $"({_viewport.ScreenMouseX},{_viewport.ScreenMouseY}) - ({_viewport.ViewportMouseX},{_viewport.ViewportMouseY})";
         _fontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20);
+    }
+
+    public override void OnWindowSizeChanged()
+    {
+        _controlPanelRenderer.SetScreenDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight);
     }
 
     private void RenderSprites(SpriteBatch spriteBatch)

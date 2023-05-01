@@ -20,6 +20,7 @@ public sealed class SpriteBankBuilder
     private readonly GraphicsDevice _graphicsDevice;
 
     private readonly Dictionary<string, LemmingActionSpriteBundle> _actionSpriteBundleLookup = new();
+    private readonly Dictionary<string, Texture2D> _textureLookup = new();
 
     public SpriteBankBuilder(GraphicsDevice graphicsDevice)
     {
@@ -38,9 +39,11 @@ public sealed class SpriteBankBuilder
         var cursorSprite = LoadCursorSprites(content);
         LoadLemmingSprites(themeData);
         LoadGadgetSprites(allGadgetData);
+        LoadOtherTextures(content);
 
         return new SpriteBank(
             _actionSpriteBundleLookup,
+            _textureLookup,
             terrainSprite)
         {
             BoxTexture = boxTexture,
@@ -207,5 +210,32 @@ public sealed class SpriteBankBuilder
 
     private void LoadGadgetSprites(ICollection<GadgetData> allGadgetData)
     {
+    }
+
+    private void LoadOtherTextures(ContentManager contentManager)
+    {
+        RegisterTexture("panel/empty_slot");
+        RegisterTexture("panel/icon_cpm_and_replay");
+        RegisterTexture("panel/icon_directional");
+        RegisterTexture("panel/icon_ff");
+        RegisterTexture("panel/icon_frameskip");
+        RegisterTexture("panel/icon_nuke");
+        RegisterTexture("panel/icon_pause");
+        RegisterTexture("panel/icon_restart");
+        RegisterTexture("panel/icon_rr_minus");
+        RegisterTexture("panel/icon_rr_plus");
+        RegisterTexture("panel/minimap_region");
+        RegisterTexture("panel/panel_font");
+        RegisterTexture("panel/panel_icons");
+        RegisterTexture("panel/skill_count_digits");
+        RegisterTexture("panel/skill_count_erase");
+        RegisterTexture("panel/skill_panels");
+        RegisterTexture("panel/skill_selected");
+
+        void RegisterTexture(string textureName)
+        {
+            var texture = contentManager.Load<Texture2D>(textureName);
+            _textureLookup.Add(textureName, texture);
+        }
     }
 }
