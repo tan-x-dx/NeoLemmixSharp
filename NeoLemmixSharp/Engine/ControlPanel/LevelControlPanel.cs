@@ -38,6 +38,8 @@ public sealed class LevelControlPanel
     private int _controlPanelScale = 4;
     private SkillAssignButton? _selectedSkillAssignButton;
 
+    public int ScreenWidth { get; private set; }
+    public int ScreenHeight { get; private set; }
     public int HorizontalButtonScreenSpace { get; private set; }
     public int ControlPanelX { get; private set; }
     public int ControlPanelY { get; private set; }
@@ -114,8 +116,8 @@ public sealed class LevelControlPanel
 
     public void SetWindowDimensions(int screenWidth, int screenHeight)
     {
-        ControlPanelX = (screenWidth - HorizontalButtonScreenSpace) / 2;
-        ControlPanelY = screenHeight - (ControlPanelTotalPixelHeight * _controlPanelScale);
+        ScreenWidth = screenWidth;
+        ScreenHeight = screenHeight;
 
         RecalculateButtonDimensions();
     }
@@ -131,6 +133,9 @@ public sealed class LevelControlPanel
     {
         // 19 = 10 skill buttons + 9 other buttons
         HorizontalButtonScreenSpace = 19 * ControlPanelButtonPixelWidth * _controlPanelScale;
+
+        ControlPanelX = (ScreenWidth - HorizontalButtonScreenSpace) / 2;
+        ControlPanelY = ScreenHeight - (ControlPanelTotalPixelHeight * _controlPanelScale);
 
         ControlPanelButtonScreenWidth = ControlPanelButtonPixelWidth * _controlPanelScale;
         ControlPanelButtonScreenHeight = ControlPanelButtonPixelHeight * _controlPanelScale;

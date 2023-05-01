@@ -35,6 +35,7 @@ public sealed class SpriteBankBuilder
     {
         var boxTexture = CreateBoxTexture();
         var anchorTexture = CreateAnchorTexture();
+        var blackPixelTexture = CreateBlackPixelTexture();
 
         var cursorSprite = LoadCursorSprites(content);
         LoadLemmingSprites(themeData);
@@ -48,6 +49,7 @@ public sealed class SpriteBankBuilder
         {
             BoxTexture = boxTexture,
             AnchorTexture = anchorTexture,
+            BlackPixelTexture = blackPixelTexture,
             LevelCursorSprite = cursorSprite
         };
     }
@@ -80,6 +82,21 @@ public sealed class SpriteBankBuilder
         return $"${lemmingStateName.ToUpperInvariant()}";
     }
 
+    private Texture2D CreateBoxTexture()
+    {
+        var boxTexture = new Texture2D(_graphicsDevice, 1, 1);
+
+        var white = Color.White;
+        var x = new uint[1];
+        for (var i = 0; i < x.Length; i++)
+        {
+            x[i] = white.PackedValue;
+        }
+
+        boxTexture.SetData(x);
+        return boxTexture;
+    }
+
     private Texture2D CreateAnchorTexture()
     {
         var anchorTexture = new Texture2D(_graphicsDevice, 3, 3);
@@ -97,19 +114,14 @@ public sealed class SpriteBankBuilder
         return anchorTexture;
     }
 
-    private Texture2D CreateBoxTexture()
+    private Texture2D CreateBlackPixelTexture()
     {
-        var anchorTexture = new Texture2D(_graphicsDevice, 1, 1);
+        var blackPixelTexture = new Texture2D(_graphicsDevice, 1, 1);
 
-        var white = Color.White;
-        var x = new uint[1];
-        for (var i = 0; i < x.Length; i++)
-        {
-            x[i] = white.PackedValue;
-        }
+        var x = new[] { Color.Black.PackedValue };
 
-        anchorTexture.SetData(x);
-        return anchorTexture;
+        blackPixelTexture.SetData(x);
+        return blackPixelTexture;
     }
 
     private void ProcessLemmingSpriteTexture(string stateName, LemmingSpriteData spriteData, Texture2D texture)

@@ -23,7 +23,7 @@ public sealed class VerticalVoidViewPortBehaviour : IVerticalViewPortBehaviour
 
     public void RecalculateVerticalDimensions(int scaleMultiplier, int windowHeight, int controlPanelHeight)
     {
-        ViewPortHeight = (windowHeight - controlPanelHeight) / scaleMultiplier;
+        ViewPortHeight = (scaleMultiplier + windowHeight - controlPanelHeight) / scaleMultiplier;
 
         if (ViewPortHeight < LevelHeightInPixels)
         {

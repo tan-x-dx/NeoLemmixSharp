@@ -12,6 +12,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
     private readonly SkillAssignButtonRenderer[] _skillAssignButtonRenderers;
 
+    private readonly Texture2D _blackPixelTexture;
     private readonly Texture2D _emptySlot;
     private readonly Texture2D _iconCpmAndReplay;
     private readonly Texture2D _iconDirectional;
@@ -39,6 +40,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
             .Select(b => new SkillAssignButtonRenderer(spriteBank, fontBank, b))
             .ToArray();
 
+        _blackPixelTexture = spriteBank.BlackPixelTexture;
         _emptySlot = spriteBank.TextureLookup["panel/empty_slot"];
         _iconCpmAndReplay = spriteBank.TextureLookup["panel/icon_cpm_and_replay"];
         _iconDirectional = spriteBank.TextureLookup["panel/icon_directional"];
@@ -58,6 +60,8 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
     public void RenderControlPanel(SpriteBatch spriteBatch)
     {
+        spriteBatch.Draw(_blackPixelTexture, new Rectangle(0, _levelControlPanel.ControlPanelY, _levelControlPanel.ScreenWidth, _levelControlPanel.ControlPanelScreenHeight), Color.White);
+
         var i = 0;
         for (; i < _skillAssignButtonRenderers.Length; i++)
         {

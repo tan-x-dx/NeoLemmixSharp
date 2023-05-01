@@ -13,6 +13,7 @@ public sealed class SpriteBank : IDisposable
     public TerrainSprite TerrainSprite { get; }
     public Texture2D BoxTexture { get; init; }
     public Texture2D AnchorTexture { get; init; }
+    public Texture2D BlackPixelTexture { get; init; }
     public LevelCursorSprite LevelCursorSprite { get; init; }
 
     public IReadOnlyDictionary<string, Texture2D> TextureLookup => _textureLookup;
