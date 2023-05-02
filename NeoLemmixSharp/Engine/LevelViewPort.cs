@@ -10,6 +10,8 @@ public sealed class LevelViewport
     private const int MinScale = 1;
     private const int MaxScale = 12;
 
+    private readonly LevelCursor _cursor;
+
     private readonly IHorizontalViewPortBehaviour _horizontalViewPortBehaviour;
     private readonly IVerticalViewPortBehaviour _verticalViewPortBehaviour;
 
@@ -39,8 +41,9 @@ public sealed class LevelViewport
     public int NumberOfHorizontalRenderIntervals => _horizontalViewPortBehaviour.NumberOfHorizontalRenderIntervals;
     public int NumberOfVerticalRenderIntervals => _verticalViewPortBehaviour.NumberOfVerticalRenderIntervals;
 
-    public LevelViewport(PixelManager terrain)
+    public LevelViewport(PixelManager terrain, LevelCursor cursor)
     {
+        _cursor = cursor;
         _horizontalViewPortBehaviour = terrain.HorizontalViewPortBehaviour;
         _verticalViewPortBehaviour = terrain.VerticalViewPortBehaviour;
 
@@ -63,16 +66,34 @@ public sealed class LevelViewport
 
     public bool HandleMouseInput(MouseState mouseState)
     {
+        ScreenMouseX = mouseState.X;
+        ScreenMouseY = mouseState.Y;
+
+        ScreenMouseX -= ScreenMouseX % ScaleMultiplier;
+        ScreenMouseY -= ScreenMouseY % ScaleMultiplier;
+
         bool result;
         if (MouseIsInLevelViewport(mouseState))
         {
             result = true;
             TrackScrollWheel(mouseState.ScrollWheelValue);
+
+            ViewportMouseX = (ScreenMouseX - _horizontalViewPortBehaviour.ScreenX) / ScaleMultiplier + _horizontalViewPortBehaviour.ViewPortX;
+            ViewportMouseY = (ScreenMouseY - _verticalViewPortBehaviour.ScreenY) / ScaleMultiplier + _verticalViewPortBehaviour.ViewPortY;
+
+            ViewportMouseX = _horizontalViewPortBehaviour.NormaliseX(ViewportMouseX);
+            ViewportMouseY = _verticalViewPortBehaviour.NormaliseY(ViewportMouseY);
         }
         else
         {
             result = false;
+
+            ViewportMouseX = -500000;
+            ViewportMouseY = -500000;
         }
+
+        _cursor.CursorX = ViewPortX;
+        _cursor.CursorY = ViewPortY;
 
         if (mouseState.X == 0)
         {
@@ -95,18 +116,6 @@ public sealed class LevelViewport
             _verticalViewPortBehaviour.ScrollVertically(_scrollDelta);
             _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
         }
-
-        ScreenMouseX = mouseState.X;
-        ScreenMouseY = mouseState.Y;
-
-        ViewportMouseX = (ScreenMouseX - _horizontalViewPortBehaviour.ScreenX) / ScaleMultiplier + _horizontalViewPortBehaviour.ViewPortX;
-        ViewportMouseY = (ScreenMouseY - _verticalViewPortBehaviour.ScreenY) / ScaleMultiplier + _verticalViewPortBehaviour.ViewPortY;
-
-        ScreenMouseX -= ScreenMouseX % ScaleMultiplier;
-        ScreenMouseY -= ScreenMouseY % ScaleMultiplier;
-
-        ViewportMouseX = _horizontalViewPortBehaviour.NormaliseX(ViewportMouseX);
-        ViewportMouseY = _verticalViewPortBehaviour.NormaliseY(ViewportMouseY);
 
         return result;
     }

@@ -53,6 +53,8 @@ public sealed class LevelControlPanel
 
     public int ControlPanelScreenHeight { get; private set; }
 
+    public LemmingSkill? SelectedSkill => _selectedSkillAssignButton?.LemmingSkill;
+
     public LevelControlPanel(SkillSet skillSet)
     {
         _releaseRateMinusButton = new ControlPanelButton(0);
@@ -228,6 +230,7 @@ public sealed class LevelControlPanel
             if (skillAssignButton.TryPress(mouseX, mouseY))
             {
                 SetSelectedSkillAssignmentButton(skillAssignButton);
+                return;
             }
         }
     }

@@ -1,17 +1,23 @@
-﻿using Microsoft.Xna.Framework.Input;
-using System.Diagnostics;
+﻿using NeoLemmixSharp.Engine.ControlPanel;
 
 namespace NeoLemmixSharp.Engine;
 
-public sealed class LevelCursor : ITickable
+public sealed class LevelCursor
 {
+    private readonly LevelControlPanel _controlPanel;
+
     public bool HighlightLemming { get; private set; }
     public bool LemmingsUnderCursor { get; set; }
 
     public int CursorX { get; set; }
     public int CursorY { get; set; }
 
-    public void Tick()
+    public LevelCursor(LevelControlPanel controlPanel)
+    {
+        _controlPanel = controlPanel;
+    }
+
+    public void HandleMouseInput()
     {
         CheckLemmingsUnderCursor();
     }
@@ -21,9 +27,6 @@ public sealed class LevelCursor : ITickable
 
     }
 
-    public void HandleMouseInput(MouseState mouseState)
-    {
-    }
 
     /*
 
@@ -159,7 +162,4 @@ end;
 
 
     */
-
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    bool ITickable.ShouldTick => true;
 }

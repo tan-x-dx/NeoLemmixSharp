@@ -20,15 +20,17 @@ public sealed class LevelScreen : BaseScreen
     private bool _doTick;
 
     private readonly PixelManager _terrain;
-    private readonly LevelController _controller;
+    private readonly LevelKeyController _keyController;
+
+    private readonly LevelControlPanel _controlPanel;
+    private readonly LevelCursor _levelCursor;
     private readonly LevelViewport _viewport;
+
+    private readonly FontBank _fontBank;
 
     public ITickable[] LevelObjects { private get; init; }
     public ISprite[] LevelSprites { private get; init; }
     public SpriteBank SpriteBank { get; }
-    public FontBank FontBank { get; }
-    public LevelControlPanel ControlPanel { get; }
-    public LevelCursor LevelCursor { get; } = new();
 
     public LevelScreen(
         LevelData levelData,
@@ -38,24 +40,26 @@ public sealed class LevelScreen : BaseScreen
         : base(levelData.LevelTitle)
     {
         _terrain = terrain;
-        _controller = new LevelController();
-        _viewport = new LevelViewport(terrain);
+        _keyController = new LevelKeyController();
+
+        _controlPanel = new LevelControlPanel(levelData.SkillSet);
+        _levelCursor = new LevelCursor(_controlPanel);
+        _viewport = new LevelViewport(terrain, _levelCursor);
 
         SpriteBank = spriteBank;
-        FontBank = fontBank;
-        ControlPanel = new LevelControlPanel(levelData.SkillSet);
+        _fontBank = fontBank;
 
         CurrentLevel = this;
         Orientation.SetTerrain(terrain);
         LemmingAction.SetTerrain(terrain);
         LemmingSkill.SetTerrain(terrain);
         spriteBank.TerrainSprite.SetViewport(_viewport);
-        spriteBank.LevelCursorSprite.SetLevelCursor(LevelCursor);
+        spriteBank.LevelCursorSprite.SetLevelCursor(_levelCursor);
     }
 
     public override void Tick()
     {
-        _controller.Tick();
+        _keyController.Tick();
 
         HandleKeyboardInput();
 
@@ -81,7 +85,7 @@ public sealed class LevelScreen : BaseScreen
             return;
 
         var keyboardState = Keyboard.GetState();
-        _controller.ControllerKeysDown(keyboardState.GetPressedKeys());
+        _keyController.ControllerKeysDown(keyboardState.GetPressedKeys());
 
         if (Pause)
         {
@@ -120,12 +124,10 @@ public sealed class LevelScreen : BaseScreen
         }
         else
         {
-            ControlPanel.HandleMouseInput(mouseState);
+            _controlPanel.HandleMouseInput(mouseState);
         }
 
-        LevelCursor.CursorX = _viewport.ViewPortX;
-        LevelCursor.CursorY = _viewport.ViewPortY;
-        LevelCursor.Tick();
+        _levelCursor.HandleMouseInput();
 
         if (!_stopMotion)
             return true;
@@ -139,8 +141,8 @@ public sealed class LevelScreen : BaseScreen
 
     public override void OnWindowSizeChanged()
     {
-        ControlPanel.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight);
-        _viewport.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight, ControlPanel.ControlPanelScreenHeight);
+        _controlPanel.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight);
+        _viewport.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight, _controlPanel.ControlPanelScreenHeight);
     }
 
     public override void Dispose()
@@ -163,12 +165,12 @@ public sealed class LevelScreen : BaseScreen
             _viewport,
             LevelSprites,
             SpriteBank,
-            FontBank,
-            ControlPanel);
+            _fontBank,
+            _controlPanel);
     }
 
-    private bool Pause => _controller.CheckKeyDown(_controller.Pause) == KeyStatus.KeyPressed;
-    private bool Quit => _controller.CheckKeyDown(_controller.Quit) == KeyStatus.KeyPressed;
-    private bool ToggleFullScreen => _controller.CheckKeyDown(_controller.ToggleFullScreen) == KeyStatus.KeyPressed;
-    private bool ToggleFastForwards => _controller.CheckKeyDown(_controller.ToggleFastForwards) == KeyStatus.KeyPressed;
+    private bool Pause => _keyController.CheckKeyDown(_keyController.Pause) == KeyStatus.KeyPressed;
+    private bool Quit => _keyController.CheckKeyDown(_keyController.Quit) == KeyStatus.KeyPressed;
+    private bool ToggleFullScreen => _keyController.CheckKeyDown(_keyController.ToggleFullScreen) == KeyStatus.KeyPressed;
+    private bool ToggleFastForwards => _keyController.CheckKeyDown(_keyController.ToggleFastForwards) == KeyStatus.KeyPressed;
 }
