@@ -3,6 +3,7 @@
 public class ControlPanelButton
 {
     public int SkillPanelFrame { get; }
+    public bool ShouldRender { get; set; } = true;
 
     public int ScreenX { get; set; }
     public int ScreenY { get; set; }
@@ -24,7 +25,8 @@ public class ControlPanelButton
 
     protected bool MouseIsOverButton(int mouseX, int mouseY)
     {
-        return mouseX >= ScreenX && mouseX <= ScreenX + ScreenWidth &&
+        return ShouldRender &&
+               mouseX >= ScreenX && mouseX <= ScreenX + ScreenWidth &&
                mouseY >= ScreenY && mouseY <= ScreenY + ScreenHeight;
     }
 }

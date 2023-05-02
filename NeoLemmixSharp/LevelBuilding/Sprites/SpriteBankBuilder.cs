@@ -33,9 +33,8 @@ public sealed class SpriteBankBuilder
         TerrainSprite terrainSprite,
         ICollection<GadgetData> allGadgetData)
     {
-        var boxTexture = CreateBoxTexture();
         var anchorTexture = CreateAnchorTexture();
-        var blackPixelTexture = CreateBlackPixelTexture();
+        var whitePixelTexture = CreateWhitePixelTexture();
 
         var cursorSprite = LoadCursorSprites(content);
         LoadLemmingSprites(themeData);
@@ -47,9 +46,8 @@ public sealed class SpriteBankBuilder
             _textureLookup,
             terrainSprite)
         {
-            BoxTexture = boxTexture,
             AnchorTexture = anchorTexture,
-            BlackPixelTexture = blackPixelTexture,
+            WhitePixelTexture = whitePixelTexture,
             LevelCursorSprite = cursorSprite
         };
     }
@@ -114,11 +112,11 @@ public sealed class SpriteBankBuilder
         return anchorTexture;
     }
 
-    private Texture2D CreateBlackPixelTexture()
+    private Texture2D CreateWhitePixelTexture()
     {
         var blackPixelTexture = new Texture2D(_graphicsDevice, 1, 1);
 
-        var x = new[] { Color.Black.PackedValue };
+        var x = new[] { Color.White.PackedValue };
 
         blackPixelTexture.SetData(x);
         return blackPixelTexture;

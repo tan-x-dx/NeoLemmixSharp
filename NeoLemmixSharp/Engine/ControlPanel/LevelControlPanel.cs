@@ -108,7 +108,8 @@ public sealed class LevelControlPanel
 
         void AddSkillAssignmentButton(LemmingSkill lemmingSkill, int amount)
         {
-            tempList.Add(new SkillAssignButton(lemmingSkill, amount, i = (i + 1) & 7));
+            tempList.Add(new SkillAssignButton(lemmingSkill, amount, i));
+            i = (i + 1) & 7;
         }
     }
 

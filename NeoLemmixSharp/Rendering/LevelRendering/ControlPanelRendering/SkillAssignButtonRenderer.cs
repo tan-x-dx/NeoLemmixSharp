@@ -12,6 +12,10 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
     private readonly Texture2D _skillPanels;
     private readonly Texture2D _skillSelected;
     private readonly Texture2D _skillCountErase;
+    private readonly Texture2D _skillIcon;
+    private readonly Rectangle _skillIconSourceRectangle;
+    private readonly int _skillIconWidth;
+    private readonly int _skillIconHeight;
 
     private readonly INeoLemmixFont _skillCountDigitFont;
 
@@ -27,6 +31,22 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
         _skillCountDigitFont = fontBank.SkillCountDigitFont;
 
         _skillAssignButton = skillAssignButton;
+
+        if (spriteBank.LemmingActionSpriteBundleLookup.TryGetValue(_skillAssignButton.LemmingSkill.LemmingSkillName, out var lemmingActionSpriteBundle))
+        {
+            var sprite = lemmingActionSpriteBundle.DownRightSprite;
+            _skillIcon = sprite.Texture;
+            _skillIconSourceRectangle = sprite.GetSourceRectangleForFrame(0);
+            _skillIconWidth = sprite.SpriteWidth;
+            _skillIconHeight = sprite.SpriteHeight;
+        }
+        else
+        {
+            _skillIcon = spriteBank.WhitePixelTexture;
+            _skillIconSourceRectangle = new Rectangle(0, 0, 1, 1);
+            _skillIconWidth = 1;
+            _skillIconHeight = 1;
+        }
     }
 
     public override void Render(SpriteBatch spriteBatch)
@@ -42,6 +62,13 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 
         spriteBatch.Draw(_skillPanels, destRectangle, GetPanelButtonBackgroundSourceRectangle(_skillAssignButton.SkillPanelFrame), Color.White);
         spriteBatch.Draw(_skillCountErase, destRectangle, Color.White);
+
+        var skillIconDestRectangle = new Rectangle(
+            _skillAssignButton.ScreenX,
+            _skillAssignButton.ScreenY + 6 * _skillAssignButton.ScaleMultiplier,
+            _skillIconWidth * _skillAssignButton.ScaleMultiplier,
+            _skillIconHeight * _skillAssignButton.ScaleMultiplier);
+        spriteBatch.Draw(_skillIcon, skillIconDestRectangle, _skillIconSourceRectangle, Color.White);
 
         var dx = 3 * _skillAssignButton.ScaleMultiplier;
 
