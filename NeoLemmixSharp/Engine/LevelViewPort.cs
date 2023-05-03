@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
 
@@ -92,8 +93,7 @@ public sealed class LevelViewport
             ViewportMouseY = -500000;
         }
 
-        _cursor.CursorX = ViewPortX;
-        _cursor.CursorY = ViewPortY;
+        _cursor.CursorPosition = new LevelPosition(ViewportMouseX, ViewportMouseY);
 
         if (mouseState.X == 0)
         {

@@ -126,7 +126,7 @@ public sealed class LevelScreen : BaseScreen
             _controlPanel.HandleMouseInput(mouseState);
         }
 
-        _levelCursor.HandleMouseInput();
+        _levelCursor.HandleMouseInput(mouseState);
 
         if (!_stopMotion)
             return true;
