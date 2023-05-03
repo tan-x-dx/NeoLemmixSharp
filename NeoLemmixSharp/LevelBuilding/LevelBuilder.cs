@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
+using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Rendering.Text;
 using System;
 
@@ -13,6 +14,8 @@ public sealed class LevelBuilder : IDisposable
     private readonly LevelReader _levelReader;
     private readonly LevelPainter _levelPainter;
     private readonly LevelAssembler _levelAssembler;
+
+    private SpriteBank _spriteBank;
 
     public LevelBuilder(
         ContentManager content,
@@ -39,16 +42,18 @@ public sealed class LevelBuilder : IDisposable
             _levelReader.LevelData,
             _levelPainter.GetTerrainSprite());
 
+        _spriteBank = _levelAssembler.GetSpriteBank();
+
         return new LevelScreen(
             _levelReader.LevelData,
+            _levelAssembler.GetLevelLemmings(),
+            _levelAssembler.GetLevelGadgets(),
             _levelPainter.GetTerrainData(),
-            _levelAssembler.GetSpriteBank(),
-            _fontBank)
-        {
-            LevelObjects = _levelAssembler.GetLevelTickables(),
-            LevelSprites = _levelAssembler.GetLevelRenderables()
-        };
+            _spriteBank);
     }
+
+    public ISprite[] GetLevelSprites() => _levelAssembler.GetLevelSprites();
+    public SpriteBank GetSpriteBank() => _spriteBank;
 
     public void Dispose()
     {

@@ -71,12 +71,17 @@ public sealed class LevelAssembler : IDisposable
         return _spriteBank!;
     }
 
-    public ITickable[] GetLevelTickables()
+    public Lemming[] GetLevelLemmings()
     {
-        return _lemmings.ToArray<ITickable>();
+        return _lemmings.ToArray();
     }
 
-    public ISprite[] GetLevelRenderables()
+    public ITickable[] GetLevelGadgets()
+    {
+        return Array.Empty<ITickable>();
+    }
+
+    public ISprite[] GetLevelSprites()
     {
         return _lemmings
             .Select(GetLemmingSprite)

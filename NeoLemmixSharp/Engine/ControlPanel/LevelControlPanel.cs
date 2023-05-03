@@ -14,7 +14,7 @@ public sealed class LevelControlPanel
     private const int ControlPanelButtonPixelHeight = 23;
     private const int ControlPanelInfoPixelHeight = 16;
     private const int ControlPanelTotalPixelHeight = ControlPanelButtonPixelHeight + ControlPanelInfoPixelHeight;
-    private const int MinControlPanelScaleMultiplier = 1;
+    private const int MinControlPanelScaleMultiplier = 4;
     private const int MaxControlPanelScaleMultiplier = 6;
 
     private readonly ControlPanelButton _releaseRateMinusButton;

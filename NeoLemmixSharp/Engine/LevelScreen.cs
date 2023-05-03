@@ -16,45 +16,46 @@ public sealed class LevelScreen : BaseScreen
 {
     public static LevelScreen CurrentLevel { get; private set; }
 
+    private readonly Lemming[] _lemmings;
+    private readonly ITickable[] _gadgets;
+
+    private readonly PixelManager _terrain;
+    private readonly SpriteBank _spriteBank;
+
+    private readonly LevelCursor _levelCursor;
+    private readonly LevelViewport _viewport;
+    private readonly LevelKeyController _keyController;
+    private readonly LevelControlPanel _controlPanel;
+
     private bool _stopMotion = true;
     private bool _doTick;
 
-    private readonly PixelManager _terrain;
-    private readonly LevelKeyController _keyController;
-
-    private readonly LevelControlPanel _controlPanel;
-    private readonly LevelCursor _levelCursor;
-    private readonly LevelViewport _viewport;
-
-    private readonly FontBank _fontBank;
-
-    public ITickable[] LevelObjects { private get; init; }
-    public ISprite[] LevelSprites { private get; init; }
-    public SpriteBank SpriteBank { get; }
-
     public LevelScreen(
         LevelData levelData,
+        Lemming[] lemmings,
+        ITickable[] gadgets,
         PixelManager terrain,
-        SpriteBank spriteBank,
-        FontBank fontBank)
+        SpriteBank spriteBank)
         : base(levelData.LevelTitle)
     {
+        _lemmings = lemmings;
+        _gadgets = gadgets;
+
         _terrain = terrain;
         _keyController = new LevelKeyController();
 
         _controlPanel = new LevelControlPanel(levelData.SkillSet);
-        _levelCursor = new LevelCursor(_controlPanel);
+        _levelCursor = new LevelCursor(_controlPanel, _lemmings);
         _viewport = new LevelViewport(terrain, _levelCursor);
-
-        SpriteBank = spriteBank;
-        _fontBank = fontBank;
 
         CurrentLevel = this;
         Orientation.SetTerrain(terrain);
         LemmingAction.SetTerrain(terrain);
         LemmingSkill.SetTerrain(terrain);
-        spriteBank.TerrainSprite.SetViewport(_viewport);
-        spriteBank.LevelCursorSprite.SetLevelCursor(_levelCursor);
+
+        _spriteBank = spriteBank;
+        _spriteBank.TerrainSprite.SetViewport(_viewport);
+        _spriteBank.LevelCursorSprite.SetLevelCursor(_levelCursor);
     }
 
     public override void Tick()
@@ -65,16 +66,14 @@ public sealed class LevelScreen : BaseScreen
 
         var shouldTickLevel = HandleMouseInput();
 
-        //CheckLemmingsUnderCursor();
-
         if (!shouldTickLevel)
             return;
 
-        for (var i = 0; i < LevelObjects.Length; i++)
+        for (var i = 0; i < _lemmings.Length; i++)
         {
-            if (LevelObjects[i].ShouldTick)
+            if (_lemmings[i].ShouldTick)
             {
-                LevelObjects[i].Tick();
+                _lemmings[i].Tick();
             }
         }
     }
@@ -147,25 +146,28 @@ public sealed class LevelScreen : BaseScreen
 
     public override void Dispose()
     {
-        SpriteBank.Dispose();
+        _spriteBank.Dispose();
 #pragma warning disable CS8625
         CurrentLevel = null;
         Orientation.SetTerrain(null);
         LemmingAction.SetTerrain(null);
         LemmingSkill.SetTerrain(null);
-        SpriteBank.TerrainSprite.SetViewport(null);
-        SpriteBank.LevelCursorSprite.SetLevelCursor(null);
+        _spriteBank.TerrainSprite.SetViewport(null);
+        _spriteBank.LevelCursorSprite.SetLevelCursor(null);
 #pragma warning restore CS8625
     }
 
-    public override ScreenRenderer CreateScreenRenderer()
+    public override ScreenRenderer CreateScreenRenderer(
+        SpriteBank spriteBank,
+        FontBank fontBank,
+        ISprite[] levelSprites)
     {
         return new LevelRenderer(
             _terrain,
             _viewport,
-            LevelSprites,
-            SpriteBank,
-            _fontBank,
+            levelSprites,
+            spriteBank,
+            fontBank,
             _controlPanel);
     }
 

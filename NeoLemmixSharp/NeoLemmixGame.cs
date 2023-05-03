@@ -19,7 +19,6 @@ public sealed class NeoLemmixGame : Game, IGameWindow
     private FontBank _fontBank;
     private Point _gameResolution = new(960, 720);
     private SpriteBatch _spriteBatch;
-    private MenuFont _menuFont;
 
     public int WindowWidth => _graphics.PreferredBackBufferWidth;
     public int WindowHeight => _graphics.PreferredBackBufferHeight;
@@ -106,7 +105,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
             Screen = levelBuilder.BuildLevel(path);
             Screen.GameWindow = this;
             Screen.OnWindowSizeChanged();
-            ScreenRenderer = Screen.CreateScreenRenderer();
+            ScreenRenderer = Screen.CreateScreenRenderer(levelBuilder.GetSpriteBank(), _fontBank, levelBuilder.GetLevelSprites());
             ScreenRenderer.GameWindow = this;
         }
 

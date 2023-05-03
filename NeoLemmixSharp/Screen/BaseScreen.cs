@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Util;
 using System;
+using NeoLemmixSharp.Rendering.Text;
 
 namespace NeoLemmixSharp.Screen;
 
@@ -20,5 +21,8 @@ public abstract class BaseScreen : IDisposable
 
     public abstract void Dispose();
 
-    public abstract ScreenRenderer CreateScreenRenderer();
+    public abstract ScreenRenderer CreateScreenRenderer(
+        SpriteBank spriteBank,
+        FontBank fontBank,
+        ISprite[] levelSprites);
 }

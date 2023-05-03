@@ -5,6 +5,7 @@ namespace NeoLemmixSharp.Engine;
 public sealed class LevelCursor
 {
     private readonly LevelControlPanel _controlPanel;
+    private readonly Lemming[] _lemmings;
 
     public bool HighlightLemming { get; private set; }
     public bool LemmingsUnderCursor { get; set; }
@@ -12,9 +13,13 @@ public sealed class LevelCursor
     public int CursorX { get; set; }
     public int CursorY { get; set; }
 
-    public LevelCursor(LevelControlPanel controlPanel)
+    private Lemming? _lemmingUnderCursor;
+    private int _numberOfLemmingsUnderCursor;
+    
+    public LevelCursor(LevelControlPanel controlPanel, Lemming[] lemmings)
     {
         _controlPanel = controlPanel;
+        _lemmings = lemmings;
     }
 
     public void HandleMouseInput()
@@ -27,8 +32,28 @@ public sealed class LevelCursor
 
     }
 
+    private bool LemmingIsUnderCursor(Lemming lemming)
+    {
+        var p0 = lemming.Orientation.Move(lemming.LevelPosition, -8, -10);
+        var p1 = lemming.Orientation.Move(lemming.LevelPosition, 5, 3);
+
+        return (p0.X <= CursorX && CursorX <= p1.X &&
+                p0.Y <= CursorY && CursorY <= p1.Y) ||
+               (p1.X <= CursorX && CursorX <= p0.X &&
+                p1.Y <= CursorY && CursorY <= p0.Y);
+    }
 
     /*
+  function LemIsInCursor(L: TLemming; MousePos: TPoint): Boolean;
+  var
+    X, Y: Integer;
+  begin
+    X := L.LemX - 8;
+    Y := L.LemY - 10;
+    Result := PtInRect(Rect(X, Y, X + 13, Y + 13), MousePos);
+  end;
+
+
 
     function TLemmingGame.GetPriorityLemming(out PriorityLem: TLemming;
                                           NewSkillOrig: TBasicLemmingAction;
@@ -51,27 +76,12 @@ var
   NumLemInCursor: Integer;
   NewSkill: TBasicLemmingAction;
 
-  function LemIsInCursor(L: TLemming; MousePos: TPoint): Boolean;
-  var
-    X, Y: Integer;
-  begin
-    X := L.LemX - 8;
-    Y := L.LemY - 10;
-    Result := PtInRect(Rect(X, Y, X + 13, Y + 13), MousePos);
-  end;
-
-
-  function GetLemDistance(L: TLemming; MousePos: TPoint): Integer;
-  begin
-    // We compute the distance to the center of the cursor after 2x-zooming, to have integer values
-    Result :=   Sqr(2 * (L.LemX - 8) - 2 * MousePos.X + 13)
-              + Sqr(2 * (L.LemY - 10) - 2 * MousePos.Y + 13)
-  end;
 
   function IsCloserToCursorCenter(LOld, LNew: TLemming; MousePos: TPoint): Boolean;
   begin
     Result := (GetLemDistance(LNew, MousePos) < GetLemDistance(LOld, MousePos));
   end;
+
 
   function IsLemInPriorityBox(L: TLemming; PriorityBox: Integer): Boolean;
   begin
@@ -84,6 +94,14 @@ var
       Walk    : Result :=     (L.LemAction in [baWalking, baAscending]);
       NonWalk : Result := not (L.LemAction in [baWalking, baAscending]);
     end;
+  end;
+
+
+  function GetLemDistance(L: TLemming; MousePos: TPoint): Integer;
+  begin
+    // We compute the distance to the center of the cursor after 2x-zooming, to have integer values
+    Result :=   Sqr(2 * (L.LemX - 8) - 2 * MousePos.X + 13)
+              + Sqr(2 * (L.LemY - 10) - 2 * MousePos.Y + 13)
   end;
 
 begin
