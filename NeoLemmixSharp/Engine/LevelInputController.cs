@@ -3,7 +3,7 @@ using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
 
-public sealed class LevelKeyController : KeyController<LevelKeyboardAction>
+public sealed class LevelInputController : InputController<LevelKeyboardAction>
 {
     private int _actionCount;
 
@@ -12,7 +12,7 @@ public sealed class LevelKeyController : KeyController<LevelKeyboardAction>
     public LevelKeyboardAction ToggleFullScreen { get; }
     public LevelKeyboardAction ToggleFastForwards { get; }
 
-    public LevelKeyController()
+    public LevelInputController()
     {
         Pause = CreateAction();
         Quit = CreateAction();

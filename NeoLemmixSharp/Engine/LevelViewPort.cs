@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
-using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
+﻿using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Util;
@@ -12,11 +11,10 @@ public sealed class LevelViewport
     private const int MaxScale = 12;
 
     private readonly LevelCursor _cursor;
+    private readonly LevelInputController _controller;
 
     private readonly IHorizontalViewPortBehaviour _horizontalViewPortBehaviour;
     private readonly IVerticalViewPortBehaviour _verticalViewPortBehaviour;
-
-    private int _previousScrollWheelValue;
 
     private int _windowWidth;
     private int _windowHeight;
@@ -42,9 +40,13 @@ public sealed class LevelViewport
     public int NumberOfHorizontalRenderIntervals => _horizontalViewPortBehaviour.NumberOfHorizontalRenderIntervals;
     public int NumberOfVerticalRenderIntervals => _verticalViewPortBehaviour.NumberOfVerticalRenderIntervals;
 
-    public LevelViewport(PixelManager terrain, LevelCursor cursor)
+    public LevelViewport(
+        PixelManager terrain,
+        LevelCursor cursor,
+        LevelInputController controller)
     {
         _cursor = cursor;
+        _controller = controller;
         _horizontalViewPortBehaviour = terrain.HorizontalViewPortBehaviour;
         _verticalViewPortBehaviour = terrain.VerticalViewPortBehaviour;
 
@@ -65,19 +67,19 @@ public sealed class LevelViewport
         _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
     }
 
-    public bool HandleMouseInput(MouseState mouseState)
+    public bool HandleMouseInput()
     {
-        ScreenMouseX = mouseState.X;
-        ScreenMouseY = mouseState.Y;
+        ScreenMouseX = _controller.MouseX;
+        ScreenMouseY = _controller.MouseY;
 
         ScreenMouseX -= ScreenMouseX % ScaleMultiplier;
         ScreenMouseY -= ScreenMouseY % ScaleMultiplier;
 
         bool result;
-        if (MouseIsInLevelViewport(mouseState))
+        if (MouseIsInLevelViewport())
         {
             result = true;
-            TrackScrollWheel(mouseState.ScrollWheelValue);
+            TrackScrollWheel();
 
             ViewportMouseX = (ScreenMouseX - _horizontalViewPortBehaviour.ScreenX) / ScaleMultiplier + _horizontalViewPortBehaviour.ViewPortX;
             ViewportMouseY = (ScreenMouseY - _verticalViewPortBehaviour.ScreenY) / ScaleMultiplier + _verticalViewPortBehaviour.ViewPortY;
@@ -95,23 +97,23 @@ public sealed class LevelViewport
 
         _cursor.CursorPosition = new LevelPosition(ViewportMouseX, ViewportMouseY);
 
-        if (mouseState.X == 0)
+        if (_controller.MouseX == 0)
         {
             _horizontalViewPortBehaviour.ScrollHorizontally(-_scrollDelta);
             _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
         }
-        else if (mouseState.X == _windowWidth - 1)
+        else if (_controller.MouseX == _windowWidth - 1)
         {
             _horizontalViewPortBehaviour.ScrollHorizontally(_scrollDelta);
             _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
         }
 
-        if (mouseState.Y == 0)
+        if (_controller.MouseY == 0)
         {
             _verticalViewPortBehaviour.ScrollVertically(-_scrollDelta);
             _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
         }
-        else if (mouseState.Y == _windowHeight - 1)
+        else if (_controller.MouseY == _windowHeight - 1)
         {
             _verticalViewPortBehaviour.ScrollVertically(_scrollDelta);
             _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
@@ -120,22 +122,21 @@ public sealed class LevelViewport
         return result;
     }
 
-    private bool MouseIsInLevelViewport(MouseState mouseState)
+    private bool MouseIsInLevelViewport()
     {
-        return mouseState.X >= 0 && mouseState.X <= _windowWidth &&
-               mouseState.Y >= 0 && mouseState.Y <= _windowHeight - _controlPanelHeight;
+        return _controller.MouseX >= 0 && _controller.MouseX <= _windowWidth &&
+               _controller.MouseY >= 0 && _controller.MouseY <= _windowHeight - _controlPanelHeight;
     }
 
-    private void TrackScrollWheel(int scrollWheelValue)
+    private void TrackScrollWheel()
     {
-        var delta = scrollWheelValue - _previousScrollWheelValue;
-        _previousScrollWheelValue = scrollWheelValue;
+        var scrollDelta = _controller.ScrollDelta;
 
-        if (delta > 0)
+        if (scrollDelta == ScrollDelta.Positive)
         {
             ZoomIn();
         }
-        else if (delta < 0)
+        else if (scrollDelta == ScrollDelta.Negative)
         {
             ZoomOut();
         }

@@ -1,13 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Util;
 using System;
-using Microsoft.Xna.Framework.Input;
 
 namespace NeoLemmixSharp.Engine;
 
 public sealed class LevelCursor
 {
     private readonly LevelControlPanel _controlPanel;
+    private readonly LevelInputController _controller;
     private readonly Lemming[] _lemmings;
 
     public bool HighlightLemming { get; private set; }
@@ -18,17 +18,18 @@ public sealed class LevelCursor
     private Lemming? _lemmingUnderCursor;
     private int _numberOfLemmingsUnderCursor;
 
-    public LevelCursor(LevelControlPanel controlPanel, Lemming[] lemmings)
+    public LevelCursor(LevelControlPanel controlPanel, LevelInputController controller, Lemming[] lemmings)
     {
         _controlPanel = controlPanel;
+        _controller = controller;
         _lemmings = lemmings;
     }
 
-    public void HandleMouseInput(MouseState mouseState)
+    public void HandleMouseInput()
     {
         CheckLemmingsUnderCursor();
 
-        if (mouseState.LeftButton != ButtonState.Pressed)
+        if ((_controller.LeftMouseButtonStatus & MouseButtonStatus.MouseButtonPressed) == MouseButtonStatus.MouseButtonUnpressed)
             return;
 
         if (_lemmingUnderCursor != null && _controlPanel.SelectedSkill is not null)

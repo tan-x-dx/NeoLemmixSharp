@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
-using NeoLemmixSharp.Engine.ControlPanel;
+﻿using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LemmingSkills;
@@ -24,7 +23,7 @@ public sealed class LevelScreen : BaseScreen
 
     private readonly LevelCursor _levelCursor;
     private readonly LevelViewport _viewport;
-    private readonly LevelKeyController _keyController;
+    private readonly LevelInputController _inputController;
     private readonly LevelControlPanel _controlPanel;
 
     private bool _stopMotion = true;
@@ -42,11 +41,11 @@ public sealed class LevelScreen : BaseScreen
         _gadgets = gadgets;
 
         _terrain = terrain;
-        _keyController = new LevelKeyController();
+        _inputController = new LevelInputController();
 
-        _controlPanel = new LevelControlPanel(levelData.SkillSet);
-        _levelCursor = new LevelCursor(_controlPanel, _lemmings);
-        _viewport = new LevelViewport(terrain, _levelCursor);
+        _controlPanel = new LevelControlPanel(levelData.SkillSet, _inputController);
+        _levelCursor = new LevelCursor(_controlPanel, _inputController, _lemmings);
+        _viewport = new LevelViewport(terrain, _levelCursor, _inputController);
 
         CurrentLevel = this;
         Orientation.SetTerrain(terrain);
@@ -60,7 +59,7 @@ public sealed class LevelScreen : BaseScreen
 
     public override void Tick()
     {
-        _keyController.Tick();
+        _inputController.Tick();
 
         HandleKeyboardInput();
 
@@ -82,9 +81,6 @@ public sealed class LevelScreen : BaseScreen
     {
         if (!GameWindow.IsActive)
             return;
-
-        var keyboardState = Keyboard.GetState();
-        _keyController.ControllerKeysDown(keyboardState.GetPressedKeys());
 
         if (Pause)
         {
@@ -112,21 +108,19 @@ public sealed class LevelScreen : BaseScreen
         if (!GameWindow.IsActive)
             return false;
 
-        var mouseState = Mouse.GetState();
-
-        if (_viewport.HandleMouseInput(mouseState))
+        if (_viewport.HandleMouseInput())
         {
-            if (mouseState.LeftButton == ButtonState.Pressed)
+            if (_inputController.LeftMouseButtonStatus == MouseButtonStatus.MouseButtonPressed)
             {
                 _doTick = true;
             }
         }
         else
         {
-            _controlPanel.HandleMouseInput(mouseState);
+            _controlPanel.HandleMouseInput();
         }
 
-        _levelCursor.HandleMouseInput(mouseState);
+        _levelCursor.HandleMouseInput();
 
         if (!_stopMotion)
             return true;
@@ -171,8 +165,8 @@ public sealed class LevelScreen : BaseScreen
             _controlPanel);
     }
 
-    private bool Pause => _keyController.CheckKeyDown(_keyController.Pause) == KeyStatus.KeyPressed;
-    private bool Quit => _keyController.CheckKeyDown(_keyController.Quit) == KeyStatus.KeyPressed;
-    private bool ToggleFullScreen => _keyController.CheckKeyDown(_keyController.ToggleFullScreen) == KeyStatus.KeyPressed;
-    private bool ToggleFastForwards => _keyController.CheckKeyDown(_keyController.ToggleFastForwards) == KeyStatus.KeyPressed;
+    private bool Pause => _inputController.CheckKeyDown(_inputController.Pause) == KeyStatus.KeyPressed;
+    private bool Quit => _inputController.CheckKeyDown(_inputController.Quit) == KeyStatus.KeyPressed;
+    private bool ToggleFullScreen => _inputController.CheckKeyDown(_inputController.ToggleFullScreen) == KeyStatus.KeyPressed;
+    private bool ToggleFastForwards => _inputController.CheckKeyDown(_inputController.ToggleFastForwards) == KeyStatus.KeyPressed;
 }

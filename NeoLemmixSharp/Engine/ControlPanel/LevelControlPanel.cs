@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework.Input;
-using NeoLemmixSharp.Engine.LemmingSkills;
+﻿using NeoLemmixSharp.Engine.LemmingSkills;
 using NeoLemmixSharp.LevelBuilding.Data;
+using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +16,8 @@ public sealed class LevelControlPanel
     private const int ControlPanelTotalPixelHeight = ControlPanelButtonPixelHeight + ControlPanelInfoPixelHeight;
     private const int MinControlPanelScaleMultiplier = 4;
     private const int MaxControlPanelScaleMultiplier = 6;
+
+    private readonly LevelInputController _controller;
 
     private readonly ControlPanelButton _releaseRateMinusButton;
     private readonly ControlPanelButton _releaseRatePlusButton;
@@ -49,14 +51,14 @@ public sealed class LevelControlPanel
     public int ControlPanelButtonY { get; private set; }
 
     public int SkillPanelScroll { get; private set; }
-    private int _previousScrollWheelValue;
 
     public int ControlPanelScreenHeight { get; private set; }
 
     public LemmingSkill? SelectedSkill => _selectedSkillAssignButton?.LemmingSkill;
 
-    public LevelControlPanel(SkillSet skillSet)
+    public LevelControlPanel(SkillSet skillSet, LevelInputController controller)
     {
+        _controller = controller;
         _releaseRateMinusButton = new ControlPanelButton(0);
         _releaseRatePlusButton = new ControlPanelButton(1);
 
@@ -216,15 +218,15 @@ public sealed class LevelControlPanel
         }
     }
 
-    public void HandleMouseInput(MouseState mouseState)
+    public void HandleMouseInput()
     {
-        TrackScrollWheel(mouseState.ScrollWheelValue);
+        TrackScrollWheel();
 
-        if (mouseState.LeftButton != ButtonState.Pressed)
+        if (_controller.LeftMouseButtonStatus != MouseButtonStatus.MouseButtonPressed)
             return;
 
-        var mouseX = mouseState.X;
-        var mouseY = mouseState.Y;
+        var mouseX = _controller.MouseX;
+        var mouseY = _controller.MouseY;
         foreach (var skillAssignButton in _skillAssignButtons)
         {
             if (skillAssignButton.TryPress(mouseX, mouseY))
@@ -235,18 +237,17 @@ public sealed class LevelControlPanel
         }
     }
 
-    private void TrackScrollWheel(int scrollWheelValue)
+    private void TrackScrollWheel()
     {
-        var delta = scrollWheelValue - _previousScrollWheelValue;
-        _previousScrollWheelValue = scrollWheelValue;
+        var scrollDelta = _controller.ScrollDelta;
 
-        if (delta > 0)
-        {
-            ScrollSkillPanel(-1);
-        }
-        else if (delta < 0)
+        if (scrollDelta == ScrollDelta.Negative)
         {
             ScrollSkillPanel(1);
+        }
+        else if (scrollDelta == ScrollDelta.Positive)
+        {
+            ScrollSkillPanel(-1);
         }
     }
 
