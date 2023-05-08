@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Util;
+using System;
 
 namespace NeoLemmixSharp.Engine;
 
@@ -130,54 +131,10 @@ public sealed class LevelViewport
 
     private void TrackScrollWheel()
     {
-        var scrollDelta = _controller.ScrollDelta;
+        var scaleMultiplierDelta = (int)_controller.ScrollDelta;
 
-        if (scrollDelta == ScrollDelta.Positive)
-        {
-            ZoomIn();
-        }
-        else if (scrollDelta == ScrollDelta.Negative)
-        {
-            ZoomOut();
-        }
-    }
-
-    private void ZoomIn()
-    {
         var previousValue = ScaleMultiplier;
-        if (ScaleMultiplier < MaxScale)
-        {
-            ScaleMultiplier++;
-        }
-        else
-        {
-            ScaleMultiplier = MaxScale;
-        }
-
-        if (ScaleMultiplier == previousValue)
-            return;
-
-        _horizontalViewPortBehaviour.RecalculateHorizontalDimensions(ScaleMultiplier, _windowWidth);
-        _horizontalViewPortBehaviour.ScrollHorizontally(0);
-        _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
-        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight, _controlPanelHeight);
-        _verticalViewPortBehaviour.ScrollVertically(0);
-        _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
-
-        _scrollDelta = 4 * MaxScale / ScaleMultiplier;
-    }
-
-    private void ZoomOut()
-    {
-        var previousValue = ScaleMultiplier;
-        if (ScaleMultiplier > MinScale)
-        {
-            ScaleMultiplier--;
-        }
-        else
-        {
-            ScaleMultiplier = MinScale;
-        }
+        ScaleMultiplier = Math.Clamp(ScaleMultiplier + scaleMultiplierDelta, MinScale, MaxScale);
 
         if (ScaleMultiplier == previousValue)
             return;
