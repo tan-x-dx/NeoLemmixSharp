@@ -6,6 +6,7 @@ using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Data.SpriteSet;
 using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ public sealed class SpriteBankBuilder
     private readonly GraphicsDevice _graphicsDevice;
 
     private readonly Dictionary<string, LemmingActionSpriteBundle> _actionSpriteBundleLookup = new();
+    private readonly Dictionary<string, Texture2D> _textureLookup = new();
 
     public SpriteBankBuilder(GraphicsDevice graphicsDevice)
     {
@@ -31,29 +33,31 @@ public sealed class SpriteBankBuilder
         TerrainSprite terrainSprite,
         ICollection<GadgetData> allGadgetData)
     {
-        var boxTexture = CreateBoxTexture();
         var anchorTexture = CreateAnchorTexture();
+        var whitePixelTexture = CreateWhitePixelTexture();
 
         var cursorSprite = LoadCursorSprites(content);
         LoadLemmingSprites(themeData);
         LoadGadgetSprites(allGadgetData);
+        LoadOtherTextures(content);
 
         return new SpriteBank(
             _actionSpriteBundleLookup,
+            _textureLookup,
             terrainSprite)
         {
-            BoxTexture = boxTexture,
             AnchorTexture = anchorTexture,
-            CursorSprite = cursorSprite
+            WhitePixelTexture = whitePixelTexture,
+            LevelCursorSprite = cursorSprite
         };
     }
 
-    private static CursorSprite LoadCursorSprites(ContentManager content)
+    private static LevelCursorSprite LoadCursorSprites(ContentManager content)
     {
         var standardCursorTexture = content.Load<Texture2D>("cursor/standard");
         var focusedCursorTexture = content.Load<Texture2D>("cursor/focused");
 
-        return new CursorSprite(standardCursorTexture, focusedCursorTexture);
+        return new LevelCursorSprite(standardCursorTexture, focusedCursorTexture);
     }
 
     private void LoadLemmingSprites(ThemeData themeData)
@@ -76,26 +80,9 @@ public sealed class SpriteBankBuilder
         return $"${lemmingStateName.ToUpperInvariant()}";
     }
 
-    private Texture2D CreateAnchorTexture()
-    {
-        var anchorTexture = new Texture2D(_graphicsDevice, 3, 3);
-
-        var red = new Color(200, 0, 0, 255);
-        var yellow = new Color(200, 200, 0, 255);
-
-        var x = new uint[9];
-        x[1] = red.PackedValue;
-        x[3] = red.PackedValue;
-        x[4] = yellow.PackedValue;
-        x[5] = red.PackedValue;
-        x[7] = red.PackedValue;
-        anchorTexture.SetData(x);
-        return anchorTexture;
-    }
-
     private Texture2D CreateBoxTexture()
     {
-        var anchorTexture = new Texture2D(_graphicsDevice, 1, 1);
+        var boxTexture = new Texture2D(_graphicsDevice, 1, 1);
 
         var white = Color.White;
         var x = new uint[1];
@@ -104,8 +91,35 @@ public sealed class SpriteBankBuilder
             x[i] = white.PackedValue;
         }
 
+        boxTexture.SetData(x);
+        return boxTexture;
+    }
+
+    private Texture2D CreateAnchorTexture()
+    {
+        var anchorTexture = new Texture2D(_graphicsDevice, 3, 3);
+
+        var red = new Color(200, 0, 0, 255).PackedValue;
+        var yellow = new Color(200, 200, 0, 255).PackedValue;
+
+        var x = new uint[9];
+        x[1] = red;
+        x[3] = red;
+        x[4] = yellow;
+        x[5] = red;
+        x[7] = red;
         anchorTexture.SetData(x);
         return anchorTexture;
+    }
+
+    private Texture2D CreateWhitePixelTexture()
+    {
+        var blackPixelTexture = new Texture2D(_graphicsDevice, 1, 1);
+
+        var x = new[] { Color.White.PackedValue };
+
+        blackPixelTexture.SetData(x);
+        return blackPixelTexture;
     }
 
     private void ProcessLemmingSpriteTexture(string stateName, LemmingSpriteData spriteData, Texture2D texture)
@@ -206,5 +220,30 @@ public sealed class SpriteBankBuilder
 
     private void LoadGadgetSprites(ICollection<GadgetData> allGadgetData)
     {
+    }
+
+    private void LoadOtherTextures(ContentManager contentManager)
+    {
+        RegisterTexture("panel/empty_slot");
+        RegisterTexture("panel/icon_cpm_and_replay");
+        RegisterTexture("panel/icon_directional");
+        RegisterTexture("panel/icon_ff");
+        RegisterTexture("panel/icon_frameskip");
+        RegisterTexture("panel/icon_nuke");
+        RegisterTexture("panel/icon_pause");
+        RegisterTexture("panel/icon_restart");
+        RegisterTexture("panel/icon_rr_minus");
+        RegisterTexture("panel/icon_rr_plus");
+        RegisterTexture("panel/minimap_region");
+        RegisterTexture("panel/panel_icons");
+        RegisterTexture("panel/skill_count_erase");
+        RegisterTexture("panel/skill_panels");
+        RegisterTexture("panel/skill_selected");
+
+        void RegisterTexture(string textureName)
+        {
+            var texture = contentManager.Load<Texture2D>(textureName);
+            _textureLookup.Add(textureName, texture);
+        }
     }
 }

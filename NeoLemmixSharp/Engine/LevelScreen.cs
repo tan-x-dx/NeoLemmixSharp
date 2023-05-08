@@ -1,7 +1,10 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿using NeoLemmixSharp.Engine.ControlPanel;
+using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Engine.LemmingActions;
+using NeoLemmixSharp.Engine.LemmingSkills;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Rendering.Text;
 using NeoLemmixSharp.Screen;
 using NeoLemmixSharp.Util;
@@ -10,41 +13,53 @@ namespace NeoLemmixSharp.Engine;
 
 public sealed class LevelScreen : BaseScreen
 {
-    private bool _stopMotion = true;
-    private bool _doTick;
     public static LevelScreen CurrentLevel { get; private set; }
 
-    public ITickable[] LevelObjects { private get; init; }
-    public ISprite[] LevelSprites { private get; init; }
-    public PixelManager Terrain { get; }
-    public SpriteBank SpriteBank { get; }
-    public LevelControlPanel ControlPanel { get; } = new();
+    private readonly Lemming[] _lemmings;
+    private readonly ITickable[] _gadgets;
 
-    public LevelController Controller { get; }
-    public LevelViewPort Viewport { get; }
+    private readonly PixelManager _terrain;
+    private readonly SpriteBank _spriteBank;
 
-    public int Width => Terrain.Width;
-    public int Height => Terrain.Height;
+    private readonly LevelCursor _levelCursor;
+    private readonly LevelViewport _viewport;
+    private readonly LevelInputController _inputController;
+    private readonly LevelControlPanel _controlPanel;
+
+    private bool _stopMotion = true;
+    private bool _doTick;
 
     public LevelScreen(
         LevelData levelData,
+        Lemming[] lemmings,
+        ITickable[] gadgets,
         PixelManager terrain,
-        SpriteBank spriteBank,
-        FontBank fontBank)
+        SpriteBank spriteBank)
         : base(levelData.LevelTitle)
     {
-        Terrain = terrain;
-        SpriteBank = spriteBank;
-        Viewport = new LevelViewPort(terrain, fontBank, spriteBank);
+        _lemmings = lemmings;
+        _gadgets = gadgets;
 
-        Controller = new LevelController();
+        _terrain = terrain;
+        _inputController = new LevelInputController();
+
+        _controlPanel = new LevelControlPanel(levelData.SkillSet, _inputController);
+        _levelCursor = new LevelCursor(_controlPanel, _inputController, _lemmings);
+        _viewport = new LevelViewport(terrain, _levelCursor, _inputController);
 
         CurrentLevel = this;
+        Orientation.SetTerrain(terrain);
+        LemmingAction.SetTerrain(terrain);
+        LemmingSkill.SetTerrain(terrain);
+
+        _spriteBank = spriteBank;
+        _spriteBank.TerrainSprite.SetViewport(_viewport);
+        _spriteBank.LevelCursorSprite.SetLevelCursor(_levelCursor);
     }
 
     public override void Tick()
     {
-        Controller.Tick();
+        _inputController.Tick();
 
         HandleKeyboardInput();
 
@@ -53,11 +68,11 @@ public sealed class LevelScreen : BaseScreen
         if (!shouldTickLevel)
             return;
 
-        for (var i = 0; i < LevelObjects.Length; i++)
+        for (var i = 0; i < _lemmings.Length; i++)
         {
-            if (LevelObjects[i].ShouldTick)
+            if (_lemmings[i].ShouldTick)
             {
-                LevelObjects[i].Tick();
+                _lemmings[i].Tick();
             }
         }
     }
@@ -66,9 +81,6 @@ public sealed class LevelScreen : BaseScreen
     {
         if (!GameWindow.IsActive)
             return;
-
-        var keyboardState = Keyboard.GetState();
-        Controller.ControllerKeysDown(keyboardState.GetPressedKeys());
 
         if (Pause)
         {
@@ -96,24 +108,22 @@ public sealed class LevelScreen : BaseScreen
         if (!GameWindow.IsActive)
             return false;
 
-        var mouseState = Mouse.GetState();
-
-        Viewport.HandleMouseInput(mouseState);
-
-        if (mouseState.LeftButton == ButtonState.Pressed)
+        if (_viewport.HandleMouseInput())
         {
-            _doTick = true;
+            if (_inputController.LeftMouseButtonStatus == MouseButtonStatus.MouseButtonPressed)
+            {
+                _doTick = true;
+            }
+        }
+        else
+        {
+            _controlPanel.HandleMouseInput();
         }
 
-        var mouseCoords = new LevelPosition(Viewport.ViewportMouseX, Viewport.ViewportMouseY);
-        if (mouseState.RightButton == ButtonState.Pressed &&
-            !Terrain.PositionOutOfBounds(mouseCoords))
-        {
-            Terrain.ErasePixel(mouseCoords);
-        }
+        _levelCursor.HandleMouseInput();
 
         if (!_stopMotion)
-            return _doTick;
+            return true;
 
         if (!_doTick)
             return false;
@@ -122,31 +132,41 @@ public sealed class LevelScreen : BaseScreen
         return true;
     }
 
-    public override void Render(SpriteBatch spriteBatch)
-    {
-        SpriteBank.Render(spriteBatch);
-
-        for (var i = 0; i < LevelSprites.Length; i++)
-        {
-            Viewport.RenderSprite(spriteBatch, LevelSprites[i]);
-        }
-
-        Viewport.RenderCursor(spriteBatch, SpriteBank.CursorSprite);
-    }
-
     public override void OnWindowSizeChanged()
     {
-        Viewport.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight);
+        _controlPanel.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight);
+        _viewport.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight, _controlPanel.ControlPanelScreenHeight);
     }
 
     public override void Dispose()
     {
-        SpriteBank.Dispose();
+        _spriteBank.Dispose();
+#pragma warning disable CS8625
+        CurrentLevel = null;
+        Orientation.SetTerrain(null);
+        LemmingAction.SetTerrain(null);
+        LemmingSkill.SetTerrain(null);
+        _spriteBank.TerrainSprite.SetViewport(null);
+        _spriteBank.LevelCursorSprite.SetLevelCursor(null);
+#pragma warning restore CS8625
     }
 
-    private bool Pause => Controller.CheckKeyDown(Controller.Pause) == KeyStatus.KeyPressed;
-    private bool Quit => Controller.CheckKeyDown(Controller.Quit) == KeyStatus.KeyPressed;
-    private bool ToggleFullScreen => Controller.CheckKeyDown(Controller.ToggleFullScreen) == KeyStatus.KeyPressed;
-    private bool ToggleFastForwards => Controller.CheckKeyDown(Controller.ToggleFastForwards) == KeyStatus.KeyPressed;
-    public bool LemmingsUnderCursor { get; set; }
+    public override ScreenRenderer CreateScreenRenderer(
+        SpriteBank spriteBank,
+        FontBank fontBank,
+        ISprite[] levelSprites)
+    {
+        return new LevelRenderer(
+            _terrain,
+            _viewport,
+            levelSprites,
+            spriteBank,
+            fontBank,
+            _controlPanel);
+    }
+
+    private bool Pause => _inputController.CheckKeyDown(_inputController.Pause) == KeyStatus.KeyPressed;
+    private bool Quit => _inputController.CheckKeyDown(_inputController.Quit) == KeyStatus.KeyPressed;
+    private bool ToggleFullScreen => _inputController.CheckKeyDown(_inputController.ToggleFullScreen) == KeyStatus.KeyPressed;
+    private bool ToggleFastForwards => _inputController.CheckKeyDown(_inputController.ToggleFastForwards) == KeyStatus.KeyPressed;
 }

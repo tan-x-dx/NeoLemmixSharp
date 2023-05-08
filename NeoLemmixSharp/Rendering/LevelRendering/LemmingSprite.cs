@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 
-namespace NeoLemmixSharp.Rendering;
+namespace NeoLemmixSharp.Rendering.LevelRendering;
 
 public sealed class LemmingSprite : ISprite
 {
@@ -45,14 +45,14 @@ public sealed class LemmingSprite : ISprite
             actionSprite.GetSourceRectangleForFrame(sourceRectangle, _lemming.AnimationFrame),
             Color.White);
 
-        var p = new Point(x - scaleMultiplier, y - scaleMultiplier);
-        renderDestination = new Rectangle(p, new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
+       // var p = new Point(x - scaleMultiplier, y - scaleMultiplier);
+       // renderDestination = new Rectangle(p, new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
 
-        var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
+       /* var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
         spriteBatch.Draw(
             spriteBank.AnchorTexture,
             renderDestination,
-            Color.White);
+            Color.White);*/
     }
 
     public void Dispose()

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.LevelBuilding;
+using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Rendering.Text;
 using NeoLemmixSharp.Screen;
 using NeoLemmixSharp.Util;
@@ -18,7 +19,6 @@ public sealed class NeoLemmixGame : Game, IGameWindow
     private FontBank _fontBank;
     private Point _gameResolution = new(960, 720);
     private SpriteBatch _spriteBatch;
-    private MenuFont _menuFont;
 
     public int WindowWidth => _graphics.PreferredBackBufferWidth;
     public int WindowHeight => _graphics.PreferredBackBufferHeight;
@@ -26,6 +26,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
     public bool IsFastForwards { get; private set; }
 
     public BaseScreen Screen { get; set; }
+    public ScreenRenderer ScreenRenderer { get; set; }
 
     [DllImport("user32.dll")]
     private static extern void ClipCursor(ref Rectangle rect);
@@ -104,6 +105,8 @@ public sealed class NeoLemmixGame : Game, IGameWindow
             Screen = levelBuilder.BuildLevel(path);
             Screen.GameWindow = this;
             Screen.OnWindowSizeChanged();
+            ScreenRenderer = Screen.CreateScreenRenderer(levelBuilder.GetSpriteBank(), _fontBank, levelBuilder.GetLevelSprites());
+            ScreenRenderer.GameWindow = this;
         }
 
         Window.Title = Screen.ScreenTitle;
@@ -124,9 +127,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-        Screen.Render(_spriteBatch);
-
-        //   _menuFont.RenderText(_spriteBatch, "Test lol :)", 30, 20);
+        ScreenRenderer.RenderScreen(_spriteBatch);
 
         _spriteBatch.End();
 

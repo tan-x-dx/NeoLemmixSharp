@@ -1057,18 +1057,6 @@
 /processorParam:TextureFormat=Color
 /build:panel/minimap_region.png
 
-#begin panel/panel_font.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:panel/panel_font.png
-
 #begin panel/panel_icons.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1080,18 +1068,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:panel/panel_icons.png
-
-#begin panel/skill_count_digits.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:panel/skill_count_digits.png
 
 #begin panel/skill_count_erase.png
 /importer:TextureImporter

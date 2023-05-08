@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Directions.Orientations;
-using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,8 @@ namespace NeoLemmixSharp.Engine.LemmingActions;
 
 public abstract class LemmingAction : IEquatable<LemmingAction>
 {
+    protected static PixelManager Terrain { get; private set; }
+
     public static ReadOnlyDictionary<string, LemmingAction> LemmingActions { get; } = RegisterAllLemmingActions();
 
     private static ReadOnlyDictionary<string, LemmingAction> RegisterAllLemmingActions()
@@ -74,7 +76,10 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
     public static ICollection<LemmingAction> AllLemmingActions => LemmingActions.Values;
 
-    protected static PixelManager Terrain => LevelScreen.CurrentLevel.Terrain;
+    public static void SetTerrain(PixelManager terrain)
+    {
+        Terrain = terrain;
+    }
 
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
 

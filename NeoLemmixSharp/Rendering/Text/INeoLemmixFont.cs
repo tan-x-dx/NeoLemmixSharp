@@ -10,5 +10,6 @@ public interface INeoLemmixFont : IDisposable
         SpriteBatch spriteBatch,
         IEnumerable<char> charactersToRender,
         int x,
-        int y);
+        int y,
+        int scaleMultiplier = 1);
 }

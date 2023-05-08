@@ -7,6 +7,7 @@ using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Sprites;
 using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,31 @@ public sealed class LevelAssembler : IDisposable
         _spriteBank = spriteBankBuilder.BuildSpriteBank(content, levelData.ThemeData, terrainSprite, levelData.AllGadgetData);
 
         SetUpTestLemmings();
+
+        levelData.SkillSet = new SkillSet()
+        {
+            NumberOfBashers = 1,
+            NumberOfBlockers = 2,
+            NumberOfBombers = 3,
+            NumberOfBuilders = 4,
+            NumberOfClimbers = 5,
+            NumberOfCloners = 6,
+            NumberOfDiggers = 7,
+            NumberOfDisarmers = 8,
+            NumberOfFencers = 9,
+            NumberOfFloaters = 10,
+            NumberOfGliders = 11,
+            NumberOfJumpers = 12,
+            NumberOfLaserers = 13,
+            NumberOfMiners = 14,
+            NumberOfPlatformers = 15,
+            NumberOfShimmiers = 16,
+            NumberOfSliders = 17,
+            NumberOfStackers = 18,
+            NumberOfStoners = 19,
+            NumberOfSwimmers = 20,
+            NumberOfWalkers = 21
+        };
     }
 
     public SpriteBank GetSpriteBank()
@@ -45,12 +71,17 @@ public sealed class LevelAssembler : IDisposable
         return _spriteBank!;
     }
 
-    public ITickable[] GetLevelTickables()
+    public Lemming[] GetLevelLemmings()
     {
-        return _lemmings.ToArray<ITickable>();
+        return _lemmings.ToArray();
     }
 
-    public ISprite[] GetLevelRenderables()
+    public ITickable[] GetLevelGadgets()
+    {
+        return Array.Empty<ITickable>();
+    }
+
+    public ISprite[] GetLevelSprites()
     {
         return _lemmings
             .Select(GetLemmingSprite)
