@@ -47,7 +47,7 @@ public sealed class LevelBuilder : IDisposable
         return new LevelScreen(
             _levelReader.LevelData,
             _levelAssembler.GetLevelLemmings(),
-            _levelAssembler.GetLevelGadgets(),
+      //      _levelAssembler.GetLevelGadgets(),
             _levelPainter.GetTerrainData(),
             _spriteBank);
     }

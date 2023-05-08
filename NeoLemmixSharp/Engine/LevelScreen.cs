@@ -16,7 +16,7 @@ public sealed class LevelScreen : BaseScreen
     public static LevelScreen CurrentLevel { get; private set; }
 
     private readonly Lemming[] _lemmings;
-    private readonly ITickable[] _gadgets;
+   // private readonly ITickable[] _gadgets;
 
     private readonly PixelManager _terrain;
     private readonly SpriteBank _spriteBank;
@@ -32,13 +32,13 @@ public sealed class LevelScreen : BaseScreen
     public LevelScreen(
         LevelData levelData,
         Lemming[] lemmings,
-        ITickable[] gadgets,
+      //  ITickable[] gadgets,
         PixelManager terrain,
         SpriteBank spriteBank)
         : base(levelData.LevelTitle)
     {
         _lemmings = lemmings;
-        _gadgets = gadgets;
+      //  _gadgets = gadgets;
 
         _terrain = terrain;
         _inputController = new LevelInputController();
@@ -59,7 +59,7 @@ public sealed class LevelScreen : BaseScreen
 
     public override void Tick()
     {
-        _inputController.Tick();
+        _inputController.Update();
 
         HandleKeyboardInput();
 

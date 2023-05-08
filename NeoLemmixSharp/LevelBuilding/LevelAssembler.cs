@@ -76,10 +76,10 @@ public sealed class LevelAssembler : IDisposable
         return _lemmings.ToArray();
     }
 
-    public ITickable[] GetLevelGadgets()
-    {
-        return Array.Empty<ITickable>();
-    }
+  //  public ITickable[] GetLevelGadgets()
+  //  {
+  //      return Array.Empty<ITickable>();
+  //  }
 
     public ISprite[] GetLevelSprites()
     {

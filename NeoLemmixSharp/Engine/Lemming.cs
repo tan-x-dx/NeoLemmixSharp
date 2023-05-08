@@ -5,7 +5,7 @@ using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
 
-public sealed class Lemming : ITickable
+public sealed class Lemming
 {
     public bool IsNeutral;
     public bool IsZombie;
