@@ -121,8 +121,6 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(new Color(24, 24, 60));
-
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
         ScreenRenderer.RenderScreen(_spriteBatch);

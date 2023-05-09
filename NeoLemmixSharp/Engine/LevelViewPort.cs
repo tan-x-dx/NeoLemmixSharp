@@ -37,6 +37,8 @@ public sealed class LevelViewport
     // Stretched to fit the screen
     public int ScreenX => _horizontalViewPortBehaviour.ScreenX;
     public int ScreenY => _verticalViewPortBehaviour.ScreenY;
+    public int ScreenWidth => _horizontalViewPortBehaviour.ScreenWidth;
+    public int ScreenHeight => _verticalViewPortBehaviour.ScreenHeight;
 
     public int NumberOfHorizontalRenderIntervals => _horizontalViewPortBehaviour.NumberOfHorizontalRenderIntervals;
     public int NumberOfVerticalRenderIntervals => _verticalViewPortBehaviour.NumberOfVerticalRenderIntervals;

@@ -1,6 +1,8 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.ControlPanel;
+using NeoLemmixSharp.Rendering.LevelRendering.BackgroundRendering;
 using NeoLemmixSharp.Rendering.LevelRendering.ControlPanelRendering;
 using NeoLemmixSharp.Rendering.Text;
 
@@ -10,8 +12,10 @@ public sealed class LevelRenderer : ScreenRenderer
 {
     private readonly LevelViewport _viewport;
 
+    private readonly IBackgroundRenderer _backgroundRenderer;
+    private readonly TerrainSprite _terrainSprite;
+    private readonly LevelCursorSprite _cursorSprite;
     private readonly ISprite[] _levelSprites;
-    private readonly SpriteBank _spriteBank;
     private readonly FontBank _fontBank;
 
     private readonly IControlPanelRenderer _controlPanelRenderer;
@@ -31,21 +35,24 @@ public sealed class LevelRenderer : ScreenRenderer
         _levelWidth = terrain.Width;
         _levelHeight = terrain.Height;
 
+        _backgroundRenderer = new SolidColourBackgroundRenderer(spriteBank, viewport, new Color(24, 24, 60));
         _viewport = viewport;
         _levelSprites = levelSprites;
-        _spriteBank = spriteBank;
+        _terrainSprite = spriteBank.TerrainSprite;
+        _cursorSprite = spriteBank.LevelCursorSprite;
         _fontBank = fontBank;
         _controlPanelRenderer = new ClassicControlPanelRenderer(spriteBank, fontBank, levelControlPanel);
     }
 
     public override void RenderScreen(SpriteBatch spriteBatch)
     {
-        _spriteBank.Render(spriteBatch);
+        _backgroundRenderer.RenderBackground(spriteBatch);
+        _terrainSprite.Render(spriteBatch);
 
         RenderSprites(spriteBatch);
 
         _controlPanelRenderer.RenderControlPanel(spriteBatch);
-        _spriteBank.LevelCursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
+        _cursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
 
         _mouseCoords = $"({_viewport.ScreenMouseX},{_viewport.ScreenMouseY}) - ({_viewport.ViewportMouseX},{_viewport.ViewportMouseY})";
         _fontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20);
