@@ -2,13 +2,18 @@
 
 public sealed class StandardLevelUpdater : ILevelUpdater
 {
-    private int _levelUpdateCount = 0;
-    private bool _levelUpdateEnabled = false;
+    private int _levelUpdateCount;
+    private int _levelUpdateMod4;
+    private bool _levelUpdateEnabled;
+    private int _bitMask = 3;
 
     public bool IsFastForwards { get; private set; }
     public void ToggleFastForwards()
     {
         IsFastForwards = !IsFastForwards;
+        _bitMask = IsFastForwards ? 1 : 3;
+        _levelUpdateMod4 = _levelUpdateCount & 3;
+        _levelUpdateEnabled = (_levelUpdateMod4 & _bitMask) == _bitMask;
     }
 
     public void UpdateLemming(Lemming lemming)
@@ -24,7 +29,7 @@ public sealed class StandardLevelUpdater : ILevelUpdater
                 lemming.Tick();
             }
         }
-        else if (lemming.FastForwardTime > 0 || _levelUpdateEnabled)
+        else if (_levelUpdateEnabled || (lemming.FastForwardTime > 0 && (_levelUpdateMod4 & 1) == 1))
         {
             lemming.Tick();
         }
@@ -33,6 +38,7 @@ public sealed class StandardLevelUpdater : ILevelUpdater
     public void Update()
     {
         _levelUpdateCount++;
-        _levelUpdateEnabled = (_levelUpdateCount & 1) == 1;
+        _levelUpdateMod4 = _levelUpdateCount & 3;
+        _levelUpdateEnabled = (_levelUpdateMod4 & _bitMask) == _bitMask;
     }
 }

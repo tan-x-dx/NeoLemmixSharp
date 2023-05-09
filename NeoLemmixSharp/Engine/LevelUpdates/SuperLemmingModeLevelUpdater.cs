@@ -2,7 +2,8 @@
 
 public sealed class SuperLemmingModeLevelUpdater : ILevelUpdater
 {
-    private int _levelUpdateCount = 0;
+    private int _levelUpdateCount;
+    private bool _levelUpdateEnabled;
 
     public bool IsFastForwards => true;
     public void ToggleFastForwards()
@@ -15,8 +16,7 @@ public sealed class SuperLemmingModeLevelUpdater : ILevelUpdater
         if (!lemming.ShouldTick)
             return;
 
-        lemming.Tick();
-        if (lemming.FastForwardTime > 0)
+        if (lemming.FastForwardTime > 0 || _levelUpdateEnabled)
         {
             lemming.Tick();
         }
@@ -25,5 +25,6 @@ public sealed class SuperLemmingModeLevelUpdater : ILevelUpdater
     public void Update()
     {
         _levelUpdateCount++;
+        _levelUpdateEnabled = (_levelUpdateCount & 1) == 1;
     }
 }

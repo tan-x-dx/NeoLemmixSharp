@@ -13,7 +13,7 @@ namespace NeoLemmixSharp;
 public sealed class NeoLemmixGame : Game, IGameWindow
 {
     private readonly GraphicsDeviceManager _graphics;
-    private readonly TimeSpan _standardGameUps = TimeSpan.FromSeconds(1d / 34d);
+    private readonly TimeSpan _standardGameUps = TimeSpan.FromSeconds(1d / 68d);
 
     private FontBank _fontBank;
     private Point _gameResolution = new(960, 720);

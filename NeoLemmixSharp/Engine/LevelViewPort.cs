@@ -51,7 +51,7 @@ public sealed class LevelViewport
         _horizontalViewPortBehaviour = terrain.HorizontalViewPortBehaviour;
         _verticalViewPortBehaviour = terrain.VerticalViewPortBehaviour;
 
-        _scrollDelta = 4 * MaxScale / ScaleMultiplier;
+        _scrollDelta = MaxScale / ScaleMultiplier;
     }
 
     public void SetWindowDimensions(int gameWindowWidth, int gameWindowHeight, int controlPanelHeight)
@@ -146,7 +146,7 @@ public sealed class LevelViewport
         _verticalViewPortBehaviour.ScrollVertically(0);
         _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
 
-        _scrollDelta = 4 * MaxScale / ScaleMultiplier;
+        _scrollDelta = MaxScale / ScaleMultiplier;
     }
 
     public RenderInterval GetHorizontalRenderInterval(int i) => _horizontalViewPortBehaviour.GetHorizontalRenderInterval(i);
