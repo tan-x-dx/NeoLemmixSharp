@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LemmingSkills;
+using NeoLemmixSharp.Engine.LevelUpdates;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Rendering.LevelRendering;
@@ -15,9 +16,6 @@ public sealed class LevelScreen : BaseScreen
 {
     public static LevelScreen CurrentLevel { get; private set; }
 
-    private readonly Lemming[] _lemmings;
-   // private readonly ITickable[] _gadgets;
-
     private readonly PixelManager _terrain;
     private readonly SpriteBank _spriteBank;
 
@@ -25,6 +23,10 @@ public sealed class LevelScreen : BaseScreen
     private readonly LevelViewport _viewport;
     private readonly LevelInputController _inputController;
     private readonly LevelControlPanel _controlPanel;
+    private readonly ILevelUpdater _levelUpdater;
+
+    private readonly Lemming[] _lemmings;
+    // private readonly ITickable[] _gadgets;
 
     private bool _stopMotion = true;
     private bool _doTick;
@@ -32,17 +34,18 @@ public sealed class LevelScreen : BaseScreen
     public LevelScreen(
         LevelData levelData,
         Lemming[] lemmings,
-      //  ITickable[] gadgets,
+        //  ITickable[] gadgets,
         PixelManager terrain,
         SpriteBank spriteBank)
         : base(levelData.LevelTitle)
     {
         _lemmings = lemmings;
-      //  _gadgets = gadgets;
+        //  _gadgets = gadgets;
 
         _terrain = terrain;
         _inputController = new LevelInputController();
 
+        _levelUpdater = new StandardLevelUpdater();
         _controlPanel = new LevelControlPanel(levelData.SkillSet, _inputController);
         _levelCursor = new LevelCursor(_controlPanel, _inputController, _lemmings);
         _viewport = new LevelViewport(terrain, _levelCursor, _inputController);
@@ -70,11 +73,11 @@ public sealed class LevelScreen : BaseScreen
 
         for (var i = 0; i < _lemmings.Length; i++)
         {
-            if (_lemmings[i].ShouldTick)
-            {
-                _lemmings[i].Tick();
-            }
+            var lemming = _lemmings[i];
+            _levelUpdater.UpdateLemming(lemming);
         }
+
+        _levelUpdater.Update();
     }
 
     private void HandleKeyboardInput()
@@ -94,7 +97,7 @@ public sealed class LevelScreen : BaseScreen
 
         if (ToggleFastForwards)
         {
-            GameWindow.SetFastForwards(!GameWindow.IsFastForwards);
+            _levelUpdater.ToggleFastForwards();
         }
 
         if (ToggleFullScreen)

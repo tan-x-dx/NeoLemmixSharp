@@ -40,6 +40,8 @@ public sealed class Lemming
     public int TrueDistanceFallen;
     public int LaserRemainTime;
 
+    public int FastForwardTime = 0;
+
     public LevelPosition DehoistPin;
     public LevelPosition LaserHitLevelPosition;
     public LevelPosition LevelPosition;

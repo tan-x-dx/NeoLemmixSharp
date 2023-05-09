@@ -222,7 +222,7 @@ public sealed class LevelControlPanel
     {
         TrackScrollWheel();
 
-        if (_controller.LeftMouseButtonStatus != MouseButtonStatus.MouseButtonPressed)
+        if ((_controller.LeftMouseButtonStatus & MouseButtonStatus.MouseButtonPressed) == MouseButtonStatus.MouseButtonUnpressed)
             return;
 
         var mouseX = _controller.MouseX;

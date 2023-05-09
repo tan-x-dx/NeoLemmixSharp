@@ -13,8 +13,7 @@ namespace NeoLemmixSharp;
 public sealed class NeoLemmixGame : Game, IGameWindow
 {
     private readonly GraphicsDeviceManager _graphics;
-    private readonly TimeSpan _standardGameUps = TimeSpan.FromSeconds(1d / 17d);
-    private readonly TimeSpan _fastForwardsGameUps = TimeSpan.FromSeconds(1d / 68d);
+    private readonly TimeSpan _standardGameUps = TimeSpan.FromSeconds(1d / 34d);
 
     private FontBank _fontBank;
     private Point _gameResolution = new(960, 720);
@@ -23,7 +22,6 @@ public sealed class NeoLemmixGame : Game, IGameWindow
     public int WindowWidth => _graphics.PreferredBackBufferWidth;
     public int WindowHeight => _graphics.PreferredBackBufferHeight;
     public bool IsFullScreen => _graphics.IsFullScreen;
-    public bool IsFastForwards { get; private set; }
 
     public BaseScreen Screen { get; set; }
     public ScreenRenderer ScreenRenderer { get; set; }
@@ -150,20 +148,6 @@ public sealed class NeoLemmixGame : Game, IGameWindow
         _graphics.IsFullScreen = !_graphics.IsFullScreen;
         _graphics.ApplyChanges();
         CaptureCursor();
-    }
-
-    public void SetFastForwards(bool fastForwards)
-    {
-        if (fastForwards)
-        {
-            TargetElapsedTime = _fastForwardsGameUps;
-            IsFastForwards = true;
-        }
-        else
-        {
-            TargetElapsedTime = _standardGameUps;
-            IsFastForwards = false;
-        }
     }
 
     public void Escape()
