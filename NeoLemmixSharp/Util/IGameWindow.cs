@@ -7,9 +7,8 @@ public interface IGameWindow
 
     bool IsActive { get; }
     bool IsFullScreen { get; }
-    bool IsFastForwards { get; }
 
     void ToggleFullScreen();
-    void SetFastForwards(bool fastForwards);
+    void ToggleBorderless();
     void Escape();
 }

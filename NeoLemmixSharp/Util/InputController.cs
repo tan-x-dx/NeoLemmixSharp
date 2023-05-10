@@ -1,12 +1,10 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using NeoLemmixSharp.Engine;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace NeoLemmixSharp.Util;
 
-public abstract class InputController<T> : ITickable
+public abstract class InputController<T>
     where T : IKeyAction
 {
     private readonly Dictionary<int, T> _keyMapping;
@@ -39,7 +37,7 @@ public abstract class InputController<T> : ITickable
         _previousKeyActions = new IntBasedBitArray();
     }
 
-    public void Tick()
+    public void Update()
     {
         _currentKeyActions.Clear();
 
@@ -132,9 +130,6 @@ public abstract class InputController<T> : ITickable
             : MouseButtonStatus.MouseButtonUnpressed;
         RightMouseButtonStatus = rightMouseCurrentlyDown | rightMousePreviouslyDown;
     }
-
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    bool ITickable.ShouldTick => true;
 }
 
 [Flags]

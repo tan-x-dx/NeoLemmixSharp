@@ -76,10 +76,10 @@ public sealed class LevelAssembler : IDisposable
         return _lemmings.ToArray();
     }
 
-    public ITickable[] GetLevelGadgets()
-    {
-        return Array.Empty<ITickable>();
-    }
+  //  public ITickable[] GetLevelGadgets()
+  //  {
+  //      return Array.Empty<ITickable>();
+  //  }
 
     public ISprite[] GetLevelSprites()
     {
@@ -121,7 +121,8 @@ public sealed class LevelAssembler : IDisposable
             //  LevelPosition = new LevelPosition(692, 72),
             LevelPosition = new LevelPosition(60, 20),
             Orientation = LeftOrientation.Instance,
-            IsClimber = true
+            IsClimber = true,
+            FastForwardTime = 1
         };
 
         var lemming3 = new Lemming

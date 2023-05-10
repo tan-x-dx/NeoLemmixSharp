@@ -5,7 +5,7 @@ using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
 
-public sealed class Lemming : ITickable
+public sealed class Lemming
 {
     public bool IsNeutral;
     public bool IsZombie;
@@ -39,6 +39,8 @@ public sealed class Lemming : ITickable
     public int DistanceFallen;
     public int TrueDistanceFallen;
     public int LaserRemainTime;
+
+    public int FastForwardTime = 0;
 
     public LevelPosition DehoistPin;
     public LevelPosition LaserHitLevelPosition;
