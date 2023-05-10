@@ -9,5 +9,6 @@ public interface IGameWindow
     bool IsFullScreen { get; }
 
     void ToggleFullScreen();
+    void ToggleBorderless();
     void Escape();
 }

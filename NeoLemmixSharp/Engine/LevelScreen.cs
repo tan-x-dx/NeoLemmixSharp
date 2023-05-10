@@ -102,7 +102,7 @@ public sealed class LevelScreen : BaseScreen
 
         if (ToggleFullScreen)
         {
-            GameWindow.ToggleFullScreen();
+            GameWindow.ToggleBorderless();
         }
     }
 
