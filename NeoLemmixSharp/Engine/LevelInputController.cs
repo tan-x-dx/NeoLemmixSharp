@@ -13,6 +13,7 @@ public sealed class LevelInputController : InputController<LevelKeyboardAction>
     public LevelKeyboardAction ToggleFastForwards { get; }
 
     public LevelInputController()
+        : base(4)
     {
         Pause = CreateAction();
         Quit = CreateAction();

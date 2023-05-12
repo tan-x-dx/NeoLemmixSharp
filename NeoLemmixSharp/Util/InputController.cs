@@ -5,51 +5,43 @@ using System.Collections.Generic;
 namespace NeoLemmixSharp.Util;
 
 public abstract class InputController<T>
-    where T : IKeyAction
+    where T : class, IKeyAction
 {
     private readonly Dictionary<int, T> _keyMapping;
-    private readonly IBitArray _keys;
+    private readonly bool[] _keys;
+    private readonly int[] _keyActionStatuses;
 
-    private IBitArray _previousKeyActions;
-    private IBitArray _currentKeyActions;
-
-    private int _currentScrollValue;
     private int _previousScrollValue;
-
-    private bool _currentMouseLeftDown;
-    private bool _previousMouseLeftDown;
-
-    private bool _currentMouseRightDown;
-    private bool _previousMouseRightDown;
 
     public int MouseX { get; private set; }
     public int MouseY { get; private set; }
 
-    public ScrollDelta ScrollDelta { get; private set; }
-    public MouseButtonStatus LeftMouseButtonStatus { get; private set; }
-    public MouseButtonStatus RightMouseButtonStatus { get; private set; }
+    public int ScrollDelta { get; private set; }
+    public int LeftMouseButtonStatus { get; private set; }
+    public int RightMouseButtonStatus { get; private set; }
 
-    protected InputController()
+    protected InputController(int numberOfKeyboardInputs)
     {
         _keyMapping = new Dictionary<int, T>();
-        _keys = new ArrayBasedBitArray(256);
-        _currentKeyActions = new IntBasedBitArray();
-        _previousKeyActions = new IntBasedBitArray();
+        _keys = new bool[256];
+
+        _keyActionStatuses = new int[numberOfKeyboardInputs];
     }
 
     public void Update()
     {
-        _currentKeyActions.Clear();
+        for (var i = 0; i < _keyActionStatuses.Length; i++)
+        {
+            _keyActionStatuses[i] = (_keyActionStatuses[i] << 1) & 2;
+        }
 
         foreach (var (keyValue, action) in _keyMapping)
         {
-            if (_keys.GetBit(keyValue))
+            if (_keys[keyValue])
             {
-                _currentKeyActions.SetBit(action.Id);
+                _keyActionStatuses[action.Id] |= KeyStatusConsts.KeyPressed;
             }
         }
-
-        (_previousKeyActions, _currentKeyActions) = (_currentKeyActions, _previousKeyActions);
 
         UpdateKeysDown();
         UpdateMouseState();
@@ -60,31 +52,23 @@ public abstract class InputController<T>
         _keyMapping.Add((int)keyCode, keyAction);
     }
 
-    public KeyStatus CheckKeyDown(T keyAction)
+    public int CheckKeyDown(T keyAction)
     {
-        var previouslyDown = _previousKeyActions.GetBit(keyAction.Id)
-            ? KeyStatus.KeyPressed
-            : KeyStatus.KeyUnpressed;
-        var currentlyDown = _currentKeyActions.GetBit(keyAction.Id)
-            ? KeyStatus.KeyReleased
-            : KeyStatus.KeyUnpressed;
-
-        return previouslyDown | currentlyDown;
+        return _keyActionStatuses[keyAction.Id];
     }
 
     public void ReleaseAllKeys()
     {
-        _keys.Clear();
+        Array.Clear(_keys);
     }
 
     private void UpdateKeysDown()
     {
-        var keyboardState = Keyboard.GetState();
-        var currentlyPressedKeys = keyboardState.GetPressedKeys();
-        _keys.Clear();
+        var currentlyPressedKeys = Keyboard.GetState().GetPressedKeys();
+        Array.Clear(_keys);
         for (var i = 0; i < currentlyPressedKeys.Length; i++)
         {
-            _keys.SetBit((int)currentlyPressedKeys[i]);
+            _keys[(int)currentlyPressedKeys[i]] = true;
         }
     }
 
@@ -94,65 +78,34 @@ public abstract class InputController<T>
         MouseX = mouseState.X;
         MouseY = mouseState.Y;
 
-        _previousScrollValue = _currentScrollValue;
-        _currentScrollValue = mouseState.ScrollWheelValue;
+        var currentScrollValue = mouseState.ScrollWheelValue;
+        ScrollDelta = Math.Sign(currentScrollValue - _previousScrollValue);
+        _previousScrollValue = currentScrollValue;
 
-        if (_previousScrollValue < _currentScrollValue)
-        {
-            ScrollDelta = ScrollDelta.Positive;
-        }
-        else if (_previousScrollValue > _currentScrollValue)
-        {
-            ScrollDelta = ScrollDelta.Negative;
-        }
-        else
-        {
-            ScrollDelta = ScrollDelta.None;
-        }
-
-        _previousMouseLeftDown = _currentMouseLeftDown;
-        _currentMouseLeftDown = mouseState.LeftButton == ButtonState.Pressed;
-        var leftMousePreviouslyDown = _previousMouseLeftDown
-            ? MouseButtonStatus.MouseButtonPressed
-            : MouseButtonStatus.MouseButtonUnpressed;
-        var leftMouseCurrentlyDown = _currentMouseLeftDown
-            ? MouseButtonStatus.MouseButtonReleased
-            : MouseButtonStatus.MouseButtonUnpressed;
-        LeftMouseButtonStatus = leftMouseCurrentlyDown | leftMousePreviouslyDown;
-
-        _previousMouseRightDown = _currentMouseRightDown;
-        _currentMouseRightDown = mouseState.RightButton == ButtonState.Pressed;
-        var rightMousePreviouslyDown = _previousMouseRightDown
-            ? MouseButtonStatus.MouseButtonPressed
-            : MouseButtonStatus.MouseButtonUnpressed;
-        var rightMouseCurrentlyDown = _currentMouseRightDown
-            ? MouseButtonStatus.MouseButtonReleased
-            : MouseButtonStatus.MouseButtonUnpressed;
-        RightMouseButtonStatus = rightMouseCurrentlyDown | rightMousePreviouslyDown;
+        LeftMouseButtonStatus = ((LeftMouseButtonStatus << 1) & 2) | (int)mouseState.LeftButton;
+        RightMouseButtonStatus = ((RightMouseButtonStatus << 1) & 2) | (int)mouseState.RightButton;
     }
 }
 
-[Flags]
-public enum KeyStatus
+public static class KeyStatusConsts
 {
-    KeyUnpressed = 0,
-    KeyPressed = 1,
-    KeyReleased = 2,
-    KeyHeld = 3
+    public const int KeyUnpressed = 0;
+    public const int KeyPressed = 1;
+    public const int KeyReleased = 2;
+    public const int KeyHeld = 3;
 }
 
-[Flags]
-public enum MouseButtonStatus
+public static class MouseButtonStatusConsts
 {
-    MouseButtonUnpressed = 0,
-    MouseButtonPressed = 1,
-    MouseButtonReleased = 2,
-    MouseButtonHeld = 3
+    public const int MouseButtonUnpressed = 0;
+    public const int MouseButtonPressed = 1;
+    public const int MouseButtonReleased = 2;
+    public const int MouseButtonHeld = 3;
 }
 
-public enum ScrollDelta
+public static class ScrollDeltaConsts
 {
-    Negative = -1,
-    None = 0,
-    Positive = 1
+    public const int Negative = -1;
+    public const int None = 0;
+    public const int Positive = 1;
 }

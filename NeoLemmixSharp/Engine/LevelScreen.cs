@@ -113,7 +113,7 @@ public sealed class LevelScreen : BaseScreen
 
         if (_viewport.HandleMouseInput())
         {
-            if (_inputController.LeftMouseButtonStatus == MouseButtonStatus.MouseButtonPressed)
+            if (_inputController.LeftMouseButtonStatus == MouseButtonStatusConsts.MouseButtonPressed)
             {
                 _doTick = true;
             }
@@ -168,8 +168,8 @@ public sealed class LevelScreen : BaseScreen
             _controlPanel);
     }
 
-    private bool Pause => _inputController.CheckKeyDown(_inputController.Pause) == KeyStatus.KeyPressed;
-    private bool Quit => _inputController.CheckKeyDown(_inputController.Quit) == KeyStatus.KeyPressed;
-    private bool ToggleFullScreen => _inputController.CheckKeyDown(_inputController.ToggleFullScreen) == KeyStatus.KeyPressed;
-    private bool ToggleFastForwards => _inputController.CheckKeyDown(_inputController.ToggleFastForwards) == KeyStatus.KeyPressed;
+    private bool Pause => _inputController.CheckKeyDown(_inputController.Pause) == KeyStatusConsts.KeyPressed;
+    private bool Quit => _inputController.CheckKeyDown(_inputController.Quit) == KeyStatusConsts.KeyPressed;
+    private bool ToggleFullScreen => _inputController.CheckKeyDown(_inputController.ToggleFullScreen) == KeyStatusConsts.KeyPressed;
+    private bool ToggleFastForwards => _inputController.CheckKeyDown(_inputController.ToggleFastForwards) == KeyStatusConsts.KeyPressed;
 }

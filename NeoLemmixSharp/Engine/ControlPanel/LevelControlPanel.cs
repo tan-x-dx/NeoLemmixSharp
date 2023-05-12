@@ -220,9 +220,12 @@ public sealed class LevelControlPanel
 
     public void HandleMouseInput()
     {
-        TrackScrollWheel();
+        if (_skillAssignButtons.Length > MaxNumberOfSkillButtons)
+        {
+            TrackScrollWheel();
+        }
 
-        if ((_controller.LeftMouseButtonStatus & MouseButtonStatus.MouseButtonPressed) == MouseButtonStatus.MouseButtonUnpressed)
+        if ((_controller.LeftMouseButtonStatus & MouseButtonStatusConsts.MouseButtonPressed) == MouseButtonStatusConsts.MouseButtonUnpressed)
             return;
 
         var mouseX = _controller.MouseX;
@@ -239,25 +242,8 @@ public sealed class LevelControlPanel
 
     private void TrackScrollWheel()
     {
-        var scrollDelta = _controller.ScrollDelta;
-
-        if (scrollDelta == ScrollDelta.Negative)
-        {
-            ScrollSkillPanel(1);
-        }
-        else if (scrollDelta == ScrollDelta.Positive)
-        {
-            ScrollSkillPanel(-1);
-        }
-    }
-
-    private void ScrollSkillPanel(int delta)
-    {
-        if (_skillAssignButtons.Length <= MaxNumberOfSkillButtons)
-            return;
-
         var previousValue = SkillPanelScroll;
-        SkillPanelScroll = Math.Clamp(SkillPanelScroll + delta, 0, _maxSkillPanelScroll);
+        SkillPanelScroll = Math.Clamp(SkillPanelScroll - _controller.ScrollDelta, 0, _maxSkillPanelScroll);
         if (SkillPanelScroll == previousValue)
             return;
 

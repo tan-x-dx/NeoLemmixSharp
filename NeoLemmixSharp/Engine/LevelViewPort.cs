@@ -133,10 +133,8 @@ public sealed class LevelViewport
 
     private void TrackScrollWheel()
     {
-        var scaleMultiplierDelta = (int)_controller.ScrollDelta;
-
         var previousValue = ScaleMultiplier;
-        ScaleMultiplier = Math.Clamp(ScaleMultiplier + scaleMultiplierDelta, MinScale, MaxScale);
+        ScaleMultiplier = Math.Clamp(ScaleMultiplier + _controller.ScrollDelta, MinScale, MaxScale);
 
         if (ScaleMultiplier == previousValue)
             return;

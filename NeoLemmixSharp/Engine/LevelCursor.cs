@@ -29,7 +29,7 @@ public sealed class LevelCursor
     {
         CheckLemmingsUnderCursor();
 
-        if ((_controller.LeftMouseButtonStatus & MouseButtonStatus.MouseButtonPressed) == MouseButtonStatus.MouseButtonUnpressed)
+        if ((_controller.LeftMouseButtonStatus & MouseButtonStatusConsts.MouseButtonPressed) == MouseButtonStatusConsts.MouseButtonUnpressed)
             return;
 
         if (_lemmingUnderCursor != null && _controlPanel.SelectedSkill is not null)
