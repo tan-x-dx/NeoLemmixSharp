@@ -12,6 +12,9 @@ public sealed class DownOrientation : Orientation
     }
 
     public override int RotNum => 0;
+    public override int AbsoluteHorizontalComponent => 0;
+    public override int AbsoluteVerticalComponent => 1;
+
     public override LevelPosition TopLeftCornerOfLevel() => new(0, 0);
     public override LevelPosition TopRightCornerOfLevel() => new(Terrain.Width, 0);
     public override LevelPosition BottomLeftCornerOfLevel() => new(0, Terrain.Height);

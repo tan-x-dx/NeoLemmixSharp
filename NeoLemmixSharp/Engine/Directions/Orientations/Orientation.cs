@@ -31,6 +31,8 @@ public abstract class Orientation : IEquatable<Orientation>
     }
 
     public abstract int RotNum { get; }
+    public abstract int AbsoluteHorizontalComponent { get; }
+    public abstract int AbsoluteVerticalComponent { get; }
 
     public abstract LevelPosition TopLeftCornerOfLevel();
     public abstract LevelPosition TopRightCornerOfLevel();
@@ -69,6 +71,9 @@ public abstract class Orientation : IEquatable<Orientation>
     public abstract ActionSprite GetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle);
     public abstract void SetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite leftSprite);
     public abstract void SetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite rightSprite);
+
+    public bool IsParallelTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteVerticalComponent == 0);
+    public bool IsPerpendicularTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteHorizontalComponent == 0);
 
     public bool Equals(Orientation? other) => RotNum == (other?.RotNum ?? -1);
     public sealed override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;
