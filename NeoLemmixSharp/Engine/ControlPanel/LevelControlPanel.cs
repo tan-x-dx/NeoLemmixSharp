@@ -54,7 +54,7 @@ public sealed class LevelControlPanel
 
     public int ControlPanelScreenHeight { get; private set; }
 
-    public LemmingSkill? SelectedSkill => _selectedSkillAssignButton?.LemmingSkill;
+    public LemmingSkill SelectedSkill => _selectedSkillAssignButton?.LemmingSkill ?? NoneSkill.Instance;
 
     public LevelControlPanel(SkillSet skillSet, LevelInputController controller)
     {

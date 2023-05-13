@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.ControlPanel;
+using NeoLemmixSharp.Engine.LemmingSkills;
 using NeoLemmixSharp.Util;
 using System;
 
@@ -32,7 +33,7 @@ public sealed class LevelCursor
         if ((_controller.LeftMouseButtonStatus & MouseButtonStatusConsts.MouseButtonPressed) == MouseButtonStatusConsts.MouseButtonUnpressed)
             return;
 
-        if (_lemmingUnderCursor != null && _controlPanel.SelectedSkill is not null)
+        if (_lemmingUnderCursor != null && _controlPanel.SelectedSkill != NoneSkill.Instance)
         {
             _controlPanel.SelectedSkill.AssignToLemming(_lemmingUnderCursor);
         }
@@ -104,7 +105,7 @@ public sealed class LevelCursor
             }
 
             // Can this lemming actually receive the skill?
-            if (!_controlPanel.SelectedSkill?.CanAssignToLemming(lemming) ?? false)
+            if (!_controlPanel.SelectedSkill.CanAssignToLemming(lemming))
             {
                 curPriorityBox = 8;
             }

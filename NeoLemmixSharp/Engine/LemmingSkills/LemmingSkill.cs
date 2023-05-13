@@ -16,6 +16,8 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
     {
         var result = new Dictionary<string, LemmingSkill>();
 
+        RegisterLemmingSkill(NoneSkill.Instance);
+
         RegisterLemmingSkill(BasherSkill.Instance);
         RegisterLemmingSkill(BlockerSkill.Instance);
         RegisterLemmingSkill(BomberSkill.Instance);
