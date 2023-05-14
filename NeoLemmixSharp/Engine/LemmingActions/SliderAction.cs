@@ -86,8 +86,8 @@ public sealed class SliderAction : LemmingAction
 
     private static bool SliderHasPixelAt(
         Orientation orientation,
-        LevelPosition levelPosition,
-        LevelPosition dehoistPin)
+        in LevelPosition levelPosition,
+        in LevelPosition dehoistPin)
     {
         if (Terrain.GetPixelData(dehoistPin).IsSolid)
             return true;

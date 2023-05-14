@@ -20,42 +20,42 @@ public sealed class DownOrientation : Orientation
     public override LevelPosition BottomLeftCornerOfLevel() => new(0, Terrain.Height);
     public override LevelPosition BottomRightCornerOfLevel() => new(Terrain.Width, Terrain.Height);
 
-    public override LevelPosition MoveRight(LevelPosition position, int step)
+    public override LevelPosition MoveRight(in LevelPosition position, int step)
     {
         return Terrain.NormalisePosition(new LevelPosition(position.X + step, position.Y));
     }
 
-    public override LevelPosition MoveUp(LevelPosition position, int step)
+    public override LevelPosition MoveUp(in LevelPosition position, int step)
     {
         return Terrain.NormalisePosition(new LevelPosition(position.X, position.Y - step));
     }
 
-    public override LevelPosition MoveLeft(LevelPosition position, int step)
+    public override LevelPosition MoveLeft(in LevelPosition position, int step)
     {
         return Terrain.NormalisePosition(new LevelPosition(position.X - step, position.Y));
     }
 
-    public override LevelPosition MoveDown(LevelPosition position, int step)
+    public override LevelPosition MoveDown(in LevelPosition position, int step)
     {
         return Terrain.NormalisePosition(new LevelPosition(position.X, position.Y + step));
     }
 
-    public override LevelPosition Move(LevelPosition position, LevelPosition relativeDirection)
+    public override LevelPosition Move(in LevelPosition position, in LevelPosition relativeDirection)
     {
         return Terrain.NormalisePosition(new LevelPosition(position.X + relativeDirection.X, position.Y - relativeDirection.Y));
     }
 
-    public override LevelPosition Move(LevelPosition position, int dx, int dy)
+    public override LevelPosition Move(in LevelPosition position, int dx, int dy)
     {
         return Terrain.NormalisePosition(new LevelPosition(position.X + dx, position.Y - dy));
     }
 
-    public override bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X == secondPosition.X;
-    public override bool MatchesVertically(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y == secondPosition.Y;
-    public override bool FirstIsAboveSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y < secondPosition.Y;
-    public override bool FirstIsBelowSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y > secondPosition.Y;
-    public override bool FirstIsToLeftOfSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X < secondPosition.X;
-    public override bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X > secondPosition.X;
+    public override bool MatchesHorizontally(in LevelPosition firstPosition, in LevelPosition secondPosition) => firstPosition.X == secondPosition.X;
+    public override bool MatchesVertically(in LevelPosition firstPosition, in LevelPosition secondPosition) => firstPosition.Y == secondPosition.Y;
+    public override bool FirstIsAboveSecond(in LevelPosition firstPosition, in LevelPosition secondPosition) => firstPosition.Y < secondPosition.Y;
+    public override bool FirstIsBelowSecond(in LevelPosition firstPosition, in LevelPosition secondPosition) => firstPosition.Y > secondPosition.Y;
+    public override bool FirstIsToLeftOfSecond(in LevelPosition firstPosition, in LevelPosition secondPosition) => firstPosition.X < secondPosition.X;
+    public override bool FirstIsToRightOfSecond(in LevelPosition firstPosition, in LevelPosition secondPosition) => firstPosition.X > secondPosition.X;
 
     public override ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle)
     {
