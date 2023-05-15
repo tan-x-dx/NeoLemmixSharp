@@ -51,14 +51,14 @@ public sealed class PixelManager
         _terrainSprite = terrainSprite;
     }
 
-    public LevelPosition NormalisePosition(LevelPosition levelPosition)
+    public LevelPosition NormalisePosition(in LevelPosition levelPosition)
     {
         return new LevelPosition(
             HorizontalViewPortBehaviour.NormaliseX(levelPosition.X),
             VerticalViewPortBehaviour.NormaliseY(levelPosition.Y));
     }
 
-    public bool PositionOutOfBounds(LevelPosition levelPosition)
+    public bool PositionOutOfBounds(in LevelPosition levelPosition)
     {
         return levelPosition.X < 0 ||
                levelPosition.X >= Width ||
@@ -66,7 +66,7 @@ public sealed class PixelManager
                levelPosition.Y >= Height;
     }
 
-    public PixelData GetPixelData(LevelPosition levelPosition)
+    public PixelData GetPixelData(in LevelPosition levelPosition)
     {
         if (PositionOutOfBounds(levelPosition))
             return _voidPixel;
@@ -81,7 +81,7 @@ public sealed class PixelManager
         return _data[index];
     }
 
-    public void ErasePixel(LevelPosition pixelToErase)
+    public void ErasePixel(in LevelPosition pixelToErase)
     {
         var index = Width * pixelToErase.Y + pixelToErase.X;
         var pixel = _data[index];
@@ -94,7 +94,7 @@ public sealed class PixelManager
         }
     }
 
-    public void SetSolidPixel(LevelPosition pixelToSet, uint colour)
+    public void SetSolidPixel(in LevelPosition pixelToSet, uint colour)
     {
         var pixel = GetPixelData(pixelToSet);
         if (pixel is { IsVoid: false, IsSolid: false })

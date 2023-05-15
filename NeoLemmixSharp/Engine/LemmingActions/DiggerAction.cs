@@ -17,6 +17,7 @@ public sealed class DiggerAction : LemmingAction
     public override string LemmingActionName => "digger";
     public override int NumberOfAnimationFrames => NumberOfDiggerAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

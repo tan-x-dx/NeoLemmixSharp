@@ -14,6 +14,7 @@ public sealed class AscenderAction : LemmingAction
     public override string LemmingActionName => "ascender";
     public override int NumberOfAnimationFrames => NumberOfAscenderAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

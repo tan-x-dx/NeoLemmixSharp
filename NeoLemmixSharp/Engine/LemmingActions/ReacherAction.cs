@@ -19,6 +19,7 @@ public sealed class ReacherAction : LemmingAction
     public override string LemmingActionName => "reacher";
     public override int NumberOfAnimationFrames => NumberOfReacherAnimationFrames;
     public override bool IsOneTimeAction => true;
+    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

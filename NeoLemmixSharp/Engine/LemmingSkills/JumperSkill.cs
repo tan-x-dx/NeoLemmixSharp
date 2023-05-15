@@ -4,9 +4,7 @@ namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class JumperSkill : LemmingSkill
 {
-    public static JumperSkill Instance { get; } = new();
-
-    private JumperSkill()
+    public JumperSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 

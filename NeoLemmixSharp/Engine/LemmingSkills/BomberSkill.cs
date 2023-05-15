@@ -2,9 +2,7 @@
 
 public sealed class BomberSkill : LemmingSkill
 {
-    public static BomberSkill Instance { get; } = new();
-
-    private BomberSkill()
+    public BomberSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 
@@ -14,7 +12,7 @@ public sealed class BomberSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return LemmingActionCanBeAssignedPermanentSkill(lemming);
+        return lemming.CurrentAction.CanBeAssignedPermanentSkill;
     }
 
     public override bool AssignToLemming(Lemming lemming)

@@ -14,6 +14,7 @@ public sealed class SplatterAction : LemmingAction
     public override string LemmingActionName => "splatter";
     public override int NumberOfAnimationFrames => NumberOfSplatterAnimationFrames;
     public override bool IsOneTimeAction => true;
+    public override bool CanBeAssignedPermanentSkill => false;
 
     public override bool UpdateLemming(Lemming lemming)
     {

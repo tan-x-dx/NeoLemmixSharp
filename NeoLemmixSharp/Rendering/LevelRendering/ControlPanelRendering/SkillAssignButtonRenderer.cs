@@ -74,7 +74,7 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 
         _skillCountDigitFont.RenderText(
             spriteBatch,
-            _skillAssignButton.NumberOfSkillsAvailable.ToString(),
+            _skillAssignButton.LemmingSkill.CurrentNumberOfSkillsAvailable.ToString(),
             destRectangle.X + dx,
             destRectangle.Y + _skillAssignButton.ScaleMultiplier,
             _skillAssignButton.ScaleMultiplier);

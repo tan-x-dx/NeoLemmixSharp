@@ -4,9 +4,7 @@ namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class LasererSkill : LemmingSkill
 {
-    public static LasererSkill Instance { get; } = new();
-
-    private LasererSkill()
+    public LasererSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 

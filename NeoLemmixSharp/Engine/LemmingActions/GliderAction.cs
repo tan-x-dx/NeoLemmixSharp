@@ -14,6 +14,7 @@ public sealed class GliderAction : LemmingAction
     public override string LemmingActionName => "glider";
     public override int NumberOfAnimationFrames => NumberOfGliderAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -2,9 +2,7 @@
 
 public sealed class GliderSkill : LemmingSkill
 {
-    public static GliderSkill Instance { get; } = new();
-
-    private GliderSkill()
+    public GliderSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 
@@ -14,7 +12,7 @@ public sealed class GliderSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !(lemming.IsGlider || lemming.IsFloater) && LemmingActionCanBeAssignedPermanentSkill(lemming);
+        return !(lemming.IsGlider || lemming.IsFloater) && lemming.CurrentAction.CanBeAssignedPermanentSkill;
     }
 
     public override bool AssignToLemming(Lemming lemming)

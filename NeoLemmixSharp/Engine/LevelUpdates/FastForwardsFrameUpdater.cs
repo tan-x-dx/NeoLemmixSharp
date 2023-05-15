@@ -1,22 +1,13 @@
 ﻿namespace NeoLemmixSharp.Engine.LevelUpdates;
 
-public sealed class SuperLemmingModeLevelUpdater : ILevelUpdater
+public sealed class FastForwardsFrameUpdater : IFrameUpdater
 {
     private int _levelUpdateCount;
     private bool _levelUpdateEnabled;
 
-    public bool IsFastForwards => true;
-    public void ToggleFastForwards()
-    {
-        // Do nothing - always fast forwards
-    }
-
     public void UpdateLemming(Lemming lemming)
     {
-        if (!lemming.ShouldTick)
-            return;
-
-        if (lemming.FastForwardTime > 0 || _levelUpdateEnabled)
+        if (lemming.ShouldTick && (lemming.FastForwardTime > 0 || _levelUpdateEnabled))
         {
             lemming.Tick();
         }

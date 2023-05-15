@@ -1,9 +1,8 @@
 ﻿namespace NeoLemmixSharp.Engine.LevelUpdates;
 
-public interface ILevelUpdater
+public interface IFrameUpdater
 {
-    bool IsFastForwards { get; }
-    void ToggleFastForwards();
     void UpdateLemming(Lemming lemming);
+
     void Update();
 }

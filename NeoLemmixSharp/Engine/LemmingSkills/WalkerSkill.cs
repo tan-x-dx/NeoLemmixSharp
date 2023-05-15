@@ -4,9 +4,7 @@ namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class WalkerSkill : LemmingSkill
 {
-    public static WalkerSkill Instance { get; } = new();
-
-    private WalkerSkill()
+    public WalkerSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 

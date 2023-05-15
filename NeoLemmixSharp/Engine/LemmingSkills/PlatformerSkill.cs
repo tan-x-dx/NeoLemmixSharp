@@ -4,9 +4,7 @@ namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class PlatformerSkill : LemmingSkill
 {
-    public static PlatformerSkill Instance { get; } = new();
-
-    private PlatformerSkill()
+    public PlatformerSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 

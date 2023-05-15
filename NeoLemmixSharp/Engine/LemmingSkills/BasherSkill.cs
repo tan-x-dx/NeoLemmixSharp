@@ -4,9 +4,7 @@ namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class BasherSkill : LemmingSkill
 {
-    public static BasherSkill Instance { get; } = new();
-
-    private BasherSkill()
+    public BasherSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 

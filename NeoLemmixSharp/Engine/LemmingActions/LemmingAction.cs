@@ -87,6 +87,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     public abstract string LemmingActionName { get; }
     public abstract int NumberOfAnimationFrames { get; }
     public abstract bool IsOneTimeAction { get; }
+    public abstract bool CanBeAssignedPermanentSkill { get; }
 
     public abstract bool UpdateLemming(Lemming lemming);
 
@@ -146,7 +147,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
     protected static int FindGroundPixel(
         Orientation orientation,
-        LevelPosition levelPosition)
+        in LevelPosition levelPosition)
     {
         // Find the new ground pixel
         // If Result = 4, then at least 4 pixels are air below (X, Y)

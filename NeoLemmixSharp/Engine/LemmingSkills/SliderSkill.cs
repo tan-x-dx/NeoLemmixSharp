@@ -2,9 +2,7 @@
 
 public sealed class SliderSkill : LemmingSkill
 {
-    public static SliderSkill Instance { get; } = new();
-
-    private SliderSkill()
+    public SliderSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 
@@ -14,7 +12,7 @@ public sealed class SliderSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.IsSlider && LemmingActionCanBeAssignedPermanentSkill(lemming);
+        return !lemming.IsSlider && lemming.CurrentAction.CanBeAssignedPermanentSkill;
     }
 
     public override bool AssignToLemming(Lemming lemming)

@@ -2,9 +2,7 @@
 
 public sealed class DisarmerSkill : LemmingSkill
 {
-    public static DisarmerSkill Instance { get; } = new();
-
-    private DisarmerSkill()
+    public DisarmerSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 
@@ -14,7 +12,7 @@ public sealed class DisarmerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.IsDisarmer && LemmingActionCanBeAssignedPermanentSkill(lemming);
+        return !lemming.IsDisarmer && lemming.CurrentAction.CanBeAssignedPermanentSkill;
     }
 
     public override bool AssignToLemming(Lemming lemming)

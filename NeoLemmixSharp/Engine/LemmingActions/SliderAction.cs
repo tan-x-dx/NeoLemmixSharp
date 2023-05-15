@@ -18,6 +18,7 @@ public sealed class SliderAction : LemmingAction
     public override string LemmingActionName => "slider";
     public override int NumberOfAnimationFrames => NumberOfSliderAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -86,8 +87,8 @@ public sealed class SliderAction : LemmingAction
 
     private static bool SliderHasPixelAt(
         Orientation orientation,
-        LevelPosition levelPosition,
-        LevelPosition dehoistPin)
+        in LevelPosition levelPosition,
+        in LevelPosition dehoistPin)
     {
         if (Terrain.GetPixelData(dehoistPin).IsSolid)
             return true;

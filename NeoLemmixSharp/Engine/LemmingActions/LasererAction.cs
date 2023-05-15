@@ -57,6 +57,7 @@ public sealed class LasererAction : LemmingAction
     public override string LemmingActionName => "laserer";
     public override int NumberOfAnimationFrames => NumberOfLasererAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -121,7 +122,7 @@ public sealed class LasererAction : LemmingAction
     }
 
     private LaserHitType CheckForHit(
-        LevelPosition target,
+        in LevelPosition target,
         Orientation orientation,
         int dx)
     {
