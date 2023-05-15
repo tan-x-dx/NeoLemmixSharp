@@ -14,6 +14,7 @@ public sealed class HoisterAction : LemmingAction
     public override string LemmingActionName => "hoister";
     public override int NumberOfAnimationFrames => NumberOfHoisterAnimationFrames;
     public override bool IsOneTimeAction => true;
+    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

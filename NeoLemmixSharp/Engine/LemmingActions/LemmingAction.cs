@@ -87,6 +87,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     public abstract string LemmingActionName { get; }
     public abstract int NumberOfAnimationFrames { get; }
     public abstract bool IsOneTimeAction { get; }
+    public abstract bool CanBeAssignedPermanentSkill { get; }
 
     public abstract bool UpdateLemming(Lemming lemming);
 

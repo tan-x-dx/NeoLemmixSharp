@@ -4,9 +4,7 @@ namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class FencerSkill : LemmingSkill
 {
-    public static FencerSkill Instance { get; } = new();
-
-    private FencerSkill()
+    public FencerSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 

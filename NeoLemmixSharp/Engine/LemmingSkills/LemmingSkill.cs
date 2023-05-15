@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LemmingActions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -18,27 +17,27 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 
         RegisterLemmingSkill(NoneSkill.Instance);
 
-        RegisterLemmingSkill(BasherSkill.Instance);
-        RegisterLemmingSkill(BlockerSkill.Instance);
-        RegisterLemmingSkill(BomberSkill.Instance);
-        RegisterLemmingSkill(BuilderSkill.Instance);
-        RegisterLemmingSkill(ClimberSkill.Instance);
-        RegisterLemmingSkill(ClonerSkill.Instance);
-        RegisterLemmingSkill(DiggerSkill.Instance);
-        RegisterLemmingSkill(DisarmerSkill.Instance);
-        RegisterLemmingSkill(FencerSkill.Instance);
-        RegisterLemmingSkill(FloaterSkill.Instance);
-        RegisterLemmingSkill(GliderSkill.Instance);
-        RegisterLemmingSkill(JumperSkill.Instance);
-        RegisterLemmingSkill(LasererSkill.Instance);
-        RegisterLemmingSkill(MinerSkill.Instance);
-        RegisterLemmingSkill(PlatformerSkill.Instance);
-        RegisterLemmingSkill(ShimmierSkill.Instance);
-        RegisterLemmingSkill(SliderSkill.Instance);
-        RegisterLemmingSkill(StackerSkill.Instance);
-        RegisterLemmingSkill(StonerSkill.Instance);
-        RegisterLemmingSkill(SwimmerSkill.Instance);
-        RegisterLemmingSkill(WalkerSkill.Instance);
+        RegisterLemmingSkill(new BasherSkill(0));
+        RegisterLemmingSkill(new BlockerSkill(0));
+        RegisterLemmingSkill(new BomberSkill(0));
+        RegisterLemmingSkill(new BuilderSkill(0));
+        RegisterLemmingSkill(new ClimberSkill(0));
+        RegisterLemmingSkill(new ClonerSkill(0));
+        RegisterLemmingSkill(new DiggerSkill(0));
+        RegisterLemmingSkill(new DisarmerSkill(0));
+        RegisterLemmingSkill(new FencerSkill(0));
+        RegisterLemmingSkill(new FloaterSkill(0));
+        RegisterLemmingSkill(new GliderSkill(0));
+        RegisterLemmingSkill(new JumperSkill(0));
+        RegisterLemmingSkill(new LasererSkill(0));
+        RegisterLemmingSkill(new MinerSkill(0));
+        RegisterLemmingSkill(new PlatformerSkill(0));
+        RegisterLemmingSkill(new ShimmierSkill(0));
+        RegisterLemmingSkill(new SliderSkill(0));
+        RegisterLemmingSkill(new StackerSkill(0));
+        RegisterLemmingSkill(new StonerSkill(0));
+        RegisterLemmingSkill(new SwimmerSkill(0));
+        RegisterLemmingSkill(new WalkerSkill(0));
 
         var numberOfUniqueIds = result
             .Values
@@ -75,16 +74,13 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
     public abstract string LemmingSkillName { get; }
     public abstract bool IsPermanentSkill { get; }
 
-    protected static bool LemmingActionCanBeAssignedPermanentSkill(Lemming lemming, bool includeDrowner = true)
+    public int OriginalNumberOfSkillsAvailable { get; }
+    public int CurrentNumberOfSkillsAvailable { get; private set; }
+
+    protected LemmingSkill(int originalNumberOfSkillsAvailable)
     {
-        return lemming.CurrentAction != OhNoerAction.Instance &&
-               lemming.CurrentAction != StonerAction.Instance &&
-               lemming.CurrentAction != ExploderAction.Instance &&
-               lemming.CurrentAction != StonerAction.Instance &&
-               (!includeDrowner || lemming.CurrentAction != DrownerAction.Instance) &&
-               lemming.CurrentAction != VaporiserAction.Instance &&
-               lemming.CurrentAction != SplatterAction.Instance &&
-               lemming.CurrentAction != ExiterAction.Instance;
+        OriginalNumberOfSkillsAvailable = originalNumberOfSkillsAvailable;
+        CurrentNumberOfSkillsAvailable = originalNumberOfSkillsAvailable;
     }
 
     public abstract bool CanAssignToLemming(Lemming lemming);

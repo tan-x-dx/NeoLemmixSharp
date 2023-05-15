@@ -17,6 +17,7 @@ public sealed class PlatformerAction : LemmingAction
     public override string LemmingActionName => "platformer";
     public override int NumberOfAnimationFrames => NumberOfPlatformerAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.LemmingSkills;
+using NeoLemmixSharp.Engine.LevelUpdates;
 using NeoLemmixSharp.Util;
 using System;
 
@@ -7,41 +8,96 @@ namespace NeoLemmixSharp.Engine;
 
 public sealed class LevelCursor
 {
-    private readonly LevelControlPanel _controlPanel;
+    private readonly ILevelControlPanel _controlPanel;
+    private readonly LevelUpdater _levelUpdater;
     private readonly LevelInputController _controller;
     private readonly Lemming[] _lemmings;
+
+    private bool _hitTestAutoFail;
+    private bool _doneAssignmentThisFrame;
 
     public bool HighlightLemming { get; private set; }
     public bool LemmingsUnderCursor => _numberOfLemmingsUnderCursor > 0;
 
     public LevelPosition CursorPosition { get; set; }
 
-    private Lemming? _lemmingUnderCursor;
+    //private Lemming? _lemmingUnderCursor;
     private int _numberOfLemmingsUnderCursor;
 
-    public LevelCursor(LevelControlPanel controlPanel, LevelInputController controller, Lemming[] lemmings)
+    public LevelCursor(
+        ILevelControlPanel controlPanel,
+        LevelUpdater levelUpdater,
+        LevelInputController controller,
+        Lemming[] lemmings)
     {
         _controlPanel = controlPanel;
         _controller = controller;
         _lemmings = lemmings;
+        _levelUpdater = levelUpdater;
     }
 
     public void HandleMouseInput()
     {
-        CheckLemmingsUnderCursor();
+        //   CheckLemmingsUnderCursor();
 
-        if ((_controller.LeftMouseButtonStatus & MouseButtonStatusConsts.MouseButtonPressed) == MouseButtonStatusConsts.MouseButtonUnpressed)
-            return;
-
-        if (_lemmingUnderCursor != null && _controlPanel.SelectedSkill != NoneSkill.Instance)
+        if (_controller.LeftMouseButtonStatus == MouseButtonStatusConsts.MouseButtonPressed)
         {
-            _controlPanel.SelectedSkill.AssignToLemming(_lemmingUnderCursor);
+            HandleSkillAssignment();
         }
     }
 
-    private void CheckLemmingsUnderCursor()
+    private bool HandleSkillAssignment(bool isReplayAssignment = false)
     {
-        _lemmingUnderCursor = null;
+        if (_controlPanel.SelectedSkillAssignButton != null)
+            return false;
+
+        var skill = _controlPanel.SelectedSkill;
+        var oldHitTestAutoFail = _hitTestAutoFail;
+        _hitTestAutoFail = false;
+
+        // Just to be safe, though this should always return in fLemSelected
+        var priorityLemming = GetPriorityLemming(skill, isReplayAssignment);
+        // Get lemming to queue the skill assignment
+        var queuedLemming = GetPriorityLemming(NoneSkill.Instance, false);
+
+        _hitTestAutoFail = oldHitTestAutoFail;
+
+        if (priorityLemming == null || !SkillIsAvailable(skill))
+        {
+            if (queuedLemming == null || skill.IsPermanentSkill)
+                return false;
+
+            _levelUpdater.SetQueuedSkill(queuedLemming, skill);
+
+            return false;
+        }
+
+        if (isReplayAssignment)// If the assignment is written in the replay, change lemming state
+        {
+            if (AssignSkill(priorityLemming, skill))
+            {
+                // CueSoundEffect(SFX_ASSIGN_SKILL, L.Position);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        if (SkillIsAvailable(skill))
+        {
+            RegainControl();
+            RecordSkillAssignment(priorityLemming, skill);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private Lemming? GetPriorityLemming(LemmingSkill lemmingSkill, bool isReplayAssignment)
+    {
+        Lemming? lemmingUnderCursor = null;
         _numberOfLemmingsUnderCursor = 0;
         int curValue = 10;
 
@@ -105,7 +161,7 @@ public sealed class LevelCursor
             }
 
             // Can this lemming actually receive the skill?
-            if (!_controlPanel.SelectedSkill.CanAssignToLemming(lemming))
+            if (!lemmingSkill.CanAssignToLemming(lemming))
             {
                 curPriorityBox = 8;
             }
@@ -116,10 +172,10 @@ public sealed class LevelCursor
                 curPriorityBox = 9;
             }
 
-            if (curPriorityBox < curValue || (curPriorityBox == curValue && IsCloserToCursorCentre(_lemmingUnderCursor, lemming)))
+            if (curPriorityBox < curValue || (curPriorityBox == curValue && IsCloserToCursorCentre(lemmingUnderCursor, lemming)))
             {
                 // New top priority lemming found
-                _lemmingUnderCursor = lemming;
+                lemmingUnderCursor = lemming;
                 curValue = curPriorityBox;
             }
         }
@@ -127,6 +183,7 @@ public sealed class LevelCursor
         //  Delete PriorityLem if too low-priority and we wish to assign a skill
         //  if (CurValue > 6) && !(NewSkillOrig = baNone) then PriorityLem := nil;
 
+        return lemmingUnderCursor;
     }
 
     private bool LemmingIsUnderCursor(Lemming lemming)
@@ -140,144 +197,52 @@ public sealed class LevelCursor
                lemming.Orientation.FirstIsToRightOfSecond(p1, CursorPosition);
     }
 
-    /*    
-begin
-  PriorityLem := nil;
-
-  if fHitTestAutoFail then
-  begin
-    Result := 0;
-    Exit;
-  end;
-
-  NumLemInCursor := 0;
-  CurValue := 10;
-  if NewSkillOrig = baNone then
-  begin
-    NewSkill := SkillPanelButtonToAction[fSelectedSkill];
-    // Set NewSkill if level has no skill at all in the skillbar
-    if NewSkill = baNone then NewSkill := baExploding;
-  end
-  else
-    NewSkill := NewSkillOrig;
-
-  for i := (LemmingList.Count - 1) downto 0 do
-  begin
-    L := LemmingList.List[i];
-
-    // Check if we only look for highlighted Lems
-    if (IsHighlight and not (L = GetHighlitLemming))
-    or (IsReplay and not (L = GetTargetLemming)) then Continue;
-    // Does Lemming exist
-    if L.LemRemoved or L.LemTeleporting then Continue;
-    // Is the Lemming unable to receive skills, because zombie, neutral, or was-ohnoer? (remove unless we haven't yet had any lem under the cursor)
-    if L.CannotReceiveSkills and Assigned(PriorityLem) then Continue;
-    // Is Lemming inside cursor (only check if we are not using Hightlightning!)
-    if (not LemIsInCursor(L, MousePos)) and (not (IsHighlight or IsReplay)) then Continue;
-    // Directional select
-    if (fSelectDx <> 0) and (fSelectDx <> L.LemDx) and (not (IsHighlight or IsReplay)) then Continue;
-    // Select only walkers
-    if IsSelectWalkerHotkey and (L.LemAction <> baWalking) and (not (IsHighlight or IsReplay)) then Continue;
-
-    // Increase number of lemmings in cursor (if not a zombie or neutral)
-    if not L.CannotReceiveSkills then Inc(NumLemInCursor);
-
-    // Determine priority class of current lemming
-    if IsSelectUnassignedHotkey or IsSelectWalkerHotkey then
-      CurPriorityBox := 1
-    else
-    begin
-      CurPriorityBox := 0;
-      repeat
-        LemIsInBox := IsLemInPriorityBox(L, CurPriorityBox {PriorityBoxOrder[CurPriorityBox]});
-        Inc(CurPriorityBox);
-      until (CurPriorityBox > MinIntValue([CurValue, 4])) or LemIsInBox;
-    end;
-
-    // Can this lemmings actually receive the skill?
-    if not NewSkillMethods[NewSkill](L) then CurPriorityBox := 8;
-
-    // Deprioritize zombie even when just counting lemmings
-    if L.CannotReceiveSkills then CurPriorityBox := 9;
-
-    if     (CurPriorityBox < CurValue)
-       or ((CurPriorityBox = CurValue) and IsCloserToCursorCenter(PriorityLem, L, MousePos)) then
-    begin
-      // New top priority lemming found
-      PriorityLem := L;
-      CurValue := CurPriorityBox;
-    end;
-  end;
-
-end;
-
-
-  function LemIsInCursor(L: TLemming; MousePos: TPoint): Boolean;
-  var
-    X, Y: Integer;
-  begin
-    X := L.LemX - 8;
-    Y := L.LemY - 10;
-    Result := PtInRect(Rect(X, Y, X + 13, Y + 13), MousePos);
-  end;
-
-
-
-    function TLemmingGame.GetPriorityLemming(out PriorityLem: TLemming;
-                                          NewSkillOrig: TBasicLemmingAction;
-                                          MousePos: TPoint;
-                                          IsHighlight: Boolean = False;
-                                          IsReplay: Boolean = False): Integer;
-const
-  NonPerm = 0;
-  Perm = 1;
-  NonWalk = 2;
-  Walk = 3;
-var
-  i, CurPriorityBox: Integer;
-  // CurValue = 1, 2, 3, 4: Lem is assignable and in one PriorityBox
-  // CurValue = 8: Lem is unassignable, but no zombie
-  // CurValue = 9: Lem is zombie
-  CurValue: Integer;
-  L: TLemming;
-  LemIsInBox: Boolean;
-  NumLemInCursor: Integer;
-  NewSkill: TBasicLemmingAction;
-
-
-
-  function IsLemInPriorityBox(L: TLemming; PriorityBox: Integer): Boolean;
-  begin
-    Result := True;
-    case PriorityBox of
-      Perm    : Result :=     L.HasPermanentSkills;
-      NonPerm : Result :=     (L.LemAction in [baBashing, baFencing, baMining, baDigging, baBuilding,
-                                               baPlatforming, baStacking, baBlocking, baShrugging,
-                                               baReaching, baShimmying, baLasering]);
-      Walk    : Result :=     (L.LemAction in [baWalking, baAscending]);
-      NonWalk : Result := not (L.LemAction in [baWalking, baAscending]);
-    end;
-  end;
-
-
-
-    
-  function IsCloserToCursorCenter(LOld, LNew: TLemming; MousePos: TPoint): Boolean;
-  begin
-    Result := (GetLemDistance(LNew, MousePos) < GetLemDistance(LOld, MousePos));
-  end;
-
-  function GetLemDistance(L: TLemming; MousePos: TPoint): Integer;
-  begin
-    // We compute the distance to the center of the cursor after 2x-zooming, to have integer values
-    Result :=   Sqr(2 * (L.LemX - 8) - 2 * MousePos.X + 13)
-              + Sqr(2 * (L.LemY - 10) - 2 * MousePos.Y + 13)
-  end;
-
-    */
-
     private bool IsCloserToCursorCentre(Lemming? previousCandidate, Lemming newCandidate)
     {
-        return false;
+        if (previousCandidate is null)
+            return true;
+
+        var l1 = previousCandidate.Orientation.MoveUp(previousCandidate.LevelPosition, 6);
+        var l2 = newCandidate.Orientation.MoveUp(newCandidate.LevelPosition, 6);
+
+        var x1 = l1.X - CursorPosition.X;
+        var y1 = l1.Y - CursorPosition.Y;
+
+        var x2 = l2.X - CursorPosition.X;
+        var y2 = l2.Y - CursorPosition.Y;
+
+        var d1 = x1 * x1 + y1 * y1;
+        var d2 = x2 * x2 + y2 * y2;
+
+        return d2 < d1;
+    }
+
+    private bool SkillIsAvailable(LemmingSkill lemmingSkill)
+    {
+        return lemmingSkill.CurrentNumberOfSkillsAvailable > 0;
+    }
+
+    private bool AssignSkill(Lemming lemming, LemmingSkill lemmingSkill)
+    {
+        if (!SkillIsAvailable(lemmingSkill) || _doneAssignmentThisFrame)
+            return false;
+
+        //UpdateSkillCount(lemmingSkill);
+
+        _levelUpdater.ClearQueuedSkill();
+
+        var result = lemmingSkill.AssignToLemming(lemming);
+
+        _doneAssignmentThisFrame = true;
+
+        return result;
+    }
+
+    private void RegainControl()
+    {
+    }
+
+    private void RecordSkillAssignment(Lemming queuedLemming, LemmingSkill skill)
+    {
     }
 }

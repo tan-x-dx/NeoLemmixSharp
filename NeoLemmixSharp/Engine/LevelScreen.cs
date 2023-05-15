@@ -23,7 +23,7 @@ public sealed class LevelScreen : BaseScreen
     private readonly LevelViewport _viewport;
     private readonly LevelInputController _inputController;
     private readonly LevelControlPanel _controlPanel;
-    private readonly ILevelUpdater _levelUpdater;
+    private readonly LevelUpdater _levelUpdater;
 
     private readonly Lemming[] _lemmings;
     // private readonly ITickable[] _gadgets;
@@ -45,9 +45,9 @@ public sealed class LevelScreen : BaseScreen
         _terrain = terrain;
         _inputController = new LevelInputController();
 
-        _levelUpdater = new StandardLevelUpdater();
+        _levelUpdater = new LevelUpdater(false);
         _controlPanel = new LevelControlPanel(levelData.SkillSet, _inputController);
-        _levelCursor = new LevelCursor(_controlPanel, _inputController, _lemmings);
+        _levelCursor = new LevelCursor(_controlPanel, _levelUpdater, _inputController, _lemmings);
         _viewport = new LevelViewport(terrain, _levelCursor, _inputController);
 
         CurrentLevel = this;
@@ -62,7 +62,11 @@ public sealed class LevelScreen : BaseScreen
 
     public override void Tick()
     {
+        _levelUpdater.DoneAssignmentThisFrame = false;
+
         _inputController.Update();
+
+        _levelUpdater.CheckForQueuedAction();
 
         HandleKeyboardInput();
 
@@ -134,6 +138,51 @@ public sealed class LevelScreen : BaseScreen
         _doTick = false;
         return true;
     }
+
+    /*
+    procedure TLemmingGame.CheckForQueuedAction;
+var
+  i: Integer;
+  L: TLemming;
+  NewSkill: TBasicLemmingAction;
+begin
+  // First check whether there was already a skill assignment this frame
+  if Assigned(fReplayManager.Assignment[fCurrentIteration, 0]) then Exit;
+
+  for i := 0 to LemmingList.Count - 1 do
+  begin
+    L := LemmingList.List[i];
+
+    if L.LemQueueAction = baNone then Continue;
+
+    if L.LemRemoved or L.CannotReceiveSkills or L.LemTeleporting then // CannotReceiveSkills covers neutral and zombie
+    begin
+      // delete queued action first
+      L.LemQueueAction := baNone;
+      L.LemQueueFrame := 0;
+      Continue;
+    end;
+
+    NewSkill := L.LemQueueAction;
+
+    // Try assigning the skill
+    if NewSkillMethods[NewSkill](L) and CheckSkillAvailable(NewSkill) then
+      // Record skill assignment, so that we apply it in CheckForReplayAction
+      RecordSkillAssignment(L, NewSkill)
+    else
+    begin;
+      Inc(L.LemQueueFrame);
+      // Delete queued action after 16 frames
+      if L.LemQueueFrame > 15 then
+      begin
+        L.LemQueueAction := baNone;
+        L.LemQueueFrame := 0;
+      end;
+    end;
+  end;
+
+end;
+    */
 
     public override void OnWindowSizeChanged()
     {

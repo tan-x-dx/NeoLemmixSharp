@@ -4,9 +4,7 @@ namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class DiggerSkill : LemmingSkill
 {
-    public static DiggerSkill Instance { get; } = new();
-
-    private DiggerSkill()
+    public DiggerSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 

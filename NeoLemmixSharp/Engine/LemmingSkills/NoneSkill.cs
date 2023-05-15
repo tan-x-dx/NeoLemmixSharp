@@ -4,7 +4,7 @@ public sealed class NoneSkill : LemmingSkill
 {
     public static NoneSkill Instance { get; } = new();
 
-    private NoneSkill()
+    private NoneSkill() : base(0)
     {
     }
 

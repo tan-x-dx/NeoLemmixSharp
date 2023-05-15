@@ -4,9 +4,7 @@ namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class ClonerSkill : LemmingSkill
 {
-    public static ClonerSkill Instance { get; } = new();
-
-    private ClonerSkill()
+    public ClonerSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 

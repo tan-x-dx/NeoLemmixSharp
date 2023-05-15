@@ -4,9 +4,7 @@ namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class MinerSkill : LemmingSkill
 {
-    public static MinerSkill Instance { get; } = new();
-
-    private MinerSkill()
+    public MinerSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 

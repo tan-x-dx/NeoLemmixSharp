@@ -14,6 +14,7 @@ public sealed class ShimmierAction : LemmingAction
     public override string LemmingActionName => "shimmier";
     public override int NumberOfAnimationFrames => NumberOfShimmierAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -15,6 +15,7 @@ public sealed class FallerAction : LemmingAction
     public override string LemmingActionName => "faller";
     public override int NumberOfAnimationFrames => NumberOfFallerAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

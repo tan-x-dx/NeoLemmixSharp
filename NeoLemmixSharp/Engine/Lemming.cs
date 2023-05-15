@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
+using NeoLemmixSharp.Engine.LemmingSkills;
 using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;

@@ -4,9 +4,7 @@ namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class ShimmierSkill : LemmingSkill
 {
-    public static ShimmierSkill Instance { get; } = new();
-
-    private ShimmierSkill()
+    public ShimmierSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 

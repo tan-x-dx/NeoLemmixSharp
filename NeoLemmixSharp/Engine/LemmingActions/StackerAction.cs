@@ -14,6 +14,7 @@ public sealed class StackerAction : LemmingAction
     public override string LemmingActionName => "stacker";
     public override int NumberOfAnimationFrames => NumberOfStackerAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

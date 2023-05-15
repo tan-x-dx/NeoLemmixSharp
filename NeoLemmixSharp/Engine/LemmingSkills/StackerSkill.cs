@@ -4,9 +4,7 @@ namespace NeoLemmixSharp.Engine.LemmingSkills;
 
 public sealed class StackerSkill : LemmingSkill
 {
-    public static StackerSkill Instance { get; } = new();
-
-    private StackerSkill()
+    public StackerSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 

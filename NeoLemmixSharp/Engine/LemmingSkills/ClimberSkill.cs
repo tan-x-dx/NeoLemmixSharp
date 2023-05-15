@@ -2,9 +2,7 @@
 
 public sealed class ClimberSkill : LemmingSkill
 {
-    public static ClimberSkill Instance { get; } = new();
-
-    private ClimberSkill()
+    public ClimberSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
     {
     }
 
@@ -14,7 +12,7 @@ public sealed class ClimberSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.IsClimber && LemmingActionCanBeAssignedPermanentSkill(lemming);
+        return !lemming.IsClimber && lemming.CurrentAction.CanBeAssignedPermanentSkill;
     }
 
     public override bool AssignToLemming(Lemming lemming)

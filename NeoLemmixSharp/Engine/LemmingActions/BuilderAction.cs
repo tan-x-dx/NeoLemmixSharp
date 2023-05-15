@@ -14,6 +14,7 @@ public sealed class BuilderAction : LemmingAction
     public override string LemmingActionName => "builder";
     public override int NumberOfAnimationFrames => NumberOfBuilderAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {
