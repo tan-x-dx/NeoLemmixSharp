@@ -56,13 +56,13 @@ public sealed class LevelControlPanel : ILevelControlPanel
     public SkillAssignButton? SelectedSkillAssignButton { get; private set; }
     public LemmingSkill SelectedSkill => SelectedSkillAssignButton?.LemmingSkill ?? NoneSkill.Instance;
 
-    public LevelControlPanel(SkillSet skillSet, LevelInputController controller)
+    public LevelControlPanel(SkillSetData skillSetData, LevelInputController controller)
     {
         _controller = controller;
         _releaseRateMinusButton = new ControlPanelButton(0);
         _releaseRatePlusButton = new ControlPanelButton(1);
 
-        _skillAssignButtons = CreateSkillAssignButtons(skillSet);
+        _skillAssignButtons = CreateSkillAssignButtons(skillSetData);
 
         _maxSkillPanelScroll = _skillAssignButtons.Length - MaxNumberOfSkillButtons;
 
@@ -80,33 +80,33 @@ public sealed class LevelControlPanel : ILevelControlPanel
         SetSelectedSkillAssignmentButton(_skillAssignButtons.FirstOrDefault());
     }
 
-    private static SkillAssignButton[] CreateSkillAssignButtons(SkillSet skillSet)
+    private static SkillAssignButton[] CreateSkillAssignButtons(SkillSetData skillSetData)
     {
         var tempList = new List<SkillAssignButton>();
 
         var i = 2;
 
-        if (skillSet.NumberOfBashers.HasValue) { AddSkillAssignmentButton(new BasherSkill(skillSet.NumberOfBashers.Value)); }
-        if (skillSet.NumberOfBlockers.HasValue) { AddSkillAssignmentButton(new BlockerSkill(skillSet.NumberOfBlockers.Value)); }
-        if (skillSet.NumberOfBombers.HasValue) { AddSkillAssignmentButton(new BomberSkill(skillSet.NumberOfBombers.Value)); }
-        if (skillSet.NumberOfBuilders.HasValue) { AddSkillAssignmentButton(new BuilderSkill(skillSet.NumberOfBuilders.Value)); }
-        if (skillSet.NumberOfClimbers.HasValue) { AddSkillAssignmentButton(new ClimberSkill(skillSet.NumberOfClimbers.Value)); }
-        if (skillSet.NumberOfCloners.HasValue) { AddSkillAssignmentButton(new ClonerSkill(skillSet.NumberOfCloners.Value)); }
-        if (skillSet.NumberOfDiggers.HasValue) { AddSkillAssignmentButton(new DiggerSkill(skillSet.NumberOfDiggers.Value)); }
-        if (skillSet.NumberOfDisarmers.HasValue) { AddSkillAssignmentButton(new DisarmerSkill(skillSet.NumberOfDisarmers.Value)); }
-        if (skillSet.NumberOfFencers.HasValue) { AddSkillAssignmentButton(new FencerSkill(skillSet.NumberOfFencers.Value)); }
-        if (skillSet.NumberOfFloaters.HasValue) { AddSkillAssignmentButton(new FloaterSkill(skillSet.NumberOfFloaters.Value)); }
-        if (skillSet.NumberOfGliders.HasValue) { AddSkillAssignmentButton(new GliderSkill(skillSet.NumberOfGliders.Value)); }
-        if (skillSet.NumberOfJumpers.HasValue) { AddSkillAssignmentButton(new JumperSkill(skillSet.NumberOfJumpers.Value)); }
-        if (skillSet.NumberOfLaserers.HasValue) { AddSkillAssignmentButton(new LasererSkill(skillSet.NumberOfLaserers.Value)); }
-        if (skillSet.NumberOfMiners.HasValue) { AddSkillAssignmentButton(new MinerSkill(skillSet.NumberOfMiners.Value)); }
-        if (skillSet.NumberOfPlatformers.HasValue) { AddSkillAssignmentButton(new PlatformerSkill(skillSet.NumberOfPlatformers.Value)); }
-        if (skillSet.NumberOfShimmiers.HasValue) { AddSkillAssignmentButton(new ShimmierSkill(skillSet.NumberOfShimmiers.Value)); }
-        if (skillSet.NumberOfSliders.HasValue) { AddSkillAssignmentButton(new SliderSkill(skillSet.NumberOfSliders.Value)); }
-        if (skillSet.NumberOfStackers.HasValue) { AddSkillAssignmentButton(new StackerSkill(skillSet.NumberOfStackers.Value)); }
-        if (skillSet.NumberOfStoners.HasValue) { AddSkillAssignmentButton(new StonerSkill(skillSet.NumberOfStoners.Value)); }
-        if (skillSet.NumberOfSwimmers.HasValue) { AddSkillAssignmentButton(new SwimmerSkill(skillSet.NumberOfSwimmers.Value)); }
-        if (skillSet.NumberOfWalkers.HasValue) { AddSkillAssignmentButton(new WalkerSkill(skillSet.NumberOfWalkers.Value)); }
+        if (skillSetData.NumberOfBashers.HasValue) { AddSkillAssignmentButton(new BasherSkill(skillSetData.NumberOfBashers.Value)); }
+        if (skillSetData.NumberOfBlockers.HasValue) { AddSkillAssignmentButton(new BlockerSkill(skillSetData.NumberOfBlockers.Value)); }
+        if (skillSetData.NumberOfBombers.HasValue) { AddSkillAssignmentButton(new BomberSkill(skillSetData.NumberOfBombers.Value)); }
+        if (skillSetData.NumberOfBuilders.HasValue) { AddSkillAssignmentButton(new BuilderSkill(skillSetData.NumberOfBuilders.Value)); }
+        if (skillSetData.NumberOfClimbers.HasValue) { AddSkillAssignmentButton(new ClimberSkill(skillSetData.NumberOfClimbers.Value)); }
+        if (skillSetData.NumberOfCloners.HasValue) { AddSkillAssignmentButton(new ClonerSkill(skillSetData.NumberOfCloners.Value)); }
+        if (skillSetData.NumberOfDiggers.HasValue) { AddSkillAssignmentButton(new DiggerSkill(skillSetData.NumberOfDiggers.Value)); }
+        if (skillSetData.NumberOfDisarmers.HasValue) { AddSkillAssignmentButton(new DisarmerSkill(skillSetData.NumberOfDisarmers.Value)); }
+        if (skillSetData.NumberOfFencers.HasValue) { AddSkillAssignmentButton(new FencerSkill(skillSetData.NumberOfFencers.Value)); }
+        if (skillSetData.NumberOfFloaters.HasValue) { AddSkillAssignmentButton(new FloaterSkill(skillSetData.NumberOfFloaters.Value)); }
+        if (skillSetData.NumberOfGliders.HasValue) { AddSkillAssignmentButton(new GliderSkill(skillSetData.NumberOfGliders.Value)); }
+        if (skillSetData.NumberOfJumpers.HasValue) { AddSkillAssignmentButton(new JumperSkill(skillSetData.NumberOfJumpers.Value)); }
+        if (skillSetData.NumberOfLaserers.HasValue) { AddSkillAssignmentButton(new LasererSkill(skillSetData.NumberOfLaserers.Value)); }
+        if (skillSetData.NumberOfMiners.HasValue) { AddSkillAssignmentButton(new MinerSkill(skillSetData.NumberOfMiners.Value)); }
+        if (skillSetData.NumberOfPlatformers.HasValue) { AddSkillAssignmentButton(new PlatformerSkill(skillSetData.NumberOfPlatformers.Value)); }
+        if (skillSetData.NumberOfShimmiers.HasValue) { AddSkillAssignmentButton(new ShimmierSkill(skillSetData.NumberOfShimmiers.Value)); }
+        if (skillSetData.NumberOfSliders.HasValue) { AddSkillAssignmentButton(new SliderSkill(skillSetData.NumberOfSliders.Value)); }
+        if (skillSetData.NumberOfStackers.HasValue) { AddSkillAssignmentButton(new StackerSkill(skillSetData.NumberOfStackers.Value)); }
+        if (skillSetData.NumberOfStoners.HasValue) { AddSkillAssignmentButton(new StonerSkill(skillSetData.NumberOfStoners.Value)); }
+        if (skillSetData.NumberOfSwimmers.HasValue) { AddSkillAssignmentButton(new SwimmerSkill(skillSetData.NumberOfSwimmers.Value)); }
+        if (skillSetData.NumberOfWalkers.HasValue) { AddSkillAssignmentButton(new WalkerSkill(skillSetData.NumberOfWalkers.Value)); }
 
         return tempList.ToArray();
 

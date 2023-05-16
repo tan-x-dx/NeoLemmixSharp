@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.LevelBuilding.Data;
 
-public sealed class SkillSet
+public sealed class SkillSetData
 {
     public int? NumberOfBashers { get; set; }
     public int? NumberOfBlockers { get; set; }

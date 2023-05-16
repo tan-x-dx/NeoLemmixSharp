@@ -63,7 +63,7 @@ public sealed class LevelScreen : BaseScreen
 
         _currentlySelectedFrameUpdater = _standardFrameUpdater;
 
-        _controlPanel = new LevelControlPanel(levelData.SkillSet, _inputController);
+        _controlPanel = new LevelControlPanel(levelData.SkillSetData, _inputController);
         _levelCursor = new LevelCursor(_controlPanel, _inputController, _lemmings);
         _viewport = new LevelViewport(terrain, _levelCursor, _inputController);
 
