@@ -176,7 +176,7 @@ public sealed class LevelScreen : BaseScreen
         QueuedSkillFrame = 0;
     }
 
-    public void CheckForQueuedAction()
+    private void CheckForQueuedAction()
     {
         // First check whether there was already a skill assignment this frame
         //    if Assigned(fReplayManager.Assignment[fCurrentIteration, 0]) then Exit;
