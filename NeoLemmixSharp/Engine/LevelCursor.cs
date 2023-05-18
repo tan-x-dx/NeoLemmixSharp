@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.LemmingSkills;
-using NeoLemmixSharp.Engine.LevelUpdates;
 using NeoLemmixSharp.Util;
 using System;
 
@@ -8,8 +7,11 @@ namespace NeoLemmixSharp.Engine;
 
 public sealed class LevelCursor
 {
+#pragma warning disable CS8618
+    public static LevelScreen LevelScreen { private get; set; }
+#pragma warning restore CS8618
+
     private readonly ILevelControlPanel _controlPanel;
-    private readonly LevelUpdater _levelUpdater;
     private readonly LevelInputController _controller;
     private readonly Lemming[] _lemmings;
 
@@ -26,14 +28,12 @@ public sealed class LevelCursor
 
     public LevelCursor(
         ILevelControlPanel controlPanel,
-        LevelUpdater levelUpdater,
         LevelInputController controller,
         Lemming[] lemmings)
     {
         _controlPanel = controlPanel;
         _controller = controller;
         _lemmings = lemmings;
-        _levelUpdater = levelUpdater;
     }
 
     public void HandleMouseInput()
@@ -67,7 +67,7 @@ public sealed class LevelCursor
             if (queuedLemming == null || skill.IsPermanentSkill)
                 return false;
 
-            _levelUpdater.SetQueuedSkill(queuedLemming, skill);
+            LevelScreen.SetQueuedSkill(queuedLemming, skill);
 
             return false;
         }
@@ -229,7 +229,7 @@ public sealed class LevelCursor
 
         //UpdateSkillCount(lemmingSkill);
 
-        _levelUpdater.ClearQueuedSkill();
+        LevelScreen.ClearQueuedSkill();
 
         var result = lemmingSkill.AssignToLemming(lemming);
 

@@ -40,7 +40,7 @@ public sealed class LevelAssembler : IDisposable
 
         SetUpTestLemmings();
 
-        levelData.SkillSet = new SkillSet()
+        levelData.SkillSetData = new SkillSetData()
         {
             NumberOfBashers = 1,
             NumberOfBlockers = 2,

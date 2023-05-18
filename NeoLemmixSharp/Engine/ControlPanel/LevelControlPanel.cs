@@ -56,13 +56,13 @@ public sealed class LevelControlPanel : ILevelControlPanel
     public SkillAssignButton? SelectedSkillAssignButton { get; private set; }
     public LemmingSkill SelectedSkill => SelectedSkillAssignButton?.LemmingSkill ?? NoneSkill.Instance;
 
-    public LevelControlPanel(SkillSet skillSet, LevelInputController controller)
+    public LevelControlPanel(SkillSetManager skillSetManager, LevelInputController controller)
     {
         _controller = controller;
         _releaseRateMinusButton = new ControlPanelButton(0);
         _releaseRatePlusButton = new ControlPanelButton(1);
 
-        _skillAssignButtons = CreateSkillAssignButtons(skillSet);
+        _skillAssignButtons = CreateSkillAssignButtons(skillSetManager);
 
         _maxSkillPanelScroll = _skillAssignButtons.Length - MaxNumberOfSkillButtons;
 
@@ -80,41 +80,9 @@ public sealed class LevelControlPanel : ILevelControlPanel
         SetSelectedSkillAssignmentButton(_skillAssignButtons.FirstOrDefault());
     }
 
-    private static SkillAssignButton[] CreateSkillAssignButtons(SkillSet skillSet)
+    private static SkillAssignButton[] CreateSkillAssignButtons(SkillSetManager skillSetManager)
     {
-        var tempList = new List<SkillAssignButton>();
-
-        var i = 2;
-
-        if (skillSet.NumberOfBashers.HasValue) { AddSkillAssignmentButton(new BasherSkill(skillSet.NumberOfBashers.Value)); }
-        if (skillSet.NumberOfBlockers.HasValue) { AddSkillAssignmentButton(new BlockerSkill(skillSet.NumberOfBlockers.Value)); }
-        if (skillSet.NumberOfBombers.HasValue) { AddSkillAssignmentButton(new BomberSkill(skillSet.NumberOfBombers.Value)); }
-        if (skillSet.NumberOfBuilders.HasValue) { AddSkillAssignmentButton(new BuilderSkill(skillSet.NumberOfBuilders.Value)); }
-        if (skillSet.NumberOfClimbers.HasValue) { AddSkillAssignmentButton(new ClimberSkill(skillSet.NumberOfClimbers.Value)); }
-        if (skillSet.NumberOfCloners.HasValue) { AddSkillAssignmentButton(new ClonerSkill(skillSet.NumberOfCloners.Value)); }
-        if (skillSet.NumberOfDiggers.HasValue) { AddSkillAssignmentButton(new DiggerSkill(skillSet.NumberOfDiggers.Value)); }
-        if (skillSet.NumberOfDisarmers.HasValue) { AddSkillAssignmentButton(new DisarmerSkill(skillSet.NumberOfDisarmers.Value)); }
-        if (skillSet.NumberOfFencers.HasValue) { AddSkillAssignmentButton(new FencerSkill(skillSet.NumberOfFencers.Value)); }
-        if (skillSet.NumberOfFloaters.HasValue) { AddSkillAssignmentButton(new FloaterSkill(skillSet.NumberOfFloaters.Value)); }
-        if (skillSet.NumberOfGliders.HasValue) { AddSkillAssignmentButton(new GliderSkill(skillSet.NumberOfGliders.Value)); }
-        if (skillSet.NumberOfJumpers.HasValue) { AddSkillAssignmentButton(new JumperSkill(skillSet.NumberOfJumpers.Value)); }
-        if (skillSet.NumberOfLaserers.HasValue) { AddSkillAssignmentButton(new LasererSkill(skillSet.NumberOfLaserers.Value)); }
-        if (skillSet.NumberOfMiners.HasValue) { AddSkillAssignmentButton(new MinerSkill(skillSet.NumberOfMiners.Value)); }
-        if (skillSet.NumberOfPlatformers.HasValue) { AddSkillAssignmentButton(new PlatformerSkill(skillSet.NumberOfPlatformers.Value)); }
-        if (skillSet.NumberOfShimmiers.HasValue) { AddSkillAssignmentButton(new ShimmierSkill(skillSet.NumberOfShimmiers.Value)); }
-        if (skillSet.NumberOfSliders.HasValue) { AddSkillAssignmentButton(new SliderSkill(skillSet.NumberOfSliders.Value)); }
-        if (skillSet.NumberOfStackers.HasValue) { AddSkillAssignmentButton(new StackerSkill(skillSet.NumberOfStackers.Value)); }
-        if (skillSet.NumberOfStoners.HasValue) { AddSkillAssignmentButton(new StonerSkill(skillSet.NumberOfStoners.Value)); }
-        if (skillSet.NumberOfSwimmers.HasValue) { AddSkillAssignmentButton(new SwimmerSkill(skillSet.NumberOfSwimmers.Value)); }
-        if (skillSet.NumberOfWalkers.HasValue) { AddSkillAssignmentButton(new WalkerSkill(skillSet.NumberOfWalkers.Value)); }
-
-        return tempList.ToArray();
-
-        void AddSkillAssignmentButton(LemmingSkill lemmingSkill)
-        {
-            tempList.Add(new SkillAssignButton(lemmingSkill, i));
-            i = (i + 1) & 7;
-        }
+        return skillSetManager.AllSkills.Select((s, i) => new SkillAssignButton(s, (i + 2) & 7)).ToArray();
     }
 
     public IEnumerable<SkillAssignButton> SkillAssignButtons => _skillAssignButtons;

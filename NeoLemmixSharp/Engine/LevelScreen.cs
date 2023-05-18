@@ -14,22 +14,32 @@ namespace NeoLemmixSharp.Engine;
 
 public sealed class LevelScreen : BaseScreen
 {
-    public static LevelScreen CurrentLevel { get; private set; }
-
     private readonly PixelManager _terrain;
     private readonly SpriteBank _spriteBank;
 
+    private readonly SkillSetManager _skillSetManager;
     private readonly LevelCursor _levelCursor;
     private readonly LevelViewport _viewport;
     private readonly LevelInputController _inputController;
     private readonly LevelControlPanel _controlPanel;
-    private readonly LevelUpdater _levelUpdater;
 
     private readonly Lemming[] _lemmings;
     // private readonly ITickable[] _gadgets;
 
+    private readonly IFrameUpdater _standardFrameUpdater;
+    private readonly IFrameUpdater _fastForwardFrameUpdater;
+
+    private IFrameUpdater _currentlySelectedFrameUpdater;
+
     private bool _stopMotion = true;
     private bool _doTick;
+
+    public bool IsFastForwards { get; private set; }
+
+    public bool DoneAssignmentThisFrame { get; set; }
+    public LemmingSkill QueuedSkill { get; private set; } = NoneSkill.Instance;
+    public Lemming? QueuedSkillLemming { get; private set; }
+    public int QueuedSkillFrame { get; private set; }
 
     public LevelScreen(
         LevelData levelData,
@@ -44,16 +54,25 @@ public sealed class LevelScreen : BaseScreen
 
         _terrain = terrain;
         _inputController = new LevelInputController();
+        _skillSetManager = new SkillSetManager(levelData.SkillSetData);
 
-        _levelUpdater = new LevelUpdater(false);
-        _controlPanel = new LevelControlPanel(levelData.SkillSet, _inputController);
-        _levelCursor = new LevelCursor(_controlPanel, _levelUpdater, _inputController, _lemmings);
+        var isSuperLemmingMode = false;
+
+        _fastForwardFrameUpdater = new FastForwardsFrameUpdater();
+        _standardFrameUpdater = isSuperLemmingMode
+            ? _fastForwardFrameUpdater
+            : new StandardFrameUpdater();
+
+        _currentlySelectedFrameUpdater = _standardFrameUpdater;
+
+        _controlPanel = new LevelControlPanel(_skillSetManager, _inputController);
+        _levelCursor = new LevelCursor(_controlPanel, _inputController, _lemmings);
         _viewport = new LevelViewport(terrain, _levelCursor, _inputController);
 
-        CurrentLevel = this;
         Orientation.SetTerrain(terrain);
         LemmingAction.SetTerrain(terrain);
         LemmingSkill.SetTerrain(terrain);
+        LevelCursor.LevelScreen = this;
 
         _spriteBank = spriteBank;
         _spriteBank.TerrainSprite.SetViewport(_viewport);
@@ -62,12 +81,10 @@ public sealed class LevelScreen : BaseScreen
 
     public override void Tick()
     {
-        _levelUpdater.DoneAssignmentThisFrame = false;
+        DoneAssignmentThisFrame = false;
 
         _inputController.Update();
-
-        _levelUpdater.CheckForQueuedAction();
-
+        CheckForQueuedAction();
         HandleKeyboardInput();
 
         var shouldTickLevel = HandleMouseInput();
@@ -77,11 +94,10 @@ public sealed class LevelScreen : BaseScreen
 
         for (var i = 0; i < _lemmings.Length; i++)
         {
-            var lemming = _lemmings[i];
-            _levelUpdater.UpdateLemming(lemming);
+            _currentlySelectedFrameUpdater.UpdateLemming(_lemmings[i]);
         }
 
-        _levelUpdater.Update();
+        _currentlySelectedFrameUpdater.Update();
     }
 
     private void HandleKeyboardInput()
@@ -101,7 +117,16 @@ public sealed class LevelScreen : BaseScreen
 
         if (ToggleFastForwards)
         {
-            _levelUpdater.ToggleFastForwards();
+            if (IsFastForwards)
+            {
+                _currentlySelectedFrameUpdater = _standardFrameUpdater;
+                IsFastForwards = false;
+            }
+            else
+            {
+                _currentlySelectedFrameUpdater = _fastForwardFrameUpdater;
+                IsFastForwards = true;
+            }
         }
 
         if (ToggleFullScreen)
@@ -139,50 +164,54 @@ public sealed class LevelScreen : BaseScreen
         return true;
     }
 
-    /*
-    procedure TLemmingGame.CheckForQueuedAction;
-var
-  i: Integer;
-  L: TLemming;
-  NewSkill: TBasicLemmingAction;
-begin
-  // First check whether there was already a skill assignment this frame
-  if Assigned(fReplayManager.Assignment[fCurrentIteration, 0]) then Exit;
+    public void ClearQueuedSkill()
+    {
+        QueuedSkill = NoneSkill.Instance;
+        QueuedSkillLemming = null;
+        QueuedSkillFrame = 0;
+    }
 
-  for i := 0 to LemmingList.Count - 1 do
-  begin
-    L := LemmingList.List[i];
+    public void SetQueuedSkill(Lemming lemming, LemmingSkill lemmingSkill)
+    {
+        QueuedSkill = lemmingSkill;
+        QueuedSkillLemming = lemming;
+        QueuedSkillFrame = 0;
+    }
 
-    if L.LemQueueAction = baNone then Continue;
+    private void CheckForQueuedAction()
+    {
+        // First check whether there was already a skill assignment this frame
+        //    if Assigned(fReplayManager.Assignment[fCurrentIteration, 0]) then Exit;
 
-    if L.LemRemoved or L.CannotReceiveSkills or L.LemTeleporting then // CannotReceiveSkills covers neutral and zombie
-    begin
-      // delete queued action first
-      L.LemQueueAction := baNone;
-      L.LemQueueFrame := 0;
-      Continue;
-    end;
+        if (QueuedSkill == NoneSkill.Instance || QueuedSkillLemming == null)
+        {
+            ClearQueuedSkill();
+            return;
+        }
 
-    NewSkill := L.LemQueueAction;
+        if (false) //(lemming.IsRemoved || !lemming.CanReceiveSkills || lemming.IsTeleporting) // CannotReceiveSkills covers neutral and zombie
+        {
+            // delete queued action first
+            ClearQueuedSkill();
+            return;
+        }
 
-    // Try assigning the skill
-    if NewSkillMethods[NewSkill](L) and CheckSkillAvailable(NewSkill) then
-      // Record skill assignment, so that we apply it in CheckForReplayAction
-      RecordSkillAssignment(L, NewSkill)
-    else
-    begin;
-      Inc(L.LemQueueFrame);
-      // Delete queued action after 16 frames
-      if L.LemQueueFrame > 15 then
-      begin
-        L.LemQueueAction := baNone;
-        L.LemQueueFrame := 0;
-      end;
-    end;
-  end;
+        if (QueuedSkill.CanAssignToLemming(QueuedSkillLemming) && QueuedSkill.CurrentNumberOfSkillsAvailable > 0)
+        {
+            // Record skill assignment, so that we apply it in CheckForReplayAction
+            // RecordSkillAssignment(L, NewSkill)
+        }
+        else
+        {
+            QueuedSkillFrame++;
 
-end;
-    */
+            // Delete queued action after 16 frames
+            if (QueuedSkillFrame > 15)
+            {
+                ClearQueuedSkill();
+            }
+        }
+    }
 
     public override void OnWindowSizeChanged()
     {
@@ -194,10 +223,10 @@ end;
     {
         _spriteBank.Dispose();
 #pragma warning disable CS8625
-        CurrentLevel = null;
         Orientation.SetTerrain(null);
         LemmingAction.SetTerrain(null);
         LemmingSkill.SetTerrain(null);
+        LevelCursor.LevelScreen = null;
         _spriteBank.TerrainSprite.SetViewport(null);
         _spriteBank.LevelCursorSprite.SetLevelCursor(null);
 #pragma warning restore CS8625

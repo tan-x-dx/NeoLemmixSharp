@@ -20,7 +20,7 @@ public sealed class LevelData
     public int? TimeLimit { get; set; }
     public int MaxSpawnInterval { get; set; }
 
-    public SkillSet SkillSet { get; set; }
+    public SkillSetData SkillSetData { get; set; }
     public ThemeData ThemeData { get; } = new();
     public List<TerrainData> AllTerrainData { get; } = new();
     public List<TerrainGroup> AllTerrainGroups { get; } = new();
