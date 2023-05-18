@@ -17,6 +17,7 @@ public sealed class LevelScreen : BaseScreen
     private readonly PixelManager _terrain;
     private readonly SpriteBank _spriteBank;
 
+    private readonly SkillSetManager _skillSetManager;
     private readonly LevelCursor _levelCursor;
     private readonly LevelViewport _viewport;
     private readonly LevelInputController _inputController;
@@ -53,6 +54,7 @@ public sealed class LevelScreen : BaseScreen
 
         _terrain = terrain;
         _inputController = new LevelInputController();
+        _skillSetManager = new SkillSetManager(levelData.SkillSetData);
 
         var isSuperLemmingMode = false;
 
@@ -63,7 +65,7 @@ public sealed class LevelScreen : BaseScreen
 
         _currentlySelectedFrameUpdater = _standardFrameUpdater;
 
-        _controlPanel = new LevelControlPanel(levelData.SkillSetData, _inputController);
+        _controlPanel = new LevelControlPanel(_skillSetManager, _inputController);
         _levelCursor = new LevelCursor(_controlPanel, _inputController, _lemmings);
         _viewport = new LevelViewport(terrain, _levelCursor, _inputController);
 
