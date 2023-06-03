@@ -17,7 +17,7 @@ public sealed class FloaterAction : LemmingAction
     {
     }
 
-    protected override int ActionId => 14;
+    public override int ActionId => 14;
     public override string LemmingActionName => "floater";
     public override int NumberOfAnimationFrames => NumberOfFloaterAnimationFrames;
     public override bool IsOneTimeAction => false;
@@ -32,16 +32,19 @@ public sealed class FloaterAction : LemmingAction
             maxFallDistance--;
         }
 
-        var groundPixelDistance = Math.Max(FindGroundPixel(lemming.Orientation, lemming.LevelPosition), 0);
+        var levelPosition = lemming.LevelPosition;
+        var groundPixelDistance = Math.Max(FindGroundPixel(lemming.Orientation, levelPosition), 0);
         if (maxFallDistance > groundPixelDistance)
         {
-            lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, groundPixelDistance);
+            levelPosition = lemming.Orientation.MoveDown(levelPosition, groundPixelDistance);
             lemming.NextAction = WalkerAction.Instance;
         }
         else
         {
-            lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, maxFallDistance);
+            levelPosition = lemming.Orientation.MoveDown(levelPosition, maxFallDistance);
         }
+
+        lemming.LevelPosition = levelPosition;
 
         return true;
     }

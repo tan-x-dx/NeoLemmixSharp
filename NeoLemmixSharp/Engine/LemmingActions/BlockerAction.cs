@@ -10,7 +10,7 @@ public sealed class BlockerAction : LemmingAction
     {
     }
 
-    protected override int ActionId => 3;
+    public override int ActionId => 3;
     public override string LemmingActionName => "blocker";
     public override int NumberOfAnimationFrames => NumberOfBlockerAnimationFrames;
     public override bool IsOneTimeAction => false;

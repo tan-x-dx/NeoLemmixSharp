@@ -10,7 +10,7 @@ public sealed class StonerAction : LemmingAction
     {
     }
 
-    protected override int ActionId => 28;
+    public override int ActionId => 28;
     public override string LemmingActionName => "stoner";
     public override int NumberOfAnimationFrames => NumberOfStonerAnimationFrames;
     public override bool IsOneTimeAction => true;

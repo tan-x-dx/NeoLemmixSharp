@@ -13,7 +13,7 @@ public sealed class PlatformerAction : LemmingAction
     {
     }
 
-    protected override int ActionId => 21;
+    public override int ActionId => 21;
     public override string LemmingActionName => "platformer";
     public override int NumberOfAnimationFrames => NumberOfPlatformerAnimationFrames;
     public override bool IsOneTimeAction => false;
@@ -22,6 +22,7 @@ public sealed class PlatformerAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming)
     {
         var dx = lemming.FacingDirection.DeltaX;
+        var lemmingPosition = lemming.LevelPosition;
 
         if (lemming.AnimationFrame == 9)
         {
@@ -38,35 +39,41 @@ public sealed class PlatformerAction : LemmingAction
             {
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
             }
-            else if (PlatformerTerrainCheck(lemming.Orientation.MoveRight(lemming.LevelPosition, dx + dx), lemming.Orientation))
+            else if (PlatformerTerrainCheck(lemming.Orientation.MoveRight(lemmingPosition, dx + dx), lemming.Orientation))
             {
-                lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, dx);
+                lemmingPosition = lemming.Orientation.MoveRight(lemmingPosition, dx);
+                lemming.LevelPosition = lemmingPosition;
+
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
             }
             else if (!lemming.ConstructivePositionFreeze)
             {
-                lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, dx);
+                lemmingPosition = lemming.Orientation.MoveRight(lemmingPosition, dx);
+                lemming.LevelPosition = lemmingPosition;
             }
         }
         else if (lemming.AnimationFrame == 0)
         {
-            if (PlatformerTerrainCheck(lemming.Orientation.MoveRight(lemming.LevelPosition, dx + dx), lemming.Orientation) &&
+            if (PlatformerTerrainCheck(lemming.Orientation.MoveRight(lemmingPosition, dx + dx), lemming.Orientation) &&
                 lemming.NumberOfBricksLeft > 1)
             {
-                lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, dx);
+                lemmingPosition = lemming.Orientation.MoveRight(lemmingPosition, dx);
+                lemming.LevelPosition = lemmingPosition;
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
             }
-            else if (PlatformerTerrainCheck(lemming.Orientation.MoveRight(lemming.LevelPosition, dx + dx + dx), lemming.Orientation) &&
+            else if (PlatformerTerrainCheck(lemming.Orientation.MoveRight(lemmingPosition, dx + dx + dx), lemming.Orientation) &&
                      lemming.NumberOfBricksLeft > 1)
             {
-                lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, dx + dx);
+                lemmingPosition = lemming.Orientation.MoveRight(lemmingPosition, dx + dx);
+                lemming.LevelPosition = lemmingPosition;
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
             }
             else
             {
                 if (!lemming.ConstructivePositionFreeze)
                 {
-                    lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, dx + dx);
+                    lemmingPosition = lemming.Orientation.MoveRight(lemmingPosition, dx + dx);
+                    lemming.LevelPosition = lemmingPosition;
                 }
 
                 lemming.NumberOfBricksLeft--; // Why are we doing this here, instead at the beginning of frame 15??
@@ -74,9 +81,10 @@ public sealed class PlatformerAction : LemmingAction
                 if (lemming.NumberOfBricksLeft == 0)
                 {
                     // stalling if there are pixels in the way:
-                    if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 1)).IsSolid)
+                    if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 1)).IsSolid)
                     {
-                        lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
+                        lemmingPosition = lemming.Orientation.MoveLeft(lemmingPosition, dx);
+                        lemming.LevelPosition = lemmingPosition;
                     }
 
                     ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -94,15 +102,17 @@ public sealed class PlatformerAction : LemmingAction
 
     public static bool LemmingCanPlatform(Lemming lemming)
     {
-        var result = !Terrain.GetPixelData(lemming.LevelPosition).IsSolid ||
-                     !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 1)).IsSolid ||
-                     !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 2)).IsSolid ||
-                     !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 3)).IsSolid ||
-                     !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, 4)).IsSolid;
+        var lemmingPosition = lemming.LevelPosition;
+
+        var result = !Terrain.GetPixelData(lemmingPosition).IsSolid ||
+                     !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemmingPosition, 1)).IsSolid ||
+                     !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemmingPosition, 2)).IsSolid ||
+                     !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemmingPosition, 3)).IsSolid ||
+                     !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemmingPosition, 4)).IsSolid;
 
         var dx = lemming.FacingDirection.DeltaX;
-        result = result && !Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx, 1)).IsSolid;
-        result = result && !Terrain.GetPixelData(lemming.Orientation.Move(lemming.LevelPosition, dx + dx, 1)).IsSolid;
+        result = result && !Terrain.GetPixelData(lemming.Orientation.Move(lemmingPosition, dx, 1)).IsSolid;
+        result = result && !Terrain.GetPixelData(lemming.Orientation.Move(lemmingPosition, dx + dx, 1)).IsSolid;
         return result;
     }
 

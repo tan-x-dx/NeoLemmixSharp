@@ -10,7 +10,7 @@ public sealed class BuilderAction : LemmingAction
     {
     }
 
-    protected override int ActionId => 4;
+    public override int ActionId => 4;
     public override string LemmingActionName => "builder";
     public override int NumberOfAnimationFrames => NumberOfBuilderAnimationFrames;
     public override bool IsOneTimeAction => false;

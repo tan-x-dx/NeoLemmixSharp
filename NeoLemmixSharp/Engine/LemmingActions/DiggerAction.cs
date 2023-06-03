@@ -13,7 +13,7 @@ public sealed class DiggerAction : LemmingAction
     {
     }
 
-    protected override int ActionId => 7;
+    public override int ActionId => 7;
     public override string LemmingActionName => "digger";
     public override int NumberOfAnimationFrames => NumberOfDiggerAnimationFrames;
     public override bool IsOneTimeAction => false;
@@ -21,10 +21,12 @@ public sealed class DiggerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var lemmingPosition = lemming.LevelPosition;
+
         if (lemming.IsStartingAction)
         {
             lemming.IsStartingAction = false;
-            DigOneRow(lemming.LevelPosition, lemming.Orientation);
+            DigOneRow(lemmingPosition, lemming.Orientation);
             // The first digger cycle is one frame longer!
             // So we need to artificially cancel the very first frame advancement.
             lemming.AnimationFrame--;
@@ -33,8 +35,8 @@ public sealed class DiggerAction : LemmingAction
         if (lemming.AnimationFrame >= 0 &&
             lemming.AnimationFrame <= 8)
         {
-            var continueWork = DigOneRow(lemming.LevelPosition, lemming.Orientation);
-            lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 1);
+            var continueWork = DigOneRow(lemmingPosition, lemming.Orientation);
+            lemming.LevelPosition = lemming.Orientation.MoveDown(lemmingPosition, 1);
 
             /*if HasIndestructibleAt(L.LemX, L.LemY, L.LemDX, baDigging) then
                 begin
@@ -51,7 +53,7 @@ public sealed class DiggerAction : LemmingAction
     }
 
     private static bool DigOneRow(
-        LevelPosition levelPosition,
+        in LevelPosition levelPosition,
         Orientation orientation)
     {
         var result = false;
@@ -62,6 +64,7 @@ public sealed class DiggerAction : LemmingAction
         {
             //    Terrain.ErasePixel();
         }
+
         pixel = Terrain.GetPixelData(orientation.Move(levelPosition, 4, 0));
         if (pixel.IsSolid)
         {

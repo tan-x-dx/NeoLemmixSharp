@@ -62,7 +62,7 @@ public sealed class SpriteBankBuilder
 
     private void LoadLemmingSprites(ThemeData themeData)
     {
-        foreach (var lemmingState in LemmingAction.AllLemmingActions)
+        foreach (var lemmingState in LemmingAction.AllLemmingActions.Where(la => la.ActionId >= 0))
         {
             var pngFilePath = Path.Combine(themeData.LemmingSpritesFilePath, $"{lemmingState.LemmingActionName}.png");
 

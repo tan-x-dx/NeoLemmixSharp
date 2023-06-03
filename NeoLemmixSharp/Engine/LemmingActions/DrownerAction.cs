@@ -10,7 +10,7 @@ public sealed class DrownerAction : LemmingAction
     {
     }
 
-    protected override int ActionId => 9;
+    public override int ActionId => 9;
     public override string LemmingActionName => "drowner";
     public override int NumberOfAnimationFrames => NumberOfDrownerAnimationFrames;
     public override bool IsOneTimeAction => true;
