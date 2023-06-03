@@ -26,22 +26,6 @@ public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
 
     public RenderInterval GetHorizontalRenderInterval(int i) => _horizontalRenderIntervals[i];
 
-    public int NormaliseX(int x)
-    {
-        if (x < 0)
-            return x + LevelWidthInPixels;
-
-        if (x < LevelWidthInPixels)
-            return x;
-
-        x -= LevelWidthInPixels;
-
-        if (x >= LevelWidthInPixels)
-            return x % LevelWidthInPixels;
-
-        return x;
-    }
-
     public void RecalculateHorizontalDimensions(int scaleMultiplier, int windowWidth)
     {
         ViewPortWidth = windowWidth / scaleMultiplier;

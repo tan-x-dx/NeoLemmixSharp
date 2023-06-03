@@ -105,7 +105,10 @@ public sealed class LevelAssembler : IDisposable
         {
             //    LevelPosition = new LevelPosition(470, 76),
             LevelPosition = new LevelPosition(200, 0),
-            FacingDirection = LeftFacingDirection.Instance
+            FacingDirection = LeftFacingDirection.Instance,
+            Orientation = DownOrientation.Instance,
+
+            Debug = true
         };
 
         var lemming1 = new Lemming

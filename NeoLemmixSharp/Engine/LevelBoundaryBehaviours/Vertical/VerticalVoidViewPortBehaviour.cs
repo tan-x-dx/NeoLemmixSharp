@@ -19,8 +19,6 @@ public sealed class VerticalVoidViewPortBehaviour : IVerticalViewPortBehaviour
 
     public RenderInterval GetVerticalRenderInterval(int i) => _renderInterval;
 
-    public int NormaliseY(int y) => y;
-
     public void RecalculateVerticalDimensions(int scaleMultiplier, int windowHeight, int controlPanelHeight)
     {
         ViewPortHeight = (scaleMultiplier + windowHeight - controlPanelHeight) / scaleMultiplier;

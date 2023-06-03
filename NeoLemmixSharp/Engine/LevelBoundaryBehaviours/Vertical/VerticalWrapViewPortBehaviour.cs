@@ -26,22 +26,6 @@ public sealed class VerticalWrapViewPortBehaviour : IVerticalViewPortBehaviour
 
     public RenderInterval GetVerticalRenderInterval(int i) => _verticalRenderIntervals[i];
 
-    public int NormaliseY(int y)
-    {
-        if (y < 0)
-            return y + LevelHeightInPixels;
-
-        if (y < LevelHeightInPixels)
-            return y;
-
-        y -= LevelHeightInPixels;
-
-        if (y >= LevelHeightInPixels)
-            return y % LevelHeightInPixels;
-
-        return y;
-    }
-
     public void RecalculateVerticalDimensions(int scaleMultiplier, int windowHeight, int controlPanelHeight)
     {
         ViewPortHeight = (scaleMultiplier + windowHeight - controlPanelHeight) / scaleMultiplier;

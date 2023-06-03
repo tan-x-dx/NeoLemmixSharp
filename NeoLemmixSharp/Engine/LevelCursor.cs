@@ -1,5 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.LemmingSkills;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Util;
 using System;
 
@@ -11,6 +13,8 @@ public sealed class LevelCursor
     public static LevelScreen LevelScreen { private get; set; }
 #pragma warning restore CS8618
 
+    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
     private readonly ILevelControlPanel _controlPanel;
     private readonly LevelInputController _controller;
     private readonly Lemming[] _lemmings;
@@ -27,10 +31,14 @@ public sealed class LevelCursor
     private int _numberOfLemmingsUnderCursor;
 
     public LevelCursor(
+        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
+        IVerticalBoundaryBehaviour verticalBoundaryBehaviour,
         ILevelControlPanel controlPanel,
         LevelInputController controller,
         Lemming[] lemmings)
     {
+        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
         _controlPanel = controlPanel;
         _controller = controller;
         _lemmings = lemmings;
@@ -40,15 +48,15 @@ public sealed class LevelCursor
     {
         //   CheckLemmingsUnderCursor();
 
-        if (_controller.LeftMouseButtonStatus == MouseButtonStatusConsts.MouseButtonPressed)
-        {
-            HandleSkillAssignment();
-        }
+        //   if (_controller.LeftMouseButtonStatus == MouseButtonStatusConsts.MouseButtonPressed)
+        //  {
+        HandleSkillAssignment();
+        //  }
     }
 
     private bool HandleSkillAssignment(bool isReplayAssignment = false)
     {
-        if (_controlPanel.SelectedSkillAssignButton != null)
+        if (_controlPanel.SelectedSkillAssignButton == null)
             return false;
 
         var skill = _controlPanel.SelectedSkill;
@@ -188,13 +196,15 @@ public sealed class LevelCursor
 
     private bool LemmingIsUnderCursor(Lemming lemming)
     {
-        var p0 = lemming.Orientation.Move(lemming.LevelPosition, -8, 10);
-        var p1 = lemming.Orientation.Move(lemming.LevelPosition, 5, -3);
+        if (lemming.Debug)
+            return true;
 
-        return lemming.Orientation.FirstIsAboveSecond(p0, CursorPosition) &&
-               lemming.Orientation.FirstIsToLeftOfSecond(p0, CursorPosition) &&
-               lemming.Orientation.FirstIsBelowSecond(p1, CursorPosition) &&
-               lemming.Orientation.FirstIsToRightOfSecond(p1, CursorPosition);
+        var lemmingPosition = lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 5);
+
+        var dx = _horizontalBoundaryBehaviour.GetHorizontalDistanceSquared(CursorPosition.X, lemmingPosition.X);
+        var dy = _verticalBoundaryBehaviour.GetVerticalDistanceSquared(CursorPosition.Y, lemmingPosition.Y);
+
+        return dx < 8 && dy < 11;
     }
 
     private bool IsCloserToCursorCentre(Lemming? previousCandidate, Lemming newCandidate)
@@ -202,19 +212,16 @@ public sealed class LevelCursor
         if (previousCandidate is null)
             return true;
 
-        var l1 = previousCandidate.Orientation.MoveUp(previousCandidate.LevelPosition, 6);
-        var l2 = newCandidate.Orientation.MoveUp(newCandidate.LevelPosition, 6);
+        var previousLemmingPosition = previousCandidate.Orientation.Move(previousCandidate.LevelPosition, previousCandidate.FacingDirection.DeltaX, 5);
+        var newLemmingPosition = newCandidate.Orientation.Move(newCandidate.LevelPosition, newCandidate.FacingDirection.DeltaX, 5);
 
-        var x1 = l1.X - CursorPosition.X;
-        var y1 = l1.Y - CursorPosition.Y;
+        var dx1 = _horizontalBoundaryBehaviour.GetHorizontalDistanceSquared(CursorPosition.X, previousLemmingPosition.X);
+        var dy1 = _horizontalBoundaryBehaviour.GetHorizontalDistanceSquared(CursorPosition.Y, previousLemmingPosition.Y);
 
-        var x2 = l2.X - CursorPosition.X;
-        var y2 = l2.Y - CursorPosition.Y;
+        var dx2 = _verticalBoundaryBehaviour.GetVerticalDistanceSquared(CursorPosition.X, newLemmingPosition.X);
+        var dy2 = _verticalBoundaryBehaviour.GetVerticalDistanceSquared(CursorPosition.Y, newLemmingPosition.Y);
 
-        var d1 = x1 * x1 + y1 * y1;
-        var d2 = x2 * x2 + y2 * y2;
-
-        return d2 < d1;
+        return dx2 + dy2 < dx1 + dy1;
     }
 
     private bool SkillIsAvailable(LemmingSkill lemmingSkill)

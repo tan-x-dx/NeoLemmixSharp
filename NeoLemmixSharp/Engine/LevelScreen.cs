@@ -2,6 +2,8 @@
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LemmingSkills;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Engine.LevelUpdates;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
@@ -22,6 +24,12 @@ public sealed class LevelScreen : BaseScreen
     private readonly LevelViewport _viewport;
     private readonly LevelInputController _inputController;
     private readonly LevelControlPanel _controlPanel;
+
+    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
+
+    private readonly IHorizontalViewPortBehaviour _horizontalViewPortBehaviour;
+    private readonly IVerticalViewPortBehaviour _verticalViewPortBehaviour;
 
     private readonly Lemming[] _lemmings;
     // private readonly ITickable[] _gadgets;
@@ -49,6 +57,12 @@ public sealed class LevelScreen : BaseScreen
         SpriteBank spriteBank)
         : base(levelData.LevelTitle)
     {
+        _horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour ?? new HorizontalWrapBoundaryBehaviour(levelData.LevelWidth);
+        _verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour ?? new VerticalWrapBoundaryBehaviour(levelData.LevelHeight);
+
+        _horizontalViewPortBehaviour = levelData.HorizontalViewPortBehaviour ?? new HorizontalWrapBehaviour(levelData.LevelWidth);
+        _verticalViewPortBehaviour = levelData.VerticalViewPortBehaviour ?? new VerticalWrapViewPortBehaviour(levelData.LevelHeight);
+
         _lemmings = lemmings;
         //  _gadgets = gadgets;
 
@@ -66,8 +80,8 @@ public sealed class LevelScreen : BaseScreen
         _currentlySelectedFrameUpdater = _standardFrameUpdater;
 
         _controlPanel = new LevelControlPanel(_skillSetManager, _inputController);
-        _levelCursor = new LevelCursor(_controlPanel, _inputController, _lemmings);
-        _viewport = new LevelViewport(terrain, _levelCursor, _inputController);
+        _levelCursor = new LevelCursor(_horizontalBoundaryBehaviour, _verticalBoundaryBehaviour, _controlPanel, _inputController, _lemmings);
+        _viewport = new LevelViewport(_levelCursor, _inputController, _horizontalViewPortBehaviour, _verticalViewPortBehaviour, _horizontalBoundaryBehaviour, _verticalBoundaryBehaviour);
 
         Orientation.SetTerrain(terrain);
         LemmingAction.SetTerrain(terrain);
