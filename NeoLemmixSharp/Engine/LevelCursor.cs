@@ -196,15 +196,12 @@ public sealed class LevelCursor
 
     private bool LemmingIsUnderCursor(Lemming lemming)
     {
-        if (lemming.Debug)
-            return true;
-
         var lemmingPosition = lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 5);
 
-        var dx = _horizontalBoundaryBehaviour.GetHorizontalDistanceSquared(CursorPosition.X, lemmingPosition.X);
-        var dy = _verticalBoundaryBehaviour.GetVerticalDistanceSquared(CursorPosition.Y, lemmingPosition.Y);
-
-        return dx < 8 && dy < 11;
+        var dx = GetHorizontalDistanceSquared(CursorPosition.X, lemmingPosition.X);
+        var dy = GetVerticalDistanceSquared(CursorPosition.Y, lemmingPosition.Y);
+        
+        return dx < 10 && dy < 10;
     }
 
     private bool IsCloserToCursorCentre(Lemming? previousCandidate, Lemming newCandidate)
@@ -215,13 +212,31 @@ public sealed class LevelCursor
         var previousLemmingPosition = previousCandidate.Orientation.Move(previousCandidate.LevelPosition, previousCandidate.FacingDirection.DeltaX, 5);
         var newLemmingPosition = newCandidate.Orientation.Move(newCandidate.LevelPosition, newCandidate.FacingDirection.DeltaX, 5);
 
-        var dx1 = _horizontalBoundaryBehaviour.GetHorizontalDistanceSquared(CursorPosition.X, previousLemmingPosition.X);
-        var dy1 = _horizontalBoundaryBehaviour.GetHorizontalDistanceSquared(CursorPosition.Y, previousLemmingPosition.Y);
+        var dx1 = GetHorizontalDistanceSquared(CursorPosition.X, previousLemmingPosition.X);
+        var dy1 = GetHorizontalDistanceSquared(CursorPosition.Y, previousLemmingPosition.Y);
 
-        var dx2 = _verticalBoundaryBehaviour.GetVerticalDistanceSquared(CursorPosition.X, newLemmingPosition.X);
-        var dy2 = _verticalBoundaryBehaviour.GetVerticalDistanceSquared(CursorPosition.Y, newLemmingPosition.Y);
+        var dx2 = GetVerticalDistanceSquared(CursorPosition.X, newLemmingPosition.X);
+        var dy2 = GetVerticalDistanceSquared(CursorPosition.Y, newLemmingPosition.Y);
 
         return dx2 + dy2 < dx1 + dy1;
+    }
+
+    private int GetHorizontalDistanceSquared(int x1, int x2)
+    {
+        x1 = _horizontalBoundaryBehaviour.NormaliseX(x1);
+        x2 = _horizontalBoundaryBehaviour.NormaliseX(x2);
+
+        var dx = x2 - x1;
+        return dx * dx;
+    }
+
+    private int GetVerticalDistanceSquared(int y1, int y2)
+    {
+        y1 = _verticalBoundaryBehaviour.NormaliseY(y1);
+        y2 = _verticalBoundaryBehaviour.NormaliseY(y2);
+
+        var dy = y2 - y1;
+        return dy * dy;
     }
 
     private bool SkillIsAvailable(LemmingSkill lemmingSkill)

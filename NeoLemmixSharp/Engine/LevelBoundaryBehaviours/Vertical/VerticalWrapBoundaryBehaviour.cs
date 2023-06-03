@@ -27,12 +27,4 @@ public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
         // otherwise, just do modulo operation
         return y % _levelHeightInPixels;
     }
-
-    public int GetVerticalDistanceSquared(int y1, int y2)
-    {
-        y1 = NormaliseY(y1);
-        y2 = NormaliseY(y2);
-        var dy = y2 - y1;
-        return dy * dy;
-    }
 }

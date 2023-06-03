@@ -27,12 +27,4 @@ public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehavio
         // otherwise, just do modulo operation
         return x % _levelWidthInPixels;
     }
-
-    public int GetHorizontalDistanceSquared(int x1, int x2)
-    {
-        x1 = NormaliseX(x1);
-        x2 = NormaliseX(x2);
-        var dx = x2 - x1;
-        return dx * dx;
-    }
 }
