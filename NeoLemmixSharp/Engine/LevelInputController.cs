@@ -17,19 +17,19 @@ public sealed class LevelInputController : InputController
     public LevelInputController()
         : base(6)
     {
-        Pause = CreateAction();
-        Quit = CreateAction();
-        ToggleFullScreen = CreateAction();
-        ToggleFastForwards = CreateAction();
-        SelectOnlyWalkers = CreateAction();
-        SelectOnlyUnassignedLemmings = CreateAction();
+        Pause = CreateAction("Pause");
+        Quit = CreateAction("Quit");
+        ToggleFullScreen = CreateAction("Toggle Fullscreen");
+        ToggleFastForwards = CreateAction("Toggle Fast Forwards");
+        SelectOnlyWalkers = CreateAction("Select Only Walkers");
+        SelectOnlyUnassignedLemmings = CreateAction("Select Only Unassigned Lemmings");
 
         SetUpBindings();
     }
 
-    private KeyAction CreateAction()
+    private KeyAction CreateAction(string actionName)
     {
-        return new KeyAction(_actionCount++);
+        return new KeyAction(_actionCount++, actionName);
     }
 
     private void SetUpBindings()

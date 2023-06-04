@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Util;
 
 public abstract class InputController
 {
-    private readonly Dictionary<int, KeyAction> _keyMapping;
+    private readonly List<(int, KeyAction)> _keyMapping;
     private readonly bool[] _keys;
     private readonly KeyAction[] _keyActions;
 
@@ -21,7 +21,7 @@ public abstract class InputController
 
     protected InputController(int numberOfKeyboardInputs)
     {
-        _keyMapping = new Dictionary<int, KeyAction>();
+        _keyMapping = new List<(int, KeyAction)>();
         _keys = new bool[256];
 
         _keyActions = new KeyAction[numberOfKeyboardInputs];
@@ -34,8 +34,9 @@ public abstract class InputController
             _keyActions[i].KeyState = (_keyActions[i].KeyState << 1) & 2;
         }
 
-        foreach (var (keyValue, action) in _keyMapping)
+        for (var index = 0; index < _keyMapping.Count; index++)
         {
+            var (keyValue, action) = _keyMapping[index];
             if (_keys[keyValue])
             {
                 _keyActions[action.Id].KeyState |= KeyStatusConsts.KeyPressed;
@@ -48,7 +49,7 @@ public abstract class InputController
 
     protected void Bind(Keys keyCode, KeyAction keyAction)
     {
-        _keyMapping.Add((int)keyCode, keyAction);
+        _keyMapping.Add(((int)keyCode, keyAction));
         _keyActions[keyAction.Id] = keyAction;
     }
 
