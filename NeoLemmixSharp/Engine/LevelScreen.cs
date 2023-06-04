@@ -10,7 +10,6 @@ using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Rendering.Text;
 using NeoLemmixSharp.Screen;
-using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
 
@@ -156,7 +155,7 @@ public sealed class LevelScreen : BaseScreen
 
         if (_viewport.HandleMouseInput())
         {
-            if (_inputController.LeftMouseButtonStatus == MouseButtonStatusConsts.MouseButtonPressed)
+            if (_inputController.LeftMouseButtonAction.IsPressed)
             {
                 _doTick = true;
             }

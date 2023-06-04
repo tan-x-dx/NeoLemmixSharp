@@ -26,6 +26,7 @@ public sealed class LevelCursor
     public bool HighlightLemming { get; private set; }
     public bool LemmingsUnderCursor => _numberOfLemmingsUnderCursor > 0;
 
+    public bool CursorOnLevel { get; set; }
     public LevelPosition CursorPosition { get; set; }
 
     private Lemming? _lemmingUnderCursor;
@@ -49,7 +50,7 @@ public sealed class LevelCursor
     {
         CheckLemmingsUnderCursor();
 
-        if (_controller.LeftMouseButtonStatus == MouseButtonStatusConsts.MouseButtonPressed)
+        if (_controller.LeftMouseButtonAction.IsPressed)
         {
             HandleSkillAssignment();
         }
@@ -65,7 +66,7 @@ public sealed class LevelCursor
         _hitTestAutoFail = false;
 
         // Just to be safe, though this should always return in fLemSelected
-      //  var priorityLemming = GetPriorityLemming(skill, isReplayAssignment);
+        //  var priorityLemming = GetPriorityLemming(skill, isReplayAssignment);
         // Get lemming to queue the skill assignment
         var queuedLemming = GetPriorityLemming(NoneSkill.Instance, false);
 
@@ -111,6 +112,9 @@ public sealed class LevelCursor
     {
         _lemmingUnderCursor = null;
         _numberOfLemmingsUnderCursor = 0;
+        if (!CursorOnLevel)
+            return null;
+
         var curValue = 10;
 
         var selectOnlyWalkers = _controller.SelectOnlyWalkers.IsKeyDown;
@@ -210,6 +214,9 @@ public sealed class LevelCursor
 
     private bool LemmingIsUnderCursor(Lemming lemming)
     {
+        if (!CursorOnLevel)
+            return false;
+
         var lemmingPosition = lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 4);
 
         var dx = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, lemmingPosition.X);

@@ -14,6 +14,11 @@ public sealed class KeyAction : IEquatable<KeyAction>
         _actionName = actionName;
     }
 
+    public void UpdateStatus()
+    {
+        KeyState = (KeyState << 1) & 2;
+    }
+
     /// <summary>
     /// Is the Key currently pressed down?
     /// </summary>

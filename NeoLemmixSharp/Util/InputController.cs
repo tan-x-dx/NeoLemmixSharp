@@ -16,8 +16,11 @@ public abstract class InputController
     public int MouseY { get; private set; }
 
     public int ScrollDelta { get; private set; }
-    public int LeftMouseButtonStatus { get; private set; }
-    public int RightMouseButtonStatus { get; private set; }
+    public MouseButtonAction LeftMouseButtonAction { get; }
+    public MouseButtonAction RightMouseButtonAction { get; }
+    public MouseButtonAction MiddleMouseButtonAction { get; }
+    public MouseButtonAction MouseButton4Action { get; }
+    public MouseButtonAction MouseButton5Action { get; }
 
     protected InputController(int numberOfKeyboardInputs)
     {
@@ -25,13 +28,19 @@ public abstract class InputController
         _keys = new bool[256];
 
         _keyActions = new KeyAction[numberOfKeyboardInputs];
+
+        LeftMouseButtonAction = new MouseButtonAction(0, "Left Mouse Button");
+        RightMouseButtonAction = new MouseButtonAction(1, "Right Mouse Button");
+        MiddleMouseButtonAction = new MouseButtonAction(2, "Middle Mouse Button");
+        MouseButton4Action = new MouseButtonAction(3, "Mouse Button 4");
+        MouseButton5Action = new MouseButtonAction(4, "Button 5");
     }
 
     public void Update()
     {
         for (var i = 0; i < _keyActions.Length; i++)
         {
-            _keyActions[i].KeyState = (_keyActions[i].KeyState << 1) & 2;
+            _keyActions[i].UpdateStatus();
         }
 
         for (var index = 0; index < _keyMapping.Count; index++)
@@ -78,30 +87,11 @@ public abstract class InputController
         ScrollDelta = Math.Sign(currentScrollValue - _previousScrollValue);
         _previousScrollValue = currentScrollValue;
 
-        LeftMouseButtonStatus = ((LeftMouseButtonStatus << 1) & 2) | (int)mouseState.LeftButton;
-        RightMouseButtonStatus = ((RightMouseButtonStatus << 1) & 2) | (int)mouseState.RightButton;
+        LeftMouseButtonAction.UpdateState(mouseState.LeftButton);
+        RightMouseButtonAction.UpdateState(mouseState.RightButton);
+        MiddleMouseButtonAction.UpdateState(mouseState.MiddleButton);
+
+        MouseButton4Action.UpdateState(mouseState.XButton1);
+        MouseButton5Action.UpdateState(mouseState.XButton2);
     }
-}
-
-public static class KeyStatusConsts
-{
-    public const int KeyUnpressed = 0;
-    public const int KeyPressed = 1;
-    public const int KeyReleased = 2;
-    public const int KeyHeld = 3;
-}
-
-public static class MouseButtonStatusConsts
-{
-    public const int MouseButtonUnpressed = 0;
-    public const int MouseButtonPressed = 1;
-    public const int MouseButtonReleased = 2;
-    public const int MouseButtonHeld = 3;
-}
-
-public static class ScrollDeltaConsts
-{
-    public const int Negative = -1;
-    public const int None = 0;
-    public const int Positive = 1;
 }

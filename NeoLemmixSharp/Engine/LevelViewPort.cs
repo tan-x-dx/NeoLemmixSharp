@@ -106,6 +106,7 @@ public sealed class LevelViewport
         }
 
         _cursor.CursorPosition = new LevelPosition(ViewportMouseX, ViewportMouseY);
+        _cursor.CursorOnLevel = result;
 
         if (_controller.MouseX == 0)
         {
