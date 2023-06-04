@@ -33,7 +33,7 @@ public abstract class InputController
         RightMouseButtonAction = new MouseButtonAction(1, "Right Mouse Button");
         MiddleMouseButtonAction = new MouseButtonAction(2, "Middle Mouse Button");
         MouseButton4Action = new MouseButtonAction(3, "Mouse Button 4");
-        MouseButton5Action = new MouseButtonAction(4, "Button 5");
+        MouseButton5Action = new MouseButtonAction(4, "Mouse Button 5");
     }
 
     public void Update()
@@ -52,8 +52,8 @@ public abstract class InputController
             }
         }
 
-        UpdateKeysDown();
-        UpdateMouseState();
+        UpdateKeyStates();
+        UpdateMouseButtonStates();
     }
 
     protected void Bind(Keys keyCode, KeyAction keyAction)
@@ -67,7 +67,7 @@ public abstract class InputController
         Array.Clear(_keys);
     }
 
-    private void UpdateKeysDown()
+    private void UpdateKeyStates()
     {
         var currentlyPressedKeys = Keyboard.GetState().GetPressedKeys();
         Array.Clear(_keys);
@@ -77,7 +77,7 @@ public abstract class InputController
         }
     }
 
-    private void UpdateMouseState()
+    private void UpdateMouseButtonStates()
     {
         var mouseState = Mouse.GetState();
         MouseX = mouseState.X;

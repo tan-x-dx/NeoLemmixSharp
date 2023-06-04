@@ -4,25 +4,45 @@ namespace NeoLemmixSharp.Util;
 
 public sealed class KeyAction : IEquatable<KeyAction>
 {
+    private const int EnabledMask = 3;
+
     private readonly string _actionName;
+    private int _enabledMask;
+    private int _keyState;
+
     public int Id { get; }
-    public int KeyState { get; set; }
+
+    public int KeyState
+    {
+        get => _keyState;
+        set => _keyState = value & _enabledMask;
+    }
 
     public KeyAction(int id, string actionName)
     {
         Id = id;
+        _enabledMask = EnabledMask;
         _actionName = actionName;
     }
 
     public void UpdateStatus()
     {
-        KeyState = (KeyState << 1) & 2;
+        _keyState = (_keyState << 1) & _enabledMask;
+    }
+
+    public void SetEnabled(bool enable)
+    {
+        _enabledMask = enable ? EnabledMask : 0;
     }
 
     /// <summary>
     /// Is the Key currently pressed down?
     /// </summary>
     public bool IsKeyDown => (KeyState & KeyStatusConsts.KeyPressed) == KeyStatusConsts.KeyPressed;
+    /// <summary>
+    /// Is the Key currently released?
+    /// </summary>
+    public bool IsKeyUp => (KeyState & KeyStatusConsts.KeyReleased) == KeyStatusConsts.KeyUnpressed;
     /// <summary>
     /// Is the Key currently pressed down, but it was previously released?
     /// </summary>
@@ -35,6 +55,8 @@ public sealed class KeyAction : IEquatable<KeyAction>
     /// Is the Key currently being pressed down and it was previously pressed down?
     /// </summary>
     public bool IsHeld => KeyState == KeyStatusConsts.KeyHeld;
+
+    public bool IsEnabled => _enabledMask != 0;
 
     public bool Equals(KeyAction? other)
     {

@@ -23,7 +23,11 @@ public sealed class MouseButtonAction : IEquatable<MouseButtonAction>
     /// <summary>
     /// Is the Mouse Button currently pressed down?
     /// </summary>
-    public bool IsMouseDown => (MouseButtonState & MouseButtonStatusConsts.MouseButtonPressed) == MouseButtonStatusConsts.MouseButtonPressed;
+    public bool IsMouseButtonDown => (MouseButtonState & MouseButtonStatusConsts.MouseButtonPressed) == MouseButtonStatusConsts.MouseButtonPressed;
+    /// <summary>
+    /// Is the Mouse Button currently released?
+    /// </summary>
+    public bool IsMouseButtonUp => (MouseButtonState & MouseButtonStatusConsts.MouseButtonReleased) == MouseButtonStatusConsts.MouseButtonUnpressed;
     /// <summary>
     /// Is the Mouse Button currently pressed down, but it was previously released?
     /// </summary>
