@@ -260,8 +260,8 @@ public sealed class LevelScreen : BaseScreen
             _controlPanel);
     }
 
-    private bool Pause => _inputController.CheckKeyDown(_inputController.Pause) == KeyStatusConsts.KeyPressed;
-    private bool Quit => _inputController.CheckKeyDown(_inputController.Quit) == KeyStatusConsts.KeyPressed;
-    private bool ToggleFullScreen => _inputController.CheckKeyDown(_inputController.ToggleFullScreen) == KeyStatusConsts.KeyPressed;
-    private bool ToggleFastForwards => _inputController.CheckKeyDown(_inputController.ToggleFastForwards) == KeyStatusConsts.KeyPressed;
+    private bool Pause => _inputController.Pause.IsPressed;
+    private bool Quit => _inputController.Quit.IsPressed;
+    private bool ToggleFullScreen => _inputController.ToggleFullScreen.IsPressed;
+    private bool ToggleFastForwards => _inputController.ToggleFastForwards.IsPressed;
 }

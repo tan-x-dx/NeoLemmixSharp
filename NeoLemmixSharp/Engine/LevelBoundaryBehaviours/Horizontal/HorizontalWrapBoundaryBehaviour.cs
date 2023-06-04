@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
+﻿using System;
+
+namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 
 public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehaviour
 {
@@ -26,5 +28,14 @@ public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehavio
 
         // otherwise, just do modulo operation
         return x % _levelWidthInPixels;
+    }
+
+    public int GetAbsoluteHorizontalDistance(int x1, int x2)
+    {
+        var dx = Math.Abs(x1 - x2);
+        if (dx + dx > _levelWidthInPixels)
+            return _levelWidthInPixels - dx;
+
+        return dx;
     }
 }

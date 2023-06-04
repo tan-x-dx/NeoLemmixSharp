@@ -101,8 +101,8 @@ public sealed class LevelViewport
         {
             result = false;
 
-            ViewportMouseX = -500000;
-            ViewportMouseY = -500000;
+            ViewportMouseX = -4000;
+            ViewportMouseY = -4000;
         }
 
         _cursor.CursorPosition = new LevelPosition(ViewportMouseX, ViewportMouseY);

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+﻿using System;
+
+namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 
 public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
 {
@@ -26,5 +28,14 @@ public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
 
         // otherwise, just do modulo operation
         return y % _levelHeightInPixels;
+    }
+
+    public int GetAbsoluteVerticalDistance(int y1, int y2)
+    {
+        var dy = Math.Abs(y1 - y2);
+        if (dy + dy > _levelHeightInPixels)
+            return _levelHeightInPixels - dy;
+
+        return dy;
     }
 }

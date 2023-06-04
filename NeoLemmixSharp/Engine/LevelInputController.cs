@@ -3,29 +3,33 @@ using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
 
-public sealed class LevelInputController : InputController<LevelKeyboardAction>
+public sealed class LevelInputController : InputController
 {
     private int _actionCount;
 
-    public LevelKeyboardAction Pause { get; }
-    public LevelKeyboardAction Quit { get; }
-    public LevelKeyboardAction ToggleFullScreen { get; }
-    public LevelKeyboardAction ToggleFastForwards { get; }
+    public KeyAction Pause { get; }
+    public KeyAction Quit { get; }
+    public KeyAction ToggleFullScreen { get; }
+    public KeyAction ToggleFastForwards { get; }
+    public KeyAction SelectOnlyWalkers { get; }
+    public KeyAction SelectOnlyUnassignedLemmings { get; }
 
     public LevelInputController()
-        : base(4)
+        : base(6)
     {
         Pause = CreateAction();
         Quit = CreateAction();
         ToggleFullScreen = CreateAction();
         ToggleFastForwards = CreateAction();
+        SelectOnlyWalkers = CreateAction();
+        SelectOnlyUnassignedLemmings = CreateAction();
 
         SetUpBindings();
     }
 
-    private LevelKeyboardAction CreateAction()
+    private KeyAction CreateAction()
     {
-        return new LevelKeyboardAction(_actionCount++);
+        return new KeyAction(_actionCount++);
     }
 
     private void SetUpBindings()
@@ -34,15 +38,8 @@ public sealed class LevelInputController : InputController<LevelKeyboardAction>
         Bind(Keys.Escape, Quit);
         Bind(Keys.F1, ToggleFullScreen);
         Bind(Keys.F, ToggleFastForwards);
-    }
-}
 
-public sealed class LevelKeyboardAction : IKeyAction
-{
-    public int Id { get; }
-
-    public LevelKeyboardAction(int id)
-    {
-        Id = id;
+        Bind(Keys.LeftControl, SelectOnlyUnassignedLemmings);
+        Bind(Keys.W, SelectOnlyWalkers);
     }
 }

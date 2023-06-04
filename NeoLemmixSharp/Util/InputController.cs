@@ -4,12 +4,11 @@ using System.Collections.Generic;
 
 namespace NeoLemmixSharp.Util;
 
-public abstract class InputController<T>
-    where T : class, IKeyAction
+public abstract class InputController
 {
-    private readonly Dictionary<int, T> _keyMapping;
+    private readonly Dictionary<int, KeyAction> _keyMapping;
     private readonly bool[] _keys;
-    private readonly int[] _keyActionStatuses;
+    private readonly KeyAction[] _keyActions;
 
     private int _previousScrollValue;
 
@@ -22,24 +21,24 @@ public abstract class InputController<T>
 
     protected InputController(int numberOfKeyboardInputs)
     {
-        _keyMapping = new Dictionary<int, T>();
+        _keyMapping = new Dictionary<int, KeyAction>();
         _keys = new bool[256];
 
-        _keyActionStatuses = new int[numberOfKeyboardInputs];
+        _keyActions = new KeyAction[numberOfKeyboardInputs];
     }
 
     public void Update()
     {
-        for (var i = 0; i < _keyActionStatuses.Length; i++)
+        for (var i = 0; i < _keyActions.Length; i++)
         {
-            _keyActionStatuses[i] = (_keyActionStatuses[i] << 1) & 2;
+            _keyActions[i].KeyState = (_keyActions[i].KeyState << 1) & 2;
         }
 
         foreach (var (keyValue, action) in _keyMapping)
         {
             if (_keys[keyValue])
             {
-                _keyActionStatuses[action.Id] |= KeyStatusConsts.KeyPressed;
+                _keyActions[action.Id].KeyState |= KeyStatusConsts.KeyPressed;
             }
         }
 
@@ -47,14 +46,10 @@ public abstract class InputController<T>
         UpdateMouseState();
     }
 
-    protected void Bind(Keys keyCode, T keyAction)
+    protected void Bind(Keys keyCode, KeyAction keyAction)
     {
         _keyMapping.Add((int)keyCode, keyAction);
-    }
-
-    public int CheckKeyDown(T keyAction)
-    {
-        return _keyActionStatuses[keyAction.Id];
+        _keyActions[keyAction.Id] = keyAction;
     }
 
     public void ReleaseAllKeys()
