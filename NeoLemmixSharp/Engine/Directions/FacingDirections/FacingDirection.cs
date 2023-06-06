@@ -9,6 +9,7 @@ public abstract class FacingDirection : IEquatable<FacingDirection>
     public abstract int DeltaX { get; }
     public abstract FacingDirection OppositeDirection { get; }
     public abstract ActionSprite ChooseActionSprite(LemmingActionSpriteBundle actionSpriteBundle, Orientation orientation);
+    public abstract Orientation ConvertToRelativeOrientation(Orientation orientation);
 
     public bool Equals(FacingDirection? other) => DeltaX == (other?.DeltaX ?? 0);
     public sealed override bool Equals(object? obj) => obj is FacingDirection other && DeltaX == other.DeltaX;

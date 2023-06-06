@@ -77,5 +77,8 @@ public sealed class RightOrientation : Orientation
         actionSpriteBundle.RightRightSprite = rightSprite;
     }
 
+    public override Orientation RotateClockwise() => DownOrientation.Instance;
+    public override Orientation RotateCounterClockwise() => UpOrientation.Instance;
+
     public override string ToString() => "right";
 }

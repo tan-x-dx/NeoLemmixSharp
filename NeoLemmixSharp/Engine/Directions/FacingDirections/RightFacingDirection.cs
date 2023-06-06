@@ -13,10 +13,8 @@ public sealed class RightFacingDirection : FacingDirection
 
     public override int DeltaX => 1;
     public override FacingDirection OppositeDirection => LeftFacingDirection.Instance;
-    public override ActionSprite ChooseActionSprite(LemmingActionSpriteBundle actionSpriteBundle, Orientation orientation)
-    {
-        return orientation.GetRightActionSprite(actionSpriteBundle);
-    }
+    public override ActionSprite ChooseActionSprite(LemmingActionSpriteBundle actionSpriteBundle, Orientation orientation) => orientation.GetRightActionSprite(actionSpriteBundle);
+    public override Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.RotateCounterClockwise();
 
     public override string ToString() => "right";
 }
