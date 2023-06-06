@@ -80,7 +80,7 @@ public sealed class LevelScreen : BaseScreen
         _currentlySelectedFrameUpdater = _standardFrameUpdater;
 
         _controlPanel = new LevelControlPanel(_skillSetManager, _inputController);
-        _levelCursor = new LevelCursor(_horizontalBoundaryBehaviour, _verticalBoundaryBehaviour, _controlPanel, _inputController, _lemmings);
+        _levelCursor = new LevelCursor(_horizontalBoundaryBehaviour, _verticalBoundaryBehaviour, _controlPanel, _inputController);
         _viewport = new LevelViewport(_levelCursor, _inputController, _horizontalViewPortBehaviour, _verticalViewPortBehaviour, _horizontalBoundaryBehaviour, _verticalBoundaryBehaviour);
 
         Orientation.SetTerrain(terrain);
@@ -96,21 +96,20 @@ public sealed class LevelScreen : BaseScreen
     public override void Tick()
     {
         DoneAssignmentThisFrame = false;
+        _levelCursor.OnNewFrame();
 
         _inputController.Update();
         CheckForQueuedAction();
         HandleKeyboardInput();
 
-        var shouldTickLevel = HandleMouseInput();
-
-        if (!shouldTickLevel)
-            return;
-
-        _levelCursor.OnNewFrame();
+        var shouldTickLemmings = HandleMouseInput();
 
         for (var i = 0; i < _lemmings.Length; i++)
         {
-            _currentlySelectedFrameUpdater.UpdateLemming(_lemmings[i]);
+            if (shouldTickLemmings)
+            {
+                _currentlySelectedFrameUpdater.UpdateLemming(_lemmings[i]);
+            }
 
             _levelCursor.CheckLemming(_lemmings[i]);
         }
