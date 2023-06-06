@@ -1,5 +1,10 @@
 ﻿using NeoLemmixSharp.Engine.ControlPanel;
+using NeoLemmixSharp.Engine.Directions.FacingDirections;
+using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LemmingSkills;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Engine.LevelInput;
 using NeoLemmixSharp.Util;
 using System;
 
@@ -11,9 +16,21 @@ public sealed class LevelCursor
     public static LevelScreen LevelScreen { private get; set; }
 #pragma warning restore CS8618
 
+    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
     private readonly ILevelControlPanel _controlPanel;
     private readonly LevelInputController _controller;
-    private readonly Lemming[] _lemmings;
+
+    private LemmingSkill _skill = NoneSkill.Instance;
+    private Lemming? _lemmingUnderCursor;
+    private Lemming? _queuedLemming;
+    private FacingDirection _facingDirection = LeftFacingDirection.Instance;
+    private int _numberOfLemmingsUnderCursor;
+    private int _curValue;
+    private bool _selectOnlyWalkers;
+    private bool _selectOnlyUnassigned;
+    private bool _selectOnlyFacingLeft;
+    private bool _selectOnlyFacingRight;
 
     private bool _hitTestAutoFail;
     private bool _doneAssignmentThisFrame;
@@ -21,26 +38,168 @@ public sealed class LevelCursor
     public bool HighlightLemming { get; private set; }
     public bool LemmingsUnderCursor => _numberOfLemmingsUnderCursor > 0;
 
+    public bool CursorOnLevel { get; set; }
     public LevelPosition CursorPosition { get; set; }
 
-    //private Lemming? _lemmingUnderCursor;
-    private int _numberOfLemmingsUnderCursor;
-
     public LevelCursor(
+        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
+        IVerticalBoundaryBehaviour verticalBoundaryBehaviour,
         ILevelControlPanel controlPanel,
-        LevelInputController controller,
-        Lemming[] lemmings)
+        LevelInputController controller)
     {
+        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
         _controlPanel = controlPanel;
         _controller = controller;
-        _lemmings = lemmings;
     }
+
+    public void OnNewFrame()
+    {
+        _lemmingUnderCursor = null;
+        _queuedLemming = null;
+        _skill = _controlPanel.SelectedSkill;
+        _numberOfLemmingsUnderCursor = 0;
+        _curValue = 10;
+
+        _selectOnlyWalkers = _controller.SelectOnlyWalkers.IsKeyDown;
+        _selectOnlyUnassigned = _controller.SelectOnlyUnassignedLemmings.IsKeyDown;
+
+        if (_controller.SelectLeftFacingLemmings.IsKeyDown)
+        {
+            _selectOnlyFacingLeft = true;
+            _facingDirection = LeftFacingDirection.Instance;
+        }
+
+        if (_controller.SelectRightFacingLemmings.IsKeyDown)
+        {
+            _selectOnlyFacingRight = true;
+            _facingDirection = RightFacingDirection.Instance;
+        }
+    }
+
+    public void CheckLemming(Lemming lemming)
+    {
+        if (!CursorOnLevel)
+            return;
+
+        if (HighlightLemming && !false /*(L = GetHighlitLemming)*/)
+            return;
+
+        /* if (lemming.IsRemoved || lemming.IsTeleporting)
+         return;*/
+        /*
+
+        // Check if we only look for highlighted Lems
+        if (IsHighlight and not(L = GetHighlitLemming))
+        or(IsReplay and not(L = GetTargetLemming)) 
+            return;
+        // Does Lemming exist
+        if L.LemRemoved or L.LemTeleporting 
+            return;
+        // Is the Lemming unable to receive skills, because zombie, neutral, or was-ohnoer? (remove unless we haven't yet had any lem under the cursor)
+        if L.CannotReceiveSkills and Assigned(PriorityLem) 
+            return;
+        */
+
+        // Is Lemming inside cursor (only check if we are not using Highlighting!)
+        if (!LemmingIsUnderCursor(lemming)) // and(not(IsHighlight or IsReplay))
+            return;
+
+        // Directional select
+        if ((_selectOnlyFacingLeft != _selectOnlyFacingRight) &&
+            lemming.FacingDirection != _facingDirection &&
+            !(false))//and(not(IsHighlight or IsReplay))
+            return;
+
+        // Select only walkers
+        if (_selectOnlyWalkers && lemming.CurrentAction != WalkerAction.Instance &&
+            !(false)) //and(not(IsHighlight or IsReplay))
+            return;
+
+        // Increase number of lemmings in cursor (if not a zombie or neutral)
+        //if(lemming.CanReceiveSkills)
+        //{
+        _numberOfLemmingsUnderCursor++;
+        //}
+
+        // Determine priority class of current lemming
+        int currentPriorityValue;
+        if (_selectOnlyUnassigned || _selectOnlyWalkers)
+        {
+            currentPriorityValue = 1;
+        }
+        else
+        {
+            currentPriorityValue = 0;
+            bool lemIsInBox;
+            do
+            {
+                lemIsInBox = LemmingIsPriority(lemming, currentPriorityValue);
+                currentPriorityValue++;
+            } while (currentPriorityValue > Math.Min(_curValue, 4) || lemIsInBox);
+        }
+
+        // Can this lemming actually receive the skill?
+        if (!_skill.CanAssignToLemming(lemming))
+        {
+            currentPriorityValue = 8;
+        }
+
+        // Deprioritize zombie even when just counting lemmings
+        if (false) //(!lemming.CanReceiveSkills)
+        {
+            currentPriorityValue = 9;
+        }
+
+        if (currentPriorityValue < _curValue ||
+            (currentPriorityValue == _curValue && IsCloserToCursorCentre(_lemmingUnderCursor, lemming)))
+        {
+            // New top priority lemming found
+            _lemmingUnderCursor = lemming;
+            _queuedLemming = lemming;
+            _curValue = currentPriorityValue;
+        }
+
+        //  Delete PriorityLem if too low-priority and we wish to assign a skill
+        if (_curValue > 6 && _skill != NoneSkill.Instance)
+        {
+            _queuedLemming = _lemmingUnderCursor;
+            _lemmingUnderCursor = null;
+        }
+    }
+
+    // TODO Make this cleverer
+    private static bool LemmingIsPriority(Lemming lemming, int priorityValue) => priorityValue switch
+    {
+        0 => lemming.CurrentAction == BasherAction.Instance ||
+             lemming.CurrentAction == FencerAction.Instance ||
+             lemming.CurrentAction == MinerAction.Instance ||
+             lemming.CurrentAction == DiggerAction.Instance ||
+             lemming.CurrentAction == BuilderAction.Instance ||
+             lemming.CurrentAction == PlatformerAction.Instance ||
+             lemming.CurrentAction == StackerAction.Instance ||
+             lemming.CurrentAction == BlockerAction.Instance ||
+             lemming.CurrentAction == ShruggerAction.Instance ||
+             lemming.CurrentAction == ReacherAction.Instance ||
+             lemming.CurrentAction == ShimmierAction.Instance ||
+             lemming.CurrentAction == LasererAction.Instance,
+
+        1 => lemming.HasPermanentSkill,
+
+        2 => !(lemming.CurrentAction == WalkerAction.Instance ||
+               lemming.CurrentAction == AscenderAction.Instance),
+
+        3 => lemming.CurrentAction == WalkerAction.Instance ||
+             lemming.CurrentAction == AscenderAction.Instance,
+
+        _ => true
+    };
 
     public void HandleMouseInput()
     {
-        //   CheckLemmingsUnderCursor();
+        // CheckLemmingsUnderCursor();
 
-        if (_controller.LeftMouseButtonStatus == MouseButtonStatusConsts.MouseButtonPressed)
+        if (_controller.LeftMouseButtonAction.IsPressed)
         {
             HandleSkillAssignment();
         }
@@ -48,153 +207,50 @@ public sealed class LevelCursor
 
     private bool HandleSkillAssignment(bool isReplayAssignment = false)
     {
-        if (_controlPanel.SelectedSkillAssignButton != null)
+        if (_skill == NoneSkill.Instance)
             return false;
 
-        var skill = _controlPanel.SelectedSkill;
-        var oldHitTestAutoFail = _hitTestAutoFail;
-        _hitTestAutoFail = false;
-
-        // Just to be safe, though this should always return in fLemSelected
-        var priorityLemming = GetPriorityLemming(skill, isReplayAssignment);
-        // Get lemming to queue the skill assignment
-        var queuedLemming = GetPriorityLemming(NoneSkill.Instance, false);
-
-        _hitTestAutoFail = oldHitTestAutoFail;
-
-        if (priorityLemming == null || !SkillIsAvailable(skill))
+        if (_lemmingUnderCursor == null || !SkillIsAvailable(_skill))
         {
-            if (queuedLemming == null || skill.IsPermanentSkill)
-                return false;
-
-            LevelScreen.SetQueuedSkill(queuedLemming, skill);
-
-            return false;
-        }
-
-        if (isReplayAssignment)// If the assignment is written in the replay, change lemming state
-        {
-            if (AssignSkill(priorityLemming, skill))
+            if (_queuedLemming != null && !_skill.IsPermanentSkill)
             {
-                // CueSoundEffect(SFX_ASSIGN_SKILL, L.Position);
-
-                return true;
+                LevelScreen.SetQueuedSkill(_queuedLemming, _skill);
             }
 
             return false;
         }
 
-        if (SkillIsAvailable(skill))
+        if (isReplayAssignment) // If the assignment is written in the replay, change lemming state
         {
-            RegainControl();
-            RecordSkillAssignment(priorityLemming, skill);
+            if (!AssignSkill())
+                return false;
+
+            // CueSoundEffect(SFX_ASSIGN_SKILL, L.Position);
 
             return true;
         }
 
-        return false;
-    }
+        if (!SkillIsAvailable(_skill))
+            return false;
 
-    private Lemming? GetPriorityLemming(LemmingSkill lemmingSkill, bool isReplayAssignment)
-    {
-        Lemming? lemmingUnderCursor = null;
-        _numberOfLemmingsUnderCursor = 0;
-        int curValue = 10;
+        RegainControl();
+        RecordSkillAssignment(_lemmingUnderCursor, _skill);
+        AssignSkill();
 
-        for (var i = 0; i < _lemmings.Length; i++)
-        {
-            var lemming = _lemmings[i];
-
-            if (HighlightLemming && !false/*(L = GetHighlitLemming)*/)
-            {
-                continue;
-            }
-
-            /* if (lemming.IsRemoved || lemming.IsTeleporting)
-             {
-                 continue;
-             }*/
-            /*
-            // Check if we only look for highlighted Lems
-            if (IsHighlight and not(L = GetHighlitLemming))
-            or(IsReplay and not(L = GetTargetLemming)) then Continue;
-            // Does Lemming exist
-            if L.LemRemoved or L.LemTeleporting then Continue;
-            // Is the Lemming unable to receive skills, because zombie, neutral, or was-ohnoer? (remove unless we haven't yet had any lem under the cursor)
-            if L.CannotReceiveSkills and Assigned(PriorityLem) then Continue;
-            */
-
-            // Is Lemming inside cursor (only check if we are not using Hightlightning!)
-            if (!LemmingIsUnderCursor(lemming))// and(not(IsHighlight or IsReplay))
-            {
-                continue;
-            }
-            // Directional select
-
-            /*
-            if (fSelectDx <> 0) and(fSelectDx <> L.LemDx) and(not(IsHighlight or IsReplay)) then Continue;
-            // Select only walkers
-            if IsSelectWalkerHotkey and(L.LemAction <> baWalking) and(not(IsHighlight or IsReplay)) then Continue;
-            */
-
-            // Increase number of lemmings in cursor (if not a zombie or neutral)
-            //if(lemming.CanReceiveSkills)
-            //{
-            _numberOfLemmingsUnderCursor++;
-            //}
-
-            // Determine priority class of current lemming
-            var curPriorityBox = 0;
-            if (false) //IsSelectUnassignedHotkey or IsSelectWalkerHotkey then
-            {
-                curPriorityBox = 1;
-            }
-            else
-            {
-                curPriorityBox = 0;
-                var lemIsInBox = false;
-                do
-                {
-                    lemIsInBox = false;
-                    curPriorityBox++;
-                } while (curPriorityBox > Math.Min(curValue, 4) || lemIsInBox);
-            }
-
-            // Can this lemming actually receive the skill?
-            if (!lemmingSkill.CanAssignToLemming(lemming))
-            {
-                curPriorityBox = 8;
-            }
-
-            // Deprioritize zombie even when just counting lemmings
-            if (false)//(!lemming.CanReceiveSkills)
-            {
-                curPriorityBox = 9;
-            }
-
-            if (curPriorityBox < curValue || (curPriorityBox == curValue && IsCloserToCursorCentre(lemmingUnderCursor, lemming)))
-            {
-                // New top priority lemming found
-                lemmingUnderCursor = lemming;
-                curValue = curPriorityBox;
-            }
-        }
-
-        //  Delete PriorityLem if too low-priority and we wish to assign a skill
-        //  if (CurValue > 6) && !(NewSkillOrig = baNone) then PriorityLem := nil;
-
-        return lemmingUnderCursor;
+        return true;
     }
 
     private bool LemmingIsUnderCursor(Lemming lemming)
     {
-        var p0 = lemming.Orientation.Move(lemming.LevelPosition, -8, 10);
-        var p1 = lemming.Orientation.Move(lemming.LevelPosition, 5, -3);
+        if (!CursorOnLevel)
+            return false;
 
-        return lemming.Orientation.FirstIsAboveSecond(p0, CursorPosition) &&
-               lemming.Orientation.FirstIsToLeftOfSecond(p0, CursorPosition) &&
-               lemming.Orientation.FirstIsBelowSecond(p1, CursorPosition) &&
-               lemming.Orientation.FirstIsToRightOfSecond(p1, CursorPosition);
+        var lemmingPosition = lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 4);
+
+        var dx = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, lemmingPosition.X);
+        var dy = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, lemmingPosition.Y);
+
+        return dx < 4 && dy < 4;
     }
 
     private bool IsCloserToCursorCentre(Lemming? previousCandidate, Lemming newCandidate)
@@ -202,19 +258,20 @@ public sealed class LevelCursor
         if (previousCandidate is null)
             return true;
 
-        var l1 = previousCandidate.Orientation.MoveUp(previousCandidate.LevelPosition, 6);
-        var l2 = newCandidate.Orientation.MoveUp(newCandidate.LevelPosition, 6);
+        var previousLemmingPosition = previousCandidate.Orientation.Move(previousCandidate.LevelPosition,
+            previousCandidate.FacingDirection.DeltaX, 4);
+        var newLemmingPosition =
+            newCandidate.Orientation.Move(newCandidate.LevelPosition, newCandidate.FacingDirection.DeltaX, 4);
 
-        var x1 = l1.X - CursorPosition.X;
-        var y1 = l1.Y - CursorPosition.Y;
+        var dx1 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X,
+            previousLemmingPosition.X);
+        var dy1 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.Y,
+            previousLemmingPosition.Y);
 
-        var x2 = l2.X - CursorPosition.X;
-        var y2 = l2.Y - CursorPosition.Y;
+        var dx2 = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.X, newLemmingPosition.X);
+        var dy2 = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, newLemmingPosition.Y);
 
-        var d1 = x1 * x1 + y1 * y1;
-        var d2 = x2 * x2 + y2 * y2;
-
-        return d2 < d1;
+        return dx2 * dx2 + dy2 * dy2 < dx1 * dx1 + dy1 * dy1;
     }
 
     private bool SkillIsAvailable(LemmingSkill lemmingSkill)
@@ -222,16 +279,16 @@ public sealed class LevelCursor
         return lemmingSkill.CurrentNumberOfSkillsAvailable > 0;
     }
 
-    private bool AssignSkill(Lemming lemming, LemmingSkill lemmingSkill)
+    private bool AssignSkill()
     {
-        if (!SkillIsAvailable(lemmingSkill) || _doneAssignmentThisFrame)
+        if (!SkillIsAvailable(_skill) || _doneAssignmentThisFrame)
             return false;
 
         //UpdateSkillCount(lemmingSkill);
 
         LevelScreen.ClearQueuedSkill();
 
-        var result = lemmingSkill.AssignToLemming(lemming);
+        var result = _skill.AssignToLemming(_lemmingUnderCursor!);
 
         _doneAssignmentThisFrame = true;
 

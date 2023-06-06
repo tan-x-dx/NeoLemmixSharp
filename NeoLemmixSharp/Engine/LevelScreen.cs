@@ -2,13 +2,15 @@
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LemmingSkills;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Engine.LevelInput;
 using NeoLemmixSharp.Engine.LevelUpdates;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Rendering.Text;
 using NeoLemmixSharp.Screen;
-using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
 
@@ -22,6 +24,12 @@ public sealed class LevelScreen : BaseScreen
     private readonly LevelViewport _viewport;
     private readonly LevelInputController _inputController;
     private readonly LevelControlPanel _controlPanel;
+
+    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
+
+    private readonly IHorizontalViewPortBehaviour _horizontalViewPortBehaviour;
+    private readonly IVerticalViewPortBehaviour _verticalViewPortBehaviour;
 
     private readonly Lemming[] _lemmings;
     // private readonly ITickable[] _gadgets;
@@ -49,6 +57,12 @@ public sealed class LevelScreen : BaseScreen
         SpriteBank spriteBank)
         : base(levelData.LevelTitle)
     {
+        _horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour ?? new HorizontalWrapBoundaryBehaviour(levelData.LevelWidth);
+        _verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour ?? new VerticalWrapBoundaryBehaviour(levelData.LevelHeight);
+
+        _horizontalViewPortBehaviour = levelData.HorizontalViewPortBehaviour ?? new HorizontalWrapBehaviour(levelData.LevelWidth);
+        _verticalViewPortBehaviour = levelData.VerticalViewPortBehaviour ?? new VerticalWrapViewPortBehaviour(levelData.LevelHeight);
+
         _lemmings = lemmings;
         //  _gadgets = gadgets;
 
@@ -66,8 +80,8 @@ public sealed class LevelScreen : BaseScreen
         _currentlySelectedFrameUpdater = _standardFrameUpdater;
 
         _controlPanel = new LevelControlPanel(_skillSetManager, _inputController);
-        _levelCursor = new LevelCursor(_controlPanel, _inputController, _lemmings);
-        _viewport = new LevelViewport(terrain, _levelCursor, _inputController);
+        _levelCursor = new LevelCursor(_horizontalBoundaryBehaviour, _verticalBoundaryBehaviour, _controlPanel, _inputController);
+        _viewport = new LevelViewport(_levelCursor, _inputController, _horizontalViewPortBehaviour, _verticalViewPortBehaviour, _horizontalBoundaryBehaviour, _verticalBoundaryBehaviour);
 
         Orientation.SetTerrain(terrain);
         LemmingAction.SetTerrain(terrain);
@@ -82,14 +96,20 @@ public sealed class LevelScreen : BaseScreen
     public override void Tick()
     {
         DoneAssignmentThisFrame = false;
+        _levelCursor.OnNewFrame();
+
+        for (var i = 0; i < _lemmings.Length; i++)
+        {
+            _levelCursor.CheckLemming(_lemmings[i]);
+        }
 
         _inputController.Update();
         CheckForQueuedAction();
         HandleKeyboardInput();
 
-        var shouldTickLevel = HandleMouseInput();
+        var shouldTickLemmings = HandleMouseInput();
 
-        if (!shouldTickLevel)
+        if (!shouldTickLemmings)
             return;
 
         for (var i = 0; i < _lemmings.Length; i++)
@@ -142,7 +162,7 @@ public sealed class LevelScreen : BaseScreen
 
         if (_viewport.HandleMouseInput())
         {
-            if (_inputController.LeftMouseButtonStatus == MouseButtonStatusConsts.MouseButtonPressed)
+            if (_inputController.LeftMouseButtonAction.IsPressed)
             {
                 _doTick = true;
             }
@@ -246,8 +266,8 @@ public sealed class LevelScreen : BaseScreen
             _controlPanel);
     }
 
-    private bool Pause => _inputController.CheckKeyDown(_inputController.Pause) == KeyStatusConsts.KeyPressed;
-    private bool Quit => _inputController.CheckKeyDown(_inputController.Quit) == KeyStatusConsts.KeyPressed;
-    private bool ToggleFullScreen => _inputController.CheckKeyDown(_inputController.ToggleFullScreen) == KeyStatusConsts.KeyPressed;
-    private bool ToggleFastForwards => _inputController.CheckKeyDown(_inputController.ToggleFastForwards) == KeyStatusConsts.KeyPressed;
+    private bool Pause => _inputController.Pause.IsPressed;
+    private bool Quit => _inputController.Quit.IsPressed;
+    private bool ToggleFullScreen => _inputController.ToggleFullScreen.IsPressed;
+    private bool ToggleFastForwards => _inputController.ToggleFastForwards.IsPressed;
 }

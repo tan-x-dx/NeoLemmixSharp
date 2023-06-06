@@ -11,7 +11,7 @@ public sealed class FallerAction : LemmingAction
     {
     }
 
-    protected override int ActionId => 12;
+    public override int ActionId => 12;
     public override string LemmingActionName => "faller";
     public override int NumberOfAnimationFrames => NumberOfFallerAnimationFrames;
     public override bool IsOneTimeAction => false;
@@ -30,14 +30,18 @@ public sealed class FallerAction : LemmingAction
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
             return true;
 
+        var lemmingPosition = lemming.LevelPosition;
+
         while (currentFallDistanceStep < maxFallDistanceStep &&
-               !Terrain.GetPixelData(lemming.LevelPosition).IsSolid)
+               !Terrain.GetPixelData(lemmingPosition).IsSolid)
         {
             if (currentFallDistanceStep > 0 &&
                 CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
                 return true;
 
-            lemming.LevelPosition = lemming.Orientation.MoveDown(lemming.LevelPosition, 1);
+            lemmingPosition = lemming.Orientation.MoveDown(lemmingPosition, 1);
+            lemming.LevelPosition = lemmingPosition;
+
             currentFallDistanceStep++;
             lemming.DistanceFallen++;
             lemming.TrueDistanceFallen++;

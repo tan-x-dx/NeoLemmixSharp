@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Engine.LevelInput;
 using NeoLemmixSharp.Util;
 using System;
 
@@ -16,6 +17,8 @@ public sealed class LevelViewport
 
     private readonly IHorizontalViewPortBehaviour _horizontalViewPortBehaviour;
     private readonly IVerticalViewPortBehaviour _verticalViewPortBehaviour;
+    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
 
     private int _windowWidth;
     private int _windowHeight;
@@ -44,14 +47,19 @@ public sealed class LevelViewport
     public int NumberOfVerticalRenderIntervals => _verticalViewPortBehaviour.NumberOfVerticalRenderIntervals;
 
     public LevelViewport(
-        PixelManager terrain,
         LevelCursor cursor,
-        LevelInputController controller)
+        LevelInputController controller,
+        IHorizontalViewPortBehaviour horizontalViewPortBehaviour,
+        IVerticalViewPortBehaviour verticalViewPortBehaviour,
+        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
+        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _cursor = cursor;
         _controller = controller;
-        _horizontalViewPortBehaviour = terrain.HorizontalViewPortBehaviour;
-        _verticalViewPortBehaviour = terrain.VerticalViewPortBehaviour;
+        _horizontalViewPortBehaviour = horizontalViewPortBehaviour;
+        _verticalViewPortBehaviour = verticalViewPortBehaviour;
+        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
         _scrollDelta = MaxScale / ScaleMultiplier;
     }
@@ -87,18 +95,19 @@ public sealed class LevelViewport
             ViewportMouseX = (ScreenMouseX - _horizontalViewPortBehaviour.ScreenX) / ScaleMultiplier + _horizontalViewPortBehaviour.ViewPortX;
             ViewportMouseY = (ScreenMouseY - _verticalViewPortBehaviour.ScreenY) / ScaleMultiplier + _verticalViewPortBehaviour.ViewPortY;
 
-            ViewportMouseX = _horizontalViewPortBehaviour.NormaliseX(ViewportMouseX);
-            ViewportMouseY = _verticalViewPortBehaviour.NormaliseY(ViewportMouseY);
+            ViewportMouseX = _horizontalBoundaryBehaviour.NormaliseX(ViewportMouseX);
+            ViewportMouseY = _verticalBoundaryBehaviour.NormaliseY(ViewportMouseY);
         }
         else
         {
             result = false;
 
-            ViewportMouseX = -500000;
-            ViewportMouseY = -500000;
+            ViewportMouseX = -4000;
+            ViewportMouseY = -4000;
         }
 
         _cursor.CursorPosition = new LevelPosition(ViewportMouseX, ViewportMouseY);
+        _cursor.CursorOnLevel = result;
 
         if (_controller.MouseX == 0)
         {

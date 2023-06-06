@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+using System.Collections.Generic;
 
 namespace NeoLemmixSharp.LevelBuilding.Data;
 
@@ -19,6 +21,14 @@ public sealed class LevelData
     public int SaveRequirement { get; set; }
     public int? TimeLimit { get; set; }
     public int MaxSpawnInterval { get; set; }
+
+
+    public IHorizontalBoundaryBehaviour HorizontalBoundaryBehaviour { get; set; }
+    public IVerticalBoundaryBehaviour VerticalBoundaryBehaviour { get; set; }
+
+    public IHorizontalViewPortBehaviour HorizontalViewPortBehaviour { get; set; }
+    public IVerticalViewPortBehaviour VerticalViewPortBehaviour { get; set; }
+
 
     public SkillSetData SkillSetData { get; set; }
     public ThemeData ThemeData { get; } = new();

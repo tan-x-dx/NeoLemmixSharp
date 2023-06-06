@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
-using NeoLemmixSharp.Engine.LemmingSkills;
 using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
@@ -51,7 +50,7 @@ public sealed class Lemming
     public Orientation Orientation = DownOrientation.Instance;
 
     public LemmingAction CurrentAction = WalkerAction.Instance;
-    public LemmingAction? NextAction;
+    public LemmingAction NextAction = NoneAction.Instance;
 
     public bool ShouldTick => true;
 
@@ -66,9 +65,11 @@ public sealed class Lemming
         var oldLevelPosition = LevelPosition;
         var oldFacingDirection = FacingDirection;
         var oldAction = CurrentAction;
-        NextAction = null;
+        NextAction = NoneAction.Instance;
 
-        if (!continueWithLemming)
+        _ = HandleLemmingAction() && CheckLevelBoundaries() && CheckTriggerArea(false);
+
+       /* if (!continueWithLemming)
             return;
         continueWithLemming = HandleLemmingAction();
         if (!continueWithLemming)
@@ -76,7 +77,7 @@ public sealed class Lemming
         continueWithLemming = CheckLevelBoundaries();
         if (!continueWithLemming)
             return;
-        CheckTriggerArea(false);
+        CheckTriggerArea(false);*/
     }
 
     private bool HandleLemmingAction()
@@ -119,7 +120,7 @@ public sealed class Lemming
 
         // var checkPosition = GetGadgetCheckPositions();
 
-        NextAction?.TransitionLemmingToAction(this, false);
+        NextAction.TransitionLemmingToAction(this, false);
 
         return true;
     }

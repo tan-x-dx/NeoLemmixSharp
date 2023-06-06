@@ -14,7 +14,6 @@ public interface IHorizontalViewPortBehaviour
     int NumberOfHorizontalRenderIntervals { get; }
     RenderInterval GetHorizontalRenderInterval(int i);
 
-    int NormaliseX(int x);
     void RecalculateHorizontalDimensions(int scaleMultiplier, int windowWidth);
     void ScrollHorizontally(int dx);
     void RecalculateHorizontalRenderIntervals(int scaleMultiplier);

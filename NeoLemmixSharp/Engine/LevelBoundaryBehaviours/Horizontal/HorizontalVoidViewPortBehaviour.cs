@@ -20,8 +20,6 @@ public sealed class HorizontalVoidViewPortBehaviour : IHorizontalViewPortBehavio
 
     public RenderInterval GetHorizontalRenderInterval(int i) => _renderInterval;
 
-    public int NormaliseX(int x) => x;
-
     public void RecalculateHorizontalDimensions(int scaleMultiplier, int windowWidth)
     {
         ViewPortWidth = windowWidth / scaleMultiplier;

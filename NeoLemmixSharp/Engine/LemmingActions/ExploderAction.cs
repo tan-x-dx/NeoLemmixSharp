@@ -10,7 +10,7 @@ public sealed class ExploderAction : LemmingAction
     {
     }
 
-    protected override int ActionId => 11;
+    public override int ActionId => 11;
     public override string LemmingActionName => "bomber";
     public override int NumberOfAnimationFrames => NumberOfExploderAnimationFrames;
     public override bool IsOneTimeAction => true;

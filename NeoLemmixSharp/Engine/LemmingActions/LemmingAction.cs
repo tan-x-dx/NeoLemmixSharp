@@ -18,6 +18,8 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     {
         var result = new Dictionary<string, LemmingAction>();
 
+        RegisterLemmingAction(NoneAction.Instance);
+
         RegisterLemmingAction(AscenderAction.Instance);
         RegisterLemmingAction(BasherAction.Instance);
         RegisterLemmingAction(BlockerAction.Instance);
@@ -83,7 +85,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
     public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
 
-    protected abstract int ActionId { get; }
+    public abstract int ActionId { get; }
     public abstract string LemmingActionName { get; }
     public abstract int NumberOfAnimationFrames { get; }
     public abstract bool IsOneTimeAction { get; }
@@ -126,7 +128,8 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
             ? 1
             : 0;
 
-        var brickPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, dy);
+        var brickPosition = lemming.LevelPosition;
+        brickPosition = lemming.Orientation.MoveUp(brickPosition, dy);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
 
         brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
@@ -181,13 +184,13 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         LevelPosition nextPosition;
         if (alreadyMoved)
         {
-            currentPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
             nextPosition = lemming.LevelPosition;
+            currentPosition = lemming.Orientation.MoveLeft(nextPosition, dx);
         }
         else
         {
             currentPosition = lemming.LevelPosition;
-            nextPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, dx);
+            nextPosition = lemming.Orientation.MoveRight(currentPosition, dx);
         }
 
         if (Terrain.PositionOutOfBounds(nextPosition) ||

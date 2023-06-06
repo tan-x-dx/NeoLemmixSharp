@@ -6,27 +6,39 @@ namespace NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 
 public static class BoundaryHelpers
 {
-    public static IHorizontalViewPortBehaviour GetHorizontalBoundaryBehaviour(
+    public static IHorizontalViewPortBehaviour GetHorizontalViewPortBehaviour(
         BoundaryBehaviourType boundaryBehaviourType,
-        int width,
-        int height) => boundaryBehaviourType switch
-        {
-            BoundaryBehaviourType.Void => new HorizontalVoidViewPortBehaviour(width),
-            //   BoundaryBehaviourType.Solid => expr,
-            //   BoundaryBehaviourType.Reflect => expr,
-            BoundaryBehaviourType.Wrap => new HorizontalWrapBehaviour(width),
-            _ => throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType, "Unknown boundary behaviour type")
-        };
+        int width) => boundaryBehaviourType switch
+    {
+        BoundaryBehaviourType.Void => new HorizontalVoidViewPortBehaviour(width),
+        //   BoundaryBehaviourType.Solid => expr,
+        //   BoundaryBehaviourType.Reflect => expr,
+        BoundaryBehaviourType.Wrap => new HorizontalWrapBehaviour(width),
+        _ => throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType,
+            "Unknown boundary behaviour type")
+    };
 
-    public static IVerticalViewPortBehaviour GetVerticalBoundaryBehaviour(
+    public static IVerticalViewPortBehaviour GetVerticalViewPortBehaviour(
         BoundaryBehaviourType boundaryBehaviourType,
-        int width,
         int height) => boundaryBehaviourType switch
-        {
-            BoundaryBehaviourType.Void => new VerticalVoidViewPortBehaviour(height),
-            //   BoundaryBehaviourType.Solid => expr,
-            //   BoundaryBehaviourType.Reflect => expr,
-            BoundaryBehaviourType.Wrap => new VerticalWrapViewPortBehaviour(height),
-            _ => throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType, "Unknown boundary behaviour type")
-        };
+    {
+        BoundaryBehaviourType.Void => new VerticalVoidViewPortBehaviour(height),
+        //   BoundaryBehaviourType.Solid => expr,
+        //   BoundaryBehaviourType.Reflect => expr,
+        BoundaryBehaviourType.Wrap => new VerticalWrapViewPortBehaviour(height),
+        _ => throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType,
+            "Unknown boundary behaviour type")
+    };
+
+    public static IHorizontalBoundaryBehaviour GetHorizontalBoundaryBehaviour(
+        bool wrap,
+        int width) => wrap
+        ? new HorizontalVoidBoundaryBehaviour()
+        : new HorizontalWrapBoundaryBehaviour(width);
+
+    public static IVerticalBoundaryBehaviour GetVerticalBoundaryBehaviour(
+        bool wrap,
+        int height) => wrap
+        ? new VerticalVoidBoundaryBehaviour()
+        : new VerticalWrapBoundaryBehaviour(height);
 }

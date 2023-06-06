@@ -53,7 +53,7 @@ public sealed class LasererAction : LemmingAction
     {
     }
 
-    protected override int ActionId => 18;
+    public override int ActionId => 18;
     public override string LemmingActionName => "laserer";
     public override int NumberOfAnimationFrames => NumberOfLasererAnimationFrames;
     public override bool IsOneTimeAction => false;
@@ -61,14 +61,15 @@ public sealed class LasererAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!Terrain.GetPixelData(lemming.LevelPosition).IsSolid)
+        var lemmingPosition = lemming.LevelPosition;
+        if (!Terrain.GetPixelData(lemmingPosition).IsSolid)
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
         var dx = lemming.FacingDirection.DeltaX;
-        var target = lemming.Orientation.Move(lemming.LevelPosition, dx + dx, 5);
+        var target = lemming.Orientation.Move(lemmingPosition, dx + dx, 5);
 
         var hit = false;
         var hitUseful = false;

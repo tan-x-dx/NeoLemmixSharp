@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.LemmingSkills;
+using NeoLemmixSharp.Engine.LevelInput;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Util;
 using System;
@@ -193,7 +194,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
             TrackScrollWheel();
         }
 
-        if (_controller.LeftMouseButtonStatus != MouseButtonStatusConsts.MouseButtonPressed)
+        if (!_controller.LeftMouseButtonAction.IsPressed)
             return;
 
         var mouseX = _controller.MouseX;
