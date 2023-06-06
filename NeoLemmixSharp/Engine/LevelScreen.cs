@@ -98,20 +98,23 @@ public sealed class LevelScreen : BaseScreen
         DoneAssignmentThisFrame = false;
         _levelCursor.OnNewFrame();
 
+        for (var i = 0; i < _lemmings.Length; i++)
+        {
+            _levelCursor.CheckLemming(_lemmings[i]);
+        }
+
         _inputController.Update();
         CheckForQueuedAction();
         HandleKeyboardInput();
 
         var shouldTickLemmings = HandleMouseInput();
 
+        if (!shouldTickLemmings)
+            return;
+
         for (var i = 0; i < _lemmings.Length; i++)
         {
-            if (shouldTickLemmings)
-            {
-                _currentlySelectedFrameUpdater.UpdateLemming(_lemmings[i]);
-            }
-
-            _levelCursor.CheckLemming(_lemmings[i]);
+            _currentlySelectedFrameUpdater.UpdateLemming(_lemmings[i]);
         }
 
         _currentlySelectedFrameUpdater.Update();

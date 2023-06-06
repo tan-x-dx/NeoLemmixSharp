@@ -53,6 +53,30 @@ public sealed class LevelCursor
         _controller = controller;
     }
 
+    public void OnNewFrame()
+    {
+        _lemmingUnderCursor = null;
+        _queuedLemming = null;
+        _skill = _controlPanel.SelectedSkill;
+        _numberOfLemmingsUnderCursor = 0;
+        _curValue = 10;
+
+        _selectOnlyWalkers = _controller.SelectOnlyWalkers.IsKeyDown;
+        _selectOnlyUnassigned = _controller.SelectOnlyUnassignedLemmings.IsKeyDown;
+
+        if (_controller.SelectLeftFacingLemmings.IsKeyDown)
+        {
+            _selectOnlyFacingLeft = true;
+            _facingDirection = LeftFacingDirection.Instance;
+        }
+
+        if (_controller.SelectRightFacingLemmings.IsKeyDown)
+        {
+            _selectOnlyFacingRight = true;
+            _facingDirection = RightFacingDirection.Instance;
+        }
+    }
+
     public void CheckLemming(Lemming lemming)
     {
         if (!CursorOnLevel)
@@ -198,7 +222,7 @@ public sealed class LevelCursor
 
         if (isReplayAssignment) // If the assignment is written in the replay, change lemming state
         {
-            if (!AssignSkill(_lemmingUnderCursor, _skill))
+            if (!AssignSkill())
                 return false;
 
             // CueSoundEffect(SFX_ASSIGN_SKILL, L.Position);
@@ -211,6 +235,7 @@ public sealed class LevelCursor
 
         RegainControl();
         RecordSkillAssignment(_lemmingUnderCursor, _skill);
+        AssignSkill();
 
         return true;
     }
@@ -254,16 +279,16 @@ public sealed class LevelCursor
         return lemmingSkill.CurrentNumberOfSkillsAvailable > 0;
     }
 
-    private bool AssignSkill(Lemming lemming, LemmingSkill lemmingSkill)
+    private bool AssignSkill()
     {
-        if (!SkillIsAvailable(lemmingSkill) || _doneAssignmentThisFrame)
+        if (!SkillIsAvailable(_skill) || _doneAssignmentThisFrame)
             return false;
 
         //UpdateSkillCount(lemmingSkill);
 
         LevelScreen.ClearQueuedSkill();
 
-        var result = lemmingSkill.AssignToLemming(lemming);
+        var result = _skill.AssignToLemming(_lemmingUnderCursor!);
 
         _doneAssignmentThisFrame = true;
 
@@ -276,28 +301,5 @@ public sealed class LevelCursor
 
     private void RecordSkillAssignment(Lemming queuedLemming, LemmingSkill skill)
     {
-    }
-
-    public void OnNewFrame()
-    {
-        _lemmingUnderCursor = null;
-        _queuedLemming = null;
-        _numberOfLemmingsUnderCursor = 0;
-        _curValue = 10;
-
-        _selectOnlyWalkers = _controller.SelectOnlyWalkers.IsKeyDown;
-        _selectOnlyUnassigned = _controller.SelectOnlyUnassignedLemmings.IsKeyDown;
-
-        if (_controller.SelectLeftFacingLemmings.IsKeyDown)
-        {
-            _selectOnlyFacingLeft = true;
-            _facingDirection = LeftFacingDirection.Instance;
-        }
-
-        if (_controller.SelectRightFacingLemmings.IsKeyDown)
-        {
-            _selectOnlyFacingRight = true;
-            _facingDirection = RightFacingDirection.Instance;
-        }
     }
 }
