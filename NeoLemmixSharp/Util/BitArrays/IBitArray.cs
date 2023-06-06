@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace NeoLemmixSharp.Util;
+namespace NeoLemmixSharp.Util.BitArrays;
 
 public interface IBitArray : ICollection<int>, IReadOnlyCollection<int>, ICloneable
 {

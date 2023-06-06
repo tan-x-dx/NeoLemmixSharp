@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace NeoLemmixSharp.Util;
+namespace NeoLemmixSharp.Util.BitArrays;
 
 public sealed class IntBasedBitArray : IBitArray
 {
@@ -29,7 +29,7 @@ public sealed class IntBasedBitArray : IBitArray
 
     public bool GetBit(int index)
     {
-        return (_bits & (1U << index)) != 0U;
+        return (_bits & 1U << index) != 0U;
     }
 
     public bool SetBit(int index)
