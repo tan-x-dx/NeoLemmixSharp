@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LemmingSkills;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Engine.LevelInput;
 using NeoLemmixSharp.Engine.LevelUpdates;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
@@ -105,9 +106,13 @@ public sealed class LevelScreen : BaseScreen
         if (!shouldTickLevel)
             return;
 
+        _levelCursor.OnNewFrame();
+
         for (var i = 0; i < _lemmings.Length; i++)
         {
             _currentlySelectedFrameUpdater.UpdateLemming(_lemmings[i]);
+
+            _levelCursor.CheckLemming(_lemmings[i]);
         }
 
         _currentlySelectedFrameUpdater.Update();

@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
-using NeoLemmixSharp.Engine.LemmingSkills;
 using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
@@ -68,7 +67,9 @@ public sealed class Lemming
         var oldAction = CurrentAction;
         NextAction = NoneAction.Instance;
 
-        if (!continueWithLemming)
+        _ = HandleLemmingAction() && CheckLevelBoundaries() && CheckTriggerArea(false);
+
+       /* if (!continueWithLemming)
             return;
         continueWithLemming = HandleLemmingAction();
         if (!continueWithLemming)
@@ -76,7 +77,7 @@ public sealed class Lemming
         continueWithLemming = CheckLevelBoundaries();
         if (!continueWithLemming)
             return;
-        CheckTriggerArea(false);
+        CheckTriggerArea(false);*/
     }
 
     private bool HandleLemmingAction()

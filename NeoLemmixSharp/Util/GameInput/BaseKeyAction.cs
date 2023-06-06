@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace NeoLemmixSharp.Util;
+namespace NeoLemmixSharp.Util.GameInput;
 
-public sealed class KeyAction : IEquatable<KeyAction>
+public abstract class BaseKeyAction : IEquatable<BaseKeyAction>
 {
     private const int EnabledMask = 3;
 
@@ -18,7 +18,7 @@ public sealed class KeyAction : IEquatable<KeyAction>
         set => _keyState = value & _enabledMask;
     }
 
-    public KeyAction(int id, string actionName)
+    protected BaseKeyAction(int id, string actionName)
     {
         Id = id;
         _enabledMask = EnabledMask;
@@ -58,19 +58,19 @@ public sealed class KeyAction : IEquatable<KeyAction>
 
     public bool IsEnabled => _enabledMask != 0;
 
-    public bool Equals(KeyAction? other)
+    public bool Equals(BaseKeyAction? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
         return Id == other.Id;
     }
 
-    public override bool Equals(object? obj) => ReferenceEquals(this, obj) || obj is KeyAction other && Id == other.Id;
+    public override bool Equals(object? obj) => ReferenceEquals(this, obj) || obj is BaseKeyAction other && Id == other.Id;
     public override int GetHashCode() => Id;
 
     public override string ToString() => _actionName;
 
-    public static bool operator ==(KeyAction? left, KeyAction? right)
+    public static bool operator ==(BaseKeyAction? left, BaseKeyAction? right)
     {
         if (ReferenceEquals(left, right))
             return true;
@@ -79,5 +79,5 @@ public sealed class KeyAction : IEquatable<KeyAction>
         return left.Id == right.Id;
     }
 
-    public static bool operator !=(KeyAction? left, KeyAction? right) => !(left == right);
+    public static bool operator !=(BaseKeyAction? left, BaseKeyAction? right) => !(left == right);
 }

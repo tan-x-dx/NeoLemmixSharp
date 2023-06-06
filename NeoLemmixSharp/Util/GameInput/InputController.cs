@@ -1,14 +1,14 @@
-﻿using Microsoft.Xna.Framework.Input;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Input;
 
-namespace NeoLemmixSharp.Util;
+namespace NeoLemmixSharp.Util.GameInput;
 
 public abstract class InputController
 {
-    private readonly List<(int, KeyAction)> _keyMapping;
+    private readonly List<(int, BaseKeyAction)> _keyMapping;
     private readonly bool[] _keys;
-    private readonly KeyAction[] _keyActions;
+    private readonly BaseKeyAction[] _keyActions;
 
     private int _previousScrollValue;
 
@@ -24,10 +24,10 @@ public abstract class InputController
 
     protected InputController(int numberOfKeyboardInputs)
     {
-        _keyMapping = new List<(int, KeyAction)>();
+        _keyMapping = new List<(int, BaseKeyAction)>();
         _keys = new bool[256];
 
-        _keyActions = new KeyAction[numberOfKeyboardInputs];
+        _keyActions = new BaseKeyAction[numberOfKeyboardInputs];
 
         LeftMouseButtonAction = new MouseButtonAction(0, "Left Mouse Button");
         RightMouseButtonAction = new MouseButtonAction(1, "Right Mouse Button");
@@ -56,7 +56,7 @@ public abstract class InputController
         UpdateMouseButtonStates();
     }
 
-    protected void Bind(Keys keyCode, KeyAction keyAction)
+    protected void Bind(Keys keyCode, BaseKeyAction keyAction)
     {
         _keyMapping.Add(((int)keyCode, keyAction));
         _keyActions[keyAction.Id] = keyAction;

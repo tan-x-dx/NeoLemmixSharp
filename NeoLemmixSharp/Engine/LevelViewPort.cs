@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Engine.LevelInput;
 using NeoLemmixSharp.Util;
 using System;
 
