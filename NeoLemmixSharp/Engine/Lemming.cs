@@ -42,6 +42,8 @@ public sealed class Lemming
 
     public int FastForwardTime = 0;
 
+    public bool IsFastForward => FastForwardTime > 0;
+
     public LevelPosition DehoistPin;
     public LevelPosition LaserHitLevelPosition;
     public LevelPosition LevelPosition;
