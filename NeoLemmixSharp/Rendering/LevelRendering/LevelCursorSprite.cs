@@ -44,7 +44,15 @@ public sealed class LevelCursorSprite : ISprite
             s,
             s);
 
-        spriteBatch.Draw(texture, destRectangle, GetLocationRectangle(), Color.White);
+        spriteBatch.Draw(
+            texture,
+            destRectangle,
+            GetLocationRectangle(),
+            Color.White,
+            0.0f,
+            new Vector2(),
+            SpriteEffects.None,
+            RenderingLayers.CursorLayer);
     }
 
     public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int x, int y, int scaleMultiplier)

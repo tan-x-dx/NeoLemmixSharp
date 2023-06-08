@@ -128,7 +128,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
         GraphicsDevice.Clear(Color.Black);
 
-        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        _spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
 
         ScreenRenderer.RenderScreen(_spriteBatch);
 

@@ -60,15 +60,54 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
                   _skillAssignButton.ScreenWidth,
                   _skillAssignButton.ScreenHeight);
 
-        spriteBatch.Draw(_skillPanels, destRectangle, GetPanelButtonBackgroundSourceRectangle(_skillAssignButton.SkillPanelFrame), Color.White);
-        spriteBatch.Draw(_skillCountErase, destRectangle, Color.White);
+        spriteBatch.Draw(
+            _skillPanels,
+            destRectangle,
+            GetPanelButtonBackgroundSourceRectangle(_skillAssignButton.SkillPanelFrame),
+            Color.White,
+            0.0f,
+            new Vector2(),
+            SpriteEffects.None,
+            RenderingLayers.ControlPanelButtonLayer);
+
+        spriteBatch.Draw(
+            _skillCountErase,
+            destRectangle,
+            new Rectangle(0, 0, _skillCountErase.Width, _skillCountErase.Height),
+            Color.White,
+            0.0f,
+            new Vector2(),
+            SpriteEffects.None,
+            RenderingLayers.ControlPanelSkillCountEraseLayer);
+
+        if (_skillAssignButton.IsSelected)
+        {
+            spriteBatch.Draw(
+                _skillSelected,
+                destRectangle,
+                new Rectangle(0, 0, _skillSelected.Width, _skillSelected.Height),
+                Color.White,
+                0.0f,
+                new Vector2(),
+                SpriteEffects.None,
+                RenderingLayers.ControlPanelSkillCountEraseLayer); // Can reuse this layer since the sprites shouldn't overlap anyway
+        }
 
         var skillIconDestRectangle = new Rectangle(
             _skillAssignButton.ScreenX,
             _skillAssignButton.ScreenY + 6 * _skillAssignButton.ScaleMultiplier,
             _skillIconWidth * _skillAssignButton.ScaleMultiplier,
             _skillIconHeight * _skillAssignButton.ScaleMultiplier);
-        spriteBatch.Draw(_skillIcon, skillIconDestRectangle, _skillIconSourceRectangle, Color.White);
+
+        spriteBatch.Draw(
+            _skillIcon,
+            skillIconDestRectangle,
+            _skillIconSourceRectangle,
+            Color.White,
+            0.0f,
+            new Vector2(),
+            SpriteEffects.None,
+            RenderingLayers.ControlPanelSkillIconLayer);
 
         var dx = 3 * _skillAssignButton.ScaleMultiplier;
 
@@ -78,10 +117,5 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
             destRectangle.X + dx,
             destRectangle.Y + _skillAssignButton.ScaleMultiplier,
             _skillAssignButton.ScaleMultiplier);
-
-        if (_skillAssignButton.IsSelected)
-        {
-            spriteBatch.Draw(_skillSelected, destRectangle, Color.White);
-        }
     }
 }

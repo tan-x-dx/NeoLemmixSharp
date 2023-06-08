@@ -43,16 +43,24 @@ public sealed class LemmingSprite : ISprite
             actionSprite.Texture,
             renderDestination,
             actionSprite.GetSourceRectangleForFrame(sourceRectangle, _lemming.AnimationFrame),
-            Color.White);
+            Color.White,
+            0.0f,
+            Vector2.Zero,
+            SpriteEffects.None,
+            RenderingLayers.LemmingRenderLayer);
 
-       // var p = new Point(x - scaleMultiplier, y - scaleMultiplier);
-       // renderDestination = new Rectangle(p, new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
+        // var p = new Point(x - scaleMultiplier, y - scaleMultiplier);
+        // renderDestination = new Rectangle(p, new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
 
-       /* var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
-        spriteBatch.Draw(
-            spriteBank.AnchorTexture,
-            renderDestination,
-            Color.White);*/
+        /* var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
+         spriteBatch.Draw(
+             spriteBank.AnchorTexture,
+             renderDestination,
+             Color.White,
+             0.0f,
+             Vector2.Zero, 
+             SpriteEffects.None,
+             RenderingLayers.LemmingRenderLayer);*/
     }
 
     public void Dispose()

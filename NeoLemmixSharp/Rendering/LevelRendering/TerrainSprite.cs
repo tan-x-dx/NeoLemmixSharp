@@ -37,7 +37,15 @@ public sealed class TerrainSprite : IDisposable
                 var sourceRect = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
                 var screenRect = new Rectangle(hInterval.ScreenStart, vInterval.ScreenStart, hInterval.ScreenLength, vInterval.ScreenLength);
 
-                spriteBatch.Draw(_texture, screenRect, sourceRect, Color.White);
+                spriteBatch.Draw(
+                    _texture, 
+                    screenRect, 
+                    sourceRect,
+                    Color.White,
+                    0.0f,
+                    new Vector2(),
+                    SpriteEffects.None,
+                    RenderingLayers.TerrainLayer);
             }
         }
     }

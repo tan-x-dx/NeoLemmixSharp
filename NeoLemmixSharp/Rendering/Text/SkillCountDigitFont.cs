@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Rendering.LevelRendering;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,8 +25,8 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
     }
 
     public void RenderText(
-        SpriteBatch spriteBatch, 
-        IEnumerable<char> charactersToRender, 
+        SpriteBatch spriteBatch,
+        IEnumerable<char> charactersToRender,
         int x,
         int y,
         int scaleMultiplier)
@@ -34,7 +35,15 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
         foreach (var c in charactersToRender.Where(k => k > 47 && k < 58))
         {
             var source = new Rectangle(GlyphWidth * (c - 48), 0, GlyphWidth, GlyphHeight);
-            spriteBatch.Draw(_texture, dest, source, Color.White);
+            spriteBatch.Draw(
+                _texture,
+                dest,
+                source,
+                Color.White,
+                0.0f,
+                new Vector2(),
+                SpriteEffects.None,
+                RenderingLayers.ControlPanelSkillCountLayer);
             dest.X += GlyphWidth * scaleMultiplier;
         }
     }
