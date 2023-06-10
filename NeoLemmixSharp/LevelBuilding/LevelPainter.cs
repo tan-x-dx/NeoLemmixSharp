@@ -48,6 +48,10 @@ public sealed class LevelPainter : IDisposable
             levelData.LevelHeight);
 
         _pixels = new PixelReadData[levelData.LevelWidth * levelData.LevelHeight];
+        for (var i = 0; i < _pixels.Length; i++)
+        {
+            _pixels[i] = new PixelReadData();
+        }
         _pixelsArray = new ArrayWrapper2D<PixelReadData>(levelData.LevelWidth, levelData.LevelHeight, _pixels);
 
         var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
