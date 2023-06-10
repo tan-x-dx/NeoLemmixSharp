@@ -1,9 +1,14 @@
-﻿namespace NeoLemmixSharp.Engine.LevelPixels;
+﻿using System.Diagnostics;
+
+namespace NeoLemmixSharp.Engine.LevelPixels;
 
 public sealed class NoGadgetPixelData : IPixelData
 {
     private bool _isSolid;
     private readonly bool _isSteel;
+
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    bool IPixelData.IsVoid => false;
 
     public NoGadgetPixelData(bool isSolid, bool isSteel)
     {
@@ -11,7 +16,6 @@ public sealed class NoGadgetPixelData : IPixelData
         _isSteel = isSteel;
     }
 
-    public bool IsVoid => false;
     public bool IsSolidToLemming(Lemming lemming) => _isSolid;
 
     public bool IsIndestructibleToLemming(Lemming lemming) => _isSteel;

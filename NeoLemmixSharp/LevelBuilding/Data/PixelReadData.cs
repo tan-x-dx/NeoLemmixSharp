@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.LevelBuilding.Data.PixelData;
+﻿namespace NeoLemmixSharp.LevelBuilding.Data;
 
 public sealed class PixelReadData
 {

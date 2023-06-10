@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LemmingSkills;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Engine.LevelGadgets;
 using NeoLemmixSharp.Engine.LevelInput;
 using NeoLemmixSharp.Engine.LevelPixels;
 using NeoLemmixSharp.Engine.LevelUpdates;
@@ -33,7 +34,7 @@ public sealed class LevelScreen : BaseScreen
     private readonly IVerticalViewPortBehaviour _verticalViewPortBehaviour;
 
     private readonly Lemming[] _lemmings;
-    // private readonly ITickable[] _gadgets;
+    private readonly IGadget[] _gadgets;
 
     private readonly IFrameUpdater _standardFrameUpdater;
     private readonly IFrameUpdater _fastForwardFrameUpdater;
@@ -53,7 +54,7 @@ public sealed class LevelScreen : BaseScreen
     public LevelScreen(
         LevelData levelData,
         Lemming[] lemmings,
-        //  ITickable[] gadgets,
+        IGadget[] gadgets,
         PixelManager terrain,
         SpriteBank spriteBank)
         : base(levelData.LevelTitle)
@@ -65,7 +66,7 @@ public sealed class LevelScreen : BaseScreen
         _verticalViewPortBehaviour = levelData.VerticalViewPortBehaviour ?? new VerticalWrapViewPortBehaviour(levelData.LevelHeight);
 
         _lemmings = lemmings;
-        //  _gadgets = gadgets;
+        _gadgets = gadgets;
 
         _terrain = terrain;
         _inputController = new LevelInputController();

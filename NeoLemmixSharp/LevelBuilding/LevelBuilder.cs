@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelPixels;
-using NeoLemmixSharp.LevelBuilding.Data.PixelData;
+using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Rendering.Text;
 using System;
@@ -50,6 +50,7 @@ public sealed class LevelBuilder : IDisposable
 
         var levelData = _levelReader.LevelData;
         var levelLemmings = _levelAssembler.GetLevelLemmings();
+        var levelGadgets = _levelAssembler.GetLevelGadgets();
 
         var pixelData = _levelPainter.GetPixelData();
         var levelPixelData = pixelData.Select(ConvertToLevelPixelData).ToArray();
@@ -67,7 +68,7 @@ public sealed class LevelBuilder : IDisposable
         return new LevelScreen(
             levelData,
             levelLemmings,
-            //      _levelAssembler.GetLevelGadgets(),
+            levelGadgets,
             pixelManager,
             _spriteBank);
     }

@@ -71,9 +71,7 @@ public sealed class PixelManager
 
     public void ErasePixel(in LevelPosition pixelToErase)
     {
-        var index = Width * pixelToErase.Y + pixelToErase.X;
-        var pixel = _data[index];
-
+        var pixel = GetPixelData(pixelToErase);
         if (pixel.ErasePixel())
         {
             _terrainSprite.SetPixelColour(pixelToErase.X, pixelToErase.Y, 0U);
