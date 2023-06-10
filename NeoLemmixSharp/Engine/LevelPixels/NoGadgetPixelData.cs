@@ -7,7 +7,7 @@ public sealed class NoGadgetPixelData : IPixelData
 
     public NoGadgetPixelData(bool isSolid, bool isSteel)
     {
-        _isSolid = isSolid;
+        _isSolid = isSolid || isSteel;
         _isSteel = isSteel;
     }
 
@@ -22,20 +22,15 @@ public sealed class NoGadgetPixelData : IPixelData
 
     public bool ErasePixel()
     {
-        if (_isSteel)
-            return false;
-
+        // Some clever bool logic here.
         var previouslyWasSolid = _isSolid;
-        _isSolid = false;
+        _isSolid = _isSteel;
 
         return previouslyWasSolid != _isSolid;
     }
 
     public bool SetSolid()
     {
-        if (_isSteel)
-            return false;
-
         var previouslyWasSolid = _isSolid;
         _isSolid = true;
 
