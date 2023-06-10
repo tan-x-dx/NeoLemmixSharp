@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.ControlPanel;
+using NeoLemmixSharp.Engine.LevelPixels;
 using NeoLemmixSharp.Rendering.LevelRendering.BackgroundRendering;
 using NeoLemmixSharp.Rendering.LevelRendering.ControlPanelRendering;
 using NeoLemmixSharp.Rendering.Text;

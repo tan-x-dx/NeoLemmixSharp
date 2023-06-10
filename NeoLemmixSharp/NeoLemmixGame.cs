@@ -13,7 +13,7 @@ namespace NeoLemmixSharp;
 public sealed class NeoLemmixGame : Game, IGameWindow
 {
     private readonly GraphicsDeviceManager _graphics;
-    private readonly TimeSpan _standardGameUps = TimeSpan.FromSeconds(1d / 68d);
+    private readonly TimeSpan _standardGameUps = TimeSpan.FromSeconds(1d / 51d);
 
     private bool _isBorderless;
 
@@ -128,7 +128,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
         GraphicsDevice.Clear(Color.Black);
 
-        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        _spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
 
         ScreenRenderer.RenderScreen(_spriteBatch);
 

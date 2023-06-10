@@ -33,7 +33,7 @@ public sealed class FallerAction : LemmingAction
         var lemmingPosition = lemming.LevelPosition;
 
         while (currentFallDistanceStep < maxFallDistanceStep &&
-               !Terrain.GetPixelData(lemmingPosition).IsSolid)
+               !Terrain.GetPixelData(lemmingPosition).IsSolidToLemming(lemming))
         {
             if (currentFallDistanceStep > 0 &&
                 CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))

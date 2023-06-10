@@ -66,7 +66,12 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
                 _levelControlPanel.ControlPanelY,
                 _levelControlPanel.ScreenWidth,
                 _levelControlPanel.ControlPanelScreenHeight),
-            Color.Black);
+            new Rectangle(0, 0, 1, 1),
+            Color.Black,
+            0.0f,
+            new Vector2(),
+            SpriteEffects.None,
+            RenderingLayers.ControlPanelBackgroundLayer);
 
         var i = 0;
         for (; i < _skillAssignButtonRenderers.Length; i++)
@@ -76,6 +81,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
         if (i < LevelControlPanel.MaxNumberOfSkillButtons)
         {
+            var sourceRectangle = new Rectangle(0, 0, _emptySlot.Width, _emptySlot.Height);
             var destRectangle = new Rectangle(
                 _levelControlPanel.ControlPanelX + ((i + 4) * _levelControlPanel.ControlPanelButtonScreenWidth),
                 _levelControlPanel.ControlPanelButtonY,
@@ -83,7 +89,14 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
                 _levelControlPanel.ControlPanelButtonScreenHeight);
             for (; i < LevelControlPanel.MaxNumberOfSkillButtons; i++)
             {
-                spriteBatch.Draw(_emptySlot, destRectangle, Color.White);
+                spriteBatch.Draw(
+                    _emptySlot,
+                    destRectangle,
+                    sourceRectangle,
+                    Color.White, 0.0f,
+                    new Vector2(),
+                    SpriteEffects.None,
+                    RenderingLayers.ControlPanelButtonLayer);
 
                 destRectangle.X += _levelControlPanel.ControlPanelButtonScreenWidth;
             }

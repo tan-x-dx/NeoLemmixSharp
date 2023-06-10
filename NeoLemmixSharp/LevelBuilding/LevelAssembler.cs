@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
+using NeoLemmixSharp.Engine.LevelGadgets;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Sprites;
 using NeoLemmixSharp.Rendering;
@@ -76,10 +77,10 @@ public sealed class LevelAssembler : IDisposable
         return _lemmings.ToArray();
     }
 
-  //  public ITickable[] GetLevelGadgets()
-  //  {
-  //      return Array.Empty<ITickable>();
-  //  }
+    public IGadget[] GetLevelGadgets()
+    {
+        return Array.Empty<IGadget>();
+    }
 
     public ISprite[] GetLevelSprites()
     {

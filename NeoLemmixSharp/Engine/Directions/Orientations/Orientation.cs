@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Rendering.LevelRendering;
+﻿using NeoLemmixSharp.Engine.LevelPixels;
+using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
@@ -74,6 +75,9 @@ public abstract class Orientation : IEquatable<Orientation>
 
     public bool IsParallelTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteVerticalComponent == 0);
     public bool IsPerpendicularTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteHorizontalComponent == 0);
+
+    public abstract Orientation RotateClockwise();
+    public abstract Orientation RotateCounterClockwise();
 
     public bool Equals(Orientation? other) => RotNum == (other?.RotNum ?? -1);
     public sealed override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;

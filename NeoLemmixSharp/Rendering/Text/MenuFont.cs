@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
+using NeoLemmixSharp.Rendering.LevelRendering;
 
 namespace NeoLemmixSharp.Rendering.Text;
 
@@ -34,7 +35,15 @@ public sealed class MenuFont : INeoLemmixFont
         foreach (var c in charactersToRender.Where(k => k > 31 && k < 127))
         {
             var source = new Rectangle(GlyphWidth * (c - 33), 0, GlyphWidth, GlyphHeight);
-            spriteBatch.Draw(_texture, dest, source, Color.White);
+            spriteBatch.Draw(
+                _texture,
+                dest,
+                source,
+                Color.White, 
+                0.0f, 
+                new Vector2(),
+                SpriteEffects.None,
+                RenderingLayers.ControlPanelSkillCountLayer);
             dest.X += GlyphWidth * scaleMultiplier;
         }
     }

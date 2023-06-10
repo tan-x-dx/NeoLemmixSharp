@@ -26,6 +26,11 @@ public sealed class SolidColourBackgroundRenderer : IBackgroundRenderer
                 _viewport.ScreenY,
                 _viewport.ScreenWidth,
                 _viewport.ScreenHeight),
-            _backgroundColor);
+            new Rectangle(0, 0, 1, 1),
+            _backgroundColor,
+            0.0f,
+            new Vector2(),
+            SpriteEffects.None,
+            RenderingLayers.BackgroundLayer);
     }
 }

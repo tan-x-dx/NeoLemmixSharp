@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using NeoLemmixSharp.Engine.LevelPixels;
 
 namespace NeoLemmixSharp.Engine.LemmingSkills;
 

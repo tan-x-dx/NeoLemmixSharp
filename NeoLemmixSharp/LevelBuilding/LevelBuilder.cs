@@ -1,9 +1,13 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
+using NeoLemmixSharp.Engine.LevelPixels;
+using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Rendering.Text;
 using System;
+using System.Linq;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
@@ -44,11 +48,28 @@ public sealed class LevelBuilder : IDisposable
 
         _spriteBank = _levelAssembler.GetSpriteBank();
 
+        var levelData = _levelReader.LevelData;
+        var levelLemmings = _levelAssembler.GetLevelLemmings();
+        var levelGadgets = _levelAssembler.GetLevelGadgets();
+
+        var pixelData = _levelPainter.GetPixelData();
+        var levelPixelData = pixelData.Select(ConvertToLevelPixelData).ToArray();
+
+        var terrainSprite = _levelPainter.GetTerrainSprite();
+
+        var pixelManager = new PixelManager(
+            levelData.LevelWidth,
+            levelData.LevelHeight,
+            BoundaryBehaviourType.Wrap,
+            BoundaryBehaviourType.Wrap);
+
+        pixelManager.SetData(levelPixelData, terrainSprite);
+
         return new LevelScreen(
-            _levelReader.LevelData,
-            _levelAssembler.GetLevelLemmings(),
-      //      _levelAssembler.GetLevelGadgets(),
-            _levelPainter.GetTerrainData(),
+            levelData,
+            levelLemmings,
+            levelGadgets,
+            pixelManager,
             _spriteBank);
     }
 
@@ -60,5 +81,10 @@ public sealed class LevelBuilder : IDisposable
         _levelReader.Dispose();
         _levelPainter.Dispose();
         _levelAssembler.Dispose();
+    }
+
+    private static IPixelData ConvertToLevelPixelData(PixelReadData pixelReadData)
+    {
+        return new NoGadgetPixelData(pixelReadData.IsSolid, pixelReadData.IsSteel);
     }
 }
