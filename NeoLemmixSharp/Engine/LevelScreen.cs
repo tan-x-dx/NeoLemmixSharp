@@ -34,7 +34,7 @@ public sealed class LevelScreen : BaseScreen
     private readonly IVerticalViewPortBehaviour _verticalViewPortBehaviour;
 
     private readonly Lemming[] _lemmings;
-    private readonly IGadget[] _gadgets;
+    private readonly Gadget[] _gadgets;
 
     private readonly IFrameUpdater _standardFrameUpdater;
     private readonly IFrameUpdater _fastForwardFrameUpdater;
@@ -54,7 +54,7 @@ public sealed class LevelScreen : BaseScreen
     public LevelScreen(
         LevelData levelData,
         Lemming[] lemmings,
-        IGadget[] gadgets,
+        Gadget[] gadgets,
         PixelManager terrain,
         SpriteBank spriteBank)
         : base(levelData.LevelTitle)

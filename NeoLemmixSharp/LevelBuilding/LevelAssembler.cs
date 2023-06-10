@@ -77,9 +77,9 @@ public sealed class LevelAssembler : IDisposable
         return _lemmings.ToArray();
     }
 
-    public IGadget[] GetLevelGadgets()
+    public Gadget[] GetLevelGadgets()
     {
-        return Array.Empty<IGadget>();
+        return Array.Empty<Gadget>();
     }
 
     public ISprite[] GetLevelSprites()

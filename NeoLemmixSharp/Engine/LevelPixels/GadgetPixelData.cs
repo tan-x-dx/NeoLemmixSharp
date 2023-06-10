@@ -7,28 +7,35 @@ namespace NeoLemmixSharp.Engine.LevelPixels;
 
 public sealed class GadgetPixelData : IPixelData
 {
-    private bool _isSolid;
-    private readonly bool _isSteel;
+    private readonly List<Gadget> _gadgets = new();
 
-    private readonly List<IGadget> _gadgets = new();
+    public bool IsSolid { get; private set; }
+    public bool IsSteel { get; }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     bool IPixelData.IsVoid => false;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    bool IPixelData.CanAcceptGadgets => true;
 
     public GadgetPixelData(bool isSolid, bool isSteel)
     {
-        _isSolid = isSolid || isSteel;
-        _isSteel = isSteel;
+        IsSolid = isSolid || isSteel;
+        IsSteel = isSteel;
     }
 
-    public void AddGadget(IGadget gadget)
+    public void AddGadget(Gadget gadget)
     {
         _gadgets.Add(gadget);
     }
 
+    public void RemoveGadget(Gadget gadget)
+    {
+        _gadgets.Remove(gadget);
+    }
+
     public bool IsSolidToLemming(Lemming lemming)
     {
-        if (_isSolid)
+        if (IsSolid)
             return true;
 
         for (var i = 0; i < _gadgets.Count; i++)
@@ -42,7 +49,7 @@ public sealed class GadgetPixelData : IPixelData
 
     public bool IsIndestructibleToLemming(Lemming lemming)
     {
-        if (_isSteel)
+        if (IsSteel)
             return true;
 
         for (var i = 0; i < _gadgets.Count; i++)
@@ -68,17 +75,17 @@ public sealed class GadgetPixelData : IPixelData
     public bool ErasePixel()
     {
         // Some clever bool logic here.
-        var previouslyWasSolid = _isSolid;
-        _isSolid = _isSteel;
+        var previouslyWasSolid = IsSolid;
+        IsSolid = IsSteel;
 
-        return previouslyWasSolid != _isSolid;
+        return previouslyWasSolid != IsSolid;
     }
 
     public bool SetSolid()
     {
-        var previouslyWasSolid = _isSolid;
-        _isSolid = true;
+        var previouslyWasSolid = IsSolid;
+        IsSolid = true;
 
-        return previouslyWasSolid != _isSolid;
+        return previouslyWasSolid != IsSolid;
     }
 }

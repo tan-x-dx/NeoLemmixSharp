@@ -26,7 +26,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Engine\LemmingSkills\" />
-    <Folder Include="Engine\LevelGadgets\" />
     <Folder Include="Rendering\LevelRendering\BackgroundRendering\" />
     <Folder Include="Screen\" />
   </ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Engine.LevelGadgets;
 using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
 
@@ -85,5 +86,32 @@ public sealed class PixelManager
         {
             _terrainSprite.SetPixelColour(pixelToSet.X, pixelToSet.Y, colour);
         }
+    }
+
+    public void AddGadgetAtPosition(Gadget gadget, in LevelPosition levelPosition)
+    {
+        if (PositionOutOfBounds(levelPosition))
+            return;
+
+        var index = Width * levelPosition.Y + levelPosition.X;
+        ref var pixel = ref _data[index];
+
+        if (!pixel.CanAcceptGadgets)
+        {
+            pixel = new GadgetPixelData(pixel.IsSolid, pixel.IsSteel);
+        }
+
+        pixel.AddGadget(gadget);
+    }
+
+    public void RemoveGadgetAtPosition(Gadget gadget, in LevelPosition levelPosition)
+    {
+        if (PositionOutOfBounds(levelPosition))
+            return;
+
+        var index = Width * levelPosition.Y + levelPosition.X;
+        var pixel = _data[index];
+
+        pixel.RemoveGadget(gadget);
     }
 }
