@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Util;
 using System;
+using NeoLemmixSharp.Engine.LevelGadgets;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
@@ -39,16 +40,19 @@ public sealed class SliderAction : LemmingAction
 
     private static bool SliderTerrainChecks(Lemming lemming, int maxYOffset = 7)
     {
-        var hasPixelAtLemmingPosition = SliderHasPixelAt(lemming, lemming.Orientation, lemming.LevelPosition, lemming.DehoistPin);
+        var lemmingPosition = lemming.LevelPosition;
+        var lemmingDehoistPosition = lemming.DehoistPin;
+
+        var hasPixelAtLemmingPosition = SliderHasPixelAt(lemming, lemming.Orientation, lemmingPosition, lemmingDehoistPosition);
 
         if (hasPixelAtLemmingPosition &&
-            !SliderHasPixelAt(lemming, lemming.Orientation, lemming.LevelPosition, lemming.Orientation.MoveDown(lemming.DehoistPin, 1)))
+            !SliderHasPixelAt(lemming, lemming.Orientation, lemmingPosition, lemming.Orientation.MoveDown(lemmingDehoistPosition, 1)))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             return false;
         }
 
-        if (!SliderHasPixelAt(lemming, lemming.Orientation, lemming.Orientation.MoveUp(lemming.LevelPosition, Math.Min(maxYOffset, 7)), lemming.DehoistPin))
+        if (!SliderHasPixelAt(lemming, lemming.Orientation, lemming.Orientation.MoveUp(lemmingPosition, Math.Min(maxYOffset, 7)), lemmingDehoistPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return false;
@@ -58,10 +62,12 @@ public sealed class SliderAction : LemmingAction
             return true;
 
         var dx = lemming.FacingDirection.DeltaX;
-
-        if (false) // HasTriggerAt(L.LemX - L.LemDX, L.LemY, trWater, L)
+        var pixel = Terrain.GetPixelData(lemming.Orientation.MoveLeft(lemmingPosition, dx));
+        
+        if (pixel.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Water, lemming.Orientation))
         {
-            lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
+            lemmingPosition = lemming.Orientation.MoveLeft(lemmingPosition, dx);
+            lemming.LevelPosition = lemmingPosition;
             if (lemming.IsSwimmer)
             {
                 SwimmerAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -76,8 +82,8 @@ public sealed class SliderAction : LemmingAction
             return true;
         }
 
-        var leftPos = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
-        if (!SliderHasPixelAt(lemming, lemming.Orientation, lemming.LevelPosition, leftPos))
+        var leftPos = lemming.Orientation.MoveLeft(lemmingPosition, dx);
+        if (!SliderHasPixelAt(lemming, lemming.Orientation, lemmingPosition, leftPos))
             return true;
 
         lemming.LevelPosition = leftPos;
