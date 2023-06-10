@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
 
-namespace NeoLemmixSharp.Engine;
+namespace NeoLemmixSharp.Engine.LevelPixels;
 
 public sealed class PixelManager
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
+using NeoLemmixSharp.Engine.LevelPixels;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Sprites;
 using NeoLemmixSharp.Rendering.LevelRendering;

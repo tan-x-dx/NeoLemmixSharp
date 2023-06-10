@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Directions.FacingDirections;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 
-namespace NeoLemmixSharp.Engine;
+namespace NeoLemmixSharp.Engine.LevelPixels;
 
 public sealed class PixelData
 {

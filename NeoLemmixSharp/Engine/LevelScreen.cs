@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.LemmingSkills;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Engine.LevelInput;
+using NeoLemmixSharp.Engine.LevelPixels;
 using NeoLemmixSharp.Engine.LevelUpdates;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
