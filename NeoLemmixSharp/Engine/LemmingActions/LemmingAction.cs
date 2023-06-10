@@ -150,6 +150,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     }
 
     protected static int FindGroundPixel(
+        Lemming lemming,
         Orientation orientation,
         in LevelPosition levelPosition)
     {
@@ -157,9 +158,9 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         // If Result = 4, then at least 4 pixels are air below (X, Y)
         // If Result = -7, then at least 7 pixels are terrain above (X, Y)
         var result = 0;
-        if (Terrain.GetPixelData(levelPosition).IsSolid)
+        if (Terrain.GetPixelData(levelPosition).IsSolidToLemming(lemming))
         {
-            while (Terrain.GetPixelData(orientation.MoveUp(levelPosition, 1 - result)).IsSolid &&
+            while (Terrain.GetPixelData(orientation.MoveUp(levelPosition, 1 - result)).IsSolidToLemming(lemming) &&
                    result > -7)
             {
                 result--;
@@ -169,7 +170,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         }
 
         result = 1;
-        while (!Terrain.GetPixelData(orientation.MoveDown(levelPosition, result)).IsSolid &&
+        while (!Terrain.GetPixelData(orientation.MoveDown(levelPosition, result)).IsSolidToLemming(lemming) &&
                result < 4)
         {
             result++;
@@ -195,27 +196,27 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         }
 
         if (Terrain.PositionOutOfBounds(nextPosition) ||
-            (!Terrain.GetPixelData(currentPosition).IsSolid ||
-             Terrain.GetPixelData(nextPosition).IsSolid))
+            (!Terrain.GetPixelData(currentPosition).IsSolidToLemming(lemming) ||
+             Terrain.GetPixelData(nextPosition).IsSolidToLemming(lemming)))
             return false;
 
-        if (Terrain.GetPixelData(lemming.Orientation.MoveDown(nextPosition, 1)).IsSolid)
+        if (Terrain.GetPixelData(lemming.Orientation.MoveDown(nextPosition, 1)).IsSolidToLemming(lemming))
             return false;
-        if (!Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, 1)).IsSolid)
+        if (!Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, 1)).IsSolidToLemming(lemming))
             return true;
 
-        if (Terrain.GetPixelData(lemming.Orientation.MoveDown(nextPosition, 2)).IsSolid)
+        if (Terrain.GetPixelData(lemming.Orientation.MoveDown(nextPosition, 2)).IsSolidToLemming(lemming))
             return false;
-        if (!Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, 2)).IsSolid)
+        if (!Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, 2)).IsSolidToLemming(lemming))
             return true;
 
-        if (Terrain.GetPixelData(lemming.Orientation.MoveDown(nextPosition, 3)).IsSolid)
+        if (Terrain.GetPixelData(lemming.Orientation.MoveDown(nextPosition, 3)).IsSolidToLemming(lemming))
             return false;
-        if (!Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, 3)).IsSolid)
+        if (!Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, 3)).IsSolidToLemming(lemming))
             return true;
 
-        if (Terrain.GetPixelData(lemming.Orientation.MoveDown(nextPosition, 4)).IsSolid)
+        if (Terrain.GetPixelData(lemming.Orientation.MoveDown(nextPosition, 4)).IsSolidToLemming(lemming))
             return false;
-        return !Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, 4)).IsSolid;
+        return !Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, 4)).IsSolidToLemming(lemming);
     }
 }

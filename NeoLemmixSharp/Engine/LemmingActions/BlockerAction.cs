@@ -18,7 +18,7 @@ public sealed class BlockerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!Terrain.GetPixelData(lemming.LevelPosition).IsSolid)
+        if (!Terrain.GetPixelData(lemming.LevelPosition).IsSolidToLemming(lemming))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }

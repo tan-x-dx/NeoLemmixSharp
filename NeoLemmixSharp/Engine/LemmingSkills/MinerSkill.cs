@@ -25,7 +25,7 @@ public sealed class MinerSkill : LemmingSkill
                 lemming.CurrentAction == LasererAction.Instance)
                && !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition,
                        lemming.FacingDirection.DeltaX))
-                   .IsIndestructible(lemming.Orientation, lemming.FacingDirection, lemming.CurrentAction);
+                   .IsIndestructibleToLemming(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)

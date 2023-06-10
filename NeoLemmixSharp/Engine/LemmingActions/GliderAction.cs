@@ -35,15 +35,15 @@ public sealed class GliderAction : LemmingAction
         do
         {
             // bug-fix for http://www.lemmingsforums.net/index.php?topic=2693
-            if (Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, dy)).IsSolid &&
-                Terrain.GetPixelData(lemming.Orientation.Move(currentPosition, -dx, dy)).IsSolid)
+            if (Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, dy)).IsSolidToLemming(lemming) &&
+                Terrain.GetPixelData(lemming.Orientation.Move(currentPosition, -dx, dy)).IsSolidToLemming(lemming))
             {
                 return true;
             }
 
             dy++;
 
-        } while (dy <= 3 && Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, dy)).IsSolid);
+        } while (dy <= 3 && Terrain.GetPixelData(lemming.Orientation.MoveDown(currentPosition, dy)).IsSolidToLemming(lemming));
         /*
         repeat
       if HasPixelAt(CurLemX, L.LemY + Dy) and HasPixelAt(CurLemX - L.LemDx, L.LemY + Dy) then

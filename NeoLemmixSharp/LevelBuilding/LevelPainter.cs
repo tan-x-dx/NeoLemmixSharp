@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
-using NeoLemmixSharp.Engine.LevelPixels;
 using NeoLemmixSharp.LevelBuilding.Data;
+using NeoLemmixSharp.LevelBuilding.Data.PixelData;
 using NeoLemmixSharp.LevelBuilding.Sprites;
 using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
@@ -26,7 +25,8 @@ public sealed class LevelPainter : IDisposable
     private bool _disposed;
 
     private TerrainSprite? _terrainSprite;
-    private PixelManager? _terrainData;
+    private PixelReadData[] _pixels;
+    private ArrayWrapper2D<PixelReadData> _pixelsArray;
 
     public LevelPainter(GraphicsDevice graphicsDevice)
     {
@@ -47,11 +47,8 @@ public sealed class LevelPainter : IDisposable
             levelData.LevelWidth,
             levelData.LevelHeight);
 
-        _terrainData = new PixelManager(
-            levelData.LevelWidth,
-            levelData.LevelHeight,
-            BoundaryBehaviourType.Wrap,
-            BoundaryBehaviourType.Wrap);
+        _pixels = new PixelReadData[levelData.LevelWidth * levelData.LevelHeight];
+        _pixelsArray = new ArrayWrapper2D<PixelReadData>(levelData.LevelWidth, levelData.LevelHeight, _pixels);
 
         var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
         var textureData = new PixelColourData(
@@ -62,8 +59,6 @@ public sealed class LevelPainter : IDisposable
         DrawTerrain(levelData.AllTerrainData, textureData);
         levelTerrainTexture.SetData(uintData);
         _terrainSprite = new TerrainSprite(levelTerrainTexture);
-
-        _terrainData.SetTerrainSprite(_terrainSprite);
     }
 
     private static void ProcessTerrainGroup(TerrainGroup terrainGroup)
@@ -143,7 +138,7 @@ public sealed class LevelPainter : IDisposable
                 }
 
                 var targetPixelColour = targetPixelColourData.Get(x0, y0);
-                var targetPixelData = _terrainData!.GetPixelData(x0, y0);
+                var targetPixelData = _pixelsArray!.Get(x0, y0);
 
                 if (terrainData.Erase)
                 {
@@ -223,9 +218,9 @@ public sealed class LevelPainter : IDisposable
         return result;
     }
 
-    public PixelManager GetTerrainData()
+    public PixelReadData[] GetPixelData()
     {
-        return _terrainData!;
+        return _pixels;
     }
 
     public TerrainSprite GetTerrainSprite()

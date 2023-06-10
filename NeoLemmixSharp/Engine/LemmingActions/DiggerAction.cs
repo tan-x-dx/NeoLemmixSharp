@@ -26,7 +26,7 @@ public sealed class DiggerAction : LemmingAction
         if (lemming.IsStartingAction)
         {
             lemming.IsStartingAction = false;
-            DigOneRow(lemmingPosition, lemming.Orientation);
+            DigOneRow(lemming, lemmingPosition, lemming.Orientation);
             // The first digger cycle is one frame longer!
             // So we need to artificially cancel the very first frame advancement.
             lemming.AnimationFrame--;
@@ -35,7 +35,7 @@ public sealed class DiggerAction : LemmingAction
         if (lemming.AnimationFrame >= 0 &&
             lemming.AnimationFrame <= 8)
         {
-            var continueWork = DigOneRow(lemmingPosition, lemming.Orientation);
+            var continueWork = DigOneRow(lemming, lemmingPosition, lemming.Orientation);
             lemming.LevelPosition = lemming.Orientation.MoveDown(lemmingPosition, 1);
 
             /*if HasIndestructibleAt(L.LemX, L.LemY, L.LemDX, baDigging) then
@@ -53,31 +53,35 @@ public sealed class DiggerAction : LemmingAction
     }
 
     private static bool DigOneRow(
-        in LevelPosition levelPosition,
+        Lemming lemming,
+        in LevelPosition baseLevelPosition,
         Orientation orientation)
     {
         var result = false;
 
         // Two most extreme pixels
-        var pixel = Terrain.GetPixelData(orientation.Move(levelPosition, -4, 0));
-        if (pixel.IsSolid)
+        var checkLevelPosition = orientation.Move(baseLevelPosition, -4, 0);
+        var pixel = Terrain.GetPixelData(checkLevelPosition);
+        if (pixel.IsSolidToLemming(lemming))
         {
-            //    Terrain.ErasePixel();
+            Terrain.ErasePixel(checkLevelPosition);
         }
 
-        pixel = Terrain.GetPixelData(orientation.Move(levelPosition, 4, 0));
-        if (pixel.IsSolid)
+        checkLevelPosition = orientation.Move(baseLevelPosition, 4, 0);
+        pixel = Terrain.GetPixelData(checkLevelPosition);
+        if (pixel.IsSolidToLemming(lemming))
         {
-            //    Terrain.ErasePixel();
+            Terrain.ErasePixel(checkLevelPosition);
         }
 
         // Everything in between
         for (var i = -3; i < 4; i++)
         {
-            pixel = Terrain.GetPixelData(orientation.Move(levelPosition, i, 0));
-            if (pixel.IsSolid)
+            checkLevelPosition = orientation.Move(baseLevelPosition, i, 0);
+            pixel = Terrain.GetPixelData(checkLevelPosition);
+            if (pixel.IsSolidToLemming(lemming))
             {
-                //    Terrain.ErasePixel();
+                Terrain.ErasePixel(checkLevelPosition);
                 result = true;
             }
         }

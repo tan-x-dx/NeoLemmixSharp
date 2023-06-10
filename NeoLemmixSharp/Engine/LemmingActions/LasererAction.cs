@@ -62,7 +62,7 @@ public sealed class LasererAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming)
     {
         var lemmingPosition = lemming.LevelPosition;
-        if (!Terrain.GetPixelData(lemmingPosition).IsSolid)
+        if (!Terrain.GetPixelData(lemmingPosition).IsSolidToLemming(lemming))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
@@ -76,7 +76,7 @@ public sealed class LasererAction : LemmingAction
 
         for (var i = 0; i < DistanceCap; i++)
         {
-            switch (CheckForHit(target, lemming.Orientation, dx))
+            switch (CheckForHit(lemming, target, lemming.Orientation, dx))
             {
                 case LaserHitType.None:
                     target = lemming.Orientation.Move(target, dx, 1);
@@ -123,6 +123,7 @@ public sealed class LasererAction : LemmingAction
     }
 
     private LaserHitType CheckForHit(
+        Lemming lemming,
         in LevelPosition target,
         Orientation orientation,
         int dx)
@@ -142,9 +143,9 @@ public sealed class LasererAction : LemmingAction
 
             var pixel = Terrain.GetPixelData(checkLevelPosition);
 
-            if (pixel.IsSolid)
+            if (pixel.IsSolidToLemming(lemming))
             {
-                if (pixel.IsSteel && result != LaserHitType.Solid)
+                if (pixel.IsIndestructibleToLemming(lemming) && result != LaserHitType.Solid)
                 {
                     result = LaserHitType.None;
                 }

@@ -25,19 +25,19 @@ public sealed class ReacherAction : LemmingAction
     {
         var lemmingPosition = lemming.LevelPosition;
         int emptyPixels;
-        if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 10)).IsSolid)
+        if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 10)).IsSolidToLemming(lemming))
         {
             emptyPixels = 0;
         }
-        else if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 11)).IsSolid)
+        else if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 11)).IsSolidToLemming(lemming))
         {
             emptyPixels = 1;
         }
-        else if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 12)).IsSolid)
+        else if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 12)).IsSolidToLemming(lemming))
         {
             emptyPixels = 2;
         }
-        else if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 13)).IsSolid)
+        else if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 13)).IsSolidToLemming(lemming))
         {
             emptyPixels = 3;
         }
@@ -46,15 +46,15 @@ public sealed class ReacherAction : LemmingAction
             emptyPixels = 4;
         }
 
-        if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 5)).IsSolid ||
-            Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 6)).IsSolid ||
-            Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 7)).IsSolid ||
-            Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 8)).IsSolid)
+        if (Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 5)).IsSolidToLemming(lemming) ||
+            Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 6)).IsSolidToLemming(lemming) ||
+            Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 7)).IsSolidToLemming(lemming) ||
+            Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 8)).IsSolidToLemming(lemming))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
         else if (lemming.AnimationFrame == 1 &&
-                 Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 9)).IsSolid)
+                 Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 9)).IsSolidToLemming(lemming))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
