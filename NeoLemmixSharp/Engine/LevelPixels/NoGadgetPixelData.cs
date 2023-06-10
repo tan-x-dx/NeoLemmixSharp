@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Engine.LevelGadgets;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelPixels;
 
@@ -19,10 +21,7 @@ public sealed class NoGadgetPixelData : IPixelData
     public bool IsSolidToLemming(Lemming lemming) => _isSolid;
 
     public bool IsIndestructibleToLemming(Lemming lemming) => _isSteel;
-
-    void IPixelData.CheckGadgets(Lemming lemming)
-    {
-    }
+    public bool HasGadgetThatMatchesTypeAndOrientation(GadgetType gadgetType, Orientation orientation) => false;
 
     public bool ErasePixel()
     {

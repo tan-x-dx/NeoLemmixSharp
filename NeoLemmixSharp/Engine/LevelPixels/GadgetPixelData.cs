@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelGadgets;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Engine.LevelGadgets;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -53,13 +54,15 @@ public sealed class GadgetPixelData : IPixelData
         return false;
     }
 
-    public void CheckGadgets(Lemming lemming)
+    public bool HasGadgetThatMatchesTypeAndOrientation(GadgetType gadgetType, Orientation orientation)
     {
         for (var i = 0; i < _gadgets.Count; i++)
         {
-            if (_gadgets[i].InteractsWithLemming(lemming))
-                return;
+            if (_gadgets[i].MatchesTypeAndOrientation(gadgetType, orientation))
+                return true;
         }
+
+        return false;
     }
 
     public bool ErasePixel()

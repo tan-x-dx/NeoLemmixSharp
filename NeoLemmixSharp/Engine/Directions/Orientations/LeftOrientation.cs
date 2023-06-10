@@ -79,6 +79,7 @@ public sealed class LeftOrientation : Orientation
 
     public override Orientation RotateClockwise() => UpOrientation.Instance;
     public override Orientation RotateCounterClockwise() => DownOrientation.Instance;
+    public override Orientation GetOpposite() => RightOrientation.Instance;
 
     public override string ToString() => "left";
 }

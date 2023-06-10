@@ -78,6 +78,7 @@ public abstract class Orientation : IEquatable<Orientation>
 
     public abstract Orientation RotateClockwise();
     public abstract Orientation RotateCounterClockwise();
+    public abstract Orientation GetOpposite();
 
     public bool Equals(Orientation? other) => RotNum == (other?.RotNum ?? -1);
     public sealed override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;

@@ -1,4 +1,7 @@
-﻿namespace NeoLemmixSharp.Engine.LevelPixels;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Engine.LevelGadgets;
+
+namespace NeoLemmixSharp.Engine.LevelPixels;
 
 public interface IPixelData
 {
@@ -7,7 +10,7 @@ public interface IPixelData
     bool IsSolidToLemming(Lemming lemming);
     bool IsIndestructibleToLemming(Lemming lemming);
 
-    void CheckGadgets(Lemming lemming);
+    bool HasGadgetThatMatchesTypeAndOrientation(GadgetType gadgetType, Orientation orientation);
 
     bool ErasePixel();
     bool SetSolid();
