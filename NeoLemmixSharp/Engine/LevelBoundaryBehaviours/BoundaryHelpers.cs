@@ -33,12 +33,12 @@ public static class BoundaryHelpers
     public static IHorizontalBoundaryBehaviour GetHorizontalBoundaryBehaviour(
         bool wrap,
         int width) => wrap
-        ? new HorizontalVoidBoundaryBehaviour()
-        : new HorizontalWrapBoundaryBehaviour(width);
+        ? new HorizontalWrapBoundaryBehaviour(width)
+        : new HorizontalVoidBoundaryBehaviour();
 
     public static IVerticalBoundaryBehaviour GetVerticalBoundaryBehaviour(
         bool wrap,
         int height) => wrap
-        ? new VerticalVoidBoundaryBehaviour()
-        : new VerticalWrapBoundaryBehaviour(height);
+        ? new VerticalWrapBoundaryBehaviour(height)
+        : new VerticalVoidBoundaryBehaviour();
 }
