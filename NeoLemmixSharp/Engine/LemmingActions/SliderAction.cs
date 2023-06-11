@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Engine.LevelGadgets;
 using NeoLemmixSharp.Util;
 using System;
-using NeoLemmixSharp.Engine.LevelGadgets;
 
 namespace NeoLemmixSharp.Engine.LemmingActions;
 
@@ -62,9 +62,8 @@ public sealed class SliderAction : LemmingAction
             return true;
 
         var dx = lemming.FacingDirection.DeltaX;
-        var pixel = Terrain.GetPixelData(lemming.Orientation.MoveLeft(lemmingPosition, dx));
-        
-        if (pixel.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Water, lemming.Orientation))
+
+        if (Terrain.HasGadgetThatMatchesTypeAndOrientation(lemmingPosition, GadgetType.Water, lemming.Orientation))
         {
             lemmingPosition = lemming.Orientation.MoveLeft(lemmingPosition, dx);
             lemming.LevelPosition = lemmingPosition;
@@ -97,7 +96,7 @@ public sealed class SliderAction : LemmingAction
         in LevelPosition levelPosition,
         in LevelPosition dehoistPin)
     {
-        if (Terrain.GetPixelData(dehoistPin).IsSolidToLemming(lemming))
+        if (Terrain.PixelIsSolidToLemming(dehoistPin, lemming))
             return true;
 
         var result = false;
@@ -105,7 +104,7 @@ public sealed class SliderAction : LemmingAction
             orientation.MatchesVertically(levelPosition, dehoistPin) &&
             true)
         {
-            result = Terrain.GetPixelData(orientation.MoveDown(dehoistPin, 1)).IsSolidToLemming(lemming);
+            result = Terrain.PixelIsSolidToLemming(orientation.MoveDown(dehoistPin, 1), lemming);
         }
 
         return result;

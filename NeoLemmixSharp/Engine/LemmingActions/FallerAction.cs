@@ -25,9 +25,8 @@ public sealed class FallerAction : LemmingAction
         var maxFallDistanceStep = 3; // A lemming falls 3 pixels each frame
 
         var lemmingPosition = lemming.LevelPosition;
-        var pixel = Terrain.GetPixelData(lemmingPosition);
 
-        if (pixel.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Updraft, lemming.Orientation.GetOpposite()))
+        if (Terrain.HasGadgetThatMatchesTypeAndOrientation(lemmingPosition, GadgetType.Updraft, lemming.Orientation.GetOpposite()))
         {
             maxFallDistanceStep = 2;
         }
@@ -36,7 +35,7 @@ public sealed class FallerAction : LemmingAction
             return true;
 
         while (currentFallDistanceStep < maxFallDistanceStep &&
-               !Terrain.GetPixelData(lemmingPosition).IsSolidToLemming(lemming))
+               !Terrain.PixelIsSolidToLemming(lemmingPosition, lemming))
         {
             if (currentFallDistanceStep > 0 &&
                 CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
@@ -49,9 +48,7 @@ public sealed class FallerAction : LemmingAction
             lemming.DistanceFallen++;
             lemming.TrueDistanceFallen++;
 
-            pixel = Terrain.GetPixelData(lemmingPosition);
-
-            if (pixel.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Updraft, lemming.Orientation.GetOpposite()))
+            if (Terrain.HasGadgetThatMatchesTypeAndOrientation(lemmingPosition, GadgetType.Updraft, lemming.Orientation.GetOpposite()))
             {
                 lemming.DistanceFallen = 0;
             }
@@ -79,12 +76,10 @@ public sealed class FallerAction : LemmingAction
 
     private static bool IsFallFatal(Lemming lemming)
     {
-        var pixel = Terrain.GetPixelData(lemming.LevelPosition);
-
         return !(lemming.IsFloater || lemming.IsGlider) &&
-               !pixel.HasGadgetThatMatchesTypeAndOrientation(GadgetType.NoSplat, lemming.Orientation) &&
+               !Terrain.HasGadgetThatMatchesTypeAndOrientation(lemming.LevelPosition, GadgetType.NoSplat, lemming.Orientation) &&
                (lemming.DistanceFallen > MaxFallDistance ||
-                pixel.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Splat, lemming.Orientation));
+                Terrain.HasGadgetThatMatchesTypeAndOrientation(lemming.LevelPosition, GadgetType.Splat, lemming.Orientation));
     }
 
     private static bool CheckFloaterOrGliderTransition(

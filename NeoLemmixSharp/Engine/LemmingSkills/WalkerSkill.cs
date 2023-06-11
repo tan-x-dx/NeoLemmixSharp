@@ -39,8 +39,8 @@ public sealed class WalkerSkill : LemmingSkill
         // Important! If a builder just placed a brick and part of the previous brick
         // got removed, he should not fall if turned into a walker!
         if (lemming.CurrentAction == BuilderAction.Instance &&
-            Terrain.GetPixelData(lemming.Orientation.MoveUp(lemmingPosition, 1)).IsSolidToLemming(lemming) &&
-            !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemmingPosition, dx)).IsSolidToLemming(lemming))
+            Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 1), lemming) &&
+            !Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveRight(lemmingPosition, dx), lemming))
         {
             lemmingPosition = lemming.Orientation.MoveUp(lemmingPosition, 1);
             lemming.LevelPosition = lemmingPosition;
@@ -53,14 +53,13 @@ public sealed class WalkerSkill : LemmingSkill
 
             // Special treatment if in one-way-field facing the wrong direction
             // see http://www.lemmingsforums.net/index.php?topic=2640.0
-            var pixel = Terrain.GetPixelData(lemmingPosition);
             var facingDirectionAsOrientation = lemming.FacingDirection.ConvertToRelativeOrientation(lemming.Orientation);
 
-            if (pixel.HasGadgetThatMatchesTypeAndOrientation(GadgetType.ForceDirection, facingDirectionAsOrientation.GetOpposite()))
+            if (Terrain.HasGadgetThatMatchesTypeAndOrientation(lemmingPosition, GadgetType.ForceDirection, facingDirectionAsOrientation.GetOpposite()))
             {
                 // Go one back to cancel the horizontal offset in WalkerAction's update method.
                 // unless the Lem will fall down (which is handles already in Transition)
-                if (Terrain.GetPixelData(lemmingPosition).IsSolidToLemming(lemming))
+                if (Terrain.PixelIsSolidToLemming(lemmingPosition, lemming))
                 {
                     lemmingPosition = lemming.Orientation.MoveRight(lemmingPosition, dx);
                     lemming.LevelPosition = lemmingPosition;

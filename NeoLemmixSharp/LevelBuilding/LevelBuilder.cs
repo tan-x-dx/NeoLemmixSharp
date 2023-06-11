@@ -2,12 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
+using NeoLemmixSharp.Engine.LevelGadgets;
 using NeoLemmixSharp.Engine.LevelPixels;
-using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering;
 using NeoLemmixSharp.Rendering.Text;
 using System;
-using System.Linq;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
@@ -53,7 +52,6 @@ public sealed class LevelBuilder : IDisposable
         var levelGadgets = _levelAssembler.GetLevelGadgets();
 
         var pixelData = _levelPainter.GetPixelData();
-        var levelPixelData = pixelData.Select(ConvertToLevelPixelData).ToArray();
 
         var terrainSprite = _levelPainter.GetTerrainSprite();
 
@@ -63,7 +61,7 @@ public sealed class LevelBuilder : IDisposable
             BoundaryBehaviourType.Wrap,
             BoundaryBehaviourType.Wrap);
 
-        pixelManager.SetData(levelPixelData, terrainSprite);
+        pixelManager.SetData(pixelData, Array.Empty<Gadget>(), terrainSprite);
 
         return new LevelScreen(
             levelData,
@@ -81,10 +79,5 @@ public sealed class LevelBuilder : IDisposable
         _levelReader.Dispose();
         _levelPainter.Dispose();
         _levelAssembler.Dispose();
-    }
-
-    private static IPixelData ConvertToLevelPixelData(PixelReadData pixelReadData)
-    {
-        return new NoGadgetPixelData(pixelReadData.IsSolid, pixelReadData.IsSteel);
     }
 }

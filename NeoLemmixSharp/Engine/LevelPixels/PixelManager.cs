@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
+﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Engine.LevelGadgets;
@@ -9,11 +10,11 @@ namespace NeoLemmixSharp.Engine.LevelPixels;
 
 public sealed class PixelManager
 {
-    private readonly VoidPixelData _voidPixel;
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
 
-    private IPixelData[] _data;
+    private PixelType[] _data;
+    private Gadget[] _gadgets;
     private TerrainSprite _terrainSprite;
 
     public int Width { get; }
@@ -27,7 +28,6 @@ public sealed class PixelManager
     {
         Width = width;
         Height = height;
-        _voidPixel = new VoidPixelData();
 
         _horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(
             true,
@@ -39,10 +39,12 @@ public sealed class PixelManager
     }
 
     public void SetData(
-        IPixelData[] pixels,
+        PixelType[] pixels,
+        Gadget[] gadgets,
         TerrainSprite terrainSprite)
     {
         _data = pixels;
+        _gadgets = gadgets;
         _terrainSprite = terrainSprite;
     }
 
@@ -61,57 +63,83 @@ public sealed class PixelManager
                levelPosition.Y >= Height;
     }
 
-    public IPixelData GetPixelData(in LevelPosition levelPosition)
+    private PixelType GetPixelData(in LevelPosition levelPosition)
     {
         if (PositionOutOfBounds(levelPosition))
-            return _voidPixel;
+            return PixelType.Void;
 
         var index = Width * levelPosition.Y + levelPosition.X;
         return _data[index];
     }
 
+    public bool PixelIsSolidToLemming(in LevelPosition levelPosition, Lemming lemming)
+    {
+        var pixel = GetPixelData(levelPosition);
+        if (pixel == PixelType.Solid || pixel == PixelType.Steel)
+            return true;
+
+        for (var i = 0; i < _gadgets.Length; i++)
+        {
+            if (_gadgets[i].IsSolidToLemming(levelPosition, lemming))
+                return true;
+        }
+
+        return false;
+    }
+
+    public bool PixelIsIndestructibleToLemming(in LevelPosition levelPosition, Lemming lemming)
+    {
+        var pixel = GetPixelData(levelPosition);
+        if (pixel == PixelType.Steel)
+            return true;
+
+        for (var i = 0; i < _gadgets.Length; i++)
+        {
+            if (_gadgets[i].IsIndestructibleToLemming(levelPosition, lemming))
+                return true;
+        }
+
+        return false;
+    }
+
+    public bool HasGadgetThatMatchesTypeAndOrientation(LevelPosition levelPosition, GadgetType gadgetType, Orientation orientation)
+    {
+        for (var i = 0; i < _gadgets.Length; i++)
+        {
+            if (_gadgets[i].MatchesTypeAndOrientation(levelPosition, gadgetType, orientation))
+                return true;
+        }
+
+        return false;
+    }
+
     public void ErasePixel(in LevelPosition pixelToErase)
     {
-        var pixel = GetPixelData(pixelToErase);
-        if (pixel.ErasePixel())
+        if (PositionOutOfBounds(pixelToErase))
+            return;
+
+        var index = Width * pixelToErase.Y + pixelToErase.X;
+        ref var pixel = ref _data[index];
+
+        if (pixel == PixelType.Solid)
         {
+            pixel = PixelType.Empty;
             _terrainSprite.SetPixelColour(pixelToErase.X, pixelToErase.Y, 0U);
         }
     }
 
     public void SetSolidPixel(in LevelPosition pixelToSet, uint colour)
     {
-        var pixel = GetPixelData(pixelToSet);
-        if (pixel.SetSolid())
-        {
-            _terrainSprite.SetPixelColour(pixelToSet.X, pixelToSet.Y, colour);
-        }
-    }
-
-    public void AddGadgetAtPosition(Gadget gadget, in LevelPosition levelPosition)
-    {
-        if (PositionOutOfBounds(levelPosition))
+        if (PositionOutOfBounds(pixelToSet))
             return;
 
-        var index = Width * levelPosition.Y + levelPosition.X;
+        var index = Width * pixelToSet.Y + pixelToSet.X;
         ref var pixel = ref _data[index];
 
-        if (!pixel.CanAcceptGadgets)
+        if (pixel == PixelType.Empty)
         {
-            pixel = new GadgetPixelData(pixel.IsSolid, pixel.IsSteel);
+            pixel = PixelType.Solid;
+            _terrainSprite.SetPixelColour(pixelToSet.X, pixelToSet.Y, colour);
         }
-
-        pixel.AddGadget(gadget);
-    }
-
-    public void RemoveGadgetAtPosition(Gadget gadget, in LevelPosition levelPosition)
-    {
-        if (PositionOutOfBounds(levelPosition))
-            return;
-
-        var index = Width * levelPosition.Y + levelPosition.X;
-        var pixel = _data[index];
-
-        pixel.RemoveGadget(gadget);
     }
 }

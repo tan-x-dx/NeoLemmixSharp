@@ -29,9 +29,9 @@ public sealed class BasherAction : LemmingAction
         in LevelPosition pos,
         Orientation orientation)
     {
-        return Terrain.GetPixelData(orientation.MoveUp(pos, 3)).IsIndestructibleToLemming(lemming) ||
-               Terrain.GetPixelData(orientation.MoveUp(pos, 4)).IsIndestructibleToLemming(lemming) ||
-               Terrain.GetPixelData(orientation.MoveUp(pos, 5)).IsIndestructibleToLemming(lemming);
+        return Terrain.PixelIsIndestructibleToLemming(orientation.MoveUp(pos, 3), lemming) ||
+               Terrain.PixelIsIndestructibleToLemming(orientation.MoveUp(pos, 4), lemming) ||
+               Terrain.PixelIsIndestructibleToLemming(orientation.MoveUp(pos, 5), lemming);
     }
 
     private void BasherTurn(
@@ -55,13 +55,13 @@ public sealed class BasherAction : LemmingAction
         int dx,
         int step)
     {
-        var p1X1Y = Terrain.GetPixelData(orientation.Move(pos, dx, 1)).IsSolidToLemming(lemming);
-        var p1X2Y = Terrain.GetPixelData(orientation.Move(pos, dx, 2)).IsSolidToLemming(lemming);
-        var p1X3Y = Terrain.GetPixelData(orientation.Move(pos, dx, 3)).IsSolidToLemming(lemming);
+        var p1X1Y = Terrain.PixelIsSolidToLemming(orientation.Move(pos, dx, 1), lemming);
+        var p1X2Y = Terrain.PixelIsSolidToLemming(orientation.Move(pos, dx, 2), lemming);
+        var p1X3Y = Terrain.PixelIsSolidToLemming(orientation.Move(pos, dx, 3), lemming);
 
-        var p2X1Y = Terrain.GetPixelData(orientation.Move(pos, dx + dx, 1)).IsSolidToLemming(lemming);
-        var p2X2Y = Terrain.GetPixelData(orientation.Move(pos, dx + dx, 2)).IsSolidToLemming(lemming);
-        var p2X3Y = Terrain.GetPixelData(orientation.Move(pos, dx + dx, 3)).IsSolidToLemming(lemming);
+        var p2X1Y = Terrain.PixelIsSolidToLemming(orientation.Move(pos, dx + dx, 1), lemming);
+        var p2X2Y = Terrain.PixelIsSolidToLemming(orientation.Move(pos, dx + dx, 2), lemming);
+        var p2X3Y = Terrain.PixelIsSolidToLemming(orientation.Move(pos, dx + dx, 3), lemming);
 
         if (step == 1)
         {
