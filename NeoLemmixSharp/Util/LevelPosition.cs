@@ -17,7 +17,7 @@ public readonly struct LevelPosition : IEquatable<LevelPosition>
         left.X == right.X &&
         left.Y == right.Y;
 
-    public static bool operator !=(in LevelPosition left, in LevelPosition right) => 
+    public static bool operator !=(in LevelPosition left, in LevelPosition right) =>
         left.X != right.X ||
         left.Y != right.Y;
 
@@ -29,7 +29,9 @@ public readonly struct LevelPosition : IEquatable<LevelPosition>
 
     public bool Equals(LevelPosition other) => X == other.X && Y == other.Y;
     public override bool Equals(object? obj) => obj is LevelPosition other && Equals(other);
-    public override int GetHashCode() => HashCode.Combine(X, Y);
+    public override int GetHashCode() => 3790121 * X +
+                                         2885497 * Y +
+                                         7211341;
 
     public override string ToString() => $"[{X},{Y}]";
 }
