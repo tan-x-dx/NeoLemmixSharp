@@ -40,10 +40,12 @@ public sealed class LevelBuilder : IDisposable
         _levelPainter.PaintLevel(
             _levelReader.LevelData);
 
+        var terrainSprite = _levelPainter.GetTerrainSprite();
+
         _levelAssembler.AssembleLevel(
             _content,
             _levelReader.LevelData,
-            _levelPainter.GetTerrainSprite());
+            terrainSprite);
 
         _spriteBank = _levelAssembler.GetSpriteBank();
 
@@ -53,15 +55,13 @@ public sealed class LevelBuilder : IDisposable
 
         var pixelData = _levelPainter.GetPixelData();
 
-        var terrainSprite = _levelPainter.GetTerrainSprite();
-
         var pixelManager = new PixelManager(
             levelData.LevelWidth,
             levelData.LevelHeight,
-            BoundaryBehaviourType.Wrap,
-            BoundaryBehaviourType.Wrap);
+            BoundaryBehaviourType.Void,
+            BoundaryBehaviourType.Void);
 
-        pixelManager.SetData(pixelData, Array.Empty<Gadget>(), terrainSprite);
+        pixelManager.SetData(pixelData, levelGadgets, terrainSprite);
 
         return new LevelScreen(
             levelData,

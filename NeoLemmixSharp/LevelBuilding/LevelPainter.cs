@@ -24,7 +24,7 @@ public sealed class LevelPainter : IDisposable
 
     private bool _disposed;
 
-    private TerrainSprite? _terrainSprite;
+    private TerrainSprite _terrainSprite;
     private PixelType[] _pixels;
 
     public LevelPainter(GraphicsDevice graphicsDevice)
@@ -224,7 +224,7 @@ public sealed class LevelPainter : IDisposable
 
     public TerrainSprite GetTerrainSprite()
     {
-        return _terrainSprite!;
+        return _terrainSprite;
     }
 
     public void Dispose()

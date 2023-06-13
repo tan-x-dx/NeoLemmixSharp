@@ -9,28 +9,37 @@ public sealed class SpriteBank : IDisposable
 {
     private readonly Dictionary<string, LemmingActionSpriteBundle> _actionSpriteBundleLookup;
     private readonly Dictionary<string, Texture2D> _textureLookup;
+    private readonly Dictionary<string, ISprite> _spriteLookup;
 
     public TerrainSprite TerrainSprite { get; }
-    public Texture2D AnchorTexture { get; init; }
-    public Texture2D WhitePixelTexture { get; init; }
-    public LevelCursorSprite LevelCursorSprite { get; init; }
-
-    public IReadOnlyDictionary<string, LemmingActionSpriteBundle> LemmingActionSpriteBundleLookup => _actionSpriteBundleLookup;
-    public IReadOnlyDictionary<string, Texture2D> TextureLookup => _textureLookup;
 
     public SpriteBank(
         Dictionary<string, LemmingActionSpriteBundle> actionSpriteBundleLookup,
         Dictionary<string, Texture2D> textureLookup,
+        Dictionary<string, ISprite> spriteLookup,
         TerrainSprite terrainSprite)
     {
         _actionSpriteBundleLookup = actionSpriteBundleLookup;
         _textureLookup = textureLookup;
+        _spriteLookup = spriteLookup;
+
         TerrainSprite = terrainSprite;
     }
 
-    public void Render(SpriteBatch spriteBatch)
+    public Texture2D GetTexture(string textureName)
     {
-        TerrainSprite.Render(spriteBatch);
+        return _textureLookup[textureName];
+    }
+
+    public T GetSprite<T>(string textureName)
+        where T : ISprite
+    {
+        return (T)_spriteLookup[textureName];
+    }
+
+    public LemmingActionSpriteBundle GetLemmingActionSpriteBundle(string spriteName)
+    {
+        return _actionSpriteBundleLookup[spriteName];
     }
 
     public void Dispose()
@@ -45,10 +54,15 @@ public sealed class SpriteBank : IDisposable
             texture.Dispose();
         }
 
+        foreach (var sprite in _spriteLookup.Values)
+        {
+            sprite.Dispose();
+        }
+
         _actionSpriteBundleLookup.Clear();
         _textureLookup.Clear();
+        _spriteLookup.Clear();
 
         TerrainSprite.Dispose();
-        AnchorTexture.Dispose();
     }
 }

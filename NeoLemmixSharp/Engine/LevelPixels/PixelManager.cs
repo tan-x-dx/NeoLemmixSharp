@@ -35,11 +35,11 @@ public sealed class PixelManager
         Height = height;
 
         _horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(
-            true,
+            horizontalBoundaryBehaviourType,
             width);
 
         _verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(
-            true,
+            verticalBoundaryBehaviourType,
             height);
     }
 

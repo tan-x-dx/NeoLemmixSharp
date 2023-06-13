@@ -40,22 +40,22 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
             .Select(b => new SkillAssignButtonRenderer(spriteBank, fontBank, b))
             .ToArray();
 
-        _whitePixelTexture = spriteBank.WhitePixelTexture;
-        _emptySlot = spriteBank.TextureLookup["panel/empty_slot"];
-        _iconCpmAndReplay = spriteBank.TextureLookup["panel/icon_cpm_and_replay"];
-        _iconDirectional = spriteBank.TextureLookup["panel/icon_directional"];
-        _iconFf = spriteBank.TextureLookup["panel/icon_ff"];
-        _iconFrameskip = spriteBank.TextureLookup["panel/icon_frameskip"];
-        _iconNuke = spriteBank.TextureLookup["panel/icon_nuke"];
-        _iconPause = spriteBank.TextureLookup["panel/icon_pause"];
-        _iconRestart = spriteBank.TextureLookup["panel/icon_restart"];
-        _iconRrMinus = spriteBank.TextureLookup["panel/icon_rr_minus"];
-        _iconRrPlus = spriteBank.TextureLookup["panel/icon_rr_plus"];
-        _minimapRegion = spriteBank.TextureLookup["panel/minimap_region"];
-        _panelIcons = spriteBank.TextureLookup["panel/panel_icons"];
-        _skillCountErase = spriteBank.TextureLookup["panel/skill_count_erase"];
-        _skillPanels = spriteBank.TextureLookup["panel/skill_panels"];
-        _skillSelected = spriteBank.TextureLookup["panel/skill_selected"];
+        _whitePixelTexture = spriteBank.GetTexture(SpriteBankTextureNames.WhitePixel);
+        _emptySlot = spriteBank.GetTexture("panel/empty_slot");
+        _iconCpmAndReplay = spriteBank.GetTexture("panel/icon_cpm_and_replay");
+        _iconDirectional = spriteBank.GetTexture("panel/icon_directional");
+        _iconFf = spriteBank.GetTexture("panel/icon_ff");
+        _iconFrameskip = spriteBank.GetTexture("panel/icon_frameskip");
+        _iconNuke = spriteBank.GetTexture("panel/icon_nuke");
+        _iconPause = spriteBank.GetTexture("panel/icon_pause");
+        _iconRestart = spriteBank.GetTexture("panel/icon_restart");
+        _iconRrMinus = spriteBank.GetTexture("panel/icon_rr_minus");
+        _iconRrPlus = spriteBank.GetTexture("panel/icon_rr_plus");
+        _minimapRegion = spriteBank.GetTexture("panel/minimap_region");
+        _panelIcons = spriteBank.GetTexture("panel/panel_icons");
+        _skillCountErase = spriteBank.GetTexture("panel/skill_count_erase");
+        _skillPanels = spriteBank.GetTexture("panel/skill_panels");
+        _skillSelected = spriteBank.GetTexture("panel/skill_selected");
     }
 
     public void RenderControlPanel(SpriteBatch spriteBatch)

@@ -31,14 +31,22 @@ public static class BoundaryHelpers
     };
 
     public static IHorizontalBoundaryBehaviour GetHorizontalBoundaryBehaviour(
-        bool wrap,
-        int width) => wrap
-        ? new HorizontalWrapBoundaryBehaviour(width)
-        : new HorizontalVoidBoundaryBehaviour();
+        BoundaryBehaviourType boundaryBehaviourType,
+        int width) => boundaryBehaviourType switch
+    {
+        BoundaryBehaviourType.Wrap => new HorizontalWrapBoundaryBehaviour(width),
+        BoundaryBehaviourType.Void => new HorizontalVoidBoundaryBehaviour(),
+        _ => throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType,
+            "Unknown boundary behaviour type")
+    };
 
     public static IVerticalBoundaryBehaviour GetVerticalBoundaryBehaviour(
-        bool wrap,
-        int height) => wrap
-        ? new VerticalWrapBoundaryBehaviour(height)
-        : new VerticalVoidBoundaryBehaviour();
+        BoundaryBehaviourType boundaryBehaviourType,
+        int height) => boundaryBehaviourType switch
+    {
+        BoundaryBehaviourType.Wrap => new VerticalWrapBoundaryBehaviour(height),
+        BoundaryBehaviourType.Void => new VerticalVoidBoundaryBehaviour(),
+        _ => throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType,
+            "Unknown boundary behaviour type")
+    };
 }

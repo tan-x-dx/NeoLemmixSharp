@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LemmingSkills;
+using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Engine.LevelGadgets;
@@ -59,11 +60,11 @@ public sealed class LevelScreen : BaseScreen
         SpriteBank spriteBank)
         : base(levelData.LevelTitle)
     {
-        _horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour ?? new HorizontalWrapBoundaryBehaviour(levelData.LevelWidth);
-        _verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour ?? new VerticalWrapBoundaryBehaviour(levelData.LevelHeight);
+        _horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
+        _verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
 
-        _horizontalViewPortBehaviour = levelData.HorizontalViewPortBehaviour ?? new HorizontalWrapBehaviour(levelData.LevelWidth);
-        _verticalViewPortBehaviour = levelData.VerticalViewPortBehaviour ?? new VerticalWrapViewPortBehaviour(levelData.LevelHeight);
+        _horizontalViewPortBehaviour = BoundaryHelpers.GetHorizontalViewPortBehaviour(levelData.HorizontalViewPortBehaviour, levelData.LevelWidth);
+        _verticalViewPortBehaviour = BoundaryHelpers.GetVerticalViewPortBehaviour(levelData.VerticalViewPortBehaviour, levelData.LevelHeight);
 
         _lemmings = lemmings;
         _gadgets = gadgets;
@@ -92,7 +93,8 @@ public sealed class LevelScreen : BaseScreen
 
         _spriteBank = spriteBank;
         _spriteBank.TerrainSprite.SetViewport(_viewport);
-        _spriteBank.LevelCursorSprite.SetLevelCursor(_levelCursor);
+        var levelCursorSprite = _spriteBank.GetSprite<LevelCursorSprite>(SpriteBankTextureNames.LevelCursor);
+        levelCursorSprite.SetLevelCursor(_levelCursor);
     }
 
     public override void Tick()
@@ -249,8 +251,6 @@ public sealed class LevelScreen : BaseScreen
         LemmingAction.SetTerrain(null);
         LemmingSkill.SetTerrain(null);
         LevelCursor.LevelScreen = null;
-        _spriteBank.TerrainSprite.SetViewport(null);
-        _spriteBank.LevelCursorSprite.SetLevelCursor(null);
 #pragma warning restore CS8625
     }
 

@@ -12,7 +12,7 @@ public sealed class SolidColourBackgroundRenderer : IBackgroundRenderer
 
     public SolidColourBackgroundRenderer(SpriteBank spriteBank, LevelViewport viewport, Color backgroundColor)
     {
-        _pixelTexture = spriteBank.WhitePixelTexture;
+        _pixelTexture = spriteBank.GetTexture(SpriteBankTextureNames.WhitePixel);
         _backgroundColor = backgroundColor;
         _viewport = viewport;
     }

@@ -40,7 +40,7 @@ public sealed class LevelRenderer : ScreenRenderer
         _viewport = viewport;
         _levelSprites = levelSprites;
         _terrainSprite = spriteBank.TerrainSprite;
-        _cursorSprite = spriteBank.LevelCursorSprite;
+        _cursorSprite = spriteBank.GetSprite<LevelCursorSprite>(SpriteBankTextureNames.LevelCursor);
         _fontBank = fontBank;
         _controlPanelRenderer = new ClassicControlPanelRenderer(spriteBank, fontBank, levelControlPanel);
     }

@@ -39,9 +39,11 @@ public sealed class LevelAssembler : IDisposable
         var spriteBankBuilder = new SpriteBankBuilder(_graphicsDevice);
         _spriteBank = spriteBankBuilder.BuildSpriteBank(content, levelData.ThemeData, terrainSprite, levelData.AllGadgetData);
 
-        SetUpTestLemmings();
+        // SetUpTestLemmings();
+        SetUpLemmings();
+        SetUpGadgets();
 
-        levelData.SkillSetData = new SkillSetData()
+        levelData.SkillSetData = new SkillSetData
         {
             NumberOfBashers = 1,
             NumberOfBlockers = 2,
@@ -154,5 +156,15 @@ public sealed class LevelAssembler : IDisposable
         _lemmings.Add(lemming2);
         _lemmings.Add(lemming3);
         _lemmings.Add(lemming4);
+    }
+
+    private void SetUpLemmings()
+    {
+
+    }
+
+    private void SetUpGadgets()
+    {
+
     }
 }

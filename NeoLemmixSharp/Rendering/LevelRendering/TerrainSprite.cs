@@ -38,8 +38,8 @@ public sealed class TerrainSprite : IDisposable
                 var screenRect = new Rectangle(hInterval.ScreenStart, vInterval.ScreenStart, hInterval.ScreenLength, vInterval.ScreenLength);
 
                 spriteBatch.Draw(
-                    _texture, 
-                    screenRect, 
+                    _texture,
+                    screenRect,
                     sourceRect,
                     Color.White,
                     0.0f,
@@ -59,5 +59,6 @@ public sealed class TerrainSprite : IDisposable
     public void Dispose()
     {
         _texture.Dispose();
+        SetViewport(null);
     }
 }

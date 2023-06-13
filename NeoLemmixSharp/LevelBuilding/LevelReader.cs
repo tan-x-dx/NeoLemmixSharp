@@ -32,11 +32,11 @@ public sealed class LevelReader : IDisposable
         AddDataReader(new StateRecolouringReader(LevelData.ThemeData));
         AddDataReader(new ShadesReader());
         AddDataReader(new AnimationDataReader(LevelData.ThemeData));
-    }
 
-    private void AddDataReader(IDataReader dataReader)
-    {
-        _dataReaders.Add(dataReader.IdentifierToken, dataReader);
+        void AddDataReader(IDataReader dataReader)
+        {
+            _dataReaders.Add(dataReader.IdentifierToken, dataReader);
+        }
     }
 
     public void ReadLevel(string levelFilePath)
