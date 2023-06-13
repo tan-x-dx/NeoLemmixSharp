@@ -63,7 +63,7 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        if (Terrain.HasGadgetThatMatchesTypeAndOrientation(lemmingPosition, GadgetType.Water, lemming.Orientation))
+        if (Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Water, lemmingPosition, lemming.Orientation))
         {
             lemmingPosition = lemming.Orientation.MoveLeft(lemmingPosition, dx);
             lemming.LevelPosition = lemmingPosition;

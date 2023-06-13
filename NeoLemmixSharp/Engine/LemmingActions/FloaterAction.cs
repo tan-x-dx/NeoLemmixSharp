@@ -30,7 +30,7 @@ public sealed class FloaterAction : LemmingAction
 
         var levelPosition = lemming.LevelPosition;
 
-        if (Terrain.HasGadgetThatMatchesTypeAndOrientation(levelPosition, GadgetType.Updraft, lemming.Orientation.GetOpposite()))
+        if (Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Updraft, levelPosition, lemming.Orientation.GetOpposite()))
         {
             maxFallDistance--;
         }

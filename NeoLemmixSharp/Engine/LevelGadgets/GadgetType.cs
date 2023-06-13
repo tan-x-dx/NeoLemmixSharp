@@ -17,6 +17,7 @@ public enum GadgetType
     ForceDirection,
     OneWayArrow,
 
+    BlockerForceDirectionArea,
     BlockerArea,
     Teleport,
     
