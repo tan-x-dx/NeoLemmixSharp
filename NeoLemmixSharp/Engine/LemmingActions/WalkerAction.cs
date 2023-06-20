@@ -79,7 +79,7 @@ public sealed class WalkerAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        if (Terrain.GetPixelData(lemming.LevelPosition).IsSolidToLemming(lemming))
+        if (Terrain.PixelIsSolidToLemming(lemming.LevelPosition, lemming))
         {
             base.TransitionLemmingToAction(lemming, turnAround);
             return;

@@ -55,9 +55,9 @@ public sealed class StackerAction : LemmingAction
         var brickPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 9 - lemming.NumberOfBricksLeft);
         var dx = lemming.FacingDirection.DeltaX;
 
-        return !(Terrain.GetPixelData(lemming.Orientation.MoveRight(brickPosition, dx)).IsSolidToLemming(lemming) &&
-                 Terrain.GetPixelData(lemming.Orientation.MoveRight(brickPosition, dx + dx)).IsSolidToLemming(lemming) &&
-                 Terrain.GetPixelData(lemming.Orientation.MoveRight(brickPosition, dx + dx + dx)).IsSolidToLemming(lemming));
+        return !(Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveRight(brickPosition, dx), lemming) &&
+                 Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveRight(brickPosition, dx + dx), lemming) &&
+                 Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveRight(brickPosition, dx + dx + dx), lemming));
     }
 
     private static bool LayStackBrick(Lemming lemming)
@@ -70,7 +70,7 @@ public sealed class StackerAction : LemmingAction
 
         for (var i = 0; i < 3; i++)
         {
-            if (!Terrain.GetPixelData(brickPosition).IsSolidToLemming(lemming))
+            if (!Terrain.PixelIsSolidToLemming(brickPosition, lemming))
             {
                 Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
                 result = true;

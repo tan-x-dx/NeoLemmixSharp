@@ -64,5 +64,7 @@ public sealed class LevelCursorSprite : ISprite
     {
         StandardCursorTexture.Dispose();
         FocusedCursorTexture.Dispose();
+
+        _levelCursor = null;
     }
 }

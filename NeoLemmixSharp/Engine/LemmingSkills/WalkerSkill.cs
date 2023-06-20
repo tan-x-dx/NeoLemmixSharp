@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.LemmingActions;
+using NeoLemmixSharp.Engine.LevelGadgets;
 
 namespace NeoLemmixSharp.Engine.LemmingSkills;
 
@@ -33,13 +34,16 @@ public sealed class WalkerSkill : LemmingSkill
     {
         var dx = lemming.FacingDirection.DeltaX;
 
+        var lemmingPosition = lemming.LevelPosition;
+
         // Important! If a builder just placed a brick and part of the previous brick
         // got removed, he should not fall if turned into a walker!
         if (lemming.CurrentAction == BuilderAction.Instance &&
-            Terrain.GetPixelData(lemming.Orientation.MoveUp(lemming.LevelPosition, 1)).IsSolidToLemming(lemming) &&
-            !Terrain.GetPixelData(lemming.Orientation.MoveRight(lemming.LevelPosition, dx)).IsSolidToLemming(lemming))
+            Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 1), lemming) &&
+            !Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveRight(lemmingPosition, dx), lemming))
         {
-            lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
+            lemmingPosition = lemming.Orientation.MoveUp(lemmingPosition, 1);
+            lemming.LevelPosition = lemmingPosition;
         }
 
         // Turn around walking lem, if assigned a walker
@@ -49,14 +53,16 @@ public sealed class WalkerSkill : LemmingSkill
 
             // Special treatment if in one-way-field facing the wrong direction
             // see http://www.lemmingsforums.net/index.php?topic=2640.0
-            if (false) /*(HasTriggerAt(L.LemX, L.LemY, trForceRight, L) and(L.LemDx = -1) ||
-                HasTriggerAt(L.LemX, L.LemY, trForceLeft, L) and(L.LemDx = 1))*/
+            var facingDirectionAsOrientation = lemming.FacingDirection.ConvertToRelativeOrientation(lemming.Orientation);
+
+            if (Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.ForceDirection, lemmingPosition, facingDirectionAsOrientation.GetOpposite()))
             {
-                // Go one back to cancel the Inc(L.LemX, L.LemDx) in HandleWalking
+                // Go one back to cancel the horizontal offset in WalkerAction's update method.
                 // unless the Lem will fall down (which is handles already in Transition)
-                if (Terrain.GetPixelData(lemming.LevelPosition).IsSolidToLemming(lemming))
+                if (Terrain.PixelIsSolidToLemming(lemmingPosition, lemming))
                 {
-                    lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, dx);
+                    lemmingPosition = lemming.Orientation.MoveRight(lemmingPosition, dx);
+                    lemming.LevelPosition = lemmingPosition;
                 }
             }
         }

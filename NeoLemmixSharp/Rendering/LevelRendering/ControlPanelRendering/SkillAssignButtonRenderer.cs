@@ -1,7 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.ControlPanel;
-using NeoLemmixSharp.Rendering.Text;
+using NeoLemmixSharp.Rendering2.Text;
+using System.Collections.Generic;
 
 namespace NeoLemmixSharp.Rendering.LevelRendering.ControlPanelRendering;
 
@@ -20,29 +21,32 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
     private readonly INeoLemmixFont _skillCountDigitFont;
 
     public SkillAssignButtonRenderer(
-        SpriteBank spriteBank,
+        UiSpriteBank spriteBank,
         FontBank fontBank,
         SkillAssignButton skillAssignButton)
     {
-        _skillCountErase = spriteBank.TextureLookup["panel/skill_count_erase"];
-        _skillPanels = spriteBank.TextureLookup["panel/skill_panels"];
-        _skillSelected = spriteBank.TextureLookup["panel/skill_selected"];
+        _skillCountErase = spriteBank.GetTexture("panel/skill_count_erase");
+        _skillPanels = spriteBank.GetTexture("panel/skill_panels");
+        _skillSelected = spriteBank.GetTexture("panel/skill_selected");
 
         _skillCountDigitFont = fontBank.SkillCountDigitFont;
 
         _skillAssignButton = skillAssignButton;
 
-        if (spriteBank.LemmingActionSpriteBundleLookup.TryGetValue(_skillAssignButton.LemmingSkill.LemmingSkillName, out var lemmingActionSpriteBundle))
+        // HOLY SHIT THIS IS TERRIBLE CODE
+        // TODO REFACTOR THE FUCK OUT OF THIS WHEN PROPER SPRITES ARE CREATED FOR SKILL ASSIGN BUTTONS
+        try
         {
+         /*   var lemmingActionSpriteBundle = spriteBank.GetLemmingActionSpriteBundle(_skillAssignButton.LemmingSkill.LemmingSkillName);
             var sprite = lemmingActionSpriteBundle.DownRightSprite;
             _skillIcon = sprite.Texture;
             _skillIconSourceRectangle = sprite.GetSourceRectangleForFrame(0);
             _skillIconWidth = sprite.SpriteWidth;
-            _skillIconHeight = sprite.SpriteHeight;
+            _skillIconHeight = sprite.SpriteHeight;*/
         }
-        else
+        catch (KeyNotFoundException) // goddamn
         {
-            _skillIcon = spriteBank.WhitePixelTexture;
+            _skillIcon = spriteBank.GetTexture(SpriteBankTextureNames.WhitePixel);
             _skillIconSourceRectangle = new Rectangle(0, 0, 1, 1);
             _skillIconWidth = 1;
             _skillIconHeight = 1;

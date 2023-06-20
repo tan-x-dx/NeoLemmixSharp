@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
-using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.LevelPixels;
 using NeoLemmixSharp.Rendering.LevelRendering.BackgroundRendering;
 using NeoLemmixSharp.Rendering.LevelRendering.ControlPanelRendering;
-using NeoLemmixSharp.Rendering.Text;
+using NeoLemmixSharp.Rendering2;
+using NeoLemmixSharp.Rendering2.Text;
 
 namespace NeoLemmixSharp.Rendering.LevelRendering;
 
@@ -26,12 +26,13 @@ public sealed class LevelRenderer : ScreenRenderer
 
     private string _mouseCoords = string.Empty;
 
-    public LevelRenderer(PixelManager terrain,
+    public LevelRenderer(
+        TerrainManager terrain,
         LevelViewport viewport,
         ISprite[] levelSprites,
-        SpriteBank spriteBank,
+        UiSpriteBank spriteBank,
         FontBank fontBank,
-        LevelControlPanel levelControlPanel)
+        IControlPanelRenderer controlPanelRenderer)
     {
         _levelWidth = terrain.Width;
         _levelHeight = terrain.Height;
@@ -39,24 +40,29 @@ public sealed class LevelRenderer : ScreenRenderer
         _backgroundRenderer = new SolidColourBackgroundRenderer(spriteBank, viewport, new Color(24, 24, 60));
         _viewport = viewport;
         _levelSprites = levelSprites;
-        _terrainSprite = spriteBank.TerrainSprite;
-        _cursorSprite = spriteBank.LevelCursorSprite;
+     //   _terrainSprite = terrain.TerrainRenderer;
+        _cursorSprite = spriteBank.GetSprite<LevelCursorSprite>(SpriteBankTextureNames.LevelCursor);
         _fontBank = fontBank;
-        _controlPanelRenderer = new ClassicControlPanelRenderer(spriteBank, fontBank, levelControlPanel);
+        _controlPanelRenderer = controlPanelRenderer;
     }
 
     public override void RenderScreen(SpriteBatch spriteBatch)
+    {
+        RenderLevel(spriteBatch);
+        RenderControlPanel(spriteBatch);
+    }
+
+    public override void OnWindowSizeChanged(int windowWidth, int windowHeight)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    private void RenderLevel(SpriteBatch spriteBatch)
     {
         _backgroundRenderer.RenderBackground(spriteBatch);
         _terrainSprite.Render(spriteBatch);
 
         RenderSprites(spriteBatch);
-
-        _controlPanelRenderer.RenderControlPanel(spriteBatch);
-        _cursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
-
-        _mouseCoords = $"({_viewport.ScreenMouseX},{_viewport.ScreenMouseY}) - ({_viewport.ViewportMouseX},{_viewport.ViewportMouseY})";
-        _fontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20);
     }
 
     private void RenderSprites(SpriteBatch spriteBatch)
@@ -99,6 +105,15 @@ public sealed class LevelRenderer : ScreenRenderer
                 y1 = y0;
             }
         }
+    }
+
+    private void RenderControlPanel(SpriteBatch spriteBatch)
+    {
+        _controlPanelRenderer.RenderControlPanel(spriteBatch);
+        _cursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
+
+        _mouseCoords = $"({_viewport.ScreenMouseX},{_viewport.ScreenMouseY}) - ({_viewport.ViewportMouseX},{_viewport.ViewportMouseY})";
+        _fontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20);
     }
 
     public override void Dispose()

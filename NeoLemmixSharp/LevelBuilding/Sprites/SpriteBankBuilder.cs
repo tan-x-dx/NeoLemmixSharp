@@ -21,6 +21,7 @@ public sealed class SpriteBankBuilder
 
     private readonly Dictionary<string, LemmingActionSpriteBundle> _actionSpriteBundleLookup = new();
     private readonly Dictionary<string, Texture2D> _textureLookup = new();
+    private readonly Dictionary<string, ISprite> _spriteLookup = new();
 
     public SpriteBankBuilder(GraphicsDevice graphicsDevice)
     {
@@ -36,7 +37,12 @@ public sealed class SpriteBankBuilder
         var anchorTexture = CreateAnchorTexture();
         var whitePixelTexture = CreateWhitePixelTexture();
 
+        _textureLookup.Add(SpriteBankTextureNames.LemmingAnchorTexture, anchorTexture);
+        _textureLookup.Add(SpriteBankTextureNames.WhitePixel, whitePixelTexture);
+
         var cursorSprite = LoadCursorSprites(content);
+        _spriteLookup.Add(SpriteBankTextureNames.LevelCursor, cursorSprite);
+
         LoadLemmingSprites(themeData);
         LoadGadgetSprites(allGadgetData);
         LoadOtherTextures(content);
@@ -44,12 +50,8 @@ public sealed class SpriteBankBuilder
         return new SpriteBank(
             _actionSpriteBundleLookup,
             _textureLookup,
-            terrainSprite)
-        {
-            AnchorTexture = anchorTexture,
-            WhitePixelTexture = whitePixelTexture,
-            LevelCursorSprite = cursorSprite
-        };
+            _spriteLookup,
+            terrainSprite);
     }
 
     private static LevelCursorSprite LoadCursorSprites(ContentManager content)
@@ -80,21 +82,6 @@ public sealed class SpriteBankBuilder
         return $"${lemmingStateName.ToUpperInvariant()}";
     }
 
-    private Texture2D CreateBoxTexture()
-    {
-        var boxTexture = new Texture2D(_graphicsDevice, 1, 1);
-
-        var white = Color.White;
-        var x = new uint[1];
-        for (var i = 0; i < x.Length; i++)
-        {
-            x[i] = white.PackedValue;
-        }
-
-        boxTexture.SetData(x);
-        return boxTexture;
-    }
-
     private Texture2D CreateAnchorTexture()
     {
         var anchorTexture = new Texture2D(_graphicsDevice, 3, 3);
@@ -114,12 +101,12 @@ public sealed class SpriteBankBuilder
 
     private Texture2D CreateWhitePixelTexture()
     {
-        var blackPixelTexture = new Texture2D(_graphicsDevice, 1, 1);
+        var whitePixelTexture = new Texture2D(_graphicsDevice, 1, 1);
 
         var x = new[] { Color.White.PackedValue };
 
-        blackPixelTexture.SetData(x);
-        return blackPixelTexture;
+        whitePixelTexture.SetData(x);
+        return whitePixelTexture;
     }
 
     private void ProcessLemmingSpriteTexture(string stateName, LemmingSpriteData spriteData, Texture2D texture)
@@ -131,16 +118,18 @@ public sealed class SpriteBankBuilder
 
         _actionSpriteBundleLookup.Add(stateName, actionSpriteBundle);
 
-        ProcessLefts(spriteData, originalPixelColourData, actionSpriteBundle);
-        ProcessRights(spriteData, originalPixelColourData, actionSpriteBundle);
+        ProcessLefts(_graphicsDevice, spriteData, originalPixelColourData, actionSpriteBundle);
+        ProcessRights(_graphicsDevice, spriteData, originalPixelColourData, actionSpriteBundle);
     }
 
-    private void ProcessLefts(
+    private static void ProcessLefts(
+        GraphicsDevice graphicsDevice,
         LemmingSpriteData spriteData,
         PixelColourData originalPixelColourData,
         LemmingActionSpriteBundle actionSpriteBundle)
     {
         CreateSprites(
+            graphicsDevice,
             spriteData,
             originalPixelColourData,
             0,
@@ -150,12 +139,14 @@ public sealed class SpriteBankBuilder
             (o, b, a) => o.SetLeftActionSprite(b, a));
     }
 
-    private void ProcessRights(
+    private static void ProcessRights(
+        GraphicsDevice graphicsDevice,
         LemmingSpriteData spriteData,
         PixelColourData originalPixelColourData,
         LemmingActionSpriteBundle actionSpriteBundle)
     {
         CreateSprites(
+            graphicsDevice,
             spriteData,
             originalPixelColourData,
             originalPixelColourData.Width / 2,
@@ -165,7 +156,8 @@ public sealed class SpriteBankBuilder
             (o, b, a) => o.SetRightActionSprite(b, a));
     }
 
-    private void CreateSprites(
+    private static void CreateSprites(
+        GraphicsDevice graphicsDevice,
         LemmingSpriteData spriteData,
         PixelColourData originalPixelColourData,
         int dx0,
@@ -200,12 +192,14 @@ public sealed class SpriteBankBuilder
 
         foreach (var spriteDrawingData in spriteDrawingDatas)
         {
-            var texture = spriteDrawingData.ToTexture(_graphicsDevice);
+            var texture = spriteDrawingData.ToTexture(graphicsDevice);
 
             spriteDrawingData.DihedralTransformation.Transform(footX,
                 footY,
                 spriteWidth - 1,
-                spriteHeight - 1, out var footX1, out var footY1);
+                spriteHeight - 1,
+                out var footX1,
+                out var footY1);
 
             var actionSprite = new ActionSprite(
                 texture,

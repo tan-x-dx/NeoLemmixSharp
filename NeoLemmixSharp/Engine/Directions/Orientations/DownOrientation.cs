@@ -79,6 +79,7 @@ public sealed class DownOrientation : Orientation
 
     public override Orientation RotateClockwise() => LeftOrientation.Instance;
     public override Orientation RotateCounterClockwise() => RightOrientation.Instance;
+    public override Orientation GetOpposite() => UpOrientation.Instance;
 
     public override string ToString() => "down";
 }

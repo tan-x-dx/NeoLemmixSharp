@@ -61,15 +61,15 @@ public sealed class DiggerAction : LemmingAction
 
         // Two most extreme pixels
         var checkLevelPosition = orientation.Move(baseLevelPosition, -4, 0);
-        var pixel = Terrain.GetPixelData(checkLevelPosition);
-        if (pixel.IsSolidToLemming(lemming))
+        var pixelIsSolid = Terrain.PixelIsSolidToLemming(checkLevelPosition, lemming);
+        if (pixelIsSolid)
         {
             Terrain.ErasePixel(checkLevelPosition);
         }
 
         checkLevelPosition = orientation.Move(baseLevelPosition, 4, 0);
-        pixel = Terrain.GetPixelData(checkLevelPosition);
-        if (pixel.IsSolidToLemming(lemming))
+        pixelIsSolid = Terrain.PixelIsSolidToLemming(checkLevelPosition, lemming);
+        if (pixelIsSolid)
         {
             Terrain.ErasePixel(checkLevelPosition);
         }
@@ -78,8 +78,8 @@ public sealed class DiggerAction : LemmingAction
         for (var i = -3; i < 4; i++)
         {
             checkLevelPosition = orientation.Move(baseLevelPosition, i, 0);
-            pixel = Terrain.GetPixelData(checkLevelPosition);
-            if (pixel.IsSolidToLemming(lemming))
+            pixelIsSolid = Terrain.PixelIsSolidToLemming(checkLevelPosition, lemming);
+            if (pixelIsSolid)
             {
                 Terrain.ErasePixel(checkLevelPosition);
                 result = true;

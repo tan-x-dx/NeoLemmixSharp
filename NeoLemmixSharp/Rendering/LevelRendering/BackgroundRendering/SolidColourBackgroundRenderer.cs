@@ -10,9 +10,9 @@ public sealed class SolidColourBackgroundRenderer : IBackgroundRenderer
     private readonly LevelViewport _viewport;
     private readonly Color _backgroundColor;
 
-    public SolidColourBackgroundRenderer(SpriteBank spriteBank, LevelViewport viewport, Color backgroundColor)
+    public SolidColourBackgroundRenderer(UiSpriteBank spriteBank, LevelViewport viewport, Color backgroundColor)
     {
-        _pixelTexture = spriteBank.WhitePixelTexture;
+        _pixelTexture = spriteBank.GetTexture(SpriteBankTextureNames.WhitePixel);
         _backgroundColor = backgroundColor;
         _viewport = viewport;
     }

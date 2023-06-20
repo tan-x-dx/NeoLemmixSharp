@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Engine.LevelPixels;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Sprites;
-using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
-public sealed class LevelPainter : IDisposable
+public sealed class TerrainPainter : IDisposable
 {
     public const uint MinimumSubstantialAlphaValue = 31;
 
@@ -23,11 +23,10 @@ public sealed class LevelPainter : IDisposable
 
     private bool _disposed;
 
-    private TerrainSprite? _terrainSprite;
-    private PixelReadData[] _pixels;
-    private ArrayWrapper2D<PixelReadData> _pixelsArray;
+    private Texture2D _terrainTexture;
+    private PixelType[] _terrainPixels;
 
-    public LevelPainter(GraphicsDevice graphicsDevice)
+    public TerrainPainter(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;
     }
@@ -41,17 +40,12 @@ public sealed class LevelPainter : IDisposable
             ProcessTerrainGroup(terrainGroup);
         }
 
-        var levelTerrainTexture = new Texture2D(
+        _terrainTexture = new Texture2D(
             _graphicsDevice,
             levelData.LevelWidth,
             levelData.LevelHeight);
 
-        _pixels = new PixelReadData[levelData.LevelWidth * levelData.LevelHeight];
-        for (var i = 0; i < _pixels.Length; i++)
-        {
-            _pixels[i] = new PixelReadData();
-        }
-        _pixelsArray = new ArrayWrapper2D<PixelReadData>(levelData.LevelWidth, levelData.LevelHeight, _pixels);
+        _terrainPixels = new PixelType[levelData.LevelWidth * levelData.LevelHeight];
 
         var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
         var textureData = new PixelColourData(
@@ -60,8 +54,7 @@ public sealed class LevelPainter : IDisposable
             uintData);
 
         DrawTerrain(levelData.AllTerrainData, textureData);
-        levelTerrainTexture.SetData(uintData);
-        _terrainSprite = new TerrainSprite(levelTerrainTexture);
+        _terrainTexture.SetData(uintData);
     }
 
     private static void ProcessTerrainGroup(TerrainGroup terrainGroup)
@@ -141,7 +134,6 @@ public sealed class LevelPainter : IDisposable
                 }
 
                 var targetPixelColour = targetPixelColourData.Get(x0, y0);
-                var targetPixelData = _pixelsArray!.Get(x0, y0);
 
                 if (terrainData.Erase)
                 {
@@ -160,16 +152,18 @@ public sealed class LevelPainter : IDisposable
                 }
 
                 targetPixelColourData.Set(x0, y0, targetPixelColour);
+                var pixelIndex = targetPixelColourData.Width * y0 + x0;
+                ref var targetPixelData = ref _terrainPixels[pixelIndex];
 
                 if (PixelColourIsSubstantial(targetPixelColour))
                 {
-                    targetPixelData.IsSolid = true;
-                    targetPixelData.IsSteel = terrainData.IsSteel;
+                    targetPixelData = terrainData.IsSteel
+                        ? PixelType.Steel
+                        : PixelType.Solid;
                 }
                 else
                 {
-                    targetPixelData.IsSolid = false;
-                    targetPixelData.IsSteel = false;
+                    targetPixelData = PixelType.Empty;
                 }
             }
         }
@@ -221,14 +215,14 @@ public sealed class LevelPainter : IDisposable
         return result;
     }
 
-    public PixelReadData[] GetPixelData()
+    public PixelType[] GetPixelData()
     {
-        return _pixels;
+        return _terrainPixels;
     }
 
-    public TerrainSprite GetTerrainSprite()
+    public Texture2D GetTerrainTexture()
     {
-        return _terrainSprite!;
+        return _terrainTexture;
     }
 
     public void Dispose()

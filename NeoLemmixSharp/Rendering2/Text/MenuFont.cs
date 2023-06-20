@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System.Linq;
 using NeoLemmixSharp.Rendering.LevelRendering;
 
-namespace NeoLemmixSharp.Rendering.Text;
+namespace NeoLemmixSharp.Rendering2.Text;
 
 public sealed class MenuFont : INeoLemmixFont
 {

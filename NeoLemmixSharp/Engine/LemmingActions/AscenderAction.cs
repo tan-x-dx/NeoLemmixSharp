@@ -23,26 +23,26 @@ public sealed class AscenderAction : LemmingAction
         var dy = 0;
         while (dy < 2 &&
                lemming.AscenderProgress < 5 &&
-               Terrain.GetPixelData(lemming.Orientation.MoveUp(levelPosition, 1)).IsSolidToLemming(lemming))
+               Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(levelPosition, 1), lemming))
         {
             dy++;
             lemming.LevelPosition = levelPosition = lemming.Orientation.MoveUp(levelPosition, 1);
             lemming.AscenderProgress++;
         }
 
-        var pixel1 = Terrain.GetPixelData(lemming.Orientation.MoveUp(levelPosition, 1));
-        var pixel2 = Terrain.GetPixelData(lemming.Orientation.MoveUp(levelPosition, 2));
+        var pixel1IsSolid = Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(levelPosition, 1), lemming);
+        var pixel2IsSolid = Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(levelPosition, 2), lemming);
 
         if (dy < 2 &&
-            !pixel1.IsSolidToLemming(lemming))
+            !pixel1IsSolid)
         {
             lemming.NextAction = WalkerAction.Instance;
         }
         else if ((lemming.AscenderProgress == 4 &&
-                  pixel1.IsSolidToLemming(lemming) &&
-                  pixel2.IsSolidToLemming(lemming)) ||
+                  pixel1IsSolid &&
+                  pixel2IsSolid) ||
                  (lemming.AscenderProgress >= 5 &&
-                  pixel1.IsSolidToLemming(lemming)))
+                  pixel1IsSolid))
         {
             var dx = lemming.FacingDirection.DeltaX;
             lemming.LevelPosition = lemming.Orientation.MoveLeft(levelPosition, dx);

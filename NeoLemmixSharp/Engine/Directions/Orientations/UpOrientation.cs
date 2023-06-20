@@ -80,6 +80,7 @@ public sealed class UpOrientation : Orientation
     public override Orientation RotateClockwise() => RightOrientation.Instance;
 
     public override Orientation RotateCounterClockwise() => LeftOrientation.Instance;
+    public override Orientation GetOpposite() => DownOrientation.Instance;
 
     public override string ToString() => "up";
 }

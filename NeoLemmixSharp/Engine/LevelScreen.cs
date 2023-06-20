@@ -2,39 +2,28 @@
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LemmingSkills;
-using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
-using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Engine.LevelGadgets;
 using NeoLemmixSharp.Engine.LevelInput;
 using NeoLemmixSharp.Engine.LevelPixels;
 using NeoLemmixSharp.Engine.LevelUpdates;
 using NeoLemmixSharp.LevelBuilding.Data;
-using NeoLemmixSharp.Rendering;
-using NeoLemmixSharp.Rendering.LevelRendering;
-using NeoLemmixSharp.Rendering.Text;
+using NeoLemmixSharp.Rendering2.Level;
 using NeoLemmixSharp.Screen;
 
 namespace NeoLemmixSharp.Engine;
 
 public sealed class LevelScreen : BaseScreen
 {
-    private readonly PixelManager _terrain;
-    private readonly SpriteBank _spriteBank;
+    private readonly TerrainManager _terrain;
 
     private readonly SkillSetManager _skillSetManager;
     private readonly LevelCursor _levelCursor;
     private readonly LevelViewport _viewport;
     private readonly LevelInputController _inputController;
-    private readonly LevelControlPanel _controlPanel;
-
-    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
-    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
-
-    private readonly IHorizontalViewPortBehaviour _horizontalViewPortBehaviour;
-    private readonly IVerticalViewPortBehaviour _verticalViewPortBehaviour;
+    private readonly ILevelControlPanel _controlPanel;
 
     private readonly Lemming[] _lemmings;
-    private readonly IGadget[] _gadgets;
+    private readonly Gadget[] _gadgets;
 
     private readonly IFrameUpdater _standardFrameUpdater;
     private readonly IFrameUpdater _fastForwardFrameUpdater;
@@ -43,6 +32,8 @@ public sealed class LevelScreen : BaseScreen
 
     private bool _stopMotion = true;
     private bool _doTick;
+
+    public override LevelRenderer ScreenRenderer { get; }
 
     public bool IsFastForwards { get; private set; }
 
@@ -53,23 +44,23 @@ public sealed class LevelScreen : BaseScreen
 
     public LevelScreen(
         LevelData levelData,
+        TerrainManager terrain,
         Lemming[] lemmings,
-        IGadget[] gadgets,
-        PixelManager terrain,
-        SpriteBank spriteBank)
-        : base(levelData.LevelTitle)
+        Gadget[] gadgets,
+        LevelInputController levelInputController,
+        ILevelControlPanel controlPanel,
+        LevelCursor cursor,
+        LevelViewport viewport,
+        LevelRenderer levelRenderer)
     {
-        _horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour ?? new HorizontalWrapBoundaryBehaviour(levelData.LevelWidth);
-        _verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour ?? new VerticalWrapBoundaryBehaviour(levelData.LevelHeight);
-
-        _horizontalViewPortBehaviour = levelData.HorizontalViewPortBehaviour ?? new HorizontalWrapBehaviour(levelData.LevelWidth);
-        _verticalViewPortBehaviour = levelData.VerticalViewPortBehaviour ?? new VerticalWrapViewPortBehaviour(levelData.LevelHeight);
+        ScreenTitle = levelData.LevelTitle;
+        ScreenRenderer = levelRenderer;
 
         _lemmings = lemmings;
         _gadgets = gadgets;
 
         _terrain = terrain;
-        _inputController = new LevelInputController();
+        _inputController = levelInputController; // new LevelInputController();
         _skillSetManager = new SkillSetManager(levelData.SkillSetData);
 
         var isSuperLemmingMode = false;
@@ -81,18 +72,16 @@ public sealed class LevelScreen : BaseScreen
 
         _currentlySelectedFrameUpdater = _standardFrameUpdater;
 
-        _controlPanel = new LevelControlPanel(_skillSetManager, _inputController);
-        _levelCursor = new LevelCursor(_horizontalBoundaryBehaviour, _verticalBoundaryBehaviour, _controlPanel, _inputController);
-        _viewport = new LevelViewport(_levelCursor, _inputController, _horizontalViewPortBehaviour, _verticalViewPortBehaviour, _horizontalBoundaryBehaviour, _verticalBoundaryBehaviour);
+        _controlPanel = controlPanel; // new LevelControlPanel(_skillSetManager, _inputController);
+        _levelCursor = cursor; // new LevelCursor(_horizontalBoundaryBehaviour, _verticalBoundaryBehaviour, _controlPanel, _inputController);
+        _viewport = viewport; // = new LevelViewport(_levelCursor, _inputController, _horizontalViewPortBehaviour, _verticalViewPortBehaviour, _horizontalBoundaryBehaviour, _verticalBoundaryBehaviour);
 
         Orientation.SetTerrain(terrain);
         LemmingAction.SetTerrain(terrain);
         LemmingSkill.SetTerrain(terrain);
         LevelCursor.LevelScreen = this;
 
-        _spriteBank = spriteBank;
-        _spriteBank.TerrainSprite.SetViewport(_viewport);
-        _spriteBank.LevelCursorSprite.SetLevelCursor(_levelCursor);
+        // terrain.TerrainRenderer.SetViewport(_viewport);
     }
 
     public override void Tick()
@@ -237,23 +226,26 @@ public sealed class LevelScreen : BaseScreen
 
     public override void OnWindowSizeChanged()
     {
-        _controlPanel.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight);
-        _viewport.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight, _controlPanel.ControlPanelScreenHeight);
+        var windowWidth = GameWindow.WindowWidth;
+        var windowHeight = GameWindow.WindowHeight;
+
+        _controlPanel.SetWindowDimensions(windowWidth, windowHeight);
+        _viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)_controlPanel).ControlPanelScreenHeight);
+        ScreenRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
     }
 
     public override void Dispose()
     {
-        _spriteBank.Dispose();
 #pragma warning disable CS8625
         Orientation.SetTerrain(null);
         LemmingAction.SetTerrain(null);
         LemmingSkill.SetTerrain(null);
         LevelCursor.LevelScreen = null;
-        _spriteBank.TerrainSprite.SetViewport(null);
-        _spriteBank.LevelCursorSprite.SetLevelCursor(null);
+
+        ScreenRenderer.Dispose();
 #pragma warning restore CS8625
     }
-
+    /*
     public override ScreenRenderer CreateScreenRenderer(
         SpriteBank spriteBank,
         FontBank fontBank,
@@ -266,7 +258,7 @@ public sealed class LevelScreen : BaseScreen
             spriteBank,
             fontBank,
             _controlPanel);
-    }
+    }*/
 
     private bool Pause => _inputController.Pause.IsPressed;
     private bool Quit => _inputController.Quit.IsPressed;

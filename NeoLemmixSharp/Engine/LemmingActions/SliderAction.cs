@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Directions.Orientations;
+using NeoLemmixSharp.Engine.LevelGadgets;
 using NeoLemmixSharp.Util;
 using System;
 
@@ -39,16 +40,19 @@ public sealed class SliderAction : LemmingAction
 
     private static bool SliderTerrainChecks(Lemming lemming, int maxYOffset = 7)
     {
-        var hasPixelAtLemmingPosition = SliderHasPixelAt(lemming, lemming.Orientation, lemming.LevelPosition, lemming.DehoistPin);
+        var lemmingPosition = lemming.LevelPosition;
+        var lemmingDehoistPosition = lemming.DehoistPin;
+
+        var hasPixelAtLemmingPosition = SliderHasPixelAt(lemming, lemming.Orientation, lemmingPosition, lemmingDehoistPosition);
 
         if (hasPixelAtLemmingPosition &&
-            !SliderHasPixelAt(lemming, lemming.Orientation, lemming.LevelPosition, lemming.Orientation.MoveDown(lemming.DehoistPin, 1)))
+            !SliderHasPixelAt(lemming, lemming.Orientation, lemmingPosition, lemming.Orientation.MoveDown(lemmingDehoistPosition, 1)))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             return false;
         }
 
-        if (!SliderHasPixelAt(lemming, lemming.Orientation, lemming.Orientation.MoveUp(lemming.LevelPosition, Math.Min(maxYOffset, 7)), lemming.DehoistPin))
+        if (!SliderHasPixelAt(lemming, lemming.Orientation, lemming.Orientation.MoveUp(lemmingPosition, Math.Min(maxYOffset, 7)), lemmingDehoistPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return false;
@@ -59,9 +63,10 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        if (false) // HasTriggerAt(L.LemX - L.LemDX, L.LemY, trWater, L)
+        if (Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Water, lemmingPosition, lemming.Orientation))
         {
-            lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
+            lemmingPosition = lemming.Orientation.MoveLeft(lemmingPosition, dx);
+            lemming.LevelPosition = lemmingPosition;
             if (lemming.IsSwimmer)
             {
                 SwimmerAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -76,8 +81,8 @@ public sealed class SliderAction : LemmingAction
             return true;
         }
 
-        var leftPos = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
-        if (!SliderHasPixelAt(lemming, lemming.Orientation, lemming.LevelPosition, leftPos))
+        var leftPos = lemming.Orientation.MoveLeft(lemmingPosition, dx);
+        if (!SliderHasPixelAt(lemming, lemming.Orientation, lemmingPosition, leftPos))
             return true;
 
         lemming.LevelPosition = leftPos;
@@ -91,7 +96,7 @@ public sealed class SliderAction : LemmingAction
         in LevelPosition levelPosition,
         in LevelPosition dehoistPin)
     {
-        if (Terrain.GetPixelData(dehoistPin).IsSolidToLemming(lemming))
+        if (Terrain.PixelIsSolidToLemming(dehoistPin, lemming))
             return true;
 
         var result = false;
@@ -99,7 +104,7 @@ public sealed class SliderAction : LemmingAction
             orientation.MatchesVertically(levelPosition, dehoistPin) &&
             true)
         {
-            result = Terrain.GetPixelData(orientation.MoveDown(dehoistPin, 1)).IsSolidToLemming(lemming);
+            result = Terrain.PixelIsSolidToLemming(orientation.MoveDown(dehoistPin, 1), lemming);
         }
 
         return result;

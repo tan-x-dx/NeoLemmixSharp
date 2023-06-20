@@ -1,13 +1,16 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
+using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
+using NeoLemmixSharp.Engine.LevelInput;
 using NeoLemmixSharp.Engine.LevelPixels;
-using NeoLemmixSharp.LevelBuilding.Data;
-using NeoLemmixSharp.Rendering;
-using NeoLemmixSharp.Rendering.Text;
+using NeoLemmixSharp.Rendering2.Level;
+using NeoLemmixSharp.Rendering2.Text;
 using System;
-using System.Linq;
+using NeoLemmixSharp.Rendering2.Level.ViewportSprites.BackgroundRendering;
+using LevelRenderer = NeoLemmixSharp.Rendering2.Level.LevelRenderer;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
@@ -16,10 +19,8 @@ public sealed class LevelBuilder : IDisposable
     private readonly ContentManager _content;
     private readonly FontBank _fontBank;
     private readonly LevelReader _levelReader;
-    private readonly LevelPainter _levelPainter;
+    private readonly TerrainPainter _terrainPainter;
     private readonly LevelAssembler _levelAssembler;
-
-    private SpriteBank _spriteBank;
 
     public LevelBuilder(
         ContentManager content,
@@ -30,7 +31,7 @@ public sealed class LevelBuilder : IDisposable
         _content = content;
         _fontBank = fontBank;
         _levelReader = new LevelReader();
-        _levelPainter = new LevelPainter(graphicsDevice);
+        _terrainPainter = new TerrainPainter(graphicsDevice);
         _levelAssembler = new LevelAssembler(graphicsDevice, spriteBatch);
     }
 
@@ -38,53 +39,84 @@ public sealed class LevelBuilder : IDisposable
     {
         _levelReader.ReadLevel(levelFilePath);
 
-        _levelPainter.PaintLevel(
+        _terrainPainter.PaintLevel(
             _levelReader.LevelData);
+
+        var terrainTexture = _terrainPainter.GetTerrainTexture();
 
         _levelAssembler.AssembleLevel(
             _content,
-            _levelReader.LevelData,
-            _levelPainter.GetTerrainSprite());
-
-        _spriteBank = _levelAssembler.GetSpriteBank();
+            _levelReader.LevelData);
 
         var levelData = _levelReader.LevelData;
         var levelLemmings = _levelAssembler.GetLevelLemmings();
         var levelGadgets = _levelAssembler.GetLevelGadgets();
+        var pixelData = _terrainPainter.GetPixelData();
 
-        var pixelData = _levelPainter.GetPixelData();
-        var levelPixelData = pixelData.Select(ConvertToLevelPixelData).ToArray();
+        var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
+        var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
 
-        var terrainSprite = _levelPainter.GetTerrainSprite();
+        var horizontalViewPortBehaviour = BoundaryHelpers.GetHorizontalViewPortBehaviour(levelData.HorizontalViewPortBehaviour, levelData.LevelWidth);
+        var verticalViewPortBehaviour = BoundaryHelpers.GetVerticalViewPortBehaviour(levelData.VerticalViewPortBehaviour, levelData.LevelHeight);
 
-        var pixelManager = new PixelManager(
+        var inputController = new LevelInputController();
+        var skillSetManager = new SkillSetManager(levelData.SkillSetData);
+        var controlPanel = new LevelControlPanel(skillSetManager, inputController);
+        var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController);
+        var levelViewport = new LevelViewport(levelCursor, inputController, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+
+        var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
+
+        var terrainManager = new TerrainManager(
             levelData.LevelWidth,
             levelData.LevelHeight,
-            BoundaryBehaviourType.Wrap,
-            BoundaryBehaviourType.Wrap);
+            pixelData,
+            levelGadgets,
+            terrainRenderer,
+            BoundaryBehaviourType.Void,
+            BoundaryBehaviourType.Void);
 
-        pixelManager.SetData(levelPixelData, terrainSprite);
+        var levelSprites = _levelAssembler.GetLevelSprites();
+
+        var lemmingSpriteBank = _levelAssembler.GetLemmingSpriteBank();
+        var gadgetSpriteBank = _levelAssembler.GetGadgetSpriteBank();
+        var controlPanelSpriteBank = _levelAssembler.GetControlPanelSpriteBank();
+
+        var controlPanelRenderer = controlPanelSpriteBank.GetControlPanelRenderer();
+
+        var levelCursorSprite = controlPanelSpriteBank.LevelCursorSprite;
+
+        var backgroundRenderer = new SolidColourBackgroundRenderer(controlPanelSpriteBank, levelViewport, new Color(24, 24, 60));
+
+        var levelRenderer = new LevelRenderer(
+            levelData.LevelWidth,
+            levelData.LevelHeight,
+            levelViewport,
+            backgroundRenderer,
+            terrainRenderer,
+            levelSprites,
+            levelCursorSprite,
+            controlPanelRenderer,
+            lemmingSpriteBank,
+            gadgetSpriteBank,
+            _fontBank);
 
         return new LevelScreen(
             levelData,
+            terrainManager,
             levelLemmings,
             levelGadgets,
-            pixelManager,
-            _spriteBank);
+            inputController,
+            controlPanel,
+            levelCursor,
+            levelViewport,
+            levelRenderer);
     }
-
-    public ISprite[] GetLevelSprites() => _levelAssembler.GetLevelSprites();
-    public SpriteBank GetSpriteBank() => _spriteBank;
 
     public void Dispose()
     {
         _levelReader.Dispose();
-        _levelPainter.Dispose();
+        _terrainPainter.Dispose();
         _levelAssembler.Dispose();
-    }
-
-    private static IPixelData ConvertToLevelPixelData(PixelReadData pixelReadData)
-    {
-        return new NoGadgetPixelData(pixelReadData.IsSolid, pixelReadData.IsSteel);
     }
 }

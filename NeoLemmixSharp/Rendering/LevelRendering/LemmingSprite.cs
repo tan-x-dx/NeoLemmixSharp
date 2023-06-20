@@ -45,7 +45,7 @@ public sealed class LemmingSprite : ISprite
             actionSprite.GetSourceRectangleForFrame(sourceRectangle, _lemming.AnimationFrame),
             Color.White,
             0.0f,
-            Vector2.Zero,
+            new Vector2(),
             SpriteEffects.None,
             RenderingLayers.LemmingRenderLayer);
 
@@ -58,7 +58,7 @@ public sealed class LemmingSprite : ISprite
              renderDestination,
              Color.White,
              0.0f,
-             Vector2.Zero, 
+             new Vector2(),
              SpriteEffects.None,
              RenderingLayers.LemmingRenderLayer);*/
     }
