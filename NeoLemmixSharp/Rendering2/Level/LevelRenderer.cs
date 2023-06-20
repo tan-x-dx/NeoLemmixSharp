@@ -1,49 +1,62 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
-using NeoLemmixSharp.Engine.LevelPixels;
-using NeoLemmixSharp.Rendering.LevelRendering.BackgroundRendering;
-using NeoLemmixSharp.Rendering.LevelRendering.ControlPanelRendering;
-using NeoLemmixSharp.Rendering2;
+using NeoLemmixSharp.Rendering2.Level.Ui;
+using NeoLemmixSharp.Rendering2.Level.ViewportSprites;
+using NeoLemmixSharp.Rendering2.Level.ViewportSprites.BackgroundRendering;
+using NeoLemmixSharp.Rendering2.Level.ViewportSprites.Gadgets;
+using NeoLemmixSharp.Rendering2.Level.ViewportSprites.LemmingRendering;
 using NeoLemmixSharp.Rendering2.Text;
 
-namespace NeoLemmixSharp.Rendering.LevelRendering;
+namespace NeoLemmixSharp.Rendering2.Level;
 
 public sealed class LevelRenderer : ScreenRenderer
 {
-    private readonly LevelViewport _viewport;
-
-    private readonly IBackgroundRenderer _backgroundRenderer;
-    private readonly TerrainSprite _terrainSprite;
-    private readonly LevelCursorSprite _cursorSprite;
-    private readonly ISprite[] _levelSprites;
-    private readonly FontBank _fontBank;
-
-    private readonly IControlPanelRenderer _controlPanelRenderer;
+    public static LevelRenderer Current { get; private set; }
 
     private readonly int _levelWidth;
     private readonly int _levelHeight;
+    private readonly LevelViewport _viewport;
+
+    private readonly IBackgroundRenderer _backgroundRenderer;
+    private readonly TerrainRenderer _terrainRenderer;
+    private readonly ILevelObjectRenderer[] _levelSprites;
+    private readonly LevelCursorSprite _cursorSprite;
+
+    private readonly IControlPanelRenderer _controlPanelRenderer;
+    private readonly FontBank _fontBank;
 
     private string _mouseCoords = string.Empty;
 
-    public LevelRenderer(
-        TerrainManager terrain,
-        LevelViewport viewport,
-        ISprite[] levelSprites,
-        UiSpriteBank spriteBank,
-        FontBank fontBank,
-        IControlPanelRenderer controlPanelRenderer)
-    {
-        _levelWidth = terrain.Width;
-        _levelHeight = terrain.Height;
+    public LemmingSpriteBank LemmingSpriteBank { get; }
+    public GadgetSpriteBank GadgetSpriteBank { get; }
 
-        _backgroundRenderer = new SolidColourBackgroundRenderer(spriteBank, viewport, new Color(24, 24, 60));
+    public LevelRenderer(
+        int levelWidth,
+        int levelHeight,
+        LevelViewport viewport,
+        IBackgroundRenderer backgroundRenderer,
+        TerrainRenderer terrainRenderer,
+        ILevelObjectRenderer[] levelSprites,
+        LevelCursorSprite levelCursorSprite,
+        IControlPanelRenderer controlPanelRenderer,
+        LemmingSpriteBank lemmingSpriteBank,
+        GadgetSpriteBank gadgetSpriteBank,
+        FontBank fontBank)
+    {
+        _levelWidth = levelWidth;
+        _levelHeight = levelHeight;
         _viewport = viewport;
+
+        _backgroundRenderer = backgroundRenderer;
+        _terrainRenderer = terrainRenderer;
         _levelSprites = levelSprites;
-     //   _terrainSprite = terrain.TerrainRenderer;
-        _cursorSprite = spriteBank.GetSprite<LevelCursorSprite>(SpriteBankTextureNames.LevelCursor);
-        _fontBank = fontBank;
+        _cursorSprite = levelCursorSprite;
         _controlPanelRenderer = controlPanelRenderer;
+        _fontBank = fontBank;
+        LemmingSpriteBank = lemmingSpriteBank;
+        GadgetSpriteBank = gadgetSpriteBank;
+
+        Current = this;
     }
 
     public override void RenderScreen(SpriteBatch spriteBatch)
@@ -54,13 +67,12 @@ public sealed class LevelRenderer : ScreenRenderer
 
     public override void OnWindowSizeChanged(int windowWidth, int windowHeight)
     {
-        throw new System.NotImplementedException();
     }
 
     private void RenderLevel(SpriteBatch spriteBatch)
     {
         _backgroundRenderer.RenderBackground(spriteBatch);
-        _terrainSprite.Render(spriteBatch);
+        _terrainRenderer.Render(spriteBatch);
 
         RenderSprites(spriteBatch);
     }
@@ -118,5 +130,7 @@ public sealed class LevelRenderer : ScreenRenderer
 
     public override void Dispose()
     {
+
+        Current = null;
     }
 }

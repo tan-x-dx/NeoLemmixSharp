@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 
-namespace NeoLemmixSharp.Rendering.Text;
+namespace NeoLemmixSharp.Rendering2.Text;
 
 public sealed class FontBank
 {

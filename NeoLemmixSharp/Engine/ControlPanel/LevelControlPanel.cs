@@ -1,7 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.LemmingSkills;
 using NeoLemmixSharp.Engine.LevelInput;
-using NeoLemmixSharp.LevelBuilding.Data;
-using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;

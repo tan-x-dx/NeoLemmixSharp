@@ -1,10 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.ControlPanel;
+using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Rendering2.Text;
-using System.Linq;
 
-namespace NeoLemmixSharp.Rendering.LevelRendering.ControlPanelRendering;
+namespace NeoLemmixSharp.Rendering2.Level.Ui;
 
 public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 {
@@ -83,7 +85,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
         {
             var sourceRectangle = new Rectangle(0, 0, _emptySlot.Width, _emptySlot.Height);
             var destRectangle = new Rectangle(
-                _levelControlPanel.ControlPanelX + ((i + 4) * _levelControlPanel.ControlPanelButtonScreenWidth),
+                _levelControlPanel.ControlPanelX + (i + 4) * _levelControlPanel.ControlPanelButtonScreenWidth,
                 _levelControlPanel.ControlPanelButtonY,
                 _levelControlPanel.ControlPanelButtonScreenWidth,
                 _levelControlPanel.ControlPanelButtonScreenHeight);

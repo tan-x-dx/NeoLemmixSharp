@@ -11,7 +11,7 @@ namespace NeoLemmixSharp.Engine.LemmingActions;
 
 public abstract class LemmingAction : IEquatable<LemmingAction>
 {
-    protected static PixelManager Terrain { get; private set; }
+    protected static TerrainManager Terrain { get; private set; }
 
     public static ReadOnlyDictionary<string, LemmingAction> LemmingActions { get; } = RegisterAllLemmingActions();
 
@@ -79,7 +79,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
     public static ICollection<LemmingAction> AllLemmingActions => LemmingActions.Values;
 
-    public static void SetTerrain(PixelManager terrain)
+    public static void SetTerrain(TerrainManager terrain)
     {
         Terrain = terrain;
     }

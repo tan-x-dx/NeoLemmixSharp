@@ -3,36 +3,45 @@ using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Engine.LevelGadgets;
-using NeoLemmixSharp.Rendering.LevelRendering;
+using NeoLemmixSharp.Rendering2.Level;
 using NeoLemmixSharp.Util;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace NeoLemmixSharp.Engine.LevelPixels;
 
-public sealed class PixelManager
+public sealed class TerrainManager
 {
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
 
+    private readonly PixelType[] _data;
+
     private readonly List<Gadget> _gadgetsThatCanActAsSolid = new();
     private readonly List<Gadget> _gadgetsThatCanActAsIndestructible = new();
-    private readonly Dictionary<GadgetType, Gadget[]> _gadgetLookup;
+    private readonly Dictionary<GadgetType, Gadget[]> _gadgetLookup = new();
 
-    private PixelType[] _data;
-    private TerrainSprite _terrainSprite;
+    public TerrainRenderer TerrainRenderer { get; }
 
     public int Width { get; }
     public int Height { get; }
 
-    public PixelManager(
+    public TerrainManager(
         int width,
         int height,
+        PixelType[] pixels,
+        IEnumerable<Gadget> gadgets,
+        TerrainRenderer terrainRenderer,
         BoundaryBehaviourType horizontalBoundaryBehaviourType,
         BoundaryBehaviourType verticalBoundaryBehaviourType)
     {
         Width = width;
         Height = height;
+
+        _data = pixels;
+        TerrainRenderer = terrainRenderer;
+
+        SetUpGadgets(gadgets);
 
         _horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(
             horizontalBoundaryBehaviourType,
@@ -43,14 +52,8 @@ public sealed class PixelManager
             height);
     }
 
-    public void SetData(
-        PixelType[] pixels,
-        Gadget[] gadgets,
-        TerrainSprite terrainSprite)
+    private void SetUpGadgets(IEnumerable<Gadget> gadgets)
     {
-        _data = pixels;
-        _terrainSprite = terrainSprite;
-
         foreach (var gadgetGroup in gadgets.GroupBy(g => g.GadgetType))
         {
             _gadgetLookup.Add(gadgetGroup.Key, gadgetGroup.ToArray());
@@ -152,7 +155,7 @@ public sealed class PixelManager
         if (pixel == PixelType.Solid)
         {
             _data[index] = PixelType.Empty;
-            _terrainSprite.SetPixelColour(pixelToErase.X, pixelToErase.Y, 0U);
+            TerrainRenderer.SetPixelColour(pixelToErase.X, pixelToErase.Y, 0U);
         }
     }
 
@@ -167,7 +170,7 @@ public sealed class PixelManager
         if (pixel == PixelType.Empty)
         {
             _data[index] = PixelType.Solid;
-            _terrainSprite.SetPixelColour(pixelToSet.X, pixelToSet.Y, colour);
+            TerrainRenderer.SetPixelColour(pixelToSet.X, pixelToSet.Y, colour);
         }
     }
 }

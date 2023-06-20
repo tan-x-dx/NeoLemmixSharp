@@ -6,13 +6,14 @@ using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LevelGadgets;
 using NeoLemmixSharp.LevelBuilding.Data;
-using NeoLemmixSharp.LevelBuilding.Sprites;
-using NeoLemmixSharp.Rendering;
-using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NeoLemmixSharp.Rendering2.Level.Ui;
+using NeoLemmixSharp.Rendering2.Level.ViewportSprites;
+using NeoLemmixSharp.Rendering2.Level.ViewportSprites.Gadgets;
+using NeoLemmixSharp.Rendering2.Level.ViewportSprites.LemmingRendering;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
@@ -21,9 +22,11 @@ public sealed class LevelAssembler : IDisposable
     private readonly GraphicsDevice _graphicsDevice;
     private readonly SpriteBatch _spriteBatch;
 
-    private SpriteBank? _spriteBank;
-
     private readonly List<Lemming> _lemmings = new();
+
+    private LemmingSpriteBank _lemmingSpriteBank;
+    private GadgetSpriteBank _gadgetSpriteBank;
+    private ControlPanelSpriteBank _controlPanelSpriteBank;
 
     public LevelAssembler(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
@@ -33,15 +36,20 @@ public sealed class LevelAssembler : IDisposable
 
     public void AssembleLevel(
         ContentManager content,
-        LevelData levelData,
-        TerrainSprite terrainSprite)
+        LevelData levelData)
     {
-        var spriteBankBuilder = new SpriteBankBuilder(_graphicsDevice);
-        _spriteBank = spriteBankBuilder.BuildSpriteBank(content, levelData.ThemeData, terrainSprite, levelData.AllGadgetData);
-
         // SetUpTestLemmings();
         SetUpLemmings();
         SetUpGadgets();
+
+        var lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
+        _lemmingSpriteBank = lemmingSpriteBankBuilder.BuildLemmingSpriteBank();
+
+        var gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder();
+        _gadgetSpriteBank = gadgetSpriteBankBuilder.BuildGadgetSpriteBank();
+
+        var controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder();
+        _controlPanelSpriteBank = controlPanelSpriteBankBuilder.BuildControlPanelSpriteBank();
 
         levelData.SkillSetData = new SkillSetData
         {
@@ -68,12 +76,7 @@ public sealed class LevelAssembler : IDisposable
             NumberOfWalkers = 21
         };
     }
-
-    public SpriteBank GetSpriteBank()
-    {
-        return _spriteBank!;
-    }
-
+    
     public Lemming[] GetLevelLemmings()
     {
         return _lemmings.ToArray();
@@ -84,22 +87,37 @@ public sealed class LevelAssembler : IDisposable
         return Array.Empty<Gadget>();
     }
 
-    public ISprite[] GetLevelSprites()
+    public ILevelObjectRenderer[] GetLevelSprites()
     {
         return _lemmings
             .Select(GetLemmingSprite)
-            .ToArray<ISprite>();
+            .ToArray<ILevelObjectRenderer>();
     }
 
-    private LemmingSprite GetLemmingSprite(Lemming lemming)
+    private LemmingRenderer GetLemmingSprite(Lemming lemming)
     {
-        return new LemmingSprite(lemming);
+        return new LemmingRenderer(lemming);
     }
 
     public void Dispose()
     {
-        _spriteBank = null;
+      //  _spriteBank = null;
         _lemmings.Clear();
+    }
+
+    public LemmingSpriteBank GetLemmingSpriteBank()
+    {
+        throw new NotImplementedException();
+    }
+
+    public GadgetSpriteBank GetGadgetSpriteBank()
+    {
+        throw new NotImplementedException();
+    }
+
+    public ControlPanelSpriteBank GetControlPanelSpriteBank()
+    {
+        throw new NotImplementedException();
     }
 
     private void SetUpTestLemmings()

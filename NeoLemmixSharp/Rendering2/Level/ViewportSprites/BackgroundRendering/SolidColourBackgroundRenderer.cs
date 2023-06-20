@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
+using NeoLemmixSharp.Rendering.LevelRendering;
+using NeoLemmixSharp.Rendering2.Level.Ui;
 
-namespace NeoLemmixSharp.Rendering.LevelRendering.BackgroundRendering;
+namespace NeoLemmixSharp.Rendering2.Level.ViewportSprites.BackgroundRendering;
 
 public sealed class SolidColourBackgroundRenderer : IBackgroundRenderer
 {
@@ -10,9 +12,9 @@ public sealed class SolidColourBackgroundRenderer : IBackgroundRenderer
     private readonly LevelViewport _viewport;
     private readonly Color _backgroundColor;
 
-    public SolidColourBackgroundRenderer(UiSpriteBank spriteBank, LevelViewport viewport, Color backgroundColor)
+    public SolidColourBackgroundRenderer(ControlPanelSpriteBank spriteBank, LevelViewport viewport, Color backgroundColor)
     {
-        _pixelTexture = spriteBank.GetTexture(SpriteBankTextureNames.WhitePixel);
+        _pixelTexture = spriteBank.GetTexture("WhitePixel");
         _backgroundColor = backgroundColor;
         _viewport = viewport;
     }

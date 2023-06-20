@@ -1,10 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.ControlPanel;
+using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Rendering2.Text;
-using System.Collections.Generic;
 
-namespace NeoLemmixSharp.Rendering.LevelRendering.ControlPanelRendering;
+namespace NeoLemmixSharp.Rendering2.Level.Ui;
 
 public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 {
@@ -35,22 +37,22 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 
         // HOLY SHIT THIS IS TERRIBLE CODE
         // TODO REFACTOR THE FUCK OUT OF THIS WHEN PROPER SPRITES ARE CREATED FOR SKILL ASSIGN BUTTONS
-        try
+      /*  try
         {
-         /*   var lemmingActionSpriteBundle = spriteBank.GetLemmingActionSpriteBundle(_skillAssignButton.LemmingSkill.LemmingSkillName);
+            var lemmingActionSpriteBundle = spriteBank.GetLemmingActionSpriteBundle(_skillAssignButton.LemmingSkill.LemmingSkillName);
             var sprite = lemmingActionSpriteBundle.DownRightSprite;
             _skillIcon = sprite.Texture;
             _skillIconSourceRectangle = sprite.GetSourceRectangleForFrame(0);
             _skillIconWidth = sprite.SpriteWidth;
-            _skillIconHeight = sprite.SpriteHeight;*/
+            _skillIconHeight = sprite.SpriteHeight;
         }
         catch (KeyNotFoundException) // goddamn
-        {
+        {*/
             _skillIcon = spriteBank.GetTexture(SpriteBankTextureNames.WhitePixel);
             _skillIconSourceRectangle = new Rectangle(0, 0, 1, 1);
             _skillIconWidth = 1;
             _skillIconHeight = 1;
-        }
+        //}
     }
 
     public override void Render(SpriteBatch spriteBatch)

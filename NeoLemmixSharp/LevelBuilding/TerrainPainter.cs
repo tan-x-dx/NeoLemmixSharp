@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Engine.LevelPixels;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Sprites;
-using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,7 @@ using System.Linq;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
-public sealed class LevelPainter : IDisposable
+public sealed class TerrainPainter : IDisposable
 {
     public const uint MinimumSubstantialAlphaValue = 31;
 
@@ -24,10 +23,10 @@ public sealed class LevelPainter : IDisposable
 
     private bool _disposed;
 
-    private TerrainSprite _terrainSprite;
-    private PixelType[] _pixels;
+    private Texture2D _terrainTexture;
+    private PixelType[] _terrainPixels;
 
-    public LevelPainter(GraphicsDevice graphicsDevice)
+    public TerrainPainter(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;
     }
@@ -41,12 +40,12 @@ public sealed class LevelPainter : IDisposable
             ProcessTerrainGroup(terrainGroup);
         }
 
-        var levelTerrainTexture = new Texture2D(
+        _terrainTexture = new Texture2D(
             _graphicsDevice,
             levelData.LevelWidth,
             levelData.LevelHeight);
 
-        _pixels = new PixelType[levelData.LevelWidth * levelData.LevelHeight];
+        _terrainPixels = new PixelType[levelData.LevelWidth * levelData.LevelHeight];
 
         var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
         var textureData = new PixelColourData(
@@ -55,8 +54,7 @@ public sealed class LevelPainter : IDisposable
             uintData);
 
         DrawTerrain(levelData.AllTerrainData, textureData);
-        levelTerrainTexture.SetData(uintData);
-        _terrainSprite = new TerrainSprite(levelTerrainTexture);
+        _terrainTexture.SetData(uintData);
     }
 
     private static void ProcessTerrainGroup(TerrainGroup terrainGroup)
@@ -155,7 +153,7 @@ public sealed class LevelPainter : IDisposable
 
                 targetPixelColourData.Set(x0, y0, targetPixelColour);
                 var pixelIndex = targetPixelColourData.Width * y0 + x0;
-                ref var targetPixelData = ref _pixels[pixelIndex];
+                ref var targetPixelData = ref _terrainPixels[pixelIndex];
 
                 if (PixelColourIsSubstantial(targetPixelColour))
                 {
@@ -219,12 +217,12 @@ public sealed class LevelPainter : IDisposable
 
     public PixelType[] GetPixelData()
     {
-        return _pixels;
+        return _terrainPixels;
     }
 
-    public TerrainSprite GetTerrainSprite()
+    public Texture2D GetTerrainTexture()
     {
-        return _terrainSprite;
+        return _terrainTexture;
     }
 
     public void Dispose()
