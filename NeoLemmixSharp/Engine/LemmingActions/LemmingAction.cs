@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LevelPixels;
-using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
@@ -83,8 +82,6 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     {
         Terrain = terrain;
     }
-
-    public LemmingActionSpriteBundle ActionSpriteBundle { get; set; }
 
     public abstract int ActionId { get; }
     public abstract string LemmingActionName { get; }

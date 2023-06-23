@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.LevelBuilding.Data.SpriteSet;
 using NeoLemmixSharp.LevelBuilding.Sprites;
-using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
+using System;
+using System.Linq;
 
 namespace NeoLemmixSharp.Rendering2.Level.ViewportSprites;
 
@@ -35,7 +34,7 @@ public sealed class SpriteRotationReflectionProcessor
 
     }
 
-    private void ProcessLefts(
+    /*private void ProcessLefts(
         LemmingSpriteData spriteData,
         PixelColourData originalPixelColourData,
         LemmingActionSpriteBundle actionSpriteBundle)
@@ -119,7 +118,7 @@ public sealed class SpriteRotationReflectionProcessor
 
             setSprite(spriteDrawingData.Orientation, actionSpriteBundle, actionSprite);
         }
-    }
+    }*/
 }
 
 public interface ISpriteData

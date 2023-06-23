@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Rendering.LevelRendering;
+using NeoLemmixSharp.Rendering2.Level;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NeoLemmixSharp.Rendering2.Text;
 
@@ -39,8 +39,8 @@ public sealed class MenuFont : INeoLemmixFont
                 _texture,
                 dest,
                 source,
-                Color.White, 
-                0.0f, 
+                Color.White,
+                0.0f,
                 new Vector2(),
                 SpriteEffects.None,
                 RenderingLayers.ControlPanelSkillCountLayer);

@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Rendering.LevelRendering;
-using NeoLemmixSharp.Util;
+﻿using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine.Directions.Orientations;
 
@@ -56,26 +55,6 @@ public sealed class LeftOrientation : Orientation
     public override bool FirstIsBelowSecond(in LevelPosition firstPosition, in LevelPosition secondPosition) => firstPosition.X < secondPosition.X;
     public override bool FirstIsToLeftOfSecond(in LevelPosition firstPosition, in LevelPosition secondPosition) => firstPosition.Y < secondPosition.Y;
     public override bool FirstIsToRightOfSecond(in LevelPosition firstPosition, in LevelPosition secondPosition) => firstPosition.Y > secondPosition.Y;
-
-    public override ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle)
-    {
-        return actionSpriteBundle.LeftLeftSprite;
-    }
-
-    public override ActionSprite GetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle)
-    {
-        return actionSpriteBundle.LeftRightSprite;
-    }
-
-    public override void SetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite leftSprite)
-    {
-        actionSpriteBundle.LeftLeftSprite = leftSprite;
-    }
-
-    public override void SetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite rightSprite)
-    {
-        actionSpriteBundle.LeftRightSprite = rightSprite;
-    }
 
     public override Orientation RotateClockwise() => UpOrientation.Instance;
     public override Orientation RotateCounterClockwise() => DownOrientation.Instance;

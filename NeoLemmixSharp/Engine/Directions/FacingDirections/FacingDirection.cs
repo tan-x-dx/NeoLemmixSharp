@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Engine.Directions.Orientations;
-using NeoLemmixSharp.Rendering.LevelRendering;
 using System;
 
 namespace NeoLemmixSharp.Engine.Directions.FacingDirections;
@@ -9,7 +8,6 @@ public abstract class FacingDirection : IEquatable<FacingDirection>
     public abstract int DeltaX { get; }
     public abstract int FacingId { get; }
     public abstract FacingDirection OppositeDirection { get; }
-    public abstract ActionSprite ChooseActionSprite(LemmingActionSpriteBundle actionSpriteBundle, Orientation orientation);
     public abstract Orientation ConvertToRelativeOrientation(Orientation orientation);
 
     public bool Equals(FacingDirection? other) => FacingId == (other?.FacingId ?? -1);
