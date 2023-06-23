@@ -3,10 +3,10 @@ using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Engine.LevelGadgets;
-using NeoLemmixSharp.Rendering2.Level;
 using NeoLemmixSharp.Util;
 using System.Collections.Generic;
 using System.Linq;
+using NeoLemmixSharp.Rendering.Level;
 
 namespace NeoLemmixSharp.Engine.LevelPixels;
 

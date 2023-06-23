@@ -6,12 +6,12 @@ using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelInput;
 using NeoLemmixSharp.Engine.LevelPixels;
-using NeoLemmixSharp.Rendering2.Level;
-using NeoLemmixSharp.Rendering2.Level.ViewportSprites.BackgroundRendering;
-using NeoLemmixSharp.Rendering2.Text;
 using System;
-using NeoLemmixSharp.Rendering2.Level.Ui;
-using LevelRenderer = NeoLemmixSharp.Rendering2.Level.LevelRenderer;
+using NeoLemmixSharp.Rendering.Level;
+using NeoLemmixSharp.Rendering.Level.Ui;
+using NeoLemmixSharp.Rendering.Level.ViewportSprites.BackgroundRendering;
+using NeoLemmixSharp.Rendering.Text;
+using LevelRenderer = NeoLemmixSharp.Rendering.Level.LevelRenderer;
 
 namespace NeoLemmixSharp.LevelBuilding;
 

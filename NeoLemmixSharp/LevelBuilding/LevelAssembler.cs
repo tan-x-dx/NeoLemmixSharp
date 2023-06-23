@@ -6,14 +6,14 @@ using NeoLemmixSharp.Engine.Directions.Orientations;
 using NeoLemmixSharp.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.LevelGadgets;
 using NeoLemmixSharp.LevelBuilding.Data;
-using NeoLemmixSharp.Rendering2.Level.Ui;
-using NeoLemmixSharp.Rendering2.Level.ViewportSprites;
-using NeoLemmixSharp.Rendering2.Level.ViewportSprites.Gadgets;
-using NeoLemmixSharp.Rendering2.Level.ViewportSprites.LemmingRendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NeoLemmixSharp.Rendering.Level.Ui;
+using NeoLemmixSharp.Rendering.Level.ViewportSprites;
+using NeoLemmixSharp.Rendering.Level.ViewportSprites.Gadgets;
+using NeoLemmixSharp.Rendering.Level.ViewportSprites.LemmingRendering;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
