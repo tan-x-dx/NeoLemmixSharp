@@ -26,8 +26,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Engine\LemmingSkills\" />
-    <Folder Include="Rendering\LevelRendering\BackgroundRendering\" />
-    <Folder Include="Rendering\Foo\" />
     <Folder Include="Screen\" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">

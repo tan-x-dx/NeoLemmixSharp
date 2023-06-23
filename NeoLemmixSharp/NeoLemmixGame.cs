@@ -1,12 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.LevelBuilding;
-using NeoLemmixSharp.Rendering2;
-using NeoLemmixSharp.Rendering2.Text;
 using NeoLemmixSharp.Screen;
 using NeoLemmixSharp.Util;
 using System;
 using System.Runtime.InteropServices;
+using NeoLemmixSharp.Rendering;
+using NeoLemmixSharp.Rendering.Level.ViewportSprites.LemmingRendering;
+using NeoLemmixSharp.Rendering.Text;
 
 namespace NeoLemmixSharp;
 
@@ -80,6 +81,8 @@ public sealed class NeoLemmixGame : Game, IGameWindow
         _graphics.PreferredBackBufferHeight = _gameResolution.Y;
 
         _graphics.ApplyChanges();
+
+        DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice, _spriteBatch);
 
         var path =
         //    "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";

@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Engine.LevelPixels;
-using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
@@ -67,11 +66,6 @@ public abstract class Orientation : IEquatable<Orientation>
     public abstract bool FirstIsBelowSecond(in LevelPosition firstPosition, in LevelPosition secondPosition);
     public abstract bool FirstIsToLeftOfSecond(in LevelPosition firstPosition, in LevelPosition secondPosition);
     public abstract bool FirstIsToRightOfSecond(in LevelPosition firstPosition, in LevelPosition secondPosition);
-
-    public abstract ActionSprite GetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle);
-    public abstract ActionSprite GetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle);
-    public abstract void SetLeftActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite leftSprite);
-    public abstract void SetRightActionSprite(LemmingActionSpriteBundle actionSpriteBundle, ActionSprite rightSprite);
 
     public bool IsParallelTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteVerticalComponent == 0);
     public bool IsPerpendicularTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteHorizontalComponent == 0);

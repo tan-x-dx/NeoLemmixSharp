@@ -9,6 +9,7 @@ public sealed class ClimberSkill : LemmingSkill
     public override int LemmingSkillId => 4;
     public override string LemmingSkillName => "climber";
     public override bool IsPermanentSkill => true;
+    public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

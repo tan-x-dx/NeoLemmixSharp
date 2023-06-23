@@ -7,7 +7,7 @@ using NeoLemmixSharp.Engine.LevelInput;
 using NeoLemmixSharp.Engine.LevelPixels;
 using NeoLemmixSharp.Engine.LevelUpdates;
 using NeoLemmixSharp.LevelBuilding.Data;
-using NeoLemmixSharp.Rendering2.Level;
+using NeoLemmixSharp.Rendering.Level;
 using NeoLemmixSharp.Screen;
 
 namespace NeoLemmixSharp.Engine;

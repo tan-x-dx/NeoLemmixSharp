@@ -11,6 +11,7 @@ public sealed class PlatformerSkill : LemmingSkill
     public override int LemmingSkillId => 14;
     public override string LemmingSkillName => "platformer";
     public override bool IsPermanentSkill => false;
+    public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

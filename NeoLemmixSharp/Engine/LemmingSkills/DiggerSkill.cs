@@ -11,6 +11,7 @@ public sealed class DiggerSkill : LemmingSkill
     public override int LemmingSkillId => 6;
     public override string LemmingSkillName => "digger";
     public override bool IsPermanentSkill => false;
+    public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

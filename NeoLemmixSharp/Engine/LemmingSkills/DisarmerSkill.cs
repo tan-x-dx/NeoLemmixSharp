@@ -9,6 +9,7 @@ public sealed class DisarmerSkill : LemmingSkill
     public override int LemmingSkillId => 7;
     public override string LemmingSkillName => "disarmer";
     public override bool IsPermanentSkill => true;
+    public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

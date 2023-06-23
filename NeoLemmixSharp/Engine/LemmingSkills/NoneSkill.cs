@@ -14,6 +14,7 @@ public sealed class NoneSkill : LemmingSkill
     public override int LemmingSkillId => -1;
     public override string LemmingSkillName => "none";
     public override bool IsPermanentSkill => false;
+    public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

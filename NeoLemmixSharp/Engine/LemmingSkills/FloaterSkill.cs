@@ -9,6 +9,7 @@ public sealed class FloaterSkill : LemmingSkill
     public override int LemmingSkillId => 9;
     public override string LemmingSkillName => "floater";
     public override bool IsPermanentSkill => true;
+    public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

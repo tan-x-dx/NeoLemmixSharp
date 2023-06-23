@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Rendering2.Level.ViewportSprites;
+﻿using NeoLemmixSharp.Rendering.Level.ViewportSprites;
 
 namespace NeoLemmixSharp.LevelBuilding.Data.SpriteSet;
 
