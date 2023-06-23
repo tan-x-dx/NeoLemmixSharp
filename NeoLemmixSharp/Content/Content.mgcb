@@ -1105,7 +1105,7 @@
 /processorParam:TextureFormat=Color
 /build:panel/skill_selected.png
 
-#begin sprites/ascender.png
+#begin sprites/lemming/ascender.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1115,9 +1115,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/ascender.png
+/build:sprites/lemming/ascender.png
 
-#begin sprites/basher.png
+#begin sprites/lemming/basher.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1127,9 +1127,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/basher.png
+/build:sprites/lemming/basher.png
 
-#begin sprites/blocker.png
+#begin sprites/lemming/blocker.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1139,9 +1139,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/blocker.png
+/build:sprites/lemming/blocker.png
 
-#begin sprites/bomber.png
+#begin sprites/lemming/bomber.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1151,9 +1151,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/bomber.png
+/build:sprites/lemming/bomber.png
 
-#begin sprites/builder.png
+#begin sprites/lemming/builder.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1163,9 +1163,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/builder.png
+/build:sprites/lemming/builder.png
 
-#begin sprites/burner1.png
+#begin sprites/lemming/burner1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1175,9 +1175,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/burner1.png
+/build:sprites/lemming/burner1.png
 
-#begin sprites/burner2.png
+#begin sprites/lemming/burner2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1187,9 +1187,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/burner2.png
+/build:sprites/lemming/burner2.png
 
-#begin sprites/climber.png
+#begin sprites/lemming/climber.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1199,9 +1199,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/climber.png
+/build:sprites/lemming/climber.png
 
-#begin sprites/dehoister.png
+#begin sprites/lemming/dehoister.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1211,9 +1211,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/dehoister.png
+/build:sprites/lemming/dehoister.png
 
-#begin sprites/digger.png
+#begin sprites/lemming/digger.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1223,9 +1223,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/digger.png
+/build:sprites/lemming/digger.png
 
-#begin sprites/disarmer.png
+#begin sprites/lemming/disarmer.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1235,9 +1235,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/disarmer.png
+/build:sprites/lemming/disarmer.png
 
-#begin sprites/drowner.png
+#begin sprites/lemming/drowner.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1247,9 +1247,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/drowner.png
+/build:sprites/lemming/drowner.png
 
-#begin sprites/exiter.png
+#begin sprites/lemming/exiter.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1259,9 +1259,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/exiter.png
+/build:sprites/lemming/exiter.png
 
-#begin sprites/faller.png
+#begin sprites/lemming/faller.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1271,9 +1271,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/faller.png
+/build:sprites/lemming/faller.png
 
-#begin sprites/fencer.png
+#begin sprites/lemming/fencer.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1283,9 +1283,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/fencer.png
+/build:sprites/lemming/fencer.png
 
-#begin sprites/floater.png
+#begin sprites/lemming/floater.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1295,9 +1295,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/floater.png
+/build:sprites/lemming/floater.png
 
-#begin sprites/glider.png
+#begin sprites/lemming/glider.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1307,9 +1307,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/glider.png
+/build:sprites/lemming/glider.png
 
-#begin sprites/hoister.png
+#begin sprites/lemming/hoister.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1319,9 +1319,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/hoister.png
+/build:sprites/lemming/hoister.png
 
-#begin sprites/jumper.png
+#begin sprites/lemming/jumper.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1331,9 +1331,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/jumper.png
+/build:sprites/lemming/jumper.png
 
-#begin sprites/laserer.png
+#begin sprites/lemming/laserer.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1343,9 +1343,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/laserer.png
+/build:sprites/lemming/laserer.png
 
-#begin sprites/miner.png
+#begin sprites/lemming/miner.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1355,9 +1355,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/miner.png
+/build:sprites/lemming/miner.png
 
-#begin sprites/ohnoer.png
+#begin sprites/lemming/ohnoer.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1367,9 +1367,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/ohnoer.png
+/build:sprites/lemming/ohnoer.png
 
-#begin sprites/platformer.png
+#begin sprites/lemming/platformer.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1379,9 +1379,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/platformer.png
+/build:sprites/lemming/platformer.png
 
-#begin sprites/reacher.png
+#begin sprites/lemming/reacher.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1391,9 +1391,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/reacher.png
+/build:sprites/lemming/reacher.png
 
-#begin sprites/shimmier.png
+#begin sprites/lemming/shimmier.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1403,9 +1403,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/shimmier.png
+/build:sprites/lemming/shimmier.png
 
-#begin sprites/shrugger.png
+#begin sprites/lemming/shrugger.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1415,9 +1415,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/shrugger.png
+/build:sprites/lemming/shrugger.png
 
-#begin sprites/slider.png
+#begin sprites/lemming/slider.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1427,9 +1427,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/slider.png
+/build:sprites/lemming/slider.png
 
-#begin sprites/splatter.png
+#begin sprites/lemming/splatter.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1439,9 +1439,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/splatter.png
+/build:sprites/lemming/splatter.png
 
-#begin sprites/stacker.png
+#begin sprites/lemming/stacker.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1451,9 +1451,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/stacker.png
+/build:sprites/lemming/stacker.png
 
-#begin sprites/stoner.png
+#begin sprites/lemming/stoner.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1463,9 +1463,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/stoner.png
+/build:sprites/lemming/stoner.png
 
-#begin sprites/swimmer.png
+#begin sprites/lemming/swimmer.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1475,9 +1475,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/swimmer.png
+/build:sprites/lemming/swimmer.png
 
-#begin sprites/trap_01.png
+#begin sprites/lemming/trap_01.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1487,9 +1487,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/trap_01.png
+/build:sprites/lemming/trap_01.png
 
-#begin sprites/walker.png
+#begin sprites/lemming/walker.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1499,5 +1499,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/walker.png
+/build:sprites/lemming/walker.png
 
