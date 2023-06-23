@@ -1,10 +1,8 @@
-﻿using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.ControlPanel;
-using NeoLemmixSharp.Rendering;
-using NeoLemmixSharp.Rendering.LevelRendering;
 using NeoLemmixSharp.Rendering2.Text;
+using System.Linq;
 
 namespace NeoLemmixSharp.Rendering2.Level.Ui;
 
@@ -32,7 +30,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
     private readonly Texture2D _skillSelected;
 
     public ClassicControlPanelRenderer(
-        UiSpriteBank spriteBank,
+        ControlPanelSpriteBank spriteBank,
         FontBank fontBank,
         LevelControlPanel levelControlPanel)
     {
@@ -42,7 +40,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
             .Select(b => new SkillAssignButtonRenderer(spriteBank, fontBank, b))
             .ToArray();
 
-        _whitePixelTexture = spriteBank.GetTexture(SpriteBankTextureNames.WhitePixel);
+        _whitePixelTexture = spriteBank.GetTexture("WhitePixel");
         _emptySlot = spriteBank.GetTexture("panel/empty_slot");
         _iconCpmAndReplay = spriteBank.GetTexture("panel/icon_cpm_and_replay");
         _iconDirectional = spriteBank.GetTexture("panel/icon_directional");

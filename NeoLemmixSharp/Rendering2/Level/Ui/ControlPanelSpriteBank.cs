@@ -1,11 +1,20 @@
-﻿using System;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Rendering2.Level.ViewportSprites;
+using System;
+using System.Collections.Generic;
 
 namespace NeoLemmixSharp.Rendering2.Level.Ui;
 
 public sealed class ControlPanelSpriteBank : IDisposable
 {
+    private readonly Dictionary<string, Texture2D> _textureLookup;
+
+    public ControlPanelSpriteBank(Dictionary<string, Texture2D> textureLookup, LevelCursorSprite levelCursorSprite)
+    {
+        _textureLookup = textureLookup;
+        LevelCursorSprite = levelCursorSprite;
+    }
+
     public LevelCursorSprite LevelCursorSprite { get; }
 
     public void Dispose()
@@ -13,13 +22,8 @@ public sealed class ControlPanelSpriteBank : IDisposable
 
     }
 
-    public Texture2D GetTexture(string whitePixel)
+    public Texture2D GetTexture(string textureName)
     {
-        throw new NotImplementedException();
-    }
-
-    public IControlPanelRenderer GetControlPanelRenderer()
-    {
-        throw new NotImplementedException();
+        return _textureLookup[textureName];
     }
 }
