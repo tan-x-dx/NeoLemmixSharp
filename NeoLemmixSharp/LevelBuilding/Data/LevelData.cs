@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBoundaryBehaviours;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using NeoLemmixSharp.Engine.BoundaryBehaviours;
 
 namespace NeoLemmixSharp.LevelBuilding.Data;
 

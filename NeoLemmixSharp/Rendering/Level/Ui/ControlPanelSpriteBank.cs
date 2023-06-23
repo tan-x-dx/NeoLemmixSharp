@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Rendering.Level.ViewportSprites;
+using NeoLemmixSharp.Rendering.Level.Viewport;
 
 namespace NeoLemmixSharp.Rendering.Level.Ui;
 
