@@ -11,6 +11,7 @@ public sealed class FencerSkill : LemmingSkill
     public override int LemmingSkillId => 8;
     public override string LemmingSkillName => "fencer";
     public override bool IsPermanentSkill => false;
+    public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

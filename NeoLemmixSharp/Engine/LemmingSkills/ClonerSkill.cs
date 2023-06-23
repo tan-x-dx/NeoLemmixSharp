@@ -11,6 +11,7 @@ public sealed class ClonerSkill : LemmingSkill
     public override int LemmingSkillId => 5;
     public override string LemmingSkillName => "cloner";
     public override bool IsPermanentSkill => false;
+    public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

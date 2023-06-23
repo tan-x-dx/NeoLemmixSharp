@@ -11,6 +11,7 @@ public sealed class StackerSkill : LemmingSkill
     public override int LemmingSkillId => 17;
     public override string LemmingSkillName => "stacker";
     public override bool IsPermanentSkill => false;
+    public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

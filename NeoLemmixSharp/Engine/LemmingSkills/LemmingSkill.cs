@@ -74,6 +74,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
     public abstract int LemmingSkillId { get; }
     public abstract string LemmingSkillName { get; }
     public abstract bool IsPermanentSkill { get; }
+    public abstract bool IsClassicSkill { get; }
 
     public int OriginalNumberOfSkillsAvailable { get; }
     public int CurrentNumberOfSkillsAvailable { get; private set; }

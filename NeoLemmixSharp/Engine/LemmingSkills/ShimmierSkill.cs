@@ -11,6 +11,7 @@ public sealed class ShimmierSkill : LemmingSkill
     public override int LemmingSkillId => 15;
     public override string LemmingSkillName => "shimmier";
     public override bool IsPermanentSkill => false;
+    public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
