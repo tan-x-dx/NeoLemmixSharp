@@ -7,7 +7,7 @@ public static class DefaultLemmingSpriteBank
 {
     public static LemmingSpriteBank DefaultLemmingSprites { get; private set; }
 
-    public static void CreateDefaultLemmingSpriteBank(ContentManager content, GraphicsDevice graphicsDevice, SpriteBatch _spriteBatch)
+    public static void CreateDefaultLemmingSpriteBank(ContentManager content, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
 
     }
