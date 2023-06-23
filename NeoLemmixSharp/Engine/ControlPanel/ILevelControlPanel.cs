@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LemmingSkills;
+﻿using NeoLemmixSharp.Engine.Skills;
 
 namespace NeoLemmixSharp.Engine.ControlPanel;
 

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine.LevelPixels;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.LevelBuilding.Sprites;
 using NeoLemmixSharp.Util;
@@ -7,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NeoLemmixSharp.Engine.Terrain;
 
 namespace NeoLemmixSharp.LevelBuilding;
 

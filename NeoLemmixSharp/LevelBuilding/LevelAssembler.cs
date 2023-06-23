@@ -1,19 +1,19 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
-using NeoLemmixSharp.Engine.Directions.FacingDirections;
-using NeoLemmixSharp.Engine.Directions.Orientations;
-using NeoLemmixSharp.Engine.LemmingActions;
-using NeoLemmixSharp.Engine.LevelGadgets;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NeoLemmixSharp.Engine.Actions;
+using NeoLemmixSharp.Engine.FacingDirections;
+using NeoLemmixSharp.Engine.Gadgets;
+using NeoLemmixSharp.Engine.Orientations;
 using NeoLemmixSharp.Rendering.Level.Ui;
-using NeoLemmixSharp.Rendering.Level.ViewportSprites;
-using NeoLemmixSharp.Rendering.Level.ViewportSprites.Gadgets;
-using NeoLemmixSharp.Rendering.Level.ViewportSprites.LemmingRendering;
+using NeoLemmixSharp.Rendering.Level.Viewport;
+using NeoLemmixSharp.Rendering.Level.Viewport.Gadget;
+using NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
 
 namespace NeoLemmixSharp.LevelBuilding;
 

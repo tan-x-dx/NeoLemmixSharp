@@ -1,6 +1,6 @@
-﻿using NeoLemmixSharp.Engine.LemmingSkills;
-using NeoLemmixSharp.LevelBuilding.Data;
+﻿using NeoLemmixSharp.LevelBuilding.Data;
 using System.Collections.Generic;
+using NeoLemmixSharp.Engine.Skills;
 
 namespace NeoLemmixSharp.Engine;
 

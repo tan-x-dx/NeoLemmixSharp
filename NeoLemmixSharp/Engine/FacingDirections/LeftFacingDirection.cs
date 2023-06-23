@@ -1,0 +1,20 @@
+﻿using NeoLemmixSharp.Engine.Orientations;
+
+namespace NeoLemmixSharp.Engine.FacingDirections;
+
+public sealed class LeftFacingDirection : FacingDirection
+{
+    public static LeftFacingDirection Instance { get; } = new();
+
+    private LeftFacingDirection()
+    {
+    }
+
+    public override int DeltaX => -1;
+    public override int FacingId => 1;
+
+    public override FacingDirection OppositeDirection => RightFacingDirection.Instance;
+    public override Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.RotateClockwise();
+
+    public override string ToString() => "left";
+}

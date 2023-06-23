@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
-using NeoLemmixSharp.Rendering.Level.ViewportSprites;
+using NeoLemmixSharp.Rendering.Level.Viewport;
 
 namespace NeoLemmixSharp.Rendering.Level.Ui;
 
