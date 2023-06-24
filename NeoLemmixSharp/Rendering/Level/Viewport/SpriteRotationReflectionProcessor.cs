@@ -1,31 +1,36 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
+using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Rendering.Level.Viewport;
 
 public sealed class SpriteRotationReflectionProcessor
 {
+    public delegate ActionSprite ActionSpriteCreator(
+        Texture2D texture,
+        int spriteWidth,
+        int spriteHeight,
+        int numberOfFrames,
+        int numberOfLayers,
+        LevelPosition anchorPoint);
+
     private readonly GraphicsDevice _graphicsDevice;
-
-    public ILevelObjectRenderer RightLeftSprite { get; private set; }
-    public ILevelObjectRenderer RightRightSprite { get; private set; }
-
-    public ILevelObjectRenderer UpLeftSprite { get; private set; }
-    public ILevelObjectRenderer UpRightSprite { get; private set; }
-
-    public ILevelObjectRenderer LeftLeftSprite { get; private set; }
-    public ILevelObjectRenderer LeftRightSprite { get; private set; }
-
-    public ILevelObjectRenderer DownLeftSprite { get; private set; }
-    public ILevelObjectRenderer DownRightSprite { get; private set; }
 
     public SpriteRotationReflectionProcessor(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;
     }
 
-    public void Foo()
+    public ActionSprite[] GenerateAllSpriteTypes(
+        int spriteWidth,
+        int spriteHeight,
+        int numberOfLayers,
+        LevelPosition anchorPoint,
+        ActionSpriteCreator actionSpriteCreator)
     {
+        var result = new ActionSprite[8];
 
+        return result;
     }
 
     /*private void ProcessLefts(
@@ -113,9 +118,4 @@ public sealed class SpriteRotationReflectionProcessor
             setSprite(spriteDrawingData.Orientation, actionSpriteBundle, actionSprite);
         }
     }*/
-}
-
-public interface ISpriteData
-{
-    int NumberOfFrames { get; }
 }
