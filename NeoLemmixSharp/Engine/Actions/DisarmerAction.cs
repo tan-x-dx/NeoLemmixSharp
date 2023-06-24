@@ -28,7 +28,7 @@ public sealed class DisarmerAction : LemmingAction
             else
             {
                 lemming.NextAction.TransitionLemmingToAction(lemming, false);
-                lemming.NextAction = NoneAction.Instance;
+                lemming.SetNextAction(NoneAction.Instance);
             }
         }
         else if ((lemming.AnimationFrame & 7) == 0)

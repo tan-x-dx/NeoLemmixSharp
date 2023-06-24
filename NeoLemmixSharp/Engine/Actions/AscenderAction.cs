@@ -36,7 +36,7 @@ public sealed class AscenderAction : LemmingAction
         if (dy < 2 &&
             !pixel1IsSolid)
         {
-            lemming.NextAction = WalkerAction.Instance;
+            lemming.SetNextAction(WalkerAction.Instance);
         }
         else if ((lemming.AscenderProgress == 4 &&
                   pixel1IsSolid &&

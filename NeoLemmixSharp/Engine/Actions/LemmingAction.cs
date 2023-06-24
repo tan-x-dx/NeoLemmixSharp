@@ -75,7 +75,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
             result.Add(lemmingAction.LemmingActionName, lemmingAction);
         }
     }
-    
+
     public static void SetTerrain(TerrainManager terrain)
     {
         Terrain = terrain;
@@ -103,13 +103,13 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     {
         if (turnAround)
         {
-            lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
+            lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection);
         }
 
         if (lemming.CurrentAction == this)
             return;
 
-        lemming.CurrentAction = this;
+        lemming.SetCurrentAction(this);
         lemming.AnimationFrame = 0;
         lemming.EndOfAnimation = false;
         lemming.NumberOfBricksLeft = 0;

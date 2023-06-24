@@ -66,9 +66,9 @@ public sealed class FallerAction : LemmingAction
 
         if (currentFallDistanceStep < maxFallDistanceStep)
         {
-            lemming.NextAction = IsFallFatal(lemming)
+            lemming.SetNextAction(IsFallFatal(lemming)
                 ? SplatterAction.Instance
-                : WalkerAction.Instance;
+                : WalkerAction.Instance);
         }
 
         return true;

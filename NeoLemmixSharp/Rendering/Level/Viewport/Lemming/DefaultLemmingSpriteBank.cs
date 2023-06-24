@@ -18,14 +18,13 @@ public static class DefaultLemmingSpriteBank
         SpriteBatch spriteBatch)
     {
         var spriteRotationReflectionProcessor = new SpriteRotationReflectionProcessor(graphicsDevice);
-        var actionSprites =
-            new ActionSprite[LemmingAction.AllActions.Count * 4 *
-                             2]; // Number of actions * 4 orientations * 2 facing directions.
+        var actionSprites = new ActionSprite[LemmingAction.AllActions.Count * 4 * 2];
+        // Number of actions * 4 orientations * 2 facing directions.
 
-        CreateThreeLayerSprite(AscenderAction.Instance, new LevelPosition());
+        CreateThreeLayerSprite(AscenderAction.Instance, new LevelPosition(2, 10));
         CreateFourLayerSprite(BasherAction.Instance, new LevelPosition());
         CreateThreeLayerSprite(BlockerAction.Instance, new LevelPosition());
-        CreateFiveLayerTrueColourSprite(BuilderAction.Instance, new LevelPosition());
+        CreateFiveLayerTrueColourSprite(BuilderAction.Instance, new LevelPosition(3, 13));
         CreateThreeLayerSprite(ClimberAction.Instance, new LevelPosition());
         CreateThreeLayerSprite(DehoisterAction.Instance, new LevelPosition());
         CreateFourLayerSprite(DiggerAction.Instance, new LevelPosition());
@@ -50,9 +49,9 @@ public static class DefaultLemmingSpriteBank
         CreateThreeLayerSprite(SplatterAction.Instance, new LevelPosition());
         CreateFourLayerTrueColourSprite(StackerAction.Instance, new LevelPosition());
         CreateOneLayerTrueColourSprite(StonerAction.Instance, new LevelPosition());
-        CreateThreeLayerSprite(SwimmerAction.Instance, new LevelPosition());
+        CreateThreeLayerSprite(SwimmerAction.Instance, new LevelPosition(17, 8));
         CreateFourLayerTrueColourSprite(VaporiserAction.Instance, new LevelPosition());
-        CreateThreeLayerSprite(WalkerAction.Instance, new LevelPosition());
+        CreateThreeLayerSprite(WalkerAction.Instance, new LevelPosition(2, 10));
 
         DefaultLemmingSprites = new LemmingSpriteBank(actionSprites);
 
@@ -118,8 +117,10 @@ public static class DefaultLemmingSpriteBank
         var spriteHeight = texture.Height / action.NumberOfAnimationFrames;
 
         var spritesTemp = spriteRotationReflectionProcessor.GenerateAllSpriteTypes(
+            texture,
             spriteWidth,
             spriteHeight,
+            action.NumberOfAnimationFrames,
             numberOfLayers,
             anchorPoint,
             actionSpriteCreator);

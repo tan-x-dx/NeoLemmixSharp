@@ -10,7 +10,7 @@ public sealed class WalkerAction : LemmingAction
     {
     }
 
-    public override int Id => 31;
+    public override int Id => 0;
     public override string LemmingActionName => "walker";
     public override int NumberOfAnimationFrames => NumberOfWalkerAnimationFrames;
     public override bool IsOneTimeAction => false;
@@ -42,7 +42,7 @@ public sealed class WalkerAction : LemmingAction
             }
             else
             {
-                lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
+                lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection);
                 lemmingPosition = lemming.Orientation.MoveLeft(lemmingPosition, dx);
                 lemming.LevelPosition = lemmingPosition;
             }
