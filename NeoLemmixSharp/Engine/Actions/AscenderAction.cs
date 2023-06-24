@@ -10,7 +10,7 @@ public sealed class AscenderAction : LemmingAction
     {
     }
 
-    public override int ActionId => 1;
+    public override int Id => 1;
     public override string LemmingActionName => "ascender";
     public override int NumberOfAnimationFrames => NumberOfAscenderAnimationFrames;
     public override bool IsOneTimeAction => false;

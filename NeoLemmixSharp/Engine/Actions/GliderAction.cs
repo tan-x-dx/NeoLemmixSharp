@@ -10,7 +10,7 @@ public sealed class GliderAction : LemmingAction
     {
     }
 
-    public override int ActionId => 15;
+    public override int Id => 15;
     public override string LemmingActionName => "glider";
     public override int NumberOfAnimationFrames => NumberOfGliderAnimationFrames;
     public override bool IsOneTimeAction => false;

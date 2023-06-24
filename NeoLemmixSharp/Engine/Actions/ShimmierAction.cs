@@ -10,7 +10,7 @@ public sealed class ShimmierAction : LemmingAction
     {
     }
 
-    public override int ActionId => 23;
+    public override int Id => 23;
     public override string LemmingActionName => "shimmier";
     public override int NumberOfAnimationFrames => NumberOfShimmierAnimationFrames;
     public override bool IsOneTimeAction => false;

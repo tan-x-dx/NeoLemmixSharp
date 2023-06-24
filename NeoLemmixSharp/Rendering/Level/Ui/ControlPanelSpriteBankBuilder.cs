@@ -125,7 +125,7 @@ public sealed class ControlPanelSpriteBankBuilder : IDisposable
 
     private void LoadLemmingSprites(ThemeData themeData)
     {
-        foreach (var lemmingState in LemmingAction.AllLemmingActions.Where(la => la.ActionId >= 0))
+        foreach (var lemmingState in LemmingAction.AllLemmingActions.Where(la => la.Id >= 0))
         {
             var pngFilePath = Path.Combine(themeData.LemmingSpritesFilePath, $"{lemmingState.LemmingActionName}.png");
 
@@ -148,7 +148,7 @@ public sealed class ControlPanelSpriteBankBuilder : IDisposable
         var originalPixelColourData = PixelColourData.GetPixelColourDataFromTexture(texture);
 
         var actionSpriteBundle = new LemmingActionSpriteBundle();
-        LemmingAction.LemmingActions[stateName].ActionSpriteBundle = actionSpriteBundle;
+        LemmingAction.AllActions[stateName].ActionSpriteBundle = actionSpriteBundle;
 
         _actionSpriteBundleLookup.Add(stateName, actionSpriteBundle);
 

@@ -10,7 +10,7 @@ public sealed class FencerAction : LemmingAction
     {
     }
 
-    public override int ActionId => 13;
+    public override int Id => 13;
     public override string LemmingActionName => "fencer";
     public override int NumberOfAnimationFrames => NumberOfFencerAnimationFrames;
     public override bool IsOneTimeAction => false;

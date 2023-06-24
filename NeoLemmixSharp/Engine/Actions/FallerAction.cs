@@ -13,7 +13,7 @@ public sealed class FallerAction : LemmingAction
     {
     }
 
-    public override int ActionId => 12;
+    public override int Id => 12;
     public override string LemmingActionName => "faller";
     public override int NumberOfAnimationFrames => NumberOfFallerAnimationFrames;
     public override bool IsOneTimeAction => false;
