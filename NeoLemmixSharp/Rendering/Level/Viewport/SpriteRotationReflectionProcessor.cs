@@ -24,7 +24,7 @@ public sealed class SpriteRotationReflectionProcessor
         _graphicsDevice = graphicsDevice;
     }
 
-    public ActionSprite[] GenerateAllSpriteTypes(
+    public ActionSprite[] CreateAllSpriteTypes(
         Texture2D texture,
         int spriteWidth,
         int spriteHeight,
@@ -35,30 +35,37 @@ public sealed class SpriteRotationReflectionProcessor
     {
         var result = new ActionSprite[8];
 
-        var key = LemmingSpriteBank.GetKey(DownOrientation.Instance, RightFacingDirection.Instance);
-        result[key] = actionSpriteCreator(texture, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint); // Don't need to process this texture, as it should be the correct version by default.
-        key = LemmingSpriteBank.GetKey(DownOrientation.Instance, LeftFacingDirection.Instance);
-        result[key] = Bar(texture, DownOrientation.Instance, LeftFacingDirection.Instance, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint, actionSpriteCreator);
+        CreateSpritesForDirections(DownOrientation.Instance, RightFacingDirection.Instance);
+        CreateSpritesForDirections(DownOrientation.Instance, LeftFacingDirection.Instance);
 
-        key = LemmingSpriteBank.GetKey(LeftOrientation.Instance, RightFacingDirection.Instance);
-        result[key] = Bar(texture, LeftOrientation.Instance, RightFacingDirection.Instance, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint, actionSpriteCreator);
-        key = LemmingSpriteBank.GetKey(LeftOrientation.Instance, LeftFacingDirection.Instance);
-        result[key] = Bar(texture, LeftOrientation.Instance, LeftFacingDirection.Instance, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint, actionSpriteCreator);
+        CreateSpritesForDirections(RightOrientation.Instance, RightFacingDirection.Instance);
+        CreateSpritesForDirections(RightOrientation.Instance, LeftFacingDirection.Instance);
 
-        key = LemmingSpriteBank.GetKey(RightOrientation.Instance, RightFacingDirection.Instance);
-        result[key] = Bar(texture, RightOrientation.Instance, RightFacingDirection.Instance, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint, actionSpriteCreator);
-        key = LemmingSpriteBank.GetKey(RightOrientation.Instance, LeftFacingDirection.Instance);
-        result[key] = Bar(texture, RightOrientation.Instance, LeftFacingDirection.Instance, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint, actionSpriteCreator);
+        CreateSpritesForDirections(UpOrientation.Instance, RightFacingDirection.Instance);
+        CreateSpritesForDirections(UpOrientation.Instance, LeftFacingDirection.Instance);
 
-        key = LemmingSpriteBank.GetKey(UpOrientation.Instance, RightFacingDirection.Instance);
-        result[key] = Bar(texture, UpOrientation.Instance, RightFacingDirection.Instance, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint, actionSpriteCreator);
-        key = LemmingSpriteBank.GetKey(UpOrientation.Instance, LeftFacingDirection.Instance);
-        result[key] = Bar(texture, UpOrientation.Instance, LeftFacingDirection.Instance, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint, actionSpriteCreator);
+        CreateSpritesForDirections(LeftOrientation.Instance, RightFacingDirection.Instance);
+        CreateSpritesForDirections(LeftOrientation.Instance, LeftFacingDirection.Instance);
 
         return result;
+
+        void CreateSpritesForDirections(Orientation orientation, FacingDirection facingDirection)
+        {
+            var key = LemmingSpriteBank.GetKey(orientation, facingDirection);
+
+            // TODO Figure out why these two get swapped around
+            // problems are (left O left F) and (right O left F)
+            if (facingDirection == LeftFacingDirection.Instance &&
+                (orientation == LeftOrientation.Instance || orientation == RightOrientation.Instance))
+            {
+                orientation = orientation.GetOpposite();
+            }
+
+            result[key] = CreateSpriteType(texture, orientation, facingDirection, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint, actionSpriteCreator);
+        }
     }
 
-    private ActionSprite Bar(
+    private ActionSprite CreateSpriteType(
         Texture2D texture,
         Orientation orientation,
         FacingDirection facingDirection,
@@ -81,11 +88,13 @@ public sealed class SpriteRotationReflectionProcessor
 
             for (var f = 0; f < numberOfFrames; f++)
             {
+                var f0 = f * spriteHeight;
+
                 for (var x0 = 0; x0 < spriteWidth; x0++)
                 {
                     for (var y0 = 0; y0 < spriteHeight; y0++)
                     {
-                        var pixel = pixelColourData.Get(x0 + l0, y0 + f * spriteHeight);
+                        var pixel = pixelColourData.Get(x0 + l0, y0 + f0);
 
                         spriteDrawingData.Set(pixel, x0, y0, l, f);
                     }
@@ -113,90 +122,4 @@ public sealed class SpriteRotationReflectionProcessor
 
         return actionSprite;
     }
-    /*
-    private void ProcessLefts(
-        LemmingSpriteData spriteData,
-        PixelColourData originalPixelColourData,
-        LemmingActionSpriteBundle actionSpriteBundle)
-    {
-        CreateSprites(
-            spriteData,
-            originalPixelColourData,
-            0,
-            spriteData.LeftFootX,
-            spriteData.LeftFootY,
-            actionSpriteBundle,
-            (o, b, a) => o.SetLeftActionSprite(b, a));
-    }
-
-    private void ProcessRights(
-        LemmingSpriteData spriteData,
-        PixelColourData originalPixelColourData,
-        LemmingActionSpriteBundle actionSpriteBundle)
-    {
-        CreateSprites(
-            spriteData,
-            originalPixelColourData,
-            originalPixelColourData.Width / 2,
-            spriteData.RightFootX,
-            spriteData.RightFootY,
-            actionSpriteBundle,
-            (o, b, a) => o.SetRightActionSprite(b, a));
-    }
-
-    private void CreateSprites(
-        ISpriteData spriteData,
-        PixelColourData originalPixelColourData,
-        int dx0,
-        int footX,
-        int footY,
-        LemmingActionSpriteBundle actionSpriteBundle,
-        Action<Orientation, LemmingActionSpriteBundle, ActionSprite> setSprite)
-    {
-        var spriteWidth = originalPixelColourData.Width / 2;
-        var spriteHeight = originalPixelColourData.Height / spriteData.NumberOfFrames;
-
-        var spriteDrawingDatas = Orientation
-            .AllOrientations
-            .Select(o => new SpriteDrawingData(o, spriteWidth, spriteHeight, spriteData.NumberOfFrames))
-            .ToArray();
-
-        for (var f = 0; f < spriteData.NumberOfFrames; f++)
-        {
-            for (var x0 = 0; x0 < spriteWidth; x0++)
-            {
-                for (var y0 = 0; y0 < spriteHeight; y0++)
-                {
-                    var pixel = originalPixelColourData.Get(x0 + dx0, y0 + f * spriteHeight);
-
-                    for (var i = 0; i < spriteDrawingDatas.Length; i++)
-                    {
-                        spriteDrawingDatas[i].Set(pixel, x0, y0, f);
-                    }
-                }
-            }
-        }
-
-        foreach (var spriteDrawingData in spriteDrawingDatas)
-        {
-            var texture = spriteDrawingData.ToTexture(_graphicsDevice);
-
-            spriteDrawingData.DihedralTransformation.Transform(
-                footX,
-                footY,
-                spriteWidth - 1,
-                spriteHeight - 1,
-                out var footX1,
-                out var footY1);
-
-            var actionSprite = new ActionSprite(
-                texture,
-                spriteDrawingData.ThisSpriteWidth,
-                spriteDrawingData.ThisSpriteHeight,
-                spriteData.NumberOfFrames,
-                new LevelPosition(footX1, footY1));
-
-            setSprite(spriteDrawingData.Orientation, actionSpriteBundle, actionSprite);
-        }
-    }*/
 }

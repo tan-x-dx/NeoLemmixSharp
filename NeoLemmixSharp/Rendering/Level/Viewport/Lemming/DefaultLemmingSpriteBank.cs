@@ -111,12 +111,12 @@ public static class DefaultLemmingSpriteBank
         LevelPosition anchorPoint,
         ActionSpriteCreator actionSpriteCreator)
     {
-        var texture = contentManager.Load<Texture2D>($"sprites/lemming/{action.LemmingActionName}");
+        using var texture = contentManager.Load<Texture2D>($"sprites/lemming/{action.LemmingActionName}");
 
         var spriteWidth = texture.Width / numberOfLayers;
         var spriteHeight = texture.Height / action.NumberOfAnimationFrames;
 
-        var spritesTemp = spriteRotationReflectionProcessor.GenerateAllSpriteTypes(
+        var spritesTemp = spriteRotationReflectionProcessor.CreateAllSpriteTypes(
             texture,
             spriteWidth,
             spriteHeight,
