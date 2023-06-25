@@ -5,8 +5,7 @@ namespace NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
 
 public sealed class LemmingRenderer : ILevelObjectRenderer
 {
-    private readonly Engine.Lemming _lemming;
-
+    private Engine.Lemming _lemming;
     private ActionSprite _actionSprite;
 
     public LemmingRenderer(Engine.Lemming lemming)
@@ -70,5 +69,7 @@ public sealed class LemmingRenderer : ILevelObjectRenderer
 
     public void Dispose()
     {
+        _lemming = null;
+        _actionSprite = null;
     }
 }

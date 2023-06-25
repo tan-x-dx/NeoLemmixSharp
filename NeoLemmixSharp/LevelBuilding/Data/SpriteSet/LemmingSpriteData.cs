@@ -1,8 +1,6 @@
-﻿using NeoLemmixSharp.Rendering.Level.Viewport;
+﻿namespace NeoLemmixSharp.LevelBuilding.Data.SpriteSet;
 
-namespace NeoLemmixSharp.LevelBuilding.Data.SpriteSet;
-
-public sealed class LemmingSpriteData : ISpriteData
+public sealed class LemmingSpriteData
 {
     public string AnimationIdentifier { get; }
 

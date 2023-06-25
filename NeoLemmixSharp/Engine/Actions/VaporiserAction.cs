@@ -10,8 +10,8 @@ public sealed class VaporiserAction : LemmingAction
     {
     }
 
-    public override int ActionId => 30;
-    public override string LemmingActionName => "burner";
+    public override int Id => 30;
+    public override string LemmingActionName => "burner2";
     public override int NumberOfAnimationFrames => NumberOfVaporiserAnimationFrames;
     public override bool IsOneTimeAction => true;
     public override bool CanBeAssignedPermanentSkill => false;

@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Actions;
 using NeoLemmixSharp.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Orientations;
+using NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
 using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
@@ -32,7 +33,7 @@ public sealed class Lemming
 
     public bool Debug;
 
-    public int AnimationFrame;
+    public int AnimationFrame { get; set; }
     public int AscenderProgress;
     public int NumberOfBricksLeft;
     public int DisarmingFrames;
@@ -48,13 +49,29 @@ public sealed class Lemming
     public LevelPosition LaserHitLevelPosition;
     public LevelPosition LevelPosition;
 
-    public FacingDirection FacingDirection = RightFacingDirection.Instance;
-    public Orientation Orientation = DownOrientation.Instance;
+    public FacingDirection FacingDirection { get; private set; }
+    public Orientation Orientation { get; private set; }
 
-    public LemmingAction CurrentAction = WalkerAction.Instance;
-    public LemmingAction NextAction = NoneAction.Instance;
+    public LemmingAction CurrentAction { get; private set; }
+    public LemmingAction NextAction { get; private set; } = NoneAction.Instance;
+
+    public LemmingRenderer Renderer { get; }
+    public LemmingState State { get; }
 
     public bool ShouldTick => true;
+
+    public Lemming(
+        Orientation? orientation = null,
+        FacingDirection? facingDirection = null,
+        LemmingAction? currentAction = null)
+    {
+        Orientation = orientation ?? DownOrientation.Instance;
+        FacingDirection = facingDirection ?? RightFacingDirection.Instance;
+        CurrentAction = currentAction ?? WalkerAction.Instance;
+        State = new LemmingState();
+
+        Renderer = new LemmingRenderer(this);
+    }
 
     public void Tick()
     {
@@ -263,4 +280,20 @@ begin
 end;
 
      */
+    public void SetFacingDirection(FacingDirection newFacingDirection)
+    {
+        FacingDirection = newFacingDirection;
+        Renderer.UpdateLemmingState();
+    }
+
+    public void SetNextAction(LemmingAction nextAction)
+    {
+        NextAction = nextAction;
+    }
+
+    public void SetCurrentAction(LemmingAction lemmingAction)
+    {
+        CurrentAction = lemmingAction;
+        Renderer.UpdateLemmingState();
+    }
 }

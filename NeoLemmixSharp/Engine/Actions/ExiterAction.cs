@@ -10,7 +10,7 @@ public sealed class ExiterAction : LemmingAction
     {
     }
 
-    public override int ActionId => 10;
+    public override int Id => 10;
     public override string LemmingActionName => "exiter";
     public override int NumberOfAnimationFrames => NumberOfExiterAnimationFrames;
     public override bool IsOneTimeAction => true;

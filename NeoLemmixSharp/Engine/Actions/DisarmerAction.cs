@@ -10,7 +10,7 @@ public sealed class DisarmerAction : LemmingAction
     {
     }
 
-    public override int ActionId => 8;
+    public override int Id => 8;
     public override string LemmingActionName => "disarmer";
     public override int NumberOfAnimationFrames => NumberOfDisarmerAnimationFrames;
     public override bool IsOneTimeAction => false;
@@ -28,7 +28,7 @@ public sealed class DisarmerAction : LemmingAction
             else
             {
                 lemming.NextAction.TransitionLemmingToAction(lemming, false);
-                lemming.NextAction = NoneAction.Instance;
+                lemming.SetNextAction(NoneAction.Instance);
             }
         }
         else if ((lemming.AnimationFrame & 7) == 0)

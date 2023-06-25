@@ -10,7 +10,7 @@ public sealed class ShimmierAction : LemmingAction
     {
     }
 
-    public override int ActionId => 23;
+    public override int Id => 23;
     public override string LemmingActionName => "shimmier";
     public override int NumberOfAnimationFrames => NumberOfShimmierAnimationFrames;
     public override bool IsOneTimeAction => false;
@@ -123,7 +123,7 @@ public sealed class ShimmierAction : LemmingAction
     {
         if (lemming.CurrentAction == ClimberAction.Instance)
         {
-            lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
+            lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection);
             lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX);
 
             if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemming.LevelPosition, 8), lemming))

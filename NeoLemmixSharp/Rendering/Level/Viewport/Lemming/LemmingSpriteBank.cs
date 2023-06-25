@@ -1,7 +1,7 @@
-﻿using System;
-using NeoLemmixSharp.Engine.Actions;
+﻿using NeoLemmixSharp.Engine.Actions;
 using NeoLemmixSharp.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Orientations;
+using System;
 
 namespace NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
 
@@ -32,9 +32,18 @@ public sealed class LemmingSpriteBank : IDisposable
         if (lemmingAction == NoneAction.Instance)
             throw new InvalidOperationException("Cannot render \"None\" action");
 
-        return (lemmingAction.ActionId << 3) | (orientation.RotNum << 1) | (facingDirection.FacingId);
+        var lowerBits = GetKey(orientation, facingDirection);
+
+        return (lemmingAction.Id << 3) | lowerBits;
     }
-    
+
+    public static int GetKey(
+        Orientation orientation,
+        FacingDirection facingDirection)
+    {
+        return (orientation.RotNum << 1) | (facingDirection.Id);
+    }
+
     public void Dispose()
     {
         for (var i = 0; i < _actionSprites.Length; i++)

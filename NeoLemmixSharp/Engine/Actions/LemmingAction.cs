@@ -1,10 +1,10 @@
-﻿using System;
+﻿using NeoLemmixSharp.Engine.Orientations;
+using NeoLemmixSharp.Engine.Terrain;
+using NeoLemmixSharp.Util;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using NeoLemmixSharp.Engine.Orientations;
-using NeoLemmixSharp.Engine.Terrain;
-using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine.Actions;
 
@@ -12,13 +12,13 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 {
     protected static TerrainManager Terrain { get; private set; }
 
-    public static ReadOnlyDictionary<string, LemmingAction> LemmingActions { get; } = RegisterAllLemmingActions();
+    public static ReadOnlyDictionary<string, LemmingAction> AllActions { get; } = RegisterAllLemmingActions();
 
     private static ReadOnlyDictionary<string, LemmingAction> RegisterAllLemmingActions()
     {
         var result = new Dictionary<string, LemmingAction>();
 
-        RegisterLemmingAction(NoneAction.Instance);
+        // NOTE: DO NOT REGISTER THE NONE ACTION
 
         RegisterLemmingAction(AscenderAction.Instance);
         RegisterLemmingAction(BasherAction.Instance);
@@ -31,8 +31,8 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         RegisterLemmingAction(DrownerAction.Instance);
         RegisterLemmingAction(ExiterAction.Instance);
         RegisterLemmingAction(ExploderAction.Instance);
-        RegisterLemmingAction(FencerAction.Instance);
         RegisterLemmingAction(FallerAction.Instance);
+        RegisterLemmingAction(FencerAction.Instance);
         RegisterLemmingAction(FloaterAction.Instance);
         RegisterLemmingAction(GliderAction.Instance);
         RegisterLemmingAction(HoisterAction.Instance);
@@ -54,7 +54,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
         var numberOfUniqueIds = result
             .Values
-            .Select(la => la.ActionId)
+            .Select(la => la.Id)
             .Distinct()
             .Count();
 
@@ -62,7 +62,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         {
             var ids = string.Join(',', result
                 .Values
-                .Select(la => la.ActionId)
+                .Select(la => la.Id)
                 .OrderBy(i => i));
 
             throw new Exception($"Duplicated action ID: {ids}");
@@ -76,14 +76,12 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         }
     }
 
-    public static ICollection<LemmingAction> AllLemmingActions => LemmingActions.Values;
-
     public static void SetTerrain(TerrainManager terrain)
     {
         Terrain = terrain;
     }
 
-    public abstract int ActionId { get; }
+    public abstract int Id { get; }
     public abstract string LemmingActionName { get; }
     public abstract int NumberOfAnimationFrames { get; }
     public abstract bool IsOneTimeAction { get; }
@@ -91,13 +89,13 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
     public abstract bool UpdateLemming(Lemming lemming);
 
-    public bool Equals(LemmingAction? other) => ActionId == (other?.ActionId ?? -1);
-    public sealed override bool Equals(object? obj) => obj is LemmingAction other && ActionId == other.ActionId;
-    public sealed override int GetHashCode() => ActionId;
+    public bool Equals(LemmingAction? other) => Id == (other?.Id ?? -1);
+    public sealed override bool Equals(object? obj) => obj is LemmingAction other && Id == other.Id;
+    public sealed override int GetHashCode() => Id;
     public sealed override string ToString() => LemmingActionName;
 
-    public static bool operator ==(LemmingAction left, LemmingAction right) => left.ActionId == right.ActionId;
-    public static bool operator !=(LemmingAction left, LemmingAction right) => left.ActionId != right.ActionId;
+    public static bool operator ==(LemmingAction left, LemmingAction right) => left.Id == right.Id;
+    public static bool operator !=(LemmingAction left, LemmingAction right) => left.Id != right.Id;
 
     public virtual void TransitionLemmingToAction(
         Lemming lemming,
@@ -105,13 +103,13 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     {
         if (turnAround)
         {
-            lemming.FacingDirection = lemming.FacingDirection.OppositeDirection;
+            lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection);
         }
 
         if (lemming.CurrentAction == this)
             return;
 
-        lemming.CurrentAction = this;
+        lemming.SetCurrentAction(this);
         lemming.AnimationFrame = 0;
         lemming.EndOfAnimation = false;
         lemming.NumberOfBricksLeft = 0;
@@ -121,28 +119,29 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
     protected static void LayBrick(Lemming lemming)
     {
+        var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dy = lemming.CurrentAction == BuilderAction.Instance
             ? 1
             : 0;
 
         var brickPosition = lemming.LevelPosition;
-        brickPosition = lemming.Orientation.MoveUp(brickPosition, dy);
+        brickPosition = orientation.MoveUp(brickPosition, dy);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
 
-        brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        brickPosition = orientation.MoveRight(brickPosition, dx);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
 
-        brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        brickPosition = orientation.MoveRight(brickPosition, dx);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
 
-        brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        brickPosition = orientation.MoveRight(brickPosition, dx);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
 
-        brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        brickPosition = orientation.MoveRight(brickPosition, dx);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
 
-        brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        brickPosition = orientation.MoveRight(brickPosition, dx);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
     }
 
@@ -174,46 +173,5 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         }
 
         return result;
-    }
-
-    protected static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
-    {
-        var dx = lemming.FacingDirection.DeltaX;
-        LevelPosition currentPosition;
-        LevelPosition nextPosition;
-        if (alreadyMoved)
-        {
-            nextPosition = lemming.LevelPosition;
-            currentPosition = lemming.Orientation.MoveLeft(nextPosition, dx);
-        }
-        else
-        {
-            currentPosition = lemming.LevelPosition;
-            nextPosition = lemming.Orientation.MoveRight(currentPosition, dx);
-        }
-
-        if (Terrain.PositionOutOfBounds(nextPosition) ||
-            (!Terrain.PixelIsSolidToLemming(currentPosition, lemming) ||
-             Terrain.PixelIsSolidToLemming(nextPosition, lemming)))
-            return false;
-
-        if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(nextPosition, 1), lemming))
-            return false;
-        if (!Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(currentPosition, 1), lemming))
-            return true;
-
-        if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(nextPosition, 2), lemming))
-            return false;
-        if (!Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(currentPosition, 2), lemming))
-            return true;
-
-        if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(nextPosition, 3), lemming))
-            return false;
-        if (!Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(currentPosition, 3), lemming))
-            return true;
-
-        if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(nextPosition, 4), lemming))
-            return false;
-        return !Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(currentPosition, 4), lemming);
     }
 }

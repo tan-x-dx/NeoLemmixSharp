@@ -10,7 +10,7 @@ public sealed class ShruggerAction : LemmingAction
     {
     }
 
-    public override int ActionId => 24;
+    public override int Id => 24;
     public override string LemmingActionName => "shrugger";
     public override int NumberOfAnimationFrames => NumberOfShruggerAnimationFrames;
     public override bool IsOneTimeAction => true;

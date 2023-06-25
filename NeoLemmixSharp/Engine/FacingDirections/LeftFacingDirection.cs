@@ -11,7 +11,7 @@ public sealed class LeftFacingDirection : FacingDirection
     }
 
     public override int DeltaX => -1;
-    public override int FacingId => 1;
+    public override int Id => 1;
 
     public override FacingDirection OppositeDirection => RightFacingDirection.Instance;
     public override Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.RotateClockwise();

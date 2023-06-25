@@ -13,7 +13,7 @@ public sealed class PlatformerAction : LemmingAction
     {
     }
 
-    public override int ActionId => 21;
+    public override int Id => 21;
     public override string LemmingActionName => "platformer";
     public override int NumberOfAnimationFrames => NumberOfPlatformerAnimationFrames;
     public override bool IsOneTimeAction => false;

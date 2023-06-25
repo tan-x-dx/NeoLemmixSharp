@@ -10,7 +10,7 @@ public sealed class SplatterAction : LemmingAction
     {
     }
 
-    public override int ActionId => 26;
+    public override int Id => 26;
     public override string LemmingActionName => "splatter";
     public override int NumberOfAnimationFrames => NumberOfSplatterAnimationFrames;
     public override bool IsOneTimeAction => true;

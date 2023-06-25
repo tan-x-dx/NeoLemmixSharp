@@ -10,7 +10,7 @@ public sealed class AscenderAction : LemmingAction
     {
     }
 
-    public override int ActionId => 1;
+    public override int Id => 1;
     public override string LemmingActionName => "ascender";
     public override int NumberOfAnimationFrames => NumberOfAscenderAnimationFrames;
     public override bool IsOneTimeAction => false;
@@ -36,7 +36,7 @@ public sealed class AscenderAction : LemmingAction
         if (dy < 2 &&
             !pixel1IsSolid)
         {
-            lemming.NextAction = WalkerAction.Instance;
+            lemming.SetNextAction(WalkerAction.Instance);
         }
         else if ((lemming.AscenderProgress == 4 &&
                   pixel1IsSolid &&

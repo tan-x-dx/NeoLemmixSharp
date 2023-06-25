@@ -2,15 +2,17 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
-using NeoLemmixSharp.Engine.ControlPanel;
-using System;
 using NeoLemmixSharp.Engine.BoundaryBehaviours;
+using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Input;
 using NeoLemmixSharp.Engine.Terrain;
 using NeoLemmixSharp.Rendering.Level;
 using NeoLemmixSharp.Rendering.Level.Ui;
 using NeoLemmixSharp.Rendering.Level.Viewport.Background;
+using NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
 using NeoLemmixSharp.Rendering.Text;
+using System;
+using System.Linq;
 using LevelRenderer = NeoLemmixSharp.Rendering.Level.LevelRenderer;
 
 namespace NeoLemmixSharp.LevelBuilding;
@@ -101,6 +103,11 @@ public sealed class LevelBuilder : IDisposable
             lemmingSpriteBank,
             gadgetSpriteBank,
             _fontBank);
+
+        foreach (var lemmingRenderer in levelSprites.OfType<LemmingRenderer>())
+        {
+            lemmingRenderer.UpdateLemmingState();
+        }
 
         return new LevelScreen(
             levelData,

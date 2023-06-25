@@ -1,24 +1,34 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Util;
+using System;
 
 namespace NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
 
 public abstract class ActionSprite : IDisposable
 {
-    public abstract int SpriteWidth { get; }
-    public abstract int SpriteHeight { get; }
-    public abstract int NumberOfFrames { get; }
-    public abstract int NumberOfLayers { get; }
+    public int SpriteWidth { get; }
+    public int SpriteHeight { get; }
+    public int NumberOfFrames { get; }
+    public int NumberOfLayers { get; }
 
     public Texture2D Texture { get; }
-    public abstract LevelPosition AnchorPoint { get; }
+    public LevelPosition AnchorPoint { get; }
 
     protected ActionSprite(
-        Texture2D texture)
+        Texture2D texture,
+        int spriteWidth,
+        int spriteHeight,
+        int numberOfFrames,
+        int numberOfLayers,
+        LevelPosition anchorPoint)
     {
         Texture = texture;
+        SpriteWidth = spriteWidth;
+        SpriteHeight = spriteHeight;
+        NumberOfFrames = numberOfFrames;
+        NumberOfLayers = numberOfLayers;
+        AnchorPoint = anchorPoint;
     }
 
     public abstract void RenderLemming(
@@ -48,7 +58,8 @@ public abstract class ActionSprite : IDisposable
         SpriteBatch spriteBatch,
         Rectangle sourceRectangle,
         Rectangle destinationRectangle,
-        Color layerColor)
+        Color layerColor,
+        float renderLayer)
     {
         /*
                 var renderDestination = new Rectangle(
@@ -65,6 +76,6 @@ public abstract class ActionSprite : IDisposable
             0.0f,
             new Vector2(),
             SpriteEffects.None,
-            RenderingLayers.LemmingRenderLayer);
+            renderLayer);
     }
 }

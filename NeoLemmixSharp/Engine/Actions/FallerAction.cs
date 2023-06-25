@@ -13,7 +13,7 @@ public sealed class FallerAction : LemmingAction
     {
     }
 
-    public override int ActionId => 12;
+    public override int Id => 12;
     public override string LemmingActionName => "faller";
     public override int NumberOfAnimationFrames => NumberOfFallerAnimationFrames;
     public override bool IsOneTimeAction => false;
@@ -66,9 +66,9 @@ public sealed class FallerAction : LemmingAction
 
         if (currentFallDistanceStep < maxFallDistanceStep)
         {
-            lemming.NextAction = IsFallFatal(lemming)
+            lemming.SetNextAction(IsFallFatal(lemming)
                 ? SplatterAction.Instance
-                : WalkerAction.Instance;
+                : WalkerAction.Instance);
         }
 
         return true;
