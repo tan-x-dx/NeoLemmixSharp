@@ -53,14 +53,6 @@ public sealed class SpriteRotationReflectionProcessor
         {
             var key = LemmingSpriteBank.GetKey(orientation, facingDirection);
 
-            // TODO Figure out why these two get swapped around
-            // problems are (left O left F) and (right O left F)
-            if (facingDirection == LeftFacingDirection.Instance &&
-                (orientation == LeftOrientation.Instance || orientation == RightOrientation.Instance))
-            {
-                orientation = orientation.GetOpposite();
-            }
-
             result[key] = CreateSpriteType(texture, orientation, facingDirection, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint, actionSpriteCreator);
         }
     }

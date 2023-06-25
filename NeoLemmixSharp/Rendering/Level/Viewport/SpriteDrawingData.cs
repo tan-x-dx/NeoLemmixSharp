@@ -28,21 +28,34 @@ public sealed class SpriteDrawingData
         _originalSpriteHeight = originalSpriteHeight;
 
         var rotNum = orientation.RotNum;
+        bool flipHorizontally;
 
         if ((rotNum & 1) == 0)
         {
             ThisSpriteWidth = _originalSpriteWidth;
             ThisSpriteHeight = _originalSpriteHeight;
+
+            flipHorizontally = facingDirection == LeftFacingDirection.Instance;
         }
         else
         {
             ThisSpriteWidth = _originalSpriteHeight;
             ThisSpriteHeight = _originalSpriteWidth;
+
+            if (facingDirection == LeftFacingDirection.Instance)
+            {
+                rotNum = (rotNum + 2) & 3;
+                flipHorizontally = true;
+            }
+            else
+            {
+                flipHorizontally = false;
+            }
         }
 
         var uints = new uint[originalSpriteWidth * originalSpriteHeight * numberOfFrames * numberOfLayers];
         _colourData = new PixelColourData(ThisSpriteWidth * numberOfLayers, ThisSpriteHeight * numberOfFrames, uints);
-        DihedralTransformation = DihedralTransformation.GetForTransformation(facingDirection == LeftFacingDirection.Instance, rotNum);
+        DihedralTransformation = DihedralTransformation.GetForTransformation(flipHorizontally, rotNum);
     }
 
     public void Set(uint pixel, int x0, int y0, int layer, int frame)
