@@ -111,7 +111,6 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
         lemming.SetCurrentAction(this);
         lemming.AnimationFrame = 0;
-        lemming.EndOfAnimation = false;
         lemming.NumberOfBricksLeft = 0;
         lemming.IsStartingAction = true;
         lemming.InitialFall = false;

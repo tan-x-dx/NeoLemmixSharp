@@ -28,7 +28,7 @@ public sealed class Lemming
     public bool PlacedBrick;
     public bool StackLow;
     public bool InitialFall;
-    public bool EndOfAnimation;
+
     public bool LaserHit;
 
     public bool Debug;
@@ -58,6 +58,7 @@ public sealed class Lemming
     public LemmingRenderer Renderer { get; }
 
     public bool ShouldTick => true;
+    public bool EndOfAnimation => AnimationFrame == CurrentAction.NumberOfAnimationFrames && CurrentAction.IsOneTimeAction;
 
     public Lemming(
         Orientation? orientation = null,
@@ -110,11 +111,6 @@ public sealed class Lemming
             else
             {
                 AnimationFrame = 0;
-            }
-
-            if (CurrentAction.IsOneTimeAction)
-            {
-                EndOfAnimation = true;
             }
         }
 
