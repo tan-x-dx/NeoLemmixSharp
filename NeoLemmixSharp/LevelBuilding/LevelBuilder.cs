@@ -76,8 +76,8 @@ public sealed class LevelBuilder : IDisposable
             pixelData,
             levelGadgets,
             terrainRenderer,
-            BoundaryBehaviourType.Void,
-            BoundaryBehaviourType.Void);
+            levelData.HorizontalBoundaryBehaviour,
+            levelData.VerticalBoundaryBehaviour);
 
         var levelSprites = _levelAssembler.GetLevelSprites();
 
