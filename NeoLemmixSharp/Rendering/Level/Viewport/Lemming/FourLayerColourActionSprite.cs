@@ -21,10 +21,10 @@ public sealed class FourLayerColourActionSprite : ActionSprite
     {
         RenderSpriteLayer(spriteBatch, sourceRectangle, destinationRectangle, Color.White, RenderingLayers.LemmingRenderLayer);
         sourceRectangle.X += SpriteWidth;
-        RenderSpriteLayer(spriteBatch, sourceRectangle, destinationRectangle, Color.Green, RenderingLayers.LemmingRenderLayer);
+        RenderSpriteLayer(spriteBatch, sourceRectangle, destinationRectangle, lemming.State.HairColor, RenderingLayers.LemmingRenderLayer);
         sourceRectangle.X += SpriteWidth;
-        RenderSpriteLayer(spriteBatch, sourceRectangle, destinationRectangle, Color.Wheat, RenderingLayers.LemmingRenderLayer);
+        RenderSpriteLayer(spriteBatch, sourceRectangle, destinationRectangle, lemming.State.SkinColor, RenderingLayers.LemmingRenderLayer);
         sourceRectangle.X += SpriteWidth;
-        RenderSpriteLayer(spriteBatch, sourceRectangle, destinationRectangle, Color.Blue, RenderingLayers.LemmingRenderLayer);
+        RenderSpriteLayer(spriteBatch, sourceRectangle, destinationRectangle, lemming.State.BodyColor, RenderingLayers.LemmingRenderLayer);
     }
 }

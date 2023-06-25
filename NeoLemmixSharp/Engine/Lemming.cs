@@ -56,6 +56,7 @@ public sealed class Lemming
     public LemmingAction NextAction { get; private set; } = NoneAction.Instance;
 
     public LemmingRenderer Renderer { get; }
+    public LemmingState State { get; }
 
     public bool ShouldTick => true;
 
@@ -67,6 +68,7 @@ public sealed class Lemming
         Orientation = orientation ?? DownOrientation.Instance;
         FacingDirection = facingDirection ?? RightFacingDirection.Instance;
         CurrentAction = currentAction ?? WalkerAction.Instance;
+        State = new LemmingState();
 
         Renderer = new LemmingRenderer(this);
     }
