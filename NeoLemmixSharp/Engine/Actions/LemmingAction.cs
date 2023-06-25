@@ -118,28 +118,29 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
     protected static void LayBrick(Lemming lemming)
     {
+        var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dy = lemming.CurrentAction == BuilderAction.Instance
             ? 1
             : 0;
 
         var brickPosition = lemming.LevelPosition;
-        brickPosition = lemming.Orientation.MoveUp(brickPosition, dy);
+        brickPosition = orientation.MoveUp(brickPosition, dy);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
 
-        brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        brickPosition = orientation.MoveRight(brickPosition, dx);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
 
-        brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        brickPosition = orientation.MoveRight(brickPosition, dx);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
 
-        brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        brickPosition = orientation.MoveRight(brickPosition, dx);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
 
-        brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        brickPosition = orientation.MoveRight(brickPosition, dx);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
 
-        brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+        brickPosition = orientation.MoveRight(brickPosition, dx);
         Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
     }
 
@@ -171,46 +172,5 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         }
 
         return result;
-    }
-
-    protected static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
-    {
-        var dx = lemming.FacingDirection.DeltaX;
-        LevelPosition currentPosition;
-        LevelPosition nextPosition;
-        if (alreadyMoved)
-        {
-            nextPosition = lemming.LevelPosition;
-            currentPosition = lemming.Orientation.MoveLeft(nextPosition, dx);
-        }
-        else
-        {
-            currentPosition = lemming.LevelPosition;
-            nextPosition = lemming.Orientation.MoveRight(currentPosition, dx);
-        }
-
-        if (Terrain.PositionOutOfBounds(nextPosition) ||
-            (!Terrain.PixelIsSolidToLemming(currentPosition, lemming) ||
-             Terrain.PixelIsSolidToLemming(nextPosition, lemming)))
-            return false;
-
-        if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(nextPosition, 1), lemming))
-            return false;
-        if (!Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(currentPosition, 1), lemming))
-            return true;
-
-        if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(nextPosition, 2), lemming))
-            return false;
-        if (!Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(currentPosition, 2), lemming))
-            return true;
-
-        if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(nextPosition, 3), lemming))
-            return false;
-        if (!Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(currentPosition, 3), lemming))
-            return true;
-
-        if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(nextPosition, 4), lemming))
-            return false;
-        return !Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(currentPosition, 4), lemming);
     }
 }
