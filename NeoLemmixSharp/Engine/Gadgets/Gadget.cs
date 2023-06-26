@@ -12,8 +12,8 @@ public abstract class Gadget : IEquatable<Gadget>
     public abstract bool CanActAsSolid { get; }
     public abstract bool CanActAsIndestructible { get; }
 
-    public abstract bool IsSolidToLemming(in LevelPosition levelPosition, Lemming lemming);
-    public abstract bool IsIndestructibleToLemming(in LevelPosition levelPosition, Lemming lemming);
+    public abstract bool IsSolidToLemming(LevelPosition levelPosition, Lemming lemming);
+    public abstract bool IsIndestructibleToLemming(LevelPosition levelPosition, Lemming lemming);
 
     public abstract bool MatchesOrientation(LevelPosition levelPosition, Orientation orientation);
 

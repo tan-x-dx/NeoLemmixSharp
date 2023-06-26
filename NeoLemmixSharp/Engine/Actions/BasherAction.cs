@@ -26,7 +26,7 @@ public sealed class BasherAction : LemmingAction
 
     private bool BasherIndestructibleCheck(
         Lemming lemming,
-        in LevelPosition pos,
+        LevelPosition pos,
         Orientation orientation)
     {
         return Terrain.PixelIsIndestructibleToLemming(orientation.MoveUp(pos, 3), lemming) ||
@@ -50,7 +50,7 @@ public sealed class BasherAction : LemmingAction
 
     private bool StepUpCheck(
         Lemming lemming,
-        in LevelPosition pos,
+        LevelPosition pos,
         Orientation orientation,
         int dx,
         int step)

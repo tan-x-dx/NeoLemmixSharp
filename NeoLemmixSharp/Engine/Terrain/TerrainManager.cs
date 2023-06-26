@@ -73,14 +73,14 @@ public sealed class TerrainManager
         }
     }
 
-    public LevelPosition NormalisePosition(in LevelPosition levelPosition)
+    public LevelPosition NormalisePosition(LevelPosition levelPosition)
     {
         return new LevelPosition(
             _horizontalBoundaryBehaviour.NormaliseX(levelPosition.X),
             _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y));
     }
 
-    public bool PositionOutOfBounds(in LevelPosition levelPosition)
+    public bool PositionOutOfBounds(LevelPosition levelPosition)
     {
         return levelPosition.X < 0 ||
                levelPosition.X >= Width ||
@@ -88,7 +88,7 @@ public sealed class TerrainManager
                levelPosition.Y >= Height;
     }
 
-    private PixelType GetPixelData(in LevelPosition levelPosition)
+    private PixelType GetPixelData(LevelPosition levelPosition)
     {
         if (PositionOutOfBounds(levelPosition))
             return PixelType.Void;
@@ -97,7 +97,7 @@ public sealed class TerrainManager
         return _data[index];
     }
 
-    public bool PixelIsSolidToLemming(in LevelPosition levelPosition, Lemming lemming)
+    public bool PixelIsSolidToLemming(LevelPosition levelPosition, Lemming lemming)
     {
         var pixel = GetPixelData(levelPosition);
         if (pixel == PixelType.Solid || pixel == PixelType.Steel)
@@ -112,7 +112,7 @@ public sealed class TerrainManager
         return false;
     }
 
-    public bool PixelIsIndestructibleToLemming(in LevelPosition levelPosition, Lemming lemming)
+    public bool PixelIsIndestructibleToLemming(LevelPosition levelPosition, Lemming lemming)
     {
         var pixel = GetPixelData(levelPosition);
         if (pixel == PixelType.Steel)
@@ -144,7 +144,7 @@ public sealed class TerrainManager
         return false;
     }
 
-    public void ErasePixel(in LevelPosition pixelToErase)
+    public void ErasePixel(LevelPosition pixelToErase)
     {
         if (PositionOutOfBounds(pixelToErase))
             return;
@@ -159,7 +159,7 @@ public sealed class TerrainManager
         }
     }
 
-    public void SetSolidPixel(in LevelPosition pixelToSet, uint colour)
+    public void SetSolidPixel(LevelPosition pixelToSet, uint colour)
     {
         if (PositionOutOfBounds(pixelToSet))
             return;

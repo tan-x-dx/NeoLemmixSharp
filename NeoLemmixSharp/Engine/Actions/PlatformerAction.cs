@@ -118,7 +118,7 @@ public sealed class PlatformerAction : LemmingAction
 
     private static bool PlatformerTerrainCheck(
         Lemming lemming,
-        in LevelPosition pos,
+        LevelPosition pos,
         Orientation orientation)
     {
         return Terrain.PixelIsSolidToLemming(orientation.MoveUp(pos, 1), lemming) ||

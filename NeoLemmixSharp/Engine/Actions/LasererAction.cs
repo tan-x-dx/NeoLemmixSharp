@@ -124,7 +124,7 @@ public sealed class LasererAction : LemmingAction
 
     private LaserHitType CheckForHit(
         Lemming lemming,
-        in LevelPosition target,
+        LevelPosition target,
         Orientation orientation,
         int dx)
     {
