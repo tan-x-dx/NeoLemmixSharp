@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
 
-public sealed class LemmingRenderer : ILevelObjectRenderer
+public sealed class LemmingRenderer : IViewportObjectRenderer
 {
     private Engine.Lemming _lemming;
     private ActionSprite _actionSprite;

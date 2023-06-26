@@ -42,8 +42,7 @@ public sealed class LevelBuilder : IDisposable
     {
         _levelReader.ReadLevel(levelFilePath);
 
-        _terrainPainter.PaintLevel(
-            _levelReader.LevelData);
+        _terrainPainter.PaintLevel(_levelReader.LevelData);
 
         var terrainTexture = _terrainPainter.GetTerrainTexture();
 

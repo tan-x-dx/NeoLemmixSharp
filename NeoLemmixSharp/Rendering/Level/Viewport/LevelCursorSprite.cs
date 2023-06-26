@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine;
 
 namespace NeoLemmixSharp.Rendering.Level.Viewport;
 
-public sealed class LevelCursorSprite : ILevelObjectRenderer
+public sealed class LevelCursorSprite : IViewportObjectRenderer
 {
     public const int CursorSizeInPixels = 16;
     public const int HalfCursorSizeInPixels = CursorSizeInPixels / 2;

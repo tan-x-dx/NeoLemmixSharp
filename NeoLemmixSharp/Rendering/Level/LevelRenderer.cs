@@ -19,7 +19,7 @@ public sealed class LevelRenderer : ScreenRenderer
 
     private readonly IBackgroundRenderer _backgroundRenderer;
     private readonly TerrainRenderer _terrainRenderer;
-    private readonly ILevelObjectRenderer[] _levelSprites;
+    private readonly IViewportObjectRenderer[] _levelSprites;
     private readonly LevelCursorSprite _cursorSprite;
 
     private readonly IControlPanelRenderer _controlPanelRenderer;
@@ -36,7 +36,7 @@ public sealed class LevelRenderer : ScreenRenderer
         LevelViewport viewport,
         IBackgroundRenderer backgroundRenderer,
         TerrainRenderer terrainRenderer,
-        ILevelObjectRenderer[] levelSprites,
+        IViewportObjectRenderer[] levelSprites,
         LevelCursorSprite levelCursorSprite,
         IControlPanelRenderer controlPanelRenderer,
         LemmingSpriteBank lemmingSpriteBank,

@@ -45,9 +45,9 @@ public sealed class LevelAssembler : IDisposable
         ContentManager content,
         LevelData levelData)
     {
-        SetUpTestLemmings();
+        //SetUpTestLemmings();
         SetUpLemmings();
-        SetUpGadgets();
+        SetUpGadgets(levelData.AllGadgetData);
 
         levelData.SkillSetData = new SkillSetData
         {
@@ -85,11 +85,11 @@ public sealed class LevelAssembler : IDisposable
         return Array.Empty<Gadget>();
     }
 
-    public ILevelObjectRenderer[] GetLevelSprites()
+    public IViewportObjectRenderer[] GetLevelSprites()
     {
         return _lemmings
             .Select(l => l.Renderer)
-            .ToArray<ILevelObjectRenderer>();
+            .ToArray<IViewportObjectRenderer>();
     }
 
     public void Dispose()
@@ -302,7 +302,7 @@ public sealed class LevelAssembler : IDisposable
 
     }
 
-    private void SetUpGadgets()
+    private void SetUpGadgets(ICollection<GadgetData> allGadgetData)
     {
 
     }
