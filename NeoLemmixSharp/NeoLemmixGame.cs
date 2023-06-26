@@ -120,8 +120,6 @@ public sealed class NeoLemmixGame : Game, IGameWindow
     protected override void Update(GameTime gameTime)
     {
         Screen.Tick();
-
-        base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
@@ -136,8 +134,6 @@ public sealed class NeoLemmixGame : Game, IGameWindow
         ScreenRenderer.RenderScreen(_spriteBatch);
 
         _spriteBatch.End();
-
-        base.Draw(gameTime);
     }
 
     public void ToggleFullScreen()
