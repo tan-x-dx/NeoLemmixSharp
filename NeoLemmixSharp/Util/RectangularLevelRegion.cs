@@ -1,18 +1,16 @@
-﻿using System;
+﻿namespace NeoLemmixSharp.Util;
 
-namespace NeoLemmixSharp.Util;
-
-public readonly struct LevelRegion : IEquatable<LevelRegion>
+public sealed class RectangularLevelRegion : ILevelRegion
 {
-    public readonly int X;
-    public readonly int Y;
-    public readonly int W;
-    public readonly int H;
+    public int X { get; set; }
+    public int Y { get; set; }
+    public int W { get; set; }
+    public int H { get; set; }
 
     public int X1 => X + W;
     public int Y1 => Y + H;
 
-    public LevelRegion(int x, int y, int w, int h)
+    public RectangularLevelRegion(int x, int y, int w, int h)
     {
         X = x;
         Y = y;
@@ -25,17 +23,13 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
                                                               levelPosition.X < X1 &&
                                                               levelPosition.Y < Y1;
 
-    public bool IntersectsRegion(LevelRegion otherRegion) => otherRegion.X < X1 &&
-                                                             X < otherRegion.X1 &&
-                                                             otherRegion.Y < Y1 &&
-                                                             Y < otherRegion.Y1;
-
-    public bool Equals(LevelRegion other) => X == other.X &&
+    /*
+    public bool Equals(RectangularLevelRegion other) => X == other.X &&
                                              Y == other.Y &&
                                              W == other.W &&
                                              H == other.H;
 
-    public override bool Equals(object? obj) => obj is LevelRegion other &&
+    public override bool Equals(object? obj) => obj is RectangularLevelRegion other &&
                                                 X == other.X &&
                                                 Y == other.Y &&
                                                 W == other.W &&
@@ -47,13 +41,13 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
                                          39097 * H +
                                          57719;
 
-    public static bool operator ==(LevelRegion left, LevelRegion right) => left.X == right.X &&
+    public static bool operator ==(RectangularLevelRegion left, RectangularLevelRegion right) => left.X == right.X &&
                                                                            left.Y == right.Y &&
                                                                            left.W == right.W &&
                                                                            left.H == right.H;
 
-    public static bool operator !=(LevelRegion left, LevelRegion right) => left.X != right.X ||
+    public static bool operator !=(RectangularLevelRegion left, RectangularLevelRegion right) => left.X != right.X ||
                                                                            left.Y != right.Y ||
                                                                            left.W != right.W ||
-                                                                           left.H != right.H;
+                                                                           left.H != right.H;*/
 }
