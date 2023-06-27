@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine.Gadgets;
 
 public abstract class Gadget : IEquatable<Gadget>
 {
-    public abstract GadgetType GadgetType { get; }
+    // public abstract GadgetType GadgetType { get; }
     public abstract int GadgetId { get; }
 
     public abstract bool CanActAsSolid { get; }

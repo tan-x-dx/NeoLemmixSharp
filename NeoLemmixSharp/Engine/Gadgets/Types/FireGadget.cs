@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Gadgets.Types;
 
 public sealed class FireGadget : Gadget
 {
-    public override GadgetType GadgetType { get; }
+    // public override GadgetType GadgetType { get; }
     public override int GadgetId { get; }
     public override bool CanActAsSolid { get; }
     public override bool CanActAsIndestructible { get; }

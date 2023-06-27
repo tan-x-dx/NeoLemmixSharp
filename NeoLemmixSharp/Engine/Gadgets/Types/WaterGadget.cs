@@ -7,7 +7,7 @@ public sealed class WaterGadget : Gadget
 {
     private readonly RectangularLevelRegion _levelRegion;
 
-    public override GadgetType GadgetType => GadgetType.Water;
+    // public override GadgetType GadgetType => GadgetType.Water;
     public override int GadgetId { get; }
     public override bool CanActAsSolid => false;
     public override bool CanActAsIndestructible => false;
