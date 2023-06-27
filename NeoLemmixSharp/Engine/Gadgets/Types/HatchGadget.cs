@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Orientations;
 using NeoLemmixSharp.Util;
 
-namespace NeoLemmixSharp.Engine.Gadgets;
+namespace NeoLemmixSharp.Engine.Gadgets.Types;
 
 public sealed class HatchGadget : Gadget
 {

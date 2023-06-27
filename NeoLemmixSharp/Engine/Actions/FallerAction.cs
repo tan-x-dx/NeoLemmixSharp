@@ -26,7 +26,7 @@ public sealed class FallerAction : LemmingAction
 
         var lemmingPosition = lemming.LevelPosition;
 
-        if (Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Updraft, lemmingPosition, lemming.Orientation.GetOpposite()))
+        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, lemming.Orientation.GetOpposite(), out _))
         {
             maxFallDistanceStep = 2;
         }
@@ -48,7 +48,7 @@ public sealed class FallerAction : LemmingAction
             lemming.DistanceFallen++;
             lemming.TrueDistanceFallen++;
 
-            if (Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Updraft, lemmingPosition, lemming.Orientation.GetOpposite()))
+            if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, lemming.Orientation.GetOpposite(), out _))
             {
                 lemming.DistanceFallen = 0;
             }
@@ -77,9 +77,9 @@ public sealed class FallerAction : LemmingAction
     private static bool IsFallFatal(Lemming lemming)
     {
         return !(lemming.IsFloater || lemming.IsGlider) &&
-               !Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.NoSplat, lemming.LevelPosition, lemming.Orientation) &&
+               false/*!Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.NoSplat, lemming.LevelPosition, lemming.Orientation)*/ &&
                (lemming.DistanceFallen > MaxFallDistance ||
-                Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Splat, lemming.LevelPosition, lemming.Orientation));
+                false/*Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Splat, lemming.LevelPosition, lemming.Orientation)*/);
     }
 
     private static bool CheckFloaterOrGliderTransition(

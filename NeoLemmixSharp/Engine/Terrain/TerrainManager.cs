@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NeoLemmixSharp.Engine.BoundaryBehaviours;
+﻿using NeoLemmixSharp.Engine.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Engine.Gadgets;
-using NeoLemmixSharp.Engine.Orientations;
 using NeoLemmixSharp.Rendering.Level;
 using NeoLemmixSharp.Util;
+using System.Collections.Generic;
 
 namespace NeoLemmixSharp.Engine.Terrain;
 
@@ -19,7 +17,6 @@ public sealed class TerrainManager
 
     private readonly List<Gadget> _gadgetsThatCanActAsSolid = new();
     private readonly List<Gadget> _gadgetsThatCanActAsIndestructible = new();
-    private readonly Dictionary<GadgetType, Gadget[]> _gadgetLookup = new();
 
     public TerrainRenderer TerrainRenderer { get; }
 
@@ -54,21 +51,16 @@ public sealed class TerrainManager
 
     private void SetUpGadgets(IEnumerable<Gadget> gadgets)
     {
-        foreach (var gadgetGroup in gadgets.GroupBy(g => g.GadgetType))
+        foreach (var gadget in gadgets)
         {
-            _gadgetLookup.Add(gadgetGroup.Key, gadgetGroup.ToArray());
-
-            foreach (var gadget in gadgetGroup)
+            if (gadget.CanActAsSolid)
             {
-                if (gadget.CanActAsSolid)
-                {
-                    _gadgetsThatCanActAsSolid.Add(gadget);
-                }
+                _gadgetsThatCanActAsSolid.Add(gadget);
+            }
 
-                if (gadget.CanActAsIndestructible)
-                {
-                    _gadgetsThatCanActAsIndestructible.Add(gadget);
-                }
+            if (gadget.CanActAsIndestructible)
+            {
+                _gadgetsThatCanActAsIndestructible.Add(gadget);
             }
         }
     }
@@ -121,23 +113,6 @@ public sealed class TerrainManager
         for (var i = 0; i < _gadgetsThatCanActAsIndestructible.Count; i++)
         {
             if (_gadgetsThatCanActAsIndestructible[i].IsIndestructibleToLemming(levelPosition, lemming))
-                return true;
-        }
-
-        return false;
-    }
-
-    public bool HasGadgetThatMatchesTypeAndOrientation(
-        GadgetType gadgetType,
-        LevelPosition levelPosition,
-        Orientation orientation)
-    {
-        if (!_gadgetLookup.TryGetValue(gadgetType, out var gadgetArray))
-            return false;
-
-        for (var i = 0; i < gadgetArray.Length; i++)
-        {
-            if (gadgetArray[i].MatchesOrientation(levelPosition, orientation))
                 return true;
         }
 

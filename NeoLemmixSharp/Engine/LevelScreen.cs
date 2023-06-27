@@ -243,6 +243,7 @@ public sealed class LevelScreen : BaseScreen
         LevelCursor.LevelScreen = null;
 
         ScreenRenderer.Dispose();
+        GadgetCollections.ClearGadgets();
 #pragma warning restore CS8625
     }
     /*
