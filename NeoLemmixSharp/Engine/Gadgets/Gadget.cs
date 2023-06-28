@@ -1,16 +1,23 @@
-﻿using System;
-using NeoLemmixSharp.Engine.Orientations;
+﻿using NeoLemmixSharp.Engine.Orientations;
 using NeoLemmixSharp.Util;
+using System;
 
 namespace NeoLemmixSharp.Engine.Gadgets;
 
 public abstract class Gadget : IEquatable<Gadget>
 {
     // public abstract GadgetType GadgetType { get; }
-    public abstract int GadgetId { get; }
+    public Orientation Orientation { get; }
+    public int GadgetId { get; }
 
     public abstract bool CanActAsSolid { get; }
     public abstract bool CanActAsIndestructible { get; }
+
+    protected Gadget(int gadgetId, Orientation orientation)
+    {
+        GadgetId = gadgetId;
+        Orientation = orientation;
+    }
 
     public abstract bool IsSolidToLemming(LevelPosition levelPosition, Lemming lemming);
     public abstract bool IsIndestructibleToLemming(LevelPosition levelPosition, Lemming lemming);

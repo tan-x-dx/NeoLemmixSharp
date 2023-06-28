@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NeoLemmixSharp.Util;
+namespace NeoLemmixSharp.Util.LevelRegion;
 
 public sealed class PointSetLevelRegion : ILevelRegion
 {

@@ -8,13 +8,15 @@ public sealed class HatchGadget : Gadget
     private readonly LevelPosition _anchorPosition;
 
     // public override GadgetType GadgetType => GadgetType.Hatch;
-    public override int GadgetId { get; }
     public override bool CanActAsSolid => false;
     public override bool CanActAsIndestructible => false;
 
-    public HatchGadget(int gadgetId, LevelPosition anchorPosition)
+    public HatchGadget(
+        int gadgetId,
+        Orientation orientation,
+        LevelPosition anchorPosition)
+        : base(gadgetId, orientation)
     {
-        GadgetId = gadgetId;
         _anchorPosition = anchorPosition;
     }
 

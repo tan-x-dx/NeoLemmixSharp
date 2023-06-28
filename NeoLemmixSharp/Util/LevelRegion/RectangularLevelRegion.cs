@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Util;
+﻿namespace NeoLemmixSharp.Util.LevelRegion;
 
 public sealed class RectangularLevelRegion : ILevelRegion
 {
@@ -9,6 +9,8 @@ public sealed class RectangularLevelRegion : ILevelRegion
 
     public int X1 => X + W;
     public int Y1 => Y + H;
+
+    public LevelPosition TopLeft => new(X, Y);
 
     public RectangularLevelRegion(int x, int y, int w, int h)
     {

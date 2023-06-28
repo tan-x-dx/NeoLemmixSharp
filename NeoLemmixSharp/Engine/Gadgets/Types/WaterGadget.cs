@@ -1,21 +1,27 @@
 ﻿using NeoLemmixSharp.Engine.Orientations;
 using NeoLemmixSharp.Util;
+using NeoLemmixSharp.Util.LevelRegion;
 
 namespace NeoLemmixSharp.Engine.Gadgets.Types;
 
 public sealed class WaterGadget : Gadget
 {
-    private readonly RectangularLevelRegion _levelRegion;
+    private readonly RectangularLevelRegion _renderClip;
+    private readonly RectangularLevelRegion _hitBox;
 
     // public override GadgetType GadgetType => GadgetType.Water;
-    public override int GadgetId { get; }
     public override bool CanActAsSolid => false;
     public override bool CanActAsIndestructible => false;
 
-    public WaterGadget(int gadgetId, RectangularLevelRegion levelRegion)
+    public WaterGadget(
+        int gadgetId,
+        Orientation orientation,
+        RectangularLevelRegion renderClip,
+        RectangularLevelRegion hitBox)
+        : base(gadgetId, orientation)
     {
-        GadgetId = gadgetId;
-        _levelRegion = levelRegion;
+        _renderClip = renderClip;
+        _hitBox = hitBox;
     }
 
     public override bool IsSolidToLemming(LevelPosition levelPosition, Lemming lemming) => false;
@@ -23,6 +29,9 @@ public sealed class WaterGadget : Gadget
 
     public override bool MatchesOrientation(LevelPosition levelPosition, Orientation orientation)
     {
-        return _levelRegion.ContainsPoint(levelPosition); // Water objects do not care about orientation;
+        var offset = levelPosition - _hitBox.TopLeft;
+
+        return _hitBox.ContainsPoint(offset) ||
+               _hitBox.ContainsPoint(orientation.MoveUp(offset, 1));
     }
 }

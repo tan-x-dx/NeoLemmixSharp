@@ -6,9 +6,14 @@ namespace NeoLemmixSharp.Engine.Gadgets.Types;
 public sealed class ExitGadget : Gadget
 {
     // public override GadgetType GadgetType { get; }
-    public override int GadgetId { get; }
     public override bool CanActAsSolid { get; }
     public override bool CanActAsIndestructible { get; }
+
+    public ExitGadget(int gadgetId, Orientation orientation)
+        : base(gadgetId, orientation)
+    {
+    }
+
     public override bool IsSolidToLemming(LevelPosition levelPosition, Lemming lemming)
     {
         throw new System.NotImplementedException();
@@ -23,4 +28,5 @@ public sealed class ExitGadget : Gadget
     {
         throw new System.NotImplementedException();
     }
+
 }

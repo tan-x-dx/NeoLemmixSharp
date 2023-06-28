@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Util;
+﻿namespace NeoLemmixSharp.Util.LevelRegion;
 
 public interface ILevelRegion
 {
