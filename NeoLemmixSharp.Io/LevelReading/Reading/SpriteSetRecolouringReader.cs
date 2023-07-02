@@ -1,6 +1,6 @@
-﻿using NeoLemmixSharp.Io.LevelBuilding.Data.SpriteSet;
+﻿using NeoLemmixSharp.Io.LevelReading.Data.SpriteSet;
 
-namespace NeoLemmixSharp.Io.LevelBuilding.Reading;
+namespace NeoLemmixSharp.Io.LevelReading.Reading;
 
 public sealed class SpriteSetRecolouringReader : IDataReader
 {

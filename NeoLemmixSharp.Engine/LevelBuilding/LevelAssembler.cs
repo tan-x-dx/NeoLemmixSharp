@@ -10,7 +10,7 @@ using NeoLemmixSharp.Engine.Rendering.Level.Ui;
 using NeoLemmixSharp.Engine.Rendering.Level.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Gadget;
 using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Lemming;
-using NeoLemmixSharp.Io.LevelBuilding.Data;
+using NeoLemmixSharp.Io.LevelReading.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 

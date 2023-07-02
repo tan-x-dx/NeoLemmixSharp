@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Io.LevelBuilding.Data.SpriteSet;
+﻿namespace NeoLemmixSharp.Io.LevelReading.Data.SpriteSet;
 
 public sealed class LemmingStateRecolouring
 {

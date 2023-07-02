@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Engine.Skills;
-using NeoLemmixSharp.Io.LevelBuilding.Data;
+using NeoLemmixSharp.Io.LevelReading.Data;
 
 namespace NeoLemmixSharp.Engine.Engine;
 

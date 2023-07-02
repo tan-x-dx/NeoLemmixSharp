@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Gadget;
-using NeoLemmixSharp.Io.LevelBuilding.Data;
-using NeoLemmixSharp.Io.LevelBuilding.Sprites;
+using NeoLemmixSharp.Io.LevelReading.Data;
+using NeoLemmixSharp.Io.LevelReading.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 

@@ -1,7 +1,7 @@
-﻿using NeoLemmixSharp.Io.LevelBuilding.Data;
-using NeoLemmixSharp.Io.LevelBuilding.Data.SpriteSet;
+﻿using NeoLemmixSharp.Io.LevelReading.Data;
+using NeoLemmixSharp.Io.LevelReading.Data.SpriteSet;
 
-namespace NeoLemmixSharp.Io.LevelBuilding.Reading;
+namespace NeoLemmixSharp.Io.LevelReading.Reading;
 
 public sealed class AnimationDataReader : IDataReader
 {

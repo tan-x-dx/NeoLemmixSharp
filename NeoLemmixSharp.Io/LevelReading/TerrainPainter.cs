@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Io.LevelBuilding.Data;
-using NeoLemmixSharp.Io.LevelBuilding.Sprites;
+using NeoLemmixSharp.Io.LevelReading.Data;
+using NeoLemmixSharp.Io.LevelReading.Sprites;
 
-namespace NeoLemmixSharp.Io.LevelBuilding;
+namespace NeoLemmixSharp.Io.LevelReading;
 
 public sealed class TerrainPainter : IDisposable
 {

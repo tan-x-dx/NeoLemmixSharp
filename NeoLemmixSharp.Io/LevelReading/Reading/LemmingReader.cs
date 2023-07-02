@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Io.LevelBuilding.Reading;
+﻿namespace NeoLemmixSharp.Io.LevelReading.Reading;
 
 public sealed class LemmingReader : IDataReader
 {

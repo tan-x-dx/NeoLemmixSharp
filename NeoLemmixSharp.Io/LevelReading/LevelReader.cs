@@ -1,7 +1,7 @@
-﻿using NeoLemmixSharp.Io.LevelBuilding.Data;
-using NeoLemmixSharp.Io.LevelBuilding.Reading;
+﻿using NeoLemmixSharp.Io.LevelReading.Data;
+using NeoLemmixSharp.Io.LevelReading.Reading;
 
-namespace NeoLemmixSharp.Io.LevelBuilding;
+namespace NeoLemmixSharp.Io.LevelReading;
 
 public sealed class LevelReader : IDisposable
 {

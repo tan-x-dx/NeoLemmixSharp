@@ -1,6 +1,6 @@
-﻿using NeoLemmixSharp.Io.LevelBuilding.Data.SpriteSet;
+﻿using NeoLemmixSharp.Io.LevelReading.Data.SpriteSet;
 
-namespace NeoLemmixSharp.Io.LevelBuilding.Data;
+namespace NeoLemmixSharp.Io.LevelReading.Data;
 
 public sealed class ThemeData
 {

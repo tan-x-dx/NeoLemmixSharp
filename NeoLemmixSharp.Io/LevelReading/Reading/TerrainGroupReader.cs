@@ -1,6 +1,6 @@
-﻿using NeoLemmixSharp.Io.LevelBuilding.Data;
+﻿using NeoLemmixSharp.Io.LevelReading.Data;
 
-namespace NeoLemmixSharp.Io.LevelBuilding.Reading;
+namespace NeoLemmixSharp.Io.LevelReading.Reading;
 
 public sealed class TerrainGroupReader : IDataReader
 {
