@@ -4,10 +4,10 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.LevelBuilding;
-using NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
 using System;
 using System.Runtime.InteropServices;
+using NeoLemmixSharp.Engine.LevelBuilding;
+using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Lemming;
 
 namespace NeoLemmixSharp;
 

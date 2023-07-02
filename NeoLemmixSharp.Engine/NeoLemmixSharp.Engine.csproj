@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj" />
+    <ProjectReference Include="..\NeoLemmixSharp.Io\NeoLemmixSharp.Io.csproj" />
   </ItemGroup>
 
 </Project>
