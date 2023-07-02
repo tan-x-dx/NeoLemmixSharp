@@ -75,7 +75,6 @@ public sealed class LevelBuilder : IDisposable
             levelData.LevelWidth,
             levelData.LevelHeight,
             pixelData,
-            levelGadgets,
             terrainRenderer,
             levelData.HorizontalBoundaryBehaviour,
             levelData.VerticalBoundaryBehaviour);

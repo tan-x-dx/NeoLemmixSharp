@@ -23,7 +23,7 @@ public sealed class LevelScreen : BaseScreen
     private readonly ILevelControlPanel _controlPanel;
 
     private readonly Lemming[] _lemmings;
-    private readonly Gadget[] _gadgets;
+    private readonly IGadget[] _gadgets;
 
     private readonly IFrameUpdater _standardFrameUpdater;
     private readonly IFrameUpdater _fastForwardFrameUpdater;
@@ -46,7 +46,7 @@ public sealed class LevelScreen : BaseScreen
         LevelData levelData,
         TerrainManager terrain,
         Lemming[] lemmings,
-        Gadget[] gadgets,
+        IGadget[] gadgets,
         LevelInputController levelInputController,
         ILevelControlPanel controlPanel,
         LevelCursor cursor,
@@ -102,6 +102,11 @@ public sealed class LevelScreen : BaseScreen
 
         if (!shouldTickLemmings)
             return;
+
+        for (var i = 0; i < _gadgets.Length; i++)
+        {
+            _gadgets[i].Tick();
+        }
 
         for (var i = 0; i < _lemmings.Length; i++)
         {

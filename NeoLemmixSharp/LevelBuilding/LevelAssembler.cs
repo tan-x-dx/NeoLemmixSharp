@@ -23,6 +23,7 @@ public sealed class LevelAssembler : IDisposable
     private readonly SpriteBatch _spriteBatch;
 
     private readonly List<Lemming> _lemmings = new();
+    private readonly List<IGadget> _gadgets = new();
 
     private readonly LemmingSpriteBankBuilder _lemmingSpriteBankBuilder;
     private readonly GadgetSpriteBankBuilder _gadgetSpriteBankBuilder;
@@ -37,7 +38,7 @@ public sealed class LevelAssembler : IDisposable
         _spriteBatch = spriteBatch;
 
         _lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
-        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder();
+        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(_graphicsDevice);
         _controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder(graphicsDevice, contentManager);
     }
 
@@ -80,9 +81,9 @@ public sealed class LevelAssembler : IDisposable
         return _lemmings.ToArray();
     }
 
-    public Gadget[] GetLevelGadgets()
+    public IGadget[] GetLevelGadgets()
     {
-        return Array.Empty<Gadget>();
+        return _gadgets.ToArray();
     }
 
     public IViewportObjectRenderer[] GetLevelSprites()
@@ -304,6 +305,9 @@ public sealed class LevelAssembler : IDisposable
 
     private void SetUpGadgets(ICollection<GadgetData> allGadgetData)
     {
-
+        foreach (var gadgetData in allGadgetData)
+        {
+            _gadgetSpriteBankBuilder.LoadGadgetSprite(gadgetData);
+        }
     }
 }
