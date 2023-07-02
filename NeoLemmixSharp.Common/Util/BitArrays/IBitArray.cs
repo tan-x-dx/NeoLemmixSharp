@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-namespace NeoLemmixSharp.Util.BitArrays;
+namespace NeoLemmixSharp.Common.Util.BitArrays;
 
 public interface IBitArray : ICollection<int>, IReadOnlyCollection<int>, ICloneable
 {

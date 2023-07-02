@@ -13,6 +13,11 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Util\**" />
+    <EmbeddedResource Remove="Util\**" />
+    <None Remove="Util\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />
   </ItemGroup>
@@ -27,6 +32,9 @@
   <ItemGroup>
     <Folder Include="Engine\Skills\" />
     <Folder Include="Screen\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />

@@ -1,9 +1,9 @@
-﻿using NeoLemmixSharp.Util;
-using System;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Engine.Input;
+using System;
 
 namespace NeoLemmixSharp.Engine;
 

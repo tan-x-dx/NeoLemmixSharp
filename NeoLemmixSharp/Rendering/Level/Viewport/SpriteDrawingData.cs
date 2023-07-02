@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Orientations;
 using NeoLemmixSharp.LevelBuilding.Sprites;
-using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Rendering.Level.Viewport;
 

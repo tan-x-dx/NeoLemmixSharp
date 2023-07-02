@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NeoLemmixSharp.Util.GameInput;
+﻿namespace NeoLemmixSharp.Common.Util.GameInput;
 
 public abstract class BaseKeyAction : IEquatable<BaseKeyAction>
 {

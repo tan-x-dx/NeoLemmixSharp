@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Orientations;
-using NeoLemmixSharp.Util;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Orientations;
 
 namespace NeoLemmixSharp.Engine.Actions;
 

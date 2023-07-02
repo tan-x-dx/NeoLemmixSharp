@@ -1,8 +1,8 @@
-﻿using NeoLemmixSharp.Engine.Actions;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Actions;
 using NeoLemmixSharp.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Orientations;
 using NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
-using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine;
 

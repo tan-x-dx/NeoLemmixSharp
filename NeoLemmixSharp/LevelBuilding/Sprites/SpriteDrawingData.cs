@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Orientations;
-using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.LevelBuilding.Sprites;
 

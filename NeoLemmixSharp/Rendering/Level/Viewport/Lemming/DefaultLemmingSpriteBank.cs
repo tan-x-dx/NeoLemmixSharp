@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Actions;
 using NeoLemmixSharp.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Orientations;
-using NeoLemmixSharp.Util;
 using static NeoLemmixSharp.Rendering.Level.Viewport.SpriteRotationReflectionProcessor;
 
 namespace NeoLemmixSharp.Rendering.Level.Viewport.Lemming;

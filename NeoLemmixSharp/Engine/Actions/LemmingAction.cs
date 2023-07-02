@@ -1,6 +1,6 @@
-﻿using NeoLemmixSharp.Engine.Orientations;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Orientations;
 using NeoLemmixSharp.Engine.Terrain;
-using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Numerics;
 
-namespace NeoLemmixSharp.Util.BitArrays;
+namespace NeoLemmixSharp.Common.Util.BitArrays;
 
 public sealed class IntBasedBitArray : IBitArray
 {

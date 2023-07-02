@@ -1,8 +1,8 @@
-﻿using System;
+﻿using NeoLemmixSharp.Engine.Input;
+using NeoLemmixSharp.Engine.Skills;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using NeoLemmixSharp.Engine.Input;
-using NeoLemmixSharp.Engine.Skills;
 
 namespace NeoLemmixSharp.Engine.ControlPanel;
 

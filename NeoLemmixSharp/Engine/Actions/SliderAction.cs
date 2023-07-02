@@ -1,6 +1,6 @@
-﻿using NeoLemmixSharp.Engine.Gadgets;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Orientations;
-using NeoLemmixSharp.Util;
 using System;
 
 namespace NeoLemmixSharp.Engine.Actions;

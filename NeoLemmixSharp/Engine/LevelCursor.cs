@@ -1,12 +1,12 @@
-﻿using NeoLemmixSharp.Engine.ControlPanel;
-using NeoLemmixSharp.Util;
-using System;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Actions;
 using NeoLemmixSharp.Engine.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.BoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Input;
 using NeoLemmixSharp.Engine.Skills;
+using System;
 
 namespace NeoLemmixSharp.Engine;
 

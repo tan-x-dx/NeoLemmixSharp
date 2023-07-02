@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Util;
+﻿using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Orientations;
 

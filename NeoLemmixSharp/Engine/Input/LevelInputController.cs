@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.Engine.FacingDirections;
-using NeoLemmixSharp.Util.GameInput;
 
 namespace NeoLemmixSharp.Engine.Input;
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.Actions;
 using NeoLemmixSharp.Engine.FacingDirections;
@@ -10,7 +11,6 @@ using NeoLemmixSharp.Rendering.Level.Ui;
 using NeoLemmixSharp.Rendering.Level.Viewport;
 using NeoLemmixSharp.Rendering.Level.Viewport.Gadget;
 using NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
-using NeoLemmixSharp.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;

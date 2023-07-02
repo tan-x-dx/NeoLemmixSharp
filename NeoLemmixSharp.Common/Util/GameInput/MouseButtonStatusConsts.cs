@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Util.GameInput;
+﻿namespace NeoLemmixSharp.Common.Util.GameInput;
 
 public static class MouseButtonStatusConsts
 {

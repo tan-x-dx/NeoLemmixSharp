@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 
-namespace NeoLemmixSharp.Util.GameInput;
+namespace NeoLemmixSharp.Common.Util.GameInput;
 
 public abstract class InputController
 {

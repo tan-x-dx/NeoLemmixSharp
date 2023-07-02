@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Util.LevelRegion;
+﻿namespace NeoLemmixSharp.Common.Util.LevelRegion;
 
 public sealed class RelativeRectangularLevelRegion : IRectangularLevelRegion
 {

@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Util;
+﻿namespace NeoLemmixSharp.Common.Util;
 
 public interface IGameWindow
 {

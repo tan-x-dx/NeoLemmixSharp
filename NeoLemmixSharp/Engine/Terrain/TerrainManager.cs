@@ -1,9 +1,9 @@
-﻿using NeoLemmixSharp.Engine.BoundaryBehaviours;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Engine.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Engine.Gadgets;
 using NeoLemmixSharp.Rendering.Level;
-using NeoLemmixSharp.Util;
 
 namespace NeoLemmixSharp.Engine.Terrain;
 

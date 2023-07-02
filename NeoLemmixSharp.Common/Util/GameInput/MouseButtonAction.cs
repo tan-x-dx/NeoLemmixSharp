@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 
-namespace NeoLemmixSharp.Util.GameInput;
+namespace NeoLemmixSharp.Common.Util.GameInput;
 
 public sealed class MouseButtonAction : IEquatable<MouseButtonAction>
 {

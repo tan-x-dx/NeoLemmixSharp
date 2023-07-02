@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NeoLemmixSharp.Util;
+﻿namespace NeoLemmixSharp.Common.Util;
 
 public readonly struct LevelPosition : IEquatable<LevelPosition>
 {

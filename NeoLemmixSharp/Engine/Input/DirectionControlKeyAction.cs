@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Engine.FacingDirections;
-using NeoLemmixSharp.Util.GameInput;
+﻿using NeoLemmixSharp.Common.Util.GameInput;
+using NeoLemmixSharp.Engine.FacingDirections;
 
 namespace NeoLemmixSharp.Engine.Input;
 

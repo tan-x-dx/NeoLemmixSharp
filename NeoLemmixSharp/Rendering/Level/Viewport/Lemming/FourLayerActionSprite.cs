@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Util;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
 
