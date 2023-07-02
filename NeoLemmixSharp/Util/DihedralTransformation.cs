@@ -42,7 +42,26 @@ public sealed class DihedralTransformation
         bool flipVertically,
         bool rotate)
     {
-        var key = GetKey(flipHorizontally, flipVertically, rotate);
+        var rotNum = rotate
+            ? 1
+            : 0;
+
+        int flipNum;
+        if (flipVertically)
+        {
+            flipNum = flipHorizontally
+                ? 0
+                : 4;
+            rotNum += 2;
+        }
+        else
+        {
+            flipNum = flipHorizontally
+                ? 4
+                : 0;
+        }
+
+        var key = flipNum | rotNum;
         return Lookup[key];
     }
 
@@ -56,28 +75,6 @@ public sealed class DihedralTransformation
 
         var key = flipNum | rotNum;
         return Lookup[key];
-    }
-
-    private static int GetKey(
-        bool flipHorizontally,
-        bool flipVertically,
-        bool rotate)
-    {
-        var rotNum = rotate
-            ? 1
-            : 0;
-
-        if (flipVertically)
-        {
-            flipHorizontally = !flipHorizontally;
-            rotNum += 2;
-        }
-
-        var flipNum = flipHorizontally
-            ? 4
-            : 0;
-
-        return flipNum | rotNum;
     }
 
     private readonly Rotation _rotation;
