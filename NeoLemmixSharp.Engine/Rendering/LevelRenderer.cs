@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -10,7 +11,7 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 namespace NeoLemmixSharp.Engine.Rendering;
 
-public sealed class LevelRenderer : ScreenRenderer
+public sealed class LevelRenderer : IScreenRenderer
 {
     public static LevelRenderer Current { get; private set; }
 
@@ -60,13 +61,16 @@ public sealed class LevelRenderer : ScreenRenderer
         Current = this;
     }
 
-    public override void RenderScreen(SpriteBatch spriteBatch)
+    public bool IsDisposed { get; set; }
+    public IGameWindow GameWindow { get; set; }
+
+    public void RenderScreen(SpriteBatch spriteBatch)
     {
         RenderLevel(spriteBatch);
         RenderControlPanel(spriteBatch);
     }
 
-    public override void OnWindowSizeChanged(int windowWidth, int windowHeight)
+    public void OnWindowSizeChanged(int windowWidth, int windowHeight)
     {
     }
 
@@ -129,9 +133,8 @@ public sealed class LevelRenderer : ScreenRenderer
         _fontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20);
     }
 
-    public override void Dispose()
+    public void Dispose()
     {
-
         Current = null;
     }
 }

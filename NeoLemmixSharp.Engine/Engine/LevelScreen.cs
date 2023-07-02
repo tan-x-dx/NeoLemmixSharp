@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Common.Screen;
+﻿using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Screen;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Engine.Gadgets;
@@ -12,7 +14,7 @@ using NeoLemmixSharp.Io.LevelReading.Data;
 
 namespace NeoLemmixSharp.Engine.Engine;
 
-public sealed class LevelScreen : BaseScreen
+public sealed class LevelScreen : IBaseScreen
 {
     private readonly TerrainManager _terrain;
 
@@ -33,7 +35,10 @@ public sealed class LevelScreen : BaseScreen
     private bool _stopMotion = true;
     private bool _doTick;
 
-    public override LevelRenderer ScreenRenderer { get; }
+    public LevelRenderer ScreenRenderer { get; }
+    public bool IsDisposed { get; set; }
+    public IGameWindow GameWindow { get; set; }
+    public string ScreenTitle { get; init; }
 
     public bool IsFastForwards { get; private set; }
 
@@ -84,7 +89,9 @@ public sealed class LevelScreen : BaseScreen
         // terrain.TerrainRenderer.SetViewport(_viewport);
     }
 
-    public override void Tick()
+    IScreenRenderer IBaseScreen.ScreenRenderer => ScreenRenderer;
+
+    public void Tick()
     {
         DoneAssignmentThisFrame = false;
         _levelCursor.OnNewFrame();
@@ -229,7 +236,7 @@ public sealed class LevelScreen : BaseScreen
         }
     }
 
-    public override void OnWindowSizeChanged()
+    public void OnWindowSizeChanged()
     {
         var windowWidth = GameWindow.WindowWidth;
         var windowHeight = GameWindow.WindowHeight;
@@ -239,7 +246,7 @@ public sealed class LevelScreen : BaseScreen
         ScreenRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
     }
 
-    public override void Dispose()
+    public void Dispose()
     {
 #pragma warning disable CS8625
         Orientation.SetTerrain(null);
@@ -252,7 +259,7 @@ public sealed class LevelScreen : BaseScreen
 #pragma warning restore CS8625
     }
     /*
-    public override ScreenRenderer CreateScreenRenderer(
+    public override IScreenRenderer CreateScreenRenderer(
         SpriteBank spriteBank,
         FontBank fontBank,
         ISprite[] levelSprites)

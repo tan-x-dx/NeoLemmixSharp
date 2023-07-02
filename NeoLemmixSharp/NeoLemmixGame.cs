@@ -26,8 +26,8 @@ public sealed class NeoLemmixGame : Game, IGameWindow
     public int WindowHeight => _graphics.PreferredBackBufferHeight;
 
     public bool IsFullScreen { get; private set; }
-    public BaseScreen Screen { get; set; }
-    public ScreenRenderer ScreenRenderer { get; set; }
+    public IBaseScreen Screen { get; set; }
+    public IScreenRenderer ScreenRenderer { get; set; }
 
     public NeoLemmixGame()
     {
