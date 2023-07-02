@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Io.LevelReading.Data;
 using NeoLemmixSharp.Io.LevelReading.Data.SpriteSet;
 
-namespace NeoLemmixSharp.Io.LevelReading.Reading;
+namespace NeoLemmixSharp.Io.LevelReading.Nxlv.Reading;
 
 public sealed class StateRecolouringReader : IDataReader
 {

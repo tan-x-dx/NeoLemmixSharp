@@ -13,8 +13,11 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Engine\**" />
     <Compile Remove="Util\**" />
+    <EmbeddedResource Remove="Engine\**" />
     <EmbeddedResource Remove="Util\**" />
+    <None Remove="Engine\**" />
     <None Remove="Util\**" />
   </ItemGroup>
   <ItemGroup>
@@ -28,9 +31,6 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Engine\Skills\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj" />

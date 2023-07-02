@@ -13,6 +13,7 @@ using NeoLemmixSharp.Engine.Rendering.Level.Ui;
 using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Background;
 using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Lemming;
 using NeoLemmixSharp.Io.LevelReading;
+using NeoLemmixSharp.Io.LevelReading.Nxlv;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -20,7 +21,7 @@ public sealed class LevelBuilder : IDisposable
 {
     private readonly ContentManager _content;
     private readonly FontBank _fontBank;
-    private readonly LevelReader _levelReader;
+    private readonly ILevelReader _levelReader;
     private readonly TerrainPainter _terrainPainter;
     private readonly LevelAssembler _levelAssembler;
 
@@ -32,7 +33,7 @@ public sealed class LevelBuilder : IDisposable
     {
         _content = content;
         _fontBank = fontBank;
-        _levelReader = new LevelReader();
+        _levelReader = new NxlvLevelReader();
         _terrainPainter = new TerrainPainter(graphicsDevice);
         _levelAssembler = new LevelAssembler(graphicsDevice, content, spriteBatch);
     }

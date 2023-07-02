@@ -5,7 +5,7 @@ using NeoLemmixSharp.Io.LevelReading.Sprites;
 
 namespace NeoLemmixSharp.Io.LevelReading;
 
-public sealed class TerrainPainter : IDisposable
+public sealed class TerrainPainter
 {
     public const uint MinimumSubstantialAlphaValue = 31;
 
@@ -166,13 +166,13 @@ public sealed class TerrainPainter : IDisposable
 
     private static uint BlendColours(uint foreground, uint background)
     {
-        var fgA = ((foreground >> 24) & 0xffU) / 255d;
-        var fgR = ((foreground >> 16) & 0xffU) / 255d;
-        var fgG = ((foreground >> 8) & 0xffU) / 255d;
+        var fgA = (foreground >> 24 & 0xffU) / 255d;
+        var fgR = (foreground >> 16 & 0xffU) / 255d;
+        var fgG = (foreground >> 8 & 0xffU) / 255d;
         var fgB = (foreground & 0xffU) / 255d;
-        var bgA = ((background >> 24) & 0xffU) / 255d;
-        var bgR = ((background >> 16) & 0xffU) / 255d;
-        var bgG = ((background >> 8) & 0xffU) / 255d;
+        var bgA = (background >> 24 & 0xffU) / 255d;
+        var bgR = (background >> 16 & 0xffU) / 255d;
+        var bgG = (background >> 8 & 0xffU) / 255d;
         var bgB = (background & 0xffU) / 255d;
         var newA = 1.0 - (1.0 - fgA) * (1.0 - bgA);
         var newR = fgR * fgA / newA + bgR * bgA * (1.0 - fgA) / newA;
@@ -183,12 +183,12 @@ public sealed class TerrainPainter : IDisposable
         var g = (uint)Math.Round(newG * 255);
         var b = (uint)Math.Round(newB * 255);
 
-        return (a << 24) | (r << 16) | (g << 8) | b;
+        return a << 24 | r << 16 | g << 8 | b;
     }
 
     private static bool PixelColourIsSubstantial(uint colour)
     {
-        var alpha = (colour >> 24) & 0xffU;
+        var alpha = colour >> 24 & 0xffU;
         return alpha > MinimumSubstantialAlphaValue;
     }
 

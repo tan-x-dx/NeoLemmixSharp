@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Io.LevelReading.Data;
 
-namespace NeoLemmixSharp.Io.LevelReading.Reading;
+namespace NeoLemmixSharp.Io.LevelReading.Nxlv.Reading;
 
 public sealed class TerrainReader : IDataReader
 {

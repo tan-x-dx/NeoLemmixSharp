@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Io.LevelReading.Reading;
+﻿namespace NeoLemmixSharp.Io.LevelReading.Nxlv.Reading;
 
 public static class ReadingHelpers
 {

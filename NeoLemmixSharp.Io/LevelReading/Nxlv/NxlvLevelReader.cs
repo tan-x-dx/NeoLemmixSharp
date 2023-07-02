@@ -1,9 +1,9 @@
 ﻿using NeoLemmixSharp.Io.LevelReading.Data;
-using NeoLemmixSharp.Io.LevelReading.Reading;
+using NeoLemmixSharp.Io.LevelReading.Nxlv.Reading;
 
-namespace NeoLemmixSharp.Io.LevelReading;
+namespace NeoLemmixSharp.Io.LevelReading.Nxlv;
 
-public sealed class LevelReader : IDisposable
+public sealed class NxlvLevelReader : ILevelReader
 {
     private const string _rootDirectory = "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5";
 
@@ -13,7 +13,7 @@ public sealed class LevelReader : IDisposable
 
     public LevelData LevelData { get; }
 
-    public LevelReader()
+    public NxlvLevelReader()
     {
         LevelData = new LevelData();
 
