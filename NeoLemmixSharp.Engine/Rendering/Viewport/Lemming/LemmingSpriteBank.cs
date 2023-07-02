@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Viewport.Lemming;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 public sealed class LemmingSpriteBank : IDisposable
 {
@@ -33,14 +33,14 @@ public sealed class LemmingSpriteBank : IDisposable
 
         var lowerBits = GetKey(orientation, facingDirection);
 
-        return (lemmingAction.Id << 3) | lowerBits;
+        return lemmingAction.Id << 3 | lowerBits;
     }
 
     public static int GetKey(
         Orientation orientation,
         FacingDirection facingDirection)
     {
-        return (orientation.RotNum << 1) | (facingDirection.Id);
+        return orientation.RotNum << 1 | facingDirection.Id;
     }
 
     public void Dispose()

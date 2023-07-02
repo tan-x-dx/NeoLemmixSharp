@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine.Rendering.Level.Viewport;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Ui;
+namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
 public sealed class ControlPanelSpriteBank : IDisposable
 {

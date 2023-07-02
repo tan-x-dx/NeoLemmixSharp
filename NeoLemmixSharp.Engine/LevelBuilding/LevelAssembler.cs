@@ -6,10 +6,10 @@ using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Engine.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Level.Ui;
-using NeoLemmixSharp.Engine.Rendering.Level.Viewport;
-using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Gadget;
-using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Lemming;
+using NeoLemmixSharp.Engine.Rendering.Ui;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
+using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
+using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Io.LevelReading.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Viewport;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
 public interface IViewportObjectRenderer : IDisposable
 {

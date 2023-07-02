@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.Engine;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level;
+namespace NeoLemmixSharp.Engine.Rendering;
 
 public sealed class TerrainRenderer : IDisposable
 {

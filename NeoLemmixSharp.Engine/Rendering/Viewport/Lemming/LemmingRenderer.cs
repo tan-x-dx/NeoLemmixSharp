@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Viewport.Lemming;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 public sealed class LemmingRenderer : IViewportObjectRenderer
 {

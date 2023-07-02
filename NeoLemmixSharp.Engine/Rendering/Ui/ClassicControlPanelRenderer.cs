@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Ui;
+namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
 public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 {

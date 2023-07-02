@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Gadgets;
-using NeoLemmixSharp.Engine.Rendering.Level;
+using NeoLemmixSharp.Engine.Rendering;
 
 namespace NeoLemmixSharp.Engine.Engine.Terrain;
 

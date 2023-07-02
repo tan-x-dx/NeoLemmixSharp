@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.Rendering.Level.Viewport.Gadget;
+﻿namespace NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 
 public sealed class GadgetSpriteBank : IDisposable
 {

@@ -2,10 +2,10 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Lemming;
+using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Io.LevelReading.Sprites;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Viewport;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
 public sealed class SpriteRotationReflectionProcessor
 {

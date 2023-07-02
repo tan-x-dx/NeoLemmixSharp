@@ -7,7 +7,7 @@ using NeoLemmixSharp.Common.Util;
 using System;
 using System.Runtime.InteropServices;
 using NeoLemmixSharp.Engine.LevelBuilding;
-using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Lemming;
+using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 namespace NeoLemmixSharp;
 

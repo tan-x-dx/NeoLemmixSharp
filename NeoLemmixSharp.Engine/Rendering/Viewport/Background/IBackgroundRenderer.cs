@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Viewport.Background;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.Background;
 
 public interface IBackgroundRenderer
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Viewport;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
 public readonly struct SpriteLayerData
 {

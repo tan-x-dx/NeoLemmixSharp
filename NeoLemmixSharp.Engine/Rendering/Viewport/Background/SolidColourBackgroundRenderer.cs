@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.Engine;
-using NeoLemmixSharp.Engine.Rendering.Level.Ui;
+using NeoLemmixSharp.Engine.Rendering.Ui;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Viewport.Background;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.Background;
 
 public sealed class SolidColourBackgroundRenderer : IBackgroundRenderer
 {

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Viewport.Lemming;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 public sealed class FiveLayerColourActionSprite : ActionSprite
 {
