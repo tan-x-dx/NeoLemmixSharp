@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Rendering.Level.Ui;
 using NeoLemmixSharp.Rendering.Level.Viewport;
 using NeoLemmixSharp.Rendering.Level.Viewport.Background;
 using NeoLemmixSharp.Rendering.Level.Viewport.Gadget;
 using NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
-using NeoLemmixSharp.Rendering.Text;
 
 namespace NeoLemmixSharp.Rendering.Level;
 

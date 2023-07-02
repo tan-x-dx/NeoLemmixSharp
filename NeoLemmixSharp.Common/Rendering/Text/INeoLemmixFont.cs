@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace NeoLemmixSharp.Rendering.Text;
+namespace NeoLemmixSharp.Common.Rendering.Text;
 
 public interface INeoLemmixFont : IDisposable
 {

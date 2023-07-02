@@ -11,9 +11,9 @@ using NeoLemmixSharp.Rendering.Level;
 using NeoLemmixSharp.Rendering.Level.Ui;
 using NeoLemmixSharp.Rendering.Level.Viewport.Background;
 using NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
-using NeoLemmixSharp.Rendering.Text;
 using System;
 using System.Linq;
+using NeoLemmixSharp.Common.Rendering.Text;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
