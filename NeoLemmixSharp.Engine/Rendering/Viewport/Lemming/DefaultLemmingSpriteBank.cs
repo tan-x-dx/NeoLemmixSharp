@@ -4,9 +4,9 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
-using static NeoLemmixSharp.Engine.Rendering.Level.Viewport.SpriteRotationReflectionProcessor;
+using static NeoLemmixSharp.Engine.Rendering.Viewport.SpriteRotationReflectionProcessor;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Viewport.Lemming;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 public static class DefaultLemmingSpriteBank
 {

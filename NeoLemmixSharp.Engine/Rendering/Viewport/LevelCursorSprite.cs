@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.Engine;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Viewport;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
 public sealed class LevelCursorSprite : IViewportObjectRenderer
 {

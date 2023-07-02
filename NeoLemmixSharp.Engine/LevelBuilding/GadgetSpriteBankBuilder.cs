@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Gadget;
+using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 using NeoLemmixSharp.Io.LevelReading.Data;
 using NeoLemmixSharp.Io.LevelReading.Sprites;
 

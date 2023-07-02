@@ -2,13 +2,13 @@
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Engine;
-using NeoLemmixSharp.Engine.Rendering.Level.Ui;
-using NeoLemmixSharp.Engine.Rendering.Level.Viewport;
-using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Background;
-using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Gadget;
-using NeoLemmixSharp.Engine.Rendering.Level.Viewport.Lemming;
+using NeoLemmixSharp.Engine.Rendering.Ui;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
+using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
+using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
+using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level;
+namespace NeoLemmixSharp.Engine.Rendering;
 
 public sealed class LevelRenderer : ScreenRenderer
 {

@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Io.LevelReading.Sprites;
 
-namespace NeoLemmixSharp.Engine.Rendering.Level.Viewport;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
 public sealed class SpriteDrawingData
 {
@@ -44,7 +44,7 @@ public sealed class SpriteDrawingData
 
             if (facingDirection == LeftFacingDirection.Instance)
             {
-                rotNum = (rotNum + 2) & 3;
+                rotNum = rotNum + 2 & 3;
                 flipHorizontally = true;
             }
             else

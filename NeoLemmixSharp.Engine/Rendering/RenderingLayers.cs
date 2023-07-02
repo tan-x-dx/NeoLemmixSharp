@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.Rendering.Level;
+﻿namespace NeoLemmixSharp.Engine.Rendering;
 
 public static class RenderingLayers
 {
