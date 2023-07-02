@@ -56,7 +56,7 @@ public sealed class WalkerSkill : LemmingSkill
             // see http://www.lemmingsforums.net/index.php?topic=2640.0
             var facingDirectionAsOrientation = lemming.FacingDirection.ConvertToRelativeOrientation(lemming.Orientation);
 
-            if (Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.ForceDirection, lemmingPosition, facingDirectionAsOrientation.GetOpposite()))
+            if (false/*Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.ForceDirection, lemmingPosition, facingDirectionAsOrientation.GetOpposite())*/)
             {
                 // Go one back to cancel the horizontal offset in WalkerAction's update method.
                 // unless the Lem will fall down (which is handles already in Transition)

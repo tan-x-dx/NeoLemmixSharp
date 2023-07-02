@@ -1,7 +1,7 @@
-﻿using System;
-using NeoLemmixSharp.Engine.Gadgets;
+﻿using NeoLemmixSharp.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Orientations;
 using NeoLemmixSharp.Util;
+using System;
 
 namespace NeoLemmixSharp.Engine.Actions;
 
@@ -63,7 +63,7 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        if (Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Water, lemmingPosition, lemming.Orientation))
+        if (GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, lemming.Orientation, out _))
         {
             lemmingPosition = lemming.Orientation.MoveLeft(lemmingPosition, dx);
             lemming.LevelPosition = lemmingPosition;
@@ -93,8 +93,8 @@ public sealed class SliderAction : LemmingAction
     private static bool SliderHasPixelAt(
         Lemming lemming,
         Orientation orientation,
-        in LevelPosition levelPosition,
-        in LevelPosition dehoistPin)
+        LevelPosition levelPosition,
+        LevelPosition dehoistPin)
     {
         if (Terrain.PixelIsSolidToLemming(dehoistPin, lemming))
             return true;

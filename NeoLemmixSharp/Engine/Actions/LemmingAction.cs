@@ -148,7 +148,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     protected static int FindGroundPixel(
         Lemming lemming,
         Orientation orientation,
-        in LevelPosition levelPosition)
+        LevelPosition levelPosition)
     {
         // Find the new ground pixel
         // If Result = 4, then at least 4 pixels are air below (X, Y)

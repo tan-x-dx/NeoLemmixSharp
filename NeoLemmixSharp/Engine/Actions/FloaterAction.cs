@@ -1,5 +1,5 @@
-﻿using System;
-using NeoLemmixSharp.Engine.Gadgets;
+﻿using NeoLemmixSharp.Engine.Gadgets;
+using System;
 
 namespace NeoLemmixSharp.Engine.Actions;
 
@@ -30,7 +30,7 @@ public sealed class FloaterAction : LemmingAction
 
         var levelPosition = lemming.LevelPosition;
 
-        if (Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Updraft, levelPosition, lemming.Orientation.GetOpposite()))
+        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(levelPosition, lemming.Orientation.GetOpposite(), out _))
         {
             maxFallDistance--;
         }

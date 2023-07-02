@@ -23,6 +23,7 @@ public sealed class LevelAssembler : IDisposable
     private readonly SpriteBatch _spriteBatch;
 
     private readonly List<Lemming> _lemmings = new();
+    private readonly List<IGadget> _gadgets = new();
 
     private readonly LemmingSpriteBankBuilder _lemmingSpriteBankBuilder;
     private readonly GadgetSpriteBankBuilder _gadgetSpriteBankBuilder;
@@ -37,7 +38,7 @@ public sealed class LevelAssembler : IDisposable
         _spriteBatch = spriteBatch;
 
         _lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
-        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder();
+        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(_graphicsDevice);
         _controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder(graphicsDevice, contentManager);
     }
 
@@ -45,9 +46,9 @@ public sealed class LevelAssembler : IDisposable
         ContentManager content,
         LevelData levelData)
     {
-        SetUpTestLemmings();
+        //SetUpTestLemmings();
         SetUpLemmings();
-        SetUpGadgets();
+        SetUpGadgets(levelData.AllGadgetData);
 
         levelData.SkillSetData = new SkillSetData
         {
@@ -80,16 +81,16 @@ public sealed class LevelAssembler : IDisposable
         return _lemmings.ToArray();
     }
 
-    public Gadget[] GetLevelGadgets()
+    public IGadget[] GetLevelGadgets()
     {
-        return Array.Empty<Gadget>();
+        return _gadgets.ToArray();
     }
 
-    public ILevelObjectRenderer[] GetLevelSprites()
+    public IViewportObjectRenderer[] GetLevelSprites()
     {
         return _lemmings
             .Select(l => l.Renderer)
-            .ToArray<ILevelObjectRenderer>();
+            .ToArray<IViewportObjectRenderer>();
     }
 
     public void Dispose()
@@ -115,62 +116,11 @@ public sealed class LevelAssembler : IDisposable
 
     private void SetUpTestLemmings()
     {
-        var lemming0 = new Lemming(
+        var lemmingX = new Lemming(
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
-            //    LevelPosition = new LevelPosition(470, 76),
             LevelPosition = new LevelPosition(160, 0),
-
-            Debug = true
-        };
-
-        var lemming1 = new Lemming(
-            orientation: DownOrientation.Instance,
-            facingDirection: LeftFacingDirection.Instance)
-        {
-            //    LevelPosition = new LevelPosition(470, 76),
-            LevelPosition = new LevelPosition(170, 0),
-
-            Debug = true
-        };
-
-        var lemming2 = new Lemming(
-            orientation: DownOrientation.Instance,
-            facingDirection: LeftFacingDirection.Instance)
-        {
-            //    LevelPosition = new LevelPosition(470, 76),
-            LevelPosition = new LevelPosition(180, 0),
-
-            Debug = true
-        };
-
-        var lemming3 = new Lemming(
-            orientation: DownOrientation.Instance,
-            facingDirection: LeftFacingDirection.Instance)
-        {
-            //    LevelPosition = new LevelPosition(470, 76),
-            LevelPosition = new LevelPosition(190, 0),
-
-            Debug = true
-        };
-
-        var lemming4 = new Lemming(
-            orientation: DownOrientation.Instance,
-            facingDirection: LeftFacingDirection.Instance)
-        {
-            //    LevelPosition = new LevelPosition(470, 76),
-            LevelPosition = new LevelPosition(200, 0),
-
-            Debug = true
-        };
-
-        var lemming5 = new Lemming(
-            orientation: DownOrientation.Instance,
-            facingDirection: LeftFacingDirection.Instance)
-        {
-            //    LevelPosition = new LevelPosition(470, 76),
-            LevelPosition = new LevelPosition(210, 0),
 
             Debug = true
         };
@@ -179,9 +129,7 @@ public sealed class LevelAssembler : IDisposable
             orientation: UpOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
-            //    LevelPosition = new LevelPosition(770, 10),
-            LevelPosition = new LevelPosition(126, 42),
-            // FacingDirection = LeftFacingDirection.Instance
+            LevelPosition = new LevelPosition(126, 42)
         };
 
 
@@ -189,32 +137,126 @@ public sealed class LevelAssembler : IDisposable
             orientation: LeftOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
-            //  LevelPosition = new LevelPosition(692, 72),
             LevelPosition = new LevelPosition(60, 20),
             IsClimber = true,
-            //   FastForwardTime = 1
+            State =
+            {
+                IsAthlete = true
+            }
+        };
+
+        var lemmingE = new Lemming(
+            orientation: LeftOrientation.Instance,
+            facingDirection: LeftFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(60, 24),
         };
 
         var lemmingC = new Lemming(
             orientation: RightOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
-            //     LevelPosition = new LevelPosition(612, 42),
             LevelPosition = new LevelPosition(145, 134),
             IsFloater = true
         };
+        lemmingC.State.IsAthlete = true;
 
         var lemmingD = new Lemming(
             orientation: LeftOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance,
             currentAction: BuilderAction.Instance)
         {
-            //     LevelPosition = new LevelPosition(612, 42),
-            LevelPosition = new LevelPosition(232, 130),
-            Debug = true
+            LevelPosition = new LevelPosition(232, 130)
         };
 
         BuilderAction.Instance.TransitionLemmingToAction(lemmingD, false);
+
+        var lemming0 = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: LeftFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(2, 152)
+        };
+
+        var lemming1 = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: LeftFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(6, 152)
+        };
+
+        var lemming2 = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: LeftFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(10, 152)
+        };
+
+        var lemming3 = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: LeftFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(14, 152)
+        };
+
+        var lemming4 = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: LeftFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(18, 152)
+        };
+
+        var lemming5 = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: LeftFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(22, 152)
+        };
+
+
+        var lemming6 = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: RightFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(290, 152)
+        };
+
+        var lemming7 = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: RightFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(294, 152)
+        };
+
+        var lemming8 = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: RightFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(298, 152)
+        };
+
+        var lemming9 = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: RightFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(302, 152)
+        };
+
+        var lemming10 = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: RightFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(306, 152)
+        };
+
+        var lemming11 = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: RightFacingDirection.Instance)
+        {
+            LevelPosition = new LevelPosition(310, 152)
+        };
+
+        _lemmings.Add(lemmingX);
 
         _lemmings.Add(lemming0);
         _lemmings.Add(lemming1);
@@ -222,18 +264,38 @@ public sealed class LevelAssembler : IDisposable
         _lemmings.Add(lemming3);
         _lemmings.Add(lemming4);
         _lemmings.Add(lemming5);
+        _lemmings.Add(lemming6);
+        _lemmings.Add(lemming7);
+        _lemmings.Add(lemming8);
+        _lemmings.Add(lemming9);
+        _lemmings.Add(lemming10);
+        _lemmings.Add(lemming11);
+
         _lemmings.Add(lemmingA);
         _lemmings.Add(lemmingB);
         _lemmings.Add(lemmingC);
         _lemmings.Add(lemmingD);
+        _lemmings.Add(lemmingE);
 
         lemming0.State.TeamAffiliation = Team.Team0;
         lemming1.State.TeamAffiliation = Team.Team1;
         lemming2.State.TeamAffiliation = Team.Team2;
         lemming3.State.TeamAffiliation = Team.Team3;
-        lemming3.State.IsAthlete = true;
         lemming4.State.TeamAffiliation = Team.Team4;
         lemming5.State.TeamAffiliation = Team.Team5;
+
+        lemming6.State.TeamAffiliation = Team.Team0;
+        lemming7.State.TeamAffiliation = Team.Team1;
+        lemming8.State.TeamAffiliation = Team.Team2;
+        lemming9.State.TeamAffiliation = Team.Team3;
+        lemming10.State.TeamAffiliation = Team.Team4;
+        lemming11.State.TeamAffiliation = Team.Team5;
+        lemming6.State.IsAthlete = true;
+        lemming7.State.IsAthlete = true;
+        lemming8.State.IsAthlete = true;
+        lemming9.State.IsAthlete = true;
+        lemming10.State.IsAthlete = true;
+        lemming11.State.IsAthlete = true;
     }
 
     private void SetUpLemmings()
@@ -241,8 +303,11 @@ public sealed class LevelAssembler : IDisposable
 
     }
 
-    private void SetUpGadgets()
+    private void SetUpGadgets(ICollection<GadgetData> allGadgetData)
     {
-
+        foreach (var gadgetData in allGadgetData)
+        {
+            _gadgetSpriteBankBuilder.LoadGadgetSprite(gadgetData);
+        }
     }
 }

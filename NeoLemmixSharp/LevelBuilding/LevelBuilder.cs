@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine;
 using NeoLemmixSharp.Engine.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.ControlPanel;
+using NeoLemmixSharp.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Input;
 using NeoLemmixSharp.Engine.Terrain;
 using NeoLemmixSharp.Rendering.Level;
@@ -13,7 +14,6 @@ using NeoLemmixSharp.Rendering.Level.Viewport.Lemming;
 using NeoLemmixSharp.Rendering.Text;
 using System;
 using System.Linq;
-using LevelRenderer = NeoLemmixSharp.Rendering.Level.LevelRenderer;
 
 namespace NeoLemmixSharp.LevelBuilding;
 
@@ -42,8 +42,7 @@ public sealed class LevelBuilder : IDisposable
     {
         _levelReader.ReadLevel(levelFilePath);
 
-        _terrainPainter.PaintLevel(
-            _levelReader.LevelData);
+        _terrainPainter.PaintLevel(_levelReader.LevelData);
 
         var terrainTexture = _terrainPainter.GetTerrainTexture();
 
@@ -70,14 +69,15 @@ public sealed class LevelBuilder : IDisposable
 
         var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
 
+        GadgetCollections.SetGadgets(levelGadgets);
+
         var terrainManager = new TerrainManager(
             levelData.LevelWidth,
             levelData.LevelHeight,
             pixelData,
-            levelGadgets,
             terrainRenderer,
-            BoundaryBehaviourType.Void,
-            BoundaryBehaviourType.Void);
+            levelData.HorizontalBoundaryBehaviour,
+            levelData.VerticalBoundaryBehaviour);
 
         var levelSprites = _levelAssembler.GetLevelSprites();
 

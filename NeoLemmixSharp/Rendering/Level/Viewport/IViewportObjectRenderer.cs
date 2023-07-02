@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Rendering.Level.Viewport;
 
-public interface ILevelObjectRenderer : IDisposable
+public interface IViewportObjectRenderer : IDisposable
 {
     Rectangle GetLocationRectangle();
 
