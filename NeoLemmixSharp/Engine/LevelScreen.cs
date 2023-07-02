@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Actions;
+﻿using NeoLemmixSharp.Common.Screen;
+using NeoLemmixSharp.Engine.Actions;
 using NeoLemmixSharp.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Input;
@@ -8,7 +9,6 @@ using NeoLemmixSharp.Engine.Terrain;
 using NeoLemmixSharp.Engine.Updates;
 using NeoLemmixSharp.LevelBuilding.Data;
 using NeoLemmixSharp.Rendering.Level;
-using NeoLemmixSharp.Screen;
 
 namespace NeoLemmixSharp.Engine;
 

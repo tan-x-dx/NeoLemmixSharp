@@ -1,9 +1,7 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Rendering;
-using System;
-using NeoLemmixSharp.Common.Rendering;
+﻿using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.Screen;
+namespace NeoLemmixSharp.Common.Screen;
 
 public abstract class BaseScreen : IDisposable
 {

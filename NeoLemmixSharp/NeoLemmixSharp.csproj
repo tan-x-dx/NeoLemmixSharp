@@ -31,7 +31,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Engine\Skills\" />
-    <Folder Include="Screen\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj" />
