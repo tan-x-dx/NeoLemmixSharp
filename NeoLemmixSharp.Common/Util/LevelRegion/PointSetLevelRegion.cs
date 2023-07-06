@@ -4,6 +4,8 @@ namespace NeoLemmixSharp.Common.Util.LevelRegion;
 
 public static class PointSetLevelRegion
 {
+    private const int CutoffSize = 256;
+
     public static ILevelRegion GetLevelRegionForPoints(ICollection<LevelPosition> points)
     {
         var minX = int.MaxValue;
@@ -23,27 +25,25 @@ public static class PointSetLevelRegion
         var width = 1 + maxX - minX;
         var height = 1 + maxY - minY;
 
-        if (width <= 128 && height <= 128)
+        if (width > CutoffSize || height > CutoffSize)
+            return new HashSetLevelRegion(points);
+
+        var totalNumberOfPoints = width * height;
+
+        if (totalNumberOfPoints > CutoffSize)
+            return new HashSetLevelRegion(points);
+
+        IBitArray levelPositions = totalNumberOfPoints > 32
+            ? new ArrayBasedBitArray(totalNumberOfPoints)
+            : new IntBasedBitArray();
+
+        foreach (var levelPosition in points)
         {
-            var totalNumberOfPoints = width * height;
-
-            if (totalNumberOfPoints > 128)
-                return new HashSetLevelRegion(points);
-
-            IBitArray levelPositions = totalNumberOfPoints > 32
-                ? new ArrayBasedBitArray(totalNumberOfPoints)
-                : new IntBasedBitArray();
-
-            foreach (var levelPosition in points)
-            {
-                var index = width * (levelPosition.Y - minX) + (levelPosition.X - minY);
-                levelPositions.SetBit(index);
-            }
-
-            return new SmallPointSetLevelRegion(levelPositions, minX, minY, width);
+            var index = width * (levelPosition.Y - minX) + (levelPosition.X - minY);
+            levelPositions.SetBit(index);
         }
 
-        return new HashSetLevelRegion(points);
+        return new SmallPointSetLevelRegion(levelPositions, minX, minY, width);
     }
 
     private sealed class HashSetLevelRegion : ILevelRegion
