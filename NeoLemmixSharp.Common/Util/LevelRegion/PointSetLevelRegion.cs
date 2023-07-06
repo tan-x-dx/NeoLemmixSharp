@@ -70,5 +70,5 @@ public sealed class PointSetLevelRegion : ILevelRegion
                _levelPositions.GetBit(index);
     }
 
-    public bool IsEmpty => !_levelPositions.AnyBitsSet;
+    public bool IsEmpty => false;
 }
