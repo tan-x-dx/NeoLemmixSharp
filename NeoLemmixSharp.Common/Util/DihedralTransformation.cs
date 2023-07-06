@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.Util;
+﻿using System.Runtime.CompilerServices;
+
+namespace NeoLemmixSharp.Common.Util;
 
 public sealed class DihedralTransformation
 {
@@ -137,6 +139,7 @@ public sealed class DihedralTransformation
         public int A { get; }
         public int B { get; }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int W(int w, int h) => R switch
         {
             0 => 0,
@@ -146,6 +149,7 @@ public sealed class DihedralTransformation
             _ => 0
         };
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int H(int w, int h) => R switch
         {
             0 => 0,
@@ -155,6 +159,7 @@ public sealed class DihedralTransformation
             _ => 0
         };
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Choose(int w, int h) => (R & 1) == 0
             ? w
             : h;
@@ -181,6 +186,7 @@ public sealed class DihedralTransformation
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int S(int k) => F * k;
 
         public override string ToString() => F == 0

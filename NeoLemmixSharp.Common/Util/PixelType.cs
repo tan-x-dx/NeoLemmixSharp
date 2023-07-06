@@ -1,8 +1,8 @@
 ﻿namespace NeoLemmixSharp.Common.Util;
 
-public enum PixelType
+public enum PixelType : byte
 {
-    Void = -1,
+    Void = 0xff,
     Empty = 0,
     Solid = 1,
     Steel = 2
