@@ -6,6 +6,7 @@ namespace NeoLemmixSharp.Engine.Engine.Gadgets;
 
 public interface IGadget
 {
+    int Id { get; }
     GadgetType Type { get; }
     Orientation Orientation { get; }
     LevelPosition LevelPosition { get; }
@@ -16,6 +17,7 @@ public interface IGadget
 
     void Tick();
     bool MatchesOrientation(LevelPosition levelPosition, Orientation orientation);
+    void OnLemmingInHitBox(Lemming lemming);
 }
 
 public interface IMoveableGadget : IGadget

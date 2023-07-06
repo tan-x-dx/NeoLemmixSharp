@@ -62,7 +62,7 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        if (GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, lemming.Orientation, out _))
+        if (GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, lemming.Orientation, out var water))
         {
             lemmingPosition = lemming.Orientation.MoveLeft(lemmingPosition, dx);
             lemming.LevelPosition = lemmingPosition;
@@ -76,6 +76,7 @@ public sealed class SliderAction : LemmingAction
                 DrownerAction.Instance.TransitionLemmingToAction(lemming, true);
                 // ?? CueSoundEffect(SFX_DROWNING, L.Position); ??
             }
+            water!.OnLemmingInHitBox(lemming);
 
             return true;
         }

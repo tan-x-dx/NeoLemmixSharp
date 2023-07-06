@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets;
 
@@ -12,6 +12,7 @@ public sealed class ResizeableGadget : IResizableGadget
     private int _deltaWidth;
     private int _deltaHeight;
 
+    public int Id { get; }
     public GadgetType Type { get; }
     public Orientation Orientation { get; }
     public LevelPosition LevelPosition { get; }
@@ -20,9 +21,11 @@ public sealed class ResizeableGadget : IResizableGadget
     public RelativeRectangularLevelRegion HitBox { get; }
 
     public ResizeableGadget(
+        int id,
         GadgetType gadgetType,
         Orientation orientation)
     {
+        Id = id;
         Type = gadgetType;
         Orientation = orientation;
     }
@@ -39,6 +42,11 @@ public sealed class ResizeableGadget : IResizableGadget
     {
         return HitBox.ContainsPoint(levelPosition) ||
                HitBox.ContainsPoint(orientation.MoveUp(levelPosition, 1));
+    }
+
+    public void OnLemmingInHitBox(Lemming lemming)
+    {
+        throw new NotImplementedException();
     }
 
     public void SetDeltaX(int deltaX)

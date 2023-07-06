@@ -9,6 +9,7 @@ public sealed class MoveableGadget : IMoveableGadget
     private int _deltaX;
     private int _deltaY;
 
+    public int Id { get; }
     public GadgetType Type { get; }
     public Orientation Orientation { get; }
     public LevelPosition LevelPosition { get; }
@@ -18,8 +19,12 @@ public sealed class MoveableGadget : IMoveableGadget
     public RectangularLevelRegion SpriteClip { get; }
     public ILevelRegion HitBox { get; }
 
-    public MoveableGadget(GadgetType gadgetType, Orientation orientation)
+    public MoveableGadget(
+        int id,
+        GadgetType gadgetType,
+        Orientation orientation)
     {
+        Id = id;
         Type = gadgetType;
         Orientation = orientation;
     }
@@ -36,6 +41,11 @@ public sealed class MoveableGadget : IMoveableGadget
 
         return HitBox.ContainsPoint(offset) ||
                HitBox.ContainsPoint(orientation.MoveUp(offset, 1));
+    }
+
+    public void OnLemmingInHitBox(Lemming lemming)
+    {
+
     }
 
     public void SetDeltaX(int deltaX)
