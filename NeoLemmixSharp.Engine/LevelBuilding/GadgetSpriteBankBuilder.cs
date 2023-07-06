@@ -39,7 +39,6 @@ public sealed class GadgetSpriteBankBuilder : IDisposable
         return result;
     }
 
-
     public GadgetSpriteBank BuildGadgetSpriteBank()
     {
         throw new NotImplementedException();

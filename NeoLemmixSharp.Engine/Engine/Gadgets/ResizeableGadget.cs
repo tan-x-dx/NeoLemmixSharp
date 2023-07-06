@@ -37,10 +37,8 @@ public sealed class ResizeableGadget : IResizableGadget
 
     public bool MatchesOrientation(LevelPosition levelPosition, Orientation orientation)
     {
-        var offset = levelPosition - LevelPosition;
-
-        return HitBox.ContainsPoint(offset) ||
-               HitBox.ContainsPoint(orientation.MoveUp(offset, 1));
+        return HitBox.ContainsPoint(levelPosition) ||
+               HitBox.ContainsPoint(orientation.MoveUp(levelPosition, 1));
     }
 
     public void SetDeltaX(int deltaX)

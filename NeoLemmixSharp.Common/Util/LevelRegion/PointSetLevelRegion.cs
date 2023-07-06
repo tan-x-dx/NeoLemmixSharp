@@ -2,16 +2,26 @@
 
 namespace NeoLemmixSharp.Common.Util.LevelRegion;
 
-public static class PointSetLevelRegion
+public sealed class PointSetLevelRegion : ILevelRegion
 {
-    private const int CutoffSize = 256;
+    private const int DimensionCutoffSize = 128;
+    private const int AreaCutoffSize = 128 * 128;
 
-    public static ILevelRegion GetLevelRegionForPoints(ICollection<LevelPosition> points)
+    private readonly IBitArray _levelPositions;
+    private readonly int _offsetX;
+    private readonly int _offsetY;
+    private readonly int _width;
+    private readonly int _height;
+
+    public PointSetLevelRegion(ICollection<LevelPosition> points)
     {
+        if (points.Count == 0)
+            throw new ArgumentException("Cannot create PointSetLevelRegion with zero points!");
+
         var minX = int.MaxValue;
         var minY = int.MaxValue;
-        var maxX = int.MinValue;
-        var maxY = int.MinValue;
+        var maxX = 0;
+        var maxY = 0;
 
         foreach (var levelPosition in points)
         {
@@ -22,68 +32,43 @@ public static class PointSetLevelRegion
             maxY = Math.Max(maxY, levelPosition.Y);
         }
 
-        var width = 1 + maxX - minX;
-        var height = 1 + maxY - minY;
+        _width = 1 + maxX - minX;
+        _height = 1 + maxY - minY;
 
-        if (width > CutoffSize || height > CutoffSize)
-            return new HashSetLevelRegion(points);
+        if (_width > DimensionCutoffSize || _height > DimensionCutoffSize)
+            throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_width}, H:{_height}");
 
-        var totalNumberOfPoints = width * height;
+        var totalNumberOfPoints = _width * _height;
 
-        if (totalNumberOfPoints > CutoffSize)
-            return new HashSetLevelRegion(points);
+        if (totalNumberOfPoints > AreaCutoffSize)
+            throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
 
-        IBitArray levelPositions = totalNumberOfPoints > 32
+        _levelPositions = totalNumberOfPoints > IntBasedBitArray.Size
             ? new ArrayBasedBitArray(totalNumberOfPoints)
             : new IntBasedBitArray();
 
         foreach (var levelPosition in points)
         {
-            var index = width * (levelPosition.Y - minX) + (levelPosition.X - minY);
-            levelPositions.SetBit(index);
+            var index = _width * (levelPosition.Y - minY) + (levelPosition.X - minX);
+            _levelPositions.SetBit(index);
         }
 
-        return new SmallPointSetLevelRegion(levelPositions, minX, minY, width);
+        _offsetX = minX;
+        _offsetY = minY;
     }
 
-    private sealed class HashSetLevelRegion : ILevelRegion
+    public bool ContainsPoint(LevelPosition levelPosition)
     {
-        private readonly HashSet<LevelPosition> _points;
+        var newX = levelPosition.X - _offsetX;
+        var newY = levelPosition.Y - _offsetY;
+        var index = _width * newY + newX;
 
-        public HashSetLevelRegion(IEnumerable<LevelPosition> points)
-        {
-            _points = new HashSet<LevelPosition>(points, LevelPositionEqualityComparer.Instance);
-        }
-
-        public bool ContainsPoint(LevelPosition levelPosition) => _points.Contains(levelPosition);
-        public bool IsEmpty => _points.Count == 0;
+        return newX >= 0 &&
+               newY >= 0 &&
+               newX < _width &&
+               newY < _height &&
+               _levelPositions.GetBit(index);
     }
 
-    private sealed class SmallPointSetLevelRegion : ILevelRegion
-    {
-        private readonly IBitArray _levelPositions;
-        private readonly int _offsetX;
-        private readonly int _offsetY;
-        private readonly int _width;
-
-        public SmallPointSetLevelRegion(
-            IBitArray levelPositions,
-            int offsetX,
-            int offsetY,
-            int width)
-        {
-            _levelPositions = levelPositions;
-            _offsetX = offsetX;
-            _offsetY = offsetY;
-            _width = width;
-        }
-
-        public bool ContainsPoint(LevelPosition levelPosition)
-        {
-            var index = _width * (levelPosition.Y - _offsetY) + (levelPosition.X - _offsetX);
-            return _levelPositions.GetBit(index);
-        }
-
-        public bool IsEmpty => !_levelPositions.AnyBitsSet;
-    }
+    public bool IsEmpty => !_levelPositions.AnyBitsSet;
 }

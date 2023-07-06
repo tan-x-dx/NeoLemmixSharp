@@ -79,7 +79,7 @@ public static class GadgetCollections
         MetalGrates = EmptyGadgetList.Instance;
     }
 
-    public static void SetGadgets(ICollection<IGadget> allGadgets)
+    public static void SetGadgets(IEnumerable<IGadget> allGadgets)
     {
         var gadgetTypeLookup = allGadgets
             .ToLookup(g => g.Type);
