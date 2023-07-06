@@ -2,10 +2,21 @@
 
 public sealed class RectangularLevelRegion : IRectangularLevelRegion
 {
+    private int _w;
+    private int _h;
+
     public int X { get; set; }
     public int Y { get; set; }
-    public int W { get; set; }
-    public int H { get; set; }
+    public int W
+    {
+        get => _w;
+        set => _w = Math.Max(0, value);
+    }
+    public int H
+    {
+        get => _h;
+        set => _h = Math.Max(0, value);
+    }
 
     public int X1 => X + W;
     public int Y1 => Y + H;
@@ -49,4 +60,6 @@ public sealed class RectangularLevelRegion : IRectangularLevelRegion
                                                               Y <= levelPosition.Y &&
                                                               levelPosition.X < X1 &&
                                                               levelPosition.Y < Y1;
+
+    public bool IsEmpty => _w == 0 || _h == 0;
 }

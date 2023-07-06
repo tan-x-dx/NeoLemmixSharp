@@ -33,4 +33,6 @@ public sealed class RelativeRectangularLevelRegion : IRectangularLevelRegion
                                                               Y <= levelPosition.Y &&
                                                               levelPosition.X < X1 &&
                                                               levelPosition.Y < Y1;
+
+    public bool IsEmpty => W <= 0 || H <= 0;
 }
