@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.Util.LevelRegion;
+﻿using Microsoft.Xna.Framework;
+
+namespace NeoLemmixSharp.Common.Util.LevelRegion;
 
 public interface ILevelRegion
 {
@@ -16,4 +18,8 @@ public interface IRectangularLevelRegion : ILevelRegion
 
     int X1 { get; }
     int Y1 { get; }
+
+    LevelPosition TopLeft { get; }
+    LevelPosition BottomRight { get; }
+    Rectangle ToRectangle();
 }

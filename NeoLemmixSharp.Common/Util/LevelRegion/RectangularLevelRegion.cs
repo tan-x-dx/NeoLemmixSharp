@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.Util.LevelRegion;
+﻿using Microsoft.Xna.Framework;
+
+namespace NeoLemmixSharp.Common.Util.LevelRegion;
 
 public sealed class RectangularLevelRegion : IRectangularLevelRegion
 {
@@ -22,6 +24,7 @@ public sealed class RectangularLevelRegion : IRectangularLevelRegion
     public int Y1 => Y + H;
 
     public LevelPosition TopLeft => new(X, Y);
+    public LevelPosition BottomRight => new(X1, Y1);
 
     public RectangularLevelRegion(int x, int y, int w, int h)
     {
@@ -60,6 +63,8 @@ public sealed class RectangularLevelRegion : IRectangularLevelRegion
                                                               Y <= levelPosition.Y &&
                                                               levelPosition.X < X1 &&
                                                               levelPosition.Y < Y1;
+
+    public Rectangle ToRectangle() => new(X, Y, W, H);
 
     public bool IsEmpty => _w == 0 || _h == 0;
 }
