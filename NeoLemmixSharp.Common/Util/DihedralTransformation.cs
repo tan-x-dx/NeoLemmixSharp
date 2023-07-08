@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -118,6 +119,7 @@ public sealed class DihedralTransformation
 
     public override string ToString() => $"Rot {_r}|{FlipString}";
 
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string FlipString => _f == 0 ? string.Empty : "Flip";
 
     public void Transform(
@@ -130,7 +132,7 @@ public sealed class DihedralTransformation
     {
         var w = W(width, height);
         var h = H(width, height);
-        var s = S(Choose(width, height));
+        var s = _f * Choose(width, height);
         x0 = s + _m * (_a * x - _b * y + w);
         y0 = _b * x + _a * y + h;
     }
@@ -156,10 +158,7 @@ public sealed class DihedralTransformation
     };
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int Choose(int w, int h) => (_r & 1) == 0
-        ? w
-        : h;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int S(int k) => _f * k;
+    private int Choose(int w, int h) => (_r & 1) == 1
+        ? h
+        : w;
 }
