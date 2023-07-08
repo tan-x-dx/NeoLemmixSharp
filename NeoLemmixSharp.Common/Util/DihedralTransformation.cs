@@ -10,22 +10,14 @@ public sealed class DihedralTransformation
     {
         var result = new DihedralTransformation[8];
 
-        var r0 = new Rotation(0);
-        var r1 = new Rotation(1);
-        var r2 = new Rotation(2);
-        var r3 = new Rotation(3);
-
-        var f0 = new Reflection(false);
-        var f1 = new Reflection(true);
-
-        var dh0 = new DihedralTransformation(r0, f0);
-        var dh1 = new DihedralTransformation(r1, f0);
-        var dh2 = new DihedralTransformation(r2, f0);
-        var dh3 = new DihedralTransformation(r3, f0);
-        var dh4 = new DihedralTransformation(r0, f1);
-        var dh5 = new DihedralTransformation(r1, f1);
-        var dh6 = new DihedralTransformation(r2, f1);
-        var dh7 = new DihedralTransformation(r3, f1);
+        var dh0 = new DihedralTransformation(0, false);
+        var dh1 = new DihedralTransformation(1, false);
+        var dh2 = new DihedralTransformation(2, false);
+        var dh3 = new DihedralTransformation(3, false);
+        var dh4 = new DihedralTransformation(0, true);
+        var dh5 = new DihedralTransformation(1, true);
+        var dh6 = new DihedralTransformation(2, true);
+        var dh7 = new DihedralTransformation(3, true);
 
         result[dh0.Key] = dh0;
         result[dh1.Key] = dh1;
@@ -79,18 +71,54 @@ public sealed class DihedralTransformation
         return Lookup[key];
     }
 
-    private readonly Rotation _rotation;
-    private readonly Reflection _reflection;
+    private readonly int _r;
+    private readonly int _a;
+    private readonly int _b;
 
-    private int Key => _rotation.R | (_reflection.F << 2);
+    private readonly int _f;
+    private readonly int _m;
 
-    private DihedralTransformation(Rotation rotation, Reflection reflection)
+    private int Key => _r | (_f << 2);
+
+    private DihedralTransformation(int r, bool flip)
     {
-        _rotation = rotation;
-        _reflection = reflection;
+        _r = r & 3;
+
+        switch (_r)
+        {
+            case 0:
+                _a = 1;
+                _b = 0;
+                break;
+            case 1:
+                _a = 0;
+                _b = 1;
+                break;
+            case 2:
+                _a = -1;
+                _b = 0;
+                break;
+            case 3:
+                _a = 0;
+                _b = -1;
+                break;
+        }
+
+        if (flip)
+        {
+            _f = 1;
+            _m = -1;
+        }
+        else
+        {
+            _f = 0;
+            _m = 1;
+        }
     }
 
-    public override string ToString() => $"{_rotation}|{_reflection}";
+    public override string ToString() => $"Rot {_r}|{FlipString}";
+
+    private string FlipString => _f == 0 ? string.Empty : "Flip";
 
     public void Transform(
         int x,
@@ -100,97 +128,38 @@ public sealed class DihedralTransformation
         out int x0,
         out int y0)
     {
-        var m = _reflection.M;
-        var w = _rotation.W(width, height);
-        var h = _rotation.H(width, height);
-        var s = _reflection.S(_rotation.Choose(width, height));
-        x0 = s + m * (_rotation.A * x - _rotation.B * y + w);
-        y0 = _rotation.B * x + _rotation.A * y + h;
+        var w = W(width, height);
+        var h = H(width, height);
+        var s = S(Choose(width, height));
+        x0 = s + _m * (_a * x - _b * y + w);
+        y0 = _b * x + _a * y + h;
     }
 
-    private sealed class Rotation
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private int W(int w, int h) => _r switch
     {
-        public Rotation(int r)
-        {
-            R = r;
+        0 => 0,
+        1 => h,
+        2 => w,
+        3 => 0,
+        _ => 0
+    };
 
-            switch (r)
-            {
-                case 0:
-                    A = 1;
-                    B = 0;
-                    break;
-                case 1:
-                    A = 0;
-                    B = 1;
-                    break;
-                case 2:
-                    A = -1;
-                    B = 0;
-                    break;
-                case 3:
-                    A = 0;
-                    B = -1;
-                    break;
-            }
-        }
-
-        public int R { get; }
-        public int A { get; }
-        public int B { get; }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int W(int w, int h) => R switch
-        {
-            0 => 0,
-            1 => h,
-            2 => w,
-            3 => 0,
-            _ => 0
-        };
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int H(int w, int h) => R switch
-        {
-            0 => 0,
-            1 => 0,
-            2 => h,
-            3 => w,
-            _ => 0
-        };
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int Choose(int w, int h) => (R & 1) == 0
-            ? w
-            : h;
-
-        public override string ToString() => $"Rot {R}";
-    }
-
-    private sealed class Reflection
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private int H(int w, int h) => _r switch
     {
-        public int F { get; }
-        public int M { get; }
+        0 => 0,
+        1 => 0,
+        2 => h,
+        3 => w,
+        _ => 0
+    };
 
-        public Reflection(bool flip)
-        {
-            if (flip)
-            {
-                F = 1;
-                M = -1;
-            }
-            else
-            {
-                F = 0;
-                M = 1;
-            }
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private int Choose(int w, int h) => (_r & 1) == 0
+        ? w
+        : h;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int S(int k) => F * k;
-
-        public override string ToString() => F == 0
-            ? string.Empty
-            : "Flip";
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private int S(int k) => _f * k;
 }
