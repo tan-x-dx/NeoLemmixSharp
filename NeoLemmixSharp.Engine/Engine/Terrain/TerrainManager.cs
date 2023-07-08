@@ -64,7 +64,8 @@ public sealed class TerrainManager
     {
         var index = Width * levelPosition.Y + levelPosition.X;
         var pixel = _pixels[index];
-        if (pixel == PixelType.Solid || pixel == PixelType.Steel)
+
+        if ((pixel & PixelType.Solid) == PixelType.Solid)
             return true;
 
         return GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(levelPosition, lemming.Orientation, out _);
@@ -74,7 +75,7 @@ public sealed class TerrainManager
     {
         var index = Width * levelPosition.Y + levelPosition.X;
         var pixel = _pixels[index];
-        if (pixel == PixelType.Steel)
+        if ((pixel & PixelType.Steel) == PixelType.Steel)
             return true;
 
         return GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(levelPosition, lemming.Orientation, out _);
@@ -88,7 +89,7 @@ public sealed class TerrainManager
         var index = Width * pixelToErase.Y + pixelToErase.X;
         var pixel = _pixels[index];
 
-        if (pixel == PixelType.Solid)
+        if ((pixel & PixelType.Solid) == PixelType.Solid)
         {
             _pixels[index] = PixelType.Empty;
             TerrainRenderer.SetPixelColour(pixelToErase.X, pixelToErase.Y, 0U);
