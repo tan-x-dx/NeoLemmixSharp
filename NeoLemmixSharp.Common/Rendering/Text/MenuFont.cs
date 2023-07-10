@@ -11,7 +11,7 @@ public sealed class MenuFont : INeoLemmixFont
 
     private readonly Texture2D _texture;
 
-    public float RenderLayer { get; set; }
+    public float RenderLayer { get; set; } = 1.0f;
 
     public MenuFont(ContentManager content)
     {
