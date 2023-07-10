@@ -62,6 +62,9 @@ public sealed class TerrainManager
 
     public bool PixelIsSolidToLemming(LevelPosition levelPosition, Lemming lemming)
     {
+        if (PositionOutOfBounds(levelPosition))
+            return false;
+
         var index = Width * levelPosition.Y + levelPosition.X;
         var pixel = _pixels[index];
 
@@ -73,6 +76,9 @@ public sealed class TerrainManager
 
     public bool PixelIsIndestructibleToLemming(LevelPosition levelPosition, Lemming lemming)
     {
+        if (PositionOutOfBounds(levelPosition))
+            return false;
+
         var index = Width * levelPosition.Y + levelPosition.X;
         var pixel = _pixels[index];
         if ((pixel & PixelType.Steel) == PixelType.Steel)

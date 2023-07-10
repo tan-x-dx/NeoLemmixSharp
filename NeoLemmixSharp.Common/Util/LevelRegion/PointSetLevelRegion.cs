@@ -43,9 +43,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
         if (totalNumberOfPoints > AreaCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
 
-        _levelPositions = totalNumberOfPoints > IntBasedBitArray.Size
-            ? new ArrayBasedBitArray(totalNumberOfPoints)
-            : new IntBasedBitArray();
+        _levelPositions = IBitArray.GetBestFitForSize(totalNumberOfPoints);
 
         foreach (var levelPosition in points)
         {
