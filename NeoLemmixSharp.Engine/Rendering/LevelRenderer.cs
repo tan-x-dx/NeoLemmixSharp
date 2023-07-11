@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
@@ -29,11 +30,11 @@ public sealed class LevelRenderer : IScreenRenderer
 
     private string _mouseCoords = string.Empty;
 
+    public ControlPanelSpriteBank ControlPanelSpriteBank { get; }
     public LemmingSpriteBank LemmingSpriteBank { get; }
     public GadgetSpriteBank GadgetSpriteBank { get; }
 
-    public LevelRenderer(
-        int levelWidth,
+    public LevelRenderer(int levelWidth,
         int levelHeight,
         LevelViewport viewport,
         IBackgroundRenderer backgroundRenderer,
@@ -41,6 +42,7 @@ public sealed class LevelRenderer : IScreenRenderer
         IViewportObjectRenderer[] levelSprites,
         LevelCursorSprite levelCursorSprite,
         IControlPanelRenderer controlPanelRenderer,
+        ControlPanelSpriteBank controlPanelSpriteBank,
         LemmingSpriteBank lemmingSpriteBank,
         GadgetSpriteBank gadgetSpriteBank,
         FontBank fontBank)
@@ -55,6 +57,8 @@ public sealed class LevelRenderer : IScreenRenderer
         _cursorSprite = levelCursorSprite;
         _controlPanelRenderer = controlPanelRenderer;
         _fontBank = fontBank;
+
+        ControlPanelSpriteBank = controlPanelSpriteBank;
         LemmingSpriteBank = lemmingSpriteBank;
         GadgetSpriteBank = gadgetSpriteBank;
 
@@ -92,35 +96,41 @@ public sealed class LevelRenderer : IScreenRenderer
         var dx = _viewport.ScreenX - _viewport.ViewPortX * _viewport.ScaleMultiplier;
         var dy = _viewport.ScreenY - _viewport.ViewPortY * _viewport.ScaleMultiplier;
 
-        for (var t = 0; t < _levelSprites.Length; t++)
+        var w0 = dx;
+        var h0 = dy;
+
+        for (var i = 0; i < maxX; i++)
         {
-            var sprite = _levelSprites[t];
-            var spriteLocation = sprite.GetLocationRectangle();
-
-            var x0 = spriteLocation.X * _viewport.ScaleMultiplier + dx;
-            var y0 = spriteLocation.Y * _viewport.ScaleMultiplier + dy;
-
-            var y1 = y0;
-            for (var i = 0; i < maxX; i++)
+            var hInterval = _viewport.GetHorizontalRenderInterval(i);
+            for (var j = 0; j < maxY; j++)
             {
-                var hInterval = _viewport.GetHorizontalRenderInterval(i);
-                if (hInterval.Overlaps(spriteLocation.X, spriteLocation.Width))
-                {
-                    for (var j = 0; j < maxY; j++)
-                    {
-                        var vInterval = _viewport.GetVerticalRenderInterval(j);
-                        if (vInterval.Overlaps(spriteLocation.Y, spriteLocation.Height))
-                        {
-                            sprite.RenderAtPosition(spriteBatch, x0, y1, _viewport.ScaleMultiplier);
-                        }
+                var vInterval = _viewport.GetVerticalRenderInterval(j);
+                var viewportClip = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
 
-                        y1 += h;
+                for (var t = 0; t < _levelSprites.Length; t++)
+                {
+                    var sprite = _levelSprites[t];
+                    var spriteClip = sprite.GetSpriteBounds();
+
+                    Rectangle.Intersect(ref viewportClip, ref spriteClip, out var clipIntersection);
+
+                    if (!clipIntersection.IsEmpty)
+                    {
+                        clipIntersection.X -= spriteClip.X;
+                        clipIntersection.Y -= spriteClip.Y;
+
+                        var screenX = (spriteClip.X + clipIntersection.X) * _viewport.ScaleMultiplier + w0;
+                        var screenY = (spriteClip.Y + clipIntersection.Y) * _viewport.ScaleMultiplier + h0;
+
+                        sprite.RenderAtPosition(spriteBatch, clipIntersection, screenX, screenY, _viewport.ScaleMultiplier);
                     }
                 }
 
-                x0 += w;
-                y1 = y0;
+                h0 += h;
             }
+
+            h0 = dy;
+            w0 += w;
         }
     }
 

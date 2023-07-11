@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 
@@ -67,20 +68,12 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
             _skillPanels,
             destRectangle,
             GetPanelButtonBackgroundSourceRectangle(_skillAssignButton.SkillPanelFrame),
-            Color.White,
-            0.0f,
-            new Vector2(),
-            SpriteEffects.None,
             RenderingLayers.ControlPanelButtonLayer);
 
         spriteBatch.Draw(
             _skillCountErase,
             destRectangle,
             new Rectangle(0, 0, _skillCountErase.Width, _skillCountErase.Height),
-            Color.White,
-            0.0f,
-            new Vector2(),
-            SpriteEffects.None,
             RenderingLayers.ControlPanelSkillCountEraseLayer);
 
         if (_skillAssignButton.IsSelected)
@@ -89,10 +82,6 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
                 _skillSelected,
                 destRectangle,
                 new Rectangle(0, 0, _skillSelected.Width, _skillSelected.Height),
-                Color.White,
-                0.0f,
-                new Vector2(),
-                SpriteEffects.None,
                 RenderingLayers.ControlPanelSkillCountEraseLayer); // Can reuse this layer since the sprites shouldn't overlap anyway
         }
 
@@ -106,10 +95,6 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
             _skillIcon,
             skillIconDestRectangle,
             _skillIconSourceRectangle,
-            Color.White,
-            0.0f,
-            new Vector2(),
-            SpriteEffects.None,
             RenderingLayers.ControlPanelSkillIconLayer);
 
         var dx = 3 * _skillAssignButton.ScaleMultiplier;

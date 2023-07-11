@@ -38,10 +38,6 @@ public sealed class MenuFont : INeoLemmixFont
                 _texture,
                 dest,
                 source,
-                Color.White,
-                0.0f,
-                new Vector2(),
-                SpriteEffects.None,
                 RenderLayer);
             dest.X += GlyphWidth * scaleMultiplier;
         }

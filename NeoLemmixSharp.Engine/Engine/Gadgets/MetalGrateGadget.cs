@@ -2,10 +2,11 @@
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using System.Diagnostics;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets;
 
-public sealed class MetalGrateGadget : IGadget
+public sealed class MetalGrateGadget : IHitBoxGadget
 {
     public int Id { get; }
     public GadgetType Type { get; }
@@ -14,6 +15,7 @@ public sealed class MetalGrateGadget : IGadget
     public int AnimationFrame { get; private set; }
 
     public RectangularLevelRegion SpriteClip { get; }
+    public IViewportObjectRenderer Renderer { get; }
     public RectangularLevelRegion HitBox { get; }
 
     private bool _isActive;
@@ -62,5 +64,5 @@ public sealed class MetalGrateGadget : IGadget
     }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    ILevelRegion IGadget.HitBox => HitBox;
+    ILevelRegion IHitBoxGadget.HitBox => HitBox;
 }

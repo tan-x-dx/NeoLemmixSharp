@@ -20,11 +20,11 @@ public sealed class LevelData
     public int? TimeLimit { get; set; }
     public int MaxSpawnInterval { get; set; }
 
-    public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; }
-    public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; }
+    public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Void;
+    public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Void;
 
-    public BoundaryBehaviourType HorizontalViewPortBehaviour { get; set; }
-    public BoundaryBehaviourType VerticalViewPortBehaviour { get; set; }
+    public BoundaryBehaviourType HorizontalViewPortBehaviour { get; set; } = BoundaryBehaviourType.Void;
+    public BoundaryBehaviourType VerticalViewPortBehaviour { get; set; } = BoundaryBehaviourType.Void;
 
     public SkillSetData SkillSetData { get; set; }
     public ThemeData ThemeData { get; } = new();

@@ -4,57 +4,58 @@ using NeoLemmixSharp.Engine.Engine.Orientations;
 namespace NeoLemmixSharp.Engine.Engine.Gadgets;
 
 public interface IGadgetCollection<TGadget>
-    where TGadget : class, IGadget
+    where TGadget : class, IHitBoxGadget
 {
     bool TryGetGadgetThatMatchesTypeAndOrientation(LevelPosition levelPosition, Orientation orientation, out TGadget? gadget);
 }
 
 public static class GadgetCollections
 {
-    public static IGadgetCollection<IGadget> Hatches { get; private set; } = EmptyGadgetList<IGadget>.Instance;
-    public static IGadgetCollection<IGadget> Exits { get; private set; } = EmptyGadgetList<IGadget>.Instance;
-    public static IGadgetCollection<IGadget> Waters { get; private set; } = EmptyGadgetList<IGadget>.Instance;
-    public static IGadgetCollection<IGadget> InfiniteTraps { get; private set; } = EmptyGadgetList<IGadget>.Instance;
-    public static IGadgetCollection<IGadget> Fires { get; private set; } = EmptyGadgetList<IGadget>.Instance;
-    public static IGadgetCollection<IGadget> Updrafts { get; private set; } = EmptyGadgetList<IGadget>.Instance;
-    public static IGadgetCollection<IGadget> OneTimeTraps { get; private set; } = EmptyGadgetList<IGadget>.Instance;
-    public static IGadgetCollection<IGadget> ForceSplats { get; private set; } = EmptyGadgetList<IGadget>.Instance;
-    public static IGadgetCollection<IGadget> NoSplats { get; private set; } = EmptyGadgetList<IGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> Hatches { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> Exits { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> Waters { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> InfiniteTraps { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> Fires { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> Updrafts { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> OneTimeTraps { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> ForceSplats { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> NoSplats { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
     public static IGadgetCollection<MetalGrateGadget> MetalGrates { get; private set; } = EmptyGadgetList<MetalGrateGadget>.Instance;
 
     public static void ClearGadgets()
     {
-        Hatches = EmptyGadgetList<IGadget>.Instance;
-        Exits = EmptyGadgetList<IGadget>.Instance;
-        Waters = EmptyGadgetList<IGadget>.Instance;
-        InfiniteTraps = EmptyGadgetList<IGadget>.Instance;
-        Fires = EmptyGadgetList<IGadget>.Instance;
-        Updrafts = EmptyGadgetList<IGadget>.Instance;
-        OneTimeTraps = EmptyGadgetList<IGadget>.Instance;
-        ForceSplats = EmptyGadgetList<IGadget>.Instance;
-        NoSplats = EmptyGadgetList<IGadget>.Instance;
+        Hatches = EmptyGadgetList<IHitBoxGadget>.Instance;
+        Exits = EmptyGadgetList<IHitBoxGadget>.Instance;
+        Waters = EmptyGadgetList<IHitBoxGadget>.Instance;
+        InfiniteTraps = EmptyGadgetList<IHitBoxGadget>.Instance;
+        Fires = EmptyGadgetList<IHitBoxGadget>.Instance;
+        Updrafts = EmptyGadgetList<IHitBoxGadget>.Instance;
+        OneTimeTraps = EmptyGadgetList<IHitBoxGadget>.Instance;
+        ForceSplats = EmptyGadgetList<IHitBoxGadget>.Instance;
+        NoSplats = EmptyGadgetList<IHitBoxGadget>.Instance;
         MetalGrates = EmptyGadgetList<MetalGrateGadget>.Instance;
     }
 
     public static void SetGadgets(IEnumerable<IGadget> allGadgets)
     {
         var gadgetTypeLookup = allGadgets
+            .OfType<IHitBoxGadget>()
             .ToLookup(g => g.Type);
 
-        Hatches = GetGadgetCollection<IGadget>(GadgetType.Hatch);
-        Exits = GetGadgetCollection<IGadget>(GadgetType.Exit);
-        Waters = GetGadgetCollection<IGadget>(GadgetType.Water);
-        InfiniteTraps = GetGadgetCollection<IGadget>(GadgetType.TrapInfinite);
-        Fires = GetGadgetCollection<IGadget>(GadgetType.Fire);
-        Updrafts = GetGadgetCollection<IGadget>(GadgetType.Updraft);
-        OneTimeTraps = GetGadgetCollection<IGadget>(GadgetType.TrapOnce);
-        NoSplats = GetGadgetCollection<IGadget>(GadgetType.NoSplat);
-        ForceSplats = GetGadgetCollection<IGadget>(GadgetType.Splat);
+        Hatches = GetGadgetCollection<IHitBoxGadget>(GadgetType.Hatch);
+        Exits = GetGadgetCollection<IHitBoxGadget>(GadgetType.Exit);
+        Waters = GetGadgetCollection<IHitBoxGadget>(GadgetType.Water);
+        InfiniteTraps = GetGadgetCollection<IHitBoxGadget>(GadgetType.TrapInfinite);
+        Fires = GetGadgetCollection<IHitBoxGadget>(GadgetType.Fire);
+        Updrafts = GetGadgetCollection<IHitBoxGadget>(GadgetType.Updraft);
+        OneTimeTraps = GetGadgetCollection<IHitBoxGadget>(GadgetType.TrapOnce);
+        NoSplats = GetGadgetCollection<IHitBoxGadget>(GadgetType.NoSplat);
+        ForceSplats = GetGadgetCollection<IHitBoxGadget>(GadgetType.Splat);
 
         MetalGrates = GetGadgetCollection<MetalGrateGadget>(GadgetType.MetalGrate);
 
         IGadgetCollection<TGadget> GetGadgetCollection<TGadget>(GadgetType gadgetType)
-            where TGadget : class, IGadget
+            where TGadget : class, IHitBoxGadget
         {
             var relevantGadgets = gadgetTypeLookup[gadgetType]
                 .OrderBy(g => g.Id)

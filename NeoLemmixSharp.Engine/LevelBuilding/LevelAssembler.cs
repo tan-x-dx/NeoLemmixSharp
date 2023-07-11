@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
@@ -9,6 +10,7 @@ using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
+using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget.NineSliceRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Io.LevelReading.Data;
 
@@ -21,6 +23,7 @@ public sealed class LevelAssembler : IDisposable
 
     private readonly List<Lemming> _lemmings = new();
     private readonly List<IGadget> _gadgets = new();
+    private readonly List<IViewportObjectRenderer> _gadgetRenderers = new();
 
     private readonly LemmingSpriteBankBuilder _lemmingSpriteBankBuilder;
     private readonly GadgetSpriteBankBuilder _gadgetSpriteBankBuilder;
@@ -43,9 +46,9 @@ public sealed class LevelAssembler : IDisposable
         ContentManager content,
         LevelData levelData)
     {
-        //SetUpTestLemmings();
+       // SetUpTestLemmings();
         SetUpLemmings();
-        SetUpGadgets(levelData.AllGadgetData);
+        SetUpGadgets(content, levelData.AllGadgetData);
 
         levelData.SkillSetData = new SkillSetData
         {
@@ -85,9 +88,12 @@ public sealed class LevelAssembler : IDisposable
 
     public IViewportObjectRenderer[] GetLevelSprites()
     {
-        return _lemmings
-            .Select(l => l.Renderer)
-            .ToArray<IViewportObjectRenderer>();
+        var lemmingSprites = _lemmings
+            .Select(l => l.Renderer);
+
+        return lemmingSprites
+            .Concat(_gadgetRenderers)
+            .ToArray();
     }
 
     public void Dispose()
@@ -300,8 +306,36 @@ public sealed class LevelAssembler : IDisposable
 
     }
 
-    private void SetUpGadgets(ICollection<GadgetData> allGadgetData)
+    private void SetUpGadgets(ContentManager contentManager, ICollection<GadgetData> allGadgetData)
     {
+        var texture = Texture2D.FromFile(_graphicsDevice, "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\styles\\namida_systemtest\\objects\\nineslicetest.png");
+
+        var sW = texture.Width;
+        var sH = texture.Height;
+        var sL = 8;
+        var sR = texture.Width - 6;
+        var sT = 3;
+        var sB = texture.Height - 2;
+
+        /*
+        var texture = contentManager.Load<Texture2D>("sprites/style/common/water");
+
+        var sW = 64;
+        var sH = 32;
+        var sL = 0;
+        var sR = 64;
+        var sT = 16;
+        var sB = 32;
+        */
+
+        var c = new RectangularLevelRegion(20, 20, 64, 32);
+
+        var water = new ResizeableGadget(0, GadgetType.Water, DownOrientation.Instance, c);
+        var r = new NineSliceRenderer(c, texture, sW, sH, sT, sB, sL, sR);
+
+        _gadgets.Add(water);
+        _gadgetRenderers.Add(r);
+
         foreach (var gadgetData in allGadgetData)
         {
             _gadgetSpriteBankBuilder.LoadGadgetSprite(gadgetData);

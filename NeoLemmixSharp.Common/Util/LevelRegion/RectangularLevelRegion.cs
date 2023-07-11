@@ -67,4 +67,6 @@ public sealed class RectangularLevelRegion : IRectangularLevelRegion
     public Rectangle ToRectangle() => new(X, Y, W, H);
 
     public bool IsEmpty => _w == 0 || _h == 0;
+
+    public override string ToString() => $"[({X} {Y}), W:{W} H:{H}]";
 }

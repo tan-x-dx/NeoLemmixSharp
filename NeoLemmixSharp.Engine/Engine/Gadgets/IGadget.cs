@@ -13,20 +13,35 @@ public interface IGadget
     int AnimationFrame { get; }
 
     RectangularLevelRegion SpriteClip { get; }
-    ILevelRegion HitBox { get; }
 
     void Tick();
+}
+
+public interface IHitBoxGadget : IGadget
+{
+    ILevelRegion HitBox { get; }
+
     bool MatchesOrientation(LevelPosition levelPosition, Orientation orientation);
     void OnLemmingInHitBox(Lemming lemming);
 }
 
-public interface IMoveableGadget : IGadget
+public interface IProactiveGadget : IGadget
+{
+
+}
+
+public interface IReactiveGadget : IGadget
+{
+    void OnInput(InputType inputType);
+}
+
+public interface IMoveableGadget : IHitBoxGadget, IReactiveGadget
 {
     void SetDeltaX(int deltaX);
     void SetDeltaY(int deltaY);
 }
 
-public interface IResizableGadget : IMoveableGadget
+public interface IResizableGadget : IHitBoxGadget, IReactiveGadget
 {
     new IRectangularLevelRegion HitBox { get; }
 

@@ -44,7 +44,7 @@ public sealed class SpriteDrawingData
 
             if (facingDirection == LeftFacingDirection.Instance)
             {
-                rotNum = rotNum + 2 & 3;
+                rotNum = (rotNum + 2) & 3;
                 flipHorizontally = true;
             }
             else

@@ -21,25 +21,22 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             _lemming.FacingDirection);
     }
 
-    public Rectangle GetLocationRectangle()
+    public Rectangle GetSpriteBounds()
     {
         var p = _lemming.LevelPosition - _actionSprite.AnchorPoint;
 
         return new Rectangle(p.X, p.Y, _actionSprite.SpriteWidth, _actionSprite.SpriteHeight);
     }
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
-    {
-        RenderAtPosition(spriteBatch, _actionSprite.GetSourceRectangleForFrame(_lemming.AnimationFrame), x, y, scaleMultiplier);
-    }
-
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int x, int y, int scaleMultiplier)
+    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
     {
         var renderDestination = new Rectangle(
-            x,
-            y,
-            _actionSprite.SpriteWidth * scaleMultiplier,
-            _actionSprite.SpriteHeight * scaleMultiplier);
+            screenX,
+            screenY,
+            sourceRectangle.Width * scaleMultiplier,
+            sourceRectangle.Height * scaleMultiplier);
+
+        sourceRectangle.Y += _lemming.AnimationFrame * _actionSprite.SpriteHeight;
 
         _actionSprite.RenderLemming(spriteBatch, _lemming, sourceRectangle, renderDestination);
 
@@ -53,7 +50,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
               SpriteEffects.None,
               RenderingLayers.LemmingRenderLayer);*/
 
-        // var p = new Point(x - scaleMultiplier, y - scaleMultiplier);
+        // var p = new Point(screenX - scaleMultiplier, screenY - scaleMultiplier);
         // renderDestination = new Rectangle(p, new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
 
         /* var spriteBank = LevelScreen.CurrentLevel.SpriteBank;

@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Engine.Orientations;
 namespace NeoLemmixSharp.Engine.Engine.Gadgets;
 
 public sealed class SimpleGadgetList<TGadget> : IGadgetCollection<TGadget>
-    where TGadget : class, IGadget
+    where TGadget : class, IHitBoxGadget
 {
     private readonly TGadget[] _gadgets;
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Engine.Engine;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -24,7 +25,7 @@ public sealed class LevelCursorSprite : IViewportObjectRenderer
         FocusedCursorTexture = focusedCursorTexture;
     }
 
-    public Rectangle GetLocationRectangle() => new(0, 0, CursorSizeInPixels, CursorSizeInPixels);
+    public Rectangle GetSpriteBounds() => new(0, 0, CursorSizeInPixels, CursorSizeInPixels);
 
     public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
     {
@@ -44,17 +45,13 @@ public sealed class LevelCursorSprite : IViewportObjectRenderer
         spriteBatch.Draw(
             texture,
             destRectangle,
-            GetLocationRectangle(),
-            Color.White,
-            0.0f,
-            new Vector2(),
-            SpriteEffects.None,
+            GetSpriteBounds(),
             RenderingLayers.CursorLayer);
     }
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int x, int y, int scaleMultiplier)
+    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
     {
-        RenderAtPosition(spriteBatch, x, y, scaleMultiplier);
+        RenderAtPosition(spriteBatch, screenX, screenY, scaleMultiplier);
     }
 
     public void Dispose()

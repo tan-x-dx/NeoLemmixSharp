@@ -15,19 +15,22 @@ public sealed class ResizeableGadget : IResizableGadget
     public int Id { get; }
     public GadgetType Type { get; }
     public Orientation Orientation { get; }
-    public LevelPosition LevelPosition { get; }
-    public int AnimationFrame { get; }
+    public LevelPosition LevelPosition => SpriteClip.TopLeft;
+    public int AnimationFrame { get; private set; }
     public RectangularLevelRegion SpriteClip { get; }
     public RelativeRectangularLevelRegion HitBox { get; }
 
     public ResizeableGadget(
         int id,
         GadgetType gadgetType,
-        Orientation orientation)
+        Orientation orientation,
+        RectangularLevelRegion spriteClip)
     {
         Id = id;
         Type = gadgetType;
         Orientation = orientation;
+        SpriteClip = spriteClip;
+        HitBox = new RelativeRectangularLevelRegion(spriteClip, 0, 0, 5, 0);
     }
 
     public void Tick()
@@ -36,6 +39,8 @@ public sealed class ResizeableGadget : IResizableGadget
         SpriteClip.Y += _deltaY;
         SpriteClip.W += _deltaWidth;
         SpriteClip.H += _deltaHeight;
+
+        //  AnimationFrame = (AnimationFrame + 1) & 7;
     }
 
     public bool MatchesOrientation(LevelPosition levelPosition, Orientation orientation)
@@ -45,6 +50,11 @@ public sealed class ResizeableGadget : IResizableGadget
     }
 
     public void OnLemmingInHitBox(Lemming lemming)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void OnInput(InputType inputType)
     {
         throw new NotImplementedException();
     }
@@ -70,7 +80,7 @@ public sealed class ResizeableGadget : IResizableGadget
     }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    ILevelRegion IGadget.HitBox => HitBox;
+    ILevelRegion IHitBoxGadget.HitBox => HitBox;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     IRectangularLevelRegion IResizableGadget.HitBox => HitBox;
 }

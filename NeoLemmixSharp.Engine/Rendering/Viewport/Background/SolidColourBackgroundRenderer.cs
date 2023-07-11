@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 
@@ -29,9 +30,6 @@ public sealed class SolidColourBackgroundRenderer : IBackgroundRenderer
                 _viewport.ScreenHeight),
             new Rectangle(0, 0, 1, 1),
             _backgroundColor,
-            0.0f,
-            new Vector2(),
-            SpriteEffects.None,
             RenderingLayers.BackgroundLayer);
     }
 }

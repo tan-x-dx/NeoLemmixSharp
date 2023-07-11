@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets;
 
@@ -17,6 +18,7 @@ public sealed class MoveableGadget : IMoveableGadget
     public int AnimationFrame { get; private set; }
 
     public RectangularLevelRegion SpriteClip { get; }
+    public IViewportObjectRenderer Renderer { get; }
     public ILevelRegion HitBox { get; }
 
     public MoveableGadget(
@@ -33,6 +35,11 @@ public sealed class MoveableGadget : IMoveableGadget
     {
         SpriteClip.X += _deltaX;
         SpriteClip.Y += _deltaY;
+    }
+
+    public void OnInput(InputType inputType)
+    {
+        throw new NotImplementedException();
     }
 
     public bool MatchesOrientation(LevelPosition levelPosition, Orientation orientation)

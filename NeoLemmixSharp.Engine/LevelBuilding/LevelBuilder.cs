@@ -100,6 +100,7 @@ public sealed class LevelBuilder : IDisposable
             levelSprites,
             levelCursorSprite,
             controlPanelRenderer,
+            controlPanelSpriteBank,
             lemmingSpriteBank,
             gadgetSpriteBank,
             _fontBank);
