@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Gadget.NineSliceRendering;
@@ -28,38 +29,57 @@ public sealed class NineSliceTopRenderer : NineSliceSubRenderer
 
     public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
     {
-      /*  var subRectangle = SubRectangle;
-        Rectangle.Intersect(ref sourceRectangle, ref subRectangle, out var intersection);
+        var sourceSubRectangle = new Rectangle(
+            _sliceLeft,
+            0,
+            _sliceRight - _sliceLeft,
+            _sliceTop);
+        var clipSubRectangle = new Rectangle(
+            _sliceLeft,
+            0,
+            RectangularLevelRegion.W + _sliceRight - _sliceLeft - SpriteWidth,
+            _sliceTop);
+
+        Rectangle.Intersect(ref sourceRectangle, ref clipSubRectangle, out var intersection);
         if (intersection.IsEmpty)
             return;
 
-        var numberOfIntervals = (intersection.Width + subRectangle.Width - 1) / subRectangle.Width;
+        var numberOfIntervals = (clipSubRectangle.X + clipSubRectangle.Width + sourceSubRectangle.Width - sourceSubRectangle.X - 1) / sourceSubRectangle.Width;
+
+        if (numberOfIntervals == 0)
+            return;
 
         Span<IntervalThing> intervals = stackalloc IntervalThing[numberOfIntervals];
-        Populate(intervals, SubRectangle.Width, sourceRectangle.X, sourceRectangle.Right);
+        Populate(intervals, sourceSubRectangle.X, sourceSubRectangle.Width, clipSubRectangle.X, clipSubRectangle.Width);
+
+        var w0 = 0;
+        var destX = screenX + (intersection.X - sourceRectangle.X) * scaleMultiplier;
+        var destY = screenY + (intersection.Y - sourceRectangle.Y) * scaleMultiplier;
 
         for (var i = 0; i < intervals.Length; i++)
         {
-            var interval = intervals[i];
+            ref var interval = ref intervals[i];
 
             var sourceRectangle0 = new Rectangle(
-                interval.IntervalStart,
+                _sliceLeft + interval.IntervalStart,
                 intersection.Y,
                 interval.IntervalWidth,
                 intersection.Height);
 
             var destinationRectangle = new Rectangle(
-                screenX + (intersection.X * scaleMultiplier),
-                screenY + (intersection.Y * scaleMultiplier),
-                sourceRectangle0.Width * scaleMultiplier,
-                sourceRectangle0.Height * scaleMultiplier);
+                destX + (w0 - sourceRectangle.X * i) * scaleMultiplier,
+                destY,
+                interval.IntervalWidth * scaleMultiplier,
+                intersection.Height * scaleMultiplier);
+
+            w0 += interval.IntervalWidth;
 
             spriteBatch.Draw(
                 texture,
                 destinationRectangle,
                 sourceRectangle0,
                 0.9375f);
-        }*/
+        }
     }
 }
 
@@ -85,8 +105,58 @@ public sealed class NineSliceBottomRenderer : NineSliceSubRenderer
         _sliceBottom = sliceBottom;
     }
 
-    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY,
-        int scaleMultiplier)
+    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
     {
+        var sourceSubRectangle = new Rectangle(
+            _sliceLeft,
+            _sliceBottom,
+            _sliceRight - _sliceLeft,
+            SpriteHeight - _sliceBottom);
+        var clipSubRectangle = new Rectangle(
+            _sliceLeft,
+            _sliceBottom,
+            RectangularLevelRegion.W + _sliceRight - _sliceLeft - SpriteWidth,
+            SpriteHeight - _sliceBottom);
+
+        Rectangle.Intersect(ref sourceRectangle, ref clipSubRectangle, out var intersection);
+        if (intersection.IsEmpty)
+            return;
+
+        var numberOfIntervals = (clipSubRectangle.X + clipSubRectangle.Width + sourceSubRectangle.Width - sourceSubRectangle.X - 1) / sourceSubRectangle.Width;
+
+        if (numberOfIntervals == 0)
+            return;
+
+        Span<IntervalThing> intervals = stackalloc IntervalThing[numberOfIntervals];
+        Populate(intervals, sourceSubRectangle.X, sourceSubRectangle.Width, clipSubRectangle.X, clipSubRectangle.Width);
+
+        var w0 = 0;
+        var destX = screenX + (intersection.X - sourceRectangle.X) * scaleMultiplier;
+        var destY = screenY + (intersection.Y - sourceRectangle.Y) * scaleMultiplier;
+
+        for (var i = 0; i < intervals.Length; i++)
+        {
+            ref var interval = ref intervals[i];
+
+            var sourceRectangle0 = new Rectangle(
+                _sliceLeft + interval.IntervalStart,
+                intersection.Y,
+                interval.IntervalWidth,
+                intersection.Height);
+
+            var destinationRectangle = new Rectangle(
+                destX + w0 * scaleMultiplier,
+                destY,
+                interval.IntervalWidth * scaleMultiplier,
+                intersection.Height * scaleMultiplier);
+
+            w0 += interval.IntervalWidth;
+
+            spriteBatch.Draw(
+                texture,
+                destinationRectangle,
+                sourceRectangle0,
+                0.9375f);
+        }
     }
 }

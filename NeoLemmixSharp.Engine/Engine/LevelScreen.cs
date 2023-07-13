@@ -32,7 +32,7 @@ public sealed class LevelScreen : IBaseScreen
 
     private IFrameUpdater _currentlySelectedFrameUpdater;
 
-    private bool _stopMotion = true;
+    private bool _stopMotion = false;
     private bool _doTick;
 
     public LevelRenderer ScreenRenderer { get; }
@@ -156,6 +156,8 @@ public sealed class LevelScreen : IBaseScreen
         {
             GameWindow.ToggleBorderless();
         }
+
+        Foo();
     }
 
     private bool HandleMouseInput()
@@ -277,4 +279,62 @@ public sealed class LevelScreen : IBaseScreen
     private bool Quit => _inputController.Quit.IsPressed;
     private bool ToggleFullScreen => _inputController.ToggleFullScreen.IsPressed;
     private bool ToggleFastForwards => _inputController.ToggleFastForwards.IsPressed;
+
+
+    private void Foo()
+    {
+        var gadget = (ResizeableGadget)_gadgets[0];
+
+        if (_inputController.W.IsKeyDown)
+        {
+            gadget.SetDeltaHeight(-1);
+        }
+        else if (_inputController.S.IsKeyDown)
+        {
+            gadget.SetDeltaHeight(1);
+        }
+        else
+        {
+            gadget.SetDeltaHeight(0);
+        }
+
+        if (_inputController.A.IsKeyDown)
+        {
+            gadget.SetDeltaWidth(-1);
+        }
+        else if (_inputController.D.IsKeyDown)
+        {
+            gadget.SetDeltaWidth(1);
+        }
+        else
+        {
+            gadget.SetDeltaWidth(0);
+        }
+
+        if (_inputController.UpArrow.IsKeyDown)
+        {
+            gadget.SetDeltaY(-1);
+        }
+        else if (_inputController.DownArrow.IsKeyDown)
+        {
+            gadget.SetDeltaY(1);
+        }
+        else
+        {
+            gadget.SetDeltaY(0);
+        }
+
+        if (_inputController.LeftArrow.IsKeyDown)
+        {
+            gadget.SetDeltaX(-1);
+        }
+        else if (_inputController.RightArrow.IsKeyDown)
+        {
+            gadget.SetDeltaX(1);
+        }
+        else
+        {
+            gadget.SetDeltaX(0);
+        }
+    }
 }

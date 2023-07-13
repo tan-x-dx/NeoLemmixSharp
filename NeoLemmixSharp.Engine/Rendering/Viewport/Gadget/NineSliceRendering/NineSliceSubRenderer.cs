@@ -40,29 +40,33 @@ public abstract class NineSliceSubRenderer
             IntervalStart = intervalStart;
             IntervalWidth = intervalWidth;
         }
+
+        public override string ToString() => $"{IntervalStart} {IntervalWidth}";
     }
 
     protected static void Populate(
         Span<IntervalThing> intervals,
-        int maxSize,
-        int bigIntervalStart,
-        int bigIntervalEnd)
+        int sourceX,
+        int sourceW,
+        int clipX,
+        int clipW)
     {
         if (intervals.Length == 1)
         {
-            intervals[0] = new IntervalThing(bigIntervalStart, bigIntervalEnd - bigIntervalStart);
+            intervals[0] = new IntervalThing(clipX - sourceX, clipW);
 
             return;
         }
 
-        intervals[0] = new IntervalThing(bigIntervalStart, maxSize - bigIntervalStart);
+        var a = clipX - sourceX;
+        intervals[0] = new IntervalThing(a, sourceW - a);
 
         var limit = intervals.Length - 1;
         for (var i = 1; i < limit; i++)
         {
-            intervals[i] = new IntervalThing(0, maxSize);
+            intervals[i] = new IntervalThing(0, sourceW);
         }
 
-        intervals[limit] = new IntervalThing(0, bigIntervalEnd - (limit * maxSize));
+        intervals[limit] = new IntervalThing(0, clipW - limit * sourceW);
     }
 }

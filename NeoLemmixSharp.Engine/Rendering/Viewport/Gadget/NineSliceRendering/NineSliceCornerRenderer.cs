@@ -26,21 +26,31 @@ public sealed class NineSliceTopLeftCornerRenderer : NineSliceSubRenderer
 
     public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
     {
-        var subRectangle = new Rectangle(0, 0, _sliceLeft, _sliceTop);
-        Rectangle.Intersect(ref sourceRectangle, ref subRectangle, out var intersection);
+        var sourceSubRectangle = new Rectangle(
+            0,
+            0,
+            _sliceLeft,
+            _sliceTop);
+        var clipSubRectangle = new Rectangle(
+            0,
+            0,
+            _sliceLeft,
+            _sliceTop);
+
+        Rectangle.Intersect(ref sourceRectangle, ref clipSubRectangle, out var intersection);
         if (intersection.IsEmpty)
             return;
 
         var destinationRectangle = new Rectangle(
-            screenX - (intersection.X * scaleMultiplier),
-            screenY - (intersection.Y * scaleMultiplier),
+            screenX + (intersection.X - sourceRectangle.X) * scaleMultiplier,
+            screenY + (intersection.Y - sourceRectangle.Y) * scaleMultiplier,
             intersection.Width * scaleMultiplier,
             intersection.Height * scaleMultiplier);
 
         spriteBatch.Draw(
             texture,
             destinationRectangle,
-            intersection,
+            sourceSubRectangle,
             0.9375f);
     }
 }
@@ -67,31 +77,31 @@ public sealed class NineSliceTopRightCornerRenderer : NineSliceSubRenderer
     public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
     {
         var w = SpriteWidth - _sliceRight;
-        var subRectangle = new Rectangle(
+        var sourceSubRectangle = new Rectangle(
             _sliceRight,
             0,
             w,
             _sliceTop);
-        var xRectangle = new Rectangle(
-            RectangularLevelRegion.W - SpriteWidth,
+        var clipSubRectangle = new Rectangle(
+            RectangularLevelRegion.W - w,
             0,
             w,
             _sliceTop);
 
-        Rectangle.Intersect(ref sourceRectangle, ref xRectangle, out var intersection);
+        Rectangle.Intersect(ref sourceRectangle, ref clipSubRectangle, out var intersection);
         if (intersection.IsEmpty)
             return;
 
         var destinationRectangle = new Rectangle(
-            screenX - ((subRectangle.X - intersection.X) * scaleMultiplier),
-            screenY - ((subRectangle.Y - intersection.Y) * scaleMultiplier),
+            screenX + (intersection.X - sourceRectangle.X) * scaleMultiplier,
+            screenY + (intersection.Y - sourceRectangle.Y) * scaleMultiplier,
             intersection.Width * scaleMultiplier,
             intersection.Height * scaleMultiplier);
 
         spriteBatch.Draw(
             texture,
             destinationRectangle,
-            subRectangle,
+            sourceSubRectangle,
             0.9375f);
     }
 }
@@ -117,27 +127,32 @@ public sealed class NineSliceBottomLeftCornerRenderer : NineSliceSubRenderer
 
     public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
     {
-        var spriteClip = RectangularLevelRegion.ToRectangle();
-        Rectangle.Intersect(ref sourceRectangle, ref spriteClip, out var intersection);
+        var h = SpriteHeight - _sliceBottom;
+        var sourceSubRectangle = new Rectangle(
+            0,
+            _sliceBottom,
+            _sliceLeft,
+            h);
+        var clipSubRectangle = new Rectangle(
+            0,
+            RectangularLevelRegion.H - h,
+            _sliceLeft,
+            h);
+
+        Rectangle.Intersect(ref sourceRectangle, ref clipSubRectangle, out var intersection);
         if (intersection.IsEmpty)
             return;
 
-        var subRectangle = new Rectangle(
-            0,
-            RectangularLevelRegion.Y - _sliceBottom,
-            _sliceLeft,
-            _sliceBottom);
-
         var destinationRectangle = new Rectangle(
-            screenX - (intersection.X * scaleMultiplier),
-            screenY - (intersection.Y * scaleMultiplier),
+            screenX + (intersection.X - sourceRectangle.X) * scaleMultiplier,
+            screenY + (intersection.Y - sourceRectangle.Y) * scaleMultiplier,
             intersection.Width * scaleMultiplier,
             intersection.Height * scaleMultiplier);
 
         spriteBatch.Draw(
             texture,
             destinationRectangle,
-            intersection,
+            sourceSubRectangle,
             0.9375f);
     }
 }
@@ -163,25 +178,33 @@ public sealed class NineSliceBottomRightCornerRenderer : NineSliceSubRenderer
 
     public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
     {
-        var subRectangle = new Rectangle(
-            RectangularLevelRegion.X - _sliceRight,
-            RectangularLevelRegion.Y - _sliceBottom,
-            SpriteWidth - _sliceRight,
-            SpriteHeight - _sliceBottom);
-        Rectangle.Intersect(ref sourceRectangle, ref subRectangle, out var intersection);
+        var w = SpriteWidth - _sliceRight;
+        var h = SpriteHeight - _sliceBottom;
+        var sourceSubRectangle = new Rectangle(
+            _sliceRight,
+            _sliceBottom,
+            w,
+            h);
+        var clipSubRectangle = new Rectangle(
+            RectangularLevelRegion.W - w,
+            RectangularLevelRegion.H - h,
+            w,
+            h);
+
+        Rectangle.Intersect(ref sourceRectangle, ref clipSubRectangle, out var intersection);
         if (intersection.IsEmpty)
             return;
 
         var destinationRectangle = new Rectangle(
-            screenX - (intersection.X * scaleMultiplier),
-            screenY - (intersection.Y * scaleMultiplier),
+            screenX + (intersection.X - sourceRectangle.X) * scaleMultiplier,
+            screenY + (intersection.Y - sourceRectangle.Y) * scaleMultiplier,
             intersection.Width * scaleMultiplier,
             intersection.Height * scaleMultiplier);
 
         spriteBatch.Draw(
             texture,
             destinationRectangle,
-            intersection,
+            sourceSubRectangle,
             0.9375f);
     }
 }

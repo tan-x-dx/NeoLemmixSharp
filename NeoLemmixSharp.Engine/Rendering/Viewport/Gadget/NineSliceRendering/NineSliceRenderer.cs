@@ -6,13 +6,13 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.Gadget.NineSliceRendering;
 
 public sealed class NineSliceRenderer : IViewportObjectRenderer
 {
-    private readonly IRectangularLevelRegion _rectangularLevelRegion;
+    private readonly IRectangularLevelRegion _spriteClipRectangle;
     private readonly NineSliceSubRenderer[] _subRenderers;
 
     private readonly Texture2D _texture;
 
     public NineSliceRenderer(
-        IRectangularLevelRegion rectangularLevelRegion,
+        IRectangularLevelRegion spriteClipRectangle,
         Texture2D texture,
         int spriteWidth,
         int spriteHeight,
@@ -21,10 +21,10 @@ public sealed class NineSliceRenderer : IViewportObjectRenderer
         int sliceLeft,
         int sliceRight)
     {
-        _rectangularLevelRegion = rectangularLevelRegion;
+        _spriteClipRectangle = spriteClipRectangle;
 
         _subRenderers = GetSubRenderers(
-            rectangularLevelRegion,
+            spriteClipRectangle,
             spriteWidth,
             spriteHeight,
             sliceTop,
@@ -36,7 +36,7 @@ public sealed class NineSliceRenderer : IViewportObjectRenderer
     }
 
     private static NineSliceSubRenderer[] GetSubRenderers(
-        IRectangularLevelRegion rectangularLevelRegion,
+        IRectangularLevelRegion spriteClipRectangle,
         int spriteWidth,
         int spriteHeight,
         int sliceTop,
@@ -46,17 +46,17 @@ public sealed class NineSliceRenderer : IViewportObjectRenderer
     {
         var results = new NineSliceSubRenderer[]
         {
-            new NineSliceTopLeftCornerRenderer(rectangularLevelRegion, spriteWidth, spriteHeight, sliceLeft, sliceTop),
-            //new NineSliceTopRenderer(rectangularLevelRegion, spriteWidth, spriteHeight, sliceLeft, sliceRight, sliceTop),
-            new NineSliceTopRightCornerRenderer(rectangularLevelRegion, spriteWidth, spriteHeight, sliceRight, sliceTop),
+            new NineSliceTopLeftCornerRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceLeft, sliceTop),
+            new NineSliceTopRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceLeft, sliceRight, sliceTop),
+            new NineSliceTopRightCornerRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceRight, sliceTop),
 
-            //new NineSliceLeftRenderer(rectangularLevelRegion, spriteWidth, spriteHeight, sliceTop, sliceBottom, sliceLeft),
-            //new NineSliceCentreRenderer(rectangularLevelRegion, spriteWidth, spriteHeight, sliceLeft, sliceRight, sliceTop, sliceBottom),
-            //new NineSliceRightRenderer(rectangularLevelRegion, spriteWidth, spriteHeight, sliceTop, sliceBottom, sliceRight),
+            //new NineSliceLeftRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceTop, sliceBottom, sliceLeft),
+            //new NineSliceCentreRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceLeft, sliceRight, sliceTop, sliceBottom),
+            //new NineSliceRightRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceTop, sliceBottom, sliceRight),
 
-            //new NineSliceBottomLeftCornerRenderer(rectangularLevelRegion, spriteWidth, spriteHeight, sliceLeft, sliceBottom),
-            //new NineSliceBottomRenderer(rectangularLevelRegion, spriteWidth, spriteHeight, sliceLeft, sliceRight, sliceBottom),
-            //new NineSliceBottomRightCornerRenderer(rectangularLevelRegion, spriteWidth, spriteHeight, sliceRight, sliceBottom)
+            new NineSliceBottomLeftCornerRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceLeft, sliceBottom),
+            new NineSliceBottomRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceLeft, sliceRight, sliceBottom),
+            new NineSliceBottomRightCornerRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceRight, sliceBottom)
         };
 
         return results
@@ -64,7 +64,7 @@ public sealed class NineSliceRenderer : IViewportObjectRenderer
             .ToArray();
     }
 
-    public Rectangle GetSpriteBounds() => _rectangularLevelRegion.ToRectangle();
+    public Rectangle GetSpriteBounds() => _spriteClipRectangle.ToRectangle();
 
     public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
     {
