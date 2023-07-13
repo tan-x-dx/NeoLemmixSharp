@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Common.Util.BitArrays;
 
 public sealed class IntBasedBitArray : IBitArray
 {
-    private const int Size = 32;
+    public const int Size = 32;
 
     private uint _bits;
 
@@ -27,7 +27,7 @@ public sealed class IntBasedBitArray : IBitArray
 
     public bool GetBit(int index)
     {
-        return (_bits & 1U << index) != 0U;
+        return (_bits & (1U << index)) != 0U;
     }
 
     public bool SetBit(int index)

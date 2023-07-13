@@ -26,8 +26,8 @@ public sealed class NeoLemmixGame : Game, IGameWindow
     public int WindowHeight => _graphics.PreferredBackBufferHeight;
 
     public bool IsFullScreen { get; private set; }
-    public BaseScreen Screen { get; set; }
-    public ScreenRenderer ScreenRenderer { get; set; }
+    public IBaseScreen Screen { get; set; }
+    public IScreenRenderer ScreenRenderer { get; set; }
 
     public NeoLemmixGame()
     {
@@ -88,7 +88,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
         //    "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
         //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\rotation test.nxlv";
         //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\render test.nxlv";
-        //"C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\movement test.nxlv";
+       // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\movement test.nxlv";
         "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\object test.nxlv";
         // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
         //   "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";

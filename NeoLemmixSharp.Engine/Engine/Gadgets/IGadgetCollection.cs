@@ -3,137 +3,68 @@ using NeoLemmixSharp.Engine.Engine.Orientations;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets;
 
-public interface IGadgetCollection
+public interface IGadgetCollection<TGadget>
+    where TGadget : class, IHitBoxGadget
 {
-    bool TryGetGadgetThatMatchesTypeAndOrientation(LevelPosition levelPosition, Orientation orientation, out IGadget? gadget);
-}
-
-public sealed class GadgetList : IGadgetCollection
-{
-    private readonly IGadget[] _gadgets;
-
-    public GadgetList(IGadget[] gadgets)
-    {
-        _gadgets = gadgets;
-    }
-
-    public bool TryGetGadgetThatMatchesTypeAndOrientation(
-        LevelPosition levelPosition,
-        Orientation orientation,
-        out IGadget? gadget)
-    {
-        for (var i = 0; i < _gadgets.Length; i++)
-        {
-            gadget = _gadgets[i];
-            if (gadget.MatchesOrientation(levelPosition, orientation))
-                return true;
-        }
-
-        gadget = null;
-        return false;
-    }
-}
-
-public sealed class EmptyGadgetList : IGadgetCollection
-{
-    public static EmptyGadgetList Instance { get; } = new();
-
-    private EmptyGadgetList()
-    {
-    }
-
-    public bool TryGetGadgetThatMatchesTypeAndOrientation(
-        LevelPosition levelPosition,
-        Orientation orientation,
-        out IGadget? gadget)
-    {
-        gadget = null;
-        return false;
-    }
+    bool TryGetGadgetThatMatchesTypeAndOrientation(LevelPosition levelPosition, Orientation orientation, out TGadget? gadget);
 }
 
 public static class GadgetCollections
 {
-    public static IGadgetCollection Hatches { get; private set; }
-    public static IGadgetCollection Exits { get; private set; }
-    public static IGadgetCollection Waters { get; private set; }
-    public static IGadgetCollection InfiniteTraps { get; private set; }
-    public static IGadgetCollection Fires { get; private set; }
-    public static IGadgetCollection Updrafts { get; private set; }
-    public static IGadgetCollection OneTimeTraps { get; private set; }
-    public static IGadgetCollection ForceSplats { get; private set; }
-    public static IGadgetCollection NoSplats { get; private set; }
-    public static IGadgetCollection MetalGrates { get; private set; }
+    public static IGadgetCollection<IHitBoxGadget> Hatches { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> Exits { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> Waters { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> InfiniteTraps { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> Fires { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> Updrafts { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> OneTimeTraps { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> ForceSplats { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IHitBoxGadget> NoSplats { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<MetalGrateGadget> MetalGrates { get; private set; } = EmptyGadgetList<MetalGrateGadget>.Instance;
 
     public static void ClearGadgets()
     {
-        Hatches = EmptyGadgetList.Instance;
-        Exits = EmptyGadgetList.Instance;
-        Waters = EmptyGadgetList.Instance;
-        InfiniteTraps = EmptyGadgetList.Instance;
-        Fires = EmptyGadgetList.Instance;
-        Updrafts = EmptyGadgetList.Instance;
-        OneTimeTraps = EmptyGadgetList.Instance;
-        ForceSplats = EmptyGadgetList.Instance;
-        NoSplats = EmptyGadgetList.Instance;
-        MetalGrates = EmptyGadgetList.Instance;
+        Hatches = EmptyGadgetList<IHitBoxGadget>.Instance;
+        Exits = EmptyGadgetList<IHitBoxGadget>.Instance;
+        Waters = EmptyGadgetList<IHitBoxGadget>.Instance;
+        InfiniteTraps = EmptyGadgetList<IHitBoxGadget>.Instance;
+        Fires = EmptyGadgetList<IHitBoxGadget>.Instance;
+        Updrafts = EmptyGadgetList<IHitBoxGadget>.Instance;
+        OneTimeTraps = EmptyGadgetList<IHitBoxGadget>.Instance;
+        ForceSplats = EmptyGadgetList<IHitBoxGadget>.Instance;
+        NoSplats = EmptyGadgetList<IHitBoxGadget>.Instance;
+        MetalGrates = EmptyGadgetList<MetalGrateGadget>.Instance;
     }
 
-    public static void SetGadgets(ICollection<IGadget> allGadgets)
+    public static void SetGadgets(IEnumerable<IGadget> allGadgets)
     {
         var gadgetTypeLookup = allGadgets
+            .OfType<IHitBoxGadget>()
             .ToLookup(g => g.Type);
 
-        var hatches = gadgetTypeLookup[GadgetType.Hatch].ToArray();
-        Hatches = hatches.Length > 0
-            ? new GadgetList(hatches)
-            : EmptyGadgetList.Instance;
+        Hatches = GetGadgetCollection<IHitBoxGadget>(GadgetType.Hatch);
+        Exits = GetGadgetCollection<IHitBoxGadget>(GadgetType.Exit);
+        Waters = GetGadgetCollection<IHitBoxGadget>(GadgetType.Water);
+        InfiniteTraps = GetGadgetCollection<IHitBoxGadget>(GadgetType.TrapInfinite);
+        Fires = GetGadgetCollection<IHitBoxGadget>(GadgetType.Fire);
+        Updrafts = GetGadgetCollection<IHitBoxGadget>(GadgetType.Updraft);
+        OneTimeTraps = GetGadgetCollection<IHitBoxGadget>(GadgetType.TrapOnce);
+        NoSplats = GetGadgetCollection<IHitBoxGadget>(GadgetType.NoSplat);
+        ForceSplats = GetGadgetCollection<IHitBoxGadget>(GadgetType.Splat);
 
-        var exits = gadgetTypeLookup[GadgetType.Exit].ToArray();
-        Exits = exits.Length > 0
-            ? new GadgetList(exits)
-            : EmptyGadgetList.Instance;
+        MetalGrates = GetGadgetCollection<MetalGrateGadget>(GadgetType.MetalGrate);
 
-        var waters = gadgetTypeLookup[GadgetType.Water].ToArray();
-        Waters = waters.Length > 0
-            ? new GadgetList(waters)
-            : EmptyGadgetList.Instance;
+        IGadgetCollection<TGadget> GetGadgetCollection<TGadget>(GadgetType gadgetType)
+            where TGadget : class, IHitBoxGadget
+        {
+            var relevantGadgets = gadgetTypeLookup[gadgetType]
+                .OrderBy(g => g.Id)
+                .Cast<TGadget>()
+                .ToArray();
 
-        var infiniteTraps = gadgetTypeLookup[GadgetType.TrapInfinite].ToArray();
-        InfiniteTraps = infiniteTraps.Length > 0
-            ? new GadgetList(infiniteTraps)
-            : EmptyGadgetList.Instance;
-
-        var fires = gadgetTypeLookup[GadgetType.Fire].ToArray();
-        Fires = fires.Length > 0
-            ? new GadgetList(fires)
-            : EmptyGadgetList.Instance;
-
-        var updrafts = gadgetTypeLookup[GadgetType.Updraft].ToArray();
-        Updrafts = updrafts.Length > 0
-            ? new GadgetList(updrafts)
-            : EmptyGadgetList.Instance;
-
-        var oneTimeTraps = gadgetTypeLookup[GadgetType.TrapOnce].ToArray();
-        OneTimeTraps = oneTimeTraps.Length > 0
-            ? new GadgetList(oneTimeTraps)
-            : EmptyGadgetList.Instance;
-
-        var noSplats = gadgetTypeLookup[GadgetType.NoSplat].ToArray();
-        NoSplats = noSplats.Length > 0
-            ? new GadgetList(noSplats)
-            : EmptyGadgetList.Instance;
-
-        var splats = gadgetTypeLookup[GadgetType.Splat].ToArray();
-        ForceSplats = splats.Length > 0
-            ? new GadgetList(splats)
-            : EmptyGadgetList.Instance;
-
-        var metalGrates = gadgetTypeLookup[GadgetType.MetalGrate]
-            .Cast<MetalGrateGadget>()
-            .ToArray();
-        MetalGrates = metalGrates.Length > 0
-            ? new GadgetList(metalGrates)
-            : EmptyGadgetList.Instance;
+            return relevantGadgets.Length > 0
+                ? new SimpleGadgetList<TGadget>(relevantGadgets)
+                : EmptyGadgetList<TGadget>.Instance;
+        }
     }
 }

@@ -1,28 +1,33 @@
-﻿using System.Diagnostics;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using System.Diagnostics;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets;
 
-public sealed class MetalGrateGadget : IGadget
+public sealed class MetalGrateGadget : IHitBoxGadget
 {
+    public int Id { get; }
     public GadgetType Type { get; }
     public Orientation Orientation { get; }
     public LevelPosition LevelPosition { get; }
     public int AnimationFrame { get; private set; }
 
     public RectangularLevelRegion SpriteClip { get; }
+    public IViewportObjectRenderer Renderer { get; }
     public RectangularLevelRegion HitBox { get; }
 
     private bool _isActive;
 
     public MetalGrateGadget(
+        int id,
         Orientation orientation,
         LevelPosition levelPosition,
         RectangularLevelRegion renderClip,
         RectangularLevelRegion hitBox)
     {
+        Id = id;
         Orientation = orientation;
         LevelPosition = levelPosition;
         SpriteClip = renderClip;
@@ -53,6 +58,11 @@ public sealed class MetalGrateGadget : IGadget
         return HitBox.ContainsPoint(offset);
     }
 
+    public void OnLemmingInHitBox(Lemming lemming)
+    {
+
+    }
+
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    ILevelRegion IGadget.HitBox => HitBox;
+    ILevelRegion IHitBoxGadget.HitBox => HitBox;
 }

@@ -11,7 +11,7 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
 
     private readonly Texture2D _texture;
 
-    public float RenderLayer { get; set; }
+    public float RenderLayer { get; set; } = 1.0f;
 
     public SkillCountDigitFont(ContentManager content)
     {
@@ -38,10 +38,6 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
                 _texture,
                 dest,
                 source,
-                Color.White,
-                0.0f,
-                new Vector2(),
-                SpriteEffects.None,
                 RenderLayer);
             dest.X += GlyphWidth * scaleMultiplier;
         }

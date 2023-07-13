@@ -18,7 +18,7 @@ public sealed class ArrayBasedBitArray : IBitArray
 
         Length = length;
 
-        var numberOfInts = Length + 31 >> 5;
+        var numberOfInts = (Length + 31) >> 5;
 
         _uints = new uint[numberOfInts];
 
@@ -31,7 +31,7 @@ public sealed class ArrayBasedBitArray : IBitArray
         var mask = (1U << shift) - 1U;
         _uints[^1] = mask;
 
-        Count = (_uints.Length - 1 << 5) + shift;
+        Count = ((_uints.Length - 1) << 5) + shift;
     }
 
     private ArrayBasedBitArray(int length, uint[] bits, int count)
@@ -43,7 +43,7 @@ public sealed class ArrayBasedBitArray : IBitArray
 
     public bool GetBit(int index)
     {
-        return (_uints[index >> 5] & 1U << index) != 0U;
+        return (_uints[index >> 5] & (1U << index)) != 0U;
     }
 
     public bool SetBit(int index)
@@ -51,7 +51,7 @@ public sealed class ArrayBasedBitArray : IBitArray
         int intIndex = index >> 5;
 
         uint oldValue = _uints[intIndex];
-        uint newValue = oldValue | 1U << index;
+        uint newValue = oldValue | (1U << index);
 
         if (oldValue == newValue)
             return false;

@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Common.Screen;
+﻿using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Screen;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Engine.Gadgets;
@@ -12,7 +14,7 @@ using NeoLemmixSharp.Io.LevelReading.Data;
 
 namespace NeoLemmixSharp.Engine.Engine;
 
-public sealed class LevelScreen : BaseScreen
+public sealed class LevelScreen : IBaseScreen
 {
     private readonly TerrainManager _terrain;
 
@@ -30,10 +32,13 @@ public sealed class LevelScreen : BaseScreen
 
     private IFrameUpdater _currentlySelectedFrameUpdater;
 
-    private bool _stopMotion = true;
+    private bool _stopMotion = false;
     private bool _doTick;
 
-    public override LevelRenderer ScreenRenderer { get; }
+    public LevelRenderer ScreenRenderer { get; }
+    public bool IsDisposed { get; set; }
+    public IGameWindow GameWindow { get; set; }
+    public string ScreenTitle { get; init; }
 
     public bool IsFastForwards { get; private set; }
 
@@ -84,7 +89,9 @@ public sealed class LevelScreen : BaseScreen
         // terrain.TerrainRenderer.SetViewport(_viewport);
     }
 
-    public override void Tick()
+    IScreenRenderer IBaseScreen.ScreenRenderer => ScreenRenderer;
+
+    public void Tick()
     {
         DoneAssignmentThisFrame = false;
         _levelCursor.OnNewFrame();
@@ -149,6 +156,8 @@ public sealed class LevelScreen : BaseScreen
         {
             GameWindow.ToggleBorderless();
         }
+
+        Foo();
     }
 
     private bool HandleMouseInput()
@@ -229,7 +238,7 @@ public sealed class LevelScreen : BaseScreen
         }
     }
 
-    public override void OnWindowSizeChanged()
+    public void OnWindowSizeChanged()
     {
         var windowWidth = GameWindow.WindowWidth;
         var windowHeight = GameWindow.WindowHeight;
@@ -239,7 +248,7 @@ public sealed class LevelScreen : BaseScreen
         ScreenRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
     }
 
-    public override void Dispose()
+    public void Dispose()
     {
 #pragma warning disable CS8625
         Orientation.SetTerrain(null);
@@ -252,7 +261,7 @@ public sealed class LevelScreen : BaseScreen
 #pragma warning restore CS8625
     }
     /*
-    public override ScreenRenderer CreateScreenRenderer(
+    public override IScreenRenderer CreateScreenRenderer(
         SpriteBank spriteBank,
         FontBank fontBank,
         ISprite[] levelSprites)
@@ -270,4 +279,62 @@ public sealed class LevelScreen : BaseScreen
     private bool Quit => _inputController.Quit.IsPressed;
     private bool ToggleFullScreen => _inputController.ToggleFullScreen.IsPressed;
     private bool ToggleFastForwards => _inputController.ToggleFastForwards.IsPressed;
+
+
+    private void Foo()
+    {
+        var gadget = (ResizeableGadget)_gadgets[0];
+
+        if (_inputController.W.IsKeyDown)
+        {
+            gadget.SetDeltaHeight(-1);
+        }
+        else if (_inputController.S.IsKeyDown)
+        {
+            gadget.SetDeltaHeight(1);
+        }
+        else
+        {
+            gadget.SetDeltaHeight(0);
+        }
+
+        if (_inputController.A.IsKeyDown)
+        {
+            gadget.SetDeltaWidth(-1);
+        }
+        else if (_inputController.D.IsKeyDown)
+        {
+            gadget.SetDeltaWidth(1);
+        }
+        else
+        {
+            gadget.SetDeltaWidth(0);
+        }
+
+        if (_inputController.UpArrow.IsKeyDown)
+        {
+            gadget.SetDeltaY(-1);
+        }
+        else if (_inputController.DownArrow.IsKeyDown)
+        {
+            gadget.SetDeltaY(1);
+        }
+        else
+        {
+            gadget.SetDeltaY(0);
+        }
+
+        if (_inputController.LeftArrow.IsKeyDown)
+        {
+            gadget.SetDeltaX(-1);
+        }
+        else if (_inputController.RightArrow.IsKeyDown)
+        {
+            gadget.SetDeltaX(1);
+        }
+        else
+        {
+            gadget.SetDeltaX(0);
+        }
+    }
 }

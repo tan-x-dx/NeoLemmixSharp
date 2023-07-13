@@ -17,8 +17,18 @@ public sealed class LevelInputController : InputController
     public DirectionControlKeyAction SelectLeftFacingLemmings { get; }
     public DirectionControlKeyAction SelectRightFacingLemmings { get; }
 
+    public SimpleKeyAction RightArrow { get; }
+    public SimpleKeyAction UpArrow { get; }
+    public SimpleKeyAction LeftArrow { get; }
+    public SimpleKeyAction DownArrow { get; }
+
+    public SimpleKeyAction W { get; }
+    public SimpleKeyAction A { get; }
+    public SimpleKeyAction S { get; }
+    public SimpleKeyAction D { get; }
+
     public LevelInputController()
-        : base(8)
+        : base(14)
     {
         Pause = CreateSimpleAction("Pause");
         Quit = CreateSimpleAction("Quit");
@@ -26,6 +36,15 @@ public sealed class LevelInputController : InputController
         ToggleFastForwards = CreateSimpleAction("Toggle Fast Forwards");
         SelectOnlyWalkers = CreateSimpleAction("Select Only Walkers");
         SelectOnlyUnassignedLemmings = CreateSimpleAction("Select Only Unassigned Lemmings");
+
+        RightArrow = CreateSimpleAction("ABC");
+        UpArrow = CreateSimpleAction("ABC");
+        LeftArrow = CreateSimpleAction("ABC");
+        DownArrow = CreateSimpleAction("ABC");
+        W = CreateSimpleAction("ABC");
+        A = CreateSimpleAction("ABC");
+        S = CreateSimpleAction("ABC");
+        D = CreateSimpleAction("ABC");
 
         SelectLeftFacingLemmings = new DirectionControlKeyAction(_actionCount++, "Select Left Facing Lemmings", LeftFacingDirection.Instance);
         SelectRightFacingLemmings = new DirectionControlKeyAction(_actionCount++, "Select Right Facing Lemmings", RightFacingDirection.Instance);
@@ -48,7 +67,17 @@ public sealed class LevelInputController : InputController
         Bind(Keys.LeftControl, SelectOnlyUnassignedLemmings);
         Bind(Keys.W, SelectOnlyWalkers);
 
-        Bind(Keys.Left, SelectLeftFacingLemmings);
-        Bind(Keys.Right, SelectRightFacingLemmings);
+        //  Bind(Keys.Left, SelectLeftFacingLemmings);
+        //  Bind(Keys.Right, SelectRightFacingLemmings);
+
+        Bind(Keys.W, W);
+        Bind(Keys.A, A);
+        Bind(Keys.S, S);
+        Bind(Keys.D, D);
+
+        Bind(Keys.Left, LeftArrow);
+        Bind(Keys.Up, UpArrow);
+        Bind(Keys.Right, RightArrow);
+        Bind(Keys.Down, DownArrow);
     }
 }

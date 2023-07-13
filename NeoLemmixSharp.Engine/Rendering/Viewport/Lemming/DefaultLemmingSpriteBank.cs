@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Rendering.Viewport.SpriteRotationReflectionProcessor;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
@@ -60,30 +61,35 @@ public static class DefaultLemmingSpriteBank
                 (t, w, h, f, l, p) => new SingleColourLayerActionSprite(t, w, h, f, l, p));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void CreateThreeLayerSprite(LemmingAction action, LevelPosition anchorPoint)
         {
             CreateSprite(action, anchorPoint, 3,
                 (t, w, h, f, l, p) => new ThreeLayerActionSprite(t, w, h, f, l, p));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void CreateFourLayerSprite(LemmingAction action, LevelPosition anchorPoint)
         {
             CreateSprite(action, anchorPoint, 4,
                 (t, w, h, f, l, p) => new FourLayerActionSprite(t, w, h, f, l, p));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void CreateFourLayerTrueColourSprite(LemmingAction action, LevelPosition anchorPoint)
         {
             CreateSprite(action, anchorPoint, 4,
                 (t, w, h, f, l, p) => new FourLayerColourActionSprite(t, w, h, f, l, p));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void CreateFiveLayerTrueColourSprite(LemmingAction action, LevelPosition anchorPoint)
         {
             CreateSprite(action, anchorPoint, 5,
                 (t, w, h, f, l, p) => new FiveLayerColourActionSprite(t, w, h, f, l, p));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void CreateSprite(
             LemmingAction action,
             LevelPosition anchorPoint,

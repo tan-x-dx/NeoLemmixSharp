@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Engine.Engine;
 
 namespace NeoLemmixSharp.Engine.Rendering;
@@ -37,10 +38,6 @@ public sealed class TerrainRenderer : IDisposable
                     _texture,
                     screenRect,
                     sourceRect,
-                    Color.White,
-                    0.0f,
-                    new Vector2(),
-                    SpriteEffects.None,
                     RenderingLayers.TerrainLayer);
             }
         }

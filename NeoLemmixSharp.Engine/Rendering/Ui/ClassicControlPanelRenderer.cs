@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 
@@ -67,9 +68,6 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
                 _levelControlPanel.ControlPanelScreenHeight),
             new Rectangle(0, 0, 1, 1),
             Color.Black,
-            0.0f,
-            new Vector2(),
-            SpriteEffects.None,
             RenderingLayers.ControlPanelBackgroundLayer);
 
         var i = 0;
@@ -92,9 +90,6 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
                     _emptySlot,
                     destRectangle,
                     sourceRectangle,
-                    Color.White, 0.0f,
-                    new Vector2(),
-                    SpriteEffects.None,
                     RenderingLayers.ControlPanelButtonLayer);
 
                 destRectangle.X += _levelControlPanel.ControlPanelButtonScreenWidth;

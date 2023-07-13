@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
@@ -36,18 +37,6 @@ public abstract class ActionSprite : IDisposable
         Rectangle sourceRectangle,
         Rectangle destinationRectangle);
 
-    public Rectangle GetSourceRectangleForFrame(int frame)
-    {
-        return new Rectangle(0, frame * SpriteHeight, SpriteWidth, SpriteHeight);
-    }
-
-    public Rectangle GetSourceRectangleForFrame(Rectangle sourceRectangle, int frame)
-    {
-        sourceRectangle.Y += frame * SpriteHeight;
-
-        return new Rectangle(0, frame * SpriteHeight, SpriteWidth, SpriteHeight);
-    }
-
     public void Dispose()
     {
         Texture.Dispose();
@@ -60,21 +49,11 @@ public abstract class ActionSprite : IDisposable
         Color layerColor,
         float renderLayer)
     {
-        /*
-                var renderDestination = new Rectangle(
-                    x,
-                    y,
-                    SpriteWidth * scaleMultiplier,
-                    SpriteHeight * scaleMultiplier);
-                */
         spriteBatch.Draw(
             Texture,
             destinationRectangle,
             sourceRectangle,
             layerColor,
-            0.0f,
-            new Vector2(),
-            SpriteEffects.None,
             renderLayer);
     }
 }

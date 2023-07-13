@@ -5,9 +5,8 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
 public interface IViewportObjectRenderer : IDisposable
 {
-    Rectangle GetLocationRectangle();
+    Rectangle GetSpriteBounds();
 
-    void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier);
-    void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int x, int y, int scaleMultiplier);
+    void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier);
 
 }

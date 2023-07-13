@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Io.LevelReading.Sprites;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
@@ -49,6 +50,7 @@ public sealed class SpriteRotationReflectionProcessor
 
         return result;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void CreateSpritesForDirections(Orientation orientation, FacingDirection facingDirection)
         {
             var key = LemmingSpriteBank.GetKey(orientation, facingDirection);
