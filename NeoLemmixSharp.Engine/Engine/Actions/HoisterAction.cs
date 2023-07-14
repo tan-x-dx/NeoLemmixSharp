@@ -20,13 +20,17 @@ public sealed class HoisterAction : LemmingAction
         if (lemming.EndOfAnimation)
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            return true;
         }
+
         // special case due to http://www.lemmingsforums.net/index.php?topic=2620.0
-        else if (lemming.AnimationFrame == 1 && lemming.IsStartingAction)
+        if (lemming.AnimationFrame == 1 && lemming.IsStartingAction)
         {
             lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
+            return true;
         }
-        else if (lemming.AnimationFrame <= 4)
+
+        if (lemming.AnimationFrame <= 4)
         {
             lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 2);
         }
