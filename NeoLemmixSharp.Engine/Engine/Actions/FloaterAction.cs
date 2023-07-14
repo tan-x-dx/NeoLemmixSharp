@@ -17,11 +17,10 @@ public sealed class FloaterAction : LemmingAction
     {
     }
 
-    public override int Id => 14;
+    public override int Id => 2;
     public override string LemmingActionName => "floater";
     public override int NumberOfAnimationFrames => NumberOfFloaterAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

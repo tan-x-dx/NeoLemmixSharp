@@ -19,6 +19,7 @@ public sealed class LevelCursor
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
     private readonly ILevelControlPanel _controlPanel;
     private readonly LevelInputController _controller;
+    private readonly SkillSetManager _skillSetManager;
 
     private LemmingSkill _skill = NoneSkill.Instance;
     private Lemming? _lemmingUnderCursor;
@@ -44,12 +45,14 @@ public sealed class LevelCursor
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour,
         ILevelControlPanel controlPanel,
-        LevelInputController controller)
+        LevelInputController controller,
+        SkillSetManager skillSetManager)
     {
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
         _controlPanel = controlPanel;
         _controller = controller;
+        _skillSetManager = skillSetManager;
     }
 
     public void OnNewFrame()
@@ -275,7 +278,7 @@ public sealed class LevelCursor
 
     private bool SkillIsAvailable(LemmingSkill lemmingSkill)
     {
-        return lemmingSkill.CurrentNumberOfSkillsAvailable > 0;
+        return _skillSetManager.SkillIsAvailable(lemmingSkill);
     }
 
     private bool AssignSkill()

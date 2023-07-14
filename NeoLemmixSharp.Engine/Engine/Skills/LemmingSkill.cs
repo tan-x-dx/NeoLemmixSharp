@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using NeoLemmixSharp.Common.Util.BitArrays;
+using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.Terrain;
+using System.Collections.ObjectModel;
 
 namespace NeoLemmixSharp.Engine.Engine.Skills;
 
@@ -7,39 +9,41 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 {
     protected static TerrainManager Terrain { get; private set; }
 
-    public static ReadOnlyDictionary<string, LemmingSkill> LemmingSkills { get; } = RegisterAllLemmingSkills();
+    private static ReadOnlyDictionary<string, LemmingSkill> LemmingSkills { get; } = RegisterAllLemmingSkills();
 
     private static ReadOnlyDictionary<string, LemmingSkill> RegisterAllLemmingSkills()
     {
         var result = new Dictionary<string, LemmingSkill>();
 
-        RegisterLemmingSkill(NoneSkill.Instance);
+        // NOTE: DO NOT REGISTER THE NONE SKILL
 
-        RegisterLemmingSkill(new BasherSkill(0));
-        RegisterLemmingSkill(new BlockerSkill(0));
-        RegisterLemmingSkill(new BomberSkill(0));
-        RegisterLemmingSkill(new BuilderSkill(0));
-        RegisterLemmingSkill(new ClimberSkill(0));
-        RegisterLemmingSkill(new ClonerSkill(0));
-        RegisterLemmingSkill(new DiggerSkill(0));
-        RegisterLemmingSkill(new DisarmerSkill(0));
-        RegisterLemmingSkill(new FencerSkill(0));
-        RegisterLemmingSkill(new FloaterSkill(0));
-        RegisterLemmingSkill(new GliderSkill(0));
-        RegisterLemmingSkill(new JumperSkill(0));
-        RegisterLemmingSkill(new LasererSkill(0));
-        RegisterLemmingSkill(new MinerSkill(0));
-        RegisterLemmingSkill(new PlatformerSkill(0));
-        RegisterLemmingSkill(new ShimmierSkill(0));
-        RegisterLemmingSkill(new SliderSkill(0));
-        RegisterLemmingSkill(new StackerSkill(0));
-        RegisterLemmingSkill(new StonerSkill(0));
-        RegisterLemmingSkill(new SwimmerSkill(0));
-        RegisterLemmingSkill(new WalkerSkill(0));
+        RegisterLemmingSkill(WalkerSkill.Instance);
+        RegisterLemmingSkill(ClimberSkill.Instance);
+        RegisterLemmingSkill(FloaterSkill.Instance);
+        RegisterLemmingSkill(BlockerSkill.Instance);
+        RegisterLemmingSkill(BomberSkill.Instance);
+        RegisterLemmingSkill(BuilderSkill.Instance);
+        RegisterLemmingSkill(BasherSkill.Instance);
+        RegisterLemmingSkill(MinerSkill.Instance);
+        RegisterLemmingSkill(DiggerSkill.Instance);
+
+        RegisterLemmingSkill(PlatformerSkill.Instance);
+        RegisterLemmingSkill(StackerSkill.Instance);
+        RegisterLemmingSkill(FencerSkill.Instance);
+        RegisterLemmingSkill(GliderSkill.Instance);
+        RegisterLemmingSkill(JumperSkill.Instance);
+        RegisterLemmingSkill(SwimmerSkill.Instance);
+        RegisterLemmingSkill(ShimmierSkill.Instance);
+        RegisterLemmingSkill(LasererSkill.Instance);
+        RegisterLemmingSkill(SliderSkill.Instance);
+        RegisterLemmingSkill(DisarmerSkill.Instance);
+        RegisterLemmingSkill(StonerSkill.Instance);
+
+        RegisterLemmingSkill(ClonerSkill.Instance);
 
         var numberOfUniqueIds = result
             .Values
-            .Select(la => la.LemmingSkillId)
+            .Select(la => la.Id)
             .Distinct()
             .Count();
 
@@ -47,16 +51,27 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
         {
             var ids = string.Join(',', result
                 .Values
-                .Select(la => la.LemmingSkillId)
+                .Select(la => la.Id)
                 .OrderBy(i => i));
 
             throw new Exception($"Duplicated skill ID: {ids}");
+        }
+
+        var minSkillId = result.Values.Select(ls => ls.Id).Min();
+        var maxSkillId = result.Values.Select(ls => ls.Id).Max();
+
+        if (minSkillId != 0 || maxSkillId != result.Count - 1)
+        {
+            throw new Exception($"Skill ids do not span a full set of values from 0 - {result.Count - 1}");
         }
 
         return new ReadOnlyDictionary<string, LemmingSkill>(result);
 
         void RegisterLemmingSkill(LemmingSkill lemmingSkill)
         {
+            if (lemmingSkill == NoneSkill.Instance)
+                return;
+
             result.Add(lemmingSkill.LemmingSkillName, lemmingSkill);
         }
     }
@@ -68,28 +83,73 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
         Terrain = terrain;
     }
 
-    public abstract int LemmingSkillId { get; }
+    private readonly IBitArray _assignableActionIds;
+
+    protected LemmingSkill()
+    {
+        var numberOfActions = LemmingAction.AllActions.Count;
+
+        _assignableActionIds = IBitArray.GetBestFitForSize(numberOfActions);
+
+        // ReSharper disable once VirtualMemberCallInConstructor
+        foreach (var action in ActionsThatCanBeAssigned())
+        {
+            _assignableActionIds.SetBit(action.Id);
+        }
+    }
+
+    public abstract int Id { get; }
     public abstract string LemmingSkillName { get; }
     public abstract bool IsPermanentSkill { get; }
     public abstract bool IsClassicSkill { get; }
 
-    public int OriginalNumberOfSkillsAvailable { get; }
-    public int CurrentNumberOfSkillsAvailable { get; private set; }
-
-    protected LemmingSkill(int originalNumberOfSkillsAvailable)
+    public virtual bool CanAssignToLemming(Lemming lemming)
     {
-        OriginalNumberOfSkillsAvailable = originalNumberOfSkillsAvailable;
-        CurrentNumberOfSkillsAvailable = originalNumberOfSkillsAvailable;
+        return ActionIsAssignable(lemming);
     }
 
-    public abstract bool CanAssignToLemming(Lemming lemming);
+    protected abstract IEnumerable<LemmingAction> ActionsThatCanBeAssigned();
+
+    protected bool ActionIsAssignable(Lemming lemming)
+    {
+        return _assignableActionIds.GetBit(lemming.CurrentAction.Id);
+    }
+
     public abstract bool AssignToLemming(Lemming lemming);
 
-    public bool Equals(LemmingSkill? other) => LemmingSkillId == (other?.LemmingSkillId ?? -1);
-    public sealed override bool Equals(object? obj) => obj is LemmingSkill other && LemmingSkillId == other.LemmingSkillId;
-    public sealed override int GetHashCode() => LemmingSkillId;
+    public bool Equals(LemmingSkill? other) => Id == (other?.Id ?? -1);
+    public sealed override bool Equals(object? obj) => obj is LemmingSkill other && Id == other.Id;
+    public sealed override int GetHashCode() => Id;
     public sealed override string ToString() => LemmingSkillName;
 
-    public static bool operator ==(LemmingSkill left, LemmingSkill right) => left.LemmingSkillId == right.LemmingSkillId;
-    public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.LemmingSkillId != right.LemmingSkillId;
+    public static bool operator ==(LemmingSkill left, LemmingSkill right) => left.Id == right.Id;
+    public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.Id != right.Id;
+
+    protected static IEnumerable<LemmingAction> ActionsThatCanBeAssignedPermanentSkill()
+    {
+        yield return AscenderAction.Instance;
+        yield return BasherAction.Instance;
+        yield return BlockerAction.Instance;
+        yield return BuilderAction.Instance;
+        yield return ClimberAction.Instance;
+        yield return DehoisterAction.Instance;
+        yield return DiggerAction.Instance;
+        yield return DisarmerAction.Instance;
+        yield return FallerAction.Instance;
+        yield return FencerAction.Instance;
+        yield return FloaterAction.Instance;
+        yield return GliderAction.Instance;
+        yield return HoisterAction.Instance;
+        yield return JumperAction.Instance;
+        yield return LasererAction.Instance;
+        yield return MinerAction.Instance;
+        yield return PlatformerAction.Instance;
+        yield return ReacherAction.Instance;
+        yield return ShimmierAction.Instance;
+        yield return ShruggerAction.Instance;
+        yield return SliderAction.Instance;
+        yield return StackerAction.Instance;
+        yield return SwimmerAction.Instance;
+        yield return WalkerAction.Instance;
+    }
 }

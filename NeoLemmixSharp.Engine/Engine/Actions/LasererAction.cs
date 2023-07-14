@@ -52,11 +52,10 @@ public sealed class LasererAction : LemmingAction
     {
     }
 
-    public override int Id => 18;
+    public override int Id => 15;
     public override string LemmingActionName => "laserer";
     public override int NumberOfAnimationFrames => NumberOfLasererAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

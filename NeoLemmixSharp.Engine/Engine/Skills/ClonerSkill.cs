@@ -4,37 +4,16 @@ namespace NeoLemmixSharp.Engine.Engine.Skills;
 
 public sealed class ClonerSkill : LemmingSkill
 {
-    public ClonerSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
+    public static ClonerSkill Instance { get; } = new();
+
+    private ClonerSkill()
     {
     }
 
-    public override int LemmingSkillId => 5;
+    public override int Id => 20;
     public override string LemmingSkillName => "cloner";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;
-
-    public override bool CanAssignToLemming(Lemming lemming)
-    {
-        return lemming.CurrentAction == WalkerAction.Instance ||
-               lemming.CurrentAction == BuilderAction.Instance ||
-               lemming.CurrentAction == MinerAction.Instance ||
-               lemming.CurrentAction == JumperAction.Instance ||
-               lemming.CurrentAction == StackerAction.Instance ||
-               lemming.CurrentAction == LasererAction.Instance ||
-               lemming.CurrentAction == SwimmerAction.Instance ||
-               lemming.CurrentAction == GliderAction.Instance ||
-               lemming.CurrentAction == PlatformerAction.Instance ||
-               lemming.CurrentAction == BasherAction.Instance ||
-               lemming.CurrentAction == FencerAction.Instance ||
-               lemming.CurrentAction == DiggerAction.Instance ||
-               lemming.CurrentAction == AscenderAction.Instance ||
-               lemming.CurrentAction == FallerAction.Instance ||
-               lemming.CurrentAction == FloaterAction.Instance ||
-               lemming.CurrentAction == DisarmerAction.Instance ||
-               lemming.CurrentAction == ShimmierAction.Instance ||
-               lemming.CurrentAction == ShruggerAction.Instance ||
-               lemming.CurrentAction == ReacherAction.Instance;
-    }
 
     public override bool AssignToLemming(Lemming lemming)
     {
@@ -44,6 +23,29 @@ public sealed class ClonerSkill : LemmingSkill
 
 
         return true;
+    }
+
+    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
+    {
+        yield return WalkerAction.Instance;
+        yield return BuilderAction.Instance;
+        yield return MinerAction.Instance;
+        yield return JumperAction.Instance;
+        yield return StackerAction.Instance;
+        yield return LasererAction.Instance;
+        yield return SwimmerAction.Instance;
+        yield return GliderAction.Instance;
+        yield return PlatformerAction.Instance;
+        yield return BasherAction.Instance;
+        yield return FencerAction.Instance;
+        yield return DiggerAction.Instance;
+        yield return AscenderAction.Instance;
+        yield return FallerAction.Instance;
+        yield return FloaterAction.Instance;
+        yield return DisarmerAction.Instance;
+        yield return ShimmierAction.Instance;
+        yield return ShruggerAction.Instance;
+        yield return ReacherAction.Instance;
     }
 
     /*

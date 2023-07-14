@@ -14,11 +14,10 @@ public sealed class SliderAction : LemmingAction
     {
     }
 
-    public override int Id => 25;
+    public override int Id => 16;
     public override string LemmingActionName => "slider";
     public override int NumberOfAnimationFrames => NumberOfSliderAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

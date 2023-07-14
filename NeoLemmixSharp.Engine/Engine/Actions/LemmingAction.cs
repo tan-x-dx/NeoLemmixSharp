@@ -1,7 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Terrain;
+using System.Collections.ObjectModel;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -17,37 +17,40 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
         // NOTE: DO NOT REGISTER THE NONE ACTION
 
-        RegisterLemmingAction(AscenderAction.Instance);
-        RegisterLemmingAction(BasherAction.Instance);
+        RegisterLemmingAction(WalkerAction.Instance);
+        RegisterLemmingAction(ClimberAction.Instance);
+        RegisterLemmingAction(FloaterAction.Instance);
         RegisterLemmingAction(BlockerAction.Instance);
         RegisterLemmingAction(BuilderAction.Instance);
-        RegisterLemmingAction(ClimberAction.Instance);
-        RegisterLemmingAction(DehoisterAction.Instance);
+        RegisterLemmingAction(BasherAction.Instance);
+        RegisterLemmingAction(MinerAction.Instance);
         RegisterLemmingAction(DiggerAction.Instance);
-        RegisterLemmingAction(DisarmerAction.Instance);
+
+        RegisterLemmingAction(PlatformerAction.Instance);
+        RegisterLemmingAction(StackerAction.Instance);
+        RegisterLemmingAction(FencerAction.Instance);
+        RegisterLemmingAction(GliderAction.Instance);
+        RegisterLemmingAction(JumperAction.Instance);
+        RegisterLemmingAction(SwimmerAction.Instance);
+        RegisterLemmingAction(ShimmierAction.Instance);
+        RegisterLemmingAction(LasererAction.Instance);
+        RegisterLemmingAction(SliderAction.Instance);
+
+        RegisterLemmingAction(FallerAction.Instance);
+        RegisterLemmingAction(AscenderAction.Instance);
+        RegisterLemmingAction(ShruggerAction.Instance);
         RegisterLemmingAction(DrownerAction.Instance);
+        RegisterLemmingAction(HoisterAction.Instance);
+        RegisterLemmingAction(DehoisterAction.Instance);
+        RegisterLemmingAction(ReacherAction.Instance);
+        RegisterLemmingAction(DisarmerAction.Instance);
+
         RegisterLemmingAction(ExiterAction.Instance);
         RegisterLemmingAction(ExploderAction.Instance);
-        RegisterLemmingAction(FallerAction.Instance);
-        RegisterLemmingAction(FencerAction.Instance);
-        RegisterLemmingAction(FloaterAction.Instance);
-        RegisterLemmingAction(GliderAction.Instance);
-        RegisterLemmingAction(HoisterAction.Instance);
-        RegisterLemmingAction(JumperAction.Instance);
-        RegisterLemmingAction(LasererAction.Instance);
-        RegisterLemmingAction(MinerAction.Instance);
         RegisterLemmingAction(OhNoerAction.Instance);
-        RegisterLemmingAction(PlatformerAction.Instance);
-        RegisterLemmingAction(ReacherAction.Instance);
-        RegisterLemmingAction(ShimmierAction.Instance);
-        RegisterLemmingAction(ShruggerAction.Instance);
-        RegisterLemmingAction(SliderAction.Instance);
         RegisterLemmingAction(SplatterAction.Instance);
-        RegisterLemmingAction(StackerAction.Instance);
         RegisterLemmingAction(StonerAction.Instance);
-        RegisterLemmingAction(SwimmerAction.Instance);
         RegisterLemmingAction(VaporiserAction.Instance);
-        RegisterLemmingAction(WalkerAction.Instance);
 
         var numberOfUniqueIds = result
             .Values
@@ -65,10 +68,21 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
             throw new Exception($"Duplicated action ID: {ids}");
         }
 
+        var minActionId = result.Values.Select(la => la.Id).Min();
+        var maxActionId = result.Values.Select(la => la.Id).Max();
+
+        if (minActionId != 0 || maxActionId != result.Count - 1)
+        {
+            throw new Exception($"Action ids do not span a full set of values from 0 - {result.Count - 1}");
+        }
+
         return new ReadOnlyDictionary<string, LemmingAction>(result);
 
         void RegisterLemmingAction(LemmingAction lemmingAction)
         {
+            if (lemmingAction == NoneAction.Instance)
+                return;
+
             result.Add(lemmingAction.LemmingActionName, lemmingAction);
         }
     }
@@ -82,7 +96,6 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     public abstract string LemmingActionName { get; }
     public abstract int NumberOfAnimationFrames { get; }
     public abstract bool IsOneTimeAction { get; }
-    public abstract bool CanBeAssignedPermanentSkill { get; }
 
     public abstract bool UpdateLemming(Lemming lemming);
 

@@ -10,11 +10,10 @@ public sealed class MinerAction : LemmingAction
     {
     }
 
-    public override int Id => 19;
+    public override int Id => 6;
     public override string LemmingActionName => "miner";
     public override int NumberOfAnimationFrames => NumberOfMinerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

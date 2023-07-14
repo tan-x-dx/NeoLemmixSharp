@@ -16,7 +16,6 @@ public sealed class WalkerAction : LemmingAction
     public override string LemmingActionName => "walker";
     public override int NumberOfAnimationFrames => NumberOfWalkerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

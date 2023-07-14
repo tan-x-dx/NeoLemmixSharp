@@ -10,11 +10,10 @@ public sealed class StackerAction : LemmingAction
     {
     }
 
-    public override int Id => 27;
+    public override int Id => 9;
     public override string LemmingActionName => "stacker";
     public override int NumberOfAnimationFrames => NumberOfStackerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

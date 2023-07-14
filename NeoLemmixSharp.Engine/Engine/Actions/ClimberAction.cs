@@ -10,11 +10,10 @@ public sealed class ClimberAction : LemmingAction
     {
     }
 
-    public override int Id => 5;
+    public override int Id => 1;
     public override string LemmingActionName => "climber";
     public override int NumberOfAnimationFrames => NumberOfClimberAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     // Be very careful when changing the terrain/hoister checks for climbers!
     // See http://www.lemmingsforums.net/index.php?topic=2506.0 first!

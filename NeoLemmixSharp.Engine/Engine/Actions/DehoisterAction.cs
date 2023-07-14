@@ -10,11 +10,10 @@ public sealed class DehoisterAction : LemmingAction
     {
     }
 
-    public override int Id => 6;
+    public override int Id => 22;
     public override string LemmingActionName => "dehoister";
     public override int NumberOfAnimationFrames => NumberOfDehoisterAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {

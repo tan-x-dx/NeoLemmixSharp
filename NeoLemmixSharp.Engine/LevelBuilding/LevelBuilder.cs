@@ -64,7 +64,7 @@ public sealed class LevelBuilder : IDisposable
         var inputController = new LevelInputController();
         var skillSetManager = new SkillSetManager(levelData.SkillSetData);
         var controlPanel = new LevelControlPanel(skillSetManager, inputController);
-        var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController);
+        var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController, skillSetManager);
         var levelViewport = new LevelViewport(levelCursor, inputController, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
         var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);

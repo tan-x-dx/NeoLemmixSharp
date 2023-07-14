@@ -17,7 +17,7 @@ public sealed class SkillSetManager
     private static LemmingSkill[] CreateSkillList(SkillSetData skillSetData)
     {
         var tempList = new List<LemmingSkill>();
-
+        /*
         if (skillSetData.NumberOfBashers.HasValue) { tempList.Add(new BasherSkill(skillSetData.NumberOfBashers.Value)); }
         if (skillSetData.NumberOfBlockers.HasValue) { tempList.Add(new BlockerSkill(skillSetData.NumberOfBlockers.Value)); }
         if (skillSetData.NumberOfBombers.HasValue) { tempList.Add(new BomberSkill(skillSetData.NumberOfBombers.Value)); }
@@ -39,9 +39,17 @@ public sealed class SkillSetManager
         if (skillSetData.NumberOfStoners.HasValue) { tempList.Add(new StonerSkill(skillSetData.NumberOfStoners.Value)); }
         if (skillSetData.NumberOfSwimmers.HasValue) { tempList.Add(new SwimmerSkill(skillSetData.NumberOfSwimmers.Value)); }
         if (skillSetData.NumberOfWalkers.HasValue) { tempList.Add(new WalkerSkill(skillSetData.NumberOfWalkers.Value)); }
-
+        */
         return tempList.ToArray();
     }
 
+    public bool SkillIsAvailable(LemmingSkill lemmingSkill)
+    {
+        return true;
+    }
 
+    public int NumberOfSkillsAvailable(LemmingSkill queuedSkill)
+    {
+        return 1;
+    }
 }

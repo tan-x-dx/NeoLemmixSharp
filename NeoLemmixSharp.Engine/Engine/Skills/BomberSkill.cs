@@ -1,19 +1,23 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Skills;
+﻿using NeoLemmixSharp.Engine.Engine.Actions;
+
+namespace NeoLemmixSharp.Engine.Engine.Skills;
 
 public sealed class BomberSkill : LemmingSkill
 {
-    public BomberSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
+    public static BomberSkill Instance { get; } = new();
+
+    private BomberSkill()
     {
     }
 
-    public override int LemmingSkillId => 2;
+    public override int Id => 4;
     public override string LemmingSkillName => "bomber";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return lemming.CurrentAction.CanBeAssignedPermanentSkill;
+        return ActionIsAssignable(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)
@@ -26,4 +30,6 @@ public sealed class BomberSkill : LemmingSkill
 
         return true;
     }
+
+    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
 }

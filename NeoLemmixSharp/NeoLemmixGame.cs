@@ -8,6 +8,8 @@ using System;
 using System.Runtime.InteropServices;
 using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+using NeoLemmixSharp.Engine.Engine.Actions;
+using NeoLemmixSharp.Engine.Engine.Skills;
 
 namespace NeoLemmixSharp;
 
@@ -45,6 +47,10 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
         IsFixedTimeStep = true;
         TargetElapsedTime = _standardGameUps;
+
+        var numberOfActions = LemmingAction.AllActions.Count;
+        var numberOfSkills = LemmingSkill.AllLemmingSkills.Count;
+        Console.WriteLine("Loaded {0} skills. Loaded {1} actions", numberOfSkills, numberOfActions);
     }
 
     private void WindowOnClientSizeChanged(object? sender, EventArgs e)
