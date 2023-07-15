@@ -36,7 +36,7 @@ public sealed class SliderAction : LemmingAction
         return lemming.CurrentAction != DrownerAction.Instance;
     }
 
-    private static bool SliderTerrainChecks(Lemming lemming, int maxYOffset = 7)
+    public static bool SliderTerrainChecks(Lemming lemming, int maxYOffset = 7)
     {
         var lemmingPosition = lemming.LevelPosition;
         var lemmingDehoistPosition = lemming.DehoistPin;

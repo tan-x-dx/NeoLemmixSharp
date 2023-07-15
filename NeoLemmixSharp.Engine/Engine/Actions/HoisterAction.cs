@@ -17,6 +17,9 @@ public sealed class HoisterAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var orientation = lemming.Orientation;
+        var lemmingPosition = lemming.LevelPosition;
+
         if (lemming.EndOfAnimation)
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -26,13 +29,15 @@ public sealed class HoisterAction : LemmingAction
         // special case due to http://www.lemmingsforums.net/index.php?topic=2620.0
         if (lemming.AnimationFrame == 1 && lemming.IsStartingAction)
         {
-            lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
+            lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
+            lemming.LevelPosition = lemmingPosition;
             return true;
         }
 
         if (lemming.AnimationFrame <= 4)
         {
-            lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 2);
+            lemmingPosition = orientation.MoveUp(lemmingPosition, 2);
+            lemming.LevelPosition = lemmingPosition;
         }
 
         return true;

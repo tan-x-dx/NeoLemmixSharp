@@ -65,8 +65,8 @@ public abstract class Orientation : IEquatable<Orientation>
     public abstract bool FirstIsToLeftOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
     public abstract bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
 
-    public bool IsParallelTo(Orientation other) => AbsoluteVerticalComponent == 0 == (other.AbsoluteVerticalComponent == 0);
-    public bool IsPerpendicularTo(Orientation other) => AbsoluteVerticalComponent == 0 == (other.AbsoluteHorizontalComponent == 0);
+    public bool IsParallelTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteVerticalComponent == 0);
+    public bool IsPerpendicularTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteHorizontalComponent == 0);
 
     public abstract Orientation RotateClockwise();
     public abstract Orientation RotateCounterClockwise();

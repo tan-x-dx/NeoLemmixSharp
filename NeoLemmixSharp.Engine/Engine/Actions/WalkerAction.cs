@@ -22,6 +22,7 @@ public sealed class WalkerAction : LemmingAction
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var lemmingPosition = lemming.LevelPosition;
+
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
         lemming.LevelPosition = lemmingPosition;
         var dy = FindGroundPixel(lemming, orientation, lemmingPosition);
@@ -79,7 +80,7 @@ public sealed class WalkerAction : LemmingAction
         return true;
     }
 
-    private static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
+    public static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
