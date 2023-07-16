@@ -16,13 +16,13 @@ public sealed class WalkerAction : LemmingAction
     public override string LemmingActionName => "walker";
     public override int NumberOfAnimationFrames => NumberOfWalkerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var lemmingPosition = lemming.LevelPosition;
+
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
         lemming.LevelPosition = lemmingPosition;
         var dy = FindGroundPixel(lemming, orientation, lemmingPosition);
@@ -80,7 +80,7 @@ public sealed class WalkerAction : LemmingAction
         return true;
     }
 
-    private static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
+    public static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;

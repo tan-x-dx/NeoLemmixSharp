@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Skills;
+﻿using NeoLemmixSharp.Engine.Engine.Actions;
+
+namespace NeoLemmixSharp.Engine.Engine.Skills;
 
 public sealed class NoneSkill : LemmingSkill
 {
@@ -7,11 +9,11 @@ public sealed class NoneSkill : LemmingSkill
     /// </summary>
     public static NoneSkill Instance { get; } = new();
 
-    private NoneSkill() : base(0)
+    private NoneSkill()
     {
     }
 
-    public override int LemmingSkillId => -1;
+    public override int Id => -1;
     public override string LemmingSkillName => "none";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;
@@ -25,4 +27,6 @@ public sealed class NoneSkill : LemmingSkill
     {
         return false;
     }
+
+    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => Enumerable.Empty<LemmingAction>();
 }

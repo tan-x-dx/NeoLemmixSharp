@@ -4,18 +4,20 @@ namespace NeoLemmixSharp.Engine.Engine.Skills;
 
 public sealed class SwimmerSkill : LemmingSkill
 {
-    public SwimmerSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
+    public static SwimmerSkill Instance { get; } = new();
+
+    private SwimmerSkill()
     {
     }
 
-    public override int LemmingSkillId => 19;
+    public override int Id => 14;
     public override string LemmingSkillName => "swimmer";
     public override bool IsPermanentSkill => true;
     public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.IsSwimmer && (lemming.CurrentAction.CanBeAssignedPermanentSkill || lemming.CurrentAction == DrownerAction.Instance);
+        return !lemming.IsSwimmer && ActionIsAssignable(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)
@@ -27,5 +29,10 @@ public sealed class SwimmerSkill : LemmingSkill
         }
 
         return true;
+    }
+
+    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
+    {
+        return ActionsThatCanBeAssignedPermanentSkill().Append(DrownerAction.Instance);
     }
 }

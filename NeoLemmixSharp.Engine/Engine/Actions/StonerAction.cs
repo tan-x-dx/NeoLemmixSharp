@@ -10,11 +10,10 @@ public sealed class StonerAction : LemmingAction
     {
     }
 
-    public override int Id => 28;
+    public override int Id => 29;
     public override string LemmingActionName => "stoner";
     public override int NumberOfAnimationFrames => NumberOfStonerAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override bool CanBeAssignedPermanentSkill => false;
 
     public override bool UpdateLemming(Lemming lemming)
     {

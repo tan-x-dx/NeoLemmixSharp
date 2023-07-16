@@ -4,32 +4,40 @@ namespace NeoLemmixSharp.Engine.Engine.Skills;
 
 public sealed class MinerSkill : LemmingSkill
 {
-    public MinerSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
+    public static MinerSkill Instance { get; } = new();
+
+    private MinerSkill()
     {
     }
 
-    public override int LemmingSkillId => 13;
+
+    public override int Id => 7;
     public override string LemmingSkillName => "miner";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return (lemming.CurrentAction == WalkerAction.Instance ||
-                lemming.CurrentAction == ShruggerAction.Instance ||
-                lemming.CurrentAction == PlatformerAction.Instance ||
-                lemming.CurrentAction == BuilderAction.Instance ||
-                lemming.CurrentAction == StackerAction.Instance ||
-                lemming.CurrentAction == BasherAction.Instance ||
-                lemming.CurrentAction == FencerAction.Instance ||
-                lemming.CurrentAction == DiggerAction.Instance ||
-                lemming.CurrentAction == LasererAction.Instance)
-               && !Terrain.PixelIsIndestructibleToLemming(lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX), lemming);
+        return ActionIsAssignable(lemming) &&
+               !Terrain.PixelIsIndestructibleToLemming(lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX), lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)
     {
         MinerAction.Instance.TransitionLemmingToAction(lemming, false);
         return true;
+    }
+
+    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
+    {
+        yield return WalkerAction.Instance;
+        yield return ShruggerAction.Instance;
+        yield return PlatformerAction.Instance;
+        yield return BuilderAction.Instance;
+        yield return StackerAction.Instance;
+        yield return BasherAction.Instance;
+        yield return FencerAction.Instance;
+        yield return DiggerAction.Instance;
+        yield return LasererAction.Instance;
     }
 }

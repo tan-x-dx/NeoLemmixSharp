@@ -17,57 +17,62 @@ public sealed class DiggerAction : LemmingAction
     public override string LemmingActionName => "digger";
     public override int NumberOfAnimationFrames => NumberOfDiggerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
         if (lemming.IsStartingAction)
         {
             lemming.IsStartingAction = false;
-            DigOneRow(lemming, lemmingPosition, lemming.Orientation);
+            DigOneRow(lemming, orientation, orientation.MoveUp(lemmingPosition, 1));
             // The first digger cycle is one frame longer!
             // So we need to artificially cancel the very first frame advancement.
             lemming.AnimationFrame--;
         }
 
-        if (lemming.AnimationFrame >= 0 &&
-            lemming.AnimationFrame <= 8)
+        if (lemming.AnimationFrame < 0 ||
+            lemming.AnimationFrame > 8)
+            return true;
+
+        var continueDigging = DigOneRow(lemming, orientation, lemmingPosition);
+
+        lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
+        lemming.LevelPosition = lemmingPosition;
+
+        if (Terrain.PixelIsIndestructibleToLemming(lemmingPosition, lemming))
         {
-            var continueWork = DigOneRow(lemming, lemmingPosition, lemming.Orientation);
-            lemming.LevelPosition = lemming.Orientation.MoveDown(lemmingPosition, 1);
+            // if HasSteelAt(L.LemX, L.LemY) then
+            //    CueSoundEffect(SFX_HITS_STEEL, L.Position);
 
-            /*if HasIndestructibleAt(L.LemX, L.LemY, L.LemDX, baDigging) then
-                begin
-            if HasSteelAt(L.LemX, L.LemY) then
-            CueSoundEffect(SFX_HITS_STEEL, L.Position);
-            Transition(L, baWalking);
-            end
+            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
-            else if not ContinueWork then
-            Transition(L, baFalling);*/
+            return true;
         }
+
+        if (continueDigging)
+            return true;
+
+        FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
         return true;
     }
 
-    private static bool DigOneRow(
-        Lemming lemming,
-        LevelPosition baseLevelPosition,
-        Orientation orientation)
+    private static bool DigOneRow(Lemming lemming, Orientation orientation, LevelPosition lemmingPosition)
     {
+        // The central pixel of the removed row lies at the lemming's position
         var result = false;
 
         // Two most extreme pixels
-        var checkLevelPosition = orientation.Move(baseLevelPosition, -4, 0);
+        var checkLevelPosition = orientation.Move(lemmingPosition, -4, 0);
         var pixelIsSolid = Terrain.PixelIsSolidToLemming(checkLevelPosition, lemming);
         if (pixelIsSolid)
         {
             Terrain.ErasePixel(checkLevelPosition);
         }
 
-        checkLevelPosition = orientation.Move(baseLevelPosition, 4, 0);
+        checkLevelPosition = orientation.Move(lemmingPosition, 4, 0);
         pixelIsSolid = Terrain.PixelIsSolidToLemming(checkLevelPosition, lemming);
         if (pixelIsSolid)
         {
@@ -77,7 +82,7 @@ public sealed class DiggerAction : LemmingAction
         // Everything in between
         for (var i = -3; i < 4; i++)
         {
-            checkLevelPosition = orientation.Move(baseLevelPosition, i, 0);
+            checkLevelPosition = orientation.Move(lemmingPosition, i, 0);
             pixelIsSolid = Terrain.PixelIsSolidToLemming(checkLevelPosition, lemming);
             if (pixelIsSolid)
             {

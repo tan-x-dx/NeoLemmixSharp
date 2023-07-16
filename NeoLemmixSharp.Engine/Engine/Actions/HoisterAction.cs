@@ -10,26 +10,34 @@ public sealed class HoisterAction : LemmingAction
     {
     }
 
-    public override int Id => 16;
+    public override int Id => 21;
     public override string LemmingActionName => "hoister";
     public override int NumberOfAnimationFrames => NumberOfHoisterAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var orientation = lemming.Orientation;
+        var lemmingPosition = lemming.LevelPosition;
+
         if (lemming.EndOfAnimation)
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            return true;
         }
+
         // special case due to http://www.lemmingsforums.net/index.php?topic=2620.0
-        else if (lemming.AnimationFrame == 1 && lemming.IsStartingAction)
+        if (lemming.AnimationFrame == 1 && lemming.IsStartingAction)
         {
-            lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
+            lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
+            lemming.LevelPosition = lemmingPosition;
+            return true;
         }
-        else if (lemming.AnimationFrame <= 4)
+
+        if (lemming.AnimationFrame <= 4)
         {
-            lemming.LevelPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 2);
+            lemmingPosition = orientation.MoveUp(lemmingPosition, 2);
+            lemming.LevelPosition = lemmingPosition;
         }
 
         return true;

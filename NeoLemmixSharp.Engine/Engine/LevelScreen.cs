@@ -221,7 +221,7 @@ public sealed class LevelScreen : IBaseScreen
             return;
         }
 
-        if (QueuedSkill.CanAssignToLemming(QueuedSkillLemming) && QueuedSkill.CurrentNumberOfSkillsAvailable > 0)
+        if (QueuedSkill.CanAssignToLemming(QueuedSkillLemming) && _skillSetManager.NumberOfSkillsAvailable(QueuedSkill) > 0)
         {
             // Record skill assignment, so that we apply it in CheckForReplayAction
             // RecordSkillAssignment(L, NewSkill)

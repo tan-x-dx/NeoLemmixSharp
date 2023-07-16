@@ -4,31 +4,33 @@ namespace NeoLemmixSharp.Engine.Engine.Skills;
 
 public sealed class LasererSkill : LemmingSkill
 {
-    public LasererSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
+    public static LasererSkill Instance { get; } = new();
+
+    private LasererSkill()
     {
     }
 
-    public override int LemmingSkillId => 12;
+    public override int Id => 16;
     public override string LemmingSkillName => "laserer";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;
-
-    public override bool CanAssignToLemming(Lemming lemming)
-    {
-        return lemming.CurrentAction == WalkerAction.Instance ||
-               lemming.CurrentAction == ShruggerAction.Instance ||
-               lemming.CurrentAction == PlatformerAction.Instance ||
-               lemming.CurrentAction == BuilderAction.Instance ||
-               lemming.CurrentAction == StackerAction.Instance ||
-               lemming.CurrentAction == BasherAction.Instance ||
-               lemming.CurrentAction == FencerAction.Instance ||
-               lemming.CurrentAction == MinerAction.Instance ||
-               lemming.CurrentAction == DiggerAction.Instance;
-    }
 
     public override bool AssignToLemming(Lemming lemming)
     {
         LasererAction.Instance.TransitionLemmingToAction(lemming, false);
         return true;
+    }
+
+    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
+    {
+        yield return WalkerAction.Instance;
+        yield return ShruggerAction.Instance;
+        yield return PlatformerAction.Instance;
+        yield return BuilderAction.Instance;
+        yield return StackerAction.Instance;
+        yield return BasherAction.Instance;
+        yield return FencerAction.Instance;
+        yield return MinerAction.Instance;
+        yield return DiggerAction.Instance;
     }
 }

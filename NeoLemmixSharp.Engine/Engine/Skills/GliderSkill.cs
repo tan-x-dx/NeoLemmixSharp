@@ -1,19 +1,23 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Skills;
+﻿using NeoLemmixSharp.Engine.Engine.Actions;
+
+namespace NeoLemmixSharp.Engine.Engine.Skills;
 
 public sealed class GliderSkill : LemmingSkill
 {
-    public GliderSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
+    public static GliderSkill Instance { get; } = new();
+
+    private GliderSkill()
     {
     }
 
-    public override int LemmingSkillId => 10;
+    public override int Id => 12;
     public override string LemmingSkillName => "glider";
     public override bool IsPermanentSkill => true;
     public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !(lemming.IsGlider || lemming.IsFloater) && lemming.CurrentAction.CanBeAssignedPermanentSkill;
+        return !(lemming.IsGlider || lemming.IsFloater) && ActionIsAssignable(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)
@@ -21,4 +25,6 @@ public sealed class GliderSkill : LemmingSkill
         lemming.IsGlider = true;
         return true;
     }
+
+    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
 }

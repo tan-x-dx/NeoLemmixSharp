@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics.Contracts;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 
@@ -32,14 +33,22 @@ public abstract class Orientation : IEquatable<Orientation>
     public abstract int AbsoluteHorizontalComponent { get; }
     public abstract int AbsoluteVerticalComponent { get; }
 
+    [Pure]
     public abstract LevelPosition TopLeftCornerOfLevel();
+    [Pure]
     public abstract LevelPosition TopRightCornerOfLevel();
+    [Pure]
     public abstract LevelPosition BottomLeftCornerOfLevel();
+    [Pure]
     public abstract LevelPosition BottomRightCornerOfLevel();
 
+    [Pure]
     public abstract LevelPosition MoveRight(LevelPosition position, int step);
+    [Pure]
     public abstract LevelPosition MoveUp(LevelPosition position, int step);
+    [Pure]
     public abstract LevelPosition MoveLeft(LevelPosition position, int step);
+    [Pure]
     public abstract LevelPosition MoveDown(LevelPosition position, int step);
 
     /// <summary>
@@ -48,6 +57,7 @@ public abstract class Orientation : IEquatable<Orientation>
     /// <param name="position"></param>
     /// <param name="relativeDirection"></param>
     /// <returns></returns>
+    [Pure]
     public abstract LevelPosition Move(LevelPosition position, LevelPosition relativeDirection);
     /// <summary>
     /// Note: Positive dx -> right, positive dy -> up
@@ -56,20 +66,32 @@ public abstract class Orientation : IEquatable<Orientation>
     /// <param name="dx"></param>
     /// <param name="dy"></param>
     /// <returns></returns>
+    [Pure]
     public abstract LevelPosition Move(LevelPosition position, int dx, int dy);
 
+    [Pure]
     public abstract bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition);
+    [Pure]
     public abstract bool MatchesVertically(LevelPosition firstPosition, LevelPosition secondPosition);
+    [Pure]
     public abstract bool FirstIsAboveSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+    [Pure]
     public abstract bool FirstIsBelowSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+    [Pure]
     public abstract bool FirstIsToLeftOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+    [Pure]
     public abstract bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
 
-    public bool IsParallelTo(Orientation other) => AbsoluteVerticalComponent == 0 == (other.AbsoluteVerticalComponent == 0);
-    public bool IsPerpendicularTo(Orientation other) => AbsoluteVerticalComponent == 0 == (other.AbsoluteHorizontalComponent == 0);
+    [Pure]
+    public bool IsParallelTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteVerticalComponent == 0);
+    [Pure]
+    public bool IsPerpendicularTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteHorizontalComponent == 0);
 
+    [Pure]
     public abstract Orientation RotateClockwise();
+    [Pure]
     public abstract Orientation RotateCounterClockwise();
+    [Pure]
     public abstract Orientation GetOpposite();
 
     public bool Equals(Orientation? other) => RotNum == (other?.RotNum ?? -1);

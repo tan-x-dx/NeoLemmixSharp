@@ -13,20 +13,20 @@ public sealed class FallerAction : LemmingAction
     {
     }
 
-    public override int Id => 12;
+    public override int Id => 17;
     public override string LemmingActionName => "faller";
     public override int NumberOfAnimationFrames => NumberOfFallerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {
         var currentFallDistanceStep = 0;
         var maxFallDistanceStep = 3; // A lemming falls 3 pixels each frame
 
+        var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, lemming.Orientation.GetOpposite(), out var updraft))
+        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, orientation.GetOpposite(), out var updraft))
         {
             maxFallDistanceStep = 2;
             updraft!.OnLemmingInHitBox(lemming);
@@ -42,14 +42,14 @@ public sealed class FallerAction : LemmingAction
                 CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
                 return true;
 
-            lemmingPosition = lemming.Orientation.MoveDown(lemmingPosition, 1);
+            lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
             lemming.LevelPosition = lemmingPosition;
 
             currentFallDistanceStep++;
             lemming.DistanceFallen++;
             lemming.TrueDistanceFallen++;
 
-            if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, lemming.Orientation.GetOpposite(), out updraft))
+            if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, orientation.GetOpposite(), out updraft))
             {
                 lemming.DistanceFallen = 0;
                 updraft!.OnLemmingInHitBox(lemming);
@@ -111,20 +111,21 @@ public sealed class FallerAction : LemmingAction
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         // for Swimming it's set in HandleSwimming as there is no single universal value
+        var currentAction = lemming.CurrentAction;
 
-        if (lemming.CurrentAction == WalkerAction.Instance ||
-            lemming.CurrentAction == BasherAction.Instance)
+        if (currentAction == WalkerAction.Instance ||
+            currentAction == BasherAction.Instance)
         {
             lemming.DistanceFallen = 3;
         }
-        else if (lemming.CurrentAction == MinerAction.Instance ||
-                 lemming.CurrentAction == DiggerAction.Instance)
+        else if (currentAction == MinerAction.Instance ||
+                 currentAction == DiggerAction.Instance)
         {
             lemming.DistanceFallen = 0;
         }
-        else if (lemming.CurrentAction == BlockerAction.Instance ||
-                 lemming.CurrentAction == JumperAction.Instance ||
-                 lemming.CurrentAction == LasererAction.Instance)
+        else if (currentAction == BlockerAction.Instance ||
+                 currentAction == JumperAction.Instance ||
+                 currentAction == LasererAction.Instance)
         {
             lemming.DistanceFallen = -1;
         }

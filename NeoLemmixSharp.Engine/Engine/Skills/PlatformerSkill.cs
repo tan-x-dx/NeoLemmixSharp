@@ -4,26 +4,20 @@ namespace NeoLemmixSharp.Engine.Engine.Skills;
 
 public sealed class PlatformerSkill : LemmingSkill
 {
-    public PlatformerSkill(int originalNumberOfSkillsAvailable) : base(originalNumberOfSkillsAvailable)
+    public static PlatformerSkill Instance { get; } = new();
+
+    private PlatformerSkill()
     {
     }
 
-    public override int LemmingSkillId => 14;
+    public override int Id => 9;
     public override string LemmingSkillName => "platformer";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return (lemming.CurrentAction == WalkerAction.Instance ||
-                lemming.CurrentAction == ShruggerAction.Instance ||
-                lemming.CurrentAction == BuilderAction.Instance ||
-                lemming.CurrentAction == StackerAction.Instance ||
-                lemming.CurrentAction == BasherAction.Instance ||
-                lemming.CurrentAction == FencerAction.Instance ||
-                lemming.CurrentAction == MinerAction.Instance ||
-                lemming.CurrentAction == DiggerAction.Instance ||
-                lemming.CurrentAction == LasererAction.Instance) &&
+        return ActionIsAssignable(lemming) &&
                PlatformerAction.LemmingCanPlatform(lemming);
     }
 
@@ -31,5 +25,18 @@ public sealed class PlatformerSkill : LemmingSkill
     {
         PlatformerAction.Instance.TransitionLemmingToAction(lemming, false);
         return true;
+    }
+
+    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
+    {
+        yield return WalkerAction.Instance;
+        yield return ShruggerAction.Instance;
+        yield return BuilderAction.Instance;
+        yield return StackerAction.Instance;
+        yield return BasherAction.Instance;
+        yield return FencerAction.Instance;
+        yield return MinerAction.Instance;
+        yield return DiggerAction.Instance;
+        yield return LasererAction.Instance;
     }
 }

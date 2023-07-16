@@ -74,10 +74,6 @@ public sealed class LevelRenderer : IScreenRenderer
         RenderControlPanel(spriteBatch);
     }
 
-    public void OnWindowSizeChanged(int windowWidth, int windowHeight)
-    {
-    }
-
     private void RenderLevel(SpriteBatch spriteBatch)
     {
         _backgroundRenderer.RenderBackground(spriteBatch);
@@ -141,6 +137,10 @@ public sealed class LevelRenderer : IScreenRenderer
 
         _mouseCoords = $"({_viewport.ScreenMouseX},{_viewport.ScreenMouseY}) - ({_viewport.ViewportMouseX},{_viewport.ViewportMouseY})";
         _fontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20);
+    }
+
+    public void OnWindowSizeChanged(int windowWidth, int windowHeight)
+    {
     }
 
     public void Dispose()

@@ -10,11 +10,10 @@ public sealed class StackerAction : LemmingAction
     {
     }
 
-    public override int Id => 27;
+    public override int Id => 9;
     public override string LemmingActionName => "stacker";
     public override int NumberOfAnimationFrames => NumberOfStackerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -52,19 +51,23 @@ public sealed class StackerAction : LemmingAction
 
     private static bool MayPlaceNextBrick(Lemming lemming)
     {
-        var brickPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 9 - lemming.NumberOfBricksLeft);
+        var orientation = lemming.Orientation;
+        var brickPosition = lemming.LevelPosition;
+        brickPosition = orientation.MoveUp(brickPosition, 9 - lemming.NumberOfBricksLeft);
+
         var dx = lemming.FacingDirection.DeltaX;
 
-        return !(Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveRight(brickPosition, dx), lemming) &&
-                 Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveRight(brickPosition, dx + dx), lemming) &&
-                 Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveRight(brickPosition, dx + dx + dx), lemming));
+        return !(Terrain.PixelIsSolidToLemming(orientation.MoveRight(brickPosition, dx), lemming) &&
+                 Terrain.PixelIsSolidToLemming(orientation.MoveRight(brickPosition, dx + dx), lemming) &&
+                 Terrain.PixelIsSolidToLemming(orientation.MoveRight(brickPosition, dx + dx + dx), lemming));
     }
 
     private static bool LayStackBrick(Lemming lemming)
     {
+        var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dy = lemming.StackLow ? -1 : 0;
-        var brickPosition = lemming.Orientation.Move(lemming.LevelPosition, dx, 9 + dy - lemming.NumberOfBricksLeft);
+        var brickPosition = orientation.Move(lemming.LevelPosition, dx, 9 + dy - lemming.NumberOfBricksLeft);
 
         var result = false;
 
@@ -76,7 +79,7 @@ public sealed class StackerAction : LemmingAction
                 result = true;
             }
 
-            brickPosition = lemming.Orientation.MoveRight(brickPosition, dx);
+            brickPosition = orientation.MoveRight(brickPosition, dx);
         }
 
         return result;

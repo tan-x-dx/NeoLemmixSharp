@@ -99,11 +99,11 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 
         var dx = 3 * _skillAssignButton.ScaleMultiplier;
 
-        _skillCountDigitFont.RenderText(
+        /*_skillCountDigitFont.RenderText(
             spriteBatch,
             _skillAssignButton.LemmingSkill.CurrentNumberOfSkillsAvailable.ToString(),
             destRectangle.X + dx,
             destRectangle.Y + _skillAssignButton.ScaleMultiplier,
-            _skillAssignButton.ScaleMultiplier);
+            _skillAssignButton.ScaleMultiplier);*/
     }
 }

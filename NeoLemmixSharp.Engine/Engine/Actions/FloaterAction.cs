@@ -17,32 +17,32 @@ public sealed class FloaterAction : LemmingAction
     {
     }
 
-    public override int Id => 14;
+    public override int Id => 2;
     public override string LemmingActionName => "floater";
     public override int NumberOfAnimationFrames => NumberOfFloaterAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {
         var maxFallDistance = _floaterFallTable[lemming.AnimationFrame - 1];
 
+        var orientation = lemming.Orientation;
         var levelPosition = lemming.LevelPosition;
 
-        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(levelPosition, lemming.Orientation.GetOpposite(), out _))
+        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(levelPosition, orientation.GetOpposite(), out _))
         {
             maxFallDistance--;
         }
 
-        var groundPixelDistance = Math.Max(FindGroundPixel(lemming, lemming.Orientation, levelPosition), 0);
+        var groundPixelDistance = Math.Max(FindGroundPixel(lemming, orientation, levelPosition), 0);
         if (maxFallDistance > groundPixelDistance)
         {
-            levelPosition = lemming.Orientation.MoveDown(levelPosition, groundPixelDistance);
+            levelPosition = orientation.MoveDown(levelPosition, groundPixelDistance);
             lemming.SetNextAction(WalkerAction.Instance);
         }
         else
         {
-            levelPosition = lemming.Orientation.MoveDown(levelPosition, maxFallDistance);
+            levelPosition = orientation.MoveDown(levelPosition, maxFallDistance);
         }
 
         lemming.LevelPosition = levelPosition;

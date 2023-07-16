@@ -10,11 +10,10 @@ public sealed class ClimberAction : LemmingAction
     {
     }
 
-    public override int Id => 5;
+    public override int Id => 1;
     public override string LemmingActionName => "climber";
     public override int NumberOfAnimationFrames => NumberOfClimberAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override bool CanBeAssignedPermanentSkill => true;
 
     // Be very careful when changing the terrain/hoister checks for climbers!
     // See http://www.lemmingsforums.net/index.php?topic=2506.0 first!
@@ -65,7 +64,7 @@ public sealed class ClimberAction : LemmingAction
                 // if-case prevents too deep bombing, see http://www.lemmingsforums.net/index.php?topic=2620.0
                 if (!(lemming.IsStartingAction && animationFrame == 1))
                 {
-                    lemmingPosition = orientation.MoveUp(lemmingPosition, 2 - animationFrame);
+                    lemmingPosition = orientation.MoveUp(lemmingPosition, animationFrame - 2);
                     lemming.LevelPosition = lemmingPosition;
                     lemming.IsStartingAction = false;
                 }
@@ -83,7 +82,7 @@ public sealed class ClimberAction : LemmingAction
 
             if (animationFrame == 7)
             {
-                foundClip = foundClip && Terrain.PixelIsSolidToLemming(orientation.MoveUp(lemmingPosition, 7), lemming);
+                foundClip &= Terrain.PixelIsSolidToLemming(orientation.MoveUp(lemmingPosition, 7), lemming);
             }
 
             if (foundClip)

@@ -2,10 +2,9 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.Engine;
-using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding;
+namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
 public sealed class ControlPanelSpriteBankBuilder : IDisposable
 {
@@ -53,9 +52,12 @@ public sealed class ControlPanelSpriteBankBuilder : IDisposable
 
     private void CreateWhitePixelTexture(IDictionary<string, Texture2D> textureLookup)
     {
-        var whitePixelTexture = new Texture2D(_graphicsDevice, 1, 1);
+        var whitePixelTexture = new Texture2D(_graphicsDevice, 1, 256);
 
-        var x = new[] { Color.White.PackedValue };
+        var x = Enumerable
+            .Range(0, 256)
+            .Select(alpha => new Color(0xff, 0xff, 0xff, 255 - alpha))
+            .ToArray();
 
         whitePixelTexture.SetData(x);
         textureLookup.Add("WhitePixel", whitePixelTexture);
