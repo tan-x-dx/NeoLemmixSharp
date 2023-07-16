@@ -1,11 +1,13 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets;
 
 public interface IGadgetCollection<TGadget>
     where TGadget : class, IHitBoxGadget
 {
+    [Pure]
     bool TryGetGadgetThatMatchesTypeAndOrientation(LevelPosition levelPosition, Orientation orientation, out TGadget? gadget);
 }
 

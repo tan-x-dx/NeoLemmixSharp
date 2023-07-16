@@ -41,7 +41,7 @@ public sealed class DehoisterAction : LemmingAction
 
         var animFrameValue = lemming.AnimationFrame * 2;
 
-        if (!SliderAction.SliderTerrainChecks(lemming, animFrameValue - 3))
+        if (!SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 3))
         {
             if (lemming.CurrentAction == DrownerAction.Instance)
                 return false;
@@ -50,7 +50,7 @@ public sealed class DehoisterAction : LemmingAction
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         lemming.LevelPosition = lemmingPosition;
 
-        if (SliderAction.SliderTerrainChecks(lemming, animFrameValue - 2))
+        if (SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 2))
             return true;
 
         return lemming.CurrentAction != DrownerAction.Instance;

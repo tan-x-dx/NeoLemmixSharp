@@ -40,7 +40,7 @@ public sealed class LasererAction : LemmingAction
         new(-1, 1)
     };
 
-    private enum LaserHitType
+    private enum LaserHitType : byte
     {
         None,
         Solid,
@@ -59,6 +59,7 @@ public sealed class LasererAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
         if (!Terrain.PixelIsSolidToLemming(lemmingPosition, lemming))
         {
@@ -67,37 +68,47 @@ public sealed class LasererAction : LemmingAction
         }
 
         var dx = lemming.FacingDirection.DeltaX;
-        var target = lemming.Orientation.Move(lemmingPosition, dx + dx, 5);
+        var target = orientation.Move(lemmingPosition, dx + dx, 5);
 
         var hit = false;
         var hitUseful = false;
 
-        for (var i = 0; i < DistanceCap; i++)
+        var offsetChecks = dx == 1
+            ? _offsetChecksRight
+            : _offsetChecksLeft;
+
+        var i = DistanceCap;
+        while (i > 0)
         {
-            switch (CheckForHit(lemming, target, lemming.Orientation, dx))
+            switch (CheckForHit(lemming, target, orientation, offsetChecks))
             {
                 case LaserHitType.None:
-                    target = lemming.Orientation.Move(target, dx, 1);
+                    target = orientation.Move(target, dx, 1);
                     break;
                 case LaserHitType.Solid:
                     hit = true;
                     hitUseful = true;
-                    break;
+                    goto HitTestConclusive;
                 case LaserHitType.Indestructible:
                     hit = true;
-                    break;
+                    goto HitTestConclusive;
                 case LaserHitType.OutOfBounds:
-                    break;
+                    goto HitTestConclusive;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            --i;
         }
+
+HitTestConclusive:
 
         lemming.LaserHitLevelPosition = target;
 
         if (hit)
         {
             lemming.LaserHit = true;
+            // Apply laser mask here
         }
         else
         {
@@ -120,20 +131,16 @@ public sealed class LasererAction : LemmingAction
         return true;
     }
 
-    private LaserHitType CheckForHit(
+    private static LaserHitType CheckForHit(
         Lemming lemming,
         LevelPosition target,
         Orientation orientation,
-        int dx)
+        LevelPosition[] offsetChecks)
     {
         if (Terrain.PositionOutOfBounds(target))
             return LaserHitType.OutOfBounds;
 
         var result = LaserHitType.None;
-
-        var offsetChecks = dx == 1
-            ? _offsetChecksRight
-            : _offsetChecksLeft;
 
         for (var i = 0; i < offsetChecks.Length; i++)
         {
@@ -141,9 +148,9 @@ public sealed class LasererAction : LemmingAction
 
             if (Terrain.PixelIsSolidToLemming(checkLevelPosition, lemming))
             {
-                if (Terrain.PixelIsSolidToLemming(checkLevelPosition, lemming) && result != LaserHitType.Solid)
+                if (Terrain.PixelIsIndestructibleToLemming(checkLevelPosition, lemming) && result != LaserHitType.Solid)
                 {
-                    result = LaserHitType.None;
+                    result = LaserHitType.Indestructible;
                 }
                 else
                 {

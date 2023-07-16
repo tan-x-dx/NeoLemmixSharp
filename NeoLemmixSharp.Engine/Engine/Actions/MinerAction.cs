@@ -125,9 +125,12 @@ public sealed class MinerAction : LemmingAction
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        // if HasSteelAt(X, Y) then CueSoundEffect(SFX_HITS_STEEL, L.Position);
+        if (Terrain.PixelIsIndestructibleToLemming(checkPosition, lemming))
+        {
+            // CueSoundEffect(SFX_HITS_STEEL, L.Position);
+        }
 
-        // Independently of (X, Y) this check is always made at Lem position
+        // Independently of checkPosition this check is always made at Lem position
         // No longer check at Lem position, due to http://www.lemmingsforums.net/index.php?topic=2547.0
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);

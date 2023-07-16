@@ -1,7 +1,11 @@
-﻿namespace NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
+﻿using System.Diagnostics.Contracts;
+
+namespace NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 
 public interface IVerticalBoundaryBehaviour
 {
+    [Pure]
     int NormaliseY(int y);
+    [Pure]
     int GetAbsoluteVerticalDistance(int y1, int y2);
 }

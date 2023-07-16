@@ -53,7 +53,7 @@ public sealed class StackerAction : LemmingAction
     {
         var orientation = lemming.Orientation;
         var brickPosition = lemming.LevelPosition;
-        orientation.MoveUp(brickPosition, 9 - lemming.NumberOfBricksLeft);
+        brickPosition = orientation.MoveUp(brickPosition, 9 - lemming.NumberOfBricksLeft);
 
         var dx = lemming.FacingDirection.DeltaX;
 
