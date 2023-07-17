@@ -1,7 +1,8 @@
-﻿using NeoLemmixSharp.Common.Util.BitArrays;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.BitArrays;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.Terrain;
-using System.Collections.ObjectModel;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Skills;
 
@@ -9,9 +10,9 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 {
     protected static TerrainManager Terrain { get; private set; }
 
-    private static ReadOnlyDictionary<string, LemmingSkill> LemmingSkills { get; } = RegisterAllLemmingSkills();
+    private static ReadOnlyDictionaryWrapper<string, LemmingSkill> LemmingSkills { get; } = RegisterAllLemmingSkills();
 
-    private static ReadOnlyDictionary<string, LemmingSkill> RegisterAllLemmingSkills()
+    private static ReadOnlyDictionaryWrapper<string, LemmingSkill> RegisterAllLemmingSkills()
     {
         var result = new Dictionary<string, LemmingSkill>();
 
@@ -65,7 +66,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
             throw new Exception($"Skill ids do not span a full set of values from 0 - {result.Count - 1}");
         }
 
-        return new ReadOnlyDictionary<string, LemmingSkill>(result);
+        return new ReadOnlyDictionaryWrapper<string, LemmingSkill>(result);
 
         void RegisterLemmingSkill(LemmingSkill lemmingSkill)
         {
@@ -110,6 +111,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 
     protected abstract IEnumerable<LemmingAction> ActionsThatCanBeAssigned();
 
+    [Pure]
     protected bool ActionIsAssignable(Lemming lemming)
     {
         return _assignableActionIds.GetBit(lemming.CurrentAction.Id);
