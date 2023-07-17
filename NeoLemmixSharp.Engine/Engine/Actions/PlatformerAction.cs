@@ -26,7 +26,7 @@ public sealed class PlatformerAction : LemmingAction
         if (lemming.AnimationFrame == 9)
         {
             lemming.PlacedBrick = LemmingCanPlatform(lemming);
-            LayBrick(lemming);
+            BuilderAction.LayBrick(lemming);
         }
         else if (lemming.AnimationFrame == 10 && lemming.NumberOfBricksLeft <= 3)
         {

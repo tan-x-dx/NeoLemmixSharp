@@ -92,4 +92,33 @@ public sealed class BuilderAction : LemmingAction
         lemming.NumberOfBricksLeft = 12;
         lemming.ConstructivePositionFreeze = false;
     }
+
+    public static void LayBrick(Lemming lemming)
+    {
+        var orientation = lemming.Orientation;
+        var dx = lemming.FacingDirection.DeltaX;
+        var dy = lemming.CurrentAction == BuilderAction.Instance
+            ? 1
+            : 0;
+
+        var brickPosition = lemming.LevelPosition;
+        brickPosition = orientation.MoveUp(brickPosition, dy);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+
+        brickPosition = orientation.MoveRight(brickPosition, dx);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+
+        brickPosition = orientation.MoveRight(brickPosition, dx);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+
+        brickPosition = orientation.MoveRight(brickPosition, dx);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+
+        brickPosition = orientation.MoveRight(brickPosition, dx);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+
+        brickPosition = orientation.MoveRight(brickPosition, dx);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+    }
+
 }
