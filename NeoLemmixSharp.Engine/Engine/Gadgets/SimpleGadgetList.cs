@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets;
 
@@ -16,7 +17,7 @@ public sealed class SimpleGadgetList<TGadget> : IGadgetCollection<TGadget>
     public bool TryGetGadgetThatMatchesTypeAndOrientation(
         LevelPosition levelPosition,
         Orientation orientation,
-        out TGadget? gadget)
+        [NotNullWhen(true)] out TGadget? gadget)
     {
         for (var i = 0; i < _gadgets.Length; i++)
         {

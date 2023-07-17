@@ -79,7 +79,7 @@ public sealed class SliderAction : LemmingAction
                 DrownerAction.Instance.TransitionLemmingToAction(lemming, true);
                 // ?? CueSoundEffect(SFX_DROWNING, L.Position); ??
             }
-            water!.OnLemmingInHitBox(lemming);
+            water.OnLemmingInHitBox(lemming);
 
             return true;
         }

@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Terrain;
-using System.Collections.ObjectModel;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -9,9 +8,9 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 {
     protected static TerrainManager Terrain { get; private set; }
 
-    public static ReadOnlyDictionary<string, LemmingAction> AllActions { get; } = RegisterAllLemmingActions();
+    public static ReadOnlyDictionaryWrapper<string, LemmingAction> AllActions { get; } = RegisterAllLemmingActions();
 
-    private static ReadOnlyDictionary<string, LemmingAction> RegisterAllLemmingActions()
+    private static ReadOnlyDictionaryWrapper<string, LemmingAction> RegisterAllLemmingActions()
     {
         var result = new Dictionary<string, LemmingAction>();
 
@@ -76,7 +75,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
             throw new Exception($"Action ids do not span a full set of values from 0 - {result.Count - 1}");
         }
 
-        return new ReadOnlyDictionary<string, LemmingAction>(result);
+        return new ReadOnlyDictionaryWrapper<string, LemmingAction>(result);
 
         void RegisterLemmingAction(LemmingAction lemmingAction)
         {
@@ -127,42 +126,16 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         lemming.InitialFall = false;
     }
 
-    protected static void LayBrick(Lemming lemming)
-    {
-        var orientation = lemming.Orientation;
-        var dx = lemming.FacingDirection.DeltaX;
-        var dy = lemming.CurrentAction == BuilderAction.Instance
-            ? 1
-            : 0;
-
-        var brickPosition = lemming.LevelPosition;
-        brickPosition = orientation.MoveUp(brickPosition, dy);
-        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
-
-        brickPosition = orientation.MoveRight(brickPosition, dx);
-        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
-
-        brickPosition = orientation.MoveRight(brickPosition, dx);
-        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
-
-        brickPosition = orientation.MoveRight(brickPosition, dx);
-        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
-
-        brickPosition = orientation.MoveRight(brickPosition, dx);
-        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
-
-        brickPosition = orientation.MoveRight(brickPosition, dx);
-        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
-    }
-
+    /// <summary>
+    /// Find the new ground pixel. 
+    /// If result = 4, then at least 4 pixels are air below levelPosition. 
+    /// If result = -7, then at least 7 pixels are terrain above levelPosition
+    /// </summary>
     protected static int FindGroundPixel(
         Lemming lemming,
         Orientation orientation,
         LevelPosition levelPosition)
     {
-        // Find the new ground pixel
-        // If Result = 4, then at least 4 pixels are air below (X, Y)
-        // If Result = -7, then at least 7 pixels are terrain above (X, Y)
         var result = 0;
         if (Terrain.PixelIsSolidToLemming(levelPosition, lemming))
         {

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics.Contracts;
 using System.Numerics;
 
 namespace NeoLemmixSharp.Common.Util.BitArrays;
@@ -25,6 +26,7 @@ public sealed class IntBasedBitArray : IBitArray
         Count = count;
     }
 
+    [Pure]
     public bool GetBit(int index)
     {
         return (_bits & (1U << index)) != 0U;
