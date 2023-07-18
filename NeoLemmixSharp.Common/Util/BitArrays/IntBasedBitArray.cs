@@ -12,7 +12,6 @@ public sealed class IntBasedBitArray : IBitArray
 
     public int Count { get; private set; }
     public int Length => Size;
-    public bool AnyBitsSet => _bits != 0U;
 
     public IntBasedBitArray(uint initialBits = 0U)
     {

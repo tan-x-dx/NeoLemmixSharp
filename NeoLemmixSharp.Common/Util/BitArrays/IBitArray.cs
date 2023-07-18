@@ -7,7 +7,6 @@ namespace NeoLemmixSharp.Common.Util.BitArrays;
 public interface IBitArray : ICollection<int>, IReadOnlyCollection<int>, ICloneable
 {
     int Length { get; }
-    bool AnyBitsSet { get; }
     new int Count { get; }
 
     [Pure]

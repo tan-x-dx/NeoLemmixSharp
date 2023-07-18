@@ -10,7 +10,6 @@ public sealed class ArrayBasedBitArray : IBitArray
 
     public int Length { get; }
     public int Count { get; private set; }
-    public bool AnyBitsSet => Count > 0;
 
     public ArrayBasedBitArray(int length, bool initialBitFlag = false)
     {
