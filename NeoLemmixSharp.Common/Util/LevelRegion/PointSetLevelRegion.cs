@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Common.Util.LevelRegion;
 

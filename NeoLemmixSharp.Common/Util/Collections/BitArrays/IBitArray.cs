@@ -2,7 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Common.Util.BitArrays;
+namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public interface IBitArray : ICollection<int>, IReadOnlyCollection<int>, ICloneable
 {

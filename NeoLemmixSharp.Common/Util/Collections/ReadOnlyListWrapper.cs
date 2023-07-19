@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class ReadOnlyListWrapper<T> : IList<T>, IReadOnlyList<T>
 {

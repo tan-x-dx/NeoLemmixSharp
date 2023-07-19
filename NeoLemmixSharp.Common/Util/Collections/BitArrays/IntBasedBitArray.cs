@@ -2,7 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Numerics;
 
-namespace NeoLemmixSharp.Common.Util.BitArrays;
+namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public sealed class IntBasedBitArray : IBitArray
 {
@@ -28,7 +28,7 @@ public sealed class IntBasedBitArray : IBitArray
     [Pure]
     public bool GetBit(int index)
     {
-        return (_bits & (1U << index)) != 0U;
+        return (_bits & 1U << index) != 0U;
     }
 
     public bool SetBit(int index)

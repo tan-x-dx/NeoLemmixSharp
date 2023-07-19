@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class ReadOnlyDictionaryWrapper<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
     where TKey : notnull
