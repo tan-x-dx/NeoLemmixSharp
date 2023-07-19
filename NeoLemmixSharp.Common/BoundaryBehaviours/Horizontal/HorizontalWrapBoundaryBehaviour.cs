@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
+﻿using System.Diagnostics.Contracts;
+
+namespace NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 
 public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehaviour
 {
@@ -9,6 +11,7 @@ public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehavio
         _levelWidthInPixels = levelWidthInPixels;
     }
 
+    [Pure]
     public int NormaliseX(int x)
     {
         // most likely case for negatives will be "small" numbers. Therefore simply adding the level width will make it a valid value
@@ -28,6 +31,7 @@ public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehavio
         return x % _levelWidthInPixels;
     }
 
+    [Pure]
     public int GetAbsoluteHorizontalDistance(int x1, int x2)
     {
         var dx = Math.Abs(x1 - x2);
