@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Util.GameInput;
 
-namespace NeoLemmixSharp.Engine.Engine.Input;
+namespace NeoLemmixSharp.Engine.Engine;
 
 public sealed class LevelInputController : InputController
 {

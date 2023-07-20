@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Engine.Input;
-using NeoLemmixSharp.Engine.Engine.Skills;
+﻿using NeoLemmixSharp.Engine.Engine.Skills;
 
 namespace NeoLemmixSharp.Engine.Engine.ControlPanel;
 

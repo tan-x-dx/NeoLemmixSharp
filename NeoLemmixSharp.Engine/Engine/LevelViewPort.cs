@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Engine.Input;
 
 namespace NeoLemmixSharp.Engine.Engine;
 
