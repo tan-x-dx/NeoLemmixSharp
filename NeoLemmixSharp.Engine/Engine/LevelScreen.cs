@@ -6,7 +6,6 @@ using NeoLemmixSharp.Engine.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Skills;
-using NeoLemmixSharp.Engine.Engine.Terrain;
 using NeoLemmixSharp.Engine.Engine.Updates;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Io.LevelReading.Data;
