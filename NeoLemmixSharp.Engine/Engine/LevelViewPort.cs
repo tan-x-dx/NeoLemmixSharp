@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Engine;
 
@@ -81,8 +82,8 @@ public sealed class LevelViewport
         ScreenMouseX = _controller.MouseX;
         ScreenMouseY = _controller.MouseY;
 
-        ScreenMouseX -= ScreenMouseX % ScaleMultiplier;
-        ScreenMouseY -= ScreenMouseY % ScaleMultiplier;
+        ScreenMouseX = ScaleMultiplier * ((ScreenMouseX + ScaleMultiplier / 2) / ScaleMultiplier);
+        ScreenMouseY = ScaleMultiplier * ((ScreenMouseY + ScaleMultiplier / 2) / ScaleMultiplier);
 
         bool result;
         if (MouseIsInLevelViewport())
@@ -132,6 +133,7 @@ public sealed class LevelViewport
         return result;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool MouseIsInLevelViewport()
     {
         return _controller.MouseX >= 0 && _controller.MouseX <= _windowWidth &&
