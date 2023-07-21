@@ -100,7 +100,7 @@ public sealed class ArrayBasedBitArray : IBitArray
 
             var m = BitOperations.TrailingZeroCount(v);
             v ^= 1U << m;
-            array[arrayIndex++] = (index << 5) + m;
+            array[arrayIndex++] = (index << 5) | m;
             remaining--;
         }
     }
@@ -148,7 +148,7 @@ public sealed class ArrayBasedBitArray : IBitArray
             var m = BitOperations.TrailingZeroCount(_v);
             _v ^= 1U << m;
 
-            Current = (_index << 5) + m;
+            Current = (_index << 5) | m;
             _remaining--;
             return true;
         }
