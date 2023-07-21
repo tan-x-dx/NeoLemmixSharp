@@ -51,29 +51,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         RegisterLemmingAction(StonerAction.Instance);
         RegisterLemmingAction(VaporiserAction.Instance);
 
-        var numberOfUniqueIds = result
-            .Values
-            .Select(la => la.Id)
-            .Distinct()
-            .Count();
-
-        if (numberOfUniqueIds != result.Count)
-        {
-            var ids = string.Join(',', result
-                .Values
-                .Select(la => la.Id)
-                .OrderBy(i => i));
-
-            throw new Exception($"Duplicated action ID: {ids}");
-        }
-
-        var minActionId = result.Values.Select(la => la.Id).Min();
-        var maxActionId = result.Values.Select(la => la.Id).Max();
-
-        if (minActionId != 0 || maxActionId != result.Count - 1)
-        {
-            throw new Exception($"Action ids do not span a full set of values from 0 - {result.Count - 1}");
-        }
+        ValidateLemmingActionIds();
 
         return new ReadOnlyDictionaryWrapper<string, LemmingAction>(result);
 
@@ -83,6 +61,29 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
                 return;
 
             result.Add(lemmingAction.LemmingActionName, lemmingAction);
+        }
+
+        void ValidateLemmingActionIds()
+        {
+            var ids = result
+                .Values
+                .Select(la => la.Id)
+                .ToList();
+
+            var numberOfUniqueIds = ids.Distinct().Count();
+
+            if (numberOfUniqueIds != result.Count)
+            {
+                var idsString = string.Join(',', ids.OrderBy(i => i));
+
+                throw new Exception($"Duplicated action ID: {idsString}");
+            }
+
+            var minActionId = ids.Min();
+            var maxActionId = ids.Max();
+
+            if (minActionId != 0 || maxActionId != result.Count - 1)
+                throw new Exception($"Action ids do not span a full set of values from 0 - {result.Count - 1}");
         }
     }
 

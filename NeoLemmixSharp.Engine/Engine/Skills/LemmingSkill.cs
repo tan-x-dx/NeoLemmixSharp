@@ -41,29 +41,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 
         RegisterLemmingSkill(ClonerSkill.Instance);
 
-        var numberOfUniqueIds = result
-            .Values
-            .Select(la => la.Id)
-            .Distinct()
-            .Count();
-
-        if (numberOfUniqueIds != result.Count)
-        {
-            var ids = string.Join(',', result
-                .Values
-                .Select(la => la.Id)
-                .OrderBy(i => i));
-
-            throw new Exception($"Duplicated skill ID: {ids}");
-        }
-
-        var minSkillId = result.Values.Select(ls => ls.Id).Min();
-        var maxSkillId = result.Values.Select(ls => ls.Id).Max();
-
-        if (minSkillId != 0 || maxSkillId != result.Count - 1)
-        {
-            throw new Exception($"Skill ids do not span a full set of values from 0 - {result.Count - 1}");
-        }
+        ValidateLemmingSkillIds();
 
         return new ReadOnlyDictionaryWrapper<string, LemmingSkill>(result);
 
@@ -73,6 +51,31 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
                 return;
 
             result.Add(lemmingSkill.LemmingSkillName, lemmingSkill);
+        }
+
+        void ValidateLemmingSkillIds()
+        {
+            var ids = result
+                .Values
+                .Select(ls => ls.Id)
+                .ToList();
+
+            var numberOfUniqueIds = ids
+                .Distinct()
+                .Count();
+
+            if (numberOfUniqueIds != result.Count)
+            {
+                var idsString = ids.OrderBy(i => i);
+
+                throw new Exception($"Duplicated skill ID: {idsString}");
+            }
+
+            var minSkillId = ids.Min();
+            var maxSkillId = ids.Max();
+
+            if (minSkillId != 0 || maxSkillId != result.Count - 1)
+                throw new Exception($"Skill ids do not span a full set of values from 0 - {result.Count - 1}");
         }
     }
 
