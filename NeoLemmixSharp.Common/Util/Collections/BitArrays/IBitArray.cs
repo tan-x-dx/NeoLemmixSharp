@@ -29,7 +29,7 @@ public interface IBitArray : ICollection<int>, IReadOnlyCollection<int>, IClonea
     bool ICollection<int>.IsReadOnly => false;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IBitArray GetBestFitForSize(int size) => size > IntBasedBitArray.Size
-        ? new ArrayBasedBitArray(size)
-        : new IntBasedBitArray();
+    public static IBitArray GetBestFitForSize(int size) => size > SmallBitArray.Size
+        ? new LargeBitArray(size)
+        : new SmallBitArray();
 }

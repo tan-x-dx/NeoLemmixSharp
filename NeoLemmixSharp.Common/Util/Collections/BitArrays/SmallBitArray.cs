@@ -4,7 +4,10 @@ using System.Numerics;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
-public sealed class IntBasedBitArray : IBitArray
+/// <summary>
+/// Has a fixed length of 32 (Values range 0 - 31).
+/// </summary>
+public sealed class SmallBitArray : IBitArray
 {
     public const int Size = 8 * sizeof(uint);
 
@@ -13,13 +16,13 @@ public sealed class IntBasedBitArray : IBitArray
     public int Count { get; private set; }
     public int Length => Size;
 
-    public IntBasedBitArray(uint initialBits = 0U)
+    public SmallBitArray(uint initialBits = 0U)
     {
         _bits = initialBits;
         Count = initialBits == 0U ? 0 : BitOperations.PopCount(_bits);
     }
 
-    private IntBasedBitArray(uint bits, int count)
+    private SmallBitArray(uint bits, int count)
     {
         _bits = bits;
         Count = count;
@@ -67,7 +70,7 @@ public sealed class IntBasedBitArray : IBitArray
     }
 
     object ICloneable.Clone() => Clone();
-    public IntBasedBitArray Clone() => new(_bits, Count);
+    public SmallBitArray Clone() => new(_bits, Count);
 
     public Enumerator GetEnumerator() => new(this);
     IEnumerator<int> IEnumerable<int>.GetEnumerator() => new Enumerator(this);
@@ -75,12 +78,12 @@ public sealed class IntBasedBitArray : IBitArray
 
     public struct Enumerator : IEnumerator<int>
     {
-        private readonly IntBasedBitArray _bitField;
+        private readonly SmallBitArray _bitField;
         private uint _v;
 
         public int Current { get; private set; }
 
-        public Enumerator(IntBasedBitArray bitField)
+        public Enumerator(SmallBitArray bitField)
         {
             _bitField = bitField;
             _v = _bitField._bits;

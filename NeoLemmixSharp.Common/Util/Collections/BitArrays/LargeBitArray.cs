@@ -4,21 +4,24 @@ using System.Numerics;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
-public sealed class ArrayBasedBitArray : IBitArray
+/// <summary>
+/// Can be initialized with any length (Values range from 0 - Length-1).
+/// </summary>
+public sealed class LargeBitArray : IBitArray
 {
     private readonly uint[] _uints;
 
     public int Length { get; }
     public int Count { get; private set; }
 
-    public ArrayBasedBitArray(int length, bool initialBitFlag = false)
+    public LargeBitArray(int length, bool initialBitFlag = false)
     {
         if (length < 1)
             throw new ArgumentException("length must be greater than zero", nameof(length));
 
         Length = length;
 
-        var numberOfInts = Length + 31 >> 5;
+        var numberOfInts = (Length + 31) >> 5;
 
         _uints = new uint[numberOfInts];
 
@@ -31,10 +34,10 @@ public sealed class ArrayBasedBitArray : IBitArray
         var mask = (1U << shift) - 1U;
         _uints[^1] = mask;
 
-        Count = (_uints.Length - 1 << 5) + shift;
+        Count = Length;
     }
 
-    private ArrayBasedBitArray(int length, uint[] bits, int count)
+    private LargeBitArray(int length, uint[] bits, int count)
     {
         Length = length;
         _uints = (uint[])bits.Clone();
@@ -106,7 +109,7 @@ public sealed class ArrayBasedBitArray : IBitArray
     }
 
     object ICloneable.Clone() => Clone();
-    public ArrayBasedBitArray Clone() => new(Length, _uints, Count);
+    public LargeBitArray Clone() => new(Length, _uints, Count);
 
     public Enumerator GetEnumerator() => new(this);
     IEnumerator<int> IEnumerable<int>.GetEnumerator() => new Enumerator(this);
@@ -114,7 +117,7 @@ public sealed class ArrayBasedBitArray : IBitArray
 
     public struct Enumerator : IEnumerator<int>
     {
-        private readonly ArrayBasedBitArray _arrayBasedBitArray;
+        private readonly LargeBitArray _bitArray;
 
         private uint _v;
         private int _remaining;
@@ -122,11 +125,11 @@ public sealed class ArrayBasedBitArray : IBitArray
 
         public int Current { get; private set; }
 
-        public Enumerator(ArrayBasedBitArray arrayBasedBitArray)
+        public Enumerator(LargeBitArray bitArray)
         {
-            _arrayBasedBitArray = arrayBasedBitArray;
-            _v = _arrayBasedBitArray._uints[0];
-            _remaining = _arrayBasedBitArray.Count;
+            _bitArray = bitArray;
+            _v = _bitArray._uints[0];
+            _remaining = _bitArray.Count;
             _index = 0;
             Current = -1;
         }
@@ -140,7 +143,7 @@ public sealed class ArrayBasedBitArray : IBitArray
 
                 do
                 {
-                    _v = _arrayBasedBitArray._uints[++_index];
+                    _v = _bitArray._uints[++_index];
                 }
                 while (_v == 0U);
             }
@@ -155,18 +158,18 @@ public sealed class ArrayBasedBitArray : IBitArray
 
         public void Reset()
         {
-            _v = _arrayBasedBitArray._uints[0];
-            _remaining = _arrayBasedBitArray.Count;
+            _v = _bitArray._uints[0];
+            _remaining = _bitArray.Count;
             _index = 0;
         }
 
         object IEnumerator.Current => Current;
         void IDisposable.Dispose() { }
     }
-    
+
     public sealed class ReferenceTypeEnumerator : IEnumerator<int>
     {
-        private readonly ArrayBasedBitArray _arrayBasedBitArray;
+        private readonly LargeBitArray _bitArray;
 
         private uint _v;
         private int _remaining;
@@ -174,11 +177,11 @@ public sealed class ArrayBasedBitArray : IBitArray
 
         public int Current { get; private set; }
 
-        public ReferenceTypeEnumerator(ArrayBasedBitArray arrayBasedBitArray)
+        public ReferenceTypeEnumerator(LargeBitArray bitArray)
         {
-            _arrayBasedBitArray = arrayBasedBitArray;
-            _v = _arrayBasedBitArray._uints[0];
-            _remaining = _arrayBasedBitArray.Count;
+            _bitArray = bitArray;
+            _v = _bitArray._uints[0];
+            _remaining = _bitArray.Count;
             _index = 0;
             Current = -1;
         }
@@ -192,7 +195,7 @@ public sealed class ArrayBasedBitArray : IBitArray
 
                 do
                 {
-                    _v = _arrayBasedBitArray._uints[++_index];
+                    _v = _bitArray._uints[++_index];
                 }
                 while (_v == 0U);
             }
@@ -207,8 +210,8 @@ public sealed class ArrayBasedBitArray : IBitArray
 
         public void Reset()
         {
-            _v = _arrayBasedBitArray._uints[0];
-            _remaining = _arrayBasedBitArray.Count;
+            _v = _bitArray._uints[0];
+            _remaining = _bitArray.Count;
             _index = 0;
         }
 

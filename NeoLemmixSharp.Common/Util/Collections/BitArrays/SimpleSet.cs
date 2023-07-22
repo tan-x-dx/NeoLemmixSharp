@@ -6,12 +6,12 @@ namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 public sealed class SimpleSet<T> : ICollection<T>
 {
     private readonly ISimpleHasher<T> _hasher;
-    private readonly ArrayBasedBitArray _bits;
+    private readonly LargeBitArray _bits;
 
     public SimpleSet(ISimpleHasher<T> hasher)
     {
         _hasher = hasher;
-        _bits = new ArrayBasedBitArray(_hasher.NumberOfItems);
+        _bits = new LargeBitArray(_hasher.NumberOfItems);
     }
 
     public int Count => _bits.Count;
@@ -53,12 +53,12 @@ public sealed class SimpleSet<T> : ICollection<T>
     public sealed class SimpleSetEnumerator : IEnumerator<T>
     {
         private readonly ISimpleHasher<T> _hasher;
-        private readonly ArrayBasedBitArray.ReferenceTypeEnumerator _bitIndices;
+        private readonly LargeBitArray.ReferenceTypeEnumerator _bitIndices;
 
         public SimpleSetEnumerator(SimpleSet<T> set)
         {
             _hasher = set._hasher;
-            _bitIndices = new ArrayBasedBitArray.ReferenceTypeEnumerator(set._bits);
+            _bitIndices = new LargeBitArray.ReferenceTypeEnumerator(set._bits);
         }
 
         public bool MoveNext() => _bitIndices.MoveNext();
