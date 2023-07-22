@@ -163,4 +163,56 @@ public sealed class ArrayBasedBitArray : IBitArray
         object IEnumerator.Current => Current;
         void IDisposable.Dispose() { }
     }
+    
+    public sealed class ReferenceTypeEnumerator : IEnumerator<int>
+    {
+        private readonly ArrayBasedBitArray _arrayBasedBitArray;
+
+        private uint _v;
+        private int _remaining;
+        private int _index;
+
+        public int Current { get; private set; }
+
+        public ReferenceTypeEnumerator(ArrayBasedBitArray arrayBasedBitArray)
+        {
+            _arrayBasedBitArray = arrayBasedBitArray;
+            _v = _arrayBasedBitArray._uints[0];
+            _remaining = _arrayBasedBitArray.Count;
+            _index = 0;
+            Current = -1;
+        }
+
+        public bool MoveNext()
+        {
+            if (_v == 0U)
+            {
+                if (_remaining == 0)
+                    return false;
+
+                do
+                {
+                    _v = _arrayBasedBitArray._uints[++_index];
+                }
+                while (_v == 0U);
+            }
+
+            var m = BitOperations.TrailingZeroCount(_v);
+            _v ^= 1U << m;
+
+            Current = (_index << 5) | m;
+            _remaining--;
+            return true;
+        }
+
+        public void Reset()
+        {
+            _v = _arrayBasedBitArray._uints[0];
+            _remaining = _arrayBasedBitArray.Count;
+            _index = 0;
+        }
+
+        object IEnumerator.Current => Current;
+        void IDisposable.Dispose() { }
+    }
 }
