@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
@@ -27,9 +26,4 @@ public interface IBitArray : ICollection<int>, IReadOnlyCollection<int>, IClonea
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     bool ICollection<int>.IsReadOnly => false;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IBitArray GetBestFitForSize(int size) => size > SmallBitArray.Size
-        ? new LargeBitArray(size)
-        : new SmallBitArray();
 }

@@ -31,7 +31,7 @@ public sealed class SmallBitArray : IBitArray
     [Pure]
     public bool GetBit(int index)
     {
-        return (_bits & 1U << index) != 0U;
+        return (_bits & (1U << index)) != 0U;
     }
 
     public bool SetBit(int index)

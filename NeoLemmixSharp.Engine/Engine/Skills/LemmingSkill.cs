@@ -91,9 +91,9 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 
     protected LemmingSkill()
     {
-        var numberOfActions = LemmingAction.AllActions.Count;
-
-        _assignableActionIds = IBitArray.GetBestFitForSize(numberOfActions);
+        // There are currently 31 LemmingActions in existence.
+        // If/when that changes -> update this accordingly
+        _assignableActionIds = new SmallBitArray();
 
         // ReSharper disable once VirtualMemberCallInConstructor
         foreach (var action in ActionsThatCanBeAssigned())

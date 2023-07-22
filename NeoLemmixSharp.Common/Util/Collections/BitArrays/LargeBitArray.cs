@@ -47,7 +47,7 @@ public sealed class LargeBitArray : IBitArray
     [Pure]
     public bool GetBit(int index)
     {
-        return (_uints[index >> 5] & 1U << index) != 0U;
+        return (_uints[index >> 5] & (1U << index)) != 0U;
     }
 
     public bool SetBit(int index)
@@ -55,7 +55,7 @@ public sealed class LargeBitArray : IBitArray
         int intIndex = index >> 5;
 
         uint oldValue = _uints[intIndex];
-        uint newValue = oldValue | 1U << index;
+        uint newValue = oldValue | (1U << index);
 
         if (oldValue == newValue)
             return false;
