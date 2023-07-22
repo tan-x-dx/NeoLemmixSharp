@@ -6,6 +6,7 @@ using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Engine.Gadgets;
+using NeoLemmixSharp.Engine.Engine.Terrain;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;

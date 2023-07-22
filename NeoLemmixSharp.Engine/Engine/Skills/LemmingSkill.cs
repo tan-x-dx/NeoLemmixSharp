@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Engine.Actions;
+using NeoLemmixSharp.Engine.Engine.Terrain;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Skills;

@@ -7,7 +7,7 @@ using NeoLemmixSharp.Engine.Rendering;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Engine.Engine;
+namespace NeoLemmixSharp.Engine.Engine.Terrain;
 
 public sealed class TerrainManager
 {
