@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using System.Runtime.CompilerServices;
-using static NeoLemmixSharp.Engine.Rendering.Viewport.SpriteRotationReflectionProcessor;
+using ActionSpriteCreator = NeoLemmixSharp.Engine.Rendering.Viewport.SpriteRotationReflectionProcessor<NeoLemmixSharp.Engine.Rendering.Viewport.Lemming.ActionSprite>;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
@@ -17,7 +17,7 @@ public static class DefaultLemmingSpriteBank
         ContentManager contentManager,
         GraphicsDevice graphicsDevice)
     {
-        var spriteRotationReflectionProcessor = new SpriteRotationReflectionProcessor(graphicsDevice);
+        var spriteRotationReflectionProcessor = new ActionSpriteCreator(graphicsDevice);
         var actionSprites = new ActionSprite[LemmingAction.AllActions.Count * 4 * 2];
         // Number of actions * 4 orientations * 2 facing directions.
 
@@ -94,7 +94,7 @@ public static class DefaultLemmingSpriteBank
             LemmingAction action,
             LevelPosition anchorPoint,
             int numberOfLayers,
-            ActionSpriteCreator actionSpriteCreator)
+            ActionSpriteCreator.ItemCreator actionSpriteCreator)
         {
             CreateActionSprites(
                 contentManager,
@@ -109,12 +109,12 @@ public static class DefaultLemmingSpriteBank
 
     private static void CreateActionSprites(
         ContentManager contentManager,
-        SpriteRotationReflectionProcessor spriteRotationReflectionProcessor,
+        ActionSpriteCreator spriteRotationReflectionProcessor,
         ActionSprite[] actionSprites,
         LemmingAction action,
         int numberOfLayers,
         LevelPosition anchorPoint,
-        ActionSpriteCreator actionSpriteCreator)
+        ActionSpriteCreator.ItemCreator itemCreator)
     {
         using var texture = contentManager.Load<Texture2D>($"sprites/lemming/{action.LemmingActionName}");
 
@@ -128,7 +128,7 @@ public static class DefaultLemmingSpriteBank
             action.NumberOfAnimationFrames,
             numberOfLayers,
             anchorPoint,
-            actionSpriteCreator);
+            itemCreator);
 
         foreach (var orientation in Orientation.AllOrientations)
         {

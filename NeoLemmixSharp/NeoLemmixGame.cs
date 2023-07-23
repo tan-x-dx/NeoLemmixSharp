@@ -4,12 +4,13 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
-using System;
-using System.Runtime.InteropServices;
-using NeoLemmixSharp.Engine.LevelBuilding;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.Skills;
+using NeoLemmixSharp.Engine.Engine.Terrain.Masks;
+using NeoLemmixSharp.Engine.LevelBuilding;
+using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+using System;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp;
 
@@ -47,10 +48,6 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
         IsFixedTimeStep = true;
         TargetElapsedTime = _standardGameUps;
-
-        var numberOfActions = LemmingAction.AllActions.Count;
-        var numberOfSkills = LemmingSkill.AllLemmingSkills.Count;
-        Console.WriteLine("Loaded {0} skills. Loaded {1} actions", numberOfSkills, numberOfActions);
     }
 
     private void WindowOnClientSizeChanged(object? sender, EventArgs e)
@@ -88,13 +85,13 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
         _graphics.ApplyChanges();
 
-        DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
+        InitialiseGameConstants();
 
         var path =
         //    "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
         //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\rotation test.nxlv";
         //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\render test.nxlv";
-       // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\movement test.nxlv";
+        // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\movement test.nxlv";
         "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\object test.nxlv";
         // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
         //   "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
@@ -121,6 +118,16 @@ public sealed class NeoLemmixGame : Game, IGameWindow
         Window.Title = Screen.ScreenTitle;
 
         CaptureCursor();
+    }
+
+    private void InitialiseGameConstants()
+    {
+        var numberOfActions = LemmingAction.AllActions.Count;
+        var numberOfSkills = LemmingSkill.AllLemmingSkills.Count;
+        Console.WriteLine("Loaded {0} skills. Loaded {1} actions", numberOfSkills, numberOfActions);
+
+        TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
+        DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
     }
 
     protected override void Update(GameTime gameTime)
