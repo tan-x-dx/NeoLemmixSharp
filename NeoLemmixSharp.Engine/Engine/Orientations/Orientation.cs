@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 using System.Diagnostics.Contracts;
 
@@ -7,21 +6,21 @@ namespace NeoLemmixSharp.Engine.Engine.Orientations;
 
 public abstract class Orientation : IEquatable<Orientation>
 {
+    private static readonly Orientation[] Orientations = GenerateRotationCollection();
     protected static TerrainManager Terrain { get; private set; }
 
-    public static ReadOnlyListWrapper<Orientation> AllOrientations { get; } = GenerateRotationCollection();
+    public static ReadOnlySpan<Orientation> AllOrientations => new(Orientations);
 
-    private static ReadOnlyListWrapper<Orientation> GenerateRotationCollection()
+    private static Orientation[] GenerateRotationCollection()
     {
-        var list = new List<Orientation>
-        {
-            DownOrientation.Instance,
-            LeftOrientation.Instance,
-            UpOrientation.Instance,
-            RightOrientation.Instance
-        };
+        var orientations = new Orientation[4];
 
-        return new ReadOnlyListWrapper<Orientation>(list);
+        orientations[DownOrientation.Instance.RotNum] = DownOrientation.Instance;
+        orientations[LeftOrientation.Instance.RotNum] = LeftOrientation.Instance;
+        orientations[UpOrientation.Instance.RotNum] = UpOrientation.Instance;
+        orientations[RightOrientation.Instance.RotNum] = RightOrientation.Instance;
+
+        return orientations;
     }
 
     public static void SetTerrain(TerrainManager terrain)

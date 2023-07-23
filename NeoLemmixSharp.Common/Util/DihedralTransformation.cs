@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Common.Util;
 
 public sealed class DihedralTransformation
 {
-    private static DihedralTransformation[] Lookup { get; } = CreateLookup();
+    private static readonly DihedralTransformation[] Lookup = CreateLookup();
 
     private static DihedralTransformation[] CreateLookup()
     {
