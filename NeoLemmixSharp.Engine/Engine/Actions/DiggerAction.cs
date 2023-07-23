@@ -32,8 +32,8 @@ public sealed class DiggerAction : LemmingAction
             lemming.AnimationFrame--;
         }
 
-        if (lemming.AnimationFrame < 0 ||
-            lemming.AnimationFrame > 8)
+        if (lemming.AnimationFrame != 0 &&
+            lemming.AnimationFrame != 8)
             return true;
 
         var continueDigging = DigOneRow(lemming, orientation, lemmingPosition);

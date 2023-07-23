@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.Terrain.Masks;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -19,15 +20,22 @@ public sealed class MinerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var orientation = lemming.Orientation;
+        var lemmingPosition = lemming.LevelPosition;
+        var dx = lemming.FacingDirection.DeltaX;
+
         if (lemming.AnimationFrame == 1 ||
             lemming.AnimationFrame == 2)
         {
-            // ApplyMinerMask(L, L.LemPhysicsFrame - 1, 0, 0)
+            TerrainMasks.ApplyMinerMask(
+                lemming,
+                new LevelPosition(0, 0),
+                lemming.AnimationFrame - 1);
             return true;
         }
 
-        if (lemming.AnimationFrame < 3 ||
-            lemming.AnimationFrame > 15)
+        if (lemming.AnimationFrame != 3 &&
+            lemming.AnimationFrame != 15)
             return true;
 
         if (lemming.IsSlider && WalkerAction.LemmingCanDehoist(lemming, false))
@@ -36,14 +44,10 @@ public sealed class MinerAction : LemmingAction
             return true;
         }
 
-        var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
-        var dx = lemming.FacingDirection.DeltaX;
-
         lemmingPosition = orientation.Move(lemmingPosition, dx + dx, -1);
         lemming.LevelPosition = lemmingPosition;
 
-        if (lemming.IsSlider && WalkerAction.LemmingCanDehoist(lemming, false))
+        if (lemming.IsSlider && WalkerAction.LemmingCanDehoist(lemming, true))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             lemming.LevelPosition = lemmingPosition;
@@ -54,7 +58,7 @@ public sealed class MinerAction : LemmingAction
         // Note that all if-checks are relative to the end position!
 
         // Lem cannot go down, so turn; see http://www.lemmingsforums.net/index.php?topic=2547.0
-        if (Terrain.PixelIsIndestructibleToLemming(orientation.Move(lemmingPosition, dx, -1), lemming) &&
+        if (Terrain.PixelIsIndestructibleToLemming(orientation.Move(lemmingPosition, -dx, -1), lemming) &&
             Terrain.PixelIsIndestructibleToLemming(orientation.MoveDown(lemmingPosition, 1), lemming))
         {
             var lemmingPosition0 = orientation.MoveDown(lemmingPosition, 1);

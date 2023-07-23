@@ -23,7 +23,7 @@ public sealed class TerrainMask
         _mask = mask;
     }
 
-    public void ApplyMask(LevelPosition position)
+    public void ApplyEraseMask(LevelPosition position)
     {
         var offset = position - _anchorPoint;
 
@@ -60,37 +60,37 @@ public static class TerrainMasks
     {
         var maskCreator = new MaskCreator(graphicsDevice);
 
-        _basherMasks = Bar(
+        _basherMasks = CreateTerrainMaskArray(
             "basher",
-            new LevelPosition(2, 2),
+            new LevelPosition(8, 10),
             4);
 
-        _bomberMasks = Bar(
+        _bomberMasks = CreateTerrainMaskArray(
             "bomber",
-            new LevelPosition(1, 1),
+            new LevelPosition(16, 25),
             1);
 
-        _fencerMasks = Bar(
+        _fencerMasks = CreateTerrainMaskArray(
             "fencer",
-            new LevelPosition(1, 1),
+            new LevelPosition(5, 10),
             4);
 
-        /* _laserMasks = Bar(
+        /* _laserMasks = CreateTerrainMaskArray(
              "laser",
-             new LevelPosition(1, 1),
+             new LevelPosition(3, 10),
              1);*/
 
-        _minerMasks = Bar(
-            "bomber",
-            new LevelPosition(1, 1),
+        _minerMasks = CreateTerrainMaskArray(
+            "miner",
+            new LevelPosition(1, 12),
             2);
 
-        _stonerMasks = Bar(
+        _stonerMasks = CreateTerrainMaskArray(
             "stoner",
-            new LevelPosition(1, 1),
+            new LevelPosition(16, 25),
             1);
 
-        TerrainMask[] Bar(
+        TerrainMask[] CreateTerrainMaskArray(
             string actionName,
             LevelPosition anchorPoint,
             int numberOfFrames)
@@ -154,63 +154,92 @@ public static class TerrainMasks
     }
 
     public static void ApplyBasherMask(
-        Orientation orientation,
-        FacingDirection facingDirection,
-        LevelPosition position,
+        Lemming lemming,
         int frame)
     {
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.LevelPosition;
+
+        if (facingDirection == RightFacingDirection.Instance)
+        {
+            position = orientation.MoveRight(position, 1);
+        }
+
         var key = GetKey(orientation, facingDirection, frame);
-        _basherMasks[key].ApplyMask(position);
+        _basherMasks[key].ApplyEraseMask(position);
     }
 
     public static void ApplyBomberMask(
-        Orientation orientation,
-        FacingDirection facingDirection,
-        LevelPosition position,
+        Lemming lemming,
         int frame)
     {
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.LevelPosition;
+
         var key = GetKey(orientation, facingDirection, frame);
-        _bomberMasks[key].ApplyMask(position);
+        _bomberMasks[key].ApplyEraseMask(position);
     }
 
     public static void ApplyFencerMask(
-        Orientation orientation,
-        FacingDirection facingDirection,
-        LevelPosition position,
+        Lemming lemming,
         int frame)
     {
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.LevelPosition;
+
         var key = GetKey(orientation, facingDirection, frame);
-        _fencerMasks[key].ApplyMask(position);
+        _fencerMasks[key].ApplyEraseMask(position);
     }
 
     public static void ApplyLasererMask(
-        Orientation orientation,
-        FacingDirection facingDirection,
-        LevelPosition position,
+        Lemming lemming,
         int frame)
     {
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.LevelPosition;
+
         var key = GetKey(orientation, facingDirection, frame);
-        _laserMasks[key].ApplyMask(position);
+        _laserMasks[key].ApplyEraseMask(position);
     }
 
+    /// <summary>
+    /// The miner mask is usually centered at the feet of the lemming. The adjustment parameter changes the position of the miner mask relative to this
+    /// </summary>
     public static void ApplyMinerMask(
-        Orientation orientation,
-        FacingDirection facingDirection,
-        LevelPosition position,
+        Lemming lemming,
+        LevelPosition adjustment,
         int frame)
     {
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var dx = facingDirection.DeltaX;
+        var position = lemming.LevelPosition;
+        position = orientation.Move(position, dx, -frame);
+        position = orientation.Move(position, adjustment);
+
         var key = GetKey(orientation, facingDirection, frame);
-        _minerMasks[key].ApplyMask(position);
+        _minerMasks[key].ApplyEraseMask(position);
     }
 
     public static void ApplyStonerMask(
-        Orientation orientation,
-        FacingDirection facingDirection,
-        LevelPosition position,
+        Lemming lemming,
         int frame)
     {
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.LevelPosition;
+
+        if (facingDirection == RightFacingDirection.Instance)
+        {
+            position = orientation.MoveRight(position, 1);
+        }
+
         var key = GetKey(orientation, facingDirection, frame);
-        _stonerMasks[key].ApplyMask(position);
+        _stonerMasks[key].ApplyEraseMask(position);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -282,14 +311,17 @@ public sealed class TerrainMaskTextureReader
 
         var levelPositions = new List<LevelPosition>();
 
-        var i = 0;
         for (var f = 0; f < numberOfFrames; f++)
         {
+            var y0 = f * spriteHeight;
+
             for (var x = 0; x < spriteWidth; x++)
             {
                 for (var y = 0; y < spriteHeight; y++)
                 {
-                    var pixel = uints[i++];
+                    var index = x + spriteWidth * (y0 + y);
+
+                    var pixel = uints[index];
 
                     if (pixel != 0U)
                     {

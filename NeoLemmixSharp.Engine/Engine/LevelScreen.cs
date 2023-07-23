@@ -285,6 +285,9 @@ public sealed class LevelScreen : IBaseScreen
 
     private void Foo()
     {
+        if (_gadgets.Length == 0)
+            return;
+
         var gadget = (ResizeableGadget)_gadgets[0];
 
         if (_inputController.W.IsKeyDown)
