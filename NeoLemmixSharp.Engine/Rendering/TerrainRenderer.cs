@@ -8,13 +8,13 @@ namespace NeoLemmixSharp.Engine.Rendering;
 public sealed class TerrainRenderer : IDisposable
 {
     private readonly Texture2D _texture;
-    private readonly LevelViewport _viewport;
+    private readonly Engine.Viewport _viewport;
 
     private readonly uint[] _colourSetter = new uint[1];
 
     public TerrainRenderer(
         Texture2D texture,
-        LevelViewport viewport)
+        Engine.Viewport viewport)
     {
         _texture = texture;
         _viewport = viewport;

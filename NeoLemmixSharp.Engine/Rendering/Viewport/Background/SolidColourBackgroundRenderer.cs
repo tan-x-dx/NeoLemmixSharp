@@ -9,10 +9,10 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.Background;
 public sealed class SolidColourBackgroundRenderer : IBackgroundRenderer
 {
     private readonly Texture2D _pixelTexture;
-    private readonly LevelViewport _viewport;
+    private readonly Engine.Viewport _viewport;
     private readonly Color _backgroundColor;
 
-    public SolidColourBackgroundRenderer(ControlPanelSpriteBank spriteBank, LevelViewport viewport, Color backgroundColor)
+    public SolidColourBackgroundRenderer(ControlPanelSpriteBank spriteBank, Engine.Viewport viewport, Color backgroundColor)
     {
         _pixelTexture = spriteBank.GetTexture("WhitePixel");
         _backgroundColor = backgroundColor;

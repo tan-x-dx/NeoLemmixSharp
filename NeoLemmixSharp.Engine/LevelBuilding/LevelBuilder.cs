@@ -13,6 +13,7 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Io.LevelReading;
 using NeoLemmixSharp.Io.LevelReading.Nxlv;
+using Viewport = NeoLemmixSharp.Engine.Engine.Viewport;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -64,7 +65,7 @@ public sealed class LevelBuilder : IDisposable
         var skillSetManager = new SkillSetManager(levelData.SkillSetData);
         var controlPanel = new LevelControlPanel(skillSetManager, inputController);
         var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController, skillSetManager);
-        var levelViewport = new LevelViewport(levelCursor, inputController, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        var levelViewport = new Viewport(levelCursor, inputController, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
         var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
 

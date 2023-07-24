@@ -18,7 +18,7 @@ public sealed class LevelRenderer : IScreenRenderer
 
     private readonly int _levelWidth;
     private readonly int _levelHeight;
-    private readonly LevelViewport _viewport;
+    private readonly Engine.Viewport _viewport;
 
     private readonly IBackgroundRenderer _backgroundRenderer;
     private readonly TerrainRenderer _terrainRenderer;
@@ -36,7 +36,7 @@ public sealed class LevelRenderer : IScreenRenderer
 
     public LevelRenderer(int levelWidth,
         int levelHeight,
-        LevelViewport viewport,
+        Engine.Viewport viewport,
         IBackgroundRenderer backgroundRenderer,
         TerrainRenderer terrainRenderer,
         IViewportObjectRenderer[] levelSprites,

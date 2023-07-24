@@ -20,7 +20,7 @@ public sealed class LevelScreen : IBaseScreen
 
     private readonly SkillSetManager _skillSetManager;
     private readonly LevelCursor _levelCursor;
-    private readonly LevelViewport _viewport;
+    private readonly Viewport _viewport;
     private readonly LevelInputController _inputController;
     private readonly ILevelControlPanel _controlPanel;
 
@@ -55,7 +55,7 @@ public sealed class LevelScreen : IBaseScreen
         LevelInputController levelInputController,
         ILevelControlPanel controlPanel,
         LevelCursor cursor,
-        LevelViewport viewport,
+        Viewport viewport,
         LevelRenderer levelRenderer)
     {
         ScreenTitle = levelData.LevelTitle;
@@ -79,7 +79,7 @@ public sealed class LevelScreen : IBaseScreen
 
         _controlPanel = controlPanel; // new LevelControlPanel(_skillSetManager, _inputController);
         _levelCursor = cursor; // new LevelCursor(_horizontalBoundaryBehaviour, _verticalBoundaryBehaviour, _controlPanel, _inputController);
-        _viewport = viewport; // = new LevelViewport(_levelCursor, _inputController, _horizontalViewPortBehaviour, _verticalViewPortBehaviour, _horizontalBoundaryBehaviour, _verticalBoundaryBehaviour);
+        _viewport = viewport; // = new Viewport(_levelCursor, _inputController, _horizontalViewPortBehaviour, _verticalViewPortBehaviour, _horizontalBoundaryBehaviour, _verticalBoundaryBehaviour);
 
         Orientation.SetTerrain(terrain);
         LemmingAction.SetTerrain(terrain);
