@@ -161,11 +161,6 @@ public static class TerrainMasks
         var facingDirection = lemming.FacingDirection;
         var position = lemming.LevelPosition;
 
-        if (facingDirection == RightFacingDirection.Instance)
-        {
-            position = orientation.MoveRight(position, 1);
-        }
-
         var key = GetKey(orientation, facingDirection, frame);
         _basherMasks[key].ApplyEraseMask(position);
     }
@@ -177,6 +172,11 @@ public static class TerrainMasks
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
         var position = lemming.LevelPosition;
+
+        if (facingDirection == RightFacingDirection.Instance)
+        {
+            position = orientation.MoveRight(position, 1);
+        }
 
         var key = GetKey(orientation, facingDirection, frame);
         _bomberMasks[key].ApplyEraseMask(position);
