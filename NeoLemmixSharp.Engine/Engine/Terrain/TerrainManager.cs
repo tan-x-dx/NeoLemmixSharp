@@ -99,6 +99,21 @@ public sealed class TerrainManager
                GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(levelPosition, orientation, out _);
     }
 
+    [Pure]
+    public bool PixelIsSteel(
+        Orientation orientation,
+        LevelPosition levelPosition)
+    {
+        if (PositionOutOfBounds(levelPosition))
+            return false;
+
+        var index = Width * levelPosition.Y + levelPosition.X;
+        var pixel = _pixels[index];
+
+        return pixel.IsSteel() ||
+               GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(levelPosition, orientation, out _);
+    }
+
     public void ErasePixel(
         Orientation orientation,
         IDestructionAction destructionAction,

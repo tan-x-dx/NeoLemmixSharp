@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -24,11 +25,13 @@ public sealed class ExploderAction : LemmingAction, IDestructionAction
         return false;
     }
 
+    [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
         // Bombers do not care about arrows, only if the pixel can be destroyed at all!
-        // Since other checks have already taken place,
-        // this code is only ever reached when the pixel can be destroyed by a bomber
+        // Since other checks will have already taken place, this code is only ever
+        // reached when the pixel can definitely be destroyed by a bomber.
+        // Therefore, just return true.
 
         return true;
     }

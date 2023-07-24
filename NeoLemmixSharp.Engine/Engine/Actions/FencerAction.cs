@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Terrain;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -25,8 +26,9 @@ public sealed class FencerAction : LemmingAction, IDestructionAction
         return false;
     }
 
+    [Pure]
     public bool CanDestroyPixel(
-        PixelType pixelType, 
+        PixelType pixelType,
         Orientation orientation,
         FacingDirection facingDirection)
     {

@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
-using NeoLemmixSharp.Engine.Engine.Terrain;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -171,6 +171,7 @@ HitTestConclusive:
         return result;
     }
 
+    [Pure]
     public bool CanDestroyPixel(
         PixelType pixelType,
         Orientation orientation,

@@ -3,6 +3,7 @@ using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 using NeoLemmixSharp.Engine.Engine.Terrain.Masks;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -134,7 +135,7 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
         var facingDirection = lemming.FacingDirection;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, checkPosition))
+        if (Terrain.PixelIsSteel(orientation, checkPosition))
         {
             // CueSoundEffect(SFX_HITS_STEEL, L.Position);
         }
@@ -151,6 +152,7 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
         }
     }
 
+    [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
         var oppositeOrientationArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +

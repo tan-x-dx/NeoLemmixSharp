@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Terrain;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -46,8 +47,10 @@ public sealed class DiggerAction : LemmingAction, IDestructionAction
 
         if (Terrain.PixelIsIndestructibleToLemming(orientation, this, lemming.FacingDirection, lemmingPosition))
         {
-            // if HasSteelAt(L.LemX, L.LemY) then
-            //    CueSoundEffect(SFX_HITS_STEEL, L.Position);
+            if (Terrain.PixelIsSteel(orientation, lemmingPosition))
+            {
+                //CueSoundEffect(SFX_HITS_STEEL, L.Position);
+            }
 
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -99,6 +102,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionAction
         return result;
     }
 
+    [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
         var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
