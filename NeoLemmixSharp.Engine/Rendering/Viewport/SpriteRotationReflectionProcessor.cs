@@ -8,9 +8,9 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
-public sealed class SpriteRotationReflectionProcessor
+public sealed class SpriteRotationReflectionProcessor<T>
 {
-    public delegate ActionSprite ActionSpriteCreator(
+    public delegate T ItemCreator(
         Texture2D texture,
         int spriteWidth,
         int spriteHeight,
@@ -25,16 +25,16 @@ public sealed class SpriteRotationReflectionProcessor
         _graphicsDevice = graphicsDevice;
     }
 
-    public ActionSprite[] CreateAllSpriteTypes(
+    public T[] CreateAllSpriteTypes(
         Texture2D texture,
         int spriteWidth,
         int spriteHeight,
         int numberOfFrames,
         int numberOfLayers,
         LevelPosition anchorPoint,
-        ActionSpriteCreator actionSpriteCreator)
+        ItemCreator itemCreator)
     {
-        var result = new ActionSprite[8];
+        var result = new T[8];
 
         CreateSpritesForDirections(DownOrientation.Instance, RightFacingDirection.Instance);
         CreateSpritesForDirections(DownOrientation.Instance, LeftFacingDirection.Instance);
@@ -55,11 +55,11 @@ public sealed class SpriteRotationReflectionProcessor
         {
             var key = LemmingSpriteBank.GetKey(orientation, facingDirection);
 
-            result[key] = CreateSpriteType(texture, orientation, facingDirection, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint, actionSpriteCreator);
+            result[key] = CreateSpriteType(texture, orientation, facingDirection, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint, itemCreator);
         }
     }
 
-    private ActionSprite CreateSpriteType(
+    private T CreateSpriteType(
         Texture2D texture,
         Orientation orientation,
         FacingDirection facingDirection,
@@ -68,7 +68,7 @@ public sealed class SpriteRotationReflectionProcessor
         int numberOfFrames,
         int numberOfLayers,
         LevelPosition anchorPoint,
-        ActionSpriteCreator actionSpriteCreator)
+        ItemCreator itemCreator)
     {
         var pixels = new uint[texture.Width * texture.Height];
         texture.GetData(pixels);
@@ -106,7 +106,7 @@ public sealed class SpriteRotationReflectionProcessor
             out var footX1,
             out var footY1);
 
-        var actionSprite = actionSpriteCreator(
+        var actionSprite = itemCreator(
             texture0,
             spriteDrawingData.ThisSpriteWidth,
             spriteDrawingData.ThisSpriteHeight,

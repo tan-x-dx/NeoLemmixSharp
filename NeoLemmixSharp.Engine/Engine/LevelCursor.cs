@@ -4,7 +4,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
-using NeoLemmixSharp.Engine.Engine.Input;
 using NeoLemmixSharp.Engine.Engine.Skills;
 
 namespace NeoLemmixSharp.Engine.Engine;

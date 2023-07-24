@@ -17,8 +17,8 @@ public sealed class DiggerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return ActionIsAssignable(lemming)
-               && (true); // HasIndestructibleAt ;
+        return ActionIsAssignable(lemming) &&
+               !Terrain.PixelIsIndestructibleToLemming(lemming.LevelPosition, lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)

@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Common.Util.LevelRegion;
 
@@ -7,7 +7,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
     private const int DimensionCutoffSize = 128;
     private const int AreaCutoffSize = 128 * 128;
 
-    private readonly IBitArray _levelPositions;
+    private readonly LargeBitArray _levelPositions;
     private readonly int _offsetX;
     private readonly int _offsetY;
     private readonly int _width;
@@ -43,7 +43,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
         if (totalNumberOfPoints > AreaCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
 
-        _levelPositions = IBitArray.GetBestFitForSize(totalNumberOfPoints);
+        _levelPositions = new LargeBitArray(totalNumberOfPoints);
 
         foreach (var levelPosition in points)
         {

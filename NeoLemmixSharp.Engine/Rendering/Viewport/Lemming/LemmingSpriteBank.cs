@@ -35,7 +35,7 @@ public sealed class LemmingSpriteBank : IDisposable
 
         var lowerBits = GetKey(orientation, facingDirection);
 
-        return lemmingAction.Id << 3 | lowerBits;
+        return (lemmingAction.Id << 3) | lowerBits;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -43,7 +43,7 @@ public sealed class LemmingSpriteBank : IDisposable
         Orientation orientation,
         FacingDirection facingDirection)
     {
-        return orientation.RotNum << 1 | facingDirection.Id;
+        return (orientation.RotNum << 1) | facingDirection.Id;
     }
 
     public void Dispose()

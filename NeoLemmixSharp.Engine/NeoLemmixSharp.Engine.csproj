@@ -15,4 +15,8 @@
     <ProjectReference Include="..\NeoLemmixSharp.Io\NeoLemmixSharp.Io.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Engine\Terrain\Masks\" />
+  </ItemGroup>
+
 </Project>

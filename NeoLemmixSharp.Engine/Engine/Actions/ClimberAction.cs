@@ -24,16 +24,18 @@ public sealed class ClimberAction : LemmingAction
         var lemmingPosition = lemming.LevelPosition;
         var animationFrame = lemming.AnimationFrame;
 
+        bool foundClip;
+
         if (animationFrame <= 3)
         {
-            var foundClip =
+            foundClip =
                 Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, 6 + animationFrame), lemming) ||
                 (Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, 5 + animationFrame), lemming) &&
                  !lemming.IsStartingAction);
 
             if (animationFrame == 0) // first triggered after 8 frames!
             {
-                foundClip &= Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, 7), lemming);
+                foundClip = foundClip && Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, 7), lemming);
             }
 
             if (foundClip)
@@ -50,58 +52,61 @@ public sealed class ClimberAction : LemmingAction
                     lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
                     lemming.LevelPosition = lemmingPosition;
                     SliderAction.Instance.TransitionLemmingToAction(lemming, false);
-                }
-                else
-                {
-                    lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-                    lemming.LevelPosition = lemmingPosition;
-                    FallerAction.Instance.TransitionLemmingToAction(lemming, true);
-                    lemming.DistanceFallen++; // Least-impact way to fix a fall distance inconsistency. See https://www.lemmingsforums.net/index.php?topic=5794.0
-                }
-            }
-            else if (!Terrain.PixelIsSolidToLemming(orientation.MoveUp(lemmingPosition, 7 + animationFrame), lemming))
-            {
-                // if-case prevents too deep bombing, see http://www.lemmingsforums.net/index.php?topic=2620.0
-                if (!(lemming.IsStartingAction && animationFrame == 1))
-                {
-                    lemmingPosition = orientation.MoveUp(lemmingPosition, animationFrame - 2);
-                    lemming.LevelPosition = lemmingPosition;
-                    lemming.IsStartingAction = false;
+
+                    return true;
                 }
 
-                HoisterAction.Instance.TransitionLemmingToAction(lemming, false);
-            }
-        }
-        else
-        {
-            lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-            lemming.LevelPosition = lemmingPosition;
-            lemming.IsStartingAction = false;
-
-            var foundClip = Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, 7), lemming);
-
-            if (animationFrame == 7)
-            {
-                foundClip &= Terrain.PixelIsSolidToLemming(orientation.MoveUp(lemmingPosition, 7), lemming);
-            }
-
-            if (foundClip)
-            {
-                lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
+                lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
                 lemming.LevelPosition = lemmingPosition;
+                FallerAction.Instance.TransitionLemmingToAction(lemming, true);
+                lemming.DistanceFallen++; // Least-impact way to fix a fall distance inconsistency. See https://www.lemmingsforums.net/index.php?topic=5794.0
 
-                if (lemming.IsSlider)
-                {
-                    SliderAction.Instance.TransitionLemmingToAction(lemming, false);
-                }
-                else
-                {
-                    lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-                    lemming.LevelPosition = lemmingPosition;
-                    FallerAction.Instance.TransitionLemmingToAction(lemming, true);
-                }
+                return true;
             }
+
+            if (Terrain.PixelIsSolidToLemming(orientation.MoveUp(lemmingPosition, 7 + animationFrame), lemming))
+                return true;
+
+            // if-case prevents too deep bombing, see http://www.lemmingsforums.net/index.php?topic=2620.0
+            if (!(lemming.IsStartingAction && animationFrame == 1))
+            {
+                lemmingPosition = orientation.MoveUp(lemmingPosition, animationFrame - 2);
+                lemming.LevelPosition = lemmingPosition;
+                lemming.IsStartingAction = false;
+            }
+
+            HoisterAction.Instance.TransitionLemmingToAction(lemming, false);
+
+            return true;
         }
+
+        lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
+        lemming.LevelPosition = lemmingPosition;
+        lemming.IsStartingAction = false;
+
+        foundClip = Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, 7), lemming);
+
+        if (animationFrame == 7)
+        {
+            foundClip = foundClip && Terrain.PixelIsSolidToLemming(orientation.MoveUp(lemmingPosition, 7), lemming);
+        }
+
+        if (!foundClip)
+            return true;
+
+        lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
+        lemming.LevelPosition = lemmingPosition;
+
+        if (lemming.IsSlider)
+        {
+            SliderAction.Instance.TransitionLemmingToAction(lemming, false);
+
+            return true;
+        }
+
+        lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
+        lemming.LevelPosition = lemmingPosition;
+        FallerAction.Instance.TransitionLemmingToAction(lemming, true);
 
         return true;
     }

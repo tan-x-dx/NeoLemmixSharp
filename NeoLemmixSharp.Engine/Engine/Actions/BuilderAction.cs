@@ -20,17 +20,22 @@ public sealed class BuilderAction : LemmingAction
         if (lemming.AnimationFrame == 9)
         {
             LayBrick(lemming);
+
+            return true;
         }
-        else if (lemming.AnimationFrame == 10 &&
+
+        if (lemming.AnimationFrame == 10 &&
                  lemming.NumberOfBricksLeft <= 3)
         {
             // play sound/make visual cue
+            return true;
         }
-        else if (lemming.AnimationFrame == 0)
-        {
-            BuilderFrame0(lemming);
-            lemming.ConstructivePositionFreeze = false;
-        }
+
+        if (lemming.AnimationFrame != 0)
+            return true;
+
+        BuilderFrame0(lemming);
+        lemming.ConstructivePositionFreeze = false;
 
         return true;
     }
@@ -91,5 +96,33 @@ public sealed class BuilderAction : LemmingAction
 
         lemming.NumberOfBricksLeft = 12;
         lemming.ConstructivePositionFreeze = false;
+    }
+
+    public static void LayBrick(Lemming lemming)
+    {
+        var orientation = lemming.Orientation;
+        var dx = lemming.FacingDirection.DeltaX;
+        var dy = lemming.CurrentAction == Instance
+            ? 1
+            : 0;
+
+        var brickPosition = lemming.LevelPosition;
+        brickPosition = orientation.MoveUp(brickPosition, dy);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+
+        brickPosition = orientation.MoveRight(brickPosition, dx);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+
+        brickPosition = orientation.MoveRight(brickPosition, dx);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+
+        brickPosition = orientation.MoveRight(brickPosition, dx);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+
+        brickPosition = orientation.MoveRight(brickPosition, dx);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+
+        brickPosition = orientation.MoveRight(brickPosition, dx);
+        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
     }
 }

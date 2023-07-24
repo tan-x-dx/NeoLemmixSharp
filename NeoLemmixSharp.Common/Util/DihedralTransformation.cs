@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Common.Util;
 
 public sealed class DihedralTransformation
 {
-    private static DihedralTransformation[] Lookup { get; } = CreateLookup();
+    private static readonly DihedralTransformation[] Lookup = CreateLookup();
 
     private static DihedralTransformation[] CreateLookup()
     {
@@ -140,18 +140,14 @@ public sealed class DihedralTransformation
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private int W(int w, int h) => _r switch
     {
-        0 => 0,
         1 => h,
         2 => w,
-        3 => 0,
         _ => 0
     };
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private int H(int w, int h) => _r switch
     {
-        0 => 0,
-        1 => 0,
         2 => h,
         3 => w,
         _ => 0

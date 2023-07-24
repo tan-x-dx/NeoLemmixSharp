@@ -2,11 +2,11 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Engine.Input;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Engine;
 
-public sealed class LevelViewport
+public sealed class Viewport
 {
     private const int MinScale = 1;
     private const int MaxScale = 12;
@@ -45,7 +45,7 @@ public sealed class LevelViewport
     public int NumberOfHorizontalRenderIntervals => _horizontalViewPortBehaviour.NumberOfHorizontalRenderIntervals;
     public int NumberOfVerticalRenderIntervals => _verticalViewPortBehaviour.NumberOfVerticalRenderIntervals;
 
-    public LevelViewport(
+    public Viewport(
         LevelCursor cursor,
         LevelInputController controller,
         IHorizontalViewPortBehaviour horizontalViewPortBehaviour,
@@ -79,11 +79,8 @@ public sealed class LevelViewport
 
     public bool HandleMouseInput()
     {
-        ScreenMouseX = _controller.MouseX;
-        ScreenMouseY = _controller.MouseY;
-
-        ScreenMouseX -= ScreenMouseX % ScaleMultiplier;
-        ScreenMouseY -= ScreenMouseY % ScaleMultiplier;
+        ScreenMouseX = ScaleMultiplier * ((_controller.MouseX + ScaleMultiplier / 2) / ScaleMultiplier);
+        ScreenMouseY = ScaleMultiplier * ((_controller.MouseY + ScaleMultiplier / 2) / ScaleMultiplier);
 
         bool result;
         if (MouseIsInLevelViewport())
@@ -133,6 +130,7 @@ public sealed class LevelViewport
         return result;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool MouseIsInLevelViewport()
     {
         return _controller.MouseX >= 0 && _controller.MouseX <= _windowWidth &&

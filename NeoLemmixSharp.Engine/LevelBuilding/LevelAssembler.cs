@@ -46,9 +46,9 @@ public sealed class LevelAssembler : IDisposable
         ContentManager content,
         LevelData levelData)
     {
-       // SetUpTestLemmings();
-        SetUpLemmings();
-        SetUpGadgets(content, levelData.AllGadgetData);
+        SetUpTestLemmings();
+        //SetUpLemmings();
+        //SetUpGadgets(content, levelData.AllGadgetData);
 
         levelData.SkillSetData = new SkillSetData
         {
@@ -259,6 +259,15 @@ public sealed class LevelAssembler : IDisposable
             LevelPosition = new LevelPosition(310, 152)
         };
 
+        var miner = new Lemming(
+            orientation: DownOrientation.Instance,
+            facingDirection: RightFacingDirection.Instance,
+            currentAction: MinerAction.Instance)
+        {
+            LevelPosition = new LevelPosition(110, 19)
+        };
+        MinerAction.Instance.TransitionLemmingToAction(miner, false);
+
         _lemmings.Add(lemmingX);
 
         _lemmings.Add(lemming0);
@@ -279,6 +288,8 @@ public sealed class LevelAssembler : IDisposable
         _lemmings.Add(lemmingC);
         _lemmings.Add(lemmingD);
         _lemmings.Add(lemmingE);
+        
+        _lemmings.Add(miner);
 
         lemming0.State.TeamAffiliation = Team.Team0;
         lemming1.State.TeamAffiliation = Team.Team1;

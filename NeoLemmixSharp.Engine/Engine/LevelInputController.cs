@@ -1,8 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Util.GameInput;
-using NeoLemmixSharp.Engine.Engine.FacingDirections;
 
-namespace NeoLemmixSharp.Engine.Engine.Input;
+namespace NeoLemmixSharp.Engine.Engine;
 
 public sealed class LevelInputController : InputController
 {
@@ -14,8 +13,8 @@ public sealed class LevelInputController : InputController
     public SimpleKeyAction ToggleFastForwards { get; }
     public SimpleKeyAction SelectOnlyWalkers { get; }
     public SimpleKeyAction SelectOnlyUnassignedLemmings { get; }
-    public DirectionControlKeyAction SelectLeftFacingLemmings { get; }
-    public DirectionControlKeyAction SelectRightFacingLemmings { get; }
+    public SimpleKeyAction SelectLeftFacingLemmings { get; }
+    public SimpleKeyAction SelectRightFacingLemmings { get; }
 
     public SimpleKeyAction RightArrow { get; }
     public SimpleKeyAction UpArrow { get; }
@@ -46,8 +45,8 @@ public sealed class LevelInputController : InputController
         S = CreateSimpleAction("ABC");
         D = CreateSimpleAction("ABC");
 
-        SelectLeftFacingLemmings = new DirectionControlKeyAction(_actionCount++, "Select Left Facing Lemmings", LeftFacingDirection.Instance);
-        SelectRightFacingLemmings = new DirectionControlKeyAction(_actionCount++, "Select Right Facing Lemmings", RightFacingDirection.Instance);
+        SelectLeftFacingLemmings = CreateSimpleAction("Select Left Facing Lemmings");
+        SelectRightFacingLemmings = CreateSimpleAction("Select Right Facing Lemmings");
 
         SetUpBindings();
 

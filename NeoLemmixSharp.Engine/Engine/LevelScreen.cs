@@ -4,10 +4,10 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Engine.Gadgets;
-using NeoLemmixSharp.Engine.Engine.Input;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Skills;
 using NeoLemmixSharp.Engine.Engine.Terrain;
+using NeoLemmixSharp.Engine.Engine.Terrain.Masks;
 using NeoLemmixSharp.Engine.Engine.Updates;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Io.LevelReading.Data;
@@ -20,7 +20,7 @@ public sealed class LevelScreen : IBaseScreen
 
     private readonly SkillSetManager _skillSetManager;
     private readonly LevelCursor _levelCursor;
-    private readonly LevelViewport _viewport;
+    private readonly Viewport _viewport;
     private readonly LevelInputController _inputController;
     private readonly ILevelControlPanel _controlPanel;
 
@@ -55,7 +55,7 @@ public sealed class LevelScreen : IBaseScreen
         LevelInputController levelInputController,
         ILevelControlPanel controlPanel,
         LevelCursor cursor,
-        LevelViewport viewport,
+        Viewport viewport,
         LevelRenderer levelRenderer)
     {
         ScreenTitle = levelData.LevelTitle;
@@ -79,11 +79,12 @@ public sealed class LevelScreen : IBaseScreen
 
         _controlPanel = controlPanel; // new LevelControlPanel(_skillSetManager, _inputController);
         _levelCursor = cursor; // new LevelCursor(_horizontalBoundaryBehaviour, _verticalBoundaryBehaviour, _controlPanel, _inputController);
-        _viewport = viewport; // = new LevelViewport(_levelCursor, _inputController, _horizontalViewPortBehaviour, _verticalViewPortBehaviour, _horizontalBoundaryBehaviour, _verticalBoundaryBehaviour);
+        _viewport = viewport; // = new Viewport(_levelCursor, _inputController, _horizontalViewPortBehaviour, _verticalViewPortBehaviour, _horizontalBoundaryBehaviour, _verticalBoundaryBehaviour);
 
         Orientation.SetTerrain(terrain);
         LemmingAction.SetTerrain(terrain);
         LemmingSkill.SetTerrain(terrain);
+        TerrainMask.SetTerrain(terrain);
         LevelCursor.LevelScreen = this;
 
         // terrain.TerrainRenderer.SetViewport(_viewport);
@@ -254,6 +255,7 @@ public sealed class LevelScreen : IBaseScreen
         Orientation.SetTerrain(null);
         LemmingAction.SetTerrain(null);
         LemmingSkill.SetTerrain(null);
+        TerrainMask.SetTerrain(null);
         LevelCursor.LevelScreen = null;
 
         ScreenRenderer.Dispose();
@@ -283,6 +285,9 @@ public sealed class LevelScreen : IBaseScreen
 
     private void Foo()
     {
+        if (_gadgets.Length == 0)
+            return;
+
         var gadget = (ResizeableGadget)_gadgets[0];
 
         if (_inputController.W.IsKeyDown)

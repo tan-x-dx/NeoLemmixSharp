@@ -1,7 +1,8 @@
-﻿using NeoLemmixSharp.Common.Util.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.Terrain;
-using System.Collections.ObjectModel;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Skills;
 
@@ -9,9 +10,9 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 {
     protected static TerrainManager Terrain { get; private set; }
 
-    private static ReadOnlyDictionary<string, LemmingSkill> LemmingSkills { get; } = RegisterAllLemmingSkills();
+    private static ReadOnlyDictionaryWrapper<string, LemmingSkill> LemmingSkills { get; } = RegisterAllLemmingSkills();
 
-    private static ReadOnlyDictionary<string, LemmingSkill> RegisterAllLemmingSkills()
+    private static ReadOnlyDictionaryWrapper<string, LemmingSkill> RegisterAllLemmingSkills()
     {
         var result = new Dictionary<string, LemmingSkill>();
 
@@ -41,31 +42,9 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 
         RegisterLemmingSkill(ClonerSkill.Instance);
 
-        var numberOfUniqueIds = result
-            .Values
-            .Select(la => la.Id)
-            .Distinct()
-            .Count();
+        ValidateLemmingSkillIds();
 
-        if (numberOfUniqueIds != result.Count)
-        {
-            var ids = string.Join(',', result
-                .Values
-                .Select(la => la.Id)
-                .OrderBy(i => i));
-
-            throw new Exception($"Duplicated skill ID: {ids}");
-        }
-
-        var minSkillId = result.Values.Select(ls => ls.Id).Min();
-        var maxSkillId = result.Values.Select(ls => ls.Id).Max();
-
-        if (minSkillId != 0 || maxSkillId != result.Count - 1)
-        {
-            throw new Exception($"Skill ids do not span a full set of values from 0 - {result.Count - 1}");
-        }
-
-        return new ReadOnlyDictionary<string, LemmingSkill>(result);
+        return new ReadOnlyDictionaryWrapper<string, LemmingSkill>(result);
 
         void RegisterLemmingSkill(LemmingSkill lemmingSkill)
         {
@@ -73,6 +52,31 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
                 return;
 
             result.Add(lemmingSkill.LemmingSkillName, lemmingSkill);
+        }
+
+        void ValidateLemmingSkillIds()
+        {
+            var ids = result
+                .Values
+                .Select(ls => ls.Id)
+                .ToList();
+
+            var numberOfUniqueIds = ids
+                .Distinct()
+                .Count();
+
+            if (numberOfUniqueIds != result.Count)
+            {
+                var idsString = ids.OrderBy(i => i);
+
+                throw new Exception($"Duplicated skill ID: {idsString}");
+            }
+
+            var minSkillId = ids.Min();
+            var maxSkillId = ids.Max();
+
+            if (minSkillId != 0 || maxSkillId != result.Count - 1)
+                throw new Exception($"Skill ids do not span a full set of values from 0 - {result.Count - 1}");
         }
     }
 
@@ -87,9 +91,9 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 
     protected LemmingSkill()
     {
-        var numberOfActions = LemmingAction.AllActions.Count;
-
-        _assignableActionIds = IBitArray.GetBestFitForSize(numberOfActions);
+        // There are currently 31 LemmingActions in existence.
+        // If/when that changes -> update this accordingly
+        _assignableActionIds = new SmallBitArray();
 
         // ReSharper disable once VirtualMemberCallInConstructor
         foreach (var action in ActionsThatCanBeAssigned())
@@ -110,6 +114,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 
     protected abstract IEnumerable<LemmingAction> ActionsThatCanBeAssigned();
 
+    [Pure]
     protected bool ActionIsAssignable(Lemming lemming)
     {
         return _assignableActionIds.GetBit(lemming.CurrentAction.Id);

@@ -44,33 +44,39 @@ public sealed class ReacherAction : LemmingAction
         {
             emptyPixels = 4;
         }
-            
+
         if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 5), lemming) ||
             Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 6), lemming) ||
             Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 7), lemming) ||
             Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 8), lemming))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+
+            return true;
         }
-        else if (lemming.AnimationFrame == 1 &&
+
+        if (lemming.AnimationFrame == 1 &&
                  Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 9), lemming))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+
+            return true;
         }
-        else if (emptyPixels <= _movementList[lemming.AnimationFrame])
+
+        if (emptyPixels <= _movementList[lemming.AnimationFrame])
         {
             lemmingPosition = lemming.Orientation.MoveUp(lemmingPosition, emptyPixels + 1);
             lemming.LevelPosition = lemmingPosition;
             ShimmierAction.Instance.TransitionLemmingToAction(lemming, false);
+
+            return true;
         }
-        else
+
+        lemmingPosition = lemming.Orientation.MoveUp(lemmingPosition, _movementList[lemming.AnimationFrame]);
+        lemming.LevelPosition = lemmingPosition;
+        if (lemming.AnimationFrame == 7)
         {
-            lemmingPosition = lemming.Orientation.MoveUp(lemmingPosition, _movementList[lemming.AnimationFrame]);
-            lemming.LevelPosition = lemmingPosition;
-            if (lemming.AnimationFrame == 7)
-            {
-                FallerAction.Instance.TransitionLemmingToAction(lemming, false);
-            }
+            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
 
         return true;

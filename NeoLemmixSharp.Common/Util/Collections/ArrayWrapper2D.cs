@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Common.Util;
+﻿namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class ArrayWrapper2D<T>
 {

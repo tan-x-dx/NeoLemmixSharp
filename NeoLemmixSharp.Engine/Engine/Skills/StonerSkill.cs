@@ -15,11 +15,6 @@ public sealed class StonerSkill : LemmingSkill
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;
 
-    public override bool CanAssignToLemming(Lemming lemming)
-    {
-        return ActionIsAssignable(lemming);
-    }
-
     public override bool AssignToLemming(Lemming lemming)
     {
         /*

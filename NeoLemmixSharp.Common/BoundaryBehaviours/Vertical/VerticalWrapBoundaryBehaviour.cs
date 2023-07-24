@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
+﻿using System.Diagnostics.Contracts;
+
+namespace NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 
 public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
 {
@@ -9,6 +11,7 @@ public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
         _levelHeightInPixels = levelHeightInPixels;
     }
 
+    [Pure]
     public int NormaliseY(int y)
     {
         // most likely case for negatives will be "small" numbers. Therefore simply adding the level height will make it a valid value
@@ -28,6 +31,7 @@ public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
         return y % _levelHeightInPixels;
     }
 
+    [Pure]
     public int GetAbsoluteVerticalDistance(int y1, int y2)
     {
         var dy = Math.Abs(y1 - y2);
