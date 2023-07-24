@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Engine.Orientations;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -71,12 +70,15 @@ public sealed class WalkerAction : LemmingAction
             lemmingPosition = orientation.MoveDown(lemmingPosition, 4);
             lemming.LevelPosition = lemmingPosition;
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+
+            return true;
         }
-        else if (dy > 0)
-        {
-            lemmingPosition = orientation.MoveDown(lemmingPosition, dy);
-            lemming.LevelPosition = lemmingPosition;
-        }
+
+        if (dy <= 0)
+            return true;
+
+        lemmingPosition = orientation.MoveDown(lemmingPosition, dy);
+        lemming.LevelPosition = lemmingPosition;
 
         return true;
     }

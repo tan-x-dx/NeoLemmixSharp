@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Engine.Terrain;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -170,8 +171,8 @@ HitTestConclusive:
         return result;
     }
 
-    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
-    {
-        throw new NotImplementedException();
-    }
+    public bool CanDestroyPixel(
+        PixelType pixelType,
+        Orientation orientation,
+        FacingDirection facingDirection) => FencerAction.Instance.CanDestroyPixel(pixelType, orientation, facingDirection); // Defer to whatever the fencer does, since the logic is the same!
 }

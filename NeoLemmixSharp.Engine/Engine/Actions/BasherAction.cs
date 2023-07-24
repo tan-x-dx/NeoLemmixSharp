@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Engine.Terrain;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -121,7 +122,11 @@ public sealed class BasherAction : LemmingAction, IDestructionAction
 
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
-        throw new NotImplementedException();
+        var bashDirectionAsOrientation = facingDirection.ConvertToRelativeOrientation(orientation);
+        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
+                                 bashDirectionAsOrientation.GetOpposite().RotNum;
+        var oppositeArrowMask = (PixelType)(1 << oppositeArrowShift);
+        return (pixelType & oppositeArrowMask) == PixelType.Empty;
     }
 }
 

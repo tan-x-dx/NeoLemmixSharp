@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Engine.Terrain;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -24,8 +25,21 @@ public sealed class FencerAction : LemmingAction, IDestructionAction
         return false;
     }
 
-    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
+    public bool CanDestroyPixel(
+        PixelType pixelType, 
+        Orientation orientation,
+        FacingDirection facingDirection)
     {
-        throw new NotImplementedException();
+        var orientationArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
+                                    orientation.RotNum;
+        var orientationArrowMask = (PixelType)(1 << orientationArrowShift);
+        if ((pixelType & orientationArrowMask) != PixelType.Empty)
+            return false;
+
+        var facingDirectionAsOrientation = facingDirection.ConvertToRelativeOrientation(orientation);
+        var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
+                                                facingDirectionAsOrientation.GetOpposite().RotNum;
+        var oppositeFacingDirectionArrowMask = (PixelType)(1 << oppositeFacingDirectionArrowShift);
+        return (pixelType & oppositeFacingDirectionArrowMask) == PixelType.Empty;
     }
 }

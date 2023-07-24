@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Engine.Terrain;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -100,6 +101,9 @@ public sealed class DiggerAction : LemmingAction, IDestructionAction
 
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
-        throw new NotImplementedException();
+        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
+                                 orientation.GetOpposite().RotNum;
+        var oppositeArrowMask = (PixelType)(1 << oppositeArrowShift);
+        return (pixelType & oppositeArrowMask) == PixelType.Empty;
     }
 }

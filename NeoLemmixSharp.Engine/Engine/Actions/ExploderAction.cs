@@ -26,6 +26,10 @@ public sealed class ExploderAction : LemmingAction, IDestructionAction
 
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
-        throw new NotImplementedException();
+        // Bombers do not care about arrows, only if the pixel can be destroyed at all!
+        // Since other checks have already taken place,
+        // this code is only ever reached when the pixel can be destroyed by a bomber
+
+        return true;
     }
 }

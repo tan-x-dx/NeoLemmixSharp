@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Engine.Terrain;
 using NeoLemmixSharp.Engine.Engine.Terrain.Masks;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
@@ -146,12 +147,22 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
         if (Terrain.PixelIsSolidToLemming(orientation, lemmingPosition))
         {
             lemming.LevelPosition = lemmingPosition;
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, true);// turn around as well
+            WalkerAction.Instance.TransitionLemmingToAction(lemming, true); // turn around as well
         }
     }
 
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
-        return true;
+        var oppositeOrientationArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
+                                            orientation.GetOpposite().RotNum;
+        var oppositeOrientationArrowMask = (PixelType)(1 << oppositeOrientationArrowShift);
+        if ((pixelType & oppositeOrientationArrowMask) != PixelType.Empty)
+            return false;
+
+        var facingDirectionAsOrientation = facingDirection.ConvertToRelativeOrientation(orientation);
+        var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
+                                                facingDirectionAsOrientation.GetOpposite().RotNum;
+        var oppositeFacingDirectionArrowMask = (PixelType)(1 << oppositeFacingDirectionArrowShift);
+        return (pixelType & oppositeFacingDirectionArrowMask) == PixelType.Empty;
     }
 }
