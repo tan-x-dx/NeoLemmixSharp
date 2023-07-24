@@ -94,7 +94,7 @@ public sealed class TerrainManager
         var index = Width * levelPosition.Y + levelPosition.X;
         var pixel = _pixels[index];
 
-        return (!pixel.CanBeDestroyed(orientation) ||
+        return (!pixel.CanBeDestroyed() ||
                 !destructionAction.CanDestroyPixel(pixel, orientation, facingDirection)) ||
                GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(levelPosition, orientation, out _);
     }
@@ -126,7 +126,7 @@ public sealed class TerrainManager
         var index = Width * pixelToErase.Y + pixelToErase.X;
         var pixel = _pixels[index];
 
-        if (!pixel.CanBeDestroyed(orientation) ||
+        if (!pixel.CanBeDestroyed() ||
             !destructionAction.CanDestroyPixel(pixel, orientation, facingDirection))
             return;
 

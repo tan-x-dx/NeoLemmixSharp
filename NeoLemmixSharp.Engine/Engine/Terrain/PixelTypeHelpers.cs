@@ -9,11 +9,11 @@ public static class PixelTypeHelpers
     public const int PixelTypeArrowOffset = 4;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CanBeDestroyed(this PixelType pixelType, Orientation orientation)
+    public static bool CanBeDestroyed(this PixelType pixelType)
     {
-        return pixelType.IsSolidToOrientation(orientation) &&
-               !pixelType.IsSteel() &&
-               !pixelType.IsVoid();
+        const PixelType mask = PixelType.Void | PixelType.Steel;
+
+        return (pixelType & mask) == PixelType.Empty;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
