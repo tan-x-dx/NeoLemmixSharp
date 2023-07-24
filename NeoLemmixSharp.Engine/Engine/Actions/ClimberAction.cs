@@ -29,13 +29,13 @@ public sealed class ClimberAction : LemmingAction
         if (animationFrame <= 3)
         {
             foundClip =
-                Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, 6 + animationFrame), lemming) ||
-                (Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, 5 + animationFrame), lemming) &&
+                Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, 6 + animationFrame)) ||
+                (Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, 5 + animationFrame)) &&
                  !lemming.IsStartingAction);
 
             if (animationFrame == 0) // first triggered after 8 frames!
             {
-                foundClip = foundClip && Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, 7), lemming);
+                foundClip = foundClip && Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, 7));
             }
 
             if (foundClip)
@@ -64,7 +64,7 @@ public sealed class ClimberAction : LemmingAction
                 return true;
             }
 
-            if (Terrain.PixelIsSolidToLemming(orientation.MoveUp(lemmingPosition, 7 + animationFrame), lemming))
+            if (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 7 + animationFrame)))
                 return true;
 
             // if-case prevents too deep bombing, see http://www.lemmingsforums.net/index.php?topic=2620.0
@@ -84,11 +84,11 @@ public sealed class ClimberAction : LemmingAction
         lemming.LevelPosition = lemmingPosition;
         lemming.IsStartingAction = false;
 
-        foundClip = Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, 7), lemming);
+        foundClip = Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, 7));
 
         if (animationFrame == 7)
         {
-            foundClip = foundClip && Terrain.PixelIsSolidToLemming(orientation.MoveUp(lemmingPosition, 7), lemming);
+            foundClip = foundClip && Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 7));
         }
 
         if (!foundClip)

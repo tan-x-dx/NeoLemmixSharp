@@ -1,16 +1,22 @@
 ﻿namespace NeoLemmixSharp.Common.Util;
 
 [Flags]
-public enum PixelType : byte
+public enum PixelType : ushort
 {
-    Empty = 0b0000_0000,
-    Solid = 0b0000_0001,
-    Steel = 0b0000_0010 | Solid,
+    Empty = 0,
 
-    DownArrow = 0b0000_0100 | Solid,
-    LeftArrow = 0b0000_1000 | Solid,
-    UpArrow = 0b0001_0000 | Solid,
-    RightArrow = 0b0010_0000 | Solid,
+    DownSolid = 1 << 0,
+    LeftSolid = 1 << 1,
+    UpSolid = 1 << 2,
+    RightSolid = 1 << 3,
 
-    Void = 0b1000_0000
+    SolidToAllOrientations = DownSolid | LeftSolid | UpSolid | RightSolid,
+
+    DownArrow = 1 << 4,
+    LeftArrow = 1 << 5,
+    UpArrow = 1 << 6,
+    RightArrow = 1 << 7,
+
+    Steel = 1 << 14,
+    Void = 1 << 15
 }

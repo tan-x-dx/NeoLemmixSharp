@@ -152,9 +152,12 @@ public sealed class TerrainPainter
 
                 if (PixelColourIsSubstantial(targetPixelColour))
                 {
-                    targetPixelData = terrainData.IsSteel
-                        ? PixelType.Steel
-                        : PixelType.Solid;
+                    if (terrainData.Erase)
+                    {
+                        targetPixelData |= PixelType.Steel;
+                    }
+
+                    targetPixelData |= PixelType.SolidToAllOrientations;
                 }
                 else
                 {

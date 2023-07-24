@@ -22,11 +22,12 @@ public sealed class GliderAction : LemmingAction
 
     private static bool DoTurnAround(Lemming lemming, bool moveForwardFirst)
     {
+        var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var currentPosition = lemming.LevelPosition;
         if (moveForwardFirst)
         {
-            currentPosition = lemming.Orientation.MoveRight(currentPosition, dx);
+            currentPosition = orientation.MoveRight(currentPosition, dx);
         }
 
         var dy = 0;
@@ -34,15 +35,15 @@ public sealed class GliderAction : LemmingAction
         do
         {
             // bug-fix for http://www.lemmingsforums.net/index.php?topic=2693
-            if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(currentPosition, dy), lemming) &&
-                Terrain.PixelIsSolidToLemming(lemming.Orientation.Move(currentPosition, -dx, dy), lemming))
+            if (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveDown(currentPosition, dy)) &&
+                Terrain.PixelIsSolidToLemming(orientation, orientation.Move(currentPosition, -dx, dy)))
             {
                 return true;
             }
 
             dy++;
 
-        } while (dy <= 3 && Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveDown(currentPosition, dy), lemming));
+        } while (dy <= 3 && Terrain.PixelIsSolidToLemming(orientation, orientation.MoveDown(currentPosition, dy)));
         /*
         repeat
       if HasPixelAt(CurLemX, L.LemY + Dy) and HasPixelAt(CurLemX - L.LemDx, L.LemY + Dy) then

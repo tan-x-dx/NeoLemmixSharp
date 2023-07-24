@@ -19,7 +19,11 @@ public sealed class MinerSkill : LemmingSkill
     public override bool CanAssignToLemming(Lemming lemming)
     {
         return ActionIsAssignable(lemming) &&
-               !Terrain.PixelIsIndestructibleToLemming(lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX), lemming);
+               !Terrain.PixelIsIndestructibleToLemming(
+                   lemming.Orientation,
+                   MinerAction.Instance,
+                   lemming.FacingDirection,
+                   lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX));
     }
 
     public override bool AssignToLemming(Lemming lemming)

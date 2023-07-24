@@ -26,8 +26,8 @@ public sealed class WalkerSkill : LemmingSkill
         var testUp = orientation.MoveUp(lemmingPosition, 1);
 
         if (lemming.CurrentAction == BuilderAction.Instance &&
-            Terrain.PixelIsSolidToLemming(testUp, lemming) &&
-            !Terrain.PixelIsSolidToLemming(orientation.MoveRight(lemmingPosition, dx), lemming))
+            Terrain.PixelIsSolidToLemming(orientation, testUp) &&
+            !Terrain.PixelIsSolidToLemming(orientation, orientation.MoveRight(lemmingPosition, dx)))
         {
             lemming.LevelPosition = testUp;
 
@@ -55,7 +55,7 @@ public sealed class WalkerSkill : LemmingSkill
         {
             // Go one back to cancel the horizontal offset in WalkerAction's update method.
             // unless the Lem will fall down (which is handles already in Transition)
-            if (Terrain.PixelIsSolidToLemming(lemmingPosition, lemming))
+            if (Terrain.PixelIsSolidToLemming(orientation, lemmingPosition))
             {
                 lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
                 lemming.LevelPosition = lemmingPosition;

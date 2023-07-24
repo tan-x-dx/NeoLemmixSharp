@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using System.Runtime.CompilerServices;
@@ -14,16 +15,24 @@ public sealed class TerrainMask
     private static TerrainManager _terrainManager;
 #pragma warning restore CS8618
 
+    private readonly IDestructionAction _destructionAction;
     private readonly LevelPosition _anchorPoint;
     private readonly LevelPosition[] _mask;
 
-    public TerrainMask(LevelPosition anchorPoint, LevelPosition[] mask)
+    public TerrainMask(
+        IDestructionAction destructionAction,
+        LevelPosition anchorPoint,
+        LevelPosition[] mask)
     {
+        _destructionAction = destructionAction;
         _anchorPoint = anchorPoint;
         _mask = mask;
     }
 
-    public void ApplyEraseMask(LevelPosition position)
+    public void ApplyEraseMask(
+        Orientation orientation,
+        FacingDirection facingDirection,
+        LevelPosition position)
     {
         var offset = position - _anchorPoint;
 
@@ -33,7 +42,7 @@ public sealed class TerrainMask
 
             pixel += offset;
 
-            _terrainManager.ErasePixel(pixel);
+            _terrainManager.ErasePixel(orientation, _destructionAction, facingDirection, pixel);
         }
     }
 
@@ -61,36 +70,43 @@ public static class TerrainMasks
         var maskCreator = new MaskCreator(graphicsDevice);
 
         _basherMasks = CreateTerrainMaskArray(
+            BasherAction.Instance,
             "basher",
             new LevelPosition(8, 10),
             4);
 
         _bomberMasks = CreateTerrainMaskArray(
+            ExploderAction.Instance,
             "bomber",
             new LevelPosition(16, 25),
             1);
 
         _fencerMasks = CreateTerrainMaskArray(
+            FencerAction.Instance,
             "fencer",
             new LevelPosition(5, 10),
             4);
 
         /* _laserMasks = CreateTerrainMaskArray(
+             LasererAction.Instance,
              "laser",
              new LevelPosition(3, 10),
              1);*/
 
         _minerMasks = CreateTerrainMaskArray(
+            MinerAction.Instance,
             "miner",
             new LevelPosition(1, 12),
             2);
 
-        _stonerMasks = CreateTerrainMaskArray(
-            "stoner",
-            new LevelPosition(16, 25),
-            1);
+        /* _stonerMasks = CreateTerrainMaskArray(
+             StonerAction.Instance,
+             "stoner",
+             new LevelPosition(16, 25),
+             1);*/
 
         TerrainMask[] CreateTerrainMaskArray(
+            IDestructionAction destructionAction,
             string actionName,
             LevelPosition anchorPoint,
             int numberOfFrames)
@@ -98,6 +114,7 @@ public static class TerrainMasks
             return CreateTerrainMasks(
                 contentManager,
                 maskCreator,
+                destructionAction,
                 actionName,
                 anchorPoint,
                 numberOfFrames);
@@ -107,6 +124,7 @@ public static class TerrainMasks
     private static TerrainMask[] CreateTerrainMasks(
         ContentManager contentManager,
         MaskCreator maskCreator,
+        IDestructionAction destructionAction,
         string actionName,
         LevelPosition anchorPoint,
         int numberOfFrames)
@@ -116,6 +134,8 @@ public static class TerrainMasks
         var spriteWidth = texture.Width;
         var spriteHeight = texture.Height / numberOfFrames;
 
+        var itemCreator = CreateTerrainMaskFromTexture(destructionAction);
+
         var terrainMaskTextureReaders = maskCreator.CreateAllSpriteTypes(
             texture,
             spriteWidth,
@@ -123,7 +143,7 @@ public static class TerrainMasks
             numberOfFrames,
             1,
             anchorPoint,
-            CreateTerrainMaskFromTexture);
+            itemCreator);
 
         var result = new TerrainMask[numberOfFrames * 4 * 2];
         // Number of frames * 4 orientations * 2 facing directions.
@@ -153,95 +173,6 @@ public static class TerrainMasks
         return result;
     }
 
-    public static void ApplyBasherMask(
-        Lemming lemming,
-        int frame)
-    {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
-        var position = lemming.LevelPosition;
-
-        var key = GetKey(orientation, facingDirection, frame);
-        _basherMasks[key].ApplyEraseMask(position);
-    }
-
-    public static void ApplyBomberMask(
-        Lemming lemming,
-        int frame)
-    {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
-        var position = lemming.LevelPosition;
-
-        if (facingDirection == RightFacingDirection.Instance)
-        {
-            position = orientation.MoveRight(position, 1);
-        }
-
-        var key = GetKey(orientation, facingDirection, frame);
-        _bomberMasks[key].ApplyEraseMask(position);
-    }
-
-    public static void ApplyFencerMask(
-        Lemming lemming,
-        int frame)
-    {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
-        var position = lemming.LevelPosition;
-
-        var key = GetKey(orientation, facingDirection, frame);
-        _fencerMasks[key].ApplyEraseMask(position);
-    }
-
-    public static void ApplyLasererMask(
-        Lemming lemming,
-        int frame)
-    {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
-        var position = lemming.LevelPosition;
-
-        var key = GetKey(orientation, facingDirection, frame);
-        _laserMasks[key].ApplyEraseMask(position);
-    }
-
-    /// <summary>
-    /// The miner mask is usually centered at the feet of the lemming. The adjustment parameter changes the position of the miner mask relative to this
-    /// </summary>
-    public static void ApplyMinerMask(
-        Lemming lemming,
-        LevelPosition adjustment,
-        int frame)
-    {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
-        var dx = facingDirection.DeltaX;
-        var position = lemming.LevelPosition;
-        position = orientation.Move(position, dx, -frame);
-        position = orientation.Move(position, adjustment);
-
-        var key = GetKey(orientation, facingDirection, frame);
-        _minerMasks[key].ApplyEraseMask(position);
-    }
-
-    public static void ApplyStonerMask(
-        Lemming lemming,
-        int frame)
-    {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
-        var position = lemming.LevelPosition;
-
-        if (facingDirection == RightFacingDirection.Instance)
-        {
-            position = orientation.MoveRight(position, 1);
-        }
-
-        var key = GetKey(orientation, facingDirection, frame);
-        _stonerMasks[key].ApplyEraseMask(position);
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int GetKey(
         Orientation orientation,
@@ -261,16 +192,101 @@ public static class TerrainMasks
         return (orientation.RotNum << 1) | facingDirection.Id;
     }
 
-    private static TerrainMaskTextureReader CreateTerrainMaskFromTexture(
-        Texture2D texture,
-        int spriteWidth,
-        int spriteHeight,
-        int numberOfFrames,
-        int _,
-        LevelPosition anchorPoint)
+    private static MaskCreator.ItemCreator CreateTerrainMaskFromTexture(IDestructionAction destructionAction)
     {
-        return new TerrainMaskTextureReader(texture, spriteWidth, spriteHeight, numberOfFrames, anchorPoint);
+        // Currying is such fun...
+        return (t, w, h, f, _, p) => new TerrainMaskTextureReader(t, destructionAction, w, h, f, p);
     }
+
+    public static void ApplyBasherMask(
+        Lemming lemming,
+        int frame)
+    {
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.LevelPosition;
+
+        var key = GetKey(orientation, facingDirection, frame);
+        _basherMasks[key].ApplyEraseMask(orientation, facingDirection, position);
+    }
+
+    public static void ApplyBomberMask(
+        Lemming lemming,
+        int frame)
+    {
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.LevelPosition;
+
+        if (facingDirection == RightFacingDirection.Instance)
+        {
+            position = orientation.MoveRight(position, 1);
+        }
+
+        var key = GetKey(orientation, facingDirection, frame);
+        _bomberMasks[key].ApplyEraseMask(orientation, facingDirection, position);
+    }
+
+    public static void ApplyFencerMask(
+        Lemming lemming,
+        int frame)
+    {
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.LevelPosition;
+
+        var key = GetKey(orientation, facingDirection, frame);
+        _fencerMasks[key].ApplyEraseMask(orientation, facingDirection, position);
+    }
+
+    public static void ApplyLasererMask(
+        Lemming lemming,
+        int frame)
+    {
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.LevelPosition;
+
+        var key = GetKey(orientation, facingDirection, frame);
+        _laserMasks[key].ApplyEraseMask(orientation, facingDirection, position);
+    }
+
+    /// <summary>
+    /// The miner mask is usually centered at the feet of the lemming. The adjustment parameter changes the position of the miner mask relative to this
+    /// </summary>
+    public static void ApplyMinerMask(
+        Lemming lemming,
+        LevelPosition adjustment,
+        int frame)
+    {
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var dx = facingDirection.DeltaX;
+        var position = lemming.LevelPosition;
+        position = orientation.Move(position, dx, -frame);
+        position = orientation.Move(position, adjustment);
+
+        var key = GetKey(orientation, facingDirection, frame);
+        _minerMasks[key].ApplyEraseMask(orientation, facingDirection, position);
+    }
+
+    public static void ApplyStonerMask(
+        Lemming lemming,
+        int frame)
+    {
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.LevelPosition;
+
+        if (facingDirection == RightFacingDirection.Instance)
+        {
+            position = orientation.MoveRight(position, 1);
+        }
+
+        var key = GetKey(orientation, facingDirection, frame);
+        _stonerMasks[key].ApplyEraseMask(orientation, facingDirection, position);
+    }
+
 }
 
 public sealed class TerrainMaskTextureReader
@@ -279,6 +295,7 @@ public sealed class TerrainMaskTextureReader
 
     public TerrainMaskTextureReader(
         Texture2D texture,
+        IDestructionAction destructionAction,
         int spriteWidth,
         int spriteHeight,
         int numberOfFrames,
@@ -288,6 +305,7 @@ public sealed class TerrainMaskTextureReader
 
         ReadTerrainMasks(
             texture,
+            destructionAction,
             spriteWidth,
             spriteHeight,
             numberOfFrames,
@@ -301,6 +319,7 @@ public sealed class TerrainMaskTextureReader
 
     private void ReadTerrainMasks(
         Texture2D texture,
+        IDestructionAction destructionAction,
         int spriteWidth,
         int spriteHeight,
         int numberOfFrames,
@@ -330,7 +349,7 @@ public sealed class TerrainMaskTextureReader
                 }
             }
 
-            _terrainMasks[f] = new TerrainMask(anchorPoint, levelPositions.ToArray());
+            _terrainMasks[f] = new TerrainMask(destructionAction, anchorPoint, levelPositions.ToArray());
             levelPositions.Clear();
         }
 

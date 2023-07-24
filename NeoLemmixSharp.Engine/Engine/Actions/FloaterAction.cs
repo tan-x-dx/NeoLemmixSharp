@@ -34,7 +34,7 @@ public sealed class FloaterAction : LemmingAction
             maxFallDistance--;
         }
 
-        var groundPixelDistance = Math.Max(FindGroundPixel(lemming, orientation, levelPosition), 0);
+        var groundPixelDistance = Math.Max(FindGroundPixel(orientation, levelPosition), 0);
         if (maxFallDistance > groundPixelDistance)
         {
             levelPosition = orientation.MoveDown(levelPosition, groundPixelDistance);

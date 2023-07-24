@@ -1,9 +1,11 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.FacingDirections;
+using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Terrain.Masks;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
-public sealed class MinerAction : LemmingAction
+public sealed class MinerAction : LemmingAction, IDestructionAction
 {
     public const int NumberOfMinerAnimationFrames = 24;
 
@@ -22,7 +24,8 @@ public sealed class MinerAction : LemmingAction
     {
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
-        var dx = lemming.FacingDirection.DeltaX;
+        var facingDirection = lemming.FacingDirection;
+        var dx = facingDirection.DeltaX;
 
         if (lemming.AnimationFrame == 1 ||
             lemming.AnimationFrame == 2)
@@ -58,8 +61,8 @@ public sealed class MinerAction : LemmingAction
         // Note that all if-checks are relative to the end position!
 
         // Lem cannot go down, so turn; see http://www.lemmingsforums.net/index.php?topic=2547.0
-        if (Terrain.PixelIsIndestructibleToLemming(orientation.Move(lemmingPosition, -dx, -1), lemming) &&
-            Terrain.PixelIsIndestructibleToLemming(orientation.MoveDown(lemmingPosition, 1), lemming))
+        if (Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.Move(lemmingPosition, -dx, -1)) &&
+            Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveDown(lemmingPosition, 1)))
         {
             var lemmingPosition0 = orientation.MoveDown(lemmingPosition, 1);
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx + dx);
@@ -70,7 +73,7 @@ public sealed class MinerAction : LemmingAction
 
         // This first check is only relevant during the very first cycle.
         // Otherwise the pixel was already checked in frame 15 of the previous cycle
-        if (lemming.AnimationFrame == 3 && Terrain.PixelIsIndestructibleToLemming(orientation.Move(lemmingPosition, -dx, 2), lemming))
+        if (lemming.AnimationFrame == 3 && Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.Move(lemmingPosition, -dx, 2)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx + dx);
             lemming.LevelPosition = lemmingPosition;
@@ -80,9 +83,9 @@ public sealed class MinerAction : LemmingAction
         }
 
         // Do we really want the to check the second HasPixel during frame 3 ????
-        if (!Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, 1), lemming) &&
-            !Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, 0), lemming) &&
-            !Terrain.PixelIsSolidToLemming(orientation.Move(lemmingPosition, -dx, -1), lemming))
+        if (!Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, 1)) &&
+            !Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, 0)) &&
+            !Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, -1)))
         {
             lemmingPosition = orientation.Move(lemmingPosition, -dx, -1);
             lemming.LevelPosition = lemmingPosition;
@@ -91,7 +94,7 @@ public sealed class MinerAction : LemmingAction
             return true;
         }
 
-        if (Terrain.PixelIsIndestructibleToLemming(orientation.MoveDown(lemmingPosition, 2), lemming))
+        if (Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveDown(lemmingPosition, 2)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             lemming.LevelPosition = lemmingPosition;
@@ -99,7 +102,7 @@ public sealed class MinerAction : LemmingAction
             return true;
         }
 
-        if (!Terrain.PixelIsSolidToLemming(lemmingPosition, lemming))
+        if (!Terrain.PixelIsSolidToLemming(orientation, lemmingPosition))
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
             lemming.LevelPosition = lemmingPosition;
@@ -107,14 +110,14 @@ public sealed class MinerAction : LemmingAction
             return true;
         }
 
-        if (Terrain.PixelIsIndestructibleToLemming(orientation.Move(lemmingPosition, dx, 2), lemming))
+        if (Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.Move(lemmingPosition, dx, 2)))
         {
             TurnMinerAround(lemming, orientation.Move(lemmingPosition, dx, 2));
 
             return true;
         }
 
-        if (!Terrain.PixelIsIndestructibleToLemming(lemmingPosition, lemming))
+        if (!Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, lemmingPosition))
             return true;
 
         TurnMinerAround(lemming, lemmingPosition);
@@ -122,14 +125,15 @@ public sealed class MinerAction : LemmingAction
         return true;
     }
 
-    private static void TurnMinerAround(
+    private void TurnMinerAround(
         Lemming lemming,
         LevelPosition checkPosition)
     {
         var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (Terrain.PixelIsIndestructibleToLemming(checkPosition, lemming))
+        if (Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, checkPosition))
         {
             // CueSoundEffect(SFX_HITS_STEEL, L.Position);
         }
@@ -139,10 +143,15 @@ public sealed class MinerAction : LemmingAction
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
 
-        if (Terrain.PixelIsSolidToLemming(lemmingPosition, lemming))
+        if (Terrain.PixelIsSolidToLemming(orientation, lemmingPosition))
         {
             lemming.LevelPosition = lemmingPosition;
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);// turn around as well
         }
+    }
+
+    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
+    {
+        return true;
     }
 }

@@ -1,9 +1,10 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
-public sealed class DiggerAction : LemmingAction
+public sealed class DiggerAction : LemmingAction, IDestructionAction
 {
     public const int NumberOfDiggerAnimationFrames = 16;
 
@@ -21,12 +22,13 @@ public sealed class DiggerAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
         var lemmingPosition = lemming.LevelPosition;
 
         if (lemming.IsStartingAction)
         {
             lemming.IsStartingAction = false;
-            DigOneRow(lemming, orientation, orientation.MoveUp(lemmingPosition, 1));
+            DigOneRow(orientation, facingDirection, orientation.MoveUp(lemmingPosition, 1));
             // The first digger cycle is one frame longer!
             // So we need to artificially cancel the very first frame advancement.
             lemming.AnimationFrame--;
@@ -36,12 +38,12 @@ public sealed class DiggerAction : LemmingAction
             lemming.AnimationFrame != 8)
             return true;
 
-        var continueDigging = DigOneRow(lemming, orientation, lemmingPosition);
+        var continueDigging = DigOneRow(orientation, facingDirection, lemmingPosition);
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         lemming.LevelPosition = lemmingPosition;
 
-        if (Terrain.PixelIsIndestructibleToLemming(lemmingPosition, lemming))
+        if (Terrain.PixelIsIndestructibleToLemming(orientation, this, lemming.FacingDirection, lemmingPosition))
         {
             // if HasSteelAt(L.LemX, L.LemY) then
             //    CueSoundEffect(SFX_HITS_STEEL, L.Position);
@@ -59,34 +61,34 @@ public sealed class DiggerAction : LemmingAction
         return true;
     }
 
-    private static bool DigOneRow(Lemming lemming, Orientation orientation, LevelPosition lemmingPosition)
+    private bool DigOneRow(Orientation orientation, FacingDirection facingDirection, LevelPosition lemmingPosition)
     {
         // The central pixel of the removed row lies at the lemming's position
         var result = false;
 
         // Two most extreme pixels
         var checkLevelPosition = orientation.Move(lemmingPosition, -4, 0);
-        var pixelIsSolid = Terrain.PixelIsSolidToLemming(checkLevelPosition, lemming);
+        var pixelIsSolid = Terrain.PixelIsSolidToLemming(orientation, checkLevelPosition);
         if (pixelIsSolid)
         {
-            Terrain.ErasePixel(checkLevelPosition);
+            Terrain.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
         }
 
         checkLevelPosition = orientation.Move(lemmingPosition, 4, 0);
-        pixelIsSolid = Terrain.PixelIsSolidToLemming(checkLevelPosition, lemming);
+        pixelIsSolid = Terrain.PixelIsSolidToLemming(orientation, checkLevelPosition);
         if (pixelIsSolid)
         {
-            Terrain.ErasePixel(checkLevelPosition);
+            Terrain.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
         }
 
         // Everything in between
         for (var i = -3; i < 4; i++)
         {
             checkLevelPosition = orientation.Move(lemmingPosition, i, 0);
-            pixelIsSolid = Terrain.PixelIsSolidToLemming(checkLevelPosition, lemming);
+            pixelIsSolid = Terrain.PixelIsSolidToLemming(orientation, checkLevelPosition);
             if (pixelIsSolid)
             {
-                Terrain.ErasePixel(checkLevelPosition);
+                Terrain.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
                 result = true;
             }
         }
@@ -94,5 +96,10 @@ public sealed class DiggerAction : LemmingAction
         // Delete these pixels from the terrain layer
         // ?? if not IsSimulating then fRenderInterface.RemoveTerrain(PosX - 4, PosY, 9, 1); ??
         return result;
+    }
+
+    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -1,6 +1,10 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Actions;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.FacingDirections;
+using NeoLemmixSharp.Engine.Engine.Orientations;
 
-public sealed class ExploderAction : LemmingAction
+namespace NeoLemmixSharp.Engine.Engine.Actions;
+
+public sealed class ExploderAction : LemmingAction, IDestructionAction
 {
     public const int NumberOfExploderAnimationFrames = 1;
 
@@ -18,5 +22,10 @@ public sealed class ExploderAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming)
     {
         return false;
+    }
+
+    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
+    {
+        throw new NotImplementedException();
     }
 }
