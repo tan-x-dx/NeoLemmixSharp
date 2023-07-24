@@ -23,7 +23,7 @@ public sealed class AscenderAction : LemmingAction
         var dy = 0;
         while (dy < 2 &&
                lemming.AscenderProgress < 5 &&
-               Terrain.PixelIsSolidToLemming(orientation.MoveUp(levelPosition, 1), lemming))
+               Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(levelPosition, 1)))
         {
             dy++;
             levelPosition = orientation.MoveUp(levelPosition, 1);
@@ -31,8 +31,8 @@ public sealed class AscenderAction : LemmingAction
             lemming.AscenderProgress++;
         }
 
-        var pixel1IsSolid = Terrain.PixelIsSolidToLemming(orientation.MoveUp(levelPosition, 1), lemming);
-        var pixel2IsSolid = Terrain.PixelIsSolidToLemming(orientation.MoveUp(levelPosition, 2), lemming);
+        var pixel1IsSolid = Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(levelPosition, 1));
+        var pixel2IsSolid = Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(levelPosition, 2));
 
         if (dy < 2 &&
             !pixel1IsSolid)

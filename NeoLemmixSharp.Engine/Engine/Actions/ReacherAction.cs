@@ -1,4 +1,7 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Actions;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.Orientations;
+
+namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class ReacherAction : LemmingAction
 {
@@ -22,33 +25,15 @@ public sealed class ReacherAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
-        int emptyPixels;
-        if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 10), lemming))
-        {
-            emptyPixels = 0;
-        }
-        else if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 11), lemming))
-        {
-            emptyPixels = 1;
-        }
-        else if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 12), lemming))
-        {
-            emptyPixels = 2;
-        }
-        else if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 13), lemming))
-        {
-            emptyPixels = 3;
-        }
-        else
-        {
-            emptyPixels = 4;
-        }
 
-        if (Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 5), lemming) ||
-            Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 6), lemming) ||
-            Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 7), lemming) ||
-            Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 8), lemming))
+        var emptyPixels = GetEmptyPixelCount(orientation, lemmingPosition);
+
+        if (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 5)) ||
+            Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 6)) ||
+            Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 7)) ||
+            Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 8)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -56,7 +41,7 @@ public sealed class ReacherAction : LemmingAction
         }
 
         if (lemming.AnimationFrame == 1 &&
-                 Terrain.PixelIsSolidToLemming(lemming.Orientation.MoveUp(lemmingPosition, 9), lemming))
+            Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 9)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -65,14 +50,14 @@ public sealed class ReacherAction : LemmingAction
 
         if (emptyPixels <= _movementList[lemming.AnimationFrame])
         {
-            lemmingPosition = lemming.Orientation.MoveUp(lemmingPosition, emptyPixels + 1);
+            lemmingPosition = orientation.MoveUp(lemmingPosition, emptyPixels + 1);
             lemming.LevelPosition = lemmingPosition;
             ShimmierAction.Instance.TransitionLemmingToAction(lemming, false);
 
             return true;
         }
 
-        lemmingPosition = lemming.Orientation.MoveUp(lemmingPosition, _movementList[lemming.AnimationFrame]);
+        lemmingPosition = orientation.MoveUp(lemmingPosition, _movementList[lemming.AnimationFrame]);
         lemming.LevelPosition = lemmingPosition;
         if (lemming.AnimationFrame == 7)
         {
@@ -80,5 +65,24 @@ public sealed class ReacherAction : LemmingAction
         }
 
         return true;
+    }
+
+    private static int GetEmptyPixelCount(
+        Orientation orientation,
+        LevelPosition lemmingPosition)
+    {
+        if (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 10)))
+            return 0;
+
+        if (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 11)))
+            return 1;
+
+        if (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 12)))
+            return 2;
+
+        if (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 13)))
+            return 3;
+
+        return 4;
     }
 }

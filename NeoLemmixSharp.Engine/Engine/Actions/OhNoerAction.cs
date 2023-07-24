@@ -17,6 +17,7 @@ public sealed class OhNoerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var orientation = lemming.Orientation;
         var result = true;
 
         if (lemming.EndOfAnimation)
@@ -24,7 +25,7 @@ public sealed class OhNoerAction : LemmingAction
             //   if(lemming.CurrentAction == )
 
         }
-        else if (!Terrain.PixelIsSolidToLemming(lemming.LevelPosition, lemming))
+        else if (!Terrain.PixelIsSolidToLemming(orientation, lemming.LevelPosition))
         {
             /*
             L.LemHasBlockerField := False; // remove blocker field

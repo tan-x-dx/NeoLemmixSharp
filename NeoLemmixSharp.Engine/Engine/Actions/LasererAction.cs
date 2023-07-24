@@ -1,9 +1,11 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
-public sealed class LasererAction : LemmingAction
+public sealed class LasererAction : LemmingAction, IDestructionAction
 {
     private const int DistanceCap = 112;
     public const int NumberOfLasererAnimationFrames = 1;
@@ -61,26 +63,26 @@ public sealed class LasererAction : LemmingAction
     {
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
-        if (!Terrain.PixelIsSolidToLemming(lemmingPosition, lemming))
+
+        if (!Terrain.PixelIsSolidToLemming(orientation, lemmingPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
-        var dx = lemming.FacingDirection.DeltaX;
+        var facingDirection = lemming.FacingDirection;
+        var dx = facingDirection.DeltaX;
         var target = orientation.Move(lemmingPosition, dx + dx, 5);
 
         var hit = false;
         var hitUseful = false;
 
-        var offsetChecks = dx == 1
-            ? _offsetChecksRight
-            : _offsetChecksLeft;
+        var offsetChecks = GetOffsetChecks(facingDirection);
 
         var i = DistanceCap;
         while (i > 0)
         {
-            switch (CheckForHit(lemming, target, orientation, offsetChecks))
+            switch (CheckForHit(orientation, facingDirection, target, offsetChecks))
             {
                 case LaserHitType.None:
                     target = orientation.Move(target, dx, 1);
@@ -131,11 +133,18 @@ HitTestConclusive:
         return true;
     }
 
-    private static LaserHitType CheckForHit(
-        Lemming lemming,
-        LevelPosition target,
+    private ReadOnlySpan<LevelPosition> GetOffsetChecks(FacingDirection facingDirection)
+    {
+        return facingDirection == RightFacingDirection.Instance
+            ? _offsetChecksRight
+            : _offsetChecksLeft;
+    }
+
+    private LaserHitType CheckForHit(
         Orientation orientation,
-        LevelPosition[] offsetChecks)
+        FacingDirection facingDirection,
+        LevelPosition target,
+        ReadOnlySpan<LevelPosition> offsetChecks)
     {
         if (Terrain.PositionOutOfBounds(target))
             return LaserHitType.OutOfBounds;
@@ -146,9 +155,9 @@ HitTestConclusive:
         {
             var checkLevelPosition = orientation.Move(target, offsetChecks[i]);
 
-            if (Terrain.PixelIsSolidToLemming(checkLevelPosition, lemming))
+            if (Terrain.PixelIsSolidToLemming(orientation, checkLevelPosition))
             {
-                if (Terrain.PixelIsIndestructibleToLemming(checkLevelPosition, lemming) && result != LaserHitType.Solid)
+                if (Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, checkLevelPosition) && result != LaserHitType.Solid)
                 {
                     result = LaserHitType.Indestructible;
                 }
@@ -161,4 +170,10 @@ HitTestConclusive:
 
         return result;
     }
+
+    [Pure]
+    public bool CanDestroyPixel(
+        PixelType pixelType,
+        Orientation orientation,
+        FacingDirection facingDirection) => FencerAction.Instance.CanDestroyPixel(pixelType, orientation, facingDirection); // Defer to whatever the fencer does, since the logic is the same!
 }

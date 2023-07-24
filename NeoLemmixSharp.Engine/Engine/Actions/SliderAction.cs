@@ -99,7 +99,7 @@ public sealed class SliderAction : LemmingAction
         LevelPosition levelPosition,
         LevelPosition dehoistPin)
     {
-        if (Terrain.PixelIsSolidToLemming(dehoistPin, lemming))
+        if (Terrain.PixelIsSolidToLemming(orientation, dehoistPin))
             return true;
 
         var result = false;
@@ -107,7 +107,7 @@ public sealed class SliderAction : LemmingAction
             orientation.MatchesVertically(levelPosition, dehoistPin) &&
             true)
         {
-            result = Terrain.PixelIsSolidToLemming(orientation.MoveDown(dehoistPin, 1), lemming);
+            result = Terrain.PixelIsSolidToLemming(orientation, orientation.MoveDown(dehoistPin, 1));
         }
 
         return result;

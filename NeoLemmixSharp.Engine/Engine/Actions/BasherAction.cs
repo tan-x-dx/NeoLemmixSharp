@@ -1,9 +1,12 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Engine.Terrain;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
-public sealed class BasherAction : LemmingAction
+public sealed class BasherAction : LemmingAction, IDestructionAction
 {
     public const int NumberOfBasherAnimationFrames = 16;
 
@@ -24,13 +27,13 @@ public sealed class BasherAction : LemmingAction
     }
 
     private bool BasherIndestructibleCheck(
-        Lemming lemming,
-        LevelPosition pos,
-        Orientation orientation)
+        Orientation orientation,
+        FacingDirection facingDirection,
+        LevelPosition pos)
     {
-        return Terrain.PixelIsIndestructibleToLemming(orientation.MoveUp(pos, 3), lemming) ||
-               Terrain.PixelIsIndestructibleToLemming(orientation.MoveUp(pos, 4), lemming) ||
-               Terrain.PixelIsIndestructibleToLemming(orientation.MoveUp(pos, 5), lemming);
+        return Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 3)) ||
+               Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 4)) ||
+               Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 5));
     }
 
     private void BasherTurn(
@@ -54,13 +57,13 @@ public sealed class BasherAction : LemmingAction
         int dx,
         int step)
     {
-        var p1X1Y = Terrain.PixelIsSolidToLemming(orientation.Move(pos, dx, 1), lemming);
-        var p1X2Y = Terrain.PixelIsSolidToLemming(orientation.Move(pos, dx, 2), lemming);
-        var p1X3Y = Terrain.PixelIsSolidToLemming(orientation.Move(pos, dx, 3), lemming);
+        var p1X1Y = Terrain.PixelIsSolidToLemming(orientation, orientation.Move(pos, dx, 1));
+        var p1X2Y = Terrain.PixelIsSolidToLemming(orientation, orientation.Move(pos, dx, 2));
+        var p1X3Y = Terrain.PixelIsSolidToLemming(orientation, orientation.Move(pos, dx, 3));
 
-        var p2X1Y = Terrain.PixelIsSolidToLemming(orientation.Move(pos, dx + dx, 1), lemming);
-        var p2X2Y = Terrain.PixelIsSolidToLemming(orientation.Move(pos, dx + dx, 2), lemming);
-        var p2X3Y = Terrain.PixelIsSolidToLemming(orientation.Move(pos, dx + dx, 3), lemming);
+        var p2X1Y = Terrain.PixelIsSolidToLemming(orientation, orientation.Move(pos, dx + dx, 1));
+        var p2X2Y = Terrain.PixelIsSolidToLemming(orientation, orientation.Move(pos, dx + dx, 2));
+        var p2X3Y = Terrain.PixelIsSolidToLemming(orientation, orientation.Move(pos, dx + dx, 3));
 
         if (step == 1)
         {
@@ -116,6 +119,16 @@ public sealed class BasherAction : LemmingAction
         }
 
         return true;
+    }
+
+    [Pure]
+    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
+    {
+        var bashDirectionAsOrientation = facingDirection.ConvertToRelativeOrientation(orientation);
+        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
+                                 bashDirectionAsOrientation.GetOpposite().RotNum;
+        var oppositeArrowMask = (PixelType)(1 << oppositeArrowShift);
+        return (pixelType & oppositeArrowMask) == PixelType.Empty;
     }
 }
 

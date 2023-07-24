@@ -23,7 +23,7 @@ public sealed class DehoisterAction : LemmingAction
 
         if (lemming.EndOfAnimation)
         {
-            if (Terrain.PixelIsSolidToLemming(orientation.MoveUp(lemmingPosition, 7), lemming))
+            if (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 7)))
             {
                 SliderAction.Instance.TransitionLemmingToAction(lemming, false);
                 return true;

@@ -134,14 +134,13 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     /// If result = -7, then at least 7 pixels are terrain above levelPosition
     /// </summary>
     protected static int FindGroundPixel(
-        Lemming lemming,
         Orientation orientation,
         LevelPosition levelPosition)
     {
         var result = 0;
-        if (Terrain.PixelIsSolidToLemming(levelPosition, lemming))
+        if (Terrain.PixelIsSolidToLemming(orientation, levelPosition))
         {
-            while (Terrain.PixelIsSolidToLemming(orientation.MoveUp(levelPosition, 1 - result), lemming) &&
+            while (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(levelPosition, 1 - result)) &&
                    result > -7)
             {
                 result--;
@@ -151,7 +150,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         }
 
         result = 1;
-        while (!Terrain.PixelIsSolidToLemming(orientation.MoveDown(levelPosition, result), lemming) &&
+        while (!Terrain.PixelIsSolidToLemming(orientation, orientation.MoveDown(levelPosition, result)) &&
                result < 4)
         {
             result++;

@@ -36,7 +36,7 @@ public sealed class FallerAction : LemmingAction
             return true;
 
         while (currentFallDistanceStep < maxFallDistanceStep &&
-               !Terrain.PixelIsSolidToLemming(lemmingPosition, lemming))
+               !Terrain.PixelIsSolidToLemming(orientation, lemmingPosition))
         {
             if (currentFallDistanceStep > 0 &&
                 CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))

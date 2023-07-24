@@ -34,16 +34,16 @@ public sealed class SwimmerAction : LemmingAction
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
         lemming.LevelPosition = lemmingPosition;
 
-        var dy = FindGroundPixel(lemming, orientation, lemmingPosition);
+        var dy = FindGroundPixel(orientation, lemmingPosition);
 
-        if (Terrain.PixelIsSolidToLemming(lemmingPosition, lemming) ||
+        if (Terrain.PixelIsSolidToLemming(orientation, lemmingPosition) ||
             WaterAt(lemmingPosition, orientation))
         {
             // Rise if there is water above the lemming
             var pixelAbove = orientation.MoveUp(lemmingPosition, 1);
             if (dy >= -1 &&
                 WaterAt(pixelAbove, orientation) &&
-                !Terrain.PixelIsSolidToLemming(pixelAbove, lemming))
+                !Terrain.PixelIsSolidToLemming(orientation, pixelAbove))
             {
                 lemmingPosition = pixelAbove;
                 lemming.LevelPosition = lemmingPosition;
@@ -140,7 +140,7 @@ public sealed class SwimmerAction : LemmingAction
     {
         var result = 1;
 
-        while (result <= 4 && Terrain.PixelIsSolidToLemming(orientation.MoveDown(lemmingPosition, result), lemming))
+        while (result <= 4 && Terrain.PixelIsSolidToLemming(orientation, orientation.MoveDown(lemmingPosition, result)))
         {
             result++;
             lemming.DistanceFallen++;
