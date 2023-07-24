@@ -77,17 +77,15 @@ public sealed class LevelScreen : IBaseScreen
 
         _currentlySelectedFrameUpdater = _standardFrameUpdater;
 
-        _controlPanel = controlPanel; // new LevelControlPanel(_skillSetManager, _inputController);
-        _levelCursor = cursor; // new LevelCursor(_horizontalBoundaryBehaviour, _verticalBoundaryBehaviour, _controlPanel, _inputController);
-        _viewport = viewport; // = new Viewport(_levelCursor, _inputController, _horizontalViewPortBehaviour, _verticalViewPortBehaviour, _horizontalBoundaryBehaviour, _verticalBoundaryBehaviour);
+        _controlPanel = controlPanel;
+        _levelCursor = cursor;
+        _viewport = viewport;
 
         Orientation.SetTerrain(terrain);
         LemmingAction.SetTerrain(terrain);
         LemmingSkill.SetTerrain(terrain);
         TerrainMask.SetTerrain(terrain);
         LevelCursor.LevelScreen = this;
-
-        // terrain.TerrainRenderer.SetViewport(_viewport);
     }
 
     IScreenRenderer IBaseScreen.ScreenRenderer => ScreenRenderer;
