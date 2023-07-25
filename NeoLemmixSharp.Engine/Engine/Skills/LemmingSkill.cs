@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 using System.Diagnostics.Contracts;
@@ -8,13 +7,14 @@ namespace NeoLemmixSharp.Engine.Engine.Skills;
 
 public abstract class LemmingSkill : IEquatable<LemmingSkill>
 {
+    private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
     protected static TerrainManager Terrain { get; private set; }
 
-    private static ReadOnlyDictionaryWrapper<string, LemmingSkill> LemmingSkills { get; } = RegisterAllLemmingSkills();
+    public static ReadOnlySpan<LemmingSkill> AllLemmingSkills => new(LemmingSkills);
 
-    private static ReadOnlyDictionaryWrapper<string, LemmingSkill> RegisterAllLemmingSkills()
+    private static LemmingSkill[] RegisterAllLemmingSkills()
     {
-        var result = new Dictionary<string, LemmingSkill>();
+        var list = new List<LemmingSkill>();
 
         // NOTE: DO NOT REGISTER THE NONE SKILL
 
@@ -44,20 +44,21 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 
         ValidateLemmingSkillIds();
 
-        return new ReadOnlyDictionaryWrapper<string, LemmingSkill>(result);
+        list.Sort((x, y) => x.Id.CompareTo(y.Id));
+
+        return list.ToArray();
 
         void RegisterLemmingSkill(LemmingSkill lemmingSkill)
         {
             if (lemmingSkill == NoneSkill.Instance)
                 return;
 
-            result.Add(lemmingSkill.LemmingSkillName, lemmingSkill);
+            list.Add(lemmingSkill);
         }
 
         void ValidateLemmingSkillIds()
         {
-            var ids = result
-                .Values
+            var ids = list
                 .Select(ls => ls.Id)
                 .ToList();
 
@@ -65,7 +66,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
                 .Distinct()
                 .Count();
 
-            if (numberOfUniqueIds != result.Count)
+            if (numberOfUniqueIds != list.Count)
             {
                 var idsString = ids.OrderBy(i => i);
 
@@ -75,12 +76,10 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
             var minSkillId = ids.Min();
             var maxSkillId = ids.Max();
 
-            if (minSkillId != 0 || maxSkillId != result.Count - 1)
-                throw new Exception($"Skill ids do not span a full set of values from 0 - {result.Count - 1}");
+            if (minSkillId != 0 || maxSkillId != list.Count - 1)
+                throw new Exception($"Skill ids do not span a full set of values from 0 - {list.Count - 1}");
         }
     }
-
-    public static ICollection<LemmingSkill> AllLemmingSkills => LemmingSkills.Values;
 
     public static void SetTerrain(TerrainManager terrain)
     {

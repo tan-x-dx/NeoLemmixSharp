@@ -122,8 +122,8 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
     private void InitialiseGameConstants()
     {
-        var numberOfActions = LemmingAction.AllActions.Count;
-        var numberOfSkills = LemmingSkill.AllLemmingSkills.Count;
+        var numberOfActions = LemmingAction.AllLemmingActions.Length;
+        var numberOfSkills = LemmingSkill.AllLemmingSkills.Length;
         Console.WriteLine("Loaded {0} skills. Loaded {1} actions", numberOfSkills, numberOfActions);
 
         TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);

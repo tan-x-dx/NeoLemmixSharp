@@ -18,7 +18,7 @@ public static class DefaultLemmingSpriteBank
         GraphicsDevice graphicsDevice)
     {
         var spriteRotationReflectionProcessor = new ActionSpriteCreator(graphicsDevice);
-        var actionSprites = new ActionSprite[LemmingAction.AllActions.Count * 4 * 2];
+        var actionSprites = new ActionSprite[LemmingAction.AllLemmingActions.Length * Orientation.AllOrientations.Length * 2];
         // Number of actions * 4 orientations * 2 facing directions.
 
         CreateThreeLayerSprite(AscenderAction.Instance, new LevelPosition(2, 10));
