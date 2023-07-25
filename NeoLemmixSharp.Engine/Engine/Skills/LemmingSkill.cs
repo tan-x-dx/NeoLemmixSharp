@@ -63,13 +63,12 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
         Terrain = terrain;
     }
 
-    private readonly IBitArray _assignableActionIds;
+    private readonly LargeBitArray _assignableActionIds;
 
     protected LemmingSkill()
     {
-        // There are currently 31 LemmingActions in existence.
-        // If/when that changes -> update this accordingly
-        _assignableActionIds = new SmallBitArray();
+        var numberOfActions = LemmingAction.AllLemmingActions.Length;
+        _assignableActionIds = new LargeBitArray(numberOfActions);
 
         // ReSharper disable once VirtualMemberCallInConstructor
         foreach (var action in ActionsThatCanBeAssigned())
