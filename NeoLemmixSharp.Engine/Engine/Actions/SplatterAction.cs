@@ -2,8 +2,6 @@
 
 public sealed class SplatterAction : LemmingAction
 {
-    public const int NumberOfSplatterAnimationFrames = 16;
-
     public static SplatterAction Instance { get; } = new();
 
     private SplatterAction()
@@ -12,7 +10,7 @@ public sealed class SplatterAction : LemmingAction
 
     public override int Id => 28;
     public override string LemmingActionName => "splatter";
-    public override int NumberOfAnimationFrames => NumberOfSplatterAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.SplatterAnimationFrames;
     public override bool IsOneTimeAction => true;
 
     public override bool UpdateLemming(Lemming lemming)

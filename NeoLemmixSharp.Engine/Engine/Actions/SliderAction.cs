@@ -6,8 +6,6 @@ namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class SliderAction : LemmingAction
 {
-    public const int NumberOfSliderAnimationFrames = 1;
-
     public static SliderAction Instance { get; } = new();
 
     private SliderAction()
@@ -16,7 +14,7 @@ public sealed class SliderAction : LemmingAction
 
     public override int Id => 16;
     public override string LemmingActionName => "slider";
-    public override int NumberOfAnimationFrames => NumberOfSliderAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.SliderAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

@@ -2,8 +2,6 @@
 
 public sealed class GliderAction : LemmingAction
 {
-    public const int NumberOfGliderAnimationFrames = 17;
-
     public static GliderAction Instance { get; } = new();
 
     private GliderAction()
@@ -12,7 +10,7 @@ public sealed class GliderAction : LemmingAction
 
     public override int Id => 11;
     public override string LemmingActionName => "glider";
-    public override int NumberOfAnimationFrames => NumberOfGliderAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.GliderAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

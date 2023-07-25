@@ -2,8 +2,6 @@
 
 public sealed class StackerAction : LemmingAction
 {
-    public const int NumberOfStackerAnimationFrames = 8;
-
     public static StackerAction Instance { get; } = new();
 
     private StackerAction()
@@ -12,7 +10,7 @@ public sealed class StackerAction : LemmingAction
 
     public override int Id => 9;
     public override string LemmingActionName => "stacker";
-    public override int NumberOfAnimationFrames => NumberOfStackerAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.StackerAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

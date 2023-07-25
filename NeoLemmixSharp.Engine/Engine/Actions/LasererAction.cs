@@ -8,7 +8,6 @@ namespace NeoLemmixSharp.Engine.Engine.Actions;
 public sealed class LasererAction : LemmingAction, IDestructionAction
 {
     private const int DistanceCap = 112;
-    public const int NumberOfLasererAnimationFrames = 1;
 
     public static LasererAction Instance { get; } = new();
 
@@ -56,7 +55,7 @@ public sealed class LasererAction : LemmingAction, IDestructionAction
 
     public override int Id => 15;
     public override string LemmingActionName => "laserer";
-    public override int NumberOfAnimationFrames => NumberOfLasererAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.LasererAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

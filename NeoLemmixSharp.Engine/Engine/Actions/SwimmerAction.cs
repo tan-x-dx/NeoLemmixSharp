@@ -7,8 +7,6 @@ namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class SwimmerAction : LemmingAction
 {
-    public const int NumberOfSwimmerAnimationFrames = 8;
-
     public static SwimmerAction Instance { get; } = new();
 
     private SwimmerAction()
@@ -17,7 +15,7 @@ public sealed class SwimmerAction : LemmingAction
 
     public override int Id => 13;
     public override string LemmingActionName => "swimmer";
-    public override int NumberOfAnimationFrames => NumberOfSwimmerAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.SwimmerAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

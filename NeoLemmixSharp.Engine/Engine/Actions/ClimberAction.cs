@@ -2,8 +2,6 @@
 
 public sealed class ClimberAction : LemmingAction
 {
-    public const int NumberOfClimberAnimationFrames = 8;
-
     public static ClimberAction Instance { get; } = new();
 
     private ClimberAction()
@@ -12,7 +10,7 @@ public sealed class ClimberAction : LemmingAction
 
     public override int Id => 1;
     public override string LemmingActionName => "climber";
-    public override int NumberOfAnimationFrames => NumberOfClimberAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.ClimberAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     // Be very careful when changing the terrain/hoister checks for climbers!
