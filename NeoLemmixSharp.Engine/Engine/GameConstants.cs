@@ -33,4 +33,7 @@ public static class GameConstants
     public const int SwimmerAnimationFrames = 8;
     public const int VaporiserAnimationFrames = 16;
     public const int WalkerAnimationFrames = 8;
+
+    public const int TicksPerSecond = 17;
+    public const int FramesPerSecond = TicksPerSecond * 3;
 }

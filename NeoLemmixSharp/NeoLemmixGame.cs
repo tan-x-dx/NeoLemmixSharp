@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
@@ -19,7 +20,7 @@ namespace NeoLemmixSharp;
 public sealed class NeoLemmixGame : Game, IGameWindow
 {
     private readonly GraphicsDeviceManager _graphics;
-    private readonly TimeSpan _standardGameUps = TimeSpan.FromSeconds(1d / 51d);
+    private readonly TimeSpan _standardGameUps;
 
     private bool _isBorderless;
 
@@ -47,6 +48,8 @@ public sealed class NeoLemmixGame : Game, IGameWindow
         Window.IsBorderless = false;
 
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
+
+        _standardGameUps = TimeSpan.FromSeconds(1d / GameConstants.FramesPerSecond);
 
         IsFixedTimeStep = true;
         TargetElapsedTime = _standardGameUps;
