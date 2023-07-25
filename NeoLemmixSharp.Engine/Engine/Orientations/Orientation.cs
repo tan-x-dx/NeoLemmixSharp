@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Orientations;
 
-public abstract class Orientation : IEquatable<Orientation>
+public abstract class Orientation : IEquatable<Orientation>, IUniqueIdItem
 {
     private static readonly Orientation[] Orientations = GenerateRotationCollection();
     protected static TerrainManager Terrain { get; private set; }
@@ -20,6 +20,8 @@ public abstract class Orientation : IEquatable<Orientation>
         orientations[UpOrientation.Instance.RotNum] = UpOrientation.Instance;
         orientations[RightOrientation.Instance.RotNum] = RightOrientation.Instance;
 
+        ListValidatorMethods.ValidateUniqueIds(orientations);
+
         return orientations;
     }
 
@@ -28,6 +30,7 @@ public abstract class Orientation : IEquatable<Orientation>
         Terrain = terrain;
     }
 
+    int IUniqueIdItem.Id => RotNum;
     public abstract int RotNum { get; }
     public abstract int AbsoluteHorizontalComponent { get; }
     public abstract int AbsoluteVerticalComponent { get; }

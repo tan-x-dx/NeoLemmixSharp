@@ -1,11 +1,12 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Skills;
 
-public abstract class LemmingSkill : IEquatable<LemmingSkill>
+public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
 {
     private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
     protected static TerrainManager Terrain { get; private set; }
@@ -42,7 +43,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 
         RegisterLemmingSkill(ClonerSkill.Instance);
 
-        ValidateLemmingSkillIds();
+        ListValidatorMethods.ValidateUniqueIds(list);
 
         list.Sort((x, y) => x.Id.CompareTo(y.Id));
 
@@ -54,30 +55,6 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
                 return;
 
             list.Add(lemmingSkill);
-        }
-
-        void ValidateLemmingSkillIds()
-        {
-            var ids = list
-                .Select(ls => ls.Id)
-                .ToList();
-
-            var numberOfUniqueIds = ids
-                .Distinct()
-                .Count();
-
-            if (numberOfUniqueIds != list.Count)
-            {
-                var idsString = ids.OrderBy(i => i);
-
-                throw new Exception($"Duplicated skill ID: {idsString}");
-            }
-
-            var minSkillId = ids.Min();
-            var maxSkillId = ids.Max();
-
-            if (minSkillId != 0 || maxSkillId != list.Count - 1)
-                throw new Exception($"Skill ids do not span a full set of values from 0 - {list.Count - 1}");
         }
     }
 

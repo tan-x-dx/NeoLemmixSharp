@@ -5,6 +5,8 @@ using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
+using NeoLemmixSharp.Engine.Engine.FacingDirections;
+using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Skills;
 using NeoLemmixSharp.Engine.Engine.Terrain.Masks;
 using NeoLemmixSharp.Engine.LevelBuilding;
@@ -92,7 +94,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
         //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\rotation test.nxlv";
         //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\render test.nxlv";
          "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\movement test.nxlv";
-       // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\object test.nxlv";
+        // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\object test.nxlv";
         // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
         //   "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
         //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Lemmings\\Tricky\\05_Careless_clicking_costs_lives.nxlv";
@@ -122,9 +124,16 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
     private void InitialiseGameConstants()
     {
+        var numberOfFacingDirections = FacingDirection.AllFacingDirections.Length;
+        var numberOfOrientations = Orientation.AllOrientations.Length;
         var numberOfActions = LemmingAction.AllLemmingActions.Length;
         var numberOfSkills = LemmingSkill.AllLemmingSkills.Length;
-        Console.WriteLine("Loaded {0} skills. Loaded {1} actions", numberOfSkills, numberOfActions);
+        Console.WriteLine(
+            "Loaded {0} facing directions. Loaded {1} orientations. Loaded {2} skills. Loaded {3} actions",
+            numberOfFacingDirections,
+            numberOfOrientations,
+            numberOfSkills,
+            numberOfActions);
 
         TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
         DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);

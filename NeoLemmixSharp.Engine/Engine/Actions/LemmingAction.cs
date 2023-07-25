@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Engine.Terrain;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
-public abstract class LemmingAction : IEquatable<LemmingAction>
+public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
     protected static TerrainManager Terrain { get; private set; }
@@ -52,7 +52,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         RegisterLemmingAction(StonerAction.Instance);
         RegisterLemmingAction(VaporiserAction.Instance);
 
-        ValidateLemmingActionIds();
+        ListValidatorMethods.ValidateUniqueIds(list);
 
         list.Sort((x, y) => x.Id.CompareTo(y.Id));
 
@@ -64,28 +64,6 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
                 return;
 
             list.Add(lemmingAction);
-        }
-
-        void ValidateLemmingActionIds()
-        {
-            var ids = list
-                .Select(la => la.Id)
-                .ToList();
-
-            var numberOfUniqueIds = ids.Distinct().Count();
-
-            if (numberOfUniqueIds != list.Count)
-            {
-                var idsString = string.Join(',', ids.OrderBy(i => i));
-
-                throw new Exception($"Duplicated action ID: {idsString}");
-            }
-
-            var minActionId = ids.Min();
-            var maxActionId = ids.Max();
-
-            if (minActionId != 0 || maxActionId != list.Count - 1)
-                throw new Exception($"Action ids do not span a full set of values from 0 - {list.Count - 1}");
         }
     }
 
