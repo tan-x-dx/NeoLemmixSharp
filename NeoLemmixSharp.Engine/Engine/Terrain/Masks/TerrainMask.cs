@@ -145,8 +145,11 @@ public static class TerrainMasks
             anchorPoint,
             itemCreator);
 
-        var result = new TerrainMask[numberOfFrames * Orientation.AllOrientations.Length * 2];
-        // Number of frames * 4 orientations * 2 facing directions.
+        var numberOfTerrainMasks = numberOfFrames *
+                                   Orientation.AllOrientations.Length *
+                                   FacingDirection.AllFacingDirections.Length;
+
+        var result = new TerrainMask[numberOfTerrainMasks];
 
         for (var f = 0; f < numberOfFrames; f++)
         {
