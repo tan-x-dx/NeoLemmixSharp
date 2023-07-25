@@ -10,8 +10,8 @@ public sealed class UniqueIdItemEqualityComparer<T> : IEqualityComparer<T>, IEqu
 {
     public bool Equals(T? x, T? y)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (x is null || y is null) return false;
+        if (x is null) return y is null;
+        if (y is null) return false;
         return x.Id == y.Id;
     }
 
@@ -31,7 +31,7 @@ public static class ListValidatorMethods
         where T : class, IUniqueIdItem
     {
         var ids = items
-            .Select(la => la.Id)
+            .Select(i => i.Id)
             .ToList();
 
         var numberOfUniqueIds = ids.Distinct().Count();
