@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Microsoft.Xna.Framework;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Engine.Timer;
 
@@ -9,6 +10,8 @@ public abstract class LevelTimer
     protected readonly int[] Chars = new int[6];
     protected int ElapsedSeconds;
 
+    public Color FontColor { get; protected set; }
+
     public int ElapsedTicks { get; protected set; }
 
     protected LevelTimer()
@@ -17,6 +20,17 @@ public abstract class LevelTimer
     }
 
     public abstract void Tick();
+
+    public void SetElapsedTicks(int elapsedTicks)
+    {
+        ElapsedTicks = elapsedTicks;
+        ElapsedSeconds = elapsedTicks / GameConstants.FramesPerSecond;
+
+        UpdateAppearance();
+    }
+
+    protected abstract void UpdateAppearance();
+
     public ReadOnlySpan<int> AsSpan() => new(Chars);
 
     protected void UpdateCountUpString(
