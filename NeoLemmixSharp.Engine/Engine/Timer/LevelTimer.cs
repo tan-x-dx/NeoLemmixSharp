@@ -19,7 +19,15 @@ public abstract class LevelTimer
         Chars[3] = '-';
     }
 
-    public abstract void Tick();
+    public void Tick()
+    {
+        ElapsedTicks++;
+        if (ElapsedTicks % GameConstants.FramesPerSecond != 0)
+            return;
+
+        ElapsedSeconds++;
+        UpdateAppearance();
+    }
 
     public void SetElapsedTicks(int elapsedTicks)
     {
@@ -63,14 +71,9 @@ public abstract class LevelTimer
         if (partialUpdate && minutesTens > 0)
             return;
 
-        if (minutes < 100)
-        {
-            Chars[0] = ' ';
-        }
-        else
-        {
-            Chars[0] = DigitToChar(minutes / 100);
-        }
+        Chars[0] = minutes < 100
+            ? ' '
+            : DigitToChar(minutes / 100);
     }
 
     protected void UpdateCountDownString(
@@ -103,14 +106,9 @@ public abstract class LevelTimer
         if (partialUpdate && minutesTens < 9)
             return;
 
-        if (minutes < 100)
-        {
-            Chars[0] = ' ';
-        }
-        else
-        {
-            Chars[0] = DigitToChar(minutes / 100);
-        }
+        Chars[0] = minutes < 100
+            ? ' '
+            : DigitToChar(minutes / 100);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -6,6 +6,11 @@ namespace NeoLemmixSharp.Common.Rendering.Text;
 
 public sealed class PanelFont : INeoLemmixFont
 {
+    public static readonly Color Green = new(0x00, 0xB0, 0x00);
+    public static readonly Color Yellow = new(0xB0, 0xB0, 0x00);
+    public static readonly Color Red = new(0xB0, 0x00, 0x00);
+    public static readonly Color Magenta = new(0xB0, 0x00, 0xB0);
+
     private const int GlyphWidth = 8;
     private const int GlyphHeight = 16;
 
