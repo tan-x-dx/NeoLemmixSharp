@@ -42,4 +42,27 @@ public sealed class MenuFont : INeoLemmixFont
             dest.X += GlyphWidth * scaleMultiplier;
         }
     }
+
+    public void RenderTextSpan(
+        SpriteBatch spriteBatch,
+        ReadOnlySpan<int> charactersToRender,
+        int x,
+        int y,
+        int scaleMultiplier = 1)
+    {
+        var dest = new Rectangle(x, y, GlyphWidth * scaleMultiplier, GlyphHeight * scaleMultiplier);
+        foreach (var c in charactersToRender)
+        {
+            if (c <= 31 || c >= 127)
+                continue;
+
+            var source = new Rectangle(GlyphWidth * (c - 33), 0, GlyphWidth, GlyphHeight);
+            spriteBatch.Draw(
+                _texture,
+                dest,
+                source,
+                RenderLayer);
+            dest.X += GlyphWidth * scaleMultiplier;
+        }
+    }
 }

@@ -42,4 +42,27 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
             dest.X += GlyphWidth * scaleMultiplier;
         }
     }
+
+    public void RenderTextSpan(
+        SpriteBatch spriteBatch,
+        ReadOnlySpan<int> charactersToRender,
+        int x,
+        int y,
+        int scaleMultiplier = 1)
+    {
+        var dest = new Rectangle(x, y, GlyphWidth * scaleMultiplier, GlyphHeight * scaleMultiplier);
+        foreach (var c in charactersToRender)
+        {
+            if (c <= 47 || c >= 58)
+                continue;
+
+            var source = new Rectangle(GlyphWidth * (c - 48), 0, GlyphWidth, GlyphHeight);
+            spriteBatch.Draw(
+                _texture,
+                dest,
+                source,
+                RenderLayer);
+            dest.X += GlyphWidth * scaleMultiplier;
+        }
+    }
 }

@@ -10,4 +10,11 @@ public interface INeoLemmixFont : IDisposable
         int x,
         int y,
         int scaleMultiplier = 1);
+
+    void RenderTextSpan(
+        SpriteBatch spriteBatch,
+        ReadOnlySpan<int> charactersToRender,
+        int x,
+        int y,
+        int scaleMultiplier = 1);
 }
