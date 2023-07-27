@@ -45,65 +45,48 @@ public abstract class LevelTimer
         int elapsedSeconds,
         bool partialUpdate = true)
     {
-        var seconds = elapsedSeconds % 60;
-        var secondsUnits = seconds % 10;
-        Chars[5] = DigitToChar(secondsUnits);
-
-        if (partialUpdate && secondsUnits > 0)
-            return;
-
-        var secondsTens = seconds / 10;
-        Chars[4] = DigitToChar(secondsTens);
-
-        if (partialUpdate && secondsTens > 0)
-            return;
-
-        var minutes = elapsedSeconds / 60;
-        var minutesUnits = minutes % 10;
-        Chars[2] = DigitToChar(minutesUnits);
-
-        if (partialUpdate && minutesUnits > 0)
-            return;
-
-        var minutesTens = (minutes / 10) % 10;
-        Chars[1] = DigitToChar(minutesTens);
-
-        if (partialUpdate && minutesTens > 0)
-            return;
-
-        Chars[0] = minutes < 100
-            ? ' '
-            : DigitToChar(minutes / 100);
+        UpdateTimerString(elapsedSeconds, 0, 0, 0, 0, partialUpdate);
     }
 
     protected void UpdateCountDownString(
         int elapsedSeconds,
         bool partialUpdate = true)
     {
+        UpdateTimerString(elapsedSeconds, 9, 5, 9, 9, partialUpdate);
+    }
+
+    private void UpdateTimerString(
+        int elapsedSeconds,
+        int secondUnitsTest,
+        int secondTensTest,
+        int minutesUnitsTest,
+        int minutesTensTest,
+        bool partialUpdate = true)
+    {
         var seconds = elapsedSeconds % 60;
         var secondsUnits = seconds % 10;
         Chars[5] = DigitToChar(secondsUnits);
 
-        if (partialUpdate && secondsUnits < 9)
+        if (partialUpdate && secondsUnits != secondUnitsTest)
             return;
 
         var secondsTens = seconds / 10;
         Chars[4] = DigitToChar(secondsTens);
 
-        if (partialUpdate && secondsTens < 5)
+        if (partialUpdate && secondsTens != secondTensTest)
             return;
 
         var minutes = elapsedSeconds / 60;
         var minutesUnits = minutes % 10;
         Chars[2] = DigitToChar(minutesUnits);
 
-        if (partialUpdate && minutesUnits < 9)
+        if (partialUpdate && minutesUnits != minutesUnitsTest)
             return;
 
         var minutesTens = (minutes / 10) % 10;
         Chars[1] = DigitToChar(minutesTens);
 
-        if (partialUpdate && minutesTens < 9)
+        if (partialUpdate && minutesTens != minutesTensTest)
             return;
 
         Chars[0] = minutes < 100
