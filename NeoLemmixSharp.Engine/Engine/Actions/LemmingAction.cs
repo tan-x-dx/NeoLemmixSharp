@@ -1,19 +1,19 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
-public abstract class LemmingAction : IEquatable<LemmingAction>
+public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
 {
+    private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
     protected static TerrainManager Terrain { get; private set; }
 
-    public static ReadOnlyDictionaryWrapper<string, LemmingAction> AllActions { get; } = RegisterAllLemmingActions();
+    public static ReadOnlySpan<LemmingAction> AllLemmingActions => new(LemmingActions);
 
-    private static ReadOnlyDictionaryWrapper<string, LemmingAction> RegisterAllLemmingActions()
+    private static LemmingAction[] RegisterAllLemmingActions()
     {
-        var result = new Dictionary<string, LemmingAction>();
+        var list = new List<LemmingAction>();
 
         // NOTE: DO NOT REGISTER THE NONE ACTION
 
@@ -52,39 +52,18 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         RegisterLemmingAction(StonerAction.Instance);
         RegisterLemmingAction(VaporiserAction.Instance);
 
-        ValidateLemmingActionIds();
+        ListValidatorMethods.ValidateUniqueIds(list);
 
-        return new ReadOnlyDictionaryWrapper<string, LemmingAction>(result);
+        list.Sort((x, y) => x.Id.CompareTo(y.Id));
+
+        return list.ToArray();
 
         void RegisterLemmingAction(LemmingAction lemmingAction)
         {
             if (lemmingAction == NoneAction.Instance)
                 return;
 
-            result.Add(lemmingAction.LemmingActionName, lemmingAction);
-        }
-
-        void ValidateLemmingActionIds()
-        {
-            var ids = result
-                .Values
-                .Select(la => la.Id)
-                .ToList();
-
-            var numberOfUniqueIds = ids.Distinct().Count();
-
-            if (numberOfUniqueIds != result.Count)
-            {
-                var idsString = string.Join(',', ids.OrderBy(i => i));
-
-                throw new Exception($"Duplicated action ID: {idsString}");
-            }
-
-            var minActionId = ids.Min();
-            var maxActionId = ids.Max();
-
-            if (minActionId != 0 || maxActionId != result.Count - 1)
-                throw new Exception($"Action ids do not span a full set of values from 0 - {result.Count - 1}");
+            list.Add(lemmingAction);
         }
     }
 

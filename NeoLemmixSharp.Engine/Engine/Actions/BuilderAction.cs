@@ -2,8 +2,6 @@
 
 public sealed class BuilderAction : LemmingAction
 {
-    public const int NumberOfBuilderAnimationFrames = 16;
-
     public static BuilderAction Instance { get; } = new();
 
     private BuilderAction()
@@ -12,7 +10,7 @@ public sealed class BuilderAction : LemmingAction
 
     public override int Id => 4;
     public override string LemmingActionName => "builder";
-    public override int NumberOfAnimationFrames => NumberOfBuilderAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.BuilderAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

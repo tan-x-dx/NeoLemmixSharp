@@ -4,12 +4,14 @@ namespace NeoLemmixSharp.Common.Rendering.Text;
 
 public sealed class FontBank
 {
-    public INeoLemmixFont MenuFont { get; }
-    public INeoLemmixFont SkillCountDigitFont { get; }
+    public MenuFont MenuFont { get; }
+    public PanelFont PanelFont { get; }
+    public SkillCountDigitFont SkillCountDigitFont { get; }
 
     public FontBank(ContentManager contentManager)
     {
         MenuFont = new MenuFont(contentManager);
+        PanelFont = new PanelFont(contentManager);
         SkillCountDigitFont = new SkillCountDigitFont(contentManager);
     }
 }

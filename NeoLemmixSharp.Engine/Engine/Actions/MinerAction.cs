@@ -9,8 +9,6 @@ namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class MinerAction : LemmingAction, IDestructionAction
 {
-    public const int NumberOfMinerAnimationFrames = 24;
-
     public static MinerAction Instance { get; } = new();
 
     private MinerAction()
@@ -19,7 +17,7 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
 
     public override int Id => 6;
     public override string LemmingActionName => "miner";
-    public override int NumberOfAnimationFrames => NumberOfMinerAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.MinerAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)
@@ -62,7 +60,7 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
 
         // Note that all if-checks are relative to the end position!
 
-        // Lem cannot go down, so turn; see http://www.lemmingsforums.net/index.php?topic=2547.0
+        // Lemming cannot go down, so turn; see http://www.lemmingsforums.net/index.php?topic=2547.0
         if (Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.Move(lemmingPosition, -dx, -1)) &&
             Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveDown(lemmingPosition, 1)))
         {
@@ -84,7 +82,7 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
             return true;
         }
 
-        // Do we really want the to check the second HasPixel during frame 3 ????
+        // Do we really want the to check the second pixel during frame 3 ????
         if (!Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, 1)) &&
             !Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, 0)) &&
             !Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, -1)))
@@ -127,12 +125,11 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
         return true;
     }
 
-    private void TurnMinerAround(
+    private static void TurnMinerAround(
         Lemming lemming,
         LevelPosition checkPosition)
     {
         var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
         var lemmingPosition = lemming.LevelPosition;
 
         if (Terrain.PixelIsSteel(orientation, checkPosition))
@@ -140,8 +137,8 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
             // CueSoundEffect(SFX_HITS_STEEL, L.Position);
         }
 
-        // Independently of checkPosition this check is always made at Lem position
-        // No longer check at Lem position, due to http://www.lemmingsforums.net/index.php?topic=2547.0
+        // Independently of checkPosition this check is always made at lemming's position
+        // No longer check at lemming's position, due to http://www.lemmingsforums.net/index.php?topic=2547.0
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
 

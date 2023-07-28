@@ -10,8 +10,8 @@ public sealed class PointSetLevelRegion : ILevelRegion
     private readonly LargeBitArray _levelPositions;
     private readonly int _offsetX;
     private readonly int _offsetY;
-    private readonly int _width;
-    private readonly int _height;
+    private readonly int _minimumBoundingBoxWidth;
+    private readonly int _minimumBoundingBoxHeight;
 
     public PointSetLevelRegion(ICollection<LevelPosition> points)
     {
@@ -32,13 +32,13 @@ public sealed class PointSetLevelRegion : ILevelRegion
             maxY = Math.Max(maxY, levelPosition.Y);
         }
 
-        _width = 1 + maxX - minX;
-        _height = 1 + maxY - minY;
+        _minimumBoundingBoxWidth = 1 + maxX - minX;
+        _minimumBoundingBoxHeight = 1 + maxY - minY;
 
-        if (_width > DimensionCutoffSize || _height > DimensionCutoffSize)
-            throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_width}, H:{_height}");
+        if (_minimumBoundingBoxWidth > DimensionCutoffSize || _minimumBoundingBoxHeight > DimensionCutoffSize)
+            throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_minimumBoundingBoxWidth}, H:{_minimumBoundingBoxHeight}");
 
-        var totalNumberOfPoints = _width * _height;
+        var totalNumberOfPoints = _minimumBoundingBoxWidth * _minimumBoundingBoxHeight;
 
         if (totalNumberOfPoints > AreaCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
@@ -47,7 +47,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
 
         foreach (var levelPosition in points)
         {
-            var index = _width * (levelPosition.Y - minY) + (levelPosition.X - minX);
+            var index = _minimumBoundingBoxWidth * (levelPosition.Y - minY) + (levelPosition.X - minX);
             _levelPositions.SetBit(index);
         }
 
@@ -59,12 +59,12 @@ public sealed class PointSetLevelRegion : ILevelRegion
     {
         var newX = levelPosition.X - _offsetX;
         var newY = levelPosition.Y - _offsetY;
-        var index = _width * newY + newX;
+        var index = _minimumBoundingBoxWidth * newY + newX;
 
         return newX >= 0 &&
                newY >= 0 &&
-               newX < _width &&
-               newY < _height &&
+               newX < _minimumBoundingBoxWidth &&
+               newY < _minimumBoundingBoxHeight &&
                _levelPositions.GetBit(index);
     }
 

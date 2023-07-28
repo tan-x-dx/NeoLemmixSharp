@@ -5,8 +5,6 @@ namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class PlatformerAction : LemmingAction
 {
-    public const int NumberOfPlatformerAnimationFrames = 16;
-
     public static PlatformerAction Instance { get; } = new();
 
     private PlatformerAction()
@@ -15,7 +13,7 @@ public sealed class PlatformerAction : LemmingAction
 
     public override int Id => 8;
     public override string LemmingActionName => "platformer";
-    public override int NumberOfAnimationFrames => NumberOfPlatformerAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.PlatformerAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

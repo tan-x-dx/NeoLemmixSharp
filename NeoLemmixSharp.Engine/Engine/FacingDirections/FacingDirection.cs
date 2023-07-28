@@ -1,10 +1,27 @@
-﻿using NeoLemmixSharp.Engine.Engine.Orientations;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.Orientations;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.FacingDirections;
 
-public abstract class FacingDirection : IEquatable<FacingDirection>
+public abstract class FacingDirection : IEquatable<FacingDirection>, IUniqueIdItem
 {
+    private static readonly FacingDirection[] FacingDirections = GenerateFacingDirectionCollection();
+
+    public static ReadOnlySpan<FacingDirection> AllFacingDirections => new(FacingDirections);
+
+    private static FacingDirection[] GenerateFacingDirectionCollection()
+    {
+        var facingDirections = new FacingDirection[2];
+
+        facingDirections[RightFacingDirection.Instance.Id] = RightFacingDirection.Instance;
+        facingDirections[LeftFacingDirection.Instance.Id] = LeftFacingDirection.Instance;
+
+        ListValidatorMethods.ValidateUniqueIds(facingDirections);
+
+        return facingDirections;
+    }
+
     public abstract int DeltaX { get; }
     public abstract int Id { get; }
     public abstract FacingDirection OppositeDirection { get; }

@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Common.Rendering;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
@@ -8,6 +10,7 @@ using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Skills;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 using NeoLemmixSharp.Engine.Engine.Terrain.Masks;
+using NeoLemmixSharp.Engine.Engine.Timer;
 using NeoLemmixSharp.Engine.Engine.Updates;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Io.LevelReading.Data;
@@ -16,6 +19,8 @@ namespace NeoLemmixSharp.Engine.Engine;
 
 public sealed class LevelScreen : IBaseScreen
 {
+    public static LevelScreen Current { get; private set; }
+
     private readonly TerrainManager _terrain;
 
     private readonly SkillSetManager _skillSetManager;
@@ -46,6 +51,8 @@ public sealed class LevelScreen : IBaseScreen
     public LemmingSkill QueuedSkill { get; private set; } = NoneSkill.Instance;
     public Lemming? QueuedSkillLemming { get; private set; }
     public int QueuedSkillFrame { get; private set; }
+
+    public LevelTimer LevelTimer { get; } = new CountDownLevelTimer(1 * 60 + 15);
 
     public LevelScreen(
         LevelData levelData,
@@ -86,6 +93,7 @@ public sealed class LevelScreen : IBaseScreen
         LemmingSkill.SetTerrain(terrain);
         TerrainMask.SetTerrain(terrain);
         LevelCursor.LevelScreen = this;
+        Current = this;
     }
 
     IScreenRenderer IBaseScreen.ScreenRenderer => ScreenRenderer;
@@ -108,6 +116,8 @@ public sealed class LevelScreen : IBaseScreen
 
         if (!shouldTickLemmings)
             return;
+
+        LevelTimer.Tick();
 
         for (var i = 0; i < _gadgets.Length; i++)
         {
@@ -258,6 +268,7 @@ public sealed class LevelScreen : IBaseScreen
 
         ScreenRenderer.Dispose();
         GadgetCollections.ClearGadgets();
+        Current = null;
 #pragma warning restore CS8625
     }
     /*

@@ -2,8 +2,6 @@
 
 public sealed class DisarmerAction : LemmingAction
 {
-    public const int NumberOfDisarmerAnimationFrames = 16;
-
     public static DisarmerAction Instance { get; } = new();
 
     private DisarmerAction()
@@ -12,7 +10,7 @@ public sealed class DisarmerAction : LemmingAction
 
     public override int Id => 24;
     public override string LemmingActionName => "disarmer";
-    public override int NumberOfAnimationFrames => NumberOfDisarmerAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.DisarmerAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

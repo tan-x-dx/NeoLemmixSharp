@@ -34,7 +34,8 @@ public sealed class LevelRenderer : IScreenRenderer
     public LemmingSpriteBank LemmingSpriteBank { get; }
     public GadgetSpriteBank GadgetSpriteBank { get; }
 
-    public LevelRenderer(int levelWidth,
+    public LevelRenderer(
+        int levelWidth,
         int levelHeight,
         Engine.Viewport viewport,
         IBackgroundRenderer backgroundRenderer,
@@ -136,7 +137,10 @@ public sealed class LevelRenderer : IScreenRenderer
         _cursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
 
         _mouseCoords = $"({_viewport.ScreenMouseX},{_viewport.ScreenMouseY}) - ({_viewport.ViewportMouseX},{_viewport.ViewportMouseY})";
-        _fontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20);
+        _fontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20, 1, MenuFont.DefaultColor);
+
+        var levelTimer = LevelScreen.Current.LevelTimer;
+        _fontBank.PanelFont.RenderTextSpan(spriteBatch, levelTimer.AsSpan(), 20, 120, 4, levelTimer.FontColor);
     }
 
     public void OnWindowSizeChanged(int windowWidth, int windowHeight)

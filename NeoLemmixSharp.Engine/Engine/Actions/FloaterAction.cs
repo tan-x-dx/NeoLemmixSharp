@@ -4,8 +4,6 @@ namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class FloaterAction : LemmingAction
 {
-    public const int NumberOfFloaterAnimationFrames = 17;
-
     public static FloaterAction Instance { get; } = new();
 
     private readonly int[] _floaterFallTable =
@@ -19,7 +17,7 @@ public sealed class FloaterAction : LemmingAction
 
     public override int Id => 2;
     public override string LemmingActionName => "floater";
-    public override int NumberOfAnimationFrames => NumberOfFloaterAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.FloaterAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

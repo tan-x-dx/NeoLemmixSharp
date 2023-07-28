@@ -2,8 +2,6 @@
 
 public sealed class BlockerAction : LemmingAction
 {
-    public const int NumberOfBlockerAnimationFrames = 16;
-
     public static BlockerAction Instance { get; } = new();
 
     private BlockerAction()
@@ -12,7 +10,7 @@ public sealed class BlockerAction : LemmingAction
 
     public override int Id => 3;
     public override string LemmingActionName => "blocker";
-    public override int NumberOfAnimationFrames => NumberOfBlockerAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.BlockerAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

@@ -2,8 +2,6 @@
 
 public sealed class DehoisterAction : LemmingAction
 {
-    public const int NumberOfDehoisterAnimationFrames = 7;
-
     public static DehoisterAction Instance { get; } = new();
 
     private DehoisterAction()
@@ -12,7 +10,7 @@ public sealed class DehoisterAction : LemmingAction
 
     public override int Id => 22;
     public override string LemmingActionName => "dehoister";
-    public override int NumberOfAnimationFrames => NumberOfDehoisterAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.DehoisterAnimationFrames;
     public override bool IsOneTimeAction => true;
 
     public override bool UpdateLemming(Lemming lemming)

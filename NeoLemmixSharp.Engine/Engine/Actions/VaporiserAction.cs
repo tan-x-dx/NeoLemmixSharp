@@ -2,8 +2,6 @@
 
 public sealed class VaporiserAction : LemmingAction
 {
-    public const int NumberOfVaporiserAnimationFrames = 16;
-
     public static VaporiserAction Instance { get; } = new();
 
     private VaporiserAction()
@@ -12,7 +10,7 @@ public sealed class VaporiserAction : LemmingAction
 
     public override int Id => 30;
     public override string LemmingActionName => "burner2";
-    public override int NumberOfAnimationFrames => NumberOfVaporiserAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.VaporiserAnimationFrames;
     public override bool IsOneTimeAction => true;
 
     public override bool UpdateLemming(Lemming lemming)

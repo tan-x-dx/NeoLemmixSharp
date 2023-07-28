@@ -2,8 +2,6 @@
 
 public sealed class AscenderAction : LemmingAction
 {
-    public const int NumberOfAscenderAnimationFrames = 1;
-
     public static AscenderAction Instance { get; } = new();
 
     private AscenderAction()
@@ -12,7 +10,7 @@ public sealed class AscenderAction : LemmingAction
 
     public override int Id => 18;
     public override string LemmingActionName => "ascender";
-    public override int NumberOfAnimationFrames => NumberOfAscenderAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.AscenderAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

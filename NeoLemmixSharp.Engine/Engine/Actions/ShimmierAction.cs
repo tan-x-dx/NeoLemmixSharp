@@ -2,8 +2,6 @@
 
 public sealed class ShimmierAction : LemmingAction
 {
-    public const int NumberOfShimmierAnimationFrames = 20;
-
     public static ShimmierAction Instance { get; } = new();
 
     private ShimmierAction()
@@ -12,7 +10,7 @@ public sealed class ShimmierAction : LemmingAction
 
     public override int Id => 14;
     public override string LemmingActionName => "shimmier";
-    public override int NumberOfAnimationFrames => NumberOfShimmierAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.ShimmierAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
-public sealed class SimpleSet<T> : ICollection<T>
+public sealed class SimpleSet<T> : ICollection<T>, IReadOnlyCollection<T>
 {
     private readonly ISimpleHasher<T> _hasher;
     private readonly LargeBitArray _bits;
@@ -50,20 +50,20 @@ public sealed class SimpleSet<T> : ICollection<T>
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => new SimpleSetEnumerator(this);
     IEnumerator IEnumerable.GetEnumerator() => new SimpleSetEnumerator(this);
 
-    public sealed class SimpleSetEnumerator : IEnumerator<T>
+    public struct SimpleSetEnumerator : IEnumerator<T>
     {
         private readonly ISimpleHasher<T> _hasher;
-        private readonly LargeBitArray.ReferenceTypeEnumerator _bitIndices;
+        private LargeBitArray.Enumerator _bitEnumerator;
 
         public SimpleSetEnumerator(SimpleSet<T> set)
         {
             _hasher = set._hasher;
-            _bitIndices = new LargeBitArray.ReferenceTypeEnumerator(set._bits);
+            _bitEnumerator = set._bits.GetEnumerator();
         }
 
-        public bool MoveNext() => _bitIndices.MoveNext();
-        public void Reset() => _bitIndices.Reset();
-        public T Current => _hasher.Unhash(_bitIndices.Current);
+        public bool MoveNext() => _bitEnumerator.MoveNext();
+        public void Reset() => _bitEnumerator.Reset();
+        public T Current => _hasher.Unhash(_bitEnumerator.Current);
 
         void IDisposable.Dispose() { }
         object IEnumerator.Current => Current!;

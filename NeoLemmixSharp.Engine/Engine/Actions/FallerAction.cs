@@ -4,8 +4,7 @@ namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class FallerAction : LemmingAction
 {
-    public const int NumberOfFallerAnimationFrames = 4;
-    public const int MaxFallDistance = 62;
+    private const int MaxFallDistance = 62;
 
     public static FallerAction Instance { get; } = new();
 
@@ -15,7 +14,7 @@ public sealed class FallerAction : LemmingAction
 
     public override int Id => 17;
     public override string LemmingActionName => "faller";
-    public override int NumberOfAnimationFrames => NumberOfFallerAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.FallerAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

@@ -2,8 +2,6 @@
 
 public sealed class OhNoerAction : LemmingAction
 {
-    public const int NumberOfOhNoerAnimationFrames = 16;
-
     public static OhNoerAction Instance { get; } = new();
 
     private OhNoerAction()
@@ -12,7 +10,7 @@ public sealed class OhNoerAction : LemmingAction
 
     public override int Id => 27;
     public override string LemmingActionName => "ohnoer";
-    public override int NumberOfAnimationFrames => NumberOfOhNoerAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.OhNoerAnimationFrames;
     public override bool IsOneTimeAction => true;
 
     public override bool UpdateLemming(Lemming lemming)

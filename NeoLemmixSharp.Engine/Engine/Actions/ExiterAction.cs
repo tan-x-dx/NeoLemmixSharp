@@ -2,8 +2,6 @@
 
 public sealed class ExiterAction : LemmingAction
 {
-    public const int NumberOfExiterAnimationFrames = 8;
-
     public static ExiterAction Instance { get; } = new();
 
     private ExiterAction()
@@ -12,7 +10,7 @@ public sealed class ExiterAction : LemmingAction
 
     public override int Id => 25;
     public override string LemmingActionName => "exiter";
-    public override int NumberOfAnimationFrames => NumberOfExiterAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.ExiterAnimationFrames;
     public override bool IsOneTimeAction => true;
 
     public override bool UpdateLemming(Lemming lemming)

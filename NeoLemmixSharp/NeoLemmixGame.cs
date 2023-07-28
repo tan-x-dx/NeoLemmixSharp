@@ -4,7 +4,10 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.Actions;
+using NeoLemmixSharp.Engine.Engine.FacingDirections;
+using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Skills;
 using NeoLemmixSharp.Engine.Engine.Terrain.Masks;
 using NeoLemmixSharp.Engine.LevelBuilding;
@@ -17,7 +20,7 @@ namespace NeoLemmixSharp;
 public sealed class NeoLemmixGame : Game, IGameWindow
 {
     private readonly GraphicsDeviceManager _graphics;
-    private readonly TimeSpan _standardGameUps = TimeSpan.FromSeconds(1d / 51d);
+    private readonly TimeSpan _standardGameUps;
 
     private bool _isBorderless;
 
@@ -45,6 +48,8 @@ public sealed class NeoLemmixGame : Game, IGameWindow
         Window.IsBorderless = false;
 
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
+
+        _standardGameUps = TimeSpan.FromSeconds(1d / GameConstants.FramesPerSecond);
 
         IsFixedTimeStep = true;
         TargetElapsedTime = _standardGameUps;
@@ -92,7 +97,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
         //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\rotation test.nxlv";
         //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\render test.nxlv";
          "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\movement test.nxlv";
-       // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\object test.nxlv";
+        // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\object test.nxlv";
         // "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
         //   "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
         //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Lemmings\\Tricky\\05_Careless_clicking_costs_lives.nxlv";
@@ -122,9 +127,16 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
     private void InitialiseGameConstants()
     {
-        var numberOfActions = LemmingAction.AllActions.Count;
-        var numberOfSkills = LemmingSkill.AllLemmingSkills.Count;
-        Console.WriteLine("Loaded {0} skills. Loaded {1} actions", numberOfSkills, numberOfActions);
+        var numberOfFacingDirections = FacingDirection.AllFacingDirections.Length;
+        var numberOfOrientations = Orientation.AllOrientations.Length;
+        var numberOfActions = LemmingAction.AllLemmingActions.Length;
+        var numberOfSkills = LemmingSkill.AllLemmingSkills.Length;
+        Console.WriteLine(
+            "Loaded {0} facing directions. Loaded {1} orientations. Loaded {2} skills. Loaded {3} actions",
+            numberOfFacingDirections,
+            numberOfOrientations,
+            numberOfSkills,
+            numberOfActions);
 
         TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
         DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);

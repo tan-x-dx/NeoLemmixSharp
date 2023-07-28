@@ -8,8 +8,6 @@ namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class BasherAction : LemmingAction, IDestructionAction
 {
-    public const int NumberOfBasherAnimationFrames = 16;
-
     public static BasherAction Instance { get; } = new();
 
     private BasherAction()
@@ -18,7 +16,7 @@ public sealed class BasherAction : LemmingAction, IDestructionAction
 
     public override int Id => 5;
     public override string LemmingActionName => "basher";
-    public override int NumberOfAnimationFrames => NumberOfBasherAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.BasherAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)

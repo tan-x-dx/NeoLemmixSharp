@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 /// </summary>
 public sealed class SmallBitArray : IBitArray
 {
-    public const int Size = 8 * sizeof(uint);
+    public const int Size = 32;
 
     private uint _bits;
 

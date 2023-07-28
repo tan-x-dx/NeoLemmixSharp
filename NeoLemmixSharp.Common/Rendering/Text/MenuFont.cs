@@ -6,6 +6,8 @@ namespace NeoLemmixSharp.Common.Rendering.Text;
 
 public sealed class MenuFont : INeoLemmixFont
 {
+    public static Color DefaultColor { get; set; } = new(0x84, 0x7E, 0xFF);
+
     private const int GlyphWidth = 16;
     private const int GlyphHeight = 19;
 
@@ -25,19 +27,49 @@ public sealed class MenuFont : INeoLemmixFont
 
     public void RenderText(
         SpriteBatch spriteBatch,
-        IEnumerable<char> charactersToRender,
+        ReadOnlySpan<char> charactersToRender,
         int x,
         int y,
-        int scaleMultiplier)
+        int scaleMultiplier,
+        Color color)
     {
         var dest = new Rectangle(x, y, GlyphWidth * scaleMultiplier, GlyphHeight * scaleMultiplier);
-        foreach (var c in charactersToRender.Where(k => k > 31 && k < 127))
+        foreach (var c in charactersToRender)
         {
+            if (c <= 31 || c >= 127)
+                continue;
+
             var source = new Rectangle(GlyphWidth * (c - 33), 0, GlyphWidth, GlyphHeight);
             spriteBatch.Draw(
                 _texture,
                 dest,
                 source,
+                color,
+                RenderLayer);
+            dest.X += GlyphWidth * scaleMultiplier;
+        }
+    }
+
+    public void RenderTextSpan(
+        SpriteBatch spriteBatch,
+        ReadOnlySpan<int> charactersToRender,
+        int x,
+        int y,
+        int scaleMultiplier,
+        Color color)
+    {
+        var dest = new Rectangle(x, y, GlyphWidth * scaleMultiplier, GlyphHeight * scaleMultiplier);
+        foreach (var c in charactersToRender)
+        {
+            if (c <= 31 || c >= 127)
+                continue;
+
+            var source = new Rectangle(GlyphWidth * (c - 33), 0, GlyphWidth, GlyphHeight);
+            spriteBatch.Draw(
+                _texture,
+                dest,
+                source,
+                color,
                 RenderLayer);
             dest.X += GlyphWidth * scaleMultiplier;
         }

@@ -4,8 +4,6 @@ namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class WalkerAction : LemmingAction
 {
-    public const int NumberOfWalkerAnimationFrames = 8;
-
     public static WalkerAction Instance { get; } = new();
 
     private WalkerAction()
@@ -14,7 +12,7 @@ public sealed class WalkerAction : LemmingAction
 
     public override int Id => 0;
     public override string LemmingActionName => "walker";
-    public override int NumberOfAnimationFrames => NumberOfWalkerAnimationFrames;
+    public override int NumberOfAnimationFrames => GameConstants.WalkerAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)
