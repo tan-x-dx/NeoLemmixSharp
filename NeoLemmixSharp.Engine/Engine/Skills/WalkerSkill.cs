@@ -44,7 +44,7 @@ public sealed class WalkerSkill : LemmingSkill
         }
 
         // Turn around walking lem, if assigned a walker
-        lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection);
+        lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection());
 
         // Special treatment if in one-way-field facing the wrong direction
         // see http://www.lemmingsforums.net/index.php?topic=2640.0

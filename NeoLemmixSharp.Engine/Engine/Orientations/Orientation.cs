@@ -31,9 +31,16 @@ public abstract class Orientation : IEquatable<Orientation>, IUniqueIdItem
     }
 
     int IUniqueIdItem.Id => RotNum;
-    public abstract int RotNum { get; }
-    public abstract int AbsoluteHorizontalComponent { get; }
-    public abstract int AbsoluteVerticalComponent { get; }
+    public int RotNum { get; }
+    public int AbsoluteHorizontalComponent { get; }
+    public int AbsoluteVerticalComponent { get; }
+
+    protected Orientation(int rotNum, int absoluteHorizontalComponent, int absoluteVerticalComponent)
+    {
+        RotNum = rotNum;
+        AbsoluteHorizontalComponent = absoluteHorizontalComponent;
+        AbsoluteVerticalComponent = absoluteVerticalComponent;
+    }
 
     [Pure]
     public abstract LevelPosition TopLeftCornerOfLevel();

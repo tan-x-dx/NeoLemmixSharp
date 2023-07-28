@@ -7,13 +7,9 @@ public sealed class RightOrientation : Orientation
 {
     public static RightOrientation Instance { get; } = new();
 
-    private RightOrientation()
+    private RightOrientation() : base(3, 1, 0)
     {
     }
-
-    public override int RotNum => 3;
-    public override int AbsoluteHorizontalComponent => 1;
-    public override int AbsoluteVerticalComponent => 0;
 
     [Pure]
     public override LevelPosition TopLeftCornerOfLevel() => new(0, Terrain.Height);

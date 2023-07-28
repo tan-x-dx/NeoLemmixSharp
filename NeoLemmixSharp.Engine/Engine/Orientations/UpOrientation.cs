@@ -7,13 +7,9 @@ public sealed class UpOrientation : Orientation
 {
     public static UpOrientation Instance { get; } = new();
 
-    private UpOrientation()
+    private UpOrientation() : base(2, 0, -1)
     {
     }
-
-    public override int RotNum => 2;
-    public override int AbsoluteHorizontalComponent => 0;
-    public override int AbsoluteVerticalComponent => -1;
 
     [Pure]
     public override LevelPosition TopLeftCornerOfLevel() => new(Terrain.Width, Terrain.Height);
