@@ -5,33 +5,6 @@ namespace NeoLemmixSharp.Common.Util;
 
 public sealed class DihedralTransformation
 {
-    private static readonly DihedralTransformation[] Lookup = CreateLookup();
-
-    private static DihedralTransformation[] CreateLookup()
-    {
-        var result = new DihedralTransformation[8];
-
-        var dh0 = new DihedralTransformation(0, false);
-        var dh1 = new DihedralTransformation(1, false);
-        var dh2 = new DihedralTransformation(2, false);
-        var dh3 = new DihedralTransformation(3, false);
-        var dh4 = new DihedralTransformation(0, true);
-        var dh5 = new DihedralTransformation(1, true);
-        var dh6 = new DihedralTransformation(2, true);
-        var dh7 = new DihedralTransformation(3, true);
-
-        result[dh0.Key] = dh0;
-        result[dh1.Key] = dh1;
-        result[dh2.Key] = dh2;
-        result[dh3.Key] = dh3;
-        result[dh4.Key] = dh4;
-        result[dh5.Key] = dh5;
-        result[dh6.Key] = dh6;
-        result[dh7.Key] = dh7;
-
-        return result;
-    }
-
     public static DihedralTransformation GetForTransformation(
         bool flipHorizontally,
         bool flipVertically,
@@ -41,35 +14,20 @@ public sealed class DihedralTransformation
             ? 1
             : 0;
 
-        int flipNum;
         if (flipVertically)
         {
-            flipNum = flipHorizontally
-                ? 0
-                : 4;
+            flipHorizontally = !flipHorizontally;
             rotNum += 2;
         }
-        else
-        {
-            flipNum = flipHorizontally
-                ? 4
-                : 0;
-        }
 
-        var key = flipNum | rotNum;
-        return Lookup[key];
+        return new DihedralTransformation(rotNum, flipHorizontally);
     }
 
     public static DihedralTransformation GetForTransformation(
         bool flipHorizontally,
         int rotNum)
     {
-        var flipNum = flipHorizontally
-            ? 4
-            : 0;
-
-        var key = flipNum | rotNum;
-        return Lookup[key];
+        return new DihedralTransformation(rotNum, flipHorizontally);
     }
 
     private readonly int _r;
