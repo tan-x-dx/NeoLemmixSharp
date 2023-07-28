@@ -37,8 +37,6 @@ public sealed class DihedralTransformation
     private readonly int _f;
     private readonly int _m;
 
-    private int Key => _r | (_f << 2);
-
     private DihedralTransformation(int r, bool flip)
     {
         _r = r & 3;
