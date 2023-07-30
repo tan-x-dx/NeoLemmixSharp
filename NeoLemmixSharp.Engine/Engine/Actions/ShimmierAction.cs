@@ -132,7 +132,7 @@ public sealed class ShimmierAction : LemmingAction
 
         if (lemming.CurrentAction == ClimberAction.Instance)
         {
-            lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection);
+            lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection());
             lemmingPosition = orientation.MoveRight(lemmingPosition, lemming.FacingDirection.DeltaX);
             lemming.LevelPosition = lemmingPosition;
 
