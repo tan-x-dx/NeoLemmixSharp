@@ -7,9 +7,13 @@ public sealed class LeftOrientation : Orientation
 {
     public static LeftOrientation Instance { get; } = new();
 
-    private LeftOrientation() : base(1, -1, 0)
+    private LeftOrientation()
     {
     }
+
+    public override int RotNum => 1;
+    public override int AbsoluteHorizontalComponent => -1;
+    public override int AbsoluteVerticalComponent => 0;
 
     [Pure]
     public override LevelPosition TopLeftCornerOfLevel() => new(Terrain.Width, 0);

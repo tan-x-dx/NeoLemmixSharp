@@ -7,9 +7,13 @@ public sealed class DownOrientation : Orientation
 {
     public static DownOrientation Instance { get; } = new();
 
-    private DownOrientation() : base(0, 0, 1)
+    private DownOrientation()
     {
     }
+
+    public override int RotNum => 0;
+    public override int AbsoluteHorizontalComponent => 0;
+    public override int AbsoluteVerticalComponent => 1;
 
     [Pure]
     public override LevelPosition TopLeftCornerOfLevel() => new(0, 0);

@@ -7,12 +7,14 @@ public sealed class LeftFacingDirection : FacingDirection
 {
     public static LeftFacingDirection Instance { get; } = new();
 
-    private LeftFacingDirection() : base(1, -1)
+    private LeftFacingDirection()
     {
     }
 
-    [Pure]
-    public override FacingDirection OppositeDirection() => RightFacingDirection.Instance;
+    public override int DeltaX => -1;
+    public override int Id => 1;
+
+    public override FacingDirection OppositeDirection => RightFacingDirection.Instance;
     [Pure]
     public override Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.RotateClockwise();
 
