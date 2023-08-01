@@ -91,7 +91,7 @@ public sealed class LevelScreen : IBaseScreen
         Orientation.SetTerrain(terrain);
         LemmingAction.SetTerrain(terrain);
         LemmingSkill.SetTerrain(terrain);
-        TerrainMask.SetTerrain(terrain);
+        TerrainEraseMask.SetTerrain(terrain);
         LevelCursor.LevelScreen = this;
         Current = this;
     }
@@ -263,7 +263,7 @@ public sealed class LevelScreen : IBaseScreen
         Orientation.SetTerrain(null);
         LemmingAction.SetTerrain(null);
         LemmingSkill.SetTerrain(null);
-        TerrainMask.SetTerrain(null);
+        TerrainEraseMask.SetTerrain(null);
         LevelCursor.LevelScreen = null;
 
         ScreenRenderer.Dispose();

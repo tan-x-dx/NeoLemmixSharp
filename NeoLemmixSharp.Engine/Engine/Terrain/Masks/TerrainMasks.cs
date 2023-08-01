@@ -4,70 +4,27 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
 using System.Runtime.CompilerServices;
-using MaskCreator = NeoLemmixSharp.Engine.Rendering.Viewport.SpriteRotationReflectionProcessor<NeoLemmixSharp.Engine.Engine.Terrain.Masks.TerrainMaskTextureReader>;
 
 namespace NeoLemmixSharp.Engine.Engine.Terrain.Masks;
-
-public sealed class TerrainMask
-{
-#pragma warning disable CS8618
-    private static TerrainManager _terrainManager;
-#pragma warning restore CS8618
-
-    private readonly IDestructionAction _destructionAction;
-    private readonly LevelPosition _anchorPoint;
-    private readonly LevelPosition[] _mask;
-
-    public TerrainMask(
-        IDestructionAction destructionAction,
-        LevelPosition anchorPoint,
-        LevelPosition[] mask)
-    {
-        _destructionAction = destructionAction;
-        _anchorPoint = anchorPoint;
-        _mask = mask;
-    }
-
-    public void ApplyEraseMask(
-        Orientation orientation,
-        FacingDirection facingDirection,
-        LevelPosition position)
-    {
-        var offset = position - _anchorPoint;
-
-        for (var i = 0; i < _mask.Length; i++)
-        {
-            var pixel = _mask[i];
-
-            pixel += offset;
-
-            _terrainManager.ErasePixel(orientation, _destructionAction, facingDirection, pixel);
-        }
-    }
-
-    public static void SetTerrain(TerrainManager manager)
-    {
-        _terrainManager = manager;
-    }
-}
 
 public static class TerrainMasks
 {
 #pragma warning disable CS8618
-    private static TerrainMask[] _basherMasks;
-    private static TerrainMask[] _bomberMasks;
-    private static TerrainMask[] _fencerMasks;
-    private static TerrainMask[] _laserMasks;
-    private static TerrainMask[] _minerMasks;
-    private static TerrainMask[] _stonerMasks;
+    private static TerrainEraseMask[] _basherMasks;
+    private static TerrainEraseMask[] _bomberMasks;
+    private static TerrainEraseMask[] _fencerMasks;
+    private static TerrainEraseMask[] _laserMasks;
+    private static TerrainEraseMask[] _minerMasks;
+    private static TerrainEraseMask[] _stonerMasks;
 #pragma warning restore CS8618
 
     public static void InitialiseTerrainMasks(
         ContentManager contentManager,
         GraphicsDevice graphicsDevice)
     {
-        var maskCreator = new MaskCreator(graphicsDevice);
+        var maskCreator = new SpriteRotationReflectionProcessor<TerrainMaskTextureReader>(graphicsDevice);
 
         _basherMasks = CreateTerrainMaskArray(
             BasherAction.Instance,
@@ -105,7 +62,7 @@ public static class TerrainMasks
              new LevelPosition(16, 25),
              1);*/
 
-        TerrainMask[] CreateTerrainMaskArray(
+        TerrainEraseMask[] CreateTerrainMaskArray(
             IDestructionAction destructionAction,
             string actionName,
             LevelPosition anchorPoint,
@@ -121,9 +78,9 @@ public static class TerrainMasks
         }
     }
 
-    private static TerrainMask[] CreateTerrainMasks(
+    private static TerrainEraseMask[] CreateTerrainMasks(
         ContentManager contentManager,
-        MaskCreator maskCreator,
+        SpriteRotationReflectionProcessor<TerrainMaskTextureReader> maskCreator,
         IDestructionAction destructionAction,
         string actionName,
         LevelPosition anchorPoint,
@@ -149,7 +106,7 @@ public static class TerrainMasks
                                    Orientation.AllOrientations.Length *
                                    FacingDirection.AllFacingDirections.Length;
 
-        var result = new TerrainMask[numberOfTerrainMasks];
+        var result = new TerrainEraseMask[numberOfTerrainMasks];
 
         for (var f = 0; f < numberOfFrames; f++)
         {
@@ -195,7 +152,7 @@ public static class TerrainMasks
         return (orientation.RotNum << 1) | facingDirection.Id;
     }
 
-    private static MaskCreator.ItemCreator CreateTerrainMaskFromTexture(IDestructionAction destructionAction)
+    private static SpriteRotationReflectionProcessor<TerrainMaskTextureReader>.ItemCreator CreateTerrainMaskFromTexture(IDestructionAction destructionAction)
     {
         // Currying is such fun...
         return (t, w, h, f, _, p) => new TerrainMaskTextureReader(t, destructionAction, w, h, f, p);
@@ -289,12 +246,11 @@ public static class TerrainMasks
         var key = GetKey(orientation, facingDirection, frame);
         _stonerMasks[key].ApplyEraseMask(orientation, facingDirection, position);
     }
-
 }
 
 public sealed class TerrainMaskTextureReader
 {
-    private readonly TerrainMask[] _terrainMasks;
+    private readonly TerrainEraseMask[] _terrainMasks;
 
     public TerrainMaskTextureReader(
         Texture2D texture,
@@ -304,7 +260,7 @@ public sealed class TerrainMaskTextureReader
         int numberOfFrames,
         LevelPosition anchorPoint)
     {
-        _terrainMasks = new TerrainMask[numberOfFrames];
+        _terrainMasks = new TerrainEraseMask[numberOfFrames];
 
         ReadTerrainMasks(
             texture,
@@ -315,7 +271,7 @@ public sealed class TerrainMaskTextureReader
             anchorPoint);
     }
 
-    public TerrainMask TerrainMaskForFrame(int frame)
+    public TerrainEraseMask TerrainMaskForFrame(int frame)
     {
         return _terrainMasks[frame];
     }
@@ -352,7 +308,7 @@ public sealed class TerrainMaskTextureReader
                 }
             }
 
-            _terrainMasks[f] = new TerrainMask(destructionAction, anchorPoint, levelPositions.ToArray());
+            _terrainMasks[f] = new TerrainEraseMask(destructionAction, anchorPoint, levelPositions.ToArray());
             levelPositions.Clear();
         }
 
