@@ -8,7 +8,7 @@ public sealed class SplatterAction : LemmingAction
     {
     }
 
-    public override int Id => 28;
+    public override int Id => GameConstants.SplatterActionId;
     public override string LemmingActionName => "splatter";
     public override int NumberOfAnimationFrames => GameConstants.SplatterAnimationFrames;
     public override bool IsOneTimeAction => true;

@@ -10,7 +10,7 @@ public sealed class WalkerSkill : LemmingSkill
     {
     }
 
-    public override int Id => 0;
+    public override int Id => GameConstants.WalkerSkillId;
     public override string LemmingSkillName => "walker";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;

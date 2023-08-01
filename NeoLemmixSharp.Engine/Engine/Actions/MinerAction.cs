@@ -15,7 +15,7 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
     {
     }
 
-    public override int Id => 6;
+    public override int Id => GameConstants.MinerActionId;
     public override string LemmingActionName => "miner";
     public override int NumberOfAnimationFrames => GameConstants.MinerAnimationFrames;
     public override bool IsOneTimeAction => false;

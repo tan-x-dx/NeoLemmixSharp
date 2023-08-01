@@ -10,7 +10,7 @@ public sealed class BlockerSkill : LemmingSkill
     {
     }
 
-    public override int Id => 3;
+    public override int Id => GameConstants.BlockerSkillId;
     public override string LemmingSkillName => "blocker";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => true;

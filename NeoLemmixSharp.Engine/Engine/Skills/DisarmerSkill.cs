@@ -10,7 +10,7 @@ public sealed class DisarmerSkill : LemmingSkill
     {
     }
 
-    public override int Id => 18;
+    public override int Id => GameConstants.DisarmerSkillId;
     public override string LemmingSkillName => "disarmer";
     public override bool IsPermanentSkill => true;
     public override bool IsClassicSkill => false;

@@ -10,7 +10,7 @@ public sealed class JumperSkill : LemmingSkill
     {
     }
 
-    public override int Id => 13;
+    public override int Id => GameConstants.JumperSkillId;
     public override string LemmingSkillName => "jumper";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;

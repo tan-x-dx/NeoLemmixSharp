@@ -8,7 +8,7 @@ public sealed class GliderAction : LemmingAction
     {
     }
 
-    public override int Id => 11;
+    public override int Id => GameConstants.GliderActionId;
     public override string LemmingActionName => "glider";
     public override int NumberOfAnimationFrames => GameConstants.GliderAnimationFrames;
     public override bool IsOneTimeAction => false;

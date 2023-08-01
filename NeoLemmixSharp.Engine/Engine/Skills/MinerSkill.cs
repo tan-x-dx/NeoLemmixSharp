@@ -11,7 +11,7 @@ public sealed class MinerSkill : LemmingSkill
     }
 
 
-    public override int Id => 7;
+    public override int Id => GameConstants.MinerSkillId;
     public override string LemmingSkillName => "miner";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => true;

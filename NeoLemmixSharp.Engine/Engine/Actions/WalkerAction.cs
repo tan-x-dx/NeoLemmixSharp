@@ -10,7 +10,7 @@ public sealed class WalkerAction : LemmingAction
     {
     }
 
-    public override int Id => 0;
+    public override int Id => GameConstants.WalkerActionId;
     public override string LemmingActionName => "walker";
     public override int NumberOfAnimationFrames => GameConstants.WalkerAnimationFrames;
     public override bool IsOneTimeAction => false;

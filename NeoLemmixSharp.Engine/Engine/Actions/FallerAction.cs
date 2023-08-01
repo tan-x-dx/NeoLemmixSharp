@@ -12,7 +12,7 @@ public sealed class FallerAction : LemmingAction
     {
     }
 
-    public override int Id => 17;
+    public override int Id => GameConstants.FallerActionId;
     public override string LemmingActionName => "faller";
     public override int NumberOfAnimationFrames => GameConstants.FallerAnimationFrames;
     public override bool IsOneTimeAction => false;

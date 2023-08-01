@@ -10,7 +10,7 @@ public sealed class DiggerSkill : LemmingSkill
     {
     }
 
-    public override int Id => 8;
+    public override int Id => GameConstants.DiggerSkillId;
     public override string LemmingSkillName => "digger";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => true;

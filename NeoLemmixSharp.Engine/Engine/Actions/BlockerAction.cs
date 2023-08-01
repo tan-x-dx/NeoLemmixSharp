@@ -8,7 +8,7 @@ public sealed class BlockerAction : LemmingAction
     {
     }
 
-    public override int Id => 3;
+    public override int Id => GameConstants.BlockerActionId;
     public override string LemmingActionName => "blocker";
     public override int NumberOfAnimationFrames => GameConstants.BlockerAnimationFrames;
     public override bool IsOneTimeAction => false;

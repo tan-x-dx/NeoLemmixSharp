@@ -8,7 +8,7 @@ public sealed class ExiterAction : LemmingAction
     {
     }
 
-    public override int Id => 25;
+    public override int Id => GameConstants.ExiterActionId;
     public override string LemmingActionName => "exiter";
     public override int NumberOfAnimationFrames => GameConstants.ExiterAnimationFrames;
     public override bool IsOneTimeAction => true;

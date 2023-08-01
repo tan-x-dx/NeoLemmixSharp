@@ -8,7 +8,7 @@ public sealed class DehoisterAction : LemmingAction
     {
     }
 
-    public override int Id => 22;
+    public override int Id => GameConstants.DehoisterActionId;
     public override string LemmingActionName => "dehoister";
     public override int NumberOfAnimationFrames => GameConstants.DehoisterAnimationFrames;
     public override bool IsOneTimeAction => true;

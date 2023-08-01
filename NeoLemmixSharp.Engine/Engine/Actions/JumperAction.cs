@@ -8,7 +8,7 @@ public sealed class JumperAction : LemmingAction
     {
     }
 
-    public override int Id => 12;
+    public override int Id => GameConstants.JumperActionId;
     public override string LemmingActionName => "jumper";
     public override int NumberOfAnimationFrames => GameConstants.JumperAnimationFrames;
     public override bool IsOneTimeAction => false;

@@ -11,7 +11,7 @@ public sealed class PlatformerAction : LemmingAction
     {
     }
 
-    public override int Id => 8;
+    public override int Id => GameConstants.PlatformerActionId;
     public override string LemmingActionName => "platformer";
     public override int NumberOfAnimationFrames => GameConstants.PlatformerAnimationFrames;
     public override bool IsOneTimeAction => false;

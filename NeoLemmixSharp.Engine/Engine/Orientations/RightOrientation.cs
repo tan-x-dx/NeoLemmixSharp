@@ -11,7 +11,7 @@ public sealed class RightOrientation : Orientation
     {
     }
 
-    public override int RotNum => 3;
+    public override int RotNum => GameConstants.RightOrientationRotNum;
     public override int AbsoluteHorizontalComponent => 1;
     public override int AbsoluteVerticalComponent => 0;
 
