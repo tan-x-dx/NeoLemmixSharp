@@ -212,19 +212,19 @@ public static class TerrainMasks
     }
 
     /// <summary>
-    /// The miner mask is usually centered at the feet of the lemming. The adjustment parameter changes the position of the miner mask relative to this
+    /// The miner mask is usually centered at the feet of the lemming. The offset parameters changes the position of the miner mask relative to this
     /// </summary>
     public static void ApplyMinerMask(
         Lemming lemming,
-        LevelPosition adjustment,
+        int offsetX,
+        int offsetY,
         int frame)
     {
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
         var dx = facingDirection.DeltaX;
         var position = lemming.LevelPosition;
-        position = orientation.Move(position, dx, -frame);
-        position = orientation.Move(position, adjustment);
+        position = orientation.Move(position, offsetX + dx, offsetY - frame);
 
         var key = GetKey(orientation, facingDirection, frame);
         _minerMasks[key].ApplyEraseMask(orientation, facingDirection, position);
