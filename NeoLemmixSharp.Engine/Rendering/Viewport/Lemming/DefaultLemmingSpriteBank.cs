@@ -4,7 +4,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
-using System.Runtime.CompilerServices;
 using ActionSpriteCreator = NeoLemmixSharp.Engine.Rendering.Viewport.SpriteRotationReflectionProcessor<NeoLemmixSharp.Engine.Rendering.Viewport.Lemming.ActionSprite>;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
@@ -65,35 +64,30 @@ public static class DefaultLemmingSpriteBank
                 (t, w, h, f, l, p) => new SingleColourLayerActionSprite(t, w, h, f, l, p));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void CreateThreeLayerSprite(LemmingAction action, LevelPosition anchorPoint)
         {
             CreateSprite(action, anchorPoint, 3,
                 (t, w, h, f, l, p) => new ThreeLayerActionSprite(t, w, h, f, l, p));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void CreateFourLayerSprite(LemmingAction action, LevelPosition anchorPoint)
         {
             CreateSprite(action, anchorPoint, 4,
                 (t, w, h, f, l, p) => new FourLayerActionSprite(t, w, h, f, l, p));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void CreateFourLayerTrueColourSprite(LemmingAction action, LevelPosition anchorPoint)
         {
             CreateSprite(action, anchorPoint, 4,
                 (t, w, h, f, l, p) => new FourLayerColourActionSprite(t, w, h, f, l, p));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void CreateFiveLayerTrueColourSprite(LemmingAction action, LevelPosition anchorPoint)
         {
             CreateSprite(action, anchorPoint, 5,
                 (t, w, h, f, l, p) => new FiveLayerColourActionSprite(t, w, h, f, l, p));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void CreateSprite(
             LemmingAction action,
             LevelPosition anchorPoint,
@@ -103,7 +97,7 @@ public static class DefaultLemmingSpriteBank
             CreateActionSprites(
                 contentManager,
                 spriteRotationReflectionProcessor,
-                actionSprites,
+                new Span<ActionSprite>(actionSprites),
                 action,
                 numberOfLayers,
                 anchorPoint,
@@ -114,7 +108,7 @@ public static class DefaultLemmingSpriteBank
     private static void CreateActionSprites(
         ContentManager contentManager,
         ActionSpriteCreator spriteRotationReflectionProcessor,
-        ActionSprite[] actionSprites,
+        Span<ActionSprite> actionSprites,
         LemmingAction action,
         int numberOfLayers,
         LevelPosition anchorPoint,

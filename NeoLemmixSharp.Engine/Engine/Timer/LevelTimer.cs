@@ -41,6 +41,7 @@ public abstract class LevelTimer
 
     public ReadOnlySpan<int> AsSpan() => new(Chars);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void UpdateCountUpString(
         int elapsedSeconds,
         bool partialUpdate = true)
@@ -48,6 +49,7 @@ public abstract class LevelTimer
         UpdateTimerString(elapsedSeconds, 0, 0, 0, 0, partialUpdate);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void UpdateCountDownString(
         int elapsedSeconds,
         bool partialUpdate = true)

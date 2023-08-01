@@ -55,22 +55,16 @@ public sealed class FallerAction : LemmingAction
             }
         }
 
-        if (lemming.DistanceFallen > MaxFallDistance)
-        {
-            lemming.DistanceFallen = MaxFallDistance + 1;
-        }
+        lemming.DistanceFallen = Math.Min(lemming.DistanceFallen, MaxFallDistance + 1);
+        lemming.TrueDistanceFallen = Math.Min(lemming.TrueDistanceFallen, MaxFallDistance + 1);
 
-        if (lemming.TrueDistanceFallen > MaxFallDistance)
-        {
-            lemming.TrueDistanceFallen = MaxFallDistance + 1;
-        }
+        if (currentFallDistanceStep >= maxFallDistanceStep)
+            return true;
 
-        if (currentFallDistanceStep < maxFallDistanceStep)
-        {
-            lemming.SetNextAction(IsFallFatal(lemming)
-                ? SplatterAction.Instance
-                : WalkerAction.Instance);
-        }
+        LemmingAction nextAction = IsFallFatal(lemming)
+            ? SplatterAction.Instance
+            : WalkerAction.Instance;
+        lemming.SetNextAction(nextAction);
 
         return true;
     }
@@ -109,7 +103,7 @@ public sealed class FallerAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        // for Swimming it's set in HandleSwimming as there is no single universal value
+        // For Swimmers it's handled by the SwimmerAction as there is no single universal value
         var currentAction = lemming.CurrentAction;
 
         if (currentAction == WalkerAction.Instance ||
