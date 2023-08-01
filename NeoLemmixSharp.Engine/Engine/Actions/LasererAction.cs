@@ -135,8 +135,8 @@ HitTestConclusive:
     private ReadOnlySpan<LevelPosition> GetOffsetChecks(FacingDirection facingDirection)
     {
         return facingDirection == RightFacingDirection.Instance
-            ? _offsetChecksRight
-            : _offsetChecksLeft;
+            ? new ReadOnlySpan<LevelPosition>(_offsetChecksRight)
+            : new ReadOnlySpan<LevelPosition>(_offsetChecksLeft);
     }
 
     private LaserHitType CheckForHit(
@@ -150,21 +150,17 @@ HitTestConclusive:
 
         var result = LaserHitType.None;
 
-        for (var i = 0; i < offsetChecks.Length; i++)
+        foreach (var position in offsetChecks)
         {
-            var checkLevelPosition = orientation.Move(target, offsetChecks[i]);
+            var checkLevelPosition = orientation.Move(target, position);
 
-            if (Terrain.PixelIsSolidToLemming(orientation, checkLevelPosition))
-            {
-                if (Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, checkLevelPosition) && result != LaserHitType.Solid)
-                {
-                    result = LaserHitType.Indestructible;
-                }
-                else
-                {
-                    result = LaserHitType.Solid;
-                }
-            }
+            if (!Terrain.PixelIsSolidToLemming(orientation, checkLevelPosition))
+                continue;
+
+            result = result != LaserHitType.Solid &&
+                     Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, checkLevelPosition)
+                ? LaserHitType.Indestructible
+                : LaserHitType.Solid;
         }
 
         return result;
