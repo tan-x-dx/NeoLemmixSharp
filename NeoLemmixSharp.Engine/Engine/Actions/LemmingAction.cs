@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 
@@ -137,4 +138,18 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
 
         return result;
     }
+}
+
+public sealed class SimpleLemmingActionHasher : ISimpleHasher<LemmingAction>
+{
+    public static SimpleLemmingActionHasher Instance { get; } = new();
+
+    private SimpleLemmingActionHasher()
+    {
+    }
+
+    public int NumberOfItems => LemmingAction.AllLemmingActions.Length;
+
+    public int Hash(LemmingAction lemmingAction) => lemmingAction.Id;
+    public LemmingAction Unhash(int hash) => LemmingAction.AllLemmingActions[hash];
 }

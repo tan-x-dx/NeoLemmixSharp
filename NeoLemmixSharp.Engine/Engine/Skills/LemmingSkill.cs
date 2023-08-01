@@ -63,17 +63,16 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
         Terrain = terrain;
     }
 
-    private readonly LargeBitArray _assignableActionIds;
+    private readonly SimpleSet<LemmingAction> _assignableActions;
 
     protected LemmingSkill()
     {
-        var numberOfActions = LemmingAction.AllLemmingActions.Length;
-        _assignableActionIds = new LargeBitArray(numberOfActions);
+        _assignableActions = new SimpleSet<LemmingAction>(SimpleLemmingActionHasher.Instance);
 
         // ReSharper disable once VirtualMemberCallInConstructor
         foreach (var action in ActionsThatCanBeAssigned())
         {
-            _assignableActionIds.SetBit(action.Id);
+            _assignableActions.Add(action);
         }
     }
 
@@ -92,7 +91,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
     [Pure]
     protected bool ActionIsAssignable(Lemming lemming)
     {
-        return _assignableActionIds.GetBit(lemming.CurrentAction.Id);
+        return _assignableActions.Contains(lemming.CurrentAction);
     }
 
     public abstract bool AssignToLemming(Lemming lemming);
@@ -132,4 +131,18 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
         yield return SwimmerAction.Instance;
         yield return WalkerAction.Instance;
     }
+}
+
+public sealed class SimpleLemmingSkillHasher : ISimpleHasher<LemmingSkill>
+{
+    public static SimpleLemmingSkillHasher Instance { get; } = new();
+
+    private SimpleLemmingSkillHasher()
+    {
+    }
+
+    public int NumberOfItems => LemmingSkill.AllLemmingSkills.Length;
+
+    public int Hash(LemmingSkill lemmingSkill) => lemmingSkill.Id;
+    public LemmingSkill Unhash(int hash) => LemmingSkill.AllLemmingSkills[hash];
 }
