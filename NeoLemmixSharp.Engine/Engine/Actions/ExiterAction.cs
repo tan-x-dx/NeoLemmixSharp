@@ -15,7 +15,7 @@ public sealed class ExiterAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        return false;
+        throw new NotImplementedException();
     }
 
     /*

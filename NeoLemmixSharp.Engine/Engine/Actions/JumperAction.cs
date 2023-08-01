@@ -15,7 +15,7 @@ public sealed class JumperAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        return false;
+        throw new NotImplementedException();
     }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)

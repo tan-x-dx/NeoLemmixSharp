@@ -63,7 +63,6 @@ public sealed class WalkerSkill : LemmingSkill
         }
 
         WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
-
         return true;
     }
 

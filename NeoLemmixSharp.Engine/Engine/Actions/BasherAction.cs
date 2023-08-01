@@ -21,7 +21,7 @@ public sealed class BasherAction : LemmingAction, IDestructionAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        return false;
+        throw new NotImplementedException();
     }
 
     private bool BasherIndestructibleCheck(

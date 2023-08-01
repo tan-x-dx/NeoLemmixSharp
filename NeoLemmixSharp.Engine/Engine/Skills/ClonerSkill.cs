@@ -17,12 +17,7 @@ public sealed class ClonerSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        // Inc(LemmingsCloned);
-
-
-
-
-        return true;
+        throw new NotImplementedException();
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

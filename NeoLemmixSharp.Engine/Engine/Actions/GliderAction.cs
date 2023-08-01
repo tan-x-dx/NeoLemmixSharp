@@ -15,7 +15,7 @@ public sealed class GliderAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        return true;
+        throw new NotImplementedException();
     }
 
     private static bool DoTurnAround(Lemming lemming, bool moveForwardFirst)

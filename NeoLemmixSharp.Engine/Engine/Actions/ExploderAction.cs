@@ -20,7 +20,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        return false;
+        throw new NotImplementedException();
     }
 
     [Pure]

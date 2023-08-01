@@ -23,7 +23,7 @@ public sealed class StonerSkill : LemmingSkill
             lemming.LemHideCountdown : = True;
             */
 
-        return true;
+        throw new NotImplementedException();
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();

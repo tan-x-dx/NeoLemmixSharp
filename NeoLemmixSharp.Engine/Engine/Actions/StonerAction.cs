@@ -15,6 +15,6 @@ public sealed class StonerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        return true;
+        throw new NotImplementedException();
     }
 }

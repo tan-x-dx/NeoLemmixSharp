@@ -23,7 +23,7 @@ public sealed class BomberSkill : LemmingSkill
             lemming.HideCountdown : = True;
             */
 
-        return true;
+        throw new NotImplementedException();
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();

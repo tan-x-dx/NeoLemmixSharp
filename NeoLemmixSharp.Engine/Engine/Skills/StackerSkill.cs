@@ -21,7 +21,6 @@ public sealed class StackerSkill : LemmingSkill
         lemming.StackLow = !Terrain.PixelIsSolidToLemming(lemming.Orientation, lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX));
 
         StackerAction.Instance.TransitionLemmingToAction(lemming, false);
-
         return true;
     }
 

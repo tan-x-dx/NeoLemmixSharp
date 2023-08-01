@@ -23,7 +23,6 @@ public sealed class SliderSkill : LemmingSkill
     public override bool AssignToLemming(Lemming lemming)
     {
         lemming.IsSlider = true;
-
         return true;
     }
 
