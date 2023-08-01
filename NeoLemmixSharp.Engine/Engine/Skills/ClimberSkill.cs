@@ -10,7 +10,7 @@ public sealed class ClimberSkill : LemmingSkill
     {
     }
 
-    public override int Id => 1;
+    public override int Id => GameConstants.ClimberSkillId;
     public override string LemmingSkillName => "climber";
     public override bool IsPermanentSkill => true;
     public override bool IsClassicSkill => true;

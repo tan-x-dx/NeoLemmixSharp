@@ -11,7 +11,7 @@ public sealed class UpOrientation : Orientation
     {
     }
 
-    public override int RotNum => 2;
+    public override int RotNum => GameConstants.UpOrientationRotNum;
     public override int AbsoluteHorizontalComponent => 0;
     public override int AbsoluteVerticalComponent => -1;
 

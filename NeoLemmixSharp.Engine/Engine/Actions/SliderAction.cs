@@ -12,7 +12,7 @@ public sealed class SliderAction : LemmingAction
     {
     }
 
-    public override int Id => 16;
+    public override int Id => GameConstants.SliderActionId;
     public override string LemmingActionName => "slider";
     public override int NumberOfAnimationFrames => GameConstants.SliderAnimationFrames;
     public override bool IsOneTimeAction => false;

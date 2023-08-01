@@ -10,7 +10,7 @@ public sealed class WalkerSkill : LemmingSkill
     {
     }
 
-    public override int Id => 0;
+    public override int Id => GameConstants.WalkerSkillId;
     public override string LemmingSkillName => "walker";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;
@@ -44,7 +44,7 @@ public sealed class WalkerSkill : LemmingSkill
         }
 
         // Turn around walking lem, if assigned a walker
-        lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection);
+        lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection());
 
         // Special treatment if in one-way-field facing the wrong direction
         // see http://www.lemmingsforums.net/index.php?topic=2640.0
@@ -63,7 +63,6 @@ public sealed class WalkerSkill : LemmingSkill
         }
 
         WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
-
         return true;
     }
 

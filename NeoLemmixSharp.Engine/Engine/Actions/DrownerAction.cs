@@ -10,7 +10,7 @@ public sealed class DrownerAction : LemmingAction
     {
     }
 
-    public override int Id => 20;
+    public override int Id => GameConstants.DrownerActionId;
     public override string LemmingActionName => "drowner";
     public override int NumberOfAnimationFrames => GameConstants.DrownerAnimationFrames;
     public override bool IsOneTimeAction => true;

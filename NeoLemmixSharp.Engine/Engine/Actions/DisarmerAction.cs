@@ -8,7 +8,7 @@ public sealed class DisarmerAction : LemmingAction
     {
     }
 
-    public override int Id => 24;
+    public override int Id => GameConstants.DisarmerActionId;
     public override string LemmingActionName => "disarmer";
     public override int NumberOfAnimationFrames => GameConstants.DisarmerAnimationFrames;
     public override bool IsOneTimeAction => false;

@@ -13,7 +13,7 @@ public sealed class SwimmerAction : LemmingAction
     {
     }
 
-    public override int Id => 13;
+    public override int Id => GameConstants.SwimmerActionId;
     public override string LemmingActionName => "swimmer";
     public override int NumberOfAnimationFrames => GameConstants.SwimmerAnimationFrames;
     public override bool IsOneTimeAction => false;
@@ -75,7 +75,7 @@ public sealed class SwimmerAction : LemmingAction
                 }
 
 
-                lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection);
+                lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection());
                 lemmingPosition = orientation.MoveLeft(lemmingPosition, dx); // Move lemming back
                 lemming.LevelPosition = lemmingPosition;
 

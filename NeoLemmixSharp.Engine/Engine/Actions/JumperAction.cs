@@ -8,14 +8,14 @@ public sealed class JumperAction : LemmingAction
     {
     }
 
-    public override int Id => 12;
+    public override int Id => GameConstants.JumperActionId;
     public override string LemmingActionName => "jumper";
     public override int NumberOfAnimationFrames => GameConstants.JumperAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        return false;
+        throw new NotImplementedException();
     }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
@@ -23,7 +23,7 @@ public sealed class JumperAction : LemmingAction
         if (lemming.CurrentAction == ClimberAction.Instance ||
             lemming.CurrentAction == SliderAction.Instance)
         {
-            lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection);
+            lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection());
             lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX);
         }
 

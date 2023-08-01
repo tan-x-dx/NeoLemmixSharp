@@ -13,14 +13,14 @@ public sealed class ExploderAction : LemmingAction, IDestructionAction
     {
     }
 
-    public override int Id => 26;
+    public override int Id => GameConstants.ExploderActionId;
     public override string LemmingActionName => "bomber";
     public override int NumberOfAnimationFrames => GameConstants.ExploderAnimationFrames;
     public override bool IsOneTimeAction => true;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        return false;
+        throw new NotImplementedException();
     }
 
     [Pure]

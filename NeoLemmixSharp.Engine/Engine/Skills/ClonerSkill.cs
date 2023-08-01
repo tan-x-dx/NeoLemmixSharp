@@ -10,19 +10,14 @@ public sealed class ClonerSkill : LemmingSkill
     {
     }
 
-    public override int Id => 20;
+    public override int Id => GameConstants.ClonerSkillId;
     public override string LemmingSkillName => "cloner";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        // Inc(LemmingsCloned);
-
-
-
-
-        return true;
+        throw new NotImplementedException();
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

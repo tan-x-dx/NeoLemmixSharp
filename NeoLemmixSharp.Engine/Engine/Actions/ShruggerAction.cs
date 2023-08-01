@@ -8,7 +8,7 @@ public sealed class ShruggerAction : LemmingAction
     {
     }
 
-    public override int Id => 19;
+    public override int Id => GameConstants.ShruggerActionId;
     public override string LemmingActionName => "shrugger";
     public override int NumberOfAnimationFrames => GameConstants.ShruggerAnimationFrames;
     public override bool IsOneTimeAction => true;

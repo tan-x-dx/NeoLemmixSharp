@@ -10,7 +10,7 @@ public sealed class LasererSkill : LemmingSkill
     {
     }
 
-    public override int Id => 16;
+    public override int Id => GameConstants.LasererSkillId;
     public override string LemmingSkillName => "laserer";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;

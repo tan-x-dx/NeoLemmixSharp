@@ -8,7 +8,7 @@ public sealed class ClimberAction : LemmingAction
     {
     }
 
-    public override int Id => 1;
+    public override int Id => GameConstants.ClimberActionId;
     public override string LemmingActionName => "climber";
     public override int NumberOfAnimationFrames => GameConstants.ClimberAnimationFrames;
     public override bool IsOneTimeAction => false;

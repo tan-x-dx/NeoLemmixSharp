@@ -10,7 +10,7 @@ public sealed class StonerSkill : LemmingSkill
     {
     }
 
-    public override int Id => 19;
+    public override int Id => GameConstants.StonerSkillId;
     public override string LemmingSkillName => "stoner";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;
@@ -23,7 +23,7 @@ public sealed class StonerSkill : LemmingSkill
             lemming.LemHideCountdown : = True;
             */
 
-        return true;
+        throw new NotImplementedException();
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();

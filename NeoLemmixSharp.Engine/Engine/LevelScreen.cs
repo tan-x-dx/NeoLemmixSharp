@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Common.Rendering.Text;
+﻿using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
@@ -91,7 +89,8 @@ public sealed class LevelScreen : IBaseScreen
         Orientation.SetTerrain(terrain);
         LemmingAction.SetTerrain(terrain);
         LemmingSkill.SetTerrain(terrain);
-        TerrainMask.SetTerrain(terrain);
+        TerrainEraseMask.SetTerrain(terrain);
+        TerrainAddMask.SetTerrain(terrain);
         LevelCursor.LevelScreen = this;
         Current = this;
     }
@@ -263,7 +262,8 @@ public sealed class LevelScreen : IBaseScreen
         Orientation.SetTerrain(null);
         LemmingAction.SetTerrain(null);
         LemmingSkill.SetTerrain(null);
-        TerrainMask.SetTerrain(null);
+        TerrainEraseMask.SetTerrain(null);
+        TerrainAddMask.SetTerrain(null);
         LevelCursor.LevelScreen = null;
 
         ScreenRenderer.Dispose();

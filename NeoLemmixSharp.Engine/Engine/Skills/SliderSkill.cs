@@ -10,7 +10,7 @@ public sealed class SliderSkill : LemmingSkill
     {
     }
 
-    public override int Id => 17;
+    public override int Id => GameConstants.SliderSkillId;
     public override string LemmingSkillName => "slider";
     public override bool IsPermanentSkill => true;
     public override bool IsClassicSkill => false;
@@ -23,7 +23,6 @@ public sealed class SliderSkill : LemmingSkill
     public override bool AssignToLemming(Lemming lemming)
     {
         lemming.IsSlider = true;
-
         return true;
     }
 

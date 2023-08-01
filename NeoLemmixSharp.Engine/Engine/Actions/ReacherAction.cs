@@ -16,7 +16,7 @@ public sealed class ReacherAction : LemmingAction
     {
     }
 
-    public override int Id => 23;
+    public override int Id => GameConstants.ReacherActionId;
     public override string LemmingActionName => "reacher";
     public override int NumberOfAnimationFrames => GameConstants.ReacherAnimationFrames;
     public override bool IsOneTimeAction => true;

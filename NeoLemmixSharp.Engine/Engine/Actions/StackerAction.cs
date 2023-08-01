@@ -8,7 +8,7 @@ public sealed class StackerAction : LemmingAction
     {
     }
 
-    public override int Id => 9;
+    public override int Id => GameConstants.StackerActionId;
     public override string LemmingActionName => "stacker";
     public override int NumberOfAnimationFrames => GameConstants.StackerAnimationFrames;
     public override bool IsOneTimeAction => false;

@@ -14,7 +14,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionAction
     {
     }
 
-    public override int Id => 7;
+    public override int Id => GameConstants.DiggerActionId;
     public override string LemmingActionName => "digger";
     public override int NumberOfAnimationFrames => GameConstants.DiggerAnimationFrames;
     public override bool IsOneTimeAction => false;

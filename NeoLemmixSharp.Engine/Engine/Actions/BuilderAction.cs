@@ -8,7 +8,7 @@ public sealed class BuilderAction : LemmingAction
     {
     }
 
-    public override int Id => 4;
+    public override int Id => GameConstants.BuilderActionId;
     public override string LemmingActionName => "builder";
     public override int NumberOfAnimationFrames => GameConstants.BuilderAnimationFrames;
     public override bool IsOneTimeAction => false;

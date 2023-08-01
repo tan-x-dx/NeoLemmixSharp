@@ -14,14 +14,14 @@ public sealed class BasherAction : LemmingAction, IDestructionAction
     {
     }
 
-    public override int Id => 5;
+    public override int Id => GameConstants.BasherActionId;
     public override string LemmingActionName => "basher";
     public override int NumberOfAnimationFrames => GameConstants.BasherAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        return false;
+        throw new NotImplementedException();
     }
 
     private bool BasherIndestructibleCheck(

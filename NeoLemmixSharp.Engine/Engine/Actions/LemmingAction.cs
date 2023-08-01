@@ -93,7 +93,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
     {
         if (turnAround)
         {
-            lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection);
+            lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection());
         }
 
         if (lemming.CurrentAction == this)

@@ -10,7 +10,7 @@ public sealed class SwimmerSkill : LemmingSkill
     {
     }
 
-    public override int Id => 14;
+    public override int Id => GameConstants.SwimmerSkillId;
     public override string LemmingSkillName => "swimmer";
     public override bool IsPermanentSkill => true;
     public override bool IsClassicSkill => false;

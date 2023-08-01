@@ -14,14 +14,14 @@ public sealed class FencerAction : LemmingAction, IDestructionAction
     {
     }
 
-    public override int Id => 10;
+    public override int Id => GameConstants.FencerActionId;
     public override string LemmingActionName => "fencer";
     public override int NumberOfAnimationFrames => GameConstants.FencerAnimationFrames;
     public override bool IsOneTimeAction => false;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        return false;
+        throw new NotImplementedException();
     }
 
     [Pure]

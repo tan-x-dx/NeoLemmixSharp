@@ -24,7 +24,9 @@ public abstract class FacingDirection : IEquatable<FacingDirection>, IUniqueIdIt
 
     public abstract int DeltaX { get; }
     public abstract int Id { get; }
-    public abstract FacingDirection OppositeDirection { get; }
+
+    [Pure]
+    public abstract FacingDirection OppositeDirection();
     [Pure]
     public abstract Orientation ConvertToRelativeOrientation(Orientation orientation);
 

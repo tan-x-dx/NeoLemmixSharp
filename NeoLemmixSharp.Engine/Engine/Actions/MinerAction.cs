@@ -15,7 +15,7 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
     {
     }
 
-    public override int Id => 6;
+    public override int Id => GameConstants.MinerActionId;
     public override string LemmingActionName => "miner";
     public override int NumberOfAnimationFrames => GameConstants.MinerAnimationFrames;
     public override bool IsOneTimeAction => false;
@@ -32,7 +32,8 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
         {
             TerrainMasks.ApplyMinerMask(
                 lemming,
-                new LevelPosition(0, 0),
+                0,
+                0,
                 lemming.AnimationFrame - 1);
             return true;
         }

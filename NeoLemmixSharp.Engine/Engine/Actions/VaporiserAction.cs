@@ -8,7 +8,7 @@ public sealed class VaporiserAction : LemmingAction
     {
     }
 
-    public override int Id => 30;
+    public override int Id => GameConstants.VaporiserActionId;
     public override string LemmingActionName => "burner2";
     public override int NumberOfAnimationFrames => GameConstants.VaporiserAnimationFrames;
     public override bool IsOneTimeAction => true;
