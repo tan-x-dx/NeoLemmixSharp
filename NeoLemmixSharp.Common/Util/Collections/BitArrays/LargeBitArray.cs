@@ -82,6 +82,29 @@ public sealed class LargeBitArray : IBitArray
         return true;
     }
 
+    public bool ToggleBit(int index)
+    {
+        int intIndex = index >> 5;
+
+        uint oldValue = _uints[intIndex];
+        uint newValue = oldValue ^ (1U << index);
+        _uints[intIndex] = newValue;
+
+        bool result;
+        if (newValue > oldValue)
+        {
+            Count++;
+            result = true;
+        }
+        else
+        {
+            Count--;
+            result = false;
+        }
+
+        return result;
+    }
+
     public void Clear()
     {
         Array.Clear(_uints, 0, _uints.Length);

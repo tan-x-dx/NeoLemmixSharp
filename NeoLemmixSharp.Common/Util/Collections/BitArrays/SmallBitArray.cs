@@ -52,6 +52,25 @@ public sealed class SmallBitArray : IBitArray
         return delta != 0U;
     }
 
+    public bool ToggleBit(int index)
+    {
+        uint oldValue = _bits;
+        _bits ^= 1U << index;
+        bool result;
+        if (_bits > oldValue)
+        {
+            Count++;
+            result = true;
+        }
+        else
+        {
+            Count--;
+            result = false;
+        }
+
+        return result;
+    }
+
     public void Clear()
     {
         _bits = 0U;
