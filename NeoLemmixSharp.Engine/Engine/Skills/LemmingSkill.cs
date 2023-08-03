@@ -15,47 +15,37 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
 
     private static LemmingSkill[] RegisterAllLemmingSkills()
     {
-        var list = new List<LemmingSkill>();
-
-        // NOTE: DO NOT REGISTER THE NONE SKILL
-
-        RegisterLemmingSkill(WalkerSkill.Instance);
-        RegisterLemmingSkill(ClimberSkill.Instance);
-        RegisterLemmingSkill(FloaterSkill.Instance);
-        RegisterLemmingSkill(BlockerSkill.Instance);
-        RegisterLemmingSkill(BomberSkill.Instance);
-        RegisterLemmingSkill(BuilderSkill.Instance);
-        RegisterLemmingSkill(BasherSkill.Instance);
-        RegisterLemmingSkill(MinerSkill.Instance);
-        RegisterLemmingSkill(DiggerSkill.Instance);
-
-        RegisterLemmingSkill(PlatformerSkill.Instance);
-        RegisterLemmingSkill(StackerSkill.Instance);
-        RegisterLemmingSkill(FencerSkill.Instance);
-        RegisterLemmingSkill(GliderSkill.Instance);
-        RegisterLemmingSkill(JumperSkill.Instance);
-        RegisterLemmingSkill(SwimmerSkill.Instance);
-        RegisterLemmingSkill(ShimmierSkill.Instance);
-        RegisterLemmingSkill(LasererSkill.Instance);
-        RegisterLemmingSkill(SliderSkill.Instance);
-        RegisterLemmingSkill(DisarmerSkill.Instance);
-        RegisterLemmingSkill(StonerSkill.Instance);
-
-        RegisterLemmingSkill(ClonerSkill.Instance);
-
-        ListValidatorMethods.ValidateUniqueIds(list);
-
-        list.Sort((x, y) => x.Id.CompareTo(y.Id));
-
-        return list.ToArray();
-
-        void RegisterLemmingSkill(LemmingSkill lemmingSkill)
+        // NOTE: DO NOT ADD THE NONE SKILL
+        var result = new LemmingSkill[]
         {
-            if (lemmingSkill == NoneSkill.Instance)
-                return;
+            WalkerSkill.Instance,
+            ClimberSkill.Instance,
+            FloaterSkill.Instance,
+            BlockerSkill.Instance,
+            BomberSkill.Instance,
+            BuilderSkill.Instance,
+            BasherSkill.Instance,
+            MinerSkill.Instance,
+            DiggerSkill.Instance,
 
-            list.Add(lemmingSkill);
-        }
+            PlatformerSkill.Instance,
+            StackerSkill.Instance,
+            FencerSkill.Instance,
+            GliderSkill.Instance,
+            JumperSkill.Instance,
+            SwimmerSkill.Instance,
+            ShimmierSkill.Instance,
+            LasererSkill.Instance,
+            SliderSkill.Instance,
+            DisarmerSkill.Instance,
+            StonerSkill.Instance,
+            ClonerSkill.Instance
+        };
+
+        result.ValidateUniqueIds();
+        Array.Sort(result, new UniqueIdItemComparer<LemmingSkill>());
+
+        return result;
     }
 
     public static void SetTerrain(TerrainManager terrain)

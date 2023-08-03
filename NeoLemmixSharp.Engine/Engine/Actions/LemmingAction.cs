@@ -14,58 +14,49 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
 
     private static LemmingAction[] RegisterAllLemmingActions()
     {
-        var list = new List<LemmingAction>();
-
-        // NOTE: DO NOT REGISTER THE NONE ACTION
-
-        RegisterLemmingAction(WalkerAction.Instance);
-        RegisterLemmingAction(ClimberAction.Instance);
-        RegisterLemmingAction(FloaterAction.Instance);
-        RegisterLemmingAction(BlockerAction.Instance);
-        RegisterLemmingAction(BuilderAction.Instance);
-        RegisterLemmingAction(BasherAction.Instance);
-        RegisterLemmingAction(MinerAction.Instance);
-        RegisterLemmingAction(DiggerAction.Instance);
-
-        RegisterLemmingAction(PlatformerAction.Instance);
-        RegisterLemmingAction(StackerAction.Instance);
-        RegisterLemmingAction(FencerAction.Instance);
-        RegisterLemmingAction(GliderAction.Instance);
-        RegisterLemmingAction(JumperAction.Instance);
-        RegisterLemmingAction(SwimmerAction.Instance);
-        RegisterLemmingAction(ShimmierAction.Instance);
-        RegisterLemmingAction(LasererAction.Instance);
-        RegisterLemmingAction(SliderAction.Instance);
-
-        RegisterLemmingAction(FallerAction.Instance);
-        RegisterLemmingAction(AscenderAction.Instance);
-        RegisterLemmingAction(ShruggerAction.Instance);
-        RegisterLemmingAction(DrownerAction.Instance);
-        RegisterLemmingAction(HoisterAction.Instance);
-        RegisterLemmingAction(DehoisterAction.Instance);
-        RegisterLemmingAction(ReacherAction.Instance);
-        RegisterLemmingAction(DisarmerAction.Instance);
-
-        RegisterLemmingAction(ExiterAction.Instance);
-        RegisterLemmingAction(ExploderAction.Instance);
-        RegisterLemmingAction(OhNoerAction.Instance);
-        RegisterLemmingAction(SplatterAction.Instance);
-        RegisterLemmingAction(StonerAction.Instance);
-        RegisterLemmingAction(VaporiserAction.Instance);
-
-        ListValidatorMethods.ValidateUniqueIds(list);
-
-        list.Sort((x, y) => x.Id.CompareTo(y.Id));
-
-        return list.ToArray();
-
-        void RegisterLemmingAction(LemmingAction lemmingAction)
+        // NOTE: DO NOT ADD THE NONE ACTION
+        var result = new LemmingAction[]
         {
-            if (lemmingAction == NoneAction.Instance)
-                return;
+            WalkerAction.Instance,
+            ClimberAction.Instance,
+            FloaterAction.Instance,
+            BlockerAction.Instance,
+            BuilderAction.Instance,
+            BasherAction.Instance,
+            MinerAction.Instance,
+            DiggerAction.Instance,
 
-            list.Add(lemmingAction);
-        }
+            PlatformerAction.Instance,
+            StackerAction.Instance,
+            FencerAction.Instance,
+            GliderAction.Instance,
+            JumperAction.Instance,
+            SwimmerAction.Instance,
+            ShimmierAction.Instance,
+            LasererAction.Instance,
+            SliderAction.Instance,
+
+            FallerAction.Instance,
+            AscenderAction.Instance,
+            ShruggerAction.Instance,
+            DrownerAction.Instance,
+            HoisterAction.Instance,
+            DehoisterAction.Instance,
+            ReacherAction.Instance,
+            DisarmerAction.Instance,
+
+            ExiterAction.Instance,
+            ExploderAction.Instance,
+            OhNoerAction.Instance,
+            SplatterAction.Instance,
+            StonerAction.Instance,
+            VaporiserAction.Instance
+        };
+
+        result.ValidateUniqueIds();
+        Array.Sort(result, new UniqueIdItemComparer<LemmingAction>());
+
+        return result;
     }
 
     public static void SetTerrain(TerrainManager terrain)
