@@ -15,47 +15,37 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
 
     private static LemmingSkill[] RegisterAllLemmingSkills()
     {
-        var list = new List<LemmingSkill>();
-
-        // NOTE: DO NOT REGISTER THE NONE SKILL
-
-        RegisterLemmingSkill(WalkerSkill.Instance);
-        RegisterLemmingSkill(ClimberSkill.Instance);
-        RegisterLemmingSkill(FloaterSkill.Instance);
-        RegisterLemmingSkill(BlockerSkill.Instance);
-        RegisterLemmingSkill(BomberSkill.Instance);
-        RegisterLemmingSkill(BuilderSkill.Instance);
-        RegisterLemmingSkill(BasherSkill.Instance);
-        RegisterLemmingSkill(MinerSkill.Instance);
-        RegisterLemmingSkill(DiggerSkill.Instance);
-
-        RegisterLemmingSkill(PlatformerSkill.Instance);
-        RegisterLemmingSkill(StackerSkill.Instance);
-        RegisterLemmingSkill(FencerSkill.Instance);
-        RegisterLemmingSkill(GliderSkill.Instance);
-        RegisterLemmingSkill(JumperSkill.Instance);
-        RegisterLemmingSkill(SwimmerSkill.Instance);
-        RegisterLemmingSkill(ShimmierSkill.Instance);
-        RegisterLemmingSkill(LasererSkill.Instance);
-        RegisterLemmingSkill(SliderSkill.Instance);
-        RegisterLemmingSkill(DisarmerSkill.Instance);
-        RegisterLemmingSkill(StonerSkill.Instance);
-
-        RegisterLemmingSkill(ClonerSkill.Instance);
-
-        ListValidatorMethods.ValidateUniqueIds(list);
-
-        list.Sort((x, y) => x.Id.CompareTo(y.Id));
-
-        return list.ToArray();
-
-        void RegisterLemmingSkill(LemmingSkill lemmingSkill)
+        // NOTE: DO NOT ADD THE NONE SKILL
+        var result = new LemmingSkill[]
         {
-            if (lemmingSkill == NoneSkill.Instance)
-                return;
+            WalkerSkill.Instance,
+            ClimberSkill.Instance,
+            FloaterSkill.Instance,
+            BlockerSkill.Instance,
+            BomberSkill.Instance,
+            BuilderSkill.Instance,
+            BasherSkill.Instance,
+            MinerSkill.Instance,
+            DiggerSkill.Instance,
 
-            list.Add(lemmingSkill);
-        }
+            PlatformerSkill.Instance,
+            StackerSkill.Instance,
+            FencerSkill.Instance,
+            GliderSkill.Instance,
+            JumperSkill.Instance,
+            SwimmerSkill.Instance,
+            ShimmierSkill.Instance,
+            LasererSkill.Instance,
+            SliderSkill.Instance,
+            DisarmerSkill.Instance,
+            StonerSkill.Instance,
+            ClonerSkill.Instance
+        };
+
+        result.ValidateUniqueIds();
+        Array.Sort(result, new UniqueIdItemComparer<LemmingSkill>());
+
+        return result;
     }
 
     public static void SetTerrain(TerrainManager terrain)
@@ -63,17 +53,16 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
         Terrain = terrain;
     }
 
-    private readonly LargeBitArray _assignableActionIds;
+    private readonly SimpleSet<LemmingAction> _assignableActions;
 
     protected LemmingSkill()
     {
-        var numberOfActions = LemmingAction.AllLemmingActions.Length;
-        _assignableActionIds = new LargeBitArray(numberOfActions);
+        _assignableActions = new SimpleSet<LemmingAction>(SimpleLemmingActionHasher.Instance);
 
         // ReSharper disable once VirtualMemberCallInConstructor
         foreach (var action in ActionsThatCanBeAssigned())
         {
-            _assignableActionIds.SetBit(action.Id);
+            _assignableActions.Add(action);
         }
     }
 
@@ -92,7 +81,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
     [Pure]
     protected bool ActionIsAssignable(Lemming lemming)
     {
-        return _assignableActionIds.GetBit(lemming.CurrentAction.Id);
+        return _assignableActions.Contains(lemming.CurrentAction);
     }
 
     public abstract bool AssignToLemming(Lemming lemming);
@@ -132,4 +121,18 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
         yield return SwimmerAction.Instance;
         yield return WalkerAction.Instance;
     }
+}
+
+public sealed class SimpleLemmingSkillHasher : ISimpleHasher<LemmingSkill>
+{
+    public static SimpleLemmingSkillHasher Instance { get; } = new();
+
+    private SimpleLemmingSkillHasher()
+    {
+    }
+
+    public int NumberOfItems => LemmingSkill.AllLemmingSkills.Length;
+
+    public int Hash(LemmingSkill lemmingSkill) => lemmingSkill.Id;
+    public LemmingSkill Unhash(int hash) => LemmingSkill.AllLemmingSkills[hash];
 }

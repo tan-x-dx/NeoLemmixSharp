@@ -5,7 +5,7 @@ public interface IUniqueIdItem
     int Id { get; }
 }
 
-public sealed class UniqueIdItemEqualityComparer<T> : IEqualityComparer<T>, IEquatable<UniqueIdItemEqualityComparer<T>>
+public sealed class UniqueIdItemComparer<T> : IEqualityComparer<T>, IEquatable<UniqueIdItemComparer<T>>, IComparer<T>
     where T : class, IUniqueIdItem
 {
     public bool Equals(T? x, T? y)
@@ -20,14 +20,22 @@ public sealed class UniqueIdItemEqualityComparer<T> : IEqualityComparer<T>, IEqu
         return HashCode.Combine(obj.Id);
     }
 
-    public bool Equals(UniqueIdItemEqualityComparer<T>? other) => other != null;
-    public override bool Equals(object? obj) => obj is UniqueIdItemEqualityComparer<T>;
-    public override int GetHashCode() => nameof(UniqueIdItemEqualityComparer<T>).GetHashCode();
+    public int Compare(T? first, T? second)
+    {
+        var firstId = first?.Id ?? -1;
+        var secondId = second?.Id ?? -1;
+
+        return firstId.CompareTo(secondId);
+    }
+
+    public bool Equals(UniqueIdItemComparer<T>? other) => other != null;
+    public override bool Equals(object? obj) => obj is UniqueIdItemComparer<T>;
+    public override int GetHashCode() => nameof(UniqueIdItemComparer<T>).GetHashCode();
 }
 
-public static class ListValidatorMethods
+public static class UniqueIdItemValidatorMethods
 {
-    public static void ValidateUniqueIds<T>(ICollection<T> items)
+    public static void ValidateUniqueIds<T>(this T[] items)
         where T : class, IUniqueIdItem
     {
         var ids = items
@@ -36,7 +44,7 @@ public static class ListValidatorMethods
 
         var numberOfUniqueIds = ids.Distinct().Count();
 
-        if (numberOfUniqueIds != items.Count)
+        if (numberOfUniqueIds != items.Length)
         {
             var typeName = typeof(T).Name;
             var idsString = string.Join(',', ids.OrderBy(i => i));
@@ -47,10 +55,10 @@ public static class ListValidatorMethods
         var minActionId = ids.Min();
         var maxActionId = ids.Max();
 
-        if (minActionId != 0 || maxActionId != items.Count - 1)
+        if (minActionId != 0 || maxActionId != items.Length - 1)
         {
             var typeName = typeof(T).Name;
-            throw new Exception($"{typeName} ids do not span a full set of values from 0 - {items.Count - 1}");
+            throw new Exception($"{typeName} ids do not span a full set of values from 0 - {items.Length - 1}");
         }
     }
 }

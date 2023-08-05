@@ -17,7 +17,7 @@ public abstract class FacingDirection : IEquatable<FacingDirection>, IUniqueIdIt
         facingDirections[RightFacingDirection.Instance.Id] = RightFacingDirection.Instance;
         facingDirections[LeftFacingDirection.Instance.Id] = LeftFacingDirection.Instance;
 
-        ListValidatorMethods.ValidateUniqueIds(facingDirections);
+        facingDirections.ValidateUniqueIds();
 
         return facingDirections;
     }

@@ -20,7 +20,7 @@ public abstract class Orientation : IEquatable<Orientation>, IUniqueIdItem
         orientations[UpOrientation.Instance.RotNum] = UpOrientation.Instance;
         orientations[RightOrientation.Instance.RotNum] = RightOrientation.Instance;
 
-        ListValidatorMethods.ValidateUniqueIds(orientations);
+        orientations.ValidateUniqueIds();
 
         return orientations;
     }
