@@ -44,7 +44,7 @@ public abstract class LevelTimer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void UpdateCountUpString(
         int elapsedSeconds,
-        bool partialUpdate = true)
+        bool partialUpdate)
     {
         UpdateTimerString(elapsedSeconds, 0, 0, 0, 0, partialUpdate);
     }
@@ -52,7 +52,7 @@ public abstract class LevelTimer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void UpdateCountDownString(
         int elapsedSeconds,
-        bool partialUpdate = true)
+        bool partialUpdate)
     {
         UpdateTimerString(elapsedSeconds, 9, 5, 9, 9, partialUpdate);
     }
@@ -63,7 +63,7 @@ public abstract class LevelTimer
         int secondTensTest,
         int minutesUnitsTest,
         int minutesTensTest,
-        bool partialUpdate = true)
+        bool partialUpdate)
     {
         var seconds = elapsedSeconds % 60;
         var secondsUnits = seconds % 10;

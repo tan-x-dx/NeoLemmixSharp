@@ -35,7 +35,7 @@ public sealed class LevelScreen : IBaseScreen
 
     private IFrameUpdater _currentlySelectedFrameUpdater;
 
-    private bool _stopMotion = false;
+    private bool _stopMotion = true;
     private bool _doTick;
 
     public LevelRenderer ScreenRenderer { get; }

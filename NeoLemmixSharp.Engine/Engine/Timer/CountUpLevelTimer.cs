@@ -17,6 +17,6 @@ public sealed class CountUpLevelTimer : LevelTimer
 
     protected override void UpdateAppearance()
     {
-        UpdateCountUpString(ElapsedSeconds);
+        UpdateCountUpString(ElapsedSeconds, true);
     }
 }
