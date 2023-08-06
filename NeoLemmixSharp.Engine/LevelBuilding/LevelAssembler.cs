@@ -145,7 +145,8 @@ public sealed class LevelAssembler : IDisposable
             State =
             {
                 IsAthlete = true
-            }
+            },
+            FastForwardTime = 1
         };
 
         var lemmingE = new Lemming(

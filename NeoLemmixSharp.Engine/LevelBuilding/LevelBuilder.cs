@@ -7,6 +7,7 @@ using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Engine.Terrain;
+using NeoLemmixSharp.Engine.Engine.Timer;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
@@ -67,6 +68,10 @@ public sealed class LevelBuilder : IDisposable
         var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController, skillSetManager);
         var levelViewport = new Viewport(levelCursor, inputController, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
+        LevelTimer levelTimer = levelData.TimeLimit.HasValue
+            ? new CountDownLevelTimer(levelData.TimeLimit.Value)
+            : new CountUpLevelTimer();
+
         var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
 
         GadgetCollections.SetGadgets(levelGadgets);
@@ -119,7 +124,8 @@ public sealed class LevelBuilder : IDisposable
             controlPanel,
             levelCursor,
             levelViewport,
-            levelRenderer);
+            levelRenderer,
+            levelTimer);
     }
 
     public void Dispose()

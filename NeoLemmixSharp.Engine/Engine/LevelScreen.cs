@@ -50,7 +50,7 @@ public sealed class LevelScreen : IBaseScreen
     public Lemming? QueuedSkillLemming { get; private set; }
     public int QueuedSkillFrame { get; private set; }
 
-    public LevelTimer LevelTimer { get; } = new CountDownLevelTimer(1 * 60 + 15);
+    public LevelTimer LevelTimer { get; }
 
     public LevelScreen(
         LevelData levelData,
@@ -61,7 +61,8 @@ public sealed class LevelScreen : IBaseScreen
         ILevelControlPanel controlPanel,
         LevelCursor cursor,
         Viewport viewport,
-        LevelRenderer levelRenderer)
+        LevelRenderer levelRenderer,
+        LevelTimer levelTimer)
     {
         ScreenTitle = levelData.LevelTitle;
         ScreenRenderer = levelRenderer;
@@ -72,6 +73,8 @@ public sealed class LevelScreen : IBaseScreen
         _terrain = terrain;
         _inputController = levelInputController; // new LevelInputController();
         _skillSetManager = new SkillSetManager(levelData.SkillSetData);
+
+        LevelTimer = levelTimer;
 
         var isSuperLemmingMode = false;
 
