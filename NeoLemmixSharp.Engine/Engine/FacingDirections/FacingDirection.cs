@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using System.Diagnostics.Contracts;
 
@@ -37,4 +38,18 @@ public abstract class FacingDirection : IEquatable<FacingDirection>, IUniqueIdIt
 
     public static bool operator ==(FacingDirection left, FacingDirection right) => left.Id == right.Id;
     public static bool operator !=(FacingDirection left, FacingDirection right) => left.Id != right.Id;
+}
+
+public sealed class SimpleFacingDirectionHasher : ISimpleHasher<FacingDirection>
+{
+    public static SimpleFacingDirectionHasher Instance { get; } = new();
+
+    private SimpleFacingDirectionHasher()
+    {
+    }
+
+    public int NumberOfItems => FacingDirection.AllFacingDirections.Length;
+
+    public int Hash(FacingDirection facingDirection) => facingDirection.Id;
+    public FacingDirection Unhash(int hash) => FacingDirection.AllFacingDirections[hash];
 }

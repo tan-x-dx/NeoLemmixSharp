@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 using System.Diagnostics.Contracts;
 
@@ -103,4 +104,18 @@ public abstract class Orientation : IEquatable<Orientation>, IUniqueIdItem
 
     public static bool operator ==(Orientation left, Orientation right) => left.RotNum == right.RotNum;
     public static bool operator !=(Orientation left, Orientation right) => left.RotNum != right.RotNum;
+}
+
+public sealed class SimpleOrientationHasher : ISimpleHasher<Orientation>
+{
+    public static SimpleOrientationHasher Instance { get; } = new();
+
+    private SimpleOrientationHasher()
+    {
+    }
+
+    public int NumberOfItems => Orientation.AllOrientations.Length;
+
+    public int Hash(Orientation orientation) => orientation.RotNum;
+    public Orientation Unhash(int hash) => Orientation.AllOrientations[hash];
 }
