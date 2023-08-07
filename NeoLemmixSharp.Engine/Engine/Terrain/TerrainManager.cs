@@ -68,7 +68,7 @@ public sealed class TerrainManager
 
     [Pure]
     public bool PixelIsSolidToLemming(
-        Orientation orientation,
+        Lemming lemming,
         LevelPosition levelPosition)
     {
         if (PositionOutOfBounds(levelPosition))
@@ -77,15 +77,14 @@ public sealed class TerrainManager
         var index = Width * levelPosition.Y + levelPosition.X;
         var pixel = _pixels[index];
 
-        return pixel.IsSolidToOrientation(orientation) ||
-               GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(levelPosition, orientation, out _);
+        return pixel.IsSolidToOrientation(lemming.Orientation) ||
+               GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(lemming, levelPosition, out _);
     }
 
     [Pure]
     public bool PixelIsIndestructibleToLemming(
-        Orientation orientation,
+        Lemming lemming,
         IDestructionAction destructionAction,
-        FacingDirection facingDirection,
         LevelPosition levelPosition)
     {
         if (PositionOutOfBounds(levelPosition))
@@ -94,14 +93,14 @@ public sealed class TerrainManager
         var index = Width * levelPosition.Y + levelPosition.X;
         var pixel = _pixels[index];
 
-        return (!pixel.CanBeDestroyed() ||
-                !destructionAction.CanDestroyPixel(pixel, orientation, facingDirection)) ||
-               GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(levelPosition, orientation, out _);
+        return !pixel.CanBeDestroyed() ||
+               !destructionAction.CanDestroyPixel(pixel, lemming.Orientation, lemming.FacingDirection) ||
+               GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(lemming, levelPosition, out _);
     }
 
     [Pure]
     public bool PixelIsSteel(
-        Orientation orientation,
+        Lemming lemming,
         LevelPosition levelPosition)
     {
         if (PositionOutOfBounds(levelPosition))
@@ -111,7 +110,7 @@ public sealed class TerrainManager
         var pixel = _pixels[index];
 
         return pixel.IsSteel() ||
-               GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(levelPosition, orientation, out _);
+               GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(lemming, levelPosition, out _);
     }
 
     public void ErasePixel(

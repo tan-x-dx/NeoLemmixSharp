@@ -33,15 +33,15 @@ public sealed class GliderAction : LemmingAction
         do
         {
             // bug-fix for http://www.lemmingsforums.net/index.php?topic=2693
-            if (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveDown(currentPosition, dy)) &&
-                Terrain.PixelIsSolidToLemming(orientation, orientation.Move(currentPosition, -dx, dy)))
+            if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, dy)) &&
+                Terrain.PixelIsSolidToLemming(lemming, orientation.Move(currentPosition, -dx, dy)))
             {
                 return true;
             }
 
             dy++;
 
-        } while (dy <= 3 && Terrain.PixelIsSolidToLemming(orientation, orientation.MoveDown(currentPosition, dy)));
+        } while (dy <= 3 && Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, dy)));
         /*
         repeat
       if HasPixelAt(CurLemX, L.LemY + Dy) and HasPixelAt(CurLemX - L.LemDx, L.LemY + Dy) then

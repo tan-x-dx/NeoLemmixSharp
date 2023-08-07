@@ -1,46 +1,46 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Engine.Gadgets.MetalGrates;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
 
 public interface IGadgetCollection<TGadget>
-    where TGadget : class, IHitBoxGadget
+    where TGadget : class, IGadget
 {
     [Pure]
-    bool TryGetGadgetThatMatchesTypeAndOrientation(LevelPosition levelPosition, Orientation orientation, [NotNullWhen(true)] out TGadget? gadget);
+    bool TryGetGadgetThatMatchesTypeAndOrientation(Lemming lemming, LevelPosition levelPosition, [NotNullWhen(true)] out TGadget? gadget);
 }
 
 public static class GadgetCollections
 {
-    public static IGadgetCollection<IHitBoxGadget> GeneralGadgets { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
-    public static IGadgetCollection<IHitBoxGadget> Waters { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
-    public static IGadgetCollection<IHitBoxGadget> Updrafts { get; private set; } = EmptyGadgetList<IHitBoxGadget>.Instance;
+    public static IGadgetCollection<IGadget> GeneralGadgets { get; private set; } = EmptyGadgetList<IGadget>.Instance;
+    public static IGadgetCollection<IGadget> Waters { get; private set; } = EmptyGadgetList<IGadget>.Instance;
+    public static IGadgetCollection<IGadget> Updrafts { get; private set; } = EmptyGadgetList<IGadget>.Instance;
     public static IGadgetCollection<MetalGrateGadget> MetalGrates { get; private set; } = EmptyGadgetList<MetalGrateGadget>.Instance;
 
     public static void ClearGadgets()
     {
-        Waters = EmptyGadgetList<IHitBoxGadget>.Instance;
-        Updrafts = EmptyGadgetList<IHitBoxGadget>.Instance;
-        GeneralGadgets = EmptyGadgetList<IHitBoxGadget>.Instance;
+        Waters = EmptyGadgetList<IGadget>.Instance;
+        Updrafts = EmptyGadgetList<IGadget>.Instance;
+        GeneralGadgets = EmptyGadgetList<IGadget>.Instance;
         MetalGrates = EmptyGadgetList<MetalGrateGadget>.Instance;
     }
 
     public static void SetGadgets(IEnumerable<IGadget> allGadgets)
     {
         var gadgetTypeLookup = allGadgets
-            .OfType<IHitBoxGadget>()
+            .OfType<IGadget>()
             .ToLookup(g => g.Type);
 
-        Waters = GetGadgetCollection<IHitBoxGadget>(GadgetType.Water);
-        Updrafts = GetGadgetCollection<IHitBoxGadget>(GadgetType.Updraft);
-        GeneralGadgets = GetGadgetCollection<IHitBoxGadget>(GadgetType.TrapOnce);
+        Waters = GetGadgetCollection<IGadget>(GadgetType.Water);
+        Updrafts = GetGadgetCollection<IGadget>(GadgetType.Updraft);
+        GeneralGadgets = GetGadgetCollection<IGadget>(GadgetType.TrapOnce);
 
         MetalGrates = GetGadgetCollection<MetalGrateGadget>(GadgetType.MetalGrate);
 
         IGadgetCollection<TGadget> GetGadgetCollection<TGadget>(GadgetType gadgetType)
-            where TGadget : class, IHitBoxGadget
+            where TGadget : class, IGadget
         {
             var relevantGadgets = gadgetTypeLookup[gadgetType]
                 .OrderBy(g => g.Id)

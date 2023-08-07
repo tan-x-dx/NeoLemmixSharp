@@ -63,7 +63,7 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        if (GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, orientation, out var water))
+        if (GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemmingPosition, out var water))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             lemming.LevelPosition = lemmingPosition;
@@ -77,7 +77,7 @@ public sealed class SliderAction : LemmingAction
                 DrownerAction.Instance.TransitionLemmingToAction(lemming, true);
                 // ?? CueSoundEffect(SFX_DROWNING, L.Position); ??
             }
-            water.OnLemmingInHitBox(lemming);
+            //water.OnLemmingInHitBox(lemming);
 
             return true;
         }
@@ -97,7 +97,7 @@ public sealed class SliderAction : LemmingAction
         LevelPosition levelPosition,
         LevelPosition dehoistPin)
     {
-        if (Terrain.PixelIsSolidToLemming(orientation, dehoistPin))
+        if (Terrain.PixelIsSolidToLemming(lemming, dehoistPin))
             return true;
 
         var result = false;
@@ -105,7 +105,7 @@ public sealed class SliderAction : LemmingAction
             orientation.MatchesVertically(levelPosition, dehoistPin) &&
             true)
         {
-            result = Terrain.PixelIsSolidToLemming(orientation, orientation.MoveDown(dehoistPin, 1));
+            result = Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(dehoistPin, 1));
         }
 
         return result;

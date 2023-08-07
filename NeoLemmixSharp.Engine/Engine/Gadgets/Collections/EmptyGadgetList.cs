@@ -1,11 +1,10 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Engine.Orientations;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
 
 public sealed class EmptyGadgetList<TGadget> : IGadgetCollection<TGadget>
-    where TGadget : class, IHitBoxGadget
+    where TGadget : class, IGadget
 {
     public static EmptyGadgetList<TGadget> Instance { get; } = new();
 
@@ -14,8 +13,8 @@ public sealed class EmptyGadgetList<TGadget> : IGadgetCollection<TGadget>
     }
 
     public bool TryGetGadgetThatMatchesTypeAndOrientation(
+        Lemming lemming,
         LevelPosition levelPosition,
-        Orientation orientation,
         [NotNullWhen(true)] out TGadget? gadget)
     {
         gadget = null;

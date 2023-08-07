@@ -25,17 +25,17 @@ public sealed class FallerAction : LemmingAction
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, orientation.GetOpposite(), out var updraft))
+        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemmingPosition, out var updraft))
         {
             maxFallDistanceStep = 2;
-            updraft.OnLemmingInHitBox(lemming);
+            //updraft.OnLemmingInHitBox(lemming);
         }
 
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
             return true;
 
         while (currentFallDistanceStep < maxFallDistanceStep &&
-               !Terrain.PixelIsSolidToLemming(orientation, lemmingPosition))
+               !Terrain.PixelIsSolidToLemming(lemming, lemmingPosition))
         {
             if (currentFallDistanceStep > 0 &&
                 CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
@@ -48,10 +48,10 @@ public sealed class FallerAction : LemmingAction
             lemming.DistanceFallen++;
             lemming.TrueDistanceFallen++;
 
-            if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, orientation.GetOpposite(), out updraft))
+            if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemmingPosition, out updraft))
             {
                 lemming.DistanceFallen = 0;
-                updraft.OnLemmingInHitBox(lemming);
+                //updraft.OnLemmingInHitBox(lemming);
             }
         }
 

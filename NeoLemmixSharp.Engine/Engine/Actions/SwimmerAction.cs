@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
-using NeoLemmixSharp.Engine.Engine.Orientations;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
@@ -32,16 +31,16 @@ public sealed class SwimmerAction : LemmingAction
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
         lemming.LevelPosition = lemmingPosition;
 
-        var dy = FindGroundPixel(orientation, lemmingPosition);
+        var dy = FindGroundPixel(lemming, lemmingPosition);
 
-        if (Terrain.PixelIsSolidToLemming(orientation, lemmingPosition) ||
-            WaterAt(lemmingPosition, orientation))
+        if (Terrain.PixelIsSolidToLemming(lemming, lemmingPosition) ||
+            WaterAt(lemming, lemmingPosition))
         {
             // Rise if there is water above the lemming
             var pixelAbove = orientation.MoveUp(lemmingPosition, 1);
             if (dy >= -1 &&
-                WaterAt(pixelAbove, orientation) &&
-                !Terrain.PixelIsSolidToLemming(orientation, pixelAbove))
+                WaterAt(lemming, pixelAbove) &&
+                !Terrain.PixelIsSolidToLemming(lemming, pixelAbove))
             {
                 lemmingPosition = pixelAbove;
                 lemming.LevelPosition = lemmingPosition;
@@ -51,7 +50,7 @@ public sealed class SwimmerAction : LemmingAction
 
             if (dy < -6)
             {
-                var diveDistance = LemDive(lemming, orientation, lemmingPosition);
+                var diveDistance = LemDive(lemming, lemmingPosition);
 
                 if (diveDistance <= 0)
                     return true;
@@ -59,14 +58,14 @@ public sealed class SwimmerAction : LemmingAction
                 lemmingPosition = orientation.MoveDown(lemmingPosition, diveDistance); // Dive below the terrain
                 lemming.LevelPosition = lemmingPosition;
 
-                if (!WaterAt(lemmingPosition, orientation))
+                if (!WaterAt(lemming, lemmingPosition))
                 {
                     WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
                     return true;
                 }
 
-                if (lemming.IsClimber && !WaterAt(orientation.MoveUp(lemmingPosition, 1), orientation))
+                if (lemming.IsClimber && !WaterAt(lemming, orientation.MoveUp(lemmingPosition, 1)))
                 {
                     // Only transition to climber, if the lemming is not under water
                     ClimberAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -91,7 +90,7 @@ public sealed class SwimmerAction : LemmingAction
                 return true;
             }
 
-            if (dy <= -1 || (dy == 0 && !WaterAt(lemmingPosition, orientation)))
+            if (dy <= -1 || (dy == 0 && !WaterAt(lemming, lemmingPosition)))
             {
                 // see http://www.lemmingsforums.net/index.php?topic=3380.0
                 // And the swimmer should not yet stop if the water and terrain overlaps
@@ -123,9 +122,9 @@ public sealed class SwimmerAction : LemmingAction
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool WaterAt(LevelPosition lemmingPosition, Orientation orientation)
+    private static bool WaterAt(Lemming lemming, LevelPosition lemmingPosition)
     {
-        return GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, orientation, out _);
+        return GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemmingPosition, out _);
     }
 
     /// <summary>
@@ -133,17 +132,16 @@ public sealed class SwimmerAction : LemmingAction
     /// </summary>
     private static int LemDive(
         Lemming lemming,
-        Orientation orientation,
         LevelPosition lemmingPosition)
     {
         var result = 1;
 
-        while (result <= 4 && Terrain.PixelIsSolidToLemming(orientation, orientation.MoveDown(lemmingPosition, result)))
+        while (result <= 4 && Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
         {
             result++;
             lemming.DistanceFallen++;
 
-            if (WaterAt(orientation.MoveDown(lemmingPosition, result), orientation))
+            if (WaterAt(lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
             {
                 lemming.DistanceFallen = 0;
             }
