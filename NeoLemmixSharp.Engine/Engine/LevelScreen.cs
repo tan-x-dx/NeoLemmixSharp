@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Engine.Gadgets;
+using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Skills;
 using NeoLemmixSharp.Engine.Engine.Terrain;
@@ -300,7 +301,7 @@ public sealed class LevelScreen : IBaseScreen
         if (_gadgets.Length == 0)
             return;
 
-        var gadget = (ResizeableGadget)_gadgets[0];
+       /* var gadget = (ResizeableGadget)_gadgets[0];
 
         if (_inputController.W.IsKeyDown)
         {
@@ -352,6 +353,6 @@ public sealed class LevelScreen : IBaseScreen
         else
         {
             gadget.SetDeltaX(0);
-        }
+        }*/
     }
 }

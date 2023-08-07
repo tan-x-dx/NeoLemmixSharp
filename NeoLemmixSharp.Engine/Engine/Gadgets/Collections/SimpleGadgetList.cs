@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.Engine.Engine.Gadgets;
+namespace NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
 
 public sealed class SimpleGadgetList<TGadget> : IGadgetCollection<TGadget>
     where TGadget : class, IHitBoxGadget

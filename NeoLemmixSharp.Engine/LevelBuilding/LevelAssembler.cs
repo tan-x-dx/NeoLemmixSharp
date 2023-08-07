@@ -342,11 +342,11 @@ public sealed class LevelAssembler : IDisposable
 
         var c = new RectangularLevelRegion(20, 20, 64, 32);
 
-        var water = new ResizeableGadget(0, GadgetType.Water, DownOrientation.Instance, c);
+      /*  var water = new ResizeableGadget(0, GadgetType.Water, DownOrientation.Instance, c);
         var r = new NineSliceRenderer(c, texture, sW, sH, sT, sB, sL, sR);
 
         _gadgets.Add(water);
-        _gadgetRenderers.Add(r);
+        _gadgetRenderers.Add(r);*/
 
         foreach (var gadgetData in allGadgetData)
         {

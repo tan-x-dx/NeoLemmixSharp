@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Engine.Orientations;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 
-namespace NeoLemmixSharp.Engine.Engine.Gadgets;
+namespace NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
 
 public interface IGadgetCollection<TGadget>
     where TGadget : class, IHitBoxGadget
@@ -32,7 +32,7 @@ public static class GadgetCollections
         var gadgetTypeLookup = allGadgets
             .OfType<IHitBoxGadget>()
             .ToLookup(g => g.Type);
-        
+
         Waters = GetGadgetCollection<IHitBoxGadget>(GadgetType.Water);
         Updrafts = GetGadgetCollection<IHitBoxGadget>(GadgetType.Updraft);
         GeneralGadgets = GetGadgetCollection<IHitBoxGadget>(GadgetType.TrapOnce);
