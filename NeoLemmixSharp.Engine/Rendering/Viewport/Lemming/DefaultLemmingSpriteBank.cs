@@ -18,9 +18,9 @@ public static class DefaultLemmingSpriteBank
     {
         var spriteRotationReflectionProcessor = new ActionSpriteCreator(graphicsDevice);
 
-        var numberOfActionSprites = LemmingAction.AllLemmingActions.Length *
-                                    Orientation.AllOrientations.Length *
-                                    FacingDirection.AllFacingDirections.Length;
+        var numberOfActionSprites = LemmingAction.AllItems.Length *
+                                    Orientation.AllItems.Length *
+                                    FacingDirection.AllItems.Length;
 
         var actionSprites = new ActionSprite[numberOfActionSprites];
 
@@ -128,7 +128,7 @@ public static class DefaultLemmingSpriteBank
             anchorPoint,
             itemCreator);
 
-        foreach (var orientation in Orientation.AllOrientations)
+        foreach (var orientation in Orientation.AllItems)
         {
             var k0 = LemmingSpriteBank.GetKey(orientation, RightFacingDirection.Instance);
             var k1 = LemmingSpriteBank.GetKey(action, orientation, RightFacingDirection.Instance);

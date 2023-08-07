@@ -1,17 +1,17 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Skills;
 
-public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
+public abstract class LemmingSkill : IUniqueIdItem<LemmingSkill>
 {
     private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
     protected static TerrainManager Terrain { get; private set; }
 
-    public static ReadOnlySpan<LemmingSkill> AllLemmingSkills => new(LemmingSkills);
+    public static int NumberOfItems => LemmingSkills.Length;
+    public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
 
     private static LemmingSkill[] RegisterAllLemmingSkills()
     {
@@ -43,7 +43,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
         };
 
         result.ValidateUniqueIds();
-        Array.Sort(result, new UniqueIdItemComparer<LemmingSkill>());
+        Array.Sort(result, UniqueIdItemComparer<LemmingSkill>.Instance);
 
         return result;
     }
@@ -53,11 +53,11 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
         Terrain = terrain;
     }
 
-    private readonly SimpleSet<LemmingAction> _assignableActions;
+    private readonly LargeSimpleSet<LemmingAction> _assignableActions;
 
     protected LemmingSkill()
     {
-        _assignableActions = new SimpleSet<LemmingAction>(SimpleLemmingActionHasher.Instance);
+        _assignableActions = new LargeSimpleSet<LemmingAction>(UniqueIdItemComparer<LemmingAction>.Instance);
 
         // ReSharper disable once VirtualMemberCallInConstructor
         foreach (var action in ActionsThatCanBeAssigned())
@@ -121,18 +121,4 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>, IUniqueIdItem
         yield return SwimmerAction.Instance;
         yield return WalkerAction.Instance;
     }
-}
-
-public sealed class SimpleLemmingSkillHasher : ISimpleHasher<LemmingSkill>
-{
-    public static SimpleLemmingSkillHasher Instance { get; } = new();
-
-    private SimpleLemmingSkillHasher()
-    {
-    }
-
-    public int NumberOfItems => LemmingSkill.AllLemmingSkills.Length;
-
-    public int Hash(LemmingSkill lemmingSkill) => lemmingSkill.Id;
-    public LemmingSkill Unhash(int hash) => LemmingSkill.AllLemmingSkills[hash];
 }

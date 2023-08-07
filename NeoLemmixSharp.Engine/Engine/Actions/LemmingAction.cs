@@ -4,12 +4,13 @@ using NeoLemmixSharp.Engine.Engine.Terrain;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
-public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
+public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
     protected static TerrainManager Terrain { get; private set; }
 
-    public static ReadOnlySpan<LemmingAction> AllLemmingActions => new(LemmingActions);
+    public static int NumberOfItems => LemmingActions.Length;
+    public static ReadOnlySpan<LemmingAction> AllItems => new(LemmingActions);
 
     private static LemmingAction[] RegisterAllLemmingActions()
     {
@@ -53,7 +54,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
         };
 
         result.ValidateUniqueIds();
-        Array.Sort(result, new UniqueIdItemComparer<LemmingAction>());
+        Array.Sort(result, UniqueIdItemComparer<LemmingAction>.Instance);
 
         return result;
     }
@@ -128,18 +129,4 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
 
         return result;
     }
-}
-
-public sealed class SimpleLemmingActionHasher : ISimpleHasher<LemmingAction>
-{
-    public static SimpleLemmingActionHasher Instance { get; } = new();
-
-    private SimpleLemmingActionHasher()
-    {
-    }
-
-    public int NumberOfItems => LemmingAction.AllLemmingActions.Length;
-
-    public int Hash(LemmingAction lemmingAction) => lemmingAction.Id;
-    public LemmingAction Unhash(int hash) => LemmingAction.AllLemmingActions[hash];
 }

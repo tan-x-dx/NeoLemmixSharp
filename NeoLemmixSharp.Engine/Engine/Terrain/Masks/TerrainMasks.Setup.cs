@@ -94,14 +94,14 @@ public static partial class TerrainMasks
             itemCreator);
 
         var numberOfTerrainMasks = numberOfFrames *
-                                   Orientation.AllOrientations.Length *
-                                   FacingDirection.AllFacingDirections.Length;
+                                   Orientation.AllItems.Length *
+                                   FacingDirection.AllItems.Length;
 
         var result = new TerrainEraseMask[numberOfTerrainMasks];
 
         for (var f = 0; f < numberOfFrames; f++)
         {
-            foreach (var orientation in Orientation.AllOrientations)
+            foreach (var orientation in Orientation.AllItems)
             {
                 var k0 = GetKey(orientation, RightFacingDirection.Instance);
                 var k1 = GetKey(orientation, RightFacingDirection.Instance, f);

@@ -127,10 +127,10 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
     private void InitialiseGameConstants()
     {
-        var numberOfFacingDirections = FacingDirection.AllFacingDirections.Length;
-        var numberOfOrientations = Orientation.AllOrientations.Length;
-        var numberOfActions = LemmingAction.AllLemmingActions.Length;
-        var numberOfSkills = LemmingSkill.AllLemmingSkills.Length;
+        var numberOfFacingDirections = FacingDirection.NumberOfItems;
+        var numberOfOrientations = Orientation.NumberOfItems;
+        var numberOfActions = LemmingAction.NumberOfItems;
+        var numberOfSkills = LemmingSkill.NumberOfItems;
         Console.WriteLine(
             "Loaded {0} facing directions. Loaded {1} orientations. Loaded {2} skills. Loaded {3} actions",
             numberOfFacingDirections,
