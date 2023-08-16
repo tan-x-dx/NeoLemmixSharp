@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
-namespace NeoLemmixSharp.Engine.Engine;
+namespace NeoLemmixSharp.Engine.Engine.Lemmings;
 
 public sealed class Lemming
 {

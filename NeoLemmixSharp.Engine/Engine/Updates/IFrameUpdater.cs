@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Updates;
+﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
+
+namespace NeoLemmixSharp.Engine.Engine.Updates;
 
 public interface IFrameUpdater
 {

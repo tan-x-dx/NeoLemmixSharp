@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Engine.Gadgets.HitBoxes;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets.States;
 

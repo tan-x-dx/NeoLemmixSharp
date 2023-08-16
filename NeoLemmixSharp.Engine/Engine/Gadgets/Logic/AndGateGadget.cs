@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Gadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Engine.Gadgets.States;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets.Logic;

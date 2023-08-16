@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Gadgets.MetalGrates;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 

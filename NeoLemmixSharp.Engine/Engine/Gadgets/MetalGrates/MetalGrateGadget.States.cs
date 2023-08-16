@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Engine.Gadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Engine.Gadgets.States;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets.MetalGrates;
 

@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets.Collections;

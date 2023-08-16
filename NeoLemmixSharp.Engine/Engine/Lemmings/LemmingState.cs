@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Engine.Engine.Teams;
 
-namespace NeoLemmixSharp.Engine.Engine;
+namespace NeoLemmixSharp.Engine.Engine.Lemmings;
 
 public sealed class LemmingState
 {

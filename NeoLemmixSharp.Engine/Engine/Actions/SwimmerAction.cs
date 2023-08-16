@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
