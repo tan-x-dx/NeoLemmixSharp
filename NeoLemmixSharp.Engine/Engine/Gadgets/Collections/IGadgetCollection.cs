@@ -30,12 +30,11 @@ public static class GadgetCollections
     public static void SetGadgets(IEnumerable<IGadget> allGadgets)
     {
         var gadgetTypeLookup = allGadgets
-            .OfType<IGadget>()
             .ToLookup(g => g.Type);
 
         Waters = GetGadgetCollection<IGadget>(GadgetType.Water);
         Updrafts = GetGadgetCollection<IGadget>(GadgetType.Updraft);
-        GeneralGadgets = GetGadgetCollection<IGadget>(GadgetType.TrapOnce);
+        GeneralGadgets = GetGadgetCollection<IGadget>(GadgetType.None);
 
         MetalGrates = GetGadgetCollection<MetalGrateGadget>(GadgetType.MetalGrate);
 

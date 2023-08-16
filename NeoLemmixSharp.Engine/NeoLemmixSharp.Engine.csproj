@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Engine\Gadgets\Logic\" />
-    <Folder Include="Engine\Gadgets\States\" />
+    <Folder Include="Engine\Gadgets\Behaviours\" />
   </ItemGroup>
 
 </Project>

@@ -27,9 +27,12 @@ public sealed class FloaterAction : LemmingAction
         var orientation = lemming.Orientation;
         var levelPosition = lemming.LevelPosition;
 
-        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemming, levelPosition, out _))
+        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemming, levelPosition, out var updraft))
         {
-            maxFallDistance--;
+            if (updraft.Orientation == orientation.GetOpposite())
+            {
+                maxFallDistance--;
+            }
         }
 
         var groundPixelDistance = Math.Max(FindGroundPixel(lemming, levelPosition), 0);

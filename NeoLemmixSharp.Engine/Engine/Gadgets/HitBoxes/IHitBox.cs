@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Engine.Gadgets.HitBoxes;
 
 public interface IHitBox
 {
-    bool TryGetGadgetThatMatchesTypeAndOrientation(
+    bool MatchesLemming(
         Lemming lemming,
         LevelPosition levelPosition);
 }

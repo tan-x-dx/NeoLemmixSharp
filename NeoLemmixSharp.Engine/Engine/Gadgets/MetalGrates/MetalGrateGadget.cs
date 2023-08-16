@@ -6,61 +6,44 @@ using NeoLemmixSharp.Engine.Rendering.Viewport;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets.MetalGrates;
 
-public sealed class MetalGrateGadget : IGadget
+public sealed partial class MetalGrateGadget : IGadget
 {
+    private readonly DeactivatedState _deactivatedState;
+    private readonly TransitionToActiveState _transitionToActiveState;
+    private readonly ActivatedState _activatedState;
+    private readonly TransitionToDeactivatedState _transitionToDeactivatedState;
+
     public int Id { get; }
     public GadgetType Type { get; }
     public Orientation Orientation { get; }
     public LevelPosition LevelPosition { get; }
-    public IGadgetState CurrentState { get; }
-    public int AnimationFrame { get; private set; }
+    public IGadgetState CurrentState { get; private set; }
 
     public RectangularLevelRegion SpriteClip { get; }
     public IViewportObjectRenderer Renderer { get; }
-    public RectangularLevelRegion HitBox { get; }
-
-    private bool _isActive;
+    public RectangularLevelRegion HitBox => SpriteClip;
 
     public MetalGrateGadget(
         int id,
         Orientation orientation,
         LevelPosition levelPosition,
-        RectangularLevelRegion renderClip,
-        RectangularLevelRegion hitBox)
+        RectangularLevelRegion spriteClip)
     {
         Id = id;
         Orientation = orientation;
         LevelPosition = levelPosition;
-        SpriteClip = renderClip;
-        HitBox = hitBox;
-    }
+        SpriteClip = spriteClip;
+        var hitBox = new MetalGrateHitBox(SpriteClip);
 
-    public void Activate()
-    {
-        _isActive = true;
-    }
+        _deactivatedState = new DeactivatedState(hitBox);
+        _transitionToActiveState = new TransitionToActiveState(hitBox);
+        _activatedState = new ActivatedState(hitBox);
+        _transitionToDeactivatedState = new TransitionToDeactivatedState(hitBox);
 
-    public void Deactivate()
-    {
-        _isActive = false;
+        CurrentState = _activatedState;
     }
 
     public void Tick()
     {
-    }
-
-    public bool MatchesOrientation(LevelPosition levelPosition, Orientation orientation)
-    {
-        if (!_isActive)
-            return false;
-
-        var offset = levelPosition - SpriteClip.TopLeft;
-
-        return HitBox.ContainsPoint(offset);
-    }
-
-    public void OnLemmingInHitBox(Lemming lemming)
-    {
-
     }
 }

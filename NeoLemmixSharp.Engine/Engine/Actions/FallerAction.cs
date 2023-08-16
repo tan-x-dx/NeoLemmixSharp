@@ -27,7 +27,11 @@ public sealed class FallerAction : LemmingAction
 
         if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemmingPosition, out var updraft))
         {
-            maxFallDistanceStep = 2;
+            if (updraft.Orientation == orientation.GetOpposite())
+            {
+                maxFallDistanceStep = 2;
+            }
+
             //updraft.OnLemmingInHitBox(lemming);
         }
 
@@ -50,7 +54,10 @@ public sealed class FallerAction : LemmingAction
 
             if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemmingPosition, out updraft))
             {
-                lemming.DistanceFallen = 0;
+                if (updraft.Orientation == orientation.GetOpposite())
+                {
+                    lemming.DistanceFallen = 0;
+                }
                 //updraft.OnLemmingInHitBox(lemming);
             }
         }

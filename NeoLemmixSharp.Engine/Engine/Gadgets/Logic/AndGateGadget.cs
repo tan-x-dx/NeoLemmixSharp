@@ -1,20 +1,19 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.Gadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Engine.Gadgets.States;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets.Logic;
 
-public sealed class AndGateGadget : IGadget
+public sealed class AndGateGadget : IGadget, IGadgetState
 {
-    private readonly AndGateState _currentState = new();
-
     public int Id { get; }
 
     public GadgetType Type => GadgetType.Logic;
     public Orientation Orientation => DownOrientation.Instance;
     public LevelPosition LevelPosition { get; }
 
-    IGadgetState IGadget.CurrentState => _currentState;
+    IGadgetState IGadget.CurrentState => this;
 
     public AndGateGadget(int id, LevelPosition levelPosition)
     {
@@ -24,22 +23,20 @@ public sealed class AndGateGadget : IGadget
 
     public void Tick()
     {
-        _currentState.Tick();
     }
 
-    private sealed class AndGateState : IGadgetState
+    public int AnimationFrame => 0;
+    public IHitBox HitBox => EmptyHitBox.Instance;
+
+    void IGadgetState.OnTransitionTo()
     {
-        public int AnimationFrame => 0;
-        public void OnTransitionTo()
-        {
-        }
+    }
 
-        public void Tick()
-        {
-        }
+    void IGadgetState.OnTransitionFrom()
+    {
+    }
 
-        public void OnTransitionFrom()
-        {
-        }
+    void IGadgetState.OnLemmingInHitBox(Lemming lemming)
+    {
     }
 }
