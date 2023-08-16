@@ -21,26 +21,22 @@ public sealed class LevelScreen : IBaseScreen
 {
     public static LevelScreen Current { get; private set; }
 
-    private readonly TerrainManager _terrain;
-
-    private readonly SkillSetManager _skillSetManager;
-    private readonly LevelCursor _levelCursor;
-    private readonly Viewport _viewport;
-    private readonly LevelInputController _inputController;
-    private readonly ILevelControlPanel _controlPanel;
-
-    private readonly Lemming[] _lemmings;
     private readonly IGadget[] _gadgets;
 
-    private readonly IFrameUpdater _standardFrameUpdater;
-    private readonly IFrameUpdater _fastForwardFrameUpdater;
-
-    private IFrameUpdater _currentlySelectedFrameUpdater;
+    private readonly UpdateScheduler _updateScheduler;
+    private readonly LevelInputController _inputController;
+    private readonly LevelTimer _levelTimer;
+    private readonly SkillSetManager _skillSetManager;
+    private readonly ILevelControlPanel _controlPanel;
+    private readonly LevelCursor _levelCursor;
+    private readonly Viewport _viewport;
+    private readonly LemmingManager _lemmingManager;
+    private readonly TerrainManager _terrain;
+    private readonly LevelRenderer _screenRenderer;
 
     private bool _stopMotion = true;
     private bool _doTick;
 
-    public LevelRenderer ScreenRenderer { get; }
     public bool IsDisposed { get; set; }
     public IGameWindow GameWindow { get; set; }
     public string ScreenTitle { get; init; }
@@ -52,45 +48,36 @@ public sealed class LevelScreen : IBaseScreen
     public Lemming? QueuedSkillLemming { get; private set; }
     public int QueuedSkillFrame { get; private set; }
 
-    public LevelTimer LevelTimer { get; }
+    public LevelTimer LevelTimer => _levelTimer;
 
     public LevelScreen(
         LevelData levelData,
-        TerrainManager terrain,
-        Lemming[] lemmings,
         IGadget[] gadgets,
+        UpdateScheduler updateScheduler,
         LevelInputController levelInputController,
+        LevelTimer levelTimer,
         SkillSetManager skillSetManager,
         ILevelControlPanel controlPanel,
         LevelCursor cursor,
         Viewport viewport,
-        LevelRenderer levelRenderer,
-        LevelTimer levelTimer)
+        LemmingManager lemmingManager,
+        TerrainManager terrain,
+        LevelRenderer levelRenderer)
     {
         ScreenTitle = levelData.LevelTitle;
-        ScreenRenderer = levelRenderer;
 
-        _lemmings = lemmings;
         _gadgets = gadgets;
 
-        _terrain = terrain;
-        _inputController = levelInputController; // new LevelInputController();
+        _updateScheduler = updateScheduler;
+        _inputController = levelInputController;
+        _levelTimer = levelTimer;
         _skillSetManager = skillSetManager;
-
-        LevelTimer = levelTimer;
-
-        var isSuperLemmingMode = false;
-
-        _fastForwardFrameUpdater = new FastForwardsFrameUpdater();
-        _standardFrameUpdater = isSuperLemmingMode
-            ? _fastForwardFrameUpdater
-            : new StandardFrameUpdater();
-
-        _currentlySelectedFrameUpdater = _standardFrameUpdater;
-
         _controlPanel = controlPanel;
         _levelCursor = cursor;
         _viewport = viewport;
+        _lemmingManager = lemmingManager;
+        _terrain = terrain;
+        _screenRenderer = levelRenderer;
 
         Orientation.SetTerrain(terrain);
         LemmingAction.SetTerrain(terrain);
@@ -101,17 +88,13 @@ public sealed class LevelScreen : IBaseScreen
         Current = this;
     }
 
-    IScreenRenderer IBaseScreen.ScreenRenderer => ScreenRenderer;
+    IScreenRenderer IBaseScreen.ScreenRenderer => _screenRenderer;
 
     public void Tick()
     {
         DoneAssignmentThisFrame = false;
         _levelCursor.OnNewFrame();
-
-        for (var i = 0; i < _lemmings.Length; i++)
-        {
-            _levelCursor.CheckLemming(_lemmings[i]);
-        }
+        _lemmingManager.CheckLemmingsUnderCursor();
 
         _inputController.Update();
         CheckForQueuedAction();
@@ -129,12 +112,9 @@ public sealed class LevelScreen : IBaseScreen
             _gadgets[i].Tick();
         }
 
-        for (var i = 0; i < _lemmings.Length; i++)
-        {
-            _currentlySelectedFrameUpdater.UpdateLemming(_lemmings[i]);
-        }
+        _lemmingManager.UpdateLemmings();
 
-        _currentlySelectedFrameUpdater.Update();
+        _updateScheduler.Tick();
     }
 
     private void HandleKeyboardInput()
@@ -156,12 +136,12 @@ public sealed class LevelScreen : IBaseScreen
         {
             if (IsFastForwards)
             {
-                _currentlySelectedFrameUpdater = _standardFrameUpdater;
+                _updateScheduler.SetNormalSpeed();
                 IsFastForwards = false;
             }
             else
             {
-                _currentlySelectedFrameUpdater = _fastForwardFrameUpdater;
+                _updateScheduler.SetFastSpeed();
                 IsFastForwards = true;
             }
         }
@@ -259,7 +239,7 @@ public sealed class LevelScreen : IBaseScreen
 
         _controlPanel.SetWindowDimensions(windowWidth, windowHeight);
         _viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)_controlPanel).ControlPanelScreenHeight);
-        ScreenRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
+        _screenRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
     }
 
     public void Dispose()
@@ -272,25 +252,11 @@ public sealed class LevelScreen : IBaseScreen
         TerrainAddMask.SetTerrain(null);
         LevelCursor.LevelScreen = null;
 
-        ScreenRenderer.Dispose();
+        _screenRenderer.Dispose();
         GadgetCollections.ClearGadgets();
         Current = null;
 #pragma warning restore CS8625
     }
-    /*
-    public override IScreenRenderer CreateScreenRenderer(
-        SpriteBank spriteBank,
-        FontBank fontBank,
-        ISprite[] levelSprites)
-    {
-        return new LevelRenderer(
-            _terrain,
-            _viewport,
-            levelSprites,
-            spriteBank,
-            fontBank,
-            _controlPanel);
-    }*/
 
     private bool Pause => _inputController.Pause.IsPressed;
     private bool Quit => _inputController.Quit.IsPressed;
@@ -303,58 +269,58 @@ public sealed class LevelScreen : IBaseScreen
         if (_gadgets.Length == 0)
             return;
 
-       /* var gadget = (ResizeableGadget)_gadgets[0];
+        /* var gadget = (ResizeableGadget)_gadgets[0];
 
-        if (_inputController.W.IsKeyDown)
-        {
-            gadget.SetDeltaHeight(-1);
-        }
-        else if (_inputController.S.IsKeyDown)
-        {
-            gadget.SetDeltaHeight(1);
-        }
-        else
-        {
-            gadget.SetDeltaHeight(0);
-        }
+         if (_inputController.W.IsKeyDown)
+         {
+             gadget.SetDeltaHeight(-1);
+         }
+         else if (_inputController.S.IsKeyDown)
+         {
+             gadget.SetDeltaHeight(1);
+         }
+         else
+         {
+             gadget.SetDeltaHeight(0);
+         }
 
-        if (_inputController.A.IsKeyDown)
-        {
-            gadget.SetDeltaWidth(-1);
-        }
-        else if (_inputController.D.IsKeyDown)
-        {
-            gadget.SetDeltaWidth(1);
-        }
-        else
-        {
-            gadget.SetDeltaWidth(0);
-        }
+         if (_inputController.A.IsKeyDown)
+         {
+             gadget.SetDeltaWidth(-1);
+         }
+         else if (_inputController.D.IsKeyDown)
+         {
+             gadget.SetDeltaWidth(1);
+         }
+         else
+         {
+             gadget.SetDeltaWidth(0);
+         }
 
-        if (_inputController.UpArrow.IsKeyDown)
-        {
-            gadget.SetDeltaY(-1);
-        }
-        else if (_inputController.DownArrow.IsKeyDown)
-        {
-            gadget.SetDeltaY(1);
-        }
-        else
-        {
-            gadget.SetDeltaY(0);
-        }
+         if (_inputController.UpArrow.IsKeyDown)
+         {
+             gadget.SetDeltaY(-1);
+         }
+         else if (_inputController.DownArrow.IsKeyDown)
+         {
+             gadget.SetDeltaY(1);
+         }
+         else
+         {
+             gadget.SetDeltaY(0);
+         }
 
-        if (_inputController.LeftArrow.IsKeyDown)
-        {
-            gadget.SetDeltaX(-1);
-        }
-        else if (_inputController.RightArrow.IsKeyDown)
-        {
-            gadget.SetDeltaX(1);
-        }
-        else
-        {
-            gadget.SetDeltaX(0);
-        }*/
+         if (_inputController.LeftArrow.IsKeyDown)
+         {
+             gadget.SetDeltaX(-1);
+         }
+         else if (_inputController.RightArrow.IsKeyDown)
+         {
+             gadget.SetDeltaX(1);
+         }
+         else
+         {
+             gadget.SetDeltaX(0);
+         }*/
     }
 }
