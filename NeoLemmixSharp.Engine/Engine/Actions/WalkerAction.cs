@@ -28,7 +28,7 @@ public sealed class WalkerAction : LemmingAction
         var dy = FindGroundPixel(lemming, lemmingPosition);
 
         if (dy > 0 &&
-            lemming.IsSlider &&
+            lemming.State.IsSlider &&
             LemmingCanDehoist(lemming, true))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
@@ -39,7 +39,7 @@ public sealed class WalkerAction : LemmingAction
 
         if (dy < -6)
         {
-            if (lemming.IsClimber)
+            if (lemming.State.IsClimber)
             {
                 ClimberAction.Instance.TransitionLemmingToAction(lemming, false);
             }

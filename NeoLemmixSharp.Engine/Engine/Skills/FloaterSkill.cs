@@ -18,12 +18,12 @@ public sealed class FloaterSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !(lemming.IsGlider || lemming.IsFloater) && ActionIsAssignable(lemming);
+        return !(lemming.State.IsGlider || lemming.State.IsFloater) && ActionIsAssignable(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        lemming.IsFloater = true;
+        lemming.State.IsFloater = true;
         return true;
     }
 

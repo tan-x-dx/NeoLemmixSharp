@@ -48,7 +48,7 @@ public sealed class ClimberAction : LemmingAction
                     lemming.LevelPosition = lemmingPosition;
                 }
 
-                if (lemming.IsSlider)
+                if (lemming.State.IsSlider)
                 {
                     lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
                     lemming.LevelPosition = lemmingPosition;
@@ -98,7 +98,7 @@ public sealed class ClimberAction : LemmingAction
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         lemming.LevelPosition = lemmingPosition;
 
-        if (lemming.IsSlider)
+        if (lemming.State.IsSlider)
         {
             SliderAction.Instance.TransitionLemmingToAction(lemming, false);
 

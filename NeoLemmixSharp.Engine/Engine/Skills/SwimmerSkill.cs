@@ -18,12 +18,12 @@ public sealed class SwimmerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.IsSwimmer && ActionIsAssignable(lemming);
+        return !lemming.State.IsSwimmer && ActionIsAssignable(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        lemming.IsSwimmer = true;
+        lemming.State.IsSwimmer = true;
         if (lemming.CurrentAction == DrownerAction.Instance)
         {
             SwimmerAction.Instance.TransitionLemmingToAction(lemming, false);

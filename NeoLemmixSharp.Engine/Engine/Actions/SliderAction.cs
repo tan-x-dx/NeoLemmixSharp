@@ -69,7 +69,7 @@ public sealed class SliderAction : LemmingAction
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             lemming.LevelPosition = lemmingPosition;
-            if (lemming.IsSwimmer)
+            if (lemming.State.IsSwimmer)
             {
                 SwimmerAction.Instance.TransitionLemmingToAction(lemming, true);
                 // ?? CueSoundEffect(SFX_SWIMMING, L.Position); ??

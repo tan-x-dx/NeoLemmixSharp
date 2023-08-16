@@ -28,7 +28,9 @@ public sealed class Team : IUniqueIdItem<Team>
     public int Id { get; }
     public Color HairColor { get; private set; }
     public Color SkinColor { get; private set; }
+    public Color ZombieSkinColor { get; private set; }
     public Color BodyColor { get; private set; }
+    public Color NeutralBodyColor { get; private set; }
 
     private Team(int id)
     {
@@ -39,7 +41,9 @@ public sealed class Team : IUniqueIdItem<Team>
     {
         HairColor = colorData.HairColor;
         SkinColor = colorData.SkinColor;
+        ZombieSkinColor = colorData.ZombieSkinColor;
         BodyColor = colorData.BodyColor;
+        NeutralBodyColor = colorData.NeutralBodyColor;
     }
 
     public bool Equals(Team? other) => Id == other?.Id;

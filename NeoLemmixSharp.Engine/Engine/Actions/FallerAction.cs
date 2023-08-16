@@ -80,7 +80,7 @@ public sealed class FallerAction : LemmingAction
 
     private static bool IsFallFatal(Lemming lemming)
     {
-        return !(lemming.IsFloater || lemming.IsGlider) &&
+        return !(lemming.State.IsFloater || lemming.State.IsGlider) &&
                false/*!Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.NoSplat, lemming.LevelPosition, lemming.Orientation)*/ &&
                (lemming.DistanceFallen > MaxFallDistance ||
                 false/*Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Splat, lemming.LevelPosition, lemming.Orientation)*/);
@@ -90,7 +90,7 @@ public sealed class FallerAction : LemmingAction
         Lemming lemming,
         int currentFallDistance)
     {
-        if (lemming.IsFloater &&
+        if (lemming.State.IsFloater &&
             lemming.TrueDistanceFallen > 16 &&
             currentFallDistance == 0)
         {
@@ -98,7 +98,7 @@ public sealed class FallerAction : LemmingAction
             return true;
         }
 
-        if (lemming.IsGlider &&
+        if (lemming.State.IsGlider &&
             (lemming.TrueDistanceFallen > 8 ||
              (lemming.InitialFall &&
               lemming.TrueDistanceFallen > 6)))

@@ -151,48 +151,62 @@ public static class DefaultLemmingSpriteBank
     {
         var result = new TeamColorData[GameConstants.NumberOfTeams];
 
-        var defaultSkinColor = new Color(0xf0, 0xd0, 0xd0);
+        var defaultSkinColor = new Color(0xF0, 0xD0, 0xD0);
+        var defaultZombieSkinColor = new Color(0x77, 0x77, 0x77);
+        var defaultNeutralBodyColor = new Color(0x99, 0x99, 0x99);
 
         result[0] = new TeamColorData
         {
             HairColor = new Color(0x04, 0xB0, 0x00),
             SkinColor = defaultSkinColor,
-            BodyColor = new Color(0x40, 0x44, 0xDF)
+            ZombieSkinColor = defaultZombieSkinColor,
+            BodyColor = new Color(0x40, 0x44, 0xDF),
+            NeutralBodyColor = defaultNeutralBodyColor
         };
 
         result[1] = new TeamColorData
         {
             HairColor = new Color(0x00, 0xB0, 0xA9),
             SkinColor = defaultSkinColor,
-            BodyColor = new Color(0xD5, 0x3F, 0xDE)
+            ZombieSkinColor = defaultZombieSkinColor,
+            BodyColor = new Color(0xD5, 0x3F, 0xDE),
+            NeutralBodyColor = defaultNeutralBodyColor
         };
 
         result[2] = new TeamColorData
         {
             HairColor = new Color(0x00, 0x04, 0xB0),
             SkinColor = defaultSkinColor,
-            BodyColor = new Color(0xDE, 0x3F, 0x46)
+            ZombieSkinColor = defaultZombieSkinColor,
+            BodyColor = new Color(0xDE, 0x3F, 0x46),
+            NeutralBodyColor = defaultNeutralBodyColor
         };
 
         result[3] = new TeamColorData
         {
             HairColor = new Color(0xAD, 0x00, 0xB0),
             SkinColor = defaultSkinColor,
-            BodyColor = new Color(0xDE, 0xD1, 0x3F)
+            ZombieSkinColor = defaultZombieSkinColor,
+            BodyColor = new Color(0xDE, 0xD1, 0x3F),
+            NeutralBodyColor = defaultNeutralBodyColor
         };
 
         result[4] = new TeamColorData
         {
             HairColor = new Color(0xB0, 0x00, 0x00),
             SkinColor = defaultSkinColor,
-            BodyColor = new Color(0x4A, 0xDE, 0x3F)
+            ZombieSkinColor = defaultZombieSkinColor,
+            BodyColor = new Color(0x4A, 0xDE, 0x3F),
+            NeutralBodyColor = defaultNeutralBodyColor
         };
 
         result[5] = new TeamColorData
         {
             HairColor = new Color(0xB0, 0xA9, 0x00),
             SkinColor = defaultSkinColor,
-            BodyColor = new Color(0x3F, 0xDE, 0xD5)
+            ZombieSkinColor = defaultZombieSkinColor,
+            BodyColor = new Color(0x3F, 0xDE, 0xD5),
+            NeutralBodyColor = defaultNeutralBodyColor
         };
 
         return result;

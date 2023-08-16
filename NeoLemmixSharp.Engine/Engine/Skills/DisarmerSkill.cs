@@ -18,12 +18,12 @@ public sealed class DisarmerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.IsDisarmer && ActionIsAssignable(lemming);
+        return !lemming.State.IsDisarmer && ActionIsAssignable(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        lemming.IsDisarmer = true;
+        lemming.State.IsDisarmer = true;
         return true;
     }
 

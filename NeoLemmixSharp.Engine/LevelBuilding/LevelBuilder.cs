@@ -52,6 +52,9 @@ public sealed class LevelBuilder : IDisposable
             _levelReader.LevelData);
 
         var levelData = _levelReader.LevelData;
+        var lemmingSpriteBank = _levelAssembler.GetLemmingSpriteBank();
+        lemmingSpriteBank.SetTeamColors();
+
         var levelLemmings = _levelAssembler.GetLevelLemmings();
         var levelGadgets = _levelAssembler.GetLevelGadgets();
         var pixelData = _terrainPainter.GetPixelData();
@@ -85,9 +88,6 @@ public sealed class LevelBuilder : IDisposable
             levelData.VerticalBoundaryBehaviour);
 
         var levelSprites = _levelAssembler.GetLevelSprites();
-
-        var lemmingSpriteBank = _levelAssembler.GetLemmingSpriteBank();
-        lemmingSpriteBank.SetTeamColors();
 
         var gadgetSpriteBank = _levelAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelAssembler.GetControlPanelSpriteBank(levelCursor);

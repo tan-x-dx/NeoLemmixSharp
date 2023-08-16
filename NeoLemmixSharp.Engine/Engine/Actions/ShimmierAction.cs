@@ -58,7 +58,7 @@ public sealed class ShimmierAction : LemmingAction
             {
                 if (Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)))
                 {
-                    if (lemming.IsSlider)
+                    if (lemming.State.IsSlider)
                     {
                         SliderAction.Instance.TransitionLemmingToAction(lemming, false);
                     }

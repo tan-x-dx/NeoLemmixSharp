@@ -48,7 +48,7 @@ public sealed class LevelAssembler : IDisposable
         ContentManager content,
         LevelData levelData)
     {
-        SetUpTestLemmings();
+        //SetUpTestLemmings();
         //SetUpLemmings();
         //SetUpGadgets(content, levelData.AllGadgetData);
 
@@ -69,6 +69,8 @@ public sealed class LevelAssembler : IDisposable
 
     public Lemming[] GetLevelLemmings()
     {
+        SetUpTestLemmings();
+
         return _lemmings.ToArray();
     }
 
@@ -132,10 +134,9 @@ public sealed class LevelAssembler : IDisposable
             facingDirection: LeftFacingDirection.Instance)
         {
             LevelPosition = new LevelPosition(60, 20),
-            IsClimber = true,
             State =
             {
-                IsAthlete = true
+                IsClimber = true,
             },
             FastForwardTime = 1
         };
@@ -152,9 +153,11 @@ public sealed class LevelAssembler : IDisposable
             facingDirection: LeftFacingDirection.Instance)
         {
             LevelPosition = new LevelPosition(145, 134),
-            IsFloater = true
+            State =
+            {
+                IsFloater = true
+            }
         };
-        lemmingC.State.IsAthlete = true;
 
         var lemmingD = new Lemming(
             orientation: LeftOrientation.Instance,
@@ -296,12 +299,32 @@ public sealed class LevelAssembler : IDisposable
         lemming9.State.TeamAffiliation = Team.AllItems[3];
         lemming10.State.TeamAffiliation = Team.AllItems[4];
         lemming11.State.TeamAffiliation = Team.AllItems[5];
-        lemming6.State.IsAthlete = true;
-        lemming7.State.IsAthlete = true;
-        lemming8.State.IsAthlete = true;
-        lemming9.State.IsAthlete = true;
-        lemming10.State.IsAthlete = true;
-        lemming11.State.IsAthlete = true;
+        lemming6.State.IsSwimmer = true;
+        lemming7.State.IsSwimmer = true;
+        lemming8.State.IsSwimmer = true;
+        lemming9.State.IsSwimmer = true;
+        lemming10.State.IsSwimmer = true;
+        lemming11.State.IsSwimmer = true;
+
+        lemming0.State.IsNeutral = true;
+        lemming1.State.IsNeutral = true;
+        lemming2.State.IsNeutral = true;
+        lemming3.State.IsNeutral = true;
+        lemming4.State.IsNeutral = true;
+        lemming5.State.IsNeutral = true;
+        lemming6.State.IsNeutral = true;
+        lemming7.State.IsNeutral = true;
+        lemming8.State.IsNeutral = true;
+        lemming9.State.IsNeutral = true;
+        lemming10.State.IsNeutral = true;
+        lemming11.State.IsNeutral = true;
+
+        lemming0.State.IsZombie = true;
+        lemming1.State.IsZombie = true;
+        lemming2.State.IsZombie = true;
+        lemming3.State.IsZombie = true;
+        lemming4.State.IsZombie = true;
+        lemming5.State.IsZombie = true;
     }
 
     private void SetUpLemmings()

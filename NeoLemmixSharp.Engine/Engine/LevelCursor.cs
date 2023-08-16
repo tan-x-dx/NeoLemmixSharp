@@ -173,7 +173,7 @@ public sealed class LevelCursor
     private static bool LemmingIsPriority(Lemming lemming, int priorityValue)
     {
         if (priorityValue == 1)
-            return lemming.HasPermanentSkill;
+            return lemming.State.HasPermanentSkill;
 
         return lemming.CurrentAction.CursorSelectionPriorityValue == priorityValue;
     }

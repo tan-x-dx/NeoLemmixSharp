@@ -18,12 +18,12 @@ public sealed class GliderSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !(lemming.IsGlider || lemming.IsFloater) && ActionIsAssignable(lemming);
+        return !(lemming.State.IsGlider || lemming.State.IsFloater) && ActionIsAssignable(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        lemming.IsGlider = true;
+        lemming.State.IsGlider = true;
         return true;
     }
 
