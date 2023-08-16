@@ -4,8 +4,8 @@ public static class GameConstants
 {
     #region Engine Constants
 
-    public const int TicksPerSecond = 17;
-    public const int FramesPerSecond = TicksPerSecond * 3;
+    public const int StandardTicksPerSecond = 17;
+    public const int FramesPerSecond = StandardTicksPerSecond * 3;
 
     public const int RightFacingDirectionId = 0;
     public const int LeftFacingDirectionId = 1;
