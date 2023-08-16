@@ -15,6 +15,7 @@ public sealed class NoneAction : LemmingAction
     public override string LemmingActionName => "none";
     public override int NumberOfAnimationFrames => 1;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => -1;
 
     public override bool UpdateLemming(Lemming lemming)
     {

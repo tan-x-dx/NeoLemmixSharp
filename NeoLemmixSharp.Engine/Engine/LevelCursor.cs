@@ -169,36 +169,12 @@ public sealed class LevelCursor
         }
     }
 
-    // TODO Make this cleverer
     private static bool LemmingIsPriority(Lemming lemming, int priorityValue)
     {
-        var action = lemming.CurrentAction;
+        if (priorityValue == 1)
+            return lemming.HasPermanentSkill;
 
-        return priorityValue switch
-        {
-            0 => action == BasherAction.Instance ||
-                 action == FencerAction.Instance ||
-                 action == MinerAction.Instance ||
-                 action == DiggerAction.Instance ||
-                 action == BuilderAction.Instance ||
-                 action == PlatformerAction.Instance ||
-                 action == StackerAction.Instance ||
-                 action == BlockerAction.Instance ||
-                 action == ShruggerAction.Instance ||
-                 action == ReacherAction.Instance ||
-                 action == ShimmierAction.Instance ||
-                 action == LasererAction.Instance,
-
-            1 => lemming.HasPermanentSkill,
-
-            2 => !(action == WalkerAction.Instance ||
-                   action == AscenderAction.Instance),
-
-            3 => action == WalkerAction.Instance ||
-                 action == AscenderAction.Instance,
-
-            _ => true
-        };
+        return lemming.CurrentAction.CursorSelectionPriorityValue == priorityValue;
     }
 
     public void HandleMouseInput()

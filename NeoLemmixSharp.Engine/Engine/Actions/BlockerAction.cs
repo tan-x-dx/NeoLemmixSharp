@@ -12,6 +12,7 @@ public sealed class BlockerAction : LemmingAction
     public override string LemmingActionName => "blocker";
     public override int NumberOfAnimationFrames => GameConstants.BlockerAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => 0;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -16,6 +16,7 @@ public sealed class SliderAction : LemmingAction
     public override string LemmingActionName => "slider";
     public override int NumberOfAnimationFrames => GameConstants.SliderAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => 1;
 
     public override bool UpdateLemming(Lemming lemming)
     {

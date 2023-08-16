@@ -57,6 +57,7 @@ public sealed class LasererAction : LemmingAction, IDestructionAction
     public override string LemmingActionName => "laserer";
     public override int NumberOfAnimationFrames => GameConstants.LasererAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => 0;
 
     public override bool UpdateLemming(Lemming lemming)
     {

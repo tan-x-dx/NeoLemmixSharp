@@ -12,6 +12,7 @@ public sealed class VaporiserAction : LemmingAction
     public override string LemmingActionName => "burner2";
     public override int NumberOfAnimationFrames => GameConstants.VaporiserAnimationFrames;
     public override bool IsOneTimeAction => true;
+    public override int CursorSelectionPriorityValue => 2;
 
     public override bool UpdateLemming(Lemming lemming)
     {

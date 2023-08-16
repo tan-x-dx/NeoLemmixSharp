@@ -19,6 +19,7 @@ public sealed class FloaterAction : LemmingAction
     public override string LemmingActionName => "floater";
     public override int NumberOfAnimationFrames => GameConstants.FloaterAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => 1;
 
     public override bool UpdateLemming(Lemming lemming)
     {

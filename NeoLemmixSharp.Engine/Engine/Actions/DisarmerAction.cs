@@ -12,6 +12,7 @@ public sealed class DisarmerAction : LemmingAction
     public override string LemmingActionName => "disarmer";
     public override int NumberOfAnimationFrames => GameConstants.DisarmerAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => 1;
 
     public override bool UpdateLemming(Lemming lemming)
     {

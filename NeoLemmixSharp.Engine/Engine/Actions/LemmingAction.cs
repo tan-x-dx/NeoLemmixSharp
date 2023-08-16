@@ -68,6 +68,7 @@ public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
     public abstract string LemmingActionName { get; }
     public abstract int NumberOfAnimationFrames { get; }
     public abstract bool IsOneTimeAction { get; }
+    public abstract int CursorSelectionPriorityValue { get; }
 
     public abstract bool UpdateLemming(Lemming lemming);
 

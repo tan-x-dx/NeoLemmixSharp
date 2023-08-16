@@ -16,6 +16,7 @@ public sealed class SwimmerAction : LemmingAction
     public override string LemmingActionName => "swimmer";
     public override int NumberOfAnimationFrames => GameConstants.SwimmerAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => 1;
 
     public override bool UpdateLemming(Lemming lemming)
     {

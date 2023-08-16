@@ -12,6 +12,7 @@ public sealed class ShruggerAction : LemmingAction
     public override string LemmingActionName => "shrugger";
     public override int NumberOfAnimationFrames => GameConstants.ShruggerAnimationFrames;
     public override bool IsOneTimeAction => true;
+    public override int CursorSelectionPriorityValue => 0;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -12,6 +12,7 @@ public sealed class JumperAction : LemmingAction
     public override string LemmingActionName => "jumper";
     public override int NumberOfAnimationFrames => GameConstants.JumperAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => 2;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -18,6 +18,7 @@ public sealed class FencerAction : LemmingAction, IDestructionAction
     public override string LemmingActionName => "fencer";
     public override int NumberOfAnimationFrames => GameConstants.FencerAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => 0;
 
     public override bool UpdateLemming(Lemming lemming)
     {

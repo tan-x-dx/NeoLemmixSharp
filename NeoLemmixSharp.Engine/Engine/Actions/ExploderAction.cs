@@ -17,6 +17,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionAction
     public override string LemmingActionName => "bomber";
     public override int NumberOfAnimationFrames => GameConstants.ExploderAnimationFrames;
     public override bool IsOneTimeAction => true;
+    public override int CursorSelectionPriorityValue => 2;
 
     public override bool UpdateLemming(Lemming lemming)
     {
