@@ -7,13 +7,13 @@ namespace NeoLemmixSharp.Engine.Engine.Orientations;
 
 public abstract class Orientation : IUniqueIdItem<Orientation>
 {
-    private static readonly Orientation[] Orientations = GenerateRotationCollection();
+    private static readonly Orientation[] Orientations = GenerateOrientationCollection();
     protected static TerrainManager Terrain { get; private set; }
 
     public static int NumberOfItems => Orientations.Length;
     public static ReadOnlySpan<Orientation> AllItems => new(Orientations);
 
-    private static Orientation[] GenerateRotationCollection()
+    private static Orientation[] GenerateOrientationCollection()
     {
         var orientations = new Orientation[4];
 
