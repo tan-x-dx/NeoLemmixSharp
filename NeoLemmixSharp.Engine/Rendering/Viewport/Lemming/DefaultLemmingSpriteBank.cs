@@ -1,9 +1,12 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Engine.Teams;
 using ActionSpriteCreator = NeoLemmixSharp.Engine.Rendering.Viewport.SpriteRotationReflectionProcessor<NeoLemmixSharp.Engine.Rendering.Viewport.Lemming.ActionSprite>;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
@@ -27,41 +30,43 @@ public static class DefaultLemmingSpriteBank
         CreateThreeLayerSprite(AscenderAction.Instance, new LevelPosition(2, 10));
         CreateFourLayerSprite(BasherAction.Instance, new LevelPosition(8, 10));
         CreateThreeLayerSprite(BlockerAction.Instance, new LevelPosition(5, 13));
-        CreateFiveLayerTrueColourSprite(BuilderAction.Instance, new LevelPosition(3, 13));
+        CreateFiveLayerTrueColorSprite(BuilderAction.Instance, new LevelPosition(3, 13));
         CreateThreeLayerSprite(ClimberAction.Instance, new LevelPosition(8, 12));
         CreateThreeLayerSprite(DehoisterAction.Instance, new LevelPosition(5, 13));
         CreateFourLayerSprite(DiggerAction.Instance, new LevelPosition(7, 12));
-        CreateFourLayerTrueColourSprite(DisarmerAction.Instance, new LevelPosition(1, 11));
+        CreateFourLayerTrueColorSprite(DisarmerAction.Instance, new LevelPosition(1, 11));
         CreateThreeLayerSprite(DrownerAction.Instance, new LevelPosition(5, 10));
         CreateThreeLayerSprite(ExiterAction.Instance, new LevelPosition(7, 16));
-        CreateOneLayerTrueColourSprite(ExploderAction.Instance, new LevelPosition(16, 25));
+        CreateOneLayerTrueColorSprite(ExploderAction.Instance, new LevelPosition(16, 25));
         CreateThreeLayerSprite(FallerAction.Instance, new LevelPosition(2, 11));
-        CreateFiveLayerTrueColourSprite(FencerAction.Instance, new LevelPosition(5, 10));
-        CreateFourLayerTrueColourSprite(FloaterAction.Instance, new LevelPosition(4, 16));
-        CreateFourLayerTrueColourSprite(GliderAction.Instance, new LevelPosition(5, 16));
+        CreateFiveLayerTrueColorSprite(FencerAction.Instance, new LevelPosition(5, 10));
+        CreateFourLayerTrueColorSprite(FloaterAction.Instance, new LevelPosition(4, 16));
+        CreateFourLayerTrueColorSprite(GliderAction.Instance, new LevelPosition(5, 16));
         CreateThreeLayerSprite(HoisterAction.Instance, new LevelPosition(5, 12));
         CreateThreeLayerSprite(JumperAction.Instance, new LevelPosition(2, 10));
-        CreateFourLayerTrueColourSprite(LasererAction.Instance, new LevelPosition(3, 10));
+        CreateFourLayerTrueColorSprite(LasererAction.Instance, new LevelPosition(3, 10));
         CreateFourLayerSprite(MinerAction.Instance, new LevelPosition(7, 13));
         CreateThreeLayerSprite(OhNoerAction.Instance, new LevelPosition(3, 10));
-        CreateFiveLayerTrueColourSprite(PlatformerAction.Instance, new LevelPosition(3, 13));
+        CreateFiveLayerTrueColorSprite(PlatformerAction.Instance, new LevelPosition(3, 13));
         CreateThreeLayerSprite(ReacherAction.Instance, new LevelPosition(3, 10));
         CreateThreeLayerSprite(ShimmierAction.Instance, new LevelPosition(3, 8));
         CreateThreeLayerSprite(ShruggerAction.Instance, new LevelPosition(3, 10));
         CreateThreeLayerSprite(SliderAction.Instance, new LevelPosition(4, 11));
         CreateThreeLayerSprite(SplatterAction.Instance, new LevelPosition(7, 10));
-        CreateFourLayerTrueColourSprite(StackerAction.Instance, new LevelPosition(5, 13));
-        CreateOneLayerTrueColourSprite(StonerAction.Instance, new LevelPosition(16, 25));
+        CreateFourLayerTrueColorSprite(StackerAction.Instance, new LevelPosition(5, 13));
+        CreateOneLayerTrueColorSprite(StonerAction.Instance, new LevelPosition(16, 25));
         CreateThreeLayerSprite(SwimmerAction.Instance, new LevelPosition(6, 8));
-        CreateFourLayerTrueColourSprite(VaporiserAction.Instance, new LevelPosition(5, 14));
+        CreateFourLayerTrueColorSprite(VaporiserAction.Instance, new LevelPosition(5, 14));
         CreateThreeLayerSprite(WalkerAction.Instance, new LevelPosition(2, 10));
 
-        DefaultLemmingSprites = new LemmingSpriteBank(actionSprites);
+        var teamColorData = GenerateDefaultTeamColorData();
 
-        void CreateOneLayerTrueColourSprite(LemmingAction action, LevelPosition anchorPoint)
+        DefaultLemmingSprites = new LemmingSpriteBank(actionSprites, teamColorData);
+
+        void CreateOneLayerTrueColorSprite(LemmingAction action, LevelPosition anchorPoint)
         {
             CreateSprite(action, anchorPoint, 1,
-                (t, w, h, f, l, p) => new SingleColourLayerActionSprite(t, w, h, f, l, p));
+                (t, w, h, f, l, p) => new SingleColorLayerActionSprite(t, w, h, f, l, p));
         }
 
         void CreateThreeLayerSprite(LemmingAction action, LevelPosition anchorPoint)
@@ -76,16 +81,16 @@ public static class DefaultLemmingSpriteBank
                 (t, w, h, f, l, p) => new FourLayerActionSprite(t, w, h, f, l, p));
         }
 
-        void CreateFourLayerTrueColourSprite(LemmingAction action, LevelPosition anchorPoint)
+        void CreateFourLayerTrueColorSprite(LemmingAction action, LevelPosition anchorPoint)
         {
             CreateSprite(action, anchorPoint, 4,
-                (t, w, h, f, l, p) => new FourLayerColourActionSprite(t, w, h, f, l, p));
+                (t, w, h, f, l, p) => new FourLayerColorActionSprite(t, w, h, f, l, p));
         }
 
-        void CreateFiveLayerTrueColourSprite(LemmingAction action, LevelPosition anchorPoint)
+        void CreateFiveLayerTrueColorSprite(LemmingAction action, LevelPosition anchorPoint)
         {
             CreateSprite(action, anchorPoint, 5,
-                (t, w, h, f, l, p) => new FiveLayerColourActionSprite(t, w, h, f, l, p));
+                (t, w, h, f, l, p) => new FiveLayerColorActionSprite(t, w, h, f, l, p));
         }
 
         void CreateSprite(
@@ -140,5 +145,56 @@ public static class DefaultLemmingSpriteBank
 
             actionSprites[k1] = spritesTemp[k0];
         }
+    }
+
+    private static TeamColorData[] GenerateDefaultTeamColorData()
+    {
+        var result = new TeamColorData[GameConstants.NumberOfTeams];
+
+        var defaultSkinColor = new Color(0xf0, 0xd0, 0xd0);
+
+        result[0] = new TeamColorData
+        {
+            HairColor = new Color(0x04, 0xB0, 0x00),
+            SkinColor = defaultSkinColor,
+            BodyColor = new Color(0x40, 0x44, 0xDF)
+        };
+
+        result[1] = new TeamColorData
+        {
+            HairColor = new Color(0x00, 0xB0, 0xA9),
+            SkinColor = defaultSkinColor,
+            BodyColor = new Color(0xD5, 0x3F, 0xDE)
+        };
+
+        result[2] = new TeamColorData
+        {
+            HairColor = new Color(0x00, 0x04, 0xB0),
+            SkinColor = defaultSkinColor,
+            BodyColor = new Color(0xDE, 0x3F, 0x46)
+        };
+
+        result[3] = new TeamColorData
+        {
+            HairColor = new Color(0xAD, 0x00, 0xB0),
+            SkinColor = defaultSkinColor,
+            BodyColor = new Color(0xDE, 0xD1, 0x3F)
+        };
+
+        result[4] = new TeamColorData
+        {
+            HairColor = new Color(0xB0, 0x00, 0x00),
+            SkinColor = defaultSkinColor,
+            BodyColor = new Color(0x4A, 0xDE, 0x3F)
+        };
+
+        result[5] = new TeamColorData
+        {
+            HairColor = new Color(0xB0, 0xA9, 0x00),
+            SkinColor = defaultSkinColor,
+            BodyColor = new Color(0x3F, 0xDE, 0xD5)
+        };
+
+        return result;
     }
 }

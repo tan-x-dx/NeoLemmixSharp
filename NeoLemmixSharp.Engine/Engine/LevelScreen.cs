@@ -59,6 +59,7 @@ public sealed class LevelScreen : IBaseScreen
         Lemming[] lemmings,
         IGadget[] gadgets,
         LevelInputController levelInputController,
+        SkillSetManager skillSetManager,
         ILevelControlPanel controlPanel,
         LevelCursor cursor,
         Viewport viewport,
@@ -73,7 +74,7 @@ public sealed class LevelScreen : IBaseScreen
 
         _terrain = terrain;
         _inputController = levelInputController; // new LevelInputController();
-        _skillSetManager = new SkillSetManager(levelData.SkillSetData);
+        _skillSetManager = skillSetManager;
 
         LevelTimer = levelTimer;
 

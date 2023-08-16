@@ -130,10 +130,10 @@ public sealed class TerrainManager
             return;
 
         _pixels[index] = PixelType.Empty;
-        TerrainRenderer.SetPixelColour(pixelToErase.X, pixelToErase.Y, 0U);
+        TerrainRenderer.SetPixelColor(pixelToErase.X, pixelToErase.Y, 0U);
     }
 
-    public void SetSolidPixel(LevelPosition pixelToSet, uint colour)
+    public void SetSolidPixel(LevelPosition pixelToSet, uint color)
     {
         if (PositionOutOfBounds(pixelToSet))
             return;
@@ -145,6 +145,6 @@ public sealed class TerrainManager
             return;
 
         _pixels[index] |= PixelType.SolidToAllOrientations;
-        TerrainRenderer.SetPixelColour(pixelToSet.X, pixelToSet.Y, colour);
+        TerrainRenderer.SetPixelColor(pixelToSet.X, pixelToSet.Y, color);
     }
 }

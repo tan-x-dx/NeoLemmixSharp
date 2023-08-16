@@ -170,31 +170,36 @@ public sealed class LevelCursor
     }
 
     // TODO Make this cleverer
-    private static bool LemmingIsPriority(Lemming lemming, int priorityValue) => priorityValue switch
+    private static bool LemmingIsPriority(Lemming lemming, int priorityValue)
     {
-        0 => lemming.CurrentAction == BasherAction.Instance ||
-             lemming.CurrentAction == FencerAction.Instance ||
-             lemming.CurrentAction == MinerAction.Instance ||
-             lemming.CurrentAction == DiggerAction.Instance ||
-             lemming.CurrentAction == BuilderAction.Instance ||
-             lemming.CurrentAction == PlatformerAction.Instance ||
-             lemming.CurrentAction == StackerAction.Instance ||
-             lemming.CurrentAction == BlockerAction.Instance ||
-             lemming.CurrentAction == ShruggerAction.Instance ||
-             lemming.CurrentAction == ReacherAction.Instance ||
-             lemming.CurrentAction == ShimmierAction.Instance ||
-             lemming.CurrentAction == LasererAction.Instance,
+        var action = lemming.CurrentAction;
 
-        1 => lemming.HasPermanentSkill,
+        return priorityValue switch
+        {
+            0 => action == BasherAction.Instance ||
+                 action == FencerAction.Instance ||
+                 action == MinerAction.Instance ||
+                 action == DiggerAction.Instance ||
+                 action == BuilderAction.Instance ||
+                 action == PlatformerAction.Instance ||
+                 action == StackerAction.Instance ||
+                 action == BlockerAction.Instance ||
+                 action == ShruggerAction.Instance ||
+                 action == ReacherAction.Instance ||
+                 action == ShimmierAction.Instance ||
+                 action == LasererAction.Instance,
 
-        2 => !(lemming.CurrentAction == WalkerAction.Instance ||
-               lemming.CurrentAction == AscenderAction.Instance),
+            1 => lemming.HasPermanentSkill,
 
-        3 => lemming.CurrentAction == WalkerAction.Instance ||
-             lemming.CurrentAction == AscenderAction.Instance,
+            2 => !(action == WalkerAction.Instance ||
+                   action == AscenderAction.Instance),
 
-        _ => true
-    };
+            3 => action == WalkerAction.Instance ||
+                 action == AscenderAction.Instance,
+
+            _ => true
+        };
+    }
 
     public void HandleMouseInput()
     {
@@ -259,15 +264,11 @@ public sealed class LevelCursor
         if (previousCandidate is null)
             return true;
 
-        var previousLemmingPosition = previousCandidate.Orientation.Move(previousCandidate.LevelPosition,
-            previousCandidate.FacingDirection.DeltaX, 4);
-        var newLemmingPosition =
-            newCandidate.Orientation.Move(newCandidate.LevelPosition, newCandidate.FacingDirection.DeltaX, 4);
+        var previousLemmingPosition = previousCandidate.Orientation.Move(previousCandidate.LevelPosition, previousCandidate.FacingDirection.DeltaX, 4);
+        var newLemmingPosition = newCandidate.Orientation.Move(newCandidate.LevelPosition, newCandidate.FacingDirection.DeltaX, 4);
 
-        var dx1 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X,
-            previousLemmingPosition.X);
-        var dy1 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.Y,
-            previousLemmingPosition.Y);
+        var dx1 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, previousLemmingPosition.X);
+        var dy1 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.Y, previousLemmingPosition.Y);
 
         var dx2 = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.X, newLemmingPosition.X);
         var dy2 = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, newLemmingPosition.Y);

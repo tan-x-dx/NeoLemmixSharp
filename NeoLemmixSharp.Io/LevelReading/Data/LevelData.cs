@@ -26,7 +26,7 @@ public sealed class LevelData
     public BoundaryBehaviourType HorizontalViewPortBehaviour { get; set; } = BoundaryBehaviourType.Wrap;
     public BoundaryBehaviourType VerticalViewPortBehaviour { get; set; } = BoundaryBehaviourType.Wrap;
 
-    public SkillSetData SkillSetData { get; set; }
+    public List<SkillSetData> SkillSetData { get; } = new();
     public ThemeData ThemeData { get; } = new();
     public List<TerrainData> AllTerrainData { get; } = new();
     public List<TerrainGroup> AllTerrainGroups { get; } = new();

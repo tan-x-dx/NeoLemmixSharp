@@ -7,10 +7,11 @@ using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Engine.Skills;
+using NeoLemmixSharp.Engine.Engine.Teams;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget.NineSliceRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Io.LevelReading.Data;
 
@@ -50,30 +51,19 @@ public sealed class LevelAssembler : IDisposable
         //SetUpLemmings();
         //SetUpGadgets(content, levelData.AllGadgetData);
 
-        levelData.SkillSetData = new SkillSetData
+        var i = 0;
+        foreach (var skill in LemmingSkill.AllItems)
         {
-            NumberOfBashers = 1,
-            NumberOfBlockers = 2,
-            NumberOfBombers = 3,
-            NumberOfBuilders = 4,
-            NumberOfClimbers = 5,
-            NumberOfCloners = 6,
-            NumberOfDiggers = 7,
-            NumberOfDisarmers = 8,
-            NumberOfFencers = 9,
-            NumberOfFloaters = 10,
-            NumberOfGliders = 11,
-            NumberOfJumpers = 12,
-            NumberOfLaserers = 13,
-            NumberOfMiners = 14,
-            NumberOfPlatformers = 15,
-            NumberOfShimmiers = 16,
-            NumberOfSliders = 17,
-            NumberOfStackers = 18,
-            NumberOfStoners = 19,
-            NumberOfSwimmers = 20,
-            NumberOfWalkers = 21
-        };
+            var item = new SkillSetData
+            {
+                SkillName = skill.LemmingSkillName,
+                NumberOfSkills = i,
+                TeamId = 0
+            };
+
+            levelData.SkillSetData.Add(item);
+            i++;
+        }
     }
 
     public Lemming[] GetLevelLemmings()
@@ -289,22 +279,22 @@ public sealed class LevelAssembler : IDisposable
         _lemmings.Add(lemmingC);
         _lemmings.Add(lemmingD);
         _lemmings.Add(lemmingE);
-        
+
         _lemmings.Add(miner);
 
-        lemming0.State.TeamAffiliation = Team.Team0;
-        lemming1.State.TeamAffiliation = Team.Team1;
-        lemming2.State.TeamAffiliation = Team.Team2;
-        lemming3.State.TeamAffiliation = Team.Team3;
-        lemming4.State.TeamAffiliation = Team.Team4;
-        lemming5.State.TeamAffiliation = Team.Team5;
+        lemming0.State.TeamAffiliation = Team.AllItems[0];
+        lemming1.State.TeamAffiliation = Team.AllItems[1];
+        lemming2.State.TeamAffiliation = Team.AllItems[2];
+        lemming3.State.TeamAffiliation = Team.AllItems[3];
+        lemming4.State.TeamAffiliation = Team.AllItems[4];
+        lemming5.State.TeamAffiliation = Team.AllItems[5];
 
-        lemming6.State.TeamAffiliation = Team.Team0;
-        lemming7.State.TeamAffiliation = Team.Team1;
-        lemming8.State.TeamAffiliation = Team.Team2;
-        lemming9.State.TeamAffiliation = Team.Team3;
-        lemming10.State.TeamAffiliation = Team.Team4;
-        lemming11.State.TeamAffiliation = Team.Team5;
+        lemming6.State.TeamAffiliation = Team.AllItems[0];
+        lemming7.State.TeamAffiliation = Team.AllItems[1];
+        lemming8.State.TeamAffiliation = Team.AllItems[2];
+        lemming9.State.TeamAffiliation = Team.AllItems[3];
+        lemming10.State.TeamAffiliation = Team.AllItems[4];
+        lemming11.State.TeamAffiliation = Team.AllItems[5];
         lemming6.State.IsAthlete = true;
         lemming7.State.IsAthlete = true;
         lemming8.State.IsAthlete = true;
@@ -342,11 +332,11 @@ public sealed class LevelAssembler : IDisposable
 
         var c = new RectangularLevelRegion(20, 20, 64, 32);
 
-      /*  var water = new ResizeableGadget(0, GadgetType.Water, DownOrientation.Instance, c);
-        var r = new NineSliceRenderer(c, texture, sW, sH, sT, sB, sL, sR);
+        /*  var water = new ResizeableGadget(0, GadgetType.Water, DownOrientation.Instance, c);
+          var r = new NineSliceRenderer(c, texture, sW, sH, sT, sB, sL, sR);
 
-        _gadgets.Add(water);
-        _gadgetRenderers.Add(r);*/
+          _gadgets.Add(water);
+          _gadgetRenderers.Add(r);*/
 
         foreach (var gadgetData in allGadgetData)
         {

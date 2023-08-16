@@ -7,14 +7,14 @@ public sealed class SkillSetManager
 {
     private readonly LemmingSkill[] _skillList;
 
-    public SkillSetManager(SkillSetData skillSetData)
+    public SkillSetManager(ICollection<SkillSetData> skillSetData)
     {
         _skillList = CreateSkillList(skillSetData);
     }
 
     public IEnumerable<LemmingSkill> AllSkills => _skillList;
 
-    private static LemmingSkill[] CreateSkillList(SkillSetData skillSetData)
+    private static LemmingSkill[] CreateSkillList(ICollection<SkillSetData> skillSetData)
     {
         var tempList = new List<LemmingSkill>();
         /*

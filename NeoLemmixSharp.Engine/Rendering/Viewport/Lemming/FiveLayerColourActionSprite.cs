@@ -4,9 +4,9 @@ using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
-public sealed class FiveLayerColourActionSprite : ActionSprite
+public sealed class FiveLayerColorActionSprite : ActionSprite
 {
-    public FiveLayerColourActionSprite(
+    public FiveLayerColorActionSprite(
         Texture2D texture,
         int spriteWidth,
         int spriteHeight,

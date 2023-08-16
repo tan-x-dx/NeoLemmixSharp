@@ -1,12 +1,12 @@
 ﻿namespace NeoLemmixSharp.Io.LevelReading.Data.SpriteSet;
 
-public sealed class LemmingStateRecolouring
+public sealed class LemmingStateRecoloring
 {
     public string StateIdentifier { get; }
 
-    public List<(uint OriginalColour, uint ReplacementColour)> Recolourings { get; } = new();
+    public List<(uint OriginalColor, uint ReplacementColor)> Recolorings { get; } = new();
 
-    public LemmingStateRecolouring(string stateIdentifier)
+    public LemmingStateRecoloring(string stateIdentifier)
     {
         StateIdentifier = stateIdentifier;
     }

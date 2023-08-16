@@ -2,13 +2,13 @@
 
 namespace NeoLemmixSharp.Io.LevelReading.Nxlv.Reading;
 
-public sealed class SpriteSetRecolouringReader : IDataReader
+public sealed class SpriteSetRecoloringReader : IDataReader
 {
-    private readonly LemmingSpriteSetRecolouring _lemmingSpriteSetRecolouring;
+    private readonly LemmingSpriteSetRecoloring _lemmingSpriteSetRecoloring;
 
-    public SpriteSetRecolouringReader(LemmingSpriteSetRecolouring lemmingSpriteSetRecolouring)
+    public SpriteSetRecoloringReader(LemmingSpriteSetRecoloring lemmingSpriteSetRecoloring)
     {
-        _lemmingSpriteSetRecolouring = lemmingSpriteSetRecolouring;
+        _lemmingSpriteSetRecoloring = lemmingSpriteSetRecoloring;
     }
 
     public bool FinishedReading { get; private set; }
@@ -24,47 +24,47 @@ public sealed class SpriteSetRecolouringReader : IDataReader
         switch (tokens[0])
         {
             case "MASK":
-                _lemmingSpriteSetRecolouring.Mask = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.Mask = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "LEMMING_HAIR":
-                _lemmingSpriteSetRecolouring.LemmingHair = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingHair = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "LEMMING_CLOTHES":
-                _lemmingSpriteSetRecolouring.LemmingClothes = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingClothes = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "LEMMING_SKIN":
-                _lemmingSpriteSetRecolouring.LemmingSkin = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingSkin = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "LEMMING_BUILDER_SACK":
-                _lemmingSpriteSetRecolouring.LemmingBuilderSack = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingBuilderSack = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "LEMMING_UMBRELLA":
-                _lemmingSpriteSetRecolouring.LemmingUmbrella = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingUmbrella = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "LEMMING_ZOMBIE_SKIN":
-                _lemmingSpriteSetRecolouring.LemmingZombieSkin = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingZombieSkin = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "LEMMING_ATHLETE_HAIR":
-                _lemmingSpriteSetRecolouring.LemmingAthleteHair = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingAthleteHair = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "LEMMING_ATHLETE_CLOTHES":
-                _lemmingSpriteSetRecolouring.LemmingAthleteClothes = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingAthleteClothes = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "LEMMING_NEUTRAL_CLOTHES":
-                _lemmingSpriteSetRecolouring.LemmingNeutralClothes = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingNeutralClothes = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "LEMMING_SELECTED_CLOTHES":
-                _lemmingSpriteSetRecolouring.LemmingSelectedClothes = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingSelectedClothes = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "$END":

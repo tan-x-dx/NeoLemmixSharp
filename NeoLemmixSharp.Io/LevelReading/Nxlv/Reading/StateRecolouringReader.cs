@@ -3,16 +3,16 @@ using NeoLemmixSharp.Io.LevelReading.Data.SpriteSet;
 
 namespace NeoLemmixSharp.Io.LevelReading.Nxlv.Reading;
 
-public sealed class StateRecolouringReader : IDataReader
+public sealed class StateRecoloringReader : IDataReader
 {
     private readonly ThemeData _themeData;
 
-    private LemmingStateRecolouring? _currentLemmingStateRecolouring;
+    private LemmingStateRecoloring? _currentLemmingStateRecoloring;
 
-    private uint? _currentOriginalColour;
-    private uint? _currentReplacementColour;
+    private uint? _currentOriginalColor;
+    private uint? _currentReplacementColor;
 
-    public StateRecolouringReader(ThemeData themeData)
+    public StateRecoloringReader(ThemeData themeData)
     {
         _themeData = themeData;
     }
@@ -21,7 +21,7 @@ public sealed class StateRecolouringReader : IDataReader
     public string IdentifierToken => "$STATE_RECOLORING";
     public void BeginReading(string[] tokens)
     {
-        _currentLemmingStateRecolouring = null;
+        _currentLemmingStateRecoloring = null;
         FinishedReading = false;
     }
 
@@ -31,26 +31,26 @@ public sealed class StateRecolouringReader : IDataReader
         {
             if (tokens[0] == "$END")
             {
-                if (_currentLemmingStateRecolouring == null)
+                if (_currentLemmingStateRecoloring == null)
                 {
                     FinishedReading = true;
                     return;
                 }
 
-                var tuple = (_currentOriginalColour!.Value, _currentReplacementColour!.Value);
-                _currentOriginalColour = null;
-                _currentReplacementColour = null;
-                _currentLemmingStateRecolouring.Recolourings.Add(tuple);
+                var tuple = (_currentOriginalColor!.Value, _currentReplacementColor!.Value);
+                _currentOriginalColor = null;
+                _currentReplacementColor = null;
+                _currentLemmingStateRecoloring.Recolorings.Add(tuple);
 
-                _currentLemmingStateRecolouring = null;
+                _currentLemmingStateRecoloring = null;
                 return;
             }
 
-            if (_themeData.LemmingStateRecolouringLookup.TryGetValue(tokens[0], out _currentLemmingStateRecolouring))
+            if (_themeData.LemmingStateRecoloringLookup.TryGetValue(tokens[0], out _currentLemmingStateRecoloring))
                 return;
 
-            _currentLemmingStateRecolouring = new LemmingStateRecolouring(tokens[0]);
-            _themeData.LemmingStateRecolouringLookup.Add(_currentLemmingStateRecolouring.StateIdentifier, _currentLemmingStateRecolouring);
+            _currentLemmingStateRecoloring = new LemmingStateRecoloring(tokens[0]);
+            _themeData.LemmingStateRecoloringLookup.Add(_currentLemmingStateRecoloring.StateIdentifier, _currentLemmingStateRecoloring);
 
             return;
         }
@@ -58,11 +58,11 @@ public sealed class StateRecolouringReader : IDataReader
         switch (tokens[0])
         {
             case "FROM":
-                _currentOriginalColour = ReadingHelpers.ReadUint(tokens[1], false);
+                _currentOriginalColor = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             case "TO":
-                _currentReplacementColour = ReadingHelpers.ReadUint(tokens[1], false);
+                _currentReplacementColor = ReadingHelpers.ReadUint(tokens[1], false);
                 break;
 
             default:

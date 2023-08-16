@@ -2,14 +2,14 @@
 
 namespace NeoLemmixSharp.Io.LevelReading.Sprites;
 
-public sealed class PixelColourData
+public sealed class PixelColorData
 {
-    public uint[] ColourData { get; }
+    public uint[] ColorData { get; }
 
     public int Width { get; }
     public int Height { get; }
 
-    public static PixelColourData GetPixelColourDataFromTexture(Texture2D texture)
+    public static PixelColorData GetPixelColorDataFromTexture(Texture2D texture)
     {
         var width = texture.Width;
         var height = texture.Height;
@@ -17,27 +17,27 @@ public sealed class PixelColourData
 
         texture.GetData(data);
 
-        return new PixelColourData(width, height, data);
+        return new PixelColorData(width, height, data);
     }
 
-    public PixelColourData(int width, int height, uint[] colourData)
+    public PixelColorData(int width, int height, uint[] colorData)
     {
         Width = width;
         Height = height;
-        ColourData = colourData;
+        ColorData = colorData;
     }
 
     public uint Get(int x, int y)
     {
         var i = Width * y + x;
 
-        return ColourData[i];
+        return ColorData[i];
     }
 
     public void Set(int x, int y, uint pixel)
     {
         var i = Width * y + x;
 
-        ColourData[i] = pixel;
+        ColorData[i] = pixel;
     }
 }

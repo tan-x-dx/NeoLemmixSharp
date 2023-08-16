@@ -146,27 +146,27 @@ public sealed class ControlPanelSpriteBankBuilder : IDisposable
 
     private void ProcessLemmingSpriteTexture(string stateName, LemmingSpriteData spriteData, Texture2D texture)
     {
-        var originalPixelColourData = PixelColourData.GetPixelColourDataFromTexture(texture);
+        var originalPixelColorData = PixelColorData.GetPixelColorDataFromTexture(texture);
 
         var actionSpriteBundle = new LemmingActionSpriteBundle();
         LemmingAction.AllActions[stateName].ActionSpriteBundle = actionSpriteBundle;
 
         _actionSpriteBundleLookup.Add(stateName, actionSpriteBundle);
 
-        ProcessLefts(_graphicsDevice, spriteData, originalPixelColourData, actionSpriteBundle);
-        ProcessRights(_graphicsDevice, spriteData, originalPixelColourData, actionSpriteBundle);
+        ProcessLefts(_graphicsDevice, spriteData, originalPixelColorData, actionSpriteBundle);
+        ProcessRights(_graphicsDevice, spriteData, originalPixelColorData, actionSpriteBundle);
     }
 
     private static void ProcessLefts(
         GraphicsDevice graphicsDevice,
         LemmingSpriteData spriteData,
-        PixelColourData originalPixelColourData,
+        PixelColorData originalPixelColorData,
         LemmingActionSpriteBundle actionSpriteBundle)
     {
         CreateSprites(
             graphicsDevice,
             spriteData,
-            originalPixelColourData,
+            originalPixelColorData,
             0,
             spriteData.LeftFootX,
             spriteData.LeftFootY,
@@ -177,14 +177,14 @@ public sealed class ControlPanelSpriteBankBuilder : IDisposable
     private static void ProcessRights(
         GraphicsDevice graphicsDevice,
         LemmingSpriteData spriteData,
-        PixelColourData originalPixelColourData,
+        PixelColorData originalPixelColorData,
         LemmingActionSpriteBundle actionSpriteBundle)
     {
         CreateSprites(
             graphicsDevice,
             spriteData,
-            originalPixelColourData,
-            originalPixelColourData.Width / 2,
+            originalPixelColorData,
+            originalPixelColorData.Width / 2,
             spriteData.RightFootX,
             spriteData.RightFootY,
             actionSpriteBundle,
@@ -194,15 +194,15 @@ public sealed class ControlPanelSpriteBankBuilder : IDisposable
     private static void CreateSprites(
         GraphicsDevice graphicsDevice,
         LemmingSpriteData spriteData,
-        PixelColourData originalPixelColourData,
+        PixelColorData originalPixelColorData,
         int dx0,
         int footX,
         int footY,
         LemmingActionSpriteBundle actionSpriteBundle,
         Action<Orientation, LemmingActionSpriteBundle, ActionSprite> setSprite)
     {
-        var spriteWidth = originalPixelColourData.Width / 2;
-        var spriteHeight = originalPixelColourData.Height / spriteData.NumberOfFrames;
+        var spriteWidth = originalPixelColorData.Width / 2;
+        var spriteHeight = originalPixelColorData.Height / spriteData.NumberOfFrames;
 
         var spriteDrawingDatas = Orientation
             .AllOrientations
@@ -215,7 +215,7 @@ public sealed class ControlPanelSpriteBankBuilder : IDisposable
             {
                 for (var y0 = 0; y0 < spriteHeight; y0++)
                 {
-                    var pixel = originalPixelColourData.Get(x0 + dx0, y0 + f * spriteHeight);
+                    var pixel = originalPixelColorData.Get(x0 + dx0, y0 + f * spriteHeight);
 
                     for (var i = 0; i < spriteDrawingDatas.Length; i++)
                     {

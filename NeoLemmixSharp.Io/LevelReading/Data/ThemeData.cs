@@ -14,7 +14,7 @@ public sealed class ThemeData
     public uint PickupBorder { get; set; }
     public uint PickupInside { get; set; }
 
-    public LemmingSpriteSetRecolouring LemmingSpriteSetRecolouring { get; } = new();
-    public Dictionary<string, LemmingStateRecolouring> LemmingStateRecolouringLookup { get; } = new();
+    public LemmingSpriteSetRecoloring LemmingSpriteSetRecoloring { get; } = new();
+    public Dictionary<string, LemmingStateRecoloring> LemmingStateRecoloringLookup { get; } = new();
     public Dictionary<string, LemmingSpriteData> LemmingSpriteDataLookup { get; } = new();
 }

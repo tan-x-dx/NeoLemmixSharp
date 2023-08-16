@@ -11,7 +11,7 @@ public sealed class SpriteDrawingData
     private readonly int _originalSpriteWidth;
     private readonly int _originalSpriteHeight;
 
-    private readonly PixelColourData _colourData;
+    private readonly PixelColorData _colorData;
     public DihedralTransformation DihedralTransformation { get; }
     public int ThisSpriteWidth { get; }
     public int ThisSpriteHeight { get; }
@@ -54,7 +54,7 @@ public sealed class SpriteDrawingData
         }
 
         var uints = new uint[originalSpriteWidth * originalSpriteHeight * numberOfFrames * numberOfLayers];
-        _colourData = new PixelColourData(ThisSpriteWidth * numberOfLayers, ThisSpriteHeight * numberOfFrames, uints);
+        _colorData = new PixelColorData(ThisSpriteWidth * numberOfLayers, ThisSpriteHeight * numberOfFrames, uints);
         DihedralTransformation = DihedralTransformation.GetForTransformation(flipHorizontally, rotNum);
     }
 
@@ -70,13 +70,13 @@ public sealed class SpriteDrawingData
 
         var x2 = x1 + ThisSpriteWidth * layer;
         var y2 = y1 + ThisSpriteHeight * frame;
-        _colourData.Set(x2, y2, pixel);
+        _colorData.Set(x2, y2, pixel);
     }
 
     public Texture2D ToTexture(GraphicsDevice graphicsDevice)
     {
-        var result = new Texture2D(graphicsDevice, _colourData.Width, _colourData.Height);
-        result.SetData(_colourData.ColourData);
+        var result = new Texture2D(graphicsDevice, _colorData.Width, _colorData.Height);
+        result.SetData(_colorData.ColorData);
         return result;
     }
 }

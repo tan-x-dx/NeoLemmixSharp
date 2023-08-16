@@ -87,6 +87,8 @@ public sealed class LevelBuilder : IDisposable
         var levelSprites = _levelAssembler.GetLevelSprites();
 
         var lemmingSpriteBank = _levelAssembler.GetLemmingSpriteBank();
+        lemmingSpriteBank.SetTeamColors();
+
         var gadgetSpriteBank = _levelAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelAssembler.GetControlPanelSpriteBank(levelCursor);
 
@@ -94,7 +96,7 @@ public sealed class LevelBuilder : IDisposable
 
         var levelCursorSprite = controlPanelSpriteBank.LevelCursorSprite;
 
-        var backgroundRenderer = new SolidColourBackgroundRenderer(controlPanelSpriteBank, levelViewport, new Color(24, 24, 60));
+        var backgroundRenderer = new SolidColorBackgroundRenderer(controlPanelSpriteBank, levelViewport, new Color(24, 24, 60));
 
         var levelRenderer = new LevelRenderer(
             levelData.LevelWidth,
@@ -121,6 +123,7 @@ public sealed class LevelBuilder : IDisposable
             levelLemmings,
             levelGadgets,
             inputController,
+            skillSetManager,
             controlPanel,
             levelCursor,
             levelViewport,

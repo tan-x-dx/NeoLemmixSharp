@@ -15,6 +15,8 @@ public static class GameConstants
     public const int UpOrientationRotNum = 2;
     public const int RightOrientationRotNum = 3;
 
+    public const int NumberOfTeams = 6;
+
     #endregion
 
     #region Lemming Action Constants
