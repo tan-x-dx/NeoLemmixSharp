@@ -105,24 +105,15 @@ public sealed class WalkerAction : LemmingAction
              Terrain.PixelIsSolidToLemming(lemming, nextPosition)))
             return false;
 
-        if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(nextPosition, 1)))
-            return false;
-        if (!Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, 1)))
-            return true;
+        for (var i = 1; i < 4; i++)
+        {
+            if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(nextPosition, i)))
+                return false;
+            if (!Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, i)))
+                return true;
+        }
 
-        if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(nextPosition, 2)))
-            return false;
-        if (!Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, 2)))
-            return true;
-
-        if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(nextPosition, 3)))
-            return false;
-        if (!Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, 3)))
-            return true;
-
-        if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(nextPosition, 4)))
-            return false;
-        return !Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, 4));
+        return true;
     }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
