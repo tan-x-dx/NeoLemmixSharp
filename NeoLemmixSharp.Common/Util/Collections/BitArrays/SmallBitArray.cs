@@ -71,6 +71,9 @@ public sealed class SmallBitArray : IBitArray
         return result;
     }
 
+    [Pure]
+    public uint GetBitMask(uint mask) => mask & _bits;
+
     public void Clear()
     {
         _bits = 0U;
