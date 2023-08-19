@@ -1,55 +1,107 @@
-﻿using NeoLemmixSharp.Engine.Engine.Skills;
+﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
+using NeoLemmixSharp.Engine.Engine.Skills;
+using NeoLemmixSharp.Engine.Engine.Teams;
 using NeoLemmixSharp.Io.LevelReading.Data;
 
 namespace NeoLemmixSharp.Engine.Engine;
 
-public sealed class SkillSetManager
+public sealed class SkillSetManager : IComparer<SkillSetManager.SkillTrackingData>
 {
-    private readonly LemmingSkill[] _skillList;
+    private readonly SkillTrackingData[] _skillDataList;
 
     public SkillSetManager(ICollection<SkillSetData> skillSetData)
     {
-        _skillList = CreateSkillList(skillSetData);
+        _skillDataList = CreateSkillDataList(skillSetData);
     }
 
-    public IEnumerable<LemmingSkill> AllSkills => _skillList;
+    public int TotalNumberOfSkills => _skillDataList.Length;
 
-    private static LemmingSkill[] CreateSkillList(ICollection<SkillSetData> skillSetData)
+    private SkillTrackingData[] CreateSkillDataList(ICollection<SkillSetData> skillSetData)
     {
-        var tempList = new List<LemmingSkill>();
-        /*
-        if (skillSetData.NumberOfBashers.HasValue) { tempList.Add(new BasherSkill(skillSetData.NumberOfBashers.Value)); }
-        if (skillSetData.NumberOfBlockers.HasValue) { tempList.Add(new BlockerSkill(skillSetData.NumberOfBlockers.Value)); }
-        if (skillSetData.NumberOfBombers.HasValue) { tempList.Add(new BomberSkill(skillSetData.NumberOfBombers.Value)); }
-        if (skillSetData.NumberOfBuilders.HasValue) { tempList.Add(new BuilderSkill(skillSetData.NumberOfBuilders.Value)); }
-        if (skillSetData.NumberOfClimbers.HasValue) { tempList.Add(new ClimberSkill(skillSetData.NumberOfClimbers.Value)); }
-        if (skillSetData.NumberOfCloners.HasValue) { tempList.Add(new ClonerSkill(skillSetData.NumberOfCloners.Value)); }
-        if (skillSetData.NumberOfDiggers.HasValue) { tempList.Add(new DiggerSkill(skillSetData.NumberOfDiggers.Value)); }
-        if (skillSetData.NumberOfDisarmers.HasValue) { tempList.Add(new DisarmerSkill(skillSetData.NumberOfDisarmers.Value)); }
-        if (skillSetData.NumberOfFencers.HasValue) { tempList.Add(new FencerSkill(skillSetData.NumberOfFencers.Value)); }
-        if (skillSetData.NumberOfFloaters.HasValue) { tempList.Add(new FloaterSkill(skillSetData.NumberOfFloaters.Value)); }
-        if (skillSetData.NumberOfGliders.HasValue) { tempList.Add(new GliderSkill(skillSetData.NumberOfGliders.Value)); }
-        if (skillSetData.NumberOfJumpers.HasValue) { tempList.Add(new JumperSkill(skillSetData.NumberOfJumpers.Value)); }
-        if (skillSetData.NumberOfLaserers.HasValue) { tempList.Add(new LasererSkill(skillSetData.NumberOfLaserers.Value)); }
-        if (skillSetData.NumberOfMiners.HasValue) { tempList.Add(new MinerSkill(skillSetData.NumberOfMiners.Value)); }
-        if (skillSetData.NumberOfPlatformers.HasValue) { tempList.Add(new PlatformerSkill(skillSetData.NumberOfPlatformers.Value)); }
-        if (skillSetData.NumberOfShimmiers.HasValue) { tempList.Add(new ShimmierSkill(skillSetData.NumberOfShimmiers.Value)); }
-        if (skillSetData.NumberOfSliders.HasValue) { tempList.Add(new SliderSkill(skillSetData.NumberOfSliders.Value)); }
-        if (skillSetData.NumberOfStackers.HasValue) { tempList.Add(new StackerSkill(skillSetData.NumberOfStackers.Value)); }
-        if (skillSetData.NumberOfStoners.HasValue) { tempList.Add(new StonerSkill(skillSetData.NumberOfStoners.Value)); }
-        if (skillSetData.NumberOfSwimmers.HasValue) { tempList.Add(new SwimmerSkill(skillSetData.NumberOfSwimmers.Value)); }
-        if (skillSetData.NumberOfWalkers.HasValue) { tempList.Add(new WalkerSkill(skillSetData.NumberOfWalkers.Value)); }
-        */
+        var tempList = new List<SkillTrackingData>();
+
+        foreach (var x in skillSetData)
+        {
+            var lemmingSkill = GetSkillByName(x.SkillName);
+            var team = Team.AllItems[x.TeamId];
+
+            var item = new SkillTrackingData(lemmingSkill, team, x.NumberOfSkills);
+            tempList.Add(item);
+        }
+
+        tempList.Sort(this);
+
         return tempList.ToArray();
     }
 
-    public bool SkillIsAvailable(LemmingSkill lemmingSkill)
+    private static LemmingSkill GetSkillByName(string name)
     {
-        return true;
+        foreach (var lemmingSkill in LemmingSkill.AllItems)
+        {
+            if (string.Equals(name, lemmingSkill.LemmingSkillName))
+                return lemmingSkill;
+        }
+
+        throw new ArgumentException("Unknown skill name", nameof(name));
     }
 
-    public int NumberOfSkillsAvailable(LemmingSkill queuedSkill)
+    public bool SkillIsAvailable(int skillDataId)
     {
-        return 1;
+        if (skillDataId == -1)
+            return false;
+
+        return _skillDataList[skillDataId].SkillCount > 0;
+    }
+
+    public int NumberOfSkillsAvailable(int skillDataId)
+    {
+        if (skillDataId == -1)
+            return 0;
+
+        return _skillDataList[skillDataId].SkillCount;
+    }
+
+    public bool SkillCanBeAssignedToLemming(int skillDataId, Lemming lemming)
+    {
+        if (skillDataId == -1)
+            return false;
+
+        var skillData = _skillDataList[skillDataId];
+        return skillData.CanAssignToLemming(lemming);
+    }
+
+    int IComparer<SkillTrackingData>.Compare(SkillTrackingData? x, SkillTrackingData? y)
+    {
+        if (x == null && y == null) return 0;
+        if (x == null) return -1;
+        if (y == null) return 1;
+
+        var teamComparison = x.Team.Id.CompareTo(y.Team.Id);
+        if (teamComparison != 0)
+            return teamComparison;
+
+        var skillComparison = x.Skill.Id.CompareTo(y.Skill.Id);
+        return skillComparison;
+    }
+
+    private sealed class SkillTrackingData
+    {
+        public LemmingSkill Skill { get; }
+        public Team Team { get; }
+        public int SkillCount { get; set; }
+
+        public SkillTrackingData(LemmingSkill skill, Team team, int skillCount)
+        {
+            Skill = skill;
+            Team = team;
+            SkillCount = skillCount;
+        }
+
+        public bool CanAssignToLemming(Lemming lemming)
+        {
+            return lemming.State.CanHaveSkillsAssigned &&
+                   Team == lemming.State.TeamAffiliation &&
+                   Skill.CanAssignToLemming(lemming);
+        }
     }
 }

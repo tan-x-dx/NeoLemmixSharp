@@ -1,10 +1,18 @@
-﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Updates;
 
 public sealed class FastForwardsFrameUpdater : IFrameUpdater
 {
-    private int _levelUpdateCount;
+    private readonly ItemWrapper<int> _elapsedTicks;
+
+    public FastForwardsFrameUpdater(ItemWrapper<int> elapsedTicks)
+    {
+        _elapsedTicks = elapsedTicks;
+    }
+
+    public UpdateState UpdateState => UpdateState.FastForward;
 
     public void UpdateLemming(Lemming lemming)
     {
@@ -20,8 +28,10 @@ public sealed class FastForwardsFrameUpdater : IFrameUpdater
         }
     }
 
-    public void Update()
+    public bool Tick()
     {
-        _levelUpdateCount++;
+        _elapsedTicks.Item++;
+
+        return true;
     }
 }

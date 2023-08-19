@@ -4,7 +4,8 @@ namespace NeoLemmixSharp.Engine.Engine.Updates;
 
 public interface IFrameUpdater
 {
-    void UpdateLemming(Lemming lemming);
+    UpdateState UpdateState { get; }
 
-    void Update();
+    void UpdateLemming(Lemming lemming);
+    bool Tick();
 }

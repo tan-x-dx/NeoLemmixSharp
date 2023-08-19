@@ -12,8 +12,6 @@ public abstract class LevelTimer
 
     public Color FontColor { get; protected set; }
 
-    public int ElapsedTicks { get; protected set; }
-
     protected LevelTimer()
     {
         Chars[3] = '-';
@@ -21,9 +19,9 @@ public abstract class LevelTimer
 
     public void Tick()
     {
-        ElapsedTicks++;
-        if (ElapsedTicks % GameConstants.FramesPerSecond != 0)
-            return;
+       // ElapsedTicks++;
+       // if (ElapsedTicks % GameConstants.FramesPerSecond != 0)
+       //     return;
 
         ElapsedSeconds++;
         UpdateAppearance();
@@ -31,7 +29,7 @@ public abstract class LevelTimer
 
     public void SetElapsedTicks(int elapsedTicks)
     {
-        ElapsedTicks = elapsedTicks;
+     //   ElapsedTicks = elapsedTicks;
         ElapsedSeconds = elapsedTicks / GameConstants.FramesPerSecond;
 
         UpdateAppearance();

@@ -60,14 +60,12 @@ public sealed class LevelBuilder : IDisposable
         var levelGadgets = _levelAssembler.GetLevelGadgets();
         GadgetCollections.SetGadgets(levelGadgets);
 
-        var updateScheduler = new UpdateScheduler(levelData.SuperLemmingMode);
         var inputController = new LevelInputController();
+        var skillSetManager = new SkillSetManager(levelData.SkillSetData);
+        var controlPanel = new LevelControlPanel(skillSetManager, inputController);
         LevelTimer levelTimer = levelData.TimeLimit.HasValue
             ? new CountDownLevelTimer(levelData.TimeLimit.Value)
             : new CountUpLevelTimer();
-
-        var skillSetManager = new SkillSetManager(levelData.SkillSetData);
-        var controlPanel = new LevelControlPanel(skillSetManager, inputController);
 
         var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
         var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
@@ -76,10 +74,10 @@ public sealed class LevelBuilder : IDisposable
         var verticalViewPortBehaviour = BoundaryHelpers.GetVerticalViewPortBehaviour(levelData.VerticalViewPortBehaviour, levelData.LevelHeight);
 
         var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController, skillSetManager);
-        var levelViewport = new Viewport(levelCursor, inputController, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-
+        var levelViewport = new Viewport(levelCursor, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         var levelLemmings = _levelAssembler.GetLevelLemmings();
-        var lemmingManager = new LemmingManager(levelLemmings, levelCursor, updateScheduler);
+        var lemmingManager = new LemmingManager(levelLemmings);
+        var updateScheduler = new UpdateScheduler(levelData.SuperLemmingMode, controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager);
 
         var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
 

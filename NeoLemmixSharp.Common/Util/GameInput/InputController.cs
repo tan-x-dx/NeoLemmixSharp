@@ -34,7 +34,7 @@ public abstract class InputController
         MouseButton5Action = new MouseButtonAction(4, "Mouse Button 5");
     }
 
-    public void Update()
+    public void Tick()
     {
         for (var i = 0; i < _keyActions.Length; i++)
         {

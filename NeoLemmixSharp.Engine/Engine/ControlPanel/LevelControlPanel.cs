@@ -1,6 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Engine.Skills;
-
-namespace NeoLemmixSharp.Engine.Engine.ControlPanel;
+﻿namespace NeoLemmixSharp.Engine.Engine.ControlPanel;
 
 public sealed class LevelControlPanel : ILevelControlPanel
 {
@@ -49,7 +47,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
     public int ControlPanelScreenHeight { get; private set; }
 
     public SkillAssignButton? SelectedSkillAssignButton { get; private set; }
-    public LemmingSkill SelectedSkill => SelectedSkillAssignButton?.LemmingSkill ?? NoneSkill.Instance;
+    public int SelectedSkillButtonId => SelectedSkillAssignButton?.SkillAssignButtonId ?? -1;
 
     public LevelControlPanel(SkillSetManager skillSetManager, LevelInputController controller)
     {
@@ -77,7 +75,14 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
     private static SkillAssignButton[] CreateSkillAssignButtons(SkillSetManager skillSetManager)
     {
-        return skillSetManager.AllSkills.Select((s, i) => new SkillAssignButton(s, (i + 2) & 7)).ToArray();
+        var result = new SkillAssignButton[skillSetManager.TotalNumberOfSkills];
+
+        for (var i = 0; i < result.Length; i++)
+        {
+            result[i] = new SkillAssignButton(i, (i + 2) & 7);
+        }
+
+        return result;
     }
 
     public IEnumerable<SkillAssignButton> SkillAssignButtons => _skillAssignButtons;

@@ -1,25 +1,36 @@
-﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Updates;
 
 public sealed class StandardFrameUpdater : IFrameUpdater
 {
-    private int _levelUpdateCount;
+    private readonly ItemWrapper<int> _elapsedTicks;
+
     private int _levelUpdateCountModulo3;
-    private bool _levelUpdateEnabled;
+    private bool _doLevelUpdate;
+
+    public StandardFrameUpdater(ItemWrapper<int> elapsedTicks)
+    {
+        _elapsedTicks = elapsedTicks;
+    }
+
+    public UpdateState UpdateState => UpdateState.Normal;
 
     public void UpdateLemming(Lemming lemming)
     {
-        if (lemming.ShouldTick && (_levelUpdateEnabled || lemming.IsFastForward))
+        if (lemming.ShouldTick && (_doLevelUpdate || lemming.IsFastForward))
         {
             lemming.Tick();
         }
     }
 
-    public void Update()
+    public bool Tick()
     {
-        _levelUpdateCount++;
-        _levelUpdateCountModulo3 = _levelUpdateCount % 3;
-        _levelUpdateEnabled = _levelUpdateCountModulo3 == 0;
+        _elapsedTicks.Item++;
+        _levelUpdateCountModulo3 = _elapsedTicks.Item % 3;
+        _doLevelUpdate = _levelUpdateCountModulo3 == 0;
+
+        return _doLevelUpdate;
     }
 }

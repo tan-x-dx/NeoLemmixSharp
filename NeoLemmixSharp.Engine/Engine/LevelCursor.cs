@@ -21,6 +21,106 @@ public sealed class LevelCursor
     private readonly LevelInputController _controller;
     private readonly SkillSetManager _skillSetManager;
 
+    public int NumberOfLemmingsUnderCursor { get; private set; }
+    public LevelPosition CursorPosition { private get; set; }
+
+    private Lemming? _currentlyHighlightedLemming;
+
+    public LevelCursor(
+        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
+        IVerticalBoundaryBehaviour verticalBoundaryBehaviour,
+        ILevelControlPanel controlPanel,
+        LevelInputController controller,
+        SkillSetManager skillSetManager)
+    {
+        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
+        _controlPanel = controlPanel;
+        _controller = controller;
+        _skillSetManager = skillSetManager;
+    }
+
+    public void OnNewFrame()
+    {
+        NumberOfLemmingsUnderCursor = 0;
+        _currentlyHighlightedLemming = null;
+    }
+
+    public void CheckLemming(Lemming lemming)
+    {
+        if (!LemmingIsUnderCursor(lemming))
+            return;
+
+        NumberOfLemmingsUnderCursor++;
+        if (IsCloserToCursorCentre(_currentlyHighlightedLemming, lemming))
+        {
+            _currentlyHighlightedLemming = lemming;
+        }
+    }
+
+    private bool LemmingIsUnderCursor(Lemming lemming)
+    {
+        var lemmingPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 4);
+
+        var dx = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, lemmingPosition.X);
+        var dy = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, lemmingPosition.Y);
+
+        return dx < 5 && dy < 5;
+    }
+
+    private bool SelectedSkillCanBeAppliedToLemming(Lemming lemming)
+    {
+        return _skillSetManager.SkillCanBeAssignedToLemming(_controlPanel.SelectedSkillButtonId, lemming);
+    }
+
+    private bool IsCloserToCursorCentre(Lemming? previousCandidate, Lemming newCandidate)
+    {
+        if (previousCandidate is null)
+            return true;
+
+        var previousLemmingPosition = previousCandidate.Orientation.Move(previousCandidate.LevelPosition, previousCandidate.FacingDirection.DeltaX, 4);
+        var newLemmingPosition = newCandidate.Orientation.Move(newCandidate.LevelPosition, newCandidate.FacingDirection.DeltaX, 4);
+
+        var dx1 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, previousLemmingPosition.X);
+        var dy1 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.Y, previousLemmingPosition.Y);
+
+        var dx2 = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.X, newLemmingPosition.X);
+        var dy2 = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, newLemmingPosition.Y);
+
+        return dx2 * dx2 + dy2 * dy2 < dx1 * dx1 + dy1 * dy1;
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public sealed class LevelCursorA
+{
+#pragma warning disable CS8618
+    public static LevelScreen LevelScreen { private get; set; }
+#pragma warning restore CS8618
+
+    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
+    private readonly ILevelControlPanel _controlPanel;
+    private readonly LevelInputController _controller;
+    private readonly SkillSetManager _skillSetManager;
+
     private LemmingSkill _skill = NoneSkill.Instance;
     private Lemming? _lemmingUnderCursor;
     private Lemming? _queuedLemming;
@@ -41,7 +141,7 @@ public sealed class LevelCursor
     public bool CursorOnLevel { get; set; }
     public LevelPosition CursorPosition { get; set; }
 
-    public LevelCursor(
+    public LevelCursorA(
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour,
         ILevelControlPanel controlPanel,
@@ -59,7 +159,7 @@ public sealed class LevelCursor
     {
         _lemmingUnderCursor = null;
         _queuedLemming = null;
-        _skill = _controlPanel.SelectedSkill;
+        //   _skill = _controlPanel.SelectedSkill;
         _numberOfLemmingsUnderCursor = 0;
         _curValue = 10;
 
@@ -197,7 +297,7 @@ public sealed class LevelCursor
         {
             if (_queuedLemming != null && !_skill.IsPermanentSkill)
             {
-                LevelScreen.SetQueuedSkill(_queuedLemming, _skill);
+                //         LevelScreen.SetQueuedSkill(_queuedLemming, _skill);
             }
 
             return false;
@@ -255,7 +355,7 @@ public sealed class LevelCursor
 
     private bool SkillIsAvailable(LemmingSkill lemmingSkill)
     {
-        return _skillSetManager.SkillIsAvailable(lemmingSkill);
+        return false; //_skillSetManager.SkillIsAvailable(lemmingSkill);
     }
 
     private bool AssignSkill()
@@ -265,7 +365,7 @@ public sealed class LevelCursor
 
         //UpdateSkillCount(lemmingSkill);
 
-        LevelScreen.ClearQueuedSkill();
+        //  LevelScreen.ClearQueuedSkill();
 
         var result = _skill.AssignToLemming(_lemmingUnderCursor!);
 
