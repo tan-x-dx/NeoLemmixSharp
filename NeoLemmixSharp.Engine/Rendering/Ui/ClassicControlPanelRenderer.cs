@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.Rendering.Ui;
 public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 {
     private readonly LevelControlPanel _levelControlPanel;
-
+    private readonly FontBank _fontBank;
     private readonly SkillAssignButtonRenderer[] _skillAssignButtonRenderers;
 
     private readonly Texture2D _whitePixelTexture;
@@ -32,11 +32,12 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
     public ClassicControlPanelRenderer(
         ControlPanelSpriteBank spriteBank,
-        FontBank fontBank,
         LevelControlPanel levelControlPanel,
+        FontBank fontBank,
         SkillSetManager skillSetManager)
     {
         _levelControlPanel = levelControlPanel;
+        _fontBank = fontBank;
         _skillAssignButtonRenderers = _levelControlPanel
             .SkillAssignButtons
             .Select(b => new SkillAssignButtonRenderer(spriteBank, fontBank, b, skillSetManager))
@@ -62,7 +63,8 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
     public void RenderControlPanel(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(_whitePixelTexture,
+        spriteBatch.Draw(
+            _whitePixelTexture,
             new Rectangle(
                 0,
                 _levelControlPanel.ControlPanelY,
@@ -97,6 +99,11 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
                 destRectangle.X += _levelControlPanel.ControlPanelButtonScreenWidth;
             }
         }
+
+        var levelTimer = LevelScreen.Current.LevelTimer;
+        var x = _levelControlPanel.ScreenWidth - PanelFont.GlyphWidth * 6 * 4;
+
+        _fontBank.PanelFont.RenderTextSpan(spriteBatch, levelTimer.AsSpan(), x, _levelControlPanel.ControlPanelY, 4, levelTimer.FontColor);
     }
 
     public void Dispose()

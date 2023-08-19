@@ -96,7 +96,7 @@ public sealed class LevelBuilder : IDisposable
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(levelCursor);
 
-        var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, _fontBank, controlPanel, skillSetManager);
+        var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel, _fontBank, skillSetManager);
 
         var levelCursorSprite = controlPanelSpriteBank.LevelCursorSprite;
 
