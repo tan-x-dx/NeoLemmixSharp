@@ -18,7 +18,7 @@ using NeoLemmixSharp.Io.LevelReading.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class LevelAssembler : IDisposable
+public sealed class LevelObjectAssembler : IDisposable
 {
     private readonly GraphicsDevice _graphicsDevice;
     private readonly SpriteBatch _spriteBatch;
@@ -31,7 +31,7 @@ public sealed class LevelAssembler : IDisposable
     private readonly GadgetSpriteBankBuilder _gadgetSpriteBankBuilder;
     private readonly ControlPanelSpriteBankBuilder _controlPanelSpriteBankBuilder;
 
-    public LevelAssembler(
+    public LevelObjectAssembler(
         GraphicsDevice graphicsDevice,
         ContentManager contentManager,
         SpriteBatch spriteBatch)
@@ -44,7 +44,7 @@ public sealed class LevelAssembler : IDisposable
         _controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder(graphicsDevice, contentManager);
     }
 
-    public void AssembleLevel(
+    public void AssembleLevelObjects(
         ContentManager content,
         LevelData levelData)
     {
