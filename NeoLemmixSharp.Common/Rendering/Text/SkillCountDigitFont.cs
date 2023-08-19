@@ -6,8 +6,13 @@ namespace NeoLemmixSharp.Common.Rendering.Text;
 
 public sealed class SkillCountDigitFont : INeoLemmixFont
 {
-    private const int GlyphWidth = 4;
+    private const int EmptyGlyphWidth = 2;
+    private const int DigitGlyphWidth = 4;
+    private const int SpecialGlyphWidth = 8;
     private const int GlyphHeight = 8;
+
+    public const int InfinityGlyph = '∞';
+    public const int LockGlyph = '∅';
 
     private readonly Texture2D _texture;
 
@@ -23,6 +28,29 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
         _texture.Dispose();
     }
 
+    private static bool GetCharRenderDetails(int c, out int sourceX, out int glyphWidth)
+    {
+        switch (c)
+        {
+            case >= '0' and <= '9':
+                sourceX = (c - '0') * DigitGlyphWidth;
+                glyphWidth = DigitGlyphWidth;
+                return true;
+            case InfinityGlyph:
+                sourceX = 40;
+                glyphWidth = SpecialGlyphWidth;
+                return true;
+            case LockGlyph:
+                sourceX = 48;
+                glyphWidth = SpecialGlyphWidth;
+                return true;
+            default:
+                sourceX = -EmptyGlyphWidth;
+                glyphWidth = EmptyGlyphWidth;
+                return false;
+        }
+    }
+
     public void RenderText(
         SpriteBatch spriteBatch,
         ReadOnlySpan<char> charactersToRender,
@@ -31,20 +59,12 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
         int scaleMultiplier,
         Color color)
     {
-        var dest = new Rectangle(x, y, GlyphWidth * scaleMultiplier, GlyphHeight * scaleMultiplier);
+        var dest = new Rectangle(x, y, 0, GlyphHeight * scaleMultiplier);
         foreach (var c in charactersToRender)
         {
-            if (c <= 47 || c >= 58)
-                continue;
+            var glyphWidth = RenderChar(spriteBatch, dest, c, scaleMultiplier, color);
 
-            var source = new Rectangle(GlyphWidth * (c - 48), 0, GlyphWidth, GlyphHeight);
-            spriteBatch.Draw(
-                _texture,
-                dest,
-                source,
-                color,
-                RenderLayer);
-            dest.X += GlyphWidth * scaleMultiplier;
+            dest.X += glyphWidth * scaleMultiplier;
         }
     }
 
@@ -56,20 +76,35 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
         int scaleMultiplier,
         Color color)
     {
-        var dest = new Rectangle(x, y, GlyphWidth * scaleMultiplier, GlyphHeight * scaleMultiplier);
+        var dest = new Rectangle(x, y, 0, GlyphHeight * scaleMultiplier);
         foreach (var c in charactersToRender)
         {
-            if (c <= 47 || c >= 58)
-                continue;
-
-            var source = new Rectangle(GlyphWidth * (c - 48), 0, GlyphWidth, GlyphHeight);
-            spriteBatch.Draw(
-                _texture,
-                dest,
-                source,
-                color,
-                RenderLayer);
-            dest.X += GlyphWidth * scaleMultiplier;
+            var glyphWidth = RenderChar(spriteBatch, dest, c, scaleMultiplier, color);
+            
+            dest.X += glyphWidth * scaleMultiplier;
         }
+    }
+
+    private int RenderChar(
+        SpriteBatch spriteBatch,
+        Rectangle dest,
+        int c,
+        int scaleMultiplier,
+        Color color)
+    {
+        if (!GetCharRenderDetails(c, out var sourceX, out var glyphWidth))
+            return glyphWidth;
+
+        dest.Width = glyphWidth * scaleMultiplier;
+
+        var source = new Rectangle(sourceX, 0, glyphWidth, GlyphHeight);
+        spriteBatch.Draw(
+            _texture,
+            dest,
+            source,
+            color,
+            RenderLayer);
+
+        return glyphWidth;
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui;
@@ -32,12 +33,13 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
     public ClassicControlPanelRenderer(
         ControlPanelSpriteBank spriteBank,
         FontBank fontBank,
-        LevelControlPanel levelControlPanel)
+        LevelControlPanel levelControlPanel,
+        SkillSetManager skillSetManager)
     {
         _levelControlPanel = levelControlPanel;
         _skillAssignButtonRenderers = _levelControlPanel
             .SkillAssignButtons
-            .Select(b => new SkillAssignButtonRenderer(spriteBank, fontBank, b))
+            .Select(b => new SkillAssignButtonRenderer(spriteBank, fontBank, b, skillSetManager))
             .ToArray();
 
         _whitePixelTexture = spriteBank.GetTexture("WhitePixel");
