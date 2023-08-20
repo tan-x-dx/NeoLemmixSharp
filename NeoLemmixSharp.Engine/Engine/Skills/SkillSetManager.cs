@@ -1,11 +1,9 @@
-﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
-using NeoLemmixSharp.Engine.Engine.Skills;
-using NeoLemmixSharp.Engine.Engine.Teams;
+﻿using NeoLemmixSharp.Engine.Engine.Teams;
 using NeoLemmixSharp.Io.LevelReading.Data;
 
-namespace NeoLemmixSharp.Engine.Engine;
+namespace NeoLemmixSharp.Engine.Engine.Skills;
 
-public sealed class SkillSetManager : IComparer<SkillSetManager.SkillTrackingData>
+public sealed class SkillSetManager : IComparer<SkillTrackingData>
 {
     private readonly SkillTrackingData[] _skillDataList;
 
@@ -45,37 +43,12 @@ public sealed class SkillSetManager : IComparer<SkillSetManager.SkillTrackingDat
         throw new ArgumentException("Unknown skill name", nameof(name));
     }
 
-    public bool SkillIsAvailable(int skillDataId)
-    {
-        if (skillDataId == -1)
-            return false;
-
-        return _skillDataList[skillDataId].SkillCount > 0;
-    }
-
-    public int NumberOfSkillsAvailable(int skillDataId)
-    {
-        if (skillDataId == -1)
-            return 0;
-
-        return _skillDataList[skillDataId].SkillCount;
-    }
-
-    public Team? TeamForSelectedSkill(int skillDataId)
+    public SkillTrackingData? GetSkillTrackingData(int skillDataId)
     {
         if (skillDataId == -1)
             return null;
 
-        return _skillDataList[skillDataId].Team;
-    }
-
-    public bool SkillCanBeAssignedToLemming(int skillDataId, Lemming lemming)
-    {
-        if (skillDataId == -1)
-            return false;
-
-        var skillData = _skillDataList[skillDataId];
-        return skillData.CanAssignToLemming(lemming);
+        return _skillDataList[skillDataId];
     }
 
     int IComparer<SkillTrackingData>.Compare(SkillTrackingData? x, SkillTrackingData? y)
@@ -90,26 +63,5 @@ public sealed class SkillSetManager : IComparer<SkillSetManager.SkillTrackingDat
 
         var skillComparison = x.Skill.Id.CompareTo(y.Skill.Id);
         return skillComparison;
-    }
-
-    private sealed class SkillTrackingData
-    {
-        public LemmingSkill Skill { get; }
-        public Team Team { get; }
-        public int SkillCount { get; set; }
-
-        public SkillTrackingData(LemmingSkill skill, Team team, int skillCount)
-        {
-            Skill = skill;
-            Team = team;
-            SkillCount = skillCount;
-        }
-
-        public bool CanAssignToLemming(Lemming lemming)
-        {
-            return lemming.State.CanHaveSkillsAssigned &&
-                   Team == lemming.State.TeamAffiliation &&
-                   Skill.CanAssignToLemming(lemming);
-        }
     }
 }

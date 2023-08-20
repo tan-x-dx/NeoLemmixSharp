@@ -52,16 +52,24 @@ public sealed class LevelObjectAssembler : IDisposable
         //SetUpLemmings();
         //SetUpGadgets(content, levelData.AllGadgetData);
 
-        var i = 0;
-        foreach (var team in Team.AllItems)
+        var x = new List<LemmingSkill>
         {
-            foreach (var skill in LemmingSkill.AllItems)
+            BuilderSkill.Instance,
+            ClimberSkill.Instance,
+            DiggerSkill.Instance,
+            MinerSkill.Instance
+        };
+
+        var i = 10;
+        //  foreach (var team in Team.AllItems)
+        {
+            foreach (var skill in x)
             {
                 var item = new SkillSetData
                 {
                     SkillName = skill.LemmingSkillName,
                     NumberOfSkills = i,
-                    TeamId = team.Id,
+                    TeamId = Team.AllItems[0].Id,
                 };
 
                 levelData.SkillSetData.Add(item);

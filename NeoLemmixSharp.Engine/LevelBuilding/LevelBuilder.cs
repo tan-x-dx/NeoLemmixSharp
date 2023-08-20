@@ -7,6 +7,7 @@ using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
+using NeoLemmixSharp.Engine.Engine.Skills;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 using NeoLemmixSharp.Engine.Engine.Timer;
 using NeoLemmixSharp.Engine.Engine.Updates;
@@ -77,7 +78,7 @@ public sealed class LevelBuilder : IDisposable
         var levelViewport = new Viewport(levelCursor, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         var levelLemmings = _levelObjectAssembler.GetLevelLemmings();
         var lemmingManager = new LemmingManager(levelLemmings);
-        var updateScheduler = new UpdateScheduler(levelData.SuperLemmingMode, controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager);
+        var updateScheduler = new UpdateScheduler(levelData.SuperLemmingMode, controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, skillSetManager);
 
         var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
 

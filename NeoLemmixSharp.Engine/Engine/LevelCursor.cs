@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
+using NeoLemmixSharp.Engine.Engine.Skills;
 
 namespace NeoLemmixSharp.Engine.Engine;
 
@@ -20,13 +21,14 @@ public sealed class LevelCursor
     private readonly LevelInputController _controller;
     private readonly SkillSetManager _skillSetManager;
 
-    public int NumberOfLemmingsUnderCursor { get; private set; }
-    public LevelPosition CursorPosition { private get; set; }
-
-    private Lemming? _currentlyHighlightedLemming;
     private FacingDirection? _facingDirection;
     private bool _selectOnlyWalkers;
     private bool _selectOnlyUnassigned;
+
+    public int NumberOfLemmingsUnderCursor { get; private set; }
+    public LevelPosition CursorPosition { private get; set; }
+
+    public Lemming? CurrentlyHighlightedLemming { get; private set; }
 
     public LevelCursor(
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
@@ -45,7 +47,7 @@ public sealed class LevelCursor
     public void OnNewFrame()
     {
         NumberOfLemmingsUnderCursor = 0;
-        _currentlyHighlightedLemming = null;
+        CurrentlyHighlightedLemming = null;
 
         _selectOnlyWalkers = _controller.SelectOnlyWalkers.IsKeyDown;
         _selectOnlyUnassigned = _controller.SelectOnlyUnassignedLemmings.IsKeyDown;
@@ -70,9 +72,9 @@ public sealed class LevelCursor
             return;
 
         NumberOfLemmingsUnderCursor++;
-        if (NewCandidateIsHigherPriority(_currentlyHighlightedLemming, lemming))
+        if (NewCandidateIsHigherPriority(CurrentlyHighlightedLemming, lemming))
         {
-            _currentlyHighlightedLemming = lemming;
+            CurrentlyHighlightedLemming = lemming;
         }
     }
 
@@ -128,12 +130,12 @@ public sealed class LevelCursor
 
     private bool NewCandidateHasMoreRelevantTeam(Lemming previousCandidate, Lemming newCandidate)
     {
-        var teamForSelectedSkill = _skillSetManager.TeamForSelectedSkill(_controlPanel.SelectedSkillButtonId);
-        if (teamForSelectedSkill is null)
+        var skillTrackingData = _skillSetManager.GetSkillTrackingData(_controlPanel.SelectedSkillButtonId);
+        if (skillTrackingData is null)
             return false;
 
-        var previousCandidateMatchesTeam = previousCandidate.State.TeamAffiliation == teamForSelectedSkill;
-        var newCandidateMatchesTeam = newCandidate.State.TeamAffiliation == teamForSelectedSkill;
+        var previousCandidateMatchesTeam = previousCandidate.State.TeamAffiliation == skillTrackingData.Team;
+        var newCandidateMatchesTeam = newCandidate.State.TeamAffiliation == skillTrackingData.Team;
 
         return newCandidateMatchesTeam && !previousCandidateMatchesTeam;
     }

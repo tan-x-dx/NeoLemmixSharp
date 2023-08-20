@@ -2,8 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
-using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
+using NeoLemmixSharp.Engine.Engine.Skills;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
@@ -113,7 +113,8 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
         Rectangle destRectangle)
     {
         var dx = 3 * _skillAssignButton.ScaleMultiplier;
-        var numberOfSkillsAvailable = _skillSetManager.NumberOfSkillsAvailable(_skillAssignButton.SkillAssignButtonId);
+        var skillTrackingData = _skillSetManager.GetSkillTrackingData(_skillAssignButton.SkillAssignButtonId)!;
+        var numberOfSkillsAvailable = skillTrackingData.SkillCount;
 
         if (numberOfSkillsAvailable >= 100)
         {

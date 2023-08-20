@@ -22,6 +22,7 @@ public sealed class UpdateScheduler
     private readonly LevelCursor _levelCursor;
     private readonly LevelTimer _levelTimer;
     private readonly LemmingManager _lemmingManager;
+    private readonly SkillSetManager _skillSetManager;
 
     public bool DoneAssignmentThisFrame { get; set; }
     public LemmingSkill QueuedSkill { get; private set; } = NoneSkill.Instance;
@@ -37,7 +38,8 @@ public sealed class UpdateScheduler
         LevelCursor levelCursor,
         LevelInputController inputController,
         LevelTimer levelTimer,
-        LemmingManager lemmingManager)
+        LemmingManager lemmingManager,
+        SkillSetManager skillSetManager)
     {
         _superLemmingMode = superLemmingMode;
         _levelControlPanel = levelControlPanel;
@@ -46,6 +48,7 @@ public sealed class UpdateScheduler
         _inputController = inputController;
         _levelTimer = levelTimer;
         _lemmingManager = lemmingManager;
+        _skillSetManager = skillSetManager;
 
         _elapsedTicks = new ItemWrapper<int>();
         _pauseUpdater = new PauseUpdater(_elapsedTicks);
@@ -62,16 +65,21 @@ public sealed class UpdateScheduler
         HandleKeyboardInput();
         HandleMouseInput();
 
-        var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
         _levelCursor.OnNewFrame();
 
-        foreach (var lemming in _lemmingManager.AllLemmings)
+        var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
+        if (mouseIsInLevelViewPort)
         {
-            if (mouseIsInLevelViewPort)
+            foreach (var lemming in _lemmingManager.AllLemmings)
             {
                 _levelCursor.CheckLemming(lemming);
             }
+        }
 
+        HandleSkillAssignment();
+
+        foreach (var lemming in _lemmingManager.AllLemmings)
+        {
             CurrentlySelectedFrameUpdater.UpdateLemming(lemming);
         }
 
@@ -130,11 +138,6 @@ public sealed class UpdateScheduler
         }
     }
 
-    public void UpdateLemming(Lemming lemming)
-    {
-        CurrentlySelectedFrameUpdater.UpdateLemming(lemming);
-    }
-
     private void SetPaused()
     {
         CurrentlySelectedFrameUpdater = _pauseUpdater;
@@ -150,6 +153,35 @@ public sealed class UpdateScheduler
     private void SetFastSpeed()
     {
         CurrentlySelectedFrameUpdater = _fastForwardFrameUpdater;
+    }
+
+    private void HandleSkillAssignment()
+    {
+        if (_inputController.LeftMouseButtonAction.IsMouseButtonUp)
+            return;
+
+        var lemming = _levelCursor.CurrentlyHighlightedLemming;
+        if (lemming is null)
+            return;
+
+        var selectedSkillId = _levelControlPanel.SelectedSkillButtonId;
+        var skillTrackingData = _skillSetManager.GetSkillTrackingData(selectedSkillId);
+        if (skillTrackingData is null)
+            return;
+
+        if (skillTrackingData.SkillCount == 0)
+            return;
+
+        if (lemming.State.CanHaveSkillsAssigned &&
+            skillTrackingData.Team == lemming.State.TeamAffiliation &&
+            skillTrackingData.Skill.CanAssignToLemming(lemming))
+        {
+            skillTrackingData.Skill.AssignToLemming(lemming);
+        }
+        else
+        {
+            SetQueuedSkill(lemming, skillTrackingData.Skill);
+        }
     }
 
     private void ClearQueuedSkill()

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.ControlPanel;
+﻿using NeoLemmixSharp.Engine.Engine.Skills;
+
+namespace NeoLemmixSharp.Engine.Engine.ControlPanel;
 
 public sealed class LevelControlPanel : ILevelControlPanel
 {
