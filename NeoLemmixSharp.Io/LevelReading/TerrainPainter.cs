@@ -152,7 +152,7 @@ public sealed class TerrainPainter
 
                 if (PixelColorIsSubstantial(targetPixelColor))
                 {
-                    if (terrainData.Erase)
+                    if (terrainData.IsSteel)
                     {
                         targetPixelData |= PixelType.Steel;
                     }
