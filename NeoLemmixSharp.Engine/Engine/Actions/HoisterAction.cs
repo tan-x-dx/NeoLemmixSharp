@@ -14,7 +14,7 @@ public sealed class HoisterAction : LemmingAction
     public override string LemmingActionName => "hoister";
     public override int NumberOfAnimationFrames => GameConstants.HoisterAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => 2;
+    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

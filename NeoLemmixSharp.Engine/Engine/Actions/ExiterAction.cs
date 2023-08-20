@@ -14,7 +14,7 @@ public sealed class ExiterAction : LemmingAction
     public override string LemmingActionName => "exiter";
     public override int NumberOfAnimationFrames => GameConstants.ExiterAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => 2;
+    public override int CursorSelectionPriorityValue => GameConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -27,10 +27,11 @@ public sealed class UniqueIdItemComparer<T> :
 
     public int Compare(T? first, T? second)
     {
-        var firstId = first?.Id ?? -1;
-        var secondId = second?.Id ?? -1;
+        if (first is null && second is null) return 0;
+        if (first is null) return -1;
+        if (second is null) return 1;
 
-        return firstId.CompareTo(secondId);
+        return first.Id.CompareTo(second.Id);
     }
 
     public bool Equals(UniqueIdItemComparer<T>? other) => other is not null;

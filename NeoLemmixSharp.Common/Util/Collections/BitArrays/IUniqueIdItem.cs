@@ -1,21 +1,25 @@
 ﻿namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
-public interface IUniqueIdItem<T> : IEquatable<T>
-    where T : class, IUniqueIdItem<T>
+public interface IIdEquatable<T> : IEquatable<T>
+    where T : class, IIdEquatable<T>
 {
-    static abstract int NumberOfItems { get; }
-    static abstract ReadOnlySpan<T> AllItems { get; }
-
     int Id { get; }
 
     static abstract bool operator ==(T left, T right);
     static abstract bool operator !=(T left, T right);
 }
 
+public interface IUniqueIdItem<T> : IIdEquatable<T>
+    where T : class, IUniqueIdItem<T>
+{
+    static abstract int NumberOfItems { get; }
+    static abstract ReadOnlySpan<T> AllItems { get; }
+}
+
 public static class UniqueIdItemValidatorMethods
 {
-    public static void ValidateUniqueIds<T>(this T[] items)
-        where T : class, IUniqueIdItem<T>
+    public static void ValidateUniqueIds<T>(this ICollection<T> items)
+        where T : class, IIdEquatable<T>
     {
         var ids = items
             .Select(i => i.Id)
@@ -23,7 +27,7 @@ public static class UniqueIdItemValidatorMethods
 
         var numberOfUniqueIds = ids.Distinct().Count();
 
-        if (numberOfUniqueIds != items.Length)
+        if (numberOfUniqueIds != items.Count)
         {
             var typeName = typeof(T).Name;
             var idsString = string.Join(',', ids.OrderBy(i => i));
@@ -34,10 +38,10 @@ public static class UniqueIdItemValidatorMethods
         var minActionId = ids.Min();
         var maxActionId = ids.Max();
 
-        if (minActionId != 0 || maxActionId != items.Length - 1)
+        if (minActionId != 0 || maxActionId != items.Count - 1)
         {
             var typeName = typeof(T).Name;
-            throw new Exception($"{typeName} ids do not span a full set of values from 0 - {items.Length - 1}");
+            throw new Exception($"{typeName} ids do not span a full set of values from 0 - {items.Count - 1}");
         }
     }
 }

@@ -61,6 +61,14 @@ public sealed class SkillSetManager : IComparer<SkillSetManager.SkillTrackingDat
         return _skillDataList[skillDataId].SkillCount;
     }
 
+    public Team? TeamForSelectedSkill(int skillDataId)
+    {
+        if (skillDataId == -1)
+            return null;
+
+        return _skillDataList[skillDataId].Team;
+    }
+
     public bool SkillCanBeAssignedToLemming(int skillDataId, Lemming lemming)
     {
         if (skillDataId == -1)

@@ -14,7 +14,7 @@ public sealed class StackerAction : LemmingAction
     public override string LemmingActionName => "stacker";
     public override int NumberOfAnimationFrames => GameConstants.StackerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => 0;
+    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

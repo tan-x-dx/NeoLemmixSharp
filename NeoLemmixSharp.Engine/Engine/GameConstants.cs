@@ -19,6 +19,16 @@ public static class GameConstants
 
     #endregion
 
+    #region CursorPriorityLevels
+
+    public const int NonPermanentSkillPriority = 4;
+    public const int PermanentSkillPriority = 3;
+    public const int NonWalkerMovementPriority = 2;
+    public const int WalkerMovementPriority = 1;
+    public const int NoPriority = 0;
+
+    #endregion
+
     #region Lemming Action Constants
 
     public const int AscenderActionId = 18;

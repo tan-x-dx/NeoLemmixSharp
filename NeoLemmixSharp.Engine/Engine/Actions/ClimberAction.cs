@@ -14,7 +14,7 @@ public sealed class ClimberAction : LemmingAction
     public override string LemmingActionName => "climber";
     public override int NumberOfAnimationFrames => GameConstants.ClimberAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => 1;
+    public override int CursorSelectionPriorityValue => GameConstants.PermanentSkillPriority;
 
     // Be very careful when changing the terrain/hoister checks for climbers!
     // See http://www.lemmingsforums.net/index.php?topic=2506.0 first!

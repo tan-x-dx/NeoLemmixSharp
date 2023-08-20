@@ -14,7 +14,7 @@ public sealed class OhNoerAction : LemmingAction
     public override string LemmingActionName => "ohnoer";
     public override int NumberOfAnimationFrames => GameConstants.OhNoerAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => 2;
+    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -32,7 +32,7 @@ public abstract class Orientation : IUniqueIdItem<Orientation>
         Terrain = terrain;
     }
 
-    int IUniqueIdItem<Orientation>.Id => RotNum;
+    int IIdEquatable<Orientation>.Id => RotNum;
     public abstract int RotNum { get; }
     public abstract int AbsoluteHorizontalComponent { get; }
     public abstract int AbsoluteVerticalComponent { get; }

@@ -14,7 +14,7 @@ public sealed class StonerAction : LemmingAction
     public override string LemmingActionName => "stoner";
     public override int NumberOfAnimationFrames => GameConstants.StonerAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => 2;
+    public override int CursorSelectionPriorityValue => GameConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

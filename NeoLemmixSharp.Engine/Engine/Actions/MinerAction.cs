@@ -20,7 +20,7 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
     public override string LemmingActionName => "miner";
     public override int NumberOfAnimationFrames => GameConstants.MinerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => 0;
+    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

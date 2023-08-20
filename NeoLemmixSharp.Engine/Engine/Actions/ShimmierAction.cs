@@ -14,7 +14,7 @@ public sealed class ShimmierAction : LemmingAction
     public override string LemmingActionName => "shimmier";
     public override int NumberOfAnimationFrames => GameConstants.ShimmierAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => 0;
+    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

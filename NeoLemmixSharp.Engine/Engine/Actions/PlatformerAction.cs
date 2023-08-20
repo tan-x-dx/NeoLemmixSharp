@@ -16,7 +16,7 @@ public sealed class PlatformerAction : LemmingAction
     public override string LemmingActionName => "platformer";
     public override int NumberOfAnimationFrames => GameConstants.PlatformerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => 0;
+    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

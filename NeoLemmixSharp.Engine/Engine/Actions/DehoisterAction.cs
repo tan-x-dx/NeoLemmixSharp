@@ -14,7 +14,7 @@ public sealed class DehoisterAction : LemmingAction
     public override string LemmingActionName => "dehoister";
     public override int NumberOfAnimationFrames => GameConstants.DehoisterAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => 2;
+    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

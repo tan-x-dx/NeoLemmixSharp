@@ -17,7 +17,7 @@ public sealed class FallerAction : LemmingAction
     public override string LemmingActionName => "faller";
     public override int NumberOfAnimationFrames => GameConstants.FallerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => 2;
+    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

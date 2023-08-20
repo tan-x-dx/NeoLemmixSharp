@@ -19,7 +19,7 @@ public sealed class BasherAction : LemmingAction, IDestructionAction
     public override string LemmingActionName => "basher";
     public override int NumberOfAnimationFrames => GameConstants.BasherAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => 0;
+    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

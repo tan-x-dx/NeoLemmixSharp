@@ -19,7 +19,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionAction
     public override string LemmingActionName => "digger";
     public override int NumberOfAnimationFrames => GameConstants.DiggerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => 0;
+    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

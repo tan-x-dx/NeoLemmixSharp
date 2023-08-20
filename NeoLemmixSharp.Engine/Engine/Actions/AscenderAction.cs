@@ -14,7 +14,7 @@ public sealed class AscenderAction : LemmingAction
     public override string LemmingActionName => "ascender";
     public override int NumberOfAnimationFrames => GameConstants.AscenderAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => 3;
+    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

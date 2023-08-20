@@ -20,7 +20,7 @@ public sealed class ReacherAction : LemmingAction
     public override string LemmingActionName => "reacher";
     public override int NumberOfAnimationFrames => GameConstants.ReacherAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => 0;
+    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
