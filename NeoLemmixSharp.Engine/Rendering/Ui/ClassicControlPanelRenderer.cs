@@ -9,6 +9,8 @@ namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
 public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 {
+    private const int ControlPanelScaleMultiplier = 4;
+
     private readonly LevelControlPanel _levelControlPanel;
     private readonly FontBank _fontBank;
     private readonly SkillAssignButtonRenderer[] _skillAssignButtonRenderers;
@@ -101,12 +103,28 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
         }
 
         var levelTimer = LevelScreen.Current.LevelTimer;
-        var x = _levelControlPanel.ScreenWidth - PanelFont.GlyphWidth * 6 * 4;
+        var timerX = _levelControlPanel.ScreenWidth - PanelFont.GlyphWidth * 6 * ControlPanelScaleMultiplier;
 
-        _fontBank.PanelFont.RenderTextSpan(spriteBatch, levelTimer.AsSpan(), x, _levelControlPanel.ControlPanelY, 4, levelTimer.FontColor);
+        _fontBank.PanelFont.RenderTextSpan(spriteBatch, levelTimer.AsSpan(), timerX, _levelControlPanel.ControlPanelY, ControlPanelScaleMultiplier, levelTimer.FontColor);
     }
 
     public void Dispose()
     {
+        _whitePixelTexture.Dispose();
+        _emptySlot.Dispose();
+        _iconCpmAndReplay.Dispose();
+        _iconDirectional.Dispose();
+        _iconFf.Dispose();
+        _iconFrameskip.Dispose();
+        _iconNuke.Dispose();
+        _iconPause.Dispose();
+        _iconRestart.Dispose();
+        _iconRrMinus.Dispose();
+        _iconRrPlus.Dispose();
+        _minimapRegion.Dispose();
+        _panelIcons.Dispose();
+        _skillCountErase.Dispose();
+        _skillPanels.Dispose();
+        _skillSelected.Dispose();
     }
 }
