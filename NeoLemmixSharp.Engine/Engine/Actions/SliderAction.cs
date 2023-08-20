@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Engine.Gadgets;
+using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
@@ -16,6 +17,7 @@ public sealed class SliderAction : LemmingAction
     public override string LemmingActionName => "slider";
     public override int NumberOfAnimationFrames => GameConstants.SliderAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => GameConstants.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -63,11 +65,11 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        if (GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemmingPosition, orientation, out var water))
+        if (GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemmingPosition, out var water))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             lemming.LevelPosition = lemmingPosition;
-            if (lemming.IsSwimmer)
+            if (lemming.State.IsSwimmer)
             {
                 SwimmerAction.Instance.TransitionLemmingToAction(lemming, true);
                 // ?? CueSoundEffect(SFX_SWIMMING, L.Position); ??
@@ -77,7 +79,7 @@ public sealed class SliderAction : LemmingAction
                 DrownerAction.Instance.TransitionLemmingToAction(lemming, true);
                 // ?? CueSoundEffect(SFX_DROWNING, L.Position); ??
             }
-            water.OnLemmingInHitBox(lemming);
+            //water.OnLemmingInHitBox(lemming);
 
             return true;
         }
@@ -97,7 +99,7 @@ public sealed class SliderAction : LemmingAction
         LevelPosition levelPosition,
         LevelPosition dehoistPin)
     {
-        if (Terrain.PixelIsSolidToLemming(orientation, dehoistPin))
+        if (Terrain.PixelIsSolidToLemming(lemming, dehoistPin))
             return true;
 
         var result = false;
@@ -105,7 +107,7 @@ public sealed class SliderAction : LemmingAction
             orientation.MatchesVertically(levelPosition, dehoistPin) &&
             true)
         {
-            result = Terrain.PixelIsSolidToLemming(orientation, orientation.MoveDown(dehoistPin, 1));
+            result = Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(dehoistPin, 1));
         }
 
         return result;

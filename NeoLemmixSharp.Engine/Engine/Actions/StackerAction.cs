@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Actions;
+﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
+
+namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class StackerAction : LemmingAction
 {
@@ -12,6 +14,7 @@ public sealed class StackerAction : LemmingAction
     public override string LemmingActionName => "stacker";
     public override int NumberOfAnimationFrames => GameConstants.StackerAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -55,9 +58,9 @@ public sealed class StackerAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        return !(Terrain.PixelIsSolidToLemming(orientation, orientation.MoveRight(brickPosition, dx)) &&
-                 Terrain.PixelIsSolidToLemming(orientation, orientation.MoveRight(brickPosition, dx + dx)) &&
-                 Terrain.PixelIsSolidToLemming(orientation, orientation.MoveRight(brickPosition, dx + dx + dx)));
+        return !(Terrain.PixelIsSolidToLemming(lemming, orientation.MoveRight(brickPosition, dx)) &&
+                 Terrain.PixelIsSolidToLemming(lemming, orientation.MoveRight(brickPosition, dx + dx)) &&
+                 Terrain.PixelIsSolidToLemming(lemming, orientation.MoveRight(brickPosition, dx + dx + dx)));
     }
 
     private static bool LayStackBrick(Lemming lemming)
@@ -71,7 +74,7 @@ public sealed class StackerAction : LemmingAction
 
         for (var i = 0; i < 3; i++)
         {
-            if (!Terrain.PixelIsSolidToLemming(orientation, brickPosition))
+            if (!Terrain.PixelIsSolidToLemming(lemming, brickPosition))
             {
                 Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
                 result = true;

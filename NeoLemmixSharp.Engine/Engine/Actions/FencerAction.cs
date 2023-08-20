@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 using System.Diagnostics.Contracts;
@@ -18,6 +19,7 @@ public sealed class FencerAction : LemmingAction, IDestructionAction
     public override string LemmingActionName => "fencer";
     public override int NumberOfAnimationFrames => GameConstants.FencerAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

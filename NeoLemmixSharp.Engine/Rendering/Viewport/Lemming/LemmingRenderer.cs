@@ -5,10 +5,10 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 public sealed class LemmingRenderer : IViewportObjectRenderer
 {
-    private Engine.Lemming _lemming;
+    private Engine.Lemmings.Lemming _lemming;
     private ActionSprite _actionSprite;
 
-    public LemmingRenderer(Engine.Lemming lemming)
+    public LemmingRenderer(Engine.Lemmings.Lemming lemming)
     {
         _lemming = lemming;
     }

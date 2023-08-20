@@ -6,17 +6,19 @@ using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Gadgets;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Engine.Skills;
+using NeoLemmixSharp.Engine.Engine.Teams;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget.NineSliceRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Io.LevelReading.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class LevelAssembler : IDisposable
+public sealed class LevelObjectAssembler : IDisposable
 {
     private readonly GraphicsDevice _graphicsDevice;
     private readonly SpriteBatch _spriteBatch;
@@ -29,7 +31,7 @@ public sealed class LevelAssembler : IDisposable
     private readonly GadgetSpriteBankBuilder _gadgetSpriteBankBuilder;
     private readonly ControlPanelSpriteBankBuilder _controlPanelSpriteBankBuilder;
 
-    public LevelAssembler(
+    public LevelObjectAssembler(
         GraphicsDevice graphicsDevice,
         ContentManager contentManager,
         SpriteBatch spriteBatch)
@@ -42,42 +44,44 @@ public sealed class LevelAssembler : IDisposable
         _controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder(graphicsDevice, contentManager);
     }
 
-    public void AssembleLevel(
+    public void AssembleLevelObjects(
         ContentManager content,
         LevelData levelData)
     {
-        SetUpTestLemmings();
+        //SetUpTestLemmings();
         //SetUpLemmings();
         //SetUpGadgets(content, levelData.AllGadgetData);
 
-        levelData.SkillSetData = new SkillSetData
+        var x = new List<LemmingSkill>
         {
-            NumberOfBashers = 1,
-            NumberOfBlockers = 2,
-            NumberOfBombers = 3,
-            NumberOfBuilders = 4,
-            NumberOfClimbers = 5,
-            NumberOfCloners = 6,
-            NumberOfDiggers = 7,
-            NumberOfDisarmers = 8,
-            NumberOfFencers = 9,
-            NumberOfFloaters = 10,
-            NumberOfGliders = 11,
-            NumberOfJumpers = 12,
-            NumberOfLaserers = 13,
-            NumberOfMiners = 14,
-            NumberOfPlatformers = 15,
-            NumberOfShimmiers = 16,
-            NumberOfSliders = 17,
-            NumberOfStackers = 18,
-            NumberOfStoners = 19,
-            NumberOfSwimmers = 20,
-            NumberOfWalkers = 21
+            BuilderSkill.Instance,
+            ClimberSkill.Instance,
+            DiggerSkill.Instance,
+            MinerSkill.Instance
         };
+
+        var i = 10;
+        //  foreach (var team in Team.AllItems)
+        {
+            foreach (var skill in x)
+            {
+                var item = new SkillSetData
+                {
+                    SkillName = skill.LemmingSkillName,
+                    NumberOfSkills = i,
+                    TeamId = Team.AllItems[0].Id,
+                };
+
+                levelData.SkillSetData.Add(item);
+                i++;
+            }
+        }
     }
 
     public Lemming[] GetLevelLemmings()
     {
+        SetUpTestLemmings();
+
         return _lemmings.ToArray();
     }
 
@@ -141,11 +145,11 @@ public sealed class LevelAssembler : IDisposable
             facingDirection: LeftFacingDirection.Instance)
         {
             LevelPosition = new LevelPosition(60, 20),
-            IsClimber = true,
             State =
             {
-                IsAthlete = true
-            }
+                IsClimber = true,
+            },
+            FastForwardTime = 1
         };
 
         var lemmingE = new Lemming(
@@ -160,9 +164,11 @@ public sealed class LevelAssembler : IDisposable
             facingDirection: LeftFacingDirection.Instance)
         {
             LevelPosition = new LevelPosition(145, 134),
-            IsFloater = true
+            State =
+            {
+                IsFloater = true
+            }
         };
-        lemmingC.State.IsAthlete = true;
 
         var lemmingD = new Lemming(
             orientation: LeftOrientation.Instance,
@@ -288,28 +294,48 @@ public sealed class LevelAssembler : IDisposable
         _lemmings.Add(lemmingC);
         _lemmings.Add(lemmingD);
         _lemmings.Add(lemmingE);
-        
+
         _lemmings.Add(miner);
 
-        lemming0.State.TeamAffiliation = Team.Team0;
-        lemming1.State.TeamAffiliation = Team.Team1;
-        lemming2.State.TeamAffiliation = Team.Team2;
-        lemming3.State.TeamAffiliation = Team.Team3;
-        lemming4.State.TeamAffiliation = Team.Team4;
-        lemming5.State.TeamAffiliation = Team.Team5;
+        lemming0.State.TeamAffiliation = Team.AllItems[0];
+        lemming1.State.TeamAffiliation = Team.AllItems[1];
+        lemming2.State.TeamAffiliation = Team.AllItems[2];
+        lemming3.State.TeamAffiliation = Team.AllItems[3];
+        lemming4.State.TeamAffiliation = Team.AllItems[4];
+        lemming5.State.TeamAffiliation = Team.AllItems[5];
 
-        lemming6.State.TeamAffiliation = Team.Team0;
-        lemming7.State.TeamAffiliation = Team.Team1;
-        lemming8.State.TeamAffiliation = Team.Team2;
-        lemming9.State.TeamAffiliation = Team.Team3;
-        lemming10.State.TeamAffiliation = Team.Team4;
-        lemming11.State.TeamAffiliation = Team.Team5;
-        lemming6.State.IsAthlete = true;
-        lemming7.State.IsAthlete = true;
-        lemming8.State.IsAthlete = true;
-        lemming9.State.IsAthlete = true;
-        lemming10.State.IsAthlete = true;
-        lemming11.State.IsAthlete = true;
+        lemming6.State.TeamAffiliation = Team.AllItems[0];
+        lemming7.State.TeamAffiliation = Team.AllItems[1];
+        lemming8.State.TeamAffiliation = Team.AllItems[2];
+        lemming9.State.TeamAffiliation = Team.AllItems[3];
+        lemming10.State.TeamAffiliation = Team.AllItems[4];
+        lemming11.State.TeamAffiliation = Team.AllItems[5];
+        lemming6.State.IsSwimmer = true;
+        lemming7.State.IsSwimmer = true;
+        lemming8.State.IsSwimmer = true;
+        lemming9.State.IsSwimmer = true;
+        lemming10.State.IsSwimmer = true;
+        lemming11.State.IsSwimmer = true;
+
+        lemming0.State.IsNeutral = true;
+        lemming1.State.IsNeutral = true;
+        lemming2.State.IsNeutral = true;
+        lemming3.State.IsNeutral = true;
+        lemming4.State.IsNeutral = true;
+        lemming5.State.IsNeutral = true;
+        lemming6.State.IsNeutral = true;
+        lemming7.State.IsNeutral = true;
+        lemming8.State.IsNeutral = true;
+        lemming9.State.IsNeutral = true;
+        lemming10.State.IsNeutral = true;
+        lemming11.State.IsNeutral = true;
+
+        lemming0.State.IsZombie = true;
+        lemming1.State.IsZombie = true;
+        lemming2.State.IsZombie = true;
+        lemming3.State.IsZombie = true;
+        lemming4.State.IsZombie = true;
+        lemming5.State.IsZombie = true;
     }
 
     private void SetUpLemmings()
@@ -341,11 +367,11 @@ public sealed class LevelAssembler : IDisposable
 
         var c = new RectangularLevelRegion(20, 20, 64, 32);
 
-        var water = new ResizeableGadget(0, GadgetType.Water, DownOrientation.Instance, c);
-        var r = new NineSliceRenderer(c, texture, sW, sH, sT, sB, sL, sR);
+        /*  var water = new ResizeableGadget(0, GadgetType.Water, DownOrientation.Instance, c);
+          var r = new NineSliceRenderer(c, texture, sW, sH, sT, sB, sL, sR);
 
-        _gadgets.Add(water);
-        _gadgetRenderers.Add(r);
+          _gadgets.Add(water);
+          _gadgetRenderers.Add(r);*/
 
         foreach (var gadgetData in allGadgetData)
         {

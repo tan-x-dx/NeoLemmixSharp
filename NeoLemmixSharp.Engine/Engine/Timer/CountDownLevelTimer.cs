@@ -24,11 +24,11 @@ public sealed class CountDownLevelTimer : LevelTimer
 
         if (secondsLeft < 0)
         {
-            UpdateCountUpString(-secondsLeft);
+            UpdateCountUpString(-secondsLeft, true);
         }
         else
         {
-            UpdateCountDownString(secondsLeft);
+            UpdateCountDownString(secondsLeft, true);
         }
     }
 

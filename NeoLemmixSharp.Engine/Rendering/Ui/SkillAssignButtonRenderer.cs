@@ -3,12 +3,14 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
+using NeoLemmixSharp.Engine.Engine.Skills;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
 public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 {
     private readonly SkillAssignButton _skillAssignButton;
+    private readonly SkillSetManager _skillSetManager;
 
     private readonly Texture2D _skillPanels;
     private readonly Texture2D _skillSelected;
@@ -20,10 +22,13 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 
     private readonly INeoLemmixFont _skillCountDigitFont;
 
+    private readonly int[] _skillCountChars;
+
     public SkillAssignButtonRenderer(
         ControlPanelSpriteBank spriteBank,
         FontBank fontBank,
-        SkillAssignButton skillAssignButton)
+        SkillAssignButton skillAssignButton,
+        SkillSetManager skillSetManager)
     {
         _skillCountErase = spriteBank.GetTexture("panel/skill_count_erase");
         _skillPanels = spriteBank.GetTexture("panel/skill_panels");
@@ -32,6 +37,9 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
         _skillCountDigitFont = fontBank.SkillCountDigitFont;
 
         _skillAssignButton = skillAssignButton;
+        _skillSetManager = skillSetManager;
+
+        _skillCountChars = new int[2];
 
         // HOLY SHIT THIS IS TERRIBLE CODE
         // TODO REFACTOR THE FUCK OUT OF THIS WHEN PROPER SPRITES ARE CREATED FOR SKILL ASSIGN BUTTONS
@@ -97,13 +105,44 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
             _skillIconSourceRectangle,
             RenderingLayers.ControlPanelSkillIconLayer);
 
-        var dx = 3 * _skillAssignButton.ScaleMultiplier;
+        RenderSkillCounts(spriteBatch, destRectangle);
+    }
 
-        /*_skillCountDigitFont.RenderText(
+    private void RenderSkillCounts(
+        SpriteBatch spriteBatch,
+        Rectangle destRectangle)
+    {
+        var dx = 3 * _skillAssignButton.ScaleMultiplier;
+        var skillTrackingData = _skillSetManager.GetSkillTrackingData(_skillAssignButton.SkillAssignButtonId)!;
+        var numberOfSkillsAvailable = skillTrackingData.SkillCount;
+
+        if (numberOfSkillsAvailable >= 100)
+        {
+            _skillCountChars[0] = SkillCountDigitFont.InfinityGlyph;
+            _skillCountChars[1] = ' ';
+        }
+        else
+        {
+            var unit = numberOfSkillsAvailable % 10;
+            _skillCountChars[1] = unit + '0';
+
+            var tens = numberOfSkillsAvailable / 10;
+            if (tens > 0)
+            {
+                _skillCountChars[0] = tens + '0';
+            }
+            else
+            {
+                _skillCountChars[0] = ' ';
+            }
+        }
+
+        _skillCountDigitFont.RenderTextSpan(
             spriteBatch,
-            _skillAssignButton.LemmingSkill.CurrentNumberOfSkillsAvailable.ToString(),
+            new ReadOnlySpan<int>(_skillCountChars),
             destRectangle.X + dx,
             destRectangle.Y + _skillAssignButton.ScaleMultiplier,
-            _skillAssignButton.ScaleMultiplier);*/
+            _skillAssignButton.ScaleMultiplier,
+            Color.White);
     }
 }

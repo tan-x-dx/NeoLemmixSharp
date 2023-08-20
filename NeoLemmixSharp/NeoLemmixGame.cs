@@ -9,6 +9,7 @@ using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Skills;
+using NeoLemmixSharp.Engine.Engine.Teams;
 using NeoLemmixSharp.Engine.Engine.Terrain.Masks;
 using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
@@ -127,16 +128,20 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
     private void InitialiseGameConstants()
     {
-        var numberOfFacingDirections = FacingDirection.AllFacingDirections.Length;
-        var numberOfOrientations = Orientation.AllOrientations.Length;
-        var numberOfActions = LemmingAction.AllLemmingActions.Length;
-        var numberOfSkills = LemmingSkill.AllLemmingSkills.Length;
+        var numberOfFacingDirections = FacingDirection.NumberOfItems;
+        var numberOfOrientations = Orientation.NumberOfItems;
+        var numberOfActions = LemmingAction.NumberOfItems;
+        var numberOfSkills = LemmingSkill.NumberOfItems;
+        var numberOfTeams = Team.NumberOfItems;
+
         Console.WriteLine(
-            "Loaded {0} facing directions. Loaded {1} orientations. Loaded {2} skills. Loaded {3} actions",
+            "Loaded {0} facing directions. Loaded {1} orientations. Loaded {2} skills. Loaded {3} actions. " +
+            "Loaded {4} teams.",
             numberOfFacingDirections,
             numberOfOrientations,
             numberOfSkills,
-            numberOfActions);
+            numberOfActions,
+            numberOfTeams);
 
         TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
         DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);

@@ -12,8 +12,6 @@ public abstract class LevelTimer
 
     public Color FontColor { get; protected set; }
 
-    public int ElapsedTicks { get; protected set; }
-
     protected LevelTimer()
     {
         Chars[3] = '-';
@@ -21,9 +19,9 @@ public abstract class LevelTimer
 
     public void Tick()
     {
-        ElapsedTicks++;
-        if (ElapsedTicks % GameConstants.FramesPerSecond != 0)
-            return;
+       // ElapsedTicks++;
+       // if (ElapsedTicks % GameConstants.FramesPerSecond != 0)
+       //     return;
 
         ElapsedSeconds++;
         UpdateAppearance();
@@ -31,7 +29,7 @@ public abstract class LevelTimer
 
     public void SetElapsedTicks(int elapsedTicks)
     {
-        ElapsedTicks = elapsedTicks;
+     //   ElapsedTicks = elapsedTicks;
         ElapsedSeconds = elapsedTicks / GameConstants.FramesPerSecond;
 
         UpdateAppearance();
@@ -44,7 +42,7 @@ public abstract class LevelTimer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void UpdateCountUpString(
         int elapsedSeconds,
-        bool partialUpdate = true)
+        bool partialUpdate)
     {
         UpdateTimerString(elapsedSeconds, 0, 0, 0, 0, partialUpdate);
     }
@@ -52,7 +50,7 @@ public abstract class LevelTimer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void UpdateCountDownString(
         int elapsedSeconds,
-        bool partialUpdate = true)
+        bool partialUpdate)
     {
         UpdateTimerString(elapsedSeconds, 9, 5, 9, 9, partialUpdate);
     }
@@ -63,7 +61,7 @@ public abstract class LevelTimer
         int secondTensTest,
         int minutesUnitsTest,
         int minutesTensTest,
-        bool partialUpdate = true)
+        bool partialUpdate)
     {
         var seconds = elapsedSeconds % 60;
         var secondsUnits = seconds % 10;

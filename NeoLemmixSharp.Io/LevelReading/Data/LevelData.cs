@@ -20,13 +20,15 @@ public sealed class LevelData
     public int? TimeLimit { get; set; }
     public int MaxSpawnInterval { get; set; }
 
+    public bool SuperLemmingMode { get; set; }
+
     public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Wrap;
     public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Wrap;
 
     public BoundaryBehaviourType HorizontalViewPortBehaviour { get; set; } = BoundaryBehaviourType.Wrap;
     public BoundaryBehaviourType VerticalViewPortBehaviour { get; set; } = BoundaryBehaviourType.Wrap;
 
-    public SkillSetData SkillSetData { get; set; }
+    public List<SkillSetData> SkillSetData { get; } = new();
     public ThemeData ThemeData { get; } = new();
     public List<TerrainData> AllTerrainData { get; } = new();
     public List<TerrainGroup> AllTerrainGroups { get; } = new();

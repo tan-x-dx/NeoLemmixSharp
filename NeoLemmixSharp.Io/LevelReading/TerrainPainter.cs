@@ -12,7 +12,7 @@ public sealed class TerrainPainter
     private const string _rootDirectory = "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5";
 
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly Dictionary<string, PixelColourData> _textureBundleCache = new();
+    private readonly Dictionary<string, PixelColorData> _textureBundleCache = new();
 
     private readonly List<TerrainGroup> _terrainGroups = new();
 
@@ -43,7 +43,7 @@ public sealed class TerrainPainter
         _terrainPixels = new PixelType[levelData.LevelWidth * levelData.LevelHeight];
 
         var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
-        var textureData = new PixelColourData(
+        var textureData = new PixelColorData(
             levelData.LevelWidth,
             levelData.LevelHeight,
             uintData);
@@ -66,7 +66,7 @@ public sealed class TerrainPainter
 
     private void DrawTerrain(
         IEnumerable<TerrainData> terrainDataList,
-        PixelColourData targetData,
+        PixelColorData targetData,
         int dx = 0,
         int dy = 0)
     {
@@ -94,63 +94,63 @@ public sealed class TerrainPainter
 
     private void ApplyTerrainPiece(
         TerrainData terrainData,
-        PixelColourData targetPixelColourData,
+        PixelColorData targetPixelColorData,
         int dx,
         int dy)
     {
-        var sourcePixelColourData = GetOrLoadPixelColourData(terrainData);
+        var sourcePixelColorData = GetOrLoadPixelColorData(terrainData);
 
         var dihedralTransformation = DihedralTransformation.GetForTransformation(
             terrainData.FlipHorizontal,
             terrainData.FlipVertical,
             terrainData.Rotate);
 
-        for (var x = 0; x < sourcePixelColourData.Width; x++)
+        for (var x = 0; x < sourcePixelColorData.Width; x++)
         {
-            for (var y = 0; y < sourcePixelColourData.Height; y++)
+            for (var y = 0; y < sourcePixelColorData.Height; y++)
             {
                 dihedralTransformation.Transform(x,
                     y,
-                    sourcePixelColourData.Width - 1,
-                    sourcePixelColourData.Height - 1, out var x0, out var y0);
+                    sourcePixelColorData.Width - 1,
+                    sourcePixelColorData.Height - 1, out var x0, out var y0);
 
                 x0 = x0 + terrainData.X + dx;
                 y0 = y0 + terrainData.Y + dy;
 
-                if (x0 < 0 || x0 >= targetPixelColourData.Width ||
-                    y0 < 0 || y0 >= targetPixelColourData.Height)
+                if (x0 < 0 || x0 >= targetPixelColorData.Width ||
+                    y0 < 0 || y0 >= targetPixelColorData.Height)
                     continue;
 
-                var sourcePixelColour = sourcePixelColourData.Get(x, y);
+                var sourcePixelColor = sourcePixelColorData.Get(x, y);
 
-                if (sourcePixelColour != 0U && terrainData.Tint.HasValue)
+                if (sourcePixelColor != 0U && terrainData.Tint.HasValue)
                 {
-                    sourcePixelColour = BlendColours(terrainData.Tint.Value, sourcePixelColour);
+                    sourcePixelColor = BlendColors(terrainData.Tint.Value, sourcePixelColor);
                 }
 
-                var targetPixelColour = targetPixelColourData.Get(x0, y0);
+                var targetPixelColor = targetPixelColorData.Get(x0, y0);
 
                 if (terrainData.Erase)
                 {
-                    if (sourcePixelColour != 0U)
+                    if (sourcePixelColor != 0U)
                     {
-                        targetPixelColour = 0U;
+                        targetPixelColor = 0U;
                     }
                 }
                 else if (terrainData.NoOverwrite)
                 {
-                    targetPixelColour = BlendColours(targetPixelColour, sourcePixelColour);
+                    targetPixelColor = BlendColors(targetPixelColor, sourcePixelColor);
                 }
                 else
                 {
-                    targetPixelColour = BlendColours(sourcePixelColour, targetPixelColour);
+                    targetPixelColor = BlendColors(sourcePixelColor, targetPixelColor);
                 }
 
-                targetPixelColourData.Set(x0, y0, targetPixelColour);
-                var pixelIndex = targetPixelColourData.Width * y0 + x0;
+                targetPixelColorData.Set(x0, y0, targetPixelColor);
+                var pixelIndex = targetPixelColorData.Width * y0 + x0;
                 ref var targetPixelData = ref _terrainPixels[pixelIndex];
 
-                if (PixelColourIsSubstantial(targetPixelColour))
+                if (PixelColorIsSubstantial(targetPixelColor))
                 {
                     if (terrainData.Erase)
                     {
@@ -167,7 +167,7 @@ public sealed class TerrainPainter
         }
     }
 
-    private static uint BlendColours(uint foreground, uint background)
+    private static uint BlendColors(uint foreground, uint background)
     {
         var fgA = (foreground >> 24 & 0xffU) / 255d;
         var fgR = (foreground >> 16 & 0xffU) / 255d;
@@ -189,13 +189,13 @@ public sealed class TerrainPainter
         return a << 24 | r << 16 | g << 8 | b;
     }
 
-    private static bool PixelColourIsSubstantial(uint colour)
+    private static bool PixelColorIsSubstantial(uint color)
     {
-        var alpha = colour >> 24 & 0xffU;
+        var alpha = color >> 24 & 0xffU;
         return alpha > MinimumSubstantialAlphaValue;
     }
 
-    private PixelColourData GetOrLoadPixelColourData(TerrainData terrainData)
+    private PixelColorData GetOrLoadPixelColorData(TerrainData terrainData)
     {
         var rootFilePath = Path.Combine(_rootDirectory, "styles", terrainData.Style!, "terrain", terrainData.TerrainName!);
 
@@ -207,7 +207,7 @@ public sealed class TerrainPainter
         terrainData.IsSteel = isSteel;
 
         using var mainTexture = Texture2D.FromFile(_graphicsDevice, png);
-        result = PixelColourData.GetPixelColourDataFromTexture(mainTexture);
+        result = PixelColorData.GetPixelColorDataFromTexture(mainTexture);
         _textureBundleCache.Add(rootFilePath, result);
 
         return result;

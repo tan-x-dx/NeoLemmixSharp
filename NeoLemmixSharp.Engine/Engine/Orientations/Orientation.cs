@@ -1,24 +1,26 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.Orientations;
 
-public abstract class Orientation : IEquatable<Orientation>, IUniqueIdItem
+public abstract class Orientation : IUniqueIdItem<Orientation>
 {
-    private static readonly Orientation[] Orientations = GenerateRotationCollection();
+    private static readonly Orientation[] Orientations = GenerateOrientationCollection();
     protected static TerrainManager Terrain { get; private set; }
 
-    public static ReadOnlySpan<Orientation> AllOrientations => new(Orientations);
+    public static int NumberOfItems => Orientations.Length;
+    public static ReadOnlySpan<Orientation> AllItems => new(Orientations);
 
-    private static Orientation[] GenerateRotationCollection()
+    private static Orientation[] GenerateOrientationCollection()
     {
         var orientations = new Orientation[4];
 
-        orientations[DownOrientation.Instance.RotNum] = DownOrientation.Instance;
-        orientations[LeftOrientation.Instance.RotNum] = LeftOrientation.Instance;
-        orientations[UpOrientation.Instance.RotNum] = UpOrientation.Instance;
-        orientations[RightOrientation.Instance.RotNum] = RightOrientation.Instance;
+        orientations[GameConstants.DownOrientationRotNum] = DownOrientation.Instance;
+        orientations[GameConstants.LeftOrientationRotNum] = LeftOrientation.Instance;
+        orientations[GameConstants.UpOrientationRotNum] = UpOrientation.Instance;
+        orientations[GameConstants.RightOrientationRotNum] = RightOrientation.Instance;
 
         orientations.ValidateUniqueIds();
 
@@ -30,7 +32,7 @@ public abstract class Orientation : IEquatable<Orientation>, IUniqueIdItem
         Terrain = terrain;
     }
 
-    int IUniqueIdItem.Id => RotNum;
+    int IIdEquatable<Orientation>.Id => RotNum;
     public abstract int RotNum { get; }
     public abstract int AbsoluteHorizontalComponent { get; }
     public abstract int AbsoluteVerticalComponent { get; }

@@ -29,7 +29,7 @@ public sealed class LevelCursorSprite : IViewportObjectRenderer
 
     public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
     {
-        var texture = _levelCursor.LemmingsUnderCursor
+        var texture = _levelCursor.NumberOfLemmingsUnderCursor > 0
             ? FocusedCursorTexture
             : StandardCursorTexture;
 

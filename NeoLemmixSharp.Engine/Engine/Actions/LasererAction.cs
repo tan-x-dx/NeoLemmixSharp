@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using System.Diagnostics.Contracts;
 
@@ -57,13 +58,14 @@ public sealed class LasererAction : LemmingAction, IDestructionAction
     public override string LemmingActionName => "laserer";
     public override int NumberOfAnimationFrames => GameConstants.LasererAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (!Terrain.PixelIsSolidToLemming(orientation, lemmingPosition))
+        if (!Terrain.PixelIsSolidToLemming(lemming, lemmingPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
@@ -81,7 +83,7 @@ public sealed class LasererAction : LemmingAction, IDestructionAction
         var i = DistanceCap;
         while (i > 0)
         {
-            switch (CheckForHit(orientation, facingDirection, target, offsetChecks))
+            switch (CheckForHit(lemming, orientation, facingDirection, target, offsetChecks))
             {
                 case LaserHitType.None:
                     target = orientation.Move(target, dx, 1);
@@ -140,6 +142,7 @@ HitTestConclusive:
     }
 
     private LaserHitType CheckForHit(
+        Lemming lemming,
         Orientation orientation,
         FacingDirection facingDirection,
         LevelPosition target,
@@ -154,11 +157,11 @@ HitTestConclusive:
         {
             var checkLevelPosition = orientation.Move(target, position);
 
-            if (!Terrain.PixelIsSolidToLemming(orientation, checkLevelPosition))
+            if (!Terrain.PixelIsSolidToLemming(lemming, checkLevelPosition))
                 continue;
 
             result = result != LaserHitType.Solid &&
-                     Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, checkLevelPosition)
+                     Terrain.PixelIsIndestructibleToLemming(lemming, this, checkLevelPosition)
                 ? LaserHitType.Indestructible
                 : LaserHitType.Solid;
         }

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Actions;
+﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
+
+namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class AscenderAction : LemmingAction
 {
@@ -12,6 +14,7 @@ public sealed class AscenderAction : LemmingAction
     public override string LemmingActionName => "ascender";
     public override int NumberOfAnimationFrames => GameConstants.AscenderAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -21,7 +24,7 @@ public sealed class AscenderAction : LemmingAction
         var dy = 0;
         while (dy < 2 &&
                lemming.AscenderProgress < 5 &&
-               Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(levelPosition, 1)))
+               Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1)))
         {
             dy++;
             levelPosition = orientation.MoveUp(levelPosition, 1);
@@ -29,8 +32,8 @@ public sealed class AscenderAction : LemmingAction
             lemming.AscenderProgress++;
         }
 
-        var pixel1IsSolid = Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(levelPosition, 1));
-        var pixel2IsSolid = Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(levelPosition, 2));
+        var pixel1IsSolid = Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1));
+        var pixel2IsSolid = Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 2));
 
         if (dy < 2 &&
             !pixel1IsSolid)

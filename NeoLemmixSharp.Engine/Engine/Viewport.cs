@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.GameInput;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Engine;
@@ -12,7 +12,6 @@ public sealed class Viewport
     private const int MaxScale = 12;
 
     private readonly LevelCursor _cursor;
-    private readonly LevelInputController _controller;
 
     private readonly IHorizontalViewPortBehaviour _horizontalViewPortBehaviour;
     private readonly IVerticalViewPortBehaviour _verticalViewPortBehaviour;
@@ -32,6 +31,8 @@ public sealed class Viewport
     public int ScreenMouseX { get; private set; }
     public int ScreenMouseY { get; private set; }
 
+    public bool MouseIsInLevelViewPort { get; private set; }
+
     // Raw pixels, one-to-one with game
     public int ViewPortX => _horizontalViewPortBehaviour.ViewPortX;
     public int ViewPortY => _verticalViewPortBehaviour.ViewPortY;
@@ -47,14 +48,12 @@ public sealed class Viewport
 
     public Viewport(
         LevelCursor cursor,
-        LevelInputController controller,
         IHorizontalViewPortBehaviour horizontalViewPortBehaviour,
         IVerticalViewPortBehaviour verticalViewPortBehaviour,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _cursor = cursor;
-        _controller = controller;
         _horizontalViewPortBehaviour = horizontalViewPortBehaviour;
         _verticalViewPortBehaviour = verticalViewPortBehaviour;
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
@@ -77,70 +76,61 @@ public sealed class Viewport
         _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
     }
 
-    public bool HandleMouseInput()
+    public void HandleMouseInput(LevelInputController inputController)
     {
-        ScreenMouseX = ScaleMultiplier * ((_controller.MouseX + ScaleMultiplier / 2) / ScaleMultiplier);
-        ScreenMouseY = ScaleMultiplier * ((_controller.MouseY + ScaleMultiplier / 2) / ScaleMultiplier);
+        ScreenMouseX = ScaleMultiplier * ((inputController.MouseX + ScaleMultiplier / 2) / ScaleMultiplier);
+        ScreenMouseY = ScaleMultiplier * ((inputController.MouseY + ScaleMultiplier / 2) / ScaleMultiplier);
 
-        bool result;
-        if (MouseIsInLevelViewport())
+        if (MouseIsInLevelViewport(inputController))
         {
-            result = true;
-            TrackScrollWheel();
-
-            ViewportMouseX = (ScreenMouseX - _horizontalViewPortBehaviour.ScreenX) / ScaleMultiplier + _horizontalViewPortBehaviour.ViewPortX;
-            ViewportMouseY = (ScreenMouseY - _verticalViewPortBehaviour.ScreenY) / ScaleMultiplier + _verticalViewPortBehaviour.ViewPortY;
-
-            ViewportMouseX = _horizontalBoundaryBehaviour.NormaliseX(ViewportMouseX);
-            ViewportMouseY = _verticalBoundaryBehaviour.NormaliseY(ViewportMouseY);
+            MouseIsInLevelViewPort = true;
+            TrackScrollWheel(inputController);
         }
         else
         {
-            result = false;
-
-            ViewportMouseX = -4000;
-            ViewportMouseY = -4000;
+            MouseIsInLevelViewPort = false;
         }
 
-        _cursor.CursorPosition = new LevelPosition(ViewportMouseX, ViewportMouseY);
-        _cursor.CursorOnLevel = result;
+        ViewportMouseX = (ScreenMouseX - _horizontalViewPortBehaviour.ScreenX) / ScaleMultiplier + _horizontalViewPortBehaviour.ViewPortX;
+        ViewportMouseY = (ScreenMouseY - _verticalViewPortBehaviour.ScreenY) / ScaleMultiplier + _verticalViewPortBehaviour.ViewPortY;
 
-        if (_controller.MouseX == 0)
+        ViewportMouseX = _horizontalBoundaryBehaviour.NormaliseX(ViewportMouseX);
+        ViewportMouseY = _verticalBoundaryBehaviour.NormaliseY(ViewportMouseY);
+
+        if (inputController.MouseX == 0)
         {
             _horizontalViewPortBehaviour.ScrollHorizontally(-_scrollDelta);
             _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
         }
-        else if (_controller.MouseX == _windowWidth - 1)
+        else if (inputController.MouseX == _windowWidth - 1)
         {
             _horizontalViewPortBehaviour.ScrollHorizontally(_scrollDelta);
             _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
         }
 
-        if (_controller.MouseY == 0)
+        if (inputController.MouseY == 0)
         {
             _verticalViewPortBehaviour.ScrollVertically(-_scrollDelta);
             _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
         }
-        else if (_controller.MouseY == _windowHeight - 1)
+        else if (inputController.MouseY == _windowHeight - 1)
         {
             _verticalViewPortBehaviour.ScrollVertically(_scrollDelta);
             _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
         }
-
-        return result;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private bool MouseIsInLevelViewport()
+    private bool MouseIsInLevelViewport(InputController inputController)
     {
-        return _controller.MouseX >= 0 && _controller.MouseX <= _windowWidth &&
-               _controller.MouseY >= 0 && _controller.MouseY <= _windowHeight - _controlPanelHeight;
+        return inputController.MouseX >= 0 && inputController.MouseX <= _windowWidth &&
+               inputController.MouseY >= 0 && inputController.MouseY <= _windowHeight - _controlPanelHeight;
     }
 
-    private void TrackScrollWheel()
+    private void TrackScrollWheel(InputController inputController)
     {
         var previousValue = ScaleMultiplier;
-        ScaleMultiplier = Math.Clamp(ScaleMultiplier + _controller.ScrollDelta, MinScale, MaxScale);
+        ScaleMultiplier = Math.Clamp(ScaleMultiplier + inputController.ScrollDelta, MinScale, MaxScale);
 
         if (ScaleMultiplier == previousValue)
             return;

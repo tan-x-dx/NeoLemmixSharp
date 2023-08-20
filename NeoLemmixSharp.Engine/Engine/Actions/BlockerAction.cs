@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Actions;
+﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
+
+namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class BlockerAction : LemmingAction
 {
@@ -12,10 +14,11 @@ public sealed class BlockerAction : LemmingAction
     public override string LemmingActionName => "blocker";
     public override int NumberOfAnimationFrames => GameConstants.BlockerAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!Terrain.PixelIsSolidToLemming(lemming.Orientation, lemming.LevelPosition))
+        if (!Terrain.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }

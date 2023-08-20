@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Engine.Actions;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Skills;
 
@@ -18,7 +19,7 @@ public sealed class StackerSkill : LemmingSkill
     public override bool AssignToLemming(Lemming lemming)
     {
         // Get starting position for stacker
-        lemming.StackLow = !Terrain.PixelIsSolidToLemming(lemming.Orientation, lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX));
+        lemming.StackLow = !Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX));
 
         StackerAction.Instance.TransitionLemmingToAction(lemming, false);
         return true;

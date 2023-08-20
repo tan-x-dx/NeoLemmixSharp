@@ -1,14 +1,15 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Engine.FacingDirections;
 
-public abstract class FacingDirection : IEquatable<FacingDirection>, IUniqueIdItem
+public abstract class FacingDirection : IUniqueIdItem<FacingDirection>
 {
     private static readonly FacingDirection[] FacingDirections = GenerateFacingDirectionCollection();
 
-    public static ReadOnlySpan<FacingDirection> AllFacingDirections => new(FacingDirections);
+    public static int NumberOfItems => FacingDirections.Length;
+    public static ReadOnlySpan<FacingDirection> AllItems => new(FacingDirections);
 
     private static FacingDirection[] GenerateFacingDirectionCollection()
     {

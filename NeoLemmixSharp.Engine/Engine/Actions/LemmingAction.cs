@@ -1,16 +1,17 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
-public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
+public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
     protected static TerrainManager Terrain { get; private set; }
 
-    public static ReadOnlySpan<LemmingAction> AllLemmingActions => new(LemmingActions);
+    public static int NumberOfItems => LemmingActions.Length;
+    public static ReadOnlySpan<LemmingAction> AllItems => new(LemmingActions);
 
     private static LemmingAction[] RegisterAllLemmingActions()
     {
@@ -54,7 +55,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
         };
 
         result.ValidateUniqueIds();
-        Array.Sort(result, new UniqueIdItemComparer<LemmingAction>());
+        Array.Sort(result, UniqueIdItemComparer<LemmingAction>.Instance);
 
         return result;
     }
@@ -68,6 +69,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
     public abstract string LemmingActionName { get; }
     public abstract int NumberOfAnimationFrames { get; }
     public abstract bool IsOneTimeAction { get; }
+    public abstract int CursorSelectionPriorityValue { get; }
 
     public abstract bool UpdateLemming(Lemming lemming);
 
@@ -105,13 +107,13 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
     /// If result = -7, then at least 7 pixels are terrain above levelPosition
     /// </summary>
     protected static int FindGroundPixel(
-        Orientation orientation,
+        Lemming lemming,
         LevelPosition levelPosition)
     {
         var result = 0;
-        if (Terrain.PixelIsSolidToLemming(orientation, levelPosition))
+        if (Terrain.PixelIsSolidToLemming(lemming, levelPosition))
         {
-            while (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(levelPosition, 1 - result)) &&
+            while (Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(levelPosition, 1 - result)) &&
                    result > -7)
             {
                 result--;
@@ -121,7 +123,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
         }
 
         result = 1;
-        while (!Terrain.PixelIsSolidToLemming(orientation, orientation.MoveDown(levelPosition, result)) &&
+        while (!Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(levelPosition, result)) &&
                result < 4)
         {
             result++;
@@ -129,18 +131,4 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IUniqueIdItem
 
         return result;
     }
-}
-
-public sealed class SimpleLemmingActionHasher : ISimpleHasher<LemmingAction>
-{
-    public static SimpleLemmingActionHasher Instance { get; } = new();
-
-    private SimpleLemmingActionHasher()
-    {
-    }
-
-    public int NumberOfItems => LemmingAction.AllLemmingActions.Length;
-
-    public int Hash(LemmingAction lemmingAction) => lemmingAction.Id;
-    public LemmingAction Unhash(int hash) => LemmingAction.AllLemmingActions[hash];
 }

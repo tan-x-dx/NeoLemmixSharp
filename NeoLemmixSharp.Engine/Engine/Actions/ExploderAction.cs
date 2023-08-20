@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using System.Diagnostics.Contracts;
 
@@ -17,6 +18,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionAction
     public override string LemmingActionName => "bomber";
     public override int NumberOfAnimationFrames => GameConstants.ExploderAnimationFrames;
     public override bool IsOneTimeAction => true;
+    public override int CursorSelectionPriorityValue => GameConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

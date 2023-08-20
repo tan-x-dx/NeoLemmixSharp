@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Actions;
+﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
+
+namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class SplatterAction : LemmingAction
 {
@@ -12,6 +14,7 @@ public sealed class SplatterAction : LemmingAction
     public override string LemmingActionName => "splatter";
     public override int NumberOfAnimationFrames => GameConstants.SplatterAnimationFrames;
     public override bool IsOneTimeAction => true;
+    public override int CursorSelectionPriorityValue => GameConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

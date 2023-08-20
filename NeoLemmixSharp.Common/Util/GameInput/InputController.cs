@@ -1,42 +1,36 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public abstract class InputController
+public abstract class InputController : IComparer<KeyAction>
 {
-    private readonly List<(int, BaseKeyAction)> _keyMapping;
-    private readonly bool[] _keys;
-    private readonly BaseKeyAction[] _keyActions;
+    private readonly List<(int, KeyAction)> _keyMapping = new();
+    private readonly LargeBitArray _keys = new(256);
+    private readonly List<KeyAction> _keyActions = new();
 
     private int _previousScrollValue;
 
     public int MouseX { get; private set; }
     public int MouseY { get; private set; }
-
     public int ScrollDelta { get; private set; }
-    public MouseButtonAction LeftMouseButtonAction { get; }
-    public MouseButtonAction RightMouseButtonAction { get; }
-    public MouseButtonAction MiddleMouseButtonAction { get; }
-    public MouseButtonAction MouseButton4Action { get; }
-    public MouseButtonAction MouseButton5Action { get; }
 
-    protected InputController(int numberOfKeyboardInputs)
+    public MouseButtonAction LeftMouseButtonAction { get; } = new(0, "Left Mouse Button");
+    public MouseButtonAction RightMouseButtonAction { get; } = new(1, "Right Mouse Button");
+    public MouseButtonAction MiddleMouseButtonAction { get; } = new(2, "Middle Mouse Button");
+    public MouseButtonAction MouseButton4Action { get; } = new(3, "Mouse Button 4");
+    public MouseButtonAction MouseButton5Action { get; } = new(4, "Mouse Button 5");
+
+    protected InputController()
     {
-        _keyMapping = new List<(int, BaseKeyAction)>();
-        _keys = new bool[256];
-
-        _keyActions = new BaseKeyAction[numberOfKeyboardInputs];
-
-        LeftMouseButtonAction = new MouseButtonAction(0, "Left Mouse Button");
-        RightMouseButtonAction = new MouseButtonAction(1, "Right Mouse Button");
-        MiddleMouseButtonAction = new MouseButtonAction(2, "Middle Mouse Button");
-        MouseButton4Action = new MouseButtonAction(3, "Mouse Button 4");
-        MouseButton5Action = new MouseButtonAction(4, "Mouse Button 5");
+        // ReSharper disable once VirtualMemberCallInConstructor
+        SetUpBindings();
+        ValidateKeyActions();
     }
 
-    public void Update()
+    public void Tick()
     {
-        for (var i = 0; i < _keyActions.Length; i++)
+        for (var i = 0; i < _keyActions.Count; i++)
         {
             _keyActions[i].UpdateStatus();
         }
@@ -44,7 +38,7 @@ public abstract class InputController
         for (var index = 0; index < _keyMapping.Count; index++)
         {
             var (keyValue, action) = _keyMapping[index];
-            if (_keys[keyValue])
+            if (_keys.GetBit(keyValue))
             {
                 _keyActions[action.Id].KeyState |= KeyStatusConsts.KeyPressed;
             }
@@ -54,24 +48,33 @@ public abstract class InputController
         UpdateMouseButtonStates();
     }
 
-    protected void Bind(Keys keyCode, BaseKeyAction keyAction)
+    protected abstract void SetUpBindings();
+
+    protected void Bind(Keys keyCode, KeyAction keyAction)
     {
         _keyMapping.Add(((int)keyCode, keyAction));
-        _keyActions[keyAction.Id] = keyAction;
+        keyAction.Id = _keyActions.Count;
+        _keyActions.Add(keyAction);
+    }
+
+    private void ValidateKeyActions()
+    {
+        _keyActions.ValidateUniqueIds();
+        _keyActions.Sort(this);
     }
 
     public void ReleaseAllKeys()
     {
-        Array.Clear(_keys);
+        _keys.Clear();
     }
 
     private void UpdateKeyStates()
     {
         var currentlyPressedKeys = Keyboard.GetState().GetPressedKeys();
-        Array.Clear(_keys);
+        _keys.Clear();
         for (var i = 0; i < currentlyPressedKeys.Length; i++)
         {
-            _keys[(int)currentlyPressedKeys[i]] = true;
+            _keys.SetBit((int)currentlyPressedKeys[i]);
         }
     }
 
@@ -91,5 +94,14 @@ public abstract class InputController
 
         MouseButton4Action.UpdateState(mouseState.XButton1);
         MouseButton5Action.UpdateState(mouseState.XButton2);
+    }
+
+    int IComparer<KeyAction>.Compare(KeyAction? x, KeyAction? y)
+    {
+        if (x == null && y == null) return 0;
+        if (x == null) return -1;
+        if (y == null) return 1;
+
+        return x.Id.CompareTo(y.Id);
     }
 }

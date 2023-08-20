@@ -2,26 +2,16 @@
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
+using NeoLemmixSharp.Engine.Engine.Teams;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
-namespace NeoLemmixSharp.Engine.Engine;
+namespace NeoLemmixSharp.Engine.Engine.Lemmings;
 
 public sealed class Lemming
 {
-    public bool IsNeutral;
-    public bool IsZombie;
-    public bool HasPermanentSkill;
-
     public bool IsActive = true;
     public bool IsAlive = true;
     public bool HasExited;
-
-    public bool IsClimber;
-    public bool IsFloater;
-    public bool IsGlider;
-    public bool IsSlider;
-    public bool IsSwimmer;
-    public bool IsDisarmer;
 
     public bool ConstructivePositionFreeze;
     public bool IsStartingAction;
@@ -68,7 +58,7 @@ public sealed class Lemming
         Orientation = orientation ?? DownOrientation.Instance;
         FacingDirection = facingDirection ?? RightFacingDirection.Instance;
         CurrentAction = currentAction ?? WalkerAction.Instance;
-        State = new LemmingState();
+        State = new LemmingState(Team.AllItems[0]);
 
         Renderer = new LemmingRenderer(this);
     }

@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Engine.Actions;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Skills;
 
@@ -17,12 +18,12 @@ public sealed class ClimberSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.IsClimber && ActionIsAssignable(lemming);
+        return !lemming.State.IsClimber && ActionIsAssignable(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        lemming.IsClimber = true;
+        lemming.State.IsClimber = true;
         return true;
     }
 

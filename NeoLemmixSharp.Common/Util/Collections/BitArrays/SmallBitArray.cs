@@ -19,7 +19,7 @@ public sealed class SmallBitArray : IBitArray
     public SmallBitArray(uint initialBits = 0U)
     {
         _bits = initialBits;
-        Count = initialBits == 0U ? 0 : BitOperations.PopCount(_bits);
+        Count = initialBits == 0 ? 0 : BitOperations.PopCount(initialBits);
     }
 
     private SmallBitArray(uint bits, int count)
@@ -36,7 +36,7 @@ public sealed class SmallBitArray : IBitArray
 
     public bool SetBit(int index)
     {
-        uint oldValue = _bits;
+        var oldValue = _bits;
         _bits |= 1U << index;
         var delta = (_bits ^ oldValue) >> index;
         Count += (int)delta;
@@ -45,7 +45,7 @@ public sealed class SmallBitArray : IBitArray
 
     public bool ClearBit(int index)
     {
-        uint oldValue = _bits;
+        var oldValue = _bits;
         _bits &= ~(1U << index);
         var delta = (_bits ^ oldValue) >> index;
         Count -= (int)delta;
@@ -54,7 +54,7 @@ public sealed class SmallBitArray : IBitArray
 
     public bool ToggleBit(int index)
     {
-        uint oldValue = _bits;
+        var oldValue = _bits;
         _bits ^= 1U << index;
         bool result;
         if (_bits > oldValue)
@@ -70,6 +70,9 @@ public sealed class SmallBitArray : IBitArray
 
         return result;
     }
+
+    [Pure]
+    public uint GetBitMask(uint mask) => mask & _bits;
 
     public void Clear()
     {
@@ -122,9 +125,72 @@ public sealed class SmallBitArray : IBitArray
         public void Reset()
         {
             _v = _bitField._bits;
+            Current = -1;
         }
 
         object IEnumerator.Current => Current;
         void IDisposable.Dispose() { }
+    }
+
+    internal void UnionWith(SmallBitArray other)
+    {
+        _bits |= other._bits;
+        Count = BitOperations.PopCount(_bits);
+    }
+
+    internal void IntersectWith(SmallBitArray other)
+    {
+        _bits &= other._bits;
+        Count = BitOperations.PopCount(_bits);
+    }
+
+    internal void ExceptWith(SmallBitArray other)
+    {
+        _bits &= ~other._bits;
+        Count = BitOperations.PopCount(_bits);
+    }
+
+    internal void SymmetricExceptWith(SmallBitArray other)
+    {
+        _bits ^= other._bits;
+        Count = BitOperations.PopCount(_bits);
+    }
+
+    [Pure]
+    internal bool IsSubsetOf(SmallBitArray other)
+    {
+        return (_bits | other._bits) == other._bits;
+    }
+
+    [Pure]
+    internal bool IsSupersetOf(SmallBitArray other)
+    {
+        return (_bits | other._bits) == _bits;
+    }
+
+    [Pure]
+    internal bool IsProperSubsetOf(SmallBitArray other)
+    {
+        return _bits != other._bits &&
+               (_bits | other._bits) == other._bits;
+    }
+
+    [Pure]
+    internal bool IsProperSupersetOf(SmallBitArray other)
+    {
+        return _bits != other._bits &&
+               (_bits | other._bits) == _bits;
+    }
+
+    [Pure]
+    internal bool Overlaps(SmallBitArray other)
+    {
+        return (_bits & other._bits) != 0;
+    }
+
+    [Pure]
+    internal bool SetEquals(SmallBitArray other)
+    {
+        return _bits == other._bits;
     }
 }

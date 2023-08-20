@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
@@ -138,9 +137,6 @@ public sealed class LevelRenderer : IScreenRenderer
 
         _mouseCoords = $"({_viewport.ScreenMouseX},{_viewport.ScreenMouseY}) - ({_viewport.ViewportMouseX},{_viewport.ViewportMouseY})";
         _fontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20, 1, MenuFont.DefaultColor);
-
-        var levelTimer = LevelScreen.Current.LevelTimer;
-        _fontBank.PanelFont.RenderTextSpan(spriteBatch, levelTimer.AsSpan(), 20, 120, 4, levelTimer.FontColor);
     }
 
     public void OnWindowSizeChanged(int windowWidth, int windowHeight)

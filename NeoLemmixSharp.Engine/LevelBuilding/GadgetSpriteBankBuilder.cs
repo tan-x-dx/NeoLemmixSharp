@@ -11,7 +11,7 @@ public sealed class GadgetSpriteBankBuilder : IDisposable
 
     private readonly GraphicsDevice _graphicsDevice;
 
-    private readonly Dictionary<string, PixelColourData> _textureBundleCache = new();
+    private readonly Dictionary<string, PixelColorData> _textureBundleCache = new();
 
     public GadgetSpriteBankBuilder(GraphicsDevice graphicsDevice)
     {
@@ -20,10 +20,10 @@ public sealed class GadgetSpriteBankBuilder : IDisposable
 
     public void LoadGadgetSprite(GadgetData gadgetData)
     {
-        GetOrLoadPixelColourData(gadgetData);
+        GetOrLoadPixelColorData(gadgetData);
     }
 
-    private PixelColourData GetOrLoadPixelColourData(GadgetData gadgetData)
+    private PixelColorData GetOrLoadPixelColorData(GadgetData gadgetData)
     {
         var rootFilePath = Path.Combine(_rootDirectory, "styles", gadgetData.Style, "objects", gadgetData.Piece);
 
@@ -33,7 +33,7 @@ public sealed class GadgetSpriteBankBuilder : IDisposable
         var png = Path.ChangeExtension(rootFilePath, "png");
 
         using var mainTexture = Texture2D.FromFile(_graphicsDevice, png);
-        result = PixelColourData.GetPixelColourDataFromTexture(mainTexture);
+        result = PixelColorData.GetPixelColorDataFromTexture(mainTexture);
         _textureBundleCache.Add(rootFilePath, result);
 
         return result;

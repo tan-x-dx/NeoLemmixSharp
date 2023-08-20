@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Engine.Gadgets;
+﻿using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -19,6 +20,7 @@ public sealed class FloaterAction : LemmingAction
     public override string LemmingActionName => "floater";
     public override int NumberOfAnimationFrames => GameConstants.FloaterAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => GameConstants.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -27,12 +29,15 @@ public sealed class FloaterAction : LemmingAction
         var orientation = lemming.Orientation;
         var levelPosition = lemming.LevelPosition;
 
-        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(levelPosition, orientation.GetOpposite(), out _))
+        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemming, levelPosition, out var updraft))
         {
-            maxFallDistance--;
+            if (updraft.Orientation == orientation.GetOpposite())
+            {
+                maxFallDistance--;
+            }
         }
 
-        var groundPixelDistance = Math.Max(FindGroundPixel(orientation, levelPosition), 0);
+        var groundPixelDistance = Math.Max(FindGroundPixel(lemming, levelPosition), 0);
         if (maxFallDistance > groundPixelDistance)
         {
             levelPosition = orientation.MoveDown(levelPosition, groundPixelDistance);

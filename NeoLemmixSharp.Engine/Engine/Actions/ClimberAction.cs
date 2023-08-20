@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Actions;
+﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
+
+namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class ClimberAction : LemmingAction
 {
@@ -12,6 +14,7 @@ public sealed class ClimberAction : LemmingAction
     public override string LemmingActionName => "climber";
     public override int NumberOfAnimationFrames => GameConstants.ClimberAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => GameConstants.PermanentSkillPriority;
 
     // Be very careful when changing the terrain/hoister checks for climbers!
     // See http://www.lemmingsforums.net/index.php?topic=2506.0 first!
@@ -27,13 +30,13 @@ public sealed class ClimberAction : LemmingAction
         if (animationFrame <= 3)
         {
             foundClip =
-                Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, 6 + animationFrame)) ||
-                (Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, 5 + animationFrame)) &&
+                Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 6 + animationFrame)) ||
+                (Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 5 + animationFrame)) &&
                  !lemming.IsStartingAction);
 
             if (animationFrame == 0) // first triggered after 8 frames!
             {
-                foundClip = foundClip && Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, 7));
+                foundClip = foundClip && Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 7));
             }
 
             if (foundClip)
@@ -45,7 +48,7 @@ public sealed class ClimberAction : LemmingAction
                     lemming.LevelPosition = lemmingPosition;
                 }
 
-                if (lemming.IsSlider)
+                if (lemming.State.IsSlider)
                 {
                     lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
                     lemming.LevelPosition = lemmingPosition;
@@ -62,7 +65,7 @@ public sealed class ClimberAction : LemmingAction
                 return true;
             }
 
-            if (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 7 + animationFrame)))
+            if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7 + animationFrame)))
                 return true;
 
             // if-case prevents too deep bombing, see http://www.lemmingsforums.net/index.php?topic=2620.0
@@ -82,11 +85,11 @@ public sealed class ClimberAction : LemmingAction
         lemming.LevelPosition = lemmingPosition;
         lemming.IsStartingAction = false;
 
-        foundClip = Terrain.PixelIsSolidToLemming(orientation, orientation.Move(lemmingPosition, -dx, 7));
+        foundClip = Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 7));
 
         if (animationFrame == 7)
         {
-            foundClip = foundClip && Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 7));
+            foundClip = foundClip && Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7));
         }
 
         if (!foundClip)
@@ -95,7 +98,7 @@ public sealed class ClimberAction : LemmingAction
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         lemming.LevelPosition = lemmingPosition;
 
-        if (lemming.IsSlider)
+        if (lemming.State.IsSlider)
         {
             SliderAction.Instance.TransitionLemmingToAction(lemming, false);
 

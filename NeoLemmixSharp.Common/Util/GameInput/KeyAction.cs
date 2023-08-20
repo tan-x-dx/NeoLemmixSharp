@@ -1,6 +1,8 @@
-﻿namespace NeoLemmixSharp.Common.Util.GameInput;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
-public abstract class BaseKeyAction : IEquatable<BaseKeyAction>
+namespace NeoLemmixSharp.Common.Util.GameInput;
+
+public sealed class KeyAction : IIdEquatable<KeyAction>
 {
     private const int EnabledMask = 3;
 
@@ -8,7 +10,7 @@ public abstract class BaseKeyAction : IEquatable<BaseKeyAction>
     private int _enabledMask;
     private int _keyState;
 
-    public int Id { get; }
+    public int Id { get; set; }
 
     public int KeyState
     {
@@ -16,9 +18,8 @@ public abstract class BaseKeyAction : IEquatable<BaseKeyAction>
         set => _keyState = value & _enabledMask;
     }
 
-    protected BaseKeyAction(int id, string actionName)
+    public KeyAction(string actionName)
     {
-        Id = id;
         _enabledMask = EnabledMask;
         _actionName = actionName;
     }
@@ -56,19 +57,19 @@ public abstract class BaseKeyAction : IEquatable<BaseKeyAction>
 
     public bool IsEnabled => _enabledMask != 0;
 
-    public bool Equals(BaseKeyAction? other)
+    public bool Equals(KeyAction? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
         return Id == other.Id;
     }
 
-    public sealed override bool Equals(object? obj) => ReferenceEquals(this, obj) || obj is BaseKeyAction other && Id == other.Id;
+    public sealed override bool Equals(object? obj) => ReferenceEquals(this, obj) || obj is KeyAction other && Id == other.Id;
     public sealed override int GetHashCode() => Id;
 
     public sealed override string ToString() => _actionName;
 
-    public static bool operator ==(BaseKeyAction? left, BaseKeyAction? right)
+    public static bool operator ==(KeyAction? left, KeyAction? right)
     {
         if (ReferenceEquals(left, right))
             return true;
@@ -77,5 +78,5 @@ public abstract class BaseKeyAction : IEquatable<BaseKeyAction>
         return left.Id == right.Id;
     }
 
-    public static bool operator !=(BaseKeyAction? left, BaseKeyAction? right) => !(left == right);
+    public static bool operator !=(KeyAction? left, KeyAction? right) => !(left == right);
 }

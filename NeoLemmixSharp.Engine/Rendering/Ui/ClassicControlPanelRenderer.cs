@@ -2,14 +2,18 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
+using NeoLemmixSharp.Engine.Engine.Skills;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
 public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 {
-    private readonly LevelControlPanel _levelControlPanel;
+    private const int ControlPanelScaleMultiplier = 4;
 
+    private readonly LevelControlPanel _levelControlPanel;
+    private readonly FontBank _fontBank;
     private readonly SkillAssignButtonRenderer[] _skillAssignButtonRenderers;
 
     private readonly Texture2D _whitePixelTexture;
@@ -31,13 +35,15 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
     public ClassicControlPanelRenderer(
         ControlPanelSpriteBank spriteBank,
+        LevelControlPanel levelControlPanel,
         FontBank fontBank,
-        LevelControlPanel levelControlPanel)
+        SkillSetManager skillSetManager)
     {
         _levelControlPanel = levelControlPanel;
+        _fontBank = fontBank;
         _skillAssignButtonRenderers = _levelControlPanel
             .SkillAssignButtons
-            .Select(b => new SkillAssignButtonRenderer(spriteBank, fontBank, b))
+            .Select(b => new SkillAssignButtonRenderer(spriteBank, fontBank, b, skillSetManager))
             .ToArray();
 
         _whitePixelTexture = spriteBank.GetTexture("WhitePixel");
@@ -60,7 +66,8 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
     public void RenderControlPanel(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(_whitePixelTexture,
+        spriteBatch.Draw(
+            _whitePixelTexture,
             new Rectangle(
                 0,
                 _levelControlPanel.ControlPanelY,
@@ -95,9 +102,30 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
                 destRectangle.X += _levelControlPanel.ControlPanelButtonScreenWidth;
             }
         }
+
+        var levelTimer = LevelScreen.Current.LevelTimer;
+        var timerX = _levelControlPanel.ScreenWidth - PanelFont.GlyphWidth * 6 * ControlPanelScaleMultiplier;
+
+        _fontBank.PanelFont.RenderTextSpan(spriteBatch, levelTimer.AsSpan(), timerX, _levelControlPanel.ControlPanelY, ControlPanelScaleMultiplier, levelTimer.FontColor);
     }
 
     public void Dispose()
     {
+        _whitePixelTexture.Dispose();
+        _emptySlot.Dispose();
+        _iconCpmAndReplay.Dispose();
+        _iconDirectional.Dispose();
+        _iconFf.Dispose();
+        _iconFrameskip.Dispose();
+        _iconNuke.Dispose();
+        _iconPause.Dispose();
+        _iconRestart.Dispose();
+        _iconRrMinus.Dispose();
+        _iconRrPlus.Dispose();
+        _minimapRegion.Dispose();
+        _panelIcons.Dispose();
+        _skillCountErase.Dispose();
+        _skillPanels.Dispose();
+        _skillSelected.Dispose();
     }
 }

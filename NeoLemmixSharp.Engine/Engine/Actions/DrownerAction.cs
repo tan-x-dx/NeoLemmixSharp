@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Engine.Gadgets;
+﻿using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
 
@@ -14,10 +15,11 @@ public sealed class DrownerAction : LemmingAction
     public override string LemmingActionName => "drowner";
     public override int NumberOfAnimationFrames => GameConstants.DrownerAnimationFrames;
     public override bool IsOneTimeAction => true;
+    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemming.LevelPosition, lemming.Orientation, out _))
+        if (!GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemming.LevelPosition, out _))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 

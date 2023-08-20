@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Engine.Actions;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Skills;
 
@@ -18,7 +19,7 @@ public sealed class DiggerSkill : LemmingSkill
     public override bool CanAssignToLemming(Lemming lemming)
     {
         return ActionIsAssignable(lemming) &&
-               !Terrain.PixelIsIndestructibleToLemming(lemming.Orientation, DiggerAction.Instance, lemming.FacingDirection, lemming.LevelPosition);
+               !Terrain.PixelIsIndestructibleToLemming(lemming, DiggerAction.Instance, lemming.LevelPosition);
     }
 
     public override bool AssignToLemming(Lemming lemming)

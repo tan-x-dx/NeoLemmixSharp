@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Io.LevelReading.Data.SpriteSet;
 
-public sealed class LemmingSpriteSetRecolouring
+public sealed class LemmingSpriteSetRecoloring
 {
     public uint Mask { get; set; }
     public uint LemmingHair { get; set; }

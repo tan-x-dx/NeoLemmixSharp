@@ -25,8 +25,8 @@ public sealed class NxlvLevelReader : ILevelReader
         AddDataReader(new TerrainReader(LevelData.AllTerrainData));
         AddDataReader(new LemmingReader());
 
-        AddDataReader(new SpriteSetRecolouringReader(LevelData.ThemeData.LemmingSpriteSetRecolouring));
-        AddDataReader(new StateRecolouringReader(LevelData.ThemeData));
+        AddDataReader(new SpriteSetRecoloringReader(LevelData.ThemeData.LemmingSpriteSetRecoloring));
+        AddDataReader(new StateRecoloringReader(LevelData.ThemeData));
         AddDataReader(new ShadesReader());
         AddDataReader(new AnimationDataReader(LevelData.ThemeData));
 

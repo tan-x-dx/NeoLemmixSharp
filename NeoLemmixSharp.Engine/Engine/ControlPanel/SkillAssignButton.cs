@@ -4,15 +4,14 @@ namespace NeoLemmixSharp.Engine.Engine.ControlPanel;
 
 public sealed class SkillAssignButton : ControlPanelButton
 {
-    public LemmingSkill LemmingSkill { get; }
-
+    public int SkillAssignButtonId { get; }
     public bool IsSelected { get; set; }
 
     public SkillAssignButton(
-        LemmingSkill lemmingSkill,
+        int skillAssignButtonId,
         int skillPanelFrame)
         : base(skillPanelFrame)
     {
-        LemmingSkill = lemmingSkill;
+        SkillAssignButtonId = skillAssignButtonId;
     }
 }

@@ -10,7 +10,7 @@ public sealed class TerrainRenderer : IDisposable
     private readonly Texture2D _texture;
     private readonly Engine.Viewport _viewport;
 
-    private readonly uint[] _colourSetter = new uint[1];
+    private readonly uint[] _colorSetter = new uint[1];
 
     public TerrainRenderer(
         Texture2D texture,
@@ -43,10 +43,10 @@ public sealed class TerrainRenderer : IDisposable
         }
     }
 
-    public void SetPixelColour(int x, int y, uint colour)
+    public void SetPixelColor(int x, int y, uint color)
     {
-        _colourSetter[0] = colour;
-        _texture.SetData(0, new Rectangle(x, y, 1, 1), _colourSetter, 0, 1);
+        _colorSetter[0] = color;
+        _texture.SetData(0, new Rectangle(x, y, 1, 1), _colorSetter, 0, 1);
     }
 
     public void Dispose()

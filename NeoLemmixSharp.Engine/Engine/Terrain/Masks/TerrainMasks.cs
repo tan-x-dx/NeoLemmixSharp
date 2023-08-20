@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Engine.FacingDirections;
+using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Terrain.Masks;
 

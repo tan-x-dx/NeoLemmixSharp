@@ -36,7 +36,7 @@ public sealed class TerrainEraseMask
         {
             var pixel = _mask[i];
 
-            pixel += offset;
+            pixel = _terrainManager.NormalisePosition(pixel + offset);
 
             _terrainManager.ErasePixel(orientation, _destructionAction, facingDirection, pixel);
         }

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Actions;
+﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
+
+namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class JumperAction : LemmingAction
 {
@@ -12,6 +14,7 @@ public sealed class JumperAction : LemmingAction
     public override string LemmingActionName => "jumper";
     public override int NumberOfAnimationFrames => GameConstants.JumperAnimationFrames;
     public override bool IsOneTimeAction => false;
+    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

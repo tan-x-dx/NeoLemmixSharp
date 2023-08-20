@@ -27,5 +27,6 @@ public enum GadgetType
     Splat,
     Zombie,
 
-    MetalGrate
+    MetalGrate,
+    Logic
 }

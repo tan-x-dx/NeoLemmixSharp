@@ -4,9 +4,9 @@ using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
-public sealed class FourLayerColourActionSprite : ActionSprite
+public sealed class FourLayerColorActionSprite : ActionSprite
 {
-    public FourLayerColourActionSprite(
+    public FourLayerColorActionSprite(
         Texture2D texture,
         int spriteWidth,
         int spriteHeight,
@@ -17,7 +17,7 @@ public sealed class FourLayerColourActionSprite : ActionSprite
     {
     }
 
-    public override void RenderLemming(SpriteBatch spriteBatch, Engine.Lemming lemming, Rectangle sourceRectangle, Rectangle destinationRectangle)
+    public override void RenderLemming(SpriteBatch spriteBatch, Engine.Lemmings.Lemming lemming, Rectangle sourceRectangle, Rectangle destinationRectangle)
     {
         RenderSpriteLayer(spriteBatch, sourceRectangle, destinationRectangle, Color.White, RenderingLayers.LemmingRenderLayer);
         sourceRectangle.X += SpriteWidth;

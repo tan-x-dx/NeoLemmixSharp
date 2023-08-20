@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Actions;
+﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
+
+namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class ExiterAction : LemmingAction
 {
@@ -12,6 +14,7 @@ public sealed class ExiterAction : LemmingAction
     public override string LemmingActionName => "exiter";
     public override int NumberOfAnimationFrames => GameConstants.ExiterAnimationFrames;
     public override bool IsOneTimeAction => true;
+    public override int CursorSelectionPriorityValue => GameConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

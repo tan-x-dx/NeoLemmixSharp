@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Engine.Actions;
+﻿using NeoLemmixSharp.Engine.Engine.Lemmings;
+
+namespace NeoLemmixSharp.Engine.Engine.Actions;
 
 public sealed class DehoisterAction : LemmingAction
 {
@@ -12,6 +14,7 @@ public sealed class DehoisterAction : LemmingAction
     public override string LemmingActionName => "dehoister";
     public override int NumberOfAnimationFrames => GameConstants.DehoisterAnimationFrames;
     public override bool IsOneTimeAction => true;
+    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -21,7 +24,7 @@ public sealed class DehoisterAction : LemmingAction
 
         if (lemming.EndOfAnimation)
         {
-            if (Terrain.PixelIsSolidToLemming(orientation, orientation.MoveUp(lemmingPosition, 7)))
+            if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7)))
             {
                 SliderAction.Instance.TransitionLemmingToAction(lemming, false);
                 return true;

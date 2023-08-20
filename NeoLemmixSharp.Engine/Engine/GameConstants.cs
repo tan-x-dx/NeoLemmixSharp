@@ -4,8 +4,8 @@ public static class GameConstants
 {
     #region Engine Constants
 
-    public const int TicksPerSecond = 17;
-    public const int FramesPerSecond = TicksPerSecond * 3;
+    public const int StandardTicksPerSecond = 17;
+    public const int FramesPerSecond = StandardTicksPerSecond * 3;
 
     public const int RightFacingDirectionId = 0;
     public const int LeftFacingDirectionId = 1;
@@ -14,6 +14,18 @@ public static class GameConstants
     public const int LeftOrientationRotNum = 1;
     public const int UpOrientationRotNum = 2;
     public const int RightOrientationRotNum = 3;
+
+    public const int NumberOfTeams = 6;
+
+    #endregion
+
+    #region CursorPriorityLevels
+
+    public const int NonPermanentSkillPriority = 4;
+    public const int PermanentSkillPriority = 3;
+    public const int NonWalkerMovementPriority = 2;
+    public const int WalkerMovementPriority = 1;
+    public const int NoPriority = 0;
 
     #endregion
 
