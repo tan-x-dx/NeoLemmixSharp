@@ -110,22 +110,17 @@ public sealed class LevelCursor
 
     private bool NewCandidateIsHigherPriority(Lemming? previousCandidate, Lemming newCandidate)
     {
-        if (previousCandidate is null)
-            return true;
+        return previousCandidate is null ||
+               NewCandidateHasMoreRelevantState(previousCandidate, newCandidate) ||
+               NewCandidateHasMoreRelevantTeam(previousCandidate, newCandidate) ||
+               NewCandidateHasHigherActionPriority(previousCandidate, newCandidate) ||
+               NewCandidateIsCloserToCursorCentre(previousCandidate, newCandidate);
+    }
 
-        if (newCandidate.State.IsNeutral)
-            return false;
-        if (newCandidate.State.IsZombie)
-            return false;
-
-        if (NewCandidateHasMoreRelevantTeam(previousCandidate, newCandidate))
-            return true;
-
-        if (newCandidate.CurrentAction.CursorSelectionPriorityValue >
-            previousCandidate.CurrentAction.CursorSelectionPriorityValue)
-            return true;
-
-        return IsCloserToCursorCentre(previousCandidate, newCandidate);
+    private static bool NewCandidateHasMoreRelevantState(Lemming previousCandidate, Lemming newCandidate)
+    {
+        return (previousCandidate.State.IsNeutral && !newCandidate.State.IsNeutral) ||
+               (previousCandidate.State.IsZombie && !newCandidate.State.IsZombie);
     }
 
     private bool NewCandidateHasMoreRelevantTeam(Lemming previousCandidate, Lemming newCandidate)
@@ -140,16 +135,22 @@ public sealed class LevelCursor
         return newCandidateMatchesTeam && !previousCandidateMatchesTeam;
     }
 
-    private bool IsCloserToCursorCentre(Lemming previousCandidate, Lemming newCandidate)
+    private static bool NewCandidateHasHigherActionPriority(Lemming previousCandidate, Lemming newCandidate)
     {
-        var previousLemmingPosition = previousCandidate.Orientation.Move(previousCandidate.LevelPosition, previousCandidate.FacingDirection.DeltaX, 4);
-        var newLemmingPosition = newCandidate.Orientation.Move(newCandidate.LevelPosition, newCandidate.FacingDirection.DeltaX, 4);
+        return newCandidate.CurrentAction.CursorSelectionPriorityValue >
+               previousCandidate.CurrentAction.CursorSelectionPriorityValue;
+    }
 
-        var dx1 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, previousLemmingPosition.X);
-        var dy1 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.Y, previousLemmingPosition.Y);
+    private bool NewCandidateIsCloserToCursorCentre(Lemming previousCandidate, Lemming newCandidate)
+    {
+        var previousCandidatePosition = previousCandidate.Orientation.Move(previousCandidate.LevelPosition, previousCandidate.FacingDirection.DeltaX, 4);
+        var newCandidatePosition = newCandidate.Orientation.Move(newCandidate.LevelPosition, newCandidate.FacingDirection.DeltaX, 4);
 
-        var dx2 = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.X, newLemmingPosition.X);
-        var dy2 = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, newLemmingPosition.Y);
+        var dx1 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, previousCandidatePosition.X);
+        var dy1 = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, previousCandidatePosition.Y);
+
+        var dx2 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, newCandidatePosition.X);
+        var dy2 = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, newCandidatePosition.Y);
 
         return dx2 * dx2 + dy2 * dy2 < dx1 * dx1 + dy1 * dy1;
     }
