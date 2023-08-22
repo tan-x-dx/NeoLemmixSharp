@@ -187,8 +187,8 @@ public sealed class LargeBitArray : IBitArray
             Current = -1;
         }
 
-        object IEnumerator.Current => Current;
-        void IDisposable.Dispose() { }
+        readonly object IEnumerator.Current => Current;
+        readonly void IDisposable.Dispose() { }
     }
 
     internal void UnionWith(LargeBitArray other)

@@ -72,10 +72,10 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
         public bool MoveNext() => _bitEnumerator.MoveNext();
         public void Reset() => _bitEnumerator.Reset();
-        public T Current => _hasher.Unhash(_bitEnumerator.Current);
+        public readonly T Current => _hasher.Unhash(_bitEnumerator.Current);
 
-        void IDisposable.Dispose() { }
-        object IEnumerator.Current => Current!;
+        readonly void IDisposable.Dispose() { }
+        readonly object IEnumerator.Current => Current!;
     }
 
     private uint BitsFromEnumerable(IEnumerable<T> other)
