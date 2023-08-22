@@ -72,6 +72,8 @@ public sealed class SmallBitArray : IBitArray
     }
 
     [Pure]
+    internal uint GetRawBits() => _bits;
+    [Pure]
     public uint GetBitMask(uint mask) => mask & _bits;
 
     public void Clear()
@@ -128,69 +130,69 @@ public sealed class SmallBitArray : IBitArray
             Current = -1;
         }
 
-        object IEnumerator.Current => Current;
-        void IDisposable.Dispose() { }
+        readonly object IEnumerator.Current => Current;
+        readonly void IDisposable.Dispose() { }
     }
 
-    internal void UnionWith(SmallBitArray other)
+    internal void UnionWith(uint otherBits)
     {
-        _bits |= other._bits;
+        _bits |= otherBits;
         Count = BitOperations.PopCount(_bits);
     }
 
-    internal void IntersectWith(SmallBitArray other)
+    internal void IntersectWith(uint otherBits)
     {
-        _bits &= other._bits;
+        _bits &= otherBits;
         Count = BitOperations.PopCount(_bits);
     }
 
-    internal void ExceptWith(SmallBitArray other)
+    internal void ExceptWith(uint otherBits)
     {
-        _bits &= ~other._bits;
+        _bits &= ~otherBits;
         Count = BitOperations.PopCount(_bits);
     }
 
-    internal void SymmetricExceptWith(SmallBitArray other)
+    internal void SymmetricExceptWith(uint otherBits)
     {
-        _bits ^= other._bits;
+        _bits ^= otherBits;
         Count = BitOperations.PopCount(_bits);
     }
 
     [Pure]
-    internal bool IsSubsetOf(SmallBitArray other)
+    internal bool IsSubsetOf(uint otherBits)
     {
-        return (_bits | other._bits) == other._bits;
+        return (_bits | otherBits) == otherBits;
     }
 
     [Pure]
-    internal bool IsSupersetOf(SmallBitArray other)
+    internal bool IsSupersetOf(uint otherBits)
     {
-        return (_bits | other._bits) == _bits;
+        return (_bits | otherBits) == _bits;
     }
 
     [Pure]
-    internal bool IsProperSubsetOf(SmallBitArray other)
+    internal bool IsProperSubsetOf(uint otherBits)
     {
-        return _bits != other._bits &&
-               (_bits | other._bits) == other._bits;
+        return _bits != otherBits &&
+               (_bits | otherBits) == otherBits;
     }
 
     [Pure]
-    internal bool IsProperSupersetOf(SmallBitArray other)
+    internal bool IsProperSupersetOf(uint otherBits)
     {
-        return _bits != other._bits &&
-               (_bits | other._bits) == _bits;
+        return _bits != otherBits &&
+               (_bits | otherBits) == _bits;
     }
 
     [Pure]
-    internal bool Overlaps(SmallBitArray other)
+    internal bool Overlaps(uint otherBits)
     {
-        return (_bits & other._bits) != 0;
+        return (_bits & otherBits) != 0;
     }
 
     [Pure]
-    internal bool SetEquals(SmallBitArray other)
+    internal bool SetEquals(uint otherBits)
     {
-        return _bits == other._bits;
+        return _bits == otherBits;
     }
 }
