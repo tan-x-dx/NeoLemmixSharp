@@ -34,21 +34,8 @@ public sealed class LemmingState
     public Color SkinColor { get; private set; }
     public Color BodyColor { get; private set; }
 
-    public bool HasPermanentSkill => _states.GetBitMask(PermanentSkillBitMask) != 0;
+    public bool HasPermanentSkill => _states.GetBitMask(PermanentSkillBitMask) != 0U;
     public bool CanHaveSkillsAssigned => _states.GetBitMask(AssignableSkillBitMask) == 0U;
-
-    private void SetBitToValue(int bitIndex, bool value)
-    {
-        if (value)
-        {
-            _states.SetBit(bitIndex);
-        }
-        else
-        {
-            _states.ClearBit(bitIndex);
-        }
-        UpdateHairAndBodyColors();
-    }
 
     public bool IsClimber
     {
@@ -125,6 +112,19 @@ public sealed class LemmingState
         _team = team;
         UpdateHairAndBodyColors();
         UpdateSkinColor();
+    }
+
+    private void SetBitToValue(int bitIndex, bool value)
+    {
+        if (value)
+        {
+            _states.SetBit(bitIndex);
+        }
+        else
+        {
+            _states.ClearBit(bitIndex);
+        }
+        UpdateHairAndBodyColors();
     }
 
     private void UpdateHairAndBodyColors()
