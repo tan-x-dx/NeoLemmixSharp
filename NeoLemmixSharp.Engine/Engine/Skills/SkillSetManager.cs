@@ -5,14 +5,14 @@ namespace NeoLemmixSharp.Engine.Engine.Skills;
 
 public sealed class SkillSetManager : IComparer<SkillTrackingData>
 {
-    private readonly SkillTrackingData[] _skillDataList;
+    private readonly SkillTrackingData[] _skillTrackingDataList;
 
     public SkillSetManager(ICollection<SkillSetData> skillSetData)
     {
-        _skillDataList = CreateSkillDataList(skillSetData);
+        _skillTrackingDataList = CreateSkillDataList(skillSetData);
     }
 
-    public int TotalNumberOfSkills => _skillDataList.Length;
+    public int TotalNumberOfSkills => _skillTrackingDataList.Length;
 
     private SkillTrackingData[] CreateSkillDataList(ICollection<SkillSetData> skillSetData)
     {
@@ -48,7 +48,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>
         if (skillDataId == -1)
             return null;
 
-        return _skillDataList[skillDataId];
+        return _skillTrackingDataList[skillDataId];
     }
 
     int IComparer<SkillTrackingData>.Compare(SkillTrackingData? x, SkillTrackingData? y)

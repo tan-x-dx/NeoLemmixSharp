@@ -4,7 +4,6 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
-using NeoLemmixSharp.Engine.Engine.Skills;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
@@ -36,14 +35,13 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
     public ClassicControlPanelRenderer(
         ControlPanelSpriteBank spriteBank,
         LevelControlPanel levelControlPanel,
-        FontBank fontBank,
-        SkillSetManager skillSetManager)
+        FontBank fontBank)
     {
         _levelControlPanel = levelControlPanel;
         _fontBank = fontBank;
         _skillAssignButtonRenderers = _levelControlPanel
             .SkillAssignButtons
-            .Select(b => new SkillAssignButtonRenderer(spriteBank, fontBank, b, skillSetManager))
+            .Select(b => new SkillAssignButtonRenderer(spriteBank, fontBank, b))
             .ToArray();
 
         _whitePixelTexture = spriteBank.GetTexture("WhitePixel");

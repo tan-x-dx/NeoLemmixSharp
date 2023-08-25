@@ -177,6 +177,8 @@ public sealed class UpdateScheduler
             skillTrackingData.Skill.CanAssignToLemming(lemming))
         {
             skillTrackingData.Skill.AssignToLemming(lemming);
+            skillTrackingData.DecrementSkillCount();
+            _levelControlPanel.SelectedSkillAssignButton!.UpdateSkillCount(skillTrackingData.SkillCount);
         }
         else
         {

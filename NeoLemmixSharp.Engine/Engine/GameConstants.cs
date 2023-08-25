@@ -17,6 +17,8 @@ public static class GameConstants
 
     public const int NumberOfTeams = 6;
 
+    public const int InfiniteSkillCount = 100;
+
     #endregion
 
     #region CursorPriorityLevels

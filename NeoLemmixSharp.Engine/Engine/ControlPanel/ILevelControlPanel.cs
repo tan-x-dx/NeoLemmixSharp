@@ -2,6 +2,7 @@
 
 public interface ILevelControlPanel
 {
+    SkillAssignButton? SelectedSkillAssignButton { get; }
     int SelectedSkillButtonId { get; }
 
     void HandleMouseInput();

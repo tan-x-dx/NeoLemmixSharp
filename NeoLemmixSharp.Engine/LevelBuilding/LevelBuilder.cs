@@ -64,6 +64,13 @@ public sealed class LevelBuilder : IDisposable
         var inputController = new LevelInputController();
         var skillSetManager = new SkillSetManager(levelData.SkillSetData);
         var controlPanel = new LevelControlPanel(skillSetManager, inputController);
+
+        foreach (var skillAssignButton in controlPanel.SkillAssignButtons)
+        {
+            var skillTrackingData = skillSetManager.GetSkillTrackingData(skillAssignButton.SkillAssignButtonId)!;
+            skillAssignButton.UpdateSkillCount(skillTrackingData.SkillCount);
+        }
+
         LevelTimer levelTimer = levelData.TimeLimit.HasValue
             ? new CountDownLevelTimer(levelData.TimeLimit.Value)
             : new CountUpLevelTimer();
@@ -97,7 +104,7 @@ public sealed class LevelBuilder : IDisposable
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(levelCursor);
 
-        var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel, _fontBank, skillSetManager);
+        var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel, _fontBank);
 
         var levelCursorSprite = controlPanelSpriteBank.LevelCursorSprite;
 
