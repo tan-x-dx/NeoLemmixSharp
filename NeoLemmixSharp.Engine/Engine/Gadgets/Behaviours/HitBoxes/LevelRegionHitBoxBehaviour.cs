@@ -6,9 +6,9 @@ using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 
-namespace NeoLemmixSharp.Engine.Engine.Gadgets.HitBoxes;
+namespace NeoLemmixSharp.Engine.Engine.Gadgets.Behaviours.HitBoxes;
 
-public sealed class LevelRegionHitBox : IHitBox
+public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
 {
     private readonly ILevelRegion _levelRegion;
     private readonly LargeBitArray _lemmingIdsInHitBox;
@@ -16,7 +16,7 @@ public sealed class LevelRegionHitBox : IHitBox
     private readonly SmallSimpleSet<Orientation> _targetOrientations;
     private readonly SmallSimpleSet<FacingDirection> _targetFacingDirections;
 
-    public LevelRegionHitBox(
+    public LevelRegionHitBoxBehaviour(
         ILevelRegion levelRegion,
         LargeSimpleSet<LemmingAction> targetActions,
         SmallSimpleSet<Orientation> targetOrientations,
@@ -27,8 +27,6 @@ public sealed class LevelRegionHitBox : IHitBox
         _targetOrientations = targetOrientations;
         _targetFacingDirections = targetFacingDirections;
     }
-
-    public bool IsEmpty => _levelRegion.IsEmpty;
 
     public bool MatchesLemming(Lemming lemming, LevelPosition levelPosition)
     {

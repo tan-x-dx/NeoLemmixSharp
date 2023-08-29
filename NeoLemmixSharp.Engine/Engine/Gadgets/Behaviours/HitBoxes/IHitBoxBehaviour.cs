@@ -1,9 +1,9 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Engine.Gadgets.HitBoxes;
+namespace NeoLemmixSharp.Engine.Engine.Gadgets.Behaviours.HitBoxes;
 
-public interface IHitBox
+public interface IHitBoxBehaviour
 {
     bool MatchesLemming(
         Lemming lemming,

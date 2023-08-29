@@ -24,7 +24,7 @@ public sealed class LevelObjectAssembler : IDisposable
     private readonly SpriteBatch _spriteBatch;
 
     private readonly List<Lemming> _lemmings = new();
-    private readonly List<IGadget> _gadgets = new();
+    private readonly List<Gadget> _gadgets = new();
     private readonly List<IViewportObjectRenderer> _gadgetRenderers = new();
 
     private readonly LemmingSpriteBankBuilder _lemmingSpriteBankBuilder;
@@ -85,7 +85,7 @@ public sealed class LevelObjectAssembler : IDisposable
         return _lemmings.ToArray();
     }
 
-    public IGadget[] GetLevelGadgets()
+    public Gadget[] GetLevelGadgets()
     {
         return _gadgets.ToArray();
     }

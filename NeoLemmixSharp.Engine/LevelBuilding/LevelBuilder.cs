@@ -5,7 +5,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Engine;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
-using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
+using NeoLemmixSharp.Engine.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Skills;
 using NeoLemmixSharp.Engine.Engine.Terrain;
@@ -58,8 +58,14 @@ public sealed class LevelBuilder : IDisposable
         var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
         lemmingSpriteBank.SetTeamColors();
 
+        var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
+        var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
+
+        var horizontalViewPortBehaviour = BoundaryHelpers.GetHorizontalViewPortBehaviour(levelData.HorizontalViewPortBehaviour, levelData.LevelWidth);
+        var verticalViewPortBehaviour = BoundaryHelpers.GetVerticalViewPortBehaviour(levelData.VerticalViewPortBehaviour, levelData.LevelHeight);
+
         var levelGadgets = _levelObjectAssembler.GetLevelGadgets();
-        GadgetCollections.SetGadgets(levelGadgets);
+        var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
         var inputController = new LevelInputController();
         var skillSetManager = new SkillSetManager(levelData.SkillSetData);
@@ -75,12 +81,6 @@ public sealed class LevelBuilder : IDisposable
             ? new CountDownLevelTimer(levelData.TimeLimit.Value)
             : new CountUpLevelTimer();
 
-        var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
-        var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
-
-        var horizontalViewPortBehaviour = BoundaryHelpers.GetHorizontalViewPortBehaviour(levelData.HorizontalViewPortBehaviour, levelData.LevelWidth);
-        var verticalViewPortBehaviour = BoundaryHelpers.GetVerticalViewPortBehaviour(levelData.VerticalViewPortBehaviour, levelData.LevelHeight);
-
         var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController, skillSetManager);
         var levelViewport = new Viewport(levelCursor, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         var levelLemmings = _levelObjectAssembler.GetLevelLemmings();
@@ -92,12 +92,11 @@ public sealed class LevelBuilder : IDisposable
         var pixelData = _terrainPainter.GetPixelData();
 
         var terrainManager = new TerrainManager(
-            levelData.LevelWidth,
-            levelData.LevelHeight,
             pixelData,
+            gadgetManager,
             terrainRenderer,
-            levelData.HorizontalBoundaryBehaviour,
-            levelData.VerticalBoundaryBehaviour);
+            horizontalBoundaryBehaviour,
+            verticalBoundaryBehaviour);
 
         var levelSprites = _levelObjectAssembler.GetLevelSprites();
 
@@ -141,6 +140,7 @@ public sealed class LevelBuilder : IDisposable
             levelViewport,
             lemmingManager,
             terrainManager,
+            gadgetManager,
             levelRenderer);
     }
 

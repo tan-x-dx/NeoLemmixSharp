@@ -1,10 +1,9 @@
-﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
+﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
-using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
+using NeoLemmixSharp.Engine.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Rendering;
@@ -15,37 +14,30 @@ namespace NeoLemmixSharp.Engine.Engine.Terrain;
 
 public sealed class TerrainManager
 {
+    private readonly PixelType[] _pixels;
+    private readonly GadgetManager _gadgetManager;
+
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
 
-    private readonly PixelType[] _pixels;
-
     public TerrainRenderer TerrainRenderer { get; }
 
-    public int Width { get; }
-    public int Height { get; }
+    public int Width => _horizontalBoundaryBehaviour.LevelWidth;
+    public int Height => _verticalBoundaryBehaviour.LevelHeight;
 
     public TerrainManager(
-        int width,
-        int height,
         PixelType[] pixels,
+        GadgetManager gadgetManager,
         TerrainRenderer terrainRenderer,
-        BoundaryBehaviourType horizontalBoundaryBehaviourType,
-        BoundaryBehaviourType verticalBoundaryBehaviourType)
+        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
+        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
-        Width = width;
-        Height = height;
-
         _pixels = pixels;
+        _gadgetManager = gadgetManager;
+
         TerrainRenderer = terrainRenderer;
-
-        _horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(
-            horizontalBoundaryBehaviourType,
-            width);
-
-        _verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(
-            verticalBoundaryBehaviourType,
-            height);
+        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
     }
 
     [Pure]
@@ -79,7 +71,7 @@ public sealed class TerrainManager
         var pixel = _pixels[index];
 
         return pixel.IsSolidToOrientation(lemming.Orientation) ||
-               GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(lemming, levelPosition, out _);
+               _gadgetManager.HasGadgetOfTypeAtPosition(lemming, levelPosition, GadgetType.MetalGrate);
     }
 
     [Pure]
@@ -96,7 +88,7 @@ public sealed class TerrainManager
 
         return !pixel.CanBeDestroyed() ||
                !destructionAction.CanDestroyPixel(pixel, lemming.Orientation, lemming.FacingDirection) ||
-               GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(lemming, levelPosition, out _);
+               _gadgetManager.HasGadgetOfTypeAtPosition(lemming, levelPosition, GadgetType.MetalGrate);
     }
 
     [Pure]
@@ -111,7 +103,7 @@ public sealed class TerrainManager
         var pixel = _pixels[index];
 
         return pixel.IsSteel() ||
-               GadgetCollections.MetalGrates.TryGetGadgetThatMatchesTypeAndOrientation(lemming, levelPosition, out _);
+               _gadgetManager.HasGadgetOfTypeAtPosition(lemming, levelPosition, GadgetType.MetalGrate);
     }
 
     public void ErasePixel(

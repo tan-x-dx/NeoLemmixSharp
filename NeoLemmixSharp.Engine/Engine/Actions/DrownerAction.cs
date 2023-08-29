@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
+﻿using NeoLemmixSharp.Engine.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
@@ -19,7 +19,7 @@ public sealed class DrownerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemming.LevelPosition, out _))
+        if (!Gadgets.HasGadgetOfTypeAtPosition(lemming, lemming.LevelPosition, GadgetType.Water))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 

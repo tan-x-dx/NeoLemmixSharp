@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Terrain;
 
@@ -9,6 +10,7 @@ public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
     protected static TerrainManager Terrain { get; private set; }
+    protected static GadgetManager Gadgets { get; private set; }
 
     public static int NumberOfItems => LemmingActions.Length;
     public static ReadOnlySpan<LemmingAction> AllItems => new(LemmingActions);
@@ -60,9 +62,10 @@ public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
         return result;
     }
 
-    public static void SetTerrain(TerrainManager terrain)
+    public static void SetHelpers(TerrainManager terrain, GadgetManager gadgetManager)
     {
         Terrain = terrain;
+        Gadgets = gadgetManager;
     }
 
     public abstract int Id { get; }

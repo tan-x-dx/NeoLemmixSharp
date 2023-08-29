@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
+using NeoLemmixSharp.Engine.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
 using System.Runtime.CompilerServices;
 
@@ -126,7 +126,7 @@ public sealed class SwimmerAction : LemmingAction
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool WaterAt(Lemming lemming, LevelPosition lemmingPosition)
     {
-        return GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemmingPosition, out _);
+        return Gadgets.HasGadgetOfTypeAtPosition(lemming, lemmingPosition, GadgetType.Water);
     }
 
     /// <summary>

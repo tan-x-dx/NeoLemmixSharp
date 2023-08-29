@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
+using NeoLemmixSharp.Engine.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 
@@ -65,8 +65,17 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        if (GadgetCollections.Waters.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemmingPosition, out var water))
+        var allGadgets = Gadgets.AllGadgets;
+        var idEnumerator = Gadgets.GetAllGadgetIdsForPosition(lemmingPosition);
+
+        while (idEnumerator.MoveNext())
         {
+            var gadgetId = idEnumerator.Current;
+            var gadget = allGadgets[gadgetId];
+
+            if (gadget.Type != GadgetType.Water)
+                continue;
+
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             lemming.LevelPosition = lemmingPosition;
             if (lemming.State.IsSwimmer)

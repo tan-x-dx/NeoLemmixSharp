@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
+﻿using NeoLemmixSharp.Engine.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
@@ -27,14 +27,22 @@ public sealed class FallerAction : LemmingAction
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemmingPosition, out var updraft))
+        var allGadgets = Gadgets.AllGadgets;
+        var idEnumerator = Gadgets.GetAllGadgetIdsForPosition(lemmingPosition);
+
+        while (idEnumerator.MoveNext())
         {
-            if (updraft.Orientation == orientation.GetOpposite())
+            var gadgetId = idEnumerator.Current;
+            var gadget = allGadgets[gadgetId];
+
+            if (gadget.Type != GadgetType.Updraft)
+                continue;
+            if (gadget.Orientation == orientation.GetOpposite())
             {
                 maxFallDistanceStep = 2;
             }
 
-            //updraft.OnLemmingInHitBox(lemming);
+            //gadget.OnLemmingInHitBox(lemming);
         }
 
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
@@ -54,9 +62,17 @@ public sealed class FallerAction : LemmingAction
             lemming.DistanceFallen++;
             lemming.TrueDistanceFallen++;
 
-            if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemming, lemmingPosition, out updraft))
+            idEnumerator = Gadgets.GetAllGadgetIdsForPosition(lemmingPosition);
+
+            while (idEnumerator.MoveNext())
             {
-                if (updraft.Orientation == orientation.GetOpposite())
+                var gadgetId = idEnumerator.Current;
+                var gadget = allGadgets[gadgetId];
+
+                if (gadget.Type != GadgetType.Updraft)
+                    continue;
+
+                if (gadget.Orientation == orientation.GetOpposite())
                 {
                     lemming.DistanceFallen = 0;
                 }

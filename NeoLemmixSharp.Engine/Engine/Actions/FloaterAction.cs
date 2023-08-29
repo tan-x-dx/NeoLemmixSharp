@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
+﻿using NeoLemmixSharp.Engine.Engine.Gadgets;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Actions;
@@ -29,9 +29,18 @@ public sealed class FloaterAction : LemmingAction
         var orientation = lemming.Orientation;
         var levelPosition = lemming.LevelPosition;
 
-        if (GadgetCollections.Updrafts.TryGetGadgetThatMatchesTypeAndOrientation(lemming, levelPosition, out var updraft))
+        var allGadgets = Gadgets.AllGadgets;
+        var idEnumerator = Gadgets.GetAllGadgetIdsForPosition(levelPosition);
+
+        while (idEnumerator.MoveNext())
         {
-            if (updraft.Orientation == orientation.GetOpposite())
+            var gadgetId = idEnumerator.Current;
+            var gadget = allGadgets[gadgetId];
+
+            if (gadget.Type != GadgetType.Updraft)
+                continue;
+
+            if (gadget.Orientation == orientation.GetOpposite())
             {
                 maxFallDistance--;
             }

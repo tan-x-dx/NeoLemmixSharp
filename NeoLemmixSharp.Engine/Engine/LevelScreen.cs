@@ -4,7 +4,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.ControlPanel;
 using NeoLemmixSharp.Engine.Engine.Gadgets;
-using NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
 using NeoLemmixSharp.Engine.Engine.Lemmings;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Skills;
@@ -21,7 +20,7 @@ public sealed class LevelScreen : IBaseScreen
 {
     public static LevelScreen Current { get; private set; }
 
-    private readonly IGadget[] _gadgets;
+    private readonly Gadget[] _gadgets;
 
     private readonly UpdateScheduler _updateScheduler;
     private readonly LevelInputController _inputController;
@@ -31,7 +30,8 @@ public sealed class LevelScreen : IBaseScreen
     private readonly LevelCursor _levelCursor;
     private readonly Viewport _viewport;
     private readonly LemmingManager _lemmingManager;
-    private readonly TerrainManager _terrain;
+    private readonly TerrainManager _terrainManager;
+    private readonly GadgetManager _gadgetManager;
     private readonly LevelRenderer _screenRenderer;
 
     public bool IsDisposed { get; set; }
@@ -43,7 +43,7 @@ public sealed class LevelScreen : IBaseScreen
 
     public LevelScreen(
         LevelData levelData,
-        IGadget[] gadgets,
+        Gadget[] gadgets,
         UpdateScheduler updateScheduler,
         LevelInputController levelInputController,
         LevelTimer levelTimer,
@@ -52,7 +52,8 @@ public sealed class LevelScreen : IBaseScreen
         LevelCursor cursor,
         Viewport viewport,
         LemmingManager lemmingManager,
-        TerrainManager terrain,
+        TerrainManager terrainManager,
+        GadgetManager gadgetManager,
         LevelRenderer levelRenderer)
     {
         ScreenTitle = levelData.LevelTitle;
@@ -67,14 +68,15 @@ public sealed class LevelScreen : IBaseScreen
         _levelCursor = cursor;
         _viewport = viewport;
         _lemmingManager = lemmingManager;
-        _terrain = terrain;
+        _terrainManager = terrainManager;
+        _gadgetManager = gadgetManager;
         _screenRenderer = levelRenderer;
 
-        Orientation.SetTerrain(terrain);
-        LemmingAction.SetTerrain(terrain);
-        LemmingSkill.SetTerrain(terrain);
-        TerrainEraseMask.SetTerrain(terrain);
-        TerrainAddMask.SetTerrain(terrain);
+        Orientation.SetTerrain(terrainManager);
+        LemmingAction.SetHelpers(terrainManager, gadgetManager);
+        LemmingSkill.SetTerrain(terrainManager);
+        TerrainEraseMask.SetTerrain(terrainManager);
+        TerrainAddMask.SetTerrain(terrainManager);
         LevelCursor.LevelScreen = this;
         Current = this;
     }
@@ -142,14 +144,13 @@ public sealed class LevelScreen : IBaseScreen
     {
 #pragma warning disable CS8625
         Orientation.SetTerrain(null);
-        LemmingAction.SetTerrain(null);
+        LemmingAction.SetHelpers(null, null);
         LemmingSkill.SetTerrain(null);
         TerrainEraseMask.SetTerrain(null);
         TerrainAddMask.SetTerrain(null);
         LevelCursor.LevelScreen = null;
 
         _screenRenderer.Dispose();
-        GadgetCollections.ClearGadgets();
         Current = null;
 #pragma warning restore CS8625
     }

@@ -4,12 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets.Collections;
 
-public sealed class SimpleGadgetList<TGadget> : IGadgetCollection<TGadget>
-    where TGadget : class, IGadget
+public sealed class SimpleGadgetList : IGadgetCollection
 {
-    private readonly TGadget[] _gadgets;
+    private readonly Gadget[] _gadgets;
 
-    public SimpleGadgetList(TGadget[] gadgets)
+    public SimpleGadgetList(Gadget[] gadgets)
     {
         _gadgets = gadgets;
     }
@@ -17,7 +16,7 @@ public sealed class SimpleGadgetList<TGadget> : IGadgetCollection<TGadget>
     public bool TryGetGadgetThatMatchesTypeAndOrientation(
         Lemming lemming,
         LevelPosition levelPosition,
-        [NotNullWhen(true)] out TGadget? gadget)
+        [NotNullWhen(true)] out Gadget? gadget)
     {
       /*  for (var i = 0; i < _gadgets.Length; i++)
         {
