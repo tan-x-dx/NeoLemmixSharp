@@ -4,6 +4,8 @@ namespace NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 
 public interface IHorizontalBoundaryBehaviour
 {
+    int LevelWidth { get; }
+
     [Pure]
     int NormaliseX(int x);
     [Pure]

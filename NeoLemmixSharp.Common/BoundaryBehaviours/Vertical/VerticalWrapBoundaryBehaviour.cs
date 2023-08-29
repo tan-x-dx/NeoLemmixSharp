@@ -4,11 +4,11 @@ namespace NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 
 public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
 {
-    private readonly int _levelHeightInPixels;
+    public int LevelHeight { get; }
 
     public VerticalWrapBoundaryBehaviour(int levelHeightInPixels)
     {
-        _levelHeightInPixels = levelHeightInPixels;
+        LevelHeight = levelHeightInPixels;
     }
 
     [Pure]
@@ -16,27 +16,27 @@ public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
     {
         // most likely case for negatives will be "small" numbers. Therefore simply adding the level height will make it a valid value
         if (y < 0)
-            return y + _levelHeightInPixels;
+            return y + LevelHeight;
 
-        if (y < _levelHeightInPixels)
+        if (y < LevelHeight)
             return y;
 
         // most likely case for "big" numbers will be less than twice the level height. Therefore simply subtracting the level height will make it a valid value
-        y -= _levelHeightInPixels;
+        y -= LevelHeight;
 
-        if (y < _levelHeightInPixels)
+        if (y < LevelHeight)
             return y;
 
         // otherwise, just do modulo operation
-        return y % _levelHeightInPixels;
+        return y % LevelHeight;
     }
 
     [Pure]
     public int GetAbsoluteVerticalDistance(int y1, int y2)
     {
         var dy = Math.Abs(y1 - y2);
-        if (dy + dy > _levelHeightInPixels)
-            return _levelHeightInPixels - dy;
+        if (dy + dy > LevelHeight)
+            return LevelHeight - dy;
 
         return dy;
     }

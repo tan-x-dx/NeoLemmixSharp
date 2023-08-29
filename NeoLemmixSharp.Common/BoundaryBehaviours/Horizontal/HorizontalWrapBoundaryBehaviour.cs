@@ -4,11 +4,11 @@ namespace NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 
 public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehaviour
 {
-    private readonly int _levelWidthInPixels;
+    public int LevelWidth { get; }
 
     public HorizontalWrapBoundaryBehaviour(int levelWidthInPixels)
     {
-        _levelWidthInPixels = levelWidthInPixels;
+        LevelWidth = levelWidthInPixels;
     }
 
     [Pure]
@@ -16,27 +16,27 @@ public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehavio
     {
         // most likely case for negatives will be "small" numbers. Therefore simply adding the level width will make it a valid value
         if (x < 0)
-            return x + _levelWidthInPixels;
+            return x + LevelWidth;
 
-        if (x < _levelWidthInPixels)
+        if (x < LevelWidth)
             return x;
 
         // most likely case for "big" numbers will be less than twice the level width. Therefore simply subtracting the level width will make it a valid value
-        x -= _levelWidthInPixels;
+        x -= LevelWidth;
 
-        if (x < _levelWidthInPixels)
+        if (x < LevelWidth)
             return x;
 
         // otherwise, just do modulo operation
-        return x % _levelWidthInPixels;
+        return x % LevelWidth;
     }
 
     [Pure]
     public int GetAbsoluteHorizontalDistance(int x1, int x2)
     {
         var dx = Math.Abs(x1 - x2);
-        if (dx + dx > _levelWidthInPixels)
-            return _levelWidthInPixels - dx;
+        if (dx + dx > LevelWidth)
+            return LevelWidth - dx;
 
         return dx;
     }

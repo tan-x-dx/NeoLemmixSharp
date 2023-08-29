@@ -34,7 +34,7 @@ public static class BoundaryHelpers
         int width) => boundaryBehaviourType switch
     {
         BoundaryBehaviourType.Wrap => new HorizontalWrapBoundaryBehaviour(width),
-        BoundaryBehaviourType.Void => new HorizontalVoidBoundaryBehaviour(),
+        BoundaryBehaviourType.Void => new HorizontalVoidBoundaryBehaviour(width),
         _ => throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType,
             "Unknown boundary behaviour type")
     };
@@ -44,7 +44,7 @@ public static class BoundaryHelpers
         int height) => boundaryBehaviourType switch
     {
         BoundaryBehaviourType.Wrap => new VerticalWrapBoundaryBehaviour(height),
-        BoundaryBehaviourType.Void => new VerticalVoidBoundaryBehaviour(),
+        BoundaryBehaviourType.Void => new VerticalVoidBoundaryBehaviour(height),
         _ => throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType,
             "Unknown boundary behaviour type")
     };
