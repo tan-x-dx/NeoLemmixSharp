@@ -22,8 +22,8 @@ public sealed class TerrainManager
 
     public TerrainRenderer TerrainRenderer { get; }
 
-    public int Width => _horizontalBoundaryBehaviour.LevelWidth;
-    public int Height => _verticalBoundaryBehaviour.LevelHeight;
+    public int LevelWidth => _horizontalBoundaryBehaviour.LevelWidth;
+    public int LevelHeight => _verticalBoundaryBehaviour.LevelHeight;
 
     public TerrainManager(
         PixelType[] pixels,
@@ -54,9 +54,9 @@ public sealed class TerrainManager
     public bool PositionOutOfBounds(LevelPosition levelPosition)
     {
         return levelPosition.X < 0 ||
-               levelPosition.X >= Width ||
+               levelPosition.X >= LevelWidth ||
                levelPosition.Y < 0 ||
-               levelPosition.Y >= Height;
+               levelPosition.Y >= LevelHeight;
     }
 
     [Pure]
@@ -67,7 +67,7 @@ public sealed class TerrainManager
         if (PositionOutOfBounds(levelPosition))
             return false;
 
-        var index = Width * levelPosition.Y + levelPosition.X;
+        var index = LevelWidth * levelPosition.Y + levelPosition.X;
         var pixel = _pixels[index];
 
         return pixel.IsSolidToOrientation(lemming.Orientation) ||
@@ -83,7 +83,7 @@ public sealed class TerrainManager
         if (PositionOutOfBounds(levelPosition))
             return false;
 
-        var index = Width * levelPosition.Y + levelPosition.X;
+        var index = LevelWidth * levelPosition.Y + levelPosition.X;
         var pixel = _pixels[index];
 
         return !pixel.CanBeDestroyed() ||
@@ -99,7 +99,7 @@ public sealed class TerrainManager
         if (PositionOutOfBounds(levelPosition))
             return false;
 
-        var index = Width * levelPosition.Y + levelPosition.X;
+        var index = LevelWidth * levelPosition.Y + levelPosition.X;
         var pixel = _pixels[index];
 
         return pixel.IsSteel() ||
@@ -115,7 +115,7 @@ public sealed class TerrainManager
         if (PositionOutOfBounds(pixelToErase))
             return;
 
-        var index = Width * pixelToErase.Y + pixelToErase.X;
+        var index = LevelWidth * pixelToErase.Y + pixelToErase.X;
         var pixel = _pixels[index];
 
         if (!pixel.CanBeDestroyed() ||
@@ -131,7 +131,7 @@ public sealed class TerrainManager
         if (PositionOutOfBounds(pixelToSet))
             return;
 
-        var index = Width * pixelToSet.Y + pixelToSet.X;
+        var index = LevelWidth * pixelToSet.Y + pixelToSet.X;
         var pixel = _pixels[index];
 
         if (pixel != PixelType.Empty)

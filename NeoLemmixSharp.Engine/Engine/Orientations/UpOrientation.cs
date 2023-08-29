@@ -16,11 +16,11 @@ public sealed class UpOrientation : Orientation
     public override int AbsoluteVerticalComponent => -1;
 
     [Pure]
-    public override LevelPosition TopLeftCornerOfLevel() => new(Terrain.Width, Terrain.Height);
+    public override LevelPosition TopLeftCornerOfLevel() => new(Terrain.LevelWidth, Terrain.LevelHeight);
     [Pure]
-    public override LevelPosition TopRightCornerOfLevel() => new(0, Terrain.Height);
+    public override LevelPosition TopRightCornerOfLevel() => new(0, Terrain.LevelHeight);
     [Pure]
-    public override LevelPosition BottomLeftCornerOfLevel() => new(Terrain.Width, 0);
+    public override LevelPosition BottomLeftCornerOfLevel() => new(Terrain.LevelWidth, 0);
     [Pure]
     public override LevelPosition BottomRightCornerOfLevel() => new(0, 0);
 
