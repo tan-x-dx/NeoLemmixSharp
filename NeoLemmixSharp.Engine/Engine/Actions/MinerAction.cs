@@ -135,7 +135,7 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (Terrain.PixelIsSteel(lemming, checkPosition))
+        if (Terrain.PixelIsSteel(checkPosition))
         {
             // CueSoundEffect(SFX_HITS_STEEL, L.Position);
         }

@@ -18,18 +18,21 @@ public sealed class Gadget : IIdEquatable<Gadget>
     public RectangularLevelRegion GadgetBounds { get; }
 
     public GadgetState CurrentState => _states[_currentStateIndex];
+    public bool AnyStatesCareAboutLemmingInteraction => _states.Any(s => s.HitBoxBehaviour.InteractsWithLemming);
 
     public Gadget(
         int id,
+        GadgetType gadgetType,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
         GadgetState[] states)
     {
-        _states = states;
-
         Id = id;
+        Type = gadgetType;
         Orientation = orientation;
         GadgetBounds = gadgetBounds;
+
+        _states = states;
     }
 
     public void SetState(int stateIndex)
@@ -44,10 +47,8 @@ public sealed class Gadget : IIdEquatable<Gadget>
         currentState.OnTransitionTo();
     }
 
-    public bool MatchesLemmingAndPosition(Lemming lemming, LevelPosition levelPosition)
-    {
-        return false;
-    }
+    public bool MatchesLemming(Lemming lemming) => CurrentState.HitBoxBehaviour.MatchesLemming(lemming);
+    public bool MatchesPosition(LevelPosition levelPosition) => CurrentState.HitBoxBehaviour.MatchesPosition(levelPosition);
 
     public void Tick()
     {

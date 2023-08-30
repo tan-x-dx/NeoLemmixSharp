@@ -44,7 +44,7 @@ public sealed class GadgetManager : IComparer<Gadget>
 
         _gadgetChunks = new LargeBitArray[_numberOfHorizontalChunks * _numberOfVerticalChunks];
 
-        foreach (var gadget in allGadgets)
+        foreach (var gadget in allGadgets.Where(g => g.AnyStatesCareAboutLemmingInteraction))
         {
             UpdateGadgetPosition(gadget);
         }
@@ -56,10 +56,8 @@ public sealed class GadgetManager : IComparer<Gadget>
         var shiftX = levelPosition.X >> ChunkSizeBitShift;
         var shiftY = levelPosition.Y >> ChunkSizeBitShift;
 
-        if (shiftX < 0 ||
-            shiftX >= _numberOfHorizontalChunks ||
-            shiftY < 0 ||
-            shiftY >= _numberOfVerticalChunks)
+        if (shiftX < 0 || shiftX >= _numberOfHorizontalChunks ||
+            shiftY < 0 || shiftY >= _numberOfVerticalChunks)
             return new LargeBitArray.Enumerator();
 
         var index = _numberOfHorizontalChunks * shiftY + shiftX;
@@ -68,7 +66,7 @@ public sealed class GadgetManager : IComparer<Gadget>
     }
 
     [Pure]
-    public bool HasGadgetOfTypeAtPosition(Lemming lemming, LevelPosition levelPosition, GadgetType gadgetType)
+    public bool HasGadgetOfTypeAtPosition(LevelPosition levelPosition, GadgetType gadgetType)
     {
         var allGadgets = AllGadgets;
         var idEnumerator = GetAllGadgetIdsForPosition(levelPosition);
@@ -80,12 +78,37 @@ public sealed class GadgetManager : IComparer<Gadget>
 
             if (gadget.Type != gadgetType)
                 continue;
-
-            if (gadget.MatchesLemmingAndPosition(lemming, levelPosition))
+            if (gadget.MatchesPosition(levelPosition))
                 return true;
         }
 
         return false;
+    }
+
+    [Pure]
+    public bool HasGadgetOfTypeAtLemmingPosition(Lemming lemming, GadgetType gadgetType)
+    {
+        var allGadgets = AllGadgets;
+        var idEnumerator = GetAllGadgetIdsForPosition(lemming.LevelPosition);
+
+        while (idEnumerator.MoveNext())
+        {
+            var gadgetId = idEnumerator.Current;
+            var gadget = allGadgets[gadgetId];
+
+            if (gadget.Type != gadgetType)
+                continue;
+            if (gadget.MatchesLemming(lemming))
+                return true;
+        }
+
+        return false;
+    }
+
+    public void UpdateGadgetPosition(int gadgetId)
+    {
+        var gadget = _allGadgets[gadgetId];
+        UpdateGadgetPosition(gadget);
     }
 
     public void UpdateGadgetPosition(Gadget gadget)

@@ -39,6 +39,8 @@ public sealed class FloaterAction : LemmingAction
 
             if (gadget.Type != GadgetType.Updraft)
                 continue;
+            if (!gadget.MatchesLemming(lemming))
+                continue;
 
             if (gadget.Orientation == orientation.GetOpposite())
             {

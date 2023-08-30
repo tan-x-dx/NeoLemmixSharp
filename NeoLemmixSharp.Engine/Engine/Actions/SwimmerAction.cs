@@ -36,12 +36,12 @@ public sealed class SwimmerAction : LemmingAction
         var dy = FindGroundPixel(lemming, lemmingPosition);
 
         if (Terrain.PixelIsSolidToLemming(lemming, lemmingPosition) ||
-            WaterAt(lemming, lemmingPosition))
+            WaterAt(lemmingPosition))
         {
             // Rise if there is water above the lemming
             var pixelAbove = orientation.MoveUp(lemmingPosition, 1);
             if (dy >= -1 &&
-                WaterAt(lemming, pixelAbove) &&
+                WaterAt(pixelAbove) &&
                 !Terrain.PixelIsSolidToLemming(lemming, pixelAbove))
             {
                 lemmingPosition = pixelAbove;
@@ -60,14 +60,14 @@ public sealed class SwimmerAction : LemmingAction
                 lemmingPosition = orientation.MoveDown(lemmingPosition, diveDistance); // Dive below the terrain
                 lemming.LevelPosition = lemmingPosition;
 
-                if (!WaterAt(lemming, lemmingPosition))
+                if (!WaterAt(lemmingPosition))
                 {
                     WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
                     return true;
                 }
 
-                if (lemming.State.IsClimber && !WaterAt(lemming, orientation.MoveUp(lemmingPosition, 1)))
+                if (lemming.State.IsClimber && !WaterAt(orientation.MoveUp(lemmingPosition, 1)))
                 {
                     // Only transition to climber, if the lemming is not under water
                     ClimberAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -92,7 +92,7 @@ public sealed class SwimmerAction : LemmingAction
                 return true;
             }
 
-            if (dy <= -1 || (dy == 0 && !WaterAt(lemming, lemmingPosition)))
+            if (dy <= -1 || (dy == 0 && !WaterAt(lemmingPosition)))
             {
                 // see http://www.lemmingsforums.net/index.php?topic=3380.0
                 // And the swimmer should not yet stop if the water and terrain overlaps
@@ -124,9 +124,9 @@ public sealed class SwimmerAction : LemmingAction
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool WaterAt(Lemming lemming, LevelPosition lemmingPosition)
+    private static bool WaterAt(LevelPosition lemmingPosition)
     {
-        return Gadgets.HasGadgetOfTypeAtPosition(lemming, lemmingPosition, GadgetType.Water);
+        return Gadgets.HasGadgetOfTypeAtPosition(lemmingPosition, GadgetType.Water);
     }
 
     /// <summary>
@@ -143,7 +143,7 @@ public sealed class SwimmerAction : LemmingAction
             result++;
             lemming.DistanceFallen++;
 
-            if (WaterAt(lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
+            if (WaterAt(lemming.Orientation.MoveDown(lemmingPosition, result)))
             {
                 lemming.DistanceFallen = 0;
             }

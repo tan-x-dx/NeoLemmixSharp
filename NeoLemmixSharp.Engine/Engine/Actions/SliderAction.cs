@@ -75,6 +75,8 @@ public sealed class SliderAction : LemmingAction
 
             if (gadget.Type != GadgetType.Water)
                 continue;
+            if (!gadget.MatchesLemming(lemming))
+                continue;
 
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             lemming.LevelPosition = lemmingPosition;

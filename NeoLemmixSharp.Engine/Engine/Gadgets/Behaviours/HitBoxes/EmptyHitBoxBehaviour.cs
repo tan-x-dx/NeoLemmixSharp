@@ -3,13 +3,31 @@ using NeoLemmixSharp.Engine.Engine.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Engine.Gadgets.Behaviours.HitBoxes;
 
+/// <summary>
+/// A class that represents the "Do Nothing" behaviour of something that does not technically have a hit box
+/// </summary>
 public sealed class EmptyHitBoxBehaviour : IHitBoxBehaviour
 {
     public static EmptyHitBoxBehaviour Instance { get; } = new();
+
+    public bool IsEnabled
+    {
+        get => false;
+        set { }
+    }
+    public bool InteractsWithLemming => false;
 
     private EmptyHitBoxBehaviour()
     {
     }
 
-    public bool MatchesLemming(Lemming lemming, LevelPosition levelPosition) => false;
+    public bool MatchesLemming(Lemming lemming) => false;
+    public bool MatchesPosition(LevelPosition levelPosition) => false;
+    public void OnLemmingEnterHitBox(Lemming lemming)
+    {
+    }
+
+    public void OnLemmingInHitBox(Lemming lemming)
+    {
+    }
 }

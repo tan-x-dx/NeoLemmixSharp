@@ -40,6 +40,7 @@ public sealed class LevelScreen : IBaseScreen
     public string ScreenTitle { get; init; }
 
     public LevelTimer LevelTimer => _levelTimer;
+    public GadgetManager GadgetManager => _gadgetManager;
 
     public LevelScreen(
         LevelData levelData,

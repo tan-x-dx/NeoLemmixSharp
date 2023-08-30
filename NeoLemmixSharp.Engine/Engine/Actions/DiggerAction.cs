@@ -47,7 +47,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionAction
 
         if (Terrain.PixelIsIndestructibleToLemming(lemming, this, lemmingPosition))
         {
-            if (Terrain.PixelIsSteel(lemming, lemmingPosition))
+            if (Terrain.PixelIsSteel(lemmingPosition))
             {
                 //CueSoundEffect(SFX_HITS_STEEL, L.Position);
             }

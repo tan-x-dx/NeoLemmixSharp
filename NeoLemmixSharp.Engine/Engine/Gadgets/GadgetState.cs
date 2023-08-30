@@ -55,5 +55,4 @@ public sealed class GadgetState
     public void OnLemmingInHitBox(Lemming lemming)
     {
     }
-
 }

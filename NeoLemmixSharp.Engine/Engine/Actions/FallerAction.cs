@@ -37,12 +37,13 @@ public sealed class FallerAction : LemmingAction
 
             if (gadget.Type != GadgetType.Updraft)
                 continue;
+            if (!gadget.MatchesLemming(lemming))
+                continue;
+
             if (gadget.Orientation == orientation.GetOpposite())
             {
                 maxFallDistanceStep = 2;
             }
-
-            //gadget.OnLemmingInHitBox(lemming);
         }
 
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
@@ -71,12 +72,13 @@ public sealed class FallerAction : LemmingAction
 
                 if (gadget.Type != GadgetType.Updraft)
                     continue;
+                if (!gadget.MatchesLemming(lemming))
+                    continue;
 
                 if (gadget.Orientation == orientation.GetOpposite())
                 {
                     lemming.DistanceFallen = 0;
                 }
-                //updraft.OnLemmingInHitBox(lemming);
             }
         }
 
@@ -97,9 +99,9 @@ public sealed class FallerAction : LemmingAction
     private static bool IsFallFatal(Lemming lemming)
     {
         return !(lemming.State.IsFloater || lemming.State.IsGlider) &&
-               false/*!Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.NoSplat, lemming.LevelPosition, lemming.Orientation)*/ &&
+               Gadgets.HasGadgetOfTypeAtPosition(lemming.LevelPosition, GadgetType.NoSplat) &&
                (lemming.DistanceFallen > MaxFallDistance ||
-                false/*Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.Splat, lemming.LevelPosition, lemming.Orientation)*/);
+                Gadgets.HasGadgetOfTypeAtPosition(lemming.LevelPosition, GadgetType.Splat));
     }
 
     private static bool CheckFloaterOrGliderTransition(

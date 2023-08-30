@@ -19,7 +19,7 @@ public sealed class DrownerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!Gadgets.HasGadgetOfTypeAtPosition(lemming, lemming.LevelPosition, GadgetType.Water))
+        if (!Gadgets.HasGadgetOfTypeAtPosition(lemming.LevelPosition, GadgetType.Water))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
