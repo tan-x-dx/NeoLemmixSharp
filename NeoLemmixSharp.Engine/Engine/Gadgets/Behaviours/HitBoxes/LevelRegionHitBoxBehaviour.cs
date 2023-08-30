@@ -10,31 +10,21 @@ namespace NeoLemmixSharp.Engine.Engine.Gadgets.Behaviours.HitBoxes;
 
 public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
 {
-    private readonly RectangularLevelRegion _position;
-
     private readonly ILevelRegion _levelRegion;
     private readonly LargeBitArray _lemmingIdsInHitBox;
-    private readonly LargeSimpleSet<LemmingAction> _targetActions;
-    private readonly SmallSimpleSet<Orientation> _targetOrientations;
-    private readonly SmallSimpleSet<FacingDirection> _targetFacingDirections;
+    private readonly LargeSimpleSet<LemmingAction> _targetActions = SimpleSetHelpers.LargeSetForUniqueItemType<LemmingAction>(true);
+    private readonly SmallSimpleSet<Orientation> _targetOrientations = SimpleSetHelpers.SmallSetForUniqueItemType<Orientation>(true);
+    private readonly SmallSimpleSet<FacingDirection> _targetFacingDirections = SimpleSetHelpers.SmallSetForUniqueItemType<FacingDirection>(true);
 
     public bool IsEnabled { get; set; }
     public bool InteractsWithLemming => true;
 
     public LevelRegionHitBoxBehaviour(
-        RectangularLevelRegion position,
         ILevelRegion levelRegion,
-        int totalNumberOfLemmings,
-        LargeSimpleSet<LemmingAction> targetActions,
-        SmallSimpleSet<Orientation> targetOrientations,
-        SmallSimpleSet<FacingDirection> targetFacingDirections)
+        int totalNumberOfLemmings)
     {
-        _position = position;
         _levelRegion = levelRegion;
         _lemmingIdsInHitBox = new LargeBitArray(totalNumberOfLemmings);
-        _targetActions = targetActions;
-        _targetOrientations = targetOrientations;
-        _targetFacingDirections = targetFacingDirections;
     }
 
     public bool MatchesLemming(Lemming lemming) => MatchesLemmingData(lemming) &&
@@ -48,9 +38,8 @@ public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
 
     private bool MatchesLemmingPosition(Lemming lemming)
     {
-        var offset = _position.TopLeft;
-        var position1 = lemming.LevelPosition - offset;
-        var position2 = lemming.Orientation.MoveUp(position1, 1) - offset;
+        var position1 = lemming.LevelPosition;
+        var position2 = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
 
         return _levelRegion.ContainsPoint(position1) ||
                _levelRegion.ContainsPoint(position2);
@@ -63,5 +52,35 @@ public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
     public void OnLemmingInHitBox(Lemming lemming)
     {
         //if()
+    }
+
+    public void IncludeAction(LemmingAction lemmingAction)
+    {
+        _targetActions.Add(lemmingAction);
+    }
+
+    public void ExcludeAction(LemmingAction lemmingAction)
+    {
+        _targetActions.Remove(lemmingAction);
+    }
+
+    public void IncludeOrientation(Orientation orientation)
+    {
+        _targetOrientations.Add(orientation);
+    }
+
+    public void ExcludeOrientation(Orientation orientation)
+    {
+        _targetOrientations.Remove(orientation);
+    }
+
+    public void IncludeFacingDirection(FacingDirection facingDirection)
+    {
+        _targetFacingDirections.Add(facingDirection);
+    }
+
+    public void ExcludeFacingDirection(FacingDirection facingDirection)
+    {
+        _targetFacingDirections.Remove(facingDirection);
     }
 }

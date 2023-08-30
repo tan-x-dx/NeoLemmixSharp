@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Engine.Lemmings;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -79,26 +78,6 @@ public sealed class GadgetManager : IComparer<Gadget>
             if (gadget.Type != gadgetType)
                 continue;
             if (gadget.MatchesPosition(levelPosition))
-                return true;
-        }
-
-        return false;
-    }
-
-    [Pure]
-    public bool HasGadgetOfTypeAtLemmingPosition(Lemming lemming, GadgetType gadgetType)
-    {
-        var allGadgets = AllGadgets;
-        var idEnumerator = GetAllGadgetIdsForPosition(lemming.LevelPosition);
-
-        while (idEnumerator.MoveNext())
-        {
-            var gadgetId = idEnumerator.Current;
-            var gadget = allGadgets[gadgetId];
-
-            if (gadget.Type != gadgetType)
-                continue;
-            if (gadget.MatchesLemming(lemming))
                 return true;
         }
 
