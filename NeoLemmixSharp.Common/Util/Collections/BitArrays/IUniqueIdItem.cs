@@ -21,6 +21,9 @@ public static class UniqueIdItemValidatorMethods
     public static void ValidateUniqueIds<T>(this ICollection<T> items)
         where T : class, IIdEquatable<T>
     {
+        if (items.Count == 0)
+            return;
+
         var ids = items
             .Select(i => i.Id)
             .ToList();

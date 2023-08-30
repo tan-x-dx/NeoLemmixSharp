@@ -15,9 +15,4 @@
     <ProjectReference Include="..\NeoLemmixSharp.Io\NeoLemmixSharp.Io.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Engine\Gadgets\Logic\" />
-    <Folder Include="Engine\Gadgets\Behaviours\" />
-  </ItemGroup>
-
 </Project>

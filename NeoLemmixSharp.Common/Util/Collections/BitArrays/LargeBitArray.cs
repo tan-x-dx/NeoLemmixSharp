@@ -10,6 +10,9 @@ namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 /// </summary>
 public sealed class LargeBitArray : IBitArray
 {
+    private const int Shift = 5;
+    private const int Mask = (1 << Shift) - 1;
+
     private readonly uint[] _bits;
 
     public int Length { get; }
@@ -22,7 +25,7 @@ public sealed class LargeBitArray : IBitArray
 
         Length = length;
 
-        var numberOfInts = (Length + 31) >> 5;
+        var numberOfInts = (Length + Mask) >> Shift;
 
         _bits = new uint[numberOfInts];
 
@@ -31,7 +34,7 @@ public sealed class LargeBitArray : IBitArray
 
         Array.Fill(_bits, uint.MaxValue);
 
-        var shift = length & 31;
+        var shift = length & Mask;
         var mask = (1U << shift) - 1U;
         _bits[^1] = mask;
         Count = length;
@@ -47,12 +50,12 @@ public sealed class LargeBitArray : IBitArray
     [Pure]
     public bool GetBit(int index)
     {
-        return (_bits[index >> 5] & (1U << index)) != 0U;
+        return (_bits[index >> Shift] & (1U << index)) != 0U;
     }
 
     public bool SetBit(int index)
     {
-        var intIndex = index >> 5;
+        var intIndex = index >> Shift;
 
         var oldValue = _bits[intIndex];
         var newValue = oldValue | (1U << index);
@@ -68,7 +71,7 @@ public sealed class LargeBitArray : IBitArray
 
     public bool ClearBit(int index)
     {
-        var intIndex = index >> 5;
+        var intIndex = index >> Shift;
 
         var oldValue = _bits[intIndex];
         var newValue = oldValue & ~(1U << index);
@@ -84,7 +87,7 @@ public sealed class LargeBitArray : IBitArray
 
     public bool ToggleBit(int index)
     {
-        var intIndex = index >> 5;
+        var intIndex = index >> Shift;
 
         var oldValue = _bits[intIndex];
         var newValue = oldValue ^ (1U << index);
@@ -126,7 +129,7 @@ public sealed class LargeBitArray : IBitArray
 
             var m = BitOperations.TrailingZeroCount(v);
             v ^= 1U << m;
-            array[arrayIndex++] = (index << 5) | m;
+            array[arrayIndex++] = (index << Shift) | m;
             remaining--;
         }
     }
@@ -174,7 +177,7 @@ public sealed class LargeBitArray : IBitArray
             var m = BitOperations.TrailingZeroCount(_v);
             _v ^= 1U << m;
 
-            Current = (_index << 5) | m;
+            Current = (_index << Shift) | m;
             _remaining--;
             return true;
         }
@@ -187,8 +190,8 @@ public sealed class LargeBitArray : IBitArray
             Current = -1;
         }
 
-        object IEnumerator.Current => Current;
-        void IDisposable.Dispose() { }
+        readonly object IEnumerator.Current => Current;
+        readonly void IDisposable.Dispose() { }
     }
 
     internal void UnionWith(LargeBitArray other)

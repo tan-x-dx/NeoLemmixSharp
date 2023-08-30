@@ -2,14 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
-using NeoLemmixSharp.Engine.Engine;
-using NeoLemmixSharp.Engine.Engine.Actions;
-using NeoLemmixSharp.Engine.Engine.FacingDirections;
-using NeoLemmixSharp.Engine.Engine.Gadgets;
-using NeoLemmixSharp.Engine.Engine.Lemmings;
-using NeoLemmixSharp.Engine.Engine.Orientations;
-using NeoLemmixSharp.Engine.Engine.Skills;
-using NeoLemmixSharp.Engine.Engine.Teams;
+using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
@@ -24,7 +24,7 @@ public sealed class LevelObjectAssembler : IDisposable
     private readonly SpriteBatch _spriteBatch;
 
     private readonly List<Lemming> _lemmings = new();
-    private readonly List<IGadget> _gadgets = new();
+    private readonly List<Gadget> _gadgets = new();
     private readonly List<IViewportObjectRenderer> _gadgetRenderers = new();
 
     private readonly LemmingSpriteBankBuilder _lemmingSpriteBankBuilder;
@@ -85,7 +85,7 @@ public sealed class LevelObjectAssembler : IDisposable
         return _lemmings.ToArray();
     }
 
-    public IGadget[] GetLevelGadgets()
+    public Gadget[] GetLevelGadgets()
     {
         return _gadgets.ToArray();
     }

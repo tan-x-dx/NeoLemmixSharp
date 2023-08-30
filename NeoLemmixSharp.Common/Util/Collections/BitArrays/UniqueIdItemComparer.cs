@@ -37,10 +37,10 @@ public sealed class UniqueIdItemComparer<T> :
     public bool Equals(UniqueIdItemComparer<T>? other) => other is not null;
     public bool Equals(ISimpleHasher<T>? other) => other is UniqueIdItemComparer<T>;
     public override bool Equals(object? obj) => obj is UniqueIdItemComparer<T>;
-    public override int GetHashCode() => typeof(UniqueIdItemComparer<T>).GetHashCode();
+    public override int GetHashCode() => typeof(T).GetHashCode();
 
     public int NumberOfItems => T.NumberOfItems;
 
     public int Hash(T item) => item.Id;
-    public T Unhash(int hash) => T.AllItems[hash];
+    public T Unhash(int index) => T.AllItems[index];
 }

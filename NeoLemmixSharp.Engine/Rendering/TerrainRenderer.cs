@@ -1,20 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Engine.Engine;
 
 namespace NeoLemmixSharp.Engine.Rendering;
 
 public sealed class TerrainRenderer : IDisposable
 {
     private readonly Texture2D _texture;
-    private readonly Engine.Viewport _viewport;
+    private readonly Level.Viewport _viewport;
 
     private readonly uint[] _colorSetter = new uint[1];
 
     public TerrainRenderer(
         Texture2D texture,
-        Engine.Viewport viewport)
+        Level.Viewport viewport)
     {
         _texture = texture;
         _viewport = viewport;

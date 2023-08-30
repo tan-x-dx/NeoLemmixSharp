@@ -1,9 +1,9 @@
-﻿using NeoLemmixSharp.Engine.Engine;
-using NeoLemmixSharp.Engine.Engine.Actions;
-using NeoLemmixSharp.Engine.Engine.FacingDirections;
-using NeoLemmixSharp.Engine.Engine.Orientations;
-using NeoLemmixSharp.Engine.Engine.Teams;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Teams;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 

@@ -24,7 +24,7 @@ public sealed class RectangularLevelRegion : IRectangularLevelRegion
     public int Y1 => Y + H;
 
     public LevelPosition TopLeft => new(X, Y);
-    public LevelPosition BottomRight => new(X1, Y1);
+    public LevelPosition BottomRight => new(X1 - 1, Y1 - 1);
 
     public RectangularLevelRegion(int x, int y, int w, int h)
     {

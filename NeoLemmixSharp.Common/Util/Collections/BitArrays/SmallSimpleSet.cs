@@ -72,26 +72,26 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
         public bool MoveNext() => _bitEnumerator.MoveNext();
         public void Reset() => _bitEnumerator.Reset();
-        public T Current => _hasher.Unhash(_bitEnumerator.Current);
+        public readonly T Current => _hasher.Unhash(_bitEnumerator.Current);
 
-        void IDisposable.Dispose() { }
-        object IEnumerator.Current => Current!;
+        readonly void IDisposable.Dispose() { }
+        readonly object IEnumerator.Current => Current!;
     }
 
-    private SmallBitArray BitsFromEnumerable(IEnumerable<T> other)
+    private uint BitsFromEnumerable(IEnumerable<T> other)
     {
         if (other is SmallSimpleSet<T> set)
         {
             Debug.Assert(_hasher.Equals(set._hasher));
-            return set._bits;
+            return set._bits.GetRawBits();
         }
 
-        var result = new SmallBitArray();
+        var result = 0U;
 
         foreach (var item in other)
         {
             var index = _hasher.Hash(item);
-            result.SetBit(index);
+            result |= 1U << index;
         }
 
         return result;
@@ -106,7 +106,7 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     public void UnionWith(SmallSimpleSet<T> other)
     {
         Debug.Assert(_hasher.Equals(other._hasher));
-        var otherBits = other._bits;
+        var otherBits = other._bits.GetRawBits();
         _bits.UnionWith(otherBits);
     }
 
@@ -119,7 +119,7 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     public void IntersectWith(SmallSimpleSet<T> other)
     {
         Debug.Assert(_hasher.Equals(other._hasher));
-        var otherBits = other._bits;
+        var otherBits = other._bits.GetRawBits();
         _bits.IntersectWith(otherBits);
     }
 
@@ -132,7 +132,7 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     public void ExceptWith(SmallSimpleSet<T> other)
     {
         Debug.Assert(_hasher.Equals(other._hasher));
-        var otherBits = other._bits;
+        var otherBits = other._bits.GetRawBits();
         _bits.ExceptWith(otherBits);
     }
 
@@ -145,7 +145,7 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     public void SymmetricExceptWith(SmallSimpleSet<T> other)
     {
         Debug.Assert(_hasher.Equals(other._hasher));
-        var otherBits = other._bits;
+        var otherBits = other._bits.GetRawBits();
         _bits.SymmetricExceptWith(otherBits);
     }
 
@@ -160,7 +160,7 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     public bool IsSubsetOf(SmallSimpleSet<T> other)
     {
         Debug.Assert(_hasher.Equals(other._hasher));
-        var otherBits = other._bits;
+        var otherBits = other._bits.GetRawBits();
         return _bits.IsSubsetOf(otherBits);
     }
 
@@ -175,7 +175,7 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     public bool IsSupersetOf(SmallSimpleSet<T> other)
     {
         Debug.Assert(_hasher.Equals(other._hasher));
-        var otherBits = other._bits;
+        var otherBits = other._bits.GetRawBits();
         return _bits.IsSupersetOf(otherBits);
     }
 
@@ -190,7 +190,7 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     public bool IsProperSubsetOf(SmallSimpleSet<T> other)
     {
         Debug.Assert(_hasher.Equals(other._hasher));
-        var otherBits = other._bits;
+        var otherBits = other._bits.GetRawBits();
         return _bits.IsProperSubsetOf(otherBits);
     }
 
@@ -205,7 +205,7 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     public bool IsProperSupersetOf(SmallSimpleSet<T> other)
     {
         Debug.Assert(_hasher.Equals(other._hasher));
-        var otherBits = other._bits;
+        var otherBits = other._bits.GetRawBits();
         return _bits.IsProperSupersetOf(otherBits);
     }
 
@@ -213,7 +213,7 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     public bool Overlaps(IEnumerable<T> other)
     {
         if (other is SmallSimpleSet<T> set)
-            return _bits.Overlaps(set._bits);
+            return _bits.Overlaps(set._bits.GetRawBits());
 
         return other.Any(Contains);
     }
@@ -223,7 +223,7 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     {
         Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
-        return _bits.Overlaps(otherBits);
+        return _bits.Overlaps(otherBits.GetRawBits());
     }
 
     [Pure]
@@ -238,7 +238,7 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     {
         Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
-        return _bits.SetEquals(otherBits);
+        return _bits.SetEquals(otherBits.GetRawBits());
     }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
