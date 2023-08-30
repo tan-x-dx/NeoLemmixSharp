@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Engine;
-using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
+using NeoLemmixSharp.Engine.Engine.LemmingActions;
 using NeoLemmixSharp.Engine.Engine.Orientations;
 using NeoLemmixSharp.Engine.Engine.Teams;
 using System.Runtime.CompilerServices;
