@@ -9,9 +9,9 @@ namespace NeoLemmixSharp.Engine.Engine.Gadgets;
 
 public sealed class GadgetManager : IComparer<Gadget>
 {
-    public const int ChunkSizeBitShift = 6;
-    public const int ChunkSize = 1 << ChunkSizeBitShift;
-    public const int ChunkSizeBitMask = ChunkSize - 1;
+    private const int ChunkSizeBitShift = 6;
+    private const int ChunkSize = 1 << ChunkSizeBitShift;
+    private const int ChunkSizeBitMask = ChunkSize - 1;
 
     private readonly Gadget[] _allGadgets;
     private readonly LargeBitArray?[] _gadgetChunks;

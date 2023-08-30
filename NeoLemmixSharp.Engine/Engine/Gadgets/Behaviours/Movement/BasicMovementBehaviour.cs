@@ -25,5 +25,7 @@ public sealed class BasicMovementBehaviour : IMovementBehaviour
     {
         _position.X = x;
         _position.Y = y;
+
+        LevelScreen.Current.GadgetManager.UpdateGadgetPosition(_gadgetId);
     }
 }

@@ -30,8 +30,6 @@ public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
     public bool MatchesLemming(Lemming lemming) => MatchesLemmingData(lemming) &&
                                                    MatchesLemmingPosition(lemming);
 
-    public bool MatchesPosition(LevelPosition levelPosition) => _levelRegion.ContainsPoint(levelPosition);
-
     private bool MatchesLemmingData(Lemming lemming) => _targetFacingDirections.Contains(lemming.FacingDirection) &&
                                                         _targetOrientations.Contains(lemming.Orientation) &&
                                                         _targetActions.Contains(lemming.CurrentAction);
@@ -45,13 +43,23 @@ public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
                _levelRegion.ContainsPoint(position2);
     }
 
-    public void OnLemmingEnterHitBox(Lemming lemming)
-    {
-    }
+    public bool MatchesPosition(LevelPosition levelPosition) => _levelRegion.ContainsPoint(levelPosition);
 
     public void OnLemmingInHitBox(Lemming lemming)
     {
-        //if()
+        if (_lemmingIdsInHitBox.SetBit(lemming.Id))
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+
+    public void OnLemmingNotInHitBox(Lemming lemming)
+    {
+        _lemmingIdsInHitBox.ClearBit(lemming.Id);
     }
 
     public void IncludeAction(LemmingAction lemmingAction)

@@ -11,6 +11,6 @@ public interface IHitBoxBehaviour
     bool MatchesLemming(Lemming lemming);
     bool MatchesPosition(LevelPosition levelPosition);
 
-    void OnLemmingEnterHitBox(Lemming lemming);
     void OnLemmingInHitBox(Lemming lemming);
+    void OnLemmingNotInHitBox(Lemming lemming);
 }

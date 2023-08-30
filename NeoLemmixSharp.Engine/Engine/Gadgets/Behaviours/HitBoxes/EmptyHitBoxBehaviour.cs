@@ -23,11 +23,12 @@ public sealed class EmptyHitBoxBehaviour : IHitBoxBehaviour
 
     public bool MatchesLemming(Lemming lemming) => false;
     public bool MatchesPosition(LevelPosition levelPosition) => false;
-    public void OnLemmingEnterHitBox(Lemming lemming)
+
+    public void OnLemmingInHitBox(Lemming lemming)
     {
     }
 
-    public void OnLemmingInHitBox(Lemming lemming)
+    public void OnLemmingNotInHitBox(Lemming lemming)
     {
     }
 }

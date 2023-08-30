@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Engine.Actions;
 using NeoLemmixSharp.Engine.Engine.FacingDirections;
 using NeoLemmixSharp.Engine.Engine.Orientations;
@@ -7,8 +8,10 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 namespace NeoLemmixSharp.Engine.Engine.Lemmings;
 
-public sealed class Lemming
+public sealed class Lemming : IIdEquatable<Lemming>
 {
+    public int Id { get; }
+
     public bool IsActive = true;
     public bool IsAlive = true;
     public bool HasExited;
@@ -23,7 +26,7 @@ public sealed class Lemming
 
     public bool Debug;
 
-    public int AnimationFrame { get; set; }
+    public int AnimationFrame;//{ get; set; }
     public int AscenderProgress;
     public int NumberOfBricksLeft;
     public int DisarmingFrames;
@@ -286,4 +289,10 @@ end;
         CurrentAction = lemmingAction;
         Renderer.UpdateLemmingState();
     }
+
+    public bool Equals(Lemming? other) => Id == (other?.Id ?? -1);
+
+    public static bool operator ==(Lemming left, Lemming right) => left.Id == right.Id;
+
+    public static bool operator !=(Lemming left, Lemming right) => left.Id != right.Id;
 }
