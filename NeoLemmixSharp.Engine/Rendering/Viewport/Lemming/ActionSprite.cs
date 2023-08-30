@@ -33,7 +33,7 @@ public abstract class ActionSprite : IDisposable
 
     public abstract void RenderLemming(
         SpriteBatch spriteBatch,
-        Engine.Lemmings.Lemming lemming,
+        Level.Lemmings.Lemming lemming,
         Rectangle sourceRectangle,
         Rectangle destinationRectangle);
 

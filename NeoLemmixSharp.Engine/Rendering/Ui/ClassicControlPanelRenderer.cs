@@ -2,8 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
-using NeoLemmixSharp.Engine.Engine;
-using NeoLemmixSharp.Engine.Engine.ControlPanel;
+using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.ControlPanel;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui;
 

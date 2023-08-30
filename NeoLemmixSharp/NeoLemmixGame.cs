@@ -4,17 +4,17 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Engine;
-using NeoLemmixSharp.Engine.Engine.FacingDirections;
-using NeoLemmixSharp.Engine.Engine.LemmingActions;
-using NeoLemmixSharp.Engine.Engine.Orientations;
-using NeoLemmixSharp.Engine.Engine.Skills;
-using NeoLemmixSharp.Engine.Engine.Teams;
-using NeoLemmixSharp.Engine.Engine.Terrain.Masks;
 using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using System;
 using System.Runtime.InteropServices;
+using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
 namespace NeoLemmixSharp;
 

@@ -17,7 +17,7 @@ public sealed class FourLayerColorActionSprite : ActionSprite
     {
     }
 
-    public override void RenderLemming(SpriteBatch spriteBatch, Engine.Lemmings.Lemming lemming, Rectangle sourceRectangle, Rectangle destinationRectangle)
+    public override void RenderLemming(SpriteBatch spriteBatch, Level.Lemmings.Lemming lemming, Rectangle sourceRectangle, Rectangle destinationRectangle)
     {
         RenderSpriteLayer(spriteBatch, sourceRectangle, destinationRectangle, Color.White, RenderingLayers.LemmingRenderLayer);
         sourceRectangle.X += SpriteWidth;

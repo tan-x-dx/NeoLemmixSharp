@@ -15,10 +15,4 @@
     <ProjectReference Include="..\NeoLemmixSharp.Io\NeoLemmixSharp.Io.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Engine\Gadgets\Behaviours\Movement\" />
-    <Folder Include="Engine\Gadgets\Behaviours\Activation\" />
-    <Folder Include="Engine\Gadgets\Behaviours\Resizing\" />
-  </ItemGroup>
-
 </Project>

@@ -19,7 +19,7 @@ public sealed class SingleColorLayerActionSprite : ActionSprite
 
     public override void RenderLemming(
         SpriteBatch spriteBatch,
-        Engine.Lemmings.Lemming lemming,
+        Level.Lemmings.Lemming lemming,
         Rectangle sourceRectangle,
         Rectangle destinationRectangle)
     {

@@ -1,0 +1,37 @@
+﻿using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Orientations;
+
+namespace NeoLemmixSharp.Engine.Level.Terrain;
+
+public static class PixelTypeHelpers
+{
+    public const int PixelTypeArrowOffset = 4;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool CanBeDestroyed(this PixelType pixelType)
+    {
+        const PixelType mask = PixelType.Void | PixelType.Steel;
+
+        return (pixelType & mask) == PixelType.Empty;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsSolidToOrientation(this PixelType pixelType, Orientation orientation)
+    {
+        var flag = (PixelType)(1 << orientation.RotNum);
+        return (pixelType & flag) == flag;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsSteel(this PixelType pixelType)
+    {
+        return (pixelType & PixelType.Steel) == PixelType.Steel;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsVoid(this PixelType pixelType)
+    {
+        return (pixelType & PixelType.Void) == PixelType.Void;
+    }
+}
