@@ -44,7 +44,7 @@ public sealed class GadgetManager : IComparer<Gadget>
 
         _gadgetChunks = new LargeBitArray[_numberOfHorizontalChunks * _numberOfVerticalChunks];
 
-        foreach (var gadget in allGadgets.Where(g => g.AnyStatesCareAboutLemmingInteraction))
+        foreach (var gadget in allGadgets)
         {
             UpdateGadgetPosition(gadget);
         }
@@ -113,6 +113,9 @@ public sealed class GadgetManager : IComparer<Gadget>
 
     public void UpdateGadgetPosition(Gadget gadget)
     {
+        if (!gadget.AnyStatesCareAboutLemmingInteraction)
+            return;
+
         var topLeft = NormalisePosition(gadget.GadgetBounds.TopLeft);
 
         var topLeftShiftX = topLeft.X >> ChunkSizeBitShift;
