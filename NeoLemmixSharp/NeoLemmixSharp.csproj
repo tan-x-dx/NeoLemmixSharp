@@ -36,6 +36,11 @@
     <ProjectReference Include="..\NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj" />
     <ProjectReference Include="..\NeoLemmixSharp.Engine\NeoLemmixSharp.Engine.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="DebugConfig.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />
     <Exec Command="dotnet tool restore" />

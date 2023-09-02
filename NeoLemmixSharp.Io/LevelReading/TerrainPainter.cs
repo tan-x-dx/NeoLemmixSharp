@@ -9,8 +9,7 @@ public sealed class TerrainPainter
 {
     public const uint MinimumSubstantialAlphaValue = 31;
 
-    private const string _rootDirectory = "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5";
-
+    private readonly RootDirectoryManager _rootDirectoryManager;
     private readonly GraphicsDevice _graphicsDevice;
     private readonly Dictionary<string, PixelColorData> _textureBundleCache = new();
 
@@ -21,9 +20,10 @@ public sealed class TerrainPainter
     private Texture2D _terrainTexture;
     private PixelType[] _terrainPixels;
 
-    public TerrainPainter(GraphicsDevice graphicsDevice)
+    public TerrainPainter(GraphicsDevice graphicsDevice, RootDirectoryManager rootDirectoryManager)
     {
         _graphicsDevice = graphicsDevice;
+        _rootDirectoryManager = rootDirectoryManager;
     }
 
     public void PaintLevel(LevelData levelData)
@@ -197,7 +197,7 @@ public sealed class TerrainPainter
 
     private PixelColorData GetOrLoadPixelColorData(TerrainData terrainData)
     {
-        var rootFilePath = Path.Combine(_rootDirectory, "styles", terrainData.Style!, "terrain", terrainData.TerrainName!);
+        var rootFilePath = Path.Combine(_rootDirectoryManager.RootDirectory, "styles", terrainData.Style!, "terrain", terrainData.TerrainName!);
 
         if (_textureBundleCache.TryGetValue(rootFilePath, out var result))
             return result;

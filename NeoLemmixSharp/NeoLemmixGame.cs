@@ -28,6 +28,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
     private FontBank _fontBank;
     private Point _gameResolution = new(960, 720);
     private SpriteBatch _spriteBatch;
+    private RootDirectoryManager _rootDirectoryManager;
 
     public int WindowWidth => _graphics.PreferredBackBufferWidth;
     public int WindowHeight => _graphics.PreferredBackBufferHeight;
@@ -112,7 +113,7 @@ public sealed class NeoLemmixGame : Game, IGameWindow
         //    "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\eraseTest.nxlv";
         //  "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\levels\\Amiga Lemmings\\Lemmings\\Fun\\19_Take_good_care_of_my_Lemmings.nxlv";
 
-        using (var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, _fontBank))
+        using (var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, _fontBank, _rootDirectoryManager))
         {
             Screen = levelBuilder.BuildLevel(path);
             Screen.GameWindow = this;
@@ -145,6 +146,8 @@ public sealed class NeoLemmixGame : Game, IGameWindow
 
         TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
         DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
+
+        _rootDirectoryManager = new RootDirectoryManager();
     }
 
     protected override void Update(GameTime gameTime)
