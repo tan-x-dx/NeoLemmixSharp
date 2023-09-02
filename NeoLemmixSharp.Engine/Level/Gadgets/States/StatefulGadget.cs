@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -41,7 +42,7 @@ public sealed class StatefulGadget : GadgetBase
         currentState.OnTransitionTo();
     }
 
-    public override void ReactToInput(string inputName, int payload)
+    public override IGadgetInput? GetInputWithName(string inputName)
     {
         throw new NotImplementedException();
     }

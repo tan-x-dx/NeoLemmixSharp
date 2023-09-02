@@ -15,8 +15,4 @@
     <ProjectReference Include="..\NeoLemmixSharp.Io\NeoLemmixSharp.Io.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Level\Gadgets\Functional\" />
-  </ItemGroup>
-
 </Project>

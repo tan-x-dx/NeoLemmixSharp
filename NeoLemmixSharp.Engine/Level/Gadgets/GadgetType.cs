@@ -29,5 +29,10 @@ public enum GadgetType
 
     Mover,
     MetalGrate,
-    Logic
+    Logic,
+
+    AndGate,
+    OrGate,
+    NotGate,
+    XorGate
 }

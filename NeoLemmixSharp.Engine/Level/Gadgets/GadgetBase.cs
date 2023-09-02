@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.LevelRegion;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -23,7 +24,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>
 
     public abstract void Tick();
 
-    public abstract void ReactToInput(string inputName, int payload);
+    public abstract IGadgetInput? GetInputWithName(string inputName);
 
     public abstract bool CaresAboutLemmingInteraction { get; }
     public abstract bool MatchesLemming(Lemming lemming);
