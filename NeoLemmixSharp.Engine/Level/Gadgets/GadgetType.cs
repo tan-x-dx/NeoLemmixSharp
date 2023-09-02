@@ -27,6 +27,7 @@ public enum GadgetType
     Splat,
     Zombie,
 
+    Switch,
     Mover,
 
     MetalGrateOff,

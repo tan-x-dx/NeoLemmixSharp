@@ -42,7 +42,7 @@ public sealed class LevelObjectAssembler : IDisposable
         _spriteBatch = spriteBatch;
 
         _lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
-        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(_graphicsDevice, rootDirectoryManager);
+        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(_graphicsDevice, contentManager, rootDirectoryManager);
         _controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder(graphicsDevice, contentManager);
     }
 
@@ -83,15 +83,22 @@ public sealed class LevelObjectAssembler : IDisposable
         var p = new RectangularLevelRegion(250, 90, 40, 2);
         var input = new MetalGrateGadget.MetalGrateGadgetInput("input");
 
-        var g = new MetalGrateGadget(
+        var metalGrateGadget = new MetalGrateGadget(
             id,
             p,
             input,
             true);
-        input.ReactToSignal(true);
 
-        _gadgets.Add(g);
-        _gadgetRenderers.Add(new MetalGrateRenderer(g));
+        _gadgets.Add(metalGrateGadget);
+        _gadgetRenderers.Add(new MetalGrateRenderer(metalGrateGadget));
+
+        id++;
+        p = new RectangularLevelRegion(296, 142, 19, 13);
+        var switchGadget = new SwitchGadget(id, p, true);
+        switchGadget.Output.RegisterInput(input);
+
+        _gadgets.Add(switchGadget);
+        _gadgetRenderers.Add(new SwitchRenderer(switchGadget));
     }
 
     public Lemming[] GetLevelLemmings()
@@ -129,7 +136,7 @@ public sealed class LevelObjectAssembler : IDisposable
 
     public GadgetSpriteBank GetGadgetSpriteBank()
     {
-        return new GadgetSpriteBank(); // _gadgetSpriteBankBuilder.BuildGadgetSpriteBank();
+        return _gadgetSpriteBankBuilder.BuildGadgetSpriteBank();
     }
 
     public ControlPanelSpriteBank GetControlPanelSpriteBank(LevelCursor levelCursor)

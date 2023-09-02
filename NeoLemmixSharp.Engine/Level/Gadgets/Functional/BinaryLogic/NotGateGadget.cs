@@ -46,6 +46,10 @@ public sealed class NotGateGadget : GadgetBase, ILogicGateGadget
 
     public override bool CaresAboutLemmingInteraction => false;
     public override bool MatchesLemming(Lemming lemming) => false;
+    public override void OnLemmingMatch(Lemming lemming)
+    {
+    }
+
     public override bool MatchesPosition(LevelPosition levelPosition) => false;
 
     public void EvaluateInputs()

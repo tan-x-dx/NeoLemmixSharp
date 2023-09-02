@@ -41,6 +41,10 @@ public abstract class BinaryLogicGateGadget : GadgetBase, ILogicGateGadget
 
     public sealed override bool CaresAboutLemmingInteraction => false;
     public sealed override bool MatchesLemming(Lemming lemming) => false;
+    public sealed override void OnLemmingMatch(Lemming lemming)
+    {
+    }
+
     public sealed override bool MatchesPosition(LevelPosition levelPosition) => false;
 
     public abstract void EvaluateInputs();

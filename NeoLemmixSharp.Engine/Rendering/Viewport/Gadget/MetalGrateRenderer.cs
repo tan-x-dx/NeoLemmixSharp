@@ -45,9 +45,6 @@ public sealed class MetalGrateRenderer : IViewportObjectRenderer
             color = Color.Magenta;
         }
 
-        if (!_metalGrateGadget.IsActive)
-            return;
-
         var renderDestination = new Rectangle(
             screenX,
             screenY,

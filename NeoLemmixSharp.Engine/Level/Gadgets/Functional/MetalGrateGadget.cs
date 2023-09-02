@@ -10,10 +10,10 @@ public sealed class MetalGrateGadget : GadgetBase
 {
     private GadgetType _currentGadgetType;
     private int _transitionTick;
+    private bool _isActive;
 
     public override GadgetType Type => _currentGadgetType;
     public override Orientation Orientation => DownOrientation.Instance;
-    public bool IsActive { get; private set; }
 
     public MetalGrateGadgetInput Input { get; }
 
@@ -24,7 +24,7 @@ public sealed class MetalGrateGadget : GadgetBase
 
         Input.SetMetalGrateGadget(this);
 
-        IsActive = startActive;
+        _isActive = startActive;
         _currentGadgetType = startActive
             ? GadgetType.MetalGrateOn
             : GadgetType.MetalGrateOff;
@@ -36,7 +36,7 @@ public sealed class MetalGrateGadget : GadgetBase
         {
             case GadgetType.MetalGrateOff:
                 {
-                    if (IsActive)
+                    if (_isActive)
                     {
                         _currentGadgetType = GadgetType.MetalGrateActivating;
                     }
@@ -58,7 +58,7 @@ public sealed class MetalGrateGadget : GadgetBase
                 }
             case GadgetType.MetalGrateOn:
                 {
-                    if (!IsActive)
+                    if (!_isActive)
                     {
                         _currentGadgetType = GadgetType.MetalGrateDeactivating;
                     }
@@ -96,6 +96,10 @@ public sealed class MetalGrateGadget : GadgetBase
         return _currentGadgetType == GadgetType.MetalGrateOn && GadgetBounds.ContainsPoint(lemming.LevelPosition);
     }
 
+    public override void OnLemmingMatch(Lemming lemming)
+    {
+    }
+
     public override bool MatchesPosition(LevelPosition levelPosition)
     {
         return _currentGadgetType == GadgetType.MetalGrateOn && GadgetBounds.ContainsPoint(levelPosition);
@@ -119,7 +123,7 @@ public sealed class MetalGrateGadget : GadgetBase
 
         public void ReactToSignal(bool signal)
         {
-            _metalGrateGadget.IsActive = signal;
+            _metalGrateGadget._isActive = signal;
         }
     }
 }

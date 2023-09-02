@@ -49,6 +49,11 @@ public sealed class StatefulGadget : GadgetBase
 
     public override bool CaresAboutLemmingInteraction => _states.Any(s => s.HitBoxBehaviour.InteractsWithLemming);
     public override bool MatchesLemming(Lemming lemming) => CurrentState.HitBoxBehaviour.MatchesLemming(lemming);
+    public override void OnLemmingMatch(Lemming lemming)
+    {
+        
+    }
+
     public override bool MatchesPosition(LevelPosition levelPosition) => CurrentState.HitBoxBehaviour.MatchesPosition(levelPosition);
 
     public override void Tick()

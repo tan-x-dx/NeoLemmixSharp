@@ -130,7 +130,20 @@ public sealed class Lemming : IIdEquatable<Lemming>
 
         }
 
-        // var checkPosition = GetGadgetCheckPositions();
+        var gadgetManager = LevelScreen.Current.GadgetManager;
+
+        var allGadgets = gadgetManager.AllGadgets;
+        var gadgetsEnumerator = gadgetManager.GetAllGadgetIdsForPosition(LevelPosition);
+        while (gadgetsEnumerator.MoveNext())
+        {
+            var gadgetId = gadgetsEnumerator.Current;
+            var gadget = allGadgets[gadgetId];
+
+            if (gadget.MatchesLemming(this))
+            {
+                gadget.OnLemmingMatch(this);
+            }
+        }
 
         NextAction.TransitionLemmingToAction(this, false);
 

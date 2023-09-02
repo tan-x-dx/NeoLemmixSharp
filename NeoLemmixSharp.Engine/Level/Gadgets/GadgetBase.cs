@@ -28,6 +28,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>
 
     public abstract bool CaresAboutLemmingInteraction { get; }
     public abstract bool MatchesLemming(Lemming lemming);
+    public abstract void OnLemmingMatch(Lemming lemming);
     public abstract bool MatchesPosition(LevelPosition levelPosition);
 
     public bool Equals(GadgetBase? other) => Id == (other?.Id ?? -1);

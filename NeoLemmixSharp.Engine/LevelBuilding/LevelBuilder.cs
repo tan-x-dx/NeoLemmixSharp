@@ -138,6 +138,12 @@ public sealed class LevelBuilder : IDisposable
             metalGrateRenderer.SetWhitePixelTexture(wp);
         }
 
+        var switchTexture = gadgetSpriteBank.GetTexture("switch");
+        foreach (var switchRenderer in levelSprites.OfType<SwitchRenderer>())
+        {
+            switchRenderer.SetSwitchTexture(switchTexture);
+        }
+
         return new LevelScreen(
             levelData,
             levelGadgets,
