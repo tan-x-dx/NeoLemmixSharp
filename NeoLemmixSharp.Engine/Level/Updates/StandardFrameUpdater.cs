@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Updates;
@@ -16,6 +17,14 @@ public sealed class StandardFrameUpdater : IFrameUpdater
     }
 
     public UpdateState UpdateState => UpdateState.Normal;
+
+    public void UpdateGadget(GadgetBase gadget)
+    {
+        if (_doLevelUpdate)
+        {
+            gadget.Tick();
+        }
+    }
 
     public void UpdateLemming(Lemming lemming)
     {

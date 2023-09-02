@@ -28,8 +28,11 @@ public enum GadgetType
     Zombie,
 
     Mover,
-    MetalGrate,
-    Logic,
+
+    MetalGrateOff,
+    MetalGrateActivating,
+    MetalGrateOn,
+    MetalGrateDeactivating,
 
     AndGate,
     OrGate,

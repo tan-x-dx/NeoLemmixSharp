@@ -5,6 +5,7 @@ using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -69,7 +70,7 @@ public sealed class LevelObjectAssembler : IDisposable
                 var item = new SkillSetData
                 {
                     SkillName = skill.LemmingSkillName,
-                    NumberOfSkills = i,
+                    NumberOfSkills = 100,
                     TeamId = Team.AllItems[0].Id,
                 };
 
@@ -77,6 +78,20 @@ public sealed class LevelObjectAssembler : IDisposable
                 i++;
             }
         }
+
+        var id = 0;
+        var p = new RectangularLevelRegion(250, 90, 40, 2);
+        var input = new MetalGrateGadget.MetalGrateGadgetInput("input");
+
+        var g = new MetalGrateGadget(
+            id,
+            p,
+            input,
+            true);
+        input.ReactToSignal(true);
+
+        _gadgets.Add(g);
+        _gadgetRenderers.Add(new MetalGrateRenderer(g));
     }
 
     public Lemming[] GetLevelLemmings()

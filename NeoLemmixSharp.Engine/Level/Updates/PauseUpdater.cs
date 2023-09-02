@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Updates;
@@ -13,6 +14,10 @@ public sealed class PauseUpdater : IFrameUpdater
     }
 
     public UpdateState UpdateState => UpdateState.Paused;
+
+    public void UpdateGadget(GadgetBase gadget)
+    {
+    }
 
     public void UpdateLemming(Lemming lemming)
     {

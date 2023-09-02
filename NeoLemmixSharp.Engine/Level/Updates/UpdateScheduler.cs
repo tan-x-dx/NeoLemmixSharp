@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Timer;
@@ -22,6 +23,7 @@ public sealed class UpdateScheduler
     private readonly LevelCursor _levelCursor;
     private readonly LevelTimer _levelTimer;
     private readonly LemmingManager _lemmingManager;
+    private readonly GadgetManager _gadgetManager;
     private readonly SkillSetManager _skillSetManager;
 
     public bool DoneAssignmentThisFrame { get; set; }
@@ -39,6 +41,7 @@ public sealed class UpdateScheduler
         LevelInputController inputController,
         LevelTimer levelTimer,
         LemmingManager lemmingManager,
+        GadgetManager gadgetManager,
         SkillSetManager skillSetManager)
     {
         _superLemmingMode = superLemmingMode;
@@ -48,6 +51,7 @@ public sealed class UpdateScheduler
         _inputController = inputController;
         _levelTimer = levelTimer;
         _lemmingManager = lemmingManager;
+        _gadgetManager = gadgetManager;
         _skillSetManager = skillSetManager;
 
         _elapsedTicks = new ItemWrapper<int>();
@@ -74,6 +78,11 @@ public sealed class UpdateScheduler
             {
                 _levelCursor.CheckLemming(lemming);
             }
+        }
+
+        foreach (var gadget in _gadgetManager.AllGadgets)
+        {
+            CurrentlySelectedFrameUpdater.UpdateGadget(gadget);
         }
 
         HandleSkillAssignment();

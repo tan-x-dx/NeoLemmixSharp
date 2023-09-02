@@ -15,6 +15,7 @@ using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
+using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Io.LevelReading;
 using NeoLemmixSharp.Io.LevelReading.Nxlv;
@@ -88,7 +89,7 @@ public sealed class LevelBuilder : IDisposable
 
         var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController, skillSetManager);
         var levelViewport = new Viewport(levelCursor, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-        var updateScheduler = new UpdateScheduler(levelData.SuperLemmingMode, controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, skillSetManager);
+        var updateScheduler = new UpdateScheduler(levelData.SuperLemmingMode, controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, gadgetManager, skillSetManager);
 
         var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
 
@@ -100,11 +101,11 @@ public sealed class LevelBuilder : IDisposable
             terrainRenderer,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
-
-        var levelSprites = _levelObjectAssembler.GetLevelSprites();
-
+        
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(levelCursor);
+
+        var levelSprites = _levelObjectAssembler.GetLevelSprites();
 
         var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel, _fontBank);
 
@@ -129,6 +130,12 @@ public sealed class LevelBuilder : IDisposable
         foreach (var lemmingRenderer in levelSprites.OfType<LemmingRenderer>())
         {
             lemmingRenderer.UpdateLemmingState();
+        }
+
+        var wp = controlPanelSpriteBank.GetTexture("WhitePixel");
+        foreach (var metalGrateRenderer in levelSprites.OfType<MetalGrateRenderer>())
+        {
+            metalGrateRenderer.SetWhitePixelTexture(wp);
         }
 
         return new LevelScreen(
