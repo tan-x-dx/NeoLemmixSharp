@@ -2,5 +2,5 @@
 
 public interface IGadgetAction
 {
-    
+    void PerformAction(int payload);
 }

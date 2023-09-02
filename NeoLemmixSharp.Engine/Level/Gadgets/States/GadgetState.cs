@@ -2,9 +2,8 @@
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.Movement;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.Resizing;
-using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.States;
 
 public sealed class GadgetState
 {
@@ -49,10 +48,6 @@ public sealed class GadgetState
     }
 
     public void OnTransitionFrom()
-    {
-    }
-
-    public void OnLemmingInHitBox(Lemming lemming)
     {
     }
 }
