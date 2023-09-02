@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp;
 
-public sealed class NeoLemmixGame : Game, IGameWindow
+public sealed partial class NeoLemmixGame : Game, IGameWindow
 {
     private readonly GraphicsDeviceManager _graphics;
     private readonly TimeSpan _standardGameUps;
@@ -80,8 +80,8 @@ public sealed class NeoLemmixGame : Game, IGameWindow
         ClipCursor(ref rect);
     }
 
-    [DllImport("user32.dll")]
-    private static extern void ClipCursor(ref Rectangle rect);
+    [LibraryImport("user32.dll")]
+    private static partial void ClipCursor(ref Rectangle rect);
 
     protected override void LoadContent()
     {
