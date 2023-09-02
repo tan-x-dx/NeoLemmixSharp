@@ -28,19 +28,12 @@ public sealed class SkillTrackingData
         }
     }
 
-    public void SetSkillCount(int skillCount)
+    public void SetSkillCount(int skillCount) => SkillCount = skillCount switch
     {
-        if (skillCount > GameConstants.InfiniteSkillCount)
-        {
-            SkillCount = GameConstants.InfiniteSkillCount;
-        }
-        else if (skillCount < 0)
-        {
-            SkillCount = 0;
-        }
-        else
-        {
-            SkillCount = skillCount;
-        }
-    }
+        >= GameConstants.InfiniteSkillCount => Skill == ClonerSkill.Instance
+            ? 99
+            : GameConstants.InfiniteSkillCount,
+        < 0 => 0,
+        _ => skillCount
+    };
 }
