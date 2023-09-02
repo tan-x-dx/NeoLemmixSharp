@@ -7,13 +7,13 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public sealed class GadgetManager : IComparer<Gadget>
+public sealed class GadgetManager : IComparer<GadgetBase>
 {
     private const int ChunkSizeBitShift = 6;
     private const int ChunkSize = 1 << ChunkSizeBitShift;
     private const int ChunkSizeBitMask = ChunkSize - 1;
 
-    private readonly Gadget[] _allGadgets;
+    private readonly GadgetBase[] _allGadgets;
     private readonly LargeBitArray?[] _gadgetChunks;
 
     private readonly int _totalNumberOfGadgets;
@@ -23,10 +23,10 @@ public sealed class GadgetManager : IComparer<Gadget>
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
 
-    public ReadOnlySpan<Gadget> AllGadgets => new(_allGadgets);
+    public ReadOnlySpan<GadgetBase> AllGadgets => new(_allGadgets);
 
     public GadgetManager(
-        Gadget[] allGadgets,
+        GadgetBase[] allGadgets,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
@@ -90,9 +90,9 @@ public sealed class GadgetManager : IComparer<Gadget>
         UpdateGadgetPosition(gadget);
     }
 
-    public void UpdateGadgetPosition(Gadget gadget)
+    public void UpdateGadgetPosition(GadgetBase gadget)
     {
-        if (!gadget.AnyStatesCareAboutLemmingInteraction)
+        if (!gadget.CaresAboutLemmingInteraction)
             return;
 
         var topLeft = NormalisePosition(gadget.GadgetBounds.TopLeft);
@@ -140,7 +140,7 @@ public sealed class GadgetManager : IComparer<Gadget>
             _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y));
     }
 
-    int IComparer<Gadget>.Compare(Gadget? x, Gadget? y)
+    int IComparer<GadgetBase>.Compare(GadgetBase? x, GadgetBase? y)
     {
         if (ReferenceEquals(x, y)) return 0;
         if (y is null) return 1;

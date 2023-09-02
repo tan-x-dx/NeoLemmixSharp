@@ -2,7 +2,7 @@
 
 public enum GadgetType
 {
-    None,
+    Generic,
     Hatch,
     Exit,
     Water,
@@ -27,6 +27,7 @@ public enum GadgetType
     Splat,
     Zombie,
 
+    Mover,
     MetalGrate,
     Logic
 }

@@ -64,10 +64,10 @@ public sealed class KeyAction : IIdEquatable<KeyAction>
         return Id == other.Id;
     }
 
-    public sealed override bool Equals(object? obj) => ReferenceEquals(this, obj) || obj is KeyAction other && Id == other.Id;
-    public sealed override int GetHashCode() => Id;
+    public override bool Equals(object? obj) => ReferenceEquals(this, obj) || obj is KeyAction other && Id == other.Id;
+    public override int GetHashCode() => Id;
 
-    public sealed override string ToString() => _actionName;
+    public override string ToString() => _actionName;
 
     public static bool operator ==(KeyAction? left, KeyAction? right)
     {

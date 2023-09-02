@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 using NeoLemmixSharp.Io.LevelReading.Data;
 using NeoLemmixSharp.Io.LevelReading.Sprites;
@@ -7,15 +8,14 @@ namespace NeoLemmixSharp.Engine.LevelBuilding;
 
 public sealed class GadgetSpriteBankBuilder : IDisposable
 {
-    private const string _rootDirectory = "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5";
-
+    private readonly RootDirectoryManager _rootDirectoryManager;
     private readonly GraphicsDevice _graphicsDevice;
-
     private readonly Dictionary<string, PixelColorData> _textureBundleCache = new();
 
-    public GadgetSpriteBankBuilder(GraphicsDevice graphicsDevice)
+    public GadgetSpriteBankBuilder(GraphicsDevice graphicsDevice, RootDirectoryManager rootDirectoryManager)
     {
         _graphicsDevice = graphicsDevice;
+        _rootDirectoryManager = rootDirectoryManager;
     }
 
     public void LoadGadgetSprite(GadgetData gadgetData)
@@ -25,7 +25,7 @@ public sealed class GadgetSpriteBankBuilder : IDisposable
 
     private PixelColorData GetOrLoadPixelColorData(GadgetData gadgetData)
     {
-        var rootFilePath = Path.Combine(_rootDirectory, "styles", gadgetData.Style, "objects", gadgetData.Piece);
+        var rootFilePath = Path.Combine(_rootDirectoryManager.RootDirectory, "styles", gadgetData.Style, "objects", gadgetData.Piece);
 
         if (_textureBundleCache.TryGetValue(rootFilePath, out var result))
             return result;

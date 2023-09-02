@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
@@ -33,13 +34,14 @@ public sealed class LevelBuilder : IDisposable
         ContentManager content,
         GraphicsDevice graphicsDevice,
         SpriteBatch spriteBatch,
-        FontBank fontBank)
+        FontBank fontBank,
+        RootDirectoryManager rootDirectoryManager)
     {
         _content = content;
         _fontBank = fontBank;
-        _levelReader = new NxlvLevelReader();
-        _terrainPainter = new TerrainPainter(graphicsDevice);
-        _levelObjectAssembler = new LevelObjectAssembler(graphicsDevice, content, spriteBatch);
+        _levelReader = new NxlvLevelReader(rootDirectoryManager);
+        _terrainPainter = new TerrainPainter(graphicsDevice, rootDirectoryManager);
+        _levelObjectAssembler = new LevelObjectAssembler(graphicsDevice, content, spriteBatch, rootDirectoryManager);
     }
 
     public LevelScreen BuildLevel(string levelFilePath)

@@ -20,7 +20,7 @@ public sealed class LevelScreen : IBaseScreen
 {
     public static LevelScreen Current { get; private set; }
 
-    private readonly Gadget[] _gadgets;
+    private readonly GadgetBase[] _gadgets;
 
     private readonly UpdateScheduler _updateScheduler;
     private readonly LevelInputController _inputController;
@@ -44,7 +44,7 @@ public sealed class LevelScreen : IBaseScreen
 
     public LevelScreen(
         LevelData levelData,
-        Gadget[] gadgets,
+        GadgetBase[] gadgets,
         UpdateScheduler updateScheduler,
         LevelInputController levelInputController,
         LevelTimer levelTimer,
