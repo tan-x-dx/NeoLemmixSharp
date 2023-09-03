@@ -146,7 +146,10 @@ public sealed class LevelObjectAssembler : IDisposable
 
     private void SetUpTestLemmings()
     {
+        int id = 0;
+
         var lemmingX = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -156,6 +159,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemmingA = new Lemming(
+            id++,
             orientation: UpOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -164,6 +168,7 @@ public sealed class LevelObjectAssembler : IDisposable
 
 
         var lemmingB = new Lemming(
+            id++,
             orientation: LeftOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -176,6 +181,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemmingE = new Lemming(
+            id++,
             orientation: LeftOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -183,6 +189,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemmingC = new Lemming(
+            id++,
             orientation: RightOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -194,6 +201,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemmingD = new Lemming(
+            id++,
             orientation: LeftOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance,
             currentAction: BuilderAction.Instance)
@@ -204,6 +212,7 @@ public sealed class LevelObjectAssembler : IDisposable
         BuilderAction.Instance.TransitionLemmingToAction(lemmingD, false);
 
         var lemming0 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -211,6 +220,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming1 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -218,6 +228,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming2 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -225,6 +236,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming3 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -232,6 +244,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming4 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -239,6 +252,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming5 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -247,6 +261,7 @@ public sealed class LevelObjectAssembler : IDisposable
 
 
         var lemming6 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
@@ -254,6 +269,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming7 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
@@ -261,6 +277,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming8 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
@@ -268,6 +285,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming9 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
@@ -275,6 +293,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming10 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
@@ -282,6 +301,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming11 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
@@ -289,6 +309,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var miner = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance,
             currentAction: MinerAction.Instance)

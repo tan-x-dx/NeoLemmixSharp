@@ -54,10 +54,12 @@ public sealed class Lemming : IIdEquatable<Lemming>
     public bool ShouldTick => true;
 
     public Lemming(
+        int id,
         Orientation? orientation = null,
         FacingDirection? facingDirection = null,
         LemmingAction? currentAction = null)
     {
+        Id = id;
         Orientation = orientation ?? DownOrientation.Instance;
         FacingDirection = facingDirection ?? RightFacingDirection.Instance;
         CurrentAction = currentAction ?? WalkerAction.Instance;
@@ -304,6 +306,8 @@ end;
     }
 
     public bool Equals(Lemming? other) => Id == (other?.Id ?? -1);
+    public override bool Equals(object? obj) => obj is Lemming other && Id == other.Id;
+    public override int GetHashCode() => Id;
 
     public static bool operator ==(Lemming left, Lemming right) => left.Id == right.Id;
 
