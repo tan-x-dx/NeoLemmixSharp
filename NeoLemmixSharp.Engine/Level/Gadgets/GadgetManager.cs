@@ -15,6 +15,9 @@ public sealed class GadgetManager : IComparer<GadgetBase>
 
     private readonly GadgetBase[] _allGadgets;
     private readonly LargeBitArray?[] _gadgetChunks;
+    private readonly LargeBitArray _indicesOfGadgetChunks;
+
+    private readonly LargeBitArray _indicesOfGadgetChunksScratchSpace;
 
     private readonly int _totalNumberOfGadgets;
     private readonly int _numberOfHorizontalChunks;
@@ -42,6 +45,8 @@ public sealed class GadgetManager : IComparer<GadgetBase>
         _numberOfVerticalChunks = (_verticalBoundaryBehaviour.LevelHeight + ChunkSizeBitMask) >> ChunkSizeBitShift;
 
         _gadgetChunks = new LargeBitArray[_numberOfHorizontalChunks * _numberOfVerticalChunks];
+        _indicesOfGadgetChunks = new LargeBitArray(_gadgetChunks.Length);
+        _indicesOfGadgetChunksScratchSpace = new LargeBitArray(_gadgetChunks.Length);
 
         foreach (var gadget in allGadgets)
         {
@@ -109,23 +114,105 @@ public sealed class GadgetManager : IComparer<GadgetBase>
         bottomRightShiftX = Math.Clamp(bottomRightShiftX, 0, _numberOfHorizontalChunks - 1);
         bottomRightShiftY = Math.Clamp(bottomRightShiftY, 0, _numberOfVerticalChunks - 1);
 
-        for (var x = 0; x < _numberOfHorizontalChunks; x++)
+        WriteToGadgetChunkScratchSpace(topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+
+        foreach (var gadgetChunkIndex in _indicesOfGadgetChunks)
         {
-            for (var y = 0; y < _numberOfVerticalChunks; y++)
+            var gadgetChunk = _gadgetChunks[gadgetChunkIndex]!;
+            gadgetChunk.ClearBit(gadget.Id);
+        }
+
+        foreach (var gadgetChunkIndex in _indicesOfGadgetChunksScratchSpace)
+        {
+            ref var gadgetChunk = ref _gadgetChunks[gadgetChunkIndex];
+            gadgetChunk ??= new LargeBitArray(_totalNumberOfGadgets);
+            _indicesOfGadgetChunks.SetBit(gadgetChunkIndex);
+
+            gadgetChunk.SetBit(gadget.Id);
+        }
+    }
+
+    private void WriteToGadgetChunkScratchSpace(int ax, int ay, int bx, int by)
+    {
+        _indicesOfGadgetChunksScratchSpace.Clear();
+
+        // Is there a more elegant way to deal with all of these cases?
+
+        if (ax <= bx &&
+            ay <= by)
+        {
+            for (var x = ax; x <= bx; x++)
             {
-                var index = _numberOfHorizontalChunks * y + x;
-                ref var gadgetChunk = ref _gadgetChunks[index];
-
-                if (x >= topLeftShiftX && x <= bottomRightShiftX &&
-                    y >= topLeftShiftY && y <= bottomRightShiftY)
+                for (var y = ay; y <= by; y++)
                 {
-                    gadgetChunk ??= new LargeBitArray(_totalNumberOfGadgets);
-
-                    gadgetChunk.SetBit(gadget.Id);
+                    var index = _numberOfHorizontalChunks * y + x;
+                    _indicesOfGadgetChunksScratchSpace.SetBit(index);
                 }
-                else
+            }
+        }
+        else if (ax > bx && ay <= by)
+        {
+            for (var y = ay; y <= by; y++)
+            {
+                for (var x = 0; x <= ax; x++)
                 {
-                    gadgetChunk?.ClearBit(gadget.Id);
+                    var index = _numberOfHorizontalChunks * y + x;
+                    _indicesOfGadgetChunksScratchSpace.SetBit(index);
+                }
+
+                for (var x = _numberOfHorizontalChunks - 1; x >= bx; x--)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    _indicesOfGadgetChunksScratchSpace.SetBit(index);
+                }
+            }
+        }
+        else if (ax <= bx && ay > by)
+        {
+            for (var x = ax; x <= bx; x++)
+            {
+                for (var y = 0; y <= ay; y++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    _indicesOfGadgetChunksScratchSpace.SetBit(index);
+                }
+
+                for (var y = _numberOfVerticalChunks - 1; y >= by; y--)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    _indicesOfGadgetChunksScratchSpace.SetBit(index);
+                }
+            }
+        }
+        else
+        {
+            for (var x = 0; x <= ax; x++)
+            {
+                for (var y = 0; y <= ay; y++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    _indicesOfGadgetChunksScratchSpace.SetBit(index);
+                }
+
+                for (var y = _numberOfVerticalChunks - 1; y >= by; y--)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    _indicesOfGadgetChunksScratchSpace.SetBit(index);
+                }
+            }
+
+            for (var x = _numberOfHorizontalChunks - 1; x >= bx; x--)
+            {
+                for (var y = 0; y <= ay; y++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    _indicesOfGadgetChunksScratchSpace.SetBit(index);
+                }
+
+                for (var y = _numberOfVerticalChunks - 1; y >= by; y--)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    _indicesOfGadgetChunksScratchSpace.SetBit(index);
                 }
             }
         }
