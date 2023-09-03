@@ -7,12 +7,15 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public abstract class GadgetBase : IIdEquatable<GadgetBase>
+public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds
 {
     public int Id { get; }
     public abstract GadgetType Type { get; }
     public abstract Orientation Orientation { get; }
     public RectangularLevelRegion GadgetBounds { get; }
+
+    public LevelPosition TopLeftPixel => GadgetBounds.TopLeft;
+    public LevelPosition BottomRightPixel => GadgetBounds.BottomRight;
 
     protected GadgetBase(
         int id,
