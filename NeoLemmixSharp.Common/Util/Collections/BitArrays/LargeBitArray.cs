@@ -119,7 +119,7 @@ public sealed class LargeBitArray : IBitArray
 
     private void FindIndexOfFirstSetBit(int startingIndex)
     {
-        while (_bits[startingIndex] == 0U && startingIndex < _bits.Length)
+        while (startingIndex < _bits.Length && _bits[startingIndex] == 0U)
         {
             ++startingIndex;
         }
