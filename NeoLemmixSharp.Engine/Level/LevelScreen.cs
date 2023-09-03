@@ -20,8 +20,6 @@ public sealed class LevelScreen : IBaseScreen
 {
     public static LevelScreen Current { get; private set; }
 
-    private readonly GadgetBase[] _gadgets;
-
     private readonly UpdateScheduler _updateScheduler;
     private readonly LevelInputController _inputController;
     private readonly LevelTimer _levelTimer;
@@ -34,10 +32,10 @@ public sealed class LevelScreen : IBaseScreen
     private readonly GadgetManager _gadgetManager;
     private readonly LevelRenderer _screenRenderer;
 
-    public bool IsDisposed { get; set; }
+    public bool IsDisposed { get; private set; }
     public IGameWindow GameWindow { get; set; }
     IScreenRenderer IBaseScreen.ScreenRenderer => _screenRenderer;
-    public string ScreenTitle { get; init; }
+    public string ScreenTitle { get; }
 
     public LevelTimer LevelTimer => _levelTimer;
     public TerrainManager TerrainManager => _terrainManager;
@@ -45,7 +43,6 @@ public sealed class LevelScreen : IBaseScreen
 
     public LevelScreen(
         LevelData levelData,
-        GadgetBase[] gadgets,
         UpdateScheduler updateScheduler,
         LevelInputController levelInputController,
         LevelTimer levelTimer,
@@ -59,8 +56,6 @@ public sealed class LevelScreen : IBaseScreen
         LevelRenderer levelRenderer)
     {
         ScreenTitle = levelData.LevelTitle;
-
-        _gadgets = gadgets;
 
         _updateScheduler = updateScheduler;
         _inputController = levelInputController;
@@ -94,7 +89,7 @@ public sealed class LevelScreen : IBaseScreen
         HandleKeyboardInput();
 
         return;
-
+        /*
 
         _inputController.Tick();
         HandleKeyboardInput();
@@ -118,6 +113,7 @@ public sealed class LevelScreen : IBaseScreen
         // _lemmingManager.UpdateLemmings();
 
         _updateScheduler.Tick();
+        */
     }
 
     private void HandleKeyboardInput()
@@ -155,6 +151,7 @@ public sealed class LevelScreen : IBaseScreen
         LevelCursor.LevelScreen = null;
 
         _screenRenderer.Dispose();
+        IsDisposed = true;
         Current = null;
 #pragma warning restore CS8625
     }

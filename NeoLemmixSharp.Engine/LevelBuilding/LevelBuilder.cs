@@ -101,7 +101,7 @@ public sealed class LevelBuilder : IDisposable
             terrainRenderer,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
-        
+
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(levelCursor);
 
@@ -146,7 +146,6 @@ public sealed class LevelBuilder : IDisposable
 
         return new LevelScreen(
             levelData,
-            levelGadgets,
             updateScheduler,
             inputController,
             levelTimer,
