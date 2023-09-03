@@ -15,6 +15,8 @@ public sealed class LargeBitArray : IBitArray
 
     private readonly uint[] _bits;
 
+    private int _indexOfFirstSetBit;
+
     public int Length { get; }
     public int Count { get; private set; }
 
@@ -28,6 +30,7 @@ public sealed class LargeBitArray : IBitArray
         var numberOfInts = (Length + Mask) >> Shift;
 
         _bits = new uint[numberOfInts];
+        _indexOfFirstSetBit = numberOfInts - 1;
 
         if (!initialBitFlag)
             return;
@@ -38,13 +41,15 @@ public sealed class LargeBitArray : IBitArray
         var mask = (1U << shift) - 1U;
         _bits[^1] = mask;
         Count = length;
+        _indexOfFirstSetBit = 0;
     }
 
-    private LargeBitArray(int length, uint[] bits, int count)
+    private LargeBitArray(int length, uint[] bits, int count, int indexOfFirstSetBit)
     {
         Length = length;
         _bits = (uint[])bits.Clone();
         Count = count;
+        _indexOfFirstSetBit = indexOfFirstSetBit;
     }
 
     [Pure]
@@ -65,6 +70,7 @@ public sealed class LargeBitArray : IBitArray
 
         _bits[intIndex] = newValue;
         Count++;
+        _indexOfFirstSetBit = Math.Min(_indexOfFirstSetBit, intIndex);
 
         return true;
     }
@@ -81,6 +87,7 @@ public sealed class LargeBitArray : IBitArray
 
         _bits[intIndex] = newValue;
         Count--;
+        FindIndexOfFirstSetBit(_indexOfFirstSetBit);
 
         return true;
     }
@@ -98,20 +105,33 @@ public sealed class LargeBitArray : IBitArray
         {
             Count++;
             result = true;
+            _indexOfFirstSetBit = Math.Min(_indexOfFirstSetBit, intIndex);
         }
         else
         {
             Count--;
             result = false;
+            FindIndexOfFirstSetBit(_indexOfFirstSetBit);
         }
 
         return result;
+    }
+
+    private void FindIndexOfFirstSetBit(int startingIndex)
+    {
+        while (_bits[startingIndex] == 0U && startingIndex < _bits.Length)
+        {
+            ++startingIndex;
+        }
+
+        _indexOfFirstSetBit = startingIndex;
     }
 
     public void Clear()
     {
         Array.Clear(_bits, 0, _bits.Length);
         Count = 0;
+        _indexOfFirstSetBit = _bits.Length - 1;
     }
 
     public void CopyTo(int[] array, int arrayIndex)
@@ -135,7 +155,7 @@ public sealed class LargeBitArray : IBitArray
     }
 
     object ICloneable.Clone() => Clone();
-    public LargeBitArray Clone() => new(Length, _bits, Count);
+    public LargeBitArray Clone() => new(Length, _bits, Count, _indexOfFirstSetBit);
 
     public Enumerator GetEnumerator() => new(this);
     IEnumerator<int> IEnumerable<int>.GetEnumerator() => new Enumerator(this);
@@ -154,9 +174,9 @@ public sealed class LargeBitArray : IBitArray
         public Enumerator(LargeBitArray bitArray)
         {
             _bitArray = bitArray;
-            _v = _bitArray._bits[0];
-            _remaining = _bitArray.Count;
-            _index = 0;
+            _index = bitArray._indexOfFirstSetBit;
+            _v = bitArray._bits[_index];
+            _remaining = bitArray.Count;
             Current = -1;
         }
 
@@ -184,9 +204,9 @@ public sealed class LargeBitArray : IBitArray
 
         public void Reset()
         {
-            _v = _bitArray._bits[0];
+            _index = _bitArray._indexOfFirstSetBit;
+            _v = _bitArray._bits[_index];
             _remaining = _bitArray.Count;
-            _index = 0;
             Current = -1;
         }
 
@@ -199,10 +219,16 @@ public sealed class LargeBitArray : IBitArray
         Debug.Assert(Length == other.Length);
 
         var count = 0;
+        _indexOfFirstSetBit = _bits.Length - 1;
         for (var i = 0; i < _bits.Length; i++)
         {
-            _bits[i] |= other._bits[i];
-            count += BitOperations.PopCount(_bits[i]);
+            var newValue = _bits[i] | other._bits[i];
+            _bits[i] = newValue;
+            count += BitOperations.PopCount(newValue);
+            if (newValue != 0)
+            {
+                _indexOfFirstSetBit = Math.Min(_indexOfFirstSetBit, i);
+            }
         }
         Count = count;
     }
@@ -212,10 +238,16 @@ public sealed class LargeBitArray : IBitArray
         Debug.Assert(Length == other.Length);
 
         var count = 0;
+        _indexOfFirstSetBit = _bits.Length - 1;
         for (var i = 0; i < _bits.Length; i++)
         {
-            _bits[i] &= other._bits[i];
-            count += BitOperations.PopCount(_bits[i]);
+            var newValue = _bits[i] & other._bits[i];
+            _bits[i] = newValue;
+            count += BitOperations.PopCount(newValue);
+            if (newValue != 0)
+            {
+                _indexOfFirstSetBit = Math.Min(_indexOfFirstSetBit, i);
+            }
         }
         Count = count;
     }
@@ -225,10 +257,16 @@ public sealed class LargeBitArray : IBitArray
         Debug.Assert(Length == other.Length);
 
         var count = 0;
+        _indexOfFirstSetBit = _bits.Length - 1;
         for (var i = 0; i < _bits.Length; i++)
         {
-            _bits[i] &= ~other._bits[i];
-            count += BitOperations.PopCount(_bits[i]);
+            var newValue = _bits[i] & ~other._bits[i];
+            _bits[i] = newValue;
+            count += BitOperations.PopCount(newValue);
+            if (newValue != 0)
+            {
+                _indexOfFirstSetBit = Math.Min(_indexOfFirstSetBit, i);
+            }
         }
         Count = count;
     }
@@ -238,10 +276,16 @@ public sealed class LargeBitArray : IBitArray
         Debug.Assert(Length == other.Length);
 
         var count = 0;
+        _indexOfFirstSetBit = _bits.Length - 1;
         for (var i = 0; i < _bits.Length; i++)
         {
-            _bits[i] ^= other._bits[i];
-            count += BitOperations.PopCount(_bits[i]);
+            var newValue = _bits[i] ^ other._bits[i];
+            _bits[i] = newValue;
+            count += BitOperations.PopCount(newValue);
+            if (newValue != 0)
+            {
+                _indexOfFirstSetBit = Math.Min(_indexOfFirstSetBit, i);
+            }
         }
         Count = count;
     }
@@ -283,16 +327,18 @@ public sealed class LargeBitArray : IBitArray
     {
         Debug.Assert(Length == other.Length);
 
+        var allEqual = true;
         for (var i = 0; i < _bits.Length; i++)
         {
             var bits = _bits[i];
             var otherBits = other._bits[i];
-            if (bits != otherBits &&
-                (bits | otherBits) != bits)
+            allEqual &= bits == otherBits;
+
+            if ((bits | otherBits) != bits)
                 return false;
         }
 
-        return true;
+        return !allEqual;
     }
 
     [Pure]
@@ -300,16 +346,18 @@ public sealed class LargeBitArray : IBitArray
     {
         Debug.Assert(Length == other.Length);
 
+        var allEqual = true;
         for (var i = 0; i < _bits.Length; i++)
         {
             var bits = _bits[i];
             var otherBits = other._bits[i];
-            if (bits != otherBits &&
-                (bits | otherBits) == bits)
+            allEqual &= bits == otherBits;
+
+            if ((bits | otherBits) != bits)
                 return false;
         }
 
-        return true;
+        return !allEqual;
     }
 
     [Pure]
