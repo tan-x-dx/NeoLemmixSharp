@@ -71,11 +71,17 @@ public sealed class UpdateScheduler
 
         _levelCursor.OnNewFrame();
 
+        var allLemmings = _lemmingManager.AllLemmings;
+        var activeLemmingEnumerator = _lemmingManager.ActiveLemmingsEnumerator;
+
         var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
         if (mouseIsInLevelViewPort)
         {
-            foreach (var lemming in _lemmingManager.AllLemmings)
+            while (activeLemmingEnumerator.MoveNext())
             {
+                var lemmingId = activeLemmingEnumerator.Current;
+                var lemming = allLemmings[lemmingId];
+
                 _levelCursor.CheckLemming(lemming);
             }
         }
@@ -87,8 +93,13 @@ public sealed class UpdateScheduler
 
         HandleSkillAssignment();
 
-        foreach (var lemming in _lemmingManager.AllLemmings)
+        activeLemmingEnumerator.Reset();
+
+        while (activeLemmingEnumerator.MoveNext())
         {
+            var lemmingId = activeLemmingEnumerator.Current;
+            var lemming = allLemmings[lemmingId];
+
             CurrentlySelectedFrameUpdater.UpdateLemming(lemming);
         }
 

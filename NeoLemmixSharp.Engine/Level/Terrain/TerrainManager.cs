@@ -61,7 +61,7 @@ public sealed class TerrainManager
     }
 
     [Pure]
-    private PixelType PixelTypeAtPosition(LevelPosition levelPosition)
+    public PixelType PixelTypeAtPosition(LevelPosition levelPosition)
     {
         if (PositionOutOfBounds(levelPosition))
             return PixelType.Void;

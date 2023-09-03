@@ -1,13 +1,44 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
-public sealed class LemmingManager
+namespace NeoLemmixSharp.Engine.Level.Lemmings;
+
+public sealed class LemmingManager : IComparer<Lemming>
 {
+    private readonly LargeBitArray _activeLemmings;
     private readonly Lemming[] _lemmings;
 
+    public int LemmingsToRelease { get; private set; }
+    public int LemmingsOut { get; private set; }
+    public int LemmingsRemoved { get; private set; }
+
+    public int TotalNumberOfLemmings => _lemmings.Length;
     public ReadOnlySpan<Lemming> AllLemmings => new(_lemmings);
+
+    public LargeBitArray.Enumerator ActiveLemmingsEnumerator => _activeLemmings.GetEnumerator();
 
     public LemmingManager(Lemming[] lemmings)
     {
         _lemmings = lemmings;
+        Array.Sort(_lemmings, this);
+        _lemmings.ValidateUniqueIds();
+
+        _activeLemmings = new LargeBitArray(_lemmings.Length, true);
+    }
+
+    public bool LemmingIsActive(Lemming lemming) => _activeLemmings.GetBit(lemming.Id);
+
+    public void RemoveLemming(Lemming lemming)
+    {
+
+
+        _activeLemmings.ClearBit(lemming.Id);
+    }
+
+    int IComparer<Lemming>.Compare(Lemming? x, Lemming? y)
+    {
+        if (ReferenceEquals(x, y)) return 0;
+        if (y is null) return 1;
+        if (x is null) return -1;
+        return x.Id.CompareTo(y.Id);
     }
 }

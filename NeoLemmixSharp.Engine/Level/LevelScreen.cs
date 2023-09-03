@@ -40,6 +40,7 @@ public sealed class LevelScreen : IBaseScreen
     public string ScreenTitle { get; init; }
 
     public LevelTimer LevelTimer => _levelTimer;
+    public TerrainManager TerrainManager => _terrainManager;
     public GadgetManager GadgetManager => _gadgetManager;
 
     public LevelScreen(
@@ -73,13 +74,14 @@ public sealed class LevelScreen : IBaseScreen
         _gadgetManager = gadgetManager;
         _screenRenderer = levelRenderer;
 
+        Current = this;
         Orientation.SetTerrain(terrainManager);
         LemmingAction.SetHelpers(terrainManager, gadgetManager);
         LemmingSkill.SetTerrain(terrainManager);
+        Lemming.SetLevelScreen(this);
         TerrainEraseMask.SetTerrain(terrainManager);
         TerrainAddMask.SetTerrain(terrainManager);
         LevelCursor.LevelScreen = this;
-        Current = this;
     }
 
     public void Tick()
@@ -147,6 +149,7 @@ public sealed class LevelScreen : IBaseScreen
         Orientation.SetTerrain(null);
         LemmingAction.SetHelpers(null, null);
         LemmingSkill.SetTerrain(null);
+        Lemming.SetLevelScreen(null);
         TerrainEraseMask.SetTerrain(null);
         TerrainAddMask.SetTerrain(null);
         LevelCursor.LevelScreen = null;

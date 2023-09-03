@@ -4,17 +4,21 @@ using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class Lemming : IIdEquatable<Lemming>
 {
-    public int Id { get; }
+    private static LevelScreen LevelScreen { get; set; }
 
-    public bool IsActive = true;
-    public bool IsAlive = true;
-    public bool HasExited;
+    public static void SetLevelScreen(LevelScreen levelScreen)
+    {
+        LevelScreen = levelScreen;
+    }
+
+    public int Id { get; }
 
     public bool ConstructivePositionFreeze;
     public bool IsStartingAction;
@@ -122,6 +126,16 @@ public sealed class Lemming : IIdEquatable<Lemming>
 
     private bool CheckLevelBoundaries()
     {
+        var footPixel = LevelScreen.TerrainManager.PixelTypeAtPosition(Orientation.MoveUp(LevelPosition, 1));
+        var headPixel = LevelScreen.TerrainManager.PixelTypeAtPosition(Orientation.MoveUp(LevelPosition, 6));
+
+        if (footPixel.IsVoid() && headPixel.IsVoid())
+        {
+            //
+
+            return false;
+        }
+
         return true;
     }
 
@@ -132,7 +146,7 @@ public sealed class Lemming : IIdEquatable<Lemming>
 
         }
 
-        var gadgetManager = LevelScreen.Current.GadgetManager;
+        var gadgetManager = LevelScreen.GadgetManager;
 
         var allGadgets = gadgetManager.AllGadgets;
         var gadgetsEnumerator = gadgetManager.GetAllGadgetIdsForPosition(LevelPosition);
@@ -294,9 +308,10 @@ end;
         Renderer.UpdateLemmingState();
     }
 
-    public void SetNextAction(LemmingAction nextAction)
+    public void SetOrientation(Orientation newOrientation)
     {
-        NextAction = nextAction;
+        Orientation = newOrientation;
+        Renderer.UpdateLemmingState();
     }
 
     public void SetCurrentAction(LemmingAction lemmingAction)
@@ -305,11 +320,15 @@ end;
         Renderer.UpdateLemmingState();
     }
 
+    public void SetNextAction(LemmingAction nextAction)
+    {
+        NextAction = nextAction;
+    }
+
     public bool Equals(Lemming? other) => Id == (other?.Id ?? -1);
     public override bool Equals(object? obj) => obj is Lemming other && Id == other.Id;
     public override int GetHashCode() => Id;
 
     public static bool operator ==(Lemming left, Lemming right) => left.Id == right.Id;
-
     public static bool operator !=(Lemming left, Lemming right) => left.Id != right.Id;
 }
