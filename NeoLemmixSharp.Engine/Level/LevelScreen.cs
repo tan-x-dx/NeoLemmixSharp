@@ -20,26 +20,22 @@ public sealed class LevelScreen : IBaseScreen
 {
     public static LevelScreen Current { get; private set; }
 
-    private readonly UpdateScheduler _updateScheduler;
-    private readonly LevelInputController _inputController;
-    private readonly LevelTimer _levelTimer;
-    private readonly SkillSetManager _skillSetManager;
-    private readonly ILevelControlPanel _controlPanel;
-    private readonly LevelCursor _levelCursor;
-    private readonly Viewport _viewport;
-    private readonly LemmingManager _lemmingManager;
-    private readonly TerrainManager _terrainManager;
-    private readonly GadgetManager _gadgetManager;
-    private readonly LevelRenderer _screenRenderer;
+    public UpdateScheduler UpdateScheduler { get; }
+    public LevelInputController InputController { get; }
+    public LevelTimer LevelTimer { get; }
+    public SkillSetManager SkillSetManager { get; }
+    public ILevelControlPanel ControlPanel { get; }
+    public LevelCursor LevelCursor { get; }
+    public Viewport Viewport { get; }
+    public LemmingManager LemmingManager { get; }
+    public TerrainManager TerrainManager { get; }
+    public GadgetManager GadgetManager { get; }
+    public LevelRenderer ScreenRenderer { get; }
 
-    public bool IsDisposed { get; private set; }
     public IGameWindow GameWindow { get; set; }
-    IScreenRenderer IBaseScreen.ScreenRenderer => _screenRenderer;
+    IScreenRenderer IBaseScreen.ScreenRenderer => ScreenRenderer;
     public string ScreenTitle { get; }
-
-    public LevelTimer LevelTimer => _levelTimer;
-    public TerrainManager TerrainManager => _terrainManager;
-    public GadgetManager GadgetManager => _gadgetManager;
+    public bool IsDisposed { get; private set; }
 
     public LevelScreen(
         LevelData levelData,
@@ -57,26 +53,25 @@ public sealed class LevelScreen : IBaseScreen
     {
         ScreenTitle = levelData.LevelTitle;
 
-        _updateScheduler = updateScheduler;
-        _inputController = levelInputController;
-        _levelTimer = levelTimer;
-        _skillSetManager = skillSetManager;
-        _controlPanel = controlPanel;
-        _levelCursor = cursor;
-        _viewport = viewport;
-        _lemmingManager = lemmingManager;
-        _terrainManager = terrainManager;
-        _gadgetManager = gadgetManager;
-        _screenRenderer = levelRenderer;
+        UpdateScheduler = updateScheduler;
+        InputController = levelInputController;
+        LevelTimer = levelTimer;
+        SkillSetManager = skillSetManager;
+        ControlPanel = controlPanel;
+        LevelCursor = cursor;
+        Viewport = viewport;
+        LemmingManager = lemmingManager;
+        TerrainManager = terrainManager;
+        GadgetManager = gadgetManager;
+        ScreenRenderer = levelRenderer;
 
         Current = this;
         Orientation.SetTerrain(terrainManager);
         LemmingAction.SetHelpers(terrainManager, gadgetManager);
         LemmingSkill.SetTerrain(terrainManager);
-        Lemming.SetLevelScreen(this);
+        Lemming.SetHelpers(terrainManager, gadgetManager);
         TerrainEraseMask.SetTerrain(terrainManager);
         TerrainAddMask.SetTerrain(terrainManager);
-        LevelCursor.LevelScreen = this;
     }
 
     public void Tick()
@@ -84,7 +79,7 @@ public sealed class LevelScreen : IBaseScreen
         if (!GameWindow.IsActive)
             return;
 
-        _updateScheduler.Tick();
+        UpdateScheduler.Tick();
 
         HandleKeyboardInput();
 
@@ -118,12 +113,12 @@ public sealed class LevelScreen : IBaseScreen
 
     private void HandleKeyboardInput()
     {
-        if (_inputController.Quit.IsPressed)
+        if (InputController.Quit.IsPressed)
         {
             GameWindow.Escape();
         }
 
-        if (_inputController.ToggleFullScreen.IsPressed)
+        if (InputController.ToggleFullScreen.IsPressed)
         {
             GameWindow.ToggleBorderless();
         }
@@ -134,9 +129,9 @@ public sealed class LevelScreen : IBaseScreen
         var windowWidth = GameWindow.WindowWidth;
         var windowHeight = GameWindow.WindowHeight;
 
-        _controlPanel.SetWindowDimensions(windowWidth, windowHeight);
-        _viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)_controlPanel).ControlPanelScreenHeight);
-        _screenRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
+        ControlPanel.SetWindowDimensions(windowWidth, windowHeight);
+        Viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)ControlPanel).ControlPanelScreenHeight);
+        ScreenRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
     }
 
     public void Dispose()
@@ -145,12 +140,11 @@ public sealed class LevelScreen : IBaseScreen
         Orientation.SetTerrain(null);
         LemmingAction.SetHelpers(null, null);
         LemmingSkill.SetTerrain(null);
-        Lemming.SetLevelScreen(null);
+        Lemming.SetHelpers(null, null);
         TerrainEraseMask.SetTerrain(null);
         TerrainAddMask.SetTerrain(null);
-        LevelCursor.LevelScreen = null;
 
-        _screenRenderer.Dispose();
+        ScreenRenderer.Dispose();
         IsDisposed = true;
         Current = null;
 #pragma warning restore CS8625

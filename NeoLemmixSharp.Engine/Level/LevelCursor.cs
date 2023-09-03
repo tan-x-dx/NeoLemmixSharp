@@ -11,10 +11,6 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelCursor
 {
-#pragma warning disable CS8618
-    public static LevelScreen LevelScreen { private get; set; }
-#pragma warning restore CS8618
-
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
     private readonly ILevelControlPanel _controlPanel;

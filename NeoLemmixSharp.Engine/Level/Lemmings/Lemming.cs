@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
@@ -11,11 +12,13 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class Lemming : IIdEquatable<Lemming>
 {
-    private static LevelScreen LevelScreen { get; set; }
+    private static TerrainManager TerrainManager { get; set; }
+    private static GadgetManager GadgetManager { get; set; }
 
-    public static void SetLevelScreen(LevelScreen levelScreen)
+    public static void SetHelpers(TerrainManager terrainManager, GadgetManager gadgetManager)
     {
-        LevelScreen = levelScreen;
+        TerrainManager = terrainManager;
+        GadgetManager = gadgetManager;
     }
 
     public int Id { get; }
@@ -126,8 +129,8 @@ public sealed class Lemming : IIdEquatable<Lemming>
 
     private bool CheckLevelBoundaries()
     {
-        var footPixel = LevelScreen.TerrainManager.PixelTypeAtPosition(Orientation.MoveUp(LevelPosition, 1));
-        var headPixel = LevelScreen.TerrainManager.PixelTypeAtPosition(Orientation.MoveUp(LevelPosition, 6));
+        var footPixel = TerrainManager.PixelTypeAtPosition(Orientation.MoveUp(LevelPosition, 1));
+        var headPixel = TerrainManager.PixelTypeAtPosition(Orientation.MoveUp(LevelPosition, 6));
 
         if (footPixel.IsVoid() && headPixel.IsVoid())
         {
@@ -146,10 +149,8 @@ public sealed class Lemming : IIdEquatable<Lemming>
 
         }
 
-        var gadgetManager = LevelScreen.GadgetManager;
-
-        var allGadgets = gadgetManager.AllGadgets;
-        var gadgetsEnumerator = gadgetManager.GetAllGadgetIdsForPosition(LevelPosition);
+        var allGadgets = GadgetManager.AllGadgets;
+        var gadgetsEnumerator = GadgetManager.GetAllGadgetIdsForPosition(LevelPosition);
         while (gadgetsEnumerator.MoveNext())
         {
             var gadgetId = gadgetsEnumerator.Current;
