@@ -82,6 +82,8 @@ public sealed class UpdateScheduler
 
                 _levelCursor.CheckLemming(lemming);
             }
+
+            activeLemmingEnumerator.Reset();
         }
 
         foreach (var gadget in _gadgetManager.AllGadgets)
@@ -90,8 +92,6 @@ public sealed class UpdateScheduler
         }
 
         HandleSkillAssignment();
-
-        activeLemmingEnumerator.Reset();
 
         while (activeLemmingEnumerator.MoveNext())
         {

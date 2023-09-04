@@ -32,6 +32,21 @@ public abstract class InputController : ISimpleHasher<Keys>, IComparer<KeyAction
         ValidateKeyActions();
     }
 
+    protected abstract void SetUpBindings();
+
+    protected void Bind(Keys keyCode, KeyAction keyAction)
+    {
+        _keyMapping.Add((keyCode, keyAction));
+        keyAction.Id = _keyActions.Count;
+        _keyActions.Add(keyAction);
+    }
+
+    private void ValidateKeyActions()
+    {
+        _keyActions.ValidateUniqueIds();
+        _keyActions.Sort(this);
+    }
+
     public void Tick()
     {
         for (var i = 0; i < _keyActions.Count; i++)
@@ -50,21 +65,6 @@ public abstract class InputController : ISimpleHasher<Keys>, IComparer<KeyAction
 
         UpdateKeyStates();
         UpdateMouseButtonStates();
-    }
-
-    protected abstract void SetUpBindings();
-
-    protected void Bind(Keys keyCode, KeyAction keyAction)
-    {
-        _keyMapping.Add((keyCode, keyAction));
-        keyAction.Id = _keyActions.Count;
-        _keyActions.Add(keyAction);
-    }
-
-    private void ValidateKeyActions()
-    {
-        _keyActions.ValidateUniqueIds();
-        _keyActions.Sort(this);
     }
 
     public void ReleaseAllKeys()
