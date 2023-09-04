@@ -138,93 +138,42 @@ public sealed class PositionHelper<T>
 
     private void UseIndicesForIntervals(IChunkIndexUser chunkIndexUser, int ax, int ay, int bx, int by)
     {
-        // Is there a more elegant way to deal with all of these cases?
-
-        if (ax <= bx &&
-            ay <= by)
+        if (bx < ax)
         {
-            for (var x = ax; x <= bx; x++)
-            {
-                for (var y = ay; y <= by; y++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-
-                    chunkIndexUser.UseChunkIndex(index);
-                }
-            }
+            bx += _numberOfHorizontalChunks;
         }
-        else if (ax > bx && ay <= by)
+        var x = 1 + bx - ax;
+
+        if (by < ay)
         {
-            for (var y = ay; y <= by; y++)
-            {
-                for (var x = 0; x <= bx; x++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-
-                    chunkIndexUser.UseChunkIndex(index);
-                }
-
-                for (var x = _numberOfHorizontalChunks - 1; x >= ax; x--)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-
-                    chunkIndexUser.UseChunkIndex(index);
-                }
-            }
+            by += _numberOfVerticalChunks;
         }
-        else if (ax <= bx && ay > by)
+        var yCount = 1 + by - ay;
+
+        var x1 = ax;
+        while (x > 0)
         {
-            for (var x = ax; x <= bx; x++)
+            var y1 = ay;
+            var y = yCount;
+            while (y > 0)
             {
-                for (var y = 0; y <= by; y++)
+                var index = _numberOfHorizontalChunks * y1 + x1;
+
+                chunkIndexUser.UseChunkIndex(index);
+
+                y--;
+                y1++;
+                if (y1 == _numberOfVerticalChunks)
                 {
-                    var index = _numberOfHorizontalChunks * y + x;
-
-                    chunkIndexUser.UseChunkIndex(index);
-                }
-
-                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-
-                    chunkIndexUser.UseChunkIndex(index);
-                }
-            }
-        }
-        else
-        {
-            for (var x = 0; x <= ax; x++)
-            {
-                for (var y = 0; y <= by; y++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-
-                    chunkIndexUser.UseChunkIndex(index);
-                }
-
-                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-
-                    chunkIndexUser.UseChunkIndex(index);
+                    y1 = 0;
                 }
             }
 
-            for (var x = _numberOfHorizontalChunks - 1; x >= bx; x--)
+            x--;
+            x1++;
+            if (x1 == _numberOfHorizontalChunks)
             {
-                for (var y = 0; y <= by; y++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-
-                    chunkIndexUser.UseChunkIndex(index);
-                }
-
-                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-
-                    chunkIndexUser.UseChunkIndex(index);
-                }
+                x1 = 0;
             }
         }
     }
@@ -259,22 +208,16 @@ public sealed class PositionHelper<T>
 
     private sealed class ScratchSpaceChunkIndexUser : IChunkIndexUser
     {
-        private readonly LargeSimpleSet<T>?[] _itemChunks;
         private readonly LargeBitArray _indicesOfItemChunksScratchSpace;
 
         public ScratchSpaceChunkIndexUser(PositionHelper<T> manager)
         {
-            _itemChunks = manager._itemChunks;
             _indicesOfItemChunksScratchSpace = manager._indicesOfItemChunksScratchSpace;
         }
 
         public void UseChunkIndex(int index)
         {
-            var itemSet = _itemChunks[index];
-            if (itemSet is not null)
-            {
-                _indicesOfItemChunksScratchSpace.SetBit(index);
-            }
+            _indicesOfItemChunksScratchSpace.SetBit(index);
         }
     }
 
