@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
-public sealed class ChunkManager<T> : IComparer<T>
+public sealed class ChunkManager<T> : ISimpleHasher<T>, IComparer<T>
     where T : class, IIdEquatable<T>, IRectangularBounds
 {
     private const int ChunkSizeBitShift = 6;
@@ -14,7 +14,7 @@ public sealed class ChunkManager<T> : IComparer<T>
     private const int ChunkSizeBitMask = ChunkSize - 1;
 
     private readonly T[] _allItems;
-    private readonly LargeBitArray?[] _itemChunks;
+    private readonly LargeSimpleSet<T>?[] _itemChunks;
     private readonly LargeBitArray _indicesOfItemChunks;
 
     private readonly LargeBitArray _indicesOfItemChunksScratchSpace;
@@ -40,29 +40,24 @@ public sealed class ChunkManager<T> : IComparer<T>
         _numberOfHorizontalChunks = (_horizontalBoundaryBehaviour.LevelWidth + ChunkSizeBitMask) >> ChunkSizeBitShift;
         _numberOfVerticalChunks = (_verticalBoundaryBehaviour.LevelHeight + ChunkSizeBitMask) >> ChunkSizeBitShift;
 
-        _itemChunks = new LargeBitArray[_numberOfHorizontalChunks * _numberOfVerticalChunks];
+        _itemChunks = new LargeSimpleSet<T>[_numberOfHorizontalChunks * _numberOfVerticalChunks];
         _indicesOfItemChunks = new LargeBitArray(_itemChunks.Length);
         _indicesOfItemChunksScratchSpace = new LargeBitArray(_itemChunks.Length);
-
-        foreach (var item in allItems)
-        {
-            UpdateItemPosition(item);
-        }
     }
 
     [Pure]
-    public LargeBitArray.Enumerator GetAllItemIdsForPosition(LevelPosition levelPosition)
+    public LargeSimpleSet<T>.Enumerator GetAllItemIdsForPosition(LevelPosition levelPosition)
     {
         var shiftX = levelPosition.X >> ChunkSizeBitShift;
         var shiftY = levelPosition.Y >> ChunkSizeBitShift;
 
         if (shiftX < 0 || shiftX >= _numberOfHorizontalChunks ||
             shiftY < 0 || shiftY >= _numberOfVerticalChunks)
-            return new LargeBitArray.Enumerator();
+            return new LargeSimpleSet<T>.Enumerator();
 
         var index = _numberOfHorizontalChunks * shiftY + shiftX;
         var itemChunk = _itemChunks[index];
-        return itemChunk?.GetEnumerator() ?? new LargeBitArray.Enumerator();
+        return itemChunk?.GetEnumerator() ?? new LargeSimpleSet<T>.Enumerator();
     }
 
     public void UpdateItemPosition(int itemId)
@@ -92,16 +87,16 @@ public sealed class ChunkManager<T> : IComparer<T>
         foreach (var itemChunkIndex in _indicesOfItemChunks)
         {
             var itemChunk = _itemChunks[itemChunkIndex]!;
-            itemChunk.ClearBit(item.Id);
+            itemChunk.Remove(item);
         }
 
         foreach (var itemChunkIndex in _indicesOfItemChunksScratchSpace)
         {
             ref var itemChunk = ref _itemChunks[itemChunkIndex];
-            itemChunk ??= new LargeBitArray(_allItems.Length);
+            itemChunk ??= new LargeSimpleSet<T>(this);
             _indicesOfItemChunks.SetBit(itemChunkIndex);
 
-            itemChunk.SetBit(item.Id);
+            itemChunk.Add(item);
         }
     }
 
@@ -200,6 +195,10 @@ public sealed class ChunkManager<T> : IComparer<T>
             _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y));
     }
 
+    bool IEquatable<ISimpleHasher<T>>.Equals(ISimpleHasher<T>? other) => ReferenceEquals(this, other);
+    int ISimpleHasher<T>.NumberOfItems => _allItems.Length;
+    int ISimpleHasher<T>.Hash(T item) => item.Id;
+    T ISimpleHasher<T>.Unhash(int index) => _allItems[index];
     int IComparer<T>.Compare(T? x, T? y)
     {
         if (ReferenceEquals(x, y)) return 0;

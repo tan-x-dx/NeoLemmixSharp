@@ -27,13 +27,11 @@ public sealed class FallerAction : LemmingAction
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        var allGadgets = Gadgets.AllGadgets;
-        var idEnumerator = Gadgets.GetAllGadgetIdsForPosition(lemmingPosition);
+        var gadgetEnumerator = Gadgets.GetAllGadgetsForPosition(lemmingPosition);
 
-        while (idEnumerator.MoveNext())
+        while (gadgetEnumerator.MoveNext())
         {
-            var gadgetId = idEnumerator.Current;
-            var gadget = allGadgets[gadgetId];
+            var gadget = gadgetEnumerator.Current;
 
             if (gadget.Type != GadgetType.Updraft)
                 continue;
@@ -63,12 +61,11 @@ public sealed class FallerAction : LemmingAction
             lemming.DistanceFallen++;
             lemming.TrueDistanceFallen++;
 
-            idEnumerator = Gadgets.GetAllGadgetIdsForPosition(lemmingPosition);
+            gadgetEnumerator = Gadgets.GetAllGadgetsForPosition(lemmingPosition);
 
-            while (idEnumerator.MoveNext())
+            while (gadgetEnumerator.MoveNext())
             {
-                var gadgetId = idEnumerator.Current;
-                var gadget = allGadgets[gadgetId];
+                var gadget = gadgetEnumerator.Current;
 
                 if (gadget.Type != GadgetType.Updraft)
                     continue;

@@ -2,9 +2,9 @@
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class LemmingManager : IComparer<Lemming>
+public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
 {
-    private readonly LargeBitArray _activeLemmings;
+    private readonly LargeSimpleSet<Lemming> _activeLemmings;
     private readonly Lemming[] _lemmings;
 
     public int LemmingsToRelease { get; private set; }
@@ -14,7 +14,7 @@ public sealed class LemmingManager : IComparer<Lemming>
     public int TotalNumberOfLemmings => _lemmings.Length;
     public ReadOnlySpan<Lemming> AllLemmings => new(_lemmings);
 
-    public LargeBitArray.Enumerator ActiveLemmingsEnumerator => _activeLemmings.GetEnumerator();
+    public LargeSimpleSet<Lemming>.Enumerator ActiveLemmingsEnumerator => _activeLemmings.GetEnumerator();
 
     public LemmingManager(Lemming[] lemmings)
     {
@@ -22,16 +22,16 @@ public sealed class LemmingManager : IComparer<Lemming>
         Array.Sort(_lemmings, this);
         _lemmings.ValidateUniqueIds();
 
-        _activeLemmings = new LargeBitArray(_lemmings.Length, true);
+        _activeLemmings = new LargeSimpleSet<Lemming>(this, true);
     }
 
-    public bool LemmingIsActive(Lemming lemming) => _activeLemmings.GetBit(lemming.Id);
+    public bool LemmingIsActive(Lemming lemming) => _activeLemmings.Contains(lemming);
 
     public void RemoveLemming(Lemming lemming)
     {
 
 
-        _activeLemmings.ClearBit(lemming.Id);
+        _activeLemmings.Remove(lemming);
     }
 
     int IComparer<Lemming>.Compare(Lemming? x, Lemming? y)
@@ -41,4 +41,9 @@ public sealed class LemmingManager : IComparer<Lemming>
         if (x is null) return -1;
         return x.Id.CompareTo(y.Id);
     }
+
+    bool IEquatable<ISimpleHasher<Lemming>>.Equals(ISimpleHasher<Lemming>? other) => ReferenceEquals(this, other);
+    int ISimpleHasher<Lemming>.NumberOfItems => _lemmings.Length;
+    int ISimpleHasher<Lemming>.Hash(Lemming item) => item.Id;
+    Lemming ISimpleHasher<Lemming>.Unhash(int index) => _lemmings[index];
 }

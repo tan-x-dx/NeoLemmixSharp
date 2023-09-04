@@ -31,7 +31,7 @@ public sealed class GadgetManager
     }
 
     [Pure]
-    public LargeBitArray.Enumerator GetAllGadgetIdsForPosition(LevelPosition levelPosition)
+    public LargeSimpleSet<GadgetBase>.Enumerator GetAllGadgetsForPosition(LevelPosition levelPosition)
     {
         return _gadgetChunkManager.GetAllItemIdsForPosition(levelPosition);
     }
@@ -39,13 +39,11 @@ public sealed class GadgetManager
     [Pure]
     public bool HasGadgetOfTypeAtPosition(LevelPosition levelPosition, GadgetType gadgetType)
     {
-        var allGadgets = AllGadgets;
-        var idEnumerator = GetAllGadgetIdsForPosition(levelPosition);
+        var gadgetEnumerator = GetAllGadgetsForPosition(levelPosition);
 
-        while (idEnumerator.MoveNext())
+        while (gadgetEnumerator.MoveNext())
         {
-            var gadgetId = idEnumerator.Current;
-            var gadget = allGadgets[gadgetId];
+            var gadget = gadgetEnumerator.Current;
 
             if (gadget.Type != gadgetType)
                 continue;

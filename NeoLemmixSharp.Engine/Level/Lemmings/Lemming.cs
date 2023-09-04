@@ -149,12 +149,10 @@ public sealed class Lemming : IIdEquatable<Lemming>
 
         }
 
-        var allGadgets = GadgetManager.AllGadgets;
-        var gadgetsEnumerator = GadgetManager.GetAllGadgetIdsForPosition(LevelPosition);
-        while (gadgetsEnumerator.MoveNext())
+        var gadgetEnumerator = GadgetManager.GetAllGadgetsForPosition(LevelPosition);
+        while (gadgetEnumerator.MoveNext())
         {
-            var gadgetId = gadgetsEnumerator.Current;
-            var gadget = allGadgets[gadgetId];
+            var gadget = gadgetEnumerator.Current;
 
             if (gadget.MatchesLemming(this))
             {

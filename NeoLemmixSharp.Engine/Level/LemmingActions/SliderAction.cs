@@ -65,13 +65,11 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        var allGadgets = Gadgets.AllGadgets;
-        var idEnumerator = Gadgets.GetAllGadgetIdsForPosition(lemmingPosition);
+        var gadgetEnumerator = Gadgets.GetAllGadgetsForPosition(lemmingPosition);
 
-        while (idEnumerator.MoveNext())
+        while (gadgetEnumerator.MoveNext())
         {
-            var gadgetId = idEnumerator.Current;
-            var gadget = allGadgets[gadgetId];
+            var gadget = gadgetEnumerator.Current;
 
             if (gadget.Type != GadgetType.Water)
                 continue;

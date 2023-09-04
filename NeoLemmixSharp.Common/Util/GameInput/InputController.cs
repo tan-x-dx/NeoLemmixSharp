@@ -3,10 +3,12 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public abstract class InputController : IComparer<KeyAction>
+public abstract class InputController : ISimpleHasher<Keys>, IComparer<KeyAction>
 {
-    private readonly List<(int, KeyAction)> _keyMapping = new();
-    private readonly LargeBitArray _keys = new(256);
+    private const int NumberOfKeys = 256;
+
+    private readonly List<(Keys, KeyAction)> _keyMapping = new();
+    private readonly LargeSimpleSet<Keys> _keys;
     private readonly List<KeyAction> _keyActions = new();
 
     private int _previousScrollValue;
@@ -23,6 +25,8 @@ public abstract class InputController : IComparer<KeyAction>
 
     protected InputController()
     {
+        _keys = new LargeSimpleSet<Keys>(this);
+
         // ReSharper disable once VirtualMemberCallInConstructor
         SetUpBindings();
         ValidateKeyActions();
@@ -38,7 +42,7 @@ public abstract class InputController : IComparer<KeyAction>
         for (var index = 0; index < _keyMapping.Count; index++)
         {
             var (keyValue, action) = _keyMapping[index];
-            if (_keys.GetBit(keyValue))
+            if (_keys.Contains(keyValue))
             {
                 _keyActions[action.Id].KeyState |= KeyStatusConsts.KeyPressed;
             }
@@ -52,7 +56,7 @@ public abstract class InputController : IComparer<KeyAction>
 
     protected void Bind(Keys keyCode, KeyAction keyAction)
     {
-        _keyMapping.Add(((int)keyCode, keyAction));
+        _keyMapping.Add((keyCode, keyAction));
         keyAction.Id = _keyActions.Count;
         _keyActions.Add(keyAction);
     }
@@ -74,7 +78,7 @@ public abstract class InputController : IComparer<KeyAction>
         _keys.Clear();
         for (var i = 0; i < currentlyPressedKeys.Length; i++)
         {
-            _keys.SetBit((int)currentlyPressedKeys[i]);
+            _keys.Add(currentlyPressedKeys[i]);
         }
     }
 
@@ -104,4 +108,9 @@ public abstract class InputController : IComparer<KeyAction>
 
         return x.Id.CompareTo(y.Id);
     }
+
+    bool IEquatable<ISimpleHasher<Keys>>.Equals(ISimpleHasher<Keys>? other) => ReferenceEquals(this, other);
+    int ISimpleHasher<Keys>.NumberOfItems => NumberOfKeys;
+    int ISimpleHasher<Keys>.Hash(Keys item) => (int)item;
+    Keys ISimpleHasher<Keys>.Unhash(int index) => (Keys)index;
 }
