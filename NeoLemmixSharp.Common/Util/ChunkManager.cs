@@ -25,6 +25,9 @@ public sealed class ChunkManager<T>
     private readonly int _numberOfHorizontalChunks;
     private readonly int _numberOfVerticalChunks;
 
+    private readonly SetUnionChunkIndexUser _setUnionChunkIndexUser;
+    private readonly ScratchSpaceChunkIndexUser _scratchSpaceChunkIndexUser;
+
     public ChunkManager(
         T[] allItems,
         ISimpleHasher<T> hasher,
@@ -43,6 +46,9 @@ public sealed class ChunkManager<T>
         _itemChunks = new LargeSimpleSet<T>[_numberOfHorizontalChunks * _numberOfVerticalChunks];
         _indicesOfItemChunks = new LargeBitArray(_itemChunks.Length);
         _indicesOfItemChunksScratchSpace = new LargeBitArray(_itemChunks.Length);
+
+        _setUnionChunkIndexUser = new SetUnionChunkIndexUser(this);
+        _scratchSpaceChunkIndexUser = new ScratchSpaceChunkIndexUser(this);
     }
 
     [Pure]
@@ -88,7 +94,8 @@ public sealed class ChunkManager<T>
                 return;
         }
 
-        WriteToItemChunkScratchSpace(topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        _indicesOfItemChunksScratchSpace.Clear();
+        UseIndicesForIntervals(_scratchSpaceChunkIndexUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
 
         foreach (var itemChunkIndex in _indicesOfItemChunks)
         {
@@ -106,92 +113,6 @@ public sealed class ChunkManager<T>
         }
     }
 
-    private void WriteToItemChunkScratchSpace(int ax, int ay, int bx, int by)
-    {
-        _indicesOfItemChunksScratchSpace.Clear();
-
-        // Is there a more elegant way to deal with all of these cases?
-
-        if (ax <= bx &&
-            ay <= by)
-        {
-            for (var x = ax; x <= bx; x++)
-            {
-                for (var y = ay; y <= by; y++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    _indicesOfItemChunksScratchSpace.SetBit(index);
-                }
-            }
-        }
-        else if (ax > bx && ay <= by)
-        {
-            for (var y = ay; y <= by; y++)
-            {
-                for (var x = 0; x <= bx; x++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    _indicesOfItemChunksScratchSpace.SetBit(index);
-                }
-
-                for (var x = _numberOfHorizontalChunks - 1; x >= ax; x--)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    _indicesOfItemChunksScratchSpace.SetBit(index);
-                }
-            }
-        }
-        else if (ax <= bx && ay > by)
-        {
-            for (var x = ax; x <= bx; x++)
-            {
-                for (var y = 0; y <= by; y++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    _indicesOfItemChunksScratchSpace.SetBit(index);
-                }
-
-                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    _indicesOfItemChunksScratchSpace.SetBit(index);
-                }
-            }
-        }
-        else
-        {
-            for (var x = 0; x <= ax; x++)
-            {
-                for (var y = 0; y <= by; y++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    _indicesOfItemChunksScratchSpace.SetBit(index);
-                }
-
-                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    _indicesOfItemChunksScratchSpace.SetBit(index);
-                }
-            }
-
-            for (var x = _numberOfHorizontalChunks - 1; x >= bx; x--)
-            {
-                for (var y = 0; y <= by; y++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    _indicesOfItemChunksScratchSpace.SetBit(index);
-                }
-
-                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    _indicesOfItemChunksScratchSpace.SetBit(index);
-                }
-            }
-        }
-    }
-
     public void PopulateSetWithItemsFromRegion(
         LargeSimpleSet<T> set,
         LevelPosition topLeftLevelPosition,
@@ -200,127 +121,8 @@ public sealed class ChunkManager<T>
         GetShiftValues(topLeftLevelPosition, out var topLeftShiftX, out var topLeftShiftY);
         GetShiftValues(bottomRightLevelPosition, out var bottomRightShiftX, out var bottomRightShiftY);
 
-        WriteToSet(set, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
-    }
-
-    private void WriteToSet(LargeSimpleSet<T> set, int ax, int ay, int bx, int by)
-    {
-        // Is there a more elegant way to deal with all of these cases?
-
-        if (ax <= bx &&
-            ay <= by)
-        {
-            for (var x = ax; x <= bx; x++)
-            {
-                for (var y = ay; y <= by; y++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    var itemSet = _itemChunks[index];
-                    if (itemSet is not null)
-                    {
-                        set.UnionWith(itemSet);
-                    }
-                }
-            }
-        }
-        else if (ax > bx && ay <= by)
-        {
-            for (var y = ay; y <= by; y++)
-            {
-                for (var x = 0; x <= bx; x++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    var itemSet = _itemChunks[index];
-                    if (itemSet is not null)
-                    {
-                        set.UnionWith(itemSet);
-                    }
-                }
-
-                for (var x = _numberOfHorizontalChunks - 1; x >= ax; x--)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    var itemSet = _itemChunks[index];
-                    if (itemSet is not null)
-                    {
-                        set.UnionWith(itemSet);
-                    }
-                }
-            }
-        }
-        else if (ax <= bx && ay > by)
-        {
-            for (var x = ax; x <= bx; x++)
-            {
-                for (var y = 0; y <= by; y++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    var itemSet = _itemChunks[index];
-                    if (itemSet is not null)
-                    {
-                        set.UnionWith(itemSet);
-                    }
-                }
-
-                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    var itemSet = _itemChunks[index];
-                    if (itemSet is not null)
-                    {
-                        set.UnionWith(itemSet);
-                    }
-                }
-            }
-        }
-        else
-        {
-            for (var x = 0; x <= ax; x++)
-            {
-                for (var y = 0; y <= by; y++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    var itemSet = _itemChunks[index];
-                    if (itemSet is not null)
-                    {
-                        set.UnionWith(itemSet);
-                    }
-                }
-
-                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    var itemSet = _itemChunks[index];
-                    if (itemSet is not null)
-                    {
-                        set.UnionWith(itemSet);
-                    }
-                }
-            }
-
-            for (var x = _numberOfHorizontalChunks - 1; x >= bx; x--)
-            {
-                for (var y = 0; y <= by; y++)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    var itemSet = _itemChunks[index];
-                    if (itemSet is not null)
-                    {
-                        set.UnionWith(itemSet);
-                    }
-                }
-
-                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
-                {
-                    var index = _numberOfHorizontalChunks * y + x;
-                    var itemSet = _itemChunks[index];
-                    if (itemSet is not null)
-                    {
-                        set.UnionWith(itemSet);
-                    }
-                }
-            }
-        }
+        _setUnionChunkIndexUser.SetToUnionWith = set;
+        UseIndicesForIntervals(_setUnionChunkIndexUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
     }
 
     private void GetShiftValues(
@@ -333,4 +135,148 @@ public sealed class ChunkManager<T>
         shiftX = Math.Clamp(shiftX, 0, _numberOfHorizontalChunks - 1);
         shiftY = Math.Clamp(shiftY, 0, _numberOfVerticalChunks - 1);
     }
+
+    private void UseIndicesForIntervals(IChunkIndexUser chunkIndexUser, int ax, int ay, int bx, int by)
+    {
+        // Is there a more elegant way to deal with all of these cases?
+
+        if (ax <= bx &&
+            ay <= by)
+        {
+            for (var x = ax; x <= bx; x++)
+            {
+                for (var y = ay; y <= by; y++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+
+                    chunkIndexUser.UseChunkIndex(index);
+                }
+            }
+        }
+        else if (ax > bx && ay <= by)
+        {
+            for (var y = ay; y <= by; y++)
+            {
+                for (var x = 0; x <= bx; x++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+
+                    chunkIndexUser.UseChunkIndex(index);
+                }
+
+                for (var x = _numberOfHorizontalChunks - 1; x >= ax; x--)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+
+                    chunkIndexUser.UseChunkIndex(index);
+                }
+            }
+        }
+        else if (ax <= bx && ay > by)
+        {
+            for (var x = ax; x <= bx; x++)
+            {
+                for (var y = 0; y <= by; y++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+
+                    chunkIndexUser.UseChunkIndex(index);
+                }
+
+                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+
+                    chunkIndexUser.UseChunkIndex(index);
+                }
+            }
+        }
+        else
+        {
+            for (var x = 0; x <= ax; x++)
+            {
+                for (var y = 0; y <= by; y++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+
+                    chunkIndexUser.UseChunkIndex(index);
+                }
+
+                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+
+                    chunkIndexUser.UseChunkIndex(index);
+                }
+            }
+
+            for (var x = _numberOfHorizontalChunks - 1; x >= bx; x--)
+            {
+                for (var y = 0; y <= by; y++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+
+                    chunkIndexUser.UseChunkIndex(index);
+                }
+
+                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+
+                    chunkIndexUser.UseChunkIndex(index);
+                }
+            }
+        }
+    }
+
+    #region HelperTypes
+
+    private interface IChunkIndexUser
+    {
+        void UseChunkIndex(int index);
+    }
+
+    private sealed class SetUnionChunkIndexUser : IChunkIndexUser
+    {
+        private readonly LargeSimpleSet<T>?[] _itemChunks;
+
+        public LargeSimpleSet<T> SetToUnionWith { private get; set; }
+
+        public SetUnionChunkIndexUser(ChunkManager<T> manager)
+        {
+            _itemChunks = manager._itemChunks;
+        }
+
+        public void UseChunkIndex(int index)
+        {
+            var itemSet = _itemChunks[index];
+            if (itemSet is not null)
+            {
+                SetToUnionWith.UnionWith(itemSet);
+            }
+        }
+    }
+
+    private sealed class ScratchSpaceChunkIndexUser : IChunkIndexUser
+    {
+        private readonly LargeSimpleSet<T>?[] _itemChunks;
+        private readonly LargeBitArray _indicesOfItemChunksScratchSpace;
+
+        public ScratchSpaceChunkIndexUser(ChunkManager<T> manager)
+        {
+            _itemChunks = manager._itemChunks;
+            _indicesOfItemChunksScratchSpace = manager._indicesOfItemChunksScratchSpace;
+        }
+
+        public void UseChunkIndex(int index)
+        {
+            var itemSet = _itemChunks[index];
+            if (itemSet is not null)
+            {
+                _indicesOfItemChunksScratchSpace.SetBit(index);
+            }
+        }
+    }
+
+    #endregion
 }
