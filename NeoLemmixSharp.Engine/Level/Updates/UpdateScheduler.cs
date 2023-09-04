@@ -71,33 +71,40 @@ public sealed class UpdateScheduler
 
         _levelCursor.OnNewFrame();
 
-        var activeLemmingEnumerator = _lemmingManager.ActiveLemmingsEnumerator;
-
         var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
         if (mouseIsInLevelViewPort)
         {
-            while (activeLemmingEnumerator.MoveNext())
+            var lemmingsNearCursorEnumerator = _levelCursor.LemmingsNearCursorPosition;
+
+            while (lemmingsNearCursorEnumerator.MoveNext())
             {
-                var lemming = activeLemmingEnumerator.Current;
+                var lemming = lemmingsNearCursorEnumerator.Current;
 
                 _levelCursor.CheckLemming(lemming);
             }
-
-            activeLemmingEnumerator.Reset();
         }
 
         foreach (var gadget in _gadgetManager.AllGadgets)
         {
-            CurrentlySelectedFrameUpdater.UpdateGadget(gadget);
+            if (CurrentlySelectedFrameUpdater.UpdateGadget(gadget))
+            {
+                gadget.Tick();
+            }
         }
 
         HandleSkillAssignment();
+
+        var activeLemmingEnumerator = _lemmingManager.ActiveLemmingsEnumerator;
 
         while (activeLemmingEnumerator.MoveNext())
         {
             var lemming = activeLemmingEnumerator.Current;
 
-            CurrentlySelectedFrameUpdater.UpdateLemming(lemming);
+            if (CurrentlySelectedFrameUpdater.UpdateLemming(lemming))
+            {
+                lemming.Tick();
+                _lemmingManager.UpdateLemmingPosition(lemming);
+            }
         }
 
         var didTick = CurrentlySelectedFrameUpdater.Tick();

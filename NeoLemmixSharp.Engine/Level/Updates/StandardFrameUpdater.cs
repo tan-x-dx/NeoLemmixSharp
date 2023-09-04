@@ -18,21 +18,9 @@ public sealed class StandardFrameUpdater : IFrameUpdater
 
     public UpdateState UpdateState => UpdateState.Normal;
 
-    public void UpdateGadget(GadgetBase gadget)
-    {
-        if (_doLevelUpdate)
-        {
-            gadget.Tick();
-        }
-    }
+    public bool UpdateGadget(GadgetBase gadget) => _doLevelUpdate;
 
-    public void UpdateLemming(Lemming lemming)
-    {
-        if (lemming.ShouldTick && (_doLevelUpdate || lemming.IsFastForward))
-        {
-            lemming.Tick();
-        }
-    }
+    public bool UpdateLemming(Lemming lemming) => lemming.ShouldTick && (_doLevelUpdate || lemming.IsFastForward);
 
     public bool Tick()
     {

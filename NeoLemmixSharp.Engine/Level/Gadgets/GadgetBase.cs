@@ -16,6 +16,8 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds
 
     public LevelPosition TopLeftPixel => GadgetBounds.TopLeft;
     public LevelPosition BottomRightPixel => GadgetBounds.BottomRight;
+    public LevelPosition PreviousTopLeftPixel => GadgetBounds.TopLeft;
+    public LevelPosition PreviousBottomRightPixel => GadgetBounds.BottomRight;
 
     protected GadgetBase(
         int id,

@@ -10,7 +10,7 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class Lemming : IIdEquatable<Lemming>
+public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 {
     private static TerrainManager TerrainManager { get; set; }
     private static GadgetManager GadgetManager { get; set; }
@@ -48,6 +48,7 @@ public sealed class Lemming : IIdEquatable<Lemming>
     public LevelPosition DehoistPin;
     public LevelPosition LaserHitLevelPosition;
     public LevelPosition LevelPosition;
+    public LevelPosition PreviousLevelPosition;
 
     public FacingDirection FacingDirection { get; private set; }
     public Orientation Orientation { get; private set; }
@@ -59,6 +60,11 @@ public sealed class Lemming : IIdEquatable<Lemming>
     public LemmingState State { get; }
 
     public bool ShouldTick => true;
+
+    public LevelPosition TopLeftPixel => LevelPosition + new LevelPosition(-3, -3);
+    public LevelPosition BottomRightPixel => LevelPosition + new LevelPosition(2, 2);
+    public LevelPosition PreviousTopLeftPixel => PreviousLevelPosition + new LevelPosition(-3, -3);
+    public LevelPosition PreviousBottomRightPixel => PreviousLevelPosition + new LevelPosition(2, 2);
 
     public Lemming(
         int id,
@@ -122,6 +128,7 @@ public sealed class Lemming : IIdEquatable<Lemming>
             }
         }
 
+        PreviousLevelPosition = LevelPosition;
         var result = CurrentAction.UpdateLemming(this);
 
         return result;

@@ -7,7 +7,7 @@ public interface IFrameUpdater
 {
     UpdateState UpdateState { get; }
 
-    void UpdateGadget(GadgetBase gadget);
-    void UpdateLemming(Lemming lemming);
+    bool UpdateGadget(GadgetBase gadget);
+    bool UpdateLemming(Lemming lemming);
     bool Tick();
 }

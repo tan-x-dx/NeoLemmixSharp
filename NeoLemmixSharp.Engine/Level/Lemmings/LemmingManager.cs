@@ -1,9 +1,14 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
+using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
 {
+    private readonly ChunkManager<Lemming> _lemmingChunkManager;
     private readonly LargeSimpleSet<Lemming> _activeLemmings;
     private readonly Lemming[] _lemmings;
 
@@ -16,13 +21,27 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
 
     public LargeSimpleSet<Lemming>.Enumerator ActiveLemmingsEnumerator => _activeLemmings.GetEnumerator();
 
-    public LemmingManager(Lemming[] lemmings)
+    public LemmingManager(
+        Lemming[] lemmings,
+        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
+        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _lemmings = lemmings;
         Array.Sort(_lemmings, this);
         _lemmings.ValidateUniqueIds();
 
-        _activeLemmings = new LargeSimpleSet<Lemming>(this, true);
+        _lemmingChunkManager = new ChunkManager<Lemming>(lemmings, this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        _activeLemmings = new LargeSimpleSet<Lemming>(this);
+
+        for (var i = 0; i < _lemmings.Length; i++)
+        {
+            var lemming = _lemmings[i];
+            if (lemming.CurrentAction != NoneAction.Instance)
+            {
+                _activeLemmings.Add(lemming);
+                _lemmingChunkManager.UpdateItemPosition(lemming, true);
+            }
+        }
     }
 
     public bool LemmingIsActive(Lemming lemming) => _activeLemmings.Contains(lemming);
@@ -32,6 +51,19 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
 
 
         _activeLemmings.Remove(lemming);
+    }
+
+    public void UpdateLemmingPosition(Lemming lemming)
+    {
+        _lemmingChunkManager.UpdateItemPosition(lemming, false);
+    }
+
+    public void PopulateSetWithLemmingsFromRegion(
+        LargeSimpleSet<Lemming> set,
+        LevelPosition topLeftLevelPosition,
+        LevelPosition bottomRightLevelPosition)
+    {
+        _lemmingChunkManager.PopulateSetWithItemsFromRegion(set, topLeftLevelPosition, bottomRightLevelPosition);
     }
 
     int IComparer<Lemming>.Compare(Lemming? x, Lemming? y)

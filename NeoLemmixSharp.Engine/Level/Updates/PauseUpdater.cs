@@ -15,16 +15,9 @@ public sealed class PauseUpdater : IFrameUpdater
 
     public UpdateState UpdateState => UpdateState.Paused;
 
-    public void UpdateGadget(GadgetBase gadget)
-    {
-    }
+    public bool UpdateGadget(GadgetBase gadget) => false;
 
-    public void UpdateLemming(Lemming lemming)
-    {
-    }
+    public bool UpdateLemming(Lemming lemming) => false;
 
-    public bool Tick()
-    {
-        return false;
-    }
+    public bool Tick() => false;
 }

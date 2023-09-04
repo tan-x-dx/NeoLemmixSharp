@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
-public sealed class ChunkManager<T> : ISimpleHasher<T>, IComparer<T>
+public sealed class ChunkManager<T>
     where T : class, IIdEquatable<T>, IRectangularBounds
 {
     private const int ChunkSizeBitShift = 6;
@@ -14,6 +14,7 @@ public sealed class ChunkManager<T> : ISimpleHasher<T>, IComparer<T>
     private const int ChunkSizeBitMask = ChunkSize - 1;
 
     private readonly T[] _allItems;
+    private readonly ISimpleHasher<T> _hasher;
     private readonly LargeSimpleSet<T>?[] _itemChunks;
     private readonly LargeBitArray _indicesOfItemChunks;
 
@@ -27,12 +28,12 @@ public sealed class ChunkManager<T> : ISimpleHasher<T>, IComparer<T>
 
     public ChunkManager(
         T[] allItems,
+        ISimpleHasher<T> hasher,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _allItems = allItems;
-        Array.Sort(_allItems, this);
-        _allItems.ValidateUniqueIds();
+        _hasher = hasher;
 
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
@@ -60,27 +61,39 @@ public sealed class ChunkManager<T> : ISimpleHasher<T>, IComparer<T>
         return itemChunk?.GetEnumerator() ?? new LargeSimpleSet<T>.Enumerator();
     }
 
-    public void UpdateItemPosition(int itemId)
+    public void UpdateItemPosition(int itemId, bool forceUpdate)
     {
         var item = _allItems[itemId];
-        UpdateItemPosition(item);
+        UpdateItemPosition(item, forceUpdate);
     }
 
-    public void UpdateItemPosition(T item)
+    public void UpdateItemPosition(T item, bool forceUpdate)
     {
-        var topLeft = NormalisePosition(item.TopLeftPixel);
+        if (!forceUpdate &&
+            item.TopLeftPixel == item.PreviousTopLeftPixel &&
+            item.BottomRightPixel == item.PreviousBottomRightPixel)
+            return;
 
-        var topLeftShiftX = topLeft.X >> ChunkSizeBitShift;
-        var topLeftShiftY = topLeft.Y >> ChunkSizeBitShift;
-        topLeftShiftX = Math.Clamp(topLeftShiftX, 0, _numberOfHorizontalChunks - 1);
-        topLeftShiftY = Math.Clamp(topLeftShiftY, 0, _numberOfVerticalChunks - 1);
+        var topLeft = NormalisePosition(item.TopLeftPixel);
+        GetShiftValues(topLeft, out var topLeftShiftX, out var topLeftShiftY);
 
         var bottomRight = NormalisePosition(item.BottomRightPixel);
+        GetShiftValues(bottomRight, out var bottomRightShiftX, out var bottomRightShiftY);
 
-        var bottomRightShiftX = bottomRight.X >> ChunkSizeBitShift;
-        var bottomRightShiftY = bottomRight.Y >> ChunkSizeBitShift;
-        bottomRightShiftX = Math.Clamp(bottomRightShiftX, 0, _numberOfHorizontalChunks - 1);
-        bottomRightShiftY = Math.Clamp(bottomRightShiftY, 0, _numberOfVerticalChunks - 1);
+        if (!forceUpdate)
+        {
+            var previousTopLeft = NormalisePosition(item.PreviousTopLeftPixel);
+            GetShiftValues(previousTopLeft, out var previousTopLeftShiftX, out var previousTopLeftShiftY);
+
+            var previousBottomRight = NormalisePosition(item.PreviousBottomRightPixel);
+            GetShiftValues(previousBottomRight, out var previousBottomRightShiftX, out var previousBottomRightShiftY);
+
+            if (topLeftShiftX == previousTopLeftShiftX &&
+                topLeftShiftY == previousTopLeftShiftY &&
+                bottomRightShiftX == previousBottomRightShiftX &&
+                bottomRightShiftY == previousBottomRightShiftY)
+                return;
+        }
 
         WriteToItemChunkScratchSpace(topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
 
@@ -93,7 +106,7 @@ public sealed class ChunkManager<T> : ISimpleHasher<T>, IComparer<T>
         foreach (var itemChunkIndex in _indicesOfItemChunksScratchSpace)
         {
             ref var itemChunk = ref _itemChunks[itemChunkIndex];
-            itemChunk ??= new LargeSimpleSet<T>(this);
+            itemChunk ??= new LargeSimpleSet<T>(_hasher);
             _indicesOfItemChunks.SetBit(itemChunkIndex);
 
             itemChunk.Add(item);
@@ -186,6 +199,155 @@ public sealed class ChunkManager<T> : ISimpleHasher<T>, IComparer<T>
         }
     }
 
+    private void GetShiftValues(
+        LevelPosition levelPosition,
+        out int shiftX,
+        out int shiftY)
+    {
+        var topLeft = NormalisePosition(levelPosition);
+
+        shiftX = topLeft.X >> ChunkSizeBitShift;
+        shiftY = topLeft.Y >> ChunkSizeBitShift;
+        shiftX = Math.Clamp(shiftX, 0, _numberOfHorizontalChunks - 1);
+        shiftY = Math.Clamp(shiftY, 0, _numberOfVerticalChunks - 1);
+    }
+
+    public void PopulateSetWithItemsFromRegion(
+        LargeSimpleSet<T> set,
+        LevelPosition topLeftLevelPosition,
+        LevelPosition bottomRightLevelPosition)
+    {
+        topLeftLevelPosition = NormalisePosition(topLeftLevelPosition);
+        GetShiftValues(topLeftLevelPosition, out var topLeftShiftX, out var topLeftShiftY);
+
+        bottomRightLevelPosition = NormalisePosition(bottomRightLevelPosition);
+        GetShiftValues(bottomRightLevelPosition, out var bottomRightShiftX, out var bottomRightShiftY);
+
+        WriteToSet(set, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+    }
+
+    private void WriteToSet(LargeSimpleSet<T> set, int ax, int ay, int bx, int by)
+    {
+        _indicesOfItemChunksScratchSpace.Clear();
+
+        // Is there a more elegant way to deal with all of these cases?
+
+        if (ax <= bx &&
+            ay <= by)
+        {
+            for (var x = ax; x <= bx; x++)
+            {
+                for (var y = ay; y <= by; y++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    var itemSet = _itemChunks[index];
+                    if (itemSet is not null)
+                    {
+                        set.UnionWith(itemSet);
+                    }
+                }
+            }
+        }
+        else if (ax > bx && ay <= by)
+        {
+            for (var y = ay; y <= by; y++)
+            {
+                for (var x = 0; x <= ax; x++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    var itemSet = _itemChunks[index];
+                    if (itemSet is not null)
+                    {
+                        set.UnionWith(itemSet);
+                    }
+                }
+
+                for (var x = _numberOfHorizontalChunks - 1; x >= bx; x--)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    var itemSet = _itemChunks[index];
+                    if (itemSet is not null)
+                    {
+                        set.UnionWith(itemSet);
+                    }
+                }
+            }
+        }
+        else if (ax <= bx && ay > by)
+        {
+            for (var x = ax; x <= bx; x++)
+            {
+                for (var y = 0; y <= ay; y++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    var itemSet = _itemChunks[index];
+                    if (itemSet is not null)
+                    {
+                        set.UnionWith(itemSet);
+                    }
+                }
+
+                for (var y = _numberOfVerticalChunks - 1; y >= by; y--)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    var itemSet = _itemChunks[index];
+                    if (itemSet is not null)
+                    {
+                        set.UnionWith(itemSet);
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (var x = 0; x <= ax; x++)
+            {
+                for (var y = 0; y <= ay; y++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    var itemSet = _itemChunks[index];
+                    if (itemSet is not null)
+                    {
+                        set.UnionWith(itemSet);
+                    }
+                }
+
+                for (var y = _numberOfVerticalChunks - 1; y >= by; y--)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    var itemSet = _itemChunks[index];
+                    if (itemSet is not null)
+                    {
+                        set.UnionWith(itemSet);
+                    }
+                }
+            }
+
+            for (var x = _numberOfHorizontalChunks - 1; x >= bx; x--)
+            {
+                for (var y = 0; y <= ay; y++)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    var itemSet = _itemChunks[index];
+                    if (itemSet is not null)
+                    {
+                        set.UnionWith(itemSet);
+                    }
+                }
+
+                for (var y = _numberOfVerticalChunks - 1; y >= by; y--)
+                {
+                    var index = _numberOfHorizontalChunks * y + x;
+                    var itemSet = _itemChunks[index];
+                    if (itemSet is not null)
+                    {
+                        set.UnionWith(itemSet);
+                    }
+                }
+            }
+        }
+    }
+
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private LevelPosition NormalisePosition(LevelPosition levelPosition)
@@ -193,16 +355,5 @@ public sealed class ChunkManager<T> : ISimpleHasher<T>, IComparer<T>
         return new LevelPosition(
             _horizontalBoundaryBehaviour.NormaliseX(levelPosition.X),
             _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y));
-    }
-
-    int ISimpleHasher<T>.NumberOfItems => _allItems.Length;
-    int ISimpleHasher<T>.Hash(T item) => item.Id;
-    T ISimpleHasher<T>.Unhash(int index) => _allItems[index];
-    int IComparer<T>.Compare(T? x, T? y)
-    {
-        if (ReferenceEquals(x, y)) return 0;
-        if (y is null) return 1;
-        if (x is null) return -1;
-        return x.Id.CompareTo(y.Id);
     }
 }

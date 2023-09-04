@@ -15,23 +15,20 @@ public sealed class FastForwardsFrameUpdater : IFrameUpdater
 
     public UpdateState UpdateState => UpdateState.FastForward;
 
-    public void UpdateGadget(GadgetBase gadget)
-    {
-        gadget.Tick();
-    }
+    public bool UpdateGadget(GadgetBase gadget) => true;
 
-    public void UpdateLemming(Lemming lemming)
+    public bool UpdateLemming(Lemming lemming)
     {
-        if (lemming.ShouldTick)
-        {
-            lemming.Tick();
+        if (!lemming.ShouldTick)
+            return false;
 
-            if (lemming.IsFastForward)
-            {
-                lemming.Tick();
-                lemming.Tick();
-            }
-        }
+        if (!lemming.IsFastForward)
+            return true;
+
+        lemming.Tick();
+        lemming.Tick();
+
+        return true;
     }
 
     public bool Tick()

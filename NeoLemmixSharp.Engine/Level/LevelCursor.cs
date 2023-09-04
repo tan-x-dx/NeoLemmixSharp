@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -15,7 +16,10 @@ public sealed class LevelCursor
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
     private readonly ILevelControlPanel _controlPanel;
     private readonly LevelInputController _controller;
+    private readonly LemmingManager _lemmingManager;
     private readonly SkillSetManager _skillSetManager;
+
+    private readonly LargeSimpleSet<Lemming> _lemmingsNearCursorPosition;
 
     private FacingDirection? _facingDirection;
     private bool _selectOnlyWalkers;
@@ -23,6 +27,8 @@ public sealed class LevelCursor
 
     private int _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre;
 
+    public LargeSimpleSet<Lemming>.Enumerator LemmingsNearCursorPosition => _lemmingsNearCursorPosition.GetEnumerator();
+    public int NumberOfLemmingsNearCursorPosition => _lemmingsNearCursorPosition.Count;
     public int NumberOfLemmingsUnderCursor { get; private set; }
     public LevelPosition CursorPosition { private get; set; }
 
@@ -33,13 +39,17 @@ public sealed class LevelCursor
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour,
         ILevelControlPanel controlPanel,
         LevelInputController controller,
+        LemmingManager lemmingManager,
         SkillSetManager skillSetManager)
     {
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
         _controlPanel = controlPanel;
         _controller = controller;
+        _lemmingManager = lemmingManager;
         _skillSetManager = skillSetManager;
+
+        _lemmingsNearCursorPosition = new LargeSimpleSet<Lemming>(_lemmingManager);
     }
 
     public void OnNewFrame()
@@ -63,6 +73,12 @@ public sealed class LevelCursor
         {
             _facingDirection = null;
         }
+
+        var topLeftCursorPosition = CursorPosition + new LevelPosition(-6, -6);
+        var bottomRightCursorPosition = CursorPosition + new LevelPosition(6, 6);
+
+        _lemmingsNearCursorPosition.Clear();
+        _lemmingManager.PopulateSetWithLemmingsFromRegion(_lemmingsNearCursorPosition, topLeftCursorPosition, bottomRightCursorPosition);
     }
 
     public void CheckLemming(Lemming lemming)

@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public sealed class GadgetManager
+public sealed class GadgetManager : ISimpleHasher<GadgetBase>
 {
     private readonly GadgetBase[] _allGadgets;
     private readonly ChunkManager<GadgetBase> _gadgetChunkManager;
@@ -19,13 +19,13 @@ public sealed class GadgetManager
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _allGadgets = allGadgets;
-        _gadgetChunkManager = new ChunkManager<GadgetBase>(allGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        _gadgetChunkManager = new ChunkManager<GadgetBase>(allGadgets, this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
         foreach (var gadget in allGadgets)
         {
             if (gadget.CaresAboutLemmingInteraction)
             {
-                UpdateGadgetPosition(gadget);
+                _gadgetChunkManager.UpdateItemPosition(gadget, true);
             }
         }
     }
@@ -64,7 +64,11 @@ public sealed class GadgetManager
     {
         if (gadget.CaresAboutLemmingInteraction)
         {
-            _gadgetChunkManager.UpdateItemPosition(gadget);
+            _gadgetChunkManager.UpdateItemPosition(gadget, false);
         }
     }
+
+    int ISimpleHasher<GadgetBase>.NumberOfItems => _allGadgets.Length;
+    int ISimpleHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
+    GadgetBase ISimpleHasher<GadgetBase>.Unhash(int index) => _allGadgets[index];
 }
