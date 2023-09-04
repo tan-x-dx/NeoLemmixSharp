@@ -225,9 +225,9 @@ public sealed class LargeBitArray : IBitArray
             var newValue = _bits[i] | other._bits[i];
             _bits[i] = newValue;
             count += BitOperations.PopCount(newValue);
-            if (newValue != 0)
+            if (newValue != 0U && i < _indexOfFirstSetBit)
             {
-                _indexOfFirstSetBit = Math.Min(_indexOfFirstSetBit, i);
+                _indexOfFirstSetBit = i;
             }
         }
         Count = count;
@@ -244,9 +244,9 @@ public sealed class LargeBitArray : IBitArray
             var newValue = _bits[i] & other._bits[i];
             _bits[i] = newValue;
             count += BitOperations.PopCount(newValue);
-            if (newValue != 0)
+            if (newValue != 0U && i < _indexOfFirstSetBit)
             {
-                _indexOfFirstSetBit = Math.Min(_indexOfFirstSetBit, i);
+                _indexOfFirstSetBit = i;
             }
         }
         Count = count;
@@ -263,9 +263,9 @@ public sealed class LargeBitArray : IBitArray
             var newValue = _bits[i] & ~other._bits[i];
             _bits[i] = newValue;
             count += BitOperations.PopCount(newValue);
-            if (newValue != 0)
+            if (newValue != 0U && i < _indexOfFirstSetBit)
             {
-                _indexOfFirstSetBit = Math.Min(_indexOfFirstSetBit, i);
+                _indexOfFirstSetBit = i;
             }
         }
         Count = count;
@@ -282,9 +282,9 @@ public sealed class LargeBitArray : IBitArray
             var newValue = _bits[i] ^ other._bits[i];
             _bits[i] = newValue;
             count += BitOperations.PopCount(newValue);
-            if (newValue != 0)
+            if (newValue != 0U && i < _indexOfFirstSetBit)
             {
-                _indexOfFirstSetBit = Math.Min(_indexOfFirstSetBit, i);
+                _indexOfFirstSetBit = i;
             }
         }
         Count = count;
