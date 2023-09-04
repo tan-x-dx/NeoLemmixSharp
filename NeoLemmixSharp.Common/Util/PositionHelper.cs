@@ -17,7 +17,8 @@ public sealed class PositionHelper<T>
     private readonly LargeSimpleSet<T>?[] _itemChunks;
     private readonly LargeBitArray _indicesOfItemChunks;
 
-    private readonly LargeBitArray _indicesOfItemChunksScratchSpace;
+    private readonly LargeBitArray _indicesOfItemChunksScratchSpaceAdd;
+    private readonly LargeBitArray _indicesOfItemChunksScratchSpaceRemove;
 
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
@@ -26,7 +27,8 @@ public sealed class PositionHelper<T>
     private readonly int _numberOfVerticalChunks;
 
     private readonly SetUnionChunkIndexUser _setUnionChunkIndexUser;
-    private readonly ScratchSpaceChunkIndexUser _scratchSpaceChunkIndexUser;
+    private readonly ScratchSpaceChunkIndexUser _scratchSpaceAddChunkIndexUser;
+    private readonly ScratchSpaceChunkIndexUser _scratchSpaceRemoveChunkIndexUser;
 
     public PositionHelper(
         T[] allItems,
@@ -45,10 +47,12 @@ public sealed class PositionHelper<T>
 
         _itemChunks = new LargeSimpleSet<T>[_numberOfHorizontalChunks * _numberOfVerticalChunks];
         _indicesOfItemChunks = new LargeBitArray(_itemChunks.Length);
-        _indicesOfItemChunksScratchSpace = new LargeBitArray(_itemChunks.Length);
+        _indicesOfItemChunksScratchSpaceAdd = new LargeBitArray(_itemChunks.Length);
+        _indicesOfItemChunksScratchSpaceRemove = new LargeBitArray(_itemChunks.Length);
 
         _setUnionChunkIndexUser = new SetUnionChunkIndexUser(this);
-        _scratchSpaceChunkIndexUser = new ScratchSpaceChunkIndexUser(this);
+        _scratchSpaceAddChunkIndexUser = new ScratchSpaceChunkIndexUser(_indicesOfItemChunksScratchSpaceAdd);
+        _scratchSpaceRemoveChunkIndexUser = new ScratchSpaceChunkIndexUser(_indicesOfItemChunksScratchSpaceRemove);
     }
 
     [Pure]
@@ -74,42 +78,57 @@ public sealed class PositionHelper<T>
 
     public void UpdateItemPosition(T item, bool forceUpdate)
     {
+        var topLeftPixel = item.TopLeftPixel;
+        var bottomRightPixel = item.BottomRightPixel;
+        var previousTopLeftPixel = item.PreviousTopLeftPixel;
+        var previousBottomRightPixel = item.PreviousBottomRightPixel;
+
         if (!forceUpdate &&
-            item.TopLeftPixel == item.PreviousTopLeftPixel &&
-            item.BottomRightPixel == item.PreviousBottomRightPixel)
+            topLeftPixel == previousTopLeftPixel &&
+            bottomRightPixel == previousBottomRightPixel)
             return;
 
-        GetShiftValues(item.TopLeftPixel, out var topLeftShiftX, out var topLeftShiftY);
-        GetShiftValues(item.BottomRightPixel, out var bottomRightShiftX, out var bottomRightShiftY);
+        GetShiftValues(topLeftPixel, out var topLeftShiftX, out var topLeftShiftY);
+        GetShiftValues(bottomRightPixel, out var bottomRightShiftX, out var bottomRightShiftY);
 
+        _indicesOfItemChunksScratchSpaceRemove.Clear();
         if (!forceUpdate)
         {
-            GetShiftValues(item.PreviousTopLeftPixel, out var previousTopLeftShiftX, out var previousTopLeftShiftY);
-            GetShiftValues(item.PreviousBottomRightPixel, out var previousBottomRightShiftX, out var previousBottomRightShiftY);
+            GetShiftValues(previousTopLeftPixel, out var previousTopLeftShiftX, out var previousTopLeftShiftY);
+            GetShiftValues(previousBottomRightPixel, out var previousBottomRightShiftX, out var previousBottomRightShiftY);
 
             if (topLeftShiftX == previousTopLeftShiftX &&
                 topLeftShiftY == previousTopLeftShiftY &&
                 bottomRightShiftX == previousBottomRightShiftX &&
                 bottomRightShiftY == previousBottomRightShiftY)
                 return;
+
+            UseIndicesForIntervals(_scratchSpaceRemoveChunkIndexUser, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
         }
 
-        _indicesOfItemChunksScratchSpace.Clear();
-        UseIndicesForIntervals(_scratchSpaceChunkIndexUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        _indicesOfItemChunksScratchSpaceAdd.Clear();
+        UseIndicesForIntervals(_scratchSpaceAddChunkIndexUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
 
-        foreach (var itemChunkIndex in _indicesOfItemChunks)
+        foreach (var itemChunkIndex in _indicesOfItemChunksScratchSpaceRemove)
         {
-            var itemChunk = _itemChunks[itemChunkIndex]!;
-            itemChunk.Remove(item);
+            if (!_indicesOfItemChunksScratchSpaceAdd.GetBit(itemChunkIndex))
+            {
+                var itemChunk = _itemChunks[itemChunkIndex]!;
+
+                itemChunk.Remove(item);
+            }
         }
 
-        foreach (var itemChunkIndex in _indicesOfItemChunksScratchSpace)
+        foreach (var itemChunkIndex in _indicesOfItemChunksScratchSpaceAdd)
         {
-            ref var itemChunk = ref _itemChunks[itemChunkIndex];
-            itemChunk ??= new LargeSimpleSet<T>(_hasher);
-            _indicesOfItemChunks.SetBit(itemChunkIndex);
+            if (!_indicesOfItemChunksScratchSpaceRemove.GetBit(itemChunkIndex))
+            {
+                ref var itemChunk = ref _itemChunks[itemChunkIndex];
+                itemChunk ??= new LargeSimpleSet<T>(_hasher);
+                _indicesOfItemChunks.SetBit(itemChunkIndex);
 
-            itemChunk.Add(item);
+                itemChunk.Add(item);
+            }
         }
     }
 
@@ -151,27 +170,23 @@ public sealed class PositionHelper<T>
         var yCount = 1 + by - ay;
 
         var x1 = ax;
-        while (x > 0)
+        while (x-- > 0)
         {
             var y1 = ay;
             var y = yCount;
-            while (y > 0)
+            while (y-- > 0)
             {
                 var index = _numberOfHorizontalChunks * y1 + x1;
 
                 chunkIndexUser.UseChunkIndex(index);
 
-                y--;
-                y1++;
-                if (y1 == _numberOfVerticalChunks)
+                if (++y1 == _numberOfVerticalChunks)
                 {
                     y1 = 0;
                 }
             }
 
-            x--;
-            x1++;
-            if (x1 == _numberOfHorizontalChunks)
+            if (++x1 == _numberOfHorizontalChunks)
             {
                 x1 = 0;
             }
@@ -210,9 +225,9 @@ public sealed class PositionHelper<T>
     {
         private readonly LargeBitArray _indicesOfItemChunksScratchSpace;
 
-        public ScratchSpaceChunkIndexUser(PositionHelper<T> manager)
+        public ScratchSpaceChunkIndexUser(LargeBitArray indicesOfItemChunksScratchSpace)
         {
-            _indicesOfItemChunksScratchSpace = manager._indicesOfItemChunksScratchSpace;
+            _indicesOfItemChunksScratchSpace = indicesOfItemChunksScratchSpace;
         }
 
         public void UseChunkIndex(int index)
