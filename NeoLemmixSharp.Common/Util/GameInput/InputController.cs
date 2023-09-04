@@ -109,7 +109,6 @@ public abstract class InputController : ISimpleHasher<Keys>, IComparer<KeyAction
         return x.Id.CompareTo(y.Id);
     }
 
-    bool IEquatable<ISimpleHasher<Keys>>.Equals(ISimpleHasher<Keys>? other) => ReferenceEquals(this, other);
     int ISimpleHasher<Keys>.NumberOfItems => NumberOfKeys;
     int ISimpleHasher<Keys>.Hash(Keys item) => (int)item;
     Keys ISimpleHasher<Keys>.Unhash(int index) => (Keys)index;

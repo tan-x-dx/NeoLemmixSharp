@@ -42,7 +42,6 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
         return x.Id.CompareTo(y.Id);
     }
 
-    bool IEquatable<ISimpleHasher<Lemming>>.Equals(ISimpleHasher<Lemming>? other) => ReferenceEquals(this, other);
     int ISimpleHasher<Lemming>.NumberOfItems => _lemmings.Length;
     int ISimpleHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming ISimpleHasher<Lemming>.Unhash(int index) => _lemmings[index];

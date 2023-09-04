@@ -195,7 +195,6 @@ public sealed class ChunkManager<T> : ISimpleHasher<T>, IComparer<T>
             _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y));
     }
 
-    bool IEquatable<ISimpleHasher<T>>.Equals(ISimpleHasher<T>? other) => ReferenceEquals(this, other);
     int ISimpleHasher<T>.NumberOfItems => _allItems.Length;
     int ISimpleHasher<T>.Hash(T item) => item.Id;
     T ISimpleHasher<T>.Unhash(int index) => _allItems[index];

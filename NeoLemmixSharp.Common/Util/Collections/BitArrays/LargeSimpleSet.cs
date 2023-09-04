@@ -74,10 +74,7 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     private LargeBitArray BitsFromEnumerable(IEnumerable<T> other)
     {
         if (other is LargeSimpleSet<T> set)
-        {
-            Debug.Assert(_hasher.Equals(set._hasher));
             return set._bits;
-        }
 
         var result = new LargeBitArray(_hasher.NumberOfItems);
 
@@ -98,7 +95,6 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public void UnionWith(LargeSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
         _bits.UnionWith(otherBits);
     }
@@ -111,7 +107,6 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public void IntersectWith(LargeSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
         _bits.IntersectWith(otherBits);
     }
@@ -124,7 +119,6 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public void ExceptWith(LargeSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
         _bits.ExceptWith(otherBits);
     }
@@ -137,7 +131,6 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public void SymmetricExceptWith(LargeSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
         _bits.SymmetricExceptWith(otherBits);
     }
@@ -152,7 +145,6 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool IsSubsetOf(LargeSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
         return _bits.IsSubsetOf(otherBits);
     }
@@ -167,7 +159,6 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool IsSupersetOf(LargeSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
         return _bits.IsSupersetOf(otherBits);
     }
@@ -182,7 +173,6 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool IsProperSubsetOf(LargeSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
         return _bits.IsProperSubsetOf(otherBits);
     }
@@ -197,7 +187,6 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool IsProperSupersetOf(LargeSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
         return _bits.IsProperSupersetOf(otherBits);
     }
@@ -214,7 +203,6 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool Overlaps(LargeSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
         return _bits.Overlaps(otherBits);
     }
@@ -229,7 +217,6 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool SetEquals(LargeSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
         return _bits.SetEquals(otherBits);
     }
