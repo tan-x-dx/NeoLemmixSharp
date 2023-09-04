@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public sealed class GadgetManager : ISimpleHasher<GadgetBase>
 {
     private readonly GadgetBase[] _allGadgets;
-    private readonly ChunkManager<GadgetBase> _gadgetChunkManager;
+    private readonly PositionHelper<GadgetBase> _gadgetPositionHelper;
 
     public ReadOnlySpan<GadgetBase> AllGadgets => new(_allGadgets);
 
@@ -19,13 +19,13 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _allGadgets = allGadgets;
-        _gadgetChunkManager = new ChunkManager<GadgetBase>(allGadgets, this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        _gadgetPositionHelper = new PositionHelper<GadgetBase>(allGadgets, this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
         foreach (var gadget in allGadgets)
         {
             if (gadget.CaresAboutLemmingInteraction)
             {
-                _gadgetChunkManager.UpdateItemPosition(gadget, true);
+                _gadgetPositionHelper.UpdateItemPosition(gadget, true);
             }
         }
     }
@@ -33,7 +33,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     [Pure]
     public LargeSimpleSet<GadgetBase>.Enumerator GetAllGadgetsForPosition(LevelPosition levelPosition)
     {
-        return _gadgetChunkManager.GetAllItemIdsForPosition(levelPosition);
+        return _gadgetPositionHelper.GetAllItemIdsForPosition(levelPosition);
     }
 
     [Pure]
@@ -64,7 +64,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     {
         if (gadget.CaresAboutLemmingInteraction)
         {
-            _gadgetChunkManager.UpdateItemPosition(gadget, false);
+            _gadgetPositionHelper.UpdateItemPosition(gadget, false);
         }
     }
 

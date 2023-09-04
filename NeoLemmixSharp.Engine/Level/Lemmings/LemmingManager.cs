@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
 {
-    private readonly ChunkManager<Lemming> _lemmingChunkManager;
+    private readonly PositionHelper<Lemming> _lemmingPositionHelper;
     private readonly LargeSimpleSet<Lemming> _activeLemmings;
     private readonly Lemming[] _lemmings;
 
@@ -30,7 +30,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
         Array.Sort(_lemmings, this);
         _lemmings.ValidateUniqueIds();
 
-        _lemmingChunkManager = new ChunkManager<Lemming>(lemmings, this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        _lemmingPositionHelper = new PositionHelper<Lemming>(lemmings, this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         _activeLemmings = new LargeSimpleSet<Lemming>(this);
 
         for (var i = 0; i < _lemmings.Length; i++)
@@ -39,7 +39,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
             if (lemming.CurrentAction != NoneAction.Instance)
             {
                 _activeLemmings.Add(lemming);
-                _lemmingChunkManager.UpdateItemPosition(lemming, true);
+                _lemmingPositionHelper.UpdateItemPosition(lemming, true);
             }
         }
     }
@@ -55,7 +55,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
 
     public void UpdateLemmingPosition(Lemming lemming)
     {
-        _lemmingChunkManager.UpdateItemPosition(lemming, false);
+        _lemmingPositionHelper.UpdateItemPosition(lemming, false);
     }
 
     public void PopulateSetWithLemmingsFromRegion(
@@ -63,7 +63,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
         LevelPosition topLeftLevelPosition,
         LevelPosition bottomRightLevelPosition)
     {
-        _lemmingChunkManager.PopulateSetWithItemsFromRegion(set, topLeftLevelPosition, bottomRightLevelPosition);
+        _lemmingPositionHelper.PopulateSetWithItemsFromRegion(set, topLeftLevelPosition, bottomRightLevelPosition);
     }
 
     int IComparer<Lemming>.Compare(Lemming? x, Lemming? y)

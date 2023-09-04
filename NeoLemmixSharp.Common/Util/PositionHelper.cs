@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Common.Util;
 
-public sealed class ChunkManager<T>
+public sealed class PositionHelper<T>
     where T : class, IIdEquatable<T>, IRectangularBounds
 {
     private const int ChunkSizeBitShift = 6;
@@ -28,7 +28,7 @@ public sealed class ChunkManager<T>
     private readonly SetUnionChunkIndexUser _setUnionChunkIndexUser;
     private readonly ScratchSpaceChunkIndexUser _scratchSpaceChunkIndexUser;
 
-    public ChunkManager(
+    public PositionHelper(
         T[] allItems,
         ISimpleHasher<T> hasher,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
@@ -242,7 +242,7 @@ public sealed class ChunkManager<T>
 
         public LargeSimpleSet<T> SetToUnionWith { private get; set; }
 
-        public SetUnionChunkIndexUser(ChunkManager<T> manager)
+        public SetUnionChunkIndexUser(PositionHelper<T> manager)
         {
             _itemChunks = manager._itemChunks;
         }
@@ -262,7 +262,7 @@ public sealed class ChunkManager<T>
         private readonly LargeSimpleSet<T>?[] _itemChunks;
         private readonly LargeBitArray _indicesOfItemChunksScratchSpace;
 
-        public ScratchSpaceChunkIndexUser(ChunkManager<T> manager)
+        public ScratchSpaceChunkIndexUser(PositionHelper<T> manager)
         {
             _itemChunks = manager._itemChunks;
             _indicesOfItemChunksScratchSpace = manager._indicesOfItemChunksScratchSpace;
