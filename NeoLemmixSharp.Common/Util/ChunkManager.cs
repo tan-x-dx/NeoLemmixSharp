@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -74,19 +73,13 @@ public sealed class ChunkManager<T>
             item.BottomRightPixel == item.PreviousBottomRightPixel)
             return;
 
-        var topLeft = NormalisePosition(item.TopLeftPixel);
-        GetShiftValues(topLeft, out var topLeftShiftX, out var topLeftShiftY);
-
-        var bottomRight = NormalisePosition(item.BottomRightPixel);
-        GetShiftValues(bottomRight, out var bottomRightShiftX, out var bottomRightShiftY);
+        GetShiftValues(item.TopLeftPixel, out var topLeftShiftX, out var topLeftShiftY);
+        GetShiftValues(item.BottomRightPixel, out var bottomRightShiftX, out var bottomRightShiftY);
 
         if (!forceUpdate)
         {
-            var previousTopLeft = NormalisePosition(item.PreviousTopLeftPixel);
-            GetShiftValues(previousTopLeft, out var previousTopLeftShiftX, out var previousTopLeftShiftY);
-
-            var previousBottomRight = NormalisePosition(item.PreviousBottomRightPixel);
-            GetShiftValues(previousBottomRight, out var previousBottomRightShiftX, out var previousBottomRightShiftY);
+            GetShiftValues(item.PreviousTopLeftPixel, out var previousTopLeftShiftX, out var previousTopLeftShiftY);
+            GetShiftValues(item.PreviousBottomRightPixel, out var previousBottomRightShiftX, out var previousBottomRightShiftY);
 
             if (topLeftShiftX == previousTopLeftShiftX &&
                 topLeftShiftY == previousTopLeftShiftY &&
@@ -135,13 +128,13 @@ public sealed class ChunkManager<T>
         {
             for (var y = ay; y <= by; y++)
             {
-                for (var x = 0; x <= ax; x++)
+                for (var x = 0; x <= bx; x++)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     _indicesOfItemChunksScratchSpace.SetBit(index);
                 }
 
-                for (var x = _numberOfHorizontalChunks - 1; x >= bx; x--)
+                for (var x = _numberOfHorizontalChunks - 1; x >= ax; x--)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     _indicesOfItemChunksScratchSpace.SetBit(index);
@@ -152,13 +145,13 @@ public sealed class ChunkManager<T>
         {
             for (var x = ax; x <= bx; x++)
             {
-                for (var y = 0; y <= ay; y++)
+                for (var y = 0; y <= by; y++)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     _indicesOfItemChunksScratchSpace.SetBit(index);
                 }
 
-                for (var y = _numberOfVerticalChunks - 1; y >= by; y--)
+                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     _indicesOfItemChunksScratchSpace.SetBit(index);
@@ -169,13 +162,13 @@ public sealed class ChunkManager<T>
         {
             for (var x = 0; x <= ax; x++)
             {
-                for (var y = 0; y <= ay; y++)
+                for (var y = 0; y <= by; y++)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     _indicesOfItemChunksScratchSpace.SetBit(index);
                 }
 
-                for (var y = _numberOfVerticalChunks - 1; y >= by; y--)
+                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     _indicesOfItemChunksScratchSpace.SetBit(index);
@@ -184,13 +177,13 @@ public sealed class ChunkManager<T>
 
             for (var x = _numberOfHorizontalChunks - 1; x >= bx; x--)
             {
-                for (var y = 0; y <= ay; y++)
+                for (var y = 0; y <= by; y++)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     _indicesOfItemChunksScratchSpace.SetBit(index);
                 }
 
-                for (var y = _numberOfVerticalChunks - 1; y >= by; y--)
+                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     _indicesOfItemChunksScratchSpace.SetBit(index);
@@ -199,28 +192,12 @@ public sealed class ChunkManager<T>
         }
     }
 
-    private void GetShiftValues(
-        LevelPosition levelPosition,
-        out int shiftX,
-        out int shiftY)
-    {
-        var topLeft = NormalisePosition(levelPosition);
-
-        shiftX = topLeft.X >> ChunkSizeBitShift;
-        shiftY = topLeft.Y >> ChunkSizeBitShift;
-        shiftX = Math.Clamp(shiftX, 0, _numberOfHorizontalChunks - 1);
-        shiftY = Math.Clamp(shiftY, 0, _numberOfVerticalChunks - 1);
-    }
-
     public void PopulateSetWithItemsFromRegion(
         LargeSimpleSet<T> set,
         LevelPosition topLeftLevelPosition,
         LevelPosition bottomRightLevelPosition)
     {
-        topLeftLevelPosition = NormalisePosition(topLeftLevelPosition);
         GetShiftValues(topLeftLevelPosition, out var topLeftShiftX, out var topLeftShiftY);
-
-        bottomRightLevelPosition = NormalisePosition(bottomRightLevelPosition);
         GetShiftValues(bottomRightLevelPosition, out var bottomRightShiftX, out var bottomRightShiftY);
 
         WriteToSet(set, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
@@ -228,8 +205,6 @@ public sealed class ChunkManager<T>
 
     private void WriteToSet(LargeSimpleSet<T> set, int ax, int ay, int bx, int by)
     {
-        _indicesOfItemChunksScratchSpace.Clear();
-
         // Is there a more elegant way to deal with all of these cases?
 
         if (ax <= bx &&
@@ -252,7 +227,7 @@ public sealed class ChunkManager<T>
         {
             for (var y = ay; y <= by; y++)
             {
-                for (var x = 0; x <= ax; x++)
+                for (var x = 0; x <= bx; x++)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     var itemSet = _itemChunks[index];
@@ -262,7 +237,7 @@ public sealed class ChunkManager<T>
                     }
                 }
 
-                for (var x = _numberOfHorizontalChunks - 1; x >= bx; x--)
+                for (var x = _numberOfHorizontalChunks - 1; x >= ax; x--)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     var itemSet = _itemChunks[index];
@@ -277,7 +252,7 @@ public sealed class ChunkManager<T>
         {
             for (var x = ax; x <= bx; x++)
             {
-                for (var y = 0; y <= ay; y++)
+                for (var y = 0; y <= by; y++)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     var itemSet = _itemChunks[index];
@@ -287,7 +262,7 @@ public sealed class ChunkManager<T>
                     }
                 }
 
-                for (var y = _numberOfVerticalChunks - 1; y >= by; y--)
+                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     var itemSet = _itemChunks[index];
@@ -302,7 +277,7 @@ public sealed class ChunkManager<T>
         {
             for (var x = 0; x <= ax; x++)
             {
-                for (var y = 0; y <= ay; y++)
+                for (var y = 0; y <= by; y++)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     var itemSet = _itemChunks[index];
@@ -312,7 +287,7 @@ public sealed class ChunkManager<T>
                     }
                 }
 
-                for (var y = _numberOfVerticalChunks - 1; y >= by; y--)
+                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     var itemSet = _itemChunks[index];
@@ -325,7 +300,7 @@ public sealed class ChunkManager<T>
 
             for (var x = _numberOfHorizontalChunks - 1; x >= bx; x--)
             {
-                for (var y = 0; y <= ay; y++)
+                for (var y = 0; y <= by; y++)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     var itemSet = _itemChunks[index];
@@ -335,7 +310,7 @@ public sealed class ChunkManager<T>
                     }
                 }
 
-                for (var y = _numberOfVerticalChunks - 1; y >= by; y--)
+                for (var y = _numberOfVerticalChunks - 1; y >= ay; y--)
                 {
                     var index = _numberOfHorizontalChunks * y + x;
                     var itemSet = _itemChunks[index];
@@ -348,12 +323,14 @@ public sealed class ChunkManager<T>
         }
     }
 
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private LevelPosition NormalisePosition(LevelPosition levelPosition)
+    private void GetShiftValues(
+        LevelPosition levelPosition,
+        out int shiftX,
+        out int shiftY)
     {
-        return new LevelPosition(
-            _horizontalBoundaryBehaviour.NormaliseX(levelPosition.X),
-            _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y));
+        shiftX = _horizontalBoundaryBehaviour.NormaliseX(levelPosition.X) >> ChunkSizeBitShift;
+        shiftY = _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y) >> ChunkSizeBitShift;
+        shiftX = Math.Clamp(shiftX, 0, _numberOfHorizontalChunks - 1);
+        shiftY = Math.Clamp(shiftY, 0, _numberOfVerticalChunks - 1);
     }
 }
