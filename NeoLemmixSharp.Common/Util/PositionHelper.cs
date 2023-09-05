@@ -103,11 +103,11 @@ public sealed class PositionHelper<T>
                 bottomRightShiftY == previousBottomRightShiftY)
                 return;
 
-            UseIndicesForIntervals(_scratchSpaceRemoveChunkIndexUser, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
+            UseIndicesForChunks(_scratchSpaceRemoveChunkIndexUser, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
         }
 
         _indicesOfItemChunksScratchSpaceAdd.Clear();
-        UseIndicesForIntervals(_scratchSpaceAddChunkIndexUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        UseIndicesForChunks(_scratchSpaceAddChunkIndexUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
 
         var chunkIndexEnumerator = _indicesOfItemChunksScratchSpaceRemove.GetEnumerator();
         while (chunkIndexEnumerator.MoveNext())
@@ -148,7 +148,7 @@ public sealed class PositionHelper<T>
         GetShiftValues(bottomRightLevelPosition, out var bottomRightShiftX, out var bottomRightShiftY);
 
         _setUnionChunkIndexUser.SetToUnionWith = set;
-        UseIndicesForIntervals(_setUnionChunkIndexUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        UseIndicesForChunks(_setUnionChunkIndexUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
     }
 
     private void GetShiftValues(
@@ -162,7 +162,7 @@ public sealed class PositionHelper<T>
         shiftY = Math.Clamp(shiftY, 0, _numberOfVerticalChunks - 1);
     }
 
-    private void UseIndicesForIntervals(IChunkIndexUser chunkIndexUser, int ax, int ay, int bx, int by)
+    private void UseIndicesForChunks(IChunkIndexUser chunkIndexUser, int ax, int ay, int bx, int by)
     {
         if (bx < ax)
         {
