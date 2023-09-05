@@ -55,11 +55,15 @@ public sealed class LargeBitArray : IBitArray
     [Pure]
     public bool GetBit(int index)
     {
+        Debug.Assert(index >= 0 && index < Length);
+
         return (_bits[index >> Shift] & (1U << index)) != 0U;
     }
 
     public bool SetBit(int index)
     {
+        Debug.Assert(index >= 0 && index < Length);
+
         var intIndex = index >> Shift;
 
         var oldValue = _bits[intIndex];
@@ -77,6 +81,8 @@ public sealed class LargeBitArray : IBitArray
 
     public bool ClearBit(int index)
     {
+        Debug.Assert(index >= 0 && index < Length);
+
         var intIndex = index >> Shift;
 
         var oldValue = _bits[intIndex];
@@ -94,6 +100,8 @@ public sealed class LargeBitArray : IBitArray
 
     public bool ToggleBit(int index)
     {
+        Debug.Assert(index >= 0 && index < Length);
+
         var intIndex = index >> Shift;
 
         var oldValue = _bits[intIndex];
