@@ -5,6 +5,7 @@ using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -41,7 +42,7 @@ public sealed class LevelObjectAssembler : IDisposable
         _spriteBatch = spriteBatch;
 
         _lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
-        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(_graphicsDevice, rootDirectoryManager);
+        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(_graphicsDevice, contentManager, rootDirectoryManager);
         _controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder(graphicsDevice, contentManager);
     }
 
@@ -69,7 +70,7 @@ public sealed class LevelObjectAssembler : IDisposable
                 var item = new SkillSetData
                 {
                     SkillName = skill.LemmingSkillName,
-                    NumberOfSkills = i,
+                    NumberOfSkills = 100,
                     TeamId = Team.AllItems[0].Id,
                 };
 
@@ -77,6 +78,27 @@ public sealed class LevelObjectAssembler : IDisposable
                 i++;
             }
         }
+
+        var id = 0;
+        var p = new RectangularLevelRegion(250, 90, 40, 2);
+        var input = new MetalGrateGadget.MetalGrateGadgetInput("input");
+
+        var metalGrateGadget = new MetalGrateGadget(
+            id,
+            p,
+            input,
+            true);
+
+        _gadgets.Add(metalGrateGadget);
+        _gadgetRenderers.Add(new MetalGrateRenderer(metalGrateGadget));
+
+        id++;
+        p = new RectangularLevelRegion(296, 142, 19, 13);
+        var switchGadget = new SwitchGadget(id, p, true);
+        switchGadget.Output.RegisterInput(input);
+
+        _gadgets.Add(switchGadget);
+        _gadgetRenderers.Add(new SwitchRenderer(switchGadget));
     }
 
     public Lemming[] GetLevelLemmings()
@@ -114,7 +136,7 @@ public sealed class LevelObjectAssembler : IDisposable
 
     public GadgetSpriteBank GetGadgetSpriteBank()
     {
-        return new GadgetSpriteBank(); // _gadgetSpriteBankBuilder.BuildGadgetSpriteBank();
+        return _gadgetSpriteBankBuilder.BuildGadgetSpriteBank();
     }
 
     public ControlPanelSpriteBank GetControlPanelSpriteBank(LevelCursor levelCursor)
@@ -124,7 +146,10 @@ public sealed class LevelObjectAssembler : IDisposable
 
     private void SetUpTestLemmings()
     {
+        int id = 0;
+
         var lemmingX = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -134,6 +159,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemmingA = new Lemming(
+            id++,
             orientation: UpOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -142,6 +168,7 @@ public sealed class LevelObjectAssembler : IDisposable
 
 
         var lemmingB = new Lemming(
+            id++,
             orientation: LeftOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -154,6 +181,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemmingE = new Lemming(
+            id++,
             orientation: LeftOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -161,6 +189,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemmingC = new Lemming(
+            id++,
             orientation: RightOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -172,6 +201,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemmingD = new Lemming(
+            id++,
             orientation: LeftOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance,
             currentAction: BuilderAction.Instance)
@@ -182,6 +212,7 @@ public sealed class LevelObjectAssembler : IDisposable
         BuilderAction.Instance.TransitionLemmingToAction(lemmingD, false);
 
         var lemming0 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -189,6 +220,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming1 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -196,6 +228,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming2 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -203,6 +236,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming3 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -210,6 +244,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming4 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -217,6 +252,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming5 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: LeftFacingDirection.Instance)
         {
@@ -225,6 +261,7 @@ public sealed class LevelObjectAssembler : IDisposable
 
 
         var lemming6 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
@@ -232,6 +269,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming7 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
@@ -239,6 +277,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming8 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
@@ -246,6 +285,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming9 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
@@ -253,6 +293,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming10 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
@@ -260,6 +301,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var lemming11 = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
@@ -267,6 +309,7 @@ public sealed class LevelObjectAssembler : IDisposable
         };
 
         var miner = new Lemming(
+            id++,
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance,
             currentAction: MinerAction.Instance)

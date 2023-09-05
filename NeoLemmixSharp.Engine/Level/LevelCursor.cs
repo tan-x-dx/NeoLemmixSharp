@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -11,20 +12,23 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelCursor
 {
-#pragma warning disable CS8618
-    public static LevelScreen LevelScreen { private get; set; }
-#pragma warning restore CS8618
-
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
     private readonly ILevelControlPanel _controlPanel;
     private readonly LevelInputController _controller;
+    private readonly LemmingManager _lemmingManager;
     private readonly SkillSetManager _skillSetManager;
+
+    private readonly LargeSimpleSet<Lemming> _lemmingsNearCursorPosition;
 
     private FacingDirection? _facingDirection;
     private bool _selectOnlyWalkers;
     private bool _selectOnlyUnassigned;
 
+    private int _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre;
+
+    public LargeSimpleSet<Lemming>.Enumerator LemmingsNearCursorPosition => _lemmingsNearCursorPosition.GetEnumerator();
+    public int NumberOfLemmingsNearCursorPosition => _lemmingsNearCursorPosition.Count;
     public int NumberOfLemmingsUnderCursor { get; private set; }
     public LevelPosition CursorPosition { private get; set; }
 
@@ -35,19 +39,24 @@ public sealed class LevelCursor
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour,
         ILevelControlPanel controlPanel,
         LevelInputController controller,
+        LemmingManager lemmingManager,
         SkillSetManager skillSetManager)
     {
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
         _controlPanel = controlPanel;
         _controller = controller;
+        _lemmingManager = lemmingManager;
         _skillSetManager = skillSetManager;
+
+        _lemmingsNearCursorPosition = new LargeSimpleSet<Lemming>(_lemmingManager);
     }
 
     public void OnNewFrame()
     {
         NumberOfLemmingsUnderCursor = 0;
         CurrentlyHighlightedLemming = null;
+        _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre = int.MaxValue;
 
         _selectOnlyWalkers = _controller.SelectOnlyWalkers.IsKeyDown;
         _selectOnlyUnassigned = _controller.SelectOnlyUnassignedLemmings.IsKeyDown;
@@ -64,6 +73,12 @@ public sealed class LevelCursor
         {
             _facingDirection = null;
         }
+
+        var topLeftCursorPosition = CursorPosition + new LevelPosition(-6, -6);
+        var bottomRightCursorPosition = CursorPosition + new LevelPosition(6, 6);
+
+        _lemmingsNearCursorPosition.Clear();
+        _lemmingManager.PopulateSetWithLemmingsFromRegion(_lemmingsNearCursorPosition, topLeftCursorPosition, bottomRightCursorPosition);
     }
 
     public void CheckLemming(Lemming lemming)
@@ -110,11 +125,17 @@ public sealed class LevelCursor
 
     private bool NewCandidateIsHigherPriority(Lemming? previousCandidate, Lemming newCandidate)
     {
-        return previousCandidate is null ||
-               NewCandidateHasMoreRelevantState(previousCandidate, newCandidate) ||
+        if (previousCandidate is null)
+        {
+            _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre = GetDistanceSquaredFromCursorCentre(newCandidate);
+
+            return true;
+        }
+
+        return NewCandidateHasMoreRelevantState(previousCandidate, newCandidate) ||
                NewCandidateHasMoreRelevantTeam(previousCandidate, newCandidate) ||
                NewCandidateHasHigherActionPriority(previousCandidate, newCandidate) ||
-               NewCandidateIsCloserToCursorCentre(previousCandidate, newCandidate);
+               NewCandidateIsCloserToCursorCentre(newCandidate);
     }
 
     private static bool NewCandidateHasMoreRelevantState(Lemming previousCandidate, Lemming newCandidate)
@@ -141,17 +162,24 @@ public sealed class LevelCursor
                previousCandidate.CurrentAction.CursorSelectionPriorityValue;
     }
 
-    private bool NewCandidateIsCloserToCursorCentre(Lemming previousCandidate, Lemming newCandidate)
+    private bool NewCandidateIsCloserToCursorCentre(Lemming newCandidate)
     {
-        var previousCandidatePosition = previousCandidate.Orientation.Move(previousCandidate.LevelPosition, previousCandidate.FacingDirection.DeltaX, 4);
-        var newCandidatePosition = newCandidate.Orientation.Move(newCandidate.LevelPosition, newCandidate.FacingDirection.DeltaX, 4);
+        var newCandidateDistanceSquaredFromCursorCentre = GetDistanceSquaredFromCursorCentre(newCandidate);
 
-        var dx1 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, previousCandidatePosition.X);
-        var dy1 = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, previousCandidatePosition.Y);
+        if (newCandidateDistanceSquaredFromCursorCentre >= _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre)
+            return false;
 
-        var dx2 = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, newCandidatePosition.X);
-        var dy2 = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, newCandidatePosition.Y);
+        _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre = newCandidateDistanceSquaredFromCursorCentre;
+        return true;
+    }
 
-        return dx2 * dx2 + dy2 * dy2 < dx1 * dx1 + dy1 * dy1;
+    private int GetDistanceSquaredFromCursorCentre(Lemming lemming)
+    {
+        var lemmingPosition = lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 4);
+
+        var dx = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, lemmingPosition.X);
+        var dy = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, lemmingPosition.Y);
+
+        return dx * dx + dy * dy;
     }
 }

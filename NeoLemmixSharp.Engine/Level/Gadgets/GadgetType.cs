@@ -27,7 +27,16 @@ public enum GadgetType
     Splat,
     Zombie,
 
+    Switch,
     Mover,
-    MetalGrate,
-    Logic
+
+    MetalGrateOff,
+    MetalGrateActivating,
+    MetalGrateOn,
+    MetalGrateDeactivating,
+
+    AndGate,
+    OrGate,
+    NotGate,
+    XorGate
 }

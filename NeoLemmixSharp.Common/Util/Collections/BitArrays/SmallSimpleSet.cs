@@ -81,10 +81,7 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     private uint BitsFromEnumerable(IEnumerable<T> other)
     {
         if (other is SmallSimpleSet<T> set)
-        {
-            Debug.Assert(_hasher.Equals(set._hasher));
             return set._bits.GetRawBits();
-        }
 
         var result = 0U;
 
@@ -105,7 +102,6 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public void UnionWith(SmallSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits.GetRawBits();
         _bits.UnionWith(otherBits);
     }
@@ -118,7 +114,6 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public void IntersectWith(SmallSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits.GetRawBits();
         _bits.IntersectWith(otherBits);
     }
@@ -131,7 +126,6 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public void ExceptWith(SmallSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits.GetRawBits();
         _bits.ExceptWith(otherBits);
     }
@@ -144,7 +138,6 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public void SymmetricExceptWith(SmallSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits.GetRawBits();
         _bits.SymmetricExceptWith(otherBits);
     }
@@ -159,7 +152,6 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool IsSubsetOf(SmallSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits.GetRawBits();
         return _bits.IsSubsetOf(otherBits);
     }
@@ -174,7 +166,6 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool IsSupersetOf(SmallSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits.GetRawBits();
         return _bits.IsSupersetOf(otherBits);
     }
@@ -189,7 +180,6 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool IsProperSubsetOf(SmallSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits.GetRawBits();
         return _bits.IsProperSubsetOf(otherBits);
     }
@@ -204,7 +194,6 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool IsProperSupersetOf(SmallSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits.GetRawBits();
         return _bits.IsProperSupersetOf(otherBits);
     }
@@ -221,7 +210,6 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool Overlaps(SmallSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
         return _bits.Overlaps(otherBits.GetRawBits());
     }
@@ -236,7 +224,6 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool SetEquals(SmallSimpleSet<T> other)
     {
-        Debug.Assert(_hasher.Equals(other._hasher));
         var otherBits = other._bits;
         return _bits.SetEquals(otherBits.GetRawBits());
     }

@@ -29,13 +29,11 @@ public sealed class FloaterAction : LemmingAction
         var orientation = lemming.Orientation;
         var levelPosition = lemming.LevelPosition;
 
-        var allGadgets = Gadgets.AllGadgets;
-        var idEnumerator = Gadgets.GetAllGadgetIdsForPosition(levelPosition);
+        var gadgetEnumerator = Gadgets.GetAllGadgetsForPosition(levelPosition);
 
-        while (idEnumerator.MoveNext())
+        while (gadgetEnumerator.MoveNext())
         {
-            var gadgetId = idEnumerator.Current;
-            var gadget = allGadgets[gadgetId];
+            var gadget = gadgetEnumerator.Current;
 
             if (gadget.Type != GadgetType.Updraft)
                 continue;

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Updates;
 
@@ -6,6 +7,7 @@ public interface IFrameUpdater
 {
     UpdateState UpdateState { get; }
 
-    void UpdateLemming(Lemming lemming);
+    bool UpdateGadget(GadgetBase gadget);
+    bool UpdateLemming(Lemming lemming);
     bool Tick();
 }

@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -41,13 +42,18 @@ public sealed class StatefulGadget : GadgetBase
         currentState.OnTransitionTo();
     }
 
-    public override void ReactToInput(string inputName, int payload)
+    public override IGadgetInput? GetInputWithName(string inputName)
     {
         throw new NotImplementedException();
     }
 
     public override bool CaresAboutLemmingInteraction => _states.Any(s => s.HitBoxBehaviour.InteractsWithLemming);
     public override bool MatchesLemming(Lemming lemming) => CurrentState.HitBoxBehaviour.MatchesLemming(lemming);
+    public override void OnLemmingMatch(Lemming lemming)
+    {
+        
+    }
+
     public override bool MatchesPosition(LevelPosition levelPosition) => CurrentState.HitBoxBehaviour.MatchesPosition(levelPosition);
 
     public override void Tick()

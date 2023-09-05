@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Updates;
@@ -14,18 +15,20 @@ public sealed class FastForwardsFrameUpdater : IFrameUpdater
 
     public UpdateState UpdateState => UpdateState.FastForward;
 
-    public void UpdateLemming(Lemming lemming)
-    {
-        if (lemming.ShouldTick)
-        {
-            lemming.Tick();
+    public bool UpdateGadget(GadgetBase gadget) => true;
 
-            if (lemming.IsFastForward)
-            {
-                lemming.Tick();
-                lemming.Tick();
-            }
-        }
+    public bool UpdateLemming(Lemming lemming)
+    {
+        if (!lemming.ShouldTick)
+            return false;
+
+        if (!lemming.IsFastForward)
+            return true;
+
+        lemming.Tick();
+        lemming.Tick();
+
+        return true;
     }
 
     public bool Tick()

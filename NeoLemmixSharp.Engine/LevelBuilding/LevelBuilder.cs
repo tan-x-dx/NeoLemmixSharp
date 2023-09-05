@@ -15,6 +15,7 @@ using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
+using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Io.LevelReading;
 using NeoLemmixSharp.Io.LevelReading.Nxlv;
@@ -67,7 +68,7 @@ public sealed class LevelBuilder : IDisposable
         var verticalViewPortBehaviour = BoundaryHelpers.GetVerticalViewPortBehaviour(levelData.VerticalViewPortBehaviour, levelData.LevelHeight);
 
         var levelLemmings = _levelObjectAssembler.GetLevelLemmings();
-        var lemmingManager = new LemmingManager(levelLemmings);
+        var lemmingManager = new LemmingManager(levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
         var levelGadgets = _levelObjectAssembler.GetLevelGadgets();
         var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
@@ -86,9 +87,9 @@ public sealed class LevelBuilder : IDisposable
             ? new CountDownLevelTimer(levelData.TimeLimit.Value)
             : new CountUpLevelTimer();
 
-        var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController, skillSetManager);
+        var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController, lemmingManager, skillSetManager);
         var levelViewport = new Viewport(levelCursor, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-        var updateScheduler = new UpdateScheduler(levelData.SuperLemmingMode, controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, skillSetManager);
+        var updateScheduler = new UpdateScheduler(levelData.SuperLemmingMode, controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, gadgetManager, skillSetManager);
 
         var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
 
@@ -101,10 +102,10 @@ public sealed class LevelBuilder : IDisposable
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        var levelSprites = _levelObjectAssembler.GetLevelSprites();
-
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(levelCursor);
+
+        var levelSprites = _levelObjectAssembler.GetLevelSprites();
 
         var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel, _fontBank);
 
@@ -131,9 +132,20 @@ public sealed class LevelBuilder : IDisposable
             lemmingRenderer.UpdateLemmingState();
         }
 
+        var wp = controlPanelSpriteBank.GetTexture("WhitePixel");
+        foreach (var metalGrateRenderer in levelSprites.OfType<MetalGrateRenderer>())
+        {
+            metalGrateRenderer.SetWhitePixelTexture(wp);
+        }
+
+        var switchTexture = gadgetSpriteBank.GetTexture("switch");
+        foreach (var switchRenderer in levelSprites.OfType<SwitchRenderer>())
+        {
+            switchRenderer.SetSwitchTexture(switchTexture);
+        }
+
         return new LevelScreen(
             levelData,
-            levelGadgets,
             updateScheduler,
             inputController,
             levelTimer,

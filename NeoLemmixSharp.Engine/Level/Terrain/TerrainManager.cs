@@ -61,7 +61,7 @@ public sealed class TerrainManager
     }
 
     [Pure]
-    private PixelType PixelTypeAtPosition(LevelPosition levelPosition)
+    public PixelType PixelTypeAtPosition(LevelPosition levelPosition)
     {
         if (PositionOutOfBounds(levelPosition))
             return PixelType.Void;
@@ -78,7 +78,7 @@ public sealed class TerrainManager
         var pixel = PixelTypeAtPosition(levelPosition);
 
         return pixel.IsSolidToOrientation(lemming.Orientation) ||
-               _gadgetManager.HasGadgetOfTypeAtPosition(levelPosition, GadgetType.MetalGrate);
+               _gadgetManager.HasGadgetOfTypeAtPosition(levelPosition, GadgetType.MetalGrateOn);
     }
 
     [Pure]
@@ -91,7 +91,7 @@ public sealed class TerrainManager
 
         return !pixel.CanBeDestroyed() ||
                !destructionAction.CanDestroyPixel(pixel, lemming.Orientation, lemming.FacingDirection) ||
-               _gadgetManager.HasGadgetOfTypeAtPosition(levelPosition, GadgetType.MetalGrate);
+               _gadgetManager.HasGadgetOfTypeAtPosition(levelPosition, GadgetType.MetalGrateOn);
     }
 
     [Pure]
@@ -101,7 +101,7 @@ public sealed class TerrainManager
         var pixel = PixelTypeAtPosition(levelPosition);
 
         return pixel.IsSteel() ||
-               _gadgetManager.HasGadgetOfTypeAtPosition(levelPosition, GadgetType.MetalGrate);
+               _gadgetManager.HasGadgetOfTypeAtPosition(levelPosition, GadgetType.MetalGrateOn);
     }
 
     public void ErasePixel(
@@ -126,7 +126,8 @@ public sealed class TerrainManager
 
     public void SetSolidPixel(LevelPosition pixelToSet, uint color)
     {
-        if (PositionOutOfBounds(pixelToSet))
+        if (PositionOutOfBounds(pixelToSet) ||
+            _gadgetManager.HasGadgetOfTypeAtPosition(pixelToSet, GadgetType.MetalGrateOn))
             return;
 
         var index = LevelWidth * pixelToSet.Y + pixelToSet.X;
