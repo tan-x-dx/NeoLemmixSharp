@@ -27,7 +27,7 @@ public sealed class UniqueIdItemComparer<T> :
 
     public int Compare(T? first, T? second)
     {
-        if (first is null && second is null) return 0;
+        if (ReferenceEquals(first, second)) return 0;
         if (first is null) return -1;
         if (second is null) return 1;
 
@@ -35,7 +35,6 @@ public sealed class UniqueIdItemComparer<T> :
     }
 
     public bool Equals(UniqueIdItemComparer<T>? other) => other is not null;
-    public bool Equals(ISimpleHasher<T>? other) => other is UniqueIdItemComparer<T>;
     public override bool Equals(object? obj) => obj is UniqueIdItemComparer<T>;
     public override int GetHashCode() => typeof(T).GetHashCode();
 

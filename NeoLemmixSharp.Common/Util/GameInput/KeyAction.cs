@@ -57,26 +57,12 @@ public sealed class KeyAction : IIdEquatable<KeyAction>
 
     public bool IsEnabled => _enabledMask != 0;
 
-    public bool Equals(KeyAction? other)
-    {
-        if (other is null) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return Id == other.Id;
-    }
-
-    public override bool Equals(object? obj) => ReferenceEquals(this, obj) || obj is KeyAction other && Id == other.Id;
+    public bool Equals(KeyAction? other) => Id == (other?.Id ?? -1);
+    public override bool Equals(object? obj) => obj is KeyAction other && Id == other.Id;
     public override int GetHashCode() => Id;
 
     public override string ToString() => _actionName;
 
-    public static bool operator ==(KeyAction? left, KeyAction? right)
-    {
-        if (ReferenceEquals(left, right))
-            return true;
-        if (left is null || right is null)
-            return false;
-        return left.Id == right.Id;
-    }
-
-    public static bool operator !=(KeyAction? left, KeyAction? right) => !(left == right);
+    public static bool operator ==(KeyAction left, KeyAction right) => left.Id == right.Id;
+    public static bool operator !=(KeyAction left, KeyAction right) => left.Id != right.Id;
 }

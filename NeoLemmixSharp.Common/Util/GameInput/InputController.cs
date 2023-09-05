@@ -102,9 +102,9 @@ public abstract class InputController : ISimpleHasher<Keys>, IComparer<KeyAction
 
     int IComparer<KeyAction>.Compare(KeyAction? x, KeyAction? y)
     {
-        if (x == null && y == null) return 0;
-        if (x == null) return -1;
-        if (y == null) return 1;
+        if (ReferenceEquals(x, y)) return 0;
+        if (x is null) return -1;
+        if (y is null) return 1;
 
         return x.Id.CompareTo(y.Id);
     }

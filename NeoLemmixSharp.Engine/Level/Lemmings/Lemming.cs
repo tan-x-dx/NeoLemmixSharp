@@ -63,8 +63,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     public LevelPosition TopLeftPixel => LevelPosition + new LevelPosition(-3, -3);
     public LevelPosition BottomRightPixel => LevelPosition + new LevelPosition(2, 2);
-    public LevelPosition PreviousTopLeftPixel => PreviousLevelPosition + new LevelPosition(-3, -3);
-    public LevelPosition PreviousBottomRightPixel => PreviousLevelPosition + new LevelPosition(2, 2);
+    public LevelPosition PreviousTopLeftPixel { get; private set; }
+    public LevelPosition PreviousBottomRightPixel { get; private set; }
 
     public Lemming(
         int id,
@@ -129,6 +129,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         }
 
         PreviousLevelPosition = LevelPosition;
+        PreviousTopLeftPixel = TopLeftPixel;
+        PreviousBottomRightPixel = BottomRightPixel;
         var result = CurrentAction.UpdateLemming(this);
 
         return result;
