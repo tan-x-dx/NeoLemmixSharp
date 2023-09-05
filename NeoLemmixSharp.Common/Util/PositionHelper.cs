@@ -109,8 +109,10 @@ public sealed class PositionHelper<T>
         _indicesOfItemChunksScratchSpaceAdd.Clear();
         UseIndicesForIntervals(_scratchSpaceAddChunkIndexUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
 
-        foreach (var itemChunkIndex in _indicesOfItemChunksScratchSpaceRemove)
+        var chunkIndexEnumerator = _indicesOfItemChunksScratchSpaceRemove.GetEnumerator();
+        while (chunkIndexEnumerator.MoveNext())
         {
+            var itemChunkIndex = chunkIndexEnumerator.Current;
             if (!_indicesOfItemChunksScratchSpaceAdd.GetBit(itemChunkIndex))
             {
                 var itemChunk = _itemChunks[itemChunkIndex]!;
@@ -119,13 +121,18 @@ public sealed class PositionHelper<T>
             }
         }
 
-        foreach (var itemChunkIndex in _indicesOfItemChunksScratchSpaceAdd)
+        chunkIndexEnumerator = _indicesOfItemChunksScratchSpaceAdd.GetEnumerator();
+        while (chunkIndexEnumerator.MoveNext())
         {
+            var itemChunkIndex = chunkIndexEnumerator.Current;
             if (!_indicesOfItemChunksScratchSpaceRemove.GetBit(itemChunkIndex))
             {
                 ref var itemChunk = ref _itemChunks[itemChunkIndex];
-                itemChunk ??= new LargeSimpleSet<T>(_hasher);
-                _indicesOfItemChunks.SetBit(itemChunkIndex);
+                if (itemChunk == null)
+                {
+                    itemChunk = new LargeSimpleSet<T>(_hasher);
+                    _indicesOfItemChunks.SetBit(itemChunkIndex);
+                }
 
                 itemChunk.Add(item);
             }
