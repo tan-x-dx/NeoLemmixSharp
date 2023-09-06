@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -34,8 +33,6 @@ public sealed class DrownerAction : LemmingAction
 
         return false;
     }
-
-    public override LevelPosition GetAnchorPosition() => new(5, 10);
 
     protected override int TopLeftBoundsDeltaX() => -2;
     protected override int TopLeftBoundsDeltaY() => 8;

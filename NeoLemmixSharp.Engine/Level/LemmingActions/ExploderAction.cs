@@ -25,8 +25,6 @@ public sealed class ExploderAction : LemmingAction, IDestructionAction
         throw new NotImplementedException();
     }
 
-    public override LevelPosition GetAnchorPosition() => new(16, 25);
-
     protected override int TopLeftBoundsDeltaX() => -4;
     protected override int TopLeftBoundsDeltaY() => 8;
 

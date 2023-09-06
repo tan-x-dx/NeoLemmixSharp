@@ -83,8 +83,6 @@ public sealed class WalkerAction : LemmingAction
         return true;
     }
 
-    public override LevelPosition GetAnchorPosition() => new(2, 10);
-
     protected override int TopLeftBoundsDeltaX() => -2;
     protected override int TopLeftBoundsDeltaY() => 10;
 

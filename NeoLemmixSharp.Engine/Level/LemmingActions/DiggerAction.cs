@@ -65,8 +65,6 @@ public sealed class DiggerAction : LemmingAction, IDestructionAction
         return true;
     }
 
-    public override LevelPosition GetAnchorPosition() => new(7, 12);
-
     protected override int TopLeftBoundsDeltaX() => -4;
     protected override int TopLeftBoundsDeltaY() => 5;
 

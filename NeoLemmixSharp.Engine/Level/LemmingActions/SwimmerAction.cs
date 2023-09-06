@@ -123,8 +123,6 @@ public sealed class SwimmerAction : LemmingAction
         return true;
     }
 
-    public override LevelPosition GetAnchorPosition() => new(6, 8);
-
     protected override int TopLeftBoundsDeltaX() => -6;
     protected override int TopLeftBoundsDeltaY() => 4;
 

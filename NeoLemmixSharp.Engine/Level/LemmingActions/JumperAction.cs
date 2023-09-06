@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -21,8 +20,6 @@ public sealed class JumperAction : LemmingAction
     {
         throw new NotImplementedException();
     }
-
-    public override LevelPosition GetAnchorPosition() => new(2, 10);
 
     protected override int TopLeftBoundsDeltaX() => -1;
     protected override int TopLeftBoundsDeltaY() => 9;

@@ -76,8 +76,6 @@ public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
 
     public abstract bool UpdateLemming(Lemming lemming);
 
-    public abstract LevelPosition GetAnchorPosition();
-
     public LevelPositionPair GetLemmingBounds(Lemming lemming)
     {
         var orientation = lemming.Orientation;

@@ -26,8 +26,6 @@ public sealed class FencerAction : LemmingAction, IDestructionAction
         throw new NotImplementedException();
     }
 
-    public override LevelPosition GetAnchorPosition() => new(3, 10);
-
     protected override int TopLeftBoundsDeltaX() => -3;
     protected override int TopLeftBoundsDeltaY() => 10;
 

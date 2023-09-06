@@ -128,8 +128,6 @@ public sealed class MinerAction : LemmingAction, IDestructionAction
         return true;
     }
 
-    public override LevelPosition GetAnchorPosition() => new(7, 13);
-
     protected override int TopLeftBoundsDeltaX() => -2;
     protected override int TopLeftBoundsDeltaY() => 10;
 

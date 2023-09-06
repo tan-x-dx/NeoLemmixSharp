@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -26,8 +25,6 @@ public sealed class BlockerAction : LemmingAction
 
         return true;
     }
-
-    public override LevelPosition GetAnchorPosition() => new(5, 13);
 
     protected override int TopLeftBoundsDeltaX() => -5;
     protected override int TopLeftBoundsDeltaY() => 11;

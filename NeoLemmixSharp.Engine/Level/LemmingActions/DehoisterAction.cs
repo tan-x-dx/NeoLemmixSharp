@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -56,8 +55,6 @@ public sealed class DehoisterAction : LemmingAction
 
         return lemming.CurrentAction != DrownerAction.Instance;
     }
-
-    public override LevelPosition GetAnchorPosition() => new(5, 13);
 
     protected override int TopLeftBoundsDeltaX() => -5;
     protected override int TopLeftBoundsDeltaY() => 10;

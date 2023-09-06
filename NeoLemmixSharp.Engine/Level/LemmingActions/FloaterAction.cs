@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -62,8 +61,6 @@ public sealed class FloaterAction : LemmingAction
 
         return true;
     }
-
-    public override LevelPosition GetAnchorPosition() => new(4, 16);
 
     protected override int TopLeftBoundsDeltaX() => -2;
     protected override int TopLeftBoundsDeltaY() => 11;
