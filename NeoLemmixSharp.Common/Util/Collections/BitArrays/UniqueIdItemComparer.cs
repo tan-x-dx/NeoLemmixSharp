@@ -25,14 +25,7 @@ public sealed class UniqueIdItemComparer<T> :
         return HashCode.Combine(obj.Id);
     }
 
-    public int Compare(T? first, T? second)
-    {
-        if (ReferenceEquals(first, second)) return 0;
-        if (first is null) return -1;
-        if (second is null) return 1;
-
-        return first.Id.CompareTo(second.Id);
-    }
+    public int Compare(T? x, T? y) => IdEquatableItemHelperMethods.Compare(x, y);
 
     public bool Equals(UniqueIdItemComparer<T>? other) => other is not null;
     public override bool Equals(object? obj) => obj is UniqueIdItemComparer<T>;
@@ -42,4 +35,17 @@ public sealed class UniqueIdItemComparer<T> :
 
     public int Hash(T item) => item.Id;
     public T Unhash(int index) => T.AllItems[index];
+
+    public static LargeSimpleSet<T> LargeSetForType(bool fullSet = false)
+    {
+        return new LargeSimpleSet<T>(Instance, fullSet);
+    }
+
+    public static SmallSimpleSet<T> SmallSetForType(bool fullSet = false)
+    {
+        if (Instance.NumberOfItems > SmallBitArray.Size)
+            throw new InvalidOperationException("Cannot create small set for this type - too many items!");
+
+        return new SmallSimpleSet<T>(Instance, fullSet);
+    }
 }

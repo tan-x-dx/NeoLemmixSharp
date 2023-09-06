@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
+public sealed class LemmingManager : ISimpleHasher<Lemming>
 {
     private readonly PositionHelper<Lemming> _lemmingPositionHelper;
     private readonly LargeSimpleSet<Lemming> _activeLemmings;
@@ -27,7 +27,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _lemmings = lemmings;
-        Array.Sort(_lemmings, this);
+        Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
         _lemmings.ValidateUniqueIds();
 
         _lemmingPositionHelper = new PositionHelper<Lemming>(lemmings, this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
@@ -64,14 +64,6 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, IComparer<Lemming>
         LevelPosition bottomRightLevelPosition)
     {
         _lemmingPositionHelper.PopulateSetWithItemsFromRegion(set, topLeftLevelPosition, bottomRightLevelPosition);
-    }
-
-    int IComparer<Lemming>.Compare(Lemming? x, Lemming? y)
-    {
-        if (ReferenceEquals(x, y)) return 0;
-        if (y is null) return 1;
-        if (x is null) return -1;
-        return x.Id.CompareTo(y.Id);
     }
 
     int ISimpleHasher<Lemming>.NumberOfItems => _lemmings.Length;

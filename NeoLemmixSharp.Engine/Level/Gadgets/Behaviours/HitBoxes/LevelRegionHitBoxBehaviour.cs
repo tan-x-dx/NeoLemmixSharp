@@ -12,9 +12,9 @@ public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
 {
     private readonly ILevelRegion _levelRegion;
     private readonly LargeBitArray _lemmingIdsInHitBox;
-    private readonly LargeSimpleSet<LemmingAction> _targetActions = SimpleSetHelpers.LargeSetForUniqueItemType<LemmingAction>(true);
-    private readonly SmallSimpleSet<Orientation> _targetOrientations = SimpleSetHelpers.SmallSetForUniqueItemType<Orientation>(true);
-    private readonly SmallSimpleSet<FacingDirection> _targetFacingDirections = SimpleSetHelpers.SmallSetForUniqueItemType<FacingDirection>(true);
+    private readonly LargeSimpleSet<LemmingAction> _targetActions = UniqueIdItemComparer<LemmingAction>.LargeSetForType(true);
+    private readonly SmallSimpleSet<Orientation> _targetOrientations = UniqueIdItemComparer<Orientation>.SmallSetForType(true);
+    private readonly SmallSimpleSet<FacingDirection> _targetFacingDirections = UniqueIdItemComparer<FacingDirection>.SmallSetForType(true);
 
     public bool IsEnabled { get; set; }
     public bool InteractsWithLemming => true;

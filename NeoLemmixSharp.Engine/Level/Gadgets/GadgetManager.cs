@@ -19,6 +19,9 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _allGadgets = allGadgets;
+        _allGadgets.ValidateUniqueIds();
+        Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
+
         _gadgetPositionHelper = new PositionHelper<GadgetBase>(allGadgets, this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
         foreach (var gadget in allGadgets)

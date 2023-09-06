@@ -44,7 +44,7 @@ public abstract class LemmingSkill : IUniqueIdItem<LemmingSkill>
         };
 
         result.ValidateUniqueIds();
-        Array.Sort(result, UniqueIdItemComparer<LemmingSkill>.Instance);
+        Array.Sort(result, IdEquatableItemHelperMethods.Compare);
 
         return result;
     }
@@ -58,7 +58,7 @@ public abstract class LemmingSkill : IUniqueIdItem<LemmingSkill>
 
     protected LemmingSkill()
     {
-        _assignableActions = SimpleSetHelpers.LargeSetForUniqueItemType<LemmingAction>();
+        _assignableActions = UniqueIdItemComparer<LemmingAction>.LargeSetForType();
 
         // ReSharper disable once VirtualMemberCallInConstructor
         foreach (var action in ActionsThatCanBeAssigned())

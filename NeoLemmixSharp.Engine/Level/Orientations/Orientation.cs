@@ -1,7 +1,7 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 

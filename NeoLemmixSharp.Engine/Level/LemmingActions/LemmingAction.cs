@@ -57,7 +57,7 @@ public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
         };
 
         result.ValidateUniqueIds();
-        Array.Sort(result, UniqueIdItemComparer<LemmingAction>.Instance);
+        Array.Sort(result, IdEquatableItemHelperMethods.Compare);
 
         return result;
     }
