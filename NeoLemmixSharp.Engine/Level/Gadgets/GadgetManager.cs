@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.PositionTracking;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
@@ -22,7 +23,12 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         _allGadgets.ValidateUniqueIds();
         Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
 
-        _gadgetPositionHelper = new PositionHelper<GadgetBase>(allGadgets, this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        _gadgetPositionHelper = new PositionHelper<GadgetBase>(
+            allGadgets, 
+            this,
+            ChunkSizeType.ChunkSize64,
+            horizontalBoundaryBehaviour,
+            verticalBoundaryBehaviour);
 
         foreach (var gadget in allGadgets)
         {

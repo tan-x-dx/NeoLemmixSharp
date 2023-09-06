@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
@@ -30,7 +31,12 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
         Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
         _lemmings.ValidateUniqueIds();
 
-        _lemmingPositionHelper = new PositionHelper<Lemming>(lemmings, this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        _lemmingPositionHelper = new PositionHelper<Lemming>(
+            lemmings,
+            this,
+            ChunkSizeType.ChunkSize32,
+            horizontalBoundaryBehaviour,
+            verticalBoundaryBehaviour);
         _activeLemmings = new LargeSimpleSet<Lemming>(this);
 
         for (var i = 0; i < _lemmings.Length; i++)

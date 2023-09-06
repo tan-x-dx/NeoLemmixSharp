@@ -3,14 +3,12 @@ using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
 public sealed class PositionHelper<T>
     where T : class, IIdEquatable<T>, IRectangularBounds
 {
-    private const int ChunkSizeBitShift = 6;
-    private const int ChunkSize = 1 << ChunkSizeBitShift;
-    private const int ChunkSizeBitMask = ChunkSize - 1;
+    private readonly int _chunkSizeBitShift;
 
     private readonly T[] _allItems;
     private readonly ISimpleHasher<T> _hasher;
@@ -26,13 +24,16 @@ public sealed class PositionHelper<T>
     private readonly int _numberOfHorizontalChunks;
     private readonly int _numberOfVerticalChunks;
 
-    private readonly SetUnionChunkIndexUser _setUnionChunkIndexUser;
+    private readonly SetUnionChunkIndexUser<T> _setUnionChunkIndexUser;
     private readonly ScratchSpaceChunkIndexUser _scratchSpaceAddChunkIndexUser;
     private readonly ScratchSpaceChunkIndexUser _scratchSpaceRemoveChunkIndexUser;
+
+    internal LargeSimpleSet<T>?[] ItemChunks => _itemChunks;
 
     public PositionHelper(
         T[] allItems,
         ISimpleHasher<T> hasher,
+        ChunkSizeType chunkSizeType,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
@@ -42,15 +43,19 @@ public sealed class PositionHelper<T>
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
-        _numberOfHorizontalChunks = (_horizontalBoundaryBehaviour.LevelWidth + ChunkSizeBitMask) >> ChunkSizeBitShift;
-        _numberOfVerticalChunks = (_verticalBoundaryBehaviour.LevelHeight + ChunkSizeBitMask) >> ChunkSizeBitShift;
+        _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
+        var chunkSize = 1 << _chunkSizeBitShift;
+        var chunkSizeBitMask = chunkSize - 1;
+
+        _numberOfHorizontalChunks = (_horizontalBoundaryBehaviour.LevelWidth + chunkSizeBitMask) >> _chunkSizeBitShift;
+        _numberOfVerticalChunks = (_verticalBoundaryBehaviour.LevelHeight + chunkSizeBitMask) >> _chunkSizeBitShift;
 
         _itemChunks = new LargeSimpleSet<T>[_numberOfHorizontalChunks * _numberOfVerticalChunks];
         _indicesOfItemChunks = new LargeBitArray(_itemChunks.Length);
         _indicesOfItemChunksScratchSpaceAdd = new LargeBitArray(_itemChunks.Length);
         _indicesOfItemChunksScratchSpaceRemove = new LargeBitArray(_itemChunks.Length);
 
-        _setUnionChunkIndexUser = new SetUnionChunkIndexUser(this);
+        _setUnionChunkIndexUser = new SetUnionChunkIndexUser<T>(this);
         _scratchSpaceAddChunkIndexUser = new ScratchSpaceChunkIndexUser(_indicesOfItemChunksScratchSpaceAdd);
         _scratchSpaceRemoveChunkIndexUser = new ScratchSpaceChunkIndexUser(_indicesOfItemChunksScratchSpaceRemove);
     }
@@ -58,8 +63,8 @@ public sealed class PositionHelper<T>
     [Pure]
     public LargeSimpleSet<T>.Enumerator GetAllItemIdsForPosition(LevelPosition levelPosition)
     {
-        var shiftX = levelPosition.X >> ChunkSizeBitShift;
-        var shiftY = levelPosition.Y >> ChunkSizeBitShift;
+        var shiftX = levelPosition.X >> _chunkSizeBitShift;
+        var shiftY = levelPosition.Y >> _chunkSizeBitShift;
 
         if (shiftX < 0 || shiftX >= _numberOfHorizontalChunks ||
             shiftY < 0 || shiftY >= _numberOfVerticalChunks)
@@ -156,8 +161,8 @@ public sealed class PositionHelper<T>
         out int shiftX,
         out int shiftY)
     {
-        shiftX = _horizontalBoundaryBehaviour.NormaliseX(levelPosition.X) >> ChunkSizeBitShift;
-        shiftY = _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y) >> ChunkSizeBitShift;
+        shiftX = _horizontalBoundaryBehaviour.NormaliseX(levelPosition.X) >> _chunkSizeBitShift;
+        shiftY = _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y) >> _chunkSizeBitShift;
         shiftX = Math.Clamp(shiftX, 0, _numberOfHorizontalChunks - 1);
         shiftY = Math.Clamp(shiftY, 0, _numberOfVerticalChunks - 1);
     }
@@ -199,49 +204,4 @@ public sealed class PositionHelper<T>
             }
         }
     }
-
-    #region HelperTypes
-
-    private interface IChunkIndexUser
-    {
-        void UseChunkIndex(int index);
-    }
-
-    private sealed class SetUnionChunkIndexUser : IChunkIndexUser
-    {
-        private readonly LargeSimpleSet<T>?[] _itemChunks;
-
-        public LargeSimpleSet<T> SetToUnionWith { private get; set; }
-
-        public SetUnionChunkIndexUser(PositionHelper<T> manager)
-        {
-            _itemChunks = manager._itemChunks;
-        }
-
-        public void UseChunkIndex(int index)
-        {
-            var itemSet = _itemChunks[index];
-            if (itemSet is not null)
-            {
-                SetToUnionWith.UnionWith(itemSet);
-            }
-        }
-    }
-
-    private sealed class ScratchSpaceChunkIndexUser : IChunkIndexUser
-    {
-        private readonly LargeBitArray _indicesOfItemChunksScratchSpace;
-
-        public ScratchSpaceChunkIndexUser(LargeBitArray indicesOfItemChunksScratchSpace)
-        {
-            _indicesOfItemChunksScratchSpace = indicesOfItemChunksScratchSpace;
-        }
-
-        public void UseChunkIndex(int index)
-        {
-            _indicesOfItemChunksScratchSpace.SetBit(index);
-        }
-    }
-
-    #endregion
 }
