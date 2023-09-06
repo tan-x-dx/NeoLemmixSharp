@@ -298,43 +298,6 @@ public sealed class LargeBitArray : IBitArray
         Count = count;
     }
 
-    internal void MutualDifferenceWith(LargeBitArray other)
-    {
-        Debug.Assert(Length == other.Length);
-
-        var thisCount = 0;
-        var otherCount = 0;
-        var thisIndexOfFirstSetBit = _bits.Length - 1;
-        var otherIndexOfFirstSetBit = other._bits.Length - 1;
-        for (var i = 0; i < _bits.Length; i++)
-        {
-            var thisValue = _bits[i];
-            var otherValue = other._bits[i];
-            var intersection = thisValue & otherValue;
-
-            thisValue ^= intersection;
-            otherValue ^= intersection;
-
-            _bits[i] = thisValue;
-            other._bits[i] = otherValue;
-            thisCount += BitOperations.PopCount(thisValue);
-            otherCount += BitOperations.PopCount(otherValue);
-            if (thisValue != 0U && i < thisIndexOfFirstSetBit)
-            {
-                thisIndexOfFirstSetBit = i;
-            }
-            if (otherValue != 0U && i < otherIndexOfFirstSetBit)
-            {
-                otherIndexOfFirstSetBit = i;
-            }
-        }
-        Count = thisCount;
-        _indexOfFirstSetBit = thisIndexOfFirstSetBit;
-
-        other.Count = otherCount;
-        other._indexOfFirstSetBit = otherIndexOfFirstSetBit;
-    }
-
     [Pure]
     internal bool IsSubsetOf(LargeBitArray other)
     {
