@@ -15,5 +15,4 @@ internal static class ChunkSizeTypeHelpers
 
         _ => throw new ArgumentOutOfRangeException(nameof(chunkSizeType), chunkSizeType, "Unknown chunk size type")
     };
-
 }
