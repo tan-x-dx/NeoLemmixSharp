@@ -37,7 +37,7 @@ public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
     private bool MatchesLemmingPosition(Lemming lemming)
     {
         var position1 = lemming.LevelPosition;
-        var position2 = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
+        var position2 = lemming.Orientation.MoveUp(position1, 1);
 
         return _levelRegion.ContainsPoint(position1) ||
                _levelRegion.ContainsPoint(position2);

@@ -13,11 +13,13 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 {
     private static TerrainManager TerrainManager { get; set; }
+    private static LemmingManager LemmingManager { get; set; }
     private static GadgetManager GadgetManager { get; set; }
 
-    public static void SetHelpers(TerrainManager terrainManager, GadgetManager gadgetManager)
+    public static void SetHelpers(TerrainManager terrainManager, LemmingManager lemmingManager, GadgetManager gadgetManager)
     {
         TerrainManager = terrainManager;
+        LemmingManager = lemmingManager;
         GadgetManager = gadgetManager;
     }
 
@@ -77,6 +79,19 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         State = new LemmingState(Team.AllItems[0]);
 
         Renderer = new LemmingRenderer(this);
+    }
+
+    public void SetPosition(LevelPosition levelPosition)
+    {
+        PreviousLevelPosition = LevelPosition;
+        PreviousTopLeftPixel = TopLeftPixel;
+        PreviousBottomRightPixel = BottomRightPixel;
+
+        LevelPosition = levelPosition;
+        var levelPositionPair = CurrentAction.GetLemmingBounds(this);
+
+        TopLeftPixel = levelPositionPair.GetTopLeftPosition();
+        BottomRightPixel = levelPositionPair.GetBottomRightPosition();
     }
 
     public void Tick()
@@ -146,7 +161,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
         if (footPixel.IsVoid() && headPixel.IsVoid())
         {
-            //
+            LemmingManager.RemoveLemming(this);
 
             return false;
         }

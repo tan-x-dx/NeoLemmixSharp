@@ -69,7 +69,7 @@ public sealed class LevelScreen : IBaseScreen
         Orientation.SetTerrain(terrainManager);
         LemmingAction.SetHelpers(terrainManager, gadgetManager);
         LemmingSkill.SetTerrain(terrainManager);
-        Lemming.SetHelpers(terrainManager, gadgetManager);
+        Lemming.SetHelpers(terrainManager, lemmingManager, gadgetManager);
         TerrainEraseMask.SetTerrain(terrainManager);
         TerrainAddMask.SetTerrain(terrainManager);
     }
@@ -140,7 +140,7 @@ public sealed class LevelScreen : IBaseScreen
         Orientation.SetTerrain(null);
         LemmingAction.SetHelpers(null, null);
         LemmingSkill.SetTerrain(null);
-        Lemming.SetHelpers(null, null);
+        Lemming.SetHelpers(null, null, null);
         TerrainEraseMask.SetTerrain(null);
         TerrainAddMask.SetTerrain(null);
 
