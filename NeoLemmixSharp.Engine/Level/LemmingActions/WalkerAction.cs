@@ -83,6 +83,13 @@ public sealed class WalkerAction : LemmingAction
         return true;
     }
 
+    public override LevelPosition GetAnchorPosition() => new(2, 10);
+
+    protected override int TopLeftBoundsDeltaX() => -2;
+    protected override int TopLeftBoundsDeltaY() => 10;
+
+    protected override int BottomRightBoundsDeltaX() => 3;
+
     public static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
     {
         var orientation = lemming.Orientation;

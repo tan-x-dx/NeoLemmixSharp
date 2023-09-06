@@ -30,6 +30,13 @@ public sealed class PlatformerAction : LemmingAction
         return true;
     }
 
+    public override LevelPosition GetAnchorPosition() => new(3, 13);
+
+    protected override int TopLeftBoundsDeltaX() => -2;
+    protected override int TopLeftBoundsDeltaY() => 8;
+
+    protected override int BottomRightBoundsDeltaX() => 3;
+
     private static void DoMainUpdate(Lemming lemming)
     {
         var orientation = lemming.Orientation;

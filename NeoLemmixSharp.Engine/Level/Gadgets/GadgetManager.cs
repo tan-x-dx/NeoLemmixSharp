@@ -42,7 +42,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     [Pure]
     public LargeSimpleSet<GadgetBase>.Enumerator GetAllGadgetsForPosition(LevelPosition levelPosition)
     {
-        return _gadgetPositionHelper.GetAllItemIdsForPosition(levelPosition);
+        return _gadgetPositionHelper.GetAllItemsAtPosition(levelPosition);
     }
 
     [Pure]

@@ -61,8 +61,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     public bool ShouldTick => true;
 
-    public LevelPosition TopLeftPixel => LevelPosition + new LevelPosition(-3, -3);
-    public LevelPosition BottomRightPixel => LevelPosition + new LevelPosition(2, 2);
+    public LevelPosition TopLeftPixel { get; private set; }
+    public LevelPosition BottomRightPixel { get; private set; }
     public LevelPosition PreviousTopLeftPixel { get; private set; }
     public LevelPosition PreviousBottomRightPixel { get; private set; }
 
@@ -131,7 +131,12 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         PreviousLevelPosition = LevelPosition;
         PreviousTopLeftPixel = TopLeftPixel;
         PreviousBottomRightPixel = BottomRightPixel;
+
         var result = CurrentAction.UpdateLemming(this);
+        var levelPositionPair = CurrentAction.GetLemmingBounds(this);
+
+        TopLeftPixel = levelPositionPair.GetTopLeftPosition();
+        BottomRightPixel = levelPositionPair.GetBottomRightPosition();
 
         return result;
     }

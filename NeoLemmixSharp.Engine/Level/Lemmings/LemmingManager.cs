@@ -64,12 +64,12 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
         _lemmingPositionHelper.UpdateItemPosition(lemming, false);
     }
 
-    public void PopulateSetWithLemmingsFromRegion(
+    public void PopulateSetWithLemmingsNearRegion(
         LargeSimpleSet<Lemming> set,
         LevelPosition topLeftLevelPosition,
         LevelPosition bottomRightLevelPosition)
     {
-        _lemmingPositionHelper.PopulateSetWithItemsFromRegion(set, topLeftLevelPosition, bottomRightLevelPosition);
+        _lemmingPositionHelper.PopulateSetWithItemsNearRegion(set, topLeftLevelPosition, bottomRightLevelPosition);
     }
 
     int ISimpleHasher<Lemming>.NumberOfItems => _lemmings.Length;

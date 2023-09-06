@@ -1,7 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -122,6 +122,13 @@ public sealed class SwimmerAction : LemmingAction
 
         return true;
     }
+
+    public override LevelPosition GetAnchorPosition() => new(6, 8);
+
+    protected override int TopLeftBoundsDeltaX() => -6;
+    protected override int TopLeftBoundsDeltaY() => 4;
+
+    protected override int BottomRightBoundsDeltaX() => 5;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool WaterAt(LevelPosition lemmingPosition)

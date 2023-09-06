@@ -76,6 +76,30 @@ public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
 
     public abstract bool UpdateLemming(Lemming lemming);
 
+    public abstract LevelPosition GetAnchorPosition();
+
+    public LevelPositionPair GetLemmingBounds(Lemming lemming)
+    {
+        var orientation = lemming.Orientation;
+        var dx = lemming.FacingDirection.DeltaX;
+        var lemmingPosition = lemming.LevelPosition;
+
+        var topLeftDx = TopLeftBoundsDeltaX();
+        var topLeftDy = TopLeftBoundsDeltaY();
+
+        var bottomRightDx = BottomRightBoundsDeltaX();
+
+        var p1 = orientation.Move(lemmingPosition, dx * topLeftDx, topLeftDy);
+        var p2 = orientation.MoveRight(lemmingPosition, dx * bottomRightDx);
+
+        return new LevelPositionPair(p1, p2);
+    }
+
+    protected abstract int TopLeftBoundsDeltaX();
+    protected abstract int TopLeftBoundsDeltaY();
+
+    protected abstract int BottomRightBoundsDeltaX();
+
     public bool Equals(LemmingAction? other) => Id == (other?.Id ?? -1);
     public sealed override bool Equals(object? obj) => obj is LemmingAction other && Id == other.Id;
     public sealed override int GetHashCode() => Id;

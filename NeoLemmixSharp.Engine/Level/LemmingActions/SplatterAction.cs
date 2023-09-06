@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -25,4 +26,11 @@ public sealed class SplatterAction : LemmingAction
 
         return false;
     }
+
+    public override LevelPosition GetAnchorPosition() => new(7, 10);
+
+    protected override int TopLeftBoundsDeltaX() => 3;
+    protected override int TopLeftBoundsDeltaY() => 6;
+
+    protected override int BottomRightBoundsDeltaX() => 4;
 }

@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -24,6 +24,13 @@ public sealed class ExploderAction : LemmingAction, IDestructionAction
     {
         throw new NotImplementedException();
     }
+
+    public override LevelPosition GetAnchorPosition() => new(16, 25);
+
+    protected override int TopLeftBoundsDeltaX() => -4;
+    protected override int TopLeftBoundsDeltaY() => 8;
+
+    protected override int BottomRightBoundsDeltaX() => 3;
 
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)

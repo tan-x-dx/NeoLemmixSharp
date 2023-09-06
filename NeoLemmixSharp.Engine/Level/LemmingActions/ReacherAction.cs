@@ -66,6 +66,13 @@ public sealed class ReacherAction : LemmingAction
         return true;
     }
 
+    public override LevelPosition GetAnchorPosition() => new(3, 9);
+
+    protected override int TopLeftBoundsDeltaX() => -2;
+    protected override int TopLeftBoundsDeltaY() => 9;
+
+    protected override int BottomRightBoundsDeltaX() => 3;
+
     private static int GetEmptyPixelCount(
         Lemming lemming,
         LevelPosition lemmingPosition)

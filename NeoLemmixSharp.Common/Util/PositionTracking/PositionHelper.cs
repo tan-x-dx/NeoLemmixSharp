@@ -57,7 +57,7 @@ public sealed class PositionHelper<T>
     }
 
     [Pure]
-    public LargeSimpleSet<T>.Enumerator GetAllItemIdsForPosition(LevelPosition levelPosition)
+    public LargeSimpleSet<T>.Enumerator GetAllItemsAtPosition(LevelPosition levelPosition)
     {
         var shiftX = levelPosition.X >> _chunkSizeBitShift;
         var shiftY = levelPosition.Y >> _chunkSizeBitShift;
@@ -136,7 +136,7 @@ public sealed class PositionHelper<T>
         }
     }
 
-    public void PopulateSetWithItemsFromRegion(
+    public void PopulateSetWithItemsNearRegion(
         LargeSimpleSet<T> set,
         LevelPosition topLeftLevelPosition,
         LevelPosition bottomRightLevelPosition)

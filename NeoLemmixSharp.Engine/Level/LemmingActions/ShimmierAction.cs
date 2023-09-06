@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -127,6 +128,13 @@ public sealed class ShimmierAction : LemmingAction
 
         return true;
     }
+
+    public override LevelPosition GetAnchorPosition() => new(3, 8);
+
+    protected override int TopLeftBoundsDeltaX() => -2;
+    protected override int TopLeftBoundsDeltaY() => 9;
+
+    protected override int BottomRightBoundsDeltaX() => 3;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

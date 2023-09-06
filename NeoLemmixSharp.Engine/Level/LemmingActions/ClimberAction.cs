@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -111,4 +112,11 @@ public sealed class ClimberAction : LemmingAction
 
         return true;
     }
+
+    public override LevelPosition GetAnchorPosition() => new(8, 12);
+
+    protected override int TopLeftBoundsDeltaX() => -6;
+    protected override int TopLeftBoundsDeltaY() => 11;
+
+    protected override int BottomRightBoundsDeltaX() => 1;
 }

@@ -37,6 +37,13 @@ public sealed class SliderAction : LemmingAction
         return lemming.CurrentAction != DrownerAction.Instance;
     }
 
+    public override LevelPosition GetAnchorPosition() => new(4, 11);
+
+    protected override int TopLeftBoundsDeltaX() => -4;
+    protected override int TopLeftBoundsDeltaY() => 10;
+
+    protected override int BottomRightBoundsDeltaX() => 0;
+
     public static bool SliderTerrainChecks(
         Lemming lemming,
         Orientation orientation,

@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -25,6 +25,13 @@ public sealed class FencerAction : LemmingAction, IDestructionAction
     {
         throw new NotImplementedException();
     }
+
+    public override LevelPosition GetAnchorPosition() => new(3, 10);
+
+    protected override int TopLeftBoundsDeltaX() => -3;
+    protected override int TopLeftBoundsDeltaY() => 10;
+
+    protected override int BottomRightBoundsDeltaX() => 3;
 
     [Pure]
     public bool CanDestroyPixel(

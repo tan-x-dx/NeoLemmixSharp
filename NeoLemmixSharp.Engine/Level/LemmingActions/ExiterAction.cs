@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -20,6 +21,13 @@ public sealed class ExiterAction : LemmingAction
     {
         throw new NotImplementedException();
     }
+
+    public override LevelPosition GetAnchorPosition() => new(2, 16);
+
+    protected override int TopLeftBoundsDeltaX() => -2;
+    protected override int TopLeftBoundsDeltaY() => 10;
+
+    protected override int BottomRightBoundsDeltaX() => 3;
 
     /*
 function TLemmingGame.HandleExiting(L: TLemming): Boolean;

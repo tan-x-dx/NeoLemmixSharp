@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -20,4 +21,11 @@ public sealed class StonerAction : LemmingAction
     {
         throw new NotImplementedException();
     }
+
+    public override LevelPosition GetAnchorPosition() => new(16, 25);
+
+    protected override int TopLeftBoundsDeltaX() => -4;
+    protected override int TopLeftBoundsDeltaY() => 8;
+
+    protected override int BottomRightBoundsDeltaX() => 3;
 }

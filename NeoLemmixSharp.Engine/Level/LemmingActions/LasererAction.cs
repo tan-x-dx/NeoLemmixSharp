@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -133,6 +133,13 @@ HitTestConclusive:
 
         return true;
     }
+
+    public override LevelPosition GetAnchorPosition() => new(3, 10);
+
+    protected override int TopLeftBoundsDeltaX() => -2;
+    protected override int TopLeftBoundsDeltaY() => 10;
+
+    protected override int BottomRightBoundsDeltaX() => 3;
 
     private ReadOnlySpan<LevelPosition> GetOffsetChecks(FacingDirection facingDirection)
     {

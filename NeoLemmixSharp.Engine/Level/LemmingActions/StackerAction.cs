@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -49,6 +50,13 @@ public sealed class StackerAction : LemmingAction
 
         return true;
     }
+
+    public override LevelPosition GetAnchorPosition() => new(3, 13);
+
+    protected override int TopLeftBoundsDeltaX() => -2;
+    protected override int TopLeftBoundsDeltaY() => 10;
+
+    protected override int BottomRightBoundsDeltaX() => 3;
 
     private static bool MayPlaceNextBrick(Lemming lemming)
     {

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -20,6 +21,13 @@ public sealed class GliderAction : LemmingAction
     {
         throw new NotImplementedException();
     }
+
+    public override LevelPosition GetAnchorPosition() => new(5, 16);
+
+    protected override int TopLeftBoundsDeltaX() => -2;
+    protected override int TopLeftBoundsDeltaY() => 11;
+
+    protected override int BottomRightBoundsDeltaX() => 4;
 
     private static bool DoTurnAround(Lemming lemming, bool moveForwardFirst)
     {

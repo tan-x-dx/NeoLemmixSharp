@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -64,6 +64,13 @@ public sealed class DiggerAction : LemmingAction, IDestructionAction
 
         return true;
     }
+
+    public override LevelPosition GetAnchorPosition() => new(7, 12);
+
+    protected override int TopLeftBoundsDeltaX() => -4;
+    protected override int TopLeftBoundsDeltaY() => 5;
+
+    protected override int BottomRightBoundsDeltaX() => 4;
 
     private bool DigOneRow(
         Lemming lemming,

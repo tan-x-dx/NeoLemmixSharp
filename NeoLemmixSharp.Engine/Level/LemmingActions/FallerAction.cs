@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -92,6 +93,13 @@ public sealed class FallerAction : LemmingAction
 
         return true;
     }
+
+    public override LevelPosition GetAnchorPosition() => new(3, 10);
+
+    protected override int TopLeftBoundsDeltaX() => -3;
+    protected override int TopLeftBoundsDeltaY() => 11;
+
+    protected override int BottomRightBoundsDeltaX() => 4;
 
     private static bool IsFallFatal(Lemming lemming)
     {

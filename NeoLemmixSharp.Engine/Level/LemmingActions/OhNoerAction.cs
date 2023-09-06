@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -41,6 +42,13 @@ public sealed class OhNoerAction : LemmingAction
 
         return result;
     }
+
+    public override LevelPosition GetAnchorPosition() => new(3, 10);
+
+    protected override int TopLeftBoundsDeltaX() => -2;
+    protected override int TopLeftBoundsDeltaY() => 11;
+
+    protected override int BottomRightBoundsDeltaX() => 3;
 
     /*
 function TLemmingGame.HandleOhNoing(L: TLemming): Boolean;
