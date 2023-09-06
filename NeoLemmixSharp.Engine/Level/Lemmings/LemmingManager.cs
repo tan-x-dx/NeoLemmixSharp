@@ -54,9 +54,8 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
 
     public void RemoveLemming(Lemming lemming)
     {
-
-
         _activeLemmings.Remove(lemming);
+        _lemmingPositionHelper.RemoveItem(lemming);
     }
 
     public void UpdateLemmingPosition(Lemming lemming)

@@ -136,6 +136,14 @@ public sealed class PositionHelper<T>
         }
     }
 
+    public void RemoveItem(T item)
+    {
+        foreach (var itemChunk in _itemChunkLookup.Values)
+        {
+            itemChunk.Remove(item);
+        }
+    }
+
     public void PopulateSetWithItemsNearRegion(
         LargeSimpleSet<T> set,
         LevelPosition topLeftLevelPosition,
