@@ -59,8 +59,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LemmingRenderer Renderer { get; }
     public LemmingState State { get; }
 
-    public bool ShouldTick => true;
-
     public LevelPosition TopLeftPixel { get; private set; }
     public LevelPosition BottomRightPixel { get; private set; }
     public LevelPosition PreviousTopLeftPixel { get; private set; }

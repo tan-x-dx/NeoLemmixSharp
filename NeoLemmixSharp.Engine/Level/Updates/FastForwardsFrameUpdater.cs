@@ -19,9 +19,6 @@ public sealed class FastForwardsFrameUpdater : IFrameUpdater
 
     public bool UpdateLemming(Lemming lemming)
     {
-        if (!lemming.ShouldTick)
-            return false;
-
         if (!lemming.IsFastForward)
             return true;
 
