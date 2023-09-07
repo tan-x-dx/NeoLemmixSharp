@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -58,6 +58,11 @@ public sealed class DownOrientation : Orientation
     public override LevelPosition Move(LevelPosition position, int dx, int dy)
     {
         return Terrain.NormalisePosition(new LevelPosition(position.X + dx, position.Y - dy));
+    }
+
+    public override LevelPosition MoveWithoutNormalization(LevelPosition position, int dx, int dy)
+    {
+        return new LevelPosition(position.X + dx, position.Y - dy);
     }
 
     [Pure]

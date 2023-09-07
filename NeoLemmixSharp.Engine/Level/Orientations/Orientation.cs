@@ -72,6 +72,15 @@ public abstract class Orientation : IUniqueIdItem<Orientation>
     /// <returns></returns>
     [Pure]
     public abstract LevelPosition Move(LevelPosition position, int dx, int dy);
+    /// <summary>
+    /// Note: Positive dx -> right, positive dy -> up
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="dx"></param>
+    /// <param name="dy"></param>
+    /// <returns></returns>
+    [Pure]
+    public abstract LevelPosition MoveWithoutNormalization(LevelPosition position, int dx, int dy);
 
     [Pure]
     public abstract bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition);
