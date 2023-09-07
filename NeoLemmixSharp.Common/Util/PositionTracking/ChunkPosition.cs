@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+﻿using System.Diagnostics;
 
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
@@ -9,6 +9,9 @@ internal readonly struct ChunkPosition : IEquatable<ChunkPosition>
 
     public ChunkPosition(int x, int y)
     {
+        Debug.Assert(x >= 0 && x < 256 &&
+                     y >= 0 && y < 256);
+
         X = x;
         Y = y;
     }
@@ -19,11 +22,7 @@ internal readonly struct ChunkPosition : IEquatable<ChunkPosition>
     public bool Equals(ChunkPosition other) => X == other.X && Y == other.Y;
     public override int GetHashCode()
     {
-        var x = (uint)X;
-        var y = (uint)Y;
-
-        y = BitOperations.RotateLeft(y, 16);
-        return (int)(x ^ y);
+        return X | (Y << 16);
     }
 }
 
@@ -42,11 +41,7 @@ internal sealed class ChunkPositionEqualityComparer : IEqualityComparer<ChunkPos
 
     public int GetHashCode(ChunkPosition chunkPosition)
     {
-        var x = (uint)chunkPosition.X;
-        var y = (uint)chunkPosition.Y;
-
-        y = BitOperations.RotateLeft(y, 16);
-        return (int)(x ^ y);
+        return chunkPosition.X | (chunkPosition.Y << 16);
     }
 
     public override bool Equals(object? obj) => obj is ChunkPositionEqualityComparer;

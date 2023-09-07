@@ -107,11 +107,8 @@ public sealed class PositionHelper<T>
         _chunksPositionScratchSpaceRemove.Clear();
         EvaluateChunkPositions(_chunksPositionScratchSpaceRemove, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
 
-        var chunkIndexEnumerator = _chunksPositionScratchSpaceRemove.GetEnumerator();
-        while (chunkIndexEnumerator.MoveNext())
+        foreach (var itemChunkPosition in _chunksPositionScratchSpaceRemove.GetSpan())
         {
-            var itemChunkPosition = chunkIndexEnumerator.Current;
-
             if (!_itemChunkLookup.TryGetValue(itemChunkPosition, out var itemChunk))
                 continue;
 
@@ -121,11 +118,8 @@ public sealed class PositionHelper<T>
         _chunkPositionScratchSpaceAdd.Clear();
         EvaluateChunkPositions(_chunkPositionScratchSpaceAdd, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
 
-        chunkIndexEnumerator = _chunkPositionScratchSpaceAdd.GetEnumerator();
-        while (chunkIndexEnumerator.MoveNext())
+        foreach (var itemChunkPosition in _chunkPositionScratchSpaceAdd.GetSpan())
         {
-            var itemChunkPosition = chunkIndexEnumerator.Current;
-
             if (!_itemChunkLookup.TryGetValue(itemChunkPosition, out var itemChunk))
             {
                 itemChunk = new LargeSimpleSet<T>(_hasher);

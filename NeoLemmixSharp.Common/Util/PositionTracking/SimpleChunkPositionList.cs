@@ -13,16 +13,12 @@ internal sealed class SimpleChunkPositionList : IChunkPositionUser
     {
         var currentArrayLength = _chunkPositions.Length;
 
-        if (_count < currentArrayLength)
+        if (_count == currentArrayLength)
         {
-            _chunkPositions[_count++] = chunkPosition;
-
-            return;
+            var newArray = new ChunkPosition[currentArrayLength + ArrayGrowthAmount];
+            Array.Copy(_chunkPositions, newArray, currentArrayLength);
+            _chunkPositions = newArray;
         }
-
-        var newArray = new ChunkPosition[currentArrayLength + ArrayGrowthAmount];
-        Array.Copy(_chunkPositions, newArray, currentArrayLength);
-        _chunkPositions = newArray;
 
         _chunkPositions[_count++] = chunkPosition;
     }
@@ -32,31 +28,5 @@ internal sealed class SimpleChunkPositionList : IChunkPositionUser
         _count = 0;
     }
 
-    public Enumerator GetEnumerator() => new(this);
-
-    internal ref struct Enumerator
-    {
-        private readonly ChunkPosition[] _chunkPositions;
-        private readonly int _count;
-
-        private int _index;
-
-        public ChunkPosition Current { get; private set; }
-
-        public Enumerator(SimpleChunkPositionList list)
-        {
-            _chunkPositions = list._chunkPositions;
-            _count = list._count;
-            _index = 0;
-        }
-
-        public bool MoveNext()
-        {
-            if (_index >= _count)
-                return false;
-
-            Current = _chunkPositions[_index++];
-            return true;
-        }
-    }
+    public ReadOnlySpan<ChunkPosition> GetSpan() => new(_chunkPositions, 0, _count);
 }
