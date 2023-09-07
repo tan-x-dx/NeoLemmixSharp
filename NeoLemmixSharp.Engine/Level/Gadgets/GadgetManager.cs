@@ -31,7 +31,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
             verticalBoundaryBehaviour);
     }
 
-    public void Activate()
+    public void Initialise()
     {
         foreach (var gadget in _allGadgets)
         {

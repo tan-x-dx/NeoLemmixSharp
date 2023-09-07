@@ -40,17 +40,22 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
         _activeLemmings = new LargeSimpleSet<Lemming>(this);
     }
 
-    public void Activate()
+    public void Initialise()
     {
         foreach (var lemming in AllLemmings)
         {
-            if (lemming.CurrentAction != NoneAction.Instance)
-            {
-                lemming.Activate();
-                _activeLemmings.Add(lemming);
-                _lemmingPositionHelper.UpdateItemPosition(lemming, true);
-            }
+            InitialiseLemming(lemming);
         }
+    }
+
+    private void InitialiseLemming(Lemming lemming)
+    {
+        if (lemming.CurrentAction == NoneAction.Instance)
+            return;
+
+        lemming.Initialise();
+        _activeLemmings.Add(lemming);
+        _lemmingPositionHelper.UpdateItemPosition(lemming, true);
     }
 
     public bool LemmingIsActive(Lemming lemming) => _activeLemmings.Contains(lemming);
