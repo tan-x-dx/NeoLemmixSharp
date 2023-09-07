@@ -72,6 +72,9 @@ public sealed class LevelScreen : IBaseScreen
         Lemming.SetHelpers(terrainManager, lemmingManager, gadgetManager);
         TerrainEraseMask.SetTerrain(terrainManager);
         TerrainAddMask.SetTerrain(terrainManager);
+
+        LemmingManager.Activate();
+        GadgetManager.Activate();
     }
 
     public void Tick()

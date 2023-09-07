@@ -28,5 +28,5 @@ internal sealed class SimpleChunkPositionList : IChunkPositionUser
         _count = 0;
     }
 
-    public ReadOnlySpan<ChunkPosition> GetSpan() => new(_chunkPositions, 0, _count);
+    public ReadOnlySpan<ChunkPosition> AsSpan() => new(_chunkPositions, 0, _count);
 }

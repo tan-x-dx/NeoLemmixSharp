@@ -87,8 +87,8 @@ public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
 
         var bottomRightDx = BottomRightBoundsDeltaX();
 
-        var p1 = orientation.Move(lemmingPosition, dx * topLeftDx, topLeftDy);
-        var p2 = orientation.MoveRight(lemmingPosition, dx * bottomRightDx);
+        var p1 = orientation.MoveWithoutNormalization(lemmingPosition, dx * topLeftDx, topLeftDy);
+        var p2 = orientation.MoveWithoutNormalization(lemmingPosition, dx * bottomRightDx, 0);
 
         return new LevelPositionPair(p1, p2);
     }

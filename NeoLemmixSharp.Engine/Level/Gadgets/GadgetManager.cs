@@ -24,13 +24,16 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
 
         _gadgetPositionHelper = new PositionHelper<GadgetBase>(
-            allGadgets, 
+            allGadgets,
             this,
             ChunkSizeType.ChunkSize64,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
+    }
 
-        foreach (var gadget in allGadgets)
+    public void Activate()
+    {
+        foreach (var gadget in _allGadgets)
         {
             if (gadget.CaresAboutLemmingInteraction)
             {
@@ -42,7 +45,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     [Pure]
     public LargeSimpleSet<GadgetBase>.Enumerator GetAllGadgetsForPosition(LevelPosition levelPosition)
     {
-        return _gadgetPositionHelper.GetAllItemsAtPosition(levelPosition);
+        return _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
     }
 
     [Pure]

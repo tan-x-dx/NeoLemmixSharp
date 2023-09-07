@@ -38,12 +38,15 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
         _activeLemmings = new LargeSimpleSet<Lemming>(this);
+    }
 
-        for (var i = 0; i < _lemmings.Length; i++)
+    public void Activate()
+    {
+        foreach (var lemming in AllLemmings)
         {
-            var lemming = _lemmings[i];
             if (lemming.CurrentAction != NoneAction.Instance)
             {
+                lemming.Activate();
                 _activeLemmings.Add(lemming);
                 _lemmingPositionHelper.UpdateItemPosition(lemming, true);
             }
