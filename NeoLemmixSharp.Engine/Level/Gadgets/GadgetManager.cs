@@ -36,7 +36,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         {
             if (gadget.CaresAboutLemmingInteraction)
             {
-                _gadgetPositionHelper.UpdateItemPosition(gadget, true);
+                _gadgetPositionHelper.AddItem(gadget);
             }
         }
     }
@@ -63,12 +63,6 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         }
 
         return false;
-    }
-
-    public void UpdateGadgetPosition(int gadgetId)
-    {
-        var gadget = _allGadgets[gadgetId];
-        UpdateGadgetPosition(gadget);
     }
 
     public void UpdateGadgetPosition(GadgetBase gadget)

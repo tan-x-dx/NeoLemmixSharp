@@ -72,7 +72,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
             LemmingsOut++;
         }
 
-        _lemmingPositionHelper.UpdateItemPosition(lemming, true);
+        _lemmingPositionHelper.AddItem(lemming);
     }
 
     public bool LemmingIsActive(Lemming lemming) => _activeLemmings.Contains(lemming);
@@ -99,13 +99,14 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
 
     public void RegisterBlocker(Lemming lemming)
     {
-        _blockerPositionHelper.UpdateItemPosition(lemming, true);
+        _blockerPositionHelper.AddItem(lemming);
     }
 
     public void DeregisterBlocker(Lemming lemming)
     {
         _blockerPositionHelper.RemoveItem(lemming);
     }
+
     public LargeSimpleSet<Lemming>.Enumerator BlockersNearLemmingEnumerator(Lemming lemming)
     {
         _blockerScratchSpace.Clear();

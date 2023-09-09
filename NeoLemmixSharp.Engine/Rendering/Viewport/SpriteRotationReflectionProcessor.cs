@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Io.LevelReading.Sprites;
 using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
@@ -59,7 +59,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
         }
     }
 
-    private T CreateSpriteType(
+    public T CreateSpriteType(
         Texture2D texture,
         Orientation orientation,
         FacingDirection facingDirection,

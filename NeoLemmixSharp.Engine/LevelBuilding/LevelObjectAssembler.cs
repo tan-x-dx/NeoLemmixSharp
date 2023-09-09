@@ -6,6 +6,7 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
+using NeoLemmixSharp.Engine.Level.Gadgets.Functional.SawBlade;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -47,7 +48,7 @@ public sealed class LevelObjectAssembler : IDisposable
     }
 
     public void AssembleLevelObjects(
-        ContentManager content,
+        ContentManager contentManager,
         LevelData levelData)
     {
         //SetUpTestLemmings();
@@ -84,7 +85,7 @@ public sealed class LevelObjectAssembler : IDisposable
         var input = new MetalGrateGadget.MetalGrateGadgetInput("input");
 
         var metalGrateGadget = new MetalGrateGadget(
-            id,
+            id++,
             p,
             input,
             true);
@@ -92,13 +93,107 @@ public sealed class LevelObjectAssembler : IDisposable
         _gadgets.Add(metalGrateGadget);
         _gadgetRenderers.Add(new MetalGrateRenderer(metalGrateGadget));
 
-        id++;
         p = new RectangularLevelRegion(296, 142, 19, 13);
-        var switchGadget = new SwitchGadget(id, p, true);
+        var switchGadget = new SwitchGadget(id++, p, true);
         switchGadget.Output.RegisterInput(input);
 
         _gadgets.Add(switchGadget);
         _gadgetRenderers.Add(new SwitchRenderer(switchGadget));
+
+        var sawBladeGadget = LoadSawBlade(contentManager);
+        
+        var mover = new GadgetMover(
+            3,
+            new RectangularLevelRegion(0, 0, 1, 1),
+            new IMoveableGadget[] { sawBladeGadget },
+            0, 1, 1);
+
+        switchGadget.Output.RegisterInput(mover.GetInputWithName("Input")!);
+        _gadgets.Add(mover);
+
+    }
+
+    private SawBladeGadget LoadSawBlade(ContentManager contentManager)
+    {
+        var p = new RectangularLevelRegion(100, 100, 14, 14);
+        var sawBladeGadget = new SawBladeGadget(2, p);
+
+        _gadgets.Add(sawBladeGadget);
+        _gadgetRenderers.Add(new SawBladeRenderer(sawBladeGadget));
+
+        var numberOfFrames = 4;
+
+        var s = new SpriteRotationReflectionProcessor<SawBladeHitMask>(_graphicsDevice);
+
+        using var texture = contentManager.Load<Texture2D>("sprites/style/common/spinner_mask");
+
+        var spriteWidth = texture.Width;
+        var spriteHeight = texture.Height / numberOfFrames;
+
+        var sawBladeHitMasks = new List<SawBladeHitMask>();
+
+        for (var i = 0; i < numberOfFrames; i++)
+        {
+            var sawBladeHitMask = s.CreateSpriteType(
+                texture,
+                DownOrientation.Instance,
+                RightFacingDirection.Instance,
+                spriteWidth,
+                spriteHeight,
+                numberOfFrames,
+                1,
+                p.TopLeft,
+                (a, b, c, d, e, f) => ItemCreator(a, b, c, d, e, f, i, sawBladeGadget));
+
+            sawBladeHitMasks.Add(sawBladeHitMask);
+        }
+
+        sawBladeGadget.SetHitMasks(sawBladeHitMasks.ToArray());
+
+        return sawBladeGadget;
+    }
+
+    private static SawBladeHitMask ItemCreator(
+            Texture2D texture,
+            int spriteWidth,
+            int spriteHeight,
+            int numberOfFrames,
+            int numberOfLayers,
+            LevelPosition anchorPoint,
+            int frame,
+            SawBladeGadget sawBladeGadget)
+    {
+        var uints = new uint[texture.Width * texture.Height];
+        texture.GetData(uints);
+
+        var levelPositions = new List<LevelPosition>();
+
+        var y0 = frame * spriteHeight;
+
+        for (var x = 0; x < spriteWidth; x++)
+        {
+            for (var y = 0; y < spriteHeight; y++)
+            {
+                var index = x + spriteWidth * (y0 + y);
+
+                var pixel = uints[index];
+
+                if (pixel != 0U)
+                {
+                    var p = new LevelPosition(x, y);
+                    if (levelPositions.Contains(p))
+                    {
+                        ;
+                    }
+
+                    levelPositions.Add(p);
+                }
+            }
+        }
+
+        texture.Dispose();
+
+        return new SawBladeHitMask(sawBladeGadget, sawBladeGadget.GadgetBounds, levelPositions.ToArray());
     }
 
     public Lemming[] GetLevelLemmings()
@@ -349,13 +444,13 @@ public sealed class LevelObjectAssembler : IDisposable
         lemming5.State.TeamAffiliation = Team.AllItems[5];
 
         lemming6.State.TeamAffiliation = Team.AllItems[0];
-    //    lemming7.State.TeamAffiliation = Team.AllItems[1];
+        //    lemming7.State.TeamAffiliation = Team.AllItems[1];
         lemming8.State.TeamAffiliation = Team.AllItems[2];
         lemming9.State.TeamAffiliation = Team.AllItems[3];
         lemming10.State.TeamAffiliation = Team.AllItems[4];
         lemming11.State.TeamAffiliation = Team.AllItems[5];
-     //   lemming6.State.IsSwimmer = true;
-     //   lemming7.State.IsSwimmer = true;
+        //   lemming6.State.IsSwimmer = true;
+        //   lemming7.State.IsSwimmer = true;
         lemming8.State.IsSwimmer = true;
         lemming9.State.IsSwimmer = true;
         lemming10.State.IsSwimmer = true;
@@ -367,8 +462,8 @@ public sealed class LevelObjectAssembler : IDisposable
         lemming3.State.IsNeutral = true;
         lemming4.State.IsNeutral = true;
         lemming5.State.IsNeutral = true;
-     //   lemming6.State.IsNeutral = true;
-     //   lemming7.State.IsNeutral = true;
+        //   lemming6.State.IsNeutral = true;
+        //   lemming7.State.IsNeutral = true;
         lemming8.State.IsNeutral = true;
         lemming9.State.IsNeutral = true;
         lemming10.State.IsNeutral = true;

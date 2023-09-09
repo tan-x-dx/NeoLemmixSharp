@@ -56,6 +56,7 @@ public sealed class GadgetSpriteBankBuilder : IDisposable
     public GadgetSpriteBank BuildGadgetSpriteBank()
     {
         RegisterTexture("switch", "sprites/style/common/switch");
+        RegisterTexture("sawblade", "sprites/style/common/spinner");
 
         return new GadgetSpriteBank(_gadgetSprites);
     }

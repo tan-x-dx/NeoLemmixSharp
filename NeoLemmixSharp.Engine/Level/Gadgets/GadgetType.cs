@@ -21,6 +21,7 @@ public enum GadgetType
     BlockerArea,
     Teleport,
 
+    SawBlade,
     Updraft,
     Flipper,
     NoSplat,

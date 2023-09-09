@@ -72,6 +72,7 @@ public sealed class LevelScreen : IBaseScreen
         Lemming.SetHelpers(terrainManager, lemmingManager, gadgetManager);
         TerrainEraseMask.SetTerrain(terrainManager);
         TerrainAddMask.SetTerrain(terrainManager);
+        GadgetBase.SetHelpers(terrainManager, lemmingManager, gadgetManager);
 
         LemmingManager.Initialise();
         GadgetManager.Initialise();
@@ -146,6 +147,7 @@ public sealed class LevelScreen : IBaseScreen
         Lemming.SetHelpers(null, null, null);
         TerrainEraseMask.SetTerrain(null);
         TerrainAddMask.SetTerrain(null);
+        GadgetBase.SetHelpers(null, null, null);
 
         ScreenRenderer.Dispose();
         IsDisposed = true;
