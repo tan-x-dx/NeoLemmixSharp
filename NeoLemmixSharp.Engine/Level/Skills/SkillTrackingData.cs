@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Teams;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Teams;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -36,4 +37,11 @@ public sealed class SkillTrackingData
         < 0 => 0,
         _ => skillCount
     };
+
+    public bool CanAssignToLemming(Lemming lemming)
+    {
+        return lemming.State.CanHaveSkillsAssigned &&
+               Team == lemming.State.TeamAffiliation &&
+               Skill.CanAssignToLemming(lemming);
+    }
 }
