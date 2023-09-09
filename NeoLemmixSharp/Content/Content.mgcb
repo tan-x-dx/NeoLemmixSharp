@@ -1621,6 +1621,30 @@
 /processorParam:TextureFormat=Color
 /build:sprites/style/common/pickup_skill_mask.png
 
+#begin sprites/style/common/spinner_mask.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/style/common/spinner_mask.png
+
+#begin sprites/style/common/spinner.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/style/common/spinner.png
+
 #begin sprites/style/common/switch.png
 /importer:TextureImporter
 /processor:TextureProcessor
