@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.Terrain;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
+public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
     protected static TerrainManager Terrain { get; private set; }

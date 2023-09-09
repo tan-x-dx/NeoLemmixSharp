@@ -1,15 +1,15 @@
 ﻿namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
-public sealed class UniqueIdItemComparer<T> :
+public sealed class ExtendedEnumTypeComparer<T> :
     IEqualityComparer<T>,
-    IEquatable<UniqueIdItemComparer<T>>,
+    IEquatable<ExtendedEnumTypeComparer<T>>,
     IComparer<T>,
     ISimpleHasher<T>
-    where T : class, IUniqueIdItem<T>
+    where T : class, IExtendedEnumType<T>
 {
-    public static UniqueIdItemComparer<T> Instance { get; } = new();
+    public static ExtendedEnumTypeComparer<T> Instance { get; } = new();
 
-    private UniqueIdItemComparer()
+    private ExtendedEnumTypeComparer()
     {
     }
 
@@ -27,8 +27,8 @@ public sealed class UniqueIdItemComparer<T> :
 
     public int Compare(T? x, T? y) => IdEquatableItemHelperMethods.Compare(x, y);
 
-    public bool Equals(UniqueIdItemComparer<T>? other) => other is not null;
-    public override bool Equals(object? obj) => obj is UniqueIdItemComparer<T>;
+    public bool Equals(ExtendedEnumTypeComparer<T>? other) => other is not null;
+    public override bool Equals(object? obj) => obj is ExtendedEnumTypeComparer<T>;
     public override int GetHashCode() => typeof(T).GetHashCode();
 
     public int NumberOfItems => T.NumberOfItems;

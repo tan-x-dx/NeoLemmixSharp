@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public abstract class LemmingSkill : IUniqueIdItem<LemmingSkill>
+public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 {
     private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
     protected static TerrainManager Terrain { get; private set; }
@@ -58,7 +58,7 @@ public abstract class LemmingSkill : IUniqueIdItem<LemmingSkill>
 
     protected LemmingSkill()
     {
-        _assignableActions = UniqueIdItemComparer<LemmingAction>.LargeSetForType();
+        _assignableActions = ExtendedEnumTypeComparer<LemmingAction>.LargeSetForType();
 
         // ReSharper disable once VirtualMemberCallInConstructor
         foreach (var action in ActionsThatCanBeAssigned())

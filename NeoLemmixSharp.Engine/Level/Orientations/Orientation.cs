@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 
-public abstract class Orientation : IUniqueIdItem<Orientation>
+public abstract class Orientation : IExtendedEnumType<Orientation>
 {
     private static readonly Orientation[] Orientations = GenerateOrientationCollection();
     protected static TerrainManager Terrain { get; private set; }
