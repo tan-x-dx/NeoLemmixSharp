@@ -61,6 +61,17 @@ public sealed class PositionHelper<T>
             : new LargeSimpleSet<T>.Enumerator();
     }
 
+    public void AddItem(T item)
+    {
+        var topLeftPixel = item.TopLeftPixel;
+        var bottomRightPixel = item.BottomRightPixel;
+
+        GetShiftValues(topLeftPixel, out var topLeftShiftX, out var topLeftShiftY);
+        GetShiftValues(bottomRightPixel, out var bottomRightShiftX, out var bottomRightShiftY);
+
+        AddItem(item, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+    }
+
     public void UpdateItemPosition(T item, bool forceUpdate)
     {
         var topLeftPixel = item.TopLeftPixel;
@@ -86,19 +97,38 @@ public sealed class PositionHelper<T>
             bottomRightShiftY == previousBottomRightShiftY)
             return;
 
+        RemoveItem(item, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
+        AddItem(item, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+    }
+
+    public void RemoveItem(T item)
+    {
+        var topLeftPixel = item.TopLeftPixel;
+        var bottomRightPixel = item.BottomRightPixel;
+        var previousTopLeftPixel = item.PreviousTopLeftPixel;
+        var previousBottomRightPixel = item.PreviousBottomRightPixel;
+
+        GetShiftValues(topLeftPixel, out var topLeftShiftX, out var topLeftShiftY);
+        GetShiftValues(bottomRightPixel, out var bottomRightShiftX, out var bottomRightShiftY);
+
+        RemoveItem(item, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+
+        GetShiftValues(previousTopLeftPixel, out var previousTopLeftShiftX, out var previousTopLeftShiftY);
+        GetShiftValues(previousBottomRightPixel, out var previousBottomRightShiftX, out var previousBottomRightShiftY);
+
+        if (topLeftShiftX == previousTopLeftShiftX &&
+            topLeftShiftY == previousTopLeftShiftY &&
+            bottomRightShiftX == previousBottomRightShiftX &&
+            bottomRightShiftY == previousBottomRightShiftY)
+            return;
+
+        RemoveItem(item, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
+    }
+
+    private void AddItem(T item, int ax, int ay, int bx, int by)
+    {
         _chunkPositionScratchSpace.Clear();
-        EvaluateChunkPositions(_chunkPositionScratchSpace, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
-
-        foreach (var itemChunkPosition in _chunkPositionScratchSpace.AsSpan())
-        {
-            if (!_itemChunkLookup.TryGetValue(itemChunkPosition, out var itemChunk))
-                continue;
-
-            itemChunk.Remove(item);
-        }
-
-        _chunkPositionScratchSpace.Clear();
-        EvaluateChunkPositions(_chunkPositionScratchSpace, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        EvaluateChunkPositions(_chunkPositionScratchSpace, ax, ay, bx, by);
 
         foreach (var itemChunkPosition in _chunkPositionScratchSpace.AsSpan())
         {
@@ -112,38 +142,10 @@ public sealed class PositionHelper<T>
         }
     }
 
-    public void RemoveItem(T item)
+    private void RemoveItem(T item, int ax, int ay, int bx, int by)
     {
-        var topLeftPixel = item.TopLeftPixel;
-        var bottomRightPixel = item.BottomRightPixel;
-        var previousTopLeftPixel = item.PreviousTopLeftPixel;
-        var previousBottomRightPixel = item.PreviousBottomRightPixel;
-
-        GetShiftValues(topLeftPixel, out var topLeftShiftX, out var topLeftShiftY);
-        GetShiftValues(bottomRightPixel, out var bottomRightShiftX, out var bottomRightShiftY);
-
-        GetShiftValues(previousTopLeftPixel, out var previousTopLeftShiftX, out var previousTopLeftShiftY);
-        GetShiftValues(previousBottomRightPixel, out var previousBottomRightShiftX, out var previousBottomRightShiftY);
-
         _chunkPositionScratchSpace.Clear();
-        EvaluateChunkPositions(_chunkPositionScratchSpace, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
-
-        foreach (var itemChunkPosition in _chunkPositionScratchSpace.AsSpan())
-        {
-            if (!_itemChunkLookup.TryGetValue(itemChunkPosition, out var itemChunk))
-                continue;
-
-            itemChunk.Remove(item);
-        }
-
-        if (topLeftShiftX == previousTopLeftShiftX &&
-            topLeftShiftY == previousTopLeftShiftY &&
-            bottomRightShiftX == previousBottomRightShiftX &&
-            bottomRightShiftY == previousBottomRightShiftY)
-            return;
-
-        _chunkPositionScratchSpace.Clear();
-        EvaluateChunkPositions(_chunkPositionScratchSpace, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        EvaluateChunkPositions(_chunkPositionScratchSpace, ax, ay, bx, by);
 
         foreach (var itemChunkPosition in _chunkPositionScratchSpace.AsSpan())
         {
