@@ -1,7 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -35,14 +35,14 @@ public sealed class SwimmerAction : LemmingAction
 
         var dy = FindGroundPixel(lemming, lemmingPosition);
 
-        if (Terrain.PixelIsSolidToLemming(lemming, lemmingPosition) ||
+        if (TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition) ||
             WaterAt(lemmingPosition))
         {
             // Rise if there is water above the lemming
             var pixelAbove = orientation.MoveUp(lemmingPosition, 1);
             if (dy >= -1 &&
                 WaterAt(pixelAbove) &&
-                !Terrain.PixelIsSolidToLemming(lemming, pixelAbove))
+                !TerrainManager.PixelIsSolidToLemming(lemming, pixelAbove))
             {
                 lemmingPosition = pixelAbove;
                 lemming.LevelPosition = lemmingPosition;
@@ -123,10 +123,15 @@ public sealed class SwimmerAction : LemmingAction
         return true;
     }
 
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -7;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 4;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool WaterAt(LevelPosition lemmingPosition)
     {
-        return Gadgets.HasGadgetOfTypeAtPosition(lemmingPosition, GadgetType.Water);
+        return GadgetManager.HasGadgetOfTypeAtPosition(lemmingPosition, GadgetType.Water);
     }
 
     /// <summary>
@@ -138,7 +143,7 @@ public sealed class SwimmerAction : LemmingAction
     {
         var result = 1;
 
-        while (result <= 4 && Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
+        while (result <= 4 && TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
         {
             result++;
             lemming.DistanceFallen++;

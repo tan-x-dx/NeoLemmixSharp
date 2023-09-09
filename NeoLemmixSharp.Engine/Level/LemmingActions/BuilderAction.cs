@@ -41,6 +41,11 @@ public sealed class BuilderAction : LemmingAction
         return true;
     }
 
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -2;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
+
     private static void BuilderFrame0(Lemming lemming)
     {
         lemming.NumberOfBricksLeft--;
@@ -49,16 +54,16 @@ public sealed class BuilderAction : LemmingAction
         var lemmingPosition = lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
-        if (Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 2)))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 2)))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
             return;
         }
 
-        if (Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 3)) ||
-                 Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 2)) ||
-                 (Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 10)) &&
+        if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 3)) ||
+                 TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 2)) ||
+                 (TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 10)) &&
                   lemming.NumberOfBricksLeft > 0))
         {
             lemmingPosition = orientation.Move(lemmingPosition, dx, 1);
@@ -74,10 +79,10 @@ public sealed class BuilderAction : LemmingAction
             lemming.LevelPosition = lemmingPosition;
         }
 
-        if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 2)) ||
-            Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 3)) ||
-            Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 3)) ||
-            (Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 10)) &&
+        if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 2)) ||
+            TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 3)) ||
+            TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 3)) ||
+            (TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 10)) &&
              lemming.NumberOfBricksLeft > 0))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -109,21 +114,21 @@ public sealed class BuilderAction : LemmingAction
 
         var brickPosition = lemming.LevelPosition;
         brickPosition = orientation.MoveUp(brickPosition, dy);
-        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+        TerrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
 
         brickPosition = orientation.MoveRight(brickPosition, dx);
-        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+        TerrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
 
         brickPosition = orientation.MoveRight(brickPosition, dx);
-        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+        TerrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
 
         brickPosition = orientation.MoveRight(brickPosition, dx);
-        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+        TerrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
 
         brickPosition = orientation.MoveRight(brickPosition, dx);
-        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+        TerrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
 
         brickPosition = orientation.MoveRight(brickPosition, dx);
-        Terrain.SetSolidPixel(brickPosition, uint.MaxValue);
+        TerrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
     }
 }

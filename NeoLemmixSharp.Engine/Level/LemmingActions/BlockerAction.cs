@@ -18,11 +18,23 @@ public sealed class BlockerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!Terrain.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        if (!TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
 
         return true;
     }
+
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    {
+        LemmingManager.RegisterBlocker(lemming);
+
+        base.TransitionLemmingToAction(lemming, turnAround);
+    }
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -7;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 11;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
 }

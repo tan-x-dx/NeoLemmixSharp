@@ -29,7 +29,7 @@ public sealed class FloaterAction : LemmingAction
         var orientation = lemming.Orientation;
         var levelPosition = lemming.LevelPosition;
 
-        var gadgetEnumerator = Gadgets.GetAllGadgetsForPosition(levelPosition);
+        var gadgetEnumerator = GadgetManager.GetAllGadgetsForPosition(levelPosition);
 
         while (gadgetEnumerator.MoveNext())
         {
@@ -61,4 +61,10 @@ public sealed class FloaterAction : LemmingAction
 
         return true;
     }
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 12;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
+    protected override int BottomRightBoundsDeltaY(int animationFrame) => 1;
 }

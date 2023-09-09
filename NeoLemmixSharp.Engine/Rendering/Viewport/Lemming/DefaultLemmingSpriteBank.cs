@@ -36,10 +36,10 @@ public static class DefaultLemmingSpriteBank
         CreateFourLayerSprite(DiggerAction.Instance, new LevelPosition(7, 12));
         CreateFourLayerTrueColorSprite(DisarmerAction.Instance, new LevelPosition(1, 11));
         CreateThreeLayerSprite(DrownerAction.Instance, new LevelPosition(5, 10));
-        CreateThreeLayerSprite(ExiterAction.Instance, new LevelPosition(7, 16));
-        CreateOneLayerTrueColorSprite(ExploderAction.Instance, new LevelPosition(16, 25));
-        CreateThreeLayerSprite(FallerAction.Instance, new LevelPosition(2, 11));
-        CreateFiveLayerTrueColorSprite(FencerAction.Instance, new LevelPosition(5, 10));
+        CreateThreeLayerSprite(ExiterAction.Instance, new LevelPosition(2, 16));
+        CreateOneLayerTrueColorSprite(ExploderAction.Instance, new LevelPosition(17, 21));
+        CreateThreeLayerSprite(FallerAction.Instance, new LevelPosition(3, 10));
+        CreateFiveLayerTrueColorSprite(FencerAction.Instance, new LevelPosition(3, 10));
         CreateFourLayerTrueColorSprite(FloaterAction.Instance, new LevelPosition(4, 16));
         CreateFourLayerTrueColorSprite(GliderAction.Instance, new LevelPosition(5, 16));
         CreateThreeLayerSprite(HoisterAction.Instance, new LevelPosition(5, 12));
@@ -48,13 +48,13 @@ public static class DefaultLemmingSpriteBank
         CreateFourLayerSprite(MinerAction.Instance, new LevelPosition(7, 13));
         CreateThreeLayerSprite(OhNoerAction.Instance, new LevelPosition(3, 10));
         CreateFiveLayerTrueColorSprite(PlatformerAction.Instance, new LevelPosition(3, 13));
-        CreateThreeLayerSprite(ReacherAction.Instance, new LevelPosition(3, 10));
+        CreateThreeLayerSprite(ReacherAction.Instance, new LevelPosition(3, 9));
         CreateThreeLayerSprite(ShimmierAction.Instance, new LevelPosition(3, 8));
         CreateThreeLayerSprite(ShruggerAction.Instance, new LevelPosition(3, 10));
         CreateThreeLayerSprite(SliderAction.Instance, new LevelPosition(4, 11));
         CreateThreeLayerSprite(SplatterAction.Instance, new LevelPosition(7, 10));
-        CreateFourLayerTrueColorSprite(StackerAction.Instance, new LevelPosition(5, 13));
-        CreateOneLayerTrueColorSprite(StonerAction.Instance, new LevelPosition(16, 25));
+        CreateFiveLayerTrueColorSprite(StackerAction.Instance, new LevelPosition(3, 13));
+        CreateOneLayerTrueColorSprite(StonerAction.Instance, new LevelPosition(17, 21));
         CreateThreeLayerSprite(SwimmerAction.Instance, new LevelPosition(6, 8));
         CreateFourLayerTrueColorSprite(VaporiserAction.Instance, new LevelPosition(5, 14));
         CreateThreeLayerSprite(WalkerAction.Instance, new LevelPosition(2, 10));
@@ -63,40 +63,42 @@ public static class DefaultLemmingSpriteBank
 
         DefaultLemmingSprites = new LemmingSpriteBank(actionSprites, teamColorData);
 
-        void CreateOneLayerTrueColorSprite(LemmingAction action, LevelPosition anchorPoint)
+        return;
+
+        void CreateOneLayerTrueColorSprite(LemmingAction action, LevelPosition levelPosition)
         {
-            CreateSprite(action, anchorPoint, 1,
+            CreateSprite(action, 1, levelPosition,
                 (t, w, h, f, l, p) => new SingleColorLayerActionSprite(t, w, h, f, l, p));
         }
 
-        void CreateThreeLayerSprite(LemmingAction action, LevelPosition anchorPoint)
+        void CreateThreeLayerSprite(LemmingAction action, LevelPosition levelPosition)
         {
-            CreateSprite(action, anchorPoint, 3,
+            CreateSprite(action, 3, levelPosition,
                 (t, w, h, f, l, p) => new ThreeLayerActionSprite(t, w, h, f, l, p));
         }
 
-        void CreateFourLayerSprite(LemmingAction action, LevelPosition anchorPoint)
+        void CreateFourLayerSprite(LemmingAction action, LevelPosition levelPosition)
         {
-            CreateSprite(action, anchorPoint, 4,
+            CreateSprite(action, 4, levelPosition,
                 (t, w, h, f, l, p) => new FourLayerActionSprite(t, w, h, f, l, p));
         }
 
-        void CreateFourLayerTrueColorSprite(LemmingAction action, LevelPosition anchorPoint)
+        void CreateFourLayerTrueColorSprite(LemmingAction action, LevelPosition levelPosition)
         {
-            CreateSprite(action, anchorPoint, 4,
+            CreateSprite(action, 4, levelPosition,
                 (t, w, h, f, l, p) => new FourLayerColorActionSprite(t, w, h, f, l, p));
         }
 
-        void CreateFiveLayerTrueColorSprite(LemmingAction action, LevelPosition anchorPoint)
+        void CreateFiveLayerTrueColorSprite(LemmingAction action, LevelPosition levelPosition)
         {
-            CreateSprite(action, anchorPoint, 5,
+            CreateSprite(action, 5, levelPosition,
                 (t, w, h, f, l, p) => new FiveLayerColorActionSprite(t, w, h, f, l, p));
         }
 
         void CreateSprite(
             LemmingAction action,
-            LevelPosition anchorPoint,
             int numberOfLayers,
+            LevelPosition levelPosition,
             ActionSpriteCreator.ItemCreator actionSpriteCreator)
         {
             CreateActionSprites(
@@ -105,7 +107,7 @@ public static class DefaultLemmingSpriteBank
                 new Span<ActionSprite>(actionSprites),
                 action,
                 numberOfLayers,
-                anchorPoint,
+                levelPosition,
                 actionSpriteCreator);
         }
     }
@@ -116,7 +118,7 @@ public static class DefaultLemmingSpriteBank
         Span<ActionSprite> actionSprites,
         LemmingAction action,
         int numberOfLayers,
-        LevelPosition anchorPoint,
+        LevelPosition levelPosition,
         ActionSpriteCreator.ItemCreator itemCreator)
     {
         using var texture = contentManager.Load<Texture2D>($"sprites/lemming/{action.LemmingActionName}");
@@ -130,7 +132,7 @@ public static class DefaultLemmingSpriteBank
             spriteHeight,
             action.NumberOfAnimationFrames,
             numberOfLayers,
-            anchorPoint,
+            levelPosition,
             itemCreator);
 
         foreach (var orientation in Orientation.AllItems)

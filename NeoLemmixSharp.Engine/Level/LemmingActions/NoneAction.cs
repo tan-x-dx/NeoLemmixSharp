@@ -24,6 +24,11 @@ public sealed class NoneAction : LemmingAction
         return false;
     }
 
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => 0;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 0;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 0;
+
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
     }

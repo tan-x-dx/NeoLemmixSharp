@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
-using NeoLemmixSharp.Engine.Level.Gadgets.States;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -13,17 +12,20 @@ public sealed class GadgetMover : GadgetBase
     private readonly int _dx;
     private readonly int _dy;
 
-    private readonly StatefulGadget[] _gadgets;
+    private readonly IMoveableGadget[] _gadgets;
 
+    private bool _active;
     private int _tickCount;
 
     public override GadgetType Type => GadgetType.Mover;
     public override Orientation Orientation => DownOrientation.Instance;
 
+    public IGadgetInput Input { get; }
+
     public GadgetMover(
         int id,
         RectangularLevelRegion gadgetBounds,
-        StatefulGadget[] gadgets,
+        IMoveableGadget[] gadgets,
         int tickDelay,
         int dx,
         int dy)
@@ -33,10 +35,15 @@ public sealed class GadgetMover : GadgetBase
         _gadgets = gadgets;
         _dx = dx;
         _dy = dy;
+
+        Input = new GadgetMoverInput("Input", this);
     }
 
     public override void Tick()
     {
+        if (!_active)
+            return;
+
         if (_tickCount < _tickDelay)
         {
             _tickCount++;
@@ -48,14 +55,15 @@ public sealed class GadgetMover : GadgetBase
         for (var i = 0; i < _gadgets.Length; i++)
         {
             var gadget = _gadgets[i];
-            var movementBehaviour = gadget.CurrentState.MovementBehaviour;
-            movementBehaviour.Move(_dx, _dy);
+            gadget.Move(_dx, _dy);
         }
     }
 
     public override IGadgetInput? GetInputWithName(string inputName)
     {
-        throw new NotImplementedException();
+        if (string.Equals(inputName, Input.InputName))
+            return Input;
+        return null;
     }
 
     public override bool CaresAboutLemmingInteraction => false;
@@ -65,4 +73,21 @@ public sealed class GadgetMover : GadgetBase
     }
 
     public override bool MatchesPosition(LevelPosition levelPosition) => false;
+
+    private sealed class GadgetMoverInput : IGadgetInput
+    {
+        private readonly GadgetMover _mover;
+        public string InputName { get; }
+
+        public GadgetMoverInput(string inputName, GadgetMover mover)
+        {
+            InputName = inputName;
+            _mover = mover;
+        }
+
+        public void ReactToSignal(bool signal)
+        {
+            _mover._active = signal;
+        }
+    }
 }

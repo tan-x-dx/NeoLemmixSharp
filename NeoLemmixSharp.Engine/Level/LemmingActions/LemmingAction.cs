@@ -6,11 +6,12 @@ using NeoLemmixSharp.Engine.Level.Terrain;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
+public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
-    protected static TerrainManager Terrain { get; private set; }
-    protected static GadgetManager Gadgets { get; private set; }
+    protected static TerrainManager TerrainManager { get; private set; }
+    protected static LemmingManager LemmingManager { get; private set; }
+    protected static GadgetManager GadgetManager { get; private set; }
 
     public static int NumberOfItems => LemmingActions.Length;
     public static ReadOnlySpan<LemmingAction> AllItems => new(LemmingActions);
@@ -57,15 +58,16 @@ public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
         };
 
         result.ValidateUniqueIds();
-        Array.Sort(result, UniqueIdItemComparer<LemmingAction>.Instance);
+        Array.Sort(result, IdEquatableItemHelperMethods.Compare);
 
         return result;
     }
 
-    public static void SetHelpers(TerrainManager terrain, GadgetManager gadgetManager)
+    public static void SetHelpers(TerrainManager terrainManager, LemmingManager lemmingManager, GadgetManager gadgetManager)
     {
-        Terrain = terrain;
-        Gadgets = gadgetManager;
+        TerrainManager = terrainManager;
+        LemmingManager = lemmingManager;
+        GadgetManager = gadgetManager;
     }
 
     public abstract int Id { get; }
@@ -75,6 +77,32 @@ public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
     public abstract int CursorSelectionPriorityValue { get; }
 
     public abstract bool UpdateLemming(Lemming lemming);
+
+    public LevelPositionPair GetLemmingBounds(Lemming lemming)
+    {
+        var orientation = lemming.Orientation;
+        var dx = lemming.FacingDirection.DeltaX;
+        var dxCorrection = 1 - lemming.FacingDirection.Id; // Fixes off-by-one errors with left/right positions
+        var lemmingPosition = lemming.LevelPosition;
+        var animationFrame = lemming.AnimationFrame;
+
+        var topLeftDx = TopLeftBoundsDeltaX(animationFrame);
+        var topLeftDy = TopLeftBoundsDeltaY(animationFrame);
+
+        var bottomRightDx = BottomRightBoundsDeltaX(animationFrame);
+        var bottomRightDy = BottomRightBoundsDeltaY(animationFrame);
+
+        var p1 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * topLeftDx, topLeftDy);
+        var p2 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * bottomRightDx, bottomRightDy);
+
+        return new LevelPositionPair(p1, p2);
+    }
+
+    protected abstract int TopLeftBoundsDeltaX(int animationFrame);
+    protected abstract int TopLeftBoundsDeltaY(int animationFrame);
+
+    protected abstract int BottomRightBoundsDeltaX(int animationFrame);
+    protected virtual int BottomRightBoundsDeltaY(int animationFrame) => -1;
 
     public bool Equals(LemmingAction? other) => Id == (other?.Id ?? -1);
     public sealed override bool Equals(object? obj) => obj is LemmingAction other && Id == other.Id;
@@ -114,9 +142,9 @@ public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
         LevelPosition levelPosition)
     {
         var result = 0;
-        if (Terrain.PixelIsSolidToLemming(lemming, levelPosition))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, levelPosition))
         {
-            while (Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(levelPosition, 1 - result)) &&
+            while (TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(levelPosition, 1 - result)) &&
                    result > -7)
             {
                 result--;
@@ -126,7 +154,7 @@ public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
         }
 
         result = 1;
-        while (!Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(levelPosition, result)) &&
+        while (!TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(levelPosition, result)) &&
                result < 4)
         {
             result++;

@@ -144,6 +144,12 @@ public sealed class LevelBuilder : IDisposable
             switchRenderer.SetSwitchTexture(switchTexture);
         }
 
+        var sawBladeTexture = gadgetSpriteBank.GetTexture("sawblade");
+        foreach (var sawBladeRenderer in levelSprites.OfType<SawBladeRenderer>())
+        {
+            sawBladeRenderer.SetSawBladeTexture(sawBladeTexture);
+        }
+
         return new LevelScreen(
             levelData,
             updateScheduler,

@@ -4,20 +4,32 @@ using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Terrain;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds
 {
+    protected static TerrainManager TerrainManager { get; private set; }
+    protected static LemmingManager LemmingManager { get; private set; }
+    protected static GadgetManager GadgetManager { get; private set; }
+
+    public static void SetHelpers(TerrainManager terrainManager, LemmingManager lemmingManager, GadgetManager gadgetManager)
+    {
+        TerrainManager = terrainManager;
+        LemmingManager = lemmingManager;
+        GadgetManager = gadgetManager;
+    }
+
     public int Id { get; }
     public abstract GadgetType Type { get; }
     public abstract Orientation Orientation { get; }
     public RectangularLevelRegion GadgetBounds { get; }
 
-    public LevelPosition TopLeftPixel => GadgetBounds.TopLeft;
-    public LevelPosition BottomRightPixel => GadgetBounds.BottomRight;
-    public LevelPosition PreviousTopLeftPixel => GadgetBounds.TopLeft;
-    public LevelPosition PreviousBottomRightPixel => GadgetBounds.BottomRight;
+    public virtual LevelPosition TopLeftPixel => GadgetBounds.TopLeft;
+    public virtual LevelPosition BottomRightPixel => GadgetBounds.BottomRight;
+    public virtual LevelPosition PreviousTopLeftPixel => GadgetBounds.TopLeft;
+    public virtual LevelPosition PreviousBottomRightPixel => GadgetBounds.BottomRight;
 
     protected GadgetBase(
         int id,

@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.FacingDirections;
 
-public abstract class FacingDirection : IUniqueIdItem<FacingDirection>
+public abstract class FacingDirection : IExtendedEnumType<FacingDirection>
 {
     private static readonly FacingDirection[] FacingDirections = GenerateFacingDirectionCollection();
 

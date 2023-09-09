@@ -26,8 +26,9 @@ public sealed class OhNoerAction : LemmingAction
             //   if(lemming.CurrentAction == )
 
         }
-        else if (!Terrain.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        else if (!TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
         {
+            LemmingManager.DeregisterBlocker(lemming);
             /*
             L.LemHasBlockerField := False; // remove blocker field
             SetBlockerMap;
@@ -41,6 +42,11 @@ public sealed class OhNoerAction : LemmingAction
 
         return result;
     }
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => animationFrame < 7 ? 10 : 9;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     /*
 function TLemmingGame.HandleOhNoing(L: TLemming): Boolean;

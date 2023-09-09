@@ -37,6 +37,11 @@ public sealed class SliderAction : LemmingAction
         return lemming.CurrentAction != DrownerAction.Instance;
     }
 
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -6;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 0;
+
     public static bool SliderTerrainChecks(
         Lemming lemming,
         Orientation orientation,
@@ -65,7 +70,7 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        var gadgetEnumerator = Gadgets.GetAllGadgetsForPosition(lemmingPosition);
+        var gadgetEnumerator = GadgetManager.GetAllGadgetsForPosition(lemmingPosition);
 
         while (gadgetEnumerator.MoveNext())
         {
@@ -108,7 +113,7 @@ public sealed class SliderAction : LemmingAction
         LevelPosition levelPosition,
         LevelPosition dehoistPin)
     {
-        if (Terrain.PixelIsSolidToLemming(lemming, dehoistPin))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, dehoistPin))
             return true;
 
         var result = false;
@@ -116,7 +121,7 @@ public sealed class SliderAction : LemmingAction
             orientation.MatchesVertically(levelPosition, dehoistPin) &&
             true)
         {
-            result = Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(dehoistPin, 1));
+            result = TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(dehoistPin, 1));
         }
 
         return result;

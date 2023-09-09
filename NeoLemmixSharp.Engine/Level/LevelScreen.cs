@@ -67,11 +67,15 @@ public sealed class LevelScreen : IBaseScreen
 
         Current = this;
         Orientation.SetTerrain(terrainManager);
-        LemmingAction.SetHelpers(terrainManager, gadgetManager);
+        LemmingAction.SetHelpers(terrainManager, lemmingManager, gadgetManager);
         LemmingSkill.SetTerrain(terrainManager);
-        Lemming.SetHelpers(terrainManager, gadgetManager);
+        Lemming.SetHelpers(terrainManager, lemmingManager, gadgetManager);
         TerrainEraseMask.SetTerrain(terrainManager);
         TerrainAddMask.SetTerrain(terrainManager);
+        GadgetBase.SetHelpers(terrainManager, lemmingManager, gadgetManager);
+
+        LemmingManager.Initialise();
+        GadgetManager.Initialise();
     }
 
     public void Tick()
@@ -138,11 +142,12 @@ public sealed class LevelScreen : IBaseScreen
     {
 #pragma warning disable CS8625
         Orientation.SetTerrain(null);
-        LemmingAction.SetHelpers(null, null);
+        LemmingAction.SetHelpers(null, null, null);
         LemmingSkill.SetTerrain(null);
-        Lemming.SetHelpers(null, null);
+        Lemming.SetHelpers(null, null, null);
         TerrainEraseMask.SetTerrain(null);
         TerrainAddMask.SetTerrain(null);
+        GadgetBase.SetHelpers(null, null, null);
 
         ScreenRenderer.Dispose();
         IsDisposed = true;

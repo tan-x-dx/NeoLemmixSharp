@@ -21,6 +21,11 @@ public sealed class JumperAction : LemmingAction
         throw new NotImplementedException();
     }
 
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -1;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 9;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
+
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         if (lemming.CurrentAction == ClimberAction.Instance ||

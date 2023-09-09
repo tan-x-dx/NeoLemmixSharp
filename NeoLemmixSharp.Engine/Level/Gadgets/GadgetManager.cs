@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.PositionTracking;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
@@ -19,13 +20,23 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _allGadgets = allGadgets;
-        _gadgetPositionHelper = new PositionHelper<GadgetBase>(allGadgets, this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        _allGadgets.ValidateUniqueIds();
+        Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
 
-        foreach (var gadget in allGadgets)
+        _gadgetPositionHelper = new PositionHelper<GadgetBase>(
+            this,
+            ChunkSizeType.ChunkSize64,
+            horizontalBoundaryBehaviour,
+            verticalBoundaryBehaviour);
+    }
+
+    public void Initialise()
+    {
+        foreach (var gadget in _allGadgets)
         {
             if (gadget.CaresAboutLemmingInteraction)
             {
-                _gadgetPositionHelper.UpdateItemPosition(gadget, true);
+                _gadgetPositionHelper.AddItem(gadget);
             }
         }
     }
@@ -33,7 +44,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     [Pure]
     public LargeSimpleSet<GadgetBase>.Enumerator GetAllGadgetsForPosition(LevelPosition levelPosition)
     {
-        return _gadgetPositionHelper.GetAllItemIdsForPosition(levelPosition);
+        return _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
     }
 
     [Pure]
@@ -52,12 +63,6 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         }
 
         return false;
-    }
-
-    public void UpdateGadgetPosition(int gadgetId)
-    {
-        var gadget = _allGadgets[gadgetId];
-        UpdateGadgetPosition(gadget);
     }
 
     public void UpdateGadgetPosition(GadgetBase gadget)

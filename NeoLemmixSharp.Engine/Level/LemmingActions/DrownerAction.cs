@@ -19,7 +19,7 @@ public sealed class DrownerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!Gadgets.HasGadgetOfTypeAtPosition(lemming.LevelPosition, GadgetType.Water))
+        if (!GadgetManager.HasGadgetOfTypeAtPosition(lemming.LevelPosition, GadgetType.Water))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -33,4 +33,9 @@ public sealed class DrownerAction : LemmingAction
 
         return false;
     }
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => Math.Max(4, 9 - animationFrame);
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 }

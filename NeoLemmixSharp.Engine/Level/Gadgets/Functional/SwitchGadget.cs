@@ -19,7 +19,7 @@ public sealed class SwitchGadget : GadgetBase
     public override GadgetType Type => GadgetType.Switch;
     public override Orientation Orientation => DownOrientation.Instance;
 
-    public int Frame { get; private set; }
+    public int AnimationFrame { get; private set; }
     public GadgetOutput Output { get; } = new();
 
     public SwitchGadget(int id, RectangularLevelRegion gadgetBounds, bool faceRight)
@@ -37,13 +37,13 @@ public sealed class SwitchGadget : GadgetBase
         if (faceRight)
         {
             _facingRight = true;
-            Frame = 6;
+            AnimationFrame = 6;
             _currentHitBox = _rightHitBox;
         }
         else
         {
             _facingRight = false;
-            Frame = 0;
+            AnimationFrame = 0;
             _currentHitBox = _leftHitBox;
         }
     }
@@ -52,16 +52,16 @@ public sealed class SwitchGadget : GadgetBase
     {
         if (_facingRight)
         {
-            if (Frame < 6)
+            if (AnimationFrame < 6)
             {
-                Frame++;
+                AnimationFrame++;
             }
         }
         else
         {
-            if (Frame > 0)
+            if (AnimationFrame > 0)
             {
-                Frame--;
+                AnimationFrame--;
             }
         }
     }

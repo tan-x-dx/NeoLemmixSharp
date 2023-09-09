@@ -1,13 +1,14 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using NeoLemmixSharp.Engine.Level.Terrain.Masks;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class FencerAction : LemmingAction, IDestructionAction
+public sealed class FencerAction : LemmingAction, IDestructionMask
 {
     public static FencerAction Instance { get; } = new();
 
@@ -25,6 +26,11 @@ public sealed class FencerAction : LemmingAction, IDestructionAction
     {
         throw new NotImplementedException();
     }
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     [Pure]
     public bool CanDestroyPixel(

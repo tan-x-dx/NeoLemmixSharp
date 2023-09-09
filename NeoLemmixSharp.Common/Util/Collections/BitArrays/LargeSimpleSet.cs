@@ -135,12 +135,6 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
         _bits.SymmetricExceptWith(otherBits);
     }
 
-    public void MutualDifferenceWith(LargeSimpleSet<T> other)
-    {
-        var otherBits = other._bits;
-        _bits.MutualDifferenceWith(otherBits);
-    }
-
     [Pure]
     public bool IsSubsetOf(IEnumerable<T> other)
     {

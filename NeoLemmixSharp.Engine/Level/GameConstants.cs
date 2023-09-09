@@ -37,7 +37,7 @@ public static class GameConstants
     public const int AscenderAnimationFrames = 1;
 
     public const int BasherActionId = 5;
-    public const int BasherAnimationFrames = 16;
+    public const int BasherAnimationFrames = 32;
 
     public const int BlockerActionId = 3;
     public const int BlockerAnimationFrames = 16;

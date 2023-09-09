@@ -7,29 +7,27 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>
 {
     private readonly SkillTrackingData[] _skillTrackingDataList;
 
-    public SkillSetManager(ICollection<SkillSetData> skillSetData)
+    public SkillSetManager(IEnumerable<SkillSetData> skillSetData)
     {
         _skillTrackingDataList = CreateSkillDataList(skillSetData);
     }
 
     public int TotalNumberOfSkills => _skillTrackingDataList.Length;
 
-    private SkillTrackingData[] CreateSkillDataList(ICollection<SkillSetData> skillSetData)
+    private SkillTrackingData[] CreateSkillDataList(IEnumerable<SkillSetData> skillSetData)
     {
-        var tempList = new List<SkillTrackingData>();
+        return skillSetData
+            .Select(CreateFromSkillSetData)
+            .Order(this)
+            .ToArray();
+    }
 
-        foreach (var x in skillSetData)
-        {
-            var lemmingSkill = GetSkillByName(x.SkillName);
-            var team = Team.AllItems[x.TeamId];
+    private static SkillTrackingData CreateFromSkillSetData(SkillSetData skillSetData)
+    {
+        var lemmingSkill = GetSkillByName(skillSetData.SkillName);
+        var team = Team.AllItems[skillSetData.TeamId];
 
-            var item = new SkillTrackingData(lemmingSkill, team, x.NumberOfSkills);
-            tempList.Add(item);
-        }
-
-        tempList.Sort(this);
-
-        return tempList.ToArray();
+        return new SkillTrackingData(lemmingSkill, team, skillSetData.NumberOfSkills);
     }
 
     private static LemmingSkill GetSkillByName(string name)
@@ -53,7 +51,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>
 
     int IComparer<SkillTrackingData>.Compare(SkillTrackingData? x, SkillTrackingData? y)
     {
-        if (x == null && y == null) return 0;
+        if (ReferenceEquals(x, y)) return 0;
         if (x == null) return -1;
         if (y == null) return 1;
 

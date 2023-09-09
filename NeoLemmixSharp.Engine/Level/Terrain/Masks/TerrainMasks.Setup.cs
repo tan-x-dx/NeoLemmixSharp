@@ -1,11 +1,11 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
@@ -54,35 +54,37 @@ public static partial class TerrainMasks
              1);*/
 
         TerrainEraseMask[] CreateTerrainMaskArray(
-            IDestructionAction destructionAction,
+            IDestructionMask destructionAction,
             string actionName,
             LevelPosition anchorPoint,
             int numberOfFrames)
         {
+            var pathName = $"mask/{actionName}";
+
             return CreateTerrainMasks(
                 contentManager,
                 maskCreator,
                 destructionAction,
-                actionName,
+                pathName,
                 anchorPoint,
                 numberOfFrames);
         }
     }
 
-    private static TerrainEraseMask[] CreateTerrainMasks(
+    public static TerrainEraseMask[] CreateTerrainMasks(
         ContentManager contentManager,
         SpriteRotationReflectionProcessor<TerrainMaskTextureReader> maskCreator,
-        IDestructionAction destructionAction,
-        string actionName,
+        IDestructionMask destructionMask,
+        string pathName,
         LevelPosition anchorPoint,
         int numberOfFrames)
     {
-        using var texture = contentManager.Load<Texture2D>($"mask/{actionName}");
+        using var texture = contentManager.Load<Texture2D>(pathName);
 
         var spriteWidth = texture.Width;
         var spriteHeight = texture.Height / numberOfFrames;
 
-        var itemCreator = CreateTerrainMaskFromTexture(destructionAction);
+        var itemCreator = CreateTerrainMaskFromTexture(destructionMask);
 
         var terrainMaskTextureReaders = maskCreator.CreateAllSpriteTypes(
             texture,
@@ -143,77 +145,9 @@ public static partial class TerrainMasks
         return (orientation.RotNum << 1) | facingDirection.Id;
     }
 
-    private static SpriteRotationReflectionProcessor<TerrainMaskTextureReader>.ItemCreator CreateTerrainMaskFromTexture(IDestructionAction destructionAction)
+    private static SpriteRotationReflectionProcessor<TerrainMaskTextureReader>.ItemCreator CreateTerrainMaskFromTexture(IDestructionMask destructionMask)
     {
         // Currying is such fun...
-        return (t, w, h, f, _, p) => new TerrainMaskTextureReader(t, destructionAction, w, h, f, p);
-    }
-
-    private sealed class TerrainMaskTextureReader
-    {
-        private readonly TerrainEraseMask[] _terrainMasks;
-
-        public TerrainMaskTextureReader(
-            Texture2D texture,
-            IDestructionAction destructionAction,
-            int spriteWidth,
-            int spriteHeight,
-            int numberOfFrames,
-            LevelPosition anchorPoint)
-        {
-            _terrainMasks = new TerrainEraseMask[numberOfFrames];
-
-            ReadTerrainMasks(
-                texture,
-                destructionAction,
-                spriteWidth,
-                spriteHeight,
-                numberOfFrames,
-                anchorPoint);
-        }
-
-        public TerrainEraseMask TerrainMaskForFrame(int frame)
-        {
-            return _terrainMasks[frame];
-        }
-
-        private void ReadTerrainMasks(
-            Texture2D texture,
-            IDestructionAction destructionAction,
-            int spriteWidth,
-            int spriteHeight,
-            int numberOfFrames,
-            LevelPosition anchorPoint)
-        {
-            var uints = new uint[texture.Width * texture.Height];
-            texture.GetData(uints);
-
-            var levelPositions = new List<LevelPosition>();
-
-            for (var f = 0; f < numberOfFrames; f++)
-            {
-                var y0 = f * spriteHeight;
-
-                for (var x = 0; x < spriteWidth; x++)
-                {
-                    for (var y = 0; y < spriteHeight; y++)
-                    {
-                        var index = x + spriteWidth * (y0 + y);
-
-                        var pixel = uints[index];
-
-                        if (pixel != 0U)
-                        {
-                            levelPositions.Add(new LevelPosition(x, y));
-                        }
-                    }
-                }
-
-                _terrainMasks[f] = new TerrainEraseMask(destructionAction, anchorPoint, levelPositions.ToArray());
-                levelPositions.Clear();
-            }
-
-            texture.Dispose();
-        }
+        return (t, w, h, f, _, p) => new TerrainMaskTextureReader(t, destructionMask, w, h, f, p);
     }
 }

@@ -20,4 +20,9 @@ public sealed class StonerAction : LemmingAction
     {
         throw new NotImplementedException();
     }
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -5;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
 }

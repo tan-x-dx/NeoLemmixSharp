@@ -6,8 +6,9 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.States;
 
-public sealed class StatefulGadget : GadgetBase
+public sealed class StatefulGadget : GadgetBase, IMoveableGadget
 {
+    private readonly Dictionary<string, IGadgetInput> _inputLookup = new();
     private readonly GadgetState[] _states;
 
     private int _currentStateIndex;
@@ -30,6 +31,11 @@ public sealed class StatefulGadget : GadgetBase
         _states = states;
     }
 
+    public void RegisterGadget(IGadgetInput gadgetInput)
+    {
+        _inputLookup.Add(gadgetInput.InputName, gadgetInput);
+    }
+
     public void SetState(int stateIndex)
     {
         var previousState = CurrentState;
@@ -44,17 +50,31 @@ public sealed class StatefulGadget : GadgetBase
 
     public override IGadgetInput? GetInputWithName(string inputName)
     {
-        throw new NotImplementedException();
+        return _inputLookup.TryGetValue(inputName, out var result) ? result : null;
     }
 
     public override bool CaresAboutLemmingInteraction => _states.Any(s => s.HitBoxBehaviour.InteractsWithLemming);
     public override bool MatchesLemming(Lemming lemming) => CurrentState.HitBoxBehaviour.MatchesLemming(lemming);
     public override void OnLemmingMatch(Lemming lemming)
     {
-        
+        CurrentState.HitBoxBehaviour.OnLemmingInHitBox(lemming);
     }
 
     public override bool MatchesPosition(LevelPosition levelPosition) => CurrentState.HitBoxBehaviour.MatchesPosition(levelPosition);
+
+    public void Move(int dx, int dy)
+    {
+        GadgetBounds.X += dx;
+        GadgetBounds.Y += dy;
+    }
+
+    public void SetPosition(int x, int y)
+    {
+        GadgetBounds.X = x;
+        GadgetBounds.Y = y;
+
+        GadgetManager.UpdateGadgetPosition(this);
+    }
 
     public override void Tick()
     {

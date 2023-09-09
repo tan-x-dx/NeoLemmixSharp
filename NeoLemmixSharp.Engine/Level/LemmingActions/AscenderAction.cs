@@ -24,7 +24,7 @@ public sealed class AscenderAction : LemmingAction
         var dy = 0;
         while (dy < 2 &&
                lemming.AscenderProgress < 5 &&
-               Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1)))
+               TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1)))
         {
             dy++;
             levelPosition = orientation.MoveUp(levelPosition, 1);
@@ -32,8 +32,8 @@ public sealed class AscenderAction : LemmingAction
             lemming.AscenderProgress++;
         }
 
-        var pixel1IsSolid = Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1));
-        var pixel2IsSolid = Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 2));
+        var pixel1IsSolid = TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1));
+        var pixel2IsSolid = TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 2));
 
         if (dy < 2 &&
             !pixel1IsSolid)
@@ -53,6 +53,12 @@ public sealed class AscenderAction : LemmingAction
 
         return true;
     }
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 2;
+    protected override int BottomRightBoundsDeltaY(int animationFrame) => 0;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

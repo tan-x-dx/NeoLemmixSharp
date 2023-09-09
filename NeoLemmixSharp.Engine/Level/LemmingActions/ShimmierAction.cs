@@ -28,8 +28,8 @@ public sealed class ShimmierAction : LemmingAction
             // Check whether we find terrain to walk onto
             for (; i < 3; i++)
             {
-                if (Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)) &&
-                    !Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i + 1)))
+                if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)) &&
+                    !TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i + 1)))
                 {
                     lemmingPosition = orientation.Move(lemmingPosition, dx, i);
                     lemming.LevelPosition = lemmingPosition;
@@ -41,8 +41,8 @@ public sealed class ShimmierAction : LemmingAction
             // Check whether we find terrain to hoist onto
             for (; i < 6; i++)
             {
-                if (Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)) &&
-                    !Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i + 1)))
+                if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)) &&
+                    !TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i + 1)))
                 {
                     lemmingPosition = orientation.Move(lemmingPosition, dx, i - 4);
                     lemming.LevelPosition = lemmingPosition;
@@ -56,7 +56,7 @@ public sealed class ShimmierAction : LemmingAction
             // Check whether we fall down due to a wall
             for (; i < 8; i++)
             {
-                if (Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)))
+                if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)))
                 {
                     if (lemming.State.IsSlider)
                     {
@@ -72,17 +72,17 @@ public sealed class ShimmierAction : LemmingAction
             }
         }
 
-        var pixel9AboveIsSolid = Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 9));
+        var pixel9AboveIsSolid = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 9));
         // Check whether we fall down due to not enough ceiling terrain
         if (!pixel9AboveIsSolid &&
-            !Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 10)))
+            !TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 10)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
         // Check whether we fall down due a checkerboard ceiling
-        if (Terrain.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 8)) &&
+        if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 8)) &&
             !pixel9AboveIsSolid)
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -93,12 +93,12 @@ public sealed class ShimmierAction : LemmingAction
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
         lemming.LevelPosition = lemmingPosition;
 
-        if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
             lemming.LevelPosition = lemmingPosition;
 
-            if (Terrain.PixelIsSolidToLemming(lemming, lemmingPosition))
+            if (TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
             {
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
                 return true;
@@ -112,14 +112,14 @@ public sealed class ShimmierAction : LemmingAction
             }
         }
 
-        if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9)))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9)))
             return true;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
         lemming.LevelPosition = lemmingPosition;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 5);
-        if (Terrain.PixelIsSolidToLemming(lemming, lemmingPosition))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
         {
             lemming.LevelPosition = lemmingPosition;
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -127,6 +127,12 @@ public sealed class ShimmierAction : LemmingAction
 
         return true;
     }
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 9;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
+    protected override int BottomRightBoundsDeltaY(int animationFrame) => -2;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
@@ -139,7 +145,7 @@ public sealed class ShimmierAction : LemmingAction
             lemmingPosition = orientation.MoveRight(lemmingPosition, lemming.FacingDirection.DeltaX);
             lemming.LevelPosition = lemmingPosition;
 
-            if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
+            if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
             {
                 lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
                 lemming.LevelPosition = lemmingPosition;
@@ -150,7 +156,7 @@ public sealed class ShimmierAction : LemmingAction
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 2);
             lemming.LevelPosition = lemmingPosition;
-            if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
+            if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
             {
                 lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
                 lemming.LevelPosition = lemmingPosition;
@@ -160,8 +166,8 @@ public sealed class ShimmierAction : LemmingAction
         {
             for (var i = -1; i < 4; i++)
             {
-                if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9 + i)) &&
-                    !Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8 + i)))
+                if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9 + i)) &&
+                    !TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8 + i)))
                 {
                     lemmingPosition = orientation.MoveUp(lemmingPosition, i);
                     lemming.LevelPosition = lemmingPosition;

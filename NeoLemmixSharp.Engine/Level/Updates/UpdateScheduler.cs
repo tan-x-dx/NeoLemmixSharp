@@ -26,10 +26,11 @@ public sealed class UpdateScheduler
     private readonly GadgetManager _gadgetManager;
     private readonly SkillSetManager _skillSetManager;
 
+    private LemmingSkill _queuedSkill = NoneSkill.Instance;
+    private Lemming? _queuedSkillLemming;
+    private int _queuedSkillFrame;
+
     public bool DoneAssignmentThisFrame { get; set; }
-    public LemmingSkill QueuedSkill { get; private set; } = NoneSkill.Instance;
-    public Lemming? QueuedSkillLemming { get; private set; }
-    public int QueuedSkillFrame { get; private set; }
 
     public IFrameUpdater CurrentlySelectedFrameUpdater { get; private set; }
 
@@ -196,9 +197,7 @@ public sealed class UpdateScheduler
         if (skillTrackingData.SkillCount == 0)
             return;
 
-        if (lemming.State.CanHaveSkillsAssigned &&
-            skillTrackingData.Team == lemming.State.TeamAffiliation &&
-            skillTrackingData.Skill.CanAssignToLemming(lemming))
+        if (skillTrackingData.CanAssignToLemming(lemming))
         {
             skillTrackingData.Skill.AssignToLemming(lemming);
             skillTrackingData.DecrementSkillCount();
@@ -212,16 +211,16 @@ public sealed class UpdateScheduler
 
     private void ClearQueuedSkill()
     {
-        QueuedSkill = NoneSkill.Instance;
-        QueuedSkillLemming = null;
-        QueuedSkillFrame = 0;
+        _queuedSkill = NoneSkill.Instance;
+        _queuedSkillLemming = null;
+        _queuedSkillFrame = 0;
     }
 
     public void SetQueuedSkill(Lemming lemming, LemmingSkill lemmingSkill)
     {
-        QueuedSkill = lemmingSkill;
-        QueuedSkillLemming = lemming;
-        QueuedSkillFrame = 0;
+        _queuedSkill = lemmingSkill;
+        _queuedSkillLemming = lemming;
+        _queuedSkillFrame = 0;
     }
 
     public void CheckForQueuedAction()
@@ -229,7 +228,7 @@ public sealed class UpdateScheduler
         // First check whether there was already a skill assignment this frame
         //    if Assigned(fReplayManager.Assignment[fCurrentIteration, 0]) then Exit;
 
-        if (QueuedSkill == NoneSkill.Instance || QueuedSkillLemming == null)
+        if (_queuedSkill == NoneSkill.Instance || _queuedSkillLemming is null)
         {
             ClearQueuedSkill();
             return;
@@ -249,10 +248,10 @@ public sealed class UpdateScheduler
         }
         //  else
         {
-            QueuedSkillFrame++;
+            _queuedSkillFrame++;
 
             // Delete queued action after 16 frames
-            if (QueuedSkillFrame > 15)
+            if (_queuedSkillFrame > 15)
             {
                 ClearQueuedSkill();
             }

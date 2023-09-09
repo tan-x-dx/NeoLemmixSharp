@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Numerics;
 
@@ -31,11 +32,15 @@ public sealed class SmallBitArray : IBitArray
     [Pure]
     public bool GetBit(int index)
     {
+        Debug.Assert(index >= 0 && index < Size);
+
         return (_bits & (1U << index)) != 0U;
     }
 
     public bool SetBit(int index)
     {
+        Debug.Assert(index >= 0 && index < Size);
+
         var oldValue = _bits;
         _bits |= 1U << index;
         var delta = (_bits ^ oldValue) >> index;
@@ -45,6 +50,8 @@ public sealed class SmallBitArray : IBitArray
 
     public bool ClearBit(int index)
     {
+        Debug.Assert(index >= 0 && index < Size);
+
         var oldValue = _bits;
         _bits &= ~(1U << index);
         var delta = (_bits ^ oldValue) >> index;
@@ -54,6 +61,8 @@ public sealed class SmallBitArray : IBitArray
 
     public bool ToggleBit(int index)
     {
+        Debug.Assert(index >= 0 && index < Size);
+
         var oldValue = _bits;
         _bits ^= 1U << index;
         bool result;

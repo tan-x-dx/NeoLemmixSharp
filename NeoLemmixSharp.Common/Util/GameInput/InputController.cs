@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public abstract class InputController : ISimpleHasher<Keys>, IComparer<KeyAction>
+public abstract class InputController : ISimpleHasher<Keys>
 {
     private const int NumberOfKeys = 256;
 
@@ -44,7 +44,7 @@ public abstract class InputController : ISimpleHasher<Keys>, IComparer<KeyAction
     private void ValidateKeyActions()
     {
         _keyActions.ValidateUniqueIds();
-        _keyActions.Sort(this);
+        _keyActions.Sort(IdEquatableItemHelperMethods.Compare);
     }
 
     public void Tick()
@@ -98,15 +98,6 @@ public abstract class InputController : ISimpleHasher<Keys>, IComparer<KeyAction
 
         MouseButton4Action.UpdateState(mouseState.XButton1);
         MouseButton5Action.UpdateState(mouseState.XButton2);
-    }
-
-    int IComparer<KeyAction>.Compare(KeyAction? x, KeyAction? y)
-    {
-        if (x == null && y == null) return 0;
-        if (x == null) return -1;
-        if (y == null) return 1;
-
-        return x.Id.CompareTo(y.Id);
     }
 
     int ISimpleHasher<Keys>.NumberOfItems => NumberOfKeys;

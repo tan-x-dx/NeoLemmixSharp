@@ -83,6 +83,11 @@ public sealed class WalkerAction : LemmingAction
         return true;
     }
 
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
+
     public static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
     {
         var orientation = lemming.Orientation;
@@ -100,16 +105,16 @@ public sealed class WalkerAction : LemmingAction
             nextPosition = orientation.MoveRight(currentPosition, dx);
         }
 
-        if (Terrain.PositionOutOfBounds(nextPosition) ||
-            (!Terrain.PixelIsSolidToLemming(lemming, currentPosition) ||
-             Terrain.PixelIsSolidToLemming(lemming, nextPosition)))
+        if (TerrainManager.PositionOutOfBounds(nextPosition) ||
+            (!TerrainManager.PixelIsSolidToLemming(lemming, currentPosition) ||
+             TerrainManager.PixelIsSolidToLemming(lemming, nextPosition)))
             return false;
 
         for (var i = 1; i < 4; i++)
         {
-            if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(nextPosition, i)))
+            if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(nextPosition, i)))
                 return false;
-            if (!Terrain.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, i)))
+            if (!TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, i)))
                 return true;
         }
 
@@ -118,7 +123,7 @@ public sealed class WalkerAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        if (Terrain.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
         {
             base.TransitionLemmingToAction(lemming, turnAround);
             return;

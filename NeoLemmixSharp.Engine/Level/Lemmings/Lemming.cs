@@ -13,11 +13,13 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 {
     private static TerrainManager TerrainManager { get; set; }
+    private static LemmingManager LemmingManager { get; set; }
     private static GadgetManager GadgetManager { get; set; }
 
-    public static void SetHelpers(TerrainManager terrainManager, GadgetManager gadgetManager)
+    public static void SetHelpers(TerrainManager terrainManager, LemmingManager lemmingManager, GadgetManager gadgetManager)
     {
         TerrainManager = terrainManager;
+        LemmingManager = lemmingManager;
         GadgetManager = gadgetManager;
     }
 
@@ -59,12 +61,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LemmingRenderer Renderer { get; }
     public LemmingState State { get; }
 
-    public bool ShouldTick => true;
-
-    public LevelPosition TopLeftPixel => LevelPosition + new LevelPosition(-3, -3);
-    public LevelPosition BottomRightPixel => LevelPosition + new LevelPosition(2, 2);
-    public LevelPosition PreviousTopLeftPixel => PreviousLevelPosition + new LevelPosition(-3, -3);
-    public LevelPosition PreviousBottomRightPixel => PreviousLevelPosition + new LevelPosition(2, 2);
+    public LevelPosition TopLeftPixel { get; private set; }
+    public LevelPosition BottomRightPixel { get; private set; }
+    public LevelPosition PreviousTopLeftPixel { get; private set; }
+    public LevelPosition PreviousBottomRightPixel { get; private set; }
 
     public Lemming(
         int id,
@@ -79,6 +79,17 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         State = new LemmingState(Team.AllItems[0]);
 
         Renderer = new LemmingRenderer(this);
+    }
+
+    public void Initialise()
+    {
+        var levelPositionPair = CurrentAction.GetLemmingBounds(this);
+        TopLeftPixel = levelPositionPair.GetTopLeftPosition();
+        BottomRightPixel = levelPositionPair.GetBottomRightPosition();
+
+        PreviousLevelPosition = LevelPosition;
+        PreviousTopLeftPixel = TopLeftPixel;
+        PreviousBottomRightPixel = BottomRightPixel;
     }
 
     public void Tick()
@@ -129,7 +140,14 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         }
 
         PreviousLevelPosition = LevelPosition;
+        PreviousTopLeftPixel = TopLeftPixel;
+        PreviousBottomRightPixel = BottomRightPixel;
+
         var result = CurrentAction.UpdateLemming(this);
+        var levelPositionPair = CurrentAction.GetLemmingBounds(this);
+
+        TopLeftPixel = levelPositionPair.GetTopLeftPosition();
+        BottomRightPixel = levelPositionPair.GetBottomRightPosition();
 
         return result;
     }
@@ -141,7 +159,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
         if (footPixel.IsVoid() && headPixel.IsVoid())
         {
-            //
+            LemmingManager.RemoveLemming(this);
 
             return false;
         }

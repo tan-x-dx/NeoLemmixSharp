@@ -2,8 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
-using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 
@@ -32,7 +30,7 @@ public sealed class SwitchRenderer : IViewportObjectRenderer
         int screenY,
         int scaleMultiplier)
     {
-        sourceRectangle.Y += _switchGadget.Frame * 13;
+        sourceRectangle.Y += _switchGadget.AnimationFrame * 13;
 
         var renderDestination = new Rectangle(
             screenX,

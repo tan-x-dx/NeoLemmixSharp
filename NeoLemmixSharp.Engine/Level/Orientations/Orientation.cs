@@ -1,11 +1,11 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 
-public abstract class Orientation : IUniqueIdItem<Orientation>
+public abstract class Orientation : IExtendedEnumType<Orientation>
 {
     private static readonly Orientation[] Orientations = GenerateOrientationCollection();
     protected static TerrainManager Terrain { get; private set; }
@@ -72,6 +72,15 @@ public abstract class Orientation : IUniqueIdItem<Orientation>
     /// <returns></returns>
     [Pure]
     public abstract LevelPosition Move(LevelPosition position, int dx, int dy);
+    /// <summary>
+    /// Note: Positive dx -> right, positive dy -> up
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="dx"></param>
+    /// <param name="dy"></param>
+    /// <returns></returns>
+    [Pure]
+    public abstract LevelPosition MoveWithoutNormalization(LevelPosition position, int dx, int dy);
 
     [Pure]
     public abstract bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition);

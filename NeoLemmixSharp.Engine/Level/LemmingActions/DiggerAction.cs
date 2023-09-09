@@ -1,13 +1,14 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using NeoLemmixSharp.Engine.Level.Terrain.Masks;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class DiggerAction : LemmingAction, IDestructionAction
+public sealed class DiggerAction : LemmingAction, IDestructionMask
 {
     public static DiggerAction Instance { get; } = new();
 
@@ -45,9 +46,9 @@ public sealed class DiggerAction : LemmingAction, IDestructionAction
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         lemming.LevelPosition = lemmingPosition;
 
-        if (Terrain.PixelIsIndestructibleToLemming(lemming, this, lemmingPosition))
+        if (TerrainManager.PixelIsIndestructibleToLemming(lemming, this, lemmingPosition))
         {
-            if (Terrain.PixelIsSteel(lemmingPosition))
+            if (TerrainManager.PixelIsSteel(lemmingPosition))
             {
                 //CueSoundEffect(SFX_HITS_STEEL, L.Position);
             }
@@ -65,6 +66,11 @@ public sealed class DiggerAction : LemmingAction, IDestructionAction
         return true;
     }
 
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -5;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 6;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
+
     private bool DigOneRow(
         Lemming lemming,
         Orientation orientation,
@@ -76,27 +82,27 @@ public sealed class DiggerAction : LemmingAction, IDestructionAction
 
         // Two most extreme pixels
         var checkLevelPosition = orientation.Move(lemmingPosition, -4, 0);
-        var pixelIsSolid = Terrain.PixelIsSolidToLemming(lemming, checkLevelPosition);
+        var pixelIsSolid = TerrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
-            Terrain.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
+            TerrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
         }
 
         checkLevelPosition = orientation.Move(lemmingPosition, 4, 0);
-        pixelIsSolid = Terrain.PixelIsSolidToLemming(lemming, checkLevelPosition);
+        pixelIsSolid = TerrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
-            Terrain.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
+            TerrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
         }
 
         // Everything in between
         for (var i = -3; i < 4; i++)
         {
             checkLevelPosition = orientation.Move(lemmingPosition, i, 0);
-            pixelIsSolid = Terrain.PixelIsSolidToLemming(lemming, checkLevelPosition);
+            pixelIsSolid = TerrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition);
             if (pixelIsSolid)
             {
-                Terrain.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
+                TerrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
                 result = true;
             }
         }

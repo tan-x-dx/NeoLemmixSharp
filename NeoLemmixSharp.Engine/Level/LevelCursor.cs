@@ -74,11 +74,11 @@ public sealed class LevelCursor
             _facingDirection = null;
         }
 
-        var topLeftCursorPosition = CursorPosition + new LevelPosition(-6, -6);
+        var topLeftCursorPosition = CursorPosition + new LevelPosition(-7, -7);
         var bottomRightCursorPosition = CursorPosition + new LevelPosition(6, 6);
 
         _lemmingsNearCursorPosition.Clear();
-        _lemmingManager.PopulateSetWithLemmingsFromRegion(_lemmingsNearCursorPosition, topLeftCursorPosition, bottomRightCursorPosition);
+        _lemmingManager.PopulateSetWithLemmingsNearRegion(_lemmingsNearCursorPosition, topLeftCursorPosition, bottomRightCursorPosition);
     }
 
     public void CheckLemming(Lemming lemming)

@@ -25,4 +25,9 @@ public sealed class ShruggerAction : LemmingAction
 
         return true;
     }
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 }

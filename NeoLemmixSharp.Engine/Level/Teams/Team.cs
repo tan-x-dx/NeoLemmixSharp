@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Engine.Level.Teams;
 
-public sealed class Team : IUniqueIdItem<Team>
+public sealed class Team : IExtendedEnumType<Team>
 {
     private static readonly Team[] Teams = GenerateTeamCollection();
 

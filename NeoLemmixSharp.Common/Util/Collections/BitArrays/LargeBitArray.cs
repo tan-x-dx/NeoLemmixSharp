@@ -55,11 +55,15 @@ public sealed class LargeBitArray : IBitArray
     [Pure]
     public bool GetBit(int index)
     {
+        Debug.Assert(index >= 0 && index < Length);
+
         return (_bits[index >> Shift] & (1U << index)) != 0U;
     }
 
     public bool SetBit(int index)
     {
+        Debug.Assert(index >= 0 && index < Length);
+
         var intIndex = index >> Shift;
 
         var oldValue = _bits[intIndex];
@@ -77,6 +81,8 @@ public sealed class LargeBitArray : IBitArray
 
     public bool ClearBit(int index)
     {
+        Debug.Assert(index >= 0 && index < Length);
+
         var intIndex = index >> Shift;
 
         var oldValue = _bits[intIndex];
@@ -94,6 +100,8 @@ public sealed class LargeBitArray : IBitArray
 
     public bool ToggleBit(int index)
     {
+        Debug.Assert(index >= 0 && index < Length);
+
         var intIndex = index >> Shift;
 
         var oldValue = _bits[intIndex];
@@ -288,43 +296,6 @@ public sealed class LargeBitArray : IBitArray
             }
         }
         Count = count;
-    }
-
-    internal void MutualDifferenceWith(LargeBitArray other)
-    {
-        Debug.Assert(Length == other.Length);
-
-        var thisCount = 0;
-        var otherCount = 0;
-        var thisIndexOfFirstSetBit = _bits.Length - 1;
-        var otherIndexOfFirstSetBit = other._bits.Length - 1;
-        for (var i = 0; i < _bits.Length; i++)
-        {
-            var thisValue = _bits[i];
-            var otherValue = other._bits[i];
-            var intersection = thisValue & otherValue;
-
-            thisValue ^= intersection;
-            otherValue ^= intersection;
-
-            _bits[i] = thisValue;
-            other._bits[i] = otherValue;
-            thisCount += BitOperations.PopCount(thisValue);
-            otherCount += BitOperations.PopCount(otherValue);
-            if (thisValue != 0U && i < thisIndexOfFirstSetBit)
-            {
-                thisIndexOfFirstSetBit = i;
-            }
-            if (otherValue != 0U && i < otherIndexOfFirstSetBit)
-            {
-                otherIndexOfFirstSetBit = i;
-            }
-        }
-        Count = thisCount;
-        _indexOfFirstSetBit = thisIndexOfFirstSetBit;
-
-        other.Count = otherCount;
-        other._indexOfFirstSetBit = otherIndexOfFirstSetBit;
     }
 
     [Pure]
