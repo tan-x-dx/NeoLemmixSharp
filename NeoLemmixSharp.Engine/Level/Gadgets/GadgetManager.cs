@@ -24,7 +24,6 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
 
         _gadgetPositionHelper = new PositionHelper<GadgetBase>(
-            allGadgets,
             this,
             ChunkSizeType.ChunkSize64,
             horizontalBoundaryBehaviour,

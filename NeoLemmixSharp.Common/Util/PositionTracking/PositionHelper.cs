@@ -9,50 +9,38 @@ public sealed class PositionHelper<T>
     where T : class, IIdEquatable<T>, IRectangularBounds
 {
     private readonly int _chunkSizeBitShift;
-
-    private readonly T[] _allItems;
-    private readonly ISimpleHasher<T> _hasher;
-
-    private readonly Dictionary<ChunkPosition, LargeSimpleSet<T>> _itemChunkLookup;
-
-    private readonly SimpleChunkPositionList _chunkPositionScratchSpaceAdd;
-    private readonly SimpleChunkPositionList _chunksPositionScratchSpaceRemove;
-
-    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
-    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
-
     private readonly int _numberOfHorizontalChunks;
     private readonly int _numberOfVerticalChunks;
 
+    private readonly ISimpleHasher<T> _hasher;
+    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
+
+    private readonly Dictionary<ChunkPosition, LargeSimpleSet<T>> _itemChunkLookup;
+    private readonly SimpleChunkPositionList _chunkPositionScratchSpace;
     private readonly SetUnionChunkPositionUser<T> _setUnionChunkPositionUser;
 
     internal Dictionary<ChunkPosition, LargeSimpleSet<T>> ItemChunks => _itemChunkLookup;
 
     public PositionHelper(
-        T[] allItems,
         ISimpleHasher<T> hasher,
         ChunkSizeType chunkSizeType,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
-        _allItems = allItems;
-        _hasher = hasher;
-
-        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
-        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
-
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
         var chunkSize = 1 << _chunkSizeBitShift;
         var chunkSizeBitMask = chunkSize - 1;
 
-        _numberOfHorizontalChunks = (_horizontalBoundaryBehaviour.LevelWidth + chunkSizeBitMask) >> _chunkSizeBitShift;
-        _numberOfVerticalChunks = (_verticalBoundaryBehaviour.LevelHeight + chunkSizeBitMask) >> _chunkSizeBitShift;
+        _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelWidth + chunkSizeBitMask) >> _chunkSizeBitShift;
+        _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelHeight + chunkSizeBitMask) >> _chunkSizeBitShift;
+
+        _hasher = hasher;
+        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
         _itemChunkLookup = new Dictionary<ChunkPosition, LargeSimpleSet<T>>(ChunkPositionEqualityComparer.Instance);
-
-        _chunkPositionScratchSpaceAdd = new SimpleChunkPositionList();
-        _chunksPositionScratchSpaceRemove = new SimpleChunkPositionList();
-
+        _chunkPositionScratchSpace = new SimpleChunkPositionList();
         _setUnionChunkPositionUser = new SetUnionChunkPositionUser<T>(this);
     }
 
@@ -71,12 +59,6 @@ public sealed class PositionHelper<T>
         return _itemChunkLookup.TryGetValue(chunkPosition, out var itemChunk)
             ? itemChunk.GetEnumerator()
             : new LargeSimpleSet<T>.Enumerator();
-    }
-
-    public void UpdateItemPosition(int itemId, bool forceUpdate)
-    {
-        var item = _allItems[itemId];
-        UpdateItemPosition(item, forceUpdate);
     }
 
     public void UpdateItemPosition(T item, bool forceUpdate)
@@ -104,10 +86,10 @@ public sealed class PositionHelper<T>
             bottomRightShiftY == previousBottomRightShiftY)
             return;
 
-        _chunksPositionScratchSpaceRemove.Clear();
-        EvaluateChunkPositions(_chunksPositionScratchSpaceRemove, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
+        _chunkPositionScratchSpace.Clear();
+        EvaluateChunkPositions(_chunkPositionScratchSpace, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
 
-        foreach (var itemChunkPosition in _chunksPositionScratchSpaceRemove.AsSpan())
+        foreach (var itemChunkPosition in _chunkPositionScratchSpace.AsSpan())
         {
             if (!_itemChunkLookup.TryGetValue(itemChunkPosition, out var itemChunk))
                 continue;
@@ -115,10 +97,10 @@ public sealed class PositionHelper<T>
             itemChunk.Remove(item);
         }
 
-        _chunkPositionScratchSpaceAdd.Clear();
-        EvaluateChunkPositions(_chunkPositionScratchSpaceAdd, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        _chunkPositionScratchSpace.Clear();
+        EvaluateChunkPositions(_chunkPositionScratchSpace, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
 
-        foreach (var itemChunkPosition in _chunkPositionScratchSpaceAdd.AsSpan())
+        foreach (var itemChunkPosition in _chunkPositionScratchSpace.AsSpan())
         {
             if (!_itemChunkLookup.TryGetValue(itemChunkPosition, out var itemChunk))
             {
@@ -143,10 +125,10 @@ public sealed class PositionHelper<T>
         GetShiftValues(previousTopLeftPixel, out var previousTopLeftShiftX, out var previousTopLeftShiftY);
         GetShiftValues(previousBottomRightPixel, out var previousBottomRightShiftX, out var previousBottomRightShiftY);
 
-        _chunksPositionScratchSpaceRemove.Clear();
-        EvaluateChunkPositions(_chunksPositionScratchSpaceRemove, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
+        _chunkPositionScratchSpace.Clear();
+        EvaluateChunkPositions(_chunkPositionScratchSpace, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
 
-        foreach (var itemChunkPosition in _chunksPositionScratchSpaceRemove.AsSpan())
+        foreach (var itemChunkPosition in _chunkPositionScratchSpace.AsSpan())
         {
             if (!_itemChunkLookup.TryGetValue(itemChunkPosition, out var itemChunk))
                 continue;
@@ -160,10 +142,10 @@ public sealed class PositionHelper<T>
             bottomRightShiftY == previousBottomRightShiftY)
             return;
 
-        _chunkPositionScratchSpaceAdd.Clear();
-        EvaluateChunkPositions(_chunkPositionScratchSpaceAdd, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        _chunkPositionScratchSpace.Clear();
+        EvaluateChunkPositions(_chunkPositionScratchSpace, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
 
-        foreach (var itemChunkPosition in _chunkPositionScratchSpaceAdd.AsSpan())
+        foreach (var itemChunkPosition in _chunkPositionScratchSpace.AsSpan())
         {
             if (!_itemChunkLookup.TryGetValue(itemChunkPosition, out var itemChunk))
                 continue;

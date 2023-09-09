@@ -26,6 +26,13 @@ public sealed class BlockerAction : LemmingAction
         return true;
     }
 
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    {
+        LemmingManager.RegisterBlocker(lemming);
+
+        base.TransitionLemmingToAction(lemming, turnAround);
+    }
+
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -7;
     protected override int TopLeftBoundsDeltaY(int animationFrame) => 11;
 

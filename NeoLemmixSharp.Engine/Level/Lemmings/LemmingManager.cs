@@ -9,8 +9,12 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class LemmingManager : ISimpleHasher<Lemming>
 {
+    private const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize32;
+
     private readonly PositionHelper<Lemming> _lemmingPositionHelper;
+    private readonly PositionHelper<Lemming> _blockerPositionHelper;
     private readonly LargeSimpleSet<Lemming> _activeLemmings;
+    private readonly LargeSimpleSet<Lemming> _blockerScratchSpace;
     private readonly Lemming[] _lemmings;
 
     public int LemmingsToRelease { get; private set; }
@@ -32,12 +36,19 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
         _lemmings.ValidateUniqueIds();
 
         _lemmingPositionHelper = new PositionHelper<Lemming>(
-            lemmings,
             this,
-            ChunkSizeType.ChunkSize32,
+            LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
+
+        _blockerPositionHelper = new PositionHelper<Lemming>(
+            this,
+            LemmingPositionChunkSize,
+            horizontalBoundaryBehaviour,
+            verticalBoundaryBehaviour);
+
         _activeLemmings = new LargeSimpleSet<Lemming>(this);
+        _blockerScratchSpace = new LargeSimpleSet<Lemming>(this);
     }
 
     public void Initialise()
@@ -55,6 +66,12 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
 
         lemming.Initialise();
         _activeLemmings.Add(lemming);
+
+        if (!lemming.State.IsZombie)
+        {
+            LemmingsOut++;
+        }
+
         _lemmingPositionHelper.UpdateItemPosition(lemming, true);
     }
 
@@ -64,6 +81,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
     {
         _activeLemmings.Remove(lemming);
         _lemmingPositionHelper.RemoveItem(lemming);
+        LemmingsRemoved++;
     }
 
     public void UpdateLemmingPosition(Lemming lemming)
@@ -77,6 +95,23 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
         LevelPosition bottomRightLevelPosition)
     {
         _lemmingPositionHelper.PopulateSetWithItemsNearRegion(set, topLeftLevelPosition, bottomRightLevelPosition);
+    }
+
+    public void RegisterBlocker(Lemming lemming)
+    {
+        _blockerPositionHelper.UpdateItemPosition(lemming, true);
+    }
+
+    public void DeregisterBlocker(Lemming lemming)
+    {
+        _blockerPositionHelper.RemoveItem(lemming);
+    }
+    public LargeSimpleSet<Lemming>.Enumerator BlockersNearLemmingEnumerator(Lemming lemming)
+    {
+        _blockerScratchSpace.Clear();
+        _blockerPositionHelper.PopulateSetWithItemsNearRegion(_blockerScratchSpace, lemming.TopLeftPixel, lemming.BottomRightPixel);
+
+        return _blockerScratchSpace.GetEnumerator();
     }
 
     int ISimpleHasher<Lemming>.NumberOfItems => _lemmings.Length;

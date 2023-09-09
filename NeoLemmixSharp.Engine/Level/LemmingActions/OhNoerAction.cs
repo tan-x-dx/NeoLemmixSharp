@@ -28,6 +28,7 @@ public sealed class OhNoerAction : LemmingAction
         }
         else if (!TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
         {
+            LemmingManager.DeregisterBlocker(lemming);
             /*
             L.LemHasBlockerField := False; // remove blocker field
             SetBlockerMap;
