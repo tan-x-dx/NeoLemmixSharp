@@ -8,7 +8,7 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class MinerAction : LemmingAction, IDestructionAction
+public sealed class MinerAction : LemmingAction, IDestructionMask
 {
     public static MinerAction Instance { get; } = new();
 

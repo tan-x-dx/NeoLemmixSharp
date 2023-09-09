@@ -54,7 +54,7 @@ public static partial class TerrainMasks
              1);*/
 
         TerrainEraseMask[] CreateTerrainMaskArray(
-            IDestructionAction destructionAction,
+            IDestructionMask destructionAction,
             string actionName,
             LevelPosition anchorPoint,
             int numberOfFrames)
@@ -72,7 +72,7 @@ public static partial class TerrainMasks
     private static TerrainEraseMask[] CreateTerrainMasks(
         ContentManager contentManager,
         SpriteRotationReflectionProcessor<TerrainMaskTextureReader> maskCreator,
-        IDestructionAction destructionAction,
+        IDestructionMask destructionMask,
         string actionName,
         LevelPosition anchorPoint,
         int numberOfFrames)
@@ -82,7 +82,7 @@ public static partial class TerrainMasks
         var spriteWidth = texture.Width;
         var spriteHeight = texture.Height / numberOfFrames;
 
-        var itemCreator = CreateTerrainMaskFromTexture(destructionAction);
+        var itemCreator = CreateTerrainMaskFromTexture(destructionMask);
 
         var terrainMaskTextureReaders = maskCreator.CreateAllSpriteTypes(
             texture,
@@ -143,10 +143,10 @@ public static partial class TerrainMasks
         return (orientation.RotNum << 1) | facingDirection.Id;
     }
 
-    private static SpriteRotationReflectionProcessor<TerrainMaskTextureReader>.ItemCreator CreateTerrainMaskFromTexture(IDestructionAction destructionAction)
+    private static SpriteRotationReflectionProcessor<TerrainMaskTextureReader>.ItemCreator CreateTerrainMaskFromTexture(IDestructionMask destructionMask)
     {
         // Currying is such fun...
-        return (t, w, h, f, _, p) => new TerrainMaskTextureReader(t, destructionAction, w, h, f, p);
+        return (t, w, h, f, _, p) => new TerrainMaskTextureReader(t, destructionMask, w, h, f, p);
     }
 
     private sealed class TerrainMaskTextureReader
@@ -155,7 +155,7 @@ public static partial class TerrainMasks
 
         public TerrainMaskTextureReader(
             Texture2D texture,
-            IDestructionAction destructionAction,
+            IDestructionMask destructionMask,
             int spriteWidth,
             int spriteHeight,
             int numberOfFrames,
@@ -165,7 +165,7 @@ public static partial class TerrainMasks
 
             ReadTerrainMasks(
                 texture,
-                destructionAction,
+                destructionMask,
                 spriteWidth,
                 spriteHeight,
                 numberOfFrames,
@@ -179,7 +179,7 @@ public static partial class TerrainMasks
 
         private void ReadTerrainMasks(
             Texture2D texture,
-            IDestructionAction destructionAction,
+            IDestructionMask destructionMask,
             int spriteWidth,
             int spriteHeight,
             int numberOfFrames,
@@ -209,7 +209,7 @@ public static partial class TerrainMasks
                     }
                 }
 
-                _terrainMasks[f] = new TerrainEraseMask(destructionAction, anchorPoint, levelPositions.ToArray());
+                _terrainMasks[f] = new TerrainEraseMask(destructionMask, anchorPoint, levelPositions.ToArray());
                 levelPositions.Clear();
             }
 

@@ -3,11 +3,12 @@ using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class DiggerAction : LemmingAction, IDestructionAction
+public sealed class DiggerAction : LemmingAction, IDestructionMask
 {
     public static DiggerAction Instance { get; } = new();
 

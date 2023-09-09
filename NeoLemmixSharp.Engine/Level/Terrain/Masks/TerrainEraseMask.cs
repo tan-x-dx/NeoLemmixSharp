@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
@@ -11,16 +10,16 @@ public sealed class TerrainEraseMask
     private static TerrainManager _terrainManager;
 #pragma warning restore CS8618
 
-    private readonly IDestructionAction _destructionAction;
+    private readonly IDestructionMask _destructionMask;
     private readonly LevelPosition _anchorPoint;
     private readonly LevelPosition[] _mask;
 
     public TerrainEraseMask(
-        IDestructionAction destructionAction,
+        IDestructionMask destructionMask,
         LevelPosition anchorPoint,
         LevelPosition[] mask)
     {
-        _destructionAction = destructionAction;
+        _destructionMask = destructionMask;
         _anchorPoint = anchorPoint;
         _mask = mask;
     }
@@ -38,7 +37,7 @@ public sealed class TerrainEraseMask
 
             pixel = _terrainManager.NormalisePosition(pixel + offset);
 
-            _terrainManager.ErasePixel(orientation, _destructionAction, facingDirection, pixel);
+            _terrainManager.ErasePixel(orientation, _destructionMask, facingDirection, pixel);
         }
     }
 

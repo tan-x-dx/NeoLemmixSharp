@@ -5,9 +5,9 @@ using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Rendering;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain;
@@ -84,13 +84,13 @@ public sealed class TerrainManager
     [Pure]
     public bool PixelIsIndestructibleToLemming(
         Lemming lemming,
-        IDestructionAction destructionAction,
+        IDestructionMask destructionMask,
         LevelPosition levelPosition)
     {
         var pixel = PixelTypeAtPosition(levelPosition);
 
         return !pixel.CanBeDestroyed() ||
-               !destructionAction.CanDestroyPixel(pixel, lemming.Orientation, lemming.FacingDirection) ||
+               !destructionMask.CanDestroyPixel(pixel, lemming.Orientation, lemming.FacingDirection) ||
                _gadgetManager.HasGadgetOfTypeAtPosition(levelPosition, GadgetType.MetalGrateOn);
     }
 
@@ -106,7 +106,7 @@ public sealed class TerrainManager
 
     public void ErasePixel(
         Orientation orientation,
-        IDestructionAction destructionAction,
+        IDestructionMask destructionMask,
         FacingDirection facingDirection,
         LevelPosition pixelToErase)
     {
@@ -117,7 +117,7 @@ public sealed class TerrainManager
         var pixel = _pixels[index];
 
         if (!pixel.CanBeDestroyed() ||
-            !destructionAction.CanDestroyPixel(pixel, orientation, facingDirection))
+            !destructionMask.CanDestroyPixel(pixel, orientation, facingDirection))
             return;
 
         _pixels[index] = PixelType.Empty;

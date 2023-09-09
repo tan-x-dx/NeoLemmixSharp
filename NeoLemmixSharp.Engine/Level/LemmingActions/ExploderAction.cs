@@ -2,11 +2,12 @@
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class ExploderAction : LemmingAction, IDestructionAction
+public sealed class ExploderAction : LemmingAction, IDestructionMask
 {
     public static ExploderAction Instance { get; } = new();
 
