@@ -26,10 +26,10 @@ public sealed class BasherAction : LemmingAction, IDestructionAction
         throw new NotImplementedException();
     }
 
-    protected override int TopLeftBoundsDeltaX() => -4;
-    protected override int TopLeftBoundsDeltaY() => 11;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
-    protected override int BottomRightBoundsDeltaX() => 4;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
 
     /* private bool BasherIndestructibleCheck(
          Orientation orientation,

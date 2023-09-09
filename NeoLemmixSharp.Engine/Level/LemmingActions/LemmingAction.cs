@@ -80,23 +80,27 @@ public abstract class LemmingAction : IUniqueIdItem<LemmingAction>
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
+        var dxCorrection = 1 - lemming.FacingDirection.Id; // Fixes off-by-one errors with left/right positions
         var lemmingPosition = lemming.LevelPosition;
+        var animationFrame = lemming.AnimationFrame;
 
-        var topLeftDx = TopLeftBoundsDeltaX();
-        var topLeftDy = TopLeftBoundsDeltaY();
+        var topLeftDx = TopLeftBoundsDeltaX(animationFrame);
+        var topLeftDy = TopLeftBoundsDeltaY(animationFrame);
 
-        var bottomRightDx = BottomRightBoundsDeltaX();
+        var bottomRightDx = BottomRightBoundsDeltaX(animationFrame);
+        var bottomRightDy = BottomRightBoundsDeltaY(animationFrame);
 
-        var p1 = orientation.MoveWithoutNormalization(lemmingPosition, dx * topLeftDx, topLeftDy);
-        var p2 = orientation.MoveWithoutNormalization(lemmingPosition, dx * bottomRightDx, 0);
+        var p1 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * topLeftDx, topLeftDy);
+        var p2 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * bottomRightDx, bottomRightDy);
 
         return new LevelPositionPair(p1, p2);
     }
 
-    protected abstract int TopLeftBoundsDeltaX();
-    protected abstract int TopLeftBoundsDeltaY();
+    protected abstract int TopLeftBoundsDeltaX(int animationFrame);
+    protected abstract int TopLeftBoundsDeltaY(int animationFrame);
 
-    protected abstract int BottomRightBoundsDeltaX();
+    protected abstract int BottomRightBoundsDeltaX(int animationFrame);
+    protected virtual int BottomRightBoundsDeltaY(int animationFrame) => -1;
 
     public bool Equals(LemmingAction? other) => Id == (other?.Id ?? -1);
     public sealed override bool Equals(object? obj) => obj is LemmingAction other && Id == other.Id;

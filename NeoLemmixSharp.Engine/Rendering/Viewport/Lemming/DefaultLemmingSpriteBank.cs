@@ -37,7 +37,7 @@ public static class DefaultLemmingSpriteBank
         CreateFourLayerTrueColorSprite(DisarmerAction.Instance, new LevelPosition(1, 11));
         CreateThreeLayerSprite(DrownerAction.Instance, new LevelPosition(5, 10));
         CreateThreeLayerSprite(ExiterAction.Instance, new LevelPosition(2, 16));
-        CreateOneLayerTrueColorSprite(ExploderAction.Instance, new LevelPosition(16, 25));
+        CreateOneLayerTrueColorSprite(ExploderAction.Instance, new LevelPosition(17, 21));
         CreateThreeLayerSprite(FallerAction.Instance, new LevelPosition(3, 10));
         CreateFiveLayerTrueColorSprite(FencerAction.Instance, new LevelPosition(3, 10));
         CreateFourLayerTrueColorSprite(FloaterAction.Instance, new LevelPosition(4, 16));
@@ -54,7 +54,7 @@ public static class DefaultLemmingSpriteBank
         CreateThreeLayerSprite(SliderAction.Instance, new LevelPosition(4, 11));
         CreateThreeLayerSprite(SplatterAction.Instance, new LevelPosition(7, 10));
         CreateFiveLayerTrueColorSprite(StackerAction.Instance, new LevelPosition(3, 13));
-        CreateOneLayerTrueColorSprite(StonerAction.Instance, new LevelPosition(16, 25));
+        CreateOneLayerTrueColorSprite(StonerAction.Instance, new LevelPosition(17, 21));
         CreateThreeLayerSprite(SwimmerAction.Instance, new LevelPosition(6, 8));
         CreateFourLayerTrueColorSprite(VaporiserAction.Instance, new LevelPosition(5, 14));
         CreateThreeLayerSprite(WalkerAction.Instance, new LevelPosition(2, 10));

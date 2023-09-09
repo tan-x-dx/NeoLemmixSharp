@@ -265,7 +265,7 @@ public sealed class LevelObjectAssembler : IDisposable
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
-            LevelPosition = new LevelPosition(290, 152)
+            LevelPosition = new LevelPosition(80, 40)
         };
 
         var lemming7 = new Lemming(
@@ -273,7 +273,7 @@ public sealed class LevelObjectAssembler : IDisposable
             orientation: DownOrientation.Instance,
             facingDirection: RightFacingDirection.Instance)
         {
-            LevelPosition = new LevelPosition(294, 152)
+            LevelPosition = new LevelPosition(90, 40)
         };
 
         var lemming8 = new Lemming(
@@ -349,13 +349,13 @@ public sealed class LevelObjectAssembler : IDisposable
         lemming5.State.TeamAffiliation = Team.AllItems[5];
 
         lemming6.State.TeamAffiliation = Team.AllItems[0];
-        lemming7.State.TeamAffiliation = Team.AllItems[1];
+    //    lemming7.State.TeamAffiliation = Team.AllItems[1];
         lemming8.State.TeamAffiliation = Team.AllItems[2];
         lemming9.State.TeamAffiliation = Team.AllItems[3];
         lemming10.State.TeamAffiliation = Team.AllItems[4];
         lemming11.State.TeamAffiliation = Team.AllItems[5];
-        lemming6.State.IsSwimmer = true;
-        lemming7.State.IsSwimmer = true;
+     //   lemming6.State.IsSwimmer = true;
+     //   lemming7.State.IsSwimmer = true;
         lemming8.State.IsSwimmer = true;
         lemming9.State.IsSwimmer = true;
         lemming10.State.IsSwimmer = true;
@@ -367,8 +367,8 @@ public sealed class LevelObjectAssembler : IDisposable
         lemming3.State.IsNeutral = true;
         lemming4.State.IsNeutral = true;
         lemming5.State.IsNeutral = true;
-        lemming6.State.IsNeutral = true;
-        lemming7.State.IsNeutral = true;
+     //   lemming6.State.IsNeutral = true;
+     //   lemming7.State.IsNeutral = true;
         lemming8.State.IsNeutral = true;
         lemming9.State.IsNeutral = true;
         lemming10.State.IsNeutral = true;

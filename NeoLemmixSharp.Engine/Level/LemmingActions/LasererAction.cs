@@ -134,10 +134,10 @@ HitTestConclusive:
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX() => -2;
-    protected override int TopLeftBoundsDeltaY() => 10;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
-    protected override int BottomRightBoundsDeltaX() => 3;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     private ReadOnlySpan<LevelPosition> GetOffsetChecks(FacingDirection facingDirection)
     {

@@ -21,10 +21,11 @@ public sealed class GliderAction : LemmingAction
         throw new NotImplementedException();
     }
 
-    protected override int TopLeftBoundsDeltaX() => -2;
-    protected override int TopLeftBoundsDeltaY() => 11;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 12;
 
-    protected override int BottomRightBoundsDeltaX() => 4;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
+    protected override int BottomRightBoundsDeltaY(int animationFrame) => 1;
 
     private static bool DoTurnAround(Lemming lemming, bool moveForwardFirst)
     {

@@ -26,8 +26,8 @@ public sealed class BlockerAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX() => -5;
-    protected override int TopLeftBoundsDeltaY() => 11;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -7;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 11;
 
-    protected override int BottomRightBoundsDeltaX() => 4;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
 }

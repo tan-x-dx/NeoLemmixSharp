@@ -21,10 +21,10 @@ public sealed class JumperAction : LemmingAction
         throw new NotImplementedException();
     }
 
-    protected override int TopLeftBoundsDeltaX() => -1;
-    protected override int TopLeftBoundsDeltaY() => 9;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -1;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 9;
 
-    protected override int BottomRightBoundsDeltaX() => 3;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

@@ -37,10 +37,10 @@ public sealed class SliderAction : LemmingAction
         return lemming.CurrentAction != DrownerAction.Instance;
     }
 
-    protected override int TopLeftBoundsDeltaX() => -4;
-    protected override int TopLeftBoundsDeltaY() => 10;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -6;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
-    protected override int BottomRightBoundsDeltaX() => 0;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 0;
 
     public static bool SliderTerrainChecks(
         Lemming lemming,

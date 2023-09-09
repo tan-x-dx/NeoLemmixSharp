@@ -93,10 +93,11 @@ public sealed class FallerAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX() => -3;
-    protected override int TopLeftBoundsDeltaY() => 11;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
-    protected override int BottomRightBoundsDeltaX() => 4;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 2;
+    protected override int BottomRightBoundsDeltaY(int animationFrame) => 0;
 
     private static bool IsFallFatal(Lemming lemming)
     {

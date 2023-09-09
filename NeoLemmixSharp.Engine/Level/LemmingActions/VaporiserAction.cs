@@ -26,8 +26,9 @@ public sealed class VaporiserAction : LemmingAction
         return false;
     }
 
-    protected override int TopLeftBoundsDeltaX() => -2;
-    protected override int TopLeftBoundsDeltaY() => 12;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 12;
 
-    protected override int BottomRightBoundsDeltaX() => 3;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
+    protected override int BottomRightBoundsDeltaY(int animationFrame) => 2;
 }

@@ -123,10 +123,10 @@ public sealed class SwimmerAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX() => -6;
-    protected override int TopLeftBoundsDeltaY() => 4;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -7;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 4;
 
-    protected override int BottomRightBoundsDeltaX() => 5;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool WaterAt(LevelPosition lemmingPosition)

@@ -44,10 +44,11 @@ public sealed class HoisterAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX() => -4;
-    protected override int TopLeftBoundsDeltaY() => 11;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -5;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
-    protected override int BottomRightBoundsDeltaX() => 0;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 1;
+    protected override int BottomRightBoundsDeltaY(int animationFrame) => 0;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

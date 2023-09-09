@@ -42,10 +42,10 @@ public sealed class OhNoerAction : LemmingAction
         return result;
     }
 
-    protected override int TopLeftBoundsDeltaX() => -2;
-    protected override int TopLeftBoundsDeltaY() => 11;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => animationFrame < 7 ? 10 : 9;
 
-    protected override int BottomRightBoundsDeltaX() => 3;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     /*
 function TLemmingGame.HandleOhNoing(L: TLemming): Boolean;

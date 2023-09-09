@@ -65,10 +65,10 @@ public sealed class DiggerAction : LemmingAction, IDestructionAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX() => -4;
-    protected override int TopLeftBoundsDeltaY() => 5;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -5;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 6;
 
-    protected override int BottomRightBoundsDeltaX() => 4;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
 
     private bool DigOneRow(
         Lemming lemming,

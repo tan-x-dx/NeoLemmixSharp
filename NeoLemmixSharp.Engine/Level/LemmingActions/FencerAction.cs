@@ -26,10 +26,10 @@ public sealed class FencerAction : LemmingAction, IDestructionAction
         throw new NotImplementedException();
     }
 
-    protected override int TopLeftBoundsDeltaX() => -3;
-    protected override int TopLeftBoundsDeltaY() => 10;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
-    protected override int BottomRightBoundsDeltaX() => 3;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     [Pure]
     public bool CanDestroyPixel(

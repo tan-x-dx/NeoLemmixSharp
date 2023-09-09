@@ -21,10 +21,10 @@ public sealed class ExiterAction : LemmingAction
         throw new NotImplementedException();
     }
 
-    protected override int TopLeftBoundsDeltaX() => -2;
-    protected override int TopLeftBoundsDeltaY() => 10;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
-    protected override int BottomRightBoundsDeltaX() => 3;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     /*
 function TLemmingGame.HandleExiting(L: TLemming): Boolean;

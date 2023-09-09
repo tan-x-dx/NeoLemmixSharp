@@ -112,8 +112,8 @@ public sealed class ClimberAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX() => -6;
-    protected override int TopLeftBoundsDeltaY() => 11;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -7;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
-    protected override int BottomRightBoundsDeltaX() => 1;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 0;
 }

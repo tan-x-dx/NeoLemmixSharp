@@ -39,8 +39,8 @@ public sealed class DisarmerAction : LemmingAction
         return false;
     }
 
-    protected override int TopLeftBoundsDeltaX() => -2;
-    protected override int TopLeftBoundsDeltaY() => 8;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 8;
 
-    protected override int BottomRightBoundsDeltaX() => 3;
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
 }

@@ -30,10 +30,23 @@ public sealed class PlatformerAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX() => -2;
-    protected override int TopLeftBoundsDeltaY() => 8;
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => animationFrame switch
+    { 
+        13 => -2,
+        14 => -1,
+        15 => -1,
+        _ => -3
+    };
 
-    protected override int BottomRightBoundsDeltaX() => 3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 8;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => animationFrame switch
+    {
+        13 => 4,
+        14 => 5,
+        15 => 5,
+        _ => 3
+    };
 
     private static void DoMainUpdate(Lemming lemming)
     {
