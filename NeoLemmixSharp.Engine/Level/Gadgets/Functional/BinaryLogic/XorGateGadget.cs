@@ -11,8 +11,8 @@ public sealed class XorGateGadget : BinaryLogicGateGadget
     public XorGateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
-        BinaryLogicGateGadgetInput inputA,
-        BinaryLogicGateGadgetInput inputB)
+        LogicGateGadgetInput inputA,
+        LogicGateGadgetInput inputB)
         : base(id, gadgetBounds, inputA, inputB)
     {
     }

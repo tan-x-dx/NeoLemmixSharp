@@ -13,13 +13,13 @@ public sealed class NotGateGadget : GadgetBase, ILogicGateGadget
     public override GadgetType Type => GadgetType.NotGate;
     public override Orientation Orientation => DownOrientation.Instance;
 
-    public BinaryLogicGateGadgetInput Input { get; }
+    public LogicGateGadgetInput Input { get; }
     public GadgetOutput Output { get; } = new();
 
     public NotGateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
-        BinaryLogicGateGadgetInput input)
+        LogicGateGadgetInput input)
         : base(id, gadgetBounds)
     {
         Input = input;

@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional.BinaryLogic;
 
@@ -10,17 +11,19 @@ public abstract class BinaryLogicGateGadget : GadgetBase, ILogicGateGadget
 {
     public sealed override Orientation Orientation => DownOrientation.Instance;
 
-    public BinaryLogicGateGadgetInput InputA { get; }
-    public BinaryLogicGateGadgetInput InputB { get; }
+    public LogicGateGadgetInput InputA { get; }
+    public LogicGateGadgetInput InputB { get; }
     public GadgetOutput Output { get; } = new();
 
     protected BinaryLogicGateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
-        BinaryLogicGateGadgetInput inputA,
-        BinaryLogicGateGadgetInput inputB)
+        LogicGateGadgetInput inputA,
+        LogicGateGadgetInput inputB)
         : base(id, gadgetBounds)
     {
+        Debug.Assert(!string.Equals(inputA.InputName, inputB.InputName));
+
         InputA = inputA;
         InputB = inputB;
 

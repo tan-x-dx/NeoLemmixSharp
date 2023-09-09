@@ -9,8 +9,8 @@ public sealed class AndGateGadget : BinaryLogicGateGadget
     public AndGateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
-        BinaryLogicGateGadgetInput inputA,
-        BinaryLogicGateGadgetInput inputB)
+        LogicGateGadgetInput inputA,
+        LogicGateGadgetInput inputB)
         : base(id, gadgetBounds, inputA, inputB)
     {
     }

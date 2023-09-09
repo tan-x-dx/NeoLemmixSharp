@@ -2,14 +2,14 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional.BinaryLogic;
 
-public sealed class BinaryLogicGateGadgetInput : IGadgetInput
+public sealed class LogicGateGadgetInput : IGadgetInput
 {
     private ILogicGateGadget _gadget;
 
     public string InputName { get; }
     public bool Signal { get; private set; }
 
-    public BinaryLogicGateGadgetInput(string inputName)
+    public LogicGateGadgetInput(string inputName)
     {
         InputName = inputName;
     }
