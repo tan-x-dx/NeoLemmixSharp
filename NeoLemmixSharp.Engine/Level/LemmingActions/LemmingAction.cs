@@ -63,9 +63,9 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         return result;
     }
 
-    public static void SetHelpers(TerrainManager terrain, LemmingManager lemmingManager, GadgetManager gadgetManager)
+    public static void SetHelpers(TerrainManager terrainManager, LemmingManager lemmingManager, GadgetManager gadgetManager)
     {
-        TerrainManager = terrain;
+        TerrainManager = terrainManager;
         LemmingManager = lemmingManager;
         GadgetManager = gadgetManager;
     }
