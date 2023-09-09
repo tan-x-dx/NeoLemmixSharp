@@ -67,7 +67,7 @@ public sealed class LevelScreen : IBaseScreen
 
         Current = this;
         Orientation.SetTerrain(terrainManager);
-        LemmingAction.SetHelpers(terrainManager, gadgetManager);
+        LemmingAction.SetHelpers(terrainManager, lemmingManager, gadgetManager);
         LemmingSkill.SetTerrain(terrainManager);
         Lemming.SetHelpers(terrainManager, lemmingManager, gadgetManager);
         TerrainEraseMask.SetTerrain(terrainManager);
@@ -141,7 +141,7 @@ public sealed class LevelScreen : IBaseScreen
     {
 #pragma warning disable CS8625
         Orientation.SetTerrain(null);
-        LemmingAction.SetHelpers(null, null);
+        LemmingAction.SetHelpers(null, null, null);
         LemmingSkill.SetTerrain(null);
         Lemming.SetHelpers(null, null, null);
         TerrainEraseMask.SetTerrain(null);

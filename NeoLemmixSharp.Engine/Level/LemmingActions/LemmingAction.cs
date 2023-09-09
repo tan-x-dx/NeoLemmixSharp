@@ -9,8 +9,9 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
-    protected static TerrainManager Terrain { get; private set; }
-    protected static GadgetManager Gadgets { get; private set; }
+    protected static TerrainManager TerrainManager { get; private set; }
+    protected static LemmingManager LemmingManager { get; private set; }
+    protected static GadgetManager GadgetManager { get; private set; }
 
     public static int NumberOfItems => LemmingActions.Length;
     public static ReadOnlySpan<LemmingAction> AllItems => new(LemmingActions);
@@ -62,10 +63,11 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         return result;
     }
 
-    public static void SetHelpers(TerrainManager terrain, GadgetManager gadgetManager)
+    public static void SetHelpers(TerrainManager terrain, LemmingManager lemmingManager, GadgetManager gadgetManager)
     {
-        Terrain = terrain;
-        Gadgets = gadgetManager;
+        TerrainManager = terrain;
+        LemmingManager = lemmingManager;
+        GadgetManager = gadgetManager;
     }
 
     public abstract int Id { get; }
@@ -140,9 +142,9 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         LevelPosition levelPosition)
     {
         var result = 0;
-        if (Terrain.PixelIsSolidToLemming(lemming, levelPosition))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, levelPosition))
         {
-            while (Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(levelPosition, 1 - result)) &&
+            while (TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(levelPosition, 1 - result)) &&
                    result > -7)
             {
                 result--;
@@ -152,7 +154,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         }
 
         result = 1;
-        while (!Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(levelPosition, result)) &&
+        while (!TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(levelPosition, result)) &&
                result < 4)
         {
             result++;

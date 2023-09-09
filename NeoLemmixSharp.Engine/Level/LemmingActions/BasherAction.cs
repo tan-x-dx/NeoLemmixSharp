@@ -36,9 +36,9 @@ public sealed class BasherAction : LemmingAction, IDestructionAction
          FacingDirection facingDirection,
          LevelPosition pos)
      {
-         return Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 3)) ||
-                Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 4)) ||
-                Terrain.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 5));
+         return TerrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 3)) ||
+                TerrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 4)) ||
+                TerrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 5));
      }*/
 
     private void BasherTurn(
@@ -62,13 +62,13 @@ public sealed class BasherAction : LemmingAction, IDestructionAction
         int dx,
         int step)
     {
-        var p1X1Y = Terrain.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 1));
-        var p1X2Y = Terrain.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 2));
-        var p1X3Y = Terrain.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 3));
+        var p1X1Y = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 1));
+        var p1X2Y = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 2));
+        var p1X3Y = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 3));
 
-        var p2X1Y = Terrain.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 1));
-        var p2X2Y = Terrain.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 2));
-        var p2X3Y = Terrain.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 3));
+        var p2X1Y = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 1));
+        var p2X2Y = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 2));
+        var p2X3Y = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 3));
 
         if (step == 1)
         {

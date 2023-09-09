@@ -29,10 +29,10 @@ public sealed class ReacherAction : LemmingAction
 
         var emptyPixels = GetEmptyPixelCount(lemming, lemmingPosition);
 
-        if (Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 5)) ||
-            Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 6)) ||
-            Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7)) ||
-            Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 5)) ||
+            TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 6)) ||
+            TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7)) ||
+            TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -40,7 +40,7 @@ public sealed class ReacherAction : LemmingAction
         }
 
         if (lemming.AnimationFrame == 1 &&
-            Terrain.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9)))
+            TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -75,16 +75,16 @@ public sealed class ReacherAction : LemmingAction
         Lemming lemming,
         LevelPosition lemmingPosition)
     {
-        if (Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 10)))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 10)))
             return 0;
 
-        if (Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 11)))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 11)))
             return 1;
 
-        if (Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 12)))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 12)))
             return 2;
 
-        if (Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 13)))
+        if (TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 13)))
             return 3;
 
         return 4;
