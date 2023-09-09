@@ -53,7 +53,7 @@ public static class DefaultLemmingSpriteBank
         CreateThreeLayerSprite(ShruggerAction.Instance, new LevelPosition(3, 10));
         CreateThreeLayerSprite(SliderAction.Instance, new LevelPosition(4, 11));
         CreateThreeLayerSprite(SplatterAction.Instance, new LevelPosition(7, 10));
-        CreateFourLayerTrueColorSprite(StackerAction.Instance, new LevelPosition(3, 13));
+        CreateFiveLayerTrueColorSprite(StackerAction.Instance, new LevelPosition(3, 13));
         CreateOneLayerTrueColorSprite(StonerAction.Instance, new LevelPosition(16, 25));
         CreateThreeLayerSprite(SwimmerAction.Instance, new LevelPosition(6, 8));
         CreateFourLayerTrueColorSprite(VaporiserAction.Instance, new LevelPosition(5, 14));
