@@ -68,16 +68,16 @@ public sealed class SawBladeGadget : GadgetBase, IDestructionMask, IMoveableGadg
 
     public void Move(int dx, int dy)
     {
-        GadgetBounds.X += dx;
-        GadgetBounds.Y += dy;
+        var newPosition = TopLeftPixel + new LevelPosition(dx, dy);
+
+        UpdatePosition(newPosition);
     }
 
     public void SetPosition(int x, int y)
     {
-        GadgetBounds.X = x;
-        GadgetBounds.Y = y;
+        var newPosition = new LevelPosition(x, y);
 
-        GadgetManager.UpdateGadgetPosition(this);
+        UpdatePosition(newPosition);
     }
 
     [Pure]

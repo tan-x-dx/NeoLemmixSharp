@@ -26,10 +26,10 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds
     public abstract Orientation Orientation { get; }
     public RectangularLevelRegion GadgetBounds { get; }
 
-    public virtual LevelPosition TopLeftPixel => GadgetBounds.TopLeft;
-    public virtual LevelPosition BottomRightPixel => GadgetBounds.BottomRight;
-    public virtual LevelPosition PreviousTopLeftPixel => GadgetBounds.TopLeft;
-    public virtual LevelPosition PreviousBottomRightPixel => GadgetBounds.BottomRight;
+    public LevelPosition TopLeftPixel { get; protected set; }
+    public LevelPosition BottomRightPixel { get; protected set; }
+    public LevelPosition PreviousTopLeftPixel { get; protected set; }
+    public LevelPosition PreviousBottomRightPixel { get; protected set; }
 
     protected GadgetBase(
         int id,
@@ -37,9 +37,31 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds
     {
         Id = id;
         GadgetBounds = gadgetBounds;
+
+        TopLeftPixel = GadgetBounds.TopLeft;
+        BottomRightPixel = GadgetBounds.BottomRight;
+
+        PreviousTopLeftPixel = TopLeftPixel;
+        PreviousBottomRightPixel = BottomRightPixel;
     }
 
     public abstract void Tick();
+
+    protected void UpdatePosition(LevelPosition position)
+    {
+        PreviousTopLeftPixel = TerrainManager.NormalisePosition(TopLeftPixel);
+        PreviousBottomRightPixel = TerrainManager.NormalisePosition(BottomRightPixel);
+
+        position = TerrainManager.NormalisePosition(position);
+
+        GadgetBounds.X = position.X;
+        GadgetBounds.Y = position.Y;
+
+        TopLeftPixel = TerrainManager.NormalisePosition(GadgetBounds.TopLeft);
+        BottomRightPixel = TerrainManager.NormalisePosition(GadgetBounds.BottomRight);
+
+        GadgetManager.UpdateGadgetPosition(this);
+    }
 
     public abstract IGadgetInput? GetInputWithName(string inputName);
 
