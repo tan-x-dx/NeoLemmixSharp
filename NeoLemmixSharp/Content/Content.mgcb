@@ -1537,6 +1537,18 @@
 /processorParam:TextureFormat=Color
 /build:sprites/style/common/flag_green.png
 
+#begin sprites/style/common/flag.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/style/common/flag.png
+
 #begin sprites/style/common/owa_down.png
 /importer:TextureImporter
 /processor:TextureProcessor
