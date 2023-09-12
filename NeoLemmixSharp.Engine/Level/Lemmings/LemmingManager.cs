@@ -86,7 +86,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
 
     public void UpdateLemmingPosition(Lemming lemming)
     {
-        _lemmingPositionHelper.UpdateItemPosition(lemming, false);
+        _lemmingPositionHelper.UpdateItemPosition(lemming);
     }
 
     public void PopulateSetWithLemmingsNearRegion(

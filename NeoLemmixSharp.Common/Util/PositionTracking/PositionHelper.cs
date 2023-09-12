@@ -72,15 +72,14 @@ public sealed class PositionHelper<T>
         AddItem(item, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
     }
 
-    public void UpdateItemPosition(T item, bool forceUpdate)
+    public void UpdateItemPosition(T item)
     {
         var topLeftPixel = item.TopLeftPixel;
         var bottomRightPixel = item.BottomRightPixel;
         var previousTopLeftPixel = item.PreviousTopLeftPixel;
         var previousBottomRightPixel = item.PreviousBottomRightPixel;
 
-        if (!forceUpdate &&
-            topLeftPixel == previousTopLeftPixel &&
+        if (topLeftPixel == previousTopLeftPixel &&
             bottomRightPixel == previousBottomRightPixel)
             return;
 
@@ -90,8 +89,7 @@ public sealed class PositionHelper<T>
         GetShiftValues(previousTopLeftPixel, out var previousTopLeftShiftX, out var previousTopLeftShiftY);
         GetShiftValues(previousBottomRightPixel, out var previousBottomRightShiftX, out var previousBottomRightShiftY);
 
-        if (!forceUpdate &&
-            topLeftShiftX == previousTopLeftShiftX &&
+        if (topLeftShiftX == previousTopLeftShiftX &&
             topLeftShiftY == previousTopLeftShiftY &&
             bottomRightShiftX == previousBottomRightShiftX &&
             bottomRightShiftY == previousBottomRightShiftY)

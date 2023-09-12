@@ -69,7 +69,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     {
         if (gadget.CaresAboutLemmingInteraction)
         {
-            _gadgetPositionHelper.UpdateItemPosition(gadget, false);
+            _gadgetPositionHelper.UpdateItemPosition(gadget);
         }
     }
 
