@@ -9,9 +9,9 @@ internal sealed class SetUnionChunkPositionUser<T> : IChunkPositionUser
 
     public LargeSimpleSet<T> SetToUnionWith { private get; set; }
 
-    public SetUnionChunkPositionUser(PositionHelper<T> manager)
+    public SetUnionChunkPositionUser(Dictionary<ChunkPosition, LargeSimpleSet<T>> itemChunksLookup)
     {
-        _itemChunksLookup = manager.ItemChunks;
+        _itemChunksLookup = itemChunksLookup;
     }
 
     public void UseChunkPosition(ChunkPosition chunkPosition)

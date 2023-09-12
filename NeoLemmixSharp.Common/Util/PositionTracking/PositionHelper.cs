@@ -20,14 +20,13 @@ public sealed class PositionHelper<T>
     private readonly SimpleChunkPositionList _chunkPositionScratchSpace;
     private readonly SetUnionChunkPositionUser<T> _setUnionChunkPositionUser;
 
-    internal Dictionary<ChunkPosition, LargeSimpleSet<T>> ItemChunks => _itemChunkLookup;
-
     public PositionHelper(
         ISimpleHasher<T> hasher,
         ChunkSizeType chunkSizeType,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
+        _hasher = hasher;
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
         var chunkSize = 1 << _chunkSizeBitShift;
         var chunkSizeBitMask = chunkSize - 1;
@@ -35,13 +34,12 @@ public sealed class PositionHelper<T>
         _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelWidth + chunkSizeBitMask) >> _chunkSizeBitShift;
         _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelHeight + chunkSizeBitMask) >> _chunkSizeBitShift;
 
-        _hasher = hasher;
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
         _itemChunkLookup = new Dictionary<ChunkPosition, LargeSimpleSet<T>>(ChunkPositionEqualityComparer.Instance);
         _chunkPositionScratchSpace = new SimpleChunkPositionList();
-        _setUnionChunkPositionUser = new SetUnionChunkPositionUser<T>(this);
+        _setUnionChunkPositionUser = new SetUnionChunkPositionUser<T>(_itemChunkLookup);
     }
 
     [Pure]
