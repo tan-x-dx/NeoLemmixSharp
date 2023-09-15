@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.Engine.Level.Orientations;
 public abstract class Orientation : IExtendedEnumType<Orientation>
 {
     private static readonly Orientation[] Orientations = GenerateOrientationCollection();
-    protected static TerrainManager Terrain { get; private set; }
+    protected static TerrainManager Terrain { get; private set; } = null!;
 
     public static int NumberOfItems => Orientations.Length;
     public static ReadOnlySpan<Orientation> AllItems => new(Orientations);

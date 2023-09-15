@@ -10,9 +10,9 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds
 {
-    protected static TerrainManager TerrainManager { get; private set; }
-    protected static LemmingManager LemmingManager { get; private set; }
-    protected static GadgetManager GadgetManager { get; private set; }
+    protected static TerrainManager TerrainManager { get; private set; } = null!;
+    protected static LemmingManager LemmingManager { get; private set; } = null!;
+    protected static GadgetManager GadgetManager { get; private set; } = null!;
 
     public static void SetHelpers(TerrainManager terrainManager, LemmingManager lemmingManager, GadgetManager gadgetManager)
     {

@@ -18,7 +18,7 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelScreen : IBaseScreen
 {
-    public static LevelScreen Current { get; private set; }
+    public static LevelScreen Current { get; private set; } = null!;
 
     public UpdateScheduler UpdateScheduler { get; }
     public LevelInputController InputController { get; }

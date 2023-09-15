@@ -9,9 +9,9 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
-    protected static TerrainManager TerrainManager { get; private set; }
-    protected static LemmingManager LemmingManager { get; private set; }
-    protected static GadgetManager GadgetManager { get; private set; }
+    protected static TerrainManager TerrainManager { get; private set; } = null!;
+    protected static LemmingManager LemmingManager { get; private set; } = null!;
+    protected static GadgetManager GadgetManager { get; private set; } = null!;
 
     public static int NumberOfItems => LemmingActions.Length;
     public static ReadOnlySpan<LemmingAction> AllItems => new(LemmingActions);

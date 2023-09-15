@@ -12,9 +12,9 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 {
-    private static TerrainManager TerrainManager { get; set; }
-    private static LemmingManager LemmingManager { get; set; }
-    private static GadgetManager GadgetManager { get; set; }
+    private static TerrainManager TerrainManager { get; set; } = null!;
+    private static LemmingManager LemmingManager { get; set; } = null!;
+    private static GadgetManager GadgetManager { get; set; } = null!;
 
     public static void SetHelpers(TerrainManager terrainManager, LemmingManager lemmingManager, GadgetManager gadgetManager)
     {

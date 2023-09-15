@@ -7,7 +7,7 @@ internal sealed class SetUnionChunkPositionUser<T> : IChunkPositionUser
 {
     private readonly Dictionary<ChunkPosition, LargeSimpleSet<T>> _itemChunksLookup;
 
-    public LargeSimpleSet<T> SetToUnionWith { private get; set; }
+    public LargeSimpleSet<T> SetToUnionWith { private get; set; } = null!;
 
     public SetUnionChunkPositionUser(Dictionary<ChunkPosition, LargeSimpleSet<T>> itemChunksLookup)
     {
