@@ -75,5 +75,5 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
 
     int ISimpleHasher<GadgetBase>.NumberOfItems => _allGadgets.Length;
     int ISimpleHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
-    GadgetBase ISimpleHasher<GadgetBase>.Unhash(int index) => _allGadgets[index];
+    GadgetBase ISimpleHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
 }

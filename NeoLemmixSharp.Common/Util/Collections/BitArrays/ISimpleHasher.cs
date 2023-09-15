@@ -5,5 +5,5 @@ public interface ISimpleHasher<T>
     int NumberOfItems { get; }
 
     int Hash(T item);
-    T Unhash(int index);
+    T UnHash(int index);
 }

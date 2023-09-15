@@ -102,5 +102,5 @@ public abstract class InputController : ISimpleHasher<Keys>
 
     int ISimpleHasher<Keys>.NumberOfItems => NumberOfKeys;
     int ISimpleHasher<Keys>.Hash(Keys item) => (int)item;
-    Keys ISimpleHasher<Keys>.Unhash(int index) => (Keys)index;
+    Keys ISimpleHasher<Keys>.UnHash(int index) => (Keys)index;
 }

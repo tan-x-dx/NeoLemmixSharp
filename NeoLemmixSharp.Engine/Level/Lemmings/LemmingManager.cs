@@ -117,5 +117,5 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
 
     int ISimpleHasher<Lemming>.NumberOfItems => _lemmings.Length;
     int ISimpleHasher<Lemming>.Hash(Lemming item) => item.Id;
-    Lemming ISimpleHasher<Lemming>.Unhash(int index) => _lemmings[index];
+    Lemming ISimpleHasher<Lemming>.UnHash(int index) => _lemmings[index];
 }
