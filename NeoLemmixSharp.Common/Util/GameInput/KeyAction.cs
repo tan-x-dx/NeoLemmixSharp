@@ -38,23 +38,23 @@ public sealed class KeyAction : IIdEquatable<KeyAction>
     /// <summary>
     /// Is the Key currently pressed down?
     /// </summary>
-    public bool IsKeyDown => (KeyState & KeyStatusConsts.KeyPressed) == KeyStatusConsts.KeyPressed;
+    public bool IsKeyDown => (KeyState & KeyStatusConstants.KeyPressed) == KeyStatusConstants.KeyPressed;
     /// <summary>
     /// Is the Key currently released?
     /// </summary>
-    public bool IsKeyUp => (KeyState & KeyStatusConsts.KeyReleased) == KeyStatusConsts.KeyUnpressed;
+    public bool IsKeyUp => (KeyState & KeyStatusConstants.KeyReleased) == KeyStatusConstants.KeyUnpressed;
     /// <summary>
     /// Is the Key currently pressed down, but it was previously released?
     /// </summary>
-    public bool IsPressed => KeyState == KeyStatusConsts.KeyPressed;
+    public bool IsPressed => KeyState == KeyStatusConstants.KeyPressed;
     /// <summary>
     /// Is the Key currently released, but it was previously pressed down?
     /// </summary>
-    public bool IsReleased => KeyState == KeyStatusConsts.KeyReleased;
+    public bool IsReleased => KeyState == KeyStatusConstants.KeyReleased;
     /// <summary>
     /// Is the Key currently being pressed down and it was previously pressed down?
     /// </summary>
-    public bool IsHeld => KeyState == KeyStatusConsts.KeyHeld;
+    public bool IsHeld => KeyState == KeyStatusConstants.KeyHeld;
 
     public bool IsEnabled => _stateMask != DisabledMask;
 

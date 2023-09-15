@@ -59,7 +59,7 @@ public abstract class InputController : ISimpleHasher<Keys>
             var (keyValue, action) = _keyMapping[index];
             if (_keys.Contains(keyValue))
             {
-                _keyActions[action.Id].KeyState |= KeyStatusConsts.KeyPressed;
+                _keyActions[action.Id].KeyState |= KeyStatusConstants.KeyPressed;
             }
         }
 
