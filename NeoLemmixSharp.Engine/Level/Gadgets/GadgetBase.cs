@@ -14,10 +14,18 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds
     protected static LemmingManager LemmingManager { get; private set; } = null!;
     protected static GadgetManager GadgetManager { get; private set; } = null!;
 
-    public static void SetHelpers(TerrainManager terrainManager, LemmingManager lemmingManager, GadgetManager gadgetManager)
+    public static void SetTerrainManager(TerrainManager terrainManager)
     {
         TerrainManager = terrainManager;
+    }
+
+    public static void SetLemmingManager(LemmingManager lemmingManager)
+    {
         LemmingManager = lemmingManager;
+    }
+
+    public static void SetGadgetManager(GadgetManager gadgetManager)
+    {
         GadgetManager = gadgetManager;
     }
 

@@ -27,11 +27,11 @@ public sealed class SwitchGadget : GadgetBase
     {
         var p = gadgetBounds.TopLeft;
         var leftRect = new RectangularLevelRegion(p.X + 3, p.Y + 8, 5, 5);
-        _leftHitBox = new LevelRegionHitBoxBehaviour(leftRect, 19);
+        _leftHitBox = new LevelRegionHitBoxBehaviour(leftRect, LemmingManager);
         _leftHitBox.ExcludeFacingDirection(LeftFacingDirection.Instance);
 
         var rightRect = new RectangularLevelRegion(p.X + 10, p.Y + 8, 5, 5);
-        _rightHitBox = new LevelRegionHitBoxBehaviour(rightRect, 19);
+        _rightHitBox = new LevelRegionHitBoxBehaviour(rightRect, LemmingManager);
         _rightHitBox.ExcludeFacingDirection(RightFacingDirection.Instance);
 
         if (faceRight)

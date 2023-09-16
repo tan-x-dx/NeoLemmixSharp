@@ -16,13 +16,21 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     private static LemmingManager LemmingManager { get; set; } = null!;
     private static GadgetManager GadgetManager { get; set; } = null!;
 
-    public static void SetHelpers(TerrainManager terrainManager, LemmingManager lemmingManager, GadgetManager gadgetManager)
+    public static void SetTerrainManager(TerrainManager terrainManager)
     {
         TerrainManager = terrainManager;
+    }
+
+    public static void SetLemmingManager(LemmingManager lemmingManager)
+    {
         LemmingManager = lemmingManager;
-        GadgetManager = gadgetManager;
 
         LemmingState.SetLemmingManager(lemmingManager);
+    }
+
+    public static void SetGadgetManager(GadgetManager gadgetManager)
+    {
+        GadgetManager = gadgetManager;
     }
 
     public int Id { get; }

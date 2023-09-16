@@ -11,7 +11,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.HitBoxes;
 public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
 {
     private readonly ILevelRegion _levelRegion;
-    private readonly LargeBitArray _lemmingIdsInHitBox;
+    private readonly LargeSimpleSet<Lemming> _lemmingsInHitBox;
     private readonly LargeSimpleSet<LemmingAction> _targetActions = ExtendedEnumTypeComparer<LemmingAction>.LargeSetForType(true);
     private readonly SmallSimpleSet<Orientation> _targetOrientations = ExtendedEnumTypeComparer<Orientation>.SmallSetForType(true);
     private readonly SmallSimpleSet<FacingDirection> _targetFacingDirections = ExtendedEnumTypeComparer<FacingDirection>.SmallSetForType(true);
@@ -21,10 +21,10 @@ public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
 
     public LevelRegionHitBoxBehaviour(
         ILevelRegion levelRegion,
-        int totalNumberOfLemmings)
+        ISimpleHasher<Lemming> lemmingHasher)
     {
         _levelRegion = levelRegion;
-        _lemmingIdsInHitBox = new LargeBitArray(totalNumberOfLemmings);
+        _lemmingsInHitBox = new LargeSimpleSet<Lemming>(lemmingHasher);
     }
 
     public bool MatchesLemming(Lemming lemming) => MatchesLemmingData(lemming) &&
@@ -47,7 +47,7 @@ public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
 
     public void OnLemmingInHitBox(Lemming lemming)
     {
-        if (_lemmingIdsInHitBox.SetBit(lemming.Id))
+        if (_lemmingsInHitBox.Contains(lemming))
         {
 
         }
@@ -59,7 +59,7 @@ public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
 
     public void OnLemmingNotInHitBox(Lemming lemming)
     {
-        _lemmingIdsInHitBox.ClearBit(lemming.Id);
+        _lemmingsInHitBox.Remove(lemming);
     }
 
     public void IncludeAction(LemmingAction lemmingAction)
