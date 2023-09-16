@@ -39,7 +39,7 @@ public sealed class PositionHelper<T>
 
         _itemChunkLookup = new Dictionary<ChunkPosition, LargeSimpleSet<T>>(ChunkPositionEqualityComparer.Instance);
         _chunkPositionScratchSpace = new SimpleChunkPositionList();
-        _setUnionChunkPositionUser = new SetUnionChunkPositionUser<T>(_itemChunkLookup);
+        _setUnionChunkPositionUser = new SetUnionChunkPositionUser<T>(hasher, _itemChunkLookup);
     }
 
     [Pure]
@@ -152,16 +152,16 @@ public sealed class PositionHelper<T>
         }
     }
 
-    public void PopulateSetWithItemsNearRegion(
-        LargeSimpleSet<T> set,
+    public LargeSimpleSet<T>.Enumerator GetItemsNearRegionEnumerator(
         LevelPosition topLeftLevelPosition,
         LevelPosition bottomRightLevelPosition)
     {
         GetShiftValues(topLeftLevelPosition, out var topLeftShiftX, out var topLeftShiftY);
         GetShiftValues(bottomRightLevelPosition, out var bottomRightShiftX, out var bottomRightShiftY);
 
-        _setUnionChunkPositionUser.SetToUnionWith = set;
+        _setUnionChunkPositionUser.Clear();
         EvaluateChunkPositions(_setUnionChunkPositionUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        return _setUnionChunkPositionUser.GetEnumerator();
     }
 
     private void GetShiftValues(

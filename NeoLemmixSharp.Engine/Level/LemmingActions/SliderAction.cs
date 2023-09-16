@@ -70,7 +70,7 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        var gadgetEnumerator = GadgetManager.GetAllGadgetsForPosition(lemmingPosition);
+        var gadgetEnumerator = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
         while (gadgetEnumerator.MoveNext())
         {

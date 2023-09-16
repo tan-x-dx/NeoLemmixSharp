@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.PositionTracking;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
@@ -48,9 +49,47 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     }
 
     [Pure]
+    public LargeSimpleSet<GadgetBase>.Enumerator GetAllGadgetsAtLemmingPosition(Lemming lemming)
+    {
+        var anchorPixel = lemming.LevelPosition;
+        var footPixel = lemming.Orientation.MoveUp(anchorPixel, 1);
+
+        var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
+
+        var topLeftPixel = levelPositionPair.GetTopLeftPosition();
+        var bottomRightPixel = levelPositionPair.GetBottomRightPosition();
+
+        return _gadgetPositionHelper.GetItemsNearRegionEnumerator(topLeftPixel, bottomRightPixel);
+    }
+
+    [Pure]
     public bool HasGadgetOfTypeAtPosition(LevelPosition levelPosition, GadgetType gadgetType)
     {
-        var gadgetEnumerator = GetAllGadgetsForPosition(levelPosition);
+        var gadgetEnumerator = _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
+
+        while (gadgetEnumerator.MoveNext())
+        {
+            var gadget = gadgetEnumerator.Current;
+
+            if (gadget.Type == gadgetType && gadget.MatchesPosition(levelPosition))
+                return true;
+        }
+
+        return false;
+    }
+
+    [Pure]
+    public bool HasGadgetOfTypeAtLemmingPosition(Lemming lemming, GadgetType gadgetType)
+    {
+        var anchorPixel = lemming.LevelPosition;
+        var footPixel = lemming.Orientation.MoveUp(anchorPixel, 1);
+
+        var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
+
+        var topLeftPixel = levelPositionPair.GetTopLeftPosition();
+        var bottomRightPixel = levelPositionPair.GetBottomRightPosition();
+
+        var gadgetEnumerator = _gadgetPositionHelper.GetItemsNearRegionEnumerator(topLeftPixel, bottomRightPixel);
 
         while (gadgetEnumerator.MoveNext())
         {
@@ -58,7 +97,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
 
             if (gadget.Type != gadgetType)
                 continue;
-            if (gadget.MatchesPosition(levelPosition))
+            if (gadget.MatchesPosition(anchorPixel) || gadget.MatchesPosition(footPixel))
                 return true;
         }
 

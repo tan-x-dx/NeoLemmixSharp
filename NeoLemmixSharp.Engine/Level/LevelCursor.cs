@@ -19,16 +19,12 @@ public sealed class LevelCursor
     private readonly LemmingManager _lemmingManager;
     private readonly SkillSetManager _skillSetManager;
 
-    private readonly LargeSimpleSet<Lemming> _lemmingsNearCursorPosition;
-
     private FacingDirection? _facingDirection;
     private bool _selectOnlyWalkers;
     private bool _selectOnlyUnassigned;
 
     private int _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre;
 
-    public LargeSimpleSet<Lemming>.Enumerator LemmingsNearCursorPosition => _lemmingsNearCursorPosition.GetEnumerator();
-    public int NumberOfLemmingsNearCursorPosition => _lemmingsNearCursorPosition.Count;
     public int NumberOfLemmingsUnderCursor { get; private set; }
     public LevelPosition CursorPosition { private get; set; }
 
@@ -48,8 +44,6 @@ public sealed class LevelCursor
         _controller = controller;
         _lemmingManager = lemmingManager;
         _skillSetManager = skillSetManager;
-
-        _lemmingsNearCursorPosition = new LargeSimpleSet<Lemming>(_lemmingManager);
     }
 
     public void OnNewFrame()
@@ -73,12 +67,14 @@ public sealed class LevelCursor
         {
             _facingDirection = null;
         }
+    }
 
+    public LargeSimpleSet<Lemming>.Enumerator LemmingsNearCursorPosition()
+    {
         var topLeftCursorPosition = CursorPosition + new LevelPosition(-7, -7);
         var bottomRightCursorPosition = CursorPosition + new LevelPosition(6, 6);
 
-        _lemmingsNearCursorPosition.Clear();
-        _lemmingManager.PopulateSetWithLemmingsNearRegion(_lemmingsNearCursorPosition, topLeftCursorPosition, bottomRightCursorPosition);
+        return _lemmingManager.GetAllLemmingsNearRegion(topLeftCursorPosition, bottomRightCursorPosition);
     }
 
     public void CheckLemming(Lemming lemming)

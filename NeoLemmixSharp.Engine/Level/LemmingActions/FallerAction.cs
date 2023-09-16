@@ -27,7 +27,7 @@ public sealed class FallerAction : LemmingAction
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        var gadgetEnumerator = GadgetManager.GetAllGadgetsForPosition(lemmingPosition);
+        var gadgetEnumerator = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
         while (gadgetEnumerator.MoveNext())
         {
@@ -61,7 +61,7 @@ public sealed class FallerAction : LemmingAction
             lemming.DistanceFallen++;
             lemming.TrueDistanceFallen++;
 
-            gadgetEnumerator = GadgetManager.GetAllGadgetsForPosition(lemmingPosition);
+            gadgetEnumerator = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
             while (gadgetEnumerator.MoveNext())
             {
@@ -102,9 +102,9 @@ public sealed class FallerAction : LemmingAction
     private static bool IsFallFatal(Lemming lemming)
     {
         return !(lemming.State.IsFloater || lemming.State.IsGlider) &&
-               GadgetManager.HasGadgetOfTypeAtPosition(lemming.LevelPosition, GadgetType.NoSplat) &&
+               GadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, GadgetType.NoSplat) &&
                (lemming.DistanceFallen > MaxFallDistance ||
-                GadgetManager.HasGadgetOfTypeAtPosition(lemming.LevelPosition, GadgetType.Splat));
+                GadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, GadgetType.Splat));
     }
 
     private static bool CheckFloaterOrGliderTransition(

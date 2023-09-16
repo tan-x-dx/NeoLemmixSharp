@@ -174,7 +174,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
         }
 
-        var gadgetEnumerator = GadgetManager.GetAllGadgetsForPosition(LevelPosition);
+        var gadgetEnumerator = GadgetManager.GetAllGadgetsAtLemmingPosition(this);
         while (gadgetEnumerator.MoveNext())
         {
             var gadget = gadgetEnumerator.Current;

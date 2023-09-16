@@ -75,7 +75,7 @@ public sealed class UpdateScheduler
         var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
         if (mouseIsInLevelViewPort)
         {
-            var lemmingsNearCursorEnumerator = _levelCursor.LemmingsNearCursorPosition;
+            var lemmingsNearCursorEnumerator = _levelCursor.LemmingsNearCursorPosition();
 
             while (lemmingsNearCursorEnumerator.MoveNext())
             {

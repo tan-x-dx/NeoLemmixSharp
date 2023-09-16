@@ -89,12 +89,11 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
         _lemmingPositionHelper.UpdateItemPosition(lemming);
     }
 
-    public void PopulateSetWithLemmingsNearRegion(
-        LargeSimpleSet<Lemming> set,
+    public LargeSimpleSet<Lemming>.Enumerator GetAllLemmingsNearRegion(
         LevelPosition topLeftLevelPosition,
         LevelPosition bottomRightLevelPosition)
     {
-        _lemmingPositionHelper.PopulateSetWithItemsNearRegion(set, topLeftLevelPosition, bottomRightLevelPosition);
+        return _lemmingPositionHelper.GetItemsNearRegionEnumerator(topLeftLevelPosition, bottomRightLevelPosition);
     }
 
     public void RegisterBlocker(Lemming lemming)
