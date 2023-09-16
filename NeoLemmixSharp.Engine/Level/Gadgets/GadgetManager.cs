@@ -63,6 +63,12 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     }
 
     [Pure]
+    public LargeSimpleSet<GadgetBase>.Enumerator GetAllItemsNearRegion(LevelPosition topLeftPixel, LevelPosition bottomRightLevelPosition)
+    {
+        return _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightLevelPosition);
+    }
+
+    [Pure]
     public bool HasGadgetOfTypeAtPosition(LevelPosition levelPosition, GadgetType gadgetType)
     {
         var gadgetEnumerator = _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);

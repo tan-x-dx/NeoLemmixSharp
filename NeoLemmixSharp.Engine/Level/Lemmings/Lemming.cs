@@ -63,6 +63,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public FacingDirection FacingDirection { get; private set; }
     public Orientation Orientation { get; private set; }
 
+    public LemmingAction PreviousAction { get; private set; } = NoneAction.Instance;
     public LemmingAction CurrentAction { get; private set; }
     public LemmingAction NextAction { get; private set; } = NoneAction.Instance;
 
@@ -176,19 +177,48 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     private bool CheckTriggerArea(bool isPostTeleportCheck)
     {
+        var currentAnchorPixel = LevelPosition;
+        var currentFootPixel = Orientation.MoveUp(currentAnchorPixel, 1);
+
+        LevelPosition previousAnchorPixel, previousFootPixel;
+
         if (isPostTeleportCheck)
         {
-
+            PreviousLevelPosition = currentAnchorPixel;
+            previousAnchorPixel = currentAnchorPixel;
+            previousFootPixel = currentFootPixel;
+        }
+        else
+        {
+            previousAnchorPixel = PreviousLevelPosition;
+            previousFootPixel = Orientation.MoveUp(previousAnchorPixel, 1);
         }
 
-        var gadgetEnumerator = GadgetManager.GetAllGadgetsAtLemmingPosition(this);
+        var checkRegion = new LevelPositionPair(currentAnchorPixel, currentFootPixel, previousAnchorPixel, previousFootPixel);
+
+        var topLeftPixel = checkRegion.GetTopLeftPosition();
+        var bottomRightPixel = checkRegion.GetBottomRightPosition();
+
+        var gadgetEnumerator = GadgetManager.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
+
+        Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
+        var movementHelper = new LemmingMovementHelper(this, checkPositions);
+        movementHelper.EvaluateCheckPositions();
+        var length = movementHelper.Length;
+
         while (gadgetEnumerator.MoveNext())
         {
             var gadget = gadgetEnumerator.Current;
 
-            if (gadget.MatchesLemming(this))
+            for (var i = 0; i < length; i++)
             {
-                gadget.OnLemmingMatch(this);
+                var anchorPosition = checkPositions[i];
+                var footPosition = Orientation.MoveUp(anchorPosition, 1);
+                if (gadget.MatchesLemmingAtPosition(this, anchorPosition) ||
+                    gadget.MatchesLemmingAtPosition(this, footPosition))
+                {
+                    gadget.OnLemmingMatch(this);
+                }
             }
         }
 
@@ -347,6 +377,7 @@ end;
 
     public void SetCurrentAction(LemmingAction lemmingAction)
     {
+        PreviousAction = CurrentAction;
         CurrentAction = lemmingAction;
         Renderer.UpdateLemmingState();
     }
