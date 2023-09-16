@@ -32,11 +32,20 @@ public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehavio
     }
 
     [Pure]
-    public int GetAbsoluteHorizontalDistance(int x1, int x2)
+    public int GetHorizontalDelta(int x1, int x2)
     {
-        var dx = Math.Abs(x1 - x2);
-        if (dx + dx > LevelWidth)
-            return LevelWidth - dx;
+        var dx = x2 - x1;
+
+        if (dx > 0)
+        {
+            if (dx + dx > LevelWidth)
+                return dx - LevelWidth;
+
+            return dx;
+        }
+
+        if (dx + dx < -LevelWidth)
+            return dx + LevelWidth;
 
         return dx;
     }

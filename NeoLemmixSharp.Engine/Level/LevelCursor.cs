@@ -93,10 +93,10 @@ public sealed class LevelCursor
     {
         var lemmingPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 4);
 
-        var dx = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, lemmingPosition.X);
-        var dy = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, lemmingPosition.Y);
+        var dx = _horizontalBoundaryBehaviour.GetHorizontalDelta(CursorPosition.X, lemmingPosition.X);
+        var dy = _verticalBoundaryBehaviour.GetVerticalDelta(CursorPosition.Y, lemmingPosition.Y);
 
-        return dx < 5 && dy < 5;
+        return Math.Abs(dx) < 5 && Math.Abs(dy) < 5;
     }
 
     private bool LemmingIsAbleToBeSelected(Lemming lemming)
@@ -173,8 +173,8 @@ public sealed class LevelCursor
     {
         var lemmingPosition = lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 4);
 
-        var dx = _horizontalBoundaryBehaviour.GetAbsoluteHorizontalDistance(CursorPosition.X, lemmingPosition.X);
-        var dy = _verticalBoundaryBehaviour.GetAbsoluteVerticalDistance(CursorPosition.Y, lemmingPosition.Y);
+        var dx = _horizontalBoundaryBehaviour.GetHorizontalDelta(CursorPosition.X, lemmingPosition.X);
+        var dy = _verticalBoundaryBehaviour.GetVerticalDelta(CursorPosition.Y, lemmingPosition.Y);
 
         return dx * dx + dy * dy;
     }
