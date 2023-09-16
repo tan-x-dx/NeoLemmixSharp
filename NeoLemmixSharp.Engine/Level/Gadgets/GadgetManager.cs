@@ -59,7 +59,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         var topLeftPixel = levelPositionPair.GetTopLeftPosition();
         var bottomRightPixel = levelPositionPair.GetBottomRightPosition();
 
-        return _gadgetPositionHelper.GetItemsNearRegionEnumerator(topLeftPixel, bottomRightPixel);
+        return _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
     }
 
     [Pure]
@@ -89,15 +89,13 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         var topLeftPixel = levelPositionPair.GetTopLeftPosition();
         var bottomRightPixel = levelPositionPair.GetBottomRightPosition();
 
-        var gadgetEnumerator = _gadgetPositionHelper.GetItemsNearRegionEnumerator(topLeftPixel, bottomRightPixel);
+        var gadgetEnumerator = _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
 
         while (gadgetEnumerator.MoveNext())
         {
             var gadget = gadgetEnumerator.Current;
 
-            if (gadget.Type != gadgetType)
-                continue;
-            if (gadget.MatchesPosition(anchorPixel) || gadget.MatchesPosition(footPixel))
+            if (gadget.Type == gadgetType && (gadget.MatchesPosition(anchorPixel) || gadget.MatchesPosition(footPixel)))
                 return true;
         }
 

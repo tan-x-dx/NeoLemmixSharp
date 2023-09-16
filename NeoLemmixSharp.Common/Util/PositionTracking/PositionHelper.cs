@@ -59,6 +59,18 @@ public sealed class PositionHelper<T>
             : new LargeSimpleSet<T>.Enumerator();
     }
 
+    public LargeSimpleSet<T>.Enumerator GetAllItemsNearRegion(
+        LevelPosition topLeftLevelPosition,
+        LevelPosition bottomRightLevelPosition)
+    {
+        GetShiftValues(topLeftLevelPosition, out var topLeftShiftX, out var topLeftShiftY);
+        GetShiftValues(bottomRightLevelPosition, out var bottomRightShiftX, out var bottomRightShiftY);
+
+        _setUnionChunkPositionUser.Clear();
+        EvaluateChunkPositions(_setUnionChunkPositionUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        return _setUnionChunkPositionUser.GetEnumerator();
+    }
+
     public void AddItem(T item)
     {
         var topLeftPixel = item.TopLeftPixel;
@@ -150,18 +162,6 @@ public sealed class PositionHelper<T>
 
             itemChunk.Remove(item);
         }
-    }
-
-    public LargeSimpleSet<T>.Enumerator GetItemsNearRegionEnumerator(
-        LevelPosition topLeftLevelPosition,
-        LevelPosition bottomRightLevelPosition)
-    {
-        GetShiftValues(topLeftLevelPosition, out var topLeftShiftX, out var topLeftShiftY);
-        GetShiftValues(bottomRightLevelPosition, out var bottomRightShiftX, out var bottomRightShiftY);
-
-        _setUnionChunkPositionUser.Clear();
-        EvaluateChunkPositions(_setUnionChunkPositionUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
-        return _setUnionChunkPositionUser.GetEnumerator();
     }
 
     private void GetShiftValues(
