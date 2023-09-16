@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.Engine.Level.Timer;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
@@ -48,12 +49,17 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
     public int ControlPanelScreenHeight { get; private set; }
 
+    public LevelTimer LevelTimer { get; }
     public SkillAssignButton? SelectedSkillAssignButton { get; private set; }
     public int SelectedSkillButtonId => SelectedSkillAssignButton?.SkillAssignButtonId ?? -1;
 
-    public LevelControlPanel(SkillSetManager skillSetManager, LevelInputController controller)
+    public LevelControlPanel(
+        SkillSetManager skillSetManager,
+        LevelInputController controller,
+        LevelTimer levelTimer)
     {
         _controller = controller;
+        LevelTimer = levelTimer;
         _releaseRateMinusButton = new ControlPanelButton(0);
         _releaseRatePlusButton = new ControlPanelButton(1);
 

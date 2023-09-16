@@ -133,12 +133,12 @@ public sealed class LevelScreen : IBaseScreen
 
     public static void SetTerrainManager(TerrainManager terrainManager)
     {
-        Orientation.SetTerrain(terrainManager);
+        Orientation.SetTerrainManager(terrainManager);
         LemmingAction.SetTerrainManager(terrainManager);
-        LemmingSkill.SetTerrain(terrainManager);
+        LemmingSkill.SetTerrainManager(terrainManager);
         Lemming.SetTerrainManager(terrainManager);
-        TerrainEraseMask.SetTerrain(terrainManager);
-        TerrainAddMask.SetTerrain(terrainManager);
+        TerrainEraseMask.SetTerrainManager(terrainManager);
+        TerrainAddMask.SetTerrainManager(terrainManager);
         GadgetBase.SetTerrainManager(terrainManager);
     }
 
@@ -146,6 +146,7 @@ public sealed class LevelScreen : IBaseScreen
     {
         LemmingAction.SetLemmingManager(lemmingManager);
         Lemming.SetLemmingManager(lemmingManager);
+        LemmingState.SetLemmingManager(lemmingManager);
         GadgetBase.SetLemmingManager(lemmingManager);
     }
 

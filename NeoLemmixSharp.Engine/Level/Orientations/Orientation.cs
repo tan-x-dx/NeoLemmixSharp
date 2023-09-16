@@ -27,7 +27,7 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
         return orientations;
     }
 
-    public static void SetTerrain(TerrainManager terrain)
+    public static void SetTerrainManager(TerrainManager terrain)
     {
         Terrain = terrain;
     }

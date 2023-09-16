@@ -49,7 +49,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
         return result;
     }
 
-    public static void SetTerrain(TerrainManager terrain)
+    public static void SetTerrainManager(TerrainManager terrain)
     {
         Terrain = terrain;
     }

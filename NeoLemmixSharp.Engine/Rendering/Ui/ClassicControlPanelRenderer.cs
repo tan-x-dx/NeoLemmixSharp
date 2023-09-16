@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui;
@@ -101,7 +100,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
             }
         }
 
-        var levelTimer = LevelScreen.Current.LevelTimer;
+        var levelTimer = _levelControlPanel.LevelTimer;
         var timerX = _levelControlPanel.ScreenWidth - PanelFont.GlyphWidth * 6 * ControlPanelScaleMultiplier;
 
         _fontBank.PanelFont.RenderTextSpan(spriteBatch, levelTimer.AsSpan(), timerX, _levelControlPanel.ControlPanelY, ControlPanelScaleMultiplier, levelTimer.FontColor);

@@ -24,8 +24,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public static void SetLemmingManager(LemmingManager lemmingManager)
     {
         LemmingManager = lemmingManager;
-
-        LemmingState.SetLemmingManager(lemmingManager);
     }
 
     public static void SetGadgetManager(GadgetManager gadgetManager)
