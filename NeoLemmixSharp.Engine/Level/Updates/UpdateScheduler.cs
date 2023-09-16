@@ -234,7 +234,9 @@ public sealed class UpdateScheduler
             return;
         }
 
-        if (false) //(lemming.IsRemoved || !lemming.CanReceiveSkills || lemming.IsTeleporting) // CannotReceiveSkills covers neutral and zombie
+        if (!_lemmingManager.LemmingIsActive(_queuedSkillLemming) ||
+            !_queuedSkillLemming.State.CanHaveSkillsAssigned
+            || false) // || lemming is teleporting
         {
             // delete queued action first
             ClearQueuedSkill();

@@ -26,6 +26,14 @@ public sealed class LemmingState
     private const uint AssignableSkillBitMask = (1U << NeutralBitIndex) |
                                                 (1U << ZombieBitIndex);
 
+    private static LemmingManager LemmingManager { get; set; } = null!;
+
+    public static void SetLemmingManager(LemmingManager lemmingManager)
+    {
+        LemmingManager = lemmingManager;
+    }
+
+    private readonly Lemming _lemming;
     private readonly SmallBitArray _states = new();
 
     private Team _team;
@@ -87,10 +95,12 @@ public sealed class LemmingState
             if (value)
             {
                 _states.SetBit(ZombieBitIndex);
+                LemmingManager.RegisterZombie(_lemming);
             }
             else
             {
                 _states.ClearBit(ZombieBitIndex);
+                LemmingManager.DeregisterZombie(_lemming);
             }
             UpdateSkinColor();
         }
@@ -107,8 +117,9 @@ public sealed class LemmingState
         }
     }
 
-    public LemmingState(Team team)
+    public LemmingState(Lemming lemming, Team team)
     {
+        _lemming = lemming;
         _team = team;
         UpdateHairAndBodyColors();
         UpdateSkinColor();

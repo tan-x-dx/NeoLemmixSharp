@@ -21,6 +21,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         TerrainManager = terrainManager;
         LemmingManager = lemmingManager;
         GadgetManager = gadgetManager;
+
+        LemmingState.SetLemmingManager(lemmingManager);
     }
 
     public int Id { get; }
@@ -76,7 +78,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         Orientation = orientation ?? DownOrientation.Instance;
         FacingDirection = facingDirection ?? RightFacingDirection.Instance;
         CurrentAction = currentAction ?? WalkerAction.Instance;
-        State = new LemmingState(Team.AllItems[0]);
+        State = new LemmingState(this, Team.AllItems[0]);
 
         Renderer = new LemmingRenderer(this);
     }
@@ -99,7 +101,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
             ;
         }
 
-        var continueWithLemming = true;
         var oldLevelPosition = LevelPosition;
         var oldFacingDirection = FacingDirection;
         var oldAction = CurrentAction;
