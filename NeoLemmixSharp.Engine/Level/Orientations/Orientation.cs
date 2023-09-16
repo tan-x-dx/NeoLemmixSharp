@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.Engine.Level.Orientations;
 public abstract class Orientation : IExtendedEnumType<Orientation>
 {
     private static readonly Orientation[] Orientations = GenerateOrientationCollection();
-    protected static TerrainManager Terrain { get; private set; }
+    protected static TerrainManager Terrain { get; private set; } = null!;
 
     public static int NumberOfItems => Orientations.Length;
     public static ReadOnlySpan<Orientation> AllItems => new(Orientations);
@@ -27,7 +27,7 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
         return orientations;
     }
 
-    public static void SetTerrain(TerrainManager terrain)
+    public static void SetTerrainManager(TerrainManager terrain)
     {
         Terrain = terrain;
     }
@@ -99,6 +99,21 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     public bool IsParallelTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteVerticalComponent == 0);
     [Pure]
     public bool IsPerpendicularTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteHorizontalComponent == 0);
+
+    /// <summary>
+    /// If the first position were to move horizontally to be in line with the reference position, what is the dx it would require?
+    /// </summary>
+    /// <param name="firstPosition"></param>
+    /// <param name="referencePosition"></param>
+    [Pure]
+    public abstract int GetHorizontalDelta(LevelPosition fromPosition, LevelPosition toPosition);
+    /// <summary>
+    /// If the first position were to move vertically to be in line with the reference position, what is the dy it would require?
+    /// </summary>
+    /// <param name="firstPosition"></param>
+    /// <param name="referencePosition"></param>
+    [Pure]
+    public abstract int GetVerticalDelta(LevelPosition fromPosition, LevelPosition toPosition);
 
     [Pure]
     public abstract Orientation RotateClockwise();

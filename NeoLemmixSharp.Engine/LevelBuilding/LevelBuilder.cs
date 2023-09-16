@@ -53,29 +53,16 @@ public sealed class LevelBuilder : IDisposable
 
         var terrainTexture = _terrainPainter.GetTerrainTexture();
 
-        _levelObjectAssembler.AssembleLevelObjects(
-            _content,
-            _levelReader.LevelData);
-
         var levelData = _levelReader.LevelData;
         var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
         lemmingSpriteBank.SetTeamColors();
 
-        var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
-        var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
-
-        var horizontalViewPortBehaviour = BoundaryHelpers.GetHorizontalViewPortBehaviour(levelData.HorizontalViewPortBehaviour, levelData.LevelWidth);
-        var verticalViewPortBehaviour = BoundaryHelpers.GetVerticalViewPortBehaviour(levelData.VerticalViewPortBehaviour, levelData.LevelHeight);
-
-        var levelLemmings = _levelObjectAssembler.GetLevelLemmings();
-        var lemmingManager = new LemmingManager(levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-
-        var levelGadgets = _levelObjectAssembler.GetLevelGadgets();
-        var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-
         var inputController = new LevelInputController();
         var skillSetManager = new SkillSetManager(levelData.SkillSetData);
-        var controlPanel = new LevelControlPanel(skillSetManager, inputController);
+        LevelTimer levelTimer = levelData.TimeLimit.HasValue
+            ? new CountDownLevelTimer(levelData.TimeLimit.Value)
+            : new CountUpLevelTimer();
+        var controlPanel = new LevelControlPanel(skillSetManager, inputController, levelTimer);
 
         foreach (var skillAssignButton in controlPanel.SkillAssignButtons)
         {
@@ -83,12 +70,27 @@ public sealed class LevelBuilder : IDisposable
             skillAssignButton.UpdateSkillCount(skillTrackingData.SkillCount);
         }
 
-        LevelTimer levelTimer = levelData.TimeLimit.HasValue
-            ? new CountDownLevelTimer(levelData.TimeLimit.Value)
-            : new CountUpLevelTimer();
+        var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
+        var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
+
+        var levelLemmings = _levelObjectAssembler.GetLevelLemmings();
+        var lemmingManager = new LemmingManager(levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        LevelScreen.SetLemmingManager(lemmingManager);
+
+        _levelObjectAssembler.AssembleLevelObjects(
+            _content,
+            _levelReader.LevelData);
+
+        var levelGadgets = _levelObjectAssembler.GetLevelGadgets();
+        var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        LevelScreen.SetGadgetManager(gadgetManager);
 
         var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController, lemmingManager, skillSetManager);
+
+        var horizontalViewPortBehaviour = BoundaryHelpers.GetHorizontalViewPortBehaviour(levelData.HorizontalViewPortBehaviour, levelData.LevelWidth);
+        var verticalViewPortBehaviour = BoundaryHelpers.GetVerticalViewPortBehaviour(levelData.VerticalViewPortBehaviour, levelData.LevelHeight);
         var levelViewport = new Viewport(levelCursor, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+
         var updateScheduler = new UpdateScheduler(levelData.SuperLemmingMode, controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, gadgetManager, skillSetManager);
 
         var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
@@ -101,6 +103,7 @@ public sealed class LevelBuilder : IDisposable
             terrainRenderer,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
+        LevelScreen.SetTerrainManager(terrainManager);
 
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(levelCursor);

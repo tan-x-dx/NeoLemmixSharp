@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.PositionTracking;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
@@ -48,17 +49,59 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     }
 
     [Pure]
+    public LargeSimpleSet<GadgetBase>.Enumerator GetAllGadgetsAtLemmingPosition(Lemming lemming)
+    {
+        var anchorPixel = lemming.LevelPosition;
+        var footPixel = lemming.Orientation.MoveUp(anchorPixel, 1);
+
+        var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
+
+        var topLeftPixel = levelPositionPair.GetTopLeftPosition();
+        var bottomRightPixel = levelPositionPair.GetBottomRightPosition();
+
+        return _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
+    }
+
+    [Pure]
+    public LargeSimpleSet<GadgetBase>.Enumerator GetAllItemsNearRegion(LevelPosition topLeftPixel, LevelPosition bottomRightLevelPosition)
+    {
+        return _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightLevelPosition);
+    }
+
+    [Pure]
     public bool HasGadgetOfTypeAtPosition(LevelPosition levelPosition, GadgetType gadgetType)
     {
-        var gadgetEnumerator = GetAllGadgetsForPosition(levelPosition);
+        var gadgetEnumerator = _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
 
         while (gadgetEnumerator.MoveNext())
         {
             var gadget = gadgetEnumerator.Current;
 
-            if (gadget.Type != gadgetType)
-                continue;
-            if (gadget.MatchesPosition(levelPosition))
+            if (gadget.Type == gadgetType && gadget.MatchesPosition(levelPosition))
+                return true;
+        }
+
+        return false;
+    }
+
+    [Pure]
+    public bool HasGadgetOfTypeAtLemmingPosition(Lemming lemming, GadgetType gadgetType)
+    {
+        var anchorPixel = lemming.LevelPosition;
+        var footPixel = lemming.Orientation.MoveUp(anchorPixel, 1);
+
+        var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
+
+        var topLeftPixel = levelPositionPair.GetTopLeftPosition();
+        var bottomRightPixel = levelPositionPair.GetBottomRightPosition();
+
+        var gadgetEnumerator = _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
+
+        while (gadgetEnumerator.MoveNext())
+        {
+            var gadget = gadgetEnumerator.Current;
+
+            if (gadget.Type == gadgetType && (gadget.MatchesPosition(anchorPixel) || gadget.MatchesPosition(footPixel)))
                 return true;
         }
 
@@ -69,11 +112,11 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     {
         if (gadget.CaresAboutLemmingInteraction)
         {
-            _gadgetPositionHelper.UpdateItemPosition(gadget, false);
+            _gadgetPositionHelper.UpdateItemPosition(gadget);
         }
     }
 
     int ISimpleHasher<GadgetBase>.NumberOfItems => _allGadgets.Length;
     int ISimpleHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
-    GadgetBase ISimpleHasher<GadgetBase>.Unhash(int index) => _allGadgets[index];
+    GadgetBase ISimpleHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
 }

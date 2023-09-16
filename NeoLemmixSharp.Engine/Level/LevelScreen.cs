@@ -18,7 +18,7 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelScreen : IBaseScreen
 {
-    public static LevelScreen Current { get; private set; }
+    public static LevelScreen Current { get; private set; } = null!;
 
     public UpdateScheduler UpdateScheduler { get; }
     public LevelInputController InputController { get; }
@@ -66,13 +66,6 @@ public sealed class LevelScreen : IBaseScreen
         ScreenRenderer = levelRenderer;
 
         Current = this;
-        Orientation.SetTerrain(terrainManager);
-        LemmingAction.SetHelpers(terrainManager, lemmingManager, gadgetManager);
-        LemmingSkill.SetTerrain(terrainManager);
-        Lemming.SetHelpers(terrainManager, lemmingManager, gadgetManager);
-        TerrainEraseMask.SetTerrain(terrainManager);
-        TerrainAddMask.SetTerrain(terrainManager);
-        GadgetBase.SetHelpers(terrainManager, lemmingManager, gadgetManager);
 
         LemmingManager.Initialise();
         GadgetManager.Initialise();
@@ -138,16 +131,38 @@ public sealed class LevelScreen : IBaseScreen
         ScreenRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
     }
 
+    public static void SetTerrainManager(TerrainManager terrainManager)
+    {
+        Orientation.SetTerrainManager(terrainManager);
+        LemmingAction.SetTerrainManager(terrainManager);
+        LemmingSkill.SetTerrainManager(terrainManager);
+        Lemming.SetTerrainManager(terrainManager);
+        TerrainEraseMask.SetTerrainManager(terrainManager);
+        TerrainAddMask.SetTerrainManager(terrainManager);
+        GadgetBase.SetTerrainManager(terrainManager);
+    }
+
+    public static void SetLemmingManager(LemmingManager lemmingManager)
+    {
+        LemmingAction.SetLemmingManager(lemmingManager);
+        Lemming.SetLemmingManager(lemmingManager);
+        LemmingState.SetLemmingManager(lemmingManager);
+        GadgetBase.SetLemmingManager(lemmingManager);
+    }
+
+    public static void SetGadgetManager(GadgetManager gadgetManager)
+    {
+        LemmingAction.SetGadgetManager(gadgetManager);
+        Lemming.SetGadgetManager(gadgetManager);
+        GadgetBase.SetGadgetManager(gadgetManager);
+    }
+
     public void Dispose()
     {
 #pragma warning disable CS8625
-        Orientation.SetTerrain(null);
-        LemmingAction.SetHelpers(null, null, null);
-        LemmingSkill.SetTerrain(null);
-        Lemming.SetHelpers(null, null, null);
-        TerrainEraseMask.SetTerrain(null);
-        TerrainAddMask.SetTerrain(null);
-        GadgetBase.SetHelpers(null, null, null);
+        SetTerrainManager(null);
+        SetLemmingManager(null);
+        SetGadgetManager(null);
 
         ScreenRenderer.Dispose();
         IsDisposed = true;

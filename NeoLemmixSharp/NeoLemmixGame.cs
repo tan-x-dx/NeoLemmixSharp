@@ -44,15 +44,16 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         {
             PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8
         };
+
         Content.RootDirectory = "Content";
-        IsMouseVisible = true;
+        IsMouseVisible = false;
 
         Window.AllowUserResizing = false;
         Window.IsBorderless = false;
 
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
 
-        _standardGameUps = TimeSpan.FromSeconds(1d / GameConstants.FramesPerSecond);
+        _standardGameUps = TimeSpan.FromTicks((long)(TimeSpan.TicksPerMillisecond * (1000 / (double)GameConstants.FramesPerSecond)));
 
         IsFixedTimeStep = true;
         TargetElapsedTime = _standardGameUps;

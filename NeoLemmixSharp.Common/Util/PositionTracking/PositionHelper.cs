@@ -20,14 +20,13 @@ public sealed class PositionHelper<T>
     private readonly SimpleChunkPositionList _chunkPositionScratchSpace;
     private readonly SetUnionChunkPositionUser<T> _setUnionChunkPositionUser;
 
-    internal Dictionary<ChunkPosition, LargeSimpleSet<T>> ItemChunks => _itemChunkLookup;
-
     public PositionHelper(
         ISimpleHasher<T> hasher,
         ChunkSizeType chunkSizeType,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
+        _hasher = hasher;
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
         var chunkSize = 1 << _chunkSizeBitShift;
         var chunkSizeBitMask = chunkSize - 1;
@@ -35,13 +34,12 @@ public sealed class PositionHelper<T>
         _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelWidth + chunkSizeBitMask) >> _chunkSizeBitShift;
         _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelHeight + chunkSizeBitMask) >> _chunkSizeBitShift;
 
-        _hasher = hasher;
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
         _itemChunkLookup = new Dictionary<ChunkPosition, LargeSimpleSet<T>>(ChunkPositionEqualityComparer.Instance);
         _chunkPositionScratchSpace = new SimpleChunkPositionList();
-        _setUnionChunkPositionUser = new SetUnionChunkPositionUser<T>(this);
+        _setUnionChunkPositionUser = new SetUnionChunkPositionUser<T>(hasher, _itemChunkLookup);
     }
 
     [Pure]
@@ -61,6 +59,18 @@ public sealed class PositionHelper<T>
             : new LargeSimpleSet<T>.Enumerator();
     }
 
+    public LargeSimpleSet<T>.Enumerator GetAllItemsNearRegion(
+        LevelPosition topLeftLevelPosition,
+        LevelPosition bottomRightLevelPosition)
+    {
+        GetShiftValues(topLeftLevelPosition, out var topLeftShiftX, out var topLeftShiftY);
+        GetShiftValues(bottomRightLevelPosition, out var bottomRightShiftX, out var bottomRightShiftY);
+
+        _setUnionChunkPositionUser.Clear();
+        EvaluateChunkPositions(_setUnionChunkPositionUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        return _setUnionChunkPositionUser.GetEnumerator();
+    }
+
     public void AddItem(T item)
     {
         var topLeftPixel = item.TopLeftPixel;
@@ -72,15 +82,14 @@ public sealed class PositionHelper<T>
         AddItem(item, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
     }
 
-    public void UpdateItemPosition(T item, bool forceUpdate)
+    public void UpdateItemPosition(T item)
     {
         var topLeftPixel = item.TopLeftPixel;
         var bottomRightPixel = item.BottomRightPixel;
         var previousTopLeftPixel = item.PreviousTopLeftPixel;
         var previousBottomRightPixel = item.PreviousBottomRightPixel;
 
-        if (!forceUpdate &&
-            topLeftPixel == previousTopLeftPixel &&
+        if (topLeftPixel == previousTopLeftPixel &&
             bottomRightPixel == previousBottomRightPixel)
             return;
 
@@ -90,8 +99,7 @@ public sealed class PositionHelper<T>
         GetShiftValues(previousTopLeftPixel, out var previousTopLeftShiftX, out var previousTopLeftShiftY);
         GetShiftValues(previousBottomRightPixel, out var previousBottomRightShiftX, out var previousBottomRightShiftY);
 
-        if (!forceUpdate &&
-            topLeftShiftX == previousTopLeftShiftX &&
+        if (topLeftShiftX == previousTopLeftShiftX &&
             topLeftShiftY == previousTopLeftShiftY &&
             bottomRightShiftX == previousBottomRightShiftX &&
             bottomRightShiftY == previousBottomRightShiftY)
@@ -154,18 +162,6 @@ public sealed class PositionHelper<T>
 
             itemChunk.Remove(item);
         }
-    }
-
-    public void PopulateSetWithItemsNearRegion(
-        LargeSimpleSet<T> set,
-        LevelPosition topLeftLevelPosition,
-        LevelPosition bottomRightLevelPosition)
-    {
-        GetShiftValues(topLeftLevelPosition, out var topLeftShiftX, out var topLeftShiftY);
-        GetShiftValues(bottomRightLevelPosition, out var bottomRightShiftX, out var bottomRightShiftY);
-
-        _setUnionChunkPositionUser.SetToUnionWith = set;
-        EvaluateChunkPositions(_setUnionChunkPositionUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
     }
 
     private void GetShiftValues(

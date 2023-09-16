@@ -9,5 +9,5 @@ public interface IVerticalBoundaryBehaviour
     [Pure]
     int NormaliseY(int y);
     [Pure]
-    int GetAbsoluteVerticalDistance(int y1, int y2);
+    int GetVerticalDelta(int y1, int y2);
 }

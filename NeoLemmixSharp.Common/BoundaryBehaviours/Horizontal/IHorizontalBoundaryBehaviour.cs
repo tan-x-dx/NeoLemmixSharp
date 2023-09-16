@@ -9,5 +9,5 @@ public interface IHorizontalBoundaryBehaviour
     [Pure]
     int NormaliseX(int x);
     [Pure]
-    int GetAbsoluteHorizontalDistance(int x1, int x2);
+    int GetHorizontalDelta(int x1, int x2);
 }

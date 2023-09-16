@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public static class KeyStatusConsts
+public static class KeyStatusConstants
 {
     public const int KeyUnpressed = 0;
     public const int KeyPressed = 1;

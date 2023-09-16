@@ -27,11 +27,11 @@ public sealed class SwitchGadget : GadgetBase
     {
         var p = gadgetBounds.TopLeft;
         var leftRect = new RectangularLevelRegion(p.X + 3, p.Y + 8, 5, 5);
-        _leftHitBox = new LevelRegionHitBoxBehaviour(leftRect, 19);
+        _leftHitBox = new LevelRegionHitBoxBehaviour(leftRect, LemmingManager);
         _leftHitBox.ExcludeFacingDirection(LeftFacingDirection.Instance);
 
         var rightRect = new RectangularLevelRegion(p.X + 10, p.Y + 8, 5, 5);
-        _rightHitBox = new LevelRegionHitBoxBehaviour(rightRect, 19);
+        _rightHitBox = new LevelRegionHitBoxBehaviour(rightRect, LemmingManager);
         _rightHitBox.ExcludeFacingDirection(RightFacingDirection.Instance);
 
         if (faceRight)
@@ -74,6 +74,12 @@ public sealed class SwitchGadget : GadgetBase
     public override bool CaresAboutLemmingInteraction => true;
 
     public override bool MatchesLemming(Lemming lemming) => _currentHitBox.MatchesLemming(lemming);
+    public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
+    {
+        return _currentHitBox.MatchesLemmingData(lemming) &&
+               _currentHitBox.MatchesPosition(levelPosition);
+    }
+
     public override void OnLemmingMatch(Lemming lemming)
     {
         if (_facingRight)

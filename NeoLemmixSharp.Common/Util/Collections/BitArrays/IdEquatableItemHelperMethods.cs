@@ -8,22 +8,31 @@ public static class IdEquatableItemHelperMethods
         if (items.Count == 0)
             return;
 
-        var ids = items
-            .Select(i => i.Id)
-            .ToList();
+        var maxActionId = int.MinValue;
+        var minActionId = int.MaxValue;
+        var allItemIds = new HashSet<int>();
 
-        var numberOfUniqueIds = ids.Distinct().Count();
-
-        if (numberOfUniqueIds != items.Count)
+        foreach (var item in items)
         {
-            var typeName = typeof(T).Name;
-            var idsString = string.Join(',', ids.OrderBy(i => i));
+            var id = item.Id;
 
-            throw new Exception($"Duplicated {typeName} ID: {idsString}");
+            if (id < minActionId)
+            {
+                minActionId = id;
+            }
+
+            if (id > maxActionId)
+            {
+                maxActionId = id;
+            }
+
+            if (!allItemIds.Add(id))
+            {
+                var typeName = typeof(T).Name;
+
+                throw new Exception($"Duplicated {typeName} ID: {id}");
+            }
         }
-
-        var minActionId = ids.Min();
-        var maxActionId = ids.Max();
 
         if (minActionId != 0 || maxActionId != items.Count - 1)
         {

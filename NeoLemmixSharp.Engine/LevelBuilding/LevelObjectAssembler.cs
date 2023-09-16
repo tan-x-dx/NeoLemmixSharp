@@ -435,46 +435,6 @@ public sealed class LevelObjectAssembler : IDisposable
         _lemmings.Add(lemmingE);
 
         _lemmings.Add(miner);
-
-        lemming0.State.TeamAffiliation = Team.AllItems[0];
-        lemming1.State.TeamAffiliation = Team.AllItems[1];
-        lemming2.State.TeamAffiliation = Team.AllItems[2];
-        lemming3.State.TeamAffiliation = Team.AllItems[3];
-        lemming4.State.TeamAffiliation = Team.AllItems[4];
-        lemming5.State.TeamAffiliation = Team.AllItems[5];
-
-        lemming6.State.TeamAffiliation = Team.AllItems[0];
-        //    lemming7.State.TeamAffiliation = Team.AllItems[1];
-        lemming8.State.TeamAffiliation = Team.AllItems[2];
-        lemming9.State.TeamAffiliation = Team.AllItems[3];
-        lemming10.State.TeamAffiliation = Team.AllItems[4];
-        lemming11.State.TeamAffiliation = Team.AllItems[5];
-        //   lemming6.State.IsSwimmer = true;
-        //   lemming7.State.IsSwimmer = true;
-        lemming8.State.IsSwimmer = true;
-        lemming9.State.IsSwimmer = true;
-        lemming10.State.IsSwimmer = true;
-        lemming11.State.IsSwimmer = true;
-
-        lemming0.State.IsNeutral = true;
-        lemming1.State.IsNeutral = true;
-        lemming2.State.IsNeutral = true;
-        lemming3.State.IsNeutral = true;
-        lemming4.State.IsNeutral = true;
-        lemming5.State.IsNeutral = true;
-        //   lemming6.State.IsNeutral = true;
-        //   lemming7.State.IsNeutral = true;
-        lemming8.State.IsNeutral = true;
-        lemming9.State.IsNeutral = true;
-        lemming10.State.IsNeutral = true;
-        lemming11.State.IsNeutral = true;
-
-        lemming0.State.IsZombie = true;
-        lemming1.State.IsZombie = true;
-        lemming2.State.IsZombie = true;
-        lemming3.State.IsZombie = true;
-        lemming4.State.IsZombie = true;
-        lemming5.State.IsZombie = true;
     }
 
     private void SetUpLemmings()

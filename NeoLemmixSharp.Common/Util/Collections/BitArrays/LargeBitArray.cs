@@ -93,7 +93,7 @@ public sealed class LargeBitArray : IBitArray
 
         _bits[intIndex] = newValue;
         Count--;
-        FindIndexOfFirstSetBit(_indexOfFirstSetBit);
+        FindIndexOfFirstSetBit();
 
         return true;
     }
@@ -119,20 +119,18 @@ public sealed class LargeBitArray : IBitArray
         {
             Count--;
             result = false;
-            FindIndexOfFirstSetBit(_indexOfFirstSetBit);
+            FindIndexOfFirstSetBit();
         }
 
         return result;
     }
 
-    private void FindIndexOfFirstSetBit(int startingIndex)
+    private void FindIndexOfFirstSetBit()
     {
-        while (startingIndex < _bits.Length && _bits[startingIndex] == 0U)
+        while (_indexOfFirstSetBit < _bits.Length - 1 && _bits[_indexOfFirstSetBit] == 0U)
         {
-            ++startingIndex;
+            ++_indexOfFirstSetBit;
         }
-
-        _indexOfFirstSetBit = startingIndex;
     }
 
     public void Clear()

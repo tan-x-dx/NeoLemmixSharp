@@ -79,6 +79,24 @@ public sealed class LeftOrientation : Orientation
     public override bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y > secondPosition.Y;
 
     [Pure]
+    public override int GetHorizontalDelta(LevelPosition fromPosition, LevelPosition toPosition)
+    {
+        var a = fromPosition.Y;
+        var b = toPosition.Y;
+
+        return Terrain.VerticalBoundaryBehaviour.GetVerticalDelta(a, b);
+    }
+
+    [Pure]
+    public override int GetVerticalDelta(LevelPosition fromPosition, LevelPosition toPosition)
+    {
+        var a = fromPosition.X;
+        var b = toPosition.X;
+
+        return Terrain.HorizontalBoundaryBehaviour.GetHorizontalDelta(b, a);
+    }
+
+    [Pure]
     public override Orientation RotateClockwise() => UpOrientation.Instance;
     [Pure]
     public override Orientation RotateCounterClockwise() => DownOrientation.Instance;

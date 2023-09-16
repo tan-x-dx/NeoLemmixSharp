@@ -10,14 +10,22 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds
 {
-    protected static TerrainManager TerrainManager { get; private set; }
-    protected static LemmingManager LemmingManager { get; private set; }
-    protected static GadgetManager GadgetManager { get; private set; }
+    protected static TerrainManager TerrainManager { get; private set; } = null!;
+    protected static LemmingManager LemmingManager { get; private set; } = null!;
+    protected static GadgetManager GadgetManager { get; private set; } = null!;
 
-    public static void SetHelpers(TerrainManager terrainManager, LemmingManager lemmingManager, GadgetManager gadgetManager)
+    public static void SetTerrainManager(TerrainManager terrainManager)
     {
         TerrainManager = terrainManager;
+    }
+
+    public static void SetLemmingManager(LemmingManager lemmingManager)
+    {
         LemmingManager = lemmingManager;
+    }
+
+    public static void SetGadgetManager(GadgetManager gadgetManager)
+    {
         GadgetManager = gadgetManager;
     }
 
@@ -26,10 +34,10 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds
     public abstract Orientation Orientation { get; }
     public RectangularLevelRegion GadgetBounds { get; }
 
-    public virtual LevelPosition TopLeftPixel => GadgetBounds.TopLeft;
-    public virtual LevelPosition BottomRightPixel => GadgetBounds.BottomRight;
-    public virtual LevelPosition PreviousTopLeftPixel => GadgetBounds.TopLeft;
-    public virtual LevelPosition PreviousBottomRightPixel => GadgetBounds.BottomRight;
+    public LevelPosition TopLeftPixel { get; protected set; }
+    public LevelPosition BottomRightPixel { get; protected set; }
+    public LevelPosition PreviousTopLeftPixel { get; protected set; }
+    public LevelPosition PreviousBottomRightPixel { get; protected set; }
 
     protected GadgetBase(
         int id,
@@ -37,16 +45,40 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds
     {
         Id = id;
         GadgetBounds = gadgetBounds;
+
+        TopLeftPixel = GadgetBounds.TopLeft;
+        BottomRightPixel = GadgetBounds.BottomRight;
+
+        PreviousTopLeftPixel = TopLeftPixel;
+        PreviousBottomRightPixel = BottomRightPixel;
     }
 
     public abstract void Tick();
+
+    protected void UpdatePosition(LevelPosition position)
+    {
+        PreviousTopLeftPixel = TerrainManager.NormalisePosition(TopLeftPixel);
+        PreviousBottomRightPixel = TerrainManager.NormalisePosition(BottomRightPixel);
+
+        position = TerrainManager.NormalisePosition(position);
+
+        GadgetBounds.X = position.X;
+        GadgetBounds.Y = position.Y;
+
+        TopLeftPixel = TerrainManager.NormalisePosition(GadgetBounds.TopLeft);
+        BottomRightPixel = TerrainManager.NormalisePosition(GadgetBounds.BottomRight);
+
+        GadgetManager.UpdateGadgetPosition(this);
+    }
 
     public abstract IGadgetInput? GetInputWithName(string inputName);
 
     public abstract bool CaresAboutLemmingInteraction { get; }
     public abstract bool MatchesLemming(Lemming lemming);
-    public abstract void OnLemmingMatch(Lemming lemming);
+    public abstract bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition);
     public abstract bool MatchesPosition(LevelPosition levelPosition);
+
+    public abstract void OnLemmingMatch(Lemming lemming);
 
     public bool Equals(GadgetBase? other) => Id == (other?.Id ?? -1);
     public sealed override bool Equals(object? obj) => obj is GadgetBase other && Id == other.Id;

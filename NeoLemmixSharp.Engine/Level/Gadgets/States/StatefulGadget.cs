@@ -31,7 +31,7 @@ public sealed class StatefulGadget : GadgetBase, IMoveableGadget
         _states = states;
     }
 
-    public void RegisterGadget(IGadgetInput gadgetInput)
+    public void RegisterGadgetInput(IGadgetInput gadgetInput)
     {
         _inputLookup.Add(gadgetInput.InputName, gadgetInput);
     }
@@ -55,6 +55,12 @@ public sealed class StatefulGadget : GadgetBase, IMoveableGadget
 
     public override bool CaresAboutLemmingInteraction => _states.Any(s => s.HitBoxBehaviour.InteractsWithLemming);
     public override bool MatchesLemming(Lemming lemming) => CurrentState.HitBoxBehaviour.MatchesLemming(lemming);
+    public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
+    {
+        return CurrentState.HitBoxBehaviour.MatchesLemmingData(lemming) &&
+               CurrentState.HitBoxBehaviour.MatchesPosition(levelPosition);
+    }
+
     public override void OnLemmingMatch(Lemming lemming)
     {
         CurrentState.HitBoxBehaviour.OnLemmingInHitBox(lemming);
@@ -64,16 +70,16 @@ public sealed class StatefulGadget : GadgetBase, IMoveableGadget
 
     public void Move(int dx, int dy)
     {
-        GadgetBounds.X += dx;
-        GadgetBounds.Y += dy;
+        var newPosition = TopLeftPixel + new LevelPosition(dx, dy);
+
+        UpdatePosition(newPosition);
     }
 
     public void SetPosition(int x, int y)
     {
-        GadgetBounds.X = x;
-        GadgetBounds.Y = y;
+        var newPosition = new LevelPosition(x, y);
 
-        GadgetManager.UpdateGadgetPosition(this);
+        UpdatePosition(newPosition);
     }
 
     public override void Tick()

@@ -105,7 +105,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
             --i;
         }
 
-HitTestConclusive:
+        HitTestConclusive:
 
         lemming.LaserHitLevelPosition = target;
 

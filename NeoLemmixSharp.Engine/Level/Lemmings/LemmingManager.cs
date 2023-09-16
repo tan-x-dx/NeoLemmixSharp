@@ -13,8 +13,8 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
 
     private readonly PositionHelper<Lemming> _lemmingPositionHelper;
     private readonly PositionHelper<Lemming> _blockerPositionHelper;
+    private readonly PositionHelper<Lemming> _zombiePositionHelper;
     private readonly LargeSimpleSet<Lemming> _activeLemmings;
-    private readonly LargeSimpleSet<Lemming> _blockerScratchSpace;
     private readonly Lemming[] _lemmings;
 
     public int LemmingsToRelease { get; private set; }
@@ -47,8 +47,13 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
+        _zombiePositionHelper = new PositionHelper<Lemming>(
+            this,
+            LemmingPositionChunkSize,
+            horizontalBoundaryBehaviour,
+            verticalBoundaryBehaviour);
+
         _activeLemmings = new LargeSimpleSet<Lemming>(this);
-        _blockerScratchSpace = new LargeSimpleSet<Lemming>(this);
     }
 
     public void Initialise()
@@ -86,15 +91,19 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
 
     public void UpdateLemmingPosition(Lemming lemming)
     {
-        _lemmingPositionHelper.UpdateItemPosition(lemming, false);
+        _lemmingPositionHelper.UpdateItemPosition(lemming);
+
+        if (lemming.State.IsZombie)
+        {
+            _zombiePositionHelper.UpdateItemPosition(lemming);
+        }
     }
 
-    public void PopulateSetWithLemmingsNearRegion(
-        LargeSimpleSet<Lemming> set,
+    public LargeSimpleSet<Lemming>.Enumerator GetAllLemmingsNearRegion(
         LevelPosition topLeftLevelPosition,
         LevelPosition bottomRightLevelPosition)
     {
-        _lemmingPositionHelper.PopulateSetWithItemsNearRegion(set, topLeftLevelPosition, bottomRightLevelPosition);
+        return _lemmingPositionHelper.GetAllItemsNearRegion(topLeftLevelPosition, bottomRightLevelPosition);
     }
 
     public void RegisterBlocker(Lemming lemming)
@@ -107,15 +116,27 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
         _blockerPositionHelper.RemoveItem(lemming);
     }
 
-    public LargeSimpleSet<Lemming>.Enumerator BlockersNearLemmingEnumerator(Lemming lemming)
+    public LargeSimpleSet<Lemming>.Enumerator BlockersNearLemming(Lemming lemming)
     {
-        _blockerScratchSpace.Clear();
-        _blockerPositionHelper.PopulateSetWithItemsNearRegion(_blockerScratchSpace, lemming.TopLeftPixel, lemming.BottomRightPixel);
+        return _blockerPositionHelper.GetAllItemsNearRegion(lemming.TopLeftPixel, lemming.BottomRightPixel);
+    }
 
-        return _blockerScratchSpace.GetEnumerator();
+    public void RegisterZombie(Lemming lemming)
+    {
+        _zombiePositionHelper.AddItem(lemming);
+    }
+
+    public void DeregisterZombie(Lemming lemming)
+    {
+        _zombiePositionHelper.RemoveItem(lemming);
+    }
+
+    public LargeSimpleSet<Lemming>.Enumerator ZombiesNearLemming(Lemming lemming)
+    {
+        return _zombiePositionHelper.GetAllItemsNearRegion(lemming.TopLeftPixel, lemming.BottomRightPixel);
     }
 
     int ISimpleHasher<Lemming>.NumberOfItems => _lemmings.Length;
     int ISimpleHasher<Lemming>.Hash(Lemming item) => item.Id;
-    Lemming ISimpleHasher<Lemming>.Unhash(int index) => _lemmings[index];
+    Lemming ISimpleHasher<Lemming>.UnHash(int index) => _lemmings[index];
 }

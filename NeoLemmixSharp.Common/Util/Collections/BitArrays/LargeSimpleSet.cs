@@ -44,7 +44,7 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     {
         foreach (var i in _bits)
         {
-            array[arrayIndex++] = _hasher.Unhash(i);
+            array[arrayIndex++] = _hasher.UnHash(i);
         }
     }
 
@@ -65,7 +65,7 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
         public bool MoveNext() => _bitEnumerator.MoveNext();
         public void Reset() => _bitEnumerator.Reset();
-        public readonly T Current => _hasher.Unhash(_bitEnumerator.Current);
+        public readonly T Current => _hasher.UnHash(_bitEnumerator.Current);
 
         readonly void IDisposable.Dispose() { }
         readonly object IEnumerator.Current => Current!;

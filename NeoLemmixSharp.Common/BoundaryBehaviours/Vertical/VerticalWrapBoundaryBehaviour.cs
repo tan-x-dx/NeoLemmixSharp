@@ -32,11 +32,20 @@ public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
     }
 
     [Pure]
-    public int GetAbsoluteVerticalDistance(int y1, int y2)
+    public int GetVerticalDelta(int y1, int y2)
     {
-        var dy = Math.Abs(y1 - y2);
-        if (dy + dy > LevelHeight)
-            return LevelHeight - dy;
+        var dy = y2 - y1;
+
+        if (dy > 0)
+        {
+            if (dy + dy > LevelHeight)
+                return dy - LevelHeight;
+
+            return dy;
+        }
+
+        if (dy + dy < -LevelHeight)
+            return dy + LevelHeight;
 
         return dy;
     }

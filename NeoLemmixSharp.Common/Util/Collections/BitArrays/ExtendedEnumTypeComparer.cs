@@ -34,7 +34,7 @@ public sealed class ExtendedEnumTypeComparer<T> :
     public int NumberOfItems => T.NumberOfItems;
 
     public int Hash(T item) => item.Id;
-    public T Unhash(int index) => T.AllItems[index];
+    public T UnHash(int index) => T.AllItems[index];
 
     public static LargeSimpleSet<T> LargeSetForType(bool fullSet = false)
     {

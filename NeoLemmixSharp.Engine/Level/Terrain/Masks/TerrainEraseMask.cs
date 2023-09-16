@@ -41,7 +41,7 @@ public sealed class TerrainEraseMask
         }
     }
 
-    public static void SetTerrain(TerrainManager manager)
+    public static void SetTerrainManager(TerrainManager manager)
     {
         _terrainManager = manager;
     }
