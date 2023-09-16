@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
+﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
@@ -9,6 +7,8 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Rendering;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain;
 
@@ -19,11 +19,11 @@ public sealed class TerrainManager
 
     private readonly TerrainRenderer _terrainRenderer;
 
-    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
-    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
+    public IHorizontalBoundaryBehaviour HorizontalBoundaryBehaviour { get; }
+    public IVerticalBoundaryBehaviour VerticalBoundaryBehaviour { get; }
 
-    public int LevelWidth => _horizontalBoundaryBehaviour.LevelWidth;
-    public int LevelHeight => _verticalBoundaryBehaviour.LevelHeight;
+    public int LevelWidth => HorizontalBoundaryBehaviour.LevelWidth;
+    public int LevelHeight => VerticalBoundaryBehaviour.LevelHeight;
 
     public TerrainManager(
         PixelType[] pixels,
@@ -37,8 +37,8 @@ public sealed class TerrainManager
 
         _terrainRenderer = terrainRenderer;
 
-        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
-        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
+        HorizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+        VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
     }
 
     [Pure]
@@ -46,8 +46,8 @@ public sealed class TerrainManager
     public LevelPosition NormalisePosition(LevelPosition levelPosition)
     {
         return new LevelPosition(
-            _horizontalBoundaryBehaviour.NormaliseX(levelPosition.X),
-            _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y));
+            HorizontalBoundaryBehaviour.NormaliseX(levelPosition.X),
+            VerticalBoundaryBehaviour.NormaliseY(levelPosition.Y));
     }
 
     [Pure]
