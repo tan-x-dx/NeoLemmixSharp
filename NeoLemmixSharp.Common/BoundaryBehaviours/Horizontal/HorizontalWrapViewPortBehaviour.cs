@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 
-public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
+public sealed class HorizontalWrapViewPortBehaviour : IHorizontalViewPortBehaviour
 {
     private readonly RenderInterval[] _horizontalRenderIntervals;
 
@@ -11,7 +11,7 @@ public sealed class HorizontalWrapBehaviour : IHorizontalViewPortBehaviour
     public int ScreenWidth { get; private set; }
     public int NumberOfHorizontalRenderIntervals { get; private set; } = 1;
 
-    public HorizontalWrapBehaviour(int levelWidthInPixels)
+    public HorizontalWrapViewPortBehaviour(int levelWidthInPixels)
     {
         LevelWidthInPixels = levelWidthInPixels;
 
