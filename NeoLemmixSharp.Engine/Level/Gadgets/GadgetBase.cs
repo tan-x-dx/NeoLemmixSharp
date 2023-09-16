@@ -75,8 +75,10 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds
 
     public abstract bool CaresAboutLemmingInteraction { get; }
     public abstract bool MatchesLemming(Lemming lemming);
-    public abstract void OnLemmingMatch(Lemming lemming);
+    public abstract bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition);
     public abstract bool MatchesPosition(LevelPosition levelPosition);
+
+    public abstract void OnLemmingMatch(Lemming lemming);
 
     public bool Equals(GadgetBase? other) => Id == (other?.Id ?? -1);
     public sealed override bool Equals(object? obj) => obj is GadgetBase other && Id == other.Id;

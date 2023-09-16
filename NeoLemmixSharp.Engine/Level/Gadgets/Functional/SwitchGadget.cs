@@ -74,6 +74,12 @@ public sealed class SwitchGadget : GadgetBase
     public override bool CaresAboutLemmingInteraction => true;
 
     public override bool MatchesLemming(Lemming lemming) => _currentHitBox.MatchesLemming(lemming);
+    public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
+    {
+        return _currentHitBox.MatchesLemmingData(lemming) &&
+               _currentHitBox.MatchesPosition(levelPosition);
+    }
+
     public override void OnLemmingMatch(Lemming lemming)
     {
         if (_facingRight)

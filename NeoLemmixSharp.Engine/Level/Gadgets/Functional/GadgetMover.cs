@@ -68,6 +68,7 @@ public sealed class GadgetMover : GadgetBase
 
     public override bool CaresAboutLemmingInteraction => false;
     public override bool MatchesLemming(Lemming lemming) => false;
+    public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition) => false;
     public override void OnLemmingMatch(Lemming lemming)
     {
     }

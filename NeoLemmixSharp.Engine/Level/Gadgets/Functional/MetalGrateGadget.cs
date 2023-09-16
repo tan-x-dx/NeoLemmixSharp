@@ -96,6 +96,8 @@ public sealed class MetalGrateGadget : GadgetBase
         return _currentGadgetType == GadgetType.MetalGrateOn && GadgetBounds.ContainsPoint(lemming.LevelPosition);
     }
 
+    public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition) => MatchesPosition(levelPosition);
+
     public override void OnLemmingMatch(Lemming lemming)
     {
     }

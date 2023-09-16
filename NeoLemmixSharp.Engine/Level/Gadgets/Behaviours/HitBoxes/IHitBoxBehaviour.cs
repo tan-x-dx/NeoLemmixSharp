@@ -9,6 +9,7 @@ public interface IHitBoxBehaviour
     bool InteractsWithLemming { get; }
 
     bool MatchesLemming(Lemming lemming);
+    bool MatchesLemmingData(Lemming lemming);
     bool MatchesPosition(LevelPosition levelPosition);
 
     void OnLemmingInHitBox(Lemming lemming);

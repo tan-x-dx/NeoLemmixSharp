@@ -30,7 +30,7 @@ public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
     public bool MatchesLemming(Lemming lemming) => MatchesLemmingData(lemming) &&
                                                    MatchesLemmingPosition(lemming);
 
-    private bool MatchesLemmingData(Lemming lemming) => _targetFacingDirections.Contains(lemming.FacingDirection) &&
+    public bool MatchesLemmingData(Lemming lemming) => _targetFacingDirections.Contains(lemming.FacingDirection) &&
                                                         _targetOrientations.Contains(lemming.Orientation) &&
                                                         _targetActions.Contains(lemming.CurrentAction);
 
