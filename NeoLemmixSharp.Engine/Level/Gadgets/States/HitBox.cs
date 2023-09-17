@@ -6,20 +6,17 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.HitBoxes;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.States;
 
-public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
+public sealed class HitBox
 {
     private readonly ILevelRegion _levelRegion;
     private readonly LargeSimpleSet<Lemming> _lemmingsInHitBox;
-    private readonly LargeSimpleSet<LemmingAction> _targetActions = ExtendedEnumTypeComparer<LemmingAction>.LargeSetForType(true);
-    private readonly SmallSimpleSet<Orientation> _targetOrientations = ExtendedEnumTypeComparer<Orientation>.SmallSetForType(true);
-    private readonly SmallSimpleSet<FacingDirection> _targetFacingDirections = ExtendedEnumTypeComparer<FacingDirection>.SmallSetForType(true);
+    private readonly LargeSimpleSet<LemmingAction> _targetActions = ExtendedEnumTypeComparer<LemmingAction>.LargeSetForType();
+    private readonly SmallSimpleSet<Orientation> _targetOrientations = ExtendedEnumTypeComparer<Orientation>.SmallSetForType();
+    private readonly SmallSimpleSet<FacingDirection> _targetFacingDirections = ExtendedEnumTypeComparer<FacingDirection>.SmallSetForType();
 
-    public bool IsEnabled { get; set; }
-    public bool InteractsWithLemming => true;
-
-    public LevelRegionHitBoxBehaviour(
+    public HitBox(
         ILevelRegion levelRegion,
         ISimpleHasher<Lemming> lemmingHasher)
     {
@@ -31,16 +28,16 @@ public sealed class LevelRegionHitBoxBehaviour : IHitBoxBehaviour
                                                    MatchesLemmingPosition(lemming);
 
     public bool MatchesLemmingData(Lemming lemming) => _targetFacingDirections.Contains(lemming.FacingDirection) &&
-                                                        _targetOrientations.Contains(lemming.Orientation) &&
-                                                        _targetActions.Contains(lemming.CurrentAction);
+                                                       _targetOrientations.Contains(lemming.Orientation) &&
+                                                       _targetActions.Contains(lemming.CurrentAction);
 
     private bool MatchesLemmingPosition(Lemming lemming)
     {
-        var position1 = lemming.LevelPosition;
-        var position2 = lemming.Orientation.MoveUp(position1, 1);
+        var anchorPosition = lemming.LevelPosition;
+        var footPosition = lemming.FootPosition;
 
-        return _levelRegion.ContainsPoint(position1) ||
-               _levelRegion.ContainsPoint(position2);
+        return _levelRegion.ContainsPoint(anchorPosition) ||
+               _levelRegion.ContainsPoint(footPosition);
     }
 
     public bool MatchesPosition(LevelPosition levelPosition) => _levelRegion.ContainsPoint(levelPosition);

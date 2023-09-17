@@ -65,6 +65,8 @@ public sealed class LevelBuilder : IDisposable
 
         var inputController = new LevelInputController();
         var skillSetManager = new SkillSetManager(levelData.SkillSetData);
+        LevelScreen.SetSkillSetManager(skillSetManager);
+
         LevelTimer levelTimer = levelData.TimeLimit.HasValue
             ? new CountDownLevelTimer(levelData.TimeLimit.Value)
             : new CountUpLevelTimer();

@@ -52,7 +52,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     public LargeSimpleSet<GadgetBase>.Enumerator GetAllGadgetsAtLemmingPosition(Lemming lemming)
     {
         var anchorPixel = lemming.LevelPosition;
-        var footPixel = lemming.Orientation.MoveUp(anchorPixel, 1);
+        var footPixel = lemming.FootPosition;
 
         var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
 
@@ -88,7 +88,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     public bool HasGadgetOfTypeAtLemmingPosition(Lemming lemming, GadgetType gadgetType)
     {
         var anchorPixel = lemming.LevelPosition;
-        var footPixel = lemming.Orientation.MoveUp(anchorPixel, 1);
+        var footPixel = lemming.FootPosition;
 
         var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
 

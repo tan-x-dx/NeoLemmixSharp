@@ -9,6 +9,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.States;
 public sealed class StatefulGadget : GadgetBase, IMoveableGadget
 {
     private readonly Dictionary<string, IGadgetInput> _inputLookup = new();
+    private readonly HitBox _hitBox;
     private readonly GadgetState[] _states;
 
     private int _currentStateIndex;
@@ -23,11 +24,13 @@ public sealed class StatefulGadget : GadgetBase, IMoveableGadget
         GadgetType type,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
+        HitBox hitBox,
         GadgetState[] states)
         : base(id, gadgetBounds)
     {
         Type = type;
         Orientation = orientation;
+        _hitBox = hitBox;
         _states = states;
     }
 
@@ -53,20 +56,24 @@ public sealed class StatefulGadget : GadgetBase, IMoveableGadget
         return _inputLookup.TryGetValue(inputName, out var result) ? result : null;
     }
 
-    public override bool CaresAboutLemmingInteraction => _states.Any(s => s.HitBoxBehaviour.InteractsWithLemming);
-    public override bool MatchesLemming(Lemming lemming) => CurrentState.HitBoxBehaviour.MatchesLemming(lemming);
+    public override bool CaresAboutLemmingInteraction => true;
+    public override bool MatchesLemming(Lemming lemming) => _hitBox.MatchesLemming(lemming);
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
-        return CurrentState.HitBoxBehaviour.MatchesLemmingData(lemming) &&
-               CurrentState.HitBoxBehaviour.MatchesPosition(levelPosition);
+        return _hitBox.MatchesLemmingData(lemming) &&
+               _hitBox.MatchesPosition(levelPosition);
     }
 
     public override void OnLemmingMatch(Lemming lemming)
     {
-        CurrentState.HitBoxBehaviour.OnLemmingInHitBox(lemming);
+        var actions = CurrentState.Actions;
+        foreach (var action in actions)
+        {
+            action.PerformAction(lemming);
+        }
     }
 
-    public override bool MatchesPosition(LevelPosition levelPosition) => CurrentState.HitBoxBehaviour.MatchesPosition(levelPosition);
+    public override bool MatchesPosition(LevelPosition levelPosition) => _hitBox.MatchesPosition(levelPosition);
 
     public void Move(int dx, int dy)
     {

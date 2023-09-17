@@ -51,12 +51,12 @@ public sealed class SawBladeGadget : GadgetBase, IDestructionMask, IMoveableGadg
 
     public override bool MatchesLemming(Lemming lemming)
     {
-        var p0 = lemming.LevelPosition;
-        var p1 = lemming.Orientation.MoveUp(lemming.LevelPosition, 1);
+        var anchorPosition = lemming.LevelPosition;
+        var footPosition = lemming.FootPosition;
 
         var hitMask = _hitMasks[AnimationFrame];
 
-        return hitMask.MatchesPosition(p0) || hitMask.MatchesPosition(p1);
+        return hitMask.MatchesPosition(anchorPosition) || hitMask.MatchesPosition(footPosition);
     }
 
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)

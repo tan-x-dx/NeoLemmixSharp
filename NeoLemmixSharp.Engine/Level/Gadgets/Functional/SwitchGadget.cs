@@ -1,8 +1,8 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Gadgets.States;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -10,10 +10,10 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
 public sealed class SwitchGadget : GadgetBase
 {
-    private readonly LevelRegionHitBoxBehaviour _leftHitBox;
-    private readonly LevelRegionHitBoxBehaviour _rightHitBox;
+    private readonly HitBox _leftHitBox;
+    private readonly HitBox _rightHitBox;
 
-    private LevelRegionHitBoxBehaviour _currentHitBox;
+    private HitBox _currentHitBox;
     private bool _facingRight;
 
     public override GadgetType Type => GadgetType.Switch;
@@ -27,11 +27,11 @@ public sealed class SwitchGadget : GadgetBase
     {
         var p = gadgetBounds.TopLeft;
         var leftRect = new RectangularLevelRegion(p.X + 3, p.Y + 8, 5, 5);
-        _leftHitBox = new LevelRegionHitBoxBehaviour(leftRect, LemmingManager);
+        _leftHitBox = new HitBox(leftRect, LemmingManager);
         _leftHitBox.ExcludeFacingDirection(LeftFacingDirection.Instance);
 
         var rightRect = new RectangularLevelRegion(p.X + 10, p.Y + 8, 5, 5);
-        _rightHitBox = new LevelRegionHitBoxBehaviour(rightRect, LemmingManager);
+        _rightHitBox = new HitBox(rightRect, LemmingManager);
         _rightHitBox.ExcludeFacingDirection(RightFacingDirection.Instance);
 
         if (faceRight)

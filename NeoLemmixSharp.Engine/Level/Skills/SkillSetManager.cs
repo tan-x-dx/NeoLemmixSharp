@@ -38,6 +38,26 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>
         return _skillTrackingDataList[skillDataId];
     }
 
+    public void SetSkillCount(LemmingSkill lemmingSkill, Team? team, int value, bool isDelta)
+    {
+        for (var i = 0; i < _skillTrackingDataList.Length; i++)
+        {
+            var skillTrackingData = _skillTrackingDataList[i];
+            if (skillTrackingData.Skill != lemmingSkill ||
+                (team is not null && skillTrackingData.Team != team))
+                continue;
+
+            if (isDelta)
+            {
+                skillTrackingData.ChangeSkillCount(value);
+            }
+            else
+            {
+                skillTrackingData.SetSkillCount(value);
+            }
+        }
+    }
+
     int IComparer<SkillTrackingData>.Compare(SkillTrackingData? x, SkillTrackingData? y)
     {
         if (ReferenceEquals(x, y)) return 0;

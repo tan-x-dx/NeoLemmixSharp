@@ -62,6 +62,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LevelPosition LevelPosition;
     public LevelPosition PreviousLevelPosition;
 
+    public LevelPosition FootPosition => Orientation.MoveUp(LevelPosition, 1);
+
     public FacingDirection FacingDirection { get; private set; }
     public Orientation Orientation { get; private set; }
 
@@ -172,7 +174,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     private bool CheckLevelBoundaries()
     {
-        var footPixel = TerrainManager.PixelTypeAtPosition(Orientation.MoveUp(LevelPosition, 1));
+        var footPixel = TerrainManager.PixelTypeAtPosition(FootPosition);
         var headPixel = TerrainManager.PixelTypeAtPosition(Orientation.MoveUp(LevelPosition, 6));
 
         if (footPixel.IsVoid() && headPixel.IsVoid())

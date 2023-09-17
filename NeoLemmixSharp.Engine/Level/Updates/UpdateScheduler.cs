@@ -200,7 +200,7 @@ public sealed class UpdateScheduler
         if (skillTrackingData.CanAssignToLemming(lemming))
         {
             skillTrackingData.Skill.AssignToLemming(lemming);
-            skillTrackingData.DecrementSkillCount();
+            skillTrackingData.ChangeSkillCount(-1);
             _levelControlPanel.SelectedSkillAssignButton!.UpdateSkillCount(skillTrackingData.SkillCount);
         }
         else

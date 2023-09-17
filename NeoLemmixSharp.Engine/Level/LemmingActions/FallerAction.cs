@@ -33,9 +33,7 @@ public sealed class FallerAction : LemmingAction
         {
             var gadget = gadgetEnumerator.Current;
 
-            if (gadget.Type != GadgetType.Updraft)
-                continue;
-            if (!gadget.MatchesLemming(lemming))
+            if (!(gadget.Type == GadgetType.Updraft && gadget.MatchesLemming(lemming)))
                 continue;
 
             if (gadget.Orientation == orientation.GetOpposite())
@@ -67,9 +65,7 @@ public sealed class FallerAction : LemmingAction
             {
                 var gadget = gadgetEnumerator.Current;
 
-                if (gadget.Type != GadgetType.Updraft)
-                    continue;
-                if (!gadget.MatchesLemming(lemming))
+                if (!(gadget.Type == GadgetType.Updraft && gadget.MatchesLemming(lemming)))
                     continue;
 
                 if (gadget.Orientation == orientation.GetOpposite())

@@ -1,30 +1,32 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.Activation;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.HitBoxes;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.States;
 
 public sealed class GadgetState
 {
     private readonly int _numberOfAnimationFrames;
+    private readonly IGadgetBehaviour[] _interactionActions;
+    private readonly GadgetOutput _stateSelectedOutput;
+
+    public ReadOnlySpan<IGadgetBehaviour> Actions => new(_interactionActions);
 
     public int AnimationFrame { get; private set; }
 
-    public IActivationBehaviour ActivationBehaviour { get; }
-    public IHitBoxBehaviour HitBoxBehaviour { get; }
-
     public GadgetState(
         int numberOfAnimationFrames,
-        IActivationBehaviour activationBehaviour,
-        IHitBoxBehaviour hitBoxBehaviour)
+        IGadgetBehaviour[] interactionActions,
+        GadgetOutput stateSelectedOutput)
     {
         _numberOfAnimationFrames = numberOfAnimationFrames;
-        ActivationBehaviour = activationBehaviour;
-        HitBoxBehaviour = hitBoxBehaviour;
+        _interactionActions = interactionActions;
+        _stateSelectedOutput = stateSelectedOutput;
     }
 
     public void OnTransitionTo()
     {
         AnimationFrame = 0;
+        _stateSelectedOutput.SetSignal(true);
     }
 
     public void Tick()
@@ -41,5 +43,6 @@ public sealed class GadgetState
 
     public void OnTransitionFrom()
     {
+        _stateSelectedOutput.SetSignal(false);
     }
 }
