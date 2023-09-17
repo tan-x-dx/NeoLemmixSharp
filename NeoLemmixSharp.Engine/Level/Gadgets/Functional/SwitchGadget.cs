@@ -8,11 +8,8 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
-public sealed class SwitchGadget : GadgetBase
+public sealed class SwitchGadget : HitBoxGadget
 {
-    private readonly HitBox _leftHitBox;
-    private readonly HitBox _rightHitBox;
-
     private HitBox _currentHitBox;
     private bool _facingRight;
 
@@ -20,6 +17,9 @@ public sealed class SwitchGadget : GadgetBase
     public override Orientation Orientation => DownOrientation.Instance;
 
     public int AnimationFrame { get; private set; }
+    public HitBox LeftHitBox { get; }
+    public HitBox RightHitBox { get; }
+
     public GadgetOutput Output { get; } = new();
 
     public SwitchGadget(int id, RectangularLevelRegion gadgetBounds, bool faceRight)
@@ -27,24 +27,24 @@ public sealed class SwitchGadget : GadgetBase
     {
         var p = gadgetBounds.TopLeft;
         var leftRect = new RectangularLevelRegion(p.X + 3, p.Y + 8, 5, 5);
-        _leftHitBox = new HitBox(leftRect, LemmingManager);
-        _leftHitBox.ExcludeFacingDirection(LeftFacingDirection.Instance);
+        LeftHitBox = new HitBox(leftRect, LemmingManager);
+        LeftHitBox.ExcludeFacingDirection(LeftFacingDirection.Instance);
 
         var rightRect = new RectangularLevelRegion(p.X + 10, p.Y + 8, 5, 5);
-        _rightHitBox = new HitBox(rightRect, LemmingManager);
-        _rightHitBox.ExcludeFacingDirection(RightFacingDirection.Instance);
+        RightHitBox = new HitBox(rightRect, LemmingManager);
+        RightHitBox.ExcludeFacingDirection(RightFacingDirection.Instance);
 
         if (faceRight)
         {
             _facingRight = true;
             AnimationFrame = 6;
-            _currentHitBox = _rightHitBox;
+            _currentHitBox = RightHitBox;
         }
         else
         {
             _facingRight = false;
             AnimationFrame = 0;
-            _currentHitBox = _leftHitBox;
+            _currentHitBox = LeftHitBox;
         }
     }
 
@@ -71,8 +71,6 @@ public sealed class SwitchGadget : GadgetBase
         return null;
     }
 
-    public override bool CaresAboutLemmingInteraction => true;
-
     public override bool MatchesLemming(Lemming lemming) => _currentHitBox.MatchesLemming(lemming);
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
@@ -85,13 +83,13 @@ public sealed class SwitchGadget : GadgetBase
         if (_facingRight)
         {
             _facingRight = false;
-            _currentHitBox = _leftHitBox;
+            _currentHitBox = LeftHitBox;
             Output.SetSignal(false);
         }
         else
         {
             _facingRight = true;
-            _currentHitBox = _rightHitBox;
+            _currentHitBox = RightHitBox;
             Output.SetSignal(true);
         }
     }

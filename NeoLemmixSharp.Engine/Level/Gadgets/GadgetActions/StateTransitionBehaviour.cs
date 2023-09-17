@@ -18,6 +18,6 @@ public sealed class StateTransitionBehaviour : IGadgetBehaviour
 
     public void PerformAction(Lemming lemming)
     {
-        _gadget.SetState(_stateIndex);
+        _gadget.SetNextState(_stateIndex);
     }
 }

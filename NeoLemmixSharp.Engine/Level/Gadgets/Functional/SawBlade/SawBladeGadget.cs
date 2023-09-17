@@ -9,7 +9,7 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional.SawBlade;
 
-public sealed class SawBladeGadget : GadgetBase, IDestructionMask, IMoveableGadget
+public sealed class SawBladeGadget : HitBoxGadget, IDestructionMask, IMoveableGadget
 {
     private SawBladeHitMask[] _hitMasks;
 
@@ -46,8 +46,6 @@ public sealed class SawBladeGadget : GadgetBase, IDestructionMask, IMoveableGadg
     {
         return null;
     }
-
-    public override bool CaresAboutLemmingInteraction => true;
 
     public override bool MatchesLemming(Lemming lemming)
     {

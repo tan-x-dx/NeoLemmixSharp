@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
@@ -254,7 +255,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         }
     }
 
-    private bool HandleGadgetInteraction(GadgetBase gadget, LevelPosition checkPosition)
+    private bool HandleGadgetInteraction(HitBoxGadget gadget, LevelPosition checkPosition)
     {
         // Transition if we are at the end position and need to do one
         // Except if we try to splat and there is water at the lemming position - then let this take precedence.

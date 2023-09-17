@@ -6,18 +6,17 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.States;
 
-public sealed class StatefulGadget : GadgetBase, IMoveableGadget
+public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 {
     private readonly Dictionary<string, IGadgetInput> _inputLookup = new();
     private readonly HitBox _hitBox;
     private readonly GadgetState[] _states;
 
     private int _currentStateIndex;
+    private int _nextStateIndex;
 
     public override GadgetType Type { get; }
     public override Orientation Orientation { get; }
-
-    public GadgetState CurrentState => _states[_currentStateIndex];
 
     public StatefulGadget(
         int id,
@@ -32,23 +31,23 @@ public sealed class StatefulGadget : GadgetBase, IMoveableGadget
         Orientation = orientation;
         _hitBox = hitBox;
         _states = states;
+
+        foreach (var gadgetState in _states)
+        {
+            gadgetState.SetGadget(this);
+        }
     }
 
-    public void RegisterGadgetInput(IGadgetInput gadgetInput)
+    public void RegisterGadgetInput(StateSelectionInput gadgetInput)
     {
         _inputLookup.Add(gadgetInput.InputName, gadgetInput);
+
+        gadgetInput.SetGadget(this);
     }
 
-    public void SetState(int stateIndex)
+    public void SetNextState(int stateIndex)
     {
-        var previousState = CurrentState;
-
-        _currentStateIndex = stateIndex;
-
-        var currentState = CurrentState;
-
-        previousState.OnTransitionFrom();
-        currentState.OnTransitionTo();
+        _nextStateIndex = stateIndex;
     }
 
     public override IGadgetInput? GetInputWithName(string inputName)
@@ -56,7 +55,6 @@ public sealed class StatefulGadget : GadgetBase, IMoveableGadget
         return _inputLookup.TryGetValue(inputName, out var result) ? result : null;
     }
 
-    public override bool CaresAboutLemmingInteraction => true;
     public override bool MatchesLemming(Lemming lemming) => _hitBox.MatchesLemming(lemming);
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
@@ -66,7 +64,7 @@ public sealed class StatefulGadget : GadgetBase, IMoveableGadget
 
     public override void OnLemmingMatch(Lemming lemming)
     {
-        var actions = CurrentState.Actions;
+        var actions = _states[_currentStateIndex].Actions;
         foreach (var action in actions)
         {
             action.PerformAction(lemming);
@@ -91,6 +89,47 @@ public sealed class StatefulGadget : GadgetBase, IMoveableGadget
 
     public override void Tick()
     {
-        CurrentState.Tick();
+        if (_currentStateIndex != _nextStateIndex)
+        {
+            ChangeStates();
+            return;
+        }
+
+        _states[_currentStateIndex].Tick();
+    }
+
+    private void ChangeStates()
+    {
+        var previousState = _states[_currentStateIndex];
+
+        _currentStateIndex = _nextStateIndex;
+
+        var currentState = _states[_currentStateIndex];
+
+        previousState.OnTransitionFrom();
+        currentState.OnTransitionTo();
+    }
+
+    public sealed class StateSelectionInput : IGadgetInput
+    {
+        private readonly int _stateIndex;
+        public string InputName { get; }
+        private StatefulGadget _gadget = null!;
+
+        public StateSelectionInput(string inputName, int stateIndex)
+        {
+            InputName = inputName;
+            _stateIndex = stateIndex;
+        }
+
+        public void SetGadget(StatefulGadget gadget)
+        {
+            _gadget = gadget;
+        }
+
+        public void ReactToSignal(bool signal)
+        {
+            _gadget.SetNextState(_stateIndex);
+        }
     }
 }

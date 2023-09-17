@@ -8,6 +8,9 @@ public sealed class GadgetState
     private readonly int _numberOfAnimationFrames;
     private readonly IGadgetBehaviour[] _interactionActions;
     private readonly GadgetOutput _stateSelectedOutput;
+    private readonly int _stateTransitionAfterAnimation;
+
+    private StatefulGadget _gadget = null!;
 
     public ReadOnlySpan<IGadgetBehaviour> Actions => new(_interactionActions);
 
@@ -16,11 +19,18 @@ public sealed class GadgetState
     public GadgetState(
         int numberOfAnimationFrames,
         IGadgetBehaviour[] interactionActions,
-        GadgetOutput stateSelectedOutput)
+        GadgetOutput stateSelectedOutput,
+        int stateTransitionAfterAnimation)
     {
         _numberOfAnimationFrames = numberOfAnimationFrames;
         _interactionActions = interactionActions;
         _stateSelectedOutput = stateSelectedOutput;
+        _stateTransitionAfterAnimation = stateTransitionAfterAnimation;
+    }
+
+    public void SetGadget(StatefulGadget gadget)
+    {
+        _gadget = gadget;
     }
 
     public void OnTransitionTo()
@@ -37,7 +47,14 @@ public sealed class GadgetState
         }
         else
         {
-            AnimationFrame = 0;
+            if (_stateTransitionAfterAnimation == -1)
+            {
+                AnimationFrame = 0;
+            }
+            else
+            {
+                _gadget.SetNextState(_stateTransitionAfterAnimation);
+            }
         }
     }
 

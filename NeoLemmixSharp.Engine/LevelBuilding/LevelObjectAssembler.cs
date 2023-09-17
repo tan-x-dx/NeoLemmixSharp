@@ -70,6 +70,13 @@ public sealed class LevelObjectAssembler : IDisposable
         p = new RectangularLevelRegion(296, 142, 19, 13);
         var switchGadget = new SwitchGadget(id++, p, true);
         switchGadget.Output.RegisterInput(input);
+        switchGadget.LeftHitBox.IncludeOrientation(DownOrientation.Instance);
+        switchGadget.LeftHitBox.IncludeFacingDirection(RightFacingDirection.Instance);
+        switchGadget.LeftHitBox.IncludeAction(WalkerAction.Instance);
+
+        switchGadget.RightHitBox.IncludeOrientation(DownOrientation.Instance);
+        switchGadget.RightHitBox.IncludeFacingDirection(LeftFacingDirection.Instance);
+        switchGadget.RightHitBox.IncludeAction(WalkerAction.Instance);
 
         _gadgets.Add(switchGadget);
         _gadgetRenderers.Add(new SwitchRenderer(switchGadget));

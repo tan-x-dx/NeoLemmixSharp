@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
-public sealed class MetalGrateGadget : GadgetBase
+public sealed class MetalGrateGadget : HitBoxGadget
 {
     private int _transitionTick;
     private bool _isActive;
@@ -85,8 +85,6 @@ public sealed class MetalGrateGadget : GadgetBase
 
         return null;
     }
-
-    public override bool CaresAboutLemmingInteraction => true;
 
     public override bool MatchesLemming(Lemming lemming)
     {
