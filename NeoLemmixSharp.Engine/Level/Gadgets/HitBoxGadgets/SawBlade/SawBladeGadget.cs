@@ -7,7 +7,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional.SawBlade;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.SawBlade;
 
 public sealed class SawBladeGadget : HitBoxGadget, IDestructionMask, IMoveableGadget
 {

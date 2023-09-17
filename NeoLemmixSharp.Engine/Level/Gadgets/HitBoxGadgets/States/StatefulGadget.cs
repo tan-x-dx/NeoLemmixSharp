@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.States;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.States;
 
 public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 {

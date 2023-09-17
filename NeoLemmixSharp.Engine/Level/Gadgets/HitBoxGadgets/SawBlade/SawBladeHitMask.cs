@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional.SawBlade;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.SawBlade;
 
 public sealed class SawBladeHitMask
 {
@@ -16,7 +16,7 @@ public sealed class SawBladeHitMask
         RectangularLevelRegion bounds,
         LevelPosition[] mask)
     {
-        _terrainEraseMask = new TerrainEraseMask(destructionMask, new LevelPosition(0,0), mask);
+        _terrainEraseMask = new TerrainEraseMask(destructionMask, new LevelPosition(0, 0), mask);
         _hitBox = new PointSetLevelRegion(bounds, mask);
     }
 

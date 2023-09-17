@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 #pragma warning disable CS0660, CS0661, CA1067
 public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRectangularBounds

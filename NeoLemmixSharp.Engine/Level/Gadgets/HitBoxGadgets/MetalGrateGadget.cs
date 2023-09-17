@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class MetalGrateGadget : HitBoxGadget
 {
@@ -29,52 +29,47 @@ public sealed class MetalGrateGadget : HitBoxGadget
 
     public override void Tick()
     {
-        switch (CurrentState)
+        if (CurrentState == MetalGrateState.Off)
         {
-            case MetalGrateState.Off:
-                {
-                    if (_isActive)
-                    {
-                        CurrentState = MetalGrateState.Activating;
-                    }
+            if (_isActive)
+            {
+                CurrentState = MetalGrateState.Activating;
+            }
 
-                    return;
-                }
-            case MetalGrateState.Activating:
-                {
-                    if (_transitionTick < 4)
-                    {
-                        _transitionTick++;
-                    }
-                    else
-                    {
-                        CurrentState = MetalGrateState.On;
-                    }
+            return;
+        }
 
-                    return;
-                }
-            case MetalGrateState.On:
-                {
-                    if (!_isActive)
-                    {
-                        CurrentState = MetalGrateState.Deactivating;
-                    }
+        if (CurrentState == MetalGrateState.Activating)
+        {
+            if (_transitionTick < 4)
+            {
+                _transitionTick++;
+            }
+            else
+            {
+                CurrentState = MetalGrateState.On;
+            }
 
-                    return;
-                }
-            case MetalGrateState.Deactivating:
-                {
-                    if (_transitionTick > 0)
-                    {
-                        _transitionTick--;
-                    }
-                    else
-                    {
-                        CurrentState = MetalGrateState.Off;
-                    }
+            return;
+        }
 
-                    return;
-                }
+        if (CurrentState == MetalGrateState.On)
+        {
+            if (!_isActive)
+            {
+                CurrentState = MetalGrateState.Deactivating;
+            }
+
+            return;
+        }
+
+        if (_transitionTick > 0)
+        {
+            _transitionTick--;
+        }
+        else
+        {
+            CurrentState = MetalGrateState.Off;
         }
     }
 

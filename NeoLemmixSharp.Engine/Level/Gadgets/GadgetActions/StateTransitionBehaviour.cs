@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.States;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.States;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;

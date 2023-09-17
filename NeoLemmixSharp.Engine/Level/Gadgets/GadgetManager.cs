@@ -5,6 +5,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
