@@ -5,17 +5,20 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 public sealed class LemmingRenderer : IViewportObjectRenderer
 {
+    private readonly LemmingSpriteBank _spriteBank;
+
     private Level.Lemmings.Lemming _lemming;
     private ActionSprite _actionSprite;
 
-    public LemmingRenderer(Level.Lemmings.Lemming lemming)
+    public LemmingRenderer(LemmingSpriteBank spriteBank, Level.Lemmings.Lemming lemming)
     {
+        _spriteBank = spriteBank;
         _lemming = lemming;
     }
 
     public void UpdateLemmingState()
     {
-        _actionSprite = LevelRenderer.Current.LemmingSpriteBank.GetActionSprite(
+        _actionSprite = _spriteBank.GetActionSprite(
             _lemming.CurrentAction,
             _lemming.Orientation,
             _lemming.FacingDirection);

@@ -10,6 +10,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Functional.SawBlade;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -181,12 +182,19 @@ public sealed class LevelObjectAssembler : IDisposable
         return _gadgets.ToArray();
     }
 
-    public IViewportObjectRenderer[] GetLevelSprites()
+    public IViewportObjectRenderer[] GetLevelSprites(Dictionary<Team, LemmingSpriteBank> lemmingSpriteBankLookup)
     {
-        var lemmingSprites = _lemmings
-            .Select(l => l.Renderer);
+        var result = new List<IViewportObjectRenderer>();
+        foreach (var lemming in _lemmings)
+        {
+            var lemmingSpriteBank = lemmingSpriteBankLookup[lemming.State.TeamAffiliation];
 
-        return lemmingSprites
+            var renderer = new LemmingRenderer(lemmingSpriteBank, lemming);
+            lemming.SetRenderer(renderer);
+            result.Add(renderer);
+        }
+
+        return result
             .Concat(_gadgetRenderers)
             .ToArray();
     }

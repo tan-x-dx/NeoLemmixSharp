@@ -67,7 +67,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LemmingAction CurrentAction { get; private set; }
     public LemmingAction NextAction { get; private set; } = NoneAction.Instance;
 
-    public LemmingRenderer Renderer { get; }
+    public LemmingRenderer Renderer { get; private set; } = null!;
     public LemmingState State { get; }
 
     public LevelPosition TopLeftPixel { get; private set; }
@@ -86,8 +86,11 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         FacingDirection = facingDirection ?? RightFacingDirection.Instance;
         CurrentAction = currentAction ?? WalkerAction.Instance;
         State = new LemmingState(this, Team.AllItems[0]);
+    }
 
-        Renderer = new LemmingRenderer(this);
+    public void SetRenderer(LemmingRenderer lemmingRenderer)
+    {
+        Renderer = lemmingRenderer;
     }
 
     public void Initialise()
