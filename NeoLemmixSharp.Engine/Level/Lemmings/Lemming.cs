@@ -40,10 +40,12 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public bool InitialFall;
     public bool EndOfAnimation;
     public bool LaserHit;
+    public bool JumpToHoistAdvance;
 
     public bool Debug;
 
-    public int AnimationFrame;//{ get; set; }
+    public int AnimationFrame;
+    public int PhysicsFrame;
     public int AscenderProgress;
     public int NumberOfBricksLeft;
     public int DisarmingFrames;
@@ -131,17 +133,18 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     private bool HandleLemmingAction()
     {
-        AnimationFrame++;
-        if (AnimationFrame == CurrentAction.NumberOfAnimationFrames)
+        PhysicsFrame++;
+
+        if (PhysicsFrame >= CurrentAction.NumberOfAnimationFrames)
         {
             if (CurrentAction == FloaterAction.Instance ||
                 CurrentAction == GliderAction.Instance)
             {
-                AnimationFrame = 9;
+                PhysicsFrame = 9;
             }
             else
             {
-                AnimationFrame = 0;
+                PhysicsFrame = 0;
             }
 
             if (CurrentAction.IsOneTimeAction)
@@ -149,6 +152,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
                 EndOfAnimation = true;
             }
         }
+
+        AnimationFrame = PhysicsFrame;
+        // AnimationFrame is usually identical to PhysicsFrame
+        // Exceptions occur in JumperAction, for example
 
         PreviousLevelPosition = LevelPosition;
         PreviousTopLeftPixel = TopLeftPixel;
@@ -180,6 +187,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     private bool CheckTriggerArea(bool isPostTeleportCheck)
     {
+        var needShiftPosition = false;
+
         var currentAnchorPixel = LevelPosition;
         var currentFootPixel = Orientation.MoveUp(currentAnchorPixel, 1);
 
@@ -202,38 +211,69 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         var topLeftPixel = checkRegion.GetTopLeftPosition();
         var bottomRightPixel = checkRegion.GetBottomRightPosition();
 
+        CheckGadgets(topLeftPixel, bottomRightPixel);
+
+        NextAction.TransitionLemmingToAction(this, false);
+
+        return true;
+    }
+
+    private void CheckGadgets(LevelPosition topLeftPixel, LevelPosition bottomRightPixel)
+    {
         var gadgetEnumerator = GadgetManager.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
 
         if (gadgetEnumerator.IsEmpty)
-        {
-            NextAction.TransitionLemmingToAction(this, false);
-            return true;
-        }
+            return;
 
         Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
         var movementHelper = new LemmingMovementHelper(this, checkPositions);
         movementHelper.EvaluateCheckPositions();
         var length = movementHelper.Length;
 
-        while (gadgetEnumerator.MoveNext())
-        {
-            var gadget = gadgetEnumerator.Current;
+        var abortChecks = false;
 
-            for (var i = 0; i < length; i++)
+        for (var i = 0; i < length && !abortChecks; i++)
+        {
+            var anchorPosition = checkPositions[i];
+            var footPosition = Orientation.MoveUp(anchorPosition, 1);
+
+            while (gadgetEnumerator.MoveNext() && !abortChecks)
             {
-                var anchorPosition = checkPositions[i];
-                var footPosition = Orientation.MoveUp(anchorPosition, 1);
+                var gadget = gadgetEnumerator.Current;
+
                 if (gadget.MatchesLemmingAtPosition(this, anchorPosition) ||
                     gadget.MatchesLemmingAtPosition(this, footPosition))
                 {
-                    gadget.OnLemmingMatch(this);
+                    abortChecks = HandleGadgetInteraction(gadget, anchorPosition);
                 }
             }
+
+            gadgetEnumerator.Reset();
+        }
+    }
+
+    private bool HandleGadgetInteraction(GadgetBase gadget, LevelPosition checkPosition)
+    {
+        // Transition if we are at the end position and need to do one
+        // Except if we try to splat and there is water at the lemming position - then let this take precedence.
+        if (NextAction != NoneAction.Instance &&
+            checkPosition == LevelPosition &&
+            (NextAction != SplatterAction.Instance || gadget.Type != GadgetType.Water))
+        {
+            NextAction.TransitionLemmingToAction(this, false);
+            if (JumpToHoistAdvance)
+            {
+                AnimationFrame += 2;
+                PhysicsFrame += 2;
+            }
+
+            NextAction = NoneAction.Instance;
+            JumpToHoistAdvance = false;
         }
 
-        NextAction.TransitionLemmingToAction(this, false);
+        gadget.OnLemmingMatch(this);
 
-        return true;
+        return false;
     }
 
     /*

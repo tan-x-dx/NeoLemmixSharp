@@ -22,7 +22,7 @@ public sealed class ShimmierAction : LemmingAction
         var lemmingPosition = lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
-        if ((lemming.AnimationFrame & 1) == 0)
+        if ((lemming.PhysicsFrame & 1) == 0)
         {
             var i = 0;
             // Check whether we find terrain to walk onto
@@ -48,6 +48,7 @@ public sealed class ShimmierAction : LemmingAction
                     lemming.LevelPosition = lemmingPosition;
                     lemming.IsStartingAction = false;
                     HoisterAction.Instance.TransitionLemmingToAction(lemming, false);
+                    lemming.PhysicsFrame += 2;
                     lemming.AnimationFrame += 2;
                     return true;
                 }

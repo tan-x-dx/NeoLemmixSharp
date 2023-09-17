@@ -18,11 +18,11 @@ public sealed class StackerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (lemming.AnimationFrame == 7)
+        if (lemming.PhysicsFrame == 7)
         {
             lemming.PlacedBrick = LayStackBrick(lemming);
         }
-        else if (lemming.AnimationFrame == 0)
+        else if (lemming.PhysicsFrame == 0)
         {
             lemming.NumberOfBricksLeft--;
 

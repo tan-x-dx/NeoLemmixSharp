@@ -24,7 +24,7 @@ public sealed class FloaterAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var maxFallDistance = _floaterFallTable[lemming.AnimationFrame - 1];
+        var maxFallDistance = _floaterFallTable[lemming.PhysicsFrame - 1];
 
         var orientation = lemming.Orientation;
         var levelPosition = lemming.LevelPosition;

@@ -34,11 +34,11 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
             DigOneRow(lemming, orientation, facingDirection, orientation.MoveUp(lemmingPosition, 1));
             // The first digger cycle is one frame longer!
             // So we need to artificially cancel the very first frame advancement.
-            lemming.AnimationFrame--;
+            lemming.PhysicsFrame--;
         }
 
-        if (lemming.AnimationFrame != 0 &&
-            lemming.AnimationFrame != 8)
+        if (lemming.PhysicsFrame != 0 &&
+            lemming.PhysicsFrame != 8)
             return true;
 
         var continueDigging = DigOneRow(lemming, orientation, facingDirection, lemmingPosition);

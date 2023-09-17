@@ -18,21 +18,21 @@ public sealed class BuilderAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (lemming.AnimationFrame == 9)
+        if (lemming.PhysicsFrame == 9)
         {
             LayBrick(lemming);
 
             return true;
         }
 
-        if (lemming.AnimationFrame == 10 &&
+        if (lemming.PhysicsFrame == 10 &&
                  lemming.NumberOfBricksLeft <= 3)
         {
             // play sound/make visual cue
             return true;
         }
 
-        if (lemming.AnimationFrame != 0)
+        if (lemming.PhysicsFrame != 0)
             return true;
 
         BuilderFrame0(lemming);

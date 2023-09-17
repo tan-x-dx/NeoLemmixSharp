@@ -33,13 +33,13 @@ public sealed class DehoisterAction : LemmingAction
             return true;
         }
 
-        if (lemming.AnimationFrame < 2)
+        if (lemming.PhysicsFrame < 2)
             return true;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         lemming.LevelPosition = lemmingPosition;
 
-        var animFrameValue = lemming.AnimationFrame * 2;
+        var animFrameValue = lemming.PhysicsFrame * 2;
 
         if (!SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 3))
         {

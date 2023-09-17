@@ -23,18 +23,18 @@ public sealed class ClimberAction : LemmingAction
         var dx = lemming.FacingDirection.DeltaX;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
-        var animationFrame = lemming.AnimationFrame;
+        var physicsFrame = lemming.PhysicsFrame;
 
         bool foundClip;
 
-        if (animationFrame <= 3)
+        if (physicsFrame <= 3)
         {
             foundClip =
-                TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 6 + animationFrame)) ||
-                (TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 5 + animationFrame)) &&
+                TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 6 + physicsFrame)) ||
+                (TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 5 + physicsFrame)) &&
                  !lemming.IsStartingAction);
 
-            if (animationFrame == 0) // first triggered after 8 frames!
+            if (physicsFrame == 0) // first triggered after 8 frames!
             {
                 foundClip = foundClip && TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 7));
             }
@@ -44,7 +44,7 @@ public sealed class ClimberAction : LemmingAction
                 // Don't fall below original position on hitting terrain in first cycle
                 if (!lemming.IsStartingAction)
                 {
-                    lemmingPosition = orientation.MoveUp(lemmingPosition, 3 - animationFrame);
+                    lemmingPosition = orientation.MoveUp(lemmingPosition, 3 - physicsFrame);
                     lemming.LevelPosition = lemmingPosition;
                 }
 
@@ -65,13 +65,13 @@ public sealed class ClimberAction : LemmingAction
                 return true;
             }
 
-            if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7 + animationFrame)))
+            if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7 + physicsFrame)))
                 return true;
 
             // if-case prevents too deep bombing, see http://www.lemmingsforums.net/index.php?topic=2620.0
-            if (!(lemming.IsStartingAction && animationFrame == 1))
+            if (!(lemming.IsStartingAction && physicsFrame == 1))
             {
-                lemmingPosition = orientation.MoveUp(lemmingPosition, animationFrame - 2);
+                lemmingPosition = orientation.MoveUp(lemmingPosition, physicsFrame - 2);
                 lemming.LevelPosition = lemmingPosition;
                 lemming.IsStartingAction = false;
             }
@@ -87,7 +87,7 @@ public sealed class ClimberAction : LemmingAction
 
         foundClip = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 7));
 
-        if (animationFrame == 7)
+        if (physicsFrame == 7)
         {
             foundClip = foundClip && TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7));
         }
