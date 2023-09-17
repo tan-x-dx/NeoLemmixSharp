@@ -7,11 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoLemmixSharp", "NeoLemmix
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoLemmixSharp.Common", "NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj", "{A2E72BB7-DB16-49D9-B310-7942B89EF30C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoLemmixSharp.Io", "NeoLemmixSharp.Io\NeoLemmixSharp.Io.csproj", "{0113B107-2329-412C-9FDB-7868349BA87E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{A2E72BB7-DB16-49D9-B310-7942B89EF30C} = {A2E72BB7-DB16-49D9-B310-7942B89EF30C}
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoLemmixSharp.Engine", "NeoLemmixSharp.Engine\NeoLemmixSharp.Engine.csproj", "{9974DE21-0F6D-419B-B969-29351AF5560B}"
 EndProject
 Global
@@ -28,10 +23,6 @@ Global
 		{A2E72BB7-DB16-49D9-B310-7942B89EF30C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2E72BB7-DB16-49D9-B310-7942B89EF30C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2E72BB7-DB16-49D9-B310-7942B89EF30C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0113B107-2329-412C-9FDB-7868349BA87E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0113B107-2329-412C-9FDB-7868349BA87E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0113B107-2329-412C-9FDB-7868349BA87E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0113B107-2329-412C-9FDB-7868349BA87E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9974DE21-0F6D-419B-B969-29351AF5560B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9974DE21-0F6D-419B-B969-29351AF5560B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9974DE21-0F6D-419B-B969-29351AF5560B}.Release|Any CPU.ActiveCfg = Release|Any CPU

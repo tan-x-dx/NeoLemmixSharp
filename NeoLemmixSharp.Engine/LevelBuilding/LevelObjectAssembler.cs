@@ -54,32 +54,7 @@ public sealed class LevelObjectAssembler : IDisposable
         //SetUpTestLemmings();
         //SetUpLemmings();
         //SetUpGadgets(content, levelData.AllGadgetData);
-
-        var x = new List<LemmingSkill>
-        {
-            BuilderSkill.Instance,
-            ClimberSkill.Instance,
-            DiggerSkill.Instance,
-            MinerSkill.Instance
-        };
-
-        var i = 10;
-        //  foreach (var team in Team.AllItems)
-        {
-            foreach (var skill in x)
-            {
-                var item = new SkillSetData
-                {
-                    SkillName = skill.LemmingSkillName,
-                    NumberOfSkills = 100,
-                    TeamId = Team.AllItems[0].Id,
-                };
-
-                levelData.SkillSetData.Add(item);
-                i++;
-            }
-        }
-
+        
         var id = 0;
         var p = new RectangularLevelRegion(250, 90, 40, 2);
         var input = new MetalGrateGadget.MetalGrateGadgetInput("input");

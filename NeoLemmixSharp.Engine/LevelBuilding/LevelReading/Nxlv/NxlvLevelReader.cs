@@ -20,7 +20,7 @@ public sealed class NxlvLevelReader : ILevelReader
 
         AddDataReader(new LevelDataReader(LevelData, false));
         AddDataReader(new LevelDataReader(LevelData, true));
-        AddDataReader(new SkillSetReader());
+        AddDataReader(new SkillSetReader(LevelData));
         AddDataReader(new TerrainGroupReader(LevelData.AllTerrainGroups));
         AddDataReader(new GadgetReader(LevelData.AllGadgetData));
         AddDataReader(new TerrainReader(LevelData.AllTerrainData));
@@ -30,6 +30,8 @@ public sealed class NxlvLevelReader : ILevelReader
         AddDataReader(new StateRecoloringReader(LevelData.ThemeData));
         AddDataReader(new ShadesReader());
         AddDataReader(new AnimationDataReader(LevelData.ThemeData));
+
+        return;
 
         void AddDataReader(IDataReader dataReader)
         {
