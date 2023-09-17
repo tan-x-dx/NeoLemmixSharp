@@ -2,5 +2,6 @@
 
 internal interface IChunkPositionUser
 {
+    void Clear();
     void UseChunkPosition(ChunkPosition chunkPosition);
 }
