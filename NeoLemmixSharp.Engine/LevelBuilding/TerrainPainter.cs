@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Io.LevelReading.Data;
-using NeoLemmixSharp.Io.LevelReading.Sprites;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.Sprites;
 
-namespace NeoLemmixSharp.Io.LevelReading;
+namespace NeoLemmixSharp.Engine.LevelBuilding;
 
 public sealed class TerrainPainter
 {

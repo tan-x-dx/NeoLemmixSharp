@@ -1,6 +1,6 @@
-﻿using NeoLemmixSharp.Io.LevelReading.Data;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Io.LevelReading;
+namespace NeoLemmixSharp.Engine.LevelBuilding;
 
 public interface ILevelReader : IDisposable
 {

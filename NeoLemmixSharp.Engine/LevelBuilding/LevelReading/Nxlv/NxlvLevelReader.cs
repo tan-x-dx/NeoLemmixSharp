@@ -1,8 +1,8 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Io.LevelReading.Data;
-using NeoLemmixSharp.Io.LevelReading.Nxlv.Reading;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Nxlv.Reading;
 
-namespace NeoLemmixSharp.Io.LevelReading.Nxlv;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Nxlv;
 
 public sealed class NxlvLevelReader : ILevelReader
 {

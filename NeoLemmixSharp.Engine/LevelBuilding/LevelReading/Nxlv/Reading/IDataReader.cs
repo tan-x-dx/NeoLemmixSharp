@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Io.LevelReading.Nxlv.Reading;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Nxlv.Reading;
 
 public interface IDataReader
 {

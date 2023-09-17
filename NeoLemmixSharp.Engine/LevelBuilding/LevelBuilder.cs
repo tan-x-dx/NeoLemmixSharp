@@ -12,13 +12,12 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Nxlv;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
-using NeoLemmixSharp.Io.LevelReading;
-using NeoLemmixSharp.Io.LevelReading.Nxlv;
 using Viewport = NeoLemmixSharp.Engine.Level.Viewport;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;

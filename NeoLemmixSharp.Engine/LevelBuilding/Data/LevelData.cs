@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 
-namespace NeoLemmixSharp.Io.LevelReading.Data;
+namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 public sealed class LevelData
 {

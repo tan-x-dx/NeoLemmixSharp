@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Io.LevelReading.Data;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 public sealed class TerrainGroup : IDisposable
 {

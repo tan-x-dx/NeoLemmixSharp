@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Io.LevelReading.Data.SpriteSet;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data.SpriteSet;
 
 public sealed class LemmingSpriteData
 {

@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Teams;
-using NeoLemmixSharp.Io.LevelReading.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
