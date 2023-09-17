@@ -1,11 +1,11 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Nxlv.Reading;
 
 public sealed class SkillSetReader : IDataReader
 {
-    private readonly Dictionary<string, LemmingAction> _actionLookup = new();
+    private readonly Dictionary<string, LemmingSkill> _skillLookup = new();
     private readonly List<SkillSetData> _skillSetData;
 
     public bool FinishedReading { get; private set; }
@@ -14,6 +14,12 @@ public sealed class SkillSetReader : IDataReader
     public SkillSetReader(LevelData levelData)
     {
         _skillSetData = levelData.SkillSetData;
+
+        foreach (var lemmingSkill in LemmingSkill.AllItems)
+        {
+            var name = lemmingSkill.LemmingSkillName.ToUpperInvariant();
+            _skillLookup.Add(name, lemmingSkill);
+        }
     }
 
     public void BeginReading(string[] tokens)
@@ -23,37 +29,31 @@ public sealed class SkillSetReader : IDataReader
 
     public void ReadNextLine(string[] tokens)
     {
-        switch (tokens[0])
+        if (tokens[0] == "$END")
         {
-            case "WALKER":
-                _skillSetData.Add(CreateSkillSetData("walker", tokens[1]));
-                break;
-
-
-
-            case "$END":
-                FinishedReading = true;
-                break;
-
-            default:
-                throw new Exception($"Unknown token: {tokens[0]}");
+            FinishedReading = true;
+            return;
         }
+
+        ReadSkillSetData(tokens);
     }
 
-    private static SkillSetData CreateSkillSetData(string skillName, string amountString)
+    private void ReadSkillSetData(string[] tokens)
     {
-        var amount = ReadingHelpers.ReadInt(amountString);
+        if (!_skillLookup.TryGetValue(tokens[0], out var skill))
+            throw new Exception($"Unknown token: {tokens[0]}");
 
-        return new SkillSetData
+        var amount = tokens[1] == "INFINITE" 
+            ? 100
+            : ReadingHelpers.ReadInt(tokens[1]);
+
+        var skillSetDatum = new SkillSetData
         {
-            SkillName = skillName,
+            Skill = skill,
             NumberOfSkills = amount,
             TeamId = 0
         };
-    }
 
-    private static void Foo(string[] tokens)
-    {
-
+        _skillSetData.Add(skillSetDatum);
     }
 }

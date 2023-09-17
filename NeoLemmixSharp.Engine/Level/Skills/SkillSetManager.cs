@@ -24,21 +24,10 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>
 
     private static SkillTrackingData CreateFromSkillSetData(SkillSetData skillSetData)
     {
-        var lemmingSkill = GetSkillByName(skillSetData.SkillName);
+        var lemmingSkill = skillSetData.Skill;
         var team = Team.AllItems[skillSetData.TeamId];
 
         return new SkillTrackingData(lemmingSkill, team, skillSetData.NumberOfSkills);
-    }
-
-    private static LemmingSkill GetSkillByName(string name)
-    {
-        foreach (var lemmingSkill in LemmingSkill.AllItems)
-        {
-            if (string.Equals(name, lemmingSkill.LemmingSkillName))
-                return lemmingSkill;
-        }
-
-        throw new ArgumentException("Unknown skill name", nameof(name));
     }
 
     public SkillTrackingData? GetSkillTrackingData(int skillDataId)

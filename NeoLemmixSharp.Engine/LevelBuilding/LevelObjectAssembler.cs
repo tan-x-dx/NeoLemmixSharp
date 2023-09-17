@@ -10,8 +10,6 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Functional.SawBlade;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -54,7 +52,7 @@ public sealed class LevelObjectAssembler : IDisposable
         //SetUpTestLemmings();
         //SetUpLemmings();
         //SetUpGadgets(content, levelData.AllGadgetData);
-        
+
         var id = 0;
         var p = new RectangularLevelRegion(250, 90, 40, 2);
         var input = new MetalGrateGadget.MetalGrateGadgetInput("input");
@@ -76,7 +74,7 @@ public sealed class LevelObjectAssembler : IDisposable
         _gadgetRenderers.Add(new SwitchRenderer(switchGadget));
 
         var sawBladeGadget = LoadSawBlade(contentManager);
-        
+
         var mover = new GadgetMover(
             3,
             new RectangularLevelRegion(0, 0, 1, 1),
