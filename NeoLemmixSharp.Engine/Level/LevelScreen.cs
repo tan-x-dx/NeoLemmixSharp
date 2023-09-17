@@ -137,6 +137,7 @@ public sealed class LevelScreen : IBaseScreen
         LemmingAction.SetTerrainManager(terrainManager);
         LemmingSkill.SetTerrainManager(terrainManager);
         Lemming.SetTerrainManager(terrainManager);
+        LemmingMovementHelper.SetTerrainManager(terrainManager);
         TerrainEraseMask.SetTerrainManager(terrainManager);
         TerrainAddMask.SetTerrainManager(terrainManager);
         GadgetBase.SetTerrainManager(terrainManager);
