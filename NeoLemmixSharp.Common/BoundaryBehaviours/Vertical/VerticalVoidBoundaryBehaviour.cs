@@ -14,5 +14,5 @@ public sealed class VerticalVoidBoundaryBehaviour : IVerticalBoundaryBehaviour
     [Pure]
     public int NormaliseY(int y) => y;
     [Pure]
-    public int GetVerticalDelta(int y1, int y2) => Math.Abs(y1 - y2);
+    public int GetVerticalDelta(int y1, int y2) => y2 - y1;
 }

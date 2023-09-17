@@ -12,7 +12,7 @@ public static class BoundaryHelpers
         BoundaryBehaviourType.Void => new HorizontalVoidViewPortBehaviour(levelWidth),
         //   BoundaryBehaviourType.Solid => expr,
         //   BoundaryBehaviourType.Reflect => expr,
-        BoundaryBehaviourType.Wrap => new HorizontalWrapBehaviour(levelWidth),
+        BoundaryBehaviourType.Wrap => new HorizontalWrapViewPortBehaviour(levelWidth),
         _ => throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType,
             "Unknown boundary behaviour type")
     };

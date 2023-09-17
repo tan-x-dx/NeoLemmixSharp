@@ -10,13 +10,11 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Functional.SawBlade;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
-using NeoLemmixSharp.Io.LevelReading.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -55,31 +53,6 @@ public sealed class LevelObjectAssembler : IDisposable
         //SetUpLemmings();
         //SetUpGadgets(content, levelData.AllGadgetData);
 
-        var x = new List<LemmingSkill>
-        {
-            BuilderSkill.Instance,
-            ClimberSkill.Instance,
-            DiggerSkill.Instance,
-            MinerSkill.Instance
-        };
-
-        var i = 10;
-        //  foreach (var team in Team.AllItems)
-        {
-            foreach (var skill in x)
-            {
-                var item = new SkillSetData
-                {
-                    SkillName = skill.LemmingSkillName,
-                    NumberOfSkills = 100,
-                    TeamId = Team.AllItems[0].Id,
-                };
-
-                levelData.SkillSetData.Add(item);
-                i++;
-            }
-        }
-
         var id = 0;
         var p = new RectangularLevelRegion(250, 90, 40, 2);
         var input = new MetalGrateGadget.MetalGrateGadgetInput("input");
@@ -101,7 +74,7 @@ public sealed class LevelObjectAssembler : IDisposable
         _gadgetRenderers.Add(new SwitchRenderer(switchGadget));
 
         var sawBladeGadget = LoadSawBlade(contentManager);
-        
+
         var mover = new GadgetMover(
             3,
             new RectangularLevelRegion(0, 0, 1, 1),

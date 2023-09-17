@@ -11,8 +11,8 @@ using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
-using NeoLemmixSharp.Io.LevelReading.Data;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -137,6 +137,7 @@ public sealed class LevelScreen : IBaseScreen
         LemmingAction.SetTerrainManager(terrainManager);
         LemmingSkill.SetTerrainManager(terrainManager);
         Lemming.SetTerrainManager(terrainManager);
+        LemmingMovementHelper.SetTerrainManager(terrainManager);
         TerrainEraseMask.SetTerrainManager(terrainManager);
         TerrainAddMask.SetTerrainManager(terrainManager);
         GadgetBase.SetTerrainManager(terrainManager);

@@ -45,30 +45,40 @@ public sealed class PositionHelper<T>
     [Pure]
     public LargeSimpleSet<T>.Enumerator GetAllItemsNearPosition(LevelPosition levelPosition)
     {
-        var shiftX = levelPosition.X >> _chunkSizeBitShift;
-        var shiftY = levelPosition.Y >> _chunkSizeBitShift;
+        var chunkX = levelPosition.X >> _chunkSizeBitShift;
+        var chunkY = levelPosition.Y >> _chunkSizeBitShift;
 
-        if (shiftX < 0 || shiftX >= _numberOfHorizontalChunks ||
-            shiftY < 0 || shiftY >= _numberOfVerticalChunks)
+        if (chunkX < 0 || chunkX >= _numberOfHorizontalChunks ||
+            chunkY < 0 || chunkY >= _numberOfVerticalChunks)
             return new LargeSimpleSet<T>.Enumerator();
 
-        var chunkPosition = new ChunkPosition(shiftX, shiftY);
-
-        return _itemChunkLookup.TryGetValue(chunkPosition, out var itemChunk)
-            ? itemChunk.GetEnumerator()
-            : new LargeSimpleSet<T>.Enumerator();
+        return GetEnumeratorForChunkPosition(chunkX, chunkY);
     }
 
+    [Pure]
     public LargeSimpleSet<T>.Enumerator GetAllItemsNearRegion(
         LevelPosition topLeftLevelPosition,
         LevelPosition bottomRightLevelPosition)
     {
-        GetShiftValues(topLeftLevelPosition, out var topLeftShiftX, out var topLeftShiftY);
-        GetShiftValues(bottomRightLevelPosition, out var bottomRightShiftX, out var bottomRightShiftY);
+        GetShiftValues(topLeftLevelPosition, out var topLeftChunkX, out var topLeftChunkY);
+        GetShiftValues(bottomRightLevelPosition, out var bottomRightChunkX, out var bottomRightChunkY);
 
-        _setUnionChunkPositionUser.Clear();
-        EvaluateChunkPositions(_setUnionChunkPositionUser, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        if (topLeftChunkX == bottomRightChunkX &&
+            topLeftChunkY == bottomRightChunkY)
+            return GetEnumeratorForChunkPosition(topLeftChunkX, topLeftChunkY);
+
+        EvaluateChunkPositions(_setUnionChunkPositionUser, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
         return _setUnionChunkPositionUser.GetEnumerator();
+    }
+
+    [Pure]
+    private LargeSimpleSet<T>.Enumerator GetEnumeratorForChunkPosition(int chunkX, int chunkY)
+    {
+        var chunkPosition = new ChunkPosition(chunkX, chunkY);
+
+        return _itemChunkLookup.TryGetValue(chunkPosition, out var itemChunk)
+            ? itemChunk.GetEnumerator()
+            : new LargeSimpleSet<T>.Enumerator();
     }
 
     public void AddItem(T item)
@@ -76,10 +86,10 @@ public sealed class PositionHelper<T>
         var topLeftPixel = item.TopLeftPixel;
         var bottomRightPixel = item.BottomRightPixel;
 
-        GetShiftValues(topLeftPixel, out var topLeftShiftX, out var topLeftShiftY);
-        GetShiftValues(bottomRightPixel, out var bottomRightShiftX, out var bottomRightShiftY);
+        GetShiftValues(topLeftPixel, out var topLeftChunkX, out var topLeftChunkY);
+        GetShiftValues(bottomRightPixel, out var bottomRightChunkX, out var bottomRightChunkY);
 
-        AddItem(item, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        AddItem(item, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
     }
 
     public void UpdateItemPosition(T item)
@@ -93,20 +103,20 @@ public sealed class PositionHelper<T>
             bottomRightPixel == previousBottomRightPixel)
             return;
 
-        GetShiftValues(topLeftPixel, out var topLeftShiftX, out var topLeftShiftY);
-        GetShiftValues(bottomRightPixel, out var bottomRightShiftX, out var bottomRightShiftY);
+        GetShiftValues(topLeftPixel, out var topLeftChunkX, out var topLeftChunkY);
+        GetShiftValues(bottomRightPixel, out var bottomRightChunkX, out var bottomRightChunkY);
 
-        GetShiftValues(previousTopLeftPixel, out var previousTopLeftShiftX, out var previousTopLeftShiftY);
-        GetShiftValues(previousBottomRightPixel, out var previousBottomRightShiftX, out var previousBottomRightShiftY);
+        GetShiftValues(previousTopLeftPixel, out var previousTopLeftChunkX, out var previousTopLeftChunkY);
+        GetShiftValues(previousBottomRightPixel, out var previousBottomRightChunkX, out var previousBottomRightChunkY);
 
-        if (topLeftShiftX == previousTopLeftShiftX &&
-            topLeftShiftY == previousTopLeftShiftY &&
-            bottomRightShiftX == previousBottomRightShiftX &&
-            bottomRightShiftY == previousBottomRightShiftY)
+        if (topLeftChunkX == previousTopLeftChunkX &&
+            topLeftChunkY == previousTopLeftChunkY &&
+            bottomRightChunkX == previousBottomRightChunkX &&
+            bottomRightChunkY == previousBottomRightChunkY)
             return;
 
-        RemoveItem(item, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
-        AddItem(item, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        RemoveItem(item, previousTopLeftChunkX, previousTopLeftChunkY, previousBottomRightChunkX, previousBottomRightChunkY);
+        AddItem(item, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
     }
 
     public void RemoveItem(T item)
@@ -116,26 +126,25 @@ public sealed class PositionHelper<T>
         var previousTopLeftPixel = item.PreviousTopLeftPixel;
         var previousBottomRightPixel = item.PreviousBottomRightPixel;
 
-        GetShiftValues(topLeftPixel, out var topLeftShiftX, out var topLeftShiftY);
-        GetShiftValues(bottomRightPixel, out var bottomRightShiftX, out var bottomRightShiftY);
+        GetShiftValues(topLeftPixel, out var topLeftChunkX, out var topLeftChunkY);
+        GetShiftValues(bottomRightPixel, out var bottomRightChunkX, out var bottomRightChunkY);
 
-        RemoveItem(item, topLeftShiftX, topLeftShiftY, bottomRightShiftX, bottomRightShiftY);
+        RemoveItem(item, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
 
-        GetShiftValues(previousTopLeftPixel, out var previousTopLeftShiftX, out var previousTopLeftShiftY);
-        GetShiftValues(previousBottomRightPixel, out var previousBottomRightShiftX, out var previousBottomRightShiftY);
+        GetShiftValues(previousTopLeftPixel, out var previousTopLeftChunkX, out var previousTopLeftChunkY);
+        GetShiftValues(previousBottomRightPixel, out var previousBottomRightChunkX, out var previousBottomRightChunkY);
 
-        if (topLeftShiftX == previousTopLeftShiftX &&
-            topLeftShiftY == previousTopLeftShiftY &&
-            bottomRightShiftX == previousBottomRightShiftX &&
-            bottomRightShiftY == previousBottomRightShiftY)
+        if (topLeftChunkX == previousTopLeftChunkX &&
+            topLeftChunkY == previousTopLeftChunkY &&
+            bottomRightChunkX == previousBottomRightChunkX &&
+            bottomRightChunkY == previousBottomRightChunkY)
             return;
 
-        RemoveItem(item, previousTopLeftShiftX, previousTopLeftShiftY, previousBottomRightShiftX, previousBottomRightShiftY);
+        RemoveItem(item, previousTopLeftChunkX, previousTopLeftChunkY, previousBottomRightChunkX, previousBottomRightChunkY);
     }
 
     private void AddItem(T item, int ax, int ay, int bx, int by)
     {
-        _chunkPositionScratchSpace.Clear();
         EvaluateChunkPositions(_chunkPositionScratchSpace, ax, ay, bx, by);
 
         foreach (var itemChunkPosition in _chunkPositionScratchSpace.AsSpan())
@@ -152,7 +161,6 @@ public sealed class PositionHelper<T>
 
     private void RemoveItem(T item, int ax, int ay, int bx, int by)
     {
-        _chunkPositionScratchSpace.Clear();
         EvaluateChunkPositions(_chunkPositionScratchSpace, ax, ay, bx, by);
 
         foreach (var itemChunkPosition in _chunkPositionScratchSpace.AsSpan())
@@ -166,17 +174,19 @@ public sealed class PositionHelper<T>
 
     private void GetShiftValues(
         LevelPosition levelPosition,
-        out int shiftX,
-        out int shiftY)
+        out int chunkX,
+        out int chunkY)
     {
-        shiftX = _horizontalBoundaryBehaviour.NormaliseX(levelPosition.X) >> _chunkSizeBitShift;
-        shiftY = _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y) >> _chunkSizeBitShift;
-        shiftX = Math.Clamp(shiftX, 0, _numberOfHorizontalChunks - 1);
-        shiftY = Math.Clamp(shiftY, 0, _numberOfVerticalChunks - 1);
+        chunkX = _horizontalBoundaryBehaviour.NormaliseX(levelPosition.X) >> _chunkSizeBitShift;
+        chunkY = _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y) >> _chunkSizeBitShift;
+        chunkX = Math.Clamp(chunkX, 0, _numberOfHorizontalChunks - 1);
+        chunkY = Math.Clamp(chunkY, 0, _numberOfVerticalChunks - 1);
     }
 
     private void EvaluateChunkPositions(IChunkPositionUser chunkPositionUser, int ax, int ay, int bx, int by)
     {
+        chunkPositionUser.Clear();
+
         if (bx < ax)
         {
             bx += _numberOfHorizontalChunks;

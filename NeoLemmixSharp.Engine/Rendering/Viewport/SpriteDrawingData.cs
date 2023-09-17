@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Io.LevelReading.Sprites;
+using NeoLemmixSharp.Engine.LevelBuilding.Sprites;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 

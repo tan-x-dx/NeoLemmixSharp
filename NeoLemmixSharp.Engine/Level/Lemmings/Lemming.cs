@@ -201,6 +201,12 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
         var gadgetEnumerator = GadgetManager.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
 
+        if (gadgetEnumerator.IsEmpty)
+        {
+            NextAction.TransitionLemmingToAction(this, false);
+            return true;
+        }
+
         Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
         var movementHelper = new LemmingMovementHelper(this, checkPositions);
         movementHelper.EvaluateCheckPositions();

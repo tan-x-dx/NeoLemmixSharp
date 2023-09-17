@@ -1,13 +1,21 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Terrain;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public ref struct LemmingMovementHelper
 {
-    public const int MaxIntermediateCheckPositions = 11;
+    private static TerrainManager Terrain { get; set; } = null!;
+
+    public static void SetTerrainManager(TerrainManager terrain)
+    {
+        Terrain = terrain;
+    }
+
+    public const int MaxIntermediateCheckPositions = 12;
 
     private readonly Lemming _lemming;
     private readonly Span<LevelPosition> _checkPositions;
@@ -19,31 +27,32 @@ public ref struct LemmingMovementHelper
         _checkPositions = checkPositions;
     }
 
+    /// <summary>
+    /// The intermediate checks are made according to:
+    /// http://www.lemmingsforums.net/index.php?topic=2604.7
+    /// </summary>
     public void EvaluateCheckPositions()
     {
-        if (_lemming.Id == 6)
-        {
-            ;
-        }
-
-        var workPosition = _lemming.PreviousLevelPosition;
         var previousLemmingPosition = _lemming.PreviousLevelPosition;
         var currentLemmingPosition = _lemming.LevelPosition;
 
         var orientation = _lemming.Orientation;
         var previousAction = _lemming.PreviousAction;
-        if (_lemming.PreviousAction == JumperAction.Instance)
+
+        var workPosition = previousLemmingPosition;
+
+        if (previousAction == JumperAction.Instance)
         {
-            HandleJumping(); // But continue with the rest as normal
+            HandleJumping(ref workPosition); // But continue with the rest as normal
         }
 
         // No movement
         if (previousLemmingPosition == currentLemmingPosition)
         {
-            if (previousAction != JumperAction.Instance || Length == 0)
-            {
-                AddPosition(workPosition);
-            }
+            if (previousAction == JumperAction.Instance && Length != 0)
+                return;
+
+            AddPosition(workPosition);
 
             return;
         }
@@ -65,8 +74,8 @@ public ref struct LemmingMovementHelper
         }
 
         // Lemming moves up or is faller; exception is made for builders!
-        if ((orientation.FirstIsAboveSecond(currentLemmingPosition, previousLemmingPosition) || _lemming.CurrentAction == FallerAction.Instance) &&
-            previousAction != BuilderAction.Instance)
+        if (previousAction != BuilderAction.Instance &&
+            (orientation.FirstIsAboveSecond(currentLemmingPosition, previousLemmingPosition) || _lemming.CurrentAction == FallerAction.Instance))
         {
             MoveHorizontally(orientation, ref workPosition, currentLemmingPosition);
             MoveVertically(orientation, ref workPosition, currentLemmingPosition);
@@ -88,9 +97,6 @@ public ref struct LemmingMovementHelper
     private void MoveHorizontally(Orientation orientation, ref LevelPosition workPosition, LevelPosition referencePosition)
     {
         var dx = Math.Sign(orientation.GetHorizontalDelta(workPosition, referencePosition));
-        /*orientation.FirstIsToRightOfSecond(referencePosition, workPosition)
-            ? 1
-            : -1;*/
 
         while (!orientation.MatchesHorizontally(workPosition, referencePosition))
         {
@@ -102,9 +108,6 @@ public ref struct LemmingMovementHelper
     private void MoveVertically(Orientation orientation, ref LevelPosition workPosition, LevelPosition referencePosition)
     {
         var dy = Math.Sign(orientation.GetVerticalDelta(workPosition, referencePosition));
-        /*orientation.FirstIsBelowSecond(referencePosition, workPosition)
-            ? 1
-            : -1;*/
 
         while (!orientation.MatchesVertically(workPosition, referencePosition))
         {
@@ -113,8 +116,17 @@ public ref struct LemmingMovementHelper
         }
     }
 
-    private void HandleJumping()
+    private void HandleJumping(ref LevelPosition workPosition)
     {
+        var jumpPositions = JumperAction.Instance.TryGetJumperPositions(_lemming);
 
+        foreach (var levelPosition in jumpPositions)
+        {
+            if (Terrain.PositionOutOfBounds(levelPosition))
+                break;
+
+            workPosition = levelPosition;
+            AddPosition(workPosition);
+        }
     }
 }

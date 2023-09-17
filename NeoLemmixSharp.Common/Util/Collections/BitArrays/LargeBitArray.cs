@@ -186,6 +186,8 @@ public sealed class LargeBitArray : IBitArray
             Current = -1;
         }
 
+        public readonly bool IsEmpty => _remaining == 0;
+
         public bool MoveNext()
         {
             if (_v == 0U)
