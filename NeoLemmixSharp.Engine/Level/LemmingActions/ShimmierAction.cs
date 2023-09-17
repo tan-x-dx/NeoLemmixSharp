@@ -104,10 +104,9 @@ public sealed class ShimmierAction : LemmingAction
                 return true;
             }
 
-            var bottomOfLevel = orientation.BottomLeftCornerOfLevel();
-            if (orientation.FirstIsBelowSecond(lemmingPosition, orientation.MoveDown(bottomOfLevel, 8)))
+            if (TerrainManager.PositionOutOfBounds(lemmingPosition))
             {
-                // ?? RemoveLemming(L, RM_NEUTRAL); ??
+                LemmingManager.RemoveLemming(lemming);
                 return true;
             }
         }
