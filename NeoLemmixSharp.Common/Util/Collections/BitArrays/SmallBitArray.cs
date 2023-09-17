@@ -116,6 +116,8 @@ public sealed class SmallBitArray : IBitArray
 
         public int Current { get; private set; }
 
+        public readonly bool IsEmpty => _v == 0;
+
         public Enumerator(SmallBitArray bitField)
         {
             _bitField = bitField;

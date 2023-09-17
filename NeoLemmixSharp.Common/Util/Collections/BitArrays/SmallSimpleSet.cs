@@ -70,6 +70,8 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
             _bitEnumerator = set._bits.GetEnumerator();
         }
 
+        public readonly bool IsEmpty => _bitEnumerator.IsEmpty;
+
         public bool MoveNext() => _bitEnumerator.MoveNext();
         public void Reset() => _bitEnumerator.Reset();
         public readonly T Current => _hasher.UnHash(_bitEnumerator.Current);
