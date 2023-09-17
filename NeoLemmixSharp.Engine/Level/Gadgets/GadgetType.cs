@@ -31,10 +31,7 @@ public enum GadgetType
     Switch,
     Mover,
 
-    MetalGrateOff,
-    MetalGrateActivating,
-    MetalGrateOn,
-    MetalGrateDeactivating,
+    MetalGrate,
 
     AndGate,
     OrGate,

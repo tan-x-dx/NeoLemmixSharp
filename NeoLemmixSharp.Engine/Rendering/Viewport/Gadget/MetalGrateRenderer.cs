@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
@@ -32,11 +31,11 @@ public sealed class MetalGrateRenderer : IViewportObjectRenderer
         int scaleMultiplier)
     {
         Color color;
-        if (_metalGrateGadget.Type == GadgetType.MetalGrateOn)
+        if (_metalGrateGadget.CurrentState == MetalGrateGadget.MetalGrateState.On)
         {
             color = Color.Green;
         }
-        else if (_metalGrateGadget.Type == GadgetType.MetalGrateOff)
+        else if (_metalGrateGadget.CurrentState == MetalGrateGadget.MetalGrateState.Off)
         {
             color = Color.Red;
         }

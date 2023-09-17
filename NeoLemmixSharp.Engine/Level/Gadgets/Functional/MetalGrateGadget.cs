@@ -8,12 +8,12 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
 public sealed class MetalGrateGadget : GadgetBase
 {
-    private GadgetType _currentGadgetType;
     private int _transitionTick;
     private bool _isActive;
 
-    public override GadgetType Type => _currentGadgetType;
+    public override GadgetType Type => GadgetType.MetalGrate;
     public override Orientation Orientation => DownOrientation.Instance;
+    public MetalGrateState CurrentState { get; private set; }
 
     public MetalGrateGadgetInput Input { get; }
 
@@ -25,25 +25,22 @@ public sealed class MetalGrateGadget : GadgetBase
         Input.SetMetalGrateGadget(this);
 
         _isActive = startActive;
-        _currentGadgetType = startActive
-            ? GadgetType.MetalGrateOn
-            : GadgetType.MetalGrateOff;
     }
 
     public override void Tick()
     {
-        switch (_currentGadgetType)
+        switch (CurrentState)
         {
-            case GadgetType.MetalGrateOff:
+            case MetalGrateState.Off:
                 {
                     if (_isActive)
                     {
-                        _currentGadgetType = GadgetType.MetalGrateActivating;
+                        CurrentState = MetalGrateState.Activating;
                     }
 
                     return;
                 }
-            case GadgetType.MetalGrateActivating:
+            case MetalGrateState.Activating:
                 {
                     if (_transitionTick < 4)
                     {
@@ -51,21 +48,21 @@ public sealed class MetalGrateGadget : GadgetBase
                     }
                     else
                     {
-                        _currentGadgetType = GadgetType.MetalGrateOn;
+                        CurrentState = MetalGrateState.On;
                     }
 
                     return;
                 }
-            case GadgetType.MetalGrateOn:
+            case MetalGrateState.On:
                 {
                     if (!_isActive)
                     {
-                        _currentGadgetType = GadgetType.MetalGrateDeactivating;
+                        CurrentState = MetalGrateState.Deactivating;
                     }
 
                     return;
                 }
-            case GadgetType.MetalGrateDeactivating:
+            case MetalGrateState.Deactivating:
                 {
                     if (_transitionTick > 0)
                     {
@@ -73,7 +70,7 @@ public sealed class MetalGrateGadget : GadgetBase
                     }
                     else
                     {
-                        _currentGadgetType = GadgetType.MetalGrateOff;
+                        CurrentState = MetalGrateState.Off;
                     }
 
                     return;
@@ -93,18 +90,22 @@ public sealed class MetalGrateGadget : GadgetBase
 
     public override bool MatchesLemming(Lemming lemming)
     {
-        return _currentGadgetType == GadgetType.MetalGrateOn && GadgetBounds.ContainsPoint(lemming.LevelPosition);
+        return CurrentState == MetalGrateState.On && GadgetBounds.ContainsPoint(lemming.LevelPosition);
     }
 
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition) => MatchesPosition(levelPosition);
 
     public override void OnLemmingMatch(Lemming lemming)
     {
+        if (CurrentState == MetalGrateState.Activating)
+        {
+            LemmingManager.RemoveLemming(lemming);
+        }
     }
 
     public override bool MatchesPosition(LevelPosition levelPosition)
     {
-        return _currentGadgetType == GadgetType.MetalGrateOn && GadgetBounds.ContainsPoint(levelPosition);
+        return CurrentState == MetalGrateState.On && GadgetBounds.ContainsPoint(levelPosition);
     }
 
     public sealed class MetalGrateGadgetInput : IGadgetInput
@@ -127,5 +128,13 @@ public sealed class MetalGrateGadget : GadgetBase
         {
             _metalGrateGadget._isActive = signal;
         }
+    }
+
+    public enum MetalGrateState
+    {
+        Off,
+        Activating,
+        On,
+        Deactivating,
     }
 }
