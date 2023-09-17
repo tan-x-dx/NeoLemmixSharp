@@ -174,8 +174,9 @@ public sealed class LargeBitArray : IBitArray
         private uint _v;
         private int _remaining;
         private int _index;
+        private int _current;
 
-        public int Current { get; private set; }
+        public readonly int Current => _current;
 
         public Enumerator(LargeBitArray bitArray)
         {
@@ -183,7 +184,7 @@ public sealed class LargeBitArray : IBitArray
             _index = bitArray._indexOfFirstSetBit;
             _v = bitArray._bits[_index];
             _remaining = bitArray.Count;
-            Current = -1;
+            _current = -1;
         }
 
         public readonly bool IsEmpty => _remaining == 0;
@@ -205,7 +206,7 @@ public sealed class LargeBitArray : IBitArray
             var m = BitOperations.TrailingZeroCount(_v);
             _v ^= 1U << m;
 
-            Current = (_index << Shift) | m;
+            _current = (_index << Shift) | m;
             _remaining--;
             return true;
         }
@@ -215,7 +216,7 @@ public sealed class LargeBitArray : IBitArray
             _index = _bitArray._indexOfFirstSetBit;
             _v = _bitArray._bits[_index];
             _remaining = _bitArray.Count;
-            Current = -1;
+            _current = -1;
         }
 
         readonly object IEnumerator.Current => Current;

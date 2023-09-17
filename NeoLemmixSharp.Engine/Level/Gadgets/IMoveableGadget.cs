@@ -1,6 +1,8 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Common.Util;
 
-public interface IMoveableGadget
+namespace NeoLemmixSharp.Engine.Level.Gadgets;
+
+public interface IMoveableGadget : IRectangularBounds
 {
     void Move(int dx, int dy);
     void SetPosition(int x, int y);

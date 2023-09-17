@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -158,12 +159,18 @@ public sealed class LevelScreen : IBaseScreen
         GadgetBase.SetGadgetManager(gadgetManager);
     }
 
+    public static void SetSkillSetManager(SkillSetManager skillSetManager)
+    {
+        SkillModifierBehaviour.SetSkillSetManager(skillSetManager);
+    }
+
     public void Dispose()
     {
 #pragma warning disable CS8625
         SetTerrainManager(null);
         SetLemmingManager(null);
         SetGadgetManager(null);
+        SetSkillSetManager(null);
 
         ScreenRenderer.Dispose();
         IsDisposed = true;

@@ -29,19 +29,19 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         var facingDirection = lemming.FacingDirection;
         var dx = facingDirection.DeltaX;
 
-        if (lemming.AnimationFrame == 1 ||
-            lemming.AnimationFrame == 2)
+        if (lemming.PhysicsFrame == 1 ||
+            lemming.PhysicsFrame == 2)
         {
             TerrainMasks.ApplyMinerMask(
                 lemming,
                 0,
                 0,
-                lemming.AnimationFrame - 1);
+                lemming.PhysicsFrame - 1);
             return true;
         }
 
-        if (lemming.AnimationFrame != 3 &&
-            lemming.AnimationFrame != 15)
+        if (lemming.PhysicsFrame != 3 &&
+            lemming.PhysicsFrame != 15)
             return true;
 
         if (lemming.State.IsSlider && WalkerAction.LemmingCanDehoist(lemming, false))
@@ -76,7 +76,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
         // This first check is only relevant during the very first cycle.
         // Otherwise the pixel was already checked in frame 15 of the previous cycle
-        if (lemming.AnimationFrame == 3 && TerrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.Move(lemmingPosition, -dx, 2)))
+        if (lemming.PhysicsFrame == 3 && TerrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.Move(lemmingPosition, -dx, 2)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx + dx);
             lemming.LevelPosition = lemmingPosition;

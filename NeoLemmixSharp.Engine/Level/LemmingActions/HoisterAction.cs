@@ -28,14 +28,14 @@ public sealed class HoisterAction : LemmingAction
         }
 
         // special case due to http://www.lemmingsforums.net/index.php?topic=2620.0
-        if (lemming.AnimationFrame == 1 && lemming.IsStartingAction)
+        if (lemming.PhysicsFrame == 1 && lemming.IsStartingAction)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
             lemming.LevelPosition = lemmingPosition;
             return true;
         }
 
-        if (lemming.AnimationFrame <= 4)
+        if (lemming.PhysicsFrame <= 4)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, 2);
             lemming.LevelPosition = lemmingPosition;

@@ -1,7 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.LevelRegion;
+﻿using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
-using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
@@ -65,15 +63,6 @@ public sealed class GadgetMover : GadgetBase
             return Input;
         return null;
     }
-
-    public override bool CaresAboutLemmingInteraction => false;
-    public override bool MatchesLemming(Lemming lemming) => false;
-    public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition) => false;
-    public override void OnLemmingMatch(Lemming lemming)
-    {
-    }
-
-    public override bool MatchesPosition(LevelPosition levelPosition) => false;
 
     private sealed class GadgetMoverInput : IGadgetInput
     {

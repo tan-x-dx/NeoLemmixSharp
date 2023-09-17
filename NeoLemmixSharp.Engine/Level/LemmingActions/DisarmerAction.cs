@@ -31,7 +31,7 @@ public sealed class DisarmerAction : LemmingAction
                 lemming.SetNextAction(NoneAction.Instance);
             }
         }
-        else if ((lemming.AnimationFrame & 7) == 0)
+        else if ((lemming.PhysicsFrame & 7) == 0)
         {
             // ?? CueSoundEffect(SFX_FIXING, L.Position); ??
         }

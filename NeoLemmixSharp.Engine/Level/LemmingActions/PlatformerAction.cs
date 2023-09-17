@@ -22,7 +22,7 @@ public sealed class PlatformerAction : LemmingAction
     {
         DoMainUpdate(lemming);
 
-        if (lemming.AnimationFrame == 0)
+        if (lemming.PhysicsFrame == 0)
         {
             lemming.ConstructivePositionFreeze = false;
         }
@@ -54,7 +54,7 @@ public sealed class PlatformerAction : LemmingAction
         var dx = lemming.FacingDirection.DeltaX;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (lemming.AnimationFrame == 9)
+        if (lemming.PhysicsFrame == 9)
         {
             lemming.PlacedBrick = LemmingCanPlatform(lemming, orientation);
             BuilderAction.LayBrick(lemming);
@@ -62,13 +62,13 @@ public sealed class PlatformerAction : LemmingAction
             return;
         }
 
-        if (lemming.AnimationFrame == 10 && lemming.NumberOfBricksLeft <= 3)
+        if (lemming.PhysicsFrame == 10 && lemming.NumberOfBricksLeft <= 3)
         {
             // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position) ??
             return;
         }
 
-        if (lemming.AnimationFrame == 15)
+        if (lemming.PhysicsFrame == 15)
         {
             if (!lemming.PlacedBrick)
             {
@@ -96,7 +96,7 @@ public sealed class PlatformerAction : LemmingAction
             return;
         }
 
-        if (lemming.AnimationFrame != 0)
+        if (lemming.PhysicsFrame != 0)
             return;
 
         if (PlatformerTerrainCheck(lemming, orientation.MoveRight(lemmingPosition, dx + dx)) &&

@@ -6,10 +6,12 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
-using NeoLemmixSharp.Engine.Level.Gadgets.Functional.SawBlade;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.SawBlade;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -69,6 +71,13 @@ public sealed class LevelObjectAssembler : IDisposable
         p = new RectangularLevelRegion(296, 142, 19, 13);
         var switchGadget = new SwitchGadget(id++, p, true);
         switchGadget.Output.RegisterInput(input);
+        switchGadget.LeftHitBox.IncludeOrientation(DownOrientation.Instance);
+        switchGadget.LeftHitBox.IncludeFacingDirection(RightFacingDirection.Instance);
+        switchGadget.LeftHitBox.IncludeAction(WalkerAction.Instance);
+
+        switchGadget.RightHitBox.IncludeOrientation(DownOrientation.Instance);
+        switchGadget.RightHitBox.IncludeFacingDirection(LeftFacingDirection.Instance);
+        switchGadget.RightHitBox.IncludeAction(WalkerAction.Instance);
 
         _gadgets.Add(switchGadget);
         _gadgetRenderers.Add(new SwitchRenderer(switchGadget));
@@ -181,12 +190,19 @@ public sealed class LevelObjectAssembler : IDisposable
         return _gadgets.ToArray();
     }
 
-    public IViewportObjectRenderer[] GetLevelSprites()
+    public IViewportObjectRenderer[] GetLevelSprites(Dictionary<Team, LemmingSpriteBank> lemmingSpriteBankLookup)
     {
-        var lemmingSprites = _lemmings
-            .Select(l => l.Renderer);
+        var result = new List<IViewportObjectRenderer>();
+        foreach (var lemming in _lemmings)
+        {
+            var lemmingSpriteBank = lemmingSpriteBankLookup[lemming.State.TeamAffiliation];
 
-        return lemmingSprites
+            var renderer = new LemmingRenderer(lemmingSpriteBank, lemming);
+            lemming.SetRenderer(renderer);
+            result.Add(renderer);
+        }
+
+        return result
             .Concat(_gadgetRenderers)
             .ToArray();
     }

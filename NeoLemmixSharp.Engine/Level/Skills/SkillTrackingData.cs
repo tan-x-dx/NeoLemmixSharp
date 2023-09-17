@@ -18,7 +18,7 @@ public sealed class SkillTrackingData
         SetSkillCount(skillCount);
     }
 
-    public void DecrementSkillCount()
+    public void ChangeSkillCount(int delta)
     {
         if (IsInfinite)
             return;

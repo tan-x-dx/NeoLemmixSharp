@@ -21,9 +21,6 @@ public sealed class SliderAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        // if ((L.LemX <= 0) and(L.LemDX = -1)) or((L.LemX >= Level.Info.Width - 1) and(L.LemDX = 1)) then
-        //      RemoveLemming(L, RM_NEUTRAL); // shouldn't get to this point but just in case
-
         var orientation = lemming.Orientation;
         lemming.LevelPosition = orientation.MoveDown(lemming.LevelPosition, 1);
         if (!SliderTerrainChecks(lemming, orientation) &&
@@ -76,9 +73,7 @@ public sealed class SliderAction : LemmingAction
         {
             var gadget = gadgetEnumerator.Current;
 
-            if (gadget.Type != GadgetType.Water)
-                continue;
-            if (!gadget.MatchesLemming(lemming))
+            if (!(gadget.Type == GadgetType.Water && gadget.MatchesLemming(lemming)))
                 continue;
 
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);

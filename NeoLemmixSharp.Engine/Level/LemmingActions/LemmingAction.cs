@@ -92,13 +92,13 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         var dx = lemming.FacingDirection.DeltaX;
         var dxCorrection = 1 - lemming.FacingDirection.Id; // Fixes off-by-one errors with left/right positions
         var lemmingPosition = lemming.LevelPosition;
-        var animationFrame = lemming.AnimationFrame;
+        var physicsFrame = lemming.PhysicsFrame;
 
-        var topLeftDx = TopLeftBoundsDeltaX(animationFrame);
-        var topLeftDy = TopLeftBoundsDeltaY(animationFrame);
+        var topLeftDx = TopLeftBoundsDeltaX(physicsFrame);
+        var topLeftDy = TopLeftBoundsDeltaY(physicsFrame);
 
-        var bottomRightDx = BottomRightBoundsDeltaX(animationFrame);
-        var bottomRightDy = BottomRightBoundsDeltaY(animationFrame);
+        var bottomRightDx = BottomRightBoundsDeltaX(physicsFrame);
+        var bottomRightDy = BottomRightBoundsDeltaY(physicsFrame);
 
         var p1 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * topLeftDx, topLeftDy);
         var p2 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * bottomRightDx, bottomRightDy);
@@ -133,6 +133,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
             return;
 
         lemming.SetCurrentAction(this);
+        lemming.PhysicsFrame = 0;
         lemming.AnimationFrame = 0;
         lemming.EndOfAnimation = false;
         lemming.NumberOfBricksLeft = 0;

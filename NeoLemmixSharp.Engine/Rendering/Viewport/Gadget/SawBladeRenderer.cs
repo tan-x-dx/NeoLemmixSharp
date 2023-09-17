@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Engine.Level.Gadgets.Functional.SawBlade;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.SawBlade;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 

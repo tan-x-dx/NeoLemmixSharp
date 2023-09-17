@@ -39,7 +39,7 @@ public sealed class ReacherAction : LemmingAction
             return true;
         }
 
-        if (lemming.AnimationFrame == 1 &&
+        if (lemming.PhysicsFrame == 1 &&
             TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -47,7 +47,7 @@ public sealed class ReacherAction : LemmingAction
             return true;
         }
 
-        if (emptyPixels <= _movementList[lemming.AnimationFrame])
+        if (emptyPixels <= _movementList[lemming.PhysicsFrame])
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, emptyPixels + 1);
             lemming.LevelPosition = lemmingPosition;
@@ -56,9 +56,9 @@ public sealed class ReacherAction : LemmingAction
             return true;
         }
 
-        lemmingPosition = orientation.MoveUp(lemmingPosition, _movementList[lemming.AnimationFrame]);
+        lemmingPosition = orientation.MoveUp(lemmingPosition, _movementList[lemming.PhysicsFrame]);
         lemming.LevelPosition = lemmingPosition;
-        if (lemming.AnimationFrame == 7)
+        if (lemming.PhysicsFrame == 7)
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }

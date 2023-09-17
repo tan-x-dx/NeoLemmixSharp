@@ -20,7 +20,7 @@ public sealed class VaporiserAction : LemmingAction
     {
         if (lemming.EndOfAnimation)
         {
-            // ?? RemoveLemming(L, RM_KILL); ??
+            LemmingManager.RemoveLemming(lemming);
         }
 
         return false;

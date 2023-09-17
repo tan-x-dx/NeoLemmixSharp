@@ -1,7 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.LevelRegion;
+﻿using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
-using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics;
 
@@ -41,16 +39,6 @@ public abstract class BinaryLogicGateGadget : GadgetBase, ILogicGateGadget
 
         return null;
     }
-
-    public sealed override bool CaresAboutLemmingInteraction => false;
-    public sealed override bool MatchesLemming(Lemming lemming) => false;
-    public sealed override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition) => false;
-
-    public sealed override void OnLemmingMatch(Lemming lemming)
-    {
-    }
-
-    public sealed override bool MatchesPosition(LevelPosition levelPosition) => false;
 
     public abstract void EvaluateInputs();
 }

@@ -5,13 +5,15 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public sealed class GadgetManager : ISimpleHasher<GadgetBase>
+public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
 {
     private readonly GadgetBase[] _allGadgets;
-    private readonly PositionHelper<GadgetBase> _gadgetPositionHelper;
+    private readonly HitBoxGadget[] _allHitBoxGadgets;
+    private readonly PositionHelper<HitBoxGadget> _gadgetPositionHelper;
 
     public ReadOnlySpan<GadgetBase> AllGadgets => new(_allGadgets);
 
@@ -24,7 +26,11 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         _allGadgets.ValidateUniqueIds();
         Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
 
-        _gadgetPositionHelper = new PositionHelper<GadgetBase>(
+        _allHitBoxGadgets = allGadgets.OfType<HitBoxGadget>().ToArray();
+        _allHitBoxGadgets.ValidateUniqueIds();
+        Array.Sort(_allHitBoxGadgets, IdEquatableItemHelperMethods.Compare);
+
+        _gadgetPositionHelper = new PositionHelper<HitBoxGadget>(
             this,
             ChunkSizeType.ChunkSize64,
             horizontalBoundaryBehaviour,
@@ -33,26 +39,23 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
 
     public void Initialise()
     {
-        foreach (var gadget in _allGadgets)
+        foreach (var gadget in _allGadgets.OfType<HitBoxGadget>())
         {
-            if (gadget.CaresAboutLemmingInteraction)
-            {
-                _gadgetPositionHelper.AddItem(gadget);
-            }
+            _gadgetPositionHelper.AddItem(gadget);
         }
     }
 
     [Pure]
-    public LargeSimpleSet<GadgetBase>.Enumerator GetAllGadgetsForPosition(LevelPosition levelPosition)
+    public LargeSimpleSet<HitBoxGadget>.Enumerator GetAllGadgetsForPosition(LevelPosition levelPosition)
     {
         return _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
     }
 
     [Pure]
-    public LargeSimpleSet<GadgetBase>.Enumerator GetAllGadgetsAtLemmingPosition(Lemming lemming)
+    public LargeSimpleSet<HitBoxGadget>.Enumerator GetAllGadgetsAtLemmingPosition(Lemming lemming)
     {
         var anchorPixel = lemming.LevelPosition;
-        var footPixel = lemming.Orientation.MoveUp(anchorPixel, 1);
+        var footPixel = lemming.FootPosition;
 
         var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
 
@@ -63,7 +66,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     }
 
     [Pure]
-    public LargeSimpleSet<GadgetBase>.Enumerator GetAllItemsNearRegion(LevelPosition topLeftPixel, LevelPosition bottomRightLevelPosition)
+    public LargeSimpleSet<HitBoxGadget>.Enumerator GetAllItemsNearRegion(LevelPosition topLeftPixel, LevelPosition bottomRightLevelPosition)
     {
         return _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightLevelPosition);
     }
@@ -88,7 +91,7 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
     public bool HasGadgetOfTypeAtLemmingPosition(Lemming lemming, GadgetType gadgetType)
     {
         var anchorPixel = lemming.LevelPosition;
-        var footPixel = lemming.Orientation.MoveUp(anchorPixel, 1);
+        var footPixel = lemming.FootPosition;
 
         var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
 
@@ -108,15 +111,12 @@ public sealed class GadgetManager : ISimpleHasher<GadgetBase>
         return false;
     }
 
-    public void UpdateGadgetPosition(GadgetBase gadget)
+    public void UpdateGadgetPosition(HitBoxGadget gadget)
     {
-        if (gadget.CaresAboutLemmingInteraction)
-        {
-            _gadgetPositionHelper.UpdateItemPosition(gadget);
-        }
+        _gadgetPositionHelper.UpdateItemPosition(gadget);
     }
 
-    int ISimpleHasher<GadgetBase>.NumberOfItems => _allGadgets.Length;
-    int ISimpleHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
-    GadgetBase ISimpleHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
+    int ISimpleHasher<HitBoxGadget>.NumberOfItems => _allHitBoxGadgets.Length;
+    int ISimpleHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
+    HitBoxGadget ISimpleHasher<HitBoxGadget>.UnHash(int index) => _allHitBoxGadgets[index];
 }

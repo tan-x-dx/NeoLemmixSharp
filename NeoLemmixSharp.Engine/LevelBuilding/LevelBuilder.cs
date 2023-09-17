@@ -9,6 +9,7 @@ using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
@@ -56,8 +57,16 @@ public sealed class LevelBuilder : IDisposable
         var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
         lemmingSpriteBank.SetTeamColors();
 
+        var lemmingSpriteBankLookup = new Dictionary<Team, LemmingSpriteBank>();
+        foreach (var team in Team.AllItems)
+        {
+            lemmingSpriteBankLookup[team] = lemmingSpriteBank;
+        }
+
         var inputController = new LevelInputController();
         var skillSetManager = new SkillSetManager(levelData.SkillSetData);
+        LevelScreen.SetSkillSetManager(skillSetManager);
+
         LevelTimer levelTimer = levelData.TimeLimit.HasValue
             ? new CountDownLevelTimer(levelData.TimeLimit.Value)
             : new CountUpLevelTimer();
@@ -107,7 +116,7 @@ public sealed class LevelBuilder : IDisposable
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(levelCursor);
 
-        var levelSprites = _levelObjectAssembler.GetLevelSprites();
+        var levelSprites = _levelObjectAssembler.GetLevelSprites(lemmingSpriteBankLookup);
 
         var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel, _fontBank);
 
