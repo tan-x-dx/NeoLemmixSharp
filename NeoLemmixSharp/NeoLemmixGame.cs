@@ -161,8 +161,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Draw(GameTime gameTime)
     {
-        if (gameTime.IsRunningSlowly)
-            return;
+        // if (gameTime.IsRunningSlowly)
+        //     return;
 
         GraphicsDevice.Clear(Color.Black);
 
