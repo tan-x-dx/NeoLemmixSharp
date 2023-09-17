@@ -86,6 +86,16 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
     {
         _activeLemmings.Remove(lemming);
         _lemmingPositionHelper.RemoveItem(lemming);
+
+        if (lemming.State.IsZombie)
+        {
+            DeregisterZombie(lemming);
+        }
+
+        if (lemming.CurrentAction == BlockerAction.Instance)
+        {
+            DeregisterBlocker(lemming);
+        }
         LemmingsRemoved++;
     }
 
@@ -96,6 +106,11 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
         if (lemming.State.IsZombie)
         {
             _zombiePositionHelper.UpdateItemPosition(lemming);
+        }
+
+        if (lemming.CurrentAction == BlockerAction.Instance)
+        {
+            _blockerPositionHelper.UpdateItemPosition(lemming);
         }
     }
 
