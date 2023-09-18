@@ -35,7 +35,7 @@ public sealed class FloaterAction : LemmingAction
         {
             var gadget = gadgetEnumerator.Current;
 
-            if (!(gadget.Type == GadgetType.Updraft && gadget.MatchesLemming(lemming)))
+            if (gadget.Type != GadgetType.Updraft || !gadget.MatchesLemming(lemming))
                 continue;
 
             if (gadget.Orientation == orientation.GetOpposite())

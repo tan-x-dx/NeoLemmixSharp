@@ -73,7 +73,7 @@ public sealed class SliderAction : LemmingAction
         {
             var gadget = gadgetEnumerator.Current;
 
-            if (!(gadget.Type == GadgetType.Water && gadget.MatchesLemming(lemming)))
+            if (gadget.Type != GadgetType.Water || !gadget.MatchesLemming(lemming))
                 continue;
 
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
