@@ -8,6 +8,8 @@ namespace NeoLemmixSharp.Common.Util.PositionTracking;
 public sealed class PositionHelper<T>
     where T : class, IIdEquatable<T>, IRectangularBounds
 {
+    private const int AlgorithmThreshold = 10; // TODO Benchmark this and figure out the best value
+
     private readonly int _chunkSizeBitShift;
     private readonly int _numberOfHorizontalChunks;
     private readonly int _numberOfVerticalChunks;
@@ -15,6 +17,8 @@ public sealed class PositionHelper<T>
     private readonly ISimpleHasher<T> _hasher;
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
+
+    private readonly LargeSimpleSet<T> _allTrackedItems;
 
     private readonly Dictionary<ChunkPosition, LargeSimpleSet<T>> _itemChunkLookup;
     private readonly SimpleChunkPositionList _chunkPositionScratchSpace;
@@ -37,6 +41,8 @@ public sealed class PositionHelper<T>
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
+        _allTrackedItems = new LargeSimpleSet<T>(hasher);
+
         _itemChunkLookup = new Dictionary<ChunkPosition, LargeSimpleSet<T>>(ChunkPositionEqualityComparer.Instance);
         _chunkPositionScratchSpace = new SimpleChunkPositionList();
         _setUnionChunkPositionUser = new SetUnionChunkPositionUser<T>(hasher, _itemChunkLookup);
@@ -45,6 +51,9 @@ public sealed class PositionHelper<T>
     [Pure]
     public LargeSimpleSet<T>.Enumerator GetAllItemsNearPosition(LevelPosition levelPosition)
     {
+        if (_allTrackedItems.Count < AlgorithmThreshold)
+            return _allTrackedItems.GetEnumerator();
+
         var chunkX = levelPosition.X >> _chunkSizeBitShift;
         var chunkY = levelPosition.Y >> _chunkSizeBitShift;
 
@@ -60,6 +69,9 @@ public sealed class PositionHelper<T>
         LevelPosition topLeftLevelPosition,
         LevelPosition bottomRightLevelPosition)
     {
+        if (_allTrackedItems.Count < AlgorithmThreshold)
+            return _allTrackedItems.GetEnumerator();
+
         GetShiftValues(topLeftLevelPosition, out var topLeftChunkX, out var topLeftChunkY);
         GetShiftValues(bottomRightLevelPosition, out var bottomRightChunkX, out var bottomRightChunkY);
 
@@ -83,17 +95,43 @@ public sealed class PositionHelper<T>
 
     public void AddItem(T item)
     {
+        if (!_allTrackedItems.Add(item))
+            throw new InvalidOperationException("Item added twice!");
+
+        if (_allTrackedItems.Count < AlgorithmThreshold)
+            return;
+
+        if (_allTrackedItems.Count > AlgorithmThreshold)
+        {
+            StartTrackingItemPosition(item);
+            return;
+        }
+
+        foreach (var trackedItem in _allTrackedItems)
+        {
+            StartTrackingItemPosition(trackedItem);
+        }
+    }
+
+    private void StartTrackingItemPosition(T item)
+    {
         var topLeftPixel = item.TopLeftPixel;
         var bottomRightPixel = item.BottomRightPixel;
 
         GetShiftValues(topLeftPixel, out var topLeftChunkX, out var topLeftChunkY);
         GetShiftValues(bottomRightPixel, out var bottomRightChunkX, out var bottomRightChunkY);
 
-        AddItem(item, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
+        RegisterItemPosition(item, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
     }
 
     public void UpdateItemPosition(T item)
     {
+        if (!_allTrackedItems.Contains(item))
+            throw new InvalidOperationException("Item not registered!");
+
+        if (_allTrackedItems.Count < AlgorithmThreshold)
+            return;
+
         var topLeftPixel = item.TopLeftPixel;
         var bottomRightPixel = item.BottomRightPixel;
         var previousTopLeftPixel = item.PreviousTopLeftPixel;
@@ -115,11 +153,33 @@ public sealed class PositionHelper<T>
             bottomRightChunkY == previousBottomRightChunkY)
             return;
 
-        RemoveItem(item, previousTopLeftChunkX, previousTopLeftChunkY, previousBottomRightChunkX, previousBottomRightChunkY);
-        AddItem(item, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
+        DeregisterItemPosition(item, previousTopLeftChunkX, previousTopLeftChunkY, previousBottomRightChunkX, previousBottomRightChunkY);
+        RegisterItemPosition(item, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
     }
 
     public void RemoveItem(T item)
+    {
+        var previousCount = _allTrackedItems.Count;
+        
+        if (!_allTrackedItems.Remove(item))
+            throw new InvalidOperationException("Item not registered!");
+
+        if (previousCount < AlgorithmThreshold)
+            return;
+
+        if (previousCount > AlgorithmThreshold)
+        {
+            StopTrackingItemPosition(item);
+            return;
+        }
+
+        foreach (var trackedItem in _allTrackedItems)
+        {
+            StopTrackingItemPosition(trackedItem);
+        }
+    }
+
+    private void StopTrackingItemPosition(T item)
     {
         var topLeftPixel = item.TopLeftPixel;
         var bottomRightPixel = item.BottomRightPixel;
@@ -129,7 +189,7 @@ public sealed class PositionHelper<T>
         GetShiftValues(topLeftPixel, out var topLeftChunkX, out var topLeftChunkY);
         GetShiftValues(bottomRightPixel, out var bottomRightChunkX, out var bottomRightChunkY);
 
-        RemoveItem(item, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
+        DeregisterItemPosition(item, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
 
         GetShiftValues(previousTopLeftPixel, out var previousTopLeftChunkX, out var previousTopLeftChunkY);
         GetShiftValues(previousBottomRightPixel, out var previousBottomRightChunkX, out var previousBottomRightChunkY);
@@ -140,10 +200,10 @@ public sealed class PositionHelper<T>
             bottomRightChunkY == previousBottomRightChunkY)
             return;
 
-        RemoveItem(item, previousTopLeftChunkX, previousTopLeftChunkY, previousBottomRightChunkX, previousBottomRightChunkY);
+        DeregisterItemPosition(item, previousTopLeftChunkX, previousTopLeftChunkY, previousBottomRightChunkX, previousBottomRightChunkY);
     }
 
-    private void AddItem(T item, int ax, int ay, int bx, int by)
+    private void RegisterItemPosition(T item, int ax, int ay, int bx, int by)
     {
         EvaluateChunkPositions(_chunkPositionScratchSpace, ax, ay, bx, by);
 
@@ -159,7 +219,7 @@ public sealed class PositionHelper<T>
         }
     }
 
-    private void RemoveItem(T item, int ax, int ay, int bx, int by)
+    private void DeregisterItemPosition(T item, int ax, int ay, int bx, int by)
     {
         EvaluateChunkPositions(_chunkPositionScratchSpace, ax, ay, bx, by);
 
