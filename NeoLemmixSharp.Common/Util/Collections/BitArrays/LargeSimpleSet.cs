@@ -6,6 +6,8 @@ namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
 {
+    public static LargeSimpleSet<T> Empty { get; } = new(ISimpleHasher<T>.Empty);
+
     private readonly ISimpleHasher<T> _hasher;
     private readonly LargeBitArray _bits;
 

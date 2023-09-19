@@ -32,5 +32,5 @@ internal sealed class SetUnionChunkPositionUser<T> : IChunkPositionUser
         _setToUnionWith.Clear();
     }
 
-    public LargeSimpleSet<T>.Enumerator GetEnumerator() => _setToUnionWith.GetEnumerator();
+    public LargeSimpleSet<T> GetSet() => _setToUnionWith;
 }

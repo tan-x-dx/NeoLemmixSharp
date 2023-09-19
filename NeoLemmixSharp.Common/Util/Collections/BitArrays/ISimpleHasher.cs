@@ -6,4 +6,13 @@ public interface ISimpleHasher<T>
 
     int Hash(T item);
     T UnHash(int index);
+
+    public static ISimpleHasher<T> Empty => new EmptyHasher();
+
+    private sealed class EmptyHasher : ISimpleHasher<T>
+    {
+        public int NumberOfItems => 0;
+        public int Hash(T item) => 0;
+        public T UnHash(int index) => throw new NotSupportedException("Empty hasher cannot be used!");
+    }
 }

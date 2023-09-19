@@ -10,6 +10,8 @@ namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 /// </summary>
 public sealed class LargeBitArray : IBitArray
 {
+    public static LargeBitArray Empty { get; } = new(1);
+
     private const int Shift = 5;
     private const int Mask = (1 << Shift) - 1;
 

@@ -29,8 +29,10 @@ public sealed class FloaterAction : LemmingAction
         var orientation = lemming.Orientation;
         var levelPosition = lemming.LevelPosition;
 
-        var gadgetEnumerator = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+        var gadgetSet = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
+        // ReSharper disable once GenericEnumeratorNotDisposed
+        var gadgetEnumerator = gadgetSet.GetEnumerator();
         while (gadgetEnumerator.MoveNext())
         {
             var gadget = gadgetEnumerator.Current;

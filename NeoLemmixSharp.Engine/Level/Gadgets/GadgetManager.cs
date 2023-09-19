@@ -43,13 +43,13 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
     }
 
     [Pure]
-    public LargeSimpleSet<HitBoxGadget>.Enumerator GetAllGadgetsForPosition(LevelPosition levelPosition)
+    public LargeSimpleSet<HitBoxGadget> GetAllGadgetsForPosition(LevelPosition levelPosition)
     {
         return _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
     }
 
     [Pure]
-    public LargeSimpleSet<HitBoxGadget>.Enumerator GetAllGadgetsAtLemmingPosition(Lemming lemming)
+    public LargeSimpleSet<HitBoxGadget> GetAllGadgetsAtLemmingPosition(Lemming lemming)
     {
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
@@ -63,7 +63,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
     }
 
     [Pure]
-    public LargeSimpleSet<HitBoxGadget>.Enumerator GetAllItemsNearRegion(LevelPosition topLeftPixel, LevelPosition bottomRightLevelPosition)
+    public LargeSimpleSet<HitBoxGadget> GetAllItemsNearRegion(LevelPosition topLeftPixel, LevelPosition bottomRightLevelPosition)
     {
         return _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightLevelPosition);
     }
@@ -71,8 +71,10 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
     [Pure]
     public bool HasGadgetOfTypeAtPosition(LevelPosition levelPosition, GadgetType gadgetType)
     {
-        var gadgetEnumerator = _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
+        var gadgetSet = _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
 
+        // ReSharper disable once GenericEnumeratorNotDisposed
+        var gadgetEnumerator = gadgetSet.GetEnumerator();
         while (gadgetEnumerator.MoveNext())
         {
             var gadget = gadgetEnumerator.Current;
@@ -95,8 +97,10 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
         var topLeftPixel = levelPositionPair.GetTopLeftPosition();
         var bottomRightPixel = levelPositionPair.GetBottomRightPosition();
 
-        var gadgetEnumerator = _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
+        var gadgetSet = _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
 
+        // ReSharper disable once GenericEnumeratorNotDisposed
+        var gadgetEnumerator = gadgetSet.GetEnumerator();
         while (gadgetEnumerator.MoveNext())
         {
             var gadget = gadgetEnumerator.Current;

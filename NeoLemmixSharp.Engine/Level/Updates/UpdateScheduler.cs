@@ -75,8 +75,10 @@ public sealed class UpdateScheduler
         var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
         if (mouseIsInLevelViewPort)
         {
-            var lemmingsNearCursorEnumerator = _levelCursor.LemmingsNearCursorPosition();
+            var lemmingsNearCursor = _levelCursor.LemmingsNearCursorPosition();
 
+            // ReSharper disable once GenericEnumeratorNotDisposed
+            var lemmingsNearCursorEnumerator = lemmingsNearCursor.GetEnumerator();
             while (lemmingsNearCursorEnumerator.MoveNext())
             {
                 var lemming = lemmingsNearCursorEnumerator.Current;
@@ -95,8 +97,10 @@ public sealed class UpdateScheduler
 
         HandleSkillAssignment();
 
-        var activeLemmingEnumerator = _lemmingManager.ActiveLemmingsEnumerator();
+        var activeLemmings = _lemmingManager.ActiveLemmings();
 
+        // ReSharper disable once GenericEnumeratorNotDisposed
+        var activeLemmingEnumerator = activeLemmings.GetEnumerator();
         while (activeLemmingEnumerator.MoveNext())
         {
             var lemming = activeLemmingEnumerator.Current;

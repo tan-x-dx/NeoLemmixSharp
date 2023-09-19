@@ -211,10 +211,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     private void CheckGadgets(LevelPosition topLeftPixel, LevelPosition bottomRightPixel)
     {
-        var gadgetEnumerator = GadgetManager.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
+        var gadgetSet = GadgetManager.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
 
-        if (gadgetEnumerator.IsEmpty)
+        if (gadgetSet.Count == 0)
             return;
+
+        // ReSharper disable once GenericEnumeratorNotDisposed
+        var gadgetEnumerator = gadgetSet.GetEnumerator();
 
         Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
         var movementHelper = new LemmingMovementHelper(this, checkPositions);

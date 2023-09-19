@@ -59,31 +59,31 @@ public sealed class PositionHelper<T>
     public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
 
     [Pure]
-    public LargeSimpleSet<T>.Enumerator GetAllTrackedItemsEnumerator() => _allTrackedItems.GetEnumerator();
+    public LargeSimpleSet<T> GetAllTrackedItemsEnumerator() => _allTrackedItems;
 
     [Pure]
-    public LargeSimpleSet<T>.Enumerator GetAllItemsNearPosition(LevelPosition levelPosition)
+    public LargeSimpleSet<T> GetAllItemsNearPosition(LevelPosition levelPosition)
     {
         if (_allTrackedItems.Count < _algorithmThreshold)
-            return _allTrackedItems.GetEnumerator();
+            return _allTrackedItems;
 
         var chunkX = levelPosition.X >> _chunkSizeBitShift;
         var chunkY = levelPosition.Y >> _chunkSizeBitShift;
 
         if (chunkX < 0 || chunkX >= _numberOfHorizontalChunks ||
             chunkY < 0 || chunkY >= _numberOfVerticalChunks)
-            return new LargeSimpleSet<T>.Enumerator();
+            return LargeSimpleSet<T>.Empty;
 
         return GetEnumeratorForChunkPosition(chunkX, chunkY);
     }
 
     [Pure]
-    public LargeSimpleSet<T>.Enumerator GetAllItemsNearRegion(
+    public LargeSimpleSet<T> GetAllItemsNearRegion(
         LevelPosition topLeftLevelPosition,
         LevelPosition bottomRightLevelPosition)
     {
         if (_allTrackedItems.Count < _algorithmThreshold)
-            return _allTrackedItems.GetEnumerator();
+            return _allTrackedItems;
 
         GetShiftValues(topLeftLevelPosition, out var topLeftChunkX, out var topLeftChunkY);
         GetShiftValues(bottomRightLevelPosition, out var bottomRightChunkX, out var bottomRightChunkY);
@@ -93,18 +93,18 @@ public sealed class PositionHelper<T>
             return GetEnumeratorForChunkPosition(topLeftChunkX, topLeftChunkY);
 
         EvaluateChunkPositions(_setUnionChunkPositionUser, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
-        return _setUnionChunkPositionUser.GetEnumerator();
+        return _setUnionChunkPositionUser.GetSet();
     }
 
     [Pure]
-    private LargeSimpleSet<T>.Enumerator GetEnumeratorForChunkPosition(int chunkX, int chunkY)
+    private LargeSimpleSet<T> GetEnumeratorForChunkPosition(int chunkX, int chunkY)
     {
         var chunkPosition = new ChunkPosition(chunkX, chunkY);
 
         ref var itemChunk = ref CollectionsMarshal.GetValueRefOrNullRef(_itemChunkLookup, chunkPosition);
         return Unsafe.IsNullRef(ref itemChunk)
-            ? new LargeSimpleSet<T>.Enumerator()
-            : itemChunk.GetEnumerator();
+            ? LargeSimpleSet<T>.Empty
+            : itemChunk;
     }
 
     public void AddItem(T item)

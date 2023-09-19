@@ -67,8 +67,10 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        var gadgetEnumerator = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+        var gadgetSet = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
+        // ReSharper disable once GenericEnumeratorNotDisposed
+        var gadgetEnumerator = gadgetSet.GetEnumerator();
         while (gadgetEnumerator.MoveNext())
         {
             var gadget = gadgetEnumerator.Current;
