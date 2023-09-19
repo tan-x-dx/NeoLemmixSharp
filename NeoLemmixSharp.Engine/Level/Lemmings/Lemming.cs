@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -64,6 +63,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LevelPosition LevelPosition;
     public LevelPosition PreviousLevelPosition;
 
+    public LevelPosition HeadPosition => Orientation.MoveUp(LevelPosition, 6);
     public LevelPosition FootPosition => Orientation.MoveUp(LevelPosition, 1);
 
     public FacingDirection FacingDirection { get; private set; }
@@ -117,22 +117,11 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
             ;
         }
 
-        var oldLevelPosition = LevelPosition;
-        var oldFacingDirection = FacingDirection;
-        var oldAction = CurrentAction;
+        PreviousAction = CurrentAction;
+        // No transition to do at the end of lemming movement
         NextAction = NoneAction.Instance;
 
         _ = HandleLemmingAction() && CheckLevelBoundaries() && CheckTriggerArea(false);
-
-        /* if (!continueWithLemming)
-             return;
-         continueWithLemming = HandleLemmingAction();
-         if (!continueWithLemming)
-             return;
-         continueWithLemming = CheckLevelBoundaries();
-         if (!continueWithLemming)
-             return;
-         CheckTriggerArea(false);*/
     }
 
     private bool HandleLemmingAction()
@@ -177,16 +166,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     private bool CheckLevelBoundaries()
     {
         var footPixel = TerrainManager.PixelTypeAtPosition(FootPosition);
-        var headPixel = TerrainManager.PixelTypeAtPosition(Orientation.MoveUp(LevelPosition, 6));
+        var headPixel = TerrainManager.PixelTypeAtPosition(HeadPosition);
 
-        if (footPixel.IsVoid() && headPixel.IsVoid())
-        {
-            LemmingManager.RemoveLemming(this);
+        if (!footPixel.IsVoid() || !headPixel.IsVoid())
+            return true;
 
-            return false;
-        }
-
-        return true;
+        LemmingManager.RemoveLemming(this);
+        return false;
     }
 
     private bool CheckTriggerArea(bool isPostTeleportCheck)
@@ -234,21 +220,24 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         movementHelper.EvaluateCheckPositions();
         var length = movementHelper.Length;
 
-        var abortChecks = false;
-
-        for (var i = 0; i < length && !abortChecks; i++)
+        for (var i = 0; i < length; i++)
         {
             var anchorPosition = checkPositions[i];
             var footPosition = Orientation.MoveUp(anchorPosition, 1);
 
-            while (gadgetEnumerator.MoveNext() && !abortChecks)
+            while (gadgetEnumerator.MoveNext())
             {
                 var gadget = gadgetEnumerator.Current;
 
                 if (gadget.MatchesLemmingAtPosition(this, anchorPosition) ||
                     gadget.MatchesLemmingAtPosition(this, footPosition))
                 {
-                    abortChecks = HandleGadgetInteraction(gadget, anchorPosition);
+                    var beforeAction = CurrentAction;
+                    HandleGadgetInteraction(gadget, anchorPosition);
+                    var afterAction = CurrentAction;
+
+                    if (beforeAction != afterAction)
+                        return;
                 }
             }
 
@@ -256,7 +245,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         }
     }
 
-    private bool HandleGadgetInteraction(HitBoxGadget gadget, LevelPosition checkPosition)
+    private void HandleGadgetInteraction(HitBoxGadget gadget, LevelPosition checkPosition)
     {
         // Transition if we are at the end position and need to do one
         // Except if we try to splat and there is water at the lemming position - then let this take precedence.
@@ -276,8 +265,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         }
 
         gadget.OnLemmingMatch(this);
-
-        return false;
     }
 
     /*
@@ -419,25 +406,35 @@ end;
     public void SetFacingDirection(FacingDirection newFacingDirection)
     {
         FacingDirection = newFacingDirection;
-        Renderer.UpdateLemmingState();
+        Renderer.UpdateLemmingState(true);
     }
 
     public void SetOrientation(Orientation newOrientation)
     {
         Orientation = newOrientation;
-        Renderer.UpdateLemmingState();
+        Renderer.UpdateLemmingState(true);
     }
 
     public void SetCurrentAction(LemmingAction lemmingAction)
     {
-        PreviousAction = CurrentAction;
         CurrentAction = lemmingAction;
-        Renderer.UpdateLemmingState();
+        Renderer.UpdateLemmingState(true);
     }
 
     public void SetNextAction(LemmingAction nextAction)
     {
         NextAction = nextAction;
+    }
+
+    public void OnInitialization()
+    {
+        Renderer.UpdateLemmingState(true);
+    }
+
+    public void OnRemoval()
+    {
+        CurrentAction = NoneAction.Instance;
+        Renderer.UpdateLemmingState(false);
     }
 
     public bool Equals(Lemming? other) => Id == (other?.Id ?? -1);

@@ -138,11 +138,6 @@ public sealed class LevelBuilder : IDisposable
             gadgetSpriteBank,
             _fontBank);
 
-        foreach (var lemmingRenderer in levelSprites.OfType<LemmingRenderer>())
-        {
-            lemmingRenderer.UpdateLemmingState();
-        }
-
         var wp = controlPanelSpriteBank.GetTexture("WhitePixel");
         foreach (var metalGrateRenderer in levelSprites.OfType<MetalGrateRenderer>())
         {

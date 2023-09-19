@@ -77,6 +77,8 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
         {
             LemmingsOut++;
         }
+
+        lemming.OnInitialization();
     }
 
     public bool LemmingIsActive(Lemming lemming) => _lemmingPositionHelper.IsTrackingItem(lemming);
@@ -95,6 +97,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
             DeregisterBlocker(lemming);
         }
         LemmingsRemoved++;
+        lemming.OnRemoval();
     }
 
     public void UpdateLemmingPosition(Lemming lemming)
