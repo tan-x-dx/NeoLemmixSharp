@@ -1,6 +1,8 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class SawBladeGadgetType : GadgetType
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+
+public sealed class SawBladeGadgetType : InteractiveGadgetType
 {
     public static SawBladeGadgetType Instance { get; } = new();
 
@@ -10,4 +12,9 @@ public sealed class SawBladeGadgetType : GadgetType
 
     public override int Id => GameConstants.SawBladeGadgetTypeId;
     public override string GadgetTypeName => "saw blade";
+
+    public override void InteractWithLemming(Lemming lemming)
+    {
+
+    }
 }

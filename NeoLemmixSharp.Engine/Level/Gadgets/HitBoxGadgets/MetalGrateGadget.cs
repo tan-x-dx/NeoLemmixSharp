@@ -12,7 +12,7 @@ public sealed class MetalGrateGadget : HitBoxGadget
     private int _transitionTick;
     private bool _isActive;
 
-    public override GadgetType Type => MetalGrateGadgetType.Instance;
+    public override InteractiveGadgetType Type => MetalGrateGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
     public MetalGrateState CurrentState { get; private set; }
 

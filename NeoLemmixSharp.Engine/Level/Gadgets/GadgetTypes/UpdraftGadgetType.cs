@@ -1,6 +1,8 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class UpdraftGadgetType : GadgetType
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+
+public sealed class UpdraftGadgetType : InteractiveGadgetType
 {
     public static UpdraftGadgetType Instance { get; } = new();
 
@@ -10,4 +12,8 @@ public sealed class UpdraftGadgetType : GadgetType
 
     public override int Id => GameConstants.UpdraftGadgetTypeId;
     public override string GadgetTypeName => "updraft";
+
+    public override void InteractWithLemming(Lemming lemming)
+    {
+    }
 }

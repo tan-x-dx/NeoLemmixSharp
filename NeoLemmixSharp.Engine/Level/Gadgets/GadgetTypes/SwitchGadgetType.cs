@@ -1,6 +1,8 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class SwitchGadgetType : GadgetType
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+
+public sealed class SwitchGadgetType : InteractiveGadgetType
 {
     public static SwitchGadgetType Instance { get; } = new();
 
@@ -10,4 +12,8 @@ public sealed class SwitchGadgetType : GadgetType
 
     public override int Id => GameConstants.SwitchGadgetTypeId;
     public override string GadgetTypeName => "switch";
+
+    public override void InteractWithLemming(Lemming lemming)
+    {
+    }
 }

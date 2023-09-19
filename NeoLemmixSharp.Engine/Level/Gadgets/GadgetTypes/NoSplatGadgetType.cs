@@ -1,6 +1,8 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class NoSplatGadgetType : GadgetType
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+
+public sealed class NoSplatGadgetType : InteractiveGadgetType
 {
     public static NoSplatGadgetType Instance { get; } = new();
 
@@ -10,4 +12,8 @@ public sealed class NoSplatGadgetType : GadgetType
 
     public override int Id => GameConstants.NoSplatGadgetTypeId;
     public override string GadgetTypeName => "no splat";
+
+    public override void InteractWithLemming(Lemming lemming)
+    {
+    }
 }

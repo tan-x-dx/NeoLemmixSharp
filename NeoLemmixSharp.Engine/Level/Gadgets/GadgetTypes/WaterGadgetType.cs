@@ -1,6 +1,8 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class WaterGadgetType : GadgetType
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+
+public sealed class WaterGadgetType : InteractiveGadgetType
 {
     public static WaterGadgetType Instance { get; } = new();
 
@@ -10,4 +12,8 @@ public sealed class WaterGadgetType : GadgetType
 
     public override int Id => GameConstants.WaterGadgetTypeId;
     public override string GadgetTypeName => "water";
+
+    public override void InteractWithLemming(Lemming lemming)
+    {
+    }
 }

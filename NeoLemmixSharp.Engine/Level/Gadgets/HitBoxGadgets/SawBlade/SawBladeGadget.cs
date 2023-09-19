@@ -22,7 +22,7 @@ public sealed class SawBladeGadget : HitBoxGadget, IDestructionMask, IMoveableGa
     {
     }
 
-    public override GadgetType Type => SawBladeGadgetType.Instance;
+    public override InteractiveGadgetType Type => SawBladeGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
     public void SetHitMasks(SawBladeHitMask[] hitMasks)

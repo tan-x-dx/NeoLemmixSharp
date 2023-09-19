@@ -1,6 +1,8 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class GenericGadgetType : GadgetType
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+
+public sealed class GenericGadgetType : InteractiveGadgetType
 {
     public static GenericGadgetType Instance { get; } = new();
 
@@ -10,4 +12,8 @@ public sealed class GenericGadgetType : GadgetType
 
     public override int Id => GameConstants.GenericGadgetTypeId;
     public override string GadgetTypeName => "generic";
+
+    public override void InteractWithLemming(Lemming lemming)
+    {
+    }
 }

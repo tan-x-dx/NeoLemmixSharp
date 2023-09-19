@@ -14,7 +14,7 @@ public sealed class SwitchGadget : HitBoxGadget
     private HitBox _currentHitBox;
     private bool _facingRight;
 
-    public override GadgetType Type => SwitchGadgetType.Instance;
+    public override InteractiveGadgetType Type => SwitchGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
     public int AnimationFrame { get; private set; }

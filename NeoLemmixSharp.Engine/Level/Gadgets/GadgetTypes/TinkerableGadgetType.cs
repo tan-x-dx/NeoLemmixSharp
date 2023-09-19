@@ -1,6 +1,8 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class TinkerableGadgetType : GadgetType
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+
+public sealed class TinkerableGadgetType : InteractiveGadgetType
 {
     public static TinkerableGadgetType Instance { get; } = new();
 
@@ -10,4 +12,8 @@ public sealed class TinkerableGadgetType : GadgetType
 
     public override int Id => GameConstants.TinkerableGadgetTypeId;
     public override string GadgetTypeName => "tinkerable";
+
+    public override void InteractWithLemming(Lemming lemming)
+    {
+    }
 }

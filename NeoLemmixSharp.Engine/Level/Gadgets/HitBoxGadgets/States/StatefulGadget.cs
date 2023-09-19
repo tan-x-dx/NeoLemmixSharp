@@ -16,12 +16,12 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
     private int _currentStateIndex;
     private int _nextStateIndex;
 
-    public override GadgetType Type { get; }
+    public override InteractiveGadgetType Type { get; }
     public override Orientation Orientation { get; }
 
     public StatefulGadget(
         int id,
-        GadgetType type,
+        InteractiveGadgetType type,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
         HitBox hitBox,
