@@ -54,6 +54,12 @@ public sealed class PositionHelper<T>
     }
 
     [Pure]
+    public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
+
+    [Pure]
+    public LargeSimpleSet<T>.Enumerator GetAllTrackedItemsEnumerator() => _allTrackedItems.GetEnumerator();
+
+    [Pure]
     public LargeSimpleSet<T>.Enumerator GetAllItemsNearPosition(LevelPosition levelPosition)
     {
         if (_allTrackedItems.Count < _algorithmThreshold)

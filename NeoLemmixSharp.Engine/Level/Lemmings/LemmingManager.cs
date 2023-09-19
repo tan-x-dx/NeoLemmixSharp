@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -11,11 +12,11 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
 {
     private const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize32;
 
+    private readonly Lemming[] _lemmings;
+
     private readonly PositionHelper<Lemming> _lemmingPositionHelper;
     private readonly PositionHelper<Lemming> _blockerPositionHelper;
     private readonly PositionHelper<Lemming> _zombiePositionHelper;
-    private readonly LargeSimpleSet<Lemming> _activeLemmings;
-    private readonly Lemming[] _lemmings;
 
     public int LemmingsToRelease { get; private set; }
     public int LemmingsOut { get; private set; }
@@ -24,7 +25,8 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
     public int TotalNumberOfLemmings => _lemmings.Length;
     public ReadOnlySpan<Lemming> AllLemmings => new(_lemmings);
 
-    public LargeSimpleSet<Lemming>.Enumerator ActiveLemmingsEnumerator => _activeLemmings.GetEnumerator();
+    [Pure]
+    public LargeSimpleSet<Lemming>.Enumerator ActiveLemmingsEnumerator() => _lemmingPositionHelper.GetAllTrackedItemsEnumerator();
 
     public LemmingManager(
         Lemming[] lemmings,
@@ -52,8 +54,6 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
             LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
-
-        _activeLemmings = new LargeSimpleSet<Lemming>(this);
     }
 
     public void Initialise()
@@ -70,21 +70,19 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
             return;
 
         lemming.Initialise();
-        _activeLemmings.Add(lemming);
+
+        _lemmingPositionHelper.AddItem(lemming);
 
         if (!lemming.State.IsZombie)
         {
             LemmingsOut++;
         }
-
-        _lemmingPositionHelper.AddItem(lemming);
     }
 
-    public bool LemmingIsActive(Lemming lemming) => _activeLemmings.Contains(lemming);
+    public bool LemmingIsActive(Lemming lemming) => _lemmingPositionHelper.IsTrackingItem(lemming);
 
     public void RemoveLemming(Lemming lemming)
     {
-        _activeLemmings.Remove(lemming);
         _lemmingPositionHelper.RemoveItem(lemming);
 
         if (lemming.State.IsZombie)
@@ -101,6 +99,9 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
 
     public void UpdateLemmingPosition(Lemming lemming)
     {
+        if (!LemmingIsActive(lemming))
+            return;
+
         _lemmingPositionHelper.UpdateItemPosition(lemming);
 
         if (lemming.State.IsZombie)

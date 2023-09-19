@@ -95,7 +95,7 @@ public sealed class UpdateScheduler
 
         HandleSkillAssignment();
 
-        var activeLemmingEnumerator = _lemmingManager.ActiveLemmingsEnumerator;
+        var activeLemmingEnumerator = _lemmingManager.ActiveLemmingsEnumerator();
 
         while (activeLemmingEnumerator.MoveNext())
         {
