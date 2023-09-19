@@ -216,29 +216,61 @@ public sealed class PositionHelper<T>
 
     private void RegisterItemPosition(T item, int ax, int ay, int bx, int by)
     {
+        if (ax == bx &&
+            ay == by)
+        {
+            // Only one chunk -> skip some extra work
+
+            var chunkPosition = new ChunkPosition(ax, ay);
+            AddToChunk(item, chunkPosition);
+
+            return;
+        }
+
         EvaluateChunkPositions(_chunkPositionScratchSpace, ax, ay, bx, by);
 
-        foreach (var itemChunkPosition in _chunkPositionScratchSpace.AsSpan())
+        foreach (var chunkPosition in _chunkPositionScratchSpace.AsSpan())
         {
-            if (!_itemChunkLookup.TryGetValue(itemChunkPosition, out var itemChunk))
-            {
-                itemChunk = new LargeSimpleSet<T>(_hasher);
-                _itemChunkLookup.Add(itemChunkPosition, itemChunk);
-            }
-
-            itemChunk.Add(item);
+            AddToChunk(item, chunkPosition);
         }
+    }
+
+    private void AddToChunk(T item, ChunkPosition chunkPosition)
+    {
+        if (!_itemChunkLookup.TryGetValue(chunkPosition, out var itemChunk))
+        {
+            itemChunk = new LargeSimpleSet<T>(_hasher);
+            _itemChunkLookup.Add(chunkPosition, itemChunk);
+        }
+
+        itemChunk.Add(item);
     }
 
     private void DeregisterItemPosition(T item, int ax, int ay, int bx, int by)
     {
+        if (ax == bx &&
+            ay == by)
+        {
+            // Only one chunk -> skip some extra work
+
+            var chunkPosition = new ChunkPosition(ax, ay);
+            RemoveFromChunk(item, chunkPosition);
+
+            return;
+        }
+
         EvaluateChunkPositions(_chunkPositionScratchSpace, ax, ay, bx, by);
 
-        foreach (var itemChunkPosition in _chunkPositionScratchSpace.AsSpan())
+        foreach (var chunkPosition in _chunkPositionScratchSpace.AsSpan())
         {
-            if (!_itemChunkLookup.TryGetValue(itemChunkPosition, out var itemChunk))
-                continue;
+            RemoveFromChunk(item, chunkPosition);
+        }
+    }
 
+    private void RemoveFromChunk(T item, ChunkPosition chunkPosition)
+    {
+        if (_itemChunkLookup.TryGetValue(chunkPosition, out var itemChunk))
+        {
             itemChunk.Remove(item);
         }
     }
