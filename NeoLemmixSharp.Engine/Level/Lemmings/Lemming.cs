@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -251,7 +252,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         // Except if we try to splat and there is water at the lemming position - then let this take precedence.
         if (NextAction != NoneAction.Instance &&
             checkPosition == LevelPosition &&
-            (NextAction != SplatterAction.Instance || gadget.Type != GadgetType.Water))
+            (NextAction != SplatterAction.Instance || gadget.Type != WaterGadgetType.Instance))
         {
             NextAction.TransitionLemmingToAction(this, false);
             if (JumpToHoistAdvance)

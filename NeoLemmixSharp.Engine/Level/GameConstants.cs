@@ -153,4 +153,21 @@ public static class GameConstants
     public const int WalkerSkillId = 0;
 
     #endregion
+
+    #region Gadget Constants
+
+    public const int FireGadgetTypeId = 2;
+    public const int FunctionalGadgetTypeId = 10;
+    public const int GenericGadgetTypeId = 0;
+    public const int LogicGateGadgetTypeId = 11;
+    public const int MetalGrateGadgetTypeId = 9;
+    public const int NoSplatGadgetTypeId = 6;
+    public const int SawBladeGadgetTypeId = 8;
+    public const int SplatGadgetTypeId = 5;
+    public const int SwitchGadgetTypeId = 7;
+    public const int TinkerableGadgetTypeId = 3;
+    public const int UpdraftGadgetTypeId = 4;
+    public const int WaterGadgetTypeId = 1;
+
+    #endregion
 }

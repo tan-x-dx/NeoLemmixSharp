@@ -4,8 +4,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional.BinaryLogic;
 
 public sealed class OrGateGadget : BinaryLogicGateGadget
 {
-    public override GadgetType Type => GadgetType.OrGate;
-
     public OrGateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,

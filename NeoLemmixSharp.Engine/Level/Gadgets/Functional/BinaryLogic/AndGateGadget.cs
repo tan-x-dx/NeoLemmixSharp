@@ -4,8 +4,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional.BinaryLogic;
 
 public sealed class AndGateGadget : BinaryLogicGateGadget
 {
-    public override GadgetType Type => GadgetType.AndGate;
-
     public AndGateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,

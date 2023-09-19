@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.States;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -13,7 +14,7 @@ public sealed class SwitchGadget : HitBoxGadget
     private HitBox _currentHitBox;
     private bool _facingRight;
 
-    public override GadgetType Type => GadgetType.Switch;
+    public override GadgetType Type => SwitchGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
     public int AnimationFrame { get; private set; }

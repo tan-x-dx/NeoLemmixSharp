@@ -6,8 +6,6 @@ public sealed class XorGateGadget : BinaryLogicGateGadget
 {
     private bool _shouldTick;
 
-    public override GadgetType Type => GadgetType.XorGate;
-
     public XorGateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
