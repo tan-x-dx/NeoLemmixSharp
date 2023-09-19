@@ -2,6 +2,8 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
@@ -99,9 +101,10 @@ public sealed class PositionHelper<T>
     {
         var chunkPosition = new ChunkPosition(chunkX, chunkY);
 
-        return _itemChunkLookup.TryGetValue(chunkPosition, out var itemChunk)
-            ? itemChunk.GetEnumerator()
-            : new LargeSimpleSet<T>.Enumerator();
+        ref var itemChunk = ref CollectionsMarshal.GetValueRefOrNullRef(_itemChunkLookup, chunkPosition);
+        return Unsafe.IsNullRef(ref itemChunk)
+            ? new LargeSimpleSet<T>.Enumerator()
+            : itemChunk.GetEnumerator();
     }
 
     public void AddItem(T item)
@@ -168,6 +171,38 @@ public sealed class PositionHelper<T>
         RegisterItemPosition(item, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
     }
 
+    private void RegisterItemPosition(T item, int ax, int ay, int bx, int by)
+    {
+        if (ax == bx &&
+            ay == by)
+        {
+            // Only one chunk -> skip some extra work
+
+            var chunkPosition = new ChunkPosition(ax, ay);
+            AddToChunk(item, chunkPosition);
+
+            return;
+        }
+
+        EvaluateChunkPositions(_chunkPositionScratchSpace, ax, ay, bx, by);
+
+        foreach (var chunkPosition in _chunkPositionScratchSpace.AsSpan())
+        {
+            AddToChunk(item, chunkPosition);
+        }
+    }
+
+    private void AddToChunk(T item, ChunkPosition chunkPosition)
+    {
+        ref var itemChunk = ref CollectionsMarshal.GetValueRefOrAddDefault(_itemChunkLookup, chunkPosition, out var exists);
+        if (!exists)
+        {
+            itemChunk = new LargeSimpleSet<T>(_hasher);
+        }
+
+        itemChunk!.Add(item);
+    }
+
     public void RemoveItem(T item)
     {
         var previousCount = _allTrackedItems.Count;
@@ -214,38 +249,6 @@ public sealed class PositionHelper<T>
         DeregisterItemPosition(item, previousTopLeftChunkX, previousTopLeftChunkY, previousBottomRightChunkX, previousBottomRightChunkY);
     }
 
-    private void RegisterItemPosition(T item, int ax, int ay, int bx, int by)
-    {
-        if (ax == bx &&
-            ay == by)
-        {
-            // Only one chunk -> skip some extra work
-
-            var chunkPosition = new ChunkPosition(ax, ay);
-            AddToChunk(item, chunkPosition);
-
-            return;
-        }
-
-        EvaluateChunkPositions(_chunkPositionScratchSpace, ax, ay, bx, by);
-
-        foreach (var chunkPosition in _chunkPositionScratchSpace.AsSpan())
-        {
-            AddToChunk(item, chunkPosition);
-        }
-    }
-
-    private void AddToChunk(T item, ChunkPosition chunkPosition)
-    {
-        if (!_itemChunkLookup.TryGetValue(chunkPosition, out var itemChunk))
-        {
-            itemChunk = new LargeSimpleSet<T>(_hasher);
-            _itemChunkLookup.Add(chunkPosition, itemChunk);
-        }
-
-        itemChunk.Add(item);
-    }
-
     private void DeregisterItemPosition(T item, int ax, int ay, int bx, int by)
     {
         if (ax == bx &&
@@ -269,7 +272,8 @@ public sealed class PositionHelper<T>
 
     private void RemoveFromChunk(T item, ChunkPosition chunkPosition)
     {
-        if (_itemChunkLookup.TryGetValue(chunkPosition, out var itemChunk))
+        ref var itemChunk = ref CollectionsMarshal.GetValueRefOrNullRef(_itemChunkLookup, chunkPosition);
+        if (!Unsafe.IsNullRef(ref itemChunk))
         {
             itemChunk.Remove(item);
         }
