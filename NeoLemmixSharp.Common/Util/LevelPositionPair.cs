@@ -38,6 +38,27 @@ public readonly ref struct LevelPositionPair
         P2Y = Math.Max(y0, y1);
     }
 
+    public LevelPositionPair(ReadOnlySpan<LevelPosition> positions)
+    {
+        var minX = int.MaxValue;
+        var minY = int.MaxValue;
+        var maxX = int.MinValue;
+        var maxY = int.MinValue;
+
+        foreach (var position in positions)
+        {
+            minX = Math.Min(minX, position.X);
+            minY = Math.Min(minY, position.Y);
+            maxX = Math.Max(maxX, position.X);
+            maxY = Math.Max(maxY, position.Y);
+        }
+
+        P1X = minX;
+        P1Y = minY;
+        P2X = maxX;
+        P2Y = maxY;
+    }
+
     public LevelPosition GetTopLeftPosition() => new(P1X, P1Y);
     public LevelPosition GetBottomRightPosition() => new(P2X, P2Y);
 }
