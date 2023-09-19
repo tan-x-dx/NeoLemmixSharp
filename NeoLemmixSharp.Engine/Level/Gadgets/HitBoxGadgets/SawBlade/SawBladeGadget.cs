@@ -55,7 +55,7 @@ public sealed class SawBladeGadget : HitBoxGadget, IDestructionMask, IMoveableGa
 
     public override bool MatchesPosition(LevelPosition levelPosition) => _hitMasks[AnimationFrame].MatchesPosition(levelPosition);
 
-    public override void OnLemmingMatch(Lemming lemming)
+    public override void OnLemmingMatch(Lemming lemming, LevelPosition position)
     {
         LemmingManager.RemoveLemming(lemming);
     }

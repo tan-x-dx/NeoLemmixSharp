@@ -55,7 +55,7 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRe
     public abstract bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition);
     public abstract bool MatchesPosition(LevelPosition levelPosition);
 
-    public abstract void OnLemmingMatch(Lemming lemming);
+    public abstract void OnLemmingMatch(Lemming lemming, LevelPosition position);
 
     public bool Equals(HitBoxGadget? other) => Id == (other?.Id ?? -1);
 

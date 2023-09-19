@@ -265,7 +265,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
             JumpToHoistAdvance = false;
         }
 
-        gadget.OnLemmingMatch(this);
+        gadget.OnLemmingMatch(this, checkPosition);
     }
 
     /*

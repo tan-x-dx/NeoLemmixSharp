@@ -89,7 +89,7 @@ public sealed class MetalGrateGadget : HitBoxGadget
         return CurrentState == MetalGrateState.On && GadgetBounds.ContainsPoint(levelPosition);
     }
 
-    public override void OnLemmingMatch(Lemming lemming)
+    public override void OnLemmingMatch(Lemming lemming, LevelPosition position)
     {
         if (CurrentState == MetalGrateState.Activating)
         {
