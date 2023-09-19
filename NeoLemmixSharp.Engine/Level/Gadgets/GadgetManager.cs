@@ -13,7 +13,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
 {
     private readonly GadgetBase[] _allGadgets;
-    private readonly HitBoxGadget[] _allHitBoxGadgets;
     private readonly PositionHelper<HitBoxGadget> _gadgetPositionHelper;
 
     public ReadOnlySpan<GadgetBase> AllGadgets => new(_allGadgets);
@@ -26,10 +25,6 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
         _allGadgets = allGadgets;
         _allGadgets.ValidateUniqueIds();
         Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
-
-        _allHitBoxGadgets = allGadgets.OfType<HitBoxGadget>().ToArray();
-        _allHitBoxGadgets.ValidateUniqueIds();
-        Array.Sort(_allHitBoxGadgets, IdEquatableItemHelperMethods.Compare);
 
         _gadgetPositionHelper = new PositionHelper<HitBoxGadget>(
             this,
@@ -118,7 +113,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
         _gadgetPositionHelper.UpdateItemPosition(gadget);
     }
 
-    int ISimpleHasher<HitBoxGadget>.NumberOfItems => _allHitBoxGadgets.Length;
+    int ISimpleHasher<HitBoxGadget>.NumberOfItems => _allGadgets.Length;
     int ISimpleHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
-    HitBoxGadget ISimpleHasher<HitBoxGadget>.UnHash(int index) => _allHitBoxGadgets[index];
+    HitBoxGadget ISimpleHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
 }
