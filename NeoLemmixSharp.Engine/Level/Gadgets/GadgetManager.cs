@@ -34,7 +34,8 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
             this,
             ChunkSizeType.ChunkSize64,
             horizontalBoundaryBehaviour,
-            verticalBoundaryBehaviour);
+            verticalBoundaryBehaviour,
+            1);
     }
 
     public void Initialise()

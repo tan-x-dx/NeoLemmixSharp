@@ -10,6 +10,8 @@ public sealed class PositionHelper<T>
 {
     private const int AlgorithmThreshold = 10; // TODO Benchmark this and figure out the best value
 
+    private readonly int _algorithmThreshold;
+
     private readonly int _chunkSizeBitShift;
     private readonly int _numberOfHorizontalChunks;
     private readonly int _numberOfVerticalChunks;
@@ -28,8 +30,11 @@ public sealed class PositionHelper<T>
         ISimpleHasher<T> hasher,
         ChunkSizeType chunkSizeType,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
-        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
+        IVerticalBoundaryBehaviour verticalBoundaryBehaviour,
+        int algorithmThreshold = AlgorithmThreshold)
     {
+        _algorithmThreshold = algorithmThreshold;
+
         _hasher = hasher;
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
         var chunkSize = 1 << _chunkSizeBitShift;
@@ -51,7 +56,7 @@ public sealed class PositionHelper<T>
     [Pure]
     public LargeSimpleSet<T>.Enumerator GetAllItemsNearPosition(LevelPosition levelPosition)
     {
-        if (_allTrackedItems.Count < AlgorithmThreshold)
+        if (_allTrackedItems.Count < _algorithmThreshold)
             return _allTrackedItems.GetEnumerator();
 
         var chunkX = levelPosition.X >> _chunkSizeBitShift;
@@ -69,7 +74,7 @@ public sealed class PositionHelper<T>
         LevelPosition topLeftLevelPosition,
         LevelPosition bottomRightLevelPosition)
     {
-        if (_allTrackedItems.Count < AlgorithmThreshold)
+        if (_allTrackedItems.Count < _algorithmThreshold)
             return _allTrackedItems.GetEnumerator();
 
         GetShiftValues(topLeftLevelPosition, out var topLeftChunkX, out var topLeftChunkY);
@@ -98,10 +103,10 @@ public sealed class PositionHelper<T>
         if (!_allTrackedItems.Add(item))
             throw new InvalidOperationException("Item added twice!");
 
-        if (_allTrackedItems.Count < AlgorithmThreshold)
+        if (_allTrackedItems.Count < _algorithmThreshold)
             return;
 
-        if (_allTrackedItems.Count > AlgorithmThreshold)
+        if (_allTrackedItems.Count > _algorithmThreshold)
         {
             StartTrackingItemPosition(item);
             return;
@@ -129,7 +134,7 @@ public sealed class PositionHelper<T>
         if (!_allTrackedItems.Contains(item))
             throw new InvalidOperationException("Item not registered!");
 
-        if (_allTrackedItems.Count < AlgorithmThreshold)
+        if (_allTrackedItems.Count < _algorithmThreshold)
             return;
 
         var topLeftPixel = item.TopLeftPixel;
@@ -160,14 +165,14 @@ public sealed class PositionHelper<T>
     public void RemoveItem(T item)
     {
         var previousCount = _allTrackedItems.Count;
-        
+
         if (!_allTrackedItems.Remove(item))
             throw new InvalidOperationException("Item not registered!");
 
-        if (previousCount < AlgorithmThreshold)
+        if (previousCount < _algorithmThreshold)
             return;
 
-        if (previousCount > AlgorithmThreshold)
+        if (previousCount > _algorithmThreshold)
         {
             StopTrackingItemPosition(item);
             return;
