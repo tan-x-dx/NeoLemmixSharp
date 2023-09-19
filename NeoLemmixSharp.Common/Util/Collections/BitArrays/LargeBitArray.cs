@@ -343,7 +343,7 @@ public sealed class LargeBitArray : IBitArray
             var otherBits = other._bits[i];
             allEqual &= bits == otherBits;
 
-            if ((bits | otherBits) != bits)
+            if ((bits | otherBits) != otherBits)
                 return false;
         }
 
