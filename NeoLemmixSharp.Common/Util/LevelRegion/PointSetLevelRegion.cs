@@ -72,6 +72,4 @@ public sealed class PointSetLevelRegion : ILevelRegion
                newY < _minimumBoundingBoxHeight &&
                _levelPositions.GetBit(index);
     }
-
-    public bool IsEmpty => false;
 }

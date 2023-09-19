@@ -5,8 +5,6 @@ namespace NeoLemmixSharp.Common.Util.LevelRegion;
 public interface ILevelRegion
 {
     bool ContainsPoint(LevelPosition levelPosition);
-
-    bool IsEmpty { get; }
 }
 
 public interface IRectangularLevelRegion : ILevelRegion
