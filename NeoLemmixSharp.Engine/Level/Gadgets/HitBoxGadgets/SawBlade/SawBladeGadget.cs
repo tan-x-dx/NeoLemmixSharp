@@ -47,27 +47,17 @@ public sealed class SawBladeGadget : HitBoxGadget, IDestructionMask, IMoveableGa
         return null;
     }
 
-    public override bool MatchesLemming(Lemming lemming)
-    {
-        var anchorPosition = lemming.LevelPosition;
-        var footPosition = lemming.FootPosition;
-
-        var hitMask = _hitMasks[AnimationFrame];
-
-        return hitMask.MatchesPosition(anchorPosition) || hitMask.MatchesPosition(footPosition);
-    }
-
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
         return _hitMasks[AnimationFrame].MatchesPosition(levelPosition);
     }
 
+    public override bool MatchesPosition(LevelPosition levelPosition) => _hitMasks[AnimationFrame].MatchesPosition(levelPosition);
+
     public override void OnLemmingMatch(Lemming lemming)
     {
         LemmingManager.RemoveLemming(lemming);
     }
-
-    public override bool MatchesPosition(LevelPosition levelPosition) => _hitMasks[AnimationFrame].MatchesPosition(levelPosition);
 
     public void Move(int dx, int dy)
     {

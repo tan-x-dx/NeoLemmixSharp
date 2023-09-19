@@ -24,21 +24,25 @@ public sealed class HitBox
         _lemmingsInHitBox = new LargeSimpleSet<Lemming>(lemmingHasher);
     }
 
-    public bool MatchesLemming(Lemming lemming) => MatchesLemmingData(lemming) &&
-                                                   MatchesLemmingPosition(lemming);
-
-    public bool MatchesLemmingData(Lemming lemming) => _targetFacingDirections.Contains(lemming.FacingDirection) &&
-                                                       _targetOrientations.Contains(lemming.Orientation) &&
-                                                       _targetActions.Contains(lemming.CurrentAction);
-
-    private bool MatchesLemmingPosition(Lemming lemming)
+    public bool MatchesLemming(Lemming lemming)
     {
         var anchorPosition = lemming.LevelPosition;
         var footPosition = lemming.FootPosition;
 
-        return _levelRegion.ContainsPoint(anchorPosition) ||
-               _levelRegion.ContainsPoint(footPosition);
+        return MatchesLemmingData(lemming) &&
+               (MatchesPosition(anchorPosition) ||
+                MatchesPosition(footPosition));
     }
+
+    public bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
+    {
+        return MatchesLemmingData(lemming) &&
+               MatchesPosition(levelPosition);
+    }
+
+    public bool MatchesLemmingData(Lemming lemming) => _targetFacingDirections.Contains(lemming.FacingDirection) &&
+                                                       _targetOrientations.Contains(lemming.Orientation) &&
+                                                       _targetActions.Contains(lemming.CurrentAction);
 
     public bool MatchesPosition(LevelPosition levelPosition) => _levelRegion.ContainsPoint(levelPosition);
 

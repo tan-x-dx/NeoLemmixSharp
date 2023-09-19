@@ -71,12 +71,13 @@ public sealed class SwitchGadget : HitBoxGadget
         return null;
     }
 
-    public override bool MatchesLemming(Lemming lemming) => _currentHitBox.MatchesLemming(lemming);
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
         return _currentHitBox.MatchesLemmingData(lemming) &&
                _currentHitBox.MatchesPosition(levelPosition);
     }
+
+    public override bool MatchesPosition(LevelPosition levelPosition) => _currentHitBox.MatchesPosition(levelPosition);
 
     public override void OnLemmingMatch(Lemming lemming)
     {
@@ -93,6 +94,4 @@ public sealed class SwitchGadget : HitBoxGadget
             Output.SetSignal(true);
         }
     }
-
-    public override bool MatchesPosition(LevelPosition levelPosition) => _currentHitBox.MatchesPosition(levelPosition);
 }

@@ -40,7 +40,15 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRe
         GadgetManager.UpdateGadgetPosition(this);
     }
 
-    public abstract bool MatchesLemming(Lemming lemming);
+    public bool MatchesLemming(Lemming lemming)
+    {
+        var anchorPosition = lemming.LevelPosition;
+        var footPosition = lemming.FootPosition;
+
+        return MatchesLemmingAtPosition(lemming, anchorPosition) ||
+               MatchesLemmingAtPosition(lemming, footPosition);
+    }
+
     public abstract bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition);
     public abstract bool MatchesPosition(LevelPosition levelPosition);
 

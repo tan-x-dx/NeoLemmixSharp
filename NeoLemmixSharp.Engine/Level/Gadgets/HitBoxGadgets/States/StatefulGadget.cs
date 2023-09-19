@@ -55,12 +55,13 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
         return _inputLookup.TryGetValue(inputName, out var result) ? result : null;
     }
 
-    public override bool MatchesLemming(Lemming lemming) => _hitBox.MatchesLemming(lemming);
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
         return _hitBox.MatchesLemmingData(lemming) &&
                _hitBox.MatchesPosition(levelPosition);
     }
+
+    public override bool MatchesPosition(LevelPosition levelPosition) => _hitBox.MatchesPosition(levelPosition);
 
     public override void OnLemmingMatch(Lemming lemming)
     {
@@ -70,8 +71,6 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
             action.PerformAction(lemming);
         }
     }
-
-    public override bool MatchesPosition(LevelPosition levelPosition) => _hitBox.MatchesPosition(levelPosition);
 
     public void Move(int dx, int dy)
     {

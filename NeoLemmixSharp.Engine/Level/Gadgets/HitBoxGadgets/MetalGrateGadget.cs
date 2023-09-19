@@ -81,12 +81,12 @@ public sealed class MetalGrateGadget : HitBoxGadget
         return null;
     }
 
-    public override bool MatchesLemming(Lemming lemming)
-    {
-        return CurrentState == MetalGrateState.On && GadgetBounds.ContainsPoint(lemming.LevelPosition);
-    }
-
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition) => MatchesPosition(levelPosition);
+
+    public override bool MatchesPosition(LevelPosition levelPosition)
+    {
+        return CurrentState == MetalGrateState.On && GadgetBounds.ContainsPoint(levelPosition);
+    }
 
     public override void OnLemmingMatch(Lemming lemming)
     {
@@ -94,11 +94,6 @@ public sealed class MetalGrateGadget : HitBoxGadget
         {
             LemmingManager.RemoveLemming(lemming);
         }
-    }
-
-    public override bool MatchesPosition(LevelPosition levelPosition)
-    {
-        return CurrentState == MetalGrateState.On && GadgetBounds.ContainsPoint(levelPosition);
     }
 
     public sealed class MetalGrateGadgetInput : IGadgetInput
