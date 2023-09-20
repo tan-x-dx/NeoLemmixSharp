@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.States;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class HitBox
 {

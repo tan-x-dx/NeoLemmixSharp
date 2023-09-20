@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.SawBlade;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class SawBladeHitMask
 {
