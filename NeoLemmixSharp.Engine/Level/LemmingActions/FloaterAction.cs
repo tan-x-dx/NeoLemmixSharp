@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -29,13 +29,11 @@ public sealed class FloaterAction : LemmingAction
         var orientation = lemming.Orientation;
         var levelPosition = lemming.LevelPosition;
 
-        var gadgetEnumerator = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+        var gadgetSet = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
-        while (gadgetEnumerator.MoveNext())
+        foreach (var gadget in gadgetSet)
         {
-            var gadget = gadgetEnumerator.Current;
-
-            if (!(gadget.Type == GadgetType.Updraft && gadget.MatchesLemming(lemming)))
+            if (gadget.Type != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
                 continue;
 
             if (gadget.Orientation == orientation.GetOpposite())

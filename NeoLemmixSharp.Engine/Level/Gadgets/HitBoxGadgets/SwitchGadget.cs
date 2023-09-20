@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.States;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -13,7 +13,7 @@ public sealed class SwitchGadget : HitBoxGadget
     private HitBox _currentHitBox;
     private bool _facingRight;
 
-    public override GadgetType Type => GadgetType.Switch;
+    public override InteractiveGadgetType Type => SwitchGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
     public int AnimationFrame { get; private set; }
@@ -71,14 +71,15 @@ public sealed class SwitchGadget : HitBoxGadget
         return null;
     }
 
-    public override bool MatchesLemming(Lemming lemming) => _currentHitBox.MatchesLemming(lemming);
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
         return _currentHitBox.MatchesLemmingData(lemming) &&
                _currentHitBox.MatchesPosition(levelPosition);
     }
 
-    public override void OnLemmingMatch(Lemming lemming)
+    public override bool MatchesPosition(LevelPosition levelPosition) => _currentHitBox.MatchesPosition(levelPosition);
+
+    public override void OnLemmingMatch(Lemming lemming, LevelPosition position)
     {
         if (_facingRight)
         {
@@ -93,6 +94,4 @@ public sealed class SwitchGadget : HitBoxGadget
             Output.SetSignal(true);
         }
     }
-
-    public override bool MatchesPosition(LevelPosition levelPosition) => _currentHitBox.MatchesPosition(levelPosition);
 }

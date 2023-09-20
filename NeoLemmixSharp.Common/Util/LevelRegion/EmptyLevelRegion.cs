@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace NeoLemmixSharp.Common.Util.LevelRegion;
+﻿namespace NeoLemmixSharp.Common.Util.LevelRegion;
 
 public sealed class EmptyLevelRegion : ILevelRegion
 {
@@ -11,6 +9,4 @@ public sealed class EmptyLevelRegion : ILevelRegion
     }
 
     public bool ContainsPoint(LevelPosition levelPosition) => false;
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    public bool IsEmpty => true;
 }

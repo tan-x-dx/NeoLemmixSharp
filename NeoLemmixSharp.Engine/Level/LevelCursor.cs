@@ -69,7 +69,7 @@ public sealed class LevelCursor
         }
     }
 
-    public LargeSimpleSet<Lemming>.Enumerator LemmingsNearCursorPosition()
+    public LargeSimpleSet<Lemming> LemmingsNearCursorPosition()
     {
         var topLeftCursorPosition = CursorPosition + new LevelPosition(-7, -7);
         var bottomRightCursorPosition = CursorPosition + new LevelPosition(6, 6);

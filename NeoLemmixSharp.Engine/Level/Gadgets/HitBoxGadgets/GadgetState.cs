@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.States;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class GadgetState
 {

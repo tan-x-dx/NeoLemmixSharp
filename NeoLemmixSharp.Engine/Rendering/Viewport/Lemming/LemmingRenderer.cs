@@ -10,14 +10,21 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     private Level.Lemmings.Lemming _lemming;
     private ActionSprite _actionSprite;
 
+    private bool _shouldRender;
+
     public LemmingRenderer(LemmingSpriteBank spriteBank, Level.Lemmings.Lemming lemming)
     {
         _spriteBank = spriteBank;
         _lemming = lemming;
     }
 
-    public void UpdateLemmingState()
+    public void UpdateLemmingState(bool shouldRender)
     {
+        _shouldRender = shouldRender;
+
+        if (!shouldRender)
+            return;
+
         _actionSprite = _spriteBank.GetActionSprite(
             _lemming.CurrentAction,
             _lemming.Orientation,
@@ -26,6 +33,9 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     public Rectangle GetSpriteBounds()
     {
+        if (!_shouldRender)
+            return Rectangle.Empty;
+
         var p = _lemming.LevelPosition - _actionSprite.AnchorPoint;
 
         return new Rectangle(p.X, p.Y, _actionSprite.SpriteWidth, _actionSprite.SpriteHeight);
@@ -33,6 +43,9 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
     {
+        if (!_shouldRender)
+            return;
+
         var renderDestination = new Rectangle(
             screenX,
             screenY,

@@ -57,9 +57,8 @@ public sealed class JumperAction : LemmingAction
     {
         var gadgetsAtLemmingPosition = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
-        while (gadgetsAtLemmingPosition.MoveNext())
+        foreach (var gadget in gadgetsAtLemmingPosition)
         {
-            var gadget = gadgetsAtLemmingPosition.Current;
         }
     }
 }

@@ -3,16 +3,16 @@ using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.PositionTracking;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
 {
     private readonly GadgetBase[] _allGadgets;
-    private readonly HitBoxGadget[] _allHitBoxGadgets;
     private readonly PositionHelper<HitBoxGadget> _gadgetPositionHelper;
 
     public ReadOnlySpan<GadgetBase> AllGadgets => new(_allGadgets);
@@ -26,15 +26,12 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
         _allGadgets.ValidateUniqueIds();
         Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
 
-        _allHitBoxGadgets = allGadgets.OfType<HitBoxGadget>().ToArray();
-        _allHitBoxGadgets.ValidateUniqueIds();
-        Array.Sort(_allHitBoxGadgets, IdEquatableItemHelperMethods.Compare);
-
         _gadgetPositionHelper = new PositionHelper<HitBoxGadget>(
             this,
             ChunkSizeType.ChunkSize64,
             horizontalBoundaryBehaviour,
-            verticalBoundaryBehaviour);
+            verticalBoundaryBehaviour,
+            1);
     }
 
     public void Initialise()
@@ -46,13 +43,13 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
     }
 
     [Pure]
-    public LargeSimpleSet<HitBoxGadget>.Enumerator GetAllGadgetsForPosition(LevelPosition levelPosition)
+    public LargeSimpleSet<HitBoxGadget> GetAllGadgetsForPosition(LevelPosition levelPosition)
     {
         return _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
     }
 
     [Pure]
-    public LargeSimpleSet<HitBoxGadget>.Enumerator GetAllGadgetsAtLemmingPosition(Lemming lemming)
+    public LargeSimpleSet<HitBoxGadget> GetAllGadgetsAtLemmingPosition(Lemming lemming)
     {
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
@@ -66,7 +63,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
     }
 
     [Pure]
-    public LargeSimpleSet<HitBoxGadget>.Enumerator GetAllItemsNearRegion(LevelPosition topLeftPixel, LevelPosition bottomRightLevelPosition)
+    public LargeSimpleSet<HitBoxGadget> GetAllItemsNearRegion(LevelPosition topLeftPixel, LevelPosition bottomRightLevelPosition)
     {
         return _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightLevelPosition);
     }
@@ -74,12 +71,10 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
     [Pure]
     public bool HasGadgetOfTypeAtPosition(LevelPosition levelPosition, GadgetType gadgetType)
     {
-        var gadgetEnumerator = _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
+        var gadgetSet = _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
 
-        while (gadgetEnumerator.MoveNext())
+        foreach (var gadget in gadgetSet)
         {
-            var gadget = gadgetEnumerator.Current;
-
             if (gadget.Type == gadgetType && gadget.MatchesPosition(levelPosition))
                 return true;
         }
@@ -98,12 +93,10 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
         var topLeftPixel = levelPositionPair.GetTopLeftPosition();
         var bottomRightPixel = levelPositionPair.GetBottomRightPosition();
 
-        var gadgetEnumerator = _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
+        var gadgetSet = _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
 
-        while (gadgetEnumerator.MoveNext())
+        foreach (var gadget in gadgetSet)
         {
-            var gadget = gadgetEnumerator.Current;
-
             if (gadget.Type == gadgetType && (gadget.MatchesPosition(anchorPixel) || gadget.MatchesPosition(footPixel)))
                 return true;
         }
@@ -116,7 +109,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
         _gadgetPositionHelper.UpdateItemPosition(gadget);
     }
 
-    int ISimpleHasher<HitBoxGadget>.NumberOfItems => _allHitBoxGadgets.Length;
+    int ISimpleHasher<HitBoxGadget>.NumberOfItems => _allGadgets.Length;
     int ISimpleHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
-    HitBoxGadget ISimpleHasher<HitBoxGadget>.UnHash(int index) => _allHitBoxGadgets[index];
+    HitBoxGadget ISimpleHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
 }

@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -11,7 +12,7 @@ public sealed class MetalGrateGadget : HitBoxGadget
     private int _transitionTick;
     private bool _isActive;
 
-    public override GadgetType Type => GadgetType.MetalGrate;
+    public override InteractiveGadgetType Type => MetalGrateGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
     public MetalGrateState CurrentState { get; private set; }
 
@@ -81,24 +82,19 @@ public sealed class MetalGrateGadget : HitBoxGadget
         return null;
     }
 
-    public override bool MatchesLemming(Lemming lemming)
-    {
-        return CurrentState == MetalGrateState.On && GadgetBounds.ContainsPoint(lemming.LevelPosition);
-    }
-
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition) => MatchesPosition(levelPosition);
 
-    public override void OnLemmingMatch(Lemming lemming)
+    public override bool MatchesPosition(LevelPosition levelPosition)
+    {
+        return CurrentState == MetalGrateState.On && GadgetBounds.ContainsPoint(levelPosition);
+    }
+
+    public override void OnLemmingMatch(Lemming lemming, LevelPosition position)
     {
         if (CurrentState == MetalGrateState.Activating)
         {
             LemmingManager.RemoveLemming(lemming);
         }
-    }
-
-    public override bool MatchesPosition(LevelPosition levelPosition)
-    {
-        return CurrentState == MetalGrateState.On && GadgetBounds.ContainsPoint(levelPosition);
     }
 
     public sealed class MetalGrateGadgetInput : IGadgetInput
