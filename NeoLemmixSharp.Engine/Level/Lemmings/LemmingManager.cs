@@ -5,6 +5,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -56,6 +57,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
             verticalBoundaryBehaviour);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Initialise()
     {
         foreach (var lemming in AllLemmings)
@@ -81,6 +83,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
         lemming.OnInitialization();
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool LemmingIsActive(Lemming lemming) => _lemmingPositionHelper.IsTrackingItem(lemming);
 
     public void RemoveLemming(Lemming lemming)
@@ -118,6 +121,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public LargeSimpleSet<Lemming> GetAllLemmingsNearRegion(
         LevelPosition topLeftLevelPosition,
         LevelPosition bottomRightLevelPosition)
@@ -125,34 +129,50 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
         return _lemmingPositionHelper.GetAllItemsNearRegion(topLeftLevelPosition, bottomRightLevelPosition);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void RegisterBlocker(Lemming lemming)
     {
         _blockerPositionHelper.AddItem(lemming);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DeregisterBlocker(Lemming lemming)
     {
         _blockerPositionHelper.RemoveItem(lemming);
     }
 
-    public LargeSimpleSet<Lemming> BlockersNearLemming(Lemming lemming)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool LemmingIsBlocking(Lemming lemming)
     {
-        return _blockerPositionHelper.GetAllItemsNearRegion(lemming.TopLeftPixel, lemming.BottomRightPixel);
+        return _blockerPositionHelper.IsTrackingItem(lemming);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public LargeSimpleSet<Lemming> GetAllBlockersNearLemming(
+        LevelPosition topLeftLevelPosition,
+        LevelPosition bottomRightLevelPosition)
+    {
+        return _blockerPositionHelper.GetAllItemsNearRegion(topLeftLevelPosition, bottomRightLevelPosition);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void RegisterZombie(Lemming lemming)
     {
         _zombiePositionHelper.AddItem(lemming);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DeregisterZombie(Lemming lemming)
     {
         _zombiePositionHelper.RemoveItem(lemming);
     }
 
-    public LargeSimpleSet<Lemming> ZombiesNearLemming(Lemming lemming)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public LargeSimpleSet<Lemming> GetAllZombiesNearLemming(
+        LevelPosition topLeftLevelPosition,
+        LevelPosition bottomRightLevelPosition)
     {
-        return _zombiePositionHelper.GetAllItemsNearRegion(lemming.TopLeftPixel, lemming.BottomRightPixel);
+        return _zombiePositionHelper.GetAllItemsNearRegion(topLeftLevelPosition, bottomRightLevelPosition);
     }
 
     int ISimpleHasher<Lemming>.NumberOfItems => _lemmings.Length;

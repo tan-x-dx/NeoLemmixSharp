@@ -7,6 +7,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -34,6 +35,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
             1);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Initialise()
     {
         foreach (var gadget in _allGadgets.OfType<HitBoxGadget>())
@@ -43,6 +45,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public LargeSimpleSet<HitBoxGadget> GetAllGadgetsForPosition(LevelPosition levelPosition)
     {
         return _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
@@ -63,6 +66,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public LargeSimpleSet<HitBoxGadget> GetAllItemsNearRegion(LevelPosition topLeftPixel, LevelPosition bottomRightLevelPosition)
     {
         return _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightLevelPosition);
@@ -104,6 +108,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
         return false;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void UpdateGadgetPosition(HitBoxGadget gadget)
     {
         _gadgetPositionHelper.UpdateItemPosition(gadget);

@@ -212,14 +212,17 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     private void CheckGadgets(LevelPosition topLeftPixel, LevelPosition bottomRightPixel)
     {
         var gadgetSet = GadgetManager.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
+        var blockerSet = LemmingManager.LemmingIsBlocking(this)
+            ? LargeSimpleSet<Lemming>.Empty
+            : LemmingManager.GetAllBlockersNearLemming(topLeftPixel, bottomRightPixel);
 
-        if (gadgetSet.Count == 0)
+        if (gadgetSet.Count == 0 &&
+            blockerSet.Count == 0)
             return;
 
         Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
         var movementHelper = new LemmingMovementHelper(this, checkPositions);
-        movementHelper.EvaluateCheckPositions();
-        var length = movementHelper.Length;
+        var length = movementHelper.EvaluateCheckPositions();
 
         for (var i = 0; i < length; i++)
         {
@@ -228,15 +231,31 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
             foreach (var gadget in gadgetSet)
             {
-                if (gadget.MatchesLemmingAtPosition(this, anchorPosition) ||
-                    gadget.MatchesLemmingAtPosition(this, footPosition))
-                {
-                    var beforeAction = CurrentAction;
-                    HandleGadgetInteraction(gadget, anchorPosition);
-                    var afterAction = CurrentAction;
+                if (!gadget.MatchesLemmingAtPosition(this, anchorPosition) &&
+                    !gadget.MatchesLemmingAtPosition(this, footPosition))
+                    continue;
 
-                    if (beforeAction != afterAction)
-                        return;
+                var beforeAction = CurrentAction;
+                HandleGadgetInteraction(gadget, anchorPosition);
+                var afterAction = CurrentAction;
+
+                if (beforeAction == afterAction)
+                    continue;
+
+                LevelPosition = anchorPosition;
+
+                var levelPositionPair = CurrentAction.GetLemmingBounds(this);
+
+                TopLeftPixel = levelPositionPair.GetTopLeftPosition();
+                BottomRightPixel = levelPositionPair.GetBottomRightPosition();
+                return;
+            }
+
+            foreach (var blocker in blockerSet)
+            {
+                if (BlockerAction.BlockerMatches(blocker, this, anchorPosition, footPosition))
+                {
+
                 }
             }
         }
@@ -264,142 +283,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         gadget.OnLemmingMatch(this, checkPosition);
     }
 
-    /*
-procedure TLemmingGame.CheckTriggerArea(L: TLemming; IsPostTeleportCheck: Boolean = false);
-// For intermediate pixels, we call the trigger function according to trigger area
-var
-  CheckPos: TArrayArrayInt; // Combined list for both X- and Y-coordinates
-  i: Integer;
-  AbortChecks: Boolean;
-
-  NeedShiftPosition: Boolean;
-  SavePos: TPoint;
-begin
-  // If this is a post-teleport check, (a) reset previous position and (b) remember new position
-  if IsPostTeleportCheck then
-  begin
-    L.LemXOld := L.LemX;
-    L.LemYOld := L.LemY;
-    SavePos := Point(L.LemX, L.LemY);
-  end;
-
-  // Get positions to check for trigger areas
-  CheckPos := GetGadgetCheckPositions(L);
-
-  // Now move through the values in CheckPosX/Y and check for trigger areas
-  i := -1;
-  AbortChecks := False;
-  NeedShiftPosition := False;
-  repeat
-    Inc(i);
-
-    // Make sure, that we do not move outside the range of CheckPos.
-    Assert(i <= Length(CheckPos[0]), 'CheckTriggerArea: CheckPos has not enough entries');
-    Assert(i <= Length(CheckPos[1]), 'CheckTriggerArea: CheckPos has not enough entries');
-
-    // Transition if we are at the end position and need to do one
-    // Except if we try to splat and there is water at the lemming position - then let this take precedence.
-    if (fLemNextAction <> baNone) and ([CheckPos[0, i], CheckPos[1, i]] = [L.LemX, L.LemY])
-      and ((fLemNextAction <> baSplatting) or not HasTriggerAt(L.LemX, L.LemY, trWater)) then
-    begin
-      Transition(L, fLemNextAction);
-      if fLemJumpToHoistAdvance then
-      begin
-        Inc(L.LemFrame, 2);
-        Inc(L.LemPhysicsFrame, 2);
-      end;
-
-      fLemNextAction := baNone;
-      fLemJumpToHoistAdvance := false;
-    end;
-
-    // Pickup Skills
-    if HasTriggerAt(CheckPos[0, i], CheckPos[1, i], trPickup) then
-      HandlePickup(L, CheckPos[0, i], CheckPos[1, i]);
-
-    // Buttons
-    if HasTriggerAt(CheckPos[0, i], CheckPos[1, i], trButton) then
-      HandleButton(L, CheckPos[0, i], CheckPos[1, i]);
-
-    // Fire
-    if HasTriggerAt(CheckPos[0, i], CheckPos[1, i], trFire) then
-      AbortChecks := HandleFire(L);
-
-    // Water - Check only for drowning here!
-    if (not AbortChecks) and HasTriggerAt(CheckPos[0, i], CheckPos[1, i], trWater) then
-      AbortChecks := HandleWaterDrown(L);
-
-    // Triggered traps and one-shot traps
-    if (not AbortChecks) and HasTriggerAt(CheckPos[0, i], CheckPos[1, i], trTrap) then
-    begin
-      AbortChecks := HandleTrap(L, CheckPos[0, i], CheckPos[1, i]);
-      // Disarmers move always to final X-position, see http://www.lemmingsforums.net/index.php?topic=3004.0
-      if (L.LemAction = baFixing) then CheckPos[0, i] := L.LemX;
-    end;
-
-    // Teleporter
-    if (not AbortChecks) and HasTriggerAt(CheckPos[0, i], CheckPos[1, i], trTeleport) and not IsPostTeleportCheck then
-      AbortChecks := HandleTeleport(L, CheckPos[0, i], CheckPos[1, i]);
-
-    // Exits
-    if (not AbortChecks) and HasTriggerAt(CheckPos[0, i], CheckPos[1, i], trExit) then
-      AbortChecks := HandleExit(L, CheckPos[0, i], CheckPos[1, i]);
-
-    // Flipper (except for blockers / jumpers)
-    if (not AbortChecks) and HasTriggerAt(CheckPos[0, i], CheckPos[1, i], trFlipper)
-                         and not (L.LemAction = baBlocking)
-                         and not ((L.LemActionOld = baJumping) or (L.LemAction = baJumping)) then
-    begin
-      NeedShiftPosition := (L.LemAction in [baClimbing, baSliding, baDehoisting]);
-      AbortChecks := HandleFlipper(L, CheckPos[0, i], CheckPos[1, i]);
-      NeedShiftPosition := NeedShiftPosition and AbortChecks;
-    end;
-
-    // Triggered animations and one-shot animations
-    if (not AbortChecks) and HasTriggerAt(CheckPos[0, i], CheckPos[1, i], trAnim) then
-      HandleAnimation(L, CheckPos[0, i], CheckPos[1, i]); // HandleAnimation will never activate AbortChecks
-
-    // If the lem was required stop, move him there!
-    if AbortChecks then
-    begin
-      L.LemX := CheckPos[0, i];
-      L.LemY := CheckPos[1, i];
-    end;
-
-    // Set L.LemInFlipper correctly
-    if not HasTriggerAt(CheckPos[0, i], CheckPos[1, i], trFlipper)
-       and not ((L.LemActionOld = baJumping) or (L.LemAction = baJumping)) then
-      L.LemInFlipper := DOM_NOOBJECT;
-  until (CheckPos[0, i] = L.LemX) and (CheckPos[1, i] = L.LemY) (*or AbortChecks*);
-
-  if NeedShiftPosition then
-    Inc(L.LemX, L.LemDX);
-
-  // Check for water to transition to swimmer only at final position
-  if HasTriggerAt(L.LemX, L.LemY, trWater) then
-    HandleWaterSwim(L);
-
-  // Check for blocker fields and force-fields
-  // but not for miners removing terrain, see http://www.lemmingsforums.net/index.php?topic=2710.0
-  // also not for Jumpers, as this is handled during movement
-  if ((L.LemAction <> baMining) or not (L.LemPhysicsFrame in [1, 2])) and
-     (L.LemAction <> baJumping) then
-  begin
-    if HasTriggerAt(L.LemX, L.LemY, trForceLeft, L) then
-      HandleForceField(L, -1)
-    else if HasTriggerAt(L.LemX, L.LemY, trForceRight, L) then
-      HandleForceField(L, 1);
-  end;
-
-  // And if this was a post-teleporter check, reset any position changes that may have occurred.
-  if IsPostTeleportCheck then
-  begin
-    L.LemX := SavePos.X;
-    L.LemY := SavePos.Y;
-  end;
-end;
-
-     */
     public void SetFacingDirection(FacingDirection newFacingDirection)
     {
         FacingDirection = newFacingDirection;

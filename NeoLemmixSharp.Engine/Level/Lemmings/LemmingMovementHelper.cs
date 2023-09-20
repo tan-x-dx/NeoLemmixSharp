@@ -19,7 +19,7 @@ public ref struct LemmingMovementHelper
 
     private readonly Lemming _lemming;
     private readonly Span<LevelPosition> _checkPositions;
-    public int Length;
+    private int _length;
 
     public LemmingMovementHelper(Lemming lemming, Span<LevelPosition> checkPositions)
     {
@@ -31,7 +31,7 @@ public ref struct LemmingMovementHelper
     /// The intermediate checks are made according to:
     /// http://www.lemmingsforums.net/index.php?topic=2604.7
     /// </summary>
-    public void EvaluateCheckPositions()
+    public int EvaluateCheckPositions()
     {
         var previousLemmingPosition = _lemming.PreviousLevelPosition;
         var currentLemmingPosition = _lemming.LevelPosition;
@@ -49,12 +49,12 @@ public ref struct LemmingMovementHelper
         // No movement
         if (previousLemmingPosition == currentLemmingPosition)
         {
-            if (previousAction == JumperAction.Instance && Length != 0)
-                return;
+            if (previousAction == JumperAction.Instance && _length != 0)
+                return _length;
 
             AddPosition(workPosition);
 
-            return;
+            return _length;
         }
 
         // Special treatment of miners!
@@ -70,28 +70,31 @@ public ref struct LemmingMovementHelper
             MoveHorizontally(orientation, ref workPosition, currentLemmingPosition);
             MoveVertically(orientation, ref workPosition, currentLemmingPosition);
 
-            return;
+            return _length;
         }
 
         // Lemming moves up or is faller; exception is made for builders!
         if (previousAction != BuilderAction.Instance &&
-            (orientation.FirstIsAboveSecond(currentLemmingPosition, previousLemmingPosition) || _lemming.CurrentAction == FallerAction.Instance))
+            (orientation.FirstIsAboveSecond(currentLemmingPosition, previousLemmingPosition) ||
+             _lemming.CurrentAction == FallerAction.Instance))
         {
             MoveHorizontally(orientation, ref workPosition, currentLemmingPosition);
             MoveVertically(orientation, ref workPosition, currentLemmingPosition);
 
-            return;
+            return _length;
         }
 
         // Lemming moves down (or straight) and is not a faller; alternatively lemming is a builder!
         MoveVertically(orientation, ref workPosition, currentLemmingPosition);
         MoveHorizontally(orientation, ref workPosition, currentLemmingPosition);
+
+        return _length;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void AddPosition(LevelPosition levelPosition)
     {
-        _checkPositions[Length++] = levelPosition;
+        _checkPositions[_length++] = levelPosition;
     }
 
     private void MoveHorizontally(Orientation orientation, ref LevelPosition workPosition, LevelPosition referencePosition)
