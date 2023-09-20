@@ -50,6 +50,9 @@ public sealed class SwitchGadget : HitBoxGadget
 
     public override void Tick()
     {
+        LeftHitBox.Tick();
+        RightHitBox.Tick();
+
         if (_facingRight)
         {
             if (AnimationFrame < 6)
@@ -81,6 +84,8 @@ public sealed class SwitchGadget : HitBoxGadget
 
     public override void OnLemmingMatch(Lemming lemming, LevelPosition position)
     {
+        _currentHitBox.OnLemmingInHitBox(lemming);
+
         if (_facingRight)
         {
             _facingRight = false;

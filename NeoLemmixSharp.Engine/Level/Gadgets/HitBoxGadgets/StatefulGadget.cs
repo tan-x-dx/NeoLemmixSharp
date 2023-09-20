@@ -1,9 +1,11 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using static NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
@@ -66,7 +68,28 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override void OnLemmingMatch(Lemming lemming, LevelPosition position)
     {
-        var actions = _states[_currentStateIndex].Actions;
+        var itemStatus = _hitBox.OnLemmingInHitBox(lemming);
+
+        var state = _states[_currentStateIndex];
+        ReadOnlySpan<IGadgetBehaviour> actions;
+
+        if (IsItemPresent(itemStatus))
+        {
+            actions = state.OnLemmingPresentActions;
+        }
+        else if (IsItemAdded(itemStatus))
+        {
+            actions = state.OnLemmingEnterActions;
+        }
+        else if (IsItemRemoved(itemStatus))
+        {
+            actions = state.OnLemmingExitActions;
+        }
+        else
+        {
+            actions = ReadOnlySpan<IGadgetBehaviour>.Empty;
+        }
+
         foreach (var action in actions)
         {
             action.PerformAction(lemming);
@@ -89,13 +112,16 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override void Tick()
     {
+        _hitBox.Tick();
+
         if (_currentStateIndex != _nextStateIndex)
         {
             ChangeStates();
             return;
         }
 
-        _states[_currentStateIndex].Tick();
+        var state = _states[_currentStateIndex];
+        state.Tick();
     }
 
     private void ChangeStates()
