@@ -31,12 +31,8 @@ public sealed class FloaterAction : LemmingAction
 
         var gadgetSet = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
-        // ReSharper disable once GenericEnumeratorNotDisposed
-        var gadgetEnumerator = gadgetSet.GetEnumerator();
-        while (gadgetEnumerator.MoveNext())
+        foreach (var gadget in gadgetSet)
         {
-            var gadget = gadgetEnumerator.Current;
-
             if (gadget.Type != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
                 continue;
 

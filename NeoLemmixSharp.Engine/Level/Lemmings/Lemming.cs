@@ -216,9 +216,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         if (gadgetSet.Count == 0)
             return;
 
-        // ReSharper disable once GenericEnumeratorNotDisposed
-        var gadgetEnumerator = gadgetSet.GetEnumerator();
-
         Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
         var movementHelper = new LemmingMovementHelper(this, checkPositions);
         movementHelper.EvaluateCheckPositions();
@@ -229,10 +226,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
             var anchorPosition = checkPositions[i];
             var footPosition = Orientation.MoveUp(anchorPosition, 1);
 
-            while (gadgetEnumerator.MoveNext())
+            foreach (var gadget in gadgetSet)
             {
-                var gadget = gadgetEnumerator.Current;
-
                 if (gadget.MatchesLemmingAtPosition(this, anchorPosition) ||
                     gadget.MatchesLemmingAtPosition(this, footPosition))
                 {
@@ -244,8 +239,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
                         return;
                 }
             }
-
-            gadgetEnumerator.Reset();
         }
     }
 

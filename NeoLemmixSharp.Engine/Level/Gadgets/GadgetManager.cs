@@ -73,12 +73,8 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
     {
         var gadgetSet = _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
 
-        // ReSharper disable once GenericEnumeratorNotDisposed
-        var gadgetEnumerator = gadgetSet.GetEnumerator();
-        while (gadgetEnumerator.MoveNext())
+        foreach (var gadget in gadgetSet)
         {
-            var gadget = gadgetEnumerator.Current;
-
             if (gadget.Type == gadgetType && gadget.MatchesPosition(levelPosition))
                 return true;
         }
@@ -99,12 +95,8 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
 
         var gadgetSet = _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
 
-        // ReSharper disable once GenericEnumeratorNotDisposed
-        var gadgetEnumerator = gadgetSet.GetEnumerator();
-        while (gadgetEnumerator.MoveNext())
+        foreach (var gadget in gadgetSet)
         {
-            var gadget = gadgetEnumerator.Current;
-
             if (gadget.Type == gadgetType && (gadget.MatchesPosition(anchorPixel) || gadget.MatchesPosition(footPixel)))
                 return true;
         }

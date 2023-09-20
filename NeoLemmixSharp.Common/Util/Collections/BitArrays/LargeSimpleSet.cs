@@ -57,10 +57,11 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     }
 
     public Enumerator GetEnumerator() => new(this);
-    IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(this);
-    IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
+    public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);
+    IEnumerator<T> IEnumerable<T>.GetEnumerator() => new ReferenceTypeEnumerator(this);
+    IEnumerator IEnumerable.GetEnumerator() => new ReferenceTypeEnumerator(this);
 
-    public struct Enumerator : IEnumerator<T>
+    public ref struct Enumerator
     {
         private readonly ISimpleHasher<T> _hasher;
         private LargeBitArray.Enumerator _bitEnumerator;
@@ -71,14 +72,28 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
             _bitEnumerator = set._bits.GetEnumerator();
         }
 
-        public readonly bool IsEmpty => _bitEnumerator.IsEmpty;
-
         public bool MoveNext() => _bitEnumerator.MoveNext();
         public void Reset() => _bitEnumerator.Reset();
         public readonly T Current => _hasher.UnHash(_bitEnumerator.Current);
+    }
 
-        readonly void IDisposable.Dispose() { }
-        readonly object IEnumerator.Current => Current!;
+    public sealed class ReferenceTypeEnumerator : IEnumerator<T>
+    {
+        private readonly ISimpleHasher<T> _hasher;
+        private readonly LargeBitArray.ReferenceTypeEnumerator _bitEnumerator;
+
+        public ReferenceTypeEnumerator(LargeSimpleSet<T> set)
+        {
+            _hasher = set._hasher;
+            _bitEnumerator = set._bits.GetReferenceTypeEnumerator();
+        }
+
+        public bool MoveNext() => _bitEnumerator.MoveNext();
+        public void Reset() => _bitEnumerator.Reset();
+        public T Current => _hasher.UnHash(_bitEnumerator.Current);
+
+        void IDisposable.Dispose() { }
+        object IEnumerator.Current => Current!;
     }
 
     private LargeBitArray BitsFromEnumerable(IEnumerable<T> other)

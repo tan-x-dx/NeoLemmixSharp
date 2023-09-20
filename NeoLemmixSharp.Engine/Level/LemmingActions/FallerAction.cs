@@ -29,12 +29,8 @@ public sealed class FallerAction : LemmingAction
 
         var gadgetSet = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
-        // ReSharper disable once GenericEnumeratorNotDisposed
-        var gadgetEnumerator = gadgetSet.GetEnumerator();
-        while (gadgetEnumerator.MoveNext())
+        foreach (var gadget in gadgetSet)
         {
-            var gadget = gadgetEnumerator.Current;
-
             if (gadget.Type != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
                 continue;
 
@@ -63,12 +59,8 @@ public sealed class FallerAction : LemmingAction
 
             gadgetSet = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
-            // ReSharper disable once GenericEnumeratorNotDisposed
-            gadgetEnumerator = gadgetSet.GetEnumerator();
-            while (gadgetEnumerator.MoveNext())
+            foreach (var gadget in gadgetSet)
             {
-                var gadget = gadgetEnumerator.Current;
-
                 if (gadget.Type != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
                     continue;
 

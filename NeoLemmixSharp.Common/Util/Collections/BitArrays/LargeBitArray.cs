@@ -171,10 +171,11 @@ public sealed class LargeBitArray : IBitArray
     public LargeBitArray Clone() => new(Length, _bits, Count, _indexOfFirstSetBit);
 
     public Enumerator GetEnumerator() => new(this);
-    IEnumerator<int> IEnumerable<int>.GetEnumerator() => new Enumerator(this);
-    IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
+    public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);
+    IEnumerator<int> IEnumerable<int>.GetEnumerator() => new ReferenceTypeEnumerator(this);
+    IEnumerator IEnumerable.GetEnumerator() => new ReferenceTypeEnumerator(this);
 
-    public struct Enumerator : IEnumerator<int>
+    public ref struct Enumerator
     {
         private readonly LargeBitArray _bitArray;
 
@@ -195,7 +196,58 @@ public sealed class LargeBitArray : IBitArray
             _current = -1;
         }
 
-        public readonly bool IsEmpty => _remaining == 0;
+        public bool MoveNext()
+        {
+            if (_v == 0U)
+            {
+                if (_remaining == 0)
+                    return false;
+
+                do
+                {
+                    _v = _bitArray._bits[++_index];
+                }
+                while (_v == 0U);
+            }
+
+            var m = BitOperations.TrailingZeroCount(_v);
+            _v ^= 1U << m;
+
+            _current = (_index << Shift) | m;
+            _remaining--;
+            return true;
+        }
+
+        public void Reset()
+        {
+            _index = _bitArray._indexOfFirstSetBit;
+            var bits = _bitArray._bits;
+            _v = bits.Length == 0 ? 0U : bits[_index];
+            _remaining = _bitArray.Count;
+            _current = -1;
+        }
+    }
+
+    public sealed class ReferenceTypeEnumerator : IEnumerator<int>
+    {
+        private readonly LargeBitArray _bitArray;
+
+        private uint _v;
+        private int _remaining;
+        private int _index;
+        private int _current;
+
+        public int Current => _current;
+
+        public ReferenceTypeEnumerator(LargeBitArray bitArray)
+        {
+            _bitArray = bitArray;
+            _index = bitArray._indexOfFirstSetBit;
+            var bits = bitArray._bits;
+            _v = bits.Length == 0U ? 0 : bits[_index];
+            _remaining = bitArray.Count;
+            _current = -1;
+        }
 
         public bool MoveNext()
         {

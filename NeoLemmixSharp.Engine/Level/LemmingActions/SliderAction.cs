@@ -69,12 +69,8 @@ public sealed class SliderAction : LemmingAction
 
         var gadgetSet = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
-        // ReSharper disable once GenericEnumeratorNotDisposed
-        var gadgetEnumerator = gadgetSet.GetEnumerator();
-        while (gadgetEnumerator.MoveNext())
+        foreach (var gadget in gadgetSet)
         {
-            var gadget = gadgetEnumerator.Current;
-
             if (gadget.Type != WaterGadgetType.Instance || !gadget.MatchesLemming(lemming))
                 continue;
 

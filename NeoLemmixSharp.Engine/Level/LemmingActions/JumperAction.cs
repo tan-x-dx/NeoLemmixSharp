@@ -57,11 +57,8 @@ public sealed class JumperAction : LemmingAction
     {
         var gadgetsAtLemmingPosition = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
-        // ReSharper disable once GenericEnumeratorNotDisposed
-        var gadgetEnumerator = gadgetsAtLemmingPosition.GetEnumerator();
-        while (gadgetEnumerator.MoveNext())
+        foreach (var gadget in gadgetsAtLemmingPosition)
         {
-            var gadget = gadgetEnumerator.Current;
         }
     }
 }
