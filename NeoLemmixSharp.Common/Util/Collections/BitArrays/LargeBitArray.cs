@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 /// </summary>
 public sealed class LargeBitArray : IBitArray
 {
-    public static LargeBitArray Empty { get; } = new(1);
+    public static LargeBitArray Empty { get; } = new();
 
     private const int Shift = 5;
     private const int Mask = (1 << Shift) - 1;
@@ -21,6 +21,11 @@ public sealed class LargeBitArray : IBitArray
 
     public int Length { get; }
     public int Count { get; private set; }
+
+    private LargeBitArray()
+    {
+        _bits = Array.Empty<uint>();
+    }
 
     public LargeBitArray(int length, bool initialBitFlag = false)
     {
@@ -184,7 +189,8 @@ public sealed class LargeBitArray : IBitArray
         {
             _bitArray = bitArray;
             _index = bitArray._indexOfFirstSetBit;
-            _v = bitArray._bits[_index];
+            var bits = bitArray._bits;
+            _v = bits.Length == 0U ? 0 : bits[_index];
             _remaining = bitArray.Count;
             _current = -1;
         }
@@ -216,13 +222,14 @@ public sealed class LargeBitArray : IBitArray
         public void Reset()
         {
             _index = _bitArray._indexOfFirstSetBit;
-            _v = _bitArray._bits[_index];
+            var bits = _bitArray._bits;
+            _v = bits.Length == 0 ? 0U : bits[_index];
             _remaining = _bitArray.Count;
             _current = -1;
         }
 
-        readonly object IEnumerator.Current => Current;
-        readonly void IDisposable.Dispose() { }
+        object IEnumerator.Current => Current;
+        void IDisposable.Dispose() { }
     }
 
     internal void UnionWith(LargeBitArray other)
