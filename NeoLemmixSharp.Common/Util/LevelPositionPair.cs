@@ -2,19 +2,19 @@
 
 public readonly ref struct LevelPositionPair
 {
-    public readonly int P1X;
-    public readonly int P1Y;
+    private readonly int _p1X;
+    private readonly int _p1Y;
 
-    public readonly int P2X;
-    public readonly int P2Y;
+    private readonly int _p2X;
+    private readonly int _p2Y;
 
     public LevelPositionPair(LevelPosition p1, LevelPosition p2)
     {
-        P1X = Math.Min(p1.X, p2.X);
-        P1Y = Math.Min(p1.Y, p2.Y);
+        _p1X = Math.Min(p1.X, p2.X);
+        _p1Y = Math.Min(p1.Y, p2.Y);
 
-        P2X = Math.Max(p1.X, p2.X);
-        P2Y = Math.Max(p1.Y, p2.Y);
+        _p2X = Math.Max(p1.X, p2.X);
+        _p2Y = Math.Max(p1.Y, p2.Y);
     }
 
     public LevelPositionPair(LevelPosition p1, LevelPosition p2, LevelPosition p3, LevelPosition p4)
@@ -25,8 +25,8 @@ public readonly ref struct LevelPositionPair
         var x1 = Math.Min(p3.X, p4.X);
         var y1 = Math.Min(p3.Y, p4.Y);
 
-        P1X = Math.Min(x0, x1);
-        P1Y = Math.Min(y0, y1);
+        _p1X = Math.Min(x0, x1);
+        _p1Y = Math.Min(y0, y1);
 
         x0 = Math.Max(p1.X, p2.X);
         y0 = Math.Max(p1.Y, p2.Y);
@@ -34,8 +34,8 @@ public readonly ref struct LevelPositionPair
         x1 = Math.Max(p3.X, p4.X);
         y1 = Math.Max(p3.Y, p4.Y);
 
-        P2X = Math.Max(x0, x1);
-        P2Y = Math.Max(y0, y1);
+        _p2X = Math.Max(x0, x1);
+        _p2Y = Math.Max(y0, y1);
     }
 
     public LevelPositionPair(ReadOnlySpan<LevelPosition> positions)
@@ -53,12 +53,20 @@ public readonly ref struct LevelPositionPair
             maxY = Math.Max(maxY, position.Y);
         }
 
-        P1X = minX;
-        P1Y = minY;
-        P2X = maxX;
-        P2Y = maxY;
+        _p1X = minX;
+        _p1Y = minY;
+        _p2X = maxX;
+        _p2Y = maxY;
     }
 
-    public LevelPosition GetTopLeftPosition() => new(P1X, P1Y);
-    public LevelPosition GetBottomRightPosition() => new(P2X, P2Y);
+    public LevelPosition GetTopLeftPosition() => new(_p1X, _p1Y);
+    public LevelPosition GetBottomRightPosition() => new(_p2X, _p2Y);
+
+    public bool Overlaps(LevelPositionPair other)
+    {
+        return other._p1X <= _p2X &&
+               _p1X <= other._p2X &&
+               other._p1Y <= _p2Y &&
+               _p1Y <= other._p2Y;
+    }
 }
