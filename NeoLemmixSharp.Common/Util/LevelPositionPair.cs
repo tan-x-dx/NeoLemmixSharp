@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.Util;
+﻿using System.Diagnostics;
+
+namespace NeoLemmixSharp.Common.Util;
 
 public readonly ref struct LevelPositionPair
 {
@@ -7,6 +9,17 @@ public readonly ref struct LevelPositionPair
 
     private readonly int _p2X;
     private readonly int _p2Y;
+
+    public LevelPositionPair(int p1X, int p1Y, int p2X, int p2Y)
+    {
+        Debug.Assert(p1X < p2X);
+        Debug.Assert(p1Y < p2Y);
+
+        _p1X = p1X;
+        _p1Y = p1Y;
+        _p2X = p2X;
+        _p2Y = p2Y;
+    }
 
     public LevelPositionPair(LevelPosition p1, LevelPosition p2)
     {

@@ -24,10 +24,7 @@ public sealed class BlockerSkill : LemmingSkill
 
         var firstBounds = BlockerAction.Instance.GetLemmingBounds(lemming);
 
-        var topLeft = firstBounds.GetTopLeftPosition();
-        var bottomRight = firstBounds.GetBottomRightPosition();
-
-        var nearbyBlockers = LemmingManager.GetAllBlockersNearLemming(topLeft, bottomRight);
+        var nearbyBlockers = LemmingManager.GetAllBlockersNearLemming(firstBounds);
 
         foreach (var blocker in nearbyBlockers)
         {

@@ -78,12 +78,13 @@ public sealed class PositionHelper<T>
     }
 
     [Pure]
-    public LargeSimpleSet<T> GetAllItemsNearRegion(
-        LevelPosition topLeftLevelPosition,
-        LevelPosition bottomRightLevelPosition)
+    public LargeSimpleSet<T> GetAllItemsNearRegion(LevelPositionPair levelRegion)
     {
         if (_allTrackedItems.Count < _algorithmThreshold)
             return _allTrackedItems;
+
+        var topLeftLevelPosition = levelRegion.GetTopLeftPosition();
+        var bottomRightLevelPosition = levelRegion.GetBottomRightPosition();
 
         GetShiftValues(topLeftLevelPosition, out var topLeftChunkX, out var topLeftChunkY);
         GetShiftValues(bottomRightLevelPosition, out var bottomRightChunkX, out var bottomRightChunkY);

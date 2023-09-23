@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
@@ -199,22 +200,19 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
         var checkRegion = new LevelPositionPair(currentAnchorPixel, currentFootPixel, previousAnchorPixel, previousFootPixel);
 
-        var topLeftPixel = checkRegion.GetTopLeftPosition();
-        var bottomRightPixel = checkRegion.GetBottomRightPosition();
-
-        CheckGadgets(topLeftPixel, bottomRightPixel);
+        CheckGadgets(checkRegion);
 
         NextAction.TransitionLemmingToAction(this, false);
 
         return true;
     }
 
-    private void CheckGadgets(LevelPosition topLeftPixel, LevelPosition bottomRightPixel)
+    private void CheckGadgets(LevelPositionPair levelRegion)
     {
-        var gadgetSet = GadgetManager.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
+        var gadgetSet = GadgetManager.GetAllItemsNearRegion(levelRegion);
         var blockerSet = LemmingManager.LemmingIsBlocking(this)
             ? LargeSimpleSet<Lemming>.Empty
-            : LemmingManager.GetAllBlockersNearLemming(topLeftPixel, bottomRightPixel);
+            : LemmingManager.GetAllBlockersNearLemming(levelRegion);
 
         if (gadgetSet.Count == 0 &&
             blockerSet.Count == 0)

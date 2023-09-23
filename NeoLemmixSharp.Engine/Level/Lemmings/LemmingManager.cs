@@ -123,11 +123,9 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LargeSimpleSet<Lemming> GetAllLemmingsNearRegion(
-        LevelPosition topLeftLevelPosition,
-        LevelPosition bottomRightLevelPosition)
+    public LargeSimpleSet<Lemming> GetAllLemmingsNearRegion(LevelPositionPair levelRegion)
     {
-        return _lemmingPositionHelper.GetAllItemsNearRegion(topLeftLevelPosition, bottomRightLevelPosition);
+        return _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -149,11 +147,9 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LargeSimpleSet<Lemming> GetAllBlockersNearLemming(
-        LevelPosition topLeftLevelPosition,
-        LevelPosition bottomRightLevelPosition)
+    public LargeSimpleSet<Lemming> GetAllBlockersNearLemming(LevelPositionPair levelRegion)
     {
-        return _blockerPositionHelper.GetAllItemsNearRegion(topLeftLevelPosition, bottomRightLevelPosition);
+        return _blockerPositionHelper.GetAllItemsNearRegion(levelRegion);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -169,11 +165,9 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LargeSimpleSet<Lemming> GetAllZombiesNearLemming(
-        LevelPosition topLeftLevelPosition,
-        LevelPosition bottomRightLevelPosition)
+    public LargeSimpleSet<Lemming> GetAllZombiesNearLemming(LevelPositionPair levelRegion)
     {
-        return _zombiePositionHelper.GetAllItemsNearRegion(topLeftLevelPosition, bottomRightLevelPosition);
+        return _zombiePositionHelper.GetAllItemsNearRegion(levelRegion);
     }
 
     int ISimpleHasher<Lemming>.NumberOfItems => _lemmings.Length;

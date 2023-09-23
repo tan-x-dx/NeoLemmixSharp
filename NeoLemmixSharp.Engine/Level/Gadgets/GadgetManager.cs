@@ -59,17 +59,14 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
 
         var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
 
-        var topLeftPixel = levelPositionPair.GetTopLeftPosition();
-        var bottomRightPixel = levelPositionPair.GetBottomRightPosition();
-
-        return _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
+        return _gadgetPositionHelper.GetAllItemsNearRegion(levelPositionPair);
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LargeSimpleSet<HitBoxGadget> GetAllItemsNearRegion(LevelPosition topLeftPixel, LevelPosition bottomRightLevelPosition)
+    public LargeSimpleSet<HitBoxGadget> GetAllItemsNearRegion(LevelPositionPair levelRegion)
     {
-        return _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightLevelPosition);
+        return _gadgetPositionHelper.GetAllItemsNearRegion(levelRegion);
     }
 
     [Pure]
@@ -94,10 +91,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
 
         var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
 
-        var topLeftPixel = levelPositionPair.GetTopLeftPosition();
-        var bottomRightPixel = levelPositionPair.GetBottomRightPosition();
-
-        var gadgetSet = _gadgetPositionHelper.GetAllItemsNearRegion(topLeftPixel, bottomRightPixel);
+        var gadgetSet = _gadgetPositionHelper.GetAllItemsNearRegion(levelPositionPair);
 
         foreach (var gadget in gadgetSet)
         {
