@@ -31,8 +31,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
             this,
             ChunkSizeType.ChunkSize64,
             horizontalBoundaryBehaviour,
-            verticalBoundaryBehaviour,
-            1);
+            verticalBoundaryBehaviour);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
