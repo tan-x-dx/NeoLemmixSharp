@@ -147,6 +147,7 @@ public sealed class LevelScreen : IBaseScreen
     public static void SetLemmingManager(LemmingManager lemmingManager)
     {
         LemmingAction.SetLemmingManager(lemmingManager);
+        LemmingSkill.SetLemmingManager(lemmingManager);
         Lemming.SetLemmingManager(lemmingManager);
         LemmingState.SetLemmingManager(lemmingManager);
         GadgetBase.SetLemmingManager(lemmingManager);
