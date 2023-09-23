@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public ref struct LemmingMovementHelper
 {
-    public const int MaxIntermediateCheckPositions = 12;
+    public const int MaxIntermediateCheckPositions = 11;
 
     private readonly Lemming _lemming;
     private readonly Span<LevelPosition> _checkPositions;
