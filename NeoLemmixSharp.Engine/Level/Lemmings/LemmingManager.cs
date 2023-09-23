@@ -26,9 +26,6 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
     public int TotalNumberOfLemmings => _lemmings.Length;
     public ReadOnlySpan<Lemming> AllLemmings => new(_lemmings);
 
-    [Pure]
-    public LargeSimpleSet<Lemming> ActiveLemmings() => _lemmingPositionHelper.GetAllTrackedItemsEnumerator();
-
     public LemmingManager(
         Lemming[] lemmings,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
@@ -57,6 +54,13 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
             verticalBoundaryBehaviour);
     }
 
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public LargeSimpleSet<Lemming> ActiveLemmings() => _lemmingPositionHelper.GetAllTrackedItems();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool LemmingIsActive(Lemming lemming) => _lemmingPositionHelper.IsTrackingItem(lemming);
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Initialise()
     {
@@ -82,9 +86,6 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
 
         lemming.OnInitialization();
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool LemmingIsActive(Lemming lemming) => _lemmingPositionHelper.IsTrackingItem(lemming);
 
     public void RemoveLemming(Lemming lemming)
     {

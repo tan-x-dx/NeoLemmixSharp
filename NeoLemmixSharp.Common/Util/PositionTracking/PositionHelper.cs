@@ -59,7 +59,7 @@ public sealed class PositionHelper<T>
     public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
 
     [Pure]
-    public LargeSimpleSet<T> GetAllTrackedItemsEnumerator() => _allTrackedItems;
+    public LargeSimpleSet<T> GetAllTrackedItems() => _allTrackedItems;
 
     [Pure]
     public LargeSimpleSet<T> GetAllItemsNearPosition(LevelPosition levelPosition)
@@ -74,7 +74,7 @@ public sealed class PositionHelper<T>
             chunkY < 0 || chunkY >= _numberOfVerticalChunks)
             return LargeSimpleSet<T>.Empty;
 
-        return GetEnumeratorForChunkPosition(chunkX, chunkY);
+        return GetItemsForChunkPosition(chunkX, chunkY);
     }
 
     [Pure]
@@ -90,14 +90,14 @@ public sealed class PositionHelper<T>
 
         if (topLeftChunkX == bottomRightChunkX &&
             topLeftChunkY == bottomRightChunkY)
-            return GetEnumeratorForChunkPosition(topLeftChunkX, topLeftChunkY);
+            return GetItemsForChunkPosition(topLeftChunkX, topLeftChunkY);
 
         EvaluateChunkPositions(_setUnionChunkPositionUser, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
         return _setUnionChunkPositionUser.GetSet();
     }
 
     [Pure]
-    private LargeSimpleSet<T> GetEnumeratorForChunkPosition(int chunkX, int chunkY)
+    private LargeSimpleSet<T> GetItemsForChunkPosition(int chunkX, int chunkY)
     {
         var chunkPosition = new ChunkPosition(chunkX, chunkY);
 
