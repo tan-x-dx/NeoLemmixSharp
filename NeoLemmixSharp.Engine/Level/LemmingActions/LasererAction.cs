@@ -55,18 +55,18 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
     {
     }
 
-    public override int Id => GameConstants.LasererActionId;
+    public override int Id => Global.LasererActionId;
     public override string LemmingActionName => "laserer";
-    public override int NumberOfAnimationFrames => GameConstants.LasererAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.LasererAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (!TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+        if (!Global.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
@@ -154,7 +154,8 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         LevelPosition target,
         ReadOnlySpan<LevelPosition> offsetChecks)
     {
-        if (TerrainManager.PositionOutOfBounds(target))
+        var terrainManager = Global.TerrainManager;
+        if (terrainManager.PositionOutOfBounds(target))
             return LaserHitType.OutOfBounds;
 
         var result = LaserHitType.None;
@@ -163,11 +164,11 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         {
             var checkLevelPosition = orientation.Move(target, position);
 
-            if (!TerrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition))
+            if (!terrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition))
                 continue;
 
             result = result != LaserHitType.Solid &&
-                     TerrainManager.PixelIsIndestructibleToLemming(lemming, this, checkLevelPosition)
+                     terrainManager.PixelIsIndestructibleToLemming(lemming, this, checkLevelPosition)
                 ? LaserHitType.Indestructible
                 : LaserHitType.Solid;
         }

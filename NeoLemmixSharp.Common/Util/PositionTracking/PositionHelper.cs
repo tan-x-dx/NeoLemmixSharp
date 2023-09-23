@@ -10,10 +10,6 @@ namespace NeoLemmixSharp.Common.Util.PositionTracking;
 public sealed class PositionHelper<T>
     where T : class, IIdEquatable<T>, IRectangularBounds
 {
-    private const int AlgorithmThreshold = 10; // TODO Benchmark this and figure out the best value
-
-    private readonly int _algorithmThreshold;
-
     private readonly int _chunkSizeBitShift;
     private readonly int _numberOfHorizontalChunks;
     private readonly int _numberOfVerticalChunks;
@@ -32,11 +28,8 @@ public sealed class PositionHelper<T>
         ISimpleHasher<T> hasher,
         ChunkSizeType chunkSizeType,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
-        IVerticalBoundaryBehaviour verticalBoundaryBehaviour,
-        int algorithmThreshold = AlgorithmThreshold)
+        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
-        _algorithmThreshold = algorithmThreshold;
-
         _hasher = hasher;
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
         var chunkSize = 1 << _chunkSizeBitShift;
@@ -59,14 +52,11 @@ public sealed class PositionHelper<T>
     public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
 
     [Pure]
-    public LargeSimpleSet<T> GetAllTrackedItemsEnumerator() => _allTrackedItems;
+    public LargeSimpleSet<T> GetAllTrackedItems() => _allTrackedItems;
 
     [Pure]
     public LargeSimpleSet<T> GetAllItemsNearPosition(LevelPosition levelPosition)
     {
-        if (_allTrackedItems.Count < _algorithmThreshold)
-            return _allTrackedItems;
-
         var chunkX = levelPosition.X >> _chunkSizeBitShift;
         var chunkY = levelPosition.Y >> _chunkSizeBitShift;
 
@@ -74,30 +64,28 @@ public sealed class PositionHelper<T>
             chunkY < 0 || chunkY >= _numberOfVerticalChunks)
             return LargeSimpleSet<T>.Empty;
 
-        return GetEnumeratorForChunkPosition(chunkX, chunkY);
+        return GetItemsForChunkPosition(chunkX, chunkY);
     }
 
     [Pure]
-    public LargeSimpleSet<T> GetAllItemsNearRegion(
-        LevelPosition topLeftLevelPosition,
-        LevelPosition bottomRightLevelPosition)
+    public LargeSimpleSet<T> GetAllItemsNearRegion(LevelPositionPair levelRegion)
     {
-        if (_allTrackedItems.Count < _algorithmThreshold)
-            return _allTrackedItems;
+        var topLeftLevelPosition = levelRegion.GetTopLeftPosition();
+        var bottomRightLevelPosition = levelRegion.GetBottomRightPosition();
 
         GetShiftValues(topLeftLevelPosition, out var topLeftChunkX, out var topLeftChunkY);
         GetShiftValues(bottomRightLevelPosition, out var bottomRightChunkX, out var bottomRightChunkY);
 
         if (topLeftChunkX == bottomRightChunkX &&
             topLeftChunkY == bottomRightChunkY)
-            return GetEnumeratorForChunkPosition(topLeftChunkX, topLeftChunkY);
+            return GetItemsForChunkPosition(topLeftChunkX, topLeftChunkY);
 
         EvaluateChunkPositions(_setUnionChunkPositionUser, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
         return _setUnionChunkPositionUser.GetSet();
     }
 
     [Pure]
-    private LargeSimpleSet<T> GetEnumeratorForChunkPosition(int chunkX, int chunkY)
+    private LargeSimpleSet<T> GetItemsForChunkPosition(int chunkX, int chunkY)
     {
         var chunkPosition = new ChunkPosition(chunkX, chunkY);
 
@@ -112,23 +100,6 @@ public sealed class PositionHelper<T>
         if (!_allTrackedItems.Add(item))
             throw new InvalidOperationException("Item added twice!");
 
-        if (_allTrackedItems.Count < _algorithmThreshold)
-            return;
-
-        if (_allTrackedItems.Count > _algorithmThreshold)
-        {
-            StartTrackingItemPosition(item);
-            return;
-        }
-
-        foreach (var trackedItem in _allTrackedItems)
-        {
-            StartTrackingItemPosition(trackedItem);
-        }
-    }
-
-    private void StartTrackingItemPosition(T item)
-    {
         var topLeftPixel = item.TopLeftPixel;
         var bottomRightPixel = item.BottomRightPixel;
 
@@ -142,9 +113,6 @@ public sealed class PositionHelper<T>
     {
         if (!_allTrackedItems.Contains(item))
             throw new InvalidOperationException("Item not registered!");
-
-        if (_allTrackedItems.Count < _algorithmThreshold)
-            return;
 
         var topLeftPixel = item.TopLeftPixel;
         var bottomRightPixel = item.BottomRightPixel;
@@ -205,28 +173,9 @@ public sealed class PositionHelper<T>
 
     public void RemoveItem(T item)
     {
-        var previousCount = _allTrackedItems.Count;
-
         if (!_allTrackedItems.Remove(item))
             throw new InvalidOperationException("Item not registered!");
 
-        if (previousCount < _algorithmThreshold)
-            return;
-
-        if (previousCount > _algorithmThreshold)
-        {
-            StopTrackingItemPosition(item);
-            return;
-        }
-
-        foreach (var trackedItem in _allTrackedItems)
-        {
-            StopTrackingItemPosition(trackedItem);
-        }
-    }
-
-    private void StopTrackingItemPosition(T item)
-    {
         var topLeftPixel = item.TopLeftPixel;
         var bottomRightPixel = item.BottomRightPixel;
         var previousTopLeftPixel = item.PreviousTopLeftPixel;

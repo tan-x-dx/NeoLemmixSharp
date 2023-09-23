@@ -11,9 +11,8 @@ public sealed class ShimmierSkill : LemmingSkill
     {
     }
 
-    public override int Id => GameConstants.ShimmierSkillId;
+    public override int Id => Global.ShimmierSkillId;
     public override string LemmingSkillName => "shimmier";
-    public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;
 
     public override bool AssignToLemming(Lemming lemming)

@@ -16,23 +16,24 @@ public sealed class ReacherAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.ReacherActionId;
+    public override int Id => Global.ReacherActionId;
     public override string LemmingActionName => "reacher";
-    public override int NumberOfAnimationFrames => GameConstants.ReacherAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.ReacherAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => Global.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var terrainManager = Global.TerrainManager;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
         var emptyPixels = GetEmptyPixelCount(lemming, lemmingPosition);
 
-        if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 5)) ||
-            TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 6)) ||
-            TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7)) ||
-            TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
+        if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 5)) ||
+            terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 6)) ||
+            terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7)) ||
+            terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -40,7 +41,7 @@ public sealed class ReacherAction : LemmingAction
         }
 
         if (lemming.PhysicsFrame == 1 &&
-            TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9)))
+            terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -75,16 +76,17 @@ public sealed class ReacherAction : LemmingAction
         Lemming lemming,
         LevelPosition lemmingPosition)
     {
-        if (TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 10)))
+        var terrainManager = Global.TerrainManager;
+        if (terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 10)))
             return 0;
 
-        if (TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 11)))
+        if (terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 11)))
             return 1;
 
-        if (TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 12)))
+        if (terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 12)))
             return 2;
 
-        if (TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 13)))
+        if (terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 13)))
             return 3;
 
         return 4;

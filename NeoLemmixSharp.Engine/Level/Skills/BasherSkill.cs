@@ -11,9 +11,8 @@ public sealed class BasherSkill : LemmingSkill
     {
     }
 
-    public override int Id => GameConstants.BasherSkillId;
+    public override int Id => Global.BasherSkillId;
     public override string LemmingSkillName => "basher";
-    public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => true;
 
     public override bool AssignToLemming(Lemming lemming)

@@ -1,6 +1,6 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.FacingDirections;
 
@@ -27,7 +27,7 @@ public abstract class FacingDirection : IExtendedEnumType<FacingDirection>
     public abstract int Id { get; }
 
     [Pure]
-    public abstract FacingDirection OppositeDirection();
+    public abstract FacingDirection GetOpposite();
     [Pure]
     public abstract Orientation ConvertToRelativeOrientation(Orientation orientation);
 

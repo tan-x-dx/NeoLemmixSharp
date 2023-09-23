@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class SwimmerSkill : LemmingSkill
+public sealed class SwimmerSkill : LemmingSkill, IPermanentSkill
 {
     public static SwimmerSkill Instance { get; } = new();
 
@@ -11,9 +11,8 @@ public sealed class SwimmerSkill : LemmingSkill
     {
     }
 
-    public override int Id => GameConstants.SwimmerSkillId;
+    public override int Id => Global.SwimmerSkillId;
     public override string LemmingSkillName => "swimmer";
-    public override bool IsPermanentSkill => true;
     public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
@@ -35,5 +34,16 @@ public sealed class SwimmerSkill : LemmingSkill
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
     {
         return ActionsThatCanBeAssignedPermanentSkill().Append(DrownerAction.Instance);
+    }
+
+    public void SetPermanentSkill(Lemming lemming, bool status)
+    {
+        lemming.State.IsSwimmer = status;
+    }
+
+    public void TogglePermanentSkill(Lemming lemming)
+    {
+        var isSwimmer = lemming.State.IsSwimmer;
+        lemming.State.IsSwimmer = !isSwimmer;
     }
 }

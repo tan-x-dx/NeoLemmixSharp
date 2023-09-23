@@ -4,21 +4,14 @@ using NeoLemmixSharp.Engine.Level.Teams;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
 
-public sealed class SkillModifierBehaviour : IGadgetBehaviour
+public sealed class SkillCountModifierBehaviour : IGadgetBehaviour
 {
-    private static SkillSetManager SkillSetManager { get; set; } = null!;
-
-    public static void SetSkillSetManager(SkillSetManager skillSetManager)
-    {
-        SkillSetManager = skillSetManager;
-    }
-
     private readonly LemmingSkill _skill;
     private readonly Team? _team;
     private readonly int _value;
     private readonly bool _isDelta;
 
-    public SkillModifierBehaviour(LemmingSkill skill, Team? team, int value, bool isDelta)
+    public SkillCountModifierBehaviour(LemmingSkill skill, Team? team, int value, bool isDelta)
     {
         _skill = skill;
         _team = team;
@@ -28,6 +21,6 @@ public sealed class SkillModifierBehaviour : IGadgetBehaviour
 
     public void PerformAction(Lemming lemming)
     {
-        SkillSetManager.SetSkillCount(_skill, _team, _value, _isDelta);
+        Global.SkillSetManager.SetSkillCount(_skill, _team, _value, _isDelta);
     }
 }

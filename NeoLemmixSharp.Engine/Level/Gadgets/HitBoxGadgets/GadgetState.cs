@@ -6,24 +6,36 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 public sealed class GadgetState
 {
     private readonly int _numberOfAnimationFrames;
-    private readonly IGadgetBehaviour[] _interactionActions;
+
+    private readonly IGadgetBehaviour[] _onLemmingEnterActions;
+    private readonly IGadgetBehaviour[] _onLemmingPresentActions;
+    private readonly IGadgetBehaviour[] _onLemmingExitActions;
+
     private readonly GadgetOutput _stateSelectedOutput;
     private readonly int _stateTransitionAfterAnimation;
 
     private StatefulGadget _gadget = null!;
 
-    public ReadOnlySpan<IGadgetBehaviour> Actions => new(_interactionActions);
+    public ReadOnlySpan<IGadgetBehaviour> OnLemmingEnterActions => new(_onLemmingEnterActions);
+    public ReadOnlySpan<IGadgetBehaviour> OnLemmingPresentActions => new(_onLemmingPresentActions);
+    public ReadOnlySpan<IGadgetBehaviour> OnLemmingExitActions => new(_onLemmingExitActions);
 
     public int AnimationFrame { get; private set; }
 
     public GadgetState(
         int numberOfAnimationFrames,
-        IGadgetBehaviour[] interactionActions,
+        IGadgetBehaviour[] onLemmingEnterActions,
+        IGadgetBehaviour[] onLemmingPresentActions,
+        IGadgetBehaviour[] onLemmingExitActions,
         GadgetOutput stateSelectedOutput,
         int stateTransitionAfterAnimation)
     {
         _numberOfAnimationFrames = numberOfAnimationFrames;
-        _interactionActions = interactionActions;
+
+        _onLemmingEnterActions = onLemmingEnterActions;
+        _onLemmingPresentActions = onLemmingPresentActions;
+        _onLemmingExitActions = onLemmingExitActions;
+
         _stateSelectedOutput = stateSelectedOutput;
         _stateTransitionAfterAnimation = stateTransitionAfterAnimation;
     }

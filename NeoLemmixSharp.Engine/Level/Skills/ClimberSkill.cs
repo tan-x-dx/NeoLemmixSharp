@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class ClimberSkill : LemmingSkill
+public sealed class ClimberSkill : LemmingSkill, IPermanentSkill
 {
     public static ClimberSkill Instance { get; } = new();
 
@@ -11,9 +11,9 @@ public sealed class ClimberSkill : LemmingSkill
     {
     }
 
-    public override int Id => GameConstants.ClimberSkillId;
+    public override int Id => Global.ClimberSkillId;
     public override string LemmingSkillName => "climber";
-    public override bool IsPermanentSkill => true;
+
     public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
@@ -28,4 +28,15 @@ public sealed class ClimberSkill : LemmingSkill
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
+
+    public void SetPermanentSkill(Lemming lemming, bool status)
+    {
+        lemming.State.IsClimber = status;
+    }
+
+    public void TogglePermanentSkill(Lemming lemming)
+    {
+        var isClimber = lemming.State.IsClimber;
+        lemming.State.IsClimber = !isClimber;
+    }
 }

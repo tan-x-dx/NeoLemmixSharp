@@ -10,7 +10,7 @@ public sealed class TinkerableGadgetType : InteractiveGadgetType
     {
     }
 
-    public override int Id => GameConstants.TinkerableGadgetTypeId;
+    public override int Id => Global.TinkerableGadgetTypeId;
     public override string GadgetTypeName => "tinkerable";
 
     public override void InteractWithLemming(Lemming lemming)

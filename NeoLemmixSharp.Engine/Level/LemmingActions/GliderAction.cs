@@ -10,11 +10,11 @@ public sealed class GliderAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.GliderActionId;
+    public override int Id => Global.GliderActionId;
     public override string LemmingActionName => "glider";
-    public override int NumberOfAnimationFrames => GameConstants.GliderAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.GliderAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.PermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => Global.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -29,6 +29,7 @@ public sealed class GliderAction : LemmingAction
 
     private static bool DoTurnAround(Lemming lemming, bool moveForwardFirst)
     {
+        var terrainManager = Global.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var currentPosition = lemming.LevelPosition;
@@ -42,15 +43,15 @@ public sealed class GliderAction : LemmingAction
         do
         {
             // bug-fix for http://www.lemmingsforums.net/index.php?topic=2693
-            if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, dy)) &&
-                TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(currentPosition, -dx, dy)))
+            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, dy)) &&
+                terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(currentPosition, -dx, dy)))
             {
                 return true;
             }
 
             dy++;
 
-        } while (dy <= 3 && TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, dy)));
+        } while (dy <= 3 && terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, dy)));
         /*
         repeat
       if HasPixelAt(CurLemX, L.LemY + Dy) and HasPixelAt(CurLemX - L.LemDx, L.LemY + Dy) then

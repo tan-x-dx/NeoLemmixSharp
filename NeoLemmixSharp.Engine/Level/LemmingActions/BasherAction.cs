@@ -16,11 +16,11 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     {
     }
 
-    public override int Id => GameConstants.BasherActionId;
+    public override int Id => Global.BasherActionId;
     public override string LemmingActionName => "basher";
-    public override int NumberOfAnimationFrames => GameConstants.BasherAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.BasherAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -37,9 +37,11 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
          FacingDirection facingDirection,
          LevelPosition pos)
      {
-         return TerrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 3)) ||
-                TerrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 4)) ||
-                TerrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 5));
+       var terrainManager = Global.TerrainManager;
+
+         return terrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 3)) ||
+                terrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 4)) ||
+                terrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 5));
      }*/
 
     private void BasherTurn(
@@ -63,13 +65,15 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         int dx,
         int step)
     {
-        var p1X1Y = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 1));
-        var p1X2Y = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 2));
-        var p1X3Y = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 3));
+        var terrainManager = Global.TerrainManager;
 
-        var p2X1Y = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 1));
-        var p2X2Y = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 2));
-        var p2X3Y = TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 3));
+        var p1X1Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 1));
+        var p1X2Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 2));
+        var p1X3Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 3));
+
+        var p2X1Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 1));
+        var p2X2Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 2));
+        var p2X3Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 3));
 
         if (step == 1)
         {

@@ -54,7 +54,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
 
-        _standardGameUps = TimeSpan.FromTicks((long)(TimeSpan.TicksPerMillisecond * (1000 / (double)GameConstants.FramesPerSecond)));
+        _standardGameUps = TimeSpan.FromTicks((long)(TimeSpan.TicksPerMillisecond * (1000 / (double)Global.FramesPerSecond)));
 
         IsFixedTimeStep = true;
         TargetElapsedTime = _standardGameUps;

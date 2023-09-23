@@ -12,7 +12,7 @@ public sealed class Team : IExtendedEnumType<Team>
 
     private static Team[] GenerateTeamCollection()
     {
-        var teams = new Team[GameConstants.NumberOfTeams];
+        var teams = new Team[Global.NumberOfTeams];
 
         for (var i = 0; i < teams.Length; i++)
         {

@@ -10,11 +10,11 @@ public sealed class DisarmerAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.DisarmerActionId;
+    public override int Id => Global.DisarmerActionId;
     public override string LemmingActionName => "disarmer";
-    public override int NumberOfAnimationFrames => GameConstants.DisarmerAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.DisarmerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.PermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => Global.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

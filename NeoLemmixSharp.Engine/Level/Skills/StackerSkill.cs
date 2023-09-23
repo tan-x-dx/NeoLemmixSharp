@@ -11,15 +11,16 @@ public sealed class StackerSkill : LemmingSkill
     {
     }
 
-    public override int Id => GameConstants.StackerSkillId;
+    public override int Id => Global.StackerSkillId;
     public override string LemmingSkillName => "stacker";
-    public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;
 
     public override bool AssignToLemming(Lemming lemming)
     {
         // Get starting position for stacker
-        lemming.StackLow = !Terrain.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX));
+        lemming.StackLow = !Global.TerrainManager.PixelIsSolidToLemming(
+            lemming,
+            lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX));
 
         StackerAction.Instance.TransitionLemmingToAction(lemming, false);
         return true;

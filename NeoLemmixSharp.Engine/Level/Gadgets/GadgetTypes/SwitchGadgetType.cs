@@ -10,7 +10,7 @@ public sealed class SwitchGadgetType : InteractiveGadgetType
     {
     }
 
-    public override int Id => GameConstants.SwitchGadgetTypeId;
+    public override int Id => Global.SwitchGadgetTypeId;
     public override string GadgetTypeName => "switch";
 
     public override void InteractWithLemming(Lemming lemming)

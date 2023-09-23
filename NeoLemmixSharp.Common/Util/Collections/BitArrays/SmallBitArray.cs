@@ -34,7 +34,8 @@ public sealed class SmallBitArray : IBitArray
     {
         Debug.Assert(index >= 0 && index < Size);
 
-        return (_bits & (1U << index)) != 0U;
+        var value = _bits >> index;
+        return (value & 1U) != 0U;
     }
 
     public bool SetBit(int index)

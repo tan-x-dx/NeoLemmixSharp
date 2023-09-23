@@ -2,33 +2,12 @@
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
-using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Level.Terrain;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IIdEquatable<GadgetBase>
 {
-    protected static TerrainManager TerrainManager { get; private set; } = null!;
-    protected static LemmingManager LemmingManager { get; private set; } = null!;
-    protected static GadgetManager GadgetManager { get; private set; } = null!;
-
-    public static void SetTerrainManager(TerrainManager terrainManager)
-    {
-        TerrainManager = terrainManager;
-    }
-
-    public static void SetLemmingManager(LemmingManager lemmingManager)
-    {
-        LemmingManager = lemmingManager;
-    }
-
-    public static void SetGadgetManager(GadgetManager gadgetManager)
-    {
-        GadgetManager = gadgetManager;
-    }
-
     public int Id { get; }
     public abstract GadgetType Type { get; }
     public abstract Orientation Orientation { get; }

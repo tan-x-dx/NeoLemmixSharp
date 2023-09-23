@@ -13,21 +13,23 @@ public sealed class FallerAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.FallerActionId;
+    public override int Id => Global.FallerActionId;
     public override string LemmingActionName => "faller";
-    public override int NumberOfAnimationFrames => GameConstants.FallerAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.FallerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => Global.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var gadgetManager = Global.GadgetManager;
+        var terrainManager = Global.TerrainManager;
         var currentFallDistanceStep = 0;
         var maxFallDistanceStep = 3; // A lemming falls 3 pixels each frame
 
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        var gadgetSet = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+        var gadgetSet = gadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
         foreach (var gadget in gadgetSet)
         {
@@ -44,7 +46,7 @@ public sealed class FallerAction : LemmingAction
             return true;
 
         while (currentFallDistanceStep < maxFallDistanceStep &&
-               !TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+               !terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
         {
             if (currentFallDistanceStep > 0 &&
                 CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
@@ -57,7 +59,7 @@ public sealed class FallerAction : LemmingAction
             lemming.DistanceFallen++;
             lemming.TrueDistanceFallen++;
 
-            gadgetSet = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+            gadgetSet = gadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
             foreach (var gadget in gadgetSet)
             {
@@ -93,10 +95,12 @@ public sealed class FallerAction : LemmingAction
 
     private static bool IsFallFatal(Lemming lemming)
     {
+        var gadgetManager = Global.GadgetManager;
+
         return !(lemming.State.IsFloater || lemming.State.IsGlider) &&
-               GadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, NoSplatGadgetType.Instance) &&
+               gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, NoSplatGadgetType.Instance) &&
                (lemming.DistanceFallen > MaxFallDistance ||
-                GadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, SplatGadgetType.Instance));
+                gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, SplatGadgetType.Instance));
     }
 
     private static bool CheckFloaterOrGliderTransition(

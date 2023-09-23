@@ -71,10 +71,13 @@ public sealed class LevelCursor
 
     public LargeSimpleSet<Lemming> LemmingsNearCursorPosition()
     {
-        var topLeftCursorPosition = CursorPosition + new LevelPosition(-7, -7);
-        var bottomRightCursorPosition = CursorPosition + new LevelPosition(6, 6);
+        var c = CursorPosition;
+        var x = c.X;
+        var y = c.Y;
 
-        return _lemmingManager.GetAllLemmingsNearRegion(topLeftCursorPosition, bottomRightCursorPosition);
+        var levelRegion = new LevelPositionPair(x - 7, y - 7, x + 6, y + 6);
+
+        return _lemmingManager.GetAllLemmingsNearRegion(levelRegion);
     }
 
     public void CheckLemming(Lemming lemming)

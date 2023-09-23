@@ -11,15 +11,14 @@ public sealed class MinerSkill : LemmingSkill
     {
     }
 
-    public override int Id => GameConstants.MinerSkillId;
+    public override int Id => Global.MinerSkillId;
     public override string LemmingSkillName => "miner";
-    public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
         return ActionIsAssignable(lemming) &&
-               !Terrain.PixelIsIndestructibleToLemming(
+               !Global.TerrainManager.PixelIsIndestructibleToLemming(
                    lemming,
                    MinerAction.Instance,
                    lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX));

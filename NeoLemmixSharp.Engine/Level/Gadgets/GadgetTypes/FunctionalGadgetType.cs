@@ -8,6 +8,6 @@ public sealed class FunctionalGadgetType : GadgetType
     {
     }
 
-    public override int Id => GameConstants.FunctionalGadgetTypeId;
+    public override int Id => Global.FunctionalGadgetTypeId;
     public override string GadgetTypeName => "functional";
 }

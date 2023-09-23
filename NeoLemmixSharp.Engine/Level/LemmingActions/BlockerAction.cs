@@ -1,4 +1,9 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Terrain.Masks;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -10,17 +15,18 @@ public sealed class BlockerAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.BlockerActionId;
+    public override int Id => Global.BlockerActionId;
     public override string LemmingActionName => "blocker";
-    public override int NumberOfAnimationFrames => GameConstants.BlockerAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.BlockerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        if (!Global.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            Global.LemmingManager.DeregisterBlocker(lemming);
         }
 
         return true;
@@ -28,13 +34,129 @@ public sealed class BlockerAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        LemmingManager.RegisterBlocker(lemming);
-
         base.TransitionLemmingToAction(lemming, turnAround);
+
+        Global.LemmingManager.RegisterBlocker(lemming);
     }
 
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -7;
     protected override int TopLeftBoundsDeltaY(int animationFrame) => 11;
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
+    protected override int BottomRightBoundsDeltaY(int animationFrame) => -3;
+
+    public static FacingDirection? TestBlockerMatches(
+        Lemming blocker,
+        Lemming lemming,
+        LevelPosition anchorPosition,
+        LevelPosition footPosition)
+    {
+        Debug.Assert(blocker.CurrentAction == Instance); // Should be a blocker
+        Debug.Assert(lemming.CurrentAction != Instance); // Should NOT be a blocker
+
+        var blockerOrientation = blocker.Orientation;
+        var lemmingOrientation = lemming.Orientation;
+
+        if (blockerOrientation.IsPerpendicularTo(lemmingOrientation))
+            return null;
+
+        var dxCorrection = 1 - blocker.FacingDirection.Id; // Fixes off-by-one errors with left/right positions
+        var topLeftDelta = new LevelPosition(dxCorrection, 0);
+        var bottomRightDelta = new LevelPosition(0, 0);
+
+        var lemmingFacingDirection = lemming.FacingDirection;
+        // If the lemming is upside down compared to the blocker, it cares about the opposite hands.
+        if (lemmingOrientation == blockerOrientation.GetOpposite())
+        {
+            lemmingFacingDirection = lemmingFacingDirection.GetOpposite();
+            topLeftDelta += new LevelPosition(0, 9);
+            bottomRightDelta += new LevelPosition(0, 9);
+        }
+
+        if (lemmingFacingDirection == RightFacingDirection.Instance)
+        {
+            topLeftDelta += GetLeftBlockingTopLeftDelta();
+            bottomRightDelta += GetLeftBlockingBottomRightDelta();
+        }
+        else
+        {
+            topLeftDelta += GetRightBlockingTopLeftDelta();
+            bottomRightDelta += GetRightBlockingBottomRightDelta();
+        }
+
+        var blockerLevelPosition = blocker.LevelPosition;
+
+        var p1 = blockerOrientation.MoveWithoutNormalization(blockerLevelPosition, topLeftDelta.X, topLeftDelta.Y);
+        var p2 = blockerOrientation.MoveWithoutNormalization(blockerLevelPosition, bottomRightDelta.X, bottomRightDelta.Y);
+        var blockingRegion = new LevelPositionPair(p1, p2);
+
+        if (blockingRegion.Contains(anchorPosition) ||
+            blockingRegion.Contains(footPosition))
+            return lemming.FacingDirection.GetOpposite();
+
+        return null;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static LevelPosition GetLeftBlockingTopLeftDelta() => new(-5, 6);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static LevelPosition GetLeftBlockingBottomRightDelta() => new(-2, -3);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static LevelPosition GetRightBlockingTopLeftDelta() => new(3, 6);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static LevelPosition GetRightBlockingBottomRightDelta() => new(6, -3);
+
+    public static void ForceLemmingDirection(Lemming lemming, FacingDirection forcedFacingDirection)
+    {
+        if (lemming.FacingDirection == forcedFacingDirection)
+            return;
+
+        lemming.SetFacingDirection(forcedFacingDirection);
+
+        var dx = forcedFacingDirection.DeltaX;
+
+        // Avoid moving into terrain, see http://www.lemmingsforums.net/index.php?topic=2575.0
+        if (lemming.CurrentAction == MinerAction.Instance)
+        {
+            if (lemming.PhysicsFrame == 2)
+            {
+                TerrainMasks.ApplyMinerMask(lemming, 1, 0, 0);
+                return;
+            }
+
+            if (lemming.PhysicsFrame >= 3 && lemming.PhysicsFrame < 15)
+            {
+                TerrainMasks.ApplyMinerMask(lemming, 1, -2 * dx, -1);
+                return;
+            }
+
+            return;
+        }
+
+        // Required for turned builders not to walk into air
+        // For platformers, see http://www.lemmingsforums.net/index.php?topic=2530.0
+        if ((lemming.CurrentAction == BuilderAction.Instance ||
+             lemming.CurrentAction == PlatformerAction.Instance) &&
+            lemming.PhysicsFrame >= 9)
+        {
+            BuilderAction.LayBrick(lemming);
+            return;
+        }
+
+        if (lemming.CurrentAction != ClimberAction.Instance &&
+            lemming.CurrentAction != SliderAction.Instance &&
+            lemming.CurrentAction != DehoisterAction.Instance)
+            return;
+
+        // Don't move below original position
+        var dy = lemming.IsStartingAction
+            ? 0
+            : 1;
+
+        // Move out of the wall
+        lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, dx, dy);
+
+        WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+    }
 }

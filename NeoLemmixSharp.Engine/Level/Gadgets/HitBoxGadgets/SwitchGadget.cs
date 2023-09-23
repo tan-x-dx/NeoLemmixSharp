@@ -27,11 +27,11 @@ public sealed class SwitchGadget : HitBoxGadget
     {
         var p = gadgetBounds.TopLeft;
         var leftRect = new RectangularLevelRegion(p.X + 3, p.Y + 8, 5, 5);
-        LeftHitBox = new HitBox(leftRect, LemmingManager);
+        LeftHitBox = new HitBox(leftRect, Global.LemmingManager);
         LeftHitBox.ExcludeFacingDirection(LeftFacingDirection.Instance);
 
         var rightRect = new RectangularLevelRegion(p.X + 10, p.Y + 8, 5, 5);
-        RightHitBox = new HitBox(rightRect, LemmingManager);
+        RightHitBox = new HitBox(rightRect, Global.LemmingManager);
         RightHitBox.ExcludeFacingDirection(RightFacingDirection.Instance);
 
         if (faceRight)
@@ -50,6 +50,9 @@ public sealed class SwitchGadget : HitBoxGadget
 
     public override void Tick()
     {
+        LeftHitBox.Tick();
+        RightHitBox.Tick();
+
         if (_facingRight)
         {
             if (AnimationFrame < 6)
@@ -81,6 +84,8 @@ public sealed class SwitchGadget : HitBoxGadget
 
     public override void OnLemmingMatch(Lemming lemming, LevelPosition position)
     {
+        _currentHitBox.OnLemmingInHitBox(lemming);
+
         if (_facingRight)
         {
             _facingRight = false;

@@ -10,11 +10,11 @@ public sealed class ShruggerAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.ShruggerActionId;
+    public override int Id => Global.ShruggerActionId;
     public override string LemmingActionName => "shrugger";
-    public override int NumberOfAnimationFrames => GameConstants.ShruggerAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.ShruggerAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => Global.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

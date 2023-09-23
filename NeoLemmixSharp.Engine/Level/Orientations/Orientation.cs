@@ -1,14 +1,13 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level.Terrain;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 
 public abstract class Orientation : IExtendedEnumType<Orientation>
 {
     private static readonly Orientation[] Orientations = GenerateOrientationCollection();
-    protected static TerrainManager Terrain { get; private set; } = null!;
 
     public static int NumberOfItems => Orientations.Length;
     public static ReadOnlySpan<Orientation> AllItems => new(Orientations);
@@ -17,19 +16,14 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     {
         var orientations = new Orientation[4];
 
-        orientations[GameConstants.DownOrientationRotNum] = DownOrientation.Instance;
-        orientations[GameConstants.LeftOrientationRotNum] = LeftOrientation.Instance;
-        orientations[GameConstants.UpOrientationRotNum] = UpOrientation.Instance;
-        orientations[GameConstants.RightOrientationRotNum] = RightOrientation.Instance;
+        orientations[Global.DownOrientationRotNum] = DownOrientation.Instance;
+        orientations[Global.LeftOrientationRotNum] = LeftOrientation.Instance;
+        orientations[Global.UpOrientationRotNum] = UpOrientation.Instance;
+        orientations[Global.RightOrientationRotNum] = RightOrientation.Instance;
 
         orientations.ValidateUniqueIds();
 
         return orientations;
-    }
-
-    public static void SetTerrainManager(TerrainManager terrain)
-    {
-        Terrain = terrain;
     }
 
     int IIdEquatable<Orientation>.Id => RotNum;
@@ -96,22 +90,24 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     public abstract bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsParallelTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteVerticalComponent == 0);
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsPerpendicularTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteHorizontalComponent == 0);
 
     /// <summary>
-    /// If the first position were to move horizontally to be in line with the reference position, what is the dx it would require?
+    /// If the first position were to move horizontally to be in line with the second position, what is the dx it would require?
     /// </summary>
-    /// <param name="firstPosition"></param>
-    /// <param name="referencePosition"></param>
+    /// <param name="fromPosition"></param>
+    /// <param name="toPosition"></param>
     [Pure]
     public abstract int GetHorizontalDelta(LevelPosition fromPosition, LevelPosition toPosition);
     /// <summary>
-    /// If the first position were to move vertically to be in line with the reference position, what is the dy it would require?
+    /// If the first position were to move vertically to be in line with the second position, what is the dy it would require?
     /// </summary>
-    /// <param name="firstPosition"></param>
-    /// <param name="referencePosition"></param>
+    /// <param name="fromPosition"></param>
+    /// <param name="toPosition"></param>
     [Pure]
     public abstract int GetVerticalDelta(LevelPosition fromPosition, LevelPosition toPosition);
 
