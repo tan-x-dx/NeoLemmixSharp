@@ -13,7 +13,6 @@ public sealed class JumperSkill : LemmingSkill
 
     public override int Id => Global.JumperSkillId;
     public override string LemmingSkillName => "jumper";
-    public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => false;
     
     public override bool AssignToLemming(Lemming lemming)

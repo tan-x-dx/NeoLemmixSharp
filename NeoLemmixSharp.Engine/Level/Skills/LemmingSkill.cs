@@ -62,7 +62,6 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     public abstract int Id { get; }
     public abstract string LemmingSkillName { get; }
-    public abstract bool IsPermanentSkill { get; }
     public abstract bool IsClassicSkill { get; }
 
     public virtual bool CanAssignToLemming(Lemming lemming)

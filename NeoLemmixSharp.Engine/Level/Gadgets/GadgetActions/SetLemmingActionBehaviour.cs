@@ -3,11 +3,11 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
 
-public sealed class ForceLemmingActionBehaviour : IGadgetBehaviour
+public sealed class SetLemmingActionBehaviour : IGadgetBehaviour
 {
     private readonly LemmingAction _action;
 
-    public ForceLemmingActionBehaviour(LemmingAction action)
+    public SetLemmingActionBehaviour(LemmingAction action)
     {
         _action = action;
     }

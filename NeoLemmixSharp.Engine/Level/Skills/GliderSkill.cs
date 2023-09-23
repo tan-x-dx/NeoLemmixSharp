@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class GliderSkill : LemmingSkill
+public sealed class GliderSkill : LemmingSkill, IPermanentSkill
 {
     public static GliderSkill Instance { get; } = new();
 
@@ -13,7 +13,6 @@ public sealed class GliderSkill : LemmingSkill
 
     public override int Id => Global.GliderSkillId;
     public override string LemmingSkillName => "glider";
-    public override bool IsPermanentSkill => true;
     public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
@@ -28,4 +27,15 @@ public sealed class GliderSkill : LemmingSkill
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
+
+    public void SetPermanentSkill(Lemming lemming, bool status)
+    {
+        lemming.State.IsGlider = status;
+    }
+
+    public void TogglePermanentSkill(Lemming lemming)
+    {
+        var isGlider = lemming.State.IsGlider;
+        lemming.State.IsGlider = !isGlider;
+    }
 }

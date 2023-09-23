@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class FloaterSkill : LemmingSkill
+public sealed class FloaterSkill : LemmingSkill, IPermanentSkill
 {
     public static FloaterSkill Instance { get; } = new();
 
@@ -13,7 +13,6 @@ public sealed class FloaterSkill : LemmingSkill
 
     public override int Id => Global.FloaterSkillId;
     public override string LemmingSkillName => "floater";
-    public override bool IsPermanentSkill => true;
     public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
@@ -28,4 +27,15 @@ public sealed class FloaterSkill : LemmingSkill
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
+
+    public void SetPermanentSkill(Lemming lemming, bool status)
+    {
+        lemming.State.IsFloater = status;
+    }
+
+    public void TogglePermanentSkill(Lemming lemming)
+    {
+        var isFloater = lemming.State.IsFloater;
+        lemming.State.IsFloater = !isFloater;
+    }
 }
