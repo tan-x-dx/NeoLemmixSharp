@@ -73,7 +73,6 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
         }
 
         public bool MoveNext() => _bitEnumerator.MoveNext();
-        public void Reset() => _bitEnumerator.Reset();
         public readonly T Current => _hasher.UnHash(_bitEnumerator.Current);
     }
 
@@ -115,112 +114,112 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     public void UnionWith(IEnumerable<T> other)
     {
         var otherBits = BitsFromEnumerable(other);
-        _bits.UnionWith(otherBits);
+        _bits.UnionWith(otherBits.AsSpan());
     }
 
     public void UnionWith(LargeSimpleSet<T> other)
     {
         var otherBits = other._bits;
-        _bits.UnionWith(otherBits);
+        _bits.UnionWith(otherBits.AsSpan());
     }
 
     public void IntersectWith(IEnumerable<T> other)
     {
         var otherBits = BitsFromEnumerable(other);
-        _bits.IntersectWith(otherBits);
+        _bits.IntersectWith(otherBits.AsSpan());
     }
 
     public void IntersectWith(LargeSimpleSet<T> other)
     {
         var otherBits = other._bits;
-        _bits.IntersectWith(otherBits);
+        _bits.IntersectWith(otherBits.AsSpan());
     }
 
     public void ExceptWith(IEnumerable<T> other)
     {
         var otherBits = BitsFromEnumerable(other);
-        _bits.ExceptWith(otherBits);
+        _bits.ExceptWith(otherBits.AsSpan());
     }
 
     public void ExceptWith(LargeSimpleSet<T> other)
     {
         var otherBits = other._bits;
-        _bits.ExceptWith(otherBits);
+        _bits.ExceptWith(otherBits.AsSpan());
     }
 
     public void SymmetricExceptWith(IEnumerable<T> other)
     {
         var otherBits = BitsFromEnumerable(other);
-        _bits.SymmetricExceptWith(otherBits);
+        _bits.SymmetricExceptWith(otherBits.AsSpan());
     }
 
     public void SymmetricExceptWith(LargeSimpleSet<T> other)
     {
         var otherBits = other._bits;
-        _bits.SymmetricExceptWith(otherBits);
+        _bits.SymmetricExceptWith(otherBits.AsSpan());
     }
 
     [Pure]
     public bool IsSubsetOf(IEnumerable<T> other)
     {
         var otherBits = BitsFromEnumerable(other);
-        return _bits.IsSubsetOf(otherBits);
+        return _bits.IsSubsetOf(otherBits.AsSpan());
     }
 
     [Pure]
     public bool IsSubsetOf(LargeSimpleSet<T> other)
     {
         var otherBits = other._bits;
-        return _bits.IsSubsetOf(otherBits);
+        return _bits.IsSubsetOf(otherBits.AsSpan());
     }
 
     [Pure]
     public bool IsSupersetOf(IEnumerable<T> other)
     {
         var otherBits = BitsFromEnumerable(other);
-        return _bits.IsSupersetOf(otherBits);
+        return _bits.IsSupersetOf(otherBits.AsSpan());
     }
 
     [Pure]
     public bool IsSupersetOf(LargeSimpleSet<T> other)
     {
         var otherBits = other._bits;
-        return _bits.IsSupersetOf(otherBits);
+        return _bits.IsSupersetOf(otherBits.AsSpan());
     }
 
     [Pure]
     public bool IsProperSubsetOf(IEnumerable<T> other)
     {
         var otherBits = BitsFromEnumerable(other);
-        return _bits.IsProperSubsetOf(otherBits);
+        return _bits.IsProperSubsetOf(otherBits.AsSpan());
     }
 
     [Pure]
     public bool IsProperSubsetOf(LargeSimpleSet<T> other)
     {
         var otherBits = other._bits;
-        return _bits.IsProperSubsetOf(otherBits);
+        return _bits.IsProperSubsetOf(otherBits.AsSpan());
     }
 
     [Pure]
     public bool IsProperSupersetOf(IEnumerable<T> other)
     {
         var otherBits = BitsFromEnumerable(other);
-        return _bits.IsProperSupersetOf(otherBits);
+        return _bits.IsProperSupersetOf(otherBits.AsSpan());
     }
 
     [Pure]
     public bool IsProperSupersetOf(LargeSimpleSet<T> other)
     {
         var otherBits = other._bits;
-        return _bits.IsProperSupersetOf(otherBits);
+        return _bits.IsProperSupersetOf(otherBits.AsSpan());
     }
 
     [Pure]
     public bool Overlaps(IEnumerable<T> other)
     {
         if (other is LargeSimpleSet<T> set)
-            return _bits.Overlaps(set._bits);
+            return _bits.Overlaps(set._bits.AsSpan());
 
         return other.Any(Contains);
     }
@@ -229,21 +228,21 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
     public bool Overlaps(LargeSimpleSet<T> other)
     {
         var otherBits = other._bits;
-        return _bits.Overlaps(otherBits);
+        return _bits.Overlaps(otherBits.AsSpan());
     }
 
     [Pure]
     public bool SetEquals(IEnumerable<T> other)
     {
         var otherBits = BitsFromEnumerable(other);
-        return _bits.SetEquals(otherBits);
+        return _bits.SetEquals(otherBits.AsSpan());
     }
 
     [Pure]
     public bool SetEquals(LargeSimpleSet<T> other)
     {
         var otherBits = other._bits;
-        return _bits.SetEquals(otherBits);
+        return _bits.SetEquals(otherBits.AsSpan());
     }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
