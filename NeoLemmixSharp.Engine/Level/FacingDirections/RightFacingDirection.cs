@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Engine.Level.Orientations;
+﻿using NeoLemmixSharp.Engine.Level.Orientations;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.FacingDirections;
 
@@ -15,7 +15,7 @@ public sealed class RightFacingDirection : FacingDirection
     public override int Id => Global.RightFacingDirectionId;
 
     [Pure]
-    public override FacingDirection OppositeDirection() => LeftFacingDirection.Instance;
+    public override FacingDirection GetOpposite() => LeftFacingDirection.Instance;
     [Pure]
     public override Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.RotateCounterClockwise();
 

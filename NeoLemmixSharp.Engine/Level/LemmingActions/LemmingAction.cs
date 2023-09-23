@@ -106,7 +106,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
     {
         if (turnAround)
         {
-            lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection());
+            lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
         }
 
         if (lemming.CurrentAction == this)

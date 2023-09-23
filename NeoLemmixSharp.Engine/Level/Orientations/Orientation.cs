@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -89,8 +90,10 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     public abstract bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsParallelTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteVerticalComponent == 0);
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsPerpendicularTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteHorizontalComponent == 0);
 
     /// <summary>

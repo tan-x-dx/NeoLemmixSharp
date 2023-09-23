@@ -44,7 +44,7 @@ public sealed class JumperAction : LemmingAction
         if (lemming.CurrentAction == ClimberAction.Instance ||
             lemming.CurrentAction == SliderAction.Instance)
         {
-            lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection());
+            lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
             lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX);
         }
 

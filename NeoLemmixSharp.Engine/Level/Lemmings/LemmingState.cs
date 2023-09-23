@@ -85,6 +85,9 @@ public sealed class LemmingState
         get => _states.GetBit(ZombieBitIndex);
         set
         {
+            if (IsZombie == value)
+                return;
+
             if (value)
             {
                 _states.SetBit(ZombieBitIndex);

@@ -77,7 +77,7 @@ public sealed class SwimmerAction : LemmingAction
                 }
 
 
-                lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection());
+                lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
                 lemmingPosition = orientation.MoveLeft(lemmingPosition, dx); // Move lemming back
                 lemming.LevelPosition = lemmingPosition;
 

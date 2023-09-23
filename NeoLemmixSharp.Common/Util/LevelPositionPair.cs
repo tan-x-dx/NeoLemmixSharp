@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -51,7 +52,7 @@ public readonly ref struct LevelPositionPair
         _p2Y = Math.Max(y0, y1);
     }
 
-    public LevelPositionPair(ReadOnlySpan<LevelPosition> positions)
+    public LevelPositionPair(Span<LevelPosition> positions)
     {
         var minX = int.MaxValue;
         var minY = int.MaxValue;
@@ -75,11 +76,19 @@ public readonly ref struct LevelPositionPair
     public LevelPosition GetTopLeftPosition() => new(_p1X, _p1Y);
     public LevelPosition GetBottomRightPosition() => new(_p2X, _p2Y);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Overlaps(LevelPositionPair other)
     {
         return other._p1X <= _p2X &&
                _p1X <= other._p2X &&
                other._p1Y <= _p2Y &&
                _p1Y <= other._p2Y;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Contains(LevelPosition anchorPosition)
+    {
+        return _p1X <= anchorPosition.X && anchorPosition.X <= _p2X &&
+               _p1Y <= anchorPosition.Y && anchorPosition.Y <= _p2Y;
     }
 }

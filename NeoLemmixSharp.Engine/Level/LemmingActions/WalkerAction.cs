@@ -45,7 +45,7 @@ public sealed class WalkerAction : LemmingAction
             }
             else
             {
-                lemming.SetFacingDirection(lemming.FacingDirection.OppositeDirection());
+                lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
                 lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
                 lemming.LevelPosition = lemmingPosition;
             }
