@@ -164,14 +164,15 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
             PreviousLevelPosition = LevelPosition;
         }
 
-        CheckGadgets();
+        var result = CheckGadgets() &&
+                     CheckBlockers();
 
         NextAction.TransitionLemmingToAction(this, false);
 
-        return true;
+        return result;
     }
 
-    private void CheckGadgets()
+    private bool CheckGadgets()
     {
         Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
         var movementHelper = new LemmingMovementHelper(this, checkPositions);
@@ -181,16 +182,11 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         var checkPositionsBounds = new LevelPositionPair(checkPositions);
 
         var gadgetManager = Global.GadgetManager;
-        var lemmingManager = Global.LemmingManager;
 
         var gadgetSet = gadgetManager.GetAllItemsNearRegion(checkPositionsBounds);
-        var blockerSet = lemmingManager.LemmingIsBlocking(this)
-            ? LargeSimpleSet<Lemming>.Empty
-            : lemmingManager.GetAllBlockersNearLemming(checkPositionsBounds);
 
-        if (gadgetSet.Count == 0 &&
-            blockerSet.Count == 0)
-            return;
+        if (gadgetSet.Count == 0)
+            return true;
 
         foreach (var anchorPosition in checkPositions)
         {
@@ -215,17 +211,11 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
                 TopLeftPixel = levelPositionPair.GetTopLeftPosition();
                 BottomRightPixel = levelPositionPair.GetBottomRightPosition();
-                return;
-            }
-
-            foreach (var blocker in blockerSet)
-            {
-                if (BlockerAction.BlockerMatches(blocker, this, anchorPosition, footPosition))
-                {
-
-                }
+                return false;
             }
         }
+
+        return true;
     }
 
     private void HandleGadgetInteraction(HitBoxGadget gadget, LevelPosition checkPosition)
@@ -250,6 +240,42 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
         NextAction = NoneAction.Instance;
         gadget.OnLemmingMatch(this, checkPosition);
+    }
+
+    /// <summary>
+    /// Check for blockers, but not for miners removing terrain,
+    /// see http://www.lemmingsforums.net/index.php?topic=2710.0.
+    /// Also not for Jumpers, as this is handled by the JumperAction
+    /// </summary>
+    private bool CheckBlockers()
+    {
+        if (CurrentAction == JumperAction.Instance ||
+            (CurrentAction == MinerAction.Instance && (PhysicsFrame == 1 || PhysicsFrame == 2)))
+            return true;
+
+        var lemmingManager = Global.LemmingManager;
+        if (lemmingManager.LemmingIsBlocking(this))
+            return true;
+
+        var anchorPosition = LevelPosition;
+        var footPosition = FootPosition;
+
+        var checkRegion = new LevelPositionPair(anchorPosition, footPosition);
+        var blockerSet = lemmingManager.GetAllBlockersNearLemming(checkRegion);
+
+        if (blockerSet.Count == 0)
+            return true;
+
+        foreach (var blocker in blockerSet)
+        {
+            var forcedFacingDirection = BlockerAction.TestBlockerMatches(blocker, this, anchorPosition, footPosition);
+            if (forcedFacingDirection is null)
+                continue;
+
+            BlockerAction.ForceLemmingDirection(this, forcedFacingDirection);
+        }
+
+        return true;
     }
 
     public void SetFacingDirection(FacingDirection newFacingDirection)
