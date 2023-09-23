@@ -94,17 +94,17 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     public bool IsPerpendicularTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteHorizontalComponent == 0);
 
     /// <summary>
-    /// If the first position were to move horizontally to be in line with the reference position, what is the dx it would require?
+    /// If the first position were to move horizontally to be in line with the second position, what is the dx it would require?
     /// </summary>
-    /// <param name="firstPosition"></param>
-    /// <param name="referencePosition"></param>
+    /// <param name="fromPosition"></param>
+    /// <param name="toPosition"></param>
     [Pure]
     public abstract int GetHorizontalDelta(LevelPosition fromPosition, LevelPosition toPosition);
     /// <summary>
-    /// If the first position were to move vertically to be in line with the reference position, what is the dy it would require?
+    /// If the first position were to move vertically to be in line with the second position, what is the dy it would require?
     /// </summary>
-    /// <param name="firstPosition"></param>
-    /// <param name="referencePosition"></param>
+    /// <param name="fromPosition"></param>
+    /// <param name="toPosition"></param>
     [Pure]
     public abstract int GetVerticalDelta(LevelPosition fromPosition, LevelPosition toPosition);
 
