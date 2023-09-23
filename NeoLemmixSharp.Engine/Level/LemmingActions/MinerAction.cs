@@ -16,14 +16,15 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
     {
     }
 
-    public override int Id => GameConstants.MinerActionId;
+    public override int Id => Global.MinerActionId;
     public override string LemmingActionName => "miner";
-    public override int NumberOfAnimationFrames => GameConstants.MinerAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.MinerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var terrainManager = Global.TerrainManager;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
         var facingDirection = lemming.FacingDirection;
@@ -64,8 +65,8 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         // Note that all if-checks are relative to the end position!
 
         // Lemming cannot go down, so turn; see http://www.lemmingsforums.net/index.php?topic=2547.0
-        if (TerrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.Move(lemmingPosition, -dx, -1)) &&
-            TerrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.MoveDown(lemmingPosition, 1)))
+        if (terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.Move(lemmingPosition, -dx, -1)) &&
+            terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.MoveDown(lemmingPosition, 1)))
         {
             var lemmingPosition0 = orientation.MoveDown(lemmingPosition, 1);
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx + dx);
@@ -76,7 +77,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
         // This first check is only relevant during the very first cycle.
         // Otherwise the pixel was already checked in frame 15 of the previous cycle
-        if (lemming.PhysicsFrame == 3 && TerrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.Move(lemmingPosition, -dx, 2)))
+        if (lemming.PhysicsFrame == 3 && terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.Move(lemmingPosition, -dx, 2)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx + dx);
             lemming.LevelPosition = lemmingPosition;
@@ -86,9 +87,9 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         }
 
         // Do we really want the to check the second pixel during frame 3 ????
-        if (!TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 1)) &&
-            !TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 0)) &&
-            !TerrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, -1)))
+        if (!terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 1)) &&
+            !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 0)) &&
+            !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, -1)))
         {
             lemmingPosition = orientation.Move(lemmingPosition, -dx, -1);
             lemming.LevelPosition = lemmingPosition;
@@ -97,7 +98,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             return true;
         }
 
-        if (TerrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.MoveDown(lemmingPosition, 2)))
+        if (terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.MoveDown(lemmingPosition, 2)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             lemming.LevelPosition = lemmingPosition;
@@ -105,7 +106,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             return true;
         }
 
-        if (!TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+        if (!terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
             lemming.LevelPosition = lemmingPosition;
@@ -113,14 +114,14 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             return true;
         }
 
-        if (TerrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.Move(lemmingPosition, dx, 2)))
+        if (terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.Move(lemmingPosition, dx, 2)))
         {
             TurnMinerAround(lemming, orientation.Move(lemmingPosition, dx, 2));
 
             return true;
         }
 
-        if (!TerrainManager.PixelIsIndestructibleToLemming(lemming, this, lemmingPosition))
+        if (!terrainManager.PixelIsIndestructibleToLemming(lemming, this, lemmingPosition))
             return true;
 
         TurnMinerAround(lemming, lemmingPosition);
@@ -137,10 +138,11 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         Lemming lemming,
         LevelPosition checkPosition)
     {
+        var terrainManager = Global.TerrainManager;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (TerrainManager.PixelIsSteel(checkPosition))
+        if (terrainManager.PixelIsSteel(checkPosition))
         {
             // CueSoundEffect(SFX_HITS_STEEL, L.Position);
         }
@@ -150,7 +152,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
 
-        if (TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+        if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
         {
             lemming.LevelPosition = lemmingPosition;
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true); // turn around as well

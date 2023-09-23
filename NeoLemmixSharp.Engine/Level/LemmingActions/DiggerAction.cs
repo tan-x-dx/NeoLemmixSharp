@@ -16,14 +16,15 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
     {
     }
 
-    public override int Id => GameConstants.DiggerActionId;
+    public override int Id => Global.DiggerActionId;
     public override string LemmingActionName => "digger";
-    public override int NumberOfAnimationFrames => GameConstants.DiggerAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.DiggerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var terrainManager = Global.TerrainManager;
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
         var lemmingPosition = lemming.LevelPosition;
@@ -46,9 +47,9 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         lemming.LevelPosition = lemmingPosition;
 
-        if (TerrainManager.PixelIsIndestructibleToLemming(lemming, this, lemmingPosition))
+        if (terrainManager.PixelIsIndestructibleToLemming(lemming, this, lemmingPosition))
         {
-            if (TerrainManager.PixelIsSteel(lemmingPosition))
+            if (terrainManager.PixelIsSteel(lemmingPosition))
             {
                 //CueSoundEffect(SFX_HITS_STEEL, L.Position);
             }
@@ -77,32 +78,33 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         FacingDirection facingDirection,
         LevelPosition lemmingPosition)
     {
+        var terrainManager = Global.TerrainManager;
         // The central pixel of the removed row lies at the lemming's position
         var result = false;
 
         // Two most extreme pixels
         var checkLevelPosition = orientation.Move(lemmingPosition, -4, 0);
-        var pixelIsSolid = TerrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition);
+        var pixelIsSolid = terrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
-            TerrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
+            terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
         }
 
         checkLevelPosition = orientation.Move(lemmingPosition, 4, 0);
-        pixelIsSolid = TerrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition);
+        pixelIsSolid = terrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
-            TerrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
+            terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
         }
 
         // Everything in between
         for (var i = -3; i < 4; i++)
         {
             checkLevelPosition = orientation.Move(lemmingPosition, i, 0);
-            pixelIsSolid = TerrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition);
+            pixelIsSolid = terrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition);
             if (pixelIsSolid)
             {
-                TerrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
+                terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
                 result = true;
             }
         }

@@ -3,13 +3,9 @@ using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
-using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
@@ -132,46 +128,13 @@ public sealed class LevelScreen : IBaseScreen
         ScreenRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
     }
 
-    public static void SetTerrainManager(TerrainManager terrainManager)
-    {
-        Orientation.SetTerrainManager(terrainManager);
-        LemmingAction.SetTerrainManager(terrainManager);
-        LemmingSkill.SetTerrainManager(terrainManager);
-        Lemming.SetTerrainManager(terrainManager);
-        LemmingMovementHelper.SetTerrainManager(terrainManager);
-        TerrainEraseMask.SetTerrainManager(terrainManager);
-        TerrainAddMask.SetTerrainManager(terrainManager);
-        GadgetBase.SetTerrainManager(terrainManager);
-    }
-
-    public static void SetLemmingManager(LemmingManager lemmingManager)
-    {
-        LemmingAction.SetLemmingManager(lemmingManager);
-        LemmingSkill.SetLemmingManager(lemmingManager);
-        Lemming.SetLemmingManager(lemmingManager);
-        LemmingState.SetLemmingManager(lemmingManager);
-        GadgetBase.SetLemmingManager(lemmingManager);
-    }
-
-    public static void SetGadgetManager(GadgetManager gadgetManager)
-    {
-        LemmingAction.SetGadgetManager(gadgetManager);
-        Lemming.SetGadgetManager(gadgetManager);
-        GadgetBase.SetGadgetManager(gadgetManager);
-    }
-
-    public static void SetSkillSetManager(SkillSetManager skillSetManager)
-    {
-        SkillModifierBehaviour.SetSkillSetManager(skillSetManager);
-    }
-
     public void Dispose()
     {
 #pragma warning disable CS8625
-        SetTerrainManager(null);
-        SetLemmingManager(null);
-        SetGadgetManager(null);
-        SetSkillSetManager(null);
+        Global.SetTerrainManager(null);
+        Global.SetLemmingManager(null);
+        Global.SetGadgetManager(null);
+        Global.SetSkillSetManager(null);
 
         ScreenRenderer.Dispose();
         IsDisposed = true;

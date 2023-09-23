@@ -20,7 +20,7 @@ public abstract class LevelTimer
     public void Tick()
     {
        // ElapsedTicks++;
-       // if (ElapsedTicks % GameConstants.FramesPerSecond != 0)
+       // if (ElapsedTicks % Global.FramesPerSecond != 0)
        //     return;
 
         ElapsedSeconds++;
@@ -30,7 +30,7 @@ public abstract class LevelTimer
     public void SetElapsedTicks(int elapsedTicks)
     {
      //   ElapsedTicks = elapsedTicks;
-        ElapsedSeconds = elapsedTicks / GameConstants.FramesPerSecond;
+        ElapsedSeconds = elapsedTicks / Global.FramesPerSecond;
 
         UpdateAppearance();
     }

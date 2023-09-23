@@ -10,11 +10,11 @@ public sealed class OhNoerAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.OhNoerActionId;
+    public override int Id => Global.OhNoerActionId;
     public override string LemmingActionName => "ohnoer";
-    public override int NumberOfAnimationFrames => GameConstants.OhNoerAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.OhNoerAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => Global.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -26,9 +26,9 @@ public sealed class OhNoerAction : LemmingAction
             //   if(lemming.CurrentAction == )
 
         }
-        else if (!TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        else if (!Global.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
         {
-            LemmingManager.DeregisterBlocker(lemming);
+            Global.LemmingManager.DeregisterBlocker(lemming);
             /*
             L.LemHasBlockerField := False; // remove blocker field
             SetBlockerMap;

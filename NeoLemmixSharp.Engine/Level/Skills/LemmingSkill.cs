@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Terrain;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -9,8 +8,6 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 {
     private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
-    protected static TerrainManager Terrain { get; private set; } = null!;
-    protected static LemmingManager LemmingManager { get; private set; } = null!;
 
     public static int NumberOfItems => LemmingSkills.Length;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
@@ -48,16 +45,6 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
         Array.Sort(result, IdEquatableItemHelperMethods.Compare);
 
         return result;
-    }
-
-    public static void SetTerrainManager(TerrainManager terrain)
-    {
-        Terrain = terrain;
-    }
-
-    public static void SetLemmingManager(LemmingManager lemmingManager)
-    {
-        LemmingManager = lemmingManager;
     }
 
     private readonly LargeSimpleSet<LemmingAction> _assignableActions;

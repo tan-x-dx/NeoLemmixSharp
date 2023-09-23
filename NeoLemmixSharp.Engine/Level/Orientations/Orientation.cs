@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level.Terrain;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
@@ -8,7 +7,6 @@ namespace NeoLemmixSharp.Engine.Level.Orientations;
 public abstract class Orientation : IExtendedEnumType<Orientation>
 {
     private static readonly Orientation[] Orientations = GenerateOrientationCollection();
-    protected static TerrainManager Terrain { get; private set; } = null!;
 
     public static int NumberOfItems => Orientations.Length;
     public static ReadOnlySpan<Orientation> AllItems => new(Orientations);
@@ -17,19 +15,14 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     {
         var orientations = new Orientation[4];
 
-        orientations[GameConstants.DownOrientationRotNum] = DownOrientation.Instance;
-        orientations[GameConstants.LeftOrientationRotNum] = LeftOrientation.Instance;
-        orientations[GameConstants.UpOrientationRotNum] = UpOrientation.Instance;
-        orientations[GameConstants.RightOrientationRotNum] = RightOrientation.Instance;
+        orientations[Global.DownOrientationRotNum] = DownOrientation.Instance;
+        orientations[Global.LeftOrientationRotNum] = LeftOrientation.Instance;
+        orientations[Global.UpOrientationRotNum] = UpOrientation.Instance;
+        orientations[Global.RightOrientationRotNum] = RightOrientation.Instance;
 
         orientations.ValidateUniqueIds();
 
         return orientations;
-    }
-
-    public static void SetTerrainManager(TerrainManager terrain)
-    {
-        Terrain = terrain;
     }
 
     int IIdEquatable<Orientation>.Id => RotNum;

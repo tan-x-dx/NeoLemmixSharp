@@ -10,7 +10,7 @@ public sealed class MetalGrateGadgetType : InteractiveGadgetType
     {
     }
 
-    public override int Id => GameConstants.MetalGrateGadgetTypeId;
+    public override int Id => Global.MetalGrateGadgetTypeId;
     public override string GadgetTypeName => "metal grate";
 
     public override void InteractWithLemming(Lemming lemming)

@@ -13,14 +13,15 @@ public sealed class SwimmerAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.SwimmerActionId;
+    public override int Id => Global.SwimmerActionId;
     public override string LemmingActionName => "swimmer";
-    public override int NumberOfAnimationFrames => GameConstants.SwimmerAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.SwimmerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.PermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => Global.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var terrainManager = Global.TerrainManager;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
@@ -35,14 +36,14 @@ public sealed class SwimmerAction : LemmingAction
 
         var dy = FindGroundPixel(lemming, lemmingPosition);
 
-        if (TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition) ||
+        if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition) ||
             WaterAt(lemmingPosition))
         {
             // Rise if there is water above the lemming
             var pixelAbove = orientation.MoveUp(lemmingPosition, 1);
             if (dy >= -1 &&
                 WaterAt(pixelAbove) &&
-                !TerrainManager.PixelIsSolidToLemming(lemming, pixelAbove))
+                !terrainManager.PixelIsSolidToLemming(lemming, pixelAbove))
             {
                 lemmingPosition = pixelAbove;
                 lemming.LevelPosition = lemmingPosition;
@@ -131,7 +132,7 @@ public sealed class SwimmerAction : LemmingAction
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool WaterAt(LevelPosition lemmingPosition)
     {
-        return GadgetManager.HasGadgetOfTypeAtPosition(lemmingPosition, WaterGadgetType.Instance);
+        return Global.GadgetManager.HasGadgetOfTypeAtPosition(lemmingPosition, WaterGadgetType.Instance);
     }
 
     /// <summary>
@@ -143,7 +144,7 @@ public sealed class SwimmerAction : LemmingAction
     {
         var result = 1;
 
-        while (result <= 4 && TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
+        while (result <= 4 && Global.TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
         {
             result++;
             lemming.DistanceFallen++;

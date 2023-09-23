@@ -1,7 +1,41 @@
-﻿namespace NeoLemmixSharp.Engine.Level;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.Engine.Level.Terrain;
 
-public static class GameConstants
+namespace NeoLemmixSharp.Engine.Level;
+
+public static class Global
 {
+    #region Common Utilities
+
+    public static TerrainManager TerrainManager { get; private set; } = null!;
+    public static LemmingManager LemmingManager { get; private set; } = null!;
+    public static GadgetManager GadgetManager { get; private set; } = null!;
+    public static SkillSetManager SkillSetManager { get; private set; } = null!;
+
+    public static void SetTerrainManager(TerrainManager terrainManager)
+    {
+        TerrainManager = terrainManager;
+    }
+
+    public static void SetLemmingManager(LemmingManager lemmingManager)
+    {
+        LemmingManager = lemmingManager;
+    }
+
+    public static void SetGadgetManager(GadgetManager gadgetManager)
+    {
+        GadgetManager = gadgetManager;
+    }
+
+    public static void SetSkillSetManager(SkillSetManager skillSetManager)
+    {
+        SkillSetManager = skillSetManager;
+    }
+
+    #endregion
+
     #region Engine Constants
 
     public const int StandardTicksPerSecond = 17;
@@ -21,7 +55,7 @@ public static class GameConstants
 
     #endregion
 
-    #region CursorPriorityLevels
+    #region Cursor Priority Levels
 
     public const int NonPermanentSkillPriority = 4;
     public const int PermanentSkillPriority = 3;

@@ -106,7 +106,7 @@ public sealed class UpdateScheduler
 
         if (didTick)
         {
-            if (_elapsedTicks.Item % GameConstants.FramesPerSecond == 0)
+            if (_elapsedTicks.Item % Global.FramesPerSecond == 0)
             {
                 _levelTimer.Tick();
             }

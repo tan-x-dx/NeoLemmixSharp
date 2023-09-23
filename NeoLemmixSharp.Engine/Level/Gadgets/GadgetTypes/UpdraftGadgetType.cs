@@ -10,7 +10,7 @@ public sealed class UpdraftGadgetType : InteractiveGadgetType
     {
     }
 
-    public override int Id => GameConstants.UpdraftGadgetTypeId;
+    public override int Id => Global.UpdraftGadgetTypeId;
     public override string GadgetTypeName => "updraft";
 
     public override void InteractWithLemming(Lemming lemming)

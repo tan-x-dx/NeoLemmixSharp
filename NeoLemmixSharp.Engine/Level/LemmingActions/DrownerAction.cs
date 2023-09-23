@@ -11,15 +11,15 @@ public sealed class DrownerAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.DrownerActionId;
+    public override int Id => Global.DrownerActionId;
     public override string LemmingActionName => "drowner";
-    public override int NumberOfAnimationFrames => GameConstants.DrownerAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.DrownerAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => Global.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!GadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, WaterGadgetType.Instance))
+        if (!Global.GadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, WaterGadgetType.Instance))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 

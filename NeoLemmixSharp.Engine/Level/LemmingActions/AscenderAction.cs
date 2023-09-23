@@ -10,21 +10,22 @@ public sealed class AscenderAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.AscenderActionId;
+    public override int Id => Global.AscenderActionId;
     public override string LemmingActionName => "ascender";
-    public override int NumberOfAnimationFrames => GameConstants.AscenderAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.AscenderAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.NonWalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => Global.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var terrainManager = Global.TerrainManager;
         var levelPosition = lemming.LevelPosition;
         var orientation = lemming.Orientation;
 
         var dy = 0;
         while (dy < 2 &&
                lemming.AscenderProgress < 5 &&
-               TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1)))
+               terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1)))
         {
             dy++;
             levelPosition = orientation.MoveUp(levelPosition, 1);
@@ -32,8 +33,8 @@ public sealed class AscenderAction : LemmingAction
             lemming.AscenderProgress++;
         }
 
-        var pixel1IsSolid = TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1));
-        var pixel2IsSolid = TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 2));
+        var pixel1IsSolid = terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1));
+        var pixel2IsSolid = terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 2));
 
         if (dy < 2 &&
             !pixel1IsSolid)

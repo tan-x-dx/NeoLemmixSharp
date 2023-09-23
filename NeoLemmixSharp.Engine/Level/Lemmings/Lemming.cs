@@ -1,8 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -15,25 +13,6 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 {
-    private static TerrainManager TerrainManager { get; set; } = null!;
-    private static LemmingManager LemmingManager { get; set; } = null!;
-    private static GadgetManager GadgetManager { get; set; } = null!;
-
-    public static void SetTerrainManager(TerrainManager terrainManager)
-    {
-        TerrainManager = terrainManager;
-    }
-
-    public static void SetLemmingManager(LemmingManager lemmingManager)
-    {
-        LemmingManager = lemmingManager;
-    }
-
-    public static void SetGadgetManager(GadgetManager gadgetManager)
-    {
-        GadgetManager = gadgetManager;
-    }
-
     public int Id { get; }
 
     public bool ConstructivePositionFreeze;
@@ -167,13 +146,14 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     private bool CheckLevelBoundaries()
     {
-        var footPixel = TerrainManager.PixelTypeAtPosition(FootPosition);
-        var headPixel = TerrainManager.PixelTypeAtPosition(HeadPosition);
+        var terrainManager = Global.TerrainManager;
+        var footPixel = terrainManager.PixelTypeAtPosition(FootPosition);
+        var headPixel = terrainManager.PixelTypeAtPosition(HeadPosition);
 
         if (!footPixel.IsVoid() || !headPixel.IsVoid())
             return true;
 
-        LemmingManager.RemoveLemming(this);
+        Global.LemmingManager.RemoveLemming(this);
         return false;
     }
 
@@ -209,10 +189,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     private void CheckGadgets(LevelPositionPair levelRegion)
     {
-        var gadgetSet = GadgetManager.GetAllItemsNearRegion(levelRegion);
-        var blockerSet = LemmingManager.LemmingIsBlocking(this)
+        var gadgetManager = Global.GadgetManager;
+        var lemmingManager = Global.LemmingManager;
+
+        var gadgetSet = gadgetManager.GetAllItemsNearRegion(levelRegion);
+        var blockerSet = lemmingManager.LemmingIsBlocking(this)
             ? LargeSimpleSet<Lemming>.Empty
-            : LemmingManager.GetAllBlockersNearLemming(levelRegion);
+            : lemmingManager.GetAllBlockersNearLemming(levelRegion);
 
         if (gadgetSet.Count == 0 &&
             blockerSet.Count == 0)

@@ -16,11 +16,11 @@ public sealed class FloaterAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.FloaterActionId;
+    public override int Id => Global.FloaterActionId;
     public override string LemmingActionName => "floater";
-    public override int NumberOfAnimationFrames => GameConstants.FloaterAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.FloaterAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.PermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => Global.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -29,7 +29,7 @@ public sealed class FloaterAction : LemmingAction
         var orientation = lemming.Orientation;
         var levelPosition = lemming.LevelPosition;
 
-        var gadgetSet = GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+        var gadgetSet = Global.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
         foreach (var gadget in gadgetSet)
         {

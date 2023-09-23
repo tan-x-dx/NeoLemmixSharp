@@ -1,20 +1,12 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Level.Terrain;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public ref struct LemmingMovementHelper
 {
-    private static TerrainManager Terrain { get; set; } = null!;
-
-    public static void SetTerrainManager(TerrainManager terrain)
-    {
-        Terrain = terrain;
-    }
-
     public const int MaxIntermediateCheckPositions = 12;
 
     private readonly Lemming _lemming;
@@ -125,7 +117,7 @@ public ref struct LemmingMovementHelper
 
         foreach (var levelPosition in jumpPositions)
         {
-            if (Terrain.PositionOutOfBounds(levelPosition))
+            if (Global.TerrainManager.PositionOutOfBounds(levelPosition))
                 break;
 
             workPosition = levelPosition;

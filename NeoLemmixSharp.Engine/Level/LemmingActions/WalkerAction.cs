@@ -11,11 +11,11 @@ public sealed class WalkerAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.WalkerActionId;
+    public override int Id => Global.WalkerActionId;
     public override string LemmingActionName => "walker";
-    public override int NumberOfAnimationFrames => GameConstants.WalkerAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.WalkerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.WalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => Global.WalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -90,6 +90,7 @@ public sealed class WalkerAction : LemmingAction
 
     public static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
     {
+        var terrainManager = Global.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         LevelPosition currentPosition;
@@ -105,16 +106,16 @@ public sealed class WalkerAction : LemmingAction
             nextPosition = orientation.MoveRight(currentPosition, dx);
         }
 
-        if (TerrainManager.PositionOutOfBounds(nextPosition) ||
-            (!TerrainManager.PixelIsSolidToLemming(lemming, currentPosition) ||
-             TerrainManager.PixelIsSolidToLemming(lemming, nextPosition)))
+        if (terrainManager.PositionOutOfBounds(nextPosition) ||
+            (!terrainManager.PixelIsSolidToLemming(lemming, currentPosition) ||
+             terrainManager.PixelIsSolidToLemming(lemming, nextPosition)))
             return false;
 
         for (var i = 1; i < 4; i++)
         {
-            if (TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(nextPosition, i)))
+            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(nextPosition, i)))
                 return false;
-            if (!TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, i)))
+            if (!terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, i)))
                 return true;
         }
 
@@ -123,7 +124,7 @@ public sealed class WalkerAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        if (TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        if (Global.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
         {
             base.TransitionLemmingToAction(lemming, turnAround);
             return;

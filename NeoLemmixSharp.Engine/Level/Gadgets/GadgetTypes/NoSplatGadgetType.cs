@@ -10,7 +10,7 @@ public sealed class NoSplatGadgetType : InteractiveGadgetType
     {
     }
 
-    public override int Id => GameConstants.NoSplatGadgetTypeId;
+    public override int Id => Global.NoSplatGadgetTypeId;
     public override string GadgetTypeName => "no splat";
 
     public override void InteractWithLemming(Lemming lemming)

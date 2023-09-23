@@ -12,7 +12,7 @@ public sealed class BlockerSkill : LemmingSkill
     {
     }
 
-    public override int Id => GameConstants.BlockerSkillId;
+    public override int Id => Global.BlockerSkillId;
     public override string LemmingSkillName => "blocker";
     public override bool IsPermanentSkill => false;
     public override bool IsClassicSkill => true;
@@ -24,7 +24,7 @@ public sealed class BlockerSkill : LemmingSkill
 
         var firstBounds = BlockerAction.Instance.GetLemmingBounds(lemming);
 
-        var nearbyBlockers = LemmingManager.GetAllBlockersNearLemming(firstBounds);
+        var nearbyBlockers = Global.LemmingManager.GetAllBlockersNearLemming(firstBounds);
 
         foreach (var blocker in nearbyBlockers)
         {

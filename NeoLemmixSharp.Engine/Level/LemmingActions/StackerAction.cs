@@ -10,11 +10,11 @@ public sealed class StackerAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.StackerActionId;
+    public override int Id => Global.StackerActionId;
     public override string LemmingActionName => "stacker";
-    public override int NumberOfAnimationFrames => GameConstants.StackerAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.StackerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -57,19 +57,21 @@ public sealed class StackerAction : LemmingAction
 
     private static bool MayPlaceNextBrick(Lemming lemming)
     {
+        var terrainManager = Global.TerrainManager;
         var orientation = lemming.Orientation;
         var brickPosition = lemming.LevelPosition;
         brickPosition = orientation.MoveUp(brickPosition, 9 - lemming.NumberOfBricksLeft);
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        return !(TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(brickPosition, dx)) &&
-                 TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(brickPosition, dx + dx)) &&
-                 TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(brickPosition, dx + dx + dx)));
+        return !(terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(brickPosition, dx)) &&
+                 terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(brickPosition, dx + dx)) &&
+                 terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(brickPosition, dx + dx + dx)));
     }
 
     private static bool LayStackBrick(Lemming lemming)
     {
+        var terrainManager = Global.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dy = lemming.StackLow ? -1 : 0;
@@ -79,9 +81,9 @@ public sealed class StackerAction : LemmingAction
 
         for (var i = 0; i < 3; i++)
         {
-            if (!TerrainManager.PixelIsSolidToLemming(lemming, brickPosition))
+            if (!terrainManager.PixelIsSolidToLemming(lemming, brickPosition))
             {
-                TerrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
+                terrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
                 result = true;
             }
 

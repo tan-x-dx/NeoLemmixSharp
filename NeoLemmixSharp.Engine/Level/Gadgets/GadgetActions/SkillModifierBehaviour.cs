@@ -6,13 +6,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
 
 public sealed class SkillModifierBehaviour : IGadgetBehaviour
 {
-    private static SkillSetManager SkillSetManager { get; set; } = null!;
-
-    public static void SetSkillSetManager(SkillSetManager skillSetManager)
-    {
-        SkillSetManager = skillSetManager;
-    }
-
     private readonly LemmingSkill _skill;
     private readonly Team? _team;
     private readonly int _value;
@@ -28,6 +21,6 @@ public sealed class SkillModifierBehaviour : IGadgetBehaviour
 
     public void PerformAction(Lemming lemming)
     {
-        SkillSetManager.SetSkillCount(_skill, _team, _value, _isDelta);
+        Global.SkillSetManager.SetSkillCount(_skill, _team, _value, _isDelta);
     }
 }

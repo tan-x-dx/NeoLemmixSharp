@@ -12,15 +12,15 @@ public sealed class BlockerAction : LemmingAction
     {
     }
 
-    public override int Id => GameConstants.BlockerActionId;
+    public override int Id => Global.BlockerActionId;
     public override string LemmingActionName => "blocker";
-    public override int NumberOfAnimationFrames => GameConstants.BlockerAnimationFrames;
+    public override int NumberOfAnimationFrames => Global.BlockerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => GameConstants.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        if (!Global.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
@@ -30,7 +30,7 @@ public sealed class BlockerAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        LemmingManager.RegisterBlocker(lemming);
+        Global.LemmingManager.RegisterBlocker(lemming);
 
         base.TransitionLemmingToAction(lemming, turnAround);
     }
