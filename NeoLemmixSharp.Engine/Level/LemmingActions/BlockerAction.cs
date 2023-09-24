@@ -3,7 +3,6 @@ using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -23,11 +22,11 @@ public sealed class BlockerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!Global.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
-        {
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
-            Global.LemmingManager.DeregisterBlocker(lemming);
-        }
+        if (Global.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+            return true;
+
+        FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+        Global.LemmingManager.DeregisterBlocker(lemming);
 
         return true;
     }
@@ -75,13 +74,13 @@ public sealed class BlockerAction : LemmingAction
 
         if (lemmingFacingDirection == RightFacingDirection.Instance)
         {
-            topLeftDelta += GetLeftBlockingTopLeftDelta();
-            bottomRightDelta += GetLeftBlockingBottomRightDelta();
+            topLeftDelta += new LevelPosition(-5, 6);
+            bottomRightDelta += new LevelPosition(-2, -3);
         }
         else
         {
-            topLeftDelta += GetRightBlockingTopLeftDelta();
-            bottomRightDelta += GetRightBlockingBottomRightDelta();
+            topLeftDelta += new LevelPosition(3, 6);
+            bottomRightDelta += new LevelPosition(6, -3);
         }
 
         var blockerLevelPosition = blocker.LevelPosition;
@@ -97,16 +96,6 @@ public sealed class BlockerAction : LemmingAction
         return null;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static LevelPosition GetLeftBlockingTopLeftDelta() => new(-5, 6);
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static LevelPosition GetLeftBlockingBottomRightDelta() => new(-2, -3);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static LevelPosition GetRightBlockingTopLeftDelta() => new(3, 6);
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static LevelPosition GetRightBlockingBottomRightDelta() => new(6, -3);
-
     public static void ForceLemmingDirection(Lemming lemming, FacingDirection forcedFacingDirection)
     {
         if (lemming.FacingDirection == forcedFacingDirection)
@@ -119,17 +108,25 @@ public sealed class BlockerAction : LemmingAction
         // Avoid moving into terrain, see http://www.lemmingsforums.net/index.php?topic=2575.0
         if (lemming.CurrentAction == MinerAction.Instance)
         {
+            int mineDx;
+            int mineDy;
+
             if (lemming.PhysicsFrame == 2)
             {
-                TerrainMasks.ApplyMinerMask(lemming, 1, 0, 0);
+                mineDx = 0;
+                mineDy = 0;
+            }
+            else if (lemming.PhysicsFrame >= 3 && lemming.PhysicsFrame < 15)
+            {
+                mineDx = -2 * dx;
+                mineDy = -1;
+            }
+            else
+            {
                 return;
             }
 
-            if (lemming.PhysicsFrame >= 3 && lemming.PhysicsFrame < 15)
-            {
-                TerrainMasks.ApplyMinerMask(lemming, 1, -2 * dx, -1);
-                return;
-            }
+            TerrainMasks.ApplyMinerMask(lemming, 1, mineDx, mineDy);
 
             return;
         }
