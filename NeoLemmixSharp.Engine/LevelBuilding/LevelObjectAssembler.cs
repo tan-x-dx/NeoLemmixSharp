@@ -237,8 +237,6 @@ public sealed class LevelObjectAssembler : IDisposable
             facingDirection: LeftFacingDirection.Instance)
         {
             LevelPosition = new LevelPosition(160, 0),
-
-            Debug = true
         };
 
         var lemmingA = new Lemming(

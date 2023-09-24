@@ -55,6 +55,9 @@ public sealed class PositionHelper<T>
     [Pure]
     public LargeSimpleSet<T> GetAllItemsNearPosition(LevelPosition levelPosition)
     {
+        if (_allTrackedItems.Count == 0)
+            return LargeSimpleSet<T>.Empty;
+
         var chunkX = levelPosition.X >> _chunkSizeBitShift;
         var chunkY = levelPosition.Y >> _chunkSizeBitShift;
 
@@ -68,6 +71,9 @@ public sealed class PositionHelper<T>
     [Pure]
     public LargeSimpleSet<T> GetAllItemsNearRegion(LevelPositionPair levelRegion)
     {
+        if(_allTrackedItems.Count == 0)
+            return LargeSimpleSet<T>.Empty;
+
         var topLeftLevelPosition = levelRegion.GetTopLeftPosition();
         var bottomRightLevelPosition = levelRegion.GetBottomRightPosition();
 
