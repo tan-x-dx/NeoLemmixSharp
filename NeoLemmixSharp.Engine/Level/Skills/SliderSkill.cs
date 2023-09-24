@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class SliderSkill : LemmingSkill, IPermanentSkill
+public sealed class SliderSkill : LemmingSkill, ILemmingStateChanger
 {
     public static SliderSkill Instance { get; } = new();
 
@@ -28,14 +28,14 @@ public sealed class SliderSkill : LemmingSkill, IPermanentSkill
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
 
-    public void SetPermanentSkill(Lemming lemming, bool status)
+    public void SetLemmingState(LemmingState lemmingState, bool status)
     {
-        lemming.State.IsSlider = status;
+        lemmingState.IsSlider = status;
     }
 
-    public void TogglePermanentSkill(Lemming lemming)
+    public void ToggleLemmingState(LemmingState lemmingState)
     {
-        var isSlider = lemming.State.IsSlider;
-        lemming.State.IsSlider = !isSlider;
+        var isSlider = lemmingState.IsSlider;
+        lemmingState.IsSlider = !isSlider;
     }
 }
