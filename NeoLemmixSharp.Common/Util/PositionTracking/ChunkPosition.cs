@@ -4,16 +4,16 @@ namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
 internal readonly struct ChunkPosition : IEquatable<ChunkPosition>
 {
-    public readonly int X;
-    public readonly int Y;
+    public readonly byte X;
+    public readonly byte Y;
 
     public ChunkPosition(int x, int y)
     {
         Debug.Assert(x >= 0 && x < 256 &&
                      y >= 0 && y < 256);
 
-        X = x;
-        Y = y;
+        X = (byte)x;
+        Y = (byte)y;
     }
 
     public override string ToString() => $"[{X}, {Y}]";

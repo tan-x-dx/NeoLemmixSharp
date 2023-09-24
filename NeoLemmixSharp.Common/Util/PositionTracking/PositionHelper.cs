@@ -19,10 +19,9 @@ public sealed class PositionHelper<T>
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
 
     private readonly LargeSimpleSet<T> _allTrackedItems;
+    private readonly LargeSimpleSet<T> _setUnionScratchSpace;
 
     private readonly Dictionary<ChunkPosition, LargeSimpleSet<T>> _itemChunkLookup;
-    private readonly SimpleChunkPositionList _chunkPositionScratchSpace;
-    private readonly SetUnionChunkPositionUser<T> _setUnionChunkPositionUser;
 
     public PositionHelper(
         ISimpleHasher<T> hasher,
@@ -42,10 +41,9 @@ public sealed class PositionHelper<T>
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
         _allTrackedItems = new LargeSimpleSet<T>(hasher);
+        _setUnionScratchSpace = new LargeSimpleSet<T>(hasher);
 
         _itemChunkLookup = new Dictionary<ChunkPosition, LargeSimpleSet<T>>(ChunkPositionEqualityComparer.Instance);
-        _chunkPositionScratchSpace = new SimpleChunkPositionList();
-        _setUnionChunkPositionUser = new SetUnionChunkPositionUser<T>(hasher, _itemChunkLookup);
     }
 
     [Pure]
@@ -80,8 +78,9 @@ public sealed class PositionHelper<T>
             topLeftChunkY == bottomRightChunkY)
             return GetItemsForChunkPosition(topLeftChunkX, topLeftChunkY);
 
-        EvaluateChunkPositions(_setUnionChunkPositionUser, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
-        return _setUnionChunkPositionUser.GetSet();
+        _setUnionScratchSpace.Clear();
+        EvaluateChunkPositions(UseChunkPositionMode.Union, null, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
+        return _setUnionScratchSpace;
     }
 
     [Pure]
@@ -152,12 +151,7 @@ public sealed class PositionHelper<T>
             return;
         }
 
-        EvaluateChunkPositions(_chunkPositionScratchSpace, ax, ay, bx, by);
-
-        foreach (var chunkPosition in _chunkPositionScratchSpace.AsSpan())
-        {
-            AddToChunk(item, chunkPosition);
-        }
+        EvaluateChunkPositions(UseChunkPositionMode.Add, item, ax, ay, bx, by);
     }
 
     private void AddToChunk(T item, ChunkPosition chunkPosition)
@@ -211,12 +205,7 @@ public sealed class PositionHelper<T>
             return;
         }
 
-        EvaluateChunkPositions(_chunkPositionScratchSpace, ax, ay, bx, by);
-
-        foreach (var chunkPosition in _chunkPositionScratchSpace.AsSpan())
-        {
-            RemoveFromChunk(item, chunkPosition);
-        }
+        EvaluateChunkPositions(UseChunkPositionMode.Remove, item, ax, ay, bx, by);
     }
 
     private void RemoveFromChunk(T item, ChunkPosition chunkPosition)
@@ -239,10 +228,8 @@ public sealed class PositionHelper<T>
         chunkY = Math.Clamp(chunkY, 0, _numberOfVerticalChunks - 1);
     }
 
-    private void EvaluateChunkPositions(IChunkPositionUser chunkPositionUser, int ax, int ay, int bx, int by)
+    private void EvaluateChunkPositions(UseChunkPositionMode useChunkPositionMode, T? item, int ax, int ay, int bx, int by)
     {
-        chunkPositionUser.Clear();
-
         if (bx < ax)
         {
             bx += _numberOfHorizontalChunks;
@@ -264,7 +251,7 @@ public sealed class PositionHelper<T>
             {
                 var chunkPosition = new ChunkPosition(x1, y1);
 
-                chunkPositionUser.UseChunkPosition(chunkPosition);
+                UseChunkPosition(useChunkPositionMode, item, chunkPosition);
 
                 if (++y1 == _numberOfVerticalChunks)
                 {
@@ -277,5 +264,40 @@ public sealed class PositionHelper<T>
                 x1 = 0;
             }
         }
+    }
+
+    private void UseChunkPosition(UseChunkPositionMode useChunkPositionMode, T? item, ChunkPosition chunkPosition)
+    {
+        if (useChunkPositionMode == UseChunkPositionMode.Add)
+        {
+            AddToChunk(item!, chunkPosition);
+            return;
+        }
+
+        if (useChunkPositionMode == UseChunkPositionMode.Remove)
+        {
+            RemoveFromChunk(item!, chunkPosition);
+            return;
+        }
+
+        if (useChunkPositionMode == UseChunkPositionMode.Union)
+        {
+            ref var itemChunk = ref CollectionsMarshal.GetValueRefOrNullRef(_itemChunkLookup, chunkPosition);
+            if (!Unsafe.IsNullRef(ref itemChunk))
+            {
+                _setUnionScratchSpace.UnionWith(itemChunk);
+            }
+
+            return;
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(useChunkPositionMode), useChunkPositionMode, "Invalid value");
+    }
+
+    private enum UseChunkPositionMode
+    {
+        Add,
+        Remove,
+        Union
     }
 }
