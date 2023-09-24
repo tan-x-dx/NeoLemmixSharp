@@ -1,10 +1,9 @@
-﻿namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using System.Numerics;
 
-public interface IIdEquatable<T> : IEquatable<T>
+namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
+
+public interface IIdEquatable<T> : IEquatable<T>, IEqualityOperators<T, T, bool>
     where T : class, IIdEquatable<T>
 {
     int Id { get; }
-
-    static abstract bool operator ==(T left, T right);
-    static abstract bool operator !=(T left, T right);
 }
