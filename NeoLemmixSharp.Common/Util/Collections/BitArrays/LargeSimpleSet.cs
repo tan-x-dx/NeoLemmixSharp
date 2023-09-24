@@ -56,9 +56,13 @@ public sealed class LargeSimpleSet<T> : ISet<T>, IReadOnlySet<T>
         }
     }
 
+    [Pure]
     public Enumerator GetEnumerator() => new(this);
+    [Pure]
     public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);
+    [Pure]
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => new ReferenceTypeEnumerator(this);
+    [Pure]
     IEnumerator IEnumerable.GetEnumerator() => new ReferenceTypeEnumerator(this);
 
     public ref struct Enumerator

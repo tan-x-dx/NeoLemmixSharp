@@ -55,8 +55,11 @@ public sealed class SmallSimpleSet<T> : ISet<T>, IReadOnlySet<T>
         }
     }
 
+    [Pure]
     public Enumerator GetEnumerator() => new(this);
+    [Pure]
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(this);
+    [Pure]
     IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
 
     public struct Enumerator : IEnumerator<T>

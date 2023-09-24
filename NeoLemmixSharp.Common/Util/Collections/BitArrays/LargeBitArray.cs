@@ -169,12 +169,18 @@ public sealed class LargeBitArray : IBitArray
         }
     }
 
+    [Pure]
     object ICloneable.Clone() => Clone();
+    [Pure]
     public LargeBitArray Clone() => new(Length, _bits, Count, _indexOfFirstSetBit);
 
+    [Pure]
     public Enumerator GetEnumerator() => new(this);
+    [Pure]
     public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);
+    [Pure]
     IEnumerator<int> IEnumerable<int>.GetEnumerator() => new ReferenceTypeEnumerator(this);
+    [Pure]
     IEnumerator IEnumerable.GetEnumerator() => new ReferenceTypeEnumerator(this);
 
     public ref struct Enumerator

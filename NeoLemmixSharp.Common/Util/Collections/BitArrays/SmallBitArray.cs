@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
@@ -82,8 +83,10 @@ public sealed class SmallBitArray : IBitArray
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal uint GetRawBits() => _bits;
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public uint GetBitMask(uint mask) => mask & _bits;
 
     public void Clear()
@@ -103,11 +106,16 @@ public sealed class SmallBitArray : IBitArray
         }
     }
 
+    [Pure]
     object ICloneable.Clone() => Clone();
+    [Pure]
     public SmallBitArray Clone() => new(_bits, Count);
 
+    [Pure]
     public Enumerator GetEnumerator() => new(this);
+    [Pure]
     IEnumerator<int> IEnumerable<int>.GetEnumerator() => new Enumerator(this);
+    [Pure]
     IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
 
     public struct Enumerator : IEnumerator<int>
@@ -146,24 +154,28 @@ public sealed class SmallBitArray : IBitArray
         readonly void IDisposable.Dispose() { }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void UnionWith(uint otherBits)
     {
         _bits |= otherBits;
         Count = BitOperations.PopCount(_bits);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void IntersectWith(uint otherBits)
     {
         _bits &= otherBits;
         Count = BitOperations.PopCount(_bits);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void ExceptWith(uint otherBits)
     {
         _bits &= ~otherBits;
         Count = BitOperations.PopCount(_bits);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void SymmetricExceptWith(uint otherBits)
     {
         _bits ^= otherBits;
@@ -171,18 +183,21 @@ public sealed class SmallBitArray : IBitArray
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal bool IsSubsetOf(uint otherBits)
     {
         return (_bits | otherBits) == otherBits;
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal bool IsSupersetOf(uint otherBits)
     {
         return (_bits | otherBits) == _bits;
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal bool IsProperSubsetOf(uint otherBits)
     {
         return _bits != otherBits &&
@@ -190,6 +205,7 @@ public sealed class SmallBitArray : IBitArray
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal bool IsProperSupersetOf(uint otherBits)
     {
         return _bits != otherBits &&
@@ -197,12 +213,14 @@ public sealed class SmallBitArray : IBitArray
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal bool Overlaps(uint otherBits)
     {
         return (_bits & otherBits) != 0;
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal bool SetEquals(uint otherBits)
     {
         return _bits == otherBits;
