@@ -25,6 +25,7 @@ public abstract class GadgetType : IExtendedEnumType<GadgetType>
             SawBladeGadgetType.Instance,
             FunctionalGadgetType.Instance,
             LogicGateGadgetType.Instance,
+            HatchGadgetType.Instance
         };
 
         result.ValidateUniqueIds();
