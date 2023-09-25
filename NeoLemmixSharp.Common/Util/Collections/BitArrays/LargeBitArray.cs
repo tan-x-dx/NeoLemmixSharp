@@ -163,7 +163,7 @@ public sealed class LargeBitArray : IBitArray
             }
 
             var m = BitOperations.TrailingZeroCount(v);
-            v ^= 1U << m;
+            v &= v - 1;
             array[arrayIndex++] = (index << Shift) | m;
             remaining--;
         }
@@ -218,7 +218,7 @@ public sealed class LargeBitArray : IBitArray
             }
 
             var m = BitOperations.TrailingZeroCount(_v);
-            _v ^= 1U << m;
+            _v &= _v - 1;
 
             _current = (_index << Shift) | m;
             _remaining--;
@@ -262,7 +262,7 @@ public sealed class LargeBitArray : IBitArray
             }
 
             var m = BitOperations.TrailingZeroCount(_v);
-            _v ^= 1U << m;
+            _v &= _v - 1;
 
             _current = (_index << Shift) | m;
             _remaining--;

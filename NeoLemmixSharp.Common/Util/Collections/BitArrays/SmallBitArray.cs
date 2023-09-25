@@ -101,7 +101,8 @@ public sealed class SmallBitArray : IBitArray
         while (v != 0U)
         {
             var m = BitOperations.TrailingZeroCount(v);
-            v ^= 1U << m;
+            v &= v - 1;
+
             array[arrayIndex++] = m;
         }
     }
@@ -138,8 +139,9 @@ public sealed class SmallBitArray : IBitArray
         {
             if (_v == 0U)
                 return false;
+
             Current = BitOperations.TrailingZeroCount(_v);
-            _v ^= 1U << Current;
+            _v &= _v - 1;
 
             return true;
         }
