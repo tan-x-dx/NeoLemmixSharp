@@ -81,6 +81,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     public void Initialise()
     {
+        State.IsActive = true;
         var levelPositionPair = CurrentAction.GetLemmingBounds(this);
         TopLeftPixel = levelPositionPair.GetTopLeftPosition();
         BottomRightPixel = levelPositionPair.GetBottomRightPosition();

@@ -4,7 +4,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
@@ -55,13 +54,6 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
             verticalBoundaryBehaviour);
     }
 
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LargeSimpleSet<Lemming> ActiveLemmings() => _lemmingPositionHelper.GetAllTrackedItems();
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool LemmingIsActive(Lemming lemming) => _lemmingPositionHelper.IsTrackingItem(lemming);
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Initialise()
     {
@@ -90,6 +82,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
 
     public void RemoveLemming(Lemming lemming)
     {
+        lemming.State.IsActive = false;
         _lemmingPositionHelper.RemoveItem(lemming);
 
         if (lemming.State.IsZombie)
@@ -107,7 +100,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
 
     public void UpdateLemmingPosition(Lemming lemming)
     {
-        if (!LemmingIsActive(lemming))
+        if (!lemming.State.IsActive)
             return;
 
         _lemmingPositionHelper.UpdateItemPosition(lemming);

@@ -140,10 +140,9 @@ end;
 
         HandleSkillAssignment();
 
-        var activeLemmings = _lemmingManager.ActiveLemmings();
-        foreach (var lemming in activeLemmings)
+        foreach (var lemming in _lemmingManager.AllLemmings)
         {
-            if (CurrentlySelectedFrameUpdater.UpdateLemming(lemming))
+            if (lemming.State.IsActive && CurrentlySelectedFrameUpdater.UpdateLemming(lemming))
             {
                 lemming.Tick();
                 _lemmingManager.UpdateLemmingPosition(lemming);
@@ -276,7 +275,7 @@ end;
             return;
         }
 
-        if (!_lemmingManager.LemmingIsActive(_queuedSkillLemming) ||
+        if (!_queuedSkillLemming.State.IsActive ||
             !_queuedSkillLemming.State.CanHaveSkillsAssigned
             || false) // || lemming is teleporting
         {
