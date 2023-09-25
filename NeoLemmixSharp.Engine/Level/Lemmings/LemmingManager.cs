@@ -9,10 +9,11 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class LemmingManager : ISimpleHasher<Lemming>
+public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<HatchGroup>
 {
     private const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize32;
 
+    private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
 
     private readonly PositionHelper<Lemming> _lemmingPositionHelper;
@@ -173,4 +174,8 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>
     int ISimpleHasher<Lemming>.NumberOfItems => _lemmings.Length;
     int ISimpleHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming ISimpleHasher<Lemming>.UnHash(int index) => _lemmings[index];
+
+    int ISimpleHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
+    int ISimpleHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
+    HatchGroup ISimpleHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
 }

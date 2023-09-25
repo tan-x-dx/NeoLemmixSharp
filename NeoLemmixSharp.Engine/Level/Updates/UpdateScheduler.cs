@@ -63,6 +63,54 @@ public sealed class UpdateScheduler
         CurrentlySelectedFrameUpdater = _standardFrameUpdater;
     }
 
+    /*
+
+procedure TLemmingGame.UpdateLemmings;
+{-------------------------------------------------------------------------------
+  The main method: handling a single frame of the game.
+-------------------------------------------------------------------------------}
+begin
+  fDoneAssignmentThisFrame := false;
+
+  if fGameFinished then
+    Exit;
+  fSoundList.Clear(); // Clear list of played sound effects
+  CheckForGameFinished;
+
+  CheckAdjustSpawnInterval;
+
+  CheckForQueuedAction; // needs to be done before CheckForReplayAction, because it writes an assignment in the replay
+  CheckForReplayAction;
+
+  // erase existing ShadowBridge
+  if fExistShadow then
+  begin
+    fRenderer.ClearShadows;
+    fExistShadow := false;
+  end;
+
+  // just as a warning: do *not* mess around with the order here
+  IncrementIteration;
+  CheckReleaseLemming;
+  CheckLemmings;
+  CheckUpdateNuking;
+  UpdateGadgets;
+
+  if (fReplayManager.ExpectedCompletionIteration = fCurrentIteration) and (not Checkpass) then
+    fReplayManager.ExpectedCompletionIteration := 0;
+
+  // Get highest priority lemming under cursor
+  GetPriorityLemming(fLemSelected, SkillPanelButtonToAction[fSelectedSkill], CursorPoint);
+
+  DrawAnimatedGadgets;
+
+  // Check lemmings under cursor
+  HitTest;
+  fSoundList.Clear(); // Clear list of played sound effects - just to be safe
+end;
+
+    */
+
     public void Tick()
     {
         _inputController.Tick();

@@ -193,6 +193,7 @@ public static class Global
     public const int FireGadgetTypeId = 2;
     public const int FunctionalGadgetTypeId = 10;
     public const int GenericGadgetTypeId = 0;
+    public const int HatchGadgetTypeId = 12;
     public const int LogicGateGadgetTypeId = 11;
     public const int MetalGrateGadgetTypeId = 9;
     public const int NoSplatGadgetTypeId = 6;
