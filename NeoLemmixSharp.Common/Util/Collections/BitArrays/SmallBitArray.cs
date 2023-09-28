@@ -67,17 +67,16 @@ public sealed class SmallBitArray : IBitArray
 
         var oldValue = _bits;
         _bits ^= 1U << index;
-        bool result;
-        if (_bits > oldValue)
+
+        var result = true;
+        var delta = 1;
+        if (_bits < oldValue)
         {
-            Count++;
-            result = true;
-        }
-        else
-        {
-            Count--;
+            delta = -1;
             result = false;
         }
+
+        Count += delta;
 
         return result;
     }
