@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿namespace NeoLemmixSharp.Common.Util.Identity;
 
 public interface IIdEquatable<T> : IEquatable<T>
     where T : class, IIdEquatable<T>

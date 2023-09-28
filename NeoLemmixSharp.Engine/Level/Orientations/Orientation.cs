@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 

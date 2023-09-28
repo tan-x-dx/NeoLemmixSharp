@@ -1,7 +1,8 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
@@ -14,7 +15,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
 {
     private readonly GadgetBase[] _allGadgets;
-    private readonly PositionHelper<HitBoxGadget> _gadgetPositionHelper;
+    private readonly SpacialHashGrid<HitBoxGadget> _gadgetPositionHelper;
 
     public ReadOnlySpan<GadgetBase> AllGadgets => new(_allGadgets);
 
@@ -27,7 +28,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
         _allGadgets.ValidateUniqueIds();
         Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
 
-        _gadgetPositionHelper = new PositionHelper<HitBoxGadget>(
+        _gadgetPositionHelper = new SpacialHashGrid<HitBoxGadget>(
             this,
             ChunkSizeType.ChunkSize64,
             horizontalBoundaryBehaviour,
@@ -45,13 +46,13 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LargeSimpleSet<HitBoxGadget> GetAllGadgetsForPosition(LevelPosition levelPosition)
+    public SimpleSet<HitBoxGadget> GetAllGadgetsForPosition(LevelPosition levelPosition)
     {
         return _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
     }
 
     [Pure]
-    public LargeSimpleSet<HitBoxGadget> GetAllGadgetsAtLemmingPosition(Lemming lemming)
+    public SimpleSet<HitBoxGadget> GetAllGadgetsAtLemmingPosition(Lemming lemming)
     {
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
@@ -63,7 +64,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LargeSimpleSet<HitBoxGadget> GetAllItemsNearRegion(LevelPositionPair levelRegion)
+    public SimpleSet<HitBoxGadget> GetAllItemsNearRegion(LevelPositionPair levelRegion)
     {
         return _gadgetPositionHelper.GetAllItemsNearRegion(levelRegion);
     }

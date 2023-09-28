@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Teams;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
@@ -20,14 +19,16 @@ public sealed class LemmingState
                                                (1U << SwimmerBitIndex) |
                                                (1U << DisarmerBitIndex);
 
+    private const int ActiveBitIndex = 29;
     private const int NeutralBitIndex = 30;
     private const int ZombieBitIndex = 31;
 
-    private const uint AssignableSkillBitMask = (1U << NeutralBitIndex) |
+    private const uint AssignableSkillBitMask = (1U << ActiveBitIndex) |
+                                                (1U << NeutralBitIndex) |
                                                 (1U << ZombieBitIndex);
 
     private readonly Lemming _lemming;
-    private readonly SmallBitArray _states = new();
+    private uint _states;
 
     private Team _team;
 
@@ -35,54 +36,70 @@ public sealed class LemmingState
     public Color SkinColor { get; private set; }
     public Color BodyColor { get; private set; }
 
-    public bool HasPermanentSkill => _states.GetBitMask(PermanentSkillBitMask) != 0U;
-    public bool CanHaveSkillsAssigned => _states.GetBitMask(AssignableSkillBitMask) == 0U;
+    public bool HasPermanentSkill => (_states & PermanentSkillBitMask) != 0U;
+    public bool CanHaveSkillsAssigned => (_states & AssignableSkillBitMask) == (1U << ActiveBitIndex);
 
     public bool IsClimber
     {
-        get => _states.GetBit(ClimberBitIndex);
-        set => SetBitToValue(ClimberBitIndex, value);
+        get => ((_states >> ClimberBitIndex) & 1U) != 0U;
+        set => SetBitToValue(1U << ClimberBitIndex, value);
     }
 
     public bool IsFloater
     {
-        get => _states.GetBit(FloaterBitIndex);
-        set => SetBitToValue(FloaterBitIndex, value);
+        get => ((_states >> FloaterBitIndex) & 1U) != 0U;
+        set => SetBitToValue(1U << FloaterBitIndex, value);
     }
 
     public bool IsGlider
     {
-        get => _states.GetBit(GliderBitIndex);
-        set => SetBitToValue(GliderBitIndex, value);
+        get => ((_states >> GliderBitIndex) & 1U) != 0U;
+        set => SetBitToValue(1U << GliderBitIndex, value);
     }
 
     public bool IsSlider
     {
-        get => _states.GetBit(SliderBitIndex);
-        set => SetBitToValue(SliderBitIndex, value);
+        get => ((_states >> SliderBitIndex) & 1U) != 0U;
+        set => SetBitToValue(1U << SliderBitIndex, value);
     }
 
     public bool IsSwimmer
     {
-        get => _states.GetBit(SwimmerBitIndex);
-        set => SetBitToValue(SwimmerBitIndex, value);
+        get => ((_states >> SwimmerBitIndex) & 1U) != 0U;
+        set => SetBitToValue(1U << SwimmerBitIndex, value);
     }
 
     public bool IsDisarmer
     {
-        get => _states.GetBit(DisarmerBitIndex);
-        set => SetBitToValue(DisarmerBitIndex, value);
+        get => ((_states >> DisarmerBitIndex) & 1U) != 0U;
+        set => SetBitToValue(1U << DisarmerBitIndex, value);
     }
 
     public bool IsNeutral
     {
-        get => _states.GetBit(NeutralBitIndex);
-        set => SetBitToValue(NeutralBitIndex, value);
+        get => ((_states >> NeutralBitIndex) & 1U) != 0U;
+        set => SetBitToValue(1U << NeutralBitIndex, value);
+    }
+
+    public bool IsActive
+    {
+        get => ((_states >> ActiveBitIndex) & 1U) != 0U;
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << ActiveBitIndex;
+            }
+            else
+            {
+                _states &= ~(1U << ActiveBitIndex);
+            }
+        }
     }
 
     public bool IsZombie
     {
-        get => _states.GetBit(ZombieBitIndex);
+        get => ((_states >> ZombieBitIndex) & 1U) != 0U;
         set
         {
             if (IsZombie == value)
@@ -90,12 +107,12 @@ public sealed class LemmingState
 
             if (value)
             {
-                _states.SetBit(ZombieBitIndex);
+                _states |= 1U << ZombieBitIndex;
                 Global.LemmingManager.RegisterZombie(_lemming);
             }
             else
             {
-                _states.ClearBit(ZombieBitIndex);
+                _states &= ~(1U << ZombieBitIndex);
                 Global.LemmingManager.DeregisterZombie(_lemming);
             }
             UpdateSkinColor();
@@ -121,15 +138,15 @@ public sealed class LemmingState
         UpdateSkinColor();
     }
 
-    private void SetBitToValue(int bitIndex, bool value)
+    private void SetBitToValue(uint bitMask, bool value)
     {
         if (value)
         {
-            _states.SetBit(bitIndex);
+            _states |= bitMask;
         }
         else
         {
-            _states.ClearBit(bitIndex);
+            _states &= bitMask;
         }
         UpdateHairAndBodyColors();
     }

@@ -14,9 +14,8 @@ public sealed class FireGadgetType : InteractiveGadgetType
     public override int Id => Global.FireGadgetTypeId;
     public override string GadgetTypeName => "fire";
 
-    public override void InteractWithLemming(Lemming lemming)
+    public override LemmingAction InteractWithLemming(Lemming lemming)
     {
-        VaporiserAction.Instance.TransitionLemmingToAction(lemming, false);
-        // play sound
+        return VaporiserAction.Instance;
     }
 }

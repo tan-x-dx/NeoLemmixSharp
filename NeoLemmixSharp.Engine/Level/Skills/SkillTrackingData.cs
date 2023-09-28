@@ -32,7 +32,7 @@ public sealed class SkillTrackingData
     public void SetSkillCount(int skillCount) => SkillCount = skillCount switch
     {
         >= Global.InfiniteSkillCount => Skill == ClonerSkill.Instance
-            ? 99
+            ? Global.InfiniteSkillCount - 1
             : Global.InfiniteSkillCount,
         < 0 => 0,
         _ => skillCount

@@ -8,7 +8,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
     private const int AreaCutoffSize = 128 * 128;
 
     private readonly RectangularLevelRegion _anchor;
-    private readonly LargeBitArray _levelPositions;
+    private readonly BitArray _levelPositions;
     private readonly int _offsetX;
     private readonly int _offsetY;
     private readonly int _minimumBoundingBoxWidth;
@@ -46,7 +46,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
         if (totalNumberOfPoints > AreaCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
 
-        _levelPositions = new LargeBitArray(totalNumberOfPoints);
+        _levelPositions = new BitArray(new UintArrayWrapper(totalNumberOfPoints));
 
         foreach (var levelPosition in points)
         {

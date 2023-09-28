@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -69,7 +69,7 @@ public sealed class LevelCursor
         }
     }
 
-    public LargeSimpleSet<Lemming> LemmingsNearCursorPosition()
+    public SimpleSet<Lemming> LemmingsNearCursorPosition()
     {
         var c = CursorPosition;
         var x = c.X;

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
@@ -47,11 +48,11 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
         return result;
     }
 
-    private readonly LargeSimpleSet<LemmingAction> _assignableActions;
+    private readonly SimpleSet<LemmingAction> _assignableActions;
 
     protected LemmingSkill()
     {
-        _assignableActions = ExtendedEnumTypeComparer<LemmingAction>.LargeSetForType();
+        _assignableActions = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
 
         // ReSharper disable once VirtualMemberCallInConstructor
         foreach (var action in ActionsThatCanBeAssigned())

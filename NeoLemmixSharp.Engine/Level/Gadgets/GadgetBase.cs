@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;

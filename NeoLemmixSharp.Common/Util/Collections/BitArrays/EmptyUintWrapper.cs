@@ -1,0 +1,22 @@
+﻿using System.Diagnostics.Contracts;
+
+namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
+
+public sealed class EmptyUintWrapper : IUintWrapper
+{
+    public static EmptyUintWrapper Instance { get; } = new();
+
+    public int Size => 0;
+
+    private EmptyUintWrapper()
+    {
+    }
+
+    public void Clear() { }
+
+    [Pure]
+    public Span<uint> AsSpan() => Span<uint>.Empty;
+
+    [Pure]
+    public ReadOnlySpan<uint> AsReadOnlySpan() => ReadOnlySpan<uint>.Empty;
+}

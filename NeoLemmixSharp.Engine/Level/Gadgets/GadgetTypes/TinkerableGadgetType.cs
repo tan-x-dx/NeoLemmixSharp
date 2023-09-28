@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 
@@ -13,7 +14,12 @@ public sealed class TinkerableGadgetType : InteractiveGadgetType
     public override int Id => Global.TinkerableGadgetTypeId;
     public override string GadgetTypeName => "tinkerable";
 
-    public override void InteractWithLemming(Lemming lemming)
+    public override LemmingAction InteractWithLemming(Lemming lemming)
     {
+        if (!lemming.State.IsDisarmer)
+            return NoneAction.Instance;
+
+        //if()
+        return NoneAction.Instance;
     }
 }

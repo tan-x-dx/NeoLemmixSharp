@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics.Contracts;
 

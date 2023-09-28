@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
@@ -8,6 +8,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -23,8 +24,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public bool EndOfAnimation;
     public bool LaserHit;
     public bool JumpToHoistAdvance;
-
-    public bool Debug;
 
     public int AnimationFrame;
     public int PhysicsFrame;
@@ -82,6 +81,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     public void Initialise()
     {
+        State.IsActive = true;
         var levelPositionPair = CurrentAction.GetLemmingBounds(this);
         TopLeftPixel = levelPositionPair.GetTopLeftPosition();
         BottomRightPixel = levelPositionPair.GetBottomRightPosition();
@@ -93,16 +93,18 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     public void Tick()
     {
-        if (Debug)
-        {
-            ;
-        }
-
         PreviousAction = CurrentAction;
         // No transition to do at the end of lemming movement
         NextAction = NoneAction.Instance;
 
-        _ = HandleLemmingAction() && CheckLevelBoundaries() && CheckTriggerAreas(false);
+        var shouldContinue = HandleLemmingAction() && CheckLevelBoundaries() && CheckTriggerAreas(false);
+
+        if (shouldContinue &&
+            CurrentAction != ExiterAction.Instance &&
+            !State.IsZombie)
+        {
+            CheckZombies();
+        }
     }
 
     private bool HandleLemmingAction()
@@ -121,10 +123,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
                 PhysicsFrame = 0;
             }
 
-            if (CurrentAction.IsOneTimeAction)
-            {
-                EndOfAnimation = true;
-            }
+            EndOfAnimation = CurrentAction.IsOneTimeAction;
         }
 
         AnimationFrame = PhysicsFrame;
@@ -276,6 +275,31 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         }
 
         return true;
+    }
+
+    private void CheckZombies()
+    {
+        Debug.Assert(!State.IsZombie);
+
+        var checkRegion = new LevelPositionPair(TopLeftPixel, BottomRightPixel);
+        var nearbyZombies = Global.LemmingManager.GetAllZombiesNearLemming(checkRegion);
+
+        if (nearbyZombies.Count == 0)
+            return;
+
+        foreach (var zombie in nearbyZombies)
+        {
+            Debug.Assert(zombie.State.IsZombie);
+
+            var zombieRegion = new LevelPositionPair(zombie.TopLeftPixel, zombie.BottomRightPixel);
+
+            if (checkRegion.Overlaps(zombieRegion))
+            {
+                State.IsZombie = true;
+
+                return;
+            }
+        }
     }
 
     public void SetFacingDirection(FacingDirection newFacingDirection)

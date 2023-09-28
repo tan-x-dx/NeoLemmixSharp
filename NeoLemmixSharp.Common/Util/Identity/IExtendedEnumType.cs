@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿namespace NeoLemmixSharp.Common.Util.Identity;
 
 public interface IExtendedEnumType<T> : IIdEquatable<T>
     where T : class, IExtendedEnumType<T>
