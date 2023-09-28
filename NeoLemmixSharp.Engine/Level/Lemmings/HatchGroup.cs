@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;

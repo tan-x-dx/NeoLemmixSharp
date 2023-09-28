@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+
+namespace NeoLemmixSharp.Common.Util.Identity;
 
 public sealed class ExtendedEnumTypeComparer<T> :
     IEqualityComparer<T>,

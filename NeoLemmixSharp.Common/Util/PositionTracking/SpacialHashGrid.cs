@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Common.Util.PositionTracking;

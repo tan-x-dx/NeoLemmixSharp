@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿namespace NeoLemmixSharp.Common.Util.Identity;
 
 public static class IdEquatableItemHelperMethods
 {
