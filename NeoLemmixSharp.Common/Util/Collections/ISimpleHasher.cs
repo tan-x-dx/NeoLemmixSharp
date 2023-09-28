@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿namespace NeoLemmixSharp.Common.Util.Collections;
 
 public interface ISimpleHasher<T>
 {

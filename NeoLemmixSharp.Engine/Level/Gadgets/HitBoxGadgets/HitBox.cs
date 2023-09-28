@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
@@ -14,9 +14,9 @@ public sealed class HitBox
 {
     private readonly ILevelRegion _levelRegion;
     private readonly ItemTracker<Lemming> _lemmingsInHitBox;
-    private readonly LargeSimpleSet<LemmingAction> _targetActions = ExtendedEnumTypeComparer<LemmingAction>.LargeSetForType();
-    private readonly SmallSimpleSet<Orientation> _targetOrientations = ExtendedEnumTypeComparer<Orientation>.SmallSetForType();
-    private readonly SmallSimpleSet<FacingDirection> _targetFacingDirections = ExtendedEnumTypeComparer<FacingDirection>.SmallSetForType();
+    private readonly SimpleSet<LemmingAction> _targetActions = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
+    private readonly SimpleSet<Orientation> _targetOrientations = ExtendedEnumTypeComparer<Orientation>.CreateSimpleSet();
+    private readonly SimpleSet<FacingDirection> _targetFacingDirections = ExtendedEnumTypeComparer<FacingDirection>.CreateSimpleSet();
 
     public HitBox(
         ILevelRegion levelRegion,
