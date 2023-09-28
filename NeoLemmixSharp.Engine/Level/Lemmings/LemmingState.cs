@@ -41,49 +41,49 @@ public sealed class LemmingState
 
     public bool IsClimber
     {
-        get => (_states & ClimberBitIndex) != 0U;
+        get => ((_states >> ClimberBitIndex) & 1U) != 0U;
         set => SetBitToValue(1U << ClimberBitIndex, value);
     }
 
     public bool IsFloater
     {
-        get => (_states & FloaterBitIndex) != 0U;
+        get => ((_states >> FloaterBitIndex) & 1U) != 0U;
         set => SetBitToValue(1U << FloaterBitIndex, value);
     }
 
     public bool IsGlider
     {
-        get => (_states & GliderBitIndex) != 0U;
+        get => ((_states >> GliderBitIndex) & 1U) != 0U;
         set => SetBitToValue(1U << GliderBitIndex, value);
     }
 
     public bool IsSlider
     {
-        get => (_states & SliderBitIndex) != 0U;
+        get => ((_states >> SliderBitIndex) & 1U) != 0U;
         set => SetBitToValue(1U << SliderBitIndex, value);
     }
 
     public bool IsSwimmer
     {
-        get => (_states & SwimmerBitIndex) != 0U;
+        get => ((_states >> SwimmerBitIndex) & 1U) != 0U;
         set => SetBitToValue(1U << SwimmerBitIndex, value);
     }
 
     public bool IsDisarmer
     {
-        get => (_states & DisarmerBitIndex) != 0U;
+        get => ((_states >> DisarmerBitIndex) & 1U) != 0U;
         set => SetBitToValue(1U << DisarmerBitIndex, value);
     }
 
     public bool IsNeutral
     {
-        get => (_states & NeutralBitIndex) != 0U;
+        get => ((_states >> NeutralBitIndex) & 1U) != 0U;
         set => SetBitToValue(1U << NeutralBitIndex, value);
     }
 
     public bool IsActive
     {
-        get => (_states & ActiveBitIndex) != 0U;
+        get => ((_states >> ActiveBitIndex) & 1U) != 0U;
         set
         {
             if (value)
@@ -99,7 +99,7 @@ public sealed class LemmingState
 
     public bool IsZombie
     {
-        get => (_states & ZombieBitIndex) != 0U;
+        get => ((_states >> ZombieBitIndex) & 1U) != 0U;
         set
         {
             if (IsZombie == value)
