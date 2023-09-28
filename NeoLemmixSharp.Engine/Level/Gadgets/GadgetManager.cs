@@ -14,7 +14,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
 {
     private readonly GadgetBase[] _allGadgets;
-    private readonly PositionHelper<HitBoxGadget> _gadgetPositionHelper;
+    private readonly SpacialHashGrid<HitBoxGadget> _gadgetPositionHelper;
 
     public ReadOnlySpan<GadgetBase> AllGadgets => new(_allGadgets);
 
@@ -27,7 +27,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
         _allGadgets.ValidateUniqueIds();
         Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
 
-        _gadgetPositionHelper = new PositionHelper<HitBoxGadget>(
+        _gadgetPositionHelper = new SpacialHashGrid<HitBoxGadget>(
             this,
             ChunkSizeType.ChunkSize64,
             horizontalBoundaryBehaviour,

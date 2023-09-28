@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
-public sealed class PositionHelper<T>
+public sealed class SpacialHashGrid<T>
     where T : class, IIdEquatable<T>, IRectangularBounds
 {
     private readonly int _chunkSizeBitShift;
@@ -21,7 +21,7 @@ public sealed class PositionHelper<T>
 
     private readonly LargeSimpleSet<T>?[] _itemChunkLookup;
 
-    public PositionHelper(
+    public SpacialHashGrid(
         ISimpleHasher<T> hasher,
         ChunkSizeType chunkSizeType,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,

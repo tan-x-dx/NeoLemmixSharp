@@ -15,9 +15,9 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
 
-    private readonly PositionHelper<Lemming> _lemmingPositionHelper;
-    private readonly PositionHelper<Lemming> _blockerPositionHelper;
-    private readonly PositionHelper<Lemming> _zombiePositionHelper;
+    private readonly SpacialHashGrid<Lemming> _lemmingPositionHelper;
+    private readonly SpacialHashGrid<Lemming> _blockerPositionHelper;
+    private readonly SpacialHashGrid<Lemming> _zombiePositionHelper;
 
     public int LemmingsToRelease { get; private set; }
     public int LemmingsOut { get; private set; }
@@ -35,19 +35,19 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
         Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
         _lemmings.ValidateUniqueIds();
 
-        _lemmingPositionHelper = new PositionHelper<Lemming>(
+        _lemmingPositionHelper = new SpacialHashGrid<Lemming>(
             this,
             LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        _blockerPositionHelper = new PositionHelper<Lemming>(
+        _blockerPositionHelper = new SpacialHashGrid<Lemming>(
             this,
             LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        _zombiePositionHelper = new PositionHelper<Lemming>(
+        _zombiePositionHelper = new SpacialHashGrid<Lemming>(
             this,
             LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
