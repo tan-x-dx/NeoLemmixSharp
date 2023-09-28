@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Common.Util.Identity;
 
@@ -38,16 +39,10 @@ public sealed class ExtendedEnumTypeComparer<T> :
     public int Hash(T item) => item.Id;
     public T UnHash(int index) => T.AllItems[index];
 
-    public static LargeSimpleSet<T> LargeSetForType(bool fullSet = false)
+    public static SimpleSet<T> CreateSimpleSet()
     {
-        return new LargeSimpleSet<T>(Instance, fullSet);
-    }
+        var bitArray = BitArray.CreateForType(Instance);
 
-    public static SmallSimpleSet<T> SmallSetForType(bool fullSet = false)
-    {
-        if (Instance.NumberOfItems > SmallBitArray.Size)
-            throw new InvalidOperationException("Cannot create small set for this type - too many items!");
-
-        return new SmallSimpleSet<T>(Instance, fullSet);
+        return new SimpleSet<T>(Instance, bitArray);
     }
 }

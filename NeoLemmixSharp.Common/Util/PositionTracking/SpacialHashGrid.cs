@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 
@@ -17,10 +17,10 @@ public sealed class SpacialHashGrid<T>
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
 
-    private readonly LargeSimpleSet<T> _allTrackedItems;
-    private readonly LargeSimpleSet<T> _setUnionScratchSpace;
+    private readonly SimpleSet<T> _allTrackedItems;
+    private readonly SimpleSet<T> _setUnionScratchSpace;
 
-    private readonly LargeSimpleSet<T>?[] _itemChunkLookup;
+    private readonly SimpleSet<T>?[] _itemChunkLookup;
 
     public SpacialHashGrid(
         ISimpleHasher<T> hasher,
@@ -39,39 +39,39 @@ public sealed class SpacialHashGrid<T>
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
-        _allTrackedItems = new LargeSimpleSet<T>(hasher);
-        _setUnionScratchSpace = new LargeSimpleSet<T>(hasher);
+        _allTrackedItems = new SimpleSet<T>(hasher);
+        _setUnionScratchSpace = new SimpleSet<T>(hasher);
 
-        _itemChunkLookup = new LargeSimpleSet<T>?[_numberOfHorizontalChunks * _numberOfVerticalChunks];
+        _itemChunkLookup = new SimpleSet<T>?[_numberOfHorizontalChunks * _numberOfVerticalChunks];
     }
 
     [Pure]
     public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
 
     [Pure]
-    public LargeSimpleSet<T> GetAllTrackedItems() => _allTrackedItems;
+    public SimpleSet<T> GetAllTrackedItems() => _allTrackedItems;
 
     [Pure]
-    public LargeSimpleSet<T> GetAllItemsNearPosition(LevelPosition levelPosition)
+    public SimpleSet<T> GetAllItemsNearPosition(LevelPosition levelPosition)
     {
         if (_allTrackedItems.Count == 0)
-            return LargeSimpleSet<T>.Empty;
+            return SimpleSet<T>.Empty;
 
         var chunkX = levelPosition.X >> _chunkSizeBitShift;
         var chunkY = levelPosition.Y >> _chunkSizeBitShift;
 
         if (chunkX < 0 || chunkX >= _numberOfHorizontalChunks ||
             chunkY < 0 || chunkY >= _numberOfVerticalChunks)
-            return LargeSimpleSet<T>.Empty;
+            return SimpleSet<T>.Empty;
 
         return GetItemsForChunkPosition(chunkX, chunkY);
     }
 
     [Pure]
-    public LargeSimpleSet<T> GetAllItemsNearRegion(LevelPositionPair levelRegion)
+    public SimpleSet<T> GetAllItemsNearRegion(LevelPositionPair levelRegion)
     {
         if (_allTrackedItems.Count == 0)
-            return LargeSimpleSet<T>.Empty;
+            return SimpleSet<T>.Empty;
 
         var topLeftLevelPosition = levelRegion.GetTopLeftPosition();
         var bottomRightLevelPosition = levelRegion.GetBottomRightPosition();
@@ -89,11 +89,11 @@ public sealed class SpacialHashGrid<T>
     }
 
     [Pure]
-    private LargeSimpleSet<T> GetItemsForChunkPosition(int chunkX, int chunkY)
+    private SimpleSet<T> GetItemsForChunkPosition(int chunkX, int chunkY)
     {
         var index = _numberOfHorizontalChunks * chunkY + chunkX;
         var itemChunk = _itemChunkLookup[index];
-        return itemChunk ?? LargeSimpleSet<T>.Empty;
+        return itemChunk ?? SimpleSet<T>.Empty;
     }
 
     public void AddItem(T item)
@@ -159,7 +159,7 @@ public sealed class SpacialHashGrid<T>
     {
         var index = _numberOfHorizontalChunks * y + x;
         ref var itemChunk = ref _itemChunkLookup[index];
-        itemChunk ??= new LargeSimpleSet<T>(_hasher);
+        itemChunk ??= new SimpleSet<T>(_hasher);
 
         itemChunk.Add(item);
     }

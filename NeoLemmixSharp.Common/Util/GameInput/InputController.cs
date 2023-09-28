@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
@@ -9,7 +9,7 @@ public abstract class InputController : ISimpleHasher<Keys>
     private const int NumberOfKeys = 256;
 
     private readonly List<(Keys, KeyAction)> _keyMapping = new();
-    private readonly LargeSimpleSet<Keys> _keys;
+    private readonly SimpleSet<Keys> _keys;
     private readonly List<KeyAction> _keyActions = new();
 
     private int _previousScrollValue;
@@ -26,7 +26,7 @@ public abstract class InputController : ISimpleHasher<Keys>
 
     protected InputController()
     {
-        _keys = new LargeSimpleSet<Keys>(this);
+        _keys = new SimpleSet<Keys>(this);
 
         // ReSharper disable once VirtualMemberCallInConstructor
         SetUpBindings();

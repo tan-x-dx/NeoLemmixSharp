@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -118,7 +118,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LargeSimpleSet<Lemming> GetAllLemmingsNearRegion(LevelPositionPair levelRegion)
+    public SimpleSet<Lemming> GetAllLemmingsNearRegion(LevelPositionPair levelRegion)
     {
         return _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion);
     }
@@ -142,7 +142,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LargeSimpleSet<Lemming> GetAllBlockersNearLemming(LevelPositionPair levelRegion)
+    public SimpleSet<Lemming> GetAllBlockersNearLemming(LevelPositionPair levelRegion)
     {
         return _blockerPositionHelper.GetAllItemsNearRegion(levelRegion);
     }
@@ -160,7 +160,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LargeSimpleSet<Lemming> GetAllZombiesNearLemming(LevelPositionPair levelRegion)
+    public SimpleSet<Lemming> GetAllZombiesNearLemming(LevelPositionPair levelRegion)
     {
         return _zombiePositionHelper.GetAllItemsNearRegion(levelRegion);
     }
