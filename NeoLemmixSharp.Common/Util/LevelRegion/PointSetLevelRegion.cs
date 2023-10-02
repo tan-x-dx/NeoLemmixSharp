@@ -7,19 +7,17 @@ public sealed class PointSetLevelRegion : ILevelRegion
     private const int DimensionCutoffSize = 128;
     private const int AreaCutoffSize = 128 * 128;
 
-    private readonly RectangularLevelRegion _anchor;
-    private readonly BitArray _levelPositions;
     private readonly int _offsetX;
     private readonly int _offsetY;
     private readonly int _minimumBoundingBoxWidth;
     private readonly int _minimumBoundingBoxHeight;
 
+    private readonly BitArray _levelPositions;
+
     public PointSetLevelRegion(RectangularLevelRegion anchor, ICollection<LevelPosition> points)
     {
         if (points.Count == 0)
             throw new ArgumentException("Cannot create PointSetLevelRegion with zero points!");
-
-        _anchor = anchor;
 
         var minX = int.MaxValue;
         var minY = int.MaxValue;
@@ -46,7 +44,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
         if (totalNumberOfPoints > AreaCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
 
-        _levelPositions = new BitArray(new UintArrayWrapper(totalNumberOfPoints));
+        _levelPositions = BitArray.CreateForLength(totalNumberOfPoints);
 
         foreach (var levelPosition in points)
         {
@@ -54,14 +52,13 @@ public sealed class PointSetLevelRegion : ILevelRegion
             _levelPositions.SetBit(index);
         }
 
-        _offsetX = minX;
-        _offsetY = minY;
+        var anchorOffset = anchor.TopLeft;
+        _offsetX = minX + anchorOffset.X;
+        _offsetY = minY + anchorOffset.Y;
     }
 
     public bool ContainsPoint(LevelPosition levelPosition)
     {
-        levelPosition -= _anchor.TopLeft;
-
         var newX = levelPosition.X - _offsetX;
         var newY = levelPosition.Y - _offsetY;
         var index = _minimumBoundingBoxWidth * newY + newX;

@@ -27,11 +27,20 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     /// </summary>
     public int Count { get; private set; }
 
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArray CreateForType<T>(ISimpleHasher<T> hasher)
     {
         var numberOfItems = hasher.NumberOfItems;
-        IUintWrapper uintWrapper = numberOfItems > SingleUintWrapper.SmallBitArrayLength
-            ? new UintArrayWrapper(numberOfItems)
+
+        return CreateForLength(numberOfItems);
+    }
+
+    [Pure]
+    public static BitArray CreateForLength(int specifiedLength)
+    {
+        IUintWrapper uintWrapper = specifiedLength > SingleUintWrapper.SmallBitArrayLength
+            ? new UintArrayWrapper(specifiedLength)
             : new SingleUintWrapper();
 
         return new BitArray(uintWrapper, false);
@@ -231,7 +240,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
     public ref struct BitEnumerator
     {
-        private readonly ReadOnlySpan<uint> _bitSpan;
+        private readonly ReadOnlySpan<uint> _bits;
 
         private int _remaining;
         private int _index;
@@ -242,11 +251,11 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
         public BitEnumerator(BitArray bitArray)
         {
-            _bitSpan = bitArray.AsReadOnlySpan();
+            _bits = bitArray.AsReadOnlySpan();
             _remaining = bitArray.Count;
             _index = 0;
             _current = 0;
-            _v = bitArray.Length == 0 ? 0U : _bitSpan[0];
+            _v = _bits.Length == 0 ? 0U : _bits[0];
         }
 
         public bool MoveNext()
@@ -258,7 +267,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
                 do
                 {
-                    _v = _bitSpan[++_index];
+                    _v = _bits[++_index];
                 }
                 while (_v == 0U);
             }
