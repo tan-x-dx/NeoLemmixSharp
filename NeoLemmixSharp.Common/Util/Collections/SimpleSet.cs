@@ -22,15 +22,10 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
     public SimpleSet(ISimpleHasher<T> hasher)
     {
         _hasher = hasher;
-        _bits = BitArray.CreateForType(hasher);
+        _bits = BitArray.CreateForLength(hasher.NumberOfItems);
     }
 
-    public SimpleSet(ISimpleHasher<T> hasher, BitArray bits)
-    {
-        _hasher = hasher;
-        _bits = bits;
-    }
-
+    public int Size => _bits.Size;
     public int Count => _bits.Count;
 
     public bool Add(T item)
@@ -112,7 +107,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
         if (other is SimpleSet<T> set)
             return set._bits;
 
-        var result = BitArray.CreateForType(_hasher);
+        var result = BitArray.CreateForLength(_hasher.NumberOfItems);
 
         foreach (var item in other)
         {

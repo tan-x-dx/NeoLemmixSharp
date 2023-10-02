@@ -28,15 +28,6 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     public int Count { get; private set; }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BitArray CreateForType<T>(ISimpleHasher<T> hasher)
-    {
-        var numberOfItems = hasher.NumberOfItems;
-
-        return CreateForLength(numberOfItems);
-    }
-
-    [Pure]
     public static BitArray CreateForLength(int specifiedLength)
     {
         IUintWrapper uintWrapper = specifiedLength > SingleUintWrapper.SmallBitArrayLength
@@ -46,20 +37,12 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
         return new BitArray(uintWrapper, false);
     }
 
-    /// <summary>
-    /// Dummy constructor to avoid pointless calculation of Count property.
-    /// To be used when it is guaranteed the newly constructed BitArray will be empty (no bits set)
-    /// </summary>
-    /// <param name="uintWrapper"></param>
-    /// <param name="_"></param>
-    private BitArray(IUintWrapper uintWrapper, bool _)
+    public BitArray(IUintWrapper uintWrapper, bool calculateCount)
     {
         _uintWrapper = uintWrapper;
-    }
 
-    public BitArray(IUintWrapper uintWrapper)
-    {
-        _uintWrapper = uintWrapper;
+        if (!calculateCount)
+            return;
 
         var count = 0;
         foreach (var arrayValue in _uintWrapper.AsReadOnlySpan())
@@ -87,7 +70,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
     /// <summary>
     /// Sets a bit to 1. Returns true if a change has occurred -
-    /// i.e. if the bit was previously 0. Returns a value of 0 otherwise
+    /// i.e. if the bit was previously 0
     /// </summary>
     /// <param name="index">The bit to set</param>
     /// <returns>True if the operation changed the value of the bit, false if the bit was previously set</returns>
@@ -104,7 +87,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
     /// <summary>
     /// Sets a bit to 1. Returns a value of 1 if a change has occurred -
-    /// i.e. if the bit was previously 0
+    /// i.e. if the bit was previously 0. Returns a value of 0 otherwise
     /// </summary>
     /// <param name="bits">The span to modify</param>
     /// <param name="index">The bit to set</param>

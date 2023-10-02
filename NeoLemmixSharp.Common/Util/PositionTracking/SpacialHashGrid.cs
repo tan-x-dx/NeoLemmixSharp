@@ -40,13 +40,10 @@ public sealed class SpacialHashGrid<T>
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
-        var bitArrayForAllTrackedItems = BitArray.CreateForType(hasher);
-
-        _bitArraySize = bitArrayForAllTrackedItems.Size;
-
-        _allTrackedItems = new SimpleSet<T>(hasher, bitArrayForAllTrackedItems);
+        _allTrackedItems = new SimpleSet<T>(hasher);
         _setUnionScratchSpace = new SimpleSet<T>(hasher);
 
+        _bitArraySize = _allTrackedItems.Size;
         _allBits = new uint[_bitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];
     }
 
@@ -157,19 +154,13 @@ public sealed class SpacialHashGrid<T>
         {
             // Only one chunk -> skip some extra work
 
-            AddToChunk(item, ax, ay);
+            var span = SpanFor(ax, ay);
+            BitArray.SetBit(span, _hasher.Hash(item));
 
             return;
         }
 
         EvaluateChunkPositions(UseChunkPositionMode.Add, item, ax, ay, bx, by);
-    }
-
-    private void AddToChunk(T item, int x, int y)
-    {
-        var span = SpanFor(x, y);
-
-        BitArray.SetBit(span, _hasher.Hash(item));
     }
 
     public void RemoveItem(T item)
@@ -206,19 +197,13 @@ public sealed class SpacialHashGrid<T>
         {
             // Only one chunk -> skip some extra work
 
-            RemoveFromChunk(item, ax, ay);
+            var span = SpanFor(ax, ay);
+            BitArray.ClearBit(span, _hasher.Hash(item));
 
             return;
         }
 
         EvaluateChunkPositions(UseChunkPositionMode.Remove, item, ax, ay, bx, by);
-    }
-
-    private void RemoveFromChunk(T item, int x, int y)
-    {
-        var span = SpanFor(x, y);
-
-        BitArray.ClearBit(span, _hasher.Hash(item));
     }
 
     private void GetShiftValues(
@@ -270,24 +255,25 @@ public sealed class SpacialHashGrid<T>
 
     private void UseChunkPosition(UseChunkPositionMode useChunkPositionMode, T? item, int x, int y)
     {
+        if (useChunkPositionMode == UseChunkPositionMode.Union)
+        {
+            var readOnlySpan = ReadOnlySpanFor(x, y);
+
+            _setUnionScratchSpace.UnionWith(readOnlySpan);
+
+            return;
+        }
+
+        var span = SpanFor(x, y);
         if (useChunkPositionMode == UseChunkPositionMode.Add)
         {
-            AddToChunk(item!, x, y);
+            BitArray.SetBit(span, _hasher.Hash(item!));
             return;
         }
 
         if (useChunkPositionMode == UseChunkPositionMode.Remove)
         {
-            RemoveFromChunk(item!, x, y);
-            return;
-        }
-
-        if (useChunkPositionMode == UseChunkPositionMode.Union)
-        {
-            var span = ReadOnlySpanFor(x, y);
-
-            _setUnionScratchSpace.UnionWith(span);
-
+            BitArray.ClearBit(span, _hasher.Hash(item!));
             return;
         }
 

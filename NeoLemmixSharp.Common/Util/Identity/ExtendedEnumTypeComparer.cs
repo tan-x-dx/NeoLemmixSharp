@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Common.Util.Identity;
 
@@ -38,8 +37,6 @@ public sealed class ExtendedEnumTypeComparer<T> :
 
     public static SimpleSet<T> CreateSimpleSet()
     {
-        var bitArray = BitArray.CreateForType(Instance);
-
-        return new SimpleSet<T>(Instance, bitArray);
+        return new SimpleSet<T>(Instance);
     }
 }
