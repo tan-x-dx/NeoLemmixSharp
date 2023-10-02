@@ -294,18 +294,26 @@ public sealed class SpacialHashGrid<T>
         throw new ArgumentOutOfRangeException(nameof(useChunkPositionMode), useChunkPositionMode, "Invalid value");
     }
 
+    [Pure]
     private Span<uint> SpanFor(int x, int y)
     {
-        var index = _numberOfHorizontalChunks * y + x;
-        index *= _bitArraySize;
+        var index = IndexFor(x, y);
         return new Span<uint>(_allBits, index, _bitArraySize);
     }
 
+    [Pure]
     private ReadOnlySpan<uint> ReadOnlySpanFor(int x, int y)
+    {
+        var index = IndexFor(x, y);
+        return new ReadOnlySpan<uint>(_allBits, index, _bitArraySize);
+    }
+
+    [Pure]
+    private int IndexFor(int x, int y)
     {
         var index = _numberOfHorizontalChunks * y + x;
         index *= _bitArraySize;
-        return new ReadOnlySpan<uint>(_allBits, index, _bitArraySize);
+        return index;
     }
 
     private enum UseChunkPositionMode
