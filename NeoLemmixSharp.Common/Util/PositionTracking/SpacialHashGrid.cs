@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 
@@ -9,10 +10,6 @@ namespace NeoLemmixSharp.Common.Util.PositionTracking;
 public sealed class SpacialHashGrid<T>
     where T : class, IIdEquatable<T>, IRectangularBounds
 {
-    private readonly int _chunkSizeBitShift;
-    private readonly int _numberOfHorizontalChunks;
-    private readonly int _numberOfVerticalChunks;
-
     private readonly ISimpleHasher<T> _hasher;
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
@@ -20,7 +17,12 @@ public sealed class SpacialHashGrid<T>
     private readonly SimpleSet<T> _allTrackedItems;
     private readonly SimpleSet<T> _setUnionScratchSpace;
 
-    private readonly SimpleSet<T>?[] _itemChunkLookup;
+    private readonly int _chunkSizeBitShift;
+    private readonly int _numberOfHorizontalChunks;
+    private readonly int _numberOfVerticalChunks;
+    private readonly int _bitArraySize;
+
+    private readonly uint[] _allBits;
 
     public SpacialHashGrid(
         ISimpleHasher<T> hasher,
@@ -30,8 +32,7 @@ public sealed class SpacialHashGrid<T>
     {
         _hasher = hasher;
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
-        var chunkSize = 1 << _chunkSizeBitShift;
-        var chunkSizeBitMask = chunkSize - 1;
+        var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;
 
         _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelWidth + chunkSizeBitMask) >> _chunkSizeBitShift;
         _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelHeight + chunkSizeBitMask) >> _chunkSizeBitShift;
@@ -39,10 +40,14 @@ public sealed class SpacialHashGrid<T>
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
-        _allTrackedItems = new SimpleSet<T>(hasher);
+        var bitArrayForAllTrackedItems = BitArray.CreateForType(hasher);
+
+        _bitArraySize = bitArrayForAllTrackedItems.Size;
+
+        _allTrackedItems = new SimpleSet<T>(hasher, bitArrayForAllTrackedItems);
         _setUnionScratchSpace = new SimpleSet<T>(hasher);
 
-        _itemChunkLookup = new SimpleSet<T>?[_numberOfHorizontalChunks * _numberOfVerticalChunks];
+        _allBits = new uint[_bitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];
     }
 
     [Pure]
@@ -64,7 +69,12 @@ public sealed class SpacialHashGrid<T>
             chunkY < 0 || chunkY >= _numberOfVerticalChunks)
             return SimpleSet<T>.Empty;
 
-        return GetItemsForChunkPosition(chunkX, chunkY);
+        _setUnionScratchSpace.Clear();
+
+        var span = ReadOnlySpanFor(chunkX, chunkY);
+        _setUnionScratchSpace.UnionWith(span);
+
+        return _setUnionScratchSpace;
     }
 
     [Pure]
@@ -79,21 +89,21 @@ public sealed class SpacialHashGrid<T>
         GetShiftValues(topLeftLevelPosition, out var topLeftChunkX, out var topLeftChunkY);
         GetShiftValues(bottomRightLevelPosition, out var bottomRightChunkX, out var bottomRightChunkY);
 
+        _setUnionScratchSpace.Clear();
+
+        // Only one chunk -> skip some extra work
+
         if (topLeftChunkX == bottomRightChunkX &&
             topLeftChunkY == bottomRightChunkY)
-            return GetItemsForChunkPosition(topLeftChunkX, topLeftChunkY);
+        {
+            var span = ReadOnlySpanFor(topLeftChunkX, topLeftChunkY);
+            _setUnionScratchSpace.UnionWith(span);
 
-        _setUnionScratchSpace.Clear();
+            return _setUnionScratchSpace;
+        }
+
         EvaluateChunkPositions(UseChunkPositionMode.Union, null, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
         return _setUnionScratchSpace;
-    }
-
-    [Pure]
-    private SimpleSet<T> GetItemsForChunkPosition(int chunkX, int chunkY)
-    {
-        var index = _numberOfHorizontalChunks * chunkY + chunkX;
-        var itemChunk = _itemChunkLookup[index];
-        return itemChunk ?? SimpleSet<T>.Empty;
     }
 
     public void AddItem(T item)
@@ -157,11 +167,9 @@ public sealed class SpacialHashGrid<T>
 
     private void AddToChunk(T item, int x, int y)
     {
-        var index = _numberOfHorizontalChunks * y + x;
-        ref var itemChunk = ref _itemChunkLookup[index];
-        itemChunk ??= new SimpleSet<T>(_hasher);
+        var span = SpanFor(x, y);
 
-        itemChunk.Add(item);
+        BitArray.SetBit(span, _hasher.Hash(item));
     }
 
     public void RemoveItem(T item)
@@ -208,10 +216,9 @@ public sealed class SpacialHashGrid<T>
 
     private void RemoveFromChunk(T item, int x, int y)
     {
-        var index = _numberOfHorizontalChunks * y + x;
-        var itemChunk = _itemChunkLookup[index];
+        var span = SpanFor(x, y);
 
-        itemChunk?.Remove(item);
+        BitArray.ClearBit(span, _hasher.Hash(item));
     }
 
     private void GetShiftValues(
@@ -277,18 +284,28 @@ public sealed class SpacialHashGrid<T>
 
         if (useChunkPositionMode == UseChunkPositionMode.Union)
         {
-            var index = _numberOfHorizontalChunks * y + x;
-            var itemChunk = _itemChunkLookup[index];
+            var span = ReadOnlySpanFor(x, y);
 
-            if (itemChunk is null)
-                return;
-            _setUnionScratchSpace.UnionWith(itemChunk);
-
+            _setUnionScratchSpace.UnionWith(span);
 
             return;
         }
 
         throw new ArgumentOutOfRangeException(nameof(useChunkPositionMode), useChunkPositionMode, "Invalid value");
+    }
+
+    private Span<uint> SpanFor(int x, int y)
+    {
+        var index = _numberOfHorizontalChunks * y + x;
+        index *= _bitArraySize;
+        return new Span<uint>(_allBits, index, _bitArraySize);
+    }
+
+    private ReadOnlySpan<uint> ReadOnlySpanFor(int x, int y)
+    {
+        var index = _numberOfHorizontalChunks * y + x;
+        index *= _bitArraySize;
+        return new ReadOnlySpan<uint>(_allBits, index, _bitArraySize);
     }
 
     private enum UseChunkPositionMode

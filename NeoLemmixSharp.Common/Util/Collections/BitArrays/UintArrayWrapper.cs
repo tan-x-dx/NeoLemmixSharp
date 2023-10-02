@@ -41,11 +41,6 @@ public sealed class UintArrayWrapper : IUintWrapper
         Size = array.Length;
     }
 
-    public void Clear()
-    {
-        Array.Clear(_bits, _offset, Size);
-    }
-
     [Pure]
     public Span<uint> AsSpan() => new(_bits, _offset, Size);
 

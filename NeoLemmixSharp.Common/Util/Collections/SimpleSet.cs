@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using BitArray = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArray;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
@@ -80,7 +81,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
         public Enumerator(SimpleSet<T> set)
         {
             _hasher = set._hasher;
-            _bitEnumerator = set._bits.GetEnumerator();
+            _bitEnumerator = new BitArray.BitEnumerator(set._bits);
         }
 
         public bool MoveNext() => _bitEnumerator.MoveNext();
@@ -132,6 +133,12 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
     {
         var otherBits = other._bits;
         _bits.UnionWith(otherBits.AsReadOnlySpan());
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void UnionWith(ReadOnlySpan<uint> bits)
+    {
+        _bits.UnionWith(bits);
     }
 
     public void IntersectWith(IEnumerable<T> other)

@@ -23,10 +23,7 @@ public sealed class ExtendedEnumTypeComparer<T> :
         return x.Id == y.Id;
     }
 
-    public int GetHashCode(T obj)
-    {
-        return HashCode.Combine(obj.Id);
-    }
+    public int GetHashCode(T obj) => HashCode.Combine(obj);
 
     public int Compare(T? x, T? y) => IdEquatableItemHelperMethods.Compare(x, y);
 

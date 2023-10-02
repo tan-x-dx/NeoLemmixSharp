@@ -12,8 +12,6 @@ public sealed class EmptyUintWrapper : IUintWrapper
     {
     }
 
-    public void Clear() { }
-
     [Pure]
     public Span<uint> AsSpan() => Span<uint>.Empty;
 
