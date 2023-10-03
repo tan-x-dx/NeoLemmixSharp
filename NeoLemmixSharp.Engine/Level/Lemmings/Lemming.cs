@@ -8,7 +8,6 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
-using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -99,12 +98,12 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
         var shouldContinue = HandleLemmingAction() && CheckLevelBoundaries() && CheckTriggerAreas(false);
 
-        if (shouldContinue &&
-            CurrentAction != ExiterAction.Instance &&
-            !State.IsZombie)
-        {
-            CheckZombies();
-        }
+        if (!shouldContinue ||
+            CurrentAction == ExiterAction.Instance ||
+            State.IsZombie)
+            return;
+
+        Global.LemmingManager.DoZombieCheck(this);
     }
 
     private bool HandleLemmingAction()
@@ -250,54 +249,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
             (CurrentAction == MinerAction.Instance && (PhysicsFrame == 1 || PhysicsFrame == 2)))
             return true;
 
-        var lemmingManager = Global.LemmingManager;
-        if (lemmingManager.LemmingIsBlocking(this))
-            return true;
-
-        var anchorPosition = LevelPosition;
-        var footPosition = FootPosition;
-
-        var checkRegion = new LevelPositionPair(anchorPosition, footPosition);
-        var blockerSet = lemmingManager.GetAllBlockersNearLemming(checkRegion);
-
-        if (blockerSet.Count == 0)
-            return true;
-
-        foreach (var blocker in blockerSet)
-        {
-            var forcedFacingDirection = BlockerAction.TestBlockerMatches(blocker, this, anchorPosition, footPosition);
-            if (forcedFacingDirection is null)
-                continue;
-
-            BlockerAction.ForceLemmingDirection(this, forcedFacingDirection);
-        }
-
+        Global.LemmingManager.DoBlockerCheck(this);
         return true;
-    }
-
-    private void CheckZombies()
-    {
-        Debug.Assert(!State.IsZombie);
-
-        var checkRegion = new LevelPositionPair(TopLeftPixel, BottomRightPixel);
-        var nearbyZombies = Global.LemmingManager.GetAllZombiesNearLemming(checkRegion);
-
-        if (nearbyZombies.Count == 0)
-            return;
-
-        foreach (var zombie in nearbyZombies)
-        {
-            Debug.Assert(zombie.State.IsZombie);
-
-            var zombieRegion = new LevelPositionPair(zombie.TopLeftPixel, zombie.BottomRightPixel);
-
-            if (checkRegion.Overlaps(zombieRegion))
-            {
-                State.IsZombie = true;
-
-                return;
-            }
-        }
     }
 
     public void SetFacingDirection(FacingDirection newFacingDirection)

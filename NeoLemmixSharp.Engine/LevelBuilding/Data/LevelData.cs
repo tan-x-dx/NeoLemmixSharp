@@ -33,4 +33,16 @@ public sealed class LevelData
     public List<TerrainData> AllTerrainData { get; } = new();
     public List<TerrainGroup> AllTerrainGroups { get; } = new();
     public List<GadgetData> AllGadgetData { get; } = new();
+
+    public int? GetMaxNumberOfBlockers()
+    {
+        //TODO implement this properly
+        return null;
+    }
+
+    public bool LevelContainsAnyZombies()
+    {
+        //TODO implement this properly
+        return false;
+    }
 }

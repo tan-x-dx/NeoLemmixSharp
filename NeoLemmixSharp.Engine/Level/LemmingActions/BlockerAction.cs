@@ -44,7 +44,24 @@ public sealed class BlockerAction : LemmingAction
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
     protected override int BottomRightBoundsDeltaY(int animationFrame) => -3;
 
-    public static FacingDirection? TestBlockerMatches(
+    public static bool DoBlockerCheck(
+        Lemming blocker,
+        Lemming lemming,
+        LevelPosition anchorPosition,
+        LevelPosition footPosition)
+    {
+        if (lemming == blocker)
+            return false;
+
+        var forcedFacingDirection = TestBlockerMatches(blocker, lemming, anchorPosition, footPosition);
+        if (forcedFacingDirection is null)
+            return false;
+
+        ForceLemmingDirection(lemming, forcedFacingDirection);
+        return true;
+    }
+
+    private static FacingDirection? TestBlockerMatches(
         Lemming blocker,
         Lemming lemming,
         LevelPosition anchorPosition,

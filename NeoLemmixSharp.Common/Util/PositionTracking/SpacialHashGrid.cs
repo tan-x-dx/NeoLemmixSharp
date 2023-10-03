@@ -48,6 +48,9 @@ public sealed class SpacialHashGrid<T>
     }
 
     [Pure]
+    public bool IsEmpty => _allTrackedItems.Count == 0;
+
+    [Pure]
     public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
 
     [Pure]
@@ -56,7 +59,7 @@ public sealed class SpacialHashGrid<T>
     [Pure]
     public SimpleSet<T> GetAllItemsNearPosition(LevelPosition levelPosition)
     {
-        if (_allTrackedItems.Count == 0)
+        if (IsEmpty)
             return SimpleSet<T>.Empty;
 
         var chunkX = levelPosition.X >> _chunkSizeBitShift;
@@ -77,7 +80,7 @@ public sealed class SpacialHashGrid<T>
     [Pure]
     public SimpleSet<T> GetAllItemsNearRegion(LevelPositionPair levelRegion)
     {
-        if (_allTrackedItems.Count == 0)
+        if (IsEmpty)
             return SimpleSet<T>.Empty;
 
         var topLeftLevelPosition = levelRegion.GetTopLeftPosition();
