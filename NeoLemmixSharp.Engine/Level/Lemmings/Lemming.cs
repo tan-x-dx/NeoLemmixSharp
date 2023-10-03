@@ -177,17 +177,15 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         var movementHelper = new LemmingMovementHelper(this, checkPositions);
         var length = movementHelper.EvaluateCheckPositions();
 
-        checkPositions = checkPositions[..length];
-        var checkPositionsBounds = new LevelPositionPair(checkPositions);
+        ReadOnlySpan<LevelPosition> checkPositionsReadOnly = checkPositions[..length];
+        var checkPositionsBounds = new LevelPositionPair(checkPositionsReadOnly);
 
-        var gadgetManager = Global.GadgetManager;
-
-        var gadgetSet = gadgetManager.GetAllItemsNearRegion(checkPositionsBounds);
+        var gadgetSet = Global.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds);
 
         if (gadgetSet.Count == 0)
             return true;
 
-        foreach (var anchorPosition in checkPositions)
+        foreach (var anchorPosition in checkPositionsReadOnly)
         {
             var footPosition = Orientation.MoveWithoutNormalization(anchorPosition, 0, 1);
 
