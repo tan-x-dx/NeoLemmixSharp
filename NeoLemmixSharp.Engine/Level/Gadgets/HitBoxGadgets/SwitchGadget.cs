@@ -82,7 +82,7 @@ public sealed class SwitchGadget : HitBoxGadget
 
     public override bool MatchesPosition(LevelPosition levelPosition) => _currentHitBox.MatchesPosition(levelPosition);
 
-    public override void OnLemmingMatch(Lemming lemming, LevelPosition position)
+    public override void OnLemmingMatch(Lemming lemming)
     {
         _currentHitBox.OnLemmingInHitBox(lemming);
 

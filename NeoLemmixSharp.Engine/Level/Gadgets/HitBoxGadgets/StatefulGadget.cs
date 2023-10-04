@@ -66,7 +66,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override bool MatchesPosition(LevelPosition levelPosition) => _hitBox.MatchesPosition(levelPosition);
 
-    public override void OnLemmingMatch(Lemming lemming, LevelPosition position)
+    public override void OnLemmingMatch(Lemming lemming)
     {
         var itemStatus = _hitBox.OnLemmingInHitBox(lemming);
 
