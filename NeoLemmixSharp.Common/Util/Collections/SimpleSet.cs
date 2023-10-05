@@ -231,10 +231,8 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool Overlaps(IEnumerable<T> other)
     {
-        if (other is SimpleSet<T> set)
-            return _bits.Overlaps(set._bits.AsReadOnlySpan());
-
-        return other.Any(Contains);
+        var otherBits = BitsFromEnumerable(other);
+        return _bits.Overlaps(otherBits.AsReadOnlySpan());
     }
 
     [Pure]
