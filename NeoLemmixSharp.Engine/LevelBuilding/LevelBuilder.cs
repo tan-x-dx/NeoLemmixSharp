@@ -82,7 +82,7 @@ public sealed class LevelBuilder : IDisposable
         var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
 
         var levelLemmings = _levelObjectAssembler.GetLevelLemmings();
-        var lemmingManager = new LemmingManager(levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        var lemmingManager = new LemmingManager(levelData, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         Global.SetLemmingManager(lemmingManager);
 
         _levelObjectAssembler.AssembleLevelObjects(

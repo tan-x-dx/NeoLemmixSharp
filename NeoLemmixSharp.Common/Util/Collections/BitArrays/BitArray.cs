@@ -10,36 +10,39 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 {
     public const int Shift = 5;
 
-    public static BitArray Empty { get; } = new(EmptyUintWrapper.Instance);
+    public static BitArray Empty { get; } = new(EmptyUintWrapper.Instance, false);
 
     private readonly IUintWrapper _uintWrapper;
 
     /// <summary>
-    /// Represents the number of uints that this BitArray logically represents
+    /// The footprint of this BitArray - how many uints it logically represents
     /// </summary>
     public int Size => _uintWrapper.Size;
     /// <summary>
-    /// Represents the number of integers that this BitArray can carry
+    /// The maximum number of integers that this BitArray can carry
     /// </summary>
     public int Length => Size << Shift;
     /// <summary>
-    /// Represents the number of integers currently stored in this BitArray
+    /// The number of integers currently stored in this BitArray
     /// </summary>
     public int Count { get; private set; }
 
-    public static BitArray CreateForType<T>(ISimpleHasher<T> hasher)
+    [Pure]
+    public static BitArray CreateForLength(int specifiedLength)
     {
-        var numberOfItems = hasher.NumberOfItems;
-        IUintWrapper uintWrapper = numberOfItems > SingleUintWrapper.SmallBitArrayLength
-            ? new UintArrayWrapper(numberOfItems)
+        IUintWrapper uintWrapper = specifiedLength > SingleUintWrapper.SmallBitArrayLength
+            ? new UintArrayWrapper(specifiedLength)
             : new SingleUintWrapper();
 
-        return new BitArray(uintWrapper);
+        return new BitArray(uintWrapper, false);
     }
 
-    public BitArray(IUintWrapper uintWrapper)
+    public BitArray(IUintWrapper uintWrapper, bool calculateCount)
     {
         _uintWrapper = uintWrapper;
+
+        if (!calculateCount)
+            return;
 
         var count = 0;
         foreach (var arrayValue in _uintWrapper.AsReadOnlySpan())
@@ -75,17 +78,30 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     {
         Debug.Assert(index >= 0 && index < Length);
 
+        var span = _uintWrapper.AsSpan();
+        var delta = SetBit(span, index);
+        Count += delta;
+
+        return delta != 0;
+    }
+
+    /// <summary>
+    /// Sets a bit to 1. Returns a value of 1 if a change has occurred -
+    /// i.e. if the bit was previously 0. Returns a value of 0 otherwise
+    /// </summary>
+    /// <param name="bits">The span to modify</param>
+    /// <param name="index">The bit to set</param>
+    /// <returns>1 if the operation changed the value of the bit, 0 if the bit was previously set</returns>
+    public static int SetBit(Span<uint> bits, int index)
+    {
         var intIndex = index >> Shift;
 
-        var span = _uintWrapper.AsSpan();
-        ref var arrayValue = ref span[intIndex];
+        ref var arrayValue = ref bits[intIndex];
         var oldValue = arrayValue;
         arrayValue |= 1U << index;
 
         var delta = (arrayValue ^ oldValue) >> index;
-        Count += (int)delta;
-
-        return delta != 0U;
+        return (int)delta;
     }
 
     /// <summary>
@@ -98,17 +114,30 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     {
         Debug.Assert(index >= 0 && index < Length);
 
+        var span = _uintWrapper.AsSpan();
+        var delta = ClearBit(span, index);
+        Count -= delta;
+
+        return delta != 0;
+    }
+
+    /// <summary>
+    /// Sets a bit to 0. Returns a value of 1 if a change has occurred -
+    /// i.e. if the bit was previously 1. Returns a value of 0 otherwise
+    /// </summary>
+    /// <param name="bits">The bit to clear</param>
+    /// <param name="index">The bit to clear</param>
+    /// <returns>1 if the operation changed the value of the bit, 0 if the bit was previously clear</returns>
+    public static int ClearBit(Span<uint> bits, int index)
+    {
         var intIndex = index >> Shift;
 
-        var span = _uintWrapper.AsSpan();
-        ref var arrayValue = ref span[intIndex];
+        ref var arrayValue = ref bits[intIndex];
         var oldValue = arrayValue;
         arrayValue &= ~(1U << index);
 
         var delta = (arrayValue ^ oldValue) >> index;
-        Count -= (int)delta;
-
-        return delta != 0U;
+        return (int)delta;
     }
 
     /// <summary>
@@ -142,7 +171,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
     public void Clear()
     {
-        _uintWrapper.Clear();
+        _uintWrapper.AsSpan().Clear();
         Count = 0;
     }
 
@@ -179,19 +208,6 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     bool ICollection<int>.Remove(int i) => i >= 0 && i < Length && ClearBit(i);
 
     [Pure]
-    private int IndexOfFirstSetBit()
-    {
-        var span = _uintWrapper.AsReadOnlySpan();
-        for (var i = 0; i < span.Length; i++)
-        {
-            if (span[i] != 0U)
-                return i;
-        }
-
-        return span.Length - 1;
-    }
-
-    [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal ReadOnlySpan<uint> AsReadOnlySpan() => _uintWrapper.AsReadOnlySpan();
 
@@ -207,7 +223,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
     public ref struct BitEnumerator
     {
-        private readonly ReadOnlySpan<uint> _bitSpan;
+        private readonly ReadOnlySpan<uint> _bits;
 
         private int _remaining;
         private int _index;
@@ -218,11 +234,11 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
         public BitEnumerator(BitArray bitArray)
         {
-            _bitSpan = bitArray.AsReadOnlySpan();
+            _bits = bitArray.AsReadOnlySpan();
             _remaining = bitArray.Count;
-            _index = bitArray.IndexOfFirstSetBit();
-            _current = -1;
-            _v = bitArray.Length == 0U ? 0U : _bitSpan[_index];
+            _index = 0;
+            _current = 0;
+            _v = _bits.Length == 0 ? 0U : _bits[0];
         }
 
         public bool MoveNext()
@@ -234,7 +250,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
                 do
                 {
-                    _v = _bitSpan[++_index];
+                    _v = _bits[++_index];
                 }
                 while (_v == 0U);
             }
@@ -261,11 +277,11 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
         public ReferenceTypeBitEnumerator(BitArray bitArray)
         {
             _bitArray = bitArray;
-            _index = bitArray.IndexOfFirstSetBit();
+            _index = 0;
             var bits = bitArray.AsReadOnlySpan();
-            _v = bits.Length == 0U ? 0 : bits[_index];
+            _v = bits.Length == 0 ? 0U : bits[0];
             _remaining = bitArray.Count;
-            Current = -1;
+            Current = 0;
         }
 
         public bool MoveNext()
@@ -292,9 +308,9 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
         public void Reset()
         {
-            _index = _bitArray.IndexOfFirstSetBit();
+            _index = 0;
             var bits = _bitArray.AsReadOnlySpan();
-            _v = bits.Length == 0 ? 0U : bits[_index];
+            _v = bits.Length == 0 ? 0U : bits[0];
             _remaining = _bitArray.Count;
             Current = -1;
         }

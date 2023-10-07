@@ -12,7 +12,9 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
     private const int GlyphHeight = 8;
 
     public const int InfinityGlyph = '∞';
+    private const int InfinityGlyphOffset = 40;
     public const int LockGlyph = '∅';
+    private const int LockGlyphOffset = 48;
 
     private readonly Texture2D _texture;
 
@@ -37,11 +39,11 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
                 glyphWidth = DigitGlyphWidth;
                 return true;
             case InfinityGlyph:
-                sourceX = 40;
+                sourceX = InfinityGlyphOffset;
                 glyphWidth = SpecialGlyphWidth;
                 return true;
             case LockGlyph:
-                sourceX = 48;
+                sourceX = LockGlyphOffset;
                 glyphWidth = SpecialGlyphWidth;
                 return true;
             default:
@@ -80,7 +82,7 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
         foreach (var c in charactersToRender)
         {
             var glyphWidth = RenderChar(spriteBatch, dest, c, scaleMultiplier, color);
-            
+
             dest.X += glyphWidth * scaleMultiplier;
         }
     }

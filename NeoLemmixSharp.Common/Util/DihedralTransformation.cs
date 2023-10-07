@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
-public sealed class DihedralTransformation
+public readonly struct DihedralTransformation
 {
     public static DihedralTransformation GetForTransformation(
         bool flipHorizontally,
@@ -36,6 +36,11 @@ public sealed class DihedralTransformation
 
     private readonly int _f;
     private readonly int _m;
+
+    public DihedralTransformation()
+        : this(0, false)
+    {
+    }
 
     private DihedralTransformation(int r, bool flip)
     {
@@ -89,6 +94,7 @@ public sealed class DihedralTransformation
         var w = W(width, height);
         var h = H(width, height);
         var s = _f * Choose(width, height);
+
         x0 = s + _m * (_a * x - _b * y + w);
         y0 = _b * x + _a * y + h;
     }

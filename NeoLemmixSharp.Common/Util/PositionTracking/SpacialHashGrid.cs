@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 
@@ -9,29 +10,29 @@ namespace NeoLemmixSharp.Common.Util.PositionTracking;
 public sealed class SpacialHashGrid<T>
     where T : class, IIdEquatable<T>, IRectangularBounds
 {
-    private readonly int _chunkSizeBitShift;
-    private readonly int _numberOfHorizontalChunks;
-    private readonly int _numberOfVerticalChunks;
-
-    private readonly ISimpleHasher<T> _hasher;
+    private readonly IPerfectHasher<T> _hasher;
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
 
     private readonly SimpleSet<T> _allTrackedItems;
     private readonly SimpleSet<T> _setUnionScratchSpace;
 
-    private readonly SimpleSet<T>?[] _itemChunkLookup;
+    private readonly int _chunkSizeBitShift;
+    private readonly int _numberOfHorizontalChunks;
+    private readonly int _numberOfVerticalChunks;
+    private readonly int _bitArraySize;
+
+    private readonly uint[] _allBits;
 
     public SpacialHashGrid(
-        ISimpleHasher<T> hasher,
+        IPerfectHasher<T> hasher,
         ChunkSizeType chunkSizeType,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _hasher = hasher;
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
-        var chunkSize = 1 << _chunkSizeBitShift;
-        var chunkSizeBitMask = chunkSize - 1;
+        var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;
 
         _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelWidth + chunkSizeBitMask) >> _chunkSizeBitShift;
         _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelHeight + chunkSizeBitMask) >> _chunkSizeBitShift;
@@ -42,8 +43,12 @@ public sealed class SpacialHashGrid<T>
         _allTrackedItems = new SimpleSet<T>(hasher);
         _setUnionScratchSpace = new SimpleSet<T>(hasher);
 
-        _itemChunkLookup = new SimpleSet<T>?[_numberOfHorizontalChunks * _numberOfVerticalChunks];
+        _bitArraySize = _allTrackedItems.Size;
+        _allBits = new uint[_bitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];
     }
+
+    [Pure]
+    public bool IsEmpty => _allTrackedItems.Count == 0;
 
     [Pure]
     public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
@@ -54,7 +59,7 @@ public sealed class SpacialHashGrid<T>
     [Pure]
     public SimpleSet<T> GetAllItemsNearPosition(LevelPosition levelPosition)
     {
-        if (_allTrackedItems.Count == 0)
+        if (IsEmpty)
             return SimpleSet<T>.Empty;
 
         var chunkX = levelPosition.X >> _chunkSizeBitShift;
@@ -64,13 +69,18 @@ public sealed class SpacialHashGrid<T>
             chunkY < 0 || chunkY >= _numberOfVerticalChunks)
             return SimpleSet<T>.Empty;
 
-        return GetItemsForChunkPosition(chunkX, chunkY);
+        _setUnionScratchSpace.Clear();
+
+        var span = ReadOnlySpanFor(chunkX, chunkY);
+        _setUnionScratchSpace.UnionWith(span);
+
+        return _setUnionScratchSpace;
     }
 
     [Pure]
     public SimpleSet<T> GetAllItemsNearRegion(LevelPositionPair levelRegion)
     {
-        if (_allTrackedItems.Count == 0)
+        if (IsEmpty)
             return SimpleSet<T>.Empty;
 
         var topLeftLevelPosition = levelRegion.GetTopLeftPosition();
@@ -79,21 +89,21 @@ public sealed class SpacialHashGrid<T>
         GetShiftValues(topLeftLevelPosition, out var topLeftChunkX, out var topLeftChunkY);
         GetShiftValues(bottomRightLevelPosition, out var bottomRightChunkX, out var bottomRightChunkY);
 
+        _setUnionScratchSpace.Clear();
+
+        // Only one chunk -> skip some extra work
+
         if (topLeftChunkX == bottomRightChunkX &&
             topLeftChunkY == bottomRightChunkY)
-            return GetItemsForChunkPosition(topLeftChunkX, topLeftChunkY);
+        {
+            var span = ReadOnlySpanFor(topLeftChunkX, topLeftChunkY);
+            _setUnionScratchSpace.UnionWith(span);
 
-        _setUnionScratchSpace.Clear();
+            return _setUnionScratchSpace;
+        }
+
         EvaluateChunkPositions(UseChunkPositionMode.Union, null, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
         return _setUnionScratchSpace;
-    }
-
-    [Pure]
-    private SimpleSet<T> GetItemsForChunkPosition(int chunkX, int chunkY)
-    {
-        var index = _numberOfHorizontalChunks * chunkY + chunkX;
-        var itemChunk = _itemChunkLookup[index];
-        return itemChunk ?? SimpleSet<T>.Empty;
     }
 
     public void AddItem(T item)
@@ -147,21 +157,13 @@ public sealed class SpacialHashGrid<T>
         {
             // Only one chunk -> skip some extra work
 
-            AddToChunk(item, ax, ay);
+            var span = SpanFor(ax, ay);
+            BitArray.SetBit(span, _hasher.Hash(item));
 
             return;
         }
 
         EvaluateChunkPositions(UseChunkPositionMode.Add, item, ax, ay, bx, by);
-    }
-
-    private void AddToChunk(T item, int x, int y)
-    {
-        var index = _numberOfHorizontalChunks * y + x;
-        ref var itemChunk = ref _itemChunkLookup[index];
-        itemChunk ??= new SimpleSet<T>(_hasher);
-
-        itemChunk.Add(item);
     }
 
     public void RemoveItem(T item)
@@ -198,20 +200,13 @@ public sealed class SpacialHashGrid<T>
         {
             // Only one chunk -> skip some extra work
 
-            RemoveFromChunk(item, ax, ay);
+            var span = SpanFor(ax, ay);
+            BitArray.ClearBit(span, _hasher.Hash(item));
 
             return;
         }
 
         EvaluateChunkPositions(UseChunkPositionMode.Remove, item, ax, ay, bx, by);
-    }
-
-    private void RemoveFromChunk(T item, int x, int y)
-    {
-        var index = _numberOfHorizontalChunks * y + x;
-        var itemChunk = _itemChunkLookup[index];
-
-        itemChunk?.Remove(item);
     }
 
     private void GetShiftValues(
@@ -263,32 +258,51 @@ public sealed class SpacialHashGrid<T>
 
     private void UseChunkPosition(UseChunkPositionMode useChunkPositionMode, T? item, int x, int y)
     {
+        if (useChunkPositionMode == UseChunkPositionMode.Union)
+        {
+            var readOnlySpan = ReadOnlySpanFor(x, y);
+
+            _setUnionScratchSpace.UnionWith(readOnlySpan);
+
+            return;
+        }
+
+        var span = SpanFor(x, y);
         if (useChunkPositionMode == UseChunkPositionMode.Add)
         {
-            AddToChunk(item!, x, y);
+            BitArray.SetBit(span, _hasher.Hash(item!));
             return;
         }
 
         if (useChunkPositionMode == UseChunkPositionMode.Remove)
         {
-            RemoveFromChunk(item!, x, y);
-            return;
-        }
-
-        if (useChunkPositionMode == UseChunkPositionMode.Union)
-        {
-            var index = _numberOfHorizontalChunks * y + x;
-            var itemChunk = _itemChunkLookup[index];
-
-            if (itemChunk is null)
-                return;
-            _setUnionScratchSpace.UnionWith(itemChunk);
-
-
+            BitArray.ClearBit(span, _hasher.Hash(item!));
             return;
         }
 
         throw new ArgumentOutOfRangeException(nameof(useChunkPositionMode), useChunkPositionMode, "Invalid value");
+    }
+
+    [Pure]
+    private Span<uint> SpanFor(int x, int y)
+    {
+        var index = IndexFor(x, y);
+        return new Span<uint>(_allBits, index, _bitArraySize);
+    }
+
+    [Pure]
+    private ReadOnlySpan<uint> ReadOnlySpanFor(int x, int y)
+    {
+        var index = IndexFor(x, y);
+        return new ReadOnlySpan<uint>(_allBits, index, _bitArraySize);
+    }
+
+    [Pure]
+    private int IndexFor(int x, int y)
+    {
+        var index = _numberOfHorizontalChunks * y + x;
+        index *= _bitArraySize;
+        return index;
     }
 
     private enum UseChunkPositionMode

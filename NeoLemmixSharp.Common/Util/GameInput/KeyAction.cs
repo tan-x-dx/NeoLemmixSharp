@@ -7,6 +7,11 @@ public sealed class KeyAction : IIdEquatable<KeyAction>
     private const int EnabledMask = 3;
     private const int DisabledMask = 0;
 
+    public const int KeyUnpressed = 0;
+    public const int KeyPressed = 1;
+    public const int KeyReleased = 2;
+    public const int KeyHeld = 3;
+
     private readonly string _actionName;
     private int _stateMask;
     private int _keyState;
@@ -38,23 +43,23 @@ public sealed class KeyAction : IIdEquatable<KeyAction>
     /// <summary>
     /// Is the Key currently pressed down?
     /// </summary>
-    public bool IsKeyDown => (KeyState & KeyStatusConstants.KeyPressed) == KeyStatusConstants.KeyPressed;
+    public bool IsKeyDown => (KeyState & KeyPressed) == KeyPressed;
     /// <summary>
     /// Is the Key currently released?
     /// </summary>
-    public bool IsKeyUp => (KeyState & KeyStatusConstants.KeyReleased) == KeyStatusConstants.KeyUnpressed;
+    public bool IsKeyUp => (KeyState & KeyReleased) == KeyUnpressed;
     /// <summary>
     /// Is the Key currently pressed down, but it was previously released?
     /// </summary>
-    public bool IsPressed => KeyState == KeyStatusConstants.KeyPressed;
+    public bool IsPressed => KeyState == KeyPressed;
     /// <summary>
     /// Is the Key currently released, but it was previously pressed down?
     /// </summary>
-    public bool IsReleased => KeyState == KeyStatusConstants.KeyReleased;
+    public bool IsReleased => KeyState == KeyReleased;
     /// <summary>
     /// Is the Key currently being pressed down and it was previously pressed down?
     /// </summary>
-    public bool IsHeld => KeyState == KeyStatusConstants.KeyHeld;
+    public bool IsHeld => KeyState == KeyHeld;
 
     public bool IsEnabled => _stateMask != DisabledMask;
 

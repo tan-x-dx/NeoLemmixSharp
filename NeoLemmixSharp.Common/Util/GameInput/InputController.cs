@@ -1,10 +1,11 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public abstract class InputController : ISimpleHasher<Keys>
+public abstract class InputController : IPerfectHasher<Keys>
 {
     private const int NumberOfKeys = 256;
 
@@ -50,17 +51,20 @@ public abstract class InputController : ISimpleHasher<Keys>
 
     public void Tick()
     {
-        for (var i = 0; i < _keyActions.Count; i++)
+        var keyActionsSpan = CollectionsMarshal.AsSpan(_keyActions);
+
+        foreach (var keyAction in keyActionsSpan)
         {
-            _keyActions[i].UpdateStatus();
+            keyAction.UpdateStatus();
         }
 
-        for (var index = 0; index < _keyMapping.Count; index++)
+        var keyMappingSpan = CollectionsMarshal.AsSpan(_keyMapping);
+
+        foreach (var (keyValue, action) in keyMappingSpan)
         {
-            var (keyValue, action) = _keyMapping[index];
             if (_keys.Contains(keyValue))
             {
-                _keyActions[action.Id].KeyState |= KeyStatusConstants.KeyPressed;
+                keyActionsSpan[action.Id].KeyState |= KeyAction.KeyPressed;
             }
         }
 
@@ -101,7 +105,7 @@ public abstract class InputController : ISimpleHasher<Keys>
         MouseButton5Action.UpdateState(mouseState.XButton2);
     }
 
-    int ISimpleHasher<Keys>.NumberOfItems => NumberOfKeys;
-    int ISimpleHasher<Keys>.Hash(Keys item) => (int)item;
-    Keys ISimpleHasher<Keys>.UnHash(int index) => (Keys)index;
+    int IPerfectHasher<Keys>.NumberOfItems => NumberOfKeys;
+    int IPerfectHasher<Keys>.Hash(Keys item) => (int)item;
+    Keys IPerfectHasher<Keys>.UnHash(int index) => (Keys)index;
 }

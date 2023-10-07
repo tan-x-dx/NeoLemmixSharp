@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using BitArray = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArray;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
@@ -9,7 +10,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 {
     public static SimpleSet<T> Empty { get; } = new();
 
-    private readonly ISimpleHasher<T> _hasher;
+    private readonly IPerfectHasher<T> _hasher;
     private readonly BitArray _bits;
 
     private SimpleSet()
@@ -18,18 +19,13 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
         _bits = BitArray.Empty;
     }
 
-    public SimpleSet(ISimpleHasher<T> hasher)
+    public SimpleSet(IPerfectHasher<T> hasher)
     {
         _hasher = hasher;
-        _bits = BitArray.CreateForType(hasher);
+        _bits = BitArray.CreateForLength(hasher.NumberOfItems);
     }
 
-    public SimpleSet(ISimpleHasher<T> hasher, BitArray bits)
-    {
-        _hasher = hasher;
-        _bits = bits;
-    }
-
+    public int Size => _bits.Size;
     public int Count => _bits.Count;
 
     public bool Add(T item)
@@ -74,13 +70,13 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public ref struct Enumerator
     {
-        private readonly ISimpleHasher<T> _hasher;
+        private readonly IPerfectHasher<T> _hasher;
         private BitArray.BitEnumerator _bitEnumerator;
 
         public Enumerator(SimpleSet<T> set)
         {
             _hasher = set._hasher;
-            _bitEnumerator = set._bits.GetEnumerator();
+            _bitEnumerator = new BitArray.BitEnumerator(set._bits);
         }
 
         public bool MoveNext() => _bitEnumerator.MoveNext();
@@ -89,7 +85,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public sealed class ReferenceTypeEnumerator : IEnumerator<T>
     {
-        private readonly ISimpleHasher<T> _hasher;
+        private readonly IPerfectHasher<T> _hasher;
         private readonly BitArray.ReferenceTypeBitEnumerator _bitEnumerator;
 
         public ReferenceTypeEnumerator(SimpleSet<T> set)
@@ -111,7 +107,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
         if (other is SimpleSet<T> set)
             return set._bits;
 
-        var result = BitArray.CreateForType(_hasher);
+        var result = BitArray.CreateForLength(_hasher.NumberOfItems);
 
         foreach (var item in other)
         {
@@ -132,6 +128,12 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
     {
         var otherBits = other._bits;
         _bits.UnionWith(otherBits.AsReadOnlySpan());
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void UnionWith(ReadOnlySpan<uint> bits)
+    {
+        _bits.UnionWith(bits);
     }
 
     public void IntersectWith(IEnumerable<T> other)
@@ -229,10 +231,8 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
     [Pure]
     public bool Overlaps(IEnumerable<T> other)
     {
-        if (other is SimpleSet<T> set)
-            return _bits.Overlaps(set._bits.AsReadOnlySpan());
-
-        return other.Any(Contains);
+        var otherBits = BitsFromEnumerable(other);
+        return _bits.Overlaps(otherBits.AsReadOnlySpan());
     }
 
     [Pure]

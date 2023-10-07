@@ -8,7 +8,6 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
-using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -99,12 +98,12 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
         var shouldContinue = HandleLemmingAction() && CheckLevelBoundaries() && CheckTriggerAreas(false);
 
-        if (shouldContinue &&
-            CurrentAction != ExiterAction.Instance &&
-            !State.IsZombie)
-        {
-            CheckZombies();
-        }
+        if (!shouldContinue ||
+            CurrentAction == ExiterAction.Instance ||
+            State.IsZombie)
+            return;
+
+        Global.LemmingManager.DoZombieCheck(this);
     }
 
     private bool HandleLemmingAction()
@@ -173,21 +172,20 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     private bool CheckGadgets()
     {
-        Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
-        var movementHelper = new LemmingMovementHelper(this, checkPositions);
-        var length = movementHelper.EvaluateCheckPositions();
+        var checkPositionsBounds = new LevelPositionPair(LevelPosition, PreviousLevelPosition);
 
-        checkPositions = checkPositions[..length];
-        var checkPositionsBounds = new LevelPositionPair(checkPositions);
-
-        var gadgetManager = Global.GadgetManager;
-
-        var gadgetSet = gadgetManager.GetAllItemsNearRegion(checkPositionsBounds);
+        var gadgetSet = Global.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds);
 
         if (gadgetSet.Count == 0)
             return true;
 
-        foreach (var anchorPosition in checkPositions)
+        Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
+        var movementHelper = new LemmingMovementHelper(this, checkPositions);
+        var length = movementHelper.EvaluateCheckPositions();
+
+        ReadOnlySpan<LevelPosition> checkPositionsReadOnly = checkPositions[..length];
+
+        foreach (var anchorPosition in checkPositionsReadOnly)
         {
             var footPosition = Orientation.MoveWithoutNormalization(anchorPosition, 0, 1);
 
@@ -222,23 +220,21 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         // If we're at the end of the check positions and Next action is not None
         // then transition. However, if NextAction is SplatterAction and there's water
         // at the position, the water takes precedence over splatting
-        if (NextAction == NoneAction.Instance || checkPosition != LevelPosition ||
-            (NextAction == SplatterAction.Instance && gadget.Type == WaterGadgetType.Instance))
+        if (NextAction != NoneAction.Instance && checkPosition == LevelPosition &&
+            (NextAction != SplatterAction.Instance || gadget.Type != WaterGadgetType.Instance))
         {
-            gadget.OnLemmingMatch(this, checkPosition);
-            return;
+            NextAction.TransitionLemmingToAction(this, false);
+            if (JumpToHoistAdvance)
+            {
+                AnimationFrame += 2;
+                PhysicsFrame += 2;
+                JumpToHoistAdvance = false;
+            }
+
+            NextAction = NoneAction.Instance;
         }
 
-        NextAction.TransitionLemmingToAction(this, false);
-        if (JumpToHoistAdvance)
-        {
-            AnimationFrame += 2;
-            PhysicsFrame += 2;
-            JumpToHoistAdvance = false;
-        }
-
-        NextAction = NoneAction.Instance;
-        gadget.OnLemmingMatch(this, checkPosition);
+        gadget.OnLemmingMatch(this);
     }
 
     /// <summary>
@@ -252,54 +248,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
             (CurrentAction == MinerAction.Instance && (PhysicsFrame == 1 || PhysicsFrame == 2)))
             return true;
 
-        var lemmingManager = Global.LemmingManager;
-        if (lemmingManager.LemmingIsBlocking(this))
-            return true;
-
-        var anchorPosition = LevelPosition;
-        var footPosition = FootPosition;
-
-        var checkRegion = new LevelPositionPair(anchorPosition, footPosition);
-        var blockerSet = lemmingManager.GetAllBlockersNearLemming(checkRegion);
-
-        if (blockerSet.Count == 0)
-            return true;
-
-        foreach (var blocker in blockerSet)
-        {
-            var forcedFacingDirection = BlockerAction.TestBlockerMatches(blocker, this, anchorPosition, footPosition);
-            if (forcedFacingDirection is null)
-                continue;
-
-            BlockerAction.ForceLemmingDirection(this, forcedFacingDirection);
-        }
-
+        Global.LemmingManager.DoBlockerCheck(this);
         return true;
-    }
-
-    private void CheckZombies()
-    {
-        Debug.Assert(!State.IsZombie);
-
-        var checkRegion = new LevelPositionPair(TopLeftPixel, BottomRightPixel);
-        var nearbyZombies = Global.LemmingManager.GetAllZombiesNearLemming(checkRegion);
-
-        if (nearbyZombies.Count == 0)
-            return;
-
-        foreach (var zombie in nearbyZombies)
-        {
-            Debug.Assert(zombie.State.IsZombie);
-
-            var zombieRegion = new LevelPositionPair(zombie.TopLeftPixel, zombie.BottomRightPixel);
-
-            if (checkRegion.Overlaps(zombieRegion))
-            {
-                State.IsZombie = true;
-
-                return;
-            }
-        }
     }
 
     public void SetFacingDirection(FacingDirection newFacingDirection)

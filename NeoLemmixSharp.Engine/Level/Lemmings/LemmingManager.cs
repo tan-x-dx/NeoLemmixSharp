@@ -5,20 +5,25 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Lemmings.BlockerHelpers;
+using NeoLemmixSharp.Engine.Level.Lemmings.ZombieHelpers;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<HatchGroup>
+public sealed class LemmingManager : IPerfectHasher<Lemming>, IPerfectHasher<HatchGroup>
 {
-    private const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize32;
+    public const int BlockerQuantityThreshold = 20;
+    public const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize32;
 
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
 
     private readonly SpacialHashGrid<Lemming> _lemmingPositionHelper;
-    private readonly SpacialHashGrid<Lemming> _blockerPositionHelper;
-    private readonly SpacialHashGrid<Lemming> _zombiePositionHelper;
+
+    private readonly IBlockerHelper _blockerHelper;
+    private readonly IZombieHelper _zombieHelper;
 
     public int LemmingsToRelease { get; private set; }
     public int LemmingsOut { get; private set; }
@@ -28,6 +33,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
     public ReadOnlySpan<Lemming> AllLemmings => new(_lemmings);
 
     public LemmingManager(
+        LevelData levelData,
         Lemming[] lemmings,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
@@ -42,17 +48,37 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        _blockerPositionHelper = new SpacialHashGrid<Lemming>(
-            this,
-            LemmingPositionChunkSize,
-            horizontalBoundaryBehaviour,
-            verticalBoundaryBehaviour);
+        _blockerHelper = GetBlockerHelper(levelData, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        _zombieHelper = GetZombieHelper(levelData, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+    }
 
-        _zombiePositionHelper = new SpacialHashGrid<Lemming>(
-            this,
-            LemmingPositionChunkSize,
-            horizontalBoundaryBehaviour,
-            verticalBoundaryBehaviour);
+    private IBlockerHelper GetBlockerHelper(
+        LevelData levelData,
+        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
+        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
+    {
+        var maxNumberOfBlockers = levelData.GetMaxNumberOfBlockers();
+
+        return maxNumberOfBlockers switch
+        {
+            null => new PositionTrackingBlockerHelper(this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour),
+            0 => new EmptyBlockerHelper(),
+            > BlockerQuantityThreshold => new PositionTrackingBlockerHelper(this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour),
+            _ => new SmallListBlockerHelper(maxNumberOfBlockers.Value)
+        };
+    }
+
+    private IZombieHelper GetZombieHelper(
+        LevelData levelData,
+        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
+        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
+    {
+        var levelHasZombies = levelData.LevelContainsAnyZombies();
+
+        if (levelHasZombies)
+            return new PositionTrackingZombieHelper(this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+
+        return new EmptyZombieHelper();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -95,6 +121,7 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
         {
             DeregisterBlocker(lemming);
         }
+
         LemmingsRemoved++;
         lemming.OnRemoval();
     }
@@ -106,70 +133,41 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
 
         _lemmingPositionHelper.UpdateItemPosition(lemming);
 
-        if (lemming.State.IsZombie)
-        {
-            _zombiePositionHelper.UpdateItemPosition(lemming);
-        }
-
-        if (lemming.CurrentAction == BlockerAction.Instance)
-        {
-            _blockerPositionHelper.UpdateItemPosition(lemming);
-        }
+        // The helpers will deal with these updates.
+        // If not relevant for this lemming, nothing will happen
+        _blockerHelper.UpdateBlockerPosition(lemming);
+        _zombieHelper.UpdateZombiePosition(lemming);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSet<Lemming> GetAllLemmingsNearRegion(LevelPositionPair levelRegion)
-    {
-        return _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion);
-    }
+    public SimpleSet<Lemming> GetAllLemmingsNearRegion(LevelPositionPair levelRegion) => _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void RegisterBlocker(Lemming lemming)
-    {
-        _blockerPositionHelper.AddItem(lemming);
-    }
+    public void RegisterBlocker(Lemming lemming) => _blockerHelper.RegisterBlocker(lemming);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void DeregisterBlocker(Lemming lemming)
-    {
-        _blockerPositionHelper.RemoveItem(lemming);
-    }
+    public void DeregisterBlocker(Lemming lemming) => _blockerHelper.DeregisterBlocker(lemming);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool LemmingIsBlocking(Lemming lemming)
-    {
-        return _blockerPositionHelper.IsTrackingItem(lemming);
-    }
+    public void DoBlockerCheck(Lemming lemming) => _blockerHelper.CheckBlockers(lemming);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSet<Lemming> GetAllBlockersNearLemming(LevelPositionPair levelRegion)
-    {
-        return _blockerPositionHelper.GetAllItemsNearRegion(levelRegion);
-    }
+    public bool CanAssignBlocker(Lemming lemming) => _blockerHelper.CanAssignBlocker(lemming);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void RegisterZombie(Lemming lemming)
-    {
-        _zombiePositionHelper.AddItem(lemming);
-    }
+    public void RegisterZombie(Lemming lemming) => _zombieHelper.RegisterZombie(lemming);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void DeregisterZombie(Lemming lemming)
-    {
-        _zombiePositionHelper.RemoveItem(lemming);
-    }
+    public void DeregisterZombie(Lemming lemming) => _zombieHelper.DeregisterZombie(lemming);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSet<Lemming> GetAllZombiesNearLemming(LevelPositionPair levelRegion)
-    {
-        return _zombiePositionHelper.GetAllItemsNearRegion(levelRegion);
-    }
+    public void DoZombieCheck(Lemming lemming) => _zombieHelper.CheckZombies(lemming);
 
-    int ISimpleHasher<Lemming>.NumberOfItems => _lemmings.Length;
-    int ISimpleHasher<Lemming>.Hash(Lemming item) => item.Id;
-    Lemming ISimpleHasher<Lemming>.UnHash(int index) => _lemmings[index];
+    int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Length;
+    int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
+    Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
 
-    int ISimpleHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
-    int ISimpleHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
-    HatchGroup ISimpleHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
+    int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
+    int IPerfectHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
+    HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
 }

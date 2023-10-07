@@ -1,4 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.LevelRegion;
 
@@ -7,36 +9,21 @@ public sealed class PointSetLevelRegion : ILevelRegion
     private const int DimensionCutoffSize = 128;
     private const int AreaCutoffSize = 128 * 128;
 
-    private readonly RectangularLevelRegion _anchor;
     private readonly BitArray _levelPositions;
-    private readonly int _offsetX;
-    private readonly int _offsetY;
+    private readonly LevelPosition _offset;
+
     private readonly int _minimumBoundingBoxWidth;
     private readonly int _minimumBoundingBoxHeight;
 
-    public PointSetLevelRegion(RectangularLevelRegion anchor, ICollection<LevelPosition> points)
+    public PointSetLevelRegion(RectangularLevelRegion anchor, ReadOnlySpan<LevelPosition> points)
     {
-        if (points.Count == 0)
+        if (points.Length == 0)
             throw new ArgumentException("Cannot create PointSetLevelRegion with zero points!");
 
-        _anchor = anchor;
+        var minimumBoundingBox = new LevelPositionPair(points);
 
-        var minX = int.MaxValue;
-        var minY = int.MaxValue;
-        var maxX = 0;
-        var maxY = 0;
-
-        foreach (var levelPosition in points)
-        {
-            minX = Math.Min(minX, levelPosition.X);
-            minY = Math.Min(minY, levelPosition.Y);
-
-            maxX = Math.Max(maxX, levelPosition.X);
-            maxY = Math.Max(maxY, levelPosition.Y);
-        }
-
-        _minimumBoundingBoxWidth = 1 + maxX - minX;
-        _minimumBoundingBoxHeight = 1 + maxY - minY;
+        _minimumBoundingBoxWidth = 1 + minimumBoundingBox.P2X - minimumBoundingBox.P1X;
+        _minimumBoundingBoxHeight = 1 + minimumBoundingBox.P2Y - minimumBoundingBox.P1Y;
 
         if (_minimumBoundingBoxWidth > DimensionCutoffSize || _minimumBoundingBoxHeight > DimensionCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_minimumBoundingBoxWidth}, H:{_minimumBoundingBoxHeight}");
@@ -46,30 +33,34 @@ public sealed class PointSetLevelRegion : ILevelRegion
         if (totalNumberOfPoints > AreaCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
 
-        _levelPositions = new BitArray(new UintArrayWrapper(totalNumberOfPoints));
+        _levelPositions = BitArray.CreateForLength(totalNumberOfPoints);
 
         foreach (var levelPosition in points)
         {
-            var index = _minimumBoundingBoxWidth * (levelPosition.Y - minY) + (levelPosition.X - minX);
+            var x = levelPosition.X - minimumBoundingBox.P1X;
+            var y = levelPosition.Y - minimumBoundingBox.P1Y;
+
+            var index = IndexFor(x, y);
             _levelPositions.SetBit(index);
         }
 
-        _offsetX = minX;
-        _offsetY = minY;
+        _offset = minimumBoundingBox.GetTopLeftPosition() + anchor.TopLeft;
     }
 
+    [Pure]
     public bool ContainsPoint(LevelPosition levelPosition)
     {
-        levelPosition -= _anchor.TopLeft;
+        levelPosition -= _offset;
+        var index = IndexFor(levelPosition.X, levelPosition.Y);
 
-        var newX = levelPosition.X - _offsetX;
-        var newY = levelPosition.Y - _offsetY;
-        var index = _minimumBoundingBoxWidth * newY + newX;
-
-        return newX >= 0 &&
-               newY >= 0 &&
-               newX < _minimumBoundingBoxWidth &&
-               newY < _minimumBoundingBoxHeight &&
+        return levelPosition.X >= 0 &&
+               levelPosition.Y >= 0 &&
+               levelPosition.X < _minimumBoundingBoxWidth &&
+               levelPosition.Y < _minimumBoundingBoxHeight &&
                _levelPositions.GetBit(index);
     }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private int IndexFor(int x, int y) => _minimumBoundingBoxWidth * y + x;
 }

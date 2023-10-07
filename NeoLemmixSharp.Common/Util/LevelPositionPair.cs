@@ -5,30 +5,31 @@ namespace NeoLemmixSharp.Common.Util;
 
 public readonly ref struct LevelPositionPair
 {
-    private readonly int _p1X;
-    private readonly int _p1Y;
+    public readonly int P1X;
+    public readonly int P1Y;
 
-    private readonly int _p2X;
-    private readonly int _p2Y;
+    public readonly int P2X;
+    public readonly int P2Y;
 
     public LevelPositionPair(int p1X, int p1Y, int p2X, int p2Y)
     {
         Debug.Assert(p1X < p2X);
         Debug.Assert(p1Y < p2Y);
 
-        _p1X = p1X;
-        _p1Y = p1Y;
-        _p2X = p2X;
-        _p2Y = p2Y;
+        P1X = p1X;
+        P1Y = p1Y;
+
+        P2X = p2X;
+        P2Y = p2Y;
     }
 
     public LevelPositionPair(LevelPosition p1, LevelPosition p2)
     {
-        _p1X = Math.Min(p1.X, p2.X);
-        _p1Y = Math.Min(p1.Y, p2.Y);
+        P1X = Math.Min(p1.X, p2.X);
+        P1Y = Math.Min(p1.Y, p2.Y);
 
-        _p2X = Math.Max(p1.X, p2.X);
-        _p2Y = Math.Max(p1.Y, p2.Y);
+        P2X = Math.Max(p1.X, p2.X);
+        P2Y = Math.Max(p1.Y, p2.Y);
     }
 
     public LevelPositionPair(LevelPosition p1, LevelPosition p2, LevelPosition p3, LevelPosition p4)
@@ -39,8 +40,8 @@ public readonly ref struct LevelPositionPair
         var x1 = Math.Min(p3.X, p4.X);
         var y1 = Math.Min(p3.Y, p4.Y);
 
-        _p1X = Math.Min(x0, x1);
-        _p1Y = Math.Min(y0, y1);
+        P1X = Math.Min(x0, x1);
+        P1Y = Math.Min(y0, y1);
 
         x0 = Math.Max(p1.X, p2.X);
         y0 = Math.Max(p1.Y, p2.Y);
@@ -48,11 +49,11 @@ public readonly ref struct LevelPositionPair
         x1 = Math.Max(p3.X, p4.X);
         y1 = Math.Max(p3.Y, p4.Y);
 
-        _p2X = Math.Max(x0, x1);
-        _p2Y = Math.Max(y0, y1);
+        P2X = Math.Max(x0, x1);
+        P2Y = Math.Max(y0, y1);
     }
 
-    public LevelPositionPair(Span<LevelPosition> positions)
+    public LevelPositionPair(ReadOnlySpan<LevelPosition> positions)
     {
         var minX = int.MaxValue;
         var minY = int.MaxValue;
@@ -67,28 +68,30 @@ public readonly ref struct LevelPositionPair
             maxY = Math.Max(maxY, position.Y);
         }
 
-        _p1X = minX;
-        _p1Y = minY;
-        _p2X = maxX;
-        _p2Y = maxY;
+        P1X = minX;
+        P1Y = minY;
+        P2X = maxX;
+        P2Y = maxY;
     }
 
-    public LevelPosition GetTopLeftPosition() => new(_p1X, _p1Y);
-    public LevelPosition GetBottomRightPosition() => new(_p2X, _p2Y);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public LevelPosition GetTopLeftPosition() => new(P1X, P1Y);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public LevelPosition GetBottomRightPosition() => new(P2X, P2Y);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Overlaps(LevelPositionPair other)
     {
-        return other._p1X <= _p2X &&
-               _p1X <= other._p2X &&
-               other._p1Y <= _p2Y &&
-               _p1Y <= other._p2Y;
+        return other.P1X <= P2X &&
+               P1X <= other.P2X &&
+               other.P1Y <= P2Y &&
+               P1Y <= other.P2Y;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Contains(LevelPosition anchorPosition)
     {
-        return _p1X <= anchorPosition.X && anchorPosition.X <= _p2X &&
-               _p1Y <= anchorPosition.Y && anchorPosition.Y <= _p2Y;
+        return P1X <= anchorPosition.X && anchorPosition.X <= P2X &&
+               P1Y <= anchorPosition.Y && anchorPosition.Y <= P2Y;
     }
 }

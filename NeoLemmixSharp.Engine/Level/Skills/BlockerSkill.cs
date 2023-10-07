@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -18,25 +17,7 @@ public sealed class BlockerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        if (!ActionIsAssignable(lemming))
-            return false;
-
-        var firstBounds = BlockerAction.Instance.GetLemmingBounds(lemming);
-
-        var nearbyBlockers = Global.LemmingManager.GetAllBlockersNearLemming(firstBounds);
-
-        foreach (var blocker in nearbyBlockers)
-        {
-            var blockerTopLeft = blocker.TopLeftPixel;
-            var blockerBottomRight = blocker.BottomRightPixel;
-
-            var secondBounds = new LevelPositionPair(blockerTopLeft, blockerBottomRight);
-
-            if (firstBounds.Overlaps(secondBounds))
-                return false;
-        }
-
-        return true;
+        return ActionIsAssignable(lemming) && Global.LemmingManager.CanAssignBlocker(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)

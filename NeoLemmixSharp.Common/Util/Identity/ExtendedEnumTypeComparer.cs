@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Common.Util.Identity;
 
@@ -7,7 +6,7 @@ public sealed class ExtendedEnumTypeComparer<T> :
     IEqualityComparer<T>,
     IEquatable<ExtendedEnumTypeComparer<T>>,
     IComparer<T>,
-    ISimpleHasher<T>
+    IPerfectHasher<T>
     where T : class, IExtendedEnumType<T>
 {
     public static ExtendedEnumTypeComparer<T> Instance { get; } = new();
@@ -23,10 +22,7 @@ public sealed class ExtendedEnumTypeComparer<T> :
         return x.Id == y.Id;
     }
 
-    public int GetHashCode(T obj)
-    {
-        return HashCode.Combine(obj.Id);
-    }
+    public int GetHashCode(T obj) => HashCode.Combine(obj);
 
     public int Compare(T? x, T? y) => IdEquatableItemHelperMethods.Compare(x, y);
 
@@ -41,8 +37,6 @@ public sealed class ExtendedEnumTypeComparer<T> :
 
     public static SimpleSet<T> CreateSimpleSet()
     {
-        var bitArray = BitArray.CreateForType(Instance);
-
-        return new SimpleSet<T>(Instance, bitArray);
+        return new SimpleSet<T>(Instance);
     }
 }

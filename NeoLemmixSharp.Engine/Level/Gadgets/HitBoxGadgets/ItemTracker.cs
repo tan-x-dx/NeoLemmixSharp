@@ -14,7 +14,7 @@ public sealed class ItemTracker<T>
 
     private readonly ulong[] _longs;
 
-    public ItemTracker(ISimpleHasher<T> hasher)
+    public ItemTracker(IPerfectHasher<T> hasher)
     {
         var length = hasher.NumberOfItems;
 
