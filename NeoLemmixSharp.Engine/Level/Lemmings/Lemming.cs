@@ -172,17 +172,18 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     private bool CheckGadgets()
     {
-        Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
-        var movementHelper = new LemmingMovementHelper(this, checkPositions);
-        var length = movementHelper.EvaluateCheckPositions();
-
-        ReadOnlySpan<LevelPosition> checkPositionsReadOnly = checkPositions[..length];
-        var checkPositionsBounds = new LevelPositionPair(checkPositionsReadOnly);
+        var checkPositionsBounds = new LevelPositionPair(LevelPosition, PreviousLevelPosition);
 
         var gadgetSet = Global.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds);
 
         if (gadgetSet.Count == 0)
             return true;
+
+        Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
+        var movementHelper = new LemmingMovementHelper(this, checkPositions);
+        var length = movementHelper.EvaluateCheckPositions();
+
+        ReadOnlySpan<LevelPosition> checkPositionsReadOnly = checkPositions[..length];
 
         foreach (var anchorPosition in checkPositionsReadOnly)
         {
