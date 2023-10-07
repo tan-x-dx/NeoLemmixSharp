@@ -22,7 +22,7 @@ public static class HitBoxHelpers
     public static bool IsItemAbsent(int i) => (i & ItemRemoved) == ItemAbsent;
 
     /// <summary>
-    /// Is the item currently present down, but it was previously absent?
+    /// Is the item currently present, but it was previously absent?
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsItemAdded(int i) => i == ItemPresent;
