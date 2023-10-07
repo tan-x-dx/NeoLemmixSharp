@@ -115,6 +115,8 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override void Tick()
     {
+        _itemTracker.Tick();
+
         if (_currentStateIndex != _nextStateIndex)
         {
             ChangeStates();
@@ -140,8 +142,9 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
     public sealed class StateSelectionInput : IGadgetInput
     {
         private readonly int _stateIndex;
-        public string InputName { get; }
         private StatefulGadget _gadget = null!;
+
+        public string InputName { get; }
 
         public StateSelectionInput(string inputName, int stateIndex)
         {
