@@ -39,4 +39,9 @@ public sealed class ClimberSkill : LemmingSkill, ILemmingStateChanger
         var isClimber = lemmingState.IsClimber;
         lemmingState.IsClimber = !isClimber;
     }
+
+    public bool IsApplied(LemmingState lemmingState)
+    {
+        return lemmingState.IsClimber;
+    }
 }

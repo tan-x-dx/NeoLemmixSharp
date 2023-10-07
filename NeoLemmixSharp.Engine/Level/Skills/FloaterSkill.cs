@@ -38,4 +38,9 @@ public sealed class FloaterSkill : LemmingSkill, ILemmingStateChanger
         var isFloater = lemmingState.IsFloater;
         lemmingState.IsFloater = !isFloater;
     }
+
+    public bool IsApplied(LemmingState lemmingState)
+    {
+        return lemmingState.IsFloater;
+    }
 }
