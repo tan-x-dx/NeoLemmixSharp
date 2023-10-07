@@ -7,7 +7,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
-public sealed class MetalGrateGadget : HitBoxGadget
+public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget
 {
     private int _transitionTick;
     private bool _isActive;
@@ -74,7 +74,7 @@ public sealed class MetalGrateGadget : HitBoxGadget
         }
     }
 
-    public override IGadgetInput? GetInputWithName(string inputName)
+    public IGadgetInput? GetInputWithName(string inputName)
     {
         if (string.Equals(inputName, Input.InputName))
             return Input;

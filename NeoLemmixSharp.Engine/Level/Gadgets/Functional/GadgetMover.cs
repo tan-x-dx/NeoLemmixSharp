@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
-public sealed class GadgetMover : GadgetBase
+public sealed class GadgetMover : GadgetBase , IReactiveGadget
 {
     private readonly int _tickDelay;
     private readonly int _dx;
@@ -58,7 +58,7 @@ public sealed class GadgetMover : GadgetBase
         }
     }
 
-    public override IGadgetInput? GetInputWithName(string inputName)
+    public IGadgetInput? GetInputWithName(string inputName)
     {
         if (string.Equals(inputName, Input.InputName))
             return Input;

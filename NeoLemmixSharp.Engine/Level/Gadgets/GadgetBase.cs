@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
@@ -22,8 +21,6 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>
     }
 
     public abstract void Tick();
-
-    public abstract IGadgetInput? GetInputWithName(string inputName);
 
     public bool Equals(GadgetBase? other) => Id == (other?.Id ?? -1);
     public sealed override bool Equals(object? obj) => obj is GadgetBase other && Id == other.Id;

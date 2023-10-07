@@ -31,7 +31,7 @@ public abstract class BinaryLogicGateGadget : GadgetBase, ILogicGateGadget
         InputB.SetLogicGate(this);
     }
 
-    public sealed override IGadgetInput? GetInputWithName(string inputName)
+    public IGadgetInput? GetInputWithName(string inputName)
     {
         if (string.Equals(inputName, InputA.InputName))
             return InputA;

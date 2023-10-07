@@ -35,7 +35,7 @@ public sealed class NotGateGadget : GadgetBase, ILogicGateGadget
         Output.SetSignal(!Input.Signal);
     }
 
-    public override IGadgetInput? GetInputWithName(string inputName)
+    public IGadgetInput? GetInputWithName(string inputName)
     {
         if (string.Equals(inputName, Input.InputName))
             return Input;

@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
-public sealed class StateChangerGadget : GadgetBase
+public sealed class StateChangerGadget : GadgetBase, IReactiveGadget
 {
     private readonly int _newState;
 
@@ -43,7 +43,7 @@ public sealed class StateChangerGadget : GadgetBase
         _previousSignal = _signal;
     }
 
-    public override IGadgetInput? GetInputWithName(string inputName)
+    public IGadgetInput? GetInputWithName(string inputName)
     {
         if (string.Equals(inputName, Input.InputName))
             return Input;

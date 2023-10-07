@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
-public sealed class HatchGadget : GadgetBase, IMoveableGadget
+public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget
 {
     private readonly LevelPosition _spawnPositionTranslation;
 
@@ -44,7 +44,7 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
     {
     }
 
-    public override IGadgetInput? GetInputWithName(string inputName)
+    public IGadgetInput? GetInputWithName(string inputName)
     {
         return null;
     }

@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using static NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxHelpers;
@@ -11,7 +10,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 {
-    private readonly Dictionary<string, IGadgetInput> _inputLookup = new();
     private readonly HitBox _hitBox;
     private readonly GadgetState[] _states;
     private readonly ItemTracker<Lemming> _itemTracker;
@@ -44,21 +42,9 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
         }
     }
 
-    public void RegisterGadgetInput(StateSelectionInput gadgetInput)
-    {
-        _inputLookup.Add(gadgetInput.InputName, gadgetInput);
-
-        gadgetInput.SetGadget(this);
-    }
-
     public void SetNextState(int stateIndex)
     {
         _nextStateIndex = stateIndex;
-    }
-
-    public override IGadgetInput? GetInputWithName(string inputName)
-    {
-        return _inputLookup.TryGetValue(inputName, out var result) ? result : null;
     }
 
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
@@ -137,29 +123,5 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
         previousState.OnTransitionFrom();
         currentState.OnTransitionTo();
-    }
-
-    public sealed class StateSelectionInput : IGadgetInput
-    {
-        private readonly int _stateIndex;
-        private StatefulGadget _gadget = null!;
-
-        public string InputName { get; }
-
-        public StateSelectionInput(string inputName, int stateIndex)
-        {
-            InputName = inputName;
-            _stateIndex = stateIndex;
-        }
-
-        public void SetGadget(StatefulGadget gadget)
-        {
-            _gadget = gadget;
-        }
-
-        public void ReactToSignal(bool signal)
-        {
-            _gadget.SetNextState(_stateIndex);
-        }
     }
 }

@@ -77,11 +77,6 @@ public sealed class SwitchGadget : HitBoxGadget
         }
     }
 
-    public override IGadgetInput? GetInputWithName(string inputName)
-    {
-        return null;
-    }
-
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
         return _currentHitBox.MatchesLemming(lemming) &&
