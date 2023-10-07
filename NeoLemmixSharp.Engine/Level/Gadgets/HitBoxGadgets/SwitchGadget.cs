@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -27,12 +28,22 @@ public sealed class SwitchGadget : HitBoxGadget
     {
         var p = gadgetBounds.TopLeft;
         var leftRect = new RectangularLevelRegion(p.X + 3, p.Y + 8, 5, 5);
-        LeftHitBox = new HitBox(leftRect, Global.LemmingManager);
-        LeftHitBox.ExcludeFacingDirection(LeftFacingDirection.Instance);
+        var leftHitBoxFilters = new ILemmingFilter[]
+        {
+            new LemmingActionFilter(null, Orientation, RightFacingDirection.Instance),
+            new LemmingActionFilter(null, Orientation.GetOpposite(), LeftFacingDirection.Instance)
+        };
+
+        LeftHitBox = new HitBox(leftRect, leftHitBoxFilters);
 
         var rightRect = new RectangularLevelRegion(p.X + 10, p.Y + 8, 5, 5);
-        RightHitBox = new HitBox(rightRect, Global.LemmingManager);
-        RightHitBox.ExcludeFacingDirection(RightFacingDirection.Instance);
+        var rightHitBoxFilters = new ILemmingFilter[]
+        {
+            new LemmingActionFilter(null, Orientation, LeftFacingDirection.Instance),
+            new LemmingActionFilter(null, Orientation.GetOpposite(), RightFacingDirection.Instance)
+        };
+
+        RightHitBox = new HitBox(rightRect, rightHitBoxFilters);
 
         if (faceRight)
         {
@@ -50,9 +61,6 @@ public sealed class SwitchGadget : HitBoxGadget
 
     public override void Tick()
     {
-        LeftHitBox.Tick();
-        RightHitBox.Tick();
-
         if (_facingRight)
         {
             if (AnimationFrame < 6)
@@ -76,7 +84,7 @@ public sealed class SwitchGadget : HitBoxGadget
 
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
-        return _currentHitBox.MatchesLemmingData(lemming) &&
+        return _currentHitBox.MatchesLemming(lemming) &&
                _currentHitBox.MatchesPosition(levelPosition);
     }
 
@@ -84,8 +92,6 @@ public sealed class SwitchGadget : HitBoxGadget
 
     public override void OnLemmingMatch(Lemming lemming)
     {
-        _currentHitBox.OnLemmingInHitBox(lemming);
-
         if (_facingRight)
         {
             _facingRight = false;

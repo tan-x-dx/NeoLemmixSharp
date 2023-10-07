@@ -14,6 +14,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
     private readonly Dictionary<string, IGadgetInput> _inputLookup = new();
     private readonly HitBox _hitBox;
     private readonly GadgetState[] _states;
+    private readonly ItemTracker<Lemming> _itemTracker;
 
     private int _currentStateIndex;
     private int _nextStateIndex;
@@ -27,13 +28,15 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
         HitBox hitBox,
-        GadgetState[] states)
+        GadgetState[] states,
+        ItemTracker<Lemming> itemTracker)
         : base(id, gadgetBounds)
     {
         Type = type;
         Orientation = orientation;
         _hitBox = hitBox;
         _states = states;
+        _itemTracker = itemTracker;
 
         foreach (var gadgetState in _states)
         {
@@ -60,7 +63,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
-        return _hitBox.MatchesLemmingData(lemming) &&
+        return _hitBox.MatchesLemming(lemming) &&
                _hitBox.MatchesPosition(levelPosition);
     }
 
@@ -68,7 +71,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override void OnLemmingMatch(Lemming lemming)
     {
-        var itemStatus = _hitBox.OnLemmingInHitBox(lemming);
+        var itemStatus = _itemTracker.EvaluateItem(lemming);
 
         var state = _states[_currentStateIndex];
         ReadOnlySpan<IGadgetBehaviour> actions;
@@ -112,8 +115,6 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override void Tick()
     {
-        _hitBox.Tick();
-
         if (_currentStateIndex != _nextStateIndex)
         {
             ChangeStates();
