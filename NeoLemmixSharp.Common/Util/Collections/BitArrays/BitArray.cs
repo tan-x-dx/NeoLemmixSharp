@@ -60,8 +60,6 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     [Pure]
     public bool GetBit(int index)
     {
-        Debug.Assert(index >= 0 && index < Length);
-
         var span = _uintWrapper.AsReadOnlySpan();
         var value = span[index >> Shift];
         value >>= index;
@@ -76,8 +74,6 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     /// <returns>True if the operation changed the value of the bit, false if the bit was previously set</returns>
     public bool SetBit(int index)
     {
-        Debug.Assert(index >= 0 && index < Length);
-
         var span = _uintWrapper.AsSpan();
         var delta = SetBit(span, index);
         Count += delta;
@@ -112,8 +108,6 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     /// <returns>True if the operation changed the value of the bit, false if the bit was previously clear</returns>
     public bool ClearBit(int index)
     {
-        Debug.Assert(index >= 0 && index < Length);
-
         var span = _uintWrapper.AsSpan();
         var delta = ClearBit(span, index);
         Count -= delta;
@@ -147,8 +141,6 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     /// <returns>The bool equivalent of the binary value (0 or 1) of the bit after toggling</returns>
     public bool ToggleBit(int index)
     {
-        Debug.Assert(index >= 0 && index < Length);
-
         var intIndex = index >> Shift;
 
         var span = _uintWrapper.AsSpan();
