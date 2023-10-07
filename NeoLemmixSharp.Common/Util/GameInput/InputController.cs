@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public abstract class InputController : ISimpleHasher<Keys>
+public abstract class InputController : IPerfectHasher<Keys>
 {
     private const int NumberOfKeys = 256;
 
@@ -105,7 +105,7 @@ public abstract class InputController : ISimpleHasher<Keys>
         MouseButton5Action.UpdateState(mouseState.XButton2);
     }
 
-    int ISimpleHasher<Keys>.NumberOfItems => NumberOfKeys;
-    int ISimpleHasher<Keys>.Hash(Keys item) => (int)item;
-    Keys ISimpleHasher<Keys>.UnHash(int index) => (Keys)index;
+    int IPerfectHasher<Keys>.NumberOfItems => NumberOfKeys;
+    int IPerfectHasher<Keys>.Hash(Keys item) => (int)item;
+    Keys IPerfectHasher<Keys>.UnHash(int index) => (Keys)index;
 }

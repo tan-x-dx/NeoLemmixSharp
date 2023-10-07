@@ -6,7 +6,7 @@ public sealed class ExtendedEnumTypeComparer<T> :
     IEqualityComparer<T>,
     IEquatable<ExtendedEnumTypeComparer<T>>,
     IComparer<T>,
-    ISimpleHasher<T>
+    IPerfectHasher<T>
     where T : class, IExtendedEnumType<T>
 {
     public static ExtendedEnumTypeComparer<T> Instance { get; } = new();

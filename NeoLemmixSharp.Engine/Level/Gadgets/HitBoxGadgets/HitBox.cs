@@ -20,7 +20,7 @@ public sealed class HitBox
 
     public HitBox(
         ILevelRegion levelRegion,
-        ISimpleHasher<Lemming> lemmingHasher)
+        IPerfectHasher<Lemming> lemmingHasher)
     {
         _levelRegion = levelRegion;
         _lemmingsInHitBox = new ItemTracker<Lemming>(lemmingHasher);

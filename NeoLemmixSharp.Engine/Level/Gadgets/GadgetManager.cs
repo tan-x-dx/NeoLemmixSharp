@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
+public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>
 {
     private readonly GadgetBase[] _allGadgets;
     private readonly SpacialHashGrid<HitBoxGadget> _gadgetPositionHelper;
@@ -108,7 +108,7 @@ public sealed class GadgetManager : ISimpleHasher<HitBoxGadget>
         _gadgetPositionHelper.UpdateItemPosition(gadget);
     }
 
-    int ISimpleHasher<HitBoxGadget>.NumberOfItems => _allGadgets.Length;
-    int ISimpleHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
-    HitBoxGadget ISimpleHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
+    int IPerfectHasher<HitBoxGadget>.NumberOfItems => _allGadgets.Length;
+    int IPerfectHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
+    HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
 }

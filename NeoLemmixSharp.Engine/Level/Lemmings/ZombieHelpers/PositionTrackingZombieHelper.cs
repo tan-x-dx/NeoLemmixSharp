@@ -12,7 +12,7 @@ public sealed class PositionTrackingZombieHelper : IZombieHelper
     private readonly SpacialHashGrid<Lemming> _zombieSpacialHashGrid;
 
     public PositionTrackingZombieHelper(
-        ISimpleHasher<Lemming> hasher,
+        IPerfectHasher<Lemming> hasher,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {

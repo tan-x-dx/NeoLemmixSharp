@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Common.Util.PositionTracking;
 public sealed class SpacialHashGrid<T>
     where T : class, IIdEquatable<T>, IRectangularBounds
 {
-    private readonly ISimpleHasher<T> _hasher;
+    private readonly IPerfectHasher<T> _hasher;
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
 
@@ -25,7 +25,7 @@ public sealed class SpacialHashGrid<T>
     private readonly uint[] _allBits;
 
     public SpacialHashGrid(
-        ISimpleHasher<T> hasher,
+        IPerfectHasher<T> hasher,
         ChunkSizeType chunkSizeType,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)

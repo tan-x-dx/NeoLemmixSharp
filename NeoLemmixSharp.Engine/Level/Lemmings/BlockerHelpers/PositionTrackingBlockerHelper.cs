@@ -12,7 +12,7 @@ public sealed class PositionTrackingBlockerHelper : IBlockerHelper
     private readonly SpacialHashGrid<Lemming> _blockerSpacialHashGrid;
 
     public PositionTrackingBlockerHelper(
-        ISimpleHasher<Lemming> hasher,
+        IPerfectHasher<Lemming> hasher,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {

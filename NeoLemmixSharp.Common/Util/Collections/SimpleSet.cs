@@ -10,7 +10,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 {
     public static SimpleSet<T> Empty { get; } = new();
 
-    private readonly ISimpleHasher<T> _hasher;
+    private readonly IPerfectHasher<T> _hasher;
     private readonly BitArray _bits;
 
     private SimpleSet()
@@ -19,7 +19,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
         _bits = BitArray.Empty;
     }
 
-    public SimpleSet(ISimpleHasher<T> hasher)
+    public SimpleSet(IPerfectHasher<T> hasher)
     {
         _hasher = hasher;
         _bits = BitArray.CreateForLength(hasher.NumberOfItems);
@@ -70,7 +70,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public ref struct Enumerator
     {
-        private readonly ISimpleHasher<T> _hasher;
+        private readonly IPerfectHasher<T> _hasher;
         private BitArray.BitEnumerator _bitEnumerator;
 
         public Enumerator(SimpleSet<T> set)
@@ -85,7 +85,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public sealed class ReferenceTypeEnumerator : IEnumerator<T>
     {
-        private readonly ISimpleHasher<T> _hasher;
+        private readonly IPerfectHasher<T> _hasher;
         private readonly BitArray.ReferenceTypeBitEnumerator _bitEnumerator;
 
         public ReferenceTypeEnumerator(SimpleSet<T> set)

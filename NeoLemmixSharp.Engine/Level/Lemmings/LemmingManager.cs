@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<HatchGroup>
+public sealed class LemmingManager : IPerfectHasher<Lemming>, IPerfectHasher<HatchGroup>
 {
     public const int BlockerQuantityThreshold = 20;
     public const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize32;
@@ -163,11 +163,11 @@ public sealed class LemmingManager : ISimpleHasher<Lemming>, ISimpleHasher<Hatch
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DoZombieCheck(Lemming lemming) => _zombieHelper.CheckZombies(lemming);
 
-    int ISimpleHasher<Lemming>.NumberOfItems => _lemmings.Length;
-    int ISimpleHasher<Lemming>.Hash(Lemming item) => item.Id;
-    Lemming ISimpleHasher<Lemming>.UnHash(int index) => _lemmings[index];
+    int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Length;
+    int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
+    Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
 
-    int ISimpleHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
-    int ISimpleHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
-    HatchGroup ISimpleHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
+    int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
+    int IPerfectHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
+    HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
 }

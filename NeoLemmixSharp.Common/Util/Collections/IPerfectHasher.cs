@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Common.Util.Collections;
 
-public interface ISimpleHasher<T>
+public interface IPerfectHasher<T>
 {
     int NumberOfItems { get; }
 
