@@ -113,6 +113,11 @@ public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget
             _metalGrateGadget = metalGrateGadget;
         }
 
+        public void OnRegistered()
+        {
+            _metalGrateGadget._isActive = false;
+        }
+
         public void ReactToSignal(bool signal)
         {
             _metalGrateGadget._isActive = signal;

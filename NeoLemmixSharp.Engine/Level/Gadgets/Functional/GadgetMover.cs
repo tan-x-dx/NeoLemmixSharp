@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
-public sealed class GadgetMover : GadgetBase , IReactiveGadget
+public sealed class GadgetMover : GadgetBase, IReactiveGadget
 {
     private readonly int _tickDelay;
     private readonly int _dx;
@@ -13,7 +13,7 @@ public sealed class GadgetMover : GadgetBase , IReactiveGadget
 
     private readonly IMoveableGadget[] _gadgets;
 
-    private bool _active;
+    private bool _active = true;
     private int _tickCount;
 
     public override GadgetSubType SubType => FunctionalGadgetType.Instance;
@@ -74,6 +74,11 @@ public sealed class GadgetMover : GadgetBase , IReactiveGadget
         {
             InputName = inputName;
             _mover = mover;
+        }
+
+        public void OnRegistered()
+        {
+            _mover._active = false;
         }
 
         public void ReactToSignal(bool signal)

@@ -8,6 +8,7 @@ public sealed class GadgetOutput
     public void RegisterInput(IGadgetInput input)
     {
         _inputs.Add(input);
+        input.OnRegistered();
     }
 
     public void SetSignal(bool newSignal)

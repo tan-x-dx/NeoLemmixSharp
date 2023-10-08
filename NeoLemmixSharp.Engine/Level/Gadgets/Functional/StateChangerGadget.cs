@@ -61,6 +61,10 @@ public sealed class StateChangerGadget : GadgetBase, IReactiveGadget
             _gadget = gadget;
         }
 
+        public void OnRegistered()
+        {
+        }
+
         public void ReactToSignal(bool signal)
         {
             _gadget._signal = signal;
