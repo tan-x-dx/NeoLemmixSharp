@@ -53,6 +53,8 @@ public static class Global
 
     public const int InfiniteSkillCount = 100;
 
+    public const int InitialLemmingCountDown = 20;
+
     #endregion
 
     #region Cursor Priority Levels
