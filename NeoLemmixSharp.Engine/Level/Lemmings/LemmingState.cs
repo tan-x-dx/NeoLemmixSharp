@@ -48,13 +48,37 @@ public sealed class LemmingState
     public bool IsFloater
     {
         get => ((_states >> FloaterBitIndex) & 1U) != 0U;
-        set => SetBitToValue(1U << FloaterBitIndex, value);
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << FloaterBitIndex;
+                _states &= 1U << GliderBitIndex; // Deliberately knock out the glider
+            }
+            else
+            {
+                _states &= 1U << FloaterBitIndex;
+            }
+            UpdateHairAndBodyColors();
+        }
     }
 
     public bool IsGlider
     {
         get => ((_states >> GliderBitIndex) & 1U) != 0U;
-        set => SetBitToValue(1U << GliderBitIndex, value);
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << GliderBitIndex;
+                _states &= 1U << FloaterBitIndex; // Deliberately knock out the floater
+            }
+            else
+            {
+                _states &= 1U << GliderBitIndex;
+            }
+            UpdateHairAndBodyColors();
+        }
     }
 
     public bool IsSlider
