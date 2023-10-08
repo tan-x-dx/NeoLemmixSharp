@@ -1,6 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
-public sealed class LogicGateGadgetType : GadgetType
+public sealed class LogicGateGadgetType : GadgetSubType
 {
     public static LogicGateGadgetType Instance { get; } = new();
 

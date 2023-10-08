@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -12,7 +12,7 @@ public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget
     private int _transitionTick;
     private bool _isActive;
 
-    public override InteractiveGadgetType Type => MetalGrateGadgetType.Instance;
+    public override InteractiveGadgetType SubType => MetalGrateGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
     public MetalGrateState CurrentState { get; private set; }
 

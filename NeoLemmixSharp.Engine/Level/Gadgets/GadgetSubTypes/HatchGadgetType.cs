@@ -1,6 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
-public sealed class HatchGadgetType : GadgetType
+public sealed class HatchGadgetType : GadgetSubType
 {
     public static HatchGadgetType Instance { get; } = new ();
 

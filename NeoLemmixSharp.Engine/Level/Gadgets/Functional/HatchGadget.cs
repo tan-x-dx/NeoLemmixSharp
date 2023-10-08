@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -10,7 +10,7 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget
 {
     private readonly LevelPosition _spawnPositionTranslation;
 
-    public override GadgetType Type => HatchGadgetType.Instance;
+    public override GadgetSubType SubType => HatchGadgetType.Instance;
     public override Orientation Orientation { get; }
 
     public LevelPosition TopLeftPixel { get; private set; }

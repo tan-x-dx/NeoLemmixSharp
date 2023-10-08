@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -33,7 +33,7 @@ public sealed class FallerAction : LemmingAction
 
         foreach (var gadget in gadgetSet)
         {
-            if (gadget.Type != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
+            if (gadget.SubType != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
                 continue;
 
             if (gadget.Orientation == orientation.GetOpposite())
@@ -63,7 +63,7 @@ public sealed class FallerAction : LemmingAction
 
             foreach (var gadget in gadgetSet)
             {
-                if (gadget.Type != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
+                if (gadget.SubType != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
                     continue;
 
                 if (gadget.Orientation == orientation.GetOpposite())

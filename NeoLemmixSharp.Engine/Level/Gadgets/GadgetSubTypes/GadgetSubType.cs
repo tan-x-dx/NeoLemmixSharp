@@ -1,17 +1,17 @@
 ﻿using NeoLemmixSharp.Common.Util.Identity;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
-public abstract class GadgetType : IExtendedEnumType<GadgetType>
+public abstract class GadgetSubType : IExtendedEnumType<GadgetSubType>
 {
-    private static readonly GadgetType[] GadgetTypes = RegisterAllGadgetTypes();
+    private static readonly GadgetSubType[] GadgetTypes = RegisterAllGadgetTypes();
 
     public static int NumberOfItems => GadgetTypes.Length;
-    public static ReadOnlySpan<GadgetType> AllItems => new(GadgetTypes);
+    public static ReadOnlySpan<GadgetSubType> AllItems => new(GadgetTypes);
 
-    private static GadgetType[] RegisterAllGadgetTypes()
+    private static GadgetSubType[] RegisterAllGadgetTypes()
     {
-        var result = new GadgetType[]
+        var result = new GadgetSubType[]
         {
             GenericGadgetType.Instance,
             WaterGadgetType.Instance,
@@ -37,11 +37,11 @@ public abstract class GadgetType : IExtendedEnumType<GadgetType>
     public abstract int Id { get; }
     public abstract string GadgetTypeName { get; }
 
-    public bool Equals(GadgetType? other) => Id == (other?.Id ?? -1);
-    public sealed override bool Equals(object? obj) => obj is GadgetType other && Id == other.Id;
+    public bool Equals(GadgetSubType? other) => Id == (other?.Id ?? -1);
+    public sealed override bool Equals(object? obj) => obj is GadgetSubType other && Id == other.Id;
     public sealed override int GetHashCode() => Id;
     public sealed override string ToString() => GadgetTypeName;
 
-    public static bool operator ==(GadgetType left, GadgetType right) => left.Id == right.Id;
-    public static bool operator !=(GadgetType left, GadgetType right) => left.Id != right.Id;
+    public static bool operator ==(GadgetSubType left, GadgetSubType right) => left.Id == right.Id;
+    public static bool operator !=(GadgetSubType left, GadgetSubType right) => left.Id != right.Id;
 }

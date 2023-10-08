@@ -4,7 +4,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
@@ -70,13 +70,13 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>
     }
 
     [Pure]
-    public bool HasGadgetOfTypeAtPosition(LevelPosition levelPosition, GadgetType gadgetType)
+    public bool HasGadgetOfTypeAtPosition(LevelPosition levelPosition, GadgetSubType gadgetType)
     {
         var gadgetSet = _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
 
         foreach (var gadget in gadgetSet)
         {
-            if (gadget.Type == gadgetType && gadget.MatchesPosition(levelPosition))
+            if (gadget.SubType == gadgetType && gadget.MatchesPosition(levelPosition))
                 return true;
         }
 
@@ -84,7 +84,7 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>
     }
 
     [Pure]
-    public bool HasGadgetOfTypeAtLemmingPosition(Lemming lemming, GadgetType gadgetType)
+    public bool HasGadgetOfTypeAtLemmingPosition(Lemming lemming, GadgetSubType gadgetType)
     {
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
@@ -95,7 +95,7 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>
 
         foreach (var gadget in gadgetSet)
         {
-            if (gadget.Type == gadgetType && (gadget.MatchesPosition(anchorPixel) || gadget.MatchesPosition(footPixel)))
+            if (gadget.SubType == gadgetType && (gadget.MatchesPosition(anchorPixel) || gadget.MatchesPosition(footPixel)))
                 return true;
         }
 
