@@ -57,7 +57,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override void OnLemmingMatch(Lemming lemming)
     {
-        var itemStatus = _itemTracker.EvaluateItem(lemming);
+        var itemStatus = _itemTracker.TrackItem(lemming);
 
         var state = _states[_currentStateIndex];
         ReadOnlySpan<IGadgetBehaviour> actions;

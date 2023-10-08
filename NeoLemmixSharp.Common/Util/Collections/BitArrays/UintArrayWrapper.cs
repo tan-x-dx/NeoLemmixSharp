@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public sealed class UintArrayWrapper : IUintWrapper
 {
-    private const int Mask = (1 << BitArray.Shift) - 1;
+    public const int Mask = (1 << BitArray.Shift) - 1;
 
     private readonly uint[] _bits;
     private readonly int _offset;
