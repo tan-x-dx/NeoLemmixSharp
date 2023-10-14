@@ -28,22 +28,21 @@ public abstract class InputController : IPerfectHasher<Keys>
     protected InputController()
     {
         _keys = new SimpleSet<Keys>(this);
-
-        // ReSharper disable once VirtualMemberCallInConstructor
-        SetUpBindings();
-        ValidateKeyActions();
     }
 
-    protected abstract void SetUpBindings();
+    protected KeyAction CreateKeyAction(string actionName)
+    {
+        var keyAction = new KeyAction(_keyActions.Count, actionName);
+        _keyActions.Add(keyAction);
+        return keyAction;
+    }
 
     protected void Bind(Keys keyCode, KeyAction keyAction)
     {
         _keyMapping.Add((keyCode, keyAction));
-        keyAction.Id = _keyActions.Count;
-        _keyActions.Add(keyAction);
     }
 
-    private void ValidateKeyActions()
+    protected void ValidateKeyActions()
     {
         _keyActions.ValidateUniqueIds();
         _keyActions.Sort(IdEquatableItemHelperMethods.Compare);
@@ -55,7 +54,7 @@ public abstract class InputController : IPerfectHasher<Keys>
 
         foreach (var keyAction in keyActionsSpan)
         {
-            keyAction.UpdateStatus();
+            keyAction.UpdateState();
         }
 
         var keyMappingSpan = CollectionsMarshal.AsSpan(_keyMapping);
@@ -64,7 +63,7 @@ public abstract class InputController : IPerfectHasher<Keys>
         {
             if (_keys.Contains(keyValue))
             {
-                keyActionsSpan[action.Id].KeyState |= KeyAction.KeyPressed;
+                keyActionsSpan[action.Id].ActionState |= InputAction.ActionPressed;
             }
         }
 
@@ -97,12 +96,19 @@ public abstract class InputController : IPerfectHasher<Keys>
         ScrollDelta = Math.Sign(currentScrollValue - _previousScrollValue);
         _previousScrollValue = currentScrollValue;
 
-        LeftMouseButtonAction.UpdateState(mouseState.LeftButton);
-        RightMouseButtonAction.UpdateState(mouseState.RightButton);
-        MiddleMouseButtonAction.UpdateState(mouseState.MiddleButton);
+        LeftMouseButtonAction.UpdateState();
+        RightMouseButtonAction.UpdateState();
+        MiddleMouseButtonAction.UpdateState();
 
-        MouseButton4Action.UpdateState(mouseState.XButton1);
-        MouseButton5Action.UpdateState(mouseState.XButton2);
+        MouseButton4Action.UpdateState();
+        MouseButton5Action.UpdateState();
+
+        LeftMouseButtonAction.ActionState |= (ulong)mouseState.LeftButton;
+        RightMouseButtonAction.ActionState |= (ulong)mouseState.RightButton;
+        MiddleMouseButtonAction.ActionState |= (ulong)mouseState.MiddleButton;
+
+        MouseButton4Action.ActionState |= (ulong)mouseState.XButton1;
+        MouseButton5Action.ActionState |= (ulong)mouseState.XButton2;
     }
 
     int IPerfectHasher<Keys>.NumberOfItems => NumberOfKeys;
