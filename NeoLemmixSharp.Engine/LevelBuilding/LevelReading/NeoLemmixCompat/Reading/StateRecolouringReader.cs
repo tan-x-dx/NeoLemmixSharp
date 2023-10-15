@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.SpriteSet;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Nxlv.Reading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reading;
 
 public sealed class StateRecoloringReader : IDataReader
 {

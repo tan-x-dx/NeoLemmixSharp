@@ -18,6 +18,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
 namespace NeoLemmixSharp;
 
@@ -119,7 +120,10 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         var path = Path.Combine(_rootDirectoryManager.RootDirectory, file);
 
-        using (var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, _fontBank, _rootDirectoryManager))
+        var fileExtension = Path.GetExtension(file);
+        var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension, _rootDirectoryManager);
+
+        using (var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, _fontBank, _rootDirectoryManager, levelReader))
         {
             Screen = levelBuilder.BuildLevel(path);
             Screen.GameWindow = this;

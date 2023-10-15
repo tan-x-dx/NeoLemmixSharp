@@ -13,7 +13,6 @@ using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Nxlv;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
@@ -36,11 +35,12 @@ public sealed class LevelBuilder : IDisposable
         GraphicsDevice graphicsDevice,
         SpriteBatch spriteBatch,
         FontBank fontBank,
-        RootDirectoryManager rootDirectoryManager)
+        RootDirectoryManager rootDirectoryManager,
+        ILevelReader levelReader)
     {
         _content = content;
         _fontBank = fontBank;
-        _levelReader = new NxlvLevelReader(rootDirectoryManager);
+        _levelReader = levelReader;
         _terrainPainter = new TerrainPainter(graphicsDevice, rootDirectoryManager);
         _levelObjectAssembler = new LevelObjectAssembler(graphicsDevice, content, spriteBatch, rootDirectoryManager);
     }

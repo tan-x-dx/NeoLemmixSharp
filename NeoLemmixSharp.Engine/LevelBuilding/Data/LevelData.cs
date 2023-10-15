@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.GadgetArchetypes;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 
@@ -32,6 +33,7 @@ public sealed class LevelData
     public ThemeData ThemeData { get; } = new();
     public List<TerrainData> AllTerrainData { get; } = new();
     public List<TerrainGroup> AllTerrainGroups { get; } = new();
+    public List<GadgetArchetypeData> AllGadgetArchetypeData { get; } = new();
     public List<GadgetData> AllGadgetData { get; } = new();
 
     public int? GetMaxNumberOfBlockers()

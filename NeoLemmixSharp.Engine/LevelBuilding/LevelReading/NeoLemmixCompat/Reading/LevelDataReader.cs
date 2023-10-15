@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Nxlv.Reading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reading;
 
 public sealed class LevelDataReader : IDataReader
 {
@@ -33,7 +33,7 @@ public sealed class LevelDataReader : IDataReader
         switch (tokens[0])
         {
             case "TITLE":
-                _levelData.LevelTitle = ReadingHelpers.ReadFormattedString(tokens[1..]); //string.Join(' ', tokens[1..]);
+                _levelData.LevelTitle = ReadingHelpers.ReadFormattedString(tokens[1..]);
                 break;
 
             case "AUTHOR":
