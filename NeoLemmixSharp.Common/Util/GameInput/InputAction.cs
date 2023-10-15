@@ -2,14 +2,14 @@
 
 public sealed class InputAction : IInputAction
 {
-    private const ulong EnabledMask = (1UL << 51) - 1UL;
+    private const ulong EnabledMask = (1UL << EngineGlobal.FramesPerSecond) - 1UL;
     private const ulong DisabledMask = 0UL;
 
     private const ulong ActionUnpressed = 0UL;
     public const ulong ActionPressed = 1UL;
     private const ulong ActionReleased = 2UL;
     private const ulong ActionHeld = 3UL;
-    private const ulong DoubleTapUpperMask = ((1UL << 11) - 1UL) << 2;
+    private const ulong DoubleTapUpperMask = ((1UL << (EngineGlobal.DoubleTapFrameCountMax - 2)) - 1UL) << 2;
 
     private ulong _stateMask = EnabledMask;
     private ulong _actionState;
@@ -51,7 +51,7 @@ public sealed class InputAction : IInputAction
     /// </summary>
     public bool IsHeld => (_actionState & ActionHeld) == ActionHeld;
     /// <summary>
-    /// Has a double tap occurred for the Action? Double tap has about 1/4 of a second to take place.
+    /// Has a double tap occurred for the Action?
     /// </summary>
     public bool IsDoubleTap => (_actionState & ActionPressed) != 0UL &&
                                (_actionState & ActionReleased) == 0UL &&

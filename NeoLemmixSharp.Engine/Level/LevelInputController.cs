@@ -24,6 +24,8 @@ public sealed class LevelInputController : InputController
     public KeyAction S { get; }
     public KeyAction D { get; }
 
+    public KeyAction Space { get; }
+
     public LevelInputController()
     {
         Pause = CreateKeyAction("Pause");
@@ -44,6 +46,8 @@ public sealed class LevelInputController : InputController
         A = CreateKeyAction("ABC");
         S = CreateKeyAction("ABC");
         D = CreateKeyAction("ABC");
+
+        Space = CreateKeyAction("Space");
 
         ValidateKeyActions();
 
@@ -72,5 +76,7 @@ public sealed class LevelInputController : InputController
         Bind(Keys.Up, UpArrow);
         //Bind(Keys.Right, RightArrow);
         Bind(Keys.Down, DownArrow);
+
+        Bind(Keys.Space, Space);
     }
 }

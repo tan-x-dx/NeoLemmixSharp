@@ -17,6 +17,7 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using NeoLemmixSharp.Common;
 
 namespace NeoLemmixSharp;
 
@@ -54,7 +55,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
 
-        _standardGameUps = TimeSpan.FromTicks((long)(TimeSpan.TicksPerMillisecond * (1000 / (double)Global.FramesPerSecond)));
+        _standardGameUps = EngineGlobal.FramesPerSecondTimeSpan;
 
         IsFixedTimeStep = true;
         TargetElapsedTime = _standardGameUps;

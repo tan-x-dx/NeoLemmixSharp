@@ -38,9 +38,6 @@ public static class Global
 
     #region Engine Constants
 
-    public const int StandardTicksPerSecond = 17;
-    public const int FramesPerSecond = StandardTicksPerSecond * 3;
-
     public const int RightFacingDirectionId = 0;
     public const int LeftFacingDirectionId = 1;
 
