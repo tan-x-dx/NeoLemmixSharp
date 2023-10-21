@@ -148,13 +148,8 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
         var oldValue = arrayValue;
         arrayValue ^= 1U << index;
 
-        var result = true;
-        var delta = 1;
-        if (arrayValue < oldValue)
-        {
-            delta = -1;
-            result = false;
-        }
+        var result = arrayValue > oldValue;
+        var delta = result ? 1 : -1;
 
         Count += delta;
 
