@@ -5,26 +5,56 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelInputController : InputController
 {
-    public KeyAction Pause { get; } = new("Pause");
-    public KeyAction Quit { get; } = new("Quit");
-    public KeyAction ToggleFullScreen { get; } = new("Toggle Fullscreen");
-    public KeyAction ToggleFastForwards { get; } = new("Toggle Fast Forwards");
-    public KeyAction SelectOnlyWalkers { get; } = new("Select Only Walkers");
-    public KeyAction SelectOnlyUnassignedLemmings { get; } = new("Select Only Unassigned Lemmings");
-    public KeyAction SelectLeftFacingLemmings { get; } = new("Select Left Facing Lemmings");
-    public KeyAction SelectRightFacingLemmings { get; } = new("Select Right Facing Lemmings");
+    public KeyAction Pause { get; }
+    public KeyAction Quit { get; }
+    public KeyAction ToggleFullScreen { get; }
+    public KeyAction ToggleFastForwards { get; }
+    public KeyAction SelectOnlyWalkers { get; }
+    public KeyAction SelectOnlyUnassignedLemmings { get; }
+    public KeyAction SelectLeftFacingLemmings { get; }
+    public KeyAction SelectRightFacingLemmings { get; }
 
-    public KeyAction RightArrow { get; } = new("ABC");
-    public KeyAction UpArrow { get; } = new("ABC");
-    public KeyAction LeftArrow { get; } = new("ABC");
-    public KeyAction DownArrow { get; } = new("ABC");
+    public KeyAction RightArrow { get; }
+    public KeyAction UpArrow { get; }
+    public KeyAction LeftArrow { get; }
+    public KeyAction DownArrow { get; }
 
-    public KeyAction W { get; } = new("ABC");
-    public KeyAction A { get; } = new("ABC");
-    public KeyAction S { get; } = new("ABC");
-    public KeyAction D { get; } = new("ABC");
+    public KeyAction W { get; }
+    public KeyAction A { get; }
+    public KeyAction S { get; }
+    public KeyAction D { get; }
 
-    protected override void SetUpBindings()
+    public KeyAction Space { get; }
+
+    public LevelInputController()
+    {
+        Pause = CreateKeyAction("Pause");
+        Quit = CreateKeyAction("Quit");
+        ToggleFullScreen = CreateKeyAction("Toggle Fullscreen");
+        ToggleFastForwards = CreateKeyAction("Toggle Fast Forwards");
+        SelectOnlyWalkers = CreateKeyAction("Select Only Walkers");
+        SelectOnlyUnassignedLemmings = CreateKeyAction("Select Only Unassigned Lemmings");
+        SelectLeftFacingLemmings = CreateKeyAction("Select Left Facing Lemmings");
+        SelectRightFacingLemmings = CreateKeyAction("Select Right Facing Lemmings");
+
+        RightArrow = CreateKeyAction("ABC");
+        UpArrow = CreateKeyAction("ABC");
+        LeftArrow = CreateKeyAction("ABC");
+        DownArrow = CreateKeyAction("ABC");
+
+        W = CreateKeyAction("ABC");
+        A = CreateKeyAction("ABC");
+        S = CreateKeyAction("ABC");
+        D = CreateKeyAction("ABC");
+
+        Space = CreateKeyAction("Space");
+
+        ValidateKeyActions();
+
+        SetUpBindings();
+    }
+
+    private void SetUpBindings()
     {
         Bind(Keys.P, Pause);
         Bind(Keys.Escape, Quit);
@@ -46,5 +76,7 @@ public sealed class LevelInputController : InputController
         Bind(Keys.Up, UpArrow);
         //Bind(Keys.Right, RightArrow);
         Bind(Keys.Down, DownArrow);
+
+        Bind(Keys.Space, Space);
     }
 }

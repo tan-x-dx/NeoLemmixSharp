@@ -1,12 +1,12 @@
 ﻿using NeoLemmixSharp.Common.Util.LevelRegion;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
-public sealed class StateChangerGadget : GadgetBase
+public sealed class StateChangerGadget : GadgetBase, IReactiveGadget
 {
     private readonly int _newState;
 
@@ -15,7 +15,7 @@ public sealed class StateChangerGadget : GadgetBase
 
     public StatefulGadget Gadget { get; }
 
-    public override GadgetType Type => FunctionalGadgetType.Instance;
+    public override GadgetSubType SubType => FunctionalGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
     public IGadgetInput Input { get; }
@@ -43,7 +43,7 @@ public sealed class StateChangerGadget : GadgetBase
         _previousSignal = _signal;
     }
 
-    public override IGadgetInput? GetInputWithName(string inputName)
+    public IGadgetInput? GetInputWithName(string inputName)
     {
         if (string.Equals(inputName, Input.InputName))
             return Input;
@@ -59,6 +59,10 @@ public sealed class StateChangerGadget : GadgetBase
         {
             InputName = inputName;
             _gadget = gadget;
+        }
+
+        public void OnRegistered()
+        {
         }
 
         public void ReactToSignal(bool signal)

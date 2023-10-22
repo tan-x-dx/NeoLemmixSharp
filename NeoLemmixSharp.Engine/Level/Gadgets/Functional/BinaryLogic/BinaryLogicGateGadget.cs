@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.LevelRegion;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics;
@@ -13,7 +13,7 @@ public abstract class BinaryLogicGateGadget : GadgetBase, ILogicGateGadget
     public LogicGateGadgetInput InputA { get; }
     public LogicGateGadgetInput InputB { get; }
     public GadgetOutput Output { get; } = new();
-    public sealed override GadgetType Type => LogicGateGadgetType.Instance;
+    public sealed override GadgetSubType SubType => LogicGateGadgetType.Instance;
 
     protected BinaryLogicGateGadget(
         int id,
@@ -31,7 +31,7 @@ public abstract class BinaryLogicGateGadget : GadgetBase, ILogicGateGadget
         InputB.SetLogicGate(this);
     }
 
-    public sealed override IGadgetInput? GetInputWithName(string inputName)
+    public IGadgetInput? GetInputWithName(string inputName)
     {
         if (string.Equals(inputName, InputA.InputName))
             return InputA;

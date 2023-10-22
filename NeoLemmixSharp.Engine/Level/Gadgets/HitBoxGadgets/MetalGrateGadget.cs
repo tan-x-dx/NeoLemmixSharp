@@ -1,18 +1,18 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
-public sealed class MetalGrateGadget : HitBoxGadget
+public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget
 {
     private int _transitionTick;
     private bool _isActive;
 
-    public override InteractiveGadgetType Type => MetalGrateGadgetType.Instance;
+    public override InteractiveGadgetType SubType => MetalGrateGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
     public MetalGrateState CurrentState { get; private set; }
 
@@ -74,7 +74,7 @@ public sealed class MetalGrateGadget : HitBoxGadget
         }
     }
 
-    public override IGadgetInput? GetInputWithName(string inputName)
+    public IGadgetInput? GetInputWithName(string inputName)
     {
         if (string.Equals(inputName, Input.InputName))
             return Input;
@@ -111,6 +111,11 @@ public sealed class MetalGrateGadget : HitBoxGadget
         public void SetMetalGrateGadget(MetalGrateGadget metalGrateGadget)
         {
             _metalGrateGadget = metalGrateGadget;
+        }
+
+        public void OnRegistered()
+        {
+            _metalGrateGadget._isActive = false;
         }
 
         public void ReactToSignal(bool signal)

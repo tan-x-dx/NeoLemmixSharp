@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 
@@ -30,7 +31,7 @@ public abstract class LevelTimer
     public void SetElapsedTicks(int elapsedTicks)
     {
      //   ElapsedTicks = elapsedTicks;
-        ElapsedSeconds = elapsedTicks / Global.FramesPerSecond;
+        ElapsedSeconds = elapsedTicks / EngineGlobal.FramesPerSecond;
 
         UpdateAppearance();
     }

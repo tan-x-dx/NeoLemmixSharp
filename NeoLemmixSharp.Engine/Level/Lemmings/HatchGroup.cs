@@ -1,28 +1,45 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class HatchGroup : IIdEquatable<HatchGroup>
+public sealed class HatchGroup
 {
     private readonly HatchGadget[] _hatches;
 
-    public int Id { get; }
-    public int MinSpawnInterval { get; }
-    public int MaxSpawnInterval { get; }
+    private readonly int _minSpawnInterval;
+    private readonly int _maxSpawnInterval;
+
+    private int _spawnInterval;
+    private int _spawnIntervalDelta;
+
+    private int _nextLemmingCountDown = Global.InitialLemmingCountDown;
 
     public HatchGroup(
-        int id,
-        HatchGadget[] hatches)
+        HatchGadget[] hatches,
+        int minSpawnInterval,
+        int maxSpawnInterval,
+        int initialSpawnInterval)
     {
-        Id = id;
         _hatches = hatches;
+        _minSpawnInterval = minSpawnInterval;
+        _maxSpawnInterval = maxSpawnInterval;
+        _spawnInterval = initialSpawnInterval;
     }
 
-    public bool Equals(HatchGroup? other) => Id == (other?.Id ?? -1);
-    public override bool Equals(object? obj) => obj is HatchGroup other && Id == other.Id;
-    public override int GetHashCode() => Id;
+    public void SetSpawnIntervalDelta(int spawnIntervalDelta)
+    {
+        _spawnIntervalDelta = spawnIntervalDelta;
+    }
 
-    public static bool operator ==(HatchGroup left, HatchGroup right) => left.Id == right.Id;
-    public static bool operator !=(HatchGroup left, HatchGroup right) => left.Id != right.Id;
+    public void Tick()
+    {
+        _spawnInterval = Math.Clamp(_spawnInterval + _spawnIntervalDelta, _minSpawnInterval, _maxSpawnInterval);
+        
+        _nextLemmingCountDown--;
+
+        if (_nextLemmingCountDown == 0)
+        {
+            _nextLemmingCountDown = _spawnInterval;
+        }
+    }
 }

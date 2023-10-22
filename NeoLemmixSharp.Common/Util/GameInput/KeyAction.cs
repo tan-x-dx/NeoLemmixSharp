@@ -2,66 +2,49 @@
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public sealed class KeyAction : IIdEquatable<KeyAction>
+public sealed class KeyAction : IIdEquatable<KeyAction>, IInputAction
 {
-    private const int EnabledMask = 3;
-    private const int DisabledMask = 0;
-
-    public const int KeyUnpressed = 0;
-    public const int KeyPressed = 1;
-    public const int KeyReleased = 2;
-    public const int KeyHeld = 3;
-
+    private readonly InputAction _action;
     private readonly string _actionName;
-    private int _stateMask;
-    private int _keyState;
 
-    public int Id { get; set; }
+    public int Id { get; }
 
-    public int KeyState
+    public KeyAction(int id, string actionName)
     {
-        get => _keyState;
-        set => _keyState = value & _stateMask;
-    }
-
-    public KeyAction(string actionName)
-    {
+        Id = id;
         _actionName = actionName;
-        _stateMask = EnabledMask;
+        _action = new InputAction();
     }
 
-    public void UpdateStatus()
+    public ulong ActionState
     {
-        _keyState = (_keyState << 1) & _stateMask;
+        get => _action.ActionState;
+        set => _action.ActionState = value;
+    }
+
+    public void UpdateState()
+    {
+        _action.UpdateState();
     }
 
     public void SetEnabled(bool enable)
     {
-        _stateMask = enable ? EnabledMask : DisabledMask;
+        _action.SetEnabled(enable);
     }
 
-    /// <summary>
-    /// Is the Key currently pressed down?
-    /// </summary>
-    public bool IsKeyDown => (KeyState & KeyPressed) == KeyPressed;
-    /// <summary>
-    /// Is the Key currently released?
-    /// </summary>
-    public bool IsKeyUp => (KeyState & KeyReleased) == KeyUnpressed;
-    /// <summary>
-    /// Is the Key currently pressed down, but it was previously released?
-    /// </summary>
-    public bool IsPressed => KeyState == KeyPressed;
-    /// <summary>
-    /// Is the Key currently released, but it was previously pressed down?
-    /// </summary>
-    public bool IsReleased => KeyState == KeyReleased;
-    /// <summary>
-    /// Is the Key currently being pressed down and it was previously pressed down?
-    /// </summary>
-    public bool IsHeld => KeyState == KeyHeld;
+    public bool IsActionDown => _action.IsActionDown;
 
-    public bool IsEnabled => _stateMask != DisabledMask;
+    public bool IsActionUp => _action.IsActionUp;
+
+    public bool IsPressed => _action.IsPressed;
+
+    public bool IsReleased => _action.IsReleased;
+
+    public bool IsHeld => _action.IsHeld;
+
+    public bool IsDoubleTap => _action.IsDoubleTap;
+
+    public bool IsEnabled => _action.IsEnabled;
 
     public bool Equals(KeyAction? other) => Id == (other?.Id ?? -1);
     public override bool Equals(object? obj) => obj is KeyAction other && Id == other.Id;

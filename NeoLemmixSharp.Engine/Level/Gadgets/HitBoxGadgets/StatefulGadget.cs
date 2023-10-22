@@ -1,8 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using static NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxHelpers;
@@ -11,14 +10,14 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 {
-    private readonly Dictionary<string, IGadgetInput> _inputLookup = new();
     private readonly HitBox _hitBox;
     private readonly GadgetState[] _states;
+    private readonly ItemTracker<Lemming> _itemTracker;
 
     private int _currentStateIndex;
     private int _nextStateIndex;
 
-    public override InteractiveGadgetType Type { get; }
+    public override InteractiveGadgetType SubType { get; }
     public override Orientation Orientation { get; }
 
     public StatefulGadget(
@@ -27,13 +26,15 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
         HitBox hitBox,
-        GadgetState[] states)
+        GadgetState[] states,
+        ItemTracker<Lemming> itemTracker)
         : base(id, gadgetBounds)
     {
-        Type = type;
+        SubType = type;
         Orientation = orientation;
         _hitBox = hitBox;
         _states = states;
+        _itemTracker = itemTracker;
 
         foreach (var gadgetState in _states)
         {
@@ -41,26 +42,14 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
         }
     }
 
-    public void RegisterGadgetInput(StateSelectionInput gadgetInput)
-    {
-        _inputLookup.Add(gadgetInput.InputName, gadgetInput);
-
-        gadgetInput.SetGadget(this);
-    }
-
     public void SetNextState(int stateIndex)
     {
         _nextStateIndex = stateIndex;
     }
 
-    public override IGadgetInput? GetInputWithName(string inputName)
-    {
-        return _inputLookup.TryGetValue(inputName, out var result) ? result : null;
-    }
-
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
-        return _hitBox.MatchesLemmingData(lemming) &&
+        return _hitBox.MatchesLemming(lemming) &&
                _hitBox.MatchesPosition(levelPosition);
     }
 
@@ -68,7 +57,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override void OnLemmingMatch(Lemming lemming)
     {
-        var itemStatus = _hitBox.OnLemmingInHitBox(lemming);
+        var itemStatus = _itemTracker.TrackItem(lemming);
 
         var state = _states[_currentStateIndex];
         ReadOnlySpan<IGadgetBehaviour> actions;
@@ -112,7 +101,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override void Tick()
     {
-        _hitBox.Tick();
+        _itemTracker.Tick();
 
         if (_currentStateIndex != _nextStateIndex)
         {
@@ -134,28 +123,5 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
         previousState.OnTransitionFrom();
         currentState.OnTransitionTo();
-    }
-
-    public sealed class StateSelectionInput : IGadgetInput
-    {
-        private readonly int _stateIndex;
-        public string InputName { get; }
-        private StatefulGadget _gadget = null!;
-
-        public StateSelectionInput(string inputName, int stateIndex)
-        {
-            InputName = inputName;
-            _stateIndex = stateIndex;
-        }
-
-        public void SetGadget(StatefulGadget gadget)
-        {
-            _gadget = gadget;
-        }
-
-        public void ReactToSignal(bool signal)
-        {
-            _gadget.SetNextState(_stateIndex);
-        }
     }
 }

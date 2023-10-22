@@ -6,7 +6,7 @@ using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Skills;
@@ -17,6 +17,8 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
 namespace NeoLemmixSharp;
 
@@ -54,7 +56,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
 
-        _standardGameUps = TimeSpan.FromTicks((long)(TimeSpan.TicksPerMillisecond * (1000 / (double)Global.FramesPerSecond)));
+        _standardGameUps = EngineGlobal.FramesPerSecondTimeSpan;
 
         IsFixedTimeStep = true;
         TargetElapsedTime = _standardGameUps;
@@ -118,7 +120,10 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         var path = Path.Combine(_rootDirectoryManager.RootDirectory, file);
 
-        using (var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, _fontBank, _rootDirectoryManager))
+        var fileExtension = Path.GetExtension(file);
+        var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension, _rootDirectoryManager);
+
+        using (var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, _fontBank, _rootDirectoryManager, levelReader))
         {
             Screen = levelBuilder.BuildLevel(path);
             Screen.GameWindow = this;
@@ -139,7 +144,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         var numberOfActions = LemmingAction.NumberOfItems;
         var numberOfSkills = LemmingSkill.NumberOfItems;
         var numberOfTeams = Team.NumberOfItems;
-        var numberOfGadgetTypes = GadgetType.NumberOfItems;
+        var numberOfGadgetTypes = GadgetSubType.NumberOfItems;
 
         Console.WriteLine(
             "Loaded {0} facing directions. Loaded {1} orientations. Loaded {2} skills. Loaded {3} actions. " +

@@ -6,9 +6,9 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
 public sealed class SetLemmingStateBehaviour : IGadgetBehaviour
 {
     private readonly ILemmingStateChanger _lemmingStateChanger;
-    private readonly SetPermanentSkillBehaviourType _type;
+    private readonly SetStateType _type;
 
-    public SetLemmingStateBehaviour(ILemmingStateChanger lemmingStateChanger, SetPermanentSkillBehaviourType type)
+    public SetLemmingStateBehaviour(ILemmingStateChanger lemmingStateChanger, SetStateType type)
     {
         _lemmingStateChanger = lemmingStateChanger;
         _type = type;
@@ -18,16 +18,16 @@ public sealed class SetLemmingStateBehaviour : IGadgetBehaviour
     {
         var lemmingState = lemming.State;
 
-        if (_type == SetPermanentSkillBehaviourType.Toggle)
+        if (_type == SetStateType.Toggle)
         {
             _lemmingStateChanger.ToggleLemmingState(lemmingState);
             return;
         }
 
-        _lemmingStateChanger.SetLemmingState(lemmingState, _type != SetPermanentSkillBehaviourType.Clear);
+        _lemmingStateChanger.SetLemmingState(lemmingState, _type != SetStateType.Clear);
     }
 
-    public enum SetPermanentSkillBehaviourType
+    public enum SetStateType
     {
         Clear,
         Set,
@@ -53,6 +53,11 @@ public sealed class ZombieStateChanger : ILemmingStateChanger
         var isZombie = lemmingState.IsZombie;
         lemmingState.IsZombie = !isZombie;
     }
+
+    public bool IsApplied(LemmingState lemmingState)
+    {
+        return lemmingState.IsZombie;
+    }
 }
 
 public sealed class NeutralStateChanger : ILemmingStateChanger
@@ -72,5 +77,10 @@ public sealed class NeutralStateChanger : ILemmingStateChanger
     {
         var isNeutral = lemmingState.IsNeutral;
         lemmingState.IsNeutral = !isNeutral;
+    }
+
+    public bool IsApplied(LemmingState lemmingState)
+    {
+        return lemmingState.IsNeutral;
     }
 }

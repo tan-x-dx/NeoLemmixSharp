@@ -19,6 +19,10 @@ public sealed class LogicGateGadgetInput : IGadgetInput
         _gadget = gadget;
     }
 
+    public void OnRegistered()
+    {
+    }
+
     public void ReactToSignal(bool signal)
     {
         Signal = signal;

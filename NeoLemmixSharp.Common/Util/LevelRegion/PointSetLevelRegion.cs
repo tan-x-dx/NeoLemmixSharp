@@ -15,7 +15,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
     private readonly int _minimumBoundingBoxWidth;
     private readonly int _minimumBoundingBoxHeight;
 
-    public PointSetLevelRegion(RectangularLevelRegion anchor, ReadOnlySpan<LevelPosition> points)
+    public PointSetLevelRegion(ReadOnlySpan<LevelPosition> points)
     {
         if (points.Length == 0)
             throw new ArgumentException("Cannot create PointSetLevelRegion with zero points!");
@@ -44,7 +44,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
             _levelPositions.SetBit(index);
         }
 
-        _offset = minimumBoundingBox.GetTopLeftPosition() + anchor.TopLeft;
+        _offset = minimumBoundingBox.GetTopLeftPosition();
     }
 
     [Pure]

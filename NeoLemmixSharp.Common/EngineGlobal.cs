@@ -1,0 +1,10 @@
+﻿namespace NeoLemmixSharp.Common;
+
+public static class EngineGlobal
+{
+    public const int StandardTicksPerSecond = 17;
+    public const int FramesPerSecond = StandardTicksPerSecond * 3;
+    public static TimeSpan FramesPerSecondTimeSpan => TimeSpan.FromTicks((long)(TimeSpan.TicksPerMillisecond * (1000 / (double)FramesPerSecond)));
+
+    public const int DoubleTapFrameCountMax = 17;
+}

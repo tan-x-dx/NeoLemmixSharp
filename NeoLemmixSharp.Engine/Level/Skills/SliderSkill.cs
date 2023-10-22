@@ -38,4 +38,9 @@ public sealed class SliderSkill : LemmingSkill, ILemmingStateChanger
         var isSlider = lemmingState.IsSlider;
         lemmingState.IsSlider = !isSlider;
     }
+
+    public bool IsApplied(LemmingState lemmingState)
+    {
+        return lemmingState.IsSlider;
+    }
 }

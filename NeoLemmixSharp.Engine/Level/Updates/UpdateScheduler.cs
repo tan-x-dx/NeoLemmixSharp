@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -153,7 +154,7 @@ end;
 
         if (didTick)
         {
-            if (_elapsedTicks.Item % Global.FramesPerSecond == 0)
+            if (_elapsedTicks.Item % EngineGlobal.FramesPerSecond == 0)
             {
                 _levelTimer.Tick();
             }
@@ -223,7 +224,7 @@ end;
 
     private void HandleSkillAssignment()
     {
-        if (_inputController.LeftMouseButtonAction.IsMouseButtonUp)
+        if (_inputController.LeftMouseButtonAction.IsActionUp)
             return;
 
         var lemming = _levelCursor.CurrentlyHighlightedLemming;

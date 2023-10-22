@@ -1,11 +1,11 @@
 ﻿using NeoLemmixSharp.Common.Util.LevelRegion;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
-public sealed class GadgetMover : GadgetBase
+public sealed class GadgetMover : GadgetBase, IReactiveGadget
 {
     private readonly int _tickDelay;
     private readonly int _dx;
@@ -13,10 +13,10 @@ public sealed class GadgetMover : GadgetBase
 
     private readonly IMoveableGadget[] _gadgets;
 
-    private bool _active;
+    private bool _active = true;
     private int _tickCount;
 
-    public override GadgetType Type => FunctionalGadgetType.Instance;
+    public override GadgetSubType SubType => FunctionalGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
     public IGadgetInput Input { get; }
@@ -58,7 +58,7 @@ public sealed class GadgetMover : GadgetBase
         }
     }
 
-    public override IGadgetInput? GetInputWithName(string inputName)
+    public IGadgetInput? GetInputWithName(string inputName)
     {
         if (string.Equals(inputName, Input.InputName))
             return Input;
@@ -74,6 +74,11 @@ public sealed class GadgetMover : GadgetBase
         {
             InputName = inputName;
             _mover = mover;
+        }
+
+        public void OnRegistered()
+        {
+            _mover._active = false;
         }
 
         public void ReactToSignal(bool signal)

@@ -1,48 +1,53 @@
-﻿using Microsoft.Xna.Framework.Input;
-using NeoLemmixSharp.Common.Util.Identity;
+﻿using NeoLemmixSharp.Common.Util.Identity;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public sealed class MouseButtonAction : IIdEquatable<MouseButtonAction>
+public sealed class MouseButtonAction : IIdEquatable<MouseButtonAction>, IInputAction
 {
+    private readonly InputAction _action;
     private readonly string _actionName;
+
     public int Id { get; }
-    public int MouseButtonState { get; private set; }
 
     public MouseButtonAction(int id, string actionName)
     {
         Id = id;
         _actionName = actionName;
+        _action = new InputAction();
     }
 
-    public void UpdateState(ButtonState mouseState)
+    public ulong ActionState
     {
-        MouseButtonState = ((MouseButtonState << 1) & 2) | (int)mouseState;
+        get => _action.ActionState;
+        set => _action.ActionState = value;
     }
 
-    /// <summary>
-    /// Is the Mouse Button currently pressed down?
-    /// </summary>
-    public bool IsMouseButtonDown => (MouseButtonState & MouseButtonStatusConsts.MouseButtonPressed) == MouseButtonStatusConsts.MouseButtonPressed;
-    /// <summary>
-    /// Is the Mouse Button currently released?
-    /// </summary>
-    public bool IsMouseButtonUp => (MouseButtonState & MouseButtonStatusConsts.MouseButtonReleased) == MouseButtonStatusConsts.MouseButtonUnpressed;
-    /// <summary>
-    /// Is the Mouse Button currently pressed down, but it was previously released?
-    /// </summary>
-    public bool IsPressed => MouseButtonState == MouseButtonStatusConsts.MouseButtonPressed;
-    /// <summary>
-    /// Is the Mouse Button currently released, but it was previously pressed down?
-    /// </summary>
-    public bool IsReleased => MouseButtonState == MouseButtonStatusConsts.MouseButtonReleased;
-    /// <summary>
-    /// Is the Mouse Button currently being pressed down and it was previously pressed down?
-    /// </summary>
-    public bool IsHeld => MouseButtonState == MouseButtonStatusConsts.MouseButtonHeld;
+    public void UpdateState()
+    {
+        _action.UpdateState();
+    }
+
+    public void SetEnabled(bool enable)
+    {
+        _action.SetEnabled(enable);
+    }
+
+    public bool IsActionDown => _action.IsActionDown;
+
+    public bool IsActionUp => _action.IsActionUp;
+
+    public bool IsPressed => _action.IsPressed;
+
+    public bool IsReleased => _action.IsReleased;
+
+    public bool IsHeld => _action.IsHeld;
+
+    public bool IsDoubleTap => _action.IsDoubleTap;
+
+    public bool IsEnabled => _action.IsEnabled;
 
     public bool Equals(MouseButtonAction? other) => Id == (other?.Id ?? -1);
-    public override bool Equals(object? obj) => ReferenceEquals(this, obj) || obj is MouseButtonAction other && Id == other.Id;
+    public override bool Equals(object? obj) => obj is MouseButtonAction other && Id == other.Id;
     public override int GetHashCode() => Id;
 
     public override string ToString() => _actionName;

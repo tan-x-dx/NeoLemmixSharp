@@ -1,8 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetTypes;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
@@ -22,7 +21,7 @@ public sealed class SawBladeGadget : HitBoxGadget, IDestructionMask, IMoveableGa
     {
     }
 
-    public override InteractiveGadgetType Type => SawBladeGadgetType.Instance;
+    public override InteractiveGadgetType SubType => SawBladeGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
     public void SetHitMasks(SawBladeHitMask[] hitMasks)
@@ -41,11 +40,6 @@ public sealed class SawBladeGadget : HitBoxGadget, IDestructionMask, IMoveableGa
         var hitMask = _hitMasks[AnimationFrame];
         var position = GadgetBounds.TopLeft;
         hitMask.ApplyEraseMask(position);
-    }
-
-    public override IGadgetInput? GetInputWithName(string inputName)
-    {
-        return null;
     }
 
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)

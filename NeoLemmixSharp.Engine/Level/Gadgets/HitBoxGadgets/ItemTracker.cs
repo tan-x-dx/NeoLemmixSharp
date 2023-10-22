@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using System.Runtime.CompilerServices;
 
@@ -7,10 +8,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 public sealed class ItemTracker<T>
     where T : class, IIdEquatable<T>
 {
-    private const ulong BigMask = 0xAAAA_AAAA_AAAA_AAAA;
-
-    private const int Shift = 5;
-    private const int Mask = (1 << Shift) - 1;
+    private const ulong BigMask = 0xAAAA_AAAA_AAAA_AAAAUL;
 
     private readonly ulong[] _longs;
 
@@ -18,7 +16,7 @@ public sealed class ItemTracker<T>
     {
         var length = hasher.NumberOfItems;
 
-        var numberOfLongs = (length + Mask) >> Shift;
+        var numberOfLongs = (length + UintArrayWrapper.Mask) >> BitArray.Shift;
 
         _longs = new ulong[numberOfLongs];
     }
@@ -34,12 +32,12 @@ public sealed class ItemTracker<T>
         }
     }
 
-    public int EvaluateItem(T item)
+    public int TrackItem(T item)
     {
         var id = item.Id;
 
-        var bitIndex = (id & Mask) << 1;
-        var longIndex = id >> Shift;
+        var bitIndex = (id & UintArrayWrapper.Mask) << 1;
+        var longIndex = id >> BitArray.Shift;
 
         ref var longValue = ref _longs[longIndex];
         longValue |= 1UL << bitIndex;

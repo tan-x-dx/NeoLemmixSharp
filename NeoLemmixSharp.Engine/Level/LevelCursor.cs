@@ -52,14 +52,14 @@ public sealed class LevelCursor
         CurrentlyHighlightedLemming = null;
         _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre = int.MaxValue;
 
-        _selectOnlyWalkers = _controller.SelectOnlyWalkers.IsKeyDown;
-        _selectOnlyUnassigned = _controller.SelectOnlyUnassignedLemmings.IsKeyDown;
+        _selectOnlyWalkers = _controller.SelectOnlyWalkers.IsActionDown;
+        _selectOnlyUnassigned = _controller.SelectOnlyUnassignedLemmings.IsActionDown;
 
-        if (_controller.SelectLeftFacingLemmings.IsKeyDown)
+        if (_controller.SelectLeftFacingLemmings.IsActionDown)
         {
             _facingDirection = LeftFacingDirection.Instance;
         }
-        else if (_controller.SelectRightFacingLemmings.IsKeyDown)
+        else if (_controller.SelectRightFacingLemmings.IsActionDown)
         {
             _facingDirection = RightFacingDirection.Instance;
         }
