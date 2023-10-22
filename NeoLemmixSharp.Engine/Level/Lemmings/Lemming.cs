@@ -88,6 +88,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         PreviousLevelPosition = LevelPosition;
         PreviousTopLeftPixel = TopLeftPixel;
         PreviousBottomRightPixel = BottomRightPixel;
+
+        Renderer.UpdateLemmingState(true);
     }
 
     public void Tick()
@@ -275,9 +277,11 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         NextAction = nextAction;
     }
 
-    public void OnInitialization()
+    public void SetRawData(Team team, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
     {
-        Renderer.UpdateLemmingState(true);
+        State.SetRawData(team, rawStateData);
+        Orientation = orientation;
+        FacingDirection = facingDirection;
     }
 
     public void OnRemoval()

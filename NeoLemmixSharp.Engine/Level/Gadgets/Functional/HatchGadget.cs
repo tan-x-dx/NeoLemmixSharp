@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
@@ -19,16 +20,19 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget
     public LevelPosition PreviousBottomRightPixel { get; private set; }
 
     public LevelPosition SpawnPosition => Global.TerrainManager.NormalisePosition(GadgetBounds.TopLeft + _spawnPositionTranslation);
+    public HatchSpawnData HatchSpawnData { get; }
 
     public HatchGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
         Orientation orientation,
-        LevelPosition spawnPositionTranslation)
+        LevelPosition spawnPositionTranslation,
+        HatchSpawnData hatchSpawnData)
         : base(id, gadgetBounds)
     {
         Orientation = orientation;
         _spawnPositionTranslation = spawnPositionTranslation;
+        HatchSpawnData = hatchSpawnData;
 
         var topLeft = GadgetBounds.TopLeft;
         var bottomRight = GadgetBounds.BottomRight;
@@ -77,5 +81,10 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget
 
         TopLeftPixel = terrainManager.NormalisePosition(GadgetBounds.TopLeft);
         BottomRightPixel = terrainManager.NormalisePosition(GadgetBounds.BottomRight);
+    }
+
+    public bool CanReleaseLemmings()
+    {
+        return true;
     }
 }

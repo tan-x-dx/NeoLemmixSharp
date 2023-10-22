@@ -32,12 +32,22 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
     public int TotalNumberOfLemmings => _lemmings.Length;
     public ReadOnlySpan<Lemming> AllLemmings => new(_lemmings);
 
+    private int _nextLemmingId;
+
     public LemmingManager(
         LevelData levelData,
+        HatchGroup[] hatchGroups,
         Lemming[] lemmings,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
+        _hatchGroups = hatchGroups;
+        if (_hatchGroups.Length > 0)
+        {
+            Array.Sort(_hatchGroups, IdEquatableItemHelperMethods.Compare);
+            _hatchGroups.ValidateUniqueIds();
+        }
+
         _lemmings = lemmings;
         Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
         _lemmings.ValidateUniqueIds();
@@ -103,15 +113,23 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
         {
             LemmingsOut++;
         }
-
-        lemming.OnInitialization();
     }
 
     public void Tick()
     {
         for (var i = 0; i < _hatchGroups.Length; i++)
         {
-            _hatchGroups[i].Tick();
+            var hatchGadget = _hatchGroups[i].Tick();
+
+            if (hatchGadget is null)
+                continue;
+
+            var lemming = _lemmings[_nextLemmingId++];
+
+            lemming.LevelPosition = hatchGadget.SpawnPosition;
+            hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
+            InitialiseLemming(lemming);
+            _hatchGroups[i].OnSpawnLemming();
         }
     }
 

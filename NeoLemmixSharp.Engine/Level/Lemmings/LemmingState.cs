@@ -199,4 +199,12 @@ public sealed class LemmingState
             ? _team.ZombieSkinColor
             : _team.SkinColor;
     }
+
+    public void SetRawData(Team team, uint rawData)
+    {
+        _team = team;
+        _states = rawData;
+        UpdateHairAndBodyColors();
+        UpdateSkinColor();
+    }
 }
