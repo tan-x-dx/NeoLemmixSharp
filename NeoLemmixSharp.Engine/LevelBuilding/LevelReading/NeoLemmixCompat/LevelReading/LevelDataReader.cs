@@ -1,8 +1,8 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-public sealed class LevelDataReader : IDataReader
+public sealed class LevelDataReader : INeoLemmixDataReader
 {
     private readonly LevelData _levelData;
     private readonly bool _indentedFormat;

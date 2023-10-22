@@ -1,9 +1,9 @@
 ﻿using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-public sealed class SkillSetReader : IDataReader
+public sealed class SkillSetReader : INeoLemmixDataReader
 {
     private readonly Dictionary<string, LemmingSkill> _skillLookup = new();
     private readonly List<SkillSetData> _skillSetData;

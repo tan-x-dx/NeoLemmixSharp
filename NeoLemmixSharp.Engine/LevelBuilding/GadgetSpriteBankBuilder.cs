@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 using NeoLemmixSharp.Engine.LevelBuilding.Sprites;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 
@@ -26,7 +26,7 @@ public sealed class GadgetSpriteBankBuilder : IDisposable
         _rootDirectoryManager = rootDirectoryManager;
     }
 
-    public void LoadGadgetSprite(GadgetData gadgetData)
+    public void LoadGadgetSprite(NeoLemmixGadgetData gadgetData)
     {
         GetOrLoadPixelColorData(gadgetData);
     }
@@ -37,7 +37,7 @@ public sealed class GadgetSpriteBankBuilder : IDisposable
         _gadgetSprites.Add(lookupName, texture);
     }
 
-    private PixelColorData GetOrLoadPixelColorData(GadgetData gadgetData)
+    private PixelColorData GetOrLoadPixelColorData(NeoLemmixGadgetData gadgetData)
     {
         var rootFilePath = Path.Combine(_rootDirectoryManager.RootDirectory, "styles", gadgetData.Style, "objects", gadgetData.Piece);
 

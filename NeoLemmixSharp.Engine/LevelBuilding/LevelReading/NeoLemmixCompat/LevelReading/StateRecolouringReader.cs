@@ -1,9 +1,9 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.SpriteSet;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-public sealed class StateRecoloringReader : IDataReader
+public sealed class StateRecoloringReader : INeoLemmixDataReader
 {
     private readonly ThemeData _themeData;
 

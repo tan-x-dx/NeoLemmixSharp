@@ -1,8 +1,8 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-public sealed class TerrainReader : IDataReader
+public sealed class TerrainReader : INeoLemmixDataReader
 {
     private readonly ICollection<TerrainData> _allTerrainData;
 

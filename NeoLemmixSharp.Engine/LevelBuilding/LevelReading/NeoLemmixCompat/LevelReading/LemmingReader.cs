@@ -1,6 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reading;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-public sealed class LemmingReader : IDataReader
+public sealed class LemmingReader : INeoLemmixDataReader
 {
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$LEMMING";

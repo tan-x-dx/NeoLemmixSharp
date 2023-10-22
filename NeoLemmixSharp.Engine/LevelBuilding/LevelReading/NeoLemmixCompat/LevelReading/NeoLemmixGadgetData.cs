@@ -1,6 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-public sealed class GadgetData
+public sealed class NeoLemmixGadgetData
 {
     public string Style { get; set; }
     public string Piece { get; set; }

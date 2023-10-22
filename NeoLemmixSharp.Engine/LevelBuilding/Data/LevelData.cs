@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.GadgetArchetypes;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 

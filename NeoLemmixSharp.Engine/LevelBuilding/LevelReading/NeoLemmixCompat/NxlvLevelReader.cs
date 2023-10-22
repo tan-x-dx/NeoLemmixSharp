@@ -1,15 +1,17 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reading;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 public sealed class NxlvLevelReader : ILevelReader
 {
     private readonly RootDirectoryManager _rootDirectoryManager;
-    private readonly Dictionary<string, IDataReader> _dataReaders = new();
+    private readonly Dictionary<string, INeoLemmixDataReader> _dataReaders = new();
 
-    private IDataReader? _currentDataReader;
+    private readonly List<NeoLemmixGadgetData> _neoLemmixGadgetData = new();
+
+    private INeoLemmixDataReader? _currentDataReader;
 
     public LevelData LevelData { get; }
 
@@ -22,7 +24,7 @@ public sealed class NxlvLevelReader : ILevelReader
         AddDataReader(new LevelDataReader(LevelData, true));
         AddDataReader(new SkillSetReader(LevelData));
         AddDataReader(new TerrainGroupReader(LevelData.AllTerrainGroups));
-        AddDataReader(new GadgetReader(LevelData.AllGadgetData));
+        AddDataReader(new GadgetReader(_neoLemmixGadgetData));
         AddDataReader(new TerrainReader(LevelData.AllTerrainData));
         AddDataReader(new LemmingReader());
 
@@ -33,7 +35,7 @@ public sealed class NxlvLevelReader : ILevelReader
 
         return;
 
-        void AddDataReader(IDataReader dataReader)
+        void AddDataReader(INeoLemmixDataReader dataReader)
         {
             _dataReaders.Add(dataReader.IdentifierToken, dataReader);
         }
@@ -56,6 +58,7 @@ public sealed class NxlvLevelReader : ILevelReader
 
         ReadStyle();
         ReadSpriteData();
+        SetUpGadgets();
     }
 
     private void ProcessLine(string line, int index)
@@ -154,6 +157,11 @@ public sealed class NxlvLevelReader : ILevelReader
             var line = schemeLines[index];
             ProcessLine(line, index);
         }
+    }
+
+    private void SetUpGadgets()
+    {
+
     }
 
     public void Dispose()

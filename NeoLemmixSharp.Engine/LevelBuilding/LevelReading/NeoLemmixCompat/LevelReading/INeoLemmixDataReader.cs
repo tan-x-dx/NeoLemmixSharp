@@ -1,6 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reading;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-public interface IDataReader
+public interface INeoLemmixDataReader
 {
     bool FinishedReading { get; }
     string IdentifierToken { get; }

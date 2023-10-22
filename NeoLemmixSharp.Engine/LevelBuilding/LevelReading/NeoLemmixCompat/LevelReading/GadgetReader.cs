@@ -1,23 +1,21 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reading;
-
-public sealed class GadgetReader : IDataReader
+public sealed class GadgetReader : INeoLemmixDataReader
 {
-    private readonly ICollection<GadgetData> _allGadgetData;
+    private readonly ICollection<NeoLemmixGadgetData> _allGadgetData;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$GADGET";
-    private GadgetData? _currentGadgetData;
+    private NeoLemmixGadgetData? _currentGadgetData;
 
-    public GadgetReader(ICollection<GadgetData> allGadgetData)
+    public GadgetReader(ICollection<NeoLemmixGadgetData> allGadgetData)
     {
         _allGadgetData = allGadgetData;
     }
 
     public void BeginReading(string[] tokens)
     {
-        _currentGadgetData = new GadgetData();
+        _currentGadgetData = new NeoLemmixGadgetData();
         FinishedReading = false;
     }
 

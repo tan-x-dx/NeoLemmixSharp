@@ -1,8 +1,8 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.SpriteSet;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-public sealed class SpriteSetRecoloringReader : IDataReader
+public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
 {
     private readonly LemmingSpriteSetRecoloring _lemmingSpriteSetRecoloring;
 

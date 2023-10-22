@@ -1,17 +1,15 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
@@ -21,7 +19,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding;
 
 public sealed class LevelObjectAssembler : IDisposable
 {
-    private readonly GraphicsDevice _graphicsDevice;
     private readonly SpriteBatch _spriteBatch;
 
     private readonly List<Lemming> _lemmings = new();
@@ -38,11 +35,10 @@ public sealed class LevelObjectAssembler : IDisposable
         SpriteBatch spriteBatch,
         RootDirectoryManager rootDirectoryManager)
     {
-        _graphicsDevice = graphicsDevice;
         _spriteBatch = spriteBatch;
 
         _lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
-        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(_graphicsDevice, contentManager, rootDirectoryManager);
+        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(graphicsDevice, contentManager, rootDirectoryManager);
         _controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder(graphicsDevice, contentManager);
     }
 
@@ -50,43 +46,11 @@ public sealed class LevelObjectAssembler : IDisposable
         ContentManager contentManager,
         LevelData levelData)
     {
-        //SetUpTestLemmings();
-        //SetUpLemmings();
-        //SetUpGadgets(content, levelData.AllGadgetData);
-
-        var id = 0;
-        var p = new RectangularLevelRegion(250, 90, 40, 2);
-        var input = new MetalGrateGadget.MetalGrateGadgetInput("input");
-
-        var metalGrateGadget = new MetalGrateGadget(
-            id++,
-            p,
-            input,
-            true);
-
-        _gadgets.Add(metalGrateGadget);
-        _gadgetRenderers.Add(new MetalGrateRenderer(metalGrateGadget));
-
-        p = new RectangularLevelRegion(296, 142, 19, 13);
-        var switchGadget = new SwitchGadget(id++, p, true);
-        switchGadget.Output.RegisterInput(input);
-
-        _gadgets.Add(switchGadget);
-        _gadgetRenderers.Add(new SwitchRenderer(switchGadget));
-
-        var sawBladeGadget = LoadSawBlade(contentManager);
-
-        var mover = new GadgetMover(
-            3,
-            new RectangularLevelRegion(0, 0, 1, 1),
-            new IMoveableGadget[] { sawBladeGadget },
-            0, 1, 1);
-
-        switchGadget.Output.RegisterInput(mover.GetInputWithName("Input")!);
-        _gadgets.Add(mover);
-
+        SetUpTestLemmings();
+        SetUpLemmings();
+        SetUpGadgets(contentManager, levelData.AllGadgetData);
     }
-
+    /*
     private SawBladeGadget LoadSawBlade(ContentManager contentManager)
     {
         var p = new RectangularLevelRegion(100, 100, 14, 14);
@@ -169,7 +133,7 @@ public sealed class LevelObjectAssembler : IDisposable
 
         return new SawBladeHitMask(sawBladeGadget, sawBladeGadget.GadgetBounds, levelPositions.ToArray());
     }
-
+    */
     public Lemming[] GetLevelLemmings()
     {
         SetUpTestLemmings();
@@ -423,37 +387,9 @@ public sealed class LevelObjectAssembler : IDisposable
 
     private void SetUpGadgets(ContentManager contentManager, ICollection<GadgetData> allGadgetData)
     {
-        var texture = Texture2D.FromFile(_graphicsDevice, "C:\\Users\\andre\\Documents\\NeoLemmix_v12.12.5\\styles\\namida_systemtest\\objects\\nineslicetest.png");
-
-        var sW = texture.Width;
-        var sH = texture.Height;
-        var sL = 8;
-        var sR = texture.Width - 6;
-        var sT = 3;
-        var sB = texture.Height - 2;
-
-        /*
-        var texture = contentManager.Load<Texture2D>("sprites/style/common/water");
-
-        var sW = 64;
-        var sH = 32;
-        var sL = 0;
-        var sR = 64;
-        var sT = 16;
-        var sB = 32;
-        */
-
-        var c = new RectangularLevelRegion(20, 20, 64, 32);
-
-        /*  var water = new ResizeableGadget(0, GadgetType.Water, DownOrientation.Instance, c);
-          var r = new NineSliceRenderer(c, texture, sW, sH, sT, sB, sL, sR);
-
-          _gadgets.Add(water);
-          _gadgetRenderers.Add(r);*/
-
         foreach (var gadgetData in allGadgetData)
         {
-            _gadgetSpriteBankBuilder.LoadGadgetSprite(gadgetData);
+            //    _gadgetSpriteBankBuilder.LoadGadgetSprite(gadgetData);
         }
     }
 }
