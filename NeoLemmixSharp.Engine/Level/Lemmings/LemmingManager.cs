@@ -175,7 +175,11 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
     public void DeregisterBlocker(Lemming lemming) => _blockerHelper.DeregisterBlocker(lemming);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void DoBlockerCheck(Lemming lemming) => _blockerHelper.CheckBlockers(lemming);
+    public bool DoBlockerCheck(Lemming lemming)
+    {
+        _blockerHelper.CheckBlockers(lemming);
+        return true;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool CanAssignBlocker(Lemming lemming) => _blockerHelper.CanAssignBlocker(lemming);
