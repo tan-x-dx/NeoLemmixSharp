@@ -4,12 +4,17 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Menu.Rendering;
 
 namespace NeoLemmixSharp.Menu;
 
 public sealed class MenuScreen : IBaseScreen
 {
+    private readonly IPage[] _allPages;
+
+    private IPage _currentPage;
+
     public MenuInputController InputController { get; } = new();
 
     public MenuScreenRenderer MenuScreenRenderer { get; }
@@ -27,12 +32,31 @@ public sealed class MenuScreen : IBaseScreen
     {
         var menuCursorRenderer = new MenuCursorRenderer(graphicsDevice, InputController);
 
-        MenuScreenRenderer = new MenuScreenRenderer(content, graphicsDevice, spriteBatch, fontBank, menuCursorRenderer);
+        _allPages = GeneratePages();
+        _currentPage = _allPages[0];
+
+        MenuScreenRenderer = new MenuScreenRenderer(
+            content,
+            graphicsDevice,
+            spriteBatch,
+            fontBank,
+            menuCursorRenderer);
     }
 
     public void Initialise()
     {
         MenuScreenRenderer.Initialise();
+        MenuScreenRenderer.SetPage(_currentPage);
+    }
+
+    private IPage[] GeneratePages()
+    {
+        var result = new IPage[]
+        {
+            new MainPage(InputController)
+        };
+
+        return result;
     }
 
     public void Tick()

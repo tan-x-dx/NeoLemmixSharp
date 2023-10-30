@@ -1,9 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Myra.Graphics2D.TextureAtlases;
+using Myra.Graphics2D.UI;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Menu.Pages;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
@@ -14,19 +16,17 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     private readonly SpriteBatch _spriteBatch;
     private readonly FontBank _fontBank;
 
+    private readonly Desktop _desktop = new();
+
     private readonly MenuCursorRenderer _menuCursorRenderer;
 
     private Texture2D _backGround;
-    private bool _initialised;
+    private bool _initialized;
 
     public bool IsDisposed { get; private set; }
     public IGameWindow GameWindow { get; set; }
 
-    private int _backGroundTileX;
-    private int _backGroundTileY;
-
-    public MenuScreenRenderer(
-        ContentManager contentManager,
+    public MenuScreenRenderer(ContentManager contentManager,
         GraphicsDevice graphicsDevice,
         SpriteBatch spriteBatch,
         FontBank fontBank,
@@ -43,59 +43,34 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     {
         _backGround = _contentManager.Load<Texture2D>("background");
 
+        _desktop.Background = new TextureRegion(_backGround);
 
-        RecalculateBackgroundTileValues();
+        _initialized = true;
+    }
 
-        _initialised = true;
+    public void SetPage(IPage page)
+    {
+        _desktop.Root = page.RootWidget;
     }
 
     public void RenderScreen(SpriteBatch spriteBatch)
     {
-        RenderBackground(spriteBatch);
+        _desktop.Render();
 
         _menuCursorRenderer.RenderCursor(spriteBatch);
     }
 
-    private void RenderBackground(SpriteBatch spriteBatch)
-    {
-        var spriteWidth = _backGround.Width;
-        var spriteHeight = _backGround.Height;
-
-        for (var x = 0; x < _backGroundTileX; x++)
-        {
-            var vx = x * spriteWidth;
-
-            for (var y = 0; y < _backGroundTileY; y++)
-            {
-                var vy = y * spriteHeight;
-
-                spriteBatch.Draw(_backGround, new Vector2(vx, vy), Color.White);
-            }
-        }
-    }
-
     public void OnWindowSizeChanged()
     {
-        if (!_initialised)
+        if (!_initialized)
             return;
 
-        RecalculateBackgroundTileValues();
-    }
-
-    private void RecalculateBackgroundTileValues()
-    {
-        var spriteWidth = _backGround.Width;
-        var spriteHeight = _backGround.Height;
-
-        var windowWidth = GameWindow.WindowWidth;
-        var windowHeight = GameWindow.WindowHeight;
-
-        _backGroundTileX = 1 + windowWidth / spriteWidth;
-        _backGroundTileY = 1 + windowHeight / spriteHeight;
     }
 
     public void Dispose()
     {
+        _desktop.Dispose();
+
         HelperMethods.DisposeOf(ref _backGround);
         _menuCursorRenderer.Dispose();
     }

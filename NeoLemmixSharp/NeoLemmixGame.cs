@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Myra;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
@@ -103,7 +104,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         var menuScreen = new MenuScreen(Content, GraphicsDevice, _spriteBatch, _fontBank);
         SetScreen(menuScreen);
         menuScreen.Initialise();
-        
+
         CaptureCursor();
     }
 
@@ -130,6 +131,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
 
         _rootDirectoryManager = new RootDirectoryManager();
+
+        MyraEnvironment.Game = this;
     }
 
     private void LoadLevel_Debug()

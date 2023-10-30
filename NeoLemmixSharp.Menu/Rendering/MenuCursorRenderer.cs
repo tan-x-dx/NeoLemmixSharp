@@ -15,7 +15,7 @@ public sealed class MenuCursorRenderer : IDisposable
         _cursorTexture = CreateCursorTexture_Debug(graphicsDevice);
     }
 
-    private Texture2D CreateCursorTexture_Debug(GraphicsDevice graphicsDevice)
+    private static Texture2D CreateCursorTexture_Debug(GraphicsDevice graphicsDevice)
     {
         var cursorTexture = new Texture2D(graphicsDevice, 32, 32);
 
