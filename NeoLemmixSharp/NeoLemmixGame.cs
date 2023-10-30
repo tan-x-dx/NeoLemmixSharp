@@ -100,8 +100,10 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         InitialiseGameConstants();
 
         //LoadLevel_Debug();
-        SetScreen(new MenuScreen());
-
+        var menuScreen = new MenuScreen(Content, GraphicsDevice, _spriteBatch, _fontBank);
+        SetScreen(menuScreen);
+        menuScreen.Initialise();
+        
         CaptureCursor();
     }
 

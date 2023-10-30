@@ -10,5 +10,5 @@ public interface IScreenRenderer : IDisposable
     IGameWindow GameWindow { get; set; }
 
     void RenderScreen(SpriteBatch spriteBatch);
-    void OnWindowSizeChanged(int windowWidth, int windowHeight);
+    void OnWindowSizeChanged();
 }

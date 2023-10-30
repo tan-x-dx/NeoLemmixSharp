@@ -125,7 +125,7 @@ public sealed class LevelScreen : IBaseScreen
 
         ControlPanel.SetWindowDimensions(windowWidth, windowHeight);
         Viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)ControlPanel).ControlPanelScreenHeight);
-        LevelRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
+        LevelRenderer.OnWindowSizeChanged();
     }
 
     public void Dispose()

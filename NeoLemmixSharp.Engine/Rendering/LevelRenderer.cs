@@ -139,7 +139,7 @@ public sealed class LevelRenderer : IScreenRenderer
         _fontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20, 1, MenuFont.DefaultColor);
     }
 
-    public void OnWindowSizeChanged(int windowWidth, int windowHeight)
+    public void OnWindowSizeChanged()
     {
     }
 

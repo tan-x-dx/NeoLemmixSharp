@@ -1,4 +1,7 @@
-﻿using NeoLemmixSharp.Common.Rendering;
+﻿using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Menu.Rendering;
@@ -14,12 +17,31 @@ public sealed class MenuScreen : IBaseScreen
     public string ScreenTitle => "NeoLemmixSharp";
     public bool IsDisposed { get; private set; }
 
-    public MenuScreen()
+    public MenuScreen(
+        ContentManager content,
+        GraphicsDevice graphicsDevice,
+        SpriteBatch spriteBatch,
+        FontBank fontBank)
     {
-        MenuScreenRenderer = new MenuScreenRenderer();
+        MenuScreenRenderer = new MenuScreenRenderer(content, graphicsDevice, spriteBatch, fontBank, null);
+    }
+
+    public void Initialise()
+    {
+        MenuScreenRenderer.Initialise();
     }
 
     public void Tick()
+    {
+        HandleKeyboardInput();
+        HandleMouseInput();
+    }
+
+    private void HandleKeyboardInput()
+    {
+    }
+
+    private void HandleMouseInput()
     {
     }
 
