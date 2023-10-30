@@ -27,10 +27,10 @@ public sealed class LevelScreen : IBaseScreen
     public LemmingManager LemmingManager { get; }
     public TerrainManager TerrainManager { get; }
     public GadgetManager GadgetManager { get; }
-    public LevelRenderer ScreenRenderer { get; }
+    public LevelRenderer LevelRenderer { get; }
 
     public IGameWindow GameWindow { get; set; }
-    IScreenRenderer IBaseScreen.ScreenRenderer => ScreenRenderer;
+    IScreenRenderer IBaseScreen.ScreenRenderer => LevelRenderer;
     public string ScreenTitle { get; }
     public bool IsDisposed { get; private set; }
 
@@ -60,7 +60,7 @@ public sealed class LevelScreen : IBaseScreen
         LemmingManager = lemmingManager;
         TerrainManager = terrainManager;
         GadgetManager = gadgetManager;
-        ScreenRenderer = levelRenderer;
+        LevelRenderer = levelRenderer;
 
         Current = this;
 
@@ -125,7 +125,7 @@ public sealed class LevelScreen : IBaseScreen
 
         ControlPanel.SetWindowDimensions(windowWidth, windowHeight);
         Viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)ControlPanel).ControlPanelScreenHeight);
-        ScreenRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
+        LevelRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
     }
 
     public void Dispose()
@@ -136,7 +136,7 @@ public sealed class LevelScreen : IBaseScreen
         Global.SetGadgetManager(null);
         Global.SetSkillSetManager(null);
 
-        ScreenRenderer.Dispose();
+        LevelRenderer.Dispose();
         IsDisposed = true;
         Current = null;
 #pragma warning restore CS8625
