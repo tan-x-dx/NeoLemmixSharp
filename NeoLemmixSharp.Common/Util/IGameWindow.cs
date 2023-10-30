@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Screen;
+
+namespace NeoLemmixSharp.Common.Util;
 
 public interface IGameWindow
 {
@@ -8,6 +10,7 @@ public interface IGameWindow
     bool IsActive { get; }
     bool IsFullScreen { get; }
 
+    void SetScreen(IBaseScreen screen);
     void ToggleFullScreen();
     void ToggleBorderless();
     void Escape();

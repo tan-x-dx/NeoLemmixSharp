@@ -35,6 +35,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj" />
     <ProjectReference Include="..\NeoLemmixSharp.Engine\NeoLemmixSharp.Engine.csproj" />
+    <ProjectReference Include="..\NeoLemmixSharp.Menu\NeoLemmixSharp.Menu.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="DebugConfig.txt">

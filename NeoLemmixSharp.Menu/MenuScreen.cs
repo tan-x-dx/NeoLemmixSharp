@@ -16,7 +16,7 @@ public sealed class MenuScreen : IBaseScreen
 
     public MenuScreen()
     {
-        
+        MenuScreenRenderer = new MenuScreenRenderer();
     }
 
     public void Tick()

@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoLemmixSharp", "NeoLemmixSharp\NeoLemmixSharp.csproj", "{B4EB701D-12AE-490A-B01C-58EE79EED155}"
+	ProjectSection(ProjectDependencies) = postProject
+		{71450571-E95A-4A5F-A7B8-E8505B419838} = {71450571-E95A-4A5F-A7B8-E8505B419838}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoLemmixSharp.Common", "NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj", "{A2E72BB7-DB16-49D9-B310-7942B89EF30C}"
 EndProject

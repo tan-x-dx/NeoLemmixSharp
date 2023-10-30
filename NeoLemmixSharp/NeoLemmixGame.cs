@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -13,12 +13,12 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.LevelBuilding;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+using NeoLemmixSharp.Menu;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
 namespace NeoLemmixSharp;
 
@@ -99,40 +99,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         InitialiseGameConstants();
 
-        var file =
-        //    "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
-        //  "levels\\rotation test.nxlv";
-        //  "levels\\render test.nxlv";
-         "levels\\movement test.nxlv";
-        // "levels\\object test.nxlv";
-        // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
-        //   "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
-        //  "levels\\Amiga Lemmings\\Lemmings\\Tricky\\05_Careless_clicking_costs_lives.nxlv";
-        //   "levels\\LemRunner\\Industry\\TheNightShift.nxlv";
-        //  "levels\\Amiga Lemmings\\Lemmings\\Tricky\\04_Here's_one_I_prepared_earlier.nxlv";
-        //"levels\\IntegralLemmingsV5\\Alpha\\TheseLemmingsAndThoseLemmings.nxlv";
-        //"levels\\CuttingItClose.nxlv";
-        //    "levels\\scrollTest.nxlv";
-        //  "levels\\LemRunner\\Mona\\ACaeloUsqueAdCentrum.nxlv";
-        // "levels\\groupTest.nxlv";
-        //    "levels\\eraseTest.nxlv";
-        //  "levels\\Amiga Lemmings\\Lemmings\\Fun\\19_Take_good_care_of_my_Lemmings.nxlv";
-
-        var path = Path.Combine(_rootDirectoryManager.RootDirectory, file);
-
-        var fileExtension = Path.GetExtension(file);
-        var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension, _rootDirectoryManager);
-
-        using (var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, _fontBank, _rootDirectoryManager, levelReader))
-        {
-            Screen = levelBuilder.BuildLevel(path);
-            Screen.GameWindow = this;
-            Screen.OnWindowSizeChanged();
-            ScreenRenderer = Screen.ScreenRenderer;
-            ScreenRenderer.GameWindow = this;
-        }
-
-        Window.Title = Screen.ScreenTitle;
+        //LoadLevel_Debug();
+        SetScreen(new MenuScreen());
 
         CaptureCursor();
     }
@@ -160,6 +128,47 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
 
         _rootDirectoryManager = new RootDirectoryManager();
+    }
+
+    private void LoadLevel_Debug()
+    {
+        var file =
+            //    "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
+            //  "levels\\rotation test.nxlv";
+            //  "levels\\render test.nxlv";
+            "levels\\movement test.nxlv";
+        // "levels\\object test.nxlv";
+        // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
+        //   "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
+        //  "levels\\Amiga Lemmings\\Lemmings\\Tricky\\05_Careless_clicking_costs_lives.nxlv";
+        //   "levels\\LemRunner\\Industry\\TheNightShift.nxlv";
+        //  "levels\\Amiga Lemmings\\Lemmings\\Tricky\\04_Here's_one_I_prepared_earlier.nxlv";
+        //"levels\\IntegralLemmingsV5\\Alpha\\TheseLemmingsAndThoseLemmings.nxlv";
+        //"levels\\CuttingItClose.nxlv";
+        //    "levels\\scrollTest.nxlv";
+        //  "levels\\LemRunner\\Mona\\ACaeloUsqueAdCentrum.nxlv";
+        // "levels\\groupTest.nxlv";
+        //    "levels\\eraseTest.nxlv";
+        //  "levels\\Amiga Lemmings\\Lemmings\\Fun\\19_Take_good_care_of_my_Lemmings.nxlv";
+
+        var path = Path.Combine(_rootDirectoryManager.RootDirectory, file);
+
+        var fileExtension = Path.GetExtension(file);
+        var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension, _rootDirectoryManager);
+
+        using var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, _fontBank, _rootDirectoryManager, levelReader);
+        SetScreen(levelBuilder.BuildLevel(path));
+    }
+
+    public void SetScreen(IBaseScreen screen)
+    {
+        Screen = screen;
+        Screen.GameWindow = this;
+        Screen.OnWindowSizeChanged();
+        ScreenRenderer = Screen.ScreenRenderer;
+        ScreenRenderer.GameWindow = this;
+
+        Window.Title = Screen.ScreenTitle;
     }
 
     protected override void Update(GameTime gameTime)
