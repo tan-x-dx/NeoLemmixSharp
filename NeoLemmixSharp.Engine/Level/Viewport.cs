@@ -121,13 +121,13 @@ public sealed class Viewport
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private bool MouseIsInLevelViewport(InputController inputController)
+    private bool MouseIsInLevelViewport(LevelInputController inputController)
     {
         return inputController.MouseX >= 0 && inputController.MouseX <= _windowWidth &&
                inputController.MouseY >= 0 && inputController.MouseY <= _windowHeight - _controlPanelHeight;
     }
 
-    private void TrackScrollWheel(InputController inputController)
+    private void TrackScrollWheel(LevelInputController inputController)
     {
         var previousValue = ScaleMultiplier;
         ScaleMultiplier = Math.Clamp(ScaleMultiplier + inputController.ScrollDelta, MinScale, MaxScale);

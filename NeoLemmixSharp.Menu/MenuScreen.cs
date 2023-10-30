@@ -10,6 +10,8 @@ namespace NeoLemmixSharp.Menu;
 
 public sealed class MenuScreen : IBaseScreen
 {
+    public MenuInputController InputController { get; } = new();
+
     public MenuScreenRenderer MenuScreenRenderer { get; }
 
     public IGameWindow GameWindow { get; set; }
