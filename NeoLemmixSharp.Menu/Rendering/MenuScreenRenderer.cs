@@ -14,9 +14,10 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     private readonly SpriteBatch _spriteBatch;
     private readonly FontBank _fontBank;
 
-    private readonly CursorRenderer _cursorRenderer;
+    private readonly MenuCursorRenderer _menuCursorRenderer;
 
     private Texture2D _backGround;
+    private bool _initialised;
 
     public bool IsDisposed { get; private set; }
     public IGameWindow GameWindow { get; set; }
@@ -29,13 +30,13 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         GraphicsDevice graphicsDevice,
         SpriteBatch spriteBatch,
         FontBank fontBank,
-        CursorRenderer cursorRenderer)
+        MenuCursorRenderer menuCursorRenderer)
     {
         _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;
         _spriteBatch = spriteBatch;
         _fontBank = fontBank;
-        _cursorRenderer = cursorRenderer;
+        _menuCursorRenderer = menuCursorRenderer;
     }
 
     public void Initialise()
@@ -44,13 +45,15 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
 
         RecalculateBackgroundTileValues();
+
+        _initialised = true;
     }
 
     public void RenderScreen(SpriteBatch spriteBatch)
     {
         RenderBackground(spriteBatch);
 
-        _cursorRenderer.RenderCursor(spriteBatch);
+        _menuCursorRenderer.RenderCursor(spriteBatch);
     }
 
     private void RenderBackground(SpriteBatch spriteBatch)
@@ -73,6 +76,9 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     public void OnWindowSizeChanged()
     {
+        if (!_initialised)
+            return;
+
         RecalculateBackgroundTileValues();
     }
 
@@ -91,6 +97,6 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     public void Dispose()
     {
         HelperMethods.DisposeOf(ref _backGround);
-        _cursorRenderer.Dispose();
+        _menuCursorRenderer.Dispose();
     }
 }

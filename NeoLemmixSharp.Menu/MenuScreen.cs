@@ -25,7 +25,9 @@ public sealed class MenuScreen : IBaseScreen
         SpriteBatch spriteBatch,
         FontBank fontBank)
     {
-        MenuScreenRenderer = new MenuScreenRenderer(content, graphicsDevice, spriteBatch, fontBank, null);
+        var menuCursorRenderer = new MenuCursorRenderer(graphicsDevice, InputController);
+
+        MenuScreenRenderer = new MenuScreenRenderer(content, graphicsDevice, spriteBatch, fontBank, menuCursorRenderer);
     }
 
     public void Initialise()
@@ -35,8 +37,20 @@ public sealed class MenuScreen : IBaseScreen
 
     public void Tick()
     {
+        InputController.Tick();
+
         HandleKeyboardInput();
         HandleMouseInput();
+
+        if (InputController.Quit.IsPressed)
+        {
+            GameWindow.Escape();
+        }
+
+        if (InputController.ToggleFullScreen.IsPressed)
+        {
+            GameWindow.ToggleBorderless();
+        }
     }
 
     private void HandleKeyboardInput()
@@ -49,6 +63,7 @@ public sealed class MenuScreen : IBaseScreen
 
     public void OnWindowSizeChanged()
     {
+        MenuScreenRenderer.OnWindowSizeChanged();
     }
 
     public void Dispose()

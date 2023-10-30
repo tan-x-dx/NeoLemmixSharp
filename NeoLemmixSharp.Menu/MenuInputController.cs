@@ -25,6 +25,9 @@ public sealed class MenuInputController
     public KeyAction Space { get; }
     public KeyAction Enter { get; }
 
+    public KeyAction ToggleFullScreen { get; }
+    public KeyAction Quit { get; }
+
     public MenuInputController()
     {
         RightArrow = _inputController.CreateKeyAction("\u2192");
@@ -34,6 +37,9 @@ public sealed class MenuInputController
 
         Space = _inputController.CreateKeyAction("Space");
         Enter = _inputController.CreateKeyAction("Enter");
+
+        ToggleFullScreen = _inputController.CreateKeyAction("Toggle Full Screen");
+        Quit = _inputController.CreateKeyAction("Quit");
 
         _inputController.ValidateKeyActions();
 
@@ -53,5 +59,10 @@ public sealed class MenuInputController
         _inputController.Bind(Keys.Down, DownArrow);
 
         _inputController.Bind(Keys.Space, Space);
+
+        _inputController.Bind(Keys.F1, ToggleFullScreen);
+        _inputController.Bind(Keys.Escape, Quit);
     }
+
+    public void Tick() => _inputController.Tick();
 }

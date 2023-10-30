@@ -4,12 +4,14 @@ using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
-public sealed class CursorRenderer : IDisposable
+public sealed class MenuCursorRenderer : IDisposable
 {
+    private readonly MenuInputController _menuCursor;
     private Texture2D _cursorTexture;
 
-    public CursorRenderer(GraphicsDevice graphicsDevice)
+    public MenuCursorRenderer(GraphicsDevice graphicsDevice, MenuInputController menuCursor)
     {
+        _menuCursor = menuCursor;
         _cursorTexture = CreateCursorTexture_Debug(graphicsDevice);
     }
 
@@ -68,6 +70,6 @@ public sealed class CursorRenderer : IDisposable
 
     public void RenderCursor(SpriteBatch spriteBatch)
     {
-
+        spriteBatch.Draw(_cursorTexture, new Vector2(_menuCursor.MouseX, _menuCursor.MouseY), Color.White);
     }
 }
