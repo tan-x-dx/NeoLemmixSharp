@@ -11,4 +11,12 @@
     <ProjectReference Include="..\NeoLemmixSharp.Engine\NeoLemmixSharp.Engine.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Rendering\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
+  </ItemGroup>
+
 </Project>
