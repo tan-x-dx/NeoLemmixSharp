@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Common.Rendering;
 
 public interface IScreenRenderer : IDisposable
 {
-    bool IsDisposed { get; protected set; }
+    bool IsDisposed { get; }
 
     IGameWindow GameWindow { get; set; }
 
