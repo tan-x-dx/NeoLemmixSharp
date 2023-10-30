@@ -43,7 +43,10 @@ public sealed class SmallListBlockerHelper : IBlockerHelper
 
     public void CheckBlockers(Lemming lemming)
     {
-        if (lemming.CurrentAction == BlockerAction.Instance)
+        if (_blockerList.Count == 0 ||
+            lemming.CurrentAction == BlockerAction.Instance ||
+            lemming.CurrentAction == JumperAction.Instance ||
+            (lemming.CurrentAction == MinerAction.Instance && (lemming.PhysicsFrame == 1 || lemming.PhysicsFrame == 2)))
             return;
 
         var anchorPosition = lemming.LevelPosition;

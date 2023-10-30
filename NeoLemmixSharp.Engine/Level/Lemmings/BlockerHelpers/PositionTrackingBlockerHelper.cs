@@ -60,7 +60,10 @@ public sealed class PositionTrackingBlockerHelper : IBlockerHelper
 
     public void CheckBlockers(Lemming lemming)
     {
-        if (lemming.CurrentAction == BlockerAction.Instance)
+        if (_blockerSpacialHashGrid.IsEmpty ||
+            lemming.CurrentAction == BlockerAction.Instance ||
+            lemming.CurrentAction == JumperAction.Instance ||
+            (lemming.CurrentAction == MinerAction.Instance && (lemming.PhysicsFrame == 1 || lemming.PhysicsFrame == 2)))
             return;
 
         var anchorPosition = lemming.LevelPosition;

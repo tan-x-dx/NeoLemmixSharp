@@ -88,6 +88,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         PreviousLevelPosition = LevelPosition;
         PreviousTopLeftPixel = TopLeftPixel;
         PreviousBottomRightPixel = BottomRightPixel;
+
+        Renderer.UpdateLemmingState(true);
     }
 
     public void Tick()
@@ -162,8 +164,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
             PreviousLevelPosition = LevelPosition;
         }
 
-        var result = CheckGadgets() &&
-                     CheckBlockers();
+        var result = CheckGadgets() && Global.LemmingManager.DoBlockerCheck(this);
 
         NextAction.TransitionLemmingToAction(this, false);
 
@@ -237,21 +238,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         gadget.OnLemmingMatch(this);
     }
 
-    /// <summary>
-    /// Check for blockers, but not for miners removing terrain,
-    /// see http://www.lemmingsforums.net/index.php?topic=2710.0.
-    /// Also not for Jumpers, as this is handled by the JumperAction
-    /// </summary>
-    private bool CheckBlockers()
-    {
-        if (CurrentAction == JumperAction.Instance ||
-            (CurrentAction == MinerAction.Instance && (PhysicsFrame == 1 || PhysicsFrame == 2)))
-            return true;
-
-        Global.LemmingManager.DoBlockerCheck(this);
-        return true;
-    }
-
     public void SetFacingDirection(FacingDirection newFacingDirection)
     {
         FacingDirection = newFacingDirection;
@@ -275,9 +261,11 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         NextAction = nextAction;
     }
 
-    public void OnInitialization()
+    public void SetRawData(Team team, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
     {
-        Renderer.UpdateLemmingState(true);
+        State.SetRawData(team, rawStateData);
+        Orientation = orientation;
+        FacingDirection = facingDirection;
     }
 
     public void OnRemoval()

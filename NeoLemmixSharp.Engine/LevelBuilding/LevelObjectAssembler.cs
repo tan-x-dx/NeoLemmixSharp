@@ -134,6 +134,12 @@ public sealed class LevelObjectAssembler : IDisposable
         return new SawBladeHitMask(sawBladeGadget, sawBladeGadget.GadgetBounds, levelPositions.ToArray());
     }
     */
+
+    public HatchGroup[] GetHatchGroups()
+    {
+        return Array.Empty<HatchGroup>();
+    }
+
     public Lemming[] GetLevelLemmings()
     {
         SetUpTestLemmings();

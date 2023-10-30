@@ -258,29 +258,26 @@ public sealed class SpacialHashGrid<T>
 
     private void UseChunkPosition(UseChunkPositionMode useChunkPositionMode, T? item, int x, int y)
     {
-        if (useChunkPositionMode == UseChunkPositionMode.Union)
+        switch (useChunkPositionMode)
         {
-            var readOnlySpan = ReadOnlySpanFor(x, y);
+            case UseChunkPositionMode.Add:
+                var addSpan = SpanFor(x, y);
+                BitArray.SetBit(addSpan, _hasher.Hash(item!));
+                break;
 
-            _setUnionScratchSpace.UnionWith(readOnlySpan);
+            case UseChunkPositionMode.Remove:
+                var removeSpan = SpanFor(x, y);
+                BitArray.ClearBit(removeSpan, _hasher.Hash(item!));
+                break;
 
-            return;
+            case UseChunkPositionMode.Union:
+                var readOnlySpan = ReadOnlySpanFor(x, y);
+                _setUnionScratchSpace.UnionWith(readOnlySpan);
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(useChunkPositionMode), useChunkPositionMode, "Invalid value");
         }
-
-        var span = SpanFor(x, y);
-        if (useChunkPositionMode == UseChunkPositionMode.Add)
-        {
-            BitArray.SetBit(span, _hasher.Hash(item!));
-            return;
-        }
-
-        if (useChunkPositionMode == UseChunkPositionMode.Remove)
-        {
-            BitArray.ClearBit(span, _hasher.Hash(item!));
-            return;
-        }
-
-        throw new ArgumentOutOfRangeException(nameof(useChunkPositionMode), useChunkPositionMode, "Invalid value");
     }
 
     [Pure]
