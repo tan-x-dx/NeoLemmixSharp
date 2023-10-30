@@ -130,7 +130,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         Lemming lemming,
         LevelPosition levelPosition)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
 
         var result = 0;
         if (terrainManager.PixelIsSolidToLemming(lemming, levelPosition))

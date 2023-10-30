@@ -11,7 +11,7 @@ public sealed class PlatformerSkill : LemmingSkill
     {
     }
 
-    public override int Id => Global.PlatformerSkillId;
+    public override int Id => LevelConstants.PlatformerSkillId;
     public override string LemmingSkillName => "platformer";
     public override bool IsClassicSkill => false;
 

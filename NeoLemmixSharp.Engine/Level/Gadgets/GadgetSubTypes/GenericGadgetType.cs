@@ -11,7 +11,7 @@ public sealed class GenericGadgetType : InteractiveGadgetType
     {
     }
 
-    public override int Id => Global.GenericGadgetTypeId;
+    public override int Id => LevelConstants.GenericGadgetTypeId;
     public override string GadgetTypeName => "generic";
 
     public override LemmingAction InteractWithLemming(Lemming lemming)

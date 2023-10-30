@@ -55,18 +55,18 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
     {
     }
 
-    public override int Id => Global.LasererActionId;
+    public override int Id => LevelConstants.LasererActionId;
     public override string LemmingActionName => "laserer";
-    public override int NumberOfAnimationFrames => Global.LasererAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.LasererAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (!Global.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+        if (!LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
@@ -154,7 +154,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         LevelPosition target,
         ReadOnlySpan<LevelPosition> offsetChecks)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         if (terrainManager.PositionOutOfBounds(target))
             return LaserHitType.OutOfBounds;
 

@@ -21,7 +21,7 @@ public abstract class LevelTimer
     public void Tick()
     {
        // ElapsedTicks++;
-       // if (ElapsedTicks % Global.FramesPerSecond != 0)
+       // if (ElapsedTicks % LevelConstants.FramesPerSecond != 0)
        //     return;
 
         ElapsedSeconds++;
@@ -31,7 +31,7 @@ public abstract class LevelTimer
     public void SetElapsedTicks(int elapsedTicks)
     {
      //   ElapsedTicks = elapsedTicks;
-        ElapsedSeconds = elapsedTicks / EngineGlobal.FramesPerSecond;
+        ElapsedSeconds = elapsedTicks / EngineConstants.FramesPerSecond;
 
         UpdateAppearance();
     }

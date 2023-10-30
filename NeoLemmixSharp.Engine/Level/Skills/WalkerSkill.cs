@@ -11,13 +11,13 @@ public sealed class WalkerSkill : LemmingSkill
     {
     }
 
-    public override int Id => Global.WalkerSkillId;
+    public override int Id => LevelConstants.WalkerSkillId;
     public override string LemmingSkillName => "walker";
     public override bool IsClassicSkill => false;
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;

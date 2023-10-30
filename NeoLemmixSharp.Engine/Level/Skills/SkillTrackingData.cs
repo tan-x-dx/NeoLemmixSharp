@@ -9,7 +9,7 @@ public sealed class SkillTrackingData
     public Team Team { get; }
     public int SkillCount { get; private set; }
 
-    public bool IsInfinite => SkillCount == Global.InfiniteSkillCount;
+    public bool IsInfinite => SkillCount == LevelConstants.InfiniteSkillCount;
 
     public SkillTrackingData(LemmingSkill skill, Team team, int skillCount)
     {
@@ -31,9 +31,9 @@ public sealed class SkillTrackingData
 
     public void SetSkillCount(int skillCount) => SkillCount = skillCount switch
     {
-        >= Global.InfiniteSkillCount => Skill == ClonerSkill.Instance
-            ? Global.InfiniteSkillCount - 1
-            : Global.InfiniteSkillCount,
+        >= LevelConstants.InfiniteSkillCount => Skill == ClonerSkill.Instance
+            ? LevelConstants.InfiniteSkillCount - 1
+            : LevelConstants.InfiniteSkillCount,
         < 0 => 0,
         _ => skillCount
     };

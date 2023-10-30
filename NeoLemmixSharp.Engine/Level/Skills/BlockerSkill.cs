@@ -11,13 +11,13 @@ public sealed class BlockerSkill : LemmingSkill
     {
     }
 
-    public override int Id => Global.BlockerSkillId;
+    public override int Id => LevelConstants.BlockerSkillId;
     public override string LemmingSkillName => "blocker";
     public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return ActionIsAssignable(lemming) && Global.LemmingManager.CanAssignBlocker(lemming);
+        return ActionIsAssignable(lemming) && LevelConstants.LemmingManager.CanAssignBlocker(lemming);
     }
 
     public override bool AssignToLemming(Lemming lemming)

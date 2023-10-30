@@ -11,7 +11,7 @@ public sealed class SawBladeGadgetType : InteractiveGadgetType
     {
     }
 
-    public override int Id => Global.SawBladeGadgetTypeId;
+    public override int Id => LevelConstants.SawBladeGadgetTypeId;
     public override string GadgetTypeName => "saw blade";
 
     public override LemmingAction InteractWithLemming(Lemming lemming)

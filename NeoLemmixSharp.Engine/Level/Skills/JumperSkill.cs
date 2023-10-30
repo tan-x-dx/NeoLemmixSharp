@@ -11,7 +11,7 @@ public sealed class JumperSkill : LemmingSkill
     {
     }
 
-    public override int Id => Global.JumperSkillId;
+    public override int Id => LevelConstants.JumperSkillId;
     public override string LemmingSkillName => "jumper";
     public override bool IsClassicSkill => false;
     

@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Common;
 
-public static class EngineGlobal
+public static class EngineConstants
 {
     public const int StandardTicksPerSecond = 17;
     public const int FramesPerSecond = StandardTicksPerSecond * 3;

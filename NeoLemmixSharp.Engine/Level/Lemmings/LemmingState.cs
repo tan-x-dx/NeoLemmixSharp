@@ -132,12 +132,12 @@ public sealed class LemmingState
             if (value)
             {
                 _states |= 1U << ZombieBitIndex;
-                Global.LemmingManager.RegisterZombie(_lemming);
+                LevelConstants.LemmingManager.RegisterZombie(_lemming);
             }
             else
             {
                 _states &= ~(1U << ZombieBitIndex);
-                Global.LemmingManager.DeregisterZombie(_lemming);
+                LevelConstants.LemmingManager.DeregisterZombie(_lemming);
             }
             UpdateSkinColor();
         }

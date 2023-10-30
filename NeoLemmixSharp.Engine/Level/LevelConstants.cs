@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.Level.Terrain;
 
 namespace NeoLemmixSharp.Engine.Level;
 
-public static class Global
+public static class LevelConstants
 {
     #region Common Utilities
 

@@ -14,19 +14,19 @@ public sealed class BlockerAction : LemmingAction
     {
     }
 
-    public override int Id => Global.BlockerActionId;
+    public override int Id => LevelConstants.BlockerActionId;
     public override string LemmingActionName => "blocker";
-    public override int NumberOfAnimationFrames => Global.BlockerAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.BlockerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (Global.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        if (LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
             return true;
 
         FallerAction.Instance.TransitionLemmingToAction(lemming, false);
-        Global.LemmingManager.DeregisterBlocker(lemming);
+        LevelConstants.LemmingManager.DeregisterBlocker(lemming);
 
         return true;
     }
@@ -35,7 +35,7 @@ public sealed class BlockerAction : LemmingAction
     {
         base.TransitionLemmingToAction(lemming, turnAround);
 
-        Global.LemmingManager.RegisterBlocker(lemming);
+        LevelConstants.LemmingManager.RegisterBlocker(lemming);
     }
 
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -7;

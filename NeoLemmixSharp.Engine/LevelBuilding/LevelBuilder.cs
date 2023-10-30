@@ -65,7 +65,7 @@ public sealed class LevelBuilder : IDisposable
 
         var inputController = new LevelInputController();
         var skillSetManager = new SkillSetManager(levelData.SkillSetData);
-        Global.SetSkillSetManager(skillSetManager);
+        LevelConstants.SetSkillSetManager(skillSetManager);
 
         LevelTimer levelTimer = levelData.TimeLimit.HasValue
             ? new CountDownLevelTimer(levelData.TimeLimit.Value)
@@ -84,7 +84,7 @@ public sealed class LevelBuilder : IDisposable
         var hatchGroups = _levelObjectAssembler.GetHatchGroups();
         var levelLemmings = _levelObjectAssembler.GetLevelLemmings();
         var lemmingManager = new LemmingManager(levelData, hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-        Global.SetLemmingManager(lemmingManager);
+        LevelConstants.SetLemmingManager(lemmingManager);
 
         _levelObjectAssembler.AssembleLevelObjects(
             _content,
@@ -92,7 +92,7 @@ public sealed class LevelBuilder : IDisposable
 
         var levelGadgets = _levelObjectAssembler.GetLevelGadgets();
         var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-        Global.SetGadgetManager(gadgetManager);
+        LevelConstants.SetGadgetManager(gadgetManager);
 
         var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController, lemmingManager, skillSetManager);
 
@@ -112,7 +112,7 @@ public sealed class LevelBuilder : IDisposable
             terrainRenderer,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
-        Global.SetTerrainManager(terrainManager);
+        LevelConstants.SetTerrainManager(terrainManager);
 
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(levelCursor);

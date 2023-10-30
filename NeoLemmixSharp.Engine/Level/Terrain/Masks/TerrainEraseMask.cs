@@ -26,7 +26,7 @@ public sealed class TerrainEraseMask
         LevelPosition position)
     {
         var offset = position - _anchorPoint;
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
 
         for (var i = 0; i < _mask.Length; i++)
         {

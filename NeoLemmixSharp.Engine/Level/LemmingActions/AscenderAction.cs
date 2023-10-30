@@ -10,15 +10,15 @@ public sealed class AscenderAction : LemmingAction
     {
     }
 
-    public override int Id => Global.AscenderActionId;
+    public override int Id => LevelConstants.AscenderActionId;
     public override string LemmingActionName => "ascender";
-    public override int NumberOfAnimationFrames => Global.AscenderAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.AscenderAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.NonWalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var levelPosition = lemming.LevelPosition;
         var orientation = lemming.Orientation;
 

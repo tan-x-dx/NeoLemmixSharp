@@ -11,7 +11,7 @@ public sealed class SplatGadgetType : InteractiveGadgetType
     {
     }
 
-    public override int Id => Global.SplatGadgetTypeId;
+    public override int Id => LevelConstants.SplatGadgetTypeId;
     public override string GadgetTypeName => "splat";
 
     public override LemmingAction InteractWithLemming(Lemming lemming)

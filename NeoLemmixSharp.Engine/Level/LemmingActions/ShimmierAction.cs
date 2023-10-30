@@ -10,15 +10,15 @@ public sealed class ShimmierAction : LemmingAction
     {
     }
 
-    public override int Id => Global.ShimmierActionId;
+    public override int Id => LevelConstants.ShimmierActionId;
     public override string LemmingActionName => "shimmier";
-    public override int NumberOfAnimationFrames => Global.ShimmierAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.ShimmierAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.NonWalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
@@ -108,7 +108,7 @@ public sealed class ShimmierAction : LemmingAction
 
             if (terrainManager.PositionOutOfBounds(lemmingPosition))
             {
-                Global.LemmingManager.RemoveLemming(lemming);
+                LevelConstants.LemmingManager.RemoveLemming(lemming);
                 return true;
             }
         }
@@ -137,7 +137,7 @@ public sealed class ShimmierAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 

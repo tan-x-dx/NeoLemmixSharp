@@ -131,10 +131,10 @@ public sealed class LevelScreen : IBaseScreen
     public void Dispose()
     {
 #pragma warning disable CS8625
-        Global.SetTerrainManager(null);
-        Global.SetLemmingManager(null);
-        Global.SetGadgetManager(null);
-        Global.SetSkillSetManager(null);
+        LevelConstants.SetTerrainManager(null);
+        LevelConstants.SetLemmingManager(null);
+        LevelConstants.SetGadgetManager(null);
+        LevelConstants.SetSkillSetManager(null);
 
         LevelRenderer.Dispose();
         IsDisposed = true;

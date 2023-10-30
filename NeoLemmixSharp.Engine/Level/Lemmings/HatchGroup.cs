@@ -15,7 +15,7 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
     private int _spawnInterval;
     private int _spawnIntervalDelta;
 
-    private int _nextLemmingCountDown = Global.InitialLemmingCountDown;
+    private int _nextLemmingCountDown = LevelConstants.InitialLemmingCountDown;
     private int _lemmingsToRelease;
 
     public int Id { get; }

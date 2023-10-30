@@ -12,11 +12,11 @@ public sealed class PlatformerAction : LemmingAction
     {
     }
 
-    public override int Id => Global.PlatformerActionId;
+    public override int Id => LevelConstants.PlatformerActionId;
     public override string LemmingActionName => "platformer";
-    public override int NumberOfAnimationFrames => Global.PlatformerAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.PlatformerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -50,7 +50,7 @@ public sealed class PlatformerAction : LemmingAction
 
     private static void DoMainUpdate(Lemming lemming)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var lemmingPosition = lemming.LevelPosition;
@@ -145,7 +145,7 @@ public sealed class PlatformerAction : LemmingAction
         Lemming lemming,
         Orientation orientation)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var lemmingPosition = lemming.LevelPosition;
 
         var result = !terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition) ||
@@ -164,7 +164,7 @@ public sealed class PlatformerAction : LemmingAction
         Lemming lemming,
         LevelPosition pos)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         return terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(pos, 1)) ||
                terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(pos, 2));
     }
