@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
@@ -11,12 +12,14 @@ namespace NeoLemmixSharp.Menu;
 
 public sealed class MenuScreen : IBaseScreen
 {
-    private readonly IPage[] _allPages;
+    public static MenuScreen Current { get; private set; } = null!;
+
+    private readonly PageTransition _pageTransition = new(EngineConstants.PageTransitionDurationInFrames);
 
     private IPage _currentPage;
+    private IPage? _nextPage;
 
     public MenuInputController InputController { get; } = new();
-
     public MenuScreenRenderer MenuScreenRenderer { get; }
 
     public IGameWindow GameWindow { get; set; }
@@ -25,22 +28,23 @@ public sealed class MenuScreen : IBaseScreen
     public bool IsDisposed { get; private set; }
 
     public MenuScreen(
-        ContentManager content,
+        ContentManager contentManager,
         GraphicsDevice graphicsDevice,
         SpriteBatch spriteBatch,
         FontBank fontBank)
     {
         var menuCursorRenderer = new MenuCursorRenderer(graphicsDevice, InputController);
-
-        _allPages = GeneratePages();
-        _currentPage = _allPages[0];
-
         MenuScreenRenderer = new MenuScreenRenderer(
-            content,
+            contentManager,
             graphicsDevice,
             spriteBatch,
             fontBank,
-            menuCursorRenderer);
+            menuCursorRenderer,
+            _pageTransition);
+
+        _currentPage = new MainPage(contentManager, InputController, MenuScreenRenderer.BackgroundBrush);
+
+        Current = this;
     }
 
     public void Initialise()
@@ -49,40 +53,32 @@ public sealed class MenuScreen : IBaseScreen
         MenuScreenRenderer.SetPage(_currentPage);
     }
 
-    private IPage[] GeneratePages()
+    public void SetNextPage(IPage page)
     {
-        var result = new IPage[]
-        {
-            new MainPage(InputController)
-        };
-
-        return result;
+        _nextPage = page;
+        _pageTransition.BeginTransition();
+        InputController.MiddleMouseButtonAction
     }
 
     public void Tick()
     {
+        if (_pageTransition.IsTransitioning)
+        {
+            _pageTransition.Tick();
+
+            if (_pageTransition.IsHalfWayDone)
+            {
+                HelperMethods.DisposeOf(ref _currentPage);
+                _currentPage = _nextPage!;
+                MenuScreenRenderer.SetPage(_nextPage!);
+            }
+
+            return;
+        }
+
         InputController.Tick();
 
-        HandleKeyboardInput();
-        HandleMouseInput();
-
-        if (InputController.Quit.IsPressed)
-        {
-            GameWindow.Escape();
-        }
-
-        if (InputController.ToggleFullScreen.IsPressed)
-        {
-            GameWindow.ToggleBorderless();
-        }
-    }
-
-    private void HandleKeyboardInput()
-    {
-    }
-
-    private void HandleMouseInput()
-    {
+        _currentPage.Tick();
     }
 
     public void OnWindowSizeChanged()
@@ -92,5 +88,12 @@ public sealed class MenuScreen : IBaseScreen
 
     public void Dispose()
     {
+        if (IsDisposed)
+            return;
+
+        MenuScreenRenderer.Dispose();
+
+        Current = null!;
+        IsDisposed = true;
     }
 }

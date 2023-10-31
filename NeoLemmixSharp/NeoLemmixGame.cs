@@ -31,7 +31,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     private bool _isBorderless;
 
     private FontBank _fontBank;
-    private Point _gameResolution = new(960, 720);
+    private Point _gameResolution = new(1600, 900);
     private SpriteBatch _spriteBatch;
     private RootDirectoryManager _rootDirectoryManager;
 

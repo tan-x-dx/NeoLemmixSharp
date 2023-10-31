@@ -7,4 +7,6 @@ public static class EngineConstants
     public static TimeSpan FramesPerSecondTimeSpan => TimeSpan.FromTicks((long)(TimeSpan.TicksPerMillisecond * (1000 / (double)FramesPerSecond)));
 
     public const int DoubleTapFrameCountMax = 17;
+
+    public const int PageTransitionDurationInFrames = 6;
 }

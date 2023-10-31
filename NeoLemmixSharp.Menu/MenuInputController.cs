@@ -59,6 +59,7 @@ public sealed class MenuInputController
         _inputController.Bind(Keys.Down, DownArrow);
 
         _inputController.Bind(Keys.Space, Space);
+        _inputController.Bind(Keys.Enter, Enter);
 
         _inputController.Bind(Keys.F1, ToggleFullScreen);
         _inputController.Bind(Keys.Escape, Quit);

@@ -4,5 +4,7 @@ namespace NeoLemmixSharp.Menu.Pages;
 
 public interface IPage : IDisposable
 {
-    Widget RootWidget { get; }
+    Widget? RootWidget { get; }
+
+    void Tick();
 }
