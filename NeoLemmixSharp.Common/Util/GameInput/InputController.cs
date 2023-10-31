@@ -71,9 +71,16 @@ public sealed class InputController : IPerfectHasher<Keys>
         UpdateMouseButtonStates();
     }
 
-    public void ReleaseAllKeys()
+    public void ClearAllKeys()
     {
         _keys.Clear();
+
+        var keyActionsSpan = CollectionsMarshal.AsSpan(_keyActions);
+
+        foreach (var keyAction in keyActionsSpan)
+        {
+            keyAction.Clear();
+        }
     }
 
     private void UpdateKeyStates()

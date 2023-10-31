@@ -20,6 +20,11 @@ public sealed class InputAction : IInputAction
         set => _actionState = value & _stateMask;
     }
 
+    public void Clear()
+    {
+        _actionState = 0UL;
+    }
+
     public void UpdateState()
     {
         _actionState = (_actionState << 1) & _stateMask;

@@ -57,7 +57,7 @@ public sealed class MenuScreen : IBaseScreen
     {
         _nextPage = page;
         _pageTransition.BeginTransition();
-        InputController.MiddleMouseButtonAction
+        InputController.ClearAllKeys();
     }
 
     public void Tick()

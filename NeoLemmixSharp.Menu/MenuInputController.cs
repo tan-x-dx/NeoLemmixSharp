@@ -65,5 +65,7 @@ public sealed class MenuInputController
         _inputController.Bind(Keys.Escape, Quit);
     }
 
+    public void ClearAllKeys() => _inputController.ClearAllKeys();
+
     public void Tick() => _inputController.Tick();
 }
