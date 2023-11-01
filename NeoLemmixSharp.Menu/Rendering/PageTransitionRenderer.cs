@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
@@ -8,17 +7,17 @@ public sealed class PageTransitionRenderer : IDisposable
 {
     private readonly PageTransition _pageTransition;
     private readonly uint[] _pixelSet;
-    private Texture2D _fadeTexture;
+    private readonly Texture2D _fadeTexture;
 
     private int _windowWidth;
     private int _windowHeight;
 
     public PageTransitionRenderer(
-        GraphicsDevice graphicsDevice,
+        MenuSpriteBank menuSpriteBank,
         PageTransition pageTransition)
     {
         _pageTransition = pageTransition;
-        _fadeTexture = new Texture2D(graphicsDevice, 1, 1);
+        _fadeTexture = menuSpriteBank.GetTexture(MenuResource.FadeTexture);
         _pixelSet = new uint[1];
     }
 
@@ -33,7 +32,7 @@ public sealed class PageTransitionRenderer : IDisposable
         if (!_pageTransition.IsTransitioning)
             return;
 
-        var blackFadeColor = (new Color(0f, 0f, 0f, _pageTransition.TransitionAlpha)).PackedValue;
+        var blackFadeColor = new Color(0f, 0f, 0f, _pageTransition.TransitionAlpha).PackedValue;
         _pixelSet[0] = blackFadeColor;
 
         _fadeTexture.SetData(_pixelSet);
@@ -42,6 +41,9 @@ public sealed class PageTransitionRenderer : IDisposable
 
     public void Dispose()
     {
-        HelperMethods.DisposeOf(ref _fadeTexture);
+        var blackFadeColor = Color.Transparent.PackedValue;
+        _pixelSet[0] = blackFadeColor;
+
+        _fadeTexture.SetData(_pixelSet);
     }
 }

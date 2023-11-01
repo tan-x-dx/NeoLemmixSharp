@@ -1,18 +1,16 @@
-﻿using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Myra.Graphics2D.UI;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Menu.Pages;
+using NeoLemmixSharp.Menu.Rendering.Pages;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
 public sealed class MenuScreenRenderer : IScreenRenderer
 {
-    private readonly ContentManager _contentManager;
-    private readonly GraphicsDevice _graphicsDevice;
-    private readonly SpriteBatch _spriteBatch;
+    private readonly MenuSpriteBank _menuSpriteBank;
     private readonly FontBank _fontBank;
 
     private readonly Desktop _desktop = new();
@@ -20,36 +18,32 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     private readonly MenuCursorRenderer _menuCursorRenderer;
     private readonly PageTransitionRenderer _pageTransitionRenderer;
 
+    private IPageRenderer _currentPageRenderer;
     private Texture2D _backGround;
     private bool _initialized;
-
-    public BackgroundBrush BackgroundBrush { get; private set; }
 
     public bool IsDisposed { get; private set; }
     public IGameWindow GameWindow { get; set; }
 
     public MenuScreenRenderer(
-        ContentManager contentManager,
-        GraphicsDevice graphicsDevice,
-        SpriteBatch spriteBatch,
+        MenuSpriteBank menuSpriteBank,
         FontBank fontBank,
         MenuCursorRenderer menuCursorRenderer,
         PageTransition pageTransition)
     {
-        _contentManager = contentManager;
-        _graphicsDevice = graphicsDevice;
-        _spriteBatch = spriteBatch;
+        _menuSpriteBank = menuSpriteBank;
         _fontBank = fontBank;
         _menuCursorRenderer = menuCursorRenderer;
-        _pageTransitionRenderer = new PageTransitionRenderer(graphicsDevice, pageTransition);
+        _pageTransitionRenderer = new PageTransitionRenderer(menuSpriteBank, pageTransition);
     }
 
-    public void Initialise()
+    public void Initialise(IPage currentPage)
     {
-        _backGround = _contentManager.Load<Texture2D>("menu/background");
-        BackgroundBrush = new BackgroundBrush(_backGround);
+        var backGroundTexture = _menuSpriteBank.GetTexture(MenuResource.Background);
+        var backgroundBrush = new BackgroundBrush(backGroundTexture);
+        _desktop.Background = backgroundBrush;
 
-        _desktop.Background = BackgroundBrush;
+        _currentPageRenderer = currentPage.GetPageRenderer(_menuSpriteBank, _desktop);
 
         _initialized = true;
         OnWindowSizeChanged();
@@ -57,12 +51,14 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     public void SetPage(IPage page)
     {
-        _desktop.Root = page.RootWidget;
+        HelperMethods.DisposeOf(ref _currentPageRenderer);
+        _currentPageRenderer = page.GetPageRenderer(_menuSpriteBank, _desktop);
+        _currentPageRenderer.SetRootWidget(_desktop);
     }
 
     public void RenderScreen(SpriteBatch spriteBatch)
     {
-        _desktop.Render();
+        _currentPageRenderer.RenderPage(spriteBatch);
 
         _menuCursorRenderer.RenderCursor(spriteBatch);
 
@@ -74,7 +70,11 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         if (!_initialized)
             return;
 
-        _pageTransitionRenderer.SetWindowDimensions(GameWindow.WindowWidth, GameWindow.WindowHeight);
+        var windowWidth = GameWindow.WindowWidth;
+        var windowHeight = GameWindow.WindowHeight;
+
+        _currentPageRenderer.SetWindowDimensions(windowWidth, windowHeight);
+        _pageTransitionRenderer.SetWindowDimensions(windowWidth, windowHeight);
     }
 
     public void Dispose()

@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
@@ -19,38 +17,35 @@ public sealed class MenuScreen : IBaseScreen
     private IPage _currentPage;
     private IPage? _nextPage;
 
+    public MenuSpriteBank MenuSpriteBank { get; }
     public MenuInputController InputController { get; } = new();
     public MenuScreenRenderer MenuScreenRenderer { get; }
 
-    public IGameWindow GameWindow { get; set; }
+    public IGameWindow GameWindow { get; set; } = null!;
     IScreenRenderer IBaseScreen.ScreenRenderer => MenuScreenRenderer;
     public string ScreenTitle => "NeoLemmixSharp";
     public bool IsDisposed { get; private set; }
 
     public MenuScreen(
-        ContentManager contentManager,
-        GraphicsDevice graphicsDevice,
-        SpriteBatch spriteBatch,
+        MenuSpriteBank menuSpriteBank,
         FontBank fontBank)
     {
-        var menuCursorRenderer = new MenuCursorRenderer(graphicsDevice, InputController);
+        MenuSpriteBank = menuSpriteBank;
+        var menuCursorRenderer = new MenuCursorRenderer(menuSpriteBank, InputController);
         MenuScreenRenderer = new MenuScreenRenderer(
-            contentManager,
-            graphicsDevice,
-            spriteBatch,
+            menuSpriteBank,
             fontBank,
             menuCursorRenderer,
             _pageTransition);
 
-        _currentPage = new MainPage(contentManager, InputController, MenuScreenRenderer.BackgroundBrush);
+        _currentPage = new MainPage(InputController);
 
         Current = this;
     }
 
     public void Initialise()
     {
-        MenuScreenRenderer.Initialise();
-        MenuScreenRenderer.SetPage(_currentPage);
+        MenuScreenRenderer.Initialise(_currentPage);
     }
 
     public void SetNextPage(IPage page)
@@ -64,14 +59,7 @@ public sealed class MenuScreen : IBaseScreen
     {
         if (_pageTransition.IsTransitioning)
         {
-            _pageTransition.Tick();
-
-            if (_pageTransition.IsHalfWayDone)
-            {
-                HelperMethods.DisposeOf(ref _currentPage);
-                _currentPage = _nextPage!;
-                MenuScreenRenderer.SetPage(_nextPage!);
-            }
+            HandlePageTransition();
 
             return;
         }
@@ -79,6 +67,23 @@ public sealed class MenuScreen : IBaseScreen
         InputController.Tick();
 
         _currentPage.Tick();
+
+        if (InputController.ToggleFullScreen.IsPressed)
+        {
+            GameWindow.ToggleBorderless();
+        }
+    }
+
+    private void HandlePageTransition()
+    {
+        _pageTransition.Tick();
+
+        if (!_pageTransition.IsHalfWayDone)
+            return;
+
+        HelperMethods.DisposeOf(ref _currentPage);
+        _currentPage = _nextPage!;
+        MenuScreenRenderer.SetPage(_nextPage!);
     }
 
     public void OnWindowSizeChanged()

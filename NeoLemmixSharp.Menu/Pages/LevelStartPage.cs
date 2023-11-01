@@ -1,10 +1,15 @@
 ﻿using Myra.Graphics2D.UI;
+using NeoLemmixSharp.Menu.Rendering;
+using NeoLemmixSharp.Menu.Rendering.Pages;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class LevelStartPage : IPage
 {
-    public Widget? RootWidget => null;
+    public IPageRenderer GetPageRenderer(MenuSpriteBank menuSpriteBank, Desktop desktop)
+    {
+        throw new NotImplementedException();
+    }
 
     public void Tick()
     {

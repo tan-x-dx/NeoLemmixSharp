@@ -17,6 +17,7 @@ using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Menu;
+using NeoLemmixSharp.Menu.Rendering;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -31,6 +32,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     private bool _isBorderless;
 
     private FontBank _fontBank;
+    private MenuSpriteBank _menuSpriteBank;
     private Point _gameResolution = new(1600, 900);
     private SpriteBatch _spriteBatch;
     private RootDirectoryManager _rootDirectoryManager;
@@ -91,6 +93,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     protected override void LoadContent()
     {
         _fontBank = new FontBank(Content);
+        _menuSpriteBank = new MenuSpriteBank(Content, GraphicsDevice);
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _graphics.PreferredBackBufferWidth = _gameResolution.X;
@@ -101,7 +104,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         InitialiseGameConstants();
 
         //LoadLevel_Debug();
-        var menuScreen = new MenuScreen(Content, GraphicsDevice, _spriteBatch, _fontBank);
+        var menuScreen = new MenuScreen(_menuSpriteBank, _fontBank);
         SetScreen(menuScreen);
         menuScreen.Initialise();
 
