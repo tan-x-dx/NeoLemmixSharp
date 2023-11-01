@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.GameInput;
 
 namespace NeoLemmixSharp.Menu;
@@ -61,7 +62,7 @@ public sealed class MenuInputController
         _inputController.Bind(Keys.Space, Space);
         _inputController.Bind(Keys.Enter, Enter);
 
-        _inputController.Bind(Keys.F1, ToggleFullScreen);
+        _inputController.Bind(EngineConstants.FullscreenKey, ToggleFullScreen);
         _inputController.Bind(Keys.Escape, Quit);
     }
 

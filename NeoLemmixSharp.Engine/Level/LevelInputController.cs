@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.GameInput;
 
 namespace NeoLemmixSharp.Engine.Level;
@@ -70,7 +71,7 @@ public sealed class LevelInputController
     {
         _inputController.Bind(Keys.P, Pause);
         _inputController.Bind(Keys.Escape, Quit);
-        _inputController.Bind(Keys.F1, ToggleFullScreen);
+        _inputController.Bind(EngineConstants.FullscreenKey, ToggleFullScreen);
         _inputController.Bind(Keys.F, ToggleFastForwards);
 
         _inputController.Bind(Keys.LeftControl, SelectOnlyUnassignedLemmings);
