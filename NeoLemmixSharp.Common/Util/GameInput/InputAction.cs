@@ -42,7 +42,7 @@ public sealed class InputAction : IInputAction
     /// <summary>
     /// Is the Action currently released?
     /// </summary>
-    public bool IsActionUp => (_actionState & ActionReleased) == ActionUnpressed;
+    public bool IsActionUp => (_actionState & ActionPressed) == ActionUnpressed;
     /// <summary>
     /// Is the Action currently pressed down, but it was previously released?
     /// </summary>
