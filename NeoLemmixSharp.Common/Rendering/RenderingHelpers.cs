@@ -44,4 +44,24 @@ public static class RenderingHelpers
             SpriteEffects.None,
             renderLayer);
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Draw(
+        this SpriteBatch spriteBatch,
+        Texture2D texture,
+        Vector2 position,
+        Color color,
+        float renderLayer)
+    {
+        spriteBatch.Draw(
+            texture,
+            position,
+            texture.Bounds,
+            color,
+            0.0f,
+            new Vector2(),
+            new Vector2(1f, 1f),
+            SpriteEffects.None,
+            renderLayer);
+    }
 }

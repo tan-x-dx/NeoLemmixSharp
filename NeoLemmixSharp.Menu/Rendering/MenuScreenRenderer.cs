@@ -4,7 +4,6 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Menu.Pages;
-using NeoLemmixSharp.Menu.Rendering.Pages;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
@@ -18,7 +17,6 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     private readonly MenuCursorRenderer _menuCursorRenderer;
     private readonly PageTransitionRenderer _pageTransitionRenderer;
 
-    private IPageRenderer _currentPageRenderer;
     private Texture2D _backGround;
     private bool _initialized;
 
@@ -39,11 +37,11 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     public void Initialise(IPage currentPage)
     {
-        var backGroundTexture = _menuSpriteBank.GetTexture(MenuResource.Background);
-        var backgroundBrush = new BackgroundBrush(backGroundTexture);
-        _desktop.Background = backgroundBrush;
+        if (_initialized)
+            return;
 
-        _currentPageRenderer = currentPage.GetPageRenderer(_menuSpriteBank, _desktop);
+        _desktop.Background = _menuSpriteBank.BackgroundBrush;
+        _desktop.Root = currentPage.GetRootWidget();
 
         _initialized = true;
         OnWindowSizeChanged();
@@ -51,14 +49,12 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     public void SetPage(IPage page)
     {
-        HelperMethods.DisposeOf(ref _currentPageRenderer);
-        _currentPageRenderer = page.GetPageRenderer(_menuSpriteBank, _desktop);
-        _currentPageRenderer.SetRootWidget(_desktop);
+        _desktop.Root = page.GetRootWidget();
     }
 
     public void RenderScreen(SpriteBatch spriteBatch)
     {
-        _currentPageRenderer.RenderPage(spriteBatch);
+        _desktop.Render();
 
         _menuCursorRenderer.RenderCursor(spriteBatch);
 
@@ -73,7 +69,7 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         var windowWidth = GameWindow.WindowWidth;
         var windowHeight = GameWindow.WindowHeight;
 
-        _currentPageRenderer.SetWindowDimensions(windowWidth, windowHeight);
+        _menuSpriteBank.BackgroundBrush.SetWindowDimensions(windowWidth, windowHeight);
         _pageTransitionRenderer.SetWindowDimensions(windowWidth, windowHeight);
     }
 

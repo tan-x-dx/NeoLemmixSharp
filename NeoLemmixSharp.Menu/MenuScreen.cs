@@ -18,6 +18,7 @@ public sealed class MenuScreen : IBaseScreen
     private IPage? _nextPage;
 
     public MenuSpriteBank MenuSpriteBank { get; }
+    public FontBank FontBank { get; }
     public MenuInputController InputController { get; } = new();
     public MenuScreenRenderer MenuScreenRenderer { get; }
 
@@ -31,6 +32,7 @@ public sealed class MenuScreen : IBaseScreen
         FontBank fontBank)
     {
         MenuSpriteBank = menuSpriteBank;
+        FontBank = fontBank;
         var menuCursorRenderer = new MenuCursorRenderer(menuSpriteBank, InputController);
         MenuScreenRenderer = new MenuScreenRenderer(
             menuSpriteBank,
@@ -45,6 +47,7 @@ public sealed class MenuScreen : IBaseScreen
 
     public void Initialise()
     {
+        _currentPage.Initialise();
         MenuScreenRenderer.Initialise(_currentPage);
     }
 
@@ -83,11 +86,21 @@ public sealed class MenuScreen : IBaseScreen
 
         HelperMethods.DisposeOf(ref _currentPage);
         _currentPage = _nextPage!;
+        _currentPage.Initialise();
+
+        var windowWidth = GameWindow.WindowWidth;
+        var windowHeight = GameWindow.WindowHeight;
+
+        _currentPage.SetWindowDimensions(windowWidth, windowHeight);
         MenuScreenRenderer.SetPage(_nextPage!);
     }
 
     public void OnWindowSizeChanged()
     {
+        var windowWidth = GameWindow.WindowWidth;
+        var windowHeight = GameWindow.WindowHeight;
+
+        _currentPage.SetWindowDimensions(windowWidth, windowHeight);
         MenuScreenRenderer.OnWindowSizeChanged();
     }
 

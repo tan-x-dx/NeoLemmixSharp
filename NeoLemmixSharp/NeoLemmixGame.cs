@@ -27,7 +27,6 @@ namespace NeoLemmixSharp;
 public sealed partial class NeoLemmixGame : Game, IGameWindow
 {
     private readonly GraphicsDeviceManager _graphics;
-    private readonly TimeSpan _standardGameUps;
 
     private bool _isBorderless;
 
@@ -59,10 +58,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
 
-        _standardGameUps = EngineConstants.FramesPerSecondTimeSpan;
-
         IsFixedTimeStep = true;
-        TargetElapsedTime = _standardGameUps;
+        TargetElapsedTime = EngineConstants.FramesPerSecondTimeSpan;
     }
 
     private void WindowOnClientSizeChanged(object? sender, EventArgs e)

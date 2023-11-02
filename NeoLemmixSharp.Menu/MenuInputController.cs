@@ -18,6 +18,10 @@ public sealed class MenuInputController
     public MouseButtonAction MouseButton4Action => _inputController.MouseButton4Action;
     public MouseButtonAction MouseButton5Action => _inputController.MouseButton5Action;
 
+    public KeyAction F1 { get; }
+    public KeyAction F2 { get; }
+    public KeyAction F3 { get; }
+
     public KeyAction RightArrow { get; }
     public KeyAction UpArrow { get; }
     public KeyAction LeftArrow { get; }
@@ -31,6 +35,10 @@ public sealed class MenuInputController
 
     public MenuInputController()
     {
+        F1 = _inputController.CreateKeyAction("F1");
+        F2 = _inputController.CreateKeyAction("F2");
+        F3 = _inputController.CreateKeyAction("F3");
+
         RightArrow = _inputController.CreateKeyAction("\u2192");
         UpArrow = _inputController.CreateKeyAction("\u2191");
         LeftArrow = _inputController.CreateKeyAction("\u2190");
@@ -49,6 +57,10 @@ public sealed class MenuInputController
 
     private void SetUpBindings()
     {
+        _inputController.Bind(Keys.F1, F1);
+        _inputController.Bind(Keys.F2, F2);
+        _inputController.Bind(Keys.F3, F3);
+
         _inputController.Bind(Keys.A, LeftArrow);
         _inputController.Bind(Keys.W, UpArrow);
         _inputController.Bind(Keys.D, RightArrow);

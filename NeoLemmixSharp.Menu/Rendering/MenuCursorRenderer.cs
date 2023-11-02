@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
@@ -16,7 +17,11 @@ public sealed class MenuCursorRenderer : IDisposable
 
     public void RenderCursor(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(_cursorTexture, new Vector2(_menuCursor.MouseX, _menuCursor.MouseY), Color.White);
+        spriteBatch.Draw(
+            _cursorTexture,
+            new Vector2(_menuCursor.MouseX, _menuCursor.MouseY),
+            Color.White,
+            1f);
     }
 
     public void Dispose()

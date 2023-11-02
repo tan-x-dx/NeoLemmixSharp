@@ -1,12 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Myra.Graphics2D.Brushes;
+using NeoLemmixSharp.Menu.Widgets;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
 public sealed class MenuSpriteBank
 {
     private readonly Texture2D[] _textureLookup;
+
+    public BackgroundBrush BackgroundBrush { get; }
+    public SolidBrush TransparentBrush { get; }
 
     public MenuSpriteBank(ContentManager contentManager, GraphicsDevice graphicsDevice)
     {
@@ -15,6 +20,9 @@ public sealed class MenuSpriteBank
         _textureLookup = new Texture2D[numberOfResources];
 
         LoadMenuContent(contentManager, graphicsDevice);
+
+        BackgroundBrush = new BackgroundBrush(GetTexture(MenuResource.Background));
+        TransparentBrush = new SolidBrush(Color.Transparent);
     }
 
     private void LoadMenuContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
@@ -32,7 +40,7 @@ public sealed class MenuSpriteBank
         LoadResource(MenuResource.SignQuit, "menu/sign_quit");
         LoadResource(MenuResource.MenuButton, "menu/ui_button");
 
-        var fadeTexture = new Texture2D( graphicsDevice, 1, 1);
+        var fadeTexture = new Texture2D(graphicsDevice, 1, 1);
         AddTexture(MenuResource.FadeTexture, fadeTexture);
 
         var cursorTexture = CreateCursorTexture_Debug(graphicsDevice);
