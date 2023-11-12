@@ -70,8 +70,12 @@ public sealed class LevelRenderer : IScreenRenderer
 
     public void RenderScreen(SpriteBatch spriteBatch)
     {
+        spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
+
         RenderLevel(spriteBatch);
         RenderControlPanel(spriteBatch);
+
+        spriteBatch.End();
     }
 
     private void RenderLevel(SpriteBatch spriteBatch)

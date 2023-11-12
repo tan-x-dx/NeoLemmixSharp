@@ -49,8 +49,10 @@ public sealed class MenuScreen : IBaseScreen
 
     public void Initialise()
     {
-        _currentPage.Initialise();
-        MenuScreenRenderer.Initialise(_currentPage);
+        MenuScreenRenderer.Initialise();
+        var userInterface = UserInterface.Active;
+        userInterface.Clear();
+        _currentPage.Initialise(userInterface.Root);
     }
 
     public void SetNextPage(IPage page)
@@ -69,7 +71,7 @@ public sealed class MenuScreen : IBaseScreen
             return;
         }
 
-        _currentPage.UserInterface.Update(gameTime);
+        UserInterface.Active.Update(gameTime);
         InputController.Tick();
 
         _currentPage.Tick();
@@ -89,14 +91,15 @@ public sealed class MenuScreen : IBaseScreen
 
         HelperMethods.DisposeOf(ref _currentPage);
         _currentPage = _nextPage!;
-        _currentPage.Initialise();
+
+        var userInterface = UserInterface.Active;
+        userInterface.Clear();
+        _currentPage.Initialise(userInterface.Root);
 
         var windowWidth = GameWindow.WindowWidth;
         var windowHeight = GameWindow.WindowHeight;
 
         _currentPage.SetWindowDimensions(windowWidth, windowHeight);
-        UserInterface.Active = _currentPage.UserInterface;
-        MenuScreenRenderer.SetPage(_nextPage!);
     }
 
     public void OnWindowSizeChanged()

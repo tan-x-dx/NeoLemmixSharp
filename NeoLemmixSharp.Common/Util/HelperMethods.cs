@@ -1,4 +1,7 @@
-﻿namespace NeoLemmixSharp.Common.Util;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+namespace NeoLemmixSharp.Common.Util;
 
 public static class HelperMethods
 {
@@ -12,5 +15,10 @@ public static class HelperMethods
     {
         obj.Dispose();
         obj = null!;
+    }
+
+    public static Vector2 GetSize(this Texture2D texture)
+    {
+        return new Vector2(texture.Width, texture.Height);
     }
 }

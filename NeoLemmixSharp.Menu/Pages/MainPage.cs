@@ -1,9 +1,7 @@
-﻿using GeonBit.UI;
-using GeonBit.UI.Entities;
+﻿using GeonBit.UI.Entities;
 using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Menu.Rendering;
-using NeoLemmixSharp.Menu.Widgets;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
@@ -12,144 +10,109 @@ public sealed class MainPage : IPage
     private readonly MenuInputController _inputController;
 
     private Image _playButton;
-    private TextureButton _levelSelectButton;
+    private Image _levelSelectButton;
 
-    private TextureButton _groupButton;
-    private TextureButton _groupUpButton;
-    private TextureButton _groupDownButton;
+    private Image _groupButton;
+    private Image _groupUpButton;
+    private Image _groupDownButton;
 
-    private TextureButton _configButton;
-    private TextureButton _quitButton;
-
-    public UserInterface UserInterface { get; } = new();
+    private Image _configButton;
+    private Image _quitButton;
 
     public MainPage(MenuInputController inputController)
     {
         _inputController = inputController;
     }
 
-    public void Initialise()
+    public void Initialise(RootPanel rootPanel)
     {
         var menuSpriteBank = MenuScreen.Current.MenuSpriteBank;
 
-        _playButton = new Image(menuSpriteBank.GetTexture(MenuResource.SignPlay))
-        { 
-            OnClick = PlayButtonClick
-        };
+        rootPanel.Anchor = Anchor.Center;
 
-
-
-
-
-
-
-
-
-
-/*
-        _panel = new VerticalStackPanel
-        {
-            VerticalAlignment = VerticalAlignment.Stretch,
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
-
-        var logo = new Image
-        {
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            Renderable = new TextureRegion(menuSpriteBank.GetTexture(MenuResource.Logo)),
-            Scale = new Vector2(MenuConstants.ScaleFactor, MenuConstants.ScaleFactor)
-        };
-
-        var rowOneButtonsPanel = new HorizontalStackPanel
-        {
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
-
-        var rowTwoButtonsPanel = new HorizontalStackPanel
-        {
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
+        var logoTexture = menuSpriteBank.GetTexture(MenuResource.Logo);
+        var logoImage = new Image(logoTexture, logoTexture.GetSize(), anchor: Anchor.AutoCenter, offset: new Vector2(0, 20));
+        rootPanel.AddChild(logoImage);
 
         _playButton = CreateTextureButton(MenuResource.SignPlay);
+        _playButton.OnClick = PlayButtonClick;
+
         _levelSelectButton = CreateTextureButton(MenuResource.SignLevelSelect);
+        _levelSelectButton.OnClick = LevelSelectButtonClick;
 
-        var groupPanel = new Panel();
         _groupButton = CreateTextureButton(MenuResource.SignGroup);
-        _groupUpButton = new TextureButton(menuSpriteBank.GetTexture(MenuResource.SignGroupUp))
-        {
-            HorizontalAlignment = HorizontalAlignment.Left,
-            Left = 11,
-            Top = 35
-        };
-        _groupDownButton = new TextureButton(menuSpriteBank.GetTexture(MenuResource.SignGroupDown))
-        {
-            Left = 11,
-            Top = 53
-        };
-        _groupName = new MenuFontText("abcd", MenuFont.DefaultColor)
-        {
-            Left = 14,
-            Top = 68
-        };
 
-        groupPanel.Widgets.Add(_groupButton);
-        groupPanel.Widgets.Add(_groupUpButton);
-        groupPanel.Widgets.Add(_groupDownButton);
-        groupPanel.Widgets.Add(_groupName);
-        AddToStackPanel(rowOneButtonsPanel, _playButton, 2);
-        AddToStackPanel(rowOneButtonsPanel, _levelSelectButton, 2);
-        AddToStackPanel(rowOneButtonsPanel, groupPanel, 2);
+        _groupUpButton = CreateTextureButton(MenuResource.SignGroupUp);
+        _groupUpButton.OnClick = GroupUpButtonClick;
+
+        _groupDownButton = CreateTextureButton(MenuResource.SignGroupDown);
+        _groupDownButton.OnClick = GroupDownButtonClick;
 
         _configButton = CreateTextureButton(MenuResource.SignConfig);
+        _configButton.OnClick = ConfigButtonClick;
+
         _quitButton = CreateTextureButton(MenuResource.SignQuit);
+        _quitButton.OnClick = QuitButtonClick;
 
-        AddToStackPanel(rowTwoButtonsPanel, _configButton, 2);
-        AddToStackPanel(rowTwoButtonsPanel, _quitButton, 2);
+        var topRowButtonsPanelWidth = _playButton.Size.X +
+                                      _levelSelectButton.Size.X +
+                                      _groupButton.Size.X +
+                                      50;
 
-        AddToStackPanel(_panel, logo, 3);
-        AddToStackPanel(_panel, rowOneButtonsPanel, 3);
-        AddToStackPanel(_panel, rowTwoButtonsPanel, 3);
-
-
-        var b = new Button
+        var topRowButtonsPanel = new Panel(new Vector2(topRowButtonsPanelWidth, -1))
         {
-            Content = new Label
-            {
-                Text = "AAAAA"
-            }
+            Anchor = Anchor.AutoCenter,
+
+            FillColor = Color.Transparent,
+            OutlineColor = Color.Transparent,
+            ShadowColor = Color.Transparent,
         };
-        AddToStackPanel(rowTwoButtonsPanel, b, 4);
 
+        var bottomRowButtonsPanelWidth = _configButton.Size.X +
+                                         _quitButton.Size.X + 
+                                         50;
 
-        _playButton.Click += PlayButtonClick;
-        _levelSelectButton.Click += LevelSelectButtonClick;
-        _groupUpButton.Click += GroupUpButtonClick;
-        _groupDownButton.Click += GroupDownButtonClick;
-        _configButton.Click += ConfigButtonClick;
-        _quitButton.Click += QuitButtonClick;
+        var bottomRowButtonsPanel = new Panel(new Vector2(bottomRowButtonsPanelWidth, -1))
+        {
+            Anchor = Anchor.AutoCenter,
 
-        b.PressedChanged += PlayButtonClick;
+            FillColor = Color.Transparent,
+            OutlineColor = Color.Transparent,
+            ShadowColor = Color.Transparent,
+        };
+
+        rootPanel.AddChild(topRowButtonsPanel);
+        rootPanel.AddChild(bottomRowButtonsPanel);
+
+        topRowButtonsPanel.AddChild(_playButton);
+        topRowButtonsPanel.AddChild(_levelSelectButton);
+        topRowButtonsPanel.AddChild(_groupButton);
+
+        //  rootPanel.AddChild(_groupUpButton);
+        //   rootPanel.AddChild(_groupDownButton);
+        bottomRowButtonsPanel.AddChild(_configButton);
+        bottomRowButtonsPanel.AddChild(_quitButton);
 
         return;
 
-        TextureButton CreateTextureButton(MenuResource menuResource)
+        Image CreateTextureButton(MenuResource menuResource)
         {
-            return new TextureButton(menuSpriteBank.GetTexture(menuResource));
-        }
+            var texture = menuSpriteBank.GetTexture(menuResource);
 
-        static void AddToStackPanel(StackPanel stackPanel, Widget widget, int value)
-        {
-            stackPanel.Widgets.Add(widget);
-            StackPanel.SetProportionType(widget, ProportionType.Part);
-            StackPanel.SetProportionValue(widget, value);
-        }*/
+            return new Image(
+                texture,
+                anchor: Anchor.AutoInlineNoBreak,
+                size: texture.GetSize())
+            {
+                Padding = Vector2.Zero,
+                Offset = Vector2.Zero,
+                UseActualSizeForCollision = true,
+            };
+        }
     }
 
     public void SetWindowDimensions(int windowWidth, int windowHeight)
     {
-        UserInterface.ScreenWidth = windowWidth;
-        UserInterface.ScreenHeight = windowHeight;
     }
 
     public void Tick()
@@ -160,33 +123,34 @@ public sealed class MainPage : IPage
 
     private void HandleKeyboardInput()
     {
-        /*  if (_inputController.Quit.IsPressed)
-          {
-              _quitButton.DoClick();
-              return;
-          }
+        if (_inputController.Quit.IsPressed)
+        {
+            _quitButton.OnClick.Invoke(_quitButton);
+            return;
+        }
 
-          if (_inputController.F1.IsPressed)
-          {
-              _playButton.DoClick();
-              return;
-          }
+        if (_inputController.F1.IsPressed)
+        {
+            _playButton.OnClick.Invoke(_playButton);
+            return;
+        }
 
-          if (_inputController.F2.IsPressed)
-          {
-              _levelSelectButton.DoClick();
-              return;
-          }
+        if (_inputController.F2.IsPressed)
+        {
+            _levelSelectButton.OnClick.Invoke(_levelSelectButton);
+            return;
+        }
 
-          if (_inputController.F3.IsPressed)
-          {
-              _configButton.DoClick();
-              return;
-          }*/
+        if (_inputController.F3.IsPressed)
+        {
+            _configButton.OnClick.Invoke(_configButton);
+            return;
+        }
     }
 
     private void PlayButtonClick(Entity entity)
     {
+        Console.Beep();
     }
 
     private void LevelSelectButtonClick(Entity entity)
@@ -216,6 +180,5 @@ public sealed class MainPage : IPage
 
     public void Dispose()
     {
-        UserInterface.Dispose();
     }
 }

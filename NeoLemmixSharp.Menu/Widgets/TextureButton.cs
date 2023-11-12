@@ -1,5 +1,4 @@
 ﻿using GeonBit.UI.Entities;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Menu.Widgets;

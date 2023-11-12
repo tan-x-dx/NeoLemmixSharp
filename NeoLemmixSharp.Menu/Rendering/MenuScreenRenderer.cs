@@ -9,13 +9,12 @@ namespace NeoLemmixSharp.Menu.Rendering;
 
 public sealed class MenuScreenRenderer : IScreenRenderer
 {
-    private readonly MenuSpriteBank _menuSpriteBank;
     private readonly FontBank _fontBank;
 
+    private readonly BackgroundRenderer _backgroundRenderer;
     private readonly MenuCursorRenderer _menuCursorRenderer;
     private readonly PageTransitionRenderer _pageTransitionRenderer;
 
-    private UserInterface _userInterface;
     private Texture2D _backGround;
     private bool _initialized;
 
@@ -28,42 +27,40 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         MenuCursorRenderer menuCursorRenderer,
         PageTransition pageTransition)
     {
-        _menuSpriteBank = menuSpriteBank;
         _fontBank = fontBank;
+
+        _backgroundRenderer = new BackgroundRenderer(menuSpriteBank.GetTexture(MenuResource.Background));
         _menuCursorRenderer = menuCursorRenderer;
         _pageTransitionRenderer = new PageTransitionRenderer(menuSpriteBank, pageTransition);
     }
 
-    public void Initialise(IPage currentPage)
+    public void Initialise()
     {
         if (_initialized)
             return;
 
-        _userInterface = currentPage.UserInterface;
+        UserInterface.Active.GlobalScale = 2f;
+        //   UserInterface.Active.DebugDraw = true;
 
         _initialized = true;
         OnWindowSizeChanged();
     }
 
-    public void SetPage(IPage page)
-    {
-        _userInterface = page.UserInterface;
-    }
-
     public void RenderScreen(SpriteBatch spriteBatch)
     {
-        try
-        {
-            _userInterface.Draw(spriteBatch);
-        }
-        catch (Exception ex)
-        {
-            ;
-        }
+        // draw ui
+        UserInterface.Active.Draw(spriteBatch);
 
-        _menuCursorRenderer.RenderCursor(spriteBatch);
+        spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
 
+        _backgroundRenderer.Render(spriteBatch);
+        //    _menuCursorRenderer.RenderCursor(spriteBatch);
         _pageTransitionRenderer.Render(spriteBatch);
+
+        spriteBatch.End();
+
+        // finalize ui rendering
+        UserInterface.Active.DrawMainRenderTarget(spriteBatch);
     }
 
     public void OnWindowSizeChanged()
@@ -74,12 +71,13 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         var windowWidth = GameWindow.WindowWidth;
         var windowHeight = GameWindow.WindowHeight;
 
+        _backgroundRenderer.SetWindowDimensions(windowWidth, windowHeight);
         _pageTransitionRenderer.SetWindowDimensions(windowWidth, windowHeight);
     }
 
     public void Dispose()
     {
-        _userInterface.Dispose();
+        UserInterface.Active.Dispose();
 
         HelperMethods.DisposeOf(ref _backGround);
         _menuCursorRenderer.Dispose();

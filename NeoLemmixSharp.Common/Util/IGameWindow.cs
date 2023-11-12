@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Screen;
+﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Screen;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -9,6 +10,8 @@ public interface IGameWindow
 
     bool IsActive { get; }
     bool IsFullScreen { get; }
+
+    GraphicsDevice GraphicsDevice { get; }
 
     void SetScreen(IBaseScreen screen);
     void ToggleFullScreen();

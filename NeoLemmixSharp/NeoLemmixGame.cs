@@ -32,7 +32,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     private FontBank _fontBank;
     private MenuSpriteBank _menuSpriteBank;
-    private Point _gameResolution = new(1600, 900);
     private SpriteBatch _spriteBatch;
     private RootDirectoryManager _rootDirectoryManager;
 
@@ -51,10 +50,9 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         };
 
         Content.RootDirectory = "Content";
-        IsMouseVisible = false;
-
         Window.AllowUserResizing = false;
-        Window.IsBorderless = false;
+        Window.IsBorderless = true;
+        IsMouseVisible = false;
 
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
 
@@ -87,18 +85,37 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     [LibraryImport("user32.dll")]
     private static partial void ClipCursor(ref Rectangle rect);
 
+    protected override void Initialize()
+    {
+        // make the window fullscreen (but still with border and top control bar)
+        var screenWidth = _graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Width;
+        var screenHeight = _graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Height;
+        _graphics.PreferredBackBufferWidth = screenWidth;
+        _graphics.PreferredBackBufferHeight = screenHeight;
+        _graphics.IsFullScreen = false;
+        _graphics.ApplyChanges();
+        _rootDirectoryManager = new RootDirectoryManager();
+
+        // create and init the UI manager
+        UserInterface.Initialize(Content, BuiltinThemes.editor);
+        UserInterface.Active.UseRenderTarget = true;
+
+        // draw cursor outside the render target
+        UserInterface.Active.IncludeCursorInRenderTarget = false;
+
+        LoadContent();
+
+        InitialiseGameConstants();
+    }
+
     protected override void LoadContent()
     {
         _fontBank = new FontBank(Content);
         _menuSpriteBank = new MenuSpriteBank(Content, GraphicsDevice);
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _graphics.PreferredBackBufferWidth = _gameResolution.X;
-        _graphics.PreferredBackBufferHeight = _gameResolution.Y;
 
         _graphics.ApplyChanges();
-
-        InitialiseGameConstants();
 
         //LoadLevel_Debug();
         var menuScreen = new MenuScreen(_menuSpriteBank, _fontBank);
@@ -128,11 +145,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
             numberOfGadgetTypes);
 
         TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
-        DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
-
-        _rootDirectoryManager = new RootDirectoryManager();
-
-        UserInterface.Initialize(Content, BuiltinThemes.editor);
+        DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, _graphics.GraphicsDevice);
     }
 
     private void LoadLevel_Debug()
@@ -186,13 +199,12 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         // if (gameTime.IsRunningSlowly)
         //     return;
 
-        GraphicsDevice.Clear(Color.Black);
-
-        _spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
+        _graphics.GraphicsDevice.Clear(Color.Black);
 
         ScreenRenderer.RenderScreen(_spriteBatch);
 
-        _spriteBatch.End();
+        // call base draw function
+        base.Draw(gameTime);
     }
 
     public void ToggleFullScreen()
@@ -249,24 +261,24 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     private void SetFullscreen()
     {
-        _gameResolution = new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
+        /*   _gameResolution = new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
 
-        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-        _graphics.HardwareModeSwitch = !_isBorderless;
+           _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+           _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+           _graphics.HardwareModeSwitch = !_isBorderless;
 
-        _graphics.IsFullScreen = true;
-        _graphics.ApplyChanges();
-        CaptureCursor();
+           _graphics.IsFullScreen = true;
+           _graphics.ApplyChanges();
+           CaptureCursor();*/
     }
 
     private void UnsetFullscreen()
     {
-        _graphics.PreferredBackBufferWidth = _gameResolution.X;
-        _graphics.PreferredBackBufferHeight = _gameResolution.Y;
-        _graphics.IsFullScreen = false;
-        _graphics.ApplyChanges();
-        CaptureCursor();
+        /* _graphics.PreferredBackBufferWidth = _gameResolution.X;
+         _graphics.PreferredBackBufferHeight = _gameResolution.Y;
+         _graphics.IsFullScreen = false;
+         _graphics.ApplyChanges();
+         CaptureCursor();*/
     }
 
     public void Escape()
