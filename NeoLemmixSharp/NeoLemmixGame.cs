@@ -202,9 +202,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         _graphics.GraphicsDevice.Clear(Color.Black);
 
         ScreenRenderer.RenderScreen(_spriteBatch);
-
-        // call base draw function
-        base.Draw(gameTime);
     }
 
     public void ToggleFullScreen()

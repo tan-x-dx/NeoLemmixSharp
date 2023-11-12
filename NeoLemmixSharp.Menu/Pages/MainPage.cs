@@ -69,7 +69,7 @@ public sealed class MainPage : IPage
         };
 
         var bottomRowButtonsPanelWidth = _configButton.Size.X +
-                                         _quitButton.Size.X + 
+                                         _quitButton.Size.X +
                                          50;
 
         var bottomRowButtonsPanel = new Panel(new Vector2(bottomRowButtonsPanelWidth, -1))
@@ -150,7 +150,9 @@ public sealed class MainPage : IPage
 
     private void PlayButtonClick(Entity entity)
     {
-        Console.Beep();
+        var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
+
+        MenuScreen.Current.SetNextPage(levelStartPage);
     }
 
     private void LevelSelectButtonClick(Entity entity)
@@ -180,5 +182,12 @@ public sealed class MainPage : IPage
 
     public void Dispose()
     {
+        _playButton.OnClick = null;
+        _levelSelectButton.OnClick = null;
+        _groupButton.OnClick = null;
+        _groupUpButton.OnClick = null;
+        _groupDownButton.OnClick = null;
+        _configButton.OnClick = null;
+        _quitButton.OnClick = null;
     }
 }

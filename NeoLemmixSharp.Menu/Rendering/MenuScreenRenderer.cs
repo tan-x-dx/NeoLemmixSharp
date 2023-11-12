@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Menu.Pages;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
@@ -54,13 +53,17 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
 
         _backgroundRenderer.Render(spriteBatch);
-        //    _menuCursorRenderer.RenderCursor(spriteBatch);
-        _pageTransitionRenderer.Render(spriteBatch);
 
         spriteBatch.End();
 
         // finalize ui rendering
         UserInterface.Active.DrawMainRenderTarget(spriteBatch);
+
+        spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
+
+        _pageTransitionRenderer.Render(spriteBatch);
+
+        spriteBatch.End();
     }
 
     public void OnWindowSizeChanged()
@@ -77,10 +80,15 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     public void Dispose()
     {
+        if (IsDisposed)
+            return;
+
         UserInterface.Active.Dispose();
 
         HelperMethods.DisposeOf(ref _backGround);
         _menuCursorRenderer.Dispose();
         _pageTransitionRenderer.Dispose();
+
+        IsDisposed = true;
     }
 }

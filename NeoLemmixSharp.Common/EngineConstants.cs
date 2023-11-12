@@ -10,7 +10,7 @@ public static class EngineConstants
 
     public const int DoubleTapFrameCountMax = 17;
 
-    public const int PageTransitionDurationInFrames = 6;
+    public const int PageTransitionDurationInFrames = 4;
 
     public const Keys FullscreenKey = Keys.F12;
 }

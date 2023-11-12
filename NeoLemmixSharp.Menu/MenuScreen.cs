@@ -22,6 +22,7 @@ public sealed class MenuScreen : IBaseScreen
     public MenuSpriteBank MenuSpriteBank { get; }
     public FontBank FontBank { get; }
     public MenuInputController InputController { get; } = new();
+    public MenuPageCreator MenuPageCreator { get; }
     public MenuScreenRenderer MenuScreenRenderer { get; }
 
     public IGameWindow GameWindow { get; set; } = null!;
@@ -42,8 +43,8 @@ public sealed class MenuScreen : IBaseScreen
             menuCursorRenderer,
             _pageTransition);
 
-        _currentPage = new MainPage(InputController);
-
+        MenuPageCreator = new MenuPageCreator(InputController);
+        _currentPage = MenuPageCreator.CreateMainPage();
         Current = this;
     }
 
