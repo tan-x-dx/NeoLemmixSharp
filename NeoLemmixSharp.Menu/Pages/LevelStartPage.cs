@@ -1,4 +1,4 @@
-﻿using Myra.Graphics2D.UI;
+﻿using GeonBit.UI;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
@@ -9,10 +9,7 @@ public sealed class LevelStartPage : IPage
         throw new NotImplementedException();
     }
 
-    public Widget GetRootWidget()
-    {
-        throw new NotImplementedException();
-    }
+    public UserInterface UserInterface { get; }
 
     public void SetWindowDimensions(int windowWidth, int windowHeight)
     {

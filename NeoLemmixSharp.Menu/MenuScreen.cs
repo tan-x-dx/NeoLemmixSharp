@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Common;
+﻿using GeonBit.UI;
+using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
@@ -58,7 +60,7 @@ public sealed class MenuScreen : IBaseScreen
         InputController.ClearAllKeys();
     }
 
-    public void Tick()
+    public void Tick(GameTime gameTime)
     {
         if (_pageTransition.IsTransitioning)
         {
@@ -67,6 +69,7 @@ public sealed class MenuScreen : IBaseScreen
             return;
         }
 
+        _currentPage.UserInterface.Update(gameTime);
         InputController.Tick();
 
         _currentPage.Tick();
@@ -92,6 +95,7 @@ public sealed class MenuScreen : IBaseScreen
         var windowHeight = GameWindow.WindowHeight;
 
         _currentPage.SetWindowDimensions(windowWidth, windowHeight);
+        UserInterface.Active = _currentPage.UserInterface;
         MenuScreenRenderer.SetPage(_nextPage!);
     }
 

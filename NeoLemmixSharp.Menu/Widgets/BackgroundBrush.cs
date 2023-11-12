@@ -1,11 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Myra.Graphics2D;
-using Myra.Graphics2D.TextureAtlases;
+﻿namespace NeoLemmixSharp.Menu.Widgets;
 
-namespace NeoLemmixSharp.Menu.Widgets;
-
-public sealed class BackgroundBrush : IBrush
+/*
+public sealed class BackgroundBrush : GeonBit.UI.UserInterface
 {
     private readonly Texture2D _backgroundTexture;
     private readonly TextureRegion _textureRegion;
@@ -45,4 +41,4 @@ public sealed class BackgroundBrush : IBrush
             }
         }
     }
-}
+}*/

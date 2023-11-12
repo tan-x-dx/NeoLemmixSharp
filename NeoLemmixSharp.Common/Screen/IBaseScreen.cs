@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Rendering;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Common.Screen;
@@ -12,6 +13,6 @@ public interface IBaseScreen : IDisposable
 
     string ScreenTitle { get; }
 
-    void Tick();
+    void Tick(GameTime gameTime);
     void OnWindowSizeChanged();
 }

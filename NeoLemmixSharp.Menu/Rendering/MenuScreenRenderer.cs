@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Myra.Graphics2D.UI;
+﻿using GeonBit.UI;
+using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
@@ -12,11 +12,10 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     private readonly MenuSpriteBank _menuSpriteBank;
     private readonly FontBank _fontBank;
 
-    private readonly Desktop _desktop = new();
-
     private readonly MenuCursorRenderer _menuCursorRenderer;
     private readonly PageTransitionRenderer _pageTransitionRenderer;
 
+    private UserInterface _userInterface;
     private Texture2D _backGround;
     private bool _initialized;
 
@@ -40,8 +39,7 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         if (_initialized)
             return;
 
-        _desktop.Background = _menuSpriteBank.BackgroundBrush;
-        _desktop.Root = currentPage.GetRootWidget();
+        _userInterface = currentPage.UserInterface;
 
         _initialized = true;
         OnWindowSizeChanged();
@@ -49,12 +47,19 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     public void SetPage(IPage page)
     {
-        _desktop.Root = page.GetRootWidget();
+        _userInterface = page.UserInterface;
     }
 
     public void RenderScreen(SpriteBatch spriteBatch)
     {
-        _desktop.Render();
+        try
+        {
+            _userInterface.Draw(spriteBatch);
+        }
+        catch (Exception ex)
+        {
+            ;
+        }
 
         _menuCursorRenderer.RenderCursor(spriteBatch);
 
@@ -69,13 +74,12 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         var windowWidth = GameWindow.WindowWidth;
         var windowHeight = GameWindow.WindowHeight;
 
-        _menuSpriteBank.BackgroundBrush.SetWindowDimensions(windowWidth, windowHeight);
         _pageTransitionRenderer.SetWindowDimensions(windowWidth, windowHeight);
     }
 
     public void Dispose()
     {
-        _desktop.Dispose();
+        _userInterface.Dispose();
 
         HelperMethods.DisposeOf(ref _backGround);
         _menuCursorRenderer.Dispose();

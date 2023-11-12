@@ -1,6 +1,5 @@
+using GeonBit.UI.Entities;
 using Microsoft.Xna.Framework;
-using Myra.Graphics2D;
-using Myra.Graphics2D.UI;
 using NeoLemmixSharp.Common.Rendering.Text;
 
 namespace NeoLemmixSharp.Menu.Widgets;
@@ -25,16 +24,17 @@ public sealed class MenuFontButton : Button
     public Color MouseOverColor { get; init; }
     public Color ClickColor { get; init; }
 
-    public override IBrush GetCurrentBackground() => MenuScreen.Current.MenuSpriteBank.TransparentBrush;
+    // public override IBrush GetCurrentBackground() => MenuScreen.Current.MenuSpriteBank.TransparentBrush;
 
     public MenuFontButton(string text)
     {
         _text = text;
 
-        Width = text.Length * MenuFont.GlyphWidth * MenuConstants.ScaleFactor;
-        Height = MenuFont.GlyphHeight * MenuConstants.ScaleFactor;
+        Size = new Vector2(
+            text.Length * MenuFont.GlyphWidth * MenuConstants.ScaleFactor,
+            MenuFont.GlyphHeight * MenuConstants.ScaleFactor);
     }
-
+    /*
     public override void OnMouseEntered()
     {
         base.OnMouseEntered();
@@ -72,5 +72,5 @@ public sealed class MenuFontButton : Button
             Left,
             MenuConstants.ScaleFactor,
             _currentColor);
-    }
+    }*/
 }

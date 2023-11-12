@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GeonBit.UI;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Myra;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
@@ -132,7 +132,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         _rootDirectoryManager = new RootDirectoryManager();
 
-        MyraEnvironment.Game = this;
+        UserInterface.Initialize(Content, BuiltinThemes.editor);
     }
 
     private void LoadLevel_Debug()
@@ -178,7 +178,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Update(GameTime gameTime)
     {
-        Screen.Tick();
+        Screen.Tick(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)

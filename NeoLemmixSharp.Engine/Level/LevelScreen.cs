@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Rendering;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
@@ -68,7 +69,7 @@ public sealed class LevelScreen : IBaseScreen
         GadgetManager.Initialise();
     }
 
-    public void Tick()
+    public void Tick(GameTime gameTime)
     {
         if (!GameWindow.IsActive)
             return;
