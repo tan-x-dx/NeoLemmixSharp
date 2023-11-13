@@ -5,6 +5,8 @@ namespace NeoLemmixSharp.Common.Util;
 
 public interface IGameWindow
 {
+    static IGameWindow Instance { get; set; } = null!;
+
     int WindowWidth { get; }
     int WindowHeight { get; }
 

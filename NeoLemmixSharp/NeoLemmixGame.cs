@@ -58,6 +58,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         IsFixedTimeStep = true;
         TargetElapsedTime = EngineConstants.FramesPerSecondTimeSpan;
+
+        IGameWindow.Instance = this;
     }
 
     private void WindowOnClientSizeChanged(object? sender, EventArgs e)
@@ -118,7 +120,13 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         _graphics.ApplyChanges();
 
         //LoadLevel_Debug();
-        var menuScreen = new MenuScreen(_menuSpriteBank, _fontBank);
+        var menuScreen = new MenuScreen(
+            _rootDirectoryManager,
+            _menuSpriteBank,
+            Content,
+            GraphicsDevice,
+            _spriteBatch,
+            _fontBank);
         SetScreen(menuScreen);
         menuScreen.Initialise();
 
@@ -181,10 +189,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     public void SetScreen(IBaseScreen screen)
     {
         Screen = screen;
-        Screen.GameWindow = this;
         Screen.OnWindowSizeChanged();
         ScreenRenderer = Screen.ScreenRenderer;
-        ScreenRenderer.GameWindow = this;
 
         Window.Title = Screen.ScreenTitle;
     }

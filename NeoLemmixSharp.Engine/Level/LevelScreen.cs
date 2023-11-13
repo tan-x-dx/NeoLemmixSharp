@@ -30,7 +30,6 @@ public sealed class LevelScreen : IBaseScreen
     public GadgetManager GadgetManager { get; }
     public LevelRenderer LevelRenderer { get; }
 
-    public IGameWindow GameWindow { get; set; }
     IScreenRenderer IBaseScreen.ScreenRenderer => LevelRenderer;
     public string ScreenTitle { get; }
     public bool IsDisposed { get; private set; }
@@ -71,7 +70,7 @@ public sealed class LevelScreen : IBaseScreen
 
     public void Tick(GameTime gameTime)
     {
-        if (!GameWindow.IsActive)
+        if (!IGameWindow.Instance.IsActive)
             return;
 
         UpdateScheduler.Tick();
@@ -110,19 +109,19 @@ public sealed class LevelScreen : IBaseScreen
     {
         if (InputController.Quit.IsPressed)
         {
-            GameWindow.Escape();
+            IGameWindow.Instance.Escape();
         }
 
         if (InputController.ToggleFullScreen.IsPressed)
         {
-            GameWindow.ToggleBorderless();
+            IGameWindow.Instance.ToggleBorderless();
         }
     }
 
     public void OnWindowSizeChanged()
     {
-        var windowWidth = GameWindow.WindowWidth;
-        var windowHeight = GameWindow.WindowHeight;
+        var windowWidth = IGameWindow.Instance.WindowWidth;
+        var windowHeight = IGameWindow.Instance.WindowHeight;
 
         ControlPanel.SetWindowDimensions(windowWidth, windowHeight);
         Viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)ControlPanel).ControlPanelScreenHeight);

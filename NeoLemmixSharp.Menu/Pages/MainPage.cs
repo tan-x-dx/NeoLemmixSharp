@@ -1,4 +1,5 @@
-﻿using GeonBit.UI.Entities;
+﻿using GeonBit.UI;
+using GeonBit.UI.Entities;
 using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Menu.Rendering;
@@ -26,6 +27,8 @@ public sealed class MainPage : IPage
 
     public void Initialise(RootPanel rootPanel)
     {
+        UserInterface.Active.GlobalScale = 2f;
+
         var menuSpriteBank = MenuScreen.Current.MenuSpriteBank;
 
         rootPanel.Anchor = Anchor.Center;
@@ -157,6 +160,9 @@ public sealed class MainPage : IPage
 
     private void LevelSelectButtonClick(Entity entity)
     {
+        var levelSelectPage = MenuScreen.Current.MenuPageCreator.CreateLevelSelectPage();
+
+        MenuScreen.Current.SetNextPage(levelSelectPage);
     }
 
     private void GroupUpButtonClick(Entity entity)
@@ -173,7 +179,7 @@ public sealed class MainPage : IPage
 
     private void QuitButtonClick(Entity entity)
     {
-        MenuScreen.Current.GameWindow.Escape();
+        IGameWindow.Instance.Escape();
     }
 
     private void HandleMouseInput()
@@ -182,6 +188,8 @@ public sealed class MainPage : IPage
 
     public void Dispose()
     {
+        UserInterface.Active.GlobalScale = 1f;
+
         _playButton.OnClick = null;
         _levelSelectButton.OnClick = null;
         _groupButton.OnClick = null;

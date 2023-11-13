@@ -7,8 +7,6 @@ public interface IScreenRenderer : IDisposable
 {
     bool IsDisposed { get; }
 
-    IGameWindow GameWindow { get; set; }
-
     void RenderScreen(SpriteBatch spriteBatch);
     void OnWindowSizeChanged();
 }

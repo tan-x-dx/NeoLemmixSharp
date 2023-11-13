@@ -5,13 +5,18 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
 public static class LevelFileTypeHandler
 {
+    public static bool FileExtensionIsValidLevelType(ReadOnlySpan<char> extension)
+    {
+        return extension is ".nxlv";
+    }
+
     public static ILevelReader GetLevelReaderForFileExtension(
-        string fileExtension,
+        ReadOnlySpan<char> fileExtension,
         RootDirectoryManager rootDirectoryManager)
     {
-        return fileExtension.ToUpperInvariant() switch
+        return fileExtension switch
         {
-            ".NXLV" => new NxlvLevelReader(rootDirectoryManager),
+            ".nxlv" => new NxlvLevelReader(rootDirectoryManager),
 
             _ => throw new ArgumentException("Unknown file extension", nameof(fileExtension))
         };

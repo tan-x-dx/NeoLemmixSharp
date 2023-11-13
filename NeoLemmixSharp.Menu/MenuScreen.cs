@@ -1,5 +1,7 @@
 ﻿using GeonBit.UI;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
@@ -25,13 +27,16 @@ public sealed class MenuScreen : IBaseScreen
     public MenuPageCreator MenuPageCreator { get; }
     public MenuScreenRenderer MenuScreenRenderer { get; }
 
-    public IGameWindow GameWindow { get; set; } = null!;
     IScreenRenderer IBaseScreen.ScreenRenderer => MenuScreenRenderer;
     public string ScreenTitle => "NeoLemmixSharp";
     public bool IsDisposed { get; private set; }
 
     public MenuScreen(
+        RootDirectoryManager rootDirectoryManager,
         MenuSpriteBank menuSpriteBank,
+        ContentManager contentManager,
+        GraphicsDevice graphicsDevice,
+        SpriteBatch spriteBatch,
         FontBank fontBank)
     {
         MenuSpriteBank = menuSpriteBank;
@@ -43,7 +48,13 @@ public sealed class MenuScreen : IBaseScreen
             menuCursorRenderer,
             _pageTransition);
 
-        MenuPageCreator = new MenuPageCreator(InputController);
+        MenuPageCreator = new MenuPageCreator(
+            rootDirectoryManager, 
+            contentManager,
+            graphicsDevice,
+            spriteBatch,
+            fontBank,
+            InputController);
         _currentPage = MenuPageCreator.CreateMainPage();
         Current = this;
     }
@@ -79,7 +90,7 @@ public sealed class MenuScreen : IBaseScreen
 
         if (InputController.ToggleFullScreen.IsPressed)
         {
-            GameWindow.ToggleBorderless();
+            IGameWindow.Instance.ToggleBorderless();
         }
     }
 
@@ -97,16 +108,16 @@ public sealed class MenuScreen : IBaseScreen
         userInterface.Clear();
         _currentPage.Initialise(userInterface.Root);
 
-        var windowWidth = GameWindow.WindowWidth;
-        var windowHeight = GameWindow.WindowHeight;
+        var windowWidth = IGameWindow.Instance.WindowWidth;
+        var windowHeight = IGameWindow.Instance.WindowHeight;
 
         _currentPage.SetWindowDimensions(windowWidth, windowHeight);
     }
 
     public void OnWindowSizeChanged()
     {
-        var windowWidth = GameWindow.WindowWidth;
-        var windowHeight = GameWindow.WindowHeight;
+        var windowWidth = IGameWindow.Instance.WindowWidth;
+        var windowHeight = IGameWindow.Instance.WindowHeight;
 
         _currentPage.SetWindowDimensions(windowWidth, windowHeight);
         MenuScreenRenderer.OnWindowSizeChanged();

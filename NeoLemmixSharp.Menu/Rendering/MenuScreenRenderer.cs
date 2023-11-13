@@ -18,7 +18,6 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     private bool _initialized;
 
     public bool IsDisposed { get; private set; }
-    public IGameWindow GameWindow { get; set; }
 
     public MenuScreenRenderer(
         MenuSpriteBank menuSpriteBank,
@@ -38,7 +37,6 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         if (_initialized)
             return;
 
-        UserInterface.Active.GlobalScale = 2f;
         //   UserInterface.Active.DebugDraw = true;
 
         _initialized = true;
@@ -71,8 +69,8 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         if (!_initialized)
             return;
 
-        var windowWidth = GameWindow.WindowWidth;
-        var windowHeight = GameWindow.WindowHeight;
+        var windowWidth = IGameWindow.Instance.WindowWidth;
+        var windowHeight = IGameWindow.Instance.WindowHeight;
 
         _backgroundRenderer.SetWindowDimensions(windowWidth, windowHeight);
         _pageTransitionRenderer.SetWindowDimensions(windowWidth, windowHeight);
