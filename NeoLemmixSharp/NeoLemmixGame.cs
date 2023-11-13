@@ -1,10 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GeonBit.UI;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -13,24 +14,24 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.LevelBuilding;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+using NeoLemmixSharp.Menu;
+using NeoLemmixSharp.Menu.Rendering;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
 namespace NeoLemmixSharp;
 
 public sealed partial class NeoLemmixGame : Game, IGameWindow
 {
     private readonly GraphicsDeviceManager _graphics;
-    private readonly TimeSpan _standardGameUps;
 
     private bool _isBorderless;
 
     private FontBank _fontBank;
-    private Point _gameResolution = new(960, 720);
+    private MenuSpriteBank _menuSpriteBank;
     private SpriteBatch _spriteBatch;
     private RootDirectoryManager _rootDirectoryManager;
 
@@ -49,17 +50,16 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         };
 
         Content.RootDirectory = "Content";
-        IsMouseVisible = false;
-
         Window.AllowUserResizing = false;
-        Window.IsBorderless = false;
+        Window.IsBorderless = true;
+        IsMouseVisible = false;
 
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
 
-        _standardGameUps = EngineGlobal.FramesPerSecondTimeSpan;
-
         IsFixedTimeStep = true;
-        TargetElapsedTime = _standardGameUps;
+        TargetElapsedTime = EngineConstants.FramesPerSecondTimeSpan;
+
+        IGameWindow.Instance = this;
     }
 
     private void WindowOnClientSizeChanged(object? sender, EventArgs e)
@@ -87,52 +87,48 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     [LibraryImport("user32.dll")]
     private static partial void ClipCursor(ref Rectangle rect);
 
+    protected override void Initialize()
+    {
+        // make the window fullscreen (but still with border and top control bar)
+        var screenWidth = _graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Width;
+        var screenHeight = _graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Height;
+        _graphics.PreferredBackBufferWidth = screenWidth;
+        _graphics.PreferredBackBufferHeight = screenHeight;
+        _graphics.IsFullScreen = false;
+        _graphics.ApplyChanges();
+        _rootDirectoryManager = new RootDirectoryManager();
+
+        // create and init the UI manager
+        UserInterface.Initialize(Content, BuiltinThemes.editor);
+        UserInterface.Active.UseRenderTarget = true;
+
+        // draw cursor outside the render target
+        UserInterface.Active.IncludeCursorInRenderTarget = false;
+
+        LoadContent();
+
+        InitialiseGameConstants();
+    }
+
     protected override void LoadContent()
     {
         _fontBank = new FontBank(Content);
+        _menuSpriteBank = new MenuSpriteBank(Content, GraphicsDevice);
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _graphics.PreferredBackBufferWidth = _gameResolution.X;
-        _graphics.PreferredBackBufferHeight = _gameResolution.Y;
 
         _graphics.ApplyChanges();
 
-        InitialiseGameConstants();
-
-        var file =
-        //    "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
-        //  "levels\\rotation test.nxlv";
-        //  "levels\\render test.nxlv";
-         "levels\\movement test.nxlv";
-        // "levels\\object test.nxlv";
-        // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
-        //   "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
-        //  "levels\\Amiga Lemmings\\Lemmings\\Tricky\\05_Careless_clicking_costs_lives.nxlv";
-        //   "levels\\LemRunner\\Industry\\TheNightShift.nxlv";
-        //  "levels\\Amiga Lemmings\\Lemmings\\Tricky\\04_Here's_one_I_prepared_earlier.nxlv";
-        //"levels\\IntegralLemmingsV5\\Alpha\\TheseLemmingsAndThoseLemmings.nxlv";
-        //"levels\\CuttingItClose.nxlv";
-        //    "levels\\scrollTest.nxlv";
-        //  "levels\\LemRunner\\Mona\\ACaeloUsqueAdCentrum.nxlv";
-        // "levels\\groupTest.nxlv";
-        //    "levels\\eraseTest.nxlv";
-        //  "levels\\Amiga Lemmings\\Lemmings\\Fun\\19_Take_good_care_of_my_Lemmings.nxlv";
-
-        var path = Path.Combine(_rootDirectoryManager.RootDirectory, file);
-
-        var fileExtension = Path.GetExtension(file);
-        var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension, _rootDirectoryManager);
-
-        using (var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, _fontBank, _rootDirectoryManager, levelReader))
-        {
-            Screen = levelBuilder.BuildLevel(path);
-            Screen.GameWindow = this;
-            Screen.OnWindowSizeChanged();
-            ScreenRenderer = Screen.ScreenRenderer;
-            ScreenRenderer.GameWindow = this;
-        }
-
-        Window.Title = Screen.ScreenTitle;
+        //LoadLevel_Debug();
+        var menuScreen = new MenuScreen(
+            _rootDirectoryManager,
+            _menuSpriteBank,
+            Content,
+            GraphicsDevice,
+            _spriteBatch,
+            _fontBank);
+        SetScreen(menuScreen);
+        menuScreen.Initialise();
 
         CaptureCursor();
     }
@@ -157,14 +153,51 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
             numberOfGadgetTypes);
 
         TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
-        DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
+        DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, _graphics.GraphicsDevice);
+    }
 
-        _rootDirectoryManager = new RootDirectoryManager();
+    private void LoadLevel_Debug()
+    {
+        var file =
+            //    "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
+            //  "levels\\rotation test.nxlv";
+            //  "levels\\render test.nxlv";
+            "levels\\movement test.nxlv";
+        // "levels\\object test.nxlv";
+        // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
+        //   "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
+        //  "levels\\Amiga Lemmings\\Lemmings\\Tricky\\05_Careless_clicking_costs_lives.nxlv";
+        //   "levels\\LemRunner\\Industry\\TheNightShift.nxlv";
+        //  "levels\\Amiga Lemmings\\Lemmings\\Tricky\\04_Here's_one_I_prepared_earlier.nxlv";
+        //"levels\\IntegralLemmingsV5\\Alpha\\TheseLemmingsAndThoseLemmings.nxlv";
+        //"levels\\CuttingItClose.nxlv";
+        //    "levels\\scrollTest.nxlv";
+        //  "levels\\LemRunner\\Mona\\ACaeloUsqueAdCentrum.nxlv";
+        // "levels\\groupTest.nxlv";
+        //    "levels\\eraseTest.nxlv";
+        //  "levels\\Amiga Lemmings\\Lemmings\\Fun\\19_Take_good_care_of_my_Lemmings.nxlv";
+
+        var path = Path.Combine(_rootDirectoryManager.RootDirectory, file);
+
+        var fileExtension = Path.GetExtension(file);
+        var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension, _rootDirectoryManager);
+
+        using var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, _fontBank, _rootDirectoryManager, levelReader);
+        SetScreen(levelBuilder.BuildLevel(path));
+    }
+
+    public void SetScreen(IBaseScreen screen)
+    {
+        Screen = screen;
+        Screen.OnWindowSizeChanged();
+        ScreenRenderer = Screen.ScreenRenderer;
+
+        Window.Title = Screen.ScreenTitle;
     }
 
     protected override void Update(GameTime gameTime)
     {
-        Screen.Tick();
+        Screen.Tick(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
@@ -172,13 +205,9 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         // if (gameTime.IsRunningSlowly)
         //     return;
 
-        GraphicsDevice.Clear(Color.Black);
-
-        _spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
+        _graphics.GraphicsDevice.Clear(Color.Black);
 
         ScreenRenderer.RenderScreen(_spriteBatch);
-
-        _spriteBatch.End();
     }
 
     public void ToggleFullScreen()
@@ -235,24 +264,24 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     private void SetFullscreen()
     {
-        _gameResolution = new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
+        /*   _gameResolution = new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
 
-        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-        _graphics.HardwareModeSwitch = !_isBorderless;
+           _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+           _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+           _graphics.HardwareModeSwitch = !_isBorderless;
 
-        _graphics.IsFullScreen = true;
-        _graphics.ApplyChanges();
-        CaptureCursor();
+           _graphics.IsFullScreen = true;
+           _graphics.ApplyChanges();
+           CaptureCursor();*/
     }
 
     private void UnsetFullscreen()
     {
-        _graphics.PreferredBackBufferWidth = _gameResolution.X;
-        _graphics.PreferredBackBufferHeight = _gameResolution.Y;
-        _graphics.IsFullScreen = false;
-        _graphics.ApplyChanges();
-        CaptureCursor();
+        /* _graphics.PreferredBackBufferWidth = _gameResolution.X;
+         _graphics.PreferredBackBufferHeight = _gameResolution.Y;
+         _graphics.IsFullScreen = false;
+         _graphics.ApplyChanges();
+         CaptureCursor();*/
     }
 
     public void Escape()

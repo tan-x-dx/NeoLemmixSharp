@@ -10,11 +10,11 @@ public sealed class StackerAction : LemmingAction
     {
     }
 
-    public override int Id => Global.StackerActionId;
+    public override int Id => LevelConstants.StackerActionId;
     public override string LemmingActionName => "stacker";
-    public override int NumberOfAnimationFrames => Global.StackerAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.StackerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -57,7 +57,7 @@ public sealed class StackerAction : LemmingAction
 
     private static bool MayPlaceNextBrick(Lemming lemming)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var brickPosition = lemming.LevelPosition;
         brickPosition = orientation.MoveUp(brickPosition, 9 - lemming.NumberOfBricksLeft);
@@ -71,7 +71,7 @@ public sealed class StackerAction : LemmingAction
 
     private static bool LayStackBrick(Lemming lemming)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dy = lemming.StackLow ? -1 : 0;

@@ -154,7 +154,7 @@ end;
 
         if (didTick)
         {
-            if (_elapsedTicks.Item % EngineGlobal.FramesPerSecond == 0)
+            if (_elapsedTicks.Item % EngineConstants.FramesPerSecond == 0)
             {
                 _levelTimer.Tick();
             }

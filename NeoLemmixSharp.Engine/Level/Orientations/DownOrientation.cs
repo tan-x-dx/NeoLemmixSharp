@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using System.Diagnostics.Contracts;
-using static NeoLemmixSharp.Engine.Level.Global;
+using static NeoLemmixSharp.Engine.Level.LevelConstants;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -12,7 +12,7 @@ public sealed class DownOrientation : Orientation
     {
     }
 
-    public override int RotNum => Global.DownOrientationRotNum;
+    public override int RotNum => LevelConstants.DownOrientationRotNum;
     public override int AbsoluteHorizontalComponent => 0;
     public override int AbsoluteVerticalComponent => 1;
 

@@ -11,7 +11,7 @@ public sealed class FencerSkill : LemmingSkill
     {
     }
 
-    public override int Id => Global.FencerSkillId;
+    public override int Id => LevelConstants.FencerSkillId;
     public override string LemmingSkillName => "fencer";
     public override bool IsClassicSkill => false;
     

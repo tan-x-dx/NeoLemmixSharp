@@ -8,6 +8,6 @@ public sealed class LogicGateGadgetType : GadgetSubType
     {
     }
 
-    public override int Id => Global.LogicGateGadgetTypeId;
+    public override int Id => LevelConstants.LogicGateGadgetTypeId;
     public override string GadgetTypeName => "logic gate";
 }

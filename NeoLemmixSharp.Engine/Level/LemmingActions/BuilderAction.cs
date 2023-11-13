@@ -10,11 +10,11 @@ public sealed class BuilderAction : LemmingAction
     {
     }
 
-    public override int Id => Global.BuilderActionId;
+    public override int Id => LevelConstants.BuilderActionId;
     public override string LemmingActionName => "builder";
-    public override int NumberOfAnimationFrames => Global.BuilderAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.BuilderAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -48,7 +48,7 @@ public sealed class BuilderAction : LemmingAction
 
     private static void BuilderFrame0(Lemming lemming)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         lemming.NumberOfBricksLeft--;
 
         var orientation = lemming.Orientation;
@@ -107,7 +107,7 @@ public sealed class BuilderAction : LemmingAction
 
     public static void LayBrick(Lemming lemming)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dy = lemming.CurrentAction == Instance

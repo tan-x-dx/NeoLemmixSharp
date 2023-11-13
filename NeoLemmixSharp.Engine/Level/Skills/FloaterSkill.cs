@@ -11,7 +11,7 @@ public sealed class FloaterSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public override int Id => Global.FloaterSkillId;
+    public override int Id => LevelConstants.FloaterSkillId;
     public override string LemmingSkillName => "floater";
     public override bool IsClassicSkill => true;
 

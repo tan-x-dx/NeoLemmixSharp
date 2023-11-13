@@ -16,15 +16,15 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
     {
     }
 
-    public override int Id => Global.MinerActionId;
+    public override int Id => LevelConstants.MinerActionId;
     public override string LemmingActionName => "miner";
-    public override int NumberOfAnimationFrames => Global.MinerAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.MinerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
         var facingDirection = lemming.FacingDirection;
@@ -138,7 +138,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         Lemming lemming,
         LevelPosition checkPosition)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 

@@ -11,7 +11,7 @@ public sealed class BomberSkill : LemmingSkill
     {
     }
 
-    public override int Id => Global.BomberSkillId;
+    public override int Id => LevelConstants.BomberSkillId;
     public override string LemmingSkillName => "bomber";
     public override bool IsClassicSkill => true;
 

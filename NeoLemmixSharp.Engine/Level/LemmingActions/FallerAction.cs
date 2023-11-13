@@ -13,16 +13,16 @@ public sealed class FallerAction : LemmingAction
     {
     }
 
-    public override int Id => Global.FallerActionId;
+    public override int Id => LevelConstants.FallerActionId;
     public override string LemmingActionName => "faller";
-    public override int NumberOfAnimationFrames => Global.FallerAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.FallerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.NonWalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var gadgetManager = Global.GadgetManager;
-        var terrainManager = Global.TerrainManager;
+        var gadgetManager = LevelConstants.GadgetManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var currentFallDistanceStep = 0;
         var maxFallDistanceStep = 3; // A lemming falls 3 pixels each frame
 
@@ -95,7 +95,7 @@ public sealed class FallerAction : LemmingAction
 
     private static bool IsFallFatal(Lemming lemming)
     {
-        var gadgetManager = Global.GadgetManager;
+        var gadgetManager = LevelConstants.GadgetManager;
 
         return !(lemming.State.IsFloater || lemming.State.IsGlider) &&
                gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, NoSplatGadgetType.Instance) &&

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public abstract class InputController : IPerfectHasher<Keys>
+public sealed class InputController : IPerfectHasher<Keys>
 {
     private const int NumberOfKeys = 256;
 
@@ -25,24 +25,24 @@ public abstract class InputController : IPerfectHasher<Keys>
     public MouseButtonAction MouseButton4Action { get; } = new(3, "Mouse Button 4");
     public MouseButtonAction MouseButton5Action { get; } = new(4, "Mouse Button 5");
 
-    protected InputController()
+    public InputController()
     {
         _keys = new SimpleSet<Keys>(this);
     }
 
-    protected KeyAction CreateKeyAction(string actionName)
+    public KeyAction CreateKeyAction(string actionName)
     {
         var keyAction = new KeyAction(_keyActions.Count, actionName);
         _keyActions.Add(keyAction);
         return keyAction;
     }
 
-    protected void Bind(Keys keyCode, KeyAction keyAction)
+    public void Bind(Keys keyCode, KeyAction keyAction)
     {
         _keyMapping.Add((keyCode, keyAction));
     }
 
-    protected void ValidateKeyActions()
+    public void ValidateKeyActions()
     {
         _keyActions.ValidateUniqueIds();
         _keyActions.Sort(IdEquatableItemHelperMethods.Compare);
@@ -71,9 +71,16 @@ public abstract class InputController : IPerfectHasher<Keys>
         UpdateMouseButtonStates();
     }
 
-    public void ReleaseAllKeys()
+    public void ClearAllKeys()
     {
         _keys.Clear();
+
+        var keyActionsSpan = CollectionsMarshal.AsSpan(_keyActions);
+
+        foreach (var keyAction in keyActionsSpan)
+        {
+            keyAction.Clear();
+        }
     }
 
     private void UpdateKeyStates()

@@ -16,10 +16,10 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     {
         var orientations = new Orientation[4];
 
-        orientations[Global.DownOrientationRotNum] = DownOrientation.Instance;
-        orientations[Global.LeftOrientationRotNum] = LeftOrientation.Instance;
-        orientations[Global.UpOrientationRotNum] = UpOrientation.Instance;
-        orientations[Global.RightOrientationRotNum] = RightOrientation.Instance;
+        orientations[LevelConstants.DownOrientationRotNum] = DownOrientation.Instance;
+        orientations[LevelConstants.LeftOrientationRotNum] = LeftOrientation.Instance;
+        orientations[LevelConstants.UpOrientationRotNum] = UpOrientation.Instance;
+        orientations[LevelConstants.RightOrientationRotNum] = RightOrientation.Instance;
 
         orientations.ValidateUniqueIds();
 

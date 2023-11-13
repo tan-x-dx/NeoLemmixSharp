@@ -10,11 +10,11 @@ public sealed class ExiterAction : LemmingAction
     {
     }
 
-    public override int Id => Global.ExiterActionId;
+    public override int Id => LevelConstants.ExiterActionId;
     public override string LemmingActionName => "exiter";
-    public override int NumberOfAnimationFrames => Global.ExiterAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.ExiterAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => Global.NoPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

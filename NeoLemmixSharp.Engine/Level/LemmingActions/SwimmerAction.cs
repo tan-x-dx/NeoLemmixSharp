@@ -13,15 +13,15 @@ public sealed class SwimmerAction : LemmingAction
     {
     }
 
-    public override int Id => Global.SwimmerActionId;
+    public override int Id => LevelConstants.SwimmerActionId;
     public override string LemmingActionName => "swimmer";
-    public override int NumberOfAnimationFrames => Global.SwimmerAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.SwimmerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.PermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
@@ -132,7 +132,7 @@ public sealed class SwimmerAction : LemmingAction
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool WaterAt(LevelPosition lemmingPosition)
     {
-        return Global.GadgetManager.HasGadgetOfTypeAtPosition(lemmingPosition, WaterGadgetType.Instance);
+        return LevelConstants.GadgetManager.HasGadgetOfTypeAtPosition(lemmingPosition, WaterGadgetType.Instance);
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ public sealed class SwimmerAction : LemmingAction
     {
         var result = 1;
 
-        while (result <= 4 && Global.TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
+        while (result <= 4 && LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
         {
             result++;
             lemming.DistanceFallen++;

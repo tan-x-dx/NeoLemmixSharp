@@ -11,7 +11,7 @@ public sealed class MetalGrateGadgetType : InteractiveGadgetType
     {
     }
 
-    public override int Id => Global.MetalGrateGadgetTypeId;
+    public override int Id => LevelConstants.MetalGrateGadgetTypeId;
     public override string GadgetTypeName => "metal grate";
 
     public override LemmingAction InteractWithLemming(Lemming lemming)

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Rendering;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
@@ -27,10 +28,9 @@ public sealed class LevelScreen : IBaseScreen
     public LemmingManager LemmingManager { get; }
     public TerrainManager TerrainManager { get; }
     public GadgetManager GadgetManager { get; }
-    public LevelRenderer ScreenRenderer { get; }
+    public LevelRenderer LevelRenderer { get; }
 
-    public IGameWindow GameWindow { get; set; }
-    IScreenRenderer IBaseScreen.ScreenRenderer => ScreenRenderer;
+    IScreenRenderer IBaseScreen.ScreenRenderer => LevelRenderer;
     public string ScreenTitle { get; }
     public bool IsDisposed { get; private set; }
 
@@ -60,7 +60,7 @@ public sealed class LevelScreen : IBaseScreen
         LemmingManager = lemmingManager;
         TerrainManager = terrainManager;
         GadgetManager = gadgetManager;
-        ScreenRenderer = levelRenderer;
+        LevelRenderer = levelRenderer;
 
         Current = this;
 
@@ -68,9 +68,9 @@ public sealed class LevelScreen : IBaseScreen
         GadgetManager.Initialise();
     }
 
-    public void Tick()
+    public void Tick(GameTime gameTime)
     {
-        if (!GameWindow.IsActive)
+        if (!IGameWindow.Instance.IsActive)
             return;
 
         UpdateScheduler.Tick();
@@ -109,34 +109,34 @@ public sealed class LevelScreen : IBaseScreen
     {
         if (InputController.Quit.IsPressed)
         {
-            GameWindow.Escape();
+            IGameWindow.Instance.Escape();
         }
 
         if (InputController.ToggleFullScreen.IsPressed)
         {
-            GameWindow.ToggleBorderless();
+            IGameWindow.Instance.ToggleBorderless();
         }
     }
 
     public void OnWindowSizeChanged()
     {
-        var windowWidth = GameWindow.WindowWidth;
-        var windowHeight = GameWindow.WindowHeight;
+        var windowWidth = IGameWindow.Instance.WindowWidth;
+        var windowHeight = IGameWindow.Instance.WindowHeight;
 
         ControlPanel.SetWindowDimensions(windowWidth, windowHeight);
         Viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)ControlPanel).ControlPanelScreenHeight);
-        ScreenRenderer.OnWindowSizeChanged(windowWidth, windowHeight);
+        LevelRenderer.OnWindowSizeChanged();
     }
 
     public void Dispose()
     {
 #pragma warning disable CS8625
-        Global.SetTerrainManager(null);
-        Global.SetLemmingManager(null);
-        Global.SetGadgetManager(null);
-        Global.SetSkillSetManager(null);
+        LevelConstants.SetTerrainManager(null);
+        LevelConstants.SetLemmingManager(null);
+        LevelConstants.SetGadgetManager(null);
+        LevelConstants.SetSkillSetManager(null);
 
-        ScreenRenderer.Dispose();
+        LevelRenderer.Dispose();
         IsDisposed = true;
         Current = null;
 #pragma warning restore CS8625

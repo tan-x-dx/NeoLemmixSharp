@@ -16,11 +16,11 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     {
     }
 
-    public override int Id => Global.BasherActionId;
+    public override int Id => LevelConstants.BasherActionId;
     public override string LemmingActionName => "basher";
-    public override int NumberOfAnimationFrames => Global.BasherAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.BasherAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -37,7 +37,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
          FacingDirection facingDirection,
          LevelPosition pos)
      {
-       var terrainManager = Global.TerrainManager;
+       var terrainManager = LevelConstants.TerrainManager;
 
          return terrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 3)) ||
                 terrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 4)) ||
@@ -65,7 +65,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         int dx,
         int step)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
 
         var p1X1Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 1));
         var p1X2Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 2));

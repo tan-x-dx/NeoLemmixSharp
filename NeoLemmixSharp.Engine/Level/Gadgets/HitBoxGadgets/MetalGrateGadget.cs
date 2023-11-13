@@ -93,7 +93,7 @@ public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget
     {
         if (CurrentState == MetalGrateState.Activating)
         {
-            Global.LemmingManager.RemoveLemming(lemming);
+            LevelConstants.LemmingManager.RemoveLemming(lemming);
         }
     }
 

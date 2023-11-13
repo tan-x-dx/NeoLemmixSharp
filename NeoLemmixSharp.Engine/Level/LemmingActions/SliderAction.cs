@@ -13,11 +13,11 @@ public sealed class SliderAction : LemmingAction
     {
     }
 
-    public override int Id => Global.SliderActionId;
+    public override int Id => LevelConstants.SliderActionId;
     public override string LemmingActionName => "slider";
-    public override int NumberOfAnimationFrames => Global.SliderAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.SliderAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.PermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -67,7 +67,7 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        var gadgetSet = Global.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+        var gadgetSet = LevelConstants.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
         foreach (var gadget in gadgetSet)
         {
@@ -106,7 +106,7 @@ public sealed class SliderAction : LemmingAction
         LevelPosition levelPosition,
         LevelPosition dehoistPin)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         if (terrainManager.PixelIsSolidToLemming(lemming, dehoistPin))
             return true;
 
