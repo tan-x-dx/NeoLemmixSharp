@@ -22,6 +22,11 @@ public sealed class KeyAction : IIdEquatable<KeyAction>, IInputAction
         set => _action.ActionState = value;
     }
 
+    public void Clear()
+    {
+        _action.Clear();
+    }
+
     public void UpdateState()
     {
         _action.UpdateState();

@@ -11,7 +11,7 @@ public sealed class LasererSkill : LemmingSkill
     {
     }
 
-    public override int Id => Global.LasererSkillId;
+    public override int Id => LevelConstants.LasererSkillId;
     public override string LemmingSkillName => "laserer";
     public override bool IsClassicSkill => false;
 

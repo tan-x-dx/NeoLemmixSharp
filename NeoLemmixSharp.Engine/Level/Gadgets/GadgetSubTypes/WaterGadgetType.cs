@@ -11,7 +11,7 @@ public sealed class WaterGadgetType : InteractiveGadgetType
     {
     }
 
-    public override int Id => Global.WaterGadgetTypeId;
+    public override int Id => LevelConstants.WaterGadgetTypeId;
     public override string GadgetTypeName => "water";
 
     public override LemmingAction InteractWithLemming(Lemming lemming)

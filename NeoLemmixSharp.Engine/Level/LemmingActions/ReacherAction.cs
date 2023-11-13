@@ -16,15 +16,15 @@ public sealed class ReacherAction : LemmingAction
     {
     }
 
-    public override int Id => Global.ReacherActionId;
+    public override int Id => LevelConstants.ReacherActionId;
     public override string LemmingActionName => "reacher";
-    public override int NumberOfAnimationFrames => Global.ReacherAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.ReacherAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => Global.NonWalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
@@ -76,7 +76,7 @@ public sealed class ReacherAction : LemmingAction
         Lemming lemming,
         LevelPosition lemmingPosition)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         if (terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 10)))
             return 0;
 

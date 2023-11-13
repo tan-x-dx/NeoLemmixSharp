@@ -11,7 +11,7 @@ public sealed class StonerSkill : LemmingSkill
     {
     }
 
-    public override int Id => Global.StonerSkillId;
+    public override int Id => LevelConstants.StonerSkillId;
     public override string LemmingSkillName => "stoner";
     public override bool IsClassicSkill => false;
 

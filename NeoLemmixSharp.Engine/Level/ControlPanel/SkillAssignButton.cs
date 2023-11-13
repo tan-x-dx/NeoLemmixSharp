@@ -24,7 +24,7 @@ public sealed class SkillAssignButton : ControlPanelButton
 
     public void UpdateSkillCount(int numberOfSkillsAvailable)
     {
-        if (numberOfSkillsAvailable >= Global.InfiniteSkillCount)
+        if (numberOfSkillsAvailable >= LevelConstants.InfiniteSkillCount)
         {
             _skillCountChars[0] = SkillCountDigitFont.InfinityGlyph;
             _skillCountChars[1] = ' ';

@@ -10,17 +10,17 @@ public sealed class VaporiserAction : LemmingAction
     {
     }
 
-    public override int Id => Global.VaporiserActionId;
+    public override int Id => LevelConstants.VaporiserActionId;
     public override string LemmingActionName => "burner2";
-    public override int NumberOfAnimationFrames => Global.VaporiserAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.VaporiserAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => Global.NoPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
         if (lemming.EndOfAnimation)
         {
-            Global.LemmingManager.RemoveLemming(lemming);
+            LevelConstants.LemmingManager.RemoveLemming(lemming);
         }
 
         return false;

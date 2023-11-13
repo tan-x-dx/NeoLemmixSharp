@@ -60,7 +60,7 @@ public sealed class LemmingSpriteBank : IDisposable
 
     public void SetTeamColors()
     {
-        for (var i = 0; i < Global.NumberOfTeams; i++)
+        for (var i = 0; i < LevelConstants.NumberOfTeams; i++)
         {
             Team.AllItems[i].SetColorData(_teamColorData[i]);
         }

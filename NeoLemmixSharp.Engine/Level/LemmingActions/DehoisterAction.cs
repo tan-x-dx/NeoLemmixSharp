@@ -10,11 +10,11 @@ public sealed class DehoisterAction : LemmingAction
     {
     }
 
-    public override int Id => Global.DehoisterActionId;
+    public override int Id => LevelConstants.DehoisterActionId;
     public override string LemmingActionName => "dehoister";
-    public override int NumberOfAnimationFrames => Global.DehoisterAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.DehoisterAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => Global.NonWalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -23,7 +23,7 @@ public sealed class DehoisterAction : LemmingAction
 
         if (lemming.EndOfAnimation)
         {
-            if (Global.TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7)))
+            if (LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7)))
             {
                 SliderAction.Instance.TransitionLemmingToAction(lemming, false);
                 return true;

@@ -4,6 +4,8 @@ namespace NeoLemmixSharp.Common.Rendering.Text;
 
 public sealed class FontBank
 {
+    public static FontBank Instance { get; private set; } = null!;
+
     public MenuFont MenuFont { get; }
     public PanelFont PanelFont { get; }
     public SkillCountDigitFont SkillCountDigitFont { get; }
@@ -13,5 +15,7 @@ public sealed class FontBank
         MenuFont = new MenuFont(contentManager);
         PanelFont = new PanelFont(contentManager);
         SkillCountDigitFont = new SkillCountDigitFont(contentManager);
+
+        Instance = this;
     }
 }

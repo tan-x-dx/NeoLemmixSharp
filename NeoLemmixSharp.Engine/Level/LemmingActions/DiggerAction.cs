@@ -16,15 +16,15 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
     {
     }
 
-    public override int Id => Global.DiggerActionId;
+    public override int Id => LevelConstants.DiggerActionId;
     public override string LemmingActionName => "digger";
-    public override int NumberOfAnimationFrames => Global.DiggerAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.DiggerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.NonPermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
         var lemmingPosition = lemming.LevelPosition;
@@ -78,7 +78,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         FacingDirection facingDirection,
         LevelPosition lemmingPosition)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         // The central pixel of the removed row lies at the lemming's position
         var result = false;
 

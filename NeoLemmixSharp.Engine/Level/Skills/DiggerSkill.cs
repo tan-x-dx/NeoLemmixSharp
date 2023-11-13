@@ -11,14 +11,14 @@ public sealed class DiggerSkill : LemmingSkill
     {
     }
 
-    public override int Id => Global.DiggerSkillId;
+    public override int Id => LevelConstants.DiggerSkillId;
     public override string LemmingSkillName => "digger";
     public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
         return ActionIsAssignable(lemming) &&
-               !Global.TerrainManager.PixelIsIndestructibleToLemming(lemming, DiggerAction.Instance, lemming.LevelPosition);
+               !LevelConstants.TerrainManager.PixelIsIndestructibleToLemming(lemming, DiggerAction.Instance, lemming.LevelPosition);
     }
 
     public override bool AssignToLemming(Lemming lemming)

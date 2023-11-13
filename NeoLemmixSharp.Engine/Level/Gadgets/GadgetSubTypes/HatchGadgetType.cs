@@ -8,6 +8,6 @@ public sealed class HatchGadgetType : GadgetSubType
     {
     }
 
-    public override int Id => Global.HatchGadgetTypeId;
+    public override int Id => LevelConstants.HatchGadgetTypeId;
     public override string GadgetTypeName => "hatch";
 }

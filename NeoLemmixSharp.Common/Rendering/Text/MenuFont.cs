@@ -6,14 +6,14 @@ namespace NeoLemmixSharp.Common.Rendering.Text;
 
 public sealed class MenuFont : INeoLemmixFont
 {
-    public static Color DefaultColor { get; set; } = new(0xff, 0xff, 0xFF);
+    public static Color DefaultColor { get; set; } = new(0xff, 0xff, 0xff);
 
-    private const int GlyphWidth = 16;
-    private const int GlyphHeight = 19;
+    public const int GlyphWidth = 16;
+    public const int GlyphHeight = 19;
 
     private readonly Texture2D _texture;
 
-    public float RenderLayer { get; set; } = 1.0f;
+    public float RenderLayer { get; set; } = 0.9f;
 
     public MenuFont(ContentManager content)
     {

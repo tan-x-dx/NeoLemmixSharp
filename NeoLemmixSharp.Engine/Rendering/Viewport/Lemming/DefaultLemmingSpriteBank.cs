@@ -151,7 +151,7 @@ public static class DefaultLemmingSpriteBank
 
     private static TeamColorData[] GenerateDefaultTeamColorData()
     {
-        var result = new TeamColorData[Global.NumberOfTeams];
+        var result = new TeamColorData[LevelConstants.NumberOfTeams];
 
         var defaultSkinColor = new Color(0xF0, 0xD0, 0xD0);
         var defaultZombieSkinColor = new Color(0x77, 0x77, 0x77);

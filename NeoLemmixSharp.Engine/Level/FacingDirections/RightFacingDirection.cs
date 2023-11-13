@@ -12,7 +12,7 @@ public sealed class RightFacingDirection : FacingDirection
     }
 
     public override int DeltaX => 1;
-    public override int Id => Global.RightFacingDirectionId;
+    public override int Id => LevelConstants.RightFacingDirectionId;
 
     [Pure]
     public override FacingDirection GetOpposite() => LeftFacingDirection.Instance;

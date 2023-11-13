@@ -10,11 +10,11 @@ public sealed class GliderAction : LemmingAction
     {
     }
 
-    public override int Id => Global.GliderActionId;
+    public override int Id => LevelConstants.GliderActionId;
     public override string LemmingActionName => "glider";
-    public override int NumberOfAnimationFrames => Global.GliderAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.GliderAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.PermanentSkillPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -29,7 +29,7 @@ public sealed class GliderAction : LemmingAction
 
     private static bool DoTurnAround(Lemming lemming, bool moveForwardFirst)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var currentPosition = lemming.LevelPosition;

@@ -16,11 +16,11 @@ public sealed class JumperAction : LemmingAction
     {
     }
 
-    public override int Id => Global.JumperActionId;
+    public override int Id => LevelConstants.JumperActionId;
     public override string LemmingActionName => "jumper";
-    public override int NumberOfAnimationFrames => Global.JumperAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.JumperAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.NonWalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -55,7 +55,7 @@ public sealed class JumperAction : LemmingAction
 
     private void DoGadgetChecks(Lemming lemming)
     {
-        var gadgetsAtLemmingPosition = Global.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+        var gadgetsAtLemmingPosition = LevelConstants.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
         foreach (var gadget in gadgetsAtLemmingPosition)
         {

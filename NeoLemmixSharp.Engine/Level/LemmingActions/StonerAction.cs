@@ -10,11 +10,11 @@ public sealed class StonerAction : LemmingAction
     {
     }
 
-    public override int Id => Global.StonerActionId;
+    public override int Id => LevelConstants.StonerActionId;
     public override string LemmingActionName => "stoner";
-    public override int NumberOfAnimationFrames => Global.StonerAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.StonerAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => Global.NoPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

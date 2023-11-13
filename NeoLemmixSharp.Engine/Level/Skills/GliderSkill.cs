@@ -11,7 +11,7 @@ public sealed class GliderSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public override int Id => Global.GliderSkillId;
+    public override int Id => LevelConstants.GliderSkillId;
     public override string LemmingSkillName => "glider";
     public override bool IsClassicSkill => false;
 

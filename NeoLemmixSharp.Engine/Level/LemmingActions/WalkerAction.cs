@@ -11,11 +11,11 @@ public sealed class WalkerAction : LemmingAction
     {
     }
 
-    public override int Id => Global.WalkerActionId;
+    public override int Id => LevelConstants.WalkerActionId;
     public override string LemmingActionName => "walker";
-    public override int NumberOfAnimationFrames => Global.WalkerAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.WalkerAnimationFrames;
     public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => Global.WalkerMovementPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.WalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -90,7 +90,7 @@ public sealed class WalkerAction : LemmingAction
 
     public static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
     {
-        var terrainManager = Global.TerrainManager;
+        var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         LevelPosition currentPosition;
@@ -124,7 +124,7 @@ public sealed class WalkerAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        if (Global.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        if (LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
         {
             base.TransitionLemmingToAction(lemming, turnAround);
             return;

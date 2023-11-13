@@ -10,17 +10,17 @@ public sealed class SplatterAction : LemmingAction
     {
     }
 
-    public override int Id => Global.SplatterActionId;
+    public override int Id => LevelConstants.SplatterActionId;
     public override string LemmingActionName => "splatter";
-    public override int NumberOfAnimationFrames => Global.SplatterAnimationFrames;
+    public override int NumberOfAnimationFrames => LevelConstants.SplatterAnimationFrames;
     public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => Global.NoPriority;
+    public override int CursorSelectionPriorityValue => LevelConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
         if (lemming.EndOfAnimation)
         {
-            Global.LemmingManager.RemoveLemming(lemming);
+            LevelConstants.LemmingManager.RemoveLemming(lemming);
         }
 
         return false;
