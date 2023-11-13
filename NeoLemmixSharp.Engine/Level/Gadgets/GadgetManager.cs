@@ -46,13 +46,13 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSet<HitBoxGadget> GetAllGadgetsForPosition(LevelPosition levelPosition)
+    public SimpleSetEnumerable<HitBoxGadget> GetAllGadgetsForPosition(LevelPosition levelPosition)
     {
         return _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
     }
 
     [Pure]
-    public SimpleSet<HitBoxGadget> GetAllGadgetsAtLemmingPosition(Lemming lemming)
+    public SimpleSetEnumerable<HitBoxGadget> GetAllGadgetsAtLemmingPosition(Lemming lemming)
     {
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
@@ -64,7 +64,7 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSet<HitBoxGadget> GetAllItemsNearRegion(LevelPositionPair levelRegion)
+    public SimpleSetEnumerable<HitBoxGadget> GetAllItemsNearRegion(LevelPositionPair levelRegion)
     {
         return _gadgetPositionHelper.GetAllItemsNearRegion(levelRegion);
     }

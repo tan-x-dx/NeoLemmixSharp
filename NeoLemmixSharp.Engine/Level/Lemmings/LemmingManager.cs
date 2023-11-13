@@ -166,7 +166,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSet<Lemming> GetAllLemmingsNearRegion(LevelPositionPair levelRegion) => _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion);
+    public SimpleSetEnumerable<Lemming> GetAllLemmingsNearRegion(LevelPositionPair levelRegion) => _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void RegisterBlocker(Lemming lemming) => _blockerHelper.RegisterBlocker(lemming);

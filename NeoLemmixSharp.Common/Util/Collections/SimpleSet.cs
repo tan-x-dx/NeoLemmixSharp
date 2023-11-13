@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using NeoLemmixSharp.Common.Util.PositionTracking;
+using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -8,16 +9,8 @@ namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 {
-    public static SimpleSet<T> Empty { get; } = new();
-
     private readonly IPerfectHasher<T> _hasher;
     private readonly BitArray _bits;
-
-    private SimpleSet()
-    {
-        _hasher = null!;
-        _bits = BitArray.Empty;
-    }
 
     public SimpleSet(IPerfectHasher<T> hasher)
     {
@@ -60,6 +53,12 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
     }
 
     [Pure]
+    public SimpleSetEnumerable<T> ToSimpleEnumerable()
+    {
+        return new SimpleSetEnumerable<T>(_hasher, _bits.AsReadOnlySpan(), Count);
+    }
+
+    [Pure]
     public Enumerator GetEnumerator() => new(this);
     [Pure]
     public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);
@@ -77,6 +76,15 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
         {
             _hasher = set._hasher;
             _bitEnumerator = new BitArray.BitEnumerator(set._bits);
+        }
+
+        public Enumerator(
+            IPerfectHasher<T> hasher,
+            ReadOnlySpan<uint> bits,
+            int count)
+        {
+            _hasher = hasher;
+            _bitEnumerator = new BitArray.BitEnumerator(bits, count);
         }
 
         public bool MoveNext() => _bitEnumerator.MoveNext();
