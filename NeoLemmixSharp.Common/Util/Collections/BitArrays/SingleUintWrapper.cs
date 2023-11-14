@@ -20,5 +20,5 @@ public sealed class SingleUintWrapper : IUintWrapper
     public Span<uint> AsSpan() => new(ref _bits);
 
     [Pure]
-    public ReadOnlySpan<uint> AsReadOnlySpan() => new(in _bits);
+    public ReadOnlySpan<uint> AsReadOnlySpan() => new(ref _bits);
 }
