@@ -103,8 +103,7 @@ public sealed class SpacialHashGrid<T>
             return new SimpleSetEnumerable<T>(_hasher, _setUnionScratchSpace, count);
         }
 
-        EvaluateChunkPositions(UseChunkPositionMode.Union, null, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
-        count = BitArray.PopCount(_setUnionScratchSpace);
+        count = EvaluateChunkPositions(UseChunkPositionMode.Union, null, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
         return new SimpleSetEnumerable<T>(_hasher, _setUnionScratchSpace, count);
     }
 
@@ -222,7 +221,7 @@ public sealed class SpacialHashGrid<T>
         chunkY = Math.Clamp(chunkY, 0, _numberOfVerticalChunks - 1);
     }
 
-    private void EvaluateChunkPositions(UseChunkPositionMode useChunkPositionMode, T? item, int ax, int ay, int bx, int by)
+    private int EvaluateChunkPositions(UseChunkPositionMode useChunkPositionMode, T? item, int ax, int ay, int bx, int by)
     {
         if (bx < ax)
         {
@@ -237,13 +236,15 @@ public sealed class SpacialHashGrid<T>
         var yCount = 1 + by - ay;
 
         var x1 = ax;
+
+        int result = 0;
         while (x-- > 0)
         {
             var y1 = ay;
             var y = yCount;
             while (y-- > 0)
             {
-                UseChunkPosition(useChunkPositionMode, item, x1, y1);
+                result = UseChunkPosition(useChunkPositionMode, item, x1, y1);
 
                 if (++y1 == _numberOfVerticalChunks)
                 {
@@ -256,26 +257,27 @@ public sealed class SpacialHashGrid<T>
                 x1 = 0;
             }
         }
+
+        return result;
     }
 
-    private void UseChunkPosition(UseChunkPositionMode useChunkPositionMode, T? item, int x, int y)
+    private int UseChunkPosition(UseChunkPositionMode useChunkPositionMode, T? item, int x, int y)
     {
         switch (useChunkPositionMode)
         {
             case UseChunkPositionMode.Add:
                 var addSpan = SpanFor(x, y);
                 BitArray.SetBit(addSpan, _hasher.Hash(item!));
-                return;
+                return 0;
 
             case UseChunkPositionMode.Remove:
                 var removeSpan = SpanFor(x, y);
                 BitArray.ClearBit(removeSpan, _hasher.Hash(item!));
-                return;
+                return 0;
 
             case UseChunkPositionMode.Union:
                 var readOnlySpan = ReadOnlySpanFor(x, y);
-                BitArray.UnionWith(_setUnionScratchSpace, readOnlySpan);
-                return;
+                return BitArray.UnionWith(_setUnionScratchSpace, readOnlySpan);
 
             default:
                 throw new ArgumentOutOfRangeException(nameof(useChunkPositionMode), useChunkPositionMode, "Invalid value");

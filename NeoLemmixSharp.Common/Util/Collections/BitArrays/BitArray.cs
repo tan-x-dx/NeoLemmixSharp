@@ -32,22 +32,22 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
             ? new UintArrayWrapper(specifiedLength)
             : new SingleUintWrapper();
 
-        return new BitArray(uintWrapper, false);
+        return new BitArray(uintWrapper);
     }
 
-    public BitArray(IUintWrapper uintWrapper, bool calculateCount)
+    private BitArray(IUintWrapper uintWrapper)
+    {
+        _uintWrapper = uintWrapper;
+    }
+
+    public BitArray(IUintWrapper uintWrapper, bool calculatePopCount)
     {
         _uintWrapper = uintWrapper;
 
-        if (!calculateCount)
+        if (!calculatePopCount)
             return;
 
-        var count = 0;
-        foreach (var arrayValue in _uintWrapper.AsReadOnlySpan())
-        {
-            count += BitOperations.PopCount(arrayValue);
-        }
-        Count = count;
+        Count = PopCount(uintWrapper.AsReadOnlySpan());
     }
 
     /// <summary>
