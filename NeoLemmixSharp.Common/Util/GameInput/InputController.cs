@@ -44,7 +44,7 @@ public sealed class InputController : IPerfectHasher<Keys>
 
     public void ValidateKeyActions()
     {
-        _keyActions.ValidateUniqueIds();
+        IdEquatableItemHelperMethods.ValidateUniqueIds((ReadOnlySpan<KeyAction>)CollectionsMarshal.AsSpan(_keyActions));
         _keyActions.Sort(IdEquatableItemHelperMethods.Compare);
     }
 

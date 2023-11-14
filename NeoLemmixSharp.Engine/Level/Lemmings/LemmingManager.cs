@@ -44,13 +44,13 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
         _hatchGroups = hatchGroups;
         if (_hatchGroups.Length > 0)
         {
+            IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<HatchGroup>(hatchGroups));
             Array.Sort(_hatchGroups, IdEquatableItemHelperMethods.Compare);
-            _hatchGroups.ValidateUniqueIds();
         }
 
         _lemmings = lemmings;
+        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Lemming>(lemmings));
         Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
-        _lemmings.ValidateUniqueIds();
 
         _lemmingPositionHelper = new SpacialHashGrid<Lemming>(
             this,

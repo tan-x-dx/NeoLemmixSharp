@@ -25,7 +25,7 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _allGadgets = allGadgets;
-        _allGadgets.ValidateUniqueIds();
+        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
         Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
 
         _gadgetPositionHelper = new SpacialHashGrid<HitBoxGadget>(

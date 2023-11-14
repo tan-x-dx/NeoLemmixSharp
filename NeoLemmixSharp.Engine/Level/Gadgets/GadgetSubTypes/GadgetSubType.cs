@@ -28,7 +28,7 @@ public abstract class GadgetSubType : IExtendedEnumType<GadgetSubType>
             HatchGadgetType.Instance
         };
 
-        result.ValidateUniqueIds();
+        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<GadgetSubType>(result));
         Array.Sort(result, IdEquatableItemHelperMethods.Compare);
 
         return result;

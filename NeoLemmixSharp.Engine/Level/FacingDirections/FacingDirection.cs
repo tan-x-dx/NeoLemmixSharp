@@ -18,7 +18,7 @@ public abstract class FacingDirection : IExtendedEnumType<FacingDirection>
         facingDirections[RightFacingDirection.Instance.Id] = RightFacingDirection.Instance;
         facingDirections[LeftFacingDirection.Instance.Id] = LeftFacingDirection.Instance;
 
-        facingDirections.ValidateUniqueIds();
+        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<FacingDirection>(facingDirections));
 
         return facingDirections;
     }

@@ -20,7 +20,7 @@ public sealed class Team : IExtendedEnumType<Team>
         }
 
         // Probably irrelevant here since it's done programatically, but whatever
-        teams.ValidateUniqueIds();
+        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Team>(teams));
 
         return teams;
     }

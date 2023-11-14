@@ -56,7 +56,7 @@ public sealed class SpacialHashGrid<T>
     [Pure]
     public SimpleSetEnumerable<T> GetAllTrackedItems() => _allTrackedItems.ToSimpleEnumerable();
 
-    [Pure]
+    [Pure] // Technically not pure since it mutates the _setUnionScratchSpace array. But that's what it's intended for anyway so...
     public SimpleSetEnumerable<T> GetAllItemsNearPosition(LevelPosition levelPosition)
     {
         if (IsEmpty)
@@ -237,7 +237,7 @@ public sealed class SpacialHashGrid<T>
 
         var x1 = ax;
 
-        int result = 0;
+        var result = 0;
         while (x-- > 0)
         {
             var y1 = ay;
