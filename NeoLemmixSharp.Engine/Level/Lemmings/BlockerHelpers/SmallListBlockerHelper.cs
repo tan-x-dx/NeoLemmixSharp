@@ -25,9 +25,9 @@ public sealed class SmallListBlockerHelper : IBlockerHelper
 
         var firstBounds = BlockerAction.Instance.GetLemmingBounds(lemming);
 
-        var nearbyBlockers = _blockerList.AsSpan();
+        var allBlockers = _blockerList.AsSpan();
 
-        foreach (var blocker in nearbyBlockers)
+        foreach (var blocker in allBlockers)
         {
             var blockerTopLeft = blocker.TopLeftPixel;
             var blockerBottomRight = blocker.BottomRightPixel;
@@ -52,9 +52,9 @@ public sealed class SmallListBlockerHelper : IBlockerHelper
         var anchorPosition = lemming.LevelPosition;
         var footPosition = lemming.FootPosition;
 
-        var blockers = _blockerList.AsSpan();
+        var allBlockers = _blockerList.AsSpan();
 
-        foreach (var blocker in blockers)
+        foreach (var blocker in allBlockers)
         {
             if (BlockerAction.DoBlockerCheck(blocker, lemming, anchorPosition, footPosition))
                 return;
