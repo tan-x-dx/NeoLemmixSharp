@@ -5,12 +5,23 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class JumperAction : LemmingAction
 {
-    private const int JumperPositionCount = 6;
+    public const int JumperPositionCount = 6;
     private const int JumperArcFrames = 13;
 
     public static JumperAction Instance { get; } = new();
 
-    private readonly Dictionary<Lemming, LevelPosition[]> _jumperPositionLookup = new();
+    private readonly LevelPosition[] _jumpPositions =
+    {
+        new(0, -1), new(0, -1), new(1, 0), new(0, -1), new(0, -1), new(1, 0), // occurs twice
+        new(0, -1), new(1, 0), new(0, -1), new(1, 0), new(0, -1), new(1, 0), // occurs twice
+        new(0, -1), new(1, 0), new(0, -1), new(1, 0), new(1, 0), new(0, 0),
+        new(0, -1), new(1, 0), new(1, 0), new(0, -1), new(1, 0), new(0, 0),
+        new(1, 0), new(1, 0), new(1, 0), new(1, 0), new(0, 0), new(0, 0),
+        new(1, 0), new(0, 1), new(1, 0), new(1, 0), new(0, 1), new(0, 0),
+        new(1, 0), new(1, 0), new(0, 1), new(1, 0), new(0, 1), new(0, 0),
+        new(1, 0), new(0, 1), new(1, 0), new(0, 1), new(1, 0), new(0, 1), // occurs twice
+        new(1, 0), new(0, 1), new(0, 1), new(1, 0), new(0, 1), new(0, 1) // occurs twice
+    };
 
     private JumperAction()
     {
@@ -24,14 +35,23 @@ public sealed class JumperAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        throw new NotImplementedException();
-    }
+        if (!MakeJumpMovement(lemming))
+            return true;
 
-    public ReadOnlySpan<LevelPosition> TryGetJumperPositions(Lemming lemming)
-    {
-        return _jumperPositionLookup.TryGetValue(lemming, out var array)
-            ? new ReadOnlySpan<LevelPosition>(array)
-            : ReadOnlySpan<LevelPosition>.Empty;
+        lemming.JumpProgress++;
+
+        if (lemming.JumpProgress >= 8 && lemming.State.IsGlider)
+        {
+            lemming.SetNextAction(GliderAction.Instance);
+            return true;
+        }
+
+        if (lemming.JumpProgress == JumperArcFrames)
+        {
+            lemming.SetNextAction(WalkerAction.Instance);
+        }
+
+        return true;
     }
 
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -1;
@@ -48,12 +68,169 @@ public sealed class JumperAction : LemmingAction
             lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX);
         }
 
-        _jumperPositionLookup.TryAdd(lemming, new LevelPosition[JumperPositionCount]);
-
         base.TransitionLemmingToAction(lemming, turnAround);
     }
 
-    private void DoGadgetChecks(Lemming lemming)
+    private bool MakeJumpMovement(Lemming lemming)
+    {
+        var patternIndex = GetPatternIndex(lemming);
+        if (patternIndex < 0)
+            return false;
+
+        var firstStepSpecialHandling = lemming.JumpProgress == 0;
+        var patternSpan = new ReadOnlySpan<LevelPosition>(_jumpPositions, patternIndex * JumperPositionCount, JumperPositionCount);
+        var lemmingJumpPatterns = lemming.GetJumperPositions();
+
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.LevelPosition;
+
+        for (var i = 0; i < JumperPositionCount; i++)
+        {
+            lemmingJumpPatterns[i] = lemmingPosition;
+
+            var position = patternSpan[i];
+
+            if (position.X == 0 && position.Y == 0)
+                break;
+
+            if (position.X != 0) // Wall check
+            {
+                var hitWall = DoWallCheck(lemming);
+                if (hitWall)
+                    return false;
+            }
+
+            if (position.Y < 0) // Head check
+            {
+                var hitHead = DoHeadCheck(lemming, firstStepSpecialHandling);
+                if (hitHead)
+                    return false;
+            }
+
+            lemmingPosition = orientation.Move(lemmingPosition, patternSpan[i]);
+
+            DoJumperTriggerChecks(lemming);
+
+            if (firstStepSpecialHandling)
+            {
+                firstStepSpecialHandling = false;
+            }
+            else if (LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition)) // Foot check
+            {
+                lemming.SetNextAction(WalkerAction.Instance);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static int GetPatternIndex(Lemming lemming)
+    {
+        var jumpProgress = lemming.JumpProgress;
+
+        return jumpProgress switch
+        {
+            0 => 0,
+            1 => 0,
+            2 => 1,
+            3 => 1,
+            >= 4 and <= 8 => jumpProgress - 2,
+            9 => 7,
+            10 => 7,
+            11 => 8,
+            12 => 8,
+            _ => -1
+        };
+    }
+
+    private static bool DoWallCheck(Lemming lemming)
+    {
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.LevelPosition;
+        var dx = lemming.FacingDirection.DeltaX;
+
+        var checkPosition = orientation.MoveRight(lemmingPosition, dx);
+        if (!LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
+            return false;
+
+        for (var n = 1; n < 9; n++)
+        {
+            var checkPosition2 = orientation.MoveUp(checkPosition, n);
+            if (!LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition2))
+            {
+                switch (n)
+                {
+                    case <= 2:
+                        lemmingPosition = orientation.MoveUp(checkPosition, n - 1);
+                        lemming.SetNextAction(WalkerAction.Instance);
+                        break;
+
+                    case <= 5:
+                        lemmingPosition = orientation.MoveUp(checkPosition, n - 5);
+                        lemming.SetNextAction(HoisterAction.Instance);
+                        break;
+
+                    default:
+                        lemmingPosition = orientation.MoveUp(checkPosition, n - 8);
+                        lemming.SetNextAction(HoisterAction.Instance);
+                        break;
+                }
+
+                return true;
+            }
+
+            var isClimber = lemming.State.IsClimber;
+            if (n != 7 && (n != 5 || isClimber))
+                continue;
+
+            if (isClimber)
+            {
+                lemmingPosition = checkPosition;
+                lemming.SetNextAction(ClimberAction.Instance);
+                return true;
+            }
+
+            if (lemming.State.IsSlider)
+            {
+                lemmingPosition = checkPosition;
+                lemming.SetNextAction(SliderAction.Instance);
+                return true;
+            }
+
+            lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
+            lemming.SetNextAction(FallerAction.Instance);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool DoHeadCheck(
+        Lemming lemming,
+        bool firstStepSpecialHandling)
+    {
+        var orientation = lemming.Orientation;
+        var lemmingPosition = lemming.LevelPosition;
+
+        for (var n = 1; n < 10; n++)
+        {
+            if (n == 1 && firstStepSpecialHandling)
+                continue;
+
+            var checkPosition = orientation.MoveUp(lemmingPosition, n);
+            if (!LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
+                continue;
+
+            lemming.SetNextAction(FallerAction.Instance);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void DoJumperTriggerChecks(Lemming lemming)
     {
         var gadgetsAtLemmingPosition = LevelConstants.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
@@ -64,10 +241,6 @@ public sealed class JumperAction : LemmingAction
 }
 
 /*
-function TLemmingGame.HandleJumping(L: TLemming): Boolean;
-const
-  JUMPER_ARC_FRAMES = 13;
-
   procedure DoJumperTriggerChecks;
   begin
     if not HasTriggerAt(L.LemX, L.LemY, trFlipper) then
@@ -84,134 +257,4 @@ const
     else if HasTriggerAt(L.LemX, L.LemY, trForceRight, L) then
       HandleForceField(L, 1);
   end;
-
-  function MakeJumpMovement: Boolean;
-  var
-    Pattern: TJumpPattern;
-    PatternIndex: Integer;
-
-    FirstStepSpecialHandling: Boolean;
-
-    i: Integer;
-    n: Integer;
-
-    CheckX: Integer;
-  begin
-    Result := false;
-
-    case L.LemJumpProgress of
-      0..1: PatternIndex := 0;
-      2..3: PatternIndex := 1;
-      4..8: PatternIndex := L.LemJumpProgress - 2;
-      9..10: PatternIndex := 7;
-      11..12: PatternIndex := 8;
-      else Exit;
-    end;
-
-    Pattern := JUMP_PATTERNS[PatternIndex];
-    FillChar(L.LemJumpPositions, SizeOf(L.LemJumpPositions), $FF);
-
-    FirstStepSpecialHandling := (L.LemJumpProgress = 0);
-
-    for i := 0 to 5 do
-    begin
-      L.LemJumpPositions[i, 0] := L.LemX;
-      L.LemJumpPositions[i, 1] := L.LemY;
-
-      if (Pattern[i][0] = 0) and (Pattern[i][1] = 0) then Break;
-
-      if (Pattern[i][0] <> 0) then // Wall check
-      begin
-        CheckX := L.LemX + L.LemDX;
-        if HasPixelAt(CheckX, L.LemY) then
-        begin
-          for n := 1 to 8 do
-          begin
-            if not HasPixelAt(CheckX, L.LemY - n) then
-            begin
-              if n <= 2 then
-              begin
-                L.LemX := CheckX;
-                L.LemY := L.LemY - n + 1;
-                fLemNextAction := baWalking;
-              end else if n <= 5 then begin
-                L.LemX := CheckX;
-                L.LemY := L.LemY - n + 5;
-                fLemNextAction := baHoisting;
-                fLemJumpToHoistAdvance := true;
-              end else begin
-                L.LemX := CheckX;
-                L.LemY := L.LemY - n + 8;
-                fLemNextAction := baHoisting;
-              end;
-
-              Exit;
-            end;
-
-            if ((n = 5) and not (L.LemIsClimber)) or (n = 7) then
-            begin
-              if L.LemIsClimber then
-              begin
-                L.LemX := CheckX;
-                fLemNextAction := baClimbing;
-              end else begin
-                if L.LemIsSlider then
-                begin
-                  Inc(L.LemX, L.LemDX);
-                  fLemNextAction := baSliding;
-                end else begin
-                  L.LemDX := -L.LemDX;
-                  fLemNextAction := baFalling;
-                end;
-              end;
-              Exit;
-            end;
-          end;
-        end;
-      end;
-
-      if (Pattern[i][1] < 0) then // Head check
-      begin
-        for n := 1 to 9 do
-        begin
-          if (n = 1) and FirstStepSpecialHandling then
-            Continue;
-        
-          if HasPixelAt(L.LemX, L.LemY - n) then
-          begin
-            fLemNextAction := baFalling;
-            Exit;
-          end;
-        end;
-      end;
-
-      L.LemX := L.LemX + (Pattern[i][0] * L.LemDX);
-      L.LemY := L.LemY + Pattern[i][1];
-
-      DoJumperTriggerChecks;
-
-      if FirstStepSpecialHandling then
-        FirstStepSpecialHandling := false
-      else if HasPixelAt(L.LemX, L.LemY) then // Foot check
-      begin
-        fLemNextAction := baWalking;
-        Exit;
-      end;
-    end;
-
-    Result := true;
-  end;
-begin
-  if MakeJumpMovement then
-  begin
-    Inc(L.LemJumpProgress);
-    if (L.LemJumpProgress >= 8) and (L.LemIsGlider) then
-      fLemNextAction := baGliding
-    else if L.LemJumpProgress = JUMPER_ARC_FRAMES then
-      fLemNextAction := baWalking;
-  end;
-
-  Result := true;
-end;
-
 */

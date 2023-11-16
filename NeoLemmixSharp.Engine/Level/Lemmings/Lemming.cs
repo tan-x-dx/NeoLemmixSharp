@@ -13,6 +13,8 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 {
+    private LevelPosition[]? _jumperPositions;
+
     public int Id { get; }
 
     public bool ConstructivePositionFreeze;
@@ -30,6 +32,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public int NumberOfBricksLeft;
     public int DisarmingFrames;
     public int DistanceFallen;
+    public int JumpProgress;
     public int TrueDistanceFallen;
     public int LaserRemainTime;
 
@@ -272,6 +275,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     {
         CurrentAction = NoneAction.Instance;
         Renderer.UpdateLemmingState(false);
+    }
+
+    public Span<LevelPosition> GetJumperPositions()
+    {
+        _jumperPositions ??= new LevelPosition[JumperAction.JumperPositionCount];
+
+        return new Span<LevelPosition>(_jumperPositions);
     }
 
     public bool Equals(Lemming? other) => Id == (other?.Id ?? -1);

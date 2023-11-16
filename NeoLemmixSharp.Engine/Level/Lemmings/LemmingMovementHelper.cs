@@ -113,7 +113,7 @@ public ref struct LemmingMovementHelper
 
     private void HandleJumping(ref LevelPosition workPosition)
     {
-        var jumpPositions = JumperAction.Instance.TryGetJumperPositions(_lemming);
+        var jumpPositions = _lemming.GetJumperPositions();
 
         foreach (var levelPosition in jumpPositions)
         {
