@@ -25,7 +25,6 @@ public sealed class LevelRenderer : IScreenRenderer
     private readonly LevelCursorSprite _cursorSprite;
 
     private readonly IControlPanelRenderer _controlPanelRenderer;
-    private readonly FontBank _fontBank;
 
     private string _mouseCoords = string.Empty;
 
@@ -44,8 +43,7 @@ public sealed class LevelRenderer : IScreenRenderer
         IControlPanelRenderer controlPanelRenderer,
         ControlPanelSpriteBank controlPanelSpriteBank,
         LemmingSpriteBank lemmingSpriteBank,
-        GadgetSpriteBank gadgetSpriteBank,
-        FontBank fontBank)
+        GadgetSpriteBank gadgetSpriteBank)
     {
         _levelWidth = levelWidth;
         _levelHeight = levelHeight;
@@ -56,7 +54,6 @@ public sealed class LevelRenderer : IScreenRenderer
         _levelSprites = levelSprites;
         _cursorSprite = levelCursorSprite;
         _controlPanelRenderer = controlPanelRenderer;
-        _fontBank = fontBank;
 
         ControlPanelSpriteBank = controlPanelSpriteBank;
         LemmingSpriteBank = lemmingSpriteBank;
@@ -140,7 +137,7 @@ public sealed class LevelRenderer : IScreenRenderer
         _cursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
 
         _mouseCoords = $"({_viewport.ScreenMouseX},{_viewport.ScreenMouseY}) - ({_viewport.ViewportMouseX},{_viewport.ViewportMouseY})";
-        _fontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20, 1, MenuFont.DefaultColor);
+        FontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20, 1, MenuFont.DefaultColor);
     }
 
     public void OnWindowSizeChanged()

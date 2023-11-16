@@ -22,14 +22,13 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 
     public SkillAssignButtonRenderer(
         ControlPanelSpriteBank spriteBank,
-        FontBank fontBank,
         SkillAssignButton skillAssignButton)
     {
         _skillCountErase = spriteBank.GetTexture("panel/skill_count_erase");
         _skillPanels = spriteBank.GetTexture("panel/skill_panels");
         _skillSelected = spriteBank.GetTexture("panel/skill_selected");
 
-        _skillCountDigitFont = fontBank.SkillCountDigitFont;
+        _skillCountDigitFont = FontBank.SkillCountDigitFont;
 
         _skillAssignButton = skillAssignButton;
 

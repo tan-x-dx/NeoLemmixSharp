@@ -12,12 +12,10 @@ public sealed class PageTransitionRenderer : IDisposable
     private int _windowWidth;
     private int _windowHeight;
 
-    public PageTransitionRenderer(
-        MenuSpriteBank menuSpriteBank,
-        PageTransition pageTransition)
+    public PageTransitionRenderer(PageTransition pageTransition)
     {
         _pageTransition = pageTransition;
-        _fadeTexture = menuSpriteBank.GetTexture(MenuResource.FadeTexture);
+        _fadeTexture = MenuSpriteBank.GetTexture(MenuResource.FadeTexture);
         _pixelSet = new uint[1];
     }
 

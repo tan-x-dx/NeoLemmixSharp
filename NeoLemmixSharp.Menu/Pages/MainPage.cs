@@ -29,11 +29,9 @@ public sealed class MainPage : IPage
     {
         UserInterface.Active.GlobalScale = 2f;
 
-        var menuSpriteBank = MenuScreen.Current.MenuSpriteBank;
-
         rootPanel.Anchor = Anchor.Center;
 
-        var logoTexture = menuSpriteBank.GetTexture(MenuResource.Logo);
+        var logoTexture = MenuSpriteBank.GetTexture(MenuResource.Logo);
         var logoImage = new Image(logoTexture, logoTexture.GetSize(), anchor: Anchor.AutoCenter, offset: new Vector2(0, 20));
         rootPanel.AddChild(logoImage);
 
@@ -100,7 +98,7 @@ public sealed class MainPage : IPage
 
         Image CreateTextureButton(MenuResource menuResource)
         {
-            var texture = menuSpriteBank.GetTexture(menuResource);
+            var texture = MenuSpriteBank.GetTexture(menuResource);
 
             return new Image(
                 texture,

@@ -11,19 +11,16 @@ public sealed class GadgetSpriteBankBuilder : IDisposable
 {
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly RootDirectoryManager _rootDirectoryManager;
 
     private readonly Dictionary<string, PixelColorData> _textureBundleCache = new();
     private readonly Dictionary<string, Texture2D> _gadgetSprites = new();
 
     public GadgetSpriteBankBuilder(
         GraphicsDevice graphicsDevice,
-        ContentManager contentManager,
-        RootDirectoryManager rootDirectoryManager)
+        ContentManager contentManager)
     {
         _graphicsDevice = graphicsDevice;
         _contentManager = contentManager;
-        _rootDirectoryManager = rootDirectoryManager;
     }
 
     public void LoadGadgetSprite(NeoLemmixGadgetData gadgetData)
@@ -39,7 +36,7 @@ public sealed class GadgetSpriteBankBuilder : IDisposable
 
     private PixelColorData GetOrLoadPixelColorData(NeoLemmixGadgetData gadgetData)
     {
-        var rootFilePath = Path.Combine(_rootDirectoryManager.RootDirectory, "styles", gadgetData.Style, "objects", gadgetData.Piece);
+        var rootFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", gadgetData.Style, "objects", gadgetData.Piece);
 
         if (_textureBundleCache.TryGetValue(rootFilePath, out var result))
             return result;

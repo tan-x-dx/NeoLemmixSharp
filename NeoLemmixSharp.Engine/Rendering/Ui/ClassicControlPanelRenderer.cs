@@ -11,7 +11,6 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
     private const int ControlPanelScaleMultiplier = 4;
 
     private readonly LevelControlPanel _levelControlPanel;
-    private readonly FontBank _fontBank;
     private readonly SkillAssignButtonRenderer[] _skillAssignButtonRenderers;
 
     private readonly Texture2D _whitePixelTexture;
@@ -33,14 +32,12 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
     public ClassicControlPanelRenderer(
         ControlPanelSpriteBank spriteBank,
-        LevelControlPanel levelControlPanel,
-        FontBank fontBank)
+        LevelControlPanel levelControlPanel)
     {
         _levelControlPanel = levelControlPanel;
-        _fontBank = fontBank;
         _skillAssignButtonRenderers = _levelControlPanel
             .SkillAssignButtons
-            .Select(b => new SkillAssignButtonRenderer(spriteBank, fontBank, b))
+            .Select(b => new SkillAssignButtonRenderer(spriteBank, b))
             .ToArray();
 
         _whitePixelTexture = spriteBank.GetTexture("WhitePixel");
@@ -103,7 +100,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
         var levelTimer = _levelControlPanel.LevelTimer;
         var timerX = _levelControlPanel.ScreenWidth - PanelFont.GlyphWidth * 6 * ControlPanelScaleMultiplier;
 
-        _fontBank.PanelFont.RenderTextSpan(spriteBatch, levelTimer.AsSpan(), timerX, _levelControlPanel.ControlPanelY, ControlPanelScaleMultiplier, levelTimer.FontColor);
+        FontBank.PanelFont.RenderTextSpan(spriteBatch, levelTimer.AsSpan(), timerX, _levelControlPanel.ControlPanelY, ControlPanelScaleMultiplier, levelTimer.FontColor);
     }
 
     public void Dispose()

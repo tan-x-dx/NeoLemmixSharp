@@ -1,15 +1,12 @@
 ﻿using GeonBit.UI;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
 public sealed class MenuScreenRenderer : IScreenRenderer
 {
-    private readonly FontBank _fontBank;
-
     private readonly BackgroundRenderer _backgroundRenderer;
     private readonly MenuCursorRenderer _menuCursorRenderer;
     private readonly PageTransitionRenderer _pageTransitionRenderer;
@@ -20,16 +17,12 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     public bool IsDisposed { get; private set; }
 
     public MenuScreenRenderer(
-        MenuSpriteBank menuSpriteBank,
-        FontBank fontBank,
         MenuCursorRenderer menuCursorRenderer,
         PageTransition pageTransition)
     {
-        _fontBank = fontBank;
-
-        _backgroundRenderer = new BackgroundRenderer(menuSpriteBank.GetTexture(MenuResource.Background));
+        _backgroundRenderer = new BackgroundRenderer(MenuSpriteBank.GetTexture(MenuResource.Background));
         _menuCursorRenderer = menuCursorRenderer;
-        _pageTransitionRenderer = new PageTransitionRenderer(menuSpriteBank, pageTransition);
+        _pageTransitionRenderer = new PageTransitionRenderer(pageTransition);
     }
 
     public void Initialise()
