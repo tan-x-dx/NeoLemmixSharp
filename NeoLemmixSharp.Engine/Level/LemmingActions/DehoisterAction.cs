@@ -19,7 +19,7 @@ public sealed class DehoisterAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
 
         if (lemming.EndOfAnimation)
         {
@@ -37,7 +37,6 @@ public sealed class DehoisterAction : LemmingAction
             return true;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-        lemming.LevelPosition = lemmingPosition;
 
         var animFrameValue = lemming.PhysicsFrame * 2;
 
@@ -48,7 +47,6 @@ public sealed class DehoisterAction : LemmingAction
         }
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-        lemming.LevelPosition = lemmingPosition;
 
         if (SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 2))
             return true;

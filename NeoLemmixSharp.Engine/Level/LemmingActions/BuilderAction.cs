@@ -52,7 +52,7 @@ public sealed class BuilderAction : LemmingAction
         lemming.NumberOfBricksLeft--;
 
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 2)))
@@ -68,7 +68,6 @@ public sealed class BuilderAction : LemmingAction
              lemming.NumberOfBricksLeft > 0))
         {
             lemmingPosition = orientation.Move(lemmingPosition, dx, 1);
-            lemming.LevelPosition = lemmingPosition;
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
             return;
@@ -77,7 +76,6 @@ public sealed class BuilderAction : LemmingAction
         if (!lemming.ConstructivePositionFreeze)
         {
             lemmingPosition = orientation.Move(lemmingPosition, dx + dx, 1);
-            lemming.LevelPosition = lemmingPosition;
         }
 
         if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 2)) ||

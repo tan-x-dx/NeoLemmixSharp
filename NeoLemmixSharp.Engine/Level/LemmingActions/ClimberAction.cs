@@ -23,7 +23,7 @@ public sealed class ClimberAction : LemmingAction
         var terrainManager = LevelConstants.TerrainManager;
         var dx = lemming.FacingDirection.DeltaX;
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
         var physicsFrame = lemming.PhysicsFrame;
 
         bool foundClip;
@@ -47,20 +47,17 @@ public sealed class ClimberAction : LemmingAction
                 if (!lemming.IsStartingAction)
                 {
                     lemmingPosition = orientation.MoveUp(lemmingPosition, 3 - physicsFrame);
-                    lemming.LevelPosition = lemmingPosition;
                 }
 
                 if (lemming.State.IsSlider)
                 {
                     lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-                    lemming.LevelPosition = lemmingPosition;
                     SliderAction.Instance.TransitionLemmingToAction(lemming, false);
 
                     return true;
                 }
 
                 lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-                lemming.LevelPosition = lemmingPosition;
                 FallerAction.Instance.TransitionLemmingToAction(lemming, true);
                 lemming.DistanceFallen++; // Least-impact way to fix a fall distance inconsistency. See https://www.lemmingsforums.net/index.php?topic=5794.0
 
@@ -74,7 +71,6 @@ public sealed class ClimberAction : LemmingAction
             if (!(lemming.IsStartingAction && physicsFrame == 1))
             {
                 lemmingPosition = orientation.MoveUp(lemmingPosition, physicsFrame - 2);
-                lemming.LevelPosition = lemmingPosition;
                 lemming.IsStartingAction = false;
             }
 
@@ -84,7 +80,6 @@ public sealed class ClimberAction : LemmingAction
         }
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-        lemming.LevelPosition = lemmingPosition;
         lemming.IsStartingAction = false;
 
         foundClip = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 7));
@@ -99,7 +94,6 @@ public sealed class ClimberAction : LemmingAction
             return true;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-        lemming.LevelPosition = lemmingPosition;
 
         if (lemming.State.IsSlider)
         {
@@ -109,7 +103,6 @@ public sealed class ClimberAction : LemmingAction
         }
 
         lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-        lemming.LevelPosition = lemmingPosition;
         FallerAction.Instance.TransitionLemmingToAction(lemming, true);
 
         return true;
