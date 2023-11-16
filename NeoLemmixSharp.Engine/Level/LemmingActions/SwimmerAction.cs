@@ -151,4 +151,25 @@ public sealed class SwimmerAction : LemmingAction
             ? 0
             : result;
     }
+
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    {
+        base.TransitionLemmingToAction(lemming, turnAround);
+
+        // If possible, float up 4 pixels when starting
+        var orientation = lemming.Orientation;
+        var checkPosition = orientation.MoveUp(lemming.LevelPosition, 1);
+
+        var i = 0;
+
+        while (i < 4 &&
+               WaterAt(checkPosition) &&
+               !LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
+        {
+            i++;
+            checkPosition = orientation.MoveUp(lemming.LevelPosition, 1 + i);
+        }
+
+        lemming.LevelPosition = orientation.MoveUp(lemming.LevelPosition, i);
+    }
 }

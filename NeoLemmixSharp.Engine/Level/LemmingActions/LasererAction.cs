@@ -176,6 +176,13 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         return result;
     }
 
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    {
+        base.TransitionLemmingToAction(lemming, turnAround);
+
+        lemming.LaserRemainTime = 10;
+    }
+
     [Pure]
     public bool CanDestroyPixel(
         PixelType pixelType,

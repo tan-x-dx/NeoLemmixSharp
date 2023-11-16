@@ -52,6 +52,6 @@ public sealed class HoisterAction : LemmingAction
     {
         var previouslyStartingAction = lemming.IsStartingAction;
         base.TransitionLemmingToAction(lemming, turnAround);
-        lemming.IsStartingAction = previouslyStartingAction;
+        lemming.IsStartingAction = previouslyStartingAction; // It needs to know what the Climber's value was
     }
 }

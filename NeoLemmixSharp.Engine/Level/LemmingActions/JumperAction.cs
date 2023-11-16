@@ -69,6 +69,8 @@ public sealed class JumperAction : LemmingAction
         }
 
         base.TransitionLemmingToAction(lemming, turnAround);
+
+        lemming.JumpProgress = 0;
     }
 
     private bool MakeJumpMovement(Lemming lemming)
