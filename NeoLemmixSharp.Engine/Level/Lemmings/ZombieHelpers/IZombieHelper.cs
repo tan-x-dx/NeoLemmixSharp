@@ -6,5 +6,6 @@ public interface IZombieHelper
     void UpdateZombiePosition(Lemming lemming);
     void DeregisterZombie(Lemming lemming);
 
+    bool AnyZombies();
     void CheckZombies(Lemming lemming);
 }

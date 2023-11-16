@@ -103,12 +103,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
         var shouldContinue = HandleLemmingAction() && CheckLevelBoundaries() && CheckTriggerAreas(false);
 
-        if (!shouldContinue ||
-            CurrentAction == ExiterAction.Instance ||
-            State.IsZombie)
-            return;
-
-        LevelConstants.LemmingManager.DoZombieCheck(this);
+        if (shouldContinue &&
+            CurrentAction != ExiterAction.Instance &&
+            !State.IsZombie &&
+            LevelConstants.LemmingManager.AnyZombies())
+        {
+            LevelConstants.LemmingManager.DoZombieCheck(this);
+        }
     }
 
     private bool HandleLemmingAction()

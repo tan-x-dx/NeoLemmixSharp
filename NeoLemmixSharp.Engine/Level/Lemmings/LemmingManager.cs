@@ -109,7 +109,11 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
 
         _lemmingPositionHelper.AddItem(lemming);
 
-        if (!lemming.State.IsZombie)
+        if (lemming.State.IsZombie)
+        {
+            RegisterZombie(lemming);
+        }
+        else
         {
             LemmingsOut++;
         }
@@ -189,6 +193,9 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DeregisterZombie(Lemming lemming) => _zombieHelper.DeregisterZombie(lemming);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool AnyZombies() => _zombieHelper.AnyZombies();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DoZombieCheck(Lemming lemming) => _zombieHelper.CheckZombies(lemming);
