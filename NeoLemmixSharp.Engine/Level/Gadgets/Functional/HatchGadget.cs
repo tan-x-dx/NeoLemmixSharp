@@ -12,7 +12,7 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget
     private readonly LevelPosition _spawnPositionTranslation;
 
     public override GadgetSubType SubType => HatchGadgetType.Instance;
-    public override Orientation Orientation { get; }
+    public override Orientation Orientation => HatchSpawnData.Orientation;
 
     public LevelPosition TopLeftPixel { get; private set; }
     public LevelPosition BottomRightPixel { get; private set; }
@@ -25,12 +25,10 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget
     public HatchGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
-        Orientation orientation,
         LevelPosition spawnPositionTranslation,
         HatchSpawnData hatchSpawnData)
         : base(id, gadgetBounds)
     {
-        Orientation = orientation;
         _spawnPositionTranslation = spawnPositionTranslation;
         HatchSpawnData = hatchSpawnData;
 
