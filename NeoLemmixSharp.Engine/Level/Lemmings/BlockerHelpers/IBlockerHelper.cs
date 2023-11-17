@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Lemmings.BlockerHelpers;
+﻿using System.Diagnostics.Contracts;
+
+namespace NeoLemmixSharp.Engine.Level.Lemmings.BlockerHelpers;
 
 public interface IBlockerHelper
 {
@@ -7,6 +9,7 @@ public interface IBlockerHelper
     bool LemmingIsBlocking(Lemming lemming);
     void DeregisterBlocker(Lemming lemming);
 
+    [Pure]
     bool CanAssignBlocker(Lemming lemming);
 
     /// <summary>

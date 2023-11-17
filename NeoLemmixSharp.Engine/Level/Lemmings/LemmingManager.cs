@@ -8,6 +8,7 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings.BlockerHelpers;
 using NeoLemmixSharp.Engine.Level.Lemmings.ZombieHelpers;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
@@ -185,6 +186,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
         return true;
     }
 
+    [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool CanAssignBlocker(Lemming lemming) => _blockerHelper.CanAssignBlocker(lemming);
 
@@ -194,6 +196,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DeregisterZombie(Lemming lemming) => _zombieHelper.DeregisterZombie(lemming);
 
+    [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool AnyZombies() => _zombieHelper.AnyZombies();
 
