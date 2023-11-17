@@ -5,7 +5,6 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Lemmings.BlockerHelpers;
 using NeoLemmixSharp.Engine.Level.Lemmings.ZombieHelpers;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using System.Diagnostics.Contracts;
@@ -22,8 +21,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
     private readonly Lemming[] _lemmings;
 
     private readonly SpacialHashGrid<Lemming> _lemmingPositionHelper;
-
-    private readonly IBlockerHelper _blockerHelper;
+    private readonly SimpleSet<Lemming> _allBlockers;
     private readonly IZombieHelper _zombieHelper;
 
     public int LemmingsToRelease { get; private set; }
@@ -59,24 +57,9 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        _blockerHelper = GetBlockerHelper(levelData, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        _allBlockers = new SimpleSet<Lemming>(this);
+
         _zombieHelper = GetZombieHelper(levelData, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-    }
-
-    private IBlockerHelper GetBlockerHelper(
-        LevelData levelData,
-        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
-        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
-    {
-        var maxNumberOfBlockers = levelData.GetMaxNumberOfBlockers();
-
-        return maxNumberOfBlockers switch
-        {
-            null => new PositionTrackingBlockerHelper(this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour),
-            0 => new EmptyBlockerHelper(),
-            > BlockerQuantityThreshold => new PositionTrackingBlockerHelper(this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour),
-            _ => new SmallListBlockerHelper(maxNumberOfBlockers.Value)
-        };
     }
 
     private IZombieHelper GetZombieHelper(
@@ -164,31 +147,56 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
 
         _lemmingPositionHelper.UpdateItemPosition(lemming);
 
-        // The helpers will deal with these updates.
+        if (lemming.CurrentAction == BlockerAction.Instance)
+        {
+            BlockerAction.SetBlockerField(lemming, true);
+        }
+
         // If not relevant for this lemming, nothing will happen
-        _blockerHelper.UpdateBlockerPosition(lemming);
         _zombieHelper.UpdateZombiePosition(lemming);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public SimpleSetEnumerable<Lemming> GetAllLemmingsNearRegion(LevelPositionPair levelRegion) => _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void RegisterBlocker(Lemming lemming) => _blockerHelper.RegisterBlocker(lemming);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void DeregisterBlocker(Lemming lemming) => _blockerHelper.DeregisterBlocker(lemming);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool DoBlockerCheck(Lemming lemming)
+    public void RegisterBlocker(Lemming lemming)
     {
-        _blockerHelper.CheckBlockers(lemming);
+        BlockerAction.SetBlockerField(lemming, true);
+        _allBlockers.Add(lemming);
+    }
+
+    public void DeregisterBlocker(Lemming lemming)
+    {
+        BlockerAction.SetBlockerField(lemming, false);
+        _allBlockers.Remove(lemming);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool DoBlockerCheck(Lemming lemming)
+    {
+        BlockerAction.DoBlockerCheck(lemming);
         return true;
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool CanAssignBlocker(Lemming lemming) => _blockerHelper.CanAssignBlocker(lemming);
+    public bool CanAssignBlocker(Lemming lemming)
+    {
+        var firstBounds = BlockerAction.Instance.GetLemmingBounds(lemming);
+
+        foreach (var blocker in _allBlockers)
+        {
+            var blockerTopLeft = blocker.TopLeftPixel;
+            var blockerBottomRight = blocker.BottomRightPixel;
+
+            var secondBounds = new LevelPositionPair(blockerTopLeft, blockerBottomRight);
+
+            if (firstBounds.Overlaps(secondBounds))
+                return false;
+        }
+
+        return true;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void RegisterZombie(Lemming lemming) => _zombieHelper.RegisterZombie(lemming);

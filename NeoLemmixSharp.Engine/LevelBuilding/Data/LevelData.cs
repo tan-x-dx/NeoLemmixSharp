@@ -36,12 +36,6 @@ public sealed class LevelData
     public List<GadgetArchetypeData> AllGadgetArchetypeData { get; } = new();
     public List<GadgetData> AllGadgetData { get; } = new();
 
-    public int? GetMaxNumberOfBlockers()
-    {
-        //TODO implement this properly
-        return null;
-    }
-
     public bool LevelContainsAnyZombies()
     {
         //TODO implement this properly

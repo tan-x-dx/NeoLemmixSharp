@@ -168,7 +168,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
             PreviousLevelPosition = LevelPosition;
         }
 
-        var result = CheckGadgets() && LevelConstants.LemmingManager.DoBlockerCheck(this);
+        var result = CheckGadgets() && LemmingManager.DoBlockerCheck(this);
 
         NextAction.TransitionLemmingToAction(this, false);
 

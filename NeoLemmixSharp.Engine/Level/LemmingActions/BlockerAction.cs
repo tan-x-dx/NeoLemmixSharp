@@ -1,8 +1,10 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -44,73 +46,41 @@ public sealed class BlockerAction : LemmingAction
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
     protected override int BottomRightBoundsDeltaY(int animationFrame) => -3;
 
-    public static bool DoBlockerCheck(
-        Lemming blocker,
-        Lemming lemming,
-        LevelPosition anchorPosition,
-        LevelPosition footPosition)
+    public static void DoBlockerCheck(Lemming lemming)
     {
-        if (lemming == blocker)
-            return false;
+        var terrainManager = LevelConstants.TerrainManager;
 
-        var forcedFacingDirection = TestBlockerMatches(blocker, lemming, anchorPosition, footPosition);
-        if (forcedFacingDirection is null)
-            return false;
-
-        ForceLemmingDirection(lemming, forcedFacingDirection);
-        return true;
-    }
-
-    private static FacingDirection? TestBlockerMatches(
-        Lemming blocker,
-        Lemming lemming,
-        LevelPosition anchorPosition,
-        LevelPosition footPosition)
-    {
-        Debug.Assert(blocker.CurrentAction == Instance); // Should be a blocker
-        Debug.Assert(lemming.CurrentAction != Instance); // Should NOT be a blocker
-
-        var blockerOrientation = blocker.Orientation;
         var lemmingOrientation = lemming.Orientation;
 
-        if (blockerOrientation.IsPerpendicularTo(lemmingOrientation))
-            return null;
+        var testPosition = lemming.LevelPosition;
+        var pixel = terrainManager.GetBlockerData(testPosition);
+        var pixelBlockerOrientation = PixelTypeHelpers.GetOrientationFromBlockerMask(pixel);
 
-        var dxCorrection = 1 - blocker.FacingDirection.Id; // Fixes off-by-one errors with left/right positions
-        var topLeftDelta = new LevelPosition(dxCorrection, 0);
-        var bottomRightDelta = new LevelPosition(0, 0);
+        if (lemmingOrientation.IsPerpendicularTo(pixelBlockerOrientation))
+        {
+            HandleBlocker(lemming, pixelBlockerOrientation);
+            return;
+        }
 
+        testPosition = lemming.FootPosition;
+        pixel = terrainManager.GetBlockerData(testPosition);
+        pixelBlockerOrientation = PixelTypeHelpers.GetOrientationFromBlockerMask(pixel);
+
+        if (lemmingOrientation.IsParallelTo(pixelBlockerOrientation))
+            return;
+
+        HandleBlocker(lemming, pixelBlockerOrientation);
+    }
+
+    private static void HandleBlocker(Lemming lemming, Orientation pixelBlockerOrientation)
+    {
         var lemmingFacingDirection = lemming.FacingDirection;
-        // If the lemming is upside down compared to the blocker, it cares about the opposite hands.
-        if (lemmingOrientation == blockerOrientation.GetOpposite())
+        var lemmingFacingDirectionAsOrientation = lemmingFacingDirection.ConvertToRelativeOrientation(lemming.Orientation);
+
+        if (lemmingFacingDirectionAsOrientation == pixelBlockerOrientation.GetOpposite())
         {
-            lemmingFacingDirection = lemmingFacingDirection.GetOpposite();
-            topLeftDelta += new LevelPosition(0, 9);
-            bottomRightDelta += new LevelPosition(0, 9);
+            ForceLemmingDirection(lemming, lemmingFacingDirection.GetOpposite());
         }
-
-        if (lemmingFacingDirection == RightFacingDirection.Instance)
-        {
-            topLeftDelta += new LevelPosition(-5, 6);
-            bottomRightDelta += new LevelPosition(-2, -3);
-        }
-        else
-        {
-            topLeftDelta += new LevelPosition(3, 6);
-            bottomRightDelta += new LevelPosition(6, -3);
-        }
-
-        var blockerLevelPosition = blocker.LevelPosition;
-
-        var p1 = blockerOrientation.MoveWithoutNormalization(blockerLevelPosition, topLeftDelta.X, topLeftDelta.Y);
-        var p2 = blockerOrientation.MoveWithoutNormalization(blockerLevelPosition, bottomRightDelta.X, bottomRightDelta.Y);
-        var blockingRegion = new LevelPositionPair(p1, p2);
-
-        if (blockingRegion.Contains(anchorPosition) ||
-            blockingRegion.Contains(footPosition))
-            return lemming.FacingDirection.GetOpposite();
-
-        return null;
     }
 
     public static void ForceLemmingDirection(Lemming lemming, FacingDirection forcedFacingDirection)
@@ -172,5 +142,72 @@ public sealed class BlockerAction : LemmingAction
         lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, dx, dy);
 
         WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+    }
+
+    public static void SetBlockerField(Lemming lemming, bool set)
+    {
+        var previousPosition = lemming.PreviousLevelPosition;
+        var currentPosition = lemming.LevelPosition;
+
+        if (previousPosition == currentPosition)
+        {
+            if (set)
+                return;
+
+            UpdateBlockerField(lemming, currentPosition, false);
+            return;
+        }
+
+        UpdateBlockerField(lemming, previousPosition, false);
+        UpdateBlockerField(lemming, currentPosition, set);
+    }
+
+    private static void UpdateBlockerField(Lemming lemming, LevelPosition levelPosition, bool set)
+    {
+        var orientation = lemming.Orientation;
+        var rightArmPixelType = set ? GetRightArmPixelType(orientation) : PixelType.ClearBlockerMask;
+        var leftArmPixelType = set ? GetLeftArmPixelType(orientation) : PixelType.ClearBlockerMask;
+
+        var moveDelta = lemming.FacingDirection == RightFacingDirection.Instance
+            ? -5
+            : -6;
+        levelPosition = orientation.MoveRight(levelPosition, moveDelta);
+
+        var terrainManager = LevelConstants.TerrainManager;
+
+        for (var y = -3; y < 7; y++)
+        {
+            var workPosition = orientation.Move(levelPosition, 0, y);
+            terrainManager.SetBlockerMaskPixel(workPosition, leftArmPixelType, set);
+            workPosition = orientation.Move(levelPosition, 1, y);
+            terrainManager.SetBlockerMaskPixel(workPosition, leftArmPixelType, set);
+            workPosition = orientation.Move(levelPosition, 2, y);
+            terrainManager.SetBlockerMaskPixel(workPosition, leftArmPixelType, set);
+            workPosition = orientation.Move(levelPosition, 3, y);
+            terrainManager.SetBlockerMaskPixel(workPosition, leftArmPixelType, set);
+
+            workPosition = orientation.Move(levelPosition, 8, y);
+            terrainManager.SetBlockerMaskPixel(workPosition, rightArmPixelType, set);
+            workPosition = orientation.Move(levelPosition, 9, y);
+            terrainManager.SetBlockerMaskPixel(workPosition, rightArmPixelType, set);
+            workPosition = orientation.Move(levelPosition, 10, y);
+            terrainManager.SetBlockerMaskPixel(workPosition, rightArmPixelType, set);
+            workPosition = orientation.Move(levelPosition, 11, y);
+            terrainManager.SetBlockerMaskPixel(workPosition, rightArmPixelType, set);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static PixelType GetRightArmPixelType(Orientation orientation)
+    {
+        orientation = orientation.RotateCounterClockwise();
+        return (PixelType)(1 << (PixelTypeHelpers.PixelTypeBlockerOffset + orientation.RotNum));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static PixelType GetLeftArmPixelType(Orientation orientation)
+    {
+        orientation = orientation.RotateClockwise();
+        return (PixelType)(1 << (PixelTypeHelpers.PixelTypeBlockerOffset + orientation.RotNum));
     }
 }
