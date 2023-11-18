@@ -1,8 +1,6 @@
 ﻿using GeonBit.UI.Entities;
 using GeonBit.UI.Utils;
-using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
 namespace NeoLemmixSharp.Menu.Pages;
@@ -15,14 +13,12 @@ public sealed class LevelSelectPage : IPage
         FileDialogOptions.CageInStartingPath |
         FileDialogOptions.MustSelectExistingFile;
 
-    private readonly RootDirectoryManager _rootDirectoryManager;
     private readonly MenuInputController _inputController;
     private readonly string _levelsRootPath;
 
-    public LevelSelectPage(RootDirectoryManager rootDirectoryManager, MenuInputController inputController)
+    public LevelSelectPage(MenuInputController inputController)
     {
-        _levelsRootPath = Path.Combine(rootDirectoryManager.RootDirectory, "levels");
-        _rootDirectoryManager = rootDirectoryManager;
+        _levelsRootPath = Path.Combine(RootDirectoryManager.RootDirectory, "levels");
         _inputController = inputController;
     }
 

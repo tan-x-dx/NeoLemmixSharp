@@ -7,6 +7,6 @@ public sealed class EmptyZombieHelper : IZombieHelper
     public void RegisterZombie(Lemming lemming) => throw ExpectedNoZombiesException;
     public void UpdateZombiePosition(Lemming lemming) { } // Do nothing
     public void DeregisterZombie(Lemming lemming) => throw ExpectedNoZombiesException;
-
-    public void CheckZombies(Lemming lemming) { } // Do nothing - no zombies!
+    public bool AnyZombies() => false; // No zombies!
+    public void CheckZombies(Lemming lemming) { } // Do nothing
 }

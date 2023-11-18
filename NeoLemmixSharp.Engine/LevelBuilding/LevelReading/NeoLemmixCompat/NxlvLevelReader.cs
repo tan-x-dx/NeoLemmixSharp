@@ -6,7 +6,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 public sealed class NxlvLevelReader : ILevelReader
 {
-    private readonly RootDirectoryManager _rootDirectoryManager;
     private readonly Dictionary<string, INeoLemmixDataReader> _dataReaders = new();
 
     private readonly List<NeoLemmixGadgetData> _neoLemmixGadgetData = new();
@@ -15,9 +14,8 @@ public sealed class NxlvLevelReader : ILevelReader
 
     public LevelData LevelData { get; }
 
-    public NxlvLevelReader(RootDirectoryManager rootDirectoryManager)
+    public NxlvLevelReader()
     {
-        _rootDirectoryManager = rootDirectoryManager;
         LevelData = new LevelData();
 
         AddDataReader(new LevelDataReader(LevelData, false));
@@ -91,7 +89,7 @@ public sealed class NxlvLevelReader : ILevelReader
     private void ReadStyle()
     {
         var theme = LevelData.LevelTheme;
-        var themeFilePath = Path.Combine(_rootDirectoryManager.RootDirectory, "styles", theme, "theme.nxtm");
+        var themeFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", theme, "theme.nxtm");
 
         var themeLines = File.ReadAllLines(themeFilePath);
 
@@ -100,7 +98,7 @@ public sealed class NxlvLevelReader : ILevelReader
             ProcessThemeLine(line);
         }
 
-        LevelData.ThemeData.LemmingSpritesFilePath = Path.Combine(_rootDirectoryManager.RootDirectory, "styles", LevelData.ThemeData.BaseStyle, "lemmings");
+        LevelData.ThemeData.LemmingSpritesFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", LevelData.ThemeData.BaseStyle, "lemmings");
     }
 
     private void ProcessThemeLine(string line)

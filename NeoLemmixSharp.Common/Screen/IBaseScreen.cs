@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Common.Screen;
 

@@ -1,28 +1,25 @@
 ﻿namespace NeoLemmixSharp.Common.Util;
 
-public sealed class RootDirectoryManager
+public static class RootDirectoryManager
 {
-    public string RootDirectory { get; }
-
-    public RootDirectoryManager()
+    public static void Initialise()
     {
-#if DEBUG
         RootDirectory = ReadRootDirectoryForConfigFile();
-#else
-        RootDirectory = AppDomain.CurrentDomain.BaseDirectory;
-#endif
     }
 
-#if DEBUG
+    public static string RootDirectory { get; private set; } = null!;
 
     private const string ConfigFileName = "DebugConfig.txt";
 
-    private string ReadRootDirectoryForConfigFile()
+    private static string ReadRootDirectoryForConfigFile()
     {
+#if DEBUG
         var rootDirectory = Directory.GetCurrentDirectory();
         var configFilePath = Path.Combine(rootDirectory, ConfigFileName);
 
         return File.ReadAllText(configFilePath);
-    }
+#else
+        return AppDomain.CurrentDomain.BaseDirectory;
 #endif
+    }
 }

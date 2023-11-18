@@ -17,6 +17,14 @@ public enum PixelType : ushort
     UpArrow = 1 << 6,
     RightArrow = 1 << 7,
 
+    BlockerDown = 1 << 8,
+    BlockerLeft = 1 << 9,
+    BlockerUp = 1 << 10,
+    BlockerRight = 1 << 11,
+
+    BlockerMask = BlockerDown | BlockerLeft | BlockerRight | BlockerUp,
+    ClearBlockerMask = ushort.MaxValue ^ BlockerMask,
+
     Steel = 1 << 14,
     Void = 1 << 15
 }

@@ -52,7 +52,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
             VaporiserAction.Instance
         };
 
-        result.ValidateUniqueIds();
+        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<LemmingAction>(result));
         Array.Sort(result, IdEquatableItemHelperMethods.Compare);
 
         return result;

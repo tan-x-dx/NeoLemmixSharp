@@ -29,13 +29,14 @@ public sealed class SimpleList<T>
 
     private int IndexOf(T item)
     {
-        var index = Count - 1;
+        var index = 0;
 
-        while (index >= 0)
+        while (index < Count)
         {
-            if (item == _items[index])
+            var testItem = _items[index];
+            if (testItem == item)
                 return index;
-            index--;
+            index++;
         }
 
         return -1;
@@ -57,6 +58,7 @@ public sealed class SimpleList<T>
 
         Count--;
         _items[index] = _items[Count];
+        _items[Count] = null!;
 
         if (Count > 0)
             return true;

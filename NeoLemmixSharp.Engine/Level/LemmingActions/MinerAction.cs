@@ -26,7 +26,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
     {
         var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
         var facingDirection = lemming.FacingDirection;
         var dx = facingDirection.DeltaX;
 
@@ -52,12 +52,10 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         }
 
         lemmingPosition = orientation.Move(lemmingPosition, dx + dx, -1);
-        lemming.LevelPosition = lemmingPosition;
 
         if (lemming.State.IsSlider && WalkerAction.LemmingCanDehoist(lemming, true))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-            lemming.LevelPosition = lemmingPosition;
             DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
             return true;
         }
@@ -70,7 +68,6 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         {
             var lemmingPosition0 = orientation.MoveDown(lemmingPosition, 1);
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx + dx);
-            lemming.LevelPosition = lemmingPosition;
             TurnMinerAround(lemming, lemmingPosition0);
             return true;
         }
@@ -80,7 +77,6 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         if (lemming.PhysicsFrame == 3 && terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.Move(lemmingPosition, -dx, 2)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx + dx);
-            lemming.LevelPosition = lemmingPosition;
             TurnMinerAround(lemming, orientation.Move(lemmingPosition, dx, 2));
 
             return true;
@@ -92,7 +88,6 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, -1)))
         {
             lemmingPosition = orientation.Move(lemmingPosition, -dx, -1);
-            lemming.LevelPosition = lemmingPosition;
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             lemming.DistanceFallen++;
             return true;
@@ -101,7 +96,6 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         if (terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.MoveDown(lemmingPosition, 2)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-            lemming.LevelPosition = lemmingPosition;
             TurnMinerAround(lemming, orientation.Move(lemmingPosition, dx, 2));
             return true;
         }
@@ -109,7 +103,6 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         if (!terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-            lemming.LevelPosition = lemmingPosition;
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }

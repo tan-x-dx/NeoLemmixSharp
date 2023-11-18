@@ -22,12 +22,14 @@ public sealed class SliderAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
-        lemming.LevelPosition = orientation.MoveDown(lemming.LevelPosition, 1);
+        ref var lemmingPosition = ref lemming.LevelPosition;
+
+        lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         if (!SliderTerrainChecks(lemming, orientation) &&
             lemming.CurrentAction == DrownerAction.Instance)
             return false;
 
-        lemming.LevelPosition = orientation.MoveDown(lemming.LevelPosition, 1);
+        lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         if (SliderTerrainChecks(lemming, orientation))
             return true;
 
@@ -44,7 +46,7 @@ public sealed class SliderAction : LemmingAction
         Orientation orientation,
         int maxYOffset = 7)
     {
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
         var lemmingDehoistPosition = lemming.DehoistPin;
 
         var hasPixelAtLemmingPosition = SliderHasPixelAt(lemming, orientation, lemmingPosition, lemmingDehoistPosition);
@@ -75,7 +77,6 @@ public sealed class SliderAction : LemmingAction
                 continue;
 
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-            lemming.LevelPosition = lemmingPosition;
             if (lemming.State.IsSwimmer)
             {
                 SwimmerAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -95,7 +96,7 @@ public sealed class SliderAction : LemmingAction
         if (!SliderHasPixelAt(lemming, orientation, lemmingPosition, leftPos))
             return true;
 
-        lemming.LevelPosition = leftPos;
+        lemmingPosition = leftPos;
         WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
         return false;
     }

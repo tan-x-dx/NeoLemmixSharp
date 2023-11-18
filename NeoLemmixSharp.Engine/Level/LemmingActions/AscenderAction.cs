@@ -19,7 +19,7 @@ public sealed class AscenderAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming)
     {
         var terrainManager = LevelConstants.TerrainManager;
-        var levelPosition = lemming.LevelPosition;
+        ref var levelPosition = ref lemming.LevelPosition;
         var orientation = lemming.Orientation;
 
         var dy = 0;
@@ -29,7 +29,6 @@ public sealed class AscenderAction : LemmingAction
         {
             dy++;
             levelPosition = orientation.MoveUp(levelPosition, 1);
-            lemming.LevelPosition = levelPosition;
             lemming.AscenderProgress++;
         }
 
@@ -40,8 +39,10 @@ public sealed class AscenderAction : LemmingAction
             !pixel1IsSolid)
         {
             lemming.SetNextAction(WalkerAction.Instance);
+            return true;
         }
-        else if ((lemming.AscenderProgress == 4 &&
+        
+        if ((lemming.AscenderProgress == 4 &&
                   pixel1IsSolid &&
                   pixel2IsSolid) ||
                  (lemming.AscenderProgress >= 5 &&

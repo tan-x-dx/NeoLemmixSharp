@@ -10,8 +10,6 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 {
     public const int Shift = 5;
 
-    public static BitArray Empty { get; } = new(EmptyUintWrapper.Instance, false);
-
     private readonly IUintWrapper _uintWrapper;
 
     /// <summary>
@@ -34,22 +32,22 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
             ? new UintArrayWrapper(specifiedLength)
             : new SingleUintWrapper();
 
-        return new BitArray(uintWrapper, false);
+        return new BitArray(uintWrapper);
     }
 
-    public BitArray(IUintWrapper uintWrapper, bool calculateCount)
+    private BitArray(IUintWrapper uintWrapper)
+    {
+        _uintWrapper = uintWrapper;
+    }
+
+    public BitArray(IUintWrapper uintWrapper, bool calculatePopCount)
     {
         _uintWrapper = uintWrapper;
 
-        if (!calculateCount)
+        if (!calculatePopCount)
             return;
 
-        var count = 0;
-        foreach (var arrayValue in _uintWrapper.AsReadOnlySpan())
-        {
-            count += BitOperations.PopCount(arrayValue);
-        }
-        Count = count;
+        Count = PopCount(uintWrapper.AsReadOnlySpan());
     }
 
     /// <summary>
@@ -228,6 +226,15 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
             _v = _bits.Length == 0 ? 0U : _bits[0];
         }
 
+        public BitEnumerator(ReadOnlySpan<uint> bits, int count)
+        {
+            _bits = bits;
+            _remaining = count;
+            _index = 0;
+            _current = 0;
+            _v = _bits.Length == 0 ? 0U : _bits[0];
+        }
+
         public bool MoveNext()
         {
             if (_v == 0U)
@@ -306,19 +313,37 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
         void IDisposable.Dispose() { }
     }
 
+    internal static int PopCount(ReadOnlySpan<uint> bits)
+    {
+        var result = 0;
+        foreach (var v in bits)
+        {
+            result += BitOperations.PopCount(v);
+        }
+
+        return result;
+    }
+
     internal void UnionWith(ReadOnlySpan<uint> other)
     {
         var span = _uintWrapper.AsSpan();
+
+        var newCount = UnionWith(span, other);
+        Count = newCount;
+    }
+
+    internal static int UnionWith(Span<uint> span, ReadOnlySpan<uint> other)
+    {
         Debug.Assert(span.Length == other.Length);
 
         var count = 0;
         for (var i = 0; i < span.Length; i++)
         {
-            ref var arrayValue = ref span[i];
-            arrayValue |= other[i];
-            count += BitOperations.PopCount(arrayValue);
+            ref var v = ref span[i];
+            v |= other[i];
+            count += BitOperations.PopCount(v);
         }
-        Count = count;
+        return count;
     }
 
     internal void IntersectWith(ReadOnlySpan<uint> other)

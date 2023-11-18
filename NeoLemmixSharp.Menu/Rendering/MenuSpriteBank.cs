@@ -1,31 +1,23 @@
-﻿using GeonBit.UI.Entities;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Menu.Widgets;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
-public sealed class MenuSpriteBank
+public static class MenuSpriteBank
 {
-    private readonly Texture2D[] _textureLookup;
+    private static Texture2D[] _textureLookup = null!;
 
-  //  public BackgroundBrush BackgroundBrush { get; }
-  //  public Entity TransparentBrush { get; }
-
-    public MenuSpriteBank(ContentManager contentManager, GraphicsDevice graphicsDevice)
+    public static void Initialise(ContentManager contentManager, GraphicsDevice graphicsDevice)
     {
         var numberOfResources = Enum.GetValuesAsUnderlyingType<MenuResource>().Length;
 
         _textureLookup = new Texture2D[numberOfResources];
 
         LoadMenuContent(contentManager, graphicsDevice);
-
-     //   BackgroundBrush = new BackgroundBrush(GetTexture(MenuResource.Background));
-     //   TransparentBrush = new SolidBrush(Color.Transparent);
     }
 
-    private void LoadMenuContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
+    private static void LoadMenuContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
     {
         LoadResource(MenuResource.Background, "menu/background");
         LoadResource(MenuResource.Logo, "menu/logo");
@@ -61,7 +53,7 @@ public sealed class MenuSpriteBank
         }
     }
 
-    public Texture2D GetTexture(MenuResource resource) => _textureLookup[(int)resource];
+    public static Texture2D GetTexture(MenuResource resource) => _textureLookup[(int)resource];
 
     private static Texture2D CreateCursorTexture_Debug(GraphicsDevice graphicsDevice)
     {

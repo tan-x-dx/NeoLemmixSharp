@@ -21,10 +21,9 @@ public sealed class WalkerAction : LemmingAction
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
 
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
-        lemming.LevelPosition = lemmingPosition;
         var dy = FindGroundPixel(lemming, lemmingPosition);
 
         if (dy > 0 &&
@@ -32,7 +31,6 @@ public sealed class WalkerAction : LemmingAction
             LemmingCanDehoist(lemming, true))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-            lemming.LevelPosition = lemmingPosition;
             DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
             return true;
         }
@@ -47,19 +45,16 @@ public sealed class WalkerAction : LemmingAction
             {
                 lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
                 lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-                lemming.LevelPosition = lemmingPosition;
             }
         }
         else if (dy < -2)
         {
             AscenderAction.Instance.TransitionLemmingToAction(lemming, false);
             lemmingPosition = orientation.MoveUp(lemmingPosition, 2);
-            lemming.LevelPosition = lemmingPosition;
         }
         else if (dy < 1)
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, dy);
-            lemming.LevelPosition = lemmingPosition;
         }
 
         // Get new ground pixel again in case the Lem has turned
@@ -68,7 +63,6 @@ public sealed class WalkerAction : LemmingAction
         if (dy > 3)
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 4);
-            lemming.LevelPosition = lemmingPosition;
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
             return true;
@@ -78,7 +72,6 @@ public sealed class WalkerAction : LemmingAction
             return true;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, dy);
-        lemming.LevelPosition = lemmingPosition;
 
         return true;
     }

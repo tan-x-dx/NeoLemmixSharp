@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.LevelRegion;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional.BinaryLogic;
 

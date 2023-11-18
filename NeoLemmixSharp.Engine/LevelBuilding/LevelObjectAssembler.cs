@@ -32,13 +32,12 @@ public sealed class LevelObjectAssembler : IDisposable
     public LevelObjectAssembler(
         GraphicsDevice graphicsDevice,
         ContentManager contentManager,
-        SpriteBatch spriteBatch,
-        RootDirectoryManager rootDirectoryManager)
+        SpriteBatch spriteBatch)
     {
         _spriteBatch = spriteBatch;
 
         _lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
-        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(graphicsDevice, contentManager, rootDirectoryManager);
+        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(graphicsDevice, contentManager);
         _controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder(graphicsDevice, contentManager);
     }
 

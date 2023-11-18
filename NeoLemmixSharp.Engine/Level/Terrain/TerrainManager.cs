@@ -3,13 +3,13 @@ using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Rendering;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain;
 
@@ -115,13 +115,13 @@ public sealed class TerrainManager
             return;
 
         var index = LevelWidth * pixelToErase.Y + pixelToErase.X;
-        var pixel = _pixels[index];
+        ref var pixel = ref _pixels[index];
 
         if (!pixel.CanBeDestroyed() ||
             !destructionMask.CanDestroyPixel(pixel, orientation, facingDirection))
             return;
 
-        _pixels[index] = PixelType.Empty;
+        pixel = PixelType.Empty;
         _terrainRenderer.SetPixelColor(pixelToErase.X, pixelToErase.Y, 0U);
     }
 
@@ -132,12 +132,42 @@ public sealed class TerrainManager
             return;
 
         var index = LevelWidth * pixelToSet.Y + pixelToSet.X;
-        var pixel = _pixels[index];
+        ref var pixel = ref _pixels[index];
 
         if (pixel != PixelType.Empty)
             return;
 
-        _pixels[index] |= PixelType.SolidToAllOrientations;
+        pixel |= PixelType.SolidToAllOrientations;
         _terrainRenderer.SetPixelColor(pixelToSet.X, pixelToSet.Y, color);
+    }
+
+    public void SetBlockerMaskPixel(LevelPosition pixelToSet, PixelType pixelTypeMask, bool set)
+    {
+        if (PositionOutOfBounds(pixelToSet))
+            return;
+
+        var index = LevelWidth * pixelToSet.Y + pixelToSet.X;
+        ref var pixel = ref _pixels[index];
+
+        if (set)
+        {
+            pixel |= pixelTypeMask;
+        }
+        else
+        {
+            pixel &= pixelTypeMask;
+        }
+    }
+
+    [Pure]
+    public PixelType GetBlockerData(LevelPosition pixel)
+    {
+        if (PositionOutOfBounds(pixel))
+            return PixelType.Empty;
+
+        var index = LevelWidth * pixel.Y + pixel.X;
+        var result = _pixels[index];
+
+        return result & PixelType.BlockerMask;
     }
 }

@@ -9,10 +9,10 @@ public sealed class MenuCursorRenderer : IDisposable
     private readonly MenuInputController _menuCursor;
     private readonly Texture2D _cursorTexture;
 
-    public MenuCursorRenderer(MenuSpriteBank menuSpriteBank, MenuInputController menuCursor)
+    public MenuCursorRenderer(MenuInputController menuCursor)
     {
         _menuCursor = menuCursor;
-        _cursorTexture = menuSpriteBank.GetTexture(MenuResource.Cursor);
+        _cursorTexture = MenuSpriteBank.GetTexture(MenuResource.Cursor);
     }
 
     public void RenderCursor(SpriteBatch spriteBatch)

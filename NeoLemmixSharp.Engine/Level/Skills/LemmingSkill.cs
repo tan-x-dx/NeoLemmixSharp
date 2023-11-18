@@ -42,7 +42,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
             ClonerSkill.Instance
         };
 
-        result.ValidateUniqueIds();
+        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<LemmingSkill>(result));
         Array.Sort(result, IdEquatableItemHelperMethods.Compare);
 
         return result;

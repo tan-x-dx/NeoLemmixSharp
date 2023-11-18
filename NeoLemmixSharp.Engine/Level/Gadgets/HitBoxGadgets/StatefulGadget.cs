@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.LevelRegion;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetBehaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using static NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxHelpers;
@@ -50,10 +50,15 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
         return _hitBox.MatchesLemming(lemming) &&
-               _hitBox.MatchesPosition(levelPosition);
+               MatchesPosition(levelPosition);
     }
 
-    public override bool MatchesPosition(LevelPosition levelPosition) => _hitBox.MatchesPosition(levelPosition);
+    public override bool MatchesPosition(LevelPosition levelPosition)
+    {
+        levelPosition = LevelRegionHelpers.GetRelativePosition(TopLeftPixel, levelPosition);
+
+        return _hitBox.MatchesPosition(levelPosition);
+    }
 
     public override void OnLemmingMatch(Lemming lemming)
     {

@@ -19,7 +19,7 @@ public sealed class HoisterAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
 
         if (lemming.EndOfAnimation)
         {
@@ -31,14 +31,12 @@ public sealed class HoisterAction : LemmingAction
         if (lemming.PhysicsFrame == 1 && lemming.IsStartingAction)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-            lemming.LevelPosition = lemmingPosition;
             return true;
         }
 
         if (lemming.PhysicsFrame <= 4)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, 2);
-            lemming.LevelPosition = lemmingPosition;
         }
 
         return true;
@@ -54,6 +52,6 @@ public sealed class HoisterAction : LemmingAction
     {
         var previouslyStartingAction = lemming.IsStartingAction;
         base.TransitionLemmingToAction(lemming, turnAround);
-        lemming.IsStartingAction = previouslyStartingAction;
+        lemming.IsStartingAction = previouslyStartingAction; // It needs to know what the Climber's value was
     }
 }

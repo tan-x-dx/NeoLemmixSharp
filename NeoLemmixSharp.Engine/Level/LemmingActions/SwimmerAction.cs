@@ -23,7 +23,7 @@ public sealed class SwimmerAction : LemmingAction
     {
         var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         lemming.DistanceFallen = 0;
@@ -32,7 +32,6 @@ public sealed class SwimmerAction : LemmingAction
         // still set TrueDistanceFallen so we don't need to worry about that one.
 
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
-        lemming.LevelPosition = lemmingPosition;
 
         var dy = FindGroundPixel(lemming, lemmingPosition);
 
@@ -46,7 +45,6 @@ public sealed class SwimmerAction : LemmingAction
                 !terrainManager.PixelIsSolidToLemming(lemming, pixelAbove))
             {
                 lemmingPosition = pixelAbove;
-                lemming.LevelPosition = lemmingPosition;
 
                 return true;
             }
@@ -59,7 +57,6 @@ public sealed class SwimmerAction : LemmingAction
                     return true;
 
                 lemmingPosition = orientation.MoveDown(lemmingPosition, diveDistance); // Dive below the terrain
-                lemming.LevelPosition = lemmingPosition;
 
                 if (!WaterAt(lemmingPosition))
                 {
@@ -79,7 +76,6 @@ public sealed class SwimmerAction : LemmingAction
 
                 lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
                 lemmingPosition = orientation.MoveLeft(lemmingPosition, dx); // Move lemming back
-                lemming.LevelPosition = lemmingPosition;
 
                 return true;
             }
@@ -88,7 +84,6 @@ public sealed class SwimmerAction : LemmingAction
             {
                 AscenderAction.Instance.TransitionLemmingToAction(lemming, false);
                 lemmingPosition = orientation.MoveUp(lemmingPosition, 2);
-                lemming.LevelPosition = lemmingPosition;
 
                 return true;
             }
@@ -100,7 +95,6 @@ public sealed class SwimmerAction : LemmingAction
 
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
                 lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-                lemming.LevelPosition = lemmingPosition;
             }
 
             return true;
@@ -110,7 +104,6 @@ public sealed class SwimmerAction : LemmingAction
         if (dy > 1)
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-            lemming.LevelPosition = lemmingPosition;
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
             return true;
@@ -118,7 +111,6 @@ public sealed class SwimmerAction : LemmingAction
 
         // if dy == 0 or == 1
         lemmingPosition = orientation.MoveDown(lemmingPosition, dy);
-        lemming.LevelPosition = lemmingPosition;
         WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
         return true;
@@ -158,5 +150,26 @@ public sealed class SwimmerAction : LemmingAction
         return result > 4
             ? 0
             : result;
+    }
+
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    {
+        base.TransitionLemmingToAction(lemming, turnAround);
+
+        // If possible, float up 4 pixels when starting
+        var orientation = lemming.Orientation;
+        var checkPosition = orientation.MoveUp(lemming.LevelPosition, 1);
+
+        var i = 0;
+
+        while (i < 4 &&
+               WaterAt(checkPosition) &&
+               !LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
+        {
+            i++;
+            checkPosition = orientation.MoveUp(lemming.LevelPosition, 1 + i);
+        }
+
+        lemming.LevelPosition = orientation.MoveUp(lemming.LevelPosition, i);
     }
 }

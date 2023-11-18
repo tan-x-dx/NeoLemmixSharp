@@ -26,7 +26,7 @@ public sealed class ReacherAction : LemmingAction
     {
         var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
 
         var emptyPixels = GetEmptyPixelCount(lemming, lemmingPosition);
 
@@ -51,14 +51,12 @@ public sealed class ReacherAction : LemmingAction
         if (emptyPixels <= _movementList[lemming.PhysicsFrame])
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, emptyPixels + 1);
-            lemming.LevelPosition = lemmingPosition;
             ShimmierAction.Instance.TransitionLemmingToAction(lemming, false);
 
             return true;
         }
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, _movementList[lemming.PhysicsFrame]);
-        lemming.LevelPosition = lemmingPosition;
         if (lemming.PhysicsFrame == 7)
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);

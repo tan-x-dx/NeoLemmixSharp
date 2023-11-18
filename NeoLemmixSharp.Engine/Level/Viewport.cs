@@ -1,8 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Common.BoundaryBehaviours;
+﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
-using NeoLemmixSharp.Common.Util.GameInput;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;
 

@@ -53,7 +53,7 @@ public sealed class PlatformerAction : LemmingAction
         var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
 
         if (lemming.PhysicsFrame == 9)
         {
@@ -81,7 +81,6 @@ public sealed class PlatformerAction : LemmingAction
             if (PlatformerTerrainCheck(lemming, orientation.MoveRight(lemmingPosition, dx + dx)))
             {
                 lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
-                lemming.LevelPosition = lemmingPosition;
 
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
@@ -92,7 +91,6 @@ public sealed class PlatformerAction : LemmingAction
                 return;
 
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
-            lemming.LevelPosition = lemmingPosition;
 
             return;
         }
@@ -104,7 +102,6 @@ public sealed class PlatformerAction : LemmingAction
             lemming.NumberOfBricksLeft > 1)
         {
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
-            lemming.LevelPosition = lemmingPosition;
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
             return;
@@ -114,7 +111,6 @@ public sealed class PlatformerAction : LemmingAction
             lemming.NumberOfBricksLeft > 1)
         {
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx + dx);
-            lemming.LevelPosition = lemmingPosition;
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
             return;
@@ -123,7 +119,6 @@ public sealed class PlatformerAction : LemmingAction
         if (!lemming.ConstructivePositionFreeze)
         {
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx + dx);
-            lemming.LevelPosition = lemmingPosition;
         }
 
         lemming.NumberOfBricksLeft--; // Why are we doing this here, instead at the beginning of frame 15??
@@ -135,7 +130,6 @@ public sealed class PlatformerAction : LemmingAction
         if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 1)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-            lemming.LevelPosition = lemmingPosition;
         }
 
         ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);

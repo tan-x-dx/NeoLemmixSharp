@@ -27,7 +27,7 @@ public sealed class FallerAction : LemmingAction
         var maxFallDistanceStep = 3; // A lemming falls 3 pixels each frame
 
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
 
         var gadgetSet = gadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
@@ -53,7 +53,6 @@ public sealed class FallerAction : LemmingAction
                 return true;
 
             lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-            lemming.LevelPosition = lemmingPosition;
 
             currentFallDistanceStep++;
             lemming.DistanceFallen++;

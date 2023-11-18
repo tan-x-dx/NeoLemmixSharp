@@ -21,7 +21,7 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
         orientations[LevelConstants.UpOrientationRotNum] = UpOrientation.Instance;
         orientations[LevelConstants.RightOrientationRotNum] = RightOrientation.Instance;
 
-        orientations.ValidateUniqueIds();
+        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Orientation>(orientations));
 
         return orientations;
     }

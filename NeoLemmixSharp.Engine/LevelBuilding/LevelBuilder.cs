@@ -2,8 +2,6 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
-using NeoLemmixSharp.Common.Rendering.Text;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
@@ -25,7 +23,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding;
 public sealed class LevelBuilder : IDisposable
 {
     private readonly ContentManager _content;
-    private readonly FontBank _fontBank;
     private readonly ILevelReader _levelReader;
     private readonly TerrainPainter _terrainPainter;
     private readonly LevelObjectAssembler _levelObjectAssembler;
@@ -34,15 +31,12 @@ public sealed class LevelBuilder : IDisposable
         ContentManager content,
         GraphicsDevice graphicsDevice,
         SpriteBatch spriteBatch,
-        FontBank fontBank,
-        RootDirectoryManager rootDirectoryManager,
         ILevelReader levelReader)
     {
         _content = content;
-        _fontBank = fontBank;
         _levelReader = levelReader;
-        _terrainPainter = new TerrainPainter(graphicsDevice, rootDirectoryManager);
-        _levelObjectAssembler = new LevelObjectAssembler(graphicsDevice, content, spriteBatch, rootDirectoryManager);
+        _terrainPainter = new TerrainPainter(graphicsDevice);
+        _levelObjectAssembler = new LevelObjectAssembler(graphicsDevice, content, spriteBatch);
     }
 
     public LevelScreen BuildLevel(string levelFilePath)
@@ -119,7 +113,7 @@ public sealed class LevelBuilder : IDisposable
 
         var levelSprites = _levelObjectAssembler.GetLevelSprites(lemmingSpriteBankLookup);
 
-        var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel, _fontBank);
+        var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel);
 
         var levelCursorSprite = controlPanelSpriteBank.LevelCursorSprite;
 
@@ -136,8 +130,7 @@ public sealed class LevelBuilder : IDisposable
             controlPanelRenderer,
             controlPanelSpriteBank,
             lemmingSpriteBank,
-            gadgetSpriteBank,
-            _fontBank);
+            gadgetSpriteBank);
 
         var wp = controlPanelSpriteBank.GetTexture("WhitePixel");
         foreach (var metalGrateRenderer in levelSprites.OfType<MetalGrateRenderer>())

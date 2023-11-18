@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.Common.Util.LevelRegion;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
 public sealed class RectangularLevelRegion : IRectangularLevelRegion
 {

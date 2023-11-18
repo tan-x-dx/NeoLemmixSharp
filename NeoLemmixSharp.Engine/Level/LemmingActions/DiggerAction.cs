@@ -27,7 +27,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
 
         if (lemming.IsStartingAction)
         {
@@ -45,7 +45,6 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         var continueDigging = DigOneRow(lemming, orientation, facingDirection, lemmingPosition);
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-        lemming.LevelPosition = lemmingPosition;
 
         if (terrainManager.PixelIsIndestructibleToLemming(lemming, this, lemmingPosition))
         {

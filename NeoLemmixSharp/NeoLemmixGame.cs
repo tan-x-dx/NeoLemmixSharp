@@ -30,10 +30,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     private bool _isBorderless;
 
-    private FontBank _fontBank;
-    private MenuSpriteBank _menuSpriteBank;
     private SpriteBatch _spriteBatch;
-    private RootDirectoryManager _rootDirectoryManager;
 
     public int WindowWidth => _graphics.PreferredBackBufferWidth;
     public int WindowHeight => _graphics.PreferredBackBufferHeight;
@@ -90,20 +87,12 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     protected override void Initialize()
     {
         // make the window fullscreen (but still with border and top control bar)
-        var screenWidth = _graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Width;
-        var screenHeight = _graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Height;
+        var screenWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;
+        var screenHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
         _graphics.PreferredBackBufferWidth = screenWidth;
         _graphics.PreferredBackBufferHeight = screenHeight;
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
-        _rootDirectoryManager = new RootDirectoryManager();
-
-        // create and init the UI manager
-        UserInterface.Initialize(Content, BuiltinThemes.editor);
-        UserInterface.Active.UseRenderTarget = true;
-
-        // draw cursor outside the render target
-        UserInterface.Active.IncludeCursorInRenderTarget = false;
 
         LoadContent();
 
@@ -112,28 +101,34 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void LoadContent()
     {
-        _fontBank = new FontBank(Content);
-        _menuSpriteBank = new MenuSpriteBank(Content, GraphicsDevice);
+        // create and init the UI manager
+        UserInterface.Initialize(Content, BuiltinThemes.editor);
+        UserInterface.Active.UseRenderTarget = true;
+
+        // draw cursor outside the render target
+        UserInterface.Active.IncludeCursorInRenderTarget = false;
+
+        RootDirectoryManager.Initialise();
+        FontBank.Initialise(Content);
+        MenuSpriteBank.Initialise(Content, GraphicsDevice);
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        _graphics.ApplyChanges();
+        TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
+        DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
 
         //LoadLevel_Debug();
         var menuScreen = new MenuScreen(
-            _rootDirectoryManager,
-            _menuSpriteBank,
             Content,
             GraphicsDevice,
-            _spriteBatch,
-            _fontBank);
+            _spriteBatch);
         SetScreen(menuScreen);
         menuScreen.Initialise();
 
         CaptureCursor();
     }
 
-    private void InitialiseGameConstants()
+    private static void InitialiseGameConstants()
     {
         var numberOfFacingDirections = FacingDirection.NumberOfItems;
         var numberOfOrientations = Orientation.NumberOfItems;
@@ -151,9 +146,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
             numberOfActions,
             numberOfTeams,
             numberOfGadgetTypes);
-
-        TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
-        DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, _graphics.GraphicsDevice);
     }
 
     private void LoadLevel_Debug()
@@ -177,12 +169,12 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         //    "levels\\eraseTest.nxlv";
         //  "levels\\Amiga Lemmings\\Lemmings\\Fun\\19_Take_good_care_of_my_Lemmings.nxlv";
 
-        var path = Path.Combine(_rootDirectoryManager.RootDirectory, file);
+        var path = Path.Combine(RootDirectoryManager.RootDirectory, file);
 
         var fileExtension = Path.GetExtension(file);
-        var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension, _rootDirectoryManager);
+        var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
 
-        using var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, _fontBank, _rootDirectoryManager, levelReader);
+        using var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, levelReader);
         SetScreen(levelBuilder.BuildLevel(path));
     }
 
@@ -205,7 +197,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         // if (gameTime.IsRunningSlowly)
         //     return;
 
-        _graphics.GraphicsDevice.Clear(Color.Black);
+        GraphicsDevice.Clear(Color.Black);
 
         ScreenRenderer.RenderScreen(_spriteBatch);
     }

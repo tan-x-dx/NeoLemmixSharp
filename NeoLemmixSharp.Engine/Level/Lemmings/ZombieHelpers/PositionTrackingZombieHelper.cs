@@ -34,17 +34,16 @@ public sealed class PositionTrackingZombieHelper : IZombieHelper
 
     public void DeregisterZombie(Lemming lemming) => _zombieSpacialHashGrid.RemoveItem(lemming);
 
+    public bool AnyZombies() => !_zombieSpacialHashGrid.IsEmpty;
+
     public void CheckZombies(Lemming lemming)
     {
-        if (_zombieSpacialHashGrid.IsEmpty)
-            return;
-
         Debug.Assert(!lemming.State.IsZombie);
 
         var checkRegion = new LevelPositionPair(lemming.TopLeftPixel, lemming.BottomRightPixel);
         var nearbyZombies = _zombieSpacialHashGrid.GetAllItemsNearRegion(checkRegion);
 
-        if (nearbyZombies.Count == 0)
+        if (nearbyZombies.IsEmpty)
             return;
 
         foreach (var zombie in nearbyZombies)

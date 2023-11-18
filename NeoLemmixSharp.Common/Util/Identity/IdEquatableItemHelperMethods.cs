@@ -2,10 +2,10 @@
 
 public static class IdEquatableItemHelperMethods
 {
-    public static void ValidateUniqueIds<T>(this ICollection<T> items)
+    public static void ValidateUniqueIds<T>(ReadOnlySpan<T> items)
         where T : class, IIdEquatable<T>
     {
-        if (items.Count == 0)
+        if (items.Length == 0)
             return;
 
         var maxActionId = int.MinValue;
@@ -34,10 +34,10 @@ public static class IdEquatableItemHelperMethods
             }
         }
 
-        if (minActionId != 0 || maxActionId != items.Count - 1)
+        if (minActionId != 0 || maxActionId != items.Length - 1)
         {
             var typeName = typeof(T).Name;
-            throw new Exception($"{typeName} ids do not span a full set of values from 0 - {items.Count - 1}");
+            throw new Exception($"{typeName} ids do not span a full set of values from 0 - {items.Length - 1}");
         }
     }
 
@@ -48,6 +48,6 @@ public static class IdEquatableItemHelperMethods
         if (x is null) return -1;
         if (y is null) return 1;
 
-        return x.Id - y.Id;
+        return x.Id.CompareTo(y.Id);
     }
 }

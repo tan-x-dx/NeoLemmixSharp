@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetBehaviours;
 
 public interface IGadgetBehaviour
 {

@@ -20,7 +20,7 @@ public sealed class ShimmierAction : LemmingAction
     {
         var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         if ((lemming.PhysicsFrame & 1) == 0)
@@ -33,7 +33,6 @@ public sealed class ShimmierAction : LemmingAction
                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i + 1)))
                 {
                     lemmingPosition = orientation.Move(lemmingPosition, dx, i);
-                    lemming.LevelPosition = lemmingPosition;
                     WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
                     return true;
                 }
@@ -46,7 +45,6 @@ public sealed class ShimmierAction : LemmingAction
                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i + 1)))
                 {
                     lemmingPosition = orientation.Move(lemmingPosition, dx, i - 4);
-                    lemming.LevelPosition = lemmingPosition;
                     lemming.IsStartingAction = false;
                     HoisterAction.Instance.TransitionLemmingToAction(lemming, false);
                     lemming.PhysicsFrame += 2;
@@ -93,12 +91,10 @@ public sealed class ShimmierAction : LemmingAction
 
         // Move along
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
-        lemming.LevelPosition = lemmingPosition;
 
         if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-            lemming.LevelPosition = lemmingPosition;
 
             if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
             {
@@ -117,14 +113,13 @@ public sealed class ShimmierAction : LemmingAction
             return true;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-        lemming.LevelPosition = lemmingPosition;
 
-        lemmingPosition = orientation.MoveUp(lemmingPosition, 5);
-        if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
-        {
-            lemming.LevelPosition = lemmingPosition;
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
-        }
+        var checkPosition = orientation.MoveUp(lemmingPosition, 5);
+        if (!terrainManager.PixelIsSolidToLemming(lemming, checkPosition))
+            return true;
+
+        lemmingPosition = checkPosition;
+        WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
         return true;
     }
@@ -139,29 +134,25 @@ public sealed class ShimmierAction : LemmingAction
     {
         var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
 
         if (lemming.CurrentAction == ClimberAction.Instance)
         {
             lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
             lemmingPosition = orientation.MoveRight(lemmingPosition, lemming.FacingDirection.DeltaX);
-            lemming.LevelPosition = lemmingPosition;
 
             if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
             {
                 lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-                lemming.LevelPosition = lemmingPosition;
             }
         }
         else if (lemming.CurrentAction == SliderAction.Instance ||
                  lemming.CurrentAction == DehoisterAction.Instance)
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 2);
-            lemming.LevelPosition = lemmingPosition;
             if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
             {
                 lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-                lemming.LevelPosition = lemmingPosition;
             }
         }
         else if (lemming.CurrentAction == JumperAction.Instance)
@@ -172,7 +163,6 @@ public sealed class ShimmierAction : LemmingAction
                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8 + i)))
                 {
                     lemmingPosition = orientation.MoveUp(lemmingPosition, i);
-                    lemming.LevelPosition = lemmingPosition;
                 }
             }
         }

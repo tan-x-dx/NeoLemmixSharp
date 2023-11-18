@@ -28,9 +28,9 @@ public sealed class LemmingState
                                                 (1U << ZombieBitIndex);
 
     private readonly Lemming _lemming;
-    private uint _states;
-
     private Team _team;
+
+    private uint _states;
 
     public Color HairColor { get; private set; }
     public Color SkinColor { get; private set; }
@@ -198,6 +198,12 @@ public sealed class LemmingState
         SkinColor = IsZombie
             ? _team.ZombieSkinColor
             : _team.SkinColor;
+    }
+
+    public void SetRawData(LemmingState otherLemmingState)
+    {
+        _team = otherLemmingState._team;
+        _states = otherLemmingState._states;
     }
 
     public void SetRawData(Team team, uint rawData)

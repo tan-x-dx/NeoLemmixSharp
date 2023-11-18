@@ -1,9 +1,9 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.LevelRegion;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -27,7 +27,7 @@ public sealed class SwitchGadget : HitBoxGadget
         : base(id, gadgetBounds)
     {
         var p = gadgetBounds.TopLeft;
-        var leftRect = new RectangularLevelRegion(p.X + 3, p.Y + 8, 5, 5);
+        var leftRect = new RectangularLevelRegion(3, 8, 5, 5);
         var leftHitBoxFilters = new ILemmingFilter[]
         {
             new LemmingActionFilter(null, Orientation, RightFacingDirection.Instance),
@@ -36,7 +36,7 @@ public sealed class SwitchGadget : HitBoxGadget
 
         LeftHitBox = new HitBox(leftRect, leftHitBoxFilters);
 
-        var rightRect = new RectangularLevelRegion(p.X + 10, p.Y + 8, 5, 5);
+        var rightRect = new RectangularLevelRegion(10, 8, 5, 5);
         var rightHitBoxFilters = new ILemmingFilter[]
         {
             new LemmingActionFilter(null, Orientation, LeftFacingDirection.Instance),
@@ -80,10 +80,15 @@ public sealed class SwitchGadget : HitBoxGadget
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
         return _currentHitBox.MatchesLemming(lemming) &&
-               _currentHitBox.MatchesPosition(levelPosition);
+               MatchesPosition(levelPosition);
     }
 
-    public override bool MatchesPosition(LevelPosition levelPosition) => _currentHitBox.MatchesPosition(levelPosition);
+    public override bool MatchesPosition(LevelPosition levelPosition)
+    {
+        levelPosition = LevelRegionHelpers.GetRelativePosition(TopLeftPixel, levelPosition);
+
+        return _currentHitBox.MatchesPosition(levelPosition);
+    }
 
     public override void OnLemmingMatch(Lemming lemming)
     {

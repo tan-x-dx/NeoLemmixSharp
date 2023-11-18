@@ -19,7 +19,7 @@ public sealed class WalkerSkill : LemmingSkill
     {
         var terrainManager = LevelConstants.TerrainManager;
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         // Important! If a builder just placed a brick and part of the previous brick
@@ -30,7 +30,7 @@ public sealed class WalkerSkill : LemmingSkill
             terrainManager.PixelIsSolidToLemming(lemming, testUp) &&
             !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, dx)))
         {
-            lemming.LevelPosition = testUp;
+            lemmingPosition = testUp;
 
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -59,7 +59,6 @@ public sealed class WalkerSkill : LemmingSkill
             if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
             {
                 lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
-                lemming.LevelPosition = lemmingPosition;
             }
         }
 

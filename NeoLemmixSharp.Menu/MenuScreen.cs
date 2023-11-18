@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Menu.Pages;
@@ -21,8 +20,6 @@ public sealed class MenuScreen : IBaseScreen
     private IPage _currentPage;
     private IPage? _nextPage;
 
-    public MenuSpriteBank MenuSpriteBank { get; }
-    public FontBank FontBank { get; }
     public MenuInputController InputController { get; } = new();
     public MenuPageCreator MenuPageCreator { get; }
     public MenuScreenRenderer MenuScreenRenderer { get; }
@@ -32,28 +29,19 @@ public sealed class MenuScreen : IBaseScreen
     public bool IsDisposed { get; private set; }
 
     public MenuScreen(
-        RootDirectoryManager rootDirectoryManager,
-        MenuSpriteBank menuSpriteBank,
         ContentManager contentManager,
         GraphicsDevice graphicsDevice,
-        SpriteBatch spriteBatch,
-        FontBank fontBank)
+        SpriteBatch spriteBatch)
     {
-        MenuSpriteBank = menuSpriteBank;
-        FontBank = fontBank;
-        var menuCursorRenderer = new MenuCursorRenderer(menuSpriteBank, InputController);
+        var menuCursorRenderer = new MenuCursorRenderer(InputController);
         MenuScreenRenderer = new MenuScreenRenderer(
-            menuSpriteBank,
-            fontBank,
             menuCursorRenderer,
             _pageTransition);
 
         MenuPageCreator = new MenuPageCreator(
-            rootDirectoryManager, 
             contentManager,
             graphicsDevice,
             spriteBatch,
-            fontBank,
             InputController);
         _currentPage = MenuPageCreator.CreateMainPage();
         Current = this;
