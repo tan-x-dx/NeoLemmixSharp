@@ -48,39 +48,35 @@ public sealed class BlockerAction : LemmingAction
 
     public static void DoBlockerCheck(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
-
-        var lemmingOrientation = lemming.Orientation;
-
-        var testPosition = lemming.LevelPosition;
-        var pixel = terrainManager.GetBlockerData(testPosition);
-        var pixelBlockerOrientation = PixelTypeHelpers.GetOrientationFromBlockerMask(pixel);
-
-        if (lemmingOrientation.IsPerpendicularTo(pixelBlockerOrientation))
-        {
-            HandleBlocker(lemming, pixelBlockerOrientation);
+        if (CheckPixelForBlocker(lemming, lemming.LevelPosition))
             return;
-        }
-
-        testPosition = lemming.FootPosition;
-        pixel = terrainManager.GetBlockerData(testPosition);
-        pixelBlockerOrientation = PixelTypeHelpers.GetOrientationFromBlockerMask(pixel);
-
-        if (lemmingOrientation.IsParallelTo(pixelBlockerOrientation))
-            return;
-
-        HandleBlocker(lemming, pixelBlockerOrientation);
+        CheckPixelForBlocker(lemming, lemming.FootPosition);
     }
 
-    private static void HandleBlocker(Lemming lemming, Orientation pixelBlockerOrientation)
+    private static bool CheckPixelForBlocker(Lemming lemming, LevelPosition testPosition)
+    {
+        var pixel = LevelConstants.TerrainManager.GetBlockerData(testPosition);
+        if (pixel == PixelType.Empty)
+            return false;
+
+        var pixelBlockerOrientation = PixelTypeHelpers.GetOrientationFromBlockerMask(pixel);
+
+        if (!lemming.Orientation.IsPerpendicularTo(pixelBlockerOrientation))
+            return false;
+
+        return HandleBlocker(lemming, pixelBlockerOrientation);
+    }
+
+    private static bool HandleBlocker(Lemming lemming, Orientation pixelBlockerOrientation)
     {
         var lemmingFacingDirection = lemming.FacingDirection;
         var lemmingFacingDirectionAsOrientation = lemmingFacingDirection.ConvertToRelativeOrientation(lemming.Orientation);
 
-        if (lemmingFacingDirectionAsOrientation == pixelBlockerOrientation.GetOpposite())
-        {
-            ForceLemmingDirection(lemming, lemmingFacingDirection.GetOpposite());
-        }
+        if (lemmingFacingDirectionAsOrientation != pixelBlockerOrientation.GetOpposite())
+            return false;
+
+        ForceLemmingDirection(lemming, lemmingFacingDirection.GetOpposite());
+        return true;
     }
 
     public static void ForceLemmingDirection(Lemming lemming, FacingDirection forcedFacingDirection)
