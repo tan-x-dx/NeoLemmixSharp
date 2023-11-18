@@ -86,6 +86,8 @@ public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget
 
     public override bool MatchesPosition(LevelPosition levelPosition)
     {
+        levelPosition = LevelRegionHelpers.GetRelativePosition(TopLeftPixel, levelPosition);
+
         return CurrentState == MetalGrateState.On && GadgetBounds.ContainsPoint(levelPosition);
     }
 

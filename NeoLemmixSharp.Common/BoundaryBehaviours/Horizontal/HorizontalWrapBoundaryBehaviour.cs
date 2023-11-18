@@ -4,6 +4,7 @@ namespace NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 
 public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehaviour
 {
+    public BoundaryBehaviourType BoundaryBehaviourType => BoundaryBehaviourType.Wrap;
     public int LevelWidth { get; }
 
     public HorizontalWrapBoundaryBehaviour(int levelWidthInPixels)
@@ -29,6 +30,17 @@ public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehavio
 
         // otherwise, just do modulo operation
         return x % LevelWidth;
+    }
+
+    public void NormaliseXCoords(ref int left, ref int right, ref int x)
+    {
+        if (right < LevelWidth)
+            return;
+
+        var halfLevelWidth = LevelWidth / 2;
+        left -= halfLevelWidth;
+        right -= halfLevelWidth;
+        x -= halfLevelWidth;
     }
 
     [Pure]

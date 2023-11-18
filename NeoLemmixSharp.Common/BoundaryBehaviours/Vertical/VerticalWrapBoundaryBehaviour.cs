@@ -4,6 +4,7 @@ namespace NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 
 public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
 {
+    public BoundaryBehaviourType BoundaryBehaviourType => BoundaryBehaviourType.Wrap;
     public int LevelHeight { get; }
 
     public VerticalWrapBoundaryBehaviour(int levelHeightInPixels)
@@ -29,6 +30,17 @@ public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
 
         // otherwise, just do modulo operation
         return y % LevelHeight;
+    }
+
+    public void NormaliseYCoords(ref int top, ref int bottom, ref int y)
+    {
+        if (bottom < LevelHeight)
+            return;
+
+        var halfLevelHeight = LevelHeight / 2;
+        top -= halfLevelHeight;
+        bottom -= halfLevelHeight;
+        y -= halfLevelHeight;
     }
 
     [Pure]

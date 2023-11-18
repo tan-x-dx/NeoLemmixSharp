@@ -50,10 +50,15 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
         return _hitBox.MatchesLemming(lemming) &&
-               _hitBox.MatchesPosition(levelPosition);
+               MatchesPosition(levelPosition);
     }
 
-    public override bool MatchesPosition(LevelPosition levelPosition) => _hitBox.MatchesPosition(levelPosition);
+    public override bool MatchesPosition(LevelPosition levelPosition)
+    {
+        levelPosition = LevelRegionHelpers.GetRelativePosition(TopLeftPixel, levelPosition);
+
+        return _hitBox.MatchesPosition(levelPosition);
+    }
 
     public override void OnLemmingMatch(Lemming lemming)
     {
