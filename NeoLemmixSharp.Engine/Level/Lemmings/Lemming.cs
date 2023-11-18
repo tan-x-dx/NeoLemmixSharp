@@ -225,19 +225,23 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         // If we're at the end of the check positions and Next action is not None
         // then transition. However, if NextAction is SplatterAction and there's water
         // at the position, the water takes precedence over splatting
-        if (NextAction != NoneAction.Instance && checkPosition == LevelPosition &&
-            (NextAction != SplatterAction.Instance || gadget.SubType != WaterGadgetType.Instance))
+        if (NextAction == NoneAction.Instance || checkPosition != LevelPosition ||
+            (NextAction == SplatterAction.Instance && gadget.SubType == WaterGadgetType.Instance))
         {
-            NextAction.TransitionLemmingToAction(this, false);
-            if (JumpToHoistAdvance)
-            {
-                AnimationFrame += 2;
-                PhysicsFrame += 2;
-                JumpToHoistAdvance = false;
-            }
+            gadget.OnLemmingMatch(this);
 
-            NextAction = NoneAction.Instance;
+            return;
         }
+
+        NextAction.TransitionLemmingToAction(this, false);
+        if (JumpToHoistAdvance)
+        {
+            AnimationFrame += 2;
+            PhysicsFrame += 2;
+            JumpToHoistAdvance = false;
+        }
+
+        NextAction = NoneAction.Instance;
 
         gadget.OnLemmingMatch(this);
     }
