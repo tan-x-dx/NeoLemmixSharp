@@ -13,10 +13,11 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 {
+    public static Lemming SimulationLemming { get; } = new();
+
     private LevelPosition[]? _jumperPositions;
 
-    public int Id { get; }
-
+    private readonly bool _isSimulation;
     public bool ConstructivePositionFreeze;
     public bool IsStartingAction;
     public bool PlacedBrick;
@@ -36,17 +37,15 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public int TrueDistanceFallen;
     public int LaserRemainTime;
 
-    public int FastForwardTime = 0;
-
-    public bool IsFastForward => FastForwardTime > 0;
+    public int FastForwardTime;
 
     public LevelPosition DehoistPin;
     public LevelPosition LaserHitLevelPosition;
     public LevelPosition LevelPosition;
     public LevelPosition PreviousLevelPosition;
 
-    public LevelPosition HeadPosition => Orientation.MoveUp(LevelPosition, 6);
-    public LevelPosition FootPosition => Orientation.MoveUp(LevelPosition, 1);
+    public int Id { get; }
+    public LemmingState State { get; }
 
     public FacingDirection FacingDirection { get; private set; }
     public Orientation Orientation { get; private set; }
@@ -56,12 +55,16 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LemmingAction NextAction { get; private set; } = NoneAction.Instance;
 
     public LemmingRenderer Renderer { get; private set; } = null!;
-    public LemmingState State { get; }
 
     public LevelPosition TopLeftPixel { get; private set; }
     public LevelPosition BottomRightPixel { get; private set; }
     public LevelPosition PreviousTopLeftPixel { get; private set; }
     public LevelPosition PreviousBottomRightPixel { get; private set; }
+
+    public bool IsFastForward => FastForwardTime > 0;
+
+    public LevelPosition HeadPosition => Orientation.MoveUp(LevelPosition, 6);
+    public LevelPosition FootPosition => Orientation.MoveUp(LevelPosition, 1);
 
     public Lemming(
         int id,
@@ -70,9 +73,20 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         LemmingAction? currentAction = null)
     {
         Id = id;
+        _isSimulation = false;
         Orientation = orientation ?? DownOrientation.Instance;
         FacingDirection = facingDirection ?? RightFacingDirection.Instance;
         CurrentAction = currentAction ?? WalkerAction.Instance;
+        State = new LemmingState(this, Team.AllItems[0]);
+    }
+
+    private Lemming()
+    {
+        Id = -1;
+        _isSimulation = true;
+        Orientation = DownOrientation.Instance;
+        FacingDirection = RightFacingDirection.Instance;
+        CurrentAction = NoneAction.Instance;
         State = new LemmingState(this, Team.AllItems[0]);
     }
 
@@ -109,6 +123,18 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
             LevelConstants.LemmingManager.AnyZombies())
         {
             LevelConstants.LemmingManager.DoZombieCheck(this);
+        }
+    }
+
+    public void Simulate(bool checkGadgets)
+    {
+        if (!_isSimulation)
+            throw new InvalidOperationException("Use simulation lemming for simulations!");
+
+        var handleGadgets = HandleLemmingAction() && CheckLevelBoundaries() && checkGadgets;
+        if (handleGadgets)
+        {
+            CheckTriggerAreas(false);
         }
     }
 
@@ -287,6 +313,52 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         _jumperPositions ??= new LevelPosition[JumperAction.JumperPositionCount];
 
         return new Span<LevelPosition>(_jumperPositions);
+    }
+
+    public void SetRawData(Lemming otherLemming)
+    {
+        _jumperPositions = otherLemming._jumperPositions;
+
+        ConstructivePositionFreeze = otherLemming.ConstructivePositionFreeze;
+        IsStartingAction = otherLemming.IsStartingAction;
+        PlacedBrick = otherLemming.PlacedBrick;
+        StackLow = otherLemming.StackLow;
+        InitialFall = otherLemming.InitialFall;
+        EndOfAnimation = otherLemming.EndOfAnimation;
+        LaserHit = otherLemming.LaserHit;
+        JumpToHoistAdvance = otherLemming.JumpToHoistAdvance;
+
+        AnimationFrame = otherLemming.AnimationFrame;
+        PhysicsFrame = otherLemming.PhysicsFrame;
+        AscenderProgress = otherLemming.AscenderProgress;
+        NumberOfBricksLeft = otherLemming.NumberOfBricksLeft;
+        DisarmingFrames = otherLemming.DisarmingFrames;
+        DistanceFallen = otherLemming.DistanceFallen;
+        JumpProgress = otherLemming.JumpProgress;
+        TrueDistanceFallen = otherLemming.TrueDistanceFallen;
+        LaserRemainTime = otherLemming.LaserRemainTime;
+
+        FastForwardTime = otherLemming.FastForwardTime;
+
+        DehoistPin = otherLemming.DehoistPin;
+        LaserHitLevelPosition = otherLemming.LaserHitLevelPosition;
+        LevelPosition = otherLemming.LevelPosition;
+        PreviousLevelPosition = otherLemming.PreviousLevelPosition;
+
+        FacingDirection = otherLemming.FacingDirection;
+        Orientation = otherLemming.Orientation;
+
+        PreviousAction = otherLemming.PreviousAction;
+        CurrentAction = otherLemming.CurrentAction;
+        NextAction = otherLemming.NextAction;
+
+        Renderer = otherLemming.Renderer;
+        State.SetRawData(otherLemming.State);
+
+        TopLeftPixel = otherLemming.TopLeftPixel;
+        BottomRightPixel = otherLemming.BottomRightPixel;
+        PreviousTopLeftPixel = otherLemming.PreviousTopLeftPixel;
+        PreviousBottomRightPixel = otherLemming.PreviousBottomRightPixel;
     }
 
     public bool Equals(Lemming? other) => Id == (other?.Id ?? -1);

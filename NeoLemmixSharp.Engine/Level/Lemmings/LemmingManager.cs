@@ -156,6 +156,16 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
         _zombieHelper.UpdateZombiePosition(lemming);
     }
 
+    public static Lemming SimulateLemming(Lemming lemming, bool checkGadgets)
+    {
+        var simulationLemming = Lemming.SimulationLemming;
+        simulationLemming.SetRawData(lemming);
+
+        simulationLemming.Simulate(checkGadgets);
+
+        return simulationLemming;
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public SimpleSetEnumerable<Lemming> GetAllLemmingsNearRegion(LevelPositionPair levelRegion) => _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion);
 

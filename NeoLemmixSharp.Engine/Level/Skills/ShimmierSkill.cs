@@ -15,6 +15,54 @@ public sealed class ShimmierSkill : LemmingSkill
     public override string LemmingSkillName => "shimmier";
     public override bool IsClassicSkill => false;
 
+    public override bool CanAssignToLemming(Lemming lemming)
+    {
+        var terrainManager = LevelConstants.TerrainManager;
+
+        if (lemming.CurrentAction == ClimberAction.Instance)
+        {
+            var simulationLemming = LemmingManager.SimulateLemming(lemming, true);
+
+            if (simulationLemming.CurrentAction != SliderAction.Instance &&
+                (simulationLemming.CurrentAction != FallerAction.Instance ||
+                 simulationLemming.FacingDirection != lemming.FacingDirection.GetOpposite()))
+                return false;
+
+            var simulationOrientation = simulationLemming.Orientation;
+            var simulationPosition = simulationLemming.LevelPosition;
+
+            return terrainManager.PixelIsSolidToLemming(simulationLemming, simulationOrientation.MoveUp(simulationPosition, 9)) ||
+                   terrainManager.PixelIsSolidToLemming(simulationLemming, simulationOrientation.MoveUp(simulationPosition, 8));
+        }
+
+        if (lemming.CurrentAction == SliderAction.Instance ||
+            lemming.CurrentAction == DehoisterAction.Instance)
+        {
+            var oldAction = lemming.CurrentAction;
+
+            var simulationLemming = LemmingManager.SimulateLemming(lemming, true);
+
+            return simulationLemming.CurrentAction != oldAction &&
+                   simulationLemming.FacingDirection == lemming.FacingDirection &&
+                   (oldAction != DehoisterAction.Instance || simulationLemming.CurrentAction != SliderAction.Instance);
+        }
+
+        if (lemming.CurrentAction != JumperAction.Instance)
+            return ActionIsAssignable(lemming);
+
+        var orientation = lemming.Orientation;
+        var lemmingPosition = lemming.LevelPosition;
+
+        for (var i = -1; i < 4; i++)
+        {
+            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9 + i)) &&
+                !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8 + i)))
+                return true;
+        }
+
+        return ActionIsAssignable(lemming);
+    }
+
     public override bool AssignToLemming(Lemming lemming)
     {
         if (lemming.CurrentAction == ClimberAction.Instance ||
