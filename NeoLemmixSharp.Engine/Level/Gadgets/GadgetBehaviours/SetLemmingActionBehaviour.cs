@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetBehaviours;
 
 public sealed class SetLemmingActionBehaviour : IGadgetBehaviour
 {

@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Teams;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetActions;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetBehaviours;
 
 public sealed class SkillCountModifierBehaviour : IGadgetBehaviour
 {
