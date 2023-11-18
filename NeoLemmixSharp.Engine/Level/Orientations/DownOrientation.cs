@@ -12,7 +12,7 @@ public sealed class DownOrientation : Orientation
     {
     }
 
-    public override int RotNum => LevelConstants.DownOrientationRotNum;
+    public override int RotNum => DownOrientationRotNum;
     public override int AbsoluteHorizontalComponent => 0;
     public override int AbsoluteVerticalComponent => 1;
 
