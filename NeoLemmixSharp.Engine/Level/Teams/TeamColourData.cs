@@ -4,9 +4,9 @@ namespace NeoLemmixSharp.Engine.Level.Teams;
 
 public sealed class TeamColorData
 {
-    public Color HairColor { get; init; }
-    public Color SkinColor { get; init; }
-    public Color ZombieSkinColor { get; init; }
-    public Color BodyColor { get; init; }
-    public Color NeutralBodyColor { get; init; }
+    public required Color HairColor { get; init; }
+    public required Color SkinColor { get; init; }
+    public required Color ZombieSkinColor { get; init; }
+    public required Color BodyColor { get; init; }
+    public required Color NeutralBodyColor { get; init; }
 }
