@@ -1,8 +1,9 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
-namespace NeoLemmixSharp.Common.Util.LevelRegion;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
 public sealed class PointSetLevelRegion : ILevelRegion
 {

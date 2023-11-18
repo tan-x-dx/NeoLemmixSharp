@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.Util.LevelRegion;
+﻿using NeoLemmixSharp.Common.Util;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
 public sealed class EmptyLevelRegion : ILevelRegion
 {
