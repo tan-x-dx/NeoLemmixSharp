@@ -28,16 +28,15 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 {
     private readonly GraphicsDeviceManager _graphics;
 
-    private bool _isBorderless;
-
     private SpriteBatch _spriteBatch;
+    private IBaseScreen _screen;
+    private IScreenRenderer _screenRenderer;
+
+    private bool _isBorderless;
+    public bool IsFullScreen { get; private set; }
 
     public int WindowWidth => _graphics.PreferredBackBufferWidth;
     public int WindowHeight => _graphics.PreferredBackBufferHeight;
-
-    public bool IsFullScreen { get; private set; }
-    public IBaseScreen Screen { get; set; }
-    public IScreenRenderer ScreenRenderer { get; set; }
 
     public NeoLemmixGame()
     {
@@ -62,7 +61,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     private void WindowOnClientSizeChanged(object? sender, EventArgs e)
     {
         CaptureCursor();
-        Screen.OnWindowSizeChanged();
+        _screen.OnWindowSizeChanged();
     }
 
     protected override void OnActivated(object sender, EventArgs args)
@@ -180,16 +179,19 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     public void SetScreen(IBaseScreen screen)
     {
-        Screen = screen;
-        Screen.OnWindowSizeChanged();
-        ScreenRenderer = Screen.ScreenRenderer;
+        _screen?.Dispose();
+        _screenRenderer?.Dispose();
 
-        Window.Title = Screen.ScreenTitle;
+        _screen = screen;
+        _screen.OnWindowSizeChanged();
+        _screenRenderer = _screen.ScreenRenderer;
+
+        Window.Title = _screen.ScreenTitle;
     }
 
     protected override void Update(GameTime gameTime)
     {
-        Screen.Tick(gameTime);
+        _screen.Tick(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
@@ -199,7 +201,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         GraphicsDevice.Clear(Color.Black);
 
-        ScreenRenderer.RenderScreen(_spriteBatch);
+        _screenRenderer.RenderScreen(_spriteBatch);
     }
 
     public void ToggleFullScreen()
