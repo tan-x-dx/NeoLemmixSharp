@@ -164,31 +164,29 @@ public sealed class BlockerAction : LemmingAction
         var rightArmPixelType = set ? GetRightArmPixelType(orientation) : PixelType.ClearBlockerMask;
         var leftArmPixelType = set ? GetLeftArmPixelType(orientation) : PixelType.ClearBlockerMask;
 
-        var moveDelta = lemming.FacingDirection == RightFacingDirection.Instance
-            ? -5
-            : -6;
+        var moveDelta = lemming.FacingDirection.Id - 1; // Fixes off-by-one errors between left/right
         levelPosition = orientation.MoveRight(levelPosition, moveDelta);
 
         var terrainManager = LevelConstants.TerrainManager;
 
         for (var y = -3; y < 7; y++)
         {
-            var workPosition = orientation.Move(levelPosition, 0, y);
+            var workPosition = orientation.Move(levelPosition, -5, y);
             terrainManager.SetBlockerMaskPixel(workPosition, leftArmPixelType, set);
-            workPosition = orientation.Move(levelPosition, 1, y);
+            workPosition = orientation.Move(levelPosition, -4, y);
             terrainManager.SetBlockerMaskPixel(workPosition, leftArmPixelType, set);
-            workPosition = orientation.Move(levelPosition, 2, y);
+            workPosition = orientation.Move(levelPosition, -3, y);
             terrainManager.SetBlockerMaskPixel(workPosition, leftArmPixelType, set);
-            workPosition = orientation.Move(levelPosition, 3, y);
+            workPosition = orientation.Move(levelPosition, -2, y);
             terrainManager.SetBlockerMaskPixel(workPosition, leftArmPixelType, set);
 
-            workPosition = orientation.Move(levelPosition, 8, y);
+            workPosition = orientation.Move(levelPosition, 3, y);
             terrainManager.SetBlockerMaskPixel(workPosition, rightArmPixelType, set);
-            workPosition = orientation.Move(levelPosition, 9, y);
+            workPosition = orientation.Move(levelPosition, 4, y);
             terrainManager.SetBlockerMaskPixel(workPosition, rightArmPixelType, set);
-            workPosition = orientation.Move(levelPosition, 10, y);
+            workPosition = orientation.Move(levelPosition, 5, y);
             terrainManager.SetBlockerMaskPixel(workPosition, rightArmPixelType, set);
-            workPosition = orientation.Move(levelPosition, 11, y);
+            workPosition = orientation.Move(levelPosition, 6, y);
             terrainManager.SetBlockerMaskPixel(workPosition, rightArmPixelType, set);
         }
     }
