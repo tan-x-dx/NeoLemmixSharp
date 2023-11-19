@@ -11,7 +11,6 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     private readonly MenuCursorRenderer _menuCursorRenderer;
     private readonly PageTransitionRenderer _pageTransitionRenderer;
 
-    private Texture2D _backGround;
     private bool _initialized;
 
     public bool IsDisposed { get; private set; }
@@ -76,7 +75,6 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
         UserInterface.Active.Dispose();
 
-        HelperMethods.DisposeOf(ref _backGround);
         _menuCursorRenderer.Dispose();
         _pageTransitionRenderer.Dispose();
 

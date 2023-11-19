@@ -30,11 +30,19 @@ public sealed class PageTransitionRenderer : IDisposable
         if (!_pageTransition.IsTransitioning)
             return;
 
-        var blackFadeColor = new Color(0f, 0f, 0f, _pageTransition.TransitionAlpha).PackedValue;
-        _pixelSet[0] = blackFadeColor;
+        _pixelSet[0] = _pageTransition.TransitionPackedColor;
 
         _fadeTexture.SetData(_pixelSet);
         spriteBatch.Draw(_fadeTexture, new Rectangle(0, 0, _windowWidth, _windowHeight), Color.White);
+    }
+
+    private static uint GetPackedFadeColor(double alpha)
+    {
+        var intValue = (uint)(alpha * 255d);
+        intValue = Math.Clamp(intValue, 0u, 0xffu);
+
+        // Color format is ABGR - alpha is the most significant bits and everything else is black (zero)
+        return intValue << 24;
     }
 
     public void Dispose()
