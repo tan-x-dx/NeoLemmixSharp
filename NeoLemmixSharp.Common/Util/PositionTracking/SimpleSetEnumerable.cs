@@ -1,4 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
@@ -19,8 +22,10 @@ public readonly ref struct SimpleSetEnumerable<T>
         _count = count;
     }
 
-    public SimpleSet<T>.Enumerator GetEnumerator()
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public BitBasedEnumerator<T> GetEnumerator()
     {
-        return new SimpleSet<T>.Enumerator(_hasher, _bits, _count);
+        return new BitBasedEnumerator<T>(_hasher, _bits, _count);
     }
 }
