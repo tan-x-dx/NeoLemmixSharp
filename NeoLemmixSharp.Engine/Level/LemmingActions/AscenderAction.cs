@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class AscenderAction : LemmingAction
 {
-    public static AscenderAction Instance { get; } = new();
+    public static readonly AscenderAction Instance = new();
 
     private AscenderAction()
     {

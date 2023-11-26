@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine.Level.Orientations;
 
 public sealed class RightOrientation : Orientation
 {
-    public static RightOrientation Instance { get; } = new();
+    public static readonly RightOrientation Instance = new();
 
     private RightOrientation()
     {

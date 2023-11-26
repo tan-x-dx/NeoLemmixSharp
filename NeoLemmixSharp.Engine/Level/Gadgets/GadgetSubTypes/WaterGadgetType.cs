@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
 public sealed class WaterGadgetType : InteractiveGadgetType
 {
-    public static WaterGadgetType Instance { get; } = new();
+    public static readonly WaterGadgetType Instance = new();
 
     private WaterGadgetType()
     {

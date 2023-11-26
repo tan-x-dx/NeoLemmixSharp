@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class SplatterAction : LemmingAction
 {
-    public static SplatterAction Instance { get; } = new();
+    public static readonly SplatterAction Instance = new();
 
     private SplatterAction()
     {

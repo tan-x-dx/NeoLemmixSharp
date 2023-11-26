@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
 public sealed class SwitchGadgetType : InteractiveGadgetType
 {
-    public static SwitchGadgetType Instance { get; } = new();
+    public static readonly SwitchGadgetType Instance = new();
 
     private SwitchGadgetType()
     {

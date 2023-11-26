@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class DehoisterAction : LemmingAction
 {
-    public static DehoisterAction Instance { get; } = new();
+    public static readonly DehoisterAction Instance = new();
 
     private DehoisterAction()
     {

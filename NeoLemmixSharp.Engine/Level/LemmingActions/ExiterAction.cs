@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class ExiterAction : LemmingAction
 {
-    public static ExiterAction Instance { get; } = new();
+    public static readonly ExiterAction Instance = new();
 
     private ExiterAction()
     {

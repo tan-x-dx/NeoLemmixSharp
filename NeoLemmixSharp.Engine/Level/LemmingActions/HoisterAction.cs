@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class HoisterAction : LemmingAction
 {
-    public static HoisterAction Instance { get; } = new();
+    public static readonly HoisterAction Instance = new();
 
     private HoisterAction()
     {

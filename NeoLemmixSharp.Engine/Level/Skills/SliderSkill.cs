@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class SliderSkill : LemmingSkill, ILemmingStateChanger
 {
-    public static SliderSkill Instance { get; } = new();
+    public static readonly SliderSkill Instance = new();
 
     private SliderSkill()
     {

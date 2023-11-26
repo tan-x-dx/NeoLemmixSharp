@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class BuilderSkill : LemmingSkill
 {
-    public static BuilderSkill Instance { get; } = new();
+    public static readonly BuilderSkill Instance = new();
 
     private BuilderSkill()
     {

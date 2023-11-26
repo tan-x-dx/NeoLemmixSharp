@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class SliderAction : LemmingAction
 {
-    public static SliderAction Instance { get; } = new();
+    public static readonly SliderAction Instance = new();
 
     private SliderAction()
     {

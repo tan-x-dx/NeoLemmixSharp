@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class BlockerAction : LemmingAction
 {
-    public static BlockerAction Instance { get; } = new();
+    public static readonly BlockerAction Instance = new();
 
     private BlockerAction()
     {

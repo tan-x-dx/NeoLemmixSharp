@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class StonerAction : LemmingAction
 {
-    public static StonerAction Instance { get; } = new();
+    public static readonly StonerAction Instance = new();
 
     private StonerAction()
     {

@@ -9,7 +9,7 @@ public sealed class ExtendedEnumTypeComparer<T> :
     IPerfectHasher<T>
     where T : class, IExtendedEnumType<T>
 {
-    public static ExtendedEnumTypeComparer<T> Instance { get; } = new();
+    public static readonly ExtendedEnumTypeComparer<T> Instance = new();
 
     private ExtendedEnumTypeComparer()
     {

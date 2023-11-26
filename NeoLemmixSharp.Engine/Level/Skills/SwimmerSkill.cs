@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
 {
-    public static SwimmerSkill Instance { get; } = new();
+    public static readonly SwimmerSkill Instance = new();
 
     private SwimmerSkill()
     {

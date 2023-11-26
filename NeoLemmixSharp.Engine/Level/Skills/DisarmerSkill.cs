@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class DisarmerSkill : LemmingSkill, ILemmingStateChanger
 {
-    public static DisarmerSkill Instance { get; } = new();
+    public static readonly DisarmerSkill Instance = new();
 
     private DisarmerSkill()
     {

@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class FloaterSkill : LemmingSkill, ILemmingStateChanger
 {
-    public static FloaterSkill Instance { get; } = new();
+    public static readonly FloaterSkill Instance = new();
 
     private FloaterSkill()
     {

@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine.Level.Orientations;
 
 public sealed class DownOrientation : Orientation
 {
-    public static DownOrientation Instance { get; } = new();
+    public static readonly DownOrientation Instance = new();
 
     private DownOrientation()
     {

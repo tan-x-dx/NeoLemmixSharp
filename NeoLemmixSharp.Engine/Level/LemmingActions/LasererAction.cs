@@ -11,7 +11,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 {
     private const int DistanceCap = 112;
 
-    public static LasererAction Instance { get; } = new();
+    public static readonly LasererAction Instance = new();
 
     private readonly LevelPosition[] _offsetChecksRight =
     {

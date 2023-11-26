@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class ClimberSkill : LemmingSkill, ILemmingStateChanger
 {
-    public static ClimberSkill Instance { get; } = new();
+    public static readonly ClimberSkill Instance = new();
 
     private ClimberSkill()
     {

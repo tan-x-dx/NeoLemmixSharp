@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class OhNoerAction : LemmingAction
 {
-    public static OhNoerAction Instance { get; } = new();
+    public static readonly OhNoerAction Instance = new();
 
     private OhNoerAction()
     {

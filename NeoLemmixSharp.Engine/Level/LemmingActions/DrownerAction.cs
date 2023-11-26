@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class DrownerAction : LemmingAction
 {
-    public static DrownerAction Instance { get; } = new();
+    public static readonly DrownerAction Instance = new();
 
     private DrownerAction()
     {

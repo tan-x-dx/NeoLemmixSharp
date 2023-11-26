@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class BasherAction : LemmingAction, IDestructionMask
 {
-    public static BasherAction Instance { get; } = new();
+    public static readonly BasherAction Instance = new();
 
     private BasherAction()
     {

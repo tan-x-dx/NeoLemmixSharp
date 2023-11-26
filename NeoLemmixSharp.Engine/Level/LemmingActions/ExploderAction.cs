@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class ExploderAction : LemmingAction, IDestructionMask
 {
-    public static ExploderAction Instance { get; } = new();
+    public static readonly ExploderAction Instance = new();
 
     private ExploderAction()
     {

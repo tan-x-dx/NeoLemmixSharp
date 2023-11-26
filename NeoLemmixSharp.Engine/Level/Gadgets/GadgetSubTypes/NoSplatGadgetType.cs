@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
 public sealed class NoSplatGadgetType : InteractiveGadgetType
 {
-    public static NoSplatGadgetType Instance { get; } = new();
+    public static readonly NoSplatGadgetType Instance = new();
 
     private NoSplatGadgetType()
     {

@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
 public sealed class MatchAllFilter : ILemmingFilter
 {
-    public static MatchAllFilter Instance { get; } = new();
+    public static readonly MatchAllFilter Instance = new();
 
     private MatchAllFilter()
     {

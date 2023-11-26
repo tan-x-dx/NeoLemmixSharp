@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class PlatformerAction : LemmingAction
 {
-    public static PlatformerAction Instance { get; } = new();
+    public static readonly PlatformerAction Instance = new();
 
     private PlatformerAction()
     {

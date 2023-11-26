@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class BuilderAction : LemmingAction
 {
-    public static BuilderAction Instance { get; } = new();
+    public static readonly BuilderAction Instance = new();
 
     private BuilderAction()
     {

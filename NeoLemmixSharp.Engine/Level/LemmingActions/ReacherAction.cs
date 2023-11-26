@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class ReacherAction : LemmingAction
 {
-    public static ReacherAction Instance { get; } = new();
+    public static readonly ReacherAction Instance = new();
 
     private readonly int[] _movementList =
     {

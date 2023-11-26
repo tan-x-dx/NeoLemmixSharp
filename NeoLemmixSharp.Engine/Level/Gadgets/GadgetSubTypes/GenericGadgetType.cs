@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
 public sealed class GenericGadgetType : InteractiveGadgetType
 {
-    public static GenericGadgetType Instance { get; } = new();
+    public static readonly GenericGadgetType Instance = new();
 
     private GenericGadgetType()
     {

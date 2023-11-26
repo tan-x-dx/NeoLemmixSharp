@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class ClimberAction : LemmingAction
 {
-    public static ClimberAction Instance { get; } = new();
+    public static readonly ClimberAction Instance = new();
 
     private ClimberAction()
     {
