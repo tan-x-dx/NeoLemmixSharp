@@ -5,13 +5,13 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
-public sealed class GadgetMover : GadgetBase, IReactiveGadget
+public sealed class GadgetResizer : GadgetBase, IReactiveGadget
 {
     private readonly int _tickDelay;
-    private readonly int _dx;
-    private readonly int _dy;
+    private readonly int _dw;
+    private readonly int _dh;
 
-    private readonly IMoveableGadget[] _gadgets;
+    private readonly IResizeableGadget[] _gadgets;
 
     private bool _active = true;
     private int _tickCount;
@@ -19,23 +19,23 @@ public sealed class GadgetMover : GadgetBase, IReactiveGadget
     public override GadgetSubType SubType => FunctionalGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
-    public GadgetMoverInput Input { get; }
+    public GadgetResizerInput Input { get; }
 
-    public GadgetMover(
+    public GadgetResizer(
         int id,
         RectangularLevelRegion gadgetBounds,
-        IMoveableGadget[] gadgets,
+        IResizeableGadget[] gadgets,
         int tickDelay,
-        int dx,
-        int dy)
+        int dw,
+        int dh)
         : base(id, gadgetBounds)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;
-        _dx = dx;
-        _dy = dy;
+        _dw = dw;
+        _dh = dh;
 
-        Input = new GadgetMoverInput("Input", this);
+        Input = new GadgetResizerInput("Input", this);
     }
 
     public override void Tick()
@@ -53,7 +53,7 @@ public sealed class GadgetMover : GadgetBase, IReactiveGadget
 
         foreach (var gadget in _gadgets.AsSpan())
         {
-            gadget.Move(_dx, _dy);
+            gadget.SetSize(_dw, _dh);
         }
     }
 
@@ -64,25 +64,25 @@ public sealed class GadgetMover : GadgetBase, IReactiveGadget
         return null;
     }
 
-    public sealed class GadgetMoverInput : IGadgetInput
+    public sealed class GadgetResizerInput : IGadgetInput
     {
-        private readonly GadgetMover _mover;
+        private readonly GadgetResizer _resizer;
         public string InputName { get; }
 
-        public GadgetMoverInput(string inputName, GadgetMover mover)
+        public GadgetResizerInput(string inputName, GadgetResizer resizer)
         {
             InputName = inputName;
-            _mover = mover;
+            _resizer = resizer;
         }
 
         public void OnRegistered()
         {
-            _mover._active = false;
+            _resizer._active = false;
         }
 
         public void ReactToSignal(bool signal)
         {
-            _mover._active = signal;
+            _resizer._active = signal;
         }
     }
 }

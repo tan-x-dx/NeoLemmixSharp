@@ -85,11 +85,11 @@ public sealed class InputController : IPerfectHasher<Keys>
 
     private void UpdateKeyStates()
     {
-        var currentlyPressedKeys = Keyboard.GetState().GetPressedKeys();
+        var currentlyPressedKeys = Keyboard.GetState().GetPressedKeys().AsSpan();
         _keys.Clear();
-        for (var i = 0; i < currentlyPressedKeys.Length; i++)
+        foreach (var t in currentlyPressedKeys)
         {
-            _keys.Add(currentlyPressedKeys[i]);
+            _keys.Add(t);
         }
     }
 

@@ -13,9 +13,9 @@ public sealed class LogicalAndLemmingFilter : ILemmingFilter
 
     public bool MatchesLemming(Lemming lemming)
     {
-        for (var i = 0; i < _filters.Length; i++)
+        foreach (var t in _filters.AsSpan())
         {
-            if (!_filters[i].MatchesLemming(lemming))
+            if (!t.MatchesLemming(lemming))
                 return false;
         }
 

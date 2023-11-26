@@ -10,22 +10,27 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRectangularBounds
 #pragma warning restore CS0660, CS0661, CA1067
 {
-    public LevelPosition TopLeftPixel { get; private set; }
-    public LevelPosition BottomRightPixel { get; private set; }
-    public LevelPosition PreviousTopLeftPixel { get; private set; }
-    public LevelPosition PreviousBottomRightPixel { get; private set; }
+    protected readonly ItemTracker<Lemming> LemmingTracker;
+
+    public LevelPosition TopLeftPixel { get; set; }
+    public LevelPosition BottomRightPixel { get; set; }
+    public LevelPosition PreviousTopLeftPixel { get; set; }
+    public LevelPosition PreviousBottomRightPixel { get; set; }
 
     public abstract override InteractiveGadgetType SubType { get; }
 
-    protected HitBoxGadget(int id, RectangularLevelRegion gadgetBounds)
+    protected HitBoxGadget(
+        int id,
+        RectangularLevelRegion gadgetBounds,
+        ItemTracker<Lemming> lemmingTracker)
         : base(id, gadgetBounds)
     {
+        LemmingTracker = lemmingTracker;
+
         var topLeft = GadgetBounds.TopLeft;
         var bottomRight = GadgetBounds.BottomRight;
-
         TopLeftPixel = topLeft;
         BottomRightPixel = bottomRight;
-
         PreviousTopLeftPixel = topLeft;
         PreviousBottomRightPixel = bottomRight;
     }
@@ -43,6 +48,20 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRe
         GadgetBounds.Y = position.Y;
 
         TopLeftPixel = terrainManager.NormalisePosition(GadgetBounds.TopLeft);
+        BottomRightPixel = terrainManager.NormalisePosition(GadgetBounds.BottomRight);
+
+        LevelConstants.GadgetManager.UpdateGadgetPosition(this);
+    }
+
+    protected void UpdateSize(LevelPosition size)
+    {
+        var terrainManager = LevelConstants.TerrainManager;
+
+        PreviousBottomRightPixel = terrainManager.NormalisePosition(BottomRightPixel);
+
+        GadgetBounds.W = size.X;
+        GadgetBounds.H = size.Y;
+
         BottomRightPixel = terrainManager.NormalisePosition(GadgetBounds.BottomRight);
 
         LevelConstants.GadgetManager.UpdateGadgetPosition(this);
