@@ -30,6 +30,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     void ICollection<T>.Add(T item) => Add(item);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear() => _bits.Clear();
 
     [Pure]
@@ -54,14 +55,17 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public SimpleSetEnumerable<T> ToSimpleEnumerable()
     {
         return new SimpleSetEnumerable<T>(_hasher, _bits.AsReadOnlySpan(), Count);
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public BitBasedEnumerator<T> GetEnumerator() => new(_hasher, _bits.AsReadOnlySpan(), _bits.Count);
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);
     [Pure]
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => new ReferenceTypeEnumerator(this);

@@ -1,4 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Identity;
 
@@ -22,7 +24,10 @@ public sealed class ExtendedEnumTypeComparer<T> :
         return x.Id == y.Id;
     }
 
-    public int GetHashCode(T obj) => HashCode.Combine(obj);
+    public int GetHashCode(T obj) => 2965019 * obj.Id +
+                                     5477821;
+
+    public static Dictionary<T, TValue> CreateDictionary<TValue>() => new(T.NumberOfItems, Instance);
 
     public int Compare(T? x, T? y) => IdEquatableItemHelperMethods.Compare(x, y);
 
@@ -35,6 +40,8 @@ public sealed class ExtendedEnumTypeComparer<T> :
     public int Hash(T item) => item.Id;
     public T UnHash(int index) => T.AllItems[index];
 
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static SimpleSet<T> CreateSimpleSet()
     {
         return new SimpleSet<T>(Instance);
