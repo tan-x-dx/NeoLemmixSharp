@@ -21,6 +21,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
     private readonly Lemming[] _lemmings;
 
     private readonly SpacialHashGrid<Lemming> _lemmingPositionHelper;
+    private readonly SimpleSet<Lemming> _lemmingsToZombify;
     private readonly SimpleSet<Lemming> _allBlockers;
     private readonly IZombieHelper _zombieHelper;
 
@@ -57,6 +58,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
+        _lemmingsToZombify = new SimpleSet<Lemming>(this);
         _allBlockers = new SimpleSet<Lemming>(this);
 
         _zombieHelper = GetZombieHelper(levelData, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
@@ -119,6 +121,12 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
             InitialiseLemming(lemming);
             _hatchGroups[i].OnSpawnLemming();
         }
+
+        foreach (var lemming in _lemmingsToZombify)
+        {
+            lemming.State.IsZombie = true;
+        }
+        _lemmingsToZombify.Clear();
     }
 
     public void RemoveLemming(Lemming lemming)
@@ -220,6 +228,11 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DoZombieCheck(Lemming lemming) => _zombieHelper.CheckZombies(lemming);
+
+    public void RegisterLemmingForZombification(Lemming lemming)
+    {
+        _lemmingsToZombify.Add(lemming);
+    }
 
     int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Length;
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
