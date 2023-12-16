@@ -147,7 +147,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
                     continue;
 
                 var i = lemming.IsFastForward
-                    ? EngineConstants.FastForwardSpeedMultiplier - 1
+                    ? EngineConstants.FastForwardSpeedMultiplier
                     : 1;
                 while (i-- > 0)
                 {
