@@ -22,8 +22,8 @@ public static class HelperMethods
     /// </summary>
     /// <typeparam name="TKey">The key type of the dictionary</typeparam>
     /// <typeparam name="TValue">The value type of the dictionary - the items to be disposed of</typeparam>
-    /// <param name="dictionary">The dictionary to dispose of</param>
-    public static void DisposeOf<TKey, TValue>(Dictionary<TKey, TValue> dictionary)
+    /// <param name="dictionary">The dictionary to dispose the contents of</param>
+    public static void DisposeOfAll<TKey, TValue>(Dictionary<TKey, TValue> dictionary)
         where TKey : notnull
         where TValue : class, IDisposable
     {
@@ -33,6 +33,20 @@ public static class HelperMethods
         }
 
         dictionary.Clear();
+    }
+
+    /// <summary>
+    /// Disposes of all values in the span
+    /// </summary>
+    /// <typeparam name="T">The value type of the span - the items to be disposed of</typeparam>
+    /// <param name="values">The span to dispose the contents of</param>
+    public static void DisposeOfAll<T>(ReadOnlySpan<T> values)
+        where T : class, IDisposable
+    {
+        foreach (var value in values)
+        {
+            value.Dispose();
+        }
     }
 
     public static Vector2 GetSize(this Texture2D texture)

@@ -7,16 +7,16 @@ namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
 public sealed class ControlPanelSpriteBank : IDisposable
 {
-    private readonly Dictionary<ControlPanelTexture, Texture2D> _textureLookup;
+    private readonly Texture2D[] _textureLookup;
 
-    public ControlPanelSpriteBank(Dictionary<ControlPanelTexture, Texture2D> textureLookup)
+    public ControlPanelSpriteBank(Texture2D[] textureLookup)
     {
         _textureLookup = textureLookup;
     }
 
     public Texture2D GetTexture(ControlPanelTexture textureName)
     {
-        return _textureLookup[textureName];
+        return _textureLookup[(int)textureName];
     }
 
     public LevelCursorSprite GetLevelCursorSprite(LevelCursor levelCursor)
@@ -29,6 +29,6 @@ public sealed class ControlPanelSpriteBank : IDisposable
 
     public void Dispose()
     {
-        HelperMethods.DisposeOf(_textureLookup);
+        HelperMethods.DisposeOfAll(new ReadOnlySpan<Texture2D>(_textureLookup));
     }
 }

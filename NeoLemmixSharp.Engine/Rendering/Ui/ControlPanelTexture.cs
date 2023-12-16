@@ -27,7 +27,7 @@ public enum ControlPanelTexture
 
 public static class ControlPanelStringHelper
 {
-    public static string GetString(this ControlPanelTexture texture) => texture switch
+    public static string GetTexturePath(this ControlPanelTexture texture) => texture switch
     {
         ControlPanelTexture.LemmingAnchorTexture => "LemmingAnchorTexture",
         ControlPanelTexture.WhitePixel => "WhitePixel",

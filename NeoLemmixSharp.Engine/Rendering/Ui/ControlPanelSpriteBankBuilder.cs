@@ -9,7 +9,7 @@ public sealed class ControlPanelSpriteBankBuilder
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
 
-    private readonly Dictionary<ControlPanelTexture, Texture2D> _textureLookup = new();
+    private readonly Texture2D[] _textureLookup;
 
     public ControlPanelSpriteBankBuilder(
         GraphicsDevice graphicsDevice,
@@ -17,6 +17,9 @@ public sealed class ControlPanelSpriteBankBuilder
     {
         _graphicsDevice = graphicsDevice;
         _contentManager = contentManager;
+
+        var numberOfResources = Enum.GetValuesAsUnderlyingType<ControlPanelTexture>().Length;
+        _textureLookup = new Texture2D[numberOfResources];
     }
 
     public ControlPanelSpriteBank BuildControlPanelSpriteBank()
@@ -24,13 +27,17 @@ public sealed class ControlPanelSpriteBankBuilder
         CreateAnchorTexture();
         CreateWhitePixelTexture();
         LoadPanelTextures();
+        LoadCursorSprites();
 
         return new ControlPanelSpriteBank(_textureLookup);
     }
 
     private void CreateAnchorTexture()
     {
-        var anchorTexture = new Texture2D(_graphicsDevice, 3, 3);
+        var anchorTexture = new Texture2D(_graphicsDevice, 3, 3)
+        {
+            Name = ControlPanelTexture.LemmingAnchorTexture.GetTexturePath()
+        };
 
         var red = new Color(200, 0, 0, 255).PackedValue;
         var yellow = new Color(200, 200, 0, 255).PackedValue;
@@ -43,12 +50,15 @@ public sealed class ControlPanelSpriteBankBuilder
         x[7] = red;
         anchorTexture.SetData(x);
 
-        _textureLookup.Add(ControlPanelTexture.LemmingAnchorTexture, anchorTexture);
+        RegisterTexture(ControlPanelTexture.LemmingAnchorTexture, anchorTexture);
     }
 
     private void CreateWhitePixelTexture()
     {
-        var whitePixelTexture = new Texture2D(_graphicsDevice, 1, 256);
+        var whitePixelTexture = new Texture2D(_graphicsDevice, 1, 256)
+        {
+            Name = ControlPanelTexture.WhitePixel.GetTexturePath()
+        };
 
         var whiteColors = Enumerable
             .Range(0, 256)
@@ -56,7 +66,7 @@ public sealed class ControlPanelSpriteBankBuilder
             .ToArray();
 
         whitePixelTexture.SetData(whiteColors);
-        _textureLookup.Add(ControlPanelTexture.WhitePixel, whitePixelTexture);
+        RegisterTexture(ControlPanelTexture.WhitePixel, whitePixelTexture);
     }
 
     private void LoadPanelTextures()
@@ -77,6 +87,7 @@ public sealed class ControlPanelSpriteBankBuilder
         RegisterTexture(ControlPanelTexture.PanelSkillPanels);
         RegisterTexture(ControlPanelTexture.PanelSkillSelected);
     }
+
     private void LoadCursorSprites()
     {
         RegisterTexture(ControlPanelTexture.CursorStandard);
@@ -85,8 +96,13 @@ public sealed class ControlPanelSpriteBankBuilder
 
     private void RegisterTexture(ControlPanelTexture textureName)
     {
-        var texture = _contentManager.Load<Texture2D>(textureName.GetString());
-        _textureLookup.Add(textureName, texture);
+        var texture = _contentManager.Load<Texture2D>(textureName.GetTexturePath());
+        RegisterTexture(textureName, texture);
+    }
+
+    private void RegisterTexture(ControlPanelTexture textureName, Texture2D texture)
+    {
+        _textureLookup[(int)textureName] = texture;
     }
 
     /*
