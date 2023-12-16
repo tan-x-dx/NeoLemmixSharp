@@ -179,10 +179,10 @@ public sealed class LemmingState
     {
         if (HasPermanentSkill)
         {
-            HairColor = _team.PermanentSkillBodyColor;
+            HairColor = _team.PermanentSkillHairColor;
             BodyColor = IsNeutral
                 ? _team.NeutralBodyColor
-                : _team.PermanentSkillHairColor;
+                : _team.PermanentSkillBodyColor;
         }
         else
         {
