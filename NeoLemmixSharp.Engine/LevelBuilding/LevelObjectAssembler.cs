@@ -210,8 +210,8 @@ public sealed class LevelObjectAssembler
             State =
             {
                 IsClimber = true,
-            },
-            FastForwardTime = 1
+                IsPermanentFastForwards = true
+            }
         };
 
         var lemmingE = new Lemming(

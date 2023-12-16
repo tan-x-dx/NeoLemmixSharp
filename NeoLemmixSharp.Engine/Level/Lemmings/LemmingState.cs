@@ -19,6 +19,8 @@ public sealed class LemmingState
                                                (1U << SwimmerBitIndex) |
                                                (1U << DisarmerBitIndex);
 
+    private const int PermanentFastForwardBitIndex = 20;
+
     private const int ActiveBitIndex = 29;
     private const int NeutralBitIndex = 30;
     private const int ZombieBitIndex = 31;
@@ -103,6 +105,22 @@ public sealed class LemmingState
     {
         get => ((_states >> NeutralBitIndex) & 1U) != 0U;
         set => SetBitToValue(1U << NeutralBitIndex, value);
+    }
+
+    public bool IsPermanentFastForwards
+    {
+        get => ((_states >> PermanentFastForwardBitIndex) & 1U) != 0U;
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << PermanentFastForwardBitIndex;
+            }
+            else
+            {
+                _states &= ~(1U << PermanentFastForwardBitIndex);
+            }
+        }
     }
 
     public bool IsActive

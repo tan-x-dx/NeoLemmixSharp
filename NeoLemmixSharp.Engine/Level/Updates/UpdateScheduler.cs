@@ -10,14 +10,6 @@ namespace NeoLemmixSharp.Engine.Level.Updates;
 
 public sealed class UpdateScheduler
 {
-    private readonly ItemWrapper<int> _elapsedTicks;
-
-    private readonly PauseUpdater _pauseUpdater;
-    private readonly StandardFrameUpdater _standardFrameUpdater;
-    private readonly FastForwardsFrameUpdater _fastForwardFrameUpdater;
-
-    private readonly bool _superLemmingMode;
-
     private readonly ILevelControlPanel _levelControlPanel;
     private readonly LevelInputController _inputController;
     private readonly Viewport _viewport;
@@ -29,14 +21,17 @@ public sealed class UpdateScheduler
 
     private LemmingSkill _queuedSkill = NoneSkill.Instance;
     private Lemming? _queuedSkillLemming;
+
+    private UpdateState _updateState;
     private int _queuedSkillFrame;
+
+    private int _elapsedTicks;
+    private int _elapsedTicksModuloFastForwardSpeed;
+    private int _elapsedTicksModuloFramesPerSecond;
 
     public bool DoneAssignmentThisFrame { get; set; }
 
-    public IFrameUpdater CurrentlySelectedFrameUpdater { get; private set; }
-
     public UpdateScheduler(
-        bool superLemmingMode,
         ILevelControlPanel levelControlPanel,
         Viewport viewport,
         LevelCursor levelCursor,
@@ -46,7 +41,6 @@ public sealed class UpdateScheduler
         GadgetManager gadgetManager,
         SkillSetManager skillSetManager)
     {
-        _superLemmingMode = superLemmingMode;
         _levelControlPanel = levelControlPanel;
         _levelCursor = levelCursor;
         _viewport = viewport;
@@ -55,13 +49,6 @@ public sealed class UpdateScheduler
         _lemmingManager = lemmingManager;
         _gadgetManager = gadgetManager;
         _skillSetManager = skillSetManager;
-
-        _elapsedTicks = new ItemWrapper<int>();
-        _pauseUpdater = new PauseUpdater(_elapsedTicks);
-        _fastForwardFrameUpdater = new FastForwardsFrameUpdater(_elapsedTicks);
-        _standardFrameUpdater = new StandardFrameUpdater(_elapsedTicks);
-
-        CurrentlySelectedFrameUpdater = _standardFrameUpdater;
     }
 
     /*
@@ -131,41 +118,41 @@ end;
             }
         }
 
-        foreach (var gadget in _gadgetManager.AllGadgets)
-        {
-            if (CurrentlySelectedFrameUpdater.UpdateGadget(gadget))
-            {
-                gadget.Tick();
-            }
-        }
+        TickLevel();
+    }
 
+    private void TickLevel()
+    {
         HandleSkillAssignment();
 
-        foreach (var lemming in _lemmingManager.AllLemmings)
-        {
-            if (lemming.State.IsActive && CurrentlySelectedFrameUpdater.UpdateLemming(lemming))
-            {
-                lemming.Tick();
-                _lemmingManager.UpdateLemmingPosition(lemming);
-            }
-        }
+        if (_updateState == UpdateState.Paused)
+            return;
 
-        var didTick = CurrentlySelectedFrameUpdater.Tick();
+        _lemmingManager.Tick(_updateState, _elapsedTicksModuloFastForwardSpeed);
+        _gadgetManager.Tick(_updateState, _elapsedTicksModuloFastForwardSpeed);
 
-        if (didTick)
+        _elapsedTicks++;
+        var elapsedTicksModuloFastForwardSpeed = _elapsedTicksModuloFastForwardSpeed + 1;
+        if (elapsedTicksModuloFastForwardSpeed == EngineConstants.FastForwardSpeedMultiplier)
         {
-            if (_elapsedTicks.Item % EngineConstants.FramesPerSecond == 0)
-            {
-                _levelTimer.Tick();
-            }
+            elapsedTicksModuloFastForwardSpeed = 0;
         }
+        _elapsedTicksModuloFastForwardSpeed = elapsedTicksModuloFastForwardSpeed;
+
+        var elapsedTicksModuloFramesPerSecond = _elapsedTicksModuloFramesPerSecond + 1;
+        if (elapsedTicksModuloFramesPerSecond == EngineConstants.FramesPerSecond)
+        {
+            _levelTimer.Tick();
+            elapsedTicksModuloFramesPerSecond = 0;
+        }
+        _elapsedTicksModuloFramesPerSecond = elapsedTicksModuloFramesPerSecond;
     }
 
     private void HandleKeyboardInput()
     {
         if (_inputController.Pause.IsPressed)
         {
-            if (CurrentlySelectedFrameUpdater.UpdateState == UpdateState.Paused)
+            if (_updateState == UpdateState.Paused)
             {
                 SetNormalSpeed();
             }
@@ -179,7 +166,7 @@ end;
 
         if (_inputController.ToggleFastForwards.IsPressed)
         {
-            if (CurrentlySelectedFrameUpdater.UpdateState == UpdateState.FastForward)
+            if (_updateState == UpdateState.FastForward)
             {
                 SetNormalSpeed();
             }
@@ -207,19 +194,17 @@ end;
 
     private void SetPaused()
     {
-        CurrentlySelectedFrameUpdater = _pauseUpdater;
+        _updateState = UpdateState.Paused;
     }
 
     private void SetNormalSpeed()
     {
-        CurrentlySelectedFrameUpdater = _superLemmingMode
-            ? _fastForwardFrameUpdater
-            : _standardFrameUpdater;
+        _updateState = UpdateState.Normal;
     }
 
     private void SetFastSpeed()
     {
-        CurrentlySelectedFrameUpdater = _fastForwardFrameUpdater;
+        _updateState = UpdateState.FastForward;
     }
 
     private void HandleSkillAssignment()
@@ -233,10 +218,7 @@ end;
 
         var selectedSkillId = _levelControlPanel.SelectedSkillButtonId;
         var skillTrackingData = _skillSetManager.GetSkillTrackingData(selectedSkillId);
-        if (skillTrackingData is null)
-            return;
-
-        if (skillTrackingData.SkillCount == 0)
+        if (skillTrackingData is null || skillTrackingData.SkillCount == 0)
             return;
 
         if (skillTrackingData.CanAssignToLemming(lemming))
@@ -301,5 +283,4 @@ end;
             }
         }
     }
-
 }
