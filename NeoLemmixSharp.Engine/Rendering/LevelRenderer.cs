@@ -146,6 +146,10 @@ public sealed class LevelRenderer : IScreenRenderer
 
     public void Dispose()
     {
-        Current = null;
+        ControlPanelSpriteBank.Dispose();
+        LemmingSpriteBank.Dispose();
+        GadgetSpriteBank.Dispose();
+
+        Current = null!;
     }
 }

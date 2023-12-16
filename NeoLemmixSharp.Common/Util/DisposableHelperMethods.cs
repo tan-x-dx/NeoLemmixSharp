@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Common.Util;
 
-public static class HelperMethods
+public static class DisposableHelperMethods
 {
     /// <summary>
     /// Disposes of the object and then sets the reference to null

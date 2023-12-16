@@ -105,21 +105,6 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
     public void Dispose()
     {
-        _whitePixelTexture.Dispose();
-        _emptySlot.Dispose();
-        _iconCpmAndReplay.Dispose();
-        _iconDirectional.Dispose();
-        _iconFf.Dispose();
-        _iconFrameskip.Dispose();
-        _iconNuke.Dispose();
-        _iconPause.Dispose();
-        _iconRestart.Dispose();
-        _iconRrMinus.Dispose();
-        _iconRrPlus.Dispose();
-        _minimapRegion.Dispose();
-        _panelIcons.Dispose();
-        _skillCountErase.Dispose();
-        _skillPanels.Dispose();
-        _skillSelected.Dispose();
+
     }
 }

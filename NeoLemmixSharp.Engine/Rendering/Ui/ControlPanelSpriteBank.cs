@@ -29,6 +29,6 @@ public sealed class ControlPanelSpriteBank : IDisposable
 
     public void Dispose()
     {
-        HelperMethods.DisposeOfAll(new ReadOnlySpan<Texture2D>(_textureLookup));
+        DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<Texture2D>(_textureLookup));
     }
 }
