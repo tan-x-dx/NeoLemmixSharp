@@ -1,17 +1,15 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public ref struct LemmingMovementHelper
+public readonly ref struct LemmingMovementHelper
 {
     public const int MaxIntermediateCheckPositions = 11;
 
     private readonly Lemming _lemming;
     private readonly Span<LevelPosition> _checkPositions;
-    private int _length;
 
     public LemmingMovementHelper(Lemming lemming, Span<LevelPosition> checkPositions)
     {
@@ -33,20 +31,21 @@ public ref struct LemmingMovementHelper
 
         var workPosition = previousLemmingPosition;
 
+        var length = 0;
         if (previousAction == JumperAction.Instance)
         {
-            HandleJumping(ref workPosition); // But continue with the rest as normal
+            HandleJumping(ref workPosition, ref length); // But continue with the rest as normal
         }
 
         // No movement
         if (previousLemmingPosition == currentLemmingPosition)
         {
-            if (previousAction == JumperAction.Instance && _length != 0)
-                return _length;
+            if (previousAction == JumperAction.Instance && length != 0)
+                return length;
 
-            AddPosition(workPosition);
+            AddPosition(workPosition, ref length);
 
-            return _length;
+            return length;
         }
 
         // Special treatment of miners!
@@ -56,13 +55,13 @@ public ref struct LemmingMovementHelper
             if (orientation.FirstIsBelowSecond(currentLemmingPosition, workPosition))
             {
                 workPosition = orientation.MoveDown(workPosition, 1);
-                AddPosition(workPosition);
+                AddPosition(workPosition, ref length);
             }
 
-            MoveHorizontally(orientation, ref workPosition, currentLemmingPosition);
-            MoveVertically(orientation, ref workPosition, currentLemmingPosition);
+            MoveHorizontally(orientation, ref workPosition, currentLemmingPosition, ref length);
+            MoveVertically(orientation, ref workPosition, currentLemmingPosition, ref length);
 
-            return _length;
+            return length;
         }
 
         // Lemming moves up or is faller; exception is made for builders!
@@ -70,48 +69,57 @@ public ref struct LemmingMovementHelper
             (orientation.FirstIsAboveSecond(currentLemmingPosition, previousLemmingPosition) ||
              _lemming.CurrentAction == FallerAction.Instance))
         {
-            MoveHorizontally(orientation, ref workPosition, currentLemmingPosition);
-            MoveVertically(orientation, ref workPosition, currentLemmingPosition);
+            MoveHorizontally(orientation, ref workPosition, currentLemmingPosition, ref length);
+            MoveVertically(orientation, ref workPosition, currentLemmingPosition, ref length);
 
-            return _length;
+            return length;
         }
 
         // Lemming moves down (or straight) and is not a faller; alternatively lemming is a builder!
-        MoveVertically(orientation, ref workPosition, currentLemmingPosition);
-        MoveHorizontally(orientation, ref workPosition, currentLemmingPosition);
+        MoveVertically(orientation, ref workPosition, currentLemmingPosition, ref length);
+        MoveHorizontally(orientation, ref workPosition, currentLemmingPosition, ref length);
 
-        return _length;
+        return length;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void AddPosition(LevelPosition levelPosition)
+    private void AddPosition(LevelPosition levelPosition, ref int length)
     {
-        _checkPositions[_length++] = levelPosition;
+        _checkPositions[length++] = levelPosition;
     }
 
-    private void MoveHorizontally(Orientation orientation, ref LevelPosition workPosition, LevelPosition referencePosition)
+    private void MoveHorizontally(
+        Orientation orientation,
+        ref LevelPosition workPosition,
+        LevelPosition referencePosition,
+        ref int length)
     {
         var dx = Math.Sign(orientation.GetHorizontalDelta(workPosition, referencePosition));
 
         while (!orientation.MatchesHorizontally(workPosition, referencePosition))
         {
             workPosition = orientation.MoveRight(workPosition, dx);
-            AddPosition(workPosition);
+            AddPosition(workPosition, ref length);
         }
     }
 
-    private void MoveVertically(Orientation orientation, ref LevelPosition workPosition, LevelPosition referencePosition)
+    private void MoveVertically(
+        Orientation orientation,
+        ref LevelPosition workPosition,
+        LevelPosition referencePosition,
+        ref int length)
     {
         var dy = Math.Sign(orientation.GetVerticalDelta(workPosition, referencePosition));
 
         while (!orientation.MatchesVertically(workPosition, referencePosition))
         {
             workPosition = orientation.MoveDown(workPosition, dy);
-            AddPosition(workPosition);
+            AddPosition(workPosition, ref length);
         }
     }
 
-    private void HandleJumping(ref LevelPosition workPosition)
+    private void HandleJumping(
+        ref LevelPosition workPosition,
+        ref int length)
     {
         var jumpPositions = _lemming.GetJumperPositions();
 
@@ -121,7 +129,7 @@ public ref struct LemmingMovementHelper
                 break;
 
             workPosition = levelPosition;
-            AddPosition(workPosition);
+            AddPosition(workPosition, ref length);
         }
     }
 }
