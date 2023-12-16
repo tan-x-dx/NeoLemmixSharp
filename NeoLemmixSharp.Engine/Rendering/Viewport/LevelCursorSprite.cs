@@ -55,7 +55,5 @@ public sealed class LevelCursorSprite : IViewportObjectRenderer
 
     public void Dispose()
     {
-        _standardCursorTexture.Dispose();
-        _focusedCursorTexture.Dispose();
     }
 }

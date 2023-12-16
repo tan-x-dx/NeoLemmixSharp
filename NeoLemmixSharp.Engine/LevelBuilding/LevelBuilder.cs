@@ -150,6 +150,5 @@ public sealed class LevelBuilder : IDisposable
     {
         _levelReader.Dispose();
         _terrainPainter.Dispose();
-        _levelObjectAssembler.Dispose();
     }
 }

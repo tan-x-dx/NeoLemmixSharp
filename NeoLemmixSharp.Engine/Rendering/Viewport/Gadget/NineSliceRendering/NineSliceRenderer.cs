@@ -76,6 +76,5 @@ public sealed class NineSliceRenderer : IViewportObjectRenderer
 
     public void Dispose()
     {
-        _texture.Dispose();
     }
 }

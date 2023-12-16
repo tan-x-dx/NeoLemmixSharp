@@ -162,9 +162,7 @@ public sealed class LevelObjectAssembler
             result.Add(renderer);
         }
 
-        return result
-            .Concat(_gadgetRenderers)
-            .ToArray();
+        return [.. result, .. _gadgetRenderers];
     }
 
     public LemmingSpriteBank GetLemmingSpriteBank()

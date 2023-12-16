@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -13,11 +12,15 @@ namespace NeoLemmixSharp.Engine.Rendering;
 
 public sealed class LevelRenderer : IScreenRenderer
 {
-    public static LevelRenderer Current { get; private set; }
+    public static LevelRenderer Current { get; private set; } = null!;
 
     private readonly int _levelWidth;
     private readonly int _levelHeight;
     private readonly Level.Viewport _viewport;
+
+    private readonly ControlPanelSpriteBank _controlPanelSpriteBank;
+    private readonly LemmingSpriteBank _lemmingSpriteBank;
+    private readonly GadgetSpriteBank _gadgetSpriteBank;
 
     private readonly IBackgroundRenderer _backgroundRenderer;
     private readonly TerrainRenderer _terrainRenderer;
@@ -25,12 +28,6 @@ public sealed class LevelRenderer : IScreenRenderer
     private readonly LevelCursorSprite _cursorSprite;
 
     private readonly IControlPanelRenderer _controlPanelRenderer;
-
-    private string _mouseCoords = string.Empty;
-
-    public ControlPanelSpriteBank ControlPanelSpriteBank { get; }
-    public LemmingSpriteBank LemmingSpriteBank { get; }
-    public GadgetSpriteBank GadgetSpriteBank { get; }
 
     public LevelRenderer(
         int levelWidth,
@@ -55,15 +52,14 @@ public sealed class LevelRenderer : IScreenRenderer
         _cursorSprite = levelCursorSprite;
         _controlPanelRenderer = controlPanelRenderer;
 
-        ControlPanelSpriteBank = controlPanelSpriteBank;
-        LemmingSpriteBank = lemmingSpriteBank;
-        GadgetSpriteBank = gadgetSpriteBank;
+        _controlPanelSpriteBank = controlPanelSpriteBank;
+        _lemmingSpriteBank = lemmingSpriteBank;
+        _gadgetSpriteBank = gadgetSpriteBank;
 
         Current = this;
     }
 
     public bool IsDisposed { get; set; }
-    public IGameWindow GameWindow { get; set; }
 
     public void RenderScreen(SpriteBatch spriteBatch)
     {
@@ -135,9 +131,6 @@ public sealed class LevelRenderer : IScreenRenderer
     {
         _controlPanelRenderer.RenderControlPanel(spriteBatch);
         _cursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
-
-        _mouseCoords = $"({_viewport.ScreenMouseX},{_viewport.ScreenMouseY}) - ({_viewport.ViewportMouseX},{_viewport.ViewportMouseY})";
-        FontBank.MenuFont.RenderText(spriteBatch, _mouseCoords, 20, 20, 1, MenuFont.DefaultColor);
     }
 
     public void OnWindowSizeChanged()
@@ -146,9 +139,11 @@ public sealed class LevelRenderer : IScreenRenderer
 
     public void Dispose()
     {
-        ControlPanelSpriteBank.Dispose();
-        LemmingSpriteBank.Dispose();
-        GadgetSpriteBank.Dispose();
+        _controlPanelSpriteBank.Dispose();
+        _lemmingSpriteBank.Dispose();
+        _gadgetSpriteBank.Dispose();
+
+        DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<IViewportObjectRenderer>(_levelSprites));
 
         Current = null!;
     }
