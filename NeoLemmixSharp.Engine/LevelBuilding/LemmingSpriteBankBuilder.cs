@@ -2,15 +2,10 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class LemmingSpriteBankBuilder : IDisposable
+public sealed class LemmingSpriteBankBuilder
 {
     public LemmingSpriteBank BuildLemmingSpriteBank()
     {
         throw new NotImplementedException();
-    }
-
-    public void Dispose()
-    {
-
     }
 }

@@ -16,7 +16,7 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class LevelObjectAssembler : IDisposable
+public sealed class LevelObjectAssembler
 {
     private readonly SpriteBatch _spriteBatch;
 
@@ -165,12 +165,6 @@ public sealed class LevelObjectAssembler : IDisposable
         return result
             .Concat(_gadgetRenderers)
             .ToArray();
-    }
-
-    public void Dispose()
-    {
-        //  _spriteBank = null;
-        _lemmings.Clear();
     }
 
     public LemmingSpriteBank GetLemmingSpriteBank()

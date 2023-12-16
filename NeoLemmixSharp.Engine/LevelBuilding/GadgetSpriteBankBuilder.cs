@@ -7,7 +7,7 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class GadgetSpriteBankBuilder : IDisposable
+public sealed class GadgetSpriteBankBuilder
 {
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
@@ -56,10 +56,5 @@ public sealed class GadgetSpriteBankBuilder : IDisposable
         RegisterTexture("sawblade", "sprites/style/common/spinner");
 
         return new GadgetSpriteBank(_gadgetSprites);
-    }
-
-    public void Dispose()
-    {
-
     }
 }
