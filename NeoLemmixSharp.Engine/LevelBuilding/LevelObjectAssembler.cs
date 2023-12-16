@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -184,9 +183,9 @@ public sealed class LevelObjectAssembler : IDisposable
         return _gadgetSpriteBankBuilder.BuildGadgetSpriteBank();
     }
 
-    public ControlPanelSpriteBank GetControlPanelSpriteBank(LevelCursor levelCursor)
+    public ControlPanelSpriteBank GetControlPanelSpriteBank()
     {
-        return _controlPanelSpriteBankBuilder.BuildControlPanelSpriteBank(levelCursor);
+        return _controlPanelSpriteBankBuilder.BuildControlPanelSpriteBank();
     }
 
     private void SetUpTestLemmings()

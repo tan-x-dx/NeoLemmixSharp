@@ -17,6 +17,24 @@ public static class HelperMethods
         obj = null!;
     }
 
+    /// <summary>
+    /// Disposes of all values in the dictionary and then clears the dictionary
+    /// </summary>
+    /// <typeparam name="TKey">The key type of the dictionary</typeparam>
+    /// <typeparam name="TValue">The value type of the dictionary - the items to be disposed of</typeparam>
+    /// <param name="dictionary">The dictionary to dispose of</param>
+    public static void DisposeOf<TKey, TValue>(Dictionary<TKey, TValue> dictionary)
+        where TKey : notnull
+        where TValue : class, IDisposable
+    {
+        foreach (var value in dictionary.Values)
+        {
+            value.Dispose();
+        }
+
+        dictionary.Clear();
+    }
+
     public static Vector2 GetSize(this Texture2D texture)
     {
         return new Vector2(texture.Width, texture.Height);

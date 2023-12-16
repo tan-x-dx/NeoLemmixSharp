@@ -1,15 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine.Level;
-using NeoLemmixSharp.Engine.Rendering.Viewport;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
-public sealed class ControlPanelSpriteBankBuilder : IDisposable
+public sealed class ControlPanelSpriteBankBuilder
 {
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
+
+    private readonly Dictionary<ControlPanelTexture, Texture2D> _textureLookup = new();
 
     public ControlPanelSpriteBankBuilder(
         GraphicsDevice graphicsDevice,
@@ -19,20 +19,16 @@ public sealed class ControlPanelSpriteBankBuilder : IDisposable
         _contentManager = contentManager;
     }
 
-    public ControlPanelSpriteBank BuildControlPanelSpriteBank(LevelCursor levelCursor)
+    public ControlPanelSpriteBank BuildControlPanelSpriteBank()
     {
-        var textureLookup = new Dictionary<string, Texture2D>();
+        CreateAnchorTexture();
+        CreateWhitePixelTexture();
+        LoadPanelTextures();
 
-        CreateAnchorTexture(textureLookup);
-        CreateWhitePixelTexture(textureLookup);
-        LoadPanelTextures(textureLookup);
-
-        var cursorSprite = LoadCursorSprites(levelCursor);
-
-        return new ControlPanelSpriteBank(textureLookup, cursorSprite);
+        return new ControlPanelSpriteBank(_textureLookup);
     }
 
-    private void CreateAnchorTexture(IDictionary<string, Texture2D> textureLookup)
+    private void CreateAnchorTexture()
     {
         var anchorTexture = new Texture2D(_graphicsDevice, 3, 3);
 
@@ -47,52 +43,50 @@ public sealed class ControlPanelSpriteBankBuilder : IDisposable
         x[7] = red;
         anchorTexture.SetData(x);
 
-        textureLookup.Add("LemmingAnchorTexture", anchorTexture);
+        _textureLookup.Add(ControlPanelTexture.LemmingAnchorTexture, anchorTexture);
     }
 
-    private void CreateWhitePixelTexture(IDictionary<string, Texture2D> textureLookup)
+    private void CreateWhitePixelTexture()
     {
         var whitePixelTexture = new Texture2D(_graphicsDevice, 1, 256);
 
-        var x = Enumerable
+        var whiteColors = Enumerable
             .Range(0, 256)
             .Select(alpha => new Color(0xff, 0xff, 0xff, 255 - alpha))
             .ToArray();
 
-        whitePixelTexture.SetData(x);
-        textureLookup.Add("WhitePixel", whitePixelTexture);
+        whitePixelTexture.SetData(whiteColors);
+        _textureLookup.Add(ControlPanelTexture.WhitePixel, whitePixelTexture);
     }
 
-    private void LoadPanelTextures(IDictionary<string, Texture2D> textureLookup)
+    private void LoadPanelTextures()
     {
-        RegisterTexture("panel/empty_slot");
-        RegisterTexture("panel/icon_cpm_and_replay");
-        RegisterTexture("panel/icon_directional");
-        RegisterTexture("panel/icon_ff");
-        RegisterTexture("panel/icon_frameskip");
-        RegisterTexture("panel/icon_nuke");
-        RegisterTexture("panel/icon_pause");
-        RegisterTexture("panel/icon_restart");
-        RegisterTexture("panel/icon_rr_minus");
-        RegisterTexture("panel/icon_rr_plus");
-        RegisterTexture("panel/minimap_region");
-        RegisterTexture("panel/panel_icons");
-        RegisterTexture("panel/skill_count_erase");
-        RegisterTexture("panel/skill_panels");
-        RegisterTexture("panel/skill_selected");
-
-        void RegisterTexture(string textureName)
-        {
-            var texture = _contentManager.Load<Texture2D>(textureName);
-            textureLookup.Add(textureName, texture);
-        }
+        RegisterTexture(ControlPanelTexture.PanelEmptySlot);
+        RegisterTexture(ControlPanelTexture.PanelIconCpmAndReplay);
+        RegisterTexture(ControlPanelTexture.PanelIconDirectional);
+        RegisterTexture(ControlPanelTexture.PanelIconFastForward);
+        RegisterTexture(ControlPanelTexture.PanelIconFrameskip);
+        RegisterTexture(ControlPanelTexture.PanelIconNuke);
+        RegisterTexture(ControlPanelTexture.PanelIconPause);
+        RegisterTexture(ControlPanelTexture.PanelIconRestart);
+        RegisterTexture(ControlPanelTexture.PanelIconReleaseRateMinus);
+        RegisterTexture(ControlPanelTexture.PanelIconReleaseRatePlus);
+        RegisterTexture(ControlPanelTexture.PanelMinimapRegion);
+        RegisterTexture(ControlPanelTexture.PanelPanelIcons);
+        RegisterTexture(ControlPanelTexture.PanelSkillCountErase);
+        RegisterTexture(ControlPanelTexture.PanelSkillPanels);
+        RegisterTexture(ControlPanelTexture.PanelSkillSelected);
     }
-    private LevelCursorSprite LoadCursorSprites(LevelCursor levelCursor)
+    private void LoadCursorSprites()
     {
-        var standardCursorTexture = _contentManager.Load<Texture2D>("cursor/standard");
-        var focusedCursorTexture = _contentManager.Load<Texture2D>("cursor/focused");
+        RegisterTexture(ControlPanelTexture.CursorStandard);
+        RegisterTexture(ControlPanelTexture.CursorFocused);
+    }
 
-        return new LevelCursorSprite(levelCursor, standardCursorTexture, focusedCursorTexture);
+    private void RegisterTexture(ControlPanelTexture textureName)
+    {
+        var texture = _contentManager.Load<Texture2D>(textureName.GetString());
+        _textureLookup.Add(textureName, texture);
     }
 
     /*
@@ -253,9 +247,4 @@ public sealed class ControlPanelSpriteBankBuilder : IDisposable
 
      */
 
-
-    public void Dispose()
-    {
-
-    }
 }

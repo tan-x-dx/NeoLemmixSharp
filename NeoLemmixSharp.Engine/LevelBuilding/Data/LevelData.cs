@@ -21,8 +21,6 @@ public sealed class LevelData
     public int? TimeLimit { get; set; }
     public int MaxSpawnInterval { get; set; }
 
-    public bool SuperLemmingMode { get; set; }
-
     public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Wrap;
     public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Wrap;
 
