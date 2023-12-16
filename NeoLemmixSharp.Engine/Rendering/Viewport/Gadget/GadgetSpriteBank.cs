@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 
@@ -13,6 +14,7 @@ public sealed class GadgetSpriteBank : IDisposable
 
     public void Dispose()
     {
+        DisposableHelperMethods.DisposeOfAll(_textureLookup);
     }
 
     public Texture2D GetTexture(string textureName)

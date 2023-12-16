@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class BlockerSkill : LemmingSkill
 {
-    public static BlockerSkill Instance { get; } = new();
+    public static readonly BlockerSkill Instance = new();
 
     private BlockerSkill()
     {

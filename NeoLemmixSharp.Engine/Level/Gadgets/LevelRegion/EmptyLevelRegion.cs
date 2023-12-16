@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
 public sealed class EmptyLevelRegion : ILevelRegion
 {
-    public static EmptyLevelRegion Instance { get; } = new();
+    public static readonly EmptyLevelRegion Instance = new();
 
     private EmptyLevelRegion()
     {

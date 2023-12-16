@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class WalkerAction : LemmingAction
 {
-    public static WalkerAction Instance { get; } = new();
+    public static readonly WalkerAction Instance = new();
 
     private WalkerAction()
     {

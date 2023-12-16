@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
 public sealed class UpdraftGadgetType : InteractiveGadgetType
 {
-    public static UpdraftGadgetType Instance { get; } = new();
+    public static readonly UpdraftGadgetType Instance = new();
 
     private UpdraftGadgetType()
     {

@@ -19,7 +19,7 @@ public sealed class GadgetMover : GadgetBase, IReactiveGadget
     public override GadgetSubType SubType => FunctionalGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
-    public IGadgetInput Input { get; }
+    public GadgetMoverInput Input { get; }
 
     public GadgetMover(
         int id,
@@ -51,9 +51,8 @@ public sealed class GadgetMover : GadgetBase, IReactiveGadget
 
         _tickCount = 0;
 
-        for (var i = 0; i < _gadgets.Length; i++)
+        foreach (var gadget in _gadgets.AsSpan())
         {
-            var gadget = _gadgets[i];
             gadget.Move(_dx, _dy);
         }
     }
@@ -65,7 +64,7 @@ public sealed class GadgetMover : GadgetBase, IReactiveGadget
         return null;
     }
 
-    private sealed class GadgetMoverInput : IGadgetInput
+    public sealed class GadgetMoverInput : IGadgetInput
     {
         private readonly GadgetMover _mover;
         public string InputName { get; }

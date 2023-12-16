@@ -21,8 +21,8 @@ public sealed class MenuFontButton : Button
             _currentColor = value;
         }
     }
-    public Color MouseOverColor { get; init; }
-    public Color ClickColor { get; init; }
+    public required Color MouseOverColor { get; init; }
+    public required Color ClickColor { get; init; }
 
     // public override IBrush GetCurrentBackground() => MenuScreen.Current.MenuSpriteBank.TransparentBrush;
 

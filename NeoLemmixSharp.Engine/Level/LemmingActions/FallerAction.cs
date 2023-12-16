@@ -7,7 +7,7 @@ public sealed class FallerAction : LemmingAction
 {
     private const int MaxFallDistance = 62;
 
-    public static FallerAction Instance { get; } = new();
+    public static readonly FallerAction Instance = new();
 
     private FallerAction()
     {

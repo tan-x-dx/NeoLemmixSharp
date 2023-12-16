@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class GliderSkill : LemmingSkill, ILemmingStateChanger
 {
-    public static GliderSkill Instance { get; } = new();
+    public static readonly GliderSkill Instance = new();
 
     private GliderSkill()
     {

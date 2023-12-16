@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
@@ -6,6 +7,7 @@ using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings.ZombieHelpers;
+using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -21,6 +23,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
     private readonly Lemming[] _lemmings;
 
     private readonly SpacialHashGrid<Lemming> _lemmingPositionHelper;
+    private readonly SimpleSet<Lemming> _lemmingsToZombify;
     private readonly SimpleSet<Lemming> _allBlockers;
     private readonly IZombieHelper _zombieHelper;
 
@@ -57,6 +60,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
+        _lemmingsToZombify = new SimpleSet<Lemming>(this);
         _allBlockers = new SimpleSet<Lemming>(this);
 
         _zombieHelper = GetZombieHelper(levelData, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
@@ -103,22 +107,77 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
         }
     }
 
-    public void Tick()
+    public void Tick(UpdateState updateState, int elapsedTicksModulo3)
     {
-        for (var i = 0; i < _hatchGroups.Length; i++)
+        if (updateState == UpdateState.FastForward || elapsedTicksModulo3 == 0)
         {
-            var hatchGadget = _hatchGroups[i].Tick();
+            foreach (var hatchGroup in _hatchGroups.AsSpan())
+            {
+                var hatchGadget = hatchGroup.Tick();
 
-            if (hatchGadget is null)
-                continue;
+                if (hatchGadget is null)
+                    continue;
 
-            var lemming = _lemmings[_nextLemmingId++];
+                var lemming = _lemmings[_nextLemmingId++];
 
-            lemming.LevelPosition = hatchGadget.SpawnPosition;
-            hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
-            InitialiseLemming(lemming);
-            _hatchGroups[i].OnSpawnLemming();
+                lemming.LevelPosition = hatchGadget.SpawnPosition;
+                hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
+                InitialiseLemming(lemming);
+                hatchGroup.OnSpawnLemming();
+            }
         }
+
+        if (updateState == UpdateState.Normal)
+        {
+            foreach (var lemming in AllLemmings)
+            {
+                if (!lemming.State.IsActive ||
+                    (elapsedTicksModulo3 != 0 && !lemming.IsFastForward))
+                    continue;
+
+                lemming.Tick();
+                UpdateLemmingPosition(lemming);
+            }
+        }
+        else
+        {
+            foreach (var lemming in AllLemmings)
+            {
+                if (!lemming.State.IsActive)
+                    continue;
+
+                var i = lemming.IsFastForward
+                    ? EngineConstants.FastForwardSpeedMultiplier - 1
+                    : 1;
+                while (i-- > 0)
+                {
+                    lemming.Tick();
+                    UpdateLemmingPosition(lemming);
+                }
+            }
+        }
+
+        foreach (var lemming in _lemmingsToZombify)
+        {
+            lemming.State.IsZombie = true;
+        }
+        _lemmingsToZombify.Clear();
+    }
+
+    private void UpdateLemmingPosition(Lemming lemming)
+    {
+        if (!lemming.State.IsActive)
+            return;
+
+        _lemmingPositionHelper.UpdateItemPosition(lemming);
+
+        if (lemming.CurrentAction == BlockerAction.Instance)
+        {
+            BlockerAction.SetBlockerField(lemming, true);
+        }
+
+        // If not relevant for this lemming, nothing will happen
+        _zombieHelper.UpdateZombiePosition(lemming);
     }
 
     public void RemoveLemming(Lemming lemming)
@@ -138,22 +197,6 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
 
         LemmingsRemoved++;
         lemming.OnRemoval();
-    }
-
-    public void UpdateLemmingPosition(Lemming lemming)
-    {
-        if (!lemming.State.IsActive)
-            return;
-
-        _lemmingPositionHelper.UpdateItemPosition(lemming);
-
-        if (lemming.CurrentAction == BlockerAction.Instance)
-        {
-            BlockerAction.SetBlockerField(lemming, true);
-        }
-
-        // If not relevant for this lemming, nothing will happen
-        _zombieHelper.UpdateZombiePosition(lemming);
     }
 
     public static Lemming SimulateLemming(Lemming lemming, bool checkGadgets)
@@ -220,6 +263,11 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DoZombieCheck(Lemming lemming) => _zombieHelper.CheckZombies(lemming);
+
+    public void RegisterLemmingForZombification(Lemming lemming)
+    {
+        _lemmingsToZombify.Add(lemming);
+    }
 
     int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Length;
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;

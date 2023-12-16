@@ -23,10 +23,13 @@ public sealed class SwitchGadget : HitBoxGadget
 
     public GadgetOutput Output { get; } = new();
 
-    public SwitchGadget(int id, RectangularLevelRegion gadgetBounds, bool faceRight)
-        : base(id, gadgetBounds)
+    public SwitchGadget(
+        int id,
+        RectangularLevelRegion gadgetBounds,
+        ItemTracker<Lemming> lemmingTracker,
+        bool faceRight)
+        : base(id, gadgetBounds, lemmingTracker)
     {
-        var p = gadgetBounds.TopLeft;
         var leftRect = new RectangularLevelRegion(3, 8, 5, 5);
         var leftHitBoxFilters = new ILemmingFilter[]
         {

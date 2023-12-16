@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.FacingDirections;
 
 public sealed class LeftFacingDirection : FacingDirection
 {
-    public static LeftFacingDirection Instance { get; } = new();
+    public static readonly LeftFacingDirection Instance = new();
 
     private LeftFacingDirection()
     {

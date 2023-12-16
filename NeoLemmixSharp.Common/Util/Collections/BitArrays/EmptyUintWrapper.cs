@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public sealed class EmptyUintWrapper : IUintWrapper
 {
-    public static EmptyUintWrapper Instance { get; } = new();
+    public static readonly EmptyUintWrapper Instance = new();
 
     public int Size => 0;
 

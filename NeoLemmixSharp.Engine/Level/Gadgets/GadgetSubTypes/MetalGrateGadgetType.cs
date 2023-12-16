@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
 public sealed class MetalGrateGadgetType : InteractiveGadgetType
 {
-    public static MetalGrateGadgetType Instance { get; } = new();
+    public static readonly MetalGrateGadgetType Instance = new();
 
     private MetalGrateGadgetType()
     {

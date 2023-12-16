@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class BomberSkill : LemmingSkill
 {
-    public static BomberSkill Instance { get; } = new();
+    public static readonly BomberSkill Instance = new();
 
     private BomberSkill()
     {

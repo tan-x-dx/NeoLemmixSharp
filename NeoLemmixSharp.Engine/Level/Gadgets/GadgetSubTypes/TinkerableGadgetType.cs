@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
 public sealed class TinkerableGadgetType : InteractiveGadgetType
 {
-    public static TinkerableGadgetType Instance { get; } = new();
+    public static readonly TinkerableGadgetType Instance = new();
 
     private TinkerableGadgetType()
     {

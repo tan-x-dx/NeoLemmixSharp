@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
 public sealed class FireGadgetType : InteractiveGadgetType
 {
-    public static FireGadgetType Instance { get; } = new();
+    public static readonly FireGadgetType Instance = new();
 
     private FireGadgetType()
     {

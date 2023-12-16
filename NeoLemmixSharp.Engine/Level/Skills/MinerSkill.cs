@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class MinerSkill : LemmingSkill
 {
-    public static MinerSkill Instance { get; } = new();
+    public static readonly MinerSkill Instance = new();
 
     private MinerSkill()
     {

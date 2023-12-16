@@ -2,7 +2,7 @@
 
 public sealed class FunctionalGadgetType : GadgetSubType
 {
-    public static FunctionalGadgetType Instance { get; } = new();
+    public static readonly FunctionalGadgetType Instance = new();
 
     private FunctionalGadgetType()
     {

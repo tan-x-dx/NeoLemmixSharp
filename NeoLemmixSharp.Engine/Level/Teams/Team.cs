@@ -27,9 +27,11 @@ public sealed class Team : IExtendedEnumType<Team>
 
     public int Id { get; }
     public Color HairColor { get; private set; }
+    public Color PermanentSkillHairColor { get; private set; }
     public Color SkinColor { get; private set; }
     public Color ZombieSkinColor { get; private set; }
     public Color BodyColor { get; private set; }
+    public Color PermanentSkillBodyColor { get; private set; }
     public Color NeutralBodyColor { get; private set; }
 
     private Team(int id)
@@ -40,9 +42,11 @@ public sealed class Team : IExtendedEnumType<Team>
     public void SetColorData(TeamColorData colorData)
     {
         HairColor = colorData.HairColor;
+        PermanentSkillHairColor = colorData.PermanentSkillHairColor;
         SkinColor = colorData.SkinColor;
         ZombieSkinColor = colorData.ZombieSkinColor;
         BodyColor = colorData.BodyColor;
+        PermanentSkillBodyColor = colorData.PermanentSkillBodyColor;
         NeutralBodyColor = colorData.NeutralBodyColor;
     }
 

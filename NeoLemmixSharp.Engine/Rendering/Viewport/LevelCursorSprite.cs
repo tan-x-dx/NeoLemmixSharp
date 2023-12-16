@@ -11,9 +11,8 @@ public sealed class LevelCursorSprite : IViewportObjectRenderer
     public const int HalfCursorSizeInPixels = CursorSizeInPixels / 2;
 
     private readonly LevelCursor _levelCursor;
-
-    public Texture2D StandardCursorTexture { get; }
-    public Texture2D FocusedCursorTexture { get; }
+    private readonly Texture2D _standardCursorTexture;
+    private readonly Texture2D _focusedCursorTexture;
 
     public LevelCursorSprite(
         LevelCursor levelCursor,
@@ -21,8 +20,8 @@ public sealed class LevelCursorSprite : IViewportObjectRenderer
         Texture2D focusedCursorTexture)
     {
         _levelCursor = levelCursor;
-        StandardCursorTexture = standardCursorTexture;
-        FocusedCursorTexture = focusedCursorTexture;
+        _standardCursorTexture = standardCursorTexture;
+        _focusedCursorTexture = focusedCursorTexture;
     }
 
     public Rectangle GetSpriteBounds() => new(0, 0, CursorSizeInPixels, CursorSizeInPixels);
@@ -30,8 +29,8 @@ public sealed class LevelCursorSprite : IViewportObjectRenderer
     public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
     {
         var texture = _levelCursor.NumberOfLemmingsUnderCursor > 0
-            ? FocusedCursorTexture
-            : StandardCursorTexture;
+            ? _focusedCursorTexture
+            : _standardCursorTexture;
 
         var d = HalfCursorSizeInPixels * scaleMultiplier;
         var s = CursorSizeInPixels * scaleMultiplier;
@@ -56,7 +55,5 @@ public sealed class LevelCursorSprite : IViewportObjectRenderer
 
     public void Dispose()
     {
-        StandardCursorTexture.Dispose();
-        FocusedCursorTexture.Dispose();
     }
 }

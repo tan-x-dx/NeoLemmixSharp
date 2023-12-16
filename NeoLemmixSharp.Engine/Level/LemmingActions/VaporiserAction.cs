@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class VaporiserAction : LemmingAction
 {
-    public static VaporiserAction Instance { get; } = new();
+    public static readonly VaporiserAction Instance = new();
 
     private VaporiserAction()
     {

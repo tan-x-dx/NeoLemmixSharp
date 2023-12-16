@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class MinerAction : LemmingAction, IDestructionMask
 {
-    public static MinerAction Instance { get; } = new();
+    public static readonly MinerAction Instance = new();
 
     private MinerAction()
     {

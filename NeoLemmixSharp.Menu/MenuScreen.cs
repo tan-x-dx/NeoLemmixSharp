@@ -89,7 +89,7 @@ public sealed class MenuScreen : IBaseScreen
         if (!_pageTransition.IsHalfWayDone)
             return;
 
-        HelperMethods.DisposeOf(ref _currentPage);
+        DisposableHelperMethods.DisposeOf(ref _currentPage);
         _currentPage = _nextPage!;
 
         var userInterface = UserInterface.Active;

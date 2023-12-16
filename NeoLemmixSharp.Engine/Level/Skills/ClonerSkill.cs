@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class ClonerSkill : LemmingSkill
 {
-    public static ClonerSkill Instance { get; } = new();
+    public static readonly ClonerSkill Instance = new();
 
     private ClonerSkill()
     {

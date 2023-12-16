@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class StackerAction : LemmingAction
 {
-    public static StackerAction Instance { get; } = new();
+    public static readonly StackerAction Instance = new();
 
     private StackerAction()
     {

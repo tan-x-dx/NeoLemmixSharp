@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 
 public sealed class SawBladeGadgetType : InteractiveGadgetType
 {
-    public static SawBladeGadgetType Instance { get; } = new();
+    public static readonly SawBladeGadgetType Instance = new();
 
     private SawBladeGadgetType()
     {

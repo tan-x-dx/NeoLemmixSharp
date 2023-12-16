@@ -61,7 +61,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LevelPosition PreviousTopLeftPixel { get; private set; }
     public LevelPosition PreviousBottomRightPixel { get; private set; }
 
-    public bool IsFastForward => FastForwardTime > 0;
+    public bool IsFastForward => FastForwardTime > 0 || State.IsPermanentFastForwards;
 
     public LevelPosition HeadPosition => Orientation.MoveUp(LevelPosition, 6);
     public LevelPosition FootPosition => Orientation.MoveUp(LevelPosition, 1);
@@ -123,6 +123,11 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
             LevelConstants.LemmingManager.AnyZombies())
         {
             LevelConstants.LemmingManager.DoZombieCheck(this);
+        }
+
+        if (FastForwardTime > 0)
+        {
+            FastForwardTime--;
         }
     }
 

@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class DisarmerAction : LemmingAction
 {
-    public static DisarmerAction Instance { get; } = new();
+    public static readonly DisarmerAction Instance = new();
 
     private DisarmerAction()
     {

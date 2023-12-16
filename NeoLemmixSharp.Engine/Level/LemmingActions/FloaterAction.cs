@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class FloaterAction : LemmingAction
 {
-    public static FloaterAction Instance { get; } = new();
+    public static readonly FloaterAction Instance = new();
 
     private readonly int[] _floaterFallTable =
     {

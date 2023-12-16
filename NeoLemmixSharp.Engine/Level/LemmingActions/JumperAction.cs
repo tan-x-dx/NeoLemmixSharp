@@ -8,7 +8,7 @@ public sealed class JumperAction : LemmingAction
     public const int JumperPositionCount = 6;
     private const int JumperArcFrames = 13;
 
-    public static JumperAction Instance { get; } = new();
+    public static readonly JumperAction Instance = new();
 
     private readonly LevelPosition[] _jumpPositions =
     {

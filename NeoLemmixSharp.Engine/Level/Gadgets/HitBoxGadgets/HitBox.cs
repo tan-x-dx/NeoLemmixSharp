@@ -19,9 +19,9 @@ public sealed class HitBox
 
     public bool MatchesLemming(Lemming lemming)
     {
-        for (var i = 0; i < _lemmingFilters.Length; i++)
+        foreach (var lemmingFilter in _lemmingFilters.AsSpan())
         {
-            if (_lemmingFilters[i].MatchesLemming(lemming))
+            if (lemmingFilter.MatchesLemming(lemming))
                 return true;
         }
 

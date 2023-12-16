@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+﻿using System.Runtime.InteropServices;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 public sealed class GadgetOutput
 {
@@ -18,9 +20,10 @@ public sealed class GadgetOutput
 
         _currentSignal = newSignal;
 
-        for (var i = 0; i < _inputs.Count; i++)
+        var span = CollectionsMarshal.AsSpan(_inputs);
+        foreach (var gadgetInput in span)
         {
-            _inputs[i].ReactToSignal(_currentSignal);
+            gadgetInput.ReactToSignal(_currentSignal);
         }
     }
 }

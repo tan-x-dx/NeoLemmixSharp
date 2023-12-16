@@ -36,7 +36,7 @@ public readonly struct LevelPosition : IEquatable<LevelPosition>
 
 public sealed class LevelPositionEqualityComparer : IEqualityComparer<LevelPosition>, IEquatable<LevelPositionEqualityComparer>
 {
-    public static LevelPositionEqualityComparer Instance { get; } = new();
+    public static readonly LevelPositionEqualityComparer Instance = new();
 
     private LevelPositionEqualityComparer()
     {

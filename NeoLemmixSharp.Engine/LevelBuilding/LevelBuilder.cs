@@ -14,7 +14,6 @@ using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using Viewport = NeoLemmixSharp.Engine.Level.Viewport;
 
@@ -94,7 +93,7 @@ public sealed class LevelBuilder : IDisposable
         var verticalViewPortBehaviour = BoundaryHelpers.GetVerticalViewPortBehaviour(levelData.VerticalViewPortBehaviour, levelData.LevelHeight);
         var levelViewport = new Viewport(levelCursor, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
-        var updateScheduler = new UpdateScheduler(levelData.SuperLemmingMode, controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, gadgetManager, skillSetManager);
+        var updateScheduler = new UpdateScheduler(controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, gadgetManager, skillSetManager);
 
         var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
 
@@ -109,13 +108,13 @@ public sealed class LevelBuilder : IDisposable
         LevelConstants.SetTerrainManager(terrainManager);
 
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
-        var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(levelCursor);
+        var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank();
 
         var levelSprites = _levelObjectAssembler.GetLevelSprites(lemmingSpriteBankLookup);
 
         var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel);
 
-        var levelCursorSprite = controlPanelSpriteBank.LevelCursorSprite;
+        var levelCursorSprite = controlPanelSpriteBank.GetLevelCursorSprite(levelCursor);
 
         var backgroundRenderer = new SolidColorBackgroundRenderer(controlPanelSpriteBank, levelViewport, new Color(24, 24, 60));
 
@@ -131,24 +130,6 @@ public sealed class LevelBuilder : IDisposable
             controlPanelSpriteBank,
             lemmingSpriteBank,
             gadgetSpriteBank);
-
-        var wp = controlPanelSpriteBank.GetTexture("WhitePixel");
-        foreach (var metalGrateRenderer in levelSprites.OfType<MetalGrateRenderer>())
-        {
-            metalGrateRenderer.SetWhitePixelTexture(wp);
-        }
-
-        var switchTexture = gadgetSpriteBank.GetTexture("switch");
-        foreach (var switchRenderer in levelSprites.OfType<SwitchRenderer>())
-        {
-            switchRenderer.SetSwitchTexture(switchTexture);
-        }
-
-        var sawBladeTexture = gadgetSpriteBank.GetTexture("sawblade");
-        foreach (var sawBladeRenderer in levelSprites.OfType<SawBladeRenderer>())
-        {
-            sawBladeRenderer.SetSawBladeTexture(sawBladeTexture);
-        }
 
         return new LevelScreen(
             levelData,
@@ -169,6 +150,5 @@ public sealed class LevelBuilder : IDisposable
     {
         _levelReader.Dispose();
         _terrainPainter.Dispose();
-        _levelObjectAssembler.Dispose();
     }
 }

@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class ShimmierAction : LemmingAction
 {
-    public static ShimmierAction Instance { get; } = new();
+    public static readonly ShimmierAction Instance = new();
 
     private ShimmierAction()
     {

@@ -2,7 +2,7 @@
 
 public sealed class HatchGadgetType : GadgetSubType
 {
-    public static HatchGadgetType Instance { get; } = new ();
+    public static readonly HatchGadgetType Instance = new();
 
     private HatchGadgetType()
     {

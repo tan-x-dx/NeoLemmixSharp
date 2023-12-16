@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class TerrainPainter
+public sealed class TerrainPainter : IDisposable
 {
     public const uint MinimumSubstantialAlphaValue = 31;
 

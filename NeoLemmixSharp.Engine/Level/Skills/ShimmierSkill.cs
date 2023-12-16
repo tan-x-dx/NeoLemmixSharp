@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class ShimmierSkill : LemmingSkill
 {
-    public static ShimmierSkill Instance { get; } = new();
+    public static readonly ShimmierSkill Instance = new();
 
     private ShimmierSkill()
     {

@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class FencerAction : LemmingAction, IDestructionMask
 {
-    public static FencerAction Instance { get; } = new();
+    public static readonly FencerAction Instance = new();
 
     private FencerAction()
     {

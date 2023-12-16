@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -17,7 +16,7 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class LevelObjectAssembler : IDisposable
+public sealed class LevelObjectAssembler
 {
     private readonly SpriteBatch _spriteBatch;
 
@@ -163,15 +162,7 @@ public sealed class LevelObjectAssembler : IDisposable
             result.Add(renderer);
         }
 
-        return result
-            .Concat(_gadgetRenderers)
-            .ToArray();
-    }
-
-    public void Dispose()
-    {
-        //  _spriteBank = null;
-        _lemmings.Clear();
+        return [.. result, .. _gadgetRenderers];
     }
 
     public LemmingSpriteBank GetLemmingSpriteBank()
@@ -184,9 +175,9 @@ public sealed class LevelObjectAssembler : IDisposable
         return _gadgetSpriteBankBuilder.BuildGadgetSpriteBank();
     }
 
-    public ControlPanelSpriteBank GetControlPanelSpriteBank(LevelCursor levelCursor)
+    public ControlPanelSpriteBank GetControlPanelSpriteBank()
     {
-        return _controlPanelSpriteBankBuilder.BuildControlPanelSpriteBank(levelCursor);
+        return _controlPanelSpriteBankBuilder.BuildControlPanelSpriteBank();
     }
 
     private void SetUpTestLemmings()
@@ -219,8 +210,8 @@ public sealed class LevelObjectAssembler : IDisposable
             State =
             {
                 IsClimber = true,
-            },
-            FastForwardTime = 1
+                IsPermanentFastForwards = true
+            }
         };
 
         var lemmingE = new Lemming(

@@ -2,29 +2,31 @@
 
 public sealed class PageTransition
 {
-    private const float TransitionAlphaOffset = 1f / 256f;
+    private const double TransitionAlphaOffset = 1d / 256d;
 
     private readonly int _transitionDurationInFrames;
-    private readonly float _transitionDelta;
+    private readonly double _transitionDelta;
+
+    private double _transitionAlpha;
 
     private int _transitionCount = -1;
 
-    public float TransitionAlpha { get; private set; }
+    public uint TransitionPackedColor => GetTransitionPackedColor();
 
     public bool IsTransitioning => _transitionCount >= 0;
-    public bool IsHalfWayDone => _transitionCount == _transitionDurationInFrames;
-    public bool IsDone => _transitionCount == _transitionDurationInFrames * 2;
+    public bool IsHalfWayDone => _transitionCount == _transitionDurationInFrames + 1;
+    public bool IsDone => _transitionCount == 1 + _transitionDurationInFrames * 2;
 
     public PageTransition(int transitionDurationInFrames)
     {
         _transitionDurationInFrames = transitionDurationInFrames;
-        _transitionDelta = 1.0f / transitionDurationInFrames;
+        _transitionDelta = 1.0d / transitionDurationInFrames;
     }
 
     public void BeginTransition()
     {
         _transitionCount = 0;
-        TransitionAlpha = TransitionAlphaOffset;
+        _transitionAlpha = TransitionAlphaOffset;
     }
 
     public void Tick()
@@ -33,28 +35,37 @@ public sealed class PageTransition
             return;
 
         _transitionCount++;
-        if (_transitionCount < _transitionDurationInFrames)
+        if (_transitionCount <= _transitionDurationInFrames)
         {
-            TransitionAlpha = Math.Min(TransitionAlpha + _transitionDelta, 1f);
-            
+            _transitionAlpha = Math.Min(_transitionAlpha + _transitionDelta, 1d);
+
             return;
         }
 
-        if (_transitionCount == _transitionDurationInFrames)
+        if (_transitionCount == _transitionDurationInFrames + 1)
         {
-            TransitionAlpha = 1f - TransitionAlphaOffset;
+            _transitionAlpha = 1d - TransitionAlphaOffset;
         }
 
-        if (_transitionCount > _transitionDurationInFrames)
+        if (_transitionCount > _transitionDurationInFrames + 1)
         {
             if (IsDone)
             {
                 _transitionCount = -1;
-                TransitionAlpha = 0f;
+                _transitionAlpha = 0d;
                 return;
             }
 
-            TransitionAlpha = Math.Max(TransitionAlpha - _transitionDelta, 0f);
+            _transitionAlpha = Math.Max(_transitionAlpha - _transitionDelta, 0d);
         }
+    }
+
+    private uint GetTransitionPackedColor()
+    {
+        var intValue = (uint)(_transitionAlpha * 255d);
+        intValue = Math.Clamp(intValue, 0u, 0xffu);
+
+        // Color format is ABGR - alpha is the most significant bits and everything else is black (zero)
+        return intValue << 24;
     }
 }

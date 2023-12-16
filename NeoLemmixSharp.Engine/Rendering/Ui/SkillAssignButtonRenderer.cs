@@ -18,15 +18,15 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
     private readonly int _skillIconWidth;
     private readonly int _skillIconHeight;
 
-    private readonly INeoLemmixFont _skillCountDigitFont;
+    private readonly SkillCountDigitFont _skillCountDigitFont;
 
     public SkillAssignButtonRenderer(
         ControlPanelSpriteBank spriteBank,
         SkillAssignButton skillAssignButton)
     {
-        _skillCountErase = spriteBank.GetTexture("panel/skill_count_erase");
-        _skillPanels = spriteBank.GetTexture("panel/skill_panels");
-        _skillSelected = spriteBank.GetTexture("panel/skill_selected");
+        _skillCountErase = spriteBank.GetTexture(ControlPanelTexture.PanelSkillCountErase);
+        _skillPanels = spriteBank.GetTexture(ControlPanelTexture.PanelSkillPanels);
+        _skillSelected = spriteBank.GetTexture(ControlPanelTexture.PanelSkillSelected);
 
         _skillCountDigitFont = FontBank.SkillCountDigitFont;
 
@@ -45,7 +45,7 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
           }
           catch (KeyNotFoundException) // goddamn
           {*/
-        _skillIcon = spriteBank.GetTexture("WhitePixel");
+        _skillIcon = spriteBank.GetTexture(ControlPanelTexture.WhitePixel);
         _skillIconSourceRectangle = new Rectangle(0, 0, 1, 1);
         _skillIconWidth = 1;
         _skillIconHeight = 1;

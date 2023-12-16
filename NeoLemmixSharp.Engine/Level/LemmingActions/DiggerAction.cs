@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class DiggerAction : LemmingAction, IDestructionMask
 {
-    public static DiggerAction Instance { get; } = new();
+    public static readonly DiggerAction Instance = new();
 
     private DiggerAction()
     {

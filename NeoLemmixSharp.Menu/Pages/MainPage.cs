@@ -10,15 +10,15 @@ public sealed class MainPage : IPage
 {
     private readonly MenuInputController _inputController;
 
-    private Image _playButton;
-    private Image _levelSelectButton;
+    private Image? _playButton;
+    private Image? _levelSelectButton;
 
-    private Image _groupButton;
-    private Image _groupUpButton;
-    private Image _groupDownButton;
+    private Image? _groupButton;
+    private Image? _groupUpButton;
+    private Image? _groupDownButton;
 
-    private Image _configButton;
-    private Image _quitButton;
+    private Image? _configButton;
+    private Image? _quitButton;
 
     public MainPage(MenuInputController inputController)
     {
@@ -93,23 +93,21 @@ public sealed class MainPage : IPage
         //   rootPanel.AddChild(_groupDownButton);
         bottomRowButtonsPanel.AddChild(_configButton);
         bottomRowButtonsPanel.AddChild(_quitButton);
+    }
 
-        return;
+    private static Image CreateTextureButton(MenuResource menuResource)
+    {
+        var texture = MenuSpriteBank.GetTexture(menuResource);
 
-        Image CreateTextureButton(MenuResource menuResource)
+        return new Image(
+            texture,
+            anchor: Anchor.AutoInlineNoBreak,
+            size: texture.GetSize())
         {
-            var texture = MenuSpriteBank.GetTexture(menuResource);
-
-            return new Image(
-                texture,
-                anchor: Anchor.AutoInlineNoBreak,
-                size: texture.GetSize())
-            {
-                Padding = Vector2.Zero,
-                Offset = Vector2.Zero,
-                UseActualSizeForCollision = true,
-            };
-        }
+            Padding = Vector2.Zero,
+            Offset = Vector2.Zero,
+            UseActualSizeForCollision = true,
+        };
     }
 
     public void SetWindowDimensions(int windowWidth, int windowHeight)
@@ -126,26 +124,25 @@ public sealed class MainPage : IPage
     {
         if (_inputController.Quit.IsPressed)
         {
-            _quitButton.OnClick.Invoke(_quitButton);
+            _quitButton!.OnClick.Invoke(_quitButton);
             return;
         }
 
         if (_inputController.F1.IsPressed)
         {
-            _playButton.OnClick.Invoke(_playButton);
+            _playButton!.OnClick.Invoke(_playButton);
             return;
         }
 
         if (_inputController.F2.IsPressed)
         {
-            _levelSelectButton.OnClick.Invoke(_levelSelectButton);
+            _levelSelectButton!.OnClick.Invoke(_levelSelectButton);
             return;
         }
 
         if (_inputController.F3.IsPressed)
         {
-            _configButton.OnClick.Invoke(_configButton);
-            return;
+            _configButton!.OnClick.Invoke(_configButton);
         }
     }
 
@@ -188,12 +185,23 @@ public sealed class MainPage : IPage
     {
         UserInterface.Active.GlobalScale = 1f;
 
-        _playButton.OnClick = null;
-        _levelSelectButton.OnClick = null;
-        _groupButton.OnClick = null;
-        _groupUpButton.OnClick = null;
-        _groupDownButton.OnClick = null;
-        _configButton.OnClick = null;
-        _quitButton.OnClick = null;
+        DisposeOfEntity(ref _playButton);
+        DisposeOfEntity(ref _levelSelectButton);
+        DisposeOfEntity(ref _groupButton);
+        DisposeOfEntity(ref _groupUpButton);
+        DisposeOfEntity(ref _groupDownButton);
+        DisposeOfEntity(ref _configButton);
+        DisposeOfEntity(ref _quitButton);
+    }
+
+    private static void DisposeOfEntity<T>(ref T? entity)
+        where T : Entity
+    {
+        if (entity is null)
+            return;
+
+        entity.OnClick = null;
+        entity.OnRightClick = null;
+        entity = null;
     }
 }

@@ -7,7 +7,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
-public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget
+public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget, IResizeableGadget
 {
     private int _transitionTick;
     private bool _isActive;
@@ -18,8 +18,13 @@ public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget
 
     public MetalGrateGadgetInput Input { get; }
 
-    public MetalGrateGadget(int id, RectangularLevelRegion gadgetBounds, MetalGrateGadgetInput input, bool startActive)
-        : base(id, gadgetBounds)
+    public MetalGrateGadget(
+        int id, 
+        RectangularLevelRegion gadgetBounds,
+        ItemTracker<Lemming> lemmingTracker,
+        MetalGrateGadgetInput input,
+        bool startActive)
+        : base(id, gadgetBounds, lemmingTracker)
     {
         Input = input;
 
@@ -72,6 +77,18 @@ public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget
         {
             CurrentState = MetalGrateState.Off;
         }
+    }
+
+    void IResizeableGadget.Resize(int dw, int dh)
+    {
+        // Do nothing - this gadget type can have any size
+        // but cannot be resized during the play through
+    }
+
+    void IResizeableGadget.SetSize(int w, int h)
+    {
+        // Do nothing - this gadget type can have any size
+        // but cannot be resized during the play through
     }
 
     public IGadgetInput? GetInputWithName(string inputName)

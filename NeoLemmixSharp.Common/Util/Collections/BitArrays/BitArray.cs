@@ -198,65 +198,10 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitEnumerator GetEnumerator() => new(this);
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReferenceTypeBitEnumerator GetReferenceTypeBitEnumerator() => new(this);
+    public ReferenceTypeBitEnumerator GetEnumerator() => new(this);
 
-    IEnumerator<int> IEnumerable<int>.GetEnumerator() => GetReferenceTypeBitEnumerator();
-    IEnumerator IEnumerable.GetEnumerator() => GetReferenceTypeBitEnumerator();
-
-    public ref struct BitEnumerator
-    {
-        private readonly ReadOnlySpan<uint> _bits;
-
-        private int _remaining;
-        private int _index;
-        private int _current;
-        private uint _v;
-
-        public readonly int Current => _current;
-
-        public BitEnumerator(BitArray bitArray)
-        {
-            _bits = bitArray.AsReadOnlySpan();
-            _remaining = bitArray.Count;
-            _index = 0;
-            _current = 0;
-            _v = _bits.Length == 0 ? 0U : _bits[0];
-        }
-
-        public BitEnumerator(ReadOnlySpan<uint> bits, int count)
-        {
-            _bits = bits;
-            _remaining = count;
-            _index = 0;
-            _current = 0;
-            _v = _bits.Length == 0 ? 0U : _bits[0];
-        }
-
-        public bool MoveNext()
-        {
-            if (_v == 0U)
-            {
-                if (_remaining == 0)
-                    return false;
-
-                do
-                {
-                    _v = _bits[++_index];
-                }
-                while (_v == 0U);
-            }
-
-            var m = BitOperations.TrailingZeroCount(_v);
-            _v &= _v - 1;
-
-            _current = (_index << Shift) | m;
-            _remaining--;
-            return true;
-        }
-    }
+    IEnumerator<int> IEnumerable<int>.GetEnumerator() => GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public sealed class ReferenceTypeBitEnumerator : IEnumerator<int>
     {

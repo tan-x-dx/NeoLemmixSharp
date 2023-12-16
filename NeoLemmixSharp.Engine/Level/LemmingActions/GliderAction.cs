@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class GliderAction : LemmingAction
 {
-    public static GliderAction Instance { get; } = new();
+    public static readonly GliderAction Instance = new();
 
     private GliderAction()
     {

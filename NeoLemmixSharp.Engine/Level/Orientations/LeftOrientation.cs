@@ -6,13 +6,13 @@ namespace NeoLemmixSharp.Engine.Level.Orientations;
 
 public sealed class LeftOrientation : Orientation
 {
-    public static LeftOrientation Instance { get; } = new();
+    public static readonly LeftOrientation Instance = new();
 
     private LeftOrientation()
     {
     }
 
-    public override int RotNum => LevelConstants.LeftOrientationRotNum;
+    public override int RotNum => LeftOrientationRotNum;
     public override int AbsoluteHorizontalComponent => -1;
     public override int AbsoluteVerticalComponent => 0;
 

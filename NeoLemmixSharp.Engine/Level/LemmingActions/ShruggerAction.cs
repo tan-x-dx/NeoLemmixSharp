@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class ShruggerAction : LemmingAction
 {
-    public static ShruggerAction Instance { get; } = new();
+    public static readonly ShruggerAction Instance = new();
 
     private ShruggerAction()
     {

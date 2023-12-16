@@ -1,9 +1,10 @@
-﻿using System.Runtime.CompilerServices;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
@@ -52,10 +53,7 @@ public sealed class LemmingSpriteBank : IDisposable
 
     public void Dispose()
     {
-        for (var i = 0; i < _actionSprites.Length; i++)
-        {
-            _actionSprites[i].Dispose();
-        }
+        DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<ActionSprite>(_actionSprites));
     }
 
     public void SetTeamColors()

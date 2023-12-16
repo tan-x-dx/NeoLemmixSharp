@@ -19,6 +19,8 @@ public sealed class LemmingState
                                                (1U << SwimmerBitIndex) |
                                                (1U << DisarmerBitIndex);
 
+    private const int PermanentFastForwardBitIndex = 20;
+
     private const int ActiveBitIndex = 29;
     private const int NeutralBitIndex = 30;
     private const int ZombieBitIndex = 31;
@@ -105,6 +107,22 @@ public sealed class LemmingState
         set => SetBitToValue(1U << NeutralBitIndex, value);
     }
 
+    public bool IsPermanentFastForwards
+    {
+        get => ((_states >> PermanentFastForwardBitIndex) & 1U) != 0U;
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << PermanentFastForwardBitIndex;
+            }
+            else
+            {
+                _states &= ~(1U << PermanentFastForwardBitIndex);
+            }
+        }
+    }
+
     public bool IsActive
     {
         get => ((_states >> ActiveBitIndex) & 1U) != 0U;
@@ -179,10 +197,10 @@ public sealed class LemmingState
     {
         if (HasPermanentSkill)
         {
-            HairColor = _team.BodyColor;
+            HairColor = _team.PermanentSkillHairColor;
             BodyColor = IsNeutral
                 ? _team.NeutralBodyColor
-                : _team.HairColor;
+                : _team.PermanentSkillBodyColor;
         }
         else
         {

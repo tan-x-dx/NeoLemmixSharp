@@ -7,7 +7,7 @@ public sealed class NoneAction : LemmingAction
     /// <summary>
     /// Logically equivalent to null, but null references suck
     /// </summary>
-    public static NoneAction Instance { get; } = new();
+    public static readonly NoneAction Instance = new();
 
     private NoneAction()
     {

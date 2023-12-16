@@ -2,7 +2,7 @@
 
 public sealed class LogicGateGadgetType : GadgetSubType
 {
-    public static LogicGateGadgetType Instance { get; } = new();
+    public static readonly LogicGateGadgetType Instance = new();
 
     private LogicGateGadgetType()
     {
