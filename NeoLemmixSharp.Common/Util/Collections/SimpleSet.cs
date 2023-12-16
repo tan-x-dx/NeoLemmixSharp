@@ -56,10 +56,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSetEnumerable<T> ToSimpleEnumerable()
-    {
-        return new SimpleSetEnumerable<T>(_hasher, _bits.AsReadOnlySpan(), Count);
-    }
+    public SimpleSetEnumerable<T> ToSimpleEnumerable() => new(_hasher, _bits.AsReadOnlySpan(), Count);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

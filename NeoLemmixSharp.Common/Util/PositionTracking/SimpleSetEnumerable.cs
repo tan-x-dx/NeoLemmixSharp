@@ -7,11 +7,11 @@ namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
 public readonly ref struct SimpleSetEnumerable<T>
 {
+    public static SimpleSetEnumerable<T> Empty => default;
+
     private readonly IPerfectHasher<T> _hasher;
     private readonly ReadOnlySpan<uint> _bits;
     private readonly int _count;
-
-    public static SimpleSetEnumerable<T> Empty => new(null!, ReadOnlySpan<uint>.Empty, 0);
 
     public bool IsEmpty => _count == 0;
 
@@ -24,8 +24,5 @@ public readonly ref struct SimpleSetEnumerable<T>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitBasedEnumerator<T> GetEnumerator()
-    {
-        return new BitBasedEnumerator<T>(_hasher, _bits, _count);
-    }
+    public BitBasedEnumerator<T> GetEnumerator() => new(_hasher, _bits, _count);
 }
