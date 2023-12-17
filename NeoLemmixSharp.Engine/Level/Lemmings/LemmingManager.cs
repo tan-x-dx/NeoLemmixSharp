@@ -109,7 +109,8 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
 
     public void Tick(UpdateState updateState, int elapsedTicksModulo3)
     {
-        if (updateState == UpdateState.FastForward || elapsedTicksModulo3 == 0)
+        if (updateState == UpdateState.FastForward ||
+            elapsedTicksModulo3 == 0)
         {
             foreach (var hatchGroup in _hatchGroups.AsSpan())
             {
@@ -127,33 +128,14 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
             }
         }
 
-        if (updateState == UpdateState.Normal)
+        foreach (var lemming in AllLemmings)
         {
-            foreach (var lemming in AllLemmings)
-            {
-                if (!lemming.State.IsActive ||
-                    (elapsedTicksModulo3 != 0 && !lemming.IsFastForward))
-                    continue;
+            var i = GetTickNumberForLemming(lemming, updateState, elapsedTicksModulo3);
 
+            while (i-- > 0)
+            {
                 lemming.Tick();
                 UpdateLemmingPosition(lemming);
-            }
-        }
-        else
-        {
-            foreach (var lemming in AllLemmings)
-            {
-                if (!lemming.State.IsActive)
-                    continue;
-
-                var i = lemming.IsFastForward
-                    ? EngineConstants.FastForwardSpeedMultiplier
-                    : 1;
-                while (i-- > 0)
-                {
-                    lemming.Tick();
-                    UpdateLemmingPosition(lemming);
-                }
             }
         }
 
@@ -162,6 +144,21 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
             lemming.State.IsZombie = true;
         }
         _lemmingsToZombify.Clear();
+    }
+
+    private static int GetTickNumberForLemming(Lemming lemming, UpdateState updateState, int elapsedTicksModulo3)
+    {
+        var lemmingIsFastForward = lemming.IsFastForward;
+        var gameIsFastForward = updateState == UpdateState.FastForward;
+        if (!lemming.State.IsActive ||
+            (!lemmingIsFastForward &&
+             !gameIsFastForward &&
+             elapsedTicksModulo3 != 0))
+            return 0;
+
+        return lemmingIsFastForward && gameIsFastForward
+            ? EngineConstants.FastForwardSpeedMultiplier
+            : 1;
     }
 
     private void UpdateLemmingPosition(Lemming lemming)

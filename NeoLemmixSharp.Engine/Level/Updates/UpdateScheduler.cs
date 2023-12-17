@@ -119,12 +119,11 @@ end;
         }
 
         TickLevel();
+        HandleSkillAssignment();
     }
 
     private void TickLevel()
     {
-        HandleSkillAssignment();
-
         if (_updateState == UpdateState.Paused)
             return;
 
