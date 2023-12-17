@@ -1,5 +1,7 @@
-﻿using NeoLemmixSharp.Engine.Level.Skills;
+﻿using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
+using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Timer;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
@@ -7,7 +9,6 @@ public sealed class LevelControlPanel : ILevelControlPanel
 {
     public const int MaxNumberOfSkillButtons = 10;
     private const int NumberOfTechnicalButtons = 9;
-    private const int TotalNumberOfButtons = MaxNumberOfSkillButtons + NumberOfTechnicalButtons;
     private const int ControlPanelButtonPixelWidth = 16;
     private const int ControlPanelButtonPixelHeight = 23;
     private const int ControlPanelInfoPixelHeight = 16;
@@ -17,21 +18,8 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
     private readonly LevelInputController _controller;
 
-    private readonly ControlPanelButton _releaseRateMinusButton;
-    private readonly ControlPanelButton _releaseRatePlusButton;
-
+    private readonly ControlPanelButton[] _allButtons;
     private readonly SkillAssignButton[] _skillAssignButtons;
-
-    private readonly ControlPanelButton _pauseButton;
-    private readonly ControlPanelButton _nukeButton;
-    private readonly ControlPanelButton _fastForwardButton;
-    private readonly ControlPanelButton _restartButton;
-    private readonly ControlPanelButton _frameSkipBackButton;
-    private readonly ControlPanelButton _frameSkipForwardButton;
-    private readonly ControlPanelButton _directionSelectLeftButton;
-    private readonly ControlPanelButton _directionSelectRightButton;
-    private readonly ControlPanelButton _clearPhysicsButton;
-    private readonly ControlPanelButton _replayButton;
 
     private readonly int _maxSkillPanelScroll;
 
@@ -55,40 +43,36 @@ public sealed class LevelControlPanel : ILevelControlPanel
     public SkillAssignButton? SelectedSkillAssignButton { get; private set; }
     public int SelectedSkillButtonId => SelectedSkillAssignButton?.SkillAssignButtonId ?? -1;
 
+    public ReadOnlySpan<SkillAssignButton> SkillAssignButtons => new(_skillAssignButtons);
+    public ReadOnlySpan<ControlPanelButton> AllButtons => new(_allButtons);
+    public bool HasReleaseRateButtons { get; private set; }
+
     public LevelControlPanel(
+        LevelData levelData,
         SkillSetManager skillSetManager,
         LevelInputController controller,
         LevelTimer levelTimer)
     {
         _controller = controller;
         LevelTimer = levelTimer;
-        _releaseRateMinusButton = new ControlPanelButton(0);
-        _releaseRatePlusButton = new ControlPanelButton(1);
 
         _skillAssignButtons = CreateSkillAssignButtons(skillSetManager);
+        _allButtons = new ControlPanelButton[NumberOfTechnicalButtons + _skillAssignButtons.Length];
+
+        SetUpButtons(levelData);
 
         _maxSkillPanelScroll = _skillAssignButtons.Length - MaxNumberOfSkillButtons;
-
-        _pauseButton = new ControlPanelButton(3);
-        _nukeButton = new ControlPanelButton(4);
-        _fastForwardButton = new ControlPanelButton(5);
-        _restartButton = new ControlPanelButton(6);
-        _frameSkipBackButton = new ControlPanelButton(7);
-        _frameSkipForwardButton = new ControlPanelButton(0);
-        _directionSelectLeftButton = new ControlPanelButton(1);
-        _directionSelectRightButton = new ControlPanelButton(2);
-        _clearPhysicsButton = new ControlPanelButton(3);
-        _replayButton = new ControlPanelButton(4);
 
         SetSelectedSkillAssignmentButton(_skillAssignButtons.FirstOrDefault());
     }
 
     private static SkillAssignButton[] CreateSkillAssignButtons(SkillSetManager skillSetManager)
     {
-        var result = new SkillAssignButton[skillSetManager.TotalNumberOfSkills];
+        var allSkillTrackingData = skillSetManager.AllSkillTrackingData;
+        var result = new SkillAssignButton[allSkillTrackingData.Length];
 
         var i = 0;
-        foreach (var skillTrackingData in skillSetManager.AllSkillTrackingData)
+        foreach (var skillTrackingData in allSkillTrackingData)
         {
             result[i] = new SkillAssignButton(i, (i + 2) & 7, skillTrackingData);
             i++;
@@ -97,7 +81,14 @@ public sealed class LevelControlPanel : ILevelControlPanel
         return result;
     }
 
-    public IEnumerable<SkillAssignButton> SkillAssignButtons => _skillAssignButtons;
+    private void SetUpButtons(LevelData levelData)
+    {
+        var i = 0;
+        for (; i < _skillAssignButtons.Length; i++)
+        {
+            _allButtons[i] = _skillAssignButtons[i];
+        }
+    }
 
     public void SetWindowDimensions(int screenWidth, int screenHeight)
     {
@@ -116,7 +107,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
     private void RecalculateButtonDimensions()
     {
-        HorizontalButtonScreenSpace = TotalNumberOfButtons * ControlPanelButtonPixelWidth * _controlPanelScale;
+        HorizontalButtonScreenSpace = (MaxNumberOfSkillButtons + NumberOfTechnicalButtons) * ControlPanelButtonPixelWidth * _controlPanelScale;
 
         ControlPanelX = (ScreenWidth - HorizontalButtonScreenSpace) / 2;
         ControlPanelY = ScreenHeight - (ControlPanelTotalPixelHeight * _controlPanelScale);
@@ -131,12 +122,13 @@ public sealed class LevelControlPanel : ILevelControlPanel
         var x0 = ControlPanelX;
         var y0 = ControlPanelButtonY;
         var h0 = ControlPanelButtonScreenHeight;
-
+        /*
         UpdateButtonDimensions(_releaseRateMinusButton);
         x0 += ControlPanelButtonScreenWidth;
         UpdateButtonDimensions(_releaseRatePlusButton);
 
-        UpdateSkillAssignButtonDimensions();
+       */
+        UpdateSkillAssignButtonDimensions();/*
 
         x0 = ControlPanelButtonScreenWidth * 12;
 
@@ -167,7 +159,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
         UpdateButtonDimensions(_clearPhysicsButton);
         y0 += h0;
         UpdateButtonDimensions(_replayButton);
-
+        */
         return;
 
         void UpdateButtonDimensions(ControlPanelButton button)
@@ -184,7 +176,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
     {
         var indexOfLastSkillAssignButtonToRender = SkillPanelScroll + MaxNumberOfSkillButtons;
 
-        var x0 = ControlPanelButtonScreenWidth * (2 - SkillPanelScroll);
+        var x0 = ControlPanelX + ControlPanelButtonScreenWidth * (2 - SkillPanelScroll);
 
         for (var i = 0; i < _skillAssignButtons.Length; i++)
         {

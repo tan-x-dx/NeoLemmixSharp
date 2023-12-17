@@ -63,7 +63,7 @@ public sealed class LevelBuilder : IDisposable
         LevelTimer levelTimer = levelData.TimeLimit.HasValue
             ? new CountDownLevelTimer(levelData.TimeLimit.Value)
             : new CountUpLevelTimer();
-        var controlPanel = new LevelControlPanel(skillSetManager, inputController, levelTimer);
+        var controlPanel = new LevelControlPanel(levelData, skillSetManager, inputController, levelTimer);
 
         foreach (var skillAssignButton in controlPanel.SkillAssignButtons)
         {

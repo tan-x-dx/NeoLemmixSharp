@@ -3,10 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Level;
-using NeoLemmixSharp.Engine.Level.ControlPanel;
+using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Skills;
 
-namespace NeoLemmixSharp.Engine.Rendering.Ui;
+namespace NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
 public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 {
@@ -17,6 +17,7 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
     private readonly Texture2D _skillIcons;
 
     private readonly SkillCountDigitFont _skillCountDigitFont;
+    private readonly int _skillY;
 
     public SkillAssignButtonRenderer(
         ControlPanelSpriteBank spriteBank,
@@ -29,6 +30,9 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
         _skillIcons = spriteBank.GetTexture(ControlPanelTexture.PanelSkills);
 
         _skillCountDigitFont = FontBank.SkillCountDigitFont;
+
+        var skillTrackingData = _skillAssignButton.SkillTrackingData;
+        _skillY = GetSkillY(skillTrackingData.Skill);
     }
 
     public override void Render(SpriteBatch spriteBatch)
@@ -60,13 +64,10 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
             PanelHelpers.ControlPanelButtonPixelWidth * _skillAssignButton.ScaleMultiplier,
             PanelHelpers.ControlPanelButtonPixelHeight * _skillAssignButton.ScaleMultiplier);
 
-        var skillTrackingData = _skillAssignButton.SkillTrackingData;
-        var skillY = GetSkillY(skillTrackingData.Skill);
-
         spriteBatch.Draw(
             _skillIcons,
             skillIconDestRectangle,
-            new Rectangle(0, skillY * PanelHelpers.ControlPanelButtonPixelHeight,
+            new Rectangle(0, _skillY * PanelHelpers.ControlPanelButtonPixelHeight,
                 PanelHelpers.ControlPanelButtonPixelWidth, PanelHelpers.ControlPanelButtonPixelHeight),
             RenderingLayers.ControlPanelSkillIconLayer);
 

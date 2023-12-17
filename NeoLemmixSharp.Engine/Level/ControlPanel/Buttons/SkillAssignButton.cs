@@ -1,8 +1,10 @@
 ﻿using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.Engine.Rendering.Ui;
+using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
-namespace NeoLemmixSharp.Engine.Level.ControlPanel;
+namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 public sealed class SkillAssignButton : ControlPanelButton
 {
@@ -39,5 +41,10 @@ public sealed class SkillAssignButton : ControlPanelButton
             var span = new Span<int>(_skillCountChars);
             TextRenderingHelpers.WriteDigits(span, numberOfSkillsAvailable);
         }
+    }
+
+    public override ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
+    {
+        return new SkillAssignButtonRenderer(spriteBank, this);
     }
 }

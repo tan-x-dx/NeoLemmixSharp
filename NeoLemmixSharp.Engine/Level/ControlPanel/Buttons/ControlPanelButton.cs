@@ -1,6 +1,9 @@
-﻿namespace NeoLemmixSharp.Engine.Level.ControlPanel;
+﻿using NeoLemmixSharp.Engine.Rendering.Ui;
+using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
-public class ControlPanelButton
+namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
+
+public abstract class ControlPanelButton
 {
     public int SkillPanelFrame { get; }
     public bool ShouldRender { get; set; } = true;
@@ -13,7 +16,7 @@ public class ControlPanelButton
 
     public int ScaleMultiplier { get; set; }
 
-    public ControlPanelButton(int skillPanelFrame)
+    protected ControlPanelButton(int skillPanelFrame)
     {
         SkillPanelFrame = skillPanelFrame;
     }
@@ -29,4 +32,6 @@ public class ControlPanelButton
                mouseX >= ScreenX && mouseX <= ScreenX + ScreenWidth &&
                mouseY >= ScreenY && mouseY <= ScreenY + ScreenHeight;
     }
+
+    public abstract ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank);
 }

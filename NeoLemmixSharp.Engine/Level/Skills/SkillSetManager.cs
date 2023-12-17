@@ -14,8 +14,6 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>
         _skillTrackingDataList = CreateSkillDataList(skillSetData);
     }
 
-    public int TotalNumberOfSkills => _skillTrackingDataList.Length;
-
     private SkillTrackingData[] CreateSkillDataList(IEnumerable<SkillSetData> skillSetData)
     {
         return skillSetData

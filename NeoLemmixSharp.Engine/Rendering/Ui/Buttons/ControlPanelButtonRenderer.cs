@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace NeoLemmixSharp.Engine.Rendering.Ui;
+namespace NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
 public abstract class ControlPanelButtonRenderer
 {
