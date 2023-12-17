@@ -2,7 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
+using NeoLemmixSharp.Engine.Level.Skills;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
@@ -12,11 +14,7 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 
     private readonly Texture2D _skillPanels;
     private readonly Texture2D _skillSelected;
-    private readonly Texture2D _skillCountErase;
-    private readonly Texture2D _skillIcon;
-    private readonly Rectangle _skillIconSourceRectangle;
-    private readonly int _skillIconWidth;
-    private readonly int _skillIconHeight;
+    private readonly Texture2D _skillIcons;
 
     private readonly SkillCountDigitFont _skillCountDigitFont;
 
@@ -24,32 +22,13 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
         ControlPanelSpriteBank spriteBank,
         SkillAssignButton skillAssignButton)
     {
-        _skillCountErase = spriteBank.GetTexture(ControlPanelTexture.PanelSkillCountErase);
-        _skillPanels = spriteBank.GetTexture(ControlPanelTexture.PanelSkillPanels);
-        _skillSelected = spriteBank.GetTexture(ControlPanelTexture.PanelSkillSelected);
-
-        _skillCountDigitFont = FontBank.SkillCountDigitFont;
-
         _skillAssignButton = skillAssignButton;
 
-        // HOLY SHIT THIS IS TERRIBLE CODE
-        // TODO REFACTOR THE FUCK OUT OF THIS WHEN PROPER SPRITES ARE CREATED FOR SKILL ASSIGN BUTTONS
-        /*  try
-          {
-              var lemmingActionSpriteBundle = spriteBank.GetLemmingActionSpriteBundle(_skillAssignButton.LemmingSkill.LemmingSkillName);
-              var sprite = lemmingActionSpriteBundle.DownRightSprite;
-              _skillIcon = sprite.Texture;
-              _skillIconSourceRectangle = sprite.GetSourceRectangleForFrame(0);
-              _skillIconWidth = sprite.SpriteWidth;
-              _skillIconHeight = sprite.SpriteHeight;
-          }
-          catch (KeyNotFoundException) // goddamn
-          {*/
-        _skillIcon = spriteBank.GetTexture(ControlPanelTexture.WhitePixel);
-        _skillIconSourceRectangle = new Rectangle(0, 0, 1, 1);
-        _skillIconWidth = 1;
-        _skillIconHeight = 1;
-        //}
+        _skillPanels = spriteBank.GetTexture(ControlPanelTexture.Panel);
+        _skillSelected = spriteBank.GetTexture(ControlPanelTexture.PanelSkillSelected);
+        _skillIcons = spriteBank.GetTexture(ControlPanelTexture.PanelSkills);
+
+        _skillCountDigitFont = FontBank.SkillCountDigitFont;
     }
 
     public override void Render(SpriteBatch spriteBatch)
@@ -58,22 +37,40 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
             return;
 
         var destRectangle = new Rectangle(
-                  _skillAssignButton.ScreenX,
-                  _skillAssignButton.ScreenY,
-                  _skillAssignButton.ScreenWidth,
-                  _skillAssignButton.ScreenHeight);
+            _skillAssignButton.ScreenX,
+            _skillAssignButton.ScreenY,
+            _skillAssignButton.ScreenWidth,
+            _skillAssignButton.ScreenHeight);
 
         spriteBatch.Draw(
             _skillPanels,
             destRectangle,
-            GetPanelButtonBackgroundSourceRectangle(_skillAssignButton.SkillPanelFrame),
+            PanelHelpers.GetRectangleForCoordinates(_skillAssignButton.SkillPanelFrame, 0),
             RenderingLayers.ControlPanelButtonLayer);
 
         spriteBatch.Draw(
-            _skillCountErase,
+            _skillPanels,
             destRectangle,
-            new Rectangle(0, 0, _skillCountErase.Width, _skillCountErase.Height),
+            PanelHelpers.GetRectangleForCoordinates(1, 2),
             RenderingLayers.ControlPanelSkillCountEraseLayer);
+
+        var skillIconDestRectangle = new Rectangle(
+            _skillAssignButton.ScreenX,
+            _skillAssignButton.ScreenY,
+            PanelHelpers.ControlPanelButtonPixelWidth * _skillAssignButton.ScaleMultiplier,
+            PanelHelpers.ControlPanelButtonPixelHeight * _skillAssignButton.ScaleMultiplier);
+
+        var skillTrackingData = _skillAssignButton.SkillTrackingData;
+        var skillY = GetSkillY(skillTrackingData.Skill);
+
+        spriteBatch.Draw(
+            _skillIcons,
+            skillIconDestRectangle,
+            new Rectangle(0, skillY * PanelHelpers.ControlPanelButtonPixelHeight,
+                PanelHelpers.ControlPanelButtonPixelWidth, PanelHelpers.ControlPanelButtonPixelHeight),
+            RenderingLayers.ControlPanelSkillIconLayer);
+
+        RenderSkillCounts(spriteBatch, destRectangle);
 
         if (_skillAssignButton.IsSelected)
         {
@@ -81,22 +78,9 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
                 _skillSelected,
                 destRectangle,
                 new Rectangle(0, 0, _skillSelected.Width, _skillSelected.Height),
-                RenderingLayers.ControlPanelSkillCountEraseLayer); // Can reuse this layer since the sprites shouldn't overlap anyway
+                RenderingLayers
+                    .ControlPanelSkillCountEraseLayer); // Can reuse this layer since the sprites shouldn't overlap anyway
         }
-
-        var skillIconDestRectangle = new Rectangle(
-            _skillAssignButton.ScreenX,
-            _skillAssignButton.ScreenY + 6 * _skillAssignButton.ScaleMultiplier,
-            _skillIconWidth * _skillAssignButton.ScaleMultiplier,
-            _skillIconHeight * _skillAssignButton.ScaleMultiplier);
-
-        spriteBatch.Draw(
-            _skillIcon,
-            skillIconDestRectangle,
-            _skillIconSourceRectangle,
-            RenderingLayers.ControlPanelSkillIconLayer);
-
-        RenderSkillCounts(spriteBatch, destRectangle);
     }
 
     private void RenderSkillCounts(
@@ -113,4 +97,31 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
             _skillAssignButton.ScaleMultiplier,
             Color.White);
     }
+
+    private static int GetSkillY(LemmingSkill skill) => skill.Id switch
+    {
+        LevelConstants.BasherSkillId => 16,
+        LevelConstants.BlockerSkillId => 11,
+        LevelConstants.BomberSkillId => 9,
+        LevelConstants.BuilderSkillId => 13,
+        LevelConstants.ClimberSkillId => 4,
+        LevelConstants.ClonerSkillId => 20,
+        LevelConstants.DiggerSkillId => 19,
+        LevelConstants.DisarmerSkillId => 8,
+        LevelConstants.FencerSkillId => 17,
+        LevelConstants.FloaterSkillId => 6,
+        LevelConstants.GliderSkillId => 7,
+        LevelConstants.JumperSkillId => 1,
+        LevelConstants.LasererSkillId => 15,
+        LevelConstants.MinerSkillId => 18,
+        LevelConstants.PlatformerSkillId => 12,
+        LevelConstants.ShimmierSkillId => 2,
+        LevelConstants.SliderSkillId => 3,
+        LevelConstants.StackerSkillId => 14,
+        LevelConstants.StonerSkillId => 10,
+        LevelConstants.SwimmerSkillId => 5,
+        LevelConstants.WalkerSkillId => 0,
+
+        _ => throw new ArgumentOutOfRangeException(nameof(skill), skill, "Cannot get icon for skill")
+    };
 }

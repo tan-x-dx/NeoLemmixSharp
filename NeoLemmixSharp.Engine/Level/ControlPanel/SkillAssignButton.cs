@@ -1,11 +1,14 @@
 ﻿using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Skills;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
 public sealed class SkillAssignButton : ControlPanelButton
 {
     private readonly int[] _skillCountChars;
+
+    public SkillTrackingData SkillTrackingData { get; }
 
     public int SkillAssignButtonId { get; }
     public bool IsSelected { get; set; }
@@ -14,12 +17,14 @@ public sealed class SkillAssignButton : ControlPanelButton
 
     public SkillAssignButton(
         int skillAssignButtonId,
-        int skillPanelFrame)
+        int skillPanelFrame,
+        SkillTrackingData skillTrackingData)
         : base(skillPanelFrame)
     {
         _skillCountChars = new int[2];
 
         SkillAssignButtonId = skillAssignButtonId;
+        SkillTrackingData = skillTrackingData;
     }
 
     public void UpdateSkillCount(int numberOfSkillsAvailable)

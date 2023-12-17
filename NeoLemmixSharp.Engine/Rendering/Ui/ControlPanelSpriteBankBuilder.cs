@@ -71,21 +71,11 @@ public sealed class ControlPanelSpriteBankBuilder
 
     private void LoadPanelTextures()
     {
-        RegisterTexture(ControlPanelTexture.PanelEmptySlot);
-        RegisterTexture(ControlPanelTexture.PanelIconCpmAndReplay);
-        RegisterTexture(ControlPanelTexture.PanelIconDirectional);
-        RegisterTexture(ControlPanelTexture.PanelIconFastForward);
-        RegisterTexture(ControlPanelTexture.PanelIconFrameskip);
-        RegisterTexture(ControlPanelTexture.PanelIconNuke);
-        RegisterTexture(ControlPanelTexture.PanelIconPause);
-        RegisterTexture(ControlPanelTexture.PanelIconRestart);
-        RegisterTexture(ControlPanelTexture.PanelIconReleaseRateMinus);
-        RegisterTexture(ControlPanelTexture.PanelIconReleaseRatePlus);
+        RegisterTexture(ControlPanelTexture.Panel);
         RegisterTexture(ControlPanelTexture.PanelMinimapRegion);
-        RegisterTexture(ControlPanelTexture.PanelPanelIcons);
-        RegisterTexture(ControlPanelTexture.PanelSkillCountErase);
-        RegisterTexture(ControlPanelTexture.PanelSkillPanels);
+        RegisterTexture(ControlPanelTexture.PanelIcons);
         RegisterTexture(ControlPanelTexture.PanelSkillSelected);
+        RegisterTexture(ControlPanelTexture.PanelSkills);
     }
 
     private void LoadCursorSprites()

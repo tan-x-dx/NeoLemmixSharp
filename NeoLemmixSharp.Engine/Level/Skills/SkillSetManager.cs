@@ -7,6 +7,8 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>
 {
     private readonly SkillTrackingData[] _skillTrackingDataList;
 
+    public ReadOnlySpan<SkillTrackingData> AllSkillTrackingData => new(_skillTrackingDataList);
+
     public SkillSetManager(IEnumerable<SkillSetData> skillSetData)
     {
         _skillTrackingDataList = CreateSkillDataList(skillSetData);
@@ -40,9 +42,8 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>
 
     public void SetSkillCount(LemmingSkill lemmingSkill, Team? team, int value, bool isDelta)
     {
-        for (var i = 0; i < _skillTrackingDataList.Length; i++)
+        foreach (var skillTrackingData in AllSkillTrackingData)
         {
-            var skillTrackingData = _skillTrackingDataList[i];
             if (skillTrackingData.Skill != lemmingSkill ||
                 (team is not null && skillTrackingData.Team != team))
                 continue;

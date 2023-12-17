@@ -6,6 +6,8 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 public sealed class LevelControlPanel : ILevelControlPanel
 {
     public const int MaxNumberOfSkillButtons = 10;
+    private const int NumberOfTechnicalButtons = 9;
+    private const int TotalNumberOfButtons = MaxNumberOfSkillButtons + NumberOfTechnicalButtons;
     private const int ControlPanelButtonPixelWidth = 16;
     private const int ControlPanelButtonPixelHeight = 23;
     private const int ControlPanelInfoPixelHeight = 16;
@@ -85,9 +87,11 @@ public sealed class LevelControlPanel : ILevelControlPanel
     {
         var result = new SkillAssignButton[skillSetManager.TotalNumberOfSkills];
 
-        for (var i = 0; i < result.Length; i++)
+        var i = 0;
+        foreach (var skillTrackingData in skillSetManager.AllSkillTrackingData)
         {
-            result[i] = new SkillAssignButton(i, (i + 2) & 7);
+            result[i] = new SkillAssignButton(i, (i + 2) & 7, skillTrackingData);
+            i++;
         }
 
         return result;
@@ -112,8 +116,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
     private void RecalculateButtonDimensions()
     {
-        // 19 = 10 skill buttons + 9 other buttons
-        HorizontalButtonScreenSpace = 19 * ControlPanelButtonPixelWidth * _controlPanelScale;
+        HorizontalButtonScreenSpace = TotalNumberOfButtons * ControlPanelButtonPixelWidth * _controlPanelScale;
 
         ControlPanelX = (ScreenWidth - HorizontalButtonScreenSpace) / 2;
         ControlPanelY = ScreenHeight - (ControlPanelTotalPixelHeight * _controlPanelScale);
@@ -164,6 +167,8 @@ public sealed class LevelControlPanel : ILevelControlPanel
         UpdateButtonDimensions(_clearPhysicsButton);
         y0 += h0;
         UpdateButtonDimensions(_replayButton);
+
+        return;
 
         void UpdateButtonDimensions(ControlPanelButton button)
         {

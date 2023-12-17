@@ -14,21 +14,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
     private readonly SkillAssignButtonRenderer[] _skillAssignButtonRenderers;
 
     private readonly Texture2D _whitePixelTexture;
-    private readonly Texture2D _emptySlot;
-    private readonly Texture2D _iconCpmAndReplay;
-    private readonly Texture2D _iconDirectional;
-    private readonly Texture2D _iconFf;
-    private readonly Texture2D _iconFrameskip;
-    private readonly Texture2D _iconNuke;
-    private readonly Texture2D _iconPause;
-    private readonly Texture2D _iconRestart;
-    private readonly Texture2D _iconRrMinus;
-    private readonly Texture2D _iconRrPlus;
-    private readonly Texture2D _minimapRegion;
-    private readonly Texture2D _panelIcons;
-    private readonly Texture2D _skillCountErase;
-    private readonly Texture2D _skillPanels;
-    private readonly Texture2D _skillSelected;
+    private readonly Texture2D _panels;
 
     public ClassicControlPanelRenderer(
         ControlPanelSpriteBank spriteBank,
@@ -41,21 +27,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
             .ToArray();
 
         _whitePixelTexture = spriteBank.GetTexture(ControlPanelTexture.WhitePixel);
-        _emptySlot = spriteBank.GetTexture(ControlPanelTexture.PanelEmptySlot);
-        _iconCpmAndReplay = spriteBank.GetTexture(ControlPanelTexture.PanelIconCpmAndReplay);
-        _iconDirectional = spriteBank.GetTexture(ControlPanelTexture.PanelIconDirectional);
-        _iconFf = spriteBank.GetTexture(ControlPanelTexture.PanelIconFastForward);
-        _iconFrameskip = spriteBank.GetTexture(ControlPanelTexture.PanelIconFrameskip);
-        _iconNuke = spriteBank.GetTexture(ControlPanelTexture.PanelIconNuke);
-        _iconPause = spriteBank.GetTexture(ControlPanelTexture.PanelIconPause);
-        _iconRestart = spriteBank.GetTexture(ControlPanelTexture.PanelIconRestart);
-        _iconRrMinus = spriteBank.GetTexture(ControlPanelTexture.PanelIconReleaseRateMinus);
-        _iconRrPlus = spriteBank.GetTexture(ControlPanelTexture.PanelIconReleaseRatePlus);
-        _minimapRegion = spriteBank.GetTexture(ControlPanelTexture.PanelMinimapRegion);
-        _panelIcons = spriteBank.GetTexture(ControlPanelTexture.PanelPanelIcons);
-        _skillCountErase = spriteBank.GetTexture(ControlPanelTexture.PanelSkillCountErase);
-        _skillPanels = spriteBank.GetTexture(ControlPanelTexture.PanelSkillPanels);
-        _skillSelected = spriteBank.GetTexture(ControlPanelTexture.PanelSkillSelected);
+        _panels = spriteBank.GetTexture(ControlPanelTexture.Panel);
     }
 
     public void RenderControlPanel(SpriteBatch spriteBatch)
@@ -79,7 +51,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
         if (i < LevelControlPanel.MaxNumberOfSkillButtons)
         {
-            var sourceRectangle = new Rectangle(0, 0, _emptySlot.Width, _emptySlot.Height);
+            var emptySlotSourceRectangle = PanelHelpers.GetRectangleForCoordinates(0, 2);
             var destRectangle = new Rectangle(
                 _levelControlPanel.ControlPanelX + (i + 4) * _levelControlPanel.ControlPanelButtonScreenWidth,
                 _levelControlPanel.ControlPanelButtonY,
@@ -88,9 +60,9 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
             for (; i < LevelControlPanel.MaxNumberOfSkillButtons; i++)
             {
                 spriteBatch.Draw(
-                    _emptySlot,
+                    _panels,
                     destRectangle,
-                    sourceRectangle,
+                    emptySlotSourceRectangle,
                     RenderingLayers.ControlPanelButtonLayer);
 
                 destRectangle.X += _levelControlPanel.ControlPanelButtonScreenWidth;
