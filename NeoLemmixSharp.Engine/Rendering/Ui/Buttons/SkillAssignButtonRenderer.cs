@@ -16,7 +16,6 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
     private readonly Texture2D _skillSelected;
     private readonly Texture2D _skillIcons;
 
-    private readonly SkillCountDigitFont _skillCountDigitFont;
     private readonly int _skillY;
 
     public SkillAssignButtonRenderer(
@@ -28,8 +27,6 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
         _skillPanels = spriteBank.GetTexture(ControlPanelTexture.Panel);
         _skillSelected = spriteBank.GetTexture(ControlPanelTexture.PanelSkillSelected);
         _skillIcons = spriteBank.GetTexture(ControlPanelTexture.PanelSkills);
-
-        _skillCountDigitFont = FontBank.SkillCountDigitFont;
 
         var skillTrackingData = _skillAssignButton.SkillTrackingData;
         _skillY = GetSkillY(skillTrackingData.Skill);
@@ -90,7 +87,7 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
     {
         var dx = 3 * _skillAssignButton.ScaleMultiplier;
 
-        _skillCountDigitFont.RenderTextSpan(
+        FontBank.SkillCountDigitFont.RenderTextSpan(
             spriteBatch,
             _skillAssignButton.SkillCountChars,
             destRectangle.X + dx,

@@ -45,7 +45,8 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
     public ReadOnlySpan<SkillAssignButton> SkillAssignButtons => new(_skillAssignButtons);
     public ReadOnlySpan<ControlPanelButton> AllButtons => new(_allButtons);
-    public bool HasReleaseRateButtons { get; private set; }
+    public bool HasReleaseRateButtons { get; }
+    private int ReleaseRateButtonOffset => HasReleaseRateButtons ? 2 : 0;
 
     public LevelControlPanel(
         LevelData levelData,
@@ -56,32 +57,35 @@ public sealed class LevelControlPanel : ILevelControlPanel
         _controller = controller;
         LevelTimer = levelTimer;
 
+        HasReleaseRateButtons = levelData.AllHatchGroupData.Count == 1;
+
         _skillAssignButtons = CreateSkillAssignButtons(skillSetManager);
         _allButtons = new ControlPanelButton[NumberOfTechnicalButtons + _skillAssignButtons.Length];
 
-        SetUpButtons(levelData);
+        SetUpButtons();
 
         _maxSkillPanelScroll = _skillAssignButtons.Length - MaxNumberOfSkillButtons;
 
         SetSelectedSkillAssignmentButton(_skillAssignButtons.FirstOrDefault());
     }
 
-    private static SkillAssignButton[] CreateSkillAssignButtons(SkillSetManager skillSetManager)
+    private SkillAssignButton[] CreateSkillAssignButtons(SkillSetManager skillSetManager)
     {
         var allSkillTrackingData = skillSetManager.AllSkillTrackingData;
         var result = new SkillAssignButton[allSkillTrackingData.Length];
 
         var i = 0;
+        var hatchGroupOffset = ReleaseRateButtonOffset;
         foreach (var skillTrackingData in allSkillTrackingData)
         {
-            result[i] = new SkillAssignButton(i, (i + 2) & 7, skillTrackingData);
+            result[i] = new SkillAssignButton(i, (i + hatchGroupOffset) & 7, skillTrackingData);
             i++;
         }
 
         return result;
     }
 
-    private void SetUpButtons(LevelData levelData)
+    private void SetUpButtons()
     {
         var i = 0;
         for (; i < _skillAssignButtons.Length; i++)
@@ -176,7 +180,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
     {
         var indexOfLastSkillAssignButtonToRender = SkillPanelScroll + MaxNumberOfSkillButtons;
 
-        var x0 = ControlPanelX + ControlPanelButtonScreenWidth * (2 - SkillPanelScroll);
+        var x0 = ControlPanelX + ControlPanelButtonScreenWidth * (ReleaseRateButtonOffset - SkillPanelScroll);
 
         for (var i = 0; i < _skillAssignButtons.Length; i++)
         {
