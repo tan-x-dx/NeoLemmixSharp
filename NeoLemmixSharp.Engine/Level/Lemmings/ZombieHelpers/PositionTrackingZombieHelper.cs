@@ -23,6 +23,8 @@ public sealed class PositionTrackingZombieHelper : IZombieHelper
             verticalBoundaryBehaviour);
     }
 
+    public void Clear() => _zombieSpacialHashGrid.Clear();
+
     public void RegisterZombie(Lemming lemming) => _zombieSpacialHashGrid.AddItem(lemming);
     public void UpdateZombiePosition(Lemming lemming)
     {

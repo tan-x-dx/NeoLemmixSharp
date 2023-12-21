@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class SkillSetManager : IComparer<SkillTrackingData>
+public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 {
     private readonly SkillTrackingData[] _skillTrackingDataList;
 
@@ -69,5 +69,10 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>
 
         var skillComparison = x.Skill.Id.CompareTo(y.Skill.Id);
         return skillComparison;
+    }
+
+    public void Dispose()
+    {
+	    Array.Clear(_skillTrackingDataList);
     }
 }

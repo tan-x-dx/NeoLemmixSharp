@@ -129,6 +129,10 @@ public sealed class LevelScreen : IBaseScreen
 
 	public void Dispose()
 	{
+		LemmingManager.Dispose();
+		GadgetManager.Dispose();
+		SkillSetManager.Dispose();
+
 #pragma warning disable CS8625
 		SetTerrainManager(null);
 		SetLemmingManager(null);

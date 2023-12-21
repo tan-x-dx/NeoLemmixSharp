@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class LemmingManager : IPerfectHasher<Lemming>
+public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 {
     public const int BlockerQuantityThreshold = 20;
     public const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize32;
@@ -269,4 +269,13 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
     int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Length;
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
+
+    public void Dispose()
+    {
+        Array.Clear(_lemmings);
+        Array.Clear(_hatchGroups);
+        _lemmingPositionHelper.Clear();
+        _lemmingsToZombify.Clear();
+        _allBlockers.Clear();
+    }
 }
