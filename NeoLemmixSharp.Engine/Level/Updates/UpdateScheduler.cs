@@ -102,11 +102,10 @@ end;
     public void Tick()
     {
         _inputController.Tick();
+        _levelCursor.Tick();
 
         HandleKeyboardInput();
         HandleMouseInput();
-
-        _levelCursor.OnNewFrame();
 
         var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
         if (mouseIsInLevelViewPort)

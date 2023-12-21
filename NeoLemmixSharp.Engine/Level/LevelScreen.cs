@@ -81,7 +81,7 @@ public sealed class LevelScreen : IBaseScreen
 
         _inputController.Tick();
         HandleKeyboardInput();
-        // _levelCursor.OnNewFrame();
+        // _levelCursor.Tick();
         // _lemmingManager.CheckLemmingsUnderCursor();
 
         _updateScheduler.CheckForQueuedAction();

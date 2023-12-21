@@ -7,22 +7,20 @@ namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
 public readonly ref struct SimpleSetEnumerable<T>
 {
-    public static SimpleSetEnumerable<T> Empty => default;
+	public static SimpleSetEnumerable<T> Empty => default;
 
-    private readonly IPerfectHasher<T> _hasher;
-    private readonly ReadOnlySpan<uint> _bits;
-    private readonly int _count;
+	private readonly IPerfectHasher<T> _hasher;
+	private readonly ReadOnlySpan<uint> _bits;
+	public readonly int Count;
 
-    public bool IsEmpty => _count == 0;
+	public SimpleSetEnumerable(IPerfectHasher<T> hasher, ReadOnlySpan<uint> bits, int count)
+	{
+		_hasher = hasher;
+		_bits = bits;
+		Count = count;
+	}
 
-    public SimpleSetEnumerable(IPerfectHasher<T> hasher, ReadOnlySpan<uint> bits, int count)
-    {
-        _hasher = hasher;
-        _bits = bits;
-        _count = count;
-    }
-
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitBasedEnumerator<T> GetEnumerator() => new(_hasher, _bits, _count);
+	[Pure]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public BitBasedEnumerator<T> GetEnumerator() => new(_hasher, _bits, Count);
 }

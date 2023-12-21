@@ -45,7 +45,7 @@ public sealed class PositionTrackingZombieHelper : IZombieHelper
         var checkRegion = new LevelPositionPair(lemming.TopLeftPixel, lemming.BottomRightPixel);
         var nearbyZombies = _zombieSpacialHashGrid.GetAllItemsNearRegion(checkRegion);
 
-        if (nearbyZombies.IsEmpty)
+        if (nearbyZombies.Count == 0)
             return;
 
         foreach (var zombie in nearbyZombies)

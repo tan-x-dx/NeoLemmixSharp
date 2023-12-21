@@ -212,7 +212,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
         var gadgetSet = LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds);
 
-        if (gadgetSet.IsEmpty)
+        if (gadgetSet.Count == 0)
             return true;
 
         Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
