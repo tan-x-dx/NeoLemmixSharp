@@ -21,8 +21,8 @@ public sealed class FallerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var gadgetManager = LevelConstants.GadgetManager;
-        var terrainManager = LevelConstants.TerrainManager;
+        var gadgetManager = LevelScreen.GadgetManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var currentFallDistanceStep = 0;
         var maxFallDistanceStep = 3; // A lemming falls 3 pixels each frame
 
@@ -94,7 +94,7 @@ public sealed class FallerAction : LemmingAction
 
     private static bool IsFallFatal(Lemming lemming)
     {
-        var gadgetManager = LevelConstants.GadgetManager;
+        var gadgetManager = LevelScreen.GadgetManager;
 
         return !(lemming.State.IsFloater || lemming.State.IsGlider) &&
                gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, NoSplatGadgetType.Instance) &&

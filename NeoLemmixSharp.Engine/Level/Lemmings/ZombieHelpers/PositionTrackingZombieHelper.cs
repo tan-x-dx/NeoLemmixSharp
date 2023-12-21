@@ -54,7 +54,7 @@ public sealed class PositionTrackingZombieHelper : IZombieHelper
 
             if (checkRegion.Overlaps(zombieRegion))
             {
-                LevelConstants.LemmingManager.RegisterLemmingForZombification(lemming);
+                LevelScreen.LemmingManager.RegisterLemmingForZombification(lemming);
 
                 return;
             }

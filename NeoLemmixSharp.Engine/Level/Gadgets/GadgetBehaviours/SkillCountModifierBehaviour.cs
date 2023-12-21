@@ -21,6 +21,6 @@ public sealed class SkillCountModifierBehaviour : IGadgetBehaviour
 
     public void PerformAction(Lemming lemming)
     {
-        LevelConstants.SkillSetManager.SetSkillCount(_skill, _team, _value, _isDelta);
+        LevelScreen.SkillSetManager.SetSkillCount(_skill, _team, _value, _isDelta);
     }
 }

@@ -24,7 +24,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
         var facingDirection = lemming.FacingDirection;
@@ -131,7 +131,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         Lemming lemming,
         LevelPosition checkPosition)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 

@@ -17,7 +17,7 @@ public sealed class WalkerSkill : LemmingSkill
 
     public override bool AssignToLemming(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;

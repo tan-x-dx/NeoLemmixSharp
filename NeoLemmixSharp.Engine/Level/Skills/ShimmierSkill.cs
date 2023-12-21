@@ -17,7 +17,7 @@ public sealed class ShimmierSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
 
         if (lemming.CurrentAction == ClimberAction.Instance)
         {

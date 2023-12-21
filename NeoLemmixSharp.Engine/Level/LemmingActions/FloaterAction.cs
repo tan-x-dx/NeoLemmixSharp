@@ -29,7 +29,7 @@ public sealed class FloaterAction : LemmingAction
         var orientation = lemming.Orientation;
         var levelPosition = lemming.LevelPosition;
 
-        var gadgetSet = LevelConstants.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+        var gadgetSet = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
         foreach (var gadget in gadgetSet)
         {

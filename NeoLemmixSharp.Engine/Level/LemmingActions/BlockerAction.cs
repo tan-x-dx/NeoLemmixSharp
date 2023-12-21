@@ -24,11 +24,11 @@ public sealed class BlockerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        if (LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
             return true;
 
         FallerAction.Instance.TransitionLemmingToAction(lemming, false);
-        LevelConstants.LemmingManager.DeregisterBlocker(lemming);
+        LevelScreen.LemmingManager.DeregisterBlocker(lemming);
 
         return true;
     }
@@ -37,7 +37,7 @@ public sealed class BlockerAction : LemmingAction
     {
         base.TransitionLemmingToAction(lemming, turnAround);
 
-        LevelConstants.LemmingManager.RegisterBlocker(lemming);
+        LevelScreen.LemmingManager.RegisterBlocker(lemming);
     }
 
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -7;
@@ -55,7 +55,7 @@ public sealed class BlockerAction : LemmingAction
 
     private static bool CheckPixelForBlocker(Lemming lemming, LevelPosition testPosition)
     {
-        var pixel = LevelConstants.TerrainManager.GetBlockerData(testPosition);
+        var pixel = LevelScreen.TerrainManager.GetBlockerData(testPosition);
         if (pixel == PixelType.Empty)
             return false;
 
@@ -167,7 +167,7 @@ public sealed class BlockerAction : LemmingAction
         var moveDelta = lemming.FacingDirection.Id - 1; // Fixes off-by-one errors between left/right
         levelPosition = orientation.MoveRight(levelPosition, moveDelta);
 
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
 
         for (var y = -3; y < 7; y++)
         {

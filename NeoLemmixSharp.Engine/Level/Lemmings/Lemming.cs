@@ -120,9 +120,9 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         if (shouldContinue &&
             CurrentAction != ExiterAction.Instance &&
             !State.IsZombie &&
-            LevelConstants.LemmingManager.AnyZombies())
+            LevelScreen.LemmingManager.AnyZombies())
         {
-            LevelConstants.LemmingManager.DoZombieCheck(this);
+            LevelScreen.LemmingManager.DoZombieCheck(this);
         }
 
         if (FastForwardTime > 0)
@@ -181,14 +181,14 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     private bool CheckLevelBoundaries()
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var footPixel = terrainManager.PixelTypeAtPosition(FootPosition);
         var headPixel = terrainManager.PixelTypeAtPosition(HeadPosition);
 
         if (!footPixel.IsVoid() || !headPixel.IsVoid())
             return true;
 
-        LevelConstants.LemmingManager.RemoveLemming(this);
+        LevelScreen.LemmingManager.RemoveLemming(this);
         return false;
     }
 
@@ -210,7 +210,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     {
         var checkPositionsBounds = new LevelPositionPair(LevelPosition, PreviousLevelPosition);
 
-        var gadgetSet = LevelConstants.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds);
+        var gadgetSet = LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds);
 
         if (gadgetSet.IsEmpty)
             return true;

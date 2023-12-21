@@ -26,9 +26,9 @@ public sealed class OhNoerAction : LemmingAction
             //   if(lemming.CurrentAction == )
 
         }
-        else if (!LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        else if (!LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
         {
-            LevelConstants.LemmingManager.DeregisterBlocker(lemming);
+            LevelScreen.LemmingManager.DeregisterBlocker(lemming);
             /*
             L.LemHasBlockerField := False; // remove blocker field
             SetBlockerMap;

@@ -29,7 +29,7 @@ public sealed class GliderAction : LemmingAction
 
     private static bool DoTurnAround(Lemming lemming, bool moveForwardFirst)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var currentPosition = lemming.LevelPosition;

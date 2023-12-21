@@ -24,7 +24,7 @@ public sealed class ReacherAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
@@ -74,7 +74,7 @@ public sealed class ReacherAction : LemmingAction
         Lemming lemming,
         LevelPosition lemmingPosition)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         if (terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 10)))
             return 0;
 

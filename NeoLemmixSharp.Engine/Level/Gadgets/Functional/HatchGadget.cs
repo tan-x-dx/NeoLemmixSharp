@@ -19,7 +19,7 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget
     public LevelPosition PreviousTopLeftPixel { get; private set; }
     public LevelPosition PreviousBottomRightPixel { get; private set; }
 
-    public LevelPosition SpawnPosition => LevelConstants.TerrainManager.NormalisePosition(GadgetBounds.TopLeft + _spawnPositionTranslation);
+    public LevelPosition SpawnPosition => LevelScreen.TerrainManager.NormalisePosition(GadgetBounds.TopLeft + _spawnPositionTranslation);
     public HatchSpawnData HatchSpawnData { get; }
 
     public HatchGadget(
@@ -67,7 +67,7 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget
 
     private void UpdatePosition(LevelPosition position)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
 
         PreviousTopLeftPixel = terrainManager.NormalisePosition(TopLeftPixel);
         PreviousBottomRightPixel = terrainManager.NormalisePosition(BottomRightPixel);

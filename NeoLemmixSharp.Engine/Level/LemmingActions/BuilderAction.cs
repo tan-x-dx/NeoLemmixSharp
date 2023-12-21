@@ -48,7 +48,7 @@ public sealed class BuilderAction : LemmingAction
 
     private static void BuilderFrame0(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         lemming.NumberOfBricksLeft--;
 
         var orientation = lemming.Orientation;
@@ -105,7 +105,7 @@ public sealed class BuilderAction : LemmingAction
 
     public static void LayBrick(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dy = lemming.CurrentAction == Instance
