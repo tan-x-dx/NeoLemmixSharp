@@ -55,7 +55,7 @@ public sealed class LemmingState
             if (value)
             {
                 _states |= 1U << FloaterBitIndex;
-                _states &= 1U << GliderBitIndex; // Deliberately knock out the glider
+                _states &= ~(1U << GliderBitIndex); // Deliberately knock out the glider
             }
             else
             {
@@ -73,7 +73,7 @@ public sealed class LemmingState
             if (value)
             {
                 _states |= 1U << GliderBitIndex;
-                _states &= 1U << FloaterBitIndex; // Deliberately knock out the floater
+                _states &= ~(1U << FloaterBitIndex); // Deliberately knock out the floater
             }
             else
             {

@@ -8,9 +8,9 @@ public sealed class FloaterAction : LemmingAction
     public static readonly FloaterAction Instance = new();
 
     private readonly int[] _floaterFallTable =
-    {
-        3, 3, 3, 3, -1, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2
-    };
+    [
+	    3, 3, 3, 3, -1, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2
+    ];
 
     private FloaterAction()
     {
