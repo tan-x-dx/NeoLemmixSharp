@@ -11,6 +11,7 @@ using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
@@ -56,6 +57,8 @@ public sealed class LevelBuilder : IDisposable
 			lemmingSpriteBankLookup[team] = lemmingSpriteBank;
 		}
 
+		var controlPanelButtonAvailability = GetControlPanelButtonAvailability(levelData);
+
 		var inputController = new LevelInputController();
 		var skillSetManager = new SkillSetManager(levelData.SkillSetData);
 		LevelScreen.SetSkillSetManager(skillSetManager);
@@ -63,12 +66,15 @@ public sealed class LevelBuilder : IDisposable
 		LevelTimer levelTimer = levelData.TimeLimit.HasValue
 			? new CountDownLevelTimer(levelData.TimeLimit.Value)
 			: new CountUpLevelTimer();
-		var controlPanel = new LevelControlPanel(levelData, skillSetManager, inputController, levelTimer);
+		var controlPanel = new LevelControlPanel(levelData, controlPanelButtonAvailability, inputController, skillSetManager, levelTimer);
 
 		foreach (var skillAssignButton in controlPanel.SkillAssignButtons)
 		{
-			var skillTrackingData = skillSetManager.GetSkillTrackingData(skillAssignButton.SkillAssignButtonId)!;
-			skillAssignButton.UpdateSkillCount(skillTrackingData.SkillCount);
+			var skillTrackingData = skillSetManager.GetSkillTrackingData(skillAssignButton.SkillTrackingDataId);
+			if (skillTrackingData is not null)
+			{
+				skillAssignButton.UpdateSkillCount(skillTrackingData.SkillCount);
+			}
 		}
 
 		var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
@@ -141,6 +147,18 @@ public sealed class LevelBuilder : IDisposable
 			controlPanel,
 			levelViewport,
 			levelRenderer);
+	}
+
+	private ControlPanelButtonAvailability GetControlPanelButtonAvailability(LevelData levelData)
+	{
+		return ControlPanelButtonAvailability.ShowPauseButton |
+		       ControlPanelButtonAvailability.ShowNukeButton |
+		       ControlPanelButtonAvailability.ShowFastForwardsButton |
+		       ControlPanelButtonAvailability.ShowRestartButton |
+		       ControlPanelButtonAvailability.ShowFrameNudgeButtons |
+		       ControlPanelButtonAvailability.ShowDirectionSelectButtons |
+		       ControlPanelButtonAvailability.ShowClearPhysicsAndReplayButton |
+		       ControlPanelButtonAvailability.ShowReleaseRateButtonsIfPossible;
 	}
 
 	public void Dispose()
