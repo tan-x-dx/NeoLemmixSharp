@@ -19,6 +19,8 @@ public sealed class LevelScreen : IBaseScreen
 	public static LemmingManager LemmingManager { get; private set; } = null!;
 	public static GadgetManager GadgetManager { get; private set; } = null!;
 	public static SkillSetManager SkillSetManager { get; private set; } = null!;
+	public static ILevelControlPanel LevelControlPanel { get; private set; } = null!;
+	public static UpdateScheduler UpdateScheduler { get; private set; } = null!;
 
 	public static void SetTerrainManager(TerrainManager terrainManager)
 	{
@@ -38,6 +40,16 @@ public sealed class LevelScreen : IBaseScreen
 	public static void SetSkillSetManager(SkillSetManager skillSetManager)
 	{
 		SkillSetManager = skillSetManager;
+	}
+
+	public static void SetLevelControlPanel(ILevelControlPanel levelControlPanel)
+	{
+		LevelControlPanel = levelControlPanel;
+	}
+
+	public static void SetUpdateScheduler(UpdateScheduler updateScheduler)
+	{
+		UpdateScheduler = updateScheduler;
 	}
 
 	private readonly UpdateScheduler _updateScheduler;
@@ -138,6 +150,8 @@ public sealed class LevelScreen : IBaseScreen
 		SetLemmingManager(null);
 		SetGadgetManager(null);
 		SetSkillSetManager(null);
+		SetLevelControlPanel(null);
+		SetUpdateScheduler(null);
 
 		_levelRenderer.Dispose();
 		IsDisposed = true;

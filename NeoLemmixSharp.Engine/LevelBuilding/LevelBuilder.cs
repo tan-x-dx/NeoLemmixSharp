@@ -57,26 +57,6 @@ public sealed class LevelBuilder : IDisposable
 			lemmingSpriteBankLookup[team] = lemmingSpriteBank;
 		}
 
-		var controlPanelButtonAvailability = GetControlPanelButtonAvailability(levelData);
-
-		var inputController = new LevelInputController();
-		var skillSetManager = new SkillSetManager(levelData.SkillSetData);
-		LevelScreen.SetSkillSetManager(skillSetManager);
-
-		LevelTimer levelTimer = levelData.TimeLimit.HasValue
-			? new CountDownLevelTimer(levelData.TimeLimit.Value)
-			: new CountUpLevelTimer();
-		var controlPanel = new LevelControlPanel(levelData, controlPanelButtonAvailability, inputController, skillSetManager, levelTimer);
-
-		foreach (var skillAssignButton in controlPanel.SkillAssignButtons)
-		{
-			var skillTrackingData = skillSetManager.GetSkillTrackingData(skillAssignButton.SkillTrackingDataId);
-			if (skillTrackingData is not null)
-			{
-				skillAssignButton.UpdateSkillCount(skillTrackingData.SkillCount);
-			}
-		}
-
 		var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
 		var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
 
@@ -84,6 +64,17 @@ public sealed class LevelBuilder : IDisposable
 		var levelLemmings = _levelObjectAssembler.GetLevelLemmings();
 		var lemmingManager = new LemmingManager(levelData, hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 		LevelScreen.SetLemmingManager(lemmingManager);
+
+		var controlPanelButtonAvailability = GetControlPanelButtonAvailability(levelData);
+		var inputController = new LevelInputController();
+		var skillSetManager = new SkillSetManager(levelData.SkillSetData);
+		LevelScreen.SetSkillSetManager(skillSetManager);
+
+		LevelTimer levelTimer = levelData.TimeLimit.HasValue
+			? new CountDownLevelTimer(levelData.TimeLimit.Value)
+			: new CountUpLevelTimer();
+		var controlPanel = new LevelControlPanel(controlPanelButtonAvailability, inputController, skillSetManager, lemmingManager, levelTimer);
+		LevelScreen.SetLevelControlPanel(controlPanel);
 
 		_levelObjectAssembler.AssembleLevelObjects(
 			_content,
@@ -100,6 +91,7 @@ public sealed class LevelBuilder : IDisposable
 		var levelViewport = new Viewport(levelCursor, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
 		var updateScheduler = new UpdateScheduler(controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, gadgetManager, skillSetManager);
+		LevelScreen.SetUpdateScheduler(updateScheduler);
 
 		var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
 
@@ -149,16 +141,16 @@ public sealed class LevelBuilder : IDisposable
 			levelRenderer);
 	}
 
-	private ControlPanelButtonAvailability GetControlPanelButtonAvailability(LevelData levelData)
+	private static ControlPanelParameters GetControlPanelButtonAvailability(LevelData levelData)
 	{
-		return ControlPanelButtonAvailability.ShowPauseButton |
-		       ControlPanelButtonAvailability.ShowNukeButton |
-		       ControlPanelButtonAvailability.ShowFastForwardsButton |
-		       ControlPanelButtonAvailability.ShowRestartButton |
-		       ControlPanelButtonAvailability.ShowFrameNudgeButtons |
-		       ControlPanelButtonAvailability.ShowDirectionSelectButtons |
-		       ControlPanelButtonAvailability.ShowClearPhysicsAndReplayButton |
-		       ControlPanelButtonAvailability.ShowReleaseRateButtonsIfPossible;
+		return ControlPanelParameters.ShowPauseButton |
+			   ControlPanelParameters.ShowNukeButton |
+			   ControlPanelParameters.ShowFastForwardsButton |
+			   ControlPanelParameters.ShowRestartButton |
+			   ControlPanelParameters.ShowFrameNudgeButtons |
+			   ControlPanelParameters.ShowDirectionSelectButtons |
+			   ControlPanelParameters.ShowClearPhysicsAndReplayButton |
+			   ControlPanelParameters.ShowReleaseRateButtonsIfPossible;
 	}
 
 	public void Dispose()

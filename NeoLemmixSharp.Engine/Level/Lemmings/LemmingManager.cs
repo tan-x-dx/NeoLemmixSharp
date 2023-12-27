@@ -33,6 +33,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
     public int TotalNumberOfLemmings => _lemmings.Length;
     public ReadOnlySpan<Lemming> AllLemmings => new(_lemmings);
+    public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
 
     private int _nextLemmingId;
 
@@ -112,7 +113,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         if (updateState == UpdateState.FastForward ||
             elapsedTicksModulo3 == 0)
         {
-            foreach (var hatchGroup in _hatchGroups.AsSpan())
+            foreach (var hatchGroup in AllHatchGroups)
             {
                 var hatchGadget = hatchGroup.Tick();
 

@@ -1,7 +1,7 @@
 ﻿namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
 [Flags]
-public enum ControlPanelButtonAvailability
+public enum ControlPanelParameters
 {
 	ShowPauseButton = 1 << 0,
 	ShowNukeButton = 1 << 1,
@@ -13,11 +13,12 @@ public enum ControlPanelButtonAvailability
 	ShowReleaseRateButtonsIfPossible = 1 << 7,
 	EnableClassicModeSkillsIfPossible = 1 << 8,
 	RemoveExcessSkillAssignButtons = 1 << 9,
+	ShowSpawnInterval = 1 << 10,
 }
 
 public static class ControlPanelButtonAvailabilityHelpers
 {
-	public static bool HasFlag(this ControlPanelButtonAvailability item, ControlPanelButtonAvailability test)
+	public static bool TestFlag(this ControlPanelParameters item, ControlPanelParameters test)
 	{
 		return (item & test) != 0;
 	}

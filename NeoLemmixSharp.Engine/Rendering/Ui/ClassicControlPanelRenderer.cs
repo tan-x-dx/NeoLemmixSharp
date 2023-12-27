@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Rendering;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
@@ -14,7 +12,6 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
 	private readonly LevelControlPanel _levelControlPanel;
 	private readonly ControlPanelButtonRenderer[] _controlPanelButtonRenderers;
-	private readonly SkillAssignButtonRenderer[] _skillAssignButtonRenderers;
 
 	private readonly Texture2D _panels;
 
@@ -25,9 +22,7 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 		_levelControlPanel = levelControlPanel;
 
 		var allButtons = _levelControlPanel.AllButtons;
-		var skillAssignButtons = _levelControlPanel.SkillAssignButtons;
 		_controlPanelButtonRenderers = SetUpButtonRenderers(spriteBank, allButtons);
-		_skillAssignButtonRenderers = SetUpSkillButtonRenderers(skillAssignButtons);
 
 		_panels = spriteBank.GetTexture(ControlPanelTexture.Panel);
 	}
@@ -49,22 +44,6 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 		return result;
 	}
 
-	private SkillAssignButtonRenderer[] SetUpSkillButtonRenderers(ReadOnlySpan<SkillAssignButton> skillAssignButtons)
-	{
-		var result = new SkillAssignButtonRenderer[skillAssignButtons.Length];
-
-		var i = 0;
-		foreach (var controlPanelButtonRenderer in _controlPanelButtonRenderers)
-		{
-			if (controlPanelButtonRenderer is SkillAssignButtonRenderer skillAssignButtonRenderer)
-			{
-				result[i++] = skillAssignButtonRenderer;
-			}
-		}
-
-		return result;
-	}
-
 	public void RenderControlPanel(SpriteBatch spriteBatch)
 	{
 		RenderSkillAssignButtons(spriteBatch);
@@ -77,31 +56,9 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 
 	private void RenderSkillAssignButtons(SpriteBatch spriteBatch)
 	{
-		var i = _levelControlPanel.ReleaseRateButtonOffset;
-		foreach (var skillAssignButtonRenderer in _skillAssignButtonRenderers)
+		foreach (var controlPanelButtonRenderer in _controlPanelButtonRenderers)
 		{
-			skillAssignButtonRenderer.Render(spriteBatch);
-			i++;
-		}
-
-		if (i >= LevelControlPanel.MaxNumberOfSkillButtons)
-			return;
-
-		var emptySlotSourceRectangle = PanelHelpers.GetRectangleForCoordinates(0, 2);
-		var destRectangle = new Rectangle(
-			_levelControlPanel.ControlPanelX + i * _levelControlPanel.ControlPanelButtonScreenWidth,
-			_levelControlPanel.ControlPanelButtonY,
-			_levelControlPanel.ControlPanelButtonScreenWidth,
-			_levelControlPanel.ControlPanelButtonScreenHeight);
-		for (; i < LevelControlPanel.MaxNumberOfSkillButtons; i++)
-		{
-			spriteBatch.Draw(
-				_panels,
-				destRectangle,
-				emptySlotSourceRectangle,
-				RenderingLayers.ControlPanelButtonLayer);
-
-			destRectangle.X += _levelControlPanel.ControlPanelButtonScreenWidth;
+			controlPanelButtonRenderer.Render(spriteBatch);
 		}
 	}
 

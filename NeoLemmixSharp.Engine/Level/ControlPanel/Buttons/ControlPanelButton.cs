@@ -5,33 +5,44 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 public abstract class ControlPanelButton
 {
-    public int SkillPanelFrame { get; }
-    public bool ShouldRender { get; set; } = true;
+	private const int NumberOfSkillPanels = 8;
+	private const int SkillPanelFrameMask = NumberOfSkillPanels - 1;
 
-    public int ScreenX { get; set; }
-    public int ScreenY { get; set; }
+	public int SkillPanelFrame { get; }
+	public bool ShouldRender { get; set; } = true;
 
-    public int ScreenWidth { get; set; }
-    public int ScreenHeight { get; set; }
+	public int ScreenX { get; set; }
+	public int ScreenY { get; set; }
 
-    public int ScaleMultiplier { get; set; }
+	public int ScreenWidth { get; set; }
+	public int ScreenHeight { get; set; }
 
-    protected ControlPanelButton(int skillPanelFrame)
-    {
-        SkillPanelFrame = skillPanelFrame;
-    }
+	public int ScaleMultiplier { get; set; }
 
-    public virtual bool TryPress(int mouseX, int mouseY)
-    {
-        return MouseIsOverButton(mouseX, mouseY);
-    }
+	protected ControlPanelButton(int skillPanelFrame)
+	{
+		SkillPanelFrame = skillPanelFrame & SkillPanelFrameMask;
+	}
 
-    protected bool MouseIsOverButton(int mouseX, int mouseY)
-    {
-        return ShouldRender &&
-               mouseX >= ScreenX && mouseX <= ScreenX + ScreenWidth &&
-               mouseY >= ScreenY && mouseY <= ScreenY + ScreenHeight;
-    }
+	public virtual bool TryPress(int mouseX, int mouseY)
+	{
+		return MouseIsOverButton(mouseX, mouseY);
+	}
 
-    public abstract ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank);
+	protected bool MouseIsOverButton(int mouseX, int mouseY)
+	{
+		return ShouldRender &&
+			   mouseX >= ScreenX && mouseX <= ScreenX + ScreenWidth &&
+			   mouseY >= ScreenY && mouseY <= ScreenY + ScreenHeight;
+	}
+
+	public virtual void OnDoubleTap()
+	{
+	}
+
+	public virtual void OnPress()
+	{
+	}
+
+	public abstract ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank);
 }

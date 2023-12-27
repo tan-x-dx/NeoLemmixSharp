@@ -25,10 +25,8 @@ public sealed class SkillTrackingData
 		if (IsInfinite)
 			return;
 
-		if (SkillCount > 0)
-		{
-			SkillCount--;
-		}
+		var newSkillCount = SkillCount + delta;
+		SkillCount = Math.Clamp(newSkillCount, 0, LevelConstants.InfiniteSkillCount - 1);
 	}
 
 	public void SetSkillCount(int skillCount) => SkillCount = skillCount switch

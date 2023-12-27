@@ -11,4 +11,7 @@ public interface ILevelControlPanel
 
     void HandleMouseInput();
     void SetWindowDimensions(int windowWidth, int windowHeight);
+    void SetSelectedSkillAssignmentButton(SkillAssignButton? skillAssignButton);
+    void UpdateSkillCount(SkillAssignButton? selectedSkillAssignButton, int skillCount);
+    void OnSpawnIntervalChanged();
 }

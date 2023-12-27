@@ -37,12 +37,21 @@ public sealed class SkillAssignButton : ControlPanelButton
 		{
 			_skillCountChars[0] = SkillCountDigitFont.InfinityGlyph;
 			_skillCountChars[1] = ' ';
+			return;
 		}
-		else
-		{
-			var span = new Span<int>(_skillCountChars);
-			TextRenderingHelpers.WriteDigits(span, numberOfSkillsAvailable);
-		}
+
+		var span = new Span<int>(_skillCountChars);
+		TextRenderingHelpers.WriteDigits(span, numberOfSkillsAvailable);
+	}
+
+	public override void OnPress()
+	{
+		LevelScreen.LevelControlPanel.SetSelectedSkillAssignmentButton(this);
+	}
+
+	public override void OnDoubleTap()
+	{
+		LevelScreen.LevelControlPanel.SetSelectedSkillAssignmentButton(this);
 	}
 
 	public override ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)

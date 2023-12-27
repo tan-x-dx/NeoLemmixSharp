@@ -10,48 +10,48 @@ namespace NeoLemmixSharp.Engine.Level.Updates;
 
 public sealed class UpdateScheduler
 {
-    private readonly ILevelControlPanel _levelControlPanel;
-    private readonly LevelInputController _inputController;
-    private readonly Viewport _viewport;
-    private readonly LevelCursor _levelCursor;
-    private readonly LevelTimer _levelTimer;
-    private readonly LemmingManager _lemmingManager;
-    private readonly GadgetManager _gadgetManager;
-    private readonly SkillSetManager _skillSetManager;
+	private readonly ILevelControlPanel _levelControlPanel;
+	private readonly LevelInputController _inputController;
+	private readonly Viewport _viewport;
+	private readonly LevelCursor _levelCursor;
+	private readonly LevelTimer _levelTimer;
+	private readonly LemmingManager _lemmingManager;
+	private readonly GadgetManager _gadgetManager;
+	private readonly SkillSetManager _skillSetManager;
 
-    private LemmingSkill _queuedSkill = NoneSkill.Instance;
-    private Lemming? _queuedSkillLemming;
+	private LemmingSkill _queuedSkill = NoneSkill.Instance;
+	private Lemming? _queuedSkillLemming;
 
-    private UpdateState _updateState;
-    private int _queuedSkillFrame;
+	private UpdateState _updateState;
+	private int _queuedSkillFrame;
 
-    private int _elapsedTicks;
-    private int _elapsedTicksModuloFastForwardSpeed;
-    private int _elapsedTicksModuloFramesPerSecond;
+	private int _elapsedTicks;
+	private int _elapsedTicksModuloFastForwardSpeed;
+	private int _elapsedTicksModuloFramesPerSecond;
 
-    public bool DoneAssignmentThisFrame { get; set; }
+	public bool DoneAssignmentThisFrame { get; set; }
 
-    public UpdateScheduler(
-        ILevelControlPanel levelControlPanel,
-        Viewport viewport,
-        LevelCursor levelCursor,
-        LevelInputController inputController,
-        LevelTimer levelTimer,
-        LemmingManager lemmingManager,
-        GadgetManager gadgetManager,
-        SkillSetManager skillSetManager)
-    {
-        _levelControlPanel = levelControlPanel;
-        _levelCursor = levelCursor;
-        _viewport = viewport;
-        _inputController = inputController;
-        _levelTimer = levelTimer;
-        _lemmingManager = lemmingManager;
-        _gadgetManager = gadgetManager;
-        _skillSetManager = skillSetManager;
-    }
+	public UpdateScheduler(
+		ILevelControlPanel levelControlPanel,
+		Viewport viewport,
+		LevelCursor levelCursor,
+		LevelInputController inputController,
+		LevelTimer levelTimer,
+		LemmingManager lemmingManager,
+		GadgetManager gadgetManager,
+		SkillSetManager skillSetManager)
+	{
+		_levelControlPanel = levelControlPanel;
+		_levelCursor = levelCursor;
+		_viewport = viewport;
+		_inputController = inputController;
+		_levelTimer = levelTimer;
+		_lemmingManager = lemmingManager;
+		_gadgetManager = gadgetManager;
+		_skillSetManager = skillSetManager;
+	}
 
-    /*
+	/*
 
 procedure TLemmingGame.UpdateLemmings;
 {-------------------------------------------------------------------------------
@@ -99,186 +99,208 @@ end;
 
     */
 
-    public void Tick()
-    {
-        _inputController.Tick();
-        _levelCursor.Tick();
+	public void Tick()
+	{
+		_inputController.Tick();
+		_levelCursor.Tick();
 
-        HandleKeyboardInput();
-        HandleMouseInput();
+		HandleKeyboardInput();
+		HandleMouseInput();
 
-        var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
-        if (mouseIsInLevelViewPort)
-        {
-            var lemmingsNearCursor = _levelCursor.LemmingsNearCursorPosition();
-            foreach (var lemming in lemmingsNearCursor)
-            {
-                _levelCursor.CheckLemming(lemming);
-            }
-        }
+		var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
+		if (mouseIsInLevelViewPort)
+		{
+			var lemmingsNearCursor = _levelCursor.LemmingsNearCursorPosition();
+			foreach (var lemming in lemmingsNearCursor)
+			{
+				_levelCursor.CheckLemming(lemming);
+			}
+		}
 
-        TickLevel();
-        HandleSkillAssignment();
-    }
+		TickLevel();
+		HandleSkillAssignment();
+	}
 
-    private void TickLevel()
-    {
-        if (_updateState == UpdateState.Paused)
-            return;
+	private void TickLevel()
+	{
+		if (_updateState == UpdateState.Paused)
+			return;
 
-        _lemmingManager.Tick(_updateState, _elapsedTicksModuloFastForwardSpeed);
-        _gadgetManager.Tick(_updateState, _elapsedTicksModuloFastForwardSpeed);
+		_lemmingManager.Tick(_updateState, _elapsedTicksModuloFastForwardSpeed);
+		_gadgetManager.Tick(_updateState, _elapsedTicksModuloFastForwardSpeed);
 
-        _elapsedTicks++;
-        var elapsedTicksModuloFastForwardSpeed = _elapsedTicksModuloFastForwardSpeed + 1;
-        if (elapsedTicksModuloFastForwardSpeed == EngineConstants.FastForwardSpeedMultiplier)
-        {
-            elapsedTicksModuloFastForwardSpeed = 0;
-        }
-        _elapsedTicksModuloFastForwardSpeed = elapsedTicksModuloFastForwardSpeed;
+		_elapsedTicks++;
+		var elapsedTicksModuloFastForwardSpeed = _elapsedTicksModuloFastForwardSpeed + 1;
+		if (elapsedTicksModuloFastForwardSpeed == EngineConstants.FastForwardSpeedMultiplier)
+		{
+			elapsedTicksModuloFastForwardSpeed = 0;
+		}
+		_elapsedTicksModuloFastForwardSpeed = elapsedTicksModuloFastForwardSpeed;
 
-        var elapsedTicksModuloFramesPerSecond = _elapsedTicksModuloFramesPerSecond + 1;
-        if (elapsedTicksModuloFramesPerSecond == EngineConstants.FramesPerSecond)
-        {
-            _levelTimer.Tick();
-            elapsedTicksModuloFramesPerSecond = 0;
-        }
-        _elapsedTicksModuloFramesPerSecond = elapsedTicksModuloFramesPerSecond;
-    }
+		var elapsedTicksModuloFramesPerSecond = _elapsedTicksModuloFramesPerSecond + 1;
+		if (elapsedTicksModuloFramesPerSecond == EngineConstants.FramesPerSecond)
+		{
+			_levelTimer.Tick();
+			elapsedTicksModuloFramesPerSecond = 0;
+		}
+		_elapsedTicksModuloFramesPerSecond = elapsedTicksModuloFramesPerSecond;
+	}
 
-    private void HandleKeyboardInput()
-    {
-        if (_inputController.Pause.IsPressed)
-        {
-            if (_updateState == UpdateState.Paused)
-            {
-                SetNormalSpeed();
-            }
-            else
-            {
-                SetPaused();
-            }
+	private void HandleKeyboardInput()
+	{
+		if (_inputController.Pause.IsPressed)
+		{
+			if (_updateState == UpdateState.Paused)
+			{
+				SetNormalSpeed();
+			}
+			else
+			{
+				SetPaused();
+			}
 
-            return;
-        }
+			return;
+		}
 
-        if (_inputController.ToggleFastForwards.IsPressed)
-        {
-            if (_updateState == UpdateState.FastForward)
-            {
-                SetNormalSpeed();
-            }
-            else
-            {
-                SetFastSpeed();
-            }
-        }
-    }
+		if (_inputController.ToggleFastForwards.IsPressed)
+		{
+			if (_updateState == UpdateState.FastForward)
+			{
+				SetNormalSpeed();
+			}
+			else
+			{
+				SetFastSpeed();
+			}
+		}
+	}
 
-    private void HandleMouseInput()
-    {
-        _viewport.HandleMouseInput(_inputController);
+	private void HandleMouseInput()
+	{
+		_viewport.HandleMouseInput(_inputController);
 
-        if (_viewport.MouseIsInLevelViewPort)
-        {
-            _levelCursor.CursorPosition = new LevelPosition(_viewport.ViewportMouseX, _viewport.ViewportMouseY);
-        }
-        else
-        {
-            _levelCursor.CursorPosition = new LevelPosition(-4000, -4000);
-            _levelControlPanel.HandleMouseInput();
-        }
-    }
+		if (_viewport.MouseIsInLevelViewPort)
+		{
+			_levelCursor.CursorPosition = new LevelPosition(_viewport.ViewportMouseX, _viewport.ViewportMouseY);
+		}
+		else
+		{
+			_levelCursor.CursorPosition = new LevelPosition(-4000, -4000);
+			_levelControlPanel.HandleMouseInput();
+		}
+	}
 
-    private void SetPaused()
-    {
-        _updateState = UpdateState.Paused;
-    }
+	private void SetPaused()
+	{
+		_updateState = UpdateState.Paused;
+	}
 
-    private void SetNormalSpeed()
-    {
-        _updateState = UpdateState.Normal;
-    }
+	private void SetNormalSpeed()
+	{
+		_updateState = UpdateState.Normal;
+	}
 
-    private void SetFastSpeed()
-    {
-        _updateState = UpdateState.FastForward;
-    }
+	private void SetFastSpeed()
+	{
+		_updateState = UpdateState.FastForward;
+	}
 
-    private void HandleSkillAssignment()
-    {
-        if (_inputController.LeftMouseButtonAction.IsActionUp)
-            return;
+	private void HandleSkillAssignment()
+	{
+		if (_inputController.LeftMouseButtonAction.IsActionUp)
+			return;
 
-        var lemming = _levelCursor.CurrentlyHighlightedLemming;
-        if (lemming is null)
-            return;
+		var lemming = _levelCursor.CurrentlyHighlightedLemming;
+		if (lemming is null)
+			return;
 
-        var selectedSkillId = _levelControlPanel.SelectedSkillButtonId;
-        var skillTrackingData = _skillSetManager.GetSkillTrackingData(selectedSkillId);
-        if (skillTrackingData is null || skillTrackingData.SkillCount == 0)
-            return;
+		var selectedSkillId = _levelControlPanel.SelectedSkillButtonId;
+		var skillTrackingData = _skillSetManager.GetSkillTrackingData(selectedSkillId);
+		if (skillTrackingData is null || skillTrackingData.SkillCount == 0)
+			return;
 
-        if (skillTrackingData.CanAssignToLemming(lemming))
-        {
-            skillTrackingData.Skill.AssignToLemming(lemming);
-            skillTrackingData.ChangeSkillCount(-1);
-            _levelControlPanel.SelectedSkillAssignButton!.UpdateSkillCount(skillTrackingData.SkillCount);
-        }
-        else
-        {
-            SetQueuedSkill(lemming, skillTrackingData.Skill);
-        }
-    }
+		if (skillTrackingData.CanAssignToLemming(lemming))
+		{
+			skillTrackingData.Skill.AssignToLemming(lemming);
+			skillTrackingData.ChangeSkillCount(-1);
+			_levelControlPanel.UpdateSkillCount(_levelControlPanel.SelectedSkillAssignButton, skillTrackingData.SkillCount);
+		}
+		else
+		{
+			SetQueuedSkill(lemming, skillTrackingData.Skill);
+		}
+	}
 
-    private void ClearQueuedSkill()
-    {
-        _queuedSkill = NoneSkill.Instance;
-        _queuedSkillLemming = null;
-        _queuedSkillFrame = 0;
-    }
+	private void ClearQueuedSkill()
+	{
+		_queuedSkill = NoneSkill.Instance;
+		_queuedSkillLemming = null;
+		_queuedSkillFrame = 0;
+	}
 
-    public void SetQueuedSkill(Lemming lemming, LemmingSkill lemmingSkill)
-    {
-        _queuedSkill = lemmingSkill;
-        _queuedSkillLemming = lemming;
-        _queuedSkillFrame = 0;
-    }
+	public void SetQueuedSkill(Lemming lemming, LemmingSkill lemmingSkill)
+	{
+		_queuedSkill = lemmingSkill;
+		_queuedSkillLemming = lemming;
+		_queuedSkillFrame = 0;
+	}
 
-    public void CheckForQueuedAction()
-    {
-        // First check whether there was already a skill assignment this frame
-        //    if Assigned(fReplayManager.Assignment[fCurrentIteration, 0]) then Exit;
+	public void CheckForQueuedAction()
+	{
+		// First check whether there was already a skill assignment this frame
+		//    if Assigned(fReplayManager.Assignment[fCurrentIteration, 0]) then Exit;
 
-        if (_queuedSkill == NoneSkill.Instance || _queuedSkillLemming is null)
-        {
-            ClearQueuedSkill();
-            return;
-        }
+		if (_queuedSkill == NoneSkill.Instance || _queuedSkillLemming is null)
+		{
+			ClearQueuedSkill();
+			return;
+		}
 
-        if (!_queuedSkillLemming.State.IsActive ||
-            !_queuedSkillLemming.State.CanHaveSkillsAssigned
-            || false) // || lemming is teleporting
-        {
-            // delete queued action first
-            ClearQueuedSkill();
-            return;
-        }
+		if (!_queuedSkillLemming.State.IsActive ||
+			!_queuedSkillLemming.State.CanHaveSkillsAssigned
+			|| false) // || lemming is teleporting
+		{
+			// delete queued action first
+			ClearQueuedSkill();
+			return;
+		}
 
-        //   if (QueuedSkill.CanAssignToLemming(QueuedSkillLemming) && _skillSetManager.NumberOfSkillsAvailable(QueuedSkill) > 0)
-        {
-            // Record skill assignment, so that we apply it in CheckForReplayAction
-            // RecordSkillAssignment(L, NewSkill)
-        }
-        //  else
-        {
-            _queuedSkillFrame++;
+		//   if (QueuedSkill.CanAssignToLemming(QueuedSkillLemming) && _skillSetManager.NumberOfSkillsAvailable(QueuedSkill) > 0)
+		{
+			// Record skill assignment, so that we apply it in CheckForReplayAction
+			// RecordSkillAssignment(L, NewSkill)
+		}
+		//  else
+		{
+			_queuedSkillFrame++;
 
-            // Delete queued action after 16 frames
-            if (_queuedSkillFrame > 15)
-            {
-                ClearQueuedSkill();
-            }
-        }
-    }
+			// Delete queued action after 16 frames
+			if (_queuedSkillFrame > 15)
+			{
+				ClearQueuedSkill();
+			}
+		}
+	}
+
+	public void PausePress()
+	{
+		_updateState = _updateState switch
+		{
+			UpdateState.Paused => UpdateState.Normal,
+			UpdateState.Normal => UpdateState.Paused,
+			UpdateState.FastForward => UpdateState.Paused,
+			_ => throw new ArgumentOutOfRangeException()
+		};
+	}
+
+	public void FastForwardButtonPress()
+	{
+		_updateState = _updateState switch
+		{
+			UpdateState.Paused => UpdateState.FastForward,
+			UpdateState.Normal => UpdateState.FastForward,
+			UpdateState.FastForward => UpdateState.Normal,
+			_ => throw new ArgumentOutOfRangeException()
+		};
+	}
 }
