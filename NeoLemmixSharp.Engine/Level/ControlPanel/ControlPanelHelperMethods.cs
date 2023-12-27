@@ -84,6 +84,8 @@ public static class ControlPanelHelperMethods
 		var releaseRateButtonOffset = includeReleaseRateButtons
 			? LevelControlPanel.NumberOfReleaseRateButtons
 			: 0;
+		var showSkillAssignScrollButtons = numberOfSkillAssignButtons > LevelControlPanel.MaxNumberOfSkillButtons;
+		var paddingButtonCount = GetPaddingButtonCount();
 
 		var numberOfTechnicalButtons = releaseRateButtonOffset +
 									   ButtonAvailability(ControlPanelParameters.ShowPauseButton, 1, out var showPause) +
@@ -93,46 +95,68 @@ public static class ControlPanelHelperMethods
 									   ButtonAvailability(ControlPanelParameters.ShowFrameNudgeButtons, 2, out var showFrameNudge) +
 									   ButtonAvailability(ControlPanelParameters.ShowDirectionSelectButtons, 2, out var showDirectionSelect) +
 									   ButtonAvailability(ControlPanelParameters.ShowClearPhysicsAndReplayButton, 2, out var showClearPhysicsAndReplay) +
-									   GetExtraSkillAssignButtonCount();
+									   paddingButtonCount +
+									   (showSkillAssignScrollButtons ? 2 : 0);
 
 		var totalNumberOfButtons = numberOfSkillAssignButtons + numberOfTechnicalButtons;
 
 		var result = new ControlPanelButton[totalNumberOfButtons];
 
-		Array.Copy(skillAssignButtons, 0, result, releaseRateButtonOffset, numberOfSkillAssignButtons);
-
 		if (includeReleaseRateButtons)
 		{
-			// Always put these buttons at the start
-			result[0] = new SpawnIntervalMinusButton(0, controlPanelParameters, hatchGroup!);
+			// Always put these buttons at the start if they exist
+			result[0] = new SpawnIntervalIncreaseButton(0, controlPanelParameters, hatchGroup!);
 			result[1] = new SpawnIntervalDisplayButton(1, controlPanelParameters, hatchGroup!);
-			result[2] = new SpawnIntervalPlusButton(2, controlPanelParameters, hatchGroup!);
+			result[2] = new SpawnIntervalDecreaseButton(2, controlPanelParameters, hatchGroup!);
 		}
 
-		var i = numberOfSkillAssignButtons + releaseRateButtonOffset;
+		var newButtonIndex = releaseRateButtonOffset;
+
+		if (showSkillAssignScrollButtons) // Left scroll button
+		{
+			result[newButtonIndex] = new SkillAssignScrollButton(newButtonIndex, -1);
+			newButtonIndex++;
+		}
+
+		Array.Copy(skillAssignButtons, 0, result, newButtonIndex, numberOfSkillAssignButtons);
+		newButtonIndex += numberOfSkillAssignButtons;
+
+		if (showSkillAssignScrollButtons) // Right scroll button
+		{
+			result[newButtonIndex] = new SkillAssignScrollButton(newButtonIndex, 1);
+			newButtonIndex++;
+		}
+		else // Padding buttons
+		{
+			for (var p = 0; p < paddingButtonCount; p++)
+			{
+				result[newButtonIndex] = new PaddingButton();
+				newButtonIndex++;
+			}
+		}
 
 		if (showPause)
 		{
-			result[i] = new PauseButton(i);
-			i++;
+			result[newButtonIndex] = new PauseButton(newButtonIndex);
+			newButtonIndex++;
 		}
 
 		if (showNuke)
 		{
-			result[i] = new NukeButton(i);
-			i++;
+			result[newButtonIndex] = new NukeButton(newButtonIndex);
+			newButtonIndex++;
 		}
 
 		if (showFastForward)
 		{
-			result[i] = new FastForwardButton(i);
-			i++;
+			result[newButtonIndex] = new FastForwardButton(newButtonIndex);
+			newButtonIndex++;
 		}
 
 		if (showRestart)
 		{
-			result[i] = new RestartButton(i);
-			i++;
+			result[newButtonIndex] = new RestartButton(newButtonIndex);
+			newButtonIndex++;
 		}
 
 		return result;
@@ -146,12 +170,10 @@ public static class ControlPanelHelperMethods
 				: 0;
 		}
 
-		int GetExtraSkillAssignButtonCount()
+		int GetPaddingButtonCount()
 		{
-			if (numberOfSkillAssignButtons > LevelControlPanel.MaxNumberOfSkillButtons)
-				return 2;
-
-			return controlPanelParameters.TestFlag(ControlPanelParameters.RemoveExcessSkillAssignButtons)
+			return showSkillAssignScrollButtons ||
+				   controlPanelParameters.TestFlag(ControlPanelParameters.RemoveSkillAssignPaddingButtons)
 				? 0
 				: LevelControlPanel.MaxNumberOfSkillButtons - numberOfSkillAssignButtons;
 		}

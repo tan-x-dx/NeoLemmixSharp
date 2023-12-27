@@ -5,13 +5,14 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
 public interface ILevelControlPanel
 {
-    LevelTimer LevelTimer { get; }
-    SkillAssignButton? SelectedSkillAssignButton { get; }
-    int SelectedSkillButtonId { get; }
+	LevelTimer LevelTimer { get; }
+	SkillAssignButton? SelectedSkillAssignButton { get; }
+	int SelectedSkillButtonId { get; }
 
-    void HandleMouseInput();
-    void SetWindowDimensions(int windowWidth, int windowHeight);
-    void SetSelectedSkillAssignmentButton(SkillAssignButton? skillAssignButton);
-    void UpdateSkillCount(SkillAssignButton? selectedSkillAssignButton, int skillCount);
-    void OnSpawnIntervalChanged();
+	void HandleMouseInput();
+	void SetWindowDimensions(int windowWidth, int windowHeight);
+	void ChangeSkillAssignButtonScroll(int delta);
+	void SetSelectedSkillAssignmentButton(SkillAssignButton? skillAssignButton);
+	void UpdateSkillCount(SkillAssignButton? selectedSkillAssignButton, int skillCount);
+	void OnSpawnIntervalChanged();
 }

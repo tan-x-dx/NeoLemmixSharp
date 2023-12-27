@@ -6,9 +6,11 @@ namespace NeoLemmixSharp.Engine.Level.Timer;
 
 public abstract class LevelTimer
 {
+	public const int NumberOfChars = 6;
+
     // We do things this way to avoid lots of string allocations.
     // The text we want to render is only 6 characters anyway
-    protected readonly int[] Chars = new int[6];
+    protected readonly int[] Chars = new int[NumberOfChars];
     protected int ElapsedSeconds;
 
     public Color FontColor { get; protected set; }

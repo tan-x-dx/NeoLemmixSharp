@@ -12,7 +12,7 @@ public enum ControlPanelParameters
 	ShowClearPhysicsAndReplayButton = 1 << 6,
 	ShowReleaseRateButtonsIfPossible = 1 << 7,
 	EnableClassicModeSkillsIfPossible = 1 << 8,
-	RemoveExcessSkillAssignButtons = 1 << 9,
+	RemoveSkillAssignPaddingButtons = 1 << 9,
 	ShowSpawnInterval = 1 << 10,
 }
 

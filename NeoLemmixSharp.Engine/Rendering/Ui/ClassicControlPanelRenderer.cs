@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
+using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui;
@@ -38,7 +39,11 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 		{
 			if (button is null)
 				continue;
-			result[i++] = button.CreateButtonRenderer(spriteBank);
+			try
+			{
+				result[i++] = button.CreateButtonRenderer(spriteBank);
+			}
+			catch { }
 		}
 
 		return result;
@@ -49,15 +54,22 @@ public sealed class ClassicControlPanelRenderer : IControlPanelRenderer
 		RenderSkillAssignButtons(spriteBatch);
 
 		var levelTimer = _levelControlPanel.LevelTimer;
-		var timerX = _levelControlPanel.ScreenWidth - PanelFont.GlyphWidth * 6 * ControlPanelScaleMultiplier;
+		var timerX = _levelControlPanel.ScreenWidth - PanelFont.GlyphWidth * LevelTimer.NumberOfChars * ControlPanelScaleMultiplier;
 
-		FontBank.PanelFont.RenderTextSpan(spriteBatch, levelTimer.AsSpan(), timerX, _levelControlPanel.ControlPanelY, ControlPanelScaleMultiplier, levelTimer.FontColor);
+		FontBank.PanelFont.RenderTextSpan(
+			spriteBatch,
+			levelTimer.AsSpan(),
+			timerX,
+			_levelControlPanel.ControlPanelY,
+			ControlPanelScaleMultiplier,
+			levelTimer.FontColor);
 	}
 
 	private void RenderSkillAssignButtons(SpriteBatch spriteBatch)
 	{
 		foreach (var controlPanelButtonRenderer in _controlPanelButtonRenderers)
 		{
+			if(controlPanelButtonRenderer is null) continue;
 			controlPanelButtonRenderer.Render(spriteBatch);
 		}
 	}

@@ -11,7 +11,6 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 {
 	private readonly SkillAssignButton _skillAssignButton;
 
-	private readonly Texture2D _skillPanels;
 	private readonly Texture2D _skillSelected;
 	private readonly Texture2D _skillIcons;
 
@@ -20,10 +19,10 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 	public SkillAssignButtonRenderer(
 		ControlPanelSpriteBank spriteBank,
 		SkillAssignButton skillAssignButton)
+		: base(spriteBank)
 	{
 		_skillAssignButton = skillAssignButton;
 
-		_skillPanels = spriteBank.GetTexture(ControlPanelTexture.Panel);
 		_skillSelected = spriteBank.GetTexture(ControlPanelTexture.PanelSkillSelected);
 		_skillIcons = spriteBank.GetTexture(ControlPanelTexture.PanelSkills);
 
@@ -43,15 +42,15 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 			_skillAssignButton.ScreenHeight);
 
 		spriteBatch.Draw(
-			_skillPanels,
+			PanelTexture,
 			destRectangle,
-			PanelHelpers.GetRectangleForCoordinates(_skillAssignButton.SkillPanelFrame, 0),
+			PanelHelpers.GetRectangleForCoordinates(_skillAssignButton.SkillPanelFrame, PanelHelpers.PanelBackgroundsY),
 			RenderingLayers.ControlPanelButtonLayer);
 
 		spriteBatch.Draw(
-			_skillPanels,
+			PanelTexture,
 			destRectangle,
-			PanelHelpers.GetRectangleForCoordinates(1, 2),
+			PanelHelpers.GetRectangleForCoordinates(PanelHelpers.SkillIconMaskX, PanelHelpers.SkillIconMaskY),
 			RenderingLayers.ControlPanelSkillCountEraseLayer);
 
 		var skillIconDestRectangle = new Rectangle(

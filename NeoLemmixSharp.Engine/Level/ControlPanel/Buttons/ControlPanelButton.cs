@@ -44,5 +44,9 @@ public abstract class ControlPanelButton
 	{
 	}
 
+	public virtual void OnMouseDown()
+	{
+	}
+
 	public abstract ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank);
 }
