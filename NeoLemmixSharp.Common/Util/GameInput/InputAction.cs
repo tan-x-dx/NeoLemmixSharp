@@ -35,29 +35,11 @@ public sealed class InputAction : IInputAction
         _stateMask = enable ? EnabledMask : DisabledMask;
     }
 
-    /// <summary>
-    /// Is the Action currently pressed down?
-    /// </summary>
     public bool IsActionDown => (_actionState & ActionPressed) == ActionPressed;
-    /// <summary>
-    /// Is the Action currently released?
-    /// </summary>
     public bool IsActionUp => (_actionState & ActionPressed) == ActionUnpressed;
-    /// <summary>
-    /// Is the Action currently pressed down, but it was previously released?
-    /// </summary>
     public bool IsPressed => (_actionState & ActionHeld) == ActionPressed;
-    /// <summary>
-    /// Is the Action currently released, but it was previously pressed down?
-    /// </summary>
     public bool IsReleased => (_actionState & ActionHeld) == ActionReleased;
-    /// <summary>
-    /// Is the Action currently being pressed down and it was previously pressed down?
-    /// </summary>
     public bool IsHeld => (_actionState & ActionHeld) == ActionHeld;
-    /// <summary>
-    /// Has a double tap occurred for the Action?
-    /// </summary>
     public bool IsDoubleTap => (_actionState & ActionPressed) != 0UL &&
                                (_actionState & ActionReleased) == 0UL &&
                                (_actionState & DoubleTapUpperMask) != 0UL;
