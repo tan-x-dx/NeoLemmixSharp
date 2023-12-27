@@ -16,6 +16,6 @@ public sealed class FastForwardButton : ControlPanelButton
 
 	public override ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
 	{
-		throw new NotImplementedException();
+		return new ControlPanelButtonRenderer(spriteBank, this, PanelHelpers.FastForwardButtonX, PanelHelpers.ButtonIconsY);
 	}
 }

@@ -16,6 +16,6 @@ public sealed class PauseButton : ControlPanelButton
 
 	public override ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
 	{
-		throw new NotImplementedException();
+		return new ControlPanelButtonRenderer(spriteBank, this, PanelHelpers.PauseButtonX, PanelHelpers.ButtonIconsY);
 	}
 }

@@ -105,9 +105,9 @@ public static class ControlPanelHelperMethods
 		if (includeReleaseRateButtons)
 		{
 			// Always put these buttons at the start if they exist
-			result[0] = new SpawnIntervalIncreaseButton(0, controlPanelParameters, hatchGroup!);
-			result[1] = new SpawnIntervalDisplayButton(1, controlPanelParameters, hatchGroup!);
-			result[2] = new SpawnIntervalDecreaseButton(2, controlPanelParameters, hatchGroup!);
+			result[0] = SpawnIntervalButton.CreateSpawnIntervalIncreaseButton(2, controlPanelParameters, hatchGroup!);
+			result[1] = SpawnIntervalButton.CreateSpawnIntervalDisplayButton(1, controlPanelParameters, hatchGroup!);
+			result[2] = SpawnIntervalButton.CreateSpawnIntervalDecreaseButton(0, controlPanelParameters, hatchGroup!);
 		}
 
 		var newButtonIndex = releaseRateButtonOffset;

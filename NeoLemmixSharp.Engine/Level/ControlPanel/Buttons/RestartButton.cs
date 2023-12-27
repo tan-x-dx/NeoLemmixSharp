@@ -15,6 +15,6 @@ public sealed class RestartButton : ControlPanelButton
 
 	public override ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
 	{
-		throw new NotImplementedException();
+		return new ControlPanelButtonRenderer(spriteBank, this, PanelHelpers.ReplayButtonX, PanelHelpers.ButtonIconsY);
 	}
 }

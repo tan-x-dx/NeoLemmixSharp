@@ -9,15 +9,14 @@ public abstract class ControlPanelButton
 	private const int SkillPanelFrameMask = NumberOfSkillPanels - 1;
 
 	public int SkillPanelFrame { get; }
-	public bool ShouldRender { get; set; } = true;
-
 	public int ScreenX { get; set; }
 	public int ScreenY { get; set; }
-
 	public int ScreenWidth { get; set; }
 	public int ScreenHeight { get; set; }
-
 	public int ScaleMultiplier { get; set; }
+
+	public bool ShouldRender { get; set; } = true;
+	public bool IsSelected { get; set; }
 
 	protected ControlPanelButton(int skillPanelFrame)
 	{
@@ -47,6 +46,9 @@ public abstract class ControlPanelButton
 	public virtual void OnMouseDown()
 	{
 	}
+
+	public virtual ReadOnlySpan<int> GetDigitsToRender() => ReadOnlySpan<int>.Empty;
+	public virtual int GetNumberOfDigitsToRender() => 0;
 
 	public abstract ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank);
 }

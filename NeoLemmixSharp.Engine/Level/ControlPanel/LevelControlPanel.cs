@@ -277,15 +277,15 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
 		return;
 
-		SpawnIntervalDisplayButton GetSpawnIntervalDisplayButton()
+		SpawnIntervalButton GetSpawnIntervalDisplayButton()
 		{
 			var buttons = AllButtons;
 
 			var secondButton = buttons[1];
-			if (secondButton is SpawnIntervalDisplayButton result)
+			if (secondButton is SpawnIntervalButton result)
 				return result;
 
-			throw new InvalidOperationException($"Could not locate {nameof(SpawnIntervalDisplayButton)}");
+			throw new InvalidOperationException($"Could not locate {nameof(SpawnIntervalButton)}");
 		}
 	}
 }

@@ -13,10 +13,6 @@ public sealed class SkillAssignButton : ControlPanelButton
 	public int SkillTrackingDataId { get; }
 	public int SkillAssignButtonId { get; }
 
-	public bool IsSelected { get; set; }
-
-	public ReadOnlySpan<int> SkillCountChars => new(_skillCountChars);
-
 	public SkillAssignButton(
 		int skillAssignButtonId,
 		int skillPanelFrame,
@@ -53,6 +49,9 @@ public sealed class SkillAssignButton : ControlPanelButton
 	{
 		LevelScreen.LevelControlPanel.SetSelectedSkillAssignmentButton(this);
 	}
+
+	public override ReadOnlySpan<int> GetDigitsToRender() => new(_skillCountChars);
+	public override int GetNumberOfDigitsToRender() => 2;
 
 	public override ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
 	{

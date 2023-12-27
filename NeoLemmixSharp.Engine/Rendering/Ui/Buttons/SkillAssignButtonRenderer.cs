@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
@@ -9,9 +8,6 @@ namespace NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
 public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 {
-	private readonly SkillAssignButton _skillAssignButton;
-
-	private readonly Texture2D _skillSelected;
 	private readonly Texture2D _skillIcons;
 
 	private readonly int _skillY;
@@ -19,32 +15,25 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 	public SkillAssignButtonRenderer(
 		ControlPanelSpriteBank spriteBank,
 		SkillAssignButton skillAssignButton)
-		: base(spriteBank)
+		: base(spriteBank, skillAssignButton, 0, 0)
 	{
-		_skillAssignButton = skillAssignButton;
-
-		_skillSelected = spriteBank.GetTexture(ControlPanelTexture.PanelSkillSelected);
 		_skillIcons = spriteBank.GetTexture(ControlPanelTexture.PanelSkills);
 
-		var skillId = _skillAssignButton.SkillId;
+		var skillId = skillAssignButton.SkillId;
 		_skillY = GetSkillY(skillId);
 	}
 
 	public override void Render(SpriteBatch spriteBatch)
 	{
-		if (!_skillAssignButton.ShouldRender)
+		if (!ControlPanelButton.ShouldRender)
 			return;
 
-		var destRectangle = new Rectangle(
-			_skillAssignButton.ScreenX,
-			_skillAssignButton.ScreenY,
-			_skillAssignButton.ScreenWidth,
-			_skillAssignButton.ScreenHeight);
+		var destRectangle = GetDestinationRectangle();
 
 		spriteBatch.Draw(
 			PanelTexture,
 			destRectangle,
-			PanelHelpers.GetRectangleForCoordinates(_skillAssignButton.SkillPanelFrame, PanelHelpers.PanelBackgroundsY),
+			PanelHelpers.GetRectangleForCoordinates(ControlPanelButton.SkillPanelFrame, PanelHelpers.PanelBackgroundsY),
 			RenderingLayers.ControlPanelButtonLayer);
 
 		spriteBatch.Draw(
@@ -54,10 +43,10 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 			RenderingLayers.ControlPanelSkillCountEraseLayer);
 
 		var skillIconDestRectangle = new Rectangle(
-			_skillAssignButton.ScreenX,
-			_skillAssignButton.ScreenY,
-			PanelHelpers.ControlPanelButtonPixelWidth * _skillAssignButton.ScaleMultiplier,
-			PanelHelpers.ControlPanelButtonPixelHeight * _skillAssignButton.ScaleMultiplier);
+			ControlPanelButton.ScreenX,
+			ControlPanelButton.ScreenY,
+			PanelHelpers.ControlPanelButtonPixelWidth * ControlPanelButton.ScaleMultiplier,
+			PanelHelpers.ControlPanelButtonPixelHeight * ControlPanelButton.ScaleMultiplier);
 
 		spriteBatch.Draw(
 			_skillIcons,
@@ -66,32 +55,9 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 				PanelHelpers.ControlPanelButtonPixelWidth, PanelHelpers.ControlPanelButtonPixelHeight),
 			RenderingLayers.ControlPanelSkillIconLayer);
 
-		RenderSkillCounts(spriteBatch, destRectangle);
+		RenderDigits(spriteBatch, destRectangle);
 
-		if (_skillAssignButton.IsSelected)
-		{
-			spriteBatch.Draw(
-				_skillSelected,
-				destRectangle,
-				new Rectangle(0, 0, _skillSelected.Width, _skillSelected.Height),
-				RenderingLayers
-					.ControlPanelSkillCountEraseLayer); // Can reuse this layer since the sprites shouldn't overlap anyway
-		}
-	}
-
-	private void RenderSkillCounts(
-		SpriteBatch spriteBatch,
-		Rectangle destRectangle)
-	{
-		var dx = 3 * _skillAssignButton.ScaleMultiplier;
-
-		FontBank.SkillCountDigitFont.RenderTextSpan(
-			spriteBatch,
-			_skillAssignButton.SkillCountChars,
-			destRectangle.X + dx,
-			destRectangle.Y + _skillAssignButton.ScaleMultiplier,
-			_skillAssignButton.ScaleMultiplier,
-			Color.White);
+		RenderSelected(spriteBatch, destRectangle);
 	}
 
 	private static int GetSkillY(int skillId) => skillId switch

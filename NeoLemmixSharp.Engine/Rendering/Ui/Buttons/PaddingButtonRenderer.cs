@@ -7,21 +7,18 @@ namespace NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
 public sealed class PaddingButtonRenderer : ControlPanelButtonRenderer
 {
-	private readonly PaddingButton _paddingButton;
-
 	public PaddingButtonRenderer(ControlPanelSpriteBank spriteBank, PaddingButton paddingButton)
-		: base(spriteBank)
+		: base(spriteBank, paddingButton, 0, 0)
 	{
-		_paddingButton = paddingButton;
 	}
 
 	public override void Render(SpriteBatch spriteBatch)
 	{
 		var destRectangle = new Rectangle(
-			_paddingButton.ScreenX,
-			_paddingButton.ScreenY,
-			_paddingButton.ScreenWidth,
-			_paddingButton.ScreenHeight);
+			ControlPanelButton.ScreenX,
+			ControlPanelButton.ScreenY,
+			ControlPanelButton.ScreenWidth,
+			ControlPanelButton.ScreenHeight);
 
 		spriteBatch.Draw(
 			PanelTexture,

@@ -5,22 +5,25 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 public sealed class SkillAssignScrollButton : ControlPanelButton
 {
-	public int Delta { get; }
+	private readonly int _delta;
 
 	public SkillAssignScrollButton(int skillPanelFrame, int delta)
 		: base(skillPanelFrame)
 	{
-		Delta = delta;
+		_delta = delta;
 	}
 
 	public override ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
 	{
-		return new SkillAssignScrollButtonRenderer(spriteBank, this);
-	}
+		var iconX = _delta < 0
+				? PanelHelpers.SkillAssignScrollLeftX
+				: PanelHelpers.SkillAssignScrollRightX;
 
+		return new ControlPanelButtonRenderer(spriteBank, this, iconX, PanelHelpers.SkillAssignScrollY);
+	}
 
 	public override void OnMouseDown()
 	{
-		LevelScreen.LevelControlPanel.ChangeSkillAssignButtonScroll(Delta);
+		LevelScreen.LevelControlPanel.ChangeSkillAssignButtonScroll(_delta);
 	}
 }
