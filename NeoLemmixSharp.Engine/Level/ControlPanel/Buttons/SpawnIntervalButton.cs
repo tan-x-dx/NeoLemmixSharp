@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Rendering.Ui;
-using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
@@ -18,21 +17,24 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 		ControlPanelParameters controlPanelParameters,
 		HatchGroup hatchGroup)
 	{
+		var showSpawnInterval = controlPanelParameters.TestFlag(ControlPanelParameters.ShowSpawnInterval);
+
 		var spawnIntervalMinValueGetter = new SpawnIntervalMinValueGetter(
 			hatchGroup,
-			controlPanelParameters.TestFlag(ControlPanelParameters.ShowSpawnInterval));
+			showSpawnInterval);
 
 		var buttonAction = new SpawnIntervalChangeButtonAction(spawnIntervalMinValueGetter, hatchGroup);
 
-		var iconX = spawnIntervalMinValueGetter.GetIconX();
-		var iconY = spawnIntervalMinValueGetter.GetIconY();
+		var iconX = showSpawnInterval
+			? PanelHelpers.PlusButtonX
+			: PanelHelpers.MinusButtonX;
 
 		return new SpawnIntervalButton(
 			skillPanelFrame,
 			spawnIntervalMinValueGetter,
 			buttonAction,
 			iconX,
-			iconY);
+			PanelHelpers.ButtonIconsY);
 	}
 
 	public static SpawnIntervalButton CreateSpawnIntervalDisplayButton(
@@ -57,21 +59,24 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 		ControlPanelParameters controlPanelParameters,
 		HatchGroup hatchGroup)
 	{
+		var showSpawnInterval = controlPanelParameters.TestFlag(ControlPanelParameters.ShowSpawnInterval);
+
 		var spawnIntervalMaxValueGetter = new SpawnIntervalMaxValueGetter(
 			hatchGroup,
-			controlPanelParameters.TestFlag(ControlPanelParameters.ShowSpawnInterval));
+			showSpawnInterval);
 
 		var buttonAction = new SpawnIntervalChangeButtonAction(spawnIntervalMaxValueGetter, hatchGroup);
 
-		var iconX = spawnIntervalMaxValueGetter.GetIconX();
-		var iconY = spawnIntervalMaxValueGetter.GetIconY();
+		var iconX = showSpawnInterval
+			? PanelHelpers.MinusButtonX
+			: PanelHelpers.PlusButtonX;
 
 		return new SpawnIntervalButton(
 			skillPanelFrame,
 			spawnIntervalMaxValueGetter,
 			buttonAction,
 			iconX,
-			iconY);
+			PanelHelpers.ButtonIconsY);
 	}
 
 	private SpawnIntervalButton(
@@ -97,21 +102,10 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 	public override ReadOnlySpan<int> GetDigitsToRender() => new(_chars);
 	public override int GetNumberOfDigitsToRender() => _numberOfDigitsToRender;
 
-	public override ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
-	{
-		var iconX = _spawnIntervalValueGetter.GetIconX();
-		var iconY = _spawnIntervalValueGetter.GetIconY();
-
-		return new ControlPanelButtonRenderer(spriteBank, this, iconX, iconY);
-	}
-
 	private interface ISpawnIntervalValueGetter
 	{
 		int GetSpawnIntervalDelta();
 		int GetNumericalValue();
-
-		int GetIconX();
-		int GetIconY();
 	}
 
 	private sealed class SpawnIntervalMinValueGetter : ISpawnIntervalValueGetter
@@ -129,10 +123,6 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 		public int GetNumericalValue() => _showSpawnInterval
 			? _hatchGroup.MinSpawnInterval
 			: _hatchGroup.MinReleaseRate;
-		public int GetIconX() => _showSpawnInterval
-			? PanelHelpers.PlusButtonX
-			: PanelHelpers.MinusButtonX;
-		public int GetIconY() => PanelHelpers.ButtonIconsY;
 	}
 
 	private sealed class SpawnIntervalCurrentValueGetter : ISpawnIntervalValueGetter
@@ -150,8 +140,6 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 		public int GetNumericalValue() => _showSpawnInterval
 			? _hatchGroup.CurrentSpawnInterval
 			: _hatchGroup.CurrentReleaseRate;
-		public int GetIconX() => -1;
-		public int GetIconY() => -1;
 	}
 
 	private sealed class SpawnIntervalMaxValueGetter : ISpawnIntervalValueGetter
@@ -169,10 +157,6 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 		public int GetNumericalValue() => _showSpawnInterval
 			? _hatchGroup.MaxSpawnInterval
 			: _hatchGroup.MaxReleaseRate;
-		public int GetIconX() => _showSpawnInterval
-			? PanelHelpers.MinusButtonX
-			: PanelHelpers.PlusButtonX;
-		public int GetIconY() => PanelHelpers.ButtonIconsY;
 	}
 
 	private sealed class SpawnIntervalChangeButtonAction : IButtonAction

@@ -86,34 +86,8 @@ public sealed class LevelScreen : IBaseScreen
 
 		_updateScheduler.Tick();
 
+		// Do these checks after main game loop
 		HandleKeyboardInput();
-
-		return;
-		/*
-
-        _inputController.Tick();
-        HandleKeyboardInput();
-        // _levelCursor.Tick();
-        // _lemmingManager.CheckLemmingsUnderCursor();
-
-        _updateScheduler.CheckForQueuedAction();
-
-        var shouldTickLemmings = false;// HandleMouseInput();
-
-        if (!shouldTickLemmings)
-            return;
-
-        //    LevelTimer.Tick();
-
-        for (var i = 0; i < _gadgets.Length; i++)
-        {
-            _gadgets[i].Tick();
-        }
-
-        // _lemmingManager.UpdateLemmings();
-
-        _updateScheduler.Tick();
-        */
 	}
 
 	private void HandleKeyboardInput()
@@ -141,6 +115,9 @@ public sealed class LevelScreen : IBaseScreen
 
 	public void Dispose()
 	{
+		if (IsDisposed)
+			return;
+
 		LemmingManager.Dispose();
 		GadgetManager.Dispose();
 		SkillSetManager.Dispose();
