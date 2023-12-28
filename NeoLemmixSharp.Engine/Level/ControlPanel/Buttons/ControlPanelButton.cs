@@ -22,7 +22,8 @@ public class ControlPanelButton
 
 	public IButtonAction ButtonAction { get; protected init; }
 
-	protected ControlPanelButton(int skillPanelFrame)
+	protected ControlPanelButton(
+		int skillPanelFrame)
 	{
 		SkillPanelFrame = skillPanelFrame & SkillPanelFrameMask;
 	}

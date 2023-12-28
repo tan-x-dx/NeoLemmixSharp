@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
-public sealed class SkillAssignButton : ControlPanelButton
+public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
 {
 	private const int NumberOfChars = 2;
 
@@ -28,7 +28,7 @@ public sealed class SkillAssignButton : ControlPanelButton
 		SkillTrackingDataId = skillTrackingDataId;
 		SkillAssignButtonId = skillAssignButtonId;
 
-		ButtonAction = new SkillAssignButtonAction(this);
+		ButtonAction = this;
 	}
 
 	public void UpdateSkillCount(int numberOfSkillsAvailable)
@@ -51,20 +51,12 @@ public sealed class SkillAssignButton : ControlPanelButton
 	{
 		return new SkillAssignButtonRenderer(spriteBank, this);
 	}
-}
 
-public sealed class SkillAssignButtonAction : IButtonAction
-{
-	private readonly SkillAssignButton _skillAssignButton;
-
-	public SkillAssignButtonAction(SkillAssignButton skillAssignButton)
-	{
-		_skillAssignButton = skillAssignButton;
-	}
+	public ButtonType ButtonType => ButtonType.SkillAssign;
 
 	public void OnMouseDown()
 	{
-		LevelScreen.LevelControlPanel.SetSelectedSkillAssignmentButton(_skillAssignButton);
+		LevelScreen.LevelControlPanel.SetSelectedSkillAssignmentButton(this);
 	}
 
 	public void OnPress()

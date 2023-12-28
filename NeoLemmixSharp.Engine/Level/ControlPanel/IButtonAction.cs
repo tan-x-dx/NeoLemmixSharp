@@ -1,7 +1,11 @@
-﻿namespace NeoLemmixSharp.Engine.Level.ControlPanel;
+﻿using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
+
+namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
 public interface IButtonAction
 {
+	ButtonType ButtonType { get; }
+
 	void OnMouseDown();
 	void OnPress();
 	void OnDoubleTap();
@@ -16,6 +20,8 @@ public sealed class EmptyButtonAction : IButtonAction
 	private EmptyButtonAction()
 	{
 	}
+
+	public ButtonType ButtonType => ButtonType.Padding;
 
 	public void OnMouseDown()
 	{

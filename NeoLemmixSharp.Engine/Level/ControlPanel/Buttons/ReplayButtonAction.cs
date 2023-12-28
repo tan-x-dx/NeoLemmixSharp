@@ -1,8 +1,8 @@
 ﻿namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
-public sealed class RestartButtonAction : IButtonAction
+public sealed class ReplayButtonAction : IButtonAction
 {
-	public ButtonType ButtonType => ButtonType.Restart;
+	public ButtonType ButtonType => ButtonType.Replay;
 
 	public void OnMouseDown()
 	{

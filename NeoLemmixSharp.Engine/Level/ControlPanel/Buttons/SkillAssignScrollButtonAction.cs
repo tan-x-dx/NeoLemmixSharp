@@ -9,6 +9,10 @@ public sealed class SkillAssignScrollButtonAction : IButtonAction
 		_delta = delta;
 	}
 
+	public ButtonType ButtonType => _delta > 0
+		? ButtonType.SkillScrollLeft
+		: ButtonType.SkillScrollRight;
+
 	public void OnMouseDown()
 	{
 		LevelScreen.LevelControlPanel.ChangeSkillAssignButtonScroll(_delta);

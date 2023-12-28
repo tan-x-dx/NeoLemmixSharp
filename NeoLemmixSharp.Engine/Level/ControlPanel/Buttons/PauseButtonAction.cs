@@ -2,6 +2,8 @@
 
 public sealed class PauseButtonAction : IButtonAction
 {
+	public ButtonType ButtonType => ButtonType.Pause;
+
 	public void OnMouseDown()
 	{
 	}

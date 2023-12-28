@@ -104,6 +104,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
 	private interface ISpawnIntervalValueGetter
 	{
+		ButtonType ButtonType { get; }
 		int GetSpawnIntervalDelta();
 		int GetNumericalValue();
 	}
@@ -119,6 +120,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 			_showSpawnInterval = showSpawnInterval;
 		}
 
+		public ButtonType ButtonType => ButtonType.SpawnIntervalDecrease;
 		public int GetSpawnIntervalDelta() => -1;
 		public int GetNumericalValue() => _showSpawnInterval
 			? _hatchGroup.MinSpawnInterval
@@ -136,6 +138,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 			_showSpawnInterval = showSpawnInterval;
 		}
 
+		public ButtonType ButtonType => ButtonType.SpawnIntervalDisplay;
 		public int GetSpawnIntervalDelta() => 0;
 		public int GetNumericalValue() => _showSpawnInterval
 			? _hatchGroup.CurrentSpawnInterval
@@ -153,6 +156,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 			_showSpawnInterval = showSpawnInterval;
 		}
 
+		public ButtonType ButtonType => ButtonType.SpawnIntervalIncrease;
 		public int GetSpawnIntervalDelta() => 1;
 		public int GetNumericalValue() => _showSpawnInterval
 			? _hatchGroup.MaxSpawnInterval
@@ -171,6 +175,8 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 			_spawnIntervalValueGetter = spawnIntervalValueGetter;
 			_hatchGroup = hatchGroup;
 		}
+
+		public ButtonType ButtonType => _spawnIntervalValueGetter.ButtonType;
 
 		public void OnMouseDown()
 		{

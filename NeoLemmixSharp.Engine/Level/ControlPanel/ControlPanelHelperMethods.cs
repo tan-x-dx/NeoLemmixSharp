@@ -190,6 +190,23 @@ public static class ControlPanelHelperMethods
 			newButtonIndex++;
 		}
 
+		if (showFrameNudge)
+		{
+			var nudgeBack = new FrameNudgeButtonAction(-1);
+			var nudgeForward = new FrameNudgeButtonAction(1);
+
+		}
+
+		if (showDirectionSelect)
+		{
+
+		}
+
+		if (showClearPhysicsAndReplay)
+		{
+
+		}
+
 		return result;
 
 		int ButtonAvailability(ControlPanelParameters test, int numberOfButtons, out bool testFlag)

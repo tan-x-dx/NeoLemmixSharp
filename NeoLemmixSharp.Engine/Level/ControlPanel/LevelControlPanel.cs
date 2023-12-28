@@ -62,14 +62,19 @@ public sealed class LevelControlPanel : ILevelControlPanel
 		LevelTimer = levelTimer;
 
 		var allHatchGroups = lemmingManager.AllHatchGroups;
-		_singularHatchGroup = allHatchGroups.Length == 1 ? allHatchGroups[0] : null;
+		_singularHatchGroup = allHatchGroups.Length == 1
+			? allHatchGroups[0]
+			: null;
 
 		_skillAssignButtons = ControlPanelHelperMethods.SetUpSkillAssignButtons(this, controlPanelParameters, skillSetManager);
 		_allButtons = ControlPanelHelperMethods.SetUpControlButtons(_skillAssignButtons, _singularHatchGroup, controlPanelParameters);
 
 		_maxSkillPanelScroll = _skillAssignButtons.Length - MaxNumberOfSkillButtons;
 
-		SetSelectedSkillAssignmentButton(_skillAssignButtons.FirstOrDefault());
+		var firstSkillAssignButton = _skillAssignButtons.Length > 0
+			? _skillAssignButtons[0]
+			: null;
+		SetSelectedSkillAssignmentButton(firstSkillAssignButton);
 	}
 
 	public void SetWindowDimensions(int screenWidth, int screenHeight)
@@ -114,24 +119,31 @@ public sealed class LevelControlPanel : ILevelControlPanel
 		var x0 = ControlPanelX;
 		var y0 = ControlPanelButtonY;
 		var h0 = ControlPanelButtonScreenHeight;
+		var halfH0 = h0 / 2;
 		var allButtons = AllButtons;
 
 		var index = 0;
 		for (; index < allButtons.Length; index++)
 		{
 			var controlPanelButton = allButtons[index];
-			if (controlPanelButton is SkillAssignButton)
+			// Quit when we come across the first skill assign button
+			if (controlPanelButton.ButtonAction.ButtonType == ButtonType.SkillAssign)
 				break;
 
 			x0 += ControlPanelButtonScreenWidth;
 			UpdateButtonDimensions(controlPanelButton);
 		}
 
+		// Deal with skill assign buttons separately
 		UpdateSkillAssignButtonDimensions();
 
-		var dx = Math.Min(_skillAssignButtons.Length, MaxNumberOfSkillButtons) * ControlPanelButtonScreenWidth;
+		var skillAssignButtons = SkillAssignButtons;
+		var numberOfSkillAssignButtons = skillAssignButtons.Length;
+
+		// Jump ahead in the list to the first non skill assign button
+		var dx = Math.Min(numberOfSkillAssignButtons, MaxNumberOfSkillButtons) * ControlPanelButtonScreenWidth;
 		x0 += dx;
-		index += _skillAssignButtons.Length;
+		index += numberOfSkillAssignButtons;
 
 		for (; index < allButtons.Length; index++)
 		{
@@ -148,9 +160,30 @@ public sealed class LevelControlPanel : ILevelControlPanel
 		void UpdateButtonDimensions(ControlPanelButton button)
 		{
 			button.ScreenX = x0;
-			button.ScreenY = y0;
 			button.ScreenWidth = ControlPanelButtonScreenWidth;
-			button.ScreenHeight = h0;
+
+			switch (button.ButtonAction.ButtonType.GetButtonTypeSizePosition())
+			{
+				case ButtonTypeSizePosition.Normal:
+					button.ScreenY = y0;
+					button.ScreenHeight = h0;
+					return;
+
+				case ButtonTypeSizePosition.TopHalf:
+					button.ScreenY = y0;
+					button.ScreenHeight = halfH0;
+
+					x0 -= ControlPanelButtonScreenWidth;
+					return;
+
+				case ButtonTypeSizePosition.BottomHalf:
+					button.ScreenY = y0 + halfH0;
+					button.ScreenHeight = halfH0;
+					return;
+
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 	}
 
@@ -164,14 +197,16 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
 		var x0 = ControlPanelX + ControlPanelButtonScreenWidth * (1 + skillAssignOffset - SkillPanelScroll);
 
-		for (var i = 0; i < _skillAssignButtons.Length; i++)
+		var skillAssignButtons = SkillAssignButtons;
+
+		for (var i = 0; i < skillAssignButtons.Length; i++)
 		{
-			var button = _skillAssignButtons[i];
+			var button = skillAssignButtons[i];
 			button.ScreenX = x0;
 			button.ScreenY = ControlPanelButtonY;
 			button.ScreenWidth = ControlPanelButtonScreenWidth;
 			button.ScreenHeight = ControlPanelButtonScreenHeight;
-			_skillAssignButtons[i].ShouldRender = i >= SkillPanelScroll && i < indexOfLastSkillAssignButtonToRender;
+			skillAssignButtons[i].ShouldRender = i >= SkillPanelScroll && i < indexOfLastSkillAssignButtonToRender;
 			x0 += ControlPanelButtonScreenWidth;
 		}
 
@@ -179,10 +214,12 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
 		int GetFirstIndexOfSkillAssignButton()
 		{
-			for (var index = 0; index < AllButtons.Length; index++)
+			var allButtons = AllButtons;
+
+			for (var index = 0; index < allButtons.Length; index++)
 			{
-				var button = AllButtons[index];
-				if (button is SkillAssignButton)
+				var button = allButtons[index];
+				if (button.ButtonAction.ButtonType == ButtonType.SkillAssign)
 					return index;
 			}
 
@@ -192,7 +229,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
 	public void HandleMouseInput()
 	{
-		if (_skillAssignButtons.Length > MaxNumberOfSkillButtons)
+		if (SkillAssignButtons.Length > MaxNumberOfSkillButtons)
 		{
 			TrackScrollWheel();
 		}
@@ -202,7 +239,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
 		var mouseX = _controller.MouseX;
 		var mouseY = _controller.MouseY;
-		foreach (var controlPanelButton in _allButtons)
+		foreach (var controlPanelButton in AllButtons)
 		{
 			if (controlPanelButton is null)
 				continue;
@@ -292,7 +329,8 @@ public sealed class LevelControlPanel : ILevelControlPanel
 			var buttons = AllButtons;
 
 			var secondButton = buttons[1];
-			if (secondButton is SpawnIntervalButton result)
+			if (secondButton is SpawnIntervalButton result &&
+				result.ButtonAction.ButtonType == ButtonType.SpawnIntervalDisplay)
 				return result;
 
 			throw new InvalidOperationException($"Could not locate {nameof(SpawnIntervalButton)}");

@@ -53,8 +53,7 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 		spriteBatch.Draw(
 			_skillIcons,
 			skillIconDestRectangle,
-			new Rectangle(0, _skillY * PanelHelpers.ControlPanelButtonPixelHeight,
-				PanelHelpers.ControlPanelButtonPixelWidth, PanelHelpers.ControlPanelButtonPixelHeight),
+			new Rectangle(0, _skillY * PanelHelpers.ControlPanelButtonPixelHeight, PanelHelpers.ControlPanelButtonPixelWidth, PanelHelpers.ControlPanelButtonPixelHeight),
 			RenderingLayers.ControlPanelSkillIconLayer);
 
 		RenderDigits(spriteBatch, destRectangle);
