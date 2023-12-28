@@ -29,8 +29,6 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
 	private readonly int _maxSkillPanelScroll;
 
-	private int _controlPanelScale = 4;
-
 	public int ScreenWidth { get; private set; }
 	public int ScreenHeight { get; private set; }
 	public int HorizontalButtonScreenSpace { get; private set; }
@@ -44,6 +42,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
 	public int SkillPanelScroll { get; private set; }
 
 	public int ControlPanelScreenHeight { get; private set; }
+	public int ControlPanelScale { get; private set; } = 4;
 
 	public LevelTimer LevelTimer { get; }
 	public SkillAssignButton? SelectedSkillAssignButton { get; private set; }
@@ -88,11 +87,11 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
 	public void SetPanelScale(int scale)
 	{
-		var previousScale = _controlPanelScale;
+		var previousScale = ControlPanelScale;
 
-		_controlPanelScale = Math.Clamp(scale, MinControlPanelScaleMultiplier, MaxControlPanelScaleMultiplier);
+		ControlPanelScale = Math.Clamp(scale, MinControlPanelScaleMultiplier, MaxControlPanelScaleMultiplier);
 
-		if (_controlPanelScale == previousScale)
+		if (ControlPanelScale == previousScale)
 			return;
 
 		RecalculateButtonDimensions();
@@ -100,15 +99,15 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
 	private void RecalculateButtonDimensions()
 	{
-		HorizontalButtonScreenSpace = (MaxNumberOfSkillButtons + NumberOfTechnicalButtons) * ControlPanelButtonPixelWidth * _controlPanelScale;
+		HorizontalButtonScreenSpace = (MaxNumberOfSkillButtons + NumberOfTechnicalButtons) * ControlPanelButtonPixelWidth * ControlPanelScale;
 
 		ControlPanelX = (ScreenWidth - HorizontalButtonScreenSpace) / 2;
-		ControlPanelY = ScreenHeight - (ControlPanelTotalPixelHeight * _controlPanelScale);
+		ControlPanelY = ScreenHeight - (ControlPanelTotalPixelHeight * ControlPanelScale);
 
-		ControlPanelButtonScreenWidth = ControlPanelButtonPixelWidth * _controlPanelScale;
-		ControlPanelButtonScreenHeight = ControlPanelButtonPixelHeight * _controlPanelScale;
-		ControlPanelInfoScreenHeight = ControlPanelInfoPixelHeight * _controlPanelScale;
-		ControlPanelScreenHeight = ControlPanelTotalPixelHeight * _controlPanelScale;
+		ControlPanelButtonScreenWidth = ControlPanelButtonPixelWidth * ControlPanelScale;
+		ControlPanelButtonScreenHeight = ControlPanelButtonPixelHeight * ControlPanelScale;
+		ControlPanelInfoScreenHeight = ControlPanelInfoPixelHeight * ControlPanelScale;
+		ControlPanelScreenHeight = ControlPanelTotalPixelHeight * ControlPanelScale;
 
 		ControlPanelButtonY = ControlPanelY + ControlPanelInfoScreenHeight;
 
@@ -152,7 +151,6 @@ public sealed class LevelControlPanel : ILevelControlPanel
 			button.ScreenY = y0;
 			button.ScreenWidth = ControlPanelButtonScreenWidth;
 			button.ScreenHeight = h0;
-			button.ScaleMultiplier = _controlPanelScale;
 		}
 	}
 
@@ -164,7 +162,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
 		if (skillAssignOffset < 0)
 			return;
 
-		var x0 = ControlPanelX + ControlPanelButtonScreenWidth * (skillAssignOffset - SkillPanelScroll);
+		var x0 = ControlPanelX + ControlPanelButtonScreenWidth * (1 + skillAssignOffset - SkillPanelScroll);
 
 		for (var i = 0; i < _skillAssignButtons.Length; i++)
 		{
@@ -173,7 +171,6 @@ public sealed class LevelControlPanel : ILevelControlPanel
 			button.ScreenY = ControlPanelButtonY;
 			button.ScreenWidth = ControlPanelButtonScreenWidth;
 			button.ScreenHeight = ControlPanelButtonScreenHeight;
-			button.ScaleMultiplier = _controlPanelScale;
 			_skillAssignButtons[i].ShouldRender = i >= SkillPanelScroll && i < indexOfLastSkillAssignButtonToRender;
 			x0 += ControlPanelButtonScreenWidth;
 		}
@@ -186,7 +183,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
 			{
 				var button = AllButtons[index];
 				if (button is SkillAssignButton)
-					return index + 1;
+					return index;
 			}
 
 			return -1;
@@ -201,29 +198,42 @@ public sealed class LevelControlPanel : ILevelControlPanel
 		}
 
 		var leftMouseButton = _controller.LeftMouseButtonAction;
-		if (!leftMouseButton.IsActionDown)
-			return;
+		var rightMouseButton = _controller.RightMouseButtonAction;
 
 		var mouseX = _controller.MouseX;
 		var mouseY = _controller.MouseY;
 		foreach (var controlPanelButton in _allButtons)
 		{
+			if (controlPanelButton is null)
+				continue;
+
 			if (!controlPanelButton.TryPress(mouseX, mouseY))
 				continue;
 
+			var buttonAction = controlPanelButton.ButtonAction;
+
 			if (leftMouseButton.IsDoubleTap)
 			{
-				controlPanelButton.OnDoubleTap();
+				buttonAction.OnDoubleTap();
 				return;
 			}
 
 			if (leftMouseButton.IsPressed)
 			{
-				controlPanelButton.OnPress();
+				buttonAction.OnPress();
 				return;
 			}
 
-			controlPanelButton.OnMouseDown();
+			if (leftMouseButton.IsActionDown)
+			{
+				buttonAction.OnMouseDown();
+			}
+
+			if (rightMouseButton.IsPressed)
+			{
+				buttonAction.OnRightClick();
+			}
+
 			return;
 		}
 	}

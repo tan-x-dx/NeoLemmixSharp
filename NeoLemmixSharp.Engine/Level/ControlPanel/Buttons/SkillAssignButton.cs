@@ -25,6 +25,8 @@ public sealed class SkillAssignButton : ControlPanelButton
 		SkillId = skillId;
 		SkillTrackingDataId = skillTrackingDataId;
 		SkillAssignButtonId = skillAssignButtonId;
+
+		ButtonAction = new SkillAssignButtonAction(this);
 	}
 
 	public void UpdateSkillCount(int numberOfSkillsAvailable)
@@ -40,21 +42,38 @@ public sealed class SkillAssignButton : ControlPanelButton
 		TextRenderingHelpers.WriteDigits(span, numberOfSkillsAvailable);
 	}
 
-	public override void OnPress()
-	{
-		LevelScreen.LevelControlPanel.SetSelectedSkillAssignmentButton(this);
-	}
-
-	public override void OnDoubleTap()
-	{
-		LevelScreen.LevelControlPanel.SetSelectedSkillAssignmentButton(this);
-	}
-
 	public override ReadOnlySpan<int> GetDigitsToRender() => new(_skillCountChars);
 	public override int GetNumberOfDigitsToRender() => 2;
 
 	public override ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
 	{
 		return new SkillAssignButtonRenderer(spriteBank, this);
+	}
+}
+
+public sealed class SkillAssignButtonAction : IButtonAction
+{
+	private readonly SkillAssignButton _skillAssignButton;
+
+	public SkillAssignButtonAction(SkillAssignButton skillAssignButton)
+	{
+		_skillAssignButton = skillAssignButton;
+	}
+
+	public void OnMouseDown()
+	{
+		LevelScreen.LevelControlPanel.SetSelectedSkillAssignmentButton(_skillAssignButton);
+	}
+
+	public void OnPress()
+	{
+	}
+
+	public void OnDoubleTap()
+	{
+	}
+
+	public void OnRightClick()
+	{
 	}
 }

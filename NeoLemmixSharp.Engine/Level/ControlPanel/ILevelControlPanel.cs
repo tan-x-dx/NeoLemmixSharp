@@ -8,8 +8,10 @@ public interface ILevelControlPanel
 	LevelTimer LevelTimer { get; }
 	SkillAssignButton? SelectedSkillAssignButton { get; }
 	int SelectedSkillButtonId { get; }
+	int ControlPanelScale { get; }
 
 	void HandleMouseInput();
+	void SetPanelScale(int scale);
 	void SetWindowDimensions(int windowWidth, int windowHeight);
 	void ChangeSkillAssignButtonScroll(int delta);
 	void SetSelectedSkillAssignmentButton(SkillAssignButton? skillAssignButton);

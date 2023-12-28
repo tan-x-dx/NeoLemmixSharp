@@ -42,11 +42,13 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 			PanelHelpers.GetRectangleForCoordinates(PanelHelpers.SkillIconMaskX, PanelHelpers.SkillIconMaskY),
 			RenderingLayers.ControlPanelSkillCountEraseLayer);
 
+		var scaleMultiplier = LevelScreen.LevelControlPanel.ControlPanelScale;
+
 		var skillIconDestRectangle = new Rectangle(
 			ControlPanelButton.ScreenX,
 			ControlPanelButton.ScreenY,
-			PanelHelpers.ControlPanelButtonPixelWidth * ControlPanelButton.ScaleMultiplier,
-			PanelHelpers.ControlPanelButtonPixelHeight * ControlPanelButton.ScaleMultiplier);
+			PanelHelpers.ControlPanelButtonPixelWidth * scaleMultiplier,
+			PanelHelpers.ControlPanelButtonPixelHeight * scaleMultiplier);
 
 		spriteBatch.Draw(
 			_skillIcons,

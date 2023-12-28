@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
@@ -14,11 +13,7 @@ public sealed class PaddingButtonRenderer : ControlPanelButtonRenderer
 
 	public override void Render(SpriteBatch spriteBatch)
 	{
-		var destRectangle = new Rectangle(
-			ControlPanelButton.ScreenX,
-			ControlPanelButton.ScreenY,
-			ControlPanelButton.ScreenWidth,
-			ControlPanelButton.ScreenHeight);
+		var destRectangle = GetDestinationRectangle();
 
 		spriteBatch.Draw(
 			PanelTexture,

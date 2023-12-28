@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
-public abstract class ControlPanelButton
+public class ControlPanelButton
 {
 	private const int NumberOfSkillPanels = 8;
 	private const int SkillPanelFrameMask = NumberOfSkillPanels - 1;
@@ -13,14 +13,31 @@ public abstract class ControlPanelButton
 	public int ScreenY { get; set; }
 	public int ScreenWidth { get; set; }
 	public int ScreenHeight { get; set; }
-	public int ScaleMultiplier { get; set; }
+
+	public int IconX { get; }
+	public int IconY { get; }
 
 	public bool ShouldRender { get; set; } = true;
 	public bool IsSelected { get; set; }
 
+	public IButtonAction ButtonAction { get; protected init; }
+
 	protected ControlPanelButton(int skillPanelFrame)
 	{
 		SkillPanelFrame = skillPanelFrame & SkillPanelFrameMask;
+	}
+
+	public ControlPanelButton(
+		int skillPanelFrame,
+		IButtonAction buttonAction,
+		int iconX,
+		int iconY)
+	{
+		ButtonAction = buttonAction;
+		SkillPanelFrame = skillPanelFrame & SkillPanelFrameMask;
+
+		IconX = iconX;
+		IconY = iconY;
 	}
 
 	public virtual bool TryPress(int mouseX, int mouseY)
@@ -35,20 +52,11 @@ public abstract class ControlPanelButton
 			   mouseY >= ScreenY && mouseY <= ScreenY + ScreenHeight;
 	}
 
-	public virtual void OnDoubleTap()
-	{
-	}
-
-	public virtual void OnPress()
-	{
-	}
-
-	public virtual void OnMouseDown()
-	{
-	}
-
 	public virtual ReadOnlySpan<int> GetDigitsToRender() => ReadOnlySpan<int>.Empty;
 	public virtual int GetNumberOfDigitsToRender() => 0;
 
-	public abstract ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank);
+	public virtual ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
+	{
+		return new ControlPanelButtonRenderer(spriteBank, this, IconX, IconY);
+	}
 }

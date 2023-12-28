@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
@@ -73,7 +74,7 @@ public class ControlPanelButtonRenderer
 			PanelHelpers.GetRectangleForCoordinates(PanelHelpers.SkillIconMaskX, PanelHelpers.SkillIconMaskY),
 			RenderingLayers.ControlPanelSkillCountEraseLayer);
 
-		var buttonScaleMultiplier = ControlPanelButton.ScaleMultiplier;
+		var buttonScaleMultiplier = LevelScreen.LevelControlPanel.ControlPanelScale;
 		var dx = 3 * buttonScaleMultiplier;
 
 		FontBank.SkillCountDigitFont.RenderTextSpan(
@@ -94,7 +95,6 @@ public class ControlPanelButtonRenderer
 			SelectedTexture,
 			destRectangle,
 			new Rectangle(0, 0, SelectedTexture.Width, SelectedTexture.Height),
-			RenderingLayers
-				.ControlPanelSkillCountEraseLayer); // Can reuse this layer since the sprites shouldn't overlap anyway
+			RenderingLayers.ControlPanelSkillCountEraseLayer); // Can reuse this layer since the sprites shouldn't overlap anyway
 	}
 }

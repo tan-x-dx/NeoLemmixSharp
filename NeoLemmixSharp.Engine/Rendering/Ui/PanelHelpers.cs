@@ -12,7 +12,7 @@ public static class PanelHelpers
 	public const int PauseButtonX = 0;
 	public const int NukeButtonX = 1;
 	public const int FastForwardButtonX = 2;
-	public const int ReplayButtonX = 3;
+	public const int RestartButtonX = 3;
 	public const int FrameNudgeButtonX = 4;
 	public const int DirectionSelectButtonX = 5;
 	public const int ClearPhysicsAndReplayButtonX = 6;

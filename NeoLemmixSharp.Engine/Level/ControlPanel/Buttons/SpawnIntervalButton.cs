@@ -22,7 +22,17 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 			hatchGroup,
 			controlPanelParameters.TestFlag(ControlPanelParameters.ShowSpawnInterval));
 
-		return new SpawnIntervalButton(skillPanelFrame, spawnIntervalMinValueGetter);
+		var buttonAction = new SpawnIntervalChangeButtonAction(spawnIntervalMinValueGetter, hatchGroup);
+
+		var iconX = spawnIntervalMinValueGetter.GetIconX();
+		var iconY = spawnIntervalMinValueGetter.GetIconY();
+
+		return new SpawnIntervalButton(
+			skillPanelFrame,
+			spawnIntervalMinValueGetter,
+			buttonAction,
+			iconX,
+			iconY);
 	}
 
 	public static SpawnIntervalButton CreateSpawnIntervalDisplayButton(
@@ -34,7 +44,12 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 			hatchGroup,
 			controlPanelParameters.TestFlag(ControlPanelParameters.ShowSpawnInterval));
 
-		return new SpawnIntervalButton(skillPanelFrame, spawnIntervalMinValueGetter);
+		return new SpawnIntervalButton(
+			skillPanelFrame,
+			spawnIntervalMinValueGetter,
+			EmptyButtonAction.Instance,
+			-1,
+			-1);
 	}
 
 	public static SpawnIntervalButton CreateSpawnIntervalIncreaseButton(
@@ -42,17 +57,30 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 		ControlPanelParameters controlPanelParameters,
 		HatchGroup hatchGroup)
 	{
-		var spawnIntervalMinValueGetter = new SpawnIntervalMaxValueGetter(
+		var spawnIntervalMaxValueGetter = new SpawnIntervalMaxValueGetter(
 			hatchGroup,
 			controlPanelParameters.TestFlag(ControlPanelParameters.ShowSpawnInterval));
 
-		return new SpawnIntervalButton(skillPanelFrame, spawnIntervalMinValueGetter);
+		var buttonAction = new SpawnIntervalChangeButtonAction(spawnIntervalMaxValueGetter, hatchGroup);
+
+		var iconX = spawnIntervalMaxValueGetter.GetIconX();
+		var iconY = spawnIntervalMaxValueGetter.GetIconY();
+
+		return new SpawnIntervalButton(
+			skillPanelFrame,
+			spawnIntervalMaxValueGetter,
+			buttonAction,
+			iconX,
+			iconY);
 	}
 
 	private SpawnIntervalButton(
 		int skillPanelFrame,
-		ISpawnIntervalValueGetter spawnIntervalValueGetter)
-		: base(skillPanelFrame)
+		ISpawnIntervalValueGetter spawnIntervalValueGetter,
+		IButtonAction buttonAction,
+		int iconX,
+		int iconY)
+		: base(skillPanelFrame, buttonAction, iconX, iconY)
 	{
 		_spawnIntervalValueGetter = spawnIntervalValueGetter;
 		UpdateNumericalValue();
@@ -68,12 +96,6 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
 	public override ReadOnlySpan<int> GetDigitsToRender() => new(_chars);
 	public override int GetNumberOfDigitsToRender() => _numberOfDigitsToRender;
-	public override void OnPress()
-	{
-		_spawnIntervalValueGetter.ChangeSpawnInterval();
-
-		LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
-	}
 
 	public override ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
 	{
@@ -85,7 +107,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
 	private interface ISpawnIntervalValueGetter
 	{
-		void ChangeSpawnInterval();
+		int GetSpawnIntervalDelta();
 		int GetNumericalValue();
 
 		int GetIconX();
@@ -103,7 +125,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 			_showSpawnInterval = showSpawnInterval;
 		}
 
-		public void ChangeSpawnInterval() => _hatchGroup.ChangeSpawnInterval(-1);
+		public int GetSpawnIntervalDelta() => -1;
 		public int GetNumericalValue() => _showSpawnInterval
 			? _hatchGroup.MinSpawnInterval
 			: _hatchGroup.MinReleaseRate;
@@ -124,7 +146,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 			_showSpawnInterval = showSpawnInterval;
 		}
 
-		public void ChangeSpawnInterval() { } // Do nothing
+		public int GetSpawnIntervalDelta() => 0;
 		public int GetNumericalValue() => _showSpawnInterval
 			? _hatchGroup.CurrentSpawnInterval
 			: _hatchGroup.CurrentReleaseRate;
@@ -143,7 +165,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 			_showSpawnInterval = showSpawnInterval;
 		}
 
-		public void ChangeSpawnInterval() => _hatchGroup.ChangeSpawnInterval(1);
+		public int GetSpawnIntervalDelta() => 1;
 		public int GetNumericalValue() => _showSpawnInterval
 			? _hatchGroup.MaxSpawnInterval
 			: _hatchGroup.MaxReleaseRate;
@@ -151,5 +173,43 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 			? PanelHelpers.MinusButtonX
 			: PanelHelpers.PlusButtonX;
 		public int GetIconY() => PanelHelpers.ButtonIconsY;
+	}
+
+	private sealed class SpawnIntervalChangeButtonAction : IButtonAction
+	{
+		private readonly ISpawnIntervalValueGetter _spawnIntervalValueGetter;
+		private readonly HatchGroup _hatchGroup;
+
+		public SpawnIntervalChangeButtonAction(
+			ISpawnIntervalValueGetter spawnIntervalValueGetter,
+			HatchGroup hatchGroup)
+		{
+			_spawnIntervalValueGetter = spawnIntervalValueGetter;
+			_hatchGroup = hatchGroup;
+		}
+
+		public void OnMouseDown()
+		{
+		}
+
+		public void OnPress()
+		{
+			var delta = _spawnIntervalValueGetter.GetSpawnIntervalDelta();
+			_hatchGroup.ChangeSpawnInterval(delta);
+
+			LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+		}
+
+		public void OnDoubleTap()
+		{
+		}
+
+		public void OnRightClick()
+		{
+			var delta = _spawnIntervalValueGetter.GetSpawnIntervalDelta();
+			_hatchGroup.ChangeSpawnInterval(delta * 1000); // Set to extremal value - will be clamped appropriately
+
+			LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+		}
 	}
 }

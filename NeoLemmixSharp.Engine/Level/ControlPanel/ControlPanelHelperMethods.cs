@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.Engine.Rendering.Ui;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
@@ -114,7 +115,12 @@ public static class ControlPanelHelperMethods
 
 		if (showSkillAssignScrollButtons) // Left scroll button
 		{
-			result[newButtonIndex] = new SkillAssignScrollButton(newButtonIndex, -1);
+			var buttonAction = new SkillAssignScrollButtonAction(1);
+			result[newButtonIndex] = new ControlPanelButton(
+				newButtonIndex,
+				buttonAction,
+				PanelHelpers.SkillAssignScrollLeftX,
+				PanelHelpers.SkillAssignScrollY);
 			newButtonIndex++;
 		}
 
@@ -123,7 +129,12 @@ public static class ControlPanelHelperMethods
 
 		if (showSkillAssignScrollButtons) // Right scroll button
 		{
-			result[newButtonIndex] = new SkillAssignScrollButton(newButtonIndex, 1);
+			var buttonAction = new SkillAssignScrollButtonAction(-1);
+			result[newButtonIndex] = new ControlPanelButton(
+				newButtonIndex,
+				buttonAction,
+				PanelHelpers.SkillAssignScrollRightX,
+				PanelHelpers.SkillAssignScrollY);
 			newButtonIndex++;
 		}
 		else // Padding buttons
@@ -137,25 +148,45 @@ public static class ControlPanelHelperMethods
 
 		if (showPause)
 		{
-			result[newButtonIndex] = new PauseButton(newButtonIndex);
+			var buttonAction = new PauseButtonAction();
+			result[newButtonIndex] = new ControlPanelButton(
+				newButtonIndex,
+				buttonAction,
+				PanelHelpers.PauseButtonX,
+				PanelHelpers.ButtonIconsY);
 			newButtonIndex++;
 		}
 
 		if (showNuke)
 		{
-			result[newButtonIndex] = new NukeButton(newButtonIndex);
+			var buttonAction = new NukeButtonAction();
+			result[newButtonIndex] = new ControlPanelButton(
+				newButtonIndex,
+				buttonAction,
+				PanelHelpers.NukeButtonX,
+				PanelHelpers.ButtonIconsY);
 			newButtonIndex++;
 		}
 
 		if (showFastForward)
 		{
-			result[newButtonIndex] = new FastForwardButton(newButtonIndex);
+			var buttonAction = new FastForwardButtonAction();
+			result[newButtonIndex] = new ControlPanelButton(
+				newButtonIndex,
+				buttonAction,
+				PanelHelpers.FastForwardButtonX,
+				PanelHelpers.ButtonIconsY);
 			newButtonIndex++;
 		}
 
 		if (showRestart)
 		{
-			result[newButtonIndex] = new RestartButton(newButtonIndex);
+			var buttonAction = new RestartButtonAction();
+			result[newButtonIndex] = new ControlPanelButton(
+				newButtonIndex,
+				buttonAction,
+				PanelHelpers.RestartButtonX,
+				PanelHelpers.ButtonIconsY);
 			newButtonIndex++;
 		}
 
