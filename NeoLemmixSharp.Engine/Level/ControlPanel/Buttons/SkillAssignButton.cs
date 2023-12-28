@@ -7,6 +7,8 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 public sealed class SkillAssignButton : ControlPanelButton
 {
+	private const int NumberOfChars = 2;
+
 	private readonly int[] _skillCountChars;
 
 	public int SkillId { get; }
@@ -20,7 +22,7 @@ public sealed class SkillAssignButton : ControlPanelButton
 		int skillTrackingDataId)
 		: base(skillPanelFrame)
 	{
-		_skillCountChars = new int[2];
+		_skillCountChars = new int[NumberOfChars];
 
 		SkillId = skillId;
 		SkillTrackingDataId = skillTrackingDataId;
@@ -43,7 +45,7 @@ public sealed class SkillAssignButton : ControlPanelButton
 	}
 
 	public override ReadOnlySpan<int> GetDigitsToRender() => new(_skillCountChars);
-	public override int GetNumberOfDigitsToRender() => 2;
+	public override int GetNumberOfDigitsToRender() => NumberOfChars;
 
 	public override ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
 	{
