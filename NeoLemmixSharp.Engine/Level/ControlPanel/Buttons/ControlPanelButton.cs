@@ -41,16 +41,11 @@ public class ControlPanelButton
 		IconY = iconY;
 	}
 
-	public virtual bool TryPress(int mouseX, int mouseY)
-	{
-		return MouseIsOverButton(mouseX, mouseY);
-	}
-
-	protected bool MouseIsOverButton(int mouseX, int mouseY)
+	public bool MouseIsOverButton(int mouseX, int mouseY)
 	{
 		return ShouldRender &&
-			   mouseX >= ScreenX && mouseX <= ScreenX + ScreenWidth &&
-			   mouseY >= ScreenY && mouseY <= ScreenY + ScreenHeight;
+			   mouseX >= ScreenX && mouseX < ScreenX + ScreenWidth &&
+			   mouseY >= ScreenY && mouseY < ScreenY + ScreenHeight;
 	}
 
 	public virtual ReadOnlySpan<int> GetDigitsToRender() => ReadOnlySpan<int>.Empty;

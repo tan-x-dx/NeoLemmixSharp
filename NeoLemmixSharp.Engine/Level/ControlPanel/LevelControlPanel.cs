@@ -244,7 +244,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
 			if (controlPanelButton is null)
 				continue;
 
-			if (!controlPanelButton.TryPress(mouseX, mouseY))
+			if (!controlPanelButton.MouseIsOverButton(mouseX, mouseY))
 				continue;
 
 			var buttonAction = controlPanelButton.ButtonAction;
