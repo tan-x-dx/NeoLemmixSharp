@@ -42,7 +42,7 @@ public sealed class MenuFont : INeoLemmixFont
             if (c < LowerCharLimit || c > UpperCharLimit)
                 continue;
 
-            var source = new Rectangle(GlyphWidth * (c - 33), 0, GlyphWidth, GlyphHeight);
+            var source = new Rectangle(GlyphWidth * (c - (1 + LowerCharLimit)), 0, GlyphWidth, GlyphHeight);
             spriteBatch.Draw(
                 _texture,
                 dest,
@@ -67,7 +67,7 @@ public sealed class MenuFont : INeoLemmixFont
 			if (c < LowerCharLimit || c > UpperCharLimit)
 				continue;
 
-            var source = new Rectangle(GlyphWidth * (c - 33), 0, GlyphWidth, GlyphHeight);
+            var source = new Rectangle(GlyphWidth * (c - (1 + LowerCharLimit)), 0, GlyphWidth, GlyphHeight);
             spriteBatch.Draw(
                 _texture,
                 dest,
