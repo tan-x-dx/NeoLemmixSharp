@@ -5,58 +5,57 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 public sealed class LemmingRenderer : IViewportObjectRenderer
 {
-    private readonly LemmingSpriteBank _spriteBank;
+	private Level.Lemmings.Lemming _lemming;
+	private ActionSprite _actionSprite;
 
-    private Level.Lemmings.Lemming _lemming;
-    private ActionSprite _actionSprite;
+	private bool _shouldRender;
 
-    private bool _shouldRender;
+	public LemmingRenderer(Level.Lemmings.Lemming lemming)
+	{
+		_lemming = lemming;
+	}
 
-    public LemmingRenderer(LemmingSpriteBank spriteBank, Level.Lemmings.Lemming lemming)
-    {
-        _spriteBank = spriteBank;
-        _lemming = lemming;
-    }
+	public void UpdateLemmingState(bool shouldRender)
+	{
+		_shouldRender = shouldRender;
 
-    public void UpdateLemmingState(bool shouldRender)
-    {
-        _shouldRender = shouldRender;
+		if (!shouldRender)
+			return;
 
-        if (!shouldRender)
-            return;
+		var spriteBank = _lemming.State.TeamAffiliation.SpriteBank;
 
-        _actionSprite = _spriteBank.GetActionSprite(
-            _lemming.CurrentAction,
-            _lemming.Orientation,
-            _lemming.FacingDirection);
-    }
+		_actionSprite = spriteBank.GetActionSprite(
+			_lemming.CurrentAction,
+			_lemming.Orientation,
+			_lemming.FacingDirection);
+	}
 
-    public Rectangle GetSpriteBounds()
-    {
-        if (!_shouldRender)
-            return Rectangle.Empty;
+	public Rectangle GetSpriteBounds()
+	{
+		if (!_shouldRender)
+			return Rectangle.Empty;
 
-        var p = _lemming.LevelPosition - _actionSprite.AnchorPoint;
+		var p = _lemming.LevelPosition - _actionSprite.AnchorPoint;
 
-        return new Rectangle(p.X, p.Y, _actionSprite.SpriteWidth, _actionSprite.SpriteHeight);
-    }
+		return new Rectangle(p.X, p.Y, _actionSprite.SpriteWidth, _actionSprite.SpriteHeight);
+	}
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
-    {
-        if (!_shouldRender)
-            return;
+	public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+	{
+		if (!_shouldRender)
+			return;
 
-        var renderDestination = new Rectangle(
-            screenX,
-            screenY,
-            sourceRectangle.Width * scaleMultiplier,
-            sourceRectangle.Height * scaleMultiplier);
+		var renderDestination = new Rectangle(
+			screenX,
+			screenY,
+			sourceRectangle.Width * scaleMultiplier,
+			sourceRectangle.Height * scaleMultiplier);
 
-        sourceRectangle.Y += _lemming.AnimationFrame * _actionSprite.SpriteHeight;
+		sourceRectangle.Y += _lemming.AnimationFrame * _actionSprite.SpriteHeight;
 
-        _actionSprite.RenderLemming(spriteBatch, _lemming, sourceRectangle, renderDestination);
+		_actionSprite.RenderLemming(spriteBatch, _lemming, sourceRectangle, renderDestination);
 
-        /* spriteBatch.Draw(
+		/* spriteBatch.Draw(
               actionSprite.Texture,
               renderDestination,
               actionSprite.GetSourceRectangleForFrame(sourceRectangle, _lemming.AnimationFrame),
@@ -66,10 +65,10 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
               SpriteEffects.None,
               RenderingLayers.LemmingRenderLayer);*/
 
-        // var p = new Point(screenX - scaleMultiplier, screenY - scaleMultiplier);
-        // renderDestination = new Rectangle(p, new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
+		// var p = new Point(screenX - scaleMultiplier, screenY - scaleMultiplier);
+		// renderDestination = new Rectangle(p, new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
 
-        /* var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
+		/* var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
          spriteBatch.Draw(
              spriteBank.AnchorTexture,
              renderDestination,
@@ -78,11 +77,11 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
              new Vector2(),
              SpriteEffects.None,
              RenderingLayers.LemmingRenderLayer);*/
-    }
+	}
 
-    public void Dispose()
-    {
-        _lemming = null;
-        _actionSprite = null;
-    }
+	public void Dispose()
+	{
+		_lemming = null!;
+		_actionSprite = null!;
+	}
 }

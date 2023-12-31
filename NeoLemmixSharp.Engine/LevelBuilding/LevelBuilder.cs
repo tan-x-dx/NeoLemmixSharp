@@ -7,7 +7,6 @@ using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
@@ -15,7 +14,6 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using Viewport = NeoLemmixSharp.Engine.Level.Viewport;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
@@ -49,13 +47,6 @@ public sealed class LevelBuilder : IDisposable
 
 		var levelData = _levelReader.LevelData;
 		var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
-		lemmingSpriteBank.SetTeamColors();
-
-		var lemmingSpriteBankLookup = new Dictionary<Team, LemmingSpriteBank>();
-		foreach (var team in Team.AllItems)
-		{
-			lemmingSpriteBankLookup[team] = lemmingSpriteBank;
-		}
 
 		var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
 		var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
@@ -108,7 +99,7 @@ public sealed class LevelBuilder : IDisposable
 		var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
 		var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank();
 
-		var levelSprites = _levelObjectAssembler.GetLevelSprites(lemmingSpriteBankLookup);
+		var levelSprites = _levelObjectAssembler.GetLevelSprites();
 
 		var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel);
 
