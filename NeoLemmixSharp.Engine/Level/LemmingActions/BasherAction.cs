@@ -37,7 +37,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
          FacingDirection facingDirection,
          LevelPosition pos)
      {
-       var terrainManager = LevelConstants.TerrainManager;
+       var terrainManager = LevelScreen.TerrainManager;
 
          return terrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 3)) ||
                 terrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 4)) ||
@@ -65,7 +65,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         int dx,
         int step)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
 
         var p1X1Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 1));
         var p1X2Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 2));

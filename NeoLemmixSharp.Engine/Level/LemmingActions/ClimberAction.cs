@@ -20,7 +20,7 @@ public sealed class ClimberAction : LemmingAction
     // See http://www.lemmingsforums.net/index.php?topic=2506.0 first!
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var dx = lemming.FacingDirection.DeltaX;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;

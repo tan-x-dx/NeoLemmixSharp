@@ -50,7 +50,7 @@ public sealed class PlatformerAction : LemmingAction
 
     private static void DoMainUpdate(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         ref var lemmingPosition = ref lemming.LevelPosition;
@@ -139,7 +139,7 @@ public sealed class PlatformerAction : LemmingAction
         Lemming lemming,
         Orientation orientation)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var lemmingPosition = lemming.LevelPosition;
 
         var result = !terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition) ||
@@ -158,7 +158,7 @@ public sealed class PlatformerAction : LemmingAction
         Lemming lemming,
         LevelPosition pos)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         return terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(pos, 1)) ||
                terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(pos, 2));
     }

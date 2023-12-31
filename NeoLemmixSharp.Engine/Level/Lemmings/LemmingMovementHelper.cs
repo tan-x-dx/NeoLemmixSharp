@@ -125,7 +125,7 @@ public readonly ref struct LemmingMovementHelper
 
         foreach (var levelPosition in jumpPositions)
         {
-            if (LevelConstants.TerrainManager.PositionOutOfBounds(levelPosition))
+            if (LevelScreen.TerrainManager.PositionOutOfBounds(levelPosition))
                 break;
 
             workPosition = levelPosition;

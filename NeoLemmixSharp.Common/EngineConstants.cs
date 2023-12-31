@@ -7,7 +7,7 @@ public static class EngineConstants
     public const int StandardTicksPerSecond = 17;
     public const int FastForwardSpeedMultiplier = 3;
     public const int FramesPerSecond = StandardTicksPerSecond * FastForwardSpeedMultiplier;
-    public static TimeSpan FramesPerSecondTimeSpan => TimeSpan.FromTicks((long)(TimeSpan.TicksPerMillisecond * (1000 / (double)FramesPerSecond)));
+    public static TimeSpan FramesPerSecondTimeSpan => TimeSpan.FromTicks((long)(TimeSpan.TicksPerMillisecond * (1000d / (double)FramesPerSecond)));
 
     public const int DoubleTapFrameCountMax = 17;
 

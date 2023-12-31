@@ -83,7 +83,7 @@ public sealed class WalkerAction : LemmingAction
 
     public static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         LevelPosition currentPosition;
@@ -117,7 +117,7 @@ public sealed class WalkerAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        if (LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        if (LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
         {
             base.TransitionLemmingToAction(lemming, turnAround);
             return;

@@ -4,6 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings.ZombieHelpers;
 
 public interface IZombieHelper
 {
+	void Clear();
     void RegisterZombie(Lemming lemming);
     void UpdateZombiePosition(Lemming lemming);
     void DeregisterZombie(Lemming lemming);

@@ -18,7 +18,7 @@ public sealed class ShimmierAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
@@ -104,7 +104,7 @@ public sealed class ShimmierAction : LemmingAction
 
             if (terrainManager.PositionOutOfBounds(lemmingPosition))
             {
-                LevelConstants.LemmingManager.RemoveLemming(lemming);
+                LevelScreen.LemmingManager.RemoveLemming(lemming);
                 return true;
             }
         }
@@ -132,7 +132,7 @@ public sealed class ShimmierAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
 

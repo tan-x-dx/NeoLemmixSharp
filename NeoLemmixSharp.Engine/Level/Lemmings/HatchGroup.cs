@@ -1,85 +1,104 @@
 ﻿using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class HatchGroup : IIdEquatable<HatchGroup>
 {
-    private readonly HatchGadget[] _hatches;
+	private const int MinAllowedSpawnInterval = 4;
+	private const int MaxAllowedSpawnInterval = 102;
 
-    private readonly int _minSpawnInterval;
-    private readonly int _maxSpawnInterval;
+	private readonly HatchGadget[] _hatches;
 
-    private int _hatchIndex;
+	public int Id { get; }
 
-    private int _spawnInterval;
-    private int _spawnIntervalDelta;
+	public int MinSpawnInterval { get; }
+	public int MaxSpawnInterval { get; }
+	public int CurrentSpawnInterval { get; private set; }
 
-    private int _nextLemmingCountDown = LevelConstants.InitialLemmingCountDown;
-    private int _lemmingsToRelease;
+	private int _hatchIndex;
 
-    public int Id { get; }
+	private int _nextLemmingCountDown = LevelConstants.InitialLemmingCountDown;
+	private int _lemmingsToRelease;
 
-    public HatchGroup(
-        HatchGadget[] hatches,
-        int minSpawnInterval,
-        int maxSpawnInterval,
-        int initialSpawnInterval)
-    {
-        _hatches = hatches;
-        _hatchIndex = _hatches.Length - 1;
-        _minSpawnInterval = minSpawnInterval;
-        _maxSpawnInterval = maxSpawnInterval;
-        _spawnInterval = initialSpawnInterval;
-        _lemmingsToRelease = hatches.Sum(h => h.HatchSpawnData.LemmingsToRelease);
-    }
+	public int MinReleaseRate => ConvertToReleaseRate(MinSpawnInterval);
+	public int MaxReleaseRate => ConvertToReleaseRate(MaxSpawnInterval);
+	public int CurrentReleaseRate => ConvertToReleaseRate(CurrentSpawnInterval);
 
-    public void SetSpawnIntervalDelta(int spawnIntervalDelta)
-    {
-        _spawnIntervalDelta = spawnIntervalDelta;
-    }
+	public HatchGroup(
+		int id,
+		HatchGadget[] hatches,
+		int minSpawnInterval,
+		int maxSpawnInterval,
+		int initialSpawnInterval)
+	{
+		Id = id;
 
-    public HatchGadget? Tick()
-    {
-        _spawnInterval = Math.Clamp(_spawnInterval + _spawnIntervalDelta, _minSpawnInterval, _maxSpawnInterval);
+		_hatches = hatches;
+		_hatchIndex = _hatches.Length - 1;
+		MinSpawnInterval = Math.Clamp(minSpawnInterval, MinAllowedSpawnInterval, MaxAllowedSpawnInterval);
+		MaxSpawnInterval = Math.Clamp(maxSpawnInterval, minSpawnInterval, MaxAllowedSpawnInterval);
+		CurrentSpawnInterval = Math.Clamp(initialSpawnInterval, MinSpawnInterval, MaxSpawnInterval);
+		_lemmingsToRelease = hatches.Sum(h => h.HatchSpawnData.LemmingsToRelease);
+	}
 
-        _nextLemmingCountDown--;
+	public void ChangeSpawnInterval(int spawnIntervalDelta)
+	{
+		CurrentSpawnInterval = Math.Clamp(CurrentSpawnInterval + spawnIntervalDelta, MinSpawnInterval, MaxSpawnInterval);
+	}
 
-        if (_nextLemmingCountDown != 0)
-            return null;
+	public HatchGadget? Tick()
+	{
+		_nextLemmingCountDown--;
 
-        _nextLemmingCountDown = _spawnInterval;
-        return GetNextLogicalHatchGadget();
-    }
+		if (_nextLemmingCountDown != 0)
+			return null;
 
-    private HatchGadget? GetNextLogicalHatchGadget()
-    {
-        if (_lemmingsToRelease == 0)
-            return null;
+		_nextLemmingCountDown = CurrentSpawnInterval;
+		return GetNextLogicalHatchGadget();
+	}
 
-        do
-        {
-            _hatchIndex++;
-            if (_hatchIndex == _hatches.Length)
-            {
-                _hatchIndex = 0;
-            }
-            var hatchGadget = _hatches[_hatchIndex];
+	private HatchGadget? GetNextLogicalHatchGadget()
+	{
+		if (_lemmingsToRelease == 0)
+			return null;
 
-            if (hatchGadget.CanReleaseLemmings())
-                return hatchGadget;
-        } while (true);
-    }
+		do
+		{
+			_hatchIndex++;
+			if (_hatchIndex == _hatches.Length)
+			{
+				_hatchIndex = 0;
+			}
+			var hatchGadget = _hatches[_hatchIndex];
 
-    public void OnSpawnLemming()
-    {
-        _lemmingsToRelease--;
-    }
+			if (hatchGadget.CanReleaseLemmings())
+				return hatchGadget;
+		} while (true);
+	}
 
-    public bool Equals(HatchGroup? other) => Id == (other?.Id ?? -1);
-    public override bool Equals(object? obj) => obj is HatchGroup other && Id == other.Id;
-    public override int GetHashCode() => Id;
+	public void OnSpawnLemming()
+	{
+		_lemmingsToRelease--;
+	}
 
-    public static bool operator ==(HatchGroup left, HatchGroup right) => left.Id == right.Id;
-    public static bool operator !=(HatchGroup left, HatchGroup right) => left.Id != right.Id;
+	[Pure]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static int ConvertToReleaseRate(int spawnInterval)
+	{
+		// So that:
+		// RR1 <=> SI102,
+		// RR50 <=> SI53,
+		// RR99 <=> SI4, etc
+		return 1 + MaxAllowedSpawnInterval - spawnInterval;
+	}
+
+	public bool Equals(HatchGroup? other) => Id == (other?.Id ?? -1);
+	public override bool Equals(object? obj) => obj is HatchGroup other && Id == other.Id;
+	public override int GetHashCode() => Id;
+
+	public static bool operator ==(HatchGroup left, HatchGroup right) => left.Id == right.Id;
+	public static bool operator !=(HatchGroup left, HatchGroup right) => left.Id != right.Id;
 }

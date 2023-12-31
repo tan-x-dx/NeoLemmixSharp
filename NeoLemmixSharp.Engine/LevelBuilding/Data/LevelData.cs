@@ -31,6 +31,7 @@ public sealed class LevelData
     public ThemeData ThemeData { get; } = new();
     public List<TerrainData> AllTerrainData { get; } = new();
     public List<TerrainGroup> AllTerrainGroups { get; } = new();
+    public List<HatchGroupData> AllHatchGroupData { get; } = new();
     public List<GadgetArchetypeData> AllGadgetArchetypeData { get; } = new();
     public List<GadgetData> AllGadgetData { get; } = new();
 

@@ -117,7 +117,7 @@ public sealed class JumperAction : LemmingAction
             {
                 firstStepSpecialHandling = false;
             }
-            else if (LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition)) // Foot check
+            else if (LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition)) // Foot check
             {
                 lemming.SetNextAction(WalkerAction.Instance);
                 return false;
@@ -153,13 +153,13 @@ public sealed class JumperAction : LemmingAction
         var dx = lemming.FacingDirection.DeltaX;
 
         var checkPosition = orientation.MoveRight(lemmingPosition, dx);
-        if (!LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
+        if (!LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
             return false;
 
         for (var n = 1; n < 9; n++)
         {
             var checkPosition2 = orientation.MoveUp(checkPosition, n);
-            if (!LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition2))
+            if (!LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition2))
             {
                 switch (n)
                 {
@@ -222,7 +222,7 @@ public sealed class JumperAction : LemmingAction
                 continue;
 
             var checkPosition = orientation.MoveUp(lemmingPosition, n);
-            if (!LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
+            if (!LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
                 continue;
 
             lemming.SetNextAction(FallerAction.Instance);
@@ -234,7 +234,7 @@ public sealed class JumperAction : LemmingAction
 
     private void DoJumperTriggerChecks(Lemming lemming)
     {
-        var gadgetsAtLemmingPosition = LevelConstants.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+        var gadgetsAtLemmingPosition = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
         foreach (var gadget in gadgetsAtLemmingPosition)
         {

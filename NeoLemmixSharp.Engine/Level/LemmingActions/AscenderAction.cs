@@ -18,7 +18,7 @@ public sealed class AscenderAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         ref var levelPosition = ref lemming.LevelPosition;
         var orientation = lemming.Orientation;
 

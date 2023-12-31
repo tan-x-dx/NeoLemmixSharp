@@ -23,6 +23,8 @@ public sealed class PositionTrackingZombieHelper : IZombieHelper
             verticalBoundaryBehaviour);
     }
 
+    public void Clear() => _zombieSpacialHashGrid.Clear();
+
     public void RegisterZombie(Lemming lemming) => _zombieSpacialHashGrid.AddItem(lemming);
     public void UpdateZombiePosition(Lemming lemming)
     {
@@ -43,7 +45,7 @@ public sealed class PositionTrackingZombieHelper : IZombieHelper
         var checkRegion = new LevelPositionPair(lemming.TopLeftPixel, lemming.BottomRightPixel);
         var nearbyZombies = _zombieSpacialHashGrid.GetAllItemsNearRegion(checkRegion);
 
-        if (nearbyZombies.IsEmpty)
+        if (nearbyZombies.Count == 0)
             return;
 
         foreach (var zombie in nearbyZombies)
@@ -54,7 +56,7 @@ public sealed class PositionTrackingZombieHelper : IZombieHelper
 
             if (checkRegion.Overlaps(zombieRegion))
             {
-                LevelConstants.LemmingManager.RegisterLemmingForZombification(lemming);
+                LevelScreen.LemmingManager.RegisterLemmingForZombification(lemming);
 
                 return;
             }

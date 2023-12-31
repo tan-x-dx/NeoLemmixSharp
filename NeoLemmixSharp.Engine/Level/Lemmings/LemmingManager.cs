@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class LemmingManager : IPerfectHasher<Lemming>
+public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 {
     public const int BlockerQuantityThreshold = 20;
     public const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize32;
@@ -33,6 +33,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
 
     public int TotalNumberOfLemmings => _lemmings.Length;
     public ReadOnlySpan<Lemming> AllLemmings => new(_lemmings);
+    public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
 
     private int _nextLemmingId;
 
@@ -109,9 +110,10 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
 
     public void Tick(UpdateState updateState, int elapsedTicksModulo3)
     {
-        if (updateState == UpdateState.FastForward || elapsedTicksModulo3 == 0)
+        if (updateState == UpdateState.FastForward ||
+            elapsedTicksModulo3 == 0)
         {
-            foreach (var hatchGroup in _hatchGroups.AsSpan())
+            foreach (var hatchGroup in AllHatchGroups)
             {
                 var hatchGadget = hatchGroup.Tick();
 
@@ -127,33 +129,14 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
             }
         }
 
-        if (updateState == UpdateState.Normal)
+        foreach (var lemming in AllLemmings)
         {
-            foreach (var lemming in AllLemmings)
-            {
-                if (!lemming.State.IsActive ||
-                    (elapsedTicksModulo3 != 0 && !lemming.IsFastForward))
-                    continue;
+            var i = GetTickNumberForLemming(lemming, updateState, elapsedTicksModulo3);
 
+            while (i-- > 0)
+            {
                 lemming.Tick();
                 UpdateLemmingPosition(lemming);
-            }
-        }
-        else
-        {
-            foreach (var lemming in AllLemmings)
-            {
-                if (!lemming.State.IsActive)
-                    continue;
-
-                var i = lemming.IsFastForward
-                    ? EngineConstants.FastForwardSpeedMultiplier - 1
-                    : 1;
-                while (i-- > 0)
-                {
-                    lemming.Tick();
-                    UpdateLemmingPosition(lemming);
-                }
             }
         }
 
@@ -162,6 +145,21 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
             lemming.State.IsZombie = true;
         }
         _lemmingsToZombify.Clear();
+    }
+
+    private static int GetTickNumberForLemming(Lemming lemming, UpdateState updateState, int elapsedTicksModulo3)
+    {
+        var lemmingIsFastForward = lemming.IsFastForward;
+        var gameIsFastForward = updateState == UpdateState.FastForward;
+        if (!lemming.State.IsActive ||
+            (!lemmingIsFastForward &&
+             !gameIsFastForward &&
+             elapsedTicksModulo3 != 0))
+            return 0;
+
+        return lemmingIsFastForward && gameIsFastForward
+            ? EngineConstants.FastForwardSpeedMultiplier
+            : 1;
     }
 
     private void UpdateLemmingPosition(Lemming lemming)
@@ -272,4 +270,13 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>
     int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Length;
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
+
+    public void Dispose()
+    {
+        Array.Clear(_lemmings);
+        Array.Clear(_hatchGroups);
+        _lemmingPositionHelper.Clear();
+        _lemmingsToZombify.Clear();
+        _allBlockers.Clear();
+    }
 }

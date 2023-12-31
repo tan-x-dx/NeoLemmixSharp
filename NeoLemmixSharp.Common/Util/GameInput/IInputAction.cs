@@ -27,7 +27,7 @@ public interface IInputAction
     /// </summary>
     bool IsReleased { get; }
     /// <summary>
-    /// Is the Action currently being pressed down and it was previously pressed down?
+    /// Is the Action currently being pressed down, and it was previously pressed down?
     /// </summary>
     bool IsHeld { get; }
     /// <summary>

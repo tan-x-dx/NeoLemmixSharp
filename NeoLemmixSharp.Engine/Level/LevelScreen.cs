@@ -7,7 +7,6 @@ using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
-using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
@@ -16,129 +15,123 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelScreen : IBaseScreen
 {
-    public static LevelScreen Current { get; private set; } = null!;
+	public static TerrainManager TerrainManager { get; private set; } = null!;
+	public static LemmingManager LemmingManager { get; private set; } = null!;
+	public static GadgetManager GadgetManager { get; private set; } = null!;
+	public static SkillSetManager SkillSetManager { get; private set; } = null!;
+	public static ILevelControlPanel LevelControlPanel { get; private set; } = null!;
+	public static UpdateScheduler UpdateScheduler { get; private set; } = null!;
 
-    public UpdateScheduler UpdateScheduler { get; }
-    public LevelInputController InputController { get; }
-    public LevelTimer LevelTimer { get; }
-    public SkillSetManager SkillSetManager { get; }
-    public ILevelControlPanel ControlPanel { get; }
-    public LevelCursor LevelCursor { get; }
-    public Viewport Viewport { get; }
-    public LemmingManager LemmingManager { get; }
-    public TerrainManager TerrainManager { get; }
-    public GadgetManager GadgetManager { get; }
-    public LevelRenderer LevelRenderer { get; }
+	public static void SetTerrainManager(TerrainManager terrainManager)
+	{
+		TerrainManager = terrainManager;
+	}
 
-    IScreenRenderer IBaseScreen.ScreenRenderer => LevelRenderer;
-    public string ScreenTitle { get; }
-    public bool IsDisposed { get; private set; }
+	public static void SetLemmingManager(LemmingManager lemmingManager)
+	{
+		LemmingManager = lemmingManager;
+	}
 
-    public LevelScreen(
-        LevelData levelData,
-        UpdateScheduler updateScheduler,
-        LevelInputController levelInputController,
-        LevelTimer levelTimer,
-        SkillSetManager skillSetManager,
-        ILevelControlPanel controlPanel,
-        LevelCursor cursor,
-        Viewport viewport,
-        LemmingManager lemmingManager,
-        TerrainManager terrainManager,
-        GadgetManager gadgetManager,
-        LevelRenderer levelRenderer)
-    {
-        ScreenTitle = levelData.LevelTitle;
+	public static void SetGadgetManager(GadgetManager gadgetManager)
+	{
+		GadgetManager = gadgetManager;
+	}
 
-        UpdateScheduler = updateScheduler;
-        InputController = levelInputController;
-        LevelTimer = levelTimer;
-        SkillSetManager = skillSetManager;
-        ControlPanel = controlPanel;
-        LevelCursor = cursor;
-        Viewport = viewport;
-        LemmingManager = lemmingManager;
-        TerrainManager = terrainManager;
-        GadgetManager = gadgetManager;
-        LevelRenderer = levelRenderer;
+	public static void SetSkillSetManager(SkillSetManager skillSetManager)
+	{
+		SkillSetManager = skillSetManager;
+	}
 
-        Current = this;
+	public static void SetLevelControlPanel(ILevelControlPanel levelControlPanel)
+	{
+		LevelControlPanel = levelControlPanel;
+	}
 
-        LemmingManager.Initialise();
-        GadgetManager.Initialise();
-    }
+	public static void SetUpdateScheduler(UpdateScheduler updateScheduler)
+	{
+		UpdateScheduler = updateScheduler;
+	}
 
-    public void Tick(GameTime gameTime)
-    {
-        if (!IGameWindow.Instance.IsActive)
-            return;
+	private readonly UpdateScheduler _updateScheduler;
+	private readonly LevelInputController _inputController;
+	private readonly ILevelControlPanel _controlPanel;
+	private readonly Viewport _viewport;
+	private readonly LevelRenderer _levelRenderer;
 
-        UpdateScheduler.Tick();
+	IScreenRenderer IBaseScreen.ScreenRenderer => _levelRenderer;
+	public string ScreenTitle { get; }
+	public bool IsDisposed { get; private set; }
 
-        HandleKeyboardInput();
+	public LevelScreen(
+		LevelData levelData,
+		UpdateScheduler updateScheduler,
+		LevelInputController levelInputController,
+		ILevelControlPanel controlPanel,
+		Viewport viewport,
+		LevelRenderer levelRenderer)
+	{
+		ScreenTitle = levelData.LevelTitle;
 
-        return;
-        /*
+		_updateScheduler = updateScheduler;
+		_inputController = levelInputController;
+		_controlPanel = controlPanel;
+		_viewport = viewport;
+		_levelRenderer = levelRenderer;
+	}
 
-        _inputController.Tick();
-        HandleKeyboardInput();
-        // _levelCursor.OnNewFrame();
-        // _lemmingManager.CheckLemmingsUnderCursor();
+	public void Tick(GameTime gameTime)
+	{
+		if (!IGameWindow.Instance.IsActive)
+			return;
 
-        _updateScheduler.CheckForQueuedAction();
+		_updateScheduler.Tick();
 
-        var shouldTickLemmings = false;// HandleMouseInput();
+		// Do these checks after main game loop
+		HandleKeyboardInput();
+	}
 
-        if (!shouldTickLemmings)
-            return;
+	private void HandleKeyboardInput()
+	{
+		if (_inputController.Quit.IsPressed)
+		{
+			IGameWindow.Instance.Escape();
+		}
 
-        //    LevelTimer.Tick();
+		if (_inputController.ToggleFullScreen.IsPressed)
+		{
+			IGameWindow.Instance.ToggleBorderless();
+		}
+	}
 
-        for (var i = 0; i < _gadgets.Length; i++)
-        {
-            _gadgets[i].Tick();
-        }
+	public void OnWindowSizeChanged()
+	{
+		var windowWidth = IGameWindow.Instance.WindowWidth;
+		var windowHeight = IGameWindow.Instance.WindowHeight;
 
-        // _lemmingManager.UpdateLemmings();
+		_controlPanel.SetWindowDimensions(windowWidth, windowHeight);
+		_viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)_controlPanel).ControlPanelScreenHeight);
+		_levelRenderer.OnWindowSizeChanged();
+	}
 
-        _updateScheduler.Tick();
-        */
-    }
+	public void Dispose()
+	{
+		if (IsDisposed)
+			return;
 
-    private void HandleKeyboardInput()
-    {
-        if (InputController.Quit.IsPressed)
-        {
-            IGameWindow.Instance.Escape();
-        }
+		LemmingManager.Dispose();
+		GadgetManager.Dispose();
+		SkillSetManager.Dispose();
 
-        if (InputController.ToggleFullScreen.IsPressed)
-        {
-            IGameWindow.Instance.ToggleBorderless();
-        }
-    }
-
-    public void OnWindowSizeChanged()
-    {
-        var windowWidth = IGameWindow.Instance.WindowWidth;
-        var windowHeight = IGameWindow.Instance.WindowHeight;
-
-        ControlPanel.SetWindowDimensions(windowWidth, windowHeight);
-        Viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)ControlPanel).ControlPanelScreenHeight);
-        LevelRenderer.OnWindowSizeChanged();
-    }
-
-    public void Dispose()
-    {
 #pragma warning disable CS8625
-        LevelConstants.SetTerrainManager(null);
-        LevelConstants.SetLemmingManager(null);
-        LevelConstants.SetGadgetManager(null);
-        LevelConstants.SetSkillSetManager(null);
+		SetTerrainManager(null);
+		SetLemmingManager(null);
+		SetGadgetManager(null);
+		SetSkillSetManager(null);
+		SetLevelControlPanel(null);
+		SetUpdateScheduler(null);
 
-        LevelRenderer.Dispose();
-        IsDisposed = true;
-        Current = null;
+		_levelRenderer.Dispose();
+		IsDisposed = true;
 #pragma warning restore CS8625
-    }
+	}
 }

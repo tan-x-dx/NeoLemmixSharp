@@ -37,7 +37,7 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRe
 
     protected void UpdatePosition(LevelPosition position)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
 
         PreviousTopLeftPixel = terrainManager.NormalisePosition(TopLeftPixel);
         PreviousBottomRightPixel = terrainManager.NormalisePosition(BottomRightPixel);
@@ -50,12 +50,12 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRe
         TopLeftPixel = terrainManager.NormalisePosition(GadgetBounds.TopLeft);
         BottomRightPixel = terrainManager.NormalisePosition(GadgetBounds.BottomRight);
 
-        LevelConstants.GadgetManager.UpdateGadgetPosition(this);
+        LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
     protected void UpdateSize(LevelPosition size)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
 
         PreviousBottomRightPixel = terrainManager.NormalisePosition(BottomRightPixel);
 
@@ -64,7 +64,7 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRe
 
         BottomRightPixel = terrainManager.NormalisePosition(GadgetBounds.BottomRight);
 
-        LevelConstants.GadgetManager.UpdateGadgetPosition(this);
+        LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
     public bool MatchesLemming(Lemming lemming)

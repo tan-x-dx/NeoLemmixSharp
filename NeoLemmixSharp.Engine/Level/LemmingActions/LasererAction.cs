@@ -66,7 +66,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (!LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+        if (!LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
@@ -154,7 +154,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         LevelPosition target,
         ReadOnlySpan<LevelPosition> offsetChecks)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         if (terrainManager.PositionOutOfBounds(target))
             return LaserHitType.OutOfBounds;
 

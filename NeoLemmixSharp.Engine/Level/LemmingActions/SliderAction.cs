@@ -69,7 +69,7 @@ public sealed class SliderAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        var gadgetSet = LevelConstants.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+        var gadgetSet = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
         foreach (var gadget in gadgetSet)
         {
@@ -107,7 +107,7 @@ public sealed class SliderAction : LemmingAction
         LevelPosition levelPosition,
         LevelPosition dehoistPin)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         if (terrainManager.PixelIsSolidToLemming(lemming, dehoistPin))
             return true;
 

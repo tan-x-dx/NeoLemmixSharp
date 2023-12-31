@@ -21,7 +21,7 @@ public sealed class SwimmerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
@@ -124,7 +124,7 @@ public sealed class SwimmerAction : LemmingAction
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool WaterAt(LevelPosition lemmingPosition)
     {
-        return LevelConstants.GadgetManager.HasGadgetOfTypeAtPosition(lemmingPosition, WaterGadgetType.Instance);
+        return LevelScreen.GadgetManager.HasGadgetOfTypeAtPosition(lemmingPosition, WaterGadgetType.Instance);
     }
 
     /// <summary>
@@ -136,7 +136,7 @@ public sealed class SwimmerAction : LemmingAction
     {
         var result = 1;
 
-        while (result <= 4 && LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
+        while (result <= 4 && LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
         {
             result++;
             lemming.DistanceFallen++;
@@ -164,7 +164,7 @@ public sealed class SwimmerAction : LemmingAction
 
         while (i < 4 &&
                WaterAt(checkPosition) &&
-               !LevelConstants.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
+               !LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
         {
             i++;
             checkPosition = orientation.MoveUp(lemming.LevelPosition, 1 + i);

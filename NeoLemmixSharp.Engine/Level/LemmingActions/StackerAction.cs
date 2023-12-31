@@ -57,7 +57,7 @@ public sealed class StackerAction : LemmingAction
 
     private static bool MayPlaceNextBrick(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var brickPosition = lemming.LevelPosition;
         brickPosition = orientation.MoveUp(brickPosition, 9 - lemming.NumberOfBricksLeft);
@@ -71,7 +71,7 @@ public sealed class StackerAction : LemmingAction
 
     private static bool LayStackBrick(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dy = lemming.StackLow ? -1 : 0;

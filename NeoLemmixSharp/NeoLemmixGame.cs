@@ -29,8 +29,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     private readonly GraphicsDeviceManager _graphics;
 
     private SpriteBatch _spriteBatch;
-    private IBaseScreen _screen;
-    private IScreenRenderer _screenRenderer;
+    private IBaseScreen? _screen;
+    private IScreenRenderer? _screenRenderer;
 
     private bool _isBorderless;
     public bool IsFullScreen { get; private set; }
@@ -60,8 +60,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     private void WindowOnClientSizeChanged(object? sender, EventArgs e)
     {
-        CaptureCursor();
-        _screen.OnWindowSizeChanged();
+      //  CaptureCursor();
+        _screen?.OnWindowSizeChanged();
     }
 
     protected override void OnActivated(object sender, EventArgs args)
@@ -191,7 +191,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Update(GameTime gameTime)
     {
-        _screen.Tick(gameTime);
+        _screen!.Tick(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
@@ -201,7 +201,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         GraphicsDevice.Clear(Color.Black);
 
-        _screenRenderer.RenderScreen(_spriteBatch);
+        _screenRenderer!.RenderScreen(_spriteBatch);
     }
 
     public void ToggleFullScreen()

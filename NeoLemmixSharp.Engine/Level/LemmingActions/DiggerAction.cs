@@ -24,7 +24,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
         ref var lemmingPosition = ref lemming.LevelPosition;
@@ -77,7 +77,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         FacingDirection facingDirection,
         LevelPosition lemmingPosition)
     {
-        var terrainManager = LevelConstants.TerrainManager;
+        var terrainManager = LevelScreen.TerrainManager;
         // The central pixel of the removed row lies at the lemming's position
         var result = false;
 

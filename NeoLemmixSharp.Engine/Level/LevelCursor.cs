@@ -46,7 +46,7 @@ public sealed class LevelCursor
         _skillSetManager = skillSetManager;
     }
 
-    public void OnNewFrame()
+    public void Tick()
     {
         NumberOfLemmingsUnderCursor = 0;
         CurrentlyHighlightedLemming = null;

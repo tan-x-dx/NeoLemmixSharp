@@ -6,6 +6,9 @@ namespace NeoLemmixSharp.Common.Rendering.Text;
 
 public sealed class MenuFont : INeoLemmixFont
 {
+	private const int LowerCharLimit = ' ';
+	private const int UpperCharLimit = '~';
+
     public static Color DefaultColor { get; set; } = new(0xff, 0xff, 0xff);
 
     public const int GlyphWidth = 16;
@@ -36,7 +39,7 @@ public sealed class MenuFont : INeoLemmixFont
         var dest = new Rectangle(x, y, GlyphWidth * scaleMultiplier, GlyphHeight * scaleMultiplier);
         foreach (var c in charactersToRender)
         {
-            if (c <= 31 || c >= 127)
+            if (c < LowerCharLimit || c > UpperCharLimit)
                 continue;
 
             var source = new Rectangle(GlyphWidth * (c - 33), 0, GlyphWidth, GlyphHeight);
@@ -60,9 +63,9 @@ public sealed class MenuFont : INeoLemmixFont
     {
         var dest = new Rectangle(x, y, GlyphWidth * scaleMultiplier, GlyphHeight * scaleMultiplier);
         foreach (var c in charactersToRender)
-        {
-            if (c <= 31 || c >= 127)
-                continue;
+		{
+			if (c < LowerCharLimit || c > UpperCharLimit)
+				continue;
 
             var source = new Rectangle(GlyphWidth * (c - 33), 0, GlyphWidth, GlyphHeight);
             spriteBatch.Draw(
