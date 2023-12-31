@@ -75,7 +75,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         Id = id;
         _isSimulation = false;
         Orientation = orientation ?? DownOrientation.Instance;
-        FacingDirection = facingDirection ?? RightFacingDirection.Instance;
+        FacingDirection = facingDirection ?? FacingDirection.RightInstance;
         CurrentAction = currentAction ?? WalkerAction.Instance;
         State = new LemmingState(this, Team.AllItems[0]);
     }
@@ -85,7 +85,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         Id = -1;
         _isSimulation = true;
         Orientation = DownOrientation.Instance;
-        FacingDirection = RightFacingDirection.Instance;
+        FacingDirection = FacingDirection.RightInstance;
         CurrentAction = NoneAction.Instance;
         State = new LemmingState(this, Team.AllItems[0]);
     }

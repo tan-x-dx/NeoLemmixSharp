@@ -105,16 +105,16 @@ public static partial class TerrainMasks
         {
             foreach (var orientation in Orientation.AllItems)
             {
-                var k0 = GetKey(orientation, RightFacingDirection.Instance);
-                var k1 = GetKey(orientation, RightFacingDirection.Instance, f);
+                var k0 = GetKey(orientation, FacingDirection.RightInstance);
+                var k1 = GetKey(orientation, FacingDirection.RightInstance, f);
 
                 var terrainMaskTextureReader = terrainMaskTextureReaders[k0];
                 var terrainMaskFrame = terrainMaskTextureReader.TerrainMaskForFrame(f);
 
                 result[k1] = terrainMaskFrame;
 
-                k0 = GetKey(orientation, LeftFacingDirection.Instance);
-                k1 = GetKey(orientation, LeftFacingDirection.Instance, f);
+                k0 = GetKey(orientation, FacingDirection.LeftInstance);
+                k1 = GetKey(orientation, FacingDirection.LeftInstance, f);
 
                 terrainMaskTextureReader = terrainMaskTextureReaders[k0];
                 terrainMaskFrame = terrainMaskTextureReader.TerrainMaskForFrame(f);

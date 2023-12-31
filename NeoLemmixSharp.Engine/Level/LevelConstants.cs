@@ -5,7 +5,10 @@ public static class LevelConstants
 	#region Engine Constants
 
 	public const int RightFacingDirectionId = 0;
+	public const int RightFacingDirectionDeltaX = 1;
+
 	public const int LeftFacingDirectionId = 1;
+	public const int LeftFacingDirectionDeltaX = -1;
 
 	public const int DownOrientationRotNum = 0;
 	public const int LeftOrientationRotNum = 1;

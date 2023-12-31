@@ -72,7 +72,7 @@ public sealed class LevelObjectAssembler
             var sawBladeHitMask = s.CreateSpriteType(
                 texture,
                 DownOrientation.Instance,
-                RightFacingDirection.Instance,
+                FacingDirection.RightInstance,
                 spriteWidth,
                 spriteHeight,
                 numberOfFrames,
@@ -186,7 +186,7 @@ public sealed class LevelObjectAssembler
 		var lemmingX = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: LeftFacingDirection.Instance)
+			facingDirection: FacingDirection.LeftInstance)
 		{
 			LevelPosition = new LevelPosition(160, 0),
 		};
@@ -194,7 +194,7 @@ public sealed class LevelObjectAssembler
 		var lemmingA = new Lemming(
 			id++,
 			orientation: UpOrientation.Instance,
-			facingDirection: LeftFacingDirection.Instance)
+			facingDirection: FacingDirection.LeftInstance)
 		{
 			LevelPosition = new LevelPosition(126, 42)
 		};
@@ -203,7 +203,7 @@ public sealed class LevelObjectAssembler
 		var lemmingB = new Lemming(
 			id++,
 			orientation: LeftOrientation.Instance,
-			facingDirection: LeftFacingDirection.Instance)
+			facingDirection: FacingDirection.LeftInstance)
 		{
 			LevelPosition = new LevelPosition(60, 20),
 			State =
@@ -216,7 +216,7 @@ public sealed class LevelObjectAssembler
 		var lemmingE = new Lemming(
 			id++,
 			orientation: LeftOrientation.Instance,
-			facingDirection: LeftFacingDirection.Instance)
+			facingDirection: FacingDirection.LeftInstance)
 		{
 			LevelPosition = new LevelPosition(60, 24),
 		};
@@ -224,7 +224,7 @@ public sealed class LevelObjectAssembler
 		var lemmingC = new Lemming(
 			id++,
 			orientation: RightOrientation.Instance,
-			facingDirection: LeftFacingDirection.Instance)
+			facingDirection: FacingDirection.LeftInstance)
 		{
 			LevelPosition = new LevelPosition(145, 134),
 			State =
@@ -236,7 +236,7 @@ public sealed class LevelObjectAssembler
 		var lemmingD = new Lemming(
 			id++,
 			orientation: LeftOrientation.Instance,
-			facingDirection: LeftFacingDirection.Instance,
+			facingDirection: FacingDirection.LeftInstance,
 			currentAction: BuilderAction.Instance)
 		{
 			LevelPosition = new LevelPosition(232, 130)
@@ -247,7 +247,7 @@ public sealed class LevelObjectAssembler
 		var lemming0 = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: LeftFacingDirection.Instance)
+			facingDirection: FacingDirection.LeftInstance)
 		{
 			LevelPosition = new LevelPosition(2, 152)
 		};
@@ -255,7 +255,7 @@ public sealed class LevelObjectAssembler
 		var lemming1 = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: LeftFacingDirection.Instance)
+			facingDirection: FacingDirection.LeftInstance)
 		{
 			LevelPosition = new LevelPosition(6, 152)
 		};
@@ -263,7 +263,7 @@ public sealed class LevelObjectAssembler
 		var lemming2 = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: LeftFacingDirection.Instance)
+			facingDirection: FacingDirection.LeftInstance)
 		{
 			LevelPosition = new LevelPosition(10, 152)
 		};
@@ -271,7 +271,7 @@ public sealed class LevelObjectAssembler
 		var lemming3 = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: LeftFacingDirection.Instance)
+			facingDirection: FacingDirection.LeftInstance)
 		{
 			LevelPosition = new LevelPosition(14, 152)
 		};
@@ -279,7 +279,7 @@ public sealed class LevelObjectAssembler
 		var lemming4 = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: LeftFacingDirection.Instance)
+			facingDirection: FacingDirection.LeftInstance)
 		{
 			LevelPosition = new LevelPosition(18, 152)
 		};
@@ -287,7 +287,7 @@ public sealed class LevelObjectAssembler
 		var lemming5 = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: LeftFacingDirection.Instance)
+			facingDirection: FacingDirection.LeftInstance)
 		{
 			LevelPosition = new LevelPosition(22, 152)
 		};
@@ -296,7 +296,7 @@ public sealed class LevelObjectAssembler
 		var lemming6 = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: RightFacingDirection.Instance)
+			facingDirection: FacingDirection.RightInstance)
 		{
 			LevelPosition = new LevelPosition(80, 40)
 		};
@@ -304,7 +304,7 @@ public sealed class LevelObjectAssembler
 		var lemming7 = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: RightFacingDirection.Instance)
+			facingDirection: FacingDirection.RightInstance)
 		{
 			LevelPosition = new LevelPosition(90, 40)
 		};
@@ -312,7 +312,7 @@ public sealed class LevelObjectAssembler
 		var lemming8 = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: RightFacingDirection.Instance)
+			facingDirection: FacingDirection.RightInstance)
 		{
 			LevelPosition = new LevelPosition(298, 152)
 		};
@@ -320,7 +320,7 @@ public sealed class LevelObjectAssembler
 		var lemming9 = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: RightFacingDirection.Instance)
+			facingDirection: FacingDirection.RightInstance)
 		{
 			LevelPosition = new LevelPosition(302, 152)
 		};
@@ -328,7 +328,7 @@ public sealed class LevelObjectAssembler
 		var lemming10 = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: RightFacingDirection.Instance)
+			facingDirection: FacingDirection.RightInstance)
 		{
 			LevelPosition = new LevelPosition(306, 152)
 		};
@@ -336,7 +336,7 @@ public sealed class LevelObjectAssembler
 		var lemming11 = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: RightFacingDirection.Instance)
+			facingDirection: FacingDirection.RightInstance)
 		{
 			LevelPosition = new LevelPosition(310, 152)
 		};
@@ -344,7 +344,7 @@ public sealed class LevelObjectAssembler
 		var miner = new Lemming(
 			id++,
 			orientation: DownOrientation.Instance,
-			facingDirection: RightFacingDirection.Instance,
+			facingDirection: FacingDirection.RightInstance,
 			currentAction: MinerAction.Instance)
 		{
 			LevelPosition = new LevelPosition(110, 19)

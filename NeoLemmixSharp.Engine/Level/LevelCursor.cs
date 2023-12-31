@@ -57,11 +57,11 @@ public sealed class LevelCursor
 
         if (_controller.SelectLeftFacingLemmings.IsActionDown)
         {
-            _facingDirection = LeftFacingDirection.Instance;
+            _facingDirection = FacingDirection.LeftInstance;
         }
         else if (_controller.SelectRightFacingLemmings.IsActionDown)
         {
-            _facingDirection = RightFacingDirection.Instance;
+            _facingDirection = FacingDirection.RightInstance;
         }
         else
         {

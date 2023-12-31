@@ -35,14 +35,14 @@ public sealed class SpriteDrawingData
             ThisSpriteWidth = _originalSpriteWidth;
             ThisSpriteHeight = _originalSpriteHeight;
 
-            flipHorizontally = facingDirection == LeftFacingDirection.Instance;
+            flipHorizontally = facingDirection == FacingDirection.LeftInstance;
         }
         else
         {
             ThisSpriteWidth = _originalSpriteHeight;
             ThisSpriteHeight = _originalSpriteWidth;
 
-            if (facingDirection == LeftFacingDirection.Instance)
+            if (facingDirection == FacingDirection.LeftInstance)
             {
                 rotNum = (rotNum + 2) & 3;
                 flipHorizontally = true;

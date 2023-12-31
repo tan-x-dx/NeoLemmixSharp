@@ -34,7 +34,7 @@ public static partial class TerrainMasks
         var facingDirection = lemming.FacingDirection;
         var position = lemming.LevelPosition;
 
-        if (facingDirection == RightFacingDirection.Instance)
+        if (facingDirection == FacingDirection.RightInstance)
         {
             position = orientation.MoveRight(position, 1);
         }
@@ -94,7 +94,7 @@ public static partial class TerrainMasks
         var facingDirection = lemming.FacingDirection;
         var position = lemming.LevelPosition;
 
-        if (facingDirection == RightFacingDirection.Instance)
+        if (facingDirection == FacingDirection.RightInstance)
         {
             position = orientation.MoveRight(position, 1);
         }

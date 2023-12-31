@@ -143,13 +143,13 @@ public static class DefaultLemmingSpriteBank
 
 		foreach (var orientation in Orientation.AllItems)
 		{
-			var k0 = LemmingSpriteBank.GetKey(orientation, RightFacingDirection.Instance);
-			var k1 = LemmingSpriteBank.GetKey(action, orientation, RightFacingDirection.Instance);
+			var k0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.RightInstance);
+			var k1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.RightInstance);
 
 			actionSprites[k1] = spritesTemp[k0];
 
-			k0 = LemmingSpriteBank.GetKey(orientation, LeftFacingDirection.Instance);
-			k1 = LemmingSpriteBank.GetKey(action, orientation, LeftFacingDirection.Instance);
+			k0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.LeftInstance);
+			k1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.LeftInstance);
 
 			actionSprites[k1] = spritesTemp[k0];
 		}

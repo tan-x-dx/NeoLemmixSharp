@@ -9,12 +9,9 @@ public sealed class LeftOrientation : Orientation
 	public static readonly LeftOrientation Instance = new();
 
 	private LeftOrientation()
+		: base(LevelConstants.LeftOrientationRotNum, -1, 0)
 	{
 	}
-
-	public override int RotNum => LevelConstants.LeftOrientationRotNum;
-	public override int AbsoluteHorizontalComponent => -1;
-	public override int AbsoluteVerticalComponent => 0;
 
 	[Pure]
 	public override LevelPosition TopLeftCornerOfLevel() => new(TerrainManager.LevelWidth, 0);
@@ -96,13 +93,6 @@ public sealed class LeftOrientation : Orientation
 
 		return TerrainManager.HorizontalBoundaryBehaviour.GetHorizontalDelta(b, a);
 	}
-
-	[Pure]
-	public override Orientation RotateClockwise() => UpOrientation.Instance;
-	[Pure]
-	public override Orientation RotateCounterClockwise() => DownOrientation.Instance;
-	[Pure]
-	public override Orientation GetOpposite() => RightOrientation.Instance;
 
 	public override string ToString() => "left";
 }

@@ -11,7 +11,7 @@ public sealed class DirectionalSelectButtonAction : IButtonAction
 		_facingDirection = facingDirection;
 	}
 
-	public ButtonType ButtonType => _facingDirection == RightFacingDirection.Instance
+	public ButtonType ButtonType => _facingDirection == FacingDirection.RightInstance
 		? ButtonType.DirectionalSelectRight
 		: ButtonType.DirectionalSelectLeft;
 
