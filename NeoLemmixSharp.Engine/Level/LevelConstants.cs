@@ -133,27 +133,27 @@ public static class LevelConstants
 
 	#region Lemming Skill Constants
 
-	public const int BasherSkillId = 6;
-	public const int BlockerSkillId = 3;
-	public const int BomberSkillId = 4;
-	public const int BuilderSkillId = 5;
-	public const int ClimberSkillId = 1;
+	public const int BasherSkillId = 5;
+	public const int BlockerSkillId = 2;
+	public const int BomberSkillId = 3;
+	public const int BuilderSkillId = 4;
+	public const int ClimberSkillId = 0;
 	public const int ClonerSkillId = 20;
-	public const int DiggerSkillId = 8;
+	public const int DiggerSkillId = 7;
 	public const int DisarmerSkillId = 18;
 	public const int FencerSkillId = 11;
-	public const int FloaterSkillId = 2;
+	public const int FloaterSkillId = 1;
 	public const int GliderSkillId = 12;
 	public const int JumperSkillId = 13;
 	public const int LasererSkillId = 16;
-	public const int MinerSkillId = 7;
+	public const int MinerSkillId = 6;
 	public const int PlatformerSkillId = 9;
 	public const int ShimmierSkillId = 15;
 	public const int SliderSkillId = 17;
 	public const int StackerSkillId = 10;
 	public const int StonerSkillId = 19;
 	public const int SwimmerSkillId = 14;
-	public const int WalkerSkillId = 0;
+	public const int WalkerSkillId = 8;
 
 	#endregion
 

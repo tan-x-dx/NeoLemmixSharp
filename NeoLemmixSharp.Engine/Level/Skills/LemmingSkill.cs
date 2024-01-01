@@ -13,14 +13,13 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
 	public static int NumberOfItems => LemmingSkills.Length;
 	public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
-	public static ReadOnlySpan<LemmingSkill> AllClassicSkills => new(LemmingSkills, 0, LevelConstants.NumberOfClassicSkills);
+	public static ReadOnlySpan<LemmingSkill> AllClassicSkills => new(LemmingSkills, LevelConstants.ClimberSkillId, LevelConstants.NumberOfClassicSkills);
 
 	private static LemmingSkill[] RegisterAllLemmingSkills()
 	{
 		// NOTE: DO NOT ADD THE NONE SKILL
 		var result = new LemmingSkill[]
 		{
-			WalkerSkill.Instance,
 			ClimberSkill.Instance,
 			FloaterSkill.Instance,
 			BlockerSkill.Instance,
@@ -30,6 +29,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 			MinerSkill.Instance,
 			DiggerSkill.Instance,
 
+			WalkerSkill.Instance,
 			PlatformerSkill.Instance,
 			StackerSkill.Instance,
 			FencerSkill.Instance,
