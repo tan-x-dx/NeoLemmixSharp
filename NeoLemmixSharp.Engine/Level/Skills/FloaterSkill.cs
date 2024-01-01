@@ -20,10 +20,9 @@ public sealed class FloaterSkill : LemmingSkill, ILemmingStateChanger
         return !(lemming.State.IsGlider || lemming.State.IsFloater) && ActionIsAssignable(lemming);
     }
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         lemming.State.IsFloater = true;
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();

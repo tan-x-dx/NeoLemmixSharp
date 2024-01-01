@@ -21,10 +21,9 @@ public sealed class DiggerSkill : LemmingSkill
                !LevelScreen.TerrainManager.PixelIsIndestructibleToLemming(lemming, DiggerAction.Instance, lemming.LevelPosition);
     }
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         DiggerAction.Instance.TransitionLemmingToAction(lemming, false);
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

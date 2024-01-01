@@ -15,7 +15,7 @@ public sealed class BomberSkill : LemmingSkill
     public override string LemmingSkillName => "bomber";
     public override bool IsClassicSkill => true;
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         /*
             lemming.ExplosionTimer : = 1;

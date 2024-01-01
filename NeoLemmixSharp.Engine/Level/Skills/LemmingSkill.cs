@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -74,12 +75,13 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 	protected abstract IEnumerable<LemmingAction> ActionsThatCanBeAssigned();
 
 	[Pure]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected bool ActionIsAssignable(Lemming lemming)
 	{
 		return _assignableActions.Contains(lemming.CurrentAction);
 	}
 
-	public abstract bool AssignToLemming(Lemming lemming);
+	public abstract void AssignToLemming(Lemming lemming);
 
 	public bool Equals(LemmingSkill? other) => Id == (other?.Id ?? -1);
 	public sealed override bool Equals(object? obj) => obj is LemmingSkill other && Id == other.Id;

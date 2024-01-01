@@ -20,10 +20,9 @@ public sealed class SliderSkill : LemmingSkill, ILemmingStateChanger
         return !lemming.State.IsSlider && ActionIsAssignable(lemming);
     }
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         lemming.State.IsSlider = true;
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();

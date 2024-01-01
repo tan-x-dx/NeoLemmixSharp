@@ -15,7 +15,7 @@ public sealed class ClonerSkill : LemmingSkill
     public override string LemmingSkillName => "cloner";
     public override bool IsClassicSkill => false;
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         throw new NotImplementedException();
     }

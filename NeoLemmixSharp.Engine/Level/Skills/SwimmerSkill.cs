@@ -20,15 +20,13 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
         return !lemming.State.IsSwimmer && ActionIsAssignable(lemming);
     }
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         lemming.State.IsSwimmer = true;
         if (lemming.CurrentAction == DrownerAction.Instance)
         {
             SwimmerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
-
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

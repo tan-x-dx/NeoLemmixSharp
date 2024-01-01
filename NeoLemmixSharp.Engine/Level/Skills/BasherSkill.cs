@@ -15,10 +15,9 @@ public sealed class BasherSkill : LemmingSkill
     public override string LemmingSkillName => "basher";
     public override bool IsClassicSkill => true;
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         BasherAction.Instance.TransitionLemmingToAction(lemming, false);
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

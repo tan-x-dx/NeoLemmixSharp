@@ -20,10 +20,9 @@ public sealed class BlockerSkill : LemmingSkill
         return ActionIsAssignable(lemming) && LevelScreen.LemmingManager.CanAssignBlocker(lemming);
     }
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         BlockerAction.Instance.TransitionLemmingToAction(lemming, false);
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

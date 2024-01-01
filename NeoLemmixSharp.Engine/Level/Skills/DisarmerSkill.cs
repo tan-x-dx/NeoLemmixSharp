@@ -20,10 +20,9 @@ public sealed class DisarmerSkill : LemmingSkill, ILemmingStateChanger
         return !lemming.State.IsDisarmer && ActionIsAssignable(lemming);
     }
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         lemming.State.IsDisarmer = true;
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
