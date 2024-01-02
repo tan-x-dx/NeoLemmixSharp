@@ -1,171 +1,160 @@
-﻿using System.Collections;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.PositionTracking;
 
 namespace NeoLemmixSharp.Common.Util.Identity;
 
 public sealed class ExtendedEnumTypeDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
-    where TKey : class, IExtendedEnumType<TKey>
+	where TKey : class, IExtendedEnumType<TKey>
 {
-    private readonly SimpleSet<TKey> _keys = ExtendedEnumTypeComparer<TKey>.CreateSimpleSet();
-    private readonly TValue[] _values = new TValue[TKey.NumberOfItems];
+	private readonly SimpleSet<TKey> _keys = ExtendedEnumTypeComparer<TKey>.CreateSimpleSet();
+	private readonly TValue[] _values = new TValue[TKey.NumberOfItems];
 
-    public int Count => _keys.Count;
+	public int Count => _keys.Count;
 
-    public void Add(TKey key, TValue value)
-    {
-        if (!_keys.Add(key))
-            throw new ArgumentException("Key already added!", nameof(key));
+	public void Add(TKey key, TValue value)
+	{
+		if (!_keys.Add(key))
+			throw new ArgumentException("Key already added!", nameof(key));
 
-        _values[key.Id] = value;
-    }
+		_values[key.Id] = value;
+	}
 
-    public void Clear()
-    {
-        _keys.Clear();
-        Array.Clear(_values);
-    }
+	public void Clear()
+	{
+		_keys.Clear();
+		Array.Clear(_values);
+	}
 
-    public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
-    {
-        foreach (var key in _keys)
-        {
-            var value = _values[key.Id];
-            array[arrayIndex++] = new KeyValuePair<TKey, TValue>(key, value);
-        }
-    }
+	public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+	{
+		foreach (var key in _keys)
+		{
+			var value = _values[key.Id];
+			array[arrayIndex++] = new KeyValuePair<TKey, TValue>(key, value);
+		}
+	}
 
-    public bool ContainsKey(TKey key)
-    {
-        return _keys.Contains(key);
-    }
+	public bool ContainsKey(TKey key)
+	{
+		return _keys.Contains(key);
+	}
 
-    public bool TryGetValue(TKey key, out TValue value)
-    {
-        if (_keys.Contains(key))
-        {
-            value = _values[key.Id];
-            return true;
-        }
+	public bool TryGetValue(TKey key, out TValue value)
+	{
+		value = _values[key.Id];
+		return _keys.Contains(key);
+	}
 
-        value = default;
-        return false;
-    }
+	public bool Remove(TKey key)
+	{
+		_values[key.Id] = default;
+		return _keys.Remove(key);
+	}
 
-    public bool Remove(TKey key)
-    {
-        if (!_keys.Remove(key))
-            return false;
+	public TValue this[TKey key]
+	{
+		get
+		{
+			if (!_keys.Contains(key))
+				throw new KeyNotFoundException();
 
-        _values[key.Id] = default;
-        return true;
-    }
+			return _values[key.Id];
+		}
+		set
+		{
+			_keys.Add(key);
+			_values[key.Id] = value;
+		}
+	}
 
-    public TValue this[TKey key]
-    {
-        get
-        {
-            if (!_keys.Contains(key))
-                throw new KeyNotFoundException();
+	[Pure]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public Enumerator GetEnumerator() => new(this);
+	[Pure]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);
 
-            return _values[key.Id];
-        }
-        set
-        {
-            _keys.Add(key);
-            _values[key.Id] = value;
-        }
-    }
+	[Pure]
+	IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() => new ReferenceTypeEnumerator(this);
 
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Enumerator GetEnumerator() => new(this);
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);
+	[Pure]
+	IEnumerator IEnumerable.GetEnumerator() => new ReferenceTypeEnumerator(this);
 
-    [Pure]
-    IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() => new ReferenceTypeEnumerator(this);
+	public ref struct Enumerator
+	{
+		private readonly ReadOnlySpan<TValue> _values;
+		private BitBasedEnumerator<TKey> _bitEnumerator;
 
-    [Pure]
-    IEnumerator IEnumerable.GetEnumerator() => new ReferenceTypeEnumerator(this);
+		public Enumerator(ExtendedEnumTypeDictionary<TKey, TValue> dictionary)
+		{
+			_values = dictionary.Values;
+			_bitEnumerator = dictionary._keys.GetEnumerator();
+		}
 
-    public ref struct Enumerator
-    {
-        private readonly ReadOnlySpan<TValue> _values;
-        private BitBasedEnumerator<TKey> _bitEnumerator;
+		public bool MoveNext() => _bitEnumerator.MoveNext();
 
-        public Enumerator(ExtendedEnumTypeDictionary<TKey, TValue> dictionary)
-        {
-            _values = dictionary.Values;
-            _bitEnumerator = dictionary._keys.GetEnumerator();
-        }
+		public readonly KeyValuePair<TKey, TValue> Current
+		{
+			get
+			{
+				var key = _bitEnumerator.Current;
+				return new KeyValuePair<TKey, TValue>(key, _values[key.Id]);
+			}
+		}
+	}
 
-        public bool MoveNext() => _bitEnumerator.MoveNext();
+	public sealed class ReferenceTypeEnumerator : IEnumerator<KeyValuePair<TKey, TValue>>
+	{
+		private readonly SimpleSet<TKey>.ReferenceTypeEnumerator _enumerator;
+		private readonly TValue[] _values;
 
-        public readonly KeyValuePair<TKey, TValue> Current
-        {
-            get
-            {
-                var key = _bitEnumerator.Current;
-                return new KeyValuePair<TKey, TValue>(key, _values[key.Id]);
-            }
-        }
-    }
+		public ReferenceTypeEnumerator(ExtendedEnumTypeDictionary<TKey, TValue> dictionary)
+		{
+			_enumerator = dictionary._keys.GetReferenceTypeEnumerator();
+			_values = dictionary._values;
+		}
 
-    public sealed class ReferenceTypeEnumerator : IEnumerator<KeyValuePair<TKey, TValue>>
-    {
-        private readonly SimpleSet<TKey>.ReferenceTypeEnumerator _enumerator;
-        private readonly TValue[] _values;
+		public bool MoveNext() => _enumerator.MoveNext();
 
-        public ReferenceTypeEnumerator(ExtendedEnumTypeDictionary<TKey, TValue> dictionary)
-        {
-            _enumerator = dictionary._keys.GetReferenceTypeEnumerator();
-            _values = dictionary._values;
-        }
+		public void Reset() => _enumerator.Reset();
 
-        public bool MoveNext() => _enumerator.MoveNext();
+		public KeyValuePair<TKey, TValue> Current
+		{
+			get
+			{
+				var key = _enumerator.Current;
+				return new KeyValuePair<TKey, TValue>(key, _values[key.Id]);
+			}
+		}
 
-        public void Reset() => _enumerator.Reset();
+		object IEnumerator.Current => Current;
 
-        public KeyValuePair<TKey, TValue> Current
-        {
-            get
-            {
-                var key = _enumerator.Current;
+		void IDisposable.Dispose()
+		{
+		}
+	}
 
-                return new KeyValuePair<TKey, TValue>(key, _values[key.Id]);
-            }
-        }
+	[Pure]
+	public SimpleSetEnumerable<TKey> Keys => _keys.ToSimpleEnumerable();
+	[Pure]
+	public ReadOnlySpan<TValue> Values => new(_values);
 
-        object IEnumerator.Current => Current;
+	void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item) => Add(item.Key, item.Value);
+	bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item) => ContainsKey(item.Key);
+	bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item) => Remove(item.Key);
 
-        void IDisposable.Dispose()
-        {
-        }
-    }
-
-    [Pure]
-    public SimpleSetEnumerable<TKey> Keys => _keys.ToSimpleEnumerable();
-    [Pure]
-    public ReadOnlySpan<TValue> Values => new(_values);
-
-    void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item) => Add(item.Key, item.Value);
-    bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item) => ContainsKey(item.Key);
-    bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item) => Remove(item.Key);
-
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys => _keys;
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values => _values;
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    ICollection<TKey> IDictionary<TKey, TValue>.Keys => _keys;
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    ICollection<TValue> IDictionary<TKey, TValue>.Values => _values;
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => false;
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys => _keys;
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values => _values;
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	ICollection<TKey> IDictionary<TKey, TValue>.Keys => _keys;
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	ICollection<TValue> IDictionary<TKey, TValue>.Values => _values;
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => false;
 }
