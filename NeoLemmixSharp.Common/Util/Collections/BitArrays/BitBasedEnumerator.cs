@@ -12,7 +12,7 @@ public ref struct BitBasedEnumerator<T>
     private int _current;
     private uint _v;
 
-    public BitBasedEnumerator(
+    internal BitBasedEnumerator(
         IPerfectHasher<T> hasher,
         ReadOnlySpan<uint> bits,
         int count)

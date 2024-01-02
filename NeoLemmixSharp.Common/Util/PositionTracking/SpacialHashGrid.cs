@@ -31,16 +31,17 @@ public sealed class SpacialHashGrid<T>
 		IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
 	{
 		_hasher = hasher;
+		_horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+		_verticalBoundaryBehaviour = verticalBoundaryBehaviour;
+
+		_allTrackedItems = new SimpleSet<T>(hasher);
+
 		_chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
 		var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;
 
 		_numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelWidth + chunkSizeBitMask) >> _chunkSizeBitShift;
 		_numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelHeight + chunkSizeBitMask) >> _chunkSizeBitShift;
 
-		_horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
-		_verticalBoundaryBehaviour = verticalBoundaryBehaviour;
-
-		_allTrackedItems = new SimpleSet<T>(hasher);
 		_bitArraySize = _allTrackedItems.Size;
 
 		_setUnionScratchSpace = new uint[_bitArraySize];

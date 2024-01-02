@@ -44,7 +44,7 @@ public sealed class InputController : IPerfectHasher<Keys>
 
     public void ValidateKeyActions()
     {
-        IdEquatableItemHelperMethods.ValidateUniqueIds((ReadOnlySpan<KeyAction>)CollectionsMarshal.AsSpan(_keyActions));
+        IdEquatableItemHelperMethods.ValidateUniqueIds<KeyAction>(CollectionsMarshal.AsSpan(_keyActions));
         _keyActions.Sort(IdEquatableItemHelperMethods.Compare);
     }
 
@@ -87,9 +87,9 @@ public sealed class InputController : IPerfectHasher<Keys>
     {
         var currentlyPressedKeys = Keyboard.GetState().GetPressedKeys().AsSpan();
         _keys.Clear();
-        foreach (var t in currentlyPressedKeys)
+        foreach (var key in currentlyPressedKeys)
         {
-            _keys.Add(t);
+            _keys.Add(key);
         }
     }
 
