@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.PositionTracking;
 using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
