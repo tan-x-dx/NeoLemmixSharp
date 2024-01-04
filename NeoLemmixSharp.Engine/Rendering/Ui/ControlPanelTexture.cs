@@ -11,8 +11,7 @@ public enum ControlPanelTexture
     PanelSkillSelected,
     PanelSkills,
 
-    CursorStandard,
-    CursorFocused,
+    Cursors,
 }
 
 public static class ControlPanelStringHelper
@@ -28,8 +27,7 @@ public static class ControlPanelStringHelper
         ControlPanelTexture.PanelSkillSelected => "panel/skill_selected",
         ControlPanelTexture.PanelSkills => "panel/skills_placeholder2",
 
-        ControlPanelTexture.CursorStandard => "cursor/standard",
-        ControlPanelTexture.CursorFocused => "cursor/focused",
+        ControlPanelTexture.Cursors => "cursor/cursors",
 
         _ => throw new ArgumentOutOfRangeException(nameof(texture), texture, "Unknown texture")
     };

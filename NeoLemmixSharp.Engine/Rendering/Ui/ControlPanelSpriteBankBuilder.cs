@@ -81,8 +81,7 @@ public sealed class ControlPanelSpriteBankBuilder
 
 	private void LoadCursorSprites()
 	{
-		RegisterTexture(ControlPanelTexture.CursorStandard);
-		RegisterTexture(ControlPanelTexture.CursorFocused);
+		RegisterTexture(ControlPanelTexture.Cursors);
 	}
 
 	private void RegisterTexture(ControlPanelTexture textureName)

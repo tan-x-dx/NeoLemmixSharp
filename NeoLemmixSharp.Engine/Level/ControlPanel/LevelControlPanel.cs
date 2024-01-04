@@ -306,6 +306,19 @@ public sealed class LevelControlPanel : ILevelControlPanel
 		{
 			SelectedSkillAssignButton.IsSelected = true;
 		}
+
+		UpdateCursorColors();
+	}
+
+	private void UpdateCursorColors()
+	{
+		var skillSetManager = LevelScreen.SkillSetManager;
+		var skillTrackingDataId = SelectedSkillAssignButton?.SkillTrackingDataId ?? -1;
+
+		var skillTrackingData = skillSetManager.GetSkillTrackingData(skillTrackingDataId);
+
+		LevelScreen.LevelCursor.SetSelectedTeam(skillTrackingData?.Team);
+
 	}
 
 	public void UpdateSkillCount(SkillAssignButton? selectedSkillAssignButton, int skillCount)

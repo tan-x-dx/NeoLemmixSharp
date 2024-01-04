@@ -21,6 +21,7 @@ public sealed class LevelScreen : IBaseScreen
 	public static SkillSetManager SkillSetManager { get; private set; } = null!;
 	public static ILevelControlPanel LevelControlPanel { get; private set; } = null!;
 	public static UpdateScheduler UpdateScheduler { get; private set; } = null!;
+	public static LevelCursor LevelCursor { get; private set; } = null!;
 
 	public static void SetTerrainManager(TerrainManager terrainManager)
 	{
@@ -50,6 +51,11 @@ public sealed class LevelScreen : IBaseScreen
 	public static void SetUpdateScheduler(UpdateScheduler updateScheduler)
 	{
 		UpdateScheduler = updateScheduler;
+	}
+
+	public static void SetLevelCursor(LevelCursor levelCursor)
+	{
+		LevelCursor = levelCursor;
 	}
 
 	private readonly UpdateScheduler _updateScheduler;
@@ -129,6 +135,7 @@ public sealed class LevelScreen : IBaseScreen
 		SetSkillSetManager(null);
 		SetLevelControlPanel(null);
 		SetUpdateScheduler(null);
+		SetLevelCursor(null);
 
 		_levelRenderer.Dispose();
 		IsDisposed = true;

@@ -117,10 +117,10 @@ public static class ControlPanelHelperMethods
 		{
 			var buttonAction = new SkillAssignScrollButtonAction(1);
 			result[newButtonIndex] = new ControlPanelButton(
-				newButtonIndex,
+				newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
 				buttonAction,
 				PanelHelpers.SkillAssignScrollLeftX,
-				PanelHelpers.SkillAssignScrollY);
+				PanelHelpers.ButtonIconsY);
 			newButtonIndex++;
 		}
 
@@ -131,10 +131,10 @@ public static class ControlPanelHelperMethods
 		{
 			var buttonAction = new SkillAssignScrollButtonAction(-1);
 			result[newButtonIndex] = new ControlPanelButton(
-				newButtonIndex,
+				newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
 				buttonAction,
 				PanelHelpers.SkillAssignScrollRightX,
-				PanelHelpers.SkillAssignScrollY);
+				PanelHelpers.ButtonIconsY);
 			newButtonIndex++;
 		}
 		else // Padding buttons
@@ -150,7 +150,7 @@ public static class ControlPanelHelperMethods
 		{
 			var buttonAction = new PauseButtonAction();
 			result[newButtonIndex] = new ControlPanelButton(
-				newButtonIndex,
+				newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
 				buttonAction,
 				PanelHelpers.PauseButtonX,
 				PanelHelpers.ButtonIconsY);
@@ -161,7 +161,7 @@ public static class ControlPanelHelperMethods
 		{
 			var buttonAction = new NukeButtonAction();
 			result[newButtonIndex] = new ControlPanelButton(
-				newButtonIndex,
+				newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
 				buttonAction,
 				PanelHelpers.NukeButtonX,
 				PanelHelpers.ButtonIconsY);
@@ -172,7 +172,7 @@ public static class ControlPanelHelperMethods
 		{
 			var buttonAction = new FastForwardButtonAction();
 			result[newButtonIndex] = new ControlPanelButton(
-				newButtonIndex,
+				newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
 				buttonAction,
 				PanelHelpers.FastForwardButtonX,
 				PanelHelpers.ButtonIconsY);
@@ -183,7 +183,7 @@ public static class ControlPanelHelperMethods
 		{
 			var buttonAction = new RestartButtonAction();
 			result[newButtonIndex] = new ControlPanelButton(
-				newButtonIndex,
+				newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
 				buttonAction,
 				PanelHelpers.RestartButtonX,
 				PanelHelpers.ButtonIconsY);

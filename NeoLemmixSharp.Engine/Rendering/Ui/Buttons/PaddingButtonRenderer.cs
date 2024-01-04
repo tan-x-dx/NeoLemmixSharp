@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 public sealed class PaddingButtonRenderer : ControlPanelButtonRenderer
 {
 	public PaddingButtonRenderer(ControlPanelSpriteBank spriteBank, PaddingButton paddingButton)
-		: base(spriteBank, paddingButton, 0, 0)
+		: base(spriteBank, paddingButton, 8, 0)
 	{
 	}
 

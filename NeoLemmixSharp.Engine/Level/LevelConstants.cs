@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level;
+﻿using Microsoft.Xna.Framework;
+
+namespace NeoLemmixSharp.Engine.Level;
 
 public static class LevelConstants
 {
@@ -21,6 +23,17 @@ public static class LevelConstants
 	public const int InfiniteSkillCount = 100;
 
 	public const int InitialLemmingCountDown = 20;
+
+	public const int CursorSizeInPixels = 16;
+	public const int HalfCursorSizeInPixels = CursorSizeInPixels / 2;
+
+	#endregion
+
+	#region Default Colours
+
+	public static Color CursorColor1 => new(0xff, 0xff, 0xff);
+	public static Color CursorColor2 => new(0xff, 0x00, 0x00);
+	public static Color CursorColor3 => new(0x88, 0x88, 0x88);
 
 	#endregion
 

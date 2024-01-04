@@ -61,6 +61,9 @@ public sealed class LevelBuilder : IDisposable
 		var skillSetManager = new SkillSetManager(levelData.SkillSetData);
 		LevelScreen.SetSkillSetManager(skillSetManager);
 
+		var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, inputController);
+		LevelScreen.SetLevelCursor(levelCursor);
+
 		LevelTimer levelTimer = levelData.TimeLimit.HasValue
 			? new CountDownLevelTimer(levelData.TimeLimit.Value)
 			: new CountUpLevelTimer();
@@ -74,8 +77,6 @@ public sealed class LevelBuilder : IDisposable
 		var levelGadgets = _levelObjectAssembler.GetLevelGadgets();
 		var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 		LevelScreen.SetGadgetManager(gadgetManager);
-
-		var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController, lemmingManager, skillSetManager);
 
 		var horizontalViewPortBehaviour = BoundaryHelpers.GetHorizontalViewPortBehaviour(levelData.HorizontalViewPortBehaviour, levelData.LevelWidth);
 		var verticalViewPortBehaviour = BoundaryHelpers.GetVerticalViewPortBehaviour(levelData.VerticalViewPortBehaviour, levelData.LevelHeight);
