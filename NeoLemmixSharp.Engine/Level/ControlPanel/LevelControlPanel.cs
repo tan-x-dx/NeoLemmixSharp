@@ -74,7 +74,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
 		var firstSkillAssignButton = _skillAssignButtons.Length > 0
 			? _skillAssignButtons[0]
 			: null;
-		SetSelectedSkillAssignmentButton(firstSkillAssignButton);
+	//	SetSelectedSkillAssignmentButton(firstSkillAssignButton);
 	}
 
 	public void SetWindowDimensions(int screenWidth, int screenHeight)

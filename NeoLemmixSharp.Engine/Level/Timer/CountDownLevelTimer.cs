@@ -34,9 +34,9 @@ public sealed class CountDownLevelTimer : LevelTimer
 
     private static Color GetColorForTime(int secondsLeft) => secondsLeft switch
     {
-        <= 0 => PanelFont.Magenta,
-        <= 15 => PanelFont.Red,
-        <= 30 => PanelFont.Yellow,
-        _ => PanelFont.Green
+        <= 0 => LevelConstants.PanelMagenta,
+        <= 15 => LevelConstants.PanelRed,
+        <= 30 => LevelConstants.PanelYellow,
+        _ => LevelConstants.PanelGreen
     };
 }
