@@ -7,20 +7,29 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Identity;
 
-public sealed class ExtendedEnumTypeDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
-	where TKey : class, IExtendedEnumType<TKey>
+public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
+	where TKey : class
 {
-	private readonly SimpleSet<TKey> _keys = ExtendedEnumTypeComparer<TKey>.CreateSimpleSet();
-	private readonly TValue[] _values = new TValue[TKey.NumberOfItems];
+	private readonly IPerfectHasher<TKey> _hasher;
+	private readonly SimpleSet<TKey> _keys;
+	private readonly TValue[] _values;
 
 	public int Count => _keys.Count;
+
+	public SimpleDictionary(IPerfectHasher<TKey> hasher)
+	{
+		_hasher = hasher;
+		_keys = new SimpleSet<TKey>(hasher);
+		_values = new TValue[hasher.NumberOfItems];
+	}
 
 	public void Add(TKey key, TValue value)
 	{
 		if (!_keys.Add(key))
 			throw new ArgumentException("Key already added!", nameof(key));
 
-		_values[key.Id] = value;
+		var index = _hasher.Hash(key);
+		_values[index] = value;
 	}
 
 	public void Clear()
@@ -33,7 +42,8 @@ public sealed class ExtendedEnumTypeDictionary<TKey, TValue> : IDictionary<TKey,
 	{
 		foreach (var key in _keys)
 		{
-			var value = _values[key.Id];
+			var index = _hasher.Hash(key);
+			var value = _values[index];
 			array[arrayIndex++] = new KeyValuePair<TKey, TValue>(key, value);
 		}
 	}
@@ -45,13 +55,15 @@ public sealed class ExtendedEnumTypeDictionary<TKey, TValue> : IDictionary<TKey,
 
 	public bool TryGetValue(TKey key, out TValue value)
 	{
-		value = _values[key.Id];
+		var index = _hasher.Hash(key);
+		value = _values[index];
 		return _keys.Contains(key);
 	}
 
 	public bool Remove(TKey key)
 	{
-		_values[key.Id] = default;
+		var index = _hasher.Hash(key);
+		_values[index] = default;
 		return _keys.Remove(key);
 	}
 
@@ -62,12 +74,14 @@ public sealed class ExtendedEnumTypeDictionary<TKey, TValue> : IDictionary<TKey,
 			if (!_keys.Contains(key))
 				throw new KeyNotFoundException();
 
-			return _values[key.Id];
+			var index = _hasher.Hash(key);
+			return _values[index];
 		}
 		set
 		{
 			_keys.Add(key);
-			_values[key.Id] = value;
+			var index = _hasher.Hash(key);
+			_values[index] = value;
 		}
 	}
 
@@ -86,11 +100,13 @@ public sealed class ExtendedEnumTypeDictionary<TKey, TValue> : IDictionary<TKey,
 
 	public ref struct Enumerator
 	{
+		private readonly IPerfectHasher<TKey> _hasher;
 		private readonly ReadOnlySpan<TValue> _values;
 		private BitBasedEnumerator<TKey> _bitEnumerator;
 
-		public Enumerator(ExtendedEnumTypeDictionary<TKey, TValue> dictionary)
+		public Enumerator(SimpleDictionary<TKey, TValue> dictionary)
 		{
+			_hasher = dictionary._hasher;
 			_values = dictionary.Values;
 			_bitEnumerator = dictionary._keys.GetEnumerator();
 		}
@@ -102,18 +118,21 @@ public sealed class ExtendedEnumTypeDictionary<TKey, TValue> : IDictionary<TKey,
 			get
 			{
 				var key = _bitEnumerator.Current;
-				return new KeyValuePair<TKey, TValue>(key, _values[key.Id]);
+				var index = _hasher.Hash(key);
+				return new KeyValuePair<TKey, TValue>(key, _values[index]);
 			}
 		}
 	}
 
 	public sealed class ReferenceTypeEnumerator : IEnumerator<KeyValuePair<TKey, TValue>>
 	{
+		private readonly IPerfectHasher<TKey> _hasher;
 		private readonly SimpleSet<TKey>.ReferenceTypeEnumerator _enumerator;
 		private readonly TValue[] _values;
 
-		public ReferenceTypeEnumerator(ExtendedEnumTypeDictionary<TKey, TValue> dictionary)
+		public ReferenceTypeEnumerator(SimpleDictionary<TKey, TValue> dictionary)
 		{
+			_hasher = dictionary._hasher;
 			_enumerator = dictionary._keys.GetReferenceTypeEnumerator();
 			_values = dictionary._values;
 		}
@@ -127,7 +146,8 @@ public sealed class ExtendedEnumTypeDictionary<TKey, TValue> : IDictionary<TKey,
 			get
 			{
 				var key = _enumerator.Current;
-				return new KeyValuePair<TKey, TValue>(key, _values[key.Id]);
+				var index = _hasher.Hash(key);
+				return new KeyValuePair<TKey, TValue>(key, _values[index]);
 			}
 		}
 
