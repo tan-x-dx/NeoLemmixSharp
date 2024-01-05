@@ -47,15 +47,17 @@ public sealed class FloaterAction : LemmingAction
 		var levelPosition = lemming.LevelPosition;
 
 		var gadgetSet = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
-
-		foreach (var gadget in gadgetSet)
+		if (gadgetSet.Count > 0)
 		{
-			if (gadget.SubType != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
-				continue;
-
-			if (gadget.Orientation == Orientation.GetOpposite(orientation))
+			foreach (var gadget in gadgetSet)
 			{
-				maxFallDistance--;
+				if (gadget.SubType != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
+					continue;
+
+				if (gadget.Orientation == Orientation.GetOpposite(orientation))
+				{
+					maxFallDistance--;
+				}
 			}
 		}
 
