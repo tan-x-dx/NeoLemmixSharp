@@ -20,7 +20,7 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
 
 	private int _hatchIndex;
 
-	private int _nextLemmingCountDown = LevelConstants.InitialLemmingCountDown;
+	private int _nextLemmingCountDown = LevelConstants.InitialLemmingHatchReleaseCountDown;
 	private int _lemmingsToRelease;
 
 	public int MinReleaseRate => ConvertToReleaseRate(MinSpawnInterval);

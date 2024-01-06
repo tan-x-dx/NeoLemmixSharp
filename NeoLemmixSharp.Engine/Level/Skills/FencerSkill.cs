@@ -15,10 +15,9 @@ public sealed class FencerSkill : LemmingSkill
     public override string LemmingSkillName => "fencer";
     public override bool IsClassicSkill => false;
     
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         FencerAction.Instance.TransitionLemmingToAction(lemming, false);
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

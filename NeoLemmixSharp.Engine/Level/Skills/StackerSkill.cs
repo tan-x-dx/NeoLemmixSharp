@@ -15,7 +15,7 @@ public sealed class StackerSkill : LemmingSkill
     public override string LemmingSkillName => "stacker";
     public override bool IsClassicSkill => false;
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         // Get starting position for stacker
         lemming.StackLow = !LevelScreen.TerrainManager.PixelIsSolidToLemming(
@@ -23,7 +23,6 @@ public sealed class StackerSkill : LemmingSkill
             lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX));
 
         StackerAction.Instance.TransitionLemmingToAction(lemming, false);
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

@@ -15,12 +15,19 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelScreen : IBaseScreen
 {
+	public static LevelParameters LevelParameters { get; private set; } = null!;
 	public static TerrainManager TerrainManager { get; private set; } = null!;
 	public static LemmingManager LemmingManager { get; private set; } = null!;
 	public static GadgetManager GadgetManager { get; private set; } = null!;
 	public static SkillSetManager SkillSetManager { get; private set; } = null!;
 	public static ILevelControlPanel LevelControlPanel { get; private set; } = null!;
 	public static UpdateScheduler UpdateScheduler { get; private set; } = null!;
+	public static LevelCursor LevelCursor { get; private set; } = null!;
+
+	public static void SetLevelParameters(LevelParameters levelParameters)
+	{
+		LevelParameters = levelParameters;
+	}
 
 	public static void SetTerrainManager(TerrainManager terrainManager)
 	{
@@ -50,6 +57,11 @@ public sealed class LevelScreen : IBaseScreen
 	public static void SetUpdateScheduler(UpdateScheduler updateScheduler)
 	{
 		UpdateScheduler = updateScheduler;
+	}
+
+	public static void SetLevelCursor(LevelCursor levelCursor)
+	{
+		LevelCursor = levelCursor;
 	}
 
 	private readonly UpdateScheduler _updateScheduler;
@@ -123,12 +135,14 @@ public sealed class LevelScreen : IBaseScreen
 		SkillSetManager.Dispose();
 
 #pragma warning disable CS8625
+		SetLevelParameters(null);
 		SetTerrainManager(null);
 		SetLemmingManager(null);
 		SetGadgetManager(null);
 		SetSkillSetManager(null);
 		SetLevelControlPanel(null);
 		SetUpdateScheduler(null);
+		SetLevelCursor(null);
 
 		_levelRenderer.Dispose();
 		IsDisposed = true;

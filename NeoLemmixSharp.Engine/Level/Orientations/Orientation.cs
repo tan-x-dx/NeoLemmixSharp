@@ -7,122 +7,132 @@ namespace NeoLemmixSharp.Engine.Level.Orientations;
 
 public abstract class Orientation : IExtendedEnumType<Orientation>
 {
-    private static readonly Orientation[] Orientations = GenerateOrientationCollection();
+	private static readonly Orientation[] Orientations = GenerateOrientationCollection();
 
-    public static int NumberOfItems => Orientations.Length;
-    public static ReadOnlySpan<Orientation> AllItems => new(Orientations);
+	public static int NumberOfItems => Orientations.Length;
+	public static ReadOnlySpan<Orientation> AllItems => new(Orientations);
 
-    private static Orientation[] GenerateOrientationCollection()
-    {
-        var orientations = new Orientation[4];
+	private static Orientation[] GenerateOrientationCollection()
+	{
+		var orientations = new Orientation[4];
 
-        orientations[LevelConstants.DownOrientationRotNum] = DownOrientation.Instance;
-        orientations[LevelConstants.LeftOrientationRotNum] = LeftOrientation.Instance;
-        orientations[LevelConstants.UpOrientationRotNum] = UpOrientation.Instance;
-        orientations[LevelConstants.RightOrientationRotNum] = RightOrientation.Instance;
+		orientations[LevelConstants.DownOrientationRotNum] = DownOrientation.Instance;
+		orientations[LevelConstants.LeftOrientationRotNum] = LeftOrientation.Instance;
+		orientations[LevelConstants.UpOrientationRotNum] = UpOrientation.Instance;
+		orientations[LevelConstants.RightOrientationRotNum] = RightOrientation.Instance;
 
-        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Orientation>(orientations));
+		IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Orientation>(orientations));
 
-        return orientations;
-    }
+		return orientations;
+	}
 
-    int IIdEquatable<Orientation>.Id => RotNum;
-    public abstract int RotNum { get; }
-    public abstract int AbsoluteHorizontalComponent { get; }
-    public abstract int AbsoluteVerticalComponent { get; }
+	int IIdEquatable<Orientation>.Id => RotNum;
+	public readonly int RotNum;
+	private readonly int _absoluteHorizontalComponent;
+	private readonly int _absoluteVerticalComponent;
 
-    [Pure]
-    public abstract LevelPosition TopLeftCornerOfLevel();
-    [Pure]
-    public abstract LevelPosition TopRightCornerOfLevel();
-    [Pure]
-    public abstract LevelPosition BottomLeftCornerOfLevel();
-    [Pure]
-    public abstract LevelPosition BottomRightCornerOfLevel();
+	protected Orientation(
+		int rotNum,
+		int absoluteHorizontalComponent,
+		int absoluteVerticalComponent)
+	{
+		RotNum = rotNum;
+		_absoluteHorizontalComponent = absoluteHorizontalComponent;
+		_absoluteVerticalComponent = absoluteVerticalComponent;
+	}
 
-    [Pure]
-    public abstract LevelPosition MoveRight(LevelPosition position, int step);
-    [Pure]
-    public abstract LevelPosition MoveUp(LevelPosition position, int step);
-    [Pure]
-    public abstract LevelPosition MoveLeft(LevelPosition position, int step);
-    [Pure]
-    public abstract LevelPosition MoveDown(LevelPosition position, int step);
+	[Pure]
+	public abstract LevelPosition TopLeftCornerOfLevel();
+	[Pure]
+	public abstract LevelPosition TopRightCornerOfLevel();
+	[Pure]
+	public abstract LevelPosition BottomLeftCornerOfLevel();
+	[Pure]
+	public abstract LevelPosition BottomRightCornerOfLevel();
 
-    /// <summary>
-    /// Note: For the relativeDirection parameter - Positive x -> right, positive y -> up
-    /// </summary>
-    /// <param name="position"></param>
-    /// <param name="relativeDirection"></param>
-    /// <returns></returns>
-    [Pure]
-    public abstract LevelPosition Move(LevelPosition position, LevelPosition relativeDirection);
-    /// <summary>
-    /// Note: Positive dx -> right, positive dy -> up
-    /// </summary>
-    /// <param name="position"></param>
-    /// <param name="dx"></param>
-    /// <param name="dy"></param>
-    /// <returns></returns>
-    [Pure]
-    public abstract LevelPosition Move(LevelPosition position, int dx, int dy);
-    /// <summary>
-    /// Note: Positive dx -> right, positive dy -> up
-    /// </summary>
-    /// <param name="position"></param>
-    /// <param name="dx"></param>
-    /// <param name="dy"></param>
-    /// <returns></returns>
-    [Pure]
-    public abstract LevelPosition MoveWithoutNormalization(LevelPosition position, int dx, int dy);
+	[Pure]
+	public abstract LevelPosition MoveRight(LevelPosition position, int step);
+	[Pure]
+	public abstract LevelPosition MoveUp(LevelPosition position, int step);
+	[Pure]
+	public abstract LevelPosition MoveLeft(LevelPosition position, int step);
+	[Pure]
+	public abstract LevelPosition MoveDown(LevelPosition position, int step);
 
-    [Pure]
-    public abstract bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition);
-    [Pure]
-    public abstract bool MatchesVertically(LevelPosition firstPosition, LevelPosition secondPosition);
-    [Pure]
-    public abstract bool FirstIsAboveSecond(LevelPosition firstPosition, LevelPosition secondPosition);
-    [Pure]
-    public abstract bool FirstIsBelowSecond(LevelPosition firstPosition, LevelPosition secondPosition);
-    [Pure]
-    public abstract bool FirstIsToLeftOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
-    [Pure]
-    public abstract bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+	/// <summary>
+	/// Note: For the relativeDirection parameter - Positive x -> right, positive y -> up
+	/// </summary>
+	/// <param name="position"></param>
+	/// <param name="relativeDirection"></param>
+	/// <returns></returns>
+	[Pure]
+	public abstract LevelPosition Move(LevelPosition position, LevelPosition relativeDirection);
+	/// <summary>
+	/// Note: Positive dx -> right, positive dy -> up
+	/// </summary>
+	/// <param name="position"></param>
+	/// <param name="dx"></param>
+	/// <param name="dy"></param>
+	/// <returns></returns>
+	[Pure]
+	public abstract LevelPosition Move(LevelPosition position, int dx, int dy);
+	/// <summary>
+	/// Note: Positive dx -> right, positive dy -> up
+	/// </summary>
+	/// <param name="position"></param>
+	/// <param name="dx"></param>
+	/// <param name="dy"></param>
+	/// <returns></returns>
+	[Pure]
+	public abstract LevelPosition MoveWithoutNormalization(LevelPosition position, int dx, int dy);
 
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsParallelTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteVerticalComponent == 0);
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool IsPerpendicularTo(Orientation other) => (AbsoluteVerticalComponent == 0) == (other.AbsoluteHorizontalComponent == 0);
+	[Pure]
+	public abstract bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition);
+	[Pure]
+	public abstract bool MatchesVertically(LevelPosition firstPosition, LevelPosition secondPosition);
+	[Pure]
+	public abstract bool FirstIsAboveSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+	[Pure]
+	public abstract bool FirstIsBelowSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+	[Pure]
+	public abstract bool FirstIsToLeftOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+	[Pure]
+	public abstract bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
 
-    /// <summary>
-    /// If the first position were to move horizontally to be in line with the second position, what is the dx it would require?
-    /// </summary>
-    /// <param name="fromPosition"></param>
-    /// <param name="toPosition"></param>
-    [Pure]
-    public abstract int GetHorizontalDelta(LevelPosition fromPosition, LevelPosition toPosition);
-    /// <summary>
-    /// If the first position were to move vertically to be in line with the second position, what is the dy it would require?
-    /// </summary>
-    /// <param name="fromPosition"></param>
-    /// <param name="toPosition"></param>
-    [Pure]
-    public abstract int GetVerticalDelta(LevelPosition fromPosition, LevelPosition toPosition);
+	[Pure]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool IsParallelTo(Orientation other) => (_absoluteVerticalComponent == 0) == (other._absoluteVerticalComponent == 0);
+	[Pure]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public bool IsPerpendicularTo(Orientation other) => (_absoluteVerticalComponent == 0) == (other._absoluteHorizontalComponent == 0);
 
-    [Pure]
-    public abstract Orientation RotateClockwise();
-    [Pure]
-    public abstract Orientation RotateCounterClockwise();
-    [Pure]
-    public abstract Orientation GetOpposite();
+	/// <summary>
+	/// If the first position were to move horizontally to be in line with the second position, what is the dx it would require?
+	/// </summary>
+	/// <param name="fromPosition"></param>
+	/// <param name="toPosition"></param>
+	[Pure]
+	public abstract int GetHorizontalDelta(LevelPosition fromPosition, LevelPosition toPosition);
+	/// <summary>
+	/// If the first position were to move vertically to be in line with the second position, what is the dy it would require?
+	/// </summary>
+	/// <param name="fromPosition"></param>
+	/// <param name="toPosition"></param>
+	[Pure]
+	public abstract int GetVerticalDelta(LevelPosition fromPosition, LevelPosition toPosition);
 
-    public bool Equals(Orientation? other) => RotNum == (other?.RotNum ?? -1);
-    public sealed override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;
-    public sealed override int GetHashCode() => RotNum;
-    public abstract override string ToString();
+	[Pure]
+	public static Orientation RotateClockwise(Orientation o) => AllItems[(o.RotNum + 3) & 3];
+	[Pure]
+	public static Orientation RotateCounterClockwise(Orientation o) => AllItems[(o.RotNum + 1) & 3];
+	[Pure]
+	public static Orientation GetOpposite(Orientation o) => AllItems[(o.RotNum + 2) & 3];
 
-    public static bool operator ==(Orientation left, Orientation right) => left.RotNum == right.RotNum;
-    public static bool operator !=(Orientation left, Orientation right) => left.RotNum != right.RotNum;
+	public bool Equals(Orientation? other) => RotNum == (other?.RotNum ?? -1);
+	public sealed override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;
+	public sealed override int GetHashCode() => RotNum;
+	public abstract override string ToString();
+
+	public static bool operator ==(Orientation left, Orientation right) => left.RotNum == right.RotNum;
+	public static bool operator !=(Orientation left, Orientation right) => left.RotNum != right.RotNum;
 }

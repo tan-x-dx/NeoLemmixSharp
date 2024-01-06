@@ -24,10 +24,9 @@ public sealed class MinerSkill : LemmingSkill
                    lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX));
     }
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         MinerAction.Instance.TransitionLemmingToAction(lemming, false);
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

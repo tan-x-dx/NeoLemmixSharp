@@ -15,10 +15,9 @@ public sealed class JumperSkill : LemmingSkill
     public override string LemmingSkillName => "jumper";
     public override bool IsClassicSkill => false;
     
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         JumperAction.Instance.TransitionLemmingToAction(lemming, false);
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

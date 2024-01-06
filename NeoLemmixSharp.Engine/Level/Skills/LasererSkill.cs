@@ -15,10 +15,9 @@ public sealed class LasererSkill : LemmingSkill
     public override string LemmingSkillName => "laserer";
     public override bool IsClassicSkill => false;
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         LasererAction.Instance.TransitionLemmingToAction(lemming, false);
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

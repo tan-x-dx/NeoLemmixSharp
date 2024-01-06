@@ -258,6 +258,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
         void IDisposable.Dispose() { }
     }
 
+    [Pure]
     internal static int PopCount(ReadOnlySpan<uint> bits)
     {
         var result = 0;
@@ -444,6 +445,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
         return true;
     }
 
+    [Pure]
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     bool ICollection<int>.IsReadOnly => false;
 }

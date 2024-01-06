@@ -48,7 +48,7 @@ public class ControlPanelButtonRenderer
 		spriteBatch.Draw(
 			PanelTexture,
 			destRectangle,
-			PanelHelpers.GetRectangleForCoordinates(ControlPanelButton.SkillPanelFrame, PanelHelpers.PanelBackgroundsY),
+			PanelHelpers.GetRectangleForCoordinates(ControlPanelButton.SkillPanelFrame, PanelHelpers.PanelBackgroundY),
 			RenderingLayers.ControlPanelButtonLayer);
 
 		RenderDigits(spriteBatch, destRectangle);
@@ -68,10 +68,14 @@ public class ControlPanelButtonRenderer
 		if (numberOfDigitsToRender == 0)
 			return;
 
+		var iconX = numberOfDigitsToRender == 3
+			? PanelHelpers.SkillIconTripleMaskX
+			: PanelHelpers.SkillIconDoubleMaskX;
+
 		spriteBatch.Draw(
 			PanelTexture,
 			destRectangle,
-			PanelHelpers.GetRectangleForCoordinates(PanelHelpers.SkillIconMaskX, PanelHelpers.SkillIconMaskY),
+			PanelHelpers.GetRectangleForCoordinates(iconX, PanelHelpers.SkillIconMaskY),
 			RenderingLayers.ControlPanelSkillCountEraseLayer);
 
 		var buttonScaleMultiplier = LevelScreen.LevelControlPanel.ControlPanelScale;

@@ -23,8 +23,7 @@ public sealed class ControlPanelSpriteBank : IDisposable
     {
         return new LevelCursorSprite(
             levelCursor,
-            GetTexture(ControlPanelTexture.CursorStandard),
-            GetTexture(ControlPanelTexture.CursorFocused));
+            GetTexture(ControlPanelTexture.Cursors));
     }
 
     public void Dispose()

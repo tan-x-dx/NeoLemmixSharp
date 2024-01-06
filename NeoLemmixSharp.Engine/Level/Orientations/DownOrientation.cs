@@ -9,12 +9,9 @@ public sealed class DownOrientation : Orientation
 	public static readonly DownOrientation Instance = new();
 
 	private DownOrientation()
+		: base(LevelConstants.DownOrientationRotNum, 0, 1)
 	{
 	}
-
-	public override int RotNum => LevelConstants.DownOrientationRotNum;
-	public override int AbsoluteHorizontalComponent => 0;
-	public override int AbsoluteVerticalComponent => 1;
 
 	[Pure]
 	public override LevelPosition TopLeftCornerOfLevel() => new(0, 0);
@@ -96,13 +93,6 @@ public sealed class DownOrientation : Orientation
 
 		return TerrainManager.VerticalBoundaryBehaviour.GetVerticalDelta(a, b);
 	}
-
-	[Pure]
-	public override Orientation RotateClockwise() => LeftOrientation.Instance;
-	[Pure]
-	public override Orientation RotateCounterClockwise() => RightOrientation.Instance;
-	[Pure]
-	public override Orientation GetOpposite() => UpOrientation.Instance;
 
 	public override string ToString() => "down";
 }

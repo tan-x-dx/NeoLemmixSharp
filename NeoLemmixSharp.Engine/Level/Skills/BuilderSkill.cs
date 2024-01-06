@@ -15,10 +15,9 @@ public sealed class BuilderSkill : LemmingSkill
     public override string LemmingSkillName => "builder";
     public override bool IsClassicSkill => true;
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
         BuilderAction.Instance.TransitionLemmingToAction(lemming, false);
-        return true;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

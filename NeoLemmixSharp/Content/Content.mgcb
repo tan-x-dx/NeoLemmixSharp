@@ -19,6 +19,18 @@
 #begin BuiltEffects/silhouette.xnb
 /copy:BuiltEffects/silhouette.xnb
 
+#begin cursor/cursors.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:cursor/cursors.png
+
 #begin cursor/direction_left.png
 /importer:TextureImporter
 /processor:TextureProcessor

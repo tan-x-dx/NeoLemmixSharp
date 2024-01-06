@@ -23,9 +23,8 @@ public sealed class NoneSkill : LemmingSkill
         return false;
     }
 
-    public override bool AssignToLemming(Lemming lemming)
+    public override void AssignToLemming(Lemming lemming)
     {
-        return false;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => Enumerable.Empty<LemmingAction>();

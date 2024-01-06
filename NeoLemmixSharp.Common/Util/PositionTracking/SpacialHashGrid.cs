@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
@@ -31,16 +32,17 @@ public sealed class SpacialHashGrid<T>
 		IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
 	{
 		_hasher = hasher;
+		_horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+		_verticalBoundaryBehaviour = verticalBoundaryBehaviour;
+
+		_allTrackedItems = new SimpleSet<T>(hasher);
+
 		_chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
 		var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;
 
 		_numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelWidth + chunkSizeBitMask) >> _chunkSizeBitShift;
 		_numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelHeight + chunkSizeBitMask) >> _chunkSizeBitShift;
 
-		_horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
-		_verticalBoundaryBehaviour = verticalBoundaryBehaviour;
-
-		_allTrackedItems = new SimpleSet<T>(hasher);
 		_bitArraySize = _allTrackedItems.Size;
 
 		_setUnionScratchSpace = new uint[_bitArraySize];
@@ -54,6 +56,7 @@ public sealed class SpacialHashGrid<T>
 	public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
 
 	[Pure]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public SimpleSetEnumerable<T> GetAllTrackedItems() => _allTrackedItems.ToSimpleEnumerable();
 
 	public void Clear()
@@ -76,12 +79,13 @@ public sealed class SpacialHashGrid<T>
 			chunkY < 0 || chunkY >= _numberOfVerticalChunks)
 			return SimpleSetEnumerable<T>.Empty;
 
-		Array.Clear(_setUnionScratchSpace);
+		var scratchSpaceSpan = new Span<uint>(_setUnionScratchSpace);
+		scratchSpaceSpan.Clear();
 
-		var span = ReadOnlySpanFor(chunkX, chunkY);
-		var count = BitArray.UnionWith(_setUnionScratchSpace, span);
+		var sourceSpan = ReadOnlySpanFor(chunkX, chunkY);
+		var count = BitArray.UnionWith(scratchSpaceSpan, sourceSpan);
 
-		return new SimpleSetEnumerable<T>(_hasher, _setUnionScratchSpace, count);
+		return new SimpleSetEnumerable<T>(_hasher, new ReadOnlySpan<uint>(_setUnionScratchSpace), count);
 	}
 
 	[Pure]
@@ -96,7 +100,8 @@ public sealed class SpacialHashGrid<T>
 		GetShiftValues(topLeftLevelPosition, out var topLeftChunkX, out var topLeftChunkY);
 		GetShiftValues(bottomRightLevelPosition, out var bottomRightChunkX, out var bottomRightChunkY);
 
-		Array.Clear(_setUnionScratchSpace);
+		var scratchSpaceSpan = new Span<uint>(_setUnionScratchSpace);
+		scratchSpaceSpan.Clear();
 
 		// Only one chunk -> skip some extra work
 
@@ -104,14 +109,14 @@ public sealed class SpacialHashGrid<T>
 		if (topLeftChunkX == bottomRightChunkX &&
 			topLeftChunkY == bottomRightChunkY)
 		{
-			var span = ReadOnlySpanFor(topLeftChunkX, topLeftChunkY);
-			count = BitArray.UnionWith(_setUnionScratchSpace, span);
+			var sourceSpan = ReadOnlySpanFor(topLeftChunkX, topLeftChunkY);
+			count = BitArray.UnionWith(scratchSpaceSpan, sourceSpan);
 
-			return new SimpleSetEnumerable<T>(_hasher, _setUnionScratchSpace, count);
+			return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, count);
 		}
 
 		count = EvaluateChunkPositions(UseChunkPositionMode.Union, null, topLeftChunkX, topLeftChunkY, bottomRightChunkX, bottomRightChunkY);
-		return new SimpleSetEnumerable<T>(_hasher, _setUnionScratchSpace, count);
+		return new SimpleSetEnumerable<T>(_hasher, new ReadOnlySpan<uint>(_setUnionScratchSpace), count);
 	}
 
 	public void AddItem(T item)

@@ -12,7 +12,7 @@ public sealed class CountUpLevelTimer : LevelTimer
         Chars[4] = '0';
         Chars[5] = '0';
 
-        FontColor = PanelFont.Green;
+        FontColor = LevelConstants.PanelGreen;
     }
 
     protected override void UpdateAppearance()

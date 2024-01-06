@@ -7,53 +7,69 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
 public sealed class LevelCursorSprite : IViewportObjectRenderer
 {
-    public const int CursorSizeInPixels = 16;
-    public const int HalfCursorSizeInPixels = CursorSizeInPixels / 2;
+	private readonly LevelCursor _levelCursor;
+	private readonly Texture2D _cursorTexture;
 
-    private readonly LevelCursor _levelCursor;
-    private readonly Texture2D _standardCursorTexture;
-    private readonly Texture2D _focusedCursorTexture;
+	public LevelCursorSprite(
+		LevelCursor levelCursor,
+		Texture2D cursorTexture)
+	{
+		_levelCursor = levelCursor;
+		_cursorTexture = cursorTexture;
+	}
 
-    public LevelCursorSprite(
-        LevelCursor levelCursor,
-        Texture2D standardCursorTexture,
-        Texture2D focusedCursorTexture)
-    {
-        _levelCursor = levelCursor;
-        _standardCursorTexture = standardCursorTexture;
-        _focusedCursorTexture = focusedCursorTexture;
-    }
+	public Rectangle GetSpriteBounds() => new(0, 0, LevelConstants.CursorSizeInPixels, LevelConstants.CursorSizeInPixels);
 
-    public Rectangle GetSpriteBounds() => new(0, 0, CursorSizeInPixels, CursorSizeInPixels);
+	public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
+	{
+		var d = LevelConstants.HalfCursorSizeInPixels * scaleMultiplier;
+		var s = LevelConstants.CursorSizeInPixels * scaleMultiplier;
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
-    {
-        var texture = _levelCursor.NumberOfLemmingsUnderCursor > 0
-            ? _focusedCursorTexture
-            : _standardCursorTexture;
+		var destRectangle = new Rectangle(
+			x - d,
+			y - d,
+			s,
+			s);
 
-        var d = HalfCursorSizeInPixels * scaleMultiplier;
-        var s = CursorSizeInPixels * scaleMultiplier;
+		var sourceRect = GetSpriteBounds();
+		var sourceY = _levelCursor.NumberOfLemmingsUnderCursor > 0
+			? LevelConstants.CursorSizeInPixels
+			: 0;
 
-        var destRectangle = new Rectangle(
-            x - d,
-            y - d,
-            s,
-            s);
+		sourceRect.Y = sourceY;
 
-        spriteBatch.Draw(
-            texture,
-            destRectangle,
-            GetSpriteBounds(),
-            RenderingLayers.CursorLayer);
-    }
+		spriteBatch.Draw(
+			_cursorTexture,
+			destRectangle,
+			sourceRect,
+			_levelCursor.Color1,
+			RenderingLayers.CursorLayer);
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
-    {
-        RenderAtPosition(spriteBatch, screenX, screenY, scaleMultiplier);
-    }
+		sourceRect.X += LevelConstants.CursorSizeInPixels;
 
-    public void Dispose()
-    {
-    }
+		spriteBatch.Draw(
+			_cursorTexture,
+			destRectangle,
+			sourceRect,
+			_levelCursor.Color2,
+			RenderingLayers.CursorLayer);
+
+		sourceRect.X += LevelConstants.CursorSizeInPixels;
+
+		spriteBatch.Draw(
+			_cursorTexture,
+			destRectangle,
+			sourceRect,
+			_levelCursor.Color3,
+			RenderingLayers.CursorLayer);
+	}
+
+	public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+	{
+		RenderAtPosition(spriteBatch, screenX, screenY, scaleMultiplier);
+	}
+
+	public void Dispose()
+	{
+	}
 }

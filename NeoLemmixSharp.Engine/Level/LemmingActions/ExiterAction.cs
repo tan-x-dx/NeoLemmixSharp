@@ -26,6 +26,13 @@ public sealed class ExiterAction : LemmingAction
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    {
+	    base.TransitionLemmingToAction(lemming, turnAround);
+
+	    lemming.CountDownTimer = 0;
+    }
+
     /*
 function TLemmingGame.HandleExiting(L: TLemming): Boolean;
 begin

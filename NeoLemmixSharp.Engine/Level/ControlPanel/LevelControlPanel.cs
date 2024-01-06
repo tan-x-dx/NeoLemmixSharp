@@ -74,7 +74,7 @@ public sealed class LevelControlPanel : ILevelControlPanel
 		var firstSkillAssignButton = _skillAssignButtons.Length > 0
 			? _skillAssignButtons[0]
 			: null;
-		SetSelectedSkillAssignmentButton(firstSkillAssignButton);
+	//	SetSelectedSkillAssignmentButton(firstSkillAssignButton);
 	}
 
 	public void SetWindowDimensions(int screenWidth, int screenHeight)
@@ -306,6 +306,19 @@ public sealed class LevelControlPanel : ILevelControlPanel
 		{
 			SelectedSkillAssignButton.IsSelected = true;
 		}
+
+		UpdateCursorColors();
+	}
+
+	private void UpdateCursorColors()
+	{
+		var skillSetManager = LevelScreen.SkillSetManager;
+		var skillTrackingDataId = SelectedSkillAssignButton?.SkillTrackingDataId ?? -1;
+
+		var skillTrackingData = skillSetManager.GetSkillTrackingData(skillTrackingDataId);
+
+		LevelScreen.LevelCursor.SetSelectedTeam(skillTrackingData?.Team);
+
 	}
 
 	public void UpdateSkillCount(SkillAssignButton? selectedSkillAssignButton, int skillCount)

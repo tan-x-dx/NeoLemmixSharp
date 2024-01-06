@@ -142,7 +142,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
     private ReadOnlySpan<LevelPosition> GetOffsetChecks(FacingDirection facingDirection)
     {
-        return facingDirection == RightFacingDirection.Instance
+        return facingDirection == FacingDirection.RightInstance
             ? new ReadOnlySpan<LevelPosition>(_offsetChecksRight)
             : new ReadOnlySpan<LevelPosition>(_offsetChecksLeft);
     }

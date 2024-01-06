@@ -1,159 +1,158 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class FallerAction : LemmingAction
 {
-    private const int MaxFallDistance = 62;
+	public static readonly FallerAction Instance = new();
 
-    public static readonly FallerAction Instance = new();
+	private FallerAction()
+	{
+	}
 
-    private FallerAction()
-    {
-    }
+	public override int Id => LevelConstants.FallerActionId;
+	public override string LemmingActionName => "faller";
+	public override int NumberOfAnimationFrames => LevelConstants.FallerAnimationFrames;
+	public override bool IsOneTimeAction => false;
+	public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
-    public override int Id => LevelConstants.FallerActionId;
-    public override string LemmingActionName => "faller";
-    public override int NumberOfAnimationFrames => LevelConstants.FallerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
+	public override bool UpdateLemming(Lemming lemming)
+	{
+		var gadgetManager = LevelScreen.GadgetManager;
+		var terrainManager = LevelScreen.TerrainManager;
+		var currentFallDistanceStep = 0;
+		var maxFallDistanceStep = LevelConstants.DefaultFallStep;
 
-    public override bool UpdateLemming(Lemming lemming)
-    {
-        var gadgetManager = LevelScreen.GadgetManager;
-        var terrainManager = LevelScreen.TerrainManager;
-        var currentFallDistanceStep = 0;
-        var maxFallDistanceStep = 3; // A lemming falls 3 pixels each frame
+		var orientation = lemming.Orientation;
+		ref var lemmingPosition = ref lemming.LevelPosition;
 
-        var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+		var gadgetSet = gadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
-        var gadgetSet = gadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+		foreach (var gadget in gadgetSet)
+		{
+			if (gadget.SubType != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
+				continue;
 
-        foreach (var gadget in gadgetSet)
-        {
-            if (gadget.SubType != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
-                continue;
+			if (gadget.Orientation == Orientation.GetOpposite(orientation))
+			{
+				maxFallDistanceStep = 2;
+			}
+		}
 
-            if (gadget.Orientation == orientation.GetOpposite())
-            {
-                maxFallDistanceStep = 2;
-            }
-        }
+		if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
+			return true;
 
-        if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
-            return true;
+		while (currentFallDistanceStep < maxFallDistanceStep &&
+			   !terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+		{
+			if (currentFallDistanceStep > 0 &&
+				CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
+				return true;
 
-        while (currentFallDistanceStep < maxFallDistanceStep &&
-               !terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
-        {
-            if (currentFallDistanceStep > 0 &&
-                CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
-                return true;
+			lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
 
-            lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
+			currentFallDistanceStep++;
+			lemming.DistanceFallen++;
+			lemming.TrueDistanceFallen++;
 
-            currentFallDistanceStep++;
-            lemming.DistanceFallen++;
-            lemming.TrueDistanceFallen++;
+			gadgetSet = gadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
-            gadgetSet = gadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+			foreach (var gadget in gadgetSet)
+			{
+				if (gadget.SubType != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
+					continue;
 
-            foreach (var gadget in gadgetSet)
-            {
-                if (gadget.SubType != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
-                    continue;
+				if (gadget.Orientation == Orientation.GetOpposite(orientation))
+				{
+					lemming.DistanceFallen = 0;
+				}
+			}
+		}
 
-                if (gadget.Orientation == orientation.GetOpposite())
-                {
-                    lemming.DistanceFallen = 0;
-                }
-            }
-        }
+		lemming.DistanceFallen = Math.Min(lemming.DistanceFallen, LevelConstants.MaxFallDistance + 1);
+		lemming.TrueDistanceFallen = Math.Min(lemming.TrueDistanceFallen, LevelConstants.MaxFallDistance + 1);
 
-        lemming.DistanceFallen = Math.Min(lemming.DistanceFallen, MaxFallDistance + 1);
-        lemming.TrueDistanceFallen = Math.Min(lemming.TrueDistanceFallen, MaxFallDistance + 1);
+		if (currentFallDistanceStep >= maxFallDistanceStep)
+			return true;
 
-        if (currentFallDistanceStep >= maxFallDistanceStep)
-            return true;
+		LemmingAction nextAction = IsFallFatal(lemming)
+			? SplatterAction.Instance
+			: WalkerAction.Instance;
+		lemming.SetNextAction(nextAction);
 
-        LemmingAction nextAction = IsFallFatal(lemming)
-            ? SplatterAction.Instance
-            : WalkerAction.Instance;
-        lemming.SetNextAction(nextAction);
+		return true;
+	}
 
-        return true;
-    }
+	protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
+	protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
+	protected override int BottomRightBoundsDeltaX(int animationFrame) => 2;
+	protected override int BottomRightBoundsDeltaY(int animationFrame) => 0;
 
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 2;
-    protected override int BottomRightBoundsDeltaY(int animationFrame) => 0;
+	private static bool IsFallFatal(Lemming lemming)
+	{
+		var gadgetManager = LevelScreen.GadgetManager;
 
-    private static bool IsFallFatal(Lemming lemming)
-    {
-        var gadgetManager = LevelScreen.GadgetManager;
+		return !(lemming.State.IsFloater || lemming.State.IsGlider) &&
+			   gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, NoSplatGadgetType.Instance) &&
+			   (lemming.DistanceFallen > LevelConstants.MaxFallDistance ||
+				gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, SplatGadgetType.Instance));
+	}
 
-        return !(lemming.State.IsFloater || lemming.State.IsGlider) &&
-               gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, NoSplatGadgetType.Instance) &&
-               (lemming.DistanceFallen > MaxFallDistance ||
-                gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, SplatGadgetType.Instance));
-    }
+	private static bool CheckFloaterOrGliderTransition(
+		Lemming lemming,
+		int currentFallDistance)
+	{
+		if (lemming.State.IsFloater &&
+			lemming.TrueDistanceFallen > 16 &&
+			currentFallDistance == 0)
+		{
+			FloaterAction.Instance.TransitionLemmingToAction(lemming, false);
+			return true;
+		}
 
-    private static bool CheckFloaterOrGliderTransition(
-        Lemming lemming,
-        int currentFallDistance)
-    {
-        if (lemming.State.IsFloater &&
-            lemming.TrueDistanceFallen > 16 &&
-            currentFallDistance == 0)
-        {
-            FloaterAction.Instance.TransitionLemmingToAction(lemming, false);
-            return true;
-        }
+		if (lemming.State.IsGlider &&
+			(lemming.TrueDistanceFallen > 8 ||
+			 (lemming.InitialFall &&
+			  lemming.TrueDistanceFallen > 6)))
+		{
+			GliderAction.Instance.TransitionLemmingToAction(lemming, false);
+			return true;
+		}
 
-        if (lemming.State.IsGlider &&
-            (lemming.TrueDistanceFallen > 8 ||
-             (lemming.InitialFall &&
-              lemming.TrueDistanceFallen > 6)))
-        {
-            GliderAction.Instance.TransitionLemmingToAction(lemming, false);
-            return true;
-        }
+		return false;
+	}
 
-        return false;
-    }
+	public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+	{
+		var distanceFallen = GetDistanceFallen(lemming);
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
-    {
-        // For Swimmers it's handled by the SwimmerAction as there is no single universal value
-        var currentAction = lemming.CurrentAction;
+		lemming.DistanceFallen = distanceFallen;
+		lemming.TrueDistanceFallen = distanceFallen;
 
-        if (currentAction == WalkerAction.Instance ||
-            currentAction == BasherAction.Instance)
-        {
-            lemming.DistanceFallen = 3;
-        }
-        else if (currentAction == MinerAction.Instance ||
-                 currentAction == DiggerAction.Instance)
-        {
-            lemming.DistanceFallen = 0;
-        }
-        else if (currentAction == BlockerAction.Instance ||
-                 currentAction == JumperAction.Instance ||
-                 currentAction == LasererAction.Instance)
-        {
-            lemming.DistanceFallen = -1;
-        }
-        else
-        {
-            lemming.DistanceFallen = 1;
-        }
+		base.TransitionLemmingToAction(lemming, turnAround);
+	}
 
-        lemming.TrueDistanceFallen = lemming.DistanceFallen;
+	private static int GetDistanceFallen(Lemming lemming)
+	{
+		// For Swimmers it's handled by the SwimmerAction as there is no single universal value
+		var currentAction = lemming.CurrentAction;
 
-        base.TransitionLemmingToAction(lemming, turnAround);
-    }
+		if (currentAction == WalkerAction.Instance ||
+		    currentAction == BasherAction.Instance)
+			return 3;
+
+		if (currentAction == MinerAction.Instance ||
+		    currentAction == DiggerAction.Instance)
+			return 0;
+
+		if (currentAction == BlockerAction.Instance ||
+		    currentAction == JumperAction.Instance ||
+		    currentAction == LasererAction.Instance)
+			return -1;
+
+		return 1;
+	}
 }

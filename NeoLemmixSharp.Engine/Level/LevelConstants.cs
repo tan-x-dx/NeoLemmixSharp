@@ -1,11 +1,17 @@
-﻿namespace NeoLemmixSharp.Engine.Level;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level;
 
 public static class LevelConstants
 {
 	#region Engine Constants
 
 	public const int RightFacingDirectionId = 0;
+	public const int RightFacingDirectionDeltaX = 1;
+
 	public const int LeftFacingDirectionId = 1;
+	public const int LeftFacingDirectionDeltaX = -1;
 
 	public const int DownOrientationRotNum = 0;
 	public const int LeftOrientationRotNum = 1;
@@ -17,7 +23,60 @@ public static class LevelConstants
 
 	public const int InfiniteSkillCount = 100;
 
-	public const int InitialLemmingCountDown = 20;
+	public const int InitialLemmingHatchReleaseCountDown = 20;
+
+	public const int CursorSizeInPixels = 16;
+	public const int HalfCursorSizeInPixels = CursorSizeInPixels / 2;
+
+	public const int MaxFallDistance = 62;
+
+	public const int DefaultCountDownActionTicks = 5 * EngineConstants.StandardTicksPerSecond;
+	public const int DefaultFastForwardLemmingCountDownActionTicks = EngineConstants.FastForwardSpeedMultiplier * DefaultCountDownActionTicks;
+
+	public const int ParticleFrameCount = 51;
+	public const int NumberOfParticles = 80;
+
+	/// <summary>
+	/// A lemming falls 3 pixels each frame
+	/// </summary>
+	public const int DefaultFallStep = 3;
+	/// <summary>
+	/// A lemming falls 2 pixels each frame if there's an updraft at its location
+	/// </summary>
+	public const int UpdraftFallStep = 2;
+	/// <summary>
+	/// A lemming falls 4 pixels each frame if there's a downdraft at its location
+	/// </summary>
+	public const int DownDraftFallStep = 4;
+
+	#endregion
+
+	#region Default Colours
+
+	private static readonly Color[] ExplosionParticleColors = new Color[]
+	{
+		new(0x00,0x00,0x00,0xff),
+		new(),
+		new(),
+		new(),
+		new(),
+		new(),
+		new(),
+		new(),
+	};
+
+	public static ReadOnlySpan<Color> GetExplosionParticleColors() => new(ExplosionParticleColors);
+	public const int NumberOfExplosionParticleColors = 8;
+	public const int NumberOfExplosionParticleColorsMask = NumberOfExplosionParticleColors - 1;
+
+	public static Color CursorColor1 => new(0xB0, 0xB0, 0xB0);
+	public static Color CursorColor2 => PanelRed;
+	public static Color CursorColor3 => new(0x60, 0x60, 0x60);
+
+	public static Color PanelGreen => new(0x00, 0xB0, 0x00);
+	public static Color PanelYellow => new(0xB0, 0xB0, 0x00);
+	public static Color PanelRed => new(0xB0, 0x00, 0x00);
+	public static Color PanelMagenta => new(0xB0, 0x00, 0xB0);
 
 	#endregion
 
@@ -130,27 +189,27 @@ public static class LevelConstants
 
 	#region Lemming Skill Constants
 
-	public const int BasherSkillId = 6;
-	public const int BlockerSkillId = 3;
-	public const int BomberSkillId = 4;
-	public const int BuilderSkillId = 5;
-	public const int ClimberSkillId = 1;
+	public const int BasherSkillId = 5;
+	public const int BlockerSkillId = 2;
+	public const int BomberSkillId = 3;
+	public const int BuilderSkillId = 4;
+	public const int ClimberSkillId = 0;
 	public const int ClonerSkillId = 20;
-	public const int DiggerSkillId = 8;
+	public const int DiggerSkillId = 7;
 	public const int DisarmerSkillId = 18;
 	public const int FencerSkillId = 11;
-	public const int FloaterSkillId = 2;
+	public const int FloaterSkillId = 1;
 	public const int GliderSkillId = 12;
 	public const int JumperSkillId = 13;
 	public const int LasererSkillId = 16;
-	public const int MinerSkillId = 7;
+	public const int MinerSkillId = 6;
 	public const int PlatformerSkillId = 9;
 	public const int ShimmierSkillId = 15;
 	public const int SliderSkillId = 17;
 	public const int StackerSkillId = 10;
 	public const int StonerSkillId = 19;
 	public const int SwimmerSkillId = 14;
-	public const int WalkerSkillId = 0;
+	public const int WalkerSkillId = 8;
 
 	#endregion
 

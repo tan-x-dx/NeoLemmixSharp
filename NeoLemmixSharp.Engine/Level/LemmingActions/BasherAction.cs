@@ -136,7 +136,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     {
         var bashDirectionAsOrientation = facingDirection.ConvertToRelativeOrientation(orientation);
         var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
-                                 bashDirectionAsOrientation.GetOpposite().RotNum;
+                                 Orientation.GetOpposite(bashDirectionAsOrientation).RotNum;
         var oppositeArrowMask = (PixelType)(1 << oppositeArrowShift);
         return (pixelType & oppositeArrowMask) == PixelType.Empty;
     }

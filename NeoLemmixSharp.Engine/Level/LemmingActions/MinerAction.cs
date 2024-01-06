@@ -73,7 +73,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         }
 
         // This first check is only relevant during the very first cycle.
-        // Otherwise the pixel was already checked in frame 15 of the previous cycle
+        // Otherwise, the pixel was already checked in frame 15 of the previous cycle
         if (lemming.PhysicsFrame == 3 && terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.Move(lemmingPosition, -dx, 2)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx + dx);
@@ -156,14 +156,14 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
         var oppositeOrientationArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
-                                            orientation.GetOpposite().RotNum;
+                                            Orientation.GetOpposite(orientation).RotNum;
         var oppositeOrientationArrowMask = (PixelType)(1 << oppositeOrientationArrowShift);
         if ((pixelType & oppositeOrientationArrowMask) != PixelType.Empty)
             return false;
 
         var facingDirectionAsOrientation = facingDirection.ConvertToRelativeOrientation(orientation);
         var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
-                                                facingDirectionAsOrientation.GetOpposite().RotNum;
+                                                Orientation.GetOpposite(facingDirectionAsOrientation).RotNum;
         var oppositeFacingDirectionArrowMask = (PixelType)(1 << oppositeFacingDirectionArrowShift);
         return (pixelType & oppositeFacingDirectionArrowMask) == PixelType.Empty;
     }

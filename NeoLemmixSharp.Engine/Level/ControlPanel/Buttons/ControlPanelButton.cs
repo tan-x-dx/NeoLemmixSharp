@@ -6,16 +6,16 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 public class ControlPanelButton
 {
 	private const int NumberOfSkillPanels = 8;
-	private const int SkillPanelFrameMask = NumberOfSkillPanels - 1;
+	public const int SkillPanelFrameMask = NumberOfSkillPanels - 1;
+
+	private readonly int _iconX;
+	private readonly int _iconY;
 
 	public int SkillPanelFrame { get; }
 	public int ScreenX { get; set; }
 	public int ScreenY { get; set; }
 	public int ScreenWidth { get; set; }
 	public int ScreenHeight { get; set; }
-
-	public int IconX { get; }
-	public int IconY { get; }
 
 	public bool ShouldRender { get; set; } = true;
 	public bool IsSelected { get; set; }
@@ -34,11 +34,11 @@ public class ControlPanelButton
 		int iconX,
 		int iconY)
 	{
+		_iconX = iconX;
+		_iconY = iconY;
+
 		ButtonAction = buttonAction;
 		SkillPanelFrame = skillPanelFrame & SkillPanelFrameMask;
-
-		IconX = iconX;
-		IconY = iconY;
 	}
 
 	public bool MouseIsOverButton(int mouseX, int mouseY)
@@ -53,6 +53,6 @@ public class ControlPanelButton
 
 	public virtual ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
 	{
-		return new ControlPanelButtonRenderer(spriteBank, this, IconX, IconY);
+		return new ControlPanelButtonRenderer(spriteBank, this, _iconX, _iconY);
 	}
 }

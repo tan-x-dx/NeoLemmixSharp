@@ -21,244 +21,253 @@ using NeoLemmixSharp.Menu.Rendering;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace NeoLemmixSharp;
 
 public sealed partial class NeoLemmixGame : Game, IGameWindow
 {
-    private readonly GraphicsDeviceManager _graphics;
+	private readonly GraphicsDeviceManager _graphics;
 
-    private SpriteBatch _spriteBatch;
-    private IBaseScreen? _screen;
-    private IScreenRenderer? _screenRenderer;
+	private SpriteBatch _spriteBatch;
+	private IBaseScreen? _screen;
+	private IScreenRenderer? _screenRenderer;
 
-    private bool _isBorderless;
-    public bool IsFullScreen { get; private set; }
+	private bool _isBorderless;
+	public bool IsFullScreen { get; private set; }
 
-    public int WindowWidth => _graphics.PreferredBackBufferWidth;
-    public int WindowHeight => _graphics.PreferredBackBufferHeight;
+	public int WindowWidth => _graphics.PreferredBackBufferWidth;
+	public int WindowHeight => _graphics.PreferredBackBufferHeight;
 
-    public NeoLemmixGame()
-    {
-        _graphics = new GraphicsDeviceManager(this)
-        {
-            PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8
-        };
+	public NeoLemmixGame()
+	{
+		_graphics = new GraphicsDeviceManager(this)
+		{
+			PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8
+		};
 
-        Content.RootDirectory = "Content";
-        Window.AllowUserResizing = false;
-        Window.IsBorderless = true;
-        IsMouseVisible = false;
+		Content.RootDirectory = "Content";
+		Window.AllowUserResizing = false;
+		Window.IsBorderless = true;
+		IsMouseVisible = false;
 
-        Window.ClientSizeChanged += WindowOnClientSizeChanged;
+		Window.ClientSizeChanged += WindowOnClientSizeChanged;
 
-        IsFixedTimeStep = true;
-        TargetElapsedTime = EngineConstants.FramesPerSecondTimeSpan;
+		IsFixedTimeStep = true;
+		TargetElapsedTime = EngineConstants.FramesPerSecondTimeSpan;
 
-        IGameWindow.Instance = this;
-    }
+		IGameWindow.Instance = this;
+	}
 
-    private void WindowOnClientSizeChanged(object? sender, EventArgs e)
-    {
-      //  CaptureCursor();
-        _screen?.OnWindowSizeChanged();
-    }
+	private void WindowOnClientSizeChanged(object? sender, EventArgs e)
+	{
+		//  CaptureCursor();
+		_screen?.OnWindowSizeChanged();
+	}
 
-    protected override void OnActivated(object sender, EventArgs args)
-    {
-        base.OnActivated(sender, args);
+	protected override void OnActivated(object sender, EventArgs args)
+	{
+		base.OnActivated(sender, args);
 
-        CaptureCursor();
-    }
+		CaptureCursor();
+	}
 
-    private void CaptureCursor()
-    {
-        var rect = Window.ClientBounds;
-        rect.Width += rect.X;
-        rect.Height += rect.Y;
+	private void CaptureCursor()
+	{
+		var rect = Window.ClientBounds;
+		rect.Width += rect.X;
+		rect.Height += rect.Y;
 
-        ClipCursor(ref rect);
-    }
+		ClipCursor(ref rect);
+	}
 
-    [LibraryImport("user32.dll")]
-    private static partial void ClipCursor(ref Rectangle rect);
+	[LibraryImport("user32.dll")]
+	private static partial void ClipCursor(ref Rectangle rect);
 
-    protected override void Initialize()
-    {
-        // make the window fullscreen (but still with border and top control bar)
-        var screenWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;
-        var screenHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
-        _graphics.PreferredBackBufferWidth = screenWidth;
-        _graphics.PreferredBackBufferHeight = screenHeight;
-        _graphics.IsFullScreen = false;
-        _graphics.ApplyChanges();
+	protected override void Initialize()
+	{
+		// make the window fullscreen (but still with border and top control bar)
+		var screenWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;
+		var screenHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
+		_graphics.PreferredBackBufferWidth = screenWidth;
+		_graphics.PreferredBackBufferHeight = screenHeight;
+		_graphics.IsFullScreen = false;
+		_graphics.ApplyChanges();
 
-        LoadContent();
+		InitialiseGameConstants();
+		LoadContent();
+	}
 
-        InitialiseGameConstants();
-    }
+	protected override void LoadContent()
+	{
+		// create and init the UI manager
+		UserInterface.Initialize(Content, BuiltinThemes.editor);
+		UserInterface.Active.UseRenderTarget = true;
 
-    protected override void LoadContent()
-    {
-        // create and init the UI manager
-        UserInterface.Initialize(Content, BuiltinThemes.editor);
-        UserInterface.Active.UseRenderTarget = true;
+		// draw cursor outside the render target
+		UserInterface.Active.IncludeCursorInRenderTarget = false;
 
-        // draw cursor outside the render target
-        UserInterface.Active.IncludeCursorInRenderTarget = false;
+		RootDirectoryManager.Initialise();
+		FontBank.Initialise(Content);
+		MenuSpriteBank.Initialise(Content, GraphicsDevice);
 
-        RootDirectoryManager.Initialise();
-        FontBank.Initialise(Content);
-        MenuSpriteBank.Initialise(Content, GraphicsDevice);
+		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+		TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
+		DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
 
-        TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
-        DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
+		using (var stream = File.Open("particles.dat", FileMode.Open))
+		{
+			var byteBuffer = ParticleRenderer.GetParticleOffsetBuffer();
+			using var reader = new BinaryReader(stream, Encoding.UTF8, false);
+			_ = reader.Read(byteBuffer);
+		}
 
-        //LoadLevel_Debug();
-        var menuScreen = new MenuScreen(
-            Content,
-            GraphicsDevice,
-            _spriteBatch);
-        SetScreen(menuScreen);
-        menuScreen.Initialise();
+		//LoadLevel_Debug();
+		var menuScreen = new MenuScreen(
+			Content,
+			GraphicsDevice,
+			_spriteBatch);
+		SetScreen(menuScreen);
+		menuScreen.Initialise();
 
-        CaptureCursor();
-    }
+		CaptureCursor();
+	}
 
-    private static void InitialiseGameConstants()
-    {
-        var numberOfFacingDirections = FacingDirection.NumberOfItems;
-        var numberOfOrientations = Orientation.NumberOfItems;
-        var numberOfActions = LemmingAction.NumberOfItems;
-        var numberOfSkills = LemmingSkill.NumberOfItems;
-        var numberOfTeams = Team.NumberOfItems;
-        var numberOfGadgetTypes = GadgetSubType.NumberOfItems;
+	private static void InitialiseGameConstants()
+	{
+		var numberOfFacingDirections = FacingDirection.NumberOfItems;
+		var numberOfOrientations = Orientation.NumberOfItems;
+		var numberOfActions = LemmingAction.NumberOfItems;
+		var numberOfSkills = LemmingSkill.NumberOfItems;
+		var numberOfTeams = Team.NumberOfItems;
+		var numberOfGadgetTypes = GadgetSubType.NumberOfItems;
 
-        Console.WriteLine(
-            "Loaded {0} facing directions. Loaded {1} orientations. Loaded {2} skills. Loaded {3} actions. " +
-            "Loaded {4} teams. Loaded {5} gadget types",
-            numberOfFacingDirections,
-            numberOfOrientations,
-            numberOfSkills,
-            numberOfActions,
-            numberOfTeams,
-            numberOfGadgetTypes);
-    }
+		Console.WriteLine(
+			"Loaded {0} facing directions. Loaded {1} orientations. Loaded {2} skills. Loaded {3} actions. " +
+			"Loaded {4} teams. Loaded {5} gadget types",
+			numberOfFacingDirections,
+			numberOfOrientations,
+			numberOfSkills,
+			numberOfActions,
+			numberOfTeams,
+			numberOfGadgetTypes);
 
-    private void LoadLevel_Debug()
-    {
-        var file =
-            //    "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
-            //  "levels\\rotation test.nxlv";
-            //  "levels\\render test.nxlv";
-            "levels\\movement test.nxlv";
-        // "levels\\object test.nxlv";
-        // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
-        //   "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
-        //  "levels\\Amiga Lemmings\\Lemmings\\Tricky\\05_Careless_clicking_costs_lives.nxlv";
-        //   "levels\\LemRunner\\Industry\\TheNightShift.nxlv";
-        //  "levels\\Amiga Lemmings\\Lemmings\\Tricky\\04_Here's_one_I_prepared_earlier.nxlv";
-        //"levels\\IntegralLemmingsV5\\Alpha\\TheseLemmingsAndThoseLemmings.nxlv";
-        //"levels\\CuttingItClose.nxlv";
-        //    "levels\\scrollTest.nxlv";
-        //  "levels\\LemRunner\\Mona\\ACaeloUsqueAdCentrum.nxlv";
-        // "levels\\groupTest.nxlv";
-        //    "levels\\eraseTest.nxlv";
-        //  "levels\\Amiga Lemmings\\Lemmings\\Fun\\19_Take_good_care_of_my_Lemmings.nxlv";
+		OhNoerAction.Initialise();
+	}
 
-        var path = Path.Combine(RootDirectoryManager.RootDirectory, file);
+	private void LoadLevel_Debug()
+	{
+		var file =
+			//    "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
+			//  "levels\\rotation test.nxlv";
+			//  "levels\\render test.nxlv";
+			"levels\\movement test.nxlv";
+		// "levels\\object test.nxlv";
+		// "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
+		//   "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
+		//  "levels\\Amiga Lemmings\\Lemmings\\Tricky\\05_Careless_clicking_costs_lives.nxlv";
+		//   "levels\\LemRunner\\Industry\\TheNightShift.nxlv";
+		//  "levels\\Amiga Lemmings\\Lemmings\\Tricky\\04_Here's_one_I_prepared_earlier.nxlv";
+		//"levels\\IntegralLemmingsV5\\Alpha\\TheseLemmingsAndThoseLemmings.nxlv";
+		//"levels\\CuttingItClose.nxlv";
+		//    "levels\\scrollTest.nxlv";
+		//  "levels\\LemRunner\\Mona\\ACaeloUsqueAdCentrum.nxlv";
+		// "levels\\groupTest.nxlv";
+		//    "levels\\eraseTest.nxlv";
+		//  "levels\\Amiga Lemmings\\Lemmings\\Fun\\19_Take_good_care_of_my_Lemmings.nxlv";
 
-        var fileExtension = Path.GetExtension(file);
-        var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
+		var path = Path.Combine(RootDirectoryManager.RootDirectory, file);
 
-        using var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, levelReader);
-        SetScreen(levelBuilder.BuildLevel(path));
-    }
+		var fileExtension = Path.GetExtension(file);
+		var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
 
-    public void SetScreen(IBaseScreen screen)
-    {
-        _screen?.Dispose();
-        _screenRenderer?.Dispose();
+		using var levelBuilder = new LevelBuilder(Content, GraphicsDevice, _spriteBatch, levelReader);
+		SetScreen(levelBuilder.BuildLevel(path));
+	}
 
-        _screen = screen;
-        _screen.OnWindowSizeChanged();
-        _screenRenderer = _screen.ScreenRenderer;
+	public void SetScreen(IBaseScreen screen)
+	{
+		_screen?.Dispose();
+		_screenRenderer?.Dispose();
 
-        Window.Title = _screen.ScreenTitle;
-    }
+		_screen = screen;
+		_screen.OnWindowSizeChanged();
+		_screenRenderer = _screen.ScreenRenderer;
 
-    protected override void Update(GameTime gameTime)
-    {
-        _screen!.Tick(gameTime);
-    }
+		Window.Title = _screen.ScreenTitle;
+	}
 
-    protected override void Draw(GameTime gameTime)
-    {
-        // if (gameTime.IsRunningSlowly)
-        //     return;
+	protected override void Update(GameTime gameTime)
+	{
+		_screen!.Tick(gameTime);
+	}
 
-        GraphicsDevice.Clear(Color.Black);
+	protected override void Draw(GameTime gameTime)
+	{
+		// if (gameTime.IsRunningSlowly)
+		//     return;
 
-        _screenRenderer!.RenderScreen(_spriteBatch);
-    }
+		GraphicsDevice.Clear(Color.Black);
 
-    public void ToggleFullScreen()
-    {
-        var oldIsFullscreen = IsFullScreen;
+		_screenRenderer!.RenderScreen(_spriteBatch);
+	}
 
-        if (_isBorderless)
-        {
-            _isBorderless = false;
-        }
-        else
-        {
-            IsFullScreen = !IsFullScreen;
-        }
+	public void ToggleFullScreen()
+	{
+		var oldIsFullscreen = IsFullScreen;
 
-        ApplyFullscreenChange(oldIsFullscreen);
-    }
+		if (_isBorderless)
+		{
+			_isBorderless = false;
+		}
+		else
+		{
+			IsFullScreen = !IsFullScreen;
+		}
 
-    public void ToggleBorderless()
-    {
-        var oldIsFullscreen = IsFullScreen;
+		ApplyFullscreenChange(oldIsFullscreen);
+	}
 
-        _isBorderless = !_isBorderless;
-        IsFullScreen = _isBorderless;
+	public void ToggleBorderless()
+	{
+		var oldIsFullscreen = IsFullScreen;
 
-        ApplyFullscreenChange(oldIsFullscreen);
-    }
+		_isBorderless = !_isBorderless;
+		IsFullScreen = _isBorderless;
 
-    private void ApplyFullscreenChange(bool oldIsFullscreen)
-    {
-        if (IsFullScreen)
-        {
-            if (oldIsFullscreen)
-            {
-                ApplyHardwareMode();
-            }
-            else
-            {
-                SetFullscreen();
-            }
-        }
-        else
-        {
-            UnsetFullscreen();
-        }
-    }
+		ApplyFullscreenChange(oldIsFullscreen);
+	}
 
-    private void ApplyHardwareMode()
-    {
-        _graphics.HardwareModeSwitch = !_isBorderless;
-        _graphics.ApplyChanges();
-        CaptureCursor();
-    }
+	private void ApplyFullscreenChange(bool oldIsFullscreen)
+	{
+		if (IsFullScreen)
+		{
+			if (oldIsFullscreen)
+			{
+				ApplyHardwareMode();
+			}
+			else
+			{
+				SetFullscreen();
+			}
+		}
+		else
+		{
+			UnsetFullscreen();
+		}
+	}
 
-    private void SetFullscreen()
-    {
-        /*   _gameResolution = new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
+	private void ApplyHardwareMode()
+	{
+		_graphics.HardwareModeSwitch = !_isBorderless;
+		_graphics.ApplyChanges();
+		CaptureCursor();
+	}
+
+	private void SetFullscreen()
+	{
+		/*   _gameResolution = new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
 
            _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
            _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
@@ -267,19 +276,19 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
            _graphics.IsFullScreen = true;
            _graphics.ApplyChanges();
            CaptureCursor();*/
-    }
+	}
 
-    private void UnsetFullscreen()
-    {
-        /* _graphics.PreferredBackBufferWidth = _gameResolution.X;
+	private void UnsetFullscreen()
+	{
+		/* _graphics.PreferredBackBufferWidth = _gameResolution.X;
          _graphics.PreferredBackBufferHeight = _gameResolution.Y;
          _graphics.IsFullScreen = false;
          _graphics.ApplyChanges();
          CaptureCursor();*/
-    }
+	}
 
-    public void Escape()
-    {
-        Exit();
-    }
+	public void Escape()
+	{
+		Exit();
+	}
 }

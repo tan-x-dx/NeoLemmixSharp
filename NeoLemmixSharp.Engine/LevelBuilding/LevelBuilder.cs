@@ -7,15 +7,12 @@ using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using Viewport = NeoLemmixSharp.Engine.Level.Viewport;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
@@ -49,13 +46,9 @@ public sealed class LevelBuilder : IDisposable
 
 		var levelData = _levelReader.LevelData;
 		var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
-		lemmingSpriteBank.SetTeamColors();
 
-		var lemmingSpriteBankLookup = new Dictionary<Team, LemmingSpriteBank>();
-		foreach (var team in Team.AllItems)
-		{
-			lemmingSpriteBankLookup[team] = lemmingSpriteBank;
-		}
+		var levelParameters = new LevelParameters(levelData);
+		LevelScreen.SetLevelParameters(levelParameters);
 
 		var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
 		var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
@@ -65,15 +58,17 @@ public sealed class LevelBuilder : IDisposable
 		var lemmingManager = new LemmingManager(levelData, hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 		LevelScreen.SetLemmingManager(lemmingManager);
 
-		var controlPanelButtonAvailability = GetControlPanelButtonAvailability(levelData);
 		var inputController = new LevelInputController();
 		var skillSetManager = new SkillSetManager(levelData.SkillSetData);
 		LevelScreen.SetSkillSetManager(skillSetManager);
 
+		var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, inputController);
+		LevelScreen.SetLevelCursor(levelCursor);
+
 		LevelTimer levelTimer = levelData.TimeLimit.HasValue
 			? new CountDownLevelTimer(levelData.TimeLimit.Value)
 			: new CountUpLevelTimer();
-		var controlPanel = new LevelControlPanel(controlPanelButtonAvailability, inputController, skillSetManager, lemmingManager, levelTimer);
+		var controlPanel = new LevelControlPanel(levelParameters.ControlPanelParameters, inputController, skillSetManager, lemmingManager, levelTimer);
 		LevelScreen.SetLevelControlPanel(controlPanel);
 
 		_levelObjectAssembler.AssembleLevelObjects(
@@ -84,11 +79,9 @@ public sealed class LevelBuilder : IDisposable
 		var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 		LevelScreen.SetGadgetManager(gadgetManager);
 
-		var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, controlPanel, inputController, lemmingManager, skillSetManager);
-
 		var horizontalViewPortBehaviour = BoundaryHelpers.GetHorizontalViewPortBehaviour(levelData.HorizontalViewPortBehaviour, levelData.LevelWidth);
 		var verticalViewPortBehaviour = BoundaryHelpers.GetVerticalViewPortBehaviour(levelData.VerticalViewPortBehaviour, levelData.LevelHeight);
-		var levelViewport = new Viewport(levelCursor, horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+		var levelViewport = new Viewport(horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
 		var updateScheduler = new UpdateScheduler(controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, gadgetManager, skillSetManager);
 		LevelScreen.SetUpdateScheduler(updateScheduler);
@@ -107,8 +100,9 @@ public sealed class LevelBuilder : IDisposable
 
 		var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
 		var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank();
+		LevelRenderer.SetControlPanelSpriteBank(controlPanelSpriteBank);
 
-		var levelSprites = _levelObjectAssembler.GetLevelSprites(lemmingSpriteBankLookup);
+		var levelSprites = _levelObjectAssembler.GetLevelSprites();
 
 		var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel);
 
@@ -125,7 +119,6 @@ public sealed class LevelBuilder : IDisposable
 			levelSprites,
 			levelCursorSprite,
 			controlPanelRenderer,
-			controlPanelSpriteBank,
 			lemmingSpriteBank,
 			gadgetSpriteBank);
 
@@ -139,18 +132,6 @@ public sealed class LevelBuilder : IDisposable
 			controlPanel,
 			levelViewport,
 			levelRenderer);
-	}
-
-	private static ControlPanelParameters GetControlPanelButtonAvailability(LevelData levelData)
-	{
-		return ControlPanelParameters.ShowPauseButton |
-			   ControlPanelParameters.ShowNukeButton |
-			   ControlPanelParameters.ShowFastForwardsButton |
-			   ControlPanelParameters.ShowRestartButton |
-			   ControlPanelParameters.ShowFrameNudgeButtons |
-			   ControlPanelParameters.ShowDirectionSelectButtons |
-			   ControlPanelParameters.ShowClearPhysicsAndReplayButton |
-			   ControlPanelParameters.ShowReleaseRateButtonsIfPossible;
 	}
 
 	public void Dispose()

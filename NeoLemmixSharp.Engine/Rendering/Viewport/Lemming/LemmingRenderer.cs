@@ -1,62 +1,78 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Rendering.Ui;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 public sealed class LemmingRenderer : IViewportObjectRenderer
 {
-    private readonly LemmingSpriteBank _spriteBank;
+	private const int NumberOfChars = 2;
 
-    private Level.Lemmings.Lemming _lemming;
-    private ActionSprite _actionSprite;
+	private readonly int[] _countDownCharsToRender = new int[NumberOfChars];
 
-    private bool _shouldRender;
+	private Level.Lemmings.Lemming _lemming;
+	private ActionSprite _actionSprite;
 
-    public LemmingRenderer(LemmingSpriteBank spriteBank, Level.Lemmings.Lemming lemming)
-    {
-        _spriteBank = spriteBank;
-        _lemming = lemming;
-    }
+	private bool _shouldRender;
+	private bool _shouldRenderCountDown;
 
-    public void UpdateLemmingState(bool shouldRender)
-    {
-        _shouldRender = shouldRender;
+	public Span<int> CountDownCharsSpan => new(_countDownCharsToRender);
 
-        if (!shouldRender)
-            return;
+	public LemmingRenderer(Level.Lemmings.Lemming lemming)
+	{
+		_lemming = lemming;
+	}
 
-        _actionSprite = _spriteBank.GetActionSprite(
-            _lemming.CurrentAction,
-            _lemming.Orientation,
-            _lemming.FacingDirection);
-    }
+	public void UpdateLemmingState(bool shouldRender)
+	{
+		_shouldRender = shouldRender;
 
-    public Rectangle GetSpriteBounds()
-    {
-        if (!_shouldRender)
-            return Rectangle.Empty;
+		if (!shouldRender)
+			return;
 
-        var p = _lemming.LevelPosition - _actionSprite.AnchorPoint;
+		var spriteBank = _lemming.State.TeamAffiliation.SpriteBank;
 
-        return new Rectangle(p.X, p.Y, _actionSprite.SpriteWidth, _actionSprite.SpriteHeight);
-    }
+		_actionSprite = spriteBank.GetActionSprite(
+			_lemming.CurrentAction,
+			_lemming.Orientation,
+			_lemming.FacingDirection);
+	}
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
-    {
-        if (!_shouldRender)
-            return;
+	public void SetDisplayTimer(bool displayTimer)
+	{
+		_shouldRenderCountDown = displayTimer;
+	}
 
-        var renderDestination = new Rectangle(
-            screenX,
-            screenY,
-            sourceRectangle.Width * scaleMultiplier,
-            sourceRectangle.Height * scaleMultiplier);
+	public Rectangle GetSpriteBounds()
+	{
+		if (!_shouldRender)
+			return Rectangle.Empty;
 
-        sourceRectangle.Y += _lemming.AnimationFrame * _actionSprite.SpriteHeight;
+		var p = _lemming.LevelPosition - _actionSprite.AnchorPoint;
 
-        _actionSprite.RenderLemming(spriteBatch, _lemming, sourceRectangle, renderDestination);
+		return new Rectangle(p.X, p.Y, _actionSprite.SpriteWidth, _actionSprite.SpriteHeight);
+	}
 
-        /* spriteBatch.Draw(
+	public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+	{
+		if (!_shouldRender)
+			return;
+
+		var renderDestination = new Rectangle(
+			screenX,
+			screenY,
+			sourceRectangle.Width * scaleMultiplier,
+			sourceRectangle.Height * scaleMultiplier);
+
+		sourceRectangle.Y += _lemming.AnimationFrame * _actionSprite.SpriteHeight;
+
+		_actionSprite.RenderLemming(spriteBatch, _lemming, sourceRectangle, renderDestination);
+
+		/* spriteBatch.Draw(
               actionSprite.Texture,
               renderDestination,
               actionSprite.GetSourceRectangleForFrame(sourceRectangle, _lemming.AnimationFrame),
@@ -66,10 +82,10 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
               SpriteEffects.None,
               RenderingLayers.LemmingRenderLayer);*/
 
-        // var p = new Point(screenX - scaleMultiplier, screenY - scaleMultiplier);
-        // renderDestination = new Rectangle(p, new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
+		// var p = new Point(screenX - scaleMultiplier, screenY - scaleMultiplier);
+		// renderDestination = new Rectangle(p, new Point(3 * scaleMultiplier, 3 * scaleMultiplier));
 
-        /* var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
+		/* var spriteBank = LevelScreen.CurrentLevel.SpriteBank;
          spriteBatch.Draw(
              spriteBank.AnchorTexture,
              renderDestination,
@@ -78,11 +94,62 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
              new Vector2(),
              SpriteEffects.None,
              RenderingLayers.LemmingRenderLayer);*/
-    }
 
-    public void Dispose()
-    {
-        _lemming = null;
-        _actionSprite = null;
-    }
+		if (_shouldRenderCountDown)
+		{
+			var countDownPositionOffset = new LevelPosition();
+
+			FontBank.CountDownFont.RenderTextSpan(
+				spriteBatch,
+				CountDownCharsSpan,
+				screenX + countDownPositionOffset.X,
+				screenY + countDownPositionOffset.Y,
+				scaleMultiplier,
+				Color.White);
+		}
+
+		if (_lemming.ParticleTimer > 0)
+		{
+			RenderParticles(spriteBatch, screenX, screenY, scaleMultiplier);
+		}
+	}
+
+	private void RenderParticles(
+		SpriteBatch spriteBatch,
+		int screenX,
+		int screenY,
+		int scaleMultiplier)
+	{
+		var destRectangle = new Rectangle(0, 0, scaleMultiplier, scaleMultiplier);
+		var explosionParticleColors = LevelConstants.GetExplosionParticleColors();
+		var whitePixelTexture = LevelRenderer.ControlPanelSpriteBank.GetTexture(ControlPanelTexture.WhitePixel);
+
+		var sourceRectangle = new Rectangle(0, 0, 1, 1);
+		var p = _lemming.LevelPosition;
+
+		for (var i = 0; i < LevelConstants.NumberOfParticles; i++)
+		{
+			var offset = ParticleRenderer.GetParticleOffsets(_lemming.ParticleTimer, i);
+
+			var color = explosionParticleColors[i & LevelConstants.NumberOfExplosionParticleColorsMask];
+
+			offset += p;
+
+			destRectangle.X = screenX + (offset.X * scaleMultiplier);
+			destRectangle.Y = screenY + (offset.Y * scaleMultiplier);
+
+			spriteBatch.Draw(
+				whitePixelTexture,
+				destRectangle,
+				sourceRectangle,
+				Color.White, //color,
+				RenderingLayers.LemmingRenderLayer);
+		}
+	}
+
+	public void Dispose()
+	{
+		_lemming = null!;
+		_actionSprite = null!;
+	}
 }

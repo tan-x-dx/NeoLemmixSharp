@@ -46,7 +46,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
 
         var facingDirectionAsOrientation = facingDirection.ConvertToRelativeOrientation(orientation);
         var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
-                                                facingDirectionAsOrientation.GetOpposite().RotNum;
+                                                Orientation.GetOpposite(facingDirectionAsOrientation).RotNum;
         var oppositeFacingDirectionArrowMask = (PixelType)(1 << oppositeFacingDirectionArrowShift);
         return (pixelType & oppositeFacingDirectionArrowMask) == PixelType.Empty;
     }
