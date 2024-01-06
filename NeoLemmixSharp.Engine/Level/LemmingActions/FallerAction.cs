@@ -6,8 +6,6 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class FallerAction : LemmingAction
 {
-	private const int MaxFallDistance = 62;
-
 	public static readonly FallerAction Instance = new();
 
 	private FallerAction()
@@ -25,7 +23,7 @@ public sealed class FallerAction : LemmingAction
 		var gadgetManager = LevelScreen.GadgetManager;
 		var terrainManager = LevelScreen.TerrainManager;
 		var currentFallDistanceStep = 0;
-		var maxFallDistanceStep = 3; // A lemming falls 3 pixels each frame
+		var maxFallDistanceStep = LevelConstants.DefaultFallStep;
 
 		var orientation = lemming.Orientation;
 		ref var lemmingPosition = ref lemming.LevelPosition;
@@ -73,8 +71,8 @@ public sealed class FallerAction : LemmingAction
 			}
 		}
 
-		lemming.DistanceFallen = Math.Min(lemming.DistanceFallen, MaxFallDistance + 1);
-		lemming.TrueDistanceFallen = Math.Min(lemming.TrueDistanceFallen, MaxFallDistance + 1);
+		lemming.DistanceFallen = Math.Min(lemming.DistanceFallen, LevelConstants.MaxFallDistance + 1);
+		lemming.TrueDistanceFallen = Math.Min(lemming.TrueDistanceFallen, LevelConstants.MaxFallDistance + 1);
 
 		if (currentFallDistanceStep >= maxFallDistanceStep)
 			return true;
@@ -99,7 +97,7 @@ public sealed class FallerAction : LemmingAction
 
 		return !(lemming.State.IsFloater || lemming.State.IsGlider) &&
 			   gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, NoSplatGadgetType.Instance) &&
-			   (lemming.DistanceFallen > MaxFallDistance ||
+			   (lemming.DistanceFallen > LevelConstants.MaxFallDistance ||
 				gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, SplatGadgetType.Instance));
 	}
 

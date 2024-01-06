@@ -27,6 +27,12 @@ public static class LevelConstants
 	public const int CursorSizeInPixels = 16;
 	public const int HalfCursorSizeInPixels = CursorSizeInPixels / 2;
 
+	public const int MaxFallDistance = 62;
+	/// <summary>
+	/// A lemming falls 3 pixels each frame
+	/// </summary>
+	public const int DefaultFallStep = 3;
+
 	#endregion
 
 	#region Default Colours
