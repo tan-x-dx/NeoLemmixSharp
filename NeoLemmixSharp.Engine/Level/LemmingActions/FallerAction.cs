@@ -129,32 +129,32 @@ public sealed class FallerAction : LemmingAction
 
 	public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
 	{
+		var distanceFallen = GetDistanceFallen(lemming);
+
+		lemming.DistanceFallen = distanceFallen;
+		lemming.TrueDistanceFallen = distanceFallen;
+
+		base.TransitionLemmingToAction(lemming, turnAround);
+	}
+
+	private static int GetDistanceFallen(Lemming lemming)
+	{
 		// For Swimmers it's handled by the SwimmerAction as there is no single universal value
 		var currentAction = lemming.CurrentAction;
 
 		if (currentAction == WalkerAction.Instance ||
-			currentAction == BasherAction.Instance)
-		{
-			lemming.DistanceFallen = 3;
-		}
-		else if (currentAction == MinerAction.Instance ||
-				 currentAction == DiggerAction.Instance)
-		{
-			lemming.DistanceFallen = 0;
-		}
-		else if (currentAction == BlockerAction.Instance ||
-				 currentAction == JumperAction.Instance ||
-				 currentAction == LasererAction.Instance)
-		{
-			lemming.DistanceFallen = -1;
-		}
-		else
-		{
-			lemming.DistanceFallen = 1;
-		}
+		    currentAction == BasherAction.Instance)
+			return 3;
 
-		lemming.TrueDistanceFallen = lemming.DistanceFallen;
+		if (currentAction == MinerAction.Instance ||
+		    currentAction == DiggerAction.Instance)
+			return 0;
 
-		base.TransitionLemmingToAction(lemming, turnAround);
+		if (currentAction == BlockerAction.Instance ||
+		    currentAction == JumperAction.Instance ||
+		    currentAction == LasererAction.Instance)
+			return -1;
+
+		return 1;
 	}
 }
