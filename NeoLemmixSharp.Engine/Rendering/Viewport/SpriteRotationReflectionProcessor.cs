@@ -15,7 +15,6 @@ public sealed class SpriteRotationReflectionProcessor<T>
         int spriteWidth,
         int spriteHeight,
         int numberOfFrames,
-        int numberOfLayers,
         LevelPosition anchorPoint);
 
     private readonly GraphicsDevice _graphicsDevice;
@@ -111,7 +110,6 @@ public sealed class SpriteRotationReflectionProcessor<T>
             spriteDrawingData.ThisSpriteWidth,
             spriteDrawingData.ThisSpriteHeight,
             numberOfFrames,
-            numberOfLayers,
             new LevelPosition(footX1, footY1));
 
         return actionSprite;

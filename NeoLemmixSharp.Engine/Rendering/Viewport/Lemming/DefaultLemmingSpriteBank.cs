@@ -19,6 +19,8 @@ public static class DefaultLemmingSpriteBank
 		ContentManager contentManager,
 		GraphicsDevice graphicsDevice)
 	{
+		EmptyActionSprite.Initialise(graphicsDevice);
+
 		var spriteRotationReflectionProcessor = new ActionSpriteCreator(graphicsDevice);
 
 		var numberOfActionSprites = LemmingAction.NumberOfItems *
@@ -74,31 +76,31 @@ public static class DefaultLemmingSpriteBank
 		void CreateOneLayerTrueColorSprite(LemmingAction action, LevelPosition levelPosition)
 		{
 			CreateSprite(action, 1, levelPosition,
-				(t, w, h, f, l, p) => new SingleColorLayerActionSprite(t, w, h, f, l, p));
+				(t, w, h, _, p) => new SingleColorLayerActionSprite(t, w, h, p));
 		}
 
 		void CreateThreeLayerSprite(LemmingAction action, LevelPosition levelPosition)
 		{
 			CreateSprite(action, 3, levelPosition,
-				(t, w, h, f, l, p) => new ThreeLayerActionSprite(t, w, h, f, l, p));
+				(t, w, h, _, p) => new ThreeLayerActionSprite(t, w, h, p));
 		}
 
 		void CreateFourLayerSprite(LemmingAction action, LevelPosition levelPosition)
 		{
 			CreateSprite(action, 4, levelPosition,
-				(t, w, h, f, l, p) => new FourLayerActionSprite(t, w, h, f, l, p));
+				(t, w, h, _, p) => new FourLayerActionSprite(t, w, h, p));
 		}
 
 		void CreateFourLayerTrueColorSprite(LemmingAction action, LevelPosition levelPosition)
 		{
 			CreateSprite(action, 4, levelPosition,
-				(t, w, h, f, l, p) => new FourLayerColorActionSprite(t, w, h, f, l, p));
+				(t, w, h, _, p) => new FourLayerColorActionSprite(t, w, h, p));
 		}
 
 		void CreateFiveLayerTrueColorSprite(LemmingAction action, LevelPosition levelPosition)
 		{
 			CreateSprite(action, 5, levelPosition,
-				(t, w, h, f, l, p) => new FiveLayerColorActionSprite(t, w, h, f, l, p));
+				(t, w, h, _, p) => new FiveLayerColorActionSprite(t, w, h, p));
 		}
 
 		void CreateSprite(

@@ -12,13 +12,17 @@ namespace NeoLemmixSharp.Engine.Rendering;
 
 public sealed class LevelRenderer : IScreenRenderer
 {
-	public static LevelRenderer Current { get; private set; } = null!;
+	public static ControlPanelSpriteBank ControlPanelSpriteBank { get; private set; } = null!;
+
+	public static void SetControlPanelSpriteBank(ControlPanelSpriteBank controlPanelSpriteBank)
+	{
+		ControlPanelSpriteBank = controlPanelSpriteBank;
+	}
 
 	private readonly int _levelWidth;
 	private readonly int _levelHeight;
 	private readonly Level.Viewport _viewport;
 
-	private readonly ControlPanelSpriteBank _controlPanelSpriteBank;
 	private readonly LemmingSpriteBank _lemmingSpriteBank;
 	private readonly GadgetSpriteBank _gadgetSpriteBank;
 
@@ -40,7 +44,6 @@ public sealed class LevelRenderer : IScreenRenderer
 		IViewportObjectRenderer[] levelSprites,
 		LevelCursorSprite levelCursorSprite,
 		IControlPanelRenderer controlPanelRenderer,
-		ControlPanelSpriteBank controlPanelSpriteBank,
 		LemmingSpriteBank lemmingSpriteBank,
 		GadgetSpriteBank gadgetSpriteBank)
 	{
@@ -54,11 +57,8 @@ public sealed class LevelRenderer : IScreenRenderer
 		_cursorSprite = levelCursorSprite;
 		_controlPanelRenderer = controlPanelRenderer;
 
-		_controlPanelSpriteBank = controlPanelSpriteBank;
 		_lemmingSpriteBank = lemmingSpriteBank;
 		_gadgetSpriteBank = gadgetSpriteBank;
-
-		Current = this;
 	}
 
 	public void RenderScreen(SpriteBatch spriteBatch)
@@ -140,12 +140,17 @@ public sealed class LevelRenderer : IScreenRenderer
 
 	public void Dispose()
 	{
-		_controlPanelSpriteBank.Dispose();
+		if (IsDisposed)
+			return;
+
+#pragma warning disable CS8625
+		SetControlPanelSpriteBank(null);
+#pragma warning restore CS8625
+
 		_lemmingSpriteBank.Dispose();
 		_gadgetSpriteBank.Dispose();
 
 		DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<IViewportObjectRenderer>(_levelSprites));
-
-		Current = null!;
+		IsDisposed = true;
 	}
 }

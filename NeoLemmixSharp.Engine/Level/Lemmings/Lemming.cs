@@ -41,6 +41,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
 	public int FastForwardTime;
 	public int CountDownTimer;
+	public int ParticleTimer;
 
 	public LevelPosition DehoistPin;
 	public LevelPosition LaserHitLevelPosition;
@@ -118,6 +119,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 		// No transition to do at the end of lemming movement
 		NextAction = NoneAction.Instance;
 
+		HandleParticleTimer();
 		HandleCountDownTimer();
 		HandleFastForwardTimer();
 
@@ -139,6 +141,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 		if (!_isSimulation)
 			throw new InvalidOperationException("Use simulation lemming for simulations!");
 
+		HandleParticleTimer();
 		HandleCountDownTimer();
 		HandleFastForwardTimer();
 
@@ -146,6 +149,14 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 		if (handleGadgets)
 		{
 			CheckTriggerAreas(false);
+		}
+	}
+
+	private void HandleParticleTimer()
+	{
+		if (ParticleTimer > 0)
+		{
+			ParticleTimer--;
 		}
 	}
 

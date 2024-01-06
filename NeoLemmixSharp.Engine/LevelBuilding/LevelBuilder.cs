@@ -100,6 +100,7 @@ public sealed class LevelBuilder : IDisposable
 
 		var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
 		var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank();
+		LevelRenderer.SetControlPanelSpriteBank(controlPanelSpriteBank);
 
 		var levelSprites = _levelObjectAssembler.GetLevelSprites();
 
@@ -118,7 +119,6 @@ public sealed class LevelBuilder : IDisposable
 			levelSprites,
 			levelCursorSprite,
 			controlPanelRenderer,
-			controlPanelSpriteBank,
 			lemmingSpriteBank,
 			gadgetSpriteBank);
 

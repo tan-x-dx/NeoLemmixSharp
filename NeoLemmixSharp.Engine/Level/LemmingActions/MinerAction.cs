@@ -73,7 +73,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         }
 
         // This first check is only relevant during the very first cycle.
-        // Otherwise the pixel was already checked in frame 15 of the previous cycle
+        // Otherwise, the pixel was already checked in frame 15 of the previous cycle
         if (lemming.PhysicsFrame == 3 && terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.Move(lemmingPosition, -dx, 2)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx + dx);

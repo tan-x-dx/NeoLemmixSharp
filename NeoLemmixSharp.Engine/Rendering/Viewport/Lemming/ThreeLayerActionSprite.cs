@@ -10,10 +10,8 @@ public sealed class ThreeLayerActionSprite : ActionSprite
         Texture2D texture,
         int spriteWidth,
         int spriteHeight,
-        int numberOfFrames,
-        int numberOfLayers,
         LevelPosition anchorPoint)
-        : base(texture, spriteWidth, spriteHeight, numberOfFrames, numberOfLayers, anchorPoint)
+        : base(texture, spriteWidth, spriteHeight, anchorPoint)
     {
     }
 

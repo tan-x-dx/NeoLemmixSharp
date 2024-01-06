@@ -9,8 +9,6 @@ public abstract class ActionSprite : IDisposable
 {
     public int SpriteWidth { get; }
     public int SpriteHeight { get; }
-    public int NumberOfFrames { get; }
-    public int NumberOfLayers { get; }
 
     public Texture2D Texture { get; }
     public LevelPosition AnchorPoint { get; }
@@ -19,15 +17,11 @@ public abstract class ActionSprite : IDisposable
         Texture2D texture,
         int spriteWidth,
         int spriteHeight,
-        int numberOfFrames,
-        int numberOfLayers,
         LevelPosition anchorPoint)
     {
         Texture = texture;
         SpriteWidth = spriteWidth;
         SpriteHeight = spriteHeight;
-        NumberOfFrames = numberOfFrames;
-        NumberOfLayers = numberOfLayers;
         AnchorPoint = anchorPoint;
     }
 

@@ -1,7 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Rendering.Ui;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
@@ -103,6 +106,44 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 				screenY + countDownPositionOffset.Y,
 				scaleMultiplier,
 				Color.White);
+		}
+
+		if (_lemming.ParticleTimer > 0)
+		{
+			RenderParticles(spriteBatch, screenX, screenY, scaleMultiplier);
+		}
+	}
+
+	private void RenderParticles(
+		SpriteBatch spriteBatch,
+		int screenX,
+		int screenY,
+		int scaleMultiplier)
+	{
+		var destRectangle = new Rectangle(0, 0, scaleMultiplier, scaleMultiplier);
+		var explosionParticleColors = LevelConstants.GetExplosionParticleColors();
+		var whitePixelTexture = LevelRenderer.ControlPanelSpriteBank.GetTexture(ControlPanelTexture.WhitePixel);
+
+		var sourceRectangle = new Rectangle(0, 0, 1, 1);
+		var p = _lemming.LevelPosition;
+
+		for (var i = 0; i < LevelConstants.NumberOfParticles; i++)
+		{
+			var offset = ParticleRenderer.GetParticleOffsets(_lemming.ParticleTimer, i);
+
+			var color = explosionParticleColors[i & LevelConstants.NumberOfExplosionParticleColorsMask];
+
+			offset += p;
+
+			destRectangle.X = screenX + (offset.X * scaleMultiplier);
+			destRectangle.Y = screenY + (offset.Y * scaleMultiplier);
+
+			spriteBatch.Draw(
+				whitePixelTexture,
+				destRectangle,
+				sourceRectangle,
+				Color.White, //color,
+				RenderingLayers.LemmingRenderLayer);
 		}
 	}
 

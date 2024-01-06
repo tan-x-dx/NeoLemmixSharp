@@ -3,7 +3,6 @@ using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
@@ -23,12 +22,14 @@ public sealed class LemmingSpriteBank : IDisposable
 		Orientation orientation,
 		FacingDirection facingDirection)
 	{
+		if (lemmingAction == NoneAction.Instance)
+			return EmptyActionSprite.Instance;
+
 		var key = GetKey(lemmingAction, orientation, facingDirection);
 
 		return _actionSprites[key];
 	}
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static int GetKey(
 		LemmingAction lemmingAction,
 		Orientation orientation,
@@ -42,7 +43,6 @@ public sealed class LemmingSpriteBank : IDisposable
 		return (lemmingAction.Id << 3) | lowerBits;
 	}
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static int GetKey(
 		Orientation orientation,
 		FacingDirection facingDirection)

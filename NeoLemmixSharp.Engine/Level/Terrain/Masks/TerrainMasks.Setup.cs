@@ -148,6 +148,6 @@ public static partial class TerrainMasks
     private static SpriteRotationReflectionProcessor<TerrainMaskTextureReader>.ItemCreator CreateTerrainMaskFromTexture(IDestructionMask destructionMask)
     {
         // Currying is such fun...
-        return (t, w, h, f, _, p) => new TerrainMaskTextureReader(t, destructionMask, w, h, f, p);
+        return (t, w, h, f, p) => new TerrainMaskTextureReader(t, destructionMask, w, h, f, p);
     }
 }

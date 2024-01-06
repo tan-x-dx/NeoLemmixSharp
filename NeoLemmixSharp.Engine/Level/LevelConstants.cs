@@ -33,6 +33,9 @@ public static class LevelConstants
 	public const int DefaultCountDownActionTicks = 5 * EngineConstants.StandardTicksPerSecond;
 	public const int DefaultFastForwardLemmingCountDownActionTicks = EngineConstants.FastForwardSpeedMultiplier * DefaultCountDownActionTicks;
 
+	public const int ParticleFrameCount = 51;
+	public const int NumberOfParticles = 80;
+
 	/// <summary>
 	/// A lemming falls 3 pixels each frame
 	/// </summary>
@@ -49,6 +52,22 @@ public static class LevelConstants
 	#endregion
 
 	#region Default Colours
+
+	private static readonly Color[] ExplosionParticleColors = new Color[]
+	{
+		new(0x00,0x00,0x00,0xff),
+		new(),
+		new(),
+		new(),
+		new(),
+		new(),
+		new(),
+		new(),
+	};
+
+	public static ReadOnlySpan<Color> GetExplosionParticleColors() => new(ExplosionParticleColors);
+	public const int NumberOfExplosionParticleColors = 8;
+	public const int NumberOfExplosionParticleColorsMask = NumberOfExplosionParticleColors - 1;
 
 	public static Color CursorColor1 => new(0xB0, 0xB0, 0xB0);
 	public static Color CursorColor2 => PanelRed;
