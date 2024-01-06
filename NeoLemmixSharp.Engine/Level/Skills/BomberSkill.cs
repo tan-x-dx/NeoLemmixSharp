@@ -5,26 +5,28 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class BomberSkill : LemmingSkill
 {
-    public static readonly BomberSkill Instance = new();
+	public static readonly BomberSkill Instance = new();
 
-    private BomberSkill()
-    {
-    }
+	private BomberSkill()
+	{
+	}
 
-    public override int Id => LevelConstants.BomberSkillId;
-    public override string LemmingSkillName => "bomber";
-    public override bool IsClassicSkill => true;
+	public override int Id => LevelConstants.BomberSkillId;
+	public override string LemmingSkillName => "bomber";
+	public override bool IsClassicSkill => true;
 
-    public override void AssignToLemming(Lemming lemming)
-    {
-        /*
-            lemming.ExplosionTimer : = 1;
-            lemming.TimerToStone : = False;
-            lemming.HideCountdown : = True;
-            */
+	public override bool CanAssignToLemming(Lemming lemming)
+	{
+		return lemming.CountDownTimer == 0 && ActionIsAssignable(lemming);
+	}
 
-        throw new NotImplementedException();
-    }
+	public override void AssignToLemming(Lemming lemming)
+	{
+		var levelParameters = LevelScreen.LevelParameters;
+		var countDownTimer = levelParameters.GetLemmingCountDownTimer(lemming);
 
-    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
+		lemming.SetCountDownAction(countDownTimer, ExploderAction.Instance, levelParameters.TimedBombers);
+	}
+
+	protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
 }

@@ -25,11 +25,6 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
         _texture = content.Load<Texture2D>("fonts/skill_count_digits");
     }
 
-    public void Dispose()
-    {
-        _texture.Dispose();
-    }
-
     private static bool GetCharRenderDetails(int c, out int sourceX, out int glyphWidth)
     {
         switch (c)

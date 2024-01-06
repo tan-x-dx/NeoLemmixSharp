@@ -93,9 +93,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
-        LoadContent();
-
         InitialiseGameConstants();
+        LoadContent();
     }
 
     protected override void LoadContent()
@@ -145,6 +144,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
             numberOfActions,
             numberOfTeams,
             numberOfGadgetTypes);
+
+        OhNoerAction.Initialise();
     }
 
     private void LoadLevel_Debug()

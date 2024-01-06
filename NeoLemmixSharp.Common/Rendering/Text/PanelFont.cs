@@ -18,11 +18,6 @@ public sealed class PanelFont : INeoLemmixFont
         _texture = content.Load<Texture2D>("fonts/panel_font");
     }
 
-    public void Dispose()
-    {
-        _texture.Dispose();
-    }
-
     private static bool CanRenderChar(int c, out int adjustedChar)
     {
         switch (c)

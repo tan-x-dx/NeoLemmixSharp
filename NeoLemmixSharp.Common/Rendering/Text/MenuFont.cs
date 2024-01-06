@@ -21,11 +21,6 @@ public sealed class MenuFont : INeoLemmixFont
 		_texture = content.Load<Texture2D>("fonts/menu_font");
 	}
 
-	public void Dispose()
-	{
-		_texture.Dispose();
-	}
-
 	public void RenderText(
 		SpriteBatch spriteBatch,
 		ReadOnlySpan<char> charactersToRender,

@@ -10,7 +10,6 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
@@ -48,6 +47,9 @@ public sealed class LevelBuilder : IDisposable
 		var levelData = _levelReader.LevelData;
 		var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
 
+		var levelParameters = new LevelParameters(levelData);
+		LevelScreen.SetLevelParameters(levelParameters);
+
 		var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
 		var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
 
@@ -56,7 +58,6 @@ public sealed class LevelBuilder : IDisposable
 		var lemmingManager = new LemmingManager(levelData, hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 		LevelScreen.SetLemmingManager(lemmingManager);
 
-		var controlPanelButtonAvailability = GetControlPanelButtonAvailability(levelData);
 		var inputController = new LevelInputController();
 		var skillSetManager = new SkillSetManager(levelData.SkillSetData);
 		LevelScreen.SetSkillSetManager(skillSetManager);
@@ -67,7 +68,7 @@ public sealed class LevelBuilder : IDisposable
 		LevelTimer levelTimer = levelData.TimeLimit.HasValue
 			? new CountDownLevelTimer(levelData.TimeLimit.Value)
 			: new CountUpLevelTimer();
-		var controlPanel = new LevelControlPanel(controlPanelButtonAvailability, inputController, skillSetManager, lemmingManager, levelTimer);
+		var controlPanel = new LevelControlPanel(levelParameters.ControlPanelParameters, inputController, skillSetManager, lemmingManager, levelTimer);
 		LevelScreen.SetLevelControlPanel(controlPanel);
 
 		_levelObjectAssembler.AssembleLevelObjects(
@@ -131,18 +132,6 @@ public sealed class LevelBuilder : IDisposable
 			controlPanel,
 			levelViewport,
 			levelRenderer);
-	}
-
-	private static ControlPanelParameters GetControlPanelButtonAvailability(LevelData levelData)
-	{
-		return ControlPanelParameters.ShowPauseButton |
-			   ControlPanelParameters.ShowNukeButton |
-			   ControlPanelParameters.ShowFastForwardsButton |
-			   ControlPanelParameters.ShowRestartButton |
-			   ControlPanelParameters.ShowFrameNudgeButtons |
-			   ControlPanelParameters.ShowDirectionSelectButtons |
-			   ControlPanelParameters.ShowClearPhysicsAndReplayButton |
-			   ControlPanelParameters.ShowReleaseRateButtonsIfPossible;
 	}
 
 	public void Dispose()

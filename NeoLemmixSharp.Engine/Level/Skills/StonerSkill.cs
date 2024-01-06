@@ -15,16 +15,18 @@ public sealed class StonerSkill : LemmingSkill
     public override string LemmingSkillName => "stoner";
     public override bool IsClassicSkill => false;
 
-    public override void AssignToLemming(Lemming lemming)
+    public override bool CanAssignToLemming(Lemming lemming)
     {
-        /*
-            lemming.LemExplosionTimer : = 1;
-            lemming.LemTimerToStone : = True;
-            lemming.LemHideCountdown : = True;
-            */
-
-        throw new NotImplementedException();
+	    return lemming.CountDownTimer == 0 && ActionIsAssignable(lemming);
     }
 
-    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
+    public override void AssignToLemming(Lemming lemming)
+	{
+		var levelParameters = LevelScreen.LevelParameters;
+		var countDownTimer = levelParameters.GetLemmingCountDownTimer(lemming);
+
+		lemming.SetCountDownAction(countDownTimer, StonerAction.Instance, !levelParameters.TimedBombers);
+	}
+
+	protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
 }

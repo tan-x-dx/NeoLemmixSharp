@@ -40,6 +40,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 	public int LaserRemainTime;
 
 	public int FastForwardTime;
+	public int CountDownTimer;
 
 	public LevelPosition DehoistPin;
 	public LevelPosition LaserHitLevelPosition;
@@ -54,6 +55,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 	public LemmingAction PreviousAction { get; private set; } = NoneAction.Instance;
 	public LemmingAction CurrentAction { get; private set; }
 	public LemmingAction NextAction { get; private set; } = NoneAction.Instance;
+	public LemmingAction CountDownAction { get; private set; } = NoneAction.Instance;
 
 	public LemmingRenderer Renderer { get; private set; } = null!;
 
@@ -116,7 +118,12 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 		// No transition to do at the end of lemming movement
 		NextAction = NoneAction.Instance;
 
-		var shouldContinue = HandleLemmingAction() && CheckLevelBoundaries() && CheckTriggerAreas(false);
+		HandleCountDownTimer();
+		HandleFastForwardTimer();
+
+		var shouldContinue = HandleLemmingAction() &&
+							 CheckLevelBoundaries() &&
+							 CheckTriggerAreas(false);
 
 		if (shouldContinue &&
 			CurrentAction != ExiterAction.Instance &&
@@ -125,11 +132,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 		{
 			LevelScreen.LemmingManager.DoZombieCheck(this);
 		}
-
-		if (FastForwardTime > 0)
-		{
-			FastForwardTime--;
-		}
 	}
 
 	public void Simulate(bool checkGadgets)
@@ -137,10 +139,35 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 		if (!_isSimulation)
 			throw new InvalidOperationException("Use simulation lemming for simulations!");
 
+		HandleCountDownTimer();
+		HandleFastForwardTimer();
+
 		var handleGadgets = HandleLemmingAction() && CheckLevelBoundaries() && checkGadgets;
 		if (handleGadgets)
 		{
 			CheckTriggerAreas(false);
+		}
+	}
+
+	private void HandleCountDownTimer()
+	{
+		if (CountDownTimer == 0)
+			return;
+
+		CountDownTimer--;
+		CountDownHelper.UpdateCountDownTimer(this);
+
+		if (CountDownTimer != 0)
+			return;
+
+		OhNoerAction.HandleCountDownTransition(this);
+	}
+
+	private void HandleFastForwardTimer()
+	{
+		if (FastForwardTime > 0)
+		{
+			FastForwardTime--;
 		}
 	}
 
@@ -307,6 +334,20 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 		NextAction = nextAction;
 	}
 
+	public void SetCountDownAction(int countDownTimer, LemmingAction countDownAction, bool displayTimer)
+	{
+		CountDownTimer = countDownTimer;
+		CountDownAction = countDownAction;
+
+		Renderer.SetDisplayTimer(displayTimer);
+	}
+
+	public void ClearCountDownAction()
+	{
+		CountDownTimer = 0;
+		CountDownAction = NoneAction.Instance;
+	}
+
 	public void SetRawData(Team team, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
 	{
 		State.SetRawData(team, rawStateData);
@@ -351,6 +392,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 		LaserRemainTime = otherLemming.LaserRemainTime;
 
 		FastForwardTime = otherLemming.FastForwardTime;
+		CountDownTimer = otherLemming.CountDownTimer;
 
 		DehoistPin = otherLemming.DehoistPin;
 		LaserHitLevelPosition = otherLemming.LaserHitLevelPosition;

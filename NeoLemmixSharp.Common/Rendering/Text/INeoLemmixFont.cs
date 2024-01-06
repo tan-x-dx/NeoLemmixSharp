@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Common.Rendering.Text;
 
-public interface INeoLemmixFont : IDisposable
+public interface INeoLemmixFont
 {
     void RenderText(
         SpriteBatch spriteBatch,

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -22,16 +23,28 @@ public static class LevelConstants
 
 	public const int InfiniteSkillCount = 100;
 
-	public const int InitialLemmingCountDown = 20;
+	public const int InitialLemmingHatchReleaseCountDown = 20;
 
 	public const int CursorSizeInPixels = 16;
 	public const int HalfCursorSizeInPixels = CursorSizeInPixels / 2;
 
 	public const int MaxFallDistance = 62;
+
+	public const int DefaultCountDownActionTicks = 5 * EngineConstants.StandardTicksPerSecond;
+	public const int DefaultFastForwardLemmingCountDownActionTicks = EngineConstants.FastForwardSpeedMultiplier * DefaultCountDownActionTicks;
+
 	/// <summary>
 	/// A lemming falls 3 pixels each frame
 	/// </summary>
 	public const int DefaultFallStep = 3;
+	/// <summary>
+	/// A lemming falls 2 pixels each frame if there's an updraft at its location
+	/// </summary>
+	public const int UpdraftFallStep = 2;
+	/// <summary>
+	/// A lemming falls 4 pixels each frame if there's a downdraft at its location
+	/// </summary>
+	public const int DownDraftFallStep = 4;
 
 	#endregion
 

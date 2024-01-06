@@ -1,14 +1,23 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
 public sealed class LemmingRenderer : IViewportObjectRenderer
 {
+	private const int NumberOfChars = 2;
+
+	private readonly int[] _countDownCharsToRender = new int[NumberOfChars];
+
 	private Level.Lemmings.Lemming _lemming;
 	private ActionSprite _actionSprite;
 
 	private bool _shouldRender;
+	private bool _shouldRenderCountDown;
+
+	public Span<int> CountDownCharsSpan => new(_countDownCharsToRender);
 
 	public LemmingRenderer(Level.Lemmings.Lemming lemming)
 	{
@@ -28,6 +37,11 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 			_lemming.CurrentAction,
 			_lemming.Orientation,
 			_lemming.FacingDirection);
+	}
+
+	public void SetDisplayTimer(bool displayTimer)
+	{
+		_shouldRenderCountDown = displayTimer;
 	}
 
 	public Rectangle GetSpriteBounds()
@@ -77,6 +91,19 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
              new Vector2(),
              SpriteEffects.None,
              RenderingLayers.LemmingRenderLayer);*/
+
+		if (_shouldRenderCountDown)
+		{
+			var countDownPositionOffset = new LevelPosition();
+
+			FontBank.CountDownFont.RenderTextSpan(
+				spriteBatch,
+				CountDownCharsSpan,
+				screenX + countDownPositionOffset.X,
+				screenY + countDownPositionOffset.Y,
+				scaleMultiplier,
+				Color.White);
+		}
 	}
 
 	public void Dispose()

@@ -1,77 +1,130 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Identity;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class OhNoerAction : LemmingAction
 {
-    public static readonly OhNoerAction Instance = new();
+	public static readonly OhNoerAction Instance = new();
 
-    private OhNoerAction()
-    {
-    }
+	private static SimpleSet<LemmingAction> _airborneActions = null!;
 
-    public override int Id => LevelConstants.OhNoerActionId;
-    public override string LemmingActionName => "ohnoer";
-    public override int NumberOfAnimationFrames => LevelConstants.OhNoerAnimationFrames;
-    public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
+	private OhNoerAction()
+	{
+	}
 
-    public override bool UpdateLemming(Lemming lemming)
-    {
-        var orientation = lemming.Orientation;
-        var result = true;
+	public static void Initialise()
+	{
+		_airborneActions = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
 
-        if (lemming.EndOfAnimation)
-        {
-            //   if(lemming.CurrentAction == )
+		_airborneActions.Add(VaporiserAction.Instance);
+		_airborneActions.Add(DrownerAction.Instance);
+		_airborneActions.Add(FloaterAction.Instance);
+		_airborneActions.Add(GliderAction.Instance);
+		_airborneActions.Add(FallerAction.Instance);
+		_airborneActions.Add(SwimmerAction.Instance);
+		_airborneActions.Add(ReacherAction.Instance);
+		_airborneActions.Add(ShimmierAction.Instance);
+		_airborneActions.Add(JumperAction.Instance);
+	}
 
-        }
-        else if (!LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
-        {
-            LevelScreen.LemmingManager.DeregisterBlocker(lemming);
-            /*
-            L.LemHasBlockerField := False; // remove blocker field
-            SetBlockerMap;
-            // let lemming fall
-            if HasTriggerAt(L.LemX, L.LemY, trUpdraft) then
-              Inc(L.LemY, MinIntValue([FindGroundPixel(L.LemX, L.LemY), 2]))
-            else
-              Inc(L.LemY, MinIntValue([FindGroundPixel(L.LemX, L.LemY), 3]));
-             */
-        }
+	public override int Id => LevelConstants.OhNoerActionId;
+	public override string LemmingActionName => "ohnoer";
+	public override int NumberOfAnimationFrames => LevelConstants.OhNoerAnimationFrames;
+	public override bool IsOneTimeAction => true;
+	public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
-        return result;
-    }
+	public override bool UpdateLemming(Lemming lemming)
+	{
+		ref var lemmingPosition = ref lemming.LevelPosition;
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => animationFrame < 7 ? 10 : 9;
+		if (lemming.EndOfAnimation)
+		{
+			LevelScreen.LemmingManager.DeregisterBlocker(lemming);
+			var nextAction = lemming.CountDownAction;
+			nextAction.TransitionLemmingToAction(lemming, false);
+			lemming.ClearCountDownAction();
+			return !nextAction.IsOneTimeAction;
+		}
 
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
+		if (LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+			return true;
 
-    /*
-function TLemmingGame.HandleOhNoing(L: TLemming): Boolean;
-begin
-  Result := True;
-  if L.LemEndOfAnimation then
-  begin
-    if L.LemAction = baOhNoing then
-      Transition(L, baExploding)
-    else // if L.LemAction = baStoning then
-      Transition(L, baStoneFinish);
-    L.LemHasBlockerField := False; // remove blocker field
-    SetBlockerMap;
-    Result := False;
-  end
-  else if not HasPixelAt(L.LemX, L.LemY) then
-  begin
-    L.LemHasBlockerField := False; // remove blocker field
-    SetBlockerMap;
-    // let lemming fall
-    if HasTriggerAt(L.LemX, L.LemY, trUpdraft) then
-      Inc(L.LemY, MinIntValue([FindGroundPixel(L.LemX, L.LemY), 2]))
-    else
-      Inc(L.LemY, MinIntValue([FindGroundPixel(L.LemX, L.LemY), 3]));
-  end;
-end;
-    */
+		LevelScreen.LemmingManager.DeregisterBlocker(lemming);
+
+		var fallDelta = GetFallDelta(lemming);
+
+		var lemmingOrientation = lemming.Orientation;
+		lemmingPosition = lemmingOrientation.MoveDown(lemmingPosition, fallDelta);
+
+		return true;
+	}
+
+	private static int GetFallDelta(Lemming lemming)
+	{
+		var lemmingOrientation = lemming.Orientation;
+
+		var hasUpdraft = false;
+		var hasDowndraft = false;
+
+		var gadgetManager = LevelScreen.GadgetManager;
+		var gadgetsNearPosition = gadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+
+		if (gadgetsNearPosition.Count > 0)
+		{
+			foreach (var gadget in gadgetsNearPosition)
+			{
+				if (gadget.SubType != UpdraftGadgetType.Instance || !gadget.MatchesLemming(lemming))
+					continue;
+
+				var gadgetOrientation = gadget.Orientation;
+
+				if (gadgetOrientation == lemmingOrientation)
+				{
+					hasDowndraft = true;
+				}
+				if (gadgetOrientation == Orientation.GetOpposite(lemmingOrientation))
+				{
+					hasUpdraft = true;
+				}
+			}
+		}
+
+		if (hasUpdraft && hasDowndraft)
+			return LevelConstants.DefaultFallStep;
+
+		if (hasUpdraft)
+			return LevelConstants.UpdraftFallStep;
+
+		if (hasDowndraft)
+			return LevelConstants.DownDraftFallStep;
+
+		return LevelConstants.DefaultFallStep;
+	}
+
+	protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+	protected override int TopLeftBoundsDeltaY(int animationFrame) => animationFrame < 7 ? 10 : 9;
+
+	protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
+
+	public static void HandleCountDownTransition(Lemming lemming)
+	{
+		var currentAction = lemming.CurrentAction;
+
+		if (currentAction == NoneAction.Instance)
+			return;
+
+		if (_airborneActions.Contains(currentAction))
+		{
+			// If in the air, do the action immediately
+			lemming.CountDownAction.TransitionLemmingToAction(lemming, false);
+			lemming.ClearCountDownAction();
+			return;
+		}
+
+		Instance.TransitionLemmingToAction(lemming, false); // Otherwise start oh-noing!
+	}
 }
