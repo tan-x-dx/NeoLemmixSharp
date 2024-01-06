@@ -142,7 +142,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 				whitePixelTexture,
 				destRectangle,
 				sourceRectangle,
-				Color.White, //color,
+				color,
 				RenderingLayers.LemmingRenderLayer);
 		}
 	}

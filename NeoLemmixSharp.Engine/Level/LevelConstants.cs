@@ -53,17 +53,17 @@ public static class LevelConstants
 
 	#region Default Colours
 
-	private static readonly Color[] ExplosionParticleColors = new Color[]
-	{
-		new(0x00,0x00,0x00,0xff),
-		new(),
-		new(),
-		new(),
-		new(),
-		new(),
-		new(),
-		new(),
-	};
+	private static readonly Color[] ExplosionParticleColors =
+	[
+		new Color(0x40, 0x40, 0xE0, 0xFF),
+		new Color(0x00, 0xB0, 0x00, 0xFF),
+		new Color(0xF0, 0xD0, 0xD0, 0xFF),
+		new Color(0xF0, 0x20, 0x20, 0xFF),
+		new Color(0x40, 0x40, 0xE0, 0xC0),
+		new Color(0x00, 0xB0, 0x00, 0xC0),
+		new Color(0xF0, 0xD0, 0xD0, 0xC0),
+		new Color(0xF0, 0x20, 0x20, 0xC0)
+	];
 
 	public static ReadOnlySpan<Color> GetExplosionParticleColors() => new(ExplosionParticleColors);
 	public const int NumberOfExplosionParticleColors = 8;
