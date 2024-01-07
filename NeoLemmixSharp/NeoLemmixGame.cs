@@ -117,9 +117,10 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
 		using (var stream = File.Open("particles.dat", FileMode.Open))
 		{
-			var byteBuffer = ParticleRenderer.GetParticleOffsetBuffer();
+			Span<byte> byteBuffer = stackalloc byte[ParticleHelper.ByteLength];
 			using var reader = new BinaryReader(stream, Encoding.UTF8, false);
 			_ = reader.Read(byteBuffer);
+			ParticleHelper.InitialiseParticleOffsets(byteBuffer);
 		}
 
 		//LoadLevel_Debug();
@@ -129,8 +130,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 			_spriteBatch);
 		SetScreen(menuScreen);
 		menuScreen.Initialise();
-
-		CaptureCursor();
 	}
 
 	private static void InitialiseGameConstants()
@@ -262,7 +261,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 	{
 		_graphics.HardwareModeSwitch = !_isBorderless;
 		_graphics.ApplyChanges();
-		CaptureCursor();
 	}
 
 	private void SetFullscreen()

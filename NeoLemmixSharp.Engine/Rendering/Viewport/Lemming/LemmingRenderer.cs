@@ -125,15 +125,18 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 		var whitePixelTexture = LevelRenderer.ControlPanelSpriteBank.GetTexture(ControlPanelTexture.WhitePixel);
 
 		var sourceRectangle = new Rectangle(0, 0, 1, 1);
-		var p = _lemming.LevelPosition;
+		var p = _lemming.LevelPosition - _actionSprite.AnchorPoint;
 
 		for (var i = 0; i < LevelConstants.NumberOfParticles; i++)
 		{
-			var offset = ParticleRenderer.GetParticleOffsets(_lemming.ParticleTimer, i);
+			var offset = ParticleHelper.GetParticleOffsets(_lemming.ParticleTimer, i);
+
+			if (offset.X == -128 || offset.Y == -128)
+				continue;
 
 			var color = explosionParticleColors[i & LevelConstants.NumberOfExplosionParticleColorsMask];
 
-			offset += p;
+			offset -= p;
 
 			destRectangle.X = screenX + (offset.X * scaleMultiplier);
 			destRectangle.Y = screenY + (offset.Y * scaleMultiplier);
