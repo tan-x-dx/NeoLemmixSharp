@@ -99,6 +99,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
 	protected override void LoadContent()
 	{
+		LoadResources();
+
 		// create and init the UI manager
 		UserInterface.Initialize(Content, BuiltinThemes.editor);
 		UserInterface.Active.UseRenderTarget = true;
@@ -115,14 +117,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 		TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
 		DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
 
-		using (var stream = File.Open("particles.dat", FileMode.Open))
-		{
-			Span<byte> byteBuffer = stackalloc byte[ParticleHelper.ByteLength];
-			using var reader = new BinaryReader(stream, Encoding.UTF8, false);
-			_ = reader.Read(byteBuffer);
-			ParticleHelper.InitialiseParticleOffsets(byteBuffer);
-		}
-
 		//LoadLevel_Debug();
 		var menuScreen = new MenuScreen(
 			Content,
@@ -130,6 +124,30 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 			_spriteBatch);
 		SetScreen(menuScreen);
 		menuScreen.Initialise();
+	}
+
+	private void LoadResources()
+	{
+		var assembly = GetType().Assembly;
+		var resourceNames = assembly.GetManifestResourceNames();
+
+		LoadParticleResources();
+
+		return;
+
+		void LoadParticleResources()
+		{
+			var particleResourceName = Array.Find(resourceNames, s => s.EndsWith("particles.dat"));
+
+			if (string.IsNullOrWhiteSpace(particleResourceName))
+				throw new InvalidOperationException("Could not load particles.dat!");
+
+			using var stream = assembly.GetManifestResourceStream(particleResourceName)!;
+			Span<byte> byteBuffer = stackalloc byte[ParticleHelper.ByteLength];
+			using var reader = new BinaryReader(stream, Encoding.UTF8, false);
+			_ = reader.Read(byteBuffer);
+			ParticleHelper.InitialiseParticleOffsets(byteBuffer);
+		}
 	}
 
 	private static void InitialiseGameConstants()
