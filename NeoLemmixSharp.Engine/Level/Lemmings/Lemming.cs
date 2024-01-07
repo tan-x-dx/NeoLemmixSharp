@@ -233,7 +233,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 		if (!footPixel.IsVoid() || !headPixel.IsVoid())
 			return true;
 
-		LevelScreen.LemmingManager.RemoveLemming(this);
+		LevelScreen.LemmingManager.RemoveLemming(this, LemmingRemovalReason.DeathVoid);
 		return false;
 	}
 
@@ -366,10 +366,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 		FacingDirection = facingDirection;
 	}
 
-	public void OnRemoval()
+	public void OnRemoval(LemmingRemovalReason removalReason)
 	{
 		CurrentAction = NoneAction.Instance;
-		Renderer.UpdateLemmingState(false);
+		Renderer.UpdateLemmingState(removalReason == LemmingRemovalReason.DeathExplode);
 	}
 
 	public Span<LevelPosition> GetJumperPositions()
