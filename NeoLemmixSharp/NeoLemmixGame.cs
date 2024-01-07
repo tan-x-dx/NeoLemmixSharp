@@ -61,7 +61,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
 	private void WindowOnClientSizeChanged(object? sender, EventArgs e)
 	{
-		//  CaptureCursor();
 		_screen?.OnWindowSizeChanged();
 	}
 
@@ -69,10 +68,10 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 	{
 		base.OnActivated(sender, args);
 
-		CaptureCursor();
+		_screen?.OnActivated();
 	}
 
-	private void CaptureCursor()
+	public void CaptureCursor()
 	{
 		var rect = Window.ClientBounds;
 		rect.Width += rect.X;
@@ -196,6 +195,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 		_screenRenderer = _screen.ScreenRenderer;
 
 		Window.Title = _screen.ScreenTitle;
+		_screen.OnSetScreen();
 	}
 
 	protected override void Update(GameTime gameTime)

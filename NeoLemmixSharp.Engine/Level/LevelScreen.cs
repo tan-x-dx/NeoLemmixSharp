@@ -123,6 +123,18 @@ public sealed class LevelScreen : IBaseScreen
 		_controlPanel.SetWindowDimensions(windowWidth, windowHeight);
 		_viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)_controlPanel).ControlPanelScreenHeight);
 		_levelRenderer.OnWindowSizeChanged();
+
+		IGameWindow.Instance.CaptureCursor();
+	}
+
+	public void OnActivated()
+	{
+		IGameWindow.Instance.CaptureCursor();
+	}
+
+	public void OnSetScreen()
+	{
+		IGameWindow.Instance.CaptureCursor();
 	}
 
 	public void Dispose()
