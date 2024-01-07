@@ -125,7 +125,6 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 		var whitePixelTexture = LevelRenderer.ControlPanelSpriteBank.GetTexture(ControlPanelTexture.WhitePixel);
 
 		var sourceRectangle = new Rectangle(0, 0, 1, 1);
-		var p = _lemming.LevelPosition - _actionSprite.AnchorPoint;
 
 		for (var i = 0; i < LevelConstants.NumberOfParticles; i++)
 		{
@@ -136,7 +135,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
 			var color = explosionParticleColors[i & LevelConstants.NumberOfExplosionParticleColorsMask];
 
-			offset -= p;
+			offset += _actionSprite.AnchorPoint;
 
 			destRectangle.X = screenX + (offset.X * scaleMultiplier);
 			destRectangle.Y = screenY + (offset.Y * scaleMultiplier);
