@@ -225,9 +225,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 		// if (gameTime.IsRunningSlowly)
 		//     return;
 
-		GraphicsDevice.Clear(Color.Black);
-
-		_screenRenderer!.RenderScreen(_spriteBatch);
+		_screenRenderer!.RenderScreen(GraphicsDevice, _spriteBatch);
 	}
 
 	public void ToggleFullScreen()
