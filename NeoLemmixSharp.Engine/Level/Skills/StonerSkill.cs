@@ -24,8 +24,9 @@ public sealed class StonerSkill : LemmingSkill
 	{
 		var levelParameters = LevelScreen.LevelParameters;
 		var countDownTimer = levelParameters.GetLemmingCountDownTimer(lemming);
+		var displayTimer = levelParameters.TestFlag(LevelParameters.TimedBombers);
 
-		lemming.SetCountDownAction(countDownTimer, StonerAction.Instance, !levelParameters.TimedBombers);
+		lemming.SetCountDownAction(countDownTimer, StonerAction.Instance, displayTimer);
 	}
 
 	protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();

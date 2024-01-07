@@ -10,6 +10,7 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
@@ -47,7 +48,8 @@ public sealed class LevelBuilder : IDisposable
 		var levelData = _levelReader.LevelData;
 		var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
 
-		var levelParameters = new LevelParameters(levelData);
+		var levelParameters = GetLevelParameters(levelData);
+		var controlPanelParameters = GetControlPanelParameters(levelData);
 		LevelScreen.SetLevelParameters(levelParameters);
 
 		var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
@@ -58,7 +60,7 @@ public sealed class LevelBuilder : IDisposable
 		var lemmingManager = new LemmingManager(levelData, hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 		LevelScreen.SetLemmingManager(lemmingManager);
 
-		var inputController = new LevelInputController();
+		var inputController = new LevelInputController(levelParameters);
 		var skillSetManager = new SkillSetManager(levelData.SkillSetData);
 		LevelScreen.SetSkillSetManager(skillSetManager);
 
@@ -68,7 +70,7 @@ public sealed class LevelBuilder : IDisposable
 		LevelTimer levelTimer = levelData.TimeLimit.HasValue
 			? new CountDownLevelTimer(levelData.TimeLimit.Value)
 			: new CountUpLevelTimer();
-		var controlPanel = new LevelControlPanel(levelParameters.ControlPanelParameters, inputController, skillSetManager, lemmingManager, levelTimer);
+		var controlPanel = new LevelControlPanel(controlPanelParameters, inputController, skillSetManager, lemmingManager, levelTimer);
 		LevelScreen.SetLevelControlPanel(controlPanel);
 
 		_levelObjectAssembler.AssembleLevelObjects(
@@ -132,6 +134,30 @@ public sealed class LevelBuilder : IDisposable
 			controlPanel,
 			levelViewport,
 			levelRenderer);
+	}
+
+	private static LevelParameters GetLevelParameters(LevelData levelData)
+	{
+		return LevelParameters.TimedBombers |
+		   //    LevelParameters.EnablePause |
+		       LevelParameters.EnableNuke |
+		       LevelParameters.EnableFastForward |
+		       LevelParameters.EnableDirectionSelect |
+		       LevelParameters.EnableClearPhysics |
+		       LevelParameters.EnableSkillShadows |
+		       LevelParameters.EnableFrameControl;
+	}
+
+	private static ControlPanelParameters GetControlPanelParameters(LevelData levelData)
+	{
+		return ControlPanelParameters.ShowPauseButton |
+		       ControlPanelParameters.ShowNukeButton |
+		       ControlPanelParameters.ShowFastForwardsButton |
+		       ControlPanelParameters.ShowRestartButton |
+		       ControlPanelParameters.ShowFrameNudgeButtons |
+		       ControlPanelParameters.ShowDirectionSelectButtons |
+		       ControlPanelParameters.ShowClearPhysicsAndReplayButton |
+		       ControlPanelParameters.ShowReleaseRateButtonsIfPossible;
 	}
 
 	public void Dispose()
