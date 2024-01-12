@@ -6,6 +6,6 @@ public interface IScreenRenderer : IDisposable
 {
     bool IsDisposed { get; }
 
-    void RenderScreen(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch);
+    void RenderScreen(SpriteBatch spriteBatch);
     void OnWindowSizeChanged();
 }

@@ -61,9 +61,9 @@ public sealed class LevelRenderer : IScreenRenderer
 		_gadgetSpriteBank = gadgetSpriteBank;
 	}
 
-	public void RenderScreen(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+	public void RenderScreen(SpriteBatch spriteBatch)
 	{
-		graphicsDevice.Clear(Color.Black);
+		//_graphicsDevice.Clear(Color.Black);
 
 		spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
 

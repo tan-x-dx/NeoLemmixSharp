@@ -35,7 +35,7 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         OnWindowSizeChanged();
     }
 
-    public void RenderScreen(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+    public void RenderScreen(SpriteBatch spriteBatch)
     {
         // draw ui
         UserInterface.Active.Draw(spriteBatch);

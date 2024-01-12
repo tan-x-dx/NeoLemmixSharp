@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Background;
 
-public interface IBackgroundRenderer
+public interface IBackgroundRenderer : IDisposable
 {
     void RenderBackground(SpriteBatch spriteBatch);
 }

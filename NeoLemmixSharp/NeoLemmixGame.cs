@@ -15,6 +15,7 @@ using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
+using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using NeoLemmixSharp.Menu;
 using NeoLemmixSharp.Menu.Rendering;
@@ -111,6 +112,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 		RootDirectoryManager.Initialise();
 		FontBank.Initialise(Content);
 		MenuSpriteBank.Initialise(Content, GraphicsDevice);
+		new CommonSpriteBankBuilder(GraphicsDevice, Content).BuildCommonSpriteBank();
 
 		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -225,7 +227,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 		// if (gameTime.IsRunningSlowly)
 		//     return;
 
-		_screenRenderer!.RenderScreen(GraphicsDevice, _spriteBatch);
+		_screenRenderer!.RenderScreen(_spriteBatch);
 	}
 
 	public void ToggleFullScreen()

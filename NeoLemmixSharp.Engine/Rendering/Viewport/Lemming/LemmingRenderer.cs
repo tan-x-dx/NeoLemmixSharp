@@ -122,7 +122,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 	{
 		var destRectangle = new Rectangle(0, 0, scaleMultiplier, scaleMultiplier);
 		var explosionParticleColors = LevelConstants.GetExplosionParticleColors();
-		var whitePixelTexture = LevelRenderer.ControlPanelSpriteBank.GetTexture(ControlPanelTexture.WhitePixel);
+		var whitePixelTexture = CommonSpriteBank.Instance.GetTexture(CommonTexture.WhitePixel);
 
 		var sourceRectangle = new Rectangle(0, 0, 1, 1);
 

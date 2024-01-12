@@ -19,13 +19,6 @@ public sealed class ControlPanelSpriteBank : IDisposable
         return _textureLookup[(int)textureName];
     }
 
-    public LevelCursorSprite GetLevelCursorSprite(LevelCursor levelCursor)
-    {
-        return new LevelCursorSprite(
-            levelCursor,
-            GetTexture(ControlPanelTexture.Cursors));
-    }
-
     public void Dispose()
     {
         DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<Texture2D>(_textureLookup));
