@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.Level;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 
@@ -15,14 +16,9 @@ public static class ParticleHelper
 
 	public static void InitialiseParticleOffsets(Span<byte> byteBuffer)
 	{
+		var sbyteBuffer = MemoryMarshal.Cast<byte, sbyte>(byteBuffer);
 		var destSpan = new Span<sbyte>(ParticleOffsets);
-		if (byteBuffer.Length != destSpan.Length)
-			throw new InvalidOperationException("Buffer length mismatch");
-
-		for (var i = 0; i < destSpan.Length; i++)
-		{
-			destSpan[i] = (sbyte)byteBuffer[i];
-		}
+		sbyteBuffer.CopyTo(destSpan);
 	}
 
 	[Pure]
@@ -32,9 +28,9 @@ public static class ParticleHelper
 	{
 		var index = GetParticleIndex(frame, particleId);
 
-		var s = new Span<sbyte>(ParticleOffsets, index, NumberOfBytesPerCall);
+		var span = new Span<sbyte>(ParticleOffsets, index, NumberOfBytesPerCall);
 
-		return new LevelPosition(s[0], s[1]);
+		return new LevelPosition(span[0], span[1]);
 	}
 
 	[Pure]
