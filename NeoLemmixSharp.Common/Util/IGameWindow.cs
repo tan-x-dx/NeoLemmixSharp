@@ -16,6 +16,7 @@ public interface IGameWindow
     GraphicsDevice GraphicsDevice { get; }
 
     void SetScreen(IBaseScreen screen);
+    void CaptureCursor();
     void ToggleFullScreen();
     void ToggleBorderless();
     void Escape();

@@ -20,7 +20,7 @@ public sealed class SplatterAction : LemmingAction
 	{
 		if (lemming.EndOfAnimation)
 		{
-			LevelScreen.LemmingManager.RemoveLemming(lemming);
+			LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathSplat);
 		}
 
 		return false;

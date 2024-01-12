@@ -182,7 +182,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 		_zombieHelper.UpdateZombiePosition(lemming);
 	}
 
-	public void RemoveLemming(Lemming lemming)
+	public void RemoveLemming(Lemming lemming, LemmingRemovalReason removalReason)
 	{
 		lemming.State.IsActive = false;
 		_lemmingPositionHelper.RemoveItem(lemming);
@@ -198,7 +198,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 		}
 
 		LemmingsRemoved++;
-		lemming.OnRemoval();
+		lemming.OnRemoval(removalReason);
 	}
 
 	public static Lemming SimulateLemming(Lemming lemming, bool checkGadgets)

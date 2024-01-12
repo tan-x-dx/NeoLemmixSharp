@@ -22,7 +22,7 @@ public sealed class UpdateScheduler
 	private LemmingSkill _queuedSkill = NoneSkill.Instance;
 	private Lemming? _queuedSkillLemming;
 
-	private UpdateState _updateState;
+	private UpdateState _updateState = UpdateState.Normal;
 	private int _queuedSkillFrame;
 
 	private int _elapsedTicks;

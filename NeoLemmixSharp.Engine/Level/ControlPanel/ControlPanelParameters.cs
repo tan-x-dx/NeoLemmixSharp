@@ -16,7 +16,7 @@ public enum ControlPanelParameters
 	ShowSpawnInterval = 1 << 10,
 }
 
-public static class ControlPanelButtonAvailabilityHelpers
+public static class ControlPanelParameterHelpers
 {
 	public static bool TestFlag(this ControlPanelParameters item, ControlPanelParameters test)
 	{

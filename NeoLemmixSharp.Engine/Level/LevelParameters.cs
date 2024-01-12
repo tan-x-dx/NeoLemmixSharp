@@ -1,37 +1,32 @@
-﻿using NeoLemmixSharp.Engine.Level.ControlPanel;
-using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using System.Diagnostics.Contracts;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level;
 
-public sealed class LevelParameters
+[Flags]
+public enum LevelParameters
 {
-	public bool TimedBombers { get; } = true;
+	TimedBombers = 1 << 0,
+	EnablePause = 1 << 1,
+	EnableNuke = 1 << 2,
+	EnableFastForward = 1 << 3,
+	EnableDirectionSelect = 1 << 4,
+	EnableClearPhysics = 1 << 5,
+	EnableSkillShadows = 1 << 6,
+	EnableFrameControl = 1 << 7,
+}
 
-	public ControlPanelParameters ControlPanelParameters { get; }
-
-	public LevelParameters(LevelData levelData)
+public static class LevelParameterHelpers
+{
+	public static bool TestFlag(this LevelParameters parameters, LevelParameters test)
 	{
-		ControlPanelParameters = GetControlPanelButtonAvailability(levelData);
+		return (parameters & test) != 0;
 	}
 
-	private static ControlPanelParameters GetControlPanelButtonAvailability(LevelData levelData)
+	public static int GetLemmingCountDownTimer(this LevelParameters parameters, Lemming lemming)
 	{
-		return ControlPanelParameters.ShowPauseButton |
-			   ControlPanelParameters.ShowNukeButton |
-			   ControlPanelParameters.ShowFastForwardsButton |
-			   ControlPanelParameters.ShowRestartButton |
-			   ControlPanelParameters.ShowFrameNudgeButtons |
-			   ControlPanelParameters.ShowDirectionSelectButtons |
-			   ControlPanelParameters.ShowClearPhysicsAndReplayButton |
-			   ControlPanelParameters.ShowReleaseRateButtonsIfPossible;
-	}
+		var timedBombers = parameters.TestFlag(LevelParameters.TimedBombers);
 
-	[Pure]
-	public int GetLemmingCountDownTimer(Lemming lemming)
-	{
-		if (TimedBombers)
+		if (timedBombers)
 			return lemming.IsFastForward
 				? LevelConstants.DefaultFastForwardLemmingCountDownActionTicks
 				: LevelConstants.DefaultCountDownActionTicks;

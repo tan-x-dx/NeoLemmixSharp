@@ -33,6 +33,8 @@ public sealed class Viewport
 	// Raw pixels, one-to-one with game
 	public int ViewPortX => _horizontalViewPortBehaviour.ViewPortX;
 	public int ViewPortY => _verticalViewPortBehaviour.ViewPortY;
+	public int ViewPortWidth => _horizontalViewPortBehaviour.ViewPortWidth;
+	public int ViewPortHeight => _verticalViewPortBehaviour.ViewPortHeight;
 
 	// Stretched to fit the screen
 	public int ScreenX => _horizontalViewPortBehaviour.ScreenX;

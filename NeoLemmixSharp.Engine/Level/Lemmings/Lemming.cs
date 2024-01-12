@@ -7,7 +7,7 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -233,7 +233,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 		if (!footPixel.IsVoid() || !headPixel.IsVoid())
 			return true;
 
-		LevelScreen.LemmingManager.RemoveLemming(this);
+		LevelScreen.LemmingManager.RemoveLemming(this, LemmingRemovalReason.DeathVoid);
 		return false;
 	}
 
@@ -366,10 +366,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 		FacingDirection = facingDirection;
 	}
 
-	public void OnRemoval()
+	public void OnRemoval(LemmingRemovalReason removalReason)
 	{
 		CurrentAction = NoneAction.Instance;
-		Renderer.UpdateLemmingState(false);
+		Renderer.UpdateLemmingState(removalReason == LemmingRemovalReason.DeathExplode);
 	}
 
 	public Span<LevelPosition> GetJumperPositions()

@@ -15,7 +15,7 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelScreen : IBaseScreen
 {
-	public static LevelParameters LevelParameters { get; private set; } = null!;
+	public static LevelParameters LevelParameters { get; private set; }
 	public static TerrainManager TerrainManager { get; private set; } = null!;
 	public static LemmingManager LemmingManager { get; private set; } = null!;
 	public static GadgetManager GadgetManager { get; private set; } = null!;
@@ -123,6 +123,18 @@ public sealed class LevelScreen : IBaseScreen
 		_controlPanel.SetWindowDimensions(windowWidth, windowHeight);
 		_viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)_controlPanel).ControlPanelScreenHeight);
 		_levelRenderer.OnWindowSizeChanged();
+
+		IGameWindow.Instance.CaptureCursor();
+	}
+
+	public void OnActivated()
+	{
+		IGameWindow.Instance.CaptureCursor();
+	}
+
+	public void OnSetScreen()
+	{
+		IGameWindow.Instance.CaptureCursor();
 	}
 
 	public void Dispose()
@@ -135,7 +147,6 @@ public sealed class LevelScreen : IBaseScreen
 		SkillSetManager.Dispose();
 
 #pragma warning disable CS8625
-		SetLevelParameters(null);
 		SetTerrainManager(null);
 		SetLemmingManager(null);
 		SetGadgetManager(null);

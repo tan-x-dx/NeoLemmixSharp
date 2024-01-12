@@ -4,9 +4,9 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
-using NeoLemmixSharp.Engine.Rendering.Ui;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public sealed class LemmingRenderer : IViewportObjectRenderer
 {
@@ -14,7 +14,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
 	private readonly int[] _countDownCharsToRender = new int[NumberOfChars];
 
-	private Level.Lemmings.Lemming _lemming;
+	private Lemming _lemming;
 	private ActionSprite _actionSprite;
 
 	private bool _shouldRender;
@@ -22,7 +22,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
 	public Span<int> CountDownCharsSpan => new(_countDownCharsToRender);
 
-	public LemmingRenderer(Level.Lemmings.Lemming lemming)
+	public LemmingRenderer(Lemming lemming)
 	{
 		_lemming = lemming;
 	}
@@ -122,18 +122,20 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 	{
 		var destRectangle = new Rectangle(0, 0, scaleMultiplier, scaleMultiplier);
 		var explosionParticleColors = LevelConstants.GetExplosionParticleColors();
-		var whitePixelTexture = LevelRenderer.ControlPanelSpriteBank.GetTexture(ControlPanelTexture.WhitePixel);
+		var whitePixelTexture = CommonSpriteBank.Instance.GetTexture(CommonTexture.WhitePixel);
 
 		var sourceRectangle = new Rectangle(0, 0, 1, 1);
-		var p = _lemming.LevelPosition;
 
 		for (var i = 0; i < LevelConstants.NumberOfParticles; i++)
 		{
-			var offset = ParticleRenderer.GetParticleOffsets(_lemming.ParticleTimer, i);
+			var offset = ParticleHelper.GetParticleOffsets(_lemming.ParticleTimer, i);
+
+			if (offset.X == -128 || offset.Y == -128)
+				continue;
 
 			var color = explosionParticleColors[i & LevelConstants.NumberOfExplosionParticleColorsMask];
 
-			offset += p;
+			offset += _actionSprite.AnchorPoint;
 
 			destRectangle.X = screenX + (offset.X * scaleMultiplier);
 			destRectangle.Y = screenY + (offset.Y * scaleMultiplier);
@@ -142,7 +144,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 				whitePixelTexture,
 				destRectangle,
 				sourceRectangle,
-				Color.White, //color,
+				color,
 				RenderingLayers.LemmingRenderLayer);
 		}
 	}

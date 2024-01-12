@@ -88,8 +88,10 @@ public sealed class BlockerAction : LemmingAction
 
 		var dx = forcedFacingDirection.DeltaX;
 
+		var currentAction = lemming.CurrentAction;
+
 		// Avoid moving into terrain, see http://www.lemmingsforums.net/index.php?topic=2575.0
-		if (lemming.CurrentAction == MinerAction.Instance)
+		if (currentAction == MinerAction.Instance)
 		{
 			int mineDx;
 			int mineDy;
@@ -116,17 +118,17 @@ public sealed class BlockerAction : LemmingAction
 
 		// Required for turned builders not to walk into air
 		// For platformers, see http://www.lemmingsforums.net/index.php?topic=2530.0
-		if ((lemming.CurrentAction == BuilderAction.Instance ||
-			 lemming.CurrentAction == PlatformerAction.Instance) &&
+		if ((currentAction == BuilderAction.Instance ||
+			 currentAction == PlatformerAction.Instance) &&
 			lemming.PhysicsFrame >= 9)
 		{
 			BuilderAction.LayBrick(lemming);
 			return;
 		}
 
-		if (lemming.CurrentAction != ClimberAction.Instance &&
-			lemming.CurrentAction != SliderAction.Instance &&
-			lemming.CurrentAction != DehoisterAction.Instance)
+		if (currentAction != ClimberAction.Instance &&
+			currentAction != SliderAction.Instance &&
+			currentAction != DehoisterAction.Instance)
 			return;
 
 		// Don't move below original position

@@ -24,10 +24,10 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
 	public override bool UpdateLemming(Lemming lemming)
 	{
 		TerrainMasks.ApplyBomberMask(lemming);
-		NoneAction.Instance.TransitionLemmingToAction(lemming, false);
-		//	LevelScreen.LemmingManager.RemoveLemming(lemming);
-		lemming.SetCurrentAction(NoneAction.Instance);
+	//	LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExplode);
 		lemming.ParticleTimer = LevelConstants.ParticleFrameCount;
+
+		WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
 		return false;
 	}

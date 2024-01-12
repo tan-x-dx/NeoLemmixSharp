@@ -104,7 +104,7 @@ public sealed class ShimmierAction : LemmingAction
 
             if (terrainManager.PositionOutOfBounds(lemmingPosition))
             {
-                LevelScreen.LemmingManager.RemoveLemming(lemming);
+                LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathVoid);
                 return true;
             }
         }

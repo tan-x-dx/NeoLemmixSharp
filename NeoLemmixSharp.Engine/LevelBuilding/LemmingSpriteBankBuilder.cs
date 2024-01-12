@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+﻿using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 

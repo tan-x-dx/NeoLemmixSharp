@@ -40,7 +40,7 @@ public sealed class LevelInputController
 
 	public KeyAction Space { get; }
 
-	public LevelInputController()
+	public LevelInputController(LevelParameters levelParameters)
 	{
 		Pause = _inputController.CreateKeyAction("Pause");
 		Quit = _inputController.CreateKeyAction("Quit");
@@ -66,6 +66,8 @@ public sealed class LevelInputController
 		_inputController.ValidateKeyActions();
 
 		SetUpBindings();
+
+		Initialise(levelParameters);
 	}
 
 	private void SetUpBindings()
@@ -94,4 +96,19 @@ public sealed class LevelInputController
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void Tick() => _inputController.Tick();
+
+	private void Initialise(LevelParameters levelParameters)
+	{
+		SetEnabledWithFlag(Pause, LevelParameters.EnablePause);
+		SetEnabledWithFlag(ToggleFastForwards, LevelParameters.EnableFastForward);
+		SetEnabledWithFlag(SelectLeftFacingLemmings, LevelParameters.EnableDirectionSelect);
+		SetEnabledWithFlag(SelectRightFacingLemmings, LevelParameters.EnableDirectionSelect);
+
+		return;
+
+		void SetEnabledWithFlag(IInputAction inputAction, LevelParameters testFlag)
+		{
+			inputAction.SetEnabled(levelParameters.TestFlag(testFlag));
+		}
+	}
 }

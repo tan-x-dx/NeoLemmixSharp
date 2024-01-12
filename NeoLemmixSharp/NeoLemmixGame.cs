@@ -15,13 +15,14 @@ using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Menu;
 using NeoLemmixSharp.Menu.Rendering;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp;
 
@@ -61,7 +62,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
 	private void WindowOnClientSizeChanged(object? sender, EventArgs e)
 	{
-		//  CaptureCursor();
 		_screen?.OnWindowSizeChanged();
 	}
 
@@ -69,10 +69,10 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 	{
 		base.OnActivated(sender, args);
 
-		CaptureCursor();
+		_screen?.OnActivated();
 	}
 
-	private void CaptureCursor()
+	public void CaptureCursor()
 	{
 		var rect = Window.ClientBounds;
 		rect.Width += rect.X;
@@ -100,6 +100,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
 	protected override void LoadContent()
 	{
+		LoadResources();
+
 		// create and init the UI manager
 		UserInterface.Initialize(Content, BuiltinThemes.editor);
 		UserInterface.Active.UseRenderTarget = true;
@@ -110,18 +112,12 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 		RootDirectoryManager.Initialise();
 		FontBank.Initialise(Content);
 		MenuSpriteBank.Initialise(Content, GraphicsDevice);
+		new CommonSpriteBankBuilder(GraphicsDevice, Content).BuildCommonSpriteBank();
 
 		_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 		TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
 		DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
-
-		using (var stream = File.Open("particles.dat", FileMode.Open))
-		{
-			var byteBuffer = ParticleRenderer.GetParticleOffsetBuffer();
-			using var reader = new BinaryReader(stream, Encoding.UTF8, false);
-			_ = reader.Read(byteBuffer);
-		}
 
 		//LoadLevel_Debug();
 		var menuScreen = new MenuScreen(
@@ -130,8 +126,30 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 			_spriteBatch);
 		SetScreen(menuScreen);
 		menuScreen.Initialise();
+	}
 
-		CaptureCursor();
+	private void LoadResources()
+	{
+		var assembly = GetType().Assembly;
+		var resourceNames = assembly.GetManifestResourceNames();
+
+		LoadParticleResources();
+
+		return;
+
+		void LoadParticleResources()
+		{
+			var particleResourceName = Array.Find(resourceNames, s => s.EndsWith("particles.dat"));
+
+			if (string.IsNullOrWhiteSpace(particleResourceName))
+				throw new InvalidOperationException("Could not load particles.dat!");
+
+			using var stream = assembly.GetManifestResourceStream(particleResourceName)!;
+			Span<byte> byteBuffer = stackalloc byte[ParticleHelper.ByteLength];
+			using var reader = new BinaryReader(stream, Encoding.UTF8, false);
+			_ = reader.Read(byteBuffer);
+			ParticleHelper.InitialiseParticleOffsets(byteBuffer);
+		}
 	}
 
 	private static void InitialiseGameConstants()
@@ -196,6 +214,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 		_screenRenderer = _screen.ScreenRenderer;
 
 		Window.Title = _screen.ScreenTitle;
+		_screen.OnSetScreen();
 	}
 
 	protected override void Update(GameTime gameTime)
@@ -207,8 +226,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 	{
 		// if (gameTime.IsRunningSlowly)
 		//     return;
-
-		GraphicsDevice.Clear(Color.Black);
 
 		_screenRenderer!.RenderScreen(_spriteBatch);
 	}
@@ -262,7 +279,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 	{
 		_graphics.HardwareModeSwitch = !_isBorderless;
 		_graphics.ApplyChanges();
-		CaptureCursor();
 	}
 
 	private void SetFullscreen()

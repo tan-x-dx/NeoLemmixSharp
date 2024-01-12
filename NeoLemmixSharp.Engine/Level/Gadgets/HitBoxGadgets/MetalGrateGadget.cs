@@ -112,7 +112,7 @@ public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget, IResizeabl
     {
         if (CurrentState == MetalGrateState.Activating)
         {
-            LevelScreen.LemmingManager.RemoveLemming(lemming);
+            LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathMetalGrate);
         }
     }
 

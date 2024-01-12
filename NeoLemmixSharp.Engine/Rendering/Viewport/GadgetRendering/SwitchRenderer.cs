@@ -3,25 +3,25 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
-namespace NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
-public sealed class SawBladeRenderer : IViewportObjectRenderer
+public sealed class SwitchRenderer : IViewportObjectRenderer
 {
-    private readonly SawBladeGadget _sawBladeGadget;
+    private readonly SwitchGadget _switchGadget;
 
-    private Texture2D _sawBladeTexture;
+    private Texture2D _switchTexture;
 
-    public SawBladeRenderer(SawBladeGadget sawBladeGadget)
+    public SwitchRenderer(SwitchGadget switchGadget)
     {
-        _sawBladeGadget = sawBladeGadget;
+        _switchGadget = switchGadget;
     }
 
-    public void SetSawBladeTexture(Texture2D sawBladeTexture)
+    public void SetSwitchTexture(Texture2D switchTexture)
     {
-        _sawBladeTexture = sawBladeTexture;
+        _switchTexture = switchTexture;
     }
 
-    public Rectangle GetSpriteBounds() => _sawBladeGadget.GadgetBounds.ToRectangle();
+    public Rectangle GetSpriteBounds() => _switchGadget.GadgetBounds.ToRectangle();
 
     public void RenderAtPosition(
         SpriteBatch spriteBatch,
@@ -30,7 +30,7 @@ public sealed class SawBladeRenderer : IViewportObjectRenderer
         int screenY,
         int scaleMultiplier)
     {
-        sourceRectangle.Y += _sawBladeGadget.AnimationFrame * 14;
+        sourceRectangle.Y += _switchGadget.AnimationFrame * 13;
 
         var renderDestination = new Rectangle(
             screenX,
@@ -39,22 +39,23 @@ public sealed class SawBladeRenderer : IViewportObjectRenderer
             sourceRectangle.Height * scaleMultiplier);
 
         spriteBatch.Draw(
-            _sawBladeTexture,
+            _switchTexture,
             renderDestination,
             sourceRectangle,
             RenderingLayers.AthleteRenderLayer);
 
-        sourceRectangle.X += 14;
+        sourceRectangle.X += 19;
 
         spriteBatch.Draw(
-            _sawBladeTexture,
+            _switchTexture,
             renderDestination,
             sourceRectangle,
-            Color.Gray,
+            Color.Green,
             RenderingLayers.AthleteRenderLayer);
     }
 
     public void Dispose()
     {
+
     }
 }
