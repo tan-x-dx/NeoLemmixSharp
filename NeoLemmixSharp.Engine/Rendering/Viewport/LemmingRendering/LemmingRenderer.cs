@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
@@ -13,7 +14,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
 	private readonly int[] _countDownCharsToRender = new int[NumberOfChars];
 
-	private Level.Lemmings.Lemming _lemming;
+	private Lemming _lemming;
 	private ActionSprite _actionSprite;
 
 	private bool _shouldRender;
@@ -21,7 +22,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
 	public Span<int> CountDownCharsSpan => new(_countDownCharsToRender);
 
-	public LemmingRenderer(Level.Lemmings.Lemming lemming)
+	public LemmingRenderer(Lemming lemming)
 	{
 		_lemming = lemming;
 	}
