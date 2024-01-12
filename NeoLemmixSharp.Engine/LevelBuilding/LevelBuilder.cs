@@ -13,7 +13,7 @@ using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Ui;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
+using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
 using Viewport = NeoLemmixSharp.Engine.Level.Viewport;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;

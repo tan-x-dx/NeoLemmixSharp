@@ -1,10 +1,10 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level;
 
-namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public static class ParticleHelper
 {

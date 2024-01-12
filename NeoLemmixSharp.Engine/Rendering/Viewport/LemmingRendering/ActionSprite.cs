@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public abstract class ActionSprite : IDisposable
 {

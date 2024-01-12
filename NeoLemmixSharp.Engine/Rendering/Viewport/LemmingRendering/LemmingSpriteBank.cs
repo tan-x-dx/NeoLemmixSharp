@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
 
-namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public sealed class LemmingSpriteBank : IDisposable
 {

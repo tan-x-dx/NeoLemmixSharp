@@ -2,11 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
-public sealed class ThreeLayerActionSprite : ActionSprite
+public sealed class FourLayerColorActionSprite : ActionSprite
 {
-    public ThreeLayerActionSprite(
+    public FourLayerColorActionSprite(
         Texture2D texture,
         int spriteWidth,
         int spriteHeight,
@@ -17,6 +17,8 @@ public sealed class ThreeLayerActionSprite : ActionSprite
 
     public override void RenderLemming(SpriteBatch spriteBatch, Level.Lemmings.Lemming lemming, Rectangle sourceRectangle, Rectangle destinationRectangle)
     {
+        RenderSpriteLayer(spriteBatch, sourceRectangle, destinationRectangle, Color.White, RenderingLayers.LemmingRenderLayer);
+        sourceRectangle.X += SpriteWidth;
         RenderSpriteLayer(spriteBatch, sourceRectangle, destinationRectangle, lemming.State.HairColor, RenderingLayers.LemmingRenderLayer);
         sourceRectangle.X += SpriteWidth;
         RenderSpriteLayer(spriteBatch, sourceRectangle, destinationRectangle, lemming.State.SkinColor, RenderingLayers.LemmingRenderLayer);

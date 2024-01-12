@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Teams;
 

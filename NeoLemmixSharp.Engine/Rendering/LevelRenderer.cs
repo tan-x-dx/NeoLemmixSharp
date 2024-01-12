@@ -4,9 +4,9 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Background;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
+using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.Rendering;
 

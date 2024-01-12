@@ -4,9 +4,8 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
-using NeoLemmixSharp.Engine.Rendering.Ui;
 
-namespace NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public sealed class LemmingRenderer : IViewportObjectRenderer
 {

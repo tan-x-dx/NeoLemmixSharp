@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 public sealed class GadgetSpriteBank : IDisposable
 {

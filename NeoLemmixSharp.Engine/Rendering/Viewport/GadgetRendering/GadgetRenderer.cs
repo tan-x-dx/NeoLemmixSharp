@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace NeoLemmixSharp.Engine.Rendering.Viewport.Gadget;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 public class GadgetRenderer : IViewportObjectRenderer
 {

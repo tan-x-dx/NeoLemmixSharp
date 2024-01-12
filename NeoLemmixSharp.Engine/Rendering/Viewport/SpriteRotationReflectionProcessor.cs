@@ -2,9 +2,9 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Viewport.Lemming;
 using System.Runtime.CompilerServices;
 using NeoLemmixSharp.Engine.LevelBuilding.Sprites;
+using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 
-namespace NeoLemmixSharp.Engine.Rendering.Viewport.Background;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
 
 public sealed class SolidColorBackgroundRenderer : IBackgroundRenderer
 {
