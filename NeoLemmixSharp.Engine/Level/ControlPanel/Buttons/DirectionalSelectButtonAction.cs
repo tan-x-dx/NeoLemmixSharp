@@ -4,30 +4,26 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 public sealed class DirectionalSelectButtonAction : IButtonAction
 {
-	private readonly FacingDirection _facingDirection;
+    private readonly FacingDirection _facingDirection;
 
-	public DirectionalSelectButtonAction(FacingDirection facingDirection)
-	{
-		_facingDirection = facingDirection;
-	}
+    public DirectionalSelectButtonAction(FacingDirection facingDirection)
+    {
+        _facingDirection = facingDirection;
+    }
 
-	public ButtonType ButtonType => _facingDirection == FacingDirection.RightInstance
-		? ButtonType.DirectionalSelectRight
-		: ButtonType.DirectionalSelectLeft;
+    public ButtonType ButtonType => _facingDirection == FacingDirection.RightInstance
+        ? ButtonType.DirectionalSelectRight
+        : ButtonType.DirectionalSelectLeft;
 
-	public void OnMouseDown()
-	{
-	}
+    public void OnMouseDown()
+    {
+    }
 
-	public void OnPress()
-	{
-	}
+    public void OnPress(bool isDoubleTap)
+    {
+    }
 
-	public void OnDoubleTap()
-	{
-	}
-
-	public void OnRightClick()
-	{
-	}
+    public void OnRightClick()
+    {
+    }
 }

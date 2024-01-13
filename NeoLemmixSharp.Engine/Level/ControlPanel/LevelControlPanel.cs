@@ -251,15 +251,9 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
 			var buttonAction = controlPanelButton.ButtonAction;
 
-			if (leftMouseButton.IsDoubleTap)
-			{
-				buttonAction.OnDoubleTap();
-				return;
-			}
-
 			if (leftMouseButton.IsPressed)
 			{
-				buttonAction.OnPress();
+                buttonAction.OnPress(leftMouseButton.IsDoubleTap);
 				return;
 			}
 

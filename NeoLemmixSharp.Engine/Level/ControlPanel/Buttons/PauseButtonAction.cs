@@ -8,13 +8,9 @@ public sealed class PauseButtonAction : IButtonAction
 	{
 	}
 
-	public void OnPress()
+	public void OnPress(bool isDoubleTap)
 	{
 		LevelScreen.UpdateScheduler.PausePress();
-	}
-
-	public void OnDoubleTap()
-	{
 	}
 
 	public void OnRightClick()

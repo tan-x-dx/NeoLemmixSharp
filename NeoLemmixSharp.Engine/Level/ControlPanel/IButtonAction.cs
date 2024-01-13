@@ -4,38 +4,33 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
 public interface IButtonAction
 {
-	ButtonType ButtonType { get; }
+    ButtonType ButtonType { get; }
 
-	void OnMouseDown();
-	void OnPress();
-	void OnDoubleTap();
+    void OnMouseDown();
+    void OnPress(bool isDoubleTap);
 
-	void OnRightClick();
+    void OnRightClick();
 }
 
 public sealed class EmptyButtonAction : IButtonAction
 {
-	public static readonly EmptyButtonAction Instance = new();
+    public static readonly EmptyButtonAction Instance = new();
 
-	private EmptyButtonAction()
-	{
-	}
+    private EmptyButtonAction()
+    {
+    }
 
-	public ButtonType ButtonType => ButtonType.Padding;
+    public ButtonType ButtonType => ButtonType.Padding;
 
-	public void OnMouseDown()
-	{
-	}
+    public void OnMouseDown()
+    {
+    }
 
-	public void OnPress()
-	{
-	}
+    public void OnPress(bool isDoubleTap)
+    {
+    }
 
-	public void OnDoubleTap()
-	{
-	}
-
-	public void OnRightClick()
-	{
-	}
+    public void OnRightClick()
+    {
+    }
 }

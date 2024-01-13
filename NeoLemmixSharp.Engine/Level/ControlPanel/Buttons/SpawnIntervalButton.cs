@@ -182,16 +182,12 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 		{
 		}
 
-		public void OnPress()
+		public void OnPress(bool isDoubleTap)
 		{
 			var delta = _spawnIntervalValueGetter.GetSpawnIntervalDelta();
 			_hatchGroup.ChangeSpawnInterval(delta);
 
 			LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
-		}
-
-		public void OnDoubleTap()
-		{
 		}
 
 		public void OnRightClick()

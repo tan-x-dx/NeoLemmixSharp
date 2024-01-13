@@ -59,11 +59,7 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
 		LevelScreen.LevelControlPanel.SetSelectedSkillAssignmentButton(this);
 	}
 
-	public void OnPress()
-	{
-	}
-
-	public void OnDoubleTap()
+	public void OnPress(bool isDoubleTap)
 	{
 	}
 

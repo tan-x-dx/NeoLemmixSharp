@@ -12,10 +12,10 @@ public class ControlPanelButton
 	private readonly int _iconY;
 
 	public int SkillPanelFrame { get; }
-	public int ScreenX { get; set; }
-	public int ScreenY { get; set; }
-	public int ScreenWidth { get; set; }
-	public int ScreenHeight { get; set; }
+	public int X { get; set; }
+	public int Y { get; set; }
+	public int Width { get; set; }
+	public int Height { get; set; }
 
 	public bool ShouldRender { get; set; } = true;
 	public bool IsSelected { get; set; }
@@ -44,8 +44,8 @@ public class ControlPanelButton
 	public bool MouseIsOverButton(int mouseX, int mouseY)
 	{
 		return ShouldRender &&
-			   mouseX >= ScreenX && mouseX < ScreenX + ScreenWidth &&
-			   mouseY >= ScreenY && mouseY < ScreenY + ScreenHeight;
+			   mouseX >= X && mouseX < X + Width &&
+			   mouseY >= Y && mouseY < Y + Height;
 	}
 
 	public virtual ReadOnlySpan<int> GetDigitsToRender() => ReadOnlySpan<int>.Empty;

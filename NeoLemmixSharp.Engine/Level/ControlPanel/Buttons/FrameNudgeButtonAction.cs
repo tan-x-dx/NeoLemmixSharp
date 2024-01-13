@@ -2,30 +2,26 @@
 
 public sealed class FrameNudgeButtonAction : IButtonAction
 {
-	private readonly int _delta;
+    private readonly int _delta;
 
-	public FrameNudgeButtonAction(int delta)
-	{
-		_delta = delta;
-	}
+    public FrameNudgeButtonAction(int delta)
+    {
+        _delta = delta;
+    }
 
-	public ButtonType ButtonType => _delta < 0
-		? ButtonType.NudgeFrameBack
-		: ButtonType.NudgeFrameForward;
+    public ButtonType ButtonType => _delta < 0
+        ? ButtonType.NudgeFrameBack
+        : ButtonType.NudgeFrameForward;
 
-	public void OnMouseDown()
-	{
-	}
+    public void OnMouseDown()
+    {
+    }
 
-	public void OnPress()
-	{
-	}
+    public void OnPress(bool isDoubleTap)
+    {
+    }
 
-	public void OnDoubleTap()
-	{
-	}
-
-	public void OnRightClick()
-	{
-	}
+    public void OnRightClick()
+    {
+    }
 }

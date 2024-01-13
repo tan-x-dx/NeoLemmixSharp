@@ -8,11 +8,7 @@ public sealed class ClearPhysicsButtonAction : IButtonAction
 	{
 	}
 
-	public void OnPress()
-	{
-	}
-
-	public void OnDoubleTap()
+	public void OnPress(bool isDoubleTap)
 	{
 	}
 
