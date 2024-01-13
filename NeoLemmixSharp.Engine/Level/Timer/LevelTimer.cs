@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Rendering;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 

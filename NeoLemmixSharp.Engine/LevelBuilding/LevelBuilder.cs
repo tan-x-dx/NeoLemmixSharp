@@ -105,36 +105,21 @@ public sealed class LevelBuilder : IDisposable
 
 		var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
 		var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank();
-		LevelScreenRenderer.SetControlPanelSpriteBank(controlPanelSpriteBank);
 
 		var levelSprites = _levelObjectAssembler.GetLevelSprites();
-
-		var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel);
-
 		var levelCursorSprite = CommonSpriteBank.Instance.GetLevelCursorSprite(levelCursor);
 
-		var backgroundRenderer = new SolidColorBackgroundRenderer(levelViewport, new Color(24, 24, 60));
-
-		var levelScreenRenderer = new LevelScreenRenderer(
-			levelData.LevelWidth,
-			levelData.LevelHeight,
-			levelViewport,
-			backgroundRenderer,
-			terrainRenderer,
-			levelSprites,
-			levelCursorSprite,
-			controlPanelRenderer,
-			lemmingSpriteBank,
-			gadgetSpriteBank);
-
-		var levelScreenRenderer2 = new LevelScreenRendererAaa(
+		var levelScreenRenderer2 = new LevelScreenRenderer(
 			_graphicsDevice,
 			levelData,
 			controlPanel,
 			levelViewport,
 			levelSprites,
 			terrainRenderer,
-			levelCursorSprite);
+			levelCursorSprite,
+			lemmingSpriteBank,
+			gadgetSpriteBank,
+            controlPanelSpriteBank);
 
 		lemmingManager.Initialise();
 		gadgetManager.Initialise();

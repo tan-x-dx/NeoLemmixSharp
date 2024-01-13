@@ -11,7 +11,7 @@ namespace NeoLemmixSharp.Engine.Rendering;
 public sealed class LevelRenderer : IDisposable
 {
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly ILevelControlPanel _levelControlPanel;
+    private readonly LevelControlPanel _levelControlPanel;
     private readonly Level.Viewport _viewport;
     private readonly IViewportObjectRenderer[] _levelSprites;
 
@@ -27,7 +27,7 @@ public sealed class LevelRenderer : IDisposable
     public LevelRenderer(
         GraphicsDevice graphicsDevice,
         LevelData levelData,
-        ILevelControlPanel levelControlPanel,
+        LevelControlPanel levelControlPanel,
         Level.Viewport viewport,
         IViewportObjectRenderer[] levelSprites,
         IBackgroundRenderer backgroundRenderer,
@@ -121,7 +121,7 @@ public sealed class LevelRenderer : IDisposable
         return new RenderTarget2D(
             _graphicsDevice,
             _graphicsDevice.PresentationParameters.BackBufferWidth,
-            _graphicsDevice.PresentationParameters.BackBufferHeight - _levelControlPanel.Height,
+            _graphicsDevice.PresentationParameters.BackBufferHeight - _levelControlPanel.ScreenHeight,
             false,
             _graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24);
@@ -141,6 +141,7 @@ public sealed class LevelRenderer : IDisposable
         DisposableHelperMethods.DisposeOf(ref _backgroundRenderer);
         DisposableHelperMethods.DisposeOf(ref _terrainRenderer);
         DisposableHelperMethods.DisposeOf(ref _levelRenderTarget);
+        DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<IViewportObjectRenderer>(_levelSprites));
 
         _disposed = true;
     }

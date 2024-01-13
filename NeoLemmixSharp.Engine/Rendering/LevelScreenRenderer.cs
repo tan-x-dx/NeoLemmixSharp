@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.ControlPanel;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
@@ -12,147 +14,105 @@ namespace NeoLemmixSharp.Engine.Rendering;
 
 public sealed class LevelScreenRenderer : IScreenRenderer
 {
-	public static ControlPanelSpriteBank ControlPanelSpriteBank { get; private set; } = null!;
+    public static LevelScreenRenderer Instance { get; private set; } = null!;
 
-	public static void SetControlPanelSpriteBank(ControlPanelSpriteBank controlPanelSpriteBank)
-	{
-		ControlPanelSpriteBank = controlPanelSpriteBank;
-	}
+    private readonly GraphicsDevice _graphicsDevice;
+    private readonly Level.Viewport _viewport;
 
-	private readonly int _levelWidth;
-	private readonly int _levelHeight;
-	private readonly Level.Viewport _viewport;
+    private readonly LemmingSpriteBank _lemmingSpriteBank;
+    private readonly GadgetSpriteBank _gadgetSpriteBank;
 
-	private readonly LemmingSpriteBank _lemmingSpriteBank;
-	private readonly GadgetSpriteBank _gadgetSpriteBank;
+    private readonly LevelRenderer _levelRenderer;
+    public readonly ControlPanelRenderer ControlPanelRenderer;
+    private readonly LevelCursorSprite _levelCursorSprite;
 
-	private readonly IBackgroundRenderer _backgroundRenderer;
-	private readonly TerrainRenderer _terrainRenderer;
-	private readonly IViewportObjectRenderer[] _levelSprites;
-	private readonly LevelCursorSprite _cursorSprite;
+    private DepthStencilState _depthStencilState;
 
-	private readonly IControlPanelRenderer _controlPanelRenderer;
+    public bool IsDisposed { get; private set; }
 
-	public bool IsDisposed { get; set; }
+    public LevelScreenRenderer(
+        GraphicsDevice graphicsDevice,
+        LevelData levelData,
+        LevelControlPanel levelControlPanel,
+        Level.Viewport viewport,
+        IViewportObjectRenderer[] levelSprites,
+        TerrainRenderer terrainRenderer,
+        LevelCursorSprite levelCursorSprite,
+        LemmingSpriteBank lemmingSpriteBank,
+        GadgetSpriteBank gadgetSpriteBank,
+        ControlPanelSpriteBank controlPanelSpriteBank)
+    {
+        _graphicsDevice = graphicsDevice;
+        _viewport = viewport;
 
-	public LevelScreenRenderer(
-		int levelWidth,
-		int levelHeight,
-		Level.Viewport viewport,
-		IBackgroundRenderer backgroundRenderer,
-		TerrainRenderer terrainRenderer,
-		IViewportObjectRenderer[] levelSprites,
-		LevelCursorSprite levelCursorSprite,
-		IControlPanelRenderer controlPanelRenderer,
-		LemmingSpriteBank lemmingSpriteBank,
-		GadgetSpriteBank gadgetSpriteBank)
-	{
-		_levelWidth = levelWidth;
-		_levelHeight = levelHeight;
-		_viewport = viewport;
+        _lemmingSpriteBank = lemmingSpriteBank;
+        _gadgetSpriteBank = gadgetSpriteBank;
 
-		_backgroundRenderer = backgroundRenderer;
-		_terrainRenderer = terrainRenderer;
-		_levelSprites = levelSprites;
-		_cursorSprite = levelCursorSprite;
-		_controlPanelRenderer = controlPanelRenderer;
+        var backgroundRenderer = GetBackgroundRenderer(levelData, viewport);
 
-		_lemmingSpriteBank = lemmingSpriteBank;
-		_gadgetSpriteBank = gadgetSpriteBank;
-	}
+        _levelRenderer = new LevelRenderer(
+            graphicsDevice,
+            levelData,
+            levelControlPanel,
+            viewport,
+            levelSprites,
+            backgroundRenderer,
+            terrainRenderer);
+        ControlPanelRenderer = new ControlPanelRenderer(
+            _graphicsDevice,
+            controlPanelSpriteBank,
+            levelControlPanel);
 
-	public void RenderScreen(SpriteBatch spriteBatch)
-	{
-		//_graphicsDevice.Clear(Color.Black);
+        _levelCursorSprite = levelCursorSprite;
 
-		spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
+        _depthStencilState = new DepthStencilState { DepthBufferEnable = true };
+        _graphicsDevice.DepthStencilState = _depthStencilState;
 
-		RenderLevel(spriteBatch);
-		RenderControlPanel(spriteBatch);
+        Instance = this;
+    }
 
-		spriteBatch.End();
-	}
+    private static IBackgroundRenderer GetBackgroundRenderer(
+        LevelData levelData,
+        Level.Viewport viewport)
+    {
+        return new SolidColorBackgroundRenderer(viewport, new Color(24, 24, 60));
+    }
 
-	private void RenderLevel(SpriteBatch spriteBatch)
-	{
-		_backgroundRenderer.RenderBackground(spriteBatch);
-		_terrainRenderer.RenderTerrain(spriteBatch);
+    public void RenderScreen(SpriteBatch spriteBatch)
+    {
+        _levelRenderer.RenderLevel(spriteBatch);
 
-		RenderSprites(spriteBatch);
-	}
+        ControlPanelRenderer.RenderControlPanel(spriteBatch);
 
-	private void RenderSprites(SpriteBatch spriteBatch)
-	{
-		var w = _levelWidth * _viewport.ScaleMultiplier;
-		var h = _levelHeight * _viewport.ScaleMultiplier;
-		var maxX = _viewport.NumberOfHorizontalRenderIntervals;
-		var maxY = _viewport.NumberOfVerticalRenderIntervals;
+        _graphicsDevice.SetRenderTarget(null);
 
-		var dx = _viewport.ScreenX - _viewport.ViewPortX * _viewport.ScaleMultiplier;
-		var dy = _viewport.ScreenY - _viewport.ViewPortY * _viewport.ScaleMultiplier;
+        spriteBatch.Begin(SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
 
-		var w0 = dx;
-		var h0 = dy;
+   //     _graphicsDevice.Clear(Color.DarkGray);
+        _levelRenderer.DrawToScreen(spriteBatch);
+        ControlPanelRenderer.DrawToScreen(spriteBatch);
+        _levelCursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
 
-		var levelSpritesSpan = new ReadOnlySpan<IViewportObjectRenderer>(_levelSprites);
+        spriteBatch.End();
+    }
+    public void OnWindowSizeChanged()
+    {
+        _levelRenderer.OnWindowSizeChanged();
+        ControlPanelRenderer.OnWindowSizeChanged();
+    }
+    public void Dispose()
+    {
+        if (IsDisposed)
+            return;
 
-		for (var i = 0; i < maxX; i++)
-		{
-			var hInterval = _viewport.GetHorizontalRenderInterval(i);
-			for (var j = 0; j < maxY; j++)
-			{
-				var vInterval = _viewport.GetVerticalRenderInterval(j);
-				var viewportClip = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
+        DisposableHelperMethods.DisposeOf(ref _depthStencilState);
+        _levelRenderer.Dispose();
+        ControlPanelRenderer.Dispose();
+        _lemmingSpriteBank.Dispose();
+        _gadgetSpriteBank.Dispose();
 
-				foreach (var sprite in levelSpritesSpan)
-				{
-					var spriteClip = sprite.GetSpriteBounds();
+        Instance = null!;
 
-					Rectangle.Intersect(ref viewportClip, ref spriteClip, out var clipIntersection);
-
-					if (!clipIntersection.IsEmpty)
-					{
-						clipIntersection.X -= spriteClip.X;
-						clipIntersection.Y -= spriteClip.Y;
-
-						var screenX = (spriteClip.X + clipIntersection.X) * _viewport.ScaleMultiplier + w0;
-						var screenY = (spriteClip.Y + clipIntersection.Y) * _viewport.ScaleMultiplier + h0;
-
-						sprite.RenderAtPosition(spriteBatch, clipIntersection, screenX, screenY);
-					}
-				}
-
-				h0 += h;
-			}
-
-			h0 = dy;
-			w0 += w;
-		}
-	}
-
-	private void RenderControlPanel(SpriteBatch spriteBatch)
-	{
-		_controlPanelRenderer.RenderControlPanel(spriteBatch);
-		_cursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
-	}
-
-	public void OnWindowSizeChanged()
-	{
-	}
-
-	public void Dispose()
-	{
-		if (IsDisposed)
-			return;
-
-#pragma warning disable CS8625
-		SetControlPanelSpriteBank(null);
-#pragma warning restore CS8625
-
-		_lemmingSpriteBank.Dispose();
-		_gadgetSpriteBank.Dispose();
-
-		DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<IViewportObjectRenderer>(_levelSprites));
-		IsDisposed = true;
-	}
+        IsDisposed = true;
+    }
 }

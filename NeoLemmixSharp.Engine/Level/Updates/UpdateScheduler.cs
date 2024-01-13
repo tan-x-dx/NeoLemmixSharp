@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.Level.Updates;
 
 public sealed class UpdateScheduler
 {
-	private readonly ILevelControlPanel _levelControlPanel;
+	private readonly LevelControlPanel _levelControlPanel;
 	private readonly LevelInputController _inputController;
 	private readonly Viewport _viewport;
 	private readonly LevelCursor _levelCursor;
@@ -32,7 +32,7 @@ public sealed class UpdateScheduler
 	public bool DoneAssignmentThisFrame { get; set; }
 
 	public UpdateScheduler(
-		ILevelControlPanel levelControlPanel,
+		LevelControlPanel levelControlPanel,
 		Viewport viewport,
 		LevelCursor levelCursor,
 		LevelInputController inputController,

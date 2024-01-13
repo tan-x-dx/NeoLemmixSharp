@@ -5,54 +5,61 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 public class ControlPanelButton
 {
-	private const int NumberOfSkillPanels = 8;
-	public const int SkillPanelFrameMask = NumberOfSkillPanels - 1;
+    private const int NumberOfSkillPanels = 8;
+    public const int SkillPanelFrameMask = NumberOfSkillPanels - 1;
 
-	private readonly int _iconX;
-	private readonly int _iconY;
+    private readonly int _iconX;
+    private readonly int _iconY;
 
-	public int SkillPanelFrame { get; }
-	public int X { get; set; }
-	public int Y { get; set; }
-	public int Width { get; set; }
-	public int Height { get; set; }
+    public readonly int ButtonId;
 
-	public bool ShouldRender { get; set; } = true;
-	public bool IsSelected { get; set; }
+    public readonly int SkillPanelFrame;
+    public int X;
+    public int Y;
+    public int Width;
+    public int Height;
 
-	public IButtonAction ButtonAction { get; protected init; }
+    public bool ShouldRender = true;
+    public bool IsSelected;
 
-	protected ControlPanelButton(
-		int skillPanelFrame)
-	{
-		SkillPanelFrame = skillPanelFrame & SkillPanelFrameMask;
-	}
+    public IButtonAction ButtonAction { get; protected init; }
 
-	public ControlPanelButton(
-		int skillPanelFrame,
-		IButtonAction buttonAction,
-		int iconX,
-		int iconY)
-	{
-		_iconX = iconX;
-		_iconY = iconY;
+    protected ControlPanelButton(
+        int buttonId,
+        int skillPanelFrame)
+    {
+        ButtonId = buttonId;
+        SkillPanelFrame = skillPanelFrame & SkillPanelFrameMask;
+    }
 
-		ButtonAction = buttonAction;
-		SkillPanelFrame = skillPanelFrame & SkillPanelFrameMask;
-	}
+    public ControlPanelButton(
+        int buttonId,
+        int skillPanelFrame,
+        IButtonAction buttonAction,
+        int iconX,
+        int iconY)
+    {
+        ButtonId = buttonId;
 
-	public bool MouseIsOverButton(int mouseX, int mouseY)
-	{
-		return ShouldRender &&
-			   mouseX >= X && mouseX < X + Width &&
-			   mouseY >= Y && mouseY < Y + Height;
-	}
+        _iconX = iconX;
+        _iconY = iconY;
 
-	public virtual ReadOnlySpan<int> GetDigitsToRender() => ReadOnlySpan<int>.Empty;
-	public virtual int GetNumberOfDigitsToRender() => 0;
+        ButtonAction = buttonAction;
+        SkillPanelFrame = skillPanelFrame & SkillPanelFrameMask;
+    }
 
-	public virtual ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
-	{
-		return new ControlPanelButtonRenderer(spriteBank, this, _iconX, _iconY);
-	}
+    public bool MouseIsOverButton(int mouseX, int mouseY)
+    {
+        return ShouldRender &&
+               mouseX >= X && mouseX < X + Width &&
+               mouseY >= Y && mouseY < Y + Height;
+    }
+
+    public virtual ReadOnlySpan<int> GetDigitsToRender() => ReadOnlySpan<int>.Empty;
+    public virtual int GetNumberOfDigitsToRender() => 0;
+
+    public virtual ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
+    {
+        return new ControlPanelButtonRenderer(spriteBank, this, _iconX, _iconY);
+    }
 }

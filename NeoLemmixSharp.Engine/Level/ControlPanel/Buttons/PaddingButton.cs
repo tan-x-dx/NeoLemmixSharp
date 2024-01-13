@@ -5,8 +5,9 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 public sealed class PaddingButton : ControlPanelButton
 {
-	public PaddingButton()
+	public PaddingButton(int buttonId)
 		: base(
+			buttonId,
 			PanelHelpers.PaddingButtonX,
 			EmptyButtonAction.Instance,
 			-1,
