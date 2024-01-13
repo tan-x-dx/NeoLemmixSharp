@@ -19,7 +19,7 @@ public sealed class TerrainRenderer : IDisposable
         _viewport = viewport;
     }
 
-    public void Render(SpriteBatch spriteBatch)
+    public void RenderTerrain(SpriteBatch spriteBatch)
     {
         var maxX = _viewport.NumberOfHorizontalRenderIntervals;
         var maxY = _viewport.NumberOfVerticalRenderIntervals;

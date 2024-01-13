@@ -29,6 +29,8 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
 	private readonly int _maxSkillPanelScroll;
 
+	public int Width { get; private set; }
+	public int Height { get; private set; }
 	public int ScreenWidth { get; private set; }
 	public int ScreenHeight { get; private set; }
 	public int HorizontalButtonScreenSpace { get; private set; }
@@ -41,7 +43,6 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
 	public int SkillPanelScroll { get; private set; }
 
-	public int ControlPanelScreenHeight { get; private set; }
 	public int ControlPanelScale { get; private set; } = 4;
 
 	public LevelTimer LevelTimer { get; }
@@ -104,15 +105,16 @@ public sealed class LevelControlPanel : ILevelControlPanel
 
 	private void RecalculateButtonDimensions()
 	{
-		HorizontalButtonScreenSpace = (MaxNumberOfSkillButtons + NumberOfTechnicalButtons) * ControlPanelButtonPixelWidth * ControlPanelScale;
+		Width = (MaxNumberOfSkillButtons + NumberOfTechnicalButtons) * ControlPanelButtonPixelWidth * ControlPanelScale;
+		Height = ControlPanelTotalPixelHeight * ControlPanelScale;
+		HorizontalButtonScreenSpace = Width;
 
 		ControlPanelX = (ScreenWidth - HorizontalButtonScreenSpace) / 2;
-		ControlPanelY = ScreenHeight - (ControlPanelTotalPixelHeight * ControlPanelScale);
+		ControlPanelY = ScreenHeight - Height;
 
 		ControlPanelButtonScreenWidth = ControlPanelButtonPixelWidth * ControlPanelScale;
 		ControlPanelButtonScreenHeight = ControlPanelButtonPixelHeight * ControlPanelScale;
 		ControlPanelInfoScreenHeight = ControlPanelInfoPixelHeight * ControlPanelScale;
-		ControlPanelScreenHeight = ControlPanelTotalPixelHeight * ControlPanelScale;
 
 		ControlPanelButtonY = ControlPanelY + ControlPanelInfoScreenHeight;
 

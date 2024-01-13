@@ -5,6 +5,9 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
 public interface ILevelControlPanel
 {
+	int Width { get; }
+	int Height { get; }
+
 	LevelTimer LevelTimer { get; }
 	SkillAssignButton? SelectedSkillAssignButton { get; }
 	int SelectedSkillButtonId { get; }

@@ -76,7 +76,7 @@ public sealed class LevelScreenRenderer : IScreenRenderer
 	private void RenderLevel(SpriteBatch spriteBatch)
 	{
 		_backgroundRenderer.RenderBackground(spriteBatch);
-		_terrainRenderer.Render(spriteBatch);
+		_terrainRenderer.RenderTerrain(spriteBatch);
 
 		RenderSprites(spriteBatch);
 	}
