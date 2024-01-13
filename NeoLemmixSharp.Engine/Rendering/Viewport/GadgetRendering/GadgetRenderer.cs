@@ -11,7 +11,7 @@ public class GadgetRenderer : IViewportObjectRenderer
         throw new NotImplementedException();
     }
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY)
     {
         throw new NotImplementedException();
     }

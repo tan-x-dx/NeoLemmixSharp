@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
@@ -26,6 +27,16 @@ public sealed class ControlPanelRenderer
 		_controlPanelRenderTarget = GetControlPanelRenderTarget2D();
 	}
 
+	public void RenderControlPanel(SpriteBatch spriteBatch)
+	{
+		//_graphicsDevice.SetRenderTarget(_controlPanelRenderTarget);
+	}
+
+	public void DrawToScreen(SpriteBatch spriteBatch)
+	{
+		spriteBatch.Draw(_controlPanelRenderTarget, Vector2.Zero, Color.White);
+	}
+
 	private RenderTarget2D GetControlPanelRenderTarget2D()
 	{
 		return new RenderTarget2D(
@@ -51,10 +62,5 @@ public sealed class ControlPanelRenderer
 		DisposableHelperMethods.DisposeOf(ref _controlPanelRenderTarget);
 
 		_disposed = true;
-	}
-
-	public void RenderControlPanel(SpriteBatch spriteBatch)
-	{
-		_graphicsDevice.SetRenderTarget(_controlPanelRenderTarget);
 	}
 }

@@ -24,7 +24,8 @@ public sealed class NineSliceTopLeftCornerRenderer : NineSliceSubRenderer
         _sliceTop = sliceTop;
     }
 
-    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX,
+        int screenY)
     {
         var sourceSubRectangle = new Rectangle(
             0,
@@ -42,10 +43,10 @@ public sealed class NineSliceTopLeftCornerRenderer : NineSliceSubRenderer
             return;
 
         var destinationRectangle = new Rectangle(
-            screenX + (intersection.X - sourceRectangle.X) * scaleMultiplier,
-            screenY + (intersection.Y - sourceRectangle.Y) * scaleMultiplier,
-            intersection.Width * scaleMultiplier,
-            intersection.Height * scaleMultiplier);
+            screenX + intersection.X - sourceRectangle.X,
+            screenY + intersection.Y - sourceRectangle.Y,
+            intersection.Width,
+            intersection.Height);
 
         spriteBatch.Draw(
             texture,
@@ -74,7 +75,8 @@ public sealed class NineSliceTopRightCornerRenderer : NineSliceSubRenderer
         _sliceTop = sliceTop;
     }
 
-    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX,
+        int screenY)
     {
         var w = SpriteWidth - _sliceRight;
         var sourceSubRectangle = new Rectangle(
@@ -93,10 +95,10 @@ public sealed class NineSliceTopRightCornerRenderer : NineSliceSubRenderer
             return;
 
         var destinationRectangle = new Rectangle(
-            screenX + (intersection.X - sourceRectangle.X) * scaleMultiplier,
-            screenY + (intersection.Y - sourceRectangle.Y) * scaleMultiplier,
-            intersection.Width * scaleMultiplier,
-            intersection.Height * scaleMultiplier);
+            screenX + intersection.X - sourceRectangle.X,
+            screenY + intersection.Y - sourceRectangle.Y,
+            intersection.Width,
+            intersection.Height);
 
         spriteBatch.Draw(
             texture,
@@ -125,7 +127,8 @@ public sealed class NineSliceBottomLeftCornerRenderer : NineSliceSubRenderer
         _sliceBottom = sliceBottom;
     }
 
-    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX,
+        int screenY)
     {
         var h = SpriteHeight - _sliceBottom;
         var sourceSubRectangle = new Rectangle(
@@ -144,10 +147,10 @@ public sealed class NineSliceBottomLeftCornerRenderer : NineSliceSubRenderer
             return;
 
         var destinationRectangle = new Rectangle(
-            screenX + (intersection.X - sourceRectangle.X) * scaleMultiplier,
-            screenY + (intersection.Y - sourceRectangle.Y) * scaleMultiplier,
-            intersection.Width * scaleMultiplier,
-            intersection.Height * scaleMultiplier);
+            screenX + intersection.X - sourceRectangle.X,
+            screenY + intersection.Y - sourceRectangle.Y,
+            intersection.Width,
+            intersection.Height);
 
         spriteBatch.Draw(
             texture,
@@ -176,7 +179,8 @@ public sealed class NineSliceBottomRightCornerRenderer : NineSliceSubRenderer
         _sliceBottom = sliceBottom;
     }
 
-    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX,
+        int screenY)
     {
         var w = SpriteWidth - _sliceRight;
         var h = SpriteHeight - _sliceBottom;
@@ -196,10 +200,10 @@ public sealed class NineSliceBottomRightCornerRenderer : NineSliceSubRenderer
             return;
 
         var destinationRectangle = new Rectangle(
-            screenX + (intersection.X - sourceRectangle.X) * scaleMultiplier,
-            screenY + (intersection.Y - sourceRectangle.Y) * scaleMultiplier,
-            intersection.Width * scaleMultiplier,
-            intersection.Height * scaleMultiplier);
+            screenX + intersection.X - sourceRectangle.X,
+            screenY + intersection.Y - sourceRectangle.Y,
+            intersection.Width,
+            intersection.Height);
 
         spriteBatch.Draw(
             texture,

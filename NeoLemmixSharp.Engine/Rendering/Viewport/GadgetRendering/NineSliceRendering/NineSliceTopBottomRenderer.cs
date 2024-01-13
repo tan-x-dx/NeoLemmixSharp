@@ -27,7 +27,8 @@ public sealed class NineSliceTopRenderer : NineSliceSubRenderer
         _sliceTop = sliceTop;
     }
 
-    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX,
+        int screenY)
     {
         var sourceSubRectangle = new Rectangle(
             _sliceLeft,
@@ -53,8 +54,8 @@ public sealed class NineSliceTopRenderer : NineSliceSubRenderer
         Populate(intervals, sourceSubRectangle.X, sourceSubRectangle.Width, clipSubRectangle.X, clipSubRectangle.Width);
 
         var w0 = 0;
-        var destX = screenX + (intersection.X - sourceRectangle.X) * scaleMultiplier;
-        var destY = screenY + (intersection.Y - sourceRectangle.Y) * scaleMultiplier;
+        var destX = screenX + (intersection.X - sourceRectangle.X);
+        var destY = screenY + (intersection.Y - sourceRectangle.Y);
 
         for (var i = 0; i < intervals.Length; i++)
         {
@@ -67,10 +68,10 @@ public sealed class NineSliceTopRenderer : NineSliceSubRenderer
                 intersection.Height);
 
             var destinationRectangle = new Rectangle(
-                destX + (w0 - sourceRectangle.X * i) * scaleMultiplier,
+                destX + (w0 - sourceRectangle.X * i),
                 destY,
-                interval.IntervalWidth * scaleMultiplier,
-                intersection.Height * scaleMultiplier);
+                interval.IntervalWidth,
+                intersection.Height);
 
             w0 += interval.IntervalWidth;
 
@@ -105,7 +106,8 @@ public sealed class NineSliceBottomRenderer : NineSliceSubRenderer
         _sliceBottom = sliceBottom;
     }
 
-    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX,
+        int screenY)
     {
         var sourceSubRectangle = new Rectangle(
             _sliceLeft,
@@ -131,8 +133,8 @@ public sealed class NineSliceBottomRenderer : NineSliceSubRenderer
         Populate(intervals, sourceSubRectangle.X, sourceSubRectangle.Width, clipSubRectangle.X, clipSubRectangle.Width);
 
         var w0 = 0;
-        var destX = screenX + (intersection.X - sourceRectangle.X) * scaleMultiplier;
-        var destY = screenY + (intersection.Y - sourceRectangle.Y) * scaleMultiplier;
+        var destX = screenX + (intersection.X - sourceRectangle.X);
+        var destY = screenY + (intersection.Y - sourceRectangle.Y);
 
         for (var i = 0; i < intervals.Length; i++)
         {
@@ -145,10 +147,10 @@ public sealed class NineSliceBottomRenderer : NineSliceSubRenderer
                 intersection.Height);
 
             var destinationRectangle = new Rectangle(
-                destX + w0 * scaleMultiplier,
+                destX + w0,
                 destY,
-                interval.IntervalWidth * scaleMultiplier,
-                intersection.Height * scaleMultiplier);
+                interval.IntervalWidth,
+                intersection.Height);
 
             w0 += interval.IntervalWidth;
 

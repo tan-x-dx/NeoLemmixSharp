@@ -118,7 +118,7 @@ public sealed class LevelScreenRenderer : IScreenRenderer
 						var screenX = (spriteClip.X + clipIntersection.X) * _viewport.ScaleMultiplier + w0;
 						var screenY = (spriteClip.Y + clipIntersection.Y) * _viewport.ScaleMultiplier + h0;
 
-						sprite.RenderAtPosition(spriteBatch, clipIntersection, screenX, screenY, _viewport.ScaleMultiplier);
+						sprite.RenderAtPosition(spriteBatch, clipIntersection, screenX, screenY);
 					}
 				}
 

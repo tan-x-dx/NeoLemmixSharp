@@ -6,11 +6,4 @@ public sealed class RenderInterval
     public int PixelLength;
 
     public int ScreenStart;
-    public int ScreenLength;
-
-    public bool Overlaps(int otherPixelStart, int otherPixelLength)
-    {
-        return PixelStart < otherPixelStart + otherPixelLength &&
-               otherPixelStart < PixelStart + PixelLength;
-    }
 }

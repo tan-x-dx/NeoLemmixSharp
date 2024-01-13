@@ -10,125 +10,138 @@ namespace NeoLemmixSharp.Engine.Rendering;
 
 public sealed class LevelRenderer : IDisposable
 {
-	private readonly GraphicsDevice _graphicsDevice;
-	private readonly ILevelControlPanel _levelControlPanel;
-	private readonly Level.Viewport _viewport;
-	private readonly IViewportObjectRenderer[] _levelSprites;
+    private readonly GraphicsDevice _graphicsDevice;
+    private readonly ILevelControlPanel _levelControlPanel;
+    private readonly Level.Viewport _viewport;
+    private readonly IViewportObjectRenderer[] _levelSprites;
 
-	private IBackgroundRenderer _backgroundRenderer;
-	private TerrainRenderer _terrainRenderer;
+    private readonly int _levelWidth;
+    private readonly int _levelHeight;
 
-	private RenderTarget2D _levelRenderTarget;
-	private bool _disposed;
+    private IBackgroundRenderer _backgroundRenderer;
+    private TerrainRenderer _terrainRenderer;
 
-	public LevelRenderer(
-		GraphicsDevice graphicsDevice,
-		LevelData levelData,
-		ILevelControlPanel levelControlPanel,
-		Level.Viewport viewport,
-		IViewportObjectRenderer[] levelSprites,
-		IBackgroundRenderer backgroundRenderer,
-		TerrainRenderer terrainRenderer)
-	{
-		_graphicsDevice = graphicsDevice;
-		_levelControlPanel = levelControlPanel;
-		_viewport = viewport;
-		_levelSprites = levelSprites;
+    private RenderTarget2D _levelRenderTarget;
+    private bool _disposed;
 
-		_backgroundRenderer = backgroundRenderer;
-		_terrainRenderer = terrainRenderer;
-		_levelRenderTarget = GetLevelRenderTarget2D();
-	}
+    public LevelRenderer(
+        GraphicsDevice graphicsDevice,
+        LevelData levelData,
+        ILevelControlPanel levelControlPanel,
+        Level.Viewport viewport,
+        IViewportObjectRenderer[] levelSprites,
+        IBackgroundRenderer backgroundRenderer,
+        TerrainRenderer terrainRenderer)
+    {
+        _graphicsDevice = graphicsDevice;
+        _levelControlPanel = levelControlPanel;
+        _viewport = viewport;
+        _levelSprites = levelSprites;
 
-	public void RenderLevel(SpriteBatch spriteBatch)
-	{
-		_graphicsDevice.SetRenderTarget(_levelRenderTarget);
-		_graphicsDevice.Clear(Color.DarkGray);
-		_backgroundRenderer.RenderBackground(spriteBatch);
-		_terrainRenderer.RenderTerrain(spriteBatch);
+        _levelWidth = levelData.LevelWidth;
+        _levelHeight = levelData.LevelHeight;
 
-		RenderSprites(spriteBatch);
-	}
+        _backgroundRenderer = backgroundRenderer;
+        _terrainRenderer = terrainRenderer;
+        _levelRenderTarget = GetLevelRenderTarget2D();
+    }
 
-	private void RenderSprites(SpriteBatch spriteBatch)
-	{
+    public void RenderLevel(SpriteBatch spriteBatch)
+    {
+        _graphicsDevice.SetRenderTarget(_levelRenderTarget);
+        spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
 
-	}
+        _backgroundRenderer.RenderBackground(spriteBatch);
+        _terrainRenderer.RenderTerrain(spriteBatch);
+        RenderSprites(spriteBatch);
 
-	private void RenderSprites2(SpriteBatch spriteBatch)
-	{
-		var _levelWidth = 1;
-		var _levelHeight = 1;
-		var w = _levelWidth * _viewport.ScaleMultiplier;
-		var h = _levelHeight * _viewport.ScaleMultiplier;
-		var maxX = _viewport.NumberOfHorizontalRenderIntervals;
-		var maxY = _viewport.NumberOfVerticalRenderIntervals;
-		var dx = _viewport.ScreenX - _viewport.ViewPortX * _viewport.ScaleMultiplier;
-		var dy = _viewport.ScreenY - _viewport.ViewPortY * _viewport.ScaleMultiplier;
-		var w0 = dx;
-		var h0 = dy;
-		var levelSpritesSpan = new ReadOnlySpan<IViewportObjectRenderer>(_levelSprites);
+        spriteBatch.End();
+    }
 
-		for (var i = 0; i < maxX; i++)
-		{
-			var hInterval = _viewport.GetHorizontalRenderInterval(i);
-			for (var j = 0; j < maxY; j++)
-			{
-				var vInterval = _viewport.GetVerticalRenderInterval(j);
-				var viewportClip = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
+    private void RenderSprites(SpriteBatch spriteBatch)
+    {
+        var viewportX = _viewport.ViewPortX;
+        var viewportY = _viewport.ViewPortY;
+        var maxX = _viewport.NumberOfHorizontalRenderIntervals;
+        var maxY = _viewport.NumberOfVerticalRenderIntervals;
+        var levelSpritesSpan = new ReadOnlySpan<IViewportObjectRenderer>(_levelSprites);
 
-				foreach (var sprite in levelSpritesSpan)
-				{
-					var spriteClip = sprite.GetSpriteBounds();
+        for (var i = 0; i < maxX; i++)
+        {
+            var hInterval = _viewport.GetHorizontalRenderInterval(i);
+            for (var j = 0; j < maxY; j++)
+            {
+                var vInterval = _viewport.GetVerticalRenderInterval(j);
+                var viewportClip = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
 
-					Rectangle.Intersect(ref viewportClip, ref spriteClip, out var clipIntersection);
+                foreach (var sprite in levelSpritesSpan)
+                {
+                    var spriteClip = sprite.GetSpriteBounds();
 
-					if (!clipIntersection.IsEmpty)
-					{
-						clipIntersection.X -= spriteClip.X;
-						clipIntersection.Y -= spriteClip.Y;
+                    Rectangle.Intersect(ref viewportClip, ref spriteClip, out var clipIntersection);
 
-						var screenX = (spriteClip.X + clipIntersection.X) * _viewport.ScaleMultiplier + w0;
-						var screenY = (spriteClip.Y + clipIntersection.Y) * _viewport.ScaleMultiplier + h0;
+                    if (!clipIntersection.IsEmpty)
+                    {
+                        clipIntersection.X -= spriteClip.X;
+                        clipIntersection.Y -= spriteClip.Y;
 
-						sprite.RenderAtPosition(spriteBatch, clipIntersection, screenX, screenY, _viewport.ScaleMultiplier);
-					}
-				}
+                        var screenX = spriteClip.X + clipIntersection.X - viewportX;
+                        var screenY = spriteClip.Y + clipIntersection.Y - viewportY;
 
-				h0 += h;
-			}
+                        sprite.RenderAtPosition(spriteBatch, clipIntersection, screenX, screenY);
+                    }
+                }
+            }
+        }
+    }
 
-			h0 = dy;
-			w0 += w;
-		}
-	}
+    public void DrawToScreen(SpriteBatch spriteBatch)
+    {
+        var destinationRectangle = new Rectangle(
+            _viewport.ScreenX,
+            _viewport.ScreenY,
+            _viewport.ScreenWidth,
+            _viewport.ScreenHeight);
 
-	private RenderTarget2D GetLevelRenderTarget2D()
-	{
-		return new RenderTarget2D(
-			_graphicsDevice,
-			_graphicsDevice.PresentationParameters.BackBufferWidth,
-			_graphicsDevice.PresentationParameters.BackBufferHeight,
-			false,
-			_graphicsDevice.PresentationParameters.BackBufferFormat,
-			DepthFormat.Depth24);
-	}
+        var sourceRectangle = new Rectangle(
+            0,
+            0,
+            _viewport.ViewPortWidth,
+            _viewport.ViewPortHeight);
 
-	public void OnWindowSizeChanged()
-	{
-		DisposableHelperMethods.DisposeOf(ref _levelRenderTarget);
-		_levelRenderTarget = GetLevelRenderTarget2D();
-	}
+        spriteBatch.Draw(
+            _levelRenderTarget,
+            destinationRectangle,
+            sourceRectangle,
+            Color.White);
+    }
 
-	public void Dispose()
-	{
-		if (_disposed)
-			return;
+    private RenderTarget2D GetLevelRenderTarget2D()
+    {
+        return new RenderTarget2D(
+            _graphicsDevice,
+            _graphicsDevice.PresentationParameters.BackBufferWidth,
+            _graphicsDevice.PresentationParameters.BackBufferHeight - _levelControlPanel.Height,
+            false,
+            _graphicsDevice.PresentationParameters.BackBufferFormat,
+            DepthFormat.Depth24);
+    }
 
-		DisposableHelperMethods.DisposeOf(ref _backgroundRenderer);
-		DisposableHelperMethods.DisposeOf(ref _terrainRenderer);
-		DisposableHelperMethods.DisposeOf(ref _levelRenderTarget);
+    public void OnWindowSizeChanged()
+    {
+        DisposableHelperMethods.DisposeOf(ref _levelRenderTarget);
+        _levelRenderTarget = GetLevelRenderTarget2D();
+    }
 
-		_disposed = true;
-	}
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        DisposableHelperMethods.DisposeOf(ref _backgroundRenderer);
+        DisposableHelperMethods.DisposeOf(ref _terrainRenderer);
+        DisposableHelperMethods.DisposeOf(ref _levelRenderTarget);
+
+        _disposed = true;
+    }
 }

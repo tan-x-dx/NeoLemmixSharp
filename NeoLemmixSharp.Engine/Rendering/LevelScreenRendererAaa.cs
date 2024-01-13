@@ -6,82 +6,92 @@ using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
-using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.Rendering;
 
 public sealed class LevelScreenRendererAaa : IScreenRenderer
 {
-	private readonly GraphicsDevice _graphicsDevice;
-	private DepthStencilState _depthStencilState;
+    private readonly GraphicsDevice _graphicsDevice;
+    private readonly Level.Viewport _viewport;
 
-	private readonly LevelRenderer _levelRenderer;
-	private readonly ControlPanelRenderer _controlPanelRenderer;
+    private readonly LevelRenderer _levelRenderer;
+    private readonly ControlPanelRenderer _controlPanelRenderer;
+    private readonly LevelCursorSprite _levelCursorSprite;
 
-	public bool IsDisposed { get; private set; }
+    private DepthStencilState _depthStencilState;
 
-	public LevelScreenRendererAaa(
-		GraphicsDevice graphicsDevice,
-		LevelData levelData,
-		ILevelControlPanel controlPanel,
-		Level.Viewport viewport,
-		IViewportObjectRenderer[] levelSprites,
-		TerrainRenderer terrainRenderer,
-		LevelCursorSprite levelCursorSprite)
-	{
-		_graphicsDevice = graphicsDevice;
-		_depthStencilState = new DepthStencilState { DepthBufferEnable = true };
-		_graphicsDevice.DepthStencilState = _depthStencilState;
+    public bool IsDisposed { get; private set; }
 
-		var backgroundRenderer = GetBackgroundRenderer(levelData, viewport);
+    public LevelScreenRendererAaa(
+        GraphicsDevice graphicsDevice,
+        LevelData levelData,
+        ILevelControlPanel controlPanel,
+        Level.Viewport viewport,
+        IViewportObjectRenderer[] levelSprites,
+        TerrainRenderer terrainRenderer,
+        LevelCursorSprite levelCursorSprite)
+    {
+        _graphicsDevice = graphicsDevice;
+        _viewport = viewport;
+        _levelCursorSprite = levelCursorSprite;
+        _depthStencilState = new DepthStencilState { DepthBufferEnable = true };
+        _graphicsDevice.DepthStencilState = _depthStencilState;
 
-		_levelRenderer = new LevelRenderer(
-			graphicsDevice,
-			levelData,
-			controlPanel,
-			viewport,
-			levelSprites,
-			backgroundRenderer,
-			terrainRenderer);
-		_controlPanelRenderer = new ControlPanelRenderer(
-			_graphicsDevice,
-			controlPanel,
-			levelData,
-			levelCursorSprite);
-	}
+        var backgroundRenderer = GetBackgroundRenderer(levelData, viewport);
 
-	private static IBackgroundRenderer GetBackgroundRenderer(
-		LevelData levelData,
-		Level.Viewport viewport)
-	{
-		return new SolidColorBackgroundRenderer(viewport, new Color(24, 24, 60));
-	}
+        _levelRenderer = new LevelRenderer(
+            graphicsDevice,
+            levelData,
+            controlPanel,
+            viewport,
+            levelSprites,
+            backgroundRenderer,
+            terrainRenderer);
+        _controlPanelRenderer = new ControlPanelRenderer(
+            _graphicsDevice,
+            controlPanel,
+            levelData,
+            levelCursorSprite);
+    }
 
-	public void RenderScreen(SpriteBatch spriteBatch)
-	{
-		_levelRenderer.RenderLevel(spriteBatch);
+    private static IBackgroundRenderer GetBackgroundRenderer(
+        LevelData levelData,
+        Level.Viewport viewport)
+    {
+        return new SolidColorBackgroundRenderer(viewport, new Color(24, 24, 60));
+    }
 
-		_controlPanelRenderer.RenderControlPanel(spriteBatch);
+    public void RenderScreen(SpriteBatch spriteBatch)
+    {
+        _levelRenderer.RenderLevel(spriteBatch);
 
-		_graphicsDevice.SetRenderTarget(null);
-	}
+        _controlPanelRenderer.RenderControlPanel(spriteBatch);
 
-	public void OnWindowSizeChanged()
-	{
-		_levelRenderer.OnWindowSizeChanged();
-		_controlPanelRenderer.OnWindowSizeChanged();
-	}
+        _graphicsDevice.SetRenderTarget(null);
 
-	public void Dispose()
-	{
-		if (IsDisposed)
-			return;
+        spriteBatch.Begin(SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
 
-		DisposableHelperMethods.DisposeOf(ref _depthStencilState);
-		_levelRenderer.Dispose();
-		_controlPanelRenderer.Dispose();
+        _graphicsDevice.Clear(Color.DarkGray);
+        _levelRenderer.DrawToScreen(spriteBatch);
+        _controlPanelRenderer.DrawToScreen(spriteBatch);
+        _levelCursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
 
-		IsDisposed = true;
-	}
+        spriteBatch.End();
+    }
+    public void OnWindowSizeChanged()
+    {
+        _levelRenderer.OnWindowSizeChanged();
+        _controlPanelRenderer.OnWindowSizeChanged();
+    }
+    public void Dispose()
+    {
+        if (IsDisposed)
+            return;
+
+        DisposableHelperMethods.DisposeOf(ref _depthStencilState);
+        _levelRenderer.Dispose();
+        _controlPanelRenderer.Dispose();
+
+        IsDisposed = true;
+    }
 }
