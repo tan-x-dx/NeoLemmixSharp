@@ -10,7 +10,7 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.Rendering;
 
-public sealed class LevelRendererAaa : IScreenRenderer
+public sealed class LevelScreenRendererAaa : IScreenRenderer
 {
 	private readonly GraphicsDevice _graphicsDevice;
 	private DepthStencilState _depthStencilState;
@@ -21,7 +21,7 @@ public sealed class LevelRendererAaa : IScreenRenderer
 
 	public bool IsDisposed { get; private set; }
 
-	public LevelRendererAaa(
+	public LevelScreenRendererAaa(
 		GraphicsDevice graphicsDevice,
 		LevelData levelData,
 		Level.Viewport viewport,

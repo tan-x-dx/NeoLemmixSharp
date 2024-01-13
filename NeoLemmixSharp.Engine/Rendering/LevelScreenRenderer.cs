@@ -10,7 +10,7 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.Rendering;
 
-public sealed class LevelRenderer : IScreenRenderer
+public sealed class LevelScreenRenderer : IScreenRenderer
 {
 	public static ControlPanelSpriteBank ControlPanelSpriteBank { get; private set; } = null!;
 
@@ -35,7 +35,7 @@ public sealed class LevelRenderer : IScreenRenderer
 
 	public bool IsDisposed { get; set; }
 
-	public LevelRenderer(
+	public LevelScreenRenderer(
 		int levelWidth,
 		int levelHeight,
 		Level.Viewport viewport,
