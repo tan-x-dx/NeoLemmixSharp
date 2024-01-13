@@ -7,6 +7,6 @@ public interface IViewportObjectRenderer : IDisposable
 {
     Rectangle GetSpriteBounds();
 
-    void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier);
+    void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY);
 
 }

@@ -22,13 +22,11 @@ public abstract class NineSliceSubRenderer
         SpriteHeight = spriteHeight;
     }
 
-    public abstract void Render(
-        SpriteBatch spriteBatch,
+    public abstract void Render(SpriteBatch spriteBatch,
         Texture2D texture,
         Rectangle sourceRectangle,
         int screenX,
-        int screenY,
-        int scaleMultiplier);
+        int screenY);
 
     protected readonly struct IntervalThing
     {

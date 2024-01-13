@@ -26,7 +26,7 @@ public sealed class VerticalWrapViewPortBehaviour : IVerticalViewPortBehaviour
 
     public void RecalculateVerticalDimensions(int scaleMultiplier, int windowHeight, int controlPanelHeight)
     {
-        ViewPortHeight = (scaleMultiplier + windowHeight - controlPanelHeight) / scaleMultiplier;
+        ViewPortHeight = (windowHeight + scaleMultiplier - controlPanelHeight) / scaleMultiplier;
 
         if (ViewPortHeight < LevelHeightInPixels)
         {
@@ -84,6 +84,5 @@ public sealed class VerticalWrapViewPortBehaviour : IVerticalViewPortBehaviour
         item.PixelStart = pixelStart;
         item.PixelLength = pixelLength;
         item.ScreenStart = screenStart;
-        item.ScreenLength = screenLength;
     }
 }

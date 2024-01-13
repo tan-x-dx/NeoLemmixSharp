@@ -7,8 +7,15 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
 public static class ControlPanelHelperMethods
 {
+    private static int _buttonId;
+
+    public static void ResetButtonIds()
+    {
+        _buttonId = 0;
+    }
+
 	public static SkillAssignButton[] SetUpSkillAssignButtons(
-		ILevelControlPanel controlPanel,
+		LevelControlPanel controlPanel,
 		ControlPanelParameters controlPanelParameters,
 		SkillSetManager skillSetManager)
 	{
@@ -41,6 +48,7 @@ public static class ControlPanelHelperMethods
 				}
 
 				var skillAssignButton = new SkillAssignButton(
+					_buttonId++,
 					i,
 					i,
 					classicSkill.Id,
@@ -63,7 +71,8 @@ public static class ControlPanelHelperMethods
 			foreach (var skillTrackingData in allSkillTrackingData)
 			{
 				var skillAssignButton = new SkillAssignButton(
-					i,
+                    _buttonId++,
+                    i,
 					i,
 					skillTrackingData.Skill.Id,
 					skillTrackingData.SkillTrackingDataId);
@@ -106,9 +115,9 @@ public static class ControlPanelHelperMethods
 		if (includeReleaseRateButtons)
 		{
 			// Always put these buttons at the start if they exist
-			result[0] = SpawnIntervalButton.CreateSpawnIntervalIncreaseButton(2, controlPanelParameters, hatchGroup!);
-			result[1] = SpawnIntervalButton.CreateSpawnIntervalDisplayButton(1, controlPanelParameters, hatchGroup!);
-			result[2] = SpawnIntervalButton.CreateSpawnIntervalDecreaseButton(0, controlPanelParameters, hatchGroup!);
+			result[0] = SpawnIntervalButton.CreateSpawnIntervalIncreaseButton(_buttonId++, 2, controlPanelParameters, hatchGroup!);
+			result[1] = SpawnIntervalButton.CreateSpawnIntervalDisplayButton(_buttonId++, 1, controlPanelParameters, hatchGroup!);
+			result[2] = SpawnIntervalButton.CreateSpawnIntervalDecreaseButton(_buttonId++, 0, controlPanelParameters, hatchGroup!);
 		}
 
 		var newButtonIndex = releaseRateButtonOffset;
@@ -117,7 +126,8 @@ public static class ControlPanelHelperMethods
 		{
 			var buttonAction = new SkillAssignScrollButtonAction(1);
 			result[newButtonIndex] = new ControlPanelButton(
-				newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
+                _buttonId++,
+                newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
 				buttonAction,
 				PanelHelpers.SkillAssignScrollLeftX,
 				PanelHelpers.ButtonIconsY);
@@ -131,7 +141,8 @@ public static class ControlPanelHelperMethods
 		{
 			var buttonAction = new SkillAssignScrollButtonAction(-1);
 			result[newButtonIndex] = new ControlPanelButton(
-				newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
+                _buttonId++,
+                newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
 				buttonAction,
 				PanelHelpers.SkillAssignScrollRightX,
 				PanelHelpers.ButtonIconsY);
@@ -141,7 +152,7 @@ public static class ControlPanelHelperMethods
 		{
 			for (var p = 0; p < paddingButtonCount; p++)
 			{
-				result[newButtonIndex] = new PaddingButton();
+				result[newButtonIndex] = new PaddingButton(_buttonId++);
 				newButtonIndex++;
 			}
 		}
@@ -150,7 +161,8 @@ public static class ControlPanelHelperMethods
 		{
 			var buttonAction = new PauseButtonAction();
 			result[newButtonIndex] = new ControlPanelButton(
-				newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
+                _buttonId++,
+                newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
 				buttonAction,
 				PanelHelpers.PauseButtonX,
 				PanelHelpers.ButtonIconsY);
@@ -161,7 +173,8 @@ public static class ControlPanelHelperMethods
 		{
 			var buttonAction = new NukeButtonAction();
 			result[newButtonIndex] = new ControlPanelButton(
-				newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
+                _buttonId++,
+                newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
 				buttonAction,
 				PanelHelpers.NukeButtonX,
 				PanelHelpers.ButtonIconsY);
@@ -172,7 +185,8 @@ public static class ControlPanelHelperMethods
 		{
 			var buttonAction = new FastForwardButtonAction();
 			result[newButtonIndex] = new ControlPanelButton(
-				newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
+                _buttonId++,
+                newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
 				buttonAction,
 				PanelHelpers.FastForwardButtonX,
 				PanelHelpers.ButtonIconsY);
@@ -183,7 +197,8 @@ public static class ControlPanelHelperMethods
 		{
 			var buttonAction = new RestartButtonAction();
 			result[newButtonIndex] = new ControlPanelButton(
-				newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
+                _buttonId++,
+                newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
 				buttonAction,
 				PanelHelpers.RestartButtonX,
 				PanelHelpers.ButtonIconsY);

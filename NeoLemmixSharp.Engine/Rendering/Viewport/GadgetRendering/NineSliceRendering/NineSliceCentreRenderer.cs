@@ -29,7 +29,8 @@ public sealed class NineSliceCentreRenderer : NineSliceSubRenderer
         _sliceBottom = sliceBottom;
     }
 
-    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX,
+        int screenY)
     {
         //  throw new NotImplementedException();
     }

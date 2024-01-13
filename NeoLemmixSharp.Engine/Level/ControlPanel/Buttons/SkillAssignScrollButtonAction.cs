@@ -18,11 +18,7 @@ public sealed class SkillAssignScrollButtonAction : IButtonAction
 		LevelScreen.LevelControlPanel.ChangeSkillAssignButtonScroll(_delta);
 	}
 
-	public void OnPress()
-	{
-	}
-
-	public void OnDoubleTap()
+	public void OnPress(bool isDoubleTap)
 	{
 	}
 

@@ -26,7 +26,7 @@ public sealed class HorizontalWrapViewPortBehaviour : IHorizontalViewPortBehavio
 
     public void RecalculateHorizontalDimensions(int scaleMultiplier, int windowWidth)
     {
-        ViewPortWidth = windowWidth / scaleMultiplier;
+        ViewPortWidth = (windowWidth + scaleMultiplier) / scaleMultiplier;
 
         if (ViewPortWidth < LevelWidthInPixels)
         {
@@ -85,6 +85,5 @@ public sealed class HorizontalWrapViewPortBehaviour : IHorizontalViewPortBehavio
         item.PixelStart = pixelStart;
         item.PixelLength = pixelLength;
         item.ScreenStart = screenStart;
-        item.ScreenLength = screenLength;
     }
 }

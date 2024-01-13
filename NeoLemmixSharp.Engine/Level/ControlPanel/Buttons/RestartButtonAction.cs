@@ -8,11 +8,7 @@ public sealed class RestartButtonAction : IButtonAction
 	{
 	}
 
-	public void OnPress()
-	{
-	}
-
-	public void OnDoubleTap()
+	public void OnPress(bool isDoubleTap)
 	{
 	}
 

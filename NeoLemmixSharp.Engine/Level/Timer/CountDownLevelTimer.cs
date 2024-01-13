@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.Rendering.Text;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 
@@ -8,6 +7,7 @@ public sealed class CountDownLevelTimer : LevelTimer
     private readonly int _timeLimitInSeconds;
 
     public CountDownLevelTimer(int timeLimitInSeconds)
+        : base(TimerType.CountDown)
     {
         _timeLimitInSeconds = timeLimitInSeconds;
 

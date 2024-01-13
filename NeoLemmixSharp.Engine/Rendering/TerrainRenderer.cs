@@ -19,7 +19,7 @@ public sealed class TerrainRenderer : IDisposable
         _viewport = viewport;
     }
 
-    public void Render(SpriteBatch spriteBatch)
+    public void RenderTerrain(SpriteBatch spriteBatch)
     {
         var maxX = _viewport.NumberOfHorizontalRenderIntervals;
         var maxY = _viewport.NumberOfVerticalRenderIntervals;
@@ -30,13 +30,13 @@ public sealed class TerrainRenderer : IDisposable
             for (var j = 0; j < maxY; j++)
             {
                 var vInterval = _viewport.GetVerticalRenderInterval(j);
-                var sourceRect = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
-                var screenRect = new Rectangle(hInterval.ScreenStart, vInterval.ScreenStart, hInterval.ScreenLength, vInterval.ScreenLength);
+                var destinationRectangle = new Rectangle(hInterval.ScreenStart, vInterval.ScreenStart, hInterval.PixelLength, vInterval.PixelLength);
+                var sourceRectangle = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
 
                 spriteBatch.Draw(
                     _texture,
-                    screenRect,
-                    sourceRect,
+                    destinationRectangle,
+                    sourceRectangle,
                     RenderingLayers.TerrainLayer);
             }
         }

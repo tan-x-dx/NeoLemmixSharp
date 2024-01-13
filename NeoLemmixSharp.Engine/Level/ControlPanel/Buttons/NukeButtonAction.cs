@@ -2,21 +2,17 @@
 
 public sealed class NukeButtonAction : IButtonAction
 {
-	public ButtonType ButtonType => ButtonType.Nuke;
+    public ButtonType ButtonType => ButtonType.Nuke;
 
-	public void OnMouseDown()
-	{
-	}
+    public void OnMouseDown()
+    {
+    }
 
-	public void OnPress()
-	{
-	}
+    public void OnPress(bool isDoubleTap)
+    {
+    }
 
-	public void OnDoubleTap()
-	{
-	}
-
-	public void OnRightClick()
-	{
-	}
+    public void OnRightClick()
+    {
+    }
 }

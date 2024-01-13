@@ -26,7 +26,8 @@ public sealed class NineSliceLeftRenderer : NineSliceSubRenderer
         _sliceLeft = sliceLeft;
     }
 
-    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX,
+        int screenY)
     {
         // throw new NotImplementedException();
     }
@@ -54,7 +55,8 @@ public sealed class NineSliceRightRenderer : NineSliceSubRenderer
         _sliceRight = sliceRight;
     }
 
-    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+    public override void Render(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, int screenX,
+        int screenY)
     {
         // throw new NotImplementedException();
     }

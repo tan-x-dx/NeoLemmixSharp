@@ -66,11 +66,11 @@ public sealed class NineSliceRenderer : IViewportObjectRenderer
 
     public Rectangle GetSpriteBounds() => _spriteClipRectangle.ToRectangle();
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY)
     {
         for (var i = 0; i < _subRenderers.Length; i++)
         {
-            _subRenderers[i].Render(spriteBatch, _texture, sourceRectangle, screenX, screenY, scaleMultiplier);
+            _subRenderers[i].Render(spriteBatch, _texture, sourceRectangle, screenX, screenY);
         }
     }
 

@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
 public sealed class LevelCursorSprite : IViewportObjectRenderer
 {
-	private readonly LevelCursor _levelCursor;
+    private readonly LevelCursor _levelCursor;
 	private readonly Texture2D _cursorTexture;
 
 	public LevelCursorSprite(
@@ -64,9 +64,9 @@ public sealed class LevelCursorSprite : IViewportObjectRenderer
 			RenderingLayers.CursorLayer);
 	}
 
-	public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY, int scaleMultiplier)
+	public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY)
 	{
-		RenderAtPosition(spriteBatch, screenX, screenY, scaleMultiplier);
+		RenderAtPosition(spriteBatch, screenX, screenY, 1);
 	}
 
 	public void Dispose()

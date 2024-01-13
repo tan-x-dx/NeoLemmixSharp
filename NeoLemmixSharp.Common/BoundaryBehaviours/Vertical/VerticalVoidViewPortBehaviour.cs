@@ -21,7 +21,7 @@ public sealed class VerticalVoidViewPortBehaviour : IVerticalViewPortBehaviour
 
     public void RecalculateVerticalDimensions(int scaleMultiplier, int windowHeight, int controlPanelHeight)
     {
-        ViewPortHeight = (scaleMultiplier + windowHeight - controlPanelHeight) / scaleMultiplier;
+        ViewPortHeight = (windowHeight + scaleMultiplier - controlPanelHeight) / scaleMultiplier;
 
         if (ViewPortHeight < LevelHeightInPixels)
         {
@@ -60,7 +60,6 @@ public sealed class VerticalVoidViewPortBehaviour : IVerticalViewPortBehaviour
     {
         _renderInterval.PixelStart = ViewPortY;
         _renderInterval.PixelLength = ViewPortHeight;
-        _renderInterval.ScreenStart = ScreenY;
-        _renderInterval.ScreenLength = ScreenHeight;
+        _renderInterval.ScreenStart = 0;
     }
 }

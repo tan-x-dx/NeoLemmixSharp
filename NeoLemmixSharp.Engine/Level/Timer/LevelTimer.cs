@@ -1,30 +1,32 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 
 public abstract class LevelTimer
 {
-	public const int NumberOfChars = 6;
+    public const int NumberOfChars = 6;
 
     // We do things this way to avoid lots of string allocations.
     // The text we want to render is only 6 characters anyway
     protected readonly int[] Chars = new int[NumberOfChars];
+    public readonly TimerType Type;
     protected int ElapsedSeconds;
 
     public Color FontColor { get; protected set; }
 
-    protected LevelTimer()
+    protected LevelTimer(TimerType type)
     {
         Chars[3] = '-';
+        Type = type;
     }
 
     public void Tick()
     {
-       // ElapsedTicks++;
-       // if (ElapsedTicks % LevelConstants.FramesPerSecond != 0)
-       //     return;
+        // ElapsedTicks++;
+        // if (ElapsedTicks % LevelConstants.FramesPerSecond != 0)
+        //     return;
 
         ElapsedSeconds++;
         UpdateAppearance();
@@ -32,7 +34,7 @@ public abstract class LevelTimer
 
     public void SetElapsedTicks(int elapsedTicks)
     {
-     //   ElapsedTicks = elapsedTicks;
+        //   ElapsedTicks = elapsedTicks;
         ElapsedSeconds = elapsedTicks / EngineConstants.FramesPerSecond;
 
         UpdateAppearance();
@@ -99,4 +101,10 @@ public abstract class LevelTimer
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int DigitToChar(int digit) => digit + '0';
+
+    public enum TimerType
+    {
+        CountDown,
+        CountUp
+    }
 }

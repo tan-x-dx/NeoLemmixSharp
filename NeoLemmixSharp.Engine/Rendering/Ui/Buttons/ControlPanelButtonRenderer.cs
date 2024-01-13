@@ -2,103 +2,102 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
 public class ControlPanelButtonRenderer
 {
-	protected readonly ControlPanelButton ControlPanelButton;
+    protected readonly ControlPanelButton ControlPanelButton;
 
-	protected readonly Texture2D PanelTexture;
-	protected readonly Texture2D SelectedTexture;
+    protected readonly Texture2D PanelTexture;
+    protected readonly Texture2D SelectedTexture;
 
-	private readonly int _iconX;
-	private readonly int _iconY;
+    private readonly int _iconX;
+    private readonly int _iconY;
 
-	public ControlPanelButtonRenderer(
-		ControlPanelSpriteBank spriteBank,
-		ControlPanelButton controlPanelButton,
-		int iconX,
-		int iconY)
-	{
-		ControlPanelButton = controlPanelButton;
+    public readonly int ButtonId;
 
-		PanelTexture = spriteBank.GetTexture(ControlPanelTexture.Panel);
-		SelectedTexture = spriteBank.GetTexture(ControlPanelTexture.PanelSkillSelected);
+    public ControlPanelButtonRenderer(
+        ControlPanelSpriteBank spriteBank,
+        ControlPanelButton controlPanelButton,
+        int iconX,
+        int iconY)
+    {
+        ControlPanelButton = controlPanelButton;
+        ButtonId = controlPanelButton.ButtonId;
 
-		_iconX = iconX;
-		_iconY = iconY;
-	}
+        PanelTexture = spriteBank.GetTexture(ControlPanelTexture.Panel);
+        SelectedTexture = spriteBank.GetTexture(ControlPanelTexture.PanelSkillSelected);
 
-	protected Rectangle GetDestinationRectangle()
-	{
-		return new Rectangle(
-			ControlPanelButton.ScreenX,
-			ControlPanelButton.ScreenY,
-			ControlPanelButton.ScreenWidth,
-			ControlPanelButton.ScreenHeight);
-	}
+        _iconX = iconX;
+        _iconY = iconY;
+    }
 
-	public virtual void Render(SpriteBatch spriteBatch)
-	{
-		var destRectangle = GetDestinationRectangle();
+    protected Rectangle GetDestinationRectangle()
+    {
+        return new Rectangle(
+            ControlPanelButton.X,
+            ControlPanelButton.Y,
+            ControlPanelButton.Width,
+            ControlPanelButton.Height);
+    }
 
-		spriteBatch.Draw(
-			PanelTexture,
-			destRectangle,
-			PanelHelpers.GetRectangleForCoordinates(ControlPanelButton.SkillPanelFrame, PanelHelpers.PanelBackgroundY),
-			RenderingLayers.ControlPanelButtonLayer);
+    public virtual void Render(SpriteBatch spriteBatch)
+    {
+        var destRectangle = GetDestinationRectangle();
 
-		RenderDigits(spriteBatch, destRectangle);
+        spriteBatch.Draw(
+            PanelTexture,
+            destRectangle,
+            PanelHelpers.GetRectangleForCoordinates(ControlPanelButton.SkillPanelFrame, PanelHelpers.PanelBackgroundY),
+            RenderingLayers.ControlPanelButtonLayer);
 
-		spriteBatch.Draw(
-			PanelTexture,
-			destRectangle,
-			PanelHelpers.GetRectangleForCoordinates(_iconX, _iconY),
-			RenderingLayers.ControlPanelSkillCountEraseLayer);
+        RenderDigits(spriteBatch, destRectangle);
 
-		RenderSelected(spriteBatch, destRectangle);
-	}
+        spriteBatch.Draw(
+            PanelTexture,
+            destRectangle,
+            PanelHelpers.GetRectangleForCoordinates(_iconX, _iconY),
+            RenderingLayers.ControlPanelSkillCountEraseLayer);
 
-	protected void RenderDigits(SpriteBatch spriteBatch, Rectangle destRectangle)
-	{
-		var numberOfDigitsToRender = ControlPanelButton.GetNumberOfDigitsToRender();
-		if (numberOfDigitsToRender == 0)
-			return;
+        RenderSelected(spriteBatch, destRectangle);
+    }
 
-		var iconX = numberOfDigitsToRender == 3
-			? PanelHelpers.SkillIconTripleMaskX
-			: PanelHelpers.SkillIconDoubleMaskX;
+    protected void RenderDigits(SpriteBatch spriteBatch, Rectangle destRectangle)
+    {
+        var numberOfDigitsToRender = ControlPanelButton.GetNumberOfDigitsToRender();
+        if (numberOfDigitsToRender == 0)
+            return;
 
-		spriteBatch.Draw(
-			PanelTexture,
-			destRectangle,
-			PanelHelpers.GetRectangleForCoordinates(iconX, PanelHelpers.SkillIconMaskY),
-			RenderingLayers.ControlPanelSkillCountEraseLayer);
+        var iconX = numberOfDigitsToRender == 3
+            ? PanelHelpers.SkillIconTripleMaskX
+            : PanelHelpers.SkillIconDoubleMaskX;
 
-		var buttonScaleMultiplier = LevelScreen.LevelControlPanel.ControlPanelScale;
-		var dx = 3 * buttonScaleMultiplier;
+        spriteBatch.Draw(
+            PanelTexture,
+            destRectangle,
+            PanelHelpers.GetRectangleForCoordinates(iconX, PanelHelpers.SkillIconMaskY),
+            RenderingLayers.ControlPanelSkillCountEraseLayer);
 
-		FontBank.SkillCountDigitFont.RenderTextSpan(
-			spriteBatch,
-			ControlPanelButton.GetDigitsToRender(),
-			destRectangle.X + dx,
-			destRectangle.Y + buttonScaleMultiplier,
-			buttonScaleMultiplier,
-			Color.White);
-	}
+        FontBank.SkillCountDigitFont.RenderTextSpan(
+            spriteBatch,
+            ControlPanelButton.GetDigitsToRender(),
+            destRectangle.X + 3,
+            destRectangle.Y + 1,
+            1,
+            Color.White);
+    }
 
-	protected void RenderSelected(SpriteBatch spriteBatch, Rectangle destRectangle)
-	{
-		if (!ControlPanelButton.IsSelected)
-			return;
+    protected void RenderSelected(SpriteBatch spriteBatch, Rectangle destRectangle)
+    {
+        if (!ControlPanelButton.IsSelected)
+            return;
 
-		spriteBatch.Draw(
-			SelectedTexture,
-			destRectangle,
-			new Rectangle(0, 0, SelectedTexture.Width, SelectedTexture.Height),
-			RenderingLayers.ControlPanelSkillCountEraseLayer); // Can reuse this layer since the sprites shouldn't overlap anyway
-	}
+        spriteBatch.Draw(
+            SelectedTexture,
+            destRectangle,
+            new Rectangle(0, 0, SelectedTexture.Width, SelectedTexture.Height),
+            RenderingLayers.ControlPanelSkillCountEraseLayer); // Can reuse this layer since the sprites shouldn't overlap anyway
+    }
 }

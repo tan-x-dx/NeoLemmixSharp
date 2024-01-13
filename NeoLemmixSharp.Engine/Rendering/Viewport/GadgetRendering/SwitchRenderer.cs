@@ -23,20 +23,18 @@ public sealed class SwitchRenderer : IViewportObjectRenderer
 
     public Rectangle GetSpriteBounds() => _switchGadget.GadgetBounds.ToRectangle();
 
-    public void RenderAtPosition(
-        SpriteBatch spriteBatch,
+    public void RenderAtPosition(SpriteBatch spriteBatch,
         Rectangle sourceRectangle,
         int screenX,
-        int screenY,
-        int scaleMultiplier)
+        int screenY)
     {
         sourceRectangle.Y += _switchGadget.AnimationFrame * 13;
 
         var renderDestination = new Rectangle(
             screenX,
             screenY,
-            sourceRectangle.Width * scaleMultiplier,
-            sourceRectangle.Height * scaleMultiplier);
+            sourceRectangle.Width,
+            sourceRectangle.Height);
 
         spriteBatch.Draw(
             _switchTexture,

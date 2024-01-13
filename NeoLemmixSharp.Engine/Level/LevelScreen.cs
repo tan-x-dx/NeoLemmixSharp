@@ -20,7 +20,7 @@ public sealed class LevelScreen : IBaseScreen
 	public static LemmingManager LemmingManager { get; private set; } = null!;
 	public static GadgetManager GadgetManager { get; private set; } = null!;
 	public static SkillSetManager SkillSetManager { get; private set; } = null!;
-	public static ILevelControlPanel LevelControlPanel { get; private set; } = null!;
+	public static LevelControlPanel LevelControlPanel { get; private set; } = null!;
 	public static UpdateScheduler UpdateScheduler { get; private set; } = null!;
 	public static LevelCursor LevelCursor { get; private set; } = null!;
 
@@ -49,7 +49,7 @@ public sealed class LevelScreen : IBaseScreen
 		SkillSetManager = skillSetManager;
 	}
 
-	public static void SetLevelControlPanel(ILevelControlPanel levelControlPanel)
+	public static void SetLevelControlPanel(LevelControlPanel levelControlPanel)
 	{
 		LevelControlPanel = levelControlPanel;
 	}
@@ -66,11 +66,11 @@ public sealed class LevelScreen : IBaseScreen
 
 	private readonly UpdateScheduler _updateScheduler;
 	private readonly LevelInputController _inputController;
-	private readonly ILevelControlPanel _controlPanel;
+	private readonly LevelControlPanel _controlPanel;
 	private readonly Viewport _viewport;
-	private readonly LevelRenderer _levelRenderer;
+	private readonly LevelScreenRenderer _levelScreenRenderer;
 
-	IScreenRenderer IBaseScreen.ScreenRenderer => _levelRenderer;
+	IScreenRenderer IBaseScreen.ScreenRenderer => _levelScreenRenderer;
 	public string ScreenTitle { get; }
 	public bool IsDisposed { get; private set; }
 
@@ -78,9 +78,9 @@ public sealed class LevelScreen : IBaseScreen
 		LevelData levelData,
 		UpdateScheduler updateScheduler,
 		LevelInputController levelInputController,
-		ILevelControlPanel controlPanel,
+		LevelControlPanel controlPanel,
 		Viewport viewport,
-		LevelRenderer levelRenderer)
+		LevelScreenRenderer levelScreenRenderer)
 	{
 		ScreenTitle = levelData.LevelTitle;
 
@@ -88,7 +88,7 @@ public sealed class LevelScreen : IBaseScreen
 		_inputController = levelInputController;
 		_controlPanel = controlPanel;
 		_viewport = viewport;
-		_levelRenderer = levelRenderer;
+		_levelScreenRenderer = levelScreenRenderer;
 	}
 
 	public void Tick(GameTime gameTime)
@@ -121,8 +121,8 @@ public sealed class LevelScreen : IBaseScreen
 		var windowHeight = IGameWindow.Instance.WindowHeight;
 
 		_controlPanel.SetWindowDimensions(windowWidth, windowHeight);
-		_viewport.SetWindowDimensions(windowWidth, windowHeight, ((LevelControlPanel)_controlPanel).ControlPanelScreenHeight);
-		_levelRenderer.OnWindowSizeChanged();
+		_viewport.SetWindowDimensions(windowWidth, windowHeight, _controlPanel.ScreenHeight);
+		_levelScreenRenderer.OnWindowSizeChanged();
 
 		IGameWindow.Instance.CaptureCursor();
 	}
@@ -155,7 +155,6 @@ public sealed class LevelScreen : IBaseScreen
 		SetUpdateScheduler(null);
 		SetLevelCursor(null);
 
-		_levelRenderer.Dispose();
 		IsDisposed = true;
 #pragma warning restore CS8625
 	}

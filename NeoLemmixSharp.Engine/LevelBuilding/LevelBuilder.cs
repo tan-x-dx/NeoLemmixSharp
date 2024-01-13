@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
@@ -45,8 +46,6 @@ public sealed class LevelBuilder : IDisposable
 
 		_terrainPainter.PaintLevel(_levelReader.LevelData);
 
-		var terrainTexture = _terrainPainter.GetTerrainTexture();
-
 		var levelData = _levelReader.LevelData;
 		var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
 
@@ -73,6 +72,7 @@ public sealed class LevelBuilder : IDisposable
 			? new CountDownLevelTimer(levelData.TimeLimit.Value)
 			: new CountUpLevelTimer();
 		var controlPanel = new LevelControlPanel(controlPanelParameters, inputController, skillSetManager, lemmingManager, levelTimer);
+		controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowWidth, IGameWindow.Instance.WindowHeight);
 		LevelScreen.SetLevelControlPanel(controlPanel);
 
 		_levelObjectAssembler.AssembleLevelObjects(
@@ -90,6 +90,7 @@ public sealed class LevelBuilder : IDisposable
 		var updateScheduler = new UpdateScheduler(controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, gadgetManager, skillSetManager);
 		LevelScreen.SetUpdateScheduler(updateScheduler);
 
+		var terrainTexture = _terrainPainter.GetTerrainTexture();
 		var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
 
 		var pixelData = _terrainPainter.GetPixelData();
@@ -104,36 +105,21 @@ public sealed class LevelBuilder : IDisposable
 
 		var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
 		var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank();
-		LevelRenderer.SetControlPanelSpriteBank(controlPanelSpriteBank);
 
 		var levelSprites = _levelObjectAssembler.GetLevelSprites();
-
-		var controlPanelRenderer = new ClassicControlPanelRenderer(controlPanelSpriteBank, controlPanel);
-
 		var levelCursorSprite = CommonSpriteBank.Instance.GetLevelCursorSprite(levelCursor);
 
-		var backgroundRenderer = new SolidColorBackgroundRenderer(levelViewport, new Color(24, 24, 60));
-
-		var levelRenderer = new LevelRenderer(
-			levelData.LevelWidth,
-			levelData.LevelHeight,
-			levelViewport,
-			backgroundRenderer,
-			terrainRenderer,
-			levelSprites,
-			levelCursorSprite,
-			controlPanelRenderer,
-			lemmingSpriteBank,
-			gadgetSpriteBank);
-
-		var levelRenderer2 = new LevelRendererAaa(
+		var levelScreenRenderer2 = new LevelScreenRenderer(
 			_graphicsDevice,
 			levelData,
+			controlPanel,
 			levelViewport,
 			levelSprites,
+			terrainRenderer,
 			levelCursorSprite,
 			lemmingSpriteBank,
-			gadgetSpriteBank);
+			gadgetSpriteBank,
+            controlPanelSpriteBank);
 
 		lemmingManager.Initialise();
 		gadgetManager.Initialise();
@@ -144,13 +130,13 @@ public sealed class LevelBuilder : IDisposable
 			inputController,
 			controlPanel,
 			levelViewport,
-			levelRenderer);
+			levelScreenRenderer2);
 	}
 
 	private static LevelParameters GetLevelParameters(LevelData levelData)
 	{
 		return LevelParameters.TimedBombers |
-			   //    LevelParameters.EnablePause |
+			   LevelParameters.EnablePause |
 			   LevelParameters.EnableNuke |
 			   LevelParameters.EnableFastForward |
 			   LevelParameters.EnableDirectionSelect |

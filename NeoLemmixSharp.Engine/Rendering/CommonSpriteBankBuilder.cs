@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine.Rendering.Viewport;
 
 namespace NeoLemmixSharp.Engine.Rendering;
 
@@ -63,7 +62,7 @@ public readonly ref struct CommonSpriteBankBuilder
 		var whiteColors = new Color[256];
 		for (var i = 0; i < whiteColors.Length; i++)
 		{
-			whiteColors[i] = new Color(0xff, 0xff, 0xff, 0xff - i);
+			whiteColors[i] = new Color(0xff, 0xff, 0xff, i);
 		}
 
 		whitePixelTexture.SetData(whiteColors);
