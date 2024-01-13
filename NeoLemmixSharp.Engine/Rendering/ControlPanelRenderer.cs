@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Timer;
@@ -12,27 +13,48 @@ namespace NeoLemmixSharp.Engine.Rendering;
 
 public sealed class ControlPanelRenderer
 {
+    public const int TotalNumberOfIcons = 7;
+    public const int PanelIconWidth = 8;
+    private const int PanelIconHeight = 16;
+
+    private const int ReplayPanelIconX = 0 * PanelIconWidth;
+    private const int HatchPanelIconX = 1 * PanelIconWidth;
+    private const int LemmingPanelIconX = 2 * PanelIconWidth;
+    private const int FlagPanelIconX = 3 * PanelIconWidth;
+    private const int TimerUpPanelIconX = 4 * PanelIconWidth;
+    private const int TimerDownPanelIconX = 5 * PanelIconWidth;
+    private const int EditReplayPanelIconX = 6 * PanelIconWidth;
+
     private readonly GraphicsDevice _graphicsDevice;
     private readonly LevelControlPanel _levelControlPanel;
 
     private readonly ControlPanelButtonRenderer[] _controlPanelButtonRenderers;
+    private readonly Texture2D _whitePixel;
+    private readonly Texture2D _panelIconsTexture;
+    private readonly Texture2D _minimapRegionTexture;
 
     private RenderTarget2D _controlPanelRenderTarget;
+
+    private int _windowWidth;
+    private int _windowHeight;
 
     private bool _disposed;
 
     public ControlPanelRenderer(
         GraphicsDevice graphicsDevice,
-        ControlPanelSpriteBank spriteBank,
+        ControlPanelSpriteBank controlPanelSpriteBank,
         LevelControlPanel levelControlPanel)
     {
         _graphicsDevice = graphicsDevice;
         _levelControlPanel = levelControlPanel;
 
-        _controlPanelRenderTarget = GetControlPanelRenderTarget2D();
-
         var allButtons = _levelControlPanel.AllButtons;
-        _controlPanelButtonRenderers = SetUpButtonRenderers(spriteBank, allButtons);
+        _controlPanelButtonRenderers = SetUpButtonRenderers(controlPanelSpriteBank, allButtons);
+        _whitePixel = CommonSpriteBank.Instance.GetTexture(CommonTexture.WhitePixel);
+        _panelIconsTexture = controlPanelSpriteBank.GetTexture(ControlPanelTexture.PanelIcons);
+        _minimapRegionTexture = controlPanelSpriteBank.GetTexture(ControlPanelTexture.PanelMinimapRegion);
+
+        _controlPanelRenderTarget = GetControlPanelRenderTarget2D();
     }
 
     private static ControlPanelButtonRenderer[] SetUpButtonRenderers(
@@ -50,7 +72,9 @@ public sealed class ControlPanelRenderer
             {
                 result[i++] = button.CreateButtonRenderer(spriteBank);
             }
-            catch { }
+            catch
+            {
+            }
         }
 
         return result;
@@ -62,17 +86,7 @@ public sealed class ControlPanelRenderer
         spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
 
         RenderSkillAssignButtons(spriteBatch);
-
-        var levelTimer = _levelControlPanel.LevelTimer;
-        var timerX = _levelControlPanel.Width - PanelFont.GlyphWidth * LevelTimer.NumberOfChars;
-
-        FontBank.PanelFont.RenderTextSpan(
-            spriteBatch,
-            levelTimer.AsSpan(),
-            timerX,
-            0,
-            1,
-            levelTimer.FontColor);
+        RenderTextualDataAndIcons(spriteBatch);
 
         spriteBatch.End();
     }
@@ -86,13 +100,87 @@ public sealed class ControlPanelRenderer
         }
     }
 
+    private void RenderTextualDataAndIcons(SpriteBatch spriteBatch)
+    {
+        var textualData = _levelControlPanel.TextualData;
+
+        var x = 0;
+
+        var lemmingActionAndCountSpan = textualData.LemmingActionAndCountSpan;
+        RenderText(lemmingActionAndCountSpan, x);
+        x += lemmingActionAndCountSpan.Length * PanelFont.GlyphWidth;
+
+        RenderIcon(HatchPanelIconX, x);
+        x += PanelIconWidth;
+
+        var hatchCountSpan = textualData.HatchCountSpan;
+        RenderText(hatchCountSpan, x);
+        x += (hatchCountSpan.Length + 1) * PanelFont.GlyphWidth;
+
+        RenderIcon(LemmingPanelIconX, x);
+        x += PanelIconWidth;
+
+        var lemmingOutSpan = textualData.LemmingsOutSpan;
+        RenderText(lemmingOutSpan, x);
+        x += (lemmingOutSpan.Length + 1) * PanelFont.GlyphWidth;
+
+        RenderIcon(FlagPanelIconX, x);
+        x += PanelIconWidth;
+
+        var goalCountSpan = textualData.GoalCountSpan;
+        RenderText(goalCountSpan, x);
+        x += (goalCountSpan.Length + 1) * PanelFont.GlyphWidth;
+
+        var levelTimer = textualData.LevelTimer;
+        var timerIconX = levelTimer.Type == LevelTimer.TimerType.CountDown
+            ? TimerDownPanelIconX
+            : TimerUpPanelIconX;
+        RenderIcon(timerIconX, x);
+        x += PanelIconWidth;
+
+        var timerSpan = levelTimer.AsSpan();
+        RenderText(timerSpan, x);
+
+        return;
+
+        void RenderText(ReadOnlySpan<int> span, int renderX)
+        {
+            FontBank.PanelFont.RenderTextSpan(
+                spriteBatch,
+                span,
+                renderX,
+                0,
+                1,
+                LevelConstants.PanelGreen);
+        }
+
+        void RenderIcon(int iconX, int renderX)
+        {
+            var destinationRectangle = new Rectangle(renderX, 0, PanelIconWidth, PanelIconHeight);
+            var sourceRectangle = new Rectangle(iconX, 0, PanelIconWidth, PanelIconHeight);
+
+            spriteBatch.Draw(
+                _panelIconsTexture,
+                destinationRectangle,
+                sourceRectangle,
+                Color.White);
+        }
+    }
+
     public void DrawToScreen(SpriteBatch spriteBatch)
     {
+        var controlPanelScreenHeight = _levelControlPanel.ScreenHeight;
+        spriteBatch.Draw(
+            _whitePixel,
+            new Rectangle(0, _windowHeight - controlPanelScreenHeight, _windowWidth, controlPanelScreenHeight),
+            new Rectangle(0, 0xff, 1, 1),
+            Color.DarkGray);
+
         var destinationRectangle = new Rectangle(
             _levelControlPanel.ControlPanelX,
             _levelControlPanel.ControlPanelY,
             _levelControlPanel.ScreenWidth,
-            _levelControlPanel.ScreenHeight);
+            controlPanelScreenHeight);
 
         spriteBatch.Draw(_controlPanelRenderTarget, destinationRectangle, Color.White);
     }
@@ -110,6 +198,10 @@ public sealed class ControlPanelRenderer
 
     public void OnWindowSizeChanged()
     {
+        var gameWindow = IGameWindow.Instance;
+        _windowWidth = gameWindow.WindowWidth;
+        _windowHeight = gameWindow.WindowHeight;
+
         DisposableHelperMethods.DisposeOf(ref _controlPanelRenderTarget);
         _controlPanelRenderTarget = GetControlPanelRenderTarget2D();
     }

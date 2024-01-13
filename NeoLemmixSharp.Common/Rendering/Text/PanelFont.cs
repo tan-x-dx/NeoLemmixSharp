@@ -58,6 +58,12 @@ public sealed class PanelFont : INeoLemmixFont
             if (!CanRenderChar(c, out var adjustedChar))
                 continue;
 
+            if (adjustedChar < 0)
+            {
+                dest.X += dx;
+                continue;
+            }
+
             var source = new Rectangle(GlyphWidth * adjustedChar, 0, GlyphWidth, GlyphHeight);
             spriteBatch.Draw(
                 _texture,
@@ -91,7 +97,10 @@ public sealed class PanelFont : INeoLemmixFont
         foreach (var c in charactersToRender)
         {
             if (!CanRenderChar(c, out var adjustedChar))
+            {
+                dest.X += dx;
                 continue;
+            }
 
             var source = new Rectangle(GlyphWidth * adjustedChar, 0, GlyphWidth, GlyphHeight);
             spriteBatch.Draw(

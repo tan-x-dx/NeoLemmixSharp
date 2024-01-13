@@ -1,10 +1,9 @@
-﻿using NeoLemmixSharp.Common.Rendering.Text;
-
-namespace NeoLemmixSharp.Engine.Level.Timer;
+﻿namespace NeoLemmixSharp.Engine.Level.Timer;
 
 public sealed class CountUpLevelTimer : LevelTimer
 {
     public CountUpLevelTimer()
+        : base(TimerType.CountUp)
     {
         Chars[0] = ' ';
         Chars[1] = '0';

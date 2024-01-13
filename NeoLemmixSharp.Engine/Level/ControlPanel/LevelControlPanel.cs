@@ -1,7 +1,9 @@
-﻿using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
+﻿using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Timer;
+using NeoLemmixSharp.Engine.Rendering;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
@@ -16,6 +18,7 @@ public sealed class LevelControlPanel
     public const int MinControlPanelScaleMultiplier = 4;
     public const int MaxControlPanelScaleMultiplier = 6;
     public const int NumberOfReleaseRateButtons = 3;
+    public const int MinimapWidth = 111;
 
     private readonly LevelInputController _controller;
 
@@ -24,8 +27,9 @@ public sealed class LevelControlPanel
     /// In that case, this references that singular hatch group.
     /// </summary>
     private readonly HatchGroup? _singularHatchGroup;
-    private readonly ControlPanelButton[] _allButtons;
     private readonly SkillAssignButton[] _skillAssignButtons;
+    private readonly ControlPanelButton[] _allButtons;
+    private readonly ControlPanelTextualData _controlPanelTextualData;
 
     private readonly int _maxSkillPanelScroll;
 
@@ -43,7 +47,7 @@ public sealed class LevelControlPanel
 
     public int ControlPanelScaleMultiplier { get; private set; } = 4;
 
-    public LevelTimer LevelTimer { get; }
+    public ControlPanelTextualData TextualData => _controlPanelTextualData;
     public SkillAssignButton? SelectedSkillAssignButton { get; private set; }
     public int SelectedSkillButtonId => SelectedSkillAssignButton?.SkillAssignButtonId ?? -1;
 
@@ -58,7 +62,6 @@ public sealed class LevelControlPanel
         LevelTimer levelTimer)
     {
         _controller = controller;
-        LevelTimer = levelTimer;
 
         var allHatchGroups = lemmingManager.AllHatchGroups;
         _singularHatchGroup = allHatchGroups.Length == 1
@@ -68,6 +71,8 @@ public sealed class LevelControlPanel
         ControlPanelHelperMethods.ResetButtonIds();
         _skillAssignButtons = ControlPanelHelperMethods.SetUpSkillAssignButtons(this, controlPanelParameters, skillSetManager);
         _allButtons = ControlPanelHelperMethods.SetUpControlButtons(_skillAssignButtons, _singularHatchGroup, controlPanelParameters);
+
+        _controlPanelTextualData = new ControlPanelTextualData(levelTimer);
 
         _maxSkillPanelScroll = _skillAssignButtons.Length - MaxNumberOfSkillButtons;
 
@@ -88,6 +93,12 @@ public sealed class LevelControlPanel
             return;
 
         RecalculateButtonDimensions();
+
+        Width = CalculateControlPanelWidth();
+        Height = ControlPanelTotalPixelHeight;
+
+        ControlPanelX = (_windowWidth - ScreenWidth) / 2;
+        ControlPanelY = _windowHeight - ScreenHeight;
     }
 
     public void SetPanelScale(int scale)
@@ -97,12 +108,6 @@ public sealed class LevelControlPanel
 
     private void RecalculateButtonDimensions()
     {
-        Width = (MaxNumberOfSkillButtons + NumberOfTechnicalButtons) * ControlPanelButtonPixelWidth;
-        Height = ControlPanelTotalPixelHeight;
-
-        ControlPanelX = (_windowWidth - ScreenWidth) / 2;
-        ControlPanelY = _windowHeight - ScreenHeight;
-
         var x0 = 0;
         const int halfH0 = ControlPanelButtonPixelHeight / 2;
         var allButtons = AllButtons;
@@ -169,6 +174,45 @@ public sealed class LevelControlPanel
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+    }
+
+    private int CalculateControlPanelWidth()
+    {
+        var textTotalLength = _controlPanelTextualData.GetTotalCharacterLength() *
+                              PanelFont.GlyphWidth;
+        const int iconsTotalLength = ControlPanelRenderer.TotalNumberOfIcons *
+                                     ControlPanelRenderer.PanelIconWidth;
+
+        var infoLength = textTotalLength + iconsTotalLength;
+
+        var buttonsWidth = GetTotalWidthOfAllButtons();
+
+        var max = Math.Max(infoLength, buttonsWidth);
+
+        return max + MinimapWidth;
+
+        int GetTotalWidthOfAllButtons()
+        {
+            var numberOfButtonsOnScreenAtAnyGivenTime = 0;
+
+            foreach (var button in AllButtons)
+            {
+                if (button is null)
+                    continue;
+
+                if (button.ButtonAction.ButtonType == ButtonType.SkillAssign)
+                    continue;
+
+                if (!button.ShouldRender)
+                    continue;
+
+                numberOfButtonsOnScreenAtAnyGivenTime++;
+            }
+
+            numberOfButtonsOnScreenAtAnyGivenTime += Math.Min(MaxNumberOfSkillButtons, _skillAssignButtons.Length);
+
+            return numberOfButtonsOnScreenAtAnyGivenTime * ControlPanelButtonPixelWidth;
         }
     }
 

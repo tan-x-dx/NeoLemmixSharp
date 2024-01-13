@@ -50,7 +50,7 @@ public sealed class LevelRenderer : IDisposable
     {
         _graphicsDevice.SetRenderTarget(_levelRenderTarget);
         spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
-
+        
         _backgroundRenderer.RenderBackground(spriteBatch);
         _terrainRenderer.RenderTerrain(spriteBatch);
         RenderSprites(spriteBatch);
