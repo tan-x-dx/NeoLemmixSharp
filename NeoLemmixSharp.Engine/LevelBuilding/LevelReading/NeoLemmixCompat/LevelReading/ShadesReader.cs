@@ -7,15 +7,17 @@ public sealed class ShadesReader : INeoLemmixDataReader
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$SHADES";
 
-    public void BeginReading(string[] tokens)
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         _inBlock = false;
         FinishedReading = false;
     }
 
-    public void ReadNextLine(string[] tokens)
+    public void ReadNextLine(ReadOnlySpan<char> line)
     {
-        switch (tokens[0])
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+
+        switch (firstToken)
         {
             case "$SHADE":
                 _inBlock = true;

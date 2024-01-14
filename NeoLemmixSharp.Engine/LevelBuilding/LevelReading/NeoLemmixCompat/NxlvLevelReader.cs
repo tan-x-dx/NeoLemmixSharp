@@ -46,6 +46,9 @@ public sealed class NxlvLevelReader : ILevelReader
         for (var index = 0; index < lines.Length; index++)
         {
             var line = lines[index];
+            if (line[0] == '#' || string.IsNullOrWhiteSpace(line)) // Comment line or blank - ignore
+                continue;
+
             ProcessLine(line, index);
         }
 
@@ -61,12 +64,9 @@ public sealed class NxlvLevelReader : ILevelReader
 
     private void ProcessLine(string line, int index)
     {
-        if (!ReadingHelpers.TrySplitIntoTokens(line, out var tokens))
-            return;
-
         if (_currentDataReader != null)
         {
-            _currentDataReader.ReadNextLine(tokens);
+            _currentDataReader.ReadNextLine(line);
 
             if (_currentDataReader.FinishedReading)
             {
@@ -75,15 +75,16 @@ public sealed class NxlvLevelReader : ILevelReader
             return;
         }
 
-        if (_dataReaders.TryGetValue(tokens[0], out var dataReader))
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        if (ReadingHelpers.TryGetWithSpan(_dataReaders, firstToken, out var dataReader))
         {
             _currentDataReader = dataReader;
-            _currentDataReader.BeginReading(tokens);
+            _currentDataReader.BeginReading(line);
 
             return;
         }
 
-        throw new InvalidOperationException($"Unknown token: [{tokens[0]}] - line {index}: \"{line}\"");
+        throw new InvalidOperationException($"Unknown token: [{firstToken}] - line {index}: \"{line}\"");
     }
 
     private void ReadStyle()
@@ -93,50 +94,54 @@ public sealed class NxlvLevelReader : ILevelReader
 
         var themeLines = File.ReadAllLines(themeFilePath);
 
-        foreach (var line in themeLines)
+        for (var index = 0; index < themeLines.Length; index++)
         {
-            ProcessThemeLine(line);
+            var line = themeLines[index];
+            if (line[0] == '#' || string.IsNullOrWhiteSpace(line)) // Comment line or blank - ignore
+                continue;
+
+            ProcessThemeLine(line, index);
         }
 
         LevelData.ThemeData.LemmingSpritesFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", LevelData.ThemeData.BaseStyle, "lemmings");
     }
 
-    private void ProcessThemeLine(string line)
+    private void ProcessThemeLine(string line, int index)
     {
-        if (!ReadingHelpers.TrySplitIntoTokens(line, out var tokens))
-            return;
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
 
-        switch (tokens[0])
+        switch (firstToken)
         {
             case "LEMMINGS":
-                LevelData.ThemeData.BaseStyle = tokens[1];
+                LevelData.ThemeData.BaseStyle = secondToken.ToString();
                 break;
 
             case "$COLORS":
                 break;
 
             case "MASK":
-                LevelData.ThemeData.Mask = ReadingHelpers.ReadUint(tokens[1], false);
+                LevelData.ThemeData.Mask = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "MINIMAP":
-                LevelData.ThemeData.Minimap = ReadingHelpers.ReadUint(tokens[1], false);
+                LevelData.ThemeData.Minimap = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "BACKGROUND":
-                LevelData.ThemeData.Background = ReadingHelpers.ReadUint(tokens[1], false);
+                LevelData.ThemeData.Background = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "ONE_WAYS":
-                LevelData.ThemeData.OneWays = ReadingHelpers.ReadUint(tokens[1], false);
+                LevelData.ThemeData.OneWays = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "PICKUP_BORDER":
-                LevelData.ThemeData.PickupBorder = ReadingHelpers.ReadUint(tokens[1], false);
+                LevelData.ThemeData.PickupBorder = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "PICKUP_INSIDE":
-                LevelData.ThemeData.PickupInside = ReadingHelpers.ReadUint(tokens[1], false);
+                LevelData.ThemeData.PickupInside = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "END":
@@ -153,6 +158,8 @@ public sealed class NxlvLevelReader : ILevelReader
         for (var index = 0; index < schemeLines.Length; index++)
         {
             var line = schemeLines[index];
+            if (line[0] == '#' || string.IsNullOrWhiteSpace(line)) // Comment line or blank - ignore
+                continue;
             ProcessLine(line, index);
         }
     }

@@ -17,17 +17,17 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$TERRAINGROUP";
 
-    public void BeginReading(string[] tokens)
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         _currentTerrainGroup = new TerrainGroup();
         FinishedReading = false;
     }
 
-    public void ReadNextLine(string[] tokens)
+    public void ReadNextLine(ReadOnlySpan<char> line)
     {
         if (_terrainReader != null)
         {
-            _terrainReader.ReadNextLine(tokens);
+            _terrainReader.ReadNextLine(line);
 
             if (_terrainReader.FinishedReading)
             {
@@ -37,15 +37,18 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
             return;
         }
 
-        switch (tokens[0])
+        var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
+        var rest = line[(1 + firstTokenIndex + firstToken.Length)..];
+
+        switch (firstToken)
         {
             case "NAME":
-                _currentTerrainGroup!.GroupId = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                _currentTerrainGroup!.GroupId = rest.ToString();
                 break;
 
             case "$TERRAIN":
                 _terrainReader = new TerrainReader(_currentTerrainGroup!.TerrainDatas);
-                _terrainReader.BeginReading(tokens);
+                _terrainReader.BeginReading(line);
                 break;
 
             case "$END":

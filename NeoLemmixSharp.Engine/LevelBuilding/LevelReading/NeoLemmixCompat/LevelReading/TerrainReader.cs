@@ -17,24 +17,28 @@ public sealed class TerrainReader : INeoLemmixDataReader
         _allTerrainData = allTerrainData;
     }
 
-    public void BeginReading(string[] tokens)
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         _currentTerrainData = new TerrainData();
         FinishedReading = false;
     }
 
-    public void ReadNextLine(string[] tokens)
+    public void ReadNextLine(ReadOnlySpan<char> line)
     {
-        switch (tokens[0])
+        var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
+        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+
+        switch (firstToken)
         {
             case "STYLE":
-                if (tokens[1][0] == '*')
+                if (secondToken[0] == '*')
                 {
                     _settingDataForGroup = true;
                 }
                 else
                 {
-                    _currentTerrainData!.Style = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                    var rest = line[(1 + firstTokenIndex + firstToken.Length)..];
+                    _currentTerrainData!.Style = rest.ToString();
                 }
 
                 break;
@@ -42,24 +46,25 @@ public sealed class TerrainReader : INeoLemmixDataReader
             case "PIECE":
                 if (_settingDataForGroup)
                 {
-                    _currentTerrainData!.GroupId = tokens[1];
+                    _currentTerrainData!.GroupId = secondToken.ToString();
                 }
                 else
                 {
-                    _currentTerrainData!.TerrainName = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                    var rest = line[(1 + firstTokenIndex + firstToken.Length)..];
+                    _currentTerrainData!.TerrainName = rest.ToString();
                 }
                 break;
 
             case "X":
-                _currentTerrainData!.X = ReadingHelpers.ReadInt(tokens[1]);
+                _currentTerrainData!.X = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "Y":
-                _currentTerrainData!.Y = ReadingHelpers.ReadInt(tokens[1]);
+                _currentTerrainData!.Y = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "RGB":
-                _currentTerrainData!.Tint = ReadingHelpers.ReadUint(tokens[1], true);
+                _currentTerrainData!.Tint = ReadingHelpers.ReadUint(secondToken, true);
                 break;
 
             case "NO_OVERWRITE":
@@ -94,7 +99,7 @@ public sealed class TerrainReader : INeoLemmixDataReader
 
             default:
                 throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{tokens[0]}] line: \"{string.Join(' ', tokens)}\"");
+                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
         }
     }
 }

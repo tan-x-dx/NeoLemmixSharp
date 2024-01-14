@@ -13,42 +13,47 @@ public sealed class GadgetReader : INeoLemmixDataReader
         _allGadgetData = allGadgetData;
     }
 
-    public void BeginReading(string[] tokens)
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         _currentGadgetData = new NeoLemmixGadgetData();
         FinishedReading = false;
     }
 
-    public void ReadNextLine(string[] tokens)
+    public void ReadNextLine(ReadOnlySpan<char> line)
     {
-        switch (tokens[0])
+        var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
+        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+
+        switch (firstToken)
         {
             case "STYLE":
-                _currentGadgetData!.Style = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                var rest = line[(1 + firstTokenIndex + firstToken.Length)..];
+                _currentGadgetData!.Style = rest.ToString();
                 break;
 
             case "PIECE":
-                _currentGadgetData!.Piece = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                var rest1 = line[(1 + firstTokenIndex + firstToken.Length)..];
+                _currentGadgetData!.Piece = rest1.ToString();
                 break;
 
             case "X":
-                _currentGadgetData!.X = ReadingHelpers.ReadInt(tokens[1]);
+                _currentGadgetData!.X = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "Y":
-                _currentGadgetData!.Y = ReadingHelpers.ReadInt(tokens[1]);
+                _currentGadgetData!.Y = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "WIDTH":
-                _currentGadgetData!.Width = ReadingHelpers.ReadInt(tokens[1]);
+                _currentGadgetData!.Width = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "HEIGHT":
-                _currentGadgetData!.Height = ReadingHelpers.ReadInt(tokens[1]);
+                _currentGadgetData!.Height = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "SPEED":
-                _currentGadgetData!.Speed = ReadingHelpers.ReadInt(tokens[1]);
+                _currentGadgetData!.Speed = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "ANGLE":
@@ -79,11 +84,12 @@ public sealed class GadgetReader : INeoLemmixDataReader
                 break;
 
             case "SKILL":
-                _currentGadgetData!.Skill = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                var rest2 = line[(1 + firstTokenIndex + firstToken.Length)..];
+                _currentGadgetData!.Skill = rest2.ToString();
                 break;
 
             case "SKILL_COUNT":
-                _currentGadgetData!.SkillCount = ReadingHelpers.ReadInt(tokens[1]);
+                _currentGadgetData!.SkillCount = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "$END":
@@ -94,7 +100,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
             default:
                 throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{tokens[0]}] line: \"{string.Join(' ', tokens)}\"");
+                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
         }
     }
 }

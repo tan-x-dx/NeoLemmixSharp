@@ -1,11 +1,11 @@
-﻿using NeoLemmixSharp.Engine.Level.Skills;
+﻿using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-public sealed class SkillSetReader : INeoLemmixDataReader
+public sealed class SkillSetReader : INeoLemmixDataReader, IEqualityComparer<char>
 {
-    private readonly Dictionary<string, LemmingSkill> _skillLookup = new();
     private readonly List<SkillSetData> _skillSetData;
 
     public bool FinishedReading { get; private set; }
@@ -14,38 +14,37 @@ public sealed class SkillSetReader : INeoLemmixDataReader
     public SkillSetReader(LevelData levelData)
     {
         _skillSetData = levelData.SkillSetData;
-
-        foreach (var lemmingSkill in LemmingSkill.AllItems)
-        {
-            var name = lemmingSkill.LemmingSkillName.ToUpperInvariant();
-            _skillLookup.Add(name, lemmingSkill);
-        }
     }
 
-    public void BeginReading(string[] tokens)
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
     }
 
-    public void ReadNextLine(string[] tokens)
+    public void ReadNextLine(ReadOnlySpan<char> line)
     {
-        if (tokens[0] == "$END")
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+
+        if (firstToken is "$END")
         {
             FinishedReading = true;
             return;
         }
 
-        ReadSkillSetData(tokens);
+        ReadSkillSetData(line);
     }
 
-    private void ReadSkillSetData(string[] tokens)
+    private void ReadSkillSetData(ReadOnlySpan<char> line)
     {
-        if (!_skillLookup.TryGetValue(tokens[0], out var skill))
-            throw new Exception($"Unknown token: {tokens[0]}");
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
 
-        var amount = tokens[1] == "INFINITE" 
-            ? 100
-            : ReadingHelpers.ReadInt(tokens[1]);
+        if (!GetSkillByName(firstToken, out var skill))
+            throw new Exception($"Unknown token: {firstToken}");
+
+        var amount = secondToken is "INFINITE"
+            ? LevelConstants.InfiniteSkillCount
+            : ReadingHelpers.ReadInt(secondToken);
 
         var skillSetDatum = new SkillSetData
         {
@@ -55,5 +54,31 @@ public sealed class SkillSetReader : INeoLemmixDataReader
         };
 
         _skillSetData.Add(skillSetDatum);
+    }
+
+    private bool GetSkillByName(ReadOnlySpan<char> token, out LemmingSkill lemmingSkill)
+    {
+        foreach (var item in LemmingSkill.AllItems)
+        {
+            var skillName = item.LemmingSkillName.AsSpan();
+            if (skillName.SequenceEqual(token, this))
+            {
+                lemmingSkill = item;
+                return true;
+            }
+        }
+
+        lemmingSkill = null!;
+        return false;
+    }
+
+    bool IEqualityComparer<char>.Equals(char x, char y)
+    {
+        return char.ToUpperInvariant(x) == char.ToUpperInvariant(y);
+    }
+
+    int IEqualityComparer<char>.GetHashCode(char obj)
+    {
+        return char.ToUpperInvariant(obj).GetHashCode();
     }
 }

@@ -20,48 +20,55 @@ public sealed class LevelDataReader : INeoLemmixDataReader
         _indentedFormat = indentedFormat;
     }
 
-    public void BeginReading(string[] tokens)
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
         if (_indentedFormat)
             return;
-        _levelData.LevelTitle = ReadingHelpers.ReadFormattedString(tokens[1..]);
+
+        var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
+        var rest = line[(1 + firstTokenIndex + firstToken.Length)..];
+        _levelData.LevelTitle = rest.ToString();
     }
 
-    public void ReadNextLine(string[] tokens)
+    public void ReadNextLine(ReadOnlySpan<char> line)
     {
-        switch (tokens[0])
+        var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
+        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+        var rest = line[(1 + firstTokenIndex + firstToken.Length)..];
+
+        switch (firstToken)
         {
             case "TITLE":
-                _levelData.LevelTitle = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                _levelData.LevelTitle = rest.ToString();
                 break;
 
             case "AUTHOR":
-                _levelData.LevelAuthor = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                _levelData.LevelAuthor = rest.ToString();
                 break;
 
             case "ID":
-                _levelData.LevelId = ReadingHelpers.ReadUlong(tokens[1]);
+                _levelData.LevelId = ReadingHelpers.ReadUlong(secondToken);
                 break;
 
             case "VERSION":
-                _levelData.Version = ReadingHelpers.ReadUlong(tokens[1]);
+                _levelData.Version = ReadingHelpers.ReadUlong(secondToken);
                 break;
 
             case "START_X":
-                _levelData.LevelStartPositionX = ReadingHelpers.ReadInt(tokens[1]);
+                _levelData.LevelStartPositionX = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "START_Y":
-                _levelData.LevelStartPositionY = ReadingHelpers.ReadInt(tokens[1]);
+                _levelData.LevelStartPositionY = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "THEME":
-                _levelData.LevelTheme = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                _levelData.LevelTheme = rest.ToString();
                 break;
 
             case "BACKGROUND":
-                _levelData.LevelBackground = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                _levelData.LevelBackground = rest.ToString();
                 break;
 
             case "MUSIC":
@@ -69,23 +76,23 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "WIDTH":
-                _levelData.LevelWidth = ReadingHelpers.ReadInt(tokens[1]);
+                _levelData.LevelWidth = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "HEIGHT":
-                _levelData.LevelHeight = ReadingHelpers.ReadInt(tokens[1]);
+                _levelData.LevelHeight = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "LEMMINGS":
-                _levelData.NumberOfLemmings = ReadingHelpers.ReadInt(tokens[1]);
+                _levelData.NumberOfLemmings = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "SAVE_REQUIREMENT":
-                _levelData.SaveRequirement = ReadingHelpers.ReadInt(tokens[1]);
+                _levelData.SaveRequirement = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "TIME_LIMIT":
-                _levelData.TimeLimit = ReadingHelpers.ReadInt(tokens[1]);
+                _levelData.TimeLimit = ReadingHelpers.ReadInt(secondToken);
                 break;
 
             case "SPAWN_INTERVAL_LOCKED":
@@ -93,7 +100,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "MAX_SPAWN_INTERVAL":
-                _levelData.MaxSpawnInterval = ReadingHelpers.ReadInt(tokens[1]);
+                _levelData.MaxSpawnInterval = ReadingHelpers.ReadInt(secondToken);
 
                 if (_indentedFormat)
                     break;
@@ -110,7 +117,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                     ? "Indented"
                     : "Not indented";
                 throw new InvalidOperationException(
-                    $"Unknown token when parsing LevelData ({indentedFormatString}): [{tokens[0]}] line: \"{string.Join(' ', tokens)}\"");
+                    $"Unknown token when parsing LevelData ({indentedFormatString}): [{firstToken}] line: \"{line}\"");
         }
     }
 }

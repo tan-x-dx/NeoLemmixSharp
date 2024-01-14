@@ -19,17 +19,20 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$STATE_RECOLORING";
-    public void BeginReading(string[] tokens)
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         _currentLemmingStateRecoloring = null;
         FinishedReading = false;
     }
 
-    public void ReadNextLine(string[] tokens)
+    public void ReadNextLine(ReadOnlySpan<char> line)
     {
-        if (tokens[0][0] == '$')
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+
+        if (firstToken[0] == '$')
         {
-            if (tokens[0] == "$END")
+            if (firstToken is "$END")
             {
                 if (_currentLemmingStateRecoloring == null)
                 {
@@ -46,28 +49,28 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
                 return;
             }
 
-            if (_themeData.LemmingStateRecoloringLookup.TryGetValue(tokens[0], out _currentLemmingStateRecoloring))
+            if (ReadingHelpers.TryGetWithSpan(_themeData.LemmingStateRecoloringLookup, firstToken, out _currentLemmingStateRecoloring))
                 return;
 
-            _currentLemmingStateRecoloring = new LemmingStateRecoloring(tokens[0]);
+            _currentLemmingStateRecoloring = new LemmingStateRecoloring(firstToken.ToString());
             _themeData.LemmingStateRecoloringLookup.Add(_currentLemmingStateRecoloring.StateIdentifier, _currentLemmingStateRecoloring);
 
             return;
         }
 
-        switch (tokens[0])
+        switch (firstToken)
         {
             case "FROM":
-                _currentOriginalColor = ReadingHelpers.ReadUint(tokens[1], false);
+                _currentOriginalColor = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "TO":
-                _currentReplacementColor = ReadingHelpers.ReadUint(tokens[1], false);
+                _currentReplacementColor = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             default:
                 throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{tokens[0]}] line: \"{string.Join(' ', tokens)}\"");
+                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
         }
     }
 }

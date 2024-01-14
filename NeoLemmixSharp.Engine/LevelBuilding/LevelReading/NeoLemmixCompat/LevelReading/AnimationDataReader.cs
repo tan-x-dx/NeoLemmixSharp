@@ -17,101 +17,92 @@ public sealed class AnimationDataReader : INeoLemmixDataReader
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$ANIMATIONS";
-    public void BeginReading(string[] tokens)
+
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         _currentLemmingSpriteData = null;
         _footSetter = FootSetter.None;
         FinishedReading = false;
     }
 
-    public void ReadNextLine(string[] tokens)
+    public void ReadNextLine(ReadOnlySpan<char> line)
     {
-        if (tokens[0][0] == '$')
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+
+        if (line[0] == '$')
         {
-            switch (tokens[0])
+            switch (firstToken)
             {
                 case "$RIGHT":
                     _footSetter = FootSetter.RightFoot;
                     return;
-
                 case "$LEFT":
                     _footSetter = FootSetter.LeftFoot;
                     return;
-
-                case "$END":
-                    if (_currentLemmingSpriteData == null)
-                    {
-                        FinishedReading = true;
-                        return;
-                    }
-
-                    if (_footSetter != FootSetter.None)
-                    {
-                        _footSetter = FootSetter.None;
-                        return;
-                    }
-
-                    _currentLemmingSpriteData = null;
+                case "$END" when _currentLemmingSpriteData == null:
+                    FinishedReading = true;
                     return;
+                case "$END" when _footSetter != FootSetter.None:
+                    _footSetter = FootSetter.None;
+                    return;
+                case "$END":
+                    _currentLemmingSpriteData = null;
+                    break;
             }
 
-            _currentLemmingSpriteData = new LemmingSpriteData(tokens[0]);
+            _currentLemmingSpriteData = new LemmingSpriteData(firstToken.ToString());
             _themeData.LemmingSpriteDataLookup.Add(_currentLemmingSpriteData.AnimationIdentifier, _currentLemmingSpriteData);
 
             return;
         }
 
-        switch (tokens[0])
+        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+        switch (firstToken)
         {
             case "FRAMES":
-                _currentLemmingSpriteData!.NumberOfFrames = ReadingHelpers.ReadInt(tokens[1]);
-                break;
-
+                _currentLemmingSpriteData!.NumberOfFrames = ReadingHelpers.ReadInt(secondToken);
+                return;
             case "LOOP_TO_FRAME":
-                _currentLemmingSpriteData!.LoopToFrame = ReadingHelpers.ReadInt(tokens[1]);
-                break;
-
+                _currentLemmingSpriteData!.LoopToFrame = ReadingHelpers.ReadInt(secondToken);
+                return;
             case "PEAK_FRAME":
-                _currentLemmingSpriteData!.PeakFrame = ReadingHelpers.ReadInt(tokens[1]);
-                break;
-
+                _currentLemmingSpriteData!.PeakFrame = ReadingHelpers.ReadInt(secondToken);
+                return;
             case "FOOT_X":
                 switch (_footSetter)
                 {
                     case FootSetter.None:
                         throw new InvalidOperationException("No foot setting type selected!");
                     case FootSetter.LeftFoot:
-                        _currentLemmingSpriteData!.LeftFootX = ReadingHelpers.ReadInt(tokens[1]);
+                        _currentLemmingSpriteData!.LeftFootX = ReadingHelpers.ReadInt(secondToken);
                         break;
                     case FootSetter.RightFoot:
-                        _currentLemmingSpriteData!.RightFootX = ReadingHelpers.ReadInt(tokens[1]);
+                        _currentLemmingSpriteData!.RightFootX = ReadingHelpers.ReadInt(secondToken);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                break;
+                return;
 
             case "FOOT_Y":
-
                 switch (_footSetter)
                 {
                     case FootSetter.None:
                         throw new InvalidOperationException("No foot setting type selected!");
                     case FootSetter.LeftFoot:
-                        _currentLemmingSpriteData!.LeftFootY = ReadingHelpers.ReadInt(tokens[1]);
+                        _currentLemmingSpriteData!.LeftFootY = ReadingHelpers.ReadInt(secondToken);
                         break;
                     case FootSetter.RightFoot:
-                        _currentLemmingSpriteData!.RightFootY = ReadingHelpers.ReadInt(tokens[1]);
+                        _currentLemmingSpriteData!.RightFootY = ReadingHelpers.ReadInt(secondToken);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                break;
-
-            default:
-                throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{tokens[0]}] line: \"{string.Join(' ', tokens)}\"");
+                return;
         }
+
+        throw new InvalidOperationException(
+            $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
     }
 
     private enum FootSetter

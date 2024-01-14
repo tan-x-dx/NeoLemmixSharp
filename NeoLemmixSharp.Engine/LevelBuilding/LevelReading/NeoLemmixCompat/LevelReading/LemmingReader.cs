@@ -4,14 +4,15 @@ public sealed class LemmingReader : INeoLemmixDataReader
 {
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$LEMMING";
-    public void BeginReading(string[] tokens)
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
     }
 
-    public void ReadNextLine(string[] tokens)
+    public void ReadNextLine(ReadOnlySpan<char> line)
     {
-        switch (tokens[0])
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        switch (firstToken)
         {
             case "$END":
                 FinishedReading = true;
@@ -19,7 +20,7 @@ public sealed class LemmingReader : INeoLemmixDataReader
 
                 /*  default:
                       throw new InvalidOperationException(
-                          $"Unknown token when parsing {IdentifierToken}: [{tokens[0]}] line: \"{string.Join(' ', tokens)}\"");*/
+                          $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");*/
         }
     }
 }

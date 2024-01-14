@@ -14,57 +14,61 @@ public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$SPRITESET_RECOLORING";
 
-    public void BeginReading(string[] tokens)
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
     }
 
-    public void ReadNextLine(string[] tokens)
+    public void ReadNextLine(ReadOnlySpan<char> line)
     {
-        switch (tokens[0])
+        var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
+        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+        var rest = line[(1 + firstTokenIndex + firstToken.Length)..];
+
+        switch (firstToken)
         {
             case "MASK":
-                _lemmingSpriteSetRecoloring.Mask = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.Mask = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "LEMMING_HAIR":
-                _lemmingSpriteSetRecoloring.LemmingHair = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingHair = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "LEMMING_CLOTHES":
-                _lemmingSpriteSetRecoloring.LemmingClothes = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingClothes = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "LEMMING_SKIN":
-                _lemmingSpriteSetRecoloring.LemmingSkin = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingSkin = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "LEMMING_BUILDER_SACK":
-                _lemmingSpriteSetRecoloring.LemmingBuilderSack = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingBuilderSack = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "LEMMING_UMBRELLA":
-                _lemmingSpriteSetRecoloring.LemmingUmbrella = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingUmbrella = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "LEMMING_ZOMBIE_SKIN":
-                _lemmingSpriteSetRecoloring.LemmingZombieSkin = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingZombieSkin = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "LEMMING_ATHLETE_HAIR":
-                _lemmingSpriteSetRecoloring.LemmingAthleteHair = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingAthleteHair = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "LEMMING_ATHLETE_CLOTHES":
-                _lemmingSpriteSetRecoloring.LemmingAthleteClothes = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingAthleteClothes = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "LEMMING_NEUTRAL_CLOTHES":
-                _lemmingSpriteSetRecoloring.LemmingNeutralClothes = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingNeutralClothes = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "LEMMING_SELECTED_CLOTHES":
-                _lemmingSpriteSetRecoloring.LemmingSelectedClothes = ReadingHelpers.ReadUint(tokens[1], false);
+                _lemmingSpriteSetRecoloring.LemmingSelectedClothes = ReadingHelpers.ReadUint(secondToken, false);
                 break;
 
             case "$END":
@@ -73,7 +77,7 @@ public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
 
             default:
                 throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{tokens[0]}] line: \"{string.Join(' ', tokens)}\"");
+                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
         }
     }
 }
