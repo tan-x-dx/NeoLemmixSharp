@@ -28,7 +28,6 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
     public void ReadNextLine(ReadOnlySpan<char> line)
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
 
         if (firstToken[0] == '$')
         {
@@ -57,6 +56,8 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
 
             return;
         }
+
+        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
 
         switch (firstToken)
         {

@@ -6,8 +6,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 public sealed class NxlvLevelReader : ILevelReader
 {
-    private readonly Dictionary<string, INeoLemmixDataReader> _dataReaders = new();
-
+    private readonly INeoLemmixDataReader[] _dataReaders;
     private readonly List<NeoLemmixGadgetData> _neoLemmixGadgetData = new();
 
     private INeoLemmixDataReader? _currentDataReader;
@@ -18,25 +17,20 @@ public sealed class NxlvLevelReader : ILevelReader
     {
         LevelData = new LevelData();
 
-        AddDataReader(new LevelDataReader(LevelData, false));
-        AddDataReader(new LevelDataReader(LevelData, true));
-        AddDataReader(new SkillSetReader(LevelData));
-        AddDataReader(new TerrainGroupReader(LevelData.AllTerrainGroups));
-        AddDataReader(new GadgetReader(_neoLemmixGadgetData));
-        AddDataReader(new TerrainReader(LevelData.AllTerrainData));
-        AddDataReader(new LemmingReader());
-
-        AddDataReader(new SpriteSetRecoloringReader(LevelData.ThemeData.LemmingSpriteSetRecoloring));
-        AddDataReader(new StateRecoloringReader(LevelData.ThemeData));
-        AddDataReader(new ShadesReader());
-        AddDataReader(new AnimationDataReader(LevelData.ThemeData));
-
-        return;
-
-        void AddDataReader(INeoLemmixDataReader dataReader)
-        {
-            _dataReaders.Add(dataReader.IdentifierToken, dataReader);
-        }
+        _dataReaders =
+        [
+            new LevelDataReader(LevelData, false),
+            new LevelDataReader(LevelData, true),
+            new SkillSetReader(LevelData),
+            new TerrainGroupReader(LevelData.AllTerrainGroups),
+            new GadgetReader(_neoLemmixGadgetData),
+            new TerrainReader(LevelData.AllTerrainData),
+            new LemmingReader(),
+            new SpriteSetRecoloringReader(LevelData.ThemeData.LemmingSpriteSetRecoloring),
+            new StateRecoloringReader(LevelData.ThemeData),
+            new ShadesReader(),
+            new AnimationDataReader(LevelData.ThemeData)
+        ];
     }
 
     public void ReadLevel(string levelFilePath)
@@ -76,7 +70,7 @@ public sealed class NxlvLevelReader : ILevelReader
         }
 
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        if (ReadingHelpers.TryGetWithSpan(_dataReaders, firstToken, out var dataReader))
+        if (TryGetWithSpan(firstToken, out var dataReader))
         {
             _currentDataReader = dataReader;
             _currentDataReader.BeginReading(line);
@@ -85,6 +79,23 @@ public sealed class NxlvLevelReader : ILevelReader
         }
 
         throw new InvalidOperationException($"Unknown token: [{firstToken}] - line {index}: \"{line}\"");
+    }
+
+    private bool TryGetWithSpan(ReadOnlySpan<char> token, out INeoLemmixDataReader dataReader)
+    {
+        foreach (var item in _dataReaders)
+        {
+            var itemSpan = item.IdentifierToken.AsSpan();
+
+            if (itemSpan.SequenceEqual(token))
+            {
+                dataReader = item;
+                return true;
+            }
+        }
+
+        dataReader = null!;
+        return false;
     }
 
     private void ReadStyle()
