@@ -56,15 +56,15 @@ public sealed class TerrainReader : INeoLemmixDataReader
                 break;
 
             case "X":
-                _currentTerrainData!.X = ReadingHelpers.ReadInt(secondToken);
+                _currentTerrainData!.X = int.Parse(secondToken);
                 break;
 
             case "Y":
-                _currentTerrainData!.Y = ReadingHelpers.ReadInt(secondToken);
+                _currentTerrainData!.Y = int.Parse(secondToken);
                 break;
 
             case "RGB":
-                _currentTerrainData!.Tint = ReadingHelpers.ReadUint(secondToken, true);
+                _currentTerrainData!.Tint = ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "NO_OVERWRITE":

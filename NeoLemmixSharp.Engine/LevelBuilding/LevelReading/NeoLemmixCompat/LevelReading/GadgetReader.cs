@@ -37,23 +37,23 @@ public sealed class GadgetReader : INeoLemmixDataReader
                 break;
 
             case "X":
-                _currentGadgetData!.X = ReadingHelpers.ReadInt(secondToken);
+                _currentGadgetData!.X = int.Parse(secondToken);
                 break;
 
             case "Y":
-                _currentGadgetData!.Y = ReadingHelpers.ReadInt(secondToken);
+                _currentGadgetData!.Y = int.Parse(secondToken);
                 break;
 
             case "WIDTH":
-                _currentGadgetData!.Width = ReadingHelpers.ReadInt(secondToken);
+                _currentGadgetData!.Width = int.Parse(secondToken);
                 break;
 
             case "HEIGHT":
-                _currentGadgetData!.Height = ReadingHelpers.ReadInt(secondToken);
+                _currentGadgetData!.Height = int.Parse(secondToken);
                 break;
 
             case "SPEED":
-                _currentGadgetData!.Speed = ReadingHelpers.ReadInt(secondToken);
+                _currentGadgetData!.Speed = int.Parse(secondToken);
                 break;
 
             case "ANGLE":
@@ -89,7 +89,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
                 break;
 
             case "SKILL_COUNT":
-                _currentGadgetData!.SkillCount = ReadingHelpers.ReadInt(secondToken);
+                _currentGadgetData!.SkillCount = int.Parse(secondToken);
                 break;
 
             case "$END":

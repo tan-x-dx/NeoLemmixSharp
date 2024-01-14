@@ -60,13 +60,13 @@ public sealed class AnimationDataReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "FRAMES":
-                _currentLemmingSpriteData!.NumberOfFrames = ReadingHelpers.ReadInt(secondToken);
+                _currentLemmingSpriteData!.NumberOfFrames = int.Parse(secondToken);
                 return;
             case "LOOP_TO_FRAME":
-                _currentLemmingSpriteData!.LoopToFrame = ReadingHelpers.ReadInt(secondToken);
+                _currentLemmingSpriteData!.LoopToFrame = int.Parse(secondToken);
                 return;
             case "PEAK_FRAME":
-                _currentLemmingSpriteData!.PeakFrame = ReadingHelpers.ReadInt(secondToken);
+                _currentLemmingSpriteData!.PeakFrame = int.Parse(secondToken);
                 return;
             case "FOOT_X":
                 switch (_footSetter)
@@ -74,10 +74,10 @@ public sealed class AnimationDataReader : INeoLemmixDataReader
                     case FootSetter.None:
                         throw new InvalidOperationException("No foot setting type selected!");
                     case FootSetter.LeftFoot:
-                        _currentLemmingSpriteData!.LeftFootX = ReadingHelpers.ReadInt(secondToken);
+                        _currentLemmingSpriteData!.LeftFootX = int.Parse(secondToken);
                         break;
                     case FootSetter.RightFoot:
-                        _currentLemmingSpriteData!.RightFootX = ReadingHelpers.ReadInt(secondToken);
+                        _currentLemmingSpriteData!.RightFootX = int.Parse(secondToken);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -90,10 +90,10 @@ public sealed class AnimationDataReader : INeoLemmixDataReader
                     case FootSetter.None:
                         throw new InvalidOperationException("No foot setting type selected!");
                     case FootSetter.LeftFoot:
-                        _currentLemmingSpriteData!.LeftFootY = ReadingHelpers.ReadInt(secondToken);
+                        _currentLemmingSpriteData!.LeftFootY = int.Parse(secondToken);
                         break;
                     case FootSetter.RightFoot:
-                        _currentLemmingSpriteData!.RightFootY = ReadingHelpers.ReadInt(secondToken);
+                        _currentLemmingSpriteData!.RightFootY = int.Parse(secondToken);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

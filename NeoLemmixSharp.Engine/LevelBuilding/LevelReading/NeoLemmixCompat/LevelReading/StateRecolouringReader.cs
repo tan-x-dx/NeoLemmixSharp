@@ -61,11 +61,11 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "FROM":
-                _currentOriginalColor = ReadingHelpers.ReadUint(secondToken, false);
+                _currentOriginalColor = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "TO":
-                _currentReplacementColor = ReadingHelpers.ReadUint(secondToken, false);
+                _currentReplacementColor = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             default:

@@ -121,27 +121,27 @@ public sealed class NxlvLevelReader : ILevelReader
                 break;
 
             case "MASK":
-                LevelData.ThemeData.Mask = ReadingHelpers.ReadUint(secondToken, false);
+                LevelData.ThemeData.Mask = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "MINIMAP":
-                LevelData.ThemeData.Minimap = ReadingHelpers.ReadUint(secondToken, false);
+                LevelData.ThemeData.Minimap = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "BACKGROUND":
-                LevelData.ThemeData.Background = ReadingHelpers.ReadUint(secondToken, false);
+                LevelData.ThemeData.Background = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "ONE_WAYS":
-                LevelData.ThemeData.OneWays = ReadingHelpers.ReadUint(secondToken, false);
+                LevelData.ThemeData.OneWays = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "PICKUP_BORDER":
-                LevelData.ThemeData.PickupBorder = ReadingHelpers.ReadUint(secondToken, false);
+                LevelData.ThemeData.PickupBorder = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "PICKUP_INSIDE":
-                LevelData.ThemeData.PickupInside = ReadingHelpers.ReadUint(secondToken, false);
+                LevelData.ThemeData.PickupInside = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "END":

@@ -28,47 +28,47 @@ public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "MASK":
-                _lemmingSpriteSetRecoloring.Mask = ReadingHelpers.ReadUint(secondToken, false);
+                _lemmingSpriteSetRecoloring.Mask = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "LEMMING_HAIR":
-                _lemmingSpriteSetRecoloring.LemmingHair = ReadingHelpers.ReadUint(secondToken, false);
+                _lemmingSpriteSetRecoloring.LemmingHair = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "LEMMING_CLOTHES":
-                _lemmingSpriteSetRecoloring.LemmingClothes = ReadingHelpers.ReadUint(secondToken, false);
+                _lemmingSpriteSetRecoloring.LemmingClothes = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "LEMMING_SKIN":
-                _lemmingSpriteSetRecoloring.LemmingSkin = ReadingHelpers.ReadUint(secondToken, false);
+                _lemmingSpriteSetRecoloring.LemmingSkin = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "LEMMING_BUILDER_SACK":
-                _lemmingSpriteSetRecoloring.LemmingBuilderSack = ReadingHelpers.ReadUint(secondToken, false);
+                _lemmingSpriteSetRecoloring.LemmingBuilderSack = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "LEMMING_UMBRELLA":
-                _lemmingSpriteSetRecoloring.LemmingUmbrella = ReadingHelpers.ReadUint(secondToken, false);
+                _lemmingSpriteSetRecoloring.LemmingUmbrella = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "LEMMING_ZOMBIE_SKIN":
-                _lemmingSpriteSetRecoloring.LemmingZombieSkin = ReadingHelpers.ReadUint(secondToken, false);
+                _lemmingSpriteSetRecoloring.LemmingZombieSkin = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "LEMMING_ATHLETE_HAIR":
-                _lemmingSpriteSetRecoloring.LemmingAthleteHair = ReadingHelpers.ReadUint(secondToken, false);
+                _lemmingSpriteSetRecoloring.LemmingAthleteHair = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "LEMMING_ATHLETE_CLOTHES":
-                _lemmingSpriteSetRecoloring.LemmingAthleteClothes = ReadingHelpers.ReadUint(secondToken, false);
+                _lemmingSpriteSetRecoloring.LemmingAthleteClothes = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "LEMMING_NEUTRAL_CLOTHES":
-                _lemmingSpriteSetRecoloring.LemmingNeutralClothes = ReadingHelpers.ReadUint(secondToken, false);
+                _lemmingSpriteSetRecoloring.LemmingNeutralClothes = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "LEMMING_SELECTED_CLOTHES":
-                _lemmingSpriteSetRecoloring.LemmingSelectedClothes = ReadingHelpers.ReadUint(secondToken, false);
+                _lemmingSpriteSetRecoloring.LemmingSelectedClothes = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "$END":

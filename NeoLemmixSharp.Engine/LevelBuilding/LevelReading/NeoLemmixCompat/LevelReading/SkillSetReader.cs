@@ -44,7 +44,7 @@ public sealed class SkillSetReader : INeoLemmixDataReader, IEqualityComparer<cha
 
         var amount = secondToken is "INFINITE"
             ? LevelConstants.InfiniteSkillCount
-            : ReadingHelpers.ReadInt(secondToken);
+            : int.Parse(secondToken);
 
         var skillSetDatum = new SkillSetData
         {

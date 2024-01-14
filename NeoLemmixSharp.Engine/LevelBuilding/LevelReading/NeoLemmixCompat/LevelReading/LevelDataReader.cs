@@ -48,19 +48,19 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "ID":
-                _levelData.LevelId = ReadingHelpers.ReadUlong(secondToken);
+                _levelData.LevelId = ReadingHelpers.ParseUnsignedNumericalValue<ulong>(secondToken);
                 break;
 
             case "VERSION":
-                _levelData.Version = ReadingHelpers.ReadUlong(secondToken);
+                _levelData.Version = ReadingHelpers.ParseUnsignedNumericalValue<ulong>(secondToken);
                 break;
 
             case "START_X":
-                _levelData.LevelStartPositionX = ReadingHelpers.ReadInt(secondToken);
+                _levelData.LevelStartPositionX = int.Parse(secondToken);
                 break;
 
             case "START_Y":
-                _levelData.LevelStartPositionY = ReadingHelpers.ReadInt(secondToken);
+                _levelData.LevelStartPositionY = int.Parse(secondToken);
                 break;
 
             case "THEME":
@@ -76,23 +76,23 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "WIDTH":
-                _levelData.LevelWidth = ReadingHelpers.ReadInt(secondToken);
+                _levelData.LevelWidth = int.Parse(secondToken);
                 break;
 
             case "HEIGHT":
-                _levelData.LevelHeight = ReadingHelpers.ReadInt(secondToken);
+                _levelData.LevelHeight = int.Parse(secondToken);
                 break;
 
             case "LEMMINGS":
-                _levelData.NumberOfLemmings = ReadingHelpers.ReadInt(secondToken);
+                _levelData.NumberOfLemmings = int.Parse(secondToken);
                 break;
 
             case "SAVE_REQUIREMENT":
-                _levelData.SaveRequirement = ReadingHelpers.ReadInt(secondToken);
+                _levelData.SaveRequirement = int.Parse(secondToken);
                 break;
 
             case "TIME_LIMIT":
-                _levelData.TimeLimit = ReadingHelpers.ReadInt(secondToken);
+                _levelData.TimeLimit = int.Parse(secondToken);
                 break;
 
             case "SPAWN_INTERVAL_LOCKED":
@@ -100,7 +100,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "MAX_SPAWN_INTERVAL":
-                _levelData.MaxSpawnInterval = ReadingHelpers.ReadInt(secondToken);
+                _levelData.MaxSpawnInterval = int.Parse(secondToken);
 
                 if (_indentedFormat)
                     break;
