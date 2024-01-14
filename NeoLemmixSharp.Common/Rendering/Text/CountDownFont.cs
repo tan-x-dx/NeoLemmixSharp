@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Common.Rendering.Text;
 
-public sealed class CountDownFont : INeoLemmixFont
+public sealed class CountDownFont
 {
     private const int EmptyGlyphWidth = 2;
     private const int GlyphWidth = 4;
@@ -31,23 +31,6 @@ public sealed class CountDownFont : INeoLemmixFont
         sourceX = -EmptyGlyphWidth;
         glyphWidth = EmptyGlyphWidth;
         return false;
-    }
-
-    public void RenderText(
-        SpriteBatch spriteBatch,
-        ReadOnlySpan<char> charactersToRender,
-        int x,
-        int y,
-        int scaleMultiplier,
-        Color color)
-    {
-        var dest = new Rectangle(x, y, 0, GlyphHeight * scaleMultiplier);
-        foreach (var c in charactersToRender)
-        {
-            var glyphWidth = RenderChar(spriteBatch, dest, c, scaleMultiplier, color);
-
-            dest.X += glyphWidth * scaleMultiplier;
-        }
     }
 
     public void RenderTextSpan(

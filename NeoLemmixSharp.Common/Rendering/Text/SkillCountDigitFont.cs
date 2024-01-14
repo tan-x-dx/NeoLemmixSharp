@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Common.Rendering.Text;
 
-public sealed class SkillCountDigitFont : INeoLemmixFont
+public sealed class SkillCountDigitFont
 {
     private const int EmptyGlyphWidth = 2;
     private const int DigitGlyphWidth = 4;
@@ -45,23 +45,6 @@ public sealed class SkillCountDigitFont : INeoLemmixFont
                 sourceX = -EmptyGlyphWidth;
                 glyphWidth = EmptyGlyphWidth;
                 return false;
-        }
-    }
-
-    public void RenderText(
-        SpriteBatch spriteBatch,
-        ReadOnlySpan<char> charactersToRender,
-        int x,
-        int y,
-        int scaleMultiplier,
-        Color color)
-    {
-        var dest = new Rectangle(x, y, 0, GlyphHeight * scaleMultiplier);
-        foreach (var c in charactersToRender)
-        {
-            var glyphWidth = RenderChar(spriteBatch, dest, c, scaleMultiplier, color);
-
-            dest.X += glyphWidth * scaleMultiplier;
         }
     }
 
