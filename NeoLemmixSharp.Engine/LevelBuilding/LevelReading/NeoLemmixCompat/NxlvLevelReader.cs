@@ -29,7 +29,8 @@ public sealed class NxlvLevelReader : ILevelReader
             new SpriteSetRecoloringReader(LevelData.ThemeData.LemmingSpriteSetRecoloring),
             new StateRecoloringReader(LevelData.ThemeData),
             new ShadesReader(),
-            new AnimationDataReader(LevelData.ThemeData)
+
+            new DudDataReader("$ANIMATIONS")
         ];
     }
 
@@ -70,15 +71,11 @@ public sealed class NxlvLevelReader : ILevelReader
         }
 
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        if (TryGetWithSpan(firstToken, out var dataReader))
-        {
-            _currentDataReader = dataReader;
-            _currentDataReader.BeginReading(line);
-
+        if (!TryGetWithSpan(firstToken, out var dataReader)) // If there's no applicable reader, just skip
             return;
-        }
 
-        throw new InvalidOperationException($"Unknown token: [{firstToken}] - line {index}: \"{line}\"");
+        _currentDataReader = dataReader;
+        _currentDataReader.BeginReading(line);
     }
 
     private bool TryGetWithSpan(ReadOnlySpan<char> token, out INeoLemmixDataReader dataReader)
