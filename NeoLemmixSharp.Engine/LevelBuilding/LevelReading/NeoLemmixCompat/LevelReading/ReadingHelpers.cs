@@ -61,11 +61,11 @@ public static class ReadingHelpers
         // the initial "0x" part must be omitted. We deal with this here
 
         var startIndex = 0;
-        if (token[0] == 'x')
+        if (token[0] == 'x' || token[0] == 'X')
         {
             startIndex = 1;
         }
-        else if (token[1] == 'x')
+        else if (token[1] == 'x' || token[1] == 'X')
         {
             startIndex = 2;
         }
