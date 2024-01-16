@@ -40,7 +40,7 @@ public sealed class NxlvLevelReader : ILevelReader
         for (var index = 0; index < lines.Length; index++)
         {
             var line = lines[index];
-            if (line[0] == '#' || string.IsNullOrWhiteSpace(line)) // Comment line or blank - ignore
+            if (LineIsBlankOrComment(line))
                 continue;
 
             ProcessLine(line, index);
@@ -108,7 +108,7 @@ public sealed class NxlvLevelReader : ILevelReader
         for (var index = 0; index < themeLines.Length; index++)
         {
             var line = themeLines[index];
-            if (line[0] == '#' || string.IsNullOrWhiteSpace(line)) // Comment line or blank - ignore
+            if (LineIsBlankOrComment(line))
                 continue;
 
             ProcessThemeLine(line, index);
@@ -169,7 +169,7 @@ public sealed class NxlvLevelReader : ILevelReader
         for (var index = 0; index < schemeLines.Length; index++)
         {
             var line = schemeLines[index];
-            if (line[0] == '#' || string.IsNullOrWhiteSpace(line)) // Comment line or blank - ignore
+            if (LineIsBlankOrComment(line))
                 continue;
             ProcessLine(line, index);
         }
@@ -186,5 +186,10 @@ public sealed class NxlvLevelReader : ILevelReader
         {
             terrainGroup.Dispose();
         }
+    }
+
+    private static bool LineIsBlankOrComment(string line)
+    {
+        return string.IsNullOrWhiteSpace(line) || line[0] == '#';
     }
 }
