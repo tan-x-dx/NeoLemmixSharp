@@ -9,45 +9,36 @@ namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 {
     public const int Shift = 5;
+    public const int Mask = (1 << Shift) - 1;
 
-    private readonly IUintWrapper _uintWrapper;
+    private readonly uint[] _bits;
 
     /// <summary>
     /// The footprint of this BitArray - how many uints it logically represents
     /// </summary>
-    public int Size => _uintWrapper.Size;
+    public int Size => _bits.Length;
     /// <summary>
     /// The maximum number of integers that this BitArray can carry
     /// </summary>
-    public int Length => Size << Shift;
+    public int Length => _bits.Length << Shift;
     /// <summary>
     /// The number of integers currently stored in this BitArray
     /// </summary>
     public int Count { get; private set; }
 
-    [Pure]
-    public static BitArray CreateForLength(int specifiedLength)
+    public BitArray(int length, bool initialBitFlag = false)
     {
-        IUintWrapper uintWrapper = specifiedLength > SingleUintWrapper.SmallBitArrayLength
-            ? new UintArrayWrapper(specifiedLength)
-            : new SingleUintWrapper();
+        var arraySize = (length + Mask) >> Shift;
+        _bits = new uint[arraySize];
 
-        return new BitArray(uintWrapper);
-    }
-
-    private BitArray(IUintWrapper uintWrapper)
-    {
-        _uintWrapper = uintWrapper;
-    }
-
-    public BitArray(IUintWrapper uintWrapper, bool calculatePopCount)
-    {
-        _uintWrapper = uintWrapper;
-
-        if (!calculatePopCount)
+        if (!initialBitFlag)
             return;
 
-        Count = PopCount(uintWrapper.AsReadOnlySpan());
+        Array.Fill(_bits, uint.MaxValue);
+
+        var shift = length & Mask;
+        var mask = (1U << shift) - 1U;
+        _bits[^1] = mask;
     }
 
     /// <summary>
@@ -58,7 +49,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     [Pure]
     public bool GetBit(int index)
     {
-        var span = _uintWrapper.AsReadOnlySpan();
+        var span = new ReadOnlySpan<uint>(_bits);
         var value = span[index >> Shift];
         value >>= index;
         return (value & 1U) != 0U;
@@ -72,7 +63,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     /// <returns>True if the operation changed the value of the bit, false if the bit was previously set</returns>
     public bool SetBit(int index)
     {
-        var span = _uintWrapper.AsSpan();
+        var span = new Span<uint>(_bits);
         var delta = SetBit(span, index);
         Count += delta;
 
@@ -106,7 +97,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     /// <returns>True if the operation changed the value of the bit, false if the bit was previously clear</returns>
     public bool ClearBit(int index)
     {
-        var span = _uintWrapper.AsSpan();
+        var span = new Span<uint>(_bits);
         var delta = ClearBit(span, index);
         Count -= delta;
 
@@ -141,7 +132,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     {
         var intIndex = index >> Shift;
 
-        var span = _uintWrapper.AsSpan();
+        var span = new Span<uint>(_bits);
         ref var arrayValue = ref span[intIndex];
         var oldValue = arrayValue;
         arrayValue ^= 1U << index;
@@ -156,7 +147,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
     public void Clear()
     {
-        _uintWrapper.AsSpan().Clear();
+        new Span<uint>(_bits).Clear();
         Count = 0;
     }
 
@@ -164,7 +155,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     {
         var remaining = Count;
         var index = 0;
-        var span = _uintWrapper.AsReadOnlySpan();
+        var span = new ReadOnlySpan<uint>(_bits);
         var v = span[0];
 
         while (remaining > 0)
@@ -194,7 +185,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal ReadOnlySpan<uint> AsReadOnlySpan() => _uintWrapper.AsReadOnlySpan();
+    internal ReadOnlySpan<uint> AsReadOnlySpan() => new(_bits);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -272,7 +263,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
     internal void UnionWith(ReadOnlySpan<uint> other)
     {
-        var span = _uintWrapper.AsSpan();
+        var span = new Span<uint>(_bits);
 
         var newCount = UnionWith(span, other);
         Count = newCount;
@@ -294,7 +285,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
     internal void IntersectWith(ReadOnlySpan<uint> other)
     {
-        var span = _uintWrapper.AsSpan();
+        var span = new Span<uint>(_bits);
         Debug.Assert(span.Length == other.Length);
 
         var count = 0;
@@ -309,7 +300,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
     internal void ExceptWith(ReadOnlySpan<uint> other)
     {
-        var span = _uintWrapper.AsSpan();
+        var span = new Span<uint>(_bits);
         Debug.Assert(span.Length == other.Length);
 
         var count = 0;
@@ -324,7 +315,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
     internal void SymmetricExceptWith(ReadOnlySpan<uint> other)
     {
-        var span = _uintWrapper.AsSpan();
+        var span = new Span<uint>(_bits);
         Debug.Assert(span.Length == other.Length);
 
         var count = 0;
@@ -340,7 +331,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     [Pure]
     internal bool IsSubsetOf(ReadOnlySpan<uint> other)
     {
-        var span = _uintWrapper.AsReadOnlySpan();
+        var span = new ReadOnlySpan<uint>(_bits);
         Debug.Assert(span.Length == other.Length);
 
         for (var i = 0; i < span.Length; i++)
@@ -357,7 +348,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     [Pure]
     internal bool IsSupersetOf(ReadOnlySpan<uint> other)
     {
-        var span = _uintWrapper.AsReadOnlySpan();
+        var span = new ReadOnlySpan<uint>(_bits);
         Debug.Assert(span.Length == other.Length);
 
         for (var i = 0; i < span.Length; i++)
@@ -374,7 +365,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     [Pure]
     internal bool IsProperSubsetOf(ReadOnlySpan<uint> other)
     {
-        var span = _uintWrapper.AsReadOnlySpan();
+        var span = new ReadOnlySpan<uint>(_bits);
         Debug.Assert(span.Length == other.Length);
 
         var allEqual = true;
@@ -394,7 +385,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     [Pure]
     internal bool IsProperSupersetOf(ReadOnlySpan<uint> other)
     {
-        var span = _uintWrapper.AsReadOnlySpan();
+        var span = new ReadOnlySpan<uint>(_bits);
         Debug.Assert(span.Length == other.Length);
 
         var allEqual = true;
@@ -414,7 +405,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     [Pure]
     internal bool Overlaps(ReadOnlySpan<uint> other)
     {
-        var span = _uintWrapper.AsReadOnlySpan();
+        var span = new ReadOnlySpan<uint>(_bits);
         Debug.Assert(span.Length == other.Length);
 
         for (var i = 0; i < span.Length; i++)
@@ -431,7 +422,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     [Pure]
     internal bool SetEquals(ReadOnlySpan<uint> other)
     {
-        var span = _uintWrapper.AsReadOnlySpan();
+        var span = new ReadOnlySpan<uint>(_bits);
         Debug.Assert(span.Length == other.Length);
 
         for (var i = 0; i < span.Length; i++)

@@ -15,7 +15,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 	public SimpleSet(IPerfectHasher<T> hasher)
 	{
 		_hasher = hasher;
-		_bits = BitArray.CreateForLength(hasher.NumberOfItems);
+		_bits = new BitArray(hasher.NumberOfItems);
 	}
 
 	public int Size => _bits.Size;
@@ -93,7 +93,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 		if (other is SimpleSet<T> set)
 			return set._bits;
 
-		var result = BitArray.CreateForLength(_hasher.NumberOfItems);
+		var result = new BitArray(_hasher.NumberOfItems);
 
 		foreach (var item in other)
 		{
