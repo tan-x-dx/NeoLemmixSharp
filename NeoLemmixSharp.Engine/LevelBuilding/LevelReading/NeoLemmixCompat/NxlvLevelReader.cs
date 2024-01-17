@@ -9,32 +9,30 @@ public sealed class NxlvLevelReader : ILevelReader
     private readonly INeoLemmixDataReader[] _dataReaders;
     private readonly List<NeoLemmixGadgetData> _neoLemmixGadgetData = new();
 
-    private INeoLemmixDataReader? _currentDataReader;
+    private readonly LevelData _levelData = new();
 
-    public LevelData LevelData { get; }
+    private INeoLemmixDataReader? _currentDataReader;
 
     public NxlvLevelReader()
     {
-        LevelData = new LevelData();
-
         _dataReaders =
         [
-            new LevelDataReader(LevelData, false),
-            new LevelDataReader(LevelData, true),
-            new SkillSetReader(LevelData),
-            new TerrainGroupReader(LevelData.AllTerrainGroups),
+            new LevelDataReader(_levelData, false),
+            new LevelDataReader(_levelData, true),
+            new SkillSetReader(_levelData),
+            new TerrainGroupReader(_levelData.AllTerrainGroups),
             new GadgetReader(_neoLemmixGadgetData),
-            new TerrainReader(LevelData.AllTerrainData),
+            new TerrainReader(_levelData.AllTerrainData),
             new LemmingReader(),
-            new SpriteSetRecoloringReader(LevelData.ThemeData.LemmingSpriteSetRecoloring),
-            new StateRecoloringReader(LevelData.ThemeData),
+            new SpriteSetRecoloringReader(_levelData.ThemeData.LemmingSpriteSetRecoloring),
+            new StateRecoloringReader(_levelData.ThemeData),
             new ShadesReader(),
 
             new DudDataReader("$ANIMATIONS")
         ];
     }
 
-    public void ReadLevel(string levelFilePath)
+    public LevelData ReadLevel(string levelFilePath)
     {
         using (var stream = new FileStream(levelFilePath, FileMode.Open))
         {
@@ -50,14 +48,16 @@ public sealed class NxlvLevelReader : ILevelReader
             }
         }
 
-        if (string.IsNullOrWhiteSpace(LevelData.LevelTitle))
+        if (string.IsNullOrWhiteSpace(_levelData.LevelTitle))
         {
-            LevelData.LevelTitle = "Untitled";
+            _levelData.LevelTitle = "Untitled";
         }
 
         ReadStyle();
         ReadSpriteData();
         SetUpGadgets();
+
+        return _levelData;
     }
 
     private void ProcessLine(string line)
@@ -100,7 +100,7 @@ public sealed class NxlvLevelReader : ILevelReader
 
     private void ReadStyle()
     {
-        var theme = LevelData.LevelTheme;
+        var theme = _levelData.LevelTheme;
         var themeFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", theme, "theme.nxtm");
 
         using (var stream = new FileStream(themeFilePath, FileMode.Open))
@@ -117,7 +117,11 @@ public sealed class NxlvLevelReader : ILevelReader
             }
         }
 
-        LevelData.ThemeData.LemmingSpritesFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", LevelData.ThemeData.BaseStyle, "lemmings");
+        _levelData.ThemeData.LemmingSpritesFilePath = Path.Combine(
+            RootDirectoryManager.RootDirectory,
+            "styles",
+            _levelData.ThemeData.BaseStyle,
+            "lemmings");
     }
 
     private void ProcessThemeLine(string line)
@@ -128,34 +132,34 @@ public sealed class NxlvLevelReader : ILevelReader
         switch (firstToken)
         {
             case "LEMMINGS":
-                LevelData.ThemeData.BaseStyle = secondToken.ToString();
+                _levelData.ThemeData.BaseStyle = secondToken.ToString();
                 break;
 
             case "$COLORS":
                 break;
 
             case "MASK":
-                LevelData.ThemeData.Mask = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                _levelData.ThemeData.Mask = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "MINIMAP":
-                LevelData.ThemeData.Minimap = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                _levelData.ThemeData.Minimap = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "BACKGROUND":
-                LevelData.ThemeData.Background = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                _levelData.ThemeData.Background = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "ONE_WAYS":
-                LevelData.ThemeData.OneWays = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                _levelData.ThemeData.OneWays = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "PICKUP_BORDER":
-                LevelData.ThemeData.PickupBorder = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                _levelData.ThemeData.PickupBorder = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "PICKUP_INSIDE":
-                LevelData.ThemeData.PickupInside = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                _levelData.ThemeData.PickupInside = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
                 break;
 
             case "END":
@@ -165,7 +169,9 @@ public sealed class NxlvLevelReader : ILevelReader
 
     private void ReadSpriteData()
     {
-        var schemeFilePath = Path.Combine(LevelData.ThemeData.LemmingSpritesFilePath, "scheme.nxmi");
+        var schemeFilePath = Path.Combine(
+            _levelData.ThemeData.LemmingSpritesFilePath,
+            "scheme.nxmi");
 
         using var stream = new FileStream(schemeFilePath, FileMode.Open);
         using var streamReader = new StreamReader(stream);
@@ -186,7 +192,7 @@ public sealed class NxlvLevelReader : ILevelReader
 
     public void Dispose()
     {
-        foreach (var terrainGroup in LevelData.AllTerrainGroups)
+        foreach (var terrainGroup in _levelData.AllTerrainGroups)
         {
             terrainGroup.Dispose();
         }

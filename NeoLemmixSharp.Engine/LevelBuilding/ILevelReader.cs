@@ -4,7 +4,5 @@ namespace NeoLemmixSharp.Engine.LevelBuilding;
 
 public interface ILevelReader : IDisposable
 {
-    LevelData LevelData { get; }
-
-    void ReadLevel(string levelFilePath);
+    LevelData ReadLevel(string levelFilePath);
 }
