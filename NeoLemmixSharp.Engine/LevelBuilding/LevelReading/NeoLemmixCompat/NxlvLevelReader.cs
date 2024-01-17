@@ -36,15 +36,18 @@ public sealed class NxlvLevelReader : ILevelReader
 
     public void ReadLevel(string levelFilePath)
     {
-        var lines = File.ReadAllLines(levelFilePath);
-
-        for (var index = 0; index < lines.Length; index++)
+        using (var stream = new FileStream(levelFilePath, FileMode.Open))
         {
-            var line = lines[index];
-            if (LineIsBlankOrComment(line))
-                continue;
+            using var streamReader = new StreamReader(stream);
 
-            ProcessLine(line, index);
+            string? line;
+            while ((line = streamReader.ReadLine()) != null)
+            {
+                if (LineIsBlankOrComment(line))
+                    continue;
+
+                ProcessLine(line);
+            }
         }
 
         if (string.IsNullOrWhiteSpace(LevelData.LevelTitle))
@@ -57,7 +60,7 @@ public sealed class NxlvLevelReader : ILevelReader
         SetUpGadgets();
     }
 
-    private void ProcessLine(string line, int index)
+    private void ProcessLine(string line)
     {
         if (_currentDataReader != null)
         {
@@ -100,21 +103,24 @@ public sealed class NxlvLevelReader : ILevelReader
         var theme = LevelData.LevelTheme;
         var themeFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", theme, "theme.nxtm");
 
-        var themeLines = File.ReadAllLines(themeFilePath);
-
-        for (var index = 0; index < themeLines.Length; index++)
+        using (var stream = new FileStream(themeFilePath, FileMode.Open))
         {
-            var line = themeLines[index];
-            if (LineIsBlankOrComment(line))
-                continue;
+            using var streamReader = new StreamReader(stream);
 
-            ProcessThemeLine(line, index);
+            string? line;
+            while ((line = streamReader.ReadLine()) != null)
+            {
+                if (LineIsBlankOrComment(line))
+                    continue;
+
+                ProcessThemeLine(line);
+            }
         }
 
         LevelData.ThemeData.LemmingSpritesFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", LevelData.ThemeData.BaseStyle, "lemmings");
     }
 
-    private void ProcessThemeLine(string line, int index)
+    private void ProcessThemeLine(string line)
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
         var secondToken = ReadingHelpers.GetToken(line, 1, out _);
@@ -161,14 +167,15 @@ public sealed class NxlvLevelReader : ILevelReader
     {
         var schemeFilePath = Path.Combine(LevelData.ThemeData.LemmingSpritesFilePath, "scheme.nxmi");
 
-        var schemeLines = File.ReadAllLines(schemeFilePath);
+        using var stream = new FileStream(schemeFilePath, FileMode.Open);
+        using var streamReader = new StreamReader(stream);
 
-        for (var index = 0; index < schemeLines.Length; index++)
+        string? line;
+        while ((line = streamReader.ReadLine()) != null)
         {
-            var line = schemeLines[index];
             if (LineIsBlankOrComment(line))
                 continue;
-            ProcessLine(line, index);
+            ProcessLine(line);
         }
     }
 
