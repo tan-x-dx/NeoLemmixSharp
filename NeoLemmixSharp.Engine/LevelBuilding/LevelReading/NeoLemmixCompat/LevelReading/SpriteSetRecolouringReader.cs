@@ -1,15 +1,11 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.SpriteSet;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.SpriteSet;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
 {
-    private readonly LemmingSpriteSetRecoloring _lemmingSpriteSetRecoloring;
-
-    public SpriteSetRecoloringReader(LemmingSpriteSetRecoloring lemmingSpriteSetRecoloring)
-    {
-        _lemmingSpriteSetRecoloring = lemmingSpriteSetRecoloring;
-    }
+    private readonly LemmingSpriteSetRecoloring _lemmingSpriteSetRecoloring = new();
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$SPRITESET_RECOLORING";
@@ -19,7 +15,7 @@ public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
         FinishedReading = false;
     }
 
-    public void ReadNextLine(ReadOnlySpan<char> line)
+    public bool ReadNextLine(ReadOnlySpan<char> line)
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
         var secondToken = ReadingHelpers.GetToken(line, 1, out _);
@@ -78,5 +74,15 @@ public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
                 throw new InvalidOperationException(
                     $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
         }
+
+        return false;
+    }
+
+    public void ApplyToLevelData(LevelData levelData)
+    {
+    }
+
+    public void Dispose()
+    {
     }
 }

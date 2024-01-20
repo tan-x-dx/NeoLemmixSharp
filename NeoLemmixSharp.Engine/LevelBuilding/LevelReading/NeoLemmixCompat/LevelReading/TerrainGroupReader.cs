@@ -4,15 +4,10 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 
 public sealed class TerrainGroupReader : INeoLemmixDataReader
 {
-    private readonly ICollection<TerrainGroup> _allTerrainGroups;
+    private readonly List<TerrainGroup> _allTerrainGroups = new();
 
     private TerrainReader? _terrainReader;
     private TerrainGroup? _currentTerrainGroup;
-
-    public TerrainGroupReader(ICollection<TerrainGroup> allTerrainGroups)
-    {
-        _allTerrainGroups = allTerrainGroups;
-    }
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$TERRAINGROUP";
@@ -23,18 +18,19 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
         FinishedReading = false;
     }
 
-    public void ReadNextLine(ReadOnlySpan<char> line)
+    public bool ReadNextLine(ReadOnlySpan<char> line)
     {
         if (_terrainReader != null)
         {
-            _terrainReader.ReadNextLine(line);
+            var result = _terrainReader.ReadNextLine(line);
 
             if (_terrainReader.FinishedReading)
             {
+                _terrainReader.Dispose();
                 _terrainReader = null;
             }
 
-            return;
+            return result;
         }
 
         var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
@@ -57,5 +53,22 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
                 FinishedReading = true;
                 break;
         }
+
+        return false;
+    }
+
+    public void ApplyToLevelData(LevelData levelData)
+    {
+        levelData.AllTerrainGroups.AddRange(_allTerrainGroups);
+    }
+
+    public void Dispose()
+    {
+        foreach (var terrainGroup in _allTerrainGroups)
+        {
+            terrainGroup.Dispose();
+        }
+
+        _allTerrainGroups.Clear();
     }
 }

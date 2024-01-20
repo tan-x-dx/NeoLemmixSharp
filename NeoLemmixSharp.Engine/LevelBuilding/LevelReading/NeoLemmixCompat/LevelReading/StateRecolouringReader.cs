@@ -5,17 +5,12 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 
 public sealed class StateRecoloringReader : INeoLemmixDataReader
 {
-    private readonly ThemeData _themeData;
+    private readonly ThemeData _themeData = new();
 
     private LemmingStateRecoloring? _currentLemmingStateRecoloring;
 
     private uint? _currentOriginalColor;
     private uint? _currentReplacementColor;
-
-    public StateRecoloringReader(ThemeData themeData)
-    {
-        _themeData = themeData;
-    }
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$STATE_RECOLORING";
@@ -25,7 +20,7 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
         FinishedReading = false;
     }
 
-    public void ReadNextLine(ReadOnlySpan<char> line)
+    public bool ReadNextLine(ReadOnlySpan<char> line)
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
 
@@ -36,7 +31,7 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
                 if (_currentLemmingStateRecoloring == null)
                 {
                     FinishedReading = true;
-                    return;
+                    return false;
                 }
 
                 var tuple = (_currentOriginalColor!.Value, _currentReplacementColor!.Value);
@@ -45,16 +40,16 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
                 _currentLemmingStateRecoloring.Recolorings.Add(tuple);
 
                 _currentLemmingStateRecoloring = null;
-                return;
+                return false;
             }
 
             if (ReadingHelpers.TryGetWithSpan(_themeData.LemmingStateRecoloringLookup, firstToken, out _currentLemmingStateRecoloring))
-                return;
+                return false;
 
             _currentLemmingStateRecoloring = new LemmingStateRecoloring(firstToken.ToString());
             _themeData.LemmingStateRecoloringLookup.Add(_currentLemmingStateRecoloring.StateIdentifier, _currentLemmingStateRecoloring);
 
-            return;
+            return false;
         }
 
         var secondToken = ReadingHelpers.GetToken(line, 1, out _);
@@ -73,5 +68,17 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
                 throw new InvalidOperationException(
                     $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
         }
+
+        return false;
+    }
+
+    public void ApplyToLevelData(LevelData levelData)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Dispose()
+    {
+        throw new NotImplementedException();
     }
 }

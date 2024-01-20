@@ -4,71 +4,75 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 
 public sealed class LevelDataReader : INeoLemmixDataReader
 {
-    private readonly LevelData _levelData;
-    private readonly bool _indentedFormat;
+    private string? _levelTitle;
+    private string? _levelAuthor;
+    private ulong _levelId;
+    private ulong _version;
+    private int _levelWidth;
+    private int _levelHeight;
+    private int _levelStartPositionX;
+    private int _levelStartPositionY;
+    private string? _levelTheme;
+    private string? _levelBackground;
+    private int _numberOfLemmings;
+    private int _saveRequirement;
+    private int? _timeLimit;
 
     public bool FinishedReading { get; private set; }
-    public string IdentifierToken => _indentedFormat
-        ? "$LEVELDATA"
-        : "TITLE";
-
-    public LevelDataReader(
-        LevelData levelData,
-        bool indentedFormat)
-    {
-        _levelData = levelData;
-        _indentedFormat = indentedFormat;
-    }
+    public string IdentifierToken => "TITLE";
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
-        if (_indentedFormat)
-            return;
 
         var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
         var rest = line[(1 + firstTokenIndex + firstToken.Length)..];
-        _levelData.LevelTitle = rest.ToString();
+        _levelTitle = rest.ToString();
     }
 
-    public void ReadNextLine(ReadOnlySpan<char> line)
+    public bool ReadNextLine(ReadOnlySpan<char> line)
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
+
+        if (firstToken[0] == '$')
+        {
+            FinishedReading = true;
+            return true;
+        }
+
         var secondToken = ReadingHelpers.GetToken(line, 1, out _);
-        var rest = line[(1 + firstTokenIndex + firstToken.Length)..];
+        var rest = secondToken.IsEmpty
+            ? ReadOnlySpan<char>.Empty
+            : line[(1 + firstTokenIndex + firstToken.Length)..];
 
         switch (firstToken)
         {
-            case "TITLE":
-                _levelData.LevelTitle = rest.ToString();
-                break;
-
             case "AUTHOR":
-                _levelData.LevelAuthor = rest.ToString();
+                _levelAuthor = rest.ToString();
                 break;
 
             case "ID":
-                _levelData.LevelId = ReadingHelpers.ParseUnsignedNumericalValue<ulong>(secondToken);
+                _levelId = ReadingHelpers.ParseUnsignedNumericalValue<ulong>(secondToken);
                 break;
 
             case "VERSION":
-                _levelData.Version = ReadingHelpers.ParseUnsignedNumericalValue<ulong>(secondToken);
+                _version = ReadingHelpers.ParseUnsignedNumericalValue<ulong>(secondToken);
                 break;
 
             case "START_X":
-                _levelData.LevelStartPositionX = int.Parse(secondToken);
+                _levelStartPositionX = int.Parse(secondToken);
                 break;
 
             case "START_Y":
-                _levelData.LevelStartPositionY = int.Parse(secondToken);
+                _levelStartPositionY = int.Parse(secondToken);
                 break;
 
             case "THEME":
-                _levelData.LevelTheme = rest.ToString();
+                _levelTheme = rest.ToString();
                 break;
 
             case "BACKGROUND":
-                _levelData.LevelBackground = rest.ToString();
+                _levelBackground = rest.ToString();
                 break;
 
             case "MUSIC":
@@ -76,23 +80,23 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "WIDTH":
-                _levelData.LevelWidth = int.Parse(secondToken);
+                _levelWidth = int.Parse(secondToken);
                 break;
 
             case "HEIGHT":
-                _levelData.LevelHeight = int.Parse(secondToken);
+                _levelHeight = int.Parse(secondToken);
                 break;
 
             case "LEMMINGS":
-                _levelData.NumberOfLemmings = int.Parse(secondToken);
+                _numberOfLemmings = int.Parse(secondToken);
                 break;
 
             case "SAVE_REQUIREMENT":
-                _levelData.SaveRequirement = int.Parse(secondToken);
+                _saveRequirement = int.Parse(secondToken);
                 break;
 
             case "TIME_LIMIT":
-                _levelData.TimeLimit = int.Parse(secondToken);
+                _timeLimit = int.Parse(secondToken);
                 break;
 
             case "SPAWN_INTERVAL_LOCKED":
@@ -100,24 +104,36 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "MAX_SPAWN_INTERVAL":
-                _levelData.MaxSpawnInterval = int.Parse(secondToken);
+                //     _MaxSpawnInterval = int.Parse(secondToken);
 
-                if (_indentedFormat)
-                    break;
-
-                FinishedReading = true;
-                break;
-
-            case "$END":
-                FinishedReading = true;
                 break;
 
             default:
-                var indentedFormatString = _indentedFormat
-                    ? "Indented"
-                    : "Not indented";
                 throw new InvalidOperationException(
-                    $"Unknown token when parsing LevelData ({indentedFormatString}): [{firstToken}] line: \"{line}\"");
+                    $"Unknown token when parsing LevelData: [{firstToken}] line: \"{line}\"");
         }
+
+        return false;
+    }
+
+    public void ApplyToLevelData(LevelData levelData)
+    {
+        levelData.LevelTitle = string.IsNullOrEmpty(_levelTitle) ? "Untitled" : _levelTitle;
+        levelData.LevelAuthor = string.IsNullOrEmpty(_levelAuthor) ? "Unknown Author" : _levelAuthor;
+        levelData.LevelId = _levelId;
+        levelData.Version = _version;
+        levelData.LevelWidth = _levelWidth;
+        levelData.LevelHeight = _levelHeight;
+        levelData.LevelStartPositionX = _levelStartPositionX;
+        levelData.LevelStartPositionY = _levelStartPositionY;
+        levelData.LevelTheme = _levelTheme;
+        levelData.LevelBackground = _levelBackground;
+        levelData.NumberOfLemmings = _numberOfLemmings;
+        levelData.SaveRequirement = _saveRequirement;
+        levelData.TimeLimit = _timeLimit;
+    }
+
+    public void Dispose()
+    {
     }
 }

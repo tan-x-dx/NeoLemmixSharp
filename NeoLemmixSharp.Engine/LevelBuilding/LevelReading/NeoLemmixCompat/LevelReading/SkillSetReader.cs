@@ -6,32 +6,28 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 
 public sealed class SkillSetReader : INeoLemmixDataReader, IEqualityComparer<char>
 {
-    private readonly List<SkillSetData> _skillSetData;
+    private readonly List<SkillSetData> _skillSetData = new();
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$SKILLSET";
-
-    public SkillSetReader(LevelData levelData)
-    {
-        _skillSetData = levelData.SkillSetData;
-    }
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
     }
 
-    public void ReadNextLine(ReadOnlySpan<char> line)
+    public bool ReadNextLine(ReadOnlySpan<char> line)
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
 
         if (firstToken is "$END")
         {
             FinishedReading = true;
-            return;
+            return false;
         }
 
         ReadSkillSetData(line);
+        return false;
     }
 
     private void ReadSkillSetData(ReadOnlySpan<char> line)
@@ -80,5 +76,15 @@ public sealed class SkillSetReader : INeoLemmixDataReader, IEqualityComparer<cha
     int IEqualityComparer<char>.GetHashCode(char obj)
     {
         return char.ToUpperInvariant(obj).GetHashCode();
+    }
+
+    public void ApplyToLevelData(LevelData levelData)
+    {
+        levelData.SkillSetData.AddRange(_skillSetData);
+    }
+
+    public void Dispose()
+    {
+        _skillSetData.Clear();
     }
 }

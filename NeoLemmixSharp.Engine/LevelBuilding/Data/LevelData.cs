@@ -19,7 +19,6 @@ public sealed class LevelData
     public int NumberOfLemmings { get; set; }
     public int SaveRequirement { get; set; }
     public int? TimeLimit { get; set; }
-    public int MaxSpawnInterval { get; set; }
 
     public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Void;
     public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Void;

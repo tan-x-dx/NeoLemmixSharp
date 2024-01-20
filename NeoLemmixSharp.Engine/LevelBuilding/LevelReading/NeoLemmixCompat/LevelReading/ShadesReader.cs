@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 public sealed class ShadesReader : INeoLemmixDataReader
 {
@@ -13,7 +15,7 @@ public sealed class ShadesReader : INeoLemmixDataReader
         FinishedReading = false;
     }
 
-    public void ReadNextLine(ReadOnlySpan<char> line)
+    public bool ReadNextLine(ReadOnlySpan<char> line)
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
 
@@ -33,5 +35,15 @@ public sealed class ShadesReader : INeoLemmixDataReader
                 FinishedReading = true;
                 break;
         }
+
+        return false;
+    }
+
+    public void ApplyToLevelData(LevelData levelData)
+    {
+    }
+
+    public void Dispose()
+    {
     }
 }

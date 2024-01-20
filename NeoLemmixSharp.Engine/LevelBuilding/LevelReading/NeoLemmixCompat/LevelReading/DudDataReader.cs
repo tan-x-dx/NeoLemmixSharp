@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 /// <summary>
 /// Represents a reader that does nothing. Useful for skipping sections that will not be used.
@@ -21,12 +23,12 @@ public sealed class DudDataReader : INeoLemmixDataReader
         FinishedReading = false;
     }
 
-    public void ReadNextLine(ReadOnlySpan<char> line)
+    public bool ReadNextLine(ReadOnlySpan<char> line)
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
 
         if (firstToken[0] != '$')
-            return;
+            return false;
 
         if (firstToken is "$END")
         {
@@ -37,9 +39,19 @@ public sealed class DudDataReader : INeoLemmixDataReader
                 FinishedReading = true;
             }
 
-            return;
+            return false;
         }
 
         _indentationLevel++;
+
+        return false;
+    }
+
+    public void ApplyToLevelData(LevelData levelData)
+    {
+    }
+
+    public void Dispose()
+    {
     }
 }

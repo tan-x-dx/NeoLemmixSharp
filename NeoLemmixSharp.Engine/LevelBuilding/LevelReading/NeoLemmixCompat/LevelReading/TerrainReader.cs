@@ -12,9 +12,9 @@ public sealed class TerrainReader : INeoLemmixDataReader
     private TerrainData? _currentTerrainData;
     private bool _settingDataForGroup;
 
-    public TerrainReader(ICollection<TerrainData> allTerrainData)
+    public TerrainReader(ICollection<TerrainData>? allTerrainData = null)
     {
-        _allTerrainData = allTerrainData;
+        _allTerrainData = allTerrainData ?? new List<TerrainData>();
     }
 
     public void BeginReading(ReadOnlySpan<char> line)
@@ -23,7 +23,7 @@ public sealed class TerrainReader : INeoLemmixDataReader
         FinishedReading = false;
     }
 
-    public void ReadNextLine(ReadOnlySpan<char> line)
+    public bool ReadNextLine(ReadOnlySpan<char> line)
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
         var secondToken = ReadingHelpers.GetToken(line, 1, out _);
@@ -101,5 +101,17 @@ public sealed class TerrainReader : INeoLemmixDataReader
                 throw new InvalidOperationException(
                     $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
         }
+
+        return false;
+    }
+
+    public void ApplyToLevelData(LevelData levelData)
+    {
+        levelData.AllTerrainData.AddRange(_allTerrainData.Where(t => t.GroupId is null));
+    }
+
+    public void Dispose()
+    {
+        _allTerrainData.Clear();
     }
 }

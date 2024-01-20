@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 public sealed class GadgetReader : INeoLemmixDataReader
 {
@@ -19,7 +21,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
         FinishedReading = false;
     }
 
-    public void ReadNextLine(ReadOnlySpan<char> line)
+    public bool ReadNextLine(ReadOnlySpan<char> line)
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
         var secondToken = ReadingHelpers.GetToken(line, 1, out _);
@@ -102,5 +104,17 @@ public sealed class GadgetReader : INeoLemmixDataReader
                 throw new InvalidOperationException(
                     $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
         }
+
+        return false;
+    }
+
+    public void ApplyToLevelData(LevelData levelData)
+    {
+    //    levelData.AllGadgetData.AddRange(_allGadgetData);
+    }
+
+    public void Dispose()
+    {
+        _allGadgetData.Clear();
     }
 }
