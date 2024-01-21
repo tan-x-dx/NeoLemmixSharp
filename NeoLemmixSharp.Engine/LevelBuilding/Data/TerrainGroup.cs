@@ -4,10 +4,10 @@ public sealed class TerrainGroup : IDisposable
 {
     private bool _disposed;
 
-    public string? GroupId { get; set; }
+    public string? GroupName { get; set; }
     public List<TerrainData> TerrainDatas { get; } = new();
 
-    public bool IsPrimitive => TerrainDatas.All(td => td.GroupId == null);
+    public bool IsPrimitive => TerrainDatas.TrueForAll(td => td.GroupName == null);
 
     public void Dispose()
     {

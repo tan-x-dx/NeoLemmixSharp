@@ -6,19 +6,19 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 public sealed class NxlvLevelReader : ILevelReader
 {
     private readonly INeoLemmixDataReader[] _dataReaders;
-    private readonly List<NeoLemmixGadgetData> _neoLemmixGadgetData = new();
 
     private INeoLemmixDataReader? _currentDataReader;
 
     public NxlvLevelReader()
     {
+        var terrainArchetypes = new Dictionary<string, TerrainArchetypeData>();
         _dataReaders =
         [
             new LevelDataReader(),
             new SkillSetReader(),
-            new TerrainGroupReader(),
-            new GadgetReader(_neoLemmixGadgetData),
-            new TerrainReader(),
+            new TerrainGroupReader(terrainArchetypes),
+            new TerrainReader(terrainArchetypes),
+            new GadgetReader(),
             new LemmingReader(),
             new SpriteSetRecoloringReader(),
             new StateRecoloringReader(),

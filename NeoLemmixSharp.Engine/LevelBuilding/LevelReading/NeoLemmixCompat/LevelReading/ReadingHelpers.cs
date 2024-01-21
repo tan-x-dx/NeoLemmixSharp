@@ -91,4 +91,11 @@ public static class ReadingHelpers
         value = default!;
         return false;
     }
+
+    public static string GetString(this ReadOnlySpan<char> span)
+    {
+        return span.IsEmpty
+            ? string.Empty
+            : span.ToString();
+    }
 }

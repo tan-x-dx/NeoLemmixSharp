@@ -46,7 +46,7 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
             if (ReadingHelpers.TryGetWithSpan(_themeData.LemmingStateRecoloringLookup, firstToken, out _currentLemmingStateRecoloring))
                 return false;
 
-            _currentLemmingStateRecoloring = new LemmingStateRecoloring(firstToken.ToString());
+            _currentLemmingStateRecoloring = new LemmingStateRecoloring(firstToken.GetString());
             _themeData.LemmingStateRecoloringLookup.Add(_currentLemmingStateRecoloring.StateIdentifier, _currentLemmingStateRecoloring);
 
             return false;
@@ -74,11 +74,9 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
 
     public void ApplyToLevelData(LevelData levelData)
     {
-        throw new NotImplementedException();
     }
 
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }

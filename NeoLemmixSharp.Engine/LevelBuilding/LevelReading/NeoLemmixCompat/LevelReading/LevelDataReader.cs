@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
+using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
@@ -17,6 +19,8 @@ public sealed class LevelDataReader : INeoLemmixDataReader
     private int _numberOfLemmings;
     private int _saveRequirement;
     private int? _timeLimit;
+    private int _maxSpawnInterval;
+    private bool _lockSpawnInterval;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "TITLE";
@@ -27,7 +31,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
         var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
         var rest = line[(1 + firstTokenIndex + firstToken.Length)..];
-        _levelTitle = rest.ToString();
+        _levelTitle = rest.GetString();
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
@@ -48,7 +52,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "AUTHOR":
-                _levelAuthor = rest.ToString();
+                _levelAuthor = rest.GetString();
                 break;
 
             case "ID":
@@ -68,11 +72,11 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "THEME":
-                _levelTheme = rest.ToString();
+                _levelTheme = rest.GetString();
                 break;
 
             case "BACKGROUND":
-                _levelBackground = rest.ToString();
+                _levelBackground = rest.GetString();
                 break;
 
             case "MUSIC":
@@ -100,12 +104,11 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "SPAWN_INTERVAL_LOCKED":
-
+                _lockSpawnInterval = true;
                 break;
 
             case "MAX_SPAWN_INTERVAL":
-                //     _MaxSpawnInterval = int.Parse(secondToken);
-
+                _maxSpawnInterval = int.Parse(secondToken);
                 break;
 
             default:
@@ -131,6 +134,21 @@ public sealed class LevelDataReader : INeoLemmixDataReader
         levelData.NumberOfLemmings = _numberOfLemmings;
         levelData.SaveRequirement = _saveRequirement;
         levelData.TimeLimit = _timeLimit;
+        levelData.HorizontalBoundaryBehaviour = BoundaryBehaviourType.Void;
+        levelData.VerticalBoundaryBehaviour = BoundaryBehaviourType.Void;
+        levelData.HorizontalViewPortBehaviour = BoundaryBehaviourType.Void;
+        levelData.VerticalViewPortBehaviour = BoundaryBehaviourType.Void;
+
+        var hatchGroupData = new HatchGroupData
+        {
+            MaxSpawnInterval = _maxSpawnInterval,
+            InitialSpawnInterval = _maxSpawnInterval,
+            MinSpawnInterval = _lockSpawnInterval
+                ? _maxSpawnInterval
+                : LevelConstants.MinAllowedSpawnInterval
+        };
+
+        levelData.AllHatchGroupData.Add(hatchGroupData);
     }
 
     public void Dispose()

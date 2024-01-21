@@ -36,10 +36,13 @@ public static class LevelConstants
 	public const int ParticleFrameCount = 51;
 	public const int NumberOfParticles = 80;
 
-	/// <summary>
-	/// A lemming falls 3 pixels each frame
-	/// </summary>
-	public const int DefaultFallStep = 3;
+    public const int MinAllowedSpawnInterval = 4;
+    public const int MaxAllowedSpawnInterval = 102;
+
+    /// <summary>
+    /// A lemming falls 3 pixels each frame
+    /// </summary>
+    public const int DefaultFallStep = 3;
 	/// <summary>
 	/// A lemming falls 2 pixels each frame if there's an updraft at its location
 	/// </summary>

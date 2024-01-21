@@ -4,10 +4,16 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 
 public sealed class TerrainGroupReader : INeoLemmixDataReader
 {
+    private readonly Dictionary<string, TerrainArchetypeData> _terrainArchetypes;
     private readonly List<TerrainGroup> _allTerrainGroups = new();
 
     private TerrainReader? _terrainReader;
     private TerrainGroup? _currentTerrainGroup;
+
+    public TerrainGroupReader(Dictionary<string, TerrainArchetypeData> terrainArchetypes)
+    {
+        _terrainArchetypes = terrainArchetypes;
+    }
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$TERRAINGROUP";
@@ -39,11 +45,11 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "NAME":
-                _currentTerrainGroup!.GroupId = rest.ToString();
+                _currentTerrainGroup!.GroupName = rest.GetString();
                 break;
 
             case "$TERRAIN":
-                _terrainReader = new TerrainReader(_currentTerrainGroup!.TerrainDatas);
+                _terrainReader = new TerrainReader(_terrainArchetypes, _currentTerrainGroup!.TerrainDatas);
                 _terrainReader.BeginReading(line);
                 break;
 
@@ -59,6 +65,9 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
 
     public void ApplyToLevelData(LevelData levelData)
     {
+        levelData.TerrainArchetypeData.EnsureCapacity(_terrainArchetypes.Count);
+        levelData.TerrainArchetypeData.AddRange(_terrainArchetypes.Values.OrderBy(d => d.TerrainArchetypeId));
+
         levelData.AllTerrainGroups.AddRange(_allTerrainGroups);
     }
 
@@ -69,6 +78,7 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
             terrainGroup.Dispose();
         }
 
+        _terrainArchetypes.Clear();
         _allTerrainGroups.Clear();
     }
 }

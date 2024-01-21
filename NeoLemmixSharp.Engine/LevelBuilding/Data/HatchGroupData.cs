@@ -3,5 +3,6 @@
 public sealed class HatchGroupData
 {
     public int MaxSpawnInterval { get; set; }
+    public int InitialSpawnInterval { get; set; }
     public int MinSpawnInterval { get; set; }
 }

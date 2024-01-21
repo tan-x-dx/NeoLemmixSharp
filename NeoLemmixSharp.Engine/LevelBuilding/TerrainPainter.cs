@@ -7,227 +7,234 @@ namespace NeoLemmixSharp.Engine.LevelBuilding;
 
 public sealed class TerrainPainter : IDisposable
 {
-	public const uint MinimumSubstantialAlphaValue = 0x80;
+    public const uint MinimumSubstantialAlphaValue = 0x80;
 
-	private readonly GraphicsDevice _graphicsDevice;
-	private readonly Dictionary<string, PixelColorData> _textureBundleCache = new();
+    private readonly GraphicsDevice _graphicsDevice;
 
-	private readonly List<TerrainGroup> _terrainGroups = new();
+    private readonly List<TerrainArchetypeData> _terrainArchetypes = new();
+    private readonly List<TerrainGroup> _terrainGroups = new();
 
-	private bool _disposed;
+    private bool _disposed;
 
-	private Texture2D _terrainTexture;
-	private PixelType[] _terrainPixels;
+    private Texture2D _terrainTexture;
+    private PixelType[] _terrainPixels;
 
-	public TerrainPainter(GraphicsDevice graphicsDevice)
-	{
-		_graphicsDevice = graphicsDevice;
-	}
+    public TerrainPainter(GraphicsDevice graphicsDevice)
+    {
+        _graphicsDevice = graphicsDevice;
+    }
 
-	public void PaintLevel(LevelData levelData)
-	{
-		_terrainGroups.AddRange(levelData.AllTerrainGroups);
+    public void PaintLevel(LevelData levelData)
+    {
+        _terrainArchetypes.AddRange(levelData.TerrainArchetypeData);
+        foreach (var terrainArchetypeData in _terrainArchetypes)
+        {
+            LoadPixelColorData(terrainArchetypeData);
+        }
 
-		foreach (var terrainGroup in _terrainGroups)
-		{
-			ProcessTerrainGroup(terrainGroup);
-		}
+        _terrainGroups.AddRange(levelData.AllTerrainGroups);
 
-		_terrainTexture = new Texture2D(
-			_graphicsDevice,
-			levelData.LevelWidth,
-			levelData.LevelHeight);
+        foreach (var terrainGroup in _terrainGroups)
+        {
+            ProcessTerrainGroup(terrainGroup);
+        }
 
-		_terrainPixels = new PixelType[levelData.LevelWidth * levelData.LevelHeight];
+        _terrainTexture = new Texture2D(
+            _graphicsDevice,
+            levelData.LevelWidth,
+            levelData.LevelHeight);
 
-		var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
-		var textureData = new PixelColorData(
-			levelData.LevelWidth,
-			levelData.LevelHeight,
-			uintData);
+        _terrainPixels = new PixelType[levelData.LevelWidth * levelData.LevelHeight];
 
-		DrawTerrain(levelData.AllTerrainData, textureData);
-		_terrainTexture.SetData(uintData);
-	}
+        var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
+        var textureData = new PixelColorData(
+            levelData.LevelWidth,
+            levelData.LevelHeight,
+            uintData);
 
-	private static void ProcessTerrainGroup(TerrainGroup terrainGroup)
-	{
-		var minX = terrainGroup.TerrainDatas.Select(td => td.X).Min();
-		var minY = terrainGroup.TerrainDatas.Select(td => td.Y).Min();
+        DrawTerrain(levelData.AllTerrainData, textureData);
+        _terrainTexture.SetData(uintData);
+    }
 
-		foreach (var terrainData in terrainGroup.TerrainDatas)
-		{
-			terrainData.X -= minX;
-			terrainData.Y -= minY;
-		}
-	}
+    private static void ProcessTerrainGroup(TerrainGroup terrainGroup)
+    {
+        var minX = terrainGroup.TerrainDatas.Select(td => td.X).Min();
+        var minY = terrainGroup.TerrainDatas.Select(td => td.Y).Min();
 
-	private void DrawTerrain(
-		IEnumerable<TerrainData> terrainDataList,
-		PixelColorData targetData,
-		int dx = 0,
-		int dy = 0)
-	{
-		foreach (var terrainData in terrainDataList)
-		{
-			if (terrainData.GroupId == null)
-			{
-				ApplyTerrainPiece(
-					terrainData,
-					targetData,
-					dx,
-					dy);
-			}
-			else
-			{
-				var textureGroup = _terrainGroups.First(tg => tg.GroupId == terrainData.GroupId);
-				DrawTerrain(
-					textureGroup.TerrainDatas,
-					targetData,
-					dx + terrainData.X,
-					dy + terrainData.Y);
-			}
-		}
-	}
+        foreach (var terrainData in terrainGroup.TerrainDatas)
+        {
+            terrainData.X -= minX;
+            terrainData.Y -= minY;
+        }
+    }
 
-	private void ApplyTerrainPiece(
-		TerrainData terrainData,
-		PixelColorData targetPixelColorData,
-		int dx,
-		int dy)
-	{
-		var sourcePixelColorData = GetOrLoadPixelColorData(terrainData);
+    private void DrawTerrain(
+        IEnumerable<TerrainData> terrainDataList,
+        PixelColorData targetData,
+        int dx = 0,
+        int dy = 0)
+    {
+        foreach (var terrainData in terrainDataList)
+        {
+            if (terrainData.GroupName is null)
+            {
+                ApplyTerrainPiece(
+                    terrainData,
+                    targetData,
+                    dx,
+                    dy);
+            }
+            else
+            {
+                var textureGroup = _terrainGroups.First(tg => tg.GroupName == terrainData.GroupName);
+                DrawTerrain(
+                    textureGroup.TerrainDatas,
+                    targetData,
+                    dx + terrainData.X,
+                    dy + terrainData.Y);
+            }
+        }
+    }
 
-		var dihedralTransformation = DihedralTransformation.GetForTransformation(
-			terrainData.FlipHorizontal,
-			terrainData.FlipVertical,
-			terrainData.Rotate);
+    private void ApplyTerrainPiece(
+        TerrainData terrainData,
+        PixelColorData targetPixelColorData,
+        int dx,
+        int dy)
+    {
+        var terrainArchetypeData = _terrainArchetypes[terrainData.TerrainArchetypeId];
+        var sourcePixelColorData = terrainArchetypeData.TerrainPixelColorData;
 
-		for (var x = 0; x < sourcePixelColorData.Width; x++)
-		{
-			for (var y = 0; y < sourcePixelColorData.Height; y++)
-			{
-				dihedralTransformation.Transform(x,
-					y,
-					sourcePixelColorData.Width - 1,
-					sourcePixelColorData.Height - 1, out var x0, out var y0);
+        var dihedralTransformation = DihedralTransformation.GetForTransformation(
+            terrainData.FlipHorizontal,
+            terrainData.FlipVertical,
+            terrainData.Rotate);
 
-				x0 = x0 + terrainData.X + dx;
-				y0 = y0 + terrainData.Y + dy;
+        for (var x = 0; x < sourcePixelColorData.Width; x++)
+        {
+            for (var y = 0; y < sourcePixelColorData.Height; y++)
+            {
+                var sourcePixelColor = sourcePixelColorData.Get(x, y);
+                if (sourcePixelColor == 0U)
+                    continue;
 
-				if (x0 < 0 || x0 >= targetPixelColorData.Width ||
-					y0 < 0 || y0 >= targetPixelColorData.Height)
-					continue;
+                dihedralTransformation.Transform(
+                    x,
+                    y,
+                    sourcePixelColorData.Width - 1,
+                    sourcePixelColorData.Height - 1, out var x0, out var y0);
 
-				var sourcePixelColor = sourcePixelColorData.Get(x, y);
+                x0 = x0 + terrainData.X + dx;
+                y0 = y0 + terrainData.Y + dy;
 
-				if (sourcePixelColor != 0U && terrainData.Tint.HasValue)
-				{
-					sourcePixelColor = BlendColors(terrainData.Tint.Value, sourcePixelColor);
-				}
+                if (x0 < 0 || x0 >= targetPixelColorData.Width ||
+                    y0 < 0 || y0 >= targetPixelColorData.Height)
+                    continue;
 
-				var targetPixelColor = targetPixelColorData.Get(x0, y0);
+                if (terrainData.Tint.HasValue)
+                {
+                    sourcePixelColor = BlendColors(terrainData.Tint.Value, sourcePixelColor);
+                }
 
-				if (terrainData.Erase)
-				{
-					if (sourcePixelColor != 0U)
-					{
-						targetPixelColor = 0U;
-					}
-				}
-				else if (terrainData.NoOverwrite)
-				{
-					targetPixelColor = BlendColors(targetPixelColor, sourcePixelColor);
-				}
-				else
-				{
-					targetPixelColor = BlendColors(sourcePixelColor, targetPixelColor);
-				}
+                var targetPixelColor = targetPixelColorData.Get(x0, y0);
 
-				targetPixelColorData.Set(x0, y0, targetPixelColor);
-				var pixelIndex = targetPixelColorData.Width * y0 + x0;
-				ref var targetPixelData = ref _terrainPixels[pixelIndex];
+                if (terrainData.Erase)
+                {
+                    if (sourcePixelColor != 0U)
+                    {
+                        targetPixelColor = 0U;
+                    }
+                }
+                else if (terrainData.NoOverwrite)
+                {
+                    targetPixelColor = BlendColors(targetPixelColor, sourcePixelColor);
+                }
+                else
+                {
+                    targetPixelColor = BlendColors(sourcePixelColor, targetPixelColor);
+                }
 
-				if (PixelColorIsSubstantial(targetPixelColor))
-				{
-					if (terrainData.IsSteel)
-					{
-						targetPixelData |= PixelType.Steel;
-					}
+                targetPixelColorData.Set(x0, y0, targetPixelColor);
+                var pixelIndex = targetPixelColorData.Width * y0 + x0;
+                ref var targetPixelData = ref _terrainPixels[pixelIndex];
 
-					targetPixelData |= PixelType.SolidToAllOrientations;
-				}
-				else
-				{
-					targetPixelData = PixelType.Empty;
-				}
-			}
-		}
-	}
+                if (PixelColorIsSubstantial(targetPixelColor))
+                {
+                    if (terrainArchetypeData.IsSteel)
+                    {
+                        targetPixelData |= PixelType.Steel;
+                    }
+                    else
+                    {
+                        targetPixelData &= ~PixelType.Steel;
+                    }
 
-	private static uint BlendColors(uint foreground, uint background)
-	{
-		var fgA = ((foreground >> 24) & 0xffU) / 255d;
-		var fgR = ((foreground >> 16) & 0xffU) / 255d;
-		var fgG = ((foreground >> 8) & 0xffU) / 255d;
-		var fgB = (foreground & 0xffU) / 255d;
-		var bgA = ((background >> 24) & 0xffU) / 255d;
-		var bgR = ((background >> 16) & 0xffU) / 255d;
-		var bgG = ((background >> 8) & 0xffU) / 255d;
-		var bgB = (background & 0xffU) / 255d;
-		var newA = 1.0 - (1.0 - fgA) * (1.0 - bgA);
-		var newR = fgR * fgA / newA + bgR * bgA * (1.0 - fgA) / newA;
-		var newG = fgG * fgA / newA + bgG * bgA * (1.0 - fgA) / newA;
-		var newB = fgB * fgA / newA + bgB * bgA * (1.0 - fgA) / newA;
-		var a = (uint)Math.Round(newA * 255);
-		var r = (uint)Math.Round(newR * 255);
-		var g = (uint)Math.Round(newG * 255);
-		var b = (uint)Math.Round(newB * 255);
+                    targetPixelData |= PixelType.SolidToAllOrientations;
+                }
+                else
+                {
+                    targetPixelData = PixelType.Empty;
+                }
+            }
+        }
+    }
 
-		return (a << 24) | (r << 16) | (g << 8) | b;
-	}
+    private static uint BlendColors(uint foreground, uint background)
+    {
+        var fgA = ((foreground >> 24) & 0xffU) / 255d;
+        var fgR = ((foreground >> 16) & 0xffU) / 255d;
+        var fgG = ((foreground >> 8) & 0xffU) / 255d;
+        var fgB = (foreground & 0xffU) / 255d;
+        var bgA = ((background >> 24) & 0xffU) / 255d;
+        var bgR = ((background >> 16) & 0xffU) / 255d;
+        var bgG = ((background >> 8) & 0xffU) / 255d;
+        var bgB = (background & 0xffU) / 255d;
+        var newA = 1.0 - (1.0 - fgA) * (1.0 - bgA);
+        var newR = fgR * fgA / newA + bgR * bgA * (1.0 - fgA) / newA;
+        var newG = fgG * fgA / newA + bgG * bgA * (1.0 - fgA) / newA;
+        var newB = fgB * fgA / newA + bgB * bgA * (1.0 - fgA) / newA;
+        var a = (uint)Math.Clamp(Math.Round(newA * 255d, MidpointRounding.ToPositiveInfinity), 0.0, 255);
+        var r = (uint)Math.Clamp(Math.Round(newR * 255d, MidpointRounding.ToPositiveInfinity), 0.0, 255);
+        var g = (uint)Math.Clamp(Math.Round(newG * 255d, MidpointRounding.ToPositiveInfinity), 0.0, 255);
+        var b = (uint)Math.Clamp(Math.Round(newB * 255d, MidpointRounding.ToPositiveInfinity), 0.0, 255);
 
-	private static bool PixelColorIsSubstantial(uint color)
-	{
-		var alpha = color >> 24 & 0xffU;
-		return alpha >= MinimumSubstantialAlphaValue;
-	}
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
 
-	private PixelColorData GetOrLoadPixelColorData(TerrainData terrainData)
-	{
-		var rootFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", terrainData.Style!, "terrain", terrainData.TerrainName!);
+    private static bool PixelColorIsSubstantial(uint color)
+    {
+        var alpha = color >> 24 & 0xffU;
+        return alpha >= MinimumSubstantialAlphaValue;
+    }
 
-		if (_textureBundleCache.TryGetValue(rootFilePath, out var result))
-			return result;
+    private void LoadPixelColorData(TerrainArchetypeData terrainArchetypeData)
+    {
+        var rootFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", terrainArchetypeData.Style!, "terrain", terrainArchetypeData.TerrainPiece!);
 
-		var png = Path.ChangeExtension(rootFilePath, "png");
-		var isSteel = File.Exists(Path.ChangeExtension(rootFilePath, "nxmt"));
-		terrainData.IsSteel = isSteel;
+        var pngPath = Path.ChangeExtension(rootFilePath, "png");
 
-		using var mainTexture = Texture2D.FromFile(_graphicsDevice, png);
-		result = PixelColorData.GetPixelColorDataFromTexture(mainTexture);
-		_textureBundleCache.Add(rootFilePath, result);
+        using var mainTexture = Texture2D.FromFile(_graphicsDevice, pngPath);
+        var pixelColorData = PixelColorData.GetPixelColorDataFromTexture(mainTexture);
+        terrainArchetypeData.TerrainPixelColorData = pixelColorData;
+    }
 
-		return result;
-	}
+    public PixelType[] GetPixelData()
+    {
+        return _terrainPixels;
+    }
 
-	public PixelType[] GetPixelData()
-	{
-		return _terrainPixels;
-	}
+    public Texture2D GetTerrainTexture()
+    {
+        return _terrainTexture;
+    }
 
-	public Texture2D GetTerrainTexture()
-	{
-		return _terrainTexture;
-	}
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
 
-	public void Dispose()
-	{
-		if (_disposed)
-			return;
-
-		_textureBundleCache.Clear();
-		_terrainGroups.Clear();
-		_disposed = true;
-	}
+        _terrainArchetypes.Clear();
+        _terrainGroups.Clear();
+        _disposed = true;
+    }
 }

@@ -4,16 +4,11 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 
 public sealed class GadgetReader : INeoLemmixDataReader
 {
-    private readonly ICollection<NeoLemmixGadgetData> _allGadgetData;
+    private readonly List<NeoLemmixGadgetData> _allGadgetData = new();
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$GADGET";
     private NeoLemmixGadgetData? _currentGadgetData;
-
-    public GadgetReader(ICollection<NeoLemmixGadgetData> allGadgetData)
-    {
-        _allGadgetData = allGadgetData;
-    }
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
@@ -25,17 +20,18 @@ public sealed class GadgetReader : INeoLemmixDataReader
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
         var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+        var rest = secondToken.IsEmpty
+            ? ReadOnlySpan<char>.Empty
+            : line[(1 + firstTokenIndex + firstToken.Length)..];
 
         switch (firstToken)
         {
             case "STYLE":
-                var rest = line[(1 + firstTokenIndex + firstToken.Length)..];
-                _currentGadgetData!.Style = rest.ToString();
+                _currentGadgetData!.Style = rest.GetString();
                 break;
 
             case "PIECE":
-                var rest1 = line[(1 + firstTokenIndex + firstToken.Length)..];
-                _currentGadgetData!.Piece = rest1.ToString();
+                _currentGadgetData!.Piece = rest.GetString();
                 break;
 
             case "X":
@@ -86,8 +82,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
                 break;
 
             case "SKILL":
-                var rest2 = line[(1 + firstTokenIndex + firstToken.Length)..];
-                _currentGadgetData!.Skill = rest2.ToString();
+                _currentGadgetData!.Skill = rest.GetString();
                 break;
 
             case "SKILL_COUNT":
@@ -110,7 +105,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     public void ApplyToLevelData(LevelData levelData)
     {
-    //    levelData.AllGadgetData.AddRange(_allGadgetData);
+        //    levelData.AllGadgetData.AddRange(_allGadgetData);
     }
 
     public void Dispose()
