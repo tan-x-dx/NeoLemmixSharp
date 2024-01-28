@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using System.Globalization;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
@@ -10,6 +11,14 @@ public static class ReadingHelpers
 {
     private const int MaxStackallocSize = 128;
 
+    /// <summary>
+    /// Returns the nth token from the initial span, where a token is defined as being a contiguous section of non-whitespace characters.
+    /// If no such section exists for the given parameters, an empty span is returned, and the <paramref name="indexOfFirstCharacter" /> parameter is set to -1.
+    /// </summary>
+    /// <param name="span">The source span</param>
+    /// <param name="tokenIndex">The 0-based index of the token to fetch</param>
+    /// <param name="indexOfFirstCharacter">The index of the first character of the result token, inside the source span</param>
+    /// <returns>A span of non-whitespace characters</returns>
     public static ReadOnlySpan<char> GetToken(ReadOnlySpan<char> span, int tokenIndex, out int indexOfFirstCharacter)
     {
         const int padding = 2;
@@ -62,6 +71,49 @@ public static class ReadingHelpers
         return ReadOnlySpan<char>.Empty;
     }
 
+    /// <summary>
+    /// Returns a sub-span starting at the given index, and trimming all leading and trailing whitespace.
+    /// </summary>
+    /// <param name="span">The original span</param>
+    /// <param name="startIndex">The first index the result can start from</param>
+    /// <returns>A ReadOnlySpan of trimmed-whitespace</returns>
+    public static ReadOnlySpan<char> TrimAfterIndex(ReadOnlySpan<char> span, int startIndex)
+    {
+        if (startIndex < 0 || startIndex >= span.Length)
+            return ReadOnlySpan<char>.Empty;
+
+        var endIndex = span.Length - 1;
+        while (endIndex > startIndex)
+        {
+            var c = span[endIndex];
+            if (!char.IsWhiteSpace(c))
+                break;
+
+            endIndex--;
+        }
+
+        if (startIndex == endIndex)
+            return ReadOnlySpan<char>.Empty;
+
+        while (startIndex < endIndex)
+        {
+            var c = span[startIndex];
+            if (!char.IsWhiteSpace(c))
+                break;
+
+            startIndex++;
+        }
+
+        return span[startIndex..(1 + endIndex)];
+    }
+
+    /// <summary>
+    /// Parses a span into an unsigned integral type. The input must be hexadecimal format, and the leading characters may be hex signifiers.
+    /// Valid leading characters may be "0x...", "0X...", "x...", "X..."
+    /// </summary>
+    /// <typeparam name="TNumber">The integral type to be parsed</typeparam>
+    /// <param name="token">A sequence of characters representing a hexadecimal number</param>
+    /// <returns>An unsigned integral type</returns>
     public static TNumber ParseHex<TNumber>(ReadOnlySpan<char> token)
         where TNumber : struct, IUnsignedNumber<TNumber>
     {
@@ -81,6 +133,12 @@ public static class ReadingHelpers
         return TNumber.Parse(token[startIndex..], NumberStyles.AllowHexSpecifier, null);
     }
 
+    /// <summary>
+    /// Helper method to prevent unnecessary allocations of empty strings
+    /// </summary>
+    /// <param name="span">The input span to be converted</param>
+    /// <returns>A string representation of the input</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetString(this ReadOnlySpan<char> span)
     {
         return span.IsEmpty
@@ -107,6 +165,16 @@ public static class ReadingHelpers
         return false;
     }
 
+    /// <summary>
+    /// Returns a (possibly null) reference to a <typeparamref name="T" />. A key is constructed based on the <paramref name="currentStyle" /> and <paramref name="piece" /> parameters,
+    /// and either a new entry is created, or the existing entry is returned. NOTE: the returned reference may be null, and is expected to be initialised by the caller!
+    /// </summary>
+    /// <typeparam name="T">The type of value.</typeparam>
+    /// <param name="currentStyle">The style type</param>
+    /// <param name="piece">The piece type</param>
+    /// <param name="dictionary">The dictionary to look in</param>
+    /// <param name="exists">When this method returns, contains <see langword="true" /> if the constructed key already existed in the dictionary, and <see langword="false" /> if a new entry was added.</param>
+    /// <returns>A reference to a <typeparamref name="T" /> in the specified dictionary.</returns>
     public static ref T? GetArchetypeDataRef<T>(
         ReadOnlySpan<char> currentStyle,
         ReadOnlySpan<char> piece,

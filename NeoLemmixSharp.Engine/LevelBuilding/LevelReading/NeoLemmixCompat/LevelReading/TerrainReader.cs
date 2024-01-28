@@ -34,15 +34,13 @@ public sealed class TerrainReader : INeoLemmixDataReader
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
         var secondToken = ReadingHelpers.GetToken(line, 1, out var secondTokenIndex);
-        var rest = secondToken.IsEmpty
-            ? ReadOnlySpan<char>.Empty
-            : line[secondTokenIndex..];
 
         var currentTerrainData = _currentTerrainData!;
 
         switch (firstToken)
         {
             case "STYLE":
+                var rest = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex);
                 if (secondToken[0] == '*')
                 {
                     _settingDataForGroup = true;
@@ -71,7 +69,7 @@ public sealed class TerrainReader : INeoLemmixDataReader
                 }
                 else
                 {
-                    var terrainArchetypeData = GetOrLoadTerrainArchetypeData(rest);
+                    var terrainArchetypeData = GetOrLoadTerrainArchetypeData(ReadingHelpers.TrimAfterIndex(line, secondTokenIndex));
                     currentTerrainData.TerrainArchetypeId = terrainArchetypeData.TerrainArchetypeId;
                 }
                 break;

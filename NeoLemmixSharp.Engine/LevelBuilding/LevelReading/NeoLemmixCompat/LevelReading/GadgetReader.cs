@@ -26,15 +26,13 @@ public sealed class GadgetReader : INeoLemmixDataReader
     {
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
         var secondToken = ReadingHelpers.GetToken(line, 1, out var secondTokenIndex);
-        var rest = secondToken.IsEmpty
-            ? ReadOnlySpan<char>.Empty
-            : line[secondTokenIndex..];
 
         var currentGadgetData = _currentGadgetData!;
 
         switch (firstToken)
         {
             case "STYLE":
+                var rest = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex);
                 if (_currentStyle is null)
                 {
                     _currentStyle = rest.GetString();
@@ -44,14 +42,14 @@ public sealed class GadgetReader : INeoLemmixDataReader
                     var currentStyleSpan = _currentStyle.AsSpan();
                     if (!currentStyleSpan.SequenceEqual(rest))
                     {
-                        _currentStyle = rest.ToString();
+                        _currentStyle = rest.GetString();
                     }
                 }
 
                 break;
 
             case "PIECE":
-                var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(rest);
+                var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(ReadingHelpers.TrimAfterIndex(line, secondTokenIndex));
                 currentGadgetData.GadgetArchetypeId = gadgetArchetypeData.GadgetArchetypeId;
                 break;
 
