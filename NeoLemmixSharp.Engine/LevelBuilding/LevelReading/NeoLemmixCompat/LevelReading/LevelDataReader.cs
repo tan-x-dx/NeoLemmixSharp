@@ -29,14 +29,16 @@ public sealed class LevelDataReader : INeoLemmixDataReader
     {
         FinishedReading = false;
 
-        var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
-        var rest = line[(1 + firstTokenIndex + firstToken.Length)..];
+        ReadingHelpers.GetToken(line, 1, out var secondTokenIndex);
+        var rest = secondTokenIndex < 0
+            ? ReadOnlySpan<char>.Empty
+            : line[secondTokenIndex..];
         _levelTitle = rest.GetString();
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
 
         if (firstToken[0] == '$')
         {
@@ -44,10 +46,10 @@ public sealed class LevelDataReader : INeoLemmixDataReader
             return true;
         }
 
-        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+        var secondToken = ReadingHelpers.GetToken(line, 1, out var secondTokenIndex);
         var rest = secondToken.IsEmpty
             ? ReadOnlySpan<char>.Empty
-            : line[(1 + firstTokenIndex + firstToken.Length)..];
+            : line[secondTokenIndex..];
 
         switch (firstToken)
         {
@@ -56,11 +58,11 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "ID":
-                _levelId = ReadingHelpers.ParseUnsignedNumericalValue<ulong>(secondToken);
+                _levelId = ReadingHelpers.ParseHex<ulong>(secondToken);
                 break;
 
             case "VERSION":
-                _version = ReadingHelpers.ParseUnsignedNumericalValue<ulong>(secondToken);
+                _version = ReadingHelpers.ParseHex<ulong>(secondToken);
                 break;
 
             case "START_X":

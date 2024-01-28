@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 using NeoLemmixSharp.Engine.LevelBuilding.Sprites;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
@@ -36,7 +35,8 @@ public sealed class GadgetSpriteBankBuilder
 
     private PixelColorData GetOrLoadPixelColorData(NeoLemmixGadgetData gadgetData)
     {
-        var rootFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", gadgetData.Style, "objects", gadgetData.Piece);
+        var rootFilePath = "";
+        //   var rootFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", gadgetData.Style, "objects", gadgetData.Piece);
 
         if (_textureBundleCache.TryGetValue(rootFilePath, out var result))
             return result;

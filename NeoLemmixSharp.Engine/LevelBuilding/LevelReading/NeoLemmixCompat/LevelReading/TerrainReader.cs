@@ -5,20 +5,20 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 
 public sealed class TerrainReader : INeoLemmixDataReader
 {
-    private readonly ICollection<TerrainData> _allTerrainData;
+    private readonly List<TerrainData> _allTerrainData;
     private readonly Dictionary<string, TerrainArchetypeData> _terrainArchetypes;
-
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$TERRAIN";
 
     private TerrainData? _currentTerrainData;
     private string? _currentStyle;
 
     private bool _settingDataForGroup;
 
+    public bool FinishedReading { get; private set; }
+    public string IdentifierToken => "$TERRAIN";
+
     public TerrainReader(
         Dictionary<string, TerrainArchetypeData> terrainArchetypes,
-        ICollection<TerrainData>? allTerrainData = null)
+        List<TerrainData>? allTerrainData = null)
     {
         _terrainArchetypes = terrainArchetypes;
         _allTerrainData = allTerrainData ?? new List<TerrainData>();
@@ -32,11 +32,13 @@ public sealed class TerrainReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
-        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        var secondToken = ReadingHelpers.GetToken(line, 1, out var secondTokenIndex);
         var rest = secondToken.IsEmpty
             ? ReadOnlySpan<char>.Empty
-            : line[(1 + firstTokenIndex + firstToken.Length)..];
+            : line[secondTokenIndex..];
+
+        var currentTerrainData = _currentTerrainData!;
 
         switch (firstToken)
         {
@@ -65,48 +67,48 @@ public sealed class TerrainReader : INeoLemmixDataReader
             case "PIECE":
                 if (_settingDataForGroup)
                 {
-                    _currentTerrainData!.GroupName = secondToken.GetString();
+                    currentTerrainData.GroupName = secondToken.GetString();
                 }
                 else
                 {
                     var terrainArchetypeData = GetOrLoadTerrainArchetypeData(rest);
-                    _currentTerrainData!.TerrainArchetypeId = terrainArchetypeData.TerrainArchetypeId;
+                    currentTerrainData.TerrainArchetypeId = terrainArchetypeData.TerrainArchetypeId;
                 }
                 break;
 
             case "X":
-                _currentTerrainData!.X = int.Parse(secondToken);
+                currentTerrainData.X = int.Parse(secondToken);
                 break;
 
             case "Y":
-                _currentTerrainData!.Y = int.Parse(secondToken);
+                currentTerrainData.Y = int.Parse(secondToken);
                 break;
 
             case "RGB":
-                _currentTerrainData!.Tint = ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                currentTerrainData.Tint = ReadingHelpers.ParseHex<uint>(secondToken);
                 break;
 
             case "NO_OVERWRITE":
-                _currentTerrainData!.NoOverwrite = true;
+                currentTerrainData.NoOverwrite = true;
                 break;
 
             case "ONE_WAY":
                 break;
 
             case "FLIP_VERTICAL":
-                _currentTerrainData!.FlipVertical = true;
+                currentTerrainData.FlipVertical = true;
                 break;
 
             case "FLIP_HORIZONTAL":
-                _currentTerrainData!.FlipHorizontal = true;
+                currentTerrainData.FlipHorizontal = true;
                 break;
 
             case "ROTATE":
-                _currentTerrainData!.Rotate = true;
+                currentTerrainData.Rotate = true;
                 break;
 
             case "ERASE":
-                _currentTerrainData!.Erase = true;
+                currentTerrainData.Erase = true;
                 break;
 
             case "$END":
@@ -127,13 +129,19 @@ public sealed class TerrainReader : INeoLemmixDataReader
     private TerrainArchetypeData GetOrLoadTerrainArchetypeData(ReadOnlySpan<char> piece)
     {
         var currentStyleLength = _currentStyle!.Length;
-        Span<char> terrainArchetypeDataKey = stackalloc char[currentStyleLength + piece.Length + 1];
 
-        _currentStyle.AsSpan().CopyTo(terrainArchetypeDataKey);
-        piece.CopyTo(terrainArchetypeDataKey[(currentStyleLength + 1)..]);
-        terrainArchetypeDataKey[currentStyleLength] = ':';
+        var bufferSize = currentStyleLength + piece.Length + 1;
+        Span<char> terrainArchetypeDataKeySpan = bufferSize > ReadingHelpers.MaxStackallocSize
+            ? new char[bufferSize]
+            : stackalloc char[bufferSize];
 
-        if (ReadingHelpers.TryGetWithSpan(_terrainArchetypes, terrainArchetypeDataKey, out var terrainArchetypeData))
+        _currentStyle.AsSpan().CopyTo(terrainArchetypeDataKeySpan);
+        piece.CopyTo(terrainArchetypeDataKeySpan[(currentStyleLength + 1)..]);
+        terrainArchetypeDataKeySpan[currentStyleLength] = ':';
+
+        var terrainArchetypeDataKey = terrainArchetypeDataKeySpan.ToString();
+
+        if (_terrainArchetypes.TryGetValue(terrainArchetypeDataKey, out var terrainArchetypeData))
             return terrainArchetypeData;
 
         var terrainPiece = piece.ToString();
@@ -148,7 +156,7 @@ public sealed class TerrainReader : INeoLemmixDataReader
             IsSteel = isSteel
         };
 
-        var key = terrainArchetypeDataKey.ToString();
+        var key = terrainArchetypeDataKeySpan.ToString();
         _terrainArchetypes[key] = terrainArchetypeData;
 
         return terrainArchetypeData;

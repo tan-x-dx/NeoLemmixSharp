@@ -143,27 +143,27 @@ public sealed class NxlvLevelReader : ILevelReader
                   break;
 
               case "MASK":
-                  _levelData.ThemeData.Mask = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                  _levelData.ThemeData.Mask = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                   break;
 
               case "MINIMAP":
-                  _levelData.ThemeData.Minimap = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                  _levelData.ThemeData.Minimap = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                   break;
 
               case "BACKGROUND":
-                  _levelData.ThemeData.Background = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                  _levelData.ThemeData.Background = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                   break;
 
               case "ONE_WAYS":
-                  _levelData.ThemeData.OneWays = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                  _levelData.ThemeData.OneWays = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                   break;
 
               case "PICKUP_BORDER":
-                  _levelData.ThemeData.PickupBorder = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                  _levelData.ThemeData.PickupBorder = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                   break;
 
               case "PICKUP_INSIDE":
-                  _levelData.ThemeData.PickupInside = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                  _levelData.ThemeData.PickupInside = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                   break;
 
               case "END":

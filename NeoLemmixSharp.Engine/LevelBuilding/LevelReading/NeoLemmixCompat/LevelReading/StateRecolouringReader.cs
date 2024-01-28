@@ -43,10 +43,12 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
                 return false;
             }
 
-            if (ReadingHelpers.TryGetWithSpan(_themeData.LemmingStateRecoloringLookup, firstToken, out _currentLemmingStateRecoloring))
+            var key = firstToken.GetString();
+
+            if (_themeData.LemmingStateRecoloringLookup.TryGetValue(key, out _currentLemmingStateRecoloring))
                 return false;
 
-            _currentLemmingStateRecoloring = new LemmingStateRecoloring(firstToken.GetString());
+            _currentLemmingStateRecoloring = new LemmingStateRecoloring(key);
             _themeData.LemmingStateRecoloringLookup.Add(_currentLemmingStateRecoloring.StateIdentifier, _currentLemmingStateRecoloring);
 
             return false;
@@ -57,11 +59,11 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "FROM":
-                _currentOriginalColor = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                _currentOriginalColor = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                 break;
 
             case "TO":
-                _currentReplacementColor = 0xff000000U | ReadingHelpers.ParseUnsignedNumericalValue<uint>(secondToken);
+                _currentReplacementColor = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                 break;
 
             default:

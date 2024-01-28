@@ -5,12 +5,12 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class LemmingState
 {
-	private const int ClimberBitIndex = 0;
-	private const int FloaterBitIndex = 1;
-	private const int GliderBitIndex = 2;
-	private const int SliderBitIndex = 3;
-	private const int SwimmerBitIndex = 4;
-	private const int DisarmerBitIndex = 5;
+	public const int ClimberBitIndex = 0;
+	public const int FloaterBitIndex = 1;
+	public const int GliderBitIndex = 2;
+	public const int SliderBitIndex = 3;
+	public const int SwimmerBitIndex = 4;
+	public const int DisarmerBitIndex = 5;
 
 	private const uint PermanentSkillBitMask = (1U << ClimberBitIndex) |
 											   (1U << FloaterBitIndex) |
@@ -21,9 +21,9 @@ public sealed class LemmingState
 
 	private const int PermanentFastForwardBitIndex = 20;
 
-	private const int ActiveBitIndex = 29;
-	private const int NeutralBitIndex = 30;
-	private const int ZombieBitIndex = 31;
+	public const int ActiveBitIndex = 29;
+	public const int NeutralBitIndex = 30;
+    public const int ZombieBitIndex = 31;
 
 	private const uint AssignableSkillBitMask = (1U << ActiveBitIndex) |
 												(1U << NeutralBitIndex) |

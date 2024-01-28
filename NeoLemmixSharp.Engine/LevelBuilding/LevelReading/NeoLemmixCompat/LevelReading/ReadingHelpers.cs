@@ -1,18 +1,23 @@
-﻿using System.Globalization;
+﻿using NeoLemmixSharp.Engine.Level.Skills;
+using System.Globalization;
 using System.Numerics;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 public static class ReadingHelpers
 {
+    public const int MaxStackallocSize = 256;
+
     public static ReadOnlySpan<char> GetToken(ReadOnlySpan<char> span, int tokenIndex, out int indexOfFirstCharacter)
     {
+        const int padding = 2;
+
         // Safeguard against potential stack overflow.
-        // Will almost certainly be a small string
+        // Will almost certainly be a small buffer
         // allocated on the stack, but still...
-        Span<int> whitespaceIndexSpan = span.Length > 254
-            ? new int[2 + span.Length]
-            : stackalloc int[2 + span.Length];
+        Span<int> whitespaceIndexSpan = span.Length > MaxStackallocSize - padding
+            ? new int[padding + span.Length]
+            : stackalloc int[padding + span.Length];
         whitespaceIndexSpan[0] = -1;
 
         var i = 0;
@@ -54,7 +59,7 @@ public static class ReadingHelpers
         return ReadOnlySpan<char>.Empty;
     }
 
-    public static TNumber ParseUnsignedNumericalValue<TNumber>(ReadOnlySpan<char> token)
+    public static TNumber ParseHex<TNumber>(ReadOnlySpan<char> token)
         where TNumber : struct, IUnsignedNumber<TNumber>, IParsable<TNumber>
     {
         // The standard parse methods can deal with hexadecimal, but
@@ -73,29 +78,29 @@ public static class ReadingHelpers
         return TNumber.Parse(token[startIndex..], NumberStyles.AllowHexSpecifier, null);
     }
 
-    public static bool TryGetWithSpan<TValue>(Dictionary<string, TValue> dictionary, ReadOnlySpan<char> testSpan, out TValue value)
-    {
-        // This is a really terrible way to use a dictionary,
-        // but we only have a span to work with, so it's the
-        // best we can do without allocating new strings
-        foreach (var (key, result) in dictionary)
-        {
-            var keySpan = key.AsSpan();
-            if (testSpan.SequenceEqual(keySpan))
-            {
-                value = result;
-                return true;
-            }
-        }
-
-        value = default!;
-        return false;
-    }
-
     public static string GetString(this ReadOnlySpan<char> span)
     {
         return span.IsEmpty
             ? string.Empty
             : span.ToString();
+    }
+
+    public static bool GetSkillByName(
+        ReadOnlySpan<char> token,
+        IEqualityComparer<char> charEqualityComparer,
+        out LemmingSkill lemmingSkill)
+    {
+        foreach (var item in LemmingSkill.AllItems)
+        {
+            var skillName = item.LemmingSkillName.AsSpan();
+            if (skillName.SequenceEqual(token, charEqualityComparer))
+            {
+                lemmingSkill = item;
+                return true;
+            }
+        }
+
+        lemmingSkill = null!;
+        return false;
     }
 }

@@ -1,11 +1,11 @@
 ﻿using NeoLemmixSharp.Engine.Level;
-using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-public sealed class SkillSetReader : INeoLemmixDataReader, IEqualityComparer<char>
+public sealed class SkillSetReader : INeoLemmixDataReader
 {
+    private readonly CaseInvariantCharEqualityComparer _charEqualityComparer = new();
     private readonly List<SkillSetData> _skillSetData = new();
 
     public bool FinishedReading { get; private set; }
@@ -35,7 +35,7 @@ public sealed class SkillSetReader : INeoLemmixDataReader, IEqualityComparer<cha
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
         var secondToken = ReadingHelpers.GetToken(line, 1, out _);
 
-        if (!GetSkillByName(firstToken, out var skill))
+        if (!ReadingHelpers.GetSkillByName(firstToken, _charEqualityComparer, out var skill))
             throw new Exception($"Unknown token: {firstToken}");
 
         var amount = secondToken is "INFINITE"
@@ -50,32 +50,6 @@ public sealed class SkillSetReader : INeoLemmixDataReader, IEqualityComparer<cha
         };
 
         _skillSetData.Add(skillSetDatum);
-    }
-
-    private bool GetSkillByName(ReadOnlySpan<char> token, out LemmingSkill lemmingSkill)
-    {
-        foreach (var item in LemmingSkill.AllItems)
-        {
-            var skillName = item.LemmingSkillName.AsSpan();
-            if (skillName.SequenceEqual(token, this))
-            {
-                lemmingSkill = item;
-                return true;
-            }
-        }
-
-        lemmingSkill = null!;
-        return false;
-    }
-
-    bool IEqualityComparer<char>.Equals(char x, char y)
-    {
-        return char.ToUpperInvariant(x) == char.ToUpperInvariant(y);
-    }
-
-    int IEqualityComparer<char>.GetHashCode(char obj)
-    {
-        return char.ToUpperInvariant(obj).GetHashCode();
     }
 
     public void ApplyToLevelData(LevelData levelData)
