@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
@@ -50,8 +51,8 @@ public sealed class GadgetReader : INeoLemmixDataReader
                 break;
 
             case "PIECE":
-                var terrainArchetypeData = GetOrLoadGadgetArchetypeData(rest);
-                currentGadgetData.GadgetArchetypeId = terrainArchetypeData.GadgetArchetypeId;
+                var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(rest);
+                currentGadgetData.GadgetArchetypeId = gadgetArchetypeData.GadgetArchetypeId;
                 break;
 
             case "X":
@@ -136,33 +137,23 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     private GadgetArchetypeData GetOrLoadGadgetArchetypeData(ReadOnlySpan<char> piece)
     {
-        var currentStyleLength = _currentStyle!.Length;
+        ref var gadgetArchetypeData = ref ReadingHelpers.GetArchetypeDataRef(
+            _currentStyle!,
+            piece,
+            _gadgetArchetypes,
+            out var exists);
 
-        var bufferSize = currentStyleLength + piece.Length + 1;
-        Span<char> terrainArchetypeDataKeySpan = bufferSize > ReadingHelpers.MaxStackallocSize
-            ? new char[bufferSize]
-            : stackalloc char[bufferSize];
+        if (exists)
+            return gadgetArchetypeData!;
 
-        _currentStyle.AsSpan().CopyTo(terrainArchetypeDataKeySpan);
-        piece.CopyTo(terrainArchetypeDataKeySpan[(currentStyleLength + 1)..]);
-        terrainArchetypeDataKeySpan[currentStyleLength] = ':';
-
-        var terrainArchetypeDataKey = terrainArchetypeDataKeySpan.ToString();
-
-        if (_gadgetArchetypes.TryGetValue(terrainArchetypeDataKey, out var gadgetArchetypeData))
-            return gadgetArchetypeData;
-
-        var terrainPiece = piece.ToString();
+        var gadgetPiece = piece.ToString();
 
         gadgetArchetypeData = new GadgetArchetypeData
         {
             GadgetArchetypeId = _gadgetArchetypes.Count,
             Style = _currentStyle,
-            Gadget = terrainPiece
+            Gadget = gadgetPiece
         };
-
-        var key = terrainArchetypeDataKeySpan.ToString();
-        _gadgetArchetypes[key] = gadgetArchetypeData;
 
         return gadgetArchetypeData;
     }

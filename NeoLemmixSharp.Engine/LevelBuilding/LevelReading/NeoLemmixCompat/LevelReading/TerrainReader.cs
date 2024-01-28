@@ -128,24 +128,17 @@ public sealed class TerrainReader : INeoLemmixDataReader
 
     private TerrainArchetypeData GetOrLoadTerrainArchetypeData(ReadOnlySpan<char> piece)
     {
-        var currentStyleLength = _currentStyle!.Length;
+        ref var terrainArchetypeData = ref ReadingHelpers.GetArchetypeDataRef(
+            _currentStyle!,
+            piece,
+            _terrainArchetypes,
+            out var exists);
 
-        var bufferSize = currentStyleLength + piece.Length + 1;
-        Span<char> terrainArchetypeDataKeySpan = bufferSize > ReadingHelpers.MaxStackallocSize
-            ? new char[bufferSize]
-            : stackalloc char[bufferSize];
-
-        _currentStyle.AsSpan().CopyTo(terrainArchetypeDataKeySpan);
-        piece.CopyTo(terrainArchetypeDataKeySpan[(currentStyleLength + 1)..]);
-        terrainArchetypeDataKeySpan[currentStyleLength] = ':';
-
-        var terrainArchetypeDataKey = terrainArchetypeDataKeySpan.ToString();
-
-        if (_terrainArchetypes.TryGetValue(terrainArchetypeDataKey, out var terrainArchetypeData))
-            return terrainArchetypeData;
+        if (exists)
+            return terrainArchetypeData!;
 
         var terrainPiece = piece.ToString();
-        var rootFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", _currentStyle, "terrain", terrainPiece);
+        var rootFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", _currentStyle!, "terrain", terrainPiece);
         var isSteel = File.Exists(Path.ChangeExtension(rootFilePath, "nxmt"));
 
         terrainArchetypeData = new TerrainArchetypeData
@@ -155,9 +148,6 @@ public sealed class TerrainReader : INeoLemmixDataReader
             TerrainPiece = terrainPiece,
             IsSteel = isSteel
         };
-
-        var key = terrainArchetypeDataKeySpan.ToString();
-        _terrainArchetypes[key] = terrainArchetypeData;
 
         return terrainArchetypeData;
     }
