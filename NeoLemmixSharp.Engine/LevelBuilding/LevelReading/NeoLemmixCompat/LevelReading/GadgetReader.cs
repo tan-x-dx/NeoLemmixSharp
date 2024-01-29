@@ -148,7 +148,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
         gadgetArchetypeData = new GadgetArchetypeData
         {
-            GadgetArchetypeId = _gadgetArchetypes.Count,
+            GadgetArchetypeId = _gadgetArchetypes.Count - 1,
             Style = _currentStyle,
             Gadget = gadgetPiece
         };

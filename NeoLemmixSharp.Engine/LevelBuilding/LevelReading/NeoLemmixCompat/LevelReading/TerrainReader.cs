@@ -141,7 +141,7 @@ public sealed class TerrainReader : INeoLemmixDataReader
 
         terrainArchetypeData = new TerrainArchetypeData
         {
-            TerrainArchetypeId = _terrainArchetypes.Count,
+            TerrainArchetypeId = _terrainArchetypes.Count - 1,
             Style = _currentStyle,
             TerrainPiece = terrainPiece,
             IsSteel = isSteel
