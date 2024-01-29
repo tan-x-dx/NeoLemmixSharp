@@ -153,7 +153,14 @@ public sealed class GadgetReader : INeoLemmixDataReader
             Gadget = gadgetPiece
         };
 
+        ProcessGadgetArchetypeData(gadgetArchetypeData);
+
         return gadgetArchetypeData;
+    }
+
+    private void ProcessGadgetArchetypeData(GadgetArchetypeData gadgetArchetypeData)
+    {
+
     }
 
     public void ApplyToLevelData(LevelData levelData)

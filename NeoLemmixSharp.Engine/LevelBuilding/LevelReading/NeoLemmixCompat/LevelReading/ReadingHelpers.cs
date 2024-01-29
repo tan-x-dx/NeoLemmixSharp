@@ -180,7 +180,7 @@ public static class ReadingHelpers
         ReadOnlySpan<char> piece,
         Dictionary<string, T> dictionary,
         out bool exists)
-        where T : class, IStyleArchetypeData
+        where T : class
     {
         var currentStyleLength = currentStyle.Length;
 
