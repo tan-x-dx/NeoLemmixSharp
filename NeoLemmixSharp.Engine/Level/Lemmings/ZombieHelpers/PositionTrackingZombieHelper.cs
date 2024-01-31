@@ -18,7 +18,7 @@ public sealed class PositionTrackingZombieHelper : IZombieHelper
     {
         _zombieSpacialHashGrid = new SpacialHashGrid<Lemming>(
             hasher,
-            LemmingManager.LemmingPositionChunkSize,
+            LevelConstants.LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
     }

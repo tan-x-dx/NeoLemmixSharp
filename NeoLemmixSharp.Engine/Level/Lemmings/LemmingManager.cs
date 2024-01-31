@@ -16,9 +16,6 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 {
-    public const int BlockerQuantityThreshold = 20;
-    public const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize32;
-
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
 
@@ -57,7 +54,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
         _lemmingPositionHelper = new SpacialHashGrid<Lemming>(
             this,
-            LemmingPositionChunkSize,
+            LevelConstants.LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 

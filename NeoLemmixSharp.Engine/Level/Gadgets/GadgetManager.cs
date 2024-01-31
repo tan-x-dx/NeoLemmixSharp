@@ -31,7 +31,7 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
 
         _gadgetPositionHelper = new SpacialHashGrid<HitBoxGadget>(
             this,
-            ChunkSizeType.ChunkSize64,
+            LevelConstants.GadgetPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
     }
