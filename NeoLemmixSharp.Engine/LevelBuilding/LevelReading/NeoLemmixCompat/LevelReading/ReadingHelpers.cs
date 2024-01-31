@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -166,21 +165,21 @@ public static class ReadingHelpers
     }
 
     /// <summary>
-    /// Returns a (possibly null) reference to a <typeparamref name="T" />. A key is constructed based on the <paramref name="currentStyle" /> and <paramref name="piece" /> parameters,
+    /// Returns a (possibly null) reference to a <typeparamref name="TValue" />. A key is constructed based on the <paramref name="currentStyle" /> and <paramref name="piece" /> parameters,
     /// and either a new entry is created, or the existing entry is returned. NOTE: the returned reference may be null, and is expected to be initialised by the caller!
     /// </summary>
-    /// <typeparam name="T">The type of value.</typeparam>
+    /// <typeparam name="TValue">The type of value.</typeparam>
     /// <param name="currentStyle">The style type</param>
     /// <param name="piece">The piece type</param>
     /// <param name="dictionary">The dictionary to look in</param>
     /// <param name="exists">When this method returns, contains <see langword="true" /> if the constructed key already existed in the dictionary, and <see langword="false" /> if a new entry was added.</param>
-    /// <returns>A reference to a <typeparamref name="T" /> in the specified dictionary.</returns>
-    public static ref T? GetArchetypeDataRef<T>(
+    /// <returns>A reference to a <typeparamref name="TValue" /> in the specified dictionary.</returns>
+    public static ref TValue? GetArchetypeDataRef<TValue>(
         ReadOnlySpan<char> currentStyle,
         ReadOnlySpan<char> piece,
-        Dictionary<string, T> dictionary,
+        Dictionary<string, TValue> dictionary,
         out bool exists)
-        where T : class
+        where TValue : class
     {
         var currentStyleLength = currentStyle.Length;
 
