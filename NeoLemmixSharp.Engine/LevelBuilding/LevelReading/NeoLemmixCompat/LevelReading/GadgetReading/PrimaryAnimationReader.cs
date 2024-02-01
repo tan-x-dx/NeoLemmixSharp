@@ -2,24 +2,21 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
 
-public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
+public sealed class PrimaryAnimationReader : INeoLemmixDataReader
 {
     private readonly GadgetArchetypeData _gadgetArchetypeData;
 
-    public GadgetArchetypeDataReader(GadgetArchetypeData gadgetArchetypeData)
+    public PrimaryAnimationReader(GadgetArchetypeData gadgetArchetypeData)
     {
         _gadgetArchetypeData = gadgetArchetypeData;
     }
 
     public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "EFFECT";
+    public string IdentifierToken => "$PRIMARY_ANIMATION";
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
-
-        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
-
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
@@ -35,49 +32,33 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
 
         switch (firstToken)
         {
-            case "TRIGGER_X":
-                _gadgetArchetypeData.TriggerX = int.Parse(secondToken);
+            case "FRAMES":
+                _gadgetArchetypeData.PrimaryAnimationFrameCount = int.Parse(secondToken);
                 break;
 
-            case "TRIGGER_Y":
-                _gadgetArchetypeData.TriggerY = int.Parse(secondToken);
-                break;
-
-            case "TRIGGER_WIDTH":
-                _gadgetArchetypeData.TriggerWidth = int.Parse(secondToken);
-                break;
-
-            case "TRIGGER_HEIGHT":
-                _gadgetArchetypeData.TriggerHeight = int.Parse(secondToken);
-                break;
-
-            case "SOUND":
+            case "NINE_SLICE_TOP":
 
                 break;
 
-            case "RESIZE_HORIZONTAL":
+            case "NINE_SLICE_RIGHT":
 
                 break;
 
-            case "RESIZE_VERTICAL":
+            case "NINE_SLICE_BOTTOM":
 
                 break;
 
-            case "RESIZE_BOTH":
+            case "NINE_SLICE_LEFT":
 
                 break;
 
-            case "DEFAULT_WIDTH":
-
-                break;
-
-            case "DEFAULT_HEIGHT":
+            case "COLOR":
 
                 break;
 
             default:
                 throw new InvalidOperationException(
-                    $"Unknown token when parsing Gadget Archetype Data: [{firstToken}] line: \"{line}\"");
+                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
         }
 
         return false;

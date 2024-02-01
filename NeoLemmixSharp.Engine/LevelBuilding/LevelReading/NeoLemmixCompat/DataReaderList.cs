@@ -59,7 +59,9 @@ public sealed class DataReaderList : IDisposable
 
     private bool TryGetWithSpan(ReadOnlySpan<char> token, out INeoLemmixDataReader dataReader)
     {
-        foreach (var item in _dataReaders)
+        var dataReaderSpan = CollectionsMarshal.AsSpan(_dataReaders);
+
+        foreach (var item in dataReaderSpan)
         {
             var itemSpan = item.IdentifierToken.AsSpan();
 

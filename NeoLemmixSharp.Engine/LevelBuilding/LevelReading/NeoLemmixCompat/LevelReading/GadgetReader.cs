@@ -169,6 +169,8 @@ public sealed class GadgetReader : INeoLemmixDataReader
         using var dataReaderList = new DataReaderList();
 
         dataReaderList.Add(new GadgetArchetypeDataReader(gadgetArchetypeData));
+        dataReaderList.Add(new PrimaryAnimationReader(gadgetArchetypeData));
+        dataReaderList.Add(new SecondaryAnimationReader(gadgetArchetypeData));
 
         dataReaderList.ReadFile(rootFilePath);
     }
