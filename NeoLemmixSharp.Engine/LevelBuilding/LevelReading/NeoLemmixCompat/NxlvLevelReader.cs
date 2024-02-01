@@ -5,48 +5,28 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 public sealed class NxlvLevelReader : ILevelReader
 {
-    private readonly INeoLemmixDataReader[] _dataReaders;
-
-    private INeoLemmixDataReader? _currentDataReader;
+    private readonly DataReaderList _dataReaders = new();
 
     public NxlvLevelReader()
     {
         var terrainArchetypes = new Dictionary<string, TerrainArchetypeData>();
-        _dataReaders =
-        [
-            new LevelDataReader(),
-            new SkillSetReader(),
-            new TerrainGroupReader(terrainArchetypes),
-            new TerrainReader(terrainArchetypes),
-            new GadgetReader(),
-            new LemmingReader(),
-            new SpriteSetRecoloringReader(),
-            new StateRecoloringReader(),
-            new ShadesReader(),
 
-            new DudDataReader("$ANIMATIONS")
-        ];
+        _dataReaders.Add(new LevelDataReader());
+        _dataReaders.Add(new SkillSetReader());
+        _dataReaders.Add(new TerrainGroupReader(terrainArchetypes));
+        _dataReaders.Add(new TerrainReader(terrainArchetypes));
+        _dataReaders.Add(new GadgetReader());
+        _dataReaders.Add(new LemmingReader());
+        _dataReaders.Add(new SpriteSetRecoloringReader());
+        _dataReaders.Add(new StateRecoloringReader());
+        _dataReaders.Add(new ShadesReader());
+
+        _dataReaders.Add(new DudDataReader("$ANIMATIONS"));
     }
 
     public LevelData ReadLevel(string levelFilePath)
     {
-        using (var stream = new FileStream(levelFilePath, FileMode.Open))
-        {
-            using var streamReader = new StreamReader(stream);
-
-            string? line;
-            while ((line = streamReader.ReadLine()) != null)
-            {
-                if (LineIsBlankOrComment(line))
-                    continue;
-
-                bool reprocessLine;
-                do
-                {
-                    reprocessLine = ProcessLine(line);
-                } while (reprocessLine);
-            }
-        }
+        _dataReaders.ReadFile(levelFilePath);
 
         var levelData = new LevelData();
 
@@ -54,52 +34,9 @@ public sealed class NxlvLevelReader : ILevelReader
         //  ReadSpriteData();
         //   SetUpGadgets();
 
-        foreach (var dataReader in _dataReaders)
-        {
-            dataReader.ApplyToLevelData(levelData);
-        }
+        _dataReaders.ApplyToLevelData(levelData);
 
         return levelData;
-    }
-
-    private bool ProcessLine(string line)
-    {
-        if (_currentDataReader != null)
-        {
-            var result = _currentDataReader.ReadNextLine(line);
-
-            if (_currentDataReader.FinishedReading)
-            {
-                _currentDataReader = null;
-            }
-            return result;
-        }
-
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        if (!TryGetWithSpan(firstToken, out var dataReader))
-            throw new InvalidOperationException($"Could not find reader for line! [{firstToken}] line: \"{line}\"");
-
-        _currentDataReader = dataReader;
-        _currentDataReader.BeginReading(line);
-
-        return false;
-    }
-
-    private bool TryGetWithSpan(ReadOnlySpan<char> token, out INeoLemmixDataReader dataReader)
-    {
-        foreach (var item in _dataReaders)
-        {
-            var itemSpan = item.IdentifierToken.AsSpan();
-
-            if (itemSpan.SequenceEqual(token))
-            {
-                dataReader = item;
-                return true;
-            }
-        }
-
-        dataReader = null!;
-        return false;
     }
 
     /*  private void ReadStyle()
@@ -191,14 +128,6 @@ public sealed class NxlvLevelReader : ILevelReader
 
     public void Dispose()
     {
-        foreach (var dataReader in _dataReaders)
-        {
-            dataReader.Dispose();
-        }
-    }
-
-    private static bool LineIsBlankOrComment(string line)
-    {
-        return string.IsNullOrWhiteSpace(line) || line[0] == '#';
+        _dataReaders.Dispose();
     }
 }

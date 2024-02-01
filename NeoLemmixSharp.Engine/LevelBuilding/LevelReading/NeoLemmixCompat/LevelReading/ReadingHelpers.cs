@@ -199,4 +199,9 @@ public static class ReadingHelpers
 
         return ref CollectionsMarshal.GetValueRefOrAddDefault(dictionary, archetypeDataKey, out exists);
     }
+
+    public static bool LineIsBlankOrComment(string line)
+    {
+        return string.IsNullOrWhiteSpace(line) || line[0] == '#';
+    }
 }

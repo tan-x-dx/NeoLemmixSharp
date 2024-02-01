@@ -1,6 +1,8 @@
-﻿using NeoLemmixSharp.Engine.Level;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
@@ -160,7 +162,15 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     private void ProcessGadgetArchetypeData(GadgetArchetypeData gadgetArchetypeData)
     {
+        var objectsFolder = Path.Combine(RootDirectoryManager.RootDirectory, "styles", _currentStyle!, "objects");
+        var rootFilePath = Path.Combine(objectsFolder, gadgetArchetypeData.Gadget!);
+        rootFilePath = Path.ChangeExtension(rootFilePath, "nxmo");
 
+        using var dataReaderList = new DataReaderList();
+
+        dataReaderList.Add(new GadgetArchetypeDataReader(gadgetArchetypeData));
+
+        dataReaderList.ReadFile(rootFilePath);
     }
 
     public void ApplyToLevelData(LevelData levelData)
