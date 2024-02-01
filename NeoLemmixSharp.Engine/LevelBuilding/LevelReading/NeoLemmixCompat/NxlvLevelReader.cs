@@ -1,172 +1,133 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 public sealed class NxlvLevelReader : ILevelReader
 {
-    private readonly Dictionary<string, INeoLemmixDataReader> _dataReaders = new();
-
-    private readonly List<NeoLemmixGadgetData> _neoLemmixGadgetData = new();
-
-    private INeoLemmixDataReader? _currentDataReader;
-
-    public LevelData LevelData { get; }
+    private readonly DataReaderList _dataReaders = new();
 
     public NxlvLevelReader()
     {
-        LevelData = new LevelData();
+        var terrainArchetypes = new Dictionary<string, TerrainArchetypeData>();
 
-        AddDataReader(new LevelDataReader(LevelData, false));
-        AddDataReader(new LevelDataReader(LevelData, true));
-        AddDataReader(new SkillSetReader(LevelData));
-        AddDataReader(new TerrainGroupReader(LevelData.AllTerrainGroups));
-        AddDataReader(new GadgetReader(_neoLemmixGadgetData));
-        AddDataReader(new TerrainReader(LevelData.AllTerrainData));
-        AddDataReader(new LemmingReader());
+        _dataReaders.Add(new LevelDataReader());
+        _dataReaders.Add(new SkillSetReader());
+        _dataReaders.Add(new TerrainGroupReader(terrainArchetypes));
+        _dataReaders.Add(new TerrainReader(terrainArchetypes));
+        _dataReaders.Add(new GadgetReader());
+        _dataReaders.Add(new LemmingReader());
+        _dataReaders.Add(new SpriteSetRecoloringReader());
+        _dataReaders.Add(new StateRecoloringReader());
+        _dataReaders.Add(new ShadesReader());
 
-        AddDataReader(new SpriteSetRecoloringReader(LevelData.ThemeData.LemmingSpriteSetRecoloring));
-        AddDataReader(new StateRecoloringReader(LevelData.ThemeData));
-        AddDataReader(new ShadesReader());
-        AddDataReader(new AnimationDataReader(LevelData.ThemeData));
-
-        return;
-
-        void AddDataReader(INeoLemmixDataReader dataReader)
-        {
-            _dataReaders.Add(dataReader.IdentifierToken, dataReader);
-        }
+        _dataReaders.Add(new DudDataReader("$ANIMATIONS"));
     }
 
-    public void ReadLevel(string levelFilePath)
+    public LevelData ReadLevel(string levelFilePath)
     {
-        var lines = File.ReadAllLines(levelFilePath);
+        _dataReaders.ReadFile(levelFilePath);
 
-        for (var index = 0; index < lines.Length; index++)
-        {
-            var line = lines[index];
-            ProcessLine(line, index);
-        }
+        var levelData = new LevelData();
 
-        if (string.IsNullOrWhiteSpace(LevelData.LevelTitle))
-        {
-            LevelData.LevelTitle = "Untitled";
-        }
+        //   ReadStyle();
+        //  ReadSpriteData();
+        //   SetUpGadgets();
 
-        ReadStyle();
-        ReadSpriteData();
-        SetUpGadgets();
+        _dataReaders.ApplyToLevelData(levelData);
+
+        return levelData;
     }
 
-    private void ProcessLine(string line, int index)
-    {
-        if (!ReadingHelpers.TrySplitIntoTokens(line, out var tokens))
-            return;
+    /*  private void ReadStyle()
+      {
+          var theme = _levelData.LevelTheme;
+          var themeFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", theme, "theme.nxtm");
 
-        if (_currentDataReader != null)
-        {
-            _currentDataReader.ReadNextLine(tokens);
+          using (var stream = new FileStream(themeFilePath, FileMode.Open))
+          {
+              using var streamReader = new StreamReader(stream);
 
-            if (_currentDataReader.FinishedReading)
-            {
-                _currentDataReader = null;
-            }
-            return;
-        }
+              string? line;
+              while ((line = streamReader.ReadLine()) != null)
+              {
+                  if (LineIsBlankOrComment(line))
+                      continue;
 
-        if (_dataReaders.TryGetValue(tokens[0], out var dataReader))
-        {
-            _currentDataReader = dataReader;
-            _currentDataReader.BeginReading(tokens);
+                  ProcessThemeLine(line);
+              }
+          }
 
-            return;
-        }
+          _levelData.ThemeData.LemmingSpritesFilePath = Path.Combine(
+              RootDirectoryManager.RootDirectory,
+              "styles",
+              _levelData.ThemeData.BaseStyle,
+              "lemmings");
+      }*/
 
-        throw new InvalidOperationException($"Unknown token: [{tokens[0]}] - line {index}: \"{line}\"");
-    }
+    /*  private void ProcessThemeLine(string line)
+      {
+          var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+          var secondToken = ReadingHelpers.GetToken(line, 1, out _);
 
-    private void ReadStyle()
-    {
-        var theme = LevelData.LevelTheme;
-        var themeFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", theme, "theme.nxtm");
+          switch (firstToken)
+          {
+              case "LEMMINGS":
+                  _levelData.ThemeData.BaseStyle = secondToken.ToString();
+                  break;
 
-        var themeLines = File.ReadAllLines(themeFilePath);
+              case "$COLORS":
+                  break;
 
-        foreach (var line in themeLines)
-        {
-            ProcessThemeLine(line);
-        }
+              case "MASK":
+                  _levelData.ThemeData.Mask = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                  break;
 
-        LevelData.ThemeData.LemmingSpritesFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", LevelData.ThemeData.BaseStyle, "lemmings");
-    }
+              case "MINIMAP":
+                  _levelData.ThemeData.Minimap = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                  break;
 
-    private void ProcessThemeLine(string line)
-    {
-        if (!ReadingHelpers.TrySplitIntoTokens(line, out var tokens))
-            return;
+              case "BACKGROUND":
+                  _levelData.ThemeData.Background = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                  break;
 
-        switch (tokens[0])
-        {
-            case "LEMMINGS":
-                LevelData.ThemeData.BaseStyle = tokens[1];
-                break;
+              case "ONE_WAYS":
+                  _levelData.ThemeData.OneWays = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                  break;
 
-            case "$COLORS":
-                break;
+              case "PICKUP_BORDER":
+                  _levelData.ThemeData.PickupBorder = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                  break;
 
-            case "MASK":
-                LevelData.ThemeData.Mask = ReadingHelpers.ReadUint(tokens[1], false);
-                break;
+              case "PICKUP_INSIDE":
+                  _levelData.ThemeData.PickupInside = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                  break;
 
-            case "MINIMAP":
-                LevelData.ThemeData.Minimap = ReadingHelpers.ReadUint(tokens[1], false);
-                break;
+              case "END":
+                  break;
+          }
+      }*/
 
-            case "BACKGROUND":
-                LevelData.ThemeData.Background = ReadingHelpers.ReadUint(tokens[1], false);
-                break;
+    /* private void ReadSpriteData()
+     {
+         var schemeFilePath = Path.Combine(
+             _levelData.ThemeData.LemmingSpritesFilePath,
+             "scheme.nxmi");
 
-            case "ONE_WAYS":
-                LevelData.ThemeData.OneWays = ReadingHelpers.ReadUint(tokens[1], false);
-                break;
+         using var stream = new FileStream(schemeFilePath, FileMode.Open);
+         using var streamReader = new StreamReader(stream);
 
-            case "PICKUP_BORDER":
-                LevelData.ThemeData.PickupBorder = ReadingHelpers.ReadUint(tokens[1], false);
-                break;
-
-            case "PICKUP_INSIDE":
-                LevelData.ThemeData.PickupInside = ReadingHelpers.ReadUint(tokens[1], false);
-                break;
-
-            case "END":
-                break;
-        }
-    }
-
-    private void ReadSpriteData()
-    {
-        var schemeFilePath = Path.Combine(LevelData.ThemeData.LemmingSpritesFilePath, "scheme.nxmi");
-
-        var schemeLines = File.ReadAllLines(schemeFilePath);
-
-        for (var index = 0; index < schemeLines.Length; index++)
-        {
-            var line = schemeLines[index];
-            ProcessLine(line, index);
-        }
-    }
-
-    private void SetUpGadgets()
-    {
-
-    }
+         string? line;
+         while ((line = streamReader.ReadLine()) != null)
+         {
+             if (LineIsBlankOrComment(line))
+                 continue;
+             ProcessLine(line);
+         }
+     }*/
 
     public void Dispose()
     {
-        foreach (var terrainGroup in LevelData.AllTerrainGroups)
-        {
-            terrainGroup.Dispose();
-        }
+        _dataReaders.Dispose();
     }
 }

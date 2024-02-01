@@ -1,89 +1,124 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
+
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 public sealed class GadgetReader : INeoLemmixDataReader
 {
-    private readonly ICollection<NeoLemmixGadgetData> _allGadgetData;
+    private readonly CaseInvariantCharEqualityComparer _charEqualityComparer = new();
+    private readonly Dictionary<string, GadgetArchetypeData> _gadgetArchetypes = new();
+    private readonly List<NeoLemmixGadgetData> _allGadgetData = new();
+
+    private NeoLemmixGadgetData? _currentGadgetData;
+    private string? _currentStyle;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$GADGET";
-    private NeoLemmixGadgetData? _currentGadgetData;
 
-    public GadgetReader(ICollection<NeoLemmixGadgetData> allGadgetData)
-    {
-        _allGadgetData = allGadgetData;
-    }
-
-    public void BeginReading(string[] tokens)
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         _currentGadgetData = new NeoLemmixGadgetData();
         FinishedReading = false;
     }
 
-    public void ReadNextLine(string[] tokens)
+    public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        switch (tokens[0])
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        var secondToken = ReadingHelpers.GetToken(line, 1, out var secondTokenIndex);
+
+        var currentGadgetData = _currentGadgetData!;
+
+        switch (firstToken)
         {
             case "STYLE":
-                _currentGadgetData!.Style = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                var rest = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex);
+                if (_currentStyle is null)
+                {
+                    _currentStyle = rest.GetString();
+                }
+                else
+                {
+                    var currentStyleSpan = _currentStyle.AsSpan();
+                    if (!currentStyleSpan.SequenceEqual(rest))
+                    {
+                        _currentStyle = rest.GetString();
+                    }
+                }
+
                 break;
 
             case "PIECE":
-                _currentGadgetData!.Piece = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(ReadingHelpers.TrimAfterIndex(line, secondTokenIndex));
+                currentGadgetData.GadgetArchetypeId = gadgetArchetypeData.GadgetArchetypeId;
                 break;
 
             case "X":
-                _currentGadgetData!.X = ReadingHelpers.ReadInt(tokens[1]);
+                currentGadgetData.X = int.Parse(secondToken);
                 break;
 
             case "Y":
-                _currentGadgetData!.Y = ReadingHelpers.ReadInt(tokens[1]);
+                currentGadgetData.Y = int.Parse(secondToken);
                 break;
 
             case "WIDTH":
-                _currentGadgetData!.Width = ReadingHelpers.ReadInt(tokens[1]);
+                currentGadgetData.Width = int.Parse(secondToken);
                 break;
 
             case "HEIGHT":
-                _currentGadgetData!.Height = ReadingHelpers.ReadInt(tokens[1]);
+                currentGadgetData.Height = int.Parse(secondToken);
                 break;
 
             case "SPEED":
-                _currentGadgetData!.Speed = ReadingHelpers.ReadInt(tokens[1]);
+                currentGadgetData.Speed = int.Parse(secondToken);
                 break;
 
             case "ANGLE":
-                _currentGadgetData!.Angle = 0;
+                currentGadgetData.Angle = int.Parse(secondToken);
                 break;
 
             case "NO_OVERWRITE":
-                _currentGadgetData!.NoOverwrite = true;
+                currentGadgetData.NoOverwrite = true;
                 break;
 
             case "ONLY_ON_TERRAIN":
-                _currentGadgetData!.OnlyOnTerrain = true;
+                currentGadgetData.OnlyOnTerrain = true;
                 break;
 
             case "ONE_WAY":
                 break;
 
             case "FLIP_VERTICAL":
-                _currentGadgetData!.FlipVertical = true;
+                currentGadgetData.FlipVertical = true;
                 break;
 
             case "FLIP_HORIZONTAL":
-                _currentGadgetData!.FlipHorizontal = true;
+                currentGadgetData.FlipHorizontal = true;
                 break;
 
             case "ROTATE":
-                _currentGadgetData!.Rotate = true;
+                currentGadgetData.Rotate = true;
                 break;
 
             case "SKILL":
-                _currentGadgetData!.Skill = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                if (!ReadingHelpers.GetSkillByName(secondToken, _charEqualityComparer, out var skill))
+                    throw new Exception($"Unknown token: {secondToken}");
+
+                currentGadgetData.Skill = skill;
                 break;
 
             case "SKILL_COUNT":
-                _currentGadgetData!.SkillCount = ReadingHelpers.ReadInt(tokens[1]);
+                var amount = secondToken is "INFINITE"
+                    ? LevelConstants.InfiniteSkillCount
+                    : int.Parse(secondToken);
+
+                currentGadgetData.SkillCount = amount;
+                break;
+
+            case "LEMMINGS":
+                currentGadgetData.LemmingCount = int.Parse(secondToken);
                 break;
 
             case "$END":
@@ -94,7 +129,59 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
             default:
                 throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{tokens[0]}] line: \"{string.Join(' ', tokens)}\"");
+                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
         }
+
+        return false;
+    }
+
+    private GadgetArchetypeData GetOrLoadGadgetArchetypeData(ReadOnlySpan<char> piece)
+    {
+        ref var gadgetArchetypeData = ref ReadingHelpers.GetArchetypeDataRef(
+            _currentStyle!,
+            piece,
+            _gadgetArchetypes,
+            out var exists);
+
+        if (exists)
+            return gadgetArchetypeData!;
+
+        var gadgetPiece = piece.ToString();
+
+        gadgetArchetypeData = new GadgetArchetypeData
+        {
+            GadgetArchetypeId = _gadgetArchetypes.Count - 1,
+            Style = _currentStyle,
+            Gadget = gadgetPiece
+        };
+
+        ProcessGadgetArchetypeData(gadgetArchetypeData);
+
+        return gadgetArchetypeData;
+    }
+
+    private void ProcessGadgetArchetypeData(GadgetArchetypeData gadgetArchetypeData)
+    {
+        var objectsFolder = Path.Combine(RootDirectoryManager.RootDirectory, "styles", _currentStyle!, "objects");
+        var rootFilePath = Path.Combine(objectsFolder, gadgetArchetypeData.Gadget!);
+        rootFilePath = Path.ChangeExtension(rootFilePath, "nxmo");
+
+        using var dataReaderList = new DataReaderList();
+
+        dataReaderList.Add(new GadgetArchetypeDataReader(gadgetArchetypeData));
+        dataReaderList.Add(new PrimaryAnimationReader(gadgetArchetypeData));
+        dataReaderList.Add(new SecondaryAnimationReader(gadgetArchetypeData));
+
+        dataReaderList.ReadFile(rootFilePath);
+    }
+
+    public void ApplyToLevelData(LevelData levelData)
+    {
+        //    levelData.AllGadgetData.AddRange(_allGadgetData);
+    }
+
+    public void Dispose()
+    {
+        _allGadgetData.Clear();
     }
 }

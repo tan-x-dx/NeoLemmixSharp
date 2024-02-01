@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Common.Rendering.Text;
 
-public sealed class PanelFont : INeoLemmixFont
+public sealed class PanelFont
 {
     public const int GlyphWidth = 8;
     private const int GlyphHeight = 16;
@@ -40,47 +40,6 @@ public sealed class PanelFont : INeoLemmixFont
             default:
                 adjustedChar = -1;
                 return false;
-        }
-    }
-
-    public void RenderText(
-        SpriteBatch spriteBatch,
-        ReadOnlySpan<char> charactersToRender,
-        int x,
-        int y,
-        int scaleMultiplier,
-        Color color)
-    {
-        var dx = GlyphWidth * scaleMultiplier;
-        var dest = new Rectangle(x, y, GlyphWidth * scaleMultiplier, GlyphHeight * scaleMultiplier);
-        foreach (var c in charactersToRender)
-        {
-            if (!CanRenderChar(c, out var adjustedChar))
-                continue;
-
-            if (adjustedChar < 0)
-            {
-                dest.X += dx;
-                continue;
-            }
-
-            var source = new Rectangle(GlyphWidth * adjustedChar, 0, GlyphWidth, GlyphHeight);
-            spriteBatch.Draw(
-                _texture,
-                dest,
-                source,
-                Color.White,
-                RenderLayer);
-
-            source.Y += GlyphHeight;
-            spriteBatch.Draw(
-                _texture,
-                dest,
-                source,
-                color,
-                RenderLayer);
-
-            dest.X += dx;
         }
     }
 

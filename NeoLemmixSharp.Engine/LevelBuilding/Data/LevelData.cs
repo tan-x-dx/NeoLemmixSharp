@@ -19,16 +19,16 @@ public sealed class LevelData
     public int NumberOfLemmings { get; set; }
     public int SaveRequirement { get; set; }
     public int? TimeLimit { get; set; }
-    public int MaxSpawnInterval { get; set; }
 
-    public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Void;
-    public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Void;
+    public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; }
+    public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; }
 
-    public BoundaryBehaviourType HorizontalViewPortBehaviour { get; set; } = BoundaryBehaviourType.Void;
-    public BoundaryBehaviourType VerticalViewPortBehaviour { get; set; } = BoundaryBehaviourType.Void;
+    public BoundaryBehaviourType HorizontalViewPortBehaviour { get; set; }
+    public BoundaryBehaviourType VerticalViewPortBehaviour { get; set; }
 
     public List<SkillSetData> SkillSetData { get; } = new();
     public ThemeData ThemeData { get; } = new();
+    public List<TerrainArchetypeData> TerrainArchetypeData { get; } = new();
     public List<TerrainData> AllTerrainData { get; } = new();
     public List<TerrainGroup> AllTerrainGroups { get; } = new();
     public List<HatchGroupData> AllHatchGroupData { get; } = new();

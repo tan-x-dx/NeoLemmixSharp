@@ -5,36 +5,33 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 
 public sealed class StateRecoloringReader : INeoLemmixDataReader
 {
-    private readonly ThemeData _themeData;
+    private readonly ThemeData _themeData = new();
 
     private LemmingStateRecoloring? _currentLemmingStateRecoloring;
 
     private uint? _currentOriginalColor;
     private uint? _currentReplacementColor;
 
-    public StateRecoloringReader(ThemeData themeData)
-    {
-        _themeData = themeData;
-    }
-
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$STATE_RECOLORING";
-    public void BeginReading(string[] tokens)
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         _currentLemmingStateRecoloring = null;
         FinishedReading = false;
     }
 
-    public void ReadNextLine(string[] tokens)
+    public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        if (tokens[0][0] == '$')
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+
+        if (firstToken[0] == '$')
         {
-            if (tokens[0] == "$END")
+            if (firstToken is "$END")
             {
                 if (_currentLemmingStateRecoloring == null)
                 {
                     FinishedReading = true;
-                    return;
+                    return false;
                 }
 
                 var tuple = (_currentOriginalColor!.Value, _currentReplacementColor!.Value);
@@ -43,31 +40,45 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
                 _currentLemmingStateRecoloring.Recolorings.Add(tuple);
 
                 _currentLemmingStateRecoloring = null;
-                return;
+                return false;
             }
 
-            if (_themeData.LemmingStateRecoloringLookup.TryGetValue(tokens[0], out _currentLemmingStateRecoloring))
-                return;
+            var key = firstToken.GetString();
 
-            _currentLemmingStateRecoloring = new LemmingStateRecoloring(tokens[0]);
+            if (_themeData.LemmingStateRecoloringLookup.TryGetValue(key, out _currentLemmingStateRecoloring))
+                return false;
+
+            _currentLemmingStateRecoloring = new LemmingStateRecoloring(key);
             _themeData.LemmingStateRecoloringLookup.Add(_currentLemmingStateRecoloring.StateIdentifier, _currentLemmingStateRecoloring);
 
-            return;
+            return false;
         }
 
-        switch (tokens[0])
+        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+
+        switch (firstToken)
         {
             case "FROM":
-                _currentOriginalColor = ReadingHelpers.ReadUint(tokens[1], false);
+                _currentOriginalColor = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                 break;
 
             case "TO":
-                _currentReplacementColor = ReadingHelpers.ReadUint(tokens[1], false);
+                _currentReplacementColor = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                 break;
 
             default:
                 throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{tokens[0]}] line: \"{string.Join(' ', tokens)}\"");
+                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
         }
+
+        return false;
+    }
+
+    public void ApplyToLevelData(LevelData levelData)
+    {
+    }
+
+    public void Dispose()
+    {
     }
 }

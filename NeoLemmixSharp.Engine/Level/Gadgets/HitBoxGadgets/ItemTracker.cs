@@ -16,7 +16,7 @@ public sealed class ItemTracker<T>
     {
         var length = hasher.NumberOfItems;
 
-        var numberOfLongs = (length + UintArrayWrapper.Mask) >> BitArray.Shift;
+        var numberOfLongs = (length + BitArray.Mask) >> BitArray.Shift;
 
         _longs = new ulong[numberOfLongs];
     }
@@ -36,7 +36,7 @@ public sealed class ItemTracker<T>
     {
         var id = item.Id;
 
-        var bitIndex = (id & UintArrayWrapper.Mask) << 1;
+        var bitIndex = (id & BitArray.Mask) << 1;
         var longIndex = id >> BitArray.Shift;
 
         ref var longValue = ref _longs[longIndex];

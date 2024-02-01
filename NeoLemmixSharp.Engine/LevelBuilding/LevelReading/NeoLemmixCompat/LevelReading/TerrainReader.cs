@@ -1,88 +1,112 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 public sealed class TerrainReader : INeoLemmixDataReader
 {
-    private readonly ICollection<TerrainData> _allTerrainData;
+    private readonly List<TerrainData> _allTerrainData;
+    private readonly Dictionary<string, TerrainArchetypeData> _terrainArchetypes;
+
+    private TerrainData? _currentTerrainData;
+    private string? _currentStyle;
+
+    private bool _settingDataForGroup;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$TERRAIN";
 
-    private TerrainData? _currentTerrainData;
-    private bool _settingDataForGroup;
-
-    public TerrainReader(ICollection<TerrainData> allTerrainData)
+    public TerrainReader(
+        Dictionary<string, TerrainArchetypeData> terrainArchetypes,
+        List<TerrainData>? allTerrainData = null)
     {
-        _allTerrainData = allTerrainData;
+        _terrainArchetypes = terrainArchetypes;
+        _allTerrainData = allTerrainData ?? new List<TerrainData>();
     }
 
-    public void BeginReading(string[] tokens)
+    public void BeginReading(ReadOnlySpan<char> line)
     {
         _currentTerrainData = new TerrainData();
         FinishedReading = false;
     }
 
-    public void ReadNextLine(string[] tokens)
+    public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        switch (tokens[0])
+        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        var secondToken = ReadingHelpers.GetToken(line, 1, out var secondTokenIndex);
+
+        var currentTerrainData = _currentTerrainData!;
+
+        switch (firstToken)
         {
             case "STYLE":
-                if (tokens[1][0] == '*')
+                var rest = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex);
+                if (secondToken[0] == '*')
                 {
                     _settingDataForGroup = true;
                 }
                 else
                 {
-                    _currentTerrainData!.Style = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                    if (_currentStyle is null)
+                    {
+                        _currentStyle = rest.GetString();
+                    }
+                    else
+                    {
+                        var currentStyleSpan = _currentStyle.AsSpan();
+                        if (!currentStyleSpan.SequenceEqual(rest))
+                        {
+                            _currentStyle = rest.ToString();
+                        }
+                    }
                 }
-
                 break;
 
             case "PIECE":
                 if (_settingDataForGroup)
                 {
-                    _currentTerrainData!.GroupId = tokens[1];
+                    currentTerrainData.GroupName = secondToken.GetString();
                 }
                 else
                 {
-                    _currentTerrainData!.TerrainName = ReadingHelpers.ReadFormattedString(tokens[1..]);
+                    var terrainArchetypeData = GetOrLoadTerrainArchetypeData(ReadingHelpers.TrimAfterIndex(line, secondTokenIndex));
+                    currentTerrainData.TerrainArchetypeId = terrainArchetypeData.TerrainArchetypeId;
                 }
                 break;
 
             case "X":
-                _currentTerrainData!.X = ReadingHelpers.ReadInt(tokens[1]);
+                currentTerrainData.X = int.Parse(secondToken);
                 break;
 
             case "Y":
-                _currentTerrainData!.Y = ReadingHelpers.ReadInt(tokens[1]);
+                currentTerrainData.Y = int.Parse(secondToken);
                 break;
 
             case "RGB":
-                _currentTerrainData!.Tint = ReadingHelpers.ReadUint(tokens[1], true);
+                currentTerrainData.Tint = ReadingHelpers.ParseHex<uint>(secondToken);
                 break;
 
             case "NO_OVERWRITE":
-                _currentTerrainData!.NoOverwrite = true;
+                currentTerrainData.NoOverwrite = true;
                 break;
 
             case "ONE_WAY":
                 break;
 
             case "FLIP_VERTICAL":
-                _currentTerrainData!.FlipVertical = true;
+                currentTerrainData.FlipVertical = true;
                 break;
 
             case "FLIP_HORIZONTAL":
-                _currentTerrainData!.FlipHorizontal = true;
+                currentTerrainData.FlipHorizontal = true;
                 break;
 
             case "ROTATE":
-                _currentTerrainData!.Rotate = true;
+                currentTerrainData.Rotate = true;
                 break;
 
             case "ERASE":
-                _currentTerrainData!.Erase = true;
+                currentTerrainData.Erase = true;
                 break;
 
             case "$END":
@@ -94,7 +118,45 @@ public sealed class TerrainReader : INeoLemmixDataReader
 
             default:
                 throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{tokens[0]}] line: \"{string.Join(' ', tokens)}\"");
+                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
         }
+
+        return false;
+    }
+
+    private TerrainArchetypeData GetOrLoadTerrainArchetypeData(ReadOnlySpan<char> piece)
+    {
+        ref var terrainArchetypeData = ref ReadingHelpers.GetArchetypeDataRef(
+            _currentStyle!,
+            piece,
+            _terrainArchetypes,
+            out var exists);
+
+        if (exists)
+            return terrainArchetypeData!;
+
+        var terrainPiece = piece.ToString();
+        var rootFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", _currentStyle!, "terrain", terrainPiece);
+        var isSteel = File.Exists(Path.ChangeExtension(rootFilePath, "nxmt"));
+
+        terrainArchetypeData = new TerrainArchetypeData
+        {
+            TerrainArchetypeId = _terrainArchetypes.Count - 1,
+            Style = _currentStyle,
+            TerrainPiece = terrainPiece,
+            IsSteel = isSteel
+        };
+
+        return terrainArchetypeData;
+    }
+
+    public void ApplyToLevelData(LevelData levelData)
+    {
+        levelData.AllTerrainData.AddRange(_allTerrainData);
+    }
+
+    public void Dispose()
+    {
+        _allTerrainData.Clear();
     }
 }

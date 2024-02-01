@@ -142,10 +142,9 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
                 throw new InvalidOperationException("Could not load particles.dat!");
 
             using var stream = assembly.GetManifestResourceStream(particleResourceName)!;
-            Span<byte> byteBuffer = stackalloc byte[ParticleHelper.ByteLength];
+            Span<byte> byteBuffer = ParticleHelper.GetByteBuffer();
             using var reader = new BinaryReader(stream, Encoding.UTF8, false);
             _ = reader.Read(byteBuffer);
-            ParticleHelper.InitialiseParticleOffsets(byteBuffer);
         }
     }
 
