@@ -35,7 +35,7 @@ public sealed class LevelSelectPage : IPage
 
     private static bool FilterFiles(string filename)
     {
-        var extension = Path.GetExtension(filename.AsSpan());
+        var extension = Path.GetExtension(filename);
 
         return LevelFileTypeHandler.FileExtensionIsValidLevelType(extension);
     }
@@ -48,6 +48,9 @@ public sealed class LevelSelectPage : IPage
         MenuScreen.Current.MenuPageCreator.LevelToLoadFilepath = fileDialogResponse.FullPath;
 
         var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
+
+        if (levelStartPage is null)
+            return false;
 
         MenuScreen.Current.SetNextPage(levelStartPage);
 

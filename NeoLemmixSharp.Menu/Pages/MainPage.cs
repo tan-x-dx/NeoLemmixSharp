@@ -151,6 +151,9 @@ public sealed class MainPage : IPage
 	{
 		var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
 
+        if (levelStartPage is null)
+            return;
+
 		MenuScreen.Current.SetNextPage(levelStartPage);
 	}
 
