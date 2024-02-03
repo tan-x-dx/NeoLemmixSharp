@@ -10,13 +10,13 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
     private TerrainReader? _terrainReader;
     private TerrainGroup? _currentTerrainGroup;
 
+    public bool FinishedReading { get; private set; }
+    public string IdentifierToken => "$TERRAINGROUP";
+
     public TerrainGroupReader(Dictionary<string, TerrainArchetypeData> terrainArchetypes)
     {
         _terrainArchetypes = terrainArchetypes;
     }
-
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$TERRAINGROUP";
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
@@ -41,19 +41,21 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
 
         var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
 
+        var currentTerrainGroup = _currentTerrainGroup!;
+
         switch (firstToken)
         {
             case "NAME":
-                _currentTerrainGroup!.GroupName = ReadingHelpers.TrimAfterIndex(line, 1 + firstTokenIndex + firstToken.Length).GetString();
+                currentTerrainGroup.GroupName = ReadingHelpers.TrimAfterIndex(line, 1 + firstTokenIndex + firstToken.Length).GetString();
                 break;
 
             case "$TERRAIN":
-                _terrainReader = new TerrainReader(_terrainArchetypes, _currentTerrainGroup!.TerrainDatas);
+                _terrainReader = new TerrainReader(_terrainArchetypes, currentTerrainGroup.TerrainDatas);
                 _terrainReader.BeginReading(line);
                 break;
 
             case "$END":
-                _allTerrainGroups.Add(_currentTerrainGroup!);
+                _allTerrainGroups.Add(currentTerrainGroup);
                 _currentTerrainGroup = null;
                 FinishedReading = true;
                 break;

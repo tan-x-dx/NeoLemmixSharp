@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 
 public static class ReadingHelpers
 {
-    private const int MaxStackallocSize = 128;
+    private const int MaxStackallocSize = 64;
 
     /// <summary>
     /// Returns the nth token from the initial span, where a token is defined as being a contiguous section of non-whitespace characters.

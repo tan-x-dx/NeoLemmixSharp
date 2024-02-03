@@ -5,28 +5,19 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 public sealed class NxlvLevelReader : ILevelReader
 {
-    private readonly DataReaderList _dataReaders = new();
-
-    public NxlvLevelReader()
-    {
-        var terrainArchetypes = new Dictionary<string, TerrainArchetypeData>();
-
-        _dataReaders.Add(new LevelDataReader());
-        _dataReaders.Add(new SkillSetReader());
-        _dataReaders.Add(new TerrainGroupReader(terrainArchetypes));
-        _dataReaders.Add(new TerrainReader(terrainArchetypes));
-        _dataReaders.Add(new GadgetReader());
-        _dataReaders.Add(new LemmingReader());
-        _dataReaders.Add(new SpriteSetRecoloringReader());
-        _dataReaders.Add(new StateRecoloringReader());
-        _dataReaders.Add(new ShadesReader());
-
-        _dataReaders.Add(new DudDataReader("$ANIMATIONS"));
-    }
-
     public LevelData ReadLevel(string levelFilePath)
     {
-        _dataReaders.ReadFile(levelFilePath);
+        var terrainArchetypes = new Dictionary<string, TerrainArchetypeData>();
+        using var dataReaders = new DataReaderList();
+
+        dataReaders.Add(new LevelDataReader());
+        dataReaders.Add(new SkillSetReader());
+        dataReaders.Add(new TerrainGroupReader(terrainArchetypes));
+        dataReaders.Add(new TerrainReader(terrainArchetypes));
+        dataReaders.Add(new GadgetReader());
+        dataReaders.Add(new LemmingReader());
+
+        dataReaders.ReadFile(levelFilePath);
 
         var levelData = new LevelData();
 
@@ -34,7 +25,7 @@ public sealed class NxlvLevelReader : ILevelReader
         //  ReadSpriteData();
         //   SetUpGadgets();
 
-        _dataReaders.ApplyToLevelData(levelData);
+        dataReaders.ApplyToLevelData(levelData);
 
         return levelData;
     }
@@ -128,6 +119,5 @@ public sealed class NxlvLevelReader : ILevelReader
 
     public void Dispose()
     {
-        _dataReaders.Dispose();
     }
 }

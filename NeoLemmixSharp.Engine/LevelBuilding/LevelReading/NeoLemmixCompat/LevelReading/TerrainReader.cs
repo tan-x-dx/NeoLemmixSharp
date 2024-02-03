@@ -110,7 +110,7 @@ public sealed class TerrainReader : INeoLemmixDataReader
                 break;
 
             case "$END":
-                _allTerrainData.Add(_currentTerrainData!);
+                _allTerrainData.Add(currentTerrainData);
                 _currentTerrainData = null;
                 _settingDataForGroup = false;
                 FinishedReading = true;
@@ -157,6 +157,5 @@ public sealed class TerrainReader : INeoLemmixDataReader
 
     public void Dispose()
     {
-        _allTerrainData.Clear();
     }
 }

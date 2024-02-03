@@ -7,13 +7,13 @@ public sealed class PrimaryAnimationReader : INeoLemmixDataReader
 {
     private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
 
+    public bool FinishedReading { get; private set; }
+    public string IdentifierToken => "$PRIMARY_ANIMATION";
+
     public PrimaryAnimationReader(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
     {
         _gadgetArchetypeData = gadgetArchetypeData;
     }
-
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$PRIMARY_ANIMATION";
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
@@ -25,10 +25,25 @@ public sealed class PrimaryAnimationReader : INeoLemmixDataReader
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
         var secondToken = ReadingHelpers.GetToken(line, 1, out _);
 
+        // Special handling for pickups specifically
+        if (firstToken is "NAME" && secondToken is "*PICKUP")
+        {
+            _gadgetArchetypeData.IsSkillPickup = true;
+            return false;
+        }
+
         switch (firstToken)
         {
             case "FRAMES":
                 _gadgetArchetypeData.PrimaryAnimationFrameCount = int.Parse(secondToken);
+                break;
+
+            case "OFFSET_X":
+
+                break;
+
+            case "OFFSET_Y":
+
                 break;
 
             case "NINE_SLICE_TOP":

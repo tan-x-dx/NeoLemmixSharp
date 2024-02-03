@@ -7,7 +7,8 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
 {
     private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
 
-    private SecondaryAnimationData? _secondaryAnimationData;
+    private AnimationData? _secondaryAnimationData;
+    private AnimationTriggerReader? _triggerReader;
 
     public SecondaryAnimationReader(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
     {
@@ -21,11 +22,24 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
     {
         FinishedReading = false;
 
-        _secondaryAnimationData = new SecondaryAnimationData();
+        _secondaryAnimationData = new AnimationData();
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
+        if (_triggerReader != null)
+        {
+            var result = _triggerReader.ReadNextLine(line);
+
+            if (_triggerReader.FinishedReading)
+            {
+                _triggerReader.Dispose();
+                _triggerReader = null;
+            }
+
+            return result;
+        }
+
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
         var secondToken = ReadingHelpers.GetToken(line, 1, out _);
 
@@ -49,6 +63,10 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
                 secondaryAnimationData.Name = secondToken.GetString();
                 break;
 
+            case "HIDE":
+                secondaryAnimationData.Hide = true;
+                break;
+
             case "OFFSET_X":
                 secondaryAnimationData.OffsetX = int.Parse(secondToken);
                 break;
@@ -57,9 +75,18 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
                 secondaryAnimationData.OffsetY = int.Parse(secondToken);
                 break;
 
+            case "COLOR":
+
+                break;
+
+            case "$TRIGGER":
+                _triggerReader = new AnimationTriggerReader(secondaryAnimationData.TriggerData);
+                _triggerReader.BeginReading(line);
+                break;
+
             case "$END":
                 _secondaryAnimationData = null;
-                _gadgetArchetypeData.SecondaryAnimationData = secondaryAnimationData;
+                _gadgetArchetypeData.AnimationData.Add(secondaryAnimationData);
                 FinishedReading = true;
                 break;
 

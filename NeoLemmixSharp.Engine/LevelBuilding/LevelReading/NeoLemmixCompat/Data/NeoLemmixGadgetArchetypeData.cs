@@ -7,6 +7,8 @@ public sealed class NeoLemmixGadgetArchetypeData
     public required string? Style { get; init; }
     public required string? Gadget { get; init; }
 
+    public string Effect { get; set; }
+
     public int TriggerX { get; set; }
     public int TriggerY { get; set; }
 
@@ -16,7 +18,7 @@ public sealed class NeoLemmixGadgetArchetypeData
     public ResizeType ResizeType { get; set; }
 
     public int PrimaryAnimationFrameCount { get; set; }
+    public bool IsSkillPickup { get; set; }
 
-    public SecondaryAnimationData? SecondaryAnimationData { get; set; }
-
+    public List<AnimationData> AnimationData { get; } = new();
 }

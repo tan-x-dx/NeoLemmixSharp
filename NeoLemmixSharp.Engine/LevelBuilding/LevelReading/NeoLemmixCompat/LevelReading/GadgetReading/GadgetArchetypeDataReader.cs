@@ -21,6 +21,7 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
 
         var secondToken = ReadingHelpers.GetToken(line, 1, out _);
 
+        _gadgetArchetypeData.Effect = secondToken.GetString();
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
@@ -78,6 +79,22 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
                 break;
 
             case "DEFAULT_HEIGHT":
+
+                break;
+
+            case "DIGIT_X":
+
+                break;
+
+            case "DIGIT_Y":
+
+                break;
+
+            case "DIGIT_ALIGNMENT":
+
+                break;
+
+            case "DIGIT_LENGTH":
 
                 break;
 

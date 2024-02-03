@@ -36,17 +36,24 @@ public sealed class DataReaderList : IDisposable
 
     private bool ProcessLine(string line)
     {
-        if (_currentDataReader != null)
+        if (_currentDataReader == null)
         {
-            var result = _currentDataReader.ReadNextLine(line);
+            GetDataReaderForLine(line);
 
-            if (_currentDataReader.FinishedReading)
-            {
-                _currentDataReader = null;
-            }
-            return result;
+            return false;
         }
 
+        var result = _currentDataReader.ReadNextLine(line);
+
+        if (_currentDataReader.FinishedReading)
+        {
+            _currentDataReader = null;
+        }
+        return result;
+    }
+
+    private void GetDataReaderForLine(string line)
+    {
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
 
         _currentDataReader = TryGetWithSpan(firstToken);
@@ -54,8 +61,6 @@ public sealed class DataReaderList : IDisposable
             throw new InvalidOperationException($"Could not find reader for line! [{firstToken}] line: \"{line}\"");
 
         _currentDataReader.BeginReading(line);
-
-        return false;
     }
 
     private INeoLemmixDataReader? TryGetWithSpan(ReadOnlySpan<char> token)
