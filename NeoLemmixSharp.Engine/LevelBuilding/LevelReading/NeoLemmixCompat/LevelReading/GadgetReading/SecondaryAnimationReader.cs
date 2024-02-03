@@ -91,8 +91,8 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
                 break;
 
             default:
-                throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
+                ReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
+                break;
         }
 
         return false;

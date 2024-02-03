@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Skills;
+﻿using System.Diagnostics.CodeAnalysis;
+using NeoLemmixSharp.Engine.Level.Skills;
 using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -215,5 +216,15 @@ public static class ReadingHelpers
         }
 
         return true;
+    }
+
+    [DoesNotReturn]
+    public static void ThrowUnknownTokenException(
+        ReadOnlySpan<char> identifierToken,
+        ReadOnlySpan<char> firstToken,
+        ReadOnlySpan<char> line)
+    {
+        throw new InvalidDataException(
+            $"Unknown token when parsing {identifierToken}: [{firstToken}] line: \"{line}\"");
     }
 }

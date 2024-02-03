@@ -117,8 +117,8 @@ public sealed class TerrainReader : INeoLemmixDataReader
                 break;
 
             default:
-                throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
+                ReadingHelpers.ThrowUnknownTokenException("Gadget Archetype Data", firstToken, line);
+                break;
         }
 
         return false;

@@ -109,8 +109,8 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             default:
-                throw new InvalidOperationException(
-                    $"Unknown token when parsing LevelData: [{firstToken}] line: \"{line}\"");
+                ReadingHelpers.ThrowUnknownTokenException("Level Data", firstToken, line);
+                break;
         }
 
         return false;
