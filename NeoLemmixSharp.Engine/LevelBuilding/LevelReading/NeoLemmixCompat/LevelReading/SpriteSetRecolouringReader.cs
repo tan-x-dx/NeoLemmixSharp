@@ -17,8 +17,7 @@ public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         switch (firstToken)
         {

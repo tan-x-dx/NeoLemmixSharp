@@ -39,19 +39,19 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
             return result;
         }
 
-        var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
         var currentTerrainGroup = _currentTerrainGroup!;
 
         switch (firstToken)
         {
             case "NAME":
-                currentTerrainGroup.GroupName = ReadingHelpers.TrimAfterIndex(line, 1 + firstTokenIndex + firstToken.Length).GetString();
+                currentTerrainGroup.GroupName = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex).GetString();
                 break;
 
             case "$TERRAIN":
                 _terrainReader = new TerrainReader(_terrainArchetypes, currentTerrainGroup.TerrainDatas);
-                _terrainReader.BeginReading(line);
+                _terrainReader.BeginReading(firstToken);
                 break;
 
             case "$END":

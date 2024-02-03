@@ -40,8 +40,7 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
             return result;
         }
 
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         var secondaryAnimationData = _secondaryAnimationData!;
 
@@ -81,7 +80,7 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
 
             case "$TRIGGER":
                 _triggerReader = new AnimationTriggerReader(secondaryAnimationData.TriggerData);
-                _triggerReader.BeginReading(line);
+                _triggerReader.BeginReading(firstToken);
                 break;
 
             case "$END":

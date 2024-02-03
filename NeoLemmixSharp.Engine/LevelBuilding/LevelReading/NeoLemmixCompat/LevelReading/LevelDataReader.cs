@@ -29,22 +29,21 @@ public sealed class LevelDataReader : INeoLemmixDataReader
     {
         FinishedReading = false;
 
-        ReadingHelpers.GetToken(line, 1, out var secondTokenIndex);
+        ReadingHelpers.GetTokenPair(line, out _, out _, out var secondTokenIndex);
+
         var rest = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex);
         _levelTitle = rest.GetString();
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
         if (firstToken[0] == '$')
         {
             FinishedReading = true;
             return true;
         }
-
-        var secondToken = ReadingHelpers.GetToken(line, 1, out var secondTokenIndex);
 
         switch (firstToken)
         {

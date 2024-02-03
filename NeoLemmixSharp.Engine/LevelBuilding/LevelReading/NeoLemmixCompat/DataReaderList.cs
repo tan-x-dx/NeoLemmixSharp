@@ -54,7 +54,7 @@ public sealed class DataReaderList : IDisposable
 
     private void GetDataReaderForLine(string line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
 
         _currentDataReader = TryGetWithSpan(firstToken);
         if (_currentDataReader == null)

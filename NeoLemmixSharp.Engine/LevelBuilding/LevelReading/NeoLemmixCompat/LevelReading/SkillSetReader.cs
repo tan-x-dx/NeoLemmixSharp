@@ -18,7 +18,7 @@ public sealed class SkillSetReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
 
         if (firstToken is "$END")
         {
@@ -32,8 +32,7 @@ public sealed class SkillSetReader : INeoLemmixDataReader
 
     private void ReadSkillSetData(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         if (!ReadingHelpers.GetSkillByName(firstToken, _charEqualityComparer, out var skill))
             throw new Exception($"Unknown token: {firstToken}");

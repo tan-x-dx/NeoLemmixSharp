@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using NeoLemmixSharp.Engine.Level.Skills;
+﻿using NeoLemmixSharp.Engine.Level.Skills;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -12,28 +12,37 @@ public static class ReadingHelpers
     private const int MaxStackallocSize = 64;
 
     /// <summary>
-    /// Returns the nth token from the initial span, where a token is defined as being a contiguous section of non-whitespace characters.
-    /// If no such section exists for the given parameters, an empty span is returned, and the <paramref name="indexOfFirstCharacter" /> parameter is set to -1.
+    /// Returns the first two tokens from the initial span, where a token is defined as being a contiguous section of non-whitespace characters.
+    /// If no such tokens exists, empty spans are returned.
     /// </summary>
     /// <param name="span">The source span</param>
-    /// <param name="tokenIndex">The 0-based index of the token to fetch</param>
-    /// <param name="indexOfFirstCharacter">The index of the first character of the result token, inside the source span</param>
-    /// <returns>A span of non-whitespace characters</returns>
-    public static ReadOnlySpan<char> GetToken(ReadOnlySpan<char> span, int tokenIndex, out int indexOfFirstCharacter)
+    /// <param name="firstToken">The first span of non-whitespace characters</param>
+    /// <param name="secondToken">The second span of non-whitespace characters</param>
+    /// <param name="secondTokenIndex">The index of the second span. If no second span exists, -1 is returned</param>
+    public static void GetTokenPair(
+        ReadOnlySpan<char> span,
+        out ReadOnlySpan<char> firstToken,
+        out ReadOnlySpan<char> secondToken,
+        out int secondTokenIndex)
     {
-        const int padding = 2;
+        firstToken = ReadOnlySpan<char>.Empty;
+        secondTokenIndex = -1;
+        secondToken = ReadOnlySpan<char>.Empty;
+
+        if (span.Length == 0)
+            return;
 
         // Safeguard against potential stack overflow.
         // Will almost certainly be a small buffer
         // allocated on the stack, but still...
-        var bufferSize = span.Length + padding;
+        var bufferSize = span.Length + 1;
         Span<int> whitespaceIndexSpan = bufferSize > MaxStackallocSize
             ? new int[bufferSize]
             : stackalloc int[bufferSize];
         whitespaceIndexSpan[0] = -1;
 
         var i = 0;
-        var j = 1;
+        var j = 0;
         while (i < span.Length)
         {
             var c = span[i];
@@ -45,30 +54,37 @@ public static class ReadingHelpers
             i++;
         }
 
-        whitespaceIndexSpan = whitespaceIndexSpan[..(j + 1)];
-        whitespaceIndexSpan[^1] = span.Length;
+        whitespaceIndexSpan[j] = span.Length;
 
         i = 0;
+        j++;
 
-        while (i < j)
+        var doFirstToken = true;
+        var x0 = -1;
+        var x1 = whitespaceIndexSpan[0];
+
+        while (i++ < j)
         {
-            var x0 = whitespaceIndexSpan[i];
-            var x1 = whitespaceIndexSpan[i + 1];
-
-            i++;
-
-            if (x1 - x0 == 1)
-                continue;
-
-            if (tokenIndex-- == 0)
+            var start = 1 + x0;
+            var length = x1 - start;
+            if (length > 0)
             {
-                indexOfFirstCharacter = 1 + x0;
-                return span.Slice(indexOfFirstCharacter, x1 - x0 - 1);
+                if (doFirstToken)
+                {
+                    firstToken = span.Slice(start, length);
+                    doFirstToken = false;
+                }
+                else
+                {
+                    secondToken = span.Slice(start, length);
+                    secondTokenIndex = start;
+                    return;
+                }
             }
-        }
 
-        indexOfFirstCharacter = -1;
-        return ReadOnlySpan<char>.Empty;
+            x0 = x1;
+            x1 = whitespaceIndexSpan[i];
+        }
     }
 
     /// <summary>
