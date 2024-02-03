@@ -39,7 +39,16 @@ public sealed class LevelBuilder : IDisposable
 
     public LevelScreen BuildLevel(string levelFilePath)
     {
-        var levelData = _levelReader.ReadLevel(levelFilePath);
+        LevelData levelData = null!;
+
+        try
+        {
+            levelData = _levelReader.ReadLevel(levelFilePath);
+        }
+        catch (Exception ex)
+        {
+            ;
+        }
 
         _terrainPainter.PaintLevel(levelData);
 

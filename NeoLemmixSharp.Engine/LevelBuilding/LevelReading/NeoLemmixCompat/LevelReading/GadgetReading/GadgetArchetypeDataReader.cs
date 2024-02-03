@@ -1,12 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
 
 public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
 {
-    private readonly GadgetArchetypeData _gadgetArchetypeData;
+    private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
 
-    public GadgetArchetypeDataReader(GadgetArchetypeData gadgetArchetypeData)
+    public GadgetArchetypeDataReader(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
     {
         _gadgetArchetypeData = gadgetArchetypeData;
     }
@@ -48,23 +49,28 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
                 break;
 
             case "TRIGGER_HEIGHT":
-                _gadgetArchetypeData.TriggerHeight = int.Parse(secondToken);
+                // Subtract 1 from height because of differences in physics between engines
+                _gadgetArchetypeData.TriggerHeight = int.Parse(secondToken) - 1;
                 break;
 
             case "SOUND":
 
                 break;
 
-            case "RESIZE_HORIZONTAL":
+            case "SOUND_ACTIVATE":
 
+                break;
+
+            case "RESIZE_HORIZONTAL":
+                _gadgetArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
                 break;
 
             case "RESIZE_VERTICAL":
-
+                _gadgetArchetypeData.ResizeType |= ResizeType.ResizeVertical;
                 break;
 
             case "RESIZE_BOTH":
-
+                _gadgetArchetypeData.ResizeType = ResizeType.ResizeBoth;
                 break;
 
             case "DEFAULT_WIDTH":

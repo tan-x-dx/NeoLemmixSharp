@@ -48,16 +48,17 @@ public sealed class DataReaderList : IDisposable
         }
 
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        if (!TryGetWithSpan(firstToken, out var dataReader))
+
+        _currentDataReader = TryGetWithSpan(firstToken);
+        if (_currentDataReader == null)
             throw new InvalidOperationException($"Could not find reader for line! [{firstToken}] line: \"{line}\"");
 
-        _currentDataReader = dataReader;
         _currentDataReader.BeginReading(line);
 
         return false;
     }
 
-    private bool TryGetWithSpan(ReadOnlySpan<char> token, out INeoLemmixDataReader dataReader)
+    private INeoLemmixDataReader? TryGetWithSpan(ReadOnlySpan<char> token)
     {
         var dataReaderSpan = CollectionsMarshal.AsSpan(_dataReaders);
 
@@ -66,14 +67,10 @@ public sealed class DataReaderList : IDisposable
             var itemSpan = item.IdentifierToken.AsSpan();
 
             if (itemSpan.SequenceEqual(token))
-            {
-                dataReader = item;
-                return true;
-            }
+                return item;
         }
 
-        dataReader = null!;
-        return false;
+        return null;
     }
 
     public void ApplyToLevelData(LevelData levelData)

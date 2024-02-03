@@ -1,12 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
 
 public sealed class PrimaryAnimationReader : INeoLemmixDataReader
 {
-    private readonly GadgetArchetypeData _gadgetArchetypeData;
+    private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
 
-    public PrimaryAnimationReader(GadgetArchetypeData gadgetArchetypeData)
+    public PrimaryAnimationReader(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
     {
         _gadgetArchetypeData = gadgetArchetypeData;
     }
@@ -24,12 +25,6 @@ public sealed class PrimaryAnimationReader : INeoLemmixDataReader
         var firstToken = ReadingHelpers.GetToken(line, 0, out _);
         var secondToken = ReadingHelpers.GetToken(line, 1, out _);
 
-        if (firstToken[0] == '$')
-        {
-            FinishedReading = true;
-            return true;
-        }
-
         switch (firstToken)
         {
             case "FRAMES":
@@ -37,23 +32,27 @@ public sealed class PrimaryAnimationReader : INeoLemmixDataReader
                 break;
 
             case "NINE_SLICE_TOP":
-
+                _gadgetArchetypeData.ResizeType |= ResizeType.ResizeVertical;
                 break;
 
             case "NINE_SLICE_RIGHT":
-
+                _gadgetArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
                 break;
 
             case "NINE_SLICE_BOTTOM":
-
+                _gadgetArchetypeData.ResizeType |= ResizeType.ResizeVertical;
                 break;
 
             case "NINE_SLICE_LEFT":
-
+                _gadgetArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
                 break;
 
             case "COLOR":
 
+                break;
+
+            case "$END":
+                FinishedReading = true;
                 break;
 
             default:

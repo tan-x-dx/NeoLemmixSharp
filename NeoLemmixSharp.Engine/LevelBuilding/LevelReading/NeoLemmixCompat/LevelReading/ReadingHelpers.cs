@@ -200,8 +200,20 @@ public static class ReadingHelpers
         return ref CollectionsMarshal.GetValueRefOrAddDefault(dictionary, archetypeDataKey, out exists);
     }
 
-    public static bool LineIsBlankOrComment(string line)
+    /// <summary>
+    /// NeoLemmix data strings may be prefixed with a '#', indicating a comment
+    /// </summary>
+    /// <param name="line">The line to test</param>
+    /// <returns>Whether the input is blank or a comment</returns>
+    public static bool LineIsBlankOrComment(ReadOnlySpan<char> line)
     {
-        return string.IsNullOrWhiteSpace(line) || line[0] == '#';
+        foreach (var c in line)
+        {
+            if (char.IsWhiteSpace(c))
+                continue;
+            return c == '#';
+        }
+
+        return true;
     }
 }

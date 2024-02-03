@@ -1,6 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
-public sealed class GadgetArchetypeData
+public sealed class NeoLemmixGadgetArchetypeData
 {
     public required int GadgetArchetypeId { get; init; }
 
@@ -13,5 +13,10 @@ public sealed class GadgetArchetypeData
     public int? TriggerWidth { get; set; }
     public int? TriggerHeight { get; set; }
 
+    public ResizeType ResizeType { get; set; }
+
     public int PrimaryAnimationFrameCount { get; set; }
+
+    public SecondaryAnimationData? SecondaryAnimationData { get; set; }
+
 }

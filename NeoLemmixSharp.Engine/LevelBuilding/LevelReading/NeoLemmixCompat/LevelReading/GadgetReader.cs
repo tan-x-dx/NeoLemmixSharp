@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 public sealed class GadgetReader : INeoLemmixDataReader
 {
     private readonly CaseInvariantCharEqualityComparer _charEqualityComparer = new();
-    private readonly Dictionary<string, GadgetArchetypeData> _gadgetArchetypes = new();
+    private readonly Dictionary<string, NeoLemmixGadgetArchetypeData> _gadgetArchetypes = new();
     private readonly List<NeoLemmixGadgetData> _allGadgetData = new();
 
     private NeoLemmixGadgetData? _currentGadgetData;
@@ -135,7 +135,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
         return false;
     }
 
-    private GadgetArchetypeData GetOrLoadGadgetArchetypeData(ReadOnlySpan<char> piece)
+    private NeoLemmixGadgetArchetypeData GetOrLoadGadgetArchetypeData(ReadOnlySpan<char> piece)
     {
         ref var gadgetArchetypeData = ref ReadingHelpers.GetArchetypeDataRef(
             _currentStyle!,
@@ -148,7 +148,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
         var gadgetPiece = piece.ToString();
 
-        gadgetArchetypeData = new GadgetArchetypeData
+        gadgetArchetypeData = new NeoLemmixGadgetArchetypeData
         {
             GadgetArchetypeId = _gadgetArchetypes.Count - 1,
             Style = _currentStyle,
@@ -160,7 +160,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
         return gadgetArchetypeData;
     }
 
-    private void ProcessGadgetArchetypeData(GadgetArchetypeData gadgetArchetypeData)
+    private void ProcessGadgetArchetypeData(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
     {
         var objectsFolder = Path.Combine(RootDirectoryManager.RootDirectory, "styles", _currentStyle!, "objects");
         var rootFilePath = Path.Combine(objectsFolder, gadgetArchetypeData.Gadget!);
