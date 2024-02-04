@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 using NeoLemmixSharp.Engine.LevelBuilding.Sprites;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
+namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 public sealed class TerrainArchetypeData
 {

@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 public sealed class TerrainData
 {

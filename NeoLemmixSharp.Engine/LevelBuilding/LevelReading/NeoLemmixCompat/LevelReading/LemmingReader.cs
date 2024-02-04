@@ -2,12 +2,13 @@
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 public sealed class LemmingReader : INeoLemmixDataReader
 {
-    private readonly List<LemmingData> _lemmingData = new();
+    private readonly List<LemmingData> _prePlacedLemmingData = new();
 
     private LemmingData? _currentLemmingData;
 
@@ -18,6 +19,7 @@ public sealed class LemmingReader : INeoLemmixDataReader
     {
         _currentLemmingData = new LemmingData
         {
+            // Pre-placed lemmings are always active
             State = 1U << LemmingState.ActiveBitIndex
         };
         FinishedReading = false;
@@ -82,7 +84,7 @@ public sealed class LemmingReader : INeoLemmixDataReader
                 break;
 
             case "$END":
-                _lemmingData.Add(_currentLemmingData!);
+                _prePlacedLemmingData.Add(currentLemmingData);
                 _currentLemmingData = null;
                 FinishedReading = true;
                 break;
@@ -97,7 +99,19 @@ public sealed class LemmingReader : INeoLemmixDataReader
 
     public void ApplyToLevelData(LevelData levelData)
     {
-        
+        var totalNumberOfLemmings = Math.Max(levelData.NumberOfLemmings, _prePlacedLemmingData.Count);
+        levelData.NumberOfLemmings = totalNumberOfLemmings;
+        var targetCollection = levelData.AllLemmingData;
+
+        targetCollection.Capacity = totalNumberOfLemmings;
+        targetCollection.AddRange(CollectionsMarshal.AsSpan(_prePlacedLemmingData));
+
+        for (var i = targetCollection.Count; i < totalNumberOfLemmings; i++)
+        {
+            var newLemmingData = new LemmingData();
+
+            targetCollection.Add(newLemmingData);
+        }
     }
 
     public void Dispose()

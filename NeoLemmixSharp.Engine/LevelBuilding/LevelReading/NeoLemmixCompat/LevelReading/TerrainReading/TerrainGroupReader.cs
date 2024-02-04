@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.TerrainReading;
 
@@ -66,7 +67,7 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
 
     public void ApplyToLevelData(LevelData levelData)
     {
-        levelData.TerrainArchetypeData.EnsureCapacity(_terrainArchetypes.Count);
+        levelData.TerrainArchetypeData.Capacity = _terrainArchetypes.Count;
         levelData.TerrainArchetypeData.AddRange(_terrainArchetypes.Values.OrderBy(d => d.TerrainArchetypeId));
 
         levelData.AllTerrainGroups.AddRange(_allTerrainGroups);

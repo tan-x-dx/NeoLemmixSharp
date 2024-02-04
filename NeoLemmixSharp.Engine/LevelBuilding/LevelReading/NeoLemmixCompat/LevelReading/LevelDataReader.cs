@@ -31,8 +31,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
         ReadingHelpers.GetTokenPair(line, out _, out _, out var secondTokenIndex);
 
-        var rest = line.TrimAfterIndex(secondTokenIndex);
-        _levelTitle = rest.GetString();
+        _levelTitle = line.TrimAfterIndex(secondTokenIndex).GetString();
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)

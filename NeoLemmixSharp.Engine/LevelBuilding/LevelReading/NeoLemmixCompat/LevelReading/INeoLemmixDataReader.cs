@@ -7,7 +7,7 @@ public interface INeoLemmixDataReader : IDisposable
     bool FinishedReading { get; }
     string IdentifierToken { get; }
 
-    public bool MatchesToken(ReadOnlySpan<char> token)
+    bool MatchesToken(ReadOnlySpan<char> token)
     {
         var itemSpan = IdentifierToken.AsSpan();
 

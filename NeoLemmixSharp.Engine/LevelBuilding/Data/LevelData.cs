@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
@@ -44,8 +45,7 @@ public sealed class LevelData
 
         foreach (var lemmingData in lemmingSpan)
         {
-            var state = lemmingData.State;
-            var zombieFlag = state >> LemmingState.ZombieBitIndex;
+            var zombieFlag = lemmingData.State >> LemmingState.ZombieBitIndex;
 
             if ((zombieFlag & 1U) != 0U)
                 return true;

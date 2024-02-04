@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 using NeoLemmixSharp.Engine.LevelBuilding.Sprites;
 
