@@ -5,16 +5,16 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 public sealed class LevelData
 {
-    public string LevelTitle { get; set; }
-    public string LevelAuthor { get; set; }
+    public string LevelTitle { get; set; } = null!;
+    public string LevelAuthor { get; set; } = null!;
     public ulong LevelId { get; set; }
     public ulong Version { get; set; }
     public int LevelWidth { get; set; }
     public int LevelHeight { get; set; }
     public int LevelStartPositionX { get; set; }
     public int LevelStartPositionY { get; set; }
-    public string LevelTheme { get; set; }
-    public string LevelBackground { get; set; }
+    public string LevelTheme { get; set; } = null!;
+    public string LevelBackground { get; set; } = null!;
 
     public int NumberOfLemmings { get; set; }
     public int SaveRequirement { get; set; }
@@ -32,6 +32,7 @@ public sealed class LevelData
     public List<TerrainData> AllTerrainData { get; } = new();
     public List<TerrainGroup> AllTerrainGroups { get; } = new();
     public List<HatchGroupData> AllHatchGroupData { get; } = new();
+    public List<LemmingData> AllLemmingData { get; } = new();
     public List<GadgetArchetypeData> AllGadgetArchetypeData { get; } = new();
     public List<GadgetData> AllGadgetData { get; } = new();
 

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
+
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 public sealed class NeoLemmixGadgetArchetypeData
 {
@@ -7,7 +9,7 @@ public sealed class NeoLemmixGadgetArchetypeData
     public required string? Style { get; init; }
     public required string? Gadget { get; init; }
 
-    public string Effect { get; set; }
+    public NeoLemmixGadgetType Type { get; set; }
 
     public int TriggerX { get; set; }
     public int TriggerY { get; set; }

@@ -97,7 +97,7 @@ public sealed class LemmingReader : INeoLemmixDataReader
 
     public void ApplyToLevelData(LevelData levelData)
     {
-
+        
     }
 
     public void Dispose()

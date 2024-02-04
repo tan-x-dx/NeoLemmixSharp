@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
@@ -120,6 +121,44 @@ public sealed class GadgetReader : INeoLemmixDataReader
             case "LEMMINGS":
                 currentGadgetData.LemmingCount = int.Parse(secondToken);
                 break;
+
+            #region Window properties
+
+            case "CLIMBER":
+                currentGadgetData.State |= 1U << LemmingState.ClimberBitIndex;
+                break;
+
+            case "DISARMER":
+                currentGadgetData.State |= 1U << LemmingState.DisarmerBitIndex;
+                break;
+
+            case "FLOATER":
+                currentGadgetData.State |= 1U << LemmingState.FloaterBitIndex;
+                currentGadgetData.State &= ~(1U << LemmingState.GliderBitIndex); // Deliberately knock out the glider
+                break;
+
+            case "GLIDER":
+                currentGadgetData.State |= 1U << LemmingState.GliderBitIndex;
+                currentGadgetData.State &= ~(1U << LemmingState.FloaterBitIndex); // Deliberately knock out the floater
+                break;
+
+            case "NEUTRAL":
+                currentGadgetData.State |= 1U << LemmingState.NeutralBitIndex;
+                break;
+
+            case "SLIDER":
+                currentGadgetData.State |= 1U << LemmingState.SliderBitIndex;
+                break;
+
+            case "SWIMMER":
+                currentGadgetData.State |= 1U << LemmingState.SwimmerBitIndex;
+                break;
+
+            case "ZOMBIE":
+                currentGadgetData.State |= 1U << LemmingState.ZombieBitIndex;
+                break;
+
+            #endregion
 
             case "$END":
                 _allGadgetData.Add(_currentGadgetData!);

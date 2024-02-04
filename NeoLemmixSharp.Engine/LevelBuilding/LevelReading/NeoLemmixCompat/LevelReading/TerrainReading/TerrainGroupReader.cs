@@ -74,11 +74,6 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
 
     public void Dispose()
     {
-        foreach (var terrainGroup in _allTerrainGroups)
-        {
-            terrainGroup.Dispose();
-        }
-
         _terrainArchetypes.Clear();
         _allTerrainGroups.Clear();
     }

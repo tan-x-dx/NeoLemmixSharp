@@ -21,7 +21,7 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
 
         ReadingHelpers.GetTokenPair(line, out _, out var secondToken, out _);
 
-        _gadgetArchetypeData.Effect = secondToken.GetString();
+        _gadgetArchetypeData.Type = GetNeoLemmixGadgetType(secondToken);
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
@@ -104,6 +104,47 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
 
         return false;
     }
+
+    private static NeoLemmixGadgetType GetNeoLemmixGadgetType(
+        ReadOnlySpan<char> token) => token switch
+    {
+        "ANTISPLATPAD" => NeoLemmixGadgetType.AntiSplatPad,
+        "BACKGROUND" => NeoLemmixGadgetType.Background,
+        "BUTTON" => NeoLemmixGadgetType.UnlockButton,
+        "ENTRANCE" => NeoLemmixGadgetType.Entrance,
+        "EXIT" => NeoLemmixGadgetType.Exit,
+        "FIRE" => NeoLemmixGadgetType.Fire,
+        "FORCE_LEFT" => NeoLemmixGadgetType.ForceLeft,
+        "FORCE_RIGHT" => NeoLemmixGadgetType.ForceRight,
+        "FORCELEFT" => NeoLemmixGadgetType.ForceLeft,
+        "FORCERIGHT" => NeoLemmixGadgetType.ForceRight,
+        "LOCKED_EXIT" => NeoLemmixGadgetType.LockedExit,
+        "LOCKEDEXIT" => NeoLemmixGadgetType.LockedExit,
+        "MOVING_BACKGROUND" => NeoLemmixGadgetType.Background,
+        "ONE_WAY_LEFT" => NeoLemmixGadgetType.OneWayLeft,
+        "ONE_WAY_DOWN" => NeoLemmixGadgetType.OneWayDown,
+        "ONE_WAY_RIGHT" => NeoLemmixGadgetType.OneWayRight,
+        "ONE_WAY_UP" => NeoLemmixGadgetType.OneWayUp,
+        "ONEWAYLEFT" => NeoLemmixGadgetType.OneWayLeft,
+        "ONEWAYDOWN" => NeoLemmixGadgetType.OneWayDown,
+        "ONEWAYRIGHT" => NeoLemmixGadgetType.OneWayRight,
+        "ONEWAYUP" => NeoLemmixGadgetType.OneWayUp,
+        "PICKUP_SKILL" => NeoLemmixGadgetType.PickupSkill,
+        "PICKUPSKILL" => NeoLemmixGadgetType.PickupSkill,
+        "RECEIVER" => NeoLemmixGadgetType.Receiver,
+        "SINGLE_USE_TRAP" => NeoLemmixGadgetType.TrapOnce,
+        "SPLATPAD" => NeoLemmixGadgetType.SplatPad,
+        "SPLITTER" => NeoLemmixGadgetType.Splitter,
+        "TELEPORTER" => NeoLemmixGadgetType.Teleporter,
+        "TRAP" => NeoLemmixGadgetType.Trap,
+        "TRAPONCE" => NeoLemmixGadgetType.TrapOnce,
+        "UPDRAFT" => NeoLemmixGadgetType.Updraft,
+        "UNLOCKBUTTON" => NeoLemmixGadgetType.UnlockButton,
+        "WATER" => NeoLemmixGadgetType.Water,
+        "WINDOW" => NeoLemmixGadgetType.Entrance,
+
+        _ => NeoLemmixGadgetType.None
+    };
 
     public void ApplyToLevelData(LevelData levelData)
     {
