@@ -93,7 +93,7 @@ public static class ReadingHelpers
     /// <param name="span">The original span</param>
     /// <param name="startIndex">The first index the result can start from</param>
     /// <returns>A ReadOnlySpan of trimmed-whitespace</returns>
-    public static ReadOnlySpan<char> TrimAfterIndex(ReadOnlySpan<char> span, int startIndex)
+    public static ReadOnlySpan<char> TrimAfterIndex(this ReadOnlySpan<char> span, int startIndex)
     {
         if (startIndex < 0 || startIndex >= span.Length)
             return ReadOnlySpan<char>.Empty;

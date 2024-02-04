@@ -14,6 +14,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     private NeoLemmixGadgetData? _currentGadgetData;
     private string? _currentStyle;
+    private string? _currentFolder;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$GADGET";
@@ -33,24 +34,24 @@ public sealed class GadgetReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "STYLE":
-                var rest = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex);
+                var rest = line.TrimAfterIndex(secondTokenIndex);
                 if (_currentStyle is null)
                 {
-                    _currentStyle = rest.GetString();
+                    SetCurrentStyle(rest);
                 }
                 else
                 {
                     var currentStyleSpan = _currentStyle.AsSpan();
                     if (!currentStyleSpan.SequenceEqual(rest))
                     {
-                        _currentStyle = rest.GetString();
+                        SetCurrentStyle(rest);
                     }
                 }
 
                 break;
 
             case "PIECE":
-                var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(ReadingHelpers.TrimAfterIndex(line, secondTokenIndex));
+                var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(line.TrimAfterIndex(secondTokenIndex));
                 currentGadgetData.GadgetArchetypeId = gadgetArchetypeData.GadgetArchetypeId;
                 break;
 
@@ -134,6 +135,12 @@ public sealed class GadgetReader : INeoLemmixDataReader
         return false;
     }
 
+    private void SetCurrentStyle(ReadOnlySpan<char> style)
+    {
+        _currentStyle = style.GetString();
+        _currentFolder = Path.Combine(RootDirectoryManager.RootDirectory, "styles", _currentStyle, "objects");
+    }
+
     private NeoLemmixGadgetArchetypeData GetOrLoadGadgetArchetypeData(ReadOnlySpan<char> piece)
     {
         ref var gadgetArchetypeData = ref ReadingHelpers.GetArchetypeDataRef(
@@ -161,8 +168,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     private void ProcessGadgetArchetypeData(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
     {
-        var objectsFolder = Path.Combine(RootDirectoryManager.RootDirectory, "styles", _currentStyle!, "objects");
-        var rootFilePath = Path.Combine(objectsFolder, gadgetArchetypeData.Gadget!);
+        var rootFilePath = Path.Combine(_currentFolder!, gadgetArchetypeData.Gadget!);
         rootFilePath = Path.ChangeExtension(rootFilePath, "nxmo");
 
         using var dataReaderList = new DataReaderList();

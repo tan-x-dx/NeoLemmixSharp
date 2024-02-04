@@ -31,7 +31,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
         ReadingHelpers.GetTokenPair(line, out _, out _, out var secondTokenIndex);
 
-        var rest = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex);
+        var rest = line.TrimAfterIndex(secondTokenIndex);
         _levelTitle = rest.GetString();
     }
 
@@ -48,7 +48,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "AUTHOR":
-                _levelAuthor = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex).GetString();
+                _levelAuthor = line.TrimAfterIndex(secondTokenIndex).GetString();
                 break;
 
             case "ID":
@@ -68,11 +68,11 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "THEME":
-                _levelTheme = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex).GetString();
+                _levelTheme = line.TrimAfterIndex(secondTokenIndex).GetString();
                 break;
 
             case "BACKGROUND":
-                _levelBackground = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex).GetString();
+                _levelBackground = line.TrimAfterIndex(secondTokenIndex).GetString();
                 break;
 
             case "MUSIC":

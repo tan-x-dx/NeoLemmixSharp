@@ -12,8 +12,8 @@ public sealed class NeoLemmixGadgetArchetypeData
     public int TriggerX { get; set; }
     public int TriggerY { get; set; }
 
-    public int? TriggerWidth { get; set; }
-    public int? TriggerHeight { get; set; }
+    public int TriggerWidth { get; set; } = 1;
+    public int TriggerHeight { get; set; } = 1;
 
     public ResizeType ResizeType { get; set; }
 

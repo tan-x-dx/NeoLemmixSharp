@@ -39,14 +39,14 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
             return result;
         }
 
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out var secondTokenIndex);
 
         var currentTerrainGroup = _currentTerrainGroup!;
 
         switch (firstToken)
         {
             case "NAME":
-                currentTerrainGroup.GroupName = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex).GetString();
+                currentTerrainGroup.GroupName = line.TrimAfterIndex(secondTokenIndex).GetString();
                 break;
 
             case "$TERRAIN":
