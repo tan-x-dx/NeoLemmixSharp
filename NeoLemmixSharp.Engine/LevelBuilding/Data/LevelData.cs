@@ -1,5 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 
@@ -38,7 +40,19 @@ public sealed class LevelData
 
     public bool LevelContainsAnyZombies()
     {
-        //TODO implement this properly
+        var lemmingSpan = CollectionsMarshal.AsSpan(AllLemmingData);
+
+        foreach (var lemmingData in lemmingSpan)
+        {
+            var state = lemmingData.State;
+            var zombieFlag = state >> LemmingState.ZombieBitIndex;
+
+            if ((zombieFlag & 1U) != 0U)
+                return true;
+        }
+
+        // TODO - Implement zombie hatch test
+
         return false;
     }
 }
