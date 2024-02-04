@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.TerrainReading;
 
 public sealed class TerrainReader : INeoLemmixDataReader
 {
@@ -10,6 +10,7 @@ public sealed class TerrainReader : INeoLemmixDataReader
 
     private TerrainData? _currentTerrainData;
     private string? _currentStyle;
+    private string? _currentFolder;
 
     private bool _settingDataForGroup;
 
@@ -48,14 +49,14 @@ public sealed class TerrainReader : INeoLemmixDataReader
                 {
                     if (_currentStyle is null)
                     {
-                        _currentStyle = rest.GetString();
+                        SetCurrentStyle(rest);
                     }
                     else
                     {
                         var currentStyleSpan = _currentStyle.AsSpan();
                         if (!currentStyleSpan.SequenceEqual(rest))
                         {
-                            _currentStyle = rest.ToString();
+                            SetCurrentStyle(rest);
                         }
                     }
                 }
@@ -123,6 +124,16 @@ public sealed class TerrainReader : INeoLemmixDataReader
         return false;
     }
 
+    private void SetCurrentStyle(ReadOnlySpan<char> style)
+    {
+        _currentStyle = style.GetString();
+        _currentFolder = Path.Combine(
+            RootDirectoryManager.RootDirectory, 
+            NeoLemmixFileExtensions.StyleFolderName,
+            _currentStyle, 
+            NeoLemmixFileExtensions.TerrainFolderName);
+    }
+
     private TerrainArchetypeData GetOrLoadTerrainArchetypeData(ReadOnlySpan<char> piece)
     {
         ref var terrainArchetypeData = ref ReadingHelpers.GetArchetypeDataRef(
@@ -135,18 +146,31 @@ public sealed class TerrainReader : INeoLemmixDataReader
             return terrainArchetypeData!;
 
         var terrainPiece = piece.ToString();
-        var rootFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", _currentStyle!, "terrain", terrainPiece);
-        var isSteel = File.Exists(Path.ChangeExtension(rootFilePath, "nxmt"));
-
         terrainArchetypeData = new TerrainArchetypeData
         {
             TerrainArchetypeId = _terrainArchetypes.Count - 1,
             Style = _currentStyle,
-            TerrainPiece = terrainPiece,
-            IsSteel = isSteel
+            TerrainPiece = terrainPiece
         };
 
+        ProcessTerrainArchetypeData(terrainArchetypeData);
+
         return terrainArchetypeData;
+    }
+
+    private void ProcessTerrainArchetypeData(TerrainArchetypeData terrainArchetypeData)
+    {
+        var rootFilePath = Path.Combine(_currentFolder!, terrainArchetypeData.TerrainPiece!);
+        rootFilePath = Path.ChangeExtension(rootFilePath, NeoLemmixFileExtensions.TerrainFileExtension);
+
+        if (!File.Exists(rootFilePath))
+            return;
+
+        using var dataReaderList = new DataReaderList();
+
+        dataReaderList.Add(new TerrainArchetypeDataReader(terrainArchetypeData));
+
+        dataReaderList.ReadFile(rootFilePath);
     }
 
     public void ApplyToLevelData(LevelData levelData)

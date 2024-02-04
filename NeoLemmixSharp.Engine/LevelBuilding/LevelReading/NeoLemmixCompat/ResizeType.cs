@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 [Flags]
 public enum ResizeType

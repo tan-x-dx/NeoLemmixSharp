@@ -138,7 +138,11 @@ public sealed class GadgetReader : INeoLemmixDataReader
     private void SetCurrentStyle(ReadOnlySpan<char> style)
     {
         _currentStyle = style.GetString();
-        _currentFolder = Path.Combine(RootDirectoryManager.RootDirectory, "styles", _currentStyle, "objects");
+        _currentFolder = Path.Combine(
+            RootDirectoryManager.RootDirectory,
+            NeoLemmixFileExtensions.StyleFolderName,
+            _currentStyle,
+            NeoLemmixFileExtensions.GadgetFolderName);
     }
 
     private NeoLemmixGadgetArchetypeData GetOrLoadGadgetArchetypeData(ReadOnlySpan<char> piece)
@@ -169,7 +173,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
     private void ProcessGadgetArchetypeData(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
     {
         var rootFilePath = Path.Combine(_currentFolder!, gadgetArchetypeData.Gadget!);
-        rootFilePath = Path.ChangeExtension(rootFilePath, "nxmo");
+        rootFilePath = Path.ChangeExtension(rootFilePath, NeoLemmixFileExtensions.GadgetFileExtension);
 
         using var dataReaderList = new DataReaderList();
 

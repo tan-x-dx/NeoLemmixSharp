@@ -6,7 +6,7 @@ public static class LevelFileTypeHandler
 {
     private static readonly Dictionary<string, Type> FileTypeLookup = new()
     {
-        { ".nxlv", typeof(NxlvLevelReader) }
+        { NeoLemmixFileExtensions.LevelFileExtension, typeof(NxlvLevelReader) }
     };
 
     public static bool FileExtensionIsValidLevelType(string? fileExtension)

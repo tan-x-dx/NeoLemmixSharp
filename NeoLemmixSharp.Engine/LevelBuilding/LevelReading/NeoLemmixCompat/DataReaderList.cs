@@ -69,9 +69,7 @@ public sealed class DataReaderList : IDisposable
 
         foreach (var item in dataReaderSpan)
         {
-            var itemSpan = item.IdentifierToken.AsSpan();
-
-            if (itemSpan.SequenceEqual(token))
+            if (item.MatchesToken(token))
                 return item;
         }
 
