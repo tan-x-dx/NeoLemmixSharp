@@ -6,10 +6,15 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 public sealed class SkillSetReader : INeoLemmixDataReader
 {
     private readonly CaseInvariantCharEqualityComparer _charEqualityComparer = new();
-    private readonly List<SkillSetData> _skillSetData = new();
+    private readonly List<SkillSetData> _skillSetData;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$SKILLSET";
+
+    public SkillSetReader(List<SkillSetData> skillSetData)
+    {
+        _skillSetData = skillSetData;
+    }
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
@@ -53,7 +58,6 @@ public sealed class SkillSetReader : INeoLemmixDataReader
 
     public void ApplyToLevelData(LevelData levelData)
     {
-        levelData.SkillSetData.AddRange(_skillSetData);
     }
 
     public void Dispose()

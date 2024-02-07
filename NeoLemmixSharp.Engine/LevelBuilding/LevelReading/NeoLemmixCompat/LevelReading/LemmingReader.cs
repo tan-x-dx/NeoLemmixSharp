@@ -8,12 +8,17 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 
 public sealed class LemmingReader : INeoLemmixDataReader
 {
-    private readonly List<LemmingData> _prePlacedLemmingData = new();
+    private readonly List<LemmingData> _prePlacedLemmingData;
 
     private LemmingData? _currentLemmingData;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$LEMMING";
+
+    public LemmingReader(List<LemmingData> prePlacedLemmingData)
+    {
+        _prePlacedLemmingData = prePlacedLemmingData;
+    }
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
@@ -100,17 +105,14 @@ public sealed class LemmingReader : INeoLemmixDataReader
     public void ApplyToLevelData(LevelData levelData)
     {
         var totalNumberOfLemmings = Math.Max(levelData.NumberOfLemmings, _prePlacedLemmingData.Count);
+        _prePlacedLemmingData.Capacity = totalNumberOfLemmings;
         levelData.NumberOfLemmings = totalNumberOfLemmings;
-        var targetCollection = levelData.AllLemmingData;
 
-        targetCollection.Capacity = totalNumberOfLemmings;
-        targetCollection.AddRange(CollectionsMarshal.AsSpan(_prePlacedLemmingData));
-
-        for (var i = targetCollection.Count; i < totalNumberOfLemmings; i++)
+        for (var i = _prePlacedLemmingData.Count; i < totalNumberOfLemmings; i++)
         {
             var newLemmingData = new LemmingData();
 
-            targetCollection.Add(newLemmingData);
+            _prePlacedLemmingData.Add(newLemmingData);
         }
     }
 

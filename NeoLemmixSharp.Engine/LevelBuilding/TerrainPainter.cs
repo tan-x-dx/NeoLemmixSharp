@@ -107,10 +107,9 @@ public sealed class TerrainPainter : IDisposable
         var terrainArchetypeData = _terrainArchetypes[terrainData.TerrainArchetypeId];
         var sourcePixelColorData = terrainArchetypeData.TerrainPixelColorData;
 
-        var dihedralTransformation = DihedralTransformation.GetForTransformation(
-            terrainData.FlipHorizontal,
-            terrainData.FlipVertical,
-            terrainData.Rotate);
+        var dihedralTransformation = new DihedralTransformation(
+            terrainData.RotNum,
+            terrainData.Flip);
 
         for (var x = 0; x < sourcePixelColorData.Width; x++)
         {
@@ -124,7 +123,9 @@ public sealed class TerrainPainter : IDisposable
                     x,
                     y,
                     sourcePixelColorData.Width - 1,
-                    sourcePixelColorData.Height - 1, out var x0, out var y0);
+                    sourcePixelColorData.Height - 1,
+                    out var x0,
+                    out var y0);
 
                 x0 = x0 + terrainData.X + dx;
                 y0 = y0 + terrainData.Y + dy;

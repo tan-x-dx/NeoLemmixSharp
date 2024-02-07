@@ -38,6 +38,10 @@ public sealed class LevelData
     public List<LemmingData> AllLemmingData { get; } = new();
     public List<GadgetArchetypeData> AllGadgetArchetypeData { get; } = new();
     public List<GadgetData> AllGadgetData { get; } = new();
+    public List<SketchData> AllSketchData { get; } = new();
+
+    public List<string> PreTextLines { get; } = new();
+    public List<string> PostTextLines { get; } = new();
 
     public bool LevelContainsAnyZombies()
     {

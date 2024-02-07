@@ -13,6 +13,10 @@ public sealed class TerrainReader : INeoLemmixDataReader
     private string? _currentStyle;
     private string? _currentFolder;
 
+    private bool _rotate;
+    private bool _flipHorizontally;
+    private bool _flipVertically;
+
     private bool _settingDataForGroup;
 
     public bool FinishedReading { get; private set; }
@@ -29,6 +33,10 @@ public sealed class TerrainReader : INeoLemmixDataReader
     public void BeginReading(ReadOnlySpan<char> line)
     {
         _currentTerrainData = new TerrainData();
+        _rotate = false;
+        _flipHorizontally = false;
+        _flipVertically = false;
+
         FinishedReading = false;
     }
 
@@ -94,16 +102,16 @@ public sealed class TerrainReader : INeoLemmixDataReader
             case "ONE_WAY":
                 break;
 
-            case "FLIP_VERTICAL":
-                currentTerrainData.FlipVertical = true;
+            case "ROTATE":
+                _rotate = true;
                 break;
 
             case "FLIP_HORIZONTAL":
-                currentTerrainData.FlipHorizontal = true;
+                _flipHorizontally = true;
                 break;
 
-            case "ROTATE":
-                currentTerrainData.Rotate = true;
+            case "FLIP_VERTICAL":
+                _flipVertically = true;
                 break;
 
             case "ERASE":
@@ -111,6 +119,10 @@ public sealed class TerrainReader : INeoLemmixDataReader
                 break;
 
             case "$END":
+                DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate, out var rotNum, out var flip);
+                currentTerrainData.RotNum = rotNum;
+                currentTerrainData.Flip = flip;
+
                 _allTerrainData.Add(currentTerrainData);
                 _currentTerrainData = null;
                 _settingDataForGroup = false;
@@ -129,9 +141,9 @@ public sealed class TerrainReader : INeoLemmixDataReader
     {
         _currentStyle = style.GetString();
         _currentFolder = Path.Combine(
-            RootDirectoryManager.RootDirectory, 
+            RootDirectoryManager.RootDirectory,
             NeoLemmixFileExtensions.StyleFolderName,
-            _currentStyle, 
+            _currentStyle,
             NeoLemmixFileExtensions.TerrainFolderName);
     }
 
