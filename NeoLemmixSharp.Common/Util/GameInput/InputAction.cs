@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
+﻿using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Common.Util.Identity;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
@@ -72,6 +73,12 @@ public sealed class InputAction : IIdEquatable<InputAction>
     public bool IsDoubleTap => (_actionState & ActionPressed) != 0UL &&
                                (_actionState & ActionReleased) == 0UL &&
                                (_actionState & DoubleTapUpperMask) != 0UL;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void DoPress()
+    {
+        ActionState |= 1U;
+    }
 
     public bool IsEnabled => _stateMask != DisabledMask;
 

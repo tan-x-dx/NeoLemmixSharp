@@ -69,8 +69,15 @@ public sealed class LevelControlPanel
             : null;
 
         ControlPanelHelperMethods.ResetButtonIds();
-        _skillAssignButtons = ControlPanelHelperMethods.SetUpSkillAssignButtons(this, controlPanelParameters, skillSetManager);
-        _allButtons = ControlPanelHelperMethods.SetUpControlButtons(_skillAssignButtons, _singularHatchGroup, controlPanelParameters);
+        _skillAssignButtons = ControlPanelHelperMethods.SetUpSkillAssignButtons(
+            this,
+            controlPanelParameters,
+            skillSetManager);
+        _allButtons = ControlPanelHelperMethods.SetUpControlButtons(
+            controller,
+            _skillAssignButtons,
+            _singularHatchGroup,
+            controlPanelParameters);
 
         _controlPanelTextualData = new ControlPanelTextualData(levelTimer);
 

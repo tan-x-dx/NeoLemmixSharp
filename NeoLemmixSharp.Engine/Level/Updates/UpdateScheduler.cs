@@ -104,8 +104,8 @@ end;
         _inputController.Tick();
         _levelCursor.Tick();
 
-        HandleKeyboardInput();
         HandleMouseInput();
+        HandleKeyboardInput();
 
         var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
         if (mouseIsInLevelViewPort)
@@ -294,27 +294,5 @@ end;
                 ClearQueuedSkill();
             }
         }
-    }
-
-    public void PausePress()
-    {
-        _updateState = _updateState switch
-        {
-            UpdateState.Paused => UpdateState.Normal,
-            UpdateState.Normal => UpdateState.Paused,
-            UpdateState.FastForward => UpdateState.Paused,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-    }
-
-    public void FastForwardButtonPress()
-    {
-        _updateState = _updateState switch
-        {
-            UpdateState.Paused => UpdateState.FastForward,
-            UpdateState.Normal => UpdateState.FastForward,
-            UpdateState.FastForward => UpdateState.Normal,
-            _ => throw new ArgumentOutOfRangeException()
-        };
     }
 }

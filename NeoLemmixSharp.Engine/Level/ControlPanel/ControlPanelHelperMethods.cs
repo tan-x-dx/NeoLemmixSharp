@@ -85,9 +85,10 @@ public static class ControlPanelHelperMethods
 	}
 
 	public static ControlPanelButton[] SetUpControlButtons(
-		SkillAssignButton[] skillAssignButtons,
-		HatchGroup? hatchGroup,
-		ControlPanelParameters controlPanelParameters)
+        LevelInputController controller,
+        SkillAssignButton[] skillAssignButtons,
+        HatchGroup? hatchGroup,
+        ControlPanelParameters controlPanelParameters)
 	{
 		var numberOfSkillAssignButtons = skillAssignButtons.Length;
 		var includeReleaseRateButtons = IncludeReleaseRateButtons();
@@ -158,8 +159,9 @@ public static class ControlPanelHelperMethods
 		}
 
 		if (showPause)
-		{
-			var buttonAction = new PauseButtonAction();
+        {
+            var pauseAction = controller.Pause;
+			var buttonAction = new PauseButtonAction(pauseAction);
 			result[newButtonIndex] = new ControlPanelButton(
                 _buttonId++,
                 newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
@@ -182,8 +184,9 @@ public static class ControlPanelHelperMethods
 		}
 
 		if (showFastForward)
-		{
-			var buttonAction = new FastForwardButtonAction();
+        {
+            var fastForwardAction = controller.ToggleFastForwards;
+			var buttonAction = new FastForwardButtonAction(fastForwardAction);
 			result[newButtonIndex] = new ControlPanelButton(
                 _buttonId++,
                 newButtonIndex & ControlPanelButton.SkillPanelFrameMask,
