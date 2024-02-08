@@ -12,26 +12,26 @@ public sealed class MenuInputController
     public int MouseY => _inputController.MouseY;
     public int ScrollDelta => _inputController.ScrollDelta;
 
-    public MouseButtonAction LeftMouseButtonAction => _inputController.LeftMouseButtonAction;
-    public MouseButtonAction RightMouseButtonAction => _inputController.RightMouseButtonAction;
-    public MouseButtonAction MiddleMouseButtonAction => _inputController.MiddleMouseButtonAction;
-    public MouseButtonAction MouseButton4Action => _inputController.MouseButton4Action;
-    public MouseButtonAction MouseButton5Action => _inputController.MouseButton5Action;
+    public InputAction LeftMouseButtonAction => _inputController.LeftMouseButtonAction;
+    public InputAction RightMouseButtonAction => _inputController.RightMouseButtonAction;
+    public InputAction MiddleMouseButtonAction => _inputController.MiddleMouseButtonAction;
+    public InputAction MouseButton4Action => _inputController.MouseButton4Action;
+    public InputAction MouseButton5Action => _inputController.MouseButton5Action;
 
-    public KeyAction F1 { get; }
-    public KeyAction F2 { get; }
-    public KeyAction F3 { get; }
+    public InputAction F1 { get; }
+    public InputAction F2 { get; }
+    public InputAction F3 { get; }
 
-    public KeyAction RightArrow { get; }
-    public KeyAction UpArrow { get; }
-    public KeyAction LeftArrow { get; }
-    public KeyAction DownArrow { get; }
+    public InputAction RightArrow { get; }
+    public InputAction UpArrow { get; }
+    public InputAction LeftArrow { get; }
+    public InputAction DownArrow { get; }
 
-    public KeyAction Space { get; }
-    public KeyAction Enter { get; }
+    public InputAction Space { get; }
+    public InputAction Enter { get; }
 
-    public KeyAction ToggleFullScreen { get; }
-    public KeyAction Quit { get; }
+    public InputAction ToggleFullScreen { get; }
+    public InputAction Quit { get; }
 
     public MenuInputController()
     {

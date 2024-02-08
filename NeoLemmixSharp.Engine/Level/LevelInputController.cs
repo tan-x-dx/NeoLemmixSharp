@@ -13,32 +13,32 @@ public sealed class LevelInputController
 	public int MouseY => _inputController.MouseY;
 	public int ScrollDelta => _inputController.ScrollDelta;
 
-	public MouseButtonAction LeftMouseButtonAction => _inputController.LeftMouseButtonAction;
-	public MouseButtonAction RightMouseButtonAction => _inputController.RightMouseButtonAction;
-	public MouseButtonAction MiddleMouseButtonAction => _inputController.MiddleMouseButtonAction;
-	public MouseButtonAction MouseButton4Action => _inputController.MouseButton4Action;
-	public MouseButtonAction MouseButton5Action => _inputController.MouseButton5Action;
+	public InputAction LeftMouseButtonAction => _inputController.LeftMouseButtonAction;
+	public InputAction RightMouseButtonAction => _inputController.RightMouseButtonAction;
+	public InputAction MiddleMouseButtonAction => _inputController.MiddleMouseButtonAction;
+	public InputAction MouseButton4Action => _inputController.MouseButton4Action;
+	public InputAction MouseButton5Action => _inputController.MouseButton5Action;
 
-	public KeyAction Pause { get; }
-	public KeyAction Quit { get; }
-	public KeyAction ToggleFullScreen { get; }
-	public KeyAction ToggleFastForwards { get; }
-	public KeyAction SelectOnlyWalkers { get; }
-	public KeyAction SelectOnlyUnassignedLemmings { get; }
-	public KeyAction SelectLeftFacingLemmings { get; }
-	public KeyAction SelectRightFacingLemmings { get; }
+	public InputAction Pause { get; }
+	public InputAction Quit { get; }
+	public InputAction ToggleFullScreen { get; }
+	public InputAction ToggleFastForwards { get; }
+	public InputAction SelectOnlyWalkers { get; }
+	public InputAction SelectOnlyUnassignedLemmings { get; }
+	public InputAction SelectLeftFacingLemmings { get; }
+	public InputAction SelectRightFacingLemmings { get; }
 
-	public KeyAction RightArrow { get; }
-	public KeyAction UpArrow { get; }
-	public KeyAction LeftArrow { get; }
-	public KeyAction DownArrow { get; }
+	public InputAction RightArrow { get; }
+	public InputAction UpArrow { get; }
+	public InputAction LeftArrow { get; }
+	public InputAction DownArrow { get; }
 
-	public KeyAction W { get; }
-	public KeyAction A { get; }
-	public KeyAction S { get; }
-	public KeyAction D { get; }
+	public InputAction W { get; }
+	public InputAction A { get; }
+	public InputAction S { get; }
+	public InputAction D { get; }
 
-	public KeyAction Space { get; }
+	public InputAction Space { get; }
 
 	public LevelInputController(LevelParameters levelParameters)
 	{
@@ -106,7 +106,7 @@ public sealed class LevelInputController
 
 		return;
 
-		void SetEnabledWithFlag(IInputAction inputAction, LevelParameters testFlag)
+		void SetEnabledWithFlag(InputAction inputAction, LevelParameters testFlag)
 		{
 			inputAction.SetEnabled(levelParameters.TestFlag(testFlag));
 		}
