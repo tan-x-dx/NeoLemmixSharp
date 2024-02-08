@@ -62,6 +62,5 @@ public sealed class SkillSetReader : INeoLemmixDataReader
 
     public void Dispose()
     {
-        _skillSetData.Clear();
     }
 }
