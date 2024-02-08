@@ -12,22 +12,27 @@ public sealed class NxlvLevelReader : ILevelReader
         var levelData = new LevelData();
 
         var terrainArchetypes = new Dictionary<string, TerrainArchetypeData>();
-        using var dataReaders = new DataReaderList();
+
+        var dataReaders = new INeoLemmixDataReader[]
+        {
+            new LevelDataReader(),
+            new SkillSetReader(levelData.SkillSetData),
+            new TerrainGroupReader(terrainArchetypes),
+            new TerrainReader(terrainArchetypes),
+            new GadgetReader(),
+            new LemmingReader(levelData.AllLemmingData),
+            new TextReader(levelData.PreTextLines, "$PRETEXT"),
+            new TextReader(levelData.PostTextLines, "$POSTTEXT"),
+            new SketchReader(levelData.AllSketchData),
+        };
+
+        using var dataReaderList = new DataReaderList(dataReaders);
 
         // NOTE: The order of the data readers is important!
-        dataReaders.Add(new LevelDataReader());
-        dataReaders.Add(new SkillSetReader(levelData.SkillSetData));
-        dataReaders.Add(new TerrainGroupReader(terrainArchetypes));
-        dataReaders.Add(new TerrainReader(terrainArchetypes));
-        dataReaders.Add(new GadgetReader());
-        dataReaders.Add(new LemmingReader(levelData.AllLemmingData));
-        dataReaders.Add(new TextReader(levelData.PreTextLines, "$PRETEXT"));
-        dataReaders.Add(new TextReader(levelData.PostTextLines, "$POSTTEXT"));
-        dataReaders.Add(new SketchReader(levelData.AllSketchData));
 
-        dataReaders.ReadFile(levelFilePath);
+        dataReaderList.ReadFile(levelFilePath);
 
-        dataReaders.ApplyToLevelData(levelData);
+        dataReaderList.ApplyToLevelData(levelData);
 
         SetUpLevelData(levelData);
 

@@ -214,11 +214,14 @@ public sealed class GadgetReader : INeoLemmixDataReader
         var rootFilePath = Path.Combine(_currentFolder!, gadgetArchetypeData.Gadget!);
         rootFilePath = Path.ChangeExtension(rootFilePath, NeoLemmixFileExtensions.GadgetFileExtension);
 
-        using var dataReaderList = new DataReaderList();
+        var dataReaders = new INeoLemmixDataReader[]
+        {
+            new GadgetArchetypeDataReader(gadgetArchetypeData),
+            new PrimaryAnimationReader(gadgetArchetypeData),
+            new SecondaryAnimationReader(gadgetArchetypeData)
+        };
 
-        dataReaderList.Add(new GadgetArchetypeDataReader(gadgetArchetypeData));
-        dataReaderList.Add(new PrimaryAnimationReader(gadgetArchetypeData));
-        dataReaderList.Add(new SecondaryAnimationReader(gadgetArchetypeData));
+        using var dataReaderList = new DataReaderList(dataReaders);
 
         dataReaderList.ReadFile(rootFilePath);
     }

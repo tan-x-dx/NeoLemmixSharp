@@ -1,19 +1,18 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 public sealed class DataReaderList : IDisposable
 {
-    private readonly List<INeoLemmixDataReader> _dataReaders = new();
+    private readonly INeoLemmixDataReader[] _dataReaders;
 
     private INeoLemmixDataReader? _currentDataReader;
 
-    public void Add(INeoLemmixDataReader dataReader)
+    public DataReaderList(INeoLemmixDataReader[] dataReaders)
     {
-        _dataReaders.Add(dataReader);
+        _dataReaders = dataReaders;
     }
 
     public void ReadFile(string filePath)
@@ -65,9 +64,7 @@ public sealed class DataReaderList : IDisposable
 
     private INeoLemmixDataReader? TryGetWithSpan(ReadOnlySpan<char> token)
     {
-        var dataReaderSpan = CollectionsMarshal.AsSpan(_dataReaders);
-
-        foreach (var item in dataReaderSpan)
+        foreach (var item in _dataReaders)
         {
             if (item.MatchesToken(token))
                 return item;
@@ -78,8 +75,7 @@ public sealed class DataReaderList : IDisposable
 
     public void ApplyToLevelData(LevelData levelData)
     {
-        var span = CollectionsMarshal.AsSpan(_dataReaders);
-        foreach (var dataReader in span)
+        foreach (var dataReader in _dataReaders)
         {
             dataReader.ApplyToLevelData(levelData);
         }
@@ -87,8 +83,7 @@ public sealed class DataReaderList : IDisposable
 
     public void Dispose()
     {
-        var span = CollectionsMarshal.AsSpan(_dataReaders);
-        DisposableHelperMethods.DisposeOfAll((ReadOnlySpan<INeoLemmixDataReader>)span);
-        _dataReaders.Clear();
+        var span = new ReadOnlySpan<INeoLemmixDataReader>(_dataReaders);
+        DisposableHelperMethods.DisposeOfAll(span);
     }
 }

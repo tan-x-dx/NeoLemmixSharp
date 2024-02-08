@@ -179,9 +179,12 @@ public sealed class TerrainReader : INeoLemmixDataReader
         if (!File.Exists(rootFilePath))
             return;
 
-        using var dataReaderList = new DataReaderList();
+        var dataReaders = new INeoLemmixDataReader[]
+        {
+            new TerrainArchetypeDataReader(terrainArchetypeData)
+        };
 
-        dataReaderList.Add(new TerrainArchetypeDataReader(terrainArchetypeData));
+        using var dataReaderList = new DataReaderList(dataReaders);
 
         dataReaderList.ReadFile(rootFilePath);
     }
