@@ -119,6 +119,7 @@ public sealed class LevelBuilder : IDisposable
 
         lemmingManager.Initialise();
         gadgetManager.Initialise();
+        updateScheduler.Initialise();
 
         return new LevelScreen(
             levelData,
