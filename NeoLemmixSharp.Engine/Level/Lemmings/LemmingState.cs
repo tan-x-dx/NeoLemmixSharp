@@ -177,8 +177,6 @@ public sealed class LemmingState
 	{
 		_lemming = lemming;
 		_team = team;
-		UpdateHairAndBodyColors();
-		UpdateSkinColor();
 	}
 
 	private void SetBitToValue(uint bitMask, bool value)
