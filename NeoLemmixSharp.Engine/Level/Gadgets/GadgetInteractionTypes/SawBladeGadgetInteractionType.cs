@@ -1,13 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 
-public sealed class SawBladeGadgetType : InteractiveGadgetType
+public sealed class SawBladeGadgetInteractionType : GadgetInteractionType
 {
-    public static readonly SawBladeGadgetType Instance = new();
+    public static readonly SawBladeGadgetInteractionType Instance = new();
 
-    private SawBladeGadgetType()
+    private SawBladeGadgetInteractionType()
     {
     }
 

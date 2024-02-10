@@ -1,13 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 
-public sealed class FireGadgetType : InteractiveGadgetType
+public sealed class FireGadgetInteractionType : GadgetInteractionType
 {
-    public static readonly FireGadgetType Instance = new();
+    public static readonly FireGadgetInteractionType Instance = new();
 
-    private FireGadgetType()
+    private FireGadgetInteractionType()
     {
     }
 

@@ -1,13 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 
-public sealed class SplatGadgetType : InteractiveGadgetType
+public sealed class SplatGadgetInteractionType : GadgetInteractionType
 {
-    public static readonly SplatGadgetType Instance = new();
+    public static readonly SplatGadgetInteractionType Instance = new();
 
-    private SplatGadgetType()
+    private SplatGadgetInteractionType()
     {
     }
 

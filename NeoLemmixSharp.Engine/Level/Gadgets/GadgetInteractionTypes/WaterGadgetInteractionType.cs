@@ -1,13 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 
-public sealed class WaterGadgetType : InteractiveGadgetType
+public sealed class WaterGadgetInteractionType : GadgetInteractionType
 {
-    public static readonly WaterGadgetType Instance = new();
+    public static readonly WaterGadgetInteractionType Instance = new();
 
-    private WaterGadgetType()
+    private WaterGadgetInteractionType()
     {
     }
 

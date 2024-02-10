@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -124,7 +124,7 @@ public sealed class SwimmerAction : LemmingAction
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool WaterAt(LevelPosition lemmingPosition)
     {
-        return LevelScreen.GadgetManager.HasGadgetOfTypeAtPosition(lemmingPosition, WaterGadgetType.Instance);
+        return LevelScreen.GadgetManager.HasGadgetOfTypeAtPosition(lemmingPosition, WaterGadgetInteractionType.Instance);
     }
 
     /// <summary>

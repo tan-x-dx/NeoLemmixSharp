@@ -1,13 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 
-public sealed class MetalGrateGadgetType : InteractiveGadgetType
+public sealed class MetalGrateGadgetInteractionType : GadgetInteractionType
 {
-    public static readonly MetalGrateGadgetType Instance = new();
+    public static readonly MetalGrateGadgetInteractionType Instance = new();
 
-    private MetalGrateGadgetType()
+    private MetalGrateGadgetInteractionType()
     {
     }
 

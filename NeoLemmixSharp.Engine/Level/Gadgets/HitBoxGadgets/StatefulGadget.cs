@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.GadgetBehaviours;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -16,12 +16,12 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
     private int _currentStateIndex;
     private int _nextStateIndex;
 
-    public override InteractiveGadgetType SubType { get; }
+    public override GadgetInteractionType GadgetSubType { get; }
     public override Orientation Orientation { get; }
 
     public StatefulGadget(
         int id,
-        InteractiveGadgetType type,
+        GadgetInteractionType interactionType,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
         HitBox hitBox,
@@ -29,7 +29,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
         ItemTracker<Lemming> lemmingTracker)
         : base(id, gadgetBounds, lemmingTracker)
     {
-        SubType = type;
+        GadgetSubType = interactionType;
         Orientation = orientation;
         _hitBox = hitBox;
         _states = states;

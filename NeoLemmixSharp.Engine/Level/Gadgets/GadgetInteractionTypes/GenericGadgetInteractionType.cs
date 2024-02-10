@@ -1,13 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 
-public sealed class GenericGadgetType : InteractiveGadgetType
+public sealed class GenericGadgetInteractionType : GadgetInteractionType
 {
-    public static readonly GenericGadgetType Instance = new();
+    public static readonly GenericGadgetInteractionType Instance = new();
 
-    private GenericGadgetType()
+    private GenericGadgetInteractionType()
     {
     }
 

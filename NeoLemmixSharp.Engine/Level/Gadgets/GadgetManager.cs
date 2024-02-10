@@ -4,12 +4,12 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Updates;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -88,7 +88,7 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
 
         foreach (var gadget in gadgetSet)
         {
-            if (gadget.SubType == gadgetType && gadget.MatchesPosition(levelPosition))
+            if (gadget.GadgetSubType == gadgetType && gadget.MatchesPosition(levelPosition))
                 return true;
         }
 
@@ -107,7 +107,7 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
 
         foreach (var gadget in gadgetSet)
         {
-            if (gadget.SubType == gadgetType && (gadget.MatchesPosition(anchorPixel) || gadget.MatchesPosition(footPixel)))
+            if (gadget.GadgetSubType == gadgetType && (gadget.MatchesPosition(anchorPixel) || gadget.MatchesPosition(footPixel)))
                 return true;
         }
 

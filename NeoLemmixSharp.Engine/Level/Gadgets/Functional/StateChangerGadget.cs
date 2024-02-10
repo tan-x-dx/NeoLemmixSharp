@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
@@ -15,7 +15,7 @@ public sealed class StateChangerGadget : GadgetBase, IReactiveGadget
 
     public StatefulGadget Gadget { get; }
 
-    public override GadgetSubType SubType => FunctionalGadgetType.Instance;
+    public override GadgetSubType GadgetSubType => FunctionalGadgetType.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
     public IGadgetInput Input { get; }

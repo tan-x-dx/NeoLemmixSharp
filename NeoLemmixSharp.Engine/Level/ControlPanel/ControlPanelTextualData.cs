@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Timer;
-using System;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 

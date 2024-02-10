@@ -1,13 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 
-public sealed class SwitchGadgetType : InteractiveGadgetType
+public sealed class SwitchGadgetInteractionType : GadgetInteractionType
 {
-    public static readonly SwitchGadgetType Instance = new();
+    public static readonly SwitchGadgetInteractionType Instance = new();
 
-    private SwitchGadgetType()
+    private SwitchGadgetInteractionType()
     {
     }
 

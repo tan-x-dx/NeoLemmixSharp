@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 
 public sealed class FunctionalGadgetType : GadgetSubType
 {
