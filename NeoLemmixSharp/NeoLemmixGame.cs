@@ -7,7 +7,7 @@ using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Skills;
@@ -155,7 +155,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         var numberOfActions = LemmingAction.NumberOfItems;
         var numberOfSkills = LemmingSkill.NumberOfItems;
         var numberOfTeams = Team.NumberOfItems;
-        var numberOfGadgetTypes = GadgetSubType.NumberOfItems;
+        var numberOfGadgetTypes = GadgetBehaviour.NumberOfItems;
 
         Console.WriteLine(
             "Loaded {0} facing directions. Loaded {1} orientations. Loaded {2} skills. Loaded {3} actions. " +

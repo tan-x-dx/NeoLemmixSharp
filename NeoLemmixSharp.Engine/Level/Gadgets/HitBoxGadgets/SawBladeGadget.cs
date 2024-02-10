@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
@@ -23,7 +23,7 @@ public sealed class SawBladeGadget : HitBoxGadget, IDestructionMask, IMoveableGa
     {
     }
 
-    public override GadgetSubType GadgetSubType => SawBladeGadgetSubType.Instance;
+    public override GadgetBehaviour GadgetBehaviour => SawBladeGadgetBehaviour.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
     public void SetHitMasks(SawBladeHitMask[] hitMasks)

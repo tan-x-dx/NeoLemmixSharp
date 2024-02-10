@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -32,7 +32,7 @@ public sealed class FallerAction : LemmingAction
 
 		foreach (var gadget in gadgetSet)
 		{
-			if (gadget.GadgetSubType != UpdraftGadgetSubType.Instance || !gadget.MatchesLemming(lemming))
+			if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
 				continue;
 
 			if (gadget.Orientation == Orientation.GetOpposite(orientation))
@@ -61,7 +61,7 @@ public sealed class FallerAction : LemmingAction
 
 			foreach (var gadget in gadgetSet)
 			{
-				if (gadget.GadgetSubType != UpdraftGadgetSubType.Instance || !gadget.MatchesLemming(lemming))
+				if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
 					continue;
 
 				if (gadget.Orientation == Orientation.GetOpposite(orientation))
@@ -96,9 +96,9 @@ public sealed class FallerAction : LemmingAction
 		var gadgetManager = LevelScreen.GadgetManager;
 
 		return !(lemming.State.IsFloater || lemming.State.IsGlider) &&
-			   gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, NoSplatGadgetSubType.Instance) &&
+			   gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, NoSplatGadgetBehaviour.Instance) &&
 			   (lemming.DistanceFallen > LevelConstants.MaxFallDistance ||
-				gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, SplatGadgetSubType.Instance));
+				gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, SplatGadgetBehaviour.Instance));
 	}
 
 	private static bool CheckFloaterOrGliderTransition(
