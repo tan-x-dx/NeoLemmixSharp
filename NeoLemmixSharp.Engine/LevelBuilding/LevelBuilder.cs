@@ -40,6 +40,7 @@ public sealed class LevelBuilder : IDisposable
     public LevelScreen BuildLevel(string levelFilePath)
     {
         var levelData = _levelReader.ReadLevel(levelFilePath);
+        levelData.Validate();
 
         _terrainPainter.PaintLevel(levelData);
 
@@ -52,8 +53,8 @@ public sealed class LevelBuilder : IDisposable
         var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
         var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
 
-        var hatchGroups = _levelObjectAssembler.GetHatchGroups();
-        var levelLemmings = _levelObjectAssembler.GetLevelLemmings();
+        var hatchGroups = _levelObjectAssembler.GetHatchGroups(levelData);
+        var levelLemmings = _levelObjectAssembler.GetLevelLemmings(levelData);
         var lemmingManager = new LemmingManager(levelData, hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetLemmingManager(lemmingManager);
 
@@ -72,8 +73,8 @@ public sealed class LevelBuilder : IDisposable
         LevelScreen.SetLevelControlPanel(controlPanel);
 
         _levelObjectAssembler.AssembleLevelObjects(
-            _content,
-            levelData);
+            levelData,
+            _content);
 
         var levelGadgets = _levelObjectAssembler.GetLevelGadgets();
         var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
@@ -105,7 +106,7 @@ public sealed class LevelBuilder : IDisposable
         var levelSprites = _levelObjectAssembler.GetLevelSprites();
         var levelCursorSprite = CommonSpriteBank.Instance.GetLevelCursorSprite(levelCursor);
 
-        var levelScreenRenderer2 = new LevelScreenRenderer(
+        var levelScreenRenderer = new LevelScreenRenderer(
             _graphicsDevice,
             levelData,
             controlPanel,
@@ -127,7 +128,7 @@ public sealed class LevelBuilder : IDisposable
             inputController,
             controlPanel,
             levelViewport,
-            levelScreenRenderer2);
+            levelScreenRenderer);
     }
 
     private static LevelParameters GetLevelParameters(LevelData levelData)

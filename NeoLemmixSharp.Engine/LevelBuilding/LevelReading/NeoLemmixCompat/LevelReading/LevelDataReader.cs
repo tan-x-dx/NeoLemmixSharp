@@ -26,7 +26,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
         ReadingHelpers.GetTokenPair(line, out _, out _, out var secondTokenIndex);
 
         var levelTitle = line.TrimAfterIndex(secondTokenIndex).GetString();
-        _levelData.LevelTitle = string.IsNullOrEmpty(levelTitle) ? "Untitled" : levelTitle;
+        _levelData.LevelTitle = string.IsNullOrWhiteSpace(levelTitle) ? "Untitled" : levelTitle;
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
@@ -44,7 +44,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
         {
             case "AUTHOR":
                 var levelAuthor = line.TrimAfterIndex(secondTokenIndex).GetString();
-                _levelData.LevelAuthor = string.IsNullOrEmpty(levelAuthor) ? "Unknown Author" : levelAuthor;
+                _levelData.LevelAuthor = string.IsNullOrWhiteSpace(levelAuthor) ? "Unknown Author" : levelAuthor;
                 break;
 
             case "ID":

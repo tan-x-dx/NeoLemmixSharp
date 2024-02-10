@@ -9,15 +9,15 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 public sealed class LevelData
 {
-    private int _levelWidth;
-    private int _levelHeight;
+    private int _levelWidth = -1;
+    private int _levelHeight = -1;
     private int? _levelStartPositionX;
     private int? _levelStartPositionY;
-    private int _numberOfLemmings;
+    private int _numberOfLemmings = -1;
     private int? _timeLimit;
 
-    public string LevelTitle { get; set; } = null!;
-    public string LevelAuthor { get; set; } = null!;
+    public string LevelTitle { get; set; } = string.Empty;
+    public string LevelAuthor { get; set; } = string.Empty;
     public ulong LevelId { get; set; }
     public ulong Version { get; set; }
 
@@ -149,6 +149,28 @@ public sealed class LevelData
     public List<string> PreTextLines { get; } = new();
     public List<string> PostTextLines { get; } = new();
 
+    public void Validate()
+    {
+        var error = TryGetError();
+
+        if (error is null)
+            return;
+
+        throw new InvalidOperationException(error);
+    }
+
+    private string? TryGetError()
+    {
+        if (_levelWidth < 0) return "Level width not set!";
+        if (_levelHeight < 0) return "Level height not set!";
+        if (_numberOfLemmings <= 0) return "Number of lemmings is invalid!";
+        if (AllLemmingData.Count == 0) return "Number of lemmings is invalid!";
+        if (LevelTitle.Length == 0) return "Level title not set!";
+        if (LevelAuthor.Length == 0) return "Level author not set!";
+
+        return null;
+    }
+
     public bool LevelContainsAnyZombies()
     {
         var lemmingSpan = CollectionsMarshal.AsSpan(AllLemmingData);
@@ -165,4 +187,5 @@ public sealed class LevelData
 
         return false;
     }
+
 }

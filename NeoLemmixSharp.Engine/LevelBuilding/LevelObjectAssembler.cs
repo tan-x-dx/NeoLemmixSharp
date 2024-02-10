@@ -1,390 +1,120 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
 public sealed class LevelObjectAssembler
 {
-	private readonly SpriteBatch _spriteBatch;
+    private readonly SpriteBatch _spriteBatch;
 
-	private readonly List<Lemming> _lemmings = new();
-	private readonly List<GadgetBase> _gadgets = new();
-	private readonly List<IViewportObjectRenderer> _gadgetRenderers = new();
+    private readonly List<GadgetBase> _gadgets = new();
+    private readonly List<IViewportObjectRenderer> _gadgetRenderers = new();
 
-	private readonly LemmingSpriteBankBuilder _lemmingSpriteBankBuilder;
-	private readonly GadgetSpriteBankBuilder _gadgetSpriteBankBuilder;
-	private readonly ControlPanelSpriteBankBuilder _controlPanelSpriteBankBuilder;
+    private readonly LemmingSpriteBankBuilder _lemmingSpriteBankBuilder;
+    private readonly GadgetSpriteBankBuilder _gadgetSpriteBankBuilder;
+    private readonly ControlPanelSpriteBankBuilder _controlPanelSpriteBankBuilder;
 
-	public LevelObjectAssembler(
-		GraphicsDevice graphicsDevice,
-		ContentManager contentManager,
-		SpriteBatch spriteBatch)
-	{
-		_spriteBatch = spriteBatch;
-
-		_lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
-		_gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(graphicsDevice, contentManager);
-		_controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder(graphicsDevice, contentManager);
-	}
-
-	public void AssembleLevelObjects(
-		ContentManager contentManager,
-		LevelData levelData)
-	{
-		SetUpTestLemmings();
-		SetUpLemmings();
-		SetUpGadgets(contentManager, levelData.AllGadgetData);
-	}
-	/*
-    private SawBladeGadget LoadSawBlade(ContentManager contentManager)
+    public LevelObjectAssembler(
+        GraphicsDevice graphicsDevice,
+        ContentManager contentManager,
+        SpriteBatch spriteBatch)
     {
-        var p = new RectangularLevelRegion(100, 100, 14, 14);
-        var sawBladeGadget = new SawBladeGadget(2, p);
+        _spriteBatch = spriteBatch;
 
-        _gadgets.Add(sawBladeGadget);
-        _gadgetRenderers.Add(new SawBladeRenderer(sawBladeGadget));
-
-        var numberOfFrames = 4;
-
-        var s = new SpriteRotationReflectionProcessor<SawBladeHitMask>(_graphicsDevice);
-
-        using var texture = contentManager.Load<Texture2D>("sprites/style/common/spinner_mask");
-
-        var spriteWidth = texture.Width;
-        var spriteHeight = texture.Height / numberOfFrames;
-
-        var sawBladeHitMasks = new List<SawBladeHitMask>();
-
-        for (var i = 0; i < numberOfFrames; i++)
-        {
-            var sawBladeHitMask = s.CreateSpriteType(
-                texture,
-                DownOrientation.Instance,
-                FacingDirection.RightInstance,
-                spriteWidth,
-                spriteHeight,
-                numberOfFrames,
-                1,
-                p.TopLeft,
-                (a, b, c, d, e, f) => ItemCreator(a, b, c, d, e, f, i, sawBladeGadget));
-
-            sawBladeHitMasks.Add(sawBladeHitMask);
-        }
-
-        sawBladeGadget.SetHitMasks(sawBladeHitMasks.ToArray());
-
-        return sawBladeGadget;
+        _lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
+        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(graphicsDevice, contentManager);
+        _controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder(graphicsDevice, contentManager);
     }
 
-    private static SawBladeHitMask ItemCreator(
-            Texture2D texture,
-            int spriteWidth,
-            int spriteHeight,
-            int numberOfFrames,
-            int numberOfLayers,
-            LevelPosition anchorPoint,
-            int frame,
-            SawBladeGadget sawBladeGadget)
+    public void AssembleLevelObjects(
+        LevelData levelData,
+        ContentManager contentManager)
     {
-        var uints = new uint[texture.Width * texture.Height];
-        texture.GetData(uints);
+        SetUpGadgets(contentManager, levelData.AllGadgetData);
+    }
 
-        var levelPositions = new List<LevelPosition>();
+    public HatchGroup[] GetHatchGroups(LevelData levelData)
+    {
+        return Array.Empty<HatchGroup>();
+    }
 
-        var y0 = frame * spriteHeight;
+    public Lemming[] GetLevelLemmings(LevelData levelData)
+    {
+        var allLemmingData = CollectionsMarshal.AsSpan(levelData.AllLemmingData);
 
-        for (var x = 0; x < spriteWidth; x++)
+        var result = new Lemming[allLemmingData.Length];
+        var i = 0;
+
+        foreach (var prototype in allLemmingData)
         {
-            for (var y = 0; y < spriteHeight; y++)
+            var lemming = new Lemming(
+                i,
+                prototype.Orientation,
+                prototype.FacingDirection,
+                prototype.InitialLemmingAction)
             {
-                var index = x + spriteWidth * (y0 + y);
+                LevelPosition = new LevelPosition(prototype.X, prototype.Y)
+            };
 
-                var pixel = uints[index];
+            lemming.State.SetRawData(prototype.Team, prototype.State);
 
-                if (pixel != 0U)
-                {
-                    var p = new LevelPosition(x, y);
-                    if (levelPositions.Contains(p))
-                    {
-                        ;
-                    }
-
-                    levelPositions.Add(p);
-                }
-            }
+            result[i++] = lemming;
         }
 
-        texture.Dispose();
+        _lemmings.AddRange(result);
 
-        return new SawBladeHitMask(sawBladeGadget, sawBladeGadget.GadgetBounds, levelPositions.ToArray());
+        return result;
     }
-    */
 
-	public HatchGroup[] GetHatchGroups()
-	{
-		return Array.Empty<HatchGroup>();
-	}
+    public GadgetBase[] GetLevelGadgets()
+    {
+        return _gadgets.ToArray();
+    }
 
-	public Lemming[] GetLevelLemmings()
-	{
-		SetUpTestLemmings();
+    private readonly List<Lemming> _lemmings = new();
+    public IViewportObjectRenderer[] GetLevelSprites()
+    {
+        var result = new List<IViewportObjectRenderer>();
+        foreach (var lemming in _lemmings)
+        {
+            result.Add(lemming.Renderer);
+        }
 
-		return _lemmings.ToArray();
-	}
+        result.AddRange(_gadgetRenderers);
 
-	public GadgetBase[] GetLevelGadgets()
-	{
-		return _gadgets.ToArray();
-	}
+        return result.ToArray();
+    }
 
-	public IViewportObjectRenderer[] GetLevelSprites()
-	{
-		var result = new List<IViewportObjectRenderer>(_lemmings.Count + _gadgetRenderers.Count);
-		foreach (var lemming in _lemmings)
-		{
-			var renderer = new LemmingRenderer(lemming);
-			lemming.SetRenderer(renderer);
-			result.Add(renderer);
-		}
+    public LemmingSpriteBank GetLemmingSpriteBank()
+    {
+        return DefaultLemmingSpriteBank.DefaultLemmingSprites;
+    }
 
-		result.AddRange(_gadgetRenderers);
+    public GadgetSpriteBank GetGadgetSpriteBank()
+    {
+        return _gadgetSpriteBankBuilder.BuildGadgetSpriteBank();
+    }
 
-		return result.ToArray();
-	}
+    public ControlPanelSpriteBank GetControlPanelSpriteBank()
+    {
+        return _controlPanelSpriteBankBuilder.BuildControlPanelSpriteBank();
+    }
 
-	public LemmingSpriteBank GetLemmingSpriteBank()
-	{
-		return DefaultLemmingSpriteBank.DefaultLemmingSprites;
-	}
-
-	public GadgetSpriteBank GetGadgetSpriteBank()
-	{
-		return _gadgetSpriteBankBuilder.BuildGadgetSpriteBank();
-	}
-
-	public ControlPanelSpriteBank GetControlPanelSpriteBank()
-	{
-		return _controlPanelSpriteBankBuilder.BuildControlPanelSpriteBank();
-	}
-
-	private void SetUpTestLemmings()
-	{
-		int id = 0;
-
-		var lemmingX = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.LeftInstance)
-		{
-			LevelPosition = new LevelPosition(160, 0),
-		};
-
-		var lemmingA = new Lemming(
-			id++,
-			orientation: UpOrientation.Instance,
-			facingDirection: FacingDirection.LeftInstance)
-		{
-			LevelPosition = new LevelPosition(126, 42)
-		};
-
-
-		var lemmingB = new Lemming(
-			id++,
-			orientation: LeftOrientation.Instance,
-			facingDirection: FacingDirection.LeftInstance)
-		{
-			LevelPosition = new LevelPosition(60, 20),
-			State =
-			{
-				IsClimber = true,
-				IsPermanentFastForwards = true
-			}
-		};
-
-		var lemmingE = new Lemming(
-			id++,
-			orientation: LeftOrientation.Instance,
-			facingDirection: FacingDirection.LeftInstance)
-		{
-			LevelPosition = new LevelPosition(60, 24),
-		};
-
-		var lemmingC = new Lemming(
-			id++,
-			orientation: RightOrientation.Instance,
-			facingDirection: FacingDirection.LeftInstance)
-		{
-			LevelPosition = new LevelPosition(145, 134),
-			State =
-			{
-				IsFloater = true
-			}
-		};
-
-		var lemmingD = new Lemming(
-			id++,
-			orientation: LeftOrientation.Instance,
-			facingDirection: FacingDirection.LeftInstance,
-			currentAction: BuilderAction.Instance)
-		{
-			LevelPosition = new LevelPosition(232, 130)
-		};
-
-		BuilderAction.Instance.TransitionLemmingToAction(lemmingD, false);
-
-		var lemming0 = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.LeftInstance)
-		{
-			LevelPosition = new LevelPosition(2, 152)
-		};
-
-		var lemming1 = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.LeftInstance)
-		{
-			LevelPosition = new LevelPosition(6, 152)
-		};
-
-		var lemming2 = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.LeftInstance)
-		{
-			LevelPosition = new LevelPosition(10, 152)
-		};
-
-		var lemming3 = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.LeftInstance)
-		{
-			LevelPosition = new LevelPosition(14, 152)
-		};
-
-		var lemming4 = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.LeftInstance)
-		{
-			LevelPosition = new LevelPosition(18, 152)
-		};
-
-		var lemming5 = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.LeftInstance)
-		{
-			LevelPosition = new LevelPosition(22, 152)
-		};
-
-
-		var lemming6 = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.RightInstance)
-		{
-			LevelPosition = new LevelPosition(80, 40)
-		};
-
-		var lemming7 = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.RightInstance)
-		{
-			LevelPosition = new LevelPosition(90, 40)
-		};
-
-		var lemming8 = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.RightInstance)
-		{
-			LevelPosition = new LevelPosition(298, 152)
-		};
-
-		var lemming9 = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.RightInstance)
-		{
-			LevelPosition = new LevelPosition(302, 152)
-		};
-
-		var lemming10 = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.RightInstance)
-		{
-			LevelPosition = new LevelPosition(306, 152)
-		};
-
-		var lemming11 = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.RightInstance)
-		{
-			LevelPosition = new LevelPosition(310, 152)
-		};
-
-		var miner = new Lemming(
-			id++,
-			orientation: DownOrientation.Instance,
-			facingDirection: FacingDirection.RightInstance,
-			currentAction: MinerAction.Instance)
-		{
-			LevelPosition = new LevelPosition(110, 19)
-		};
-		MinerAction.Instance.TransitionLemmingToAction(miner, false);
-
-		_lemmings.Add(lemmingX);
-
-		_lemmings.Add(lemming0);
-		_lemmings.Add(lemming1);
-		_lemmings.Add(lemming2);
-		_lemmings.Add(lemming3);
-		_lemmings.Add(lemming4);
-		_lemmings.Add(lemming5);
-		_lemmings.Add(lemming6);
-		_lemmings.Add(lemming7);
-		_lemmings.Add(lemming8);
-		_lemmings.Add(lemming9);
-		_lemmings.Add(lemming10);
-		_lemmings.Add(lemming11);
-
-		_lemmings.Add(lemmingA);
-		_lemmings.Add(lemmingB);
-		_lemmings.Add(lemmingC);
-		_lemmings.Add(lemmingD);
-		_lemmings.Add(lemmingE);
-
-		_lemmings.Add(miner);
-	}
-
-	private void SetUpLemmings()
-	{
-
-	}
-
-	private void SetUpGadgets(ContentManager contentManager, ICollection<GadgetData> allGadgetData)
-	{
-		foreach (var gadgetData in allGadgetData)
-		{
-			//    _gadgetSpriteBankBuilder.LoadGadgetSprite(gadgetData);
-		}
-	}
+    private void SetUpGadgets(ContentManager contentManager, ICollection<GadgetData> allGadgetData)
+    {
+        foreach (var gadgetData in allGadgetData)
+        {
+            //    _gadgetSpriteBankBuilder.LoadGadgetSprite(gadgetData);
+        }
+    }
 }
