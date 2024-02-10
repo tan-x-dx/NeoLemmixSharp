@@ -115,26 +115,31 @@ public sealed class LevelControlPanel
 
     private void RecalculateButtonDimensions()
     {
-        var x0 = 0;
         const int halfH0 = ControlPanelButtonPixelHeight / 2;
-        var allButtons = AllButtons;
 
+        var x0 = 0;
         var index = 0;
-        for (; index < allButtons.Length; index++)
-        {
-            var controlPanelButton = allButtons[index];
-            // Quit when we come across the first skill assign button
-            if (controlPanelButton.ButtonAction.ButtonType == ButtonType.SkillAssign)
-                break;
 
-            x0 += ControlPanelButtonPixelWidth;
-            UpdateButtonDimensions(controlPanelButton);
+        var allButtons = AllButtons;
+        var skillAssignButtons = SkillAssignButtons;
+
+        if (skillAssignButtons.Length > 0)
+        {
+            for (; index < allButtons.Length; index++)
+            {
+                var controlPanelButton = allButtons[index];
+                // Quit when we come across the first skill assign button
+                if (controlPanelButton.ButtonAction.ButtonType == ButtonType.SkillAssign)
+                    break;
+
+                x0 += ControlPanelButtonPixelWidth;
+                UpdateButtonDimensions(controlPanelButton);
+            }
+
+            // Deal with skill assign buttons separately
+            UpdateSkillAssignButtonDimensions();
         }
 
-        // Deal with skill assign buttons separately
-        UpdateSkillAssignButtonDimensions();
-
-        var skillAssignButtons = SkillAssignButtons;
         var numberOfSkillAssignButtons = skillAssignButtons.Length;
 
         // Jump ahead in the list to the first non skill assign button
