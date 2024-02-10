@@ -75,6 +75,10 @@ public sealed class LemmingReader : INeoLemmixDataReader
                 currentLemmingData.State |= 1U << LemmingState.NeutralBitIndex;
                 break;
 
+            case "SHIMMIER":
+                currentLemmingData.InitialLemmingAction = ShimmierAction.Instance;
+                break;
+
             case "SLIDER":
                 currentLemmingData.State |= 1U << LemmingState.SliderBitIndex;
                 break;
