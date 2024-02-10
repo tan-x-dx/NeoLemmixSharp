@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional.BinaryLogic;
 

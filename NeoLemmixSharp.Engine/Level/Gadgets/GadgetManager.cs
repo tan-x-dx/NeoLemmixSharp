@@ -9,7 +9,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Updates;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 

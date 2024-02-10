@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetBehaviours;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
+using NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -16,12 +16,12 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
     private int _currentStateIndex;
     private int _nextStateIndex;
 
-    public override GadgetInteractionType GadgetSubType { get; }
+    public override GadgetSubType GadgetSubType { get; }
     public override Orientation Orientation { get; }
 
     public StatefulGadget(
         int id,
-        GadgetInteractionType interactionType,
+        GadgetSubType interactionType,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
         HitBox hitBox,
@@ -63,7 +63,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
         var itemStatus = LemmingTracker.TrackItem(lemming);
 
         var state = _states[_currentStateIndex];
-        ReadOnlySpan<IGadgetBehaviour> actions;
+        ReadOnlySpan<IGadgetAction> actions;
 
         if (IsItemPresent(itemStatus))
         {
@@ -79,7 +79,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
         }
         else
         {
-            actions = ReadOnlySpan<IGadgetBehaviour>.Empty;
+            actions = ReadOnlySpan<IGadgetAction>.Empty;
         }
 
         foreach (var action in actions)

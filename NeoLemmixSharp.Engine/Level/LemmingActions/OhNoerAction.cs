@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -77,7 +77,7 @@ public sealed class OhNoerAction : LemmingAction
 		{
 			foreach (var gadget in gadgetsNearPosition)
 			{
-				if (gadget.GadgetSubType != UpdraftGadgetInteractionType.Instance || !gadget.MatchesLemming(lemming))
+				if (gadget.GadgetSubType != UpdraftGadgetSubType.Instance || !gadget.MatchesLemming(lemming))
 					continue;
 
 				var gadgetOrientation = gadget.Orientation;

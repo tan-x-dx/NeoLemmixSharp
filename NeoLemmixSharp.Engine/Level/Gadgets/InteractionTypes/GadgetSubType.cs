@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Identity;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
 
 public abstract class GadgetSubType : IExtendedEnumType<GadgetSubType>
 {
@@ -13,16 +13,16 @@ public abstract class GadgetSubType : IExtendedEnumType<GadgetSubType>
     {
         var result = new GadgetSubType[]
         {
-            GenericGadgetInteractionType.Instance,
-            WaterGadgetInteractionType.Instance,
-            FireGadgetInteractionType.Instance,
-            TinkerableGadgetInteractionType.Instance,
-            UpdraftGadgetInteractionType.Instance,
-            SplatGadgetInteractionType.Instance,
-            NoSplatGadgetInteractionType.Instance,
-            MetalGrateGadgetInteractionType.Instance,
-            SwitchGadgetInteractionType.Instance,
-            SawBladeGadgetInteractionType.Instance,
+            GenericGadgetSubType.Instance,
+            WaterGadgetSubType.Instance,
+            FireGadgetSubType.Instance,
+            TinkerableGadgetSubType.Instance,
+            UpdraftGadgetSubType.Instance,
+            SplatGadgetSubType.Instance,
+            NoSplatGadgetSubType.Instance,
+            MetalGrateGadgetSubType.Instance,
+            SwitchGadgetSubType.Instance,
+            SawBladeGadgetSubType.Instance,
             FunctionalGadgetType.Instance,
             LogicGateGadgetType.Instance,
             HatchGadgetType.Instance

@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
+﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
 
 public sealed class HatchGadgetType : GadgetSubType
 {

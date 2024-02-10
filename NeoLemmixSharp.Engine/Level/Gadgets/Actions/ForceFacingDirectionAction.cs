@@ -2,13 +2,13 @@
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetBehaviours;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
-public sealed class ForceFacingDirectionBehaviour : IGadgetBehaviour
+public sealed class ForceFacingDirectionAction : IGadgetAction
 {
     private readonly FacingDirection _facingDirection;
 
-    public ForceFacingDirectionBehaviour(FacingDirection facingDirection)
+    public ForceFacingDirectionAction(FacingDirection facingDirection)
     {
         _facingDirection = facingDirection;
     }

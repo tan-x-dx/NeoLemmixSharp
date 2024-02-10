@@ -7,6 +7,7 @@ using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Skills;
@@ -20,7 +21,6 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 
 namespace NeoLemmixSharp;
 

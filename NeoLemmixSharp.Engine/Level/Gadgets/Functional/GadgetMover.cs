@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
 

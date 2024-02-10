@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -8,12 +8,12 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeableGadget
 {
-    public override GadgetInteractionType GadgetSubType { get; }
+    public override GadgetSubType GadgetSubType { get; }
     public override Orientation Orientation { get; }
 
     public ResizeableGadget(
         int id,
-        GadgetInteractionType interactionType,
+        GadgetSubType interactionType,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
         ItemTracker<Lemming> lemmingTracker)

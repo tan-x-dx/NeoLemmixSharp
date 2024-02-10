@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -16,8 +15,6 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRe
     public LevelPosition BottomRightPixel { get; set; }
     public LevelPosition PreviousTopLeftPixel { get; set; }
     public LevelPosition PreviousBottomRightPixel { get; set; }
-
-    public abstract override GadgetInteractionType GadgetSubType { get; }
 
     protected HitBoxGadget(
         int id,

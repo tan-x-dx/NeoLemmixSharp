@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.GadgetInteractionTypes;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.InteractionTypes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -51,7 +51,7 @@ public sealed class FloaterAction : LemmingAction
 		{
 			foreach (var gadget in gadgetSet)
 			{
-				if (gadget.GadgetSubType != UpdraftGadgetInteractionType.Instance || !gadget.MatchesLemming(lemming))
+				if (gadget.GadgetSubType != UpdraftGadgetSubType.Instance || !gadget.MatchesLemming(lemming))
 					continue;
 
 				if (gadget.Orientation == Orientation.GetOpposite(orientation))

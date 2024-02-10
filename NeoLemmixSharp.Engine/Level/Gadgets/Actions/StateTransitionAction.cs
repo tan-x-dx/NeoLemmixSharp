@@ -1,14 +1,14 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetBehaviours;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
-public sealed class StateTransitionBehaviour : IGadgetBehaviour
+public sealed class StateTransitionAction : IGadgetAction
 {
     private readonly StatefulGadget _gadget;
     private readonly int _stateIndex;
 
-    public StateTransitionBehaviour(
+    public StateTransitionAction(
         StatefulGadget gadget,
         int stateIndex)
     {
