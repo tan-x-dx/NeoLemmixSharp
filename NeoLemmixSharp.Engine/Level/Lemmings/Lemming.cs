@@ -124,14 +124,14 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         HandleCountDownTimer();
         HandleFastForwardTimer();
 
-        var shouldContinue = HandleLemmingAction() &&
-                             CheckLevelBoundaries() &&
-                             CheckTriggerAreas(false);
+        var checkZombies = HandleLemmingAction() &&
+                           CheckLevelBoundaries() &&
+                           CheckTriggerAreas(false) &&
+                           CurrentAction != ExiterAction.Instance &&
+                           !State.IsZombie &&
+                           LevelScreen.LemmingManager.AnyZombies();
 
-        if (shouldContinue &&
-            CurrentAction != ExiterAction.Instance &&
-            !State.IsZombie &&
-            LevelScreen.LemmingManager.AnyZombies())
+        if (checkZombies)
         {
             LevelScreen.LemmingManager.DoZombieCheck(this);
         }

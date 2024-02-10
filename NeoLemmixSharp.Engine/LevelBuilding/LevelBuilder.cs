@@ -53,6 +53,11 @@ public sealed class LevelBuilder : IDisposable
         var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
         var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
 
+        _levelObjectAssembler.AssembleLevelObjects(
+            levelData,
+            _content);
+
+        var levelGadgets = _levelObjectAssembler.GetLevelGadgets();
         var hatchGroups = _levelObjectAssembler.GetHatchGroups(levelData);
         var levelLemmings = _levelObjectAssembler.GetLevelLemmings(levelData);
         var lemmingManager = new LemmingManager(levelData, hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
@@ -72,11 +77,6 @@ public sealed class LevelBuilder : IDisposable
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowWidth, IGameWindow.Instance.WindowHeight);
         LevelScreen.SetLevelControlPanel(controlPanel);
 
-        _levelObjectAssembler.AssembleLevelObjects(
-            levelData,
-            _content);
-
-        var levelGadgets = _levelObjectAssembler.GetLevelGadgets();
         var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetGadgetManager(gadgetManager);
 
