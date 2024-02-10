@@ -6,39 +6,38 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
-public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
+public sealed class BitArray
 {
     public const int Shift = 5;
     public const int Mask = (1 << Shift) - 1;
 
     private readonly uint[] _bits;
+    private int _popCount;
 
     /// <summary>
     /// The footprint of this BitArray - how many uints it logically represents
     /// </summary>
-    public int Size => _bits.Length;
-    /// <summary>
-    /// The maximum number of integers that this BitArray can carry
-    /// </summary>
-    public int Length => _bits.Length << Shift;
-    /// <summary>
-    /// The number of integers currently stored in this BitArray
-    /// </summary>
-    public int Count { get; private set; }
+    public int Size
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _bits.Length;
+    }
 
-    public BitArray(int length, bool initialBitFlag = false)
+    /// <summary>
+    /// The number of integers currently stored in this BitArray.
+    /// Logically equivalent to the total pop count of the BitArray
+    /// </summary>
+    // ReSharper disable once ConvertToAutoPropertyWithPrivateSetter
+    public int PopCount
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _popCount;
+    }
+
+    public BitArray(int length)
     {
         var arraySize = (length + Mask) >> Shift;
         _bits = new uint[arraySize];
-
-        if (!initialBitFlag)
-            return;
-
-        Array.Fill(_bits, uint.MaxValue);
-
-        var shift = length & Mask;
-        var mask = (1U << shift) - 1U;
-        _bits[^1] = mask;
     }
 
     /// <summary>
@@ -64,29 +63,23 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     public bool SetBit(int index)
     {
         var span = new Span<uint>(_bits);
-        var delta = SetBit(span, index);
-        Count += delta;
-
-        return delta != 0;
+        var intIndex = index >> Shift;
+        ref var arrayValue = ref span[intIndex];
+        var oldValue = arrayValue;
+        arrayValue |= 1U << index;
+        var delta = (arrayValue ^ oldValue) >> index;
+        _popCount += (int)delta;
+        return delta != 0U;
     }
 
     /// <summary>
-    /// Sets a bit to 1. Returns a value of 1 if a change has occurred -
-    /// i.e. if the bit was previously 0. Returns a value of 0 otherwise
+    /// Sets a bit to 1
     /// </summary>
     /// <param name="bits">The span to modify</param>
     /// <param name="index">The bit to set</param>
-    /// <returns>1 if the operation changed the value of the bit, 0 if the bit was previously set</returns>
-    public static int SetBit(Span<uint> bits, int index)
+    public static void SetBit(Span<uint> bits, int index)
     {
-        var intIndex = index >> Shift;
-
-        ref var arrayValue = ref bits[intIndex];
-        var oldValue = arrayValue;
-        arrayValue |= 1U << index;
-
-        var delta = (arrayValue ^ oldValue) >> index;
-        return (int)delta;
+        bits[index >> 5] |= (1U << index);
     }
 
     /// <summary>
@@ -98,29 +91,23 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     public bool ClearBit(int index)
     {
         var span = new Span<uint>(_bits);
-        var delta = ClearBit(span, index);
-        Count -= delta;
-
-        return delta != 0;
+        var intIndex = index >> Shift;
+        ref var arrayValue = ref span[intIndex];
+        var oldValue = arrayValue;
+        arrayValue &= ~(1U << index);
+        var delta = (arrayValue ^ oldValue) >> index;
+        _popCount -= (int)delta;
+        return delta != 0U;
     }
 
     /// <summary>
-    /// Sets a bit to 0. Returns a value of 1 if a change has occurred -
-    /// i.e. if the bit was previously 1. Returns a value of 0 otherwise
+    /// Sets a bit to 0. 
     /// </summary>
     /// <param name="bits">The bit to clear</param>
     /// <param name="index">The bit to clear</param>
-    /// <returns>1 if the operation changed the value of the bit, 0 if the bit was previously clear</returns>
-    public static int ClearBit(Span<uint> bits, int index)
+    public static void ClearBit(Span<uint> bits, int index)
     {
-        var intIndex = index >> Shift;
-
-        ref var arrayValue = ref bits[intIndex];
-        var oldValue = arrayValue;
-        arrayValue &= ~(1U << index);
-
-        var delta = (arrayValue ^ oldValue) >> index;
-        return (int)delta;
+        bits[index >> 5] &= ~(1U << index);
     }
 
     /// <summary>
@@ -131,29 +118,25 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     public bool ToggleBit(int index)
     {
         var intIndex = index >> Shift;
-
         var span = new Span<uint>(_bits);
         ref var arrayValue = ref span[intIndex];
         var oldValue = arrayValue;
         arrayValue ^= 1U << index;
-
         var result = arrayValue > oldValue;
         var delta = result ? 1 : -1;
-
-        Count += delta;
-
+        _popCount += delta;
         return result;
     }
 
     public void Clear()
     {
         new Span<uint>(_bits).Clear();
-        Count = 0;
+        _popCount = 0;
     }
 
     public void CopyTo(int[] array, int arrayIndex)
     {
-        var remaining = Count;
+        var remaining = _popCount;
         var index = 0;
         var span = new ReadOnlySpan<uint>(_bits);
         var v = span[0];
@@ -172,17 +155,6 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
         }
     }
 
-    void ICollection<int>.Add(int i)
-    {
-        if (i < 0 || i >= Length)
-            throw new ArgumentOutOfRangeException(nameof(i), i, $"Can only add items if they are between 0 and {Length - 1}");
-
-        SetBit(i);
-    }
-
-    bool ICollection<int>.Contains(int i) => i >= 0 && i < Length && GetBit(i);
-    bool ICollection<int>.Remove(int i) => i >= 0 && i < Length && ClearBit(i);
-
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal ReadOnlySpan<uint> AsReadOnlySpan() => new(_bits);
@@ -190,9 +162,6 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReferenceTypeBitEnumerator GetEnumerator() => new(this);
-
-    IEnumerator<int> IEnumerable<int>.GetEnumerator() => GetEnumerator();
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public sealed class ReferenceTypeBitEnumerator : IEnumerator<int>
     {
@@ -210,7 +179,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
             _index = 0;
             var bits = bitArray.AsReadOnlySpan();
             _v = bits.Length == 0 ? 0U : bits[0];
-            _remaining = bitArray.Count;
+            _remaining = bitArray._popCount;
             Current = 0;
         }
 
@@ -241,7 +210,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
             _index = 0;
             var bits = _bitArray.AsReadOnlySpan();
             _v = bits.Length == 0 ? 0U : bits[0];
-            _remaining = _bitArray.Count;
+            _remaining = _bitArray._popCount;
             Current = -1;
         }
 
@@ -250,7 +219,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
     }
 
     [Pure]
-    internal static int PopCount(ReadOnlySpan<uint> bits)
+    internal static int GetPopCount(ReadOnlySpan<uint> bits)
     {
         var result = 0;
         foreach (var v in bits)
@@ -266,7 +235,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
         var span = new Span<uint>(_bits);
 
         var newCount = UnionWith(span, other);
-        Count = newCount;
+        _popCount = newCount;
     }
 
     internal static int UnionWith(Span<uint> span, ReadOnlySpan<uint> other)
@@ -295,7 +264,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
             arrayValue &= other[i];
             count += BitOperations.PopCount(arrayValue);
         }
-        Count = count;
+        _popCount = count;
     }
 
     internal void ExceptWith(ReadOnlySpan<uint> other)
@@ -310,7 +279,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
             arrayValue &= ~other[i];
             count += BitOperations.PopCount(arrayValue);
         }
-        Count = count;
+        _popCount = count;
     }
 
     internal void SymmetricExceptWith(ReadOnlySpan<uint> other)
@@ -325,7 +294,7 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
             arrayValue ^= other[i];
             count += BitOperations.PopCount(arrayValue);
         }
-        Count = count;
+        _popCount = count;
     }
 
     [Pure]
@@ -435,8 +404,4 @@ public sealed class BitArray : ICollection<int>, IReadOnlyCollection<int>
 
         return true;
     }
-
-    [Pure]
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    bool ICollection<int>.IsReadOnly => false;
 }
