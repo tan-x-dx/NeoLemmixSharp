@@ -1,13 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetBehaviours;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
-public sealed class SetLemmingActionBehaviour : IGadgetBehaviour
+public sealed class SetLemmingActionAction : IGadgetAction
 {
     private readonly LemmingAction _action;
 
-    public SetLemmingActionBehaviour(LemmingAction action)
+    public SetLemmingActionAction(LemmingAction action)
     {
         _action = action;
     }

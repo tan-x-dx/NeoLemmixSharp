@@ -1,6 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 public sealed class ShadesReader : INeoLemmixDataReader
 {
@@ -37,13 +35,5 @@ public sealed class ShadesReader : INeoLemmixDataReader
         }
 
         return false;
-    }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
-    }
-
-    public void Dispose()
-    {
     }
 }

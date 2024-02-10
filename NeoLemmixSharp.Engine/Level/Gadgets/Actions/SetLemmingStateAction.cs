@@ -1,14 +1,14 @@
 ﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.GadgetBehaviours;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
-public sealed class SetLemmingStateBehaviour : IGadgetBehaviour
+public sealed class SetLemmingStateAction : IGadgetAction
 {
     private readonly ILemmingStateChanger _lemmingStateChanger;
     private readonly SetStateType _type;
 
-    public SetLemmingStateBehaviour(ILemmingStateChanger lemmingStateChanger, SetStateType type)
+    public SetLemmingStateAction(ILemmingStateChanger lemmingStateChanger, SetStateType type)
     {
         _lemmingStateChanger = lemmingStateChanger;
         _type = type;

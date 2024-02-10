@@ -1,10 +1,8 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
-public sealed class DataReaderList : IDisposable
+public sealed class DataReaderList
 {
     private readonly INeoLemmixDataReader[] _dataReaders;
 
@@ -71,19 +69,5 @@ public sealed class DataReaderList : IDisposable
         }
 
         return null;
-    }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
-        foreach (var dataReader in _dataReaders)
-        {
-            dataReader.ApplyToLevelData(levelData);
-        }
-    }
-
-    public void Dispose()
-    {
-        var span = new ReadOnlySpan<INeoLemmixDataReader>(_dataReaders);
-        DisposableHelperMethods.DisposeOfAll(span);
     }
 }

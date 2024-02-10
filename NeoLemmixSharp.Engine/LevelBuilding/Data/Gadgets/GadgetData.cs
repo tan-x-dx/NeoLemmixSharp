@@ -1,13 +1,43 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
-public abstract class GadgetData
+public sealed class GadgetData
 {
-    public GadgetArchetypeData ArchetypeData { get; init; } = null!;
+    private readonly (GadgetProperty, object)[] _properties;
 
-    public int X { get; set; }
-    public int Y { get; set; }
+    public required int Id { get; init; }
+    public required int GadgetArchetypeDataId { get; init; }
+    public required int X { get; init; }
+    public required int Y { get; init; }
 
-    public abstract GadgetBase CreateGadget();
+    public required Orientation Orientation { get; init; }
+    public required FacingDirection FacingDirection { get; init; }
+
+    public GadgetData((GadgetProperty, object)[] properties)
+    {
+        _properties = properties;
+    }
+
+    public bool GetProperty<T>(GadgetProperty property, out T? value)
+    {
+        foreach (var (tupleProperty, tupleValue) in _properties)
+        {
+            if (property != tupleProperty)
+                continue;
+
+            if (tupleValue is T result)
+            {
+                value = result;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+        value = default;
+        return false;
+    }
 }

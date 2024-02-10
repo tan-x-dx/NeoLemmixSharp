@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public abstract class GadgetBase : IIdEquatable<GadgetBase>
 {
     public int Id { get; }
-    public abstract GadgetSubType SubType { get; }
+    public abstract GadgetBehaviour GadgetBehaviour { get; }
     public abstract Orientation Orientation { get; }
     public RectangularLevelRegion GadgetBounds { get; }
 

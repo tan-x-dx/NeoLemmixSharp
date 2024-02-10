@@ -6,24 +6,18 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 
 public sealed class LevelDataReader : INeoLemmixDataReader
 {
-    private string? _levelTitle;
-    private string? _levelAuthor;
-    private ulong _levelId;
-    private ulong _version;
-    private int _levelWidth;
-    private int _levelHeight;
-    private int _levelStartPositionX;
-    private int _levelStartPositionY;
-    private string? _levelTheme;
-    private string? _levelBackground;
-    private int _numberOfLemmings;
-    private int _saveRequirement;
-    private int? _timeLimit;
-    private int _maxSpawnInterval;
+    private readonly LevelData _levelData;
+
     private bool _lockSpawnInterval;
+    private int _maxSpawnInterval;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "TITLE";
+
+    public LevelDataReader(LevelData levelData)
+    {
+        _levelData = levelData;
+    }
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
@@ -31,7 +25,8 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
         ReadingHelpers.GetTokenPair(line, out _, out _, out var secondTokenIndex);
 
-        _levelTitle = line.TrimAfterIndex(secondTokenIndex).GetString();
+        var levelTitle = line.TrimAfterIndex(secondTokenIndex).GetString();
+        _levelData.LevelTitle = string.IsNullOrWhiteSpace(levelTitle) ? "Untitled" : levelTitle;
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
@@ -40,6 +35,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
         if (firstToken[0] == '$')
         {
+            OnFinishedReading();
             FinishedReading = true;
             return true;
         }
@@ -47,31 +43,32 @@ public sealed class LevelDataReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "AUTHOR":
-                _levelAuthor = line.TrimAfterIndex(secondTokenIndex).GetString();
+                var levelAuthor = line.TrimAfterIndex(secondTokenIndex).GetString();
+                _levelData.LevelAuthor = string.IsNullOrWhiteSpace(levelAuthor) ? "Unknown Author" : levelAuthor;
                 break;
 
             case "ID":
-                _levelId = ReadingHelpers.ParseHex<ulong>(secondToken);
+                _levelData.LevelId = ReadingHelpers.ParseHex<ulong>(secondToken);
                 break;
 
             case "VERSION":
-                _version = ReadingHelpers.ParseHex<ulong>(secondToken);
+                _levelData.Version = ReadingHelpers.ParseHex<ulong>(secondToken);
                 break;
 
             case "START_X":
-                _levelStartPositionX = int.Parse(secondToken);
+                _levelData.LevelStartPositionX = int.Parse(secondToken);
                 break;
 
             case "START_Y":
-                _levelStartPositionY = int.Parse(secondToken);
+                _levelData.LevelStartPositionY = int.Parse(secondToken);
                 break;
 
             case "THEME":
-                _levelTheme = line.TrimAfterIndex(secondTokenIndex).GetString();
+                _levelData.LevelTheme = line.TrimAfterIndex(secondTokenIndex).GetString();
                 break;
 
             case "BACKGROUND":
-                _levelBackground = line.TrimAfterIndex(secondTokenIndex).GetString();
+                _levelData.LevelBackground = line.TrimAfterIndex(secondTokenIndex).GetString();
                 break;
 
             case "MUSIC":
@@ -79,23 +76,23 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "WIDTH":
-                _levelWidth = int.Parse(secondToken);
+                _levelData.LevelWidth = int.Parse(secondToken);
                 break;
 
             case "HEIGHT":
-                _levelHeight = int.Parse(secondToken);
+                _levelData.LevelHeight = int.Parse(secondToken);
                 break;
 
             case "LEMMINGS":
-                _numberOfLemmings = int.Parse(secondToken);
+                _levelData.NumberOfLemmings = int.Parse(secondToken);
                 break;
 
             case "SAVE_REQUIREMENT":
-                _saveRequirement = int.Parse(secondToken);
+                _levelData.SaveRequirement = int.Parse(secondToken);
                 break;
 
             case "TIME_LIMIT":
-                _timeLimit = int.Parse(secondToken);
+                _levelData.TimeLimit = int.Parse(secondToken);
                 break;
 
             case "SPAWN_INTERVAL_LOCKED":
@@ -114,25 +111,12 @@ public sealed class LevelDataReader : INeoLemmixDataReader
         return false;
     }
 
-    public void ApplyToLevelData(LevelData levelData)
+    private void OnFinishedReading()
     {
-        levelData.LevelTitle = string.IsNullOrEmpty(_levelTitle) ? "Untitled" : _levelTitle;
-        levelData.LevelAuthor = string.IsNullOrEmpty(_levelAuthor) ? "Unknown Author" : _levelAuthor;
-        levelData.LevelId = _levelId;
-        levelData.Version = _version;
-        levelData.LevelWidth = _levelWidth;
-        levelData.LevelHeight = _levelHeight;
-        levelData.LevelStartPositionX = _levelStartPositionX;
-        levelData.LevelStartPositionY = _levelStartPositionY;
-        levelData.LevelTheme = _levelTheme;
-        levelData.LevelBackground = _levelBackground;
-        levelData.NumberOfLemmings = _numberOfLemmings;
-        levelData.SaveRequirement = _saveRequirement;
-        levelData.TimeLimit = _timeLimit;
-        levelData.HorizontalBoundaryBehaviour = BoundaryBehaviourType.Void;
-        levelData.VerticalBoundaryBehaviour = BoundaryBehaviourType.Void;
-        levelData.HorizontalViewPortBehaviour = BoundaryBehaviourType.Void;
-        levelData.VerticalViewPortBehaviour = BoundaryBehaviourType.Void;
+        _levelData.HorizontalBoundaryBehaviour = BoundaryBehaviourType.Void;
+        _levelData.VerticalBoundaryBehaviour = BoundaryBehaviourType.Void;
+        _levelData.HorizontalViewPortBehaviour = BoundaryBehaviourType.Void;
+        _levelData.VerticalViewPortBehaviour = BoundaryBehaviourType.Void;
 
         var hatchGroupData = new HatchGroupData
         {
@@ -143,10 +127,6 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 : LevelConstants.MinAllowedSpawnInterval
         };
 
-        levelData.AllHatchGroupData.Add(hatchGroupData);
-    }
-
-    public void Dispose()
-    {
+        _levelData.AllHatchGroupData.Add(hatchGroupData);
     }
 }

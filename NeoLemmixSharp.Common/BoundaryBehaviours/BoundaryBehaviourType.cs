@@ -3,7 +3,5 @@
 public enum BoundaryBehaviourType
 {
     Void,
-    Solid,
-    Reflect,
     Wrap
 }

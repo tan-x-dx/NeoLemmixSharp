@@ -94,7 +94,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
     private void InitialiseLemming(Lemming lemming)
     {
-        if (lemming.CurrentAction == NoneAction.Instance)
+        if (!lemming.State.IsActive)
             return;
 
         lemming.Initialise();

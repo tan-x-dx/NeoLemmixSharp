@@ -71,12 +71,4 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
 
         return false;
     }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
-    }
-
-    public void Dispose()
-    {
-    }
 }

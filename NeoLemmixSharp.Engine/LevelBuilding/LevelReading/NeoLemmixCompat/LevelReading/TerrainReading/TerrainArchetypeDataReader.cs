@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.TerrainReading;
 
@@ -82,13 +81,5 @@ public sealed class TerrainArchetypeDataReader : INeoLemmixDataReader
         }
 
         return false;
-    }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
-    }
-
-    public void Dispose()
-    {
     }
 }

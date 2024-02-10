@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.GadgetSubTypes;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -16,7 +16,7 @@ public sealed class GadgetMover : GadgetBase, IReactiveGadget
     private bool _active = true;
     private int _tickCount;
 
-    public override GadgetSubType SubType => FunctionalGadgetType.Instance;
+    public override GadgetBehaviour GadgetBehaviour => FunctionalGadgetBehaviour.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
     public GadgetMoverInput Input { get; }

@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
@@ -76,6 +75,10 @@ public sealed class LemmingReader : INeoLemmixDataReader
                 currentLemmingData.State |= 1U << LemmingState.NeutralBitIndex;
                 break;
 
+            case "SHIMMIER":
+                currentLemmingData.InitialLemmingAction = ShimmierAction.Instance;
+                break;
+
             case "SLIDER":
                 currentLemmingData.State |= 1U << LemmingState.SliderBitIndex;
                 break;
@@ -114,9 +117,5 @@ public sealed class LemmingReader : INeoLemmixDataReader
 
             _prePlacedLemmingData.Add(newLemmingData);
         }
-    }
-
-    public void Dispose()
-    {
     }
 }

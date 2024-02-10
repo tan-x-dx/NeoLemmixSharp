@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.TerrainReading;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
@@ -13,26 +14,30 @@ public sealed class NxlvLevelReader : ILevelReader
 
         var terrainArchetypes = new Dictionary<string, TerrainArchetypeData>();
 
+        var terrainGroupReader = new TerrainGroupReader(terrainArchetypes);
+        var lemmingReader = new LemmingReader(levelData.AllLemmingData);
+
         var dataReaders = new INeoLemmixDataReader[]
         {
-            new LevelDataReader(),
+            new LevelDataReader(levelData),
             new SkillSetReader(levelData.SkillSetData),
-            new TerrainGroupReader(terrainArchetypes),
-            new TerrainReader(terrainArchetypes),
+            terrainGroupReader,
+            new TerrainReader(terrainArchetypes, levelData.AllTerrainData),
             new GadgetReader(),
-            new LemmingReader(levelData.AllLemmingData),
+            lemmingReader,
             new TextReader(levelData.PreTextLines, "$PRETEXT"),
             new TextReader(levelData.PostTextLines, "$POSTTEXT"),
             new SketchReader(levelData.AllSketchData),
         };
 
-        using var dataReaderList = new DataReaderList(dataReaders);
+        var dataReaderList = new DataReaderList(dataReaders);
 
         // NOTE: The order of the data readers is important!
 
         dataReaderList.ReadFile(levelFilePath);
 
-        dataReaderList.ApplyToLevelData(levelData);
+        terrainGroupReader.ApplyToLevelData(levelData);
+        lemmingReader.ApplyToLevelData(levelData);
 
         SetUpLevelData(levelData);
 

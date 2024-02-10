@@ -1,8 +1,12 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
-
-public abstract class GadgetArchetypeData
+public sealed class GadgetArchetypeData
 {
-    public abstract GadgetBase CreateGadget(int id, GadgetData gadgetData);
+    public required string Style { get; init; }
+    public required string Gadget { get; init; }
+}
+
+public enum GadgetType
+{
+
 }
