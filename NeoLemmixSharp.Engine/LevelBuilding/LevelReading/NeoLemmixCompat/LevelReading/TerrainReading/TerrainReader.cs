@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.TerrainReading;
@@ -24,10 +23,10 @@ public sealed class TerrainReader : INeoLemmixDataReader
 
     public TerrainReader(
         Dictionary<string, TerrainArchetypeData> terrainArchetypes,
-        List<TerrainData>? allTerrainData = null)
+        List<TerrainData> allTerrainData)
     {
         _terrainArchetypes = terrainArchetypes;
-        _allTerrainData = allTerrainData ?? new List<TerrainData>();
+        _allTerrainData = allTerrainData;
     }
 
     public void BeginReading(ReadOnlySpan<char> line)
@@ -184,17 +183,8 @@ public sealed class TerrainReader : INeoLemmixDataReader
             new TerrainArchetypeDataReader(terrainArchetypeData)
         };
 
-        using var dataReaderList = new DataReaderList(dataReaders);
+        var dataReaderList = new DataReaderList(dataReaders);
 
         dataReaderList.ReadFile(rootFilePath);
-    }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
-        levelData.AllTerrainData.AddRange(_allTerrainData);
-    }
-
-    public void Dispose()
-    {
     }
 }

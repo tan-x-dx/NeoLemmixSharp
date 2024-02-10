@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
 
@@ -95,10 +94,6 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
         }
 
         return false;
-    }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
     }
 
     public void Dispose()

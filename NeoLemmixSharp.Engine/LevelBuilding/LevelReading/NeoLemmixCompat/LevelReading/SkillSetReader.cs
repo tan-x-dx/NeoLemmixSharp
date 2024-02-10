@@ -55,12 +55,4 @@ public sealed class SkillSetReader : INeoLemmixDataReader
 
         _skillSetData.Add(skillSetDatum);
     }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
-    }
-
-    public void Dispose()
-    {
-    }
 }

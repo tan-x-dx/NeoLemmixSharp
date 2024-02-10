@@ -33,7 +33,6 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
 
             if (_terrainReader.FinishedReading)
             {
-                _terrainReader.Dispose();
                 _terrainReader = null;
             }
 
@@ -71,9 +70,5 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
         levelData.TerrainArchetypeData.AddRange(_terrainArchetypes.Values.OrderBy(d => d.TerrainArchetypeId));
 
         levelData.AllTerrainGroups.AddRange(_allTerrainGroups);
-    }
-
-    public void Dispose()
-    {
     }
 }

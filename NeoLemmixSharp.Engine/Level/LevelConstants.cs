@@ -42,6 +42,11 @@ public static class LevelConstants
 
     public const int BlockerQuantityThreshold = 20;
 
+    public const int MaxNumberOfLemmings = 500;
+    public const int MaxTimeLimitInSeconds = 99 * 60 + 59; // 99 minutes, 59 seconds
+    public const int MaxLevelWidth = 2400;
+    public const int MaxLevelHeight = 2400;
+
     /// <summary>
     /// A lemming falls 3 pixels each frame
     /// </summary>

@@ -79,14 +79,4 @@ public sealed class SketchReader : INeoLemmixDataReader
 
         return false;
     }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
-        levelData.AllSketchData.AddRange(_allSketchData);
-    }
-
-    public void Dispose()
-    {
-
-    }
 }

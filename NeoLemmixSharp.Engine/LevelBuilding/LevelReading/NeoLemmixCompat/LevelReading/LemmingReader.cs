@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
@@ -114,9 +113,5 @@ public sealed class LemmingReader : INeoLemmixDataReader
 
             _prePlacedLemmingData.Add(newLemmingData);
         }
-    }
-
-    public void Dispose()
-    {
     }
 }

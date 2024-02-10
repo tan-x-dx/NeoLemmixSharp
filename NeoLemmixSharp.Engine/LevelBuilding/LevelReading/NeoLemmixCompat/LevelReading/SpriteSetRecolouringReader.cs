@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.SpriteSet;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.SpriteSet;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
@@ -38,7 +37,8 @@ public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
                 break;
 
             case "LEMMING_BUILDER_SACK":
-                _lemmingSpriteSetRecoloring.LemmingBuilderSack = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                _lemmingSpriteSetRecoloring.LemmingBuilderSack =
+                    0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                 break;
 
             case "LEMMING_UMBRELLA":
@@ -46,23 +46,28 @@ public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
                 break;
 
             case "LEMMING_ZOMBIE_SKIN":
-                _lemmingSpriteSetRecoloring.LemmingZombieSkin = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                _lemmingSpriteSetRecoloring.LemmingZombieSkin =
+                    0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                 break;
 
             case "LEMMING_ATHLETE_HAIR":
-                _lemmingSpriteSetRecoloring.LemmingAthleteHair = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                _lemmingSpriteSetRecoloring.LemmingAthleteHair =
+                    0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                 break;
 
             case "LEMMING_ATHLETE_CLOTHES":
-                _lemmingSpriteSetRecoloring.LemmingAthleteClothes = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                _lemmingSpriteSetRecoloring.LemmingAthleteClothes =
+                    0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                 break;
 
             case "LEMMING_NEUTRAL_CLOTHES":
-                _lemmingSpriteSetRecoloring.LemmingNeutralClothes = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                _lemmingSpriteSetRecoloring.LemmingNeutralClothes =
+                    0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                 break;
 
             case "LEMMING_SELECTED_CLOTHES":
-                _lemmingSpriteSetRecoloring.LemmingSelectedClothes = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                _lemmingSpriteSetRecoloring.LemmingSelectedClothes =
+                    0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
                 break;
 
             case "$END":
@@ -75,13 +80,5 @@ public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
         }
 
         return false;
-    }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
-    }
-
-    public void Dispose()
-    {
     }
 }

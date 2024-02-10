@@ -1,8 +1,6 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
-
-public interface INeoLemmixDataReader : IDisposable
+public interface INeoLemmixDataReader
 {
     bool FinishedReading { get; }
     string IdentifierToken { get; }
@@ -16,6 +14,4 @@ public interface INeoLemmixDataReader : IDisposable
 
     void BeginReading(ReadOnlySpan<char> line);
     bool ReadNextLine(ReadOnlySpan<char> line);
-
-    void ApplyToLevelData(LevelData levelData);
 }

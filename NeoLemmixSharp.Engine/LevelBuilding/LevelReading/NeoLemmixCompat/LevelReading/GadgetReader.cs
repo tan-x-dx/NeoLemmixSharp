@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
 
@@ -221,18 +220,8 @@ public sealed class GadgetReader : INeoLemmixDataReader
             new SecondaryAnimationReader(gadgetArchetypeData)
         };
 
-        using var dataReaderList = new DataReaderList(dataReaders);
+        var dataReaderList = new DataReaderList(dataReaders);
 
         dataReaderList.ReadFile(rootFilePath);
-    }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
-        //    levelData.AllGadgetData.AddRange(_allGadgetData);
-    }
-
-    public void Dispose()
-    {
-        _allGadgetData.Clear();
     }
 }
