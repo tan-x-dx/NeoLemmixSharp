@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.TerrainReading;
 
 public sealed class TerrainGroupReader : INeoLemmixDataReader
 {
@@ -10,13 +11,13 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
     private TerrainReader? _terrainReader;
     private TerrainGroup? _currentTerrainGroup;
 
+    public bool FinishedReading { get; private set; }
+    public string IdentifierToken => "$TERRAINGROUP";
+
     public TerrainGroupReader(Dictionary<string, TerrainArchetypeData> terrainArchetypes)
     {
         _terrainArchetypes = terrainArchetypes;
     }
-
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$TERRAINGROUP";
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
@@ -39,21 +40,23 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
             return result;
         }
 
-        var firstToken = ReadingHelpers.GetToken(line, 0, out var firstTokenIndex);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out var secondTokenIndex);
+
+        var currentTerrainGroup = _currentTerrainGroup!;
 
         switch (firstToken)
         {
             case "NAME":
-                _currentTerrainGroup!.GroupName = ReadingHelpers.TrimAfterIndex(line, 1 + firstTokenIndex + firstToken.Length).GetString();
+                currentTerrainGroup.GroupName = line.TrimAfterIndex(secondTokenIndex).GetString();
                 break;
 
             case "$TERRAIN":
-                _terrainReader = new TerrainReader(_terrainArchetypes, _currentTerrainGroup!.TerrainDatas);
-                _terrainReader.BeginReading(line);
+                _terrainReader = new TerrainReader(_terrainArchetypes, currentTerrainGroup.TerrainDatas);
+                _terrainReader.BeginReading(firstToken);
                 break;
 
             case "$END":
-                _allTerrainGroups.Add(_currentTerrainGroup!);
+                _allTerrainGroups.Add(currentTerrainGroup);
                 _currentTerrainGroup = null;
                 FinishedReading = true;
                 break;
@@ -64,7 +67,7 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
 
     public void ApplyToLevelData(LevelData levelData)
     {
-        levelData.TerrainArchetypeData.EnsureCapacity(_terrainArchetypes.Count);
+        levelData.TerrainArchetypeData.Capacity = _terrainArchetypes.Count;
         levelData.TerrainArchetypeData.AddRange(_terrainArchetypes.Values.OrderBy(d => d.TerrainArchetypeId));
 
         levelData.AllTerrainGroups.AddRange(_allTerrainGroups);
@@ -72,12 +75,5 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
 
     public void Dispose()
     {
-        foreach (var terrainGroup in _allTerrainGroups)
-        {
-            terrainGroup.Dispose();
-        }
-
-        _terrainArchetypes.Clear();
-        _allTerrainGroups.Clear();
     }
 }

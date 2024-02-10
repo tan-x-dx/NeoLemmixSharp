@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
@@ -9,11 +10,12 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 public sealed class GadgetReader : INeoLemmixDataReader
 {
     private readonly CaseInvariantCharEqualityComparer _charEqualityComparer = new();
-    private readonly Dictionary<string, GadgetArchetypeData> _gadgetArchetypes = new();
+    private readonly Dictionary<string, NeoLemmixGadgetArchetypeData> _gadgetArchetypes = new();
     private readonly List<NeoLemmixGadgetData> _allGadgetData = new();
 
     private NeoLemmixGadgetData? _currentGadgetData;
     private string? _currentStyle;
+    private string? _currentFolder;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$GADGET";
@@ -26,32 +28,31 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        var secondToken = ReadingHelpers.GetToken(line, 1, out var secondTokenIndex);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
         var currentGadgetData = _currentGadgetData!;
 
         switch (firstToken)
         {
             case "STYLE":
-                var rest = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex);
+                var rest = line.TrimAfterIndex(secondTokenIndex);
                 if (_currentStyle is null)
                 {
-                    _currentStyle = rest.GetString();
+                    SetCurrentStyle(rest);
                 }
                 else
                 {
                     var currentStyleSpan = _currentStyle.AsSpan();
                     if (!currentStyleSpan.SequenceEqual(rest))
                     {
-                        _currentStyle = rest.GetString();
+                        SetCurrentStyle(rest);
                     }
                 }
 
                 break;
 
             case "PIECE":
-                var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(ReadingHelpers.TrimAfterIndex(line, secondTokenIndex));
+                var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(line.TrimAfterIndex(secondTokenIndex));
                 currentGadgetData.GadgetArchetypeId = gadgetArchetypeData.GadgetArchetypeId;
                 break;
 
@@ -121,6 +122,44 @@ public sealed class GadgetReader : INeoLemmixDataReader
                 currentGadgetData.LemmingCount = int.Parse(secondToken);
                 break;
 
+            #region Window properties
+
+            case "CLIMBER":
+                currentGadgetData.State |= 1U << LemmingState.ClimberBitIndex;
+                break;
+
+            case "DISARMER":
+                currentGadgetData.State |= 1U << LemmingState.DisarmerBitIndex;
+                break;
+
+            case "FLOATER":
+                currentGadgetData.State |= 1U << LemmingState.FloaterBitIndex;
+                currentGadgetData.State &= ~(1U << LemmingState.GliderBitIndex); // Deliberately knock out the glider
+                break;
+
+            case "GLIDER":
+                currentGadgetData.State |= 1U << LemmingState.GliderBitIndex;
+                currentGadgetData.State &= ~(1U << LemmingState.FloaterBitIndex); // Deliberately knock out the floater
+                break;
+
+            case "NEUTRAL":
+                currentGadgetData.State |= 1U << LemmingState.NeutralBitIndex;
+                break;
+
+            case "SLIDER":
+                currentGadgetData.State |= 1U << LemmingState.SliderBitIndex;
+                break;
+
+            case "SWIMMER":
+                currentGadgetData.State |= 1U << LemmingState.SwimmerBitIndex;
+                break;
+
+            case "ZOMBIE":
+                currentGadgetData.State |= 1U << LemmingState.ZombieBitIndex;
+                break;
+
+            #endregion
+
             case "$END":
                 _allGadgetData.Add(_currentGadgetData!);
                 _currentGadgetData = null;
@@ -128,14 +167,24 @@ public sealed class GadgetReader : INeoLemmixDataReader
                 break;
 
             default:
-                throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
+                ReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
+                break;
         }
 
         return false;
     }
 
-    private GadgetArchetypeData GetOrLoadGadgetArchetypeData(ReadOnlySpan<char> piece)
+    private void SetCurrentStyle(ReadOnlySpan<char> style)
+    {
+        _currentStyle = style.GetString();
+        _currentFolder = Path.Combine(
+            RootDirectoryManager.RootDirectory,
+            NeoLemmixFileExtensions.StyleFolderName,
+            _currentStyle,
+            NeoLemmixFileExtensions.GadgetFolderName);
+    }
+
+    private NeoLemmixGadgetArchetypeData GetOrLoadGadgetArchetypeData(ReadOnlySpan<char> piece)
     {
         ref var gadgetArchetypeData = ref ReadingHelpers.GetArchetypeDataRef(
             _currentStyle!,
@@ -148,7 +197,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
         var gadgetPiece = piece.ToString();
 
-        gadgetArchetypeData = new GadgetArchetypeData
+        gadgetArchetypeData = new NeoLemmixGadgetArchetypeData
         {
             GadgetArchetypeId = _gadgetArchetypes.Count - 1,
             Style = _currentStyle,
@@ -160,17 +209,19 @@ public sealed class GadgetReader : INeoLemmixDataReader
         return gadgetArchetypeData;
     }
 
-    private void ProcessGadgetArchetypeData(GadgetArchetypeData gadgetArchetypeData)
+    private void ProcessGadgetArchetypeData(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
     {
-        var objectsFolder = Path.Combine(RootDirectoryManager.RootDirectory, "styles", _currentStyle!, "objects");
-        var rootFilePath = Path.Combine(objectsFolder, gadgetArchetypeData.Gadget!);
-        rootFilePath = Path.ChangeExtension(rootFilePath, "nxmo");
+        var rootFilePath = Path.Combine(_currentFolder!, gadgetArchetypeData.Gadget!);
+        rootFilePath = Path.ChangeExtension(rootFilePath, NeoLemmixFileExtensions.GadgetFileExtension);
 
-        using var dataReaderList = new DataReaderList();
+        var dataReaders = new INeoLemmixDataReader[]
+        {
+            new GadgetArchetypeDataReader(gadgetArchetypeData),
+            new PrimaryAnimationReader(gadgetArchetypeData),
+            new SecondaryAnimationReader(gadgetArchetypeData)
+        };
 
-        dataReaderList.Add(new GadgetArchetypeDataReader(gadgetArchetypeData));
-        dataReaderList.Add(new PrimaryAnimationReader(gadgetArchetypeData));
-        dataReaderList.Add(new SecondaryAnimationReader(gadgetArchetypeData));
+        using var dataReaderList = new DataReaderList(dataReaders);
 
         dataReaderList.ReadFile(rootFilePath);
     }

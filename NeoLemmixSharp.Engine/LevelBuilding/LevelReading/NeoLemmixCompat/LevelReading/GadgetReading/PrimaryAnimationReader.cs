@@ -1,18 +1,19 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
 
 public sealed class PrimaryAnimationReader : INeoLemmixDataReader
 {
-    private readonly GadgetArchetypeData _gadgetArchetypeData;
-
-    public PrimaryAnimationReader(GadgetArchetypeData gadgetArchetypeData)
-    {
-        _gadgetArchetypeData = gadgetArchetypeData;
-    }
+    private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$PRIMARY_ANIMATION";
+
+    public PrimaryAnimationReader(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
+    {
+        _gadgetArchetypeData = gadgetArchetypeData;
+    }
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
@@ -21,13 +22,13 @@ public sealed class PrimaryAnimationReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
-        if (firstToken[0] == '$')
+        // Special handling for pickups specifically
+        if (firstToken is "NAME" && secondToken is "*PICKUP")
         {
-            FinishedReading = true;
-            return true;
+            _gadgetArchetypeData.IsSkillPickup = true;
+            return false;
         }
 
         switch (firstToken)
@@ -36,29 +37,41 @@ public sealed class PrimaryAnimationReader : INeoLemmixDataReader
                 _gadgetArchetypeData.PrimaryAnimationFrameCount = int.Parse(secondToken);
                 break;
 
-            case "NINE_SLICE_TOP":
+            case "OFFSET_X":
 
+                break;
+
+            case "OFFSET_Y":
+
+                break;
+
+            case "NINE_SLICE_TOP":
+                _gadgetArchetypeData.ResizeType |= ResizeType.ResizeVertical;
                 break;
 
             case "NINE_SLICE_RIGHT":
-
+                _gadgetArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
                 break;
 
             case "NINE_SLICE_BOTTOM":
-
+                _gadgetArchetypeData.ResizeType |= ResizeType.ResizeVertical;
                 break;
 
             case "NINE_SLICE_LEFT":
-
+                _gadgetArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
                 break;
 
             case "COLOR":
 
                 break;
 
+            case "$END":
+                FinishedReading = true;
+                break;
+
             default:
-                throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
+                ReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
+                break;
         }
 
         return false;

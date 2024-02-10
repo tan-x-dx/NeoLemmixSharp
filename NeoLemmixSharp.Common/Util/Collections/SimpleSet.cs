@@ -19,7 +19,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 	}
 
 	public int Size => _bits.Size;
-	public int Count => _bits.Count;
+	public int Count => _bits.PopCount;
 
 	public bool Add(T item)
 	{
@@ -55,11 +55,11 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
 	[Pure]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public SimpleSetEnumerable<T> ToSimpleEnumerable() => new(_hasher, _bits.AsReadOnlySpan(), _bits.Count);
+	public SimpleSetEnumerable<T> ToSimpleEnumerable() => new(_hasher, _bits.AsReadOnlySpan(), _bits.PopCount);
 
 	[Pure]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public BitBasedEnumerator<T> GetEnumerator() => new(_hasher, _bits.AsReadOnlySpan(), _bits.Count);
+	public BitBasedEnumerator<T> GetEnumerator() => new(_hasher, _bits.AsReadOnlySpan(), _bits.PopCount);
 	[Pure]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);

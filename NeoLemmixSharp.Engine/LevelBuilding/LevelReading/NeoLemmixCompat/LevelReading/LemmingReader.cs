@@ -2,22 +2,29 @@
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
 public sealed class LemmingReader : INeoLemmixDataReader
 {
-    private readonly List<LemmingData> _lemmingData = new();
+    private readonly List<LemmingData> _prePlacedLemmingData;
 
     private LemmingData? _currentLemmingData;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$LEMMING";
 
+    public LemmingReader(List<LemmingData> prePlacedLemmingData)
+    {
+        _prePlacedLemmingData = prePlacedLemmingData;
+    }
+
     public void BeginReading(ReadOnlySpan<char> line)
     {
         _currentLemmingData = new LemmingData
         {
+            // Pre-placed lemmings are always active
             State = 1U << LemmingState.ActiveBitIndex
         };
         FinishedReading = false;
@@ -25,8 +32,7 @@ public sealed class LemmingReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         var currentLemmingData = _currentLemmingData!;
 
@@ -83,14 +89,14 @@ public sealed class LemmingReader : INeoLemmixDataReader
                 break;
 
             case "$END":
-                _lemmingData.Add(_currentLemmingData!);
+                _prePlacedLemmingData.Add(currentLemmingData);
                 _currentLemmingData = null;
                 FinishedReading = true;
                 break;
 
             default:
-                throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
+                ReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
+                break;
         }
 
         return false;
@@ -98,7 +104,16 @@ public sealed class LemmingReader : INeoLemmixDataReader
 
     public void ApplyToLevelData(LevelData levelData)
     {
+        var totalNumberOfLemmings = Math.Max(levelData.NumberOfLemmings, _prePlacedLemmingData.Count);
+        _prePlacedLemmingData.Capacity = totalNumberOfLemmings;
+        levelData.NumberOfLemmings = totalNumberOfLemmings;
 
+        for (var i = _prePlacedLemmingData.Count; i < totalNumberOfLemmings; i++)
+        {
+            var newLemmingData = new LemmingData();
+
+            _prePlacedLemmingData.Add(newLemmingData);
+        }
     }
 
     public void Dispose()

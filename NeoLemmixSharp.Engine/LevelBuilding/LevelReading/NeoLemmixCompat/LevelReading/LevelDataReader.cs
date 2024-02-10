@@ -29,14 +29,14 @@ public sealed class LevelDataReader : INeoLemmixDataReader
     {
         FinishedReading = false;
 
-        ReadingHelpers.GetToken(line, 1, out var secondTokenIndex);
-        var rest = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex);
-        _levelTitle = rest.GetString();
+        ReadingHelpers.GetTokenPair(line, out _, out _, out var secondTokenIndex);
+
+        _levelTitle = line.TrimAfterIndex(secondTokenIndex).GetString();
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
         if (firstToken[0] == '$')
         {
@@ -44,12 +44,10 @@ public sealed class LevelDataReader : INeoLemmixDataReader
             return true;
         }
 
-        var secondToken = ReadingHelpers.GetToken(line, 1, out var secondTokenIndex);
-
         switch (firstToken)
         {
             case "AUTHOR":
-                _levelAuthor = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex).GetString();
+                _levelAuthor = line.TrimAfterIndex(secondTokenIndex).GetString();
                 break;
 
             case "ID":
@@ -69,11 +67,11 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "THEME":
-                _levelTheme = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex).GetString();
+                _levelTheme = line.TrimAfterIndex(secondTokenIndex).GetString();
                 break;
 
             case "BACKGROUND":
-                _levelBackground = ReadingHelpers.TrimAfterIndex(line, secondTokenIndex).GetString();
+                _levelBackground = line.TrimAfterIndex(secondTokenIndex).GetString();
                 break;
 
             case "MUSIC":
@@ -109,8 +107,8 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             default:
-                throw new InvalidOperationException(
-                    $"Unknown token when parsing LevelData: [{firstToken}] line: \"{line}\"");
+                ReadingHelpers.ThrowUnknownTokenException("Level Data", firstToken, line);
+                break;
         }
 
         return false;

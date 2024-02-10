@@ -9,9 +9,9 @@ public sealed class InputController : IPerfectHasher<Keys>
 {
     private const int NumberOfKeys = 256;
 
-    private readonly List<(Keys, KeyAction)> _keyMapping = new();
+    private readonly List<(Keys, InputAction)> _keyMapping = new();
     private readonly SimpleSet<Keys> _keys;
-    private readonly List<KeyAction> _keyActions = new();
+    private readonly List<InputAction> _keyActions = new();
 
     private int _previousScrollValue;
 
@@ -19,32 +19,38 @@ public sealed class InputController : IPerfectHasher<Keys>
     public int MouseY { get; private set; }
     public int ScrollDelta { get; private set; }
 
-    public MouseButtonAction LeftMouseButtonAction { get; } = new(0, "Left Mouse Button");
-    public MouseButtonAction RightMouseButtonAction { get; } = new(1, "Right Mouse Button");
-    public MouseButtonAction MiddleMouseButtonAction { get; } = new(2, "Middle Mouse Button");
-    public MouseButtonAction MouseButton4Action { get; } = new(3, "Mouse Button 4");
-    public MouseButtonAction MouseButton5Action { get; } = new(4, "Mouse Button 5");
+    public InputAction LeftMouseButtonAction { get; }
+    public InputAction RightMouseButtonAction { get; }
+    public InputAction MiddleMouseButtonAction { get; }
+    public InputAction MouseButton4Action { get; }
+    public InputAction MouseButton5Action { get; }
 
     public InputController()
     {
         _keys = new SimpleSet<Keys>(this);
+
+        LeftMouseButtonAction = CreateKeyAction("Left Mouse Button");
+        RightMouseButtonAction = CreateKeyAction("Right Mouse Button");
+        MiddleMouseButtonAction = CreateKeyAction("Middle Mouse Button");
+        MouseButton4Action = CreateKeyAction("Mouse Button 4");
+        MouseButton5Action = CreateKeyAction("Mouse Button 5");
     }
 
-    public KeyAction CreateKeyAction(string actionName)
+    public InputAction CreateKeyAction(string actionName)
     {
-        var keyAction = new KeyAction(_keyActions.Count, actionName);
+        var keyAction = new InputAction(_keyActions.Count, actionName);
         _keyActions.Add(keyAction);
         return keyAction;
     }
 
-    public void Bind(Keys keyCode, KeyAction keyAction)
+    public void Bind(Keys keyCode, InputAction keyAction)
     {
         _keyMapping.Add((keyCode, keyAction));
     }
 
     public void ValidateKeyActions()
     {
-        IdEquatableItemHelperMethods.ValidateUniqueIds<KeyAction>(CollectionsMarshal.AsSpan(_keyActions));
+        IdEquatableItemHelperMethods.ValidateUniqueIds<InputAction>(CollectionsMarshal.AsSpan(_keyActions));
         _keyActions.Sort(IdEquatableItemHelperMethods.Compare);
     }
 
@@ -102,13 +108,6 @@ public sealed class InputController : IPerfectHasher<Keys>
         var currentScrollValue = mouseState.ScrollWheelValue;
         ScrollDelta = Math.Sign(currentScrollValue - _previousScrollValue);
         _previousScrollValue = currentScrollValue;
-
-        LeftMouseButtonAction.UpdateState();
-        RightMouseButtonAction.UpdateState();
-        MiddleMouseButtonAction.UpdateState();
-
-        MouseButton4Action.UpdateState();
-        MouseButton5Action.UpdateState();
 
         LeftMouseButtonAction.ActionState |= (ulong)mouseState.LeftButton;
         RightMouseButtonAction.ActionState |= (ulong)mouseState.RightButton;

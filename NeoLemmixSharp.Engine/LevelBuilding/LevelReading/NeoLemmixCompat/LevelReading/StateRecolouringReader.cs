@@ -22,7 +22,7 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         if (firstToken[0] == '$')
         {
@@ -54,8 +54,6 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
             return false;
         }
 
-        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
-
         switch (firstToken)
         {
             case "FROM":
@@ -67,8 +65,8 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
                 break;
 
             default:
-                throw new InvalidOperationException(
-                    $"Unknown token when parsing {IdentifierToken}: [{firstToken}] line: \"{line}\"");
+                ReadingHelpers.ThrowUnknownTokenException("Gadget Archetype Data", firstToken, line);
+                break;
         }
 
         return false;

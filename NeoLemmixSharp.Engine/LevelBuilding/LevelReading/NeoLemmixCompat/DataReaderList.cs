@@ -1,19 +1,18 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 public sealed class DataReaderList : IDisposable
 {
-    private readonly List<INeoLemmixDataReader> _dataReaders = new();
+    private readonly INeoLemmixDataReader[] _dataReaders;
 
     private INeoLemmixDataReader? _currentDataReader;
 
-    public void Add(INeoLemmixDataReader dataReader)
+    public DataReaderList(INeoLemmixDataReader[] dataReaders)
     {
-        _dataReaders.Add(dataReader);
+        _dataReaders = dataReaders;
     }
 
     public void ReadFile(string filePath)
@@ -36,50 +35,47 @@ public sealed class DataReaderList : IDisposable
 
     private bool ProcessLine(string line)
     {
-        if (_currentDataReader != null)
+        if (_currentDataReader == null)
         {
-            var result = _currentDataReader.ReadNextLine(line);
+            GetDataReaderForLine(line);
 
-            if (_currentDataReader.FinishedReading)
-            {
-                _currentDataReader = null;
-            }
-            return result;
+            return false;
         }
 
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        if (!TryGetWithSpan(firstToken, out var dataReader))
-            throw new InvalidOperationException($"Could not find reader for line! [{firstToken}] line: \"{line}\"");
+        var result = _currentDataReader.ReadNextLine(line);
 
-        _currentDataReader = dataReader;
-        _currentDataReader.BeginReading(line);
-
-        return false;
+        if (_currentDataReader.FinishedReading)
+        {
+            _currentDataReader = null;
+        }
+        return result;
     }
 
-    private bool TryGetWithSpan(ReadOnlySpan<char> token, out INeoLemmixDataReader dataReader)
+    private void GetDataReaderForLine(string line)
     {
-        var dataReaderSpan = CollectionsMarshal.AsSpan(_dataReaders);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
 
-        foreach (var item in dataReaderSpan)
+        _currentDataReader = TryGetWithSpan(firstToken);
+        if (_currentDataReader == null)
+            throw new InvalidOperationException($"Could not find reader for line! [{firstToken}] line: \"{line}\"");
+
+        _currentDataReader.BeginReading(line);
+    }
+
+    private INeoLemmixDataReader? TryGetWithSpan(ReadOnlySpan<char> token)
+    {
+        foreach (var item in _dataReaders)
         {
-            var itemSpan = item.IdentifierToken.AsSpan();
-
-            if (itemSpan.SequenceEqual(token))
-            {
-                dataReader = item;
-                return true;
-            }
+            if (item.MatchesToken(token))
+                return item;
         }
 
-        dataReader = null!;
-        return false;
+        return null;
     }
 
     public void ApplyToLevelData(LevelData levelData)
     {
-        var span = CollectionsMarshal.AsSpan(_dataReaders);
-        foreach (var dataReader in span)
+        foreach (var dataReader in _dataReaders)
         {
             dataReader.ApplyToLevelData(levelData);
         }
@@ -87,8 +83,7 @@ public sealed class DataReaderList : IDisposable
 
     public void Dispose()
     {
-        var span = CollectionsMarshal.AsSpan(_dataReaders);
-        DisposableHelperMethods.DisposeOfAll((ReadOnlySpan<INeoLemmixDataReader>)span);
-        _dataReaders.Clear();
+        var span = new ReadOnlySpan<INeoLemmixDataReader>(_dataReaders);
+        DisposableHelperMethods.DisposeOfAll(span);
     }
 }

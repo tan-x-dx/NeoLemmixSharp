@@ -1,6 +1,9 @@
-﻿namespace NeoLemmixSharp.Common.Util.GameInput;
+﻿using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Common.Util.Identity;
 
-public sealed class InputAction : IInputAction
+namespace NeoLemmixSharp.Common.Util.GameInput;
+
+public sealed class InputAction : IIdEquatable<InputAction>
 {
     private const ulong EnabledMask = (1UL << EngineConstants.FramesPerSecond) - 1UL;
     private const ulong DisabledMask = 0UL;
@@ -11,8 +14,17 @@ public sealed class InputAction : IInputAction
     private const ulong ActionHeld = 3UL;
     private const ulong DoubleTapUpperMask = ((1UL << (EngineConstants.DoubleTapFrameCountMax - 2)) - 1UL) << 2;
 
+    private readonly string _actionName;
     private ulong _stateMask = EnabledMask;
     private ulong _actionState;
+
+    public readonly int Id;
+
+    public InputAction(int id, string actionName)
+    {
+        Id = id;
+        _actionName = actionName;
+    }
 
     public ulong ActionState
     {
@@ -35,14 +47,49 @@ public sealed class InputAction : IInputAction
         _stateMask = enable ? EnabledMask : DisabledMask;
     }
 
+    /// <summary>
+    /// Is the Action currently pressed down?
+    /// </summary>
     public bool IsActionDown => (_actionState & ActionPressed) == ActionPressed;
+    /// <summary>
+    /// Is the Action currently released?
+    /// </summary>
     public bool IsActionUp => (_actionState & ActionPressed) == ActionUnpressed;
+    /// <summary>
+    /// Is the Action currently pressed down, but it was previously released?
+    /// </summary>
     public bool IsPressed => (_actionState & ActionHeld) == ActionPressed;
+    /// <summary>
+    /// Is the Action currently released, but it was previously pressed down?
+    /// </summary>
     public bool IsReleased => (_actionState & ActionHeld) == ActionReleased;
+    /// <summary>
+    /// Is the Action currently being pressed down, and it was previously pressed down?
+    /// </summary>
     public bool IsHeld => (_actionState & ActionHeld) == ActionHeld;
+    /// <summary>
+    /// Has a double tap occurred for the Action? Double tap has about 1/4 of a second to take place.
+    /// </summary>
     public bool IsDoubleTap => (_actionState & ActionPressed) != 0UL &&
                                (_actionState & ActionReleased) == 0UL &&
                                (_actionState & DoubleTapUpperMask) != 0UL;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void DoPress()
+    {
+        ActionState |= 1U;
+    }
+
     public bool IsEnabled => _stateMask != DisabledMask;
+
+    int IIdEquatable<InputAction>.Id => Id;
+
+    public bool Equals(InputAction? other) => Id == (other?.Id ?? -1);
+    public override bool Equals(object? obj) => obj is InputAction other && Id == other.Id;
+    public override int GetHashCode() => Id;
+
+    public override string ToString() => _actionName;
+
+    public static bool operator ==(InputAction left, InputAction right) => left.Id == right.Id;
+    public static bool operator !=(InputAction left, InputAction right) => left.Id != right.Id;
 }

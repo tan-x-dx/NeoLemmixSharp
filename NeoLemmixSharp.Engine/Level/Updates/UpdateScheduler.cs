@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
+using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
@@ -22,7 +23,7 @@ public sealed class UpdateScheduler
     private LemmingSkill _queuedSkill = NoneSkill.Instance;
     private Lemming? _queuedSkillLemming;
 
-    private UpdateState _updateState = UpdateState.Paused;
+    private UpdateState _updateState;
     private int _queuedSkillFrame;
 
     private int _elapsedTicks;
@@ -49,6 +50,11 @@ public sealed class UpdateScheduler
         _lemmingManager = lemmingManager;
         _gadgetManager = gadgetManager;
         _skillSetManager = skillSetManager;
+    }
+
+    public void Initialise()
+    {
+        SetUpdateState(UpdateState.Paused);
     }
 
     /*
@@ -104,33 +110,9 @@ end;
         _inputController.Tick();
         _levelCursor.Tick();
 
-        HandleKeyboardInput();
         HandleMouseInput();
-
-        var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
-        if (mouseIsInLevelViewPort)
-        {
-            var lemmingsNearCursor = _levelCursor.LemmingsNearCursorPosition();
-            foreach (var lemming in lemmingsNearCursor)
-            {
-                _levelCursor.CheckLemming(lemming);
-            }
-
-            var action = _levelCursor.CurrentlyHighlightedLemming?.CurrentAction;
-            if (action is null)
-            {
-                _levelControlPanel.TextualData.ClearCursorData();
-            }
-            else
-            {
-                _levelControlPanel.TextualData.SetCursorData(action.LemmingActionName, _levelCursor.NumberOfLemmingsUnderCursor);
-            }
-        }
-        else
-        {
-            _levelControlPanel.TextualData.ClearCursorData();
-        }
-
+        EvaluateGameState();
+        HandleCursor();
         TickLevel();
         HandleSkillAssignment();
     }
@@ -160,35 +142,6 @@ end;
         _elapsedTicksModuloFramesPerSecond = elapsedTicksModuloFramesPerSecond;
     }
 
-    private void HandleKeyboardInput()
-    {
-        if (_inputController.Pause.IsPressed)
-        {
-            if (_updateState == UpdateState.Paused)
-            {
-                SetNormalSpeed();
-            }
-            else
-            {
-                SetPaused();
-            }
-
-            return;
-        }
-
-        if (_inputController.ToggleFastForwards.IsPressed)
-        {
-            if (_updateState == UpdateState.FastForward)
-            {
-                SetNormalSpeed();
-            }
-            else
-            {
-                SetFastSpeed();
-            }
-        }
-    }
-
     private void HandleMouseInput()
     {
         _viewport.HandleMouseInput(_inputController);
@@ -204,19 +157,70 @@ end;
         }
     }
 
-    private void SetPaused()
+    private void EvaluateGameState()
     {
-        _updateState = UpdateState.Paused;
+        if (_inputController.Pause.IsPressed)
+        {
+            SetUpdateState(_updateState == UpdateState.Paused ? UpdateState.Normal : UpdateState.Paused);
+        }
+        else if (_inputController.ToggleFastForwards.IsPressed)
+        {
+            SetUpdateState(_updateState == UpdateState.FastForward ? UpdateState.Normal : UpdateState.FastForward);
+        }
+
+        if (_inputController.Quit.IsPressed)
+        {
+            IGameWindow.Instance.Escape();
+        }
+
+        if (_inputController.ToggleFullScreen.IsPressed)
+        {
+            IGameWindow.Instance.ToggleBorderless();
+        }
     }
 
-    private void SetNormalSpeed()
+    private void SetUpdateState(UpdateState updateState)
     {
-        _updateState = UpdateState.Normal;
+        _updateState = updateState;
+        var isPaused = updateState == UpdateState.Paused;
+        UpdateControlPanelButtonStatus(ButtonType.Pause, isPaused);
+        var isFastForward = updateState == UpdateState.FastForward;
+        UpdateControlPanelButtonStatus(ButtonType.FastForward, isFastForward);
     }
 
-    private void SetFastSpeed()
+    private void HandleCursor()
     {
-        _updateState = UpdateState.FastForward;
+        var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
+        if (mouseIsInLevelViewPort)
+        {
+            var lemmingsNearCursor = _levelCursor.LemmingsNearCursorPosition();
+            foreach (var lemming in lemmingsNearCursor)
+            {
+                _levelCursor.CheckLemming(lemming);
+            }
+
+            var action = _levelCursor.CurrentlyHighlightedLemming?.CurrentAction;
+            if (action is null)
+            {
+                _levelControlPanel.TextualData.ClearCursorData();
+            }
+            else
+            {
+                _levelControlPanel.TextualData.SetCursorData(action.LemmingActionName, _levelCursor.NumberOfLemmingsUnderCursor);
+            }
+        }
+        else
+        {
+            _levelControlPanel.TextualData.ClearCursorData();
+        }
+    }
+
+    private void UpdateControlPanelButtonStatus(ButtonType buttonType, bool isSelected)
+    {
+        var button = _levelControlPanel.GetControlPanelButtonOfType(buttonType);
+        if (button is null)
+            return;
+        button.IsSelected = isSelected;
     }
 
     private void HandleSkillAssignment()
@@ -294,27 +298,5 @@ end;
                 ClearQueuedSkill();
             }
         }
-    }
-
-    public void PausePress()
-    {
-        _updateState = _updateState switch
-        {
-            UpdateState.Paused => UpdateState.Normal,
-            UpdateState.Normal => UpdateState.Paused,
-            UpdateState.FastForward => UpdateState.Paused,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-    }
-
-    public void FastForwardButtonPress()
-    {
-        _updateState = _updateState switch
-        {
-            UpdateState.Paused => UpdateState.FastForward,
-            UpdateState.Normal => UpdateState.FastForward,
-            UpdateState.FastForward => UpdateState.Normal,
-            _ => throw new ArgumentOutOfRangeException()
-        };
     }
 }

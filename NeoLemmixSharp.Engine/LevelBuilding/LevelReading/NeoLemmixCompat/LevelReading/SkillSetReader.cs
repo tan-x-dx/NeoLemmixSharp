@@ -6,10 +6,15 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 public sealed class SkillSetReader : INeoLemmixDataReader
 {
     private readonly CaseInvariantCharEqualityComparer _charEqualityComparer = new();
-    private readonly List<SkillSetData> _skillSetData = new();
+    private readonly List<SkillSetData> _skillSetData;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$SKILLSET";
+
+    public SkillSetReader(List<SkillSetData> skillSetData)
+    {
+        _skillSetData = skillSetData;
+    }
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
@@ -18,7 +23,7 @@ public sealed class SkillSetReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
 
         if (firstToken is "$END")
         {
@@ -32,8 +37,7 @@ public sealed class SkillSetReader : INeoLemmixDataReader
 
     private void ReadSkillSetData(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
-        var secondToken = ReadingHelpers.GetToken(line, 1, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         if (!ReadingHelpers.GetSkillByName(firstToken, _charEqualityComparer, out var skill))
             throw new Exception($"Unknown token: {firstToken}");
@@ -54,11 +58,9 @@ public sealed class SkillSetReader : INeoLemmixDataReader
 
     public void ApplyToLevelData(LevelData levelData)
     {
-        levelData.SkillSetData.AddRange(_skillSetData);
     }
 
     public void Dispose()
     {
-        _skillSetData.Clear();
     }
 }

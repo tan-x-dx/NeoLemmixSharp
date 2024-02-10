@@ -1,20 +1,23 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 public sealed class LevelData
 {
-    public string LevelTitle { get; set; }
-    public string LevelAuthor { get; set; }
+    public string LevelTitle { get; set; } = null!;
+    public string LevelAuthor { get; set; } = null!;
     public ulong LevelId { get; set; }
     public ulong Version { get; set; }
     public int LevelWidth { get; set; }
     public int LevelHeight { get; set; }
     public int LevelStartPositionX { get; set; }
     public int LevelStartPositionY { get; set; }
-    public string LevelTheme { get; set; }
-    public string LevelBackground { get; set; }
+    public string LevelTheme { get; set; } = null!;
+    public string LevelBackground { get; set; } = null!;
 
     public int NumberOfLemmings { get; set; }
     public int SaveRequirement { get; set; }
@@ -32,12 +35,28 @@ public sealed class LevelData
     public List<TerrainData> AllTerrainData { get; } = new();
     public List<TerrainGroup> AllTerrainGroups { get; } = new();
     public List<HatchGroupData> AllHatchGroupData { get; } = new();
+    public List<LemmingData> AllLemmingData { get; } = new();
     public List<GadgetArchetypeData> AllGadgetArchetypeData { get; } = new();
     public List<GadgetData> AllGadgetData { get; } = new();
+    public List<SketchData> AllSketchData { get; } = new();
+
+    public List<string> PreTextLines { get; } = new();
+    public List<string> PostTextLines { get; } = new();
 
     public bool LevelContainsAnyZombies()
     {
-        //TODO implement this properly
+        var lemmingSpan = CollectionsMarshal.AsSpan(AllLemmingData);
+
+        foreach (var lemmingData in lemmingSpan)
+        {
+            var zombieFlag = lemmingData.State >> LemmingState.ZombieBitIndex;
+
+            if ((zombieFlag & 1U) != 0U)
+                return true;
+        }
+
+        // TODO - Implement zombie hatch test
+
         return false;
     }
 }

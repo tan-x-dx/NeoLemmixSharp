@@ -1,17 +1,26 @@
-﻿namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
+﻿using NeoLemmixSharp.Common.Util.GameInput;
+
+namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 public sealed class PauseButtonAction : IButtonAction
 {
-	public ButtonType ButtonType => ButtonType.Pause;
+    private readonly InputAction _pauseAction;
+
+    public ButtonType ButtonType => ButtonType.Pause;
+
+    public PauseButtonAction(InputAction pauseAction)
+    {
+        _pauseAction = pauseAction;
+    }
 
 	public void OnMouseDown()
 	{
 	}
 
 	public void OnPress(bool isDoubleTap)
-	{
-		LevelScreen.UpdateScheduler.PausePress();
-	}
+    {
+        _pauseAction.DoPress();
+    }
 
 	public void OnRightClick()
 	{

@@ -69,8 +69,15 @@ public sealed class LevelControlPanel
             : null;
 
         ControlPanelHelperMethods.ResetButtonIds();
-        _skillAssignButtons = ControlPanelHelperMethods.SetUpSkillAssignButtons(this, controlPanelParameters, skillSetManager);
-        _allButtons = ControlPanelHelperMethods.SetUpControlButtons(_skillAssignButtons, _singularHatchGroup, controlPanelParameters);
+        _skillAssignButtons = ControlPanelHelperMethods.SetUpSkillAssignButtons(
+            this,
+            controlPanelParameters,
+            skillSetManager);
+        _allButtons = ControlPanelHelperMethods.SetUpControlButtons(
+            controller,
+            _skillAssignButtons,
+            _singularHatchGroup,
+            controlPanelParameters);
 
         _controlPanelTextualData = new ControlPanelTextualData(levelTimer);
 
@@ -375,5 +382,16 @@ public sealed class LevelControlPanel
 
             throw new InvalidOperationException($"Could not locate {nameof(SpawnIntervalButton)}");
         }
+    }
+
+    public ControlPanelButton? GetControlPanelButtonOfType(ButtonType buttonType)
+    {
+        foreach (var button in AllButtons)
+        {
+            if (button.ButtonAction.ButtonType == buttonType)
+                return button;
+        }
+
+        return null;
     }
 }

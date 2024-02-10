@@ -17,7 +17,7 @@ public sealed class ShadesReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        var firstToken = ReadingHelpers.GetToken(line, 0, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
 
         switch (firstToken)
         {

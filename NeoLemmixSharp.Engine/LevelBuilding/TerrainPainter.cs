@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 using NeoLemmixSharp.Engine.LevelBuilding.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
@@ -105,10 +107,9 @@ public sealed class TerrainPainter : IDisposable
         var terrainArchetypeData = _terrainArchetypes[terrainData.TerrainArchetypeId];
         var sourcePixelColorData = terrainArchetypeData.TerrainPixelColorData;
 
-        var dihedralTransformation = DihedralTransformation.GetForTransformation(
-            terrainData.FlipHorizontal,
-            terrainData.FlipVertical,
-            terrainData.Rotate);
+        var dihedralTransformation = new DihedralTransformation(
+            terrainData.RotNum,
+            terrainData.Flip);
 
         for (var x = 0; x < sourcePixelColorData.Width; x++)
         {
@@ -122,7 +123,9 @@ public sealed class TerrainPainter : IDisposable
                     x,
                     y,
                     sourcePixelColorData.Width - 1,
-                    sourcePixelColorData.Height - 1, out var x0, out var y0);
+                    sourcePixelColorData.Height - 1,
+                    out var x0,
+                    out var y0);
 
                 x0 = x0 + terrainData.X + dx;
                 y0 = y0 + terrainData.Y + dy;
@@ -209,7 +212,12 @@ public sealed class TerrainPainter : IDisposable
 
     private void LoadPixelColorData(TerrainArchetypeData terrainArchetypeData)
     {
-        var rootFilePath = Path.Combine(RootDirectoryManager.RootDirectory, "styles", terrainArchetypeData.Style!, "terrain", terrainArchetypeData.TerrainPiece!);
+        var rootFilePath = Path.Combine(
+            RootDirectoryManager.RootDirectory,
+            NeoLemmixFileExtensions.StyleFolderName,
+            terrainArchetypeData.Style!,
+            NeoLemmixFileExtensions.TerrainFolderName,
+            terrainArchetypeData.TerrainPiece!);
 
         var pngPath = Path.ChangeExtension(rootFilePath, "png");
 

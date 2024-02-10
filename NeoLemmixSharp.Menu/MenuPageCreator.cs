@@ -34,15 +34,17 @@ public sealed class MenuPageCreator
     private static string GetLevelFilePath()
     {
         var file =
-         // "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
-         // "levels\\rotation test.nxlv";
-         // "levels\\render test.nxlv";
-         // "levels\\movement test.nxlv";
-          "levels\\object test.nxlv";
-         // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
-         // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
-         // "levels\\Amiga Lemmings\\Lemmings\\Tricky\\05_Careless_clicking_costs_lives.nxlv";
-         // "levels\\LemRunner\\Industry\\TheNightShift.nxlv";
+          // "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
+          // "levels\\rotation test.nxlv";
+          // "levels\\render test.nxlv";
+          // "levels\\movement test.nxlv";
+          // "levels\\object test.nxlv";
+          // "levels\\lemming_count_test.nxlv";
+        "levels\\test foo.nxlv";
+        // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
+        // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
+        // "levels\\Amiga Lemmings\\Lemmings\\Tricky\\05_Careless_clicking_costs_lives.nxlv";
+        // "levels\\LemRunner\\Industry\\TheNightShift.nxlv";
         // "levels\\Amiga Lemmings\\Lemmings\\Tricky\\04_Here's_one_I_prepared_earlier.nxlv";
         // "levels\\IntegralLemmingsV5\\Alpha\\TheseLemmingsAndThoseLemmings.nxlv";
         // "levels\\CuttingItClose.nxlv";
@@ -65,14 +67,26 @@ public sealed class MenuPageCreator
         return new LevelSelectPage(_inputController);
     }
 
-    public LevelStartPage CreateLevelStartPage()
+    public LevelStartPage? CreateLevelStartPage()
     {
-        var fileExtension = Path.GetExtension(LevelToLoadFilepath.AsSpan());
-        var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
+        LevelBuilder? levelBuilder = null;
+        try
+        {
+            var fileExtension = Path.GetExtension(LevelToLoadFilepath);
+            var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
+            levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice, _spriteBatch, levelReader);
+            var levelScreen = levelBuilder.BuildLevel(LevelToLoadFilepath);
+            return new LevelStartPage(IGameWindow.Instance, _inputController, levelScreen);
+        }
+        catch (Exception ex)
+        {
+            ;
+        }
+        finally
+        {
+            levelBuilder?.Dispose();
+        }
 
-        using var levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice, _spriteBatch, levelReader);
-        var level = levelBuilder.BuildLevel(LevelToLoadFilepath);
-
-        return new LevelStartPage(IGameWindow.Instance, _inputController, level);
+        return null;
     }
 }
