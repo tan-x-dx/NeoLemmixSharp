@@ -1,17 +1,55 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
+using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Teams;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
 public sealed class HatchGadgetBuilder : IGadgetBuilder
 {
-    public int GadgetBuilderId { get; }
+    public required int GadgetBuilderId { get; init; }
+
+    public required int HatchWidth { get; init; }
+    public required int HatchHeight { get; init; }
 
     public GadgetBase BuildGadget(GadgetData gadgetData, IPerfectHasher<Lemming> lemmingHasher)
     {
-        throw new NotImplementedException();
-        //return new HatchGadget();
+        var spawnX = gadgetData.GetProperty<int>(GadgetProperty.TriggerX);
+        var spawnY = gadgetData.GetProperty<int>(GadgetProperty.TriggerY);
+        var lemmingCount = gadgetData.GetProperty<int>(GadgetProperty.LemmingCount);
+
+        var spawnPoint = new LevelPosition(spawnX, spawnY);
+
+        if (!gadgetData.TryGetProperty<Team>(GadgetProperty.Team, out var team))
+        {
+            team = Team.AllItems[0];
+        }
+
+        if (!gadgetData.TryGetProperty<uint>(GadgetProperty.RawLemmingState, out var rawLemmingState))
+        {
+            rawLemmingState = 1U << LemmingState.ActiveBitIndex;
+        }
+
+        var gadgetBounds = new RectangularLevelRegion(
+            gadgetData.X,
+            gadgetData.Y,
+            HatchWidth,
+            HatchHeight);
+
+        var hatchSpawnData = new HatchSpawnData(
+            team,
+            rawLemmingState,
+            gadgetData.Orientation,
+            gadgetData.FacingDirection,
+            lemmingCount);
+
+        return new HatchGadget(
+            gadgetData.Id,
+            gadgetBounds,
+            spawnPoint,
+            hatchSpawnData);
     }
 }

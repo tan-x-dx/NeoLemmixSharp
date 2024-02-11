@@ -1,11 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 public sealed class GadgetData
 {
-    private readonly (GadgetProperty, object)[] _properties;
+    private readonly Dictionary<GadgetProperty, object> _properties = new(GadgetPropertyEqualityComparer.Instance);
 
     public required int Id { get; init; }
     public required int GadgetBuilderId { get; init; }
@@ -15,29 +17,50 @@ public sealed class GadgetData
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }
 
-    public GadgetData((GadgetProperty, object)[] properties)
+    public void AddProperty(GadgetProperty property, object value)
     {
-        _properties = properties;
+        _properties.Add(property, value);
     }
 
-    public bool GetProperty<T>(GadgetProperty property, out T? value)
+    public T GetProperty<T>(GadgetProperty property)
     {
-        foreach (var (tupleProperty, tupleValue) in _properties)
+        var value = _properties[property];
+
+        if (value is T result)
+            return result;
+
+        ThrowTypeMismatchException(property, typeof(T), value);
+        return default;
+    }
+
+    public bool TryGetProperty<T>(GadgetProperty property, [MaybeNullWhen(false)] out T value)
+    {
+        if (!_properties.TryGetValue(property, out var rawValue))
         {
-            if (property != tupleProperty)
-                continue;
-
-            if (tupleValue is T result)
-            {
-                value = result;
-                return true;
-            }
-
             value = default;
             return false;
         }
 
+        if (rawValue is T result)
+        {
+            value = result;
+            return true;
+        }
+
+        ThrowTypeMismatchException(property, typeof(T), rawValue);
         value = default;
         return false;
+    }
+
+    [DoesNotReturn]
+    private static void ThrowTypeMismatchException(
+        GadgetProperty gadgetProperty,
+        MemberInfo expectedType,
+        object actualValue)
+    {
+        var actualType = actualValue.GetType();
+
+        throw new InvalidOperationException(
+            $"Expected type: [{expectedType.Name}] for property [{gadgetProperty}]. Instead got type: [{actualType.Name}] ({actualValue})");
     }
 }
