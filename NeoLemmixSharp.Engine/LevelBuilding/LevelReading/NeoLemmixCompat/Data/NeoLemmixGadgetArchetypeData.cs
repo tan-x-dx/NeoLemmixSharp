@@ -9,7 +9,7 @@ public sealed class NeoLemmixGadgetArchetypeData
     public required string? Style { get; init; }
     public required string? Gadget { get; init; }
 
-    public NeoLemmixGadgetType Type { get; set; }
+    public NeoLemmixGadgetBehaviour Behaviour { get; set; }
 
     public int TriggerX { get; set; }
     public int TriggerY { get; set; }

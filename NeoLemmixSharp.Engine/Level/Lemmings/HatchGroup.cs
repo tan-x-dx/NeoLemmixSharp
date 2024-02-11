@@ -7,7 +7,12 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class HatchGroup : IIdEquatable<HatchGroup>
 {
-    private readonly HatchGadget[] _hatches;
+    private HatchGadget[] _hatches;
+
+    private int _hatchIndex;
+
+    private int _nextLemmingCountDown = LevelConstants.InitialLemmingHatchReleaseCountDown;
+    private int _lemmingsToRelease;
 
     public int Id { get; }
 
@@ -15,29 +20,27 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
     public int MaxSpawnInterval { get; }
     public int CurrentSpawnInterval { get; private set; }
 
-    private int _hatchIndex;
-
-    private int _nextLemmingCountDown = LevelConstants.InitialLemmingHatchReleaseCountDown;
-    private int _lemmingsToRelease;
-
     public int MinReleaseRate => ConvertToReleaseRate(MinSpawnInterval);
     public int MaxReleaseRate => ConvertToReleaseRate(MaxSpawnInterval);
     public int CurrentReleaseRate => ConvertToReleaseRate(CurrentSpawnInterval);
 
     public HatchGroup(
         int id,
-        HatchGadget[] hatches,
         int minSpawnInterval,
         int maxSpawnInterval,
         int initialSpawnInterval)
     {
         Id = id;
 
-        _hatches = hatches;
-        _hatchIndex = _hatches.Length - 1;
         MinSpawnInterval = Math.Clamp(minSpawnInterval, LevelConstants.MinAllowedSpawnInterval, LevelConstants.MaxAllowedSpawnInterval);
         MaxSpawnInterval = Math.Clamp(maxSpawnInterval, minSpawnInterval, LevelConstants.MaxAllowedSpawnInterval);
         CurrentSpawnInterval = Math.Clamp(initialSpawnInterval, MinSpawnInterval, MaxSpawnInterval);
+    }
+
+    public void SetHatches(HatchGadget[] hatches)
+    {
+        _hatches = hatches;
+        _hatchIndex = _hatches.Length - 1;
         _lemmingsToRelease = hatches.Sum(h => h.HatchSpawnData.LemmingsToRelease);
     }
 

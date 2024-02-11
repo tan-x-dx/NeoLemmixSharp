@@ -142,7 +142,7 @@ public sealed class LevelData
     public List<TerrainGroup> AllTerrainGroups { get; } = new();
     public List<HatchGroupData> AllHatchGroupData { get; } = new();
     public List<LemmingData> AllLemmingData { get; } = new();
-    public List<GadgetArchetypeData> AllGadgetArchetypeData { get; } = new();
+    public List<IGadgetBuilder> AllGadgetBuilders { get; } = new();
     public List<GadgetData> AllGadgetData { get; } = new();
     public List<SketchData> AllSketchData { get; } = new();
 
@@ -187,5 +187,4 @@ public sealed class LevelData
 
         return false;
     }
-
 }

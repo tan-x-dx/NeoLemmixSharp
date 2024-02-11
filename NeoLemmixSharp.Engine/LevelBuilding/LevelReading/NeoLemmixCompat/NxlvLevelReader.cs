@@ -15,15 +15,17 @@ public sealed class NxlvLevelReader : ILevelReader
         var terrainArchetypes = new Dictionary<string, TerrainArchetypeData>();
 
         var terrainGroupReader = new TerrainGroupReader(terrainArchetypes);
+        var gadgetReader = new GadgetReader();
         var lemmingReader = new LemmingReader(levelData.AllLemmingData);
 
+        // NOTE: The order of the data readers is important!
         var dataReaders = new INeoLemmixDataReader[]
         {
             new LevelDataReader(levelData),
             new SkillSetReader(levelData.SkillSetData),
             terrainGroupReader,
             new TerrainReader(terrainArchetypes, levelData.AllTerrainData),
-            new GadgetReader(),
+            gadgetReader,
             lemmingReader,
             new TextReader(levelData.PreTextLines, "$PRETEXT"),
             new TextReader(levelData.PostTextLines, "$POSTTEXT"),
@@ -32,11 +34,10 @@ public sealed class NxlvLevelReader : ILevelReader
 
         var dataReaderList = new DataReaderList(dataReaders);
 
-        // NOTE: The order of the data readers is important!
-
         dataReaderList.ReadFile(levelFilePath);
 
         terrainGroupReader.ApplyToLevelData(levelData);
+        gadgetReader.ApplyToLevelData(levelData);
         lemmingReader.ApplyToLevelData(levelData);
 
         SetUpLevelData(levelData);

@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
 
-public enum NeoLemmixGadgetType
+public enum NeoLemmixGadgetBehaviour
 {
     None,
     Entrance,

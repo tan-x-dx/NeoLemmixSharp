@@ -8,7 +8,7 @@ public sealed class GadgetData
     private readonly (GadgetProperty, object)[] _properties;
 
     public required int Id { get; init; }
-    public required int GadgetArchetypeDataId { get; init; }
+    public required int GadgetBuilderId { get; init; }
     public required int X { get; init; }
     public required int Y { get; init; }
 
