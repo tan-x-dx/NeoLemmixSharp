@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
 public enum NeoLemmixGadgetBehaviour
 {

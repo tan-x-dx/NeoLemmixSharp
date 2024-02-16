@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
 public sealed class SkillSetReader : INeoLemmixDataReader
 {

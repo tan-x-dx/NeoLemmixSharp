@@ -1,9 +1,9 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+﻿using System.Runtime.InteropServices;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
-using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading.GadgetTranslation;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
 public readonly ref partial struct GadgetTranslator
 {
