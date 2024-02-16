@@ -92,7 +92,7 @@ public static class ReadingHelpers
     /// </summary>
     /// <param name="span">The original span</param>
     /// <param name="startIndex">The first index the result can start from</param>
-    /// <returns>A ReadOnlySpan of trimmed-whitespace</returns>
+    /// <returns>A ReadOnlySpan of whitespace trimmed characters</returns>
     public static ReadOnlySpan<char> TrimAfterIndex(this ReadOnlySpan<char> span, int startIndex)
     {
         if (startIndex < 0 || startIndex >= span.Length)
@@ -240,7 +240,7 @@ public static class ReadingHelpers
         ReadOnlySpan<char> firstToken,
         ReadOnlySpan<char> line)
     {
-        throw new InvalidDataException(
+        throw new InvalidOperationException(
             $"Unknown token when parsing {identifierToken}: [{firstToken}] line: \"{line}\"");
     }
 }
