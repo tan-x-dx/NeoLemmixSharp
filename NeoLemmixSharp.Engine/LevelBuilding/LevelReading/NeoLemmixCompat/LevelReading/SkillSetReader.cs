@@ -23,21 +23,13 @@ public sealed class SkillSetReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         if (firstToken is "$END")
         {
             FinishedReading = true;
             return false;
         }
-
-        ReadSkillSetData(line);
-        return false;
-    }
-
-    private void ReadSkillSetData(ReadOnlySpan<char> line)
-    {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         if (!ReadingHelpers.GetSkillByName(firstToken, _charEqualityComparer, out var skill))
             throw new Exception($"Unknown token: {firstToken}");
@@ -54,5 +46,6 @@ public sealed class SkillSetReader : INeoLemmixDataReader
         };
 
         _skillSetData.Add(skillSetDatum);
+        return false;
     }
 }

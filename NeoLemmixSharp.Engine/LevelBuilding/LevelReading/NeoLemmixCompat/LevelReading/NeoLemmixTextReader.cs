@@ -1,16 +1,13 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
-
-public sealed class TextReader : INeoLemmixDataReader
+public sealed class NeoLemmixTextReader : INeoLemmixDataReader
 {
     private readonly List<string> _lines;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken { get; }
 
-    public TextReader(List<string> lines, string identifierToken)
+    public NeoLemmixTextReader(List<string> lines, string identifierToken)
     {
         _lines = lines;
         IdentifierToken = identifierToken;
@@ -28,8 +25,8 @@ public sealed class TextReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "LINE":
-                var pretextLine = line.TrimAfterIndex(secondTokenIndex).GetString();
-                _lines.Add(pretextLine);
+                var parsedLine = line.TrimAfterIndex(secondTokenIndex).GetString();
+                _lines.Add(parsedLine);
                 break;
 
             case "$END":
@@ -38,13 +35,5 @@ public sealed class TextReader : INeoLemmixDataReader
         }
 
         return false;
-    }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
-    }
-
-    public void Dispose()
-    {
     }
 }

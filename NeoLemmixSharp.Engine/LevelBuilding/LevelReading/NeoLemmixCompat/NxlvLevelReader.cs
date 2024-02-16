@@ -27,8 +27,8 @@ public sealed class NxlvLevelReader : ILevelReader
             new TerrainReader(terrainArchetypes, levelData.AllTerrainData),
             gadgetReader,
             lemmingReader,
-            new TextReader(levelData.PreTextLines, "$PRETEXT"),
-            new TextReader(levelData.PostTextLines, "$POSTTEXT"),
+            new NeoLemmixTextReader(levelData.PreTextLines, "$PRETEXT"),
+            new NeoLemmixTextReader(levelData.PostTextLines, "$POSTTEXT"),
             new SketchReader(levelData.AllSketchData),
         };
 
