@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading.GadgetTranslation;
 
@@ -8,7 +9,7 @@ public readonly ref partial struct GadgetTranslator
 {
     private void ProcessResizeableGadgetBuilder(
         NeoLemmixGadgetArchetypeData archetypeData,
-        NeoLemmixGadgetData prototype, 
+        NeoLemmixGadgetData prototype,
         int gadgetId)
     {
         if (!prototype.Width.HasValue ||
@@ -22,7 +23,7 @@ public readonly ref partial struct GadgetTranslator
 
         if (behaviour is null)
         {
-            // TODO
+            // TODO Things like one way walls
 
             return;
         }
@@ -44,12 +45,16 @@ public readonly ref partial struct GadgetTranslator
         gadgetData.AddProperty(GadgetProperty.Width, prototypeWidth);
         gadgetData.AddProperty(GadgetProperty.Height, prototypeHeight);
 
-        var gadgetBuilder = new ResizeableGadgetBuilder
-        {
-            GadgetBuilderId = archetypeData.GadgetArchetypeId
-        };
+        ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);
 
-        _gadgetBuilders.Add(gadgetBuilder);
-        _gadgetDatas.Add(gadgetData);
+        if (!exists)
+        {
+            gadgetBuilder = new ResizeableGadgetBuilder
+            {
+                GadgetBuilderId = archetypeData.GadgetArchetypeId
+            };
+        }
+
+        _levelData.AllGadgetData.Add(gadgetData);
     }
 }

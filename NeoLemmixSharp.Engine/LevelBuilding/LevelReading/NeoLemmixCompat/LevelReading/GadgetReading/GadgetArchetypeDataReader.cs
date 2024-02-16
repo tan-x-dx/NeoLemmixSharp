@@ -144,8 +144,4 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
 
             _ => NeoLemmixGadgetBehaviour.None
         };
-
-    public void Dispose()
-    {
-    }
 }

@@ -12,16 +12,17 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
 {
     public required int GadgetBuilderId { get; init; }
 
+    public required int SpawnX { get; init; }
+    public required int SpawnY { get; init; }
+
     public required int HatchWidth { get; init; }
     public required int HatchHeight { get; init; }
 
     public GadgetBase BuildGadget(GadgetData gadgetData, IPerfectHasher<Lemming> lemmingHasher)
     {
-        var spawnX = gadgetData.GetProperty<int>(GadgetProperty.TriggerX);
-        var spawnY = gadgetData.GetProperty<int>(GadgetProperty.TriggerY);
         var lemmingCount = gadgetData.GetProperty<int>(GadgetProperty.LemmingCount);
 
-        var spawnPoint = new LevelPosition(spawnX, spawnY);
+        var spawnPoint = new LevelPosition(SpawnX, SpawnY);
 
         if (!gadgetData.TryGetProperty<Team>(GadgetProperty.Team, out var team))
         {

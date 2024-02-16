@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading.GadgetTranslation;
 
@@ -24,14 +25,24 @@ public readonly ref partial struct GadgetTranslator
             FacingDirection = facingDirection
         };
 
-        var gadgetBuilder = new HatchGadgetBuilder
-        {
-            GadgetBuilderId = archetypeData.GadgetArchetypeId,
-            HatchWidth = 2,
-            HatchHeight = 2,
-        };
+        gadgetData.AddProperty(GadgetProperty.RawLemmingState, prototype.State);
 
-        _gadgetBuilders.Add(gadgetBuilder);
-        _gadgetDatas.Add(gadgetData);
+        ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);
+
+        if (!exists)
+        {
+            gadgetBuilder = new HatchGadgetBuilder
+            {
+                GadgetBuilderId = archetypeData.GadgetArchetypeId,
+
+                SpawnX = archetypeData.TriggerX,
+                SpawnY = archetypeData.TriggerY,
+
+                HatchWidth = 2,
+                HatchHeight = 2,
+            };
+        }
+
+        _levelData.AllGadgetData.Add(gadgetData);
     }
 }

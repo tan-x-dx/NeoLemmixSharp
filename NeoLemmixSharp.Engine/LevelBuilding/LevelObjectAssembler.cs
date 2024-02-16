@@ -98,7 +98,6 @@ public sealed class LevelObjectAssembler
         IPerfectHasher<Lemming> lemmingHasher,
         HatchGroup[] hatchGroups)
     {
-        var allGadgetBuilders = CollectionsMarshal.AsSpan(levelData.AllGadgetBuilders);
         var allGadgetData = CollectionsMarshal.AsSpan(levelData.AllGadgetData);
 
         var result = new GadgetBase[allGadgetData.Length];
@@ -106,7 +105,7 @@ public sealed class LevelObjectAssembler
 
         foreach (var prototype in allGadgetData)
         {
-            var gadgetBuilder = allGadgetBuilders[prototype.GadgetBuilderId];
+            var gadgetBuilder = levelData.AllGadgetBuilders[prototype.GadgetBuilderId];
 
             var gadget = gadgetBuilder.BuildGadget(prototype, lemmingHasher);
             result[i++] = gadget;

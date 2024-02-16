@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using System.Runtime.InteropServices;
 
@@ -10,13 +9,11 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Level
 
 public readonly ref partial struct GadgetTranslator
 {
-    private readonly List<IGadgetBuilder> _gadgetBuilders;
-    private readonly List<GadgetData> _gadgetDatas;
+    private readonly LevelData _levelData;
 
     public GadgetTranslator(LevelData levelData)
     {
-        _gadgetBuilders = levelData.AllGadgetBuilders;
-        _gadgetDatas = levelData.AllGadgetData;
+        _levelData = levelData;
     }
 
     public void TranslateNeoLemmixGadgets(
@@ -27,6 +24,8 @@ public readonly ref partial struct GadgetTranslator
         var neoLemmixGadgetArchetypeData = gadgetArchetypes.Values;
 
         var id = 0;
+        _levelData.AllGadgetData.EnsureCapacity(gadgetDataSpan.Length);
+        _levelData.AllGadgetBuilders.EnsureCapacity(gadgetArchetypes.Count);
 
         foreach (var prototype in gadgetDataSpan)
         {
