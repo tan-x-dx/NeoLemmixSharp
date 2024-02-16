@@ -8,6 +8,6 @@ public sealed class FireGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.FireGadgetTypeId;
-    public override string GadgetTypeName => "fire";
+    public override int Id => LevelConstants.FireGadgetBehaviourId;
+    public override string GadgetBehaviourName => "fire";
 }

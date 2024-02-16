@@ -124,7 +124,7 @@ public sealed class SwimmerAction : LemmingAction
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool WaterAt(LevelPosition lemmingPosition)
     {
-        return LevelScreen.GadgetManager.HasGadgetOfTypeAtPosition(lemmingPosition, WaterGadgetBehaviour.Instance);
+        return LevelScreen.GadgetManager.HasGadgetWithBehaviourAtPosition(lemmingPosition, WaterGadgetBehaviour.Instance);
     }
 
     /// <summary>

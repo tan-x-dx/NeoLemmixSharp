@@ -8,6 +8,6 @@ public sealed class LogicGateGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.LogicGateGadgetTypeId;
-    public override string GadgetTypeName => "logic gate";
+    public override int Id => LevelConstants.LogicGateGadgetBehaviourId;
+    public override string GadgetBehaviourName => "logic gate";
 }

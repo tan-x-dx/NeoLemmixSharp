@@ -8,6 +8,6 @@ public sealed class SawBladeGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.SawBladeGadgetTypeId;
-    public override string GadgetTypeName => "saw blade";
+    public override int Id => LevelConstants.SawBladeGadgetBehaviourId;
+    public override string GadgetBehaviourName => "saw blade";
 }

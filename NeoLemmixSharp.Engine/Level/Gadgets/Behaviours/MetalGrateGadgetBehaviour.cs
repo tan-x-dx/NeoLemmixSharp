@@ -8,6 +8,6 @@ public sealed class MetalGrateGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.MetalGrateGadgetTypeId;
-    public override string GadgetTypeName => "metal grate";
+    public override int Id => LevelConstants.MetalGrateGadgetBehaviourId;
+    public override string GadgetBehaviourName => "metal grate";
 }

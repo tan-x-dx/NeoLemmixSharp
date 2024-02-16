@@ -4,12 +4,12 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public abstract class GadgetBehaviour : IExtendedEnumType<GadgetBehaviour>
 {
-    private static readonly GadgetBehaviour[] GadgetTypes = RegisterAllGadgetTypes();
+    private static readonly GadgetBehaviour[] GadgetBehaviours = RegisterAllGadgetBehaviours();
 
-    public static int NumberOfItems => GadgetTypes.Length;
-    public static ReadOnlySpan<GadgetBehaviour> AllItems => new(GadgetTypes);
+    public static int NumberOfItems => GadgetBehaviours.Length;
+    public static ReadOnlySpan<GadgetBehaviour> AllItems => new(GadgetBehaviours);
 
-    private static GadgetBehaviour[] RegisterAllGadgetTypes()
+    private static GadgetBehaviour[] RegisterAllGadgetBehaviours()
     {
         var result = new GadgetBehaviour[]
         {
@@ -35,12 +35,12 @@ public abstract class GadgetBehaviour : IExtendedEnumType<GadgetBehaviour>
     }
 
     public abstract int Id { get; }
-    public abstract string GadgetTypeName { get; }
+    public abstract string GadgetBehaviourName { get; }
 
     public bool Equals(GadgetBehaviour? other) => Id == (other?.Id ?? -1);
     public sealed override bool Equals(object? obj) => obj is GadgetBehaviour other && Id == other.Id;
     public sealed override int GetHashCode() => Id;
-    public sealed override string ToString() => GadgetTypeName;
+    public sealed override string ToString() => GadgetBehaviourName;
 
     public static bool operator ==(GadgetBehaviour left, GadgetBehaviour right) => left.Id == right.Id;
     public static bool operator !=(GadgetBehaviour left, GadgetBehaviour right) => left.Id != right.Id;

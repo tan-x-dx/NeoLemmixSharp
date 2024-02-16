@@ -8,6 +8,6 @@ public sealed class SplatGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.SplatGadgetTypeId;
-    public override string GadgetTypeName => "splat";
+    public override int Id => LevelConstants.SplatGadgetBehaviourId;
+    public override string GadgetBehaviourName => "splat";
 }
