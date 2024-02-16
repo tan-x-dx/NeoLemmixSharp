@@ -9,7 +9,7 @@ public sealed class InputAction : IIdEquatable<InputAction>
     private const ulong DisabledMask = 0UL;
 
     private const ulong ActionUnpressed = 0UL;
-    public const ulong ActionPressed = 1UL;
+    private const ulong ActionPressed = 1UL;
     private const ulong ActionReleased = 2UL;
     private const ulong ActionHeld = 3UL;
     private const ulong DoubleTapUpperMask = ((1UL << (EngineConstants.DoubleTapFrameCountMax - 2)) - 1UL) << 2;
@@ -77,7 +77,7 @@ public sealed class InputAction : IIdEquatable<InputAction>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DoPress()
     {
-        ActionState |= 1U;
+        ActionState |= ActionPressed;
     }
 
     public bool IsEnabled => _stateMask != DisabledMask;

@@ -35,22 +35,22 @@ public sealed class MenuInputController
 
     public MenuInputController()
     {
-        F1 = _inputController.CreateKeyAction("F1");
-        F2 = _inputController.CreateKeyAction("F2");
-        F3 = _inputController.CreateKeyAction("F3");
+        F1 = _inputController.CreateInputAction("F1");
+        F2 = _inputController.CreateInputAction("F2");
+        F3 = _inputController.CreateInputAction("F3");
 
-        RightArrow = _inputController.CreateKeyAction("\u2192");
-        UpArrow = _inputController.CreateKeyAction("\u2191");
-        LeftArrow = _inputController.CreateKeyAction("\u2190");
-        DownArrow = _inputController.CreateKeyAction("\u2193");
+        RightArrow = _inputController.CreateInputAction("\u2192");
+        UpArrow = _inputController.CreateInputAction("\u2191");
+        LeftArrow = _inputController.CreateInputAction("\u2190");
+        DownArrow = _inputController.CreateInputAction("\u2193");
 
-        Space = _inputController.CreateKeyAction("Space");
-        Enter = _inputController.CreateKeyAction("Enter");
+        Space = _inputController.CreateInputAction("Space");
+        Enter = _inputController.CreateInputAction("Enter");
 
-        ToggleFullScreen = _inputController.CreateKeyAction("Toggle Full Screen");
-        Quit = _inputController.CreateKeyAction("Quit");
+        ToggleFullScreen = _inputController.CreateInputAction("Toggle Full Screen");
+        Quit = _inputController.CreateInputAction("Quit");
 
-        _inputController.ValidateKeyActions();
+        _inputController.ValidateInputActions();
 
         SetUpBindings();
     }
@@ -78,7 +78,7 @@ public sealed class MenuInputController
         _inputController.Bind(Keys.Escape, Quit);
     }
 
-    public void ClearAllKeys() => _inputController.ClearAllKeys();
+    public void ClearAllInputActions() => _inputController.ClearAllInputActions();
 
     public void Tick() => _inputController.Tick();
 }

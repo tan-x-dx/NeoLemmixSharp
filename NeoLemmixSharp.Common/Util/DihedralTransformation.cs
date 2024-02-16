@@ -111,7 +111,7 @@ public readonly struct DihedralTransformation
     };
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int Choose(int w, int h) => (_r & 1) == 1
+    private int Choose(int w, int h) => (_r & 1) != 0
         ? h
         : w;
 }

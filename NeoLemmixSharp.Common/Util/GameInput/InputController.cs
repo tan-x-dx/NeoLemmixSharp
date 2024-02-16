@@ -11,7 +11,7 @@ public sealed class InputController : IPerfectHasher<Keys>
 
     private readonly List<(Keys, InputAction)> _keyMapping = new();
     private readonly SimpleSet<Keys> _keys;
-    private readonly List<InputAction> _keyActions = new();
+    private readonly List<InputAction> _inputActions = new();
 
     private int _previousScrollValue;
 
@@ -29,36 +29,36 @@ public sealed class InputController : IPerfectHasher<Keys>
     {
         _keys = new SimpleSet<Keys>(this);
 
-        LeftMouseButtonAction = CreateKeyAction("Left Mouse Button");
-        RightMouseButtonAction = CreateKeyAction("Right Mouse Button");
-        MiddleMouseButtonAction = CreateKeyAction("Middle Mouse Button");
-        MouseButton4Action = CreateKeyAction("Mouse Button 4");
-        MouseButton5Action = CreateKeyAction("Mouse Button 5");
+        LeftMouseButtonAction = CreateInputAction("Left Mouse Button");
+        RightMouseButtonAction = CreateInputAction("Right Mouse Button");
+        MiddleMouseButtonAction = CreateInputAction("Middle Mouse Button");
+        MouseButton4Action = CreateInputAction("Mouse Button 4");
+        MouseButton5Action = CreateInputAction("Mouse Button 5");
     }
 
-    public InputAction CreateKeyAction(string actionName)
+    public InputAction CreateInputAction(string actionName)
     {
-        var keyAction = new InputAction(_keyActions.Count, actionName);
-        _keyActions.Add(keyAction);
-        return keyAction;
+        var inputAction = new InputAction(_inputActions.Count, actionName);
+        _inputActions.Add(inputAction);
+        return inputAction;
     }
 
-    public void Bind(Keys keyCode, InputAction keyAction)
+    public void Bind(Keys keyCode, InputAction inputAction)
     {
-        _keyMapping.Add((keyCode, keyAction));
+        _keyMapping.Add((keyCode, inputAction));
     }
 
-    public void ValidateKeyActions()
+    public void ValidateInputActions()
     {
-        IdEquatableItemHelperMethods.ValidateUniqueIds<InputAction>(CollectionsMarshal.AsSpan(_keyActions));
-        _keyActions.Sort(IdEquatableItemHelperMethods.Compare);
+        IdEquatableItemHelperMethods.ValidateUniqueIds<InputAction>(CollectionsMarshal.AsSpan(_inputActions));
+        _inputActions.Sort(IdEquatableItemHelperMethods.Compare);
     }
 
     public void Tick()
     {
-        var keyActionsSpan = CollectionsMarshal.AsSpan(_keyActions);
+        var inputActionsSpan = CollectionsMarshal.AsSpan(_inputActions);
 
-        foreach (var keyAction in keyActionsSpan)
+        foreach (var keyAction in inputActionsSpan)
         {
             keyAction.UpdateState();
         }
@@ -69,7 +69,7 @@ public sealed class InputController : IPerfectHasher<Keys>
         {
             if (_keys.Contains(keyValue))
             {
-                keyActionsSpan[action.Id].ActionState |= InputAction.ActionPressed;
+                inputActionsSpan[action.Id].DoPress();
             }
         }
 
@@ -77,15 +77,15 @@ public sealed class InputController : IPerfectHasher<Keys>
         UpdateMouseButtonStates();
     }
 
-    public void ClearAllKeys()
+    public void ClearAllInputActions()
     {
         _keys.Clear();
 
-        var keyActionsSpan = CollectionsMarshal.AsSpan(_keyActions);
+        var inputActionsSpan = CollectionsMarshal.AsSpan(_inputActions);
 
-        foreach (var keyAction in keyActionsSpan)
+        foreach (var inputAction in inputActionsSpan)
         {
-            keyAction.Clear();
+            inputAction.Clear();
         }
     }
 
