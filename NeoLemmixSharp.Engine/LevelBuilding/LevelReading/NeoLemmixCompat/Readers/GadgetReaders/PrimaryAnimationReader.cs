@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
 public sealed class PrimaryAnimationReader : INeoLemmixDataReader
 {
@@ -74,9 +74,5 @@ public sealed class PrimaryAnimationReader : INeoLemmixDataReader
         }
 
         return false;
-    }
-
-    public void Dispose()
-    {
     }
 }

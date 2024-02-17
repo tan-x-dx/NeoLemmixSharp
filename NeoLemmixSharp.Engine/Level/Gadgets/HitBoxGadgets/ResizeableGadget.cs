@@ -13,13 +13,13 @@ public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeabl
 
     public ResizeableGadget(
         int id,
-        GadgetBehaviour interactionType,
+        GadgetBehaviour gadgetBehaviour,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
         ItemTracker<Lemming> lemmingTracker)
         : base(id, gadgetBounds, lemmingTracker)
     {
-        GadgetBehaviour = interactionType;
+        GadgetBehaviour = gadgetBehaviour;
         Orientation = orientation;
     }
 

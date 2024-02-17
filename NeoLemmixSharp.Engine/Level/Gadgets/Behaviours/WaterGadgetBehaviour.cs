@@ -8,6 +8,6 @@ public sealed class WaterGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.WaterGadgetTypeId;
-    public override string GadgetTypeName => "water";
+    public override int Id => LevelConstants.WaterGadgetBehaviourId;
+    public override string GadgetBehaviourName => "water";
 }

@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
 public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
 {
@@ -20,7 +20,7 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
 
         ReadingHelpers.GetTokenPair(line, out _, out var secondToken, out _);
 
-        _gadgetArchetypeData.Type = GetNeoLemmixGadgetType(secondToken);
+        _gadgetArchetypeData.Behaviour = GetNeoLemmixGadgetType(secondToken);
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
@@ -104,48 +104,44 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
         return false;
     }
 
-    private static NeoLemmixGadgetType GetNeoLemmixGadgetType(
+    private static NeoLemmixGadgetBehaviour GetNeoLemmixGadgetType(
         ReadOnlySpan<char> token) => token switch
         {
-            "ANTISPLATPAD" => NeoLemmixGadgetType.AntiSplatPad,
-            "BACKGROUND" => NeoLemmixGadgetType.Background,
-            "BUTTON" => NeoLemmixGadgetType.UnlockButton,
-            "ENTRANCE" => NeoLemmixGadgetType.Entrance,
-            "EXIT" => NeoLemmixGadgetType.Exit,
-            "FIRE" => NeoLemmixGadgetType.Fire,
-            "FORCE_LEFT" => NeoLemmixGadgetType.ForceLeft,
-            "FORCE_RIGHT" => NeoLemmixGadgetType.ForceRight,
-            "FORCELEFT" => NeoLemmixGadgetType.ForceLeft,
-            "FORCERIGHT" => NeoLemmixGadgetType.ForceRight,
-            "LOCKED_EXIT" => NeoLemmixGadgetType.LockedExit,
-            "LOCKEDEXIT" => NeoLemmixGadgetType.LockedExit,
-            "MOVING_BACKGROUND" => NeoLemmixGadgetType.Background,
-            "ONE_WAY_LEFT" => NeoLemmixGadgetType.OneWayLeft,
-            "ONE_WAY_DOWN" => NeoLemmixGadgetType.OneWayDown,
-            "ONE_WAY_RIGHT" => NeoLemmixGadgetType.OneWayRight,
-            "ONE_WAY_UP" => NeoLemmixGadgetType.OneWayUp,
-            "ONEWAYLEFT" => NeoLemmixGadgetType.OneWayLeft,
-            "ONEWAYDOWN" => NeoLemmixGadgetType.OneWayDown,
-            "ONEWAYRIGHT" => NeoLemmixGadgetType.OneWayRight,
-            "ONEWAYUP" => NeoLemmixGadgetType.OneWayUp,
-            "PICKUP_SKILL" => NeoLemmixGadgetType.PickupSkill,
-            "PICKUPSKILL" => NeoLemmixGadgetType.PickupSkill,
-            "RECEIVER" => NeoLemmixGadgetType.Receiver,
-            "SINGLE_USE_TRAP" => NeoLemmixGadgetType.TrapOnce,
-            "SPLATPAD" => NeoLemmixGadgetType.SplatPad,
-            "SPLITTER" => NeoLemmixGadgetType.Splitter,
-            "TELEPORTER" => NeoLemmixGadgetType.Teleporter,
-            "TRAP" => NeoLemmixGadgetType.Trap,
-            "TRAPONCE" => NeoLemmixGadgetType.TrapOnce,
-            "UPDRAFT" => NeoLemmixGadgetType.Updraft,
-            "UNLOCKBUTTON" => NeoLemmixGadgetType.UnlockButton,
-            "WATER" => NeoLemmixGadgetType.Water,
-            "WINDOW" => NeoLemmixGadgetType.Entrance,
+            "ANTISPLATPAD" => NeoLemmixGadgetBehaviour.AntiSplatPad,
+            "BACKGROUND" => NeoLemmixGadgetBehaviour.Background,
+            "BUTTON" => NeoLemmixGadgetBehaviour.UnlockButton,
+            "ENTRANCE" => NeoLemmixGadgetBehaviour.Entrance,
+            "EXIT" => NeoLemmixGadgetBehaviour.Exit,
+            "FIRE" => NeoLemmixGadgetBehaviour.Fire,
+            "FORCE_LEFT" => NeoLemmixGadgetBehaviour.ForceLeft,
+            "FORCE_RIGHT" => NeoLemmixGadgetBehaviour.ForceRight,
+            "FORCELEFT" => NeoLemmixGadgetBehaviour.ForceLeft,
+            "FORCERIGHT" => NeoLemmixGadgetBehaviour.ForceRight,
+            "LOCKED_EXIT" => NeoLemmixGadgetBehaviour.LockedExit,
+            "LOCKEDEXIT" => NeoLemmixGadgetBehaviour.LockedExit,
+            "MOVING_BACKGROUND" => NeoLemmixGadgetBehaviour.Background,
+            "ONE_WAY_LEFT" => NeoLemmixGadgetBehaviour.OneWayLeft,
+            "ONE_WAY_DOWN" => NeoLemmixGadgetBehaviour.OneWayDown,
+            "ONE_WAY_RIGHT" => NeoLemmixGadgetBehaviour.OneWayRight,
+            "ONE_WAY_UP" => NeoLemmixGadgetBehaviour.OneWayUp,
+            "ONEWAYLEFT" => NeoLemmixGadgetBehaviour.OneWayLeft,
+            "ONEWAYDOWN" => NeoLemmixGadgetBehaviour.OneWayDown,
+            "ONEWAYRIGHT" => NeoLemmixGadgetBehaviour.OneWayRight,
+            "ONEWAYUP" => NeoLemmixGadgetBehaviour.OneWayUp,
+            "PICKUP_SKILL" => NeoLemmixGadgetBehaviour.PickupSkill,
+            "PICKUPSKILL" => NeoLemmixGadgetBehaviour.PickupSkill,
+            "RECEIVER" => NeoLemmixGadgetBehaviour.Receiver,
+            "SINGLE_USE_TRAP" => NeoLemmixGadgetBehaviour.TrapOnce,
+            "SPLATPAD" => NeoLemmixGadgetBehaviour.SplatPad,
+            "SPLITTER" => NeoLemmixGadgetBehaviour.Splitter,
+            "TELEPORTER" => NeoLemmixGadgetBehaviour.Teleporter,
+            "TRAP" => NeoLemmixGadgetBehaviour.Trap,
+            "TRAPONCE" => NeoLemmixGadgetBehaviour.TrapOnce,
+            "UPDRAFT" => NeoLemmixGadgetBehaviour.Updraft,
+            "UNLOCKBUTTON" => NeoLemmixGadgetBehaviour.UnlockButton,
+            "WATER" => NeoLemmixGadgetBehaviour.Water,
+            "WINDOW" => NeoLemmixGadgetBehaviour.Entrance,
 
-            _ => NeoLemmixGadgetType.None
+            _ => NeoLemmixGadgetBehaviour.None
         };
-
-    public void Dispose()
-    {
-    }
 }

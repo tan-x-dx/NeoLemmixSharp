@@ -233,19 +233,19 @@ public static class LevelConstants
 
     #region Gadget Constants
 
-    public const int FireGadgetTypeId = 2;
-    public const int FunctionalGadgetTypeId = 10;
-    public const int GenericGadgetTypeId = 0;
-    public const int HatchGadgetTypeId = 12;
-    public const int LogicGateGadgetTypeId = 11;
-    public const int MetalGrateGadgetTypeId = 9;
-    public const int NoSplatGadgetTypeId = 6;
-    public const int SawBladeGadgetTypeId = 8;
-    public const int SplatGadgetTypeId = 5;
-    public const int SwitchGadgetTypeId = 7;
-    public const int TinkerableGadgetTypeId = 3;
-    public const int UpdraftGadgetTypeId = 4;
-    public const int WaterGadgetTypeId = 1;
+    public const int FireGadgetBehaviourId = 2;
+    public const int FunctionalGadgetBehaviourId = 10;
+    public const int GenericGadgetBehaviourId = 0;
+    public const int HatchGadgetBehaviourId = 12;
+    public const int LogicGateGadgetBehaviourId = 11;
+    public const int MetalGrateGadgetBehaviourId = 9;
+    public const int NoSplatGadgetBehaviourId = 6;
+    public const int SawBladeGadgetBehaviourId = 8;
+    public const int SplatGadgetBehaviourId = 5;
+    public const int SwitchGadgetBehaviourId = 7;
+    public const int TinkerableGadgetBehaviourId = 3;
+    public const int UpdraftGadgetBehaviourId = 4;
+    public const int WaterGadgetBehaviourId = 1;
 
     #endregion
 }

@@ -8,6 +8,6 @@ public sealed class GenericGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.GenericGadgetTypeId;
-    public override string GadgetTypeName => "generic";
+    public override int Id => LevelConstants.GenericGadgetBehaviourId;
+    public override string GadgetBehaviourName => "generic";
 }

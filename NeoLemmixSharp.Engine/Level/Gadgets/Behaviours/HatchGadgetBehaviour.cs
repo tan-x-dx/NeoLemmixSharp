@@ -8,6 +8,6 @@ public sealed class HatchGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.HatchGadgetTypeId;
-    public override string GadgetTypeName => "hatch";
+    public override int Id => LevelConstants.HatchGadgetBehaviourId;
+    public override string GadgetBehaviourName => "hatch";
 }

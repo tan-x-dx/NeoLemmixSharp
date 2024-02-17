@@ -59,7 +59,7 @@ public sealed class MenuScreen : IBaseScreen
 	{
 		_nextPage = page;
 		_pageTransition.BeginTransition();
-		InputController.ClearAllKeys();
+		InputController.ClearAllInputActions();
 	}
 
 	public void Tick(GameTime gameTime)

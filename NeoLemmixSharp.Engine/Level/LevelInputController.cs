@@ -42,28 +42,28 @@ public sealed class LevelInputController
 
 	public LevelInputController(LevelParameters levelParameters)
 	{
-		Pause = _inputController.CreateKeyAction("Pause");
-		Quit = _inputController.CreateKeyAction("Quit");
-		ToggleFullScreen = _inputController.CreateKeyAction("Toggle Fullscreen");
-		ToggleFastForwards = _inputController.CreateKeyAction("Toggle Fast Forwards");
-		SelectOnlyWalkers = _inputController.CreateKeyAction("Select Only Walkers");
-		SelectOnlyUnassignedLemmings = _inputController.CreateKeyAction("Select Only Unassigned Lemmings");
-		SelectLeftFacingLemmings = _inputController.CreateKeyAction("Select Left Facing Lemmings");
-		SelectRightFacingLemmings = _inputController.CreateKeyAction("Select Right Facing Lemmings");
+		Pause = _inputController.CreateInputAction("Pause");
+		Quit = _inputController.CreateInputAction("Quit");
+		ToggleFullScreen = _inputController.CreateInputAction("Toggle Fullscreen");
+		ToggleFastForwards = _inputController.CreateInputAction("Toggle Fast Forwards");
+		SelectOnlyWalkers = _inputController.CreateInputAction("Select Only Walkers");
+		SelectOnlyUnassignedLemmings = _inputController.CreateInputAction("Select Only Unassigned Lemmings");
+		SelectLeftFacingLemmings = _inputController.CreateInputAction("Select Left Facing Lemmings");
+		SelectRightFacingLemmings = _inputController.CreateInputAction("Select Right Facing Lemmings");
 
-		RightArrow = _inputController.CreateKeyAction("ABC");
-		UpArrow = _inputController.CreateKeyAction("ABC");
-		LeftArrow = _inputController.CreateKeyAction("ABC");
-		DownArrow = _inputController.CreateKeyAction("ABC");
+		RightArrow = _inputController.CreateInputAction("ABC");
+		UpArrow = _inputController.CreateInputAction("ABC");
+		LeftArrow = _inputController.CreateInputAction("ABC");
+		DownArrow = _inputController.CreateInputAction("ABC");
 
-		W = _inputController.CreateKeyAction("ABC");
-		A = _inputController.CreateKeyAction("ABC");
-		S = _inputController.CreateKeyAction("ABC");
-		D = _inputController.CreateKeyAction("ABC");
+		W = _inputController.CreateInputAction("ABC");
+		A = _inputController.CreateInputAction("ABC");
+		S = _inputController.CreateInputAction("ABC");
+		D = _inputController.CreateInputAction("ABC");
 
-		Space = _inputController.CreateKeyAction("Space");
+		Space = _inputController.CreateInputAction("Space");
 
-		_inputController.ValidateKeyActions();
+		_inputController.ValidateInputActions();
 
 		SetUpBindings();
 

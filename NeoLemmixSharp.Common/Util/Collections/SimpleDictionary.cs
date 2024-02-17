@@ -1,11 +1,10 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
-namespace NeoLemmixSharp.Common.Util.Identity;
+namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
 	where TKey : class

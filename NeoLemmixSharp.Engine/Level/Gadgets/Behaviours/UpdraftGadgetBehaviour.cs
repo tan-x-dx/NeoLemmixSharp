@@ -8,6 +8,6 @@ public sealed class UpdraftGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.UpdraftGadgetTypeId;
-    public override string GadgetTypeName => "updraft";
+    public override int Id => LevelConstants.UpdraftGadgetBehaviourId;
+    public override string GadgetBehaviourName => "updraft";
 }

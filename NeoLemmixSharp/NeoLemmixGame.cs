@@ -142,7 +142,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
                 throw new InvalidOperationException("Could not load particles.dat!");
 
             using var stream = assembly.GetManifestResourceStream(particleResourceName)!;
-            Span<byte> byteBuffer = ParticleHelper.GetByteBuffer();
+            var byteBuffer = ParticleHelper.GetByteBuffer();
             using var reader = new BinaryReader(stream, Encoding.UTF8, false);
             _ = reader.Read(byteBuffer);
         }
@@ -155,7 +155,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         var numberOfActions = LemmingAction.NumberOfItems;
         var numberOfSkills = LemmingSkill.NumberOfItems;
         var numberOfTeams = Team.NumberOfItems;
-        var numberOfGadgetTypes = GadgetBehaviour.NumberOfItems;
+        var numberOfGadgetBehaviours = GadgetBehaviour.NumberOfItems;
 
         Console.WriteLine(
             "Loaded {0} facing directions. Loaded {1} orientations. Loaded {2} skills. Loaded {3} actions. " +
@@ -165,7 +165,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
             numberOfSkills,
             numberOfActions,
             numberOfTeams,
-            numberOfGadgetTypes);
+            numberOfGadgetBehaviours);
 
         OhNoerAction.Initialise();
     }

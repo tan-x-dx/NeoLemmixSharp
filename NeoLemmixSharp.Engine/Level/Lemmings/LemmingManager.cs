@@ -41,16 +41,16 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
-        _hatchGroups = hatchGroups;
-        if (_hatchGroups.Length > 0)
+        if (hatchGroups.Length > 0)
         {
             IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<HatchGroup>(hatchGroups));
-            Array.Sort(_hatchGroups, IdEquatableItemHelperMethods.Compare);
+            Array.Sort(hatchGroups, IdEquatableItemHelperMethods.Compare);
         }
+        _hatchGroups = hatchGroups;
 
-        _lemmings = lemmings;
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Lemming>(lemmings));
-        Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
+        Array.Sort(lemmings, IdEquatableItemHelperMethods.Compare);
+        _lemmings = lemmings;
 
         _lemmingPositionHelper = new SpacialHashGrid<Lemming>(
             this,

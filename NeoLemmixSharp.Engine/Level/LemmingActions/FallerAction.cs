@@ -96,9 +96,9 @@ public sealed class FallerAction : LemmingAction
 		var gadgetManager = LevelScreen.GadgetManager;
 
 		return !(lemming.State.IsFloater || lemming.State.IsGlider) &&
-			   gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, NoSplatGadgetBehaviour.Instance) &&
+			   gadgetManager.HasGadgetWithBehaviourAtLemmingPosition(lemming, NoSplatGadgetBehaviour.Instance) &&
 			   (lemming.DistanceFallen > LevelConstants.MaxFallDistance ||
-				gadgetManager.HasGadgetOfTypeAtLemmingPosition(lemming, SplatGadgetBehaviour.Instance));
+				gadgetManager.HasGadgetWithBehaviourAtLemmingPosition(lemming, SplatGadgetBehaviour.Instance));
 	}
 
 	private static bool CheckFloaterOrGliderTransition(

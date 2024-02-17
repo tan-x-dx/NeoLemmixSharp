@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
 public sealed class SecondaryAnimationReader : INeoLemmixDataReader
 {
@@ -32,7 +32,6 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
 
             if (_triggerReader.FinishedReading)
             {
-                _triggerReader.Dispose();
                 _triggerReader = null;
             }
 
@@ -94,9 +93,5 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
         }
 
         return false;
-    }
-
-    public void Dispose()
-    {
     }
 }

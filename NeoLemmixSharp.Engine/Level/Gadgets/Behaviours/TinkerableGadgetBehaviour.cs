@@ -8,6 +8,6 @@ public sealed class TinkerableGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.TinkerableGadgetTypeId;
-    public override string GadgetTypeName => "tinkerable";
+    public override int Id => LevelConstants.TinkerableGadgetBehaviourId;
+    public override string GadgetBehaviourName => "tinkerable";
 }

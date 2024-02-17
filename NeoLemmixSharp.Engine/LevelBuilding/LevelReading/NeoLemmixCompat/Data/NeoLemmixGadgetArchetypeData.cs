@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading.GadgetReading;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
@@ -9,7 +9,7 @@ public sealed class NeoLemmixGadgetArchetypeData
     public required string? Style { get; init; }
     public required string? Gadget { get; init; }
 
-    public NeoLemmixGadgetType Type { get; set; }
+    public NeoLemmixGadgetBehaviour Behaviour { get; set; }
 
     public int TriggerX { get; set; }
     public int TriggerY { get; set; }

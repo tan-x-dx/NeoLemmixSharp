@@ -8,6 +8,6 @@ public sealed class SwitchGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.SwitchGadgetTypeId;
-    public override string GadgetTypeName => "switch";
+    public override int Id => LevelConstants.SwitchGadgetBehaviourId;
+    public override string GadgetBehaviourName => "switch";
 }

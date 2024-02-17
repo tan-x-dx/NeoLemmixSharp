@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.LevelReading;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
 public sealed class LemmingReader : INeoLemmixDataReader
 {
