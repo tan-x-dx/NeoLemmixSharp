@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
@@ -13,7 +14,9 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
     private readonly List<GadgetState> _stateList = new();
 
     public required int GadgetBuilderId { get; init; }
-    
+
+    public required Texture2D Sprite { get; init; }
+
     public GadgetBase BuildGadget(
         GadgetData gadgetData, 
         IPerfectHasher<Lemming> lemmingHasher)

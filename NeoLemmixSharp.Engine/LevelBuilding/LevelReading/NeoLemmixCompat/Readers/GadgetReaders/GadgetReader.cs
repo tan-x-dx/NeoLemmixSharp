@@ -212,9 +212,6 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     private void ProcessGadgetArchetypeData(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
     {
-        var rootFilePath = Path.Combine(_currentFolder!, gadgetArchetypeData.Gadget!);
-        rootFilePath = Path.ChangeExtension(rootFilePath, NeoLemmixFileExtensions.GadgetFileExtension);
-
         var dataReaders = new INeoLemmixDataReader[]
         {
             new GadgetArchetypeDataReader(gadgetArchetypeData),
@@ -223,6 +220,9 @@ public sealed class GadgetReader : INeoLemmixDataReader
         };
 
         var dataReaderList = new DataReaderList(dataReaders);
+
+        var rootFilePath = Path.Combine(_currentFolder!, gadgetArchetypeData.Gadget!);
+        rootFilePath = Path.ChangeExtension(rootFilePath, NeoLemmixFileExtensions.GadgetFileExtension);
 
         dataReaderList.ReadFile(rootFilePath);
     }

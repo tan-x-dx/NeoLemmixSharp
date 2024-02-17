@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
@@ -17,6 +18,8 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
 
     public required int HatchWidth { get; init; }
     public required int HatchHeight { get; init; }
+
+    public required Texture2D Sprite { get; init; }
 
     public GadgetBase BuildGadget(GadgetData gadgetData, IPerfectHasher<Lemming> lemmingHasher)
     {
