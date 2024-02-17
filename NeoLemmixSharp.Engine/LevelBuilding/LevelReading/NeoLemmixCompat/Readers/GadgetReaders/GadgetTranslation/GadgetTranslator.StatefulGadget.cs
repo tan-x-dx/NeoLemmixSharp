@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
-public readonly ref partial struct GadgetTranslator
+public sealed partial class GadgetTranslator
 {
     private void ProcessStatefulGadgetBuilder(
         NeoLemmixGadgetArchetypeData archetypeData,

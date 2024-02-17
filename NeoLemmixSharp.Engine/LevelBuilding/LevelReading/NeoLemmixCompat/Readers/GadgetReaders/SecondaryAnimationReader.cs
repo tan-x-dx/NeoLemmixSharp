@@ -32,7 +32,6 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
 
             if (_triggerReader.FinishedReading)
             {
-                _triggerReader.Dispose();
                 _triggerReader = null;
             }
 
@@ -94,9 +93,5 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
         }
 
         return false;
-    }
-
-    public void Dispose()
-    {
     }
 }

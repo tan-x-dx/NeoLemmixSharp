@@ -75,8 +75,4 @@ public sealed class PrimaryAnimationReader : INeoLemmixDataReader
 
         return false;
     }
-
-    public void Dispose()
-    {
-    }
 }

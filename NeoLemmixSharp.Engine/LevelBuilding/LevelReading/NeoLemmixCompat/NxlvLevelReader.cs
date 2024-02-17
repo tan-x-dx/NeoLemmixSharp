@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
@@ -8,7 +9,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 public sealed class NxlvLevelReader : ILevelReader
 {
-    public LevelData ReadLevel(string levelFilePath)
+    public LevelData ReadLevel(string levelFilePath, GraphicsDevice graphicsDevice)
     {
         var levelData = new LevelData();
 
@@ -37,17 +38,10 @@ public sealed class NxlvLevelReader : ILevelReader
         dataReaderList.ReadFile(levelFilePath);
 
         terrainGroupReader.ApplyToLevelData(levelData);
-        gadgetReader.ApplyToLevelData(levelData);
+        gadgetReader.ApplyToLevelData(levelData, graphicsDevice);
         lemmingReader.ApplyToLevelData(levelData);
 
-        SetUpLevelData(levelData);
-
         return levelData;
-    }
-
-    private static void SetUpLevelData(LevelData levelData)
-    {
-
     }
 
     public void Dispose()

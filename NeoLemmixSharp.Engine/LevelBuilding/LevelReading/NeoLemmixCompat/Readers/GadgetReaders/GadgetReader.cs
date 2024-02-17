@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
@@ -226,9 +227,9 @@ public sealed class GadgetReader : INeoLemmixDataReader
         dataReaderList.ReadFile(rootFilePath);
     }
 
-    public void ApplyToLevelData(LevelData levelData)
+    public void ApplyToLevelData(LevelData levelData, GraphicsDevice graphicsDevice)
     {
-        new GadgetTranslator(levelData)
+        new GadgetTranslator(levelData, graphicsDevice)
             .TranslateNeoLemmixGadgets(_gadgetArchetypes, _allGadgetData);
     }
 }

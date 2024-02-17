@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -7,13 +8,15 @@ using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
-public readonly ref partial struct GadgetTranslator
+public sealed partial class GadgetTranslator
 {
     private readonly LevelData _levelData;
+    private readonly GraphicsDevice _graphicsDevice;
 
-    public GadgetTranslator(LevelData levelData)
+    public GadgetTranslator(LevelData levelData, GraphicsDevice graphicsDevice)
     {
         _levelData = levelData;
+        _graphicsDevice = graphicsDevice;
     }
 
     public void TranslateNeoLemmixGadgets(

@@ -55,8 +55,4 @@ public sealed class AnimationTriggerReader : INeoLemmixDataReader
 
         return false;
     }
-
-    public void Dispose()
-    {
-    }
 }
