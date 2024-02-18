@@ -14,38 +14,63 @@ public sealed partial class GadgetTranslator
         out int spriteWidth,
         out int spriteHeight)
     {
-        var primaryTexture = LoadNativeGadgetTextures(archetypeData);
+        var primaryTexture = LoadSourceGadgetTextures(archetypeData);
 
-        spriteWidth = primaryTexture.Width;
-        spriteHeight = primaryTexture.Height / archetypeData.PrimaryAnimationFrameCount;
+        var maxTextureHeight = primaryTexture.Height;
+
+        var primaryTextureSpriteWidth = primaryTexture.Width;
+        var primaryTextureSpriteHeight = primaryTexture.Height / archetypeData.PrimaryAnimationFrameCount;
+
+        spriteWidth = primaryTextureSpriteWidth;
+        spriteHeight = primaryTextureSpriteHeight;
 
         var animationDataSpan = CollectionsMarshal.AsSpan(archetypeData.AnimationData);
         if (animationDataSpan.IsEmpty)
             return primaryTexture;
 
-        var maxTextureWidth = primaryTexture.Width;
-        var maxTextureHeight = primaryTexture.Height;
-
         foreach (var animationData in animationDataSpan)
         {
             var texture = animationData.Texture!;
 
-            maxTextureWidth += texture.Width;
             maxTextureHeight = Math.Max(maxTextureHeight, texture.Height);
+
+            spriteWidth = Math.Max(spriteWidth, texture.Width);
+            var animationSpriteHeight = texture.Height / animationData.NumberOfFrames;
+            spriteHeight = Math.Max(spriteHeight, animationSpriteHeight);
         }
 
-        var result = new Texture2D(_graphicsDevice, maxTextureWidth * (1 + animationDataSpan.Length), maxTextureHeight);
+        var result = new Texture2D(_graphicsDevice, spriteWidth * (1 + animationDataSpan.Length), maxTextureHeight);
         var resultTextureData = new uint[result.Width * result.Height];
 
-        var primaryTextureData = new uint[primaryTexture.Width * primaryTexture.Height];
-        primaryTexture.GetData(primaryTextureData);
-
-        var xOffset = StitchTexture(resultTextureData, result.Width, result.Height, 0, primaryTexture);
+        var xOffset = StitchTexture(
+            resultTextureData,
+            result.Width,
+            result.Height,
+            spriteWidth,
+            spriteHeight,
+            0,
+            primaryTexture,
+            primaryTextureSpriteWidth,
+            primaryTextureSpriteHeight,
+            archetypeData.PrimaryAnimationFrameCount);
 
         foreach (var animationData in animationDataSpan)
         {
             var animationTexture = animationData.Texture!;
-            var xOffsetDelta = StitchTexture(resultTextureData, result.Width, result.Height, xOffset, animationTexture);
+
+            var animationSpriteWidth = animationTexture.Width;
+            var animationSpriteHeight = animationTexture.Height / animationData.NumberOfFrames;
+            var xOffsetDelta = StitchTexture(
+                resultTextureData,
+                result.Width,
+                result.Height,
+                spriteWidth,
+                spriteHeight,
+                xOffset,
+                animationTexture,
+                animationSpriteWidth,
+                animationSpriteHeight,
+                animationData.NumberOfFrames);
 
             xOffset += xOffsetDelta;
         }
@@ -55,10 +80,18 @@ public sealed partial class GadgetTranslator
         primaryTexture.Dispose();
         DisposeOfSourceTextures(archetypeData);
 
+        /*
+        // For debugging purposes
+        var fileName = $@"C:\Temp\{archetypeData.Style}_{archetypeData.Gadget}.png";
+        using (var fileStream = File.Create(fileName))
+        {
+            result.SaveAsPng(fileStream, result.Width, result.Height);
+        }*/
+
         return result;
     }
 
-    private Texture2D LoadNativeGadgetTextures(
+    private Texture2D LoadSourceGadgetTextures(
         NeoLemmixGadgetArchetypeData archetypeData)
     {
         var styleObjectFolderPath = Path.Combine(
@@ -124,24 +157,34 @@ public sealed partial class GadgetTranslator
         uint[] resultTextureData,
         int resultTextureWidth,
         int resultTextureHeight,
+        int resultSpriteWidth,
+        int resultSpriteHeight,
         int xOffset,
-        Texture2D sourceTexture)
+        Texture2D sourceTexture,
+        int spriteWidth,
+        int spriteHeight,
+        int numberOfFrames)
     {
-        var animationTextureData = new uint[sourceTexture.Width * sourceTexture.Height];
-        sourceTexture.GetData(animationTextureData);
+        var sourceTextureData = new uint[sourceTexture.Width * sourceTexture.Height];
+        sourceTexture.GetData(sourceTextureData);
 
-        var animationTextureWrapper = new SpanWrapper2D(animationTextureData, sourceTexture.Width, sourceTexture.Height, 0, 0, sourceTexture.Width, sourceTexture.Height);
-        var resultTextureWrapper = new SpanWrapper2D(resultTextureData, resultTextureWidth, resultTextureHeight, xOffset, 0, sourceTexture.Width, sourceTexture.Height);
-
-        for (var x = 0; x < animationTextureWrapper.Width; x++)
+        for (var i = 0; i < numberOfFrames; i++)
         {
-            for (var y = 0; y < animationTextureWrapper.Height; y++)
+            var yOffset = i * spriteHeight;
+
+            var sourceTextureWrapper = new SpanWrapper2D(sourceTextureData, sourceTexture.Width, sourceTexture.Height, 0, yOffset, spriteWidth, spriteHeight);
+            var resultTextureWrapper = new SpanWrapper2D(resultTextureData, resultTextureWidth, resultTextureHeight, xOffset, i * resultSpriteHeight, spriteWidth, spriteHeight);
+
+            for (var x = 0; x < sourceTextureWrapper.Width; x++)
             {
-                resultTextureWrapper[x, y] = animationTextureWrapper[x, y];
+                for (var y = 0; y < sourceTextureWrapper.Height; y++)
+                {
+                    resultTextureWrapper[x, y] = sourceTextureWrapper[x, y];
+                }
             }
         }
 
-        return sourceTexture.Width;
+        return resultSpriteWidth;
     }
 
     private static void DisposeOfSourceTextures(NeoLemmixGadgetArchetypeData archetypeData)
