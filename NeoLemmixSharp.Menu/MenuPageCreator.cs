@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using GeonBit.UI.Utils;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding;
@@ -34,12 +35,12 @@ public sealed class MenuPageCreator
     private static string GetLevelFilePath()
     {
         var file =
-          // "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
-          // "levels\\rotation test.nxlv";
-          // "levels\\render test.nxlv";
-          // "levels\\movement test.nxlv";
+           // "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
+           // "levels\\rotation test.nxlv";
+           // "levels\\render test.nxlv";
+           // "levels\\movement test.nxlv";
            "levels\\object test 2.nxlv";
-          // "levels\\lemming_count_test.nxlv";
+        // "levels\\lemming_count_test.nxlv";
         // "levels\\test foo.nxlv";
         // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
         // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
@@ -80,7 +81,7 @@ public sealed class MenuPageCreator
         }
         catch (Exception ex)
         {
-            ;
+            MessageBox.ShowMsgBox("Error occurred!", ex.Message);
         }
         finally
         {
