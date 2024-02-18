@@ -16,8 +16,6 @@ public sealed partial class GadgetTranslator
     {
         var primaryTexture = LoadSourceGadgetTextures(archetypeData);
 
-        var maxTextureHeight = primaryTexture.Height;
-
         var primaryTextureSpriteWidth = primaryTexture.Width;
         var primaryTextureSpriteHeight = primaryTexture.Height / archetypeData.PrimaryAnimationFrameCount;
 
@@ -28,31 +26,32 @@ public sealed partial class GadgetTranslator
         if (animationDataSpan.IsEmpty)
             return primaryTexture;
 
+        var maxNumberOfFrames = archetypeData.PrimaryAnimationFrameCount;
         foreach (var animationData in animationDataSpan)
         {
             var texture = animationData.Texture!;
 
-            maxTextureHeight = Math.Max(maxTextureHeight, texture.Height);
-
             spriteWidth = Math.Max(spriteWidth, texture.Width);
             var animationSpriteHeight = texture.Height / animationData.NumberOfFrames;
             spriteHeight = Math.Max(spriteHeight, animationSpriteHeight);
+            maxNumberOfFrames = Math.Max(maxNumberOfFrames, animationData.NumberOfFrames);
         }
 
-        var result = new Texture2D(_graphicsDevice, spriteWidth * (1 + animationDataSpan.Length), maxTextureHeight);
+        var resultSpriteWidth = spriteWidth;
+        var resultSpriteHeight = spriteHeight;
+
+        var result = new Texture2D(_graphicsDevice, resultSpriteWidth * (1 + animationDataSpan.Length), maxNumberOfFrames * resultSpriteHeight);
         var resultTextureData = new uint[result.Width * result.Height];
 
-        var xOffset = StitchTexture(
-            resultTextureData,
-            result.Width,
-            result.Height,
-            spriteWidth,
-            spriteHeight,
-            0,
+        var xOffset = 0;
+
+        StitchTexture(
             primaryTexture,
             primaryTextureSpriteWidth,
             primaryTextureSpriteHeight,
             archetypeData.PrimaryAnimationFrameCount);
+
+        xOffset += resultSpriteWidth;
 
         foreach (var animationData in animationDataSpan)
         {
@@ -60,19 +59,13 @@ public sealed partial class GadgetTranslator
 
             var animationSpriteWidth = animationTexture.Width;
             var animationSpriteHeight = animationTexture.Height / animationData.NumberOfFrames;
-            var xOffsetDelta = StitchTexture(
-                resultTextureData,
-                result.Width,
-                result.Height,
-                spriteWidth,
-                spriteHeight,
-                xOffset,
+            StitchTexture(
                 animationTexture,
                 animationSpriteWidth,
                 animationSpriteHeight,
                 animationData.NumberOfFrames);
 
-            xOffset += xOffsetDelta;
+            xOffset += resultSpriteWidth;
         }
 
         result.SetData(resultTextureData);
@@ -89,6 +82,30 @@ public sealed partial class GadgetTranslator
         }*/
 
         return result;
+
+        void StitchTexture(
+            Texture2D sourceTexture,
+            int currentSpriteWidth,
+            int currentSpriteHeight,
+            int numberOfFrames)
+        {
+            var sourceTextureData = new uint[sourceTexture.Width * sourceTexture.Height];
+            sourceTexture.GetData(sourceTextureData);
+
+            for (var i = 0; i < numberOfFrames; i++)
+            {
+                var sourceTextureWrapper = new SpanWrapper2D(sourceTextureData, sourceTexture.Width, sourceTexture.Height, 0, i * currentSpriteHeight, currentSpriteWidth, currentSpriteHeight);
+                var resultTextureWrapper = new SpanWrapper2D(resultTextureData, result.Width, result.Height, xOffset, i * resultSpriteHeight, currentSpriteWidth, currentSpriteHeight);
+
+                for (var x = 0; x < sourceTextureWrapper.Width; x++)
+                {
+                    for (var y = 0; y < sourceTextureWrapper.Height; y++)
+                    {
+                        resultTextureWrapper[x, y] = sourceTextureWrapper[x, y];
+                    }
+                }
+            }
+        }
     }
 
     private Texture2D LoadSourceGadgetTextures(
@@ -151,40 +168,6 @@ public sealed partial class GadgetTranslator
         }
 
         return primaryTexture;
-    }
-
-    private static int StitchTexture(
-        uint[] resultTextureData,
-        int resultTextureWidth,
-        int resultTextureHeight,
-        int resultSpriteWidth,
-        int resultSpriteHeight,
-        int xOffset,
-        Texture2D sourceTexture,
-        int spriteWidth,
-        int spriteHeight,
-        int numberOfFrames)
-    {
-        var sourceTextureData = new uint[sourceTexture.Width * sourceTexture.Height];
-        sourceTexture.GetData(sourceTextureData);
-
-        for (var i = 0; i < numberOfFrames; i++)
-        {
-            var yOffset = i * spriteHeight;
-
-            var sourceTextureWrapper = new SpanWrapper2D(sourceTextureData, sourceTexture.Width, sourceTexture.Height, 0, yOffset, spriteWidth, spriteHeight);
-            var resultTextureWrapper = new SpanWrapper2D(resultTextureData, resultTextureWidth, resultTextureHeight, xOffset, i * resultSpriteHeight, spriteWidth, spriteHeight);
-
-            for (var x = 0; x < sourceTextureWrapper.Width; x++)
-            {
-                for (var y = 0; y < sourceTextureWrapper.Height; y++)
-                {
-                    resultTextureWrapper[x, y] = sourceTextureWrapper[x, y];
-                }
-            }
-        }
-
-        return resultSpriteWidth;
     }
 
     private static void DisposeOfSourceTextures(NeoLemmixGadgetArchetypeData archetypeData)
