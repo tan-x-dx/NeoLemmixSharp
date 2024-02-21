@@ -13,16 +13,16 @@ public sealed class PauseButtonAction : IButtonAction
         _pauseAction = pauseAction;
     }
 
-	public void OnMouseDown()
-	{
-	}
+    public void OnMouseDown()
+    {
+    }
 
-	public void OnPress(bool isDoubleTap)
+    public void OnPress(bool isDoubleTap)
     {
         _pauseAction.DoPress();
     }
 
-	public void OnRightClick()
-	{
-	}
+    public void OnRightClick()
+    {
+    }
 }

@@ -12,188 +12,188 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelCursor
 {
-	private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
-	private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
-	private readonly LevelInputController _controller;
+    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
+    private readonly LevelInputController _controller;
 
-	private FacingDirection? _facingDirection;
-	private bool _selectOnlyWalkers;
-	private bool _selectOnlyUnassigned;
+    private FacingDirection? _facingDirection;
+    private bool _selectOnlyWalkers;
+    private bool _selectOnlyUnassigned;
 
-	private int _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre;
+    private int _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre;
 
-	public int NumberOfLemmingsUnderCursor { get; private set; }
-	public LevelPosition CursorPosition { private get; set; }
+    public int NumberOfLemmingsUnderCursor { get; private set; }
+    public LevelPosition CursorPosition { private get; set; }
 
-	public Lemming? CurrentlyHighlightedLemming { get; private set; }
+    public Lemming? CurrentlyHighlightedLemming { get; private set; }
 
-	public Color Color1 { get; private set; }
-	public Color Color2 { get; private set; }
-	public Color Color3 { get; private set; }
+    public Color Color1 { get; private set; }
+    public Color Color2 { get; private set; }
+    public Color Color3 { get; private set; }
 
-	public LevelCursor(
-		IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
-		IVerticalBoundaryBehaviour verticalBoundaryBehaviour,
-		LevelInputController controller)
-	{
-		_horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
-		_verticalBoundaryBehaviour = verticalBoundaryBehaviour;
-		_controller = controller;
+    public LevelCursor(
+        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
+        IVerticalBoundaryBehaviour verticalBoundaryBehaviour,
+        LevelInputController controller)
+    {
+        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
+        _controller = controller;
 
-		SetSelectedTeam(null);
-	}
+        SetSelectedTeam(null);
+    }
 
-	public void Tick()
-	{
-		NumberOfLemmingsUnderCursor = 0;
-		CurrentlyHighlightedLemming = null;
-		_currentlyHighlightedLemmingDistanceSquaredFromCursorCentre = int.MaxValue;
+    public void Tick()
+    {
+        NumberOfLemmingsUnderCursor = 0;
+        CurrentlyHighlightedLemming = null;
+        _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre = int.MaxValue;
 
-		_selectOnlyWalkers = _controller.SelectOnlyWalkers.IsActionDown;
-		_selectOnlyUnassigned = _controller.SelectOnlyUnassignedLemmings.IsActionDown;
+        _selectOnlyWalkers = _controller.SelectOnlyWalkers.IsActionDown;
+        _selectOnlyUnassigned = _controller.SelectOnlyUnassignedLemmings.IsActionDown;
 
-		if (_controller.SelectLeftFacingLemmings.IsActionDown)
-		{
-			_facingDirection = FacingDirection.LeftInstance;
-		}
-		else if (_controller.SelectRightFacingLemmings.IsActionDown)
-		{
-			_facingDirection = FacingDirection.RightInstance;
-		}
-		else
-		{
-			_facingDirection = null;
-		}
-	}
+        if (_controller.SelectLeftFacingLemmings.IsActionDown)
+        {
+            _facingDirection = FacingDirection.LeftInstance;
+        }
+        else if (_controller.SelectRightFacingLemmings.IsActionDown)
+        {
+            _facingDirection = FacingDirection.RightInstance;
+        }
+        else
+        {
+            _facingDirection = null;
+        }
+    }
 
-	public SimpleSetEnumerable<Lemming> LemmingsNearCursorPosition()
-	{
-		var c = CursorPosition;
-		var x = c.X;
-		var y = c.Y;
+    public SimpleSetEnumerable<Lemming> LemmingsNearCursorPosition()
+    {
+        var c = CursorPosition;
+        var x = c.X;
+        var y = c.Y;
 
-		var levelRegion = new LevelPositionPair(x - 7, y - 7, x + 6, y + 6);
+        var levelRegion = new LevelPositionPair(x - 7, y - 7, x + 6, y + 6);
 
-		return LevelScreen.LemmingManager.GetAllLemmingsNearRegion(levelRegion);
-	}
+        return LevelScreen.LemmingManager.GetAllLemmingsNearRegion(levelRegion);
+    }
 
-	public void SetSelectedTeam(Team? team)
-	{
-		if (team is null)
-		{
-			Color1 = LevelConstants.CursorColor1;
-			Color2 = LevelConstants.CursorColor2;
-			Color3 = LevelConstants.CursorColor3;
+    public void SetSelectedTeam(Team? team)
+    {
+        if (team is null)
+        {
+            Color1 = LevelConstants.CursorColor1;
+            Color2 = LevelConstants.CursorColor2;
+            Color3 = LevelConstants.CursorColor3;
 
-			return;
-		}
+            return;
+        }
 
-		Color1 = team.HairColor;
-		Color2 = team.BodyColor;
-		Color3 = team.SkinColor;
-	}
+        Color1 = team.HairColor;
+        Color2 = team.BodyColor;
+        Color3 = team.SkinColor;
+    }
 
-	public void CheckLemming(Lemming lemming)
-	{
-		if (!LemmingIsUnderCursor(lemming) || !LemmingIsAbleToBeSelected(lemming))
-			return;
+    public void CheckLemming(Lemming lemming)
+    {
+        if (!LemmingIsUnderCursor(lemming) || !LemmingIsAbleToBeSelected(lemming))
+            return;
 
-		NumberOfLemmingsUnderCursor++;
-		if (NewCandidateIsHigherPriority(CurrentlyHighlightedLemming, lemming))
-		{
-			CurrentlyHighlightedLemming = lemming;
-		}
-	}
+        NumberOfLemmingsUnderCursor++;
+        if (NewCandidateIsHigherPriority(CurrentlyHighlightedLemming, lemming))
+        {
+            CurrentlyHighlightedLemming = lemming;
+        }
+    }
 
-	private bool LemmingIsUnderCursor(Lemming lemming)
-	{
-		var lemmingPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 4);
+    private bool LemmingIsUnderCursor(Lemming lemming)
+    {
+        var lemmingPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 4);
 
-		var dx = _horizontalBoundaryBehaviour.GetHorizontalDelta(CursorPosition.X, lemmingPosition.X);
-		var dy = _verticalBoundaryBehaviour.GetVerticalDelta(CursorPosition.Y, lemmingPosition.Y);
+        var dx = _horizontalBoundaryBehaviour.GetHorizontalDelta(CursorPosition.X, lemmingPosition.X);
+        var dy = _verticalBoundaryBehaviour.GetVerticalDelta(CursorPosition.Y, lemmingPosition.Y);
 
-		return Math.Abs(dx) < 5 && Math.Abs(dy) < 5;
-	}
+        return Math.Abs(dx) < 5 && Math.Abs(dy) < 5;
+    }
 
-	private bool LemmingIsAbleToBeSelected(Lemming lemming)
-	{
-		// Directional select
-		if (_facingDirection is not null &&
-			lemming.FacingDirection != _facingDirection &&
-			!(false))//and(not(IsHighlight or IsReplay))
-			return false;
+    private bool LemmingIsAbleToBeSelected(Lemming lemming)
+    {
+        // Directional select
+        if (_facingDirection is not null &&
+            lemming.FacingDirection != _facingDirection &&
+            !(false))//and(not(IsHighlight or IsReplay))
+            return false;
 
-		// Select only walkers
-		if (_selectOnlyWalkers && lemming.CurrentAction != WalkerAction.Instance &&
-			!(false)) //and(not(IsHighlight or IsReplay))
-			return false;
+        // Select only walkers
+        if (_selectOnlyWalkers && lemming.CurrentAction != WalkerAction.Instance &&
+            !(false)) //and(not(IsHighlight or IsReplay))
+            return false;
 
-		// Select only unassigned
-		if (_selectOnlyUnassigned && lemming.State.HasPermanentSkill)
-			return false;
+        // Select only unassigned
+        if (_selectOnlyUnassigned && lemming.State.HasPermanentSkill)
+            return false;
 
-		return true;
-	}
+        return true;
+    }
 
-	private bool NewCandidateIsHigherPriority(Lemming? previousCandidate, Lemming newCandidate)
-	{
-		if (previousCandidate is null)
-		{
-			_currentlyHighlightedLemmingDistanceSquaredFromCursorCentre = GetDistanceSquaredFromCursorCentre(newCandidate);
+    private bool NewCandidateIsHigherPriority(Lemming? previousCandidate, Lemming newCandidate)
+    {
+        if (previousCandidate is null)
+        {
+            _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre = GetDistanceSquaredFromCursorCentre(newCandidate);
 
-			return true;
-		}
+            return true;
+        }
 
-		return NewCandidateHasMoreRelevantState(previousCandidate, newCandidate) ||
-			   NewCandidateHasMoreRelevantTeam(previousCandidate, newCandidate) ||
-			   NewCandidateHasHigherActionPriority(previousCandidate, newCandidate) ||
-			   NewCandidateIsCloserToCursorCentre(newCandidate);
-	}
+        return NewCandidateHasMoreRelevantState(previousCandidate, newCandidate) ||
+               NewCandidateHasMoreRelevantTeam(previousCandidate, newCandidate) ||
+               NewCandidateHasHigherActionPriority(previousCandidate, newCandidate) ||
+               NewCandidateIsCloserToCursorCentre(newCandidate);
+    }
 
-	private static bool NewCandidateHasMoreRelevantState(Lemming previousCandidate, Lemming newCandidate)
-	{
-		return (previousCandidate.State.IsNeutral && !newCandidate.State.IsNeutral) ||
-			   (previousCandidate.State.IsZombie && !newCandidate.State.IsZombie);
-	}
+    private static bool NewCandidateHasMoreRelevantState(Lemming previousCandidate, Lemming newCandidate)
+    {
+        return (previousCandidate.State.IsNeutral && !newCandidate.State.IsNeutral) ||
+               (previousCandidate.State.IsZombie && !newCandidate.State.IsZombie);
+    }
 
-	private bool NewCandidateHasMoreRelevantTeam(Lemming previousCandidate, Lemming newCandidate)
-	{
-		var skillTrackingDataId = LevelScreen.LevelControlPanel.SelectedSkillAssignButton?.SkillTrackingDataId ?? -1;
+    private bool NewCandidateHasMoreRelevantTeam(Lemming previousCandidate, Lemming newCandidate)
+    {
+        var skillTrackingDataId = LevelScreen.LevelControlPanel.SelectedSkillAssignButton?.SkillTrackingDataId ?? -1;
 
-		var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(skillTrackingDataId);
-		if (skillTrackingData is null)
-			return false;
+        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(skillTrackingDataId);
+        if (skillTrackingData is null)
+            return false;
 
-		var previousCandidateMatchesTeam = previousCandidate.State.TeamAffiliation == skillTrackingData.Team;
-		var newCandidateMatchesTeam = newCandidate.State.TeamAffiliation == skillTrackingData.Team;
+        var previousCandidateMatchesTeam = previousCandidate.State.TeamAffiliation == skillTrackingData.Team;
+        var newCandidateMatchesTeam = newCandidate.State.TeamAffiliation == skillTrackingData.Team;
 
-		return newCandidateMatchesTeam && !previousCandidateMatchesTeam;
-	}
+        return newCandidateMatchesTeam && !previousCandidateMatchesTeam;
+    }
 
-	private static bool NewCandidateHasHigherActionPriority(Lemming previousCandidate, Lemming newCandidate)
-	{
-		return newCandidate.CurrentAction.CursorSelectionPriorityValue >
-			   previousCandidate.CurrentAction.CursorSelectionPriorityValue;
-	}
+    private static bool NewCandidateHasHigherActionPriority(Lemming previousCandidate, Lemming newCandidate)
+    {
+        return newCandidate.CurrentAction.CursorSelectionPriorityValue >
+               previousCandidate.CurrentAction.CursorSelectionPriorityValue;
+    }
 
-	private bool NewCandidateIsCloserToCursorCentre(Lemming newCandidate)
-	{
-		var newCandidateDistanceSquaredFromCursorCentre = GetDistanceSquaredFromCursorCentre(newCandidate);
+    private bool NewCandidateIsCloserToCursorCentre(Lemming newCandidate)
+    {
+        var newCandidateDistanceSquaredFromCursorCentre = GetDistanceSquaredFromCursorCentre(newCandidate);
 
-		if (newCandidateDistanceSquaredFromCursorCentre >= _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre)
-			return false;
+        if (newCandidateDistanceSquaredFromCursorCentre >= _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre)
+            return false;
 
-		_currentlyHighlightedLemmingDistanceSquaredFromCursorCentre = newCandidateDistanceSquaredFromCursorCentre;
-		return true;
-	}
+        _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre = newCandidateDistanceSquaredFromCursorCentre;
+        return true;
+    }
 
-	private int GetDistanceSquaredFromCursorCentre(Lemming lemming)
-	{
-		var lemmingPosition = lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 4);
+    private int GetDistanceSquaredFromCursorCentre(Lemming lemming)
+    {
+        var lemmingPosition = lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 4);
 
-		var dx = _horizontalBoundaryBehaviour.GetHorizontalDelta(CursorPosition.X, lemmingPosition.X);
-		var dy = _verticalBoundaryBehaviour.GetVerticalDelta(CursorPosition.Y, lemmingPosition.Y);
+        var dx = _horizontalBoundaryBehaviour.GetHorizontalDelta(CursorPosition.X, lemmingPosition.X);
+        var dy = _verticalBoundaryBehaviour.GetVerticalDelta(CursorPosition.Y, lemmingPosition.Y);
 
-		return dx * dx + dy * dy;
-	}
+        return dx * dx + dy * dy;
+    }
 }

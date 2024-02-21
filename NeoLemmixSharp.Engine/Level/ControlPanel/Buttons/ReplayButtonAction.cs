@@ -2,17 +2,17 @@
 
 public sealed class ReplayButtonAction : IButtonAction
 {
-	public ButtonType ButtonType => ButtonType.Replay;
+    public ButtonType ButtonType => ButtonType.Replay;
 
-	public void OnMouseDown()
-	{
-	}
+    public void OnMouseDown()
+    {
+    }
 
-	public void OnPress(bool isDoubleTap)
-	{
-	}
+    public void OnPress(bool isDoubleTap)
+    {
+    }
 
-	public void OnRightClick()
-	{
-	}
+    public void OnRightClick()
+    {
+    }
 }

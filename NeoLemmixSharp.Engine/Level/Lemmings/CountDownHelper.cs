@@ -5,22 +5,22 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public static class CountDownHelper
 {
-	public static void UpdateCountDownTimer(Lemming lemming)
-	{
-		var lemmingRenderer = lemming.Renderer;
+    public static void UpdateCountDownTimer(Lemming lemming)
+    {
+        var lemmingRenderer = lemming.Renderer;
 
-		var textSpan = lemmingRenderer.CountDownCharsSpan;
-		var countDownValue = GetCountDownValue(lemming);
+        var textSpan = lemmingRenderer.CountDownCharsSpan;
+        var countDownValue = GetCountDownValue(lemming);
 
-		TextRenderingHelpers.WriteDigits(textSpan, countDownValue);
-	}
+        TextRenderingHelpers.WriteDigits(textSpan, countDownValue);
+    }
 
-	private static int GetCountDownValue(Lemming lemming)
-	{
-		var countDownTimer = lemming.CountDownTimer;
+    private static int GetCountDownValue(Lemming lemming)
+    {
+        var countDownTimer = lemming.CountDownTimer;
 
-		return lemming.IsFastForward
-			? (countDownTimer + EngineConstants.FramesPerSecond - 1) / EngineConstants.FramesPerSecond
-			: (countDownTimer + EngineConstants.StandardTicksPerSecond - 1) / EngineConstants.StandardTicksPerSecond;
-	}
+        return lemming.IsFastForward
+            ? (countDownTimer + EngineConstants.FramesPerSecond - 1) / EngineConstants.FramesPerSecond
+            : (countDownTimer + EngineConstants.StandardTicksPerSecond - 1) / EngineConstants.StandardTicksPerSecond;
+    }
 }

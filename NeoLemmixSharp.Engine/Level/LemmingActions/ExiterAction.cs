@@ -28,9 +28,9 @@ public sealed class ExiterAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-	    base.TransitionLemmingToAction(lemming, turnAround);
+        base.TransitionLemmingToAction(lemming, turnAround);
 
-	    lemming.CountDownTimer = 0;
+        lemming.CountDownTimer = 0;
     }
 
     /*
