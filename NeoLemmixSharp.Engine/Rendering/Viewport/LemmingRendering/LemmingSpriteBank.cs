@@ -8,55 +8,55 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public sealed class LemmingSpriteBank : IDisposable
 {
-	private readonly LemmingActionSprite[] _actionSprites;
-	private readonly TeamColorData[] _teamColorData;
+    private readonly LemmingActionSprite[] _actionSprites;
+    private readonly TeamColorData[] _teamColorData;
 
-	public LemmingSpriteBank(LemmingActionSprite[] actionSprites, TeamColorData[] teamColorData)
-	{
-		_actionSprites = actionSprites;
-		_teamColorData = teamColorData;
-	}
+    public LemmingSpriteBank(LemmingActionSprite[] actionSprites, TeamColorData[] teamColorData)
+    {
+        _actionSprites = actionSprites;
+        _teamColorData = teamColorData;
+    }
 
-	public LemmingActionSprite GetActionSprite(
-		LemmingAction lemmingAction,
-		Orientation orientation,
-		FacingDirection facingDirection)
-	{
-		if (lemmingAction == NoneAction.Instance)
-			return LemmingActionSprite.Empty;
+    public LemmingActionSprite GetActionSprite(
+        LemmingAction lemmingAction,
+        Orientation orientation,
+        FacingDirection facingDirection)
+    {
+        if (lemmingAction == NoneAction.Instance)
+            return LemmingActionSprite.Empty;
 
-		var key = GetKey(lemmingAction, orientation, facingDirection);
+        var key = GetKey(lemmingAction, orientation, facingDirection);
 
-		return _actionSprites[key];
-	}
+        return _actionSprites[key];
+    }
 
-	public static int GetKey(
-		LemmingAction lemmingAction,
-		Orientation orientation,
-		FacingDirection facingDirection)
-	{
-		if (lemmingAction == NoneAction.Instance)
-			throw new InvalidOperationException("Cannot render \"None\" action");
+    public static int GetKey(
+        LemmingAction lemmingAction,
+        Orientation orientation,
+        FacingDirection facingDirection)
+    {
+        if (lemmingAction == NoneAction.Instance)
+            throw new InvalidOperationException("Cannot render \"None\" action");
 
-		var lowerBits = GetKey(orientation, facingDirection);
+        var lowerBits = GetKey(orientation, facingDirection);
 
-		return (lemmingAction.Id << 3) | lowerBits;
-	}
+        return (lemmingAction.Id << 3) | lowerBits;
+    }
 
-	public static int GetKey(
-		Orientation orientation,
-		FacingDirection facingDirection)
-	{
-		return (orientation.RotNum << 1) | facingDirection.Id;
-	}
+    public static int GetKey(
+        Orientation orientation,
+        FacingDirection facingDirection)
+    {
+        return (orientation.RotNum << 1) | facingDirection.Id;
+    }
 
-	public void Dispose()
-	{
-		DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<LemmingActionSprite>(_actionSprites));
-	}
+    public void Dispose()
+    {
+        DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<LemmingActionSprite>(_actionSprites));
+    }
 
-	public void SetTeamColors(Team team)
-	{
-		team.SetColorData(_teamColorData[team.Id]);
-	}
+    public void SetTeamColors(Team team)
+    {
+        team.SetColorData(_teamColorData[team.Id]);
+    }
 }

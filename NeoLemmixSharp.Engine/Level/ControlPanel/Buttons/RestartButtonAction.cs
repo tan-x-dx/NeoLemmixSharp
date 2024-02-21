@@ -2,17 +2,17 @@
 
 public sealed class RestartButtonAction : IButtonAction
 {
-	public ButtonType ButtonType => ButtonType.Restart;
+    public ButtonType ButtonType => ButtonType.Restart;
 
-	public void OnMouseDown()
-	{
-	}
+    public void OnMouseDown()
+    {
+    }
 
-	public void OnPress(bool isDoubleTap)
-	{
-	}
+    public void OnPress(bool isDoubleTap)
+    {
+    }
 
-	public void OnRightClick()
-	{
-	}
+    public void OnRightClick()
+    {
+    }
 }

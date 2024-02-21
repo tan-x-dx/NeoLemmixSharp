@@ -2,16 +2,16 @@
 
 public enum LemmingRemovalReason
 {
-	None,
-	Exit,
-	DeathSplat,
-	DeathExplode,
-	DeathDrown,
-	DeathFire,
-	DeathTrap,
-	DeathVoid,
-	DeathZombie,
-	DeathWeasel,
-	DeathMetalGrate,
-	DeathDismemberment
+    None,
+    Exit,
+    DeathSplat,
+    DeathExplode,
+    DeathDrown,
+    DeathFire,
+    DeathTrap,
+    DeathVoid,
+    DeathZombie,
+    DeathWeasel,
+    DeathMetalGrate,
+    DeathDismemberment
 }

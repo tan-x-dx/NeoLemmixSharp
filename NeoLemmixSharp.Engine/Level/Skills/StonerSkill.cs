@@ -17,17 +17,17 @@ public sealed class StonerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-	    return lemming.CountDownTimer == 0 && ActionIsAssignable(lemming);
+        return lemming.CountDownTimer == 0 && ActionIsAssignable(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
-	{
-		var levelParameters = LevelScreen.LevelParameters;
-		var countDownTimer = levelParameters.GetLemmingCountDownTimer(lemming);
-		var displayTimer = levelParameters.TestFlag(LevelParameters.TimedBombers);
+    {
+        var levelParameters = LevelScreen.LevelParameters;
+        var countDownTimer = levelParameters.GetLemmingCountDownTimer(lemming);
+        var displayTimer = levelParameters.TestFlag(LevelParameters.TimedBombers);
 
-		lemming.SetCountDownAction(countDownTimer, StonerAction.Instance, displayTimer);
-	}
+        lemming.SetCountDownAction(countDownTimer, StonerAction.Instance, displayTimer);
+    }
 
-	protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
+    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
 }

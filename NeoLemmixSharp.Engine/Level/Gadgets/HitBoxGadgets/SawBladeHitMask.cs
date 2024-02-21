@@ -9,22 +9,22 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class SawBladeHitMask
 {
-	private readonly TerrainEraseMask _terrainEraseMask;
-	private readonly PointSetLevelRegion _hitBox;
+    private readonly TerrainEraseMask _terrainEraseMask;
+    private readonly PointSetLevelRegion _hitBox;
 
-	public SawBladeHitMask(
-		IDestructionMask destructionMask,
-		LevelPosition[] mask)
-	{
-		_terrainEraseMask = new TerrainEraseMask(destructionMask, new LevelPosition(0, 0), mask);
-		_hitBox = new PointSetLevelRegion(mask);
-	}
+    public SawBladeHitMask(
+        IDestructionMask destructionMask,
+        LevelPosition[] mask)
+    {
+        _terrainEraseMask = new TerrainEraseMask(destructionMask, new LevelPosition(0, 0), mask);
+        _hitBox = new PointSetLevelRegion(mask);
+    }
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public bool MatchesPosition(LevelPosition levelPosition) => _hitBox.ContainsPoint(levelPosition);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool MatchesPosition(LevelPosition levelPosition) => _hitBox.ContainsPoint(levelPosition);
 
-	public void ApplyEraseMask(LevelPosition levelPosition)
-	{
-		_terrainEraseMask.ApplyEraseMask(DownOrientation.Instance, FacingDirection.RightInstance, levelPosition);
-	}
+    public void ApplyEraseMask(LevelPosition levelPosition)
+    {
+        _terrainEraseMask.ApplyEraseMask(DownOrientation.Instance, FacingDirection.RightInstance, levelPosition);
+    }
 }

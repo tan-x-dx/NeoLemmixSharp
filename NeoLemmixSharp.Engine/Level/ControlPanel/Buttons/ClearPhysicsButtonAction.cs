@@ -2,17 +2,17 @@
 
 public sealed class ClearPhysicsButtonAction : IButtonAction
 {
-	public ButtonType ButtonType => ButtonType.ClearPhysics;
+    public ButtonType ButtonType => ButtonType.ClearPhysics;
 
-	public void OnMouseDown()
-	{
-	}
+    public void OnMouseDown()
+    {
+    }
 
-	public void OnPress(bool isDoubleTap)
-	{
-	}
+    public void OnPress(bool isDoubleTap)
+    {
+    }
 
-	public void OnRightClick()
-	{
-	}
+    public void OnRightClick()
+    {
+    }
 }
