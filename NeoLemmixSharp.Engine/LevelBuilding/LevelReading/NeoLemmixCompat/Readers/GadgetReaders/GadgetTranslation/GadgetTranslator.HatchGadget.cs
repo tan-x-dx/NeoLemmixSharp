@@ -1,7 +1,7 @@
-﻿using System.Runtime.InteropServices;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
@@ -31,6 +31,8 @@ public sealed partial class GadgetTranslator
 
         if (!exists)
         {
+            var sprite = GetStitchedTextures(archetypeData, out var spriteWidth, out var spriteHeight);
+
             gadgetBuilder = new HatchGadgetBuilder
             {
                 GadgetBuilderId = archetypeData.GadgetArchetypeId,
@@ -38,8 +40,10 @@ public sealed partial class GadgetTranslator
                 SpawnX = archetypeData.TriggerX,
                 SpawnY = archetypeData.TriggerY,
 
-                HatchWidth = 2,
-                HatchHeight = 2,
+                HatchWidth = spriteWidth,
+                HatchHeight = spriteHeight,
+
+                Sprite = sprite
             };
         }
 

@@ -8,22 +8,22 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public sealed class LemmingSpriteBank : IDisposable
 {
-	private readonly ActionSprite[] _actionSprites;
+	private readonly LemmingActionSprite[] _actionSprites;
 	private readonly TeamColorData[] _teamColorData;
 
-	public LemmingSpriteBank(ActionSprite[] actionSprites, TeamColorData[] teamColorData)
+	public LemmingSpriteBank(LemmingActionSprite[] actionSprites, TeamColorData[] teamColorData)
 	{
 		_actionSprites = actionSprites;
 		_teamColorData = teamColorData;
 	}
 
-	public ActionSprite GetActionSprite(
+	public LemmingActionSprite GetActionSprite(
 		LemmingAction lemmingAction,
 		Orientation orientation,
 		FacingDirection facingDirection)
 	{
 		if (lemmingAction == NoneAction.Instance)
-			return EmptyActionSprite.Instance;
+			return LemmingActionSprite.Empty;
 
 		var key = GetKey(lemmingAction, orientation, facingDirection);
 
@@ -52,7 +52,7 @@ public sealed class LemmingSpriteBank : IDisposable
 
 	public void Dispose()
 	{
-		DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<ActionSprite>(_actionSprites));
+		DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<LemmingActionSprite>(_actionSprites));
 	}
 
 	public void SetTeamColors(Team team)

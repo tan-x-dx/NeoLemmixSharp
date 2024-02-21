@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+﻿using Microsoft.Xna.Framework.Graphics;
+
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 public sealed class AnimationData
 {
@@ -10,4 +12,5 @@ public sealed class AnimationData
     public bool Hide { get; set; }
 
     public List<AnimationTriggerData> TriggerData { get; } = new();
+    public Texture2D? Texture { get; set; }
 }

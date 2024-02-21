@@ -15,7 +15,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     private readonly int[] _countDownCharsToRender = new int[NumberOfChars];
 
     private Lemming _lemming;
-    private ActionSprite _actionSprite;
+    private LemmingActionSprite _actionSprite;
 
     private bool _shouldRender;
     private bool _shouldRenderCountDown;
