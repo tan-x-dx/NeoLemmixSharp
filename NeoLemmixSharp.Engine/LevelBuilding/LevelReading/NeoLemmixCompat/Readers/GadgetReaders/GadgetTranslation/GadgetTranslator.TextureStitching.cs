@@ -130,7 +130,7 @@ public sealed partial class GadgetTranslator
         if (animationDataSpan.Length == 0)
             return primaryTexture;
 
-        var bufferLength = int.MinValue;
+        var bufferLength = 0;
         foreach (var animationData in animationDataSpan)
         {
             bufferLength = Math.Max(bufferLength, animationData.Name.Length);

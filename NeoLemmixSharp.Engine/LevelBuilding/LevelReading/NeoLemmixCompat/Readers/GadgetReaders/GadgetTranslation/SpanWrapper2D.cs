@@ -21,7 +21,10 @@ public readonly ref struct SpanWrapper2D
         int width,
         int height)
     {
-        if (spanWidth * spanHeight != data.Length ||
+        if (spanWidth <= 0 || spanHeight <= 0 ||
+            spanWidth * spanHeight != data.Length ||
+            x < 0 || y < 0 ||
+            width <= 0 || height <= 0 ||
             x + width > spanWidth ||
             y + height > spanHeight)
             throw new ArgumentException("Invalid dimensions");
