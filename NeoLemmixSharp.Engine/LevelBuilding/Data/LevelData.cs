@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
@@ -135,6 +136,8 @@ public sealed class LevelData
     public BoundaryBehaviourType HorizontalViewPortBehaviour { get; set; }
     public BoundaryBehaviourType VerticalViewPortBehaviour { get; set; }
 
+    public LevelParameterSet LevelParameters { get; } = LevelParameterHelpers.CreateSimpleSet();
+    public ControlPanelParameterSet ControlParameters { get; } = ControlPanelParameterHelpers.CreateSimpleSet();
     public List<SkillSetData> SkillSetData { get; } = new();
     public ThemeData ThemeData { get; } = new();
     public List<TerrainArchetypeData> TerrainArchetypeData { get; } = new();

@@ -10,7 +10,6 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 using NeoLemmixSharp.Engine.Rendering;
 using Viewport = NeoLemmixSharp.Engine.Level.Viewport;
@@ -47,8 +46,8 @@ public sealed class LevelBuilder : IDisposable
 
         var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
 
-        var levelParameters = GetLevelParameters(levelData);
-        var controlPanelParameters = GetControlPanelParameters(levelData);
+        var levelParameters = levelData.LevelParameters;
+        var controlPanelParameters = levelData.ControlParameters;
         LevelScreen.SetLevelParameters(levelParameters);
 
         var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
@@ -130,38 +129,6 @@ public sealed class LevelBuilder : IDisposable
             controlPanel,
             levelViewport,
             levelScreenRenderer);
-    }
-
-    private static LevelParameterSet GetLevelParameters(LevelData levelData)
-    {
-        var set = LevelParameterHelpers.CreateSimpleSet();
-
-        set.Add(LevelParameters.TimedBombers);
-        set.Add(LevelParameters.EnablePause);
-        set.Add(LevelParameters.EnableNuke);
-        set.Add(LevelParameters.EnableFastForward);
-        set.Add(LevelParameters.EnableDirectionSelect);
-        set.Add(LevelParameters.EnableClearPhysics);
-        set.Add(LevelParameters.EnableSkillShadows);
-        set.Add(LevelParameters.EnableFrameControl);
-
-        return set;
-    }
-
-    private static ControlPanelParameterSet GetControlPanelParameters(LevelData levelData)
-    {
-        var set = ControlPanelParameterHelpers.CreateSimpleSet();
-
-        set.Add(ControlPanelParameters.ShowPauseButton);
-        set.Add(ControlPanelParameters.ShowNukeButton);
-        set.Add(ControlPanelParameters.ShowFastForwardsButton);
-        set.Add(ControlPanelParameters.ShowRestartButton);
-        set.Add(ControlPanelParameters.ShowFrameNudgeButtons);
-        set.Add(ControlPanelParameters.ShowDirectionSelectButtons);
-        set.Add(ControlPanelParameters.ShowClearPhysicsAndReplayButton);
-        set.Add(ControlPanelParameters.ShowReleaseRateButtonsIfPossible);
-
-        return set;
     }
 
     public void Dispose()
