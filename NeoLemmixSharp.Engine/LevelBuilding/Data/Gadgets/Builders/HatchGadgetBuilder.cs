@@ -23,19 +23,12 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
 
     public GadgetBase BuildGadget(GadgetData gadgetData, IPerfectHasher<Lemming> lemmingHasher)
     {
+        var hatchGadgetId = gadgetData.GetProperty<int>(GadgetProperty.HatchGroupId);
+        var team = gadgetData.GetProperty<Team>(GadgetProperty.Team);
+        var rawLemmingState = gadgetData.GetProperty<uint>(GadgetProperty.RawLemmingState);
         var lemmingCount = gadgetData.GetProperty<int>(GadgetProperty.LemmingCount);
 
         var spawnPoint = new LevelPosition(SpawnX, SpawnY);
-
-        if (!gadgetData.TryGetProperty<Team>(GadgetProperty.Team, out var team))
-        {
-            team = Team.AllItems[0];
-        }
-
-        if (!gadgetData.TryGetProperty<uint>(GadgetProperty.RawLemmingState, out var rawLemmingState))
-        {
-            rawLemmingState = 1U << LemmingState.ActiveBitIndex;
-        }
 
         var gadgetBounds = new RectangularLevelRegion(
             gadgetData.X,
@@ -44,6 +37,7 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
             HatchHeight);
 
         var hatchSpawnData = new HatchSpawnData(
+            hatchGadgetId,
             team,
             rawLemmingState,
             gadgetData.Orientation,

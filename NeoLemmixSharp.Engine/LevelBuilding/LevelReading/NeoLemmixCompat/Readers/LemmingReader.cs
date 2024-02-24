@@ -104,18 +104,4 @@ public sealed class LemmingReader : INeoLemmixDataReader
 
         return false;
     }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
-        var totalNumberOfLemmings = Math.Max(levelData.NumberOfLemmings, _prePlacedLemmingData.Count);
-        _prePlacedLemmingData.Capacity = totalNumberOfLemmings;
-        levelData.NumberOfLemmings = totalNumberOfLemmings;
-
-        for (var i = _prePlacedLemmingData.Count; i < totalNumberOfLemmings; i++)
-        {
-            var newLemmingData = new LemmingData();
-
-            _prePlacedLemmingData.Add(newLemmingData);
-        }
-    }
 }

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -7,7 +8,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 public sealed class GadgetData
 {
-    private readonly Dictionary<GadgetProperty, object> _properties = new(GadgetPropertyEqualityComparer.Instance);
+    private readonly SimpleDictionary<GadgetProperty, object> _properties = GadgetPropertyHelpers.CreateSimpleDictionary<object>();
 
     public required int Id { get; init; }
     public required int GadgetBuilderId { get; init; }

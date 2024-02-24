@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+﻿using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using System.Runtime.InteropServices;
@@ -25,7 +26,10 @@ public sealed partial class GadgetTranslator
             FacingDirection = facingDirection
         };
 
+        gadgetData.AddProperty(GadgetProperty.HatchGroupId, 0); // All NeoLemmix levels have precisely one hatch group
+        gadgetData.AddProperty(GadgetProperty.Team, Team.AllItems[0]);
         gadgetData.AddProperty(GadgetProperty.RawLemmingState, prototype.State);
+        gadgetData.AddProperty(GadgetProperty.LemmingCount, prototype.LemmingCount!.Value);
 
         ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);
 

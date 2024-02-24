@@ -2,9 +2,11 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
@@ -229,7 +231,153 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     public void ApplyToLevelData(LevelData levelData, GraphicsDevice graphicsDevice)
     {
+        CalculateHatchCounts(levelData);
+
         new GadgetTranslator(levelData, graphicsDevice)
             .TranslateNeoLemmixGadgets(_gadgetArchetypes, _allGadgetData);
+    }
+
+    private void CalculateHatchCounts(LevelData levelData)
+    {
+        var gadgetDataSpan = CollectionsMarshal.AsSpan(_allGadgetData);
+        var hatchGadgets = new List<NeoLemmixGadgetData>();
+
+        foreach (var gadgetData in gadgetDataSpan)
+        {
+            if (GadgetDataIsHatch(gadgetData))
+            {
+                hatchGadgets.Add(gadgetData);
+            }
+        }
+
+        const int maxStackallocSize = 64;
+
+        var maxLemmingCountFromHatches = 0;
+        var hasInfiniteHatchCount = false;
+        var spanLength = hatchGadgets.Count * 2;
+        Span<int> countSpan = spanLength > maxStackallocSize
+            ? new int[spanLength]
+            : stackalloc int[spanLength];
+
+        var i = 0;
+        while (i < hatchGadgets.Count)
+        {
+            ref var runningCount = ref countSpan[i * 2];
+            ref var maxCount = ref countSpan[i * 2 + 1];
+
+            runningCount = 0;
+            var correspondingHatchGadget = hatchGadgets[i];
+            maxCount = correspondingHatchGadget.LemmingCount ?? -1;
+            hasInfiniteHatchCount |= !correspondingHatchGadget.LemmingCount.HasValue;
+            maxLemmingCountFromHatches += correspondingHatchGadget.LemmingCount ?? 0;
+
+            i++;
+        }
+
+        var numberOfLemmingsFromHatches = CalculateTotalLemmingCounts(
+            levelData,
+            maxLemmingCountFromHatches,
+            hasInfiniteHatchCount);
+
+        var numberOfLemmingsAssignedToHatches = 0;
+        i = 0;
+        while (numberOfLemmingsAssignedToHatches < numberOfLemmingsFromHatches)
+        {
+            ref var runningCount = ref countSpan[i * 2];
+            var maxCount = countSpan[i * 2 + 1];
+
+            if (maxCount == -1 || runningCount < maxCount)
+            {
+                runningCount++;
+                numberOfLemmingsAssignedToHatches++;
+            }
+
+            i++;
+            if (i == hatchGadgets.Count)
+            {
+                i = 0;
+            }
+        }
+
+        i = 0;
+        while (i < hatchGadgets.Count)
+        {
+            var hatchCount = countSpan[i * 2];
+            var correspondingHatchGadget = hatchGadgets[i];
+            correspondingHatchGadget.LemmingCount = hatchCount;
+            i++;
+        }
+    }
+
+    private bool GadgetDataIsHatch(NeoLemmixGadgetData gadgetData)
+    {
+        var gadgetArchetypeId = gadgetData.GadgetArchetypeId;
+        // ReSharper disable once NotDisposedResource
+        var enumerator = _gadgetArchetypes.Values.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            var gadgetArchetypeData = enumerator.Current;
+            if (gadgetArchetypeData.GadgetArchetypeId != gadgetArchetypeId)
+                continue;
+
+            return gadgetArchetypeData.Behaviour == NeoLemmixGadgetBehaviour.Entrance;
+        }
+
+        throw new InvalidOperationException("No matching gadget archetype!");
+    }
+
+    private static int CalculateTotalLemmingCounts(
+        LevelData levelData,
+        int maxLemmingCountFromHatches,
+        bool hasInfiniteHatchCount)
+    {
+        var lemmingData = levelData.AllLemmingData;
+        var lemmingCount = levelData.NumberOfLemmings;
+        var numberOfClonerSkills = GetNumberOfClonerSkills(levelData);
+        var numberOfPrePlacedLemmings = lemmingData.Count;
+
+        int totalNumberOfLemmings;
+        if (hasInfiniteHatchCount)
+        {
+            totalNumberOfLemmings = lemmingCount + numberOfPrePlacedLemmings;
+        }
+        else if (maxLemmingCountFromHatches <= lemmingCount)
+        {
+            totalNumberOfLemmings = maxLemmingCountFromHatches + numberOfPrePlacedLemmings;
+        }
+        else
+        {
+            totalNumberOfLemmings = Math.Max(lemmingCount, numberOfPrePlacedLemmings);
+        }
+
+        totalNumberOfLemmings += numberOfClonerSkills;
+
+        lemmingData.Capacity = totalNumberOfLemmings;
+        levelData.NumberOfLemmings = totalNumberOfLemmings;
+
+        while (lemmingData.Count < lemmingData.Capacity)
+        {
+            lemmingData.Add(new LemmingData());
+        }
+
+        return totalNumberOfLemmings - numberOfClonerSkills - numberOfPrePlacedLemmings;
+    }
+
+    private static int GetNumberOfClonerSkills(LevelData levelData)
+    {
+        var skillSetSpan = CollectionsMarshal.AsSpan(levelData.SkillSetData);
+        foreach (var skill in skillSetSpan)
+        {
+            if (skill.Skill != ClonerSkill.Instance)
+                continue;
+
+            var numberOfClonerSkills = skill.NumberOfSkills;
+
+            return numberOfClonerSkills >= LevelConstants.InfiniteSkillCount
+                ? LevelConstants.InfiniteSkillCount - 1
+                : numberOfClonerSkills;
+        }
+
+        return 0;
     }
 }

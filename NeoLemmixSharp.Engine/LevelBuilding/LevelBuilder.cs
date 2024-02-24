@@ -61,7 +61,12 @@ public sealed class LevelBuilder : IDisposable
         var hatchGroups = _levelObjectAssembler.GetHatchGroups(levelData);
         var lemmingManager = new LemmingManager(levelData, hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetLemmingManager(lemmingManager);
-        var levelGadgets = _levelObjectAssembler.GetLevelGadgets(levelData, lemmingManager, hatchGroups);
+        var levelGadgets = _levelObjectAssembler.GetLevelGadgets(levelData, lemmingManager);
+
+        foreach (var hatchGroup in hatchGroups)
+        {
+            _levelObjectAssembler.SetHatchesForHatchGroup(hatchGroup);
+        }
 
         var inputController = new LevelInputController(levelParameters);
         var skillSetManager = new SkillSetManager(levelData.SkillSetData);
