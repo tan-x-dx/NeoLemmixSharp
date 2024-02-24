@@ -1,13 +1,12 @@
-﻿using System.Collections;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
-    where TKey : class
 {
     private readonly IPerfectHasher<TKey> _hasher;
     private readonly SimpleSet<TKey> _keys;
@@ -160,7 +159,21 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     [Pure]
     public SimpleSetEnumerable<TKey> Keys => _keys.ToSimpleEnumerable();
     [Pure]
-    public ReadOnlySpan<TValue> Values => new(_values);
+    public TValue[] Values
+    {
+        get
+        {
+            var result = new TValue[Count];
+
+            var i = 0;
+            foreach (var (_, value) in this)
+            {
+                result[i++] = value;
+            }
+
+            return result;
+        }
+    }
 
     void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item) => Add(item.Key, item.Value);
     bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item) => ContainsKey(item.Key);
@@ -169,11 +182,11 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys => _keys;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values => _values;
+    IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values => Values;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     ICollection<TKey> IDictionary<TKey, TValue>.Keys => _keys;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    ICollection<TValue> IDictionary<TKey, TValue>.Values => _values;
+    ICollection<TValue> IDictionary<TKey, TValue>.Values => Values;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => false;
 }
