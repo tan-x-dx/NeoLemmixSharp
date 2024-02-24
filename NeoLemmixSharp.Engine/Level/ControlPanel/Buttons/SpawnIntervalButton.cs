@@ -15,10 +15,10 @@ public sealed class SpawnIntervalButton : ControlPanelButton
     public static SpawnIntervalButton CreateSpawnIntervalDecreaseButton(
         int buttonId,
         int skillPanelFrame,
-        ControlPanelParameters controlPanelParameters,
+        ControlPanelParameterSet controlPanelParameters,
         HatchGroup hatchGroup)
     {
-        var showSpawnInterval = controlPanelParameters.TestFlag(ControlPanelParameters.ShowSpawnInterval);
+        var showSpawnInterval = controlPanelParameters.Contains(ControlPanelParameters.ShowSpawnInterval);
 
         var spawnIntervalMinValueGetter = new SpawnIntervalMinValueGetter(
             hatchGroup,
@@ -42,12 +42,12 @@ public sealed class SpawnIntervalButton : ControlPanelButton
     public static SpawnIntervalButton CreateSpawnIntervalDisplayButton(
         int buttonId,
         int skillPanelFrame,
-        ControlPanelParameters controlPanelParameters,
+        ControlPanelParameterSet controlPanelParameters,
         HatchGroup hatchGroup)
     {
         var spawnIntervalMinValueGetter = new SpawnIntervalCurrentValueGetter(
             hatchGroup,
-            controlPanelParameters.TestFlag(ControlPanelParameters.ShowSpawnInterval));
+            controlPanelParameters.Contains(ControlPanelParameters.ShowSpawnInterval));
 
         return new SpawnIntervalButton(
             buttonId,
@@ -61,10 +61,10 @@ public sealed class SpawnIntervalButton : ControlPanelButton
     public static SpawnIntervalButton CreateSpawnIntervalIncreaseButton(
         int buttonId,
         int skillPanelFrame,
-        ControlPanelParameters controlPanelParameters,
+        ControlPanelParameterSet controlPanelParameters,
         HatchGroup hatchGroup)
     {
-        var showSpawnInterval = controlPanelParameters.TestFlag(ControlPanelParameters.ShowSpawnInterval);
+        var showSpawnInterval = controlPanelParameters.Contains(ControlPanelParameters.ShowSpawnInterval);
 
         var spawnIntervalMaxValueGetter = new SpawnIntervalMaxValueGetter(
             hatchGroup,

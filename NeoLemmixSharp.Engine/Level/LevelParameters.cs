@@ -1,30 +1,39 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿global using LevelParameterSet = NeoLemmixSharp.Common.Util.Collections.SimpleSet<NeoLemmixSharp.Engine.Level.LevelParameters>;
+using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level;
 
-[Flags]
 public enum LevelParameters
 {
-    TimedBombers = 1 << 0,
-    EnablePause = 1 << 1,
-    EnableNuke = 1 << 2,
-    EnableFastForward = 1 << 3,
-    EnableDirectionSelect = 1 << 4,
-    EnableClearPhysics = 1 << 5,
-    EnableSkillShadows = 1 << 6,
-    EnableFrameControl = 1 << 7,
+    TimedBombers,
+    EnablePause,
+    EnableNuke,
+    EnableFastForward,
+    EnableDirectionSelect,
+    EnableClearPhysics,
+    EnableSkillShadows,
+    EnableFrameControl,
 }
 
 public static class LevelParameterHelpers
 {
-    public static bool TestFlag(this LevelParameters parameters, LevelParameters test)
+    private const int NumberOfLevelParameters = 8;
+
+    private sealed class LevelParametersHasher : IPerfectHasher<LevelParameters>
     {
-        return (parameters & test) != 0;
+        public int NumberOfItems => NumberOfLevelParameters;
+
+        public int Hash(LevelParameters item) => (int)item;
+
+        public LevelParameters UnHash(int index) => (LevelParameters)index;
     }
 
-    public static int GetLemmingCountDownTimer(this LevelParameters parameters, Lemming lemming)
+    public static LevelParameterSet CreateSimpleSet() => new(new LevelParametersHasher());
+
+    public static int GetLemmingCountDownTimer(this LevelParameterSet parameters, Lemming lemming)
     {
-        var timedBombers = parameters.TestFlag(LevelParameters.TimedBombers);
+        var timedBombers = parameters.Contains(LevelParameters.TimedBombers);
 
         if (timedBombers)
             return lemming.IsFastForward

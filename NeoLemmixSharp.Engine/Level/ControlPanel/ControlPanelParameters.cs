@@ -1,25 +1,35 @@
-﻿namespace NeoLemmixSharp.Engine.Level.ControlPanel;
+﻿global using ControlPanelParameterSet = NeoLemmixSharp.Common.Util.Collections.SimpleSet<NeoLemmixSharp.Engine.Level.ControlPanel.ControlPanelParameters>;
+using NeoLemmixSharp.Common.Util.Collections;
 
-[Flags]
+namespace NeoLemmixSharp.Engine.Level.ControlPanel;
+
 public enum ControlPanelParameters
 {
-    ShowPauseButton = 1 << 0,
-    ShowNukeButton = 1 << 1,
-    ShowFastForwardsButton = 1 << 2,
-    ShowRestartButton = 1 << 3,
-    ShowFrameNudgeButtons = 1 << 4,
-    ShowDirectionSelectButtons = 1 << 5,
-    ShowClearPhysicsAndReplayButton = 1 << 6,
-    ShowReleaseRateButtonsIfPossible = 1 << 7,
-    EnableClassicModeSkillsIfPossible = 1 << 8,
-    RemoveSkillAssignPaddingButtons = 1 << 9,
-    ShowSpawnInterval = 1 << 10,
+    ShowPauseButton,
+    ShowNukeButton,
+    ShowFastForwardsButton,
+    ShowRestartButton,
+    ShowFrameNudgeButtons,
+    ShowDirectionSelectButtons,
+    ShowClearPhysicsAndReplayButton,
+    ShowReleaseRateButtonsIfPossible,
+    EnableClassicModeSkillsIfPossible,
+    RemoveSkillAssignPaddingButtons,
+    ShowSpawnInterval
 }
 
 public static class ControlPanelParameterHelpers
 {
-    public static bool TestFlag(this ControlPanelParameters item, ControlPanelParameters test)
+    private const int NumberOfControlPanelParameters = 11;
+
+    private sealed class ControlPanelParametersHasher : IPerfectHasher<ControlPanelParameters>
     {
-        return (item & test) != 0;
+        public int NumberOfItems => NumberOfControlPanelParameters;
+
+        public int Hash(ControlPanelParameters item) => (int)item;
+
+        public ControlPanelParameters UnHash(int index) => (ControlPanelParameters)index;
     }
+
+    public static ControlPanelParameterSet CreateSimpleSet() => new(new ControlPanelParametersHasher());
 }

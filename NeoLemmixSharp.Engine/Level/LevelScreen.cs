@@ -15,7 +15,7 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelScreen : IBaseScreen
 {
-    public static LevelParameters LevelParameters { get; private set; }
+    public static LevelParameterSet LevelParameters { get; private set; } = null!;
     public static TerrainManager TerrainManager { get; private set; } = null!;
     public static LemmingManager LemmingManager { get; private set; } = null!;
     public static GadgetManager GadgetManager { get; private set; } = null!;
@@ -24,7 +24,7 @@ public sealed class LevelScreen : IBaseScreen
     public static UpdateScheduler UpdateScheduler { get; private set; } = null!;
     public static LevelCursor LevelCursor { get; private set; } = null!;
 
-    public static void SetLevelParameters(LevelParameters levelParameters)
+    public static void SetLevelParameters(LevelParameterSet levelParameters)
     {
         LevelParameters = levelParameters;
     }

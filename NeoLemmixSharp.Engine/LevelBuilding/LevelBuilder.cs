@@ -132,28 +132,36 @@ public sealed class LevelBuilder : IDisposable
             levelScreenRenderer);
     }
 
-    private static LevelParameters GetLevelParameters(LevelData levelData)
+    private static LevelParameterSet GetLevelParameters(LevelData levelData)
     {
-        return LevelParameters.TimedBombers |
-               LevelParameters.EnablePause |
-               LevelParameters.EnableNuke |
-               LevelParameters.EnableFastForward |
-               LevelParameters.EnableDirectionSelect |
-               LevelParameters.EnableClearPhysics |
-               LevelParameters.EnableSkillShadows |
-               LevelParameters.EnableFrameControl;
+        var set = LevelParameterHelpers.CreateSimpleSet();
+
+        set.Add(LevelParameters.TimedBombers);
+        set.Add(LevelParameters.EnablePause);
+        set.Add(LevelParameters.EnableNuke);
+        set.Add(LevelParameters.EnableFastForward);
+        set.Add(LevelParameters.EnableDirectionSelect);
+        set.Add(LevelParameters.EnableClearPhysics);
+        set.Add(LevelParameters.EnableSkillShadows);
+        set.Add(LevelParameters.EnableFrameControl);
+
+        return set;
     }
 
-    private static ControlPanelParameters GetControlPanelParameters(LevelData levelData)
+    private static ControlPanelParameterSet GetControlPanelParameters(LevelData levelData)
     {
-        return ControlPanelParameters.ShowPauseButton |
-               ControlPanelParameters.ShowNukeButton |
-               ControlPanelParameters.ShowFastForwardsButton |
-               ControlPanelParameters.ShowRestartButton |
-               ControlPanelParameters.ShowFrameNudgeButtons |
-               ControlPanelParameters.ShowDirectionSelectButtons |
-               ControlPanelParameters.ShowClearPhysicsAndReplayButton |
-               ControlPanelParameters.ShowReleaseRateButtonsIfPossible;
+        var set = ControlPanelParameterHelpers.CreateSimpleSet();
+
+        set.Add(ControlPanelParameters.ShowPauseButton);
+        set.Add(ControlPanelParameters.ShowNukeButton);
+        set.Add(ControlPanelParameters.ShowFastForwardsButton);
+        set.Add(ControlPanelParameters.ShowRestartButton);
+        set.Add(ControlPanelParameters.ShowFrameNudgeButtons);
+        set.Add(ControlPanelParameters.ShowDirectionSelectButtons);
+        set.Add(ControlPanelParameters.ShowClearPhysicsAndReplayButton);
+        set.Add(ControlPanelParameters.ShowReleaseRateButtonsIfPossible);
+
+        return set;
     }
 
     public void Dispose()

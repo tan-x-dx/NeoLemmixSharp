@@ -16,10 +16,10 @@ public static class ControlPanelHelperMethods
 
     public static SkillAssignButton[] SetUpSkillAssignButtons(
         LevelControlPanel controlPanel,
-        ControlPanelParameters controlPanelParameters,
+        ControlPanelParameterSet controlPanelParameters,
         SkillSetManager skillSetManager)
     {
-        return controlPanelParameters.TestFlag(ControlPanelParameters.EnableClassicModeSkillsIfPossible) &&
+        return controlPanelParameters.Contains(ControlPanelParameters.EnableClassicModeSkillsIfPossible) &&
                skillSetManager.HasClassicSkillsOnly()
             ? CreateClassicModeSkillAssignButtons()
             : CreateSkillAssignButtons();
@@ -88,7 +88,7 @@ public static class ControlPanelHelperMethods
         LevelInputController controller,
         SkillAssignButton[] skillAssignButtons,
         HatchGroup? hatchGroup,
-        ControlPanelParameters controlPanelParameters)
+        ControlPanelParameterSet controlPanelParameters)
     {
         var numberOfSkillAssignButtons = skillAssignButtons.Length;
         var includeReleaseRateButtons = IncludeReleaseRateButtons();
@@ -229,7 +229,7 @@ public static class ControlPanelHelperMethods
 
         int ButtonAvailability(ControlPanelParameters test, int numberOfButtons, out bool testFlag)
         {
-            testFlag = controlPanelParameters.TestFlag(test);
+            testFlag = controlPanelParameters.Contains(test);
 
             return testFlag
                 ? numberOfButtons
@@ -239,14 +239,14 @@ public static class ControlPanelHelperMethods
         int GetPaddingButtonCount()
         {
             return showSkillAssignScrollButtons ||
-                   controlPanelParameters.TestFlag(ControlPanelParameters.RemoveSkillAssignPaddingButtons)
+                   controlPanelParameters.Contains(ControlPanelParameters.RemoveSkillAssignPaddingButtons)
                 ? 0
                 : LevelControlPanel.MaxNumberOfSkillButtons - numberOfSkillAssignButtons;
         }
 
         bool IncludeReleaseRateButtons()
         {
-            return hatchGroup is not null && controlPanelParameters.TestFlag(ControlPanelParameters.ShowReleaseRateButtonsIfPossible);
+            return hatchGroup is not null && controlPanelParameters.Contains(ControlPanelParameters.ShowReleaseRateButtonsIfPossible);
         }
     }
 }
