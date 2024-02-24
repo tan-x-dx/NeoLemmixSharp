@@ -31,7 +31,8 @@ public static class LevelConstants
 
     public const int MaxFallDistance = 62;
 
-    public const int DefaultCountDownActionTicks = 5 * EngineConstants.StandardTicksPerSecond;
+    public const int DefaultCountDownTimer = 5;
+    public const int DefaultCountDownActionTicks = DefaultCountDownTimer * EngineConstants.StandardTicksPerSecond;
     public const int DefaultFastForwardLemmingCountDownActionTicks = EngineConstants.FastForwardSpeedMultiplier * DefaultCountDownActionTicks;
 
     public const int ParticleFrameCount = 51;
