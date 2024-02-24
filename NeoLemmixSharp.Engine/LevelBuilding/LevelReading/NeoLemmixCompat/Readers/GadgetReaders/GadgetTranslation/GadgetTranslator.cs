@@ -1,10 +1,10 @@
-﻿using System.Runtime.InteropServices;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
@@ -32,7 +32,8 @@ public sealed partial class GadgetTranslator
 
         foreach (var prototype in gadgetDataSpan)
         {
-            var archetype = GetMatchingArchetype(neoLemmixGadgetArchetypeData, prototype);
+            var archetype = neoLemmixGadgetArchetypeData
+                .First(a => a.GadgetArchetypeId == prototype.GadgetArchetypeId);
 
             ProcessBuilder(
                 archetype,
@@ -59,25 +60,6 @@ public sealed partial class GadgetTranslator
         }
 
         ProcessStatefulGadgetBuilder(archetypeData, prototype, gadgetId);
-    }
-
-    /// <summary>
-    /// Helper method to avoid using LINQ and hence avoiding heap allocations/boxing in iterators.
-    /// </summary>
-    private static NeoLemmixGadgetArchetypeData GetMatchingArchetype(
-        Dictionary<string, NeoLemmixGadgetArchetypeData>.ValueCollection collection,
-        NeoLemmixGadgetData prototype)
-    {
-        // ReSharper disable once NotDisposedResource
-        var enumerator = collection.GetEnumerator();
-        while (enumerator.MoveNext())
-        {
-            var archetypeData = enumerator.Current;
-            if (archetypeData.GadgetArchetypeId == prototype.GadgetArchetypeId)
-                return archetypeData;
-        }
-
-        throw new InvalidOperationException("No matching archetype data found!");
     }
 
     private static void GetOrientationData(
