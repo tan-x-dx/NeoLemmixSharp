@@ -167,7 +167,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
             numberOfTeams,
             numberOfGadgetBehaviours);
 
-        OhNoerAction.Initialise();
+        LemmingAction.InitialiseLemmingActions();
     }
 
     public void SetScreen(IBaseScreen screen)

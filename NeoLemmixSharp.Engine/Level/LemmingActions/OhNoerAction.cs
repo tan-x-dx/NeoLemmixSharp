@@ -10,7 +10,7 @@ public sealed class OhNoerAction : LemmingAction
 {
     public static readonly OhNoerAction Instance = new();
 
-    private static SimpleSet<LemmingAction> _airborneActions = null!;
+    private static SimpleSet<LemmingAction> _airborneLemmingActions = null!;
 
     private OhNoerAction()
     {
@@ -18,17 +18,17 @@ public sealed class OhNoerAction : LemmingAction
 
     public static void Initialise()
     {
-        _airborneActions = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
+        _airborneLemmingActions = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
 
-        _airborneActions.Add(VaporiserAction.Instance);
-        _airborneActions.Add(DrownerAction.Instance);
-        _airborneActions.Add(FloaterAction.Instance);
-        _airborneActions.Add(GliderAction.Instance);
-        _airborneActions.Add(FallerAction.Instance);
-        _airborneActions.Add(SwimmerAction.Instance);
-        _airborneActions.Add(ReacherAction.Instance);
-        _airborneActions.Add(ShimmierAction.Instance);
-        _airborneActions.Add(JumperAction.Instance);
+        _airborneLemmingActions.Add(VaporiserAction.Instance);
+        _airborneLemmingActions.Add(DrownerAction.Instance);
+        _airborneLemmingActions.Add(FloaterAction.Instance);
+        _airborneLemmingActions.Add(GliderAction.Instance);
+        _airborneLemmingActions.Add(FallerAction.Instance);
+        _airborneLemmingActions.Add(SwimmerAction.Instance);
+        _airborneLemmingActions.Add(ReacherAction.Instance);
+        _airborneLemmingActions.Add(ShimmierAction.Instance);
+        _airborneLemmingActions.Add(JumperAction.Instance);
     }
 
     public override int Id => LevelConstants.OhNoerActionId;
@@ -117,7 +117,7 @@ public sealed class OhNoerAction : LemmingAction
         if (currentAction == NoneAction.Instance)
             return;
 
-        if (_airborneActions.Contains(currentAction))
+        if (_airborneLemmingActions.Contains(currentAction))
         {
             // If in the air, do the action immediately
             lemming.CountDownAction.TransitionLemmingToAction(lemming, false);
