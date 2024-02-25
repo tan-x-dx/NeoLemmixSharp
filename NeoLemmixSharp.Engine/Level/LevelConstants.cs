@@ -94,7 +94,7 @@ public static class LevelConstants
 
     #region Position Tracking Data
 
-    public const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize32;
+    public const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize16;
     public const ChunkSizeType GadgetPositionChunkSize = ChunkSizeType.ChunkSize64;
 
     #endregion
