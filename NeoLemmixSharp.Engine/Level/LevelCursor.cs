@@ -69,10 +69,10 @@ public sealed class LevelCursor
     public SimpleSetEnumerable<Lemming> LemmingsNearCursorPosition()
     {
         var c = CursorPosition;
-        var x = c.X;
-        var y = c.Y;
 
-        var levelRegion = new LevelPositionPair(x - 7, y - 7, x + 6, y + 6);
+        var topLeftCursorPixel = new LevelPosition(c.X - 7, c.Y - 7);
+        var bottomRightCursorPixel = new LevelPosition(c.X + 6, c.Y + 6);
+        var levelRegion = new LevelPositionPair(topLeftCursorPixel, bottomRightCursorPixel);
 
         return LevelScreen.LemmingManager.GetAllLemmingsNearRegion(levelRegion);
     }
