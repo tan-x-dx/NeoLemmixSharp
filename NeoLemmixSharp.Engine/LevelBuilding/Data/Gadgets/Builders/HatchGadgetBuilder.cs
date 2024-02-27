@@ -23,22 +23,42 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
 
     public GadgetBase BuildGadget(GadgetData gadgetData, IPerfectHasher<Lemming> lemmingHasher)
     {
-        var hatchGadgetId = gadgetData.GetProperty<int>(GadgetProperty.HatchGroupId);
-        var team = gadgetData.GetProperty<Team>(GadgetProperty.Team);
-        var rawLemmingState = gadgetData.GetProperty<uint>(GadgetProperty.RawLemmingState);
-        var lemmingCount = gadgetData.GetProperty<int>(GadgetProperty.LemmingCount);
+        var hatchGadgetId = gadgetData.GetProperty(GadgetProperty.HatchGroupId);
+        var teamId = gadgetData.GetProperty(GadgetProperty.TeamId);
+        var rawLemmingState = (uint)gadgetData.GetProperty(GadgetProperty.RawLemmingState);
+        var lemmingCount = gadgetData.GetProperty(GadgetProperty.LemmingCount);
 
-        var spawnPoint = new LevelPosition(SpawnX, SpawnY);
+        var dihedralTransformation = new DihedralTransformation(
+            gadgetData.Orientation.RotNum,
+            false); // Hatches do not flip according to facing direction
+
+        dihedralTransformation.Transform(
+            HatchWidth,
+            HatchHeight,
+            HatchWidth,
+            HatchHeight,
+            out var transformedWidth,
+            out var transformedHeight);
+
+        dihedralTransformation.Transform(
+            SpawnX,
+            SpawnY,
+            HatchWidth,
+            HatchHeight,
+            out var transformedSpawnX,
+            out var transformedSpawnY);
+
+        var spawnPoint = new LevelPosition(transformedSpawnX, transformedSpawnY);
 
         var gadgetBounds = new RectangularLevelRegion(
             gadgetData.X,
             gadgetData.Y,
-            HatchWidth,
-            HatchHeight);
+            transformedWidth,
+            transformedHeight);
 
         var hatchSpawnData = new HatchSpawnData(
             hatchGadgetId,
-            team,
+            Team.AllItems[teamId],
             rawLemmingState,
             gadgetData.Orientation,
             gadgetData.FacingDirection,

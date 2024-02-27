@@ -10,7 +10,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 {
-    private readonly HitBox _hitBox;
     private readonly GadgetState[] _states;
 
     private int _currentStateIndex;
@@ -24,14 +23,12 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
         GadgetBehaviour interactionType,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
-        HitBox hitBox,
         GadgetState[] states,
         ItemTracker<Lemming> lemmingTracker)
         : base(id, gadgetBounds, lemmingTracker)
     {
         GadgetBehaviour = interactionType;
         Orientation = orientation;
-        _hitBox = hitBox;
         _states = states;
 
         foreach (var gadgetState in _states)
@@ -47,15 +44,16 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
-        return _hitBox.MatchesLemming(lemming) &&
-               MatchesPosition(levelPosition);
+        var hitBox = _states[_currentStateIndex].HitBox;
+        return hitBox.MatchesLemming(lemming) &&
+               hitBox.MatchesPosition(levelPosition);
     }
 
     public override bool MatchesPosition(LevelPosition levelPosition)
     {
         levelPosition = LevelRegionHelpers.GetRelativePosition(TopLeftPixel, levelPosition);
 
-        return _hitBox.MatchesPosition(levelPosition);
+        return _states[_currentStateIndex].HitBox.MatchesPosition(levelPosition);
     }
 
     public override void OnLemmingMatch(Lemming lemming)

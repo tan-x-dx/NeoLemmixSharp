@@ -4,22 +4,17 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 public enum GadgetProperty
 {
-    Behaviour,
     HatchGroupId,
-    TriggerX,
-    TriggerY,
-    TriggerWidth,
-    TriggerHeight,
+    TeamId,
     Width,
     Height,
-    Team,
     RawLemmingState,
     LemmingCount
 }
 
 public static class GadgetPropertyHelpers
 {
-    private const int NumberOfGadgetProperties = 11;
+    private const int NumberOfGadgetProperties = 6;
 
     private sealed class GadgetPropertyHasher : IPerfectHasher<GadgetProperty>
     {
