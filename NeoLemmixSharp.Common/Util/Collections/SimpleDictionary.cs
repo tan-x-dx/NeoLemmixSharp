@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -61,7 +60,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     public bool Remove(TKey key)
     {
         var index = _hasher.Hash(key);
-        _values[index] = default;
+        _values[index] = default!;
         return _keys.Remove(key);
     }
 
@@ -87,48 +86,17 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Enumerator GetEnumerator() => new(this);
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);
-
+    IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() => new Enumerator(this);
     [Pure]
-    IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() => new ReferenceTypeEnumerator(this);
+    IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
 
-    [Pure]
-    IEnumerator IEnumerable.GetEnumerator() => new ReferenceTypeEnumerator(this);
-
-    public ref struct Enumerator
-    {
-        private readonly IPerfectHasher<TKey> _hasher;
-        private readonly ReadOnlySpan<TValue> _values;
-        private BitBasedEnumerator<TKey> _bitEnumerator;
-
-        public Enumerator(SimpleDictionary<TKey, TValue> dictionary)
-        {
-            _hasher = dictionary._hasher;
-            _values = dictionary.Values;
-            _bitEnumerator = dictionary._keys.GetEnumerator();
-        }
-
-        public bool MoveNext() => _bitEnumerator.MoveNext();
-
-        public readonly KeyValuePair<TKey, TValue> Current
-        {
-            get
-            {
-                var key = _bitEnumerator.Current;
-                var index = _hasher.Hash(key);
-                return new KeyValuePair<TKey, TValue>(key, _values[index]);
-            }
-        }
-    }
-
-    public sealed class ReferenceTypeEnumerator : IEnumerator<KeyValuePair<TKey, TValue>>
+    public sealed class Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
     {
         private readonly IPerfectHasher<TKey> _hasher;
         private readonly SimpleSet<TKey>.ReferenceTypeEnumerator _enumerator;
         private readonly TValue[] _values;
 
-        public ReferenceTypeEnumerator(SimpleDictionary<TKey, TValue> dictionary)
+        public Enumerator(SimpleDictionary<TKey, TValue> dictionary)
         {
             _hasher = dictionary._hasher;
             _enumerator = dictionary._keys.GetReferenceTypeEnumerator();
