@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public sealed class LemmingActionSprite : IDisposable
 {
-    public static LemmingActionSprite Empty { get; private set; }
+    public static LemmingActionSprite Empty { get; private set; } = null!;
 
     public static void Initialise(GraphicsDevice graphicsDevice)
     {
@@ -15,7 +15,7 @@ public sealed class LemmingActionSprite : IDisposable
         var data = new[] { 0U };
         texture.SetData(data);
 
-        Empty = new LemmingActionSprite(texture, new LevelPosition(0, 0), 0, 0, Array.Empty<LayerRenderer<Lemming>>());
+        Empty = new LemmingActionSprite(texture, new LevelPosition(), 0, 0, Array.Empty<LayerRenderer<Lemming>>());
     }
 
     private readonly LayerRenderer<Lemming>[] _renderers;

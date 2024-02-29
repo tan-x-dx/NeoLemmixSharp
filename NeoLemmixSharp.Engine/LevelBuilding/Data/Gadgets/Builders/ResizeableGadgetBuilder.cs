@@ -11,14 +11,14 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 public sealed class ResizeableGadgetBuilder : IGadgetBuilder
 {
     public required int GadgetBuilderId { get; init; }
+    public required GadgetBehaviour GadgetBehaviour { get; init; }
 
     public required Texture2D Sprite { get; init; }
 
     public GadgetBase BuildGadget(GadgetData gadgetData, IPerfectHasher<Lemming> lemmingHasher)
     {
-        var gadgetBehaviour = gadgetData.GetProperty<GadgetBehaviour>(GadgetProperty.Behaviour);
-        var gadgetWidth = gadgetData.GetProperty<int>(GadgetProperty.Width);
-        var gadgetHeight = gadgetData.GetProperty<int>(GadgetProperty.Height);
+        var gadgetWidth = gadgetData.GetProperty(GadgetProperty.Width);
+        var gadgetHeight = gadgetData.GetProperty(GadgetProperty.Height);
 
         var gadgetBounds = new RectangularLevelRegion(
             gadgetData.X,
@@ -28,7 +28,7 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
 
         return new ResizeableGadget(
             gadgetData.Id,
-            gadgetBehaviour,
+            GadgetBehaviour,
             gadgetData.Orientation,
             gadgetBounds,
             new ItemTracker<Lemming>(lemmingHasher));

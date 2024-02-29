@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 
-namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
 public sealed class LayerRenderer<T>
     where T : class

@@ -59,6 +59,11 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         return result;
     }
 
+    public static void InitialiseLemmingActions()
+    {
+        OhNoerAction.Initialise();
+    }
+
     public abstract int Id { get; }
     public abstract string LemmingActionName { get; }
     public abstract int NumberOfAnimationFrames { get; }

@@ -8,8 +8,8 @@ public static class IdEquatableItemHelperMethods
         if (items.Length == 0)
             return;
 
-        var maxActionId = int.MinValue;
         var minActionId = int.MaxValue;
+        var maxActionId = int.MinValue;
         var allItemIds = new HashSet<int>();
 
         foreach (var item in items)
@@ -41,6 +41,10 @@ public static class IdEquatableItemHelperMethods
         if (x is null) return -1;
         if (y is null) return 1;
 
-        return x.Id.CompareTo(y.Id);
+        var xId = x.Id;
+        var yId = y.Id;
+
+        if (xId < yId) return -1;
+        return xId > yId ? 1 : 0;
     }
 }

@@ -10,7 +10,6 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 using NeoLemmixSharp.Engine.Rendering;
 using Viewport = NeoLemmixSharp.Engine.Level.Viewport;
@@ -47,8 +46,8 @@ public sealed class LevelBuilder : IDisposable
 
         var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
 
-        var levelParameters = GetLevelParameters(levelData);
-        var controlPanelParameters = GetControlPanelParameters(levelData);
+        var levelParameters = levelData.LevelParameters;
+        var controlPanelParameters = levelData.ControlParameters;
         LevelScreen.SetLevelParameters(levelParameters);
 
         var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
@@ -62,7 +61,12 @@ public sealed class LevelBuilder : IDisposable
         var hatchGroups = _levelObjectAssembler.GetHatchGroups(levelData);
         var lemmingManager = new LemmingManager(levelData, hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetLemmingManager(lemmingManager);
-        var levelGadgets = _levelObjectAssembler.GetLevelGadgets(levelData, lemmingManager, hatchGroups);
+        var levelGadgets = _levelObjectAssembler.GetLevelGadgets(levelData, lemmingManager);
+
+        foreach (var hatchGroup in hatchGroups)
+        {
+            _levelObjectAssembler.SetHatchesForHatchGroup(hatchGroup);
+        }
 
         var inputController = new LevelInputController(levelParameters);
         var skillSetManager = new SkillSetManager(levelData.SkillSetData);
@@ -130,30 +134,6 @@ public sealed class LevelBuilder : IDisposable
             controlPanel,
             levelViewport,
             levelScreenRenderer);
-    }
-
-    private static LevelParameters GetLevelParameters(LevelData levelData)
-    {
-        return LevelParameters.TimedBombers |
-               LevelParameters.EnablePause |
-               LevelParameters.EnableNuke |
-               LevelParameters.EnableFastForward |
-               LevelParameters.EnableDirectionSelect |
-               LevelParameters.EnableClearPhysics |
-               LevelParameters.EnableSkillShadows |
-               LevelParameters.EnableFrameControl;
-    }
-
-    private static ControlPanelParameters GetControlPanelParameters(LevelData levelData)
-    {
-        return ControlPanelParameters.ShowPauseButton |
-               ControlPanelParameters.ShowNukeButton |
-               ControlPanelParameters.ShowFastForwardsButton |
-               ControlPanelParameters.ShowRestartButton |
-               ControlPanelParameters.ShowFrameNudgeButtons |
-               ControlPanelParameters.ShowDirectionSelectButtons |
-               ControlPanelParameters.ShowClearPhysicsAndReplayButton |
-               ControlPanelParameters.ShowReleaseRateButtonsIfPossible;
     }
 
     public void Dispose()

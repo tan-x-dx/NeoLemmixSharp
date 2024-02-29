@@ -11,11 +11,19 @@ public sealed class HatchSpawnData
     private readonly uint _rawStateData;
     private readonly FacingDirection _facingDirection;
 
+    public int HatchGroupId { get; }
     public Orientation Orientation { get; }
     public int LemmingsToRelease { get; private set; }
 
-    public HatchSpawnData(Team team, uint rawStateData, Orientation orientation, FacingDirection facingDirection, int lemmingsToRelease)
+    public HatchSpawnData(
+        int hatchGroupId,
+        Team team,
+        uint rawStateData,
+        Orientation orientation,
+        FacingDirection facingDirection,
+        int lemmingsToRelease)
     {
+        HatchGroupId = hatchGroupId;
         _team = team;
         _rawStateData = rawStateData;
         Orientation = orientation;

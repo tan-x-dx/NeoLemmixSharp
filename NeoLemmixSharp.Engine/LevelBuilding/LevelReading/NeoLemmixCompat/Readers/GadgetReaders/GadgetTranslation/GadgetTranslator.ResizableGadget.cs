@@ -41,7 +41,6 @@ public sealed partial class GadgetTranslator
             FacingDirection = facingDirection
         };
 
-        gadgetData.AddProperty(GadgetProperty.Behaviour, behaviour);
         gadgetData.AddProperty(GadgetProperty.Width, prototypeWidth);
         gadgetData.AddProperty(GadgetProperty.Height, prototypeHeight);
 
@@ -54,6 +53,7 @@ public sealed partial class GadgetTranslator
             gadgetBuilder = new ResizeableGadgetBuilder
             {
                 GadgetBuilderId = archetypeData.GadgetArchetypeId,
+                GadgetBehaviour = behaviour,
 
                 Sprite = sprite
             };

@@ -19,13 +19,15 @@ public sealed class HitBox
 
     public bool MatchesLemming(Lemming lemming)
     {
-        foreach (var lemmingFilter in _lemmingFilters.AsSpan())
+        var acceptAnyLemming = true;
+        foreach (var lemmingFilter in _lemmingFilters)
         {
+            acceptAnyLemming = false;
             if (lemmingFilter.MatchesLemming(lemming))
                 return true;
         }
 
-        return false;
+        return acceptAnyLemming;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

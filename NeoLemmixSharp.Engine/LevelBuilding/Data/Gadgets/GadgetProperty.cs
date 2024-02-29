@@ -1,37 +1,29 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+
+namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 public enum GadgetProperty
 {
-    Behaviour,
-
-    TriggerX,
-    TriggerY,
-    TriggerWidth,
-    TriggerHeight,
+    HatchGroupId,
+    TeamId,
     Width,
     Height,
-    Team,
     RawLemmingState,
     LemmingCount
 }
 
-public sealed class GadgetPropertyEqualityComparer : IEqualityComparer<GadgetProperty>
+public static class GadgetPropertyHelpers
 {
-    private static GadgetPropertyEqualityComparer? _instance = null;
+    private const int NumberOfGadgetProperties = 6;
 
-    public static GadgetPropertyEqualityComparer Instance => _instance ??= new GadgetPropertyEqualityComparer();
-
-    private GadgetPropertyEqualityComparer()
+    private sealed class GadgetPropertyHasher : IPerfectHasher<GadgetProperty>
     {
+        public int NumberOfItems => NumberOfGadgetProperties;
+
+        public int Hash(GadgetProperty item) => (int)item;
+
+        public GadgetProperty UnHash(int index) => (GadgetProperty)index;
     }
 
-    public bool Equals(GadgetProperty x, GadgetProperty y)
-    {
-        return x == y;
-    }
-
-    public int GetHashCode(GadgetProperty obj)
-    {
-        return HashCode.Combine((int)obj);
-    }
+    public static SimpleDictionary<GadgetProperty, T> CreateSimpleDictionary<T>() => new(new GadgetPropertyHasher());
 }

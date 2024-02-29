@@ -25,9 +25,8 @@ public sealed class ItemTracker<T>
     {
         var span = new Span<ulong>(_longs);
 
-        for (var i = 0; i < span.Length; i++)
+        foreach (ref var value in span)
         {
-            ref var value = ref span[i];
             value = (value << 1) & BigMask;
         }
     }

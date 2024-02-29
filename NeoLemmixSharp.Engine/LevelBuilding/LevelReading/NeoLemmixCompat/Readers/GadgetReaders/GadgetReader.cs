@@ -1,22 +1,20 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
 public sealed class GadgetReader : INeoLemmixDataReader
 {
     private readonly CaseInvariantCharEqualityComparer _charEqualityComparer = new();
-    private readonly Dictionary<string, NeoLemmixGadgetArchetypeData> _gadgetArchetypes = new();
-    private readonly List<NeoLemmixGadgetData> _allGadgetData = new();
 
     private NeoLemmixGadgetData? _currentGadgetData;
     private string? _currentStyle;
     private string? _currentFolder;
+
+    public Dictionary<string, NeoLemmixGadgetArchetypeData> GadgetArchetypes { get; } = new();
+    public List<NeoLemmixGadgetData> AllGadgetData { get; } = new();
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$GADGET";
@@ -162,7 +160,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
             #endregion
 
             case "$END":
-                _allGadgetData.Add(_currentGadgetData!);
+                AllGadgetData.Add(_currentGadgetData!);
                 _currentGadgetData = null;
                 FinishedReading = true;
                 break;
@@ -190,7 +188,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
         ref var gadgetArchetypeData = ref ReadingHelpers.GetArchetypeDataRef(
             _currentStyle!,
             piece,
-            _gadgetArchetypes,
+            GadgetArchetypes,
             out var exists);
 
         if (exists)
@@ -200,7 +198,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
         gadgetArchetypeData = new NeoLemmixGadgetArchetypeData
         {
-            GadgetArchetypeId = _gadgetArchetypes.Count - 1,
+            GadgetArchetypeId = GadgetArchetypes.Count - 1,
             Style = _currentStyle,
             Gadget = gadgetPiece
         };
@@ -225,11 +223,5 @@ public sealed class GadgetReader : INeoLemmixDataReader
         rootFilePath = Path.ChangeExtension(rootFilePath, NeoLemmixFileExtensions.GadgetFileExtension);
 
         dataReaderList.ReadFile(rootFilePath);
-    }
-
-    public void ApplyToLevelData(LevelData levelData, GraphicsDevice graphicsDevice)
-    {
-        new GadgetTranslator(levelData, graphicsDevice)
-            .TranslateNeoLemmixGadgets(_gadgetArchetypes, _allGadgetData);
     }
 }

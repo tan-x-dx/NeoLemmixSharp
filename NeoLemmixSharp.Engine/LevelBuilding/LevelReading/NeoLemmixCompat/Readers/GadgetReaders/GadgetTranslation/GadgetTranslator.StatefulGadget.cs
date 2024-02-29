@@ -25,24 +25,34 @@ public sealed partial class GadgetTranslator
             FacingDirection = FacingDirection.RightInstance
         };
 
-        // gadgetData.AddProperty(GadgetProperty.Behaviour, behaviour);
-        // gadgetData.AddProperty(GadgetProperty.Width, prototypeWidth);
-        // gadgetData.AddProperty(GadgetProperty.Height, prototypeHeight);
-
         ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);
 
         if (!exists)
         {
-            var sprite = GetStitchedTextures(archetypeData, out var spriteWidth, out var spriteHeight);
-
-            gadgetBuilder = new StatefulGadgetBuilder
-            {
-                GadgetBuilderId = archetypeData.GadgetArchetypeId,
-
-                Sprite = sprite
-            };
+            gadgetBuilder = CreateGadgetBuilder();
         }
 
         _levelData.AllGadgetData.Add(gadgetData);
+
+        return;
+
+        StatefulGadgetBuilder CreateGadgetBuilder()
+        {
+            var sprite = GetStitchedTextures(archetypeData, out var spriteWidth, out var spriteHeight);
+
+            var gadgetStateData = new GadgetStateData[archetypeData.AnimationData.Count];
+            var gadgetBehaviour = archetypeData.Behaviour.ToGadgetBehaviour()!;
+
+            return new StatefulGadgetBuilder
+            {
+                GadgetBuilderId = archetypeData.GadgetArchetypeId,
+                GadgetBehaviour = gadgetBehaviour,
+                AllGadgetStateData = gadgetStateData,
+
+                Sprite = sprite,
+                GadgetWidth = spriteWidth,
+                GadgetHeight = spriteHeight
+            };
+        }
     }
 }

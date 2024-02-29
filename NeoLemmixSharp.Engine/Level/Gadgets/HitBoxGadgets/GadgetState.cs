@@ -16,6 +16,8 @@ public sealed class GadgetState
 
     private StatefulGadget _gadget = null!;
 
+    public HitBox HitBox { get; }
+
     public ReadOnlySpan<IGadgetAction> OnLemmingEnterActions => new(_onLemmingEnterActions);
     public ReadOnlySpan<IGadgetAction> OnLemmingPresentActions => new(_onLemmingPresentActions);
     public ReadOnlySpan<IGadgetAction> OnLemmingExitActions => new(_onLemmingExitActions);
@@ -27,6 +29,7 @@ public sealed class GadgetState
         IGadgetAction[] onLemmingEnterActions,
         IGadgetAction[] onLemmingPresentActions,
         IGadgetAction[] onLemmingExitActions,
+        HitBox hitBox,
         GadgetOutput stateSelectedOutput,
         int stateTransitionAfterAnimation)
     {
@@ -35,6 +38,8 @@ public sealed class GadgetState
         _onLemmingEnterActions = onLemmingEnterActions;
         _onLemmingPresentActions = onLemmingPresentActions;
         _onLemmingExitActions = onLemmingExitActions;
+
+        HitBox = hitBox;
 
         _stateSelectedOutput = stateSelectedOutput;
         _stateTransitionAfterAnimation = stateTransitionAfterAnimation;

@@ -23,28 +23,42 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
 
     public GadgetBase BuildGadget(GadgetData gadgetData, IPerfectHasher<Lemming> lemmingHasher)
     {
-        var lemmingCount = gadgetData.GetProperty<int>(GadgetProperty.LemmingCount);
+        var hatchGadgetId = gadgetData.GetProperty(GadgetProperty.HatchGroupId);
+        var teamId = gadgetData.GetProperty(GadgetProperty.TeamId);
+        var rawLemmingState = (uint)gadgetData.GetProperty(GadgetProperty.RawLemmingState);
+        var lemmingCount = gadgetData.GetProperty(GadgetProperty.LemmingCount);
 
-        var spawnPoint = new LevelPosition(SpawnX, SpawnY);
+        var dihedralTransformation = new DihedralTransformation(
+            gadgetData.Orientation.RotNum,
+            false); // Hatches do not flip according to facing direction
 
-        if (!gadgetData.TryGetProperty<Team>(GadgetProperty.Team, out var team))
-        {
-            team = Team.AllItems[0];
-        }
+        dihedralTransformation.Transform(
+            HatchWidth,
+            HatchHeight,
+            HatchWidth,
+            HatchHeight,
+            out var transformedWidth,
+            out var transformedHeight);
 
-        if (!gadgetData.TryGetProperty<uint>(GadgetProperty.RawLemmingState, out var rawLemmingState))
-        {
-            rawLemmingState = 1U << LemmingState.ActiveBitIndex;
-        }
+        dihedralTransformation.Transform(
+            SpawnX,
+            SpawnY,
+            HatchWidth,
+            HatchHeight,
+            out var transformedSpawnX,
+            out var transformedSpawnY);
+
+        var spawnPoint = new LevelPosition(transformedSpawnX, transformedSpawnY);
 
         var gadgetBounds = new RectangularLevelRegion(
             gadgetData.X,
             gadgetData.Y,
-            HatchWidth,
-            HatchHeight);
+            transformedWidth,
+            transformedHeight);
 
         var hatchSpawnData = new HatchSpawnData(
-            team,
+            hatchGadgetId,
+            Team.AllItems[teamId],
             rawLemmingState,
             gadgetData.Orientation,
             gadgetData.FacingDirection,

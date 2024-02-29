@@ -31,7 +31,8 @@ public static class LevelConstants
 
     public const int MaxFallDistance = 62;
 
-    public const int DefaultCountDownActionTicks = 5 * EngineConstants.StandardTicksPerSecond;
+    public const int DefaultCountDownTimer = 5;
+    public const int DefaultCountDownActionTicks = DefaultCountDownTimer * EngineConstants.StandardTicksPerSecond;
     public const int DefaultFastForwardLemmingCountDownActionTicks = EngineConstants.FastForwardSpeedMultiplier * DefaultCountDownActionTicks;
 
     public const int ParticleFrameCount = 51;
@@ -93,7 +94,7 @@ public static class LevelConstants
 
     #region Position Tracking Data
 
-    public const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize32;
+    public const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize16;
     public const ChunkSizeType GadgetPositionChunkSize = ChunkSizeType.ChunkSize64;
 
     #endregion

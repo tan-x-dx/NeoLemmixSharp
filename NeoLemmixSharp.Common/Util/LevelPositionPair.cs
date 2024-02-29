@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -11,18 +10,6 @@ public readonly ref struct LevelPositionPair
     public readonly int P2X;
     public readonly int P2Y;
 
-    public LevelPositionPair(int p1X, int p1Y, int p2X, int p2Y)
-    {
-        Debug.Assert(p1X < p2X);
-        Debug.Assert(p1Y < p2Y);
-
-        P1X = p1X;
-        P1Y = p1Y;
-
-        P2X = p2X;
-        P2Y = p2Y;
-    }
-
     public LevelPositionPair(LevelPosition p1, LevelPosition p2)
     {
         P1X = Math.Min(p1.X, p2.X);
@@ -30,27 +17,6 @@ public readonly ref struct LevelPositionPair
 
         P2X = Math.Max(p1.X, p2.X);
         P2Y = Math.Max(p1.Y, p2.Y);
-    }
-
-    public LevelPositionPair(LevelPosition p1, LevelPosition p2, LevelPosition p3, LevelPosition p4)
-    {
-        var x0 = Math.Min(p1.X, p2.X);
-        var y0 = Math.Min(p1.Y, p2.Y);
-
-        var x1 = Math.Min(p3.X, p4.X);
-        var y1 = Math.Min(p3.Y, p4.Y);
-
-        P1X = Math.Min(x0, x1);
-        P1Y = Math.Min(y0, y1);
-
-        x0 = Math.Max(p1.X, p2.X);
-        y0 = Math.Max(p1.Y, p2.Y);
-
-        x1 = Math.Max(p3.X, p4.X);
-        y1 = Math.Max(p3.Y, p4.Y);
-
-        P2X = Math.Max(x0, x1);
-        P2Y = Math.Max(y0, y1);
     }
 
     public LevelPositionPair(ReadOnlySpan<LevelPosition> positions)
@@ -79,7 +45,6 @@ public readonly ref struct LevelPositionPair
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public LevelPosition GetBottomRightPosition() => new(P2X, P2Y);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Overlaps(LevelPositionPair other)
     {
         return other.P1X <= P2X &&

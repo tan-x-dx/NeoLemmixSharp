@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
@@ -18,14 +19,14 @@ public sealed class LevelObjectAssembler
 {
     private readonly SpriteBatch _spriteBatch;
 
+    private readonly List<Lemming> _lemmings = new();
+
     private readonly List<GadgetBase> _gadgets = new();
     private readonly List<IViewportObjectRenderer> _gadgetRenderers = new();
 
     private readonly LemmingSpriteBankBuilder _lemmingSpriteBankBuilder;
     private readonly GadgetSpriteBankBuilder _gadgetSpriteBankBuilder;
     private readonly ControlPanelSpriteBankBuilder _controlPanelSpriteBankBuilder;
-
-    private Lemming[] _lemmings;
 
     public LevelObjectAssembler(
         GraphicsDevice graphicsDevice,
@@ -71,13 +72,13 @@ public sealed class LevelObjectAssembler
     {
         var allLemmingData = CollectionsMarshal.AsSpan(levelData.AllLemmingData);
 
-        _lemmings = new Lemming[allLemmingData.Length];
-        var i = 0;
+        _lemmings.Capacity = allLemmingData.Length;
 
+        var i = 0;
         foreach (var prototype in allLemmingData)
         {
             var lemming = new Lemming(
-                i,
+                i++,
                 prototype.Orientation,
                 prototype.FacingDirection,
                 prototype.InitialLemmingAction)
@@ -87,31 +88,46 @@ public sealed class LevelObjectAssembler
 
             lemming.State.SetRawData(prototype.Team, prototype.State);
 
-            _lemmings[i++] = lemming;
+            _lemmings.Add(lemming);
         }
 
-        return _lemmings;
+        return _lemmings.ToArray();
     }
 
     public GadgetBase[] GetLevelGadgets(
         LevelData levelData,
-        IPerfectHasher<Lemming> lemmingHasher,
-        HatchGroup[] hatchGroups)
+        IPerfectHasher<Lemming> lemmingHasher)
     {
         var allGadgetData = CollectionsMarshal.AsSpan(levelData.AllGadgetData);
 
-        var result = new GadgetBase[allGadgetData.Length];
-        var i = 0;
+        _gadgets.Capacity = allGadgetData.Length;
 
         foreach (var prototype in allGadgetData)
         {
             var gadgetBuilder = levelData.AllGadgetBuilders[prototype.GadgetBuilderId];
 
             var gadget = gadgetBuilder.BuildGadget(prototype, lemmingHasher);
-            result[i++] = gadget;
+            _gadgets.Add(gadget);
         }
 
-        return result;
+        return _gadgets.ToArray();
+    }
+
+    public void SetHatchesForHatchGroup(HatchGroup hatchGroup)
+    {
+        var hatches = new List<HatchGadget>();
+
+        var gadgetSpan = CollectionsMarshal.AsSpan(_gadgets);
+        foreach (var gadget in gadgetSpan)
+        {
+            if (gadget is HatchGadget hatch &&
+                hatch.HatchSpawnData.HatchGroupId == hatchGroup.Id)
+            {
+                hatches.Add(hatch);
+            }
+        }
+
+        hatchGroup.SetHatches(hatches.ToArray());
     }
 
     public IViewportObjectRenderer[] GetLevelSprites()

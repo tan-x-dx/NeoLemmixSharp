@@ -55,7 +55,7 @@ public sealed class LevelControlPanel
     public ReadOnlySpan<ControlPanelButton> AllButtons => new(_allButtons);
 
     public LevelControlPanel(
-        ControlPanelParameters controlPanelParameters,
+        ControlPanelParameterSet controlPanelParameters,
         LevelInputController controller,
         SkillSetManager skillSetManager,
         LemmingManager lemmingManager,

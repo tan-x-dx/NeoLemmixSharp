@@ -1,15 +1,15 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
 
 public sealed class TerrainGroupReader : INeoLemmixDataReader
 {
     private readonly Dictionary<string, TerrainArchetypeData> _terrainArchetypes;
-    private readonly List<TerrainGroup> _allTerrainGroups = new();
 
     private TerrainReader? _terrainReader;
     private TerrainGroup? _currentTerrainGroup;
+
+    public List<TerrainGroup> AllTerrainGroups { get; } = new();
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$TERRAINGROUP";
@@ -55,20 +55,12 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
                 break;
 
             case "$END":
-                _allTerrainGroups.Add(currentTerrainGroup);
+                AllTerrainGroups.Add(currentTerrainGroup);
                 _currentTerrainGroup = null;
                 FinishedReading = true;
                 break;
         }
 
         return false;
-    }
-
-    public void ApplyToLevelData(LevelData levelData)
-    {
-        levelData.TerrainArchetypeData.Capacity = _terrainArchetypes.Count;
-        levelData.TerrainArchetypeData.AddRange(_terrainArchetypes.Values.OrderBy(d => d.TerrainArchetypeId));
-
-        levelData.AllTerrainGroups.AddRange(_allTerrainGroups);
     }
 }
