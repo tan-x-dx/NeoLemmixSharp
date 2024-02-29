@@ -109,6 +109,7 @@ public sealed class NxlvLevelReader : ILevelReader
 
         var numberOfLemmingsFromHatches = CalculateTotalLemmingCounts(
             levelData,
+            gadgetReader,
             maxLemmingCountFromHatches,
             hasInfiniteHatchCount);
 
@@ -157,12 +158,13 @@ public sealed class NxlvLevelReader : ILevelReader
 
     private static int CalculateTotalLemmingCounts(
         LevelData levelData,
+        GadgetReader gadgetReader,
         int maxLemmingCountFromHatches,
         bool hasInfiniteHatchCount)
     {
         var lemmingData = levelData.AllLemmingData;
         var lemmingCount = levelData.NumberOfLemmings;
-        var numberOfClonerSkills = GetNumberOfClonerSkills(levelData);
+        var numberOfCloners = GetNumberOfClonerSkills(levelData) + GetNumberOfClonerPickups(gadgetReader);
         var numberOfPrePlacedLemmings = lemmingData.Count;
 
         int totalNumberOfLemmings;
@@ -179,7 +181,7 @@ public sealed class NxlvLevelReader : ILevelReader
             totalNumberOfLemmings = Math.Max(lemmingCount, numberOfPrePlacedLemmings);
         }
 
-        totalNumberOfLemmings += numberOfClonerSkills;
+        totalNumberOfLemmings += numberOfCloners;
 
         lemmingData.Capacity = totalNumberOfLemmings;
         levelData.NumberOfLemmings = totalNumberOfLemmings;
@@ -189,23 +191,54 @@ public sealed class NxlvLevelReader : ILevelReader
             lemmingData.Add(new LemmingData());
         }
 
-        return totalNumberOfLemmings - numberOfClonerSkills - numberOfPrePlacedLemmings;
+        return totalNumberOfLemmings - numberOfCloners - numberOfPrePlacedLemmings;
     }
 
     private static int GetNumberOfClonerSkills(LevelData levelData)
     {
-        var clonerSkillData = levelData
-            .SkillSetData
-            .FirstOrDefault(s => s.Skill == ClonerSkill.Instance);
+        SkillSetData? clonerSkillData = null;
+        var skillSetSpan = CollectionsMarshal.AsSpan(levelData.SkillSetData);
+        foreach (var skillSetData in skillSetSpan)
+        {
+            if (skillSetData.Skill != ClonerSkill.Instance)
+                continue;
+
+            clonerSkillData = skillSetData;
+            break;
+        }
 
         if (clonerSkillData == null)
             return 0;
 
-        var numberOfClonerSkills = clonerSkillData.NumberOfSkills;
+        var numberOfSkills = clonerSkillData.NumberOfSkills;
 
-        return numberOfClonerSkills >= LevelConstants.InfiniteSkillCount
+        return numberOfSkills >= LevelConstants.InfiniteSkillCount
             ? LevelConstants.InfiniteSkillCount - 1
-            : numberOfClonerSkills;
+            : numberOfSkills;
+    }
+
+    private static int GetNumberOfClonerPickups(GadgetReader gadgetReader)
+    {
+        var clonerCount = 0;
+        var gadgetDataSpan = CollectionsMarshal.AsSpan(gadgetReader.AllGadgetData);
+        foreach (var gadgetArchetype in gadgetReader.GadgetArchetypes.Values)
+        {
+            if (gadgetArchetype.Behaviour != NeoLemmixGadgetBehaviour.PickupSkill)
+                continue;
+
+            var gadgetArchetypeId = gadgetArchetype.GadgetArchetypeId;
+
+            foreach (var gadgetData in gadgetDataSpan)
+            {
+                if (gadgetData.GadgetArchetypeId != gadgetArchetypeId ||
+                    gadgetData.Skill is not ClonerSkill)
+                    continue;
+
+                clonerCount += gadgetData.SkillCount!.Value;
+            }
+        }
+
+        return clonerCount;
     }
 
     private static void ProcessConfigData(LevelData levelData)
