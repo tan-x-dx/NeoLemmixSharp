@@ -25,5 +25,5 @@ public static class GadgetPropertyHelpers
         public GadgetProperty UnHash(int index) => (GadgetProperty)index;
     }
 
-    public static SimpleDictionary<GadgetProperty, T> CreateSimpleDictionary<T>() => new(new GadgetPropertyHasher());
+    public static SimpleDictionary<GadgetProperty, int> CreateSimpleIntDictionary() => new(new GadgetPropertyHasher());
 }

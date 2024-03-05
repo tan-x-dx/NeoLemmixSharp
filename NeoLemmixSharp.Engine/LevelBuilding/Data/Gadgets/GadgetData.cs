@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 public sealed class GadgetData
 {
-    private readonly SimpleDictionary<GadgetProperty, int> _properties = GadgetPropertyHelpers.CreateSimpleDictionary<int>();
+    private readonly SimpleDictionary<GadgetProperty, int> _properties = GadgetPropertyHelpers.CreateSimpleIntDictionary();
 
     public required int Id { get; init; }
     public required int GadgetBuilderId { get; init; }
@@ -29,11 +29,7 @@ public sealed class GadgetData
 
     public bool TryGetProperty(GadgetProperty property, out int value)
     {
-        if (_properties.TryGetValue(property, out value))
-            return true;
-
-        value = 0;
-        return false;
+        return _properties.TryGetValue(property, out value);
     }
 
     public void GetDihedralTransformation(out DihedralTransformation dihedralTransformation)

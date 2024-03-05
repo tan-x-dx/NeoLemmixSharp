@@ -39,8 +39,8 @@ public sealed class MenuPageCreator
            // "levels\\rotation test.nxlv";
            // "levels\\render test.nxlv";
            // "levels\\movement test.nxlv";
-           // "levels\\object test 2.nxlv";
-        "levels\\hatch count test.nxlv";
+            "levels\\object test 2.nxlv";
+        // "levels\\hatch count test.nxlv";
         // "levels\\lemming_count_test.nxlv";
         // "levels\\test foo.nxlv";
         // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";

@@ -175,8 +175,7 @@ public sealed partial class GadgetTranslator
         var animationDataSpan = CollectionsMarshal.AsSpan(archetypeData.AnimationData);
         foreach (var animationData in animationDataSpan)
         {
-            animationData.Texture!.Dispose();
-            animationData.Texture = null;
+            DisposableHelperMethods.DisposeOf(ref animationData.Texture);
         }
     }
 }

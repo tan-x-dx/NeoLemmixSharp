@@ -4,13 +4,13 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 public sealed class AnimationData
 {
-    public int NumberOfFrames { get; set; }
-    public int InitialFrame { get; set; }
-    public string Name { get; set; }
-    public int OffsetX { get; set; }
-    public int OffsetY { get; set; }
-    public bool Hide { get; set; }
+    public int NumberOfFrames;
+    public int InitialFrame;
+    public string Name;
+    public int OffsetX;
+    public int OffsetY;
+    public bool Hide;
 
     public List<AnimationTriggerData> TriggerData { get; } = new();
-    public Texture2D? Texture { get; set; }
+    public Texture2D? Texture;
 }

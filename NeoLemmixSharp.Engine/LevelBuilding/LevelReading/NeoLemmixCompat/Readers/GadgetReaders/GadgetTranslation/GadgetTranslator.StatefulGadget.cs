@@ -29,14 +29,14 @@ public sealed partial class GadgetTranslator
 
         if (!exists)
         {
-            gadgetBuilder = CreateGadgetBuilder();
+            gadgetBuilder = CreateStatefulGadgetBuilder();
         }
 
         _levelData.AllGadgetData.Add(gadgetData);
 
         return;
 
-        StatefulGadgetBuilder CreateGadgetBuilder()
+        StatefulGadgetBuilder CreateStatefulGadgetBuilder()
         {
             var sprite = GetStitchedTextures(archetypeData, out var spriteWidth, out var spriteHeight);
 

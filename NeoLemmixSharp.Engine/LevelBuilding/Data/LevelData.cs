@@ -3,6 +3,7 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 using System.Runtime.InteropServices;
 
@@ -186,8 +187,28 @@ public sealed class LevelData
                 return true;
         }
 
-        // TODO - Implement zombie hatch test
+        foreach (var gadgetData in AllGadgetData)
+        {
+            var gadgetBuilderId = gadgetData.GadgetBuilderId;
+            var gadgetBuilder = AllGadgetBuilders[gadgetBuilderId];
+
+            if (gadgetBuilder is HatchGadgetBuilder)
+            {
+                if (HatchIsZombieHatch(gadgetData))
+                    return true;
+            }
+        }
 
         return false;
+
+        static bool HatchIsZombieHatch(GadgetData hatchGadgetData)
+        {
+            if (!hatchGadgetData.TryGetProperty(GadgetProperty.RawLemmingState, out var rawLemmingState))
+                return false;
+
+            var zombieFlag = (uint)rawLemmingState >> LemmingState.ZombieBitIndex;
+
+            return (zombieFlag & 1U) != 0U;
+        }
     }
 }

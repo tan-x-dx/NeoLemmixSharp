@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
-public class GadgetRenderer : IViewportObjectRenderer
+public sealed class GadgetRenderer : IViewportObjectRenderer
 {
 
     public Rectangle GetSpriteBounds()

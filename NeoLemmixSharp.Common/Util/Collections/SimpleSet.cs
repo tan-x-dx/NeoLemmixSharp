@@ -47,9 +47,10 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-        foreach (var i in _bits)
+        var simpleSetEnumerable = ToSimpleEnumerable();
+        foreach (var i in simpleSetEnumerable)
         {
-            array[arrayIndex++] = _hasher.UnHash(i);
+            array[arrayIndex++] = i;
         }
     }
 

@@ -2,44 +2,46 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using BitArray = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArray;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
 {
     private readonly IPerfectHasher<TKey> _hasher;
-    private readonly SimpleSet<TKey> _keys;
+    private readonly BitArray _bits;
     private readonly TValue[] _values;
 
-    public int Count => _keys.Count;
+    public int Count => _bits.PopCount;
 
     public SimpleDictionary(IPerfectHasher<TKey> hasher)
     {
         _hasher = hasher;
-        _keys = new SimpleSet<TKey>(hasher);
+        _bits = new BitArray(hasher.NumberOfItems);
         _values = new TValue[hasher.NumberOfItems];
+        Array.Clear(_values);
     }
 
     public void Add(TKey key, TValue value)
     {
-        if (!_keys.Add(key))
+        var index = _hasher.Hash(key);
+        if (!_bits.SetBit(index))
             throw new ArgumentException("Key already added!", nameof(key));
 
-        var index = _hasher.Hash(key);
         _values[index] = value;
     }
 
     public void Clear()
     {
-        _keys.Clear();
+        _bits.Clear();
         Array.Clear(_values);
     }
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
-        foreach (var key in _keys)
+        foreach (var index in _bits)
         {
-            var index = _hasher.Hash(key);
+            var key = _hasher.UnHash(index);
             var value = _values[index];
             array[arrayIndex++] = new KeyValuePair<TKey, TValue>(key, value);
         }
@@ -47,37 +49,38 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
 
     public bool ContainsKey(TKey key)
     {
-        return _keys.Contains(key);
+        var index = _hasher.Hash(key);
+        return _bits.GetBit(index);
     }
 
     public bool TryGetValue(TKey key, out TValue value)
     {
         var index = _hasher.Hash(key);
         value = _values[index];
-        return _keys.Contains(key);
+        return _bits.GetBit(index);
     }
 
     public bool Remove(TKey key)
     {
         var index = _hasher.Hash(key);
         _values[index] = default!;
-        return _keys.Remove(key);
+        return _bits.ClearBit(index);
     }
 
     public TValue this[TKey key]
     {
         get
         {
-            if (!_keys.Contains(key))
+            var index = _hasher.Hash(key);
+            if (!_bits.GetBit(index))
                 throw new KeyNotFoundException();
 
-            var index = _hasher.Hash(key);
             return _values[index];
         }
         set
         {
-            _keys.Add(key);
             var index = _hasher.Hash(key);
+            _bits.SetBit(index);
             _values[index] = value;
         }
     }
@@ -93,13 +96,13 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     public sealed class Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
     {
         private readonly IPerfectHasher<TKey> _hasher;
-        private readonly SimpleSet<TKey>.ReferenceTypeEnumerator _enumerator;
+        private readonly BitArray.ReferenceTypeBitEnumerator _enumerator;
         private readonly TValue[] _values;
 
         public Enumerator(SimpleDictionary<TKey, TValue> dictionary)
         {
             _hasher = dictionary._hasher;
-            _enumerator = dictionary._keys.GetReferenceTypeEnumerator();
+            _enumerator = dictionary._bits.GetEnumerator();
             _values = dictionary._values;
         }
 
@@ -111,9 +114,10 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         {
             get
             {
-                var key = _enumerator.Current;
-                var index = _hasher.Hash(key);
-                return new KeyValuePair<TKey, TValue>(key, _values[index]);
+                var index = _enumerator.Current;
+                var key = _hasher.UnHash(index);
+                var value = _values[index];
+                return new KeyValuePair<TKey, TValue>(key, value);
             }
         }
 
@@ -125,7 +129,22 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     }
 
     [Pure]
-    public SimpleSetEnumerable<TKey> Keys => _keys.ToSimpleEnumerable();
+    public TKey[] Keys
+    {
+        get
+        {
+            var result = new TKey[Count];
+            var i = 0;
+
+            foreach (var (key, _) in this)
+            {
+                result[i++] = key;
+            }
+
+            return result;
+        }
+    }
+
     [Pure]
     public TValue[] Values
     {
@@ -148,11 +167,11 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item) => Remove(item.Key);
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys => _keys;
+    IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys => Keys;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values => Values;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    ICollection<TKey> IDictionary<TKey, TValue>.Keys => _keys;
+    ICollection<TKey> IDictionary<TKey, TValue>.Keys => Keys;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     ICollection<TValue> IDictionary<TKey, TValue>.Values => Values;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]

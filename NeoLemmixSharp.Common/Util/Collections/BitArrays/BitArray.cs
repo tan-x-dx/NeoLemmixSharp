@@ -79,7 +79,7 @@ public sealed class BitArray
     /// <param name="index">The bit to set</param>
     public static void SetBit(Span<uint> bits, int index)
     {
-        bits[index >> 5] |= (1U << index);
+        bits[index >> Shift] |= (1U << index);
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ public sealed class BitArray
     /// <param name="index">The bit to clear</param>
     public static void ClearBit(Span<uint> bits, int index)
     {
-        bits[index >> 5] &= ~(1U << index);
+        bits[index >> Shift] &= ~(1U << index);
     }
 
     /// <summary>
