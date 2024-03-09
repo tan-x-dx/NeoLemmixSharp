@@ -19,7 +19,7 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
     public required SpriteData SpriteData { get; init; }
 
     public GadgetBase BuildGadget(
-        GadgetSpriteBankBuilder gadgetSpriteBankBuilder,
+        GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         IPerfectHasher<Lemming> lemmingHasher)
     {
@@ -56,7 +56,7 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
         transformedWidth,
             transformedHeight);
 
-        var gadgetRenderer = gadgetSpriteBankBuilder.BuildGadgetRenderer(this, gadgetData);
+        var gadgetRenderer = gadgetSpriteBuilder.BuildGadgetRenderer(this, gadgetData);
 
         var hatchSpawnData = new HatchSpawnData(
             hatchGadgetId,

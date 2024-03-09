@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Viewport;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -12,12 +12,12 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>
     public abstract GadgetBehaviour GadgetBehaviour { get; }
     public abstract Orientation Orientation { get; }
     public RectangularLevelRegion GadgetBounds { get; }
-    public IViewportObjectRenderer? Renderer { get; }
+    public IGadgetRenderer? Renderer { get; }
 
     protected GadgetBase(
         int id,
         RectangularLevelRegion gadgetBounds,
-        IViewportObjectRenderer? renderer)
+        IGadgetRenderer? renderer)
     {
         Id = id;
         GadgetBounds = gadgetBounds;

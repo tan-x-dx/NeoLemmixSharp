@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
-public sealed class PixelColorData
+public readonly struct PixelColorData
 {
     public uint[] ColorData { get; }
 
@@ -27,17 +27,19 @@ public sealed class PixelColorData
         ColorData = colorData;
     }
 
-    public uint Get(int x, int y)
+    public uint this[int x, int y]
     {
-        var i = Width * y + x;
+        get
+        {
+            var i = Width * y + x;
 
-        return ColorData[i];
-    }
+            return ColorData[i];
+        }
+        set
+        {
+            var i = Width * y + x;
 
-    public void Set(int x, int y, uint pixel)
-    {
-        var i = Width * y + x;
-
-        ColorData[i] = pixel;
+            ColorData[i] = value;
+        }
     }
 }

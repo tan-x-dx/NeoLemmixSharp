@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Viewport;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional.BinaryLogic;
 
@@ -19,7 +19,7 @@ public sealed class NotGateGadget : GadgetBase, ILogicGateGadget
     public NotGateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
-        IViewportObjectRenderer? renderer,
+        IGadgetRenderer? renderer,
         LogicGateGadgetInput input)
         : base(id, gadgetBounds, renderer)
     {

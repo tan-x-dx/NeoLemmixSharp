@@ -11,7 +11,7 @@ public interface IGadgetBuilder
     SpriteData SpriteData { get; }
 
     GadgetBase BuildGadget(
-        GadgetSpriteBankBuilder gadgetSpriteBankBuilder,
+        GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         IPerfectHasher<Lemming> lemmingHasher);
 }

@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Viewport;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
@@ -27,7 +27,7 @@ public sealed class SwitchGadget : HitBoxGadget
     public SwitchGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
-        IViewportObjectRenderer? renderer,
+        IGadgetRenderer? renderer,
         ItemTracker<Lemming> lemmingTracker,
         bool faceRight)
         : base(id, gadgetBounds, renderer, lemmingTracker)

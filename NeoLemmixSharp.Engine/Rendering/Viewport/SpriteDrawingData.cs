@@ -70,7 +70,7 @@ public sealed class SpriteDrawingData
 
         var x2 = x1 + ThisSpriteWidth * layer;
         var y2 = y1 + ThisSpriteHeight * frame;
-        _colorData.Set(x2, y2, pixel);
+        _colorData[x2, y2] = pixel;
     }
 
     public Texture2D ToTexture(GraphicsDevice graphicsDevice)

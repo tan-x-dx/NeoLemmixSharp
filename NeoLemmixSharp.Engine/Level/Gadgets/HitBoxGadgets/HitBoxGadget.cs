@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Rendering.Viewport;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
@@ -20,7 +20,7 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRe
     protected HitBoxGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
-        IViewportObjectRenderer? renderer,
+        IGadgetRenderer? renderer,
         ItemTracker<Lemming> lemmingTracker)
         : base(id, gadgetBounds, renderer)
     {

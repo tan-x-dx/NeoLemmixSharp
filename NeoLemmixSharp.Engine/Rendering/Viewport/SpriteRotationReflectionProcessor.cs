@@ -33,7 +33,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
         LevelPosition anchorPoint,
         ItemCreator itemCreator)
     {
-        var result = new T[8];
+        var result = new T[Orientation.NumberOfItems * FacingDirection.NumberOfItems];
 
         CreateSpritesForDirections(DownOrientation.Instance, FacingDirection.RightInstance);
         CreateSpritesForDirections(DownOrientation.Instance, FacingDirection.LeftInstance);
@@ -87,7 +87,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
                 {
                     for (var y0 = 0; y0 < spriteHeight; y0++)
                     {
-                        var pixel = pixelColorData.Get(x0 + l0, y0 + f0);
+                        var pixel = pixelColorData[x0 + l0, y0 + f0];
 
                         spriteDrawingData.Set(pixel, x0, y0, l, f);
                     }
@@ -102,15 +102,15 @@ public sealed class SpriteRotationReflectionProcessor<T>
             anchorPoint.Y,
             spriteWidth - 1,
             spriteHeight - 1,
-            out var footX1,
-            out var footY1);
+            out var anchorX1,
+            out var anchorY1);
 
         var actionSprite = itemCreator(
             texture0,
             spriteDrawingData.ThisSpriteWidth,
             spriteDrawingData.ThisSpriteHeight,
             numberOfFrames,
-            new LevelPosition(footX1, footY1));
+            new LevelPosition(anchorX1, anchorY1));
 
         return actionSprite;
     }

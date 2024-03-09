@@ -16,7 +16,7 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
     public required SpriteData SpriteData { get; init; }
 
     public GadgetBase BuildGadget(
-        GadgetSpriteBankBuilder gadgetSpriteBankBuilder,
+        GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         IPerfectHasher<Lemming> lemmingHasher)
     {

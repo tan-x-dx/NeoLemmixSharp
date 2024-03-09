@@ -20,13 +20,13 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
     public required SpriteData SpriteData { get; init; }
 
     public GadgetBase BuildGadget(
-        GadgetSpriteBankBuilder gadgetSpriteBankBuilder,
+        GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         IPerfectHasher<Lemming> lemmingHasher)
     {
         var bounds = new RectangularLevelRegion(gadgetData.X, gadgetData.Y, SpriteData.SpriteWidth, SpriteData.SpriteHeight);
         var gadgetStates = CreateStates(gadgetData);
-        var gadgetRenderer = gadgetSpriteBankBuilder.BuildGadgetRenderer(this, gadgetData);
+        var gadgetRenderer = gadgetSpriteBuilder.BuildGadgetRenderer(this, gadgetData);
 
         return new StatefulGadget(
             gadgetData.Id,

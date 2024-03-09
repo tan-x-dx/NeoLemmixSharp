@@ -6,7 +6,6 @@ using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -23,18 +22,11 @@ public sealed class LevelObjectAssembler
     private readonly List<GadgetBase> _gadgets = new();
     private readonly List<IViewportObjectRenderer> _gadgetRenderers = new();
 
-    private readonly GadgetSpriteBankBuilder _gadgetSpriteBankBuilder;
+    private readonly GadgetSpriteBuilder _gadgetSpriteBuilder;
 
     public LevelObjectAssembler(GraphicsDevice graphicsDevice)
     {
-        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(graphicsDevice);
-    }
-
-    public void AssembleLevelObjects(
-        LevelData levelData,
-        ContentManager contentManager)
-    {
-        SetUpGadgets(contentManager, levelData.AllGadgetData);
+        _gadgetSpriteBuilder = new GadgetSpriteBuilder(graphicsDevice);
     }
 
     public static HatchGroup[] GetHatchGroups(LevelData levelData)
@@ -96,7 +88,7 @@ public sealed class LevelObjectAssembler
         {
             var gadgetBuilder = levelData.AllGadgetBuilders[prototype.GadgetBuilderId];
 
-            var gadget = gadgetBuilder.BuildGadget(_gadgetSpriteBankBuilder, prototype, lemmingHasher);
+            var gadget = gadgetBuilder.BuildGadget(_gadgetSpriteBuilder, prototype, lemmingHasher);
             _gadgets.Add(gadget);
         }
 
@@ -140,19 +132,11 @@ public sealed class LevelObjectAssembler
 
     public GadgetSpriteBank GetGadgetSpriteBank()
     {
-        return _gadgetSpriteBankBuilder.BuildGadgetSpriteBank();
+        return _gadgetSpriteBuilder.BuildGadgetSpriteBank();
     }
 
     public ControlPanelSpriteBank GetControlPanelSpriteBank(ContentManager contentManager)
     {
         return ControlPanelSpriteBankBuilder.BuildControlPanelSpriteBank(contentManager);
-    }
-
-    private void SetUpGadgets(ContentManager contentManager, ICollection<GadgetData> allGadgetData)
-    {
-        foreach (var gadgetData in allGadgetData)
-        {
-            //    _gadgetSpriteBankBuilder.LoadGadgetSprite(gadgetData);
-        }
     }
 }

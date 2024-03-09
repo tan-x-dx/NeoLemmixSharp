@@ -115,7 +115,7 @@ public sealed class TerrainPainter : IDisposable
         {
             for (var y = 0; y < sourcePixelColorData.Height; y++)
             {
-                var sourcePixelColor = sourcePixelColorData.Get(x, y);
+                var sourcePixelColor = sourcePixelColorData[x, y];
                 if (sourcePixelColor == 0U)
                     continue;
 
@@ -139,7 +139,7 @@ public sealed class TerrainPainter : IDisposable
                     sourcePixelColor = BlendColors(terrainData.Tint.Value, sourcePixelColor);
                 }
 
-                var targetPixelColor = targetPixelColorData.Get(x0, y0);
+                var targetPixelColor = targetPixelColorData[x0, y0];
 
                 if (terrainData.Erase)
                 {
@@ -157,7 +157,7 @@ public sealed class TerrainPainter : IDisposable
                     targetPixelColor = BlendColors(sourcePixelColor, targetPixelColor);
                 }
 
-                targetPixelColorData.Set(x0, y0, targetPixelColor);
+                targetPixelColorData[x0, y0] = targetPixelColor;
                 var pixelIndex = targetPixelColorData.Width * y0 + x0;
                 ref var targetPixelData = ref _terrainPixels[pixelIndex];
 

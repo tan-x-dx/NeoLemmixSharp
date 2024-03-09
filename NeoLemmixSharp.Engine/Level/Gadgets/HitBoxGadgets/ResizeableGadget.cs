@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Viewport;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
@@ -17,7 +17,7 @@ public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeabl
         GadgetBehaviour gadgetBehaviour,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
-        IViewportObjectRenderer? renderer,
+        IGadgetRenderer? renderer,
         ItemTracker<Lemming> lemmingTracker)
         : base(id, gadgetBounds, renderer, lemmingTracker)
     {
