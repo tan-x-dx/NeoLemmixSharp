@@ -18,9 +18,10 @@ public sealed partial class GadgetTranslator
         {
             Id = gadgetId,
             GadgetBuilderId = archetypeData.GadgetArchetypeId,
-
+            
             X = prototype.X,
             Y = prototype.Y,
+            ShouldRender = true,
             Orientation = orientation,
             FacingDirection = facingDirection
         };
@@ -38,7 +39,7 @@ public sealed partial class GadgetTranslator
 
         StatefulGadgetBuilder CreateStatefulGadgetBuilder()
         {
-            var sprite = GetStitchedTextures(archetypeData, out var spriteWidth, out var spriteHeight);
+            var spriteData = GetStitchedSpriteData(archetypeData);
 
             var gadgetStateData = new GadgetStateData[archetypeData.AnimationData.Count];
             var gadgetBehaviour = archetypeData.Behaviour.ToGadgetBehaviour()!;
@@ -49,9 +50,7 @@ public sealed partial class GadgetTranslator
                 GadgetBehaviour = gadgetBehaviour,
                 AllGadgetStateData = gadgetStateData,
 
-                Sprite = sprite,
-                GadgetWidth = spriteWidth,
-                GadgetHeight = spriteHeight
+                SpriteData = spriteData
             };
         }
     }

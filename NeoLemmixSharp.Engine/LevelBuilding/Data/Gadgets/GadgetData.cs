@@ -13,6 +13,7 @@ public sealed class GadgetData
     public required int GadgetBuilderId { get; init; }
     public required int X { get; init; }
     public required int Y { get; init; }
+    public required bool ShouldRender { get; init; }
 
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }

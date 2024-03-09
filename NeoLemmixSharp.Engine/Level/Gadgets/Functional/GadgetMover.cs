@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
@@ -24,11 +25,12 @@ public sealed class GadgetMover : GadgetBase, IReactiveGadget
     public GadgetMover(
         int id,
         RectangularLevelRegion gadgetBounds,
+        IViewportObjectRenderer? renderer,
         IMoveableGadget[] gadgets,
         int tickDelay,
         int dx,
         int dy)
-        : base(id, gadgetBounds)
+        : base(id, gadgetBounds, renderer)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;

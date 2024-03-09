@@ -37,7 +37,7 @@ public sealed class LevelObjectAssembler
         SetUpGadgets(contentManager, levelData.AllGadgetData);
     }
 
-    public HatchGroup[] GetHatchGroups(LevelData levelData)
+    public static HatchGroup[] GetHatchGroups(LevelData levelData)
     {
         var allHatchGroupData = CollectionsMarshal.AsSpan(levelData.AllHatchGroupData);
 
@@ -96,7 +96,7 @@ public sealed class LevelObjectAssembler
         {
             var gadgetBuilder = levelData.AllGadgetBuilders[prototype.GadgetBuilderId];
 
-            var gadget = gadgetBuilder.BuildGadget(prototype, lemmingHasher);
+            var gadget = gadgetBuilder.BuildGadget(_gadgetSpriteBankBuilder, prototype, lemmingHasher);
             _gadgets.Add(gadget);
         }
 

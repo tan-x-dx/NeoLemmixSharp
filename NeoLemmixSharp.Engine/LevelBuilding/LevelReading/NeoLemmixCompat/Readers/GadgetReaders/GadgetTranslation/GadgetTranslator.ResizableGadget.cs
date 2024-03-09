@@ -34,6 +34,7 @@ public sealed partial class GadgetTranslator
         {
             Id = gadgetId,
             GadgetBuilderId = archetypeData.GadgetArchetypeId,
+            ShouldRender = true,
 
             X = prototype.X,
             Y = prototype.Y,
@@ -48,14 +49,14 @@ public sealed partial class GadgetTranslator
 
         if (!exists)
         {
-            var sprite = GetStitchedTextures(archetypeData, out var spriteWidth, out var spriteHeight);
+            var spriteData = GetStitchedSpriteData(archetypeData);
 
             gadgetBuilder = new ResizeableGadgetBuilder
             {
                 GadgetBuilderId = archetypeData.GadgetArchetypeId,
                 GadgetBehaviour = behaviour,
 
-                Sprite = sprite
+                SpriteData = spriteData
             };
         }
 

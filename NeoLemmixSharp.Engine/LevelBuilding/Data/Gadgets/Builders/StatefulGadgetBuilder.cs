@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
@@ -8,6 +7,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
@@ -17,23 +17,23 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
     public required GadgetBehaviour GadgetBehaviour { get; init; }
     public required GadgetStateData[] AllGadgetStateData { get; init; }
 
-    public required Texture2D Sprite { get; init; }
-
-    public required int GadgetWidth { get; init; }
-    public required int GadgetHeight { get; init; }
+    public required SpriteData SpriteData { get; init; }
 
     public GadgetBase BuildGadget(
+        GadgetSpriteBankBuilder gadgetSpriteBankBuilder,
         GadgetData gadgetData,
         IPerfectHasher<Lemming> lemmingHasher)
     {
-        var bounds = new RectangularLevelRegion(gadgetData.X, gadgetData.Y, GadgetWidth, GadgetHeight);
+        var bounds = new RectangularLevelRegion(gadgetData.X, gadgetData.Y, SpriteData.SpriteWidth, SpriteData.SpriteHeight);
         var gadgetStates = CreateStates(gadgetData);
+        var gadgetRenderer = gadgetSpriteBankBuilder.BuildGadgetRenderer(this, gadgetData);
 
         return new StatefulGadget(
             gadgetData.Id,
             GadgetBehaviour,
             gadgetData.Orientation,
             bounds,
+            gadgetRenderer,
             gadgetStates,
             new ItemTracker<Lemming>(lemmingHasher));
     }
@@ -79,8 +79,8 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         dihedralTransformation.Transform(
             gadgetStateData.TriggerX,
             gadgetStateData.TriggerY,
-            GadgetWidth,
-            GadgetHeight,
+            SpriteData.SpriteWidth,
+            SpriteData.SpriteHeight,
             out var tX,
             out var tY);
 
@@ -89,8 +89,8 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         dihedralTransformation.Transform(
             gadgetStateData.TriggerX + gadgetStateData.TriggerWidth - 1,
             gadgetStateData.TriggerY + gadgetStateData.TriggerHeight - 1,
-            GadgetWidth,
-            GadgetHeight,
+            SpriteData.SpriteWidth,
+            SpriteData.SpriteHeight,
             out tX,
             out tY);
 

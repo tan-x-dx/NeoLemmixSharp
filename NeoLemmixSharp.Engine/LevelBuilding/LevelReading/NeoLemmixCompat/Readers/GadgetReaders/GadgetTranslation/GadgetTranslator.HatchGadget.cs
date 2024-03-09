@@ -21,8 +21,10 @@ public sealed partial class GadgetTranslator
 
             X = prototype.X,
             Y = prototype.Y,
+            ShouldRender = true,
+
             Orientation = orientation,
-            FacingDirection = facingDirection
+            FacingDirection = facingDirection,
         };
 
         gadgetData.AddProperty(GadgetProperty.HatchGroupId, 0); // All NeoLemmix levels have precisely one hatch group
@@ -34,7 +36,7 @@ public sealed partial class GadgetTranslator
 
         if (!exists)
         {
-            var sprite = GetStitchedTextures(archetypeData, out var spriteWidth, out var spriteHeight);
+            var spriteData = GetStitchedSpriteData(archetypeData);
 
             gadgetBuilder = new HatchGadgetBuilder
             {
@@ -43,10 +45,7 @@ public sealed partial class GadgetTranslator
                 SpawnX = archetypeData.TriggerX,
                 SpawnY = archetypeData.TriggerY,
 
-                HatchWidth = spriteWidth,
-                HatchHeight = spriteHeight,
-
-                Sprite = sprite
+                SpriteData = spriteData
             };
         }
 

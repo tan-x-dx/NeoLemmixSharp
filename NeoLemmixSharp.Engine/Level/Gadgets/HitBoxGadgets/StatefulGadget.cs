@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
 using static NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
@@ -23,9 +24,10 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
         GadgetBehaviour interactionType,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
+        IViewportObjectRenderer? renderer,
         GadgetState[] states,
         ItemTracker<Lemming> lemmingTracker)
-        : base(id, gadgetBounds, lemmingTracker)
+        : base(id, gadgetBounds, renderer, lemmingTracker)
     {
         GadgetBehaviour = interactionType;
         Orientation = orientation;

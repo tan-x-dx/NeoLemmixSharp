@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
@@ -24,11 +25,12 @@ public sealed class GadgetResizer : GadgetBase, IReactiveGadget
     public GadgetResizer(
         int id,
         RectangularLevelRegion gadgetBounds,
+        IViewportObjectRenderer? renderer,
         IResizeableGadget[] gadgets,
         int tickDelay,
         int dw,
         int dh)
-        : base(id, gadgetBounds)
+        : base(id, gadgetBounds, renderer)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;

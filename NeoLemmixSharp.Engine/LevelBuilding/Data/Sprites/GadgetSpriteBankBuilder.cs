@@ -1,9 +1,11 @@
-﻿using System.Runtime.InteropServices;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
+using System.Runtime.InteropServices;
 using GadgetSpriteCreator = NeoLemmixSharp.Engine.Rendering.Viewport.SpriteRotationReflectionProcessor<NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering.GadgetRenderer>;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
@@ -18,29 +20,47 @@ public sealed class GadgetSpriteBankBuilder
         _gadgetSpriteCreator = new GadgetSpriteCreator(graphicsDevice);
     }
 
-    public void LoadGadgetSprite(
+    public IViewportObjectRenderer? BuildGadgetRenderer(
         IGadgetBuilder gadgetBuilder,
         GadgetData gadgetData)
     {
+        if (!gadgetData.ShouldRender)
+            return null;
+
         var key = new TextureLookupKey(gadgetBuilder.GadgetBuilderId, gadgetData.Orientation, gadgetData.FacingDirection);
 
         ref var texture = ref CollectionsMarshal.GetValueRefOrAddDefault(_gadgetTextures, key, out var exists);
         if (exists)
-            return;
+            return null;
+
+        var spriteData = gadgetBuilder.SpriteData;
 
         if (gadgetData.Orientation == DownOrientation.Instance &&
             gadgetData.FacingDirection == FacingDirection.RightInstance)
         {
-            texture = gadgetBuilder.Sprite;
+            texture = spriteData.Texture;
         }
         else
         {
-       /*     var x = _gadgetSpriteCreator.CreateSpriteType(
-                gadgetBuilder.Sprite,
+            var x = _gadgetSpriteCreator.CreateSpriteType(
+                spriteData.Texture,
                 gadgetData.Orientation,
                 gadgetData.FacingDirection,
-                );*/
+                spriteData.SpriteWidth,
+                spriteData.SpriteHeight,
+                spriteData.NumberOfFrames,
+                spriteData.NumberOfLayers,
+                new LevelPosition(0, 0),
+                ItemCreator
+            );
         }
+
+        return null;
+    }
+
+    private GadgetRenderer ItemCreator(Texture2D texture, int spriteWidth, int spriteHeight, int numberOfFrames, LevelPosition anchorpoint)
+    {
+        throw new NotImplementedException();
     }
 
     public GadgetSpriteBank BuildGadgetSpriteBank()
