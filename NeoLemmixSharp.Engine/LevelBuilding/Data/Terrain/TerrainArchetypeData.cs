@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
-using NeoLemmixSharp.Engine.LevelBuilding.Sprites;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 

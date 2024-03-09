@@ -1,10 +1,10 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.SpriteSet;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
 public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
 {
-    private readonly LemmingSpriteSetRecoloring _lemmingSpriteSetRecoloring = new();
+    //private readonly LemmingSpriteSetRecoloring _lemmingSpriteSetRecoloring = new();
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$SPRITESET_RECOLORING";
@@ -18,7 +18,7 @@ public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
     {
         ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
-        switch (firstToken)
+       /* switch (firstToken)
         {
             case "MASK":
                 _lemmingSpriteSetRecoloring.Mask = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
@@ -77,7 +77,7 @@ public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
             default:
                 ReadingHelpers.ThrowUnknownTokenException("Gadget Archetype Data", firstToken, line);
                 break;
-        }
+        }*/
 
         return false;
     }

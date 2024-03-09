@@ -5,20 +5,15 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 public sealed class GadgetSpriteBank : IDisposable
 {
-    private readonly Dictionary<string, Texture2D> _textureLookup;
+    private readonly Texture2D[] _textures;
 
-    public GadgetSpriteBank(Dictionary<string, Texture2D> textureLookup)
+    public GadgetSpriteBank(Texture2D[] textures)
     {
-        _textureLookup = textureLookup;
+        _textures = textures;
     }
 
     public void Dispose()
     {
-        DisposableHelperMethods.DisposeOfAll(_textureLookup);
-    }
-
-    public Texture2D GetTexture(string textureName)
-    {
-        return _textureLookup[textureName];
+        DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<Texture2D>(_textures));
     }
 }

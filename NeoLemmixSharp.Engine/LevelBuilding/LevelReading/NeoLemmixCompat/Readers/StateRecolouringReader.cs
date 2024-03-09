@@ -1,13 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.SpriteSet;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
 public sealed class StateRecoloringReader : INeoLemmixDataReader
 {
-    private readonly ThemeData _themeData = new();
+   // private readonly ThemeData _themeData = new();
 
-    private LemmingStateRecoloring? _currentLemmingStateRecoloring;
+  //  private LemmingStateRecoloring? _currentLemmingStateRecoloring;
 
     private uint? _currentOriginalColor;
     private uint? _currentReplacementColor;
@@ -16,7 +16,7 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
     public string IdentifierToken => "$STATE_RECOLORING";
     public void BeginReading(ReadOnlySpan<char> line)
     {
-        _currentLemmingStateRecoloring = null;
+      //  _currentLemmingStateRecoloring = null;
         FinishedReading = false;
     }
 
@@ -24,7 +24,7 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
     {
         ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
-        if (firstToken[0] == '$')
+     /*   if (firstToken[0] == '$')
         {
             if (firstToken is "$END")
             {
@@ -67,7 +67,7 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
             default:
                 ReadingHelpers.ThrowUnknownTokenException("Gadget Archetype Data", firstToken, line);
                 break;
-        }
+        }*/
 
         return false;
     }

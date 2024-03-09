@@ -1,6 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using System.Runtime.InteropServices;
@@ -14,6 +12,8 @@ public sealed partial class GadgetTranslator
         NeoLemmixGadgetData prototype,
         int gadgetId)
     {
+        GetOrientationData(prototype, out var orientation, out var facingDirection);
+
         var gadgetData = new GadgetData
         {
             Id = gadgetId,
@@ -21,8 +21,8 @@ public sealed partial class GadgetTranslator
 
             X = prototype.X,
             Y = prototype.Y,
-            Orientation = DownOrientation.Instance,
-            FacingDirection = FacingDirection.RightInstance
+            Orientation = orientation,
+            FacingDirection = facingDirection
         };
 
         ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);

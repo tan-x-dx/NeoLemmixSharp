@@ -17,7 +17,7 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
         SkillAssignButton skillAssignButton)
         : base(spriteBank, skillAssignButton, 0, 0)
     {
-        _skillIcons = spriteBank.GetTexture(ControlPanelTexture.PanelSkills);
+        _skillIcons = spriteBank.PanelSkills;
 
         var skillId = skillAssignButton.SkillId;
         _skillY = GetSkillY(skillId);

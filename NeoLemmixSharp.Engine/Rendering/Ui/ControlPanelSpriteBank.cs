@@ -1,24 +1,21 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
 public sealed class ControlPanelSpriteBank : IDisposable
 {
-    private readonly Texture2D[] _textureLookup;
-
-    public ControlPanelSpriteBank(Texture2D[] textureLookup)
-    {
-        _textureLookup = textureLookup;
-    }
-
-    public Texture2D GetTexture(ControlPanelTexture textureName)
-    {
-        return _textureLookup[(int)textureName];
-    }
+    public required Texture2D Panel { get; init; }
+    public required Texture2D PanelMinimapRegion { get; init; }
+    public required Texture2D PanelIcons { get; init; }
+    public required Texture2D PanelSkillSelected { get; init; }
+    public required Texture2D PanelSkills { get; init; }
 
     public void Dispose()
     {
-        DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<Texture2D>(_textureLookup));
+        Panel.Dispose();
+        PanelMinimapRegion.Dispose();
+        PanelIcons.Dispose();
+        PanelSkillSelected.Dispose();
+        PanelSkills.Dispose();
     }
 }

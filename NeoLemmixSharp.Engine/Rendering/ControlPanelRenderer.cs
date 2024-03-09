@@ -51,8 +51,8 @@ public sealed class ControlPanelRenderer
         var allButtons = _levelControlPanel.AllButtons;
         _controlPanelButtonRenderers = SetUpButtonRenderers(controlPanelSpriteBank, allButtons);
         _whitePixel = CommonSpriteBank.Instance.GetTexture(CommonTexture.WhitePixel);
-        _panelIconsTexture = controlPanelSpriteBank.GetTexture(ControlPanelTexture.PanelIcons);
-        _minimapRegionTexture = controlPanelSpriteBank.GetTexture(ControlPanelTexture.PanelMinimapRegion);
+        _panelIconsTexture = controlPanelSpriteBank.PanelIcons;
+        _minimapRegionTexture = controlPanelSpriteBank.PanelMinimapRegion;
 
         _controlPanelRenderTarget = GetControlPanelRenderTarget2D();
     }

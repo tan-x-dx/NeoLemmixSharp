@@ -140,7 +140,6 @@ public sealed class LevelData
     public LevelParameterSet LevelParameters { get; } = LevelParameterHelpers.CreateSimpleSet();
     public ControlPanelParameterSet ControlParameters { get; } = ControlPanelParameterHelpers.CreateSimpleSet();
     public List<SkillSetData> SkillSetData { get; } = new();
-    public ThemeData ThemeData { get; } = new();
     public List<TerrainArchetypeData> TerrainArchetypeData { get; } = new();
     public List<TerrainData> AllTerrainData { get; } = new();
     public List<TerrainGroup> AllTerrainGroups { get; } = new();

@@ -24,10 +24,12 @@ public static class DefaultLemmingSpriteBank
 
         var spriteRotationReflectionProcessor = new ActionSpriteCreator(graphicsDevice);
 
+#pragma warning disable IDE0039
         LayerRenderer<Lemming>.GetColor getHairColor = l => l.State.HairColor;
         LayerRenderer<Lemming>.GetColor getSkinColor = l => l.State.SkinColor;
         LayerRenderer<Lemming>.GetColor getBodyColor = l => l.State.BodyColor;
         LayerRenderer<Lemming>.GetColor getMiscColor = _ => Color.Magenta;
+#pragma warning restore IDE0039
 
         var numberOfActionSprites = LemmingAction.NumberOfItems *
                                     Orientation.NumberOfItems *

@@ -7,6 +7,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
@@ -17,27 +18,16 @@ namespace NeoLemmixSharp.Engine.LevelBuilding;
 
 public sealed class LevelObjectAssembler
 {
-    private readonly SpriteBatch _spriteBatch;
-
     private readonly List<Lemming> _lemmings = new();
 
     private readonly List<GadgetBase> _gadgets = new();
     private readonly List<IViewportObjectRenderer> _gadgetRenderers = new();
 
-    private readonly LemmingSpriteBankBuilder _lemmingSpriteBankBuilder;
     private readonly GadgetSpriteBankBuilder _gadgetSpriteBankBuilder;
-    private readonly ControlPanelSpriteBankBuilder _controlPanelSpriteBankBuilder;
 
-    public LevelObjectAssembler(
-        GraphicsDevice graphicsDevice,
-        ContentManager contentManager,
-        SpriteBatch spriteBatch)
+    public LevelObjectAssembler(GraphicsDevice graphicsDevice)
     {
-        _spriteBatch = spriteBatch;
-
-        _lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
-        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(graphicsDevice, contentManager);
-        _controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder(graphicsDevice, contentManager);
+        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(graphicsDevice);
     }
 
     public void AssembleLevelObjects(
@@ -153,9 +143,9 @@ public sealed class LevelObjectAssembler
         return _gadgetSpriteBankBuilder.BuildGadgetSpriteBank();
     }
 
-    public ControlPanelSpriteBank GetControlPanelSpriteBank()
+    public ControlPanelSpriteBank GetControlPanelSpriteBank(ContentManager contentManager)
     {
-        return _controlPanelSpriteBankBuilder.BuildControlPanelSpriteBank();
+        return ControlPanelSpriteBankBuilder.BuildControlPanelSpriteBank(contentManager);
     }
 
     private void SetUpGadgets(ContentManager contentManager, ICollection<GadgetData> allGadgetData)

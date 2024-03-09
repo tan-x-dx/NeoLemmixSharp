@@ -3,48 +3,19 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui;
 
-public sealed class ControlPanelSpriteBankBuilder
+public static class ControlPanelSpriteBankBuilder
 {
-    private readonly ContentManager _contentManager;
-    private readonly GraphicsDevice _graphicsDevice;
-
-    private readonly Texture2D[] _textureLookup;
-
-    public ControlPanelSpriteBankBuilder(
-        GraphicsDevice graphicsDevice,
-        ContentManager contentManager)
+    public static ControlPanelSpriteBank BuildControlPanelSpriteBank(ContentManager contentManager)
     {
-        _graphicsDevice = graphicsDevice;
-        _contentManager = contentManager;
+        var result = new ControlPanelSpriteBank
+        {
+            Panel = contentManager.Load<Texture2D>("panel/panels"),
+            PanelMinimapRegion = contentManager.Load<Texture2D>("panel/minimap_region"),
+            PanelIcons = contentManager.Load<Texture2D>("panel/panel_icons"),
+            PanelSkillSelected = contentManager.Load<Texture2D>("panel/skill_selected"),
+            PanelSkills = contentManager.Load<Texture2D>("panel/skills_placeholder2"),
+        };
 
-        var numberOfResources = Enum.GetValuesAsUnderlyingType<ControlPanelTexture>().Length;
-        _textureLookup = new Texture2D[numberOfResources];
-    }
-
-    public ControlPanelSpriteBank BuildControlPanelSpriteBank()
-    {
-        LoadPanelTextures();
-
-        return new ControlPanelSpriteBank(_textureLookup);
-    }
-
-    private void LoadPanelTextures()
-    {
-        RegisterTexture(ControlPanelTexture.Panel);
-        RegisterTexture(ControlPanelTexture.PanelMinimapRegion);
-        RegisterTexture(ControlPanelTexture.PanelIcons);
-        RegisterTexture(ControlPanelTexture.PanelSkillSelected);
-        RegisterTexture(ControlPanelTexture.PanelSkills);
-    }
-
-    private void RegisterTexture(ControlPanelTexture textureName)
-    {
-        var texture = _contentManager.Load<Texture2D>(textureName.GetTexturePath());
-        RegisterTexture(textureName, texture);
-    }
-
-    private void RegisterTexture(ControlPanelTexture textureName, Texture2D texture)
-    {
-        _textureLookup[(int)textureName] = texture;
+        return result;
     }
 }
