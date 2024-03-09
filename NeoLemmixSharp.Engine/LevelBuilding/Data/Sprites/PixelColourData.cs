@@ -4,10 +4,10 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 public readonly struct PixelColorData
 {
-    public uint[] ColorData { get; }
+    public readonly int Width;
+    public readonly int Height;
 
-    public int Width { get; }
-    public int Height { get; }
+    public readonly uint[] ColorData;
 
     public static PixelColorData GetPixelColorDataFromTexture(Texture2D texture)
     {

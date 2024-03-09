@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
+﻿using System.Runtime.CompilerServices;
+
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
 public readonly ref struct SpanWrapper2D
 {
@@ -53,6 +55,7 @@ public readonly ref struct SpanWrapper2D
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private int GetIndex(int x0, int y0)
     {
         if (x0 < 0 ||
