@@ -110,7 +110,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         RootDirectoryManager.Initialise();
         FontBank.Initialise(Content);
         MenuSpriteBank.Initialise(Content, GraphicsDevice);
-        new CommonSpriteBankBuilder(GraphicsDevice, Content).BuildCommonSpriteBank();
+        CommonSprites.Initialise(Content, GraphicsDevice);
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
