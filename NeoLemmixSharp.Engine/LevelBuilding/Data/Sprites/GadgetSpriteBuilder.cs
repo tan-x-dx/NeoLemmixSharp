@@ -25,19 +25,20 @@ public sealed class GadgetSpriteBuilder : IDisposable
         IGadgetBuilder gadgetBuilder,
         GadgetData gadgetData)
     {
+        // Need to ensure the base texture is placed into the resulting GadgetSpriteBank.
+        // If not, the texture will not be disposed of - potentially leading to memory leaks!
+        GetOrAddCachedTexture(
+            gadgetBuilder,
+            DownOrientation.Instance,
+            FacingDirection.RightInstance);
+
         if (!gadgetData.ShouldRender)
             return null;
 
-        var key = new TextureLookupKey(
-            gadgetBuilder.GadgetBuilderId,
+        var texture = GetOrAddCachedTexture(
+            gadgetBuilder,
             gadgetData.Orientation,
             gadgetData.FacingDirection);
-
-        ref var texture = ref CollectionsMarshal.GetValueRefOrAddDefault(_gadgetTextures, key, out var exists);
-        if (!exists)
-        {
-            texture = GetOrientedTexture(gadgetBuilder, gadgetData);
-        }
 
         if (gadgetBuilder is ResizeableGadgetBuilder resizeableGadgetBuilder)
             return BuildNineSliceRenderer(resizeableGadgetBuilder, gadgetData, texture!);
@@ -45,19 +46,40 @@ public sealed class GadgetSpriteBuilder : IDisposable
         return BuildGenericGadgetRenderer(gadgetBuilder, gadgetData, texture!);
     }
 
-    private Texture2D GetOrientedTexture(IGadgetBuilder gadgetBuilder, GadgetData gadgetData)
+    private Texture2D GetOrAddCachedTexture(
+        IGadgetBuilder gadgetBuilder,
+        Orientation orientation,
+        FacingDirection facingDirection)
+    {
+        var key = new TextureLookupKey(
+            gadgetBuilder.GadgetBuilderId,
+            orientation,
+            facingDirection);
+
+        ref var texture = ref CollectionsMarshal.GetValueRefOrAddDefault(_gadgetTextures, key, out var exists);
+
+        if (exists)
+            return texture!;
+
+        texture = orientation == DownOrientation.Instance &&
+                  facingDirection == FacingDirection.RightInstance // Down orientation + Right facing is the default. No extra work is required, so just use the texture
+            ? gadgetBuilder.SpriteData.Texture
+            : GetOrientedTexture(gadgetBuilder, orientation, facingDirection);
+
+        return texture;
+    }
+
+    private Texture2D GetOrientedTexture(
+        IGadgetBuilder gadgetBuilder,
+        Orientation orientation,
+        FacingDirection facingDirection)
     {
         var spriteData = gadgetBuilder.SpriteData;
 
-        if (gadgetData.Orientation == DownOrientation.Instance &&
-            gadgetData.FacingDirection == FacingDirection.RightInstance)
-            // Down orientation + Right facing is the default. No extra work is required, so just use the texture
-            return spriteData.Texture;
-
         return _gadgetSpriteCreator.CreateSpriteType(
              spriteData.Texture,
-             gadgetData.Orientation,
-             gadgetData.FacingDirection,
+             orientation,
+             facingDirection,
              spriteData.SpriteWidth,
              spriteData.SpriteHeight,
              spriteData.NumberOfFrames,
