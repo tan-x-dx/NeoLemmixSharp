@@ -22,6 +22,7 @@ public sealed partial class GadgetTranslator
             X = prototype.X,
             Y = prototype.Y,
             ShouldRender = true,
+            InitialStateId = 0,
 
             Orientation = orientation,
             FacingDirection = facingDirection,
