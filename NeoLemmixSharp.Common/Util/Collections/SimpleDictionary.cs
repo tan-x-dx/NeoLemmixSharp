@@ -17,8 +17,9 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     public SimpleDictionary(IPerfectHasher<TKey> hasher)
     {
         _hasher = hasher;
-        _bits = new BitArray(hasher.NumberOfItems);
-        _values = new TValue[hasher.NumberOfItems];
+        var numberOfItems = hasher.NumberOfItems;
+        _bits = new BitArray(numberOfItems);
+        _values = new TValue[numberOfItems];
         Array.Clear(_values);
     }
 

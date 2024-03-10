@@ -15,13 +15,10 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class LevelObjectAssembler
+public sealed class LevelObjectAssembler : IDisposable
 {
     private readonly List<Lemming> _lemmings = new();
-
     private readonly List<GadgetBase> _gadgets = new();
-    private readonly List<IViewportObjectRenderer> _gadgetRenderers = new();
-
     private readonly GadgetSpriteBuilder _gadgetSpriteBuilder;
 
     public LevelObjectAssembler(GraphicsDevice graphicsDevice)
@@ -115,12 +112,22 @@ public sealed class LevelObjectAssembler
     public IViewportObjectRenderer[] GetLevelSprites()
     {
         var result = new List<IViewportObjectRenderer>();
-        foreach (var lemming in _lemmings)
+
+        var gadgetSpan = CollectionsMarshal.AsSpan(_gadgets);
+        foreach (var gadget in gadgetSpan)
+        {
+            var renderer = gadget.Renderer;
+            if (renderer is null)
+                continue;
+
+            result.Add(renderer);
+        }
+
+        var lemmingSpan = CollectionsMarshal.AsSpan(_lemmings);
+        foreach (var lemming in lemmingSpan)
         {
             result.Add(lemming.Renderer);
         }
-
-        result.AddRange(_gadgetRenderers);
 
         return result.ToArray();
     }
@@ -138,5 +145,12 @@ public sealed class LevelObjectAssembler
     public ControlPanelSpriteBank GetControlPanelSpriteBank(ContentManager contentManager)
     {
         return ControlPanelSpriteBankBuilder.BuildControlPanelSpriteBank(contentManager);
+    }
+
+    public void Dispose()
+    {
+        _lemmings.Clear();
+        _gadgets.Clear();
+        _gadgetSpriteBuilder.Dispose();
     }
 }

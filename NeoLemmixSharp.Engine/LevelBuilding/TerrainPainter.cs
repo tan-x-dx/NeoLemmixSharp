@@ -16,8 +16,6 @@ public sealed class TerrainPainter : IDisposable
     private readonly List<TerrainArchetypeData> _terrainArchetypes = new();
     private readonly List<TerrainGroup> _terrainGroups = new();
 
-    private bool _disposed;
-
     private Texture2D _terrainTexture;
     private PixelType[] _terrainPixels;
 
@@ -238,11 +236,7 @@ public sealed class TerrainPainter : IDisposable
 
     public void Dispose()
     {
-        if (_disposed)
-            return;
-
         _terrainArchetypes.Clear();
         _terrainGroups.Clear();
-        _disposed = true;
     }
 }

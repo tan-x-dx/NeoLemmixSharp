@@ -11,7 +11,7 @@ using GadgetSpriteCreator = NeoLemmixSharp.Engine.Rendering.Viewport.SpriteRotat
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
-public sealed class GadgetSpriteBuilder
+public sealed class GadgetSpriteBuilder : IDisposable
 {
     private readonly Dictionary<TextureLookupKey, Texture2D> _gadgetTextures = new(new TextureLookupKeyEqualityComparer());
     private readonly GadgetSpriteCreator _gadgetSpriteCreator;
@@ -28,7 +28,9 @@ public sealed class GadgetSpriteBuilder
         if (!gadgetData.ShouldRender)
             return null;
 
-        var key = new TextureLookupKey(gadgetBuilder.GadgetBuilderId, gadgetData.Orientation,
+        var key = new TextureLookupKey(
+            gadgetBuilder.GadgetBuilderId,
+            gadgetData.Orientation,
             gadgetData.FacingDirection);
 
         ref var texture = ref CollectionsMarshal.GetValueRefOrAddDefault(_gadgetTextures, key, out var exists);
@@ -40,7 +42,7 @@ public sealed class GadgetSpriteBuilder
         if (gadgetBuilder is ResizeableGadgetBuilder resizeableGadgetBuilder)
             return BuildNineSliceRenderer(resizeableGadgetBuilder, gadgetData, texture!);
 
-        return BuildStatefulGadgetRenderer(gadgetBuilder, gadgetData, texture!);
+        return BuildGenericGadgetRenderer(gadgetBuilder, gadgetData, texture!);
     }
 
     private Texture2D GetOrientedTexture(IGadgetBuilder gadgetBuilder, GadgetData gadgetData)
@@ -72,7 +74,7 @@ public sealed class GadgetSpriteBuilder
         throw new NotImplementedException();
     }
 
-    private static GadgetRenderer BuildStatefulGadgetRenderer(
+    private static GadgetRenderer BuildGenericGadgetRenderer(
         IGadgetBuilder gadgetBuilder,
         GadgetData gadgetData,
         Texture2D texture2D)
@@ -133,5 +135,10 @@ public sealed class GadgetSpriteBuilder
                 key.Orientation,
                 key.FacingDirection);
         }
+    }
+
+    public void Dispose()
+    {
+        _gadgetTextures.Clear();
     }
 }

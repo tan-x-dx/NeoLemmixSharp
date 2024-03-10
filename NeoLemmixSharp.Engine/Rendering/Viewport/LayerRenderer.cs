@@ -19,10 +19,8 @@ public sealed class LayerRenderer<T>
     public LayerRenderer(
         Texture2D texture,
         int layerOffsetX)
+        : this(texture, layerOffsetX, GetWhite)
     {
-        _texture = texture;
-        _layerOffsetX = layerOffsetX;
-        _getColor = GetWhite;
     }
 
     public LayerRenderer(
