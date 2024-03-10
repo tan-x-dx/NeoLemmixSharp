@@ -11,7 +11,7 @@ public sealed class GadgetState
     private readonly IGadgetAction[] _onLemmingPresentActions;
     private readonly IGadgetAction[] _onLemmingExitActions;
 
-    private readonly GadgetOutput _stateSelectedOutput;
+    private readonly GadgetOutput _stateSelectedOutput = new();
     private readonly int _stateTransitionAfterAnimation;
 
     private StatefulGadget _gadget = null!;
@@ -30,7 +30,6 @@ public sealed class GadgetState
         IGadgetAction[] onLemmingPresentActions,
         IGadgetAction[] onLemmingExitActions,
         HitBox hitBox,
-        GadgetOutput stateSelectedOutput,
         int stateTransitionAfterAnimation)
     {
         _numberOfAnimationFrames = numberOfAnimationFrames;
@@ -41,7 +40,6 @@ public sealed class GadgetState
 
         HitBox = hitBox;
 
-        _stateSelectedOutput = stateSelectedOutput;
         _stateTransitionAfterAnimation = stateTransitionAfterAnimation;
     }
 

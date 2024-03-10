@@ -34,10 +34,11 @@ public sealed partial class GadgetTranslator
         {
             Id = gadgetId,
             GadgetBuilderId = archetypeData.GadgetArchetypeId,
-            ShouldRender = true,
-
             X = prototype.X,
             Y = prototype.Y,
+            ShouldRender = true,
+            InitialStateId = 0,
+
             Orientation = orientation,
             FacingDirection = facingDirection
         };

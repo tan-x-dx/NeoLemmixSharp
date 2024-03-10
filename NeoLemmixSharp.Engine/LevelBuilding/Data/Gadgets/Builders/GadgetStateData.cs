@@ -9,8 +9,5 @@ public sealed class GadgetStateData
     public required IGadgetAction[] OnLemmingExitActions { get; init; }
 
     public required int NumberOfFrames { get; init; }
-    public required int TriggerX { get; init; }
-    public required int TriggerY { get; init; }
-    public required int TriggerWidth { get; init; }
-    public required int TriggerHeight { get; init; }
+    public required RectangularTriggerData? TriggerData { get; init; }
 }
