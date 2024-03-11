@@ -13,12 +13,13 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 public sealed class GadgetSpriteBuilder : IDisposable
 {
-    private readonly Dictionary<TextureLookupKey, Texture2D> _gadgetTextures = new(new TextureLookupKeyEqualityComparer());
     private readonly GadgetSpriteCreator _gadgetSpriteCreator;
+    private readonly Dictionary<TextureLookupKey, Texture2D> _gadgetTextures;
 
     public GadgetSpriteBuilder(GraphicsDevice graphicsDevice)
     {
         _gadgetSpriteCreator = new GadgetSpriteCreator(graphicsDevice);
+        _gadgetTextures = new Dictionary<TextureLookupKey, Texture2D>(new TextureLookupKeyEqualityComparer());
     }
 
     public IGadgetRenderer? BuildGadgetRenderer(

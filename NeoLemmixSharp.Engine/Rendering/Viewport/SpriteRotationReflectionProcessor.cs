@@ -95,8 +95,6 @@ public sealed class SpriteRotationReflectionProcessor<T>
             }
         }
 
-        var texture0 = spriteDrawingData.ToTexture(_graphicsDevice);
-
         spriteDrawingData.DihedralTransformation.Transform(
             anchorPoint.X,
             anchorPoint.Y,
@@ -105,6 +103,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
             out var anchorX1,
             out var anchorY1);
 
+        var texture0 = spriteDrawingData.ToTexture(_graphicsDevice);
         var actionSprite = itemCreator(
             texture0,
             spriteDrawingData.ThisSpriteWidth,
@@ -182,11 +181,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
             _colorData[x2, y2] = pixel;
         }
 
-        public Texture2D ToTexture(GraphicsDevice graphicsDevice)
-        {
-            var result = new Texture2D(graphicsDevice, _colorData.Width, _colorData.Height);
-            result.SetData(_colorData.ColorData);
-            return result;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Texture2D ToTexture(GraphicsDevice graphicsDevice) => _colorData.CreateTexture(graphicsDevice);
     }
 }

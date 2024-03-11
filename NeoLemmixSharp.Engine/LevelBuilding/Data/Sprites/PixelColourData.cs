@@ -7,7 +7,7 @@ public readonly struct PixelColorData
     public readonly int Width;
     public readonly int Height;
 
-    public readonly uint[] ColorData;
+    private readonly uint[] _colorData;
 
     public static PixelColorData GetPixelColorDataFromTexture(Texture2D texture)
     {
@@ -24,7 +24,7 @@ public readonly struct PixelColorData
     {
         Width = width;
         Height = height;
-        ColorData = colorData;
+        _colorData = colorData;
     }
 
     public uint this[int x, int y]
@@ -33,13 +33,20 @@ public readonly struct PixelColorData
         {
             var i = Width * y + x;
 
-            return ColorData[i];
+            return _colorData[i];
         }
         set
         {
             var i = Width * y + x;
 
-            ColorData[i] = value;
+            _colorData[i] = value;
         }
+    }
+
+    public Texture2D CreateTexture(GraphicsDevice graphicsDevice)
+    {
+        var result = new Texture2D(graphicsDevice, Width, Height);
+        result.SetData(_colorData);
+        return result;
     }
 }

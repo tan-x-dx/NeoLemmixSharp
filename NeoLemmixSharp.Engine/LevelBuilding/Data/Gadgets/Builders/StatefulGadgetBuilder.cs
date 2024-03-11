@@ -100,8 +100,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
 
             var p1 = new LevelPosition(tX, tY);
 
-            var hitBoxRegion = new RectangularLevelRegion(p0, p1);
-            return hitBoxRegion;
+            return new RectangularLevelRegion(p0, p1);
         }
     }
 }
