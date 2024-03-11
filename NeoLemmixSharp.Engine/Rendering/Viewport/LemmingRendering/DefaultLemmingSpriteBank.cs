@@ -91,7 +91,7 @@ public static class DefaultLemmingSpriteBank
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0)
+                        new(t)
                     };
 
                     return new LemmingActionSprite(t, p, w, h, layerRenderers);
@@ -147,7 +147,7 @@ public static class DefaultLemmingSpriteBank
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0),
+                        new(t),
                         new(t, w, getLemmingHairColor),
                         new(t, w * 2, getLemmingSkinColor),
                         new(t, w * 3, getLemmingBodyColor)
@@ -167,7 +167,7 @@ public static class DefaultLemmingSpriteBank
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0),
+                        new(t),
                         new(t, w, getLemmingHairColor),
                         new(t, w * 2, getLemmingSkinColor),
                         new(t, w * 3, getLemmingBodyColor),

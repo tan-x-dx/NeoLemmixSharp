@@ -177,7 +177,6 @@ public sealed class LevelData
     public bool LevelContainsAnyZombies()
     {
         var lemmingSpan = CollectionsMarshal.AsSpan(AllLemmingData);
-
         foreach (var lemmingData in lemmingSpan)
         {
             var zombieFlag = lemmingData.State >> LemmingState.ZombieBitIndex;
@@ -186,27 +185,23 @@ public sealed class LevelData
                 return true;
         }
 
-        foreach (var gadgetData in AllGadgetData)
+        var gadgetDataSpan = CollectionsMarshal.AsSpan(AllGadgetData);
+        foreach (var gadgetData in gadgetDataSpan)
         {
             var gadgetBuilderId = gadgetData.GadgetBuilderId;
             var gadgetBuilder = AllGadgetBuilders[gadgetBuilderId];
 
-            if (gadgetBuilder is HatchGadgetBuilder)
-            {
-                if (HatchIsZombieHatch(gadgetData))
-                    return true;
-            }
+            if (gadgetBuilder is HatchGadgetBuilder &&
+                HatchIsZombieHatch(gadgetData))
+                return true;
         }
 
         return false;
 
         static bool HatchIsZombieHatch(GadgetData hatchGadgetData)
         {
-            if (!hatchGadgetData.TryGetProperty(GadgetProperty.RawLemmingState, out var rawLemmingState))
-                return false;
-
+            var rawLemmingState = hatchGadgetData.GetProperty(GadgetProperty.RawLemmingState);
             var zombieFlag = (uint)rawLemmingState >> LemmingState.ZombieBitIndex;
-
             return (zombieFlag & 1U) != 0U;
         }
     }

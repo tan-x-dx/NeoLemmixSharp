@@ -1,6 +1,8 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
@@ -102,9 +104,24 @@ public sealed class GadgetSpriteBuilder : IDisposable
         GadgetData gadgetData,
         Texture2D texture2D)
     {
+        var spriteData = gadgetBuilder.SpriteData;
+        var x = new CountUpAndLoopAnimationBehaviour(
+            spriteData.SpriteWidth,
+            spriteData.SpriteHeight,
+            0,
+            0,
+            0,
+            spriteData.NumberOfFrames);
 
+        var gadgetRenderLayers = new GadgetLayerRenderer[3];
+        gadgetRenderLayers[0] = new GadgetLayerRenderer(
+            texture2D,
+            x,
+            Color.White);
 
-        return null;
+        return new GadgetRenderer(
+            gadgetRenderLayers,
+            gadgetData.GadgetRenderMode);
     }
 
     private static Texture2D ItemCreator(

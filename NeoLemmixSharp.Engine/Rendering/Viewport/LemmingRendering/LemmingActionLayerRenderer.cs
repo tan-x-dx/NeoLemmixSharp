@@ -17,9 +17,8 @@ public sealed class LemmingActionLayerRenderer
     private readonly GetLemmingColor _getLemmingColor;
 
     public LemmingActionLayerRenderer(
-        Texture2D texture,
-        int layerOffsetX)
-        : this(texture, layerOffsetX, GetWhite)
+        Texture2D texture)
+        : this(texture, 0, GetWhite)
     {
     }
 

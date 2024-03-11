@@ -23,11 +23,16 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         GadgetData gadgetData,
         IPerfectHasher<Lemming> lemmingHasher)
     {
-        var bounds = new RectangularLevelRegion(gadgetData.X, gadgetData.Y, SpriteData.SpriteWidth, SpriteData.SpriteHeight);
+        var bounds = new RectangularLevelRegion(
+            gadgetData.X,
+            gadgetData.Y,
+            SpriteData.SpriteWidth,
+            SpriteData.SpriteHeight);
+
         var gadgetStates = CreateStates(gadgetData);
         var gadgetRenderer = gadgetSpriteBuilder.BuildGadgetRenderer(this, gadgetData);
 
-        return new StatefulGadget(
+        var result = new StatefulGadget(
             gadgetData.Id,
             GadgetBehaviour,
             gadgetData.Orientation,
@@ -35,6 +40,10 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
             gadgetRenderer,
             gadgetStates,
             new ItemTracker<Lemming>(lemmingHasher));
+
+        gadgetRenderer?.SetGadget(result);
+
+        return result;
     }
 
     private GadgetState[] CreateStates(GadgetData gadgetData)
@@ -64,8 +73,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
             gadgetStateData.OnLemmingEnterActions,
             gadgetStateData.OnLemmingPresentActions,
             gadgetStateData.OnLemmingExitActions,
-            hitBox,
-            0);
+            hitBox);
     }
 
     private ILevelRegion CreateHitBoxLevelRegion(GadgetData gadgetData, GadgetStateData gadgetStateData)

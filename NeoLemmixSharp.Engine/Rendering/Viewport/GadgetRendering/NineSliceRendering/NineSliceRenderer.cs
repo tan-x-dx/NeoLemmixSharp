@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering.NineSliceRendering;
@@ -12,6 +13,10 @@ public sealed class NineSliceRenderer : IGadgetRenderer
     private readonly Texture2D _texture;
 
     public GadgetRenderMode RenderMode { get; }
+    public void SetGadget(GadgetBase gadget)
+    {
+        throw new NotImplementedException();
+    }
 
     public NineSliceRenderer(
         GadgetRenderMode renderMode,

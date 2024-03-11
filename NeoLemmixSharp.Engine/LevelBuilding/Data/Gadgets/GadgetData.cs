@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
@@ -15,6 +16,7 @@ public sealed class GadgetData
     public required int Y { get; init; }
     public required bool ShouldRender { get; init; }
     public required int InitialStateId { get; init; }
+    public required GadgetRenderMode GadgetRenderMode { get; init; }
 
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }

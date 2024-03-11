@@ -53,7 +53,7 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
         var gadgetBounds = new RectangularLevelRegion(
             gadgetData.X,
             gadgetData.Y,
-        transformedWidth,
+            transformedWidth,
             transformedHeight);
 
         var gadgetRenderer = gadgetSpriteBuilder.BuildGadgetRenderer(this, gadgetData);
@@ -66,11 +66,15 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
             gadgetData.FacingDirection,
             lemmingCount);
 
-        return new HatchGadget(
+        var result = new HatchGadget(
             gadgetData.Id,
             gadgetBounds,
             gadgetRenderer,
             spawnPoint,
             hatchSpawnData);
+
+        gadgetRenderer?.SetGadget(result);
+
+        return result;
     }
 }
