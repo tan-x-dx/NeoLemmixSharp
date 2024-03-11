@@ -1,45 +1,45 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
-namespace NeoLemmixSharp.Engine.Rendering.Viewport;
+namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
-public sealed class LayerRenderer<T>
-    where T : class
+public sealed class LemmingActionLayerRenderer
 {
-    private static readonly GetColor GetWhite = _ => Color.White;
+    private static readonly GetLemmingColor GetWhite = _ => Color.White;
 
-    public delegate Color GetColor(T item);
+    public delegate Color GetLemmingColor(Lemming item);
 
     private readonly Texture2D _texture;
 
     private readonly int _layerOffsetX;
-    private readonly GetColor _getColor;
+    private readonly GetLemmingColor _getLemmingColor;
 
-    public LayerRenderer(
+    public LemmingActionLayerRenderer(
         Texture2D texture,
         int layerOffsetX)
         : this(texture, layerOffsetX, GetWhite)
     {
     }
 
-    public LayerRenderer(
+    public LemmingActionLayerRenderer(
         Texture2D texture,
         int layerOffsetX,
-        GetColor getColor)
+        GetLemmingColor getLemmingColor)
     {
         _texture = texture;
         _layerOffsetX = layerOffsetX;
-        _getColor = getColor;
+        _getLemmingColor = getLemmingColor;
     }
 
     public void RenderLayer(
         SpriteBatch spriteBatch,
-        T item,
+        Lemming item,
         Rectangle sourceRectangle,
         Rectangle destinationRectangle)
     {
-        var color = _getColor(item);
+        var color = _getLemmingColor(item);
         sourceRectangle.X = _layerOffsetX;
 
         spriteBatch.Draw(
