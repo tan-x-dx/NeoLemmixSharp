@@ -47,7 +47,7 @@ public sealed class BitArray
     /// Tests if a specific bit is set
     /// </summary>
     /// <param name="index">The bit to query</param>
-    /// <returns>True if the specified bit is set</returns>
+    /// <returns><see langword="true" /> if the specified bit is set</returns>
     [Pure]
     public bool GetBit(int index)
     {
@@ -58,11 +58,11 @@ public sealed class BitArray
     }
 
     /// <summary>
-    /// Sets a bit to 1. Returns true if a change has occurred -
+    /// Sets a bit to 1. Returns <see langword="true" /> if a change has occurred -
     /// i.e. if the bit was previously 0
     /// </summary>
     /// <param name="index">The bit to set</param>
-    /// <returns>True if the operation changed the value of the bit, false if the bit was previously set</returns>
+    /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously set</returns>
     public bool SetBit(int index)
     {
         var span = new Span<uint>(_bits);
@@ -86,11 +86,11 @@ public sealed class BitArray
     }
 
     /// <summary>
-    /// Sets a bit to 0. Returns true if a change has occurred -
+    /// Sets a bit to 0. Returns <see langword="true" /> if a change has occurred -
     /// i.e. if the bit was previously 1
     /// </summary>
     /// <param name="index">The bit to clear</param>
-    /// <returns>True if the operation changed the value of the bit, false if the bit was previously clear</returns>
+    /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously clear</returns>
     public bool ClearBit(int index)
     {
         var span = new Span<uint>(_bits);
