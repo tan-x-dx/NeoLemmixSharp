@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -257,7 +258,7 @@ public sealed class SpacialHashGrid<T>
     /// <summary>
     /// Performs a chunk operation over a rectangle of chunks.
     ///
-    /// <para>The rectangle of chunks begins with the top left coordinate of (<paramref name="ax" />, <paramref name="ay" />)
+    /// <para>The rectangle of chunks begins with the top left coordinates of (<paramref name="ax" />, <paramref name="ay" />)
     /// down to the bottom right coordinates of (<paramref name="bx" />, <paramref name="by" />) inclusive.
     ///</para>
     /// 
@@ -332,8 +333,14 @@ public sealed class SpacialHashGrid<T>
                 return BitArray.UnionWith(_setUnionScratchSpace, readOnlySpan);
 
             default:
-                throw new ArgumentOutOfRangeException(nameof(chunkOperationType), chunkOperationType, null);
+                return ThrowUnknownChunkPositionException(chunkOperationType);
         }
+    }
+
+    [DoesNotReturn]
+    private static int ThrowUnknownChunkPositionException(ChunkOperationType chunkOperationType)
+    {
+        throw new ArgumentOutOfRangeException(nameof(chunkOperationType), chunkOperationType, "Unknown chunk position type");
     }
 
     [Pure]
