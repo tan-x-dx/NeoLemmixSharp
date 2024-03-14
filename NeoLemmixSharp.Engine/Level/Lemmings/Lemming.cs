@@ -254,25 +254,41 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     private bool CheckGadgets()
     {
-        var checkPositionsBounds = new LevelPositionPair(LevelPosition, PreviousLevelPosition);
+        Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
+
+        // Use first four entries of span to hold level positions.
+        // To fetch gadgets, we need to check all gadgets that overlap a certain rectangle.
+        // That rectangle is defined as being the minimum bounding box of four level positions:
+        // the anchor and foot positions of the current frame, and the anchor and foot
+        // positions of the previous frame.
+        // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
+        var p = LevelPosition;
+        checkPositions[0] = p;
+        p = Orientation.MoveWithoutNormalization(p, 0, 1);
+        checkPositions[1] = p;
+        p = PreviousLevelPosition;
+        checkPositions[2] = p;
+        p = Orientation.MoveWithoutNormalization(p, 0, 1);
+        checkPositions[3] = p;
+
+        var checkPositionsBounds = new LevelPositionPair(checkPositions[..4]);
 
         var gadgetSet = LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds);
 
         if (gadgetSet.Count == 0)
             return true;
 
-        Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
+        // Reuse the above span. LemmingMovementHelper will overwrite existing values
         var movementHelper = new LemmingMovementHelper(this, checkPositions);
         var length = movementHelper.EvaluateCheckPositions();
 
         ReadOnlySpan<LevelPosition> checkPositionsReadOnly = checkPositions[..length];
 
-        foreach (var anchorPosition in checkPositionsReadOnly)
+        foreach (var gadget in gadgetSet)
         {
-            var footPosition = Orientation.MoveWithoutNormalization(anchorPosition, 0, 1);
-
-            foreach (var gadget in gadgetSet)
+            foreach (var anchorPosition in checkPositionsReadOnly)
             {
+                var footPosition = Orientation.MoveWithoutNormalization(anchorPosition, 0, 1);
                 if (!gadget.MatchesLemmingAtPosition(this, anchorPosition) &&
                     !gadget.MatchesLemmingAtPosition(this, footPosition))
                     continue;
