@@ -1,17 +1,25 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering.NineSliceRendering;
 
-public sealed class NineSliceRenderer : IViewportObjectRenderer
+public sealed class NineSliceRenderer : IGadgetRenderer
 {
     private readonly IRectangularLevelRegion _spriteClipRectangle;
     private readonly NineSliceSubRenderer[] _subRenderers;
 
     private readonly Texture2D _texture;
 
+    public GadgetRenderMode RenderMode { get; }
+    public void SetGadget(GadgetBase gadget)
+    {
+        throw new NotImplementedException();
+    }
+
     public NineSliceRenderer(
+        GadgetRenderMode renderMode,
         IRectangularLevelRegion spriteClipRectangle,
         Texture2D texture,
         int spriteWidth,
@@ -21,6 +29,7 @@ public sealed class NineSliceRenderer : IViewportObjectRenderer
         int sliceLeft,
         int sliceRight)
     {
+        RenderMode = renderMode;
         _spriteClipRectangle = spriteClipRectangle;
 
         _subRenderers = GetSubRenderers(

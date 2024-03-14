@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 public static class ParticleHelper
 {
     private const int NumberOfBytesPerCall = 2;
-    private const int ByteLength = NumberOfBytesPerCall * LevelConstants.ParticleFrameCount * LevelConstants.NumberOfParticles;
+    private const int ByteLength = NumberOfBytesPerCall * LevelConstants.NumberOfParticles * LevelConstants.ParticleFrameCount;
 
     private static readonly sbyte[] ParticleOffsets = new sbyte[ByteLength];
 
@@ -23,7 +23,7 @@ public static class ParticleHelper
     {
         var index = GetParticleIndex(frame, particleId);
 
-        var span = new Span<sbyte>(ParticleOffsets, index, NumberOfBytesPerCall);
+        var span = new ReadOnlySpan<sbyte>(ParticleOffsets, index, NumberOfBytesPerCall);
 
         return new LevelPosition(span[0], span[1]);
     }
@@ -34,8 +34,7 @@ public static class ParticleHelper
         int frame,
         int particleId)
     {
-        frame = LevelConstants.ParticleFrameCount - frame;
-
-        return NumberOfBytesPerCall * (LevelConstants.NumberOfParticles * frame + particleId);
+        return NumberOfBytesPerCall *
+               (LevelConstants.NumberOfParticles * LevelConstants.ParticleFrameCount - LevelConstants.NumberOfParticles * frame + particleId);
     }
 }

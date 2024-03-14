@@ -24,10 +24,12 @@ public static class DefaultLemmingSpriteBank
 
         var spriteRotationReflectionProcessor = new ActionSpriteCreator(graphicsDevice);
 
-        LayerRenderer<Lemming>.GetColor getHairColor = l => l.State.HairColor;
-        LayerRenderer<Lemming>.GetColor getSkinColor = l => l.State.SkinColor;
-        LayerRenderer<Lemming>.GetColor getBodyColor = l => l.State.BodyColor;
-        LayerRenderer<Lemming>.GetColor getMiscColor = _ => Color.Magenta;
+#pragma warning disable IDE0039
+        LemmingActionLayerRenderer.GetLemmingColor getLemmingHairColor = l => l.State.HairColor;
+        LemmingActionLayerRenderer.GetLemmingColor getLemmingSkinColor = l => l.State.SkinColor;
+        LemmingActionLayerRenderer.GetLemmingColor getLemmingBodyColor = l => l.State.BodyColor;
+        LemmingActionLayerRenderer.GetLemmingColor getLemmingMiscColor = _ => Color.Magenta;
+#pragma warning restore IDE0039
 
         var numberOfActionSprites = LemmingAction.NumberOfItems *
                                     Orientation.NumberOfItems *
@@ -87,9 +89,9 @@ public static class DefaultLemmingSpriteBank
                 levelPosition,
                 (t, w, h, _, p) =>
                 {
-                    var layerRenderers = new LayerRenderer<Lemming>[]
+                    var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0)
+                        new(t)
                     };
 
                     return new LemmingActionSprite(t, p, w, h, layerRenderers);
@@ -104,11 +106,11 @@ public static class DefaultLemmingSpriteBank
                 levelPosition,
                 (t, w, h, _, p) =>
                 {
-                    var layerRenderers = new LayerRenderer<Lemming>[]
+                    var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0, getHairColor),
-                        new(t, w, getSkinColor),
-                        new(t, w * 2, getBodyColor)
+                        new(t, 0, getLemmingHairColor),
+                        new(t, w, getLemmingSkinColor),
+                        new(t, w * 2, getLemmingBodyColor)
                     };
 
                     return new LemmingActionSprite(t, p, w, h, layerRenderers);
@@ -123,12 +125,12 @@ public static class DefaultLemmingSpriteBank
                 levelPosition,
                 (t, w, h, _, p) =>
                 {
-                    var layerRenderers = new LayerRenderer<Lemming>[]
+                    var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0, getHairColor),
-                        new(t, w, getSkinColor),
-                        new(t, w * 2, getBodyColor),
-                        new(t, w * 3, getMiscColor)
+                        new(t, 0, getLemmingHairColor),
+                        new(t, w, getLemmingSkinColor),
+                        new(t, w * 2, getLemmingBodyColor),
+                        new(t, w * 3, getLemmingMiscColor)
                     };
 
                     return new LemmingActionSprite(t, p, w, h, layerRenderers);
@@ -143,12 +145,12 @@ public static class DefaultLemmingSpriteBank
                 levelPosition,
                 (t, w, h, _, p) =>
                 {
-                    var layerRenderers = new LayerRenderer<Lemming>[]
+                    var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0),
-                        new(t, w, getHairColor),
-                        new(t, w * 2, getSkinColor),
-                        new(t, w * 3, getBodyColor)
+                        new(t),
+                        new(t, w, getLemmingHairColor),
+                        new(t, w * 2, getLemmingSkinColor),
+                        new(t, w * 3, getLemmingBodyColor)
                     };
 
                     return new LemmingActionSprite(t, p, w, h, layerRenderers);
@@ -163,13 +165,13 @@ public static class DefaultLemmingSpriteBank
                 levelPosition,
                 (t, w, h, _, p) =>
                 {
-                    var layerRenderers = new LayerRenderer<Lemming>[]
+                    var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0),
-                        new(t, w, getHairColor),
-                        new(t, w * 2, getSkinColor),
-                        new(t, w * 3, getBodyColor),
-                        new(t, w * 4, getMiscColor)
+                        new(t),
+                        new(t, w, getLemmingHairColor),
+                        new(t, w * 2, getLemmingSkinColor),
+                        new(t, w * 3, getLemmingBodyColor),
+                        new(t, w * 4, getLemmingMiscColor)
                     };
 
                     return new LemmingActionSprite(t, p, w, h, layerRenderers);

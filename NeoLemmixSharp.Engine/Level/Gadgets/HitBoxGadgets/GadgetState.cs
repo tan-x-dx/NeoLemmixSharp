@@ -11,8 +11,7 @@ public sealed class GadgetState
     private readonly IGadgetAction[] _onLemmingPresentActions;
     private readonly IGadgetAction[] _onLemmingExitActions;
 
-    private readonly GadgetOutput _stateSelectedOutput;
-    private readonly int _stateTransitionAfterAnimation;
+    private readonly GadgetOutput _stateSelectedOutput = new();
 
     private StatefulGadget _gadget = null!;
 
@@ -29,9 +28,7 @@ public sealed class GadgetState
         IGadgetAction[] onLemmingEnterActions,
         IGadgetAction[] onLemmingPresentActions,
         IGadgetAction[] onLemmingExitActions,
-        HitBox hitBox,
-        GadgetOutput stateSelectedOutput,
-        int stateTransitionAfterAnimation)
+        HitBox hitBox)
     {
         _numberOfAnimationFrames = numberOfAnimationFrames;
 
@@ -40,9 +37,6 @@ public sealed class GadgetState
         _onLemmingExitActions = onLemmingExitActions;
 
         HitBox = hitBox;
-
-        _stateSelectedOutput = stateSelectedOutput;
-        _stateTransitionAfterAnimation = stateTransitionAfterAnimation;
     }
 
     public void SetGadget(StatefulGadget gadget)
@@ -58,7 +52,7 @@ public sealed class GadgetState
 
     public void Tick()
     {
-        if (AnimationFrame < _numberOfAnimationFrames)
+       /* if (AnimationFrame < _numberOfAnimationFrames)
         {
             AnimationFrame++;
         }
@@ -72,7 +66,7 @@ public sealed class GadgetState
             {
                 _gadget.SetNextState(_stateTransitionAfterAnimation);
             }
-        }
+        }*/
     }
 
     public void OnTransitionFrom()

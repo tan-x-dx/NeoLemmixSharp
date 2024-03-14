@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Orientations;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
@@ -14,6 +13,8 @@ public sealed partial class GadgetTranslator
         NeoLemmixGadgetData prototype,
         int gadgetId)
     {
+        GetOrientationData(prototype, out var orientation, out var facingDirection);
+
         var gadgetData = new GadgetData
         {
             Id = gadgetId,
@@ -21,26 +22,30 @@ public sealed partial class GadgetTranslator
 
             X = prototype.X,
             Y = prototype.Y,
-            Orientation = DownOrientation.Instance,
-            FacingDirection = FacingDirection.RightInstance
+            ShouldRender = true,
+            InitialStateId = 0,
+            GadgetRenderMode = GetGadgetRenderMode(prototype),
+
+            Orientation = orientation,
+            FacingDirection = facingDirection
         };
 
         ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);
 
         if (!exists)
         {
-            gadgetBuilder = CreateGadgetBuilder();
+            gadgetBuilder = CreateStatefulGadgetBuilder();
         }
 
         _levelData.AllGadgetData.Add(gadgetData);
 
         return;
 
-        StatefulGadgetBuilder CreateGadgetBuilder()
+        StatefulGadgetBuilder CreateStatefulGadgetBuilder()
         {
-            var sprite = GetStitchedTextures(archetypeData, out var spriteWidth, out var spriteHeight);
+            var spriteData = GetStitchedSpriteData(archetypeData);
 
-            var gadgetStateData = new GadgetStateData[archetypeData.AnimationData.Count];
+            var gadgetStateData = CreateGadgetStateData();
             var gadgetBehaviour = archetypeData.Behaviour.ToGadgetBehaviour()!;
 
             return new StatefulGadgetBuilder
@@ -49,10 +54,51 @@ public sealed partial class GadgetTranslator
                 GadgetBehaviour = gadgetBehaviour,
                 AllGadgetStateData = gadgetStateData,
 
-                Sprite = sprite,
-                GadgetWidth = spriteWidth,
-                GadgetHeight = spriteHeight
+                SpriteData = spriteData
             };
+        }
+
+        GadgetStateData[] CreateGadgetStateData()
+        {
+            var emptyActions = Array.Empty<IGadgetAction>();
+
+            var numberOfExtraStates = archetypeData.Behaviour.GetNumberOfExtraStates();
+
+            var result = new GadgetStateData[1 + numberOfExtraStates];
+
+            var baseState = new GadgetStateData
+            {
+                OnLemmingEnterActions = emptyActions,
+                OnLemmingPresentActions = emptyActions,
+                OnLemmingExitActions = emptyActions,
+
+                NumberOfFrames = archetypeData.PrimaryAnimationFrameCount,
+                TriggerData = new RectangularTriggerData
+                {
+                    TriggerX = archetypeData.TriggerX,
+                    TriggerY = archetypeData.TriggerY,
+                    TriggerWidth = archetypeData.TriggerWidth,
+                    TriggerHeight = archetypeData.TriggerHeight
+                }
+            };
+
+            var index = 0;
+            result[index++] = baseState;
+            var animationDataSpan = CollectionsMarshal.AsSpan(archetypeData.AnimationData);
+            foreach (var animationData in animationDataSpan)
+            {
+                result[index++] = new GadgetStateData
+                {
+                    OnLemmingEnterActions = emptyActions,
+                    OnLemmingPresentActions = emptyActions,
+                    OnLemmingExitActions = emptyActions,
+
+                    NumberOfFrames = animationData.NumberOfFrames,
+                    TriggerData = null
+                };
+            }
+
+            return result;
         }
     }
 }

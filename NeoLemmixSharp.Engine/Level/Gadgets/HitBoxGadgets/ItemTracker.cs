@@ -14,11 +14,9 @@ public sealed class ItemTracker<T>
 
     public ItemTracker(IPerfectHasher<T> hasher)
     {
-        var length = hasher.NumberOfItems;
+        var arrayLength = (hasher.NumberOfItems + BitArray.Mask) >> BitArray.Shift;
 
-        var numberOfLongs = (length + BitArray.Mask) >> BitArray.Shift;
-
-        _longs = new ulong[numberOfLongs];
+        _longs = new ulong[arrayLength];
     }
 
     public void Tick()

@@ -13,12 +13,12 @@ public sealed class RectangularLevelRegion : IRectangularLevelRegion
     public int W
     {
         get => _w;
-        set => _w = Math.Max(0, value);
+        set => _w = value < 0 ? 0 : value;
     }
     public int H
     {
         get => _h;
-        set => _h = Math.Max(0, value);
+        set => _h = value < 0 ? 0 : value;
     }
 
     public int X1 => X + W;

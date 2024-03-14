@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
@@ -78,5 +79,14 @@ public sealed partial class GadgetTranslator
         facingDirection = flip
             ? FacingDirection.LeftInstance
             : FacingDirection.RightInstance;
+    }
+
+    private static GadgetRenderMode GetGadgetRenderMode(NeoLemmixGadgetData prototype)
+    {
+        if (prototype.NoOverwrite)
+            return GadgetRenderMode.BehindTerrain;
+        return prototype.OnlyOnTerrain
+            ? GadgetRenderMode.OnlyOnTerrain 
+            : GadgetRenderMode.InFrontOfTerrain;
     }
 }

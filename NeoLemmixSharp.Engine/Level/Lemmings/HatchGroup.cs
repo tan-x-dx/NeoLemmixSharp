@@ -41,7 +41,14 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
     {
         _hatches = hatches;
         _hatchIndex = _hatches.Length - 1;
-        _lemmingsToRelease = hatches.Sum(h => h.HatchSpawnData.LemmingsToRelease);
+
+        var lemmingsToRelease = 0;
+        foreach (var hatchGadget in hatches)
+        {
+            lemmingsToRelease += hatchGadget.HatchSpawnData.LemmingsToRelease;
+        }
+
+        _lemmingsToRelease = lemmingsToRelease;
     }
 
     public void ChangeSpawnInterval(int spawnIntervalDelta)

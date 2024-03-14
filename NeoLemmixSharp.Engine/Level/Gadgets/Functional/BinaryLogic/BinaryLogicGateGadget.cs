@@ -1,8 +1,9 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Diagnostics;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional.BinaryLogic;
 
@@ -18,9 +19,10 @@ public abstract class BinaryLogicGateGadget : GadgetBase, ILogicGateGadget
     protected BinaryLogicGateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
+        IGadgetRenderer? renderer,
         LogicGateGadgetInput inputA,
         LogicGateGadgetInput inputB)
-        : base(id, gadgetBounds)
+        : base(id, gadgetBounds, renderer)
     {
         Debug.Assert(!string.Equals(inputA.InputName, inputB.InputName));
 

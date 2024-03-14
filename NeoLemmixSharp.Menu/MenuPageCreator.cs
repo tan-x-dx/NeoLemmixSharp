@@ -12,7 +12,6 @@ public sealed class MenuPageCreator
 {
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly SpriteBatch _spriteBatch;
 
     private readonly MenuInputController _inputController;
 
@@ -21,12 +20,10 @@ public sealed class MenuPageCreator
     public MenuPageCreator(
         ContentManager contentManager,
         GraphicsDevice graphicsDevice,
-        SpriteBatch spriteBatch,
         MenuInputController inputController)
     {
         _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;
-        _spriteBatch = spriteBatch;
         _inputController = inputController;
 
         LevelToLoadFilepath = GetLevelFilePath();
@@ -35,12 +32,12 @@ public sealed class MenuPageCreator
     private static string GetLevelFilePath()
     {
         var file =
-           // "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
-           // "levels\\rotation test.nxlv";
-           // "levels\\render test.nxlv";
-           // "levels\\movement test.nxlv";
-           // "levels\\object test 2.nxlv";
-        "levels\\hatch count test.nxlv";
+            // "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
+            // "levels\\rotation test.nxlv";
+            // "levels\\render test.nxlv";
+            // "levels\\movement test.nxlv";
+            "levels\\object test 2.nxlv";
+        // "levels\\hatch count test.nxlv";
         // "levels\\lemming_count_test.nxlv";
         // "levels\\test foo.nxlv";
         // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
@@ -76,7 +73,7 @@ public sealed class MenuPageCreator
         {
             var fileExtension = Path.GetExtension(LevelToLoadFilepath);
             var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
-            levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice, _spriteBatch, levelReader);
+            levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice, levelReader);
             var levelScreen = levelBuilder.BuildLevel(LevelToLoadFilepath);
             return new LevelStartPage(IGameWindow.Instance, _inputController, levelScreen);
         }

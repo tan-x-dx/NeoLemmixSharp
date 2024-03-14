@@ -9,14 +9,12 @@ public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
     public static readonly FacingDirection LeftInstance = new(
         LevelConstants.LeftFacingDirectionId,
         LevelConstants.LeftFacingDirectionDeltaX,
-        "left",
-        Orientation.RotateClockwise);
+        "left");
 
     public static readonly FacingDirection RightInstance = new(
         LevelConstants.RightFacingDirectionId,
         LevelConstants.RightFacingDirectionDeltaX,
-        "right",
-        Orientation.RotateCounterClockwise);
+        "right");
 
     private static readonly FacingDirection[] FacingDirections = GenerateFacingDirectionCollection();
 
@@ -30,10 +28,7 @@ public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
         facingDirections[LeftInstance.Id] = LeftInstance;
         facingDirections[RightInstance.Id] = RightInstance;
 
-        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<FacingDirection>(facingDirections));
-
-        LeftInstance._opposite = RightInstance;
-        RightInstance._opposite = LeftInstance;
+        // No need for id validation here. It's just that simple
 
         return facingDirections;
     }
@@ -42,23 +37,29 @@ public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
     public readonly int DeltaX;
 
     private readonly string _name;
-    private readonly Func<Orientation, Orientation> _rotate;
-    private FacingDirection _opposite;
 
-    private FacingDirection(int id, int deltaX, string name, Func<Orientation, Orientation> rotate)
+    private FacingDirection(int id, int deltaX, string name)
     {
         Id = id;
         DeltaX = deltaX;
         _name = name;
-        _rotate = rotate;
     }
 
     int IIdEquatable<FacingDirection>.Id => Id;
 
     [Pure]
-    public FacingDirection GetOpposite() => _opposite;
+    public FacingDirection GetOpposite()
+    {
+        return FacingDirections[1 - Id];
+    }
+
     [Pure]
-    public Orientation ConvertToRelativeOrientation(Orientation orientation) => _rotate(orientation);
+    public Orientation ConvertToRelativeOrientation(Orientation orientation)
+    {
+        return Id == LevelConstants.RightFacingDirectionId
+            ? Orientation.RotateCounterClockwise(orientation)
+            : Orientation.RotateClockwise(orientation);
+    }
 
     public bool Equals(FacingDirection? other) => Id == (other?.Id ?? -1);
     public override bool Equals(object? obj) => obj is FacingDirection other && Id == other.Id;

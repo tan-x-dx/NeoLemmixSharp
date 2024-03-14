@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
@@ -15,39 +15,18 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class LevelObjectAssembler
+public sealed class LevelObjectAssembler : IDisposable
 {
-    private readonly SpriteBatch _spriteBatch;
-
     private readonly List<Lemming> _lemmings = new();
-
     private readonly List<GadgetBase> _gadgets = new();
-    private readonly List<IViewportObjectRenderer> _gadgetRenderers = new();
+    private readonly GadgetSpriteBuilder _gadgetSpriteBuilder;
 
-    private readonly LemmingSpriteBankBuilder _lemmingSpriteBankBuilder;
-    private readonly GadgetSpriteBankBuilder _gadgetSpriteBankBuilder;
-    private readonly ControlPanelSpriteBankBuilder _controlPanelSpriteBankBuilder;
-
-    public LevelObjectAssembler(
-        GraphicsDevice graphicsDevice,
-        ContentManager contentManager,
-        SpriteBatch spriteBatch)
+    public LevelObjectAssembler(GraphicsDevice graphicsDevice)
     {
-        _spriteBatch = spriteBatch;
-
-        _lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
-        _gadgetSpriteBankBuilder = new GadgetSpriteBankBuilder(graphicsDevice, contentManager);
-        _controlPanelSpriteBankBuilder = new ControlPanelSpriteBankBuilder(graphicsDevice, contentManager);
+        _gadgetSpriteBuilder = new GadgetSpriteBuilder(graphicsDevice);
     }
 
-    public void AssembleLevelObjects(
-        LevelData levelData,
-        ContentManager contentManager)
-    {
-        SetUpGadgets(contentManager, levelData.AllGadgetData);
-    }
-
-    public HatchGroup[] GetHatchGroups(LevelData levelData)
+    public static HatchGroup[] GetHatchGroups(LevelData levelData)
     {
         var allHatchGroupData = CollectionsMarshal.AsSpan(levelData.AllHatchGroupData);
 
@@ -106,7 +85,7 @@ public sealed class LevelObjectAssembler
         {
             var gadgetBuilder = levelData.AllGadgetBuilders[prototype.GadgetBuilderId];
 
-            var gadget = gadgetBuilder.BuildGadget(prototype, lemmingHasher);
+            var gadget = gadgetBuilder.BuildGadget(_gadgetSpriteBuilder, prototype, lemmingHasher);
             _gadgets.Add(gadget);
         }
 
@@ -133,12 +112,22 @@ public sealed class LevelObjectAssembler
     public IViewportObjectRenderer[] GetLevelSprites()
     {
         var result = new List<IViewportObjectRenderer>();
-        foreach (var lemming in _lemmings)
+
+        var gadgetSpan = CollectionsMarshal.AsSpan(_gadgets);
+        foreach (var gadget in gadgetSpan)
+        {
+            var renderer = gadget.Renderer;
+            if (renderer is null)
+                continue;
+
+            result.Add(renderer);
+        }
+
+        var lemmingSpan = CollectionsMarshal.AsSpan(_lemmings);
+        foreach (var lemming in lemmingSpan)
         {
             result.Add(lemming.Renderer);
         }
-
-        result.AddRange(_gadgetRenderers);
 
         return result.ToArray();
     }
@@ -150,19 +139,18 @@ public sealed class LevelObjectAssembler
 
     public GadgetSpriteBank GetGadgetSpriteBank()
     {
-        return _gadgetSpriteBankBuilder.BuildGadgetSpriteBank();
+        return _gadgetSpriteBuilder.BuildGadgetSpriteBank();
     }
 
-    public ControlPanelSpriteBank GetControlPanelSpriteBank()
+    public ControlPanelSpriteBank GetControlPanelSpriteBank(ContentManager contentManager)
     {
-        return _controlPanelSpriteBankBuilder.BuildControlPanelSpriteBank();
+        return ControlPanelSpriteBankBuilder.BuildControlPanelSpriteBank(contentManager);
     }
 
-    private void SetUpGadgets(ContentManager contentManager, ICollection<GadgetData> allGadgetData)
+    public void Dispose()
     {
-        foreach (var gadgetData in allGadgetData)
-        {
-            //    _gadgetSpriteBankBuilder.LoadGadgetSprite(gadgetData);
-        }
+        _lemmings.Clear();
+        _gadgets.Clear();
+        _gadgetSpriteBuilder.Dispose();
     }
 }

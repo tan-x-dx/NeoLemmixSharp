@@ -199,7 +199,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
         gadgetArchetypeData = new NeoLemmixGadgetArchetypeData
         {
             GadgetArchetypeId = GadgetArchetypes.Count - 1,
-            Style = _currentStyle,
+            Style = _currentStyle!,
             Gadget = gadgetPiece
         };
 

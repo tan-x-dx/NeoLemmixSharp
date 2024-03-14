@@ -1,13 +1,12 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
@@ -17,25 +16,34 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
     public required GadgetBehaviour GadgetBehaviour { get; init; }
     public required GadgetStateData[] AllGadgetStateData { get; init; }
 
-    public required Texture2D Sprite { get; init; }
-
-    public required int GadgetWidth { get; init; }
-    public required int GadgetHeight { get; init; }
+    public required SpriteData SpriteData { get; init; }
 
     public GadgetBase BuildGadget(
+        GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         IPerfectHasher<Lemming> lemmingHasher)
     {
-        var bounds = new RectangularLevelRegion(gadgetData.X, gadgetData.Y, GadgetWidth, GadgetHeight);
-        var gadgetStates = CreateStates(gadgetData);
+        var bounds = new RectangularLevelRegion(
+            gadgetData.X,
+            gadgetData.Y,
+            SpriteData.SpriteWidth,
+            SpriteData.SpriteHeight);
 
-        return new StatefulGadget(
+        var gadgetStates = CreateStates(gadgetData);
+        var gadgetRenderer = gadgetSpriteBuilder.BuildGadgetRenderer(this, gadgetData);
+
+        var result = new StatefulGadget(
             gadgetData.Id,
             GadgetBehaviour,
             gadgetData.Orientation,
             bounds,
+            gadgetRenderer,
             gadgetStates,
             new ItemTracker<Lemming>(lemmingHasher));
+
+        gadgetRenderer?.SetGadget(result);
+
+        return result;
     }
 
     private GadgetState[] CreateStates(GadgetData gadgetData)
@@ -52,7 +60,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
 
     private GadgetState CreateGadgetState(GadgetData gadgetData, GadgetStateData gadgetStateData)
     {
-        var hitBoxRegion = CreateHitBoxRectangularLevelRegion(gadgetData, gadgetStateData);
+        var hitBoxRegion = CreateHitBoxLevelRegion(gadgetData, gadgetStateData);
 
         var lemmingFilters = Array.Empty<ILemmingFilter>();
 
@@ -60,43 +68,47 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
             hitBoxRegion,
             lemmingFilters);
 
-        var output = new GadgetOutput();
-
         return new GadgetState(
             gadgetStateData.NumberOfFrames,
             gadgetStateData.OnLemmingEnterActions,
             gadgetStateData.OnLemmingPresentActions,
             gadgetStateData.OnLemmingExitActions,
-            hitBox,
-            output,
-            0);
+            hitBox);
     }
 
-    private RectangularLevelRegion CreateHitBoxRectangularLevelRegion(GadgetData gadgetData, GadgetStateData gadgetStateData)
+    private ILevelRegion CreateHitBoxLevelRegion(GadgetData gadgetData, GadgetStateData gadgetStateData)
     {
-        gadgetData.GetDihedralTransformation(out var dihedralTransformation);
+        var nullableRectangularTriggerData = gadgetStateData.TriggerData;
+        if (!nullableRectangularTriggerData.HasValue)
+            return EmptyLevelRegion.Instance;
 
-        dihedralTransformation.Transform(
-            gadgetStateData.TriggerX,
-            gadgetStateData.TriggerY,
-            GadgetWidth,
-            GadgetHeight,
-            out var tX,
-            out var tY);
+        return CreateRectangularHitBoxLevelRegion(nullableRectangularTriggerData.Value);
 
-        var p0 = new LevelPosition(tX, tY);
+        RectangularLevelRegion CreateRectangularHitBoxLevelRegion(RectangularTriggerData triggerData)
+        {
+            gadgetData.GetDihedralTransformation(out var dihedralTransformation);
 
-        dihedralTransformation.Transform(
-            gadgetStateData.TriggerX + gadgetStateData.TriggerWidth - 1,
-            gadgetStateData.TriggerY + gadgetStateData.TriggerHeight - 1,
-            GadgetWidth,
-            GadgetHeight,
-            out tX,
-            out tY);
+            dihedralTransformation.Transform(
+                triggerData.TriggerX,
+                triggerData.TriggerY,
+                SpriteData.SpriteWidth,
+                SpriteData.SpriteHeight,
+                out var tX,
+                out var tY);
 
-        var p1 = new LevelPosition(tX, tY);
+            var p0 = new LevelPosition(tX, tY);
 
-        var hitBoxRegion = new RectangularLevelRegion(p0, p1);
-        return hitBoxRegion;
+            dihedralTransformation.Transform(
+                triggerData.TriggerX + triggerData.TriggerWidth - 1,
+                triggerData.TriggerY + triggerData.TriggerHeight - 1,
+                SpriteData.SpriteWidth,
+                SpriteData.SpriteHeight,
+                out tX,
+                out tY);
+
+            var p1 = new LevelPosition(tX, tY);
+
+            return new RectangularLevelRegion(p0, p1);
+        }
     }
 }

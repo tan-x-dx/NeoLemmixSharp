@@ -27,8 +27,8 @@ public class ControlPanelButtonRenderer
         ControlPanelButton = controlPanelButton;
         ButtonId = controlPanelButton.ButtonId;
 
-        PanelTexture = spriteBank.GetTexture(ControlPanelTexture.Panel);
-        SelectedTexture = spriteBank.GetTexture(ControlPanelTexture.PanelSkillSelected);
+        PanelTexture = spriteBank.Panel;
+        SelectedTexture = spriteBank.PanelSkillSelected;
 
         _iconX = iconX;
         _iconY = iconY;

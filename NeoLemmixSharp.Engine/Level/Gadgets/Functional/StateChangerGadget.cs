@@ -3,6 +3,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 
@@ -23,9 +24,10 @@ public sealed class StateChangerGadget : GadgetBase, IReactiveGadget
     public StateChangerGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
+        IGadgetRenderer? renderer,
         StatefulGadget gadget,
         int newState)
-        : base(id, gadgetBounds)
+        : base(id, gadgetBounds, renderer)
     {
         Gadget = gadget;
         _newState = newState;

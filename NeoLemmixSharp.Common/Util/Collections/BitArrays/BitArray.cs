@@ -36,6 +36,9 @@ public sealed class BitArray
 
     public BitArray(int length)
     {
+        if (length <= 0)
+            throw new ArgumentOutOfRangeException(nameof(length), length, "length must be strictly positive!");
+
         var arraySize = (length + Mask) >> Shift;
         _bits = new uint[arraySize];
     }
@@ -79,7 +82,7 @@ public sealed class BitArray
     /// <param name="index">The bit to set</param>
     public static void SetBit(Span<uint> bits, int index)
     {
-        bits[index >> 5] |= (1U << index);
+        bits[index >> Shift] |= (1U << index);
     }
 
     /// <summary>
@@ -107,7 +110,7 @@ public sealed class BitArray
     /// <param name="index">The bit to clear</param>
     public static void ClearBit(Span<uint> bits, int index)
     {
-        bits[index >> 5] &= ~(1U << index);
+        bits[index >> Shift] &= ~(1U << index);
     }
 
     /// <summary>

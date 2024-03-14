@@ -12,7 +12,7 @@ public sealed class SolidColorBackgroundRenderer : IBackgroundRenderer
 
     public SolidColorBackgroundRenderer(Level.Viewport viewport, Color backgroundColor)
     {
-        _pixelTexture = CommonSpriteBank.Instance.GetTexture(CommonTexture.WhitePixel);
+        _pixelTexture = CommonSprites.WhitePixelGradientSprite;
         _backgroundColor = backgroundColor;
         _viewport = viewport;
     }

@@ -110,7 +110,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         RootDirectoryManager.Initialise();
         FontBank.Initialise(Content);
         MenuSpriteBank.Initialise(Content, GraphicsDevice);
-        new CommonSpriteBankBuilder(GraphicsDevice, Content).BuildCommonSpriteBank();
+        CommonSprites.Initialise(Content, GraphicsDevice);
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -119,8 +119,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         var menuScreen = new MenuScreen(
             Content,
-            GraphicsDevice,
-            _spriteBatch);
+            GraphicsDevice);
         SetScreen(menuScreen);
         menuScreen.Initialise();
     }

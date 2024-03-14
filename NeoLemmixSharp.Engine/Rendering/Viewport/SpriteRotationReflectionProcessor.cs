@@ -2,9 +2,9 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Engine.LevelBuilding.Sprites;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
@@ -33,7 +33,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
         LevelPosition anchorPoint,
         ItemCreator itemCreator)
     {
-        var result = new T[8];
+        var result = new T[Orientation.NumberOfItems * FacingDirection.NumberOfItems];
 
         CreateSpritesForDirections(DownOrientation.Instance, FacingDirection.RightInstance);
         CreateSpritesForDirections(DownOrientation.Instance, FacingDirection.LeftInstance);
@@ -87,7 +87,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
                 {
                     for (var y0 = 0; y0 < spriteHeight; y0++)
                     {
-                        var pixel = pixelColorData.Get(x0 + l0, y0 + f0);
+                        var pixel = pixelColorData[x0 + l0, y0 + f0];
 
                         spriteDrawingData.Set(pixel, x0, y0, l, f);
                     }
@@ -95,23 +95,93 @@ public sealed class SpriteRotationReflectionProcessor<T>
             }
         }
 
-        var texture0 = spriteDrawingData.ToTexture(_graphicsDevice);
-
         spriteDrawingData.DihedralTransformation.Transform(
             anchorPoint.X,
             anchorPoint.Y,
             spriteWidth - 1,
             spriteHeight - 1,
-            out var footX1,
-            out var footY1);
+            out var anchorX1,
+            out var anchorY1);
 
+        var texture0 = spriteDrawingData.ToTexture(_graphicsDevice);
         var actionSprite = itemCreator(
             texture0,
             spriteDrawingData.ThisSpriteWidth,
             spriteDrawingData.ThisSpriteHeight,
             numberOfFrames,
-            new LevelPosition(footX1, footY1));
+            new LevelPosition(anchorX1, anchorY1));
 
         return actionSprite;
+    }
+
+    private readonly ref struct SpriteDrawingData
+    {
+        private readonly int _originalSpriteWidth;
+        private readonly int _originalSpriteHeight;
+        public readonly int ThisSpriteWidth;
+        public readonly int ThisSpriteHeight;
+
+        private readonly PixelColorData _colorData;
+        public readonly DihedralTransformation DihedralTransformation;
+
+        public SpriteDrawingData(
+            Orientation orientation,
+            FacingDirection facingDirection,
+            int originalSpriteWidth,
+            int originalSpriteHeight,
+            int numberOfFrames,
+            int numberOfLayers)
+        {
+            _originalSpriteWidth = originalSpriteWidth;
+            _originalSpriteHeight = originalSpriteHeight;
+
+            var rotNum = orientation.RotNum;
+            bool flipHorizontally;
+
+            if ((rotNum & 1) != 0)
+            {
+                ThisSpriteWidth = _originalSpriteHeight;
+                ThisSpriteHeight = _originalSpriteWidth;
+
+                if (facingDirection == FacingDirection.LeftInstance)
+                {
+                    rotNum = (rotNum + 2) & 3;
+                    flipHorizontally = true;
+                }
+                else
+                {
+                    flipHorizontally = false;
+                }
+            }
+            else
+            {
+                ThisSpriteWidth = _originalSpriteWidth;
+                ThisSpriteHeight = _originalSpriteHeight;
+
+                flipHorizontally = facingDirection == FacingDirection.LeftInstance;
+            }
+
+            var uints = new uint[originalSpriteWidth * originalSpriteHeight * numberOfFrames * numberOfLayers];
+            _colorData = new PixelColorData(ThisSpriteWidth * numberOfLayers, ThisSpriteHeight * numberOfFrames, uints);
+            DihedralTransformation = new DihedralTransformation(rotNum, flipHorizontally);
+        }
+
+        public void Set(uint pixel, int x0, int y0, int layer, int frame)
+        {
+            DihedralTransformation.Transform(
+                x0,
+                y0,
+                _originalSpriteWidth - 1,
+                _originalSpriteHeight - 1,
+                out var x1,
+                out var y1);
+
+            var x2 = x1 + ThisSpriteWidth * layer;
+            var y2 = y1 + ThisSpriteHeight * frame;
+            _colorData[x2, y2] = pixel;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Texture2D ToTexture(GraphicsDevice graphicsDevice) => _colorData.CreateTexture(graphicsDevice);
     }
 }

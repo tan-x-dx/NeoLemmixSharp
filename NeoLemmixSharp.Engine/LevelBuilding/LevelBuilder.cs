@@ -18,23 +18,22 @@ namespace NeoLemmixSharp.Engine.LevelBuilding;
 
 public sealed class LevelBuilder : IDisposable
 {
-    private readonly ContentManager _content;
+    private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
     private readonly ILevelReader _levelReader;
     private readonly TerrainPainter _terrainPainter;
     private readonly LevelObjectAssembler _levelObjectAssembler;
 
     public LevelBuilder(
-        ContentManager content,
+        ContentManager contentManager,
         GraphicsDevice graphicsDevice,
-        SpriteBatch spriteBatch,
         ILevelReader levelReader)
     {
-        _content = content;
+        _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;
         _levelReader = levelReader;
         _terrainPainter = new TerrainPainter(graphicsDevice);
-        _levelObjectAssembler = new LevelObjectAssembler(graphicsDevice, content, spriteBatch);
+        _levelObjectAssembler = new LevelObjectAssembler(graphicsDevice);
     }
 
     public LevelScreen BuildLevel(string levelFilePath)
@@ -53,12 +52,8 @@ public sealed class LevelBuilder : IDisposable
         var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
         var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
 
-        _levelObjectAssembler.AssembleLevelObjects(
-            levelData,
-            _content);
-
         var levelLemmings = _levelObjectAssembler.GetLevelLemmings(levelData);
-        var hatchGroups = _levelObjectAssembler.GetHatchGroups(levelData);
+        var hatchGroups = LevelObjectAssembler.GetHatchGroups(levelData);
         var lemmingManager = new LemmingManager(levelData, hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetLemmingManager(lemmingManager);
         var levelGadgets = _levelObjectAssembler.GetLevelGadgets(levelData, lemmingManager);
@@ -106,10 +101,10 @@ public sealed class LevelBuilder : IDisposable
         LevelScreen.SetTerrainManager(terrainManager);
 
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
-        var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank();
+        var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(_contentManager);
 
         var levelSprites = _levelObjectAssembler.GetLevelSprites();
-        var levelCursorSprite = CommonSpriteBank.Instance.GetLevelCursorSprite(levelCursor);
+        var levelCursorSprite = CommonSprites.GetLevelCursorSprite(levelCursor);
 
         var levelScreenRenderer = new LevelScreenRenderer(
             _graphicsDevice,
@@ -140,5 +135,6 @@ public sealed class LevelBuilder : IDisposable
     {
         _levelReader.Dispose();
         _terrainPainter.Dispose();
+        _levelObjectAssembler.Dispose();
     }
 }

@@ -1,15 +1,28 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
-public class GadgetRenderer : IViewportObjectRenderer
+public sealed class GadgetRenderer : IGadgetRenderer
 {
+    private readonly GadgetLayerRenderer[] _layers;
 
-    public Rectangle GetSpriteBounds()
+    private GadgetBase _gadget;
+
+    public GadgetRenderMode RenderMode { get; }
+
+    public GadgetRenderer(
+        GadgetLayerRenderer[] layers,
+        GadgetRenderMode renderMode)
     {
-        throw new NotImplementedException();
+        _layers = layers;
+        RenderMode = renderMode;
     }
+
+    public void SetGadget(GadgetBase gadget) => _gadget = gadget;
+
+    public Rectangle GetSpriteBounds() => _gadget.GadgetBounds.ToRectangle();
 
     public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY)
     {
@@ -18,5 +31,7 @@ public class GadgetRenderer : IViewportObjectRenderer
 
     public void Dispose()
     {
+        _gadget = null!;
+        Array.Clear(_layers);
     }
 }

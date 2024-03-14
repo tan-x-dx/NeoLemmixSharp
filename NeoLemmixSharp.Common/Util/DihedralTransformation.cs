@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
-public readonly struct DihedralTransformation
+public readonly ref struct DihedralTransformation
 {
     public static void Simplify(
         bool flipHorizontally,

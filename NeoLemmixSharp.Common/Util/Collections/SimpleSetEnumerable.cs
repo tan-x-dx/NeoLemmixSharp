@@ -12,6 +12,7 @@ public readonly ref struct SimpleSetEnumerable<T>
     private readonly ReadOnlySpan<uint> _bits;
     public readonly int Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal SimpleSetEnumerable(IPerfectHasher<T> hasher, ReadOnlySpan<uint> bits, int count)
     {
         _hasher = hasher;

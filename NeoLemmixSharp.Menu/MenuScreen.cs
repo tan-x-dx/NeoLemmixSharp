@@ -30,8 +30,7 @@ public sealed class MenuScreen : IBaseScreen
 
     public MenuScreen(
         ContentManager contentManager,
-        GraphicsDevice graphicsDevice,
-        SpriteBatch spriteBatch)
+        GraphicsDevice graphicsDevice)
     {
         var menuCursorRenderer = new MenuCursorRenderer(InputController);
         MenuScreenRenderer = new MenuScreenRenderer(
@@ -41,7 +40,6 @@ public sealed class MenuScreen : IBaseScreen
         MenuPageCreator = new MenuPageCreator(
             contentManager,
             graphicsDevice,
-            spriteBatch,
             InputController);
         _currentPage = MenuPageCreator.CreateMainPage();
         Current = this;

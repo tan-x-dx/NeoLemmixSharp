@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using static NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
@@ -20,14 +21,15 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public StatefulGadget(
         int id,
-        GadgetBehaviour interactionType,
+        GadgetBehaviour gadgetBehaviour,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
+        IGadgetRenderer? renderer,
         GadgetState[] states,
         ItemTracker<Lemming> lemmingTracker)
-        : base(id, gadgetBounds, lemmingTracker)
+        : base(id, gadgetBounds, renderer, lemmingTracker)
     {
-        GadgetBehaviour = interactionType;
+        GadgetBehaviour = gadgetBehaviour;
         Orientation = orientation;
         _states = states;
 
@@ -58,32 +60,29 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override void OnLemmingMatch(Lemming lemming)
     {
-        var itemStatus = LemmingTracker.TrackItem(lemming);
+        var actionsToPerform = GetActionsToPerformOnLemming(lemming);
 
-        var state = _states[_currentStateIndex];
-        ReadOnlySpan<IGadgetAction> actions;
-
-        if (IsItemPresent(itemStatus))
-        {
-            actions = state.OnLemmingPresentActions;
-        }
-        else if (IsItemAdded(itemStatus))
-        {
-            actions = state.OnLemmingEnterActions;
-        }
-        else if (IsItemRemoved(itemStatus))
-        {
-            actions = state.OnLemmingExitActions;
-        }
-        else
-        {
-            actions = ReadOnlySpan<IGadgetAction>.Empty;
-        }
-
-        foreach (var action in actions)
+        foreach (var action in actionsToPerform)
         {
             action.PerformAction(lemming);
         }
+    }
+
+    private ReadOnlySpan<IGadgetAction> GetActionsToPerformOnLemming(Lemming lemming)
+    {
+        var gadgetState = _states[_currentStateIndex];
+        var itemStatus = LemmingTracker.TrackItem(lemming);
+
+        if (IsItemPresent(itemStatus))
+            return gadgetState.OnLemmingPresentActions;
+
+        if (IsItemAdded(itemStatus))
+            return gadgetState.OnLemmingEnterActions;
+
+        if (IsItemRemoved(itemStatus))
+            return gadgetState.OnLemmingExitActions;
+
+        return ReadOnlySpan<IGadgetAction>.Empty;
     }
 
     public void Move(int dx, int dy)

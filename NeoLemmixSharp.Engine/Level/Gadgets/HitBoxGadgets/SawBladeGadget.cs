@@ -1,11 +1,12 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
@@ -18,8 +19,9 @@ public sealed class SawBladeGadget : HitBoxGadget, IDestructionMask, IMoveableGa
     public SawBladeGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
+        IGadgetRenderer? renderer,
         ItemTracker<Lemming> lemmingTracker)
-        : base(id, gadgetBounds, lemmingTracker)
+        : base(id, gadgetBounds, renderer, lemmingTracker)
     {
     }
 

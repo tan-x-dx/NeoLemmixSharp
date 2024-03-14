@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional.BinaryLogic;
 
@@ -9,9 +10,10 @@ public sealed class XorGateGadget : BinaryLogicGateGadget
     public XorGateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
+        IGadgetRenderer? renderer,
         LogicGateGadgetInput inputA,
         LogicGateGadgetInput inputB)
-        : base(id, gadgetBounds, inputA, inputB)
+        : base(id, gadgetBounds, renderer, inputA, inputB)
     {
     }
 
