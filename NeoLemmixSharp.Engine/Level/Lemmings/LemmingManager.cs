@@ -6,7 +6,6 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Lemmings.ZombieHelpers;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using System.Diagnostics.Contracts;
@@ -22,7 +21,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     private readonly SpacialHashGrid<Lemming> _lemmingPositionHelper;
     private readonly SimpleSet<Lemming> _lemmingsToZombify;
     private readonly SimpleSet<Lemming> _allBlockers;
-    private readonly IZombieHelper _zombieHelper;
+    private readonly ZombieHelper _zombieHelper;
 
     public int LemmingsToRelease { get; private set; }
     public int LemmingsOut { get; private set; }
@@ -61,23 +60,9 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         _lemmingsToZombify = new SimpleSet<Lemming>(this);
         _allBlockers = new SimpleSet<Lemming>(this);
 
-        _zombieHelper = GetZombieHelper(levelData, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        _zombieHelper = new ZombieHelper(this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
     }
 
-    private IZombieHelper GetZombieHelper(
-        LevelData levelData,
-        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
-        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
-    {
-        var levelHasZombies = levelData.LevelContainsAnyZombies();
-
-        if (levelHasZombies)
-            return new PositionTrackingZombieHelper(this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-
-        return new EmptyZombieHelper();
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Initialise()
     {
         foreach (var lemming in AllLemmings)

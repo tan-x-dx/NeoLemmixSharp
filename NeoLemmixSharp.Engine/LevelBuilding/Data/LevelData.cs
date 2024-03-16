@@ -1,11 +1,8 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
-using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 
@@ -172,37 +169,5 @@ public sealed class LevelData
         if (LevelAuthor.Length == 0) return "Level author not set!";
 
         return null;
-    }
-
-    public bool LevelContainsAnyZombies()
-    {
-        var lemmingSpan = CollectionsMarshal.AsSpan(AllLemmingData);
-        foreach (var lemmingData in lemmingSpan)
-        {
-            var zombieFlag = lemmingData.State >> LemmingState.ZombieBitIndex;
-
-            if ((zombieFlag & 1U) != 0U)
-                return true;
-        }
-
-        var gadgetDataSpan = CollectionsMarshal.AsSpan(AllGadgetData);
-        foreach (var gadgetData in gadgetDataSpan)
-        {
-            var gadgetBuilderId = gadgetData.GadgetBuilderId;
-            var gadgetBuilder = AllGadgetBuilders[gadgetBuilderId];
-
-            if (gadgetBuilder is HatchGadgetBuilder &&
-                HatchIsZombieHatch(gadgetData))
-                return true;
-        }
-
-        return false;
-
-        static bool HatchIsZombieHatch(GadgetData hatchGadgetData)
-        {
-            var rawLemmingState = hatchGadgetData.GetProperty(GadgetProperty.RawLemmingState);
-            var zombieFlag = (uint)rawLemmingState >> LemmingState.ZombieBitIndex;
-            return (zombieFlag & 1U) != 0U;
-        }
     }
 }
