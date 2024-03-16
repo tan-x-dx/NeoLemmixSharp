@@ -51,8 +51,7 @@ public sealed class BitArray
     [Pure]
     public bool GetBit(int index)
     {
-        var span = new ReadOnlySpan<uint>(_bits);
-        var value = span[index >> Shift];
+        var value = _bits[index >> Shift];
         value >>= index;
         return (value & 1U) != 0U;
     }
@@ -65,9 +64,7 @@ public sealed class BitArray
     /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously set</returns>
     public bool SetBit(int index)
     {
-        var span = new Span<uint>(_bits);
-        var intIndex = index >> Shift;
-        ref var arrayValue = ref span[intIndex];
+        ref var arrayValue = ref _bits[index >> Shift];
         var oldValue = arrayValue;
         arrayValue |= 1U << index;
         var delta = (arrayValue ^ oldValue) >> index;
@@ -93,9 +90,7 @@ public sealed class BitArray
     /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously clear</returns>
     public bool ClearBit(int index)
     {
-        var span = new Span<uint>(_bits);
-        var intIndex = index >> Shift;
-        ref var arrayValue = ref span[intIndex];
+        ref var arrayValue = ref _bits[index >> Shift];
         var oldValue = arrayValue;
         arrayValue &= ~(1U << index);
         var delta = (arrayValue ^ oldValue) >> index;
@@ -120,9 +115,7 @@ public sealed class BitArray
     /// <returns>The bool equivalent of the binary value (0 or 1) of the bit after toggling</returns>
     public bool ToggleBit(int index)
     {
-        var intIndex = index >> Shift;
-        var span = new Span<uint>(_bits);
-        ref var arrayValue = ref span[intIndex];
+        ref var arrayValue = ref _bits[index >> Shift];
         var oldValue = arrayValue;
         arrayValue ^= 1U << index;
         var result = arrayValue > oldValue;
@@ -133,7 +126,7 @@ public sealed class BitArray
 
     public void Clear()
     {
-        new Span<uint>(_bits).Clear();
+        Array.Clear(_bits);
         _popCount = 0;
     }
 
@@ -141,14 +134,13 @@ public sealed class BitArray
     {
         var remaining = _popCount;
         var index = 0;
-        var span = new ReadOnlySpan<uint>(_bits);
-        var v = span[0];
+        var v = _bits[0];
 
         while (remaining > 0)
         {
             while (v == 0U)
             {
-                v = span[++index];
+                v = _bits[++index];
             }
 
             var m = BitOperations.TrailingZeroCount(v);
@@ -180,7 +172,7 @@ public sealed class BitArray
         {
             _bitArray = bitArray;
             _index = 0;
-            var bits = bitArray.AsReadOnlySpan();
+            var bits = bitArray._bits;
             _v = bits.Length == 0 ? 0U : bits[0];
             _remaining = bitArray._popCount;
             Current = 0;
@@ -195,7 +187,7 @@ public sealed class BitArray
 
                 do
                 {
-                    _v = _bitArray.AsReadOnlySpan()[++_index];
+                    _v = _bitArray._bits[++_index];
                 }
                 while (_v == 0U);
             }
@@ -211,7 +203,7 @@ public sealed class BitArray
         public void Reset()
         {
             _index = 0;
-            var bits = _bitArray.AsReadOnlySpan();
+            var bits = _bitArray._bits;
             _v = bits.Length == 0 ? 0U : bits[0];
             _remaining = _bitArray._popCount;
             Current = -1;
@@ -257,13 +249,12 @@ public sealed class BitArray
 
     internal void IntersectWith(ReadOnlySpan<uint> other)
     {
-        var span = new Span<uint>(_bits);
-        Debug.Assert(span.Length == other.Length);
+        Debug.Assert(_bits.Length == other.Length);
 
         var count = 0;
-        for (var i = 0; i < span.Length; i++)
+        for (var i = 0; i < _bits.Length; i++)
         {
-            ref var arrayValue = ref span[i];
+            ref var arrayValue = ref _bits[i];
             arrayValue &= other[i];
             count += BitOperations.PopCount(arrayValue);
         }
@@ -272,13 +263,12 @@ public sealed class BitArray
 
     internal void ExceptWith(ReadOnlySpan<uint> other)
     {
-        var span = new Span<uint>(_bits);
-        Debug.Assert(span.Length == other.Length);
+        Debug.Assert(_bits.Length == other.Length);
 
         var count = 0;
-        for (var i = 0; i < span.Length; i++)
+        for (var i = 0; i < _bits.Length; i++)
         {
-            ref var arrayValue = ref span[i];
+            ref var arrayValue = ref _bits[i];
             arrayValue &= ~other[i];
             count += BitOperations.PopCount(arrayValue);
         }
@@ -287,13 +277,12 @@ public sealed class BitArray
 
     internal void SymmetricExceptWith(ReadOnlySpan<uint> other)
     {
-        var span = new Span<uint>(_bits);
-        Debug.Assert(span.Length == other.Length);
+        Debug.Assert(_bits.Length == other.Length);
 
         var count = 0;
-        for (var i = 0; i < span.Length; i++)
+        for (var i = 0; i < _bits.Length; i++)
         {
-            ref var arrayValue = ref span[i];
+            ref var arrayValue = ref _bits[i];
             arrayValue ^= other[i];
             count += BitOperations.PopCount(arrayValue);
         }
@@ -303,14 +292,12 @@ public sealed class BitArray
     [Pure]
     internal bool IsSubsetOf(ReadOnlySpan<uint> other)
     {
-        var span = new ReadOnlySpan<uint>(_bits);
-        Debug.Assert(span.Length == other.Length);
+        Debug.Assert(_bits.Length == other.Length);
 
-        for (var i = 0; i < span.Length; i++)
+        for (var i = 0; i < _bits.Length; i++)
         {
-            var bits = span[i];
             var otherBits = other[i];
-            if ((bits | otherBits) != otherBits)
+            if ((_bits[i] | otherBits) != otherBits)
                 return false;
         }
 
@@ -320,14 +307,12 @@ public sealed class BitArray
     [Pure]
     internal bool IsSupersetOf(ReadOnlySpan<uint> other)
     {
-        var span = new ReadOnlySpan<uint>(_bits);
-        Debug.Assert(span.Length == other.Length);
+        Debug.Assert(_bits.Length == other.Length);
 
-        for (var i = 0; i < span.Length; i++)
+        for (var i = 0; i < _bits.Length; i++)
         {
-            var bits = span[i];
-            var otherBits = other[i];
-            if ((bits | otherBits) != bits)
+            var bits = _bits[i];
+            if ((bits | other[i]) != bits)
                 return false;
         }
 
@@ -357,13 +342,12 @@ public sealed class BitArray
     [Pure]
     internal bool IsProperSupersetOf(ReadOnlySpan<uint> other)
     {
-        var span = new ReadOnlySpan<uint>(_bits);
-        Debug.Assert(span.Length == other.Length);
+        Debug.Assert(_bits.Length == other.Length);
 
         var allEqual = true;
-        for (var i = 0; i < span.Length; i++)
+        for (var i = 0; i < _bits.Length; i++)
         {
-            var bits = span[i];
+            var bits = _bits[i];
             var otherBits = other[i];
             allEqual &= bits == otherBits;
 
@@ -377,14 +361,11 @@ public sealed class BitArray
     [Pure]
     internal bool Overlaps(ReadOnlySpan<uint> other)
     {
-        var span = new ReadOnlySpan<uint>(_bits);
-        Debug.Assert(span.Length == other.Length);
+        Debug.Assert(_bits.Length == other.Length);
 
-        for (var i = 0; i < span.Length; i++)
+        for (var i = 0; i < _bits.Length; i++)
         {
-            var bits = span[i];
-            var otherBits = other[i];
-            if ((bits & otherBits) != 0)
+            if ((_bits[i] & other[i]) != 0)
                 return true;
         }
 
@@ -394,14 +375,11 @@ public sealed class BitArray
     [Pure]
     internal bool SetEquals(ReadOnlySpan<uint> other)
     {
-        var span = new ReadOnlySpan<uint>(_bits);
-        Debug.Assert(span.Length == other.Length);
+        Debug.Assert(_bits.Length == other.Length);
 
-        for (var i = 0; i < span.Length; i++)
+        for (var i = 0; i < _bits.Length; i++)
         {
-            var bits = span[i];
-            var otherBits = other[i];
-            if (bits != otherBits)
+            if (_bits[i] != other[i])
                 return false;
         }
 

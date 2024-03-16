@@ -11,7 +11,7 @@ public sealed class ExtendedEnumTypeComparer<T> :
     IPerfectHasher<T>
     where T : class, IExtendedEnumType<T>
 {
-    public static readonly ExtendedEnumTypeComparer<T> Instance = new();
+    private static readonly ExtendedEnumTypeComparer<T> Instance = new();
 
     private ExtendedEnumTypeComparer()
     {
@@ -41,6 +41,10 @@ public sealed class ExtendedEnumTypeComparer<T> :
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Dictionary<T, TValue> CreateDictionary<TValue>() => new(Instance);
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static SimpleDictionary<T, TValue> CreateSimpleDictionary<TValue>() => new(Instance);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

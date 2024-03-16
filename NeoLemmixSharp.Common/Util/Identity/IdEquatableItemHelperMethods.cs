@@ -8,16 +8,16 @@ public static class IdEquatableItemHelperMethods
         if (items.Length == 0)
             return;
 
-        var minActionId = int.MaxValue;
-        var maxActionId = int.MinValue;
-        var allItemIds = new HashSet<int>();
+        var minId = int.MaxValue;
+        var maxId = int.MinValue;
+        var allItemIds = new HashSet<int>(items.Length);
 
         foreach (var item in items)
         {
             var id = item.Id;
 
-            minActionId = Math.Min(minActionId, id);
-            maxActionId = Math.Max(maxActionId, id);
+            minId = Math.Min(minId, id);
+            maxId = Math.Max(maxId, id);
 
             if (!allItemIds.Add(id))
             {
@@ -27,7 +27,7 @@ public static class IdEquatableItemHelperMethods
             }
         }
 
-        if (minActionId != 0 || maxActionId != items.Length - 1)
+        if (minId != 0 || maxId != items.Length - 1)
         {
             var typeName = typeof(T).Name;
             throw new Exception($"{typeName} ids do not span a full set of values from 0 - {items.Length - 1}");
