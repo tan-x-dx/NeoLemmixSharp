@@ -64,6 +64,7 @@ public sealed class LevelBuilder : IDisposable
         }
 
         var inputController = new LevelInputController(levelParameters);
+        LevelScreen.SetLevelInputController(inputController);
         var skillSetManager = new SkillSetManager(levelData.SkillSetData);
         LevelScreen.SetSkillSetManager(skillSetManager);
 
@@ -83,6 +84,7 @@ public sealed class LevelBuilder : IDisposable
         var horizontalViewPortBehaviour = levelData.HorizontalViewPortBehaviour.GetHorizontalViewPortBehaviour(levelData.LevelWidth);
         var verticalViewPortBehaviour = levelData.VerticalViewPortBehaviour.GetVerticalViewPortBehaviour(levelData.LevelHeight);
         var levelViewport = new Viewport(horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        LevelScreen.SetViewport(levelViewport);
 
         var updateScheduler = new UpdateScheduler(controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, gadgetManager, skillSetManager);
         LevelScreen.SetUpdateScheduler(updateScheduler);
@@ -117,18 +119,13 @@ public sealed class LevelBuilder : IDisposable
             lemmingSpriteBank,
             gadgetSpriteBank,
             controlPanelSpriteBank);
+        LevelScreen.SetLevelScreenRenderer(levelScreenRenderer);
 
         lemmingManager.Initialise();
         gadgetManager.Initialise();
         updateScheduler.Initialise();
 
-        return new LevelScreen(
-            levelData,
-            updateScheduler,
-            inputController,
-            controlPanel,
-            levelViewport,
-            levelScreenRenderer);
+        return new LevelScreen(levelData);
     }
 
     public void Dispose()
