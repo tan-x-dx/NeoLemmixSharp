@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
-public sealed partial class GadgetTranslator
+public readonly ref partial struct GadgetTranslator
 {
     private readonly LevelData _levelData;
     private readonly GraphicsDevice _graphicsDevice;

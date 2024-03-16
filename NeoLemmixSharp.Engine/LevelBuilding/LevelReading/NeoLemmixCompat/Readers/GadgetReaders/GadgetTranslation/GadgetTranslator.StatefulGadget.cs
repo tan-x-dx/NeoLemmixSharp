@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
-public sealed partial class GadgetTranslator
+public readonly ref partial struct GadgetTranslator
 {
     private void ProcessStatefulGadgetBuilder(
         NeoLemmixGadgetArchetypeData archetypeData,
@@ -30,75 +30,77 @@ public sealed partial class GadgetTranslator
             FacingDirection = facingDirection
         };
 
-        ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);
+        ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders,
+            archetypeData.GadgetArchetypeId, out var exists);
 
         if (!exists)
         {
-            gadgetBuilder = CreateStatefulGadgetBuilder();
+            gadgetBuilder = CreateStatefulGadgetBuilder(archetypeData);
         }
 
         _levelData.AllGadgetData.Add(gadgetData);
 
         return;
 
-        StatefulGadgetBuilder CreateStatefulGadgetBuilder()
+    }
+
+    private StatefulGadgetBuilder CreateStatefulGadgetBuilder(NeoLemmixGadgetArchetypeData archetypeData)
+    {
+        var spriteData = GetStitchedSpriteData(archetypeData);
+
+        var gadgetStateData = CreateGadgetStateData(archetypeData);
+        var gadgetBehaviour = archetypeData.Behaviour.ToGadgetBehaviour()!;
+
+        return new StatefulGadgetBuilder
         {
-            var spriteData = GetStitchedSpriteData(archetypeData);
+            GadgetBuilderId = archetypeData.GadgetArchetypeId,
+            GadgetBehaviour = gadgetBehaviour,
+            AllGadgetStateData = gadgetStateData,
 
-            var gadgetStateData = CreateGadgetStateData();
-            var gadgetBehaviour = archetypeData.Behaviour.ToGadgetBehaviour()!;
+            SpriteData = spriteData
+        };
+    }
 
-            return new StatefulGadgetBuilder
+    private GadgetStateData[] CreateGadgetStateData(NeoLemmixGadgetArchetypeData archetypeData)
+    {
+        var emptyActions = Array.Empty<IGadgetAction>();
+
+        var numberOfExtraStates = archetypeData.Behaviour.GetNumberOfExtraStates();
+
+        var result = new GadgetStateData[1 + numberOfExtraStates];
+
+        var baseState = new GadgetStateData
+        {
+            OnLemmingEnterActions = emptyActions,
+            OnLemmingPresentActions = emptyActions,
+            OnLemmingExitActions = emptyActions,
+
+            NumberOfFrames = archetypeData.PrimaryAnimationFrameCount,
+            TriggerData = new RectangularTriggerData
             {
-                GadgetBuilderId = archetypeData.GadgetArchetypeId,
-                GadgetBehaviour = gadgetBehaviour,
-                AllGadgetStateData = gadgetStateData,
+                TriggerX = archetypeData.TriggerX,
+                TriggerY = archetypeData.TriggerY,
+                TriggerWidth = archetypeData.TriggerWidth,
+                TriggerHeight = archetypeData.TriggerHeight
+            }
+        };
 
-                SpriteData = spriteData
-            };
-        }
-
-        GadgetStateData[] CreateGadgetStateData()
+        var index = 0;
+        result[index++] = baseState;
+        var animationDataSpan = CollectionsMarshal.AsSpan(archetypeData.AnimationData);
+        foreach (var animationData in animationDataSpan)
         {
-            var emptyActions = Array.Empty<IGadgetAction>();
-
-            var numberOfExtraStates = archetypeData.Behaviour.GetNumberOfExtraStates();
-
-            var result = new GadgetStateData[1 + numberOfExtraStates];
-
-            var baseState = new GadgetStateData
+            result[index++] = new GadgetStateData
             {
                 OnLemmingEnterActions = emptyActions,
                 OnLemmingPresentActions = emptyActions,
                 OnLemmingExitActions = emptyActions,
 
-                NumberOfFrames = archetypeData.PrimaryAnimationFrameCount,
-                TriggerData = new RectangularTriggerData
-                {
-                    TriggerX = archetypeData.TriggerX,
-                    TriggerY = archetypeData.TriggerY,
-                    TriggerWidth = archetypeData.TriggerWidth,
-                    TriggerHeight = archetypeData.TriggerHeight
-                }
+                NumberOfFrames = animationData.NumberOfFrames,
+                TriggerData = null
             };
-
-            var index = 0;
-            result[index++] = baseState;
-            var animationDataSpan = CollectionsMarshal.AsSpan(archetypeData.AnimationData);
-            foreach (var animationData in animationDataSpan)
-            {
-                result[index++] = new GadgetStateData
-                {
-                    OnLemmingEnterActions = emptyActions,
-                    OnLemmingPresentActions = emptyActions,
-                    OnLemmingExitActions = emptyActions,
-
-                    NumberOfFrames = animationData.NumberOfFrames,
-                    TriggerData = null
-                };
-            }
-
-            return result;
         }
+
+        return result;
     }
 }
