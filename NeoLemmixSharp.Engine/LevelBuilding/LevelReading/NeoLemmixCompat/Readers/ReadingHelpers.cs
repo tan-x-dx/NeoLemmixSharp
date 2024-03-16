@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using NeoLemmixSharp.Engine.Level.Skills;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using NeoLemmixSharp.Engine.Level.Skills;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
@@ -131,7 +131,7 @@ public static class ReadingHelpers
     /// <param name="token">A sequence of characters representing a hexadecimal number</param>
     /// <returns>An unsigned integral type</returns>
     public static TNumber ParseHex<TNumber>(ReadOnlySpan<char> token)
-        where TNumber : struct, IUnsignedNumber<TNumber>
+        where TNumber : unmanaged, IUnsignedNumber<TNumber>
     {
         // The standard parse methods can deal with hexadecimal, but
         // the initial "0x" part must be omitted. We deal with this here
