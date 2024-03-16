@@ -89,7 +89,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
             result &= skillTrackingData.Skill.IsClassicSkill && // only classic skills
-                      skillTrackingData.Team.Id == 0; // only one team
+                      skillTrackingData.Team.Id == LevelConstants.ClassicTeamId; // only classic team
         }
 
         return result;

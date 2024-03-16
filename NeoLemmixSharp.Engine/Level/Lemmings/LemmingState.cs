@@ -223,9 +223,8 @@ public sealed class LemmingState
         _states = otherLemmingState._states;
     }
 
-    public void SetRawData(Team team, uint rawData)
+    public void SetRawData(uint rawData)
     {
-        _team = team;
         _states = rawData;
         UpdateHairAndBodyColors();
         UpdateSkinColor();
