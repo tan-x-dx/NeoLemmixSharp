@@ -138,8 +138,8 @@ public sealed class LevelScreen : IBaseScreen
         SetLevelControlPanel(null);
         SetUpdateScheduler(null);
         SetLevelCursor(null);
+#pragma warning restore CS8625
 
         IsDisposed = true;
-#pragma warning restore CS8625
     }
 }

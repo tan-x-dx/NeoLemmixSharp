@@ -68,6 +68,7 @@ public sealed class MenuPageCreator
 
     public LevelStartPage? CreateLevelStartPage()
     {
+        LevelStartPage? result = null;
         LevelBuilder? levelBuilder = null;
         try
         {
@@ -75,7 +76,7 @@ public sealed class MenuPageCreator
             var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
             levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice, levelReader);
             var levelScreen = levelBuilder.BuildLevel(LevelToLoadFilepath);
-            return new LevelStartPage(IGameWindow.Instance, _inputController, levelScreen);
+            result = new LevelStartPage(_inputController, levelScreen);
         }
         catch (Exception ex)
         {
@@ -86,6 +87,6 @@ public sealed class MenuPageCreator
             levelBuilder?.Dispose();
         }
 
-        return null;
+        return result;
     }
 }

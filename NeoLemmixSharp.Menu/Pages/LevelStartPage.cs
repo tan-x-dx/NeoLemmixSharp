@@ -7,20 +7,17 @@ namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class LevelStartPage : IPage
 {
-    private readonly IGameWindow _gameWindow;
     private readonly MenuInputController _inputController;
     private readonly LevelScreen _levelScreen;
 
-    // Panel to cover the entire screen,
-    // therefore we can click anywhere to begin the level
+    // Panel to cover the entire screen, so
+    // we can click anywhere to begin the level
     private Panel _backPanel;
 
     public LevelStartPage(
-        IGameWindow gameWindow,
         MenuInputController inputController,
         LevelScreen levelScreen)
     {
-        _gameWindow = gameWindow;
         _inputController = inputController;
         _levelScreen = levelScreen;
     }
@@ -41,7 +38,7 @@ public sealed class LevelStartPage : IPage
         rootPanel.AddChild(_backPanel);
     }
 
-    private void GoBack(Entity entity)
+    private static void GoBack(Entity entity)
     {
         var mainPage = MenuScreen.Current.MenuPageCreator.CreateMainPage();
 
@@ -79,7 +76,7 @@ public sealed class LevelStartPage : IPage
 
     private void StartLevel(Entity entity)
     {
-        _gameWindow.SetScreen(_levelScreen);
+        IGameWindow.Instance.SetScreen(_levelScreen);
     }
 
     public void Dispose()

@@ -49,12 +49,12 @@ public sealed class LevelBuilder : IDisposable
         var controlPanelParameters = levelData.ControlParameters;
         LevelScreen.SetLevelParameters(levelParameters);
 
-        var horizontalBoundaryBehaviour = BoundaryHelpers.GetHorizontalBoundaryBehaviour(levelData.HorizontalBoundaryBehaviour, levelData.LevelWidth);
-        var verticalBoundaryBehaviour = BoundaryHelpers.GetVerticalBoundaryBehaviour(levelData.VerticalBoundaryBehaviour, levelData.LevelHeight);
+        var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelData.LevelWidth);
+        var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelData.LevelHeight);
 
         var levelLemmings = _levelObjectAssembler.GetLevelLemmings(levelData);
         var hatchGroups = LevelObjectAssembler.GetHatchGroups(levelData);
-        var lemmingManager = new LemmingManager(levelData, hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        var lemmingManager = new LemmingManager(hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetLemmingManager(lemmingManager);
         var levelGadgets = _levelObjectAssembler.GetLevelGadgets(levelData, lemmingManager);
 
@@ -80,8 +80,8 @@ public sealed class LevelBuilder : IDisposable
         var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetGadgetManager(gadgetManager);
 
-        var horizontalViewPortBehaviour = BoundaryHelpers.GetHorizontalViewPortBehaviour(levelData.HorizontalViewPortBehaviour, levelData.LevelWidth);
-        var verticalViewPortBehaviour = BoundaryHelpers.GetVerticalViewPortBehaviour(levelData.VerticalViewPortBehaviour, levelData.LevelHeight);
+        var horizontalViewPortBehaviour = levelData.HorizontalViewPortBehaviour.GetHorizontalViewPortBehaviour(levelData.LevelWidth);
+        var verticalViewPortBehaviour = levelData.VerticalViewPortBehaviour.GetVerticalViewPortBehaviour(levelData.LevelHeight);
         var levelViewport = new Viewport(horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
         var updateScheduler = new UpdateScheduler(controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, gadgetManager, skillSetManager);

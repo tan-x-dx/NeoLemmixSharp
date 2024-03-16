@@ -34,7 +34,6 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     private int _nextLemmingId;
 
     public LemmingManager(
-        LevelData levelData,
         HatchGroup[] hatchGroups,
         Lemming[] lemmings,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
