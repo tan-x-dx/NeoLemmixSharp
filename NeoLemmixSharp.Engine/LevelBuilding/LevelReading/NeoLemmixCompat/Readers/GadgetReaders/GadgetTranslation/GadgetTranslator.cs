@@ -33,14 +33,26 @@ public readonly ref partial struct GadgetTranslator
 
         foreach (var prototype in gadgetDataSpan)
         {
-            var archetype = neoLemmixGadgetArchetypeData
-                .First(a => a.GadgetArchetypeId == prototype.GadgetArchetypeId);
+            var archetype = GetMatchingArchetypeData(neoLemmixGadgetArchetypeData, prototype);
 
             ProcessBuilder(
                 archetype,
                 prototype,
                 id++);
         }
+    }
+
+    private static NeoLemmixGadgetArchetypeData GetMatchingArchetypeData(
+        Dictionary<string, NeoLemmixGadgetArchetypeData>.ValueCollection neoLemmixGadgetArchetypeData,
+        NeoLemmixGadgetData prototype)
+    {
+        foreach (var archetypeData in neoLemmixGadgetArchetypeData)
+        {
+            if (archetypeData.GadgetArchetypeId == prototype.GadgetArchetypeId)
+                return archetypeData;
+        }
+
+        throw new InvalidOperationException("No matching archetype data exists");
     }
 
     private void ProcessBuilder(
@@ -86,7 +98,7 @@ public readonly ref partial struct GadgetTranslator
         if (prototype.NoOverwrite)
             return GadgetRenderMode.BehindTerrain;
         return prototype.OnlyOnTerrain
-            ? GadgetRenderMode.OnlyOnTerrain 
+            ? GadgetRenderMode.OnlyOnTerrain
             : GadgetRenderMode.InFrontOfTerrain;
     }
 }

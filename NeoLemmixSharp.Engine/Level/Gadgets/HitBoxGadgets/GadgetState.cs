@@ -5,8 +5,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class GadgetState
 {
-    private readonly int _numberOfAnimationFrames;
-
     private readonly IGadgetAction[] _onLemmingEnterActions;
     private readonly IGadgetAction[] _onLemmingPresentActions;
     private readonly IGadgetAction[] _onLemmingExitActions;
@@ -24,14 +22,11 @@ public sealed class GadgetState
     public int AnimationFrame { get; private set; }
 
     public GadgetState(
-        int numberOfAnimationFrames,
         IGadgetAction[] onLemmingEnterActions,
         IGadgetAction[] onLemmingPresentActions,
         IGadgetAction[] onLemmingExitActions,
         HitBox hitBox)
     {
-        _numberOfAnimationFrames = numberOfAnimationFrames;
-
         _onLemmingEnterActions = onLemmingEnterActions;
         _onLemmingPresentActions = onLemmingPresentActions;
         _onLemmingExitActions = onLemmingExitActions;

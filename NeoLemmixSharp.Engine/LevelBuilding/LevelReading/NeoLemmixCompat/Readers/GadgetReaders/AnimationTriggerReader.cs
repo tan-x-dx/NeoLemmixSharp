@@ -31,7 +31,7 @@ public sealed class AnimationTriggerReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "CONDITION":
-                currentAnimationTriggerData.Condition = secondToken.GetString();
+                currentAnimationTriggerData.StateType = GetNeoLemmixGadgetStateType(line, secondToken);
                 break;
 
             case "STATE":
@@ -54,5 +54,35 @@ public sealed class AnimationTriggerReader : INeoLemmixDataReader
         }
 
         return false;
+    }
+
+    private static NeoLemmixGadgetStateType GetNeoLemmixGadgetStateType(ReadOnlySpan<char> line, ReadOnlySpan<char> token)
+    {
+        var result = NeoLemmixGadgetStateType.Idle;
+
+        switch (token)
+        {
+            case "READY":
+                result = NeoLemmixGadgetStateType.Idle;
+                break;
+                
+            case "BUSY":
+                result = NeoLemmixGadgetStateType.Active;
+                break;
+
+            case "DISABLED":
+                result = NeoLemmixGadgetStateType.Disabled;
+                break;
+
+            case "EXHAUSTED":
+                result = NeoLemmixGadgetStateType.Disabled;
+                break;
+
+            default:
+                ReadingHelpers.ThrowUnknownTokenException("CONDITION", token, line);
+                break;
+        }
+
+        return result;
     }
 }

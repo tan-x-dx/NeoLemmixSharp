@@ -1,25 +1,6 @@
 ﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
-public interface IGadgetStateAnimationBehaviour
-{
-    void GetFrameData(out FrameAndLayerData data);
-
-    void Tick();
-}
-
-public readonly ref struct FrameAndLayerData
-{
-    public readonly int SourceDx;
-    public readonly int SourceDy;
-
-    public FrameAndLayerData(int sourceDx, int sourceDy)
-    {
-        SourceDx = sourceDx;
-        SourceDy = sourceDy;
-    }
-}
-
-public sealed class CountUpAndLoopAnimationBehaviour : IGadgetStateAnimationBehaviour
+public sealed class GadgetStateAnimationBehaviour
 {
     private readonly int _sourceDx;
     private readonly int _spriteHeight;
@@ -29,7 +10,7 @@ public sealed class CountUpAndLoopAnimationBehaviour : IGadgetStateAnimationBeha
     private int _currentFrame;
     public bool IsActive = true;
 
-    public CountUpAndLoopAnimationBehaviour(
+    public GadgetStateAnimationBehaviour(
         int spriteWidth,
         int spriteHeight,
         int layer,
@@ -63,5 +44,17 @@ public sealed class CountUpAndLoopAnimationBehaviour : IGadgetStateAnimationBeha
             return;
         }
         _currentFrame = c;
+    }
+}
+
+public readonly ref struct FrameAndLayerData
+{
+    public readonly int SourceDx;
+    public readonly int SourceDy;
+
+    public FrameAndLayerData(int sourceDx, int sourceDy)
+    {
+        SourceDx = sourceDx;
+        SourceDy = sourceDy;
     }
 }

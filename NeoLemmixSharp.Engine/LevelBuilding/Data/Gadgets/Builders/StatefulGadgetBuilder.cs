@@ -14,7 +14,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
 {
     public required int GadgetBuilderId { get; init; }
     public required GadgetBehaviour GadgetBehaviour { get; init; }
-    public required GadgetStateData[] AllGadgetStateData { get; init; }
+    public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }
 
     public required SpriteData SpriteData { get; init; }
 
@@ -58,9 +58,9 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         return result;
     }
 
-    private GadgetState CreateGadgetState(GadgetData gadgetData, GadgetStateData gadgetStateData)
+    private GadgetState CreateGadgetState(GadgetData gadgetData, GadgetStateArchetypeData gadgetStateArchetypeData)
     {
-        var hitBoxRegion = CreateHitBoxLevelRegion(gadgetData, gadgetStateData);
+        var hitBoxRegion = CreateHitBoxLevelRegion(gadgetData, gadgetStateArchetypeData);
 
         var lemmingFilters = Array.Empty<ILemmingFilter>();
 
@@ -69,16 +69,15 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
             lemmingFilters);
 
         return new GadgetState(
-            gadgetStateData.NumberOfFrames,
-            gadgetStateData.OnLemmingEnterActions,
-            gadgetStateData.OnLemmingPresentActions,
-            gadgetStateData.OnLemmingExitActions,
+            gadgetStateArchetypeData.OnLemmingEnterActions,
+            gadgetStateArchetypeData.OnLemmingPresentActions,
+            gadgetStateArchetypeData.OnLemmingExitActions,
             hitBox);
     }
 
-    private ILevelRegion CreateHitBoxLevelRegion(GadgetData gadgetData, GadgetStateData gadgetStateData)
+    private ILevelRegion CreateHitBoxLevelRegion(GadgetData gadgetData, GadgetStateArchetypeData gadgetStateArchetypeData)
     {
-        var nullableRectangularTriggerData = gadgetStateData.TriggerData;
+        var nullableRectangularTriggerData = gadgetStateArchetypeData.TriggerData;
         if (!nullableRectangularTriggerData.HasValue)
             return EmptyLevelRegion.Instance;
 

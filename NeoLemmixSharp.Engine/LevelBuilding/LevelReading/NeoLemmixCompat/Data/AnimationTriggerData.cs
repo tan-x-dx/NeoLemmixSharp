@@ -2,7 +2,15 @@
 
 public sealed class AnimationTriggerData
 {
-    public string Condition { get; set; }
+    public NeoLemmixGadgetStateType StateType { get; set; }
     public string? State { get; set; }
     public bool Hide { get; set; }
+
+}
+
+public enum NeoLemmixGadgetStateType
+{
+    Idle,
+    Active,
+    Disabled
 }

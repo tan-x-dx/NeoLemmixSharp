@@ -105,7 +105,7 @@ public sealed class GadgetSpriteBuilder : IDisposable
         Texture2D texture2D)
     {
         var spriteData = gadgetBuilder.SpriteData;
-        var x = new CountUpAndLoopAnimationBehaviour(
+        var x = new GadgetStateAnimationBehaviour(
             spriteData.SpriteWidth,
             spriteData.SpriteHeight,
             0,
@@ -120,6 +120,7 @@ public sealed class GadgetSpriteBuilder : IDisposable
             Color.White);
 
         return new GadgetRenderer(
+            null!,
             gadgetRenderLayers,
             gadgetData.GadgetRenderMode);
     }

@@ -39,17 +39,14 @@ public readonly ref partial struct GadgetTranslator
         }
 
         _levelData.AllGadgetData.Add(gadgetData);
-
-        return;
-
     }
 
     private StatefulGadgetBuilder CreateStatefulGadgetBuilder(NeoLemmixGadgetArchetypeData archetypeData)
     {
         var spriteData = GetStitchedSpriteData(archetypeData);
 
-        var gadgetStateData = CreateGadgetStateData(archetypeData);
-        var gadgetBehaviour = archetypeData.Behaviour.ToGadgetBehaviour()!;
+        var gadgetStateData = archetypeData.GetGadgetStates();
+        var gadgetBehaviour = archetypeData.Behaviour.ToGadgetBehaviour();
 
         return new StatefulGadgetBuilder
         {
@@ -59,48 +56,5 @@ public readonly ref partial struct GadgetTranslator
 
             SpriteData = spriteData
         };
-    }
-
-    private GadgetStateData[] CreateGadgetStateData(NeoLemmixGadgetArchetypeData archetypeData)
-    {
-        var emptyActions = Array.Empty<IGadgetAction>();
-
-        var numberOfExtraStates = archetypeData.Behaviour.GetNumberOfExtraStates();
-
-        var result = new GadgetStateData[1 + numberOfExtraStates];
-
-        var baseState = new GadgetStateData
-        {
-            OnLemmingEnterActions = emptyActions,
-            OnLemmingPresentActions = emptyActions,
-            OnLemmingExitActions = emptyActions,
-
-            NumberOfFrames = archetypeData.PrimaryAnimationFrameCount,
-            TriggerData = new RectangularTriggerData
-            {
-                TriggerX = archetypeData.TriggerX,
-                TriggerY = archetypeData.TriggerY,
-                TriggerWidth = archetypeData.TriggerWidth,
-                TriggerHeight = archetypeData.TriggerHeight
-            }
-        };
-
-        var index = 0;
-        result[index++] = baseState;
-        var animationDataSpan = CollectionsMarshal.AsSpan(archetypeData.AnimationData);
-        foreach (var animationData in animationDataSpan)
-        {
-            result[index++] = new GadgetStateData
-            {
-                OnLemmingEnterActions = emptyActions,
-                OnLemmingPresentActions = emptyActions,
-                OnLemmingExitActions = emptyActions,
-
-                NumberOfFrames = animationData.NumberOfFrames,
-                TriggerData = null
-            };
-        }
-
-        return result;
     }
 }
