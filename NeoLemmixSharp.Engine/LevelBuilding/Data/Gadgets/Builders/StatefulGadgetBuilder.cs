@@ -62,11 +62,17 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
     {
         var hitBoxRegion = CreateHitBoxLevelRegion(gadgetData, gadgetStateArchetypeData);
 
-        var lemmingFilters = Array.Empty<ILemmingFilter>();
+        var lemmingFilters = new List<ILemmingFilter>();
+
+        if (gadgetData.TryGetProperty(GadgetProperty.TeamId, out var teamId))
+        {
+            var team = Team.AllItems[teamId];
+            lemmingFilters.Add(new LemmingTeamFilter(team));
+        }
 
         var hitBox = new HitBox(
             hitBoxRegion,
-            lemmingFilters);
+            lemmingFilters.ToArray());
 
         return new GadgetState(
             gadgetStateArchetypeData.OnLemmingEnterActions,
