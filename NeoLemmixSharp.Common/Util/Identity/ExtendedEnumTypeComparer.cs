@@ -11,12 +11,14 @@ public sealed class ExtendedEnumTypeComparer<T> :
     IPerfectHasher<T>
     where T : class, IExtendedEnumType<T>
 {
-    private static readonly ExtendedEnumTypeComparer<T> Instance = new();
+    private static ExtendedEnumTypeComparer<T>? _instance;
+    private static ExtendedEnumTypeComparer<T> Instance => _instance ??= new ExtendedEnumTypeComparer<T>();
 
     private ExtendedEnumTypeComparer()
     {
     }
 
+    [Pure]
     public bool Equals(T? x, T? y)
     {
         if (x is null) return y is null;
@@ -24,18 +26,26 @@ public sealed class ExtendedEnumTypeComparer<T> :
         return x.Id == y.Id;
     }
 
+    [Pure]
     public int GetHashCode(T obj) => 2965019 * obj.Id +
                                      5477821;
 
+    [Pure]
     public int Compare(T? x, T? y) => IdEquatableItemHelperMethods.Compare(x, y);
 
+    [Pure]
     public bool Equals(ExtendedEnumTypeComparer<T>? other) => other is not null;
+    [Pure]
     public override bool Equals(object? obj) => obj is ExtendedEnumTypeComparer<T>;
+    [Pure]
     public override int GetHashCode() => typeof(T).GetHashCode();
 
+    [Pure]
     public int NumberOfItems => T.NumberOfItems;
 
+    [Pure]
     public int Hash(T item) => item.Id;
+    [Pure]
     public T UnHash(int index) => T.AllItems[index];
 
     [Pure]
@@ -48,8 +58,5 @@ public sealed class ExtendedEnumTypeComparer<T> :
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static SimpleSet<T> CreateSimpleSet()
-    {
-        return new SimpleSet<T>(Instance);
-    }
+    public static SimpleSet<T> CreateSimpleSet() => new(Instance);
 }
