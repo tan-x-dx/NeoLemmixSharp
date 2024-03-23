@@ -2,48 +2,60 @@
 
 public sealed class GadgetStateAnimationBehaviour
 {
+    public const int NoGadgetStateTransition = -1;
+
     private readonly int _sourceDx;
     private readonly int _spriteHeight;
     private readonly int _minFrame;
     private readonly int _maxFrame;
+    private readonly int _frameDelta;
+    private readonly int _gadgetStateTransitionIndex;
 
     private int _currentFrame;
-    public bool IsActive = true;
 
     public GadgetStateAnimationBehaviour(
-        int spriteWidth,
-        int spriteHeight,
-        int layer,
-        int initialFrame,
-        int minFrame,
-        int maxFrame)
+         int spriteWidth,
+         int spriteHeight,
+         int layer,
+         int initialFrame,
+         int minFrame,
+         int maxFrame,
+         int frameDelta,
+         int gadgetStateTransitionIndex)
     {
         _sourceDx = spriteWidth * layer;
         _spriteHeight = spriteHeight;
         _minFrame = minFrame;
         _maxFrame = maxFrame;
+        _frameDelta = frameDelta;
+        _gadgetStateTransitionIndex = gadgetStateTransitionIndex;
+
         _currentFrame = initialFrame;
     }
 
-    public void GetFrameData(out FrameAndLayerData data)
+    public FrameAndLayerData GetFrameData()
     {
-        data = new FrameAndLayerData(
+        return new FrameAndLayerData(
             _sourceDx,
             _currentFrame * _spriteHeight);
     }
 
-    public void Tick()
+    public int Tick()
     {
-        if (!IsActive)
-            return;
-
-        var c = _currentFrame + 1;
+        var c = _currentFrame + _frameDelta;
+        if (c < _minFrame)
+        {
+            _currentFrame = _maxFrame - 1;
+            return _gadgetStateTransitionIndex;
+        }
         if (c >= _maxFrame)
         {
             _currentFrame = _minFrame;
-            return;
+            return _gadgetStateTransitionIndex;
         }
         _currentFrame = c;
+
+        return NoGadgetStateTransition;
     }
 }
 

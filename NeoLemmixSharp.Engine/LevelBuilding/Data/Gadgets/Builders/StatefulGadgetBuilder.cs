@@ -6,6 +6,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
@@ -41,6 +42,8 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
             gadgetStates,
             new ItemTracker<Lemming>(lemmingHasher));
 
+        result.SetNextState(gadgetData.InitialStateId);
+
         gadgetRenderer?.SetGadget(result);
 
         return result;
@@ -70,14 +73,18 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
             lemmingFilters.Add(new LemmingTeamFilter(team));
         }
 
+     //   SpriteData.
+
         var hitBox = new HitBox(
             hitBoxRegion,
             lemmingFilters.ToArray());
-
+        
         return new GadgetState(
             gadgetStateArchetypeData.OnLemmingEnterActions,
             gadgetStateArchetypeData.OnLemmingPresentActions,
             gadgetStateArchetypeData.OnLemmingExitActions,
+            null,
+            null,
             hitBox);
     }
 

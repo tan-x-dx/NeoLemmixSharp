@@ -9,7 +9,8 @@ public enum GadgetProperty
     Width,
     Height,
     RawLemmingState,
-    LemmingCount
+    LemmingCount,
+    InitialAnimationFrame
 }
 
 public static class GadgetPropertyHelpers

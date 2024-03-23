@@ -44,8 +44,8 @@ public readonly ref partial struct GadgetTranslator
             FacingDirection = facingDirection
         };
 
-        gadgetData.AddProperty(GadgetProperty.Width, prototypeWidth);
-        gadgetData.AddProperty(GadgetProperty.Height, prototypeHeight);
+        gadgetData.SetProperty(GadgetProperty.Width, prototypeWidth);
+        gadgetData.SetProperty(GadgetProperty.Height, prototypeHeight);
 
         ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);
 

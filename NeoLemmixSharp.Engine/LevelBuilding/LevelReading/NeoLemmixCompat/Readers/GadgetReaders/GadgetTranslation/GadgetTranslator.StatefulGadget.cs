@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using System.Runtime.InteropServices;
@@ -30,8 +29,12 @@ public readonly ref partial struct GadgetTranslator
             FacingDirection = facingDirection
         };
 
-        ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders,
-            archetypeData.GadgetArchetypeId, out var exists);
+        gadgetData.SetProperty(GadgetProperty.InitialAnimationFrame, archetypeData.AnimationData[0].InitialFrame);
+
+        ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(
+            _levelData.AllGadgetBuilders,
+            archetypeData.GadgetArchetypeId,
+            out var exists);
 
         if (!exists)
         {

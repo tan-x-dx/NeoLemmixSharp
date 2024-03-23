@@ -9,6 +9,9 @@ public sealed class GadgetState
     private readonly IGadgetAction[] _onLemmingPresentActions;
     private readonly IGadgetAction[] _onLemmingExitActions;
 
+    private readonly GadgetStateAnimationBehaviour _primaryAnimation;
+    private readonly GadgetStateAnimationBehaviour[] _secondaryAnimations;
+
     private readonly GadgetOutput _stateSelectedOutput = new();
 
     private StatefulGadget _gadget = null!;
@@ -25,11 +28,16 @@ public sealed class GadgetState
         IGadgetAction[] onLemmingEnterActions,
         IGadgetAction[] onLemmingPresentActions,
         IGadgetAction[] onLemmingExitActions,
+        GadgetStateAnimationBehaviour primaryAnimation,
+        GadgetStateAnimationBehaviour[] secondaryAnimations,
         HitBox hitBox)
     {
         _onLemmingEnterActions = onLemmingEnterActions;
         _onLemmingPresentActions = onLemmingPresentActions;
         _onLemmingExitActions = onLemmingExitActions;
+
+        _primaryAnimation = primaryAnimation;
+        _secondaryAnimations = secondaryAnimations;
 
         HitBox = hitBox;
     }
@@ -47,21 +55,17 @@ public sealed class GadgetState
 
     public void Tick()
     {
-       /* if (AnimationFrame < _numberOfAnimationFrames)
+        foreach (var secondaryAnimation in _secondaryAnimations)
         {
-            AnimationFrame++;
+            secondaryAnimation.Tick();
         }
-        else
+
+        var gadgetStateTransitionIndex = _primaryAnimation.Tick();
+
+        if (gadgetStateTransitionIndex != GadgetStateAnimationBehaviour.NoGadgetStateTransition)
         {
-            if (_stateTransitionAfterAnimation == -1)
-            {
-                AnimationFrame = 0;
-            }
-            else
-            {
-                _gadget.SetNextState(_stateTransitionAfterAnimation);
-            }
-        }*/
+            _gadget.SetNextState(gadgetStateTransitionIndex);
+        }
     }
 
     public void OnTransitionFrom()

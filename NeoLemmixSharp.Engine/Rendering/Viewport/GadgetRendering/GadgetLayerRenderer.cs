@@ -26,7 +26,7 @@ public sealed class GadgetLayerRenderer
         Rectangle sourceRectangle,
         Rectangle destinationRectangle)
     {
-        _stateAnimationBehaviour.GetFrameData(out var spriteFrameAndLayerData);
+        var spriteFrameAndLayerData = _stateAnimationBehaviour.GetFrameData();
 
         sourceRectangle.X += spriteFrameAndLayerData.SourceDx;
         sourceRectangle.Y += spriteFrameAndLayerData.SourceDy;

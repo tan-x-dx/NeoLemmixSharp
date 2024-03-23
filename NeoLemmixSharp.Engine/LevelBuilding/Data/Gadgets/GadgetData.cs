@@ -21,9 +21,9 @@ public sealed class GadgetData
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }
 
-    public void AddProperty(GadgetProperty property, int value)
+    public void SetProperty(GadgetProperty property, int value)
     {
-        _properties.Add(property, value);
+        _properties[property] = value;
     }
 
     public int GetProperty(GadgetProperty property)
