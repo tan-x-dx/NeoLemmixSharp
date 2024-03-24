@@ -42,8 +42,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
 
     public void ToggleLemmingState(LemmingState lemmingState)
     {
-        var isSwimmer = lemmingState.IsSwimmer;
-        lemmingState.IsSwimmer = !isSwimmer;
+        lemmingState.IsSwimmer = !lemmingState.IsSwimmer;
     }
 
     public bool IsApplied(LemmingState lemmingState)

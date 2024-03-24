@@ -35,8 +35,7 @@ public sealed class GliderSkill : LemmingSkill, ILemmingStateChanger
 
     public void ToggleLemmingState(LemmingState lemmingState)
     {
-        var isGlider = lemmingState.IsGlider;
-        lemmingState.IsGlider = !isGlider;
+        lemmingState.IsGlider = !lemmingState.IsGlider;
     }
 
     public bool IsApplied(LemmingState lemmingState)

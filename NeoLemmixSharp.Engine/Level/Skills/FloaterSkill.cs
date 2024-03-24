@@ -35,8 +35,7 @@ public sealed class FloaterSkill : LemmingSkill, ILemmingStateChanger
 
     public void ToggleLemmingState(LemmingState lemmingState)
     {
-        var isFloater = lemmingState.IsFloater;
-        lemmingState.IsFloater = !isFloater;
+        lemmingState.IsFloater = !lemmingState.IsFloater;
     }
 
     public bool IsApplied(LemmingState lemmingState)

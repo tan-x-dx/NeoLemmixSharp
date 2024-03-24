@@ -46,9 +46,7 @@ public sealed class BitArray
 
         Array.Fill(_bits, uint.MaxValue);
 
-        var shift = length & Mask;
-        var mask = (1U << shift) - 1U;
-        _bits[^1] = mask;
+        _bits[^1] = (1U << (length & Mask)) - 1U;
 
         _popCount = length;
     }

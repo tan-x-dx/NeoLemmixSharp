@@ -35,8 +35,7 @@ public sealed class DisarmerSkill : LemmingSkill, ILemmingStateChanger
 
     public void ToggleLemmingState(LemmingState lemmingState)
     {
-        var isDisarmer = lemmingState.IsDisarmer;
-        lemmingState.IsDisarmer = !isDisarmer;
+        lemmingState.IsDisarmer = !lemmingState.IsDisarmer;
     }
 
     public bool IsApplied(LemmingState lemmingState)
