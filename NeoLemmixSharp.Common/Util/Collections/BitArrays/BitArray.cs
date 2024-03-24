@@ -15,7 +15,7 @@ public sealed class BitArray
     private int _popCount;
 
     /// <summary>
-    /// The footprint of this BitArray - how many uints it logically represents
+    /// The footprint of this BitArray - how many uints it logically represents.
     /// </summary>
     public int Size
     {
@@ -24,8 +24,7 @@ public sealed class BitArray
     }
 
     /// <summary>
-    /// The number of integers currently stored in this BitArray.
-    /// Logically equivalent to the total pop count of the BitArray
+    /// The population count (number of bits set) of the bit array.
     /// </summary>
     // ReSharper disable once ConvertToAutoPropertyWithPrivateSetter
     public int PopCount
@@ -34,13 +33,24 @@ public sealed class BitArray
         get => _popCount;
     }
 
-    public BitArray(int length)
+    public BitArray(int length, bool setAllBits = false)
     {
         if (length <= 0)
             throw new ArgumentOutOfRangeException(nameof(length), length, "length must be strictly positive!");
 
         var arraySize = (length + Mask) >> Shift;
         _bits = new uint[arraySize];
+
+        if (!setAllBits)
+            return;
+
+        Array.Fill(_bits, uint.MaxValue);
+
+        var shift = length & Mask;
+        var mask = (1U << shift) - 1U;
+        _bits[^1] = mask;
+
+        _popCount = length;
     }
 
     /// <summary>
