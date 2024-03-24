@@ -42,18 +42,18 @@ public sealed class GadgetStateAnimationBehaviour
 
     public int Tick()
     {
-        var c = _currentFrame + _frameDelta;
-        if (c < _minFrame)
+        var newFrame = _currentFrame + _frameDelta;
+        if (newFrame < _minFrame)
         {
             _currentFrame = _maxFrame - 1;
             return _gadgetStateTransitionIndex;
         }
-        if (c >= _maxFrame)
+        if (newFrame >= _maxFrame)
         {
             _currentFrame = _minFrame;
             return _gadgetStateTransitionIndex;
         }
-        _currentFrame = c;
+        _currentFrame = newFrame;
 
         return NoGadgetStateTransition;
     }

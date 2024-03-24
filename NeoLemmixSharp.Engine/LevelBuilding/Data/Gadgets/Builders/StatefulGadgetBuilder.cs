@@ -6,6 +6,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
@@ -35,7 +36,6 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
 
         var result = new StatefulGadget(
             gadgetData.Id,
-            GadgetBehaviour,
             gadgetData.Orientation,
             bounds,
             gadgetRenderer,
@@ -61,25 +61,14 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         return result;
     }
 
-    private GadgetState CreateGadgetState(GadgetData gadgetData, GadgetStateArchetypeData gadgetStateArchetypeData)
+    private GadgetState CreateGadgetState(
+        GadgetData gadgetData,
+        GadgetStateArchetypeData gadgetStateArchetypeData)
     {
-        var hitBoxRegion = CreateHitBoxLevelRegion(gadgetData, gadgetStateArchetypeData);
+        var hitBox = CreateHitBoxForState(gadgetData, gadgetStateArchetypeData);
 
-        var lemmingFilters = new List<ILemmingFilter>();
-
-        if (gadgetData.TryGetProperty(GadgetProperty.TeamId, out var teamId))
-        {
-            var team = Team.AllItems[teamId];
-            lemmingFilters.Add(new LemmingTeamFilter(team));
-        }
-
-     //   SpriteData.
-
-        var hitBox = new HitBox(
-            hitBoxRegion,
-            lemmingFilters.ToArray());
-        
         return new GadgetState(
+            GadgetBehaviour,
             gadgetStateArchetypeData.OnLemmingEnterActions,
             gadgetStateArchetypeData.OnLemmingPresentActions,
             gadgetStateArchetypeData.OnLemmingExitActions,
@@ -88,7 +77,69 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
             hitBox);
     }
 
-    private ILevelRegion CreateHitBoxLevelRegion(GadgetData gadgetData, GadgetStateArchetypeData gadgetStateArchetypeData)
+    private HitBox CreateHitBoxForState(
+        GadgetData gadgetData,
+        GadgetStateArchetypeData gadgetStateArchetypeData)
+    {
+        var hitBoxRegion = CreateHitBoxLevelRegion(gadgetData, gadgetStateArchetypeData);
+
+        var lemmingFilters = new List<ILemmingFilter>();
+
+        if (gadgetStateArchetypeData.AllowedActions is not null)
+        {
+            var actionFilter = new LemmingActionFilter();
+            actionFilter.RegisterActions(gadgetStateArchetypeData.AllowedActions);
+            lemmingFilters.Add(actionFilter);
+        }
+
+        if (gadgetStateArchetypeData.AllowedStates is not null)
+        {
+            var states = gadgetStateArchetypeData.AllowedStates.ToArray();
+            var stateFilter = new LemmingStateFilter(states);
+            lemmingFilters.Add(stateFilter);
+        }
+
+        if (gadgetStateArchetypeData.AllowedOrientations is not null)
+        {
+            var orientationFilter = new LemmingOrientationFilter();
+            var gadgetOrientationId = gadgetData.Orientation.RotNum;
+
+            foreach (var orientation in gadgetStateArchetypeData.AllowedOrientations)
+            {
+                var rotatedOrientationId = (orientation.RotNum + gadgetOrientationId) & 3;
+                orientationFilter.RegisterOrientation(Orientation.AllItems[rotatedOrientationId]);
+            }
+
+            lemmingFilters.Add(orientationFilter);
+        }
+
+        if (gadgetStateArchetypeData.AllowedFacingDirection is not null)
+        {
+            var facingDirectionFilter = new LemmingFacingDirectionFilter(gadgetStateArchetypeData.AllowedFacingDirection);
+            lemmingFilters.Add(facingDirectionFilter);
+        }
+
+        if (gadgetData.TryGetProperty(GadgetProperty.TeamId, out var teamId))
+        {
+            var team = Team.AllItems[teamId];
+            var teamFilter = new LemmingTeamFilter(team);
+            lemmingFilters.Add(teamFilter);
+        }
+
+        var allFilters = lemmingFilters.Count > 0
+            ? lemmingFilters.ToArray()
+            : Array.Empty<ILemmingFilter>();
+
+        var hitBox = new HitBox(
+            hitBoxRegion,
+            allFilters);
+
+        return hitBox;
+    }
+
+    private ILevelRegion CreateHitBoxLevelRegion(
+        GadgetData gadgetData,
+        GadgetStateArchetypeData gadgetStateArchetypeData)
     {
         var nullableRectangularTriggerData = gadgetStateArchetypeData.TriggerData;
         if (!nullableRectangularTriggerData.HasValue)

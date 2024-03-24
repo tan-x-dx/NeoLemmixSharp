@@ -37,7 +37,9 @@ public enum NeoLemmixGadgetBehaviour
 public static class NeoLemmixGadgetBehaviourExtensions
 {
     public static GadgetBehaviour ToGadgetBehaviour(
-        this NeoLemmixGadgetBehaviour neoLemmixGadgetBehaviour) => neoLemmixGadgetBehaviour switch
+        this NeoLemmixGadgetBehaviour neoLemmixGadgetBehaviour)
+    {
+        return neoLemmixGadgetBehaviour switch
         {
             NeoLemmixGadgetBehaviour.None => GenericGadgetBehaviour.Instance,
             NeoLemmixGadgetBehaviour.Entrance => GenericGadgetBehaviour.Instance,
@@ -53,7 +55,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
             NeoLemmixGadgetBehaviour.ForceLeft => GenericGadgetBehaviour.Instance,
             NeoLemmixGadgetBehaviour.ForceRight => GenericGadgetBehaviour.Instance,
             NeoLemmixGadgetBehaviour.Trap => TinkerableGadgetBehaviour.Instance,
-            NeoLemmixGadgetBehaviour.TrapOnce => GenericGadgetBehaviour.Instance,
+            NeoLemmixGadgetBehaviour.TrapOnce => TinkerableGadgetBehaviour.Instance,
             NeoLemmixGadgetBehaviour.Teleporter => GenericGadgetBehaviour.Instance,
             NeoLemmixGadgetBehaviour.Receiver => GenericGadgetBehaviour.Instance,
             NeoLemmixGadgetBehaviour.Updraft => UpdraftGadgetBehaviour.Instance,
@@ -64,6 +66,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
 
             _ => ThrowUnknownBehaviourException<GadgetBehaviour>(neoLemmixGadgetBehaviour)
         };
+    }
 
     public static GadgetStateArchetypeData[] GetGadgetStates(
         this NeoLemmixGadgetArchetypeData archetypeData)
@@ -79,7 +82,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
             // Deliberately omit the one-way-arrow values
 
             NeoLemmixGadgetBehaviour.PickupSkill => GetGadgetStatesForTwoStateGadgets(archetypeData),
-            NeoLemmixGadgetBehaviour.LockedExit => ToBeImplemented(NeoLemmixGadgetBehaviour.Exit),
+            NeoLemmixGadgetBehaviour.LockedExit => ToBeImplemented(NeoLemmixGadgetBehaviour.LockedExit),
             NeoLemmixGadgetBehaviour.UnlockButton => GetGadgetStatesForTwoStateGadgets(archetypeData),
             NeoLemmixGadgetBehaviour.ForceLeft => GetSingleGadgetState(archetypeData),
             NeoLemmixGadgetBehaviour.ForceRight => GetSingleGadgetState(archetypeData),

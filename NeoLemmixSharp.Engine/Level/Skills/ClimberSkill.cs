@@ -15,6 +15,7 @@ public sealed class ClimberSkill : LemmingSkill, ILemmingStateChanger
     public override string LemmingSkillName => "climber";
 
     public override bool IsClassicSkill => true;
+    public int LemmingStateChangerId => LemmingStateChangerHelpers.ClimberStateChangerId;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

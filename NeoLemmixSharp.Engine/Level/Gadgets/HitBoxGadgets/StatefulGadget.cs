@@ -16,12 +16,11 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
     private int _currentStateIndex;
     private int _nextStateIndex;
 
-    public override GadgetBehaviour GadgetBehaviour { get; }
+    public override GadgetBehaviour GadgetBehaviour => _states[_currentStateIndex].GadgetBehaviour;
     public override Orientation Orientation { get; }
 
     public StatefulGadget(
         int id,
-        GadgetBehaviour gadgetBehaviour,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
         IGadgetRenderer? renderer,
@@ -29,7 +28,6 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
         ItemTracker<Lemming> lemmingTracker)
         : base(id, gadgetBounds, renderer, lemmingTracker)
     {
-        GadgetBehaviour = gadgetBehaviour;
         Orientation = orientation;
         _states = states;
 
@@ -109,8 +107,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
             return;
         }
 
-        var state = _states[_currentStateIndex];
-        state.Tick();
+        _states[_currentStateIndex].Tick();
     }
 
     private void ChangeStates()

@@ -46,6 +46,7 @@ public readonly ref partial struct GadgetTranslator
 
         gadgetData.SetProperty(GadgetProperty.Width, prototypeWidth);
         gadgetData.SetProperty(GadgetProperty.Height, prototypeHeight);
+        gadgetData.SetProperty(GadgetProperty.InitialAnimationFrame, archetypeData.AnimationData[0].InitialFrame);
 
         ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);
 
