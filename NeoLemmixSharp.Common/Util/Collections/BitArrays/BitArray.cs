@@ -238,7 +238,7 @@ public sealed class BitArray
         Debug.Assert(span.Length == other.Length);
 
         var count = 0;
-        for (var i = 0; i < span.Length; i++)
+        for (var i = span.Length - 1; i >= 0; i--)
         {
             ref var v = ref span[i];
             v |= other[i];
@@ -252,7 +252,7 @@ public sealed class BitArray
         Debug.Assert(_bits.Length == other.Length);
 
         var count = 0;
-        for (var i = 0; i < _bits.Length; i++)
+        for (var i = _bits.Length - 1; i >= 0; i--)
         {
             ref var arrayValue = ref _bits[i];
             arrayValue &= other[i];
@@ -266,7 +266,7 @@ public sealed class BitArray
         Debug.Assert(_bits.Length == other.Length);
 
         var count = 0;
-        for (var i = 0; i < _bits.Length; i++)
+        for (var i = _bits.Length - 1; i >= 0; i--)
         {
             ref var arrayValue = ref _bits[i];
             arrayValue &= ~other[i];
@@ -280,7 +280,7 @@ public sealed class BitArray
         Debug.Assert(_bits.Length == other.Length);
 
         var count = 0;
-        for (var i = 0; i < _bits.Length; i++)
+        for (var i = _bits.Length - 1; i >= 0; i--)
         {
             ref var arrayValue = ref _bits[i];
             arrayValue ^= other[i];
@@ -294,7 +294,7 @@ public sealed class BitArray
     {
         Debug.Assert(_bits.Length == other.Length);
 
-        for (var i = 0; i < _bits.Length; i++)
+        for (var i = _bits.Length - 1; i >= 0; i--)
         {
             var otherBits = other[i];
             if ((_bits[i] | otherBits) != otherBits)
@@ -309,7 +309,7 @@ public sealed class BitArray
     {
         Debug.Assert(_bits.Length == other.Length);
 
-        for (var i = 0; i < _bits.Length; i++)
+        for (var i = _bits.Length - 1; i >= 0; i--)
         {
             var bits = _bits[i];
             if ((bits | other[i]) != bits)
@@ -326,7 +326,7 @@ public sealed class BitArray
         Debug.Assert(span.Length == other.Length);
 
         var allEqual = true;
-        for (var i = 0; i < span.Length; i++)
+        for (var i = span.Length - 1; i >= 0; i--)
         {
             var bits = span[i];
             var otherBits = other[i];
@@ -345,7 +345,7 @@ public sealed class BitArray
         Debug.Assert(_bits.Length == other.Length);
 
         var allEqual = true;
-        for (var i = 0; i < _bits.Length; i++)
+        for (var i = _bits.Length - 1; i >= 0; i--)
         {
             var bits = _bits[i];
             var otherBits = other[i];
@@ -363,7 +363,7 @@ public sealed class BitArray
     {
         Debug.Assert(_bits.Length == other.Length);
 
-        for (var i = 0; i < _bits.Length; i++)
+        for (var i = _bits.Length - 1; i >= 0; i--)
         {
             if ((_bits[i] & other[i]) != 0)
                 return true;
@@ -377,7 +377,7 @@ public sealed class BitArray
     {
         Debug.Assert(_bits.Length == other.Length);
 
-        for (var i = 0; i < _bits.Length; i++)
+        for (var i = _bits.Length - 1; i >= 0; i--)
         {
             if (_bits[i] != other[i])
                 return false;
