@@ -46,7 +46,12 @@ public sealed class BitArray
 
         Array.Fill(_bits, uint.MaxValue);
 
-        _bits[^1] = (1U << (length & Mask)) - 1U;
+        var lastIndexPopCount = length & Mask;
+
+        if (lastIndexPopCount != 0)
+        {
+            _bits[^1] = (1U << lastIndexPopCount) - 1U;
+        }
 
         _popCount = length;
     }
