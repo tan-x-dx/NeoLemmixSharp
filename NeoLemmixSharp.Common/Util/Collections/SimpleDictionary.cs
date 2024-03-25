@@ -20,7 +20,6 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         var numberOfItems = hasher.NumberOfItems;
         _bits = new BitArray(numberOfItems);
         _values = new TValue[numberOfItems];
-        Array.Clear(_values);
     }
 
     public void Add(TKey key, TValue value)

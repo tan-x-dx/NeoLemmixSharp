@@ -39,6 +39,8 @@ public sealed class ZombieStateChanger : ILemmingStateChanger
 {
     public static readonly ZombieStateChanger Instance = new();
 
+    public int LemmingStateChangerId => LemmingStateChangerHelpers.ZombieStateChangerId;
+
     private ZombieStateChanger()
     {
     }
@@ -50,8 +52,7 @@ public sealed class ZombieStateChanger : ILemmingStateChanger
 
     public void ToggleLemmingState(LemmingState lemmingState)
     {
-        var isZombie = lemmingState.IsZombie;
-        lemmingState.IsZombie = !isZombie;
+        lemmingState.IsZombie = !lemmingState.IsZombie;
     }
 
     public bool IsApplied(LemmingState lemmingState)
@@ -64,6 +65,8 @@ public sealed class NeutralStateChanger : ILemmingStateChanger
 {
     public static readonly NeutralStateChanger Instance = new();
 
+    public int LemmingStateChangerId => LemmingStateChangerHelpers.NeutralStateChangerId;
+
     private NeutralStateChanger()
     {
     }
@@ -75,8 +78,7 @@ public sealed class NeutralStateChanger : ILemmingStateChanger
 
     public void ToggleLemmingState(LemmingState lemmingState)
     {
-        var isNeutral = lemmingState.IsNeutral;
-        lemmingState.IsNeutral = !isNeutral;
+        lemmingState.IsNeutral = !lemmingState.IsNeutral;
     }
 
     public bool IsApplied(LemmingState lemmingState)

@@ -90,10 +90,6 @@ public sealed class TerrainReader : INeoLemmixDataReader
                 currentTerrainData.Y = int.Parse(secondToken);
                 break;
 
-            case "RGB":
-                currentTerrainData.Tint = ReadingHelpers.ParseHex<uint>(secondToken);
-                break;
-
             case "NO_OVERWRITE":
                 currentTerrainData.NoOverwrite = true;
                 break;

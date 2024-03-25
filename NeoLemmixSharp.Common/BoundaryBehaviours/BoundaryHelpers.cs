@@ -14,7 +14,7 @@ public static class BoundaryHelpers
     }
 
     public static IHorizontalViewPortBehaviour GetHorizontalViewPortBehaviour(
-        BoundaryBehaviourType boundaryBehaviourType,
+        this BoundaryBehaviourType boundaryBehaviourType,
         int levelWidth) => boundaryBehaviourType switch
     {
         BoundaryBehaviourType.Void => new HorizontalVoidViewPortBehaviour(levelWidth),
@@ -24,7 +24,7 @@ public static class BoundaryHelpers
     };
 
     public static IVerticalViewPortBehaviour GetVerticalViewPortBehaviour(
-        BoundaryBehaviourType boundaryBehaviourType,
+        this BoundaryBehaviourType boundaryBehaviourType,
         int levelHeight) => boundaryBehaviourType switch
     {
         BoundaryBehaviourType.Void => new VerticalVoidViewPortBehaviour(levelHeight),
@@ -34,7 +34,7 @@ public static class BoundaryHelpers
     };
 
     public static IHorizontalBoundaryBehaviour GetHorizontalBoundaryBehaviour(
-        BoundaryBehaviourType boundaryBehaviourType,
+        this BoundaryBehaviourType boundaryBehaviourType,
         int levelWidth) => boundaryBehaviourType switch
     {
         BoundaryBehaviourType.Wrap => new HorizontalWrapBoundaryBehaviour(levelWidth),
@@ -44,7 +44,7 @@ public static class BoundaryHelpers
     };
 
     public static IVerticalBoundaryBehaviour GetVerticalBoundaryBehaviour(
-        BoundaryBehaviourType boundaryBehaviourType,
+        this BoundaryBehaviourType boundaryBehaviourType,
         int levelHeight) => boundaryBehaviourType switch
     {
         BoundaryBehaviourType.Wrap => new VerticalWrapBoundaryBehaviour(levelHeight),

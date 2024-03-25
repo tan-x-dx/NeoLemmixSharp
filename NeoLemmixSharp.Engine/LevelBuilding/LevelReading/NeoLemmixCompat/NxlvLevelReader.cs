@@ -246,7 +246,6 @@ public sealed class NxlvLevelReader : ILevelReader
         var levelParameters = levelData.LevelParameters;
 
         // Add all default parameters for a NeoLemmix level
-        levelParameters.Add(LevelParameters.TimedBombers);
         levelParameters.Add(LevelParameters.EnablePause);
         levelParameters.Add(LevelParameters.EnableNuke);
         levelParameters.Add(LevelParameters.EnableFastForward);
@@ -267,7 +266,6 @@ public sealed class NxlvLevelReader : ILevelReader
         controlPanelParameters.Add(ControlPanelParameters.ShowReleaseRateButtonsIfPossible);
         controlPanelParameters.Add(ControlPanelParameters.EnableClassicModeSkillsIfPossible);
         controlPanelParameters.Add(ControlPanelParameters.RemoveSkillAssignPaddingButtons);
-        controlPanelParameters.Add(ControlPanelParameters.ShowSpawnInterval);
     }
 
     public void Dispose()

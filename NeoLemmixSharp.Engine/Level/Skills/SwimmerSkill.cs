@@ -14,6 +14,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
     public override int Id => LevelConstants.SwimmerSkillId;
     public override string LemmingSkillName => "swimmer";
     public override bool IsClassicSkill => false;
+    public int LemmingStateChangerId => LemmingStateChangerHelpers.SwimmerStateChangerId;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
@@ -41,8 +42,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
 
     public void ToggleLemmingState(LemmingState lemmingState)
     {
-        var isSwimmer = lemmingState.IsSwimmer;
-        lemmingState.IsSwimmer = !isSwimmer;
+        lemmingState.IsSwimmer = !lemmingState.IsSwimmer;
     }
 
     public bool IsApplied(LemmingState lemmingState)

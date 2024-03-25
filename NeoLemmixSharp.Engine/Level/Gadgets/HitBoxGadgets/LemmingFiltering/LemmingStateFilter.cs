@@ -5,15 +5,21 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
 public sealed class LemmingStateFilter : ILemmingFilter
 {
-    private readonly ILemmingStateChanger _lemmingStateChanger;
+    private readonly ILemmingStateChanger[] _allowedLemmingStates;
 
-    public LemmingStateFilter(ILemmingStateChanger lemmingStateChanger)
+    public LemmingStateFilter(ILemmingStateChanger[] allowedLemmingStates)
     {
-        _lemmingStateChanger = lemmingStateChanger;
+        _allowedLemmingStates = allowedLemmingStates;
     }
 
     public bool MatchesLemming(Lemming lemming)
     {
-        return _lemmingStateChanger.IsApplied(lemming.State);
+        foreach (var lemmingState in _allowedLemmingStates)
+        {
+            if (lemmingState.IsApplied(lemming.State))
+                return true;
+        }
+
+        return false;
     }
 }

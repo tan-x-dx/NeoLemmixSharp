@@ -22,6 +22,7 @@ public sealed class Team : IExtendedEnumType<Team>
 
         // Probably irrelevant here since it's done programatically, but whatever
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Team>(teams));
+        Array.Sort(teams, IdEquatableItemHelperMethods.Compare);
 
         return teams;
     }

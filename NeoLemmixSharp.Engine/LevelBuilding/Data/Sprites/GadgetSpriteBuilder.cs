@@ -105,21 +105,36 @@ public sealed class GadgetSpriteBuilder : IDisposable
         Texture2D texture2D)
     {
         var spriteData = gadgetBuilder.SpriteData;
-        var x = new CountUpAndLoopAnimationBehaviour(
+        if (gadgetData.TryGetProperty(GadgetProperty.InitialAnimationFrame, out var initialAnimationFrame))
+        {
+            if (initialAnimationFrame == -1)
+            {
+                initialAnimationFrame = Random.Shared.Next(spriteData.NumberOfFrames);
+            }
+        }
+        else
+        {
+            initialAnimationFrame = 0;
+        }
+
+        var primaryAnimationBehaviour = new GadgetStateAnimationBehaviour(
             spriteData.SpriteWidth,
             spriteData.SpriteHeight,
             0,
+            initialAnimationFrame,
             0,
-            0,
-            spriteData.NumberOfFrames);
+            spriteData.NumberOfFrames,
+            1,
+            0);
 
         var gadgetRenderLayers = new GadgetLayerRenderer[3];
         gadgetRenderLayers[0] = new GadgetLayerRenderer(
             texture2D,
-            x,
+            primaryAnimationBehaviour,
             Color.White);
 
         return new GadgetRenderer(
+            null!,
             gadgetRenderLayers,
             gadgetData.GadgetRenderMode);
     }

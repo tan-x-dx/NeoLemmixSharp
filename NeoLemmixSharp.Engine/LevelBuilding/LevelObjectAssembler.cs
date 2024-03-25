@@ -60,12 +60,13 @@ public sealed class LevelObjectAssembler : IDisposable
                 i++,
                 prototype.Orientation,
                 prototype.FacingDirection,
-                prototype.InitialLemmingAction)
+                prototype.InitialLemmingAction,
+                prototype.Team)
             {
                 LevelPosition = new LevelPosition(prototype.X, prototype.Y)
             };
 
-            lemming.State.SetRawData(prototype.Team, prototype.State);
+            lemming.State.SetRawData(prototype.State);
 
             _lemmings.Add(lemming);
         }

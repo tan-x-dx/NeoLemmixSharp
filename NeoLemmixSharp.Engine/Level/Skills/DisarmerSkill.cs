@@ -14,6 +14,7 @@ public sealed class DisarmerSkill : LemmingSkill, ILemmingStateChanger
     public override int Id => LevelConstants.DisarmerSkillId;
     public override string LemmingSkillName => "disarmer";
     public override bool IsClassicSkill => false;
+    public int LemmingStateChangerId => LemmingStateChangerHelpers.DisarmerStateChangerId;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
@@ -34,8 +35,7 @@ public sealed class DisarmerSkill : LemmingSkill, ILemmingStateChanger
 
     public void ToggleLemmingState(LemmingState lemmingState)
     {
-        var isDisarmer = lemmingState.IsDisarmer;
-        lemmingState.IsDisarmer = !isDisarmer;
+        lemmingState.IsDisarmer = !lemmingState.IsDisarmer;
     }
 
     public bool IsApplied(LemmingState lemmingState)

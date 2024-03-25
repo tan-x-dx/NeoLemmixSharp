@@ -53,7 +53,7 @@ public sealed class SkillSetReader : INeoLemmixDataReader
         {
             Skill = skill,
             NumberOfSkills = amount,
-            TeamId = 0
+            TeamId = LevelConstants.ClassicTeamId
         };
 
         _skillSetData.Add(skillSetDatum);

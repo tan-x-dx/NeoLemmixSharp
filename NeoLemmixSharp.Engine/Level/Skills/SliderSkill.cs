@@ -14,6 +14,7 @@ public sealed class SliderSkill : LemmingSkill, ILemmingStateChanger
     public override int Id => LevelConstants.SliderSkillId;
     public override string LemmingSkillName => "slider";
     public override bool IsClassicSkill => false;
+    public int LemmingStateChangerId => LemmingStateChangerHelpers.SliderStateChangerId;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
@@ -27,6 +28,7 @@ public sealed class SliderSkill : LemmingSkill, ILemmingStateChanger
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
 
+
     public void SetLemmingState(LemmingState lemmingState, bool status)
     {
         lemmingState.IsSlider = status;
@@ -34,8 +36,7 @@ public sealed class SliderSkill : LemmingSkill, ILemmingStateChanger
 
     public void ToggleLemmingState(LemmingState lemmingState)
     {
-        var isSlider = lemmingState.IsSlider;
-        lemmingState.IsSlider = !isSlider;
+        lemmingState.IsSlider = !lemmingState.IsSlider;
     }
 
     public bool IsApplied(LemmingState lemmingState)

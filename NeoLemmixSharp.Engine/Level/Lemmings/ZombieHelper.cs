@@ -5,13 +5,13 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using System.Diagnostics;
 
-namespace NeoLemmixSharp.Engine.Level.Lemmings.ZombieHelpers;
+namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class PositionTrackingZombieHelper : IZombieHelper
+public sealed class ZombieHelper
 {
     private readonly SpacialHashGrid<Lemming> _zombieSpacialHashGrid;
 
-    public PositionTrackingZombieHelper(
+    public ZombieHelper(
         IPerfectHasher<Lemming> hasher,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)

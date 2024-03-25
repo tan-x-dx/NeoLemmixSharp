@@ -12,10 +12,15 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
     private readonly IPerfectHasher<T> _hasher;
     private readonly BitArray _bits;
 
-    public SimpleSet(IPerfectHasher<T> hasher)
+    public SimpleSet(IPerfectHasher<T> hasher, bool fullSet = false)
     {
         _hasher = hasher;
-        _bits = new BitArray(hasher.NumberOfItems);
+        _bits = new BitArray(hasher.NumberOfItems, fullSet);
+    }
+
+    public static SimpleSet<T> CreateFullSet(IPerfectHasher<T> hasher)
+    {
+        return new SimpleSet<T>(hasher, true);
     }
 
     public int Size => _bits.Size;
@@ -45,12 +50,19 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
         return _bits.ClearBit(hash);
     }
 
+    public T[] ToArray()
+    {
+        var result = new T[_bits.PopCount];
+        CopyTo(result, 0);
+        return result;
+    }
+
     public void CopyTo(T[] array, int arrayIndex)
     {
-        var simpleSetEnumerable = ToSimpleEnumerable();
-        foreach (var i in simpleSetEnumerable)
+        var iterator = new BitBasedEnumerator<T>(_hasher, _bits.AsReadOnlySpan(), _bits.PopCount);
+        while (iterator.MoveNext())
         {
-            array[arrayIndex++] = i;
+            array[arrayIndex++] = iterator.Current;
         }
     }
 

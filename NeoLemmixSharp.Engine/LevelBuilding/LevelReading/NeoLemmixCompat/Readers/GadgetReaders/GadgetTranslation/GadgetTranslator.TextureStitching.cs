@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
-public sealed partial class GadgetTranslator
+public readonly ref partial struct GadgetTranslator
 {
     private const int MaxStackAllocSize = 64;
 

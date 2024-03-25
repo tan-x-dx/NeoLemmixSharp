@@ -8,12 +8,12 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 public sealed class GadgetLayerRenderer
 {
     private readonly Texture2D _texture;
-    private readonly IGadgetStateAnimationBehaviour _stateAnimationBehaviour;
+    private readonly GadgetStateAnimationBehaviour _stateAnimationBehaviour;
     private readonly Color _renderColor;
 
     public GadgetLayerRenderer(
         Texture2D texture,
-        IGadgetStateAnimationBehaviour stateAnimationBehaviour,
+        GadgetStateAnimationBehaviour stateAnimationBehaviour,
         Color renderColor)
     {
         _texture = texture;
@@ -26,7 +26,7 @@ public sealed class GadgetLayerRenderer
         Rectangle sourceRectangle,
         Rectangle destinationRectangle)
     {
-        _stateAnimationBehaviour.GetFrameData(out var spriteFrameAndLayerData);
+        var spriteFrameAndLayerData = _stateAnimationBehaviour.GetFrameData();
 
         sourceRectangle.X += spriteFrameAndLayerData.SourceDx;
         sourceRectangle.Y += spriteFrameAndLayerData.SourceDy;

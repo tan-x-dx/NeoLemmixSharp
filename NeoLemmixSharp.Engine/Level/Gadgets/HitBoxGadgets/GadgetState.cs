@@ -1,20 +1,23 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class GadgetState
 {
-    private readonly int _numberOfAnimationFrames;
-
     private readonly IGadgetAction[] _onLemmingEnterActions;
     private readonly IGadgetAction[] _onLemmingPresentActions;
     private readonly IGadgetAction[] _onLemmingExitActions;
+
+    private readonly GadgetStateAnimationBehaviour _primaryAnimation;
+    private readonly GadgetStateAnimationBehaviour[] _secondaryAnimations;
 
     private readonly GadgetOutput _stateSelectedOutput = new();
 
     private StatefulGadget _gadget = null!;
 
+    public GadgetBehaviour GadgetBehaviour { get; }
     public HitBox HitBox { get; }
 
     public ReadOnlySpan<IGadgetAction> OnLemmingEnterActions => new(_onLemmingEnterActions);
@@ -24,17 +27,21 @@ public sealed class GadgetState
     public int AnimationFrame { get; private set; }
 
     public GadgetState(
-        int numberOfAnimationFrames,
+        GadgetBehaviour gadgetBehaviour,
         IGadgetAction[] onLemmingEnterActions,
         IGadgetAction[] onLemmingPresentActions,
         IGadgetAction[] onLemmingExitActions,
+        GadgetStateAnimationBehaviour primaryAnimation,
+        GadgetStateAnimationBehaviour[] secondaryAnimations,
         HitBox hitBox)
     {
-        _numberOfAnimationFrames = numberOfAnimationFrames;
-
+        GadgetBehaviour = gadgetBehaviour;
         _onLemmingEnterActions = onLemmingEnterActions;
         _onLemmingPresentActions = onLemmingPresentActions;
         _onLemmingExitActions = onLemmingExitActions;
+
+        _primaryAnimation = primaryAnimation;
+        _secondaryAnimations = secondaryAnimations;
 
         HitBox = hitBox;
     }
@@ -52,21 +59,18 @@ public sealed class GadgetState
 
     public void Tick()
     {
-       /* if (AnimationFrame < _numberOfAnimationFrames)
+        // Tick secondary states first, since they're visual only
+        foreach (var secondaryAnimation in _secondaryAnimations)
         {
-            AnimationFrame++;
+            secondaryAnimation.Tick();
         }
-        else
+
+        var gadgetStateTransitionIndex = _primaryAnimation.Tick();
+
+        if (gadgetStateTransitionIndex != GadgetStateAnimationBehaviour.NoGadgetStateTransition)
         {
-            if (_stateTransitionAfterAnimation == -1)
-            {
-                AnimationFrame = 0;
-            }
-            else
-            {
-                _gadget.SetNextState(_stateTransitionAfterAnimation);
-            }
-        }*/
+            _gadget.SetNextState(gadgetStateTransitionIndex);
+        }
     }
 
     public void OnTransitionFrom()

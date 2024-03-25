@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
-public sealed partial class GadgetTranslator
+public readonly ref partial struct GadgetTranslator
 {
     private void ProcessResizeableGadgetBuilder(
         NeoLemmixGadgetArchetypeData archetypeData,
@@ -44,8 +44,9 @@ public sealed partial class GadgetTranslator
             FacingDirection = facingDirection
         };
 
-        gadgetData.AddProperty(GadgetProperty.Width, prototypeWidth);
-        gadgetData.AddProperty(GadgetProperty.Height, prototypeHeight);
+        gadgetData.SetProperty(GadgetProperty.Width, prototypeWidth);
+        gadgetData.SetProperty(GadgetProperty.Height, prototypeHeight);
+        gadgetData.SetProperty(GadgetProperty.InitialAnimationFrame, archetypeData.AnimationData[0].InitialFrame);
 
         ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);
 

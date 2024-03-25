@@ -1,12 +1,11 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
-public sealed partial class GadgetTranslator
+public readonly ref partial struct GadgetTranslator
 {
     private void ProcessStatefulGadgetBuilder(
         NeoLemmixGadgetArchetypeData archetypeData,
@@ -30,75 +29,35 @@ public sealed partial class GadgetTranslator
             FacingDirection = facingDirection
         };
 
-        ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);
+        gadgetData.SetProperty(GadgetProperty.InitialAnimationFrame, archetypeData.AnimationData[0].InitialFrame);
+
+        ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(
+            _levelData.AllGadgetBuilders,
+            archetypeData.GadgetArchetypeId,
+            out var exists);
 
         if (!exists)
         {
-            gadgetBuilder = CreateStatefulGadgetBuilder();
+            gadgetBuilder = CreateStatefulGadgetBuilder(archetypeData);
         }
 
         _levelData.AllGadgetData.Add(gadgetData);
+    }
 
-        return;
+    private StatefulGadgetBuilder CreateStatefulGadgetBuilder(NeoLemmixGadgetArchetypeData archetypeData)
+    {
+        var spriteData = GetStitchedSpriteData(archetypeData);
 
-        StatefulGadgetBuilder CreateStatefulGadgetBuilder()
+        var gadgetStateData = archetypeData.GetGadgetStates();
+        var gadgetBehaviour = archetypeData.Behaviour.ToGadgetBehaviour();
+
+        return new StatefulGadgetBuilder
         {
-            var spriteData = GetStitchedSpriteData(archetypeData);
+            GadgetBuilderId = archetypeData.GadgetArchetypeId,
+            GadgetBehaviour = gadgetBehaviour,
+            AllGadgetStateData = gadgetStateData,
 
-            var gadgetStateData = CreateGadgetStateData();
-            var gadgetBehaviour = archetypeData.Behaviour.ToGadgetBehaviour()!;
-
-            return new StatefulGadgetBuilder
-            {
-                GadgetBuilderId = archetypeData.GadgetArchetypeId,
-                GadgetBehaviour = gadgetBehaviour,
-                AllGadgetStateData = gadgetStateData,
-
-                SpriteData = spriteData
-            };
-        }
-
-        GadgetStateData[] CreateGadgetStateData()
-        {
-            var emptyActions = Array.Empty<IGadgetAction>();
-
-            var numberOfExtraStates = archetypeData.Behaviour.GetNumberOfExtraStates();
-
-            var result = new GadgetStateData[1 + numberOfExtraStates];
-
-            var baseState = new GadgetStateData
-            {
-                OnLemmingEnterActions = emptyActions,
-                OnLemmingPresentActions = emptyActions,
-                OnLemmingExitActions = emptyActions,
-
-                NumberOfFrames = archetypeData.PrimaryAnimationFrameCount,
-                TriggerData = new RectangularTriggerData
-                {
-                    TriggerX = archetypeData.TriggerX,
-                    TriggerY = archetypeData.TriggerY,
-                    TriggerWidth = archetypeData.TriggerWidth,
-                    TriggerHeight = archetypeData.TriggerHeight
-                }
-            };
-
-            var index = 0;
-            result[index++] = baseState;
-            var animationDataSpan = CollectionsMarshal.AsSpan(archetypeData.AnimationData);
-            foreach (var animationData in animationDataSpan)
-            {
-                result[index++] = new GadgetStateData
-                {
-                    OnLemmingEnterActions = emptyActions,
-                    OnLemmingPresentActions = emptyActions,
-                    OnLemmingExitActions = emptyActions,
-
-                    NumberOfFrames = animationData.NumberOfFrames,
-                    TriggerData = null
-                };
-            }
-
-            return result;
-        }
+            SpriteData = spriteData
+        };
     }
 }

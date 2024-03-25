@@ -20,6 +20,7 @@ public static class LevelConstants
     public const int RightOrientationRotNum = 3;
 
     public const int NumberOfTeams = 6;
+    public const int ClassicTeamId = 0;
     public const int NumberOfClassicSkills = 8;
 
     public const int InfiniteSkillCount = 100;

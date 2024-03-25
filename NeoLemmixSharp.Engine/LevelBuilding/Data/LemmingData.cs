@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
+﻿using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
@@ -13,6 +14,6 @@ public sealed class LemmingData
 
     public Orientation Orientation { get; set; } = DownOrientation.Instance;
     public FacingDirection FacingDirection { get; set; } = FacingDirection.RightInstance;
-    public Team Team { get; set; } = Team.AllItems[0];
+    public Team Team { get; set; } = Team.AllItems[LevelConstants.ClassicTeamId];
     public LemmingAction InitialLemmingAction { get; set; } = WalkerAction.Instance;
 }

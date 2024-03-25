@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -254,6 +255,25 @@ public sealed class SpacialHashGrid<T>
         return new LevelPosition(chunkX, chunkY);
     }
 
+    /// <summary>
+    /// Performs a chunk operation over a rectangle of chunks.
+    ///
+    /// <para>The rectangle of chunks begins with the top left coordinates of (<paramref name="ax" />, <paramref name="ay" />)
+    /// down to the bottom right coordinates of (<paramref name="bx" />, <paramref name="by" />) inclusive.
+    ///</para>
+    /// 
+    /// <para>If the b coordinates are less than their respective a coordinates, then this method wraps around and continues evaluating from zero.
+    ///</para>
+    /// </summary>
+    /// <param name="chunkOperationType">The chunk operation to perform</param>
+    /// <param name="item">An item to use in part of these chunk operations.
+    /// Note: if performing the <see cref="ChunkOperationType.Add"/> or <see cref="ChunkOperationType.Remove"/> operations and this parameter is null,
+    /// then an exception will be thrown.</param>
+    /// <param name="ax">The top left x-coordinate.</param>
+    /// <param name="ay">The top left y-coordinate.</param>
+    /// <param name="bx">The bottom right x-coordinate.</param>
+    /// <param name="by">The bottom right y-coordinate.</param>
+    /// <returns>If performing the <see cref="ChunkOperationType.Union"/>, then the number of distinct items total across the rectangle. Otherwise, zero.</returns>
     private int EvaluateChunkPositions(ChunkOperationType chunkOperationType, T? item, int ax, int ay, int bx, int by)
     {
         if (bx < ax)
@@ -313,8 +333,14 @@ public sealed class SpacialHashGrid<T>
                 return BitArray.UnionWith(_setUnionScratchSpace, readOnlySpan);
 
             default:
-                throw new ArgumentOutOfRangeException(nameof(chunkOperationType), chunkOperationType, null);
+                return ThrowUnknownChunkPositionException(chunkOperationType);
         }
+    }
+
+    [DoesNotReturn]
+    private static int ThrowUnknownChunkPositionException(ChunkOperationType chunkOperationType)
+    {
+        throw new ArgumentOutOfRangeException(nameof(chunkOperationType), chunkOperationType, "Unknown chunk position type");
     }
 
     [Pure]

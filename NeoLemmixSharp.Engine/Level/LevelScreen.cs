@@ -15,80 +15,92 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelScreen : IBaseScreen
 {
-    public static LevelParameterSet LevelParameters { get; private set; } = null!;
-    public static TerrainManager TerrainManager { get; private set; } = null!;
-    public static LemmingManager LemmingManager { get; private set; } = null!;
-    public static GadgetManager GadgetManager { get; private set; } = null!;
-    public static SkillSetManager SkillSetManager { get; private set; } = null!;
-    public static LevelControlPanel LevelControlPanel { get; private set; } = null!;
-    public static UpdateScheduler UpdateScheduler { get; private set; } = null!;
-    public static LevelCursor LevelCursor { get; private set; } = null!;
+    private static LevelParameterSet _levelParameters = null!;
+    private static TerrainManager _terrainManager = null!;
+    private static LemmingManager _lemmingManager = null!;
+    private static GadgetManager _gadgetManager = null!;
+    private static SkillSetManager _skillSetManager = null!;
+    private static LevelControlPanel _levelControlPanel = null!;
+    private static UpdateScheduler _updateScheduler = null!;
+    private static LevelCursor _levelCursor = null!;
+    private static LevelInputController _levelInputController = null!;
+    private static Viewport _levelViewport = null!;
+    private static LevelScreenRenderer _levelScreenRenderer = null!;
+
+    public static LevelParameterSet LevelParameters => _levelParameters;
+    public static TerrainManager TerrainManager => _terrainManager;
+    public static LemmingManager LemmingManager => _lemmingManager;
+    public static GadgetManager GadgetManager => _gadgetManager;
+    public static SkillSetManager SkillSetManager => _skillSetManager;
+    public static LevelControlPanel LevelControlPanel => _levelControlPanel;
+    public static UpdateScheduler UpdateScheduler => _updateScheduler;
+    public static LevelCursor LevelCursor => _levelCursor;
+    public static LevelInputController LevelInputController => _levelInputController;
+    public static Viewport LevelViewport => _levelViewport;
+    public static LevelScreenRenderer LevelScreenRenderer => _levelScreenRenderer;
 
     public static void SetLevelParameters(LevelParameterSet levelParameters)
     {
-        LevelParameters = levelParameters;
+        _levelParameters = levelParameters;
     }
 
     public static void SetTerrainManager(TerrainManager terrainManager)
     {
-        TerrainManager = terrainManager;
+        _terrainManager = terrainManager;
     }
 
     public static void SetLemmingManager(LemmingManager lemmingManager)
     {
-        LemmingManager = lemmingManager;
+        _lemmingManager = lemmingManager;
     }
 
     public static void SetGadgetManager(GadgetManager gadgetManager)
     {
-        GadgetManager = gadgetManager;
+        _gadgetManager = gadgetManager;
     }
 
     public static void SetSkillSetManager(SkillSetManager skillSetManager)
     {
-        SkillSetManager = skillSetManager;
+        _skillSetManager = skillSetManager;
     }
 
     public static void SetLevelControlPanel(LevelControlPanel levelControlPanel)
     {
-        LevelControlPanel = levelControlPanel;
+        _levelControlPanel = levelControlPanel;
     }
 
     public static void SetUpdateScheduler(UpdateScheduler updateScheduler)
     {
-        UpdateScheduler = updateScheduler;
+        _updateScheduler = updateScheduler;
     }
 
     public static void SetLevelCursor(LevelCursor levelCursor)
     {
-        LevelCursor = levelCursor;
+        _levelCursor = levelCursor;
     }
 
-    private readonly UpdateScheduler _updateScheduler;
-    private readonly LevelInputController _inputController;
-    private readonly LevelControlPanel _controlPanel;
-    private readonly Viewport _viewport;
-    private readonly LevelScreenRenderer _levelScreenRenderer;
+    public static void SetLevelInputController(LevelInputController levelInputController)
+    {
+        _levelInputController = levelInputController;
+    }
+
+    public static void SetViewport(Viewport levelViewport)
+    {
+        _levelViewport = levelViewport;
+    }
+
+    public static void SetLevelScreenRenderer(LevelScreenRenderer levelScreenRenderer)
+    {
+        _levelScreenRenderer = levelScreenRenderer;
+    }
 
     IScreenRenderer IBaseScreen.ScreenRenderer => _levelScreenRenderer;
     public string ScreenTitle { get; }
     public bool IsDisposed { get; private set; }
 
-    public LevelScreen(
-        LevelData levelData,
-        UpdateScheduler updateScheduler,
-        LevelInputController levelInputController,
-        LevelControlPanel controlPanel,
-        Viewport viewport,
-        LevelScreenRenderer levelScreenRenderer)
+    public LevelScreen(LevelData levelData)
     {
         ScreenTitle = levelData.LevelTitle;
-
-        _updateScheduler = updateScheduler;
-        _inputController = levelInputController;
-        _controlPanel = controlPanel;
-        _viewport = viewport;
-        _levelScreenRenderer = levelScreenRenderer;
     }
 
     public void Tick(GameTime gameTime)
@@ -104,8 +116,8 @@ public sealed class LevelScreen : IBaseScreen
         var windowWidth = IGameWindow.Instance.WindowWidth;
         var windowHeight = IGameWindow.Instance.WindowHeight;
 
-        _controlPanel.SetWindowDimensions(windowWidth, windowHeight);
-        _viewport.SetWindowDimensions(windowWidth, windowHeight, _controlPanel.ScreenHeight);
+        _levelControlPanel.SetWindowDimensions(windowWidth, windowHeight);
+        _levelViewport.SetWindowDimensions(windowWidth, windowHeight, _levelControlPanel.ScreenHeight);
         _levelScreenRenderer.OnWindowSizeChanged();
 
         IGameWindow.Instance.CaptureCursor();
@@ -126,20 +138,29 @@ public sealed class LevelScreen : IBaseScreen
         if (IsDisposed)
             return;
 
-        LemmingManager.Dispose();
-        GadgetManager.Dispose();
-        SkillSetManager.Dispose();
-
-#pragma warning disable CS8625
-        SetTerrainManager(null);
-        SetLemmingManager(null);
-        SetGadgetManager(null);
-        SetSkillSetManager(null);
-        SetLevelControlPanel(null);
-        SetUpdateScheduler(null);
-        SetLevelCursor(null);
+        DisposeOf(ref _levelParameters);
+        DisposeOf(ref _terrainManager);
+        DisposeOf(ref _lemmingManager);
+        DisposeOf(ref _gadgetManager);
+        DisposeOf(ref _skillSetManager);
+        DisposeOf(ref _levelControlPanel);
+        DisposeOf(ref _updateScheduler);
+        DisposeOf(ref _levelCursor);
+        DisposeOf(ref _levelInputController);
+        DisposeOf(ref _levelViewport);
+        DisposeOf(ref _levelScreenRenderer);
 
         IsDisposed = true;
-#pragma warning restore CS8625
+    }
+
+    private static void DisposeOf<T>(ref T obj)
+        where T : class
+    {
+        if (obj is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
+
+        obj = null!;
     }
 }
