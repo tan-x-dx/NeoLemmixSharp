@@ -9,10 +9,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace MGUI.Shared.Text
 {
@@ -43,7 +40,7 @@ namespace MGUI.Shared.Text
         private static readonly ReadOnlyCollection<char> Digits = "0123456789".ToCharArray().ToList().AsReadOnly();
         private static readonly ReadOnlyCollection<char> Alphabet = "abcdefghijklmnopqrstuvwxyz".ToCharArray().ToList().AsReadOnly();
         private static readonly ReadOnlyCollection<char> SpecialCharacters = @"`~!@#$%^&*()-_=+[{]}\|;:'"",<.>/?".ToCharArray().ToList().AsReadOnly();
-        private static readonly HashSet<char> CharacterSet = Digits.Union(Alphabet.Select(x => char.ToLower(x))).Union(Alphabet.Select(x => char.ToUpper(x))).Union(SpecialCharacters).ToHashSet();
+        private static readonly HashSet<char> CharacterSet = Digits.Union(Alphabet.Select(char.ToLower)).Union(Alphabet.Select(char.ToUpper)).Union(SpecialCharacters).ToHashSet();
 
         internal static readonly ReadOnlyCollection<CustomFontStyles> AllStyles = Enum.GetValues(typeof(CustomFontStyles)).Cast<CustomFontStyles>().ToList().AsReadOnly();
         public static readonly string FontsBasePath = "Fonts";

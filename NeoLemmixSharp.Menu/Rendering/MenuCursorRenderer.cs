@@ -12,7 +12,7 @@ public sealed class MenuCursorRenderer : IDisposable
     public MenuCursorRenderer(MenuInputController menuCursor)
     {
         _menuCursor = menuCursor;
-        _cursorTexture = MenuSpriteBank.GetTexture(MenuResource.Cursor);
+        _cursorTexture = MenuSpriteBank.Cursor;
     }
 
     public void RenderCursor(SpriteBatch spriteBatch)

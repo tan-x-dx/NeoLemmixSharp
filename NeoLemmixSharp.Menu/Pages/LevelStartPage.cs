@@ -1,9 +1,10 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using MGUI.Core.UI;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
-public sealed class LevelStartPage : IPage
+public sealed class LevelStartPage : PageBase
 {
     private readonly MenuInputController _inputController;
     private readonly LevelScreen _levelScreen;
@@ -13,28 +14,30 @@ public sealed class LevelStartPage : IPage
     //private Panel _backPanel;
 
     public LevelStartPage(
+        MGDesktop desktop,
         MenuInputController inputController,
         LevelScreen levelScreen)
+        : base(desktop)
     {
         _inputController = inputController;
         _levelScreen = levelScreen;
     }
 
-    /*public void Initialise(RootPanel rootPanel)
+    protected override void OnInitialise(MGDesktop desktop)
     {
-        _backPanel = new Panel(Vector2.Zero, anchor: Anchor.Center)
-        {
-            OnClick = StartLevel,
-            OnRightClick = GoBack,
-            UseActualSizeForCollision = true,
+        /*    _backPanel = new Panel(Vector2.Zero, anchor: Anchor.Center)
+            {
+                OnClick = StartLevel,
+                OnRightClick = GoBack,
+                UseActualSizeForCollision = true,
 
-            OutlineColor = Color.Transparent,
-            FillColor = Color.Transparent,
-            ShadowColor = Color.Transparent
-        };
+                OutlineColor = Color.Transparent,
+                FillColor = Color.Transparent,
+                ShadowColor = Color.Transparent
+            };
 
-        rootPanel.AddChild(_backPanel);
-    }*/
+            rootPanel.AddChild(_backPanel);*/
+    }
 
     private static void GoBack()
     {
@@ -43,11 +46,11 @@ public sealed class LevelStartPage : IPage
         MenuScreen.Current.SetNextPage(mainPage);
     }
 
-    public void SetWindowDimensions(int windowWidth, int windowHeight)
+    protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
     {
     }
 
-    public void Tick()
+    public override void Tick()
     {
         HandleKeyboardInput();
         HandleMouseInput();
@@ -77,7 +80,7 @@ public sealed class LevelStartPage : IPage
         IGameWindow.Instance.SetScreen(_levelScreen);
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
         //   _backPanel.OnClick = null;
         //   _backPanel.OnRightClick = null;

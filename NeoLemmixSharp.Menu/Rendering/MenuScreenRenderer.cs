@@ -21,7 +21,7 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         PageTransition pageTransition,
         MGDesktop desktop)
     {
-        _backgroundRenderer = new BackgroundRenderer(MenuSpriteBank.GetTexture(MenuResource.Background));
+        _backgroundRenderer = new BackgroundRenderer(MenuSpriteBank.Background);
         _menuCursorRenderer = menuCursorRenderer;
         _pageTransitionRenderer = new PageTransitionRenderer(pageTransition);
         _desktop = desktop;
@@ -40,27 +40,18 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     public void RenderScreen(SpriteBatch spriteBatch)
     {
-        // draw ui
-        //UserInterface.Active.Draw(spriteBatch);
-
+        // background
         spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
-
         _backgroundRenderer.Render(spriteBatch);
-
         spriteBatch.End();
 
-        // finalize ui rendering
-        //UserInterface.Active.DrawMainRenderTarget(spriteBatch);
-
+        // draw ui
         _desktop.Draw();
 
-        /*   spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
-
-           _pageTransitionRenderer.Render(spriteBatch);
-
-           spriteBatch.End();*/
-
-
+        // fade transition where necessary
+        spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
+        _pageTransitionRenderer.Render(spriteBatch);
+        spriteBatch.End();
     }
 
     public void OnWindowSizeChanged()

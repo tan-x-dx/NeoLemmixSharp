@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using MGUI.Core.UI;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding;
@@ -11,6 +12,7 @@ public sealed class MenuPageCreator
 {
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
+    private readonly MGDesktop _desktop;
 
     private readonly MenuInputController _inputController;
 
@@ -19,11 +21,13 @@ public sealed class MenuPageCreator
     public MenuPageCreator(
         ContentManager contentManager,
         GraphicsDevice graphicsDevice,
-        MenuInputController inputController)
+        MenuInputController inputController,
+        MGDesktop desktop)
     {
         _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;
         _inputController = inputController;
+        _desktop = desktop;
 
         LevelToLoadFilepath = GetLevelFilePath();
     }
@@ -57,12 +61,12 @@ public sealed class MenuPageCreator
 
     public MainPage CreateMainPage()
     {
-        return new MainPage(_inputController);
+        return new MainPage(_desktop, _inputController);
     }
 
     public LevelSelectPage CreateLevelSelectPage()
     {
-        return new LevelSelectPage(_inputController);
+        return new LevelSelectPage(_desktop, _inputController);
     }
 
     public LevelStartPage? CreateLevelStartPage()
@@ -75,7 +79,7 @@ public sealed class MenuPageCreator
             var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
             levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice, levelReader);
             var levelScreen = levelBuilder.BuildLevel(LevelToLoadFilepath);
-            result = new LevelStartPage(_inputController, levelScreen);
+            result = new LevelStartPage(_desktop, _inputController, levelScreen);
         }
         catch (Exception ex)
         {

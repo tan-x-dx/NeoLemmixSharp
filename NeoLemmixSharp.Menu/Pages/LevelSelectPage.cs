@@ -1,8 +1,10 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using MGUI.Core.UI;
+using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
-public sealed class LevelSelectPage : IPage
+public sealed class LevelSelectPage : PageBase
 {
     /*private const FileDialogOptions LoadLevelDialogOptions =
         FileDialogOptions.AllowEnterFolders |
@@ -13,21 +15,24 @@ public sealed class LevelSelectPage : IPage
     private readonly MenuInputController _inputController;
     private readonly string _levelsRootPath;
 
-    public LevelSelectPage(MenuInputController inputController)
+    public LevelSelectPage(
+        MGDesktop desktop,
+        MenuInputController inputController)
+        : base(desktop)
     {
         _levelsRootPath = Path.Combine(RootDirectoryManager.RootDirectory, "levels");
         _inputController = inputController;
     }
 
-    /*public void Initialise(RootPanel rootPanel)
+    protected override void OnInitialise(MGDesktop desktop)
     {
-        MessageBox.OpenLoadFileDialog(
-            _levelsRootPath,
-            OnFileSelected,
-            options: LoadLevelDialogOptions,
-            filterFiles: FilterFiles,
-            title: "Select a level",
-            loadButtonTxt: "Select level");
+        /* MessageBox.OpenLoadFileDialog(
+             _levelsRootPath,
+             OnFileSelected,
+             options: LoadLevelDialogOptions,
+             filterFiles: FilterFiles,
+             title: "Select a level",
+             loadButtonTxt: "Select level");*/
     }
 
     private static bool FilterFiles(string filename)
@@ -37,22 +42,22 @@ public sealed class LevelSelectPage : IPage
         return LevelFileTypeHandler.FileExtensionIsValidLevelType(extension);
     }
 
-    private bool OnFileSelected(FileDialogResponse fileDialogResponse)
-    {
-        if (!fileDialogResponse.FileExists)
-            return false;
+    /*   private bool OnFileSelected(FileDialogResponse fileDialogResponse)
+       {
+           if (!fileDialogResponse.FileExists)
+               return false;
 
-        MenuScreen.Current.MenuPageCreator.LevelToLoadFilepath = fileDialogResponse.FullPath;
+           MenuScreen.Current.MenuPageCreator.LevelToLoadFilepath = fileDialogResponse.FullPath;
 
-        var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
+           var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
 
-        if (levelStartPage is null)
-            return false;
+           if (levelStartPage is null)
+               return false;
 
-        MenuScreen.Current.SetNextPage(levelStartPage);
+           MenuScreen.Current.SetNextPage(levelStartPage);
 
-        return true;
-    }*/
+           return true;
+       }*/
 
     private void OnCancel()
     {
@@ -61,12 +66,12 @@ public sealed class LevelSelectPage : IPage
         MenuScreen.Current.SetNextPage(mainPage);
     }
 
-    public void SetWindowDimensions(int windowWidth, int windowHeight)
+    protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
     {
 
     }
 
-    public void Tick()
+    public override void Tick()
     {
         HandleKeyboardInput();
         HandleMouseInput();
@@ -85,7 +90,7 @@ public sealed class LevelSelectPage : IPage
     {
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
     }
 }

@@ -1,23 +1,30 @@
-﻿namespace NeoLemmixSharp.Menu.Pages;
+﻿using MGUI.Core.UI;
 
-public sealed class LevelEndPage : IPage
+namespace NeoLemmixSharp.Menu.Pages;
+
+public sealed class LevelEndPage : PageBase
 {
-    /*public void Initialise(RootPanel rootPanel)
+    public LevelEndPage(MGDesktop desktop)
+        : base(desktop)
+    {
+    }
+
+    protected override void OnInitialise(MGDesktop desktop)
     {
         throw new NotImplementedException();
-    }*/
+    }
 
-    public void SetWindowDimensions(int windowWidth, int windowHeight)
+    protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
     {
 
     }
 
-    public void Tick()
+    public override void Tick()
     {
 
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
 
     }

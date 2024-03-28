@@ -13,8 +13,8 @@
 		<ScrollViewer.Content>
 			<StackPanel Orientation="Vertical"
                         VerticalAlignment="Stretch">
-				<Button>Foo</Button>
-				<Button>Foo</Button>
+				<Button>LogoImage</Button>
+				<Button>LogoImage</Button>
 			</StackPanel>
 		</ScrollViewer.Content>
 	</ScrollViewer>

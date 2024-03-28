@@ -4,18 +4,14 @@ using MGUI.Core.UI.Containers;
 using MGUI.Core.UI.Containers.Grids;
 using MGUI.Core.UI.Text;
 using MGUI.Core.UI.XAML;
-using MGUI.Shared.Helpers;
 using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using System.Diagnostics;
-using System.Threading;
 
 #if WINDOWS
 using Microsoft.Win32;
@@ -64,7 +60,7 @@ namespace MGUI.Core.UI
                 //  Create the textbox that the xaml string is read from
                 MGScrollViewer MarkupScrollViewer = new(ParentWindow);
                 this.FromStringTextBoxComponent = new(ParentWindow, null);
-                string SampleXAML = 
+                string SampleXAML =
 @"<Button Background=""RoyalBlue|DarkBlue"" Padding=""10,8"" VerticalAlignment=""Center"">
     <TextBlock IsBold=""true"" FontSize=""14"" TextAlignment=""Center"" Text=""Hello\nWorld"" />
 </Button>";
@@ -244,7 +240,7 @@ namespace MGUI.Core.UI
                     Markup = File.ReadAllText(FromFilePath);
                 else
                     Markup = FromStringTextBoxComponent.Text;
-                Result = XAMLParser.Load<MGElement>(SelfOrParentWindow, Markup, !IsReadingInputFromFile, true);
+                Result = XamlParser.Load<MGElement>(SelfOrParentWindow, Markup, !IsReadingInputFromFile, true);
                 Result.DataContextOverride = ParsedContentDataContext;
             }
             catch (Exception ex)

@@ -7,10 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Pages\MainPage.xaml" />
     <None Remove="Pages\TestWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Pages\MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Include="Pages\TestWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>

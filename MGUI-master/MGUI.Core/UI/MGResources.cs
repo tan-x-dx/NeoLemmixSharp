@@ -4,13 +4,9 @@ using MGUI.Shared.Rendering;
 using MGUI.Shared.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Size = MonoGame.Extended.Size;
 
@@ -202,7 +198,7 @@ namespace MGUI.Core.UI
         /// <summary>The <see cref="MGTheme"/> to assign to an <see cref="MGWindow"/> after parsing a XAML string (unless the window explicitly specifies a different theme).<para/>
         /// Note: Changing this value will not dynamically update the theme of any windows that have already been parsed. This value is only applied once on each window, when the XAML is parsed.<br/>
         /// So if you do change this value, you may want to re-parse your XAML content to initialize a new window.<para/>
-        /// See also: <see cref="XAMLParser.LoadRootWindow(MGDesktop, string, bool, bool)"/><para/>
+        /// See also: <see cref="XamlParser.LoadRootWindow(MGDesktop, string, bool, bool)"/><para/>
         /// This value cannot be null.</summary>
         public MGTheme DefaultTheme
         {

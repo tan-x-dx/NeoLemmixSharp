@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
@@ -19,8 +18,8 @@ public sealed class MenuScreen : IBaseScreen
     private readonly PageTransition _pageTransition = new(EngineConstants.PageTransitionDurationInFrames);
     private readonly MGDesktop _desktop;
 
-    private IPage _currentPage;
-    private IPage? _nextPage;
+    private PageBase _currentPage;
+    private PageBase? _nextPage;
 
     public MenuInputController InputController { get; } = new();
     public MenuPageCreator MenuPageCreator { get; }
@@ -45,7 +44,8 @@ public sealed class MenuScreen : IBaseScreen
         MenuPageCreator = new MenuPageCreator(
             contentManager,
             graphicsDevice,
-            InputController);
+            InputController,
+            _desktop);
         _currentPage = MenuPageCreator.CreateMainPage();
         Current = this;
     }
@@ -54,30 +54,11 @@ public sealed class MenuScreen : IBaseScreen
     {
         MenuScreenRenderer.Initialise();
 
-        /* var window1 = new MGWindow(_desktop, 50, 50, 500, 200)
-         {
-             TitleText = "Sample Window with a single [b]Button[/b]: [color=yellow]Click it![/color]",
-             BackgroundBrush =
-             {
-                 NormalValue = new MGSolidFillBrush(Color.Orange)
-             },
-             Padding = new Thickness(15)
-         };
-         var button1 = new MGButton(window1, button => { button.SetContent("I've been clicked!"); });
-         button1.SetContent("Click me!");
-         window1.SetContent(button1);*/
-
-        var c = new TestWindow(IGameWindow.Instance.Content, _desktop);
-
-        c.Show();
-
-
-        //var userInterface = UserInterface.Active;
-        //userInterface.Clear();
-        //_currentPage.Initialise(userInterface.Root);
+        _desktop.Windows.Clear();
+        _currentPage.Initialise(_desktop);
     }
 
-    public void SetNextPage(IPage page)
+    public void SetNextPage(PageBase page)
     {
         _nextPage = page;
         _pageTransition.BeginTransition();
@@ -118,7 +99,7 @@ public sealed class MenuScreen : IBaseScreen
 
         //var userInterface = UserInterface.Active;
         //userInterface.Clear();
-        //_currentPage.Initialise(userInterface.Root);
+        //_currentPage.OnInitialise(userInterface.Root);
 
         var windowWidth = IGameWindow.Instance.WindowWidth;
         var windowHeight = IGameWindow.Instance.WindowHeight;
