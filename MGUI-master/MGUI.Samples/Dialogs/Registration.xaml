@@ -1,0 +1,84 @@
+﻿<Window xmlns="clr-namespace:MGUI.Core.UI.XAML;assembly=MGUI.Core"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Left="440" Top="20" MinWidth="300" SizeToContent="Height">
+
+    <!-- Replace the window's Title bar with custom content -->
+    <Window.TitleBar>
+        <!-- The root-element of the window's Title bar must always be an DockPanel, but we can add whatever we want to it -->
+        <DockPanel Padding="5,2">
+            <Rectangle Dock="Left" Width="16" Height="16" Stroke="Gray" StrokeThickness="1" Fill="Black" Margin="0,0,5,0">
+                <Rectangle.ToolTip>
+                    <ToolTip Padding="8,4" MinHeight="0" SizeToContent="WidthAndHeight" TextForeground="RoyalBlue" Background="White * 0.85">
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="[b]Pretend this is a window icon[/b]" />
+                    </ToolTip>
+                </Rectangle.ToolTip>
+            </Rectangle>
+
+            <TextBlock FontSize="10" Foreground="White" Text="Registration Form" />
+        </DockPanel>
+    </Window.TitleBar>
+
+    <DockPanel Margin="5">
+        <!-- Window header -->
+        <StackPanel Dock="Top" Orientation="Vertical">
+            <TextBlock Dock="Top" HorizontalAlignment="Center" FontSize="14" Foreground="Orange" Text="Register for a new account" />
+            <Separator Size="3" Orientation="Horizontal" Background="Orange * 0.5" />
+        </StackPanel>
+
+        <!-- Register -->
+        <Button Name="Button_Register" Dock="Bottom" Background="Orange" HorizontalAlignment="Center" Padding="25,5">
+            <TextBlock Text="[b]Register[/b]" FontSize="14" />
+        </Button>
+
+        <Border BorderBrush="Black" BorderThickness="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="8" Margin="0,10,0,15" Background="White * 0.08">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel.Styles>
+                        <Style TargetType="HeaderedContentPresenter">
+                            <Setter Property="HeaderPosition" Value="Top" />
+                            <Setter Property="Spacing" Value="2" />
+                        </Style>
+                    </StackPanel.Styles>
+
+                    <!-- Email -->
+                    <HeaderedContentPresenter>
+                        <HeaderedContentPresenter.Header>
+                            <TextBlock Text="Email:" Foreground="Gray" />
+                        </HeaderedContentPresenter.Header>
+                        <TextBox Name="TextBox_Email" PlaceholderText="[i][opacity=0.5]Email[/opacity][/i]" CharacterLimit="40" ShowCharacterCount="false" AcceptsReturn="false" AcceptsTab="false" />
+                    </HeaderedContentPresenter>
+                    <Spacer Height="8" />
+
+                    <!-- Username -->
+                    <HeaderedContentPresenter>
+                        <HeaderedContentPresenter.Header>
+                            <TextBlock Text="Username:" Foreground="Gray" />
+                        </HeaderedContentPresenter.Header>
+                        <TextBox Name="TextBox_Username" PlaceholderText="[i][opacity=0.5]Username[/opacity][/i]" CharacterLimit="16" ShowCharacterCount="true" AcceptsReturn="false" AcceptsTab="false">
+                            <TextBox.ToolTip>
+                                <ToolTip SizeToContent="WidthAndHeight" TextForeground="Red" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                                    <TextBlock WrapText="True" LinePadding="10" FontSize="10" Text="Must contain only alphanumeric characters.\nCannot exceed [b]16[/b] characters." />
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
+                    </HeaderedContentPresenter>
+                    <Spacer Height="8" />
+
+                    <!-- Password -->
+                    <HeaderedContentPresenter>
+                        <HeaderedContentPresenter.Header>
+                            <TextBlock Text="Password:" Foreground="Gray" />
+                        </HeaderedContentPresenter.Header>
+                        <PasswordBox Name="TextBox_Password" PasswordCharacter="*" Text="Hunter2" />
+                    </HeaderedContentPresenter>
+                    <Spacer Height="16" />
+
+                    <!-- Terms of service -->
+                    <CheckBox Name="CheckBox_TOS" IsChecked="true">
+                        <TextBlock Text="I agree to the [Action=OpenTOS][color=#3483eb][i][u]Terms of service[/u][/i][/color][/Action]" />
+                    </CheckBox>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </DockPanel>
+</Window>

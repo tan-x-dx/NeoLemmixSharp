@@ -1,17 +1,14 @@
-﻿using GeonBit.UI.Entities;
-using GeonBit.UI.Utils;
-using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
+﻿using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class LevelSelectPage : IPage
 {
-    private const FileDialogOptions LoadLevelDialogOptions =
+    /*private const FileDialogOptions LoadLevelDialogOptions =
         FileDialogOptions.AllowEnterFolders |
         FileDialogOptions.AllowOverride |
         FileDialogOptions.CageInStartingPath |
-        FileDialogOptions.MustSelectExistingFile;
+        FileDialogOptions.MustSelectExistingFile;*/
 
     private readonly MenuInputController _inputController;
     private readonly string _levelsRootPath;
@@ -22,7 +19,7 @@ public sealed class LevelSelectPage : IPage
         _inputController = inputController;
     }
 
-    public void Initialise(RootPanel rootPanel)
+    /*public void Initialise(RootPanel rootPanel)
     {
         MessageBox.OpenLoadFileDialog(
             _levelsRootPath,
@@ -55,7 +52,7 @@ public sealed class LevelSelectPage : IPage
         MenuScreen.Current.SetNextPage(levelStartPage);
 
         return true;
-    }
+    }*/
 
     private void OnCancel()
     {

@@ -1,13 +1,11 @@
-﻿using GeonBit.UI.Entities;
-
-namespace NeoLemmixSharp.Menu.Pages;
+﻿namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class LevelEndPage : IPage
 {
-    public void Initialise(RootPanel rootPanel)
+    /*public void Initialise(RootPanel rootPanel)
     {
         throw new NotImplementedException();
-    }
+    }*/
 
     public void SetWindowDimensions(int windowWidth, int windowHeight)
     {

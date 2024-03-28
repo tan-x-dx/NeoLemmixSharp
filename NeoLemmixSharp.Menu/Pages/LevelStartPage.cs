@@ -1,6 +1,4 @@
-﻿using GeonBit.UI.Entities;
-using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 
 namespace NeoLemmixSharp.Menu.Pages;
@@ -12,7 +10,7 @@ public sealed class LevelStartPage : IPage
 
     // Panel to cover the entire screen, so
     // we can click anywhere to begin the level
-    private Panel _backPanel;
+    //private Panel _backPanel;
 
     public LevelStartPage(
         MenuInputController inputController,
@@ -22,7 +20,7 @@ public sealed class LevelStartPage : IPage
         _levelScreen = levelScreen;
     }
 
-    public void Initialise(RootPanel rootPanel)
+    /*public void Initialise(RootPanel rootPanel)
     {
         _backPanel = new Panel(Vector2.Zero, anchor: Anchor.Center)
         {
@@ -36,9 +34,9 @@ public sealed class LevelStartPage : IPage
         };
 
         rootPanel.AddChild(_backPanel);
-    }
+    }*/
 
-    private static void GoBack(Entity entity)
+    private static void GoBack()
     {
         var mainPage = MenuScreen.Current.MenuPageCreator.CreateMainPage();
 
@@ -59,13 +57,13 @@ public sealed class LevelStartPage : IPage
     {
         if (_inputController.Quit.IsPressed)
         {
-            GoBack(null!);
+            GoBack();
             return;
         }
 
         if (_inputController.Space.IsPressed)
         {
-            StartLevel(null!);
+            StartLevel();
             return;
         }
     }
@@ -74,14 +72,14 @@ public sealed class LevelStartPage : IPage
     {
     }
 
-    private void StartLevel(Entity entity)
+    private void StartLevel()
     {
         IGameWindow.Instance.SetScreen(_levelScreen);
     }
 
     public void Dispose()
     {
-        _backPanel.OnClick = null;
-        _backPanel.OnRightClick = null;
+        //   _backPanel.OnClick = null;
+        //   _backPanel.OnRightClick = null;
     }
 }

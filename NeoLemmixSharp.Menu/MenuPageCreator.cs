@@ -1,5 +1,4 @@
-﻿using GeonBit.UI.Utils;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding;
@@ -80,7 +79,7 @@ public sealed class MenuPageCreator
         }
         catch (Exception ex)
         {
-            MessageBox.ShowMsgBox("Error occurred!", ex.Message);
+            //MessageBox.ShowMsgBox("Error occurred!", ex.Message);
         }
         finally
         {

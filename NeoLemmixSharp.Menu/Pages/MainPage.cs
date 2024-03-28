@@ -1,17 +1,10 @@
-﻿using GeonBit.UI;
-using GeonBit.UI.Entities;
-using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Menu.Rendering;
-
-namespace NeoLemmixSharp.Menu.Pages;
+﻿namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class MainPage : IPage
 {
     private readonly MenuInputController _inputController;
 
-    private Image? _playButton;
+    /*private Image? _playButton;
     private Image? _levelSelectButton;
 
     private Image? _groupButton;
@@ -19,14 +12,14 @@ public sealed class MainPage : IPage
     private Image? _groupDownButton;
 
     private Image? _configButton;
-    private Image? _quitButton;
+    private Image? _quitButton;*/
 
     public MainPage(MenuInputController inputController)
     {
         _inputController = inputController;
     }
 
-    public void Initialise(RootPanel rootPanel)
+    /*public void Initialise(RootPanel rootPanel)
     {
         UserInterface.Active.GlobalScale = 2f;
 
@@ -109,7 +102,7 @@ public sealed class MainPage : IPage
             Offset = Vector2.Zero,
             UseActualSizeForCollision = true,
         };
-    }
+    }*/
 
     public void SetWindowDimensions(int windowWidth, int windowHeight)
     {
@@ -123,7 +116,7 @@ public sealed class MainPage : IPage
 
     private void HandleKeyboardInput()
     {
-        if (_inputController.Quit.IsPressed)
+        /*if (_inputController.Quit.IsPressed)
         {
             _quitButton!.OnClick.Invoke(_quitButton);
             return;
@@ -144,10 +137,10 @@ public sealed class MainPage : IPage
         if (_inputController.F3.IsPressed)
         {
             _configButton!.OnClick.Invoke(_configButton);
-        }
+        }*/
     }
 
-    private void PlayButtonClick(Entity entity)
+    /*private void PlayButtonClick(Entity entity)
     {
         var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
 
@@ -179,7 +172,7 @@ public sealed class MainPage : IPage
     private void QuitButtonClick(Entity entity)
     {
         IGameWindow.Instance.Escape();
-    }
+    }*/
 
     private void HandleMouseInput()
     {
@@ -187,25 +180,25 @@ public sealed class MainPage : IPage
 
     public void Dispose()
     {
-        UserInterface.Active.GlobalScale = 1f;
+        /* UserInterface.Active.GlobalScale = 1f;
 
-        DisposeOfEntity(ref _playButton);
-        DisposeOfEntity(ref _levelSelectButton);
-        DisposeOfEntity(ref _groupButton);
-        DisposeOfEntity(ref _groupUpButton);
-        DisposeOfEntity(ref _groupDownButton);
-        DisposeOfEntity(ref _configButton);
-        DisposeOfEntity(ref _quitButton);
+         DisposeOfEntity(ref _playButton);
+         DisposeOfEntity(ref _levelSelectButton);
+         DisposeOfEntity(ref _groupButton);
+         DisposeOfEntity(ref _groupUpButton);
+         DisposeOfEntity(ref _groupDownButton);
+         DisposeOfEntity(ref _configButton);
+         DisposeOfEntity(ref _quitButton);*/
     }
 
-    private static void DisposeOfEntity<T>(ref T? entity)
-        where T : Entity
-    {
-        if (entity is null)
-            return;
+    /* private static void DisposeOfEntity<T>(ref T? entity)
+         where T : Entity
+     {
+         if (entity is null)
+             return;
 
-        entity.OnClick = null;
-        entity.OnRightClick = null;
-        entity = null;
-    }
+         entity.OnClick = null;
+         entity.OnRightClick = null;
+         entity = null;
+     }*/
 }

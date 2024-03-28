@@ -1,7 +1,8 @@
-﻿using GeonBit.UI;
+﻿using MGUI.Core.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
@@ -16,6 +17,7 @@ public sealed class MenuScreen : IBaseScreen
     public static MenuScreen Current { get; private set; } = null!;
 
     private readonly PageTransition _pageTransition = new(EngineConstants.PageTransitionDurationInFrames);
+    private readonly MGDesktop _desktop;
 
     private IPage _currentPage;
     private IPage? _nextPage;
@@ -32,10 +34,13 @@ public sealed class MenuScreen : IBaseScreen
         ContentManager contentManager,
         GraphicsDevice graphicsDevice)
     {
+        _desktop = new MGDesktop(IGameWindow.Instance.MguiRenderer);
+
         var menuCursorRenderer = new MenuCursorRenderer(InputController);
         MenuScreenRenderer = new MenuScreenRenderer(
             menuCursorRenderer,
-            _pageTransition);
+            _pageTransition,
+            _desktop);
 
         MenuPageCreator = new MenuPageCreator(
             contentManager,
@@ -48,9 +53,28 @@ public sealed class MenuScreen : IBaseScreen
     public void Initialise()
     {
         MenuScreenRenderer.Initialise();
-        var userInterface = UserInterface.Active;
-        userInterface.Clear();
-        _currentPage.Initialise(userInterface.Root);
+
+        /* var window1 = new MGWindow(_desktop, 50, 50, 500, 200)
+         {
+             TitleText = "Sample Window with a single [b]Button[/b]: [color=yellow]Click it![/color]",
+             BackgroundBrush =
+             {
+                 NormalValue = new MGSolidFillBrush(Color.Orange)
+             },
+             Padding = new Thickness(15)
+         };
+         var button1 = new MGButton(window1, button => { button.SetContent("I've been clicked!"); });
+         button1.SetContent("Click me!");
+         window1.SetContent(button1);*/
+
+        var c = new TestWindow(IGameWindow.Instance.Content, _desktop);
+
+        c.Show();
+
+
+        //var userInterface = UserInterface.Active;
+        //userInterface.Clear();
+        //_currentPage.Initialise(userInterface.Root);
     }
 
     public void SetNextPage(IPage page)
@@ -69,7 +93,9 @@ public sealed class MenuScreen : IBaseScreen
             return;
         }
 
-        UserInterface.Active.Update(gameTime);
+        _desktop.Update();
+
+        //UserInterface.Active.Update(gameTime);
         InputController.Tick();
 
         _currentPage.Tick();
@@ -90,9 +116,9 @@ public sealed class MenuScreen : IBaseScreen
         DisposableHelperMethods.DisposeOf(ref _currentPage);
         _currentPage = _nextPage!;
 
-        var userInterface = UserInterface.Active;
-        userInterface.Clear();
-        _currentPage.Initialise(userInterface.Root);
+        //var userInterface = UserInterface.Active;
+        //userInterface.Clear();
+        //_currentPage.Initialise(userInterface.Root);
 
         var windowWidth = IGameWindow.Instance.WindowWidth;
         var windowHeight = IGameWindow.Instance.WindowHeight;

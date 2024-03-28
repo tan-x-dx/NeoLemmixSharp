@@ -35,6 +35,8 @@
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MGUI-master\MGUI.Core\MGUI.Core.csproj" />
+    <ProjectReference Include="..\MGUI-master\MGUI.Shared\MGUI.Shared.csproj" />
     <ProjectReference Include="..\NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj" />
     <ProjectReference Include="..\NeoLemmixSharp.Engine\NeoLemmixSharp.Engine.csproj" />
     <ProjectReference Include="..\NeoLemmixSharp.Menu\NeoLemmixSharp.Menu.csproj" />
