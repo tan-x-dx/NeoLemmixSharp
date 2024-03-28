@@ -9,6 +9,6 @@ public sealed class SpriteData
     public required int SpriteWidth { get; init; }
     public required int SpriteHeight { get; init; }
 
-    public required int NumberOfLayers { get; init; }
-    public required int NumberOfFrames { get; init; }
+    public int NumberOfLayers => FrameCountsPerLayer.Length;
+    public required int[] FrameCountsPerLayer { get; init; }
 }

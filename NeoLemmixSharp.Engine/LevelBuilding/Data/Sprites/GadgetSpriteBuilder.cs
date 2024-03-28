@@ -79,13 +79,15 @@ public sealed class GadgetSpriteBuilder : IDisposable
     {
         var spriteData = gadgetBuilder.SpriteData;
 
+        var numberOfFrames = spriteData.FrameCountsPerLayer.Max();
+
         return _gadgetSpriteCreator.CreateSpriteType(
              spriteData.Texture,
              orientation,
              facingDirection,
              spriteData.SpriteWidth,
              spriteData.SpriteHeight,
-             spriteData.NumberOfFrames,
+             numberOfFrames,
              spriteData.NumberOfLayers,
              new LevelPosition(0, 0),
              ItemCreator);
@@ -109,7 +111,7 @@ public sealed class GadgetSpriteBuilder : IDisposable
         {
             if (initialAnimationFrame == -1)
             {
-                initialAnimationFrame = Random.Shared.Next(spriteData.NumberOfFrames);
+                initialAnimationFrame = Random.Shared.Next(1);
             }
         }
         else
@@ -123,7 +125,7 @@ public sealed class GadgetSpriteBuilder : IDisposable
             0,
             initialAnimationFrame,
             0,
-            spriteData.NumberOfFrames,
+            1,
             1,
             0);
 
