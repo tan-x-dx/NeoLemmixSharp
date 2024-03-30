@@ -16,7 +16,7 @@ public sealed class LevelSelectPage : PageBase
         _levelsRootPath = Path.Combine(RootDirectoryManager.RootDirectory, NeoLemmixFileExtensions.LevelFolderName);
     }
 
-    protected override void OnInitialise(MGDesktop desktop)
+    protected override void OnInitialise()
     {
 
     }

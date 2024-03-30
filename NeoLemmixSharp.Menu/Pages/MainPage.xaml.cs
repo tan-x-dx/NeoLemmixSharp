@@ -73,7 +73,7 @@ public sealed class MainPage : PageBase
     {
     }
 
-    protected override void OnInitialise(MGDesktop desktop)
+    protected override void OnInitialise()
     {
         LogoImage = new MGTextureData(MenuSpriteBank.Logo);
         PlayButtonImage = new MGTextureData(MenuSpriteBank.SignPlay);

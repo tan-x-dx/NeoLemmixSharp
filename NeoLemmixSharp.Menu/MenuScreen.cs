@@ -55,7 +55,7 @@ public sealed class MenuScreen : IBaseScreen
         MenuScreenRenderer.Initialise();
 
         _desktop.Windows.Clear();
-        _currentPage.Initialise(_desktop);
+        _currentPage.Initialise();
     }
 
     public void SetNextPage(PageBase page)
@@ -94,12 +94,25 @@ public sealed class MenuScreen : IBaseScreen
         _currentPage.Dispose();
         _currentPage = _nextPage!;
 
-        _currentPage.Initialise(_desktop);
+        CloseExceptionViewers();
+
+        _currentPage.Initialise();
 
         var windowWidth = IGameWindow.Instance.WindowWidth;
         var windowHeight = IGameWindow.Instance.WindowHeight;
 
         _currentPage.SetWindowDimensions(windowWidth, windowHeight);
+    }
+
+    private void CloseExceptionViewers()
+    {
+        foreach (var window in _desktop.Windows)
+        {
+            if (window.Metadata.ContainsKey(ExceptionViewer.ExceptionWindowProperty))
+            {
+                window.TryCloseWindow();
+            }
+        }
     }
 
     public void OnWindowSizeChanged()

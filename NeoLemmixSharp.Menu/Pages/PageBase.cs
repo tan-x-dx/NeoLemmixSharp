@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Menu.Pages;
 public abstract class PageBase : ViewModelBase, IDisposable
 {
     private readonly MGDesktop _desktop;
-    protected readonly MGWindow Window;
+    protected readonly MgWindow Window;
     protected readonly MenuInputController InputController;
 
     private bool _isInitialised;
@@ -34,17 +34,17 @@ public abstract class PageBase : ViewModelBase, IDisposable
         Window.WindowDataContext = this;
     }
 
-    public void Initialise(MGDesktop desktop)
+    public void Initialise()
     {
         if (_isInitialised)
             return;
 
-        OnInitialise(desktop);
+        OnInitialise();
         _desktop.Windows.Add(Window);
         _isInitialised = true;
     }
 
-    protected abstract void OnInitialise(MGDesktop desktop);
+    protected abstract void OnInitialise();
 
     public void SetWindowDimensions(int windowWidth, int windowHeight)
     {

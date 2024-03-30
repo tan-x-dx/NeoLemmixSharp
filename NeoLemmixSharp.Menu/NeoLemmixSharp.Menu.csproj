@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Pages\ExceptionViewer.xaml" />
     <None Remove="Pages\LevelEndPage.xaml" />
     <None Remove="Pages\LevelSelectPage.xaml" />
     <None Remove="Pages\LevelStartPage.xaml" />
@@ -14,6 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Pages\ExceptionViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Include="Pages\LevelEndPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>

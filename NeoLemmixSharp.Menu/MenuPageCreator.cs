@@ -83,7 +83,9 @@ public sealed class MenuPageCreator
         }
         catch (Exception ex)
         {
-            //MessageBox.ShowMsgBox("Error occurred!", ex.Message);
+            var exceptionWindow = new ExceptionViewer(_desktop, _inputController, ex);
+
+            exceptionWindow.Initialise();
         }
         finally
         {

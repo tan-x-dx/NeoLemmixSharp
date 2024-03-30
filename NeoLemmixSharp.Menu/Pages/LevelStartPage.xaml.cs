@@ -14,7 +14,7 @@ public sealed class LevelStartPage : PageBase
         _levelScreen = levelScreen;
     }
 
-    protected override void OnInitialise(MGDesktop desktop)
+    protected override void OnInitialise()
     {
     }
 

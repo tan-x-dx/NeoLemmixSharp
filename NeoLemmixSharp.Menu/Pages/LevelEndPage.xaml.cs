@@ -11,7 +11,7 @@ public sealed class LevelEndPage : PageBase
     {
     }
 
-    protected override void OnInitialise(MGDesktop desktop)
+    protected override void OnInitialise()
     {
     }
 
