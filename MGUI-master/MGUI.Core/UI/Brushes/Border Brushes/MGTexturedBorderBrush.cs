@@ -120,11 +120,11 @@ namespace MGUI.Core.UI.Brushes.Border_Brushes
         }
 
         /// <param name="EdgeTextureName">The name of the <see cref="MGTextureData"/> used to reference the <see cref="EdgeTexture"/> settings by.<br/>
-        /// This name must exist in <see cref="MGResources.Textures"/><para/>
-        /// See also: <see cref="MGElement.GetResources"/>, <see cref="MGDesktop.Resources"/>, <see cref="MGResources.Textures"/></param>
+        /// This name must exist in <see cref="MgResources.Textures"/><para/>
+        /// See also: <see cref="MGElement.GetResources"/>, <see cref="MGDesktop.Resources"/>, <see cref="MgResources.Textures"/></param>
         /// <param name="CornerTextureName">The name of the <see cref="MGTextureData"/> used to reference the <see cref="CornerTexture"/> settings by.<br/>
-        /// This name must exist in <see cref="MGResources.Textures"/><para/>
-        /// See also: <see cref="MGElement.GetResources"/>, <see cref="MGDesktop.Resources"/>, <see cref="MGResources.Textures"/></param>
+        /// This name must exist in <see cref="MgResources.Textures"/><para/>
+        /// See also: <see cref="MGElement.GetResources"/>, <see cref="MGDesktop.Resources"/>, <see cref="MgResources.Textures"/></param>
         public MGTexturedBorderBrush(MGDesktop Desktop, string EdgeTextureName, string CornerTextureName, Color? EdgeColor = null, Color? CornerColor = null, TextureTransforms? Transforms = null, float Opacity = 1.0f)
             : this(Desktop.Resources.Textures[EdgeTextureName], EdgeColor, Desktop.Resources.Textures[CornerTextureName], CornerColor, Transforms, Opacity) { }
 

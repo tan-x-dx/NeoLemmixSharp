@@ -24,7 +24,7 @@ namespace MGUI.Core.UI.Data_Binding
         /// (assuming the target object is of type <see cref="MGElement"/> and belongs to a <see cref="MGWindow"/>)</summary>
         public static ISourceObjectResolver FromElementName(string ElementName) => new SourceObjectResolverElementName(ElementName);
 
-        /// <summary>Indicates that the source object of the binding should be retrieved via a particular named resource in <see cref="MGResources.StaticResources"/><br/>
+        /// <summary>Indicates that the source object of the binding should be retrieved via a particular named resource in <see cref="MgResources.StaticResources"/><br/>
         /// (assuming the target object is of type <see cref="MGElement"/> so that the resources can obtained from <see cref="MGDesktop.Resources"/>)</summary>
         public static ISourceObjectResolver FromResourceName(string ResourceName) => new SourceObjectResolverStaticResource(ResourceName);
 
@@ -70,7 +70,7 @@ namespace MGUI.Core.UI.Data_Binding
         public override string ToString() => $"{nameof(SourceObjectResolverElementName)}: {ElementName}";
     }
 
-    /// <summary>Indicates that the source object of the binding should be retrieved via <see cref="MGResources.StaticResources"/> using the given <see cref="ResourceName"/><br/>
+    /// <summary>Indicates that the source object of the binding should be retrieved via <see cref="MgResources.StaticResources"/> using the given <see cref="ResourceName"/><br/>
     /// (assuming the target object is of type <see cref="MGElement"/> so that the resources can obtained from <see cref="MGDesktop.Resources"/>)</summary>
     public class SourceObjectResolverStaticResource : ISourceObjectResolver
     {

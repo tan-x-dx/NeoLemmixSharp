@@ -353,8 +353,8 @@ namespace MGUI.Core.UI.Text
     /// <summary>An <see cref="MGTextRun"/> that renders a specific portion of a <see cref="Texture2D"/> with a given size.</summary>
     public class MGTextRunImage : MGTextRun
     {
-        /// <summary>The name of the <see cref="MGTextureData"/> to render. This name should exist in <see cref="MGResources.Textures"/><para/>
-        /// See also:<br/><see cref="MGDesktop.Resources"/><br/><see cref="MGElement.GetResources"/><br/><see cref="MGResources.Textures"/><br/><see cref="MGResources.AddTexture(string, MGTextureData)"/></summary>
+        /// <summary>The name of the <see cref="MGTextureData"/> to render. This name should exist in <see cref="MgResources.Textures"/><para/>
+        /// See also:<br/><see cref="MGDesktop.Resources"/><br/><see cref="MGElement.GetResources"/><br/><see cref="MgResources.Textures"/><br/><see cref="MgResources.AddTexture(string, MGTextureData)"/></summary>
         public readonly string SourceName;
         public readonly int TargetWidth;
         public readonly int TargetHeight;

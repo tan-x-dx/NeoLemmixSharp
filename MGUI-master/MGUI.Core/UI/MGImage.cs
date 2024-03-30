@@ -41,8 +41,8 @@ namespace MGUI.Core.UI
         private string _SourceName;
         /// <summary>The name of the <see cref="MGTextureData"/> resource to draw, 
         /// or null if the <see cref="MGTextureData"/> is explicitly specified via <see cref="Source"/>.<br/>
-        /// This resource is retrieved from <see cref="MGResources.Textures"/><para/>
-        /// See also:<br/><see cref="MGElement.GetResources"/><br/><see cref="MGResources.Textures"/><br/><see cref="MGResources.AddTexture(string, MGTextureData)"/></summary>
+        /// This resource is retrieved from <see cref="MgResources.Textures"/><para/>
+        /// See also:<br/><see cref="MGElement.GetResources"/><br/><see cref="MgResources.Textures"/><br/><see cref="MgResources.AddTexture(string, MGTextureData)"/></summary>
         public string SourceName
         {
             get => _SourceName;
@@ -50,7 +50,7 @@ namespace MGUI.Core.UI
             {
                 if (_SourceName != value)
                 {
-                    MGResources Resources = GetResources();
+                    MgResources Resources = GetResources();
                     if (SourceName != null)
                     {
                         Resources.OnTextureAdded -= Resources_OnTextureAddedRemoved;
@@ -105,7 +105,7 @@ namespace MGUI.Core.UI
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private MGTextureData? _ActualSource;
-        /// <summary>Prioritizes <see cref="Source"/> if specified, otherwise attempts to retrieve the named texture resource from <see cref="MGResources.Textures"/> based on <see cref="SourceName"/></summary>
+        /// <summary>Prioritizes <see cref="Source"/> if specified, otherwise attempts to retrieve the named texture resource from <see cref="MgResources.Textures"/> based on <see cref="SourceName"/></summary>
         public MGTextureData? ActualSource
         {
             get => _ActualSource;
@@ -175,8 +175,8 @@ namespace MGUI.Core.UI
             }
         }*/
 
-        /// <param name="SourceName">The name of the <see cref="MGTextureData"/> in <see cref="MGResources.Textures"/> that should be drawn by this <see cref="MGImage"/>.<para/>
-        /// See also: <see cref="MGElement.GetResources"/>, <see cref="MGResources.Textures"/>, <see cref="MGImage.SourceName"/></param>
+        /// <param name="SourceName">The name of the <see cref="MGTextureData"/> in <see cref="MgResources.Textures"/> that should be drawn by this <see cref="MGImage"/>.<para/>
+        /// See also: <see cref="MGElement.GetResources"/>, <see cref="MgResources.Textures"/>, <see cref="MGImage.SourceName"/></param>
         public MGImage(MGWindow Window, string SourceName, Stretch Stretch = Stretch.Uniform)
             : base(Window, MGElementType.Image)
         {

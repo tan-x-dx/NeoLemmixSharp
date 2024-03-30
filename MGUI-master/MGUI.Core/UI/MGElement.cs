@@ -185,7 +185,7 @@ namespace MGUI.Core.UI
 		public MGDesktop GetDesktop() => SelfOrParentWindow.Desktop;
         /// <summary>Prioritizes <see cref="MGWindow.Theme"/>. If null, falls back to <see cref="MGDesktop.Theme"/></summary>
         public MGTheme GetTheme() => SelfOrParentWindow.Theme ?? GetDesktop().Theme;
-        public MGResources GetResources() => GetDesktop().Resources;
+        public MgResources GetResources() => GetDesktop().Resources;
 
 		/// <summary>The <see cref="MGWindow"/> that this <see cref="MGElement"/> belongs to. This value is only null if this <see cref="MGElement"/> is an <see cref="MGWindow"/> with no parent.</summary>
 		public MGWindow ParentWindow { get; }

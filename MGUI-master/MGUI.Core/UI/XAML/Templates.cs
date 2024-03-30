@@ -22,9 +22,9 @@ namespace MGUI.Core.UI.XAML
     [ContentProperty(nameof(Content))]
     public class ContentTemplate
     {
-        /// <summary>The name of the <see cref="MGElementTemplate"/> to when generating the Content. <see cref="MGElementTemplate"/>s are retrieved via <see cref="MGResources.ElementTemplates"/><para/>
+        /// <summary>The name of the <see cref="MGElementTemplate"/> to when generating the Content. <see cref="MGElementTemplate"/>s are retrieved via <see cref="MgResources.ElementTemplates"/><para/>
         /// You should only specify either <see cref="ContentTemplateName"/> or <see cref="Content"/>, not both.<para/>
-        /// See also: <see cref="MGDesktop.Resources"/>, <see cref="MGResources.ElementTemplates"/></summary>
+        /// See also: <see cref="MGDesktop.Resources"/>, <see cref="MgResources.ElementTemplates"/></summary>
         [Category("Data")]
         public string ContentTemplateName { get; set; }
 
@@ -44,10 +44,10 @@ namespace MGUI.Core.UI.XAML
             }
             else if (ContentTemplateName != null)
             {
-                MGResources Resources = Window.GetResources();
+                MgResources Resources = Window.GetResources();
                 if (!Resources.TryGetElementTemplate(ContentTemplateName, out MGElementTemplate Template))
                 {
-                    Debug.WriteLine($"Warning - No {nameof(MGElementTemplate)} was found with the name '{ContentTemplateName}' in {nameof(MGResources)}.{nameof(MGResources.ElementTemplates)}.");
+                    Debug.WriteLine($"Warning - No {nameof(MGElementTemplate)} was found with the name '{ContentTemplateName}' in {nameof(MgResources)}.{nameof(MgResources.ElementTemplates)}.");
                     return null;
                 }
 

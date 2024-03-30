@@ -148,8 +148,8 @@ namespace MGUI.Core.UI.XAML
         public Thickness? BT { get => BorderThickness; set => BorderThickness = value; }
 
         /// <summary>The name of the command to execute when this <see cref="Button"/> is left-clicked, or null if no named command should be executed when left-clicked.<para/>
-        /// This name should exist in <see cref="MGResources.Commands"/>, otherwise nothing will be invoked when clicking this <see cref="Button"/><para/>
-        /// See also:<br/><see cref="MGElement.GetResources"/><br/><see cref="MGResources.Commands"/><br/><see cref="MGResources.AddCommand(string, Action{MGElement})"/></summary>
+        /// This name should exist in <see cref="MgResources.Commands"/>, otherwise nothing will be invoked when clicking this <see cref="Button"/><para/>
+        /// See also:<br/><see cref="MGElement.GetResources"/><br/><see cref="MgResources.Commands"/><br/><see cref="MgResources.AddCommand(string, Action{MGElement})"/></summary>
         [Category("Behavior")]
         public string CommandName { get; set; }
 
@@ -2015,7 +2015,7 @@ namespace MGUI.Core.UI.XAML
         public override MGElementType ElementType => MGElementType.Window;
 
         /// <summary>The name of the <see cref="MGTheme"/> to use when parsing this XAML content.<br/>
-        /// Themes are retrieved via <see cref="MGResources.Themes"/>. Uses <see cref="MGResources.DefaultTheme"/> if no name is specified.</summary>
+        /// Themes are retrieved via <see cref="MgResources.Themes"/>. Uses <see cref="MgResources.DefaultTheme"/> if no name is specified.</summary>
         [Category("Appearance")]
         public string ThemeName { get; set; }
 
@@ -2096,7 +2096,7 @@ namespace MGUI.Core.UI.XAML
 
         public MGWindow ToElement(MGDesktop Desktop)
         {
-            MGResources Resources = Desktop.Resources;
+            MgResources Resources = Desktop.Resources;
             MGTheme Theme = Resources.GetThemeOrDefault(ThemeName);
 
             int WindowWidth = Math.Clamp(Width ?? 0, MinWidth ?? 0, MaxWidth ?? int.MaxValue);

@@ -353,7 +353,7 @@ namespace MGUI.Core.UI.XAML
 
         protected internal abstract IEnumerable<Element> GetChildren();
 
-        protected internal void ProcessStyles(MGResources Resources)
+        protected internal void ProcessStyles(MgResources Resources)
         {
             Dictionary<string, Style> StylesByName = Resources.Styles.ToDictionary(x => x.Key, x => x.Value);
             ProcessStyles(StylesByName, new Dictionary<MGElementType, Dictionary<string, List<object>>>());

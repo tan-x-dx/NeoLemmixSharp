@@ -321,8 +321,8 @@ namespace MGUI.Core.UI
         /// For example, an <see cref="MGContextMenu"/> will attempt to position itself such that it is not rendered outside of these bounds.</summary>
         public Rectangle ValidScreenBounds => Renderer.Host.GetBounds();
 
-        public MGResources Resources { get; }
-        /// <summary>Convenience property that just returns <see cref="Resources"/>.<see cref="MGResources.DefaultTheme"/></summary>
+        public MgResources Resources { get; }
+        /// <summary>Convenience property that just returns <see cref="Resources"/>.<see cref="MgResources.DefaultTheme"/></summary>
         public MGTheme Theme => Resources.DefaultTheme;
 
         public MGDesktop(MainRenderer Renderer)

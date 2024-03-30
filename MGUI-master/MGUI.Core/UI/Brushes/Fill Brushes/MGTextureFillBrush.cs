@@ -20,8 +20,8 @@ namespace MGUI.Core.UI.Brushes.Fill_Brushes
         //TODO Option to make it tesselate if Stretch is not Fill/UniformToFill? (LinearWrap SamplerState?)
         //      So if Stretch is None or UniformToFill, the empty space would instead be filled up with LinearWrap texture
 
-        /// <param name="SourceName">The name of the <see cref="MGTextureData"/> in <see cref="MGResources.Textures"/> that should be drawn by this <see cref="MGTextureFillBrush"/>.<para/>
-        /// See also: <see cref="MGElement.GetResources"/>, <see cref="MGResources.Textures"/>, <see cref="MGResources.AddTexture(string, MGTextureData)"/></param>
+        /// <param name="SourceName">The name of the <see cref="MGTextureData"/> in <see cref="MgResources.Textures"/> that should be drawn by this <see cref="MGTextureFillBrush"/>.<para/>
+        /// See also: <see cref="MGElement.GetResources"/>, <see cref="MgResources.Textures"/>, <see cref="MgResources.AddTexture(string, MGTextureData)"/></param>
         public MGTextureFillBrush(MGDesktop Desktop, string SourceName, Stretch Stretch = Stretch.Fill, Color? Color = null)
         {
             if (Desktop == null)
@@ -29,7 +29,7 @@ namespace MGUI.Core.UI.Brushes.Fill_Brushes
             if (SourceName == null)
                 throw new ArgumentNullException(nameof(SourceName));
             if (!Desktop.Resources.TryGetTexture(SourceName, out MGTextureData Source))
-                throw new InvalidOperationException($"No Texture was found with the name '{SourceName}' in {nameof(MGResources)}.{nameof(MGResources.Textures)}.");
+                throw new InvalidOperationException($"No Texture was found with the name '{SourceName}' in {nameof(MgResources)}.{nameof(MgResources.Textures)}.");
 
             this.Source = Source;
             this.Stretch = Stretch;
