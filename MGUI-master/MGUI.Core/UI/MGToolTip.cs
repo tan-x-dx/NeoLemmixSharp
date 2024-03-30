@@ -14,7 +14,7 @@ using MGUI.Core.UI.Data_Binding.Converters;
 namespace MGUI.Core.UI
 {
     [TypeConverter(typeof(StringToToolTipTypeConverter))]
-    public class MGToolTip : MGWindow
+    public class MGToolTip : MgWindow
     {
         public MGElement Host { get; }
 
@@ -73,7 +73,7 @@ namespace MGUI.Core.UI
 
         public TimeSpan ActualShowDelay => ShowDelayOverride ?? GetDesktop().ToolTipShowDelay;
 
-        public MGToolTip(MGWindow Window, MGElement Host, int Width, int Height, MGTheme Theme = null)
+        public MGToolTip(MgWindow Window, MGElement Host, int Width, int Height, MGTheme Theme = null)
             : base(Window.Desktop, Theme ?? Window.Theme, Window, MGElementType.ToolTip, 0, 0, Width, Height)
         {
             using (BeginInitializing())

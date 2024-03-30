@@ -124,11 +124,11 @@ namespace MGUI.Core.UI.Containers
         /// <summary>Invoked after either <see cref="OnContentRemoved"/> or <see cref="OnNestedContentRemoved"/> are invoked.</summary>
         public event EventHandler<MGElement> OnDirectOrNestedContentRemoved;
 
-        /// <summary>Only intended to be used by <see cref="MGWindow"/>'s constructor.</summary>
-        protected MGContentHost(MGDesktop UI, MGTheme Theme, MGWindow Window, MGElementType ElementType)
+        /// <summary>Only intended to be used by <see cref="MgWindow"/>'s constructor.</summary>
+        protected MGContentHost(MGDesktop UI, MGTheme Theme, MgWindow Window, MGElementType ElementType)
             : base(UI, Window, ElementType, Theme) { }
 
-        protected MGContentHost(MGWindow Window, MGElementType ElementType)
+        protected MGContentHost(MgWindow Window, MGElementType ElementType)
             : base(Window, ElementType)
         {
 
@@ -154,7 +154,7 @@ namespace MGUI.Core.UI.Containers
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public bool HasMultipleChildren => _Children.Count > 1;
 
-        public MGMultiContentHost(MGWindow Window, MGElementType ElementType)
+        public MGMultiContentHost(MgWindow Window, MGElementType ElementType)
             : base(Window, ElementType)
         {
             using (BeginInitializing())
@@ -256,11 +256,11 @@ namespace MGUI.Core.UI.Containers
             return TextBlock;
         }
 
-        /// <summary>Only intended to be used by <see cref="MGWindow"/>'s constructor.</summary>
-        protected MGSingleContentHost(MGDesktop UI, MGTheme Theme, MGWindow Window, MGElementType ElementType)
+        /// <summary>Only intended to be used by <see cref="MgWindow"/>'s constructor.</summary>
+        protected MGSingleContentHost(MGDesktop UI, MGTheme Theme, MgWindow Window, MGElementType ElementType)
             : base(UI, Theme, Window, ElementType) { }
 
-        protected MGSingleContentHost(MGWindow Window, MGElementType ElementType)
+        protected MGSingleContentHost(MgWindow Window, MGElementType ElementType)
             : base(Window, ElementType)
         {
 
@@ -294,13 +294,13 @@ namespace MGUI.Core.UI.Containers
     /// <summary>Lightweight wrapper class that contains a single <see cref="MGElement"/> as its <see cref="MGSingleContentHost.Content"/></summary>
     public class MGContentPresenter : MGSingleContentHost
     {
-        public MGContentPresenter(MGWindow Window) : this(Window, false) { }
+        public MGContentPresenter(MgWindow Window) : this(Window, false) { }
 
         internal bool SuppressContentAddedAndRemoved { get; }
 
         /// <param name="SuppressContentAddedAndRemoved">If true, <see cref="MGContentHost.InvokeContentAdded(MGElement)"/> and <see cref="MGContentHost.InvokeContentRemoved(MGElement)"/> will
         /// not be invoked when setting the <see cref="MGSingleContentHost.Content"/><br/>In 99% of cases this should be false.</param>
-        internal MGContentPresenter(MGWindow Window, bool SuppressContentAddedAndRemoved)
+        internal MGContentPresenter(MgWindow Window, bool SuppressContentAddedAndRemoved)
             : base(Window, MGElementType.ContentPresenter)
         {
             this.SuppressContentAddedAndRemoved = SuppressContentAddedAndRemoved;
@@ -473,9 +473,9 @@ namespace MGUI.Core.UI.Containers
         public MGComponent<MGContentPresenter> HeaderPresenterComponent { get; }
         public MGContentPresenter HeaderPresenter { get; }
 
-        public MGHeaderedContentPresenter(MGWindow Window, MGElement Header = null, MGElement Content = null)
+        public MGHeaderedContentPresenter(MgWindow Window, MGElement Header = null, MGElement Content = null)
             : this(Window, MGElementType.HeaderedContentPresenter, Header, Content) { }
-        protected MGHeaderedContentPresenter(MGWindow Window, MGElementType ElementType, MGElement Header = null, MGElement Content = null)
+        protected MGHeaderedContentPresenter(MgWindow Window, MGElementType ElementType, MGElement Header = null, MGElement Content = null)
             : base(Window, ElementType)
         {
             using (BeginInitializing())

@@ -141,7 +141,7 @@ namespace MGUI.Core.UI
         /// If you want to avoid this default behavior, manually subscribe to <see cref="OnLeftClicked"/>,<br/>
         /// call <see cref="AddCommandHandler(Action{MGButton, BaseMouseReleasedEventArgs}, bool)"/>,<br/>
         /// or set <see cref="Command"/> instead.</param>
-        public MGButton(MGWindow Window, Action<MGButton> HandleLeftClick = null)
+        public MGButton(MgWindow Window, Action<MGButton> HandleLeftClick = null)
             : this(Window, new(1), MGUniformBorderBrush.Black, HandleLeftClick) { }
 
         /// <param name="HandleLeftClick">An <see cref="Action"/> to invoke when this <see cref="MGButton"/> is left-clicked.<para/>
@@ -150,7 +150,7 @@ namespace MGUI.Core.UI
         /// If you want to avoid this default behavior, manually subscribe to <see cref="OnLeftClicked"/>,<br/>
         /// call <see cref="AddCommandHandler(Action{MGButton, BaseMouseReleasedEventArgs}, bool)"/>,<br/>
         /// or set <see cref="Command"/> instead.</param>
-        public MGButton(MGWindow Window, Thickness BorderThickness, IBorderBrush BorderBrush, Action<MGButton> HandleLeftClick = null)
+        public MGButton(MgWindow Window, Thickness BorderThickness, IBorderBrush BorderBrush, Action<MGButton> HandleLeftClick = null)
             : base(Window, MGElementType.Button)
         {
             using (BeginInitializing())

@@ -75,7 +75,7 @@ namespace MGUI.Core.UI
         }
 
 
-        public MGInputConsumer(MGWindow Window, bool HandlesMousePresses = true, bool HandlesMouseReleases = true, bool HandlesMouseDrags = true, bool HandlesMouseScroll = true)
+        public MGInputConsumer(MgWindow Window, bool HandlesMousePresses = true, bool HandlesMouseReleases = true, bool HandlesMouseDrags = true, bool HandlesMouseScroll = true)
             : base(Window, MGElementType.InputConsumer)
         {
             using (BeginInitializing())

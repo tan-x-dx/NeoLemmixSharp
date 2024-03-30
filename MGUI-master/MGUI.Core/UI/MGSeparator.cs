@@ -58,7 +58,7 @@ namespace MGUI.Core.UI
         };
 
         /// <param name="Size">For a vertical separator, this represents the width. For a horizontal separator, this represents the height.</param>
-        public MGSeparator(MGWindow Window, Orientation Orientation, int Size = 2)
+        public MGSeparator(MgWindow Window, Orientation Orientation, int Size = 2)
             : base(Window, MGElementType.Separator)
         {
             using (BeginInitializing())

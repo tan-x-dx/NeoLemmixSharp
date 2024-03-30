@@ -282,7 +282,7 @@ namespace MGUI.Core.UI
         private VisualStateFillBrush _ScrollBarOuterBrush;
         /// <summary>The brush to use for the outer portion of the scrollbars.<br/>
         /// Default value: <see cref="MGTheme.ScrollBarOuterBrush"/><para/>
-        /// See also:<br/><see cref="MGWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
+        /// See also:<br/><see cref="MgWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
         public VisualStateFillBrush ScrollBarOuterBrush
         {
             get => _ScrollBarOuterBrush;
@@ -300,7 +300,7 @@ namespace MGUI.Core.UI
         private VisualStateFillBrush _ScrollBarInnerBrush;
         /// <summary>The brush to use for the inner portion of the scrollbars.<br/>
         /// Default value: <see cref="MGTheme.ScrollBarInnerBrush"/><para/>
-        /// See also:<br/><see cref="MGWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
+        /// See also:<br/><see cref="MgWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
         public VisualStateFillBrush ScrollBarInnerBrush
         {
             get => _ScrollBarInnerBrush;
@@ -316,7 +316,7 @@ namespace MGUI.Core.UI
 
         protected override bool CanCacheSelfMeasurement => false; // The self measurement depends on the measurement of the children, so it must be re-calculated each time it's requested
 
-        public MGScrollViewer(MGWindow Window, ScrollBarVisibility VerticalScrollBarVisibility = ScrollBarVisibility.Auto, ScrollBarVisibility HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled) 
+        public MGScrollViewer(MgWindow Window, ScrollBarVisibility VerticalScrollBarVisibility = ScrollBarVisibility.Auto, ScrollBarVisibility HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled) 
             : base(Window, MGElementType.ScrollViewer)
         {
             using (BeginInitializing())

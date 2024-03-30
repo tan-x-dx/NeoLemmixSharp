@@ -182,7 +182,7 @@ namespace MGUI.Core.UI
         /// <summary>The wrapper that renders the <see cref="ActiveOverlay"/>. This element is only visible when there is an overlay being shown.</summary>
         public MGContentPresenter ActiveOverlayPresenter { get; }
 
-        public MGOverlayHost(MGWindow Window)
+        public MGOverlayHost(MgWindow Window)
             : base(Window, MGElementType.OverlayHost)
         {
             using (BeginInitializing())

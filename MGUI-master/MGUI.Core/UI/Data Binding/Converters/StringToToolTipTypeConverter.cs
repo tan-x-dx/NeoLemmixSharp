@@ -75,8 +75,8 @@ namespace MGUI.Core.UI.Data_Binding.Converters
         /// <summary>An action that will be applied to the generated <see cref="MGToolTip"/> (and it's generated <see cref="MGTextBlock"/> Content) whenever a new <see cref="MGToolTip"/>
         /// is created from a string value via <see cref="ConvertFrom(ITypeDescriptorContext, CultureInfo, object)"/><para/>
         /// Use this action to change default values of the generated <see cref="MGToolTip"/>, such as:<br/>
-        /// <see cref="MGWindow.BorderBrush"/><br/>
-        /// <see cref="MGWindow.BorderThickness"/><br/>
+        /// <see cref="MgWindow.BorderBrush"/><br/>
+        /// <see cref="MgWindow.BorderThickness"/><br/>
         /// <see cref="MGElement.Padding"/><br/>
         /// <see cref="MGElement.BackgroundBrush"/><br/>
         /// <see cref="MGTextBlock.FontSize"/><br/>

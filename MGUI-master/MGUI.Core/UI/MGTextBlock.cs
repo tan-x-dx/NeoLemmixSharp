@@ -265,7 +265,7 @@ namespace MGUI.Core.UI
         /// If the text is formatted with color codes (such as '[color=Red]Hello World[/color]'), the color specified in the <see cref="MGTextRun"/> will take precedence.<para/>
         /// If the value for the current <see cref="MGElement.VisualState"/> is null, will attempt to resolve the value from <see cref="MGElement.DerivedDefaultTextForeground"/>, or <see cref="MGTheme.TextBlockFallbackForeground"/> if no value is specified.<para/>
         /// See also:<br/><see cref="MGElement.DefaultTextForeground"/><br/><see cref="MGElement.DerivedDefaultTextForeground"/><br/><see cref="ActualForeground"/><br/>
-        /// <see cref="MGTheme.TextBlockFallbackForeground"/><br/><see cref="MGWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
+        /// <see cref="MGTheme.TextBlockFallbackForeground"/><br/><see cref="MgWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
         public VisualStateSetting<Color?> Foreground
         {
             get => _Foreground;
@@ -513,8 +513,8 @@ namespace MGUI.Core.UI
         }
 
         /// <param name="FontSize">If null, uses the font size specified by <see cref="ThemeFontSettings.DefaultFontSize"/>.<para/>
-        /// See also:<br/><see cref="MGWindow.Theme"/><br/><see cref="MGDesktop.Theme"/><br/><see cref="MGTheme.FontSettings"/></param>
-        public MGTextBlock(MGWindow Window, string Text, Color? Foreground = null, int? FontSize = null, bool AllowsInlineFormatting = true)
+        /// See also:<br/><see cref="MgWindow.Theme"/><br/><see cref="MGDesktop.Theme"/><br/><see cref="MGTheme.FontSettings"/></param>
+        public MGTextBlock(MgWindow Window, string Text, Color? Foreground = null, int? FontSize = null, bool AllowsInlineFormatting = true)
             : base(Window, MGElementType.TextBlock)
         {
             using (BeginInitializing())

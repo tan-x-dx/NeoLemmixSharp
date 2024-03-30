@@ -177,7 +177,7 @@ namespace MGUI.Core.UI
 
         /// <param name="SourceName">The name of the <see cref="MGTextureData"/> in <see cref="MgResources.Textures"/> that should be drawn by this <see cref="MGImage"/>.<para/>
         /// See also: <see cref="MGElement.GetResources"/>, <see cref="MgResources.Textures"/>, <see cref="MGImage.SourceName"/></param>
-        public MGImage(MGWindow Window, string SourceName, Stretch Stretch = Stretch.Uniform)
+        public MGImage(MgWindow Window, string SourceName, Stretch Stretch = Stretch.Uniform)
             : base(Window, MGElementType.Image)
         {
             using (BeginInitializing())
@@ -188,10 +188,10 @@ namespace MGUI.Core.UI
             }
         }
 
-        public MGImage(MGWindow Window, Texture2D Texture, Rectangle? SourceRect = null, Color? TextureColor = null, Stretch Stretch = Stretch.Uniform)
+        public MGImage(MgWindow Window, Texture2D Texture, Rectangle? SourceRect = null, Color? TextureColor = null, Stretch Stretch = Stretch.Uniform)
             : this(Window, new MGTextureData(Texture, SourceRect), TextureColor, Stretch) { }
 
-        public MGImage(MGWindow Window, MGTextureData Source, Color? TextureColor = null, Stretch Stretch = Stretch.Uniform)
+        public MGImage(MgWindow Window, MGTextureData Source, Color? TextureColor = null, Stretch Stretch = Stretch.Uniform)
             : base(Window, MGElementType.Image)
         {
             using (BeginInitializing())

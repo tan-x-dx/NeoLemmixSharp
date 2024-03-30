@@ -99,10 +99,10 @@ namespace MGUI.Core.UI
             }
         }
 
-        public MGRectangle(MGWindow Window, int Width, int Height, Color Stroke, int StrokeThickness, Color Fill)
+        public MGRectangle(MgWindow Window, int Width, int Height, Color Stroke, int StrokeThickness, Color Fill)
             : this(Window, Width, Height, Stroke, StrokeThickness, Fill.AsFillBrush()) { }
 
-        public MGRectangle(MGWindow Window, int Width, int Height, Color Stroke, int StrokeThickness, IFillBrush Fill)
+        public MGRectangle(MgWindow Window, int Width, int Height, Color Stroke, int StrokeThickness, IFillBrush Fill)
             : base(Window, MGElementType.Rectangle)
         {
             using (BeginInitializing())

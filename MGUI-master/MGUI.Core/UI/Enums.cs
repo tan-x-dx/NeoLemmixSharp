@@ -212,9 +212,9 @@ namespace MGUI.Core.UI
         /// <summary>Coordinates in this <see cref="CoordinateSpace"/> are relative to an origin specified by <see cref="MGElement.Origin"/></summary>
         Layout,
         /// <summary>Coordinates in this <see cref="CoordinateSpace"/> always use an origin of <see cref="Point.Zero"/>,<br/>
-        /// but do not account for <see cref="MGWindow.Scale"/></summary>
+        /// but do not account for <see cref="MgWindow.Scale"/></summary>
         UnscaledScreen,
-        /// <summary>Coordinates in this <see cref="CoordinateSpace"/> always use an origin of <see cref="Point.Zero"/>, and have already been scaled based on <see cref="MGWindow.Scale"/> value.<para/>
+        /// <summary>Coordinates in this <see cref="CoordinateSpace"/> always use an origin of <see cref="Point.Zero"/>, and have already been scaled based on <see cref="MgWindow.Scale"/> value.<para/>
         /// Mouse Positions are typically defined in this <see cref="CoordinateSpace"/> and converted to <see cref="CoordinateSpace.Layout"/><br/>
         /// before checking if the position intersects the <see cref="MGElement"/> bounds (such as <see cref="MGElement.LayoutBounds"/>)</summary>
         Screen

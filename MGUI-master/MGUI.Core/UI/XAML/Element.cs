@@ -173,7 +173,7 @@ namespace MGUI.Core.UI.XAML
         protected internal List<BindingConfig> Bindings { get; } = new();
 
         /// <param name="ApplyBaseSettings">If not null, this action will be invoked before <see cref="ApplySettings(MGElement, MGElement, bool)"/> executes.</param>
-        public T ToElement<T>(MGWindow Window, MGElement Parent, Action<T> ApplyBaseSettings = null) 
+        public T ToElement<T>(MgWindow Window, MGElement Parent, Action<T> ApplyBaseSettings = null) 
             where T : MGElement
         {
             T Element = CreateElementInstance(Window, Parent) as T;
@@ -347,7 +347,7 @@ namespace MGUI.Core.UI.XAML
                 Element.BackgroundBrush.FocusedColor = BackgroundFocusedColor.Value.ToXNAColor();
         }
 
-        protected abstract MGElement CreateElementInstance(MGWindow Window, MGElement Parent);
+        protected abstract MGElement CreateElementInstance(MgWindow Window, MGElement Parent);
         /// <param name="IncludeContent">Recommended value: true. If true, child XAML content, if any, will also be processed.</param>
         protected internal abstract void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent);
 

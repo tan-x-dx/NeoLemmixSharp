@@ -54,13 +54,13 @@ namespace MGUI.Core.UI
 
         public event EventHandler<EventArgs<Thickness>> OnBorderThicknessChanged;
 
-        public MGBorder(MGWindow Window)
+        public MGBorder(MgWindow Window)
             : this(Window, new(1), MGUniformBorderBrush.Black) { }
 
-        public MGBorder(MGWindow Window, Thickness BorderThickness, IFillBrush BorderBrush)
+        public MGBorder(MgWindow Window, Thickness BorderThickness, IFillBrush BorderBrush)
             : this(Window, BorderThickness, BorderBrush == null ? null : new MGUniformBorderBrush(BorderBrush)) { }
 
-        public MGBorder(MGWindow Window, Thickness BorderThickness, IBorderBrush BorderBrush)
+        public MGBorder(MgWindow Window, Thickness BorderThickness, IBorderBrush BorderBrush)
             : base(Window, MGElementType.Border)
         {
             using (BeginInitializing())

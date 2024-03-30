@@ -83,7 +83,7 @@ namespace MGUI.Core.UI
         private Color _ExpanderDropdownArrowColor;
         /// <summary>The color to use when rendering the dropdown arrow icon inside the button part of this <see cref="MGExpander"/>'s header.<para/>
         /// Default value: <see cref="MGTheme.DropdownArrowColor"/><para/>
-        /// See also:<br/><see cref="MGWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
+        /// See also:<br/><see cref="MgWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
         public Color ExpanderDropdownArrowColor
         {
             get => _ExpanderDropdownArrowColor;
@@ -313,7 +313,7 @@ namespace MGUI.Core.UI
             }
         }
 
-        public MGExpander(MGWindow Window, bool IsExpanded = true) 
+        public MGExpander(MgWindow Window, bool IsExpanded = true) 
             : base(Window, MGElementType.Expander)
         {
             using (BeginInitializing())

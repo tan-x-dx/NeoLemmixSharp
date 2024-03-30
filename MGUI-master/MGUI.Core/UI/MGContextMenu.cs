@@ -41,7 +41,7 @@ namespace MGUI.Core.UI
         }
     }
 
-    public class MGContextMenu : MGWindow, IContextMenuHost
+    public class MGContextMenu : MgWindow, IContextMenuHost
     {
         public static Rectangle FitMenuToViewport(Rectangle Anchor, Size Size, Rectangle Viewport)
         {
@@ -170,7 +170,7 @@ namespace MGUI.Core.UI
         }
         #endregion Close Conditions
 
-        public MGButton CreateDefaultDropdownButton(MGWindow Window)
+        public MGButton CreateDefaultDropdownButton(MgWindow Window)
         {
             MGButton Button = new(Window ?? this, new(0), MGUniformBorderBrush.Gray);
 
@@ -188,10 +188,10 @@ namespace MGUI.Core.UI
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private Func<MGWindow, MGButton> _ButtonWrapperTemplate;
+        private Func<MgWindow, MGButton> _ButtonWrapperTemplate;
         /// <summary>Every <see cref="MGContextMenuButton"/> and <see cref="MGContextMenuToggle"/> within <see cref="Items"/> will be automatically wrapped in an <see cref="MGButton"/> created by this function.<para/>
         /// Default value: <see cref="CreateDefaultDropdownButton"/></summary>
-        public Func<MGWindow, MGButton> ButtonWrapperTemplate
+        public Func<MgWindow, MGButton> ButtonWrapperTemplate
         {
             get => _ButtonWrapperTemplate;
             set
@@ -394,7 +394,7 @@ namespace MGUI.Core.UI
         }
 
         /// <summary>Consider subscribing to <see cref="ItemSelected"/> and <see cref="ItemToggled"/> to handle user actions.</summary>
-        public static MGContextMenu CreateSimpleMenu(MGWindow Window, string Title, Color? TextForeground, params MGSimpleContextMenuItem[] Items)
+        public static MGContextMenu CreateSimpleMenu(MgWindow Window, string Title, Color? TextForeground, params MGSimpleContextMenuItem[] Items)
         {
             MGContextMenu Menu = new(Window, Title, Window.Theme);
             AddItemsToMenu(Menu, TextForeground, Items?.ToList());
@@ -459,14 +459,14 @@ namespace MGUI.Core.UI
         }
 
         /// <summary>Creates a root-level <see cref="MGContextMenu"/></summary>
-        public MGContextMenu(MGWindow Window, string TitleText = "[b]Choose Option[/b]", MGTheme Theme = null)
+        public MGContextMenu(MgWindow Window, string TitleText = "[b]Choose Option[/b]", MGTheme Theme = null)
             : this(Window.Desktop, Theme ?? Window.Theme, Window, TitleText) { }
 
-        /// <summary>Creates a root-level <see cref="MGContextMenu"/> that does not belong to any <see cref="MGWindow"/>s</summary>
+        /// <summary>Creates a root-level <see cref="MGContextMenu"/> that does not belong to any <see cref="MgWindow"/>s</summary>
         public MGContextMenu(MGDesktop Desktop, string TitleText = "[b]Choose Option[/b]", MGTheme Theme = null)
             : this(Desktop, Theme, null, TitleText) { }
 
-        protected MGContextMenu(MGDesktop Desktop, MGTheme WindowTheme, MGWindow Window, string TitleText = "[b]Choose Option[/b]")
+        protected MGContextMenu(MGDesktop Desktop, MGTheme WindowTheme, MgWindow Window, string TitleText = "[b]Choose Option[/b]")
             : base(Desktop, WindowTheme, Window, MGElementType.ContextMenu, 0, 0, 1, 1)
         {
             using (BeginInitializing())

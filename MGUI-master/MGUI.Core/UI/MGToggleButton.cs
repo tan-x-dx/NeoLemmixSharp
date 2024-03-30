@@ -92,10 +92,10 @@ namespace MGUI.Core.UI
         public event EventHandler<EventArgs> OnChecked;
         public event EventHandler<EventArgs> OnUnchecked;
 
-        public MGToggleButton(MGWindow Window, bool IsChecked = false)
+        public MGToggleButton(MgWindow Window, bool IsChecked = false)
             : this(Window, new(1), MGUniformBorderBrush.Black, IsChecked) { }
 
-        public MGToggleButton(MGWindow Window, Thickness BorderThickness, IBorderBrush BorderBrush, bool IsChecked)
+        public MGToggleButton(MgWindow Window, Thickness BorderThickness, IBorderBrush BorderBrush, bool IsChecked)
             : base(Window, MGElementType.ToggleButton)
         {
             using (BeginInitializing())

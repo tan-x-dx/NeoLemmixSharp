@@ -145,7 +145,7 @@ namespace MGUI.Core.UI.Containers
             return true;
         }
 
-        public MGStackPanel(MGWindow Window, Orientation Orientation)
+        public MGStackPanel(MgWindow Window, Orientation Orientation)
             : base(Window, MGElementType.StackPanel)
         {
             using (BeginInitializing())

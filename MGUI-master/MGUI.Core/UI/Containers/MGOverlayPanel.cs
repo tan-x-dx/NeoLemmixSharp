@@ -94,7 +94,7 @@ namespace MGUI.Core.UI.Containers
             return true;
         }
 
-        public MGOverlayPanel(MGWindow Window)
+        public MGOverlayPanel(MgWindow Window)
             : base(Window, MGElementType.OverlayPanel)
         {
             using (BeginInitializing())

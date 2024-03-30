@@ -91,7 +91,7 @@ namespace MGUI.Core.UI
         /// <summary>This feature is intentionally disabled for <see cref="MGPasswordBox"/></summary>
         public override bool AcceptsTab { get => false; set { } }
 
-        public MGPasswordBox(MGWindow Window, int? CharacterLimit = 250)
+        public MGPasswordBox(MgWindow Window, int? CharacterLimit = 250)
             : base(Window, MGElementType.PasswordBox, CharacterLimit, false, false)
         {
 			using (BeginInitializing())

@@ -679,7 +679,7 @@ namespace MGUI.Core.UI.Containers.Grids
         /// You may wish to check if <see cref="GetCellContent(GridCellIndex)"/> is an empty list to skip custom rendering to empty cells.</summary>
         public event EventHandler<RenderCellArgs> OnRenderCell;
 
-        public MGUniformGrid(MGWindow Window, int Rows, int Columns, Size CellSize)
+        public MGUniformGrid(MgWindow Window, int Rows, int Columns, Size CellSize)
             : base(Window, MGElementType.UniformGrid)
         {
             using (BeginInitializing())

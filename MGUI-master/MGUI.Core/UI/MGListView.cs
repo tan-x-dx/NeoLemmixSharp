@@ -272,10 +272,10 @@ namespace MGUI.Core.UI
 
         public event EventHandler<GridSelection?> SelectionChanged;
 
-        public MGListView(MGWindow Window)
+        public MGListView(MgWindow Window)
             : this(Window, 8, 3) { }
 
-        public MGListView(MGWindow Window, int Spacing, int GridLineMargin)
+        public MGListView(MgWindow Window, int Spacing, int GridLineMargin)
             : base(Window, MGElementType.ListView)
         {
             using (BeginInitializing())

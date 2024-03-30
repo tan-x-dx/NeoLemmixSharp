@@ -182,7 +182,7 @@ namespace MGUI.Core.UI
 
         /// <param name="IsPaused">If true, <see cref="RemainingDuration"/> will not decrement until <see cref="Resume"/> is called.</param>
         /// <param name="AllowsNegativeDuration">If true, <see cref="RemainingDuration"/> will continue decreasing even after hitting 0.</param>
-        public MGTimer(MGWindow Window, TimeSpan Duration, bool IsPaused = true, bool AllowsNegativeDuration = false)
+        public MGTimer(MgWindow Window, TimeSpan Duration, bool IsPaused = true, bool AllowsNegativeDuration = false)
             : base(Window, MGElementType.Timer)
         {
             using (BeginInitializing())

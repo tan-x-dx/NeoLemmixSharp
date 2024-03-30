@@ -603,7 +603,7 @@ public class MgListBox<TItemType> : MGElement
         }
     }
 
-    public MgListBox(MGWindow parentWindow)
+    public MgListBox(MgWindow parentWindow)
         : base(parentWindow, MGElementType.ListBox)
     {
         using (BeginInitializing())

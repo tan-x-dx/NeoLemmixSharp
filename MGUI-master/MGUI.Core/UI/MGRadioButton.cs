@@ -19,7 +19,7 @@ namespace MGUI.Core.UI
     /// <summary>This class handles mutual exclusion between the <see cref="MGRadioButton.IsChecked"/> property of multiple <see cref="MGRadioButton"/>s belonging to the same <see cref="MGRadioButtonGroup"/></summary>
     public class MGRadioButtonGroup : ViewModelBase
     {
-        public MGWindow Window { get; }
+        public MgWindow Window { get; }
         public string Name { get; }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -95,10 +95,10 @@ namespace MGUI.Core.UI
         public void AddRadioButton(MGRadioButton RB) => _RadioButtons.Add(RB);
         public bool RemoveRadioButton(MGRadioButton RB) => _RadioButtons.Remove(RB);
 
-        public MGRadioButtonGroup(MGWindow Window, string Name)
+        public MGRadioButtonGroup(MgWindow Window, string Name)
         {
             if (Window.HasRadioButtonGroup(Name))
-                throw new ArgumentException($"{nameof(Name)} '{Name}' must be unique within the scope of its {nameof(MGWindow)}.");
+                throw new ArgumentException($"{nameof(Name)} '{Name}' must be unique within the scope of its {nameof(MgWindow)}.");
 
             this.Name = Name;
             this._RadioButtons = new();
@@ -210,7 +210,7 @@ namespace MGUI.Core.UI
         private Color _BubbleCheckedColor;
         /// <summary>The <see cref="Color"/> to use when filling in the checkable bubble part when <see cref="IsChecked"/> is true.<para/>
         /// Default value: <see cref="MGTheme.RadioButtonCheckedFillColor"/><para/>
-        /// See also:<br/><see cref="MGWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
+        /// See also:<br/><see cref="MgWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
         public Color BubbleCheckedColor
         {
             get => _BubbleCheckedColor;
@@ -266,10 +266,10 @@ namespace MGUI.Core.UI
         public event EventHandler<EventArgs> OnChecked;
         public event EventHandler<EventArgs> OnUnchecked;
 
-        public MGRadioButton(MGWindow Window, string GroupName)
+        public MGRadioButton(MgWindow Window, string GroupName)
             : this(Window, Window.GetOrCreateRadioButtonGroup(GroupName)) { }
 
-        public MGRadioButton(MGWindow Window, MGRadioButtonGroup Group)
+        public MGRadioButton(MgWindow Window, MGRadioButtonGroup Group)
             : base(Window, MGElementType.RadioButton)
         {
             using (BeginInitializing())

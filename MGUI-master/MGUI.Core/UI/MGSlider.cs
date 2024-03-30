@@ -579,10 +579,10 @@ namespace MGUI.Core.UI
 
         //TODO maybe add an option to show the value in a bordered textblock to the right of the slider portion?
 
-        public MGSlider(MGWindow Window, float Minimum, float Maximum, float Value)
+        public MGSlider(MgWindow Window, float Minimum, float Maximum, float Value)
             : this(Window, Minimum, Maximum, Value, false, null, MGUniformBorderBrush.Black, Orientation.Horizontal) { }
 
-        public MGSlider(MGWindow Window, float Minimum, float Maximum, float Value, bool DrawTicks, float? TickFrequency,
+        public MGSlider(MgWindow Window, float Minimum, float Maximum, float Value, bool DrawTicks, float? TickFrequency,
             IBorderBrush BorderBrush, Orientation Orientation)
             : base(Window, MGElementType.Slider)
         {

@@ -12,15 +12,15 @@ namespace MGUI.Core.UI
     public class MGElementTemplate
     {
         public readonly string Name;
-        /// <summary>If true, this template will only generate a single element instance and return that same instance every time <see cref="GetInstance(MGWindow)"/> is invoked.<para/>
+        /// <summary>If true, this template will only generate a single element instance and return that same instance every time <see cref="GetInstance(MgWindow)"/> is invoked.<para/>
         /// If unsure, set this to false.</summary>
         public readonly bool IsShared;
         /// <summary>The function that is invoked to generate the element instance.<para/>
-        /// Recommended to use <see cref="GetInstance(MGWindow)"/> instead of invoking this function to account for <see cref="IsShared"/>.</summary>
-        public readonly Func<MGWindow, MGElement> Template;
+        /// Recommended to use <see cref="GetInstance(MgWindow)"/> instead of invoking this function to account for <see cref="IsShared"/>.</summary>
+        public readonly Func<MgWindow, MGElement> Template;
 
-        private readonly Dictionary<MGWindow, MGElement> Instances = new();
-        public MGElement GetInstance(MGWindow Window)
+        private readonly Dictionary<MgWindow, MGElement> Instances = new();
+        public MGElement GetInstance(MgWindow Window)
         {
             if (Window == null)
                 throw new ArgumentNullException(nameof(Window));
@@ -38,9 +38,9 @@ namespace MGUI.Core.UI
         }
 
         /// <param name="IsShared">If true, this template will only generate a single element instance and return that same instance every 
-        /// time <see cref="GetInstance(MGWindow)"/> is invoked.<para/>If unsure, set this to false.</param>
+        /// time <see cref="GetInstance(MgWindow)"/> is invoked.<para/>If unsure, set this to false.</param>
         /// <param name="Template">The function that will be invoked to generate the element instance.</param>
-        public MGElementTemplate(string Name, bool IsShared, Func<MGWindow, MGElement> Template)
+        public MGElementTemplate(string Name, bool IsShared, Func<MgWindow, MGElement> Template)
         {
             this.Name = Name ?? throw new ArgumentNullException(nameof(Name));
             this.IsShared = IsShared;

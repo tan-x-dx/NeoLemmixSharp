@@ -840,7 +840,7 @@ namespace MGUI.Core.UI.Containers.Grids
             }
         }
 
-        public MGGrid(MGWindow Window)
+        public MGGrid(MgWindow Window)
             : base(Window, MGElementType.Grid)
         {
             using (BeginInitializing())

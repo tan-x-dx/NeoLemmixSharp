@@ -33,7 +33,7 @@ namespace MGUI.Core.UI.XAML
 
         /// <param name="ApplyBaseSettings">If not null, this action will be invoked before <see cref="Element.ApplySettings(MGElement, MGElement, bool)"/>
         /// executes on the created <see cref="MGElement"/>.</param>
-        public MGElement GetContent(MGWindow Window, MGElement Parent, object DataContext, Action<MGElement> ApplyBaseSettings = null)
+        public MGElement GetContent(MgWindow Window, MGElement Parent, object DataContext, Action<MGElement> ApplyBaseSettings = null)
         {
             if (Content != null)
             {

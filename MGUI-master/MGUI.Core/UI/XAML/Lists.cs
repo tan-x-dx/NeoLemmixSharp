@@ -116,7 +116,7 @@ public class ListBox : MultiContentHost
     [Category("Appearance")]
     public Border ItemContainerStyle { get; set; } = null;
 
-    protected override MGElement CreateElementInstance(MGWindow window, MGElement parent)
+    protected override MGElement CreateElementInstance(MgWindow window, MGElement parent)
     {
         var genericType = typeof(MgListBox<>).MakeGenericType([ItemType]);
         var element = Activator.CreateInstance(genericType, [window]);
@@ -177,7 +177,7 @@ public class ListView : MultiContentHost
     [Category("Behavior")]
     public GridSelectionMode? SelectionMode { get; set; }
 
-    protected override MGElement CreateElementInstance(MGWindow window, MGElement parent)
+    protected override MGElement CreateElementInstance(MgWindow window, MGElement parent)
     {
         var genericType = typeof(MGListView<>).MakeGenericType([ItemType]);
         var element = Activator.CreateInstance(genericType, [window]);

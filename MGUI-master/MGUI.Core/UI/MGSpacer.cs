@@ -48,7 +48,7 @@ namespace MGUI.Core.UI
             }
         }
 
-        public MGSpacer(MGWindow Window, int Width, int Height)
+        public MGSpacer(MgWindow Window, int Width, int Height)
             : base(Window, MGElementType.Spacer)
         {
             using (BeginInitializing())

@@ -110,7 +110,7 @@ namespace MGUI.Core.UI
             throw new InvalidOperationException($"{nameof(MGContextualContentPresenter)}.{nameof(Content)} is automatically managed via " +
                 $"{nameof(TrueContent)}, {nameof(FalseContent)}, and {nameof(Value)} properties and should not be explicitly set.");
 
-        public MGContextualContentPresenter(MGWindow Window, bool Value, MGElement TrueContent = null, MGElement FalseContent = null)
+        public MGContextualContentPresenter(MgWindow Window, bool Value, MGElement TrueContent = null, MGElement FalseContent = null)
             : base(Window, MGElementType.ContextualContentPresenter)
         {
             using (BeginInitializing())

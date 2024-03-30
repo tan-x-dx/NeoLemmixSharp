@@ -68,7 +68,7 @@ namespace MGUI.Core.UI
         private Color _CheckMarkColor;
         /// <summary>The <see cref="Color"/> to use when stroking the check mark if <see cref="IsChecked"/> is true.<para/>
         /// Default value: <see cref="MGTheme.CheckMarkColor"/><para/>
-        /// See also:<br/><see cref="MGWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
+        /// See also:<br/><see cref="MgWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
         public Color CheckMarkColor
         {
             get => _CheckMarkColor;
@@ -200,7 +200,7 @@ namespace MGUI.Core.UI
         public event EventHandler<EventArgs> OnChecked;
         public event EventHandler<EventArgs> OnUnchecked;
 
-        public MGCheckBox(MGWindow Window, bool? IsChecked = false)
+        public MGCheckBox(MgWindow Window, bool? IsChecked = false)
             : base(Window, MGElementType.CheckBox)
         {
             using (BeginInitializing())

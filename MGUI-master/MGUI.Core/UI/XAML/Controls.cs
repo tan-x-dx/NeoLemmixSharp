@@ -20,7 +20,7 @@ namespace MGUI.Core.UI.XAML
     public class ContentPresenter : SingleContentHost
     {
         public override MGElementType ElementType => MGElementType.ContentPresenter;
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGContentPresenter(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGContentPresenter(Window);
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
             => base.ApplyDerivedSettings(Parent, Element, IncludeContent);
     }
@@ -36,7 +36,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Layout")]
         public int? Spacing { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGHeaderedContentPresenter(Window, null, null);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGHeaderedContentPresenter(Window, null, null);
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
             MGHeaderedContentPresenter ContentPresenter = Element as MGHeaderedContentPresenter;
@@ -70,11 +70,11 @@ namespace MGUI.Core.UI.XAML
         public Element FalseContent { get; set; } = null;
 
         public override MGElementType ElementType => MGElementType.ContextualContentPresenter;
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGContextualContentPresenter(Window, Value, null, null);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGContextualContentPresenter(Window, Value, null, null);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
-            MGWindow Window = Element.SelfOrParentWindow;
+            MgWindow Window = Element.SelfOrParentWindow;
             MGContextualContentPresenter ContextualContentPresenter = Element as MGContextualContentPresenter;
 
             if (TrueContent != null)
@@ -109,7 +109,7 @@ namespace MGUI.Core.UI.XAML
         [Browsable(false)]
         public Thickness? BT { get => BorderThickness; set => BorderThickness = value; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGBorder(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGBorder(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -160,7 +160,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Behavior")]
         public TimeSpan? RepeatInterval { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGButton(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGButton(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -218,7 +218,7 @@ namespace MGUI.Core.UI.XAML
         public Separator Separator { get; set; } = new();
         public ListBox MessagesContainer { get; set; } = new();
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGChatBox(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGChatBox(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -275,7 +275,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Behavior")]
         public bool? IsReadonly { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGCheckBox(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGCheckBox(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -377,7 +377,7 @@ namespace MGUI.Core.UI.XAML
         public Element DropdownHeader { get; set; } = null;
         public Element DropdownFooter { get; set; } = null;
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
         {
             Type GenericType = typeof(MGComboBox<>).MakeGenericType(new Type[] { ItemType });
             object Element = Activator.CreateInstance(GenericType, new object[] { Window });
@@ -442,7 +442,7 @@ namespace MGUI.Core.UI.XAML
 
         public StackPanel HeadersPanel { get; set; } = new();
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGExpander(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGExpander(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -524,7 +524,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Layout")]
         public int? HeaderHorizontalPadding { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGGroupBox(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGGroupBox(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -580,7 +580,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Layout")]
         public Stretch? Stretch { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
             => Source.HasValue ? new MGImage(Window, Source.Value) : new MGImage(Window, SourceName);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
@@ -630,7 +630,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Behavior")]
         public bool? HandlesMouseScroll { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGInputConsumer(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGInputConsumer(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -661,7 +661,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Data")]
         public List<Overlay> Overlays { get; set; } = new();
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGOverlayHost(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGOverlayHost(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -724,7 +724,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Appearance")]
         public bool? ShowCloseButton { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
         {
             if (Parent is MGOverlayHost OverlayHost)
             {
@@ -769,7 +769,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Appearance")]
         public char? PasswordCharacter { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGPasswordBox(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGPasswordBox(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -832,7 +832,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Layout")]
         public bool? IsReversed { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGProgressBar(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGProgressBar(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -909,7 +909,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Behavior")]
         public bool? IsChecked { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGRadioButton(Window, GroupName ?? "");
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGRadioButton(Window, GroupName ?? "");
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -992,7 +992,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Behavior")]
         public bool? IsReadonly { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGRatingControl(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGRatingControl(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -1052,7 +1052,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Appearance")]
         public FillBrush Fill { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
             => new MGRectangle(Window, Width ?? 16, Height ?? 16, Stroke?.ToXNAColor() ?? Color.Transparent, StrokeThickness ?? 1, Fill?.ToFillBrush(Window.Desktop));
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
@@ -1083,7 +1083,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Layout")]
         public int? Spacing { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
             => throw new InvalidOperationException($"Unsupported feature - cannot instantiate {nameof(MGResizeGrip)} through XAML.");
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
@@ -1131,7 +1131,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Appearance")]
         public FillBrush ScrollBarFocusedInnerBrush { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGScrollViewer(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGScrollViewer(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -1171,7 +1171,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Layout")]
         public int? Size { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
             => new MGSeparator(Window, Orientation ?? UI.Orientation.Horizontal);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
@@ -1247,7 +1247,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Behavior")]
         public bool? AcceptsMouseScrollWheel { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
             => new MGSlider(Window, Minimum ?? 0, Maximum ?? 100, Value ?? Minimum ?? 0);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
@@ -1317,7 +1317,7 @@ namespace MGUI.Core.UI.XAML
     public class Spacer : Element
     {
         public override MGElementType ElementType => MGElementType.Spacer;
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGSpacer(Window, Width ?? 0, Height ?? 0);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGSpacer(Window, Width ?? 0, Height ?? 0);
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent) { }
         protected internal override IEnumerable<Element> GetChildren() => Enumerable.Empty<Element>();
     }
@@ -1346,7 +1346,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Behavior")]
         public bool? IsRevealed { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGSpoiler(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGSpoiler(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -1404,7 +1404,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Behavior")]
         public bool? IsRunning { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGStopwatch(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGStopwatch(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -1470,7 +1470,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Data")]
         public List<TabItem> Tabs { get; set; } = new();
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGTabControl(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGTabControl(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -1545,7 +1545,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Behavior")]
         public bool? IsTabSelected { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
         {
             if (Parent is MGTabControl TabControl)
             {
@@ -1618,7 +1618,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Layout")]
         public HorizontalAlignment? TextAlignment { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGTextBlock(Window, Text, Foreground?.ToXNAColor(), FontSize ?? null, AllowsInlineFormatting ?? true);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGTextBlock(Window, Text, Foreground?.ToXNAColor(), FontSize ?? null, AllowsInlineFormatting ?? true);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -1743,7 +1743,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Layout")]
         public bool? IsUserResizable { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGTextBox(Window, null);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGTextBox(Window, null);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -1861,7 +1861,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Behavior")]
         public bool? IsPaused { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
             => new MGTimer(Window, RemainingDuration ?? TimeSpan.FromSeconds(60.0), IsPaused ?? true, AllowsNegativeDuration ?? false);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
@@ -1925,7 +1925,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Behavior")]
         public bool? IsChecked { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGToggleButton(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGToggleButton(Window);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
@@ -1967,7 +1967,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Layout")]
         public Size? DrawOffset { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
             => new MGToolTip(Window, Parent, Width ?? 0, Height ?? 0);
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
@@ -2083,25 +2083,25 @@ namespace MGUI.Core.UI.XAML
         [Category("Appearance")]
         public WindowStyle? WindowStyle { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
         {
             MGTheme Theme = Window.GetResources().GetThemeOrDefault(ThemeName, Window.Theme);
             int WindowWidth = Math.Clamp(Width ?? 0, MinWidth ?? 0, MaxWidth ?? int.MaxValue);
             int WindowHeight = Math.Clamp(Height ?? 0, MinHeight ?? 0, MaxHeight ?? int.MaxValue);
-            MGWindow Instance = new(Window, Left ?? 0, Top ?? 0, WindowWidth, WindowHeight, Theme);
+            MgWindow Instance = new(Window, Left ?? 0, Top ?? 0, WindowWidth, WindowHeight, Theme);
             foreach (Window Nested in NestedWindows)
-                Instance.AddNestedWindow(Nested.ToElement<MGWindow>(Window, Window));
+                Instance.AddNestedWindow(Nested.ToElement<MgWindow>(Window, Window));
             return Instance;
         }
 
-        public MGWindow ToElement(MGDesktop Desktop)
+        public MgWindow ToElement(MGDesktop Desktop)
         {
             MgResources Resources = Desktop.Resources;
             MGTheme Theme = Resources.GetThemeOrDefault(ThemeName);
 
             int WindowWidth = Math.Clamp(Width ?? 0, MinWidth ?? 0, MaxWidth ?? int.MaxValue);
             int WindowHeight = Math.Clamp(Height ?? 0, MinHeight ?? 0, MaxHeight ?? int.MaxValue);
-            MGWindow Window = new(Desktop, Left ?? 0, Top ?? 0, WindowWidth, WindowHeight, Theme);
+            MgWindow Window = new(Desktop, Left ?? 0, Top ?? 0, WindowWidth, WindowHeight, Theme);
             ApplySettings(null, Window, true);
             ProcessBindings(Window, true, null);
 
@@ -2110,7 +2110,7 @@ namespace MGUI.Core.UI.XAML
 
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)
         {
-            MGWindow Window = Element as MGWindow;
+            MgWindow Window = Element as MgWindow;
             ResizeGrip.ApplySettings(Window, Window.ResizeGripComponent.Element, false);
             TitleBar.ApplySettings(Window, Window.TitleBarComponent.Element, true);
             TitleBarTextBlock.ApplySettings(Window, Window.TitleBarTextBlockElement, false);
@@ -2120,7 +2120,7 @@ namespace MGUI.Core.UI.XAML
                 Window.IsUserResizable = IsUserResizable.Value;
 
             if (ModalWindow != null)
-                Window.ModalWindow = ModalWindow.ToElement<MGWindow>(Window, Window);
+                Window.ModalWindow = ModalWindow.ToElement<MgWindow>(Window, Window);
 
             if (TitleText != null)
                 Window.TitleText = TitleText;
@@ -2201,7 +2201,7 @@ namespace MGUI.Core.UI.XAML
     {
         public override MGElementType ElementType => MGElementType.XAMLDesigner;
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent) => new MGXAMLDesigner(Window);
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent) => new MGXAMLDesigner(Window);
 
         protected internal override IEnumerable<Element> GetChildren() => Enumerable.Empty<Element>();
         protected internal override void ApplyDerivedSettings(MGElement Parent, MGElement Element, bool IncludeContent)

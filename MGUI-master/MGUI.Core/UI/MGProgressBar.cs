@@ -305,7 +305,7 @@ namespace MGUI.Core.UI
         /// <param name="Value">The current value. This should be in the inclusive range [<paramref name="Minimum"/>, <paramref name="Maximum"/>]</param>
         /// <param name="Size">The size, in pixels, of the bar. If the orientation is <see cref="Orientation.Horizontal"/>, this represents the height of the bar.</param>
         /// <param name="ShowValue">If true, the current value will be displayed as a piece of text on the inside of the end of the bar.</param>
-        public MGProgressBar(MGWindow Window, float Minimum = 0, float Maximum = 100, float Value = 0, int Size = 22, bool ShowValue = false, Orientation Orientation = Orientation.Horizontal)
+        public MGProgressBar(MgWindow Window, float Minimum = 0, float Maximum = 100, float Value = 0, int Size = 22, bool ShowValue = false, Orientation Orientation = Orientation.Horizontal)
             : base(Window, MGElementType.ProgressBar)
         {
             using (BeginInitializing())

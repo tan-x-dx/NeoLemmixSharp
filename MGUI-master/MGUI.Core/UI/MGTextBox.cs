@@ -988,13 +988,13 @@ namespace MGUI.Core.UI
         #endregion Resizing
 
         /// <param name="CharacterLimit">Use null for no limit. Recommended to set this to a reasonable value to avoid performance issues.</param>
-        public MGTextBox(MGWindow Window, int? CharacterLimit = 1000, bool ShowCharacterCount = false, bool IsUserResizable = false)
+        public MGTextBox(MgWindow Window, int? CharacterLimit = 1000, bool ShowCharacterCount = false, bool IsUserResizable = false)
             : this(Window, MGElementType.TextBox, CharacterLimit, ShowCharacterCount, IsUserResizable)
         {
 
         }
 
-        protected MGTextBox(MGWindow Window, MGElementType ElementType, int? CharacterLimit, bool ShowCharacterCount, bool IsUserResizable) 
+        protected MGTextBox(MgWindow Window, MGElementType ElementType, int? CharacterLimit, bool ShowCharacterCount, bool IsUserResizable) 
             : base(Window, ElementType)
         {
             using (BeginInitializing())

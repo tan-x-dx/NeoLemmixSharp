@@ -109,7 +109,7 @@ public sealed class MgResources
     public IReadOnlyDictionary<string, Action<MGElement>> Commands => _commands;
 
     /// <param name="name">Must be unique. If the command is intended to be window-specific, 
-    /// you may wish to prefix the command name with the <see cref="MGWindow"/>'s <see cref="MGElement.UniqueId"/> to ensure uniqueness.</param>
+    /// you may wish to prefix the command name with the <see cref="MgWindow"/>'s <see cref="MGElement.UniqueId"/> to ensure uniqueness.</param>
     public void AddCommand(string name, Action<MGElement> command)
     {
         _commands.Add(name, command);
@@ -187,7 +187,7 @@ public sealed class MgResources
     public event EventHandler<(string Name, MGTheme Theme)> OnThemeRemoved;
 
     private MGTheme _defaultTheme;
-    /// <summary>The <see cref="MGTheme"/> to assign to an <see cref="MGWindow"/> after parsing a XAML string (unless the window explicitly specifies a different theme).<para/>
+    /// <summary>The <see cref="MGTheme"/> to assign to an <see cref="MgWindow"/> after parsing a XAML string (unless the window explicitly specifies a different theme).<para/>
     /// Note: Changing this value will not dynamically update the theme of any windows that have already been parsed. This value is only applied once on each window, when the XAML is parsed.<br/>
     /// So if you do change this value, you may want to re-parse your XAML content to initialize a new window.<para/>
     /// See also: <see cref="XamlParser.LoadRootWindow(MGDesktop, string, bool, bool)"/><para/>

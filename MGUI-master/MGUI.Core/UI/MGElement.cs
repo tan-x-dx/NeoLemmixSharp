@@ -183,20 +183,20 @@ namespace MGUI.Core.UI
         public string UniqueId { get; }
 
 		public MGDesktop GetDesktop() => SelfOrParentWindow.Desktop;
-        /// <summary>Prioritizes <see cref="MGWindow.Theme"/>. If null, falls back to <see cref="MGDesktop.Theme"/></summary>
+        /// <summary>Prioritizes <see cref="MgWindow.Theme"/>. If null, falls back to <see cref="MGDesktop.Theme"/></summary>
         public MGTheme GetTheme() => SelfOrParentWindow.Theme ?? GetDesktop().Theme;
         public MgResources GetResources() => GetDesktop().Resources;
 
-		/// <summary>The <see cref="MGWindow"/> that this <see cref="MGElement"/> belongs to. This value is only null if this <see cref="MGElement"/> is an <see cref="MGWindow"/> with no parent.</summary>
-		public MGWindow ParentWindow { get; }
-        /// <summary>Returns a reference to 'this' if this is an instance of <see cref="MGWindow"/>. Else returns <see cref="ParentWindow"/></summary>
+		/// <summary>The <see cref="MgWindow"/> that this <see cref="MGElement"/> belongs to. This value is only null if this <see cref="MGElement"/> is an <see cref="MgWindow"/> with no parent.</summary>
+		public MgWindow ParentWindow { get; }
+        /// <summary>Returns a reference to 'this' if this is an instance of <see cref="MgWindow"/>. Else returns <see cref="ParentWindow"/></summary>
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        public MGWindow SelfOrParentWindow => IsWindow ? this as MGWindow : ParentWindow;
+        public MgWindow SelfOrParentWindow => IsWindow ? this as MgWindow : ParentWindow;
 
         private object _DataContextOverride;
-        /// <summary>If null, this element's <see cref="DataContext"/> is defaulted to the window's <see cref="MGWindow.WindowDataContext"/>.<para/>
-        /// Note: <see cref="MGWindow"/> instances cannot have an override and will always use their <see cref="MGWindow.WindowDataContext"/> instead.<br/>
-        /// For <see cref="MGWindow"/>, this property is overridden to set <see cref="MGWindow.WindowDataContext"/></summary>
+        /// <summary>If null, this element's <see cref="DataContext"/> is defaulted to the window's <see cref="MgWindow.WindowDataContext"/>.<para/>
+        /// Note: <see cref="MgWindow"/> instances cannot have an override and will always use their <see cref="MgWindow.WindowDataContext"/> instead.<br/>
+        /// For <see cref="MgWindow"/>, this property is overridden to set <see cref="MgWindow.WindowDataContext"/></summary>
         public virtual object DataContextOverride
         {
             get => _DataContextOverride;
@@ -213,8 +213,8 @@ namespace MGUI.Core.UI
         }
 
         /// <summary>The source object that data bindings are resolved from.<para/>
-        /// This value prioritizes <see cref="DataContextOverride"/>, but falls back on <see cref="MGWindow.WindowDataContext"/> if there is no explicit override.<para/>
-        /// To set this value, set <see cref="DataContextOverride"/> or set <see cref="MGWindow.WindowDataContext"/></summary>
+        /// This value prioritizes <see cref="DataContextOverride"/>, but falls back on <see cref="MgWindow.WindowDataContext"/> if there is no explicit override.<para/>
+        /// To set this value, set <see cref="DataContextOverride"/> or set <see cref="MgWindow.WindowDataContext"/></summary>
         public object DataContext => DataContextOverride ?? SelfOrParentWindow.WindowDataContext;
         /// <summary>Invoked after <see cref="DataContext"/> is changed.</summary>
         public event EventHandler<object> DataContextChanged;
@@ -728,13 +728,13 @@ namespace MGUI.Core.UI
         /// <summary>True if <see cref="MouseButton.Left"/> was pressed overtop of this <see cref="MGElement"/> and has not been released yet.<para/>
         /// This property can be true even if the mouse isn't overtop of this <see cref="MGElement"/> (if pressed overtop, but then moved outside and not yet released)<para/>
         /// You may want to consider checking for <see cref="VisualState"/>'s <see cref="SecondaryVisualState.Pressed"/> instead.<para/>
-        /// See also: <see cref="MGWindow.PressedElement"/> (You might also want to call <see cref="IsSelfOrAncestorOf(MGElement)"/> on the <see cref="MGWindow.PressedElement"/>)</summary>
+        /// See also: <see cref="MgWindow.PressedElement"/> (You might also want to call <see cref="IsSelfOrAncestorOf(MGElement)"/> on the <see cref="MgWindow.PressedElement"/>)</summary>
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public bool IsLMBPressed => InputTracker.Mouse.IsPressedInside(MouseButton.Left, this);
 
         /// <summary>Warning - this property can be true even if this <see cref="MGElement"/> is entirely occluded by another <see cref="MGElement"/> overtop it.<para/>
         /// You may want to consider checking for <see cref="VisualState"/>'s <see cref="SecondaryVisualState.Hovered"/> instead.<para/>
-        /// See also: <see cref="MGWindow.HoveredElement"/> (You might also want to call <see cref="IsSelfOrAncestorOf(MGElement)"/> on the <see cref="MGWindow.HoveredElement"/>)</summary>
+        /// See also: <see cref="MgWindow.HoveredElement"/> (You might also want to call <see cref="IsSelfOrAncestorOf(MGElement)"/> on the <see cref="MgWindow.HoveredElement"/>)</summary>
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public bool IsHovered => AsIMouseHandlerHost().IsInside(InputTracker.Mouse.CurrentPosition.ToVector2());
 
@@ -1080,13 +1080,13 @@ namespace MGUI.Core.UI
         }
         #endregion Delayed Actions
 
-        protected MGElement(MGWindow ParentWindow, MGElementType ElementType)
+        protected MGElement(MgWindow ParentWindow, MGElementType ElementType)
 			: this(ParentWindow.Desktop, ParentWindow, ElementType)
 		{
 
 		}
 
-        protected MGElement(MGDesktop Desktop, MGWindow ParentWindow, MGElementType ElementType, MGTheme Theme = null)
+        protected MGElement(MGDesktop Desktop, MgWindow ParentWindow, MGElementType ElementType, MGTheme Theme = null)
 		{
 			this.InitializationManager = new(() => { LayoutChanged(this, true); });
 			using (BeginInitializing())

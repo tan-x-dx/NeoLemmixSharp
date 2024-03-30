@@ -171,7 +171,7 @@ public class XamlParser
     /// <param name="replaceLinebreakLiterals">If true, the literal string @"\n" will be replaced with "&#38;#x0a;", which is the XAML encoding of the linebreak character '\n'.<br/>
     /// If false, setting the text of an <see cref="MGTextBlock"/> requires encoding the '\n' character as "&#38;#x0a;"<para/>
     /// See also: <see href="https://stackoverflow.com/a/183435/11689514"/></param>
-    public static T Load<T>(MGWindow window, string xamlString, bool sanitizeXamlString = false, bool replaceLinebreakLiterals = true)
+    public static T Load<T>(MgWindow window, string xamlString, bool sanitizeXamlString = false, bool replaceLinebreakLiterals = true)
         where T : MGElement
     {
         if (sanitizeXamlString)
@@ -191,7 +191,7 @@ public class XamlParser
     /// <param name="replaceLinebreakLiterals">If true, the literal string @"\n" will be replaced with "&#38;#x0a;", which is the XAML encoding of the linebreak character '\n'.<br/>
     /// If false, setting the text of an <see cref="MGTextBlock"/> requires encoding the '\n' character as "&#38;#x0a;"<para/>
     /// See also: <see href="https://stackoverflow.com/a/183435/11689514"/></param>
-    public static MGWindow LoadRootWindow(MGDesktop desktop, string xamlString, bool sanitizeXamlString = false, bool replaceLinebreakLiterals = true)
+    public static MgWindow LoadRootWindow(MGDesktop desktop, string xamlString, bool sanitizeXamlString = false, bool replaceLinebreakLiterals = true)
     {
         if (sanitizeXamlString)
             xamlString = ValidateXamlString(xamlString);

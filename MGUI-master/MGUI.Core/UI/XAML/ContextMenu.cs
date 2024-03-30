@@ -40,7 +40,7 @@ namespace MGUI.Core.UI.XAML
         [Category("Layout")]
         public int? HeaderHeight { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
         {
             if (Parent is MGContextMenu ParentMenu)
                 return new MGContextMenu(ParentMenu);
@@ -132,7 +132,7 @@ namespace MGUI.Core.UI.XAML
         public string CommandId { get; set; }
         public Image Icon { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
         {
             if (Parent is MGContextMenu ContextMenu)
             {
@@ -171,7 +171,7 @@ namespace MGUI.Core.UI.XAML
 
         public bool? IsChecked { get; set; }
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
         {
             if (Parent is MGContextMenu ContextMenu)
             {
@@ -199,7 +199,7 @@ namespace MGUI.Core.UI.XAML
 
         public Separator Separator { get; set; } = new();
 
-        protected override MGElement CreateElementInstance(MGWindow Window, MGElement Parent)
+        protected override MGElement CreateElementInstance(MgWindow Window, MGElement Parent)
         {
             if (Parent is MGContextMenu ContextMenu)
             {

@@ -108,7 +108,7 @@ namespace MGUI.Core.UI
         }
 
         /// <param name="MaxMessageLength">The maximum number of characters that can be sent in a single message</param>
-        public MGChatBox(MGWindow ParentWindow, int MaxMessageLength = 100, int MaxMessages = 25)
+        public MGChatBox(MgWindow ParentWindow, int MaxMessageLength = 100, int MaxMessages = 25)
             : base(ParentWindow, MGElementType.ChatBox)
         {
             using (BeginInitializing())
@@ -255,7 +255,7 @@ namespace MGUI.Core.UI
         /// <summary>The <see cref="MGTextBlock"/> responsible for displaying the message's content (See: <see cref="Message"/>)</summary>
         public MGTextBlock MessageTextBlock { get; }
 
-        public MGChatBoxMessage(MGWindow ParentWindow, MGChatBox ChatBox, ChatBoxMessageData Data)
+        public MGChatBoxMessage(MgWindow ParentWindow, MGChatBox ChatBox, ChatBoxMessageData Data)
             : base(ParentWindow, MGElementType.ChatBoxMessage)
         {
             using (BeginInitializing())

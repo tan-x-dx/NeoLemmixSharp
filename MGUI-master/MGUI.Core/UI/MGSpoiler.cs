@@ -154,7 +154,7 @@ namespace MGUI.Core.UI
             }
         }
 
-        public MGSpoiler(MGWindow Window)
+        public MGSpoiler(MgWindow Window)
             : base(Window, MGElementType.Spoiler)
         {
             using (BeginInitializing())

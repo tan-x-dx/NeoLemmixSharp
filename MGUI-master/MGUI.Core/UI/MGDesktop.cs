@@ -20,7 +20,7 @@ using System.Threading;
 
 namespace MGUI.Core.UI
 {
-    /// <summary>Represents a Rectanglular screen bounds that you can add or remove <see cref="MGWindow"/>s to/from, 
+    /// <summary>Represents a Rectanglular screen bounds that you can add or remove <see cref="MgWindow"/>s to/from, 
     /// and handles mutual exclusion with things like input handling or ensuring there is only 1 <see cref="MGToolTip"/> or <see cref="MGContextMenu"/> on the user interface at a time.</summary>
     public class MGDesktop : ViewModelBase, IMouseHandlerHost, IKeyboardHandlerHost, IContextMenuHost
     {
@@ -28,11 +28,11 @@ namespace MGUI.Core.UI
         public InputTracker InputTracker => Renderer.Input;
         public FontManager FontManager => Renderer.FontManager;
 
-        /// <summary>A <see cref="MouseHandler"/> that is updated at the start of <see cref="Update()"/>, before any <see cref="MGWindow"/>s in <see cref="Windows"/> are updated.<br/>
+        /// <summary>A <see cref="MouseHandler"/> that is updated at the start of <see cref="Update()"/>, before any <see cref="MgWindow"/>s in <see cref="Windows"/> are updated.<br/>
         /// Objects that subscribe to this handler's mouse events will be the very first to receive and handle the event.<para/>
         /// Highly recommended to avoid using this unless absolutely necessary, and if you do use it, you probably shouldn't call e.SetHandledBy(...) so other elements can still receive the input.</summary>
         public MouseHandler HighPriorityMouseHandler { get; }
-        /// <summary>A <see cref="KeyboardHandler"/> that is updated at the start of <see cref="Update()"/>, before any <see cref="MGWindow"/>s in <see cref="Windows"/> are updated.<br/>
+        /// <summary>A <see cref="KeyboardHandler"/> that is updated at the start of <see cref="Update()"/>, before any <see cref="MgWindow"/>s in <see cref="Windows"/> are updated.<br/>
         /// Objects that subscribe to this handler's keyboard events will be the very first to receive and handle the event.<para/>
         /// Highly recommended to avoid using this unless absolutely necessary, and if you do use it, you probably shouldn't call e.SetHandledBy(...) so other elements can still receive the input.</summary>
         public KeyboardHandler HighPriorityKeyboardHandler { get; }
@@ -222,23 +222,23 @@ namespace MGUI.Core.UI
         #endregion Context Menu
 
         #region Windows
-        private MGWindow OverlayWindow { get; }
+        private MgWindow OverlayWindow { get; }
         /// <summary>A specialized <see cref="MGOverlayHost"/> used for drawing <see cref="MGOverlay"/>s overtop of this entire <see cref="MGDesktop"/>.<para/>
-        /// This element's <see cref="MGWindow"/> is always updated first and drawn last, regardless of the <see cref="MGWindow.IsTopmost"/> state of other windows.</summary>
+        /// This element's <see cref="MgWindow"/> is always updated first and drawn last, regardless of the <see cref="MgWindow.IsTopmost"/> state of other windows.</summary>
         public MGOverlayHost OverlayHost { get; }
         internal const string OverlayName = "DesktopOverlay";
 
-        /// <summary>The last element represents the <see cref="MGWindow"/> that will be
+        /// <summary>The last element represents the <see cref="MgWindow"/> that will be
         /// drawn last (I.E., rendered overtop of everything else), and updated first (I.E., has the first chance to handle inputs)<para/>
-        /// except in cases where a Topmost window is prioritized (See: <see cref="MGWindow.IsTopmost"/>)<para/>
+        /// except in cases where a Topmost window is prioritized (See: <see cref="MgWindow.IsTopmost"/>)<para/>
         /// Note: This list does not include the special window used to render overlays. See: <see cref="OverlayHost"/></summary>
-        public List<MGWindow> Windows { get; }
+        public List<MgWindow> Windows { get; }
 
         /// <summary>Moves the given <paramref name="Window"/> to the end of <see cref="Windows"/> list.<br/>
         /// It will typically be rendered overtop of all other <see cref="Windows"/> and have first chance at receiving/handling input,<br/>
-        /// unless another window is Topmost (See: <see cref="MGWindow.IsTopmost"/>).</summary>
+        /// unless another window is Topmost (See: <see cref="MgWindow.IsTopmost"/>).</summary>
         /// <returns>True if the <paramref name="Window"/> was brought to the front. False if it was not a valid element in <see cref="Windows"/>.</returns>
-        public bool BringToFront(MGWindow Window)
+        public bool BringToFront(MgWindow Window)
         {
             if (!Windows.Contains(Window))
             {
@@ -256,9 +256,9 @@ namespace MGUI.Core.UI
         }
 
         /// <summary>Moves the given <paramref name="Window"/> to the start of <see cref="Windows"/> list.<br/>
-        /// It will typically be rendered underneath of all other <see cref="Windows"/>, unless it is Topmost (See: <see cref="MGWindow.IsTopmost"/>)</summary>
+        /// It will typically be rendered underneath of all other <see cref="Windows"/>, unless it is Topmost (See: <see cref="MgWindow.IsTopmost"/>)</summary>
         /// <returns>True if the <paramref name="Window"/> was moved to the back. False if it was not a valid element in <see cref="Windows"/>.</returns>
-        public bool BringToBack(MGWindow Window)
+        public bool BringToBack(MgWindow Window)
         {
             if (!Windows.Contains(Window))
             {
@@ -291,7 +291,7 @@ namespace MGUI.Core.UI
                 if (_FocusedKeyboardHandler != value)
                 {
                     if (value != null && !value.CanHandleKeyboardInput)
-                        throw new InvalidOperationException($"{nameof(MGWindow)}.{nameof(FocusedKeyboardHandler)} cannot be set to an value with {nameof(MGElement)}.{nameof(MGElement.CanHandleKeyboardInput)}=false.");
+                        throw new InvalidOperationException($"{nameof(MgWindow)}.{nameof(FocusedKeyboardHandler)} cannot be set to an value with {nameof(MGElement)}.{nameof(MGElement.CanHandleKeyboardInput)}=false.");
 
                     MGElement Previous = FocusedKeyboardHandler;
                     if (Previous is MGTextBox PreviousTextBox)
@@ -451,10 +451,10 @@ namespace MGUI.Core.UI
 
             bool IsWindowOccludedAtMousePos = false;
 
-            List<MGWindow> OrderedWindows = Windows.Reverse<MGWindow>().OrderByDescending(x => x.IsTopmost).ToList();
+            List<MgWindow> OrderedWindows = Windows.Reverse<MgWindow>().OrderByDescending(x => x.IsTopmost).ToList();
             OrderedWindows.Insert(0, OverlayWindow);
 
-            foreach (MGWindow Window in OrderedWindows)
+            foreach (MgWindow Window in OrderedWindows)
             {
                 MGToolTip PreviousQueuedToolTip = QueuedToolTip;
 
@@ -513,7 +513,7 @@ namespace MGUI.Core.UI
             {
                 using (BA.DT.SetClipTargetTemporary(ScreenBounds, true))
                 {
-                    foreach (MGWindow Window in Windows.OrderBy(x => x.IsTopmost))
+                    foreach (MgWindow Window in Windows.OrderBy(x => x.IsTopmost))
                     {
                         Window.Draw(DA);
                     }

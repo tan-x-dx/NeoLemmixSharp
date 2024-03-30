@@ -185,7 +185,7 @@ namespace MGUI.Core.UI
         }
 
         /// <param name="IsRunning">If false, <see cref="Elapsed"/> will not increment until <see cref="Start"/> is called.</param>
-        public MGStopwatch(MGWindow Window, bool IsRunning = false)
+        public MGStopwatch(MgWindow Window, bool IsRunning = false)
             : base(Window, MGElementType.Stopwatch)
         {
             using (BeginInitializing())

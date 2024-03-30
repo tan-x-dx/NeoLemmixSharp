@@ -20,8 +20,8 @@ namespace MGUI.Core.UI.Data_Binding
         /// <summary>Indicates that the source object of the binding is the same as the Targeted object</summary>
         public static ISourceObjectResolver FromSelf() => SelfResolver;
 
-        /// <summary>Indicates that the source object of the binding should be retrieved via <see cref="MGWindow.GetElementByName(string)"/><br/>
-        /// (assuming the target object is of type <see cref="MGElement"/> and belongs to a <see cref="MGWindow"/>)</summary>
+        /// <summary>Indicates that the source object of the binding should be retrieved via <see cref="MgWindow.GetElementByName(string)"/><br/>
+        /// (assuming the target object is of type <see cref="MGElement"/> and belongs to a <see cref="MgWindow"/>)</summary>
         public static ISourceObjectResolver FromElementName(string ElementName) => new SourceObjectResolverElementName(ElementName);
 
         /// <summary>Indicates that the source object of the binding should be retrieved via a particular named resource in <see cref="MgResources.StaticResources"/><br/>
@@ -48,8 +48,8 @@ namespace MGUI.Core.UI.Data_Binding
         public override string ToString() => $"{nameof(SourceObjectResolverSelf)}";
     }
 
-    /// <summary>Indicates that the source object of the binding should be retrieved via <see cref="MGWindow.GetElementByName(string)"/><br/>
-    /// (assuming the target object is of type <see cref="MGElement"/> and belongs to a <see cref="MGWindow"/>)</summary>
+    /// <summary>Indicates that the source object of the binding should be retrieved via <see cref="MgWindow.GetElementByName(string)"/><br/>
+    /// (assuming the target object is of type <see cref="MGElement"/> and belongs to a <see cref="MgWindow"/>)</summary>
     public class SourceObjectResolverElementName : ISourceObjectResolver
     {
         public readonly string ElementName;

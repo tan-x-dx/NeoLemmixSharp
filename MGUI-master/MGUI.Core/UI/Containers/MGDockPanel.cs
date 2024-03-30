@@ -68,7 +68,7 @@ namespace MGUI.Core.UI.Containers
             return true;
         }
 
-        public MGDockPanel(MGWindow Window, bool LastChildFill = true)
+        public MGDockPanel(MgWindow Window, bool LastChildFill = true)
             : base(Window, MGElementType.DockPanel)
         {
             using (BeginInitializing())

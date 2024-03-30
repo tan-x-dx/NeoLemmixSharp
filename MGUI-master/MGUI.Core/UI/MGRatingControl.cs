@@ -398,7 +398,7 @@ namespace MGUI.Core.UI
         //TODO
         //Orientation? FlowDirection?
 
-        public MGRatingControl(MGWindow ParentWindow, int MinimumValue = 0, int MaximumValue = 5, int Size = 16, 
+        public MGRatingControl(MgWindow ParentWindow, int MinimumValue = 0, int MaximumValue = 5, int Size = 16, 
             bool UseDiscreteValues = true, float? DiscreteValueInterval = 1, RatingItemShape Shape = RatingItemShape.Star)
             : base(ParentWindow, MGElementType.RatingControl)
         {

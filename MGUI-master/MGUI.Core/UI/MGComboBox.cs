@@ -405,11 +405,11 @@ namespace MGUI.Core.UI
         public int MinDropdownHeight { get; set; } = 100;
         public int MaxDropdownHeight { get; set; } = 360;
 
-        /// <summary>The floating <see cref="MGWindow"/> used to display the content inside of the dropdown when <see cref="IsDropdownOpen"/> is true.<para/>
+        /// <summary>The floating <see cref="MgWindow"/> used to display the content inside of the dropdown when <see cref="IsDropdownOpen"/> is true.<para/>
         /// Warning - be careful when editing properties on this object. Some changes could break the combobox's functionality,<br/>
-        /// such as setting <see cref="MGWindow.IsTitleBarVisible"/> and <see cref="MGWindow.IsCloseButtonVisible"/> to true, and then clicking the close button.<para/>
+        /// such as setting <see cref="MgWindow.IsTitleBarVisible"/> and <see cref="MgWindow.IsCloseButtonVisible"/> to true, and then clicking the close button.<para/>
         /// See also: <see cref="DropdownScrollViewer"/>, <see cref="DropdownStackPanel"/></summary>
-        public MGWindow Dropdown { get; }
+        public MgWindow Dropdown { get; }
         /// <summary>The <see cref="MGScrollViewer"/> that the <see cref="Dropdown"/>'s Content is wrapped in.<para/>
         /// See also: <see cref="Dropdown"/>, <see cref="DropdownStackPanel"/></summary>
         public MGScrollViewer DropdownScrollViewer { get; }
@@ -489,7 +489,7 @@ namespace MGUI.Core.UI
         private Color _DropdownArrowColor;
         /// <summary>The color of the inverted triangle on the right-side of this <see cref="MGComboBox{TItemType}"/>.<para/>
         /// Default value: <see cref="MGTheme.DropdownArrowColor"/><para/>
-        /// See also:<br/><see cref="MGWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
+        /// See also:<br/><see cref="MgWindow.Theme"/><br/><see cref="MGDesktop.Theme"/></summary>
         public Color DropdownArrowColor
         {
             get => _DropdownArrowColor;
@@ -559,13 +559,13 @@ namespace MGUI.Core.UI
         }
         #endregion Dropdown
 
-        public MGComboBox(MGWindow Window)
+        public MGComboBox(MgWindow Window)
             : this(Window, new(1), MGUniformBorderBrush.Black) { }
 
-        public MGComboBox(MGWindow Window, Thickness BorderThickness, IFillBrush BorderBrush)
+        public MGComboBox(MgWindow Window, Thickness BorderThickness, IFillBrush BorderBrush)
             : this(Window, BorderThickness, new MGUniformBorderBrush(BorderBrush)) { }
 
-        public MGComboBox(MGWindow Window, Thickness BorderThickness, IBorderBrush BorderBrush)
+        public MGComboBox(MgWindow Window, Thickness BorderThickness, IBorderBrush BorderBrush)
             : base(Window, MGElementType.ComboBox)
         {
             using (BeginInitializing())

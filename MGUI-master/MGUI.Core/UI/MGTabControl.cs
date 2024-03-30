@@ -365,7 +365,7 @@ namespace MGUI.Core.UI
         }
         #endregion Tabs
 
-        public MGTabControl(MGWindow Window)
+        public MGTabControl(MgWindow Window)
             : base(Window, MGElementType.TabControl)
         {
             using (BeginInitializing())

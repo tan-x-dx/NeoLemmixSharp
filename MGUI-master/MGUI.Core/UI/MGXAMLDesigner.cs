@@ -40,7 +40,7 @@ namespace MGUI.Core.UI
         /// <summary>Optional. The default DataContext to apply to the Content immediately after it's been parsed</summary>
         public object ParsedContentDataContext { get; set; }
 
-        public MGXAMLDesigner(MGWindow ParentWindow)
+        public MGXAMLDesigner(MgWindow ParentWindow)
             : base(ParentWindow, MGElementType.XAMLDesigner)
         {
             using (BeginInitializing())
@@ -155,7 +155,7 @@ namespace MGUI.Core.UI
 
                 SelfOrParentWindow.OnWindowPositionChanged += (sender, e) =>
                 {
-                    if (MarkupPresenter.Content is MGWindow XAMLWindow)
+                    if (MarkupPresenter.Content is MgWindow XAMLWindow)
                     {
                         Rectangle PreviousLayoutBounds = LayoutBounds;
                         Point Offset = new(e.NewValue.Left - e.PreviousValue.Left, e.NewValue.Top - e.PreviousValue.Top);

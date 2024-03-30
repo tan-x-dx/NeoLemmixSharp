@@ -135,7 +135,7 @@ namespace MGUI.Core.UI
 
         /// <summary>Creates a <see cref="MGResizeGrip"/> that will be attached to the given <paramref name="HostElement"/></summary>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="HostElement"/> is null</exception>
-        public MGResizeGrip(MGWindow Window, MGElement HostElement)
+        public MGResizeGrip(MgWindow Window, MGElement HostElement)
             : this(Window, false)
         {
             if (HostElement == null)
@@ -145,13 +145,13 @@ namespace MGUI.Core.UI
         }
 
         /// <summary>Creates a <see cref="MGResizeGrip"/> which is a component of its parent element.</summary>
-        internal MGResizeGrip(MGWindow Window)
+        internal MGResizeGrip(MgWindow Window)
             : this(Window, true)
         {
 
         }
 
-        private MGResizeGrip(MGWindow ParentWindow, bool IsComponent)
+        private MGResizeGrip(MgWindow ParentWindow, bool IsComponent)
             : base(ParentWindow, MGElementType.ResizeGrip)
         {
             using (BeginInitializing())
@@ -171,8 +171,8 @@ namespace MGUI.Core.UI
                     {
                         IsDragging = true;
                         SpoofIsPressedWhileDrawingBackground = false;
-                        InitialWidth = Parent is MGWindow ? ParentWindow.WindowWidth : Parent.ActualWidth;
-                        InitialHeight = Parent is MGWindow ? ParentWindow.WindowHeight : Parent.ActualHeight;
+                        InitialWidth = Parent is MgWindow ? ParentWindow.WindowWidth : Parent.ActualWidth;
+                        InitialHeight = Parent is MgWindow ? ParentWindow.WindowHeight : Parent.ActualHeight;
                         e.SetHandledBy(this, false);
                     }
                 };
@@ -183,7 +183,7 @@ namespace MGUI.Core.UI
                     {
                         float Scalar = 1.0f / Parent.SelfOrParentWindow.Scale;
                         Point Delta = new((int)(e.PositionDelta.X * Scalar), (int)(e.PositionDelta.Y * Scalar));
-                        if (Parent is MGWindow TargetWindow)
+                        if (Parent is MgWindow TargetWindow)
                         {
                             TargetWindow.WindowWidth = Math.Max(0, InitialWidth + Delta.X);
                             TargetWindow.WindowHeight = Math.Max(0, InitialHeight + Delta.Y);

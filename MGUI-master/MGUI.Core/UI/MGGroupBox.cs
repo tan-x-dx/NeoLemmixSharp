@@ -129,7 +129,7 @@ namespace MGUI.Core.UI
             }
         }
 
-        public MGGroupBox(MGWindow Window, MGElement Header = null)
+        public MGGroupBox(MgWindow Window, MGElement Header = null)
             : base(Window, MGElementType.GroupBox)
         {
             using (BeginInitializing())

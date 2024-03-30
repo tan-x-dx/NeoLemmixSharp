@@ -220,7 +220,7 @@ namespace MGUI.Core.UI.Containers.Grids
             }
         }
 
-        public MGGridSplitter(MGWindow ParentWindow)
+        public MGGridSplitter(MgWindow ParentWindow)
             : base(ParentWindow, MGElementType.GridSplitter)
         {
             using (BeginInitializing())

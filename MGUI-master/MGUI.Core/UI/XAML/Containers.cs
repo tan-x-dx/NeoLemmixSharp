@@ -78,7 +78,7 @@ public class GridSplitter : Element
     [Category("Appearance")]
     public FillBrush Foreground { get; set; }
 
-    protected override MGElement CreateElementInstance(MGWindow window, MGElement parent) => new MGGridSplitter(window);
+    protected override MGElement CreateElementInstance(MgWindow window, MGElement parent) => new MGGridSplitter(window);
 
     protected internal override void ApplyDerivedSettings(MGElement parent, MGElement element, bool includeContent)
     {
@@ -135,7 +135,7 @@ public class Grid : MultiContentHost
     [Category("Layout")]
     public int? ColumnSpacing { get; set; }
 
-    protected override MGElement CreateElementInstance(MGWindow window, MGElement parent) => new MGGrid(window);
+    protected override MGElement CreateElementInstance(MgWindow window, MGElement parent) => new MGGrid(window);
 
     protected internal override void ApplyDerivedSettings(MGElement parent, MGElement element, bool includeContent)
     {
@@ -259,7 +259,7 @@ public class UniformGrid : MultiContentHost
     [Category("Behavior")]
     public bool? AutoAssignCells { get; set; }
 
-    protected override MGElement CreateElementInstance(MGWindow window, MGElement parent) => new MGUniformGrid(window, Rows ?? 0, Columns ?? 0, CellSize?.ToSize() ?? MonoGame.Extended.Size.Empty);
+    protected override MGElement CreateElementInstance(MgWindow window, MGElement parent) => new MGUniformGrid(window, Rows ?? 0, Columns ?? 0, CellSize?.ToSize() ?? MonoGame.Extended.Size.Empty);
 
     protected internal override void ApplyDerivedSettings(MGElement parent, MGElement element, bool includeContent)
     {
@@ -352,7 +352,7 @@ public class DockPanel : MultiContentHost
 
     public bool? LastChildFill { get; set; }
 
-    protected override MGElement CreateElementInstance(MGWindow window, MGElement parent) => new MGDockPanel(window);
+    protected override MGElement CreateElementInstance(MgWindow window, MGElement parent) => new MGDockPanel(window);
 
     protected internal override void ApplyDerivedSettings(MGElement parent, MGElement element, bool includeContent)
     {
@@ -398,7 +398,7 @@ public class StackPanel : MultiContentHost
     [Category("Layout")]
     public int? Spacing { get; set; }
 
-    protected override MGElement CreateElementInstance(MGWindow window, MGElement parent) => new MGStackPanel(window, Orientation ?? UI.Orientation.Vertical);
+    protected override MGElement CreateElementInstance(MgWindow window, MGElement parent) => new MGStackPanel(window, Orientation ?? UI.Orientation.Vertical);
 
     protected internal override void ApplyDerivedSettings(MGElement parent, MGElement element, bool includeContent)
     {
@@ -425,7 +425,7 @@ public class OverlayPanel : MultiContentHost
 {
     public override MGElementType ElementType => MGElementType.OverlayPanel;
 
-    protected override MGElement CreateElementInstance(MGWindow window, MGElement parent) => new MGOverlayPanel(window);
+    protected override MGElement CreateElementInstance(MgWindow window, MGElement parent) => new MGOverlayPanel(window);
 
     protected internal override void ApplyDerivedSettings(MGElement parent, MGElement element, bool includeContent)
     {
