@@ -88,91 +88,14 @@ public sealed class MainPage : PageBase
         QuitButton = new MGTextureData(MenuSpriteBank.SignQuit);
 
         Resources.AddCommand(nameof(PlayButtonClick), PlayButtonClick);
+        Resources.AddCommand(nameof(LevelSelectButtonClick), LevelSelectButtonClick);
+        Resources.AddCommand(nameof(GroupDownButtonClick), GroupDownButtonClick);
+        Resources.AddCommand(nameof(GroupUpButtonClick), GroupUpButtonClick);
+        Resources.AddCommand(nameof(ConfigButtonClick), ConfigButtonClick);
+        Resources.AddCommand(nameof(QuitButtonClick), QuitButtonClick);
 
         Show();
-
-        /*   UserInterface.Active.GlobalScale = 2f;
-
-           rootPanel.Anchor = Anchor.Center;
-
-           var logoTexture = MenuSpriteBank.GetTexture(MenuResource.LogoImage);
-           var logoImage = new Image(logoTexture, logoTexture.GetSize(), anchor: Anchor.AutoCenter, offset: new Vector2(0, 20));
-           rootPanel.AddChild(logoImage);
-
-           _playButton = CreateTextureButton(MenuResource.SignPlay);
-           _playButton.OnClick = PlayButtonClick;
-
-           _levelSelectButton = CreateTextureButton(MenuResource.SignLevelSelect);
-           _levelSelectButton.OnClick = LevelSelectButtonClick;
-
-           _groupButton = CreateTextureButton(MenuResource.SignGroup);
-
-           _groupUpButton = CreateTextureButton(MenuResource.SignGroupUp);
-           _groupUpButton.OnClick = GroupUpButtonClick;
-
-           _groupDownButton = CreateTextureButton(MenuResource.SignGroupDown);
-           _groupDownButton.OnClick = GroupDownButtonClick;
-
-           _configButton = CreateTextureButton(MenuResource.SignConfig);
-           _configButton.OnClick = ConfigButtonClick;
-
-           _quitButton = CreateTextureButton(MenuResource.SignQuit);
-           _quitButton.OnClick = QuitButtonClick;
-
-           var topRowButtonsPanelWidth = _playButton.Size.X +
-                                         _levelSelectButton.Size.X +
-                                         _groupButton.Size.X +
-                                         50;
-
-           var topRowButtonsPanel = new Panel(new Vector2(topRowButtonsPanelWidth, -1))
-           {
-               Anchor = Anchor.AutoCenter,
-
-               FillColor = Color.Transparent,
-               OutlineColor = Color.Transparent,
-               ShadowColor = Color.Transparent,
-           };
-
-           var bottomRowButtonsPanelWidth = _configButton.Size.X +
-                                            _quitButton.Size.X +
-                                            50;
-
-           var bottomRowButtonsPanel = new Panel(new Vector2(bottomRowButtonsPanelWidth, -1))
-           {
-               Anchor = Anchor.AutoCenter,
-
-               FillColor = Color.Transparent,
-               OutlineColor = Color.Transparent,
-               ShadowColor = Color.Transparent,
-           };
-
-           rootPanel.AddChild(topRowButtonsPanel);
-           rootPanel.AddChild(bottomRowButtonsPanel);
-
-           topRowButtonsPanel.AddChild(_playButton);
-           topRowButtonsPanel.AddChild(_levelSelectButton);
-           topRowButtonsPanel.AddChild(_groupButton);
-
-           //  rootPanel.AddChild(_groupUpButton);
-           //   rootPanel.AddChild(_groupDownButton);
-           bottomRowButtonsPanel.AddChild(_configButton);
-           bottomRowButtonsPanel.AddChild(_quitButton);*/
     }
-
-    /*  private static Image CreateTextureButton(MenuResource menuResource)
-      {
-          var texture = MenuSpriteBank.GetTexture(menuResource);
-
-          return new Image(
-              texture,
-              anchor: Anchor.AutoInlineNoBreak,
-              size: texture.GetSize())
-          {
-              Padding = Vector2.Zero,
-              Offset = Vector2.Zero,
-              UseActualSizeForCollision = true,
-          };
-      }*/
 
     protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
     {
@@ -186,28 +109,28 @@ public sealed class MainPage : PageBase
 
     private void HandleKeyboardInput()
     {
-        /*if (_inputController.Quit.IsPressed)
+        if (_inputController.Quit.IsPressed)
         {
-            _quitButton!.OnClick.Invoke(_quitButton);
+            QuitButtonClick(null!);
             return;
         }
 
         if (_inputController.F1.IsPressed)
         {
-            _playButton!.OnClick.Invoke(_playButton);
+            PlayButtonClick(null!);
             return;
         }
 
         if (_inputController.F2.IsPressed)
         {
-            _levelSelectButton!.OnClick.Invoke(_levelSelectButton);
+            LevelSelectButtonClick(null!);
             return;
         }
 
         if (_inputController.F3.IsPressed)
         {
-            _configButton!.OnClick.Invoke(_configButton);
-        }*/
+            ConfigButtonClick(null!);
+        }
     }
 
     private static void PlayButtonClick(MGElement entity)
@@ -250,33 +173,21 @@ public sealed class MainPage : PageBase
 
     public override void Dispose()
     {
+        LogoImage = new MGTextureData();
+        PlayButtonImage = new MGTextureData();
+        LevelSelectButton = new MGTextureData();
+        GroupButton = new MGTextureData();
+        GroupUpButton = new MGTextureData();
+        GroupDownButton = new MGTextureData();
+        ConfigButton = new MGTextureData();
+        QuitButton = new MGTextureData();
+
         var resources = Resources;
-        resources.RemoveComand(nameof(PlayButtonClick));
-        resources.RemoveComand(nameof(LevelSelectButtonClick));
-        resources.RemoveComand(nameof(GroupUpButtonClick));
-        resources.RemoveComand(nameof(GroupDownButtonClick));
-        resources.RemoveComand(nameof(ConfigButtonClick));
-        resources.RemoveComand(nameof(QuitButtonClick));
-
-        /* UserInterface.Active.GlobalScale = 1f;
-
-         DisposeOfEntity(ref _playButton);
-         DisposeOfEntity(ref _levelSelectButton);
-         DisposeOfEntity(ref _groupButton);
-         DisposeOfEntity(ref _groupUpButton);
-         DisposeOfEntity(ref _groupDownButton);
-         DisposeOfEntity(ref _configButton);
-         DisposeOfEntity(ref _quitButton);*/
+        resources.RemoveCommand(nameof(PlayButtonClick));
+        resources.RemoveCommand(nameof(LevelSelectButtonClick));
+        resources.RemoveCommand(nameof(GroupUpButtonClick));
+        resources.RemoveCommand(nameof(GroupDownButtonClick));
+        resources.RemoveCommand(nameof(ConfigButtonClick));
+        resources.RemoveCommand(nameof(QuitButtonClick));
     }
-
-    /* private static void DisposeOfEntity<T>(ref T? entity)
-         where T : Entity
-     {
-         if (entity is null)
-             return;
-
-         entity.OnClick = null;
-         entity.OnRightClick = null;
-         entity = null;
-     }*/
 }

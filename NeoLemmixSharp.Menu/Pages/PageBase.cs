@@ -13,7 +13,7 @@ public abstract class PageBase : ViewModelBase, IDisposable
 
     private bool _isInitialised;
 
-    protected MGResources Resources => _desktop.Resources;
+    protected MgResources Resources => _desktop.Resources;
 
     protected PageBase(MGDesktop desktop)
     {
