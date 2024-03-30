@@ -74,12 +74,9 @@ public sealed class MenuScreen : IBaseScreen
             return;
         }
 
-        _desktop.Update();
-
-        //UserInterface.Active.Update(gameTime);
         InputController.Tick();
-
         _currentPage.Tick();
+        _desktop.Update();
 
         if (InputController.ToggleFullScreen.IsPressed)
         {
@@ -94,12 +91,10 @@ public sealed class MenuScreen : IBaseScreen
         if (!_pageTransition.IsHalfWayDone)
             return;
 
-        DisposableHelperMethods.DisposeOf(ref _currentPage);
+        _currentPage.Dispose();
         _currentPage = _nextPage!;
 
-        //var userInterface = UserInterface.Active;
-        //userInterface.Clear();
-        //_currentPage.OnInitialise(userInterface.Root);
+        _currentPage.Initialise(_desktop);
 
         var windowWidth = IGameWindow.Instance.WindowWidth;
         var windowHeight = IGameWindow.Instance.WindowHeight;

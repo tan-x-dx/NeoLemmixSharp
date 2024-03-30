@@ -7,15 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Pages\LevelEndPage.xaml" />
+    <None Remove="Pages\LevelSelectPage.xaml" />
+    <None Remove="Pages\LevelStartPage.xaml" />
     <None Remove="Pages\MainPage.xaml" />
-    <None Remove="Pages\TestWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Pages\LevelEndPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\LevelSelectPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Include="Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pages\TestWindow.xaml">
+    <EmbeddedResource Include="Pages\LevelStartPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
   </ItemGroup>

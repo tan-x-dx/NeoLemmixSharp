@@ -1,24 +1,20 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using MGUI.Core.UI.Brushes.Border_Brushes;
 using MGUI.Core.UI.Brushes.Fill_Brushes;
 using MGUI.Core.UI.Containers;
 using MGUI.Core.UI.Containers.Grids;
 using MGUI.Core.UI.XAML;
+using MGUI.Shared.Helpers;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MGUI.Shared.Helpers;
-using MGUI.Core.UI.Brushes.Border_Brushes;
-using MonoGame.Extended;
-using Thickness = MonoGame.Extended.Thickness;
+using ColumnDefinition = MGUI.Core.UI.Containers.Grids.ColumnDefinition;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using RowDefinition = MGUI.Core.UI.Containers.Grids.RowDefinition;
-using ColumnDefinition = MGUI.Core.UI.Containers.Grids.ColumnDefinition;
+using Thickness = MonoGame.Extended.Thickness;
 
 namespace MGUI.Core.UI
 {
@@ -319,7 +315,8 @@ namespace MGUI.Core.UI
                 this.ScrollViewer = new(Window, ScrollBarVisibility.Auto, ScrollBarVisibility.Disabled);
                 ScrollViewer.SetContent(DataGrid);
                 ScrollViewer.CanChangeContent = false;
-                ScrollViewer.VerticalScrollBarBoundsChanged += (sender, e) => {
+                ScrollViewer.VerticalScrollBarBoundsChanged += (sender, e) =>
+                {
                     TopRightCornerPlaceholder.PreferredWidth = e?.Width ?? 0;
                 };
 
@@ -387,7 +384,7 @@ namespace MGUI.Core.UI
                 SelectionMode = Settings.SelectionMode.Value;
         }
     }
-    
+
     public class ListViewColumnWidth : ViewModelBase
     {
         public GridLength Length { get; private set; }

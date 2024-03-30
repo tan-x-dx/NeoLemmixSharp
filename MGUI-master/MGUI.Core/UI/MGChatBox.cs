@@ -79,7 +79,7 @@ namespace MGUI.Core.UI
         /// <summary>A separator between the messages list and the bottom portion of the chatbox that contains the <see cref="InputTextBox"/> and <see cref="SendButton"/></summary>
         public MGSeparator Separator { get; }
 
-        public MGListBox<ChatBoxMessageData> MessagesContainer { get; }
+        public MgListBox<ChatBoxMessageData> MessagesContainer { get; }
 
         public ObservableCollection<ChatBoxMessageData> Messages { get; }
 

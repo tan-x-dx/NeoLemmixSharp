@@ -7,8 +7,6 @@ namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class MainPage : PageBase
 {
-    private readonly MenuInputController _inputController;
-
     private MGTextureData _logoImage;
     private MGTextureData _playButtonImage;
     private MGTextureData _levelSelectButton;
@@ -71,9 +69,8 @@ public sealed class MainPage : PageBase
     public MainPage(
         MGDesktop desktop,
         MenuInputController inputController)
-        : base(desktop)
+        : base(desktop, inputController)
     {
-        _inputController = inputController;
     }
 
     protected override void OnInitialise(MGDesktop desktop)
@@ -109,25 +106,25 @@ public sealed class MainPage : PageBase
 
     private void HandleKeyboardInput()
     {
-        if (_inputController.Quit.IsPressed)
+        if (InputController.Quit.IsPressed)
         {
             QuitButtonClick(null!);
             return;
         }
 
-        if (_inputController.F1.IsPressed)
+        if (InputController.F1.IsPressed)
         {
             PlayButtonClick(null!);
             return;
         }
 
-        if (_inputController.F2.IsPressed)
+        if (InputController.F2.IsPressed)
         {
             LevelSelectButtonClick(null!);
             return;
         }
 
-        if (_inputController.F3.IsPressed)
+        if (InputController.F3.IsPressed)
         {
             ConfigButtonClick(null!);
         }
@@ -171,7 +168,7 @@ public sealed class MainPage : PageBase
     {
     }
 
-    public override void Dispose()
+    protected override void OnDispose()
     {
         LogoImage = new MGTextureData();
         PlayButtonImage = new MGTextureData();

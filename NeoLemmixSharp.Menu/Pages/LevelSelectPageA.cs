@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
-public sealed class LevelSelectPage : PageBase
+public sealed class LevelSelectPageA : PageBase
 {
     /*private const FileDialogOptions LoadLevelDialogOptions =
         FileDialogOptions.AllowEnterFolders |
@@ -15,10 +15,10 @@ public sealed class LevelSelectPage : PageBase
     private readonly MenuInputController _inputController;
     private readonly string _levelsRootPath;
 
-    public LevelSelectPage(
+    public LevelSelectPageA(
         MGDesktop desktop,
         MenuInputController inputController)
-        : base(desktop)
+        : base(desktop, inputController)
     {
         _levelsRootPath = Path.Combine(RootDirectoryManager.RootDirectory, "levels");
         _inputController = inputController;
@@ -90,7 +90,7 @@ public sealed class LevelSelectPage : PageBase
     {
     }
 
-    public override void Dispose()
+    protected override void OnDispose()
     {
     }
 }

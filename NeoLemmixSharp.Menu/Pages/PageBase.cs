@@ -10,14 +10,18 @@ public abstract class PageBase : ViewModelBase, IDisposable
 {
     private readonly MGDesktop _desktop;
     protected readonly MGWindow Window;
+    protected readonly MenuInputController InputController;
 
     private bool _isInitialised;
 
     protected MgResources Resources => _desktop.Resources;
 
-    protected PageBase(MGDesktop desktop)
+    protected PageBase(
+        MGDesktop desktop,
+        MenuInputController inputController)
     {
         _desktop = desktop;
+        InputController = inputController;
         var resourceName = $"{nameof(NeoLemmixSharp)}.{nameof(Menu)}.{nameof(Pages)}.{GetType().Name}.xaml";
         var xaml = GeneralUtils.ReadEmbeddedResourceAsString(Assembly.GetExecutingAssembly(), resourceName);
 
@@ -57,5 +61,13 @@ public abstract class PageBase : ViewModelBase, IDisposable
     protected abstract void OnWindowDimensionsChanged(int windowWidth, int windowHeight);
 
     public abstract void Tick();
-    public abstract void Dispose();
+
+    public void Dispose()
+    {
+        OnDispose();
+        Window.RemoveDataBindings(true);
+        _desktop.Windows.Remove(Window);
+    }
+
+    protected abstract void OnDispose();
 }

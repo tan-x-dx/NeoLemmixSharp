@@ -19,7 +19,7 @@ public class ListBox : MultiContentHost
 {
     public override MGElementType ElementType => MGElementType.ListBox;
 
-    /// <summary>The generic type that will be used when instantiating <see cref="MGListBox{TItemType}"/>.<para/>
+    /// <summary>The generic type that will be used when instantiating <see cref="MgListBox{TItemType}"/>.<para/>
     /// To set this value from a XAML string, you must define the namespace the type belongs to, then use the x:Type Markup Extension<br/>
     /// (See: <see href="https://learn.microsoft.com/en-us/dotnet/desktop/xaml-services/xtype-markup-extension"/>)<para/>
     /// Example:
@@ -118,15 +118,15 @@ public class ListBox : MultiContentHost
 
     protected override MGElement CreateElementInstance(MGWindow window, MGElement parent)
     {
-        var genericType = typeof(MGListBox<>).MakeGenericType([ItemType]);
+        var genericType = typeof(MgListBox<>).MakeGenericType([ItemType]);
         var element = Activator.CreateInstance(genericType, [window]);
         return element as MGElement;
     }
 
     protected internal override void ApplyDerivedSettings(MGElement parent, MGElement element, bool includeContent)
     {
-        var genericType = typeof(MGListBox<>).MakeGenericType([ItemType]);
-        var method = genericType.GetMethod(nameof(MGListBox<object>.LoadSettings), BindingFlags.Instance | BindingFlags.NonPublic);
+        var genericType = typeof(MgListBox<>).MakeGenericType([ItemType]);
+        var method = genericType.GetMethod(nameof(MgListBox<object>.LoadSettings), BindingFlags.Instance | BindingFlags.NonPublic);
         method!.Invoke(element, [this, includeContent]);
     }
 

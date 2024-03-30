@@ -125,9 +125,9 @@ namespace MGUI.Core.UI
 
         public ThemeManagedVisualStateFillBrush GridSplitterForeground { get; }
 
-        /// <summary>The default background brush to use on items in an <see cref="MGListBox{TItemType}"/>.</summary>
+        /// <summary>The default background brush to use on items in an <see cref="MgListBox{TItemType}"/>.</summary>
         public ThemeManagedVisualStateFillBrush ListBoxItemBackground { get; }
-        /// <summary>The default value to use for <see cref="MGListBox{TItemType}.AlternatingRowBackgrounds"/></summary>
+        /// <summary>The default value to use for <see cref="MgListBox{TItemType}.AlternatingRowBackgrounds"/></summary>
         public List<ThemeManagedFillBrush> ListBoxItemAlternatingRowBackgrounds { get; }
 
         public ThemeManagedVisualStateFillBrush ProgressBarCompletedBrush { get; }

@@ -1,0 +1,6 @@
+﻿<Window xmlns="clr-namespace:MGUI.Core.UI.XAML;assembly=MGUI.Core"
+        SizeToContent="WidthAndHeight">
+	<DockPanel>
+		
+	</DockPanel>
+</Window>
