@@ -57,7 +57,7 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
                 break;
 
             case "NAME":
-                secondaryAnimationData.Name = secondToken.GetString();
+                secondaryAnimationData.Name = secondToken.ToString();
                 break;
 
             case "HIDE":

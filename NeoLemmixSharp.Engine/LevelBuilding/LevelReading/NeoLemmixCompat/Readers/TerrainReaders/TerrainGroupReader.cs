@@ -46,7 +46,7 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "NAME":
-                currentTerrainGroup.GroupName = line.TrimAfterIndex(secondTokenIndex).GetString();
+                currentTerrainGroup.GroupName = line.TrimAfterIndex(secondTokenIndex).ToString();
                 break;
 
             case "$TERRAIN":

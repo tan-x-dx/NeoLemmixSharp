@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
@@ -147,19 +146,6 @@ public static class ReadingHelpers
         }
 
         return TNumber.Parse(token[startIndex..], NumberStyles.AllowHexSpecifier, null);
-    }
-
-    /// <summary>
-    /// Helper method to prevent unnecessary allocations of empty strings
-    /// </summary>
-    /// <param name="span">The input span to be converted</param>
-    /// <returns>A string representation of the input</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string GetString(this ReadOnlySpan<char> span)
-    {
-        return span.IsEmpty
-            ? string.Empty
-            : span.ToString();
     }
 
     public static bool GetSkillByName(

@@ -25,7 +25,7 @@ public sealed class NeoLemmixTextReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "LINE":
-                var parsedLine = line.TrimAfterIndex(secondTokenIndex).GetString();
+                var parsedLine = line.TrimAfterIndex(secondTokenIndex).ToString();
                 _lines.Add(parsedLine);
                 break;
 

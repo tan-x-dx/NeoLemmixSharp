@@ -35,7 +35,7 @@ public sealed class AnimationTriggerReader : INeoLemmixDataReader
                 break;
 
             case "STATE":
-                currentAnimationTriggerData.State = secondToken.GetString();
+                currentAnimationTriggerData.State = secondToken.ToString();
                 break;
 
             case "HIDE":

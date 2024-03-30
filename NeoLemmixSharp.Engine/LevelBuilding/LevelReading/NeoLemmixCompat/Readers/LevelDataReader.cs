@@ -25,7 +25,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
         ReadingHelpers.GetTokenPair(line, out _, out _, out var secondTokenIndex);
 
-        var levelTitle = line.TrimAfterIndex(secondTokenIndex).GetString();
+        var levelTitle = line.TrimAfterIndex(secondTokenIndex).ToString();
         _levelData.LevelTitle = string.IsNullOrWhiteSpace(levelTitle) ? "Untitled" : levelTitle;
     }
 
@@ -43,7 +43,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
         switch (firstToken)
         {
             case "AUTHOR":
-                var levelAuthor = line.TrimAfterIndex(secondTokenIndex).GetString();
+                var levelAuthor = line.TrimAfterIndex(secondTokenIndex).ToString();
                 _levelData.LevelAuthor = string.IsNullOrWhiteSpace(levelAuthor) ? "Unknown Author" : levelAuthor;
                 break;
 
@@ -64,11 +64,11 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "THEME":
-                _levelData.LevelTheme = line.TrimAfterIndex(secondTokenIndex).GetString();
+                _levelData.LevelTheme = line.TrimAfterIndex(secondTokenIndex).ToString();
                 break;
 
             case "BACKGROUND":
-                _levelData.LevelBackground = line.TrimAfterIndex(secondTokenIndex).GetString();
+                _levelData.LevelBackground = line.TrimAfterIndex(secondTokenIndex).ToString();
                 break;
 
             case "MUSIC":
