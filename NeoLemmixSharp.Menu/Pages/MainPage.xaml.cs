@@ -90,8 +90,6 @@ public sealed class MainPage : PageBase
         Resources.AddCommand(nameof(GroupUpButtonClick), GroupUpButtonClick);
         Resources.AddCommand(nameof(ConfigButtonClick), ConfigButtonClick);
         Resources.AddCommand(nameof(QuitButtonClick), QuitButtonClick);
-
-        Show();
     }
 
     protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)

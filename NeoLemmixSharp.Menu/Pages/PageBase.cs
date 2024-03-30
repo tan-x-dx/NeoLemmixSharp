@@ -34,17 +34,13 @@ public abstract class PageBase : ViewModelBase, IDisposable
         Window.WindowDataContext = this;
     }
 
-    protected void Show()
-    {
-        _desktop.Windows.Add(Window);
-    }
-
     public void Initialise(MGDesktop desktop)
     {
         if (_isInitialised)
             return;
 
         OnInitialise(desktop);
+        _desktop.Windows.Add(Window);
         _isInitialised = true;
     }
 

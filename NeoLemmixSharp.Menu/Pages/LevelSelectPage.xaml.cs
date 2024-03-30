@@ -18,8 +18,25 @@ public sealed class LevelSelectPage : PageBase
 
     protected override void OnInitialise(MGDesktop desktop)
     {
-        Show();
+
     }
+
+    /*   private bool OnFileSelected(FileDialogResponse fileDialogResponse)
+       {
+           if (!fileDialogResponse.FileExists)
+               return false;
+
+           MenuScreen.Current.MenuPageCreator.LevelToLoadFilepath = fileDialogResponse.FullPath;
+
+           var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
+
+           if (levelStartPage is null)
+               return false;
+
+           MenuScreen.Current.SetNextPage(levelStartPage);
+
+           return true;
+       }*/
 
     protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
     {
@@ -75,4 +92,9 @@ public sealed class LevelSelectPage : PageBase
     protected override void OnDispose()
     {
     }
+}
+
+public sealed class FooBar
+{
+
 }

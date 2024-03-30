@@ -16,7 +16,6 @@ public sealed class LevelStartPage : PageBase
 
     protected override void OnInitialise(MGDesktop desktop)
     {
-        Show();
     }
 
     protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
