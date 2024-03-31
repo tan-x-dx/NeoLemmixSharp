@@ -46,7 +46,7 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
         {
             case "INITIAL_FRAME":
                 var initialFrame = secondToken is "RANDOM"
-                    ? -1
+                    ? 0
                     : int.Parse(secondToken);
 
                 secondaryAnimationData.InitialFrame = initialFrame;

@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -46,6 +47,12 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
 
         gadgetRenderer?.SetGadget(result);
 
+        foreach (var gadgetStateArchetypeData in AllGadgetStateData)
+        {
+            gadgetStateArchetypeData.PrimaryAnimation.Clear();
+            gadgetStateArchetypeData.SecondaryAnimation?.Clear();
+        }
+
         return result;
     }
 
@@ -67,16 +74,14 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
     {
         var hitBox = CreateHitBoxForState(gadgetData, gadgetStateArchetypeData);
 
-        var primaryAnimation = gadgetStateArchetypeData .GetPrimaryAnimationBehaviour();
-        var secondaryAnimations = gadgetStateArchetypeData.GetSecondaryAnimationBehaviours();
+        var animationController = gadgetStateArchetypeData.GetAnimationController();
 
         return new GadgetState(
             GadgetBehaviour,
             gadgetStateArchetypeData.OnLemmingEnterActions,
             gadgetStateArchetypeData.OnLemmingPresentActions,
             gadgetStateArchetypeData.OnLemmingExitActions,
-            primaryAnimation,
-            secondaryAnimations,
+            animationController,
             hitBox);
     }
 

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
@@ -107,14 +107,7 @@ public sealed class GadgetSpriteBuilder : IDisposable
         Texture2D texture2D)
     {
         var spriteData = gadgetBuilder.SpriteData;
-        if (gadgetData.TryGetProperty(GadgetProperty.InitialAnimationFrame, out var initialAnimationFrame))
-        {
-            if (initialAnimationFrame == -1)
-            {
-                initialAnimationFrame = Random.Shared.Next(1);
-            }
-        }
-        else
+        if (!gadgetData.TryGetProperty(GadgetProperty.InitialAnimationFrame, out var initialAnimationFrame))
         {
             initialAnimationFrame = 0;
         }
@@ -125,8 +118,6 @@ public sealed class GadgetSpriteBuilder : IDisposable
             0,
             initialAnimationFrame,
             0,
-            1,
-            1,
             0);
 
         var gadgetRenderLayers = new GadgetLayerRenderer[3];

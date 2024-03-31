@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
@@ -35,7 +36,7 @@ public sealed class AnimationTriggerReader : INeoLemmixDataReader
                 break;
 
             case "STATE":
-                currentAnimationTriggerData.State = secondToken.ToString();
+                currentAnimationTriggerData.AnimationAction = GetNeoLemmixGadgetAnimationAction(line, secondToken);
                 break;
 
             case "HIDE":
@@ -58,30 +59,31 @@ public sealed class AnimationTriggerReader : INeoLemmixDataReader
 
     private static NeoLemmixGadgetStateType GetNeoLemmixGadgetStateType(ReadOnlySpan<char> line, ReadOnlySpan<char> token)
     {
-        var result = NeoLemmixGadgetStateType.Idle;
-
-        switch (token)
+        var result = token switch
         {
-            case "READY":
-                result = NeoLemmixGadgetStateType.Idle;
-                break;
-                
-            case "BUSY":
-                result = NeoLemmixGadgetStateType.Active;
-                break;
+            "READY" => NeoLemmixGadgetStateType.Idle,
+            "BUSY" => NeoLemmixGadgetStateType.Active,
+            "DISABLED" => NeoLemmixGadgetStateType.Disabled,
+            "EXHAUSTED" => NeoLemmixGadgetStateType.Disabled,
 
-            case "DISABLED":
-                result = NeoLemmixGadgetStateType.Disabled;
-                break;
+            _ => ReadingHelpers.ThrowUnknownTokenException<NeoLemmixGadgetStateType>("CONDITION", token, line)
+        };
 
-            case "EXHAUSTED":
-                result = NeoLemmixGadgetStateType.Disabled;
-                break;
+        return result;
+    }
 
-            default:
-                ReadingHelpers.ThrowUnknownTokenException("CONDITION", token, line);
-                break;
-        }
+    private static GadgetSecondaryAnimationAction GetNeoLemmixGadgetAnimationAction(ReadOnlySpan<char> line, ReadOnlySpan<char> token)
+    {
+        var result = token switch
+        {
+            "PLAY" => GadgetSecondaryAnimationAction.Play,
+            "PAUSE" => GadgetSecondaryAnimationAction.Pause,
+            "STOP" => GadgetSecondaryAnimationAction.Stop,
+            "LOOPTOZERO" => GadgetSecondaryAnimationAction.LoopToZero,
+            "MATCHPHYSICS" => GadgetSecondaryAnimationAction.MatchPrimaryAnimationPhysics,
+
+            _ => ReadingHelpers.ThrowUnknownTokenException<GadgetSecondaryAnimationAction>("STATE", token, line),
+        };
 
         return result;
     }

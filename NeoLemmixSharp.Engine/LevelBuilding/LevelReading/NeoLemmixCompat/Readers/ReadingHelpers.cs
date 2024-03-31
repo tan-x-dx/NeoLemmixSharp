@@ -229,4 +229,14 @@ public static class ReadingHelpers
         throw new InvalidOperationException(
             $"Unknown token when parsing {identifierToken}: [{firstToken}] line: \"{line}\"");
     }
+
+    [DoesNotReturn]
+    public static T ThrowUnknownTokenException<T>(
+        ReadOnlySpan<char> identifierToken,
+        ReadOnlySpan<char> firstToken,
+        ReadOnlySpan<char> line)
+    {
+        throw new InvalidOperationException(
+            $"Unknown token when parsing {identifierToken}: [{firstToken}] line: \"{line}\"");
+    }
 }
