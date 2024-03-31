@@ -114,7 +114,7 @@ public sealed class TerrainReader : INeoLemmixDataReader
                 break;
 
             case "$END":
-                DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate, out var rotNum, out var flip);
+                var (rotNum, flip) = DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate);
                 currentTerrainData.RotNum = rotNum;
                 currentTerrainData.Flip = flip;
 

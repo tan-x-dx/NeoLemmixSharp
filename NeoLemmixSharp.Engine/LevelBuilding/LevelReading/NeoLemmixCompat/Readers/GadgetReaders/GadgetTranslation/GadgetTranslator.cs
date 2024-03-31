@@ -80,12 +80,10 @@ public readonly ref partial struct GadgetTranslator
         out Orientation orientation,
         out FacingDirection facingDirection)
     {
-        DihedralTransformation.Simplify(
+        var (rotNum, flip) = DihedralTransformation.Simplify(
             prototype.FlipHorizontal,
             prototype.FlipVertical,
-            prototype.Rotate,
-            out var rotNum,
-            out var flip);
+            prototype.Rotate);
 
         orientation = Orientation.AllItems[rotNum];
         facingDirection = flip
