@@ -73,12 +73,17 @@ public sealed class MenuPageCreator
     {
         LevelStartPage? result = null;
         LevelBuilder? levelBuilder = null;
+        ILevelReader? levelReader = null;
         try
         {
             var fileExtension = Path.GetExtension(LevelToLoadFilepath);
-            var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
-            levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice, levelReader);
-            var levelScreen = levelBuilder.BuildLevel(LevelToLoadFilepath);
+            levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
+            var levelData = levelReader.ReadLevel(LevelToLoadFilepath, _graphicsDevice);
+
+            levelData.Validate();
+
+            levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
+            var levelScreen = levelBuilder.BuildLevel(levelData);
             result = new LevelStartPage(_desktop, _inputController, levelScreen);
         }
         catch (Exception ex)
@@ -89,6 +94,7 @@ public sealed class MenuPageCreator
         }
         finally
         {
+            levelReader?.Dispose();
             levelBuilder?.Dispose();
         }
 
