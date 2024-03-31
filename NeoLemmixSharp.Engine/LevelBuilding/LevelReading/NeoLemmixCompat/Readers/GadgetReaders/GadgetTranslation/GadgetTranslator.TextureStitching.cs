@@ -22,15 +22,16 @@ public readonly ref partial struct GadgetTranslator
 
         var animationDataSpan = CollectionsMarshal.AsSpan(archetypeData.AnimationData);
         if (animationDataSpan.IsEmpty)
+        {
             return new SpriteData
             {
                 Texture = primaryTexture,
                 SpriteWidth = spriteWidth,
                 SpriteHeight = spriteHeight,
 
-                NumberOfFrames = archetypeData.PrimaryAnimationFrameCount,
-                NumberOfLayers = 1
+                FrameCountsPerLayer = [archetypeData.PrimaryAnimationFrameCount]
             };
+        }
 
         var maxNumberOfFrames = archetypeData.PrimaryAnimationFrameCount;
         foreach (var animationData in animationDataSpan)
@@ -46,6 +47,13 @@ public readonly ref partial struct GadgetTranslator
         var numberOfLayers = 1 + animationDataSpan.Length;
         var result = new Texture2D(_graphicsDevice, spriteWidth * numberOfLayers, maxNumberOfFrames * spriteHeight);
         var resultTextureData = new uint[result.Width * result.Height];
+
+        var frameData = new int[numberOfLayers];
+        frameData[0] = archetypeData.PrimaryAnimationFrameCount;
+        for (var i = 0; i < numberOfLayers; i++)
+        {
+            frameData[i + 1] = animationDataSpan[i].NumberOfFrames;
+        }
 
         var xOffset = 0;
 
@@ -90,8 +98,7 @@ public readonly ref partial struct GadgetTranslator
             Texture = result,
             SpriteWidth = spriteWidth,
             SpriteHeight = spriteHeight,
-            NumberOfFrames = maxNumberOfFrames,
-            NumberOfLayers = numberOfLayers
+            FrameCountsPerLayer = frameData
         };
 
         void StitchTexture(

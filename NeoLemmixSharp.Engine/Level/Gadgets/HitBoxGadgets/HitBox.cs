@@ -8,6 +8,8 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class HitBox
 {
+    public static readonly HitBox Empty = new(EmptyLevelRegion.Instance, Array.Empty<ILemmingFilter>());
+
     private readonly ILevelRegion _levelRegion;
     private readonly ILemmingFilter[] _lemmingFilters;
 

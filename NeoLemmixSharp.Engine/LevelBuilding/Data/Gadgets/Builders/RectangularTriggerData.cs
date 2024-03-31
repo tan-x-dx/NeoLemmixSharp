@@ -2,8 +2,16 @@
 
 public readonly struct RectangularTriggerData
 {
-    public required int TriggerX { get; init; }
-    public required int TriggerY { get; init; }
-    public required int TriggerWidth { get; init; }
-    public required int TriggerHeight { get; init; }
+    public readonly int TriggerX;
+    public readonly int TriggerY;
+    public readonly int TriggerWidth;
+    public readonly int TriggerHeight;
+
+    public RectangularTriggerData(int triggerX, int triggerY, int triggerWidth, int triggerHeight)
+    {
+        TriggerX = triggerX;
+        TriggerY = triggerY;
+        TriggerWidth = triggerWidth;
+        TriggerHeight = triggerHeight;
+    }
 }

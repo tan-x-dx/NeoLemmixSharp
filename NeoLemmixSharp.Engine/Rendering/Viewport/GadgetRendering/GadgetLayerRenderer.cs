@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
@@ -26,7 +26,7 @@ public sealed class GadgetLayerRenderer
         Rectangle sourceRectangle,
         Rectangle destinationRectangle)
     {
-        var spriteFrameAndLayerData = _stateAnimationBehaviour.GetFrameData();
+        var spriteFrameAndLayerData = _stateAnimationBehaviour.GetFrameAndLayerData();
 
         sourceRectangle.X += spriteFrameAndLayerData.SourceDx;
         sourceRectangle.Y += spriteFrameAndLayerData.SourceDy;

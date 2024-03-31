@@ -1,4 +1,4 @@
-﻿using GeonBit.UI.Utils;
+﻿using MGUI.Core.UI;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
@@ -12,6 +12,7 @@ public sealed class MenuPageCreator
 {
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
+    private readonly MGDesktop _desktop;
 
     private readonly MenuInputController _inputController;
 
@@ -20,11 +21,13 @@ public sealed class MenuPageCreator
     public MenuPageCreator(
         ContentManager contentManager,
         GraphicsDevice graphicsDevice,
-        MenuInputController inputController)
+        MenuInputController inputController,
+        MGDesktop desktop)
     {
         _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;
         _inputController = inputController;
+        _desktop = desktop;
 
         LevelToLoadFilepath = GetLevelFilePath();
     }
@@ -58,32 +61,40 @@ public sealed class MenuPageCreator
 
     public MainPage CreateMainPage()
     {
-        return new MainPage(_inputController);
+        return new MainPage(_desktop, _inputController);
     }
 
     public LevelSelectPage CreateLevelSelectPage()
     {
-        return new LevelSelectPage(_inputController);
+        return new LevelSelectPage(_desktop, _inputController);
     }
 
     public LevelStartPage? CreateLevelStartPage()
     {
         LevelStartPage? result = null;
         LevelBuilder? levelBuilder = null;
+        ILevelReader? levelReader = null;
         try
         {
             var fileExtension = Path.GetExtension(LevelToLoadFilepath);
-            var levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
-            levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice, levelReader);
-            var levelScreen = levelBuilder.BuildLevel(LevelToLoadFilepath);
-            result = new LevelStartPage(_inputController, levelScreen);
+            levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
+            var levelData = levelReader.ReadLevel(LevelToLoadFilepath, _graphicsDevice);
+
+            levelData.Validate();
+
+            levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
+            var levelScreen = levelBuilder.BuildLevel(levelData);
+            result = new LevelStartPage(_desktop, _inputController, levelScreen);
         }
         catch (Exception ex)
         {
-            MessageBox.ShowMsgBox("Error occurred!", ex.Message);
+            var exceptionWindow = new ExceptionViewer(_desktop, _inputController, ex);
+
+            exceptionWindow.Initialise();
         }
         finally
         {
+            levelReader?.Dispose();
             levelBuilder?.Dispose();
         }
 

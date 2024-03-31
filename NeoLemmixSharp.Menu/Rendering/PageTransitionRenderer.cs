@@ -15,7 +15,7 @@ public sealed class PageTransitionRenderer : IDisposable
     public PageTransitionRenderer(PageTransition pageTransition)
     {
         _pageTransition = pageTransition;
-        _fadeTexture = MenuSpriteBank.GetTexture(MenuResource.FadeTexture);
+        _fadeTexture = MenuSpriteBank.FadeTexture;
         _pixelSet = new uint[1];
     }
 

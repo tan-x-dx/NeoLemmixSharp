@@ -1,4 +1,4 @@
-﻿using GeonBit.UI;
+﻿using MGUI.Core.UI;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
@@ -10,6 +10,7 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     private readonly BackgroundRenderer _backgroundRenderer;
     private readonly MenuCursorRenderer _menuCursorRenderer;
     private readonly PageTransitionRenderer _pageTransitionRenderer;
+    private readonly MGDesktop _desktop;
 
     private bool _initialized;
 
@@ -17,11 +18,13 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     public MenuScreenRenderer(
         MenuCursorRenderer menuCursorRenderer,
-        PageTransition pageTransition)
+        PageTransition pageTransition,
+        MGDesktop desktop)
     {
-        _backgroundRenderer = new BackgroundRenderer(MenuSpriteBank.GetTexture(MenuResource.Background));
+        _backgroundRenderer = new BackgroundRenderer(MenuSpriteBank.Background);
         _menuCursorRenderer = menuCursorRenderer;
         _pageTransitionRenderer = new PageTransitionRenderer(pageTransition);
+        _desktop = desktop;
     }
 
     public void Initialise()
@@ -37,22 +40,17 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     public void RenderScreen(SpriteBatch spriteBatch)
     {
-        // draw ui
-        UserInterface.Active.Draw(spriteBatch);
-
+        // background
         spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
-
         _backgroundRenderer.Render(spriteBatch);
-
         spriteBatch.End();
 
-        // finalize ui rendering
-        UserInterface.Active.DrawMainRenderTarget(spriteBatch);
+        // draw ui
+        _desktop.Draw();
 
+        // fade transition where necessary
         spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
-
         _pageTransitionRenderer.Render(spriteBatch);
-
         spriteBatch.End();
     }
 
@@ -73,7 +71,7 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         if (IsDisposed)
             return;
 
-        UserInterface.Active.Dispose();
+        //UserInterface.Active.Dispose();
 
         _menuCursorRenderer.Dispose();
         _pageTransitionRenderer.Dispose();

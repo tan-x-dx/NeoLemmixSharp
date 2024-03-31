@@ -6,54 +6,42 @@ namespace NeoLemmixSharp.Menu.Rendering;
 
 public static class MenuSpriteBank
 {
-    private static Texture2D[] _textureLookup = null!;
+    public static Texture2D Background { get; private set; } = null!;
+    public static Texture2D Logo { get; private set; } = null!;
+    public static Texture2D ScrollerLemmings { get; private set; } = null!;
+    public static Texture2D ScrollerSegment { get; private set; } = null!;
+    public static Texture2D SignPlay { get; private set; } = null!;
+    public static Texture2D SignGroup { get; private set; } = null!;
+    public static Texture2D SignGroupUp { get; private set; } = null!;
+    public static Texture2D SignGroupDown { get; private set; } = null!;
+    public static Texture2D SignLevelSelect { get; private set; } = null!;
+    public static Texture2D SignConfig { get; private set; } = null!;
+    public static Texture2D SignQuit { get; private set; } = null!;
+    public static Texture2D MenuButton { get; private set; } = null!;
+    public static Texture2D Cursor { get; private set; } = null!;
+    public static Texture2D FadeTexture { get; private set; } = null!;
 
-    public static void Initialise(ContentManager contentManager, GraphicsDevice graphicsDevice)
+    public static void Initialise(
+        ContentManager contentManager,
+        GraphicsDevice graphicsDevice)
     {
-        var numberOfResources = Enum.GetValuesAsUnderlyingType<MenuResource>().Length;
+        Background = contentManager.Load<Texture2D>("menu/background");
+        Logo = contentManager.Load<Texture2D>("menu/logo");
+        ScrollerLemmings = contentManager.Load<Texture2D>("menu/scroller_lemmings");
+        ScrollerSegment = contentManager.Load<Texture2D>("menu/scroller_segment");
+        SignPlay = contentManager.Load<Texture2D>("menu/sign_play");
+        SignGroup = contentManager.Load<Texture2D>("menu/sign_group");
+        SignGroupUp = contentManager.Load<Texture2D>("menu/sign_group_up");
+        SignGroupDown = contentManager.Load<Texture2D>("menu/sign_group_down");
+        SignLevelSelect = contentManager.Load<Texture2D>("menu/sign_level_select");
+        SignConfig = contentManager.Load<Texture2D>("menu/sign_config");
+        SignQuit = contentManager.Load<Texture2D>("menu/sign_quit");
+        MenuButton = contentManager.Load<Texture2D>("menu/ui_button");
 
-        _textureLookup = new Texture2D[numberOfResources];
+        Cursor = CreateCursorTexture_Debug(graphicsDevice);
 
-        LoadMenuContent(contentManager, graphicsDevice);
+        FadeTexture = new Texture2D(graphicsDevice, 1, 1);
     }
-
-    private static void LoadMenuContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
-    {
-        LoadResource(MenuResource.Background, "menu/background");
-        LoadResource(MenuResource.Logo, "menu/logo");
-        LoadResource(MenuResource.ScrollerLemmings, "menu/scroller_lemmings");
-        LoadResource(MenuResource.ScrollerSegment, "menu/scroller_segment");
-        LoadResource(MenuResource.SignPlay, "menu/sign_play");
-        LoadResource(MenuResource.SignGroup, "menu/sign_group");
-        LoadResource(MenuResource.SignGroupUp, "menu/sign_group_up");
-        LoadResource(MenuResource.SignGroupDown, "menu/sign_group_down");
-        LoadResource(MenuResource.SignLevelSelect, "menu/sign_level_select");
-        LoadResource(MenuResource.SignConfig, "menu/sign_config");
-        LoadResource(MenuResource.SignQuit, "menu/sign_quit");
-        LoadResource(MenuResource.MenuButton, "menu/ui_button");
-
-        var fadeTexture = new Texture2D(graphicsDevice, 1, 1);
-        AddTexture(MenuResource.FadeTexture, fadeTexture);
-
-        var cursorTexture = CreateCursorTexture_Debug(graphicsDevice);
-        AddTexture(MenuResource.Cursor, cursorTexture);
-
-        return;
-
-        void LoadResource(MenuResource resource, string fileName)
-        {
-            var texture = contentManager.Load<Texture2D>(fileName);
-            _textureLookup[(int)resource] = texture;
-        }
-
-        void AddTexture(MenuResource resource, Texture2D texture)
-        {
-            texture.Name = resource.ToString();
-            _textureLookup[(int)resource] = texture;
-        }
-    }
-
-    public static Texture2D GetTexture(MenuResource resource) => _textureLookup[(int)resource];
 
     private static Texture2D CreateCursorTexture_Debug(GraphicsDevice graphicsDevice)
     {

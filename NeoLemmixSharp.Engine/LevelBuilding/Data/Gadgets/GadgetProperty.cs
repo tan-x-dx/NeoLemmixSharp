@@ -15,7 +15,7 @@ public enum GadgetProperty
 
 public static class GadgetPropertyHelpers
 {
-    private const int NumberOfGadgetProperties = 6;
+    private const int NumberOfGadgetProperties = 7;
 
     private sealed class GadgetPropertyHasher : IPerfectHasher<GadgetProperty>
     {

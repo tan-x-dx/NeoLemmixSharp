@@ -175,7 +175,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     private void SetCurrentStyle(ReadOnlySpan<char> style)
     {
-        _currentStyle = style.GetString();
+        _currentStyle = style.ToString();
         _currentFolder = Path.Combine(
             RootDirectoryManager.RootDirectory,
             NeoLemmixFileExtensions.StyleFolderName,

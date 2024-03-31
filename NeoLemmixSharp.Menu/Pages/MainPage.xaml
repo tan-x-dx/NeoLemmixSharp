@@ -1,0 +1,72 @@
+﻿<Window xmlns="clr-namespace:MGUI.Core.UI.XAML;assembly=MGUI.Core"
+        SizeToContent="WidthAndHeight">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Length="*" />
+			<RowDefinition Length="*" />
+			<RowDefinition Length="*" />
+			<RowDefinition Length="*" />
+		</Grid.RowDefinitions>
+
+		<Image GridRow="0"
+               Source="{MGBinding LogoImage}"
+               HorizontalAlignment="Center"
+               Stretch="Uniform" />
+
+		<StackPanel GridRow="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top">
+			<Button BorderBrush="0"
+                    Background="0"
+                    CommandName="PlayButtonClick">
+				<Button.Content>
+					<Image Source="{MGBinding PlayButtonImage}"
+                           Stretch="None" />
+				</Button.Content>
+			</Button>
+
+			<Button BorderBrush="0"
+                    Background="0"
+                    CommandName="LevelSelectButtonClick">
+				<Button.Content>
+					<Image Source="{MGBinding LevelSelectButton}"
+                           Stretch="None" />
+				</Button.Content>
+			</Button>
+
+			<Button BorderBrush="0"
+                    Background="0"
+                    CommandName="GroupButtonClick">
+				<Button.Content>
+                    <Image Source="{MGBinding GroupButton}"
+                           Stretch="None" />
+				</Button.Content>
+			</Button>
+		</StackPanel>
+
+		<StackPanel GridRow="2"
+                    Orientation="Horizontal"
+					HorizontalAlignment="Center"
+                    VerticalAlignment="Top">
+			<Button BorderBrush="0"
+                    Background="0"
+                    CommandName="ConfigButtonClick">
+				<Button.Content>
+					<Image Source="{MGBinding ConfigButton}"
+                           Stretch="None" />
+				</Button.Content>
+			</Button>
+
+			<Button BorderBrush="0"
+                    Background="0"
+                    CommandName="QuitButtonClick">
+				<Button.Content>
+					<Image Source="{MGBinding QuitButton}"
+                           Stretch="None" />
+				</Button.Content>
+			</Button>
+		</StackPanel>
+	</Grid>
+</Window>

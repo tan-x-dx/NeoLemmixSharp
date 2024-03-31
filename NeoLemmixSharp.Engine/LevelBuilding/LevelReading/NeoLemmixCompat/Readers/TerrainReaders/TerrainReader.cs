@@ -73,7 +73,7 @@ public sealed class TerrainReader : INeoLemmixDataReader
             case "PIECE":
                 if (_settingDataForGroup)
                 {
-                    currentTerrainData.GroupName = secondToken.GetString();
+                    currentTerrainData.GroupName = secondToken.ToString();
                 }
                 else
                 {
@@ -114,7 +114,7 @@ public sealed class TerrainReader : INeoLemmixDataReader
                 break;
 
             case "$END":
-                DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate, out var rotNum, out var flip);
+                var (rotNum, flip) = DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate);
                 currentTerrainData.RotNum = rotNum;
                 currentTerrainData.Flip = flip;
 
@@ -134,7 +134,7 @@ public sealed class TerrainReader : INeoLemmixDataReader
 
     private void SetCurrentStyle(ReadOnlySpan<char> style)
     {
-        _currentStyle = style.GetString();
+        _currentStyle = style.ToString();
         _currentFolder = Path.Combine(
             RootDirectoryManager.RootDirectory,
             NeoLemmixFileExtensions.StyleFolderName,

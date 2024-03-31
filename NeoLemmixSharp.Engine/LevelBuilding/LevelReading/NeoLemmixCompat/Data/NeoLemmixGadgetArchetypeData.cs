@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
@@ -23,4 +24,10 @@ public sealed class NeoLemmixGadgetArchetypeData
     public bool IsSkillPickup { get; set; }
 
     public List<AnimationData> AnimationData { get; } = new();
+
+    public RectangularTriggerData ToRectangularTriggerData() => new(
+        TriggerX,
+        TriggerY,
+        TriggerWidth,
+        TriggerHeight);
 }

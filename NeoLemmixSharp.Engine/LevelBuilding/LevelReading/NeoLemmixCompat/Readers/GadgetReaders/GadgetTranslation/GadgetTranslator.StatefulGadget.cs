@@ -48,7 +48,7 @@ public readonly ref partial struct GadgetTranslator
     {
         var spriteData = GetStitchedSpriteData(archetypeData);
 
-        var gadgetStateData = archetypeData.GetGadgetStates();
+        var gadgetStateData = archetypeData.GetGadgetStates(spriteData);
         var gadgetBehaviour = archetypeData.Behaviour.ToGadgetBehaviour();
 
         return new StatefulGadgetBuilder

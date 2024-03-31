@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
@@ -149,19 +148,6 @@ public static class ReadingHelpers
         return TNumber.Parse(token[startIndex..], NumberStyles.AllowHexSpecifier, null);
     }
 
-    /// <summary>
-    /// Helper method to prevent unnecessary allocations of empty strings
-    /// </summary>
-    /// <param name="span">The input span to be converted</param>
-    /// <returns>A string representation of the input</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string GetString(this ReadOnlySpan<char> span)
-    {
-        return span.IsEmpty
-            ? string.Empty
-            : span.ToString();
-    }
-
     public static bool GetSkillByName(
         ReadOnlySpan<char> token,
         IEqualityComparer<char> charEqualityComparer,
@@ -236,6 +222,16 @@ public static class ReadingHelpers
 
     [DoesNotReturn]
     public static void ThrowUnknownTokenException(
+        ReadOnlySpan<char> identifierToken,
+        ReadOnlySpan<char> firstToken,
+        ReadOnlySpan<char> line)
+    {
+        throw new InvalidOperationException(
+            $"Unknown token when parsing {identifierToken}: [{firstToken}] line: \"{line}\"");
+    }
+
+    [DoesNotReturn]
+    public static T ThrowUnknownTokenException<T>(
         ReadOnlySpan<char> identifierToken,
         ReadOnlySpan<char> firstToken,
         ReadOnlySpan<char> line)

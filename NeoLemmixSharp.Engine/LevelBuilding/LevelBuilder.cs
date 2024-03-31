@@ -10,7 +10,7 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
 using Viewport = NeoLemmixSharp.Engine.Level.Viewport;
 
@@ -20,27 +20,21 @@ public sealed class LevelBuilder : IDisposable
 {
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly ILevelReader _levelReader;
     private readonly TerrainPainter _terrainPainter;
     private readonly LevelObjectAssembler _levelObjectAssembler;
 
     public LevelBuilder(
         ContentManager contentManager,
-        GraphicsDevice graphicsDevice,
-        ILevelReader levelReader)
+        GraphicsDevice graphicsDevice)
     {
         _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;
-        _levelReader = levelReader;
         _terrainPainter = new TerrainPainter(graphicsDevice);
         _levelObjectAssembler = new LevelObjectAssembler(graphicsDevice);
     }
 
-    public LevelScreen BuildLevel(string levelFilePath)
+    public LevelScreen BuildLevel(LevelData levelData)
     {
-        var levelData = _levelReader.ReadLevel(levelFilePath, _graphicsDevice);
-        levelData.Validate();
-
         _terrainPainter.PaintLevel(levelData);
 
         var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
@@ -130,7 +124,6 @@ public sealed class LevelBuilder : IDisposable
 
     public void Dispose()
     {
-        _levelReader.Dispose();
         _terrainPainter.Dispose();
         _levelObjectAssembler.Dispose();
     }

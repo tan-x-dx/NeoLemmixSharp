@@ -5,16 +5,14 @@ namespace NeoLemmixSharp.Common.Util;
 
 public readonly ref struct DihedralTransformation
 {
-    public static void Simplify(
+    public static (int RotNum, bool Flip) Simplify(
         bool flipHorizontally,
         bool flipVertically,
-        bool rotate,
-        out int rotNum,
-        out bool flip)
+        bool rotate)
     {
-        rotNum = rotate
-            ? 1
-            : 0;
+        var rotNum = rotate
+              ? 1
+              : 0;
 
         if (flipVertically)
         {
@@ -22,7 +20,7 @@ public readonly ref struct DihedralTransformation
             rotNum += 2;
         }
 
-        flip = flipHorizontally;
+        return (rotNum, flipHorizontally);
     }
 
     private readonly int _r;

@@ -1,4 +1,4 @@
-﻿using GeonBit.UI;
+﻿using MGUI.Shared.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
@@ -24,7 +24,7 @@ using System.Text;
 
 namespace NeoLemmixSharp;
 
-public sealed partial class NeoLemmixGame : Game, IGameWindow
+public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 {
     private readonly GraphicsDeviceManager _graphics;
 
@@ -37,6 +37,10 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     public int WindowWidth => _graphics.PreferredBackBufferWidth;
     public int WindowHeight => _graphics.PreferredBackBufferHeight;
+    public MainRenderer MguiRenderer { get; private set; }
+
+    public event EventHandler<TimeSpan>? PreviewUpdate;
+    public event EventHandler<EventArgs>? EndUpdate;
 
     public NeoLemmixGame()
     {
@@ -48,7 +52,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         Content.RootDirectory = "Content";
         Window.AllowUserResizing = false;
         Window.IsBorderless = true;
-        IsMouseVisible = false;
+        IsMouseVisible = true;
 
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
 
@@ -84,6 +88,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Initialize()
     {
+        MguiRenderer = new MainRenderer(new GameRenderHost<NeoLemmixGame>(this));
+
         // make the window fullscreen (but still with border and top control bar)
         var screenWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;
         var screenHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
@@ -101,11 +107,11 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         LoadResources();
 
         // create and init the UI manager
-        UserInterface.Initialize(Content, BuiltinThemes.editor);
-        UserInterface.Active.UseRenderTarget = true;
+        // UserInterface.Initialize(Content, BuiltinThemes.editor);
+        //UserInterface.Active.UseRenderTarget = true;
 
         // draw cursor outside the render target
-        UserInterface.Active.IncludeCursorInRenderTarget = false;
+        //UserInterface.Active.IncludeCursorInRenderTarget = false;
 
         RootDirectoryManager.Initialise();
         FontBank.Initialise(Content);
@@ -184,7 +190,9 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Update(GameTime gameTime)
     {
+        PreviewUpdate?.Invoke(this, gameTime.TotalGameTime);
         _screen!.Tick(gameTime);
+        EndUpdate?.Invoke(this, EventArgs.Empty);
     }
 
     protected override void Draw(GameTime gameTime)

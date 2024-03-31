@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;

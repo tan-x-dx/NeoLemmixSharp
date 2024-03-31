@@ -67,7 +67,7 @@ public sealed class SketchReader : INeoLemmixDataReader
                 break;
 
             case "$END":
-                DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate, out var rotNum, out var flip);
+                var (rotNum, flip) = DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate);
                 currentSketchData.RotNum = rotNum;
                 currentSketchData.Flip = flip;
 
