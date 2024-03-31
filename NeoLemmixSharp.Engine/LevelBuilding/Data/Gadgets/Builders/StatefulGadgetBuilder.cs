@@ -88,7 +88,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         if (!triggerData.HasValue)
             return HitBox.Empty;
 
-        var hitBoxRegion = CreateHitBoxLevelRegion(gadgetData, triggerData.Value);
+        var hitBoxRegion = CreateRectangularHitBoxLevelRegion(gadgetData, triggerData.Value);
 
         var lemmingFilters = new List<ILemmingFilter>();
 
@@ -142,7 +142,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         return hitBox;
     }
 
-    private ILevelRegion CreateHitBoxLevelRegion(
+    private RectangularLevelRegion CreateRectangularHitBoxLevelRegion(
         GadgetData gadgetData,
         RectangularTriggerData triggerData)
     {
