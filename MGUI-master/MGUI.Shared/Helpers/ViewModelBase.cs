@@ -18,7 +18,7 @@ public static class ViewModelHelpers
 {
     public static void RaisePropertyChanged<T>(this ViewModelBase viewModel, ref T field, T value, [CallerMemberName] string propertyName = null)
     {
-        if (field.Equals(value))
+        if (Equals(field, value))
             return;
 
         field = value;

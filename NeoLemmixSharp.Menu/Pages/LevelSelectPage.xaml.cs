@@ -1,5 +1,6 @@
 ﻿using MGUI.Core.UI;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 namespace NeoLemmixSharp.Menu.Pages;
@@ -7,6 +8,7 @@ namespace NeoLemmixSharp.Menu.Pages;
 public sealed class LevelSelectPage : PageBase
 {
     private readonly string _levelsRootPath;
+    private readonly MgListBox<object> _listBox;
 
     public LevelSelectPage(
         MGDesktop desktop,
@@ -14,11 +16,29 @@ public sealed class LevelSelectPage : PageBase
         : base(desktop, inputController)
     {
         _levelsRootPath = Path.Combine(RootDirectoryManager.RootDirectory, NeoLemmixFileExtensions.LevelFolderName);
+
+        _listBox = Window.Content.GetChildren().OfType<MgListBox<object>>().First();
     }
 
     protected override void OnInitialise()
     {
+        var data = new List<object>();
+        var subFolders = Directory.GetDirectories(_levelsRootPath);
+        foreach (var subFolder in subFolders)
+        {
 
+        }
+
+        var files = Directory.GetFiles(_levelsRootPath);
+        foreach (var file in files)
+        {
+            if (LevelFileTypeHandler.FileExtensionIsValidLevelType(file))
+            {
+
+            }
+        }
+
+        _listBox.SetItemsSource(data);
     }
 
     /*   private bool OnFileSelected(FileDialogResponse fileDialogResponse)
