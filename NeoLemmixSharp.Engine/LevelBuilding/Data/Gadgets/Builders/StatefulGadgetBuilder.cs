@@ -13,7 +13,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
-public sealed class StatefulGadgetBuilder : IGadgetBuilder
+public sealed class StatefulGadgetBuilder : IGadgetAnimationData
 {
     public required int GadgetBuilderId { get; init; }
     public required GadgetBehaviour GadgetBehaviour { get; init; }
@@ -49,11 +49,15 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
 
         foreach (var gadgetStateArchetypeData in AllGadgetStateData)
         {
-            gadgetStateArchetypeData.PrimaryAnimation.Clear();
-            gadgetStateArchetypeData.SecondaryAnimation?.Clear();
+            gadgetStateArchetypeData.Clear();
         }
 
         return result;
+    }
+
+    public IEnumerable<GadgetAnimationArchetypeData> AnimationArchetypes()
+    {
+        throw new NotImplementedException();
     }
 
     private GadgetState[] CreateStates(GadgetData gadgetData)

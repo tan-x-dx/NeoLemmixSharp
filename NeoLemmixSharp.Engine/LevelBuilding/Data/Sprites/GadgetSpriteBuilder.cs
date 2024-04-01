@@ -2,12 +2,12 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering.NineSliceRendering;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using GadgetSpriteCreator = NeoLemmixSharp.Engine.Rendering.Viewport.SpriteRotationReflectionProcessor<Microsoft.Xna.Framework.Graphics.Texture2D>;
 
@@ -46,7 +46,10 @@ public sealed class GadgetSpriteBuilder : IDisposable
         if (gadgetBuilder is ResizeableGadgetBuilder resizeableGadgetBuilder)
             return BuildNineSliceRenderer(resizeableGadgetBuilder, gadgetData, texture!);
 
-        return BuildGenericGadgetRenderer(gadgetBuilder, gadgetData, texture!);
+        if (gadgetBuilder is IGadgetAnimationData gadgetAnimationData)
+            return BuildGenericGadgetRenderer(gadgetAnimationData, gadgetData, texture!);
+
+        return ThrowUnexpectedGadgetBuilderType(gadgetBuilder);
     }
 
     private Texture2D GetOrAddCachedTexture(
@@ -102,34 +105,30 @@ public sealed class GadgetSpriteBuilder : IDisposable
     }
 
     private static GadgetRenderer BuildGenericGadgetRenderer(
-        IGadgetBuilder gadgetBuilder,
+        IGadgetAnimationData gadgetBuilder,
         GadgetData gadgetData,
         Texture2D texture2D)
     {
-        var spriteData = gadgetBuilder.SpriteData;
-        if (!gadgetData.TryGetProperty(GadgetProperty.InitialAnimationFrame, out var initialAnimationFrame))
+        var layerRenderers = new List<GadgetLayerRenderer>();
+
+        foreach (var gadgetAnimationArchetypeData in gadgetBuilder.AnimationArchetypes())
         {
-            initialAnimationFrame = 0;
+            var animationBehaviour = gadgetAnimationArchetypeData.GetAnimationBehaviour();
+
+            var layerRenderer = new GadgetLayerRenderer(texture2D, animationBehaviour, Color.White);
+
+            layerRenderers.Add(layerRenderer);
         }
 
-        var primaryAnimationBehaviour = new GadgetStateAnimationBehaviour(
-            spriteData.SpriteWidth,
-            spriteData.SpriteHeight,
-            0,
-            initialAnimationFrame,
-            0,
-            0);
-
-        var gadgetRenderLayers = new GadgetLayerRenderer[3];
-        gadgetRenderLayers[0] = new GadgetLayerRenderer(
-            texture2D,
-            primaryAnimationBehaviour,
-            Color.White);
-
         return new GadgetRenderer(
-            null!,
-            gadgetRenderLayers,
+            layerRenderers.ToArray(),
             gadgetData.GadgetRenderMode);
+    }
+
+    [DoesNotReturn]
+    private static GadgetRenderer ThrowUnexpectedGadgetBuilderType(IGadgetBuilder gadgetBuilder)
+    {
+        throw new InvalidOperationException($"Unexpected gadget builder type! {gadgetBuilder.GetType().Name}");
     }
 
     private static Texture2D ItemCreator(
@@ -145,7 +144,11 @@ public sealed class GadgetSpriteBuilder : IDisposable
     public GadgetSpriteBank BuildGadgetSpriteBank()
     {
         var textureArray = new Texture2D[_gadgetTextures.Count];
-        _gadgetTextures.Values.CopyTo(textureArray, 0);
+        var i = 0;
+        foreach (var (_, gadgetTexture) in _gadgetTextures)
+        {
+            textureArray[i++] = gadgetTexture;
+        }
 
         return new GadgetSpriteBank(textureArray);
     }

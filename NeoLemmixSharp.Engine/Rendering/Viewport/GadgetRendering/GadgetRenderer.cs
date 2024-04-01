@@ -6,20 +6,17 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 public sealed class GadgetRenderer : IGadgetRenderer
 {
-    private readonly GadgetLayerRenderer _primaryLayer;
-    private readonly GadgetLayerRenderer[] _secondaryLayers;
+    private readonly GadgetLayerRenderer[] _animationLayers;
 
     private GadgetBase _gadget;
 
     public GadgetRenderMode RenderMode { get; }
 
     public GadgetRenderer(
-        GadgetLayerRenderer primaryLayer,
-        GadgetLayerRenderer[] secondaryLayers,
+        GadgetLayerRenderer[] animationLayers,
         GadgetRenderMode renderMode)
     {
-        _primaryLayer = primaryLayer;
-        _secondaryLayers = secondaryLayers;
+        _animationLayers = animationLayers;
         RenderMode = renderMode;
     }
 
@@ -35,6 +32,6 @@ public sealed class GadgetRenderer : IGadgetRenderer
     public void Dispose()
     {
         _gadget = null!;
-        Array.Clear(_secondaryLayers);
+        Array.Clear(_animationLayers);
     }
 }
