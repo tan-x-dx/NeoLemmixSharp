@@ -38,8 +38,8 @@ public sealed class MenuPageCreator
             // "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
             // "levels\\rotation test.nxlv";
             // "levels\\render test.nxlv";
-            // "levels\\movement test.nxlv";
-            "levels\\object test 2.nxlv";
+             "levels\\Foo.nxlv";
+           // "levels\\object test 2.nxlv";
         // "levels\\hatch count test.nxlv";
         // "levels\\lemming_count_test.nxlv";
         // "levels\\test foo.nxlv";
