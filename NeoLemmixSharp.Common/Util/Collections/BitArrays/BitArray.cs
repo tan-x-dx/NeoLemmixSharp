@@ -35,8 +35,8 @@ public sealed class BitArray
 
     public BitArray(int length, bool setAllBits = false)
     {
-        if (length <= 0)
-            throw new ArgumentOutOfRangeException(nameof(length), length, "length must be strictly positive!");
+        if (length < 0)
+            throw new ArgumentOutOfRangeException(nameof(length), length, "length must be non-negative!");
 
         var arraySize = (length + Mask) >> Shift;
         _bits = new uint[arraySize];
