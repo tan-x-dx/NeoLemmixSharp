@@ -113,6 +113,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         }
 
         initialAction.TransitionLemmingToAction(this, false);
+        Renderer.UpdateLemmingState(true);
     }
 
     public void Tick()
