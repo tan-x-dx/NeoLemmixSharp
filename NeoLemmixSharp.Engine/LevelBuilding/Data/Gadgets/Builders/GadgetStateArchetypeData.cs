@@ -37,6 +37,12 @@ public sealed class GadgetStateArchetypeData
             secondaryAnimationBehaviour,
             SecondaryAnimationAction);
     }
+
+    public void Clear()
+    {
+        PrimaryAnimation.Clear();
+        SecondaryAnimation?.Clear();
+    }
 }
 
 public sealed class GadgetAnimationArchetypeData

@@ -84,22 +84,16 @@ public static class NeoLemmixGadgetBehaviourExtensions
             NeoLemmixGadgetBehaviour.AntiSplatPad or
             NeoLemmixGadgetBehaviour.SplatPad or
             NeoLemmixGadgetBehaviour.Background)
-        {
             return GetSingleGadgetState(archetypeData, spriteData);
-        }
 
         if (archetypeData.Behaviour is NeoLemmixGadgetBehaviour.PickupSkill or
             NeoLemmixGadgetBehaviour.UnlockButton or
             NeoLemmixGadgetBehaviour.Splitter)
-        {
             return GetGadgetStatesForTwoStateGadgets(archetypeData, spriteData);
-        }
 
         if (archetypeData.Behaviour is NeoLemmixGadgetBehaviour.Trap or
             NeoLemmixGadgetBehaviour.TrapOnce)
-        {
             return GetGadgetStatesForTraps(archetypeData, spriteData);
-        }
 
         return ToBeImplemented(archetypeData.Behaviour);
     }
@@ -224,7 +218,6 @@ public static class NeoLemmixGadgetBehaviourExtensions
             SecondaryAnimationAction = GetGadgetSecondaryAnimationActionForState(NeoLemmixGadgetStateType.Active)
         };
 
-        // Disabled
         var disabledState = new GadgetStateArchetypeData
         {
             OnLemmingEnterActions = emptyActions,
@@ -246,7 +239,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
             SecondaryAnimationAction = GetGadgetSecondaryAnimationActionForState(NeoLemmixGadgetStateType.Disabled)
 
         };
-        // Three states: idle, active, disabled
+
         var result = new[]
         {
             idleState,
