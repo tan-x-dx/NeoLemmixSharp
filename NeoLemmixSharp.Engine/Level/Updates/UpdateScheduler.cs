@@ -199,13 +199,13 @@ end;
                 _levelCursor.CheckLemming(lemming);
             }
 
-            var action = _levelCursor.CurrentlyHighlightedLemming?.CurrentAction;
-            if (action is null)
+            if (_levelCursor.CurrentlyHighlightedLemming is null)
             {
                 _levelControlPanel.TextualData.ClearCursorData();
             }
             else
             {
+                var action = _levelCursor.CurrentlyHighlightedLemming.CurrentAction;
                 _levelControlPanel.TextualData.SetCursorData(action.LemmingActionName, _levelCursor.NumberOfLemmingsUnderCursor);
             }
         }
