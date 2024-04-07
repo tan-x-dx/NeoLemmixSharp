@@ -8,6 +8,7 @@ public static class MenuSpriteBank
 {
     public static Texture2D Background { get; private set; } = null!;
     public static Texture2D Logo { get; private set; } = null!;
+    public static Texture2D MenuIcons { get; private set; } = null!;
     public static Texture2D ScrollerLemmings { get; private set; } = null!;
     public static Texture2D ScrollerSegment { get; private set; } = null!;
     public static Texture2D SignPlay { get; private set; } = null!;
@@ -27,6 +28,7 @@ public static class MenuSpriteBank
     {
         Background = contentManager.Load<Texture2D>("menu/background");
         Logo = contentManager.Load<Texture2D>("menu/logo");
+        MenuIcons = contentManager.Load<Texture2D>("menu/menu_icons");
         ScrollerLemmings = contentManager.Load<Texture2D>("menu/scroller_lemmings");
         ScrollerSegment = contentManager.Load<Texture2D>("menu/scroller_segment");
         SignPlay = contentManager.Load<Texture2D>("menu/sign_play");
