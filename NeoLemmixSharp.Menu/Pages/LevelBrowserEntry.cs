@@ -10,14 +10,20 @@ public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
 {
     private const int IconSize = 16;
 
+    private readonly string? _fileExtension;
     private readonly List<LevelBrowserEntry>? _subEntries;
-    
+
     private IconType _iconType;
     private MGTextureData _textureData;
+    private string _displayName;
     private bool _isOpen;
 
     public string Path { get; }
-    public string DisplayName { get; }
+    public string DisplayName
+    {
+        get => _displayName;
+        private set => this.RaisePropertyChanged(ref _displayName, value);
+    }
 
     public bool IsFolder { get; }
     public int IndentationLevel { get; }
@@ -42,6 +48,17 @@ public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
 
             _textureData = GetTextureData(_iconType);
             NotifyPropertyChanged(nameof(TextureData));
+
+            if (!_isOpen)
+                return;
+
+            foreach (var subEntry in _subEntries!)
+            {
+                if (string.IsNullOrWhiteSpace(subEntry.DisplayName))
+                {
+                    subEntry.OnDisplay();
+                }
+            }
         }
     }
 
@@ -63,7 +80,7 @@ public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
         var subFolders = Directory.GetDirectories(folder);
         foreach (var subFolder in subFolders)
         {
-            var folderEntry = new LevelBrowserEntry(subFolder, indentationLevel, true, IconType.ArrowClosed);
+            var folderEntry = new LevelBrowserEntry(subFolder, indentationLevel);
 
             folderEntry._subEntries!.AddRange(GetMenuItemsForFolder(subFolder, indentationLevel + 1));
 
@@ -73,11 +90,12 @@ public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
         var files = Directory.GetFiles(folder);
         foreach (var file in files)
         {
-            var fileExtension = System.IO.Path.GetExtension(file);
+            var fileExtension = LevelFileTypeHandler.MatchLevelFileExtension(file);
 
             if (LevelFileTypeHandler.FileExtensionIsValidLevelType(fileExtension))
             {
-                var levelEntry = new LevelBrowserEntry("level name", indentationLevel, false, IconType.LevelNotAttempted);
+                var levelEntry = new LevelBrowserEntry(file, fileExtension!, indentationLevel, IconType.LevelNotAttempted);
+
                 yield return levelEntry;
             }
         }
@@ -85,21 +103,44 @@ public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
 
     private LevelBrowserEntry(
         string path,
+        int indentationLevel)
+    {
+        _fileExtension = null;
+        Path = path;
+        _displayName = System.IO.Path.GetFileNameWithoutExtension(path);
+        IndentationLevel = indentationLevel;
+        IsFolder = true;
+        _iconType = IconType.ArrowClosed;
+
+        _textureData = GetTextureData(_iconType);
+
+        _subEntries = new List<LevelBrowserEntry>();
+    }
+
+    private LevelBrowserEntry(
+        string path,
+        string fileExtension,
         int indentationLevel,
-        bool isFolder,
         IconType iconType)
     {
         Path = path;
-        DisplayName = System.IO.Path.GetFileNameWithoutExtension(path);
+        _fileExtension = fileExtension;
         IndentationLevel = indentationLevel;
-        IsFolder = isFolder;
+        if (indentationLevel == 0)
+        {
+            ScrapeLevelTitle();
+        }
+        else
+        {
+            _displayName = string.Empty;
+        }
+
+        IsFolder = false;
         _iconType = iconType;
 
-        _textureData = GetTextureData(iconType);
+        _textureData = GetTextureData(_iconType);
 
-        _subEntries = IsFolder
-            ? new List<LevelBrowserEntry>()
-            : null;
+        _subEntries = null;
     }
 
     public enum IconType
@@ -137,6 +178,28 @@ public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
 
             _subEntries.Clear();
         }
+    }
 
+    private void ScrapeLevelTitle()
+    {
+        ILevelReader? levelReader = null;
+        try
+        {
+            levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(_fileExtension);
+            DisplayName = levelReader.ScrapeLevelTitle(Path);
+        }
+        catch (Exception e)
+        {
+            DisplayName = "ERROR OCCURRED WHEN LOADING";
+        }
+        finally
+        {
+            levelReader?.Dispose();
+        }
+    }
+
+    private void OnDisplay()
+    {
+        ScrapeLevelTitle();
     }
 }

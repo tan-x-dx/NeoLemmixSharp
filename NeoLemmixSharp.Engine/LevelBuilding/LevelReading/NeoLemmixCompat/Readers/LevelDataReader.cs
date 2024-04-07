@@ -129,4 +129,18 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
         _levelData.AllHatchGroupData.Add(hatchGroupData);
     }
+
+    public static bool TryReadLevelTitle(ReadOnlySpan<char> line, out string? levelTitle)
+    {
+        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out var secondTokenIndex);
+
+        if (firstToken is "TITLE")
+        {
+            levelTitle = line.TrimAfterIndex(secondTokenIndex).ToString();
+            return true;
+        }
+
+        levelTitle = null;
+        return false;
+    }
 }
