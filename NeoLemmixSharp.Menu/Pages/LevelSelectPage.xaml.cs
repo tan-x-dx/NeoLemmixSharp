@@ -240,5 +240,9 @@ public sealed class LevelSelectPage : PageBase
     protected override void OnDispose()
     {
         _listBox.SelectionChanged -= ListBoxOnSelectionChanged;
+        foreach (var levelBrowserEntry in _allLevelBrowserEntries)
+        {
+            levelBrowserEntry.Dispose();
+        }
     }
 }
