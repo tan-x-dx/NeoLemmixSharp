@@ -122,8 +122,9 @@ end;
         if (_updateState == UpdateState.Paused)
             return;
 
-        _lemmingManager.Tick(_updateState, _elapsedTicksModuloFastForwardSpeed);
-        _gadgetManager.Tick(_updateState, _elapsedTicksModuloFastForwardSpeed);
+        var isMajorTick = _elapsedTicksModuloFastForwardSpeed == 0;
+        _lemmingManager.Tick(_updateState, isMajorTick);
+        _gadgetManager.Tick(_updateState, isMajorTick);
 
         _elapsedTicks++;
         var elapsedTicksModuloFastForwardSpeed = _elapsedTicksModuloFastForwardSpeed + 1;
