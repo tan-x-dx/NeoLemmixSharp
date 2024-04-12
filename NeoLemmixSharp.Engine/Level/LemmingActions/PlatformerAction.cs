@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -57,13 +56,13 @@ public sealed class PlatformerAction : LemmingAction
 
         if (lemming.PhysicsFrame == 9)
         {
-            lemming.PlacedBrick = LemmingCanPlatform(lemming, orientation);
+            lemming.PlacedBrick = LemmingCanPlatform(lemming);
             BuilderAction.LayBrick(lemming);
 
             return;
         }
 
-        if (lemming.PhysicsFrame == 10 && lemming.NumberOfBricksLeft <= 3)
+        if (lemming.PhysicsFrame == 10 && lemming.NumberOfBricksLeft <= LevelConstants.NumberOfRemainingBricksToPlaySound)
         {
             // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position) ??
             return;
@@ -135,12 +134,11 @@ public sealed class PlatformerAction : LemmingAction
         ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);
     }
 
-    public static bool LemmingCanPlatform(
-        Lemming lemming,
-        Orientation orientation)
+    public static bool LemmingCanPlatform(Lemming lemming)
     {
         var terrainManager = LevelScreen.TerrainManager;
         var lemmingPosition = lemming.LevelPosition;
+        var orientation = lemming.Orientation;
 
         var result = !terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition) ||
                      !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, 1)) ||
@@ -167,7 +165,7 @@ public sealed class PlatformerAction : LemmingAction
     {
         base.TransitionLemmingToAction(lemming, turnAround);
 
-        lemming.NumberOfBricksLeft = 12;
+        lemming.NumberOfBricksLeft = LevelConstants.NumberOfPlatformerBricks;
         lemming.ConstructivePositionFreeze = false;
     }
 }

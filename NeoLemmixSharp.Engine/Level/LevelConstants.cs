@@ -100,6 +100,15 @@ public static class LevelConstants
 
     #endregion
 
+    #region Lemming Brick Constants
+
+    public const int NumberOfBuilderBricks = 12;
+    public const int NumberOfPlatformerBricks = 12;
+    public const int NumberOfStackerBricks = 8;
+    public const int NumberOfRemainingBricksToPlaySound = 3;
+
+    #endregion
+
     #region Cursor Priority Levels
 
     public const int NonPermanentSkillPriority = 4;
