@@ -28,7 +28,7 @@ public readonly ref partial struct GadgetTranslator
         var neoLemmixGadgetArchetypeData = gadgetArchetypes.Values;
 
         var id = 0;
-        _levelData.AllGadgetData.EnsureCapacity(gadgetDataSpan.Length);
+        _levelData.AllGadgetData.Capacity = gadgetDataSpan.Length;
         _levelData.AllGadgetBuilders.EnsureCapacity(gadgetArchetypes.Count);
 
         foreach (var prototype in gadgetDataSpan)

@@ -144,9 +144,7 @@ public sealed class StatefulGadgetBuilder : IGadgetAnimationData
 
         var hitBox = new HitBox(
             hitBoxRegion,
-            lemmingFilters.Count > 0
-                ? lemmingFilters.ToArray()
-                : Array.Empty<ILemmingFilter>());
+            lemmingFilters.ToArray());
 
         return hitBox;
     }
