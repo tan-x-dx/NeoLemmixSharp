@@ -95,13 +95,11 @@ public sealed class SpacialHashGrid<T>
             chunk == _bottomRightChunkQuery)
             return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
 
-        scratchSpaceSpan.Clear();
-
         var sourceSpan = ReadOnlySpanFor(chunkX, chunkY);
         _topLeftChunkQuery = chunk;
         _bottomRightChunkQuery = chunk;
-        BitArray.UnionWith(scratchSpaceSpan, sourceSpan);
-        _chunkQueryCount = BitArray.GetPopCount(scratchSpaceSpan);
+        sourceSpan.CopyTo(scratchSpaceSpan);
+        _chunkQueryCount = BitArray.GetPopCount(sourceSpan);
 
         return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
     }
@@ -123,19 +121,18 @@ public sealed class SpacialHashGrid<T>
             previousBottomRightChunkQuery == _bottomRightChunkQuery)
             return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
 
-        scratchSpaceSpan.Clear();
-
         if (_topLeftChunkQuery == _bottomRightChunkQuery)
         {
             // Only one chunk -> skip some extra work
 
             var sourceSpan = ReadOnlySpanFor(_topLeftChunkQuery.X, _bottomRightChunkQuery.Y);
-            BitArray.UnionWith(scratchSpaceSpan, sourceSpan);
-            _chunkQueryCount = BitArray.GetPopCount(scratchSpaceSpan);
+            sourceSpan.CopyTo(scratchSpaceSpan);
+            _chunkQueryCount = BitArray.GetPopCount(sourceSpan);
 
             return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
         }
 
+        scratchSpaceSpan.Clear();
         EvaluateChunkPositions(ChunkOperationType.Union, null, _topLeftChunkQuery.X, _topLeftChunkQuery.Y, _bottomRightChunkQuery.X, _bottomRightChunkQuery.Y);
         _chunkQueryCount = BitArray.GetPopCount(scratchSpaceSpan);
 
