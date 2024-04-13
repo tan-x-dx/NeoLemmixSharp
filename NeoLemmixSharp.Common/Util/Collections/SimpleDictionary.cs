@@ -135,7 +135,6 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         {
             var result = new TKey[Count];
             var i = 0;
-
             foreach (var (key, _) in this)
             {
                 result[i++] = key;
@@ -151,7 +150,6 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         get
         {
             var result = new TValue[Count];
-
             var i = 0;
             foreach (var (_, value) in this)
             {
