@@ -7,7 +7,6 @@ using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Updates;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 

@@ -1,7 +1,7 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.FacingDirections;
+﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 
@@ -24,7 +24,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
     public override bool UpdateLemming(Lemming lemming)
     {
         TerrainMasks.ApplyBomberMask(lemming);
-    //    LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExplode);
+        //    LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExplode);
         lemming.ParticleTimer = LevelConstants.ParticleFrameCount;
 
         WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
