@@ -10,6 +10,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
@@ -94,10 +95,10 @@ public sealed class StatefulGadgetBuilder : IGadgetAnimationData
         GadgetStateArchetypeData gadgetStateArchetypeData)
     {
         var triggerData = gadgetStateArchetypeData.TriggerData;
-        if (!triggerData.HasValue)
+        if (triggerData.Length == 0)
             return HitBox.Empty;
 
-        var hitBoxRegion = CreateRectangularHitBoxLevelRegion(gadgetData, triggerData.Value);
+        var hitBoxRegion = CreateHitBoxLevelRegion(gadgetData, gadgetStateArchetypeData.TriggerType, triggerData);
 
         var lemmingFilters = new List<ILemmingFilter>();
 
@@ -149,32 +150,74 @@ public sealed class StatefulGadgetBuilder : IGadgetAnimationData
         return hitBox;
     }
 
-    private RectangularLevelRegion CreateRectangularHitBoxLevelRegion(
+    private ILevelRegion CreateHitBoxLevelRegion(
         GadgetData gadgetData,
-        RectangularTriggerData triggerData)
+        TriggerType triggerType,
+        LevelPosition[] triggerData)
     {
+        if (triggerType == TriggerType.Rectangular)
+            return CreateRectangularHitBoxLevelRegion(gadgetData, triggerData);
+
+        return CreatePointSetHitBoxLevelRegion(gadgetData, triggerData);
+    }
+
+    private RectangularLevelRegion CreateRectangularHitBoxLevelRegion(GadgetData gadgetData, LevelPosition[] triggerData)
+    {
+        if (triggerData.Length != 2)
+            throw new InvalidOperationException("Expected exactly two points of data");
+
         gadgetData.GetDihedralTransformation(out var dihedralTransformation);
 
+        var p0 = triggerData[0];
+        var p1 = triggerData[1];
+
         dihedralTransformation.Transform(
-            triggerData.TriggerX,
-            triggerData.TriggerY,
+            p0.X,
+            p0.Y,
             SpriteData.SpriteWidth,
             SpriteData.SpriteHeight,
             out var tX,
             out var tY);
 
-        var p0 = new LevelPosition(tX, tY);
+        p0 = new LevelPosition(tX, tY);
 
         dihedralTransformation.Transform(
-            triggerData.TriggerX + triggerData.TriggerWidth - 1,
-            triggerData.TriggerY + triggerData.TriggerHeight - 1,
+            p1.X,
+            p1.Y,
             SpriteData.SpriteWidth,
             SpriteData.SpriteHeight,
             out tX,
             out tY);
 
-        var p1 = new LevelPosition(tX, tY);
+        p1 = new LevelPosition(tX, tY);
 
         return new RectangularLevelRegion(p0, p1);
+    }
+
+    [SkipLocalsInit]
+    private PointSetLevelRegion CreatePointSetHitBoxLevelRegion(GadgetData gadgetData, LevelPosition[] triggerData)
+    {
+        gadgetData.GetDihedralTransformation(out var dihedralTransformation);
+
+        Span<LevelPosition> adjustedPoints = triggerData.Length > 64
+            ? new LevelPosition[triggerData.Length]
+            : stackalloc LevelPosition[triggerData.Length];
+
+        for (var i = 0; i < triggerData.Length; i++)
+        {
+            var originalPoint = triggerData[i];
+            ref var transformedPoint = ref adjustedPoints[i];
+            dihedralTransformation.Transform(
+                originalPoint.X,
+                originalPoint.Y,
+                SpriteData.SpriteWidth,
+                SpriteData.SpriteHeight,
+                out var tX,
+                out var tY);
+
+            transformedPoint = new LevelPosition(tX, tY);
+        }
+
+        return new PointSetLevelRegion(adjustedPoints);
     }
 }

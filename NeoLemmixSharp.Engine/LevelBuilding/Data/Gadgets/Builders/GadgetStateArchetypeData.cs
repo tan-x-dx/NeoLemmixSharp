@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
@@ -14,7 +15,8 @@ public sealed class GadgetStateArchetypeData
     public required IGadgetAction[] OnLemmingPresentActions { get; init; }
     public required IGadgetAction[] OnLemmingExitActions { get; init; }
 
-    public required RectangularTriggerData? TriggerData { get; init; }
+    public required TriggerType TriggerType { get; init; }
+    public required LevelPosition[] TriggerData { get; init; }
 
     public required GadgetAnimationArchetypeData PrimaryAnimation { get; init; }
     public required int PrimaryAnimationStateTransitionIndex { get; init; }

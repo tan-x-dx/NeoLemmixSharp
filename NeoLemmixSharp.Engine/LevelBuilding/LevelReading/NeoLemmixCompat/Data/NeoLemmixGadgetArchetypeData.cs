@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
@@ -25,9 +25,9 @@ public sealed class NeoLemmixGadgetArchetypeData
 
     public List<AnimationData> AnimationData { get; } = new();
 
-    public RectangularTriggerData ToRectangularTriggerData() => new(
-        TriggerX,
-        TriggerY,
-        TriggerWidth,
-        TriggerHeight);
+    public LevelPosition[] ToRectangularTriggerData() =>
+    [
+        new LevelPosition(TriggerX, TriggerY),
+        new LevelPosition(TriggerX + TriggerWidth - 1, TriggerY + TriggerHeight - 1)
+    ];
 }

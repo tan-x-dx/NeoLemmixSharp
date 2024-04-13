@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using System.Diagnostics.CodeAnalysis;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
@@ -130,6 +131,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
                 OnLemmingPresentActions = emptyActions,
                 OnLemmingExitActions = emptyActions,
 
+                TriggerType = TriggerType.Rectangular,
                 TriggerData = archetypeData.ToRectangularTriggerData(),
                 PrimaryAnimation = new GadgetAnimationArchetypeData
                 {
@@ -182,6 +184,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
             OnLemmingPresentActions = emptyActions,
             OnLemmingExitActions = emptyActions,
 
+            TriggerType = TriggerType.Rectangular,
             TriggerData = archetypeData.ToRectangularTriggerData(),
             PrimaryAnimation = new GadgetAnimationArchetypeData
             {
@@ -203,7 +206,8 @@ public static class NeoLemmixGadgetBehaviourExtensions
             OnLemmingPresentActions = emptyActions,
             OnLemmingExitActions = emptyActions,
 
-            TriggerData = null,
+            TriggerType = TriggerType.Rectangular,
+            TriggerData = Array.Empty<LevelPosition>(),
             PrimaryAnimation = new GadgetAnimationArchetypeData
             {
                 SpriteWidth = spriteData.SpriteWidth,
@@ -224,7 +228,8 @@ public static class NeoLemmixGadgetBehaviourExtensions
             OnLemmingPresentActions = emptyActions,
             OnLemmingExitActions = emptyActions,
 
-            TriggerData = null,
+            TriggerType = TriggerType.Rectangular,
+            TriggerData = Array.Empty<LevelPosition>(),
             PrimaryAnimation = new GadgetAnimationArchetypeData
             {
                 SpriteWidth = spriteData.SpriteWidth,
@@ -299,6 +304,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
                 OnLemmingPresentActions = emptyActions,
                 OnLemmingExitActions = emptyActions,
 
+                TriggerType = TriggerType.Rectangular,
                 TriggerData = archetypeData.ToRectangularTriggerData(),
                 PrimaryAnimation = new GadgetAnimationArchetypeData
                 {
@@ -320,9 +326,10 @@ public static class NeoLemmixGadgetBehaviourExtensions
                 OnLemmingPresentActions = emptyActions,
                 OnLemmingExitActions = emptyActions,
 
+                TriggerType = TriggerType.Rectangular,
                 TriggerData = archetypeData.Behaviour == NeoLemmixGadgetBehaviour.Splitter
                     ? archetypeData.ToRectangularTriggerData()
-                    : null,
+                    : Array.Empty<LevelPosition>(),
                 PrimaryAnimation = new GadgetAnimationArchetypeData
                 {
                     SpriteWidth = spriteData.SpriteWidth,
