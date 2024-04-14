@@ -143,6 +143,16 @@ public sealed class BitArray
         _popCount = 0;
     }
 
+    public int[] ToArray()
+    {
+        if (_popCount == 0)
+            return Array.Empty<int>();
+
+        var array = new int[_popCount];
+        CopyTo(array, 0);
+        return array;
+    }
+
     public void CopyTo(int[] array, int arrayIndex)
     {
         var remaining = _popCount;
