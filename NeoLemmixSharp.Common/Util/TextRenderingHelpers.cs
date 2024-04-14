@@ -25,11 +25,28 @@ public static class TextRenderingHelpers
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int DigitToChar(int digit) => digit + '0';
 
-    public static int QuickLog10(int n) => n switch
+    public static int GetNumberStringLength(int n)
     {
-        < 10 => 1,
-        < 100 => 2,
-        < 1000 => 3,
-        _ => 4
-    };
+        int sign;
+
+        if (n < 0)
+        {
+            sign = 1;
+            n = -n;
+        }
+        else
+        {
+            sign = 0;
+        }
+
+        var numberOfDigits = n switch
+        {
+            < 10 => 1,
+            < 100 => 2,
+            < 1000 => 3,
+            _ => 4 // We're not going to be dealing with numbers above a few thousand
+        };
+
+        return numberOfDigits + sign;
+    }
 }

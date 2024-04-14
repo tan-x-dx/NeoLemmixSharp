@@ -156,7 +156,7 @@ public sealed class LevelCursor
                (previousCandidate.State.IsZombie && !newCandidate.State.IsZombie);
     }
 
-    private bool NewCandidateHasMoreRelevantTeam(Lemming previousCandidate, Lemming newCandidate)
+    private static bool NewCandidateHasMoreRelevantTeam(Lemming previousCandidate, Lemming newCandidate)
     {
         var skillTrackingDataId = LevelScreen.LevelControlPanel.SelectedSkillAssignButton?.SkillTrackingDataId ?? -1;
 

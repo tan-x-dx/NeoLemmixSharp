@@ -41,12 +41,12 @@ public sealed class AscenderAction : LemmingAction
             lemming.SetNextAction(WalkerAction.Instance);
             return true;
         }
-        
+
         if ((lemming.AscenderProgress == 4 &&
-                  pixel1IsSolid &&
-                  pixel2IsSolid) ||
-                 (lemming.AscenderProgress >= 5 &&
-                  pixel1IsSolid))
+             pixel1IsSolid &&
+             pixel2IsSolid) ||
+            (lemming.AscenderProgress >= 5 &&
+             pixel1IsSolid))
         {
             var dx = lemming.FacingDirection.DeltaX;
             lemming.LevelPosition = orientation.MoveLeft(levelPosition, dx);

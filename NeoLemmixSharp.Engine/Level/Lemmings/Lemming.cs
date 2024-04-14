@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
@@ -8,6 +9,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -19,7 +21,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     public readonly int Id;
 
-    private readonly bool _isSimulation;
     public bool ConstructivePositionFreeze;
     public bool IsStartingAction;
     public bool PlacedBrick;
@@ -43,20 +44,20 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public int CountDownTimer;
     public int ParticleTimer;
 
-    public LevelPosition DehoistPin;
-    public LevelPosition LaserHitLevelPosition;
-    public LevelPosition LevelPosition;
-    public LevelPosition PreviousLevelPosition;
+    public LevelPosition DehoistPin = new(-1, -1);
+    public LevelPosition LaserHitLevelPosition = new(-1, -1);
+    public LevelPosition LevelPosition = new(-1, -1);
+    public LevelPosition PreviousLevelPosition = new(-1, -1);
 
     public LemmingState State { get; }
 
     public FacingDirection FacingDirection { get; private set; }
     public Orientation Orientation { get; private set; }
 
-    public LemmingAction PreviousAction { get; private set; }
+    public LemmingAction PreviousAction { get; private set; } = NoneAction.Instance;
     public LemmingAction CurrentAction { get; private set; }
-    public LemmingAction NextAction { get; private set; }
-    public LemmingAction CountDownAction { get; private set; }
+    public LemmingAction NextAction { get; private set; } = NoneAction.Instance;
+    public LemmingAction CountDownAction { get; private set; } = NoneAction.Instance;
 
     public LemmingRenderer Renderer { get; private set; }
     public LevelPosition TopLeftPixel { get; private set; }
@@ -64,10 +65,20 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LevelPosition PreviousTopLeftPixel { get; private set; }
     public LevelPosition PreviousBottomRightPixel { get; private set; }
 
+    private bool IsSimulation => Id < 0;
     public bool IsFastForward => FastForwardTime > 0 || State.IsPermanentFastForwards;
 
-    public LevelPosition HeadPosition => Orientation.MoveUp(LevelPosition, 6);
-    public LevelPosition FootPosition => Orientation.MoveUp(LevelPosition, 1);
+    public LevelPosition HeadPosition
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Orientation.MoveUp(LevelPosition, 6);
+    }
+
+    public LevelPosition FootPosition
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Orientation.MoveUp(LevelPosition, 1);
+    }
 
     public Lemming(
         int id,
@@ -77,7 +88,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         Team team)
     {
         Id = id;
-        _isSimulation = false;
         Orientation = orientation;
         FacingDirection = facingDirection;
         CurrentAction = currentAction;
@@ -88,11 +98,11 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     private Lemming()
     {
         Id = -1;
-        _isSimulation = true;
         Orientation = DownOrientation.Instance;
         FacingDirection = FacingDirection.RightInstance;
         CurrentAction = NoneAction.Instance;
         State = new LemmingState(this, Team.AllItems[LevelConstants.ClassicTeamId]);
+        Renderer = null!;
     }
 
     public void Initialise()
@@ -113,6 +123,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         }
 
         initialAction.TransitionLemmingToAction(this, false);
+        Renderer.UpdateLemmingState(true);
     }
 
     public void Tick()
@@ -140,7 +151,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     public void Simulate(bool checkGadgets)
     {
-        if (!_isSimulation)
+        if (!IsSimulation)
             throw new InvalidOperationException("Use simulation lemming for simulations!");
 
         HandleParticleTimer();
@@ -253,6 +264,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         return result;
     }
 
+    [SkipLocalsInit]
     private bool CheckGadgets()
     {
         Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
@@ -267,11 +279,11 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
         var p = LevelPosition;
         checkPositions[0] = p;
-        p = orientation.MoveWithoutNormalization(p, 0, 1);
+        p = orientation.MoveUp(p, 1);
         checkPositions[1] = p;
         p = PreviousLevelPosition;
         checkPositions[2] = p;
-        p = orientation.MoveWithoutNormalization(p, 0, 1);
+        p = orientation.MoveUp(p, 1);
         checkPositions[3] = p;
 
         var checkPositionsBounds = new LevelPositionPair(checkPositions[..4]);
@@ -287,11 +299,18 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
         ReadOnlySpan<LevelPosition> checkPositionsReadOnly = checkPositions[..length];
 
+        return CheckGadgetHitBoxCollisions(in gadgetSet, checkPositionsReadOnly);
+    }
+
+    private bool CheckGadgetHitBoxCollisions(in SimpleSetEnumerable<HitBoxGadget> gadgetSet, ReadOnlySpan<LevelPosition> intermediatePositions)
+    {
+        var orientation = Orientation;
+
         foreach (var gadget in gadgetSet)
         {
-            foreach (var anchorPosition in checkPositionsReadOnly)
+            foreach (var anchorPosition in intermediatePositions)
             {
-                var footPosition = orientation.MoveWithoutNormalization(anchorPosition, 0, 1);
+                var footPosition = orientation.MoveUp(anchorPosition, 1);
                 if (!gadget.MatchesLemmingAtPosition(this, anchorPosition) &&
                     !gadget.MatchesLemmingAtPosition(this, footPosition))
                     continue;

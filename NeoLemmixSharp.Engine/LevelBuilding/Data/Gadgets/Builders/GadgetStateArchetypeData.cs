@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
@@ -14,12 +15,12 @@ public sealed class GadgetStateArchetypeData
     public required IGadgetAction[] OnLemmingPresentActions { get; init; }
     public required IGadgetAction[] OnLemmingExitActions { get; init; }
 
-    public required RectangularTriggerData? TriggerData { get; init; }
+    public required TriggerType TriggerType { get; init; }
+    public required LevelPosition[] TriggerData { get; init; }
 
     public required GadgetAnimationArchetypeData PrimaryAnimation { get; init; }
     public required int PrimaryAnimationStateTransitionIndex { get; init; }
-    public required GadgetAnimationArchetypeData? SecondaryAnimation { get; init; }
-    public required GadgetSecondaryAnimationAction SecondaryAnimationAction { get; init; }
+    public required GadgetAnimationArchetypeData[] SecondaryAnimations { get; init; }
 
     public SimpleSet<LemmingAction>? AllowedActions { get; init; }
     public SimpleSet<ILemmingStateChanger>? AllowedStates { get; init; }
@@ -29,19 +30,33 @@ public sealed class GadgetStateArchetypeData
     public GadgetStateAnimationController GetAnimationController()
     {
         var primaryAnimationBehaviour = PrimaryAnimation.GetAnimationBehaviour();
-        var secondaryAnimationBehaviour = SecondaryAnimation?.GetAnimationBehaviour();
+        var secondaryAnimationBehaviours = GetSecondaryAnimationBehaviours();
 
         return new GadgetStateAnimationController(
             primaryAnimationBehaviour,
             PrimaryAnimationStateTransitionIndex,
-            secondaryAnimationBehaviour,
-            SecondaryAnimationAction);
+            secondaryAnimationBehaviours);
+    }
+
+    private GadgetStateAnimationBehaviour[] GetSecondaryAnimationBehaviours()
+    {
+        var result = CollectionsHelper.GetArrayForSize<GadgetStateAnimationBehaviour>(SecondaryAnimations.Length);
+
+        for (var i = SecondaryAnimations.Length - 1; i >= 0; i--)
+        {
+            result[i] = SecondaryAnimations[i].GetAnimationBehaviour();
+        }
+
+        return result;
     }
 
     public void Clear()
     {
         PrimaryAnimation.Clear();
-        SecondaryAnimation?.Clear();
+        foreach (var secondaryAnimation in SecondaryAnimations)
+        {
+            secondaryAnimation.Clear();
+        }
     }
 }
 
@@ -55,6 +70,7 @@ public sealed class GadgetAnimationArchetypeData
     public required int InitialFrame { get; init; }
     public required int MinFrame { get; init; }
     public required int MaxFrame { get; init; }
+    public required GadgetSecondaryAnimationAction SecondaryAnimationAction { get; init; }
 
     public GadgetStateAnimationBehaviour GetAnimationBehaviour()
     {
@@ -64,7 +80,8 @@ public sealed class GadgetAnimationArchetypeData
             Layer,
             InitialFrame,
             MinFrame,
-            MaxFrame);
+            MaxFrame,
+            SecondaryAnimationAction);
     }
 
     public void Clear()

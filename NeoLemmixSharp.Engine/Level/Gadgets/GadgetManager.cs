@@ -48,9 +48,9 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
         }
     }
 
-    public void Tick(UpdateState updateState, int elapsedTicksModulo3)
+    public void Tick(UpdateState updateState, bool isMajorTick)
     {
-        if (updateState != UpdateState.FastForward && elapsedTicksModulo3 != 0)
+        if (updateState != UpdateState.FastForward && !isMajorTick)
             return;
 
         foreach (var gadget in AllGadgets)

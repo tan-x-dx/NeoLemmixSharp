@@ -68,7 +68,7 @@ public sealed class ControlPanelTextualData
         }
 
         i++; // Add a space
-        var spanLength = TextRenderingHelpers.QuickLog10(count);
+        var spanLength = TextRenderingHelpers.GetNumberStringLength(count);
         TextRenderingHelpers.WriteDigits(destSpan.Slice(i, spanLength), count);
     }
 

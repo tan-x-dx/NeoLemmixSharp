@@ -73,6 +73,7 @@ public sealed class SpacialHashGrid<T>
         _allTrackedItems.Clear();
         Array.Clear(_setUnionScratchSpace);
         Array.Clear(_allBits);
+        ClearCachedData();
     }
 
     [Pure]
@@ -94,12 +95,11 @@ public sealed class SpacialHashGrid<T>
             chunk == _bottomRightChunkQuery)
             return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
 
-        scratchSpaceSpan.Clear();
-
         var sourceSpan = ReadOnlySpanFor(chunkX, chunkY);
         _topLeftChunkQuery = chunk;
         _bottomRightChunkQuery = chunk;
-        _chunkQueryCount = BitArray.UnionWith(scratchSpaceSpan, sourceSpan);
+        sourceSpan.CopyTo(scratchSpaceSpan);
+        _chunkQueryCount = BitArray.GetPopCount(sourceSpan);
 
         return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
     }
@@ -121,19 +121,21 @@ public sealed class SpacialHashGrid<T>
             previousBottomRightChunkQuery == _bottomRightChunkQuery)
             return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
 
-        scratchSpaceSpan.Clear();
-
         if (_topLeftChunkQuery == _bottomRightChunkQuery)
         {
             // Only one chunk -> skip some extra work
 
             var sourceSpan = ReadOnlySpanFor(_topLeftChunkQuery.X, _bottomRightChunkQuery.Y);
-            _chunkQueryCount = BitArray.UnionWith(scratchSpaceSpan, sourceSpan);
+            sourceSpan.CopyTo(scratchSpaceSpan);
+            _chunkQueryCount = BitArray.GetPopCount(sourceSpan);
 
             return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
         }
 
-        _chunkQueryCount = EvaluateChunkPositions(ChunkOperationType.Union, null, _topLeftChunkQuery.X, _topLeftChunkQuery.Y, _bottomRightChunkQuery.X, _bottomRightChunkQuery.Y);
+        scratchSpaceSpan.Clear();
+        EvaluateChunkPositions(ChunkOperationType.Union, null, _topLeftChunkQuery.X, _topLeftChunkQuery.Y, _bottomRightChunkQuery.X, _bottomRightChunkQuery.Y);
+        _chunkQueryCount = BitArray.GetPopCount(scratchSpaceSpan);
+
         return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
     }
 
@@ -149,8 +151,7 @@ public sealed class SpacialHashGrid<T>
         var p2 = new LevelPositionPair(topLeftChunk, bottomRightChunk);
         if (p1.Overlaps(p2))
         {
-            _topLeftChunkQuery = new LevelPosition(-50, -50);
-            _bottomRightChunkQuery = new LevelPosition(-50, -50);
+            ClearCachedData();
         }
 
         RegisterItemPosition(item, topLeftChunk, bottomRightChunk);
@@ -177,8 +178,7 @@ public sealed class SpacialHashGrid<T>
         if (p1.Overlaps(p2) ||
             p1.Overlaps(p3))
         {
-            _topLeftChunkQuery = new LevelPosition(-50, -50);
-            _bottomRightChunkQuery = new LevelPosition(-50, -50);
+            ClearCachedData();
         }
 
         DeregisterItemPosition(item, previousTopLeftChunk, previousBottomRightChunk);
@@ -219,8 +219,7 @@ public sealed class SpacialHashGrid<T>
         if (p1.Overlaps(p2) ||
             p1.Overlaps(p3))
         {
-            _topLeftChunkQuery = new LevelPosition(-50, -50);
-            _bottomRightChunkQuery = new LevelPosition(-50, -50);
+            ClearCachedData();
         }
 
         if (topLeftChunk == previousTopLeftChunk &&
@@ -273,8 +272,7 @@ public sealed class SpacialHashGrid<T>
     /// <param name="ay">The top left y-coordinate.</param>
     /// <param name="bx">The bottom right x-coordinate.</param>
     /// <param name="by">The bottom right y-coordinate.</param>
-    /// <returns>If performing the <see cref="ChunkOperationType.Union"/>, then the number of distinct items total across the rectangle. Otherwise, zero.</returns>
-    private int EvaluateChunkPositions(ChunkOperationType chunkOperationType, T? item, int ax, int ay, int bx, int by)
+    private void EvaluateChunkPositions(ChunkOperationType chunkOperationType, T? item, int ax, int ay, int bx, int by)
     {
         if (bx < ax)
         {
@@ -290,14 +288,13 @@ public sealed class SpacialHashGrid<T>
         var x1 = ax;
         var yCount = 1 + by - ay;
 
-        var result = 0;
         while (x-- > 0)
         {
             var y1 = ay;
             var y = yCount;
             while (y-- > 0)
             {
-                result = UseChunkPosition(chunkOperationType, item, x1, y1);
+                UseChunkPosition(chunkOperationType, item, x1, y1);
 
                 if (++y1 == _numberOfVerticalChunks)
                 {
@@ -310,35 +307,35 @@ public sealed class SpacialHashGrid<T>
                 x1 = 0;
             }
         }
-
-        return result;
     }
 
-    private int UseChunkPosition(ChunkOperationType chunkOperationType, T? item, int x1, int y1)
+    private void UseChunkPosition(ChunkOperationType chunkOperationType, T? item, int x1, int y1)
     {
         switch (chunkOperationType)
         {
             case ChunkOperationType.Add:
                 var addSpan = SpanFor(x1, y1);
                 BitArray.SetBit(addSpan, _hasher.Hash(item!));
-                return 0;
+                return;
 
             case ChunkOperationType.Remove:
                 var removeSpan = SpanFor(x1, y1);
                 BitArray.ClearBit(removeSpan, _hasher.Hash(item!));
-                return 0;
+                return;
 
             case ChunkOperationType.Union:
                 var readOnlySpan = ReadOnlySpanFor(x1, y1);
-                return BitArray.UnionWith(_setUnionScratchSpace, readOnlySpan);
+                BitArray.UnionWith(_setUnionScratchSpace, readOnlySpan);
+                return;
 
             default:
-                return ThrowUnknownChunkPositionException(chunkOperationType);
+                ThrowUnknownChunkPositionException(chunkOperationType);
+                return;
         }
     }
 
     [DoesNotReturn]
-    private static int ThrowUnknownChunkPositionException(ChunkOperationType chunkOperationType)
+    private static void ThrowUnknownChunkPositionException(ChunkOperationType chunkOperationType)
     {
         throw new ArgumentOutOfRangeException(nameof(chunkOperationType), chunkOperationType, "Unknown chunk position type");
     }
@@ -358,11 +355,19 @@ public sealed class SpacialHashGrid<T>
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private int IndexFor(int x, int y)
     {
         var index = _numberOfHorizontalChunks * y + x;
         index *= _bitArraySize;
         return index;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void ClearCachedData()
+    {
+        _topLeftChunkQuery = new LevelPosition(-256, -256);
+        _bottomRightChunkQuery = new LevelPosition(-256, -256);
     }
 
     private enum ChunkOperationType

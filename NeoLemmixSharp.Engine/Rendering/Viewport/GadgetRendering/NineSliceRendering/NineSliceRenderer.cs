@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering.NineSliceRendering;
 
-public sealed class NineSliceRenderer : IGadgetRenderer
+public sealed class NineSliceRenderer //: IGadgetRenderer
 {
     private readonly IRectangularLevelRegion _spriteClipRectangle;
     private readonly NineSliceSubRenderer[] _subRenderers;

@@ -41,7 +41,7 @@ public sealed class BitArray
         var arraySize = (length + Mask) >> Shift;
         _bits = new uint[arraySize];
 
-        if (!setAllBits)
+        if (!setAllBits || arraySize == 0)
             return;
 
         Array.Fill(_bits, uint.MaxValue);
@@ -143,6 +143,16 @@ public sealed class BitArray
         _popCount = 0;
     }
 
+    public int[] ToArray()
+    {
+        if (_popCount == 0)
+            return Array.Empty<int>();
+
+        var array = new int[_popCount];
+        CopyTo(array, 0);
+        return array;
+    }
+
     public void CopyTo(int[] array, int arrayIndex)
     {
         var remaining = _popCount;
@@ -242,22 +252,25 @@ public sealed class BitArray
     {
         var span = new Span<uint>(_bits);
 
-        var newCount = UnionWith(span, other);
-        _popCount = newCount;
-    }
-
-    internal static int UnionWith(Span<uint> span, ReadOnlySpan<uint> other)
-    {
-        Debug.Assert(span.Length == other.Length);
-
-        var count = 0;
+        var newCount = 0;
         for (var i = span.Length - 1; i >= 0; i--)
         {
             ref var v = ref span[i];
             v |= other[i];
-            count += BitOperations.PopCount(v);
+            newCount += BitOperations.PopCount(v);
         }
-        return count;
+        _popCount = newCount;
+    }
+
+    internal static void UnionWith(Span<uint> span, ReadOnlySpan<uint> other)
+    {
+        Debug.Assert(span.Length == other.Length);
+
+        for (var i = span.Length - 1; i >= 0; i--)
+        {
+            ref var v = ref span[i];
+            v |= other[i];
+        }
     }
 
     internal void IntersectWith(ReadOnlySpan<uint> other)
@@ -378,7 +391,7 @@ public sealed class BitArray
 
         for (var i = _bits.Length - 1; i >= 0; i--)
         {
-            if ((_bits[i] & other[i]) != 0)
+            if ((_bits[i] & other[i]) != 0U)
                 return true;
         }
 

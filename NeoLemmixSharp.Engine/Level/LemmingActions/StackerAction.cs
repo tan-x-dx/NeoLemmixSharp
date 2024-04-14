@@ -18,7 +18,7 @@ public sealed class StackerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (lemming.PhysicsFrame == 7)
+        if (lemming.PhysicsFrame == LevelConstants.StackerAnimationFrames - 1)
         {
             lemming.PlacedBrick = LayStackBrick(lemming);
         }
@@ -26,7 +26,7 @@ public sealed class StackerAction : LemmingAction
         {
             lemming.NumberOfBricksLeft--;
 
-            if (lemming.NumberOfBricksLeft < 3)
+            if (lemming.NumberOfBricksLeft < LevelConstants.NumberOfRemainingBricksToPlaySound)
             {
                 // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position); ??
             }
@@ -35,7 +35,7 @@ public sealed class StackerAction : LemmingAction
             {
                 // Relax the check on the first brick
                 // for details see http://www.lemmingsforums.net/index.php?topic=2862.0
-                if (lemming.NumberOfBricksLeft < 7 ||
+                if (lemming.NumberOfBricksLeft < LevelConstants.NumberOfStackerBricks - 1 ||
                     !MayPlaceNextBrick(lemming))
                 {
                     WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -60,7 +60,7 @@ public sealed class StackerAction : LemmingAction
         var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var brickPosition = lemming.LevelPosition;
-        brickPosition = orientation.MoveUp(brickPosition, 9 - lemming.NumberOfBricksLeft);
+        brickPosition = orientation.MoveUp(brickPosition, 1 + LevelConstants.NumberOfStackerBricks - lemming.NumberOfBricksLeft);
 
         var dx = lemming.FacingDirection.DeltaX;
 
@@ -75,7 +75,7 @@ public sealed class StackerAction : LemmingAction
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dy = lemming.StackLow ? -1 : 0;
-        var brickPosition = orientation.Move(lemming.LevelPosition, dx, 9 + dy - lemming.NumberOfBricksLeft);
+        var brickPosition = orientation.Move(lemming.LevelPosition, dx, 1 + LevelConstants.NumberOfStackerBricks + dy - lemming.NumberOfBricksLeft);
 
         var result = false;
 
@@ -97,6 +97,6 @@ public sealed class StackerAction : LemmingAction
     {
         base.TransitionLemmingToAction(lemming, turnAround);
 
-        lemming.NumberOfBricksLeft = 8;
+        lemming.NumberOfBricksLeft = LevelConstants.NumberOfStackerBricks;
     }
 }

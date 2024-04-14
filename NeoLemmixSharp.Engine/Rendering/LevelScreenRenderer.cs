@@ -23,7 +23,7 @@ public sealed class LevelScreenRenderer : IScreenRenderer
     private readonly GadgetSpriteBank _gadgetSpriteBank;
 
     private readonly LevelRenderer _levelRenderer;
-    public readonly ControlPanelRenderer ControlPanelRenderer;
+    private readonly ControlPanelRenderer _controlPanelRenderer;
     private readonly LevelCursorSprite _levelCursorSprite;
 
     private DepthStencilState _depthStencilState;
@@ -58,7 +58,7 @@ public sealed class LevelScreenRenderer : IScreenRenderer
             levelSprites,
             backgroundRenderer,
             terrainRenderer);
-        ControlPanelRenderer = new ControlPanelRenderer(
+        _controlPanelRenderer = new ControlPanelRenderer(
             _graphicsDevice,
             controlPanelSpriteBank,
             levelControlPanel);
@@ -82,7 +82,7 @@ public sealed class LevelScreenRenderer : IScreenRenderer
     {
         _levelRenderer.RenderLevel(spriteBatch);
 
-        ControlPanelRenderer.RenderControlPanel(spriteBatch);
+        _controlPanelRenderer.RenderControlPanel(spriteBatch);
 
         _graphicsDevice.SetRenderTarget(null);
 
@@ -90,16 +90,18 @@ public sealed class LevelScreenRenderer : IScreenRenderer
 
    //     _graphicsDevice.Clear(Color.DarkGray);
         _levelRenderer.DrawToScreen(spriteBatch);
-        ControlPanelRenderer.DrawToScreen(spriteBatch);
+        _controlPanelRenderer.DrawToScreen(spriteBatch);
         _levelCursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
 
         spriteBatch.End();
     }
+
     public void OnWindowSizeChanged()
     {
         _levelRenderer.OnWindowSizeChanged();
-        ControlPanelRenderer.OnWindowSizeChanged();
+        _controlPanelRenderer.OnWindowSizeChanged();
     }
+
     public void Dispose()
     {
         if (IsDisposed)
@@ -107,7 +109,7 @@ public sealed class LevelScreenRenderer : IScreenRenderer
 
         DisposableHelperMethods.DisposeOf(ref _depthStencilState);
         _levelRenderer.Dispose();
-        ControlPanelRenderer.Dispose();
+        _controlPanelRenderer.Dispose();
         _lemmingSpriteBank.Dispose();
         _gadgetSpriteBank.Dispose();
 

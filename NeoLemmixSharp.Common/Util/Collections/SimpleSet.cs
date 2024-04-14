@@ -18,11 +18,6 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
         _bits = new BitArray(hasher.NumberOfItems, fullSet);
     }
 
-    public static SimpleSet<T> CreateFullSet(IPerfectHasher<T> hasher)
-    {
-        return new SimpleSet<T>(hasher, true);
-    }
-
     public int Size => _bits.Size;
     public int Count => _bits.PopCount;
 
@@ -52,7 +47,12 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public T[] ToArray()
     {
-        var result = new T[_bits.PopCount];
+        var count = _bits.PopCount;
+
+        if (count == 0)
+            return Array.Empty<T>();
+
+        var result = new T[count];
         CopyTo(result, 0);
         return result;
     }

@@ -6,4 +6,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 public interface ILevelReader : IDisposable
 {
     LevelData ReadLevel(string levelFilePath, GraphicsDevice graphicsDevice);
+
+    string ScrapeLevelTitle(string levelFilePath);
 }

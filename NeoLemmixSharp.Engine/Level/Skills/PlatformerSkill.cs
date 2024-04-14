@@ -18,7 +18,7 @@ public sealed class PlatformerSkill : LemmingSkill
     public override bool CanAssignToLemming(Lemming lemming)
     {
         return ActionIsAssignable(lemming) &&
-               PlatformerAction.LemmingCanPlatform(lemming, lemming.Orientation);
+               PlatformerAction.LemmingCanPlatform(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)

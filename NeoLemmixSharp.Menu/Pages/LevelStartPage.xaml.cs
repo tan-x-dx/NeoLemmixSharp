@@ -45,6 +45,11 @@ public sealed class LevelStartPage : PageBase
 
     private void HandleMouseInput()
     {
+        if (InputController.LeftMouseButtonAction.IsPressed)
+        {
+            StartLevel();
+            return;
+        }
     }
 
     private static void GoBack()

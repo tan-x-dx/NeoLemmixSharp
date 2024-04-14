@@ -1,41 +1,36 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
-public sealed class GadgetLayerRenderer
+public sealed class GadgetLayerRenderer : IGadgetRenderer
 {
     private readonly Texture2D _texture;
-    private readonly GadgetStateAnimationBehaviour _stateAnimationBehaviour;
-    private readonly Color _renderColor;
+    private IControlledAnimationGadget _gadget;
+
+    public GadgetRenderMode RenderMode { get; }
 
     public GadgetLayerRenderer(
         Texture2D texture,
-        GadgetStateAnimationBehaviour stateAnimationBehaviour,
-        Color renderColor)
+        GadgetRenderMode renderMode)
     {
         _texture = texture;
-        _stateAnimationBehaviour = stateAnimationBehaviour;
-        _renderColor = renderColor;
+        RenderMode = renderMode;
     }
 
-    public void RenderLayer(
-        SpriteBatch spriteBatch,
-        Rectangle sourceRectangle,
-        Rectangle destinationRectangle)
+    public void SetGadget(IControlledAnimationGadget gadget) => _gadget = gadget;
+
+    public Rectangle GetSpriteBounds() => _gadget.GadgetBounds.ToRectangle();
+
+    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY)
     {
-        var spriteFrameAndLayerData = _stateAnimationBehaviour.GetFrameAndLayerData();
+        var gadgetAnimationController = _gadget.AnimationController;
+        //gadgetAnimationController.RenderLayers(spriteBatch, _texture, );
+    }
 
-        sourceRectangle.X += spriteFrameAndLayerData.SourceDx;
-        sourceRectangle.Y += spriteFrameAndLayerData.SourceDy;
-
-        spriteBatch.Draw(
-            _texture,
-            destinationRectangle,
-            sourceRectangle,
-            _renderColor,
-            1.0f);
+    public void Dispose()
+    {
+        _gadget = null!;
     }
 }

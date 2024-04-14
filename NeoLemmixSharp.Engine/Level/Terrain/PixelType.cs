@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Common.Util;
+﻿namespace NeoLemmixSharp.Engine.Level.Terrain;
 
 [Flags]
 public enum PixelType : ushort

@@ -47,12 +47,14 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         }
     }
 
+    [Pure]
     public bool ContainsKey(TKey key)
     {
         var index = _hasher.Hash(key);
         return _bits.GetBit(index);
     }
 
+    [Pure]
     public bool TryGetValue(TKey key, out TValue value)
     {
         var index = _hasher.Hash(key);
@@ -69,6 +71,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
 
     public TValue this[TKey key]
     {
+        [Pure]
         get
         {
             var index = _hasher.Hash(key);
@@ -135,7 +138,6 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         {
             var result = new TKey[Count];
             var i = 0;
-
             foreach (var (key, _) in this)
             {
                 result[i++] = key;
@@ -151,7 +153,6 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         get
         {
             var result = new TValue[Count];
-
             var i = 0;
             foreach (var (_, value) in this)
             {

@@ -7,7 +7,6 @@ using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Updates;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -95,10 +94,10 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         }
     }
 
-    public void Tick(UpdateState updateState, int elapsedTicksModulo3)
+    public void Tick(UpdateState updateState, bool isMajorTick)
     {
         if (updateState == UpdateState.FastForward ||
-            elapsedTicksModulo3 == 0)
+            isMajorTick)
         {
             foreach (var hatchGroup in AllHatchGroups)
             {
@@ -118,7 +117,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
         foreach (var lemming in AllLemmings)
         {
-            var i = GetTickNumberForLemming(lemming, updateState, elapsedTicksModulo3);
+            var i = GetTickNumberForLemming(lemming, updateState, isMajorTick);
 
             while (i-- > 0)
             {
@@ -138,14 +137,14 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         }
     }
 
-    private static int GetTickNumberForLemming(Lemming lemming, UpdateState updateState, int elapsedTicksModulo3)
+    private static int GetTickNumberForLemming(Lemming lemming, UpdateState updateState, bool isMajorTick)
     {
         var lemmingIsFastForward = lemming.IsFastForward;
         var gameIsFastForward = updateState == UpdateState.FastForward;
         if (!lemming.State.IsActive ||
             (!lemmingIsFastForward &&
              !gameIsFastForward &&
-             elapsedTicksModulo3 != 0))
+             !isMajorTick))
             return 0;
 
         return lemmingIsFastForward && gameIsFastForward

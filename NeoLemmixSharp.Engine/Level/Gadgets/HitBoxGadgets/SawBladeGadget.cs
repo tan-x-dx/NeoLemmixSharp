@@ -7,6 +7,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Diagnostics.Contracts;
+using NeoLemmixSharp.Engine.Level.Terrain;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 

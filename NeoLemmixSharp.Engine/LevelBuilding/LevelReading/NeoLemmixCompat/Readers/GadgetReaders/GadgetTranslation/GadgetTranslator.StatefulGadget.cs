@@ -29,7 +29,10 @@ public readonly ref partial struct GadgetTranslator
             FacingDirection = facingDirection
         };
 
-        gadgetData.SetProperty(GadgetProperty.InitialAnimationFrame, archetypeData.AnimationData[0].InitialFrame);
+        if (archetypeData.AnimationData.Count > 0)
+        {
+            gadgetData.SetProperty(GadgetProperty.InitialAnimationFrame, archetypeData.AnimationData[0].InitialFrame);
+        }
 
         ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(
             _levelData.AllGadgetBuilders,

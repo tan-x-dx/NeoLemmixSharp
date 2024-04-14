@@ -26,7 +26,7 @@ public sealed class BuilderAction : LemmingAction
         }
 
         if (lemming.PhysicsFrame == 10 &&
-            lemming.NumberOfBricksLeft <= 3)
+            lemming.NumberOfBricksLeft <= LevelConstants.NumberOfRemainingBricksToPlaySound)
         {
             // play sound/make visual cue
             return true;
@@ -99,7 +99,7 @@ public sealed class BuilderAction : LemmingAction
     {
         base.TransitionLemmingToAction(lemming, turnAround);
 
-        lemming.NumberOfBricksLeft = 12;
+        lemming.NumberOfBricksLeft = LevelConstants.NumberOfBuilderBricks;
         lemming.ConstructivePositionFreeze = false;
     }
 
