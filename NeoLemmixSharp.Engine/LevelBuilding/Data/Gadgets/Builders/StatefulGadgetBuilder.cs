@@ -153,7 +153,7 @@ public sealed class StatefulGadgetBuilder : IGadgetAnimationData
     private ILevelRegion CreateHitBoxLevelRegion(
         GadgetData gadgetData,
         TriggerType triggerType,
-        LevelPosition[] triggerData)
+        ReadOnlySpan<LevelPosition> triggerData)
     {
         if (triggerType == TriggerType.Rectangular)
             return CreateRectangularHitBoxLevelRegion(gadgetData, triggerData);
@@ -161,7 +161,9 @@ public sealed class StatefulGadgetBuilder : IGadgetAnimationData
         return CreatePointSetHitBoxLevelRegion(gadgetData, triggerData);
     }
 
-    private RectangularLevelRegion CreateRectangularHitBoxLevelRegion(GadgetData gadgetData, LevelPosition[] triggerData)
+    private RectangularLevelRegion CreateRectangularHitBoxLevelRegion(
+        GadgetData gadgetData,
+        ReadOnlySpan<LevelPosition> triggerData)
     {
         if (triggerData.Length != 2)
             throw new InvalidOperationException("Expected exactly two points of data");
@@ -195,7 +197,9 @@ public sealed class StatefulGadgetBuilder : IGadgetAnimationData
     }
 
     [SkipLocalsInit]
-    private PointSetLevelRegion CreatePointSetHitBoxLevelRegion(GadgetData gadgetData, LevelPosition[] triggerData)
+    private PointSetLevelRegion CreatePointSetHitBoxLevelRegion(
+        GadgetData gadgetData,
+        ReadOnlySpan<LevelPosition> triggerData)
     {
         gadgetData.GetDihedralTransformation(out var dihedralTransformation);
 
