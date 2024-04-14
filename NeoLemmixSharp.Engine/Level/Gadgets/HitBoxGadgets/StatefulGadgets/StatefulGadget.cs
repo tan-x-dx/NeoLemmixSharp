@@ -9,7 +9,7 @@ using static NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 
-public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
+public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget, IControlledAnimationGadget
 {
     private readonly GadgetState[] _states;
 
@@ -18,6 +18,8 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget
 
     public override GadgetBehaviour GadgetBehaviour => _states[_currentStateIndex].GadgetBehaviour;
     public override Orientation Orientation { get; }
+
+    public GadgetStateAnimationController AnimationController => _states[_currentStateIndex].AnimationController;
 
     public StatefulGadget(
         int id,

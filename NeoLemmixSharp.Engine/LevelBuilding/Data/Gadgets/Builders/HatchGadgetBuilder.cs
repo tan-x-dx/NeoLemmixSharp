@@ -9,7 +9,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
-public sealed class HatchGadgetBuilder : IGadgetAnimationData
+public sealed class HatchGadgetBuilder : IGadgetBuilder
 {
     public required int GadgetBuilderId { get; init; }
 
@@ -56,7 +56,7 @@ public sealed class HatchGadgetBuilder : IGadgetAnimationData
             transformedWidth,
             transformedHeight);
 
-        var gadgetRenderer = gadgetSpriteBuilder.BuildGadgetRenderer(this, gadgetData);
+        var gadgetRenderer = gadgetSpriteBuilder.BuildStatefulGadgetRenderer(this, gadgetData);
 
         var hatchSpawnData = new HatchSpawnData(
             hatchGadgetId,

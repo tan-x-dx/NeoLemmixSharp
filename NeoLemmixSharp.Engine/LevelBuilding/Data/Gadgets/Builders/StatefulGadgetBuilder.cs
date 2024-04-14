@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
-public sealed class StatefulGadgetBuilder : IGadgetAnimationData
+public sealed class StatefulGadgetBuilder : IGadgetBuilder
 {
     public required int GadgetBuilderId { get; init; }
     public required GadgetBehaviour GadgetBehaviour { get; init; }
@@ -34,7 +34,8 @@ public sealed class StatefulGadgetBuilder : IGadgetAnimationData
             SpriteData.SpriteHeight);
 
         var gadgetStates = CreateStates(gadgetData);
-        var gadgetRenderer = gadgetSpriteBuilder.BuildGadgetRenderer(this, gadgetData);
+        var gadgetRenderer = gadgetSpriteBuilder.BuildStatefulGadgetRenderer(this, gadgetData);
+        var itemTracker = new ItemTracker<Lemming>(lemmingHasher);
 
         var result = new StatefulGadget(
             gadgetData.Id,
@@ -42,7 +43,7 @@ public sealed class StatefulGadgetBuilder : IGadgetAnimationData
             bounds,
             gadgetRenderer,
             gadgetStates,
-            new ItemTracker<Lemming>(lemmingHasher));
+            itemTracker);
 
         result.SetNextState(gadgetData.InitialStateId);
 
