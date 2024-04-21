@@ -173,7 +173,7 @@ public sealed class ControlPanelRenderer
         spriteBatch.Draw(
             _whitePixel,
             new Rectangle(0, _windowHeight - controlPanelScreenHeight, _windowWidth, controlPanelScreenHeight),
-            new Rectangle(0, 0xff, 1, 1),
+            CommonSprites.RectangleForWhitePixelAlpha(0xff),
             Color.DarkGray);
 
         var destinationRectangle = new Rectangle(
