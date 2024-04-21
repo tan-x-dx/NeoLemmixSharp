@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -26,9 +25,9 @@ public sealed class SpacialHashGrid<T>
     private readonly uint[] _setUnionScratchSpace;
     private readonly uint[] _allBits;
 
-    private LevelPosition _topLeftChunkQuery;
-    private LevelPosition _bottomRightChunkQuery;
-    private int _chunkQueryCount;
+    private LevelPosition _previousQueryTopLeftChunk;
+    private LevelPosition _previousQueryBottomRightChunk;
+    private int _previousQueryCount;
 
     public SpacialHashGrid(
         IPerfectHasher<T> hasher,
@@ -62,6 +61,7 @@ public sealed class SpacialHashGrid<T>
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
 
     [Pure]
@@ -91,17 +91,17 @@ public sealed class SpacialHashGrid<T>
 
         var scratchSpaceSpan = new Span<uint>(_setUnionScratchSpace);
         var chunk = new LevelPosition(chunkX, chunkY);
-        if (chunk == _topLeftChunkQuery &&
-            chunk == _bottomRightChunkQuery)
-            return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
+        if (chunk == _previousQueryTopLeftChunk &&
+            chunk == _previousQueryBottomRightChunk)
+            return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _previousQueryCount);
 
         var sourceSpan = ReadOnlySpanFor(chunkX, chunkY);
-        _topLeftChunkQuery = chunk;
-        _bottomRightChunkQuery = chunk;
+        _previousQueryTopLeftChunk = chunk;
+        _previousQueryBottomRightChunk = chunk;
         sourceSpan.CopyTo(scratchSpaceSpan);
-        _chunkQueryCount = BitArray.GetPopCount(sourceSpan);
+        _previousQueryCount = BitArray.GetPopCount(sourceSpan);
 
-        return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
+        return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _previousQueryCount);
     }
 
     [Pure]
@@ -110,33 +110,33 @@ public sealed class SpacialHashGrid<T>
         if (IsEmpty)
             return SimpleSetEnumerable<T>.Empty;
 
-        var previousTopLeftChunkQuery = _topLeftChunkQuery;
-        var previousBottomRightChunkQuery = _bottomRightChunkQuery;
-        _topLeftChunkQuery = GetChunkForPoint(levelRegion.GetTopLeftPosition());
-        _bottomRightChunkQuery = GetChunkForPoint(levelRegion.GetBottomRightPosition());
+        var previousTopLeftChunkQuery = _previousQueryTopLeftChunk;
+        var previousBottomRightChunkQuery = _previousQueryBottomRightChunk;
+        _previousQueryTopLeftChunk = GetChunkForPoint(levelRegion.GetTopLeftPosition());
+        _previousQueryBottomRightChunk = GetChunkForPoint(levelRegion.GetBottomRightPosition());
 
         var scratchSpaceSpan = new Span<uint>(_setUnionScratchSpace);
 
-        if (previousTopLeftChunkQuery == _topLeftChunkQuery &&
-            previousBottomRightChunkQuery == _bottomRightChunkQuery)
-            return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
+        if (previousTopLeftChunkQuery == _previousQueryTopLeftChunk &&
+            previousBottomRightChunkQuery == _previousQueryBottomRightChunk)
+            return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _previousQueryCount);
 
-        if (_topLeftChunkQuery == _bottomRightChunkQuery)
+        if (_previousQueryTopLeftChunk == _previousQueryBottomRightChunk)
         {
             // Only one chunk -> skip some extra work
 
-            var sourceSpan = ReadOnlySpanFor(_topLeftChunkQuery.X, _bottomRightChunkQuery.Y);
+            var sourceSpan = ReadOnlySpanFor(_previousQueryTopLeftChunk.X, _previousQueryBottomRightChunk.Y);
             sourceSpan.CopyTo(scratchSpaceSpan);
-            _chunkQueryCount = BitArray.GetPopCount(sourceSpan);
+            _previousQueryCount = BitArray.GetPopCount(sourceSpan);
 
-            return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
+            return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _previousQueryCount);
         }
 
         scratchSpaceSpan.Clear();
-        EvaluateChunkPositions(ChunkOperationType.Union, null, _topLeftChunkQuery.X, _topLeftChunkQuery.Y, _bottomRightChunkQuery.X, _bottomRightChunkQuery.Y);
-        _chunkQueryCount = BitArray.GetPopCount(scratchSpaceSpan);
+        EvaluateChunkPositions(ChunkOperationType.Union, null, _previousQueryTopLeftChunk.X, _previousQueryTopLeftChunk.Y, _previousQueryBottomRightChunk.X, _previousQueryBottomRightChunk.Y);
+        _previousQueryCount = BitArray.GetPopCount(scratchSpaceSpan);
 
-        return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _chunkQueryCount);
+        return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _previousQueryCount);
     }
 
     public void AddItem(T item)
@@ -147,7 +147,7 @@ public sealed class SpacialHashGrid<T>
         var topLeftChunk = GetChunkForPoint(item.TopLeftPixel);
         var bottomRightChunk = GetChunkForPoint(item.BottomRightPixel);
 
-        var p1 = new LevelPositionPair(_topLeftChunkQuery, _bottomRightChunkQuery);
+        var p1 = new LevelPositionPair(_previousQueryTopLeftChunk, _previousQueryBottomRightChunk);
         var p2 = new LevelPositionPair(topLeftChunk, bottomRightChunk);
         if (p1.Overlaps(p2))
         {
@@ -172,7 +172,7 @@ public sealed class SpacialHashGrid<T>
             bottomRightChunk == previousBottomRightChunk)
             return;
 
-        var p1 = new LevelPositionPair(_topLeftChunkQuery, _bottomRightChunkQuery);
+        var p1 = new LevelPositionPair(_previousQueryTopLeftChunk, _previousQueryBottomRightChunk);
         var p2 = new LevelPositionPair(topLeftChunk, bottomRightChunk);
         var p3 = new LevelPositionPair(previousTopLeftChunk, previousBottomRightChunk);
         if (p1.Overlaps(p2) ||
@@ -213,7 +213,7 @@ public sealed class SpacialHashGrid<T>
         var previousTopLeftChunk = GetChunkForPoint(item.PreviousTopLeftPixel);
         var previousBottomRightChunk = GetChunkForPoint(item.PreviousBottomRightPixel);
 
-        var p1 = new LevelPositionPair(_topLeftChunkQuery, _bottomRightChunkQuery);
+        var p1 = new LevelPositionPair(_previousQueryTopLeftChunk, _previousQueryBottomRightChunk);
         var p2 = new LevelPositionPair(topLeftChunk, bottomRightChunk);
         var p3 = new LevelPositionPair(previousTopLeftChunk, previousBottomRightChunk);
         if (p1.Overlaps(p2) ||
@@ -311,33 +311,22 @@ public sealed class SpacialHashGrid<T>
 
     private void UseChunkPosition(ChunkOperationType chunkOperationType, T? item, int x1, int y1)
     {
-        switch (chunkOperationType)
+        if (chunkOperationType == ChunkOperationType.Add)
         {
-            case ChunkOperationType.Add:
-                var addSpan = SpanFor(x1, y1);
-                BitArray.SetBit(addSpan, _hasher.Hash(item!));
-                return;
-
-            case ChunkOperationType.Remove:
-                var removeSpan = SpanFor(x1, y1);
-                BitArray.ClearBit(removeSpan, _hasher.Hash(item!));
-                return;
-
-            case ChunkOperationType.Union:
-                var readOnlySpan = ReadOnlySpanFor(x1, y1);
-                BitArray.UnionWith(_setUnionScratchSpace, readOnlySpan);
-                return;
-
-            default:
-                ThrowUnknownChunkPositionException(chunkOperationType);
-                return;
+            var addSpan = SpanFor(x1, y1);
+            BitArray.SetBit(addSpan, _hasher.Hash(item!));
+            return;
         }
-    }
 
-    [DoesNotReturn]
-    private static void ThrowUnknownChunkPositionException(ChunkOperationType chunkOperationType)
-    {
-        throw new ArgumentOutOfRangeException(nameof(chunkOperationType), chunkOperationType, "Unknown chunk position type");
+        if (chunkOperationType == ChunkOperationType.Remove)
+        {
+            var removeSpan = SpanFor(x1, y1);
+            BitArray.ClearBit(removeSpan, _hasher.Hash(item!));
+            return;
+        }
+
+        var readOnlySpan = ReadOnlySpanFor(x1, y1);
+        BitArray.UnionWith(_setUnionScratchSpace, readOnlySpan);
     }
 
     [Pure]
@@ -366,8 +355,8 @@ public sealed class SpacialHashGrid<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void ClearCachedData()
     {
-        _topLeftChunkQuery = new LevelPosition(-256, -256);
-        _bottomRightChunkQuery = new LevelPosition(-256, -256);
+        _previousQueryTopLeftChunk = new LevelPosition(-256, -256);
+        _previousQueryBottomRightChunk = new LevelPosition(-256, -256);
     }
 
     private enum ChunkOperationType
