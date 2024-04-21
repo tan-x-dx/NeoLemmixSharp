@@ -30,11 +30,13 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget, 
         RectangularLevelRegion gadgetBounds,
         IGadgetRenderer? renderer,
         LevelPosition spawnPositionTranslation,
-        HatchSpawnData hatchSpawnData)
+        HatchSpawnData hatchSpawnData,
+        GadgetStateAnimationController animationController)
         : base(id, gadgetBounds, renderer)
     {
         _spawnPositionTranslation = spawnPositionTranslation;
         HatchSpawnData = hatchSpawnData;
+        AnimationController = animationController;
 
         var topLeft = GadgetBounds.TopLeft;
         var bottomRight = GadgetBounds.BottomRight;

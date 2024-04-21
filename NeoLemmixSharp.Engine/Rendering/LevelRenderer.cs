@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
 
@@ -13,7 +12,8 @@ public sealed class LevelRenderer : IDisposable
     private readonly GraphicsDevice _graphicsDevice;
     private readonly LevelControlPanel _levelControlPanel;
     private readonly Level.Viewport _viewport;
-    private readonly IViewportObjectRenderer[] _levelSprites;
+    private readonly IViewportObjectRenderer[] _behindTerrainSprites;
+    private readonly IViewportObjectRenderer[] _inFrontOfTerrainSprites;
 
     private IBackgroundRenderer _backgroundRenderer;
     private TerrainRenderer _terrainRenderer;
@@ -25,14 +25,16 @@ public sealed class LevelRenderer : IDisposable
         GraphicsDevice graphicsDevice,
         LevelControlPanel levelControlPanel,
         Level.Viewport viewport,
-        IViewportObjectRenderer[] levelSprites,
+        IViewportObjectRenderer[] behindTerrainSprites,
+        IViewportObjectRenderer[] inFrontOfTerrainSprites,
         IBackgroundRenderer backgroundRenderer,
         TerrainRenderer terrainRenderer)
     {
         _graphicsDevice = graphicsDevice;
         _levelControlPanel = levelControlPanel;
         _viewport = viewport;
-        _levelSprites = levelSprites;
+        _behindTerrainSprites = behindTerrainSprites;
+        _inFrontOfTerrainSprites = inFrontOfTerrainSprites;
 
         _backgroundRenderer = backgroundRenderer;
         _terrainRenderer = terrainRenderer;
@@ -45,24 +47,25 @@ public sealed class LevelRenderer : IDisposable
         spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
 
         _backgroundRenderer.RenderBackground(spriteBatch);
+
+        RenderSprites(spriteBatch, new ReadOnlySpan<IViewportObjectRenderer>(_behindTerrainSprites));
         _terrainRenderer.RenderTerrain(spriteBatch);
-        RenderSprites(spriteBatch);
+        RenderSprites(spriteBatch, new ReadOnlySpan<IViewportObjectRenderer>(_inFrontOfTerrainSprites));
 
         spriteBatch.End();
     }
-
-    private void RenderSprites(SpriteBatch spriteBatch)
+    
+    private void RenderSprites(SpriteBatch spriteBatch, ReadOnlySpan<IViewportObjectRenderer> levelSpritesSpan)
     {
         var viewportX = _viewport.ViewPortX;
         var viewportY = _viewport.ViewPortY;
         var maxX = _viewport.NumberOfHorizontalRenderIntervals;
         var maxY = _viewport.NumberOfVerticalRenderIntervals;
-        var levelSpritesSpan = new ReadOnlySpan<IViewportObjectRenderer>(_levelSprites);
 
-        for (var i = 0; i < maxX; i++)
+        for (var i = maxX - 1; i >= 0; i--)
         {
             var hInterval = _viewport.GetHorizontalRenderInterval(i);
-            for (var j = 0; j < maxY; j++)
+            for (var j = maxY - 1; j >= 0; j--)
             {
                 var vInterval = _viewport.GetVerticalRenderInterval(j);
                 var viewportClip = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
@@ -134,7 +137,8 @@ public sealed class LevelRenderer : IDisposable
         DisposableHelperMethods.DisposeOf(ref _backgroundRenderer);
         DisposableHelperMethods.DisposeOf(ref _terrainRenderer);
         DisposableHelperMethods.DisposeOf(ref _levelRenderTarget);
-        DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<IViewportObjectRenderer>(_levelSprites));
+        DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<IViewportObjectRenderer>(_behindTerrainSprites));
+        DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<IViewportObjectRenderer>(_inFrontOfTerrainSprites));
 
         _disposed = true;
     }

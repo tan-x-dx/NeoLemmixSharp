@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
@@ -12,6 +13,7 @@ using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
+using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
 using Viewport = NeoLemmixSharp.Engine.Level.Viewport;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
@@ -99,20 +101,29 @@ public sealed class LevelBuilder : IDisposable
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(_contentManager);
 
-        var levelSprites = _levelObjectAssembler.GetLevelSprites();
+        var (behindTerrainSprites, inFrontOfTerrainSprites) = _levelObjectAssembler.GetLevelSprites();
         var levelCursorSprite = CommonSprites.GetLevelCursorSprite(levelCursor);
+        var backgroundRenderer = GetBackgroundRenderer(levelData, levelViewport);
+
+        var levelRenderer = new LevelRenderer(
+            _graphicsDevice,
+            controlPanel,
+            levelViewport,
+            behindTerrainSprites,
+            inFrontOfTerrainSprites,
+            backgroundRenderer,
+            terrainRenderer);
 
         var levelScreenRenderer = new LevelScreenRenderer(
             _graphicsDevice,
-            levelData,
             controlPanel,
             levelViewport,
-            levelSprites,
-            terrainRenderer,
+            levelRenderer,
             levelCursorSprite,
             lemmingSpriteBank,
             gadgetSpriteBank,
             controlPanelSpriteBank);
+
         LevelScreen.SetLevelScreenRenderer(levelScreenRenderer);
 
         lemmingManager.Initialise();
@@ -120,6 +131,13 @@ public sealed class LevelBuilder : IDisposable
         updateScheduler.Initialise();
 
         return new LevelScreen(levelData);
+    }
+
+    private static IBackgroundRenderer GetBackgroundRenderer(
+        LevelData levelData,
+        Viewport viewport)
+    {
+        return new SolidColorBackgroundRenderer(viewport, new Color(24, 24, 60));
     }
 
     public void Dispose()
