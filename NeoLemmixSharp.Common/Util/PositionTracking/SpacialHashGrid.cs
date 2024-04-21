@@ -2,14 +2,13 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
 public sealed class SpacialHashGrid<T>
-    where T : class, IIdEquatable<T>, IRectangularBounds
+    where T : class, IRectangularBounds
 {
     private readonly IPerfectHasher<T> _hasher;
     private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
