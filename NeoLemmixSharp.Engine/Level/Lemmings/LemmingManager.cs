@@ -7,6 +7,7 @@ using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Updates;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -18,9 +19,9 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     private readonly Lemming[] _lemmings;
 
     private readonly SpacialHashGrid<Lemming> _lemmingPositionHelper;
+    private readonly SpacialHashGrid<Lemming> _zombieSpacialHashGrid;
     private readonly SimpleSet<Lemming> _lemmingsToZombify;
     private readonly SimpleSet<Lemming> _allBlockers;
-    private readonly ZombieHelper _zombieHelper;
 
     public int LemmingsToRelease { get; private set; }
     public int LemmingsOut { get; private set; }
@@ -54,11 +55,14 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             LevelConstants.LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
+        _zombieSpacialHashGrid = new SpacialHashGrid<Lemming>(
+            this,
+            LevelConstants.LemmingPositionChunkSize,
+            horizontalBoundaryBehaviour,
+            verticalBoundaryBehaviour);
 
         _lemmingsToZombify = new SimpleSet<Lemming>(this);
         _allBlockers = new SimpleSet<Lemming>(this);
-
-        _zombieHelper = new ZombieHelper(this, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
     }
 
     public void Initialise()
@@ -165,7 +169,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         }
 
         // If not relevant for this lemming, nothing will happen
-        _zombieHelper.UpdateZombiePosition(lemming);
+        UpdateZombiePosition(lemming);
     }
 
     public void RemoveLemming(Lemming lemming, LemmingRemovalReason removalReason)
@@ -240,23 +244,58 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         return true;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void RegisterZombie(Lemming lemming) => _zombieHelper.RegisterZombie(lemming);
+    #region Zombie Handling
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void DeregisterZombie(Lemming lemming) => _zombieHelper.DeregisterZombie(lemming);
+    public void RegisterZombie(Lemming lemming) => _zombieSpacialHashGrid.AddItem(lemming);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void DeregisterZombie(Lemming lemming) => _zombieSpacialHashGrid.RemoveItem(lemming);
+
+    private void UpdateZombiePosition(Lemming lemming)
+    {
+        if (!_zombieSpacialHashGrid.IsTrackingItem(lemming))
+            return;
+
+        _zombieSpacialHashGrid.UpdateItemPosition(lemming);
+    }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool AnyZombies() => _zombieHelper.AnyZombies();
+    public bool AnyZombies() => !_zombieSpacialHashGrid.IsEmpty;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void DoZombieCheck(Lemming lemming) => _zombieHelper.CheckZombies(lemming);
+    public void DoZombieCheck(Lemming lemming)
+    {
+        Debug.Assert(!lemming.State.IsZombie);
 
-    public void RegisterLemmingForZombification(Lemming lemming)
+        var checkRegion = new LevelPositionPair(lemming.TopLeftPixel, lemming.BottomRightPixel);
+        var nearbyZombies = _zombieSpacialHashGrid.GetAllItemsNearRegion(checkRegion);
+
+        if (nearbyZombies.Count == 0)
+            return;
+
+        foreach (var zombie in nearbyZombies)
+        {
+            Debug.Assert(zombie.State.IsZombie);
+
+            var zombieRegion = new LevelPositionPair(zombie.TopLeftPixel, zombie.BottomRightPixel);
+
+            if (checkRegion.Overlaps(zombieRegion))
+            {
+                RegisterLemmingForZombification(lemming);
+
+                return;
+            }
+        }
+    }
+
+    private void RegisterLemmingForZombification(Lemming lemming)
     {
         _lemmingsToZombify.Add(lemming);
     }
+
+    #endregion
 
     int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Length;
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
