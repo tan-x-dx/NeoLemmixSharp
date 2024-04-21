@@ -56,9 +56,7 @@ public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
     [Pure]
     public Orientation ConvertToRelativeOrientation(Orientation orientation)
     {
-        return Id == LevelConstants.RightFacingDirectionId
-            ? Orientation.RotateCounterClockwise(orientation)
-            : Orientation.RotateClockwise(orientation);
+        return Orientation.Rotate(orientation, DeltaX);
     }
 
     public bool Equals(FacingDirection? other) => Id == (other?.Id ?? -1);

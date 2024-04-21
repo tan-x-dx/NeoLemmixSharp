@@ -36,7 +36,7 @@ public sealed class ExceptionViewer : PageBase
         Window.IsCloseButtonVisible = true;
         Window.WindowStyle = WindowStyle.Default;
         Window.CanCloseWindow = true;
-        Window.Metadata.Add(ExceptionWindowProperty, new object());
+        Window.Metadata.Add(ExceptionWindowProperty, ExceptionWindowProperty);
         Window.WindowClosing += WindowOnWindowClosing;
     }
 

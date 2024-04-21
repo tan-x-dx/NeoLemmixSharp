@@ -106,8 +106,9 @@ public sealed class MenuScreen : IBaseScreen
 
     private void CloseExceptionViewers()
     {
-        foreach (var window in _desktop.Windows)
+        for (var index = _desktop.Windows.Count - 1; index >= 0; index--)
         {
+            var window = _desktop.Windows[index];
             if (window.Metadata.ContainsKey(ExceptionViewer.ExceptionWindowProperty))
             {
                 window.TryCloseWindow();
