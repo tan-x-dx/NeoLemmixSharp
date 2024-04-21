@@ -1,12 +1,14 @@
-﻿namespace NeoLemmixSharp.Common.Util.Collections;
+﻿using System.Runtime.CompilerServices;
+
+namespace NeoLemmixSharp.Common.Util.Collections;
 
 public static class CollectionsHelper
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T[] GetArrayForSize<T>(int size)
     {
-        if (size == 0)
-            return Array.Empty<T>();
-
-        return new T[size];
+        return size == 0
+            ? Array.Empty<T>()
+            : new T[size];
     }
 }

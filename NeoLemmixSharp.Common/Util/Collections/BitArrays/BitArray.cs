@@ -39,7 +39,7 @@ public sealed class BitArray
             throw new ArgumentOutOfRangeException(nameof(length), length, "length must be non-negative!");
 
         var arraySize = (length + Mask) >> Shift;
-        _bits = new uint[arraySize];
+        _bits = CollectionsHelper.GetArrayForSize<uint>(arraySize);
 
         if (!setAllBits || arraySize == 0)
             return;
