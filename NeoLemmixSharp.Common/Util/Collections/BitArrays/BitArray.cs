@@ -268,8 +268,7 @@ public sealed class BitArray
 
         for (var i = span.Length - 1; i >= 0; i--)
         {
-            ref var v = ref span[i];
-            v |= other[i];
+            span[i] |= other[i];
         }
     }
 
