@@ -143,6 +143,7 @@ public sealed class BitArray
         _popCount = 0;
     }
 
+    [Pure]
     public int[] ToArray()
     {
         if (_popCount == 0)
