@@ -52,7 +52,6 @@ public sealed class LevelScreenRenderer : IScreenRenderer
 
         _levelRenderer = new LevelRenderer(
             graphicsDevice,
-            levelData,
             levelControlPanel,
             viewport,
             levelSprites,

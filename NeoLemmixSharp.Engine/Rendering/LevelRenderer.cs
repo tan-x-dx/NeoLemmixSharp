@@ -15,9 +15,6 @@ public sealed class LevelRenderer : IDisposable
     private readonly Level.Viewport _viewport;
     private readonly IViewportObjectRenderer[] _levelSprites;
 
-    private readonly int _levelWidth;
-    private readonly int _levelHeight;
-
     private IBackgroundRenderer _backgroundRenderer;
     private TerrainRenderer _terrainRenderer;
 
@@ -26,7 +23,6 @@ public sealed class LevelRenderer : IDisposable
 
     public LevelRenderer(
         GraphicsDevice graphicsDevice,
-        LevelData levelData,
         LevelControlPanel levelControlPanel,
         Level.Viewport viewport,
         IViewportObjectRenderer[] levelSprites,
@@ -38,9 +34,6 @@ public sealed class LevelRenderer : IDisposable
         _viewport = viewport;
         _levelSprites = levelSprites;
 
-        _levelWidth = levelData.LevelWidth;
-        _levelHeight = levelData.LevelHeight;
-
         _backgroundRenderer = backgroundRenderer;
         _terrainRenderer = terrainRenderer;
         _levelRenderTarget = GetLevelRenderTarget2D();
@@ -50,7 +43,7 @@ public sealed class LevelRenderer : IDisposable
     {
         _graphicsDevice.SetRenderTarget(_levelRenderTarget);
         spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
-        
+
         _backgroundRenderer.RenderBackground(spriteBatch);
         _terrainRenderer.RenderTerrain(spriteBatch);
         RenderSprites(spriteBatch);
