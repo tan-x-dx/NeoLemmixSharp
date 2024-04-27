@@ -8,12 +8,12 @@ public sealed class LasererSkill : LemmingSkill
     public static readonly LasererSkill Instance = new();
 
     private LasererSkill()
+        : base(
+            LevelConstants.LasererSkillId,
+            LevelConstants.LasererSkillName,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.LasererSkillId;
-    public override string LemmingSkillName => "laserer";
-    public override bool IsClassicSkill => false;
 
     public override void AssignToLemming(Lemming lemming)
     {

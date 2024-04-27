@@ -8,12 +8,13 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
     public static readonly SwimmerSkill Instance = new();
 
     private SwimmerSkill()
+        : base(
+            LevelConstants.SwimmerSkillId,
+            LevelConstants.SwimmerSkillName,
+            false)
     {
     }
 
-    public override int Id => LevelConstants.SwimmerSkillId;
-    public override string LemmingSkillName => "swimmer";
-    public override bool IsClassicSkill => false;
     public int LemmingStateChangerId => LemmingStateChangerHelpers.SwimmerStateChangerId;
 
     public override bool CanAssignToLemming(Lemming lemming)

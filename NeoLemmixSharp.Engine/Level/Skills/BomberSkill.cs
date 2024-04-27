@@ -8,12 +8,12 @@ public sealed class BomberSkill : LemmingSkill
     public static readonly BomberSkill Instance = new();
 
     private BomberSkill()
+        : base(
+            LevelConstants.BomberSkillId,
+            LevelConstants.BomberSkillName,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.BomberSkillId;
-    public override string LemmingSkillName => "bomber";
-    public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

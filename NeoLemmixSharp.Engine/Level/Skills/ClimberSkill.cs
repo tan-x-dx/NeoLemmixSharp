@@ -8,13 +8,13 @@ public sealed class ClimberSkill : LemmingSkill, ILemmingStateChanger
     public static readonly ClimberSkill Instance = new();
 
     private ClimberSkill()
+        : base(
+            LevelConstants.ClimberSkillId,
+            LevelConstants.ClimberSkillName,
+            true)
     {
     }
 
-    public override int Id => LevelConstants.ClimberSkillId;
-    public override string LemmingSkillName => "climber";
-
-    public override bool IsClassicSkill => true;
     public int LemmingStateChangerId => LemmingStateChangerHelpers.ClimberStateChangerId;
 
     public override bool CanAssignToLemming(Lemming lemming)

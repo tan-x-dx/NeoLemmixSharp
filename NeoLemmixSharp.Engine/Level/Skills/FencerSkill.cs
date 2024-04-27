@@ -8,13 +8,13 @@ public sealed class FencerSkill : LemmingSkill
     public static readonly FencerSkill Instance = new();
 
     private FencerSkill()
+        : base(
+            LevelConstants.FencerSkillId,
+            LevelConstants.FencerSkillName,
+            false)
     {
     }
 
-    public override int Id => LevelConstants.FencerSkillId;
-    public override string LemmingSkillName => "fencer";
-    public override bool IsClassicSkill => false;
-    
     public override void AssignToLemming(Lemming lemming)
     {
         FencerAction.Instance.TransitionLemmingToAction(lemming, false);

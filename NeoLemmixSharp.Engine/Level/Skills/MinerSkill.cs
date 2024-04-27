@@ -8,12 +8,12 @@ public sealed class MinerSkill : LemmingSkill
     public static readonly MinerSkill Instance = new();
 
     private MinerSkill()
+        : base(
+            LevelConstants.MinerSkillId,
+            LevelConstants.MinerSkillName,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.MinerSkillId;
-    public override string LemmingSkillName => "miner";
-    public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

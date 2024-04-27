@@ -8,12 +8,12 @@ public sealed class StackerSkill : LemmingSkill
     public static readonly StackerSkill Instance = new();
 
     private StackerSkill()
+        : base(
+            LevelConstants.StackerSkillId,
+            LevelConstants.StackerSkillName,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.StackerSkillId;
-    public override string LemmingSkillName => "stacker";
-    public override bool IsClassicSkill => false;
 
     public override void AssignToLemming(Lemming lemming)
     {

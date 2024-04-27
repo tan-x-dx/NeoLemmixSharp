@@ -11,12 +11,12 @@ public sealed class NoneSkill : LemmingSkill
     public static readonly NoneSkill Instance = new();
 
     private NoneSkill()
+        : base(
+            -1,
+            LevelConstants.NoneSkillName,
+            false)
     {
     }
-
-    public override int Id => -1;
-    public override string LemmingSkillName => "none";
-    public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

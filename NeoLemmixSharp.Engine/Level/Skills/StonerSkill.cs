@@ -8,12 +8,12 @@ public sealed class StonerSkill : LemmingSkill
     public static readonly StonerSkill Instance = new();
 
     private StonerSkill()
+        : base(
+            LevelConstants.StonerSkillId,
+            LevelConstants.StonerSkillName,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.StonerSkillId;
-    public override string LemmingSkillName => "stoner";
-    public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

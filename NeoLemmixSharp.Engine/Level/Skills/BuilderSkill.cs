@@ -8,12 +8,12 @@ public sealed class BuilderSkill : LemmingSkill
     public static readonly BuilderSkill Instance = new();
 
     private BuilderSkill()
+        : base(
+            LevelConstants.BuilderSkillId,
+            LevelConstants.BuilderSkillName,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.BuilderSkillId;
-    public override string LemmingSkillName => "builder";
-    public override bool IsClassicSkill => true;
 
     public override void AssignToLemming(Lemming lemming)
     {
