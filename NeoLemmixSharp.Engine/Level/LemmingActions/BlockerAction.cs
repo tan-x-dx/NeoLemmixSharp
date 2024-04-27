@@ -13,14 +13,16 @@ public sealed class BlockerAction : LemmingAction
     public static readonly BlockerAction Instance = new();
 
     private BlockerAction()
+        : base(
+            LevelConstants.BlockerActionId,
+            LevelConstants.BlockerActionName,
+            LevelConstants.BlockerAnimationFrames,
+            LevelConstants.MaxBlockerPhysicsFrames,
+            LevelConstants.NonPermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.BlockerActionId;
-    public override string LemmingActionName => "blocker";
-    public override int NumberOfAnimationFrames => LevelConstants.BlockerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

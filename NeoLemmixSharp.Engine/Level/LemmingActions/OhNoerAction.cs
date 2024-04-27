@@ -1,6 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -10,32 +8,17 @@ public sealed class OhNoerAction : LemmingAction
 {
     public static readonly OhNoerAction Instance = new();
 
-    private static SimpleSet<LemmingAction> _airborneLemmingActions = null!;
-
     private OhNoerAction()
+        : base(
+            LevelConstants.OhNoerActionId,
+            LevelConstants.OhNoerActionName,
+            LevelConstants.OhNoerAnimationFrames,
+            LevelConstants.MaxOhNoerPhysicsFrames,
+            LevelConstants.NonWalkerMovementPriority,
+            true,
+            false)
     {
     }
-
-    public static void Initialise()
-    {
-        _airborneLemmingActions = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
-
-        _airborneLemmingActions.Add(VaporiserAction.Instance);
-        _airborneLemmingActions.Add(DrownerAction.Instance);
-        _airborneLemmingActions.Add(FloaterAction.Instance);
-        _airborneLemmingActions.Add(GliderAction.Instance);
-        _airborneLemmingActions.Add(FallerAction.Instance);
-        _airborneLemmingActions.Add(SwimmerAction.Instance);
-        _airborneLemmingActions.Add(ReacherAction.Instance);
-        _airborneLemmingActions.Add(ShimmierAction.Instance);
-        _airborneLemmingActions.Add(JumperAction.Instance);
-    }
-
-    public override int Id => LevelConstants.OhNoerActionId;
-    public override string LemmingActionName => "ohnoer";
-    public override int NumberOfAnimationFrames => LevelConstants.OhNoerAnimationFrames;
-    public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -117,7 +100,7 @@ public sealed class OhNoerAction : LemmingAction
         if (currentAction == NoneAction.Instance)
             return;
 
-        if (_airborneLemmingActions.Contains(currentAction))
+        if (currentAction.IsAirborneAction)
         {
             // If in the air, do the action immediately
             lemming.CountDownAction.TransitionLemmingToAction(lemming, false);

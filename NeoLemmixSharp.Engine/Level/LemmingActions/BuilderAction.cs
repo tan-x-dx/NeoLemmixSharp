@@ -7,14 +7,16 @@ public sealed class BuilderAction : LemmingAction
     public static readonly BuilderAction Instance = new();
 
     private BuilderAction()
+        : base(
+            LevelConstants.BuilderActionId,
+            LevelConstants.BuilderActionName,
+            LevelConstants.BuilderAnimationFrames,
+            LevelConstants.MaxBuilderPhysicsFrames,
+            LevelConstants.NonPermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.BuilderActionId;
-    public override string LemmingActionName => "builder";
-    public override int NumberOfAnimationFrames => LevelConstants.BuilderAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

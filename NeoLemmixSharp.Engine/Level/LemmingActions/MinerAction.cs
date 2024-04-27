@@ -13,14 +13,16 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
     public static readonly MinerAction Instance = new();
 
     private MinerAction()
+        : base(
+            LevelConstants.MinerActionId,
+            LevelConstants.MinerActionName,
+            LevelConstants.MinerAnimationFrames,
+            LevelConstants.MaxMinerPhysicsFrames,
+            LevelConstants.NonPermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.MinerActionId;
-    public override string LemmingActionName => "miner";
-    public override int NumberOfAnimationFrames => LevelConstants.MinerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

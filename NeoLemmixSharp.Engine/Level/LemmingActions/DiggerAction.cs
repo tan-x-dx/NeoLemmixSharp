@@ -13,14 +13,16 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
     public static readonly DiggerAction Instance = new();
 
     private DiggerAction()
+        : base(
+            LevelConstants.DiggerActionId,
+            LevelConstants.DiggerActionName,
+            LevelConstants.DiggerAnimationFrames,
+            LevelConstants.MaxDiggerPhysicsFrames,
+            LevelConstants.NonPermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.DiggerActionId;
-    public override string LemmingActionName => "digger";
-    public override int NumberOfAnimationFrames => LevelConstants.DiggerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -13,14 +13,16 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     public static readonly BasherAction Instance = new();
 
     private BasherAction()
+        : base(
+            LevelConstants.BasherActionId,
+            LevelConstants.BasherActionName,
+            LevelConstants.BasherAnimationFrames,
+            LevelConstants.MaxBasherPhysicsFrames,
+            LevelConstants.NonPermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.BasherActionId;
-    public override string LemmingActionName => "basher";
-    public override int NumberOfAnimationFrames => LevelConstants.BasherAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

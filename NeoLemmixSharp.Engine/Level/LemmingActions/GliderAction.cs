@@ -7,14 +7,16 @@ public sealed class GliderAction : LemmingAction
     public static readonly GliderAction Instance = new();
 
     private GliderAction()
+        : base(
+            LevelConstants.GliderActionId,
+            LevelConstants.GliderActionName,
+            LevelConstants.GliderAnimationFrames,
+            LevelConstants.MaxGliderPhysicsFrames,
+            LevelConstants.PermanentSkillPriority,
+            false,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.GliderActionId;
-    public override string LemmingActionName => "glider";
-    public override int NumberOfAnimationFrames => LevelConstants.GliderAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -7,14 +7,16 @@ public sealed class DisarmerAction : LemmingAction
     public static readonly DisarmerAction Instance = new();
 
     private DisarmerAction()
+        : base(
+            LevelConstants.DisarmerActionId,
+            LevelConstants.DisarmerActionName,
+            LevelConstants.DisarmerAnimationFrames,
+            LevelConstants.MaxDisarmerPhysicsFrames,
+            LevelConstants.PermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.DisarmerActionId;
-    public override string LemmingActionName => "disarmer";
-    public override int NumberOfAnimationFrames => LevelConstants.DisarmerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

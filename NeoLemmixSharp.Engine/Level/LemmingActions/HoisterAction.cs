@@ -7,14 +7,16 @@ public sealed class HoisterAction : LemmingAction
     public static readonly HoisterAction Instance = new();
 
     private HoisterAction()
+        : base(
+            LevelConstants.HoisterActionId,
+            LevelConstants.HoisterActionName,
+            LevelConstants.HoisterAnimationFrames,
+            LevelConstants.MaxHoisterPhysicsFrames,
+            LevelConstants.NonWalkerMovementPriority,
+            true,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.HoisterActionId;
-    public override string LemmingActionName => "hoister";
-    public override int NumberOfAnimationFrames => LevelConstants.HoisterAnimationFrames;
-    public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

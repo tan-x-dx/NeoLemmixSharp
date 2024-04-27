@@ -53,14 +53,16 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
     }
 
     private LasererAction()
+        : base(
+            LevelConstants.LasererActionId,
+            LevelConstants.LasererActionName,
+            LevelConstants.LasererAnimationFrames,
+            LevelConstants.MaxLasererPhysicsFrames,
+            LevelConstants.NonPermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.LasererActionId;
-    public override string LemmingActionName => "laserer";
-    public override int NumberOfAnimationFrames => LevelConstants.LasererAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -7,14 +7,16 @@ public sealed class AscenderAction : LemmingAction
     public static readonly AscenderAction Instance = new();
 
     private AscenderAction()
+        : base(
+            LevelConstants.AscenderActionId,
+            LevelConstants.AscenderActionName,
+            LevelConstants.AscenderAnimationFrames,
+            LevelConstants.MaxAscenderPhysicsFrames,
+            LevelConstants.NonWalkerMovementPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.AscenderActionId;
-    public override string LemmingActionName => "ascender";
-    public override int NumberOfAnimationFrames => LevelConstants.AscenderAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

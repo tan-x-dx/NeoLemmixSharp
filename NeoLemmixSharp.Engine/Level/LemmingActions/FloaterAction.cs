@@ -30,14 +30,16 @@ public sealed class FloaterAction : LemmingAction
     ];
 
     private FloaterAction()
+        : base(
+            LevelConstants.FloaterActionId,
+            LevelConstants.FloaterActionName,
+            LevelConstants.FloaterAnimationFrames,
+            LevelConstants.MaxFloaterPhysicsFrames,
+            LevelConstants.PermanentSkillPriority,
+            false,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.FloaterActionId;
-    public override string LemmingActionName => "floater";
-    public override int NumberOfAnimationFrames => LevelConstants.FloaterAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

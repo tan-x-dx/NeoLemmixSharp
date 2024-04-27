@@ -203,26 +203,31 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     /// <returns>True if more work needs to be done this frame</returns>
     private bool HandleLemmingAction()
     {
-        PhysicsFrame++;
+        var frame = AnimationFrame + 1;
+        if (frame == CurrentAction.NumberOfAnimationFrames)
+        {
+            frame = 0;
+        }
+        AnimationFrame = frame;
 
-        if (PhysicsFrame >= CurrentAction.NumberOfAnimationFrames)
+        frame = PhysicsFrame + 1;
+        // AnimationFrame is usually identical to PhysicsFrame
+        // Exceptions occur in JumperAction, for example
+        if (frame == CurrentAction.MaxPhysicsFrames)
         {
             if (CurrentAction == FloaterAction.Instance ||
                 CurrentAction == GliderAction.Instance)
             {
-                PhysicsFrame = 9;
+                frame = 9;
             }
             else
             {
-                PhysicsFrame = 0;
+                frame = 0;
             }
 
             EndOfAnimation = CurrentAction.IsOneTimeAction;
         }
-
-        AnimationFrame = PhysicsFrame;
-        // AnimationFrame is usually identical to PhysicsFrame
-        // Exceptions occur in JumperAction, for example
+        PhysicsFrame = frame;
 
         PreviousLevelPosition = LevelPosition;
         PreviousTopLeftPixel = TopLeftPixel;

@@ -8,14 +8,16 @@ public sealed class WalkerAction : LemmingAction
     public static readonly WalkerAction Instance = new();
 
     private WalkerAction()
+        : base(
+            LevelConstants.WalkerActionId,
+            LevelConstants.WalkerActionName,
+            LevelConstants.WalkerAnimationFrames,
+            LevelConstants.MaxWalkerPhysicsFrames,
+            LevelConstants.WalkerMovementPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.WalkerActionId;
-    public override string LemmingActionName => "walker";
-    public override int NumberOfAnimationFrames => LevelConstants.WalkerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.WalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

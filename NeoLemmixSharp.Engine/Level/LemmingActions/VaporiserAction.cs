@@ -7,14 +7,16 @@ public sealed class VaporiserAction : LemmingAction
     public static readonly VaporiserAction Instance = new();
 
     private VaporiserAction()
+        : base(
+            LevelConstants.VaporiserActionId,
+            LevelConstants.VaporiserActionName,
+            LevelConstants.VaporiserAnimationFrames,
+            LevelConstants.MaxVaporizerPhysicsFrames,
+            LevelConstants.NoPriority,
+            true,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.VaporiserActionId;
-    public override string LemmingActionName => "burner2";
-    public override int NumberOfAnimationFrames => LevelConstants.VaporiserAnimationFrames;
-    public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => LevelConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

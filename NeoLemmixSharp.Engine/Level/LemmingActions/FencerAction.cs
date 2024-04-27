@@ -12,14 +12,16 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
     public static readonly FencerAction Instance = new();
 
     private FencerAction()
+        : base(
+            LevelConstants.FencerActionId,
+            LevelConstants.FencerActionName,
+            LevelConstants.FencerAnimationFrames,
+            LevelConstants.MaxFencerPhysicsFrames,
+            LevelConstants.NonPermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.FencerActionId;
-    public override string LemmingActionName => "fencer";
-    public override int NumberOfAnimationFrames => LevelConstants.FencerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

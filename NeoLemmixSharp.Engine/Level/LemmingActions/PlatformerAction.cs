@@ -8,14 +8,16 @@ public sealed class PlatformerAction : LemmingAction
     public static readonly PlatformerAction Instance = new();
 
     private PlatformerAction()
+        : base(
+            LevelConstants.PlatformerActionId,
+            LevelConstants.PlatformerActionName,
+            LevelConstants.PlatformerAnimationFrames,
+            LevelConstants.MaxPlatformerPhysicsFrames,
+            LevelConstants.NonPermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.PlatformerActionId;
-    public override string LemmingActionName => "platformer";
-    public override int NumberOfAnimationFrames => LevelConstants.PlatformerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

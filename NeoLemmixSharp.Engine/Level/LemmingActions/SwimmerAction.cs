@@ -10,14 +10,16 @@ public sealed class SwimmerAction : LemmingAction
     public static readonly SwimmerAction Instance = new();
 
     private SwimmerAction()
+        : base(
+            LevelConstants.SwimmerActionId,
+            LevelConstants.SwimmerActionName,
+            LevelConstants.SwimmerAnimationFrames,
+            LevelConstants.MaxSwimmerPhysicsFrames,
+            LevelConstants.PermanentSkillPriority,
+            false,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.SwimmerActionId;
-    public override string LemmingActionName => "swimmer";
-    public override int NumberOfAnimationFrames => LevelConstants.SwimmerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -24,14 +24,16 @@ public sealed class JumperAction : LemmingAction
     };
 
     private JumperAction()
+        : base(
+            LevelConstants.JumperActionId,
+            LevelConstants.JumperActionName,
+            LevelConstants.JumperAnimationFrames,
+            LevelConstants.MaxJumperPhysicsFrames,
+            LevelConstants.NonWalkerMovementPriority,
+            false,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.JumperActionId;
-    public override string LemmingActionName => "jumper";
-    public override int NumberOfAnimationFrames => LevelConstants.JumperAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
