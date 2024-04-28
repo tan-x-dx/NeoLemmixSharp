@@ -65,8 +65,8 @@ public sealed class BuilderAction : LemmingAction
         }
 
         if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 3)) ||
-            terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 2)) ||
-            (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 10)) &&
+            terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx * 2, 2)) ||
+            (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx * 2, 10)) &&
              lemming.NumberOfBricksLeft > 0))
         {
             lemmingPosition = orientation.Move(lemmingPosition, dx, 1);
@@ -77,13 +77,13 @@ public sealed class BuilderAction : LemmingAction
 
         if (!lemming.ConstructivePositionFreeze)
         {
-            lemmingPosition = orientation.Move(lemmingPosition, dx + dx, 1);
+            lemmingPosition = orientation.Move(lemmingPosition, dx * 2, 1);
         }
 
         if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 2)) ||
             terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 3)) ||
             terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 3)) ||
-            (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 10)) &&
+            (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx * 2, 10)) &&
              lemming.NumberOfBricksLeft > 0))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);

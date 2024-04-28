@@ -10,7 +10,12 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class BasherAction : LemmingAction, IDestructionMask
 {
+    private const int BasherMaskWidth = 16;
+    private const int BasherMaskHeight = 10;
+
     public static readonly BasherAction Instance = new();
+
+    private readonly PixelType[] _simulationScratchSpace = new PixelType[BasherMaskWidth * BasherMaskHeight];
 
     private BasherAction()
         : base(
@@ -26,7 +31,152 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        throw new NotImplementedException();
+        // Remove terrain
+        if (lemming.PhysicsFrame is >= 2 and <= 5)
+        {
+            TerrainMasks.ApplyBasherMask(lemming, lemming.PhysicsFrame - 2);
+        }
+
+        var terrainManager = LevelScreen.TerrainManager;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.LevelPosition;
+        var dx = lemming.FacingDirection.DeltaX;
+
+        // Check for enough terrain to continue working
+        if (lemming.PhysicsFrame == 5)
+        {
+            var continueWork = false;
+
+            var fiveAbove = orientation.Move(lemmingPosition, 0, 5);
+            var sixAbove = orientation.Move(lemmingPosition, 0, 6);
+
+            // Check for destructible terrain at height 5 and 6
+            for (var n = 1; n < 15; n++)
+            {
+                fiveAbove = orientation.MoveRight(fiveAbove, dx);
+                sixAbove = orientation.MoveRight(sixAbove, dx);
+
+                continueWork = continueWork ||
+                               (terrainManager.PixelIsSolidToLemming(lemming, fiveAbove) &&
+                                !terrainManager.PixelIsIndestructibleToLemming(lemming, this, fiveAbove)) ||
+                               (terrainManager.PixelIsSolidToLemming(lemming, sixAbove) &&
+                                !terrainManager.PixelIsIndestructibleToLemming(lemming, this, sixAbove));
+            }
+
+            // Check whether we turn around within the next two basher strokes (only if we don't simulate)
+            if (!continueWork && !lemming.IsSimulation)
+            {
+                continueWork = DoTurnAtSteel(lemming);
+            }
+
+            if (continueWork)
+                return true;
+
+            if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+            {
+                WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            }
+            else
+            {
+                FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            }
+
+            return true;
+        }
+
+        if (lemming.PhysicsFrame is < 11 or > 15)
+            return true;
+
+        lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
+        var dy = FindGroundPixel(lemming, lemmingPosition);
+
+        if (dy > 0 &&
+            lemming.State.IsSlider &&
+            DehoisterAction.LemmingCanDehoist(lemming, true))
+        {
+            lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
+            DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
+
+            return true;
+        }
+
+        if (dy == 4)
+        {
+            lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
+            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            return true;
+        }
+
+        if (dy == 3)
+        {
+            lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
+            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            return true;
+        }
+
+        var testPoint = orientation.MoveDown(lemmingPosition, dy);
+        if (dy is >= 0 and <= 2)
+        {
+            // Move zero, one or two pixels down, if there is no steel
+            if (BasherIndestructibleCheck(lemming, testPoint))
+            {
+                BasherTurn(lemming, terrainManager.PixelIsSteel(orientation.MoveUp(testPoint, 4)));
+            }
+            else
+            {
+                lemmingPosition = testPoint;
+            }
+
+            return true;
+        }
+
+        if (dy is -1 or -2)
+        {
+            // Move one or two pixels up, if there is no steel and not too much terrain
+            if (BasherIndestructibleCheck(lemming, testPoint))
+            {
+                BasherTurn(lemming, terrainManager.PixelIsSteel(orientation.MoveUp(testPoint, 4)));
+                return true;
+            }
+
+            if (!StepUpCheck(lemming, lemmingPosition, orientation, dx, dy))
+            {
+                if (BasherIndestructibleCheck(lemming, orientation.Move(lemmingPosition, dx, 0 - 2)))
+                {
+                    var steelTest = terrainManager.PixelIsSteel(orientation.Move(lemmingPosition, dx, -dy)) ||
+                                    terrainManager.PixelIsSteel(orientation.Move(lemmingPosition, dx, -dy - 1));
+
+                    BasherTurn(lemming, steelTest);
+                    return true;
+                }
+
+                // Stall basher
+                lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
+                return true;
+            }
+
+            // Lemming may move up
+            lemmingPosition = testPoint;
+            return true;
+        }
+
+        if (dy >= -2)
+            return true;
+
+        // Either stall or turn if there is steel
+        if (BasherIndestructibleCheck(lemming, lemmingPosition))
+        {
+            var steelTest = terrainManager.PixelIsSteel(orientation.MoveUp(lemmingPosition, 3)) ||
+                            terrainManager.PixelIsSteel(orientation.MoveUp(lemmingPosition, 4)) ||
+                            terrainManager.PixelIsSteel(orientation.MoveUp(lemmingPosition, 5));
+
+            BasherTurn(lemming, steelTest);
+            return true;
+        }
+
+        lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
+
+        return true;
     }
 
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
@@ -34,24 +184,26 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
 
-    /* private bool BasherIndestructibleCheck(
-         Orientation orientation,
-         FacingDirection facingDirection,
-         LevelPosition pos)
-     {
-       var terrainManager = LevelScreen.TerrainManager;
+    private bool BasherIndestructibleCheck(
+        Lemming lemming,
+        LevelPosition pos)
+    {
+        var terrainManager = LevelScreen.TerrainManager;
+        var orientation = lemming.Orientation;
 
-         return terrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 3)) ||
-                terrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 4)) ||
-                terrainManager.PixelIsIndestructibleToLemming(orientation, this, facingDirection, orientation.MoveUp(pos, 5));
-     }*/
+        // Check for indestructible terrain 3, 4 and 5 pixels above position
+        return terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.MoveUp(pos, 3)) ||
+               terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.MoveUp(pos, 4)) ||
+               terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.MoveUp(pos, 5));
+    }
 
-    private void BasherTurn(
+    private static void BasherTurn(
         Lemming lemming,
         bool playSound)
     {
         var dx = lemming.FacingDirection.DeltaX;
-        lemming.LevelPosition = lemming.Orientation.MoveLeft(lemming.LevelPosition, dx);
+        ref var lemmingPosition = ref lemming.LevelPosition;
+        lemmingPosition = lemming.Orientation.MoveLeft(lemmingPosition, dx);
         WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
         if (playSound)
@@ -60,12 +212,12 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         }
     }
 
-    private bool StepUpCheck(
+    private static bool StepUpCheck(
         Lemming lemming,
         LevelPosition pos,
         Orientation orientation,
         int dx,
-        int step)
+        int dy)
     {
         var terrainManager = LevelScreen.TerrainManager;
 
@@ -73,150 +225,61 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         var p1X2Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 2));
         var p1X3Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx, 3));
 
-        var p2X1Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 1));
-        var p2X2Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 2));
-        var p2X3Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx + dx, 3));
+        var p2X1Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx * 2, 1));
+        var p2X2Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx * 2, 2));
+        var p2X3Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx * 2, 3));
 
-        if (step == 1)
+        if (dy == 1)
         {
             if (!p1X2Y &&
                 p1X1Y &&
                 p2X1Y &&
                 p2X2Y &&
                 p2X3Y)
-            {
                 return false;
-            }
 
             if (!p1X3Y &&
                 p1X2Y &&
                 p1X1Y &&
                 p2X2Y &&
                 p2X3Y)
-            {
                 return false;
-            }
 
             if (p1X3Y &&
                 p1X2Y &&
                 p1X1Y)
-            {
                 return false;
-            }
         }
-        else if (step == 2)
+        else if (dy == 2)
         {
             if (!p1X2Y &&
                 p1X1Y &&
                 p2X1Y &&
                 p2X2Y &&
                 p2X3Y)
-            {
                 return false;
-            }
 
             if (!p1X3Y &&
                 p1X2Y &&
                 p2X2Y &&
                 p2X3Y)
-            {
                 return false;
-            }
 
             if (p1X3Y &&
                 p1X2Y)
-            {
                 return false;
-            }
         }
 
         return true;
     }
 
-    [Pure]
-    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
-    {
-        var bashDirectionAsOrientation = facingDirection.ConvertToRelativeOrientation(orientation);
-        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
-                                 Orientation.GetOpposite(bashDirectionAsOrientation).RotNum;
-        var oppositeArrowMask = (PixelType)(1 << oppositeArrowShift);
-        return (pixelType & oppositeArrowMask) == PixelType.Empty;
-    }
-}
-
-/*
-
-function TLemmingGame.HandleBashing(L: TLemming): Boolean;
-var
-  LemDy, n: Integer;
-  ContinueWork: Boolean;
-
-  function BasherIndestructibleCheck(x, y, Direction: Integer): Boolean;
-  begin
-    // check for indestructible terrain 3, 4 and 5 pixels above (x, y)
-    Result := (    (HasIndestructibleAt(x, y - 3, Direction, baBashing))
-                or (HasIndestructibleAt(x, y - 4, Direction, baBashing))
-                or (HasIndestructibleAt(x, y - 5, Direction, baBashing))
-              );
-  end;
-
-  procedure BasherTurn(L: TLemming; SteelSound: Boolean);
-  begin
-    // Turns basher around an transitions to walker
-    Dec(L.LemX, L.LemDx);
-    Transition(L, baWalking, True); // turn around as well
-    if SteelSound then CueSoundEffect(SFX_HITS_STEEL, L.Position);
-  end;
-
-  function BasherStepUpCheck(x, y, Direction, Step: Integer): Boolean;
-  begin
-    Result := True;
-
-    if Step = -1 then
-    begin
-      if (     (not HasPixelAt(x + Direction, y + Step - 1))
-           and HasPixelAt(x + Direction, y + Step)
-           and HasPixelAt(x + 2*Direction, y + Step)
-           and HasPixelAt(x + 2*Direction, y + Step - 1)
-           and HasPixelAt(x + 2*Direction, y + Step - 2)
-         ) then Result := False;
-      if (     (not HasPixelAt(x + Direction, y + Step - 2))
-           and HasPixelAt(x + Direction, y + Step)
-           and HasPixelAt(x + Direction, y + Step - 1)
-           and HasPixelAt(x + 2*Direction, y + Step - 1)
-           and HasPixelAt(x + 2*Direction, y + Step - 2)
-         ) then Result := False;
-      if (     HasPixelAt(x + Direction, y + Step - 2)
-           and HasPixelAt(x + Direction, y + Step - 1)
-           and HasPixelAt(x + Direction, y + Step)
-         ) then Result := False;
-    end
-    else if Step = -2 then
-    begin
-      if (     (not HasPixelAt(x + Direction, y + Step))
-           and HasPixelAt(x + Direction, y + Step + 1)
-           and HasPixelAt(x + 2*Direction, y + Step + 1)
-           and HasPixelAt(x + 2*Direction, y + Step)
-           and HasPixelAt(x + 2*Direction, y + Step - 1)
-         ) then Result := False;
-      if (     (not HasPixelAt(x + Direction, y + Step - 1))
-           and HasPixelAt(x + Direction, y + Step)
-           and HasPixelAt(x + 2*Direction, y + Step)
-           and HasPixelAt(x + 2*Direction, y + Step - 1)
-         ) then Result := False;
-      if (     HasPixelAt(x + Direction, y + Step - 1)
-           and HasPixelAt(x + Direction, y + Step)
-         ) then Result := False;
-    end;
-  end;
-
-  // Simulate the behavior of the basher in the next two frames
-  function DoTurnAtSteel(L: TLemming): Boolean;
-  var
+    /*
+    function DoTurnAtSteel(L: TLemming): Boolean;
+    var
     CopyL: TLemming;
     SavePhysicsMap: TBitmap32;
     i: Integer;
-  begin
+    begin
     // Make deep copy of the lemming
     CopyL := TLemming.Create;
     CopyL.Assign(L);
@@ -267,107 +330,72 @@ var
 
     // Free CopyL
     CopyL.Free;
-  end;
-begin
-  Result := True;
-
-  // Remove terrain
-  if L.LemPhysicsFrame in [2, 3, 4, 5] then
-    ApplyBashingMask(L, L.LemPhysicsFrame - 2);
-
-  // Check for enough terrain to continue working
-  if L.LemPhysicsFrame = 5 then
-  begin
-    ContinueWork := False;
-
-    // check for destructible terrain at height 5 and 6
-    for n := 1 to 14 do
-    begin
-      if (     HasPixelAt(L.LemX + n*L.LemDx, L.LemY - 6)
-           and not HasIndestructibleAt(L.LemX + n*L.LemDx, L.LemY - 6, L.LemDx, baBashing)
-         ) then ContinueWork := True;
-      if (     HasPixelAt(L.LemX + n*L.LemDx, L.LemY - 5)
-           and not HasIndestructibleAt(L.LemX + n*L.LemDx, L.LemY - 5, L.LemDx, baBashing)
-         ) then ContinueWork := True;
     end;
+    */
+    // Simulate the behavior of the basher in the next two frames
+    private bool DoTurnAtSteel(Lemming lemming)
+    {
+        // Make deep copy of the lemming
 
-    // check whether we turn around within the next two basher strokes (only if we don't simulate)
-    if (not ContinueWork) and (not L.LemIsPhysicsSimulation) then
-      ContinueWork := DoTurnAtSteel(L);
+        var lemmingManager = LevelScreen.LemmingManager;
+        var simulationLemming = Lemming.SimulationLemming;
+        simulationLemming.SetRawData(lemming);
 
-    if not ContinueWork then
-    begin
-      if HasPixelAt(L.LemX, L.LemY) then
-        Transition(L, baWalking)
-      else
-        Transition(L, baFalling);
-    end;
-  end;
+        // Make a deep copy of the PhysicsMap
 
-  // Basher movement
-  if L.LemPhysicsFrame in [11, 12, 13, 14, 15] then
-  begin
-    Inc(L.LemX, L.LemDx);
 
-    LemDy := FindGroundPixel(L.LemX, L.LemY);
 
-    if (LemDy > 0) and L.LemIsSlider and LemCanDehoist(L, true) then
-    begin
-      Dec(L.LemX, L.LemDX);
-      Transition(L, baDehoisting, true);
-    end
 
-    else if LemDy = 4 then
-    begin
-      Inc(L.LemY, LemDy);
-      Transition(L, baFalling);
-    end
+        var result = false;
 
-    else if LemDy = 3 then
-    begin
-      Inc(L.LemY, LemDy);
-      Transition(L, baWalking);
-    end
 
-    else if LemDy in [0, 1, 2] then
-    begin
-      // Move no, one or two pixels down, if there no steel
-      if BasherIndestructibleCheck(L.LemX, L.LemY + LemDy, L.LemDx) then
-        BasherTurn(L, HasSteelAt(L.LemX, L.LemY + LemDy - 4))
-      else
-        Inc(L.LemY, LemDy)
-    end
 
-    else if (LemDy = -1) or (LemDy = -2) then
-    begin
-      // Move one or two pixels up, if there is no steel and not too much terrain
-      if BasherIndestructibleCheck(L.LemX, L.LemY + LemDy, L.LemDx) then
-        BasherTurn(L, HasSteelAt(L.LemX, L.LemY + LemDy - 4))
-      else if BasherStepUpCheck(L.LemX, L.LemY, L.LemDx, LemDy) = False then
-      begin
-        if BasherIndestructibleCheck(L.LemX + L.LemDx, L.LemY + 2, L.LemDx) then
-          BasherTurn(L,    HasSteelAt(L.LemX + L.LemDx, L.LemY + LemDy)
-                        or HasSteelAt(L.LemX + L.LemDx, L.LemY + LemDy + 1))
-        else
-          //stall basher
-          Dec(L.LemX, L.LemDx);
-      end
-      else
-        Inc(L.LemY, LemDy); // Lem may move up
-    end
+        // Simulate two basher cycles
+        // 11 iterations is hopefully correct: CopyL.LemPhysicsFrame changes as follows:
+        // 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 11 -> 12 -> 13 -> 14 -> 15
 
-    else if LemDy < -2 then
-    begin
-      // Either stall or turn if there is steel
-      if BasherIndestructibleCheck(L.LemX, L.LemY, L.LemDx) then
-        BasherTurn(L,(    HasSteelAt(L.LemX, L.LemY - 3)
-                       or HasSteelAt(L.LemX, L.LemY - 4)
-                       or HasSteelAt(L.LemX, L.LemY - 5)
-                     ))
-      else
-        Dec(L.LemX, L.LemDx);
-    end;
-  end;
-end;
+        simulationLemming.PhysicsFrame = 10;
+        for (var i = 0; i < 11; i++)
+        {
+            // When simulation lemming's physicsFrame is 0 or 16, apply all basher masks and jump to frame 10 again
+            if (simulationLemming.PhysicsFrame is >= 0 and <= 16)
+            {
 
-*/
+
+
+                simulationLemming.PhysicsFrame = 10;
+            }
+            else
+            {
+                ;
+            }
+
+            simulationLemming.Simulate(false);
+
+
+            if (simulationLemming.FacingDirection != lemming.FacingDirection)
+            {
+                result = true;
+                break;
+            }
+
+            // Check if we are still a basher
+            if (!simulationLemming.State.IsActive || simulationLemming.CurrentAction != Instance)
+            {
+                break; // and return false
+            }
+        }
+
+        return result;
+    }
+
+    [Pure]
+    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
+    {
+        var bashDirectionAsOrientation = facingDirection.ConvertToRelativeOrientation(orientation);
+        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
+                                 Orientation.GetOpposite(bashDirectionAsOrientation).RotNum;
+        var oppositeArrowMask = (PixelType)(1 << oppositeArrowShift);
+        return (pixelType & oppositeArrowMask) == PixelType.Empty;
+    }
+}

@@ -28,13 +28,30 @@ public sealed class TerrainEraseMask
         var offset = position - _anchorPoint;
         var terrainManager = LevelScreen.TerrainManager;
 
-        for (var i = 0; i < _mask.Length; i++)
+        foreach (var pixel in _mask)
         {
-            var pixel = _mask[i];
+            terrainManager.ErasePixel(orientation, _destructionMask, facingDirection, terrainManager.NormalisePosition(pixel + offset));
+        }
+    }
 
-            pixel = terrainManager.NormalisePosition(pixel + offset);
+    public void Foo(
+        Orientation orientation,
+        FacingDirection facingDirection,
+        Span<PixelType> pixelSpan,
+        int spanWidth,
+        int spanHeight,
+        LevelPosition position)
+    {
+        var terrainManager = LevelScreen.TerrainManager;
+        terrainManager.PopulateSpanWithTerrainData(pixelSpan, spanWidth, spanHeight, position.X, position.Y);
 
-            terrainManager.ErasePixel(orientation, _destructionMask, facingDirection, pixel);
+        foreach (ref var pixelToErase in pixelSpan)
+        {
+            if (pixelToErase.CanBeDestroyed() &&
+                _destructionMask.CanDestroyPixel(pixelToErase, orientation, facingDirection))
+            {
+                pixelToErase = PixelType.Empty;
+            }
         }
     }
 }

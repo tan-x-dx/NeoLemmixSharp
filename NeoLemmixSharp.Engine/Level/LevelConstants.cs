@@ -205,7 +205,7 @@ public static class LevelConstants
 
     public const string JumperActionName = "Jumper";
     public const int JumperActionId = 12;
-    public const int JumperAnimationFrames = 13;
+    public const int JumperAnimationFrames = 3;
     public const int MaxJumperPhysicsFrames = 13;
 
     public const string LasererActionName = "Laserer";

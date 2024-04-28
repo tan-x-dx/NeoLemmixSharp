@@ -65,7 +65,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LevelPosition PreviousTopLeftPixel { get; private set; }
     public LevelPosition PreviousBottomRightPixel { get; private set; }
 
-    private bool IsSimulation => Id < 0;
+    public bool IsSimulation => Id < 0;
     public bool IsFastForward => FastForwardTime > 0 || State.IsPermanentFastForwards;
 
     public LevelPosition HeadPosition

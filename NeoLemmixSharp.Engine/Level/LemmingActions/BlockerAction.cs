@@ -29,8 +29,8 @@ public sealed class BlockerAction : LemmingAction
         if (LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
             return true;
 
-        FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         LevelScreen.LemmingManager.DeregisterBlocker(lemming);
+        FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
         return true;
     }
