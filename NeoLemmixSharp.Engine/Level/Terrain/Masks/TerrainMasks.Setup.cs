@@ -32,7 +32,7 @@ public static partial class TerrainMasks
         _fencerMasks = CreateTerrainMaskArray(
             FencerAction.Instance,
             "fencer",
-            new LevelPosition(5, 10),
+            new LevelPosition(0, 10),
             4);
 
         /* _laserMasks = CreateTerrainMaskArray(

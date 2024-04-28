@@ -32,9 +32,10 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     public override bool UpdateLemming(Lemming lemming)
     {
         // Remove terrain
-        if (lemming.PhysicsFrame is >= 2 and <= 5)
+        var physicsFrame = lemming.PhysicsFrame;
+        if (physicsFrame is >= 2 and <= 5)
         {
-            TerrainMasks.ApplyBasherMask(lemming, lemming.PhysicsFrame - 2);
+            TerrainMasks.ApplyBasherMask(lemming, physicsFrame - 2);
         }
 
         var terrainManager = LevelScreen.TerrainManager;
@@ -43,7 +44,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         var dx = lemming.FacingDirection.DeltaX;
 
         // Check for enough terrain to continue working
-        if (lemming.PhysicsFrame == 5)
+        if (physicsFrame == 5)
         {
             var continueWork = false;
 
@@ -84,9 +85,10 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             return true;
         }
 
-        if (lemming.PhysicsFrame is < 11 or > 15)
+        if (physicsFrame is < 11 or > 15)
             return true;
-
+        
+        // Basher movement
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
         var dy = FindGroundPixel(lemming, lemmingPosition);
 
@@ -102,14 +104,14 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
         if (dy == 4)
         {
-            lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
+            lemmingPosition = orientation.MoveUp(lemmingPosition, 4);
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
         if (dy == 3)
         {
-            lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
+            lemmingPosition = orientation.MoveUp(lemmingPosition, 3);
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
@@ -179,12 +181,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
-
-    private bool BasherIndestructibleCheck(
+    private static bool BasherIndestructibleCheck(
         Lemming lemming,
         LevelPosition pos)
     {
@@ -192,9 +189,9 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         var orientation = lemming.Orientation;
 
         // Check for indestructible terrain 3, 4 and 5 pixels above position
-        return terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.MoveUp(pos, 3)) ||
-               terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.MoveUp(pos, 4)) ||
-               terrainManager.PixelIsIndestructibleToLemming(lemming, this, orientation.MoveUp(pos, 5));
+        return terrainManager.PixelIsIndestructibleToLemming(lemming, Instance, orientation.MoveUp(pos, 3)) ||
+               terrainManager.PixelIsIndestructibleToLemming(lemming, Instance, orientation.MoveUp(pos, 4)) ||
+               terrainManager.PixelIsIndestructibleToLemming(lemming, Instance, orientation.MoveUp(pos, 5));
     }
 
     private static void BasherTurn(
@@ -212,7 +209,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         }
     }
 
-    private static bool StepUpCheck(
+    public static bool StepUpCheck(
         Lemming lemming,
         LevelPosition pos,
         Orientation orientation,
@@ -231,42 +228,27 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
         if (dy == 1)
         {
-            if (!p1X2Y &&
-                p1X1Y &&
-                p2X1Y &&
-                p2X2Y &&
-                p2X3Y)
+            if (!p1X2Y && p1X1Y && p2X1Y && p2X2Y && p2X3Y)
                 return false;
 
-            if (!p1X3Y &&
-                p1X2Y &&
-                p1X1Y &&
-                p2X2Y &&
-                p2X3Y)
+            if (!p1X3Y && p1X1Y && p1X2Y && p2X2Y && p2X3Y)
                 return false;
 
-            if (p1X3Y &&
-                p1X2Y &&
-                p1X1Y)
+            if (p1X1Y && p1X2Y && p1X3Y)
                 return false;
+
+            return true;
         }
-        else if (dy == 2)
+
+        if (dy == 2)
         {
-            if (!p1X2Y &&
-                p1X1Y &&
-                p2X1Y &&
-                p2X2Y &&
-                p2X3Y)
+            if (!p1X2Y && p1X1Y && p2X1Y && p2X2Y && p2X3Y)
                 return false;
 
-            if (!p1X3Y &&
-                p1X2Y &&
-                p2X2Y &&
-                p2X3Y)
+            if (!p1X3Y && p1X2Y && p2X2Y && p2X3Y)
                 return false;
 
-            if (p1X3Y &&
-                p1X2Y)
+            if (p1X2Y && p1X3Y)
                 return false;
         }
 
@@ -388,6 +370,11 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
         return result;
     }
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
 
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
