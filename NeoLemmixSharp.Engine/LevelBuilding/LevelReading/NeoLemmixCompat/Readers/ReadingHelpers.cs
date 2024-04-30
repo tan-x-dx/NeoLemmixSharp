@@ -24,65 +24,51 @@ public static class ReadingHelpers
         out ReadOnlySpan<char> secondToken,
         out int secondTokenIndex)
     {
-        firstToken = ReadOnlySpan<char>.Empty;
-        secondTokenIndex = -1;
-        secondToken = ReadOnlySpan<char>.Empty;
+        var index = 0;
+        var spanStart = 0;
+        var spanLength = -1;
 
-        if (span.Length == 0)
-            return;
+        FindToken(span, out firstToken, out _);
+        FindToken(span, out secondToken, out secondTokenIndex);
 
-        // Safeguard against potential stack overflow.
-        // Will almost certainly be a small buffer
-        // allocated on the stack, but still...
-        var bufferSize = span.Length + 1;
-        Span<int> whitespaceIndexSpan = bufferSize > MaxStackallocSize
-            ? new int[bufferSize]
-            : stackalloc int[bufferSize];
-        whitespaceIndexSpan[0] = -1;
+        return;
 
-        var i = 0;
-        var j = 0;
-        while (i < span.Length)
+        void FindToken(
+            ReadOnlySpan<char> mainSpan,
+            out ReadOnlySpan<char> tokenToFind,
+            out int tokenIndexToFind)
         {
-            var c = span[i];
-            if (char.IsWhiteSpace(c))
+            tokenToFind = ReadOnlySpan<char>.Empty;
+            tokenIndexToFind = -1;
+
+            while (index < mainSpan.Length)
             {
-                whitespaceIndexSpan[j++] = i;
-            }
-
-            i++;
-        }
-
-        whitespaceIndexSpan[j] = span.Length;
-
-        i = 0;
-        j++;
-
-        var doFirstToken = true;
-        var x0 = -1;
-        var x1 = whitespaceIndexSpan[0];
-
-        while (i++ < j)
-        {
-            var start = 1 + x0;
-            var length = x1 - start;
-            if (length > 0)
-            {
-                if (doFirstToken)
+                var c = mainSpan[index++];
+                if (!char.IsWhiteSpace(c))
                 {
-                    firstToken = span.Slice(start, length);
-                    doFirstToken = false;
-                }
-                else
-                {
-                    secondToken = span.Slice(start, length);
-                    secondTokenIndex = start;
-                    return;
+                    spanStart = index - 1;
+                    spanLength = 1;
+                    break;
                 }
             }
 
-            x0 = x1;
-            x1 = whitespaceIndexSpan[i];
+            while (index < mainSpan.Length)
+            {
+                var c = mainSpan[index++];
+                if (char.IsWhiteSpace(c))
+                {
+                    break;
+                }
+
+                spanLength++;
+            }
+
+            if (spanLength != -1)
+            {
+                tokenToFind = mainSpan.Slice(spanStart, spanLength);
+                tokenIndexToFind = spanStart;
+                spanLength = -1;
+            }
         }
     }
 
