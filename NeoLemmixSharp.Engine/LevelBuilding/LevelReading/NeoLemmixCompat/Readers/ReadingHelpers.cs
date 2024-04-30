@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Skills;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Skills;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
@@ -24,52 +25,27 @@ public static class ReadingHelpers
         out ReadOnlySpan<char> secondToken,
         out int secondTokenIndex)
     {
-        var index = 0;
-        var spanStart = 0;
-        var spanLength = -1;
+        var tokenIterator = new TokenEnumerator(span);
 
-        FindToken(span, out firstToken, out _);
-        FindToken(span, out secondToken, out secondTokenIndex);
-
-        return;
-
-        void FindToken(
-            ReadOnlySpan<char> mainSpan,
-            out ReadOnlySpan<char> tokenToFind,
-            out int tokenIndexToFind)
+        if (!tokenIterator.MoveNext())
         {
-            tokenToFind = ReadOnlySpan<char>.Empty;
-            tokenIndexToFind = -1;
-
-            while (index < mainSpan.Length)
-            {
-                var c = mainSpan[index++];
-                if (!char.IsWhiteSpace(c))
-                {
-                    spanStart = index - 1;
-                    spanLength = 1;
-                    break;
-                }
-            }
-
-            while (index < mainSpan.Length)
-            {
-                var c = mainSpan[index++];
-                if (char.IsWhiteSpace(c))
-                {
-                    break;
-                }
-
-                spanLength++;
-            }
-
-            if (spanLength != -1)
-            {
-                tokenToFind = mainSpan.Slice(spanStart, spanLength);
-                tokenIndexToFind = spanStart;
-                spanLength = -1;
-            }
+            firstToken = ReadOnlySpan<char>.Empty;
+            secondToken = ReadOnlySpan<char>.Empty;
+            secondTokenIndex = -1;
+            return;
         }
+
+        firstToken = tokenIterator.Current;
+
+        if (!tokenIterator.MoveNext())
+        {
+            secondToken = ReadOnlySpan<char>.Empty;
+            secondTokenIndex = -1;
+            return;
+        }
+
+        secondToken = tokenIterator.Current;
+        secondTokenIndex = tokenIterator.CurrentSpanStart;
     }
 
     /// <summary>
