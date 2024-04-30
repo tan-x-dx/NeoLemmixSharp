@@ -12,14 +12,16 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
     public static readonly ExploderAction Instance = new();
 
     private ExploderAction()
+        : base(
+            LevelConstants.ExploderActionId,
+            LevelConstants.ExploderActionName,
+            LevelConstants.ExploderAnimationFrames,
+            LevelConstants.MaxExploderPhysicsFrames,
+            LevelConstants.NoPriority,
+            true,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.ExploderActionId;
-    public override string LemmingActionName => "bomber";
-    public override int NumberOfAnimationFrames => LevelConstants.ExploderAnimationFrames;
-    public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => LevelConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

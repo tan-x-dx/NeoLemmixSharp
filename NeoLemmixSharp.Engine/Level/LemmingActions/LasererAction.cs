@@ -2,9 +2,9 @@
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Engine.Level.Terrain;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -15,36 +15,36 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
     public static readonly LasererAction Instance = new();
 
     private readonly LevelPosition[] _offsetChecksRight =
-    {
-        new(1, -1),
-        new(0, -1),
-        new(1, 0),
-        new(-1, -1),
-        new(-1, -2),
-        new(0, -2),
-        new(1, -2),
-        new(2, -1),
-        new(2, 0),
-        new(2, 2),
-        new(1, 1)
-    };
+    [
+        new LevelPosition(1, -1),
+        new LevelPosition(0, -1),
+        new LevelPosition(1, 0),
+        new LevelPosition(-1, -1),
+        new LevelPosition(-1, -2),
+        new LevelPosition(0, -2),
+        new LevelPosition(1, -2),
+        new LevelPosition(2, -1),
+        new LevelPosition(2, 0),
+        new LevelPosition(2, 2),
+        new LevelPosition(1, 1)
+    ];
 
     private readonly LevelPosition[] _offsetChecksLeft =
-    {
-        new(-1, -1),
-        new(0, -1),
-        new(-1, 0),
-        new(1, -1),
-        new(1, -2),
-        new(0, -2),
-        new(-1, -2),
-        new(-2, -1),
-        new(-2, 0),
-        new(-2, 2),
-        new(-1, 1)
-    };
+    [
+        new LevelPosition(-1, -1),
+        new LevelPosition(0, -1),
+        new LevelPosition(-1, 0),
+        new LevelPosition(1, -1),
+        new LevelPosition(1, -2),
+        new LevelPosition(0, -2),
+        new LevelPosition(-1, -2),
+        new LevelPosition(-2, -1),
+        new LevelPosition(-2, 0),
+        new LevelPosition(-2, 2),
+        new LevelPosition(-1, 1)
+    ];
 
-    private enum LaserHitType : byte
+    private enum LaserHitType
     {
         None,
         Solid,
@@ -53,14 +53,16 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
     }
 
     private LasererAction()
+        : base(
+            LevelConstants.LasererActionId,
+            LevelConstants.LasererActionName,
+            LevelConstants.LasererAnimationFrames,
+            LevelConstants.MaxLasererPhysicsFrames,
+            LevelConstants.NonPermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.LasererActionId;
-    public override string LemmingActionName => "laserer";
-    public override int NumberOfAnimationFrames => LevelConstants.LasererAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -75,17 +77,19 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
         var facingDirection = lemming.FacingDirection;
         var dx = facingDirection.DeltaX;
-        var target = orientation.Move(lemmingPosition, dx + dx, 5);
+        var target = orientation.Move(lemmingPosition, dx * 2, 5);
 
         var hit = false;
         var hitUseful = false;
 
-        var offsetChecks = GetOffsetChecks(facingDirection);
+        var offsetChecks = facingDirection == FacingDirection.RightInstance
+            ? new ReadOnlySpan<LevelPosition>(_offsetChecksRight)
+            : new ReadOnlySpan<LevelPosition>(_offsetChecksLeft);
 
         var i = DistanceCap;
         while (i > 0)
         {
-            switch (CheckForHit(lemming, orientation, facingDirection, target, offsetChecks))
+            switch (CheckForHit(offsetChecks))
             {
                 case LaserHitType.None:
                     target = orientation.Move(target, dx, 1);
@@ -113,7 +117,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         if (hit)
         {
             lemming.LaserHit = true;
-            // Apply laser mask here
+            TerrainMasks.ApplyLasererMask(lemming, target);
         }
         else
         {
@@ -134,48 +138,36 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         }
 
         return true;
+
+        LaserHitType CheckForHit(ReadOnlySpan<LevelPosition> offsetChecks)
+        {
+            var terrainManager = LevelScreen.TerrainManager;
+            if (terrainManager.PositionOutOfBounds(target))
+                return LaserHitType.OutOfBounds;
+
+            var result = LaserHitType.None;
+
+            foreach (var offset in offsetChecks)
+            {
+                var checkLevelPosition = orientation.Move(target, offset);
+
+                if (!terrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition))
+                    continue;
+
+                result = terrainManager.PixelIsIndestructibleToLemming(lemming, this, checkLevelPosition) &&
+                         result != LaserHitType.Solid
+                    ? LaserHitType.Indestructible
+                    : LaserHitType.Solid;
+            }
+
+            return result;
+        }
     }
 
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
     protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
-
-    private ReadOnlySpan<LevelPosition> GetOffsetChecks(FacingDirection facingDirection)
-    {
-        return facingDirection == FacingDirection.RightInstance
-            ? new ReadOnlySpan<LevelPosition>(_offsetChecksRight)
-            : new ReadOnlySpan<LevelPosition>(_offsetChecksLeft);
-    }
-
-    private LaserHitType CheckForHit(
-        Lemming lemming,
-        Orientation orientation,
-        FacingDirection facingDirection,
-        LevelPosition target,
-        ReadOnlySpan<LevelPosition> offsetChecks)
-    {
-        var terrainManager = LevelScreen.TerrainManager;
-        if (terrainManager.PositionOutOfBounds(target))
-            return LaserHitType.OutOfBounds;
-
-        var result = LaserHitType.None;
-
-        foreach (var position in offsetChecks)
-        {
-            var checkLevelPosition = orientation.Move(target, position);
-
-            if (!terrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition))
-                continue;
-
-            result = result != LaserHitType.Solid &&
-                     terrainManager.PixelIsIndestructibleToLemming(lemming, this, checkLevelPosition)
-                ? LaserHitType.Indestructible
-                : LaserHitType.Solid;
-        }
-
-        return result;
-    }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

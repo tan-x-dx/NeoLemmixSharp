@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -8,14 +7,16 @@ public sealed class WalkerAction : LemmingAction
     public static readonly WalkerAction Instance = new();
 
     private WalkerAction()
+        : base(
+            LevelConstants.WalkerActionId,
+            LevelConstants.WalkerActionName,
+            LevelConstants.WalkerAnimationFrames,
+            LevelConstants.MaxWalkerPhysicsFrames,
+            LevelConstants.WalkerMovementPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.WalkerActionId;
-    public override string LemmingActionName => "walker";
-    public override int NumberOfAnimationFrames => LevelConstants.WalkerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.WalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -28,7 +29,7 @@ public sealed class WalkerAction : LemmingAction
 
         if (dy > 0 &&
             lemming.State.IsSlider &&
-            LemmingCanDehoist(lemming, true))
+            DehoisterAction.LemmingCanDehoist(lemming, true))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -80,40 +81,6 @@ public sealed class WalkerAction : LemmingAction
     protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
-
-    public static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
-    {
-        var terrainManager = LevelScreen.TerrainManager;
-        var orientation = lemming.Orientation;
-        var dx = lemming.FacingDirection.DeltaX;
-        LevelPosition currentPosition;
-        LevelPosition nextPosition;
-        if (alreadyMoved)
-        {
-            nextPosition = lemming.LevelPosition;
-            currentPosition = orientation.MoveLeft(nextPosition, dx);
-        }
-        else
-        {
-            currentPosition = lemming.LevelPosition;
-            nextPosition = orientation.MoveRight(currentPosition, dx);
-        }
-
-        if (terrainManager.PositionOutOfBounds(nextPosition) ||
-            (!terrainManager.PixelIsSolidToLemming(lemming, currentPosition) ||
-             terrainManager.PixelIsSolidToLemming(lemming, nextPosition)))
-            return false;
-
-        for (var i = 1; i < 4; i++)
-        {
-            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(nextPosition, i)))
-                return false;
-            if (!terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, i)))
-                return true;
-        }
-
-        return true;
-    }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

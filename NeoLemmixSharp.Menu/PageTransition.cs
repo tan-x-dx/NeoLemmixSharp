@@ -11,7 +11,7 @@ public sealed class PageTransition
 
     private int _transitionCount = -1;
 
-    public uint TransitionPackedColor => GetTransitionPackedColor();
+    public int TransitionAlpha => Math.Clamp((int)(_transitionAlpha * 255d), 0x00, 0xff);
 
     public bool IsTransitioning => _transitionCount >= 0;
     public bool IsHalfWayDone => _transitionCount == _transitionDurationInFrames + 1;
@@ -58,14 +58,5 @@ public sealed class PageTransition
 
             _transitionAlpha = Math.Max(_transitionAlpha - _transitionDelta, 0d);
         }
-    }
-
-    private uint GetTransitionPackedColor()
-    {
-        var intValue = (uint)(_transitionAlpha * 255d);
-        intValue = Math.Clamp(intValue, 0u, 0xffu);
-
-        // Color format is ABGR - alpha is the most significant bits and everything else is black (zero)
-        return intValue << 24;
     }
 }

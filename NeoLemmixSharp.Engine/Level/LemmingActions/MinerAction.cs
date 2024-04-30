@@ -13,14 +13,16 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
     public static readonly MinerAction Instance = new();
 
     private MinerAction()
+        : base(
+            LevelConstants.MinerActionId,
+            LevelConstants.MinerActionName,
+            LevelConstants.MinerAnimationFrames,
+            LevelConstants.MaxMinerPhysicsFrames,
+            LevelConstants.NonPermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.MinerActionId;
-    public override string LemmingActionName => "miner";
-    public override int NumberOfAnimationFrames => LevelConstants.MinerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -45,7 +47,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             lemming.PhysicsFrame != 15)
             return true;
 
-        if (lemming.State.IsSlider && WalkerAction.LemmingCanDehoist(lemming, false))
+        if (lemming.State.IsSlider && DehoisterAction.LemmingCanDehoist(lemming, false))
         {
             DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
             return true;
@@ -53,7 +55,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
         lemmingPosition = orientation.Move(lemmingPosition, dx + dx, -1);
 
-        if (lemming.State.IsSlider && WalkerAction.LemmingCanDehoist(lemming, true))
+        if (lemming.State.IsSlider && DehoisterAction.LemmingCanDehoist(lemming, true))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);

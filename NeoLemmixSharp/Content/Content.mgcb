@@ -364,18 +364,6 @@
 /processorParam:TextureFormat=Color
 /build:menu/menu_font.png
 
-#begin menu/menu_font.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:menu/menu_font.png
-
 #begin menu/menu_icons.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -652,7 +640,7 @@
 /processorParam:TextureFormat=Color
 /build:sprites/lemming/burner1.png
 
-#begin sprites/lemming/burner2.png
+#begin sprites/lemming/vaporiser.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -662,7 +650,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/lemming/burner2.png
+/build:sprites/lemming/vaporiser.png
 
 #begin sprites/lemming/climber.png
 /importer:TextureImporter

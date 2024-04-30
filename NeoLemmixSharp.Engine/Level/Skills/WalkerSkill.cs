@@ -8,12 +8,12 @@ public sealed class WalkerSkill : LemmingSkill
     public static readonly WalkerSkill Instance = new();
 
     private WalkerSkill()
+        : base(
+            LevelConstants.WalkerSkillId,
+            LevelConstants.WalkerSkillName,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.WalkerSkillId;
-    public override string LemmingSkillName => "walker";
-    public override bool IsClassicSkill => false;
 
     public override void AssignToLemming(Lemming lemming)
     {

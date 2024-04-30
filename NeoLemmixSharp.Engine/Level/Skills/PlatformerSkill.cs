@@ -8,12 +8,12 @@ public sealed class PlatformerSkill : LemmingSkill
     public static readonly PlatformerSkill Instance = new();
 
     private PlatformerSkill()
+        : base(
+            LevelConstants.PlatformerSkillId,
+            LevelConstants.PlatformerSkillName,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.PlatformerSkillId;
-    public override string LemmingSkillName => "platformer";
-    public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

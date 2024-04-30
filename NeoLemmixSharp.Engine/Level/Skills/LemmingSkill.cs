@@ -51,9 +51,16 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
     }
 
     private readonly SimpleSet<LemmingAction> _assignableActions;
+    public readonly int Id;
+    public readonly string LemmingSkillName;
+    public readonly bool IsClassicSkill;
 
-    protected LemmingSkill()
+
+    protected LemmingSkill(int id, string lemmingSkillName, bool isClassicSkill)
     {
+        Id = id;
+        LemmingSkillName = lemmingSkillName;
+        IsClassicSkill = isClassicSkill;
         _assignableActions = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
 
         // ReSharper disable once VirtualMemberCallInConstructor
@@ -62,10 +69,6 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
             _assignableActions.Add(action);
         }
     }
-
-    public abstract int Id { get; }
-    public abstract string LemmingSkillName { get; }
-    public abstract bool IsClassicSkill { get; }
 
     public virtual bool CanAssignToLemming(Lemming lemming)
     {
@@ -82,14 +85,6 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
     }
 
     public abstract void AssignToLemming(Lemming lemming);
-
-    public bool Equals(LemmingSkill? other) => Id == (other?.Id ?? -1);
-    public sealed override bool Equals(object? obj) => obj is LemmingSkill other && Id == other.Id;
-    public sealed override int GetHashCode() => Id;
-    public sealed override string ToString() => LemmingSkillName;
-
-    public static bool operator ==(LemmingSkill left, LemmingSkill right) => left.Id == right.Id;
-    public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.Id != right.Id;
 
     protected static IEnumerable<LemmingAction> ActionsThatCanBeAssignedPermanentSkill()
     {
@@ -118,4 +113,13 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
         yield return SwimmerAction.Instance;
         yield return WalkerAction.Instance;
     }
+
+    int IIdEquatable<LemmingSkill>.Id => Id;
+    public bool Equals(LemmingSkill? other) => Id == (other?.Id ?? -1);
+    public sealed override bool Equals(object? obj) => obj is LemmingSkill other && Id == other.Id;
+    public sealed override int GetHashCode() => Id;
+    public sealed override string ToString() => LemmingSkillName;
+
+    public static bool operator ==(LemmingSkill left, LemmingSkill right) => left.Id == right.Id;
+    public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.Id != right.Id;
 }

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -7,14 +8,16 @@ public sealed class DehoisterAction : LemmingAction
     public static readonly DehoisterAction Instance = new();
 
     private DehoisterAction()
+        : base(
+            LevelConstants.DehoisterActionId,
+            LevelConstants.DehoisterActionName,
+            LevelConstants.DehoisterAnimationFrames,
+            LevelConstants.MaxDehoisterPhysicsFrames,
+            LevelConstants.NonWalkerMovementPriority,
+            true,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.DehoisterActionId;
-    public override string LemmingActionName => "dehoister";
-    public override int NumberOfAnimationFrames => LevelConstants.DehoisterAnimationFrames;
-    public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -40,18 +43,14 @@ public sealed class DehoisterAction : LemmingAction
 
         var animFrameValue = lemming.PhysicsFrame * 2;
 
-        if (!SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 3))
-        {
-            if (lemming.CurrentAction == DrownerAction.Instance)
-                return false;
-        }
+        if (!SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 3) &&
+            lemming.CurrentAction == DrownerAction.Instance)
+            return false;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
 
-        if (SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 2))
-            return true;
-
-        return lemming.CurrentAction != DrownerAction.Instance;
+        return SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 2) ||
+               lemming.CurrentAction != DrownerAction.Instance;
     }
 
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -5;
@@ -65,5 +64,39 @@ public sealed class DehoisterAction : LemmingAction
         lemming.DehoistPin = lemming.LevelPosition;
 
         base.TransitionLemmingToAction(lemming, turnAround);
+    }
+
+    public static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
+    {
+        var terrainManager = LevelScreen.TerrainManager;
+        var orientation = lemming.Orientation;
+        var dx = lemming.FacingDirection.DeltaX;
+        LevelPosition currentPosition;
+        LevelPosition nextPosition;
+        if (alreadyMoved)
+        {
+            nextPosition = lemming.LevelPosition;
+            currentPosition = orientation.MoveLeft(nextPosition, dx);
+        }
+        else
+        {
+            currentPosition = lemming.LevelPosition;
+            nextPosition = orientation.MoveRight(currentPosition, dx);
+        }
+
+        if (terrainManager.PositionOutOfBounds(nextPosition) ||
+            (!terrainManager.PixelIsSolidToLemming(lemming, currentPosition) ||
+             terrainManager.PixelIsSolidToLemming(lemming, nextPosition)))
+            return false;
+
+        for (var i = 1; i < 4; i++)
+        {
+            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(nextPosition, i)))
+                return false;
+            if (!terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, i)))
+                return true;
+        }
+
+        return true;
     }
 }

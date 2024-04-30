@@ -8,12 +8,12 @@ public sealed class ShimmierSkill : LemmingSkill
     public static readonly ShimmierSkill Instance = new();
 
     private ShimmierSkill()
+        : base(
+            LevelConstants.ShimmierSkillId,
+            LevelConstants.ShimmierSkillName,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.ShimmierSkillId;
-    public override string LemmingSkillName => "shimmier";
-    public override bool IsClassicSkill => false;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

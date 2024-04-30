@@ -7,14 +7,16 @@ public sealed class BuilderAction : LemmingAction
     public static readonly BuilderAction Instance = new();
 
     private BuilderAction()
+        : base(
+            LevelConstants.BuilderActionId,
+            LevelConstants.BuilderActionName,
+            LevelConstants.BuilderAnimationFrames,
+            LevelConstants.MaxBuilderPhysicsFrames,
+            LevelConstants.NonPermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.BuilderActionId;
-    public override string LemmingActionName => "builder";
-    public override int NumberOfAnimationFrames => LevelConstants.BuilderAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -63,8 +65,8 @@ public sealed class BuilderAction : LemmingAction
         }
 
         if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 3)) ||
-            terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 2)) ||
-            (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 10)) &&
+            terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx * 2, 2)) ||
+            (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx * 2, 10)) &&
              lemming.NumberOfBricksLeft > 0))
         {
             lemmingPosition = orientation.Move(lemmingPosition, dx, 1);
@@ -75,13 +77,13 @@ public sealed class BuilderAction : LemmingAction
 
         if (!lemming.ConstructivePositionFreeze)
         {
-            lemmingPosition = orientation.Move(lemmingPosition, dx + dx, 1);
+            lemmingPosition = orientation.Move(lemmingPosition, dx * 2, 1);
         }
 
         if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 2)) ||
             terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 3)) ||
             terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 3)) ||
-            (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 10)) &&
+            (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx * 2, 10)) &&
              lemming.NumberOfBricksLeft > 0))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);

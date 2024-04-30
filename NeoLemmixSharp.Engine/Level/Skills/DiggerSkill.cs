@@ -8,12 +8,12 @@ public sealed class DiggerSkill : LemmingSkill
     public static readonly DiggerSkill Instance = new();
 
     private DiggerSkill()
+        : base(
+            LevelConstants.DiggerSkillId,
+            LevelConstants.DiggerSkillName,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.DiggerSkillId;
-    public override string LemmingSkillName => "digger";
-    public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

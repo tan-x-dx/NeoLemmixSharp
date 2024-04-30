@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.Level;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
-public sealed class LevelCursorSprite : IViewportObjectRenderer
+public sealed class LevelCursorSprite
 {
     private readonly LevelCursor _levelCursor;
     private readonly Texture2D _cursorTexture;
@@ -18,8 +18,6 @@ public sealed class LevelCursorSprite : IViewportObjectRenderer
         _cursorTexture = cursorTexture;
     }
 
-    public Rectangle GetSpriteBounds() => new(0, 0, LevelConstants.CursorSizeInPixels, LevelConstants.CursorSizeInPixels);
-
     public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
     {
         var d = LevelConstants.HalfCursorSizeInPixels * scaleMultiplier;
@@ -31,7 +29,7 @@ public sealed class LevelCursorSprite : IViewportObjectRenderer
             s,
             s);
 
-        var sourceRect = GetSpriteBounds();
+        var sourceRect = new Rectangle(0, 0, LevelConstants.CursorSizeInPixels, LevelConstants.CursorSizeInPixels);
         var sourceY = _levelCursor.NumberOfLemmingsUnderCursor > 0
             ? LevelConstants.CursorSizeInPixels
             : 0;
@@ -62,11 +60,6 @@ public sealed class LevelCursorSprite : IViewportObjectRenderer
             sourceRect,
             _levelCursor.Color3,
             RenderingLayers.CursorLayer);
-    }
-
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY)
-    {
-        RenderAtPosition(spriteBatch, screenX, screenY, 1);
     }
 
     public void Dispose()

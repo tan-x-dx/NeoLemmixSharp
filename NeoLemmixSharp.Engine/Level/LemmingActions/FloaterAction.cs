@@ -8,36 +8,19 @@ public sealed class FloaterAction : LemmingAction
 {
     public static readonly FloaterAction Instance = new();
 
-    private readonly int[] _floaterFallTable =
-    [
-        3,
-        3,
-        3,
-        3,
-        -1,
-        0,
-        1,
-        1,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2,
-        2
-    ];
+    private readonly int[] _floaterFallTable = [3, 3, 3, 3, -1, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2];
 
     private FloaterAction()
+        : base(
+            LevelConstants.FloaterActionId,
+            LevelConstants.FloaterActionName,
+            LevelConstants.FloaterAnimationFrames,
+            LevelConstants.MaxFloaterPhysicsFrames,
+            LevelConstants.PermanentSkillPriority,
+            false,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.FloaterActionId;
-    public override string LemmingActionName => "floater";
-    public override int NumberOfAnimationFrames => LevelConstants.FloaterAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

@@ -8,14 +8,16 @@ public sealed class StonerAction : LemmingAction
     public static readonly StonerAction Instance = new();
 
     private StonerAction()
+        : base(
+            LevelConstants.StonerActionId,
+            LevelConstants.StonerActionName,
+            LevelConstants.StonerAnimationFrames,
+            LevelConstants.MaxStonerPhysicsFrames,
+            LevelConstants.NoPriority,
+            true,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.StonerActionId;
-    public override string LemmingActionName => "stoner";
-    public override int NumberOfAnimationFrames => LevelConstants.StonerAnimationFrames;
-    public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => LevelConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

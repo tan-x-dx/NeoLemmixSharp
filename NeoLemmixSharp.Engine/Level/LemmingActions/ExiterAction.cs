@@ -7,14 +7,16 @@ public sealed class ExiterAction : LemmingAction
     public static readonly ExiterAction Instance = new();
 
     private ExiterAction()
+        : base(
+            LevelConstants.ExiterActionId,
+            LevelConstants.ExiterActionName,
+            LevelConstants.ExiterAnimationFrames,
+            LevelConstants.MaxExiterPhysicsFrames,
+            LevelConstants.NoPriority,
+            true,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.ExiterActionId;
-    public override string LemmingActionName => "exiter";
-    public override int NumberOfAnimationFrames => LevelConstants.ExiterAnimationFrames;
-    public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => LevelConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

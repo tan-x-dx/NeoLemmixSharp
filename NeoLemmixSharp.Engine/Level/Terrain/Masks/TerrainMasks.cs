@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
@@ -30,12 +31,7 @@ public static partial class TerrainMasks
     {
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
-        var position = lemming.LevelPosition;
-
-        if (facingDirection == FacingDirection.RightInstance)
-        {
-            position = orientation.MoveRight(position, 1);
-        }
+        var position = orientation.MoveRight(lemming.LevelPosition, facingDirection.DeltaX);
 
         var key = GetKey(orientation, facingDirection, 0);
         _bomberMasks[key].ApplyEraseMask(orientation, facingDirection, position);
@@ -55,14 +51,14 @@ public static partial class TerrainMasks
 
     public static void ApplyLasererMask(
         Lemming lemming,
-        int frame)
+        LevelPosition target)
     {
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
         var position = lemming.LevelPosition;
 
-        var key = GetKey(orientation, facingDirection, frame);
-        _laserMasks[key].ApplyEraseMask(orientation, facingDirection, position);
+        //  var key = GetKey(orientation, facingDirection, frame);
+        //  _laserMasks[key].ApplyEraseMask(orientation, facingDirection, position);
     }
 
     /// <summary>

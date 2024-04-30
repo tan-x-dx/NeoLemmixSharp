@@ -21,6 +21,7 @@ public sealed class MetalGrateRenderer : IViewportObjectRenderer
         _whitePixelTexture = whitePixelTexture;
     }
 
+    public int ItemId => _metalGrateGadget.Id;
     public Rectangle GetSpriteBounds() => _metalGrateGadget.GadgetBounds.ToRectangle();
 
     public void RenderAtPosition(SpriteBatch spriteBatch,

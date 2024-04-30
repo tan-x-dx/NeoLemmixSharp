@@ -7,14 +7,16 @@ public sealed class SplatterAction : LemmingAction
     public static readonly SplatterAction Instance = new();
 
     private SplatterAction()
+        : base(
+            LevelConstants.SplatterActionId,
+            LevelConstants.SplatterActionName,
+            LevelConstants.SplatterAnimationFrames,
+            LevelConstants.MaxSplatterPhysicsFrames,
+            LevelConstants.NoPriority,
+            true,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.SplatterActionId;
-    public override string LemmingActionName => "splatter";
-    public override int NumberOfAnimationFrames => LevelConstants.SplatterAnimationFrames;
-    public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => LevelConstants.NoPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

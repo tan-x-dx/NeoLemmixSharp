@@ -27,22 +27,23 @@ public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeabl
 
     public override void Tick()
     {
-        throw new NotImplementedException();
     }
 
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
-        throw new NotImplementedException();
+        //   throw new NotImplementedException();
+        return false;
     }
 
     public override bool MatchesPosition(LevelPosition levelPosition)
     {
-        throw new NotImplementedException();
+        //   throw new NotImplementedException();
+        return false;
     }
 
     public override void OnLemmingMatch(Lemming lemming)
     {
-        throw new NotImplementedException();
+        //    throw new NotImplementedException();
     }
 
     public void Move(int dx, int dy)

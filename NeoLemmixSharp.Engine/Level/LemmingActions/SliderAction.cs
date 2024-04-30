@@ -7,17 +7,21 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class SliderAction : LemmingAction
 {
+    private const int MaxYCheckOffset = 7;
+
     public static readonly SliderAction Instance = new();
 
     private SliderAction()
+        : base(
+            LevelConstants.SliderActionId,
+            LevelConstants.SliderActionName,
+            LevelConstants.SliderAnimationFrames,
+            LevelConstants.MaxSliderPhysicsFrames,
+            LevelConstants.PermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.SliderActionId;
-    public override string LemmingActionName => "slider";
-    public override int NumberOfAnimationFrames => LevelConstants.SliderAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.PermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -25,15 +29,13 @@ public sealed class SliderAction : LemmingAction
         ref var lemmingPosition = ref lemming.LevelPosition;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-        if (!SliderTerrainChecks(lemming, orientation) &&
+        if (!SliderTerrainChecks(lemming, orientation, MaxYCheckOffset) &&
             lemming.CurrentAction == DrownerAction.Instance)
             return false;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-        if (SliderTerrainChecks(lemming, orientation))
-            return true;
-
-        return lemming.CurrentAction != DrownerAction.Instance;
+        return SliderTerrainChecks(lemming, orientation, MaxYCheckOffset) ||
+               lemming.CurrentAction != DrownerAction.Instance;
     }
 
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -6;
@@ -44,21 +46,22 @@ public sealed class SliderAction : LemmingAction
     public static bool SliderTerrainChecks(
         Lemming lemming,
         Orientation orientation,
-        int maxYOffset = 7)
+        int maxYOffset)
     {
+        var terrainManager = LevelScreen.TerrainManager;
         ref var lemmingPosition = ref lemming.LevelPosition;
         var lemmingDehoistPosition = lemming.DehoistPin;
 
-        var hasPixelAtLemmingPosition = SliderHasPixelAt(lemming, orientation, lemmingPosition, lemmingDehoistPosition);
+        var hasPixelAtLemmingPosition = SliderHasPixelAt(lemmingPosition);
 
         if (hasPixelAtLemmingPosition &&
-            !SliderHasPixelAt(lemming, orientation, lemmingPosition, orientation.MoveDown(lemmingDehoistPosition, 1)))
+            !SliderHasPixelAt(orientation.MoveUp(lemmingPosition, 1)))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             return false;
         }
 
-        if (!SliderHasPixelAt(lemming, orientation, orientation.MoveUp(lemmingPosition, Math.Min(maxYOffset, 7)), lemmingDehoistPosition))
+        if (!SliderHasPixelAt(orientation.MoveUp(lemmingPosition, Math.Min(maxYOffset, MaxYCheckOffset))))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return false;
@@ -93,33 +96,20 @@ public sealed class SliderAction : LemmingAction
         }
 
         var leftPos = orientation.MoveLeft(lemmingPosition, dx);
-        if (!SliderHasPixelAt(lemming, orientation, lemmingPosition, leftPos))
+        if (!SliderHasPixelAt(leftPos))
             return true;
 
         lemmingPosition = leftPos;
         WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
         return false;
-    }
 
-    private static bool SliderHasPixelAt(
-        Lemming lemming,
-        Orientation orientation,
-        LevelPosition levelPosition,
-        LevelPosition dehoistPin)
-    {
-        var terrainManager = LevelScreen.TerrainManager;
-        if (terrainManager.PixelIsSolidToLemming(lemming, dehoistPin))
-            return true;
-
-        var result = false;
-        if (orientation.MatchesHorizontally(levelPosition, dehoistPin) &&
-            orientation.MatchesVertically(levelPosition, dehoistPin) &&
-            true)
+        bool SliderHasPixelAt(LevelPosition testPosition)
         {
-            result = terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(dehoistPin, 1));
+            return terrainManager.PixelIsSolidToLemming(lemming, testPosition) ||
+                   (orientation.MatchesHorizontally(testPosition, lemming.LevelPosition) &&
+                    orientation.MatchesVertically(testPosition, lemmingDehoistPosition) &&
+                    terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(testPosition, 1)));
         }
-
-        return result;
     }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)

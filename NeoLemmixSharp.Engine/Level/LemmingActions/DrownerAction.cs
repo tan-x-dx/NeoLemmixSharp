@@ -8,14 +8,16 @@ public sealed class DrownerAction : LemmingAction
     public static readonly DrownerAction Instance = new();
 
     private DrownerAction()
+        : base(
+            LevelConstants.DrownerActionId,
+            LevelConstants.DrownerActionName,
+            LevelConstants.DrownerAnimationFrames,
+            LevelConstants.MaxDrownerPhysicsFrames,
+            LevelConstants.NonWalkerMovementPriority,
+            true,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.DrownerActionId;
-    public override string LemmingActionName => "drowner";
-    public override int NumberOfAnimationFrames => LevelConstants.DrownerAnimationFrames;
-    public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

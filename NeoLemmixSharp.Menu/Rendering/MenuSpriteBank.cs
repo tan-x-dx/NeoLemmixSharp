@@ -20,7 +20,6 @@ public static class MenuSpriteBank
     public static Texture2D SignQuit { get; private set; } = null!;
     public static Texture2D MenuButton { get; private set; } = null!;
     public static Texture2D Cursor { get; private set; } = null!;
-    public static Texture2D FadeTexture { get; private set; } = null!;
 
     public static void Initialise(
         ContentManager contentManager,
@@ -41,8 +40,6 @@ public static class MenuSpriteBank
         MenuButton = contentManager.Load<Texture2D>("menu/ui_button");
 
         Cursor = CreateCursorTexture_Debug(graphicsDevice);
-
-        FadeTexture = new Texture2D(graphicsDevice, 1, 1);
     }
 
     private static Texture2D CreateCursorTexture_Debug(GraphicsDevice graphicsDevice)

@@ -7,14 +7,16 @@ public sealed class StackerAction : LemmingAction
     public static readonly StackerAction Instance = new();
 
     private StackerAction()
+        : base(
+            LevelConstants.StackerActionId,
+            LevelConstants.StackerActionName,
+            LevelConstants.StackerAnimationFrames,
+            LevelConstants.MaxStackerPhysicsFrames,
+            LevelConstants.NonPermanentSkillPriority,
+            false,
+            false)
     {
     }
-
-    public override int Id => LevelConstants.StackerActionId;
-    public override string LemmingActionName => "stacker";
-    public override int NumberOfAnimationFrames => LevelConstants.StackerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonPermanentSkillPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {

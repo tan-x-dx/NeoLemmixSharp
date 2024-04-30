@@ -59,16 +59,31 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         return result;
     }
 
-    public static void InitialiseLemmingActions()
-    {
-        OhNoerAction.Initialise();
-    }
+    public readonly int Id;
+    public readonly string LemmingActionName;
+    public readonly int NumberOfAnimationFrames;
+    public readonly int MaxPhysicsFrames;
+    public readonly int CursorSelectionPriorityValue;
+    public readonly bool IsOneTimeAction;
+    public readonly bool IsAirborneAction;
 
-    public abstract int Id { get; }
-    public abstract string LemmingActionName { get; }
-    public abstract int NumberOfAnimationFrames { get; }
-    public abstract bool IsOneTimeAction { get; }
-    public abstract int CursorSelectionPriorityValue { get; }
+    protected LemmingAction(
+        int id,
+        string lemmingActionName,
+        int numberOfAnimationFrames,
+        int maxPhysicsFrames,
+        int cursorSelectionPriorityValue,
+        bool isOneTimeAction,
+        bool isAirborneAction)
+    {
+        Id = id;
+        LemmingActionName = lemmingActionName;
+        NumberOfAnimationFrames = numberOfAnimationFrames;
+        MaxPhysicsFrames = maxPhysicsFrames;
+        CursorSelectionPriorityValue = cursorSelectionPriorityValue;
+        IsOneTimeAction = isOneTimeAction;
+        IsAirborneAction = isAirborneAction;
+    }
 
     public abstract bool UpdateLemming(Lemming lemming);
 
@@ -97,14 +112,6 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     protected abstract int BottomRightBoundsDeltaX(int animationFrame);
     protected virtual int BottomRightBoundsDeltaY(int animationFrame) => -1;
-
-    public bool Equals(LemmingAction? other) => Id == (other?.Id ?? -1);
-    public sealed override bool Equals(object? obj) => obj is LemmingAction other && Id == other.Id;
-    public sealed override int GetHashCode() => Id;
-    public sealed override string ToString() => LemmingActionName;
-
-    public static bool operator ==(LemmingAction left, LemmingAction right) => left.Id == right.Id;
-    public static bool operator !=(LemmingAction left, LemmingAction right) => left.Id != right.Id;
 
     public virtual void TransitionLemmingToAction(
         Lemming lemming,
@@ -160,4 +167,13 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
         return result;
     }
+
+    int IIdEquatable<LemmingAction>.Id => Id;
+    public bool Equals(LemmingAction? other) => Id == (other?.Id ?? -1);
+    public sealed override bool Equals(object? obj) => obj is LemmingAction other && Id == other.Id;
+    public sealed override int GetHashCode() => Id;
+    public sealed override string ToString() => LemmingActionName;
+
+    public static bool operator ==(LemmingAction left, LemmingAction right) => left.Id == right.Id;
+    public static bool operator !=(LemmingAction left, LemmingAction right) => left.Id != right.Id;
 }

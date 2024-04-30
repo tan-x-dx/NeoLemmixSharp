@@ -110,9 +110,10 @@ public sealed class LevelObjectAssembler : IDisposable
         hatchGroup.SetHatches(hatches.ToArray());
     }
 
-    public IViewportObjectRenderer[] GetLevelSprites()
+    public (IViewportObjectRenderer[] BehindTerrainSprites, IViewportObjectRenderer[] InFrontOfTerrainSprites) GetLevelSprites()
     {
-        var result = new List<IViewportObjectRenderer>();
+        var behindTerrainSprites = new List<IViewportObjectRenderer>();
+        var inFrontOfTerrainSprites = new List<IViewportObjectRenderer>();
 
         var gadgetSpan = CollectionsMarshal.AsSpan(_gadgets);
         foreach (var gadget in gadgetSpan)
@@ -121,16 +122,23 @@ public sealed class LevelObjectAssembler : IDisposable
             if (renderer is null)
                 continue;
 
-            result.Add(renderer);
+            if (renderer.RenderMode == GadgetRenderMode.BehindTerrain)
+            {
+                behindTerrainSprites.Add(renderer);
+            }
+            else
+            {
+                inFrontOfTerrainSprites.Add(renderer);
+            }
         }
 
         var lemmingSpan = CollectionsMarshal.AsSpan(_lemmings);
         foreach (var lemming in lemmingSpan)
         {
-            result.Add(lemming.Renderer);
+            inFrontOfTerrainSprites.Add(lemming.Renderer);
         }
 
-        return result.ToArray();
+        return (behindTerrainSprites.ToArray(), inFrontOfTerrainSprites.ToArray());
     }
 
     public LemmingSpriteBank GetLemmingSpriteBank()

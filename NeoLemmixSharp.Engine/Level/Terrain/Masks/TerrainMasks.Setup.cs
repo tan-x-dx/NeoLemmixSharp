@@ -20,19 +20,19 @@ public static partial class TerrainMasks
         _basherMasks = CreateTerrainMaskArray(
             BasherAction.Instance,
             "basher",
-            new LevelPosition(8, 10),
+            new LevelPosition(0, 10),
             4);
 
         _bomberMasks = CreateTerrainMaskArray(
             ExploderAction.Instance,
             "bomber",
-            new LevelPosition(16, 25),
+            new LevelPosition(8, 14),
             1);
 
         _fencerMasks = CreateTerrainMaskArray(
             FencerAction.Instance,
             "fencer",
-            new LevelPosition(5, 10),
+            new LevelPosition(0, 10),
             4);
 
         /* _laserMasks = CreateTerrainMaskArray(

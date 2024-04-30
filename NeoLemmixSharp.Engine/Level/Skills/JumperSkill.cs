@@ -8,13 +8,13 @@ public sealed class JumperSkill : LemmingSkill
     public static readonly JumperSkill Instance = new();
 
     private JumperSkill()
+        : base(
+            LevelConstants.JumperSkillId,
+            LevelConstants.JumperSkillName,
+            false)
     {
     }
 
-    public override int Id => LevelConstants.JumperSkillId;
-    public override string LemmingSkillName => "jumper";
-    public override bool IsClassicSkill => false;
-    
     public override void AssignToLemming(Lemming lemming)
     {
         JumperAction.Instance.TransitionLemmingToAction(lemming, false);

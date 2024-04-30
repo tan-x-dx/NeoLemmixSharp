@@ -11,27 +11,29 @@ public sealed class JumperAction : LemmingAction
     public static readonly JumperAction Instance = new();
 
     private readonly LevelPosition[] _jumpPositions =
-    {
-        new(0, -1), new(0, -1), new(1, 0), new(0, -1), new(0, -1), new(1, 0), // occurs twice
-        new(0, -1), new(1, 0), new(0, -1), new(1, 0), new(0, -1), new(1, 0), // occurs twice
-        new(0, -1), new(1, 0), new(0, -1), new(1, 0), new(1, 0), new(0, 0),
-        new(0, -1), new(1, 0), new(1, 0), new(0, -1), new(1, 0), new(0, 0),
-        new(1, 0), new(1, 0), new(1, 0), new(1, 0), new(0, 0), new(0, 0),
-        new(1, 0), new(0, 1), new(1, 0), new(1, 0), new(0, 1), new(0, 0),
-        new(1, 0), new(1, 0), new(0, 1), new(1, 0), new(0, 1), new(0, 0),
-        new(1, 0), new(0, 1), new(1, 0), new(0, 1), new(1, 0), new(0, 1), // occurs twice
-        new(1, 0), new(0, 1), new(0, 1), new(1, 0), new(0, 1), new(0, 1) // occurs twice
-    };
+    [
+        new LevelPosition(0, 1), new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(0, 1), new LevelPosition(1, 0), // occurs twice
+        new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(1, 0), // occurs twice
+        new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(0, 0),
+        new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 0),
+        new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(0, 0), new LevelPosition(0, 0),
+        new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(0, 0),
+        new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(0, 0),
+        new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(1, 0), new LevelPosition(0, -1), // occurs twice
+        new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(0, -1), new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(0, -1) // occurs twice
+    ];
 
     private JumperAction()
+        : base(
+            LevelConstants.JumperActionId,
+            LevelConstants.JumperActionName,
+            LevelConstants.JumperAnimationFrames,
+            LevelConstants.MaxJumperPhysicsFrames,
+            LevelConstants.NonWalkerMovementPriority,
+            false,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.JumperActionId;
-    public override string LemmingActionName => "jumper";
-    public override int NumberOfAnimationFrames => LevelConstants.JumperAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -39,6 +41,19 @@ public sealed class JumperAction : LemmingAction
             return true;
 
         lemming.JumpProgress++;
+
+        if (lemming.JumpProgress >= 0 && lemming.JumpProgress <= 5)
+        {
+            lemming.AnimationFrame = 0;
+        }
+        else if (lemming.JumpProgress == 6)
+        {
+            lemming.AnimationFrame = 1;
+        }
+        else
+        {
+            lemming.AnimationFrame = 2;
+        }
 
         if (lemming.JumpProgress >= 8 && lemming.State.IsGlider)
         {
@@ -53,6 +68,17 @@ public sealed class JumperAction : LemmingAction
 
         return true;
     }
+
+/*
+if (aLemming.LemAction = baJumping) then
+   begin
+     case aLemming.LemJumpProgress of
+       0..5: if aLemming.LemFrame >= aLemming.LemMaxFrame - aLemming.LemFrameDiff then aLemming.LemFrame := 0;
+       6: aLemming.LemFrame := aLemming.LemMaxFrame - aLemming.LemFrameDiff + 1;
+       7..12: if aLemming.LemFrame > aLemming.LemMaxFrame then aLemming.LemFrame := aLemming.LemMaxFrame - aLemming.LemFrameDiff + 2;
+     end;
+   end
+    */
 
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -1;
     protected override int TopLeftBoundsDeltaY(int animationFrame) => 9;
@@ -79,12 +105,12 @@ public sealed class JumperAction : LemmingAction
         if (patternIndex < 0)
             return false;
 
-        var firstStepSpecialHandling = lemming.JumpProgress == 0;
         var patternSpan = new ReadOnlySpan<LevelPosition>(_jumpPositions, patternIndex * JumperPositionCount, JumperPositionCount);
         var lemmingJumpPatterns = lemming.GetJumperPositions();
 
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
+        var dx = lemming.FacingDirection.DeltaX;
 
         for (var i = 0; i < JumperPositionCount; i++)
         {
@@ -102,26 +128,23 @@ public sealed class JumperAction : LemmingAction
                     return false;
             }
 
-            if (position.Y < 0) // Head check
+            if (position.Y > 0) // Head check
             {
-                var hitHead = DoHeadCheck(lemming, firstStepSpecialHandling);
+                var hitHead = DoHeadCheck(lemming, lemming.JumpProgress == 0);
                 if (hitHead)
                     return false;
             }
 
-            lemmingPosition = orientation.Move(lemmingPosition, patternSpan[i]);
+            lemmingPosition = orientation.Move(lemmingPosition, dx * position.X, position.Y);
 
             DoJumperTriggerChecks(lemming);
 
-            if (firstStepSpecialHandling)
-            {
-                firstStepSpecialHandling = false;
-            }
-            else if (LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition)) // Foot check
-            {
-                lemming.SetNextAction(WalkerAction.Instance);
-                return false;
-            }
+            if (lemming.JumpProgress == 0 ||
+                !LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+                continue; // Foot check
+
+            lemming.SetNextAction(WalkerAction.Instance);
+            return false;
         }
 
         return true;
@@ -131,19 +154,17 @@ public sealed class JumperAction : LemmingAction
     {
         var jumpProgress = lemming.JumpProgress;
 
-        return jumpProgress switch
-        {
-            0 => 0,
-            1 => 0,
-            2 => 1,
-            3 => 1,
-            >= 4 and <= 8 => jumpProgress - 2,
-            9 => 7,
-            10 => 7,
-            11 => 8,
-            12 => 8,
-            _ => -1
-        };
+        if (jumpProgress is 0 or 1)
+            return 0;
+        if (jumpProgress is 2 or 3)
+            return 1;
+        if (jumpProgress is >= 4 and <= 8)
+            return jumpProgress - 2;
+        if (jumpProgress is 9 or 10)
+            return 7;
+        if (jumpProgress is 11 or 12)
+            return 8;
+        return -1;
     }
 
     private static bool DoWallCheck(Lemming lemming)
@@ -222,11 +243,12 @@ public sealed class JumperAction : LemmingAction
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        for (var n = 1; n < 10; n++)
-        {
-            if (n == 1 && firstStepSpecialHandling)
-                continue;
+        var n = firstStepSpecialHandling
+            ? 2
+            : 1;
 
+        for (; n < 10; n++)
+        {
             var checkPosition = orientation.MoveUp(lemmingPosition, n);
             if (!LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
                 continue;

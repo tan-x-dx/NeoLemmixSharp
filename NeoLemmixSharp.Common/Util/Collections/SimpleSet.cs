@@ -45,6 +45,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
         return _bits.ClearBit(hash);
     }
 
+    [Pure]
     public T[] ToArray()
     {
         var count = _bits.PopCount;

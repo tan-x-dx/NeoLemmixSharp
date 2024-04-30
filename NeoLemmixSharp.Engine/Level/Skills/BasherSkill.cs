@@ -8,12 +8,12 @@ public sealed class BasherSkill : LemmingSkill
     public static readonly BasherSkill Instance = new();
 
     private BasherSkill()
+        : base(
+            LevelConstants.BasherSkillId,
+            LevelConstants.BasherSkillName,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.BasherSkillId;
-    public override string LemmingSkillName => "basher";
-    public override bool IsClassicSkill => true;
 
     public override void AssignToLemming(Lemming lemming)
     {

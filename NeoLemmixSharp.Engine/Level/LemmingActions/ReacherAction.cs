@@ -8,19 +8,21 @@ public sealed class ReacherAction : LemmingAction
     public static readonly ReacherAction Instance = new();
 
     private readonly int[] _movementList =
-    {
+    [
         0, 3, 2, 2, 1, 1, 1, 0
-    };
+    ];
 
     private ReacherAction()
+        : base(
+            LevelConstants.ReacherActionId,
+            LevelConstants.ReacherActionName,
+            LevelConstants.ReacherAnimationFrames,
+            LevelConstants.MaxReacherPhysicsFrames,
+            LevelConstants.NonWalkerMovementPriority,
+            true,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.ReacherActionId;
-    public override string LemmingActionName => "reacher";
-    public override int NumberOfAnimationFrames => LevelConstants.ReacherAnimationFrames;
-    public override bool IsOneTimeAction => true;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -30,6 +32,7 @@ public sealed class ReacherAction : LemmingAction
 
         var emptyPixels = GetEmptyPixelCount(lemming, lemmingPosition);
 
+        // Check for terrain in the body to trigger falling down
         if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 5)) ||
             terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 6)) ||
             terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7)) ||
@@ -40,6 +43,7 @@ public sealed class ReacherAction : LemmingAction
             return true;
         }
 
+        // On the first frame, check as well for height 9, as the shimmier may not continue in that case
         if (lemming.PhysicsFrame == 1 &&
             terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9)))
         {
@@ -48,14 +52,16 @@ public sealed class ReacherAction : LemmingAction
             return true;
         }
 
+        // Check whether we can reach the ceiling
         if (emptyPixels <= _movementList[lemming.PhysicsFrame])
         {
-            lemmingPosition = orientation.MoveUp(lemmingPosition, emptyPixels + 1);
+            lemmingPosition = orientation.MoveUp(lemmingPosition, emptyPixels + 1); // Shimmiers are a lot smaller than reachers
             ShimmierAction.Instance.TransitionLemmingToAction(lemming, false);
 
             return true;
         }
 
+        // Move upwards
         lemmingPosition = orientation.MoveUp(lemmingPosition, _movementList[lemming.PhysicsFrame]);
         if (lemming.PhysicsFrame == 7)
         {
@@ -75,16 +81,21 @@ public sealed class ReacherAction : LemmingAction
         LevelPosition lemmingPosition)
     {
         var terrainManager = LevelScreen.TerrainManager;
-        if (terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 10)))
+        var orientation = lemming.Orientation;
+        lemmingPosition = orientation.MoveUp(lemmingPosition, 10);
+        if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
             return 0;
 
-        if (terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 11)))
+        lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
+        if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
             return 1;
 
-        if (terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 12)))
+        lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
+        if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
             return 2;
 
-        if (terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(lemmingPosition, 13)))
+        lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
+        if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
             return 3;
 
         return 4;

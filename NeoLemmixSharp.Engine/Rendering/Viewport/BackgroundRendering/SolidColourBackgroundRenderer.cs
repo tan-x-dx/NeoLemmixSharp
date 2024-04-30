@@ -26,7 +26,7 @@ public sealed class SolidColorBackgroundRenderer : IBackgroundRenderer
                 0,
                 _viewport.ViewPortWidth,
                 _viewport.ViewPortHeight),
-            new Rectangle(0, 255, 1, 1),
+            CommonSprites.RectangleForWhitePixelAlpha(0xff),
             _backgroundColor,
             RenderingLayers.BackgroundLayer);
     }

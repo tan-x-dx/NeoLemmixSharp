@@ -9,14 +9,16 @@ public sealed class FallerAction : LemmingAction
     public static readonly FallerAction Instance = new();
 
     private FallerAction()
+        : base(
+            LevelConstants.FallerActionId,
+            LevelConstants.FallerActionName,
+            LevelConstants.FallerAnimationFrames,
+            LevelConstants.MaxFallerPhysicsFrames,
+            LevelConstants.NonWalkerMovementPriority,
+            false,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.FallerActionId;
-    public override string LemmingActionName => "faller";
-    public override int NumberOfAnimationFrames => LevelConstants.FallerAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -95,10 +97,14 @@ public sealed class FallerAction : LemmingAction
     {
         var gadgetManager = LevelScreen.GadgetManager;
 
-        return !(lemming.State.IsFloater || lemming.State.IsGlider) &&
-               gadgetManager.HasGadgetWithBehaviourAtLemmingPosition(lemming, NoSplatGadgetBehaviour.Instance) &&
-               (lemming.DistanceFallen > LevelConstants.MaxFallDistance ||
-                gadgetManager.HasGadgetWithBehaviourAtLemmingPosition(lemming, SplatGadgetBehaviour.Instance));
+        if (lemming.State.IsFloater || lemming.State.IsGlider)
+            return false;
+
+        if (gadgetManager.HasGadgetWithBehaviourAtLemmingPosition(lemming, NoSplatGadgetBehaviour.Instance))
+            return false;
+
+        return lemming.DistanceFallen > LevelConstants.MaxFallDistance ||
+               gadgetManager.HasGadgetWithBehaviourAtLemmingPosition(lemming, SplatGadgetBehaviour.Instance);
     }
 
     private static bool CheckFloaterOrGliderTransition(

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.Level;
@@ -72,5 +73,11 @@ public static class CommonSprites
         return new LevelCursorSprite(
             levelCursor,
             CursorSprite);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Rectangle RectangleForWhitePixelAlpha(int alpha)
+    {
+        return new Rectangle(0, alpha, 1, 1);
     }
 }

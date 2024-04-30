@@ -22,6 +22,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     public Span<int> CountDownCharsSpan => new(_countDownCharsToRender);
 
+    public int ItemId => _lemming.Id;
+
     public LemmingRenderer(Lemming lemming)
     {
         _lemming = lemming;

@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
@@ -66,12 +67,18 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
             gadgetData.FacingDirection,
             lemmingCount);
 
+        var gadgetAnimationController = new GadgetStateAnimationController(
+            new GadgetStateAnimationBehaviour(SpriteData.SpriteWidth, SpriteData.SpriteHeight, 0, 0, 0, SpriteData.FrameCountsPerLayer[0], GadgetSecondaryAnimationAction.Play),
+            -1,
+            Array.Empty<GadgetStateAnimationBehaviour>());
+
         var result = new HatchGadget(
             gadgetData.Id,
             gadgetBounds,
             gadgetRenderer,
             spawnPoint,
-            hatchSpawnData);
+            hatchSpawnData,
+            gadgetAnimationController);
 
         gadgetRenderer?.SetGadget(result);
 

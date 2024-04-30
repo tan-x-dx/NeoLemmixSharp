@@ -7,14 +7,16 @@ public sealed class ShimmierAction : LemmingAction
     public static readonly ShimmierAction Instance = new();
 
     private ShimmierAction()
+        : base(
+            LevelConstants.ShimmierActionId,
+            LevelConstants.ShimmierActionName,
+            LevelConstants.ShimmierAnimationFrames,
+            LevelConstants.MaxShimmierPhysicsFrames,
+            LevelConstants.NonWalkerMovementPriority,
+            false,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.ShimmierActionId;
-    public override string LemmingActionName => "shimmier";
-    public override int NumberOfAnimationFrames => LevelConstants.ShimmierAnimationFrames;
-    public override bool IsOneTimeAction => false;
-    public override int CursorSelectionPriorityValue => LevelConstants.NonWalkerMovementPriority;
 
     public override bool UpdateLemming(Lemming lemming)
     {
@@ -23,52 +25,52 @@ public sealed class ShimmierAction : LemmingAction
         ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
-        if ((lemming.PhysicsFrame & 1) == 0)
+        if ((lemming.PhysicsFrame & 1) != 0)
+            return true;
+
+        var i = 0;
+        // Check whether we find terrain to walk onto
+        for (; i < 3; i++)
         {
-            var i = 0;
-            // Check whether we find terrain to walk onto
-            for (; i < 3; i++)
+            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)) &&
+                !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i + 1)))
             {
-                if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)) &&
-                    !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i + 1)))
-                {
-                    lemmingPosition = orientation.Move(lemmingPosition, dx, i);
-                    WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
-                    return true;
-                }
+                lemmingPosition = orientation.Move(lemmingPosition, dx, i);
+                WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+                return true;
             }
+        }
 
-            // Check whether we find terrain to hoist onto
-            for (; i < 6; i++)
+        // Check whether we find terrain to hoist onto
+        for (; i < 6; i++)
+        {
+            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)) &&
+                !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i + 1)))
             {
-                if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)) &&
-                    !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i + 1)))
-                {
-                    lemmingPosition = orientation.Move(lemmingPosition, dx, i - 4);
-                    lemming.IsStartingAction = false;
-                    HoisterAction.Instance.TransitionLemmingToAction(lemming, false);
-                    lemming.PhysicsFrame += 2;
-                    lemming.AnimationFrame += 2;
-                    return true;
-                }
+                lemmingPosition = orientation.Move(lemmingPosition, dx, i - 4);
+                lemming.IsStartingAction = false;
+                HoisterAction.Instance.TransitionLemmingToAction(lemming, false);
+                lemming.PhysicsFrame += 2;
+                lemming.AnimationFrame += 2;
+                return true;
             }
+        }
 
-            // Check whether we fall down due to a wall
-            for (; i < 8; i++)
+        // Check whether we fall down due to a wall
+        for (; i < 8; i++)
+        {
+            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)))
             {
-                if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)))
+                if (lemming.State.IsSlider)
                 {
-                    if (lemming.State.IsSlider)
-                    {
-                        SliderAction.Instance.TransitionLemmingToAction(lemming, false);
-                    }
-                    else
-                    {
-                        FallerAction.Instance.TransitionLemmingToAction(lemming, false);
-                    }
-
-                    return true;
+                    SliderAction.Instance.TransitionLemmingToAction(lemming, false);
                 }
+                else
+                {
+                    FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+                }
+
+                return true;
             }
         }
 

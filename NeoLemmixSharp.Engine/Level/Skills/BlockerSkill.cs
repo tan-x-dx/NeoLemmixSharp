@@ -8,12 +8,12 @@ public sealed class BlockerSkill : LemmingSkill
     public static readonly BlockerSkill Instance = new();
 
     private BlockerSkill()
+        : base(
+            LevelConstants.BlockerSkillId,
+            LevelConstants.BlockerSkillName,
+            true)
     {
     }
-
-    public override int Id => LevelConstants.BlockerSkillId;
-    public override string LemmingSkillName => "blocker";
-    public override bool IsClassicSkill => true;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

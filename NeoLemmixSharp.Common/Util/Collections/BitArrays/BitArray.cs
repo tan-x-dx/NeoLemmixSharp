@@ -39,7 +39,7 @@ public sealed class BitArray
             throw new ArgumentOutOfRangeException(nameof(length), length, "length must be non-negative!");
 
         var arraySize = (length + Mask) >> Shift;
-        _bits = new uint[arraySize];
+        _bits = CollectionsHelper.GetArrayForSize<uint>(arraySize);
 
         if (!setAllBits || arraySize == 0)
             return;
@@ -143,6 +143,7 @@ public sealed class BitArray
         _popCount = 0;
     }
 
+    [Pure]
     public int[] ToArray()
     {
         if (_popCount == 0)
@@ -268,8 +269,7 @@ public sealed class BitArray
 
         for (var i = span.Length - 1; i >= 0; i--)
         {
-            ref var v = ref span[i];
-            v |= other[i];
+            span[i] |= other[i];
         }
     }
 

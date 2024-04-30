@@ -1,12 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
-using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
@@ -32,11 +29,9 @@ public sealed class LevelScreenRenderer : IScreenRenderer
 
     public LevelScreenRenderer(
         GraphicsDevice graphicsDevice,
-        LevelData levelData,
         LevelControlPanel levelControlPanel,
         Level.Viewport viewport,
-        IViewportObjectRenderer[] levelSprites,
-        TerrainRenderer terrainRenderer,
+        LevelRenderer levelRenderer,
         LevelCursorSprite levelCursorSprite,
         LemmingSpriteBank lemmingSpriteBank,
         GadgetSpriteBank gadgetSpriteBank,
@@ -48,16 +43,8 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         _lemmingSpriteBank = lemmingSpriteBank;
         _gadgetSpriteBank = gadgetSpriteBank;
 
-        var backgroundRenderer = GetBackgroundRenderer(levelData, viewport);
+        _levelRenderer = levelRenderer;
 
-        _levelRenderer = new LevelRenderer(
-            graphicsDevice,
-            levelData,
-            levelControlPanel,
-            viewport,
-            levelSprites,
-            backgroundRenderer,
-            terrainRenderer);
         _controlPanelRenderer = new ControlPanelRenderer(
             _graphicsDevice,
             controlPanelSpriteBank,
@@ -71,13 +58,6 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         Instance = this;
     }
 
-    private static IBackgroundRenderer GetBackgroundRenderer(
-        LevelData levelData,
-        Level.Viewport viewport)
-    {
-        return new SolidColorBackgroundRenderer(viewport, new Color(24, 24, 60));
-    }
-
     public void RenderScreen(SpriteBatch spriteBatch)
     {
         _levelRenderer.RenderLevel(spriteBatch);
@@ -88,7 +68,7 @@ public sealed class LevelScreenRenderer : IScreenRenderer
 
         spriteBatch.Begin(SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
 
-   //     _graphicsDevice.Clear(Color.DarkGray);
+        //     _graphicsDevice.Clear(Color.DarkGray);
         _levelRenderer.DrawToScreen(spriteBatch);
         _controlPanelRenderer.DrawToScreen(spriteBatch);
         _levelCursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
