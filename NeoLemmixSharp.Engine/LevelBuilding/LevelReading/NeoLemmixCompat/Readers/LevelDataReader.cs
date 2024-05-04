@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
@@ -68,7 +69,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "BACKGROUND":
-                _levelData.LevelBackground = line.TrimAfterIndex(secondTokenIndex).ToString();
+                _levelData.LevelBackground = ParseBackgroundData(line.TrimAfterIndex(secondTokenIndex));
                 break;
 
             case "MUSIC":
@@ -142,5 +143,15 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
         levelTitle = null;
         return false;
+    }
+
+    private static BackgroundData ParseBackgroundData(ReadOnlySpan<char> backgroundToken)
+    {
+        return new BackgroundData
+        {
+            IsSolidColor = false,
+            Color = Color.Black,
+            BackgroundImageName = backgroundToken.ToString()
+        };
     }
 }
