@@ -22,7 +22,7 @@ public sealed class LevelBuilder : IDisposable
 {
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly TerrainPainter _terrainPainter;
+    private readonly TerrainBuilder _terrainBuilder;
     private readonly LevelObjectAssembler _levelObjectAssembler;
 
     public LevelBuilder(
@@ -31,13 +31,13 @@ public sealed class LevelBuilder : IDisposable
     {
         _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;
-        _terrainPainter = new TerrainPainter(graphicsDevice);
+        _terrainBuilder = new TerrainBuilder(graphicsDevice);
         _levelObjectAssembler = new LevelObjectAssembler(graphicsDevice);
     }
 
     public LevelScreen BuildLevel(LevelData levelData)
     {
-        _terrainPainter.PaintLevel(levelData);
+        _terrainBuilder.BuildTerrain(levelData);
 
         var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
 
@@ -85,10 +85,10 @@ public sealed class LevelBuilder : IDisposable
         var updateScheduler = new UpdateScheduler(controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, gadgetManager, skillSetManager);
         LevelScreen.SetUpdateScheduler(updateScheduler);
 
-        var terrainTexture = _terrainPainter.GetTerrainTexture();
+        var terrainTexture = _terrainBuilder.GetTerrainTexture();
         var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
 
-        var pixelData = _terrainPainter.GetPixelData();
+        var pixelData = _terrainBuilder.GetPixelData();
 
         var terrainManager = new TerrainManager(
             pixelData,
@@ -142,7 +142,7 @@ public sealed class LevelBuilder : IDisposable
 
     public void Dispose()
     {
-        _terrainPainter.Dispose();
+        _terrainBuilder.Dispose();
         _levelObjectAssembler.Dispose();
     }
 }

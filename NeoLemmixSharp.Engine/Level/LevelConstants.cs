@@ -66,6 +66,8 @@ public static class LevelConstants
 
     #region Default Colours
 
+    public const uint MinimumSubstantialAlphaValue = 0x80;
+
     private static readonly Color[] ExplosionParticleColors =
     [
         new Color(0x40, 0x40, 0xE0, 0xFF),
