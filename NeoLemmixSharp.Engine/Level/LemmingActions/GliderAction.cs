@@ -1,10 +1,13 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class GliderAction : LemmingAction
 {
     public static readonly GliderAction Instance = new();
+
+    private readonly int[] _gliderFallTable = [3, 3, 3, 3, -1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
     private GliderAction()
         : base(
@@ -18,130 +21,12 @@ public sealed class GliderAction : LemmingAction
     {
     }
 
-    public override bool UpdateLemming(Lemming lemming)
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 12;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
-    protected override int BottomRightBoundsDeltaY(int animationFrame) => 1;
-
-    private static bool DoTurnAround(Lemming lemming, bool moveForwardFirst)
-    {
-        var terrainManager = LevelScreen.TerrainManager;
-        var orientation = lemming.Orientation;
-        var dx = lemming.FacingDirection.DeltaX;
-        var currentPosition = lemming.LevelPosition;
-        if (moveForwardFirst)
-        {
-            currentPosition = orientation.MoveRight(currentPosition, dx);
-        }
-
-        var dy = 0;
-        var result = false;
-        do
-        {
-            // bug-fix for http://www.lemmingsforums.net/index.php?topic=2693
-            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, dy)) &&
-                terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(currentPosition, -dx, dy)))
-            {
-                return true;
-            }
-
-            dy++;
-
-        } while (dy <= 3 && terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, dy)));
-        /*
-        repeat
-      if HasPixelAt(CurLemX, L.LemY + Dy) and HasPixelAt(CurLemX - L.LemDx, L.LemY + Dy) then
-      begin
-        // Abort computation and let lemming turn around
-        Result := True;
-        Exit;
-      end;
-      Inc(Dy);
-    until (Dy > 3) or (not HasPixelAt(CurLemX, L.LemY + Dy));
-        */
-        return dy > 3;
-    }
-
-    // Special behavior in 1-pixel wide shafts: Move one pixel down even when turning
-    private static void CheckOnePixelShaft(Lemming lemming)
-    {
-
-    }
-
-    private static bool HasConsecutivePixels(Lemming lemming)
-    {
-        // Check at LemY +1, +2, +3 for (a) solid terrain, or (b) a one-way field that will turn the lemming around
-        var result = false;
-
-        var dx = lemming.FacingDirection.DeltaX;
-
-
-        return result;
-    }
     /*
 function TLemmingGame.HandleGliding(L: TLemming): Boolean;
 var
   MaxFallDist, GroundDist: Integer;
   LemDy: Integer;
-    
-  procedure CheckOnePixelShaft(L: TLemming);
-  var
-    LemYDir: Integer;
 
-    function HasConsecutivePixels: Boolean;
-    var
-      i: Integer;
-      OneWayCheckType: TTriggerTypes;
-    begin
-      
-      Result := false;
-
-      if L.LemDX > 0 then
-        OneWayCheckType := trForceLeft
-      else
-        OneWayCheckType := trForceRight;
-
-      for i := 1 to 3 do
-        if not (HasPixelAt(L.LemX + L.LemDX, L.LemY + i) or
-                HasTriggerAt(L.LemX + L.LemDX, L.LemY + i, OneWayCheckType)) then
-          Exit;
-
-      Result := true;
-    end;
-  begin
-    // Move upwards if in updraft
-    LemYDir := 1;
-    if HasTriggerAt(L.LemX, L.LemY, trUpdraft) then LemYDir := -1;
-
-    if    ((FindGroundPixel(L.LemX + L.LemDx, L.LemY) < -4) and DoTurnAround(L, True))
-       or (HasConsecutivePixels) then
-    begin
-      if HasPixelAt(L.LemX, L.LemY) and (LemYDir = 1) then
-        fLemNextAction := baWalking
-      else if HasPixelAt(L.LemX, L.LemY - 2) and (LemYDir = -1) then
-        // Do nothing
-      else
-        Inc(L.LemY, LemYDir);
-    end;
-  end;
-
-  function HeadCheck(LemX, Lemy: Integer): Boolean; // returns False if lemming hits his head
-  begin
-    Result := not (     HasPixelAt(LemX - 1, LemY - 12)
-                    and HasPixelAt(LemX, LemY - 12)
-                    and HasPixelAt(LemX + 1, LemY - 12));
-  end;
-
-
-const
-  GliderFallTable: array[1..17] of Integer =
-    (3, 3, 3, 3, -1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 begin
   Result := True;
   MaxFallDist := GliderFallTable[L.LemPhysicsFrame];
@@ -221,4 +106,224 @@ begin
 end;
 
     */
+    public override bool UpdateLemming(Lemming lemming)
+    {
+        var terrainManager = LevelScreen.TerrainManager;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.LevelPosition;
+
+        var dx = lemming.FacingDirection.DeltaX;
+
+        var maxFallDistance = _gliderFallTable[lemming.PhysicsFrame];
+
+        var updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
+
+        if (updraftFallDelta.Y < 0)
+        {
+            maxFallDistance--;
+
+            // Rise a pixel every second frame
+            if (lemming.PhysicsFrame >= 9 &&
+                (lemming.PhysicsFrame & 1) != 0 &&
+                !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 1 - maxFallDistance)) &&
+                HeadCheck(lemming, orientation.MoveUp(lemmingPosition, 1)))
+            {
+                maxFallDistance--;
+            }
+        }
+
+        lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
+
+        // Do upwards movement right away
+        if (maxFallDistance < 0)
+        {
+            // Moving down, but by a negative amount so going up
+            lemmingPosition = orientation.MoveDown(lemmingPosition, maxFallDistance);
+        }
+
+        var groundDistance = FindGroundPixel(lemming, lemmingPosition);
+
+        int dy;
+
+        if (groundDistance < -4) // Pushed down or turn around
+        {
+            if (DoTurnAround(lemming, false)) // Move back and turn around
+            {
+                lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
+                lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
+                CheckOnePixelShaft(lemming);
+                return true;
+            }
+
+            dy = 0;
+            LevelPosition checkPosition;
+            do
+            {
+                dy++;
+                checkPosition = orientation.MoveDown(lemmingPosition, dy);
+            } while (!terrainManager.PixelIsSolidToLemming(lemming, checkPosition));
+
+            lemmingPosition = checkPosition;
+
+            return true;
+        }
+
+        if (groundDistance < 0) // Move 1 to 4 pixels up
+        {
+            // Moving down, but by a negative amount so going up
+            lemmingPosition = orientation.MoveDown(lemmingPosition, groundDistance);
+            lemming.SetNextAction(WalkerAction.Instance);
+
+            return true;
+        }
+
+        if (maxFallDistance > 0) // No pixel above current location; not checked if one has moved upwards
+        {
+            // Same algorithm as for faller!
+
+            if (maxFallDistance > groundDistance)
+            {
+                // Lem has found solid terrain
+                lemmingPosition = orientation.MoveDown(lemmingPosition, groundDistance);
+                lemming.SetNextAction(WalkerAction.Instance);
+
+                return true;
+            }
+
+            lemmingPosition = orientation.MoveDown(lemmingPosition, maxFallDistance);
+
+            return true;
+        }
+
+        updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
+        if (updraftFallDelta.Y >= 0)
+            return true; // Head check for pushing down in updraft
+
+        // Move down at most 2 pixels until the HeadCheck passes
+
+        dy = -1;
+        while (!HeadCheck(lemming, lemmingPosition) && dy < 2)
+        {
+            lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
+            dy++;
+
+            // Check whether the glider has reached the ground
+            if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+            {
+                lemming.SetNextAction(WalkerAction.Instance);
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 12;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
+    protected override int BottomRightBoundsDeltaY(int animationFrame) => 1;
+
+    private static bool DoTurnAround(Lemming lemming, bool moveForwardFirst)
+    {
+        var terrainManager = LevelScreen.TerrainManager;
+        var orientation = lemming.Orientation;
+        var checkPosition = lemming.LevelPosition;
+        var dx = lemming.FacingDirection.DeltaX;
+
+        if (moveForwardFirst)
+        {
+            checkPosition = orientation.MoveRight(checkPosition, dx);
+        }
+
+        var dy = 0;
+        do
+        {
+            // Bug-fix for http://www.lemmingsforums.net/index.php?topic=2693
+            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(checkPosition, dy)) &&
+                terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(checkPosition, -dx, dy)))
+                // Abort computation and let lemming turn around
+                return true;
+
+            dy++;
+
+        } while (dy <= 3 && terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(checkPosition, dy)));
+
+        return dy > 3;
+    }
+
+    // Special behavior in 1-pixel wide shafts: Move one pixel down even when turning
+    private static void CheckOnePixelShaft(Lemming lemming)
+    {
+        var terrainManager = LevelScreen.TerrainManager;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.LevelPosition;
+
+        var dx = lemming.FacingDirection.DeltaX;
+        var groundPixelDelta = FindGroundPixel(lemming, orientation.MoveRight(lemmingPosition, dx));
+
+        if ((groundPixelDelta >= -4 ||
+             !DoTurnAround(lemming, true)) &&
+            !HasConsecutivePixels())
+            return;
+
+        var updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
+        if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition) &&
+            updraftFallDelta.Y >= 0)
+        {
+            lemming.SetNextAction(WalkerAction.Instance);
+
+            return;
+        }
+
+        if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 2)) &&
+            updraftFallDelta.Y < 0)
+            return;
+
+        var updraftDy = updraftFallDelta.Y < 0
+            ? 1
+            : -1;
+        lemmingPosition = orientation.MoveUp(lemmingPosition, updraftDy);
+
+        return;
+
+        bool HasConsecutivePixels()
+        {
+            // Check at LemY +1, +2, +3 for (a) solid terrain, or (b) a one-way field that will turn the lemming around
+            var checkPosition = orientation.MoveRight(lemming.LevelPosition, dx);
+
+            // var gadgetManager = LevelScreen.GadgetManager;
+
+            for (var i = 1; i < 4; i++)
+            {
+                if (!terrainManager.PixelIsSolidToLemming(lemming, checkPosition))
+                    return false;
+
+                /* checkPosition = orientation.MoveDown(checkPosition, 1);
+
+                var gadgetCheckRegion = new LevelPositionPair(checkPosition, orientation.MoveUp(checkPosition, 1));
+                var gadgetsNearPosition = gadgetManager.GetAllItemsNearRegion(gadgetCheckRegion);
+                if (gadgetsNearPosition.Count == 0)
+                    continue;
+
+                foreach (var gadget in gadgetsNearPosition)
+                {
+                }*/
+            }
+
+            return true;
+        }
+    }
+
+    private static bool HeadCheck(
+        Lemming lemming,
+        LevelPosition checkPosition)
+    {
+        var terrainManager = LevelScreen.TerrainManager;
+        var orientation = lemming.Orientation;
+
+        return !(terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(checkPosition, -1, 12)) ||
+                 terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(checkPosition, 0, 12)) ||
+                 terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(checkPosition, 1, 12)));
+    }
 }

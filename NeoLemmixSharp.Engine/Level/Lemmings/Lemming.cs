@@ -211,14 +211,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         AnimationFrame = frame;
 
         frame = PhysicsFrame + 1;
-        // AnimationFrame is usually identical to PhysicsFrame
-        // Exceptions occur in JumperAction, for example
         if (frame == CurrentAction.MaxPhysicsFrames)
         {
+            // Floater and Glider start cycle at frame 9!
             if (CurrentAction == FloaterAction.Instance ||
                 CurrentAction == GliderAction.Instance)
             {
-                frame = 9;
+                frame = LevelConstants.FloaterGliderStartCycleFrame;
             }
             else
             {

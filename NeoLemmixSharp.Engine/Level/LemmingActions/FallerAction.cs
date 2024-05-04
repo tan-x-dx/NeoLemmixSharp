@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -22,29 +23,19 @@ public sealed class FallerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var gadgetManager = LevelScreen.GadgetManager;
         var terrainManager = LevelScreen.TerrainManager;
         var currentFallDistanceStep = 0;
-        var maxFallDistanceStep = LevelConstants.DefaultFallStep;
 
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
-        var gadgetSet = gadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
-
-        foreach (var gadget in gadgetSet)
-        {
-            if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
-                continue;
-
-            if (gadget.Orientation == Orientation.GetOpposite(orientation))
-            {
-                maxFallDistanceStep = 2;
-            }
-        }
+        var updraftFallDelta = GetUpdraftFallDelta(lemming);
+        var maxFallDistanceStep = LevelConstants.DefaultFallStep + updraftFallDelta.Y;
 
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
             return true;
+
+        ref var distanceFallen = ref lemming.DistanceFallen;
 
         while (currentFallDistanceStep < maxFallDistanceStep &&
                !terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
@@ -56,24 +47,22 @@ public sealed class FallerAction : LemmingAction
             lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
 
             currentFallDistanceStep++;
-            lemming.DistanceFallen++;
+            distanceFallen++;
             lemming.TrueDistanceFallen++;
 
-            gadgetSet = gadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+            updraftFallDelta = GetUpdraftFallDelta(lemming);
 
-            foreach (var gadget in gadgetSet)
+            if (updraftFallDelta.Y < 0)
             {
-                if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
-                    continue;
-
-                if (gadget.Orientation == Orientation.GetOpposite(orientation))
-                {
-                    lemming.DistanceFallen = 0;
-                }
+                distanceFallen = 0;
+            }
+            else if (updraftFallDelta.Y > 0)
+            {
+                distanceFallen = Math.Min(distanceFallen, LevelConstants.MaxFallDistance / 2);
             }
         }
 
-        lemming.DistanceFallen = Math.Min(lemming.DistanceFallen, LevelConstants.MaxFallDistance + 1);
+        distanceFallen = Math.Min(distanceFallen, LevelConstants.MaxFallDistance + 1);
         lemming.TrueDistanceFallen = Math.Min(lemming.TrueDistanceFallen, LevelConstants.MaxFallDistance + 1);
 
         if (currentFallDistanceStep >= maxFallDistanceStep)
@@ -160,5 +149,72 @@ public sealed class FallerAction : LemmingAction
             return -1;
 
         return 1;
+    }
+
+    public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
+    {
+        var gadgetsNearPosition = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+
+        if (gadgetsNearPosition.Count == 0)
+            return new LevelPosition();
+
+        var lemmingOrientation = lemming.Orientation;
+
+        var hasUpdraft = false;
+        var hasDowndraft = false;
+        var draftLeft = false;
+        var draftRight = false;
+
+        foreach (var gadget in gadgetsNearPosition)
+        {
+            if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
+                continue;
+
+            var gadgetOrientation = gadget.Orientation;
+
+            if (gadgetOrientation == lemmingOrientation)
+            {
+                hasDowndraft = true;
+            }
+
+            if (gadgetOrientation == Orientation.RotateClockwise(lemmingOrientation))
+            {
+                draftLeft = true;
+            }
+
+            if (gadgetOrientation == Orientation.GetOpposite(lemmingOrientation))
+            {
+                hasUpdraft = true;
+            }
+
+            if (gadgetOrientation == Orientation.RotateCounterClockwise(lemmingOrientation))
+            {
+                draftRight = true;
+            }
+        }
+
+        var dx = 0;
+        if (draftLeft)
+        {
+            dx--;
+        }
+
+        if (draftRight)
+        {
+            dx++;
+        }
+
+        var dy = 0;
+        if (hasUpdraft)
+        {
+            dy--;
+        }
+
+        if (hasDowndraft)
+        {
+            dy++;
+        }
+
+        return new LevelPosition(dx, dy);
     }
 }

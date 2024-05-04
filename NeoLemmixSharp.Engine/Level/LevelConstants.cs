@@ -49,6 +49,8 @@ public static class LevelConstants
     public const int MaxLevelWidth = 2400;
     public const int MaxLevelHeight = 2400;
 
+    public const int FloaterGliderStartCycleFrame = 9;
+
     /// <summary>
     /// A lemming falls 3 pixels each frame
     /// </summary>
