@@ -62,8 +62,6 @@ public sealed class ItemTracker<T> : IItemCountListener
             return;
         }
 
-        var newArray = new ulong[newArraySize];
-        Array.Copy(_longs, newArray, _longs.Length);
-        _longs = newArray;
+        Array.Resize(ref _longs, newArraySize);
     }
 }
