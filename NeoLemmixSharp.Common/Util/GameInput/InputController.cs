@@ -27,7 +27,7 @@ public sealed class InputController : IPerfectHasher<Keys>
 
     public InputController()
     {
-        _keys = new SimpleSet<Keys>(this);
+        _keys = new SimpleSet<Keys>(this, false);
 
         LeftMouseButtonAction = CreateInputAction("Left Mouse Button");
         RightMouseButtonAction = CreateInputAction("Right Mouse Button");

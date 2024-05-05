@@ -59,7 +59,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LemmingAction NextAction { get; private set; } = NoneAction.Instance;
     public LemmingAction CountDownAction { get; private set; } = NoneAction.Instance;
 
-    public LemmingRenderer Renderer { get; private set; }
+    public LemmingRenderer Renderer { get; }
     public LevelPosition TopLeftPixel { get; private set; }
     public LevelPosition BottomRightPixel { get; private set; }
     public LevelPosition PreviousTopLeftPixel { get; private set; }

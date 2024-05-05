@@ -14,7 +14,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
     private uint[] _bits;
     private int _popCount;
 
-    public SimpleSet(IPerfectHasher<T> hasher, bool fullSet = false)
+    public SimpleSet(IPerfectHasher<T> hasher, bool fullSet)
     {
         _hasher = hasher;
         var numberOfItems = hasher.NumberOfItems;

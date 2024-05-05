@@ -68,8 +68,8 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        _lemmingsToZombify = new SimpleSet<Lemming>(this);
-        _allBlockers = new SimpleSet<Lemming>(this);
+        _lemmingsToZombify = new SimpleSet<Lemming>(this, false);
+        _allBlockers = new SimpleSet<Lemming>(this, false);
 
         _itemCountListeners = new List<IItemCountListener>
         {

@@ -38,7 +38,7 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
-        _allTrackedItems = new SimpleSet<T>(hasher);
+        _allTrackedItems = new SimpleSet<T>(hasher, false);
 
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
         var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;

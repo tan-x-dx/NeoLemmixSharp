@@ -197,6 +197,8 @@ public static class BitArrayHelpers
 
     internal static void UnionWith(Span<uint> span, ReadOnlySpan<uint> other, ref int popCount)
     {
+        Debug.Assert(span.Length == other.Length);
+
         var newCount = 0;
         for (var i = span.Length - 1; i >= 0; i--)
         {

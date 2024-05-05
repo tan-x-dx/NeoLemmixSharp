@@ -56,5 +56,5 @@ public sealed class ExtendedEnumTypeComparer<T> :
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static SimpleSet<T> CreateSimpleSet() => new(Instance);
+    public static SimpleSet<T> CreateSimpleSet() => new(Instance, false);
 }
