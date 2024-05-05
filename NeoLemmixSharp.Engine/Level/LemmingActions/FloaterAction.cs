@@ -1,6 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
-using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Orientations;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -27,35 +25,24 @@ public sealed class FloaterAction : LemmingAction
         var maxFallDistance = _floaterFallTable[lemming.PhysicsFrame - 1];
 
         var orientation = lemming.Orientation;
-        var levelPosition = lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
 
-        var gadgetSet = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
-        if (gadgetSet.Count > 0)
-        {
-            foreach (var gadget in gadgetSet)
-            {
-                if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
-                    continue;
+        var updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
 
-                if (gadget.Orientation == Orientation.GetOpposite(orientation))
-                {
-                    maxFallDistance--;
-                }
-            }
-        }
+        maxFallDistance += updraftFallDelta.Y;
 
-        var groundPixelDistance = Math.Max(FindGroundPixel(lemming, levelPosition), 0);
+        lemmingPosition = orientation.MoveRight(lemmingPosition, updraftFallDelta.X);
+
+        var groundPixelDistance = Math.Max(FindGroundPixel(lemming, lemmingPosition), 0);
         if (maxFallDistance > groundPixelDistance)
         {
-            levelPosition = orientation.MoveDown(levelPosition, groundPixelDistance);
+            lemmingPosition = orientation.MoveDown(lemmingPosition, groundPixelDistance);
             lemming.SetNextAction(WalkerAction.Instance);
         }
         else
         {
-            levelPosition = orientation.MoveDown(levelPosition, maxFallDistance);
+            lemmingPosition = orientation.MoveDown(lemmingPosition, maxFallDistance);
         }
-
-        lemming.LevelPosition = levelPosition;
 
         return true;
     }

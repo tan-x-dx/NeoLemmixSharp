@@ -4,6 +4,8 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
+using System.Runtime.InteropServices;
+using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.Rendering;
 
@@ -14,6 +16,7 @@ public sealed class LevelRenderer : IDisposable
     private readonly Level.Viewport _viewport;
     private readonly IViewportObjectRenderer[] _behindTerrainSprites;
     private readonly IViewportObjectRenderer[] _inFrontOfTerrainSprites;
+    private readonly List<IViewportObjectRenderer> _lemmingSprites = new();
 
     private IBackgroundRenderer _backgroundRenderer;
     private TerrainRenderer _terrainRenderer;
@@ -25,16 +28,18 @@ public sealed class LevelRenderer : IDisposable
         GraphicsDevice graphicsDevice,
         LevelControlPanel levelControlPanel,
         Level.Viewport viewport,
-        IViewportObjectRenderer[] behindTerrainSprites,
-        IViewportObjectRenderer[] inFrontOfTerrainSprites,
+        ICollection<IViewportObjectRenderer> behindTerrainSprites,
+        ICollection<IViewportObjectRenderer> inFrontOfTerrainSprites,
+        ICollection<IViewportObjectRenderer> lemmingSprites,
         IBackgroundRenderer backgroundRenderer,
         TerrainRenderer terrainRenderer)
     {
         _graphicsDevice = graphicsDevice;
         _levelControlPanel = levelControlPanel;
         _viewport = viewport;
-        _behindTerrainSprites = behindTerrainSprites;
-        _inFrontOfTerrainSprites = inFrontOfTerrainSprites;
+        _behindTerrainSprites = behindTerrainSprites.ToArray();
+        _inFrontOfTerrainSprites = inFrontOfTerrainSprites.ToArray();
+        _lemmingSprites.AddRange(lemmingSprites);
 
         _backgroundRenderer = backgroundRenderer;
         _terrainRenderer = terrainRenderer;
@@ -52,9 +57,11 @@ public sealed class LevelRenderer : IDisposable
         _terrainRenderer.RenderTerrain(spriteBatch);
         RenderSprites(spriteBatch, new ReadOnlySpan<IViewportObjectRenderer>(_inFrontOfTerrainSprites));
 
+        RenderSprites(spriteBatch, CollectionsMarshal.AsSpan(_lemmingSprites));
+
         spriteBatch.End();
     }
-    
+
     private void RenderSprites(SpriteBatch spriteBatch, ReadOnlySpan<IViewportObjectRenderer> levelSpritesSpan)
     {
         var viewportX = _viewport.ViewPortX;
@@ -127,6 +134,11 @@ public sealed class LevelRenderer : IDisposable
     {
         DisposableHelperMethods.DisposeOf(ref _levelRenderTarget);
         _levelRenderTarget = GetLevelRenderTarget2D();
+    }
+
+    public void AddLemmingRenderer(LemmingRenderer lemmingRenderer)
+    {
+        _lemmingSprites.Add(lemmingRenderer);
     }
 
     public void Dispose()

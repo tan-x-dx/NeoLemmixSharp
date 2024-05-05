@@ -113,7 +113,7 @@ public sealed class BlockerAction : LemmingAction
                 return;
             }
 
-            TerrainMasks.ApplyMinerMask(lemming, mineDx, mineDy, 1);
+            TerrainMasks.ApplyMinerMask(lemming, 1, mineDx, mineDy);
 
             return;
         }

@@ -39,7 +39,9 @@ public sealed class LemmingState
     public Color BodyColor { get; private set; }
 
     public bool HasPermanentSkill => (_states & PermanentSkillBitMask) != 0U;
-    // Must be active and NOT zombie and NOT neutral
+    /// <summary>
+    /// Must be active and NOT zombie and NOT neutral
+    /// </summary>
     public bool CanHaveSkillsAssigned => (_states & AssignableSkillBitMask) == (1U << ActiveBitIndex);
 
     public bool IsClimber
@@ -217,13 +219,15 @@ public sealed class LemmingState
             : _team.SkinColor;
     }
 
-    public void SetRawData(LemmingState otherLemmingState)
+    public void SetRawDataFromOther(LemmingState otherLemmingState)
     {
         _team = otherLemmingState._team;
         _states = otherLemmingState._states;
+        UpdateHairAndBodyColors();
+        UpdateSkinColor();
     }
 
-    public void SetRawData(uint rawData)
+    public void SetRawDataFromOther(uint rawData)
     {
         _states = rawData;
         UpdateHairAndBodyColors();

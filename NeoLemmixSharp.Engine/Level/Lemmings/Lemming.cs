@@ -59,7 +59,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LemmingAction NextAction { get; private set; } = NoneAction.Instance;
     public LemmingAction CountDownAction { get; private set; } = NoneAction.Instance;
 
-    public LemmingRenderer Renderer { get; private set; }
+    public LemmingRenderer Renderer { get; }
     public LevelPosition TopLeftPixel { get; private set; }
     public LevelPosition BottomRightPixel { get; private set; }
     public LevelPosition PreviousTopLeftPixel { get; private set; }
@@ -102,7 +102,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         FacingDirection = FacingDirection.RightInstance;
         CurrentAction = NoneAction.Instance;
         State = new LemmingState(this, Team.AllItems[LevelConstants.ClassicTeamId]);
-        Renderer = null!;
+        Renderer = new LemmingRenderer(this);
     }
 
     public void Initialise()
@@ -211,14 +211,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         AnimationFrame = frame;
 
         frame = PhysicsFrame + 1;
-        // AnimationFrame is usually identical to PhysicsFrame
-        // Exceptions occur in JumperAction, for example
         if (frame == CurrentAction.MaxPhysicsFrames)
         {
+            // Floater and Glider start cycle at frame 9!
             if (CurrentAction == FloaterAction.Instance ||
                 CurrentAction == GliderAction.Instance)
             {
-                frame = 9;
+                frame = LevelConstants.FloaterGliderStartCycleFrame;
             }
             else
             {
@@ -403,14 +402,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         CountDownAction = NoneAction.Instance;
     }
 
-    public void SetRawData(Team team, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
-    {
-        State.SetRawData(rawStateData);
-        State.TeamAffiliation = team;
-        Orientation = orientation;
-        FacingDirection = facingDirection;
-    }
-
     public void OnRemoval(LemmingRemovalReason removalReason)
     {
         CurrentAction = NoneAction.Instance;
@@ -424,7 +415,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         return new Span<LevelPosition>(_jumperPositions);
     }
 
-    public void SetRawData(Lemming otherLemming)
+    public void SetRawDataFromOther(Lemming otherLemming)
     {
         _jumperPositions = otherLemming._jumperPositions;
 
@@ -462,13 +453,20 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         CurrentAction = otherLemming.CurrentAction;
         NextAction = otherLemming.NextAction;
 
-        Renderer = otherLemming.Renderer;
-        State.SetRawData(otherLemming.State);
+        State.SetRawDataFromOther(otherLemming.State);
 
         TopLeftPixel = otherLemming.TopLeftPixel;
         BottomRightPixel = otherLemming.BottomRightPixel;
         PreviousTopLeftPixel = otherLemming.PreviousTopLeftPixel;
         PreviousBottomRightPixel = otherLemming.PreviousBottomRightPixel;
+    }
+
+    public void SetRawDataFromOther(Team team, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
+    {
+        State.SetRawDataFromOther(rawStateData);
+        State.TeamAffiliation = team;
+        Orientation = orientation;
+        FacingDirection = facingDirection;
     }
 
     int IIdEquatable<Lemming>.Id => Id;

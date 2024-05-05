@@ -44,7 +44,7 @@ public ref struct BitBasedEnumerator<T>
         var m = BitOperations.TrailingZeroCount(_v);
         _v &= _v - 1;
 
-        _current = (_index << BitArray.Shift) | m;
+        _current = (_index << BitArrayHelpers.Shift) | m;
         _remaining--;
         return true;
     }

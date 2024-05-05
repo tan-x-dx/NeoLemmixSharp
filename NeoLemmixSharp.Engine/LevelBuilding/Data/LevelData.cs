@@ -89,7 +89,7 @@ public sealed class LevelData
     }
 
     public string LevelTheme { get; set; } = null!;
-    public string LevelBackground { get; set; } = null!;
+    public BackgroundData? LevelBackground { get; set; }
 
     public int NumberOfLemmings
     {

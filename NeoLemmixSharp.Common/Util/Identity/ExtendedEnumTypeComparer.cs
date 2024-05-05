@@ -11,8 +11,7 @@ public sealed class ExtendedEnumTypeComparer<T> :
     IPerfectHasher<T>
     where T : class, IExtendedEnumType<T>
 {
-    private static ExtendedEnumTypeComparer<T>? _instance;
-    private static ExtendedEnumTypeComparer<T> Instance => _instance ??= new ExtendedEnumTypeComparer<T>();
+    private static readonly ExtendedEnumTypeComparer<T> Instance = new();
 
     private ExtendedEnumTypeComparer()
     {
@@ -27,8 +26,7 @@ public sealed class ExtendedEnumTypeComparer<T> :
     }
 
     [Pure]
-    public int GetHashCode(T obj) => 2965019 * obj.Id +
-                                     5477821;
+    public int GetHashCode(T obj) => IdEquatableItemHelperMethods.GetHashCode(obj);
 
     [Pure]
     public int Compare(T? x, T? y) => IdEquatableItemHelperMethods.Compare(x, y);
@@ -58,5 +56,5 @@ public sealed class ExtendedEnumTypeComparer<T> :
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static SimpleSet<T> CreateSimpleSet() => new(Instance);
+    public static SimpleSet<T> CreateSimpleSet() => new(Instance, false);
 }

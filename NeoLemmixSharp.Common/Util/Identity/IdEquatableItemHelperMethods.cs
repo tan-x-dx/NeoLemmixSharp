@@ -47,4 +47,11 @@ public static class IdEquatableItemHelperMethods
         if (xId < yId) return -1;
         return xId > yId ? 1 : 0;
     }
+
+    public static int GetHashCode<T>(T obj)
+        where T : class, IIdEquatable<T>
+    {
+        return 2965019 * obj.Id +
+               5477821;
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
@@ -8,10 +9,8 @@ using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class TerrainPainter : IDisposable
+public sealed class TerrainBuilder : IDisposable
 {
-    public const uint MinimumSubstantialAlphaValue = 0x80;
-
     private readonly GraphicsDevice _graphicsDevice;
 
     private readonly List<TerrainArchetypeData> _terrainArchetypes = new();
@@ -20,12 +19,12 @@ public sealed class TerrainPainter : IDisposable
     private Texture2D _terrainTexture;
     private PixelType[] _terrainPixels;
 
-    public TerrainPainter(GraphicsDevice graphicsDevice)
+    public TerrainBuilder(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;
     }
 
-    public void PaintLevel(LevelData levelData)
+    public void BuildTerrain(LevelData levelData)
     {
         _terrainArchetypes.AddRange(levelData.TerrainArchetypeData);
         foreach (var terrainArchetypeData in _terrainArchetypes)
@@ -53,7 +52,7 @@ public sealed class TerrainPainter : IDisposable
             levelData.LevelHeight,
             uintData);
 
-        DrawTerrain(levelData.AllTerrainData, textureData);
+        DrawTerrainPieces(levelData.AllTerrainData, textureData, 0, 0);
         _terrainTexture.SetData(uintData);
     }
 
@@ -69,17 +68,17 @@ public sealed class TerrainPainter : IDisposable
         }
     }
 
-    private void DrawTerrain(
+    private void DrawTerrainPieces(
         IEnumerable<TerrainData> terrainDataList,
         PixelColorData targetData,
-        int dx = 0,
-        int dy = 0)
+        int dx,
+        int dy)
     {
         foreach (var terrainData in terrainDataList)
         {
             if (terrainData.GroupName is null)
             {
-                ApplyTerrainPiece(
+                DrawTerrainPiece(
                     terrainData,
                     targetData,
                     dx,
@@ -88,7 +87,7 @@ public sealed class TerrainPainter : IDisposable
             else
             {
                 var textureGroup = _terrainGroups.First(tg => tg.GroupName == terrainData.GroupName);
-                DrawTerrain(
+                DrawTerrainPieces(
                     textureGroup.TerrainDatas,
                     targetData,
                     dx + terrainData.X,
@@ -97,7 +96,7 @@ public sealed class TerrainPainter : IDisposable
         }
     }
 
-    private void ApplyTerrainPiece(
+    private void DrawTerrainPiece(
         TerrainData terrainData,
         PixelColorData targetPixelColorData,
         int dx,
@@ -206,7 +205,7 @@ public sealed class TerrainPainter : IDisposable
     private static bool PixelColorIsSubstantial(uint color)
     {
         var alpha = color >> 24 & 0xffU;
-        return alpha >= MinimumSubstantialAlphaValue;
+        return alpha >= LevelConstants.MinimumSubstantialAlphaValue;
     }
 
     private void LoadPixelColorData(TerrainArchetypeData terrainArchetypeData)

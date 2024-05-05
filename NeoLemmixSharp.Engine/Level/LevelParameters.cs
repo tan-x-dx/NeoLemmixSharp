@@ -29,7 +29,7 @@ public static class LevelParameterHelpers
         public LevelParameters UnHash(int index) => (LevelParameters)index;
     }
 
-    public static LevelParameterSet CreateSimpleSet() => new(new LevelParametersHasher());
+    public static LevelParameterSet CreateSimpleSet() => new(new LevelParametersHasher(), false);
 
     public static int GetLemmingCountDownTimer(this LevelParameterSet parameters, Lemming lemming)
     {

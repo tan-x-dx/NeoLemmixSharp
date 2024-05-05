@@ -38,54 +38,12 @@ public sealed class OhNoerAction : LemmingAction
 
         LevelScreen.LemmingManager.DeregisterBlocker(lemming);
 
-        var fallDelta = GetFallDelta(lemming);
+        var updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
 
         var lemmingOrientation = lemming.Orientation;
-        lemmingPosition = lemmingOrientation.MoveDown(lemmingPosition, fallDelta);
+        lemmingPosition = lemmingOrientation.MoveDown(lemmingPosition, LevelConstants.DefaultFallStep + updraftFallDelta.Y);
 
         return true;
-    }
-
-    private static int GetFallDelta(Lemming lemming)
-    {
-        var lemmingOrientation = lemming.Orientation;
-
-        var hasUpdraft = false;
-        var hasDowndraft = false;
-
-        var gadgetManager = LevelScreen.GadgetManager;
-        var gadgetsNearPosition = gadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
-
-        if (gadgetsNearPosition.Count > 0)
-        {
-            foreach (var gadget in gadgetsNearPosition)
-            {
-                if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
-                    continue;
-
-                var gadgetOrientation = gadget.Orientation;
-
-                if (gadgetOrientation == lemmingOrientation)
-                {
-                    hasDowndraft = true;
-                }
-                if (gadgetOrientation == Orientation.GetOpposite(lemmingOrientation))
-                {
-                    hasUpdraft = true;
-                }
-            }
-        }
-
-        if (hasUpdraft && hasDowndraft)
-            return LevelConstants.DefaultFallStep;
-
-        if (hasUpdraft)
-            return LevelConstants.UpdraftFallStep;
-
-        if (hasDowndraft)
-            return LevelConstants.DownDraftFallStep;
-
-        return LevelConstants.DefaultFallStep;
     }
 
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;

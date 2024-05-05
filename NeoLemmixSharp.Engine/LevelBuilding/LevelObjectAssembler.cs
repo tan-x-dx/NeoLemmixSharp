@@ -47,7 +47,7 @@ public sealed class LevelObjectAssembler : IDisposable
         return result;
     }
 
-    public Lemming[] GetLevelLemmings(LevelData levelData)
+    public ICollection<Lemming> GetLevelLemmings(LevelData levelData)
     {
         var allLemmingData = CollectionsMarshal.AsSpan(levelData.AllLemmingData);
 
@@ -66,12 +66,12 @@ public sealed class LevelObjectAssembler : IDisposable
                 LevelPosition = new LevelPosition(prototype.X, prototype.Y)
             };
 
-            lemming.State.SetRawData(prototype.State);
+            lemming.State.SetRawDataFromOther(prototype.State);
 
             _lemmings.Add(lemming);
         }
 
-        return _lemmings.ToArray();
+        return _lemmings;
     }
 
     public GadgetBase[] GetLevelGadgets(
@@ -110,10 +110,14 @@ public sealed class LevelObjectAssembler : IDisposable
         hatchGroup.SetHatches(hatches.ToArray());
     }
 
-    public (IViewportObjectRenderer[] BehindTerrainSprites, IViewportObjectRenderer[] InFrontOfTerrainSprites) GetLevelSprites()
+    public void GetLevelSprites(
+        out ICollection<IViewportObjectRenderer> behindTerrainSprites,
+        out ICollection<IViewportObjectRenderer> inFrontOfTerrainSprites,
+        out ICollection<IViewportObjectRenderer> lemmingSprites)
     {
-        var behindTerrainSprites = new List<IViewportObjectRenderer>();
-        var inFrontOfTerrainSprites = new List<IViewportObjectRenderer>();
+        behindTerrainSprites = new List<IViewportObjectRenderer>(_gadgets.Count);
+        inFrontOfTerrainSprites = new List<IViewportObjectRenderer>(_gadgets.Count);
+        lemmingSprites = new List<IViewportObjectRenderer>(_lemmings.Count);
 
         var gadgetSpan = CollectionsMarshal.AsSpan(_gadgets);
         foreach (var gadget in gadgetSpan)
@@ -135,10 +139,8 @@ public sealed class LevelObjectAssembler : IDisposable
         var lemmingSpan = CollectionsMarshal.AsSpan(_lemmings);
         foreach (var lemming in lemmingSpan)
         {
-            inFrontOfTerrainSprites.Add(lemming.Renderer);
+            lemmingSprites.Add(lemming.Renderer);
         }
-
-        return (behindTerrainSprites.ToArray(), inFrontOfTerrainSprites.ToArray());
     }
 
     public LemmingSpriteBank GetLemmingSpriteBank()

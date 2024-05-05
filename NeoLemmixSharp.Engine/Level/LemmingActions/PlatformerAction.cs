@@ -141,14 +141,14 @@ public sealed class PlatformerAction : LemmingAction
         var terrainManager = LevelScreen.TerrainManager;
         var lemmingPosition = lemming.LevelPosition;
         var orientation = lemming.Orientation;
+        var dx = lemming.FacingDirection.DeltaX;
 
         var result = !terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition) ||
-                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, 1)) ||
-                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, 2)) ||
-                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, 3)) ||
-                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, 4));
+                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, dx)) ||
+                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, dx * 2)) ||
+                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, dx * 3)) ||
+                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, dx * 4));
 
-        var dx = lemming.FacingDirection.DeltaX;
         result = result && !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 1));
         result = result && !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 1));
         return result;

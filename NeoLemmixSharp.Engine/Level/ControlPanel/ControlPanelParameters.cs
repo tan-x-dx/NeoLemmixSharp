@@ -31,5 +31,5 @@ public static class ControlPanelParameterHelpers
         public ControlPanelParameters UnHash(int index) => (ControlPanelParameters)index;
     }
 
-    public static ControlPanelParameterSet CreateSimpleSet() => new(new ControlPanelParametersHasher());
+    public static ControlPanelParameterSet CreateSimpleSet() => new(new ControlPanelParametersHasher(), false);
 }

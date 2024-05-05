@@ -82,6 +82,11 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         _controlPanelRenderer.OnWindowSizeChanged();
     }
 
+    public void AddLemmingRenderer(LemmingRenderer lemmingRenderer)
+    {
+        _levelRenderer.AddLemmingRenderer(lemmingRenderer);
+    }
+
     public void Dispose()
     {
         if (IsDisposed)

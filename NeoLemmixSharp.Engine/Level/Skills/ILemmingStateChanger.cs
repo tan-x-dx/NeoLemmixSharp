@@ -46,5 +46,5 @@ public sealed class LemmingStateChangerHelpers : IPerfectHasher<ILemmingStateCha
 
     public ILemmingStateChanger UnHash(int index) => AllLemmingStateChangers[index];
 
-    public static SimpleSet<ILemmingStateChanger> CreateSimpleSet() => new(Instance);
+    public static SimpleSet<ILemmingStateChanger> CreateSimpleSet() => new(Instance, false);
 }
