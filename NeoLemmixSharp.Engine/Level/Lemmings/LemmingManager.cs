@@ -347,14 +347,18 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         _lemmings.Add(newLemming);
         LevelScreenRenderer.Instance.AddLemmingRenderer(newLemming.Renderer);
         newLemming.Initialise();
-        itemCount++;
         LemmingsOut++;
         UpdateControlPanel();
+
+        // Use the list's internal capacity as a metric for how many items there are.
+        // This will prevent excessive reallocations of arrays, since the list's capacity
+        // doubles once filled
+        var lemmingListCapacity = _lemmings.Capacity;
 
         var itemCountListenersSpan = CollectionsMarshal.AsSpan(_itemCountListeners);
         foreach (var itemCountListener in itemCountListenersSpan)
         {
-            itemCountListener.OnNumberOfItemsChanged(itemCount);
+            itemCountListener.OnNumberOfItemsChanged(lemmingListCapacity);
         }
 
         _lemmingPositionHelper.AddItem(newLemming);
