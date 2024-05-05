@@ -5,16 +5,16 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Updates;
+using NeoLemmixSharp.Engine.Rendering;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Level.Teams;
-using NeoLemmixSharp.Engine.Rendering;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -277,7 +277,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
     private void UpdateZombiePosition(Lemming lemming)
     {
-        if (!_zombieSpacialHashGrid.IsTrackingItem(lemming))
+        if (!lemming.State.IsZombie)
             return;
 
         _zombieSpacialHashGrid.UpdateItemPosition(lemming);
