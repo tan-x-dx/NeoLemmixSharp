@@ -1,16 +1,16 @@
-﻿using System.Collections;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
 
-public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
+public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>, IItemCountListener
 {
     private readonly IPerfectHasher<TKey> _hasher;
-    private readonly uint[] _bits;
-    private readonly TValue[] _values;
+    private uint[] _bits;
+    private TValue[] _values;
     private int _popCount;
 
     public int Count => _popCount;
@@ -162,6 +162,15 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
 
             return result;
         }
+    }
+
+    public void OnNumberOfItemsChanged(int numberOfItems)
+    {
+        if (numberOfItems <= _values.Length)
+            return;
+
+        BitArrayHelpers.SetLength(ref _bits, numberOfItems);
+        Array.Resize(ref _values, numberOfItems);
     }
 
     void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item) => Add(item.Key, item.Value);
