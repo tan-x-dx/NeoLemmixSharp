@@ -5,7 +5,7 @@ using System.Numerics;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
-public static class BitArray
+public static class BitArrayHelpers
 {
     public const int Shift = 5;
     public const int Mask = (1 << Shift) - 1;

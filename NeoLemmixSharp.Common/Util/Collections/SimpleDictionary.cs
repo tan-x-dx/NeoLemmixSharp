@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using BitArray = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArray;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
 
@@ -19,7 +19,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     {
         _hasher = hasher;
         var numberOfItems = hasher.NumberOfItems;
-        _bits = BitArray.CreateBitArray(numberOfItems, false);
+        _bits = BitArrayHelpers.CreateBitArray(numberOfItems, false);
         _popCount = 0;
         _values = new TValue[numberOfItems];
     }
@@ -27,7 +27,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     public void Add(TKey key, TValue value)
     {
         var index = _hasher.Hash(key);
-        if (!BitArray.SetBit(new Span<uint>(_bits), index, ref _popCount))
+        if (!BitArrayHelpers.SetBit(new Span<uint>(_bits), index, ref _popCount))
             throw new ArgumentException("Key already added!", nameof(key));
 
         _values[index] = value;
@@ -42,7 +42,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
-        var enumerator = new BitArray.ReferenceTypeBitEnumerator(_bits, _popCount);
+        var enumerator = new BitArrayHelpers.ReferenceTypeBitEnumerator(_bits, _popCount);
         while (enumerator.MoveNext())
         {
             var index = enumerator.Current;
@@ -56,7 +56,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     public bool ContainsKey(TKey key)
     {
         var index = _hasher.Hash(key);
-        return BitArray.GetBit(new ReadOnlySpan<uint>(_bits), index);
+        return BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_bits), index);
     }
 
     [Pure]
@@ -64,14 +64,14 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     {
         var index = _hasher.Hash(key);
         value = _values[index];
-        return BitArray.GetBit(new ReadOnlySpan<uint>(_bits), index);
+        return BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_bits), index);
     }
 
     public bool Remove(TKey key)
     {
         var index = _hasher.Hash(key);
         _values[index] = default!;
-        return BitArray.ClearBit(new Span<uint>(_bits), index, ref _popCount);
+        return BitArrayHelpers.ClearBit(new Span<uint>(_bits), index, ref _popCount);
     }
 
     public TValue this[TKey key]
@@ -80,7 +80,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         get
         {
             var index = _hasher.Hash(key);
-            if (!BitArray.GetBit(new ReadOnlySpan<uint>(_bits), index))
+            if (!BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_bits), index))
                 throw new KeyNotFoundException();
 
             return _values[index];
@@ -88,7 +88,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         set
         {
             var index = _hasher.Hash(key);
-            BitArray.SetBit(new Span<uint>(_bits), index);
+            BitArrayHelpers.SetBit(new Span<uint>(_bits), index);
             _values[index] = value;
         }
     }
@@ -104,13 +104,13 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     public sealed class Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
     {
         private readonly IPerfectHasher<TKey> _hasher;
-        private readonly BitArray.ReferenceTypeBitEnumerator _enumerator;
+        private readonly BitArrayHelpers.ReferenceTypeBitEnumerator _enumerator;
         private readonly TValue[] _values;
 
         public Enumerator(SimpleDictionary<TKey, TValue> dictionary)
         {
             _hasher = dictionary._hasher;
-            _enumerator = new BitArray.ReferenceTypeBitEnumerator(dictionary._bits, dictionary._popCount);
+            _enumerator = new BitArrayHelpers.ReferenceTypeBitEnumerator(dictionary._bits, dictionary._popCount);
             _values = dictionary._values;
         }
 

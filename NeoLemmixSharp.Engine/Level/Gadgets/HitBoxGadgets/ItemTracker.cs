@@ -14,7 +14,7 @@ public sealed class ItemTracker<T> : IItemCountListener
 
     public ItemTracker(IPerfectHasher<T> hasher)
     {
-        var arrayLength = (hasher.NumberOfItems + BitArray.Mask) >> BitArray.Shift;
+        var arrayLength = (hasher.NumberOfItems + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
 
         _longs = new ulong[arrayLength];
     }
@@ -33,8 +33,8 @@ public sealed class ItemTracker<T> : IItemCountListener
     {
         var id = item.Id;
 
-        var bitIndex = (id & BitArray.Mask) << 1;
-        var longIndex = id >> BitArray.Shift;
+        var bitIndex = (id & BitArrayHelpers.Mask) << 1;
+        var longIndex = id >> BitArrayHelpers.Shift;
 
         ref var longValue = ref _longs[longIndex];
         longValue |= 1UL << bitIndex;
@@ -51,7 +51,7 @@ public sealed class ItemTracker<T> : IItemCountListener
 
     public void OnNumberOfItemsChanged(int numberOfItems)
     {
-        var newArraySize = (numberOfItems + BitArray.Mask) >> BitArray.Shift;
+        var newArraySize = (numberOfItems + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
 
         if (newArraySize <= _longs.Length)
             return;

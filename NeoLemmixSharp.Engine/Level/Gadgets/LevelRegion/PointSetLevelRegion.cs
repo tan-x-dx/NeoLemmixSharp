@@ -34,7 +34,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
         if (totalNumberOfPoints > AreaCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
 
-        _levelPositionBits = BitArray.CreateBitArray(totalNumberOfPoints, false);
+        _levelPositionBits = BitArrayHelpers.CreateBitArray(totalNumberOfPoints, false);
 
         foreach (var levelPosition in points)
         {
@@ -42,7 +42,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
             var y = levelPosition.Y - minimumBoundingBox.P1Y;
 
             var index = IndexFor(x, y);
-            BitArray.SetBit(new Span<uint>(_levelPositionBits), index);
+            BitArrayHelpers.SetBit(new Span<uint>(_levelPositionBits), index);
         }
 
         _offset = minimumBoundingBox.GetTopLeftPosition();
@@ -58,7 +58,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
                levelPosition.Y >= 0 &&
                levelPosition.X < _minimumBoundingBoxWidth &&
                levelPosition.Y < _minimumBoundingBoxHeight &&
-               BitArray.GetBit(new ReadOnlySpan<uint>(_levelPositionBits), index);
+               BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_levelPositionBits), index);
     }
 
     [Pure]
