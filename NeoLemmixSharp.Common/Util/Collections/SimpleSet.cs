@@ -7,48 +7,67 @@ using BitArray = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArray;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
 
-public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
+public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
 {
+    private const int MaxStackAllocSize = 64;
+
     private readonly IPerfectHasher<T> _hasher;
-    private readonly BitArray _bits;
+    private uint[] _bits;
+    private int _popCount;
 
     public SimpleSet(IPerfectHasher<T> hasher, bool fullSet = false)
     {
         _hasher = hasher;
-        _bits = new BitArray(hasher.NumberOfItems, fullSet);
+        var numberOfItems = hasher.NumberOfItems;
+        _bits = BitArray.CreateBitArray(numberOfItems, fullSet);
+        _popCount = fullSet
+            ? numberOfItems
+            : 0;
     }
 
-    public int Size => _bits.Size;
-    public int Count => _bits.PopCount;
+    /// <summary>
+    /// The footprint of the underlying BitArray - how many uints it logically represents.
+    /// </summary>
+    public int Size => _bits.Length;
+    public int Count => _popCount;
 
     public bool Add(T item)
     {
         var hash = _hasher.Hash(item);
-        return _bits.SetBit(hash);
+        return BitArray.SetBit(new Span<uint>(_bits), hash, ref _popCount);
     }
 
     void ICollection<T>.Add(T item) => Add(item);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Clear() => _bits.Clear();
+    public void Clear()
+    {
+        new Span<uint>(_bits).Clear();
+        _popCount = 0;
+    }
 
     [Pure]
     public bool Contains(T item)
     {
         var hash = _hasher.Hash(item);
-        return _bits.GetBit(hash);
+        return BitArray.GetBit(new ReadOnlySpan<uint>(_bits), hash);
     }
 
     public bool Remove(T item)
     {
         var hash = _hasher.Hash(item);
-        return _bits.ClearBit(hash);
+        return BitArray.ClearBit(new Span<uint>(_bits), hash, ref _popCount);
+    }
+
+    public void OnNumberOfItemsChanged(int numberOfItems)
+    {
+        BitArray.SetLength(ref _bits, numberOfItems);
     }
 
     [Pure]
     public T[] ToArray()
     {
-        var count = _bits.PopCount;
+        var count = _popCount;
 
         if (count == 0)
             return Array.Empty<T>();
@@ -60,7 +79,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-        var iterator = new BitBasedEnumerator<T>(_hasher, _bits.AsReadOnlySpan(), _bits.PopCount);
+        var iterator = new BitBasedEnumerator<T>(_hasher, new ReadOnlySpan<uint>(_bits), _popCount);
         while (iterator.MoveNext())
         {
             array[arrayIndex++] = iterator.Current;
@@ -69,11 +88,11 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSetEnumerable<T> ToSimpleEnumerable() => new(_hasher, _bits.AsReadOnlySpan(), _bits.PopCount);
+    public SimpleSetEnumerable<T> ToSimpleEnumerable() => new(_hasher, new ReadOnlySpan<uint>(_bits), _popCount);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitBasedEnumerator<T> GetEnumerator() => new(_hasher, _bits.AsReadOnlySpan(), _bits.PopCount);
+    public BitBasedEnumerator<T> GetEnumerator() => new(_hasher, new ReadOnlySpan<uint>(_bits), _popCount);
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);
@@ -90,164 +109,217 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
         public ReferenceTypeEnumerator(SimpleSet<T> set)
         {
             _hasher = set._hasher;
-            _bitEnumerator = set._bits.GetEnumerator();
+            _bitEnumerator = new BitArray.ReferenceTypeBitEnumerator(set._bits, set._popCount);
         }
 
         public bool MoveNext() => _bitEnumerator.MoveNext();
-        public void Reset() => _bitEnumerator.Reset();
         public T Current => _hasher.UnHash(_bitEnumerator.Current);
 
+        void IEnumerator.Reset() => throw new InvalidOperationException("Cannot reset");
         void IDisposable.Dispose() { }
         object IEnumerator.Current => Current!;
     }
 
-    [Pure]
-    private BitArray BitsFromEnumerable(IEnumerable<T> other)
+    private void GetBitsFromEnumerable(Span<uint> buffer, IEnumerable<T> other)
     {
         if (other is SimpleSet<T> set)
-            return set._bits;
-
-        var result = new BitArray(_hasher.NumberOfItems);
+        {
+            new ReadOnlySpan<uint>(set._bits).CopyTo(buffer);
+            return;
+        }
 
         foreach (var item in other)
         {
             var index = _hasher.Hash(item);
-            result.SetBit(index);
+            BitArray.SetBit(buffer, index);
         }
-
-        return result;
     }
 
     public void UnionWith(IEnumerable<T> other)
     {
-        var otherBits = BitsFromEnumerable(other);
-        _bits.UnionWith(otherBits.AsReadOnlySpan());
+        var bufferSize = _hasher.NumberOfItems;
+        Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
+            ? new uint[bufferSize]
+            : stackalloc uint[bufferSize];
+
+        GetBitsFromEnumerable(otherBitBuffer, other);
+        BitArray.UnionWith(new Span<uint>(_bits), otherBitBuffer, ref _popCount);
     }
 
     public void UnionWith(SimpleSet<T> other)
     {
-        var otherBits = other._bits;
-        _bits.UnionWith(otherBits.AsReadOnlySpan());
+        var bufferSize = _hasher.NumberOfItems;
+        Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
+            ? new uint[bufferSize]
+            : stackalloc uint[bufferSize];
+
+        GetBitsFromEnumerable(otherBitBuffer, other);
+        BitArray.UnionWith(new Span<uint>(_bits), otherBitBuffer, ref _popCount);
     }
 
     public void IntersectWith(IEnumerable<T> other)
     {
-        var otherBits = BitsFromEnumerable(other);
-        _bits.IntersectWith(otherBits.AsReadOnlySpan());
+        var bufferSize = _hasher.NumberOfItems;
+        Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
+            ? new uint[bufferSize]
+            : stackalloc uint[bufferSize];
+
+        GetBitsFromEnumerable(otherBitBuffer, other);
+        BitArray.IntersectWith(new Span<uint>(_bits), otherBitBuffer, ref _popCount);
     }
 
     public void IntersectWith(SimpleSet<T> other)
     {
         var otherBits = other._bits;
-        _bits.IntersectWith(otherBits.AsReadOnlySpan());
+        BitArray.IntersectWith(new Span<uint>(_bits), new ReadOnlySpan<uint>(otherBits), ref _popCount);
     }
 
     public void ExceptWith(IEnumerable<T> other)
     {
-        var otherBits = BitsFromEnumerable(other);
-        _bits.ExceptWith(otherBits.AsReadOnlySpan());
+        var bufferSize = _hasher.NumberOfItems;
+        Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
+            ? new uint[bufferSize]
+            : stackalloc uint[bufferSize];
+
+        GetBitsFromEnumerable(otherBitBuffer, other);
+        BitArray.ExceptWith(new Span<uint>(_bits), otherBitBuffer, ref _popCount);
     }
 
     public void ExceptWith(SimpleSet<T> other)
     {
         var otherBits = other._bits;
-        _bits.ExceptWith(otherBits.AsReadOnlySpan());
+        BitArray.ExceptWith(new Span<uint>(_bits), new ReadOnlySpan<uint>(otherBits), ref _popCount);
     }
 
     public void SymmetricExceptWith(IEnumerable<T> other)
     {
-        var otherBits = BitsFromEnumerable(other);
-        _bits.SymmetricExceptWith(otherBits.AsReadOnlySpan());
+        var bufferSize = _hasher.NumberOfItems;
+        Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
+            ? new uint[bufferSize]
+            : stackalloc uint[bufferSize];
+
+        GetBitsFromEnumerable(otherBitBuffer, other);
+        BitArray.SymmetricExceptWith(new Span<uint>(_bits), otherBitBuffer, ref _popCount);
     }
 
     public void SymmetricExceptWith(SimpleSet<T> other)
     {
         var otherBits = other._bits;
-        _bits.SymmetricExceptWith(otherBits.AsReadOnlySpan());
+        BitArray.SymmetricExceptWith(new Span<uint>(_bits), new ReadOnlySpan<uint>(otherBits), ref _popCount);
     }
 
     [Pure]
     public bool IsSubsetOf(IEnumerable<T> other)
     {
-        var otherBits = BitsFromEnumerable(other);
-        return _bits.IsSubsetOf(otherBits.AsReadOnlySpan());
+        var bufferSize = _hasher.NumberOfItems;
+        Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
+            ? new uint[bufferSize]
+            : stackalloc uint[bufferSize];
+
+        GetBitsFromEnumerable(otherBitBuffer, other);
+        return BitArray.IsSubsetOf(new ReadOnlySpan<uint>(_bits), otherBitBuffer);
     }
 
     [Pure]
     public bool IsSubsetOf(SimpleSet<T> other)
     {
         var otherBits = other._bits;
-        return _bits.IsSubsetOf(otherBits.AsReadOnlySpan());
+        return BitArray.IsSubsetOf(new ReadOnlySpan<uint>(_bits), new ReadOnlySpan<uint>(otherBits));
     }
 
     [Pure]
     public bool IsSupersetOf(IEnumerable<T> other)
     {
-        var otherBits = BitsFromEnumerable(other);
-        return _bits.IsSupersetOf(otherBits.AsReadOnlySpan());
+        var bufferSize = _hasher.NumberOfItems;
+        Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
+            ? new uint[bufferSize]
+            : stackalloc uint[bufferSize];
+
+        GetBitsFromEnumerable(otherBitBuffer, other);
+        return BitArray.IsSupersetOf(new ReadOnlySpan<uint>(_bits), otherBitBuffer);
     }
 
     [Pure]
     public bool IsSupersetOf(SimpleSet<T> other)
     {
         var otherBits = other._bits;
-        return _bits.IsSupersetOf(otherBits.AsReadOnlySpan());
+        return BitArray.IsSupersetOf(new ReadOnlySpan<uint>(_bits), new ReadOnlySpan<uint>(otherBits));
     }
 
     [Pure]
     public bool IsProperSubsetOf(IEnumerable<T> other)
     {
-        var otherBits = BitsFromEnumerable(other);
-        return _bits.IsProperSubsetOf(otherBits.AsReadOnlySpan());
+        var bufferSize = _hasher.NumberOfItems;
+        Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
+            ? new uint[bufferSize]
+            : stackalloc uint[bufferSize];
+
+        GetBitsFromEnumerable(otherBitBuffer, other);
+        return BitArray.IsProperSubsetOf(new ReadOnlySpan<uint>(_bits), otherBitBuffer);
     }
 
     [Pure]
     public bool IsProperSubsetOf(SimpleSet<T> other)
     {
         var otherBits = other._bits;
-        return _bits.IsProperSubsetOf(otherBits.AsReadOnlySpan());
+        return BitArray.IsProperSubsetOf(new ReadOnlySpan<uint>(_bits), new ReadOnlySpan<uint>(otherBits));
     }
 
     [Pure]
     public bool IsProperSupersetOf(IEnumerable<T> other)
     {
-        var otherBits = BitsFromEnumerable(other);
-        return _bits.IsProperSupersetOf(otherBits.AsReadOnlySpan());
+        var bufferSize = _hasher.NumberOfItems;
+        Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
+            ? new uint[bufferSize]
+            : stackalloc uint[bufferSize];
+
+        GetBitsFromEnumerable(otherBitBuffer, other);
+        return BitArray.IsProperSupersetOf(new ReadOnlySpan<uint>(_bits), otherBitBuffer);
     }
 
     [Pure]
     public bool IsProperSupersetOf(SimpleSet<T> other)
     {
         var otherBits = other._bits;
-        return _bits.IsProperSupersetOf(otherBits.AsReadOnlySpan());
+        return BitArray.IsProperSupersetOf(new ReadOnlySpan<uint>(_bits), new ReadOnlySpan<uint>(otherBits));
     }
 
     [Pure]
     public bool Overlaps(IEnumerable<T> other)
     {
-        var otherBits = BitsFromEnumerable(other);
-        return _bits.Overlaps(otherBits.AsReadOnlySpan());
+        var bufferSize = _hasher.NumberOfItems;
+        Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
+            ? new uint[bufferSize]
+            : stackalloc uint[bufferSize];
+
+        GetBitsFromEnumerable(otherBitBuffer, other);
+        return BitArray.Overlaps(new ReadOnlySpan<uint>(_bits), otherBitBuffer);
     }
 
     [Pure]
     public bool Overlaps(SimpleSet<T> other)
     {
         var otherBits = other._bits;
-        return _bits.Overlaps(otherBits.AsReadOnlySpan());
+        return BitArray.Overlaps(new ReadOnlySpan<uint>(_bits), new ReadOnlySpan<uint>(otherBits));
     }
 
     [Pure]
     public bool SetEquals(IEnumerable<T> other)
     {
-        var otherBits = BitsFromEnumerable(other);
-        return _bits.SetEquals(otherBits.AsReadOnlySpan());
+        var bufferSize = _hasher.NumberOfItems;
+        Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
+            ? new uint[bufferSize]
+            : stackalloc uint[bufferSize];
+
+        GetBitsFromEnumerable(otherBitBuffer, other);
+        return BitArray.SetEquals(new ReadOnlySpan<uint>(_bits), otherBitBuffer);
     }
 
     [Pure]
     public bool SetEquals(SimpleSet<T> other)
     {
         var otherBits = other._bits;
-        return _bits.SetEquals(otherBits.AsReadOnlySpan());
+        return BitArray.SetEquals(new ReadOnlySpan<uint>(_bits), new ReadOnlySpan<uint>(otherBits));
     }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]

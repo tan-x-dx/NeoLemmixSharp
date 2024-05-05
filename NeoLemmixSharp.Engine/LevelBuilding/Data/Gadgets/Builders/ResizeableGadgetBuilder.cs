@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
@@ -29,12 +30,15 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
             gadgetWidth,
             gadgetHeight);
 
+        var itemTracker = new ItemTracker<Lemming>(lemmingHasher);
+        LevelScreen.LemmingManager.RegisterItemForLemmingCountTracking(itemTracker);
+
         return new ResizeableGadget(
             gadgetData.Id,
             GadgetBehaviour,
             gadgetData.Orientation,
             gadgetBounds,
             null,
-            new ItemTracker<Lemming>(lemmingHasher));
+            itemTracker);
     }
 }

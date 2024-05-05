@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
-public sealed class SpacialHashGrid<T>
+public sealed class SpacialHashGrid<T> : IItemCountListener
     where T : class, IRectangularBounds
 {
     private readonly IPerfectHasher<T> _hasher;
@@ -19,10 +19,10 @@ public sealed class SpacialHashGrid<T>
     private readonly int _chunkSizeBitShift;
     private readonly int _numberOfHorizontalChunks;
     private readonly int _numberOfVerticalChunks;
-    private readonly int _bitArraySize;
 
-    private readonly uint[] _setUnionScratchSpace;
-    private readonly uint[] _allBits;
+    private int _bitArraySize;
+    private uint[] _setUnionScratchSpace;
+    private uint[] _allBits;
 
     private LevelPosition _previousQueryTopLeftChunk;
     private LevelPosition _previousQueryBottomRightChunk;
@@ -140,8 +140,7 @@ public sealed class SpacialHashGrid<T>
 
     public void AddItem(T item)
     {
-        if (!_allTrackedItems.Add(item))
-            throw new InvalidOperationException("Item added twice!");
+        _allTrackedItems.Add(item);
 
         var topLeftChunk = GetChunkForPoint(item.TopLeftPixel);
         var bottomRightChunk = GetChunkForPoint(item.BottomRightPixel);
@@ -201,8 +200,7 @@ public sealed class SpacialHashGrid<T>
 
     public void RemoveItem(T item)
     {
-        if (!_allTrackedItems.Remove(item))
-            throw new InvalidOperationException("Item not registered!");
+        _allTrackedItems.Remove(item);
 
         var topLeftChunk = GetChunkForPoint(item.TopLeftPixel);
         var bottomRightChunk = GetChunkForPoint(item.BottomRightPixel);
@@ -364,5 +362,25 @@ public sealed class SpacialHashGrid<T>
         Add,
         Remove,
         Union
+    }
+
+    public void OnNumberOfItemsChanged(int numberOfItems)
+    {
+        var newBitArraySize = (numberOfItems + BitArray.Mask) >> BitArray.Shift;
+
+        if (newBitArraySize <= _bitArraySize)
+            return;
+
+        _bitArraySize = newBitArraySize;
+
+        _setUnionScratchSpace = new uint[_bitArraySize];
+        _allBits = new uint[_bitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];
+
+        foreach (var item in _allTrackedItems)
+        {
+            AddItem(item);
+        }
+
+        ClearCachedData();
     }
 }

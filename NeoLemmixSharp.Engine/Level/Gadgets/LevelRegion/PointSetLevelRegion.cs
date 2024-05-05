@@ -1,7 +1,7 @@
-﻿using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
@@ -10,7 +10,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
     private const int DimensionCutoffSize = 128;
     private const int AreaCutoffSize = 128 * 128;
 
-    private readonly BitArray _levelPositions;
+    private readonly uint[] _levelPositionBits;
     private readonly LevelPosition _offset;
 
     private readonly int _minimumBoundingBoxWidth;
@@ -34,7 +34,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
         if (totalNumberOfPoints > AreaCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
 
-        _levelPositions = new BitArray(totalNumberOfPoints);
+        _levelPositionBits = BitArray.CreateBitArray(totalNumberOfPoints, false);
 
         foreach (var levelPosition in points)
         {
@@ -42,7 +42,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
             var y = levelPosition.Y - minimumBoundingBox.P1Y;
 
             var index = IndexFor(x, y);
-            _levelPositions.SetBit(index);
+            BitArray.SetBit(new Span<uint>(_levelPositionBits), index);
         }
 
         _offset = minimumBoundingBox.GetTopLeftPosition();
@@ -58,7 +58,7 @@ public sealed class PointSetLevelRegion : ILevelRegion
                levelPosition.Y >= 0 &&
                levelPosition.X < _minimumBoundingBoxWidth &&
                levelPosition.Y < _minimumBoundingBoxHeight &&
-               _levelPositions.GetBit(index);
+               BitArray.GetBit(new ReadOnlySpan<uint>(_levelPositionBits), index);
     }
 
     [Pure]
