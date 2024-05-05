@@ -217,13 +217,13 @@ public sealed class LemmingState
             : _team.SkinColor;
     }
 
-    public void SetRawData(LemmingState otherLemmingState)
+    public void SetRawDataFromOther(LemmingState otherLemmingState)
     {
         _team = otherLemmingState._team;
         _states = otherLemmingState._states;
     }
 
-    public void SetRawData(uint rawData)
+    public void SetRawDataFromOther(uint rawData)
     {
         _states = rawData;
         UpdateHairAndBodyColors();

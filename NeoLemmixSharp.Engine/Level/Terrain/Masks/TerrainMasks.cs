@@ -66,11 +66,10 @@ public static partial class TerrainMasks
     ///
     /// This method deals with lemming orientations by itself!
     /// </summary>
-    public static void ApplyMinerMask(
-        Lemming lemming,
+    public static void ApplyMinerMask(Lemming lemming,
+        int frame,
         int offsetX,
-        int offsetY,
-        int frame)
+        int offsetY)
     {
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;

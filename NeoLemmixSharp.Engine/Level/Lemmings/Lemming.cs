@@ -402,14 +402,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         CountDownAction = NoneAction.Instance;
     }
 
-    public void SetRawData(Team team, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
-    {
-        State.SetRawData(rawStateData);
-        State.TeamAffiliation = team;
-        Orientation = orientation;
-        FacingDirection = facingDirection;
-    }
-
     public void OnRemoval(LemmingRemovalReason removalReason)
     {
         CurrentAction = NoneAction.Instance;
@@ -423,7 +415,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         return new Span<LevelPosition>(_jumperPositions);
     }
 
-    public void SetRawData(Lemming otherLemming)
+    public void SetRawDataFromOther(Lemming otherLemming)
     {
         _jumperPositions = otherLemming._jumperPositions;
 
@@ -462,12 +454,20 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         NextAction = otherLemming.NextAction;
 
         Renderer = otherLemming.Renderer;
-        State.SetRawData(otherLemming.State);
+        State.SetRawDataFromOther(otherLemming.State);
 
         TopLeftPixel = otherLemming.TopLeftPixel;
         BottomRightPixel = otherLemming.BottomRightPixel;
         PreviousTopLeftPixel = otherLemming.PreviousTopLeftPixel;
         PreviousBottomRightPixel = otherLemming.PreviousBottomRightPixel;
+    }
+
+    public void SetRawDataFromOther(Team team, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
+    {
+        State.SetRawDataFromOther(rawStateData);
+        State.TeamAffiliation = team;
+        Orientation = orientation;
+        FacingDirection = facingDirection;
     }
 
     int IIdEquatable<Lemming>.Id => Id;

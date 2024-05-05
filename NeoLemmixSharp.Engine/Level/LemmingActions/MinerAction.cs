@@ -37,9 +37,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         {
             TerrainMasks.ApplyMinerMask(
                 lemming,
-                0,
-                0,
-                lemming.PhysicsFrame - 1);
+                lemming.PhysicsFrame - 1, 0, 0);
             return true;
         }
 

@@ -33,7 +33,7 @@ public sealed class HatchSpawnData
 
     public void InitialiseLemming(Lemming lemming)
     {
-        lemming.SetRawData(_team, _rawStateData, Orientation, _facingDirection);
+        lemming.SetRawDataFromOther(_team, _rawStateData, Orientation, _facingDirection);
 
         FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         lemming.InitialFall = lemming.CurrentAction == FallerAction.Instance; // could be a walker if eg. spawned inside terrain

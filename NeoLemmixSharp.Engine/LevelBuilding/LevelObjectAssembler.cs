@@ -66,7 +66,7 @@ public sealed class LevelObjectAssembler : IDisposable
                 LevelPosition = new LevelPosition(prototype.X, prototype.Y)
             };
 
-            lemming.State.SetRawData(prototype.State);
+            lemming.State.SetRawDataFromOther(prototype.State);
 
             _lemmings.Add(lemming);
         }

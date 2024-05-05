@@ -211,7 +211,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     public static Lemming SimulateLemming(Lemming lemming, bool checkGadgets)
     {
         var simulationLemming = Lemming.SimulationLemming;
-        simulationLemming.SetRawData(lemming);
+        simulationLemming.SetRawDataFromOther(lemming);
 
         simulationLemming.Simulate(checkGadgets);
 
@@ -318,7 +318,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         _itemCountListeners.Add(itemCountListener);
     }
 
-    public Lemming AddNewLemming(
+    public Lemming CreateNewLemming(
         Orientation orientation,
         FacingDirection facingDirection,
         LemmingAction currentAction,
