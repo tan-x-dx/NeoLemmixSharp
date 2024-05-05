@@ -39,7 +39,9 @@ public sealed class LemmingState
     public Color BodyColor { get; private set; }
 
     public bool HasPermanentSkill => (_states & PermanentSkillBitMask) != 0U;
-    // Must be active and NOT zombie and NOT neutral
+    /// <summary>
+    /// Must be active and NOT zombie and NOT neutral
+    /// </summary>
     public bool CanHaveSkillsAssigned => (_states & AssignableSkillBitMask) == (1U << ActiveBitIndex);
 
     public bool IsClimber
