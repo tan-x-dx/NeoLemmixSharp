@@ -147,13 +147,8 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
 
     public void UnionWith(SimpleSet<T> other)
     {
-        var bufferSize = _hasher.NumberOfItems;
-        Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
-            ? new uint[bufferSize]
-            : stackalloc uint[bufferSize];
-
-        GetBitsFromEnumerable(otherBitBuffer, other);
-        BitArrayHelpers.UnionWith(new Span<uint>(_bits), otherBitBuffer, ref _popCount);
+        var otherBits = other._bits;
+        BitArrayHelpers.UnionWith(new Span<uint>(_bits), new ReadOnlySpan<uint>(otherBits), ref _popCount);
     }
 
     public void IntersectWith(IEnumerable<T> other)
