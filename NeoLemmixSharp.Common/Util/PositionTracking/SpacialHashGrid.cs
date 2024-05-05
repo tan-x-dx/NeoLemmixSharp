@@ -371,6 +371,8 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         if (newBitArraySize <= _bitArraySize)
             return;
 
+        _allTrackedItems.OnNumberOfItemsChanged(numberOfItems);
+
         _bitArraySize = newBitArraySize;
 
         _setUnionScratchSpace = new uint[_bitArraySize];

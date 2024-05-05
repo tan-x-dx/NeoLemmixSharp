@@ -20,12 +20,13 @@ public sealed class ClonerSkill : LemmingSkill
     {
         var newLemming = LevelScreen.LemmingManager.CreateNewLemming(
             lemming.Orientation,
-            lemming.FacingDirection.GetOpposite(),
+            lemming.FacingDirection,
             lemming.CurrentAction,
             lemming.State.TeamAffiliation,
             lemming.LevelPosition);
 
         newLemming.SetRawDataFromOther(lemming);
+        newLemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
 
         var newLemmingCurrentAction = newLemming.CurrentAction;
 

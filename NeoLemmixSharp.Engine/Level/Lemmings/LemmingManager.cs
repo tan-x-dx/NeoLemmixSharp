@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Rendering;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -109,6 +110,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         else
         {
             LemmingsOut++;
+            UpdateControlPanel();
         }
     }
 
@@ -205,6 +207,11 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
         LemmingsRemoved++;
         lemming.OnRemoval(removalReason);
+        UpdateControlPanel();
+    }
+
+    private void UpdateControlPanel()
+    {
         LevelScreen.LevelControlPanel.TextualData.SetLemmingData(LemmingsOut - LemmingsRemoved);
     }
 
@@ -327,7 +334,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     {
         var itemCount = _lemmings.Count;
 
-        var lemming = new Lemming(
+        var newLemming = new Lemming(
             itemCount,
             orientation,
             facingDirection,
@@ -337,9 +344,12 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             LevelPosition = levelPosition
         };
 
-        _lemmings.Add(lemming);
+        _lemmings.Add(newLemming);
+        LevelScreenRenderer.Instance.AddLemmingRenderer(newLemming.Renderer);
+        newLemming.Initialise();
         itemCount++;
-        _lemmingPositionHelper.AddItem(lemming);
+        LemmingsOut++;
+        UpdateControlPanel();
 
         var itemCountListenersSpan = CollectionsMarshal.AsSpan(_itemCountListeners);
         foreach (var itemCountListener in itemCountListenersSpan)
@@ -347,7 +357,9 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             itemCountListener.OnNumberOfItemsChanged(itemCount);
         }
 
-        return lemming;
+        _lemmingPositionHelper.AddItem(newLemming);
+
+        return newLemming;
     }
 
     int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Count;

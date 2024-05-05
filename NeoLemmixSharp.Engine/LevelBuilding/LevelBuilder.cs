@@ -99,7 +99,7 @@ public sealed class LevelBuilder : IDisposable
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(_contentManager);
 
-        var (behindTerrainSprites, inFrontOfTerrainSprites) = _levelObjectAssembler.GetLevelSprites();
+        _levelObjectAssembler.GetLevelSprites(out var behindTerrainSprites, out var inFrontOfTerrainSprites, out var lemmingSprites);
         var levelCursorSprite = CommonSprites.GetLevelCursorSprite(levelCursor);
         var backgroundRenderer = LevelBuildingHelpers.GetBackgroundRenderer(levelData, levelViewport);
 
@@ -109,6 +109,7 @@ public sealed class LevelBuilder : IDisposable
             levelViewport,
             behindTerrainSprites,
             inFrontOfTerrainSprites,
+            lemmingSprites,
             backgroundRenderer,
             terrainRenderer);
 

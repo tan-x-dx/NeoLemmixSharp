@@ -226,7 +226,7 @@ end;
 
     private void HandleSkillAssignment()
     {
-        if (_inputController.LeftMouseButtonAction.IsActionUp)
+        if (!_inputController.LeftMouseButtonAction.IsPressed)
             return;
 
         var lemming = _levelCursor.CurrentlyHighlightedLemming;

@@ -102,7 +102,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         FacingDirection = FacingDirection.RightInstance;
         CurrentAction = NoneAction.Instance;
         State = new LemmingState(this, Team.AllItems[LevelConstants.ClassicTeamId]);
-        Renderer = null!;
+        Renderer = new LemmingRenderer(this);
     }
 
     public void Initialise()
@@ -453,7 +453,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         CurrentAction = otherLemming.CurrentAction;
         NextAction = otherLemming.NextAction;
 
-        Renderer = otherLemming.Renderer;
         State.SetRawDataFromOther(otherLemming.State);
 
         TopLeftPixel = otherLemming.TopLeftPixel;
