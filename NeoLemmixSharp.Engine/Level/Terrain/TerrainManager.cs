@@ -121,8 +121,13 @@ public sealed class TerrainManager
             !destructionMask.CanDestroyPixel(pixel, orientation, facingDirection))
             return;
 
+        var previousValue = pixel;
         pixel = PixelType.Empty;
+        if (pixel == previousValue)
+            return;
+
         _terrainRenderer.SetPixelColor(pixelToErase.X, pixelToErase.Y, 0U);
+        LevelScreen.PixelChangeCount++;
     }
 
     public void SetSolidPixel(LevelPosition pixelToSet, uint color)
@@ -137,8 +142,13 @@ public sealed class TerrainManager
         if (pixel != PixelType.Empty)
             return;
 
+        var previousValue = pixel;
         pixel |= PixelType.SolidToAllOrientations;
+        if (pixel == previousValue)
+            return;
+
         _terrainRenderer.SetPixelColor(pixelToSet.X, pixelToSet.Y, color);
+        LevelScreen.PixelChangeCount++;
     }
 
     public void SetBlockerMaskPixel(LevelPosition pixelToSet, PixelType pixelTypeMask, bool set)

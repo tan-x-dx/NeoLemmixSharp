@@ -1,6 +1,9 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -72,6 +75,10 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         _levelRenderer.DrawToScreen(spriteBatch);
         _controlPanelRenderer.DrawToScreen(spriteBatch);
         _levelCursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
+
+        Span<int> foo = stackalloc int[5];
+        TextRenderingHelpers.WriteDigits(foo, LevelScreen.PixelChangeCount);
+        FontBank.MenuFont.RenderTextSpan(spriteBatch, foo, 20, 20, 1, Color.White);
 
         spriteBatch.End();
     }
