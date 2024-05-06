@@ -9,51 +9,54 @@ using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class TerrainBuilder : IDisposable
+public sealed class TerrainBuilder
 {
     private readonly GraphicsDevice _graphicsDevice;
+    private readonly LevelData _levelData;
 
-    private readonly List<TerrainArchetypeData> _terrainArchetypes = new();
-    private readonly List<TerrainGroup> _terrainGroups = new();
+    private readonly RenderTarget2D _terrainTexture;
+    private readonly uint[] _terrainColors;
+    private readonly PixelType[] _terrainPixels;
 
-    private Texture2D _terrainTexture;
-    private PixelType[] _terrainPixels;
-
-    public TerrainBuilder(GraphicsDevice graphicsDevice)
+    public TerrainBuilder(GraphicsDevice graphicsDevice, LevelData levelData)
     {
         _graphicsDevice = graphicsDevice;
+        _levelData = levelData;
+
+        _terrainTexture = new RenderTarget2D(
+            _graphicsDevice,
+            _levelData.LevelWidth,
+            _levelData.LevelHeight,
+            false,
+            _graphicsDevice.PresentationParameters.BackBufferFormat,
+            DepthFormat.Depth24,
+            8,
+            RenderTargetUsage.DiscardContents);
+
+        _terrainPixels = new PixelType[_levelData.LevelWidth * _levelData.LevelHeight];
+
+        _terrainColors = new uint[_levelData.LevelWidth * _levelData.LevelHeight];
     }
 
-    public void BuildTerrain(LevelData levelData)
+    public void BuildTerrain()
     {
-        _terrainArchetypes.AddRange(levelData.TerrainArchetypeData);
-        foreach (var terrainArchetypeData in _terrainArchetypes)
+        foreach (var terrainArchetypeData in _levelData.TerrainArchetypeData)
         {
             LoadPixelColorData(terrainArchetypeData);
         }
 
-        _terrainGroups.AddRange(levelData.AllTerrainGroups);
-
-        foreach (var terrainGroup in _terrainGroups)
+        foreach (var terrainGroup in _levelData.AllTerrainGroups)
         {
             ProcessTerrainGroup(terrainGroup);
         }
 
-        _terrainTexture = new Texture2D(
-            _graphicsDevice,
-            levelData.LevelWidth,
-            levelData.LevelHeight);
-
-        _terrainPixels = new PixelType[levelData.LevelWidth * levelData.LevelHeight];
-
-        var uintData = new uint[levelData.LevelWidth * levelData.LevelHeight];
         var textureData = new PixelColorData(
-            levelData.LevelWidth,
-            levelData.LevelHeight,
-            uintData);
+            _levelData.LevelWidth,
+            _levelData.LevelHeight,
+            _terrainColors);
 
-        DrawTerrainPieces(levelData.AllTerrainData, textureData, 0, 0);
-        _terrainTexture.SetData(uintData);
+        DrawTerrainPieces(_levelData.AllTerrainData, textureData, 0, 0);
+        _terrainTexture.SetData(_terrainColors);
     }
 
     private static void ProcessTerrainGroup(TerrainGroup terrainGroup)
@@ -86,7 +89,7 @@ public sealed class TerrainBuilder : IDisposable
             }
             else
             {
-                var textureGroup = _terrainGroups.First(tg => tg.GroupName == terrainData.GroupName);
+                var textureGroup = _levelData.AllTerrainGroups.First(tg => tg.GroupName == terrainData.GroupName);
                 DrawTerrainPieces(
                     textureGroup.TerrainDatas,
                     targetData,
@@ -102,7 +105,7 @@ public sealed class TerrainBuilder : IDisposable
         int dx,
         int dy)
     {
-        var terrainArchetypeData = _terrainArchetypes[terrainData.TerrainArchetypeId];
+        var terrainArchetypeData = _levelData.TerrainArchetypeData[terrainData.TerrainArchetypeId];
         var sourcePixelColorData = terrainArchetypeData.TerrainPixelColorData;
 
         var dihedralTransformation = new DihedralTransformation(
@@ -204,7 +207,7 @@ public sealed class TerrainBuilder : IDisposable
 
     private static bool PixelColorIsSubstantial(uint color)
     {
-        var alpha = color >> 24 & 0xffU;
+        var alpha = (color >> 24) & 0xffU;
         return alpha >= LevelConstants.MinimumSubstantialAlphaValue;
     }
 
@@ -224,19 +227,18 @@ public sealed class TerrainBuilder : IDisposable
         terrainArchetypeData.TerrainPixelColorData = pixelColorData;
     }
 
+    public uint[] GetTerrainColors()
+    {
+        return _terrainColors;
+    }
+
     public PixelType[] GetPixelData()
     {
         return _terrainPixels;
     }
 
-    public Texture2D GetTerrainTexture()
+    public RenderTarget2D GetTerrainTexture()
     {
         return _terrainTexture;
-    }
-
-    public void Dispose()
-    {
-        _terrainArchetypes.Clear();
-        _terrainGroups.Clear();
     }
 }

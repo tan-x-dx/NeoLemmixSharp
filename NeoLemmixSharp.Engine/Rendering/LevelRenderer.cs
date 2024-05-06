@@ -48,6 +48,8 @@ public sealed class LevelRenderer : IDisposable
 
     public void RenderLevel(SpriteBatch spriteBatch)
     {
+        _terrainRenderer.UpdateTerrainTexture(spriteBatch);
+
         _graphicsDevice.SetRenderTarget(_levelRenderTarget);
         spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
 

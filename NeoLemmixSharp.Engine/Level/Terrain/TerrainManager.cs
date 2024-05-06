@@ -7,7 +7,6 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
-using NeoLemmixSharp.Engine.Rendering;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -18,7 +17,7 @@ public sealed class TerrainManager
     private readonly PixelType[] _pixels;
     private readonly GadgetManager _gadgetManager;
 
-    private readonly TerrainRenderer _terrainRenderer;
+    private readonly TerrainPainter _terrainPainter;
 
     public IHorizontalBoundaryBehaviour HorizontalBoundaryBehaviour { get; }
     public IVerticalBoundaryBehaviour VerticalBoundaryBehaviour { get; }
@@ -29,14 +28,14 @@ public sealed class TerrainManager
     public TerrainManager(
         PixelType[] pixels,
         GadgetManager gadgetManager,
-        TerrainRenderer terrainRenderer,
+        TerrainPainter terrainPainter,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _pixels = pixels;
         _gadgetManager = gadgetManager;
 
-        _terrainRenderer = terrainRenderer;
+        _terrainPainter = terrainPainter;
 
         HorizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
@@ -126,7 +125,11 @@ public sealed class TerrainManager
         if (pixel == previousValue)
             return;
 
-        _terrainRenderer.SetPixelColor(pixelToErase.X, pixelToErase.Y, 0U);
+        _terrainPainter.RecordPixelChange(
+            pixelToErase,
+            0U,
+            previousValue,
+            pixel);
         LevelScreen.PixelChangeCount++;
     }
 
@@ -147,7 +150,8 @@ public sealed class TerrainManager
         if (pixel == previousValue)
             return;
 
-        _terrainRenderer.SetPixelColor(pixelToSet.X, pixelToSet.Y, color);
+        //_terrainRenderer.SetPixelColor(pixelToSet.X, pixelToSet.Y, color);
+        _terrainPainter.RecordPixelChange(pixelToSet, color, previousValue, pixel);
         LevelScreen.PixelChangeCount++;
     }
 

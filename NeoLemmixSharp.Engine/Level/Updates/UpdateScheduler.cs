@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 
 namespace NeoLemmixSharp.Engine.Level.Updates;
@@ -31,6 +32,7 @@ public sealed class UpdateScheduler
     private int _elapsedTicksModuloFramesPerSecond;
 
     public bool DoneAssignmentThisFrame { get; set; }
+    public int ElapsedTicks => _elapsedTicks;
 
     public UpdateScheduler(
         LevelControlPanel levelControlPanel,
