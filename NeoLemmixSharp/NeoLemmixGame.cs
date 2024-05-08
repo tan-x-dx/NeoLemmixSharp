@@ -46,7 +46,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
     {
         _graphics = new GraphicsDeviceManager(this)
         {
-            PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8
+            PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8,
+            SynchronizeWithVerticalRetrace = false
         };
 
         Content.RootDirectory = "Content";
