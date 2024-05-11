@@ -1,28 +1,32 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain;
 
 public sealed class TerrainPainter
 {
     private readonly PixelChangeList _pixelChangeList = new();
+    private readonly Texture2D _terrainTexture;
     private readonly PixelType[] _terrainPixelTypes;
+    private readonly Color[] _terrainColors;
     private readonly int _terrainWidth;
-
-    private readonly uint[] _terrainColors;
 
     private int _firstIndexOfFrameUpdates;
 
     public TerrainPainter(
+        Texture2D terrainTexture,
         PixelType[] terrainPixelTypes,
-        uint[] terrainColors,
+        Color[] terrainColors,
         int terrainWidth)
     {
+        _terrainTexture = terrainTexture;
         _terrainPixelTypes = terrainPixelTypes;
         _terrainColors = terrainColors;
         _terrainWidth = terrainWidth;
     }
 
-    public void RecordPixelChange(LevelPosition pixel, uint toColor, PixelType fromPixelType, PixelType toPixelType)
+    public void RecordPixelChange(LevelPosition pixel, Color toColor, PixelType fromPixelType, PixelType toPixelType)
     {
         var previousLatestFrameWithUpdate = _pixelChangeList.LatestFrameWithChange();
         var currentLatestFrameWithUpdate = LevelScreen.UpdateScheduler.ElapsedTicks;
@@ -39,7 +43,21 @@ public sealed class TerrainPainter
         _pixelChangeList.AddTerrainChangeData(in pixelChangeData);
     }
 
-    public ReadOnlySpan<PixelChangeData> GetLatestPixelChanges()
+    public void RepaintTerrain()
+    {
+        var pixelChanges = GetLatestPixelChanges();
+        if (pixelChanges.Length == 0)
+            return;
+
+        foreach (ref readonly var pixelChangeData in pixelChanges)
+        {
+            _terrainColors[pixelChangeData.Y * _terrainWidth + pixelChangeData.X] = pixelChangeData.ToColor;
+        }
+
+        _terrainTexture.SetData(_terrainColors);
+    }
+
+    private ReadOnlySpan<PixelChangeData> GetLatestPixelChanges()
     {
         var startIndex = _firstIndexOfFrameUpdates;
         _firstIndexOfFrameUpdates = _pixelChangeList.Count;
@@ -48,13 +66,8 @@ public sealed class TerrainPainter
 
     private sealed class PixelChangeList
     {
-        private PixelChangeData[] _terrainChanges;
+        private PixelChangeData[] _terrainChanges = new PixelChangeData[1 << 12];
         private int _count;
-
-        public PixelChangeList()
-        {
-            _terrainChanges = new PixelChangeData[1 << 12];
-        }
 
         public int Count => _count;
 
@@ -109,12 +122,12 @@ public sealed class TerrainPainter
         public readonly int Frame;
         public readonly int X;
         public readonly int Y;
-        public readonly uint FromColor;
-        public readonly uint ToColor;
+        public readonly Color FromColor;
+        public readonly Color ToColor;
         public readonly PixelType FromPixelType;
         public readonly PixelType ToPixelType;
 
-        public PixelChangeData(int frame, int x, int y, uint fromColor, uint toColor, PixelType fromPixelType, PixelType toPixelType)
+        public PixelChangeData(int frame, int x, int y, Color fromColor, Color toColor, PixelType fromPixelType, PixelType toPixelType)
         {
             Frame = frame;
             X = x;

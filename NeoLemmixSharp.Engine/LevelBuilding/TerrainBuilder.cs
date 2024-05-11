@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Terrain;
@@ -15,7 +16,7 @@ public sealed class TerrainBuilder
     private readonly LevelData _levelData;
 
     private readonly RenderTarget2D _terrainTexture;
-    private readonly uint[] _terrainColors;
+    private readonly Color[] _terrainColors;
     private readonly PixelType[] _terrainPixels;
 
     public TerrainBuilder(GraphicsDevice graphicsDevice, LevelData levelData)
@@ -35,7 +36,7 @@ public sealed class TerrainBuilder
 
         _terrainPixels = new PixelType[_levelData.LevelWidth * _levelData.LevelHeight];
 
-        _terrainColors = new uint[_levelData.LevelWidth * _levelData.LevelHeight];
+        _terrainColors = new Color[_levelData.LevelWidth * _levelData.LevelHeight];
     }
 
     public void BuildTerrain()
@@ -117,7 +118,7 @@ public sealed class TerrainBuilder
             for (var y = 0; y < sourcePixelColorData.Height; y++)
             {
                 var sourcePixelColor = sourcePixelColorData[x, y];
-                if (sourcePixelColor == 0U)
+                if (sourcePixelColor == Color.Transparent)
                     continue;
 
                 dihedralTransformation.Transform(
@@ -144,9 +145,9 @@ public sealed class TerrainBuilder
 
                 if (terrainData.Erase)
                 {
-                    if (sourcePixelColor != 0U)
+                    if (sourcePixelColor != Color.Transparent)
                     {
-                        targetPixelColor = 0U;
+                        targetPixelColor = Color.Transparent;
                     }
                 }
                 else if (terrainData.NoOverwrite)
@@ -183,31 +184,27 @@ public sealed class TerrainBuilder
         }
     }
 
-    private static uint BlendColors(uint foreground, uint background)
+    private static Color BlendColors(Color foregroundColor, Color backgroundColor)
     {
-        var fgA = ((foreground >> 24) & 0xffU) / 255d;
-        var fgR = ((foreground >> 16) & 0xffU) / 255d;
-        var fgG = ((foreground >> 8) & 0xffU) / 255d;
-        var fgB = (foreground & 0xffU) / 255d;
-        var bgA = ((background >> 24) & 0xffU) / 255d;
-        var bgR = ((background >> 16) & 0xffU) / 255d;
-        var bgG = ((background >> 8) & 0xffU) / 255d;
-        var bgB = (background & 0xffU) / 255d;
-        var newA = 1.0 - (1.0 - fgA) * (1.0 - bgA);
-        var newR = fgR * fgA / newA + bgR * bgA * (1.0 - fgA) / newA;
-        var newG = fgG * fgA / newA + bgG * bgA * (1.0 - fgA) / newA;
-        var newB = fgB * fgA / newA + bgB * bgA * (1.0 - fgA) / newA;
-        var a = (uint)Math.Clamp(Math.Round(newA * 255d, MidpointRounding.ToPositiveInfinity), 0.0, 255);
-        var r = (uint)Math.Clamp(Math.Round(newR * 255d, MidpointRounding.ToPositiveInfinity), 0.0, 255);
-        var g = (uint)Math.Clamp(Math.Round(newG * 255d, MidpointRounding.ToPositiveInfinity), 0.0, 255);
-        var b = (uint)Math.Clamp(Math.Round(newB * 255d, MidpointRounding.ToPositiveInfinity), 0.0, 255);
+        var fgA = foregroundColor.A / 255f;
+        var fgR = foregroundColor.R / 255f;
+        var fgG = foregroundColor.G / 255f;
+        var fgB = foregroundColor.B / 255f;
+        var bgA = backgroundColor.A / 255f;
+        var bgR = backgroundColor.R / 255f;
+        var bgG = backgroundColor.G / 255f;
+        var bgB = backgroundColor.B / 255f;
+        var newA = 1.0f - (1.0f - fgA) * (1.0f - bgA);
+        var newR = fgR * fgA / newA + bgR * bgA * (1.0f - fgA) / newA;
+        var newG = fgG * fgA / newA + bgG * bgA * (1.0f - fgA) / newA;
+        var newB = fgB * fgA / newA + bgB * bgA * (1.0f - fgA) / newA;
 
-        return (a << 24) | (r << 16) | (g << 8) | b;
+        return new Color(newR, newG, newB, newA);
     }
 
-    private static bool PixelColorIsSubstantial(uint color)
+    private static bool PixelColorIsSubstantial(Color color)
     {
-        var alpha = (color >> 24) & 0xffU;
+        uint alpha = color.A;
         return alpha >= LevelConstants.MinimumSubstantialAlphaValue;
     }
 
@@ -227,7 +224,7 @@ public sealed class TerrainBuilder
         terrainArchetypeData.TerrainPixelColorData = pixelColorData;
     }
 
-    public uint[] GetTerrainColors()
+    public Color[] GetTerrainColors()
     {
         return _terrainColors;
     }

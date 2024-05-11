@@ -82,8 +82,8 @@ public sealed class LevelBuilder : IDisposable
         var terrainTexture = terrainBuilder.GetTerrainTexture();
         var pixelData = terrainBuilder.GetPixelData();
         var terrainColorData = terrainBuilder.GetTerrainColors();
-        var terrainPainter = new TerrainPainter(pixelData, terrainColorData, levelData.LevelWidth);
-        var terrainRenderer = new TerrainRenderer(_graphicsDevice, terrainTexture, terrainPainter, terrainColorData, levelViewport);
+        var terrainPainter = new TerrainPainter(terrainTexture, pixelData, terrainColorData, levelData.LevelWidth);
+        var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
         LevelScreen.SetTerrainPainter(terrainPainter);
 
         var updateScheduler = new UpdateScheduler(
@@ -94,7 +94,8 @@ public sealed class LevelBuilder : IDisposable
             levelTimer,
             lemmingManager,
             gadgetManager,
-            skillSetManager);
+            skillSetManager,
+            terrainPainter);
         LevelScreen.SetUpdateScheduler(updateScheduler);
 
         var terrainManager = new TerrainManager(

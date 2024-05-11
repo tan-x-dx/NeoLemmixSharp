@@ -20,6 +20,7 @@ public sealed class UpdateScheduler
     private readonly LemmingManager _lemmingManager;
     private readonly GadgetManager _gadgetManager;
     private readonly SkillSetManager _skillSetManager;
+    private readonly TerrainPainter _terrainPainter;
 
     private LemmingSkill _queuedSkill = NoneSkill.Instance;
     private Lemming? _queuedSkillLemming;
@@ -42,7 +43,8 @@ public sealed class UpdateScheduler
         LevelTimer levelTimer,
         LemmingManager lemmingManager,
         GadgetManager gadgetManager,
-        SkillSetManager skillSetManager)
+        SkillSetManager skillSetManager,
+        TerrainPainter terrainPainter)
     {
         _levelControlPanel = levelControlPanel;
         _levelCursor = levelCursor;
@@ -52,6 +54,7 @@ public sealed class UpdateScheduler
         _lemmingManager = lemmingManager;
         _gadgetManager = gadgetManager;
         _skillSetManager = skillSetManager;
+        _terrainPainter = terrainPainter;
     }
 
     public void Initialise()
@@ -117,6 +120,7 @@ end;
         HandleCursor();
         TickLevel();
         HandleSkillAssignment();
+        _terrainPainter.RepaintTerrain();
     }
 
     private void TickLevel()

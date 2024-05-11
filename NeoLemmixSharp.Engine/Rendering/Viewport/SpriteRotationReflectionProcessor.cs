@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
@@ -69,7 +70,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
         LevelPosition anchorPoint,
         ItemCreator itemCreator)
     {
-        var pixels = new uint[texture.Width * texture.Height];
+        var pixels = new Color[texture.Width * texture.Height];
         texture.GetData(pixels);
 
         var pixelColorData = new PixelColorData(texture.Width, texture.Height, pixels);
@@ -161,12 +162,12 @@ public sealed class SpriteRotationReflectionProcessor<T>
                 flipHorizontally = facingDirection == FacingDirection.LeftInstance;
             }
 
-            var uints = new uint[originalSpriteWidth * originalSpriteHeight * numberOfFrames * numberOfLayers];
+            var uints = new Color[originalSpriteWidth * originalSpriteHeight * numberOfFrames * numberOfLayers];
             _colorData = new PixelColorData(ThisSpriteWidth * numberOfLayers, ThisSpriteHeight * numberOfFrames, uints);
             DihedralTransformation = new DihedralTransformation(rotNum, flipHorizontally);
         }
 
-        public void Set(uint pixel, int x0, int y0, int layer, int frame)
+        public void Set(Color pixel, int x0, int y0, int layer, int frame)
         {
             DihedralTransformation.Transform(
                 x0,

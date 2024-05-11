@@ -9,6 +9,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain;
 
@@ -127,13 +128,13 @@ public sealed class TerrainManager
 
         _terrainPainter.RecordPixelChange(
             pixelToErase,
-            0U,
+            Color.Transparent,
             previousValue,
             pixel);
         LevelScreen.PixelChangeCount++;
     }
 
-    public void SetSolidPixel(LevelPosition pixelToSet, uint color)
+    public void SetSolidPixel(LevelPosition pixelToSet, Color color)
     {
         if (PositionOutOfBounds(pixelToSet) ||
             _gadgetManager.HasGadgetWithBehaviourAtPosition(pixelToSet, MetalGrateGadgetBehaviour.Instance))
