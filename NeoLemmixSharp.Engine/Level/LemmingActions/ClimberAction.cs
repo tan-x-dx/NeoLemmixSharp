@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -114,4 +115,9 @@ public sealed class ClimberAction : LemmingAction
     protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 0;
+
+    public override LevelPosition GetFootPosition(Lemming lemming, LevelPosition anchorPosition)
+    {
+        return lemming.Orientation.MoveLeft(anchorPosition, lemming.FacingDirection.DeltaX);
+    }
 }
