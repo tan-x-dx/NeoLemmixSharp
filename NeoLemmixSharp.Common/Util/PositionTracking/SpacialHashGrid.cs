@@ -374,16 +374,38 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
         _allTrackedItems.OnNumberOfItemsChanged(numberOfItems);
 
-        _bitArraySize = newBitArraySize;
-
-        _setUnionScratchSpace = new uint[_bitArraySize];
-        _allBits = new uint[_bitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];
-
-        foreach (var item in _allTrackedItems)
-        {
-            AddItem(item);
-        }
-
         ClearCachedData();
+
+        var newBits = new uint[newBitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];
+
+        TransferData(
+            new ReadOnlySpan<uint>(_allBits),
+            _bitArraySize,
+            new Span<uint>(newBits),
+            newBitArraySize);
+
+        _bitArraySize = newBitArraySize;
+        _allBits = newBits;
+        _setUnionScratchSpace = new uint[newBitArraySize];
+    }
+
+    private void TransferData(
+        ReadOnlySpan<uint> oldData,
+        int oldDataSize,
+        Span<uint> newData,
+        int newDataSize)
+    {
+        for (var y = 0; y < _numberOfVerticalChunks; y++)
+        {
+            for (var x = 0; x < _numberOfHorizontalChunks; x++)
+            {
+                var chunkIndex = _numberOfHorizontalChunks * y + x;
+
+                var oldChunk = oldData.Slice(chunkIndex * oldDataSize, oldDataSize);
+                var newChunk = newData.Slice(chunkIndex * newDataSize, newDataSize);
+
+                oldChunk.CopyTo(newChunk);
+            }
+        }
     }
 }
