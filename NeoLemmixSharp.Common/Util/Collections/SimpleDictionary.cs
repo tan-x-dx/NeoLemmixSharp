@@ -88,7 +88,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         set
         {
             var index = _hasher.Hash(key);
-            BitArrayHelpers.SetBit(new Span<uint>(_bits), index);
+            BitArrayHelpers.SetBit(new Span<uint>(_bits), index, ref _popCount);
             _values[index] = value;
         }
     }
