@@ -206,7 +206,16 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         var frame = AnimationFrame + 1;
         if (frame == CurrentAction.NumberOfAnimationFrames)
         {
-            frame = 0;
+            // Floater and Glider start cycle at frame 9!
+            if (CurrentAction == FloaterAction.Instance ||
+                CurrentAction == GliderAction.Instance)
+            {
+                frame = LevelConstants.FloaterGliderStartCycleFrame;
+            }
+            else
+            {
+                frame = 0;
+            }
         }
         AnimationFrame = frame;
 

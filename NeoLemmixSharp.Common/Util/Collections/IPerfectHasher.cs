@@ -1,6 +1,7 @@
 ﻿namespace NeoLemmixSharp.Common.Util.Collections;
 
 public interface IPerfectHasher<T>
+    where T : notnull
 {
     int NumberOfItems { get; }
 

@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
@@ -15,7 +16,6 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -118,27 +118,38 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
     public void Tick(UpdateState updateState, bool isMajorTick)
     {
+        UpdateHatchGroups(updateState, isMajorTick);
+        UpdateLemmings(updateState, isMajorTick);
+
+        ZombifyLemmings();
+    }
+
+    private void UpdateHatchGroups(UpdateState updateState, bool isMajorTick)
+    {
+        if (updateState != UpdateState.FastForward &&
+            !isMajorTick)
+            return;
+
         var lemmingSpan = CollectionsMarshal.AsSpan(_lemmings);
-
-        if (updateState == UpdateState.FastForward ||
-            isMajorTick)
+        foreach (var hatchGroup in AllHatchGroups)
         {
-            foreach (var hatchGroup in AllHatchGroups)
-            {
-                var hatchGadget = hatchGroup.Tick();
+            var hatchGadget = hatchGroup.Tick();
 
-                if (hatchGadget is null)
-                    continue;
+            if (hatchGadget is null)
+                continue;
 
-                var lemming = lemmingSpan[_nextLemmingId++];
+            var lemming = lemmingSpan[_nextLemmingId++];
 
-                lemming.LevelPosition = hatchGadget.SpawnPosition;
-                hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
-                InitialiseLemming(lemming);
-                hatchGroup.OnSpawnLemming();
-            }
+            lemming.LevelPosition = hatchGadget.SpawnPosition;
+            hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
+            InitialiseLemming(lemming);
+            hatchGroup.OnSpawnLemming();
         }
+    }
 
+    private void UpdateLemmings(UpdateState updateState, bool isMajorTick)
+    {
+        var lemmingSpan = CollectionsMarshal.AsSpan(_lemmings);
         foreach (var lemming in lemmingSpan)
         {
             var i = GetTickNumberForLemming(lemming, updateState, isMajorTick);
@@ -149,16 +160,19 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
                 UpdateLemmingPosition(lemming);
             }
         }
+    }
 
-        if (_lemmingsToZombify.Count > 0)
+    private void ZombifyLemmings()
+    {
+        if (_lemmingsToZombify.Count == 0)
+            return;
+
+        foreach (var lemming in _lemmingsToZombify)
         {
-            foreach (var lemming in _lemmingsToZombify)
-            {
-                lemming.State.IsZombie = true;
-            }
-
-            _lemmingsToZombify.Clear();
+            lemming.State.IsZombie = true;
         }
+
+        _lemmingsToZombify.Clear();
     }
 
     private static int GetTickNumberForLemming(Lemming lemming, UpdateState updateState, bool isMajorTick)
@@ -355,7 +369,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         {
             LevelPosition = levelPosition
         };
-        
+
         if (_lemmings.Count == _lemmings.Capacity)
         {
             _lemmings.Capacity = Math.Min(LevelConstants.MaxNumberOfLemmings, _lemmings.Capacity * 2);
@@ -389,7 +403,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     public void Dispose()
     {
         _lemmings.Clear();
-        Array.Clear(_hatchGroups);
+        new Span<HatchGroup>(_hatchGroups).Clear();
         _lemmingPositionHelper.Clear();
         _lemmingsToZombify.Clear();
         _allBlockers.Clear();

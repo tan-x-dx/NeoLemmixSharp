@@ -163,10 +163,8 @@ end;
     private void SetUpdateState(UpdateState updateState)
     {
         _updateState = updateState;
-        var isPaused = updateState == UpdateState.Paused;
-        UpdateControlPanelButtonStatus(ButtonType.Pause, isPaused);
-        var isFastForward = updateState == UpdateState.FastForward;
-        UpdateControlPanelButtonStatus(ButtonType.FastForward, isFastForward);
+        UpdateControlPanelButtonStatus(ButtonType.Pause, updateState == UpdateState.Paused);
+        UpdateControlPanelButtonStatus(ButtonType.FastForward, updateState == UpdateState.FastForward);
     }
 
     private void TickLevel()

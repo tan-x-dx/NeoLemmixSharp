@@ -140,7 +140,8 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
     public void AddItem(T item)
     {
-        _allTrackedItems.Add(item);
+        if (!_allTrackedItems.Add(item))
+            throw new InvalidOperationException("Already tracking item!");
 
         var topLeftChunk = GetChunkForPoint(item.TopLeftPixel);
         var bottomRightChunk = GetChunkForPoint(item.BottomRightPixel);
@@ -200,7 +201,8 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
     public void RemoveItem(T item)
     {
-        _allTrackedItems.Remove(item);
+        if (!_allTrackedItems.Remove(item))
+            throw new InvalidOperationException("Not tracking item!");
 
         var topLeftChunk = GetChunkForPoint(item.TopLeftPixel);
         var bottomRightChunk = GetChunkForPoint(item.BottomRightPixel);
