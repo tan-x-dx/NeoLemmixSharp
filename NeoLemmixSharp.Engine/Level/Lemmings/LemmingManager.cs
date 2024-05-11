@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -41,7 +42,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
     public LemmingManager(
         HatchGroup[] hatchGroups,
-        ICollection<Lemming> lemmings,
+        List<Lemming> lemmings,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
@@ -52,7 +53,8 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         }
         _hatchGroups = hatchGroups;
 
-        _lemmings = new List<Lemming>(lemmings);
+        _lemmings = new List<Lemming>(BitArrayHelpers.ToNextLargestMultipleOf32(lemmings.Count));
+        _lemmings.AddRange(lemmings);
         var lemmingsSpan = CollectionsMarshal.AsSpan(_lemmings);
         IdEquatableItemHelperMethods.ValidateUniqueIds<Lemming>(lemmingsSpan);
         lemmingsSpan.Sort(lemmingsSpan, IdEquatableItemHelperMethods.Compare);
@@ -325,17 +327,27 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         _itemCountListeners.Add(itemCountListener);
     }
 
-    public Lemming CreateNewLemming(
+    public bool CanCreateNewLemming()
+    {
+        return _lemmings.Count < LevelConstants.MaxNumberOfLemmings;
+    }
+
+    public bool TryCreateNewLemming(
         Orientation orientation,
         FacingDirection facingDirection,
         LemmingAction currentAction,
         Team team,
-        LevelPosition levelPosition)
+        LevelPosition levelPosition,
+        out Lemming newLemming)
     {
-        var itemCount = _lemmings.Count;
+        if (_lemmings.Count == LevelConstants.MaxNumberOfLemmings)
+        {
+            newLemming = default!;
+            return false;
+        }
 
-        var newLemming = new Lemming(
-            itemCount,
+        newLemming = new Lemming(
+            _lemmings.Count,
             orientation,
             facingDirection,
             currentAction,
@@ -343,6 +355,11 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         {
             LevelPosition = levelPosition
         };
+        
+        if (_lemmings.Count == _lemmings.Capacity)
+        {
+            _lemmings.Capacity = Math.Min(LevelConstants.MaxNumberOfLemmings, _lemmings.Capacity * 2);
+        }
 
         _lemmings.Add(newLemming);
         LevelScreenRenderer.Instance.AddLemmingRenderer(newLemming.Renderer);
@@ -353,17 +370,16 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         // Use the list's internal capacity as a metric for how many items there are.
         // This will prevent excessive reallocations of arrays, since the list's capacity
         // doubles once filled
-        var lemmingListCapacity = _lemmings.Capacity;
 
         var itemCountListenersSpan = CollectionsMarshal.AsSpan(_itemCountListeners);
         foreach (var itemCountListener in itemCountListenersSpan)
         {
-            itemCountListener.OnNumberOfItemsChanged(lemmingListCapacity);
+            itemCountListener.OnNumberOfItemsChanged(_lemmings.Capacity);
         }
 
         _lemmingPositionHelper.AddItem(newLemming);
 
-        return newLemming;
+        return true;
     }
 
     int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Count;

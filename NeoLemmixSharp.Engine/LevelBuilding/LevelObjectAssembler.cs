@@ -47,7 +47,7 @@ public sealed class LevelObjectAssembler : IDisposable
         return result;
     }
 
-    public ICollection<Lemming> GetLevelLemmings(LevelData levelData)
+    public List<Lemming> GetLevelLemmings(LevelData levelData)
     {
         var allLemmingData = CollectionsMarshal.AsSpan(levelData.AllLemmingData);
 

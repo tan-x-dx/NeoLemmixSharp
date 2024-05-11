@@ -11,6 +11,12 @@ public static class BitArrayHelpers
     public const int Mask = (1 << Shift) - 1;
 
     [Pure]
+    public static int ToNextLargestMultipleOf32(int a)
+    {
+        return ((a + Mask) >> Shift) << Shift;
+    }
+
+    [Pure]
     public static uint[] CreateBitArray(int length, bool setAllBits)
     {
         if (length < 0)

@@ -31,9 +31,7 @@ public sealed class SkillTrackingData
 
     public void SetSkillCount(int skillCount) => SkillCount = skillCount switch
     {
-        >= LevelConstants.InfiniteSkillCount => Skill == ClonerSkill.Instance
-            ? LevelConstants.InfiniteSkillCount - 1
-            : LevelConstants.InfiniteSkillCount,
+        >= LevelConstants.InfiniteSkillCount => LevelConstants.InfiniteSkillCount,
         < 0 => 0,
         _ => skillCount
     };
