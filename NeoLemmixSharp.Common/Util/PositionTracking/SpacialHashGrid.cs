@@ -369,12 +369,11 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
     public void OnNumberOfItemsChanged(int numberOfItems)
     {
-        var newBitArraySize = (numberOfItems + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
-
-        if (newBitArraySize <= _bitArraySize)
-            return;
-
         _allTrackedItems.OnNumberOfItemsChanged(numberOfItems);
+        var newBitArraySize = _allTrackedItems.Size;
+
+        if (_bitArraySize == newBitArraySize)
+            return;
 
         ClearCachedData();
 
