@@ -41,10 +41,8 @@ public static class LevelConstants
 
     public const int MinAllowedSpawnInterval = 4;
     public const int MaxAllowedSpawnInterval = 102;
-
-    public const int BlockerQuantityThreshold = 20;
-
-    public const int MaxNumberOfLemmings = 512;
+    
+    public const int MaxNumberOfLemmings = 1 << 9;
     public const int MaxTimeLimitInSeconds = 99 * 60 + 59; // 99 minutes, 59 seconds
     public const int MaxLevelWidth = 2400;
     public const int MaxLevelHeight = 2400;
