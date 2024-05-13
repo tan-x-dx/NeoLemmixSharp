@@ -58,6 +58,7 @@ public static class BitArrayHelpers
         if (originalBits.Length == 0)
         {
             originalBits = new uint[newArraySize];
+            return;
         }
 
         Array.Resize(ref originalBits, newArraySize);

@@ -24,13 +24,14 @@ public sealed class ClonerSkill : LemmingSkill
 
     public override void AssignToLemming(Lemming lemming)
     {
-        LevelScreen.LemmingManager.TryCreateNewLemming(
-            lemming.Orientation,
-            lemming.FacingDirection,
-            lemming.CurrentAction,
-            lemming.State.TeamAffiliation,
-            lemming.LevelPosition,
-            out var newLemming);
+        if (!LevelScreen.LemmingManager.TryCreateNewLemming(
+                lemming.Orientation,
+                lemming.FacingDirection,
+                lemming.CurrentAction,
+                lemming.State.TeamAffiliation,
+                lemming.LevelPosition,
+                out var newLemming))
+            return;
 
         newLemming.SetRawDataFromOther(lemming);
         newLemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());

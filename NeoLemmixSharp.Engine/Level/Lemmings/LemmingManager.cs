@@ -373,6 +373,16 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         if (_lemmings.Count == _lemmings.Capacity)
         {
             _lemmings.Capacity = Math.Min(LevelConstants.MaxNumberOfLemmings, _lemmings.Capacity * 2);
+
+            // Use the list's internal capacity as a metric for how many items there are.
+            // This will prevent excessive reallocations of arrays, since the list's capacity
+            // doubles once filled
+
+            var itemCountListenersSpan = CollectionsMarshal.AsSpan(_itemCountListeners);
+            foreach (var itemCountListener in itemCountListenersSpan)
+            {
+                itemCountListener.OnNumberOfItemsChanged(_lemmings.Capacity);
+            }
         }
 
         _lemmings.Add(newLemming);
@@ -380,16 +390,6 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         newLemming.Initialise();
         LemmingsOut++;
         UpdateControlPanel();
-
-        // Use the list's internal capacity as a metric for how many items there are.
-        // This will prevent excessive reallocations of arrays, since the list's capacity
-        // doubles once filled
-
-        var itemCountListenersSpan = CollectionsMarshal.AsSpan(_itemCountListeners);
-        foreach (var itemCountListener in itemCountListenersSpan)
-        {
-            itemCountListener.OnNumberOfItemsChanged(_lemmings.Capacity);
-        }
 
         _lemmingPositionHelper.AddItem(newLemming);
 
