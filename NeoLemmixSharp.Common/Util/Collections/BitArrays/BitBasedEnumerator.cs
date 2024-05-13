@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public ref struct BitBasedEnumerator<T>
+    where T : notnull
 {
     private readonly IPerfectHasher<T> _hasher;
     private readonly ReadOnlySpan<uint> _bits;

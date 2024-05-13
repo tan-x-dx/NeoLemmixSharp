@@ -1,20 +1,21 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Identity;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class ItemTracker<T> : IItemCountListener
-    where T : class, IIdEquatable<T>
+    where T : notnull
 {
     private const ulong BigMask = 0xAAAA_AAAA_AAAA_AAAAUL;
 
+    private readonly IPerfectHasher<T> _hasher;
     private ulong[] _longs;
 
     public ItemTracker(IPerfectHasher<T> hasher)
     {
-        var arrayLength = (hasher.NumberOfItems + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
+        _hasher = hasher;
+        var arrayLength = BitArrayHelpers.CalculateBitArrayBufferSize(_hasher.NumberOfItems);
 
         _longs = new ulong[arrayLength];
     }
@@ -31,7 +32,7 @@ public sealed class ItemTracker<T> : IItemCountListener
 
     public int TrackItem(T item)
     {
-        var id = item.Id;
+        var id = _hasher.Hash(item);
 
         var bitIndex = (id & BitArrayHelpers.Mask) << 1;
         var longIndex = id >> BitArrayHelpers.Shift;
@@ -51,7 +52,7 @@ public sealed class ItemTracker<T> : IItemCountListener
 
     public void OnNumberOfItemsChanged(int numberOfItems)
     {
-        var newArraySize = (numberOfItems + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
+        var newArraySize = BitArrayHelpers.CalculateBitArrayBufferSize(numberOfItems);
 
         if (newArraySize <= _longs.Length)
             return;

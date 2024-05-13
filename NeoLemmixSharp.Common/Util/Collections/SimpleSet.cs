@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
+    where T : notnull
 {
     private const int MaxStackAllocSize = 64;
 
@@ -246,7 +247,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
         var bufferSize = BitArrayHelpers.CalculateBitArrayBufferSize(_hasher.NumberOfItems);
         Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
             ? new uint[bufferSize]
-            : stackalloc uint[bufferSize];
+            : stackalloc uint[bufferSize];  
 
         GetBitsFromEnumerable(otherBitBuffer, other);
         return BitArrayHelpers.IsProperSubsetOf(new ReadOnlySpan<uint>(_bits), otherBitBuffer);
