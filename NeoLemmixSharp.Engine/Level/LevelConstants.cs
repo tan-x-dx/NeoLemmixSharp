@@ -41,10 +41,8 @@ public static class LevelConstants
 
     public const int MinAllowedSpawnInterval = 4;
     public const int MaxAllowedSpawnInterval = 102;
-
-    public const int BlockerQuantityThreshold = 20;
-
-    public const int MaxNumberOfLemmings = 500;
+    
+    public const int MaxNumberOfLemmings = 1 << 9;
     public const int MaxTimeLimitInSeconds = 99 * 60 + 59; // 99 minutes, 59 seconds
     public const int MaxLevelWidth = 2400;
     public const int MaxLevelHeight = 2400;
@@ -72,10 +70,10 @@ public static class LevelConstants
 
     private static readonly Color[] ExplosionParticleColors =
     [
-        new Color(0x40, 0x40, 0xE0, 0xFF),
-        new Color(0x00, 0xB0, 0x00, 0xFF),
-        new Color(0xF0, 0xD0, 0xD0, 0xFF),
-        new Color(0xF0, 0x20, 0x20, 0xFF),
+        new Color(0x40, 0x40, 0xE0, 0xF0),
+        new Color(0x00, 0xB0, 0x00, 0xF0),
+        new Color(0xF0, 0xD0, 0xD0, 0xF0),
+        new Color(0xF0, 0x20, 0x20, 0xF0),
         new Color(0x40, 0x40, 0xE0, 0xC0),
         new Color(0x00, 0xB0, 0x00, 0xC0),
         new Color(0xF0, 0xD0, 0xD0, 0xC0),

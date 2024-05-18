@@ -77,7 +77,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LevelPosition FootPosition
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Orientation.MoveUp(LevelPosition, 1);
+        get => CurrentAction.GetFootPosition(this, LevelPosition);
     }
 
     public Lemming(
@@ -206,7 +206,16 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         var frame = AnimationFrame + 1;
         if (frame == CurrentAction.NumberOfAnimationFrames)
         {
-            frame = 0;
+            // Floater and Glider start cycle at frame 9!
+            if (CurrentAction == FloaterAction.Instance ||
+                CurrentAction == GliderAction.Instance)
+            {
+                frame = LevelConstants.FloaterGliderStartCycleFrame;
+            }
+            else
+            {
+                frame = 0;
+            }
         }
         AnimationFrame = frame;
 
@@ -273,8 +282,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     {
         Span<LevelPosition> checkPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
 
-        var orientation = Orientation;
-
         // Use first four entries of span to hold level positions.
         // To fetch gadgets, we need to check all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the minimum bounding box of four level positions:
@@ -283,11 +290,11 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
         var p = LevelPosition;
         checkPositions[0] = p;
-        p = orientation.MoveUp(p, 1);
+        p = CurrentAction.GetFootPosition(this, p);
         checkPositions[1] = p;
         p = PreviousLevelPosition;
         checkPositions[2] = p;
-        p = orientation.MoveUp(p, 1);
+        p = PreviousAction.GetFootPosition(this, p);
         checkPositions[3] = p;
 
         var checkPositionsBounds = new LevelPositionPair(checkPositions[..4]);
@@ -301,20 +308,16 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         var movementHelper = new LemmingMovementHelper(this, checkPositions);
         var length = movementHelper.EvaluateCheckPositions();
 
-        ReadOnlySpan<LevelPosition> checkPositionsReadOnly = checkPositions[..length];
-
-        return CheckGadgetHitBoxCollisions(in gadgetSet, checkPositionsReadOnly);
+        return CheckGadgetHitBoxCollisions(in gadgetSet, checkPositions[..length]);
     }
 
     private bool CheckGadgetHitBoxCollisions(in SimpleSetEnumerable<HitBoxGadget> gadgetSet, ReadOnlySpan<LevelPosition> intermediatePositions)
     {
-        var orientation = Orientation;
-
         foreach (var gadget in gadgetSet)
         {
             foreach (var anchorPosition in intermediatePositions)
             {
-                var footPosition = orientation.MoveUp(anchorPosition, 1);
+                var footPosition = CurrentAction.GetFootPosition(this, anchorPosition);
                 if (!gadget.MatchesLemmingAtPosition(this, anchorPosition) &&
                     !gadget.MatchesLemmingAtPosition(this, footPosition))
                     continue;

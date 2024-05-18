@@ -69,17 +69,6 @@ public sealed class JumperAction : LemmingAction
         return true;
     }
 
-/*
-if (aLemming.LemAction = baJumping) then
-   begin
-     case aLemming.LemJumpProgress of
-       0..5: if aLemming.LemFrame >= aLemming.LemMaxFrame - aLemming.LemFrameDiff then aLemming.LemFrame := 0;
-       6: aLemming.LemFrame := aLemming.LemMaxFrame - aLemming.LemFrameDiff + 1;
-       7..12: if aLemming.LemFrame > aLemming.LemMaxFrame then aLemming.LemFrame := aLemming.LemMaxFrame - aLemming.LemFrameDiff + 2;
-     end;
-   end
-    */
-
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -1;
     protected override int TopLeftBoundsDeltaY(int animationFrame) => 9;
 
@@ -195,6 +184,7 @@ if (aLemming.LemAction = baJumping) then
                     case <= 5:
                         deltaY = n - 5;
                         nextAction = HoisterAction.Instance;
+                        lemming.JumpToHoistAdvance = true;
                         break;
 
                     default:

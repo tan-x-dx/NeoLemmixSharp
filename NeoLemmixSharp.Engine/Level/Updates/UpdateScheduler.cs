@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 
 namespace NeoLemmixSharp.Engine.Level.Updates;
@@ -19,6 +20,7 @@ public sealed class UpdateScheduler
     private readonly LemmingManager _lemmingManager;
     private readonly GadgetManager _gadgetManager;
     private readonly SkillSetManager _skillSetManager;
+    private readonly TerrainPainter _terrainPainter;
 
     private LemmingSkill _queuedSkill = NoneSkill.Instance;
     private Lemming? _queuedSkillLemming;
@@ -31,6 +33,7 @@ public sealed class UpdateScheduler
     private int _elapsedTicksModuloFramesPerSecond;
 
     public bool DoneAssignmentThisFrame { get; set; }
+    public int ElapsedTicks => _elapsedTicks;
 
     public UpdateScheduler(
         LevelControlPanel levelControlPanel,
@@ -40,7 +43,8 @@ public sealed class UpdateScheduler
         LevelTimer levelTimer,
         LemmingManager lemmingManager,
         GadgetManager gadgetManager,
-        SkillSetManager skillSetManager)
+        SkillSetManager skillSetManager,
+        TerrainPainter terrainPainter)
     {
         _levelControlPanel = levelControlPanel;
         _levelCursor = levelCursor;
@@ -50,6 +54,7 @@ public sealed class UpdateScheduler
         _lemmingManager = lemmingManager;
         _gadgetManager = gadgetManager;
         _skillSetManager = skillSetManager;
+        _terrainPainter = terrainPainter;
     }
 
     public void Initialise()
@@ -112,35 +117,10 @@ end;
 
         HandleMouseInput();
         EvaluateGameState();
-        HandleCursor();
         TickLevel();
+        HandleCursor();
         HandleSkillAssignment();
-    }
-
-    private void TickLevel()
-    {
-        if (_updateState == UpdateState.Paused)
-            return;
-
-        var isMajorTick = _elapsedTicksModuloFastForwardSpeed == 0;
-        _lemmingManager.Tick(_updateState, isMajorTick);
-        _gadgetManager.Tick(_updateState, isMajorTick);
-
-        _elapsedTicks++;
-        var elapsedTicksModuloFastForwardSpeed = _elapsedTicksModuloFastForwardSpeed + 1;
-        if (elapsedTicksModuloFastForwardSpeed == EngineConstants.FastForwardSpeedMultiplier)
-        {
-            elapsedTicksModuloFastForwardSpeed = 0;
-        }
-        _elapsedTicksModuloFastForwardSpeed = elapsedTicksModuloFastForwardSpeed;
-
-        var elapsedTicksModuloFramesPerSecond = _elapsedTicksModuloFramesPerSecond + 1;
-        if (elapsedTicksModuloFramesPerSecond == EngineConstants.FramesPerSecond)
-        {
-            _levelTimer.Tick();
-            elapsedTicksModuloFramesPerSecond = 0;
-        }
-        _elapsedTicksModuloFramesPerSecond = elapsedTicksModuloFramesPerSecond;
+        _terrainPainter.RepaintTerrain();
     }
 
     private void HandleMouseInput()
@@ -183,10 +163,34 @@ end;
     private void SetUpdateState(UpdateState updateState)
     {
         _updateState = updateState;
-        var isPaused = updateState == UpdateState.Paused;
-        UpdateControlPanelButtonStatus(ButtonType.Pause, isPaused);
-        var isFastForward = updateState == UpdateState.FastForward;
-        UpdateControlPanelButtonStatus(ButtonType.FastForward, isFastForward);
+        UpdateControlPanelButtonStatus(ButtonType.Pause, updateState == UpdateState.Paused);
+        UpdateControlPanelButtonStatus(ButtonType.FastForward, updateState == UpdateState.FastForward);
+    }
+
+    private void TickLevel()
+    {
+        if (_updateState == UpdateState.Paused)
+            return;
+
+        var isMajorTick = _elapsedTicksModuloFastForwardSpeed == 0;
+        _lemmingManager.Tick(_updateState, isMajorTick);
+        _gadgetManager.Tick(_updateState, isMajorTick);
+
+        _elapsedTicks++;
+        var elapsedTicksModuloFastForwardSpeed = _elapsedTicksModuloFastForwardSpeed + 1;
+        if (elapsedTicksModuloFastForwardSpeed == EngineConstants.FastForwardSpeedMultiplier)
+        {
+            elapsedTicksModuloFastForwardSpeed = 0;
+        }
+        _elapsedTicksModuloFastForwardSpeed = elapsedTicksModuloFastForwardSpeed;
+
+        var elapsedTicksModuloFramesPerSecond = _elapsedTicksModuloFramesPerSecond + 1;
+        if (elapsedTicksModuloFramesPerSecond == EngineConstants.FramesPerSecond)
+        {
+            _levelTimer.Tick();
+            elapsedTicksModuloFramesPerSecond = 0;
+        }
+        _elapsedTicksModuloFramesPerSecond = elapsedTicksModuloFramesPerSecond;
     }
 
     private void HandleCursor()

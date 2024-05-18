@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -85,7 +86,7 @@ public sealed class StackerAction : LemmingAction
         {
             if (!terrainManager.PixelIsSolidToLemming(lemming, brickPosition))
             {
-                terrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
+                terrainManager.SetSolidPixel(brickPosition, Color.Magenta);
                 result = true;
             }
 

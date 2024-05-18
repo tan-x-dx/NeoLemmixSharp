@@ -38,11 +38,6 @@ public sealed class SliderAction : LemmingAction
                lemming.CurrentAction != DrownerAction.Instance;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -6;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 0;
-
     public static bool SliderTerrainChecks(
         Lemming lemming,
         Orientation orientation,
@@ -110,6 +105,16 @@ public sealed class SliderAction : LemmingAction
                     orientation.MatchesVertically(testPosition, lemmingDehoistPosition) &&
                     terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(testPosition, 1)));
         }
+    }
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -6;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 0;
+
+    public override LevelPosition GetFootPosition(Lemming lemming, LevelPosition anchorPosition)
+    {
+        return lemming.Orientation.MoveLeft(anchorPosition, lemming.FacingDirection.DeltaX);
     }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)

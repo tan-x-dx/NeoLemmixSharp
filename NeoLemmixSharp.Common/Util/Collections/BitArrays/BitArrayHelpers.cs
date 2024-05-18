@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
@@ -11,12 +12,25 @@ public static class BitArrayHelpers
     public const int Mask = (1 << Shift) - 1;
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int CalculateBitArrayBufferSize(int length)
+    {
+        return (length + Mask) >> Shift;
+    }
+
+    [Pure]
+    public static int ToNextLargestMultipleOf32(int a)
+    {
+        return ((a + Mask) >> Shift) << Shift;
+    }
+
+    [Pure]
     public static uint[] CreateBitArray(int length, bool setAllBits)
     {
         if (length < 0)
             throw new ArgumentOutOfRangeException(nameof(length), length, "length must be non-negative!");
 
-        var arraySize = (length + Mask) >> Shift;
+        var arraySize = CalculateBitArrayBufferSize(length);
         var result = CollectionsHelper.GetArrayForSize<uint>(arraySize);
 
         if (!setAllBits || arraySize == 0)
@@ -36,7 +50,7 @@ public static class BitArrayHelpers
 
     public static void SetLength(ref uint[] originalBits, int newLength)
     {
-        var newArraySize = (newLength + Mask) >> Shift;
+        var newArraySize = CalculateBitArrayBufferSize(newLength);
 
         if (newArraySize <= originalBits.Length)
             return;
@@ -44,6 +58,7 @@ public static class BitArrayHelpers
         if (originalBits.Length == 0)
         {
             originalBits = new uint[newArraySize];
+            return;
         }
 
         Array.Resize(ref originalBits, newArraySize);

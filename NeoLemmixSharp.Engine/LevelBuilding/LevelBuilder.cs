@@ -20,7 +20,6 @@ public sealed class LevelBuilder : IDisposable
 {
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly TerrainBuilder _terrainBuilder;
     private readonly LevelObjectAssembler _levelObjectAssembler;
 
     public LevelBuilder(
@@ -29,13 +28,13 @@ public sealed class LevelBuilder : IDisposable
     {
         _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;
-        _terrainBuilder = new TerrainBuilder(graphicsDevice);
         _levelObjectAssembler = new LevelObjectAssembler(graphicsDevice);
     }
 
     public LevelScreen BuildLevel(LevelData levelData)
     {
-        _terrainBuilder.BuildTerrain(levelData);
+        var terrainBuilder = new TerrainBuilder(_graphicsDevice, levelData);
+        terrainBuilder.BuildTerrain();
 
         var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
 
@@ -80,18 +79,29 @@ public sealed class LevelBuilder : IDisposable
         var levelViewport = new Viewport(horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetViewport(levelViewport);
 
-        var updateScheduler = new UpdateScheduler(controlPanel, levelViewport, levelCursor, inputController, levelTimer, lemmingManager, gadgetManager, skillSetManager);
-        LevelScreen.SetUpdateScheduler(updateScheduler);
-
-        var terrainTexture = _terrainBuilder.GetTerrainTexture();
+        var terrainTexture = terrainBuilder.GetTerrainTexture();
+        var pixelData = terrainBuilder.GetPixelData();
+        var terrainColorData = terrainBuilder.GetTerrainColors();
+        var terrainPainter = new TerrainPainter(terrainTexture, pixelData, terrainColorData, levelData.LevelWidth);
         var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
+        LevelScreen.SetTerrainPainter(terrainPainter);
 
-        var pixelData = _terrainBuilder.GetPixelData();
+        var updateScheduler = new UpdateScheduler(
+            controlPanel,
+            levelViewport,
+            levelCursor,
+            inputController,
+            levelTimer,
+            lemmingManager,
+            gadgetManager,
+            skillSetManager,
+            terrainPainter);
+        LevelScreen.SetUpdateScheduler(updateScheduler);
 
         var terrainManager = new TerrainManager(
             pixelData,
             gadgetManager,
-            terrainRenderer,
+            terrainPainter,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
         LevelScreen.SetTerrainManager(terrainManager);
@@ -134,7 +144,6 @@ public sealed class LevelBuilder : IDisposable
 
     public void Dispose()
     {
-        _terrainBuilder.Dispose();
         _levelObjectAssembler.Dispose();
     }
 }

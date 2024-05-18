@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+﻿using Microsoft.Xna.Framework;
+
+namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 public sealed class TerrainData
 {
@@ -9,7 +11,7 @@ public sealed class TerrainData
     public bool Flip { get; set; }
     public bool Erase { get; set; }
 
-    public uint? Tint { get; set; }
+    public Color? Tint { get; set; }
 
     public string? GroupName { get; set; }
     public int TerrainArchetypeId { get; set; }

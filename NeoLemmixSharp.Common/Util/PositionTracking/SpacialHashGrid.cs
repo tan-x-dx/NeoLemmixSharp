@@ -94,7 +94,7 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
             chunk == _previousQueryBottomRightChunk)
             return new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _previousQueryCount);
 
-        var sourceSpan = ReadOnlySpanFor(chunkX, chunkY);
+        var sourceSpan = ReadOnlySpanForChunk(chunkX, chunkY);
         _previousQueryTopLeftChunk = chunk;
         _previousQueryBottomRightChunk = chunk;
         sourceSpan.CopyTo(new Span<uint>(_setUnionScratchSpace));
@@ -124,7 +124,7 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         {
             // Only one chunk -> skip some extra work
 
-            var sourceSpan = ReadOnlySpanFor(_previousQueryTopLeftChunk.X, _previousQueryBottomRightChunk.Y);
+            var sourceSpan = ReadOnlySpanForChunk(_previousQueryTopLeftChunk.X, _previousQueryBottomRightChunk.Y);
             sourceSpan.CopyTo(scratchSpaceSpan);
             _previousQueryCount = BitArrayHelpers.GetPopCount(sourceSpan);
 
@@ -140,7 +140,8 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
     public void AddItem(T item)
     {
-        _allTrackedItems.Add(item);
+        if (!_allTrackedItems.Add(item))
+            throw new InvalidOperationException("Already tracking item!");
 
         var topLeftChunk = GetChunkForPoint(item.TopLeftPixel);
         var bottomRightChunk = GetChunkForPoint(item.BottomRightPixel);
@@ -189,7 +190,7 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         {
             // Only one chunk -> skip some extra work
 
-            var span = SpanFor(topLeftChunk.X, topLeftChunk.Y);
+            var span = SpanForChunk(topLeftChunk.X, topLeftChunk.Y);
             BitArrayHelpers.SetBit(span, _hasher.Hash(item));
 
             return;
@@ -200,7 +201,8 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
     public void RemoveItem(T item)
     {
-        _allTrackedItems.Remove(item);
+        if (!_allTrackedItems.Remove(item))
+            throw new InvalidOperationException("Not tracking item!");
 
         var topLeftChunk = GetChunkForPoint(item.TopLeftPixel);
         var bottomRightChunk = GetChunkForPoint(item.BottomRightPixel);
@@ -232,7 +234,7 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         {
             // Only one chunk -> skip some extra work
 
-            var span = SpanFor(topLeftChunk.X, topLeftChunk.Y);
+            var span = SpanForChunk(topLeftChunk.X, topLeftChunk.Y);
             BitArrayHelpers.ClearBit(span, _hasher.Hash(item));
 
             return;
@@ -306,44 +308,45 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         }
     }
 
-    private void UseChunkPosition(ChunkOperationType chunkOperationType, T? item, int x1, int y1)
+    private void UseChunkPosition(ChunkOperationType chunkOperationType, T? item, int x, int y)
     {
+        Span<uint> span;
         if (chunkOperationType == ChunkOperationType.Add)
         {
-            var addSpan = SpanFor(x1, y1);
-            BitArrayHelpers.SetBit(addSpan, _hasher.Hash(item!));
+            span = SpanForChunk(x, y);
+            BitArrayHelpers.SetBit(span, _hasher.Hash(item!));
             return;
         }
 
         if (chunkOperationType == ChunkOperationType.Remove)
         {
-            var removeSpan = SpanFor(x1, y1);
-            BitArrayHelpers.ClearBit(removeSpan, _hasher.Hash(item!));
+            span = SpanForChunk(x, y);
+            BitArrayHelpers.ClearBit(span, _hasher.Hash(item!));
             return;
         }
 
-        var readOnlySpan = ReadOnlySpanFor(x1, y1);
-        var scratchSpaceSpan = new Span<uint>(_setUnionScratchSpace);
-        BitArrayHelpers.UnionWith(scratchSpaceSpan, readOnlySpan);
+        var readOnlySpan = ReadOnlySpanForChunk(x, y);
+        span = new Span<uint>(_setUnionScratchSpace);
+        BitArrayHelpers.UnionWith(span, readOnlySpan);
     }
 
     [Pure]
-    private Span<uint> SpanFor(int x, int y)
+    private Span<uint> SpanForChunk(int x, int y)
     {
-        var index = IndexFor(x, y);
+        var index = IndexForChunk(x, y);
         return new Span<uint>(_allBits, index, _bitArraySize);
     }
 
     [Pure]
-    private ReadOnlySpan<uint> ReadOnlySpanFor(int x, int y)
+    private ReadOnlySpan<uint> ReadOnlySpanForChunk(int x, int y)
     {
-        var index = IndexFor(x, y);
+        var index = IndexForChunk(x, y);
         return new ReadOnlySpan<uint>(_allBits, index, _bitArraySize);
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int IndexFor(int x, int y)
+    private int IndexForChunk(int x, int y)
     {
         var index = _numberOfHorizontalChunks * y + x;
         index *= _bitArraySize;
@@ -366,23 +369,39 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
     public void OnNumberOfItemsChanged(int numberOfItems)
     {
-        var newBitArraySize = (numberOfItems + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
+        _allTrackedItems.OnNumberOfItemsChanged(numberOfItems);
+        var newBitArraySize = _allTrackedItems.Size;
 
-        if (newBitArraySize <= _bitArraySize)
+        if (_bitArraySize == newBitArraySize)
             return;
 
-        _allTrackedItems.OnNumberOfItemsChanged(numberOfItems);
+        var newBits = new uint[newBitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];
+
+        TransferData(
+            new ReadOnlySpan<uint>(_allBits),
+            _bitArraySize,
+            new Span<uint>(newBits),
+            newBitArraySize);
 
         _bitArraySize = newBitArraySize;
+        _allBits = newBits;
+        Array.Resize(ref _setUnionScratchSpace, newBitArraySize);
+    }
 
-        _setUnionScratchSpace = new uint[_bitArraySize];
-        _allBits = new uint[_bitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];
+    private void TransferData(
+        ReadOnlySpan<uint> oldData,
+        int oldDataSize,
+        Span<uint> newData,
+        int newDataSize)
+    {
+        var limit = _numberOfHorizontalChunks * _numberOfVerticalChunks;
 
-        foreach (var item in _allTrackedItems)
+        for (var i = 0; i < limit; i++)
         {
-            AddItem(item);
-        }
+            var oldChunk = oldData.Slice(i * oldDataSize, oldDataSize);
+            var newChunk = newData.Slice(i * newDataSize, newDataSize);
 
-        ClearCachedData();
+            oldChunk.CopyTo(newChunk);
+        }
     }
 }

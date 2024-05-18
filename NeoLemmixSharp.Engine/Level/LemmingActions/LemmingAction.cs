@@ -113,6 +113,13 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
     protected abstract int BottomRightBoundsDeltaX(int animationFrame);
     protected virtual int BottomRightBoundsDeltaY(int animationFrame) => -1;
 
+    public virtual LevelPosition GetFootPosition(
+        Lemming lemming,
+        LevelPosition anchorPosition)
+    {
+        return lemming.Orientation.MoveUp(anchorPosition, 1);
+    }
+
     public virtual void TransitionLemmingToAction(
         Lemming lemming,
         bool turnAround)

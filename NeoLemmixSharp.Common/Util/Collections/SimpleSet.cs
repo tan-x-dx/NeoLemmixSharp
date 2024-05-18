@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
+    where T : notnull
 {
     private const int MaxStackAllocSize = 64;
 
@@ -136,7 +137,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
 
     public void UnionWith(IEnumerable<T> other)
     {
-        var bufferSize = _hasher.NumberOfItems;
+        var bufferSize = BitArrayHelpers.CalculateBitArrayBufferSize(_hasher.NumberOfItems);
         Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
             ? new uint[bufferSize]
             : stackalloc uint[bufferSize];
@@ -153,7 +154,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
 
     public void IntersectWith(IEnumerable<T> other)
     {
-        var bufferSize = _hasher.NumberOfItems;
+        var bufferSize = BitArrayHelpers.CalculateBitArrayBufferSize(_hasher.NumberOfItems);
         Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
             ? new uint[bufferSize]
             : stackalloc uint[bufferSize];
@@ -170,7 +171,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
 
     public void ExceptWith(IEnumerable<T> other)
     {
-        var bufferSize = _hasher.NumberOfItems;
+        var bufferSize = BitArrayHelpers.CalculateBitArrayBufferSize(_hasher.NumberOfItems);
         Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
             ? new uint[bufferSize]
             : stackalloc uint[bufferSize];
@@ -187,7 +188,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
 
     public void SymmetricExceptWith(IEnumerable<T> other)
     {
-        var bufferSize = _hasher.NumberOfItems;
+        var bufferSize = BitArrayHelpers.CalculateBitArrayBufferSize(_hasher.NumberOfItems);
         Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
             ? new uint[bufferSize]
             : stackalloc uint[bufferSize];
@@ -205,7 +206,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
     [Pure]
     public bool IsSubsetOf(IEnumerable<T> other)
     {
-        var bufferSize = _hasher.NumberOfItems;
+        var bufferSize = BitArrayHelpers.CalculateBitArrayBufferSize(_hasher.NumberOfItems);
         Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
             ? new uint[bufferSize]
             : stackalloc uint[bufferSize];
@@ -224,7 +225,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
     [Pure]
     public bool IsSupersetOf(IEnumerable<T> other)
     {
-        var bufferSize = _hasher.NumberOfItems;
+        var bufferSize = BitArrayHelpers.CalculateBitArrayBufferSize(_hasher.NumberOfItems);
         Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
             ? new uint[bufferSize]
             : stackalloc uint[bufferSize];
@@ -243,10 +244,10 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
     [Pure]
     public bool IsProperSubsetOf(IEnumerable<T> other)
     {
-        var bufferSize = _hasher.NumberOfItems;
+        var bufferSize = BitArrayHelpers.CalculateBitArrayBufferSize(_hasher.NumberOfItems);
         Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
             ? new uint[bufferSize]
-            : stackalloc uint[bufferSize];
+            : stackalloc uint[bufferSize];  
 
         GetBitsFromEnumerable(otherBitBuffer, other);
         return BitArrayHelpers.IsProperSubsetOf(new ReadOnlySpan<uint>(_bits), otherBitBuffer);
@@ -262,7 +263,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
     [Pure]
     public bool IsProperSupersetOf(IEnumerable<T> other)
     {
-        var bufferSize = _hasher.NumberOfItems;
+        var bufferSize = BitArrayHelpers.CalculateBitArrayBufferSize(_hasher.NumberOfItems);
         Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
             ? new uint[bufferSize]
             : stackalloc uint[bufferSize];
@@ -281,7 +282,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
     [Pure]
     public bool Overlaps(IEnumerable<T> other)
     {
-        var bufferSize = _hasher.NumberOfItems;
+        var bufferSize = BitArrayHelpers.CalculateBitArrayBufferSize(_hasher.NumberOfItems);
         Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
             ? new uint[bufferSize]
             : stackalloc uint[bufferSize];
@@ -300,7 +301,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
     [Pure]
     public bool SetEquals(IEnumerable<T> other)
     {
-        var bufferSize = _hasher.NumberOfItems;
+        var bufferSize = BitArrayHelpers.CalculateBitArrayBufferSize(_hasher.NumberOfItems);
         Span<uint> otherBitBuffer = bufferSize > MaxStackAllocSize
             ? new uint[bufferSize]
             : stackalloc uint[bufferSize];

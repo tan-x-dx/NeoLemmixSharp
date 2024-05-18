@@ -6,16 +6,16 @@ namespace NeoLemmixSharp.Engine.Rendering;
 
 public sealed class TerrainRenderer : IDisposable
 {
-    private readonly Texture2D _texture;
+    private readonly RenderTarget2D _terrainTexture;
+
     private readonly Level.Viewport _viewport;
 
-    private readonly uint[] _colorSetter = new uint[1];
-
     public TerrainRenderer(
-        Texture2D texture,
+        RenderTarget2D terrainTexture,
         Level.Viewport viewport)
     {
-        _texture = texture;
+        _terrainTexture = terrainTexture;
+
         _viewport = viewport;
     }
 
@@ -34,7 +34,7 @@ public sealed class TerrainRenderer : IDisposable
                 var sourceRectangle = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
 
                 spriteBatch.Draw(
-                    _texture,
+                    _terrainTexture,
                     destinationRectangle,
                     sourceRectangle,
                     RenderingLayers.TerrainLayer);
@@ -42,14 +42,8 @@ public sealed class TerrainRenderer : IDisposable
         }
     }
 
-    public void SetPixelColor(int x, int y, uint color)
-    {
-        _colorSetter[0] = color;
-        _texture.SetData(0, new Rectangle(x, y, 1, 1), _colorSetter, 0, 1);
-    }
-
     public void Dispose()
     {
-        _texture.Dispose();
+        _terrainTexture.Dispose();
     }
 }

@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.Collections;
 
 public readonly ref struct SimpleSetEnumerable<T>
+    where T : notnull
 {
     public static SimpleSetEnumerable<T> Empty => default;
 

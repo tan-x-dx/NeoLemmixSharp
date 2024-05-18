@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -47,7 +48,7 @@ public sealed class LevelObjectAssembler : IDisposable
         return result;
     }
 
-    public ICollection<Lemming> GetLevelLemmings(LevelData levelData)
+    public List<Lemming> GetLevelLemmings(LevelData levelData)
     {
         var allLemmingData = CollectionsMarshal.AsSpan(levelData.AllLemmingData);
 
@@ -117,7 +118,7 @@ public sealed class LevelObjectAssembler : IDisposable
     {
         behindTerrainSprites = new List<IViewportObjectRenderer>(_gadgets.Count);
         inFrontOfTerrainSprites = new List<IViewportObjectRenderer>(_gadgets.Count);
-        lemmingSprites = new List<IViewportObjectRenderer>(_lemmings.Count);
+        lemmingSprites = new List<IViewportObjectRenderer>(BitArrayHelpers.ToNextLargestMultipleOf32(_lemmings.Count));
 
         var gadgetSpan = CollectionsMarshal.AsSpan(_gadgets);
         foreach (var gadget in gadgetSpan)

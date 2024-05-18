@@ -17,6 +17,7 @@ public sealed class LevelScreen : IBaseScreen
 {
     private static LevelParameterSet _levelParameters = null!;
     private static TerrainManager _terrainManager = null!;
+    private static TerrainPainter _terrainPainter = null!;
     private static LemmingManager _lemmingManager = null!;
     private static GadgetManager _gadgetManager = null!;
     private static SkillSetManager _skillSetManager = null!;
@@ -29,6 +30,7 @@ public sealed class LevelScreen : IBaseScreen
 
     public static LevelParameterSet LevelParameters => _levelParameters;
     public static TerrainManager TerrainManager => _terrainManager;
+    public static TerrainPainter TerrainPainter => _terrainPainter;
     public static LemmingManager LemmingManager => _lemmingManager;
     public static GadgetManager GadgetManager => _gadgetManager;
     public static SkillSetManager SkillSetManager => _skillSetManager;
@@ -39,6 +41,8 @@ public sealed class LevelScreen : IBaseScreen
     public static Viewport LevelViewport => _levelViewport;
     public static LevelScreenRenderer LevelScreenRenderer => _levelScreenRenderer;
 
+    public static int PixelChangeCount { get; set; }
+
     public static void SetLevelParameters(LevelParameterSet levelParameters)
     {
         _levelParameters = levelParameters;
@@ -47,6 +51,11 @@ public sealed class LevelScreen : IBaseScreen
     public static void SetTerrainManager(TerrainManager terrainManager)
     {
         _terrainManager = terrainManager;
+    }
+
+    public static void SetTerrainPainter(TerrainPainter terrainPainter)
+    {
+        _terrainPainter = terrainPainter;
     }
 
     public static void SetLemmingManager(LemmingManager lemmingManager)
@@ -101,6 +110,8 @@ public sealed class LevelScreen : IBaseScreen
     public LevelScreen(LevelData levelData)
     {
         ScreenTitle = levelData.LevelTitle;
+
+        PixelChangeCount = 0;
     }
 
     public void Tick(GameTime gameTime)

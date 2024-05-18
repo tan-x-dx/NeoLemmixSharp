@@ -7,9 +7,9 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
-using NeoLemmixSharp.Engine.Rendering;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain;
 
@@ -18,7 +18,7 @@ public sealed class TerrainManager
     private readonly PixelType[] _pixels;
     private readonly GadgetManager _gadgetManager;
 
-    private readonly TerrainRenderer _terrainRenderer;
+    private readonly TerrainPainter _terrainPainter;
 
     public IHorizontalBoundaryBehaviour HorizontalBoundaryBehaviour { get; }
     public IVerticalBoundaryBehaviour VerticalBoundaryBehaviour { get; }
@@ -29,14 +29,14 @@ public sealed class TerrainManager
     public TerrainManager(
         PixelType[] pixels,
         GadgetManager gadgetManager,
-        TerrainRenderer terrainRenderer,
+        TerrainPainter terrainPainter,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _pixels = pixels;
         _gadgetManager = gadgetManager;
 
-        _terrainRenderer = terrainRenderer;
+        _terrainPainter = terrainPainter;
 
         HorizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
@@ -121,11 +121,20 @@ public sealed class TerrainManager
             !destructionMask.CanDestroyPixel(pixel, orientation, facingDirection))
             return;
 
+        var previousValue = pixel;
         pixel = PixelType.Empty;
-        _terrainRenderer.SetPixelColor(pixelToErase.X, pixelToErase.Y, 0U);
+        if (pixel == previousValue)
+            return;
+
+        _terrainPainter.RecordPixelChange(
+            pixelToErase,
+            Color.Transparent,
+            previousValue,
+            pixel);
+        LevelScreen.PixelChangeCount++;
     }
 
-    public void SetSolidPixel(LevelPosition pixelToSet, uint color)
+    public void SetSolidPixel(LevelPosition pixelToSet, Color color)
     {
         if (PositionOutOfBounds(pixelToSet) ||
             _gadgetManager.HasGadgetWithBehaviourAtPosition(pixelToSet, MetalGrateGadgetBehaviour.Instance))
@@ -137,8 +146,14 @@ public sealed class TerrainManager
         if (pixel != PixelType.Empty)
             return;
 
+        var previousValue = pixel;
         pixel |= PixelType.SolidToAllOrientations;
-        _terrainRenderer.SetPixelColor(pixelToSet.X, pixelToSet.Y, color);
+        if (pixel == previousValue)
+            return;
+
+        //_terrainRenderer.SetPixelColor(pixelToSet.X, pixelToSet.Y, color);
+        _terrainPainter.RecordPixelChange(pixelToSet, color, previousValue, pixel);
+        LevelScreen.PixelChangeCount++;
     }
 
     public void SetBlockerMaskPixel(LevelPosition pixelToSet, PixelType pixelTypeMask, bool set)

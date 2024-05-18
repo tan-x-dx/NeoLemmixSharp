@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -116,21 +117,21 @@ public sealed class BuilderAction : LemmingAction
 
         var brickPosition = lemming.LevelPosition;
         brickPosition = orientation.MoveUp(brickPosition, dy);
-        terrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
+        terrainManager.SetSolidPixel(brickPosition, Color.Magenta);
 
         brickPosition = orientation.MoveRight(brickPosition, dx);
-        terrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
+        terrainManager.SetSolidPixel(brickPosition, Color.Magenta);
 
         brickPosition = orientation.MoveRight(brickPosition, dx);
-        terrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
+        terrainManager.SetSolidPixel(brickPosition, Color.Magenta);
 
         brickPosition = orientation.MoveRight(brickPosition, dx);
-        terrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
+        terrainManager.SetSolidPixel(brickPosition, Color.Magenta);
 
         brickPosition = orientation.MoveRight(brickPosition, dx);
-        terrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
+        terrainManager.SetSolidPixel(brickPosition, Color.Magenta);
 
         brickPosition = orientation.MoveRight(brickPosition, dx);
-        terrainManager.SetSolidPixel(brickPosition, uint.MaxValue);
+        terrainManager.SetSolidPixel(brickPosition, Color.Magenta);
     }
 }

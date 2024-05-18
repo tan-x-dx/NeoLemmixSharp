@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>, IItemCountListener
+    where TKey : notnull
 {
     private readonly IPerfectHasher<TKey> _hasher;
     private uint[] _bits;
@@ -36,19 +37,15 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     public void Clear()
     {
         new Span<uint>(_bits).Clear();
+        new Span<TValue>(_values).Clear();
         _popCount = 0;
-        Array.Clear(_values);
     }
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
-        var enumerator = new BitArrayHelpers.ReferenceTypeBitEnumerator(_bits, _popCount);
-        while (enumerator.MoveNext())
+        foreach (var kvp in this)
         {
-            var index = enumerator.Current;
-            var key = _hasher.UnHash(index);
-            var value = _values[index];
-            array[arrayIndex++] = new KeyValuePair<TKey, TValue>(key, value);
+            array[arrayIndex++] = kvp;
         }
     }
 
@@ -88,7 +85,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         set
         {
             var index = _hasher.Hash(key);
-            BitArrayHelpers.SetBit(new Span<uint>(_bits), index);
+            BitArrayHelpers.SetBit(new Span<uint>(_bits), index, ref _popCount);
             _values[index] = value;
         }
     }
