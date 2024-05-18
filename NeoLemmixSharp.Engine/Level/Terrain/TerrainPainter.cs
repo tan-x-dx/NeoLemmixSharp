@@ -77,9 +77,9 @@ public sealed class TerrainPainter
         {
             if (start < 0)
                 throw new ArgumentOutOfRangeException(nameof(start), "Negative start index");
-            if (start >= _count)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start index out of bounds");
-            if (start + length >= _count)
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(start), "Negative length");
+            if (_count - start < length)
                 throw new ArgumentOutOfRangeException(nameof(start), "Start index with length is out of bounds");
 
             return new ReadOnlySpan<PixelChangeData>(_terrainChanges, start, length);
