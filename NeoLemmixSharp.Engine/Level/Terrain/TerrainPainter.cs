@@ -79,8 +79,8 @@ public sealed class TerrainPainter
             _terrainColors[index] = pixelChangeData.FromColor;
             ref var pixelType = ref _terrainPixelTypes[index];
 
-            pixelType &= PixelType.TerrainDataInverseMask;
-            pixelType |= (PixelType.TerrainDataMask & pixelChangeData.FromPixelType);
+            pixelType &= PixelType.TerrainDataInverseMask; // Clear out existing terrain data
+            pixelType |= (PixelType.TerrainDataMask & pixelChangeData.FromPixelType); // Add in the original terrain data
         }
 
         _terrainTexture.SetData(_terrainColors);
