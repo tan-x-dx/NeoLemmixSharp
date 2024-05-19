@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
@@ -9,7 +10,6 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain;
 
@@ -122,15 +122,15 @@ public sealed class TerrainManager
             return;
 
         var previousValue = pixel;
-        pixel = PixelType.Empty;
+        pixel &= PixelType.TerrainDataInverseMask;
         if (pixel == previousValue)
             return;
 
         _terrainPainter.RecordPixelChange(
             pixelToErase,
             Color.Transparent,
-            previousValue,
-            pixel);
+            previousValue & PixelType.TerrainDataMask,
+            0);
         LevelScreen.PixelChangeCount++;
     }
 
@@ -151,8 +151,11 @@ public sealed class TerrainManager
         if (pixel == previousValue)
             return;
 
-        //_terrainRenderer.SetPixelColor(pixelToSet.X, pixelToSet.Y, color);
-        _terrainPainter.RecordPixelChange(pixelToSet, color, previousValue, pixel);
+        _terrainPainter.RecordPixelChange(
+            pixelToSet,
+            color,
+            previousValue & PixelType.TerrainDataMask,
+            PixelType.SolidToAllOrientations);
         LevelScreen.PixelChangeCount++;
     }
 

@@ -77,7 +77,10 @@ public sealed class TerrainPainter
             ref readonly var pixelChangeData = ref pixelChanges[i];
             var index = pixelChangeData.Y * _terrainWidth + pixelChangeData.X;
             _terrainColors[index] = pixelChangeData.FromColor;
-            _terrainPixelTypes[index] = pixelChangeData.FromPixelType;
+            ref var pixelType = ref _terrainPixelTypes[index];
+
+            pixelType &= PixelType.TerrainDataInverseMask;
+            pixelType |= (PixelType.TerrainDataMask & pixelChangeData.FromPixelType);
         }
 
         _terrainTexture.SetData(_terrainColors);

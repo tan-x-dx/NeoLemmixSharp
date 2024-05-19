@@ -380,7 +380,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
         var bashDirectionAsOrientation = facingDirection.ConvertToRelativeOrientation(orientation);
-        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
+        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
                                  Orientation.GetOpposite(bashDirectionAsOrientation).RotNum;
         var oppositeArrowMask = (PixelType)(1 << oppositeArrowShift);
         return (pixelType & oppositeArrowMask) == PixelType.Empty;

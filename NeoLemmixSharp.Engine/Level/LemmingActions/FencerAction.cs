@@ -317,14 +317,14 @@ procedure DoFencerContinueTests(L: TLemming; var SteelContinue: Boolean; var Mov
         Orientation orientation,
         FacingDirection facingDirection)
     {
-        var orientationArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
+        var orientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
                                     orientation.RotNum;
         var orientationArrowMask = (PixelType)(1 << orientationArrowShift);
         if ((pixelType & orientationArrowMask) != PixelType.Empty)
             return false;
 
         var facingDirectionAsOrientation = facingDirection.ConvertToRelativeOrientation(orientation);
-        var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
+        var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
                                                 Orientation.GetOpposite(facingDirectionAsOrientation).RotNum;
         var oppositeFacingDirectionArrowMask = (PixelType)(1 << oppositeFacingDirectionArrowShift);
         return (pixelType & oppositeFacingDirectionArrowMask) == PixelType.Empty;

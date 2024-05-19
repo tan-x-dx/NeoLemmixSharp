@@ -6,9 +6,12 @@ namespace NeoLemmixSharp.Engine.Level.Terrain;
 
 public static class PixelTypeHelpers
 {
-    public const int PixelTypeArrowOffset = 4;
-    public const int PixelTypeBlockerOffset = 8;
-
+    public const int PixelTypeSolidShiftOffset = 0;
+    public const int PixelTypeArrowShiftOffset = 4;
+    public const int PixelTypeBlockerShiftOffset = 8;
+    public const int PixelTypeSteelShift = 14;
+    public const int PixelTypeVoidShift = 15;
+    
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CanBeDestroyed(this PixelType pixelType)
