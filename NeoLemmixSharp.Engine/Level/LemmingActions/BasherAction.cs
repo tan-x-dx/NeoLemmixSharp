@@ -87,7 +87,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
         if (physicsFrame is < 11 or > 15)
             return true;
-        
+
         // Basher movement
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
         var dy = FindGroundPixel(lemming, lemmingPosition);
@@ -379,9 +379,9 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
-        var bashDirectionAsOrientation = facingDirection.ConvertToRelativeOrientation(orientation);
         var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
-                                 Orientation.GetOpposite(bashDirectionAsOrientation).RotNum;
+                                 ((2 + orientation.RotNum - facingDirection.DeltaX) & 3);
+
         var oppositeArrowMask = (PixelType)(1 << oppositeArrowShift);
         return (pixelType & oppositeArrowMask) == PixelType.Empty;
     }
