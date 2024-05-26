@@ -102,6 +102,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             return;
 
         lemming.Initialise();
+        _nextLemmingId++;
 
         _lemmingPositionHelper.AddItem(lemming);
 

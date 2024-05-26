@@ -46,6 +46,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget, IControlledA
 
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
+        levelPosition = LevelRegionHelpers.GetRelativePosition(TopLeftPixel, levelPosition);
         var hitBox = _states[_currentStateIndex].HitBox;
         return hitBox.MatchesLemming(lemming) &&
                hitBox.MatchesPosition(levelPosition);
@@ -73,11 +74,11 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget, IControlledA
         var gadgetState = _states[_currentStateIndex];
         var itemStatus = LemmingTracker.TrackItem(lemming);
 
-        if (IsItemPresent(itemStatus))
-            return gadgetState.OnLemmingPresentActions;
-
         if (IsItemAdded(itemStatus))
             return gadgetState.OnLemmingEnterActions;
+
+        if (IsItemPresent(itemStatus))
+            return gadgetState.OnLemmingPresentActions;
 
         if (IsItemRemoved(itemStatus))
             return gadgetState.OnLemmingExitActions;

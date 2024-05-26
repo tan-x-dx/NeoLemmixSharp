@@ -50,7 +50,7 @@ public readonly ref partial struct GadgetTranslator
 
         var frameData = new int[numberOfLayers];
         frameData[0] = archetypeData.PrimaryAnimationFrameCount;
-        for (var i = 0; i < numberOfLayers; i++)
+        for (var i = 0; i < numberOfLayers - 1; i++)
         {
             frameData[i + 1] = animationDataSpan[i].NumberOfFrames;
         }
