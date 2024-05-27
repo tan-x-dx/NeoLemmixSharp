@@ -174,23 +174,21 @@ public sealed class JumperAction : LemmingAction
                 int deltaY;
                 LemmingAction nextAction;
 
-                switch (n)
+                if (n <= 2)
                 {
-                    case <= 2:
-                        deltaY = n - 1;
-                        nextAction = WalkerAction.Instance;
-                        break;
-
-                    case <= 5:
-                        deltaY = n - 5;
-                        nextAction = HoisterAction.Instance;
-                        lemming.JumpToHoistAdvance = true;
-                        break;
-
-                    default:
-                        deltaY = n - 8;
-                        nextAction = HoisterAction.Instance;
-                        break;
+                    deltaY = n - 1;
+                    nextAction = WalkerAction.Instance;
+                }
+                else if (n <= 5)
+                {
+                    deltaY = n - 5;
+                    nextAction = HoisterAction.Instance;
+                    lemming.JumpToHoistAdvance = true;
+                }
+                else
+                {
+                    deltaY = n - 8;
+                    nextAction = HoisterAction.Instance;
                 }
 
                 lemmingPosition = orientation.MoveUp(checkPosition, deltaY);

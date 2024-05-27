@@ -372,20 +372,20 @@ public sealed class LevelControlPanel
 
         var spawnIntervalDisplayButton = GetSpawnIntervalDisplayButton();
 
-        spawnIntervalDisplayButton.UpdateNumericalValue();
+        spawnIntervalDisplayButton?.UpdateNumericalValue();
 
         return;
 
-        SpawnIntervalButton GetSpawnIntervalDisplayButton()
+        SpawnIntervalButton? GetSpawnIntervalDisplayButton()
         {
-            var buttons = AllButtons;
+            foreach (var button in AllButtons)
+            {
+                if (button is SpawnIntervalButton result &&
+                    result.ButtonAction.ButtonType == ButtonType.SpawnIntervalIncrease)
+                    return result;
+            }
 
-            var secondButton = buttons[1];
-            if (secondButton is SpawnIntervalButton result &&
-                result.ButtonAction.ButtonType == ButtonType.SpawnIntervalDisplay)
-                return result;
-
-            throw new InvalidOperationException($"Could not locate {nameof(SpawnIntervalButton)}");
+            return null;
         }
     }
 

@@ -139,12 +139,12 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             if (hatchGadget is null)
                 continue;
 
-            var lemming = lemmingSpan[_nextLemmingId++];
+            hatchGroup.OnSpawnLemming();
+            var lemming = lemmingSpan[_nextLemmingId];
 
             lemming.LevelPosition = hatchGadget.SpawnPosition;
             hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
             InitialiseLemming(lemming);
-            hatchGroup.OnSpawnLemming();
         }
     }
 

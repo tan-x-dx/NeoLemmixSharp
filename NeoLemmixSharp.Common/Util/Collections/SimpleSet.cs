@@ -117,7 +117,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
 
         void IEnumerator.Reset() => throw new InvalidOperationException("Cannot reset");
         void IDisposable.Dispose() { }
-        object IEnumerator.Current => Current!;
+        object IEnumerator.Current => Current;
     }
 
     private void GetBitsFromEnumerable(Span<uint> buffer, IEnumerable<T> other)
