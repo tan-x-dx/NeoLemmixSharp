@@ -23,7 +23,6 @@ public sealed class FallerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var currentFallDistanceStep = 0;
 
         var orientation = lemming.Orientation;
@@ -35,10 +34,15 @@ public sealed class FallerAction : LemmingAction
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
             return true;
 
+        var gadgetTestRegion = new LevelPositionPair(
+            lemmingPosition,
+            orientation.MoveDown(lemmingPosition, LevelConstants.DefaultFallStep + 1));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+
         ref var distanceFallen = ref lemming.DistanceFallen;
 
         while (currentFallDistanceStep < maxFallDistanceStep &&
-               !terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+               !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
         {
             if (currentFallDistanceStep > 0 &&
                 CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
@@ -153,7 +157,8 @@ public sealed class FallerAction : LemmingAction
 
     public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
     {
-        var gadgetsNearPosition = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+        Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
+        var gadgetsNearPosition = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(scratchSpace, lemming);
 
         if (gadgetsNearPosition.Count == 0)
             return new LevelPosition();

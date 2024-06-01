@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -152,22 +153,22 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         Lemming lemming,
         LevelPosition levelPosition)
     {
-        var terrainManager = LevelScreen.TerrainManager;
-        var gadgetManager = LevelScreen.GadgetManager;
-
         var orientation = lemming.Orientation;
+
+        // Subroutine of other LevelAction methods.
+        // Use a dummy scratch space span to prevent data from being overridden.
+        // Prevents weird bugs!
+        Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
+
         var gadgetTestRegion = new LevelPositionPair(
             orientation.MoveUp(levelPosition, LevelConstants.MaxStepUp + 1),
             orientation.MoveDown(levelPosition, LevelConstants.DefaultFallStep + 1));
-
-        var gadgetsNearRegion = gadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion);
 
         var result = 0;
-        if (terrainManager.PixelIsSolidToLemming(lemming, levelPosition) ||
-            GadgetManager.HasSolidGadgetAtPosition(in gadgetsNearRegion, lemming, levelPosition))
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, levelPosition))
         {
-            while ((terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1 + result)) ||
-                    GadgetManager.HasSolidGadgetAtPosition(in gadgetsNearRegion, lemming, levelPosition)) &&
+            while (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(levelPosition, 1 + result)) &&
                    result < 7)
             {
                 result++;
@@ -177,14 +178,41 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         }
 
         result = -1;
-        while (!(terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(levelPosition, result)) ||
-                 GadgetManager.HasSolidGadgetAtPosition(in gadgetsNearRegion, lemming, levelPosition)) &&
+        while (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveDown(levelPosition, result)) &&
                result > -4)
         {
             result--;
         }
 
         return result;
+    }
+
+    public static bool PositionIsSolidToLemming(
+        in GadgetSet gadgets,
+        Lemming lemming,
+        LevelPosition levelPosition)
+    {
+        return LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, levelPosition) ||
+               (gadgets.Count > 0 && GadgetManager.HasSolidGadgetAtPosition(in gadgets, lemming, levelPosition));
+    }
+
+    public static bool PositionIsIndestructibleToLemming(
+        in GadgetSet gadgets,
+        Lemming lemming,
+        IDestructionMask destructionMask,
+        LevelPosition levelPosition)
+    {
+        return LevelScreen.TerrainManager.PixelIsIndestructibleToLemming(lemming, destructionMask, levelPosition) ||
+               (gadgets.Count > 0 && GadgetManager.HasSteelGadgetAtPosition(in gadgets, lemming, levelPosition));
+    }
+
+    protected static bool PositionIsSteelToLemming(
+        in GadgetSet gadgets,
+        Lemming lemming,
+        LevelPosition levelPosition)
+    {
+        return LevelScreen.TerrainManager.PixelIsSteel(levelPosition) ||
+               (gadgets.Count > 0 && GadgetManager.HasSteelGadgetAtPosition(in gadgets, lemming, levelPosition));
     }
 
     int IIdEquatable<LemmingAction>.Id => Id;

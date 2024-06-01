@@ -53,9 +53,9 @@ public sealed class WalkerAction : LemmingAction
             AscenderAction.Instance.TransitionLemmingToAction(lemming, false);
             lemmingPosition = orientation.MoveUp(lemmingPosition, 2);
         }
-        else if (dy > -1)
+        else if (dy >= 0)
         {
-            lemmingPosition = orientation.MoveDown(lemmingPosition, dy);
+            lemmingPosition = orientation.MoveUp(lemmingPosition, dy);
         }
 
         // Get new ground pixel again in case the Lem has turned
@@ -72,7 +72,7 @@ public sealed class WalkerAction : LemmingAction
         if (dy >= 0)
             return true;
 
-        lemmingPosition = orientation.MoveDown(lemmingPosition, dy);
+        lemmingPosition = orientation.MoveUp(lemmingPosition, dy);
 
         return true;
     }
@@ -84,7 +84,9 @@ public sealed class WalkerAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        if (LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.LevelPosition);
+
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.LevelPosition))
         {
             base.TransitionLemmingToAction(lemming, turnAround);
             return;

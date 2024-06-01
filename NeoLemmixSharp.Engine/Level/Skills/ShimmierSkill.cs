@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -17,8 +18,6 @@ public sealed class ShimmierSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        var terrainManager = LevelScreen.TerrainManager;
-
         if (lemming.CurrentAction == ClimberAction.Instance)
         {
             var simulationLemming = LemmingManager.SimulateLemming(lemming, true);
@@ -31,8 +30,13 @@ public sealed class ShimmierSkill : LemmingSkill
             var simulationOrientation = simulationLemming.Orientation;
             var simulationPosition = simulationLemming.LevelPosition;
 
-            return terrainManager.PixelIsSolidToLemming(simulationLemming, simulationOrientation.MoveUp(simulationPosition, 9)) ||
-                   terrainManager.PixelIsSolidToLemming(simulationLemming, simulationOrientation.MoveUp(simulationPosition, 8));
+        var gadgetTestRegion = new LevelPositionPair(
+            simulationPosition,
+            simulationOrientation.MoveUp(simulationPosition, 9));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+
+            return LemmingAction.PositionIsSolidToLemming(in gadgetsNearRegion, simulationLemming, simulationOrientation.MoveUp(simulationPosition, 9)) ||
+                   LemmingAction.PositionIsSolidToLemming(in gadgetsNearRegion, simulationLemming, simulationOrientation.MoveUp(simulationPosition, 8));
         }
 
         if (lemming.CurrentAction == SliderAction.Instance ||
@@ -53,10 +57,15 @@ public sealed class ShimmierSkill : LemmingSkill
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
+        var gadgetTestRegion1 = new LevelPositionPair(
+            lemmingPosition,
+            orientation.MoveUp(lemmingPosition, 12));
+        var gadgetsNearRegion1 = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion1);
+
         for (var i = -1; i < 4; i++)
         {
-            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9 + i)) &&
-                !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8 + i)))
+            if (LemmingAction.PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveUp(lemmingPosition, 9 + i)) &&
+                !LemmingAction.PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveUp(lemmingPosition, 8 + i)))
                 return true;
         }
 

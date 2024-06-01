@@ -51,10 +51,14 @@ public sealed class PlatformerAction : LemmingAction
 
     private static void DoMainUpdate(Lemming lemming)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         ref var lemmingPosition = ref lemming.LevelPosition;
+
+        var gadgetTestRegion = new LevelPositionPair(
+            lemmingPosition,
+            orientation.Move(lemmingPosition, dx * 4, 2));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
 
         if (lemming.PhysicsFrame == 9)
         {
@@ -64,7 +68,8 @@ public sealed class PlatformerAction : LemmingAction
             return;
         }
 
-        if (lemming.PhysicsFrame == 10 && lemming.NumberOfBricksLeft <= LevelConstants.NumberOfRemainingBricksToPlaySound)
+        if (lemming.PhysicsFrame == 10 &&
+            lemming.NumberOfBricksLeft <= LevelConstants.NumberOfRemainingBricksToPlaySound)
         {
             // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position) ??
             return;
@@ -79,7 +84,10 @@ public sealed class PlatformerAction : LemmingAction
                 return;
             }
 
-            if (PlatformerTerrainCheck(lemming, orientation.MoveRight(lemmingPosition, dx + dx)))
+            if (PlatformerTerrainCheck(
+                    in gadgetsNearRegion,
+                    lemming,
+                    orientation.MoveRight(lemmingPosition, dx * 2)))
             {
                 lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
 
@@ -99,7 +107,10 @@ public sealed class PlatformerAction : LemmingAction
         if (lemming.PhysicsFrame != 0)
             return;
 
-        if (PlatformerTerrainCheck(lemming, orientation.MoveRight(lemmingPosition, dx + dx)) &&
+        if (PlatformerTerrainCheck(
+                in gadgetsNearRegion,
+                lemming,
+                orientation.MoveRight(lemmingPosition, dx * 2)) &&
             lemming.NumberOfBricksLeft > 1)
         {
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
@@ -108,10 +119,13 @@ public sealed class PlatformerAction : LemmingAction
             return;
         }
 
-        if (PlatformerTerrainCheck(lemming, orientation.MoveRight(lemmingPosition, dx + dx + dx)) &&
+        if (PlatformerTerrainCheck(
+                in gadgetsNearRegion,
+                lemming,
+                orientation.MoveRight(lemmingPosition, dx * 3)) &&
             lemming.NumberOfBricksLeft > 1)
         {
-            lemmingPosition = orientation.MoveRight(lemmingPosition, dx + dx);
+            lemmingPosition = orientation.MoveRight(lemmingPosition, dx * 2);
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
             return;
@@ -119,7 +133,7 @@ public sealed class PlatformerAction : LemmingAction
 
         if (!lemming.ConstructivePositionFreeze)
         {
-            lemmingPosition = orientation.MoveRight(lemmingPosition, dx + dx);
+            lemmingPosition = orientation.MoveRight(lemmingPosition, dx * 2);
         }
 
         lemming.NumberOfBricksLeft--; // Why are we doing this here, instead at the beginning of frame 15??
@@ -128,7 +142,7 @@ public sealed class PlatformerAction : LemmingAction
             return;
 
         // stalling if there are pixels in the way:
-        if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 1)))
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 1)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
         }
@@ -136,31 +150,41 @@ public sealed class PlatformerAction : LemmingAction
         ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);
     }
 
-    public static bool LemmingCanPlatform(Lemming lemming)
+    public static bool LemmingCanPlatform(
+        Lemming lemming)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var lemmingPosition = lemming.LevelPosition;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
 
-        var result = !terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition) ||
-                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, dx)) ||
-                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, dx * 2)) ||
-                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, dx * 3)) ||
-                     !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, dx * 4));
+        // Subroutine of other LevelAction methods.
+        // Use a dummy scratch space span to prevent data from being overridden.
+        // Prevents weird bugs!
+        Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
 
-        result = result && !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 1));
-        result = result && !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx + dx, 1));
+        var gadgetTestRegion = new LevelPositionPair(
+            lemmingPosition,
+            orientation.Move(lemmingPosition, dx * 4, 1));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion);
+
+        var result = !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition) ||
+                     !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx)) ||
+                     !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx * 2)) ||
+                     !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx * 3)) ||
+                     !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx * 4));
+
+        result = result && !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 1));
+        result = result && !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx * 2, 1));
         return result;
     }
 
     private static bool PlatformerTerrainCheck(
+        in GadgetSet gadgetsNearRegion,
         Lemming lemming,
         LevelPosition pos)
     {
-        var terrainManager = LevelScreen.TerrainManager;
-        return terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(pos, 1)) ||
-               terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(pos, 2));
+        return PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.Orientation.MoveUp(pos, 1)) ||
+               PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.Orientation.MoveUp(pos, 2));
     }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)

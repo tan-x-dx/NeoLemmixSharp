@@ -69,7 +69,9 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        if (!LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemmingPosition);
+
+        if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
@@ -139,7 +141,8 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
         return true;
 
-        LaserHitType CheckForHit(ReadOnlySpan<LevelPosition> offsetChecks)
+        LaserHitType CheckForHit(
+            ReadOnlySpan<LevelPosition> offsetChecks)
         {
             var terrainManager = LevelScreen.TerrainManager;
             if (terrainManager.PositionOutOfBounds(target))
@@ -151,10 +154,12 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
             {
                 var checkLevelPosition = orientation.Move(target, offset);
 
-                if (!terrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition))
+                var gadgetSet = LevelScreen.GadgetManager.GetAllGadgetsForPosition(checkLevelPosition);
+
+                if (!PositionIsSolidToLemming(in gadgetSet, lemming, checkLevelPosition))
                     continue;
 
-                result = terrainManager.PixelIsIndestructibleToLemming(lemming, this, checkLevelPosition) &&
+                result = PositionIsIndestructibleToLemming(in gadgetSet, lemming, this, checkLevelPosition) &&
                          result != LaserHitType.Solid
                     ? LaserHitType.Indestructible
                     : LaserHitType.Solid;

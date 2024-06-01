@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿global using GadgetSet = NeoLemmixSharp.Common.Util.Collections.SimpleSetEnumerable<NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxGadget>;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;

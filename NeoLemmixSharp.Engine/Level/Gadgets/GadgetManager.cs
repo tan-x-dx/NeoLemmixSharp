@@ -36,6 +36,8 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
             verticalBoundaryBehaviour);
     }
 
+    public int ScratchSpaceSize => _gadgetPositionHelper.ScratchSpaceSize;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Initialise()
     {
@@ -61,13 +63,13 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSetEnumerable<HitBoxGadget> GetAllGadgetsForPosition(LevelPosition levelPosition)
+    public GadgetSet GetAllGadgetsForPosition(LevelPosition levelPosition)
     {
         return _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
     }
 
     [Pure]
-    public SimpleSetEnumerable<HitBoxGadget> GetAllGadgetsAtLemmingPosition(Lemming lemming)
+    public GadgetSet GetAllGadgetsAtLemmingPosition(Lemming lemming)
     {
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
@@ -78,10 +80,32 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
     }
 
     [Pure]
+    public GadgetSet GetAllGadgetsAtLemmingPosition(
+        Span<uint> scratchSpace,
+        Lemming lemming)
+    {
+        var anchorPixel = lemming.LevelPosition;
+        var footPixel = lemming.FootPosition;
+
+        var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
+
+        return _gadgetPositionHelper.GetAllItemsNearRegion(scratchSpace, levelPositionPair);
+    }
+
+    [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSetEnumerable<HitBoxGadget> GetAllItemsNearRegion(LevelPositionPair levelRegion)
+    public GadgetSet GetAllItemsNearRegion(LevelPositionPair levelRegion)
     {
         return _gadgetPositionHelper.GetAllItemsNearRegion(levelRegion);
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public GadgetSet GetAllItemsNearRegion(
+        Span<uint> scratchSpace,
+        LevelPositionPair levelRegion)
+    {
+        return _gadgetPositionHelper.GetAllItemsNearRegion(scratchSpace, levelRegion);
     }
 
     [Pure]
@@ -119,7 +143,7 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
 
     [Pure]
     public static bool HasSolidGadgetAtPosition(
-        in SimpleSetEnumerable<HitBoxGadget> enumerable,
+        in GadgetSet enumerable,
         Lemming lemming,
         LevelPosition levelPosition)
     {
@@ -134,7 +158,7 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
 
     [Pure]
     public static bool HasSteelGadgetAtPosition(
-        in SimpleSetEnumerable<HitBoxGadget> enumerable,
+        in GadgetSet enumerable,
         Lemming lemming,
         LevelPosition levelPosition)
     {

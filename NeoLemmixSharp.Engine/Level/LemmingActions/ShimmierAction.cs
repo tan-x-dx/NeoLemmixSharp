@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -20,7 +21,6 @@ public sealed class ShimmierAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
@@ -28,12 +28,17 @@ public sealed class ShimmierAction : LemmingAction
         if ((lemming.PhysicsFrame & 1) != 0)
             return true;
 
+        var gadgetTestRegion = new LevelPositionPair(
+            lemmingPosition,
+            orientation.Move(lemmingPosition, dx, 10));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+
         var i = 0;
         // Check whether we find terrain to walk onto
         for (; i < 3; i++)
         {
-            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)) &&
-                !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i + 1)))
+            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, i)) &&
+                !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, i + 1)))
             {
                 lemmingPosition = orientation.Move(lemmingPosition, dx, i);
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -44,8 +49,8 @@ public sealed class ShimmierAction : LemmingAction
         // Check whether we find terrain to hoist onto
         for (; i < 6; i++)
         {
-            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)) &&
-                !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i + 1)))
+            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, i)) &&
+                !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, i + 1)))
             {
                 lemmingPosition = orientation.Move(lemmingPosition, dx, i - 4);
                 lemming.IsStartingAction = false;
@@ -59,7 +64,7 @@ public sealed class ShimmierAction : LemmingAction
         // Check whether we fall down due to a wall
         for (; i < 8; i++)
         {
-            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, i)))
+            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, i)))
             {
                 if (lemming.State.IsSlider)
                 {
@@ -74,17 +79,17 @@ public sealed class ShimmierAction : LemmingAction
             }
         }
 
-        var pixel9AboveIsSolid = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 9));
+        var pixel9AboveIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 9));
         // Check whether we fall down due to not enough ceiling terrain
         if (!pixel9AboveIsSolid &&
-            !terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 10)))
+            !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 10)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
         // Check whether we fall down due a checkerboard ceiling
-        if (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, dx, 8)) &&
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 8)) &&
             !pixel9AboveIsSolid)
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -94,30 +99,30 @@ public sealed class ShimmierAction : LemmingAction
         // Move along
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
 
-        if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 8)))
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
 
-            if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
             {
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
                 return true;
             }
 
-            if (terrainManager.PositionOutOfBounds(lemmingPosition))
+            if (LevelScreen.TerrainManager.PositionOutOfBounds(lemmingPosition))
             {
                 LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathVoid);
                 return true;
             }
         }
 
-        if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9)))
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 9)))
             return true;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
 
         var checkPosition = orientation.MoveUp(lemmingPosition, 5);
-        if (!terrainManager.PixelIsSolidToLemming(lemming, checkPosition))
+        if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkPosition))
             return true;
 
         lemmingPosition = checkPosition;
@@ -134,16 +139,21 @@ public sealed class ShimmierAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
+        var dx = lemming.FacingDirection.DeltaX;
+
+        var gadgetTestRegion = new LevelPositionPair(
+            lemmingPosition,
+            orientation.Move(lemmingPosition, dx, 12));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
 
         if (lemming.CurrentAction == ClimberAction.Instance)
         {
             lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
-            lemmingPosition = orientation.MoveRight(lemmingPosition, lemming.FacingDirection.DeltaX);
+            lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
 
-            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
+            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 8)))
             {
                 lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
             }
@@ -152,7 +162,7 @@ public sealed class ShimmierAction : LemmingAction
                  lemming.CurrentAction == DehoisterAction.Instance)
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 2);
-            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
+            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 8)))
             {
                 lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
             }
@@ -161,8 +171,8 @@ public sealed class ShimmierAction : LemmingAction
         {
             for (var i = -1; i < 4; i++)
             {
-                if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9 + i)) &&
-                    !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8 + i)))
+                if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 9 + i)) &&
+                    !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 8 + i)))
                 {
                     lemmingPosition = orientation.MoveUp(lemmingPosition, i);
                 }

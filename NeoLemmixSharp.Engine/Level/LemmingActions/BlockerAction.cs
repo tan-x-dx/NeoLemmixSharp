@@ -26,7 +26,9 @@ public sealed class BlockerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.LevelPosition);
+
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.LevelPosition))
             return true;
 
         LevelScreen.LemmingManager.DeregisterBlocker(lemming);

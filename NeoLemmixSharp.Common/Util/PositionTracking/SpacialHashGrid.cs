@@ -60,6 +60,13 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
     }
 
     [Pure]
+    public int ScratchSpaceSize
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _bitArraySize;
+    }
+
+    [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
 
@@ -136,6 +143,32 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         _previousQueryCount = BitArrayHelpers.GetPopCount(readonlyScratchSpaceSpan);
 
         return new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _previousQueryCount);
+    }
+
+    public SimpleSetEnumerable<T> GetAllItemsNearRegion(Span<uint> scratchSpaceSpan, LevelPositionPair levelRegion)
+    {
+        if (IsEmpty)
+            return SimpleSetEnumerable<T>.Empty;
+
+        var topLeftChunk = GetChunkForPoint(levelRegion.GetTopLeftPosition());
+        var bottomRightChunk = GetChunkForPoint(levelRegion.GetBottomRightPosition());
+
+        if (topLeftChunk == bottomRightChunk)
+        {
+            // Only one chunk -> skip some extra work
+
+            var sourceSpan = ReadOnlySpanForChunk(topLeftChunk.X, topLeftChunk.Y);
+            sourceSpan.CopyTo(scratchSpaceSpan);
+            _previousQueryCount = BitArrayHelpers.GetPopCount(sourceSpan);
+
+            return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _previousQueryCount);
+        }
+
+        scratchSpaceSpan.Clear();
+        EvaluateChunkPositions(ChunkOperationType.Union, null, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
+        _previousQueryCount = BitArrayHelpers.GetPopCount(scratchSpaceSpan);
+
+        return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _previousQueryCount);
     }
 
     public void AddItem(T item)

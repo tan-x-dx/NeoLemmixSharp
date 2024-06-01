@@ -17,8 +17,10 @@ public sealed class DiggerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.LevelPosition);
+
         return ActionIsAssignable(lemming) &&
-               !LevelScreen.TerrainManager.PixelIsIndestructibleToLemming(lemming, DiggerAction.Instance, lemming.LevelPosition);
+               !LemmingAction.PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, DiggerAction.Instance, lemming.LevelPosition);
     }
 
     public override void AssignToLemming(Lemming lemming)

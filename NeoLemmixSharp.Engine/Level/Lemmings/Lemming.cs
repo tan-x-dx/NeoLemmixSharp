@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
@@ -311,7 +310,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         return CheckGadgetHitBoxCollisions(in gadgetSet, checkPositions[..length]);
     }
 
-    private bool CheckGadgetHitBoxCollisions(in SimpleSetEnumerable<HitBoxGadget> gadgetSet, ReadOnlySpan<LevelPosition> intermediatePositions)
+    private bool CheckGadgetHitBoxCollisions(in GadgetSet gadgetSet, ReadOnlySpan<LevelPosition> intermediatePositions)
     {
         foreach (var gadget in gadgetSet)
         {

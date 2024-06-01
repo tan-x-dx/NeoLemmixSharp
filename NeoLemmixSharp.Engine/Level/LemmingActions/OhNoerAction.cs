@@ -1,6 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
-using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Orientations;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -33,7 +31,9 @@ public sealed class OhNoerAction : LemmingAction
             return !nextAction.IsOneTimeAction;
         }
 
-        if (LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemmingPosition);
+
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
             return true;
 
         LevelScreen.LemmingManager.DeregisterBlocker(lemming);

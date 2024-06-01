@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -20,22 +21,26 @@ public sealed class AscenderAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelScreen.TerrainManager;
-        ref var levelPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.LevelPosition;
         var orientation = lemming.Orientation;
+
+        var gadgetTestRegion = new LevelPositionPair(
+            lemmingPosition,
+            orientation.MoveUp(lemmingPosition, 2));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
 
         var dy = 0;
         while (dy < 2 &&
                lemming.AscenderProgress < 5 &&
-               terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1)))
+               PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 1)))
         {
             dy++;
-            levelPosition = orientation.MoveUp(levelPosition, 1);
+            lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
             lemming.AscenderProgress++;
         }
 
-        var pixel1IsSolid = terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1));
-        var pixel2IsSolid = terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 2));
+        var pixel1IsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 1));
+        var pixel2IsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 2));
 
         if (dy < 2 &&
             !pixel1IsSolid)
@@ -51,7 +56,7 @@ public sealed class AscenderAction : LemmingAction
              pixel1IsSolid))
         {
             var dx = lemming.FacingDirection.DeltaX;
-            lemming.LevelPosition = orientation.MoveLeft(levelPosition, dx);
+            lemming.LevelPosition = orientation.MoveLeft(lemmingPosition, dx);
             FallerAction.Instance.TransitionLemmingToAction(lemming, true);
         }
 

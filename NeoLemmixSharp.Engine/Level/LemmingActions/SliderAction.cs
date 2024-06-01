@@ -43,20 +43,25 @@ public sealed class SliderAction : LemmingAction
         Orientation orientation,
         int maxYOffset)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         ref var lemmingPosition = ref lemming.LevelPosition;
         var lemmingDehoistPosition = lemming.DehoistPin;
+        var dx = lemming.FacingDirection.DeltaX;
 
-        var hasPixelAtLemmingPosition = SliderHasPixelAt(lemmingPosition);
+        var gadgetTestRegion = new LevelPositionPair(
+            orientation.Move(lemmingPosition, -dx, -1),
+            orientation.Move(lemmingPosition, dx, LevelConstants.MaxStepUp + 1));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+
+        var hasPixelAtLemmingPosition = SliderHasPixelAt(in gadgetsNearRegion, lemmingPosition);
 
         if (hasPixelAtLemmingPosition &&
-            !SliderHasPixelAt(orientation.MoveUp(lemmingPosition, 1)))
+            !SliderHasPixelAt(in gadgetsNearRegion, orientation.MoveUp(lemmingPosition, 1)))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             return false;
         }
 
-        if (!SliderHasPixelAt(orientation.MoveUp(lemmingPosition, Math.Min(maxYOffset, MaxYCheckOffset))))
+        if (!SliderHasPixelAt(in gadgetsNearRegion, orientation.MoveUp(lemmingPosition, Math.Min(maxYOffset, MaxYCheckOffset))))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return false;
@@ -64,8 +69,6 @@ public sealed class SliderAction : LemmingAction
 
         if (!hasPixelAtLemmingPosition)
             return true;
-
-        var dx = lemming.FacingDirection.DeltaX;
 
         var gadgetSet = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
 
@@ -91,19 +94,21 @@ public sealed class SliderAction : LemmingAction
         }
 
         var leftPos = orientation.MoveLeft(lemmingPosition, dx);
-        if (!SliderHasPixelAt(leftPos))
+        if (!SliderHasPixelAt(in gadgetsNearRegion, leftPos))
             return true;
 
         lemmingPosition = leftPos;
         WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
         return false;
 
-        bool SliderHasPixelAt(LevelPosition testPosition)
+        bool SliderHasPixelAt(
+            in GadgetSet gadgetsNearRegion1,
+            LevelPosition testPosition)
         {
-            return terrainManager.PixelIsSolidToLemming(lemming, testPosition) ||
+            return PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, testPosition) ||
                    (orientation.MatchesHorizontally(testPosition, lemming.LevelPosition) &&
                     orientation.MatchesVertically(testPosition, lemmingDehoistPosition) &&
-                    terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(testPosition, 1)));
+                    PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveDown(testPosition, 1)));
         }
     }
 

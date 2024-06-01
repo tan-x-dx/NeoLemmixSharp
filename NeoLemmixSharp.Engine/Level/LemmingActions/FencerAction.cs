@@ -38,17 +38,21 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
             lemming.IsStartingAction = false;
         }
 
-        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
+
+        var gadgetTestRegion = new LevelPositionPair(
+            orientation.MoveDown(lemmingPosition, -LevelConstants.DefaultFallStep - 1),
+            orientation.Move(lemmingPosition, dx, 12));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
 
         if (physicsFrame == 5)
         {
             var continueWork = false;
 
-            var fiveAbove = orientation.Move(lemmingPosition, 0, 5);
-            var sixAbove = orientation.Move(lemmingPosition, 0, 6);
+            var fiveAbove = orientation.MoveUp(lemmingPosition, 5);
+            var sixAbove = orientation.MoveUp(lemmingPosition, 6);
 
             // Check for destructible terrain at height 5 and 6
             for (var n = 1; n < 15; n++)
@@ -57,10 +61,10 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
                 sixAbove = orientation.MoveRight(sixAbove, dx);
 
                 continueWork = continueWork ||
-                               (terrainManager.PixelIsSolidToLemming(lemming, fiveAbove) &&
-                                !terrainManager.PixelIsIndestructibleToLemming(lemming, this, fiveAbove)) ||
-                               (terrainManager.PixelIsSolidToLemming(lemming, sixAbove) &&
-                                !terrainManager.PixelIsIndestructibleToLemming(lemming, this, sixAbove));
+                               (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, fiveAbove) &&
+                                !PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, this, fiveAbove)) ||
+                               (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, sixAbove) &&
+                                !PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, this, sixAbove));
             }
 
             // Check whether we turn around within the next two fencer strokes (only if we don't simulate)
@@ -84,7 +88,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
 
             if (!continueWork)
             {
-                if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+                if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
                 {
                     WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
                 }
@@ -116,7 +120,8 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
             needToUndoMoveUp = false;
         }
 
-        if (dy < 0 && lemming.State.IsSlider && DehoisterAction.LemmingCanDehoist(lemming, true))
+        if (dy < 0 && lemming.State.IsSlider &&
+            DehoisterAction.LemmingCanDehoist(lemming, true))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -140,9 +145,9 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
         if (dy == 0)
         {
             // Move zero, one or two pixels down, if there is no steel
-            if (FencerIndestructibleCheck(lemming, lemmingPosition))
+            if (FencerIndestructibleCheck(in gadgetsNearRegion, lemming, lemmingPosition))
             {
-                FencerTurn(lemming, needToUndoMoveUp, terrainManager.PixelIsSteel(orientation.MoveDown(lemmingPosition, 4)));
+                FencerTurn(lemming, needToUndoMoveUp, PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 4)));
             }
 
             return true;
@@ -151,19 +156,19 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
         if (dy is 1 or 2)
         {
             // Move one or two pixels up, if there is no steel and not too much terrain
-            if (FencerIndestructibleCheck(lemming, orientation.MoveUp(lemmingPosition, dy)))
+            if (FencerIndestructibleCheck(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, dy)))
             {
-                FencerTurn(lemming, needToUndoMoveUp, terrainManager.PixelIsSteel(orientation.MoveDown(lemmingPosition, dy - 4)));
+                FencerTurn(lemming, needToUndoMoveUp, PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.MoveDown(lemmingPosition, dy - 4)));
 
                 return true;
             }
 
-            if (!BasherAction.StepUpCheck(lemming, lemmingPosition, orientation, dx, dy))
+            if (!BasherAction.StepUpCheck(in gadgetsNearRegion, lemming, lemmingPosition, orientation, dx, dy))
             {
-                if (FencerIndestructibleCheck(lemming, orientation.Move(lemmingPosition, dx, -2)))
+                if (FencerIndestructibleCheck(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, -2)))
                 {
-                    var steelTest = terrainManager.PixelIsSteel(orientation.Move(lemmingPosition, dx, dy)) ||
-                                    terrainManager.PixelIsSteel(orientation.Move(lemmingPosition, dx, dy + 1));
+                    var steelTest = PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, dy)) ||
+                                    PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, dy + 1));
 
                     FencerTurn(lemming, needToUndoMoveUp, steelTest);
 
@@ -186,11 +191,11 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
         }
 
         // Either stall or turn if there is steel
-        if (FencerIndestructibleCheck(lemming, lemmingPosition))
+        if (FencerIndestructibleCheck(in gadgetsNearRegion, lemming, lemmingPosition))
         {
-            var steelTest = terrainManager.PixelIsSteel(orientation.Move(lemmingPosition, dx, 3)) ||
-                            terrainManager.PixelIsSteel(orientation.Move(lemmingPosition, dx, 4)) ||
-                            terrainManager.PixelIsSteel(orientation.Move(lemmingPosition, dx, 5));
+            var steelTest = PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 3)) ||
+                            PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 4)) ||
+                            PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 5));
 
             FencerTurn(lemming, needToUndoMoveUp, steelTest);
             return true;
@@ -201,14 +206,12 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
     }
 
     private static bool FencerIndestructibleCheck(
+        in GadgetSet gadgetsNearRegion,
         Lemming lemming,
         LevelPosition pos)
     {
-        var terrainManager = LevelScreen.TerrainManager;
-        var orientation = lemming.Orientation;
-
         // Check for indestructible terrain 3 pixels above position
-        return terrainManager.PixelIsIndestructibleToLemming(lemming, Instance, orientation.MoveUp(pos, 3));
+        return PositionIsIndestructibleToLemming(gadgetsNearRegion, lemming, Instance, lemming.Orientation.MoveUp(pos, 3));
     }
 
     private static void FencerTurn(
