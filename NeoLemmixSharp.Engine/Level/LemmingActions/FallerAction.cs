@@ -72,7 +72,9 @@ public sealed class FallerAction : LemmingAction
         if (currentFallDistanceStep >= maxFallDistanceStep)
             return true;
 
-        LemmingAction nextAction = IsFallFatal(lemming)
+        LemmingAction nextAction = IsFallFatal(
+            in gadgetsNearRegion,
+            lemming)
             ? SplatterAction.Instance
             : WalkerAction.Instance;
         lemming.SetNextAction(nextAction);
@@ -86,18 +88,28 @@ public sealed class FallerAction : LemmingAction
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 2;
     protected override int BottomRightBoundsDeltaY(int animationFrame) => 0;
 
-    private static bool IsFallFatal(Lemming lemming)
+    private static bool IsFallFatal(in GadgetSet gadgetSet, Lemming lemming)
     {
-        var gadgetManager = LevelScreen.GadgetManager;
-
         if (lemming.State.IsFloater || lemming.State.IsGlider)
             return false;
 
-        if (gadgetManager.HasGadgetWithBehaviourAtLemmingPosition(lemming, NoSplatGadgetBehaviour.Instance))
-            return false;
+        var anchorPixel = lemming.LevelPosition;
+        var footPixel = lemming.FootPosition;
 
-        return lemming.DistanceFallen > LevelConstants.MaxFallDistance ||
-               gadgetManager.HasGadgetWithBehaviourAtLemmingPosition(lemming, SplatGadgetBehaviour.Instance);
+        foreach (var gadget in gadgetSet)
+        {
+            if (!gadget.MatchesPosition(anchorPixel) &&
+                !gadget.MatchesPosition(footPixel))
+                continue;
+
+            if (gadget.GadgetBehaviour == NoSplatGadgetBehaviour.Instance)
+                return false;
+
+            if (gadget.GadgetBehaviour == SplatGadgetBehaviour.Instance)
+                return true;
+        }
+
+        return lemming.DistanceFallen > LevelConstants.MaxFallDistance;
     }
 
     private static bool CheckFloaterOrGliderTransition(
