@@ -28,7 +28,7 @@ public sealed class BlockerAction : LemmingAction
     {
         var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.LevelPosition);
 
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.LevelPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemming.LevelPosition))
             return true;
 
         LevelScreen.LemmingManager.DeregisterBlocker(lemming);

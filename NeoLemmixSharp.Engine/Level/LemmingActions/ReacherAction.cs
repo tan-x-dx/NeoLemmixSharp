@@ -37,10 +37,10 @@ public sealed class ReacherAction : LemmingAction
         var emptyPixels = GetEmptyPixelCount(in gadgetsNearRegion, lemming, lemmingPosition);
 
         // Check for terrain in the body to trigger falling down
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 5)) ||
-            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 6)) ||
-            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 7)) ||
-            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 8)))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 5)) ||
+            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 6)) ||
+            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 7)) ||
+            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 8)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -49,7 +49,7 @@ public sealed class ReacherAction : LemmingAction
 
         // On the first frame, check as well for height 9, as the shimmier may not continue in that case
         if (lemming.PhysicsFrame == 1 &&
-            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 9)))
+            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 9)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -87,19 +87,19 @@ public sealed class ReacherAction : LemmingAction
     {
         var orientation = lemming.Orientation;
         lemmingPosition = orientation.MoveUp(lemmingPosition, 10);
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             return 0;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             return 1;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             return 2;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             return 3;
 
         return 4;

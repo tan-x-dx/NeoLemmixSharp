@@ -33,7 +33,7 @@ public sealed class OhNoerAction : LemmingAction
 
         var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemmingPosition);
 
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             return true;
 
         LevelScreen.LemmingManager.DeregisterBlocker(lemming);

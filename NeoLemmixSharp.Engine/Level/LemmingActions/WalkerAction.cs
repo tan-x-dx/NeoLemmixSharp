@@ -86,7 +86,7 @@ public sealed class WalkerAction : LemmingAction
     {
         var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.LevelPosition);
 
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.LevelPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemming.LevelPosition))
         {
             base.TransitionLemmingToAction(lemming, turnAround);
             return;

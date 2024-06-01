@@ -40,14 +40,14 @@ public sealed class SwimmerAction : LemmingAction
 
         var dy = FindGroundPixel(lemming, lemmingPosition);
 
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition) ||
-            WaterAt(in gadgetsNearRegion, lemmingPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition) ||
+            WaterAt(gadgetsNearRegion, lemmingPosition))
         {
             // Rise if there is water above the lemming
             var pixelAbove = orientation.MoveUp(lemmingPosition, 1);
             if (dy <= 1 &&
-                WaterAt(in gadgetsNearRegion, pixelAbove) &&
-                !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, pixelAbove))
+                WaterAt(gadgetsNearRegion, pixelAbove) &&
+                !PositionIsSolidToLemming(gadgetsNearRegion, lemming, pixelAbove))
             {
                 lemmingPosition = pixelAbove;
 
@@ -56,14 +56,14 @@ public sealed class SwimmerAction : LemmingAction
 
             if (dy > 6)
             {
-                var diveDistance = LemDive(in gadgetsNearRegion, lemming, lemmingPosition);
+                var diveDistance = LemDive(gadgetsNearRegion, lemming, lemmingPosition);
 
                 if (diveDistance <= 0)
                     return true;
 
                 lemmingPosition = orientation.MoveDown(lemmingPosition, diveDistance); // Dive below the terrain
 
-                if (!WaterAt(in gadgetsNearRegion, lemmingPosition))
+                if (!WaterAt(gadgetsNearRegion, lemmingPosition))
                 {
                     WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -71,7 +71,7 @@ public sealed class SwimmerAction : LemmingAction
                 }
 
                 if (lemming.State.IsClimber &&
-                    !WaterAt(in gadgetsNearRegion, orientation.MoveUp(lemmingPosition, 1)))
+                    !WaterAt(gadgetsNearRegion, orientation.MoveUp(lemmingPosition, 1)))
                 {
                     // Only transition to climber, if the lemming is not under water
                     ClimberAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -94,7 +94,7 @@ public sealed class SwimmerAction : LemmingAction
                 return true;
             }
 
-            if (dy >= 1 || (dy == 0 && !WaterAt(in gadgetsNearRegion, lemmingPosition)))
+            if (dy >= 1 || (dy == 0 && !WaterAt(gadgetsNearRegion, lemmingPosition)))
             {
                 // see http://www.lemmingsforums.net/index.php?topic=3380.0
                 // And the swimmer should not yet stop if the water and terrain overlaps
@@ -131,7 +131,8 @@ public sealed class SwimmerAction : LemmingAction
     {
         foreach (var gadget in gadgetSet)
         {
-            if (gadget.GadgetBehaviour == WaterGadgetBehaviour.Instance && gadget.MatchesPosition(lemmingPosition))
+            if (gadget.GadgetBehaviour == WaterGadgetBehaviour.Instance &&
+                gadget.MatchesPosition(lemmingPosition))
                 return true;
         }
 
@@ -148,7 +149,7 @@ public sealed class SwimmerAction : LemmingAction
     {
         var result = 1;
 
-        while (result <= 4 && PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
+        while (result <= 4 && PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
         {
             result++;
             lemming.DistanceFallen++;
@@ -185,7 +186,7 @@ public sealed class SwimmerAction : LemmingAction
 
         while (i < 4 &&
                WaterAt(in gadgetsNearRegion, checkPosition) &&
-               !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkPosition))
+               !PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkPosition))
         {
             i++;
             checkPosition = orientation.MoveUp(lemming.LevelPosition, 1 + i);

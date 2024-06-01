@@ -42,7 +42,7 @@ public sealed class FallerAction : LemmingAction
         ref var distanceFallen = ref lemming.DistanceFallen;
 
         while (currentFallDistanceStep < maxFallDistanceStep &&
-               !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+               !PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
         {
             if (currentFallDistanceStep > 0 &&
                 CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))

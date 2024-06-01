@@ -105,10 +105,10 @@ public sealed class SliderAction : LemmingAction
             in GadgetSet gadgetsNearRegion1,
             LevelPosition testPosition)
         {
-            return PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, testPosition) ||
+            return PositionIsSolidToLemming(gadgetsNearRegion1, lemming, testPosition) ||
                    (orientation.MatchesHorizontally(testPosition, lemming.LevelPosition) &&
                     orientation.MatchesVertically(testPosition, lemmingDehoistPosition) &&
-                    PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveDown(testPosition, 1)));
+                    PositionIsSolidToLemming(gadgetsNearRegion1, lemming, orientation.MoveDown(testPosition, 1)));
         }
     }
 

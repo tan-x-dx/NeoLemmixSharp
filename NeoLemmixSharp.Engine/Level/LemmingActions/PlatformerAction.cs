@@ -142,7 +142,7 @@ public sealed class PlatformerAction : LemmingAction
             return;
 
         // stalling if there are pixels in the way:
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 1)))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 1)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
         }
@@ -167,14 +167,14 @@ public sealed class PlatformerAction : LemmingAction
             orientation.Move(lemmingPosition, dx * 4, 1));
         var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion);
 
-        var result = !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition) ||
-                     !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx)) ||
-                     !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx * 2)) ||
-                     !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx * 3)) ||
-                     !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx * 4));
+        var result = !PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition) ||
+                     !PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx)) ||
+                     !PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx * 2)) ||
+                     !PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx * 3)) ||
+                     !PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx * 4));
 
-        result = result && !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 1));
-        result = result && !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx * 2, 1));
+        result = result && !PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 1));
+        result = result && !PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx * 2, 1));
         return result;
     }
 
@@ -183,8 +183,8 @@ public sealed class PlatformerAction : LemmingAction
         Lemming lemming,
         LevelPosition pos)
     {
-        return PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.Orientation.MoveUp(pos, 1)) ||
-               PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.Orientation.MoveUp(pos, 2));
+        return PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemming.Orientation.MoveUp(pos, 1)) ||
+               PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemming.Orientation.MoveUp(pos, 2));
     }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)

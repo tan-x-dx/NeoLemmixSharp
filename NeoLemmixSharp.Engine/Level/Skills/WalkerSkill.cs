@@ -32,8 +32,8 @@ public sealed class WalkerSkill : LemmingSkill
         var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
 
         if (lemming.CurrentAction == BuilderAction.Instance &&
-            LemmingAction.PositionIsSolidToLemming(in gadgetsNearRegion, lemming, testUp) &&
-            !LemmingAction.PositionIsSolidToLemming(in gadgetsNearRegion, lemming, testRight))
+            LemmingAction.PositionIsSolidToLemming(gadgetsNearRegion, lemming, testUp) &&
+            !LemmingAction.PositionIsSolidToLemming(gadgetsNearRegion, lemming, testRight))
         {
             lemmingPosition = testUp;
 
@@ -56,7 +56,7 @@ public sealed class WalkerSkill : LemmingSkill
         {
             // Go one back to cancel the horizontal offset in WalkerAction's update method.
             // unless the Lem will fall down (which is handles already in Transition)
-            if (LemmingAction.PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+            if (LemmingAction.PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             {
                 lemmingPosition = testRight;
             }

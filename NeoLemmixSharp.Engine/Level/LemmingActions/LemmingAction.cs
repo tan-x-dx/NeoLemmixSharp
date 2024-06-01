@@ -166,9 +166,9 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion);
 
         var result = 0;
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, levelPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, levelPosition))
         {
-            while (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(levelPosition, 1 + result)) &&
+            while (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(levelPosition, 1 + result)) &&
                    result < 7)
             {
                 result++;
@@ -178,7 +178,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         }
 
         result = -1;
-        while (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveDown(levelPosition, result)) &&
+        while (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveDown(levelPosition, result)) &&
                result > -4)
         {
             result--;

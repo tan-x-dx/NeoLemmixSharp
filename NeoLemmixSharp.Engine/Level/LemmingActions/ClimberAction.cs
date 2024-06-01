@@ -38,14 +38,14 @@ public sealed class ClimberAction : LemmingAction
         if (physicsFrame <= 3)
         {
             foundClip =
-                PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, -dx, 6 + physicsFrame)) ||
-                (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, -dx, 5 + physicsFrame)) &&
+                PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, -dx, 6 + physicsFrame)) ||
+                (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, -dx, 5 + physicsFrame)) &&
                  !lemming.IsStartingAction);
 
             if (physicsFrame == 0) // first triggered after 8 frames!
             {
                 foundClip = foundClip &&
-                            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, -dx, 7));
+                            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, -dx, 7));
             }
 
             if (foundClip)
@@ -71,7 +71,7 @@ public sealed class ClimberAction : LemmingAction
                 return true;
             }
 
-            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 7 + physicsFrame)))
+            if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 7 + physicsFrame)))
                 return true;
 
             // if-case prevents too deep bombing, see http://www.lemmingsforums.net/index.php?topic=2620.0
@@ -89,12 +89,12 @@ public sealed class ClimberAction : LemmingAction
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
         lemming.IsStartingAction = false;
 
-        foundClip = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, -dx, 7));
+        foundClip = PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, -dx, 7));
 
         if (physicsFrame == 7)
         {
             foundClip = foundClip &&
-                        PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 7));
+                        PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 7));
         }
 
         if (!foundClip)

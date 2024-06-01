@@ -64,9 +64,9 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
 
-        if (PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, this, lemmingPosition))
+        if (PositionIsIndestructibleToLemming(gadgetsNearRegion, lemming, this, lemmingPosition))
         {
-            if (PositionIsSteelToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+            if (PositionIsSteelToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             {
                 //CueSoundEffect(SFX_HITS_STEEL, L.Position);
             }
@@ -102,14 +102,14 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
         // Two most extreme pixels
         var checkLevelPosition = orientation.MoveLeft(lemmingPosition, 4);
-        var pixelIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkLevelPosition);
+        var pixelIsSolid = PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
             terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
         }
 
         checkLevelPosition = orientation.MoveRight(lemmingPosition, 4);
-        pixelIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkLevelPosition);
+        pixelIsSolid = PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
             terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
@@ -119,7 +119,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         for (var i = -3; i < 4; i++)
         {
             checkLevelPosition = orientation.MoveRight(lemmingPosition, i);
-            pixelIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkLevelPosition);
+            pixelIsSolid = PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkLevelPosition);
             if (pixelIsSolid)
             {
                 terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);

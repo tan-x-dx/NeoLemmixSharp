@@ -129,7 +129,7 @@ end;
             // Rise a pixel every second frame
             if (lemming.PhysicsFrame >= 9 &&
                 (lemming.PhysicsFrame & 1) != 0 &&
-                !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 1 - maxFallDistance)) &&
+                !PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 1 - maxFallDistance)) &&
                 HeadCheck(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 1)))
             {
                 maxFallDistance--;
@@ -165,7 +165,7 @@ end;
             {
                 dy++;
                 checkPosition = orientation.MoveDown(lemmingPosition, dy);
-            } while (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkPosition));
+            } while (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkPosition));
 
             lemmingPosition = checkPosition;
 
@@ -211,7 +211,7 @@ end;
             dy++;
 
             // Check whether the glider has reached the ground
-            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+            if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             {
                 lemming.SetNextAction(WalkerAction.Instance);
                 return true;
@@ -245,14 +245,14 @@ end;
         do
         {
             // Bug-fix for http://www.lemmingsforums.net/index.php?topic=2693
-            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveDown(checkPosition, dy)) &&
-                PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(checkPosition, -dx, dy)))
+            if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveDown(checkPosition, dy)) &&
+                PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(checkPosition, -dx, dy)))
                 // Abort computation and let lemming turn around
                 return true;
 
             dy++;
 
-        } while (dy <= 3 && PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveDown(checkPosition, dy)));
+        } while (dy <= 3 && PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveDown(checkPosition, dy)));
 
         return dy > 3;
     }
@@ -274,7 +274,7 @@ end;
             return;
 
         var updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition) &&
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition) &&
             updraftFallDelta.Y >= 0)
         {
             lemming.SetNextAction(WalkerAction.Instance);
@@ -282,7 +282,7 @@ end;
             return;
         }
 
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 2)) &&
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 2)) &&
             updraftFallDelta.Y < 0)
             return;
 
@@ -300,7 +300,7 @@ end;
 
             for (var i = 1; i < 4; i++)
             {
-                if (!PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, checkPosition))
+                if (!PositionIsSolidToLemming(gadgetsNearRegion1, lemming, checkPosition))
                     return false;
             }
 
@@ -315,8 +315,8 @@ end;
     {
         var orientation = lemming.Orientation;
 
-        return !(PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(checkPosition, -1, 12)) ||
-                 PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(checkPosition, 0, 12)) ||
-                 PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(checkPosition, 1, 12)));
+        return !(PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(checkPosition, -1, 12)) ||
+                 PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(checkPosition, 0, 12)) ||
+                 PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(checkPosition, 1, 12)));
     }
 }

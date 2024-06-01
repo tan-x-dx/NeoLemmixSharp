@@ -71,7 +71,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
         var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemmingPosition);
 
-        if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+        if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
