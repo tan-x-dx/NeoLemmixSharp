@@ -55,6 +55,15 @@ public sealed class SawBladeGadget : HitBoxGadget, IDestructionMask, IMoveableGa
     }
 
     public override bool MatchesPosition(LevelPosition levelPosition) => _hitMasks[AnimationFrame].MatchesPosition(levelPosition);
+    public override bool IsSolidToLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
+    {
+        return false; // Saw blades can never be solid
+    }
+
+    public override bool IsSteelToLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
+    {
+        return false; // Saw blades can never be steel
+    }
 
     public override void OnLemmingMatch(Lemming lemming)
     {

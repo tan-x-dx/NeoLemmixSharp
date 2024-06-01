@@ -59,6 +59,16 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget, IControlledA
         return _states[_currentStateIndex].HitBox.MatchesPosition(levelPosition);
     }
 
+    public override bool IsSolidToLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
+    {
+        return false;
+    }
+
+    public override bool IsSteelToLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
+    {
+        return false;
+    }
+
     public override void OnLemmingMatch(Lemming lemming)
     {
         var actionsToPerform = GetActionsToPerformOnLemming(lemming);

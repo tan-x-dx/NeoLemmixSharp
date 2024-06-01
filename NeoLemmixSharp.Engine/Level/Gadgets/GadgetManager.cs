@@ -117,6 +117,36 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
         return false;
     }
 
+    [Pure]
+    public static bool HasSolidGadgetAtPosition(
+        in SimpleSetEnumerable<HitBoxGadget> enumerable,
+        Lemming lemming,
+        LevelPosition levelPosition)
+    {
+        foreach (var gadget in enumerable)
+        {
+            if (gadget.IsSolidToLemmingAtPosition(lemming, levelPosition))
+                return true;
+        }
+
+        return false;
+    }
+
+    [Pure]
+    public static bool HasSteelGadgetAtPosition(
+        in SimpleSetEnumerable<HitBoxGadget> enumerable,
+        Lemming lemming,
+        LevelPosition levelPosition)
+    {
+        foreach (var gadget in enumerable)
+        {
+            if (gadget.IsSteelToLemmingAtPosition(lemming, levelPosition))
+                return true;
+        }
+
+        return false;
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void UpdateGadgetPosition(HitBoxGadget gadget)
     {

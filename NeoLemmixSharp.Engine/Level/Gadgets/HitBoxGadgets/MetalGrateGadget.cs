@@ -107,7 +107,17 @@ public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget, IResizeabl
     {
         levelPosition = LevelRegionHelpers.GetRelativePosition(TopLeftPixel, levelPosition);
 
-        return CurrentState == MetalGrateState.On && GadgetBounds.ContainsPoint(levelPosition);
+        return GadgetBounds.ContainsPoint(levelPosition);
+    }
+
+    public override bool IsSolidToLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
+    {
+        return CurrentState == MetalGrateState.On && MatchesLemmingAtPosition(lemming, levelPosition);
+    }
+
+    public override bool IsSteelToLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
+    {
+        return CurrentState == MetalGrateState.On && MatchesLemmingAtPosition(lemming, levelPosition);
     }
 
     public override void OnLemmingMatch(Lemming lemming)
