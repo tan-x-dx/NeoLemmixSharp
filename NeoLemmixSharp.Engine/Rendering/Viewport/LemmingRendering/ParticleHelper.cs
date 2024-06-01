@@ -35,6 +35,6 @@ public static class ParticleHelper
         int particleId)
     {
         return NumberOfBytesPerCall *
-               (LevelConstants.NumberOfParticles * LevelConstants.ParticleFrameCount - LevelConstants.NumberOfParticles * frame + particleId);
+               (LevelConstants.NumberOfParticles * (LevelConstants.ParticleFrameCount - frame) + particleId);
     }
 }
