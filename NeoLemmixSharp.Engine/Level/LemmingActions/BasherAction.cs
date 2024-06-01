@@ -92,7 +92,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
         var dy = FindGroundPixel(lemming, lemmingPosition);
 
-        if (dy > 0 &&
+        if (dy < 0 &&
             lemming.State.IsSlider &&
             DehoisterAction.LemmingCanDehoist(lemming, true))
         {
@@ -102,22 +102,22 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             return true;
         }
 
-        if (dy == 4)
+        if (dy == -4)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, 4);
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
-        if (dy == 3)
+        if (dy == -3)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, 3);
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
-        var testPoint = orientation.MoveDown(lemmingPosition, dy);
-        if (dy is >= 0 and <= 2)
+        var testPoint = orientation.MoveUp(lemmingPosition, dy);
+        if (dy is <= 0 and >= -2)
         {
             // Move zero, one or two pixels down, if there is no steel
             if (BasherIndestructibleCheck(lemming, testPoint))
@@ -132,7 +132,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             return true;
         }
 
-        if (dy is -1 or -2)
+        if (dy is 1 or 2)
         {
             // Move one or two pixels up, if there is no steel and not too much terrain
             if (BasherIndestructibleCheck(lemming, testPoint))
@@ -145,8 +145,8 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             {
                 if (BasherIndestructibleCheck(lemming, orientation.Move(lemmingPosition, dx, 0 - 2)))
                 {
-                    var steelTest = terrainManager.PixelIsSteel(orientation.Move(lemmingPosition, dx, -dy)) ||
-                                    terrainManager.PixelIsSteel(orientation.Move(lemmingPosition, dx, -dy - 1));
+                    var steelTest = terrainManager.PixelIsSteel(orientation.Move(lemmingPosition, dx, dy)) ||
+                                    terrainManager.PixelIsSteel(orientation.Move(lemmingPosition, dx, dy - 1));
 
                     BasherTurn(lemming, steelTest);
                     return true;
@@ -162,7 +162,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             return true;
         }
 
-        if (dy >= -2)
+        if (dy <= 2)
             return true;
 
         // Either stall or turn if there is steel
@@ -226,7 +226,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         var p2X2Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx * 2, 2));
         var p2X3Y = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(pos, dx * 2, 3));
 
-        if (dy == 1)
+        if (dy == -1)
         {
             if (!p1X2Y && p1X1Y && p2X1Y && p2X2Y && p2X3Y)
                 return false;
@@ -240,7 +240,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             return true;
         }
 
-        if (dy == 2)
+        if (dy == -2)
         {
             if (!p1X2Y && p1X1Y && p2X1Y && p2X2Y && p2X3Y)
                 return false;

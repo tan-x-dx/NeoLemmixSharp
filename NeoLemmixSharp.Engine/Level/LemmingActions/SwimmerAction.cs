@@ -31,7 +31,7 @@ public sealed class SwimmerAction : LemmingAction
         lemming.DistanceFallen = 0;
         // Need to set this here for swimmers, as it's not constant.
         // 0 is the fallback value that's correct for *most* situations. Transition will
-        // still set TrueDistanceFallen so we don't need to worry about that one.
+        // still set TrueDistanceFallen, so we don't need to worry about that one.
 
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
 
@@ -42,7 +42,7 @@ public sealed class SwimmerAction : LemmingAction
         {
             // Rise if there is water above the lemming
             var pixelAbove = orientation.MoveUp(lemmingPosition, 1);
-            if (dy >= -1 &&
+            if (dy <= 1 &&
                 WaterAt(pixelAbove) &&
                 !terrainManager.PixelIsSolidToLemming(lemming, pixelAbove))
             {
@@ -51,7 +51,7 @@ public sealed class SwimmerAction : LemmingAction
                 return true;
             }
 
-            if (dy < -6)
+            if (dy > 6)
             {
                 var diveDistance = LemDive(lemming, lemmingPosition);
 
@@ -82,7 +82,7 @@ public sealed class SwimmerAction : LemmingAction
                 return true;
             }
 
-            if (dy <= -3)
+            if (dy >= 3)
             {
                 AscenderAction.Instance.TransitionLemmingToAction(lemming, false);
                 lemmingPosition = orientation.MoveUp(lemmingPosition, 2);
@@ -90,7 +90,7 @@ public sealed class SwimmerAction : LemmingAction
                 return true;
             }
 
-            if (dy <= -1 || (dy == 0 && !WaterAt(lemmingPosition)))
+            if (dy >= 1 || (dy == 0 && !WaterAt(lemmingPosition)))
             {
                 // see http://www.lemmingsforums.net/index.php?topic=3380.0
                 // And the swimmer should not yet stop if the water and terrain overlaps
@@ -103,7 +103,7 @@ public sealed class SwimmerAction : LemmingAction
         }
 
         // if no water or terrain on current position
-        if (dy > 1)
+        if (dy < -1)
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -111,8 +111,8 @@ public sealed class SwimmerAction : LemmingAction
             return true;
         }
 
-        // if dy == 0 or == 1
-        lemmingPosition = orientation.MoveDown(lemmingPosition, dy);
+        // if dy == 0 or == -1
+        lemmingPosition = orientation.MoveUp(lemmingPosition, dy);
         WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
         return true;

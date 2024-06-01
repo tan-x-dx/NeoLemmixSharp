@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
 
@@ -143,8 +144,8 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     /// <summary>
     /// Find the new ground pixel. 
-    /// If result = 4, then at least 4 pixels are air below levelPosition. 
-    /// If result = -7, then at least 7 pixels are terrain above levelPosition
+    /// If result = -4, then at least 4 pixels are air below levelPosition. 
+    /// If result = 7, then at least 7 pixels are terrain above levelPosition
     /// </summary>
     [Pure]
     protected static int FindGroundPixel(
@@ -152,24 +153,35 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         LevelPosition levelPosition)
     {
         var terrainManager = LevelScreen.TerrainManager;
+        var gadgetManager = LevelScreen.GadgetManager;
+
+        var orientation = lemming.Orientation;
+        var gadgetTestRegion = new LevelPositionPair(
+            orientation.MoveUp(levelPosition, LevelConstants.MaxStepUp + 1),
+            orientation.MoveDown(levelPosition, LevelConstants.DefaultFallStep + 1));
+
+        var gadgetsNearRegion = gadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
 
         var result = 0;
-        if (terrainManager.PixelIsSolidToLemming(lemming, levelPosition))
+        if (terrainManager.PixelIsSolidToLemming(lemming, levelPosition) ||
+            GadgetManager.HasSolidGadgetAtPosition(in gadgetsNearRegion, lemming, levelPosition))
         {
-            while (terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveUp(levelPosition, 1 - result)) &&
-                   result > -7)
+            while ((terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(levelPosition, 1 + result)) ||
+                    GadgetManager.HasSolidGadgetAtPosition(in gadgetsNearRegion, lemming, levelPosition)) &&
+                   result < 7)
             {
-                result--;
+                result++;
             }
 
             return result;
         }
 
-        result = 1;
-        while (!terrainManager.PixelIsSolidToLemming(lemming, lemming.Orientation.MoveDown(levelPosition, result)) &&
-               result < 4)
+        result = -1;
+        while (!(terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(levelPosition, result)) ||
+                 GadgetManager.HasSolidGadgetAtPosition(in gadgetsNearRegion, lemming, levelPosition)) &&
+               result > -4)
         {
-            result++;
+            result--;
         }
 
         return result;

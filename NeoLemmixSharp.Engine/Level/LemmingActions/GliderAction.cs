@@ -145,7 +145,7 @@ end;
 
         int dy;
 
-        if (groundDistance < -4) // Pushed down or turn around
+        if (groundDistance > 4) // Pushed down or turn around
         {
             if (DoTurnAround(lemming, false)) // Move back and turn around
             {
@@ -168,10 +168,9 @@ end;
             return true;
         }
 
-        if (groundDistance < 0) // Move 1 to 4 pixels up
+        if (groundDistance > 0) // Move 1 to 4 pixels up
         {
-            // Moving down, but by a negative amount so going up
-            lemmingPosition = orientation.MoveDown(lemmingPosition, groundDistance);
+            lemmingPosition = orientation.MoveUp(lemmingPosition, groundDistance);
             lemming.SetNextAction(WalkerAction.Instance);
 
             return true;
@@ -181,10 +180,10 @@ end;
         {
             // Same algorithm as for faller!
 
-            if (maxFallDistance > groundDistance)
+            if (maxFallDistance > -groundDistance)
             {
                 // Lem has found solid terrain
-                lemmingPosition = orientation.MoveDown(lemmingPosition, groundDistance);
+                lemmingPosition = orientation.MoveUp(lemmingPosition, groundDistance);
                 lemming.SetNextAction(WalkerAction.Instance);
 
                 return true;
@@ -262,7 +261,7 @@ end;
         var dx = lemming.FacingDirection.DeltaX;
         var groundPixelDelta = FindGroundPixel(lemming, orientation.MoveRight(lemmingPosition, dx));
 
-        if ((groundPixelDelta >= -4 ||
+        if ((groundPixelDelta <= 4 ||
              !DoTurnAround(lemming, true)) &&
             !HasConsecutivePixels())
             return;

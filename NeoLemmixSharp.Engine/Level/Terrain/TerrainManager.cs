@@ -76,10 +76,7 @@ public sealed class TerrainManager
         Lemming lemming,
         LevelPosition levelPosition)
     {
-        var pixel = PixelTypeAtPosition(levelPosition);
-
-        return pixel.IsSolidToOrientation(lemming.Orientation) ||
-               _gadgetManager.HasGadgetWithBehaviourAtPosition(levelPosition, MetalGrateGadgetBehaviour.Instance);
+        return PixelTypeAtPosition(levelPosition).IsSolidToOrientation(lemming.Orientation);
     }
 
     [Pure]
@@ -91,18 +88,14 @@ public sealed class TerrainManager
         var pixel = PixelTypeAtPosition(levelPosition);
 
         return !pixel.CanBeDestroyed() ||
-               !destructionMask.CanDestroyPixel(pixel, lemming.Orientation, lemming.FacingDirection) ||
-               _gadgetManager.HasGadgetWithBehaviourAtPosition(levelPosition, MetalGrateGadgetBehaviour.Instance);
+               !destructionMask.CanDestroyPixel(pixel, lemming.Orientation, lemming.FacingDirection);
     }
 
     [Pure]
     public bool PixelIsSteel(
         LevelPosition levelPosition)
     {
-        var pixel = PixelTypeAtPosition(levelPosition);
-
-        return pixel.IsSteel() ||
-               _gadgetManager.HasGadgetWithBehaviourAtPosition(levelPosition, MetalGrateGadgetBehaviour.Instance);
+        return PixelTypeAtPosition(levelPosition).IsSteel();
     }
 
     public void ErasePixel(

@@ -53,14 +53,11 @@ public static class LevelConstants
     /// A lemming falls 3 pixels each frame
     /// </summary>
     public const int DefaultFallStep = 3;
+
     /// <summary>
-    /// A lemming falls 2 pixels each frame if there's an updraft at its location
+    /// A lemming can step up a maximum of 6 pixels
     /// </summary>
-    public const int UpdraftFallStep = 2;
-    /// <summary>
-    /// A lemming falls 4 pixels each frame if there's a downdraft at its location
-    /// </summary>
-    public const int DownDraftFallStep = 4;
+    public const int MaxStepUp = 6;
 
     #endregion
 
