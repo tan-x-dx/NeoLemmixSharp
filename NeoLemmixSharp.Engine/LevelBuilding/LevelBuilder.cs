@@ -100,7 +100,6 @@ public sealed class LevelBuilder : IDisposable
 
         var terrainManager = new TerrainManager(
             pixelData,
-            gadgetManager,
             terrainPainter,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);

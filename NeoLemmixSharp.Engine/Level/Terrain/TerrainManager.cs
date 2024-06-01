@@ -3,8 +3,6 @@ using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
@@ -16,8 +14,6 @@ namespace NeoLemmixSharp.Engine.Level.Terrain;
 public sealed class TerrainManager
 {
     private readonly PixelType[] _pixels;
-    private readonly GadgetManager _gadgetManager;
-
     private readonly TerrainPainter _terrainPainter;
 
     public IHorizontalBoundaryBehaviour HorizontalBoundaryBehaviour { get; }
@@ -28,13 +24,11 @@ public sealed class TerrainManager
 
     public TerrainManager(
         PixelType[] pixels,
-        GadgetManager gadgetManager,
         TerrainPainter terrainPainter,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _pixels = pixels;
-        _gadgetManager = gadgetManager;
 
         _terrainPainter = terrainPainter;
 
@@ -92,8 +86,7 @@ public sealed class TerrainManager
     }
 
     [Pure]
-    public bool PixelIsSteel(
-        LevelPosition levelPosition)
+    public bool PixelIsSteel(LevelPosition levelPosition)
     {
         return PixelTypeAtPosition(levelPosition).IsSteel();
     }
@@ -129,8 +122,7 @@ public sealed class TerrainManager
 
     public void SetSolidPixel(LevelPosition pixelToSet, Color color)
     {
-        if (PositionOutOfBounds(pixelToSet) ||
-            _gadgetManager.HasGadgetWithBehaviourAtPosition(pixelToSet, MetalGrateGadgetBehaviour.Instance))
+        if (PositionOutOfBounds(pixelToSet))
             return;
 
         var index = LevelWidth * pixelToSet.Y + pixelToSet.X;
