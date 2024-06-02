@@ -23,7 +23,6 @@ public sealed class ClimberAction : LemmingAction
     // See http://www.lemmingsforums.net/index.php?topic=2506.0 first!
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var dx = lemming.FacingDirection.DeltaX;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
@@ -31,17 +30,22 @@ public sealed class ClimberAction : LemmingAction
 
         bool foundClip;
 
+        var gadgetTestRegion = new LevelPositionPair(
+            orientation.Move(lemmingPosition, 2 * dx, -2),
+            orientation.Move(lemmingPosition, -2 * dx, 10));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+
         if (physicsFrame <= 3)
         {
             foundClip =
-                terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 6 + physicsFrame)) ||
-                (terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 5 + physicsFrame)) &&
+                PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, -dx, 6 + physicsFrame)) ||
+                (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, -dx, 5 + physicsFrame)) &&
                  !lemming.IsStartingAction);
 
             if (physicsFrame == 0) // first triggered after 8 frames!
             {
                 foundClip = foundClip &&
-                            terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 7));
+                            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, -dx, 7));
             }
 
             if (foundClip)
@@ -67,7 +71,7 @@ public sealed class ClimberAction : LemmingAction
                 return true;
             }
 
-            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7 + physicsFrame)))
+            if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 7 + physicsFrame)))
                 return true;
 
             // if-case prevents too deep bombing, see http://www.lemmingsforums.net/index.php?topic=2620.0
@@ -85,12 +89,12 @@ public sealed class ClimberAction : LemmingAction
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
         lemming.IsStartingAction = false;
 
-        foundClip = terrainManager.PixelIsSolidToLemming(lemming, orientation.Move(lemmingPosition, -dx, 7));
+        foundClip = PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, -dx, 7));
 
         if (physicsFrame == 7)
         {
             foundClip = foundClip &&
-                        terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7));
+                        PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 7));
         }
 
         if (!foundClip)

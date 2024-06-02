@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -21,9 +22,14 @@ public sealed class StackerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
+        var gadgetTestRegion = new LevelPositionPair(
+            lemming.Orientation.MoveDown(lemming.LevelPosition, 1),
+            lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX * 3, 1 + LevelConstants.NumberOfStackerBricks));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+
         if (lemming.PhysicsFrame == LevelConstants.StackerAnimationFrames - 1)
         {
-            lemming.PlacedBrick = LayStackBrick(lemming);
+            lemming.PlacedBrick = LayStackBrick(in gadgetsNearRegion, lemming);
         }
         else if (lemming.PhysicsFrame == 0)
         {
@@ -39,7 +45,7 @@ public sealed class StackerAction : LemmingAction
                 // Relax the check on the first brick
                 // for details see http://www.lemmingsforums.net/index.php?topic=2862.0
                 if (lemming.NumberOfBricksLeft < LevelConstants.NumberOfStackerBricks - 1 ||
-                    !MayPlaceNextBrick(lemming))
+                    !MayPlaceNextBrick(in gadgetsNearRegion, lemming))
                 {
                     WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
                 }
@@ -58,21 +64,24 @@ public sealed class StackerAction : LemmingAction
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
-    private static bool MayPlaceNextBrick(Lemming lemming)
+    private static bool MayPlaceNextBrick(
+        in GadgetSet gadgetsNearRegion,
+        Lemming lemming)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var brickPosition = lemming.LevelPosition;
         brickPosition = orientation.MoveUp(brickPosition, 1 + LevelConstants.NumberOfStackerBricks - lemming.NumberOfBricksLeft);
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        return !(terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(brickPosition, dx)) &&
-                 terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(brickPosition, dx + dx)) &&
-                 terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(brickPosition, dx + dx + dx)));
+        return !(PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveRight(brickPosition, dx)) &&
+                 PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveRight(brickPosition, dx * 2)) &&
+                 PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveRight(brickPosition, dx * 3)));
     }
 
-    private static bool LayStackBrick(Lemming lemming)
+    private static bool LayStackBrick(
+        in GadgetSet gadgetsNearRegion,
+        Lemming lemming)
     {
         var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
@@ -84,7 +93,7 @@ public sealed class StackerAction : LemmingAction
 
         for (var i = 0; i < 3; i++)
         {
-            if (!terrainManager.PixelIsSolidToLemming(lemming, brickPosition))
+            if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, brickPosition))
             {
                 terrainManager.SetSolidPixel(brickPosition, Color.Magenta);
                 result = true;

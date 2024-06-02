@@ -41,6 +41,16 @@ public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeabl
         return false;
     }
 
+    public override bool IsSolidToLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
+    {
+        return false;
+    }
+
+    public override bool IsSteelToLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
+    {
+        return false;
+    }
+
     public override void OnLemmingMatch(Lemming lemming)
     {
         //    throw new NotImplementedException();

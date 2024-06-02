@@ -34,9 +34,9 @@ public sealed class FloaterAction : LemmingAction
         lemmingPosition = orientation.MoveRight(lemmingPosition, updraftFallDelta.X);
 
         var groundPixelDistance = Math.Max(FindGroundPixel(lemming, lemmingPosition), 0);
-        if (maxFallDistance > groundPixelDistance)
+        if (maxFallDistance > -groundPixelDistance)
         {
-            lemmingPosition = orientation.MoveDown(lemmingPosition, groundPixelDistance);
+            lemmingPosition = orientation.MoveUp(lemmingPosition, groundPixelDistance);
             lemming.SetNextAction(WalkerAction.Instance);
         }
         else

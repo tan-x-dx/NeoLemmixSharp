@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -17,18 +18,22 @@ public sealed class WalkerSkill : LemmingSkill
 
     public override void AssignToLemming(Lemming lemming)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
-        var dx = lemming.FacingDirection.DeltaX;
 
         // Important! If a builder just placed a brick and part of the previous brick
         // got removed, he should not fall if turned into a walker!
         var testUp = orientation.MoveUp(lemmingPosition, 1);
+        var testRight = orientation.MoveRight(lemmingPosition, lemming.FacingDirection.DeltaX);
+
+        var gadgetTestRegion = new LevelPositionPair(
+            lemmingPosition,
+            testRight);
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
 
         if (lemming.CurrentAction == BuilderAction.Instance &&
-            terrainManager.PixelIsSolidToLemming(lemming, testUp) &&
-            !terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveRight(lemmingPosition, dx)))
+            LemmingAction.PositionIsSolidToLemming(gadgetsNearRegion, lemming, testUp) &&
+            !LemmingAction.PositionIsSolidToLemming(gadgetsNearRegion, lemming, testRight))
         {
             lemmingPosition = testUp;
 
@@ -47,22 +52,38 @@ public sealed class WalkerSkill : LemmingSkill
         // Turn around walking lem, if assigned a walker
         lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
 
-        // Special treatment if in one-way-field facing the wrong direction
-        // see http://www.lemmingsforums.net/index.php?topic=2640.0
-        var facingDirectionAsOrientation = lemming.FacingDirection.ConvertToRelativeOrientation(orientation);
-
-        if (false /*Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.ForceDirection, lemmingPosition, facingDirectionAsOrientation.GetOpposite())*/
-           )
+        if (LemmingIsForcedToChangeDirection(in gadgetsNearRegion, lemming))
         {
             // Go one back to cancel the horizontal offset in WalkerAction's update method.
             // unless the Lem will fall down (which is handles already in Transition)
-            if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+            if (LemmingAction.PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             {
-                lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
+                lemmingPosition = testRight;
             }
         }
 
         WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+    }
+
+    private static bool LemmingIsForcedToChangeDirection(
+        in GadgetSet gadgetsNearRegion,
+        Lemming lemming)
+    {
+        foreach (var blocker in LevelScreen.LemmingManager.AllBlockers)
+        {
+
+        }
+
+        // Special treatment if in one-way-field facing the wrong direction
+        // see http://www.lemmingsforums.net/index.php?topic=2640.0
+        var facingDirectionAsOrientation = lemming.FacingDirection.ConvertToRelativeOrientation(lemming.Orientation);
+
+        foreach (var gadget in gadgetsNearRegion)
+        {
+            /*Terrain.HasGadgetThatMatchesTypeAndOrientation(GadgetType.ForceDirection, lemmingPosition, facingDirectionAsOrientation.GetOpposite())*/
+        }
+
+        return false;
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()

@@ -1,4 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -69,26 +71,8 @@ public sealed class JumperAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -1;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 9;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
-
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
-    {
-        if (lemming.CurrentAction == ClimberAction.Instance ||
-            lemming.CurrentAction == SliderAction.Instance)
-        {
-            lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
-            lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX);
-        }
-
-        base.TransitionLemmingToAction(lemming, turnAround);
-
-        lemming.JumpProgress = 0;
-    }
-
-    private bool MakeJumpMovement(Lemming lemming)
+    private bool MakeJumpMovement(
+        Lemming lemming)
     {
         var patternIndex = GetPatternIndex(lemming);
         if (patternIndex < 0)
@@ -101,6 +85,11 @@ public sealed class JumperAction : LemmingAction
         ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
+        var gadgetTestRegion = new LevelPositionPair(
+            lemmingPosition,
+            orientation.Move(lemmingPosition, dx, 12));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+
         for (var i = 0; i < JumperPositionCount; i++)
         {
             lemmingJumpPatterns[i] = lemmingPosition;
@@ -112,24 +101,24 @@ public sealed class JumperAction : LemmingAction
 
             if (position.X != 0) // Wall check
             {
-                var hitWall = DoWallCheck(lemming);
+                var hitWall = DoWallCheck(in gadgetsNearRegion, lemming);
                 if (hitWall)
                     return false;
             }
 
             if (position.Y > 0) // Head check
             {
-                var hitHead = DoHeadCheck(lemming, lemming.JumpProgress == 0);
+                var hitHead = DoHeadCheck(in gadgetsNearRegion, lemming, lemming.JumpProgress == 0);
                 if (hitHead)
                     return false;
             }
 
             lemmingPosition = orientation.Move(lemmingPosition, dx * position.X, position.Y);
 
-            DoJumperTriggerChecks(lemming);
+            DoJumperTriggerChecks(in gadgetsNearRegion);
 
             if (lemming.JumpProgress == 0 ||
-                !LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+                !PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
                 continue; // Foot check
 
             lemming.SetNextAction(WalkerAction.Instance);
@@ -156,41 +145,41 @@ public sealed class JumperAction : LemmingAction
         return -1;
     }
 
-    private static bool DoWallCheck(Lemming lemming)
+    private static bool DoWallCheck(
+        in GadgetSet gadgetsNearRegion,
+        Lemming lemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         var checkPosition = orientation.MoveRight(lemmingPosition, dx);
-        if (!LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
+        if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkPosition))
             return false;
 
         for (var n = 1; n < 9; n++)
         {
             var checkPosition2 = orientation.MoveUp(checkPosition, n);
-            if (!LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition2))
+            if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkPosition2))
             {
                 int deltaY;
                 LemmingAction nextAction;
 
-                switch (n)
+                if (n <= 2)
                 {
-                    case <= 2:
-                        deltaY = n - 1;
-                        nextAction = WalkerAction.Instance;
-                        break;
-
-                    case <= 5:
-                        deltaY = n - 5;
-                        nextAction = HoisterAction.Instance;
-                        lemming.JumpToHoistAdvance = true;
-                        break;
-
-                    default:
-                        deltaY = n - 8;
-                        nextAction = HoisterAction.Instance;
-                        break;
+                    deltaY = n - 1;
+                    nextAction = WalkerAction.Instance;
+                }
+                else if (n <= 5)
+                {
+                    deltaY = n - 5;
+                    nextAction = HoisterAction.Instance;
+                    lemming.JumpToHoistAdvance = true;
+                }
+                else
+                {
+                    deltaY = n - 8;
+                    nextAction = HoisterAction.Instance;
                 }
 
                 lemmingPosition = orientation.MoveUp(checkPosition, deltaY);
@@ -227,6 +216,7 @@ public sealed class JumperAction : LemmingAction
     }
 
     private static bool DoHeadCheck(
+        in GadgetSet gadgetsNearRegion,
         Lemming lemming,
         bool firstStepSpecialHandling)
     {
@@ -240,7 +230,7 @@ public sealed class JumperAction : LemmingAction
         for (; n < 10; n++)
         {
             var checkPosition = orientation.MoveUp(lemmingPosition, n);
-            if (!LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, checkPosition))
+            if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkPosition))
                 continue;
 
             lemming.SetNextAction(FallerAction.Instance);
@@ -250,15 +240,13 @@ public sealed class JumperAction : LemmingAction
         return false;
     }
 
-    private void DoJumperTriggerChecks(Lemming lemming)
+    private void DoJumperTriggerChecks(
+        in GadgetSet gadgetsNearRegion)
     {
-        var gadgetsAtLemmingPosition = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
-
-        foreach (var gadget in gadgetsAtLemmingPosition)
+        foreach (var gadget in gadgetsNearRegion)
         {
         }
     }
-}
 
 /*
   procedure DoJumperTriggerChecks;
@@ -278,3 +266,23 @@ public sealed class JumperAction : LemmingAction
       HandleForceField(L, 1);
   end;
 */
+
+    protected override int TopLeftBoundsDeltaX(int animationFrame) => -1;
+    protected override int TopLeftBoundsDeltaY(int animationFrame) => 9;
+
+    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
+
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    {
+        if (lemming.CurrentAction == ClimberAction.Instance ||
+            lemming.CurrentAction == SliderAction.Instance)
+        {
+            lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
+            lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX);
+        }
+
+        base.TransitionLemmingToAction(lemming, turnAround);
+
+        lemming.JumpProgress = 0;
+    }
+}

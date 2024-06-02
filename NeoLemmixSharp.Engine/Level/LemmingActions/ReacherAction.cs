@@ -26,17 +26,21 @@ public sealed class ReacherAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
-        var emptyPixels = GetEmptyPixelCount(lemming, lemmingPosition);
+        var gadgetTestRegion = new LevelPositionPair(
+            lemmingPosition,
+            orientation.MoveUp(lemmingPosition, 14));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+
+        var emptyPixels = GetEmptyPixelCount(in gadgetsNearRegion, lemming, lemmingPosition);
 
         // Check for terrain in the body to trigger falling down
-        if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 5)) ||
-            terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 6)) ||
-            terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7)) ||
-            terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 8)))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 5)) ||
+            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 6)) ||
+            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 7)) ||
+            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 8)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -45,7 +49,7 @@ public sealed class ReacherAction : LemmingAction
 
         // On the first frame, check as well for height 9, as the shimmier may not continue in that case
         if (lemming.PhysicsFrame == 1 &&
-            terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 9)))
+            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 9)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -77,25 +81,25 @@ public sealed class ReacherAction : LemmingAction
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     private static int GetEmptyPixelCount(
+        in GadgetSet gadgetsNearRegion,
         Lemming lemming,
         LevelPosition lemmingPosition)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         lemmingPosition = orientation.MoveUp(lemmingPosition, 10);
-        if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             return 0;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-        if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             return 1;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-        if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             return 2;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-        if (terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             return 3;
 
         return 4;

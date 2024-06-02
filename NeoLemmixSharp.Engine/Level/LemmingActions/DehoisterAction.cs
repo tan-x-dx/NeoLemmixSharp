@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -24,9 +25,12 @@ public sealed class DehoisterAction : LemmingAction
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
+        var gadgetsNearRegion =
+            LevelScreen.GadgetManager.GetAllGadgetsForPosition(orientation.MoveUp(lemmingPosition, 7));
+
         if (lemming.EndOfAnimation)
         {
-            if (LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, orientation.MoveUp(lemmingPosition, 7)))
+            if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 7)))
             {
                 SliderAction.Instance.TransitionLemmingToAction(lemming, false);
                 return true;
@@ -66,9 +70,11 @@ public sealed class DehoisterAction : LemmingAction
         base.TransitionLemmingToAction(lemming, turnAround);
     }
 
-    public static bool LemmingCanDehoist(Lemming lemming, bool alreadyMoved)
+    [SkipLocalsInit]
+    public static bool LemmingCanDehoist(
+        Lemming lemming,
+        bool alreadyMoved)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         LevelPosition currentPosition;
@@ -84,16 +90,26 @@ public sealed class DehoisterAction : LemmingAction
             nextPosition = orientation.MoveRight(currentPosition, dx);
         }
 
-        if (terrainManager.PositionOutOfBounds(nextPosition) ||
-            (!terrainManager.PixelIsSolidToLemming(lemming, currentPosition) ||
-             terrainManager.PixelIsSolidToLemming(lemming, nextPosition)))
+        // Subroutine of other LevelAction methods.
+        // Use a dummy scratch space span to prevent data from being overridden.
+        // Prevents weird bugs!
+        Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
+
+        var gadgetTestRegion = new LevelPositionPair(
+            orientation.Move(nextPosition, dx, 1),
+            orientation.Move(nextPosition, -dx, -4));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion);
+
+        if (LevelScreen.TerrainManager.PositionOutOfBounds(nextPosition) ||
+            !PositionIsSolidToLemming(gadgetsNearRegion, lemming, currentPosition) ||
+            PositionIsSolidToLemming(gadgetsNearRegion, lemming, nextPosition))
             return false;
 
         for (var i = 1; i < 4; i++)
         {
-            if (terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(nextPosition, i)))
+            if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveDown(nextPosition, i)))
                 return false;
-            if (!terrainManager.PixelIsSolidToLemming(lemming, orientation.MoveDown(currentPosition, i)))
+            if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveDown(currentPosition, i)))
                 return true;
         }
 

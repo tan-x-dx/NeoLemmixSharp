@@ -6,6 +6,8 @@ namespace NeoLemmixSharp.Engine.Level.Terrain;
 
 public sealed class TerrainPainter
 {
+    private const int InitialPixelChangeListSize = 1 << 12;
+
     private readonly PixelChangeList _pixelChangeList = new();
     private readonly Texture2D _terrainTexture;
     private readonly PixelType[] _terrainPixelTypes;
@@ -38,9 +40,9 @@ public sealed class TerrainPainter
 
         var fromColor = _terrainColors[pixel.Y * _terrainWidth + pixel.X];
 
-        var pixelChangeData = new PixelChangeData(currentLatestFrameWithUpdate, pixel.X, pixel.Y, fromColor, toColor, fromPixelType, toPixelType);
+        ref var pixelChangeData = ref _pixelChangeList.GetNewPixelChangeDataRef();
 
-        _pixelChangeList.AddTerrainChangeData(in pixelChangeData);
+        pixelChangeData = new PixelChangeData(currentLatestFrameWithUpdate, pixel.X, pixel.Y, fromColor, toColor, fromPixelType, toPixelType);
     }
 
     public void RepaintTerrain()
@@ -64,9 +66,29 @@ public sealed class TerrainPainter
         return _pixelChangeList.SliceToEnd(startIndex);
     }
 
+    public void RewindBackTo(int frame)
+    {
+        var pixelChanges = _pixelChangeList.GetSliceBackTo(frame);
+        if (pixelChanges.Length == 0)
+            return;
+
+        for (var i = pixelChanges.Length - 1; i >= 0; i--)
+        {
+            ref readonly var pixelChangeData = ref pixelChanges[i];
+            var index = pixelChangeData.Y * _terrainWidth + pixelChangeData.X;
+            _terrainColors[index] = pixelChangeData.FromColor;
+            ref var pixelType = ref _terrainPixelTypes[index];
+
+            pixelType &= PixelType.TerrainDataInverseMask; // Clear out existing terrain data
+            pixelType |= (PixelType.TerrainDataMask & pixelChangeData.FromPixelType); // Add in the original terrain data
+        }
+
+        _terrainTexture.SetData(_terrainColors);
+    }
+
     private sealed class PixelChangeList
     {
-        private PixelChangeData[] _terrainChanges = new PixelChangeData[1 << 12];
+        private PixelChangeData[] _terrainChanges = new PixelChangeData[InitialPixelChangeListSize];
         private int _count;
 
         public int Count => _count;
@@ -93,7 +115,48 @@ public sealed class TerrainPainter
             return new ReadOnlySpan<PixelChangeData>(_terrainChanges, start, Math.Max(0, _count - start));
         }
 
-        public void AddTerrainChangeData(in PixelChangeData pixelChangeData)
+        public ReadOnlySpan<PixelChangeData> GetSliceBackTo(int frame)
+        {
+            var index = GetSmallestIndexOfFrame(frame);
+
+            return SliceToEnd(index);
+        }
+
+        /// <summary>
+        /// Returns the smallest index such that the data at that index has a frame equal to or exceeding the input parameter
+        /// </summary>
+        /// <param name="frame"></param>
+        /// <returns></returns>
+        private int GetSmallestIndexOfFrame(int frame)
+        {
+            if (_count == 0)
+                return 0;
+
+            var upperTestIndex = _count;
+            var lowerTestIndex = 0;
+
+            while (upperTestIndex - lowerTestIndex > 1)
+            {
+                var bestGuess = (lowerTestIndex + upperTestIndex) / 2;
+                ref readonly var test = ref _terrainChanges[bestGuess];
+
+                if (test.Frame >= frame)
+                {
+                    upperTestIndex = bestGuess;
+                }
+                else
+                {
+                    lowerTestIndex = bestGuess;
+                }
+            }
+
+            ref readonly var test1 = ref _terrainChanges[lowerTestIndex];
+            return test1.Frame >= frame
+                ? lowerTestIndex
+                : upperTestIndex;
+        }
+
+        public ref PixelChangeData GetNewPixelChangeDataRef()
         {
             var arraySize = _terrainChanges.Length;
             if (_count == arraySize)
@@ -103,7 +166,7 @@ public sealed class TerrainPainter
                 _terrainChanges = newArray;
             }
 
-            _terrainChanges[_count++] = pixelChangeData;
+            return ref _terrainChanges[_count++];
         }
 
         public int LatestFrameWithChange()
@@ -117,7 +180,7 @@ public sealed class TerrainPainter
         }
     }
 
-    public readonly struct PixelChangeData
+    private readonly struct PixelChangeData
     {
         public readonly int Frame;
         public readonly int X;

@@ -60,6 +60,13 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
     }
 
     [Pure]
+    public int ScratchSpaceSize
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _bitArraySize;
+    }
+
+    [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
 
@@ -103,6 +110,11 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         return new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _previousQueryCount);
     }
 
+    /// <summary>
+    /// Gets all items that overlap with the input region. Uses the backing scratch space to record data.
+    /// </summary>
+    /// <param name="levelRegion">The region to evaluate chunks from</param>
+    /// <returns>An enumerable for items within the region</returns>
     [Pure]
     public SimpleSetEnumerable<T> GetAllItemsNearRegion(LevelPositionPair levelRegion)
     {
@@ -127,15 +139,55 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
             var sourceSpan = ReadOnlySpanForChunk(_previousQueryTopLeftChunk.X, _previousQueryBottomRightChunk.Y);
             sourceSpan.CopyTo(scratchSpaceSpan);
             _previousQueryCount = BitArrayHelpers.GetPopCount(sourceSpan);
-
-            return new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _previousQueryCount);
+        }
+        else
+        {
+            scratchSpaceSpan.Clear();
+            EvaluateChunks(ChunkOperationType.Union, null, _previousQueryTopLeftChunk.X, _previousQueryTopLeftChunk.Y, _previousQueryBottomRightChunk.X, _previousQueryBottomRightChunk.Y);
+            _previousQueryCount = BitArrayHelpers.GetPopCount(readonlyScratchSpaceSpan);
         }
 
-        scratchSpaceSpan.Clear();
-        EvaluateChunkPositions(ChunkOperationType.Union, null, _previousQueryTopLeftChunk.X, _previousQueryTopLeftChunk.Y, _previousQueryBottomRightChunk.X, _previousQueryBottomRightChunk.Y);
-        _previousQueryCount = BitArrayHelpers.GetPopCount(readonlyScratchSpaceSpan);
-
         return new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _previousQueryCount);
+    }
+
+    /// <summary>
+    /// Gets all items that overlap with the input region. Uses the span parameter to record data.
+    /// </summary>
+    /// <param name="scratchSpaceSpan">The span used to record data</param>
+    /// <param name="levelRegion">The region to evaluate chunks from</param>
+    /// <returns>An enumerable for items within the region</returns>
+    public SimpleSetEnumerable<T> GetAllItemsNearRegion(Span<uint> scratchSpaceSpan, LevelPositionPair levelRegion)
+    {
+        if (IsEmpty)
+            return SimpleSetEnumerable<T>.Empty;
+
+        var topLeftChunk = GetChunkForPoint(levelRegion.GetTopLeftPosition());
+        var bottomRightChunk = GetChunkForPoint(levelRegion.GetBottomRightPosition());
+
+        if (topLeftChunk == _previousQueryTopLeftChunk &&
+            bottomRightChunk == _previousQueryBottomRightChunk)
+        {
+            // If we've already got the data cached, just use it
+            new ReadOnlySpan<uint>(_setUnionScratchSpace).CopyTo(scratchSpaceSpan);
+            return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _previousQueryCount);
+        }
+
+        int queryCount;
+        if (topLeftChunk == bottomRightChunk)
+        {
+            // Only one chunk -> skip some extra work
+
+            var sourceSpan = ReadOnlySpanForChunk(topLeftChunk.X, topLeftChunk.Y);
+            sourceSpan.CopyTo(scratchSpaceSpan);
+            queryCount = BitArrayHelpers.GetPopCount(sourceSpan);
+        }
+        else
+        {
+            EvaluateChunks(scratchSpaceSpan, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
+            queryCount = BitArrayHelpers.GetPopCount(scratchSpaceSpan);
+        }
+
+        return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, queryCount);
     }
 
     public void AddItem(T item)
@@ -196,7 +248,7 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
             return;
         }
 
-        EvaluateChunkPositions(ChunkOperationType.Add, item, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
+        EvaluateChunks(ChunkOperationType.Add, item, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
     }
 
     public void RemoveItem(T item)
@@ -240,7 +292,7 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
             return;
         }
 
-        EvaluateChunkPositions(ChunkOperationType.Remove, item, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
+        EvaluateChunks(ChunkOperationType.Remove, item, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
     }
 
     private LevelPosition GetChunkForPoint(LevelPosition levelPosition)
@@ -271,7 +323,7 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
     /// <param name="ay">The top left y-coordinate.</param>
     /// <param name="bx">The bottom right x-coordinate.</param>
     /// <param name="by">The bottom right y-coordinate.</param>
-    private void EvaluateChunkPositions(ChunkOperationType chunkOperationType, T? item, int ax, int ay, int bx, int by)
+    private void EvaluateChunks(ChunkOperationType chunkOperationType, T? item, int ax, int ay, int bx, int by)
     {
         if (bx < ax)
         {
@@ -328,6 +380,59 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         var readOnlySpan = ReadOnlySpanForChunk(x, y);
         span = new Span<uint>(_setUnionScratchSpace);
         BitArrayHelpers.UnionWith(span, readOnlySpan);
+    }
+
+    /// <summary>
+    /// Performs a Union chunk operation over a rectangle of chunks, placing the results into the span parameter.
+    ///
+    /// <para>The rectangle of chunks begins with the top left coordinates of (<paramref name="ax" />, <paramref name="ay" />)
+    /// down to the bottom right coordinates of (<paramref name="bx" />, <paramref name="by" />) inclusive.
+    ///</para>
+    /// 
+    /// <para>If the b coordinates are less than their respective a coordinates, then this method wraps around and continues evaluating from zero.
+    ///</para>
+    /// </summary>
+    /// 
+    /// <param name="span">The span used to record data.</param>
+    /// <param name="ax">The top left x-coordinate.</param>
+    /// <param name="ay">The top left y-coordinate.</param>
+    /// <param name="bx">The bottom right x-coordinate.</param>
+    /// <param name="by">The bottom right y-coordinate.</param>
+    private void EvaluateChunks(Span<uint> span, int ax, int ay, int bx, int by)
+    {
+        if (bx < ax)
+        {
+            bx += _numberOfHorizontalChunks;
+        }
+
+        if (by < ay)
+        {
+            by += _numberOfVerticalChunks;
+        }
+
+        var x = 1 + bx - ax;
+        var x1 = ax;
+        var yCount = 1 + by - ay;
+
+        while (x-- > 0)
+        {
+            var y1 = ay;
+            var y = yCount;
+            while (y-- > 0)
+            {
+                BitArrayHelpers.UnionWith(span, ReadOnlySpanForChunk(x1, y1));
+
+                if (++y1 == _numberOfVerticalChunks)
+                {
+                    y1 = 0;
+                }
+            }
+
+            if (++x1 == _numberOfHorizontalChunks)
+            {
+                x1 = 0;
+            }
+        }
     }
 
     [Pure]

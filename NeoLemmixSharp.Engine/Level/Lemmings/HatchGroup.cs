@@ -58,6 +58,9 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
 
     public HatchGadget? Tick()
     {
+        if (_lemmingsToRelease == 0)
+            return null;
+
         _nextLemmingCountDown--;
 
         if (_nextLemmingCountDown != 0)
@@ -69,12 +72,12 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
 
     private HatchGadget? GetNextLogicalHatchGadget()
     {
-        if (_lemmingsToRelease == 0)
-            return null;
+        var c = _hatches.Length;
 
         do
         {
             _hatchIndex++;
+            c--;
             if (_hatchIndex == _hatches.Length)
             {
                 _hatchIndex = 0;
@@ -83,7 +86,9 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
 
             if (hatchGadget.CanReleaseLemmings())
                 return hatchGadget;
-        } while (true);
+        } while (c > 0);
+
+        return null;
     }
 
     public void OnSpawnLemming()

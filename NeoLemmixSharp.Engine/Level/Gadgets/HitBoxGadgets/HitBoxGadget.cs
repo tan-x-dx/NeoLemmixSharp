@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿global using GadgetSet = NeoLemmixSharp.Common.Util.Collections.SimpleSetEnumerable<NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxGadget>;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -77,6 +78,8 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRe
 
     public abstract bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition);
     public abstract bool MatchesPosition(LevelPosition levelPosition);
+    public abstract bool IsSolidToLemmingAtPosition(Lemming lemming, LevelPosition levelPosition);
+    public abstract bool IsSteelToLemmingAtPosition(Lemming lemming, LevelPosition levelPosition);
 
     public abstract void OnLemmingMatch(Lemming lemming);
 

@@ -1,6 +1,7 @@
 ﻿using MGUI.Core.UI;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Menu.Rendering;
@@ -48,8 +49,10 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         // draw ui
         _desktop.Draw();
 
-        // fade transition where necessary
         spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
+        _menuCursorRenderer.RenderCursor(spriteBatch);
+
+        // fade transition where necessary
         _pageTransitionRenderer.Render(spriteBatch);
         spriteBatch.End();
     }
@@ -73,7 +76,6 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
         //UserInterface.Active.Dispose();
 
-        _menuCursorRenderer.Dispose();
         _pageTransitionRenderer.Dispose();
 
         IsDisposed = true;

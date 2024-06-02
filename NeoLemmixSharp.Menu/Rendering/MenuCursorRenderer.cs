@@ -1,30 +1,46 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Screen;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
-public sealed class MenuCursorRenderer : IDisposable
+public sealed class MenuCursorRenderer
 {
-    private readonly MenuInputController _menuCursor;
+    private readonly MenuInputController _menuInputController;
     private readonly Texture2D _cursorTexture;
 
-    public MenuCursorRenderer(MenuInputController menuCursor)
+    public MenuCursorRenderer(MenuInputController menuInputController)
     {
-        _menuCursor = menuCursor;
-        _cursorTexture = MenuSpriteBank.Cursor;
+        _menuInputController = menuInputController;
+        _cursorTexture = MenuSpriteBank.CursorHiRes;
     }
 
     public void RenderCursor(SpriteBatch spriteBatch)
     {
+        var destination = new Rectangle(
+            _menuInputController.MouseX + MenuSpriteBank.CursorHiResXOffset,
+            _menuInputController.MouseY + MenuSpriteBank.CursorHiResYOffset,
+            MenuSpriteBank.CursorHiResWidth * 2,
+            MenuSpriteBank.CursorHiResHeight * 2);
+
+        var source = new Rectangle(
+            0,
+            0,
+            MenuSpriteBank.CursorHiResWidth,
+            MenuSpriteBank.CursorHiResHeight);
+
         spriteBatch.Draw(
             _cursorTexture,
-            new Vector2(_menuCursor.MouseX, _menuCursor.MouseY),
-            Color.White,
-            1f);
-    }
+            destination,
+            source,
+            Color.White);
 
-    public void Dispose()
-    {
+        source.X = MenuSpriteBank.CursorHiResWidth;
+
+        spriteBatch.Draw(
+            _cursorTexture,
+            destination,
+            source,
+            new Color(0x88, 0x88, 0x22));
     }
 }

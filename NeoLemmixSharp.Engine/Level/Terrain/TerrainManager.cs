@@ -1,23 +1,19 @@
-﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain;
 
 public sealed class TerrainManager
 {
     private readonly PixelType[] _pixels;
-    private readonly GadgetManager _gadgetManager;
-
     private readonly TerrainPainter _terrainPainter;
 
     public IHorizontalBoundaryBehaviour HorizontalBoundaryBehaviour { get; }
@@ -28,13 +24,11 @@ public sealed class TerrainManager
 
     public TerrainManager(
         PixelType[] pixels,
-        GadgetManager gadgetManager,
         TerrainPainter terrainPainter,
         IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
         IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
     {
         _pixels = pixels;
-        _gadgetManager = gadgetManager;
 
         _terrainPainter = terrainPainter;
 
@@ -76,10 +70,7 @@ public sealed class TerrainManager
         Lemming lemming,
         LevelPosition levelPosition)
     {
-        var pixel = PixelTypeAtPosition(levelPosition);
-
-        return pixel.IsSolidToOrientation(lemming.Orientation) ||
-               _gadgetManager.HasGadgetWithBehaviourAtPosition(levelPosition, MetalGrateGadgetBehaviour.Instance);
+        return PixelTypeAtPosition(levelPosition).IsSolidToOrientation(lemming.Orientation);
     }
 
     [Pure]
@@ -91,18 +82,13 @@ public sealed class TerrainManager
         var pixel = PixelTypeAtPosition(levelPosition);
 
         return !pixel.CanBeDestroyed() ||
-               !destructionMask.CanDestroyPixel(pixel, lemming.Orientation, lemming.FacingDirection) ||
-               _gadgetManager.HasGadgetWithBehaviourAtPosition(levelPosition, MetalGrateGadgetBehaviour.Instance);
+               !destructionMask.CanDestroyPixel(pixel, lemming.Orientation, lemming.FacingDirection);
     }
 
     [Pure]
-    public bool PixelIsSteel(
-        LevelPosition levelPosition)
+    public bool PixelIsSteel(LevelPosition levelPosition)
     {
-        var pixel = PixelTypeAtPosition(levelPosition);
-
-        return pixel.IsSteel() ||
-               _gadgetManager.HasGadgetWithBehaviourAtPosition(levelPosition, MetalGrateGadgetBehaviour.Instance);
+        return PixelTypeAtPosition(levelPosition).IsSteel();
     }
 
     public void ErasePixel(
@@ -122,22 +108,21 @@ public sealed class TerrainManager
             return;
 
         var previousValue = pixel;
-        pixel = PixelType.Empty;
+        pixel &= PixelType.TerrainDataInverseMask;
         if (pixel == previousValue)
             return;
 
         _terrainPainter.RecordPixelChange(
             pixelToErase,
             Color.Transparent,
-            previousValue,
-            pixel);
+            previousValue & PixelType.TerrainDataMask,
+            0);
         LevelScreen.PixelChangeCount++;
     }
 
     public void SetSolidPixel(LevelPosition pixelToSet, Color color)
     {
-        if (PositionOutOfBounds(pixelToSet) ||
-            _gadgetManager.HasGadgetWithBehaviourAtPosition(pixelToSet, MetalGrateGadgetBehaviour.Instance))
+        if (PositionOutOfBounds(pixelToSet))
             return;
 
         var index = LevelWidth * pixelToSet.Y + pixelToSet.X;
@@ -151,8 +136,11 @@ public sealed class TerrainManager
         if (pixel == previousValue)
             return;
 
-        //_terrainRenderer.SetPixelColor(pixelToSet.X, pixelToSet.Y, color);
-        _terrainPainter.RecordPixelChange(pixelToSet, color, previousValue, pixel);
+        _terrainPainter.RecordPixelChange(
+            pixelToSet,
+            color,
+            previousValue & PixelType.TerrainDataMask,
+            PixelType.SolidToAllOrientations);
         LevelScreen.PixelChangeCount++;
     }
 

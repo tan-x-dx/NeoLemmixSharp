@@ -1,5 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
@@ -26,15 +28,24 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
+        var gadgetTestRegion = new LevelPositionPair(
+            orientation.Move(lemmingPosition, 4, 1),
+            orientation.Move(lemmingPosition, -4, -1));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+
         if (lemming.IsStartingAction)
         {
             lemming.IsStartingAction = false;
-            DigOneRow(lemming, orientation, facingDirection, orientation.MoveUp(lemmingPosition, 1));
+            DigOneRow(
+                in gadgetsNearRegion,
+                lemming,
+                orientation,
+                facingDirection,
+                orientation.MoveUp(lemmingPosition, 1));
             // The first digger cycle is one frame longer!
             // So we need to artificially cancel the very first frame advancement.
             lemming.PhysicsFrame--;
@@ -44,13 +55,18 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
             lemming.PhysicsFrame != 8)
             return true;
 
-        var continueDigging = DigOneRow(lemming, orientation, facingDirection, lemmingPosition);
+        var continueDigging = DigOneRow(
+            in gadgetsNearRegion,
+            lemming,
+            orientation,
+            facingDirection,
+            lemmingPosition);
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
 
-        if (terrainManager.PixelIsIndestructibleToLemming(lemming, this, lemmingPosition))
+        if (PositionIsIndestructibleToLemming(gadgetsNearRegion, lemming, this, lemmingPosition))
         {
-            if (terrainManager.PixelIsSteel(lemmingPosition))
+            if (PositionIsSteelToLemming(gadgetsNearRegion, lemming, lemmingPosition))
             {
                 //CueSoundEffect(SFX_HITS_STEEL, L.Position);
             }
@@ -74,6 +90,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
 
     private bool DigOneRow(
+        in GadgetSet gadgetsNearRegion,
         Lemming lemming,
         Orientation orientation,
         FacingDirection facingDirection,
@@ -84,15 +101,15 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         var result = false;
 
         // Two most extreme pixels
-        var checkLevelPosition = orientation.Move(lemmingPosition, -4, 0);
-        var pixelIsSolid = terrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition);
+        var checkLevelPosition = orientation.MoveLeft(lemmingPosition, 4);
+        var pixelIsSolid = PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
             terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
         }
 
-        checkLevelPosition = orientation.Move(lemmingPosition, 4, 0);
-        pixelIsSolid = terrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition);
+        checkLevelPosition = orientation.MoveRight(lemmingPosition, 4);
+        pixelIsSolid = PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
             terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
@@ -101,8 +118,8 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         // Everything in between
         for (var i = -3; i < 4; i++)
         {
-            checkLevelPosition = orientation.Move(lemmingPosition, i, 0);
-            pixelIsSolid = terrainManager.PixelIsSolidToLemming(lemming, checkLevelPosition);
+            checkLevelPosition = orientation.MoveRight(lemmingPosition, i);
+            pixelIsSolid = PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkLevelPosition);
             if (pixelIsSolid)
             {
                 terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
@@ -118,8 +135,8 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
-        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowOffset +
-                                 Orientation.GetOpposite(orientation).RotNum;
+        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
+                                 ((2 + orientation.RotNum) & 3);
         var oppositeArrowMask = (PixelType)(1 << oppositeArrowShift);
         return (pixelType & oppositeArrowMask) == PixelType.Empty;
     }

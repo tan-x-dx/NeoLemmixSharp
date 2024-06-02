@@ -26,7 +26,9 @@ public sealed class BlockerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, lemming.LevelPosition))
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.LevelPosition);
+
+        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemming.LevelPosition))
             return true;
 
         LevelScreen.LemmingManager.DeregisterBlocker(lemming);
@@ -165,8 +167,8 @@ public sealed class BlockerAction : LemmingAction
     private static void UpdateBlockerField(Lemming lemming, LevelPosition levelPosition, bool set)
     {
         var orientation = lemming.Orientation;
-        var rightArmPixelType = set ? GetRightArmPixelType(orientation) : PixelType.ClearBlockerMask;
-        var leftArmPixelType = set ? GetLeftArmPixelType(orientation) : PixelType.ClearBlockerMask;
+        var rightArmPixelType = set ? GetRightArmPixelType(orientation) : PixelType.BlockerInverseMask;
+        var leftArmPixelType = set ? GetLeftArmPixelType(orientation) : PixelType.BlockerInverseMask;
 
         var moveDelta = lemming.FacingDirection.Id - 1; // Fixes off-by-one errors between left/right
         levelPosition = orientation.MoveRight(levelPosition, moveDelta);
@@ -199,13 +201,13 @@ public sealed class BlockerAction : LemmingAction
     private static PixelType GetRightArmPixelType(Orientation orientation)
     {
         orientation = Orientation.RotateCounterClockwise(orientation);
-        return (PixelType)(1 << (PixelTypeHelpers.PixelTypeBlockerOffset + orientation.RotNum));
+        return (PixelType)(1 << (PixelTypeHelpers.PixelTypeBlockerShiftOffset + orientation.RotNum));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static PixelType GetLeftArmPixelType(Orientation orientation)
     {
         orientation = Orientation.RotateClockwise(orientation);
-        return (PixelType)(1 << (PixelTypeHelpers.PixelTypeBlockerOffset + orientation.RotNum));
+        return (PixelType)(1 << (PixelTypeHelpers.PixelTypeBlockerShiftOffset + orientation.RotNum));
     }
 }

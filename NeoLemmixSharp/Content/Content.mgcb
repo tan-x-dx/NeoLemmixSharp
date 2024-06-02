@@ -19,6 +19,30 @@
 #begin BuiltEffects/silhouette.xnb
 /copy:BuiltEffects/silhouette.xnb
 
+#begin cursor/amiga_hr.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:cursor/amiga_hr.png
+
+#begin cursor/amiga.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:cursor/amiga.png
+
 #begin cursor/cursors.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -66,6 +90,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:cursor/focused.png
+
+#begin cursor/loading_hr.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:cursor/loading_hr.png
+
+#begin cursor/loading.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:cursor/loading.png
 
 #begin cursor/standard.png
 /importer:TextureImporter
@@ -640,18 +688,6 @@
 /processorParam:TextureFormat=Color
 /build:sprites/lemming/burner1.png
 
-#begin sprites/lemming/vaporiser.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:sprites/lemming/vaporiser.png
-
 #begin sprites/lemming/climber.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -951,6 +987,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/lemming/trap_01.png
+
+#begin sprites/lemming/vaporiser.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/lemming/vaporiser.png
 
 #begin sprites/lemming/walker.png
 /importer:TextureImporter

@@ -33,10 +33,12 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     public int LemmingsToRelease { get; private set; }
     public int LemmingsOut { get; private set; }
     public int LemmingsRemoved { get; private set; }
+    public int LemmingsSaved { get; private set; }
 
     public int TotalNumberOfLemmings => _lemmings.Count;
     public ReadOnlySpan<Lemming> AllLemmings => CollectionsMarshal.AsSpan(_lemmings);
     public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
+    public SimpleSetEnumerable<Lemming> AllBlockers => _allBlockers.ToSimpleEnumerable();
 
     private int _nextLemmingId;
 
@@ -102,6 +104,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             return;
 
         lemming.Initialise();
+        _nextLemmingId++;
 
         _lemmingPositionHelper.AddItem(lemming);
 
@@ -138,12 +141,12 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             if (hatchGadget is null)
                 continue;
 
-            var lemming = lemmingSpan[_nextLemmingId++];
+            hatchGroup.OnSpawnLemming();
+            var lemming = lemmingSpan[_nextLemmingId];
 
             lemming.LevelPosition = hatchGadget.SpawnPosition;
             hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
             InitialiseLemming(lemming);
-            hatchGroup.OnSpawnLemming();
         }
     }
 
@@ -219,6 +222,11 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         if (lemming.CurrentAction == BlockerAction.Instance)
         {
             DeregisterBlocker(lemming);
+        }
+
+        if (removalReason == LemmingRemovalReason.Exit)
+        {
+            LemmingsSaved++;
         }
 
         LemmingsRemoved++;

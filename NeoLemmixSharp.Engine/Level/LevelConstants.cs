@@ -41,7 +41,7 @@ public static class LevelConstants
 
     public const int MinAllowedSpawnInterval = 4;
     public const int MaxAllowedSpawnInterval = 102;
-    
+
     public const int MaxNumberOfLemmings = 1 << 9;
     public const int MaxTimeLimitInSeconds = 99 * 60 + 59; // 99 minutes, 59 seconds
     public const int MaxLevelWidth = 2400;
@@ -53,14 +53,11 @@ public static class LevelConstants
     /// A lemming falls 3 pixels each frame
     /// </summary>
     public const int DefaultFallStep = 3;
+
     /// <summary>
-    /// A lemming falls 2 pixels each frame if there's an updraft at its location
+    /// A lemming can step up a maximum of 6 pixels
     /// </summary>
-    public const int UpdraftFallStep = 2;
-    /// <summary>
-    /// A lemming falls 4 pixels each frame if there's a downdraft at its location
-    /// </summary>
-    public const int DownDraftFallStep = 4;
+    public const int MaxStepUp = 6;
 
     #endregion
 
@@ -88,10 +85,12 @@ public static class LevelConstants
     public static Color CursorColor2 => PanelRed;
     public static Color CursorColor3 => new(0x60, 0x60, 0x60);
 
+    public static Color PanelBlue => new(0x00, 0x00, 0xB0);
     public static Color PanelGreen => new(0x00, 0xB0, 0x00);
-    public static Color PanelYellow => new(0xB0, 0xB0, 0x00);
+    public static Color PanelCyan => new(0x00, 0xB0, 0xB0);
     public static Color PanelRed => new(0xB0, 0x00, 0x00);
     public static Color PanelMagenta => new(0xB0, 0x00, 0xB0);
+    public static Color PanelYellow => new(0xB0, 0xB0, 0x00);
 
     #endregion
 

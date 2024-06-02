@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -23,7 +24,6 @@ public sealed class FallerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var terrainManager = LevelScreen.TerrainManager;
         var currentFallDistanceStep = 0;
 
         var orientation = lemming.Orientation;
@@ -35,10 +35,15 @@ public sealed class FallerAction : LemmingAction
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
             return true;
 
+        var gadgetTestRegion = new LevelPositionPair(
+            lemmingPosition,
+            orientation.MoveDown(lemmingPosition, LevelConstants.DefaultFallStep + 1));
+        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+
         ref var distanceFallen = ref lemming.DistanceFallen;
 
         while (currentFallDistanceStep < maxFallDistanceStep &&
-               !terrainManager.PixelIsSolidToLemming(lemming, lemmingPosition))
+               !PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
         {
             if (currentFallDistanceStep > 0 &&
                 CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
@@ -68,7 +73,9 @@ public sealed class FallerAction : LemmingAction
         if (currentFallDistanceStep >= maxFallDistanceStep)
             return true;
 
-        LemmingAction nextAction = IsFallFatal(lemming)
+        LemmingAction nextAction = IsFallFatal(
+            in gadgetsNearRegion,
+            lemming)
             ? SplatterAction.Instance
             : WalkerAction.Instance;
         lemming.SetNextAction(nextAction);
@@ -82,18 +89,28 @@ public sealed class FallerAction : LemmingAction
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 2;
     protected override int BottomRightBoundsDeltaY(int animationFrame) => 0;
 
-    private static bool IsFallFatal(Lemming lemming)
+    private static bool IsFallFatal(in GadgetSet gadgetSet, Lemming lemming)
     {
-        var gadgetManager = LevelScreen.GadgetManager;
-
         if (lemming.State.IsFloater || lemming.State.IsGlider)
             return false;
 
-        if (gadgetManager.HasGadgetWithBehaviourAtLemmingPosition(lemming, NoSplatGadgetBehaviour.Instance))
-            return false;
+        var anchorPixel = lemming.LevelPosition;
+        var footPixel = lemming.FootPosition;
 
-        return lemming.DistanceFallen > LevelConstants.MaxFallDistance ||
-               gadgetManager.HasGadgetWithBehaviourAtLemmingPosition(lemming, SplatGadgetBehaviour.Instance);
+        foreach (var gadget in gadgetSet)
+        {
+            if (!gadget.MatchesPosition(anchorPixel) &&
+                !gadget.MatchesPosition(footPixel))
+                continue;
+
+            if (gadget.GadgetBehaviour == NoSplatGadgetBehaviour.Instance)
+                return false;
+
+            if (gadget.GadgetBehaviour == SplatGadgetBehaviour.Instance)
+                return true;
+        }
+
+        return lemming.DistanceFallen > LevelConstants.MaxFallDistance;
     }
 
     private static bool CheckFloaterOrGliderTransition(
@@ -151,9 +168,11 @@ public sealed class FallerAction : LemmingAction
         return 1;
     }
 
+    [SkipLocalsInit]
     public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
     {
-        var gadgetsNearPosition = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
+        Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
+        var gadgetsNearPosition = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(scratchSpace, lemming);
 
         if (gadgetsNearPosition.Count == 0)
             return new LevelPosition();

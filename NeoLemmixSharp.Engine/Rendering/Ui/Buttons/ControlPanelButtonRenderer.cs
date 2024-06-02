@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
@@ -16,8 +18,6 @@ public class ControlPanelButtonRenderer
     private readonly int _iconX;
     private readonly int _iconY;
 
-    public readonly int ButtonId;
-
     public ControlPanelButtonRenderer(
         ControlPanelSpriteBank spriteBank,
         ControlPanelButton controlPanelButton,
@@ -25,7 +25,6 @@ public class ControlPanelButtonRenderer
         int iconY)
     {
         ControlPanelButton = controlPanelButton;
-        ButtonId = controlPanelButton.ButtonId;
 
         PanelTexture = spriteBank.Panel;
         SelectedTexture = spriteBank.PanelSkillSelected;
@@ -34,6 +33,8 @@ public class ControlPanelButtonRenderer
         _iconY = iconY;
     }
 
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected Rectangle GetDestinationRectangle()
     {
         return new Rectangle(
