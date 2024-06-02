@@ -178,7 +178,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         }
 
         result = -1;
-        while (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveDown(levelPosition, result)) &&
+        while (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(levelPosition, result)) &&
                result > -4)
         {
             result--;
