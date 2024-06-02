@@ -113,7 +113,7 @@ public static class ReadingHelpers
     public static bool GetSkillByName(
         ReadOnlySpan<char> token,
         IEqualityComparer<char> charEqualityComparer,
-        out LemmingSkill lemmingSkill)
+        [MaybeNullWhen(false)] out LemmingSkill lemmingSkill)
     {
         foreach (var item in LemmingSkill.AllItems)
         {
@@ -125,7 +125,7 @@ public static class ReadingHelpers
             }
         }
 
-        lemmingSkill = null!;
+        lemmingSkill = null;
         return false;
     }
 
