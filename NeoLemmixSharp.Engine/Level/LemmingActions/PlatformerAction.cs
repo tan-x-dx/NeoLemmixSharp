@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -150,6 +151,7 @@ public sealed class PlatformerAction : LemmingAction
         ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);
     }
 
+    [SkipLocalsInit]
     public static bool LemmingCanPlatform(
         Lemming lemming)
     {

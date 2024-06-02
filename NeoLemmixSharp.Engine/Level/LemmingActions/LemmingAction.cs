@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -149,6 +150,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
     /// If result = 7, then at least 7 pixels are terrain above levelPosition
     /// </summary>
     [Pure]
+    [SkipLocalsInit]
     protected static int FindGroundPixel(
         Lemming lemming,
         LevelPosition levelPosition)

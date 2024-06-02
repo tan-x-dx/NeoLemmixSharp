@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -69,6 +70,7 @@ public sealed class DehoisterAction : LemmingAction
         base.TransitionLemmingToAction(lemming, turnAround);
     }
 
+    [SkipLocalsInit]
     public static bool LemmingCanDehoist(
         Lemming lemming,
         bool alreadyMoved)

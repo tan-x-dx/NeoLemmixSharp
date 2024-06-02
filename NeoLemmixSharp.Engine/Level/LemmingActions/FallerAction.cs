@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -167,6 +168,7 @@ public sealed class FallerAction : LemmingAction
         return 1;
     }
 
+    [SkipLocalsInit]
     public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
     {
         Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
