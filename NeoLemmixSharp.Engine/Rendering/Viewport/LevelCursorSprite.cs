@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Engine.Level;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -9,16 +10,31 @@ public sealed class LevelCursorSprite
 {
     private readonly LevelCursor _levelCursor;
     private readonly Texture2D _cursorTexture;
+    private readonly Texture2D _handTexture;
 
     public LevelCursorSprite(
         LevelCursor levelCursor,
-        Texture2D cursorTexture)
+        Texture2D cursorTexture,
+        Texture2D handTexture)
     {
         _levelCursor = levelCursor;
         _cursorTexture = cursorTexture;
+        _handTexture = handTexture;
     }
 
     public void RenderAtPosition(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
+    {
+        if (LevelScreen.LevelViewport.MouseIsInLevelViewPort)
+        {
+            RenderCursor(spriteBatch, x, y, scaleMultiplier);
+        }
+        else
+        {
+            RenderHand(spriteBatch, x, y);
+        }
+    }
+
+    private void RenderCursor(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
     {
         var d = LevelConstants.HalfCursorSizeInPixels * scaleMultiplier;
         var s = LevelConstants.CursorSizeInPixels * scaleMultiplier;
@@ -62,7 +78,32 @@ public sealed class LevelCursorSprite
             RenderingLayers.CursorLayer);
     }
 
-    public void Dispose()
+    private void RenderHand(SpriteBatch spriteBatch, int x, int y)
     {
+        var destination = new Rectangle(
+            x + MenuSpriteBank.CursorHiResXOffset,
+            y + MenuSpriteBank.CursorHiResYOffset,
+            MenuSpriteBank.CursorHiResWidth * 2,
+            MenuSpriteBank.CursorHiResHeight * 2);
+
+        var source = new Rectangle(
+            0,
+            0,
+            MenuSpriteBank.CursorHiResWidth,
+            MenuSpriteBank.CursorHiResHeight);
+
+        spriteBatch.Draw(
+            _handTexture,
+            destination,
+            source,
+            Color.White);
+
+        source.X = MenuSpriteBank.CursorHiResWidth;
+
+        spriteBatch.Draw(
+            _handTexture,
+            destination,
+            source,
+            new Color(0x88, 0x88, 0x22));
     }
 }

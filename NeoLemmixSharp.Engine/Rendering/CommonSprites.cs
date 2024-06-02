@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 
@@ -72,7 +73,8 @@ public static class CommonSprites
     {
         return new LevelCursorSprite(
             levelCursor,
-            CursorSprite);
+            CursorSprite,
+            MenuSpriteBank.CursorHiRes);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

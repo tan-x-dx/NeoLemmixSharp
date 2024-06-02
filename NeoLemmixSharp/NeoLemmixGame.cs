@@ -16,7 +16,6 @@ using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.Menu;
-using NeoLemmixSharp.Menu.Rendering;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -116,7 +115,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
         RootDirectoryManager.Initialise();
         FontBank.Initialise(Content);
-        MenuSpriteBank.Initialise(Content, GraphicsDevice);
+        MenuSpriteBank.Initialise(Content);
         CommonSprites.Initialise(Content, GraphicsDevice);
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
