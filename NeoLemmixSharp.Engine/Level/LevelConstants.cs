@@ -85,10 +85,12 @@ public static class LevelConstants
     public static Color CursorColor2 => PanelRed;
     public static Color CursorColor3 => new(0x60, 0x60, 0x60);
 
+    public static Color PanelBlue => new(0x00, 0x00, 0xB0);
     public static Color PanelGreen => new(0x00, 0xB0, 0x00);
-    public static Color PanelYellow => new(0xB0, 0xB0, 0x00);
+    public static Color PanelCyan => new(0x00, 0xB0, 0xB0);
     public static Color PanelRed => new(0xB0, 0x00, 0x00);
     public static Color PanelMagenta => new(0xB0, 0x00, 0xB0);
+    public static Color PanelYellow => new(0xB0, 0xB0, 0x00);
 
     #endregion
 

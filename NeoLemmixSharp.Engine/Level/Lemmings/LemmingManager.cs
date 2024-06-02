@@ -33,6 +33,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     public int LemmingsToRelease { get; private set; }
     public int LemmingsOut { get; private set; }
     public int LemmingsRemoved { get; private set; }
+    public int LemmingsSaved { get; private set; }
 
     public int TotalNumberOfLemmings => _lemmings.Count;
     public ReadOnlySpan<Lemming> AllLemmings => CollectionsMarshal.AsSpan(_lemmings);
@@ -221,6 +222,11 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         if (lemming.CurrentAction == BlockerAction.Instance)
         {
             DeregisterBlocker(lemming);
+        }
+
+        if (removalReason == LemmingRemovalReason.Exit)
+        {
+            LemmingsSaved++;
         }
 
         LemmingsRemoved++;
