@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.Util;
+﻿using System.Runtime.CompilerServices;
+
+namespace NeoLemmixSharp.Common.Util;
 
 public static class DisposableHelperMethods
 {
@@ -7,6 +9,7 @@ public static class DisposableHelperMethods
     /// </summary>
     /// <typeparam name="T">The type of the object to dispose</typeparam>
     /// <param name="obj">The object to dispose</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void DisposeOf<T>(ref T obj)
         where T : class, IDisposable
     {
