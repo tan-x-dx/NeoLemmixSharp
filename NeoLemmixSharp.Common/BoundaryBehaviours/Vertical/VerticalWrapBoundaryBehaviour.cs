@@ -4,40 +4,43 @@ namespace NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 
 public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
 {
+    private readonly int _levelHeight;
+
     public BoundaryBehaviourType BoundaryBehaviourType => BoundaryBehaviourType.Wrap;
-    public int LevelHeight { get; }
+    public int LevelHeight => _levelHeight;
 
     public VerticalWrapBoundaryBehaviour(int levelHeightInPixels)
     {
-        LevelHeight = levelHeightInPixels;
+        _levelHeight = levelHeightInPixels;
     }
 
     [Pure]
     public int NormaliseY(int y)
     {
-        // most likely case for negatives will be "small" numbers. Therefore simply adding the level height will make it a valid value
         if (y < 0)
-            return y + LevelHeight;
+        {
+            do
+            {
+                y += _levelHeight;
+            } while (y < 0);
 
-        if (y < LevelHeight)
             return y;
+        }
 
-        // most likely case for "big" numbers will be less than twice the level height. Therefore simply subtracting the level height will make it a valid value
-        y -= LevelHeight;
+        while (y >= _levelHeight)
+        {
+            y -= _levelHeight;
+        }
 
-        if (y < LevelHeight)
-            return y;
-
-        // otherwise, just do modulo operation
-        return y % LevelHeight;
+        return y;
     }
 
     public void NormaliseYCoords(ref int top, ref int bottom, ref int y)
     {
-        if (bottom < LevelHeight)
+        if (bottom < _levelHeight)
             return;
 
-        var halfLevelHeight = LevelHeight / 2;
+        var halfLevelHeight = _levelHeight / 2;
         top -= halfLevelHeight;
         bottom -= halfLevelHeight;
         y -= halfLevelHeight;
@@ -50,14 +53,14 @@ public sealed class VerticalWrapBoundaryBehaviour : IVerticalBoundaryBehaviour
 
         if (dy > 0)
         {
-            if (dy + dy > LevelHeight)
-                return dy - LevelHeight;
+            if (dy + dy > _levelHeight)
+                return dy - _levelHeight;
 
             return dy;
         }
 
-        if (dy + dy < -LevelHeight)
-            return dy + LevelHeight;
+        if (dy + dy < -_levelHeight)
+            return dy + _levelHeight;
 
         return dy;
     }

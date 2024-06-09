@@ -4,40 +4,43 @@ namespace NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 
 public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehaviour
 {
+    private readonly int _levelWidth;
+
     public BoundaryBehaviourType BoundaryBehaviourType => BoundaryBehaviourType.Wrap;
-    public int LevelWidth { get; }
+    public int LevelWidth => _levelWidth;
 
     public HorizontalWrapBoundaryBehaviour(int levelWidthInPixels)
     {
-        LevelWidth = levelWidthInPixels;
+        _levelWidth = levelWidthInPixels;
     }
 
     [Pure]
     public int NormaliseX(int x)
     {
-        // most likely case for negatives will be "small" numbers. Therefore simply adding the level width will make it a valid value
         if (x < 0)
-            return x + LevelWidth;
+        {
+            do
+            {
+                x += _levelWidth;
+            } while (x < 0);
 
-        if (x < LevelWidth)
             return x;
+        }
 
-        // most likely case for "big" numbers will be less than twice the level width. Therefore simply subtracting the level width will make it a valid value
-        x -= LevelWidth;
+        while (x >= _levelWidth)
+        {
+            x -= _levelWidth;
+        }
 
-        if (x < LevelWidth)
-            return x;
-
-        // otherwise, just do modulo operation
-        return x % LevelWidth;
+        return x;
     }
 
     public void NormaliseXCoords(ref int left, ref int right, ref int x)
     {
-        if (right < LevelWidth)
+        if (right < _levelWidth)
             return;
 
-        var halfLevelWidth = LevelWidth / 2;
+        var halfLevelWidth = _levelWidth / 2;
         left -= halfLevelWidth;
         right -= halfLevelWidth;
         x -= halfLevelWidth;
@@ -50,14 +53,14 @@ public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehavio
 
         if (dx > 0)
         {
-            if (dx + dx > LevelWidth)
-                return dx - LevelWidth;
+            if (dx + dx > _levelWidth)
+                return dx - _levelWidth;
 
             return dx;
         }
 
-        if (dx + dx < -LevelWidth)
-            return dx + LevelWidth;
+        if (dx + dx < -_levelWidth)
+            return dx + _levelWidth;
 
         return dx;
     }
