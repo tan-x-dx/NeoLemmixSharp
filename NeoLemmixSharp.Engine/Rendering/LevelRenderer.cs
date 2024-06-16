@@ -5,6 +5,7 @@ using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.PositionTracking;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
@@ -79,11 +80,11 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         Span<ViewPortRenderInterval> renderIntervalSpan = stackalloc ViewPortRenderInterval[BoundaryBehaviour.MaxNumberOfRenderIntervals * 2];
         Span<uint> scratchSpaceSpan = stackalloc uint[_spriteSpacialHashGrid.ScratchSpaceSize];
 
-        var horizontalRenderIntervals = _viewport.HorizontalBoundaryBehaviour.GetRenderIntervals(renderIntervalSpan[..BoundaryBehaviour.MaxNumberOfRenderIntervals]);
-        var verticalRenderIntervals = _viewport.VerticalBoundaryBehaviour.GetRenderIntervals(renderIntervalSpan.Slice(BoundaryBehaviour.MaxNumberOfRenderIntervals, BoundaryBehaviour.MaxNumberOfRenderIntervals));
+        var horizontalBoundary = _viewport.HorizontalBoundaryBehaviour;
+        var verticalBoundary = _viewport.VerticalBoundaryBehaviour;
 
-        var viewportX = _viewport.HorizontalBoundaryBehaviour.ViewPortCoordinate;
-        var viewportY = _viewport.VerticalBoundaryBehaviour.ViewPortCoordinate;
+        var horizontalRenderIntervals = horizontalBoundary.GetRenderIntervals(renderIntervalSpan[..BoundaryBehaviour.MaxNumberOfRenderIntervals]);
+        var verticalRenderIntervals = verticalBoundary.GetRenderIntervals(renderIntervalSpan.Slice(BoundaryBehaviour.MaxNumberOfRenderIntervals, BoundaryBehaviour.MaxNumberOfRenderIntervals));
 
         foreach (var horizontalRenderInterval in horizontalRenderIntervals)
         {
@@ -106,22 +107,34 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
                 foreach (var renderer in rendererSet)
                 {
                     var spriteClip = renderer.GetSpriteBounds();
-                    spriteClip.X = _viewport.HorizontalBoundaryBehaviour.Normalise(spriteClip.X);
-                    spriteClip.Y = _viewport.VerticalBoundaryBehaviour.Normalise(spriteClip.Y);
 
                     Rectangle.Intersect(ref viewportClip, ref spriteClip, out var clipIntersection);
 
                     if (clipIntersection.IsEmpty)
                         continue;
 
-                    var screenX = clipIntersection.X + horizontalRenderInterval.Offset - viewportX;
-                    var screenY = clipIntersection.Y + verticalRenderInterval.Offset - viewportY;
+                    var projectionX = horizontalRenderInterval.Offset + clipIntersection.X;
+                    var projectionY = verticalRenderInterval.Offset + clipIntersection.Y;
 
                     clipIntersection.X -= spriteClip.X;
                     clipIntersection.Y -= spriteClip.Y;
 
-                    renderer.RenderAtPosition(spriteBatch, clipIntersection, screenX, screenY);
+                    if (renderer is TerrainRenderer)
+                    {
+                        ;
+                    }
+
+                    renderer.RenderAtPosition(spriteBatch, clipIntersection, projectionX, projectionY);
                 }
+            }
+        }
+
+        if (LevelScreen.Screenshot)
+        {
+            const string fileName = @"C:\Temp\foo.png";
+            using (var fileStream = File.Create(fileName))
+            {
+                _levelRenderTarget.SaveAsPng(fileStream, _levelRenderTarget.Width, _levelRenderTarget.Height);
             }
         }
     }
@@ -145,10 +158,10 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
                     verticalRenderInterval.ScreenDimension);
 
                 var sourceRectangle = new Rectangle(
-                    horizontalRenderInterval.ViewPortCoordinate,
-                    verticalRenderInterval.ViewPortCoordinate,
-                    horizontalRenderInterval.ViewPortDimension,
-                    verticalRenderInterval.ViewPortDimension);
+                    horizontalRenderInterval.SourceCoordinate,
+                    verticalRenderInterval.SourceCoordinate,
+                    horizontalRenderInterval.SourceDimension,
+                    verticalRenderInterval.SourceDimension);
 
                 spriteBatch.Draw(
                     _levelRenderTarget,
@@ -171,8 +184,8 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     {
         return new RenderTarget2D(
             _graphicsDevice,
-            _graphicsDevice.PresentationParameters.BackBufferWidth,
-            _graphicsDevice.PresentationParameters.BackBufferHeight - _levelControlPanel.ScreenHeight,
+            _viewport.HorizontalBoundaryBehaviour.LevelDimension,
+            _viewport.VerticalBoundaryBehaviour.LevelDimension,
             false,
             _graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24);

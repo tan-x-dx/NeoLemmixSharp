@@ -47,9 +47,6 @@ public sealed class Viewport
 
     public void HandleMouseInput(LevelInputController inputController)
     {
-        // ScreenMouseX = ScaleMultiplier * ((inputController.MouseX + ScaleMultiplier / 2) / ScaleMultiplier);
-        // ScreenMouseY = ScaleMultiplier * ((inputController.MouseY + ScaleMultiplier / 2) / ScaleMultiplier);
-
         if (MouseIsInLevelViewport(inputController))
         {
             MouseIsInLevelViewPort = true;
@@ -62,12 +59,6 @@ public sealed class Viewport
 
         HorizontalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseX);
         VerticalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseY);
-
-        // ViewportMouseX = (ScreenMouseX - HorizontalBoundaryBehaviour.ScreenCoordinate) / ScaleMultiplier + HorizontalBoundaryBehaviour.ViewPortCoordinate;
-        // ViewportMouseY = (ScreenMouseY - VerticalBoundaryBehaviour.ScreenCoordinate) / ScaleMultiplier + VerticalBoundaryBehaviour.ViewPortCoordinate;
-
-        // ViewportMouseX = HorizontalBoundaryBehaviour.Normalise(ViewportMouseX);
-        // ViewportMouseY = VerticalBoundaryBehaviour.Normalise(ViewportMouseY);
 
         if (inputController.MouseX == 0)
         {

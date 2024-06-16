@@ -51,6 +51,8 @@ public sealed class LevelCursor
         _selectOnlyWalkers = _controller.SelectOnlyWalkers.IsActionDown;
         _selectOnlyUnassigned = _controller.SelectOnlyUnassignedLemmings.IsActionDown;
 
+        LevelScreen.Screenshot = _controller.Space.IsPressed;
+
         if (_controller.SelectLeftFacingLemmings.IsActionDown)
         {
             _facingDirection = FacingDirection.LeftInstance;
