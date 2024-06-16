@@ -11,6 +11,7 @@ public readonly ref struct LevelPositionPair
     public readonly int P2X;
     public readonly int P2Y;
 
+    [DebuggerStepThrough]
     public LevelPositionPair(int x1, int y1, int x2, int y2)
     {
         if (x1 < x2)
@@ -36,6 +37,7 @@ public readonly ref struct LevelPositionPair
         }
     }
 
+    [DebuggerStepThrough]
     public LevelPositionPair(LevelPosition p1, LevelPosition p2)
     {
         if (p1.X < p2.X)
@@ -61,6 +63,7 @@ public readonly ref struct LevelPositionPair
         }
     }
 
+    [DebuggerStepThrough]
     public LevelPositionPair(ReadOnlySpan<LevelPosition> positions)
     {
         var minX = int.MaxValue;
@@ -89,6 +92,7 @@ public readonly ref struct LevelPositionPair
     [DebuggerStepThrough]
     public LevelPosition GetBottomRightPosition() => new(P2X, P2Y);
 
+    [DebuggerStepThrough]
     public bool Overlaps(LevelPositionPair other)
     {
         return other.P1X <= P2X &&
@@ -98,6 +102,7 @@ public readonly ref struct LevelPositionPair
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public bool Contains(LevelPosition anchorPosition)
     {
         return P1X <= anchorPosition.X && anchorPosition.X <= P2X &&
