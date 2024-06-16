@@ -149,8 +149,6 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         return new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _previousQueryCount);
     }
 
-    public bool Foo;
-
     /// <summary>
     /// Gets all items that overlap with the input region. Uses the span parameter to record data.
     /// </summary>
@@ -162,11 +160,6 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         if (IsEmpty)
             return SimpleSetEnumerable<T>.Empty;
 
-        if (Foo)
-        {
-            ;
-        }
-
         var topLeftChunk = GetChunkForPoint(levelRegion.GetTopLeftPosition());
         var bottomRightChunk = GetChunkForPoint(levelRegion.GetBottomRightPosition());
 
@@ -175,11 +168,6 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         {
             // If we've already got the data cached, just use it
             new ReadOnlySpan<uint>(_setUnionScratchSpace).CopyTo(scratchSpaceSpan);
-            
-            if (Foo && scratchSpaceSpan[0] > 16U)
-            {
-                ;
-            }
 
             return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _previousQueryCount);
         }
@@ -191,21 +179,12 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
             var sourceSpan = ReadOnlySpanForChunk(topLeftChunk.X, topLeftChunk.Y);
             sourceSpan.CopyTo(scratchSpaceSpan);
-            if (Foo && scratchSpaceSpan[0] > 16U)
-            {
-                ;
-            }
-
             queryCount = BitArrayHelpers.GetPopCount(sourceSpan);
         }
         else
         {
+            scratchSpaceSpan.Clear();
             EvaluateChunks(scratchSpaceSpan, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
-
-            if (Foo && scratchSpaceSpan[0] > 16U)
-            {
-                ;
-            }
 
             queryCount = BitArrayHelpers.GetPopCount(scratchSpaceSpan);
         }

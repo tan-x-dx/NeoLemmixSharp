@@ -161,14 +161,10 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         // Prevents weird bugs!
         Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
 
-        LevelScreen.GadgetManager.Foo = true;
-
         var gadgetTestRegion = new LevelPositionPair(
             orientation.MoveUp(levelPosition, LevelConstants.MaxStepUp + 1),
             orientation.MoveDown(levelPosition, LevelConstants.DefaultFallStep + 1));
         var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion);
-
-        LevelScreen.GadgetManager.Foo = false;
 
         int result;
         if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, levelPosition))

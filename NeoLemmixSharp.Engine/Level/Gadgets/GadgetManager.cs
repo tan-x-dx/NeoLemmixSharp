@@ -18,13 +18,7 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
     private readonly SpacialHashGrid<HitBoxGadget> _gadgetPositionHelper;
 
     public ReadOnlySpan<GadgetBase> AllGadgets => new(_allGadgets);
-
-    public bool Foo
-    {
-        get => _gadgetPositionHelper.Foo;
-        set => _gadgetPositionHelper.Foo = value;
-    }
-
+    
     public GadgetManager(
         GadgetBase[] allGadgets,
         BoundaryBehaviour horizontalBoundaryBehaviour,
