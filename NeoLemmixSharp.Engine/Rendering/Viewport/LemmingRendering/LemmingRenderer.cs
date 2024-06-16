@@ -119,6 +119,17 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         {
             RenderParticles(spriteBatch, screenX, screenY);
         }
+        /*
+        if (_lemming.Id < 7)
+        {
+            FontBank.MenuFont.RenderText(
+                spriteBatch,
+                _lemming.LevelPosition.ToString(),
+                screenX - 10,
+                screenY - MenuFont.GlyphHeight * 2,
+                1,
+                Color.White);
+        }*/
     }
 
     private void RenderParticles(

@@ -14,29 +14,6 @@ public sealed class TerrainRenderer : IViewportObjectRenderer
     {
         _terrainTexture = terrainTexture;
     }
-    /*
-    public void RenderTerrain(SpriteBatch spriteBatch)
-    {
-        var maxX = _viewport.HorizontalBoundaryBehaviour.NumberOfHorizontalRenderIntervals;
-        var maxY = _viewport.VerticalBoundaryBehaviour.NumberOfVerticalRenderIntervals;
-
-        for (var i = 0; i < maxX; i++)
-        {
-            var hInterval = _viewport.GetHorizontalRenderInterval(i);
-            for (var j = 0; j < maxY; j++)
-            {
-                var vInterval = _viewport.GetVerticalRenderInterval(j);
-                var destinationRectangle = new Rectangle(hInterval.ScreenStart, vInterval.ScreenStart, hInterval.PixelLength, vInterval.PixelLength);
-                var sourceRectangle = new Rectangle(hInterval.PixelStart, vInterval.PixelStart, hInterval.PixelLength, vInterval.PixelLength);
-
-                spriteBatch.Draw(
-                    _terrainTexture,
-                    destinationRectangle,
-                    sourceRectangle,
-                    RenderingLayers.TerrainLayer);
-            }
-        }
-    }*/
 
     public void Dispose()
     {
@@ -45,7 +22,7 @@ public sealed class TerrainRenderer : IViewportObjectRenderer
 
     public int RendererId { get; set; }
     public int ItemId => 0;
-    public Rectangle GetSpriteBounds() => new(0, 0, _terrainTexture.Width - 1, _terrainTexture.Height - 1);
+    public Rectangle GetSpriteBounds() => new(0, 0, _terrainTexture.Width, _terrainTexture.Height);
 
     public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY)
     {

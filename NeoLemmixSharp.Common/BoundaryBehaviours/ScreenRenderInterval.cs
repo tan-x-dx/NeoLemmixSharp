@@ -1,5 +1,8 @@
-﻿namespace NeoLemmixSharp.Common.BoundaryBehaviours;
+﻿using System.Diagnostics;
 
+namespace NeoLemmixSharp.Common.BoundaryBehaviours;
+
+[DebuggerDisplay("vpC: {ViewPortCoordinate}, vpD: {ViewPortDimension}, sC: {ScreenCoordinate}, sD: {ScreenDimension}")]
 public readonly struct ScreenRenderInterval
 {
     public readonly int ViewPortCoordinate;

@@ -116,7 +116,6 @@ public sealed class TerrainManager
             Color.Transparent,
             previousValue & PixelType.TerrainDataMask,
             0);
-        LevelScreen.PixelChangeCount++;
     }
 
     public void SetSolidPixel(LevelPosition pixelToSet, Color color)
@@ -140,7 +139,6 @@ public sealed class TerrainManager
             color,
             previousValue & PixelType.TerrainDataMask,
             PixelType.SolidToAllOrientations);
-        LevelScreen.PixelChangeCount++;
     }
 
     public void SetBlockerMaskPixel(LevelPosition pixelToSet, PixelType pixelTypeMask, bool set)

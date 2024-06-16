@@ -80,10 +80,6 @@ public sealed class LevelScreenRenderer : IScreenRenderer
             _viewport.VerticalBoundaryBehaviour.MouseScreenCoordinate,
             _viewport.ScaleMultiplier);
 
-        Span<int> foo = stackalloc int[5];
-        TextRenderingHelpers.WriteDigits(foo, LevelScreen.PixelChangeCount);
-        FontBank.MenuFont.RenderTextSpan(spriteBatch, foo, 20, 20, 1, Color.White);
-
         spriteBatch.End();
     }
 

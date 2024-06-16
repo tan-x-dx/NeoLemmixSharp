@@ -41,8 +41,6 @@ public sealed class LevelScreen : IBaseScreen
     public static Viewport LevelViewport => _levelViewport;
     public static LevelScreenRenderer LevelScreenRenderer => _levelScreenRenderer;
 
-    public static int PixelChangeCount { get; set; }
-
     public static void SetLevelParameters(LevelParameterSet levelParameters)
     {
         _levelParameters = levelParameters;
@@ -110,8 +108,6 @@ public sealed class LevelScreen : IBaseScreen
     public LevelScreen(LevelData levelData)
     {
         ScreenTitle = levelData.LevelTitle;
-
-        PixelChangeCount = 0;
     }
 
     public void Tick(GameTime gameTime)
