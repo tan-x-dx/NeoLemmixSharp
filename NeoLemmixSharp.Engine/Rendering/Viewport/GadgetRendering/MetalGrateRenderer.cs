@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
@@ -21,6 +22,7 @@ public sealed class MetalGrateRenderer : IViewportObjectRenderer
         _whitePixelTexture = whitePixelTexture;
     }
 
+    public int RendererId { get; set; }
     public int ItemId => _metalGrateGadget.Id;
     public Rectangle GetSpriteBounds() => _metalGrateGadget.GadgetBounds.ToRectangle();
 
@@ -53,12 +55,16 @@ public sealed class MetalGrateRenderer : IViewportObjectRenderer
             _whitePixelTexture,
             renderDestination,
             sourceRectangle,
-            color,
-            RenderingLayers.AthleteRenderLayer);
+            color);
     }
 
     public void Dispose()
     {
 
     }
+
+    public LevelPosition TopLeftPixel => _metalGrateGadget.TopLeftPixel;
+    public LevelPosition BottomRightPixel => _metalGrateGadget.BottomRightPixel;
+    public LevelPosition PreviousTopLeftPixel => _metalGrateGadget.PreviousTopLeftPixel;
+    public LevelPosition PreviousBottomRightPixel => _metalGrateGadget.PreviousBottomRightPixel;
 }

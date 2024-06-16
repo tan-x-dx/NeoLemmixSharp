@@ -1,9 +1,13 @@
 ﻿namespace NeoLemmixSharp.Common.BoundaryBehaviours;
 
-public sealed class RenderInterval
+public readonly struct RenderInterval
 {
-    public int PixelStart;
-    public int PixelLength;
+    public readonly int PixelStart;
+    public readonly int PixelLength;
 
-    public int ScreenStart;
+    public RenderInterval(int pixelStart, int pixelLength)
+    {
+        PixelStart = pixelStart;
+        PixelLength = pixelLength;
+    }
 }

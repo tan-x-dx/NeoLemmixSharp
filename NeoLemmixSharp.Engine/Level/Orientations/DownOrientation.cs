@@ -82,7 +82,7 @@ public sealed class DownOrientation : Orientation
         var a = fromPosition.X;
         var b = toPosition.X;
 
-        return TerrainManager.HorizontalBoundaryBehaviour.GetHorizontalDelta(a, b);
+        return TerrainManager.HorizontalBoundaryBehaviour.GetDelta(a, b);
     }
 
     [Pure]
@@ -91,7 +91,7 @@ public sealed class DownOrientation : Orientation
         var a = fromPosition.Y;
         var b = toPosition.Y;
 
-        return TerrainManager.VerticalBoundaryBehaviour.GetVerticalDelta(a, b);
+        return TerrainManager.VerticalBoundaryBehaviour.GetDelta(a, b);
     }
 
     public override string ToString() => "down";

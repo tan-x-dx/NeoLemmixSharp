@@ -33,14 +33,12 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
         spriteBatch.Draw(
             PanelTexture,
             destRectangle,
-            PanelHelpers.GetRectangleForCoordinates(ControlPanelButton.SkillPanelFrame, PanelHelpers.PanelBackgroundY),
-            RenderingLayers.ControlPanelButtonLayer);
+            PanelHelpers.GetRectangleForCoordinates(ControlPanelButton.SkillPanelFrame, PanelHelpers.PanelBackgroundY));
 
         spriteBatch.Draw(
             PanelTexture,
             destRectangle,
-            PanelHelpers.GetRectangleForCoordinates(PanelHelpers.SkillIconDoubleMaskX, PanelHelpers.SkillIconMaskY),
-            RenderingLayers.ControlPanelSkillCountEraseLayer);
+            PanelHelpers.GetRectangleForCoordinates(PanelHelpers.SkillIconDoubleMaskX, PanelHelpers.SkillIconMaskY));
 
         var skillIconDestRectangle = new Rectangle(
             ControlPanelButton.X,
@@ -51,8 +49,7 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
         spriteBatch.Draw(
             _skillIcons,
             skillIconDestRectangle,
-            new Rectangle(0, _skillY * PanelHelpers.ControlPanelButtonPixelHeight, PanelHelpers.ControlPanelButtonPixelWidth, PanelHelpers.ControlPanelButtonPixelHeight),
-            RenderingLayers.ControlPanelSkillIconLayer);
+            new Rectangle(0, _skillY * PanelHelpers.ControlPanelButtonPixelHeight, PanelHelpers.ControlPanelButtonPixelWidth, PanelHelpers.ControlPanelButtonPixelHeight));
 
         RenderDigits(spriteBatch, destRectangle);
 

@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 
-public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehaviour
+public sealed class HorizontalWrapBoundaryBehaviour : IHorizontalBoundaryBehaviourAaa
 {
     private readonly int _levelWidth;
 

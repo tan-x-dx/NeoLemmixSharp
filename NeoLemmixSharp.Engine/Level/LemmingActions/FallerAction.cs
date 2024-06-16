@@ -167,12 +167,16 @@ public sealed class FallerAction : LemmingAction
 
         return 1;
     }
-
+    
     [SkipLocalsInit]
     public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
     {
+      //  LevelScreen.GadgetManager.Foo = true;
+
         Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
         var gadgetsNearPosition = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(scratchSpace, lemming);
+
+      //  LevelScreen.GadgetManager.Foo = false;
 
         if (gadgetsNearPosition.Count == 0)
             return new LevelPosition();

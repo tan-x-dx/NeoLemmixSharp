@@ -74,16 +74,14 @@ public sealed class LevelBuilder : IDisposable
         var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetGadgetManager(gadgetManager);
 
-        var horizontalViewPortBehaviour = levelData.HorizontalViewPortBehaviour.GetHorizontalViewPortBehaviour(levelData.LevelWidth);
-        var verticalViewPortBehaviour = levelData.VerticalViewPortBehaviour.GetVerticalViewPortBehaviour(levelData.LevelHeight);
-        var levelViewport = new Viewport(horizontalViewPortBehaviour, verticalViewPortBehaviour, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        var levelViewport = new Viewport(horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetViewport(levelViewport);
 
         var terrainTexture = terrainBuilder.GetTerrainTexture();
         var pixelData = terrainBuilder.GetPixelData();
         var terrainColorData = terrainBuilder.GetTerrainColors();
         var terrainPainter = new TerrainPainter(terrainTexture, pixelData, terrainColorData, levelData.LevelWidth);
-        var terrainRenderer = new TerrainRenderer(terrainTexture, levelViewport);
+        var terrainRenderer = new TerrainRenderer(terrainTexture);
         LevelScreen.SetTerrainPainter(terrainPainter);
 
         var updateScheduler = new UpdateScheduler(
@@ -108,19 +106,22 @@ public sealed class LevelBuilder : IDisposable
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(_contentManager);
 
-        _levelObjectAssembler.GetLevelSprites(out var behindTerrainSprites, out var inFrontOfTerrainSprites, out var lemmingSprites);
         var levelCursorSprite = CommonSprites.GetLevelCursorSprite(levelCursor);
         var backgroundRenderer = LevelBuildingHelpers.GetBackgroundRenderer(levelData, levelViewport);
+
+        _levelObjectAssembler.GetLevelSprites(out var behindTerrainSprites, out var inFrontOfTerrainSprites, out var lemmingSprites);
+        var orderedLevelSprites = LevelBuildingHelpers.GetSortedRenderables(
+            behindTerrainSprites,
+            inFrontOfTerrainSprites,
+            terrainRenderer,
+            lemmingSprites);
 
         var levelRenderer = new LevelRenderer(
             _graphicsDevice,
             controlPanel,
             levelViewport,
-            behindTerrainSprites,
-            inFrontOfTerrainSprites,
-            lemmingSprites,
-            backgroundRenderer,
-            terrainRenderer);
+            orderedLevelSprites,
+            backgroundRenderer);
 
         var levelScreenRenderer = new LevelScreenRenderer(
             _graphicsDevice,

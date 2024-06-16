@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 
-public interface IHorizontalBoundaryBehaviour
+public interface IHorizontalBoundaryBehaviourAaa
 {
     BoundaryBehaviourType BoundaryBehaviourType { get; }
     int LevelWidth { get; }

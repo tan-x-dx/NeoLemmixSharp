@@ -51,16 +51,14 @@ public class ControlPanelButtonRenderer
         spriteBatch.Draw(
             PanelTexture,
             destRectangle,
-            PanelHelpers.GetRectangleForCoordinates(ControlPanelButton.SkillPanelFrame, PanelHelpers.PanelBackgroundY),
-            RenderingLayers.ControlPanelButtonLayer);
+            PanelHelpers.GetRectangleForCoordinates(ControlPanelButton.SkillPanelFrame, PanelHelpers.PanelBackgroundY));
 
         RenderDigits(spriteBatch, destRectangle);
 
         spriteBatch.Draw(
             PanelTexture,
             destRectangle,
-            PanelHelpers.GetRectangleForCoordinates(_iconX, _iconY),
-            RenderingLayers.ControlPanelSkillCountEraseLayer);
+            PanelHelpers.GetRectangleForCoordinates(_iconX, _iconY));
 
         RenderSelected(spriteBatch, destRectangle);
     }
@@ -78,8 +76,7 @@ public class ControlPanelButtonRenderer
         spriteBatch.Draw(
             PanelTexture,
             destRectangle,
-            PanelHelpers.GetRectangleForCoordinates(iconX, PanelHelpers.SkillIconMaskY),
-            RenderingLayers.ControlPanelSkillCountEraseLayer);
+            PanelHelpers.GetRectangleForCoordinates(iconX, PanelHelpers.SkillIconMaskY));
 
         FontBank.SkillCountDigitFont.RenderTextSpan(
             spriteBatch,
@@ -98,7 +95,6 @@ public class ControlPanelButtonRenderer
         spriteBatch.Draw(
             SelectedTexture,
             destRectangle,
-            new Rectangle(0, 0, SelectedTexture.Width, SelectedTexture.Height),
-            RenderingLayers.ControlPanelSkillCountEraseLayer); // Can reuse this layer since the sprites shouldn't overlap anyway
+            new Rectangle(0, 0, SelectedTexture.Width, SelectedTexture.Height));
     }
 }

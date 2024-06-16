@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
 
-public interface IHorizontalViewPortBehaviour
+public interface IHorizontalViewPortBehaviourAaa
 {
     // Raw pixels, one-to-one with game
     int LevelWidthInPixels { get; }
@@ -17,4 +17,6 @@ public interface IHorizontalViewPortBehaviour
     void RecalculateHorizontalDimensions(int scaleMultiplier, int windowWidth);
     void ScrollHorizontally(int dx);
     void RecalculateHorizontalRenderIntervals(int scaleMultiplier);
+
+    ReadOnlySpan<RenderInterval> GetHorizontalRenderIntervals(Span<RenderInterval> baseSpan);
 }

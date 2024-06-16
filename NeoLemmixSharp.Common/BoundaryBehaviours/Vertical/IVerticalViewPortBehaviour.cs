@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 
-public interface IVerticalViewPortBehaviour
+public interface IVerticalViewPortBehaviourAaa
 {
     // Raw pixels, one-to-one with game
     int LevelHeightInPixels { get; }
@@ -17,4 +17,6 @@ public interface IVerticalViewPortBehaviour
     void RecalculateVerticalDimensions(int scaleMultiplier, int windowHeight, int controlPanelHeight);
     void ScrollVertically(int dy);
     void RecalculateVerticalRenderIntervals(int scaleMultiplier);
+
+    ReadOnlySpan<RenderInterval> GetVerticalRenderIntervals(Span<RenderInterval> baseSpan);
 }

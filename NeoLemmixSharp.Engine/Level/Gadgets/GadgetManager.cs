@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
+﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
@@ -20,10 +19,16 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
 
     public ReadOnlySpan<GadgetBase> AllGadgets => new(_allGadgets);
 
+    public bool Foo
+    {
+        get => _gadgetPositionHelper.Foo;
+        set => _gadgetPositionHelper.Foo = value;
+    }
+
     public GadgetManager(
         GadgetBase[] allGadgets,
-        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
-        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
+        BoundaryBehaviour horizontalBoundaryBehaviour,
+        BoundaryBehaviour verticalBoundaryBehaviour)
     {
         _allGadgets = allGadgets;
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));

@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
+﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
@@ -11,8 +10,8 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
     where T : class, IRectangularBounds
 {
     private readonly IPerfectHasher<T> _hasher;
-    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
-    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
+    private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
 
     private readonly SimpleSet<T> _allTrackedItems;
 
@@ -31,8 +30,8 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
     public SpacialHashGrid(
         IPerfectHasher<T> hasher,
         ChunkSizeType chunkSizeType,
-        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
-        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
+        BoundaryBehaviour horizontalBoundaryBehaviour,
+        BoundaryBehaviour verticalBoundaryBehaviour)
     {
         _hasher = hasher;
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
@@ -43,8 +42,8 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
         var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;
 
-        _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelWidth + chunkSizeBitMask) >> _chunkSizeBitShift;
-        _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelHeight + chunkSizeBitMask) >> _chunkSizeBitShift;
+        _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelDimension + chunkSizeBitMask) >> _chunkSizeBitShift;
+        _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelDimension + chunkSizeBitMask) >> _chunkSizeBitShift;
 
         _bitArraySize = _allTrackedItems.Size;
 
@@ -150,6 +149,8 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         return new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _previousQueryCount);
     }
 
+    public bool Foo;
+
     /// <summary>
     /// Gets all items that overlap with the input region. Uses the span parameter to record data.
     /// </summary>
@@ -161,6 +162,11 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         if (IsEmpty)
             return SimpleSetEnumerable<T>.Empty;
 
+        if (Foo)
+        {
+            ;
+        }
+
         var topLeftChunk = GetChunkForPoint(levelRegion.GetTopLeftPosition());
         var bottomRightChunk = GetChunkForPoint(levelRegion.GetBottomRightPosition());
 
@@ -169,6 +175,12 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         {
             // If we've already got the data cached, just use it
             new ReadOnlySpan<uint>(_setUnionScratchSpace).CopyTo(scratchSpaceSpan);
+            
+            if (Foo && scratchSpaceSpan[0] > 16U)
+            {
+                ;
+            }
+
             return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _previousQueryCount);
         }
 
@@ -179,11 +191,22 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
             var sourceSpan = ReadOnlySpanForChunk(topLeftChunk.X, topLeftChunk.Y);
             sourceSpan.CopyTo(scratchSpaceSpan);
+            if (Foo && scratchSpaceSpan[0] > 16U)
+            {
+                ;
+            }
+
             queryCount = BitArrayHelpers.GetPopCount(sourceSpan);
         }
         else
         {
             EvaluateChunks(scratchSpaceSpan, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
+
+            if (Foo && scratchSpaceSpan[0] > 16U)
+            {
+                ;
+            }
+
             queryCount = BitArrayHelpers.GetPopCount(scratchSpaceSpan);
         }
 
@@ -297,8 +320,8 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
     private LevelPosition GetChunkForPoint(LevelPosition levelPosition)
     {
-        var chunkX = _horizontalBoundaryBehaviour.NormaliseX(levelPosition.X) >> _chunkSizeBitShift;
-        var chunkY = _verticalBoundaryBehaviour.NormaliseY(levelPosition.Y) >> _chunkSizeBitShift;
+        var chunkX = _horizontalBoundaryBehaviour.Normalise(levelPosition.X) >> _chunkSizeBitShift;
+        var chunkY = _verticalBoundaryBehaviour.Normalise(levelPosition.Y) >> _chunkSizeBitShift;
         chunkX = Math.Clamp(chunkX, 0, _numberOfHorizontalChunks - 1);
         chunkY = Math.Clamp(chunkY, 0, _numberOfVerticalChunks - 1);
 

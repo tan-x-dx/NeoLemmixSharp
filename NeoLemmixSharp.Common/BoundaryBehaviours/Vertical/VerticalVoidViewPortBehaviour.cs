@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 
-public sealed class VerticalVoidViewPortBehaviour : IVerticalViewPortBehaviour
+public sealed class VerticalVoidViewPortBehaviour : IVerticalViewPortBehaviourAaa
 {
     private readonly RenderInterval _renderInterval;
 
@@ -58,8 +58,17 @@ public sealed class VerticalVoidViewPortBehaviour : IVerticalViewPortBehaviour
 
     public void RecalculateVerticalRenderIntervals(int scaleMultiplier)
     {
-        _renderInterval.PixelStart = ViewPortY;
+      /*  _renderInterval.PixelStart = ViewPortY;
         _renderInterval.PixelLength = ViewPortHeight;
-        _renderInterval.ScreenStart = 0;
+        _renderInterval.ScreenStart = 0;*/
+    }
+
+    public ReadOnlySpan<RenderInterval> GetVerticalRenderIntervals(Span<RenderInterval> baseSpan)
+    {
+        baseSpan[0] = new RenderInterval(
+            _renderInterval.PixelStart,
+            _renderInterval.PixelLength);
+
+        return baseSpan[..1];
     }
 }

@@ -129,7 +129,9 @@ end;
 
         if (_viewport.MouseIsInLevelViewPort)
         {
-            _levelCursor.CursorPosition = new LevelPosition(_viewport.ViewportMouseX, _viewport.ViewportMouseY);
+            _levelCursor.CursorPosition = new LevelPosition(
+                _viewport.HorizontalBoundaryBehaviour.MouseViewPortCoordinate,
+                _viewport.VerticalBoundaryBehaviour.MouseViewPortCoordinate);
         }
         else
         {

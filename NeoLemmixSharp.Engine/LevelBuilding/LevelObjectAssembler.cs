@@ -112,9 +112,9 @@ public sealed class LevelObjectAssembler : IDisposable
     }
 
     public void GetLevelSprites(
-        out ICollection<IViewportObjectRenderer> behindTerrainSprites,
-        out ICollection<IViewportObjectRenderer> inFrontOfTerrainSprites,
-        out ICollection<IViewportObjectRenderer> lemmingSprites)
+        out List<IViewportObjectRenderer> behindTerrainSprites,
+        out List<IViewportObjectRenderer> inFrontOfTerrainSprites,
+        out List<IViewportObjectRenderer> lemmingSprites)
     {
         behindTerrainSprites = new List<IViewportObjectRenderer>(_gadgets.Count);
         inFrontOfTerrainSprites = new List<IViewportObjectRenderer>(_gadgets.Count);

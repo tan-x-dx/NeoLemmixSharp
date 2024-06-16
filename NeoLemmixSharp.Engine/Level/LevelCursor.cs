@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
@@ -12,8 +11,8 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelCursor
 {
-    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
-    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
+    private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
     private readonly LevelInputController _controller;
 
     private FacingDirection? _facingDirection;
@@ -32,8 +31,8 @@ public sealed class LevelCursor
     public Color Color3 { get; private set; }
 
     public LevelCursor(
-        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
-        IVerticalBoundaryBehaviour verticalBoundaryBehaviour,
+        BoundaryBehaviour horizontalBoundaryBehaviour,
+        BoundaryBehaviour verticalBoundaryBehaviour,
         LevelInputController controller)
     {
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
@@ -109,8 +108,8 @@ public sealed class LevelCursor
     {
         var lemmingPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 4);
 
-        var dx = _horizontalBoundaryBehaviour.GetHorizontalDelta(CursorPosition.X, lemmingPosition.X);
-        var dy = _verticalBoundaryBehaviour.GetVerticalDelta(CursorPosition.Y, lemmingPosition.Y);
+        var dx = _horizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
+        var dy = _verticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
 
         return Math.Abs(dx) < 5 && Math.Abs(dy) < 5;
     }
@@ -191,8 +190,8 @@ public sealed class LevelCursor
     {
         var lemmingPosition = lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 4);
 
-        var dx = _horizontalBoundaryBehaviour.GetHorizontalDelta(CursorPosition.X, lemmingPosition.X);
-        var dy = _verticalBoundaryBehaviour.GetVerticalDelta(CursorPosition.Y, lemmingPosition.Y);
+        var dx = _horizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
+        var dy = _verticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
 
         return dx * dx + dy * dy;
     }

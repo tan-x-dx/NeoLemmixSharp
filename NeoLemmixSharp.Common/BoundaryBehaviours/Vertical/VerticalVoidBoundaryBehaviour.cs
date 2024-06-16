@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 
-public sealed class VerticalVoidBoundaryBehaviour : IVerticalBoundaryBehaviour
+public sealed class VerticalVoidBoundaryBehaviour : IVerticalBoundaryBehaviourAaa
 {
     public BoundaryBehaviourType BoundaryBehaviourType => BoundaryBehaviourType.Void;
     public int LevelHeight { get; }
