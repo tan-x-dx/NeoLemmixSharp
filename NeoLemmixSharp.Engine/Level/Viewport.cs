@@ -1,6 +1,4 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;
@@ -11,51 +9,25 @@ public sealed class Viewport
     private const int MaxScale = 12;
     private const int ScrollSpeedMultiplier = 2;
 
-    private readonly IHorizontalViewPortBehaviour _horizontalViewPortBehaviour;
-    private readonly IVerticalViewPortBehaviour _verticalViewPortBehaviour;
-    private readonly IHorizontalBoundaryBehaviour _horizontalBoundaryBehaviour;
-    private readonly IVerticalBoundaryBehaviour _verticalBoundaryBehaviour;
-
     private int _windowWidth;
     private int _windowHeight;
     private int _controlPanelHeight;
 
     private int _scrollDelta;
 
-    public int ScaleMultiplier { get; private set; } = 6;
+    public BoundaryBehaviour HorizontalBoundaryBehaviour { get; }
+    public BoundaryBehaviour VerticalBoundaryBehaviour { get; }
 
-    public int ViewportMouseX { get; private set; }
-    public int ViewportMouseY { get; private set; }
-    public int ScreenMouseX { get; private set; }
-    public int ScreenMouseY { get; private set; }
+    public int ScaleMultiplier { get; private set; } = 6;
 
     public bool MouseIsInLevelViewPort { get; private set; }
 
-    // Raw pixels, one-to-one with game
-    public int ViewPortX => _horizontalViewPortBehaviour.ViewPortX;
-    public int ViewPortY => _verticalViewPortBehaviour.ViewPortY;
-    public int ViewPortWidth => _horizontalViewPortBehaviour.ViewPortWidth;
-    public int ViewPortHeight => _verticalViewPortBehaviour.ViewPortHeight;
-
-    // Stretched to fit the screen
-    public int ScreenX => _horizontalViewPortBehaviour.ScreenX;
-    public int ScreenY => _verticalViewPortBehaviour.ScreenY;
-    public int ScreenWidth => _horizontalViewPortBehaviour.ScreenWidth;
-    public int ScreenHeight => _verticalViewPortBehaviour.ScreenHeight;
-
-    public int NumberOfHorizontalRenderIntervals => _horizontalViewPortBehaviour.NumberOfHorizontalRenderIntervals;
-    public int NumberOfVerticalRenderIntervals => _verticalViewPortBehaviour.NumberOfVerticalRenderIntervals;
-
     public Viewport(
-        IHorizontalViewPortBehaviour horizontalViewPortBehaviour,
-        IVerticalViewPortBehaviour verticalViewPortBehaviour,
-        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
-        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
+        BoundaryBehaviour horizontalBoundaryBehaviour,
+        BoundaryBehaviour verticalBoundaryBehaviour)
     {
-        _horizontalViewPortBehaviour = horizontalViewPortBehaviour;
-        _verticalViewPortBehaviour = verticalViewPortBehaviour;
-        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
-        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
+        HorizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+        VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
         _scrollDelta = ScrollSpeedMultiplier * MaxScale / ScaleMultiplier;
     }
@@ -66,19 +38,15 @@ public sealed class Viewport
         _windowHeight = gameWindowHeight;
         _controlPanelHeight = controlPanelHeight;
 
-        _horizontalViewPortBehaviour.RecalculateHorizontalDimensions(ScaleMultiplier, _windowWidth);
-        _horizontalViewPortBehaviour.ScrollHorizontally(0);
-        _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
-        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight, _controlPanelHeight);
-        _verticalViewPortBehaviour.ScrollVertically(0);
-        _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
+        HorizontalBoundaryBehaviour.UpdateScreenDimension(_windowWidth, ScaleMultiplier);
+        HorizontalBoundaryBehaviour.Scroll(0);
+
+        VerticalBoundaryBehaviour.UpdateScreenDimension(_windowHeight - _controlPanelHeight, ScaleMultiplier);
+        VerticalBoundaryBehaviour.Scroll(0);
     }
 
     public void HandleMouseInput(LevelInputController inputController)
     {
-        ScreenMouseX = ScaleMultiplier * ((inputController.MouseX + ScaleMultiplier / 2) / ScaleMultiplier);
-        ScreenMouseY = ScaleMultiplier * ((inputController.MouseY + ScaleMultiplier / 2) / ScaleMultiplier);
-
         if (MouseIsInLevelViewport(inputController))
         {
             MouseIsInLevelViewPort = true;
@@ -89,32 +57,25 @@ public sealed class Viewport
             MouseIsInLevelViewPort = false;
         }
 
-        ViewportMouseX = (ScreenMouseX - _horizontalViewPortBehaviour.ScreenX) / ScaleMultiplier + _horizontalViewPortBehaviour.ViewPortX;
-        ViewportMouseY = (ScreenMouseY - _verticalViewPortBehaviour.ScreenY) / ScaleMultiplier + _verticalViewPortBehaviour.ViewPortY;
-
-        ViewportMouseX = _horizontalBoundaryBehaviour.NormaliseX(ViewportMouseX);
-        ViewportMouseY = _verticalBoundaryBehaviour.NormaliseY(ViewportMouseY);
+        HorizontalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseX);
+        VerticalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseY);
 
         if (inputController.MouseX == 0)
         {
-            _horizontalViewPortBehaviour.ScrollHorizontally(-_scrollDelta);
-            _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
+            HorizontalBoundaryBehaviour.Scroll(-_scrollDelta);
         }
         else if (inputController.MouseX == _windowWidth - 1)
         {
-            _horizontalViewPortBehaviour.ScrollHorizontally(_scrollDelta);
-            _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
+            HorizontalBoundaryBehaviour.Scroll(_scrollDelta);
         }
 
         if (inputController.MouseY == 0)
         {
-            _verticalViewPortBehaviour.ScrollVertically(-_scrollDelta);
-            _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
+            VerticalBoundaryBehaviour.Scroll(-_scrollDelta);
         }
         else if (inputController.MouseY == _windowHeight - 1)
         {
-            _verticalViewPortBehaviour.ScrollVertically(_scrollDelta);
-            _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
+            VerticalBoundaryBehaviour.Scroll(_scrollDelta);
         }
     }
 
@@ -133,16 +94,12 @@ public sealed class Viewport
         if (ScaleMultiplier == previousValue)
             return;
 
-        _horizontalViewPortBehaviour.RecalculateHorizontalDimensions(ScaleMultiplier, _windowWidth);
-        _horizontalViewPortBehaviour.ScrollHorizontally(0);
-        _horizontalViewPortBehaviour.RecalculateHorizontalRenderIntervals(ScaleMultiplier);
-        _verticalViewPortBehaviour.RecalculateVerticalDimensions(ScaleMultiplier, _windowHeight, _controlPanelHeight);
-        _verticalViewPortBehaviour.ScrollVertically(0);
-        _verticalViewPortBehaviour.RecalculateVerticalRenderIntervals(ScaleMultiplier);
+        HorizontalBoundaryBehaviour.UpdateScreenDimension(_windowWidth, ScaleMultiplier);
+        HorizontalBoundaryBehaviour.Scroll(0);
+
+        VerticalBoundaryBehaviour.UpdateScreenDimension(_windowHeight - _controlPanelHeight, ScaleMultiplier);
+        VerticalBoundaryBehaviour.Scroll(0);
 
         _scrollDelta = ScrollSpeedMultiplier * MaxScale / ScaleMultiplier;
     }
-
-    public RenderInterval GetHorizontalRenderInterval(int i) => _horizontalViewPortBehaviour.GetHorizontalRenderInterval(i);
-    public RenderInterval GetVerticalRenderInterval(int i) => _verticalViewPortBehaviour.GetVerticalRenderInterval(i);
 }

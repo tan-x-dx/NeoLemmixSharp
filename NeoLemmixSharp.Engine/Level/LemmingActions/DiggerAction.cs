@@ -97,8 +97,8 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         LevelPosition lemmingPosition)
     {
         var terrainManager = LevelScreen.TerrainManager;
+
         // The central pixel of the removed row lies at the lemming's position
-        var result = false;
 
         // Two most extreme pixels
         var checkLevelPosition = orientation.MoveLeft(lemmingPosition, 4);
@@ -115,6 +115,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
             terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
         }
 
+        var result = false;
         // Everything in between
         for (var i = -3; i < 4; i++)
         {

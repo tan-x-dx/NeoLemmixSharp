@@ -82,7 +82,7 @@ public sealed class RightOrientation : Orientation
         var a = fromPosition.Y;
         var b = toPosition.Y;
 
-        return TerrainManager.VerticalBoundaryBehaviour.GetVerticalDelta(b, a);
+        return TerrainManager.VerticalBoundaryBehaviour.GetDelta(b, a);
     }
 
     [Pure]
@@ -91,7 +91,7 @@ public sealed class RightOrientation : Orientation
         var a = fromPosition.X;
         var b = toPosition.X;
 
-        return TerrainManager.HorizontalBoundaryBehaviour.GetHorizontalDelta(a, b);
+        return TerrainManager.HorizontalBoundaryBehaviour.GetDelta(a, b);
     }
 
     public override string ToString() => "right";

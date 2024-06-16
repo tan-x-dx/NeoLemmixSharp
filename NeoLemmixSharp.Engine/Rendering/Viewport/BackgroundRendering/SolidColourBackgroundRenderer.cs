@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Rendering;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
 
@@ -24,11 +23,10 @@ public sealed class SolidColorBackgroundRenderer : IBackgroundRenderer
             new Rectangle(
                 0,
                 0,
-                _viewport.ViewPortWidth,
-                _viewport.ViewPortHeight),
+                _viewport.HorizontalBoundaryBehaviour.ViewPortDimension,
+                _viewport.VerticalBoundaryBehaviour.ViewPortDimension),
             CommonSprites.RectangleForWhitePixelAlpha(0xff),
-            _backgroundColor,
-            RenderingLayers.BackgroundLayer);
+            _backgroundColor);
     }
 
     public void Dispose()

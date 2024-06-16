@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Engine.Level;
 
@@ -56,8 +55,7 @@ public sealed class LevelCursorSprite
             _cursorTexture,
             destRectangle,
             sourceRect,
-            _levelCursor.Color1,
-            RenderingLayers.CursorLayer);
+            _levelCursor.Color1);
 
         sourceRect.X += LevelConstants.CursorSizeInPixels;
 
@@ -65,8 +63,7 @@ public sealed class LevelCursorSprite
             _cursorTexture,
             destRectangle,
             sourceRect,
-            _levelCursor.Color2,
-            RenderingLayers.CursorLayer);
+            _levelCursor.Color2);
 
         sourceRect.X += LevelConstants.CursorSizeInPixels;
 
@@ -74,8 +71,7 @@ public sealed class LevelCursorSprite
             _cursorTexture,
             destRectangle,
             sourceRect,
-            _levelCursor.Color3,
-            RenderingLayers.CursorLayer);
+            _levelCursor.Color3);
     }
 
     private void RenderHand(SpriteBatch spriteBatch, int x, int y)

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
@@ -22,7 +21,13 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     public Span<int> CountDownCharsSpan => new(_countDownCharsToRender);
 
+    public int RendererId { get; set; }
     public int ItemId => _lemming.Id;
+
+    public LevelPosition TopLeftPixel => _lemming.TopLeftPixel;
+    public LevelPosition BottomRightPixel => _lemming.BottomRightPixel;
+    public LevelPosition PreviousTopLeftPixel => _lemming.PreviousTopLeftPixel;
+    public LevelPosition PreviousBottomRightPixel => _lemming.PreviousBottomRightPixel;
 
     public LemmingRenderer(Lemming lemming)
     {
@@ -114,6 +119,17 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         {
             RenderParticles(spriteBatch, screenX, screenY);
         }
+        /*
+        if (_lemming.Id < 7)
+        {
+            FontBank.MenuFont.RenderText(
+                spriteBatch,
+                _lemming.LevelPosition.ToString(),
+                screenX - 10,
+                screenY - MenuFont.GlyphHeight * 2,
+                1,
+                Color.White);
+        }*/
     }
 
     private void RenderParticles(
@@ -145,8 +161,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
                 whitePixelTexture,
                 destRectangle,
                 sourceRectangle,
-                color,
-                RenderingLayers.LemmingRenderLayer);
+                color);
         }
     }
 

@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
+﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
@@ -19,11 +18,11 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
     private readonly SpacialHashGrid<HitBoxGadget> _gadgetPositionHelper;
 
     public ReadOnlySpan<GadgetBase> AllGadgets => new(_allGadgets);
-
+    
     public GadgetManager(
         GadgetBase[] allGadgets,
-        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
-        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
+        BoundaryBehaviour horizontalBoundaryBehaviour,
+        BoundaryBehaviour verticalBoundaryBehaviour)
     {
         _allGadgets = allGadgets;
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
@@ -135,36 +134,6 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
         foreach (var gadget in gadgetSet)
         {
             if (gadget.GadgetBehaviour == gadgetBehaviour && (gadget.MatchesPosition(anchorPixel) || gadget.MatchesPosition(footPixel)))
-                return true;
-        }
-
-        return false;
-    }
-
-    [Pure]
-    public static bool HasSolidGadgetAtPosition(
-        in GadgetSet enumerable,
-        Lemming lemming,
-        LevelPosition levelPosition)
-    {
-        foreach (var gadget in enumerable)
-        {
-            if (gadget.IsSolidToLemmingAtPosition(lemming, levelPosition))
-                return true;
-        }
-
-        return false;
-    }
-
-    [Pure]
-    public static bool HasSteelGadgetAtPosition(
-        in GadgetSet enumerable,
-        Lemming lemming,
-        LevelPosition levelPosition)
-    {
-        foreach (var gadget in enumerable)
-        {
-            if (gadget.IsSteelToLemmingAtPosition(lemming, levelPosition))
                 return true;
         }
 

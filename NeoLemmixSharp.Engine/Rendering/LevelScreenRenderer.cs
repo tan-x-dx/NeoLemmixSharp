@@ -74,11 +74,11 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         //     _graphicsDevice.Clear(Color.DarkGray);
         _levelRenderer.DrawToScreen(spriteBatch);
         _controlPanelRenderer.DrawToScreen(spriteBatch);
-        _levelCursorSprite.RenderAtPosition(spriteBatch, _viewport.ScreenMouseX, _viewport.ScreenMouseY, _viewport.ScaleMultiplier);
-
-        Span<int> foo = stackalloc int[5];
-        TextRenderingHelpers.WriteDigits(foo, LevelScreen.PixelChangeCount);
-        FontBank.MenuFont.RenderTextSpan(spriteBatch, foo, 20, 20, 1, Color.White);
+        _levelCursorSprite.RenderAtPosition(
+            spriteBatch,
+            _viewport.HorizontalBoundaryBehaviour.MouseScreenCoordinate,
+            _viewport.VerticalBoundaryBehaviour.MouseScreenCoordinate,
+            _viewport.ScaleMultiplier);
 
         spriteBatch.End();
     }

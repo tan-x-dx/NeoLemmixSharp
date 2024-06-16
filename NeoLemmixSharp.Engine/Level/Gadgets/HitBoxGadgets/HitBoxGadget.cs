@@ -8,15 +8,10 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 #pragma warning disable CS0660, CS0661, CA1067
-public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRectangularBounds
+public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>
 #pragma warning restore CS0660, CS0661, CA1067
 {
     protected readonly ItemTracker<Lemming> LemmingTracker;
-
-    public LevelPosition TopLeftPixel { get; set; }
-    public LevelPosition BottomRightPixel { get; set; }
-    public LevelPosition PreviousTopLeftPixel { get; set; }
-    public LevelPosition PreviousBottomRightPixel { get; set; }
 
     protected HitBoxGadget(
         int id,

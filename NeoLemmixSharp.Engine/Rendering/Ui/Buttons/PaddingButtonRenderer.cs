@@ -18,7 +18,6 @@ public sealed class PaddingButtonRenderer : ControlPanelButtonRenderer
         spriteBatch.Draw(
             PanelTexture,
             destRectangle,
-            PanelHelpers.GetRectangleForCoordinates(PanelHelpers.PaddingButtonX, PanelHelpers.PaddingButtonY),
-            RenderingLayers.ControlPanelButtonLayer);
+            PanelHelpers.GetRectangleForCoordinates(PanelHelpers.PaddingButtonX, PanelHelpers.PaddingButtonY));
     }
 }

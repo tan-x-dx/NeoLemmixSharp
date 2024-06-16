@@ -1,55 +1,33 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
 
 namespace NeoLemmixSharp.Common.BoundaryBehaviours;
 
 public static class BoundaryHelpers
 {
     [DoesNotReturn]
-    private static T ThrowUnknownBoundaryBehaviourException<T>(BoundaryBehaviourType boundaryBehaviourType)
+    private static BoundaryBehaviour ThrowUnknownBoundaryBehaviourException(BoundaryBehaviourType boundaryBehaviourType)
     {
         throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType,
             "Unknown boundary behaviour type");
     }
 
-    public static IHorizontalViewPortBehaviour GetHorizontalViewPortBehaviour(
+    public static BoundaryBehaviour GetHorizontalBoundaryBehaviour(
         this BoundaryBehaviourType boundaryBehaviourType,
-        int levelWidth) => boundaryBehaviourType switch
+        int levelWidth)
     {
-        BoundaryBehaviourType.Void => new HorizontalVoidViewPortBehaviour(levelWidth),
-        BoundaryBehaviourType.Wrap => new HorizontalWrapViewPortBehaviour(levelWidth),
+        if (boundaryBehaviourType is BoundaryBehaviourType.Void or BoundaryBehaviourType.Wrap)
+            return new BoundaryBehaviour(boundaryBehaviourType, levelWidth);
 
-        _ => ThrowUnknownBoundaryBehaviourException<IHorizontalViewPortBehaviour>(boundaryBehaviourType)
-    };
+        return ThrowUnknownBoundaryBehaviourException(boundaryBehaviourType);
+    }
 
-    public static IVerticalViewPortBehaviour GetVerticalViewPortBehaviour(
+    public static BoundaryBehaviour GetVerticalBoundaryBehaviour(
         this BoundaryBehaviourType boundaryBehaviourType,
-        int levelHeight) => boundaryBehaviourType switch
+        int levelHeight)
     {
-        BoundaryBehaviourType.Void => new VerticalVoidViewPortBehaviour(levelHeight),
-        BoundaryBehaviourType.Wrap => new VerticalWrapViewPortBehaviour(levelHeight),
+        if (boundaryBehaviourType is BoundaryBehaviourType.Void or BoundaryBehaviourType.Wrap)
+            return new BoundaryBehaviour(boundaryBehaviourType, levelHeight);
 
-        _ => ThrowUnknownBoundaryBehaviourException<IVerticalViewPortBehaviour>(boundaryBehaviourType)
-    };
-
-    public static IHorizontalBoundaryBehaviour GetHorizontalBoundaryBehaviour(
-        this BoundaryBehaviourType boundaryBehaviourType,
-        int levelWidth) => boundaryBehaviourType switch
-    {
-        BoundaryBehaviourType.Wrap => new HorizontalWrapBoundaryBehaviour(levelWidth),
-        BoundaryBehaviourType.Void => new HorizontalVoidBoundaryBehaviour(levelWidth),
-
-        _ => ThrowUnknownBoundaryBehaviourException<IHorizontalBoundaryBehaviour>(boundaryBehaviourType)
-    };
-
-    public static IVerticalBoundaryBehaviour GetVerticalBoundaryBehaviour(
-        this BoundaryBehaviourType boundaryBehaviourType,
-        int levelHeight) => boundaryBehaviourType switch
-    {
-        BoundaryBehaviourType.Wrap => new VerticalWrapBoundaryBehaviour(levelHeight),
-        BoundaryBehaviourType.Void => new VerticalVoidBoundaryBehaviour(levelHeight),
-
-        _ => ThrowUnknownBoundaryBehaviourException<IVerticalBoundaryBehaviour>(boundaryBehaviourType)
-    };
+        return ThrowUnknownBoundaryBehaviourException(boundaryBehaviourType);
+    }
 }

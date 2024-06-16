@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -10,15 +11,59 @@ public readonly ref struct LevelPositionPair
     public readonly int P2X;
     public readonly int P2Y;
 
-    public LevelPositionPair(LevelPosition p1, LevelPosition p2)
+    [DebuggerStepThrough]
+    public LevelPositionPair(int x1, int y1, int x2, int y2)
     {
-        P1X = Math.Min(p1.X, p2.X);
-        P1Y = Math.Min(p1.Y, p2.Y);
+        if (x1 < x2)
+        {
+            P1X = x1;
+            P2X = x2;
+        }
+        else
+        {
+            P1X = x2;
+            P2X = x1;
+        }
 
-        P2X = Math.Max(p1.X, p2.X);
-        P2Y = Math.Max(p1.Y, p2.Y);
+        if (y1 < y2)
+        {
+            P1Y = y1;
+            P2Y = y2;
+        }
+        else
+        {
+            P1Y = y2;
+            P2Y = y1;
+        }
     }
 
+    [DebuggerStepThrough]
+    public LevelPositionPair(LevelPosition p1, LevelPosition p2)
+    {
+        if (p1.X < p2.X)
+        {
+            P1X = p1.X;
+            P2X = p2.X;
+        }
+        else
+        {
+            P1X = p2.X;
+            P2X = p1.X;
+        }
+
+        if (p1.Y < p2.Y)
+        {
+            P1Y = p1.Y;
+            P2Y = p2.Y;
+        }
+        else
+        {
+            P1Y = p2.Y;
+            P2Y = p1.Y;
+        }
+    }
+
+    [DebuggerStepThrough]
     public LevelPositionPair(ReadOnlySpan<LevelPosition> positions)
     {
         var minX = int.MaxValue;
@@ -41,10 +86,13 @@ public readonly ref struct LevelPositionPair
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public LevelPosition GetTopLeftPosition() => new(P1X, P1Y);
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public LevelPosition GetBottomRightPosition() => new(P2X, P2Y);
 
+    [DebuggerStepThrough]
     public bool Overlaps(LevelPositionPair other)
     {
         return other.P1X <= P2X &&
@@ -54,6 +102,7 @@ public readonly ref struct LevelPositionPair
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public bool Contains(LevelPosition anchorPosition)
     {
         return P1X <= anchorPosition.X && anchorPosition.X <= P2X &&

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
@@ -10,6 +11,7 @@ public sealed class GadgetLayerRenderer : IGadgetRenderer
     private IControlledAnimationGadget _gadget;
 
     public GadgetRenderMode RenderMode { get; }
+    public int RendererId { get; set; }
     public int ItemId => _gadget.Id;
 
     public GadgetLayerRenderer(
@@ -39,4 +41,9 @@ public sealed class GadgetLayerRenderer : IGadgetRenderer
     {
         _gadget = null!;
     }
+
+    public LevelPosition TopLeftPixel => _gadget.TopLeftPixel;
+    public LevelPosition BottomRightPixel => _gadget.BottomRightPixel;
+    public LevelPosition PreviousTopLeftPixel => _gadget.PreviousTopLeftPixel;
+    public LevelPosition PreviousBottomRightPixel => _gadget.PreviousBottomRightPixel;
 }

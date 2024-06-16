@@ -167,7 +167,7 @@ public sealed class FallerAction : LemmingAction
 
         return 1;
     }
-
+    
     [SkipLocalsInit]
     public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
     {

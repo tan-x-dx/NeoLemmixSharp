@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -16,17 +15,17 @@ public sealed class TerrainManager
     private readonly PixelType[] _pixels;
     private readonly TerrainPainter _terrainPainter;
 
-    public IHorizontalBoundaryBehaviour HorizontalBoundaryBehaviour { get; }
-    public IVerticalBoundaryBehaviour VerticalBoundaryBehaviour { get; }
+    public BoundaryBehaviour HorizontalBoundaryBehaviour { get; }
+    public BoundaryBehaviour VerticalBoundaryBehaviour { get; }
 
-    public int LevelWidth => HorizontalBoundaryBehaviour.LevelWidth;
-    public int LevelHeight => VerticalBoundaryBehaviour.LevelHeight;
+    public int LevelWidth => HorizontalBoundaryBehaviour.LevelDimension;
+    public int LevelHeight => VerticalBoundaryBehaviour.LevelDimension;
 
     public TerrainManager(
         PixelType[] pixels,
         TerrainPainter terrainPainter,
-        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
-        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
+        BoundaryBehaviour horizontalBoundaryBehaviour,
+        BoundaryBehaviour verticalBoundaryBehaviour)
     {
         _pixels = pixels;
 
@@ -41,8 +40,8 @@ public sealed class TerrainManager
     public LevelPosition NormalisePosition(LevelPosition levelPosition)
     {
         return new LevelPosition(
-            HorizontalBoundaryBehaviour.NormaliseX(levelPosition.X),
-            VerticalBoundaryBehaviour.NormaliseY(levelPosition.Y));
+            HorizontalBoundaryBehaviour.Normalise(levelPosition.X),
+            VerticalBoundaryBehaviour.Normalise(levelPosition.Y));
     }
 
     [Pure]
@@ -117,7 +116,6 @@ public sealed class TerrainManager
             Color.Transparent,
             previousValue & PixelType.TerrainDataMask,
             0);
-        LevelScreen.PixelChangeCount++;
     }
 
     public void SetSolidPixel(LevelPosition pixelToSet, Color color)
@@ -141,7 +139,6 @@ public sealed class TerrainManager
             color,
             previousValue & PixelType.TerrainDataMask,
             PixelType.SolidToAllOrientations);
-        LevelScreen.PixelChangeCount++;
     }
 
     public void SetBlockerMaskPixel(LevelPosition pixelToSet, PixelType pixelTypeMask, bool set)

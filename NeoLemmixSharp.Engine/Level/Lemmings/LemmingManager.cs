@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Horizontal;
-using NeoLemmixSharp.Common.BoundaryBehaviours.Vertical;
+using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
@@ -45,8 +44,8 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     public LemmingManager(
         HatchGroup[] hatchGroups,
         List<Lemming> lemmings,
-        IHorizontalBoundaryBehaviour horizontalBoundaryBehaviour,
-        IVerticalBoundaryBehaviour verticalBoundaryBehaviour)
+        BoundaryBehaviour horizontalBoundaryBehaviour,
+        BoundaryBehaviour verticalBoundaryBehaviour)
     {
         if (hatchGroups.Length > 0)
         {
