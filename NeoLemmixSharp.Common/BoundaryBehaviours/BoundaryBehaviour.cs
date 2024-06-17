@@ -71,7 +71,7 @@ public sealed class BoundaryBehaviour
         _mouseViewPortCoordinate = (windowCoordinate + _scaleMultiplier - 1) / _scaleMultiplier;
         _mouseScreenCoordinate = _mouseViewPortCoordinate * _scaleMultiplier + _screenCoordinate;
 
-        _mouseViewPortCoordinate = Normalise(_mouseViewPortCoordinate + _viewPortCoordinate);
+        _mouseViewPortCoordinate = Normalise(_mouseViewPortCoordinate - _viewPortCoordinate);
     }
 
     public void UpdateScreenDimension(

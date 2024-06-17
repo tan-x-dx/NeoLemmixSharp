@@ -129,7 +129,8 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
             }
         }
 
-        if (LevelScreen.Screenshot)
+        /*
+        if (LevelScreen.LevelInputController.Space.IsPressed)
         {
             const string fileName = @"C:\Temp\foo.png";
             using (var fileStream = File.Create(fileName))
@@ -137,6 +138,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
                 _levelRenderTarget.SaveAsPng(fileStream, _levelRenderTarget.Width, _levelRenderTarget.Height);
             }
         }
+        */
     }
 
     [SkipLocalsInit]

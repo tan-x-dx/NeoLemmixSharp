@@ -41,8 +41,6 @@ public sealed class LevelScreen : IBaseScreen
     public static Viewport LevelViewport => _levelViewport;
     public static LevelScreenRenderer LevelScreenRenderer => _levelScreenRenderer;
 
-    public static bool Screenshot;
-
     public static void SetLevelParameters(LevelParameterSet levelParameters)
     {
         _levelParameters = levelParameters;

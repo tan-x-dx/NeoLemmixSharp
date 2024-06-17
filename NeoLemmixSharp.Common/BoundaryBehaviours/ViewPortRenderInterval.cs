@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Common.BoundaryBehaviours;
 
-[DebuggerDisplay("pixelStart: {ViewPortCoordinate}, pixelLength: {ViewPortDimension}, offset: {Offset}")]
+[DebuggerDisplay("C: {ViewPortCoordinate}, D: {ViewPortDimension}, O: {Offset}")]
 public readonly struct ViewPortRenderInterval
 {
     public readonly int ViewPortCoordinate;
