@@ -22,8 +22,7 @@ public sealed class MetalGrateRenderer : IViewportObjectRenderer
 
     public void RenderAtPosition(SpriteBatch spriteBatch,
         Rectangle sourceRectangle,
-        int screenX,
-        int screenY)
+        int projectionX, int projectionY)
     {
         Color color;
         if (_metalGrateGadget.CurrentState == MetalGrateGadget.MetalGrateState.On)
@@ -40,8 +39,8 @@ public sealed class MetalGrateRenderer : IViewportObjectRenderer
         }
 
         var renderDestination = new Rectangle(
-            screenX,
-            screenY,
+            projectionX,
+            projectionY,
             sourceRectangle.Width,
             sourceRectangle.Height);
 

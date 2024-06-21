@@ -26,12 +26,12 @@ public sealed class GadgetLayerRenderer : IGadgetRenderer
 
     public Rectangle GetSpriteBounds() => _gadget.GadgetBounds.ToRectangle();
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY)
+    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY)
     {
         var gadgetAnimationController = _gadget.AnimationController;
         var renderDestination = new Rectangle(
-            screenX,
-            screenY,
+            projectionX,
+            projectionY,
             sourceRectangle.Width,
             sourceRectangle.Height);
         gadgetAnimationController.RenderLayers(spriteBatch, _texture, sourceRectangle, renderDestination);

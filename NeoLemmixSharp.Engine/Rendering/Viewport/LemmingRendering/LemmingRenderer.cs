@@ -71,11 +71,11 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     public Rectangle GetSpriteBounds() => _spriteBounds;
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY)
+    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY)
     {
         var renderDestination = new Rectangle(
-            screenX,
-            screenY,
+            projectionX,
+            projectionY,
             sourceRectangle.Width,
             sourceRectangle.Height);
 
@@ -113,15 +113,15 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             FontBank.CountDownFont.RenderTextSpan(
                 spriteBatch,
                 CountDownCharsSpan,
-                screenX + countDownPositionOffset.X,
-                screenY + countDownPositionOffset.Y,
+                projectionX + countDownPositionOffset.X,
+                projectionY + countDownPositionOffset.Y,
                 1,
                 Color.White);
         }
 
         if (_lemming.ParticleTimer > 0)
         {
-            RenderParticles(spriteBatch, screenX, screenY);
+            RenderParticles(spriteBatch, projectionX, projectionY);
         }
         /*
         if (_lemming.Id < 7)

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
@@ -99,14 +98,13 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     [SkipLocalsInit]
     private void RenderSprites(SpriteBatch spriteBatch)
     {
-        Span<ViewPortRenderInterval> renderIntervalSpan = stackalloc ViewPortRenderInterval[BoundaryBehaviour.MaxNumberOfRenderIntervals * 2];
         Span<uint> scratchSpaceSpan = stackalloc uint[_spriteSpacialHashGrid.ScratchSpaceSize];
 
         var horizontalBoundary = _viewport.HorizontalBoundaryBehaviour;
         var verticalBoundary = _viewport.VerticalBoundaryBehaviour;
 
-        var horizontalRenderIntervals = horizontalBoundary.GetRenderIntervals(renderIntervalSpan[..BoundaryBehaviour.MaxNumberOfRenderIntervals]);
-        var verticalRenderIntervals = verticalBoundary.GetRenderIntervals(renderIntervalSpan.Slice(BoundaryBehaviour.MaxNumberOfRenderIntervals, BoundaryBehaviour.MaxNumberOfRenderIntervals));
+        var horizontalRenderIntervals = horizontalBoundary.GetRenderIntervals();
+        var verticalRenderIntervals = verticalBoundary.GetRenderIntervals();
 
         foreach (var horizontalRenderInterval in horizontalRenderIntervals)
         {
@@ -129,6 +127,16 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
                 foreach (var renderer in rendererSet)
                 {
                     var spriteClip = renderer.GetSpriteBounds();
+
+                    if (horizontalBoundary.CrossesBoundary(spriteClip.X, spriteClip.Width))
+                    {
+                        spriteClip.X += horizontalRenderInterval.SpriteBoundaryShift;
+                    }
+
+                    if (verticalBoundary.CrossesBoundary(spriteClip.Y, spriteClip.Height))
+                    {
+                        spriteClip.Y += verticalRenderInterval.SpriteBoundaryShift;
+                    }
 
                     Rectangle.Intersect(ref viewportClip, ref spriteClip, out var clipIntersection);
 
@@ -161,10 +169,8 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     [SkipLocalsInit]
     public void DrawToScreen(SpriteBatch spriteBatch)
     {
-        Span<ScreenRenderInterval> renderIntervals = stackalloc ScreenRenderInterval[BoundaryBehaviour.MaxNumberOfRenderCopiesForWrappedLevels * 2];
-
-        var horizontalRenderIntervals = _viewport.HorizontalBoundaryBehaviour.GetScreenRenderIntervals(renderIntervals[..BoundaryBehaviour.MaxNumberOfRenderCopiesForWrappedLevels]);
-        var verticalRenderIntervals = _viewport.VerticalBoundaryBehaviour.GetScreenRenderIntervals(renderIntervals.Slice(BoundaryBehaviour.MaxNumberOfRenderCopiesForWrappedLevels, BoundaryBehaviour.MaxNumberOfRenderCopiesForWrappedLevels));
+        var horizontalRenderIntervals = _viewport.HorizontalBoundaryBehaviour.GetScreenRenderIntervals();
+        var verticalRenderIntervals = _viewport.VerticalBoundaryBehaviour.GetScreenRenderIntervals();
 
         foreach (var horizontalRenderInterval in horizontalRenderIntervals)
         {
