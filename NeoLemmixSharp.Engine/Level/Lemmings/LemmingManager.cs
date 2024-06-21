@@ -198,6 +198,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             return;
 
         _lemmingPositionHelper.UpdateItemPosition(lemming);
+        lemming.OnUpdatePosition();
 
         if (lemming.CurrentAction == BlockerAction.Instance)
         {

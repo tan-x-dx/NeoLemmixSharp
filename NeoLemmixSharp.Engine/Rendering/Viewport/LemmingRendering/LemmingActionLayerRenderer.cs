@@ -39,7 +39,7 @@ public sealed class LemmingActionLayerRenderer
         Rectangle destinationRectangle)
     {
         var color = _getLemmingColor(item);
-        sourceRectangle.X = _layerOffsetX;
+        sourceRectangle.X += _layerOffsetX;
 
         spriteBatch.Draw(
             _texture,

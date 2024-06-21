@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
@@ -10,16 +9,11 @@ public sealed class MetalGrateRenderer : IViewportObjectRenderer
 {
     private readonly MetalGrateGadget _metalGrateGadget;
 
-    private Texture2D _whitePixelTexture;
+    private readonly Texture2D _whitePixelTexture = CommonSprites.WhitePixelGradientSprite;
 
     public MetalGrateRenderer(MetalGrateGadget metalGrateGadget)
     {
         _metalGrateGadget = metalGrateGadget;
-    }
-
-    public void SetWhitePixelTexture(Texture2D whitePixelTexture)
-    {
-        _whitePixelTexture = whitePixelTexture;
     }
 
     public int RendererId { get; set; }

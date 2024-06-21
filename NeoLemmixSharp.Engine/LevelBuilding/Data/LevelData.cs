@@ -131,9 +131,6 @@ public sealed class LevelData
     public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; }
     public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; }
 
-    public BoundaryBehaviourType HorizontalViewPortBehaviour { get; set; }
-    public BoundaryBehaviourType VerticalViewPortBehaviour { get; set; }
-
     public LevelParameterSet LevelParameters { get; } = LevelParameterHelpers.CreateSimpleSet();
     public ControlPanelParameterSet ControlParameters { get; } = ControlPanelParameterHelpers.CreateSimpleSet();
     public List<SkillSetData> SkillSetData { get; } = new();

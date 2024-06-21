@@ -5,10 +5,9 @@ using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.PositionTracking;
-using NeoLemmixSharp.Engine.Level;
-using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -18,7 +17,6 @@ namespace NeoLemmixSharp.Engine.Rendering;
 public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectRenderer>
 {
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly LevelControlPanel _levelControlPanel;
     private readonly Level.Viewport _viewport;
     private readonly SpacialHashGrid<IViewportObjectRenderer> _spriteSpacialHashGrid;
 
@@ -30,13 +28,11 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
 
     public LevelRenderer(
         GraphicsDevice graphicsDevice,
-        LevelControlPanel levelControlPanel,
         Level.Viewport viewport,
         List<IViewportObjectRenderer> orderedSprites,
         IBackgroundRenderer backgroundRenderer)
     {
         _graphicsDevice = graphicsDevice;
-        _levelControlPanel = levelControlPanel;
         _viewport = viewport;
 
         _orderedSprites = orderedSprites;
@@ -50,21 +46,47 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
             viewport.HorizontalBoundaryBehaviour,
             viewport.VerticalBoundaryBehaviour);
 
-        var span = CollectionsMarshal.AsSpan(_orderedSprites);
-        foreach (var renderer in span)
+        var rendererSpan = CollectionsMarshal.AsSpan(_orderedSprites);
+        foreach (var renderer in rendererSpan)
+        {
+            if (renderer is TerrainRenderer)
+            {
+                StartRenderingSprite(renderer);
+            }
+
+            if (renderer is GadgetLayerRenderer gadgetSprite &&
+                gadgetSprite.RenderMode != GadgetRenderMode.NoRender)
+            {
+                StartRenderingSprite(renderer);
+            }
+        }
+    }
+
+    public bool IsRenderingSprite(IViewportObjectRenderer renderer) => _spriteSpacialHashGrid.IsTrackingItem(renderer);
+
+    public void StartRenderingSprite(IViewportObjectRenderer renderer)
+    {
+        if (!_spriteSpacialHashGrid.IsTrackingItem(renderer))
         {
             _spriteSpacialHashGrid.AddItem(renderer);
         }
     }
 
+    public void UpdateSpritePosition(IViewportObjectRenderer renderer)
+    {
+        _spriteSpacialHashGrid.UpdateItemPosition(renderer);
+    }
+
+    public void StopRenderingSprite(IViewportObjectRenderer renderer)
+    {
+        if (_spriteSpacialHashGrid.IsTrackingItem(renderer))
+        {
+            _spriteSpacialHashGrid.RemoveItem(renderer);
+        }
+    }
+
     public void RenderLevel(SpriteBatch spriteBatch)
     {
-        var span = CollectionsMarshal.AsSpan(_orderedSprites);
-        foreach (var renderer in span)
-        {
-            _spriteSpacialHashGrid.UpdateItemPosition(renderer);
-        }
-
         _graphicsDevice.SetRenderTarget(_levelRenderTarget);
         spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
 
@@ -118,11 +140,6 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
 
                     clipIntersection.X -= spriteClip.X;
                     clipIntersection.Y -= spriteClip.Y;
-
-                    if (renderer is TerrainRenderer)
-                    {
-                        ;
-                    }
 
                     renderer.RenderAtPosition(spriteBatch, clipIntersection, projectionX, projectionY);
                 }

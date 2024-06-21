@@ -1,9 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -27,6 +25,8 @@ public sealed class LevelScreenRenderer : IScreenRenderer
     private readonly LevelCursorSprite _levelCursorSprite;
 
     private DepthStencilState _depthStencilState;
+
+    public LevelRenderer LevelRenderer => _levelRenderer;
 
     public bool IsDisposed { get; private set; }
 

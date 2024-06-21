@@ -131,7 +131,7 @@ public sealed class LevelObjectAssembler : IDisposable
             {
                 behindTerrainSprites.Add(renderer);
             }
-            else
+            else if (renderer.RenderMode == GadgetRenderMode.InFrontOfTerrain)
             {
                 inFrontOfTerrainSprites.Add(renderer);
             }

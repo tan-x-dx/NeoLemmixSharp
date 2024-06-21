@@ -39,7 +39,6 @@ public sealed class LevelScreen : IBaseScreen
     public static LevelCursor LevelCursor => _levelCursor;
     public static LevelInputController LevelInputController => _levelInputController;
     public static Viewport LevelViewport => _levelViewport;
-    public static LevelScreenRenderer LevelScreenRenderer => _levelScreenRenderer;
 
     public static void SetLevelParameters(LevelParameterSet levelParameters)
     {

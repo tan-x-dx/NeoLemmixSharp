@@ -2,6 +2,7 @@
 
 public enum GadgetRenderMode
 {
+    NoRender,
     BehindTerrain,
     InFrontOfTerrain,
     OnlyOnTerrain

@@ -8,6 +8,7 @@ public sealed class BoundaryBehaviour
     public const int MaxNumberOfRenderIntervals = 2;
     public const int MaxNumberOfRenderCopiesForWrappedLevels = 6;
 
+    private readonly BoundaryBehaviourType _boundaryBehaviourType;
     private readonly int _levelDimension;
 
     private int _scaleMultiplier;
@@ -21,7 +22,7 @@ public sealed class BoundaryBehaviour
     private int _mouseViewPortCoordinate;
     private int _mouseScreenCoordinate;
 
-    public BoundaryBehaviourType BoundaryBehaviourType { get; }
+    public BoundaryBehaviourType BoundaryBehaviourType => _boundaryBehaviourType;
 
     /// <summary>
     /// The level dimension in pixels
@@ -62,7 +63,7 @@ public sealed class BoundaryBehaviour
         BoundaryBehaviourType boundaryBehaviourType,
         int levelDimension)
     {
-        BoundaryBehaviourType = boundaryBehaviourType;
+        _boundaryBehaviourType = boundaryBehaviourType;
         _levelDimension = levelDimension;
     }
 
@@ -102,7 +103,7 @@ public sealed class BoundaryBehaviour
             return;
         }
 
-        if (BoundaryBehaviourType == BoundaryBehaviourType.Void)
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
         {
             _viewPortCoordinate = Math.Clamp(viewPortCoordinate, 0, _levelDimension - _viewPortDimension);
             return;
@@ -117,7 +118,7 @@ public sealed class BoundaryBehaviour
     [Pure]
     public int Normalise(int a)
     {
-        if (BoundaryBehaviourType == BoundaryBehaviourType.Void)
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return a;
 
         if (a < 0)
@@ -141,7 +142,7 @@ public sealed class BoundaryBehaviour
     public void NormaliseCoords(ref int left, ref int right, ref int a)
     {
         // Do nothing - coords will already be fine
-        if (BoundaryBehaviourType == BoundaryBehaviourType.Void ||
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
             (left > 0 &&
              right < _levelDimension))
             return;
@@ -157,7 +158,7 @@ public sealed class BoundaryBehaviour
     {
         var delta = a2 - a1;
 
-        if (BoundaryBehaviourType == BoundaryBehaviourType.Void)
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return delta;
 
         if (delta > 0)
@@ -174,12 +175,18 @@ public sealed class BoundaryBehaviour
         return delta;
     }
 
+    public bool CrossesBoundary(int spriteClipX, int spriteClipWidth)
+    {
+        return _boundaryBehaviourType == BoundaryBehaviourType.Wrap &&
+               spriteClipX + spriteClipWidth > _levelDimension;
+    }
+
     public ReadOnlySpan<ViewPortRenderInterval> GetRenderIntervals(Span<ViewPortRenderInterval> baseSpan)
     {
         if (baseSpan.Length != MaxNumberOfRenderIntervals)
             throw new ArgumentException($"baseSpan should have length {MaxNumberOfRenderIntervals}", nameof(baseSpan));
 
-        if (BoundaryBehaviourType == BoundaryBehaviourType.Void ||
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
             _viewPortCoordinate + _viewPortDimension < _levelDimension)
         {
             baseSpan[0] = new ViewPortRenderInterval(_viewPortCoordinate, _viewPortDimension, -_viewPortCoordinate);
@@ -210,7 +217,7 @@ public sealed class BoundaryBehaviour
 
         var viewPortDimensionOnScreen = _viewPortDimension * _scaleMultiplier;
 
-        if (BoundaryBehaviourType == BoundaryBehaviourType.Void ||
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
             _viewPortCoordinate + _viewPortDimension < _levelDimension)
         {
             baseSpan[0] = new ScreenRenderInterval(0, _viewPortDimension, _screenCoordinate + (_screenDimension - viewPortDimensionOnScreen) / 2, viewPortDimensionOnScreen);
