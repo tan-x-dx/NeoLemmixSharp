@@ -10,6 +10,7 @@ public readonly struct ScreenRenderInterval
     public readonly int ScreenCoordinate;
     public readonly int ScreenDimension;
 
+    [DebuggerStepThrough]
     public ScreenRenderInterval(int sourceCoordinate, int sourceDimension, int screenCoordinate, int screenDimension)
     {
         SourceCoordinate = sourceCoordinate;

@@ -62,6 +62,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             _lemming.CurrentAction,
             _lemming.Orientation,
             _lemming.FacingDirection);
+
+        UpdatePosition();
     }
 
     public void SetDisplayTimer(bool displayTimer)

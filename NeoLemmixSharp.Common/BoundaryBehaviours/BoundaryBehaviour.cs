@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.BoundaryBehaviours;
 
@@ -77,7 +76,8 @@ public sealed class BoundaryBehaviour
         _mouseViewPortCoordinate = (windowCoordinate + _scaleMultiplier - 1) / _scaleMultiplier;
         _mouseScreenCoordinate = _mouseViewPortCoordinate * _scaleMultiplier;
 
-        _mouseViewPortCoordinate = Normalise(_mouseViewPortCoordinate - _viewPortCoordinate);
+        _mouseViewPortCoordinate =
+            Normalise(_mouseViewPortCoordinate + _viewPortCoordinate - (_screenCoordinate / _scaleMultiplier));
     }
 
     public void UpdateScreenDimension(
@@ -119,7 +119,6 @@ public sealed class BoundaryBehaviour
         _viewPortCoordinate = Normalise(viewPortCoordinate);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Scroll(int delta)
     {
         UpdateViewPortCoordinate(_viewPortCoordinate + delta);
@@ -182,16 +181,10 @@ public sealed class BoundaryBehaviour
             return delta;
         }
 
-        if (delta * 2 < -_levelDimension)
+        if (delta * -2 > _levelDimension)
             return delta + _levelDimension;
 
         return delta;
-    }
-
-    public bool CrossesBoundary(int spriteClipX, int spriteClipWidth)
-    {
-        return _boundaryBehaviourType == BoundaryBehaviourType.Wrap &&
-               spriteClipX + spriteClipWidth > _levelDimension;
     }
 
     private void UpdateViewPortRenderIntervals()
@@ -199,7 +192,7 @@ public sealed class BoundaryBehaviour
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
             _viewPortCoordinate + _viewPortDimension < _levelDimension)
         {
-            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(_viewPortCoordinate, _viewPortDimension, -_viewPortCoordinate, 0);
+            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(_viewPortCoordinate, _viewPortDimension, -_viewPortCoordinate);
             _viewPortSpanLength = 1;
             return;
         }
@@ -209,14 +202,14 @@ public sealed class BoundaryBehaviour
         if (_viewPortDimension < _levelDimension)
         {
             l1 = _levelDimension - _viewPortCoordinate;
-            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(_viewPortCoordinate, l1, -_viewPortCoordinate, 0);
-            _viewPortRenderIntervals[1] = new ViewPortRenderInterval(0, _viewPortDimension - l1, _levelDimension - _viewPortCoordinate, -_levelDimension);
+            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(_viewPortCoordinate, l1, -_viewPortCoordinate);
+            _viewPortRenderIntervals[1] = new ViewPortRenderInterval(0, _viewPortDimension - l1, _levelDimension - _viewPortCoordinate);
         }
         else
         {
             l1 = _levelDimension >> 1;
-            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(0, l1, 0, 0);
-            _viewPortRenderIntervals[1] = new ViewPortRenderInterval(l1, _levelDimension - l1, 0, -_levelDimension);
+            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(0, l1, 0);
+            _viewPortRenderIntervals[1] = new ViewPortRenderInterval(l1, _levelDimension - l1, 0);
         }
     }
 
@@ -244,26 +237,103 @@ public sealed class BoundaryBehaviour
             return;
         }
 
-        var l1 = _levelDimension - _viewPortCoordinate;
-        var l2 = l1 * _scaleMultiplier;
-        var deltaL = _levelDimension * _scaleMultiplier;
-
-        _screenRenderIntervals[0] = new ScreenRenderInterval(_viewPortCoordinate, l1, 0, l2);
-
-        var length = l2;
-        _screenSpanLength = 1;
-
-        while (length < _screenDimension &&
-               _screenSpanLength < _screenRenderIntervals.Length)
-        {
-            _screenRenderIntervals[_screenSpanLength++] = new ScreenRenderInterval(0, _levelDimension, length, deltaL);
-            length += deltaL;
-        }
-
-        //    baseSpan[spanLength++] = new ScreenRenderInterval(0, )
-
+        UpdateScreenRenderIntervalsForMultipleWrappedCopies();
     }
 
+    private void UpdateScreenRenderIntervalsForMultipleWrappedCopies()
+    {
+        var deltaL = _levelDimension * _scaleMultiplier;
+
+        int screenCoordinate;
+
+        var maxScreenDimension = Math.Min(deltaL * MaxNumberOfRenderCopiesForWrappedLevels, _screenDimension);
+
+        if (maxScreenDimension < _screenDimension)
+        {
+            screenCoordinate = (_screenDimension - maxScreenDimension) >> 1;
+        }
+        else
+        {
+            screenCoordinate = 0;
+        }
+
+        _screenRenderIntervals[0] = new ScreenRenderInterval(
+            _viewPortCoordinate,
+            _levelDimension - _viewPortCoordinate,
+            screenCoordinate,
+            (_levelDimension - _viewPortCoordinate) * _scaleMultiplier);
+
+        screenCoordinate += (_levelDimension - _viewPortCoordinate) * _scaleMultiplier;
+
+        _screenSpanLength = 1;
+
+        while (screenCoordinate < maxScreenDimension &&
+               _screenSpanLength < _screenRenderIntervals.Length - 1)
+        {
+            _screenRenderIntervals[_screenSpanLength++] = new ScreenRenderInterval(0, _levelDimension, screenCoordinate, deltaL);
+            screenCoordinate += deltaL;
+        }
+
+        if (screenCoordinate < maxScreenDimension)
+        {
+            _screenRenderIntervals[_screenSpanLength++] = new ScreenRenderInterval(0, 0, screenCoordinate, 0);
+        }
+    }
+
+    [Pure]
     public ReadOnlySpan<ViewPortRenderInterval> GetRenderIntervals() => new(_viewPortRenderIntervals, 0, _viewPortSpanLength);
+
+    [Pure]
     public ReadOnlySpan<ScreenRenderInterval> GetScreenRenderIntervals() => new(_screenRenderIntervals, 0, _screenSpanLength);
+
+    [Pure]
+    public ClipInterval GetIntersection(ClipInterval spriteClipInterval, ClipInterval viewportClipInterval)
+    {
+        var offset = _boundaryBehaviourType == BoundaryBehaviourType.Wrap
+            ? GetIntersectionAcrossBoundary(ref spriteClipInterval, ref viewportClipInterval)
+            : 0;
+
+        if (viewportClipInterval.Start < spriteClipInterval.Start + spriteClipInterval.Length &&
+            spriteClipInterval.Start < viewportClipInterval.Start + viewportClipInterval.Length)
+        {
+            var num1 = Math.Min(spriteClipInterval.Start + spriteClipInterval.Length,
+                viewportClipInterval.Start + viewportClipInterval.Length);
+            var start = Math.Max(spriteClipInterval.Start, viewportClipInterval.Start);
+            return new ClipInterval(start, num1 - start, offset);
+        }
+
+        return new ClipInterval(0, 0, 0);
+    }
+
+    private int GetIntersectionAcrossBoundary(
+        ref ClipInterval spriteClipInterval,
+        ref ClipInterval viewportClipInterval)
+    {
+        if (spriteClipInterval.Start < 0 &&
+            spriteClipInterval.Start + spriteClipInterval.Length > 0)
+        {
+            if (viewportClipInterval.Start == 0)
+                return 0;
+
+            viewportClipInterval = new ClipInterval(
+                viewportClipInterval.Start - _levelDimension,
+                viewportClipInterval.Length,
+                0);
+            return _levelDimension;
+        }
+
+        if (spriteClipInterval.Start + spriteClipInterval.Length <= _levelDimension)
+            return 0;
+
+        if (viewportClipInterval.Start == 0)
+        {
+            viewportClipInterval = new ClipInterval(
+                viewportClipInterval.Start + _levelDimension,
+                viewportClipInterval.Length,
+                0);
+            return -_levelDimension;
+        }
+
+        return 0;
+    }
 }

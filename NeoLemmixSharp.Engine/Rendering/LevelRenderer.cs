@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
@@ -73,7 +74,10 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
 
     public void UpdateSpritePosition(IViewportObjectRenderer renderer)
     {
-        _spriteSpacialHashGrid.UpdateItemPosition(renderer);
+        if (_spriteSpacialHashGrid.IsTrackingItem(renderer))
+        {
+            _spriteSpacialHashGrid.UpdateItemPosition(renderer);
+        }
     }
 
     public void StopRenderingSprite(IViewportObjectRenderer renderer)
@@ -124,37 +128,47 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
                     horizontalRenderInterval.ViewPortDimension,
                     verticalRenderInterval.ViewPortDimension);
 
+                var horizontalViewportClip = new ClipInterval(viewportClip.X, viewportClip.Width, 0);
+                var verticalViewportClip = new ClipInterval(viewportClip.Y, viewportClip.Height, 0);
+
                 foreach (var renderer in rendererSet)
                 {
                     var spriteClip = renderer.GetSpriteBounds();
 
-                    if (horizontalBoundary.CrossesBoundary(spriteClip.X, spriteClip.Width))
-                    {
-                        spriteClip.X += horizontalRenderInterval.SpriteBoundaryShift;
-                    }
-
-                    if (verticalBoundary.CrossesBoundary(spriteClip.Y, spriteClip.Height))
-                    {
-                        spriteClip.Y += verticalRenderInterval.SpriteBoundaryShift;
-                    }
-
-                    Rectangle.Intersect(ref viewportClip, ref spriteClip, out var clipIntersection);
-
-                    if (clipIntersection.IsEmpty)
+                    var horizontalSpriteClip = new ClipInterval(spriteClip.X, spriteClip.Width, 0);
+                    var horizontalClipIntersection = horizontalBoundary.GetIntersection(horizontalSpriteClip, horizontalViewportClip);
+                    if (horizontalClipIntersection.Length == 0)
                         continue;
 
-                    var projectionX = horizontalRenderInterval.Offset + clipIntersection.X;
-                    var projectionY = verticalRenderInterval.Offset + clipIntersection.Y;
+                    var verticalSpriteClip = new ClipInterval(spriteClip.Y, spriteClip.Height, 0);
+                    var verticalClipIntersection = verticalBoundary.GetIntersection(verticalSpriteClip, verticalViewportClip);
+                    if (verticalClipIntersection.Length == 0)
+                        continue;
 
-                    clipIntersection.X -= spriteClip.X;
-                    clipIntersection.Y -= spriteClip.Y;
+                    var clipIntersection = new Rectangle(
+                        horizontalClipIntersection.Start - spriteClip.X,
+                        verticalClipIntersection.Start - spriteClip.Y,
+                        horizontalClipIntersection.Length,
+                        verticalClipIntersection.Length);
 
-                    renderer.RenderAtPosition(spriteBatch, clipIntersection, projectionX, projectionY);
+                    var projectionX = horizontalClipIntersection.Start +
+                                      horizontalClipIntersection.Offset +
+                                      horizontalRenderInterval.Offset;
+                    var projectionY = verticalClipIntersection.Start +
+                                      verticalClipIntersection.Offset +
+                                      verticalRenderInterval.Offset;
+
+                    renderer.RenderAtPosition(
+                        spriteBatch,
+                        clipIntersection,
+                        projectionX,
+                        projectionY);
                 }
             }
         }
 
         /*
+        // Debug code to print a screenshot of the level's render space
         if (LevelScreen.LevelInputController.Space.IsPressed)
         {
             const string fileName = @"C:\Temp\foo.png";
@@ -197,11 +211,13 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         }
 
         var b = _viewport.HorizontalBoundaryBehaviour;
-        var data = $"H: vpC:{b.ViewPortCoordinate}, vpD: {b.ViewPortDimension}, sC: {b.ScreenCoordinate}, sD: {b.ScreenDimension}, mvpC{b.MouseViewPortCoordinate}, msC: {b.MouseScreenCoordinate}, lD: {b.LevelDimension}";
+        var data = $"H: vpC:{b.ViewPortCoordinate}, vpD: {b.ViewPortDimension}, sC: {b.ScreenCoordinate}, sD: {b.ScreenDimension}, " +
+                   $"mvpC{b.MouseViewPortCoordinate}, msC: {b.MouseScreenCoordinate}, lD: {b.LevelDimension}";
         FontBank.MenuFont.RenderText(spriteBatch, data, 10, 0 * MenuFont.GlyphHeight + 10, 1, Color.White);
 
         b = _viewport.VerticalBoundaryBehaviour;
-        data = $"V: vpC:{b.ViewPortCoordinate}, vpD: {b.ViewPortDimension}, sC: {b.ScreenCoordinate}, sD: {b.ScreenDimension}, mvpC{b.MouseViewPortCoordinate}, msC: {b.MouseScreenCoordinate}, lD: {b.LevelDimension}";
+        data = $"V: vpC:{b.ViewPortCoordinate}, vpD: {b.ViewPortDimension}, sC: {b.ScreenCoordinate}, sD: {b.ScreenDimension}, " +
+               $"mvpC{b.MouseViewPortCoordinate}, msC: {b.MouseScreenCoordinate}, lD: {b.LevelDimension}";
         FontBank.MenuFont.RenderText(spriteBatch, data, 10, 1 * MenuFont.GlyphHeight + 20, 1, Color.White);
     }
 
@@ -226,6 +242,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     {
         lemmingRenderer.RendererId = _orderedSprites.Count;
         _orderedSprites.Add(lemmingRenderer);
+        _spriteSpacialHashGrid.OnNumberOfItemsChanged(_orderedSprites.Count);
     }
 
     public void Dispose()

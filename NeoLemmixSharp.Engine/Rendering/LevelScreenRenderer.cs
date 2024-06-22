@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
@@ -87,11 +86,6 @@ public sealed class LevelScreenRenderer : IScreenRenderer
     {
         _levelRenderer.OnWindowSizeChanged();
         _controlPanelRenderer.OnWindowSizeChanged();
-    }
-
-    public void AddLemmingRenderer(LemmingRenderer lemmingRenderer)
-    {
-        _levelRenderer.AddLemmingRenderer(lemmingRenderer);
     }
 
     public void Dispose()
