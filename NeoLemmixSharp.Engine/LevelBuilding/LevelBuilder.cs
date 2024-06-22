@@ -43,6 +43,7 @@ public sealed class LevelBuilder : IDisposable
         LevelScreen.SetLevelParameters(levelParameters);
 
         levelData.HorizontalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
+        // levelData.VerticalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
 
         var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelData.LevelWidth);
         var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelData.LevelHeight);
@@ -120,7 +121,6 @@ public sealed class LevelBuilder : IDisposable
 
         var levelRenderer = new LevelRenderer(
             _graphicsDevice,
-            controlPanel,
             levelViewport,
             orderedLevelSprites,
             backgroundRenderer);

@@ -116,8 +116,6 @@ public sealed class LevelDataReader : INeoLemmixDataReader
     {
         _levelData.HorizontalBoundaryBehaviour = BoundaryBehaviourType.Void;
         _levelData.VerticalBoundaryBehaviour = BoundaryBehaviourType.Void;
-        _levelData.HorizontalViewPortBehaviour = BoundaryBehaviourType.Void;
-        _levelData.VerticalViewPortBehaviour = BoundaryBehaviourType.Void;
 
         var hatchGroupData = new HatchGroupData
         {

@@ -1,10 +1,11 @@
-﻿using System.Runtime.InteropServices;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -16,7 +17,7 @@ public static class LevelBuildingHelpers
     {
         var backgroundData = levelData.LevelBackground;
         if (backgroundData is null)
-            return new SolidColorBackgroundRenderer(viewport, Color.Black);
+            return new SolidColorBackgroundRenderer(viewport, new Color(24, 24, 60));
 
         if (backgroundData.IsSolidColor)
             return new SolidColorBackgroundRenderer(viewport, backgroundData.Color);
@@ -30,10 +31,11 @@ public static class LevelBuildingHelpers
         TerrainRenderer terrainRenderer,
         List<IViewportObjectRenderer> lemmingSprites)
     {
-        var listCapacity = behindTerrainSprites.Count +
-                           inFrontOfTerrainSprites.Count +
-                           1 + // Terrain renderer
-                           lemmingSprites.Count;
+        var listCapacity = BitArrayHelpers.ToNextLargestMultipleOf32(
+            behindTerrainSprites.Count +
+            inFrontOfTerrainSprites.Count +
+            1 + // Terrain renderer
+            lemmingSprites.Count);
         var result = new List<IViewportObjectRenderer>(listCapacity);
 
         var comparer = new ViewportObjectRendererComparer();

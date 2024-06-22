@@ -198,6 +198,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             return;
 
         _lemmingPositionHelper.UpdateItemPosition(lemming);
+        lemming.OnUpdatePosition();
 
         if (lemming.CurrentAction == BlockerAction.Instance)
         {
@@ -393,7 +394,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         }
 
         _lemmings.Add(newLemming);
-        LevelScreenRenderer.Instance.AddLemmingRenderer(newLemming.Renderer);
+        LevelScreenRenderer.Instance.LevelRenderer.AddLemmingRenderer(newLemming.Renderer);
         newLemming.Initialise();
         LemmingsOut++;
         UpdateControlPanel();

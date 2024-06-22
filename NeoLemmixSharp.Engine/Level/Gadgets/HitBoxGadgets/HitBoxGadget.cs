@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
@@ -46,6 +47,11 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>
         BottomRightPixel = terrainManager.NormalisePosition(GadgetBounds.BottomRight);
 
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
+
+        if (Renderer is not null)
+        {
+            LevelScreenRenderer.Instance.LevelRenderer.UpdateSpritePosition(Renderer);
+        }
     }
 
     protected void UpdateSize(LevelPosition size)

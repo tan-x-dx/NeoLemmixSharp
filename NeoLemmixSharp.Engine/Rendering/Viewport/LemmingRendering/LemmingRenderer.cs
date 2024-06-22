@@ -15,8 +15,9 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     private Lemming _lemming;
     private LemmingActionSprite _actionSprite;
+    private Rectangle _previousSpriteBounds;
+    private Rectangle _spriteBounds;
 
-    private bool _shouldRender;
     private bool _shouldRenderCountDown;
 
     public Span<int> CountDownCharsSpan => new(_countDownCharsToRender);
@@ -24,22 +25,36 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     public int RendererId { get; set; }
     public int ItemId => _lemming.Id;
 
-    public LevelPosition TopLeftPixel => _lemming.TopLeftPixel;
-    public LevelPosition BottomRightPixel => _lemming.BottomRightPixel;
-    public LevelPosition PreviousTopLeftPixel => _lemming.PreviousTopLeftPixel;
-    public LevelPosition PreviousBottomRightPixel => _lemming.PreviousBottomRightPixel;
+    public LevelPosition TopLeftPixel => _spriteBounds.TopLeftLevelPosition();
+    public LevelPosition BottomRightPixel => _spriteBounds.BottomRightLevelPosition();
+    public LevelPosition PreviousTopLeftPixel => _previousSpriteBounds.TopLeftLevelPosition();
+    public LevelPosition PreviousBottomRightPixel => _previousSpriteBounds.BottomRightLevelPosition();
 
     public LemmingRenderer(Lemming lemming)
     {
         _lemming = lemming;
     }
 
+    public void UpdatePosition()
+    {
+        var p = _lemming.LevelPosition - _actionSprite.AnchorPoint;
+
+        _previousSpriteBounds = _spriteBounds;
+        _spriteBounds = new Rectangle(p.X, p.Y, _actionSprite.SpriteWidth, _actionSprite.SpriteHeight);
+
+        LevelScreenRenderer.Instance.LevelRenderer.UpdateSpritePosition(this);
+    }
+
     public void UpdateLemmingState(bool shouldRender)
     {
-        _shouldRender = shouldRender;
-
         if (!shouldRender)
+        {
+            LevelScreenRenderer.Instance.LevelRenderer.StopRenderingSprite(this);
+
             return;
+        }
+
+        LevelScreenRenderer.Instance.LevelRenderer.StartRenderingSprite(this);
 
         var spriteBank = _lemming.State.TeamAffiliation.SpriteBank;
 
@@ -47,6 +62,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             _lemming.CurrentAction,
             _lemming.Orientation,
             _lemming.FacingDirection);
+
+        UpdatePosition();
     }
 
     public void SetDisplayTimer(bool displayTimer)
@@ -54,24 +71,13 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         _shouldRenderCountDown = displayTimer;
     }
 
-    public Rectangle GetSpriteBounds()
+    public Rectangle GetSpriteBounds() => _spriteBounds;
+
+    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY)
     {
-        if (!_shouldRender)
-            return Rectangle.Empty;
-
-        var p = _lemming.LevelPosition - _actionSprite.AnchorPoint;
-
-        return new Rectangle(p.X, p.Y, _actionSprite.SpriteWidth, _actionSprite.SpriteHeight);
-    }
-
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY)
-    {
-        if (!_shouldRender)
-            return;
-
         var renderDestination = new Rectangle(
-            screenX,
-            screenY,
+            projectionX,
+            projectionY,
             sourceRectangle.Width,
             sourceRectangle.Height);
 
@@ -109,15 +115,15 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             FontBank.CountDownFont.RenderTextSpan(
                 spriteBatch,
                 CountDownCharsSpan,
-                screenX + countDownPositionOffset.X,
-                screenY + countDownPositionOffset.Y,
+                projectionX + countDownPositionOffset.X,
+                projectionY + countDownPositionOffset.Y,
                 1,
                 Color.White);
         }
 
         if (_lemming.ParticleTimer > 0)
         {
-            RenderParticles(spriteBatch, screenX, screenY);
+            RenderParticles(spriteBatch, projectionX, projectionY);
         }
         /*
         if (_lemming.Id < 7)

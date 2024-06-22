@@ -11,5 +11,5 @@ public interface IViewportObjectRenderer : IRectangularBounds, IDisposable
 
     Rectangle GetSpriteBounds();
 
-    void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY);
+    void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY);
 }

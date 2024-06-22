@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
@@ -15,11 +16,6 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget, 
 
     public override GadgetBehaviour GadgetBehaviour => HatchGadgetBehaviour.Instance;
     public override Orientation Orientation => HatchSpawnData.Orientation;
-
-    public LevelPosition TopLeftPixel { get; private set; }
-    public LevelPosition BottomRightPixel { get; private set; }
-    public LevelPosition PreviousTopLeftPixel { get; private set; }
-    public LevelPosition PreviousBottomRightPixel { get; private set; }
 
     public LevelPosition SpawnPosition => LevelScreen.TerrainManager.NormalisePosition(GadgetBounds.TopLeft + _spawnPositionTranslation);
     public HatchSpawnData HatchSpawnData { get; }
@@ -85,6 +81,11 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget, 
 
         TopLeftPixel = terrainManager.NormalisePosition(GadgetBounds.TopLeft);
         BottomRightPixel = terrainManager.NormalisePosition(GadgetBounds.BottomRight);
+
+        if (Renderer is not null)
+        {
+            LevelScreenRenderer.Instance.LevelRenderer.UpdateSpritePosition(Renderer);
+        }
     }
 
     public bool CanReleaseLemmings()

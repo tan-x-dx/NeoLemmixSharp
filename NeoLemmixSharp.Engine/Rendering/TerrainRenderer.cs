@@ -24,11 +24,11 @@ public sealed class TerrainRenderer : IViewportObjectRenderer
     public int ItemId => 0;
     public Rectangle GetSpriteBounds() => new(0, 0, _terrainTexture.Width, _terrainTexture.Height);
 
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY)
+    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY)
     {
         var destinationRectangle = new Rectangle(
-            screenX,
-            screenY,
+            projectionX,
+            projectionY,
             sourceRectangle.Width,
             sourceRectangle.Height);
 

@@ -123,6 +123,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
         initialAction.TransitionLemmingToAction(this, false);
         Renderer.UpdateLemmingState(true);
+        Renderer.UpdatePosition();
     }
 
     public void Tick()
@@ -402,6 +403,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     {
         CountDownTimer = 0;
         CountDownAction = NoneAction.Instance;
+    }
+    public void OnUpdatePosition()
+    {
+        Renderer.UpdatePosition();
     }
 
     public void OnRemoval(LemmingRemovalReason removalReason)
