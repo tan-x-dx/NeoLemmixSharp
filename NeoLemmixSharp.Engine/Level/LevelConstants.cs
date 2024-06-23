@@ -234,6 +234,21 @@ public static class LevelConstants
     public const int ReacherAnimationFrames = 6;
     public const int MaxReacherPhysicsFrames = 8;
 
+    public const string RotateClockwiseActionName = WalkerActionName;// "Rotate Clockwise";
+    public const int RotateClockwiseActionId = 31;
+    public const int RotateClockwiseAnimationFrames = 8;
+    public const int MaxRotateClockwisePhysicsFrames = 8;
+
+    public const string RotateCounterclockwiseActionName = WalkerActionName;//"Rotate Counterclockwise";
+    public const int RotateCounterclockwiseActionId = 32;
+    public const int RotateCounterclockwiseAnimationFrames = 8;
+    public const int MaxRotateCounterclockwisePhysicsFrames = 8;
+
+    public const string RotateHalfActionName = WalkerActionName;//"Rotate Half";
+    public const int RotateHalfActionId = 33;
+    public const int RotateHalfAnimationFrames = 8;
+    public const int MaxRotateHalfPhysicsFrames = 8;
+
     public const string ShimmierActionName = "Shimmier";
     public const int ShimmierActionId = 14;
     public const int ShimmierAnimationFrames = 20;
@@ -329,6 +344,27 @@ public static class LevelConstants
 
     public const string PlatformerSkillName = "Platformer";
     public const int PlatformerSkillId = 9;
+
+    public const string RotateClockwiseSkillName = "RotateClockwise";
+    public const int RotateClockwiseSkillId = 21;
+
+    public const string RotateCounterclockwiseSkillName = "RotateCounterclockwise";
+    public const int RotateCounterclockwiseSkillId = 22;
+
+    public const string RotateHalfSkillName = "RotateHalf";
+    public const int RotateHalfSkillId = 23;
+
+    public const string RotateToDownSkillName = "RotateToDown";
+    public const int RotateToDownSkillId = 24;
+
+    public const string RotateToRightSkillName = "RotateToRight";
+    public const int RotateToRightSkillId = 25;
+
+    public const string RotateToUpSkillName = "RotateToUp";
+    public const int RotateToUpSkillId = 26;
+
+    public const string RotateToLeftSkillName = "RotateToLeft";
+    public const int RotateToLeftSkillId = 27;
 
     public const string ShimmierSkillName = "Shimmier";
     public const int ShimmierSkillId = 15;

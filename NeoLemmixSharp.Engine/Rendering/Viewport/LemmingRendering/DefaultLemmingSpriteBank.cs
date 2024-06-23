@@ -67,6 +67,9 @@ public static class DefaultLemmingSpriteBank
         CreateThreeLayerSprite(SwimmerAction.Instance, new LevelPosition(6, 8));
         CreateFourLayerTrueColorSprite(VaporiserAction.Instance, new LevelPosition(5, 14));
         CreateThreeLayerSprite(WalkerAction.Instance, new LevelPosition(2, 10));
+        CreateThreeLayerSprite(RotateClockwiseAction.Instance, new LevelPosition(2, 10));
+        CreateThreeLayerSprite(RotateCounterclockwiseAction.Instance, new LevelPosition(2, 10));
+        CreateThreeLayerSprite(RotateHalfAction.Instance, new LevelPosition(2, 10));
 
         var teamColorData = GenerateDefaultTeamColorData();
 

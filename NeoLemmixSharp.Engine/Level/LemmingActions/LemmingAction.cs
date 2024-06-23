@@ -52,7 +52,11 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
             OhNoerAction.Instance,
             SplatterAction.Instance,
             StonerAction.Instance,
-            VaporiserAction.Instance
+            VaporiserAction.Instance,
+
+            RotateClockwiseAction.Instance,
+            RotateCounterclockwiseAction.Instance,
+            RotateHalfAction.Instance
         };
 
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<LemmingAction>(result));
