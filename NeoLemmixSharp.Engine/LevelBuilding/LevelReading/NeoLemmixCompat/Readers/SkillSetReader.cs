@@ -11,7 +11,7 @@ public sealed class SkillSetReader : INeoLemmixDataReader
     private readonly CaseInvariantCharEqualityComparer _charEqualityComparer;
     private readonly SimpleSet<LemmingSkill> _seenSkills = ExtendedEnumTypeComparer<LemmingSkill>.CreateSimpleSet();
 
-    public List<SkillSetDatum> SkillSetData { get; } = new();
+    public List<SkillSetData> SkillSetData { get; } = new();
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$SKILLSET";
@@ -50,7 +50,7 @@ public sealed class SkillSetReader : INeoLemmixDataReader
             amount > LevelConstants.InfiniteSkillCount)
             throw new InvalidOperationException($"Invalid skill count value! {amount}");
 
-        var skillSetDatum = new SkillSetDatum
+        var skillSetDatum = new SkillSetData
         {
             Skill = skill,
             NumberOfSkills = amount,

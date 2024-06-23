@@ -15,7 +15,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         _skillTrackingDataList = CreateSkillDataList(levelObjective.SkillSetData);
     }
 
-    private SkillTrackingData[] CreateSkillDataList(ReadOnlySpan<SkillSetDatum> skillSetDataSpan)
+    private SkillTrackingData[] CreateSkillDataList(ReadOnlySpan<SkillSetData> skillSetDataSpan)
     {
         var result = new SkillTrackingData[skillSetDataSpan.Length];
 
@@ -30,12 +30,12 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         return result;
     }
 
-    private static SkillTrackingData CreateFromSkillSetData(SkillSetDatum skillSetDatum, int i)
+    private static SkillTrackingData CreateFromSkillSetData(SkillSetData skillSetData, int i)
     {
-        var lemmingSkill = skillSetDatum.Skill;
-        var team = Team.AllItems[skillSetDatum.TeamId];
+        var lemmingSkill = skillSetData.Skill;
+        var team = Team.AllItems[skillSetData.TeamId];
 
-        return new SkillTrackingData(lemmingSkill, team, i, skillSetDatum.NumberOfSkills);
+        return new SkillTrackingData(lemmingSkill, team, i, skillSetData.NumberOfSkills);
     }
 
     public SkillTrackingData? GetSkillTrackingData(int skillDataId)

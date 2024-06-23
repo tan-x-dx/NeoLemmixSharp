@@ -38,17 +38,17 @@ public sealed class TalismanData
             GetSkillSetData(levelData));
     }
 
-    private List<SkillSetDatum> GetSkillSetData(LevelData levelData)
+    private List<SkillSetData> GetSkillSetData(LevelData levelData)
     {
         var originalSkillSetData = levelData.PrimaryLevelObjective!.SkillSetData;
 
-        var result = new List<SkillSetDatum>();
+        var result = new List<SkillSetData>();
 
         foreach (var originalSkillSetDatum in originalSkillSetData)
         {
             if (SkillLimits.TryGetValue(originalSkillSetDatum.Skill, out var skillLimit))
             {
-                result.Add(new SkillSetDatum
+                result.Add(new SkillSetData
                 {
                     Skill = originalSkillSetDatum.Skill,
                     NumberOfSkills = skillLimit,

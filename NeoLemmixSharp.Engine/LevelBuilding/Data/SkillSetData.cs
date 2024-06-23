@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-public sealed class SkillSetDatum
+public sealed class SkillSetData
 {
     public required LemmingSkill Skill { get; init; }
     public required int NumberOfSkills { get; init; }
