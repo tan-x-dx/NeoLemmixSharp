@@ -8,16 +8,17 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 
 public sealed class SkillSetReader : INeoLemmixDataReader
 {
-    private readonly CaseInvariantCharEqualityComparer _charEqualityComparer = new();
-    private readonly List<SkillSetData> _skillSetData;
+    private readonly CaseInvariantCharEqualityComparer _charEqualityComparer;
     private readonly SimpleSet<LemmingSkill> _seenSkills = ExtendedEnumTypeComparer<LemmingSkill>.CreateSimpleSet();
+
+    public List<SkillSetDatum> SkillSetData { get; } = new();
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$SKILLSET";
 
-    public SkillSetReader(List<SkillSetData> skillSetData)
+    public SkillSetReader(CaseInvariantCharEqualityComparer charEqualityComparer)
     {
-        _skillSetData = skillSetData;
+        _charEqualityComparer = charEqualityComparer;
     }
 
     public void BeginReading(ReadOnlySpan<char> line)
@@ -49,14 +50,14 @@ public sealed class SkillSetReader : INeoLemmixDataReader
             amount > LevelConstants.InfiniteSkillCount)
             throw new InvalidOperationException($"Invalid skill count value! {amount}");
 
-        var skillSetDatum = new SkillSetData
+        var skillSetDatum = new SkillSetDatum
         {
             Skill = skill,
             NumberOfSkills = amount,
             TeamId = LevelConstants.ClassicTeamId
         };
 
-        _skillSetData.Add(skillSetDatum);
+        SkillSetData.Add(skillSetDatum);
         return false;
     }
 }

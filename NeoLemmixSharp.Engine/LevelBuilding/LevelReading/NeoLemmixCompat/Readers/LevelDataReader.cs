@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
@@ -11,9 +12,13 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
     private bool _lockSpawnInterval;
     private int _maxSpawnInterval;
+    private int _saveRequirement;
+    private int? _timeLimitInSeconds;
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "TITLE";
+    public int SaveRequirement => _saveRequirement;
+    public int? TimeLimitInSeconds => _timeLimitInSeconds;
 
     public LevelDataReader(LevelData levelData)
     {
@@ -89,11 +94,19 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "SAVE_REQUIREMENT":
-                _levelData.SaveRequirement = int.Parse(secondToken);
+
+                _saveRequirement = int.Parse(secondToken);
                 break;
 
             case "TIME_LIMIT":
-                _levelData.TimeLimit = int.Parse(secondToken);
+                var timeLimitInSecondsValue = int.Parse(secondToken);
+
+                if (timeLimitInSecondsValue <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(timeLimitInSecondsValue), timeLimitInSecondsValue, "Time limit must be positive!");
+                if (timeLimitInSecondsValue > LevelConstants.MaxTimeLimitInSeconds)
+                    throw new ArgumentOutOfRangeException(nameof(timeLimitInSecondsValue), timeLimitInSecondsValue, "Time limit too big!");
+
+                _timeLimitInSeconds = timeLimitInSecondsValue;
                 break;
 
             case "SPAWN_INTERVAL_LOCKED":

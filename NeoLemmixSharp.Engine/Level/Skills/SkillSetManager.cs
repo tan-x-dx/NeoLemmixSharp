@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Teams;
+﻿using NeoLemmixSharp.Engine.Level.Objectives;
+using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -9,25 +10,32 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
     public ReadOnlySpan<SkillTrackingData> AllSkillTrackingData => new(_skillTrackingDataList);
 
-    public SkillSetManager(IEnumerable<SkillSetData> skillSetData)
+    public SkillSetManager(LevelObjective levelObjective)
     {
-        _skillTrackingDataList = CreateSkillDataList(skillSetData);
+        _skillTrackingDataList = CreateSkillDataList(levelObjective.SkillSetData);
     }
 
-    private SkillTrackingData[] CreateSkillDataList(IEnumerable<SkillSetData> skillSetData)
+    private SkillTrackingData[] CreateSkillDataList(ReadOnlySpan<SkillSetDatum> skillSetDataSpan)
     {
-        return skillSetData
-            .Select(CreateFromSkillSetData)
-            .Order(this)
-            .ToArray();
+        var result = new SkillTrackingData[skillSetDataSpan.Length];
+
+        for (var index = 0; index < skillSetDataSpan.Length; index++)
+        {
+            var skillSetDatum = skillSetDataSpan[index];
+            result[index] = CreateFromSkillSetData(skillSetDatum, index);
+        }
+
+        Array.Sort(result, this);
+
+        return result;
     }
 
-    private static SkillTrackingData CreateFromSkillSetData(SkillSetData skillSetData, int i)
+    private static SkillTrackingData CreateFromSkillSetData(SkillSetDatum skillSetDatum, int i)
     {
-        var lemmingSkill = skillSetData.Skill;
-        var team = Team.AllItems[skillSetData.TeamId];
+        var lemmingSkill = skillSetDatum.Skill;
+        var team = Team.AllItems[skillSetDatum.TeamId];
 
-        return new SkillTrackingData(lemmingSkill, team, i, skillSetData.NumberOfSkills);
+        return new SkillTrackingData(lemmingSkill, team, i, skillSetDatum.NumberOfSkills);
     }
 
     public SkillTrackingData? GetSkillTrackingData(int skillDataId)

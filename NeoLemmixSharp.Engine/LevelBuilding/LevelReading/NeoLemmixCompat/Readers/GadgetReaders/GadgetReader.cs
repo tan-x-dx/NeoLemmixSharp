@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 
 public sealed class GadgetReader : INeoLemmixDataReader
 {
-    private readonly CaseInvariantCharEqualityComparer _charEqualityComparer = new();
+    private readonly CaseInvariantCharEqualityComparer _charEqualityComparer;
 
     private NeoLemmixGadgetData? _currentGadgetData;
     private string? _currentStyle;
@@ -18,6 +18,11 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$GADGET";
+
+    public GadgetReader(CaseInvariantCharEqualityComparer charEqualityComparer)
+    {
+        _charEqualityComparer = charEqualityComparer;
+    }
 
     public void BeginReading(ReadOnlySpan<char> line)
     {

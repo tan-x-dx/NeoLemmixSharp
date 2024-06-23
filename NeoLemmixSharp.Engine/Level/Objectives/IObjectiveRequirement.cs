@@ -3,4 +3,5 @@
 public interface IObjectiveRequirement
 {
     bool IsSatisfied { get; }
+    bool IsFailed { get; }
 }

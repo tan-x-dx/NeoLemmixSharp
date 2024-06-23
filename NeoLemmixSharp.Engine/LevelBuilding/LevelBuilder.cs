@@ -8,7 +8,6 @@ using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
-using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
@@ -43,7 +42,7 @@ public sealed class LevelBuilder : IDisposable
         LevelScreen.SetLevelParameters(levelParameters);
 
         levelData.HorizontalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
-        // levelData.VerticalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
+        levelData.VerticalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
 
         var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelData.LevelWidth);
         var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelData.LevelHeight);
@@ -61,15 +60,16 @@ public sealed class LevelBuilder : IDisposable
 
         var inputController = new LevelInputController(levelParameters);
         LevelScreen.SetLevelInputController(inputController);
-        var skillSetManager = new SkillSetManager(levelData.SkillSetData);
+
+        var primaryLevelObjective = levelData.PrimaryLevelObjective!;
+
+        var skillSetManager = new SkillSetManager(primaryLevelObjective);
         LevelScreen.SetSkillSetManager(skillSetManager);
 
         var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, inputController);
         LevelScreen.SetLevelCursor(levelCursor);
 
-        LevelTimer levelTimer = levelData.TimeLimit.HasValue
-            ? new CountDownLevelTimer(levelData.TimeLimit.Value)
-            : new CountUpLevelTimer();
+        var levelTimer = LevelBuildingHelpers.GetLevelTimer(levelData);
         var controlPanel = new LevelControlPanel(controlPanelParameters, inputController, skillSetManager, lemmingManager, levelTimer);
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowWidth, IGameWindow.Instance.WindowHeight);
         LevelScreen.SetLevelControlPanel(controlPanel);

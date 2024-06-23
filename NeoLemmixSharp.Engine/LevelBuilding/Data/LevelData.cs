@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
+using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
@@ -13,7 +14,6 @@ public sealed class LevelData
     private int? _levelStartPositionX;
     private int? _levelStartPositionY;
     private int _numberOfLemmings = -1;
-    private int? _timeLimit;
 
     public string LevelTitle { get; set; } = string.Empty;
     public string LevelAuthor { get; set; } = string.Empty;
@@ -105,46 +105,24 @@ public sealed class LevelData
         }
     }
 
-    public int SaveRequirement { get; set; }
-    public int? TimeLimit
-    {
-        get => _timeLimit;
-        set
-        {
-            if (!value.HasValue)
-            {
-                _timeLimit = null;
-                return;
-            }
-
-            var timeLimitValue = value.Value;
-
-            if (timeLimitValue <= 0)
-                throw new ArgumentOutOfRangeException(nameof(value), timeLimitValue, "Time limit must be positive!");
-            if (timeLimitValue > LevelConstants.MaxTimeLimitInSeconds)
-                throw new ArgumentOutOfRangeException(nameof(value), timeLimitValue, "Time limit too big!");
-
-            _timeLimit = timeLimitValue;
-        }
-    }
-
     public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; }
     public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; }
 
+    public LevelObjective? PrimaryLevelObjective { get; set; }
+    public List<LevelObjective> SecondaryLevelObjectives { get; } = [];
     public LevelParameterSet LevelParameters { get; } = LevelParameterHelpers.CreateSimpleSet();
     public ControlPanelParameterSet ControlParameters { get; } = ControlPanelParameterHelpers.CreateSimpleSet();
-    public List<SkillSetData> SkillSetData { get; } = new();
-    public List<TerrainArchetypeData> TerrainArchetypeData { get; } = new();
-    public List<TerrainData> AllTerrainData { get; } = new();
-    public List<TerrainGroup> AllTerrainGroups { get; } = new();
-    public List<HatchGroupData> AllHatchGroupData { get; } = new();
-    public List<LemmingData> AllLemmingData { get; } = new();
-    public Dictionary<int, IGadgetBuilder> AllGadgetBuilders { get; } = new();
-    public List<GadgetData> AllGadgetData { get; } = new();
-    public List<SketchData> AllSketchData { get; } = new();
+    public List<TerrainArchetypeData> TerrainArchetypeData { get; } = [];
+    public List<TerrainData> AllTerrainData { get; } = [];
+    public List<TerrainGroup> AllTerrainGroups { get; } = [];
+    public List<HatchGroupData> AllHatchGroupData { get; } = [];
+    public List<LemmingData> AllLemmingData { get; } = [];
+    public Dictionary<int, IGadgetBuilder> AllGadgetBuilders { get; } = [];
+    public List<GadgetData> AllGadgetData { get; } = [];
+    public List<SketchData> AllSketchData { get; } = [];
 
-    public List<string> PreTextLines { get; } = new();
-    public List<string> PostTextLines { get; } = new();
+    public List<string> PreTextLines { get; } = [];
+    public List<string> PostTextLines { get; } = [];
 
     public void Validate()
     {
@@ -164,6 +142,7 @@ public sealed class LevelData
         if (AllLemmingData.Count == 0) return "Number of lemmings is invalid!";
         if (LevelTitle.Length == 0) return "Level title not set!";
         if (LevelAuthor.Length == 0) return "Level author not set!";
+        if (PrimaryLevelObjective is null) return "Primary level objective not set!";
 
         return null;
     }

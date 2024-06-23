@@ -10,4 +10,5 @@ public sealed class SaveRequirement : IObjectiveRequirement
     }
 
     public bool IsSatisfied => LevelScreen.LemmingManager.LemmingsSaved >= _saveRequirement;
+    public bool IsFailed { get; }
 }
