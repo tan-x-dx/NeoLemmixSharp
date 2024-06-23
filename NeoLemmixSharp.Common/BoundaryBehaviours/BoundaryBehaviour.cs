@@ -7,6 +7,13 @@ public sealed class BoundaryBehaviour
     private const int MaxNumberOfRenderIntervals = 2;
     private const int MaxNumberOfRenderCopiesForWrappedLevels = 6;
 
+    public enum DimensionType
+    {
+        Horizontal,
+        Vertical
+    }
+
+    private readonly DimensionType _dimensionType;
     private readonly BoundaryBehaviourType _boundaryBehaviourType;
     private readonly int _levelLength;
 
@@ -64,9 +71,11 @@ public sealed class BoundaryBehaviour
     public int MouseScreenCoordinate => _mouseScreenCoordinate;
 
     public BoundaryBehaviour(
+        DimensionType dimensionType,
         BoundaryBehaviourType boundaryBehaviourType,
         int levelLength)
     {
+        _dimensionType = dimensionType;
         _boundaryBehaviourType = boundaryBehaviourType;
         _levelLength = levelLength;
     }
