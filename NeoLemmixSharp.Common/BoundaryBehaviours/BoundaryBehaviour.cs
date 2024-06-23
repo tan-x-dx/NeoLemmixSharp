@@ -289,9 +289,7 @@ public sealed class BoundaryBehaviour
     [Pure]
     public ClipInterval GetIntersection(ClipInterval spriteClipInterval, ClipInterval viewportClipInterval)
     {
-        var offset = _boundaryBehaviourType == BoundaryBehaviourType.Void
-            ? 0
-            : GetIntersectionAcrossBoundary(spriteClipInterval, ref viewportClipInterval);
+        var offset = GetIntersectionAcrossBoundary(spriteClipInterval, ref viewportClipInterval);
 
         if (viewportClipInterval.Start < spriteClipInterval.Start + spriteClipInterval.Length &&
             spriteClipInterval.Start < viewportClipInterval.Start + viewportClipInterval.Length)
@@ -309,8 +307,11 @@ public sealed class BoundaryBehaviour
         ClipInterval spriteClipInterval,
         ref ClipInterval viewportClipInterval)
     {
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
+            return 0;
+
         if (spriteClipInterval.Start < 0 &&
-            spriteClipInterval.Start + spriteClipInterval.Length > 0)
+            spriteClipInterval.Start + spriteClipInterval.Length >= 0)
         {
             if (viewportClipInterval.Start == 0)
                 return 0;
