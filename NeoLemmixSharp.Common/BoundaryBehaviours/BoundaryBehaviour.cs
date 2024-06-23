@@ -8,7 +8,7 @@ public sealed class BoundaryBehaviour
     private const int MaxNumberOfRenderCopiesForWrappedLevels = 6;
 
     private readonly BoundaryBehaviourType _boundaryBehaviourType;
-    private readonly int _levelDimension;
+    private readonly int _levelLength;
 
     private readonly ViewPortRenderInterval[] _viewPortRenderIntervals = new ViewPortRenderInterval[MaxNumberOfRenderIntervals];
     private readonly ScreenRenderInterval[] _screenRenderIntervals = new ScreenRenderInterval[MaxNumberOfRenderCopiesForWrappedLevels];
@@ -17,11 +17,11 @@ public sealed class BoundaryBehaviour
 
     private int _scaleMultiplier;
 
-    private int _viewPortCoordinate;
-    private int _viewPortDimension;
+    private int _viewPortStart;
+    private int _viewPortLength;
 
-    private int _screenCoordinate;
-    private int _screenDimension;
+    private int _screenStart;
+    private int _screenLength;
 
     private int _mouseViewPortCoordinate;
     private int _mouseScreenCoordinate;
@@ -31,27 +31,27 @@ public sealed class BoundaryBehaviour
     /// <summary>
     /// The level dimension in pixels
     /// </summary>
-    public int LevelDimension => _levelDimension;
+    public int LevelLength => _levelLength;
 
     /// <summary>
     /// The starting pixel of the view port
     /// </summary>
-    public int ViewPortCoordinate => _viewPortCoordinate;
+    public int ViewPortStart => _viewPortStart;
 
     /// <summary>
-    /// The size in pixels of the view port. Note: ViewPortDimension is derived from the ScreenDimension and the scale multiplier
+    /// The size in pixels of the view port. Note: ViewPortLength is derived from the ScreenLength and the scale multiplier
     /// </summary>
-    public int ViewPortDimension => _viewPortDimension;
+    public int ViewPortLength => _viewPortLength;
 
     /// <summary>
     /// The starting pixel where this should be rendered on screen
     /// </summary>
-    public int ScreenCoordinate => _screenCoordinate;
+    public int ScreenStart => _screenStart;
 
     /// <summary>
     /// How many pixels are available on screen for rendering purposes
     /// </summary>
-    public int ScreenDimension => _screenDimension;
+    public int ScreenLength => _screenLength;
 
     /// <summary>
     /// The coordinate of the mouse within the view port
@@ -65,10 +65,10 @@ public sealed class BoundaryBehaviour
 
     public BoundaryBehaviour(
         BoundaryBehaviourType boundaryBehaviourType,
-        int levelDimension)
+        int levelLength)
     {
         _boundaryBehaviourType = boundaryBehaviourType;
-        _levelDimension = levelDimension;
+        _levelLength = levelLength;
     }
 
     public void UpdateMouseCoordinate(int windowCoordinate)
@@ -77,7 +77,7 @@ public sealed class BoundaryBehaviour
         _mouseScreenCoordinate = _mouseViewPortCoordinate * _scaleMultiplier;
 
         _mouseViewPortCoordinate =
-            Normalise(_mouseViewPortCoordinate + _viewPortCoordinate - (_screenCoordinate / _scaleMultiplier));
+            Normalise(_mouseViewPortCoordinate + _viewPortStart - (_screenStart / _scaleMultiplier));
     }
 
     public void UpdateScreenDimension(
@@ -85,17 +85,17 @@ public sealed class BoundaryBehaviour
         int scaleMultiplier)
     {
         _scaleMultiplier = scaleMultiplier;
-        _viewPortDimension = (screenDimension + _scaleMultiplier - 1) / _scaleMultiplier;
-        _screenDimension = _viewPortDimension * _scaleMultiplier;
+        _viewPortLength = (screenDimension + _scaleMultiplier - 1) / _scaleMultiplier;
+        _screenLength = _viewPortLength * _scaleMultiplier;
 
-        if (_levelDimension < _viewPortDimension)
+        if (_levelLength < _viewPortLength)
         {
-            _viewPortCoordinate = 0;
-            _viewPortDimension = _levelDimension;
+            _viewPortStart = 0;
+            _viewPortLength = _levelLength;
         }
         else
         {
-            UpdateViewPortCoordinate(_viewPortCoordinate);
+            UpdateViewPortCoordinate(_viewPortStart);
         }
 
         UpdateViewPortRenderIntervals();
@@ -104,24 +104,24 @@ public sealed class BoundaryBehaviour
 
     private void UpdateViewPortCoordinate(int viewPortCoordinate)
     {
-        if (_levelDimension < _viewPortDimension)
+        if (_levelLength < _viewPortLength)
         {
-            _viewPortCoordinate = 0;
+            _viewPortStart = 0;
             return;
         }
 
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
         {
-            _viewPortCoordinate = Math.Clamp(viewPortCoordinate, 0, _levelDimension - _viewPortDimension);
+            _viewPortStart = Math.Clamp(viewPortCoordinate, 0, _levelLength - _viewPortLength);
             return;
         }
 
-        _viewPortCoordinate = Normalise(viewPortCoordinate);
+        _viewPortStart = Normalise(viewPortCoordinate);
     }
 
     public void Scroll(int delta)
     {
-        UpdateViewPortCoordinate(_viewPortCoordinate + delta);
+        UpdateViewPortCoordinate(_viewPortStart + delta);
 
         UpdateViewPortRenderIntervals();
         UpdateScreenRenderIntervals();
@@ -137,15 +137,15 @@ public sealed class BoundaryBehaviour
         {
             do
             {
-                a += _levelDimension;
+                a += _levelLength;
             } while (a < 0);
 
             return a;
         }
 
-        while (a >= _levelDimension)
+        while (a >= _levelLength)
         {
-            a -= _levelDimension;
+            a -= _levelLength;
         }
 
         return a;
@@ -156,10 +156,10 @@ public sealed class BoundaryBehaviour
         // Do nothing - coords will already be fine
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
             (left > 0 &&
-             right < _levelDimension))
+             right < _levelLength))
             return;
 
-        var halfLevelWidth = _levelDimension / 2;
+        var halfLevelWidth = _levelLength / 2;
         left -= halfLevelWidth;
         right -= halfLevelWidth;
         a -= halfLevelWidth;
@@ -175,14 +175,14 @@ public sealed class BoundaryBehaviour
 
         if (delta > 0)
         {
-            if (delta * 2 > _levelDimension)
-                return delta - _levelDimension;
+            if (delta * 2 > _levelLength)
+                return delta - _levelLength;
 
             return delta;
         }
 
-        if (delta * -2 > _levelDimension)
-            return delta + _levelDimension;
+        if (delta * -2 > _levelLength)
+            return delta + _levelLength;
 
         return delta;
     }
@@ -190,48 +190,48 @@ public sealed class BoundaryBehaviour
     private void UpdateViewPortRenderIntervals()
     {
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
-            _viewPortCoordinate + _viewPortDimension < _levelDimension)
+            _viewPortStart + _viewPortLength < _levelLength)
         {
-            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(_viewPortCoordinate, _viewPortDimension, -_viewPortCoordinate);
+            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(_viewPortStart, _viewPortLength, -_viewPortStart);
             _viewPortSpanLength = 1;
             return;
         }
 
         _viewPortSpanLength = 2;
         int l1;
-        if (_viewPortDimension < _levelDimension)
+        if (_viewPortLength < _levelLength)
         {
-            l1 = _levelDimension - _viewPortCoordinate;
-            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(_viewPortCoordinate, l1, -_viewPortCoordinate);
-            _viewPortRenderIntervals[1] = new ViewPortRenderInterval(0, _viewPortDimension - l1, _levelDimension - _viewPortCoordinate);
+            l1 = _levelLength - _viewPortStart;
+            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(_viewPortStart, l1, -_viewPortStart);
+            _viewPortRenderIntervals[1] = new ViewPortRenderInterval(0, _viewPortLength - l1, _levelLength - _viewPortStart);
         }
         else
         {
-            l1 = _levelDimension >> 1;
+            l1 = _levelLength >> 1;
             _viewPortRenderIntervals[0] = new ViewPortRenderInterval(0, l1, 0);
-            _viewPortRenderIntervals[1] = new ViewPortRenderInterval(l1, _levelDimension - l1, 0);
+            _viewPortRenderIntervals[1] = new ViewPortRenderInterval(l1, _levelLength - l1, 0);
         }
     }
 
     private void UpdateScreenRenderIntervals()
     {
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
-            _viewPortCoordinate + _viewPortDimension < _levelDimension)
+            _viewPortStart + _viewPortLength < _levelLength)
         {
-            var viewPortDimensionOnScreen = _viewPortDimension * _scaleMultiplier;
-            _screenCoordinate = (_screenDimension - viewPortDimensionOnScreen) >> 1;
+            var viewPortDimensionOnScreen = _viewPortLength * _scaleMultiplier;
+            _screenStart = (_screenLength - viewPortDimensionOnScreen) >> 1;
 
-            _screenRenderIntervals[0] = new ScreenRenderInterval(0, _viewPortDimension, _screenCoordinate, viewPortDimensionOnScreen);
+            _screenRenderIntervals[0] = new ScreenRenderInterval(0, _viewPortLength, _screenStart, viewPortDimensionOnScreen);
             _screenSpanLength = 1;
 
             return;
         }
 
-        _screenCoordinate = 0;
+        _screenStart = 0;
 
-        if (_viewPortDimension < _levelDimension)
+        if (_viewPortLength < _levelLength)
         {
-            _screenRenderIntervals[0] = new ScreenRenderInterval(0, _viewPortDimension, 0, _screenDimension);
+            _screenRenderIntervals[0] = new ScreenRenderInterval(0, _viewPortLength, 0, _screenLength);
             _screenSpanLength = 1;
 
             return;
@@ -242,15 +242,15 @@ public sealed class BoundaryBehaviour
 
     private void UpdateScreenRenderIntervalsForMultipleWrappedCopies()
     {
-        var deltaL = _levelDimension * _scaleMultiplier;
+        var deltaL = _levelLength * _scaleMultiplier;
 
         int screenCoordinate;
 
-        var maxScreenDimension = Math.Min(deltaL * MaxNumberOfRenderCopiesForWrappedLevels, _screenDimension);
+        var maxScreenDimension = Math.Min(deltaL * MaxNumberOfRenderCopiesForWrappedLevels, _screenLength);
 
-        if (maxScreenDimension < _screenDimension)
+        if (maxScreenDimension < _screenLength)
         {
-            screenCoordinate = (_screenDimension - maxScreenDimension) >> 1;
+            screenCoordinate = (_screenLength - maxScreenDimension) >> 1;
         }
         else
         {
@@ -258,19 +258,19 @@ public sealed class BoundaryBehaviour
         }
 
         _screenRenderIntervals[0] = new ScreenRenderInterval(
-            _viewPortCoordinate,
-            _levelDimension - _viewPortCoordinate,
+            _viewPortStart,
+            _levelLength - _viewPortStart,
             screenCoordinate,
-            (_levelDimension - _viewPortCoordinate) * _scaleMultiplier);
+            (_levelLength - _viewPortStart) * _scaleMultiplier);
 
-        screenCoordinate += (_levelDimension - _viewPortCoordinate) * _scaleMultiplier;
+        screenCoordinate += (_levelLength - _viewPortStart) * _scaleMultiplier;
 
         _screenSpanLength = 1;
 
         while (screenCoordinate < maxScreenDimension &&
                _screenSpanLength < _screenRenderIntervals.Length - 1)
         {
-            _screenRenderIntervals[_screenSpanLength++] = new ScreenRenderInterval(0, _levelDimension, screenCoordinate, deltaL);
+            _screenRenderIntervals[_screenSpanLength++] = new ScreenRenderInterval(0, _levelLength, screenCoordinate, deltaL);
             screenCoordinate += deltaL;
         }
 
@@ -317,22 +317,22 @@ public sealed class BoundaryBehaviour
                 return 0;
 
             viewportClipInterval = new ClipInterval(
-                viewportClipInterval.Start - _levelDimension,
+                viewportClipInterval.Start - _levelLength,
                 viewportClipInterval.Length,
                 0);
-            return _levelDimension;
+            return _levelLength;
         }
 
-        if (spriteClipInterval.Start + spriteClipInterval.Length <= _levelDimension)
+        if (spriteClipInterval.Start + spriteClipInterval.Length <= _levelLength)
             return 0;
 
         if (viewportClipInterval.Start == 0)
         {
             viewportClipInterval = new ClipInterval(
-                viewportClipInterval.Start + _levelDimension,
+                viewportClipInterval.Start + _levelLength,
                 viewportClipInterval.Length,
                 0);
-            return -_levelDimension;
+            return -_levelLength;
         }
 
         return 0;

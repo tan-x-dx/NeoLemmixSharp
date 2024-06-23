@@ -42,8 +42,8 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
         var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;
 
-        _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelDimension + chunkSizeBitMask) >> _chunkSizeBitShift;
-        _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelDimension + chunkSizeBitMask) >> _chunkSizeBitShift;
+        _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift;
+        _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift;
 
         _bitArraySize = _allTrackedItems.Size;
 

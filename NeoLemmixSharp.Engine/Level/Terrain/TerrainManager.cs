@@ -18,8 +18,8 @@ public sealed class TerrainManager
     public BoundaryBehaviour HorizontalBoundaryBehaviour { get; }
     public BoundaryBehaviour VerticalBoundaryBehaviour { get; }
 
-    public int LevelWidth => HorizontalBoundaryBehaviour.LevelDimension;
-    public int LevelHeight => VerticalBoundaryBehaviour.LevelDimension;
+    public int LevelWidth => HorizontalBoundaryBehaviour.LevelLength;
+    public int LevelHeight => VerticalBoundaryBehaviour.LevelLength;
 
     public TerrainManager(
         PixelType[] pixels,

@@ -2,20 +2,20 @@
 
 namespace NeoLemmixSharp.Common.BoundaryBehaviours;
 
-[DebuggerDisplay("sourceC: {SourceCoordinate}, sourceD: {SourceDimension}, screenC: {ScreenCoordinate}, screenD: {ScreenDimension}")]
+[DebuggerDisplay("sourceS: {SourceStart}, sourceL: {SourceLength}, screenS: {ScreenStart}, screenL: {ScreenLength}")]
 public readonly struct ScreenRenderInterval
 {
-    public readonly int SourceCoordinate;
-    public readonly int SourceDimension;
-    public readonly int ScreenCoordinate;
-    public readonly int ScreenDimension;
+    public readonly int SourceStart;
+    public readonly int SourceLength;
+    public readonly int ScreenStart;
+    public readonly int ScreenLength;
 
     [DebuggerStepThrough]
-    public ScreenRenderInterval(int sourceCoordinate, int sourceDimension, int screenCoordinate, int screenDimension)
+    public ScreenRenderInterval(int sourceStart, int sourceLength, int screenStart, int screenLength)
     {
-        SourceCoordinate = sourceCoordinate;
-        SourceDimension = sourceDimension;
-        ScreenCoordinate = screenCoordinate;
-        ScreenDimension = screenDimension;
+        SourceStart = sourceStart;
+        SourceLength = sourceLength;
+        ScreenStart = screenStart;
+        ScreenLength = screenLength;
     }
 }
