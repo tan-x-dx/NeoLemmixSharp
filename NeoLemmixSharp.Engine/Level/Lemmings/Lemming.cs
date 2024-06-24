@@ -79,6 +79,12 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         get => CurrentAction.GetFootPosition(this, LevelPosition);
     }
 
+    public LevelPosition CenterPosition
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Orientation.MoveUp(LevelPosition, 4);
+    }
+
     public Lemming(
         int id,
         Orientation orientation,

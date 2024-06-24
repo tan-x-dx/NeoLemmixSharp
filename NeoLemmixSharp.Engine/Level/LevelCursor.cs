@@ -106,7 +106,7 @@ public sealed class LevelCursor
 
     private bool LemmingIsUnderCursor(Lemming lemming)
     {
-        var lemmingPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 4);
+        var lemmingPosition = lemming.CenterPosition;
 
         var dx = _horizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
         var dy = _verticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
@@ -188,7 +188,7 @@ public sealed class LevelCursor
 
     private int GetDistanceSquaredFromCursorCentre(Lemming lemming)
     {
-        var lemmingPosition = lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 4);
+        var lemmingPosition = lemming.CenterPosition;
 
         var dx = _horizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
         var dy = _verticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
