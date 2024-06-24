@@ -42,10 +42,8 @@ public ref struct BitBasedEnumerator<T>
             while (_v == 0U);
         }
 
-        var m = BitOperations.TrailingZeroCount(_v);
+        _current = (_index << BitArrayHelpers.Shift) | BitOperations.TrailingZeroCount(_v);
         _v &= _v - 1;
-
-        _current = (_index << BitArrayHelpers.Shift) | m;
         _remaining--;
         return true;
     }
