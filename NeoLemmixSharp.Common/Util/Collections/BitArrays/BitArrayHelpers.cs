@@ -48,9 +48,9 @@ public static class BitArrayHelpers
         return result;
     }
 
-    public static void SetLength(ref uint[] originalBits, int newLength)
+    public static void Resize(ref uint[] originalBits, int numberOfItems)
     {
-        var newArraySize = CalculateBitArrayBufferSize(newLength);
+        var newArraySize = CalculateBitArrayBufferSize(numberOfItems);
 
         if (newArraySize <= originalBits.Length)
             return;
