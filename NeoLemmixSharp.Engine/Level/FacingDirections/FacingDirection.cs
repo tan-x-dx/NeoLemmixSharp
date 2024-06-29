@@ -45,8 +45,6 @@ public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
         _name = name;
     }
 
-    int IIdEquatable<FacingDirection>.Id => Id;
-
     [Pure]
     public FacingDirection GetOpposite()
     {
@@ -58,6 +56,8 @@ public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
     {
         return Orientation.Rotate(orientation, DeltaX);
     }
+
+    int IIdEquatable<FacingDirection>.Id => Id;
 
     public bool Equals(FacingDirection? other) => Id == (other?.Id ?? -1);
     public override bool Equals(object? obj) => obj is FacingDirection other && Id == other.Id;
