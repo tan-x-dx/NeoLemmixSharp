@@ -9,12 +9,12 @@ public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
     public static readonly FacingDirection LeftInstance = new(
         LevelConstants.LeftFacingDirectionId,
         LevelConstants.LeftFacingDirectionDeltaX,
-        "left");
+        LevelConstants.LeftFacingDirectionName);
 
     public static readonly FacingDirection RightInstance = new(
         LevelConstants.RightFacingDirectionId,
         LevelConstants.RightFacingDirectionDeltaX,
-        "right");
+        LevelConstants.RightFacingDirectionName);
 
     private static readonly FacingDirection[] FacingDirections = GenerateFacingDirectionCollection();
 
