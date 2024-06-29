@@ -31,11 +31,14 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
     private IBaseScreen? _screen;
     private IScreenRenderer? _screenRenderer;
 
+    private int _width;
+    private int _height;
     private bool _isBorderless;
-    public bool IsFullScreen { get; private set; }
+    private bool _isFullscreen;
+    public bool IsFullscreen => _isFullscreen;
 
-    public int WindowWidth => _graphics.PreferredBackBufferWidth;
-    public int WindowHeight => _graphics.PreferredBackBufferHeight;
+    public int WindowWidth => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+    public int WindowHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
     public MainRenderer MguiRenderer { get; private set; }
 
     public event EventHandler<TimeSpan>? PreviewUpdate;
@@ -51,7 +54,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
         Content.RootDirectory = "Content";
         Window.AllowUserResizing = false;
-        Window.IsBorderless = true;
+        //  Window.IsBorderless = true;
         IsMouseVisible = true;
 
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
@@ -60,6 +63,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
         TargetElapsedTime = EngineConstants.FramesPerSecondTimeSpan;
 
         IGameWindow.Instance = this;
+
+        ToggleFullscreen();
     }
 
     private void WindowOnClientSizeChanged(object? sender, EventArgs e)
@@ -201,9 +206,9 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
         _screenRenderer!.RenderScreen(_spriteBatch);
     }
 
-    public void ToggleFullScreen()
+    public void ToggleFullscreen()
     {
-        var oldIsFullscreen = IsFullScreen;
+        var oldIsFullscreen = _isFullscreen;
 
         if (_isBorderless)
         {
@@ -211,7 +216,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
         }
         else
         {
-            IsFullScreen = !IsFullScreen;
+            _isFullscreen = !_isFullscreen;
         }
 
         ApplyFullscreenChange(oldIsFullscreen);
@@ -219,17 +224,17 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
     public void ToggleBorderless()
     {
-        var oldIsFullscreen = IsFullScreen;
+        var oldIsFullscreen = _isFullscreen;
 
         _isBorderless = !_isBorderless;
-        IsFullScreen = _isBorderless;
+        _isFullscreen = _isBorderless;
 
         ApplyFullscreenChange(oldIsFullscreen);
     }
 
     private void ApplyFullscreenChange(bool oldIsFullscreen)
     {
-        if (IsFullScreen)
+        if (_isFullscreen)
         {
             if (oldIsFullscreen)
             {
@@ -250,28 +255,33 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
     {
         _graphics.HardwareModeSwitch = !_isBorderless;
         _graphics.ApplyChanges();
+
+        _screen?.OnWindowSizeChanged();
     }
 
     private void SetFullscreen()
     {
-        /*   _gameResolution = new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
+        _width = Window.ClientBounds.Width;
+        _height = Window.ClientBounds.Height;
 
-           _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-           _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-           _graphics.HardwareModeSwitch = !_isBorderless;
+        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+        _graphics.HardwareModeSwitch = !_isBorderless;
 
-           _graphics.IsFullScreen = true;
-           _graphics.ApplyChanges();
-           CaptureCursor();*/
+        _graphics.IsFullScreen = true;
+        _graphics.ApplyChanges();
+
+        _screen?.OnWindowSizeChanged();
     }
 
     private void UnsetFullscreen()
     {
-        /* _graphics.PreferredBackBufferWidth = _gameResolution.X;
-         _graphics.PreferredBackBufferHeight = _gameResolution.Y;
-         _graphics.IsFullScreen = false;
-         _graphics.ApplyChanges();
-         CaptureCursor();*/
+        _graphics.PreferredBackBufferWidth = _width;
+        _graphics.PreferredBackBufferHeight = _height;
+        _graphics.IsFullScreen = false;
+        _graphics.ApplyChanges();
+
+        _screen?.OnWindowSizeChanged();
     }
 
     public void Escape()
