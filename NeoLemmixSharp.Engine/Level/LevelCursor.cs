@@ -131,7 +131,11 @@ public sealed class LevelCursor
         if (_selectOnlyUnassigned && lemming.State.HasPermanentSkill)
             return false;
 
-        return true;
+        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(LevelScreen.LevelControlPanel.SelectedSkillButtonId);
+        if (skillTrackingData is null || skillTrackingData.SkillCount == 0)
+            return false;
+
+        return skillTrackingData.Skill.CanAssignToLemming(lemming);
     }
 
     private bool NewCandidateIsHigherPriority(Lemming? previousCandidate, Lemming newCandidate)
