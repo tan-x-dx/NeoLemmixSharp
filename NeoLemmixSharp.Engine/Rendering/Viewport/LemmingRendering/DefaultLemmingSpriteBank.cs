@@ -375,37 +375,47 @@ public static class DefaultLemmingSpriteBank
             contentManager,
             spriteRotationReflectionProcessor,
             RotateClockwiseAction.Instance,
-            3,
-            new LevelPosition(2, 10),
+            4,
+            new LevelPosition(9, 13),
             ItemCreator);
 
         var rotateCounterclockwiseSprites = CreateSpriteTypesArray(
             contentManager,
             spriteRotationReflectionProcessor,
             RotateCounterclockwiseAction.Instance,
-            3,
-            new LevelPosition(2, 10),
+            4,
+            new LevelPosition(9, 13),
             ItemCreator);
 
         var rotateHalfSprites = CreateSpriteTypesArray(
             contentManager,
             spriteRotationReflectionProcessor,
             RotateHalfAction.Instance,
-            3,
-            new LevelPosition(2, 10),
+            4,
+            new LevelPosition(9, 13),
             ItemCreator);
 
         foreach (var orientation in Orientation.AllItems)
         {
-            var rotateCwRightK0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.RightInstance);
-            var rotateCwLeftK1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.RightInstance);
+            var rotateCwK0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.RightInstance);
+            var rotateCwK1 = LemmingSpriteBank.GetKey(RotateClockwiseAction.Instance, orientation, FacingDirection.RightInstance);
+            var rotateCcwK1 = LemmingSpriteBank.GetKey(RotateCounterclockwiseAction.Instance, orientation, FacingDirection.RightInstance);
+            var rotateHalfK1 = LemmingSpriteBank.GetKey(RotateHalfAction.Instance, orientation, FacingDirection.RightInstance);
 
-            actionSprites[rotateCwLeftK1] = spriteTypes[rotateCwRightK0];
+            (rotateCwK1, rotateCcwK1) = (rotateCcwK1, rotateCwK1);
 
-            rotateCwRightK0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.LeftInstance);
-            rotateCwLeftK1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.LeftInstance);
+            actionSprites[rotateCwK1] = rotateClockwiseSprites[rotateCwK0];
+            actionSprites[rotateCcwK1] = rotateCounterclockwiseSprites[rotateCwK0];
+            actionSprites[rotateHalfK1] = rotateHalfSprites[rotateCwK0];
 
-            actionSprites[rotateCwLeftK1] = spriteTypes[rotateCwRightK0];
+            rotateCwK0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.LeftInstance);
+            rotateCwK1 = LemmingSpriteBank.GetKey(RotateClockwiseAction.Instance, orientation, FacingDirection.LeftInstance);
+            rotateCcwK1 = LemmingSpriteBank.GetKey(RotateCounterclockwiseAction.Instance, orientation, FacingDirection.LeftInstance);
+            rotateHalfK1 = LemmingSpriteBank.GetKey(RotateHalfAction.Instance, orientation, FacingDirection.LeftInstance);
+
+            actionSprites[rotateCwK1] = rotateClockwiseSprites[rotateCwK0];
+            actionSprites[rotateCcwK1] = rotateCounterclockwiseSprites[rotateCwK0];
+            actionSprites[rotateHalfK1] = rotateHalfSprites[rotateCwK0];
         }
 
         return;

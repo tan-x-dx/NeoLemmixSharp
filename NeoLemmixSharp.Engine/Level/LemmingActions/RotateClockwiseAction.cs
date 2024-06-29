@@ -25,6 +25,10 @@ public sealed class RotateClockwiseAction : LemmingAction
         if (lemming.EndOfAnimation)
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            var orientation = lemming.Orientation;
+            ref var lemmingPosition = ref lemming.LevelPosition;
+            var dx = lemming.FacingDirection.DeltaX;
+            lemmingPosition = orientation.Move(lemmingPosition, dx * -4, 4);
             lemming.SetOrientation(Orientation.RotateClockwise(lemming.Orientation));
         }
 

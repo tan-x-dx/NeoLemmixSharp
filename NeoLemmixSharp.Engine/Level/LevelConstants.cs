@@ -184,8 +184,8 @@ public static class LevelConstants
     public const int ExiterAnimationFrames = 8;
     public const int MaxExiterPhysicsFrames = 8;
 
-    public const string ExploderActionName = "Bomber";
-    public const string ExploderActionSpriteFileName = "exploder";
+    public const string ExploderActionName = "Exploder";
+    public const string ExploderActionSpriteFileName = "bomber";
     public const int ExploderActionId = 26;
     public const int ExploderAnimationFrames = 1;
     public const int MaxExploderPhysicsFrames = 1;
@@ -257,7 +257,7 @@ public static class LevelConstants
     public const int MaxReacherPhysicsFrames = 8;
 
     public const string RotateClockwiseActionName = "Rotator";
-    public const string RotateClockwiseActionSpriteFileName = "rotate90_cw";
+    public const string RotateClockwiseActionSpriteFileName = "rotate_90cw";
     public const int RotateClockwiseActionId = 31;
     public const int RotateClockwiseAnimationFrames = 9;
     public const int MaxRotateClockwisePhysicsFrames = 9;
@@ -269,7 +269,7 @@ public static class LevelConstants
     public const int MaxRotateCounterclockwisePhysicsFrames = 9;
 
     public const string RotateHalfActionName = "Rotator";
-    public const string RotateHalfActionSpriteFileName = "rotate180_cw";
+    public const string RotateHalfActionSpriteFileName = "rotate_180cw";
     public const int RotateHalfActionId = 33;
     public const int RotateHalfAnimationFrames = 15;
     public const int MaxRotateHalfPhysicsFrames = 15;
