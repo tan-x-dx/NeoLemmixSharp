@@ -142,6 +142,11 @@ end;
 
     private void EvaluateGameState()
     {
+        if (_inputController.ToggleFullScreen.IsPressed)
+        {
+            IGameWindow.Instance.ToggleFullscreen();
+        }
+
         if (_inputController.Pause.IsPressed)
         {
             SetUpdateState(_updateState == UpdateState.Paused ? UpdateState.Normal : UpdateState.Paused);

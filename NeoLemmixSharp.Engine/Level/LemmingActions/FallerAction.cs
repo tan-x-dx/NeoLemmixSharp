@@ -14,6 +14,7 @@ public sealed class FallerAction : LemmingAction
         : base(
             LevelConstants.FallerActionId,
             LevelConstants.FallerActionName,
+            LevelConstants.FallerActionSpriteFileName,
             LevelConstants.FallerAnimationFrames,
             LevelConstants.MaxFallerPhysicsFrames,
             LevelConstants.NonWalkerMovementPriority,
@@ -179,8 +180,8 @@ public sealed class FallerAction : LemmingAction
 
         var lemmingOrientation = lemming.Orientation;
 
-        var hasUpdraft = false;
-        var hasDowndraft = false;
+        var draftUp = false;
+        var draftDown = false;
         var draftLeft = false;
         var draftRight = false;
 
@@ -193,7 +194,7 @@ public sealed class FallerAction : LemmingAction
 
             if (gadgetOrientation == lemmingOrientation)
             {
-                hasDowndraft = true;
+                draftDown = true;
             }
 
             if (gadgetOrientation == Orientation.RotateClockwise(lemmingOrientation))
@@ -203,7 +204,7 @@ public sealed class FallerAction : LemmingAction
 
             if (gadgetOrientation == Orientation.GetOpposite(lemmingOrientation))
             {
-                hasUpdraft = true;
+                draftUp = true;
             }
 
             if (gadgetOrientation == Orientation.RotateCounterClockwise(lemmingOrientation))
@@ -224,12 +225,12 @@ public sealed class FallerAction : LemmingAction
         }
 
         var dy = 0;
-        if (hasUpdraft)
+        if (draftUp)
         {
             dy--;
         }
 
-        if (hasDowndraft)
+        if (draftDown)
         {
             dy++;
         }

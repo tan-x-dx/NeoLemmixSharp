@@ -106,7 +106,7 @@ public sealed class LevelCursor
 
     private bool LemmingIsUnderCursor(Lemming lemming)
     {
-        var lemmingPosition = lemming.Orientation.MoveUp(lemming.LevelPosition, 4);
+        var lemmingPosition = lemming.CenterPosition;
 
         var dx = _horizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
         var dy = _verticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
@@ -131,7 +131,11 @@ public sealed class LevelCursor
         if (_selectOnlyUnassigned && lemming.State.HasPermanentSkill)
             return false;
 
-        return true;
+        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(LevelScreen.LevelControlPanel.SelectedSkillButtonId);
+        if (skillTrackingData is null || skillTrackingData.SkillCount == 0)
+            return false;
+
+        return skillTrackingData.Skill.CanAssignToLemming(lemming);
     }
 
     private bool NewCandidateIsHigherPriority(Lemming? previousCandidate, Lemming newCandidate)
@@ -188,7 +192,7 @@ public sealed class LevelCursor
 
     private int GetDistanceSquaredFromCursorCentre(Lemming lemming)
     {
-        var lemmingPosition = lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 4);
+        var lemmingPosition = lemming.CenterPosition;
 
         var dx = _horizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
         var dy = _verticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);

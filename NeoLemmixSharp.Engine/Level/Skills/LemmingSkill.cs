@@ -41,7 +41,15 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
             SliderSkill.Instance,
             DisarmerSkill.Instance,
             StonerSkill.Instance,
-            ClonerSkill.Instance
+            ClonerSkill.Instance,
+
+            RotateClockwiseSkill.Instance,
+            RotateCounterclockwiseSkill.Instance,
+            RotateHalfSkill.Instance,
+            RotateToDownSkill.Instance,
+            RotateToRightSkill.Instance,
+            RotateToUpSkill.Instance,
+            RotateToLeftSkill.Instance
         };
 
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<LemmingSkill>(result));
@@ -54,7 +62,6 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
     public readonly int Id;
     public readonly string LemmingSkillName;
     public readonly bool IsClassicSkill;
-
 
     protected LemmingSkill(int id, string lemmingSkillName, bool isClassicSkill)
     {
@@ -112,6 +119,10 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
         yield return StackerAction.Instance;
         yield return SwimmerAction.Instance;
         yield return WalkerAction.Instance;
+
+        yield return RotateClockwiseAction.Instance;
+        yield return RotateCounterclockwiseAction.Instance;
+        yield return RotateHalfAction.Instance;
     }
 
     int IIdEquatable<LemmingSkill>.Id => Id;

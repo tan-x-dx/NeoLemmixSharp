@@ -2,6 +2,7 @@
 
 public static class IdEquatableItemHelperMethods
 {
+
     public static void ValidateUniqueIds<T>(ReadOnlySpan<T> items)
         where T : class, IIdEquatable<T>
     {
@@ -10,7 +11,7 @@ public static class IdEquatableItemHelperMethods
 
         var minId = int.MaxValue;
         var maxId = int.MinValue;
-        var allItemIds = new HashSet<int>(items.Length);
+        var allItemIds = new HashSet<int>(items.Length, new IntEqualityComparer());
 
         foreach (var item in items)
         {
@@ -53,5 +54,11 @@ public static class IdEquatableItemHelperMethods
     {
         return 2965019 * obj.Id +
                5477821;
+    }
+
+    private sealed class IntEqualityComparer : IEqualityComparer<int>
+    {
+        public bool Equals(int x, int y) => x == y;
+        public int GetHashCode(int n) => n;
     }
 }

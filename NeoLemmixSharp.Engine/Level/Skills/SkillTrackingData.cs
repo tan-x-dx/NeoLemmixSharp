@@ -29,12 +29,7 @@ public sealed class SkillTrackingData
         SkillCount = Math.Clamp(newSkillCount, 0, LevelConstants.InfiniteSkillCount - 1);
     }
 
-    public void SetSkillCount(int skillCount) => SkillCount = skillCount switch
-    {
-        >= LevelConstants.InfiniteSkillCount => LevelConstants.InfiniteSkillCount,
-        < 0 => 0,
-        _ => skillCount
-    };
+    public void SetSkillCount(int skillCount) => SkillCount = Math.Clamp(skillCount, 0, LevelConstants.InfiniteSkillCount);
 
     public bool CanAssignToLemming(Lemming lemming)
     {

@@ -8,7 +8,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 public sealed class LemmingReader : INeoLemmixDataReader
 {
     private readonly List<LemmingData> _prePlacedLemmingData;
-
     private LemmingData? _currentLemmingData;
 
     public bool FinishedReading { get; private set; }

@@ -166,7 +166,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         if (numberOfItems <= _values.Length)
             return;
 
-        BitArrayHelpers.SetLength(ref _bits, numberOfItems);
+        BitArrayHelpers.Resize(ref _bits, numberOfItems);
         Array.Resize(ref _values, numberOfItems);
     }
 

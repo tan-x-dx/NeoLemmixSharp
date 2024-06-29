@@ -13,6 +13,7 @@ public sealed class NoneAction : LemmingAction
         : base(
             -1,
             LevelConstants.NoneActionName,
+            string.Empty,
             1,
             1,
             -1,

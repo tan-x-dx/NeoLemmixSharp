@@ -10,6 +10,7 @@ public sealed class DisarmerAction : LemmingAction
         : base(
             LevelConstants.DisarmerActionId,
             LevelConstants.DisarmerActionName,
+            LevelConstants.DisarmerActionSpriteFileName,
             LevelConstants.DisarmerAnimationFrames,
             LevelConstants.MaxDisarmerPhysicsFrames,
             LevelConstants.PermanentSkillPriority,

@@ -29,6 +29,7 @@ public sealed class JumperAction : LemmingAction
         : base(
             LevelConstants.JumperActionId,
             LevelConstants.JumperActionName,
+            LevelConstants.JumperActionSpriteFileName,
             LevelConstants.JumperAnimationFrames,
             LevelConstants.MaxJumperPhysicsFrames,
             LevelConstants.NonWalkerMovementPriority,

@@ -13,14 +13,14 @@ public interface IGameWindow
     int WindowHeight { get; }
 
     bool IsActive { get; }
-    bool IsFullScreen { get; }
+    bool IsFullscreen { get; }
 
     GraphicsDevice GraphicsDevice { get; }
     ContentManager Content { get; }
 
     void SetScreen(IBaseScreen screen);
     void CaptureCursor();
-    void ToggleFullScreen();
+    void ToggleFullscreen();
     void ToggleBorderless();
     void Escape();
 

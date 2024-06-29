@@ -16,7 +16,10 @@ public static class BoundaryHelpers
         int levelWidth)
     {
         if (boundaryBehaviourType is BoundaryBehaviourType.Void or BoundaryBehaviourType.Wrap)
-            return new BoundaryBehaviour(boundaryBehaviourType, levelWidth);
+            return new BoundaryBehaviour(
+                BoundaryBehaviour.DimensionType.Horizontal,
+                boundaryBehaviourType,
+                levelWidth);
 
         return ThrowUnknownBoundaryBehaviourException(boundaryBehaviourType);
     }
@@ -26,7 +29,10 @@ public static class BoundaryHelpers
         int levelHeight)
     {
         if (boundaryBehaviourType is BoundaryBehaviourType.Void or BoundaryBehaviourType.Wrap)
-            return new BoundaryBehaviour(boundaryBehaviourType, levelHeight);
+            return new BoundaryBehaviour(
+                BoundaryBehaviour.DimensionType.Vertical,
+                boundaryBehaviourType,
+                levelHeight);
 
         return ThrowUnknownBoundaryBehaviourException(boundaryBehaviourType);
     }

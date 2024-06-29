@@ -11,6 +11,7 @@ public sealed class StonerAction : LemmingAction
         : base(
             LevelConstants.StonerActionId,
             LevelConstants.StonerActionName,
+            LevelConstants.StonerActionSpriteFileName,
             LevelConstants.StonerAnimationFrames,
             LevelConstants.MaxStonerPhysicsFrames,
             LevelConstants.NoPriority,

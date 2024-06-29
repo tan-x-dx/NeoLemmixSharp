@@ -16,6 +16,7 @@ public sealed class ReacherAction : LemmingAction
         : base(
             LevelConstants.ReacherActionId,
             LevelConstants.ReacherActionName,
+            LevelConstants.ReacherActionSpriteFileName,
             LevelConstants.ReacherAnimationFrames,
             LevelConstants.MaxReacherPhysicsFrames,
             LevelConstants.NonWalkerMovementPriority,

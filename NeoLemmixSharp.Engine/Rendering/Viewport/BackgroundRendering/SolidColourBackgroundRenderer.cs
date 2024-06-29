@@ -23,8 +23,8 @@ public sealed class SolidColorBackgroundRenderer : IBackgroundRenderer
             new Rectangle(
                 0,
                 0,
-                _viewport.HorizontalBoundaryBehaviour.ViewPortDimension,
-                _viewport.VerticalBoundaryBehaviour.ViewPortDimension),
+                _viewport.HorizontalBoundaryBehaviour.ViewPortLength,
+                _viewport.VerticalBoundaryBehaviour.ViewPortLength),
             CommonSprites.RectangleForWhitePixelAlpha(0xff),
             _backgroundColor);
     }

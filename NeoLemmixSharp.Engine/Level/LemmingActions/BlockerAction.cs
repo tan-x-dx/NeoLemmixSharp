@@ -16,6 +16,7 @@ public sealed class BlockerAction : LemmingAction
         : base(
             LevelConstants.BlockerActionId,
             LevelConstants.BlockerActionName,
+            LevelConstants.BlockerActionSpriteFileName,
             LevelConstants.BlockerAnimationFrames,
             LevelConstants.MaxBlockerPhysicsFrames,
             LevelConstants.NonPermanentSkillPriority,

@@ -12,6 +12,7 @@ public sealed class SwimmerAction : LemmingAction
         : base(
             LevelConstants.SwimmerActionId,
             LevelConstants.SwimmerActionName,
+            LevelConstants.SwimmerActionSpriteFileName,
             LevelConstants.SwimmerAnimationFrames,
             LevelConstants.MaxSwimmerPhysicsFrames,
             LevelConstants.PermanentSkillPriority,

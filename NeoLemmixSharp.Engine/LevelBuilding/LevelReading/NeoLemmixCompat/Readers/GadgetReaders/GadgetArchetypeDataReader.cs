@@ -14,6 +14,12 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "EFFECT";
 
+    public bool MatchesToken(ReadOnlySpan<char> token)
+    {
+        return token.SequenceEqual(IdentifierToken) ||
+               token is "NO_EFFECT";
+    }
+
     public void BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
@@ -70,6 +76,9 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
 
             case "RESIZE_BOTH":
                 _gadgetArchetypeData.ResizeType = ResizeType.ResizeBoth;
+                break;
+
+            case "DEPRECATED":
                 break;
 
             case "DEFAULT_WIDTH":

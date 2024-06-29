@@ -52,7 +52,11 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
             OhNoerAction.Instance,
             SplatterAction.Instance,
             StonerAction.Instance,
-            VaporiserAction.Instance
+            VaporiserAction.Instance,
+
+            RotateClockwiseAction.Instance,
+            RotateCounterclockwiseAction.Instance,
+            RotateHalfAction.Instance
         };
 
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<LemmingAction>(result));
@@ -63,6 +67,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     public readonly int Id;
     public readonly string LemmingActionName;
+    public readonly string LemmingActionSpriteFileName;
     public readonly int NumberOfAnimationFrames;
     public readonly int MaxPhysicsFrames;
     public readonly int CursorSelectionPriorityValue;
@@ -72,6 +77,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
     protected LemmingAction(
         int id,
         string lemmingActionName,
+        string lemmingActionSpriteFileName,
         int numberOfAnimationFrames,
         int maxPhysicsFrames,
         int cursorSelectionPriorityValue,
@@ -80,6 +86,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
     {
         Id = id;
         LemmingActionName = lemmingActionName;
+        LemmingActionSpriteFileName = lemmingActionSpriteFileName;
         NumberOfAnimationFrames = numberOfAnimationFrames;
         MaxPhysicsFrames = maxPhysicsFrames;
         CursorSelectionPriorityValue = cursorSelectionPriorityValue;

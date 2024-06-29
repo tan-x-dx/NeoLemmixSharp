@@ -61,7 +61,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
 
     public void OnNumberOfItemsChanged(int numberOfItems)
     {
-        BitArrayHelpers.SetLength(ref _bits, numberOfItems);
+        BitArrayHelpers.Resize(ref _bits, numberOfItems);
     }
 
     [Pure]

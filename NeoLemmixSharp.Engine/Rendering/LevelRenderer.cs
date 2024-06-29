@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
-using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.PositionTracking;
@@ -115,18 +114,18 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
             foreach (var verticalRenderInterval in verticalRenderIntervals)
             {
                 var region = new LevelPositionPair(
-                    horizontalRenderInterval.ViewPortCoordinate,
-                    verticalRenderInterval.ViewPortCoordinate,
-                    horizontalRenderInterval.ViewPortCoordinate + horizontalRenderInterval.ViewPortDimension - 1,
-                    verticalRenderInterval.ViewPortCoordinate + verticalRenderInterval.ViewPortDimension - 1);
+                    horizontalRenderInterval.ViewPortStart,
+                    verticalRenderInterval.ViewPortStart,
+                    horizontalRenderInterval.ViewPortStart + horizontalRenderInterval.ViewPortLength - 1,
+                    verticalRenderInterval.ViewPortStart + verticalRenderInterval.ViewPortLength - 1);
 
                 var rendererSet = _spriteSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, region);
 
                 var viewportClip = new Rectangle(
-                    horizontalRenderInterval.ViewPortCoordinate,
-                    verticalRenderInterval.ViewPortCoordinate,
-                    horizontalRenderInterval.ViewPortDimension,
-                    verticalRenderInterval.ViewPortDimension);
+                    horizontalRenderInterval.ViewPortStart,
+                    verticalRenderInterval.ViewPortStart,
+                    horizontalRenderInterval.ViewPortLength,
+                    verticalRenderInterval.ViewPortLength);
 
                 var horizontalViewportClip = new ClipInterval(viewportClip.X, viewportClip.Width, 0);
                 var verticalViewportClip = new ClipInterval(viewportClip.Y, viewportClip.Height, 0);
@@ -191,16 +190,16 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
             foreach (var verticalRenderInterval in verticalRenderIntervals)
             {
                 var destinationRectangle = new Rectangle(
-                    horizontalRenderInterval.ScreenCoordinate,
-                    verticalRenderInterval.ScreenCoordinate,
-                    horizontalRenderInterval.ScreenDimension,
-                    verticalRenderInterval.ScreenDimension);
+                    horizontalRenderInterval.ScreenStart,
+                    verticalRenderInterval.ScreenStart,
+                    horizontalRenderInterval.ScreenLength,
+                    verticalRenderInterval.ScreenLength);
 
                 var sourceRectangle = new Rectangle(
-                    horizontalRenderInterval.SourceCoordinate,
-                    verticalRenderInterval.SourceCoordinate,
-                    horizontalRenderInterval.SourceDimension,
-                    verticalRenderInterval.SourceDimension);
+                    horizontalRenderInterval.SourceStart,
+                    verticalRenderInterval.SourceStart,
+                    horizontalRenderInterval.SourceLength,
+                    verticalRenderInterval.SourceLength);
 
                 spriteBatch.Draw(
                     _levelRenderTarget,
@@ -210,23 +209,25 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
             }
         }
 
+        /*
         var b = _viewport.HorizontalBoundaryBehaviour;
-        var data = $"H: vpC:{b.ViewPortCoordinate}, vpD: {b.ViewPortDimension}, sC: {b.ScreenCoordinate}, sD: {b.ScreenDimension}, " +
-                   $"mvpC{b.MouseViewPortCoordinate}, msC: {b.MouseScreenCoordinate}, lD: {b.LevelDimension}";
+        var data = $"H: vpC:{b.ViewPortStart}, vpD: {b.ViewPortLength}, sC: {b.ScreenStart}, sD: {b.ScreenLength}, " +
+                   $"mvpC{b.MouseViewPortCoordinate}, msC: {b.MouseScreenCoordinate}, lD: {b.LevelLength}";
         FontBank.MenuFont.RenderText(spriteBatch, data, 10, 0 * MenuFont.GlyphHeight + 10, 1, Color.White);
 
         b = _viewport.VerticalBoundaryBehaviour;
-        data = $"V: vpC:{b.ViewPortCoordinate}, vpD: {b.ViewPortDimension}, sC: {b.ScreenCoordinate}, sD: {b.ScreenDimension}, " +
-               $"mvpC{b.MouseViewPortCoordinate}, msC: {b.MouseScreenCoordinate}, lD: {b.LevelDimension}";
+        data = $"V: vpC:{b.ViewPortStart}, vpD: {b.ViewPortLength}, sC: {b.ScreenStart}, sD: {b.ScreenLength}, " +
+               $"mvpC{b.MouseViewPortCoordinate}, msC: {b.MouseScreenCoordinate}, lD: {b.LevelLength}";
         FontBank.MenuFont.RenderText(spriteBatch, data, 10, 1 * MenuFont.GlyphHeight + 20, 1, Color.White);
+        */
     }
 
     private RenderTarget2D GetLevelRenderTarget2D()
     {
         return new RenderTarget2D(
             _graphicsDevice,
-            _viewport.HorizontalBoundaryBehaviour.LevelDimension,
-            _viewport.VerticalBoundaryBehaviour.LevelDimension,
+            _viewport.HorizontalBoundaryBehaviour.LevelLength,
+            _viewport.VerticalBoundaryBehaviour.LevelLength,
             false,
             _graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24);

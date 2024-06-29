@@ -10,6 +10,7 @@ public sealed class VaporiserAction : LemmingAction
         : base(
             LevelConstants.VaporiserActionId,
             LevelConstants.VaporiserActionName,
+            LevelConstants.VaporiserActionSpriteFileName,
             LevelConstants.VaporiserAnimationFrames,
             LevelConstants.MaxVaporizerPhysicsFrames,
             LevelConstants.NoPriority,

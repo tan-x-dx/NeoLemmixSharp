@@ -12,6 +12,7 @@ public sealed class DehoisterAction : LemmingAction
         : base(
             LevelConstants.DehoisterActionId,
             LevelConstants.DehoisterActionName,
+            LevelConstants.DehoisterActionSpriteFileName,
             LevelConstants.DehoisterAnimationFrames,
             LevelConstants.MaxDehoisterPhysicsFrames,
             LevelConstants.NonWalkerMovementPriority,

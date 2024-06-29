@@ -10,6 +10,7 @@ public sealed class SplatterAction : LemmingAction
         : base(
             LevelConstants.SplatterActionId,
             LevelConstants.SplatterActionName,
+            LevelConstants.SplatterActionSpriteFileName,
             LevelConstants.SplatterAnimationFrames,
             LevelConstants.MaxSplatterPhysicsFrames,
             LevelConstants.NoPriority,

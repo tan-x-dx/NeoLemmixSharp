@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
-using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
@@ -19,19 +19,25 @@ public sealed class NxlvLevelReader : ILevelReader
     {
         var levelData = new LevelData();
 
+        var charEqualityComparer = new CaseInvariantCharEqualityComparer();
+
         var terrainArchetypes = new Dictionary<string, TerrainArchetypeData>();
 
+        var levelDataReader = new LevelDataReader(levelData);
+        var skillSetReader = new SkillSetReader(charEqualityComparer);
         var terrainGroupReader = new TerrainGroupReader(terrainArchetypes);
-        var gadgetReader = new GadgetReader();
+        var gadgetReader = new GadgetReader(charEqualityComparer);
+        var talismanReader = new TalismanReader(charEqualityComparer);
 
         var dataReaders = new INeoLemmixDataReader[]
         {
-            new LevelDataReader(levelData),
-            new SkillSetReader(levelData.SkillSetData),
+            levelDataReader,
+            skillSetReader,
             terrainGroupReader,
             new TerrainReader(terrainArchetypes, levelData.AllTerrainData),
             new LemmingReader(levelData.AllLemmingData),
             gadgetReader,
+            talismanReader,
             new NeoLemmixTextReader(levelData.PreTextLines, "$PRETEXT"),
             new NeoLemmixTextReader(levelData.PostTextLines, "$POSTTEXT"),
             new SketchReader(levelData.AllSketchData),
@@ -41,6 +47,7 @@ public sealed class NxlvLevelReader : ILevelReader
 
         dataReaderList.ReadFile(levelFilePath);
 
+        ProcessLevelData(levelData, levelDataReader, talismanReader, skillSetReader);
         ProcessTerrainData(levelData, terrainGroupReader, terrainArchetypes);
         ProcessGadgetData(levelData, graphicsDevice, gadgetReader);
         ProcessConfigData(levelData);
@@ -69,6 +76,39 @@ public sealed class NxlvLevelReader : ILevelReader
         return string.IsNullOrWhiteSpace(levelTitle)
             ? "Untitled"
             : levelTitle;
+    }
+
+    private static void ProcessLevelData(
+        LevelData levelData,
+        LevelDataReader levelDataReader,
+        TalismanReader talismanReader,
+        SkillSetReader skillSetReader)
+    {
+        var objectiveRequirementsList = new List<IObjectiveRequirement>
+        {
+            new SaveRequirement(levelDataReader.SaveRequirement)
+        };
+
+        if (levelDataReader.TimeLimitInSeconds.HasValue)
+        {
+            objectiveRequirementsList.Add(new TimeRequirement(levelDataReader.TimeLimitInSeconds.Value));
+        }
+
+        levelData.PrimaryLevelObjective = new LevelObjective(objectiveRequirementsList.ToArray(), skillSetReader.SkillSetData);
+
+        ProcessTalismans(levelData, talismanReader);
+    }
+
+    private static void ProcessTalismans(
+        LevelData levelData,
+        TalismanReader talismanReader)
+    {
+        levelData.SecondaryLevelObjectives.Capacity = talismanReader.TalismanData.Count;
+
+        foreach (var talismanDatum in talismanReader.TalismanData)
+        {
+            levelData.SecondaryLevelObjectives.Add(talismanDatum.ToLevelObjective(levelData));
+        }
     }
 
     private static void ProcessTerrainData(
@@ -200,7 +240,7 @@ public sealed class NxlvLevelReader : ILevelReader
         {
             totalNumberOfLemmings = Math.Max(lemmingCount, numberOfPrePlacedLemmings);
         }
-        
+
         lemmingData.Capacity = totalNumberOfLemmings;
         levelData.NumberOfLemmings = totalNumberOfLemmings;
 
