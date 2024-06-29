@@ -15,6 +15,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
         : base(
             LevelConstants.ExploderActionId,
             LevelConstants.ExploderActionName,
+            LevelConstants.ExploderActionSpriteFileName,
             LevelConstants.ExploderAnimationFrames,
             LevelConstants.MaxExploderPhysicsFrames,
             LevelConstants.NoPriority,

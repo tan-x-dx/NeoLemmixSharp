@@ -26,6 +26,7 @@ public static class DefaultLemmingSpriteBank
 #pragma warning disable IDE0039
         LemmingActionLayerRenderer.GetLemmingColor getLemmingHairColor = l => l.State.HairColor;
         LemmingActionLayerRenderer.GetLemmingColor getLemmingSkinColor = l => l.State.SkinColor;
+        LemmingActionLayerRenderer.GetLemmingColor getLemmingFootColor = _ => Color.Red;
         LemmingActionLayerRenderer.GetLemmingColor getLemmingBodyColor = l => l.State.BodyColor;
         LemmingActionLayerRenderer.GetLemmingColor getLemmingMiscColor = _ => Color.Magenta;
 #pragma warning restore IDE0039
@@ -36,40 +37,49 @@ public static class DefaultLemmingSpriteBank
 
         var actionSprites = new LemmingActionSprite[numberOfActionSprites];
 
-        CreateThreeLayerSprite(AscenderAction.Instance, new LevelPosition(2, 10));
-        CreateFourLayerSprite(BasherAction.Instance, new LevelPosition(8, 10));
-        CreateThreeLayerSprite(BlockerAction.Instance, new LevelPosition(5, 13));
-        CreateFiveLayerTrueColorSprite(BuilderAction.Instance, new LevelPosition(3, 13));
-        CreateThreeLayerSprite(ClimberAction.Instance, new LevelPosition(8, 12));
-        CreateThreeLayerSprite(DehoisterAction.Instance, new LevelPosition(5, 13));
-        CreateFourLayerSprite(DiggerAction.Instance, new LevelPosition(7, 12));
-        CreateFourLayerTrueColorSprite(DisarmerAction.Instance, new LevelPosition(1, 11));
-        CreateThreeLayerSprite(DrownerAction.Instance, new LevelPosition(5, 10));
-        CreateThreeLayerSprite(ExiterAction.Instance, new LevelPosition(2, 16));
+        CreateFourLayerSprite(AscenderAction.Instance, new LevelPosition(2, 10));
+        CreateFiveLayerSprite(BasherAction.Instance, new LevelPosition(8, 10));
+        CreateFourLayerSprite(BlockerAction.Instance, new LevelPosition(5, 13));
+        CreateSixLayerTrueColorSprite(BuilderAction.Instance, new LevelPosition(3, 13));
+        CreateFourLayerSprite(ClimberAction.Instance, new LevelPosition(8, 12));
+        CreateFourLayerSprite(DehoisterAction.Instance, new LevelPosition(5, 13));
+        CreateFiveLayerSprite(DiggerAction.Instance, new LevelPosition(7, 12));
+        CreateFiveLayerTrueColorSprite(DisarmerAction.Instance, new LevelPosition(1, 11));
+        CreateFourLayerSprite(DrownerAction.Instance, new LevelPosition(5, 10));
+        CreateFourLayerSprite(ExiterAction.Instance, new LevelPosition(2, 16));
         CreateOneLayerTrueColorSprite(ExploderAction.Instance, new LevelPosition(17, 21));
-        CreateThreeLayerSprite(FallerAction.Instance, new LevelPosition(3, 10));
-        CreateFiveLayerTrueColorSprite(FencerAction.Instance, new LevelPosition(3, 10));
-        CreateFourLayerTrueColorSprite(FloaterAction.Instance, new LevelPosition(4, 16));
-        CreateFourLayerTrueColorSprite(GliderAction.Instance, new LevelPosition(5, 16));
-        CreateThreeLayerSprite(HoisterAction.Instance, new LevelPosition(5, 12));
-        CreateThreeLayerSprite(JumperAction.Instance, new LevelPosition(2, 10));
-        CreateFourLayerTrueColorSprite(LasererAction.Instance, new LevelPosition(3, 10));
-        CreateFourLayerSprite(MinerAction.Instance, new LevelPosition(7, 13));
-        CreateThreeLayerSprite(OhNoerAction.Instance, new LevelPosition(3, 10));
-        CreateFiveLayerTrueColorSprite(PlatformerAction.Instance, new LevelPosition(3, 13));
-        CreateThreeLayerSprite(ReacherAction.Instance, new LevelPosition(3, 9));
-        CreateThreeLayerSprite(ShimmierAction.Instance, new LevelPosition(3, 8));
-        CreateThreeLayerSprite(ShruggerAction.Instance, new LevelPosition(3, 10));
-        CreateThreeLayerSprite(SliderAction.Instance, new LevelPosition(4, 11));
-        CreateThreeLayerSprite(SplatterAction.Instance, new LevelPosition(7, 10));
-        CreateFiveLayerTrueColorSprite(StackerAction.Instance, new LevelPosition(3, 13));
+        CreateFourLayerSprite(FallerAction.Instance, new LevelPosition(3, 10));
+        CreateSixLayerTrueColorSprite(FencerAction.Instance, new LevelPosition(3, 10));
+        CreateFiveLayerTrueColorSprite(FloaterAction.Instance, new LevelPosition(4, 16));
+        CreateFiveLayerTrueColorSprite(GliderAction.Instance, new LevelPosition(5, 16));
+        CreateFourLayerSprite(HoisterAction.Instance, new LevelPosition(5, 12));
+        CreateFourLayerSprite(JumperAction.Instance, new LevelPosition(2, 10));
+        CreateFiveLayerTrueColorSprite(LasererAction.Instance, new LevelPosition(3, 10));
+        CreateFiveLayerSprite(MinerAction.Instance, new LevelPosition(7, 13));
+        CreateFourLayerSprite(OhNoerAction.Instance, new LevelPosition(3, 10));
+        CreateSixLayerTrueColorSprite(PlatformerAction.Instance, new LevelPosition(3, 13));
+        CreateFourLayerSprite(ReacherAction.Instance, new LevelPosition(3, 9));
+        CreateFourLayerSprite(ShimmierAction.Instance, new LevelPosition(3, 8));
+        CreateFourLayerSprite(ShruggerAction.Instance, new LevelPosition(3, 10));
+        CreateFourLayerSprite(SliderAction.Instance, new LevelPosition(4, 11));
+        CreateFourLayerSprite(SplatterAction.Instance, new LevelPosition(7, 10));
+        CreateSixLayerTrueColorSprite(StackerAction.Instance, new LevelPosition(3, 13));
         CreateOneLayerTrueColorSprite(StonerAction.Instance, new LevelPosition(17, 21));
-        CreateThreeLayerSprite(SwimmerAction.Instance, new LevelPosition(6, 8));
-        CreateFourLayerTrueColorSprite(VaporiserAction.Instance, new LevelPosition(5, 14));
-        CreateThreeLayerSprite(WalkerAction.Instance, new LevelPosition(2, 10));
-        CreateThreeLayerSprite(RotateClockwiseAction.Instance, new LevelPosition(2, 10));
-        CreateThreeLayerSprite(RotateCounterclockwiseAction.Instance, new LevelPosition(2, 10));
-        CreateThreeLayerSprite(RotateHalfAction.Instance, new LevelPosition(2, 10));
+        CreateFourLayerSprite(SwimmerAction.Instance, new LevelPosition(6, 8));
+        CreateFiveLayerTrueColorSprite(VaporiserAction.Instance, new LevelPosition(5, 14));
+        CreateFourLayerSprite(WalkerAction.Instance, new LevelPosition(2, 10));
+        //CreateFourLayerSprite(RotateClockwiseAction.Instance, new LevelPosition(2, 10));
+        //CreateFourLayerSprite(RotateCounterclockwiseAction.Instance, new LevelPosition(2, 10));
+        //CreateFourLayerSprite(RotateHalfAction.Instance, new LevelPosition(2, 10));
+        CreateLemmingRotationSprites(
+            contentManager,
+            spriteRotationReflectionProcessor,
+            new Span<LemmingActionSprite>(actionSprites),
+
+            getLemmingHairColor,
+            getLemmingSkinColor,
+            getLemmingFootColor,
+            getLemmingBodyColor);
 
         var teamColorData = GenerateDefaultTeamColorData();
 
@@ -100,25 +110,6 @@ public static class DefaultLemmingSpriteBank
                 });
         }
 
-        void CreateThreeLayerSprite(LemmingAction action, LevelPosition levelPosition)
-        {
-            CreateSprite(
-                action,
-                3,
-                levelPosition,
-                (t, w, h, _, p) =>
-                {
-                    var layerRenderers = new LemmingActionLayerRenderer[]
-                    {
-                        new(t, 0, getLemmingHairColor),
-                        new(t, w, getLemmingSkinColor),
-                        new(t, w * 2, getLemmingBodyColor)
-                    };
-
-                    return new LemmingActionSprite(t, p, w, h, layerRenderers);
-                });
-        }
-
         void CreateFourLayerSprite(LemmingAction action, LevelPosition levelPosition)
         {
             CreateSprite(
@@ -131,28 +122,29 @@ public static class DefaultLemmingSpriteBank
                     {
                         new(t, 0, getLemmingHairColor),
                         new(t, w, getLemmingSkinColor),
-                        new(t, w * 2, getLemmingBodyColor),
-                        new(t, w * 3, getLemmingMiscColor)
+                        new(t, w * 2, getLemmingFootColor),
+                        new(t, w * 3, getLemmingBodyColor)
                     };
 
                     return new LemmingActionSprite(t, p, w, h, layerRenderers);
                 });
         }
 
-        void CreateFourLayerTrueColorSprite(LemmingAction action, LevelPosition levelPosition)
+        void CreateFiveLayerSprite(LemmingAction action, LevelPosition levelPosition)
         {
             CreateSprite(
                 action,
-                4,
+                5,
                 levelPosition,
                 (t, w, h, _, p) =>
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t),
-                        new(t, w, getLemmingHairColor),
-                        new(t, w * 2, getLemmingSkinColor),
-                        new(t, w * 3, getLemmingBodyColor)
+                        new(t, 0, getLemmingHairColor),
+                        new(t, w, getLemmingSkinColor),
+                        new(t, w * 2, getLemmingFootColor),
+                        new(t, w * 3, getLemmingBodyColor),
+                        new(t, w * 4, getLemmingMiscColor)
                     };
 
                     return new LemmingActionSprite(t, p, w, h, layerRenderers);
@@ -172,8 +164,30 @@ public static class DefaultLemmingSpriteBank
                         new(t),
                         new(t, w, getLemmingHairColor),
                         new(t, w * 2, getLemmingSkinColor),
-                        new(t, w * 3, getLemmingBodyColor),
-                        new(t, w * 4, getLemmingMiscColor)
+                        new(t, w * 3, getLemmingFootColor),
+                        new(t, w * 4, getLemmingBodyColor)
+                    };
+
+                    return new LemmingActionSprite(t, p, w, h, layerRenderers);
+                });
+        }
+
+        void CreateSixLayerTrueColorSprite(LemmingAction action, LevelPosition levelPosition)
+        {
+            CreateSprite(
+                action,
+                6,
+                levelPosition,
+                (t, w, h, _, p) =>
+                {
+                    var layerRenderers = new LemmingActionLayerRenderer[]
+                    {
+                        new(t),
+                        new(t, w, getLemmingHairColor),
+                        new(t, w * 2, getLemmingSkinColor),
+                        new(t, w * 3, getLemmingFootColor),
+                        new(t, w * 4, getLemmingBodyColor),
+                        new(t, w * 5, getLemmingMiscColor)
                     };
 
                     return new LemmingActionSprite(t, p, w, h, layerRenderers);
@@ -206,12 +220,25 @@ public static class DefaultLemmingSpriteBank
         LevelPosition levelPosition,
         ActionSpriteCreator.ItemCreator itemCreator)
     {
-        using var texture = contentManager.Load<Texture2D>($"sprites/lemming/{action.LemmingActionName}");
+        var spritesTemp = CreateSpriteTypesArray(contentManager, spriteRotationReflectionProcessor, action, numberOfLayers, levelPosition, itemCreator);
+
+        RegisterSprites(actionSprites, action, spritesTemp);
+    }
+
+    private static LemmingActionSprite[] CreateSpriteTypesArray(
+        ContentManager contentManager,
+        ActionSpriteCreator spriteRotationReflectionProcessor,
+        LemmingAction action,
+        int numberOfLayers,
+        LevelPosition levelPosition,
+        ActionSpriteCreator.ItemCreator itemCreator)
+    {
+        using var texture = contentManager.Load<Texture2D>($"sprites/lemming/{action.LemmingActionSpriteFileName}");
 
         var spriteWidth = texture.Width / numberOfLayers;
         var spriteHeight = texture.Height / action.NumberOfAnimationFrames;
 
-        var spritesTemp = spriteRotationReflectionProcessor.CreateAllSpriteTypes(
+        return spriteRotationReflectionProcessor.CreateAllSpriteTypes(
             texture,
             spriteWidth,
             spriteHeight,
@@ -219,18 +246,24 @@ public static class DefaultLemmingSpriteBank
             numberOfLayers,
             levelPosition,
             itemCreator);
+    }
 
+    private static void RegisterSprites(
+        Span<LemmingActionSprite> actionSprites,
+        LemmingAction action,
+        LemmingActionSprite[] spriteTypes)
+    {
         foreach (var orientation in Orientation.AllItems)
         {
             var k0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.RightInstance);
             var k1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.RightInstance);
 
-            actionSprites[k1] = spritesTemp[k0];
+            actionSprites[k1] = spriteTypes[k0];
 
             k0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.LeftInstance);
             k1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.LeftInstance);
 
-            actionSprites[k1] = spritesTemp[k0];
+            actionSprites[k1] = spriteTypes[k0];
         }
     }
 
@@ -327,5 +360,67 @@ public static class DefaultLemmingSpriteBank
         };
 
         return result;
+    }
+
+    private static void CreateLemmingRotationSprites(
+        ContentManager contentManager,
+        ActionSpriteCreator spriteRotationReflectionProcessor,
+        Span<LemmingActionSprite> actionSprites,
+        LemmingActionLayerRenderer.GetLemmingColor getLemmingHairColor,
+        LemmingActionLayerRenderer.GetLemmingColor getLemmingSkinColor,
+        LemmingActionLayerRenderer.GetLemmingColor getLemmingFootColor,
+        LemmingActionLayerRenderer.GetLemmingColor getLemmingBodyColor)
+    {
+        var rotateClockwiseSprites = CreateSpriteTypesArray(
+            contentManager,
+            spriteRotationReflectionProcessor,
+            RotateClockwiseAction.Instance,
+            3,
+            new LevelPosition(2, 10),
+            ItemCreator);
+
+        var rotateCounterclockwiseSprites = CreateSpriteTypesArray(
+            contentManager,
+            spriteRotationReflectionProcessor,
+            RotateCounterclockwiseAction.Instance,
+            3,
+            new LevelPosition(2, 10),
+            ItemCreator);
+
+        var rotateHalfSprites = CreateSpriteTypesArray(
+            contentManager,
+            spriteRotationReflectionProcessor,
+            RotateHalfAction.Instance,
+            3,
+            new LevelPosition(2, 10),
+            ItemCreator);
+
+        foreach (var orientation in Orientation.AllItems)
+        {
+            var rotateCwRightK0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.RightInstance);
+            var rotateCwLeftK1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.RightInstance);
+
+            actionSprites[rotateCwLeftK1] = spriteTypes[rotateCwRightK0];
+
+            rotateCwRightK0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.LeftInstance);
+            rotateCwLeftK1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.LeftInstance);
+
+            actionSprites[rotateCwLeftK1] = spriteTypes[rotateCwRightK0];
+        }
+
+        return;
+
+        LemmingActionSprite ItemCreator(Texture2D t, int w, int h, int _, LevelPosition p)
+        {
+            var layerRenderers = new LemmingActionLayerRenderer[]
+            {
+                new(t, 0, getLemmingHairColor),
+                new(t, w, getLemmingSkinColor),
+                new(t, w * 2, getLemmingFootColor),
+                new(t, w * 3, getLemmingBodyColor)
+            };
+
+            return new LemmingActionSprite(t, p, w, h, layerRenderers);
+        }
     }
 }

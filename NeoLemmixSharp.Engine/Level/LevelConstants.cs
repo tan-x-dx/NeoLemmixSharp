@@ -125,171 +125,205 @@ public static class LevelConstants
     public const string NoneActionName = "None";
 
     public const string AscenderActionName = "Ascender";
+    public const string AscenderActionSpriteFileName = "ascender";
     public const int AscenderActionId = 18;
     public const int AscenderAnimationFrames = 1;
     public const int MaxAscenderPhysicsFrames = 1;
 
     public const string BasherActionName = "Basher";
+    public const string BasherActionSpriteFileName = "basher";
     public const int BasherActionId = 5;
     public const int BasherAnimationFrames = 32;
     public const int MaxBasherPhysicsFrames = 16;
 
     public const string BlockerActionName = "Blocker";
+    public const string BlockerActionSpriteFileName = "blocker";
     public const int BlockerActionId = 3;
     public const int BlockerAnimationFrames = 16;
     public const int MaxBlockerPhysicsFrames = 16;
 
     public const string BuilderActionName = "Builder";
+    public const string BuilderActionSpriteFileName = "builder";
     public const int BuilderActionId = 4;
     public const int BuilderAnimationFrames = 16;
     public const int MaxBuilderPhysicsFrames = 16;
 
     public const string ClimberActionName = "Climber";
+    public const string ClimberActionSpriteFileName = "climber";
     public const int ClimberActionId = 1;
     public const int ClimberAnimationFrames = 8;
     public const int MaxClimberPhysicsFrames = 8;
 
     public const string DehoisterActionName = "Dehoister";
+    public const string DehoisterActionSpriteFileName = "dehoister";
     public const int DehoisterActionId = 22;
     public const int DehoisterAnimationFrames = 7;
     public const int MaxDehoisterPhysicsFrames = 7;
 
     public const string DiggerActionName = "Digger";
+    public const string DiggerActionSpriteFileName = "digger";
     public const int DiggerActionId = 7;
     public const int DiggerAnimationFrames = 16;
     public const int MaxDiggerPhysicsFrames = 16;
 
     public const string DisarmerActionName = "Disarmer";
+    public const string DisarmerActionSpriteFileName = "disarmer";
     public const int DisarmerActionId = 24;
     public const int DisarmerAnimationFrames = 16;
     public const int MaxDisarmerPhysicsFrames = 16;
 
     public const string DrownerActionName = "Drowner";
+    public const string DrownerActionSpriteFileName = "drowner";
     public const int DrownerActionId = 20;
     public const int DrownerAnimationFrames = 16;
     public const int MaxDrownerPhysicsFrames = 16;
 
     public const string ExiterActionName = "Exiter";
+    public const string ExiterActionSpriteFileName = "exiter";
     public const int ExiterActionId = 25;
     public const int ExiterAnimationFrames = 8;
     public const int MaxExiterPhysicsFrames = 8;
 
     public const string ExploderActionName = "Bomber";
+    public const string ExploderActionSpriteFileName = "exploder";
     public const int ExploderActionId = 26;
     public const int ExploderAnimationFrames = 1;
     public const int MaxExploderPhysicsFrames = 1;
 
     public const string FallerActionName = "Faller";
+    public const string FallerActionSpriteFileName = "faller";
     public const int FallerActionId = 17;
     public const int FallerAnimationFrames = 4;
     public const int MaxFallerPhysicsFrames = 4;
 
     public const string FencerActionName = "Fencer";
+    public const string FencerActionSpriteFileName = "fencer";
     public const int FencerActionId = 10;
     public const int FencerAnimationFrames = 16;
     public const int MaxFencerPhysicsFrames = 16;
 
     public const string FloaterActionName = "Floater";
+    public const string FloaterActionSpriteFileName = "floater";
     public const int FloaterActionId = 2;
     public const int FloaterAnimationFrames = 17;
     public const int MaxFloaterPhysicsFrames = 17;
 
     public const string GliderActionName = "Glider";
+    public const string GliderActionSpriteFileName = "glider";
     public const int GliderActionId = 11;
     public const int GliderAnimationFrames = 17;
     public const int MaxGliderPhysicsFrames = 17;
 
     public const string HoisterActionName = "Hoister";
+    public const string HoisterActionSpriteFileName = "hoister";
     public const int HoisterActionId = 21;
     public const int HoisterAnimationFrames = 8;
     public const int MaxHoisterPhysicsFrames = 8;
 
     public const string JumperActionName = "Jumper";
+    public const string JumperActionSpriteFileName = "jumper";
     public const int JumperActionId = 12;
     public const int JumperAnimationFrames = 3;
     public const int MaxJumperPhysicsFrames = 13;
 
     public const string LasererActionName = "Laserer";
+    public const string LasererActionSpriteFileName = "laserer";
     public const int LasererActionId = 15;
     public const int LasererAnimationFrames = 1;
     public const int MaxLasererPhysicsFrames = 12; // It's, ironically, this high for rendering purposes 
 
     public const string MinerActionName = "Miner";
+    public const string MinerActionSpriteFileName = "miner";
     public const int MinerActionId = 6;
     public const int MinerAnimationFrames = 24;
     public const int MaxMinerPhysicsFrames = 24;
 
-    public const string OhNoerActionName = "OhNoer";
+    public const string OhNoerActionName = "Oh Noer";
+    public const string OhNoerActionSpriteFileName = "ohnoer";
     public const int OhNoerActionId = 27;
     public const int OhNoerAnimationFrames = 16;
     public const int MaxOhNoerPhysicsFrames = 16;
 
     public const string PlatformerActionName = "Platformer";
+    public const string PlatformerActionSpriteFileName = "platformer";
     public const int PlatformerActionId = 8;
     public const int PlatformerAnimationFrames = 16;
     public const int MaxPlatformerPhysicsFrames = 16;
 
     public const string ReacherActionName = "Reacher";
+    public const string ReacherActionSpriteFileName = "reacher";
     public const int ReacherActionId = 23;
     public const int ReacherAnimationFrames = 6;
     public const int MaxReacherPhysicsFrames = 8;
 
-    public const string RotateClockwiseActionName = WalkerActionName;// "Rotate Clockwise";
+    public const string RotateClockwiseActionName = "Rotator";
+    public const string RotateClockwiseActionSpriteFileName = "rotate90_cw";
     public const int RotateClockwiseActionId = 31;
-    public const int RotateClockwiseAnimationFrames = 8;
-    public const int MaxRotateClockwisePhysicsFrames = 8;
+    public const int RotateClockwiseAnimationFrames = 9;
+    public const int MaxRotateClockwisePhysicsFrames = 9;
 
-    public const string RotateCounterclockwiseActionName = WalkerActionName;//"Rotate Counterclockwise";
+    public const string RotateCounterclockwiseActionName = "Rotator";
+    public const string RotateCounterclockwiseActionSpriteFileName = "rotate_90ccw";
     public const int RotateCounterclockwiseActionId = 32;
-    public const int RotateCounterclockwiseAnimationFrames = 8;
-    public const int MaxRotateCounterclockwisePhysicsFrames = 8;
+    public const int RotateCounterclockwiseAnimationFrames = 9;
+    public const int MaxRotateCounterclockwisePhysicsFrames = 9;
 
-    public const string RotateHalfActionName = WalkerActionName;//"Rotate Half";
+    public const string RotateHalfActionName = "Rotator";
+    public const string RotateHalfActionSpriteFileName = "rotate180_cw";
     public const int RotateHalfActionId = 33;
-    public const int RotateHalfAnimationFrames = 8;
-    public const int MaxRotateHalfPhysicsFrames = 8;
+    public const int RotateHalfAnimationFrames = 15;
+    public const int MaxRotateHalfPhysicsFrames = 15;
 
     public const string ShimmierActionName = "Shimmier";
+    public const string ShimmierActionSpriteFileName = "shimmier";
     public const int ShimmierActionId = 14;
     public const int ShimmierAnimationFrames = 20;
     public const int MaxShimmierPhysicsFrames = 20;
 
     public const string ShruggerActionName = "Shrugger";
+    public const string ShruggerActionSpriteFileName = "shrugger";
     public const int ShruggerActionId = 19;
     public const int ShruggerAnimationFrames = 8;
     public const int MaxShruggerPhysicsFrames = 8;
 
     public const string SliderActionName = "Slider";
+    public const string SliderActionSpriteFileName = "slider";
     public const int SliderActionId = 16;
     public const int SliderAnimationFrames = 3;
     public const int MaxSliderPhysicsFrames = 1;
 
     public const string SplatterActionName = "Splatter";
+    public const string SplatterActionSpriteFileName = "splatter";
     public const int SplatterActionId = 28;
     public const int SplatterAnimationFrames = 16;
     public const int MaxSplatterPhysicsFrames = 16;
 
     public const string StackerActionName = "Stacker";
+    public const string StackerActionSpriteFileName = "stacker";
     public const int StackerActionId = 9;
     public const int StackerAnimationFrames = 8;
     public const int MaxStackerPhysicsFrames = 8;
 
     public const string StonerActionName = "Stoner";
+    public const string StonerActionSpriteFileName = "stoner";
     public const int StonerActionId = 29;
     public const int StonerAnimationFrames = 1;
     public const int MaxStonerPhysicsFrames = 1;
 
     public const string SwimmerActionName = "Swimmer";
+    public const string SwimmerActionSpriteFileName = "swimmer";
     public const int SwimmerActionId = 13;
     public const int SwimmerAnimationFrames = 8;
     public const int MaxSwimmerPhysicsFrames = 8;
 
     public const string VaporiserActionName = "Vaporiser";
+    public const string VaporiserActionSpriteFileName = "vaporiser";
     public const int VaporiserActionId = 30;
     public const int VaporiserAnimationFrames = 16;
     public const int MaxVaporizerPhysicsFrames = 14;
 
     public const string WalkerActionName = "Walker";
+    public const string WalkerActionSpriteFileName = "walker";
     public const int WalkerActionId = 0;
     public const int WalkerAnimationFrames = 8;
     public const int MaxWalkerPhysicsFrames = 4;

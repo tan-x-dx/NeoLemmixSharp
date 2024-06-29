@@ -13,6 +13,7 @@ public sealed class GliderAction : LemmingAction
         : base(
             LevelConstants.GliderActionId,
             LevelConstants.GliderActionName,
+            LevelConstants.GliderActionSpriteFileName,
             LevelConstants.GliderAnimationFrames,
             LevelConstants.MaxGliderPhysicsFrames,
             LevelConstants.PermanentSkillPriority,

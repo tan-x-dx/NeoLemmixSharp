@@ -11,6 +11,7 @@ public sealed class ShimmierAction : LemmingAction
         : base(
             LevelConstants.ShimmierActionId,
             LevelConstants.ShimmierActionName,
+            LevelConstants.ShimmierActionSpriteFileName,
             LevelConstants.ShimmierAnimationFrames,
             LevelConstants.MaxShimmierPhysicsFrames,
             LevelConstants.NonWalkerMovementPriority,

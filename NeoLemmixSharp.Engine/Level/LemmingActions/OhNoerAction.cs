@@ -10,6 +10,7 @@ public sealed class OhNoerAction : LemmingAction
         : base(
             LevelConstants.OhNoerActionId,
             LevelConstants.OhNoerActionName,
+            LevelConstants.OhNoerActionSpriteFileName,
             LevelConstants.OhNoerAnimationFrames,
             LevelConstants.MaxOhNoerPhysicsFrames,
             LevelConstants.NonWalkerMovementPriority,

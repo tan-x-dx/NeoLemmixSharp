@@ -14,6 +14,7 @@ public sealed class FallerAction : LemmingAction
         : base(
             LevelConstants.FallerActionId,
             LevelConstants.FallerActionName,
+            LevelConstants.FallerActionSpriteFileName,
             LevelConstants.FallerAnimationFrames,
             LevelConstants.MaxFallerPhysicsFrames,
             LevelConstants.NonWalkerMovementPriority,

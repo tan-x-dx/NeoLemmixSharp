@@ -10,6 +10,7 @@ public sealed class WalkerAction : LemmingAction
         : base(
             LevelConstants.WalkerActionId,
             LevelConstants.WalkerActionName,
+            LevelConstants.WalkerActionSpriteFileName,
             LevelConstants.WalkerAnimationFrames,
             LevelConstants.MaxWalkerPhysicsFrames,
             LevelConstants.WalkerMovementPriority,

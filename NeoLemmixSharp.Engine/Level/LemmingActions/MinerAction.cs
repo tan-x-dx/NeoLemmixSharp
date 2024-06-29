@@ -16,6 +16,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         : base(
             LevelConstants.MinerActionId,
             LevelConstants.MinerActionName,
+            LevelConstants.MinerActionSpriteFileName,
             LevelConstants.MinerAnimationFrames,
             LevelConstants.MaxMinerPhysicsFrames,
             LevelConstants.NonPermanentSkillPriority,

@@ -10,6 +10,7 @@ public sealed class ShruggerAction : LemmingAction
         : base(
             LevelConstants.ShruggerActionId,
             LevelConstants.ShruggerActionName,
+            LevelConstants.ShruggerActionSpriteFileName,
             LevelConstants.ShruggerAnimationFrames,
             LevelConstants.MaxShruggerPhysicsFrames,
             LevelConstants.NonWalkerMovementPriority,

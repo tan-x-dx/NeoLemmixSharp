@@ -12,6 +12,7 @@ public sealed class StackerAction : LemmingAction
         : base(
             LevelConstants.StackerActionId,
             LevelConstants.StackerActionName,
+            LevelConstants.StackerActionSpriteFileName,
             LevelConstants.StackerAnimationFrames,
             LevelConstants.MaxStackerPhysicsFrames,
             LevelConstants.NonPermanentSkillPriority,

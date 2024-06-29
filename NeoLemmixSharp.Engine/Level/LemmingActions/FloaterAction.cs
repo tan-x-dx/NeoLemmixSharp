@@ -12,6 +12,7 @@ public sealed class FloaterAction : LemmingAction
         : base(
             LevelConstants.FloaterActionId,
             LevelConstants.FloaterActionName,
+            LevelConstants.FloaterActionSpriteFileName,
             LevelConstants.FloaterAnimationFrames,
             LevelConstants.MaxFloaterPhysicsFrames,
             LevelConstants.PermanentSkillPriority,

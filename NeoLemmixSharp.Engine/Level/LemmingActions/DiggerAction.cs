@@ -1,7 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
@@ -18,6 +16,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         : base(
             LevelConstants.DiggerActionId,
             LevelConstants.DiggerActionName,
+            LevelConstants.DiggerActionSpriteFileName,
             LevelConstants.DiggerAnimationFrames,
             LevelConstants.MaxDiggerPhysicsFrames,
             LevelConstants.NonPermanentSkillPriority,

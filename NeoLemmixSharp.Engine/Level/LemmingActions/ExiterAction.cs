@@ -10,6 +10,7 @@ public sealed class ExiterAction : LemmingAction
         : base(
             LevelConstants.ExiterActionId,
             LevelConstants.ExiterActionName,
+            LevelConstants.ExiterActionSpriteFileName,
             LevelConstants.ExiterAnimationFrames,
             LevelConstants.MaxExiterPhysicsFrames,
             LevelConstants.NoPriority,
