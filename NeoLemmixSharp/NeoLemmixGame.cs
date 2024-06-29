@@ -64,7 +64,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
         IGameWindow.Instance = this;
 
-        ToggleFullscreen();
+        ToggleBorderless();
     }
 
     private void WindowOnClientSizeChanged(object? sender, EventArgs e)
