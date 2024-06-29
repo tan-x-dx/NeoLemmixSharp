@@ -26,7 +26,7 @@ public static class DefaultLemmingSpriteBank
 #pragma warning disable IDE0039
         LemmingActionLayerRenderer.GetLemmingColor getLemmingHairColor = l => l.State.HairColor;
         LemmingActionLayerRenderer.GetLemmingColor getLemmingSkinColor = l => l.State.SkinColor;
-        LemmingActionLayerRenderer.GetLemmingColor getLemmingFootColor = _ => Color.Red;
+        LemmingActionLayerRenderer.GetLemmingColor getLemmingFootColor = l => l.State.FootColor;
         LemmingActionLayerRenderer.GetLemmingColor getLemmingBodyColor = l => l.State.BodyColor;
         LemmingActionLayerRenderer.GetLemmingColor getLemmingMiscColor = _ => Color.Magenta;
 #pragma warning restore IDE0039
@@ -272,6 +272,8 @@ public static class DefaultLemmingSpriteBank
         var result = new TeamColorData[LevelConstants.NumberOfTeams];
 
         var defaultSkinColor = new Color(0xF0, 0xD0, 0xD0);
+        var defaultAcidLemmingFootColor = new Color(0x00, 0xF0, 0x00);
+        var defaultWaterLemmingFootColor = new Color(0x00, 0xF0, 0xF0);
         var defaultZombieSkinColor = new Color(0x77, 0x77, 0x77);
         var defaultNeutralBodyColor = new Color(0x99, 0x99, 0x99);
 
@@ -298,6 +300,8 @@ public static class DefaultLemmingSpriteBank
             HairColor = team0HairColor,
             PermanentSkillHairColor = team0BodyColor,
             SkinColor = defaultSkinColor,
+            AcidLemmingFootColor = defaultAcidLemmingFootColor,
+            WaterLemmingFootColor = defaultWaterLemmingFootColor,
             ZombieSkinColor = defaultZombieSkinColor,
             BodyColor = team0BodyColor,
             PermanentSkillBodyColor = team0HairColor,
@@ -309,6 +313,8 @@ public static class DefaultLemmingSpriteBank
             HairColor = team1HairColor,
             PermanentSkillHairColor = team1BodyColor,
             SkinColor = defaultSkinColor,
+            AcidLemmingFootColor = defaultAcidLemmingFootColor,
+            WaterLemmingFootColor = defaultWaterLemmingFootColor,
             ZombieSkinColor = defaultZombieSkinColor,
             BodyColor = team1BodyColor,
             PermanentSkillBodyColor = team1HairColor,
@@ -320,6 +326,8 @@ public static class DefaultLemmingSpriteBank
             HairColor = team2HairColor,
             PermanentSkillHairColor = team2BodyColor,
             SkinColor = defaultSkinColor,
+            AcidLemmingFootColor = defaultAcidLemmingFootColor,
+            WaterLemmingFootColor = defaultWaterLemmingFootColor,
             ZombieSkinColor = defaultZombieSkinColor,
             BodyColor = team2BodyColor,
             PermanentSkillBodyColor = team2HairColor,
@@ -331,6 +339,8 @@ public static class DefaultLemmingSpriteBank
             HairColor = team3HairColor,
             PermanentSkillHairColor = team3BodyColor,
             SkinColor = defaultSkinColor,
+            AcidLemmingFootColor = defaultAcidLemmingFootColor,
+            WaterLemmingFootColor = defaultWaterLemmingFootColor,
             ZombieSkinColor = defaultZombieSkinColor,
             BodyColor = team3BodyColor,
             PermanentSkillBodyColor = team3HairColor,
@@ -342,6 +352,8 @@ public static class DefaultLemmingSpriteBank
             HairColor = team4HairColor,
             PermanentSkillHairColor = team4BodyColor,
             SkinColor = defaultSkinColor,
+            AcidLemmingFootColor = defaultAcidLemmingFootColor,
+            WaterLemmingFootColor = defaultWaterLemmingFootColor,
             ZombieSkinColor = defaultZombieSkinColor,
             BodyColor = team4BodyColor,
             PermanentSkillBodyColor = team4HairColor,
@@ -353,6 +365,8 @@ public static class DefaultLemmingSpriteBank
             HairColor = team5HairColor,
             PermanentSkillHairColor = team5BodyColor,
             SkinColor = defaultSkinColor,
+            AcidLemmingFootColor = defaultAcidLemmingFootColor,
+            WaterLemmingFootColor = defaultWaterLemmingFootColor,
             ZombieSkinColor = defaultZombieSkinColor,
             BodyColor = team5BodyColor,
             PermanentSkillBodyColor = team5HairColor,

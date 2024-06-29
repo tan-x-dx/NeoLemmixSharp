@@ -334,6 +334,9 @@ public static class LevelConstants
 
     public const string NoneSkillName = "None";
 
+    public const string AcidLemmingSkillName = "Acid Lemming";
+    public const int AcidLemmingSkillId = 28;
+
     public const string BasherSkillName = "Basher";
     public const int BasherSkillId = 5;
 
@@ -418,6 +421,8 @@ public static class LevelConstants
     public const string WalkerSkillName = "Walker";
     public const int WalkerSkillId = 8;
 
+    public const string WaterLemmingSkillName = "Water Lemming";
+    public const int WaterLemmingSkillId = 29;
 
     #endregion
 
