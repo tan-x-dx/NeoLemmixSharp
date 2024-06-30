@@ -24,10 +24,14 @@ public sealed class AcidLemmingSkill : LemmingSkill
     public override void AssignToLemming(Lemming lemming)
     {
         lemming.State.IsAcidLemming = true;
+        if (lemming.CurrentAction == DrownerAction.Instance)
+        {
+            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+        }
     }
 
     protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
     {
-        return ActionsThatCanBeAssignedPermanentSkill().Where(a => a != SwimmerAction.Instance);
+        return ActionsThatCanBeAssignedPermanentSkill();
     }
 }
