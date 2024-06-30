@@ -205,7 +205,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
         {
             GadgetArchetypeId = GadgetArchetypes.Count - 1,
             Style = _currentStyle!,
-            Gadget = gadgetPiece
+            GadgetPiece = gadgetPiece
         };
 
         ProcessGadgetArchetypeData(gadgetArchetypeData);
@@ -224,7 +224,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
         var dataReaderList = new DataReaderList(dataReaders);
 
-        var rootFilePath = Path.Combine(_currentFolder!, gadgetArchetypeData.Gadget!);
+        var rootFilePath = Path.Combine(_currentFolder!, gadgetArchetypeData.GadgetPiece!);
         rootFilePath = Path.ChangeExtension(rootFilePath, NeoLemmixFileExtensions.GadgetFileExtension);
 
         dataReaderList.ReadFile(rootFilePath);

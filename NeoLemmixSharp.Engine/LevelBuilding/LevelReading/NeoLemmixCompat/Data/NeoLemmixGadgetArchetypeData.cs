@@ -8,7 +8,7 @@ public sealed class NeoLemmixGadgetArchetypeData
     public required int GadgetArchetypeId { get; init; }
 
     public required string Style { get; init; }
-    public required string Gadget { get; init; }
+    public required string GadgetPiece { get; init; }
 
     public NeoLemmixGadgetBehaviour Behaviour { get; set; }
 

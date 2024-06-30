@@ -11,6 +11,8 @@ public sealed class GadgetData
     private readonly SimpleDictionary<GadgetProperty, int> _properties = GadgetPropertyHelpers.CreateSimpleIntDictionary();
 
     public required int Id { get; init; }
+    public required string Style { get; init; }
+    public required string GadgetPiece { get; init; }
     public required int GadgetBuilderId { get; init; }
     public required int X { get; init; }
     public required int Y { get; init; }
