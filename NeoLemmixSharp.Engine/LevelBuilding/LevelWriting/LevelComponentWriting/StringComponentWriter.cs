@@ -3,16 +3,9 @@ using System.Text;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public readonly ref struct StringComponentWriter
+public static class StringComponentWriter
 {
     private const int StringBufferSize = 1024;
-
-    private readonly Dictionary<string, ushort> _stringIdLookup;
-
-    public StringComponentWriter(Dictionary<string, ushort> stringIdLookup)
-    {
-        _stringIdLookup = stringIdLookup;
-    }
 
     private static ReadOnlySpan<byte> GetSectionIdentifier()
     {
@@ -20,23 +13,28 @@ public readonly ref struct StringComponentWriter
         return sectionIdentifier;
     }
 
-    private ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    private static ushort CalculateNumberOfItemsInSection(
+        Dictionary<string, ushort> stringIdLookup,
+        LevelData levelData)
     {
-        GenerateStringIdLookup(levelData);
+        GenerateStringIdLookup(stringIdLookup, levelData);
 
-        return (ushort)_stringIdLookup.Count;
+        return (ushort)stringIdLookup.Count;
     }
 
-    public void WriteSection(BinaryWriter writer, LevelData levelData)
+    public static void WriteSection(
+        BinaryWriter writer,
+        Dictionary<string, ushort> stringIdLookup,
+        LevelData levelData)
     {
         writer.Write(GetSectionIdentifier());
-        writer.Write(CalculateNumberOfItemsInSection(levelData));
+        writer.Write(CalculateNumberOfItemsInSection(stringIdLookup, levelData));
 
         Span<byte> buffer = new byte[StringBufferSize];
 
         var utf8Encoding = Encoding.UTF8;
 
-        foreach (var (stringToWrite, id) in _stringIdLookup.OrderBy(kvp => kvp.Value))
+        foreach (var (stringToWrite, id) in stringIdLookup.OrderBy(kvp => kvp.Value))
         {
             writer.Write(id);
 
@@ -47,12 +45,14 @@ public readonly ref struct StringComponentWriter
         }
     }
 
-    private void GenerateStringIdLookup(LevelData levelData)
+    private static void GenerateStringIdLookup(
+        Dictionary<string, ushort> stringIdLookup,
+        LevelData levelData)
     {
         TryAdd(levelData.LevelTitle);
         TryAdd(levelData.LevelAuthor);
 
-        HandleBackgroundString(levelData);
+        HandleBackgroundString();
 
         foreach (var text in levelData.PreTextLines)
         {
@@ -81,24 +81,25 @@ public readonly ref struct StringComponentWriter
             TryAdd(gadgetData.GadgetPiece);
         }
 
-    }
+        return;
 
-    private void TryAdd(string s)
-    {
-        if (string.IsNullOrEmpty(s))
-            return;
+        void TryAdd(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+                return;
 
-        // Add 1 to ensure ids start at 1, therefore can use value of zero as "Not found"
-        _stringIdLookup.TryAdd(s, (ushort)(1 + _stringIdLookup.Count));
-    }
+            // Add 1 to ensure ids start at 1, therefore can use value of zero as "Not found"
+            stringIdLookup.TryAdd(s, (ushort)(1 + stringIdLookup.Count));
+        }
 
-    private void HandleBackgroundString(LevelData levelData)
-    {
-        var backgroundData = levelData.LevelBackground;
+        void HandleBackgroundString()
+        {
+            var backgroundData = levelData.LevelBackground;
 
-        if (backgroundData is null || backgroundData.IsSolidColor)
-            return;
+            if (backgroundData is null || backgroundData.IsSolidColor)
+                return;
 
-        TryAdd(backgroundData.BackgroundImageName);
+            TryAdd(backgroundData.BackgroundImageName);
+        }
     }
 }

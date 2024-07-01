@@ -3,17 +3,10 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public readonly ref struct LevelObjectiveComponentWriter
+public static class LevelObjectiveComponentWriter
 {
     private const int NumberOfBytesPerSkillSetDatum = 3;
     private const int NumberOfBytesPerRequirementsDatum = 4;
-
-    private readonly Dictionary<string, ushort> _stringIdLookup;
-
-    public LevelObjectiveComponentWriter(Dictionary<string, ushort> stringIdLookup)
-    {
-        _stringIdLookup = stringIdLookup;
-    }
 
     private static ReadOnlySpan<byte> GetSectionIdentifier()
     {
@@ -26,23 +19,29 @@ public readonly ref struct LevelObjectiveComponentWriter
         return (ushort)(1 + levelData.LevelObjectives.Count);
     }
 
-    public void WriteSection(BinaryWriter writer, LevelData levelData)
+    public static void WriteSection(
+        BinaryWriter writer,
+        Dictionary<string, ushort> stringIdLookup,
+        LevelData levelData)
     {
         writer.Write(GetSectionIdentifier());
         writer.Write(CalculateNumberOfItemsInSection(levelData));
 
         foreach (var levelObjective in levelData.LevelObjectives)
         {
-            WriteLevelObjective(writer, levelObjective);
+            WriteLevelObjective(writer, stringIdLookup, levelObjective);
         }
     }
 
-    private void WriteLevelObjective(BinaryWriter writer, LevelObjective levelObjective)
+    private static void WriteLevelObjective(
+        BinaryWriter writer,
+        Dictionary<string, ushort> stringIdLookup,
+        LevelObjective levelObjective)
     {
         writer.Write(GetNumberOfBytesForLevelObjective(levelObjective));
 
         writer.Write((byte)levelObjective.LevelObjectiveId);
-        var titleStringId = _stringIdLookup.GetValueOrDefault(levelObjective.LevelObjectiveTitle);
+        var titleStringId = stringIdLookup.GetValueOrDefault(levelObjective.LevelObjectiveTitle);
         writer.Write(titleStringId);
 
         writer.Write((ushort)levelObjective.SkillSetData.Length);

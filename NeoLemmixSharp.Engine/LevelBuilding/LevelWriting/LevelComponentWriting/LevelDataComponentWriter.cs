@@ -2,20 +2,13 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public readonly ref struct LevelDataComponentWriter
+public static class LevelDataComponentWriter
 {
     private const byte NoBackgroundSpecified = 0x00;
     private const byte SolidBackgroundColor = 0x01;
     private const byte BackgroundImageSpecified = 0x02;
 
     private const int UnspecifiedLevelStartValue = 5000;
-
-    private readonly Dictionary<string, ushort> _stringIdLookup;
-
-    public LevelDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
-    {
-        _stringIdLookup = stringIdLookup;
-    }
 
     private static ReadOnlySpan<byte> GetSectionIdentifier()
     {
@@ -28,19 +21,22 @@ public readonly ref struct LevelDataComponentWriter
         return 1;
     }
 
-    public void WriteSection(BinaryWriter writer, LevelData levelData)
+    public static void WriteSection(
+        BinaryWriter writer,
+        Dictionary<string, ushort> stringIdLookup,
+        LevelData levelData)
     {
         writer.Write(GetSectionIdentifier());
         writer.Write(CalculateNumberOfItemsInSection());
 
         writer.Write(GetNumberOfBytesWrittenForLevelData(levelData));
 
-        WriteLevelStringData(writer, levelData);
+        WriteLevelStringData(writer, stringIdLookup, levelData);
         writer.Write(levelData.LevelId);
         writer.Write(levelData.Version);
 
         WriteLevelDimensionData(writer, levelData);
-        WriteLevelBackgroundData(writer, levelData);
+        WriteLevelBackgroundData(writer, stringIdLookup, levelData);
     }
 
     private static ushort GetNumberOfBytesWrittenForLevelData(LevelData levelData)
@@ -63,11 +59,14 @@ public readonly ref struct LevelDataComponentWriter
         return (ushort)(6 + 9 + 16 + numberOfBytesWrittenForBackgroundData);
     }
 
-    private void WriteLevelStringData(BinaryWriter writer, LevelData levelData)
+    private static void WriteLevelStringData(
+        BinaryWriter writer,
+        Dictionary<string, ushort> stringIdLookup,
+        LevelData levelData)
     {
-        var titleStringId = _stringIdLookup.GetValueOrDefault(levelData.LevelTitle);
-        var authorStringId = _stringIdLookup.GetValueOrDefault(levelData.LevelAuthor);
-        var levelThemeStringId = _stringIdLookup.GetValueOrDefault(levelData.LevelTheme);
+        var titleStringId = stringIdLookup.GetValueOrDefault(levelData.LevelTitle);
+        var authorStringId = stringIdLookup.GetValueOrDefault(levelData.LevelAuthor);
+        var levelThemeStringId = stringIdLookup.GetValueOrDefault(levelData.LevelTheme);
 
         writer.Write(titleStringId);
         writer.Write(authorStringId);
@@ -94,7 +93,10 @@ public readonly ref struct LevelDataComponentWriter
         return (byte)combined;
     }
 
-    private void WriteLevelBackgroundData(BinaryWriter writer, LevelData levelData)
+    private static void WriteLevelBackgroundData(
+        BinaryWriter writer,
+        Dictionary<string, ushort> stringIdLookup,
+        LevelData levelData)
     {
         var backgroundData = levelData.LevelBackground;
         if (backgroundData is null)
@@ -116,7 +118,7 @@ public readonly ref struct LevelDataComponentWriter
         }
 
         writer.Write(BackgroundImageSpecified);
-        var backgroundStringId = _stringIdLookup[backgroundData.BackgroundImageName];
+        var backgroundStringId = stringIdLookup[backgroundData.BackgroundImageName];
         writer.Write(backgroundStringId);
     }
 }
