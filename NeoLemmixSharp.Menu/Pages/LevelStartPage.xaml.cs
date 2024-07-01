@@ -1,17 +1,25 @@
 ﻿using MGUI.Core.UI;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class LevelStartPage : PageBase
 {
     private readonly LevelScreen _levelScreen;
+    private readonly LevelData _levelData;
 
-    public LevelStartPage(MGDesktop desktop, MenuInputController menuInputController, LevelScreen levelScreen)
+    public LevelStartPage(
+        MGDesktop desktop,
+        MenuInputController menuInputController,
+        LevelScreen levelScreen,
+        Engine.LevelBuilding.Data.LevelData levelData)
         : base(desktop, menuInputController)
     {
         _levelScreen = levelScreen;
+        _levelData = levelData;
     }
 
     protected override void OnInitialise()
@@ -40,6 +48,13 @@ public sealed class LevelStartPage : PageBase
         {
             StartLevel();
             return;
+        }
+
+        if (InputController.Enter.IsPressed)
+        {
+            const string fileName = @"C:\Temp\levelTest.lvl";
+            using var levelWriter = new LevelWriter(_levelData, new Version(1, 0, 0, 0));
+            levelWriter.WriteToFile(fileName);
         }
     }
 

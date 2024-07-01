@@ -21,6 +21,6 @@ public sealed class TerrainData
         var flipString = Flip ? "F" : string.Empty;
         var rotString = $"R{RotNum}";
 
-        return $"X:{X},Y:{Y}{rotString}{flipString}{rotString} - TerrainArchetypeId {TerrainArchetypeId}";
+        return $"X:{X},Y:{Y} - {rotString}{flipString}{rotString} - TerrainArchetypeId {TerrainArchetypeId}";
     }
 }

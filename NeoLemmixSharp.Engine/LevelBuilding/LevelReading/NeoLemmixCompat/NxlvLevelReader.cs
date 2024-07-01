@@ -94,7 +94,11 @@ public sealed class NxlvLevelReader : ILevelReader
             objectiveRequirementsList.Add(new TimeRequirement(levelDataReader.TimeLimitInSeconds.Value));
         }
 
-        levelData.PrimaryLevelObjective = new LevelObjective(objectiveRequirementsList.ToArray(), skillSetReader.SkillSetData);
+        levelData.PrimaryLevelObjective = new LevelObjective(
+            0,
+            "Save Lemmings",
+            objectiveRequirementsList.ToArray(),
+            skillSetReader.SkillSetData);
 
         ProcessTalismans(levelData, talismanReader);
     }

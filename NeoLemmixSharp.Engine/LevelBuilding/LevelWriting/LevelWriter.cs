@@ -21,7 +21,15 @@ public sealed class LevelWriter : IDisposable
 
         WriteVersion(writer);
 
-        StringComponentWriter.WriteStringSection(writer, _levelData);
+        var stringIdLookup = new Dictionary<string, ushort>();
+
+        // StringComponentWriter needs to be first as it will populate the stringIdLookup!
+        new StringComponentWriter(stringIdLookup).WriteSection(writer, _levelData);
+
+        new LevelDataComponentWriter(stringIdLookup).WriteSection(writer, _levelData);
+        new LevelObjectiveComponentWriter(stringIdLookup).WriteSection(writer, _levelData);
+        new PrePlacedLemmingComponentWriter(stringIdLookup).WriteSection(writer, _levelData);
+        new TerrainComponentWriter(stringIdLookup).WriteSection(writer, _levelData);
     }
 
     private void WriteVersion(BinaryWriter writer)

@@ -1,48 +1,58 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public static class StringComponentWriter
+public readonly ref struct StringComponentWriter
 {
     private const int StringBufferSize = 1024;
 
-    [SkipLocalsInit]
-    public static void WriteStringSection(BinaryWriter writer, LevelData levelData)
+    private readonly Dictionary<string, ushort> _stringIdLookup;
+
+    public StringComponentWriter(Dictionary<string, ushort> stringIdLookup)
     {
-        WriteSectionIdentifier(writer);
+        _stringIdLookup = stringIdLookup;
+    }
 
-        var stringIdLookup = GenerateStringIdLookup(levelData);
+    private static ReadOnlySpan<byte> GetSectionIdentifier()
+    {
+        ReadOnlySpan<byte> sectionIdentifier = [0x26, 0x44];
+        return sectionIdentifier;
+    }
 
-        writer.Write((ushort)stringIdLookup.Count);
+    private ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    {
+        GenerateStringIdLookup(levelData);
+
+        return (ushort)_stringIdLookup.Count;
+    }
+
+    public void WriteSection(BinaryWriter writer, LevelData levelData)
+    {
+        writer.Write(GetSectionIdentifier());
+        writer.Write(CalculateNumberOfItemsInSection(levelData));
 
         Span<byte> buffer = new byte[StringBufferSize];
 
         var utf8Encoding = Encoding.UTF8;
 
-        foreach (var (stringToWrite, id) in stringIdLookup.OrderBy(kvp => kvp.Value))
+        foreach (var (stringToWrite, id) in _stringIdLookup.OrderBy(kvp => kvp.Value))
         {
-            writer.Write((ushort)id);
+            writer.Write(id);
 
             var byteCount = utf8Encoding.GetBytes(stringToWrite, buffer);
 
+            writer.Write((ushort)byteCount);
             writer.Write(buffer[..byteCount]);
         }
     }
 
-    private static void WriteSectionIdentifier(BinaryWriter writer)
+    private void GenerateStringIdLookup(LevelData levelData)
     {
-        ReadOnlySpan<byte> sectionIdentifier = [0x26, 0x44];
-        writer.Write(sectionIdentifier);
-    }
-
-    private static Dictionary<string, int> GenerateStringIdLookup(LevelData levelData)
-    {
-        var result = new Dictionary<string, int>();
-
         TryAdd(levelData.LevelTitle);
         TryAdd(levelData.LevelAuthor);
+
+        HandleBackgroundString(levelData);
 
         foreach (var text in levelData.PreTextLines)
         {
@@ -52,6 +62,12 @@ public static class StringComponentWriter
         foreach (var text in levelData.PostTextLines)
         {
             TryAdd(text);
+        }
+
+        TryAdd(levelData.PrimaryLevelObjective!.LevelObjectiveTitle);
+        foreach (var levelObjective in levelData.SecondaryLevelObjectives)
+        {
+            TryAdd(levelObjective.LevelObjectiveTitle);
         }
 
         foreach (var terrainArchetypeData in levelData.TerrainArchetypeData)
@@ -66,11 +82,24 @@ public static class StringComponentWriter
             TryAdd(gadgetData.GadgetPiece);
         }
 
-        return result;
+    }
 
-        void TryAdd(string s)
-        {
-            result.TryAdd(s, result.Count);
-        }
+    private void TryAdd(string s)
+    {
+        if (string.IsNullOrEmpty(s))
+            return;
+
+        // Add 1 to ensure ids start at 1, therefore can use value of zero as "Not found"
+        _stringIdLookup.TryAdd(s, (ushort)(1 + _stringIdLookup.Count));
+    }
+
+    private void HandleBackgroundString(LevelData levelData)
+    {
+        var backgroundData = levelData.LevelBackground;
+
+        if (backgroundData is null || backgroundData.IsSolidColor)
+            return;
+
+        TryAdd(backgroundData.BackgroundImageName);
     }
 }
