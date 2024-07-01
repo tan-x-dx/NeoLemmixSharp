@@ -115,7 +115,8 @@ public sealed class LevelData
     public List<TerrainData> AllTerrainData { get; } = [];
     public List<TerrainGroup> AllTerrainGroups { get; } = [];
     public List<HatchGroupData> AllHatchGroupData { get; } = [];
-    public List<LemmingData> AllLemmingData { get; } = [];
+    public List<LemmingData> PrePlacedLemmingData { get; } = [];
+    public List<LemmingData> HatchLemmingData { get; } = [];
     public Dictionary<int, IGadgetBuilder> AllGadgetBuilders { get; } = [];
     public List<GadgetData> AllGadgetData { get; } = [];
     public List<SketchData> AllSketchData { get; } = [];
@@ -138,7 +139,7 @@ public sealed class LevelData
         if (_levelWidth < 0) return "Level width not set!";
         if (_levelHeight < 0) return "Level height not set!";
         if (_numberOfLemmings <= 0) return "Number of lemmings is invalid!";
-        if (AllLemmingData.Count == 0) return "Number of lemmings is invalid!";
+        if (PrePlacedLemmingData.Count == 0 && HatchLemmingData.Count == 0) return "Number of lemmings is invalid!";
         if (LevelTitle.Length == 0) return "Level title not set!";
         if (LevelAuthor.Length == 0) return "Level author not set!";
         if (LevelObjectives.Count == 0) return "Level objectives not set!";
