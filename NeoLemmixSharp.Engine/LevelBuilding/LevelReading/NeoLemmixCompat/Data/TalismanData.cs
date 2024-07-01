@@ -41,7 +41,7 @@ public sealed class TalismanData
 
     private List<SkillSetData> GetSkillSetData(LevelData levelData)
     {
-        var originalSkillSetData = levelData.PrimaryLevelObjective!.SkillSetData;
+        var originalSkillSetData = levelData.LevelObjectives.Find(lo => lo.LevelObjectiveId == 0)!.SkillSetData;
 
         var result = new List<SkillSetData>();
 

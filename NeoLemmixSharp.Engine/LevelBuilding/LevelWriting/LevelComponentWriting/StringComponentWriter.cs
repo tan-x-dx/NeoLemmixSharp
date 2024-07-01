@@ -64,8 +64,7 @@ public readonly ref struct StringComponentWriter
             TryAdd(text);
         }
 
-        TryAdd(levelData.PrimaryLevelObjective!.LevelObjectiveTitle);
-        foreach (var levelObjective in levelData.SecondaryLevelObjectives)
+        foreach (var levelObjective in levelData.LevelObjectives)
         {
             TryAdd(levelObjective.LevelObjectiveTitle);
         }

@@ -94,11 +94,11 @@ public sealed class NxlvLevelReader : ILevelReader
             objectiveRequirementsList.Add(new TimeRequirement(levelDataReader.TimeLimitInSeconds.Value));
         }
 
-        levelData.PrimaryLevelObjective = new LevelObjective(
+        levelData.LevelObjectives.Add(new LevelObjective(
             0,
             "Save Lemmings",
             objectiveRequirementsList.ToArray(),
-            skillSetReader.SkillSetData);
+            skillSetReader.SkillSetData));
 
         ProcessTalismans(levelData, talismanReader);
     }
@@ -107,11 +107,11 @@ public sealed class NxlvLevelReader : ILevelReader
         LevelData levelData,
         TalismanReader talismanReader)
     {
-        levelData.SecondaryLevelObjectives.Capacity = talismanReader.TalismanData.Count;
+        levelData.LevelObjectives.Capacity = talismanReader.TalismanData.Count;
 
         foreach (var talismanDatum in talismanReader.TalismanData)
         {
-            levelData.SecondaryLevelObjectives.Add(talismanDatum.ToLevelObjective(levelData));
+            levelData.LevelObjectives.Add(talismanDatum.ToLevelObjective(levelData));
         }
     }
 

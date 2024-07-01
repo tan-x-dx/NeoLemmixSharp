@@ -23,7 +23,7 @@ public readonly ref struct LevelObjectiveComponentWriter
 
     private static ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
-        return (ushort)(1 + levelData.SecondaryLevelObjectives.Count);
+        return (ushort)(1 + levelData.LevelObjectives.Count);
     }
 
     public void WriteSection(BinaryWriter writer, LevelData levelData)
@@ -31,10 +31,9 @@ public readonly ref struct LevelObjectiveComponentWriter
         writer.Write(GetSectionIdentifier());
         writer.Write(CalculateNumberOfItemsInSection(levelData));
 
-        WriteLevelObjective(writer, levelData.PrimaryLevelObjective!);
-        foreach (var secondaryLevelObjective in levelData.SecondaryLevelObjectives)
+        foreach (var levelObjective in levelData.LevelObjectives)
         {
-            WriteLevelObjective(writer, secondaryLevelObjective);
+            WriteLevelObjective(writer, levelObjective);
         }
     }
 

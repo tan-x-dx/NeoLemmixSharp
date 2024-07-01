@@ -15,7 +15,7 @@ public static class LevelBuildingHelpers
 {
     public static LevelTimer GetLevelTimer(LevelData levelData)
     {
-        var primaryObjective = levelData.PrimaryLevelObjective!;
+        var primaryObjective = levelData.LevelObjectives.Find(lo => lo.LevelObjectiveId == 0)!;
         foreach (var requirement in primaryObjective.Requirements)
         {
             if (requirement is TimeRequirement timeRequirement)

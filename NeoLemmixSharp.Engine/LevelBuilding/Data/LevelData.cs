@@ -108,8 +108,7 @@ public sealed class LevelData
     public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; }
     public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; }
 
-    public LevelObjective? PrimaryLevelObjective { get; set; }
-    public List<LevelObjective> SecondaryLevelObjectives { get; } = [];
+    public List<LevelObjective> LevelObjectives { get; } = [];
     public LevelParameterSet LevelParameters { get; } = LevelParameterHelpers.CreateSimpleSet();
     public ControlPanelParameterSet ControlParameters { get; } = ControlPanelParameterHelpers.CreateSimpleSet();
     public List<TerrainArchetypeData> TerrainArchetypeData { get; } = [];
@@ -142,7 +141,7 @@ public sealed class LevelData
         if (AllLemmingData.Count == 0) return "Number of lemmings is invalid!";
         if (LevelTitle.Length == 0) return "Level title not set!";
         if (LevelAuthor.Length == 0) return "Level author not set!";
-        if (PrimaryLevelObjective is null) return "Primary level objective not set!";
+        if (LevelObjectives.Count == 0) return "Level objectives not set!";
 
         return null;
     }
