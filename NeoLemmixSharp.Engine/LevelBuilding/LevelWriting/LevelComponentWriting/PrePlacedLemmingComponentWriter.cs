@@ -1,16 +1,9 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public sealed class PrePlacedLemmingComponentReaderWriter : ILevelDataReader, ILevelDataWriter
+public sealed class PrePlacedLemmingComponentWriter : ILevelDataWriter
 {
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
-    {
-        throw new NotImplementedException();
-    }
-
     public ReadOnlySpan<byte> GetSectionIdentifier()
     {
         ReadOnlySpan<byte> sectionIdentifier = [0xFE, 0x77];

@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Components;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
@@ -23,26 +23,30 @@ public readonly ref struct LevelWriter
 
         var stringIdLookup = new Dictionary<string, ushort>();
 
-        var terrainComponentWriter = new TerrainComponentReaderWriter(stringIdLookup);
+        var terrainComponentWriter = new TerrainComponentWriter(stringIdLookup);
 
         ReadOnlySpan<ILevelDataWriter> levelDataWriters = new ILevelDataWriter[]
         {
-            // StringComponentReaderWriter needs to be first as it will populate the stringIdLookup!
-            new StringComponentReaderWriter(stringIdLookup),
+            // StringComponentWriter needs to be first as it will populate the stringIdLookup!
+            new StringComponentWriter(stringIdLookup),
 
-            new LevelDataComponentReaderWriter(stringIdLookup),
-            new HatchGroupComponentReaderWriter(),
-            new LevelObjectiveComponentReaderWriter(stringIdLookup),
-            new PrePlacedLemmingComponentReaderWriter(),
+            new LevelDataComponentWriter(stringIdLookup),
+            new HatchGroupComponentWriter(),
+            new LevelObjectiveComponentWriter(stringIdLookup),
+            new PrePlacedLemmingComponentWriter(),
             terrainComponentWriter,
-            new TerrainGroupComponentReaderWriter(stringIdLookup, terrainComponentWriter),
-            new GadgetComponentReaderWriter(stringIdLookup),
+            new TerrainGroupComponentWriter(stringIdLookup, terrainComponentWriter),
+            new GadgetComponentWriter(stringIdLookup),
         };
 
         foreach (var levelDataWriter in levelDataWriters)
         {
+            var numberOfItemsInSection = levelDataWriter.CalculateNumberOfItemsInSection(_levelData);
+            if (numberOfItemsInSection == 0)
+                continue;
+
             writer.Write(levelDataWriter.GetSectionIdentifier());
-            writer.Write(levelDataWriter.CalculateNumberOfItemsInSection(_levelData));
+            writer.Write(numberOfItemsInSection);
 
             levelDataWriter.WriteSection(writer, _levelData);
         }

@@ -1,10 +1,8 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public sealed class LevelDataComponentReaderWriter : ILevelDataReader, ILevelDataWriter
+public sealed class LevelDataComponentWriter : ILevelDataWriter
 {
     private const int NumberOfBytesForMainLevelData = 31;
 
@@ -16,14 +14,9 @@ public sealed class LevelDataComponentReaderWriter : ILevelDataReader, ILevelDat
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public LevelDataComponentReaderWriter(Dictionary<string, ushort> stringIdLookup)
+    public LevelDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
-    }
-
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
-    {
-        throw new NotImplementedException();
     }
 
     public ReadOnlySpan<byte> GetSectionIdentifier()
@@ -51,7 +44,7 @@ public sealed class LevelDataComponentReaderWriter : ILevelDataReader, ILevelDat
         WriteLevelBackgroundData(writer, levelData);
     }
 
-    private ushort GetNumberOfBytesWrittenForLevelData(LevelData levelData)
+    private static ushort GetNumberOfBytesWrittenForLevelData(LevelData levelData)
     {
         int numberOfBytesWrittenForBackgroundData;
         var backgroundData = levelData.LevelBackground;
@@ -75,13 +68,9 @@ public sealed class LevelDataComponentReaderWriter : ILevelDataReader, ILevelDat
         BinaryWriter writer,
         LevelData levelData)
     {
-        var titleStringId = _stringIdLookup.GetValueOrDefault(levelData.LevelTitle);
-        var authorStringId = _stringIdLookup.GetValueOrDefault(levelData.LevelAuthor);
-        var levelThemeStringId = _stringIdLookup.GetValueOrDefault(levelData.LevelTheme);
-
-        writer.Write(titleStringId);
-        writer.Write(authorStringId);
-        writer.Write(levelThemeStringId);
+        writer.Write(_stringIdLookup.GetValueOrDefault(levelData.LevelTitle));
+        writer.Write(_stringIdLookup.GetValueOrDefault(levelData.LevelAuthor));
+        writer.Write(_stringIdLookup.GetValueOrDefault(levelData.LevelTheme));
     }
 
     private static void WriteLevelDimensionData(BinaryWriter writer, LevelData levelData)

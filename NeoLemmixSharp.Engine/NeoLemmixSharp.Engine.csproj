@@ -15,8 +15,4 @@
     <ProjectReference Include="..\NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="LevelBuilding\LevelWriting\LevelComponentWriting\" />
-  </ItemGroup>
-
 </Project>

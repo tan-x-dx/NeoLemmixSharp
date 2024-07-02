@@ -10,17 +10,15 @@ public static class Helpers
 
     private const int FlipBitShift = 2;
 
-    public static byte GetOrientationByte(Orientation orientation, FacingDirection facingDirection)
+    public static (Orientation, FacingDirection) DecipherOrientations(byte b)
     {
-        return GetOrientationByte(orientation.RotNum, facingDirection == FacingDirection.LeftInstance);
-    }
+        var rotNum = b & 3;
+        var orientation = Orientation.AllItems[rotNum];
+        
+        var flip = (b >> FlipBitShift) & 1;
+        var facingDirection = FacingDirection.AllItems[flip];
 
-    public static byte GetOrientationByte(int rotNum, bool flip)
-    {
-        var orientationBits = (rotNum & 3) |
-                              (flip ? 1 << FlipBitShift : 0);
-
-        return (byte)orientationBits;
+        return (orientation, facingDirection);
     }
 
     public static void ReaderAssert(bool condition, string details)

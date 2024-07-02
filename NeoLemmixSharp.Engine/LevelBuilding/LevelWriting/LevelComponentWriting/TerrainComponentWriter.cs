@@ -1,11 +1,9 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public sealed class TerrainComponentReaderWriter : ILevelDataReader, ILevelDataWriter
+public sealed class TerrainComponentWriter : ILevelDataWriter
 {
     private const int EraseBitShift = 0;
     private const int NoOverwriteBitShift = 1;
@@ -15,14 +13,9 @@ public sealed class TerrainComponentReaderWriter : ILevelDataReader, ILevelDataW
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public TerrainComponentReaderWriter(Dictionary<string, ushort> stringIdLookup)
+    public TerrainComponentWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
-    }
-
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
-    {
-        throw new NotImplementedException();
     }
 
     public ReadOnlySpan<byte> GetSectionIdentifier()

@@ -10,6 +10,7 @@ public sealed class BinaryReaderWrapper : IDisposable
 
     private long _bytesRead;
 
+    public long BytesRead => _bytesRead;
     public bool MoreToRead => _bytesRead < _fileSizeInBytes;
 
     public BinaryReaderWrapper(string filePath)
@@ -35,6 +36,15 @@ public sealed class BinaryReaderWrapper : IDisposable
 
         var result = _reader.ReadUInt16();
         _bytesRead += 2;
+        return result;
+    }
+
+    public ulong Read64BitUnsignedInteger()
+    {
+        Helpers.ReaderAssert(_fileSizeInBytes - _bytesRead >= 8, "Reached end of file!");
+
+        var result = _reader.ReadUInt64();
+        _bytesRead += 8;
         return result;
     }
 

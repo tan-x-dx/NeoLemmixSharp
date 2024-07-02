@@ -1,32 +1,24 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public sealed class GadgetComponentReaderWriter : ILevelDataReader, ILevelDataWriter
+public sealed class GadgetComponentWriter : ILevelDataWriter
 {
     private const int NumberOfBytesForMainGadgetData = 13;
     private const int NumberOfBytesPerGadgetProperty = 5;
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public GadgetComponentReaderWriter(Dictionary<string, ushort> stringIdLookup)
+    public GadgetComponentWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
-
 
     public ReadOnlySpan<byte> GetSectionIdentifier()
     {
         ReadOnlySpan<byte> sectionIdentifier = [0x3D, 0x98];
         return sectionIdentifier;
-    }
-
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
-    {
-        throw new NotImplementedException();
     }
 
     public ushort CalculateNumberOfItemsInSection(LevelData levelData)

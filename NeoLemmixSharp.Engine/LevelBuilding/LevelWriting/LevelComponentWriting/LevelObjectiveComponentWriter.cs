@@ -1,11 +1,9 @@
 ﻿using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public sealed class LevelObjectiveComponentReaderWriter : ILevelDataReader, ILevelDataWriter
+public sealed class LevelObjectiveComponentWriter : ILevelDataWriter
 {
     private const int NumberOfBytesForMainLevelObjectiveData = 7;
     private const int NumberOfBytesPerSkillSetDatum = 3;
@@ -13,14 +11,9 @@ public sealed class LevelObjectiveComponentReaderWriter : ILevelDataReader, ILev
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public LevelObjectiveComponentReaderWriter(Dictionary<string, ushort> stringIdLookup)
+    public LevelObjectiveComponentWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
-    }
-
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
-    {
-        //throw new NotImplementedException();
     }
 
     public ReadOnlySpan<byte> GetSectionIdentifier()

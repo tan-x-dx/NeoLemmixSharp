@@ -13,21 +13,21 @@ public sealed class DataReaderList : IDisposable
     {
         _binaryReaderWrapper = new BinaryReaderWrapper(filePath);
 
-        var stringIdLookup = new Dictionary<string, ushort>();
+        var stringIdLookup = new List<string>();
 
-        var terrainComponentWriter = new TerrainComponentReaderWriter(stringIdLookup);
+        var terrainComponentReader = new TerrainComponentReader(stringIdLookup);
         _dataReaders =
         [
             // StringComponentReaderWriter needs to be first as it will populate the stringIdLookup!
-            new StringComponentReaderWriter(stringIdLookup),
+            new StringComponentReader(stringIdLookup),
 
-            new LevelDataComponentReaderWriter(stringIdLookup),
-            new HatchGroupComponentReaderWriter(),
-            new LevelObjectiveComponentReaderWriter(stringIdLookup),
-            new PrePlacedLemmingComponentReaderWriter(),
-            terrainComponentWriter,
-            new TerrainGroupComponentReaderWriter(stringIdLookup, terrainComponentWriter),
-            new GadgetComponentReaderWriter(stringIdLookup)
+            new LevelDataComponentReader(stringIdLookup),
+            new HatchGroupComponentReader(),
+            new LevelObjectiveComponentReader(stringIdLookup),
+            new PrePlacedLemmingComponentReader(),
+            terrainComponentReader,
+            new TerrainGroupComponentReader(stringIdLookup, terrainComponentReader),
+            new GadgetComponentReader(stringIdLookup)
         ];
     }
 
