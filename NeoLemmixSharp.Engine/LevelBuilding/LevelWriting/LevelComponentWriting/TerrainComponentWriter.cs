@@ -9,6 +9,8 @@ public static class TerrainComponentWriter
     private const int NoOverwriteBitShift = 1;
     private const int TintBitShift = 2;
 
+    private const int NumberOfBytesForMainTerrainData = 9;
+
     private static ReadOnlySpan<byte> GetSectionIdentifier()
     {
         ReadOnlySpan<byte> sectionIdentifier = [0x60, 0xBB];
@@ -38,7 +40,7 @@ public static class TerrainComponentWriter
         }
     }
 
-    private static void WriteTerrainData(
+    public static void WriteTerrainData(
         BinaryWriter writer,
         Dictionary<string, ushort> stringIdLookup,
         TerrainArchetypeData terrainArchetypeData,
@@ -51,7 +53,6 @@ public static class TerrainComponentWriter
 
         writer.Write((ushort)(terrainData.X + Helpers.PositionOffset));
         writer.Write((ushort)(terrainData.Y + Helpers.PositionOffset));
-
         writer.Write(Helpers.GetOrientationByte(terrainData.RotNum, terrainData.Flip));
 
         WriteTerrainDataMisc(writer, terrainData);
@@ -59,7 +60,7 @@ public static class TerrainComponentWriter
 
     private static ushort GetNumberOfBytesWritten(TerrainData terrainData)
     {
-        return (ushort)(9 + (terrainData.Tint.HasValue ? 4 : 1));
+        return (ushort)(NumberOfBytesForMainTerrainData + (terrainData.Tint.HasValue ? 4 : 1));
     }
 
     private static void WriteTerrainDataMisc(BinaryWriter writer, TerrainData terrainData)

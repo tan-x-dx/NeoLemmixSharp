@@ -23,7 +23,6 @@ public readonly ref partial struct GadgetTranslator
 
             X = prototype.X,
             Y = prototype.Y,
-            ShouldRender = true,
             InitialStateId = 0,
             GadgetRenderMode = GetGadgetRenderMode(prototype),
 

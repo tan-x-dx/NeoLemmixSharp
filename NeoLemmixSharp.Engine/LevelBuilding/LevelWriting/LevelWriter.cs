@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
-public sealed class LevelWriter : IDisposable
+public readonly ref struct LevelWriter
 {
     private readonly LevelData _levelData;
     private readonly Version _version;
@@ -30,6 +30,8 @@ public sealed class LevelWriter : IDisposable
         LevelObjectiveComponentWriter.WriteSection(writer, stringIdLookup, _levelData);
         PrePlacedLemmingComponentWriter.WriteSection(writer, _levelData);
         TerrainComponentWriter.WriteSection(writer, stringIdLookup, _levelData);
+        TerrainGroupComponentWriter.WriteSection(writer, stringIdLookup, _levelData);
+        GadgetComponentWriter.WriteSection(writer, stringIdLookup, _levelData);
     }
 
     private void WriteVersion(BinaryWriter writer)
@@ -41,9 +43,5 @@ public sealed class LevelWriter : IDisposable
         writer.Write((ushort)_version.Build);
         writer.Write('.');
         writer.Write((ushort)_version.Revision);
-    }
-
-    public void Dispose()
-    {
     }
 }

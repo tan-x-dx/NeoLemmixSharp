@@ -71,8 +71,13 @@ public static class StringComponentWriter
 
         foreach (var terrainArchetypeData in levelData.TerrainArchetypeData)
         {
-            TryAdd(terrainArchetypeData.Style!);
-            TryAdd(terrainArchetypeData.TerrainPiece!);
+            TryAdd(terrainArchetypeData.Style);
+            TryAdd(terrainArchetypeData.TerrainPiece);
+        }
+
+        foreach (var terrainGroup in levelData.AllTerrainGroups)
+        {
+            TryAdd(terrainGroup.GroupName!);
         }
 
         foreach (var gadgetData in levelData.AllGadgetData)
@@ -83,7 +88,7 @@ public static class StringComponentWriter
 
         return;
 
-        void TryAdd(string s)
+        void TryAdd(string? s)
         {
             if (string.IsNullOrEmpty(s))
                 return;
