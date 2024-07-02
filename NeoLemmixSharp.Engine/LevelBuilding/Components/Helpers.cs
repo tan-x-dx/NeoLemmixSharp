@@ -1,7 +1,8 @@
 ﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
+namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
 
 public static class Helpers
 {
@@ -20,5 +21,13 @@ public static class Helpers
                               (flip ? 1 << FlipBitShift : 0);
 
         return (byte)orientationBits;
+    }
+
+    public static void ReaderAssert(bool condition, string details)
+    {
+        if (condition)
+            return;
+
+        throw new LevelReadingException($"Error occurred when reading level file. Details: [{details}]");
     }
 }

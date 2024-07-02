@@ -1,48 +1,58 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
+namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
 
-public static class GadgetComponentWriter
+public sealed class GadgetComponentReaderWriter : ILevelDataReader, ILevelDataWriter
 {
     private const int NumberOfBytesForMainGadgetData = 13;
     private const int NumberOfBytesPerGadgetProperty = 5;
 
-    private static ReadOnlySpan<byte> GetSectionIdentifier()
+    private readonly Dictionary<string, ushort> _stringIdLookup;
+
+    public GadgetComponentReaderWriter(Dictionary<string, ushort> stringIdLookup)
+    {
+        _stringIdLookup = stringIdLookup;
+    }
+
+
+    public ReadOnlySpan<byte> GetSectionIdentifier()
     {
         ReadOnlySpan<byte> sectionIdentifier = [0x3D, 0x98];
         return sectionIdentifier;
     }
 
-    private static ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return (ushort)levelData.AllGadgetData.Count;
     }
 
-    public static void WriteSection(
+    public void WriteSection(
         BinaryWriter writer,
-        Dictionary<string, ushort> stringIdLookup,
         LevelData levelData)
     {
-        writer.Write(GetSectionIdentifier());
-        writer.Write(CalculateNumberOfItemsInSection(levelData));
-
         foreach (var gadgetData in levelData.AllGadgetData)
         {
-            WriteGadgetData(writer, stringIdLookup, gadgetData);
+            WriteGadgetData(writer, gadgetData);
         }
     }
 
-    private static void WriteGadgetData(
+    private void WriteGadgetData(
         BinaryWriter writer,
-        Dictionary<string, ushort> stringIdLookup,
         GadgetData gadgetData)
     {
         writer.Write(GetNumberOfBytesWritten(gadgetData));
 
         writer.Write((ushort)gadgetData.Id);
-        writer.Write(stringIdLookup[gadgetData.Style]);
-        writer.Write(stringIdLookup[gadgetData.GadgetPiece]);
+        writer.Write(_stringIdLookup[gadgetData.Style]);
+        writer.Write(_stringIdLookup[gadgetData.GadgetPiece]);
 
         writer.Write((ushort)(gadgetData.X + Helpers.PositionOffset));
         writer.Write((ushort)(gadgetData.Y + Helpers.PositionOffset));

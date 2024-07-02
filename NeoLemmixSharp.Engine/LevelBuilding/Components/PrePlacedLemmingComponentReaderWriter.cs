@@ -1,25 +1,31 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
+namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
 
-public static class PrePlacedLemmingComponentWriter
+public sealed class PrePlacedLemmingComponentReaderWriter : ILevelDataReader, ILevelDataWriter
 {
-    private static ReadOnlySpan<byte> GetSectionIdentifier()
+    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ReadOnlySpan<byte> GetSectionIdentifier()
     {
         ReadOnlySpan<byte> sectionIdentifier = [0xFE, 0x77];
         return sectionIdentifier;
     }
 
-    private static ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return (ushort)levelData.PrePlacedLemmingData.Count;
     }
 
-    public static void WriteSection(BinaryWriter writer, LevelData levelData)
+    public void WriteSection(
+        BinaryWriter writer,
+        LevelData levelData)
     {
-        writer.Write(GetSectionIdentifier());
-        writer.Write(CalculateNumberOfItemsInSection(levelData));
-
         foreach (var lemmingData in levelData.PrePlacedLemmingData)
         {
             WriteLemmingData(writer, lemmingData);

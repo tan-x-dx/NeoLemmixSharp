@@ -1,9 +1,11 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
+namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
 
-public static class TerrainComponentWriter
+public sealed class TerrainComponentReaderWriter : ILevelDataReader, ILevelDataWriter
 {
     private const int EraseBitShift = 0;
     private const int NoOverwriteBitShift = 1;
@@ -11,45 +13,52 @@ public static class TerrainComponentWriter
 
     private const int NumberOfBytesForMainTerrainData = 9;
 
-    private static ReadOnlySpan<byte> GetSectionIdentifier()
+    private readonly Dictionary<string, ushort> _stringIdLookup;
+
+    public TerrainComponentReaderWriter(Dictionary<string, ushort> stringIdLookup)
+    {
+        _stringIdLookup = stringIdLookup;
+    }
+
+    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ReadOnlySpan<byte> GetSectionIdentifier()
     {
         ReadOnlySpan<byte> sectionIdentifier = [0x60, 0xBB];
         return sectionIdentifier;
     }
 
-    private static ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return (ushort)levelData.AllTerrainData.Count;
     }
 
-    public static void WriteSection(
+    public void WriteSection(
         BinaryWriter writer,
-        Dictionary<string, ushort> stringIdLookup,
         LevelData levelData)
     {
-        writer.Write(GetSectionIdentifier());
-        writer.Write(CalculateNumberOfItemsInSection(levelData));
-
         foreach (var terrainData in levelData.AllTerrainData)
         {
             var terrainArchetypeData = levelData.TerrainArchetypeData.Find(a => a.TerrainArchetypeId == terrainData.TerrainArchetypeId);
             if (terrainArchetypeData is null)
                 throw new InvalidOperationException($"Could not locate TerrainArchetypeData with id {terrainData.TerrainArchetypeId}");
 
-            WriteTerrainData(writer, stringIdLookup, terrainArchetypeData, terrainData);
+            WriteTerrainData(writer, terrainArchetypeData, terrainData);
         }
     }
 
-    public static void WriteTerrainData(
+    public void WriteTerrainData(
         BinaryWriter writer,
-        Dictionary<string, ushort> stringIdLookup,
         TerrainArchetypeData terrainArchetypeData,
         TerrainData terrainData)
     {
         writer.Write(GetNumberOfBytesWritten(terrainData));
 
-        writer.Write(stringIdLookup[terrainArchetypeData.Style!]);
-        writer.Write(stringIdLookup[terrainArchetypeData.TerrainPiece!]);
+        writer.Write(_stringIdLookup[terrainArchetypeData.Style!]);
+        writer.Write(_stringIdLookup[terrainArchetypeData.TerrainPiece!]);
 
         writer.Write((ushort)(terrainData.X + Helpers.PositionOffset));
         writer.Write((ushort)(terrainData.Y + Helpers.PositionOffset));

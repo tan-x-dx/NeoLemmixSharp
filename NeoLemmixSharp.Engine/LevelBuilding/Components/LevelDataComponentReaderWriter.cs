@@ -1,8 +1,10 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
+namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
 
-public static class LevelDataComponentWriter
+public sealed class LevelDataComponentReaderWriter : ILevelDataReader, ILevelDataWriter
 {
     private const int NumberOfBytesForMainLevelData = 31;
 
@@ -12,36 +14,44 @@ public static class LevelDataComponentWriter
 
     private const int UnspecifiedLevelStartValue = 5000;
 
-    private static ReadOnlySpan<byte> GetSectionIdentifier()
+    private readonly Dictionary<string, ushort> _stringIdLookup;
+
+    public LevelDataComponentReaderWriter(Dictionary<string, ushort> stringIdLookup)
+    {
+        _stringIdLookup = stringIdLookup;
+    }
+
+    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ReadOnlySpan<byte> GetSectionIdentifier()
     {
         ReadOnlySpan<byte> sectionIdentifier = [0x79, 0xA6];
         return sectionIdentifier;
     }
 
-    private static ushort CalculateNumberOfItemsInSection()
+    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return 1;
     }
 
-    public static void WriteSection(
+    public void WriteSection(
         BinaryWriter writer,
-        Dictionary<string, ushort> stringIdLookup,
         LevelData levelData)
     {
-        writer.Write(GetSectionIdentifier());
-        writer.Write(CalculateNumberOfItemsInSection());
-
         writer.Write(GetNumberOfBytesWrittenForLevelData(levelData));
 
-        WriteLevelStringData(writer, stringIdLookup, levelData);
+        WriteLevelStringData(writer, levelData);
         writer.Write(levelData.LevelId);
         writer.Write(levelData.Version);
 
         WriteLevelDimensionData(writer, levelData);
-        WriteLevelBackgroundData(writer, stringIdLookup, levelData);
+        WriteLevelBackgroundData(writer, levelData);
     }
 
-    private static ushort GetNumberOfBytesWrittenForLevelData(LevelData levelData)
+    private ushort GetNumberOfBytesWrittenForLevelData(LevelData levelData)
     {
         int numberOfBytesWrittenForBackgroundData;
         var backgroundData = levelData.LevelBackground;
@@ -61,14 +71,13 @@ public static class LevelDataComponentWriter
         return (ushort)(NumberOfBytesForMainLevelData + numberOfBytesWrittenForBackgroundData);
     }
 
-    private static void WriteLevelStringData(
+    private void WriteLevelStringData(
         BinaryWriter writer,
-        Dictionary<string, ushort> stringIdLookup,
         LevelData levelData)
     {
-        var titleStringId = stringIdLookup.GetValueOrDefault(levelData.LevelTitle);
-        var authorStringId = stringIdLookup.GetValueOrDefault(levelData.LevelAuthor);
-        var levelThemeStringId = stringIdLookup.GetValueOrDefault(levelData.LevelTheme);
+        var titleStringId = _stringIdLookup.GetValueOrDefault(levelData.LevelTitle);
+        var authorStringId = _stringIdLookup.GetValueOrDefault(levelData.LevelAuthor);
+        var levelThemeStringId = _stringIdLookup.GetValueOrDefault(levelData.LevelTheme);
 
         writer.Write(titleStringId);
         writer.Write(authorStringId);
@@ -95,9 +104,8 @@ public static class LevelDataComponentWriter
         return (byte)combined;
     }
 
-    private static void WriteLevelBackgroundData(
+    private void WriteLevelBackgroundData(
         BinaryWriter writer,
-        Dictionary<string, ushort> stringIdLookup,
         LevelData levelData)
     {
         var backgroundData = levelData.LevelBackground;
@@ -120,7 +128,7 @@ public static class LevelDataComponentWriter
         }
 
         writer.Write(BackgroundImageSpecified);
-        var backgroundStringId = stringIdLookup[backgroundData.BackgroundImageName];
+        var backgroundStringId = _stringIdLookup[backgroundData.BackgroundImageName];
         writer.Write(backgroundStringId);
     }
 }

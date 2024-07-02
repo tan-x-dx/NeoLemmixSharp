@@ -1,48 +1,57 @@
 ﻿using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
+namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
 
-public static class LevelObjectiveComponentWriter
+public sealed class LevelObjectiveComponentReaderWriter : ILevelDataReader, ILevelDataWriter
 {
     private const int NumberOfBytesForMainLevelObjectiveData = 7;
     private const int NumberOfBytesPerSkillSetDatum = 3;
     private const int NumberOfBytesPerRequirementsDatum = 4;
 
-    private static ReadOnlySpan<byte> GetSectionIdentifier()
+    private readonly Dictionary<string, ushort> _stringIdLookup;
+
+    public LevelObjectiveComponentReaderWriter(Dictionary<string, ushort> stringIdLookup)
+    {
+        _stringIdLookup = stringIdLookup;
+    }
+
+    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    {
+        //throw new NotImplementedException();
+    }
+
+    public ReadOnlySpan<byte> GetSectionIdentifier()
     {
         ReadOnlySpan<byte> sectionIdentifier = [0xBE, 0xF4];
         return sectionIdentifier;
     }
 
-    private static ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return (ushort)(1 + levelData.LevelObjectives.Count);
     }
 
-    public static void WriteSection(
+    public void WriteSection(
         BinaryWriter writer,
-        Dictionary<string, ushort> stringIdLookup,
         LevelData levelData)
     {
-        writer.Write(GetSectionIdentifier());
-        writer.Write(CalculateNumberOfItemsInSection(levelData));
-
         foreach (var levelObjective in levelData.LevelObjectives)
         {
-            WriteLevelObjective(writer, stringIdLookup, levelObjective);
+            WriteLevelObjective(writer, levelObjective);
         }
     }
 
-    private static void WriteLevelObjective(
+    private void WriteLevelObjective(
         BinaryWriter writer,
-        Dictionary<string, ushort> stringIdLookup,
         LevelObjective levelObjective)
     {
         writer.Write(GetNumberOfBytesForLevelObjective(levelObjective));
 
         writer.Write((byte)levelObjective.LevelObjectiveId);
-        var titleStringId = stringIdLookup.GetValueOrDefault(levelObjective.LevelObjectiveTitle);
+        var titleStringId = _stringIdLookup.GetValueOrDefault(levelObjective.LevelObjectiveTitle);
         writer.Write(titleStringId);
 
         writer.Write((ushort)levelObjective.SkillSetData.Length);
