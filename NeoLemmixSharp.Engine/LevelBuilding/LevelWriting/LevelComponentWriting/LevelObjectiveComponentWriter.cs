@@ -5,6 +5,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting
 
 public static class LevelObjectiveComponentWriter
 {
+    private const int NumberOfBytesForMainLevelObjectiveData = 7;
     private const int NumberOfBytesPerSkillSetDatum = 3;
     private const int NumberOfBytesPerRequirementsDatum = 4;
 
@@ -59,9 +60,9 @@ public static class LevelObjectiveComponentWriter
 
     private static ushort GetNumberOfBytesForLevelObjective(LevelObjective levelObjective)
     {
-        return (ushort)(7 +
-                        (NumberOfBytesPerSkillSetDatum * levelObjective.SkillSetData.Length) +
-                        (NumberOfBytesPerRequirementsDatum * levelObjective.Requirements.Length));
+        return (ushort)(NumberOfBytesForMainLevelObjectiveData +
+                        NumberOfBytesPerSkillSetDatum * levelObjective.SkillSetData.Length +
+                        NumberOfBytesPerRequirementsDatum * levelObjective.Requirements.Length);
     }
 
     private static void WriteSkillSetDatum(BinaryWriter writer, SkillSetData skillSetData)

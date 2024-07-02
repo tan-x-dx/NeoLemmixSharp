@@ -27,6 +27,7 @@ public readonly ref struct LevelWriter
         StringComponentWriter.WriteSection(writer, stringIdLookup, _levelData);
 
         LevelDataComponentWriter.WriteSection(writer, stringIdLookup, _levelData);
+        HatchGroupComponentWriter.WriteSection(writer, _levelData);
         LevelObjectiveComponentWriter.WriteSection(writer, stringIdLookup, _levelData);
         PrePlacedLemmingComponentWriter.WriteSection(writer, _levelData);
         TerrainComponentWriter.WriteSection(writer, stringIdLookup, _levelData);

@@ -4,6 +4,8 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting
 
 public static class LevelDataComponentWriter
 {
+    private const int NumberOfBytesForMainLevelData = 31;
+
     private const byte NoBackgroundSpecified = 0x00;
     private const byte SolidBackgroundColor = 0x01;
     private const byte BackgroundImageSpecified = 0x02;
@@ -56,7 +58,7 @@ public static class LevelDataComponentWriter
             numberOfBytesWrittenForBackgroundData = 3;
         }
 
-        return (ushort)(6 + 9 + 16 + numberOfBytesWrittenForBackgroundData);
+        return (ushort)(NumberOfBytesForMainLevelData + numberOfBytesWrittenForBackgroundData);
     }
 
     private static void WriteLevelStringData(

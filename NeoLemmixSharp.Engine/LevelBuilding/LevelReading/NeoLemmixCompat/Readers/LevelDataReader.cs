@@ -132,6 +132,8 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
         var hatchGroupData = new HatchGroupData
         {
+            HatchGroupId = 0,
+
             MaxSpawnInterval = _maxSpawnInterval,
             InitialSpawnInterval = _maxSpawnInterval,
             MinSpawnInterval = _lockSpawnInterval
