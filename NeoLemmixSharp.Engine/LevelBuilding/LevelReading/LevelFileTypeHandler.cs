@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
@@ -6,7 +7,8 @@ public static class LevelFileTypeHandler
 {
     private static readonly Dictionary<string, Type> FileTypeLookup = new()
     {
-        { NeoLemmixFileExtensions.LevelFileExtension, typeof(NxlvLevelReader) }
+        { NeoLemmixFileExtensions.LevelFileExtension, typeof(NxlvLevelReader) },
+        { DefaultFileExtensions.LevelFileExtension, typeof(DefaultLevelReader) }
     };
 
     public static bool FileExtensionIsValidLevelType(string? fileExtension)
@@ -51,6 +53,7 @@ public static class LevelFileTypeHandler
 
         return subSpan switch
         {
+            DefaultFileExtensions.LevelFileExtension => DefaultFileExtensions.LevelFileExtension,
             NeoLemmixFileExtensions.LevelFileExtension => NeoLemmixFileExtensions.LevelFileExtension,
 
             _ => null,

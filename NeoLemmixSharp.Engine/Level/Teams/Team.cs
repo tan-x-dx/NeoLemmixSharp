@@ -34,6 +34,8 @@ public sealed class Team : IExtendedEnumType<Team>
     public Color HairColor { get; private set; }
     public Color PermanentSkillHairColor { get; private set; }
     public Color SkinColor { get; private set; }
+    public Color AcidLemmingFootColor { get; private set; }
+    public Color WaterLemmingFootColor { get; private set; }
     public Color ZombieSkinColor { get; private set; }
     public Color BodyColor { get; private set; }
     public Color PermanentSkillBodyColor { get; private set; }
@@ -49,6 +51,8 @@ public sealed class Team : IExtendedEnumType<Team>
         HairColor = colorData.HairColor;
         PermanentSkillHairColor = colorData.PermanentSkillHairColor;
         SkinColor = colorData.SkinColor;
+        AcidLemmingFootColor = colorData.AcidLemmingFootColor;
+        WaterLemmingFootColor = colorData.WaterLemmingFootColor;
         ZombieSkinColor = colorData.ZombieSkinColor;
         BodyColor = colorData.BodyColor;
         PermanentSkillBodyColor = colorData.PermanentSkillBodyColor;

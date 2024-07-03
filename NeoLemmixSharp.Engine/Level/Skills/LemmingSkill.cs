@@ -49,7 +49,10 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
             RotateToDownSkill.Instance,
             RotateToRightSkill.Instance,
             RotateToUpSkill.Instance,
-            RotateToLeftSkill.Instance
+            RotateToLeftSkill.Instance,
+
+            AcidLemmingSkill.Instance,
+            WaterLemmingSkill.Instance
         };
 
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<LemmingSkill>(result));

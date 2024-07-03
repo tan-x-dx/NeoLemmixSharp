@@ -19,7 +19,8 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.IsSwimmer && ActionIsAssignable(lemming);
+        return !lemming.State.HasLiquidAffinity &&
+               ActionIsAssignable(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)

@@ -35,7 +35,7 @@ public sealed class NxlvLevelReader : ILevelReader
             skillSetReader,
             terrainGroupReader,
             new TerrainReader(terrainArchetypes, levelData.AllTerrainData),
-            new LemmingReader(levelData.AllLemmingData),
+            new LemmingReader(levelData.PrePlacedLemmingData),
             gadgetReader,
             talismanReader,
             new NeoLemmixTextReader(levelData.PreTextLines, "$PRETEXT"),
@@ -94,7 +94,12 @@ public sealed class NxlvLevelReader : ILevelReader
             objectiveRequirementsList.Add(new TimeRequirement(levelDataReader.TimeLimitInSeconds.Value));
         }
 
-        levelData.PrimaryLevelObjective = new LevelObjective(objectiveRequirementsList.ToArray(), skillSetReader.SkillSetData);
+        levelData.LevelObjectives.Capacity = 1 + talismanReader.TalismanData.Count;
+        levelData.LevelObjectives.Add(new LevelObjective(
+            0,
+            "Save Lemmings",
+            objectiveRequirementsList.ToArray(),
+            skillSetReader.SkillSetData));
 
         ProcessTalismans(levelData, talismanReader);
     }
@@ -103,11 +108,9 @@ public sealed class NxlvLevelReader : ILevelReader
         LevelData levelData,
         TalismanReader talismanReader)
     {
-        levelData.SecondaryLevelObjectives.Capacity = talismanReader.TalismanData.Count;
-
         foreach (var talismanDatum in talismanReader.TalismanData)
         {
-            levelData.SecondaryLevelObjectives.Add(talismanDatum.ToLevelObjective(levelData));
+            levelData.LevelObjectives.Add(talismanDatum.ToLevelObjective(levelData));
         }
     }
 
@@ -170,10 +173,9 @@ public sealed class NxlvLevelReader : ILevelReader
             i++;
         }
 
-        var numberOfLemmingsFromHatches = CalculateTotalLemmingCounts(
+        var numberOfLemmingsFromHatches = CalculateTotalHatchLemmingCounts(
             levelData,
-            maxLemmingCountFromHatches,
-            hasInfiniteHatchCount);
+            hasInfiniteHatchCount ? null : maxLemmingCountFromHatches);
 
         var numberOfLemmingsAssignedToHatches = 0;
         i = 0;
@@ -218,38 +220,26 @@ public sealed class NxlvLevelReader : ILevelReader
         return gadgetArchetypeData.Behaviour == NeoLemmixGadgetBehaviour.Entrance;
     }
 
-    private static int CalculateTotalLemmingCounts(
+    private static int CalculateTotalHatchLemmingCounts(
         LevelData levelData,
-        int maxLemmingCountFromHatches,
-        bool hasInfiniteHatchCount)
+        int? maxLemmingCountFromHatches)
     {
-        var lemmingData = levelData.AllLemmingData;
-        var lemmingCount = levelData.NumberOfLemmings;
-        var numberOfPrePlacedLemmings = lemmingData.Count;
+        var hatchLemmingData = levelData.HatchLemmingData;
+        var hatchLemmingCount = levelData.NumberOfLemmings - levelData.PrePlacedLemmingData.Count;
 
-        int totalNumberOfLemmings;
-        if (hasInfiniteHatchCount)
+        var totalNumberOfHatchLemmings = maxLemmingCountFromHatches.HasValue
+            ? Math.Min(hatchLemmingCount, maxLemmingCountFromHatches.Value)
+            : hatchLemmingCount;
+
+        hatchLemmingData.Capacity = totalNumberOfHatchLemmings;
+        levelData.NumberOfLemmings = totalNumberOfHatchLemmings;
+
+        while (hatchLemmingData.Count < hatchLemmingData.Capacity)
         {
-            totalNumberOfLemmings = lemmingCount + numberOfPrePlacedLemmings;
-        }
-        else if (maxLemmingCountFromHatches <= lemmingCount)
-        {
-            totalNumberOfLemmings = maxLemmingCountFromHatches + numberOfPrePlacedLemmings;
-        }
-        else
-        {
-            totalNumberOfLemmings = Math.Max(lemmingCount, numberOfPrePlacedLemmings);
+            hatchLemmingData.Add(new LemmingData());
         }
 
-        lemmingData.Capacity = totalNumberOfLemmings;
-        levelData.NumberOfLemmings = totalNumberOfLemmings;
-
-        while (lemmingData.Count < lemmingData.Capacity)
-        {
-            lemmingData.Add(new LemmingData());
-        }
-
-        return totalNumberOfLemmings - numberOfPrePlacedLemmings;
+        return totalNumberOfHatchLemmings;
     }
 
     private static void ProcessConfigData(LevelData levelData)

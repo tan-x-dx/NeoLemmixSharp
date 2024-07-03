@@ -33,10 +33,12 @@ public readonly ref partial struct GadgetTranslator
         var gadgetData = new GadgetData
         {
             Id = gadgetId,
+            Style = archetypeData.Style,
+            GadgetPiece = archetypeData.GadgetPiece,
             GadgetBuilderId = archetypeData.GadgetArchetypeId,
+
             X = prototype.X,
             Y = prototype.Y,
-            ShouldRender = true,
             InitialStateId = 0,
             GadgetRenderMode = GetGadgetRenderMode(prototype),
 

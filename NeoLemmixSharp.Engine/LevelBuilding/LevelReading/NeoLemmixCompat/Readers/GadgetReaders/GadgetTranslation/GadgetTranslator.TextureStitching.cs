@@ -135,7 +135,7 @@ public readonly ref partial struct GadgetTranslator
             archetypeData.Style!,
             NeoLemmixFileExtensions.GadgetFolderName);
 
-        var gadgetName = archetypeData.Gadget!;
+        var gadgetName = archetypeData.GadgetPiece!;
 
         var primaryTextureFileName = Path.Combine(
             styleObjectFolderPath,

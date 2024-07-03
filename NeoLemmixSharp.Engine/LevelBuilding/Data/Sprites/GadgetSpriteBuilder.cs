@@ -1,8 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
@@ -54,7 +52,7 @@ public sealed class GadgetSpriteBuilder : IDisposable
             DownOrientation.Instance,
             FacingDirection.RightInstance);
 
-        if (!gadgetData.ShouldRender)
+        if (gadgetData.GadgetRenderMode == GadgetRenderMode.NoRender)
             return null;
 
         var texture = GetOrAddCachedTexture(

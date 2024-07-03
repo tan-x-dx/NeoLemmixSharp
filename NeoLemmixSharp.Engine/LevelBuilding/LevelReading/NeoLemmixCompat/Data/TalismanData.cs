@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
@@ -34,13 +33,15 @@ public sealed class TalismanData
         }
 
         return new LevelObjective(
+            Id,
+            Title,
             objectiveRequirementsList.ToArray(),
             GetSkillSetData(levelData));
     }
 
     private List<SkillSetData> GetSkillSetData(LevelData levelData)
     {
-        var originalSkillSetData = levelData.PrimaryLevelObjective!.SkillSetData;
+        var originalSkillSetData = levelData.LevelObjectives.Find(lo => lo.LevelObjectiveId == 0)!.SkillSetData;
 
         var result = new List<SkillSetData>();
 

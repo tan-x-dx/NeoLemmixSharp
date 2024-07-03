@@ -50,29 +50,35 @@ public sealed class LevelObjectAssembler : IDisposable
 
     public List<Lemming> GetLevelLemmings(LevelData levelData)
     {
-        var allLemmingData = CollectionsMarshal.AsSpan(levelData.AllLemmingData);
-
-        _lemmings.Capacity = allLemmingData.Length;
-
-        var i = 0;
-        foreach (var prototype in allLemmingData)
-        {
-            var lemming = new Lemming(
-                i++,
-                prototype.Orientation,
-                prototype.FacingDirection,
-                prototype.InitialLemmingAction,
-                prototype.Team)
-            {
-                LevelPosition = new LevelPosition(prototype.X, prototype.Y)
-            };
-
-            lemming.State.SetRawDataFromOther(prototype.State);
-
-            _lemmings.Add(lemming);
-        }
+        var hatchLemmingData = CollectionsMarshal.AsSpan(levelData.HatchLemmingData);
+        AddLemmings(hatchLemmingData);
+        var prePlacedLemmings = CollectionsMarshal.AsSpan(levelData.PrePlacedLemmingData);
+        AddLemmings(prePlacedLemmings);
 
         return _lemmings;
+
+        void AddLemmings(ReadOnlySpan<LemmingData> lemmingDataSpan)
+        {
+            _lemmings.Capacity += lemmingDataSpan.Length;
+
+            var i = _lemmings.Count;
+            foreach (var prototype in lemmingDataSpan)
+            {
+                var lemming = new Lemming(
+                    i++,
+                    prototype.Orientation,
+                    prototype.FacingDirection,
+                    prototype.InitialLemmingAction,
+                    prototype.Team)
+                {
+                    LevelPosition = new LevelPosition(prototype.X, prototype.Y)
+                };
+
+                lemming.State.SetRawDataFromOther(prototype.State);
+
+                _lemmings.Add(lemming);
+            }
+        }
     }
 
     public GadgetBase[] GetLevelGadgets(

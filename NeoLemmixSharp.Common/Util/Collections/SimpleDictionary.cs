@@ -93,24 +93,54 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Enumerator GetEnumerator() => new(this);
-    [Pure]
-    IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() => new Enumerator(this);
-    [Pure]
-    IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
 
-    public sealed class Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
+    public ref struct Enumerator
+    {
+        private readonly IPerfectHasher<TKey> _hasher;
+        private readonly ReadOnlySpan<TValue> _values;
+        private BitBasedEnumerator _bitEnumerator;
+
+        public Enumerator(SimpleDictionary<TKey, TValue> dictionary)
+        {
+            _hasher = dictionary._hasher;
+            _values = new ReadOnlySpan<TValue>(dictionary._values);
+            _bitEnumerator = new BitBasedEnumerator(dictionary._bits, dictionary._popCount);
+        }
+
+        [DebuggerStepThrough]
+        public bool MoveNext() => _bitEnumerator.MoveNext();
+
+        public KeyValuePair<TKey, TValue> Current
+        {
+            get
+            {
+                var index = _bitEnumerator.Current;
+                var key = _hasher.UnHash(index);
+                var value = _values[index];
+                return new KeyValuePair<TKey, TValue>(key, value);
+            }
+        }
+    }
+
+    [Pure]
+    IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() => new ReferenceTypeEnumerator(this);
+    [Pure]
+    IEnumerator IEnumerable.GetEnumerator() => new ReferenceTypeEnumerator(this);
+
+    public sealed class ReferenceTypeEnumerator : IEnumerator<KeyValuePair<TKey, TValue>>
     {
         private readonly IPerfectHasher<TKey> _hasher;
         private readonly BitArrayHelpers.ReferenceTypeBitEnumerator _enumerator;
         private readonly TValue[] _values;
 
-        public Enumerator(SimpleDictionary<TKey, TValue> dictionary)
+        public ReferenceTypeEnumerator(SimpleDictionary<TKey, TValue> dictionary)
         {
             _hasher = dictionary._hasher;
             _enumerator = new BitArrayHelpers.ReferenceTypeBitEnumerator(dictionary._bits, dictionary._popCount);
             _values = dictionary._values;
         }
 
+        [DebuggerStepThrough]
         public bool MoveNext() => _enumerator.MoveNext();
 
         public KeyValuePair<TKey, TValue> Current

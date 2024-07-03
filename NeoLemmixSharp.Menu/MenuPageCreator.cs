@@ -84,7 +84,7 @@ public sealed class MenuPageCreator
 
             levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
             var levelScreen = levelBuilder.BuildLevel(levelData);
-            result = new LevelStartPage(_desktop, _inputController, levelScreen);
+            result = new LevelStartPage(_desktop, _inputController, levelScreen, levelData);
         }
         catch (Exception ex)
         {

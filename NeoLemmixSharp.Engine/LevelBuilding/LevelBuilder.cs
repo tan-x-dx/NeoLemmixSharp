@@ -61,7 +61,7 @@ public sealed class LevelBuilder : IDisposable
         var inputController = new LevelInputController(levelParameters);
         LevelScreen.SetLevelInputController(inputController);
 
-        var primaryLevelObjective = levelData.PrimaryLevelObjective!;
+        var primaryLevelObjective = levelData.LevelObjectives.Find(lo => lo.LevelObjectiveId == 0)!;
 
         var skillSetManager = new SkillSetManager(primaryLevelObjective);
         LevelScreen.SetSkillSetManager(skillSetManager);

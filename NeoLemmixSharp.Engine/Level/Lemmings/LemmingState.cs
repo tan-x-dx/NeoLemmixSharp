@@ -12,12 +12,19 @@ public sealed class LemmingState
     public const int SwimmerBitIndex = 4;
     public const int DisarmerBitIndex = 5;
 
+    public const int AcidLemmingBitIndex = 20;
+    public const int WaterLemmingBitIndex = 21;
+
     private const uint PermanentSkillBitMask = (1U << ClimberBitIndex) |
                                                (1U << FloaterBitIndex) |
                                                (1U << GliderBitIndex) |
                                                (1U << SliderBitIndex) |
                                                (1U << SwimmerBitIndex) |
                                                (1U << DisarmerBitIndex);
+
+    private const uint LiquidAffinityBitMask = (1U << AcidLemmingBitIndex) |
+                                              (1U << WaterLemmingBitIndex) |
+                                              (1U << SwimmerBitIndex);
 
     private const int PermanentFastForwardBitIndex = 20;
 
@@ -36,9 +43,12 @@ public sealed class LemmingState
 
     public Color HairColor { get; private set; }
     public Color SkinColor { get; private set; }
+    public Color FootColor { get; private set; }
     public Color BodyColor { get; private set; }
 
     public bool HasPermanentSkill => (_states & PermanentSkillBitMask) != 0U;
+    public bool HasLiquidAffinity => (_states & LiquidAffinityBitMask) != 0U;
+
     /// <summary>
     /// Must be active and NOT zombie and NOT neutral
     /// </summary>
@@ -95,7 +105,19 @@ public sealed class LemmingState
     public bool IsSwimmer
     {
         get => ((_states >> SwimmerBitIndex) & 1U) != 0U;
-        set => SetBitToValue(1U << SwimmerBitIndex, value);
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << SwimmerBitIndex;
+                _states &= ~((1U << AcidLemmingBitIndex) | (1U << WaterLemmingBitIndex)); // Deliberately knock out the acid/water lemmings
+            }
+            else
+            {
+                _states &= ~(1U << SwimmerBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
     }
 
     public bool IsDisarmer
@@ -123,6 +145,42 @@ public sealed class LemmingState
             {
                 _states &= ~(1U << PermanentFastForwardBitIndex);
             }
+        }
+    }
+
+    public bool IsAcidLemming
+    {
+        get => ((_states >> AcidLemmingBitIndex) & 1U) != 0U;
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << AcidLemmingBitIndex;
+                _states &= ~((1U << SwimmerBitIndex) | (1U << WaterLemmingBitIndex)); // Deliberately knock out the swimmer/water lemmings
+            }
+            else
+            {
+                _states &= ~(1U << AcidLemmingBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
+    }
+
+    public bool IsWaterLemming
+    {
+        get => ((_states >> WaterLemmingBitIndex) & 1U) != 0U;
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << WaterLemmingBitIndex;
+                _states &= ~((1U << SwimmerBitIndex) | (1U << AcidLemmingBitIndex)); // Deliberately knock out the swimmer/acid lemmings
+            }
+            else
+            {
+                _states &= ~(1U << WaterLemmingBitIndex);
+            }
+            UpdateHairAndBodyColors();
         }
     }
 
@@ -217,6 +275,19 @@ public sealed class LemmingState
         SkinColor = IsZombie
             ? _team.ZombieSkinColor
             : _team.SkinColor;
+
+        if (IsAcidLemming)
+        {
+            FootColor = _team.AcidLemmingFootColor;
+        }
+        else if (IsWaterLemming)
+        {
+            FootColor = _team.WaterLemmingFootColor;
+        }
+        else
+        {
+            FootColor = SkinColor;
+        }
     }
 
     public void SetRawDataFromOther(LemmingState otherLemmingState)

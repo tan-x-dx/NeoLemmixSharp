@@ -90,6 +90,14 @@ public sealed class TerrainReader : INeoLemmixDataReader
                 currentTerrainData.Y = int.Parse(secondToken);
                 break;
 
+            case "WIDTH":
+                currentTerrainData.Width = int.Parse(secondToken);
+                break;
+
+            case "HEIGHT":
+                currentTerrainData.Height = int.Parse(secondToken);
+                break;
+
             case "NO_OVERWRITE":
                 currentTerrainData.NoOverwrite = true;
                 break;
