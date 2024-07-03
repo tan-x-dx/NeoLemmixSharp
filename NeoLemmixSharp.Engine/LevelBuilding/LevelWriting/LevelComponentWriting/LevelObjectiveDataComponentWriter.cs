@@ -16,7 +16,7 @@ public sealed class LevelObjectiveDataComponentWriter : ILevelDataWriter
 
     public ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
-        return (ushort)(1 + levelData.LevelObjectives.Count);
+        return (ushort)levelData.LevelObjectives.Count;
     }
 
     public void WriteSection(
@@ -54,7 +54,9 @@ public sealed class LevelObjectiveDataComponentWriter : ILevelDataWriter
 
     private static ushort GetNumberOfBytesForLevelObjective(LevelObjective levelObjective)
     {
-        return (ushort)(LevelReadWriteHelpers.NumberOfBytesForMainLevelObjectiveData + LevelReadWriteHelpers.NumberOfBytesPerSkillSetDatum * levelObjective.SkillSetData.Length + LevelReadWriteHelpers.NumberOfBytesPerRequirementsDatum * levelObjective.Requirements.Length);
+        return (ushort)(LevelReadWriteHelpers.NumberOfBytesForMainLevelObjectiveData +
+                        LevelReadWriteHelpers.NumberOfBytesPerSkillSetDatum * levelObjective.SkillSetData.Length +
+                        LevelReadWriteHelpers.NumberOfBytesPerRequirementsDatum * levelObjective.Requirements.Length);
     }
 
     private static void WriteSkillSetDatum(BinaryWriter writer, SkillSetData skillSetData)

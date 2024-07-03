@@ -52,23 +52,37 @@ public sealed class TerrainDataComponentWriter : ILevelDataWriter
 
     private static ushort GetNumberOfBytesWritten(TerrainData terrainData)
     {
-        return (ushort)(LevelReadWriteHelpers.NumberOfBytesForMainTerrainData + (terrainData.Tint.HasValue ? 4 : 1));
+        var tintBytes = terrainData.Tint.HasValue ? 3 : 0;
+        var resizeBytes = terrainData.Width.HasValue ||
+                          terrainData.Height.HasValue ? 4 : 0;
+
+        return (ushort)(LevelReadWriteHelpers.NumberOfBytesForMainTerrainData + tintBytes + resizeBytes);
     }
 
     private static void WriteTerrainDataMisc(BinaryWriter writer, TerrainData terrainData)
     {
+        var hasResizeData = terrainData.Width.HasValue ||
+                            terrainData.Height.HasValue;
+
         var miscDataBits = (terrainData.Erase ? 1 << LevelReadWriteHelpers.EraseBitShift : 0) |
                            (terrainData.NoOverwrite ? 1 << LevelReadWriteHelpers.NoOverwriteBitShift : 0) |
-                           (terrainData.Tint.HasValue ? 1 << LevelReadWriteHelpers.TintBitShift : 0);
+                           (terrainData.Tint.HasValue ? 1 << LevelReadWriteHelpers.TintBitShift : 0) |
+                           (hasResizeData ? 1 << LevelReadWriteHelpers.ResizeBitShift : 0);
 
         writer.Write((byte)miscDataBits);
 
-        if (!terrainData.Tint.HasValue)
-            return;
+        if (terrainData.Tint.HasValue)
+        {
+            var tint = terrainData.Tint.Value;
+            writer.Write(tint.R);
+            writer.Write(tint.G);
+            writer.Write(tint.B);
+        }
 
-        var tint = terrainData.Tint.Value;
-        writer.Write(tint.R);
-        writer.Write(tint.G);
-        writer.Write(tint.B);
+        if (hasResizeData)
+        {
+            writer.Write((ushort)(terrainData.Width ?? 0));
+            writer.Write((ushort)(terrainData.Height ?? 0));
+        }
     }
 }

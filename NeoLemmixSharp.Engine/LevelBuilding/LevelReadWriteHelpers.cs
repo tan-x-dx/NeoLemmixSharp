@@ -56,6 +56,7 @@ public static class LevelReadWriteHelpers
     public const int EraseBitShift = 0;
     public const int NoOverwriteBitShift = 1;
     public const int TintBitShift = 2;
+    public const int ResizeBitShift = 3;
 
     public const int NumberOfBytesForMainTerrainData = 9;
 

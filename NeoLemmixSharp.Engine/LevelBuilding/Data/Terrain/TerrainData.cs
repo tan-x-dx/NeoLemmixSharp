@@ -16,6 +16,9 @@ public sealed class TerrainData
     public string? GroupName { get; set; }
     public int TerrainArchetypeId { get; set; }
 
+    public int? Width { get; set; }
+    public int? Height { get; set; }
+
     public override string ToString()
     {
         var flipString = Flip ? "F" : string.Empty;
