@@ -3,23 +3,19 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public sealed class GadgetComponentWriter : ILevelDataWriter
+public sealed class GadgetDataComponentWriter : ILevelDataWriter
 {
     private const int NumberOfBytesForMainGadgetData = 13;
     private const int NumberOfBytesPerGadgetProperty = 5;
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public GadgetComponentWriter(Dictionary<string, ushort> stringIdLookup)
+    public GadgetDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier()
-    {
-        ReadOnlySpan<byte> sectionIdentifier = [0x3D, 0x98];
-        return sectionIdentifier;
-    }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.GadgetDataSectionIdentifier;
 
     public ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
@@ -46,9 +42,9 @@ public sealed class GadgetComponentWriter : ILevelDataWriter
         writer.Write(_stringIdLookup[gadgetData.Style]);
         writer.Write(_stringIdLookup[gadgetData.GadgetPiece]);
 
-        writer.Write((ushort)(gadgetData.X + Helpers.PositionOffset));
-        writer.Write((ushort)(gadgetData.Y + Helpers.PositionOffset));
-        writer.Write(Helpers.GetOrientationByte(gadgetData.Orientation, gadgetData.FacingDirection));
+        writer.Write((ushort)(gadgetData.X + LevelReadWriteHelpers.PositionOffset));
+        writer.Write((ushort)(gadgetData.Y + LevelReadWriteHelpers.PositionOffset));
+        writer.Write(LevelReadWriteHelpers.GetOrientationByte(gadgetData.Orientation, gadgetData.FacingDirection));
 
         writer.Write((byte)gadgetData.InitialStateId);
         writer.Write((byte)gadgetData.GadgetRenderMode);

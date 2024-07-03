@@ -23,7 +23,7 @@ public sealed class BinaryReaderWrapper : IDisposable
 
     public byte Read8BitUnsignedInteger()
     {
-        Helpers.ReaderAssert(_fileSizeInBytes - _bytesRead >= 1, "Reached end of file!");
+        LevelReadWriteHelpers.ReaderAssert(_fileSizeInBytes - _bytesRead >= 1, "Reached end of file!");
 
         var result = _reader.ReadByte();
         _bytesRead++;
@@ -32,16 +32,34 @@ public sealed class BinaryReaderWrapper : IDisposable
 
     public ushort Read16BitUnsignedInteger()
     {
-        Helpers.ReaderAssert(_fileSizeInBytes - _bytesRead >= 2, "Reached end of file!");
+        LevelReadWriteHelpers.ReaderAssert(_fileSizeInBytes - _bytesRead >= 2, "Reached end of file!");
 
         var result = _reader.ReadUInt16();
         _bytesRead += 2;
         return result;
     }
 
+    public uint Read32BitUnsignedInteger()
+    {
+        LevelReadWriteHelpers.ReaderAssert(_fileSizeInBytes - _bytesRead >= 4, "Reached end of file!");
+
+        var result = _reader.ReadUInt32();
+        _bytesRead += 4;
+        return result;
+    }
+
+    public int Read32BitSignedInteger()
+    {
+        LevelReadWriteHelpers.ReaderAssert(_fileSizeInBytes - _bytesRead >= 4, "Reached end of file!");
+
+        var result = _reader.ReadInt32();
+        _bytesRead += 4;
+        return result;
+    }
+
     public ulong Read64BitUnsignedInteger()
     {
-        Helpers.ReaderAssert(_fileSizeInBytes - _bytesRead >= 8, "Reached end of file!");
+        LevelReadWriteHelpers.ReaderAssert(_fileSizeInBytes - _bytesRead >= 8, "Reached end of file!");
 
         var result = _reader.ReadUInt64();
         _bytesRead += 8;
@@ -50,11 +68,11 @@ public sealed class BinaryReaderWrapper : IDisposable
 
     public void ReadBytes(Span<byte> buffer)
     {
-        Helpers.ReaderAssert(_fileSizeInBytes - _bytesRead >= buffer.Length, "Reached end of file!");
+        LevelReadWriteHelpers.ReaderAssert(_fileSizeInBytes - _bytesRead >= buffer.Length, "Reached end of file!");
 
         var bytesRead = _reader.Read(buffer);
 
-        Helpers.ReaderAssert(bytesRead == buffer.Length, "Reached end of file!");
+        LevelReadWriteHelpers.ReaderAssert(bytesRead == buffer.Length, "Reached end of file!");
         _bytesRead += bytesRead;
     }
 

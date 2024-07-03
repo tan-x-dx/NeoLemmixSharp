@@ -3,24 +3,16 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public sealed class LevelObjectiveComponentWriter : ILevelDataWriter
+public sealed class LevelObjectiveDataComponentWriter : ILevelDataWriter
 {
-    private const int NumberOfBytesForMainLevelObjectiveData = 7;
-    private const int NumberOfBytesPerSkillSetDatum = 3;
-    private const int NumberOfBytesPerRequirementsDatum = 4;
-
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public LevelObjectiveComponentWriter(Dictionary<string, ushort> stringIdLookup)
+    public LevelObjectiveDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier()
-    {
-        ReadOnlySpan<byte> sectionIdentifier = [0xBE, 0xF4];
-        return sectionIdentifier;
-    }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelObjectivesDataSectionIdentifier;
 
     public ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
@@ -62,9 +54,7 @@ public sealed class LevelObjectiveComponentWriter : ILevelDataWriter
 
     private static ushort GetNumberOfBytesForLevelObjective(LevelObjective levelObjective)
     {
-        return (ushort)(NumberOfBytesForMainLevelObjectiveData +
-                        NumberOfBytesPerSkillSetDatum * levelObjective.SkillSetData.Length +
-                        NumberOfBytesPerRequirementsDatum * levelObjective.Requirements.Length);
+        return (ushort)(LevelReadWriteHelpers.NumberOfBytesForMainLevelObjectiveData + LevelReadWriteHelpers.NumberOfBytesPerSkillSetDatum * levelObjective.SkillSetData.Length + LevelReadWriteHelpers.NumberOfBytesPerRequirementsDatum * levelObjective.Requirements.Length);
     }
 
     private static void WriteSkillSetDatum(BinaryWriter writer, SkillSetData skillSetData)

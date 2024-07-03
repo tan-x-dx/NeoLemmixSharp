@@ -3,23 +3,19 @@ using System.Text;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public sealed class StringComponentWriter : ILevelDataWriter
+public sealed class StringDataComponentWriter : ILevelDataWriter
 {
     private const int StringBufferSize = 1024;
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
     private readonly byte[] _byteBuffer = new byte[StringBufferSize];
 
-    public StringComponentWriter(Dictionary<string, ushort> stringIdLookup)
+    public StringDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier()
-    {
-        ReadOnlySpan<byte> sectionIdentifier = [0x26, 0x44];
-        return sectionIdentifier;
-    }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.StringDataSectionIdentifier;
 
     public ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {

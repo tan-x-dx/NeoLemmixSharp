@@ -4,25 +4,21 @@ using System.Text;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
 
-public sealed class StringComponentReader : ILevelDataReader
+public sealed class StringDataComponentReader : ILevelDataReader
 {
     private const int StringBufferSize = 1024;
 
     private readonly List<string> _stringIdLookup;
     private readonly byte[] _byteBuffer = new byte[StringBufferSize];
 
-    public StringComponentReader(List<string> stringIdLookup)
+    public StringDataComponentReader(List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
 
         _stringIdLookup.Add(string.Empty);
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier()
-    {
-        ReadOnlySpan<byte> sectionIdentifier = [0x26, 0x44];
-        return sectionIdentifier;
-    }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.StringDataSectionIdentifier;
 
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
@@ -33,7 +29,7 @@ public sealed class StringComponentReader : ILevelDataReader
         while (numberOfItems > 0)
         {
             var id = reader.Read16BitUnsignedInteger();
-            Helpers.ReaderAssert(id == _stringIdLookup.Count, "Invalid string ids");
+            LevelReadWriteHelpers.ReaderAssert(id == _stringIdLookup.Count, "Invalid string ids");
 
             var stringLength = reader.Read16BitUnsignedInteger();
 

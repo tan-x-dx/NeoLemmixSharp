@@ -3,22 +3,18 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public sealed class TerrainGroupComponentWriter : ILevelDataWriter
+public sealed class TerrainGroupDataComponentWriter : ILevelDataWriter
 {
     private readonly Dictionary<string, ushort> _stringIdLookup;
-    private readonly TerrainComponentWriter _terrainComponentReaderWriter;
+    private readonly TerrainDataComponentWriter _terrainDataComponentWriter;
 
-    public TerrainGroupComponentWriter(Dictionary<string, ushort> stringIdLookup, TerrainComponentWriter terrainComponentReaderWriter)
+    public TerrainGroupDataComponentWriter(Dictionary<string, ushort> stringIdLookup, TerrainDataComponentWriter terrainDataComponentWriter)
     {
         _stringIdLookup = stringIdLookup;
-        _terrainComponentReaderWriter = terrainComponentReaderWriter;
+        _terrainDataComponentWriter = terrainDataComponentWriter;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier()
-    {
-        ReadOnlySpan<byte> sectionIdentifier = [0x7C, 0x5C];
-        return sectionIdentifier;
-    }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.TerrainGroupDataSectionIdentifier;
 
     public ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
@@ -49,7 +45,7 @@ public sealed class TerrainGroupComponentWriter : ILevelDataWriter
             if (terrainArchetypeData is null)
                 throw new InvalidOperationException($"Could not locate TerrainArchetypeData with id {terrainData.TerrainArchetypeId}");
 
-            _terrainComponentReaderWriter.WriteTerrainData(writer, terrainArchetypeData, terrainData);
+            _terrainDataComponentWriter.WriteTerrainData(writer, terrainArchetypeData, terrainData);
         }
     }
 }

@@ -3,26 +3,16 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public sealed class TerrainComponentWriter : ILevelDataWriter
+public sealed class TerrainDataComponentWriter : ILevelDataWriter
 {
-    private const int EraseBitShift = 0;
-    private const int NoOverwriteBitShift = 1;
-    private const int TintBitShift = 2;
-
-    private const int NumberOfBytesForMainTerrainData = 9;
-
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public TerrainComponentWriter(Dictionary<string, ushort> stringIdLookup)
+    public TerrainDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier()
-    {
-        ReadOnlySpan<byte> sectionIdentifier = [0x60, 0xBB];
-        return sectionIdentifier;
-    }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.TerrainDataSectionIdentifier;
 
     public ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
@@ -53,23 +43,23 @@ public sealed class TerrainComponentWriter : ILevelDataWriter
         writer.Write(_stringIdLookup[terrainArchetypeData.Style!]);
         writer.Write(_stringIdLookup[terrainArchetypeData.TerrainPiece!]);
 
-        writer.Write((ushort)(terrainData.X + Helpers.PositionOffset));
-        writer.Write((ushort)(terrainData.Y + Helpers.PositionOffset));
-        writer.Write(Helpers.GetOrientationByte(terrainData.RotNum, terrainData.Flip));
+        writer.Write((ushort)(terrainData.X + LevelReadWriteHelpers.PositionOffset));
+        writer.Write((ushort)(terrainData.Y + LevelReadWriteHelpers.PositionOffset));
+        writer.Write(LevelReadWriteHelpers.GetOrientationByte(terrainData.RotNum, terrainData.Flip));
 
         WriteTerrainDataMisc(writer, terrainData);
     }
 
     private static ushort GetNumberOfBytesWritten(TerrainData terrainData)
     {
-        return (ushort)(NumberOfBytesForMainTerrainData + (terrainData.Tint.HasValue ? 4 : 1));
+        return (ushort)(LevelReadWriteHelpers.NumberOfBytesForMainTerrainData + (terrainData.Tint.HasValue ? 4 : 1));
     }
 
     private static void WriteTerrainDataMisc(BinaryWriter writer, TerrainData terrainData)
     {
-        var miscDataBits = (terrainData.Erase ? 1 << EraseBitShift : 0) |
-                           (terrainData.NoOverwrite ? 1 << NoOverwriteBitShift : 0) |
-                           (terrainData.Tint.HasValue ? 1 << TintBitShift : 0);
+        var miscDataBits = (terrainData.Erase ? 1 << LevelReadWriteHelpers.EraseBitShift : 0) |
+                           (terrainData.NoOverwrite ? 1 << LevelReadWriteHelpers.NoOverwriteBitShift : 0) |
+                           (terrainData.Tint.HasValue ? 1 << LevelReadWriteHelpers.TintBitShift : 0);
 
         writer.Write((byte)miscDataBits);
 

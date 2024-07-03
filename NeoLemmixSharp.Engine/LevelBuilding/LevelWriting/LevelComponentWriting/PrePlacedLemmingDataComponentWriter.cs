@@ -2,13 +2,9 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
 
-public sealed class PrePlacedLemmingComponentWriter : ILevelDataWriter
+public sealed class PrePlacedLemmingDataComponentWriter : ILevelDataWriter
 {
-    public ReadOnlySpan<byte> GetSectionIdentifier()
-    {
-        ReadOnlySpan<byte> sectionIdentifier = [0xFE, 0x77];
-        return sectionIdentifier;
-    }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.PrePlacedLemmingDataSectionIdentifier;
 
     public ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
@@ -27,12 +23,12 @@ public sealed class PrePlacedLemmingComponentWriter : ILevelDataWriter
 
     private static void WriteLemmingData(BinaryWriter writer, LemmingData lemmingData)
     {
-        writer.Write((ushort)(lemmingData.X + Helpers.PositionOffset));
-        writer.Write((ushort)(lemmingData.Y + Helpers.PositionOffset));
+        writer.Write((ushort)(lemmingData.X + LevelReadWriteHelpers.PositionOffset));
+        writer.Write((ushort)(lemmingData.Y + LevelReadWriteHelpers.PositionOffset));
         writer.Write(lemmingData.State);
 
-        writer.Write(Helpers.GetOrientationByte(lemmingData.Orientation, lemmingData.FacingDirection));
+        writer.Write(LevelReadWriteHelpers.GetOrientationByte(lemmingData.Orientation, lemmingData.FacingDirection));
         writer.Write((byte)lemmingData.Team.Id);
-        writer.Write((ushort)lemmingData.InitialLemmingAction.Id);
+        writer.Write((byte)lemmingData.InitialLemmingAction.Id);
     }
 }

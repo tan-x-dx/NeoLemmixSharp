@@ -23,20 +23,20 @@ public readonly ref struct LevelWriter
 
         var stringIdLookup = new Dictionary<string, ushort>();
 
-        var terrainComponentWriter = new TerrainComponentWriter(stringIdLookup);
+        var terrainComponentWriter = new TerrainDataComponentWriter(stringIdLookup);
 
         ReadOnlySpan<ILevelDataWriter> levelDataWriters = new ILevelDataWriter[]
         {
-            // StringComponentWriter needs to be first as it will populate the stringIdLookup!
-            new StringComponentWriter(stringIdLookup),
+            // StringDataComponentWriter needs to be first as it will populate the stringIdLookup!
+            new StringDataComponentWriter(stringIdLookup),
 
             new LevelDataComponentWriter(stringIdLookup),
-            new HatchGroupComponentWriter(),
-            new LevelObjectiveComponentWriter(stringIdLookup),
-            new PrePlacedLemmingComponentWriter(),
+            new HatchGroupDataComponentWriter(),
+            new LevelObjectiveDataComponentWriter(stringIdLookup),
+            new PrePlacedLemmingDataComponentWriter(),
             terrainComponentWriter,
-            new TerrainGroupComponentWriter(stringIdLookup, terrainComponentWriter),
-            new GadgetComponentWriter(stringIdLookup),
+            new TerrainGroupDataComponentWriter(stringIdLookup, terrainComponentWriter),
+            new GadgetDataComponentWriter(stringIdLookup),
         };
 
         foreach (var levelDataWriter in levelDataWriters)

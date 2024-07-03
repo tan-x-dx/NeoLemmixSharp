@@ -2,19 +2,12 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
 
 public sealed class LevelDataComponentReader : ILevelDataReader
 {
-    private const int NumberOfBytesForMainLevelData = 31;
-
-    private const byte NoBackgroundSpecified = 0x00;
-    private const byte SolidBackgroundColor = 0x01;
-    private const byte BackgroundImageSpecified = 0x02;
-
-    private const int UnspecifiedLevelStartValue = 5000;
-
     private readonly List<string> _stringIdLookup;
 
     public LevelDataComponentReader(List<string> stringIdLookup)
@@ -22,16 +15,12 @@ public sealed class LevelDataComponentReader : ILevelDataReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier()
-    {
-        ReadOnlySpan<byte> sectionIdentifier = [0x79, 0xA6];
-        return sectionIdentifier;
-    }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelDataSectionIdentifier;
 
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
         var numberOfItemsInSection = reader.Read16BitUnsignedInteger();
-        Helpers.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
+        LevelReadWriteHelpers.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
 
         var numberOfBytesToRead = reader.Read16BitUnsignedInteger();
         var initialBytesRead = reader.BytesRead;
@@ -51,7 +40,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
         ReadLevelDimensionData(reader, levelData);
         ReadBackgroundData(reader, levelData);
 
-        Helpers.ReaderAssert(
+        LevelReadWriteHelpers.ReaderAssert(
             reader.BytesRead - initialBytesRead == numberOfBytesToRead,
             "Wrong number of bytes read for level data section! " +
             $"Expected: {numberOfBytesToRead}, Actual: {reader.BytesRead - initialBytesRead}");
@@ -63,13 +52,13 @@ public sealed class LevelDataComponentReader : ILevelDataReader
         levelData.LevelHeight = reader.Read16BitUnsignedInteger();
 
         var value = reader.Read16BitUnsignedInteger();
-        if (value != UnspecifiedLevelStartValue)
+        if (value != LevelReadWriteHelpers.UnspecifiedLevelStartValue)
         {
             levelData.LevelStartPositionX = value;
         }
 
         value = reader.Read16BitUnsignedInteger();
-        if (value != UnspecifiedLevelStartValue)
+        if (value != LevelReadWriteHelpers.UnspecifiedLevelStartValue)
         {
             levelData.LevelStartPositionY = value;
         }
@@ -88,17 +77,18 @@ public sealed class LevelDataComponentReader : ILevelDataReader
         levelData.VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
     }
 
+    [SkipLocalsInit]
     private void ReadBackgroundData(BinaryReaderWrapper reader, LevelData levelData)
     {
         var specifierByte = reader.Read8BitUnsignedInteger();
 
         switch (specifierByte)
         {
-            case NoBackgroundSpecified:
+            case LevelReadWriteHelpers.NoBackgroundSpecified:
                 levelData.LevelBackground = null;
                 break;
 
-            case SolidBackgroundColor:
+            case LevelReadWriteHelpers.SolidBackgroundColor:
                 Span<byte> buffer = stackalloc byte[3];
                 reader.ReadBytes(buffer);
 
@@ -111,7 +101,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
                 break;
 
 
-            case BackgroundImageSpecified:
+            case LevelReadWriteHelpers.BackgroundImageSpecified:
                 var backgroundStringId = reader.Read16BitUnsignedInteger();
 
                 levelData.LevelBackground = new BackgroundData

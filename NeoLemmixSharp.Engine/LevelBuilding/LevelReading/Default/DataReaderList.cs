@@ -15,19 +15,19 @@ public sealed class DataReaderList : IDisposable
 
         var stringIdLookup = new List<string>();
 
-        var terrainComponentReader = new TerrainComponentReader(stringIdLookup);
+        var terrainComponentReader = new TerrainDataComponentReader(stringIdLookup);
         _dataReaders =
         [
             // StringComponentReaderWriter needs to be first as it will populate the stringIdLookup!
-            new StringComponentReader(stringIdLookup),
+            new StringDataComponentReader(stringIdLookup),
 
             new LevelDataComponentReader(stringIdLookup),
-            new HatchGroupComponentReader(),
-            new LevelObjectiveComponentReader(stringIdLookup),
-            new PrePlacedLemmingComponentReader(),
+            new HatchGroupDataComponentReader(),
+            new LevelObjectiveDataComponentReader(stringIdLookup),
+            new PrePlacedLemmingDataComponentReader(),
             terrainComponentReader,
-            new TerrainGroupComponentReader(stringIdLookup, terrainComponentReader),
-            new GadgetComponentReader(stringIdLookup)
+            new TerrainGroupDataComponentReader(stringIdLookup, terrainComponentReader),
+            new GadgetDataComponentReader(stringIdLookup)
         ];
     }
 
@@ -63,7 +63,7 @@ public sealed class DataReaderList : IDisposable
         {
             var nextByte = _binaryReaderWrapper.Read8BitUnsignedInteger();
 
-            Helpers.ReaderAssert(nextByte == '.', "Version not in correct format");
+            LevelReadWriteHelpers.ReaderAssert(nextByte == '.', "Version not in correct format");
         }
     }
 
