@@ -1,6 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Components;
-
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
 public sealed class BinaryReaderWrapper : IDisposable
 {

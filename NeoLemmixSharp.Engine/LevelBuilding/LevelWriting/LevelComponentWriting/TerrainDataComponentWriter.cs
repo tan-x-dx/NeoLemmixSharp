@@ -50,13 +50,13 @@ public sealed class TerrainDataComponentWriter : ILevelDataWriter
         WriteTerrainDataMisc(writer, terrainData);
     }
 
-    private static ushort GetNumberOfBytesWritten(TerrainData terrainData)
+    private static byte GetNumberOfBytesWritten(TerrainData terrainData)
     {
         var tintBytes = terrainData.Tint.HasValue ? 3 : 0;
         var resizeBytes = terrainData.Width.HasValue ||
                           terrainData.Height.HasValue ? 4 : 0;
 
-        return (ushort)(LevelReadWriteHelpers.NumberOfBytesForMainTerrainData + tintBytes + resizeBytes);
+        return (byte)(LevelReadWriteHelpers.NumberOfBytesForMainTerrainData + tintBytes + resizeBytes);
     }
 
     private static void WriteTerrainDataMisc(BinaryWriter writer, TerrainData terrainData)
