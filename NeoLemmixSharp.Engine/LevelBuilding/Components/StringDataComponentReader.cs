@@ -1,15 +1,15 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
 
 public sealed class StringDataComponentReader : ILevelDataReader
 {
-    private const int StringBufferSize = 1024;
+    private const int StackByteBufferSize = 256;
 
     private readonly List<string> _stringIdLookup;
-    private readonly byte[] _byteBuffer = new byte[StringBufferSize];
 
     public StringDataComponentReader(List<string> stringIdLookup)
     {
@@ -20,27 +20,34 @@ public sealed class StringDataComponentReader : ILevelDataReader
 
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.StringDataSectionIdentifier;
 
+    [SkipLocalsInit]
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
         var numberOfItems = reader.Read16BitUnsignedInteger();
 
         var utf8Encoding = Encoding.UTF8;
 
-        while (numberOfItems > 0)
+        Span<byte> byteBuffer = stackalloc byte[StackByteBufferSize];
+
+        while (numberOfItems-- > 0)
         {
             var id = reader.Read16BitUnsignedInteger();
             LevelReadWriteHelpers.ReaderAssert(id == _stringIdLookup.Count, "Invalid string ids");
 
             var stringLength = reader.Read16BitUnsignedInteger();
 
-            var stringBuffer = new Span<byte>(_byteBuffer, 0, stringLength);
+            if (byteBuffer.Length < stringLength)
+            {
+                var heapBuffer = new byte[stringLength];
+                byteBuffer = new Span<byte>(heapBuffer);
+            }
+
+            var stringBuffer = byteBuffer[..stringLength];
             reader.ReadBytes(stringBuffer);
 
             var actualString = utf8Encoding.GetString(stringBuffer);
 
             _stringIdLookup.Add(actualString);
-
-            numberOfItems--;
         }
     }
 }
