@@ -71,7 +71,7 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSetEnumerable<T> GetAllTrackedItems() => _allTrackedItems.ToSimpleEnumerable();
+    public SimpleSetEnumerable<T> GetAllTrackedItems() => _allTrackedItems.AsSimpleEnumerable();
 
     public void Clear()
     {

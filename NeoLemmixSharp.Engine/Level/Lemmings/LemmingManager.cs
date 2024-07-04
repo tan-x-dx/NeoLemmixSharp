@@ -37,7 +37,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     public int TotalNumberOfLemmings => _lemmings.Count;
     public ReadOnlySpan<Lemming> AllLemmings => CollectionsMarshal.AsSpan(_lemmings);
     public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
-    public SimpleSetEnumerable<Lemming> AllBlockers => _allBlockers.ToSimpleEnumerable();
+    public SimpleSetEnumerable<Lemming> AllBlockers => _allBlockers.AsSimpleEnumerable();
 
     private int _nextLemmingId;
 
