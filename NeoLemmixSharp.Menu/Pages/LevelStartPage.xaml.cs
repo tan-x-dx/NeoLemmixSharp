@@ -52,7 +52,7 @@ public sealed class LevelStartPage : PageBase
 
         if (InputController.Enter.IsPressed)
         {
-            const string fileName = @"C:\Temp\levelTest.lvl";
+            const string fileName = @"C:\Temp\levelTest.ullv";
             new LevelWriter(_levelData, new Version(1, 0, 0, 0)).WriteToFile(fileName);
         }
     }

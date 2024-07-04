@@ -1,13 +1,15 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Teams;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
 
-public sealed class TerrainDataComponentReader : ILevelDataReader
+public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<TerrainArchetypeData>
 {
+    private readonly Dictionary<int, TerrainArchetypeData> _terrainArchetypeDataLookup = new();
     private readonly List<string> _stringIdLookup;
 
     public TerrainDataComponentReader(List<string> stringIdLookup)
@@ -21,47 +23,126 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
     {
         var numberOfItemsInSection = reader.Read16BitUnsignedInteger();
 
-        //levelData.TerrainArchetypeData.Add(new TerrainArchetypeData
-        //{
-            
-        //});
-        
-
         while (numberOfItemsInSection-- > 0)
         {
-            var bytesToRead = reader.Read8BitUnsignedInteger();
-
-            var style = _stringIdLookup[reader.Read16BitUnsignedInteger()];
-            var piece = _stringIdLookup[reader.Read16BitUnsignedInteger()];
-
-            var x = reader.Read16BitUnsignedInteger();
-            var y = reader.Read16BitUnsignedInteger();
-
-
-
-
-
-            var state = reader.Read32BitUnsignedInteger();
-
-            var orientationByte = reader.Read8BitUnsignedInteger();
-            var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientations(orientationByte);
-            var teamId = reader.Read8BitUnsignedInteger();
-            var initialActionId = reader.Read8BitUnsignedInteger();
-
-            levelData.AllTerrainData.Add(new TerrainData
-            {
-
-
-                X = x - LevelReadWriteHelpers.PositionOffset,
-                Y = y - LevelReadWriteHelpers.PositionOffset,
-                //State = state,
-
-                //Orientation = orientation,
-                //FacingDirection = facingDirection,
-
-                //Team = Team.AllItems[teamId],
-                //InitialLemmingAction = LemmingAction.AllItems[initialActionId]
-            });
+            var newTerrainDatum = ReadTerrainData(reader);
+            levelData.AllTerrainData.Add(newTerrainDatum);
         }
+
+        ProcessTerrainArchetypeData();
+
+        levelData.TerrainArchetypeData.AddRange(_terrainArchetypeDataLookup.Values);
+        levelData.TerrainArchetypeData.Sort(this);
+    }
+
+    private TerrainData ReadTerrainData(BinaryReaderWrapper reader)
+    {
+        var numberOfBytesToRead = reader.Read8BitUnsignedInteger();
+        var initialBytesRead = reader.BytesRead;
+
+        var styleId = reader.Read16BitUnsignedInteger();
+        var pieceId = reader.Read16BitUnsignedInteger();
+
+        var terrainArchetypeData = GetOrAddTerrainArchetypeData(styleId, pieceId);
+
+        var x = reader.Read16BitUnsignedInteger();
+        var y = reader.Read16BitUnsignedInteger();
+
+        var orientationByte = reader.Read8BitUnsignedInteger();
+        var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientations(orientationByte);
+
+        var terrainDataMiscByte = reader.Read8BitUnsignedInteger();
+        LevelReadWriteHelpers.DecipherTerrainDataMiscByte(terrainDataMiscByte, out var decipheredTerrainDataMisc);
+
+        Color? tintColor = null;
+        if (decipheredTerrainDataMisc.HasTintSpecified)
+        {
+            tintColor = ReadTerrainDataTintColor(reader);
+        }
+
+        int? width = null;
+        if (decipheredTerrainDataMisc.HasWidthSpecified)
+        {
+            width = ReadTerrainDataDimension(reader);
+        }
+
+        int? height = null;
+        if (decipheredTerrainDataMisc.HasHeightSpecified)
+        {
+            height = ReadTerrainDataDimension(reader);
+        }
+        
+        LevelReadWriteHelpers.ReaderAssert(
+            reader.BytesRead - initialBytesRead == numberOfBytesToRead,
+            "Wrong number of bytes read for terrain data! " +
+            $"Expected: {numberOfBytesToRead}, Actual: {reader.BytesRead - initialBytesRead}");
+
+        var newTerrainDatum = new TerrainData
+        {
+            TerrainArchetypeId = terrainArchetypeData.TerrainArchetypeId,
+
+            X = x - LevelReadWriteHelpers.PositionOffset,
+            Y = y - LevelReadWriteHelpers.PositionOffset,
+
+            NoOverwrite = decipheredTerrainDataMisc.NoOverwrite,
+            RotNum = orientation.RotNum,
+            Flip = facingDirection == FacingDirection.LeftInstance,
+            Erase = decipheredTerrainDataMisc.Erase,
+
+            Tint = tintColor,
+
+            GroupName = null,
+
+            Width = width,
+            Height = height,
+        };
+
+        return newTerrainDatum;
+    }
+
+    private static Color ReadTerrainDataTintColor(BinaryReaderWrapper reader)
+    {
+        Span<byte> byteBuffer = stackalloc byte[3];
+        reader.ReadBytes(byteBuffer);
+
+        return new Color(byteBuffer[0], byteBuffer[1], byteBuffer[2]);
+    }
+
+    private static int ReadTerrainDataDimension(BinaryReaderWrapper reader)
+    {
+        return reader.Read16BitUnsignedInteger();
+    }
+
+    private TerrainArchetypeData GetOrAddTerrainArchetypeData(ushort styleId, ushort pieceId)
+    {
+        var terrainArchetypeDataLookupKey = (styleId << 16) | pieceId;
+
+        ref var terrainArchetypeData = ref CollectionsMarshal.GetValueRefOrAddDefault(_terrainArchetypeDataLookup, terrainArchetypeDataLookupKey, out var exists);
+
+        if (exists)
+            return terrainArchetypeData!;
+
+        terrainArchetypeData = new TerrainArchetypeData
+        {
+            TerrainArchetypeId = _terrainArchetypeDataLookup.Count - 1,
+
+            Style = _stringIdLookup[styleId],
+            TerrainPiece = _stringIdLookup[pieceId]
+        };
+
+        return terrainArchetypeData;
+    }
+
+    private void ProcessTerrainArchetypeData()
+    {
+        throw new NotImplementedException();
+    }
+
+    int IComparer<TerrainArchetypeData>.Compare(TerrainArchetypeData? x, TerrainArchetypeData? y)
+    {
+        if (ReferenceEquals(x, y)) return 0;
+        if (y is null) return 1;
+        if (x is null) return -1;
+        return x.TerrainArchetypeId.CompareTo(y.TerrainArchetypeId);
     }
 }

@@ -53,10 +53,11 @@ public static class LevelReadWriteHelpers
 
     public static ReadOnlySpan<byte> TerrainDataSectionIdentifier => [0x60, 0xBB];
 
-    public const int EraseBitShift = 0;
-    public const int NoOverwriteBitShift = 1;
-    public const int TintBitShift = 2;
-    public const int ResizeBitShift = 3;
+    public const int TerrainDataEraseBitShift = 0;
+    public const int TerrainDataNoOverwriteBitShift = 1;
+    public const int TerrainDataTintBitShift = 2;
+    public const int TerrainDataResizeWidthBitShift = 3;
+    public const int TerrainDataResizeHeightBitShift = 4;
 
     public const int NumberOfBytesForMainTerrainData = 9;
 
@@ -101,5 +102,39 @@ public static class LevelReadWriteHelpers
         var facingDirection = FacingDirection.AllItems[(b >> FlipBitShift) & 1];
 
         return (orientation, facingDirection);
+    }
+
+    public static void DecipherTerrainDataMiscByte(byte b, out DecipheredTerrainDataMisc decipheredTerrainDataMisc)
+    {
+        var erase = ((b >> TerrainDataEraseBitShift) & 1) != 0;
+        var noOverwrite = ((b >> TerrainDataNoOverwriteBitShift) & 1) != 0;
+        var hasTintSpecified = ((b >> TerrainDataTintBitShift) & 1) != 0;
+        var hasWidthSpecified = ((b >> TerrainDataResizeWidthBitShift) & 1) != 0;
+        var hasHeightSpecified = ((b >> TerrainDataResizeHeightBitShift) & 1) != 0;
+
+        decipheredTerrainDataMisc = new DecipheredTerrainDataMisc(
+            erase,
+            noOverwrite,
+            hasTintSpecified,
+            hasWidthSpecified,
+            hasHeightSpecified);
+    }
+
+    public readonly ref struct DecipheredTerrainDataMisc
+    {
+        public readonly bool Erase;
+        public readonly bool NoOverwrite;
+        public readonly bool HasTintSpecified;
+        public readonly bool HasWidthSpecified;
+        public readonly bool HasHeightSpecified;
+
+        public DecipheredTerrainDataMisc(bool erase, bool noOverwrite, bool hasTintSpecified, bool hasWidthSpecified, bool hasHeightSpecified)
+        {
+            Erase = erase;
+            NoOverwrite = noOverwrite;
+            HasTintSpecified = hasTintSpecified;
+            HasWidthSpecified = hasWidthSpecified;
+            HasHeightSpecified = hasHeightSpecified;
+        }
     }
 }
