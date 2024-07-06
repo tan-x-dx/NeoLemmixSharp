@@ -27,6 +27,12 @@ public static class LevelReadWriteHelpers
 
     #endregion
 
+    #region Level Text Data Read/Write Consts
+
+    public static ReadOnlySpan<byte> LevelTextDataSectionIdentifier => [0x43, 0xAA];
+
+    #endregion
+
     #region Hatch Group Data Read/Write Consts
 
     public static ReadOnlySpan<byte> HatchGroupDataSectionIdentifier => [0x90, 0xD2];

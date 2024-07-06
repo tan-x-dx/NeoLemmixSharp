@@ -18,10 +18,10 @@ public sealed class DataReaderList : IDisposable
         var terrainComponentReader = new TerrainDataComponentReader(stringIdLookup);
         _dataReaders =
         [
-            // StringComponentReaderWriter needs to be first as it will populate the stringIdLookup!
             new StringDataComponentReader(stringIdLookup),
 
             new LevelDataComponentReader(stringIdLookup),
+            new LevelTextDataComponentReader(stringIdLookup),
             new HatchGroupDataComponentReader(),
             new LevelObjectiveDataComponentReader(stringIdLookup),
             new PrePlacedLemmingDataComponentReader(),
@@ -39,9 +39,7 @@ public sealed class DataReaderList : IDisposable
 
         while (_binaryReaderWrapper.MoreToRead)
         {
-            var dataReader = GetNextDataReader();
-
-            dataReader.ReadSection(_binaryReaderWrapper, result);
+            GetNextDataReader().ReadSection(_binaryReaderWrapper, result);
         }
 
         return result;
@@ -76,7 +74,14 @@ public sealed class DataReaderList : IDisposable
         foreach (var levelDataWriter in _dataReaders)
         {
             if (buffer.SequenceEqual(levelDataWriter.GetSectionIdentifier()))
+            {
+                if (levelDataWriter.AlreadyUsed)
+                    throw new LevelReadingException(
+                        "Attempted to read the same section multiple times!" +
+                        $"{levelDataWriter.GetType().Name}");
+
                 return levelDataWriter;
+            }
         }
 
         throw new LevelReadingException($"Unknown section identifier: {buffer[0]:X} {buffer[1]:X}");

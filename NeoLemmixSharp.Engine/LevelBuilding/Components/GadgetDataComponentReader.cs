@@ -7,13 +7,14 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
 {
     private readonly List<string> _stringIdLookup;
 
+    public bool AlreadyUsed { get; private set; }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.GadgetDataSectionIdentifier;
+
     public GadgetDataComponentReader(List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.GadgetDataSectionIdentifier;
 
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {

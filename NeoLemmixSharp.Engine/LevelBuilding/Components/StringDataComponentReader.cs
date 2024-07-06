@@ -11,6 +11,9 @@ public sealed class StringDataComponentReader : ILevelDataReader
 
     private readonly List<string> _stringIdLookup;
 
+    public bool AlreadyUsed { get; private set; }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.StringDataSectionIdentifier;
+
     public StringDataComponentReader(List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
@@ -18,11 +21,10 @@ public sealed class StringDataComponentReader : ILevelDataReader
         _stringIdLookup.Add(string.Empty);
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.StringDataSectionIdentifier;
-
     [SkipLocalsInit]
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
+        AlreadyUsed = true;
         var numberOfItems = reader.Read16BitUnsignedInteger();
 
         var utf8Encoding = Encoding.UTF8;

@@ -31,6 +31,7 @@ public readonly ref struct LevelWriter
             new StringDataComponentWriter(stringIdLookup),
 
             new LevelDataComponentWriter(stringIdLookup),
+            new LevelTextDataComponentWriter(stringIdLookup),
             new HatchGroupDataComponentWriter(),
             new LevelObjectiveDataComponentWriter(stringIdLookup),
             new PrePlacedLemmingDataComponentWriter(),

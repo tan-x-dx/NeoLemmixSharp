@@ -7,12 +7,13 @@ public sealed class LevelObjectiveDataComponentReader : ILevelDataReader
 {
     private readonly List<string> _stringIdLookup;
 
+    public bool AlreadyUsed { get; private set; }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelObjectivesDataSectionIdentifier;
+
     public LevelObjectiveDataComponentReader(List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
-
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelObjectivesDataSectionIdentifier;
 
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {

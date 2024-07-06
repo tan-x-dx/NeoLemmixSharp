@@ -10,15 +10,17 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 {
     private readonly List<string> _stringIdLookup;
 
+    public bool AlreadyUsed { get; private set; }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelDataSectionIdentifier;
+
     public LevelDataComponentReader(List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelDataSectionIdentifier;
-
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
+        AlreadyUsed = true;
         var numberOfItemsInSection = reader.Read16BitUnsignedInteger();
         LevelReadWriteHelpers.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
 
@@ -111,7 +113,6 @@ public sealed class LevelDataComponentReader : ILevelDataReader
                     BackgroundImageName = _stringIdLookup[backgroundStringId]
                 };
                 break;
-
 
             default:
                 throw new LevelReadingException($"Unknown background specifier byte: {specifierByte:X}");

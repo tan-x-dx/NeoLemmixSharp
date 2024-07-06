@@ -12,15 +12,17 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
     private readonly Dictionary<int, TerrainArchetypeData> _terrainArchetypeDataLookup = new();
     private readonly List<string> _stringIdLookup;
 
+    public bool AlreadyUsed { get; private set; }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.TerrainDataSectionIdentifier;
+
     public TerrainDataComponentReader(List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.TerrainDataSectionIdentifier;
-
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
+        AlreadyUsed = true;
         var numberOfItemsInSection = reader.Read16BitUnsignedInteger();
 
         while (numberOfItemsInSection-- > 0)
@@ -71,7 +73,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         {
             height = ReadTerrainDataDimension(reader);
         }
-        
+
         LevelReadWriteHelpers.ReaderAssert(
             reader.BytesRead - initialBytesRead == numberOfBytesToRead,
             "Wrong number of bytes read for terrain data! " +

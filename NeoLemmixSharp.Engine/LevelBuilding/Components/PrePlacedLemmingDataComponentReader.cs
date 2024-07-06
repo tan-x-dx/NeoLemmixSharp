@@ -7,10 +7,12 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
 
 public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
 {
+    public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.PrePlacedLemmingDataSectionIdentifier;
 
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
+        AlreadyUsed = true;
         var numberOfItemsInSection = reader.Read16BitUnsignedInteger();
 
         while (numberOfItemsInSection-- > 0)
