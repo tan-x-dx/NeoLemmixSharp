@@ -22,7 +22,7 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
             var state = reader.Read32BitUnsignedInteger();
 
             var orientationByte = reader.Read8BitUnsignedInteger();
-            var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientations(orientationByte);
+            var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientationByte(orientationByte);
             var teamId = reader.Read8BitUnsignedInteger();
             var initialActionId = reader.Read8BitUnsignedInteger();
 

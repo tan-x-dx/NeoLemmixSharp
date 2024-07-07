@@ -102,7 +102,7 @@ public static class LevelReadWriteHelpers
         return (byte)orientationBits;
     }
 
-    public static (Orientation, FacingDirection) DecipherOrientations(int b)
+    public static (Orientation, FacingDirection) DecipherOrientationByte(int b)
     {
         var orientation = Orientation.AllItems[b & 3];
         var facingDirection = FacingDirection.AllItems[(b >> FlipBitShift) & 1];

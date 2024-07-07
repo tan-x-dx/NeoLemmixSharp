@@ -51,7 +51,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         var y = reader.Read16BitUnsignedInteger();
 
         var orientationByte = reader.Read8BitUnsignedInteger();
-        var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientations(orientationByte);
+        var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientationByte(orientationByte);
 
         var terrainDataMiscByte = reader.Read8BitUnsignedInteger();
         LevelReadWriteHelpers.DecipherTerrainDataMiscByte(terrainDataMiscByte, out var decipheredTerrainDataMisc);
