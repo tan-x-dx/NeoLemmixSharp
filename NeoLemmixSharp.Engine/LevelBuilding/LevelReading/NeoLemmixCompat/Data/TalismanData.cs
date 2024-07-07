@@ -32,14 +32,15 @@ public sealed class TalismanData
             objectiveRequirementsList.Add(new TimeRequirement(TimeLimitInSeconds.Value));
         }
 
+        objectiveRequirementsList.Add(new SkillSetRequirement(GetSkillSetData(levelData)));
+
         return new LevelObjective(
             Id,
             Title,
-            objectiveRequirementsList.ToArray(),
-            GetSkillSetData(levelData));
+            objectiveRequirementsList.ToArray());
     }
 
-    private List<SkillSetData> GetSkillSetData(LevelData levelData)
+    private SkillSetData[] GetSkillSetData(LevelData levelData)
     {
         var originalSkillSetData = levelData.LevelObjectives.Find(lo => lo.LevelObjectiveId == 0)!.SkillSetData;
 
@@ -62,7 +63,7 @@ public sealed class TalismanData
             }
         }
 
-        return result;
+        return result.ToArray();
     }
 }
 

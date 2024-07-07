@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 

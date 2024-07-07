@@ -1,8 +1,8 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Text;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
 public sealed class StringDataComponentWriter : ILevelDataWriter
 {

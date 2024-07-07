@@ -1,8 +1,7 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
 public sealed class HatchGroupDataComponentReader : ILevelDataReader
 {

@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
 public sealed class LevelObjectiveDataComponentWriter : ILevelDataWriter
 {

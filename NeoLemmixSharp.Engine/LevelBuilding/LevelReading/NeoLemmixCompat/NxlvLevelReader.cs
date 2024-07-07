@@ -86,6 +86,7 @@ public sealed class NxlvLevelReader : ILevelReader
     {
         var objectiveRequirementsList = new List<IObjectiveRequirement>
         {
+            new SkillSetRequirement(skillSetReader.SkillSetData.ToArray()),
             new SaveRequirement(levelDataReader.SaveRequirement)
         };
 
@@ -98,8 +99,7 @@ public sealed class NxlvLevelReader : ILevelReader
         levelData.LevelObjectives.Add(new LevelObjective(
             0,
             "Save Lemmings",
-            objectiveRequirementsList.ToArray(),
-            skillSetReader.SkillSetData));
+            objectiveRequirementsList.ToArray()));
 
         ProcessTalismans(levelData, talismanReader);
     }
