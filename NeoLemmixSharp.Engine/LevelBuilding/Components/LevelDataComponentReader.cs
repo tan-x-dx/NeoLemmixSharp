@@ -42,10 +42,10 @@ public sealed class LevelDataComponentReader : ILevelDataReader
         ReadLevelDimensionData(reader, levelData);
         ReadBackgroundData(reader, levelData);
 
-        LevelReadWriteHelpers.ReaderAssert(
-            reader.BytesRead - initialBytesRead == numberOfBytesToRead,
-            "Wrong number of bytes read for level data section! " +
-            $"Expected: {numberOfBytesToRead}, Actual: {reader.BytesRead - initialBytesRead}");
+        AssertLevelDataBytesMakeSense(
+            reader.BytesRead,
+            initialBytesRead,
+            numberOfBytesToRead);
     }
 
     private static void ReadLevelDimensionData(BinaryReaderWrapper reader, LevelData levelData)
@@ -117,5 +117,18 @@ public sealed class LevelDataComponentReader : ILevelDataReader
             default:
                 throw new LevelReadingException($"Unknown background specifier byte: {specifierByte:X}");
         }
+    }
+
+    private static void AssertLevelDataBytesMakeSense(
+        long bytesRead,
+        long initialBytesRead,
+        long numberOfBytesToRead)
+    {
+        if (bytesRead - initialBytesRead == numberOfBytesToRead)
+            return;
+
+        throw new LevelReadingException(
+            "Wrong number of bytes read for level data section! " +
+            $"Expected: {numberOfBytesToRead}, Actual: {bytesRead - initialBytesRead}");
     }
 }

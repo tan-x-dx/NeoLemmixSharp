@@ -74,10 +74,10 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
             height = ReadTerrainDataDimension(reader);
         }
 
-        LevelReadWriteHelpers.ReaderAssert(
-            reader.BytesRead - initialBytesRead == numberOfBytesToRead,
-            "Wrong number of bytes read for terrain data! " +
-            $"Expected: {numberOfBytesToRead}, Actual: {reader.BytesRead - initialBytesRead}");
+        AssertTerrainDataBytesMakeSense(
+            reader.BytesRead,
+            initialBytesRead,
+            numberOfBytesToRead);
 
         var newTerrainDatum = new TerrainData
         {
@@ -146,5 +146,18 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         if (y is null) return 1;
         if (x is null) return -1;
         return x.TerrainArchetypeId.CompareTo(y.TerrainArchetypeId);
+    }
+
+    private static void AssertTerrainDataBytesMakeSense(
+        long bytesRead,
+        long initialBytesRead,
+        long numberOfBytesToRead)
+    {
+        if (bytesRead - initialBytesRead == numberOfBytesToRead)
+            return;
+
+        throw new LevelReadingException(
+            "Wrong number of bytes read for terrain data! " +
+            $"Expected: {numberOfBytesToRead}, Actual: {bytesRead - initialBytesRead}");
     }
 }

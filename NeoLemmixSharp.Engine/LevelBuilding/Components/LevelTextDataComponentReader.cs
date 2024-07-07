@@ -37,8 +37,21 @@ public sealed class LevelTextDataComponentReader : ILevelDataReader
             levelData.PostTextLines.Add(_stringIdLookup[stringId]);
         }
 
-        LevelReadWriteHelpers.ReaderAssert(
-            numberOfItemsInSection == numberOfPreTextItems + numberOfPostTextItems,
+        AssertLevelTextDataBytesMakeSense(
+            numberOfItemsInSection,
+            numberOfPreTextItems,
+            numberOfPostTextItems);
+    }
+
+    private static void AssertLevelTextDataBytesMakeSense(
+        int numberOfItemsInSection,
+        int numberOfPreTextItems,
+        int numberOfPostTextItems)
+    {
+        if (numberOfItemsInSection == numberOfPreTextItems + numberOfPostTextItems)
+            return;
+
+        throw new LevelReadingException(
             "Wrong number of items for level text data section! " +
             $"Expected {numberOfItemsInSection} items total. Read: {numberOfPreTextItems} pre text items, {numberOfPostTextItems} post text items");
     }
