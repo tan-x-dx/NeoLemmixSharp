@@ -79,7 +79,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
             initialBytesRead,
             numberOfBytesToRead);
 
-        var newTerrainDatum = new TerrainData
+        return new TerrainData
         {
             TerrainArchetypeId = terrainArchetypeData.TerrainArchetypeId,
 
@@ -98,8 +98,6 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
             Width = width,
             Height = height,
         };
-
-        return newTerrainDatum;
     }
 
     private static Color ReadTerrainDataTintColor(BinaryReaderWrapper reader)
