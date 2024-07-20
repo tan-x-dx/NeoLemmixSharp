@@ -128,7 +128,7 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     [Pure]
     public static Orientation GetOpposite(Orientation o) => Orientations[(o.RotNum + 2) & 3];
     [Pure]
-    public static Orientation Rotate(Orientation o, int clockwiseRotationOffset) => Orientations[(o.RotNum - clockwiseRotationOffset) & 3];
+    public static Orientation Rotate(Orientation o, int clockwiseRotationOffset) => Orientations[(o.RotNum + clockwiseRotationOffset) & 3];
 
     public bool Equals(Orientation? other) => RotNum == (other?.RotNum ?? -1);
     public sealed override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;
