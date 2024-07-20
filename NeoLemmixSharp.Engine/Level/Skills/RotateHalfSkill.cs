@@ -10,8 +10,7 @@ public sealed class RotateHalfSkill : LemmingSkill
     private RotateHalfSkill()
         : base(
             LevelConstants.RotateHalfSkillId,
-            LevelConstants.RotateHalfSkillName,
-            false)
+            LevelConstants.RotateHalfSkillName)
     {
     }
 

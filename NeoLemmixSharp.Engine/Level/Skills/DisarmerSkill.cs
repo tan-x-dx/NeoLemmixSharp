@@ -10,8 +10,7 @@ public sealed class DisarmerSkill : LemmingSkill, ILemmingStateChanger
     private DisarmerSkill()
         : base(
             LevelConstants.DisarmerSkillId,
-            LevelConstants.DisarmerSkillName,
-            false)
+            LevelConstants.DisarmerSkillName)
     {
     }
 

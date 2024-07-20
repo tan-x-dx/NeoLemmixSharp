@@ -10,8 +10,7 @@ public sealed class PlatformerSkill : LemmingSkill
     private PlatformerSkill()
         : base(
             LevelConstants.PlatformerSkillId,
-            LevelConstants.PlatformerSkillName,
-            false)
+            LevelConstants.PlatformerSkillName)
     {
     }
 

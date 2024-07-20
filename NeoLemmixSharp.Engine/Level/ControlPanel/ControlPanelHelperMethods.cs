@@ -28,9 +28,10 @@ public static class ControlPanelHelperMethods
         {
             var i = 0;
 
-            var result = new SkillAssignButton[LevelConstants.NumberOfClassicSkills];
+            var allClassicSkills = LemmingSkill.AllClassicSkills;
+            var result = new SkillAssignButton[allClassicSkills.Count];
 
-            foreach (var classicSkill in LemmingSkill.AllClassicSkills)
+            foreach (var classicSkill in allClassicSkills)
             {
                 var skillTrackingData = skillSetManager.GetSkillTrackingData(classicSkill.Id, 0);
 

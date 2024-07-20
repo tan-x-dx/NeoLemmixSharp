@@ -11,8 +11,7 @@ public sealed class RotateToUpSkill : LemmingSkill
     private RotateToUpSkill()
         : base(
             LevelConstants.RotateToUpSkillId,
-            LevelConstants.RotateToUpSkillName,
-            false)
+            LevelConstants.RotateToUpSkillName)
     {
     }
 

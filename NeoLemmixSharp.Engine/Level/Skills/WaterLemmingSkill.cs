@@ -10,8 +10,7 @@ public sealed class WaterLemmingSkill : LemmingSkill
     private WaterLemmingSkill()
         : base(
             LevelConstants.WaterLemmingSkillId,
-            LevelConstants.WaterLemmingSkillName,
-            false)
+            LevelConstants.WaterLemmingSkillName)
     {
     }
 

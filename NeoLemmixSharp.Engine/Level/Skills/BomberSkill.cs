@@ -10,8 +10,7 @@ public sealed class BomberSkill : LemmingSkill
     private BomberSkill()
         : base(
             LevelConstants.BomberSkillId,
-            LevelConstants.BomberSkillName,
-            true)
+            LevelConstants.BomberSkillName)
     {
     }
 
