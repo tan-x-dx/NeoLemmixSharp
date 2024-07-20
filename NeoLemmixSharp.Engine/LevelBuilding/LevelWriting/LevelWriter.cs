@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting;
 
@@ -31,6 +31,7 @@ public readonly ref struct LevelWriter
             new StringDataComponentWriter(stringIdLookup),
 
             new LevelDataComponentWriter(stringIdLookup),
+            new LevelTextDataComponentWriter(stringIdLookup),
             new HatchGroupDataComponentWriter(),
             new LevelObjectiveDataComponentWriter(stringIdLookup),
             new PrePlacedLemmingDataComponentWriter(),

@@ -1,14 +1,14 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿using System.Runtime.CompilerServices;
 using System.Text;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
 public sealed class StringDataComponentWriter : ILevelDataWriter
 {
-    private const int StringBufferSize = 1024;
+    private const int MaxStackByteBufferSize = 256;
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
-    private readonly byte[] _byteBuffer = new byte[StringBufferSize];
 
     public StringDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
     {
@@ -24,12 +24,17 @@ public sealed class StringDataComponentWriter : ILevelDataWriter
         return (ushort)_stringIdLookup.Count;
     }
 
+    [SkipLocalsInit]
     public void WriteSection(
         BinaryWriter writer,
         LevelData levelData)
     {
-        var buffer = new Span<byte>(_byteBuffer);
         var utf8Encoding = Encoding.UTF8;
+        var bufferSize = CalculateBufferSize(utf8Encoding);
+
+        Span<byte> buffer = bufferSize > MaxStackByteBufferSize
+            ? new byte[bufferSize]
+            : stackalloc byte[bufferSize];
 
         foreach (var (stringToWrite, id) in _stringIdLookup.OrderBy(kvp => kvp.Value))
         {
@@ -40,6 +45,18 @@ public sealed class StringDataComponentWriter : ILevelDataWriter
             writer.Write((ushort)byteCount);
             writer.Write(buffer[..byteCount]);
         }
+    }
+
+    private int CalculateBufferSize(Encoding utf8Encoding)
+    {
+        var maxBufferSize = 0;
+
+        foreach (var stringToWrite in _stringIdLookup.Keys)
+        {
+            maxBufferSize = Math.Max(maxBufferSize, utf8Encoding.GetByteCount(stringToWrite));
+        }
+
+        return maxBufferSize;
     }
 
     private void GenerateStringIdLookup(

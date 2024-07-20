@@ -54,8 +54,9 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
         Content.RootDirectory = "Content";
         Window.AllowUserResizing = false;
-        //  Window.IsBorderless = true;
+        Window.IsBorderless = true;
         IsMouseVisible = true;
+        _isBorderless = true;
 
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
 

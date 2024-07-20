@@ -1,16 +1,17 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
 public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
 {
+    public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.PrePlacedLemmingDataSectionIdentifier;
 
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
+        AlreadyUsed = true;
         var numberOfItemsInSection = reader.Read16BitUnsignedInteger();
 
         while (numberOfItemsInSection-- > 0)
@@ -20,7 +21,7 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
             var state = reader.Read32BitUnsignedInteger();
 
             var orientationByte = reader.Read8BitUnsignedInteger();
-            var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientations(orientationByte);
+            var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientationByte(orientationByte);
             var teamId = reader.Read8BitUnsignedInteger();
             var initialActionId = reader.Read8BitUnsignedInteger();
 

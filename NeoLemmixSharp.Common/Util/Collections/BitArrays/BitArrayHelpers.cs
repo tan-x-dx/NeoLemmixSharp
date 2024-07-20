@@ -217,9 +217,8 @@ public static class BitArrayHelpers
         var newCount = 0;
         for (var i = span.Length - 1; i >= 0; i--)
         {
-            ref var v = ref span[i];
-            v |= other[i];
-            newCount += BitOperations.PopCount(v);
+            span[i] |= other[i];
+            newCount += BitOperations.PopCount(span[i]);
         }
         popCount = newCount;
     }
@@ -241,9 +240,8 @@ public static class BitArrayHelpers
         var count = 0;
         for (var i = span.Length - 1; i >= 0; i--)
         {
-            ref var arrayValue = ref span[i];
-            arrayValue &= other[i];
-            count += BitOperations.PopCount(arrayValue);
+            span[i] &= other[i];
+            count += BitOperations.PopCount(span[i]);
         }
         popCount = count;
     }
@@ -255,9 +253,8 @@ public static class BitArrayHelpers
         var count = 0;
         for (var i = span.Length - 1; i >= 0; i--)
         {
-            ref var arrayValue = ref span[i];
-            arrayValue &= ~other[i];
-            count += BitOperations.PopCount(arrayValue);
+            span[i] &= ~other[i];
+            count += BitOperations.PopCount(span[i]);
         }
         popCount = count;
     }
@@ -269,9 +266,8 @@ public static class BitArrayHelpers
         var count = 0;
         for (var i = span.Length - 1; i >= 0; i--)
         {
-            ref var arrayValue = ref span[i];
-            arrayValue ^= other[i];
-            count += BitOperations.PopCount(arrayValue);
+            span[i] ^= other[i];
+            count += BitOperations.PopCount(span[i]);
         }
         popCount = count;
     }

@@ -4,8 +4,11 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 public sealed class TerrainData
 {
+    public int TerrainArchetypeId { get; set; }
+
     public int X { get; set; }
     public int Y { get; set; }
+
     public bool NoOverwrite { get; set; }
     public int RotNum { get; set; }
     public bool Flip { get; set; }
@@ -14,7 +17,6 @@ public sealed class TerrainData
     public Color? Tint { get; set; }
 
     public string? GroupName { get; set; }
-    public int TerrainArchetypeId { get; set; }
 
     public int? Width { get; set; }
     public int? Height { get; set; }

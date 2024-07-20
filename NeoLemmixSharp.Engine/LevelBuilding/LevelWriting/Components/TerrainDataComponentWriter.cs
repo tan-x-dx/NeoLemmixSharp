@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.LevelComponentWriting;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
 public sealed class TerrainDataComponentWriter : ILevelDataWriter
 {
@@ -50,24 +50,22 @@ public sealed class TerrainDataComponentWriter : ILevelDataWriter
         WriteTerrainDataMisc(writer, terrainData);
     }
 
-    private static ushort GetNumberOfBytesWritten(TerrainData terrainData)
+    private static byte GetNumberOfBytesWritten(TerrainData terrainData)
     {
         var tintBytes = terrainData.Tint.HasValue ? 3 : 0;
         var resizeBytes = terrainData.Width.HasValue ||
                           terrainData.Height.HasValue ? 4 : 0;
 
-        return (ushort)(LevelReadWriteHelpers.NumberOfBytesForMainTerrainData + tintBytes + resizeBytes);
+        return (byte)(LevelReadWriteHelpers.NumberOfBytesForMainTerrainData + tintBytes + resizeBytes);
     }
 
     private static void WriteTerrainDataMisc(BinaryWriter writer, TerrainData terrainData)
     {
-        var hasResizeData = terrainData.Width.HasValue ||
-                            terrainData.Height.HasValue;
-
-        var miscDataBits = (terrainData.Erase ? 1 << LevelReadWriteHelpers.EraseBitShift : 0) |
-                           (terrainData.NoOverwrite ? 1 << LevelReadWriteHelpers.NoOverwriteBitShift : 0) |
-                           (terrainData.Tint.HasValue ? 1 << LevelReadWriteHelpers.TintBitShift : 0) |
-                           (hasResizeData ? 1 << LevelReadWriteHelpers.ResizeBitShift : 0);
+        var miscDataBits = (terrainData.Erase ? 1 << LevelReadWriteHelpers.TerrainDataEraseBitShift : 0) |
+                           (terrainData.NoOverwrite ? 1 << LevelReadWriteHelpers.TerrainDataNoOverwriteBitShift : 0) |
+                           (terrainData.Tint.HasValue ? 1 << LevelReadWriteHelpers.TerrainDataTintBitShift : 0) |
+                           (terrainData.Width.HasValue ? 1 << LevelReadWriteHelpers.TerrainDataResizeWidthBitShift : 0) |
+                           (terrainData.Height.HasValue ? 1 << LevelReadWriteHelpers.TerrainDataResizeHeightBitShift : 0);
 
         writer.Write((byte)miscDataBits);
 
@@ -79,10 +77,14 @@ public sealed class TerrainDataComponentWriter : ILevelDataWriter
             writer.Write(tint.B);
         }
 
-        if (hasResizeData)
+        if (terrainData.Width.HasValue)
         {
-            writer.Write((ushort)(terrainData.Width ?? 0));
-            writer.Write((ushort)(terrainData.Height ?? 0));
+            writer.Write((ushort)terrainData.Width.Value);
+        }
+
+        if (terrainData.Height.HasValue)
+        {
+            writer.Write((ushort)terrainData.Height.Value);
         }
     }
 }

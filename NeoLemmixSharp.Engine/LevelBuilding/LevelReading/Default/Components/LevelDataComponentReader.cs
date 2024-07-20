@@ -1,24 +1,25 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
-using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Components;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
 public sealed class LevelDataComponentReader : ILevelDataReader
 {
     private readonly List<string> _stringIdLookup;
+
+    public bool AlreadyUsed { get; private set; }
+    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelDataSectionIdentifier;
 
     public LevelDataComponentReader(List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelDataSectionIdentifier;
-
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
+        AlreadyUsed = true;
         var numberOfItemsInSection = reader.Read16BitUnsignedInteger();
         LevelReadWriteHelpers.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
 
@@ -40,10 +41,10 @@ public sealed class LevelDataComponentReader : ILevelDataReader
         ReadLevelDimensionData(reader, levelData);
         ReadBackgroundData(reader, levelData);
 
-        LevelReadWriteHelpers.ReaderAssert(
-            reader.BytesRead - initialBytesRead == numberOfBytesToRead,
-            "Wrong number of bytes read for level data section! " +
-            $"Expected: {numberOfBytesToRead}, Actual: {reader.BytesRead - initialBytesRead}");
+        AssertLevelDataBytesMakeSense(
+            reader.BytesRead,
+            initialBytesRead,
+            numberOfBytesToRead);
     }
 
     private static void ReadLevelDimensionData(BinaryReaderWrapper reader, LevelData levelData)
@@ -112,9 +113,21 @@ public sealed class LevelDataComponentReader : ILevelDataReader
                 };
                 break;
 
-
             default:
                 throw new LevelReadingException($"Unknown background specifier byte: {specifierByte:X}");
         }
+    }
+
+    private static void AssertLevelDataBytesMakeSense(
+        long bytesRead,
+        long initialBytesRead,
+        long numberOfBytesToRead)
+    {
+        if (bytesRead - initialBytesRead == numberOfBytesToRead)
+            return;
+
+        throw new LevelReadingException(
+            "Wrong number of bytes read for level data section! " +
+            $"Expected: {numberOfBytesToRead}, Actual: {bytesRead - initialBytesRead}");
     }
 }
