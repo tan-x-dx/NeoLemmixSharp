@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.Level.Objectives;
 
-public sealed class SkillSetRequirement : ISkillSetRequirement
+public sealed class BasicSkillSetRequirement : ISkillSetRequirement
 {
     private readonly SkillSetData[] _skillSetData;
 
@@ -11,7 +11,7 @@ public sealed class SkillSetRequirement : ISkillSetRequirement
     public bool IsSatisfied { get; }
     public bool IsFailed { get; }
     
-    public SkillSetRequirement(SkillSetData[] skillSetData)
+    public BasicSkillSetRequirement(SkillSetData[] skillSetData)
     {
         _skillSetData = skillSetData;
     }

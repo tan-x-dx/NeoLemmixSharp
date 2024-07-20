@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -9,13 +10,13 @@ public static class LevelReadWriteHelpers
     public const int PositionOffset = 512;
     private const int FlipBitShift = 2;
 
-    #region String Data Read/Write Consts
+    #region String Data Read/Write Bits
 
     public static ReadOnlySpan<byte> StringDataSectionIdentifier => [0x26, 0x44];
 
     #endregion
 
-    #region Level Data Read/Write Consts
+    #region Level Data Read/Write Bits
 
     public static ReadOnlySpan<byte> LevelDataSectionIdentifier => [0x79, 0xA6];
 
@@ -27,19 +28,19 @@ public static class LevelReadWriteHelpers
 
     #endregion
 
-    #region Level Text Data Read/Write Consts
+    #region Level Text Data Read/Write Bits
 
     public static ReadOnlySpan<byte> LevelTextDataSectionIdentifier => [0x43, 0xAA];
 
     #endregion
 
-    #region Hatch Group Data Read/Write Consts
+    #region Hatch Group Data Read/Write Bits
 
     public static ReadOnlySpan<byte> HatchGroupDataSectionIdentifier => [0x90, 0xD2];
 
     #endregion
 
-    #region Level Objectives Data Read/Write Consts
+    #region Level Objectives Data Read/Write Bits
 
     public static ReadOnlySpan<byte> LevelObjectivesDataSectionIdentifier => [0xBE, 0xF4];
 
@@ -47,15 +48,19 @@ public static class LevelReadWriteHelpers
     public const int NumberOfBytesPerSkillSetDatum = 3;
     public const int NumberOfBytesPerRequirementsDatum = 4;
 
+    public const byte SaveRequirementId = 0x01;
+    public const byte TimeRequirementId = 0x02;
+    public const byte BasicSkillSetRequirementId = 0x02;
+
     #endregion
 
-    #region Pre-placed Lemming Data Read/Write Consts
+    #region Pre-placed Lemming Data Read/Write Bits
 
     public static ReadOnlySpan<byte> PrePlacedLemmingDataSectionIdentifier => [0xFE, 0x77];
 
     #endregion
 
-    #region Terrain Data Read/Write Consts
+    #region Terrain Data Read/Write Bits
 
     public static ReadOnlySpan<byte> TerrainDataSectionIdentifier => [0x60, 0xBB];
 
@@ -66,49 +71,6 @@ public static class LevelReadWriteHelpers
     public const int TerrainDataResizeHeightBitShift = 4;
 
     public const int NumberOfBytesForMainTerrainData = 9;
-
-    #endregion
-
-    #region Terrain Group Data Read/Write Consts
-
-    public static ReadOnlySpan<byte> TerrainGroupDataSectionIdentifier => [0x7C, 0x5C];
-
-    #endregion
-
-    #region Gadget Data Read/Write Consts
-
-    public static ReadOnlySpan<byte> GadgetDataSectionIdentifier => [0x3D, 0x98];
-
-    #endregion
-
-    public static void ReaderAssert(bool condition, string details)
-    {
-        if (condition)
-            return;
-
-        throw new LevelReadingException($"Error occurred when reading level file. Details: [{details}]");
-    }
-
-    public static byte GetOrientationByte(Orientation orientation, FacingDirection facingDirection)
-    {
-        return GetOrientationByte(orientation.RotNum, facingDirection == FacingDirection.LeftInstance);
-    }
-
-    public static byte GetOrientationByte(int rotNum, bool flip)
-    {
-        var orientationBits = (rotNum & 3) |
-                              (flip ? 1 << FlipBitShift : 0);
-
-        return (byte)orientationBits;
-    }
-
-    public static (Orientation, FacingDirection) DecipherOrientationByte(int b)
-    {
-        var orientation = Orientation.AllItems[b & 3];
-        var facingDirection = FacingDirection.AllItems[(b >> FlipBitShift) & 1];
-
-        return (orientation, facingDirection);
-    }
 
     public static void DecipherTerrainDataMiscByte(byte b, out DecipheredTerrainDataMisc decipheredTerrainDataMisc)
     {
@@ -142,5 +104,48 @@ public static class LevelReadWriteHelpers
             HasWidthSpecified = hasWidthSpecified;
             HasHeightSpecified = hasHeightSpecified;
         }
+    }
+
+    #endregion
+
+    #region Terrain Group Data Read/Write Bits
+
+    public static ReadOnlySpan<byte> TerrainGroupDataSectionIdentifier => [0x7C, 0x5C];
+
+    #endregion
+
+    #region Gadget Data Read/Write Bits
+
+    public static ReadOnlySpan<byte> GadgetDataSectionIdentifier => [0x3D, 0x98];
+
+    #endregion
+
+    public static void ReaderAssert([DoesNotReturnIf(false)] bool condition, string details)
+    {
+        if (condition)
+            return;
+
+        throw new LevelReadingException($"Error occurred when reading level file. Details: [{details}]");
+    }
+
+    public static byte GetOrientationByte(Orientation orientation, FacingDirection facingDirection)
+    {
+        return GetOrientationByte(orientation.RotNum, facingDirection == FacingDirection.LeftInstance);
+    }
+
+    public static byte GetOrientationByte(int rotNum, bool flip)
+    {
+        var orientationBits = (rotNum & 3) |
+                              (flip ? 1 << FlipBitShift : 0);
+
+        return (byte)orientationBits;
+    }
+
+    public static (Orientation, FacingDirection) DecipherOrientationByte(int b)
+    {
+        var orientation = Orientation.AllItems[b & 3];
+        var facingDirection = FacingDirection.AllItems[(b >> FlipBitShift) & 1];
+
+        return (orientation, facingDirection);
     }
 }

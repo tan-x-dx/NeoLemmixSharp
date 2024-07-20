@@ -5,7 +5,6 @@ public sealed class BinaryReaderWrapper : IDisposable
     private readonly FileStream _fileStream;
     private readonly BinaryReader _reader;
 
-
     public long FileSizeInBytes => _fileStream.Length;
     public long BytesRead => _fileStream.Position;
     public bool MoreToRead => _fileStream.Position < _fileStream.Length;

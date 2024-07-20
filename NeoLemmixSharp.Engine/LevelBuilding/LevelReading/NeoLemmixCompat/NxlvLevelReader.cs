@@ -86,7 +86,7 @@ public sealed class NxlvLevelReader : ILevelReader
     {
         var objectiveRequirementsList = new List<IObjectiveRequirement>
         {
-            new SkillSetRequirement(skillSetReader.SkillSetData.ToArray()),
+            new BasicSkillSetRequirement(skillSetReader.SkillSetData.ToArray()),
             new SaveRequirement(levelDataReader.SaveRequirement)
         };
 

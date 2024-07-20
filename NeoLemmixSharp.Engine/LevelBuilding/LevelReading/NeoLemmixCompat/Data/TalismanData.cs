@@ -32,7 +32,7 @@ public sealed class TalismanData
             objectiveRequirementsList.Add(new TimeRequirement(TimeLimitInSeconds.Value));
         }
 
-        objectiveRequirementsList.Add(new SkillSetRequirement(GetSkillSetData(levelData)));
+        objectiveRequirementsList.Add(new BasicSkillSetRequirement(GetSkillSetData(levelData)));
 
         return new LevelObjective(
             Id,
