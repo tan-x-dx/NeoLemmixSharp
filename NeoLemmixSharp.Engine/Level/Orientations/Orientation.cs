@@ -122,9 +122,9 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     public abstract int GetVerticalDelta(LevelPosition fromPosition, LevelPosition toPosition);
 
     [Pure]
-    public static Orientation RotateClockwise(Orientation o) => Orientations[(o.RotNum + 3) & 3];
+    public static Orientation RotateClockwise(Orientation o) => Orientations[(o.RotNum + 1) & 3];
     [Pure]
-    public static Orientation RotateCounterClockwise(Orientation o) => Orientations[(o.RotNum + 1) & 3];
+    public static Orientation RotateCounterClockwise(Orientation o) => Orientations[(o.RotNum + 3) & 3];
     [Pure]
     public static Orientation GetOpposite(Orientation o) => Orientations[(o.RotNum + 2) & 3];
     [Pure]
