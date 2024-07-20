@@ -191,8 +191,9 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         }
     }
 
-    public void OnNumberOfItemsChanged(int numberOfItems)
+    public void OnNumberOfItemsChanged()
     {
+        var numberOfItems = _hasher.NumberOfItems;
         if (numberOfItems <= _values.Length)
             return;
 

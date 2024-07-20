@@ -59,9 +59,9 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
         return BitArrayHelpers.ClearBit(new Span<uint>(_bits), hash, ref _popCount);
     }
 
-    public void OnNumberOfItemsChanged(int numberOfItems)
+    public void OnNumberOfItemsChanged()
     {
-        BitArrayHelpers.Resize(ref _bits, numberOfItems);
+        BitArrayHelpers.Resize(ref _bits, _hasher.NumberOfItems);
     }
 
     [Pure]

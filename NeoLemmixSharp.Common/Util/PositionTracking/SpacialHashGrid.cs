@@ -474,9 +474,9 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         Union
     }
 
-    public void OnNumberOfItemsChanged(int numberOfItems)
+    public void OnNumberOfItemsChanged()
     {
-        _allTrackedItems.OnNumberOfItemsChanged(numberOfItems);
+        _allTrackedItems.OnNumberOfItemsChanged();
         var newBitArraySize = _allTrackedItems.Size;
 
         if (_bitArraySize == newBitArraySize)

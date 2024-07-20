@@ -50,8 +50,9 @@ public sealed class ItemTracker<T> : IItemCountListener
         Array.Clear(_longs, 0, _longs.Length);
     }
 
-    public void OnNumberOfItemsChanged(int numberOfItems)
+    public void OnNumberOfItemsChanged()
     {
+        var numberOfItems = _hasher.NumberOfItems;
         var newArraySize = BitArrayHelpers.CalculateBitArrayBufferSize(numberOfItems);
 
         if (newArraySize <= _longs.Length)
