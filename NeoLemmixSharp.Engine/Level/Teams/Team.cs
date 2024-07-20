@@ -64,7 +64,7 @@ public sealed class Team : IExtendedEnumType<Team>
         SpriteBank = spriteBank;
     }
 
-    public bool Equals(Team? other) => Id == other?.Id;
+    public bool Equals(Team? other) => Id == (other?.Id ?? -1);
     public override bool Equals(object? obj) => obj is Team other && Id == other.Id;
     public override int GetHashCode() => Id;
 
