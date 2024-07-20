@@ -4,12 +4,15 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using NeoLemmixSharp.Common.Util.Collections;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
+    private static readonly SimpleSet<LemmingAction> AirborneActions = GetAirborneActions();
+    private static readonly SimpleSet<LemmingAction> OneTimeActions = GetOneTimeActions();
 
     public static int NumberOfItems => LemmingActions.Length;
     public static ReadOnlySpan<LemmingAction> AllItems => new(LemmingActions);
@@ -65,14 +68,54 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         return result;
     }
 
+    private static SimpleSet<LemmingAction> GetAirborneActions()
+    {
+        var result = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
+
+        result.Add(DrownerAction.Instance);
+        result.Add(FallerAction.Instance);
+        result.Add(FloaterAction.Instance);
+        result.Add(GliderAction.Instance);
+        result.Add(JumperAction.Instance);
+        result.Add(ReacherAction.Instance);
+        result.Add(RotateClockwiseAction.Instance);
+        result.Add(RotateCounterclockwiseAction.Instance);
+        result.Add(RotateHalfAction.Instance);
+        result.Add(ShimmierAction.Instance);
+        result.Add(SwimmerAction.Instance);
+        result.Add(VaporiserAction.Instance);
+
+        return result;
+    }
+
+    private static SimpleSet<LemmingAction> GetOneTimeActions()
+    {
+        var result = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
+
+        result.Add(DehoisterAction.Instance);
+        result.Add(DrownerAction.Instance);
+        result.Add(ExiterAction.Instance);
+        result.Add(ExploderAction.Instance);
+        result.Add(HoisterAction.Instance);
+        result.Add(OhNoerAction.Instance);
+        result.Add(ReacherAction.Instance);
+        result.Add(RotateClockwiseAction.Instance);
+        result.Add(RotateCounterclockwiseAction.Instance);
+        result.Add(RotateHalfAction.Instance);
+        result.Add(ShruggerAction.Instance);
+        result.Add(SplatterAction.Instance);
+        result.Add(StonerAction.Instance);
+        result.Add(VaporiserAction.Instance);
+
+        return result;
+    }
+
     public readonly int Id;
     public readonly string LemmingActionName;
     public readonly string LemmingActionSpriteFileName;
     public readonly int NumberOfAnimationFrames;
     public readonly int MaxPhysicsFrames;
     public readonly int CursorSelectionPriorityValue;
-    public readonly bool IsOneTimeAction;
-    public readonly bool IsAirborneAction;
 
     protected LemmingAction(
         int id,
@@ -80,9 +123,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         string lemmingActionSpriteFileName,
         int numberOfAnimationFrames,
         int maxPhysicsFrames,
-        int cursorSelectionPriorityValue,
-        bool isOneTimeAction,
-        bool isAirborneAction)
+        int cursorSelectionPriorityValue)
     {
         Id = id;
         LemmingActionName = lemmingActionName;
@@ -90,8 +131,6 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         NumberOfAnimationFrames = numberOfAnimationFrames;
         MaxPhysicsFrames = maxPhysicsFrames;
         CursorSelectionPriorityValue = cursorSelectionPriorityValue;
-        IsOneTimeAction = isOneTimeAction;
-        IsAirborneAction = isAirborneAction;
     }
 
     public abstract bool UpdateLemming(Lemming lemming);
@@ -149,6 +188,9 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         lemming.IsStartingAction = true;
         lemming.InitialFall = false;
     }
+
+    public bool IsAirborneAction() => AirborneActions.Contains(this);
+    public bool IsOneTimeAction() => OneTimeActions.Contains(this);
 
     /// <summary>
     /// Find the new ground pixel. 

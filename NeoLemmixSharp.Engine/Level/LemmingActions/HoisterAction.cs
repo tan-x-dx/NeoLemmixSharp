@@ -13,9 +13,7 @@ public sealed class HoisterAction : LemmingAction
             LevelConstants.HoisterActionSpriteFileName,
             LevelConstants.HoisterAnimationFrames,
             LevelConstants.MaxHoisterPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority,
-            true,
-            false)
+            LevelConstants.NonWalkerMovementPriority)
     {
     }
 

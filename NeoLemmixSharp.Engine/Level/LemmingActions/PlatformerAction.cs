@@ -15,9 +15,7 @@ public sealed class PlatformerAction : LemmingAction
             LevelConstants.PlatformerActionSpriteFileName,
             LevelConstants.PlatformerAnimationFrames,
             LevelConstants.MaxPlatformerPhysicsFrames,
-            LevelConstants.NonPermanentSkillPriority,
-            false,
-            false)
+            LevelConstants.NonPermanentSkillPriority)
     {
     }
 

@@ -19,9 +19,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
             LevelConstants.DiggerActionSpriteFileName,
             LevelConstants.DiggerAnimationFrames,
             LevelConstants.MaxDiggerPhysicsFrames,
-            LevelConstants.NonPermanentSkillPriority,
-            false,
-            false)
+            LevelConstants.NonPermanentSkillPriority)
     {
     }
 

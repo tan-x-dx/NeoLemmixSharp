@@ -239,7 +239,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
                 frame = 0;
             }
 
-            EndOfAnimation = CurrentAction.IsOneTimeAction;
+            EndOfAnimation = CurrentAction.IsOneTimeAction();
         }
         PhysicsFrame = frame;
 

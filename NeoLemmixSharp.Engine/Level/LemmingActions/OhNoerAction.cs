@@ -13,9 +13,7 @@ public sealed class OhNoerAction : LemmingAction
             LevelConstants.OhNoerActionSpriteFileName,
             LevelConstants.OhNoerAnimationFrames,
             LevelConstants.MaxOhNoerPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority,
-            true,
-            false)
+            LevelConstants.NonWalkerMovementPriority)
     {
     }
 
@@ -29,7 +27,7 @@ public sealed class OhNoerAction : LemmingAction
             var nextAction = lemming.CountDownAction;
             nextAction.TransitionLemmingToAction(lemming, false);
             lemming.ClearCountDownAction();
-            return !nextAction.IsOneTimeAction;
+            return !nextAction.IsOneTimeAction();
         }
 
         var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemmingPosition);
@@ -59,7 +57,7 @@ public sealed class OhNoerAction : LemmingAction
         if (currentAction == NoneAction.Instance)
             return;
 
-        if (currentAction.IsAirborneAction)
+        if (currentAction.IsAirborneAction())
         {
             // If in the air, do the action immediately
             lemming.CountDownAction.TransitionLemmingToAction(lemming, false);

@@ -14,7 +14,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
     public static readonly LasererAction Instance = new();
 
-    private readonly LevelPosition[] _offsetChecksRight =
+    private static readonly LevelPosition[] OffsetChecksRight =
     [
         new LevelPosition(1, -1),
         new LevelPosition(0, -1),
@@ -29,7 +29,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         new LevelPosition(1, 1)
     ];
 
-    private readonly LevelPosition[] _offsetChecksLeft =
+    private static readonly LevelPosition[] OffsetChecksLeft =
     [
         new LevelPosition(-1, -1),
         new LevelPosition(0, -1),
@@ -59,9 +59,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
             LevelConstants.LasererActionSpriteFileName,
             LevelConstants.LasererAnimationFrames,
             LevelConstants.MaxLasererPhysicsFrames,
-            LevelConstants.NonPermanentSkillPriority,
-            false,
-            false)
+            LevelConstants.NonPermanentSkillPriority)
     {
     }
 
@@ -86,8 +84,8 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         var hitUseful = false;
 
         var offsetChecks = facingDirection == FacingDirection.RightInstance
-            ? new ReadOnlySpan<LevelPosition>(_offsetChecksRight)
-            : new ReadOnlySpan<LevelPosition>(_offsetChecksLeft);
+            ? new ReadOnlySpan<LevelPosition>(OffsetChecksRight)
+            : new ReadOnlySpan<LevelPosition>(OffsetChecksLeft);
 
         var i = DistanceCap;
         while (i > 0)

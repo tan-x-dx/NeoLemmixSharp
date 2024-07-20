@@ -1,6 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -12,7 +10,7 @@ public sealed class JumperAction : LemmingAction
 
     public static readonly JumperAction Instance = new();
 
-    private readonly LevelPosition[] _jumpPositions =
+    private static readonly LevelPosition[] JumpPositions =
     [
         new LevelPosition(0, 1), new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(0, 1), new LevelPosition(1, 0), // occurs twice
         new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(1, 0), // occurs twice
@@ -32,9 +30,7 @@ public sealed class JumperAction : LemmingAction
             LevelConstants.JumperActionSpriteFileName,
             LevelConstants.JumperAnimationFrames,
             LevelConstants.MaxJumperPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority,
-            false,
-            true)
+            LevelConstants.NonWalkerMovementPriority)
     {
     }
 
@@ -79,7 +75,7 @@ public sealed class JumperAction : LemmingAction
         if (patternIndex < 0)
             return false;
 
-        var patternSpan = new ReadOnlySpan<LevelPosition>(_jumpPositions, patternIndex * JumperPositionCount, JumperPositionCount);
+        var patternSpan = new ReadOnlySpan<LevelPosition>(JumpPositions, patternIndex * JumperPositionCount, JumperPositionCount);
         var lemmingJumpPatterns = lemming.GetJumperPositions();
 
         var orientation = lemming.Orientation;
@@ -249,24 +245,24 @@ public sealed class JumperAction : LemmingAction
         }
     }
 
-/*
-  procedure DoJumperTriggerChecks;
-  begin
-    if not HasTriggerAt(L.LemX, L.LemY, trFlipper) then
-      L.LemInFlipper := DOM_NOOBJECT
-    else
-      if HandleFlipper(L, L.LemX, L.LemY) then
-        Exit;
+    /*
+      procedure DoJumperTriggerChecks;
+      begin
+        if not HasTriggerAt(L.LemX, L.LemY, trFlipper) then
+          L.LemInFlipper := DOM_NOOBJECT
+        else
+          if HandleFlipper(L, L.LemX, L.LemY) then
+            Exit;
 
-    if HasTriggerAt(L.LemX, L.LemY, trZombie, L) and not L.LemIsZombie then
-      RemoveLemming(L, RM_ZOMBIE);
+        if HasTriggerAt(L.LemX, L.LemY, trZombie, L) and not L.LemIsZombie then
+          RemoveLemming(L, RM_ZOMBIE);
 
-    if HasTriggerAt(L.LemX, L.LemY, trForceLeft, L) then
-      HandleForceField(L, -1)
-    else if HasTriggerAt(L.LemX, L.LemY, trForceRight, L) then
-      HandleForceField(L, 1);
-  end;
-*/
+        if HasTriggerAt(L.LemX, L.LemY, trForceLeft, L) then
+          HandleForceField(L, -1)
+        else if HasTriggerAt(L.LemX, L.LemY, trForceRight, L) then
+          HandleForceField(L, 1);
+      end;
+    */
 
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -1;
     protected override int TopLeftBoundsDeltaY(int animationFrame) => 9;

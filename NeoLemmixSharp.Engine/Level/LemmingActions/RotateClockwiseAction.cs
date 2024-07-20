@@ -14,9 +14,7 @@ public sealed class RotateClockwiseAction : LemmingAction
             LevelConstants.RotateClockwiseActionSpriteFileName,
             LevelConstants.RotateClockwiseAnimationFrames,
             LevelConstants.MaxRotateClockwisePhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority,
-            true, 
-            true)
+            LevelConstants.NonWalkerMovementPriority)
     {
     }
 
