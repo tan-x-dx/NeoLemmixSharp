@@ -1,8 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Orientations;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -149,24 +148,17 @@ public sealed class FallerAction : LemmingAction
     private static int GetDistanceFallen(Lemming lemming)
     {
         // For Swimmers it's handled by the SwimmerAction as there is no single universal value
-        var currentAction = lemming.CurrentAction;
+        var currentActionId = lemming.CurrentAction.Id;
 
-        if (currentAction == WalkerAction.Instance ||
-            currentAction == BasherAction.Instance)
-            return 3;
-
-        if (currentAction == MinerAction.Instance ||
-            currentAction == DiggerAction.Instance)
-            return 0;
-
-        if (currentAction == BlockerAction.Instance ||
-            currentAction == JumperAction.Instance ||
-            currentAction == LasererAction.Instance)
-            return -1;
-
-        return 1;
+        return currentActionId switch
+        {
+            LevelConstants.WalkerActionId or LevelConstants.BasherActionId => 3,
+            LevelConstants.MinerActionId or LevelConstants.DiggerActionId => 0,
+            LevelConstants.BlockerActionId or LevelConstants.JumperActionId or LevelConstants.LasererActionId => -1,
+            _ => 1
+        };
     }
-    
+
     [SkipLocalsInit]
     public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
     {
@@ -178,57 +170,35 @@ public sealed class FallerAction : LemmingAction
 
         var lemmingOrientation = lemming.Orientation;
 
-        var draftUp = false;
-        var draftDown = false;
-        var draftLeft = false;
-        var draftRight = false;
+        Span<bool> draftDirections = stackalloc bool[4];
+        draftDirections.Clear();
 
         foreach (var gadget in gadgetsNearPosition)
         {
             if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
                 continue;
 
-            var gadgetOrientation = gadget.Orientation;
+            var deltaRotNum = (lemmingOrientation.RotNum - gadget.Orientation.RotNum) & 3;
 
-            if (gadgetOrientation == lemmingOrientation)
-            {
-                draftDown = true;
-            }
-
-            if (gadgetOrientation == Orientation.RotateClockwise(lemmingOrientation))
-            {
-                draftLeft = true;
-            }
-
-            if (gadgetOrientation == Orientation.GetOpposite(lemmingOrientation))
-            {
-                draftUp = true;
-            }
-
-            if (gadgetOrientation == Orientation.RotateCounterClockwise(lemmingOrientation))
-            {
-                draftRight = true;
-            }
+            draftDirections[deltaRotNum] = true;
         }
 
         var dx = 0;
-        if (draftLeft)
+        if (draftDirections[LevelConstants.LeftOrientationRotNum])
         {
             dx--;
         }
-
-        if (draftRight)
+        if (draftDirections[LevelConstants.RightOrientationRotNum])
         {
             dx++;
         }
 
         var dy = 0;
-        if (draftUp)
+        if (draftDirections[LevelConstants.UpOrientationRotNum])
         {
             dy--;
         }
-
-        if (draftDown)
+        if (draftDirections[LevelConstants.DownOrientationRotNum])
         {
             dy++;
         }
