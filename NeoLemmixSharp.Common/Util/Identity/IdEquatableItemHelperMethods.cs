@@ -2,7 +2,6 @@
 
 public static class IdEquatableItemHelperMethods
 {
-
     public static void ValidateUniqueIds<T>(ReadOnlySpan<T> items)
         where T : class, IIdEquatable<T>
     {
@@ -35,6 +34,13 @@ public static class IdEquatableItemHelperMethods
         }
     }
 
+    public static int GetHashCode<T>(T obj)
+        where T : class, IIdEquatable<T>
+    {
+        return 2965019 * obj.Id +
+               5477821;
+    }
+
     public static int Compare<T>(T? x, T? y)
         where T : class, IIdEquatable<T>
     {
@@ -42,18 +48,7 @@ public static class IdEquatableItemHelperMethods
         if (x is null) return -1;
         if (y is null) return 1;
 
-        var xId = x.Id;
-        var yId = y.Id;
-
-        if (xId < yId) return -1;
-        return xId > yId ? 1 : 0;
-    }
-
-    public static int GetHashCode<T>(T obj)
-        where T : class, IIdEquatable<T>
-    {
-        return 2965019 * obj.Id +
-               5477821;
+        return x.Id.CompareTo(y.Id);
     }
 
     private sealed class IntEqualityComparer : IEqualityComparer<int>
