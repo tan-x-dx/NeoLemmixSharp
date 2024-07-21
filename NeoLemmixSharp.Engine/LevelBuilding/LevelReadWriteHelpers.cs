@@ -72,7 +72,7 @@ public static class LevelReadWriteHelpers
 
     public const int NumberOfBytesForMainTerrainData = 9;
 
-    public static void DecipherTerrainDataMiscByte(byte b, out DecipheredTerrainDataMisc decipheredTerrainDataMisc)
+    public static DecipheredTerrainDataMisc DecipherTerrainDataMiscByte(byte b)
     {
         var erase = ((b >> TerrainDataEraseBitShift) & 1) != 0;
         var noOverwrite = ((b >> TerrainDataNoOverwriteBitShift) & 1) != 0;
@@ -80,7 +80,7 @@ public static class LevelReadWriteHelpers
         var hasWidthSpecified = ((b >> TerrainDataResizeWidthBitShift) & 1) != 0;
         var hasHeightSpecified = ((b >> TerrainDataResizeHeightBitShift) & 1) != 0;
 
-        decipheredTerrainDataMisc = new DecipheredTerrainDataMisc(
+        return new DecipheredTerrainDataMisc(
             erase,
             noOverwrite,
             hasTintSpecified,

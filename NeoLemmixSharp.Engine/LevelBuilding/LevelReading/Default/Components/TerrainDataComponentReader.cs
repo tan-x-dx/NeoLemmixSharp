@@ -1,8 +1,8 @@
-﻿using System.Runtime.InteropServices;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
@@ -53,7 +53,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientationByte(orientationByte);
 
         var terrainDataMiscByte = reader.Read8BitUnsignedInteger();
-        LevelReadWriteHelpers.DecipherTerrainDataMiscByte(terrainDataMiscByte, out var decipheredTerrainDataMisc);
+        var decipheredTerrainDataMisc = LevelReadWriteHelpers.DecipherTerrainDataMiscByte(terrainDataMiscByte);
 
         Color? tintColor = null;
         if (decipheredTerrainDataMisc.HasTintSpecified)

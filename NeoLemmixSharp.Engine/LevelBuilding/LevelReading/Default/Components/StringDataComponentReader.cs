@@ -37,7 +37,7 @@ public sealed class StringDataComponentReader : ILevelDataReader
 
             var stringLength = reader.Read16BitUnsignedInteger();
 
-            if (byteBuffer.Length < stringLength)
+            if (stringLength > byteBuffer.Length)
             {
                 var heapBuffer = new byte[stringLength];
                 byteBuffer = new Span<byte>(heapBuffer);
