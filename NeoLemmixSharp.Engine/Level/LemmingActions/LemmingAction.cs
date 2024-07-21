@@ -239,6 +239,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         return result;
     }
 
+    [Pure]
     public static bool PositionIsSolidToLemming(
         in GadgetSet gadgets,
         Lemming lemming,
@@ -248,6 +249,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
                (gadgets.Count > 0 && HasSolidGadgetAtPosition(in gadgets, lemming, levelPosition));
     }
 
+    [Pure]
     public static bool PositionIsIndestructibleToLemming(
         in GadgetSet gadgets,
         Lemming lemming,
@@ -258,6 +260,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
                (gadgets.Count > 0 && HasSteelGadgetAtPosition(in gadgets, lemming, levelPosition));
     }
 
+    [Pure]
     protected static bool PositionIsSteelToLemming(
         in GadgetSet gadgets,
         Lemming lemming,
