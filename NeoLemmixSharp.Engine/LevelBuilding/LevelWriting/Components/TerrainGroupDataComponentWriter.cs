@@ -34,12 +34,12 @@ public sealed class TerrainGroupDataComponentWriter : ILevelDataWriter
     private void WriteTerrainGroupData(
         BinaryWriter writer,
         List<TerrainArchetypeData> allTerrainArchetypeData,
-        TerrainGroup terrainGroup)
+        TerrainGroupData terrainGroupData)
     {
-        writer.Write(_stringIdLookup[terrainGroup.GroupName!]);
-        writer.Write(terrainGroup.TerrainDatas.Count);
+        writer.Write(_stringIdLookup[terrainGroupData.GroupName!]);
+        writer.Write(terrainGroupData.AllBasicTerrainData.Count);
 
-        foreach (var terrainData in terrainGroup.TerrainDatas)
+        foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
         {
             var terrainArchetypeData = allTerrainArchetypeData.Find(a => a.TerrainArchetypeId == terrainData.TerrainArchetypeId);
             if (terrainArchetypeData is null)

@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using System.Runtime.InteropServices;
+using Microsoft.Xna.Framework;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
@@ -46,7 +47,7 @@ public readonly ref partial struct GadgetTranslator
 
         var numberOfLayers = 1 + animationDataSpan.Length;
         var result = new Texture2D(_graphicsDevice, spriteWidth * numberOfLayers, maxNumberOfFrames * spriteHeight);
-        var resultTextureData = new uint[result.Width * result.Height];
+        var resultTextureData = new Color[result.Width * result.Height];
 
         var frameData = new int[numberOfLayers];
         frameData[0] = archetypeData.PrimaryAnimationFrameCount;
@@ -107,13 +108,13 @@ public readonly ref partial struct GadgetTranslator
             int currentSpriteHeight,
             int numberOfFrames)
         {
-            var sourceTextureData = new uint[sourceTexture.Width * sourceTexture.Height];
+            var sourceTextureData = new Color[sourceTexture.Width * sourceTexture.Height];
             sourceTexture.GetData(sourceTextureData);
 
             for (var i = 0; i < numberOfFrames; i++)
             {
-                var sourceTextureWrapper = new SpanWrapper2D(sourceTextureData, sourceTexture.Width, sourceTexture.Height, 0, i * currentSpriteHeight, currentSpriteWidth, currentSpriteHeight);
-                var resultTextureWrapper = new SpanWrapper2D(resultTextureData, result.Width, result.Height, xOffset, i * spriteHeight, currentSpriteWidth, currentSpriteHeight);
+                var sourceTextureWrapper = new SpanWrapper2D<Color>(sourceTextureData, sourceTexture.Width, sourceTexture.Height, 0, i * currentSpriteHeight, currentSpriteWidth, currentSpriteHeight);
+                var resultTextureWrapper = new SpanWrapper2D<Color>(resultTextureData, result.Width, result.Height, xOffset, i * spriteHeight, currentSpriteWidth, currentSpriteHeight);
 
                 for (var x = 0; x < sourceTextureWrapper.Width; x++)
                 {

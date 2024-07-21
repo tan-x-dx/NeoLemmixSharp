@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
-public sealed class TerrainArchetypeData
+public sealed class TerrainArchetypeData : ITerrainArchetypeData
 {
     public required int TerrainArchetypeId { get; init; }
 

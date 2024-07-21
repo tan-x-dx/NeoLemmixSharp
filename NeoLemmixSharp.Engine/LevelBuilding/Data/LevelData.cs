@@ -114,7 +114,7 @@ public sealed class LevelData
     public ControlPanelParameterSet ControlParameters { get; } = PerfectEnumHasher<ControlPanelParameters>.CreateSimpleSet();
     public List<TerrainArchetypeData> TerrainArchetypeData { get; } = [];
     public List<TerrainData> AllTerrainData { get; } = [];
-    public List<TerrainGroup> AllTerrainGroups { get; } = [];
+    public List<TerrainGroupData> AllTerrainGroups { get; } = [];
     public List<HatchGroupData> AllHatchGroupData { get; } = [];
     public List<LemmingData> PrePlacedLemmingData { get; } = [];
     public List<LemmingData> HatchLemmingData { get; } = [];

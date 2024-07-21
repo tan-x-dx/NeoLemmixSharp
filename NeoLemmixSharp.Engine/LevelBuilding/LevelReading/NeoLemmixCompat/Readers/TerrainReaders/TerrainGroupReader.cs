@@ -7,9 +7,9 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
     private readonly Dictionary<string, TerrainArchetypeData> _terrainArchetypes;
 
     private TerrainReader? _terrainReader;
-    private TerrainGroup? _currentTerrainGroup;
+    private TerrainGroupData? _currentTerrainGroup;
 
-    public List<TerrainGroup> AllTerrainGroups { get; } = new();
+    public List<TerrainGroupData> AllTerrainGroups { get; } = new();
 
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$TERRAINGROUP";
@@ -21,7 +21,7 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
 
     public void BeginReading(ReadOnlySpan<char> line)
     {
-        _currentTerrainGroup = new TerrainGroup();
+        _currentTerrainGroup = new TerrainGroupData();
         FinishedReading = false;
     }
 
@@ -50,7 +50,7 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
                 break;
 
             case "$TERRAIN":
-                _terrainReader = new TerrainReader(_terrainArchetypes, currentTerrainGroup.TerrainDatas);
+                _terrainReader = new TerrainReader(_terrainArchetypes, currentTerrainGroup.AllBasicTerrainData);
                 _terrainReader.BeginReading(firstToken);
                 break;
 
