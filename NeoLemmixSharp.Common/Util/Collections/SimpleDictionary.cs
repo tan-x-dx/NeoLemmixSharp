@@ -110,7 +110,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         [DebuggerStepThrough]
         public bool MoveNext() => _bitEnumerator.MoveNext();
 
-        public KeyValuePair<TKey, TValue> Current
+        public readonly KeyValuePair<TKey, TValue> Current
         {
             get
             {
