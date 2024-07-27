@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.Level.Objectives;
+namespace NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 
 public interface IObjectiveRequirement
 {
