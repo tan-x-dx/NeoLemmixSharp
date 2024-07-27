@@ -106,14 +106,13 @@ public readonly ref struct TerrainBuilder
         }
 
         var colors = new Color[maxX * maxY];
-        terrainGroupData.TerrainPixelColorData = new PixelColorData(maxX, maxY, colors);
+        var terrainPixelColorData = new PixelColorData(maxX, maxY, colors);
 
         DrawTerrainPieces(
             terrainGroupData.AllBasicTerrainData,
-            terrainGroupData.TerrainPixelColorData);
+            terrainPixelColorData);
 
-        terrainGroupData.TerrainPixelColorData =
-            terrainGroupData.TerrainPixelColorData.Trim();
+        terrainGroupData.TerrainPixelColorData = terrainPixelColorData.Trim();
     }
 
     private void DrawTerrainPieces(
