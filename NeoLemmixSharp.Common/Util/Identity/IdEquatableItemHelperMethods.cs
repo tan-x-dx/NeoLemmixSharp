@@ -10,7 +10,7 @@ public static class IdEquatableItemHelperMethods
 
         var minId = int.MaxValue;
         var maxId = int.MinValue;
-        var allItemIds = new HashSet<int>(items.Length, new IntEqualityComparer());
+        var allItemIds = new HashSet<int>(items.Length);
 
         foreach (var item in items)
         {
@@ -49,11 +49,5 @@ public static class IdEquatableItemHelperMethods
         if (y is null) return 1;
 
         return x.Id.CompareTo(y.Id);
-    }
-
-    private sealed class IntEqualityComparer : IEqualityComparer<int>
-    {
-        public bool Equals(int x, int y) => x == y;
-        public int GetHashCode(int n) => n;
     }
 }
