@@ -24,9 +24,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             LevelConstants.BasherActionSpriteFileName,
             LevelConstants.BasherAnimationFrames,
             LevelConstants.MaxBasherPhysicsFrames,
-            LevelConstants.NonPermanentSkillPriority,
-            false,
-            false)
+            LevelConstants.NonPermanentSkillPriority)
     {
     }
 

@@ -10,8 +10,7 @@ public sealed class AcidLemmingSkill : LemmingSkill
     private AcidLemmingSkill()
         : base(
             LevelConstants.AcidLemmingSkillId,
-            LevelConstants.AcidLemmingSkillName,
-            false)
+            LevelConstants.AcidLemmingSkillName)
     {
     }
 

@@ -2,5 +2,5 @@
 
 public interface IItemCountListener
 {
-    void OnNumberOfItemsChanged(int numberOfItems);
+    void OnNumberOfItemsChanged();
 }

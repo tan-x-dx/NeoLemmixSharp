@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Objectives;
+using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;

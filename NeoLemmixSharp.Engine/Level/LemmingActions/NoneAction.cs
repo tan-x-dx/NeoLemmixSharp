@@ -16,9 +16,7 @@ public sealed class NoneAction : LemmingAction
             string.Empty,
             1,
             1,
-            -1,
-            false,
-            false)
+            -1)
     {
     }
 

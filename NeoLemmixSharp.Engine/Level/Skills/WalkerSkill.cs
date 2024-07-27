@@ -11,8 +11,7 @@ public sealed class WalkerSkill : LemmingSkill
     private WalkerSkill()
         : base(
             LevelConstants.WalkerSkillId,
-            LevelConstants.WalkerSkillName,
-            false)
+            LevelConstants.WalkerSkillName)
     {
     }
 

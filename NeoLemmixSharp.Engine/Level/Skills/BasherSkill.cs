@@ -10,8 +10,7 @@ public sealed class BasherSkill : LemmingSkill
     private BasherSkill()
         : base(
             LevelConstants.BasherSkillId,
-            LevelConstants.BasherSkillName,
-            true)
+            LevelConstants.BasherSkillName)
     {
     }
 

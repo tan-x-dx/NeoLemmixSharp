@@ -11,8 +11,7 @@ public sealed class ShimmierSkill : LemmingSkill
     private ShimmierSkill()
         : base(
             LevelConstants.ShimmierSkillId,
-            LevelConstants.ShimmierSkillName,
-            false)
+            LevelConstants.ShimmierSkillName)
     {
     }
 

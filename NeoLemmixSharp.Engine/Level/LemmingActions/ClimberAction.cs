@@ -14,9 +14,7 @@ public sealed class ClimberAction : LemmingAction
             LevelConstants.ClimberActionSpriteFileName,
             LevelConstants.ClimberAnimationFrames,
             LevelConstants.MaxClimberPhysicsFrames,
-            LevelConstants.PermanentSkillPriority,
-            false,
-            false)
+            LevelConstants.PermanentSkillPriority)
     {
     }
 

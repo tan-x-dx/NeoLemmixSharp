@@ -2,9 +2,9 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 
-public readonly ref struct SpanWrapper2D
+public readonly ref struct SpanWrapper2D<T>
 {
-    private readonly Span<uint> _data;
+    private readonly Span<T> _data;
 
     private readonly int _spanWidth;
 
@@ -15,7 +15,7 @@ public readonly ref struct SpanWrapper2D
     public readonly int Height;
 
     public SpanWrapper2D(
-        Span<uint> data,
+        Span<T> data,
         int spanWidth,
         int spanHeight,
         int x,
@@ -39,7 +39,7 @@ public readonly ref struct SpanWrapper2D
         Height = height;
     }
 
-    public uint this[int x0, int y0]
+    public T this[int x0, int y0]
     {
         get
         {

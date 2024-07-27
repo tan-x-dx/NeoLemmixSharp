@@ -2,7 +2,6 @@
 using MGUI.Shared.Helpers;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
-using NeoLemmixSharp.Menu.Rendering;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace NeoLemmixSharp.Menu.Pages;

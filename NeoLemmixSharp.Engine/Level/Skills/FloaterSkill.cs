@@ -10,8 +10,7 @@ public sealed class FloaterSkill : LemmingSkill, ILemmingStateChanger
     private FloaterSkill()
         : base(
             LevelConstants.FloaterSkillId,
-            LevelConstants.FloaterSkillName,
-            true)
+            LevelConstants.FloaterSkillName)
     {
     }
 

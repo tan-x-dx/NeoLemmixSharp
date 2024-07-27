@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-namespace NeoLemmixSharp.Engine.Level.Objectives;
+namespace NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 
 public sealed class BasicSkillSetRequirement : ISkillSetRequirement
 {
@@ -10,7 +10,7 @@ public sealed class BasicSkillSetRequirement : ISkillSetRequirement
 
     public bool IsSatisfied { get; }
     public bool IsFailed { get; }
-    
+
     public BasicSkillSetRequirement(SkillSetData[] skillSetData)
     {
         _skillSetData = skillSetData;

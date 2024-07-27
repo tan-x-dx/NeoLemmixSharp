@@ -11,8 +11,7 @@ public sealed class RotateToDownSkill : LemmingSkill
     private RotateToDownSkill()
         : base(
             LevelConstants.RotateToDownSkillId,
-            LevelConstants.RotateToDownSkillName,
-            false)
+            LevelConstants.RotateToDownSkillName)
     {
     }
 

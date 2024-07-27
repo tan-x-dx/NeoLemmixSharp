@@ -11,8 +11,7 @@ public sealed class RotateToLeftSkill:LemmingSkill
     private RotateToLeftSkill()
         : base(
             LevelConstants.RotateToLeftSkillId,
-            LevelConstants.RotateToLeftSkillName,
-            false)
+            LevelConstants.RotateToLeftSkillName)
     {
     }
 

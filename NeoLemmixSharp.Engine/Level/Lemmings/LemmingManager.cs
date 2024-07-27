@@ -389,7 +389,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             var itemCountListenersSpan = CollectionsMarshal.AsSpan(_itemCountListeners);
             foreach (var itemCountListener in itemCountListenersSpan)
             {
-                itemCountListener.OnNumberOfItemsChanged(_lemmings.Capacity);
+                itemCountListener.OnNumberOfItemsChanged();
             }
         }
 

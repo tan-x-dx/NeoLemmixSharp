@@ -10,10 +10,11 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 {
     private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
+    private static readonly SimpleSet<LemmingSkill> ClassicSkills = GetClassicSkills();
 
     public static int NumberOfItems => LemmingSkills.Length;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
-    public static ReadOnlySpan<LemmingSkill> AllClassicSkills => new(LemmingSkills, LevelConstants.ClimberSkillId, LevelConstants.NumberOfClassicSkills);
+    public static SimpleSetEnumerable<LemmingSkill> AllClassicSkills => ClassicSkills.AsSimpleEnumerable();
 
     private static LemmingSkill[] RegisterAllLemmingSkills()
     {
@@ -61,16 +62,30 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
         return result;
     }
 
+    private static SimpleSet<LemmingSkill> GetClassicSkills()
+    {
+        var result = ExtendedEnumTypeComparer<LemmingSkill>.CreateSimpleSet();
+
+        result.Add(ClimberSkill.Instance);
+        result.Add(FloaterSkill.Instance);
+        result.Add(BomberSkill.Instance);
+        result.Add(BlockerSkill.Instance);
+        result.Add(BuilderSkill.Instance);
+        result.Add(BasherSkill.Instance);
+        result.Add(MinerSkill.Instance);
+        result.Add(DiggerSkill.Instance);
+
+        return result;
+    }
+
     private readonly SimpleSet<LemmingAction> _assignableActions;
     public readonly int Id;
     public readonly string LemmingSkillName;
-    public readonly bool IsClassicSkill;
 
-    protected LemmingSkill(int id, string lemmingSkillName, bool isClassicSkill)
+    protected LemmingSkill(int id, string lemmingSkillName)
     {
         Id = id;
         LemmingSkillName = lemmingSkillName;
-        IsClassicSkill = isClassicSkill;
         _assignableActions = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
 
         // ReSharper disable once VirtualMemberCallInConstructor
@@ -79,6 +94,8 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
             _assignableActions.Add(action);
         }
     }
+
+    public bool IsClassicSkill() => ClassicSkills.Contains(this);
 
     public virtual bool CanAssignToLemming(Lemming lemming)
     {

@@ -10,7 +10,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class TerrainBuilder
+public readonly ref struct TerrainBuilder
 {
     private readonly GraphicsDevice _graphicsDevice;
     private readonly LevelData _levelData;
@@ -35,7 +35,6 @@ public sealed class TerrainBuilder
             RenderTargetUsage.DiscardContents);
 
         _terrainPixels = new PixelType[_levelData.LevelWidth * _levelData.LevelHeight];
-
         _terrainColors = new Color[_levelData.LevelWidth * _levelData.LevelHeight];
     }
 
@@ -56,57 +55,107 @@ public sealed class TerrainBuilder
             _levelData.LevelHeight,
             _terrainColors);
 
-        DrawTerrainPieces(_levelData.AllTerrainData, textureData, 0, 0);
+        DrawTerrainPieces(_levelData.AllTerrainData, textureData);
         _terrainTexture.SetData(_terrainColors);
     }
 
-    private static void ProcessTerrainGroup(TerrainGroup terrainGroup)
+    public Color[] GetTerrainColors()
     {
-        var minX = terrainGroup.TerrainDatas.Select(td => td.X).Min();
-        var minY = terrainGroup.TerrainDatas.Select(td => td.Y).Min();
+        return _terrainColors;
+    }
 
-        foreach (var terrainData in terrainGroup.TerrainDatas)
+    public PixelType[] GetPixelData()
+    {
+        return _terrainPixels;
+    }
+
+    public RenderTarget2D GetTerrainTexture()
+    {
+        return _terrainTexture;
+    }
+
+    private void ProcessTerrainGroup(TerrainGroupData terrainGroupData)
+    {
+        var minX = int.MaxValue;
+        var minY = int.MaxValue;
+
+        foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
+        {
+            minX = Math.Min(minX, terrainData.X);
+            minY = Math.Min(minY, terrainData.Y);
+        }
+
+        foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
         {
             terrainData.X -= minX;
             terrainData.Y -= minY;
         }
+
+        var maxX = int.MinValue;
+        var maxY = int.MinValue;
+
+        foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
+        {
+            var terrainArchetypeData = _levelData.TerrainArchetypeData[terrainData.TerrainArchetypeId];
+
+            var w = terrainData.Width ?? terrainArchetypeData.TerrainPixelColorData.Width;
+            var h = terrainData.Height ?? terrainArchetypeData.TerrainPixelColorData.Height;
+
+            maxX = Math.Max(maxX, terrainData.X + w);
+            maxY = Math.Max(maxY, terrainData.Y + h);
+        }
+
+        var colors = new Color[maxX * maxY];
+        var terrainPixelColorData = new PixelColorData(maxX, maxY, colors);
+
+        DrawTerrainPieces(
+            terrainGroupData.AllBasicTerrainData,
+            terrainPixelColorData);
+
+        terrainGroupData.TerrainPixelColorData = terrainPixelColorData.Trim();
     }
 
     private void DrawTerrainPieces(
-        IEnumerable<TerrainData> terrainDataList,
-        PixelColorData targetData,
-        int dx,
-        int dy)
+        List<TerrainData> terrainDataList,
+        PixelColorData targetData)
     {
         foreach (var terrainData in terrainDataList)
         {
             if (terrainData.GroupName is null)
             {
-                DrawTerrainPiece(
-                    terrainData,
-                    targetData,
-                    dx,
-                    dy);
+                var terrainArchetypeData = _levelData.TerrainArchetypeData[terrainData.TerrainArchetypeId];
+
+                if (terrainArchetypeData.ResizeType == ResizeType.None)
+                {
+                    DrawTerrainPiece(
+                        terrainData,
+                        terrainArchetypeData,
+                        targetData);
+                }
+                else
+                {
+                    DrawResizeableTerrainPiece(
+                        terrainData,
+                        terrainArchetypeData,
+                        targetData);
+                }
             }
             else
             {
-                var textureGroup = _levelData.AllTerrainGroups.First(tg => tg.GroupName == terrainData.GroupName);
-                DrawTerrainPieces(
-                    textureGroup.TerrainDatas,
-                    targetData,
-                    dx + terrainData.X,
-                    dy + terrainData.Y);
+                var textureGroup = _levelData.AllTerrainGroups.Find(tg => string.Equals(tg.GroupName, terrainData.GroupName, StringComparison.OrdinalIgnoreCase))!;
+                DrawTerrainPiece(
+                    terrainData,
+                    textureGroup,
+                    targetData);
             }
         }
     }
 
     private void DrawTerrainPiece(
         TerrainData terrainData,
-        PixelColorData targetPixelColorData,
-        int dx,
-        int dy)
+        ITerrainArchetypeData terrainArchetypeData,
+        PixelColorData targetPixelColorData)
     {
-        var terrainArchetypeData = _levelData.TerrainArchetypeData[terrainData.TerrainArchetypeId];
         var sourcePixelColorData = terrainArchetypeData.TerrainPixelColorData;
 
         var dihedralTransformation = new DihedralTransformation(
@@ -129,8 +178,8 @@ public sealed class TerrainBuilder
                     out var x0,
                     out var y0);
 
-                x0 = x0 + terrainData.X + dx;
-                y0 = y0 + terrainData.Y + dy;
+                x0 += terrainData.X;
+                y0 += terrainData.Y;
 
                 if (x0 < 0 || x0 >= targetPixelColorData.Width ||
                     y0 < 0 || y0 >= targetPixelColorData.Height)
@@ -184,6 +233,14 @@ public sealed class TerrainBuilder
         }
     }
 
+    private void DrawResizeableTerrainPiece(
+        TerrainData terrainData,
+        TerrainArchetypeData terrainArchetypeData,
+        PixelColorData targetPixelColorData)
+    {
+
+    }
+
     private static Color BlendColors(Color foregroundColor, Color backgroundColor)
     {
         var fgA = foregroundColor.A / 255f;
@@ -222,20 +279,5 @@ public sealed class TerrainBuilder
         using var mainTexture = Texture2D.FromFile(_graphicsDevice, pngPath);
         var pixelColorData = PixelColorData.GetPixelColorDataFromTexture(mainTexture);
         terrainArchetypeData.TerrainPixelColorData = pixelColorData;
-    }
-
-    public Color[] GetTerrainColors()
-    {
-        return _terrainColors;
-    }
-
-    public PixelType[] GetPixelData()
-    {
-        return _terrainPixels;
-    }
-
-    public RenderTarget2D GetTerrainTexture()
-    {
-        return _terrainTexture;
     }
 }

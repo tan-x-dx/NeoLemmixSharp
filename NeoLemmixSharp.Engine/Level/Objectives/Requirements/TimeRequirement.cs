@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Objectives;
+﻿namespace NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 
 public sealed class TimeRequirement : IObjectiveRequirement
 {

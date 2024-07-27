@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Objectives;
@@ -109,11 +110,11 @@ public sealed class LevelData
     public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; }
 
     public List<LevelObjective> LevelObjectives { get; } = [];
-    public LevelParameterSet LevelParameters { get; } = LevelParameterHelpers.CreateSimpleSet();
-    public ControlPanelParameterSet ControlParameters { get; } = ControlPanelParameterHelpers.CreateSimpleSet();
+    public LevelParameterSet LevelParameters { get; } = PerfectEnumHasher<LevelParameters>.CreateSimpleSet();
+    public ControlPanelParameterSet ControlParameters { get; } = PerfectEnumHasher<ControlPanelParameters>.CreateSimpleSet();
     public List<TerrainArchetypeData> TerrainArchetypeData { get; } = [];
     public List<TerrainData> AllTerrainData { get; } = [];
-    public List<TerrainGroup> AllTerrainGroups { get; } = [];
+    public List<TerrainGroupData> AllTerrainGroups { get; } = [];
     public List<HatchGroupData> AllHatchGroupData { get; } = [];
     public List<LemmingData> PrePlacedLemmingData { get; } = [];
     public List<LemmingData> HatchLemmingData { get; } = [];

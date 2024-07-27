@@ -80,6 +80,8 @@ public sealed class BoundaryBehaviour
         _levelLength = levelLength;
     }
 
+    public override string ToString() => $"{_dimensionType} - {_boundaryBehaviourType}";
+
     public void UpdateMouseCoordinate(int windowCoordinate)
     {
         _mouseViewPortCoordinate = (windowCoordinate + _scaleMultiplier - 1) / _scaleMultiplier;
@@ -142,6 +144,11 @@ public sealed class BoundaryBehaviour
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return a;
 
+        // Most likely case for wrap normalisation, is the input
+        // being just outside the bounds [0, _levelLength - 1].
+        // Therefore, we can avoid a call to the modulo operator
+        // by simply adding/subtracting the level length
+
         if (a < 0)
         {
             do
@@ -168,7 +175,7 @@ public sealed class BoundaryBehaviour
              right < _levelLength))
             return;
 
-        var halfLevelWidth = _levelLength / 2;
+        var halfLevelWidth = _levelLength >> 1;
         left -= halfLevelWidth;
         right -= halfLevelWidth;
         a -= halfLevelWidth;
@@ -298,7 +305,9 @@ public sealed class BoundaryBehaviour
     [Pure]
     public ClipInterval GetIntersection(ClipInterval spriteClipInterval, ClipInterval viewportClipInterval)
     {
-        var offset = GetIntersectionAcrossBoundary(spriteClipInterval, ref viewportClipInterval);
+        var offset = _boundaryBehaviourType == BoundaryBehaviourType.Void
+            ? 0
+            : GetIntersectionAcrossBoundary(spriteClipInterval, ref viewportClipInterval);
 
         if (viewportClipInterval.Start < spriteClipInterval.Start + spriteClipInterval.Length &&
             spriteClipInterval.Start < viewportClipInterval.Start + viewportClipInterval.Length)
@@ -316,9 +325,6 @@ public sealed class BoundaryBehaviour
         ClipInterval spriteClipInterval,
         ref ClipInterval viewportClipInterval)
     {
-        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
-            return 0;
-
         if (spriteClipInterval.Start < 0 &&
             spriteClipInterval.Start + spriteClipInterval.Length >= 0)
         {
@@ -335,15 +341,13 @@ public sealed class BoundaryBehaviour
         if (spriteClipInterval.Start + spriteClipInterval.Length <= _levelLength)
             return 0;
 
-        if (viewportClipInterval.Start == 0)
-        {
-            viewportClipInterval = new ClipInterval(
-                viewportClipInterval.Start + _levelLength,
-                viewportClipInterval.Length,
-                0);
-            return -_levelLength;
-        }
+        if (viewportClipInterval.Start != 0) 
+            return 0;
 
-        return 0;
+        viewportClipInterval = new ClipInterval(
+            viewportClipInterval.Start + _levelLength,
+            viewportClipInterval.Length,
+            0);
+        return -_levelLength;
     }
 }

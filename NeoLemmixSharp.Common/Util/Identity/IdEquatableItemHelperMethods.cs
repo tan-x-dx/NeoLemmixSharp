@@ -2,7 +2,6 @@
 
 public static class IdEquatableItemHelperMethods
 {
-
     public static void ValidateUniqueIds<T>(ReadOnlySpan<T> items)
         where T : class, IIdEquatable<T>
     {
@@ -11,7 +10,7 @@ public static class IdEquatableItemHelperMethods
 
         var minId = int.MaxValue;
         var maxId = int.MinValue;
-        var allItemIds = new HashSet<int>(items.Length, new IntEqualityComparer());
+        var allItemIds = new HashSet<int>(items.Length);
 
         foreach (var item in items)
         {
@@ -35,20 +34,6 @@ public static class IdEquatableItemHelperMethods
         }
     }
 
-    public static int Compare<T>(T? x, T? y)
-        where T : class, IIdEquatable<T>
-    {
-        if (ReferenceEquals(x, y)) return 0;
-        if (x is null) return -1;
-        if (y is null) return 1;
-
-        var xId = x.Id;
-        var yId = y.Id;
-
-        if (xId < yId) return -1;
-        return xId > yId ? 1 : 0;
-    }
-
     public static int GetHashCode<T>(T obj)
         where T : class, IIdEquatable<T>
     {
@@ -56,9 +41,13 @@ public static class IdEquatableItemHelperMethods
                5477821;
     }
 
-    private sealed class IntEqualityComparer : IEqualityComparer<int>
+    public static int Compare<T>(T? x, T? y)
+        where T : class, IIdEquatable<T>
     {
-        public bool Equals(int x, int y) => x == y;
-        public int GetHashCode(int n) => n;
+        if (ReferenceEquals(x, y)) return 0;
+        if (x is null) return -1;
+        if (y is null) return 1;
+
+        return x.Id.CompareTo(y.Id);
     }
 }

@@ -10,8 +10,7 @@ public sealed class FencerSkill : LemmingSkill
     private FencerSkill()
         : base(
             LevelConstants.FencerSkillId,
-            LevelConstants.FencerSkillName,
-            false)
+            LevelConstants.FencerSkillName)
     {
     }
 
