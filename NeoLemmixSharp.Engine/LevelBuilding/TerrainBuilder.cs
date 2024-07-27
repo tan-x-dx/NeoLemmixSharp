@@ -59,6 +59,21 @@ public readonly ref struct TerrainBuilder
         _terrainTexture.SetData(_terrainColors);
     }
 
+    public Color[] GetTerrainColors()
+    {
+        return _terrainColors;
+    }
+
+    public PixelType[] GetPixelData()
+    {
+        return _terrainPixels;
+    }
+
+    public RenderTarget2D GetTerrainTexture()
+    {
+        return _terrainTexture;
+    }
+
     private void ProcessTerrainGroup(TerrainGroupData terrainGroupData)
     {
         var minX = int.MaxValue;
@@ -92,11 +107,11 @@ public readonly ref struct TerrainBuilder
 
         var colors = new Color[maxX * maxY];
         terrainGroupData.TerrainPixelColorData = new PixelColorData(maxX, maxY, colors);
-        
+
         DrawTerrainPieces(
             terrainGroupData.AllBasicTerrainData,
             terrainGroupData.TerrainPixelColorData);
-        
+
         terrainGroupData.TerrainPixelColorData =
             terrainGroupData.TerrainPixelColorData.Trim();
     }
@@ -110,10 +125,21 @@ public readonly ref struct TerrainBuilder
             if (terrainData.GroupName is null)
             {
                 var terrainArchetypeData = _levelData.TerrainArchetypeData[terrainData.TerrainArchetypeId];
-                DrawTerrainPiece(
-                    terrainData,
-                    terrainArchetypeData,
-                    targetData);
+
+                if (terrainArchetypeData.ResizeType == ResizeType.None)
+                {
+                    DrawTerrainPiece(
+                        terrainData,
+                        terrainArchetypeData,
+                        targetData);
+                }
+                else
+                {
+                    DrawResizeableTerrainPiece(
+                        terrainData,
+                        terrainArchetypeData,
+                        targetData);
+                }
             }
             else
             {
@@ -208,6 +234,14 @@ public readonly ref struct TerrainBuilder
         }
     }
 
+    private void DrawResizeableTerrainPiece(
+        TerrainData terrainData,
+        TerrainArchetypeData terrainArchetypeData,
+        PixelColorData targetPixelColorData)
+    {
+
+    }
+
     private static Color BlendColors(Color foregroundColor, Color backgroundColor)
     {
         var fgA = foregroundColor.A / 255f;
@@ -246,20 +280,5 @@ public readonly ref struct TerrainBuilder
         using var mainTexture = Texture2D.FromFile(_graphicsDevice, pngPath);
         var pixelColorData = PixelColorData.GetPixelColorDataFromTexture(mainTexture);
         terrainArchetypeData.TerrainPixelColorData = pixelColorData;
-    }
-
-    public Color[] GetTerrainColors()
-    {
-        return _terrainColors;
-    }
-
-    public PixelType[] GetPixelData()
-    {
-        return _terrainPixels;
-    }
-
-    public RenderTarget2D GetTerrainTexture()
-    {
-        return _terrainTexture;
     }
 }
