@@ -166,8 +166,11 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         {
             var result = new TKey[Count];
             var i = 0;
-            foreach (var (key, _) in this)
+            var enumerator = new Enumerator(this);
+
+            while (enumerator.MoveNext())
             {
+                var (key, _) = enumerator.Current;
                 result[i++] = key;
             }
 
@@ -182,8 +185,11 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
         {
             var result = new TValue[Count];
             var i = 0;
-            foreach (var (_, value) in this)
+            var enumerator = new Enumerator(this);
+
+            while (enumerator.MoveNext())
             {
+                var (_, value) = enumerator.Current;
                 result[i++] = value;
             }
 
