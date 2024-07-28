@@ -173,6 +173,6 @@ public sealed class GadgetSpriteBuilder : IDisposable
 
     public void Dispose()
     {
-        DisposableHelperMethods.DisposeOfAll(_gadgetTextures);
+        _gadgetTextures.Clear();
     }
 }
