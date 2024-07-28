@@ -12,21 +12,3 @@ public enum GadgetProperty
     LemmingCount,
     InitialAnimationFrame
 }
-
-public static class GadgetPropertyHelpers
-{
-    private const int NumberOfGadgetProperties = 7;
-
-    private static readonly GadgetPropertyHasher Hasher = new();
-
-    private sealed class GadgetPropertyHasher : IPerfectHasher<GadgetProperty>
-    {
-        public int NumberOfItems => NumberOfGadgetProperties;
-
-        public int Hash(GadgetProperty item) => (int)item;
-
-        public GadgetProperty UnHash(int index) => (GadgetProperty)index;
-    }
-
-    public static SimpleDictionary<GadgetProperty, int> CreateSimpleIntDictionary() => new(Hasher);
-}
