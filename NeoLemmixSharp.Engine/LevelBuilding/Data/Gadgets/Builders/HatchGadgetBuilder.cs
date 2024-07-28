@@ -84,9 +84,4 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
 
         return result;
     }
-
-    public IEnumerable<GadgetAnimationArchetypeData> AnimationArchetypes()
-    {
-        throw new NotImplementedException();
-    }
 }

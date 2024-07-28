@@ -192,6 +192,7 @@ public readonly ref partial struct GadgetTranslator
     private static void DisposeOfSourceTextures(NeoLemmixGadgetArchetypeData archetypeData)
     {
         var animationDataSpan = CollectionsMarshal.AsSpan(archetypeData.AnimationData);
+
         foreach (var animationData in animationDataSpan)
         {
             DisposableHelperMethods.DisposeOf(ref animationData.Texture);

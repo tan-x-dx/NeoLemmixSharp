@@ -32,7 +32,7 @@ public sealed class GadgetSpriteBuilder : IDisposable
             : BuildNineSliceRenderer(resizeableGadgetBuilder, gadgetData, texture);
     }
 
-    public IControlledAnimationGadgetRenderer? BuildStatefulGadgetRenderer(
+    public GadgetLayerRenderer? BuildStatefulGadgetRenderer(
         IGadgetBuilder gadgetBuilder,
         GadgetData gadgetData)
     {
@@ -109,7 +109,9 @@ public sealed class GadgetSpriteBuilder : IDisposable
         GadgetData gadgetData,
         Texture2D texture)
     {
-        throw new NotImplementedException();
+
+
+        return new NineSliceRenderer(texture, gadgetData.GadgetRenderMode);
     }
 
     private static Texture2D ItemCreator(
@@ -171,6 +173,6 @@ public sealed class GadgetSpriteBuilder : IDisposable
 
     public void Dispose()
     {
-        _gadgetTextures.Clear();
+        DisposableHelperMethods.DisposeOfAll(_gadgetTextures);
     }
 }

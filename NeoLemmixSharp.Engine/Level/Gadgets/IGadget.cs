@@ -4,9 +4,19 @@ using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public interface IControlledAnimationGadget : IRectangularBounds
+public interface IGadget : IRectangularBounds
 {
     int Id { get; }
-    GadgetStateAnimationController AnimationController { get; }
     RectangularLevelRegion GadgetBounds { get; }
+}
+
+public interface IControlledAnimationGadget : IGadget
+{
+    GadgetStateAnimationController AnimationController { get; }
+}
+
+public interface IResizeableGadget : IGadget
+{
+    void Resize(int dw, int dh);
+    void SetSize(int w, int h);
 }

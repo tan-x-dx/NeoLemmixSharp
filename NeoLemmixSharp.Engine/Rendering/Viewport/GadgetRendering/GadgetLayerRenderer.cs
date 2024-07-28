@@ -14,6 +14,11 @@ public sealed class GadgetLayerRenderer : IControlledAnimationGadgetRenderer
     public int RendererId { get; set; }
     public int ItemId => _gadget.Id;
 
+    public LevelPosition TopLeftPixel => _gadget.TopLeftPixel;
+    public LevelPosition BottomRightPixel => _gadget.BottomRightPixel;
+    public LevelPosition PreviousTopLeftPixel => _gadget.PreviousTopLeftPixel;
+    public LevelPosition PreviousBottomRightPixel => _gadget.PreviousBottomRightPixel;
+
     public GadgetLayerRenderer(
         Texture2D texture,
         GadgetRenderMode renderMode)
@@ -41,9 +46,4 @@ public sealed class GadgetLayerRenderer : IControlledAnimationGadgetRenderer
     {
         _gadget = null!;
     }
-
-    public LevelPosition TopLeftPixel => _gadget.TopLeftPixel;
-    public LevelPosition BottomRightPixel => _gadget.BottomRightPixel;
-    public LevelPosition PreviousTopLeftPixel => _gadget.PreviousTopLeftPixel;
-    public LevelPosition PreviousBottomRightPixel => _gadget.PreviousBottomRightPixel;
 }
