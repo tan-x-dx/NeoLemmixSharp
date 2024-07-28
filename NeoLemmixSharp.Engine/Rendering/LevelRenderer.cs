@@ -6,7 +6,6 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -48,16 +47,10 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         var rendererSpan = CollectionsMarshal.AsSpan(_orderedSprites);
         foreach (var renderer in rendererSpan)
         {
-            if (renderer is TerrainRenderer)
-            {
-                StartRenderingSprite(renderer);
-            }
+            if (renderer is LemmingRenderer) // LemmingRenderers are handled elsewhere
+                continue;
 
-            if (renderer is GadgetLayerRenderer gadgetSprite &&
-                gadgetSprite.RenderMode != GadgetRenderMode.NoRender)
-            {
-                StartRenderingSprite(renderer);
-            }
+            StartRenderingSprite(renderer);
         }
     }
 
