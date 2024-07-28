@@ -9,6 +9,8 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeableGadget
 {
+    private readonly HitBox _hitBox;
+
     public override GadgetBehaviour GadgetBehaviour { get; }
     public override Orientation Orientation { get; }
 
@@ -18,11 +20,13 @@ public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeabl
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
         INineSliceGadgetRender? renderer,
-        ItemTracker<Lemming> lemmingTracker)
+        ItemTracker<Lemming> lemmingTracker,
+        HitBox hitBox)
         : base(id, gadgetBounds, renderer, lemmingTracker)
     {
         GadgetBehaviour = gadgetBehaviour;
         Orientation = orientation;
+        _hitBox = hitBox;
     }
 
     public override void Tick()
@@ -31,14 +35,13 @@ public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeabl
 
     public override bool MatchesLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)
     {
-        //   throw new NotImplementedException();
-        return false;
+        return _hitBox.MatchesLemming(lemming) &&
+               _hitBox.MatchesPosition(levelPosition);
     }
 
     public override bool MatchesPosition(LevelPosition levelPosition)
     {
-        //   throw new NotImplementedException();
-        return false;
+        return _hitBox.MatchesPosition(levelPosition);
     }
 
     public override bool IsSolidToLemmingAtPosition(Lemming lemming, LevelPosition levelPosition)

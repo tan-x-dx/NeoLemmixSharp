@@ -24,14 +24,14 @@ public sealed class RelativeRectangularLevelRegion : IRectangularLevelRegion
     public RelativeRectangularLevelRegion(
         IRectangularLevelRegion anchorRegion,
         int dx,
-        int dx1,
         int dy,
+        int dx1,
         int dy1)
     {
         _anchorRegion = anchorRegion;
         _dx = dx;
-        _dx1 = dx1;
         _dy = dy;
+        _dx1 = dx1;
         _dy1 = dy1;
     }
 

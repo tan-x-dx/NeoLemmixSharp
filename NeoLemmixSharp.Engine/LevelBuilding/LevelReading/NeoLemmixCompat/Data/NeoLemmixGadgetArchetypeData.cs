@@ -19,6 +19,9 @@ public sealed class NeoLemmixGadgetArchetypeData
     public int TriggerWidth { get; set; } = 1;
     public int TriggerHeight { get; set; } = 1;
 
+    public int? DefaultWidth { get; set; }
+    public int? DefaultHeight { get; set; }
+
     public ResizeType ResizeType { get; set; }
 
     public int PrimaryAnimationFrameCount { get; set; }

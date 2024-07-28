@@ -178,7 +178,7 @@ public sealed class FallerAction : LemmingAction
             if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
                 continue;
 
-            var deltaRotNum = (lemmingOrientation.RotNum - gadget.Orientation.RotNum) & 3;
+            var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientation.RotNum) & 3;
 
             draftDirections[deltaRotNum] = true;
         }

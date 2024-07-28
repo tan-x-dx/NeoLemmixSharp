@@ -33,7 +33,18 @@ public sealed class NineSliceRenderer : INineSliceGadgetRender
 
     public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY)
     {
-        throw new NotImplementedException();
+        var whitePixel = CommonSprites.WhitePixelGradientSprite;
+        var renderDestination = new Rectangle(
+            projectionX,
+            projectionY,
+            sourceRectangle.Width,
+            sourceRectangle.Height);
+
+        spriteBatch.Draw(
+            whitePixel,
+            renderDestination,
+            CommonSprites.RectangleForWhitePixelAlpha(0xff),
+            Color.Yellow);
     }
 
     public void Dispose()
