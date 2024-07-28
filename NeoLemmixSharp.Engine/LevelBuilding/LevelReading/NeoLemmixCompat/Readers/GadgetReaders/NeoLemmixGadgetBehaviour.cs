@@ -37,6 +37,15 @@ public enum NeoLemmixGadgetBehaviour
 
 public static class NeoLemmixGadgetBehaviourExtensions
 {
+    public static bool IsOneWayArrows(this NeoLemmixGadgetBehaviour behaviour)
+    {
+        return behaviour is
+            NeoLemmixGadgetBehaviour.OneWayRight or
+            NeoLemmixGadgetBehaviour.OneWayUp or
+            NeoLemmixGadgetBehaviour.OneWayLeft or
+            NeoLemmixGadgetBehaviour.OneWayDown;
+    }
+
     public static GadgetBehaviour ToGadgetBehaviour(
         this NeoLemmixGadgetBehaviour neoLemmixGadgetBehaviour)
     {
@@ -346,6 +355,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
         return result;
     }
 
+    [DoesNotReturn]
     private static GadgetStateArchetypeData[] ToBeImplemented(NeoLemmixGadgetBehaviour behaviour)
     {
         throw new NotImplementedException($"Need to implement this behaviour: {behaviour}");

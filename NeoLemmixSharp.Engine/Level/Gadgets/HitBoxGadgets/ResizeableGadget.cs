@@ -17,7 +17,7 @@ public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeabl
         GadgetBehaviour gadgetBehaviour,
         Orientation orientation,
         RectangularLevelRegion gadgetBounds,
-        IGadgetRenderer? renderer,
+        INineSliceGadgetRender? renderer,
         ItemTracker<Lemming> lemmingTracker)
         : base(id, gadgetBounds, renderer, lemmingTracker)
     {

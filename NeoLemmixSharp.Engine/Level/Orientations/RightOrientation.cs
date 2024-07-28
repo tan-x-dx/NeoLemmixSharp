@@ -9,7 +9,11 @@ public sealed class RightOrientation : Orientation
     public static readonly RightOrientation Instance = new();
 
     private RightOrientation()
-        : base(LevelConstants.RightOrientationRotNum, 1, 0)
+        : base(
+            LevelConstants.RightOrientationRotNum,
+            LevelConstants.RightOrientationName,
+            1,
+            0)
     {
     }
 
@@ -93,6 +97,4 @@ public sealed class RightOrientation : Orientation
 
         return TerrainManager.HorizontalBoundaryBehaviour.GetDelta(a, b);
     }
-
-    public override string ToString() => "right";
 }

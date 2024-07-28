@@ -17,9 +17,13 @@ public static class LevelConstants
     public const string LeftFacingDirectionName = "Left";
 
     public const int DownOrientationRotNum = 0;
+    public const string DownOrientationName = "Down";
     public const int LeftOrientationRotNum = 1;
+    public const string LeftOrientationName = "Left";
     public const int UpOrientationRotNum = 2;
+    public const string UpOrientationName = "Up";
     public const int RightOrientationRotNum = 3;
+    public const string RightOrientationName = "Right";
 
     public const int NumberOfTeams = 6;
     public const int ClassicTeamId = 0;

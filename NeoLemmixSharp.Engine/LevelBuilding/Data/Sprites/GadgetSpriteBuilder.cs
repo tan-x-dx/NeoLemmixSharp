@@ -32,7 +32,7 @@ public sealed class GadgetSpriteBuilder : IDisposable
             : BuildNineSliceRenderer(resizeableGadgetBuilder, gadgetData, texture);
     }
 
-    public IGadgetRenderer? BuildStatefulGadgetRenderer(
+    public IControlledAnimationGadgetRenderer? BuildStatefulGadgetRenderer(
         IGadgetBuilder gadgetBuilder,
         GadgetData gadgetData)
     {

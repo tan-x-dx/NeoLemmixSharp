@@ -32,13 +32,19 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
 
         var itemTracker = new ItemTracker<Lemming>(lemmingHasher);
         LevelScreen.LemmingManager.RegisterItemForLemmingCountTracking(itemTracker);
+        
+        var gadgetRenderer = gadgetSpriteBuilder.BuildResizeableGadgetRenderer(this, gadgetData);
 
-        return new ResizeableGadget(
+        var result = new ResizeableGadget(
             gadgetData.Id,
             GadgetBehaviour,
             gadgetData.Orientation,
             gadgetBounds,
-            null,
+            gadgetRenderer,
             itemTracker);
+        
+        gadgetRenderer?.SetGadget(result);
+
+        return result;
     }
 }

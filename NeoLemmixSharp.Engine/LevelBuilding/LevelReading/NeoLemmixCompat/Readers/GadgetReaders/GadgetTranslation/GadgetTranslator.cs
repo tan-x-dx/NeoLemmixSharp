@@ -62,6 +62,12 @@ public readonly ref partial struct GadgetTranslator
     {
         if (archetypeData.ResizeType != ResizeType.None)
         {
+            if (archetypeData.Behaviour.IsOneWayArrows())
+            {
+                ProcessOneWayArrows(archetypeData, prototype, gadgetId);
+                return;
+            }
+
             ProcessResizeableGadgetBuilder(archetypeData, prototype, gadgetId);
             return;
         }

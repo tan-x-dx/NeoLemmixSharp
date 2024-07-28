@@ -30,15 +30,18 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     public readonly int RotNum;
     private readonly int _absoluteHorizontalComponent;
     private readonly int _absoluteVerticalComponent;
+    private readonly string _orientationName;
 
     protected Orientation(
         int rotNum,
+        string orientationName,
         int absoluteHorizontalComponent,
         int absoluteVerticalComponent)
     {
         RotNum = rotNum;
         _absoluteHorizontalComponent = absoluteHorizontalComponent;
         _absoluteVerticalComponent = absoluteVerticalComponent;
+        _orientationName = orientationName;
     }
 
     [Pure]
@@ -133,7 +136,7 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     public bool Equals(Orientation? other) => RotNum == (other?.RotNum ?? -1);
     public sealed override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;
     public sealed override int GetHashCode() => RotNum;
-    public abstract override string ToString();
+    public sealed override string ToString() => _orientationName;
 
     public static bool operator ==(Orientation left, Orientation right) => left.RotNum == right.RotNum;
     public static bool operator !=(Orientation left, Orientation right) => left.RotNum != right.RotNum;

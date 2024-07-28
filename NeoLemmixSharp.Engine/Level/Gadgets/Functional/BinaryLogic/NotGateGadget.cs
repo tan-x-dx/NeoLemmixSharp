@@ -19,7 +19,7 @@ public sealed class NotGateGadget : GadgetBase, ILogicGateGadget
     public NotGateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
-        IGadgetRenderer? renderer,
+        IControlledAnimationGadgetRenderer? renderer,
         LogicGateGadgetInput input)
         : base(id, gadgetBounds, renderer)
     {

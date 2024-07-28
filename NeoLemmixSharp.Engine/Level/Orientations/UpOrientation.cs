@@ -9,7 +9,11 @@ public sealed class UpOrientation : Orientation
     public static readonly UpOrientation Instance = new();
 
     private UpOrientation()
-        : base(LevelConstants.UpOrientationRotNum, 0, -1)
+        : base(
+            LevelConstants.UpOrientationRotNum,
+            LevelConstants.UpOrientationName,
+            0,
+            -1)
     {
     }
 
@@ -93,6 +97,4 @@ public sealed class UpOrientation : Orientation
 
         return TerrainManager.VerticalBoundaryBehaviour.GetDelta(b, a);
     }
-
-    public override string ToString() => "up";
 }

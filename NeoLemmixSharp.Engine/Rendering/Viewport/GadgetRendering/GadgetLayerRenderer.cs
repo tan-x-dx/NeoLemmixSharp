@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
-public sealed class GadgetLayerRenderer : IGadgetRenderer
+public sealed class GadgetLayerRenderer : IControlledAnimationGadgetRenderer
 {
     private readonly Texture2D _texture;
     private IControlledAnimationGadget _gadget;

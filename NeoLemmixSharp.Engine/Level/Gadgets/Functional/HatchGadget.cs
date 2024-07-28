@@ -24,7 +24,7 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget, 
     public HatchGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
-        IGadgetRenderer? renderer,
+        IControlledAnimationGadgetRenderer? renderer,
         LevelPosition spawnPositionTranslation,
         HatchSpawnData hatchSpawnData,
         GadgetStateAnimationController animationController)

@@ -21,13 +21,6 @@ public readonly ref partial struct GadgetTranslator
 
         var behaviour = archetypeData.Behaviour.ToGadgetBehaviour();
 
-        if (behaviour is null)
-        {
-            // TODO Things like one way walls
-
-            return;
-        }
-
         GetOrientationData(prototype, out var orientation, out var facingDirection);
 
         var gadgetData = new GadgetData
