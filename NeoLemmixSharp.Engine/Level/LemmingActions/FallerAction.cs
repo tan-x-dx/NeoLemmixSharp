@@ -137,7 +137,7 @@ public sealed class FallerAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        var distanceFallen = GetDistanceFallen(lemming);
+        var distanceFallen = GetStartingDistanceFallenFromAction(lemming);
 
         lemming.DistanceFallen = distanceFallen;
         lemming.TrueDistanceFallen = distanceFallen;
@@ -145,7 +145,7 @@ public sealed class FallerAction : LemmingAction
         base.TransitionLemmingToAction(lemming, turnAround);
     }
 
-    private static int GetDistanceFallen(Lemming lemming)
+    private static int GetStartingDistanceFallenFromAction(Lemming lemming)
     {
         // For Swimmers it's handled by the SwimmerAction as there is no single universal value
         var currentActionId = lemming.CurrentAction.Id;
