@@ -196,11 +196,11 @@ public sealed class FallerAction : LemmingAction
         var dy = 0;
         if (draftDirections[LevelConstants.UpOrientationRotNum])
         {
-            dy--;
+            dy++;
         }
         if (draftDirections[LevelConstants.DownOrientationRotNum])
         {
-            dy++;
+            dy--;
         }
 
         return new LevelPosition(dx, dy);
