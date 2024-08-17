@@ -250,7 +250,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         _disposed = true;
     }
 
-    public int NumberOfItems => _orderedSprites.Count;
-    public int Hash(IViewportObjectRenderer item) => item.RendererId;
-    public IViewportObjectRenderer UnHash(int index) => _orderedSprites[index];
+    int IPerfectHasher<IViewportObjectRenderer>.NumberOfItems => _orderedSprites.Count;
+    int IPerfectHasher<IViewportObjectRenderer>.Hash(IViewportObjectRenderer item) => item.RendererId;
+    IViewportObjectRenderer IPerfectHasher<IViewportObjectRenderer>.UnHash(int index) => _orderedSprites[index];
 }
