@@ -12,7 +12,7 @@ public static class BitArrayHelpers
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int CalculateBitArrayBufferSize(int length)
+    public static int CalculateBitArrayBufferLength(int length)
     {
         return (length + Mask) >> Shift;
     }
@@ -30,10 +30,10 @@ public static class BitArrayHelpers
         if (length < 0)
             throw new ArgumentOutOfRangeException(nameof(length), length, "length must be non-negative!");
 
-        var arraySize = CalculateBitArrayBufferSize(length);
-        var result = CollectionsHelper.GetArrayForSize<uint>(arraySize);
+        var arrayLength = CalculateBitArrayBufferLength(length);
+        var result = CollectionsHelper.GetArrayForSize<uint>(arrayLength);
 
-        if (!setAllBits || arraySize == 0)
+        if (!setAllBits || arrayLength == 0)
             return result;
 
         new Span<uint>(result).Fill(uint.MaxValue);
@@ -50,7 +50,7 @@ public static class BitArrayHelpers
 
     public static void Resize(ref uint[] originalArray, int numberOfItems)
     {
-        var newArrayLength = CalculateBitArrayBufferSize(numberOfItems);
+        var newArrayLength = CalculateBitArrayBufferLength(numberOfItems);
 
         if (newArrayLength <= originalArray.Length)
             return;
