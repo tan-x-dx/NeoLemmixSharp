@@ -50,13 +50,13 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
             if (renderer is LemmingRenderer) // LemmingRenderers are handled elsewhere
                 continue;
 
-            StartRenderingSprite(renderer);
+            RegisterSpriteForRendering(renderer);
         }
     }
 
     public bool IsRenderingSprite(IViewportObjectRenderer renderer) => _spriteSpacialHashGrid.IsTrackingItem(renderer);
 
-    public void StartRenderingSprite(IViewportObjectRenderer renderer)
+    public void RegisterSpriteForRendering(IViewportObjectRenderer renderer)
     {
         if (!_spriteSpacialHashGrid.IsTrackingItem(renderer))
         {
@@ -72,7 +72,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         }
     }
 
-    public void StopRenderingSprite(IViewportObjectRenderer renderer)
+    public void DeregisterSpriteForRendering(IViewportObjectRenderer renderer)
     {
         if (_spriteSpacialHashGrid.IsTrackingItem(renderer))
         {

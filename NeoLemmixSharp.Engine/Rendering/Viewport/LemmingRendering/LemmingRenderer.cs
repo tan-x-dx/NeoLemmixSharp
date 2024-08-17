@@ -49,12 +49,12 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     {
         if (!shouldRender)
         {
-            LevelScreenRenderer.Instance.LevelRenderer.StopRenderingSprite(this);
+            LevelScreenRenderer.Instance.LevelRenderer.DeregisterSpriteForRendering(this);
 
             return;
         }
 
-        LevelScreenRenderer.Instance.LevelRenderer.StartRenderingSprite(this);
+        LevelScreenRenderer.Instance.LevelRenderer.RegisterSpriteForRendering(this);
 
         var spriteBank = _lemming.State.TeamAffiliation.SpriteBank;
 
