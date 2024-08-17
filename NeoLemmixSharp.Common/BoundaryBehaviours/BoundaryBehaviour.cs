@@ -151,10 +151,11 @@ public sealed class BoundaryBehaviour
 
         if (a < 0)
         {
-            do
+            a += _levelLength;
+            while (a < 0)
             {
                 a += _levelLength;
-            } while (a < 0);
+            }
 
             return a;
         }
@@ -318,7 +319,7 @@ public sealed class BoundaryBehaviour
             return new ClipInterval(start, num1 - start, offset);
         }
 
-        return new ClipInterval(0, 0, 0);
+        return new ClipInterval();
     }
 
     private int GetIntersectionAcrossBoundary(
@@ -341,7 +342,7 @@ public sealed class BoundaryBehaviour
         if (spriteClipInterval.Start + spriteClipInterval.Length <= _levelLength)
             return 0;
 
-        if (viewportClipInterval.Start != 0) 
+        if (viewportClipInterval.Start != 0)
             return 0;
 
         viewportClipInterval = new ClipInterval(
