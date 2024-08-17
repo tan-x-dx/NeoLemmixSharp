@@ -89,7 +89,7 @@ public sealed class FallerAction : LemmingAction
 
     private static bool IsFallFatal(in GadgetSet gadgetSet, Lemming lemming)
     {
-        if (lemming.State.IsFloater || lemming.State.IsGlider)
+        if (lemming.State.HasSpecialFallingBehaviour)
             return false;
 
         var anchorPixel = lemming.LevelPosition;

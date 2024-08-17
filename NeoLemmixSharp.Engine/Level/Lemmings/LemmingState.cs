@@ -23,10 +23,13 @@ public sealed class LemmingState
                                                (1U << DisarmerBitIndex);
 
     private const uint LiquidAffinityBitMask = (1U << AcidLemmingBitIndex) |
-                                              (1U << WaterLemmingBitIndex) |
-                                              (1U << SwimmerBitIndex);
+                                               (1U << WaterLemmingBitIndex) |
+                                               (1U << SwimmerBitIndex);
 
-    private const int PermanentFastForwardBitIndex = 20;
+    private const uint SpecialFallingBehaviourBitMask = (1U << FloaterBitIndex) |
+                                                        (1U << GliderBitIndex);
+
+    private const int PermanentFastForwardBitIndex = 28;
 
     public const int ActiveBitIndex = 29;
     public const int NeutralBitIndex = 30;
@@ -48,6 +51,7 @@ public sealed class LemmingState
 
     public bool HasPermanentSkill => (_states & PermanentSkillBitMask) != 0U;
     public bool HasLiquidAffinity => (_states & LiquidAffinityBitMask) != 0U;
+    public bool HasSpecialFallingBehaviour => (_states & SpecialFallingBehaviourBitMask) != 0U;
 
     /// <summary>
     /// Must be active and NOT zombie and NOT neutral
@@ -57,7 +61,18 @@ public sealed class LemmingState
     public bool IsClimber
     {
         get => ((_states >> ClimberBitIndex) & 1U) != 0U;
-        set => SetBitToValue(1U << ClimberBitIndex, value);
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << ClimberBitIndex;
+            }
+            else
+            {
+                _states &= ~(1U << ClimberBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
     }
 
     public bool IsFloater
@@ -99,7 +114,18 @@ public sealed class LemmingState
     public bool IsSlider
     {
         get => ((_states >> SliderBitIndex) & 1U) != 0U;
-        set => SetBitToValue(1U << SliderBitIndex, value);
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << SliderBitIndex;
+            }
+            else
+            {
+                _states &= ~(1U << SliderBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
     }
 
     public bool IsSwimmer
@@ -123,13 +149,35 @@ public sealed class LemmingState
     public bool IsDisarmer
     {
         get => ((_states >> DisarmerBitIndex) & 1U) != 0U;
-        set => SetBitToValue(1U << DisarmerBitIndex, value);
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << DisarmerBitIndex;
+            }
+            else
+            {
+                _states &= ~(1U << DisarmerBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
     }
 
     public bool IsNeutral
     {
         get => ((_states >> NeutralBitIndex) & 1U) != 0U;
-        set => SetBitToValue(1U << NeutralBitIndex, value);
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << NeutralBitIndex;
+            }
+            else
+            {
+                _states &= ~(1U << NeutralBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
     }
 
     public bool IsPermanentFastForwards
@@ -237,19 +285,6 @@ public sealed class LemmingState
     {
         _lemming = lemming;
         _team = team;
-    }
-
-    private void SetBitToValue(uint bitMask, bool value)
-    {
-        if (value)
-        {
-            _states |= bitMask;
-        }
-        else
-        {
-            _states &= ~bitMask;
-        }
-        UpdateHairAndBodyColors();
     }
 
     private void UpdateHairAndBodyColors()
