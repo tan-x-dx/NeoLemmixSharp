@@ -17,7 +17,7 @@ public sealed class ItemTracker<T> : IItemCountListener
         _hasher = hasher;
         var arrayLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
 
-        _longs = new ulong[arrayLength];
+        _longs = CollectionsHelper.GetArrayForSize<ulong>(arrayLength);
     }
 
     public void Tick()
@@ -47,7 +47,7 @@ public sealed class ItemTracker<T> : IItemCountListener
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear()
     {
-        Array.Clear(_longs, 0, _longs.Length);
+        new Span<ulong>(_longs).Clear();
     }
 
     public void OnNumberOfItemsChanged()
@@ -57,12 +57,6 @@ public sealed class ItemTracker<T> : IItemCountListener
 
         if (newArrayLength <= _longs.Length)
             return;
-
-        if (_longs.Length == 0)
-        {
-            _longs = new ulong[newArrayLength];
-            return;
-        }
 
         Array.Resize(ref _longs, newArrayLength);
     }
