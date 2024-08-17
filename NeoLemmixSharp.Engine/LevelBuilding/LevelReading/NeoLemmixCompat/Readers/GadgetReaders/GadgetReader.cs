@@ -129,37 +129,37 @@ public sealed class GadgetReader : INeoLemmixDataReader
             #region Window properties
 
             case "CLIMBER":
-                currentGadgetData.State |= 1U << LemmingState.ClimberBitIndex;
+                currentGadgetData.State |= 1U << LevelConstants.ClimberBitIndex;
                 break;
 
             case "DISARMER":
-                currentGadgetData.State |= 1U << LemmingState.DisarmerBitIndex;
+                currentGadgetData.State |= 1U << LevelConstants.DisarmerBitIndex;
                 break;
 
             case "FLOATER":
-                currentGadgetData.State |= 1U << LemmingState.FloaterBitIndex;
-                currentGadgetData.State &= ~(1U << LemmingState.GliderBitIndex); // Deliberately knock out the glider
+                currentGadgetData.State |= 1U << LevelConstants.FloaterBitIndex;
+                currentGadgetData.State &= ~(1U << LevelConstants.GliderBitIndex); // Deliberately knock out the glider
                 break;
 
             case "GLIDER":
-                currentGadgetData.State |= 1U << LemmingState.GliderBitIndex;
-                currentGadgetData.State &= ~(1U << LemmingState.FloaterBitIndex); // Deliberately knock out the floater
+                currentGadgetData.State |= 1U << LevelConstants.GliderBitIndex;
+                currentGadgetData.State &= ~(1U << LevelConstants.FloaterBitIndex); // Deliberately knock out the floater
                 break;
 
             case "NEUTRAL":
-                currentGadgetData.State |= 1U << LemmingState.NeutralBitIndex;
+                currentGadgetData.State |= 1U << LevelConstants.NeutralBitIndex;
                 break;
 
             case "SLIDER":
-                currentGadgetData.State |= 1U << LemmingState.SliderBitIndex;
+                currentGadgetData.State |= 1U << LevelConstants.SliderBitIndex;
                 break;
 
             case "SWIMMER":
-                currentGadgetData.State |= 1U << LemmingState.SwimmerBitIndex;
+                currentGadgetData.State |= 1U << LevelConstants.SwimmerBitIndex;
                 break;
 
             case "ZOMBIE":
-                currentGadgetData.State |= 1U << LemmingState.ZombieBitIndex;
+                currentGadgetData.State |= 1U << LevelConstants.ZombieBitIndex;
                 break;
 
             #endregion

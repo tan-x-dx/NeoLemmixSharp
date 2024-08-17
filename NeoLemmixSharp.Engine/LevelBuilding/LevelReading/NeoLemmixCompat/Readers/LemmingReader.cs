@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
+﻿using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
@@ -23,7 +24,7 @@ public sealed class LemmingReader : INeoLemmixDataReader
         _currentLemmingData = new LemmingData
         {
             // Pre-placed lemmings are always active
-            State = 1U << LemmingState.ActiveBitIndex
+            State = 1U << LevelConstants.ActiveBitIndex
         };
         FinishedReading = false;
     }
@@ -53,25 +54,25 @@ public sealed class LemmingReader : INeoLemmixDataReader
                 break;
 
             case "CLIMBER":
-                currentLemmingData.State |= 1U << LemmingState.ClimberBitIndex;
+                currentLemmingData.State |= 1U << LevelConstants.ClimberBitIndex;
                 break;
 
             case "DISARMER":
-                currentLemmingData.State |= 1U << LemmingState.DisarmerBitIndex;
+                currentLemmingData.State |= 1U << LevelConstants.DisarmerBitIndex;
                 break;
 
             case "FLOATER":
-                currentLemmingData.State |= 1U << LemmingState.FloaterBitIndex;
-                currentLemmingData.State &= ~(1U << LemmingState.GliderBitIndex); // Deliberately knock out the glider
+                currentLemmingData.State |= 1U << LevelConstants.FloaterBitIndex;
+                currentLemmingData.State &= ~(1U << LevelConstants.GliderBitIndex); // Deliberately knock out the glider
                 break;
 
             case "GLIDER":
-                currentLemmingData.State |= 1U << LemmingState.GliderBitIndex;
-                currentLemmingData.State &= ~(1U << LemmingState.FloaterBitIndex); // Deliberately knock out the floater
+                currentLemmingData.State |= 1U << LevelConstants.GliderBitIndex;
+                currentLemmingData.State &= ~(1U << LevelConstants.FloaterBitIndex); // Deliberately knock out the floater
                 break;
 
             case "NEUTRAL":
-                currentLemmingData.State |= 1U << LemmingState.NeutralBitIndex;
+                currentLemmingData.State |= 1U << LevelConstants.NeutralBitIndex;
                 break;
 
             case "SHIMMIER":
@@ -79,15 +80,15 @@ public sealed class LemmingReader : INeoLemmixDataReader
                 break;
 
             case "SLIDER":
-                currentLemmingData.State |= 1U << LemmingState.SliderBitIndex;
+                currentLemmingData.State |= 1U << LevelConstants.SliderBitIndex;
                 break;
 
             case "SWIMMER":
-                currentLemmingData.State |= 1U << LemmingState.SwimmerBitIndex;
+                currentLemmingData.State |= 1U << LevelConstants.SwimmerBitIndex;
                 break;
 
             case "ZOMBIE":
-                currentLemmingData.State |= 1U << LemmingState.ZombieBitIndex;
+                currentLemmingData.State |= 1U << LevelConstants.ZombieBitIndex;
                 break;
 
             case "$END":
