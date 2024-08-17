@@ -18,6 +18,7 @@ public static class BitArrayHelpers
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int ToNextLargestMultipleOf32(int a)
     {
         return ((a + Mask) >> Shift) << Shift;
@@ -35,7 +36,7 @@ public static class BitArrayHelpers
         if (!setAllBits || arraySize == 0)
             return result;
 
-        Array.Fill(result, uint.MaxValue);
+        new Span<uint>(result).Fill(uint.MaxValue);
 
         var lastIndexPopCount = length & Mask;
 

@@ -124,9 +124,10 @@ public sealed class TerrainPainter
 
         /// <summary>
         /// Returns the smallest index such that the data at that index has a frame equal to or exceeding the input parameter
+        /// <para>
+        /// Binary search algorithm - O(log n)
+        /// </para>
         /// </summary>
-        /// <param name="frame"></param>
-        /// <returns></returns>
         private int GetSmallestIndexOfFrame(int frame)
         {
             if (_count == 0)
@@ -137,7 +138,7 @@ public sealed class TerrainPainter
 
             while (upperTestIndex - lowerTestIndex > 1)
             {
-                var bestGuess = (lowerTestIndex + upperTestIndex) / 2;
+                var bestGuess = (lowerTestIndex + upperTestIndex) >> 1;
                 ref readonly var test = ref _terrainChanges[bestGuess];
 
                 if (test.Frame >= frame)
@@ -162,7 +163,8 @@ public sealed class TerrainPainter
             if (_count == arraySize)
             {
                 var newArray = new PixelChangeData[arraySize * 2];
-                Array.Copy(_terrainChanges, newArray, arraySize);
+                new ReadOnlySpan<PixelChangeData>(_terrainChanges).CopyTo(newArray);
+
                 _terrainChanges = newArray;
             }
 
