@@ -2,14 +2,15 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
 {
-    private const int NumberOfChars = 2;
+    private const int NumberOfSkillChars = 2;
 
-    private readonly int[] _skillCountChars;
+    private SkillCharBuffer _skillCountChars;
 
     public int SkillId { get; }
     public int SkillTrackingDataId { get; }
@@ -23,8 +24,6 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
         int skillTrackingDataId)
         : base(buttonId, skillPanelFrame)
     {
-        _skillCountChars = new int[NumberOfChars];
-
         SkillId = skillId;
         SkillTrackingDataId = skillTrackingDataId;
         SkillAssignButtonId = skillAssignButtonId;
@@ -41,12 +40,12 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
             return;
         }
 
-        var span = new Span<int>(_skillCountChars);
-        TextRenderingHelpers.WriteDigits(span, numberOfSkillsAvailable);
+        TextRenderingHelpers.WriteDigits(_skillCountChars, numberOfSkillsAvailable);
     }
 
-    public override ReadOnlySpan<int> GetDigitsToRender() => new(_skillCountChars);
-    public override int GetNumberOfDigitsToRender() => NumberOfChars;
+    public override ReadOnlySpan<int> GetDigitsToRender() => _skillCountChars;
+
+    public override int GetNumberOfDigitsToRender() => NumberOfSkillChars;
 
     public override ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)
     {
@@ -66,5 +65,11 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
 
     public void OnRightClick()
     {
+    }
+
+    [InlineArray(NumberOfSkillChars)]
+    private struct SkillCharBuffer
+    {
+        private int _firstElement;
     }
 }

@@ -5,11 +5,13 @@ public sealed class CountUpLevelTimer : LevelTimer
     public CountUpLevelTimer()
         : base(TimerType.CountUp)
     {
-        Chars[0] = ' ';
-        Chars[1] = '0';
-        Chars[2] = '0';
-        Chars[4] = '0';
-        Chars[5] = '0';
+        var charSpan = Chars();
+
+        charSpan[0] = ' ';
+        charSpan[1] = '0';
+        charSpan[2] = '0';
+        charSpan[4] = '0';
+        charSpan[5] = '0';
 
         FontColor = LevelConstants.PanelGreen;
     }

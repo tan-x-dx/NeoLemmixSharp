@@ -9,6 +9,7 @@ using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -16,7 +17,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 {
     public static Lemming SimulationLemming { get; } = new();
 
-    private LevelPosition[]? _jumperPositions;
+    private JumperPositionBuffer _jumperPositionBuffer;
 
     public readonly int Id;
 
@@ -421,16 +422,11 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         Renderer.UpdateLemmingState(removalReason == LemmingRemovalReason.DeathExplode);
     }
 
-    public Span<LevelPosition> GetJumperPositions()
-    {
-        _jumperPositions ??= new LevelPosition[JumperAction.JumperPositionCount];
-
-        return new Span<LevelPosition>(_jumperPositions);
-    }
+    public Span<LevelPosition> GetJumperPositions() => MemoryMarshal.CreateSpan(ref Unsafe.As<JumperPositionBuffer, LevelPosition>(ref _jumperPositionBuffer), JumperAction.JumperPositionCount);
 
     public void SetRawDataFromOther(Lemming otherLemming)
     {
-        _jumperPositions = otherLemming._jumperPositions;
+        otherLemming.GetJumperPositions().CopyTo(GetJumperPositions());
 
         ConstructivePositionFreeze = otherLemming.ConstructivePositionFreeze;
         IsStartingAction = otherLemming.IsStartingAction;
@@ -490,4 +486,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 
     public static bool operator ==(Lemming left, Lemming right) => left.Id == right.Id;
     public static bool operator !=(Lemming left, Lemming right) => left.Id != right.Id;
+
+    [InlineArray(JumperAction.JumperPositionCount)]
+    private struct JumperPositionBuffer
+    {
+        private LevelPosition _firstElement;
+    }
 }

@@ -22,7 +22,7 @@ public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget, IResizeabl
     public MetalGrateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
-        IGadgetRenderer? renderer,
+        IControlledAnimationGadgetRenderer? renderer,
         ItemTracker<Lemming> lemmingTracker,
         MetalGrateGadgetInput input,
         bool startActive)

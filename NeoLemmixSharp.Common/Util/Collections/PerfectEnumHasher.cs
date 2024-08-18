@@ -6,7 +6,9 @@ public sealed class PerfectEnumHasher<TEnum> : IPerfectHasher<TEnum>
     where TEnum : struct, Enum
 {
     private static readonly PerfectEnumHasher<TEnum> Instance = new();
+
     public static SimpleSet<TEnum> CreateSimpleSet() => new(Instance, false);
+    public static SimpleDictionary<TEnum, TValue> CreateSimpleDictionary<TValue>() => new(Instance);
 
     public int NumberOfItems { get; } = Enum.GetValues<TEnum>().Length;
 

@@ -4,12 +4,12 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
 public sealed class GadgetDataComponentReader : ILevelDataReader
 {
-    private readonly List<string> _stringIdLookup;
+    private readonly Dictionary<ushort, string> _stringIdLookup;
 
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.GadgetDataSectionIdentifier;
 
-    public GadgetDataComponentReader(List<string> stringIdLookup)
+    public GadgetDataComponentReader(Dictionary<ushort, string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }

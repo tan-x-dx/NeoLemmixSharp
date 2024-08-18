@@ -9,12 +9,12 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<TerrainArchetypeData>
 {
     private readonly Dictionary<int, TerrainArchetypeData> _terrainArchetypeDataLookup = new();
-    private readonly List<string> _stringIdLookup;
+    private readonly Dictionary<ushort, string> _stringIdLookup;
 
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.TerrainDataSectionIdentifier;
 
-    public TerrainDataComponentReader(List<string> stringIdLookup)
+    public TerrainDataComponentReader(Dictionary<ushort, string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }

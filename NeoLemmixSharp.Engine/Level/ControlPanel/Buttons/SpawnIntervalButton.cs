@@ -1,15 +1,16 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Rendering.Ui;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 public sealed class SpawnIntervalButton : ControlPanelButton
 {
-    private const int NumberOfChars = 3;
+    private const int NumberOfSpawnIntervalChars = 3;
 
-    private readonly int[] _chars = new int[NumberOfChars];
     private readonly ISpawnIntervalValueGetter _spawnIntervalValueGetter;
+    private SpawnIntervalCharBuffer _spawnIntervalCharBuffer;
     private int _numberOfDigitsToRender;
 
     public static SpawnIntervalButton CreateSpawnIntervalDecreaseButton(
@@ -92,13 +93,12 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
     public void UpdateNumericalValue()
     {
-        var span = new Span<int>(_chars);
         var numericalValue = _spawnIntervalValueGetter.GetNumericalValue();
         _numberOfDigitsToRender = TextRenderingHelpers.GetNumberStringLength(numericalValue);
-        TextRenderingHelpers.WriteDigits(span, numericalValue);
+        TextRenderingHelpers.WriteDigits(_spawnIntervalCharBuffer, numericalValue);
     }
 
-    public override ReadOnlySpan<int> GetDigitsToRender() => new(_chars);
+    public override ReadOnlySpan<int> GetDigitsToRender() => _spawnIntervalCharBuffer;
     public override int GetNumberOfDigitsToRender() => _numberOfDigitsToRender;
 
     private interface ISpawnIntervalValueGetter : IButtonAction
@@ -203,5 +203,11 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
             LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
         }
+    }
+
+    [InlineArray(NumberOfSpawnIntervalChars)]
+    private struct SpawnIntervalCharBuffer
+    {
+        private int _firstElement;
     }
 }

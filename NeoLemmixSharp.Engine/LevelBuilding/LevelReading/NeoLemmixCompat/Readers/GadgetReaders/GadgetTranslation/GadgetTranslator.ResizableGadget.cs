@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using System.Runtime.InteropServices;
@@ -20,13 +21,6 @@ public readonly ref partial struct GadgetTranslator
         var prototypeHeight = prototype.Height.Value;
 
         var behaviour = archetypeData.Behaviour.ToGadgetBehaviour();
-
-        if (behaviour is null)
-        {
-            // TODO Things like one way walls
-
-            return;
-        }
 
         GetOrientationData(prototype, out var orientation, out var facingDirection);
 
@@ -53,7 +47,8 @@ public readonly ref partial struct GadgetTranslator
             gadgetData.SetProperty(GadgetProperty.InitialAnimationFrame, archetypeData.AnimationData[0].InitialFrame);
         }
 
-        ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);
+        ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders,
+            archetypeData.GadgetArchetypeId, out var exists);
 
         if (!exists)
         {
@@ -63,11 +58,41 @@ public readonly ref partial struct GadgetTranslator
             {
                 GadgetBuilderId = archetypeData.GadgetArchetypeId,
                 GadgetBehaviour = behaviour,
+                ArchetypeData = new GadgetStateArchetypeData
+                {
+                    OnLemmingEnterActions = [],
+                    OnLemmingPresentActions = [],
+                    OnLemmingExitActions = [],
+                    TriggerType = TriggerType.Rectangular,
+                    TriggerData =
+                        GetTriggerData(archetypeData, spriteData.SpriteWidth, spriteData.SpriteHeight),
+                    PrimaryAnimation = null,
+                    PrimaryAnimationStateTransitionIndex = 0,
+                    SecondaryAnimations = null,
+                },
 
                 SpriteData = spriteData
             };
         }
 
         _levelData.AllGadgetData.Add(gadgetData);
+    }
+
+    private static LevelPosition[] GetTriggerData(
+        NeoLemmixGadgetArchetypeData archetypeData,
+        int spriteWidth,
+        int spriteHeight)
+    {
+        var result = new[]
+        {
+            new LevelPosition(
+                archetypeData.TriggerX,
+                archetypeData.TriggerY),
+            new LevelPosition(
+                spriteWidth - (archetypeData.TriggerX + archetypeData.TriggerWidth),
+                spriteHeight - (archetypeData.TriggerY + archetypeData.TriggerHeight))
+        };
+
+        return result;
     }
 }

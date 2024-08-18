@@ -89,7 +89,7 @@ public sealed class FallerAction : LemmingAction
 
     private static bool IsFallFatal(in GadgetSet gadgetSet, Lemming lemming)
     {
-        if (lemming.State.IsFloater || lemming.State.IsGlider)
+        if (lemming.State.HasSpecialFallingBehaviour)
             return false;
 
         var anchorPixel = lemming.LevelPosition;
@@ -137,7 +137,7 @@ public sealed class FallerAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        var distanceFallen = GetDistanceFallen(lemming);
+        var distanceFallen = GetStartingDistanceFallenFromAction(lemming);
 
         lemming.DistanceFallen = distanceFallen;
         lemming.TrueDistanceFallen = distanceFallen;
@@ -145,7 +145,7 @@ public sealed class FallerAction : LemmingAction
         base.TransitionLemmingToAction(lemming, turnAround);
     }
 
-    private static int GetDistanceFallen(Lemming lemming)
+    private static int GetStartingDistanceFallenFromAction(Lemming lemming)
     {
         // For Swimmers it's handled by the SwimmerAction as there is no single universal value
         var currentActionId = lemming.CurrentAction.Id;
@@ -178,7 +178,7 @@ public sealed class FallerAction : LemmingAction
             if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
                 continue;
 
-            var deltaRotNum = (lemmingOrientation.RotNum - gadget.Orientation.RotNum) & 3;
+            var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientation.RotNum) & 3;
 
             draftDirections[deltaRotNum] = true;
         }
@@ -196,11 +196,11 @@ public sealed class FallerAction : LemmingAction
         var dy = 0;
         if (draftDirections[LevelConstants.UpOrientationRotNum])
         {
-            dy--;
+            dy++;
         }
         if (draftDirections[LevelConstants.DownOrientationRotNum])
         {
-            dy++;
+            dy--;
         }
 
         return new LevelPosition(dx, dy);

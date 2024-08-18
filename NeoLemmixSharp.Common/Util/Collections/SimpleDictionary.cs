@@ -164,7 +164,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     {
         get
         {
-            var result = new TKey[Count];
+            var result = new TKey[_popCount];
             var i = 0;
             var enumerator = new Enumerator(this);
 
@@ -183,7 +183,7 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
     {
         get
         {
-            var result = new TValue[Count];
+            var result = new TValue[_popCount];
             var i = 0;
             var enumerator = new Enumerator(this);
 

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.Util.Identity;
+﻿using System.Diagnostics.Contracts;
+
+namespace NeoLemmixSharp.Common.Util.Identity;
 
 public static class IdEquatableItemHelperMethods
 {
@@ -34,6 +36,7 @@ public static class IdEquatableItemHelperMethods
         }
     }
 
+    [Pure]
     public static int GetHashCode<T>(T obj)
         where T : class, IIdEquatable<T>
     {
@@ -41,6 +44,7 @@ public static class IdEquatableItemHelperMethods
                5477821;
     }
 
+    [Pure]
     public static int Compare<T>(T? x, T? y)
         where T : class, IIdEquatable<T>
     {

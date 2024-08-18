@@ -17,9 +17,16 @@ public static class LevelConstants
     public const string LeftFacingDirectionName = "Left";
 
     public const int DownOrientationRotNum = 0;
+    public const string DownOrientationName = "Down";
+
     public const int LeftOrientationRotNum = 1;
+    public const string LeftOrientationName = "Left";
+
     public const int UpOrientationRotNum = 2;
+    public const string UpOrientationName = "Up";
+
     public const int RightOrientationRotNum = 3;
+    public const string RightOrientationName = "Right";
 
     public const int NumberOfTeams = 6;
     public const int ClassicTeamId = 0;
@@ -121,7 +128,47 @@ public static class LevelConstants
 
     #endregion
 
+    #region Lemming State Constants
+
+    public const int ClimberBitIndex = 0;
+    public const int FloaterBitIndex = 1;
+    public const int GliderBitIndex = 2;
+    public const int SliderBitIndex = 3;
+    public const int SwimmerBitIndex = 4;
+    public const int DisarmerBitIndex = 5;
+
+    public const int AcidLemmingBitIndex = 20;
+    public const int WaterLemmingBitIndex = 21;
+
+    public const uint PermanentSkillBitMask = (1U << ClimberBitIndex) |
+                                              (1U << FloaterBitIndex) |
+                                              (1U << GliderBitIndex) |
+                                              (1U << SliderBitIndex) |
+                                              (1U << SwimmerBitIndex) |
+                                              (1U << DisarmerBitIndex);
+
+    public const uint LiquidAffinityBitMask = (1U << AcidLemmingBitIndex) |
+                                              (1U << WaterLemmingBitIndex) |
+                                              (1U << SwimmerBitIndex);
+
+    public const uint SpecialFallingBehaviourBitMask = (1U << FloaterBitIndex) |
+                                                       (1U << GliderBitIndex);
+
+    public const int PermanentFastForwardBitIndex = 28;
+
+    public const int ActiveBitIndex = 29;
+    public const int NeutralBitIndex = 30;
+    public const int ZombieBitIndex = 31;
+
+    public const uint AssignableSkillBitMask = (1U << ActiveBitIndex) |
+                                               (1U << NeutralBitIndex) |
+                                               (1U << ZombieBitIndex);
+
+    #endregion
+
     #region Lemming Action Constants
+
+    public const int LongestActionNameLength = 10;
 
     public const string NoneActionName = "None";
 

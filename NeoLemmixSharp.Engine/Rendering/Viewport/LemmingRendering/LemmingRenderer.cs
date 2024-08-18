@@ -4,14 +4,15 @@ using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public sealed class LemmingRenderer : IViewportObjectRenderer
 {
-    private const int NumberOfChars = 2;
+    private const int NumberOfCountDownChars = 2;
 
-    private readonly int[] _countDownCharsToRender = new int[NumberOfChars];
+    private CountDownCharBuffer _countDownCharBuffer;
 
     private Lemming _lemming;
     private LemmingActionSprite _actionSprite;
@@ -20,7 +21,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     private bool _shouldRenderCountDown;
 
-    public Span<int> CountDownCharsSpan => new(_countDownCharsToRender);
+    public Span<int> CountDownCharsSpan => _countDownCharBuffer;
 
     public int RendererId { get; set; }
     public int ItemId => _lemming.Id;
@@ -49,12 +50,12 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     {
         if (!shouldRender)
         {
-            LevelScreenRenderer.Instance.LevelRenderer.StopRenderingSprite(this);
+            LevelScreenRenderer.Instance.LevelRenderer.DeregisterSpriteForRendering(this);
 
             return;
         }
 
-        LevelScreenRenderer.Instance.LevelRenderer.StartRenderingSprite(this);
+        LevelScreenRenderer.Instance.LevelRenderer.RegisterSpriteForRendering(this);
 
         var spriteBank = _lemming.State.TeamAffiliation.SpriteBank;
 
@@ -147,7 +148,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         var explosionParticleColors = LevelConstants.GetExplosionParticleColors();
         var whitePixelTexture = CommonSprites.WhitePixelGradientSprite;
 
-        var sourceRectangle = new Rectangle(0, 255, 1, 1);
+        var sourceRectangle = CommonSprites.RectangleForWhitePixelAlpha(0xff);
 
         for (var i = 0; i < LevelConstants.NumberOfParticles; i++)
         {
@@ -175,5 +176,11 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     {
         _lemming = null!;
         _actionSprite = null!;
+    }
+
+    [InlineArray(NumberOfCountDownChars)]
+    private struct CountDownCharBuffer
+    {
+        private int _firstElement;
     }
 }

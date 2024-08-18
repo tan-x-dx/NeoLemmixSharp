@@ -1,89 +1,54 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering.NineSliceRendering;
 
-public sealed class NineSliceRenderer //: IGadgetRenderer
+public sealed class NineSliceRenderer : INineSliceGadgetRender
 {
-    private readonly IRectangularLevelRegion _spriteClipRectangle;
-    private readonly NineSliceSubRenderer[] _subRenderers;
-
     private readonly Texture2D _texture;
+    private IResizeableGadget _gadget;
 
     public GadgetRenderMode RenderMode { get; }
-    public void SetGadget(GadgetBase gadget)
-    {
-        throw new NotImplementedException();
-    }
+    public int RendererId { get; set; }
+    public int ItemId => _gadget.Id;
+    
+    public LevelPosition TopLeftPixel => _gadget.TopLeftPixel;
+    public LevelPosition BottomRightPixel => _gadget.BottomRightPixel;
+    public LevelPosition PreviousTopLeftPixel => _gadget.PreviousTopLeftPixel;
+    public LevelPosition PreviousBottomRightPixel => _gadget.PreviousBottomRightPixel;
 
     public NineSliceRenderer(
-        GadgetRenderMode renderMode,
-        IRectangularLevelRegion spriteClipRectangle,
         Texture2D texture,
-        int spriteWidth,
-        int spriteHeight,
-        int sliceTop,
-        int sliceBottom,
-        int sliceLeft,
-        int sliceRight)
+        GadgetRenderMode renderMode)
     {
-        RenderMode = renderMode;
-        _spriteClipRectangle = spriteClipRectangle;
-
-        _subRenderers = GetSubRenderers(
-            spriteClipRectangle,
-            spriteWidth,
-            spriteHeight,
-            sliceTop,
-            sliceBottom,
-            sliceLeft,
-            sliceRight);
-
         _texture = texture;
+        RenderMode = renderMode;
     }
 
-    private static NineSliceSubRenderer[] GetSubRenderers(
-        IRectangularLevelRegion spriteClipRectangle,
-        int spriteWidth,
-        int spriteHeight,
-        int sliceTop,
-        int sliceBottom,
-        int sliceLeft,
-        int sliceRight)
+    public void SetGadget(IResizeableGadget gadget) => _gadget = gadget;
+
+    public Rectangle GetSpriteBounds() => _gadget.GadgetBounds.ToRectangle();
+
+    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY)
     {
-        var results = new NineSliceSubRenderer[]
-        {
-            new NineSliceTopLeftCornerRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceLeft, sliceTop),
-            new NineSliceTopRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceLeft, sliceRight, sliceTop),
-            new NineSliceTopRightCornerRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceRight, sliceTop),
+        var whitePixel = CommonSprites.WhitePixelGradientSprite;
+        var renderDestination = new Rectangle(
+            projectionX,
+            projectionY,
+            sourceRectangle.Width,
+            sourceRectangle.Height);
 
-            //new NineSliceLeftRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceTop, sliceBottom, sliceLeft),
-            //new NineSliceCentreRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceLeft, sliceRight, sliceTop, sliceBottom),
-            //new NineSliceRightRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceTop, sliceBottom, sliceRight),
-
-            new NineSliceBottomLeftCornerRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceLeft, sliceBottom),
-            new NineSliceBottomRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceLeft, sliceRight, sliceBottom),
-            new NineSliceBottomRightCornerRenderer(spriteClipRectangle, spriteWidth, spriteHeight, sliceRight, sliceBottom)
-        };
-
-        return results
-            .Where(r => !r.IsEmpty)
-            .ToArray();
-    }
-
-    public Rectangle GetSpriteBounds() => _spriteClipRectangle.ToRectangle();
-
-    public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int screenX, int screenY)
-    {
-        for (var i = 0; i < _subRenderers.Length; i++)
-        {
-            _subRenderers[i].Render(spriteBatch, _texture, sourceRectangle, screenX, screenY);
-        }
+        spriteBatch.Draw(
+            whitePixel,
+            renderDestination,
+            CommonSprites.RectangleForWhitePixelAlpha(0xff),
+            Color.Yellow);
     }
 
     public void Dispose()
     {
+        _gadget = null!;
     }
 }

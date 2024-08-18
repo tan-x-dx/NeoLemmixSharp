@@ -31,7 +31,7 @@ public sealed class DataReaderList
         }
     }
 
-    private bool ProcessLine(string line)
+    private bool ProcessLine(ReadOnlySpan<char> line)
     {
         if (_currentDataReader == null)
         {
@@ -49,7 +49,7 @@ public sealed class DataReaderList
         return result;
     }
 
-    private void GetDataReaderForLine(string line)
+    private void GetDataReaderForLine(ReadOnlySpan<char> line)
     {
         ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
 

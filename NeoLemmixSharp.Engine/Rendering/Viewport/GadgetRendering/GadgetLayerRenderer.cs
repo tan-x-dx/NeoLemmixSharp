@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
-public sealed class GadgetLayerRenderer : IGadgetRenderer
+public sealed class GadgetLayerRenderer : IControlledAnimationGadgetRenderer
 {
     private readonly Texture2D _texture;
     private IControlledAnimationGadget _gadget;
@@ -13,6 +13,11 @@ public sealed class GadgetLayerRenderer : IGadgetRenderer
     public GadgetRenderMode RenderMode { get; }
     public int RendererId { get; set; }
     public int ItemId => _gadget.Id;
+
+    public LevelPosition TopLeftPixel => _gadget.TopLeftPixel;
+    public LevelPosition BottomRightPixel => _gadget.BottomRightPixel;
+    public LevelPosition PreviousTopLeftPixel => _gadget.PreviousTopLeftPixel;
+    public LevelPosition PreviousBottomRightPixel => _gadget.PreviousBottomRightPixel;
 
     public GadgetLayerRenderer(
         Texture2D texture,
@@ -41,9 +46,4 @@ public sealed class GadgetLayerRenderer : IGadgetRenderer
     {
         _gadget = null!;
     }
-
-    public LevelPosition TopLeftPixel => _gadget.TopLeftPixel;
-    public LevelPosition BottomRightPixel => _gadget.BottomRightPixel;
-    public LevelPosition PreviousTopLeftPixel => _gadget.PreviousTopLeftPixel;
-    public LevelPosition PreviousBottomRightPixel => _gadget.PreviousBottomRightPixel;
 }

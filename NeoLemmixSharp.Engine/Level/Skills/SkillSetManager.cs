@@ -40,7 +40,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
     public SkillTrackingData? GetSkillTrackingData(int skillDataId)
     {
-        if (skillDataId == -1)
+        if ((uint)skillDataId >= (uint)_skillTrackingDataList.Length)
             return null;
 
         return _skillTrackingDataList[skillDataId];

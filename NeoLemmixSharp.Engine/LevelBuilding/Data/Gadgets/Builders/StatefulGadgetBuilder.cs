@@ -59,11 +59,6 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         return result;
     }
 
-    public IEnumerable<GadgetAnimationArchetypeData> AnimationArchetypes()
-    {
-        throw new NotImplementedException();
-    }
-
     private GadgetState[] CreateStates(GadgetData gadgetData)
     {
         var result = new GadgetState[AllGadgetStateData.Length];

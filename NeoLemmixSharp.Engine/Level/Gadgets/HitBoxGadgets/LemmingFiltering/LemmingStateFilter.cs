@@ -16,10 +16,10 @@ public sealed class LemmingStateFilter : ILemmingFilter
     {
         foreach (var lemmingState in _allowedLemmingStates)
         {
-            if (lemmingState.IsApplied(lemming.State))
-                return true;
+            if (!lemmingState.IsApplied(lemming.State))
+                return false;
         }
 
-        return false;
+        return true;
     }
 }

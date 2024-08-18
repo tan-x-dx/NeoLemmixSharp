@@ -8,7 +8,7 @@ public sealed class OrGateGadget : BinaryLogicGateGadget
     public OrGateGadget(
         int id,
         RectangularLevelRegion gadgetBounds,
-        IGadgetRenderer? renderer,
+        IControlledAnimationGadgetRenderer? renderer,
         LogicGateGadgetInput inputA,
         LogicGateGadgetInput inputB)
         : base(id, gadgetBounds, renderer, inputA, inputB)

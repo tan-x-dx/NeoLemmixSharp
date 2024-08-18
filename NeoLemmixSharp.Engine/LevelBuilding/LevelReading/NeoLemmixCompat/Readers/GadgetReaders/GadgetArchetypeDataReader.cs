@@ -83,11 +83,11 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
                 break;
 
             case "DEFAULT_WIDTH":
-
+                _gadgetArchetypeData.DefaultWidth = int.Parse(secondToken);
                 break;
 
             case "DEFAULT_HEIGHT":
-
+                _gadgetArchetypeData.DefaultHeight = int.Parse(secondToken);
                 break;
 
             case "DIGIT_X":

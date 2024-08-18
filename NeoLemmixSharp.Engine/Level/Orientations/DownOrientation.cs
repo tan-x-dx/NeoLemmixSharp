@@ -9,7 +9,11 @@ public sealed class DownOrientation : Orientation
     public static readonly DownOrientation Instance = new();
 
     private DownOrientation()
-        : base(LevelConstants.DownOrientationRotNum, 0, 1)
+        : base(
+            LevelConstants.DownOrientationRotNum,
+            LevelConstants.DownOrientationName,
+            0,
+            1)
     {
     }
 
@@ -93,6 +97,4 @@ public sealed class DownOrientation : Orientation
 
         return TerrainManager.VerticalBoundaryBehaviour.GetDelta(a, b);
     }
-
-    public override string ToString() => "down";
 }

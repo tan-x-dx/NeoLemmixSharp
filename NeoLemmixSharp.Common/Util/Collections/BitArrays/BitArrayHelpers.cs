@@ -12,12 +12,13 @@ public static class BitArrayHelpers
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int CalculateBitArrayBufferSize(int length)
+    public static int CalculateBitArrayBufferLength(int length)
     {
         return (length + Mask) >> Shift;
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int ToNextLargestMultipleOf32(int a)
     {
         return ((a + Mask) >> Shift) << Shift;
@@ -29,13 +30,13 @@ public static class BitArrayHelpers
         if (length < 0)
             throw new ArgumentOutOfRangeException(nameof(length), length, "length must be non-negative!");
 
-        var arraySize = CalculateBitArrayBufferSize(length);
-        var result = CollectionsHelper.GetArrayForSize<uint>(arraySize);
+        var arrayLength = CalculateBitArrayBufferLength(length);
+        var result = CollectionsHelper.GetArrayForSize<uint>(arrayLength);
 
-        if (!setAllBits || arraySize == 0)
+        if (!setAllBits || arrayLength == 0)
             return result;
 
-        Array.Fill(result, uint.MaxValue);
+        new Span<uint>(result).Fill(uint.MaxValue);
 
         var lastIndexPopCount = length & Mask;
 
@@ -47,14 +48,17 @@ public static class BitArrayHelpers
         return result;
     }
 
-    public static void Resize(ref uint[] originalBits, int numberOfItems)
+    public static void Resize(ref uint[] originalArray, int numberOfItems)
     {
-        var newArraySize = CalculateBitArrayBufferSize(numberOfItems);
+        var newArrayLength = CalculateBitArrayBufferLength(numberOfItems);
 
-        if (newArraySize <= originalBits.Length)
+        if (newArrayLength <= originalArray.Length)
             return;
 
-        Array.Resize(ref originalBits, newArraySize);
+        var newArray = new uint[newArrayLength];
+        new ReadOnlySpan<uint>(originalArray).CopyTo(newArray);
+
+        originalArray = newArray;
     }
 
     /// <summary>
@@ -233,27 +237,9 @@ public static class BitArrayHelpers
 
     internal static void UnionWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
-        if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
+        var dummy = 0;
 
-        switch (span.Length)
-        {
-            case 7: span[6] |= other[6]; goto case 6;
-            case 6: span[5] |= other[5]; goto case 5;
-            case 5: span[4] |= other[4]; goto case 4;
-            case 4: span[3] |= other[3]; goto case 3;
-            case 3: span[2] |= other[2]; goto case 2;
-            case 2: span[1] |= other[1]; goto case 1;
-            case 1: span[0] |= other[0]; goto Done;
-            case 0: goto Done;
-        }
-
-        for (var i = span.Length - 1; i >= 0; i--)
-        {
-            span[i] |= other[i];
-        }
-
-        Done:;
+        UnionWith(span, other, ref dummy);
     }
 
     internal static void IntersectWith(Span<uint> span, ReadOnlySpan<uint> other, ref int popCount)

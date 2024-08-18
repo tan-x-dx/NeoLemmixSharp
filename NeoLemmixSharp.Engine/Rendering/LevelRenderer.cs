@@ -6,7 +6,6 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -48,22 +47,16 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         var rendererSpan = CollectionsMarshal.AsSpan(_orderedSprites);
         foreach (var renderer in rendererSpan)
         {
-            if (renderer is TerrainRenderer)
-            {
-                StartRenderingSprite(renderer);
-            }
+            if (renderer is LemmingRenderer) // LemmingRenderers are handled elsewhere
+                continue;
 
-            if (renderer is GadgetLayerRenderer gadgetSprite &&
-                gadgetSprite.RenderMode != GadgetRenderMode.NoRender)
-            {
-                StartRenderingSprite(renderer);
-            }
+            RegisterSpriteForRendering(renderer);
         }
     }
 
     public bool IsRenderingSprite(IViewportObjectRenderer renderer) => _spriteSpacialHashGrid.IsTrackingItem(renderer);
 
-    public void StartRenderingSprite(IViewportObjectRenderer renderer)
+    public void RegisterSpriteForRendering(IViewportObjectRenderer renderer)
     {
         if (!_spriteSpacialHashGrid.IsTrackingItem(renderer))
         {
@@ -79,7 +72,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         }
     }
 
-    public void StopRenderingSprite(IViewportObjectRenderer renderer)
+    public void DeregisterSpriteForRendering(IViewportObjectRenderer renderer)
     {
         if (_spriteSpacialHashGrid.IsTrackingItem(renderer))
         {
@@ -257,7 +250,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         _disposed = true;
     }
 
-    public int NumberOfItems => _orderedSprites.Count;
-    public int Hash(IViewportObjectRenderer item) => item.RendererId;
-    public IViewportObjectRenderer UnHash(int index) => _orderedSprites[index];
+    int IPerfectHasher<IViewportObjectRenderer>.NumberOfItems => _orderedSprites.Count;
+    int IPerfectHasher<IViewportObjectRenderer>.Hash(IViewportObjectRenderer item) => item.RendererId;
+    IViewportObjectRenderer IPerfectHasher<IViewportObjectRenderer>.UnHash(int index) => _orderedSprites[index];
 }

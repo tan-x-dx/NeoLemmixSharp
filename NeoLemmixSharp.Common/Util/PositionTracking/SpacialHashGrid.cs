@@ -184,7 +184,7 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         else
         {
             scratchSpaceSpan.Clear();
-            EvaluateChunks(scratchSpaceSpan, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
+            EvaluateChunkUnions(scratchSpaceSpan, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
 
             queryCount = BitArrayHelpers.GetPopCount(scratchSpaceSpan);
         }
@@ -364,22 +364,20 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
     private void UseChunkPosition(ChunkOperationType chunkOperationType, T? item, int x, int y)
     {
-        Span<uint> span;
+        var span = SpanForChunk(x, y);
         if (chunkOperationType == ChunkOperationType.Add)
         {
-            span = SpanForChunk(x, y);
             BitArrayHelpers.SetBit(span, _hasher.Hash(item!));
             return;
         }
 
         if (chunkOperationType == ChunkOperationType.Remove)
         {
-            span = SpanForChunk(x, y);
             BitArrayHelpers.ClearBit(span, _hasher.Hash(item!));
             return;
         }
 
-        var readOnlySpan = ReadOnlySpanForChunk(x, y);
+        ReadOnlySpan<uint> readOnlySpan = span;
         span = new Span<uint>(_cachedQueryScratchSpace);
         BitArrayHelpers.UnionWith(span, readOnlySpan);
     }
@@ -400,7 +398,7 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
     /// <param name="ay">The top left y-coordinate.</param>
     /// <param name="bx">The bottom right x-coordinate.</param>
     /// <param name="by">The bottom right y-coordinate.</param>
-    private void EvaluateChunks(Span<uint> span, int ax, int ay, int bx, int by)
+    private void EvaluateChunkUnions(Span<uint> span, int ax, int ay, int bx, int by)
     {
         if (bx < ax)
         {
@@ -492,7 +490,8 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
 
         _bitArraySize = newBitArraySize;
         _allBits = newBits;
-        Array.Resize(ref _cachedQueryScratchSpace, newBitArraySize);
+        _cachedQueryScratchSpace = new uint[_bitArraySize];
+        ClearCachedData();
     }
 
     private void TransferData(
