@@ -1,6 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using System.Runtime.CompilerServices;
 using System.Text;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
@@ -51,7 +51,7 @@ public sealed class StringDataComponentWriter : ILevelDataWriter
     {
         var maxBufferSize = 0;
 
-        foreach (var stringToWrite in _stringIdLookup.Keys)
+        foreach (var (stringToWrite, _) in _stringIdLookup)
         {
             maxBufferSize = Math.Max(maxBufferSize, utf8Encoding.GetByteCount(stringToWrite));
         }

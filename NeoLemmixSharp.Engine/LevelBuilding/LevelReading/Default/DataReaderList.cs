@@ -13,7 +13,7 @@ public sealed class DataReaderList : IDisposable
     {
         _binaryReaderWrapper = new BinaryReaderWrapper(filePath);
 
-        var stringIdLookup = new List<string>();
+        var stringIdLookup = new Dictionary<ushort, string>();
 
         var terrainComponentReader = new TerrainDataComponentReader(stringIdLookup);
         _dataReaders =

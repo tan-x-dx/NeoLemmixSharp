@@ -1,6 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using System.Runtime.CompilerServices;
 using System.Text;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
@@ -8,16 +8,16 @@ public sealed class StringDataComponentReader : ILevelDataReader
 {
     private const int StackByteBufferSize = 256;
 
-    private readonly List<string> _stringIdLookup;
+    private readonly Dictionary<ushort, string> _stringIdLookup;
 
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.StringDataSectionIdentifier;
 
-    public StringDataComponentReader(List<string> stringIdLookup)
+    public StringDataComponentReader(Dictionary<ushort, string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
 
-        _stringIdLookup.Add(string.Empty);
+        _stringIdLookup.Add(0, string.Empty);
     }
 
     [SkipLocalsInit]
@@ -48,7 +48,7 @@ public sealed class StringDataComponentReader : ILevelDataReader
 
             var actualString = utf8Encoding.GetString(stringBuffer);
 
-            _stringIdLookup.Add(actualString);
+            _stringIdLookup.Add(id, actualString);
         }
     }
 }
