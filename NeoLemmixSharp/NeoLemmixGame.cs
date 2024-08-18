@@ -20,6 +20,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using NeoLemmixSharp.Engine.Level;
 
 namespace NeoLemmixSharp;
 
@@ -105,6 +106,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
         _graphics.ApplyChanges();
 
         InitialiseGameConstants();
+        ValidateMaxActionNameLength();
         LoadContent();
     }
 
@@ -177,6 +179,18 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
             numberOfActions,
             numberOfTeams,
             numberOfGadgetBehaviours);
+    }
+
+    private static void ValidateMaxActionNameLength()
+    {
+        var actualMaxActionNameLength = 0;
+        foreach (var action in LemmingAction.AllItems)
+        {
+            actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, action.LemmingActionName.Length);
+        }
+
+        if (actualMaxActionNameLength != LevelConstants.LongestActionNameLength)
+            throw new Exception($"Longest action name length is actually {actualMaxActionNameLength}! Update {nameof(LevelConstants.LongestActionNameLength)}!");
     }
 
     public void SetScreen(IBaseScreen screen)

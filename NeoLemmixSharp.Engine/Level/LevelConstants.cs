@@ -168,6 +168,8 @@ public static class LevelConstants
 
     #region Lemming Action Constants
 
+    public const int LongestActionNameLength = 10;
+
     public const string NoneActionName = "None";
 
     public const string AscenderActionName = "Ascender";
