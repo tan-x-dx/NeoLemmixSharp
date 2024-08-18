@@ -88,7 +88,7 @@ public sealed class TalismanReader : INeoLemmixDataReader
     {
         // Need to use case invariant comparer since different versions
         // of the NeoLemmix engine saved the talisman colors with different
-        // cases - "GOLD", "Gold", etc.
+        // character casing - "GOLD", "Gold", etc.
         if (secondToken.SequenceEqual("BRONZE", _charEqualityComparer))
             return TalismanColor.Bronze;
 
