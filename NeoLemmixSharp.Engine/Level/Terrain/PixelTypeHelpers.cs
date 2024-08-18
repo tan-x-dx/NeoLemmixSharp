@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Orientations;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -11,7 +12,7 @@ public static class PixelTypeHelpers
     public const int PixelTypeBlockerShiftOffset = 8;
     public const int PixelTypeSteelShift = 14;
     public const int PixelTypeVoidShift = 15;
-    
+
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CanBeDestroyed(this PixelType pixelType)
@@ -57,6 +58,7 @@ public static class PixelTypeHelpers
         };
     }
 
+    [DoesNotReturn]
     private static Orientation ExpectedBlockerMaskPixelType(PixelType pixelType)
     {
         throw new ArgumentOutOfRangeException(nameof(pixelType), pixelType, "Expected single bit set to match blocker masks");
