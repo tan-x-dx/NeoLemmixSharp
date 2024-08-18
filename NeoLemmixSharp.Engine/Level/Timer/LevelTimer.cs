@@ -6,21 +6,22 @@ namespace NeoLemmixSharp.Engine.Level.Timer;
 
 public abstract class LevelTimer
 {
-    public const int NumberOfChars = 6;
+    private const int NumberOfTimerChars = 6;
 
-    // We do things this way to avoid lots of string allocations.
-    // The text we want to render is only 6 characters anyway
-    protected readonly int[] Chars = new int[NumberOfChars];
     public readonly TimerType Type;
     protected int ElapsedSeconds;
+
+    private TimerCharBuffer _timerCharBuffer;
 
     public Color FontColor { get; protected set; }
 
     protected LevelTimer(TimerType type)
     {
-        Chars[3] = '-';
+        _timerCharBuffer[3] = '-';
         Type = type;
     }
+
+    protected Span<int> Chars() => _timerCharBuffer;
 
     public void Tick()
     {
@@ -42,7 +43,7 @@ public abstract class LevelTimer
 
     protected abstract void UpdateAppearance();
 
-    public ReadOnlySpan<int> AsSpan() => new(Chars);
+    public ReadOnlySpan<int> AsSpan() => _timerCharBuffer;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void UpdateCountUpString(
@@ -68,33 +69,35 @@ public abstract class LevelTimer
         int minutesTensTest,
         bool partialUpdate)
     {
+        var charSpan = Chars();
+
         var seconds = elapsedSeconds % 60;
         var secondsUnits = seconds % 10;
-        Chars[5] = DigitToChar(secondsUnits);
+        charSpan[5] = DigitToChar(secondsUnits);
 
         if (partialUpdate && secondsUnits != secondUnitsTest)
             return;
 
         var secondsTens = seconds / 10;
-        Chars[4] = DigitToChar(secondsTens);
+        charSpan[4] = DigitToChar(secondsTens);
 
         if (partialUpdate && secondsTens != secondTensTest)
             return;
 
         var minutes = elapsedSeconds / 60;
         var minutesUnits = minutes % 10;
-        Chars[2] = DigitToChar(minutesUnits);
+        charSpan[2] = DigitToChar(minutesUnits);
 
         if (partialUpdate && minutesUnits != minutesUnitsTest)
             return;
 
         var minutesTens = (minutes / 10) % 10;
-        Chars[1] = DigitToChar(minutesTens);
+        charSpan[1] = DigitToChar(minutesTens);
 
         if (partialUpdate && minutesTens != minutesTensTest)
             return;
 
-        Chars[0] = minutes < 100
+        charSpan[0] = minutes < 100
             ? ' '
             : DigitToChar(minutes / 100);
     }
@@ -106,5 +109,11 @@ public abstract class LevelTimer
     {
         CountDown,
         CountUp
+    }
+
+    [InlineArray(NumberOfTimerChars)]
+    private struct TimerCharBuffer
+    {
+        private int _firstElement;
     }
 }

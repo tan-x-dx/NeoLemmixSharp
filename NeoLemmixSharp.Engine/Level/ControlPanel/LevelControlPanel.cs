@@ -191,12 +191,12 @@ public sealed class LevelControlPanel
 
     private int CalculateControlPanelWidth()
     {
-        var textTotalLength = _controlPanelTextualData.GetTotalCharacterLength() *
-                              PanelFont.GlyphWidth;
+        const int textTotalLength = ControlPanelTextualData.TotalControlPanelTextLength *
+                                    PanelFont.GlyphWidth;
         const int iconsTotalLength = ControlPanelRenderer.TotalNumberOfIcons *
                                      ControlPanelRenderer.PanelIconWidth;
 
-        var infoLength = textTotalLength + iconsTotalLength;
+        const int infoLength = textTotalLength + iconsTotalLength;
 
         var buttonsWidth = GetTotalWidthOfAllButtons();
 
