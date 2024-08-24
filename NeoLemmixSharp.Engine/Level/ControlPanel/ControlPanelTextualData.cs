@@ -36,7 +36,7 @@ public sealed class ControlPanelTextualData
         LevelTimer = levelTimer;
     }
 
-    public void SetCursorData(string actionName, int count)
+    public void SetCursorData(string actionName, int numberOfLemmingsUnderCursor)
     {
         var sourceSpan = actionName.AsSpan();
         Span<int> destSpan = _lemmingActionAndCountString;
@@ -49,9 +49,9 @@ public sealed class ControlPanelTextualData
             i++;
         }
 
-        i++; // Add a space
-        var spanLength = TextRenderingHelpers.GetNumberStringLength(count);
-        TextRenderingHelpers.WriteDigits(destSpan.Slice(i, spanLength), count);
+        i++; // Add a space. Can just increment index as value of zero will not be rendered
+        var spanLength = TextRenderingHelpers.GetNumberStringLength(numberOfLemmingsUnderCursor);
+        TextRenderingHelpers.WriteDigits(destSpan.Slice(i, spanLength), numberOfLemmingsUnderCursor);
     }
 
     public void ClearCursorData()
