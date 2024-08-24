@@ -38,7 +38,7 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
             return result;
         }
 
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         var secondaryAnimationData = _secondaryAnimationData!;
 
@@ -88,7 +88,7 @@ public sealed class SecondaryAnimationReader : INeoLemmixDataReader
                 break;
 
             default:
-                ReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
+                NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
                 break;
         }
 

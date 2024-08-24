@@ -15,7 +15,7 @@ public sealed class ShadesReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
 
         switch (firstToken)
         {

@@ -28,7 +28,7 @@ public sealed class SkillSetReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         if (firstToken is "$END")
         {
@@ -36,7 +36,7 @@ public sealed class SkillSetReader : INeoLemmixDataReader
             return false;
         }
 
-        if (!ReadingHelpers.GetSkillByName(firstToken, _charEqualityComparer, out var skill))
+        if (!NxlvReadingHelpers.GetSkillByName(firstToken, _charEqualityComparer, out var skill))
             throw new InvalidOperationException($"Unknown token: {firstToken}");
 
         if (!_seenSkills.Add(skill))

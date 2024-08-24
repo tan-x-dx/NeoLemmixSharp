@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
-public static class ReadingHelpers
+public static class NxlvReadingHelpers
 {
     private const int MaxStackallocSize = 64;
 

@@ -25,14 +25,14 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
     {
         FinishedReading = false;
 
-        ReadingHelpers.GetTokenPair(line, out _, out var secondToken, out _);
+        NxlvReadingHelpers.GetTokenPair(line, out _, out var secondToken, out _);
 
         _gadgetArchetypeData.Behaviour = GetNeoLemmixGadgetType(secondToken);
     }
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         if (firstToken[0] == '$')
         {
@@ -107,7 +107,7 @@ public sealed class GadgetArchetypeDataReader : INeoLemmixDataReader
                 break;
 
             default:
-                ReadingHelpers.ThrowUnknownTokenException("Gadget Archetype Data", firstToken, line);
+                NxlvReadingHelpers.ThrowUnknownTokenException("Gadget Archetype Data", firstToken, line);
                 break;
         }
 

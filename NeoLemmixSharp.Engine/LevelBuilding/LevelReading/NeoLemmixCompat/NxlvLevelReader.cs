@@ -3,9 +3,7 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
-using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
@@ -55,7 +53,7 @@ public sealed class NxlvLevelReader : ILevelReader
         ProcessGadgetData(levelData, graphicsDevice, levelDataReader, gadgetReader);
         ProcessConfigData(levelData);
 
-        levelData.MaxNumberOfClonedLemmings = CalculateMaxNumberOfClonedLemmings(levelData);
+        levelData.MaxNumberOfClonedLemmings = LevelReadingHelpers.CalculateMaxNumberOfClonedLemmings(levelData);
 
         return levelData;
     }
@@ -69,7 +67,7 @@ public sealed class NxlvLevelReader : ILevelReader
 
         while (streamReader.ReadLine() is { } line)
         {
-            if (ReadingHelpers.LineIsBlankOrComment(line))
+            if (NxlvReadingHelpers.LineIsBlankOrComment(line))
                 continue;
 
             if (LevelDataReader.TryReadLevelTitle(line, out levelTitle))
@@ -247,38 +245,6 @@ public sealed class NxlvLevelReader : ILevelReader
         }
 
         return totalNumberOfHatchLemmings;
-    }
-
-    private static int CalculateMaxNumberOfClonedLemmings(
-        LevelData levelData)
-    {
-        var numberOfClonerSkillPickups = 0;
-
-        foreach (var gadgetDatum in levelData.AllGadgetData)
-        {
-            if (gadgetDatum.TryGetProperty(GadgetProperty.SkillId, out var skillId))
-            {
-                if (skillId == LevelConstants.ClonerSkillId)
-                {
-                    numberOfClonerSkillPickups += gadgetDatum.GetProperty(GadgetProperty.Count);
-                }
-            }
-        }
-
-        var maxNumberOfClonerSkills = 0;
-
-        foreach (var levelObjective in levelData.LevelObjectives)
-        {
-            foreach (var skillSetDatum in levelObjective.SkillSetData)
-            {
-                if (skillSetDatum.Skill == ClonerSkill.Instance)
-                {
-                    maxNumberOfClonerSkills = Math.Max(maxNumberOfClonerSkills, skillSetDatum.NumberOfSkills);
-                }
-            }
-        }
-
-        return numberOfClonerSkillPickups + maxNumberOfClonerSkills;
     }
 
     private static void ProcessConfigData(LevelData levelData)

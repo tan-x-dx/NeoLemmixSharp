@@ -25,7 +25,7 @@ public sealed class AnimationTriggerReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         var currentAnimationTriggerData = _currentAnimationTriggerData!;
 
@@ -50,7 +50,7 @@ public sealed class AnimationTriggerReader : INeoLemmixDataReader
                 break;
 
             default:
-                ReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
+                NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
                 break;
         }
 
@@ -66,7 +66,7 @@ public sealed class AnimationTriggerReader : INeoLemmixDataReader
             "DISABLED" => NeoLemmixGadgetStateType.Disabled,
             "EXHAUSTED" => NeoLemmixGadgetStateType.Disabled,
 
-            _ => ReadingHelpers.ThrowUnknownTokenException<NeoLemmixGadgetStateType>("CONDITION", token, line)
+            _ => NxlvReadingHelpers.ThrowUnknownTokenException<NeoLemmixGadgetStateType>("CONDITION", token, line)
         };
 
         return result;
@@ -82,7 +82,7 @@ public sealed class AnimationTriggerReader : INeoLemmixDataReader
             "LOOPTOZERO" => GadgetSecondaryAnimationAction.LoopToZero,
             "MATCHPHYSICS" => GadgetSecondaryAnimationAction.MatchPrimaryAnimationPhysics,
 
-            _ => ReadingHelpers.ThrowUnknownTokenException<GadgetSecondaryAnimationAction>("STATE", token, line),
+            _ => NxlvReadingHelpers.ThrowUnknownTokenException<GadgetSecondaryAnimationAction>("STATE", token, line),
         };
 
         return result;

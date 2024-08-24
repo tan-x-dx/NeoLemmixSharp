@@ -20,7 +20,7 @@ public sealed class DataReaderList
 
         while (streamReader.ReadLine() is { } line)
         {
-            if (ReadingHelpers.LineIsBlankOrComment(line))
+            if (NxlvReadingHelpers.LineIsBlankOrComment(line))
                 continue;
 
             bool reprocessLine;
@@ -51,7 +51,7 @@ public sealed class DataReaderList
 
     private void GetDataReaderForLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
 
         _currentDataReader = TryGetWithSpan(firstToken);
         if (_currentDataReader == null)
