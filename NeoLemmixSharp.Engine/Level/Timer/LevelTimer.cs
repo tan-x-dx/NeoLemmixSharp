@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 
 public abstract class LevelTimer
 {
+    private const int MinuteSecondSeparator = '-';
     private const int NumberOfTimerChars = 6;
 
     public readonly TimerType Type;
@@ -17,11 +19,14 @@ public abstract class LevelTimer
 
     protected LevelTimer(TimerType type)
     {
-        _timerCharBuffer[3] = '-';
         Type = type;
+        _timerCharBuffer[0] = ' ';
+        _timerCharBuffer[1] = '0';
+        _timerCharBuffer[2] = '0';
+        _timerCharBuffer[3] = MinuteSecondSeparator;
+        _timerCharBuffer[4] = '0';
+        _timerCharBuffer[5] = '0';
     }
-
-    protected Span<int> Chars() => _timerCharBuffer;
 
     public void Tick()
     {
@@ -43,7 +48,7 @@ public abstract class LevelTimer
 
     protected abstract void UpdateAppearance();
 
-    public ReadOnlySpan<int> AsSpan() => _timerCharBuffer;
+    public ReadOnlySpan<int> AsReadOnlySpan() => _timerCharBuffer;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void UpdateCountUpString(
@@ -69,41 +74,36 @@ public abstract class LevelTimer
         int minutesTensTest,
         bool partialUpdate)
     {
-        var charSpan = Chars();
-
         var seconds = elapsedSeconds % 60;
         var secondsUnits = seconds % 10;
-        charSpan[5] = DigitToChar(secondsUnits);
+        _timerCharBuffer[5] = TextRenderingHelpers.DigitToChar(secondsUnits);
 
         if (partialUpdate && secondsUnits != secondUnitsTest)
             return;
 
         var secondsTens = seconds / 10;
-        charSpan[4] = DigitToChar(secondsTens);
+        _timerCharBuffer[4] = TextRenderingHelpers.DigitToChar(secondsTens);
 
         if (partialUpdate && secondsTens != secondTensTest)
             return;
 
         var minutes = elapsedSeconds / 60;
         var minutesUnits = minutes % 10;
-        charSpan[2] = DigitToChar(minutesUnits);
+        _timerCharBuffer[2] = TextRenderingHelpers.DigitToChar(minutesUnits);
 
         if (partialUpdate && minutesUnits != minutesUnitsTest)
             return;
 
         var minutesTens = (minutes / 10) % 10;
-        charSpan[1] = DigitToChar(minutesTens);
+        _timerCharBuffer[1] = TextRenderingHelpers.DigitToChar(minutesTens);
 
         if (partialUpdate && minutesTens != minutesTensTest)
             return;
 
-        charSpan[0] = minutes < 100
+        _timerCharBuffer[0] = minutes < 100
             ? ' '
-            : DigitToChar(minutes / 100);
+            : TextRenderingHelpers.DigitToChar(minutes / 100);
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int DigitToChar(int digit) => digit + '0';
 
     public enum TimerType
     {

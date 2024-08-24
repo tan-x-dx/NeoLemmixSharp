@@ -138,7 +138,7 @@ public sealed class ControlPanelRenderer
         RenderIcon(timerIconX, x);
         x += PanelIconWidth;
 
-        var timerSpan = levelTimer.AsSpan();
+        var timerSpan = levelTimer.AsReadOnlySpan();
         RenderText(timerSpan, x);
 
         return;

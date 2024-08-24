@@ -17,14 +17,14 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
 {
     public static Lemming SimulationLemming { get; } = new();
 
-    private JumperPositionBuffer _jumperPositionBuffer;
-
     public readonly int Id;
+    private JumperPositionBuffer _jumperPositionBuffer;
 
     public bool ConstructivePositionFreeze;
     public bool IsStartingAction;
     public bool PlacedBrick;
     public bool StackLow;
+
     public bool InitialFall;
     public bool EndOfAnimation;
     public bool LaserHit;
@@ -422,7 +422,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         Renderer.UpdateLemmingState(removalReason == LemmingRemovalReason.DeathExplode);
     }
 
-    public Span<LevelPosition> GetJumperPositions() => MemoryMarshal.CreateSpan(ref Unsafe.As<JumperPositionBuffer, LevelPosition>(ref _jumperPositionBuffer), JumperAction.JumperPositionCount);
+    public Span<LevelPosition> GetJumperPositions() => _jumperPositionBuffer;
 
     public void SetRawDataFromOther(Lemming otherLemming)
     {

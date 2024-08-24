@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.BoundaryBehaviours;
 
@@ -207,12 +208,10 @@ public sealed class BoundaryBehaviour
 
     private void UpdateViewPortRenderIntervals()
     {
-        Span<ViewPortRenderInterval> viewPortRenderIntervalSpan = _viewPortRenderIntervals;
-
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
             _viewPortStart + _viewPortLength < _levelLength)
         {
-            viewPortRenderIntervalSpan[0] = new ViewPortRenderInterval(_viewPortStart, _viewPortLength, -_viewPortStart);
+            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(_viewPortStart, _viewPortLength, -_viewPortStart);
             _viewPortSpanLength = 1;
             return;
         }
@@ -222,28 +221,26 @@ public sealed class BoundaryBehaviour
         if (_viewPortLength < _levelLength)
         {
             l1 = _levelLength - _viewPortStart;
-            viewPortRenderIntervalSpan[0] = new ViewPortRenderInterval(_viewPortStart, l1, -_viewPortStart);
-            viewPortRenderIntervalSpan[1] = new ViewPortRenderInterval(0, _viewPortLength - l1, _levelLength - _viewPortStart);
+            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(_viewPortStart, l1, -_viewPortStart);
+            _viewPortRenderIntervals[1] = new ViewPortRenderInterval(0, _viewPortLength - l1, _levelLength - _viewPortStart);
         }
         else
         {
             l1 = _levelLength >> 1;
-            viewPortRenderIntervalSpan[0] = new ViewPortRenderInterval(0, l1, 0);
-            viewPortRenderIntervalSpan[1] = new ViewPortRenderInterval(l1, _levelLength - l1, 0);
+            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(0, l1, 0);
+            _viewPortRenderIntervals[1] = new ViewPortRenderInterval(l1, _levelLength - l1, 0);
         }
     }
 
     private void UpdateScreenRenderIntervals()
     {
-        Span<ScreenRenderInterval> screenRenderIntervalSpan = _screenRenderIntervals;
-
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
             _viewPortStart + _viewPortLength < _levelLength)
         {
             var viewPortDimensionOnScreen = _viewPortLength * _scaleMultiplier;
             _screenStart = (_screenLength - viewPortDimensionOnScreen) >> 1;
 
-            screenRenderIntervalSpan[0] = new ScreenRenderInterval(0, _viewPortLength, _screenStart, viewPortDimensionOnScreen);
+            _screenRenderIntervals[0] = new ScreenRenderInterval(0, _viewPortLength, _screenStart, viewPortDimensionOnScreen);
             _screenSpanLength = 1;
 
             return;
@@ -253,7 +250,7 @@ public sealed class BoundaryBehaviour
 
         if (_viewPortLength < _levelLength)
         {
-            screenRenderIntervalSpan[0] = new ScreenRenderInterval(0, _viewPortLength, 0, _screenLength);
+            _screenRenderIntervals[0] = new ScreenRenderInterval(0, _viewPortLength, 0, _screenLength);
             _screenSpanLength = 1;
 
             return;
@@ -305,18 +302,12 @@ public sealed class BoundaryBehaviour
     }
 
     [Pure]
-    public ReadOnlySpan<ViewPortRenderInterval> GetRenderIntervals()
-    {
-        ReadOnlySpan<ViewPortRenderInterval> renderIntervalSpan = _viewPortRenderIntervals;
-        return renderIntervalSpan[.._viewPortSpanLength];
-    }
+    public ReadOnlySpan<ViewPortRenderInterval> GetRenderIntervals() => MemoryMarshal.CreateReadOnlySpan(
+        ref Unsafe.As<ViewPortRenderIntervalBuffer, ViewPortRenderInterval>(ref _viewPortRenderIntervals), _viewPortSpanLength);
 
     [Pure]
-    public ReadOnlySpan<ScreenRenderInterval> GetScreenRenderIntervals()
-    {
-        ReadOnlySpan<ScreenRenderInterval> screenRenderIntervalSpan = _screenRenderIntervals;
-        return screenRenderIntervalSpan[.._screenSpanLength];
-    }
+    public ReadOnlySpan<ScreenRenderInterval> GetScreenRenderIntervals() => MemoryMarshal.CreateReadOnlySpan(
+        ref Unsafe.As<ScreenRenderIntervalBuffer, ScreenRenderInterval>(ref _screenRenderIntervals), _screenSpanLength);
 
     [Pure]
     public ClipInterval GetIntersection(ClipInterval spriteClipInterval, ClipInterval viewportClipInterval)
@@ -354,10 +345,8 @@ public sealed class BoundaryBehaviour
             return _levelLength;
         }
 
-        if (spriteClipInterval.Start + spriteClipInterval.Length <= _levelLength)
-            return 0;
-
-        if (viewportClipInterval.Start != 0)
+        if (spriteClipInterval.Start + spriteClipInterval.Length <= _levelLength ||
+            viewportClipInterval.Start != 0)
             return 0;
 
         viewportClipInterval = new ClipInterval(

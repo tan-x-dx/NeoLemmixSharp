@@ -23,7 +23,7 @@ public static class TextRenderingHelpers
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int DigitToChar(int digit) => digit + '0';
+    public static int DigitToChar(int digit) => digit | '0';
 
     public static int GetNumberStringLength(int n)
     {
