@@ -14,7 +14,7 @@ public sealed class LevelData
     private int _levelHeight = -1;
     private int? _levelStartPositionX;
     private int? _levelStartPositionY;
-    private int _numberOfLemmings = -1;
+    private int _maxNumberOfClonedLemmings = -1;
 
     public string LevelTitle { get; set; } = string.Empty;
     public string LevelAuthor { get; set; } = string.Empty;
@@ -89,22 +89,27 @@ public sealed class LevelData
         }
     }
 
-    public string LevelTheme { get; set; } = null!;
-    public BackgroundData? LevelBackground { get; set; }
-
-    public int NumberOfLemmings
+    public int MaxNumberOfClonedLemmings
     {
-        get => _numberOfLemmings;
+        get => _maxNumberOfClonedLemmings;
         set
         {
-            if (value <= 0)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Number of lemmings must be positive!");
-            if (value > LevelConstants.MaxNumberOfLemmings)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Number of lemmings too big!");
+            if (value < 0)
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Max number of cloned lemmings must be non-negative!");
 
-            _numberOfLemmings = value;
+            var totalNumberOfLemmings =
+                value +
+                PrePlacedLemmingData.Count +
+                HatchLemmingData.Count;
+            if (totalNumberOfLemmings > LevelConstants.MaxNumberOfLemmings)
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Too many lemmings in level!");
+
+            _maxNumberOfClonedLemmings = value;
         }
     }
+
+    public string LevelTheme { get; set; } = null!;
+    public BackgroundData? LevelBackground { get; set; }
 
     public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; }
     public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; }
@@ -139,7 +144,7 @@ public sealed class LevelData
     {
         if (_levelWidth < 0) return "Level width not set!";
         if (_levelHeight < 0) return "Level height not set!";
-        if (_numberOfLemmings <= 0) return "Number of lemmings is invalid!";
+        if (_maxNumberOfClonedLemmings < 0) return "Cloner counts not evaluated!";
         if (PrePlacedLemmingData.Count == 0 && HatchLemmingData.Count == 0) return "Number of lemmings is invalid!";
         if (LevelTitle.Length == 0) return "Level title not set!";
         if (LevelAuthor.Length == 0) return "Level author not set!";

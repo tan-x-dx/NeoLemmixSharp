@@ -3,7 +3,9 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
+using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
@@ -50,8 +52,10 @@ public sealed class NxlvLevelReader : ILevelReader
 
         ProcessLevelData(levelData, levelDataReader, talismanReader, skillSetReader);
         ProcessTerrainData(levelData, terrainGroupReader, terrainArchetypes);
-        ProcessGadgetData(levelData, graphicsDevice, gadgetReader);
+        ProcessGadgetData(levelData, graphicsDevice, levelDataReader, gadgetReader);
         ProcessConfigData(levelData);
+
+        levelData.MaxNumberOfClonedLemmings = CalculateMaxNumberOfClonedLemmings(levelData);
 
         return levelData;
     }
@@ -129,15 +133,19 @@ public sealed class NxlvLevelReader : ILevelReader
     private static void ProcessGadgetData(
         LevelData levelData,
         GraphicsDevice graphicsDevice,
+        LevelDataReader levelDataReader,
         GadgetReader gadgetReader)
     {
-        CalculateHatchCounts(levelData, gadgetReader);
+        CalculateHatchCounts(levelData, levelDataReader, gadgetReader);
 
         new GadgetTranslator(levelData, graphicsDevice)
             .TranslateNeoLemmixGadgets(gadgetReader.GadgetArchetypes, gadgetReader.AllGadgetData);
     }
 
-    private static void CalculateHatchCounts(LevelData levelData, GadgetReader gadgetReader)
+    private static void CalculateHatchCounts(
+        LevelData levelData,
+        LevelDataReader levelDataReader,
+        GadgetReader gadgetReader)
     {
         var gadgetDataSpan = CollectionsMarshal.AsSpan(gadgetReader.AllGadgetData);
         var hatchGadgets = new List<NeoLemmixGadgetData>();
@@ -154,20 +162,17 @@ public sealed class NxlvLevelReader : ILevelReader
 
         var maxLemmingCountFromHatches = 0;
         var hasInfiniteHatchCount = false;
-        var spanLength = hatchGadgets.Count * 2;
-        Span<int> countSpan = spanLength > maxStackallocSize
-            ? new int[spanLength]
-            : stackalloc int[spanLength];
+        var spanLength = hatchGadgets.Count;
+        Span<HatchCountData> countSpan = spanLength > maxStackallocSize
+            ? new HatchCountData[spanLength]
+            : stackalloc HatchCountData[spanLength];
 
         var i = 0;
-        while (i < hatchGadgets.Count)
+        while (i < countSpan.Length)
         {
-            ref var runningCount = ref countSpan[i * 2];
-            ref var maxCount = ref countSpan[i * 2 + 1];
-
-            runningCount = 0;
             var correspondingHatchGadget = hatchGadgets[i];
-            maxCount = correspondingHatchGadget.LemmingCount ?? -1;
+            countSpan[i].RunningCount = 0;
+            countSpan[i].MaxCount = correspondingHatchGadget.LemmingCount ?? -1;
             hasInfiniteHatchCount |= !correspondingHatchGadget.LemmingCount.HasValue;
             maxLemmingCountFromHatches += correspondingHatchGadget.LemmingCount ?? 0;
 
@@ -176,14 +181,15 @@ public sealed class NxlvLevelReader : ILevelReader
 
         var numberOfLemmingsFromHatches = CalculateTotalHatchLemmingCounts(
             levelData,
+            levelDataReader,
             hasInfiniteHatchCount ? null : maxLemmingCountFromHatches);
 
         var numberOfLemmingsAssignedToHatches = 0;
         i = 0;
         while (numberOfLemmingsAssignedToHatches < numberOfLemmingsFromHatches)
         {
-            ref var runningCount = ref countSpan[i * 2];
-            var maxCount = countSpan[i * 2 + 1];
+            ref var runningCount = ref countSpan[i].RunningCount;
+            var maxCount = countSpan[i].MaxCount;
 
             if (maxCount == -1 || runningCount < maxCount)
             {
@@ -192,16 +198,16 @@ public sealed class NxlvLevelReader : ILevelReader
             }
 
             i++;
-            if (i == hatchGadgets.Count)
+            if (i == countSpan.Length)
             {
                 i = 0;
             }
         }
 
         i = 0;
-        while (i < hatchGadgets.Count)
+        while (i < countSpan.Length)
         {
-            var hatchCount = countSpan[i * 2];
+            var hatchCount = countSpan[i].RunningCount;
             var correspondingHatchGadget = hatchGadgets[i];
             correspondingHatchGadget.LemmingCount = hatchCount;
             i++;
@@ -223,17 +229,17 @@ public sealed class NxlvLevelReader : ILevelReader
 
     private static int CalculateTotalHatchLemmingCounts(
         LevelData levelData,
+        LevelDataReader levelDataReader,
         int? maxLemmingCountFromHatches)
     {
         var hatchLemmingData = levelData.HatchLemmingData;
-        var hatchLemmingCount = levelData.NumberOfLemmings - levelData.PrePlacedLemmingData.Count;
+        var hatchLemmingCount = levelDataReader.NumberOfLemmings - levelData.PrePlacedLemmingData.Count;
 
         var totalNumberOfHatchLemmings = maxLemmingCountFromHatches.HasValue
             ? Math.Min(hatchLemmingCount, maxLemmingCountFromHatches.Value)
             : hatchLemmingCount;
 
         hatchLemmingData.Capacity = totalNumberOfHatchLemmings;
-        levelData.NumberOfLemmings = totalNumberOfHatchLemmings;
 
         while (hatchLemmingData.Count < hatchLemmingData.Capacity)
         {
@@ -241,6 +247,38 @@ public sealed class NxlvLevelReader : ILevelReader
         }
 
         return totalNumberOfHatchLemmings;
+    }
+
+    private static int CalculateMaxNumberOfClonedLemmings(
+        LevelData levelData)
+    {
+        var numberOfClonerSkillPickups = 0;
+
+        foreach (var gadgetDatum in levelData.AllGadgetData)
+        {
+            if (gadgetDatum.TryGetProperty(GadgetProperty.SkillId, out var skillId))
+            {
+                if (skillId == LevelConstants.ClonerSkillId)
+                {
+                    numberOfClonerSkillPickups += gadgetDatum.GetProperty(GadgetProperty.Count);
+                }
+            }
+        }
+
+        var maxNumberOfClonerSkills = 0;
+
+        foreach (var levelObjective in levelData.LevelObjectives)
+        {
+            foreach (var skillSetDatum in levelObjective.SkillSetData)
+            {
+                if (skillSetDatum.Skill == ClonerSkill.Instance)
+                {
+                    maxNumberOfClonerSkills = Math.Max(maxNumberOfClonerSkills, skillSetDatum.NumberOfSkills);
+                }
+            }
+        }
+
+        return numberOfClonerSkillPickups + maxNumberOfClonerSkills;
     }
 
     private static void ProcessConfigData(LevelData levelData)
@@ -272,5 +310,11 @@ public sealed class NxlvLevelReader : ILevelReader
 
     public void Dispose()
     {
+    }
+
+    private struct HatchCountData
+    {
+        public int RunningCount;
+        public int MaxCount;
     }
 }

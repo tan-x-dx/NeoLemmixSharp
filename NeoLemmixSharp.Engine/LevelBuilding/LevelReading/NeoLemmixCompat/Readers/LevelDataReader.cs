@@ -10,6 +10,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
     private readonly LevelData _levelData;
 
     private bool _lockSpawnInterval;
+    private int _numberOfLemmings;
     private int _maxSpawnInterval;
     private int _saveRequirement;
     private int? _timeLimitInSeconds;
@@ -18,6 +19,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
     public string IdentifierToken => "TITLE";
     public int SaveRequirement => _saveRequirement;
     public int? TimeLimitInSeconds => _timeLimitInSeconds;
+    public int NumberOfLemmings => _numberOfLemmings;
 
     public LevelDataReader(LevelData levelData)
     {
@@ -89,7 +91,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "LEMMINGS":
-                _levelData.NumberOfLemmings = int.Parse(secondToken);
+                _numberOfLemmings = int.Parse(secondToken);
                 break;
 
             case "SAVE_REQUIREMENT":

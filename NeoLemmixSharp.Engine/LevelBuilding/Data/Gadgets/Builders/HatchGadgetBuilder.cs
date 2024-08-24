@@ -27,7 +27,7 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
         var hatchGadgetId = gadgetData.GetProperty(GadgetProperty.HatchGroupId);
         var teamId = gadgetData.GetProperty(GadgetProperty.TeamId);
         var rawLemmingState = (uint)gadgetData.GetProperty(GadgetProperty.RawLemmingState);
-        var lemmingCount = gadgetData.GetProperty(GadgetProperty.LemmingCount);
+        var lemmingCount = gadgetData.GetProperty(GadgetProperty.Count);
 
         var dihedralTransformation = new DihedralTransformation(
             gadgetData.Orientation.RotNum,
