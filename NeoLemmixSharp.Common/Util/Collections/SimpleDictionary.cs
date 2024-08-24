@@ -6,12 +6,12 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
 
-public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>, IItemCountListener
+public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
     where TKey : notnull
 {
     private readonly IPerfectHasher<TKey> _hasher;
-    private uint[] _bits;
-    private TValue[] _values;
+    private readonly uint[] _bits;
+    private readonly TValue[] _values;
     private int _popCount;
 
     public int Count => _popCount;
@@ -195,16 +195,6 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
 
             return result;
         }
-    }
-
-    public void OnNumberOfItemsChanged()
-    {
-        var numberOfItems = _hasher.NumberOfItems;
-        if (numberOfItems <= _values.Length)
-            return;
-
-        BitArrayHelpers.Resize(ref _bits, numberOfItems);
-        Array.Resize(ref _values, numberOfItems);
     }
 
     void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item) => Add(item.Key, item.Value);

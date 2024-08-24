@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
-public sealed class SpacialHashGrid<T> : IItemCountListener
+public sealed class SpacialHashGrid<T>
     where T : class, IRectangularBounds
 {
     private readonly IPerfectHasher<T> _hasher;
@@ -19,9 +19,9 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
     private readonly int _numberOfHorizontalChunks;
     private readonly int _numberOfVerticalChunks;
 
-    private int _bitArraySize;
-    private uint[] _cachedQueryScratchSpace;
-    private uint[] _allBits;
+    private readonly int _bitArraySize;
+    private readonly uint[] _cachedQueryScratchSpace;
+    private readonly uint[] _allBits;
 
     private LevelPosition _cachedTopLeftChunkQuery;
     private LevelPosition _cachedBottomRightChunkQuery;
@@ -470,44 +470,5 @@ public sealed class SpacialHashGrid<T> : IItemCountListener
         Add,
         Remove,
         Union
-    }
-
-    public void OnNumberOfItemsChanged()
-    {
-        _allTrackedItems.OnNumberOfItemsChanged();
-        var newBitArraySize = _allTrackedItems.Size;
-
-        if (_bitArraySize == newBitArraySize)
-            return;
-
-        var newBits = new uint[newBitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];
-
-        TransferData(
-            new ReadOnlySpan<uint>(_allBits),
-            _bitArraySize,
-            new Span<uint>(newBits),
-            newBitArraySize);
-
-        _bitArraySize = newBitArraySize;
-        _allBits = newBits;
-        _cachedQueryScratchSpace = new uint[_bitArraySize];
-        ClearCachedData();
-    }
-
-    private void TransferData(
-        ReadOnlySpan<uint> oldData,
-        int oldDataSize,
-        Span<uint> newData,
-        int newDataSize)
-    {
-        var limit = _numberOfHorizontalChunks * _numberOfVerticalChunks;
-
-        for (var i = 0; i < limit; i++)
-        {
-            var oldChunk = oldData.Slice(i * oldDataSize, oldDataSize);
-            var newChunk = newData.Slice(i * newDataSize, newDataSize);
-
-            oldChunk.CopyTo(newChunk);
-        }
     }
 }

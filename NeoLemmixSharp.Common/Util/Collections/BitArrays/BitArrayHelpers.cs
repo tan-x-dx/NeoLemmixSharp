@@ -48,19 +48,6 @@ public static class BitArrayHelpers
         return result;
     }
 
-    public static void Resize(ref uint[] originalArray, int numberOfItems)
-    {
-        var newArrayLength = CalculateBitArrayBufferLength(numberOfItems);
-
-        if (newArrayLength <= originalArray.Length)
-            return;
-
-        var newArray = new uint[newArrayLength];
-        new ReadOnlySpan<uint>(originalArray).CopyTo(newArray);
-
-        originalArray = newArray;
-    }
-
     /// <summary>
     /// Tests if a specific bit is set
     /// </summary>

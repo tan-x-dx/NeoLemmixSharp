@@ -236,7 +236,6 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     {
         lemmingRenderer.RendererId = _orderedSprites.Count;
         _orderedSprites.Add(lemmingRenderer);
-        _spriteSpacialHashGrid.OnNumberOfItemsChanged();
     }
 
     public void Dispose()

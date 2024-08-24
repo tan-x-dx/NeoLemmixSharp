@@ -4,13 +4,13 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
-public sealed class ItemTracker<T> : IItemCountListener
+public sealed class ItemTracker<T>
     where T : notnull
 {
     private const ulong BigMask = 0xAAAA_AAAA_AAAA_AAAAUL;
 
     private readonly IPerfectHasher<T> _hasher;
-    private ulong[] _longs;
+    private readonly ulong[] _longs;
 
     public ItemTracker(IPerfectHasher<T> hasher)
     {
@@ -48,16 +48,5 @@ public sealed class ItemTracker<T> : IItemCountListener
     public void Clear()
     {
         new Span<ulong>(_longs).Clear();
-    }
-
-    public void OnNumberOfItemsChanged()
-    {
-        var numberOfItems = _hasher.NumberOfItems;
-        var newArrayLength = BitArrayHelpers.CalculateBitArrayBufferLength(numberOfItems);
-
-        if (newArrayLength <= _longs.Length)
-            return;
-
-        Array.Resize(ref _longs, newArrayLength);
     }
 }

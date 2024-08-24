@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
@@ -36,7 +35,6 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
             gadgetHeight);
 
         var itemTracker = new ItemTracker<Lemming>(lemmingHasher);
-        LevelScreen.LemmingManager.RegisterItemForLemmingCountTracking(itemTracker);
 
         var gadgetRenderer = gadgetSpriteBuilder.BuildResizeableGadgetRenderer(this, gadgetData);
 
