@@ -149,12 +149,30 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         {
             var i = GetTickNumberForLemming(lemming, updateState, isMajorTick);
 
-            while (i-- > 0)
+            switch (i)
             {
-                lemming.Tick();
-                UpdateLemmingPosition(lemming);
+                case 3: lemming.Tick(); UpdateLemmingPosition(lemming); goto case 2;
+                case 2: lemming.Tick(); UpdateLemmingPosition(lemming); goto case 1;
+                case 1: lemming.Tick(); UpdateLemmingPosition(lemming); break;
+                case 0: break;
             }
         }
+    }
+
+    private static int GetTickNumberForLemming(Lemming lemming, UpdateState updateState, bool isMajorTick)
+    {
+        var lemmingIsFastForward = lemming.IsFastForward;
+        var gameIsFastForward = updateState == UpdateState.FastForward;
+
+        if (lemming.State.IsActive &&
+            (lemmingIsFastForward ||
+             gameIsFastForward ||
+             isMajorTick))
+            return lemmingIsFastForward && gameIsFastForward
+                ? EngineConstants.FastForwardSpeedMultiplier
+                : 1;
+
+        return 0;
     }
 
     private void ZombifyLemmings()
@@ -168,21 +186,6 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         }
 
         _lemmingsToZombify.Clear();
-    }
-
-    private static int GetTickNumberForLemming(Lemming lemming, UpdateState updateState, bool isMajorTick)
-    {
-        var lemmingIsFastForward = lemming.IsFastForward;
-        var gameIsFastForward = updateState == UpdateState.FastForward;
-        if (!lemming.State.IsActive ||
-            (!lemmingIsFastForward &&
-             !gameIsFastForward &&
-             !isMajorTick))
-            return 0;
-
-        return lemmingIsFastForward && gameIsFastForward
-            ? EngineConstants.FastForwardSpeedMultiplier
-            : 1;
     }
 
     private void UpdateLemmingPosition(Lemming lemming)
@@ -200,6 +203,14 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
         // If not relevant for this lemming, nothing will happen
         UpdateZombiePosition(lemming);
+    }
+
+    private void UpdateZombiePosition(Lemming lemming)
+    {
+        if (!lemming.State.IsZombie)
+            return;
+
+        _zombieSpacialHashGrid.UpdateItemPosition(lemming);
     }
 
     public void RemoveLemming(Lemming lemming, LemmingRemovalReason removalReason)
@@ -292,19 +303,10 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DeregisterZombie(Lemming lemming) => _zombieSpacialHashGrid.RemoveItem(lemming);
 
-    private void UpdateZombiePosition(Lemming lemming)
-    {
-        if (!lemming.State.IsZombie)
-            return;
-
-        _zombieSpacialHashGrid.UpdateItemPosition(lemming);
-    }
-
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool AnyZombies() => !_zombieSpacialHashGrid.IsEmpty;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DoZombieCheck(Lemming lemming)
     {
         Debug.Assert(!lemming.State.IsZombie);
