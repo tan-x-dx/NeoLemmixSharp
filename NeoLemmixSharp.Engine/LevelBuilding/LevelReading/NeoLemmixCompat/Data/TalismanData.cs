@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.Level.Skills;
@@ -51,6 +52,11 @@ public sealed class TalismanData
         {
             if (SkillLimits.TryGetValue(originalSkillSetDatum.Skill, out var skillLimit))
             {
+                if (originalSkillSetDatum.Skill == ClonerSkill.Instance && skillLimit == LevelConstants.InfiniteSkillCount)
+                {
+                    skillLimit = LevelConstants.InfiniteSkillCount - 1;
+                }
+
                 result.Add(new SkillSetData
                 {
                     Skill = originalSkillSetDatum.Skill,

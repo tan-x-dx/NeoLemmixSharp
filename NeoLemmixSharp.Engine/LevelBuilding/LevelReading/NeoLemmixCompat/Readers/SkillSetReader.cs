@@ -50,6 +50,11 @@ public sealed class SkillSetReader : INeoLemmixDataReader
             amount > LevelConstants.InfiniteSkillCount)
             throw new InvalidOperationException($"Invalid skill count value! {amount}");
 
+        if (skill == ClonerSkill.Instance && amount == LevelConstants.InfiniteSkillCount)
+        {
+            amount = LevelConstants.InfiniteSkillCount - 1;
+        }
+
         var skillSetDatum = new SkillSetData
         {
             Skill = skill,

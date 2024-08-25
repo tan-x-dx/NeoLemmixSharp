@@ -1,7 +1,7 @@
-﻿using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.Level;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+﻿using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
@@ -27,13 +27,17 @@ public static class LevelReadingHelpers
 
         foreach (var levelObjective in levelData.LevelObjectives)
         {
+            var numberOfClonerSkillsPerLevelObjective = 0;
+
             foreach (var skillSetDatum in levelObjective.SkillSetData)
             {
                 if (skillSetDatum.Skill == ClonerSkill.Instance)
                 {
-                    maxNumberOfClonerSkills = Math.Max(maxNumberOfClonerSkills, skillSetDatum.NumberOfSkills);
+                    numberOfClonerSkillsPerLevelObjective += skillSetDatum.NumberOfSkills;
                 }
             }
+
+            maxNumberOfClonerSkills = Math.Max(maxNumberOfClonerSkills, numberOfClonerSkillsPerLevelObjective);
         }
 
         return numberOfClonerSkillPickups + maxNumberOfClonerSkills;

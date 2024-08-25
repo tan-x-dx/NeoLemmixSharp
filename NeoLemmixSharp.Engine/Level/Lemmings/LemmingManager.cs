@@ -25,6 +25,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
     private readonly int _totalNumberOfHatchLemmings;
     private readonly int _numberOfPreplacedLemmings;
+    private readonly int _maxNumberOfClonedLemmings;
 
     private int _numberOfLemmingsReleasedFromHatch;
     private int _numberOfClonedLemmings;
@@ -37,8 +38,6 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     public int TotalNumberOfLemmings => _lemmings.Length;
     public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
     public SimpleSetEnumerable<Lemming> AllBlockers => _allBlockers.AsSimpleEnumerable();
-
-    private int _nextLemmingId;
 
     public LemmingManager(
         HatchGroup[] hatchGroups,
@@ -75,6 +74,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
         _totalNumberOfHatchLemmings = totalNumberOfHatchLemmings;
         _numberOfPreplacedLemmings = numberOfPreplacedLemmings;
+        _maxNumberOfClonedLemmings = _lemmings.Length - totalNumberOfHatchLemmings - numberOfPreplacedLemmings;
     }
 
     public void Initialise()
@@ -97,7 +97,6 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             return;
 
         lemming.Initialise();
-        _nextLemmingId++;
 
         _lemmingPositionHelper.AddItem(lemming);
 
@@ -135,7 +134,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
                 continue;
 
             hatchGroup.OnSpawnLemming();
-            var lemming = hatchLemmingSpan[_nextLemmingId];
+            var lemming = hatchLemmingSpan[_numberOfLemmingsReleasedFromHatch++];
 
             lemming.LevelPosition = hatchGadget.SpawnPosition;
             hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
@@ -338,14 +337,14 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
     #endregion
 
-    public bool CanCreateNewLemming()
+    public bool CanCreateNewLemmingClone()
     {
-        return _lemmings.Length < LevelConstants.MaxNumberOfLemmings;
+        return _numberOfClonedLemmings < _maxNumberOfClonedLemmings;
     }
 
     public bool TryGetNextClonedLemming([MaybeNullWhen(false)] out Lemming clonedLemming)
     {
-        if (_lemmings.Length == LevelConstants.MaxNumberOfLemmings)
+        if (!CanCreateNewLemmingClone())
         {
             clonedLemming = default;
             return false;

@@ -17,7 +17,7 @@ public sealed class ClonerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return LevelScreen.LemmingManager.CanCreateNewLemming() &&
+        return LevelScreen.LemmingManager.CanCreateNewLemmingClone() &&
                ActionIsAssignable(lemming);
     }
 
@@ -80,5 +80,4 @@ public sealed class ClonerSkill : LemmingSkill
         yield return ShruggerAction.Instance;
         yield return ReacherAction.Instance;
     }
-
 }
