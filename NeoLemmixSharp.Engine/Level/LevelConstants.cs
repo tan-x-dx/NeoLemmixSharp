@@ -409,6 +409,9 @@ public static class LevelConstants
     public const string DisarmerSkillName = "Disarmer";
     public const int DisarmerSkillId = 18;
 
+    public const string FastForwardSkillName = "Fast Forward";
+    public const int FastForwardSkillId = 30;
+
     public const string FencerSkillName = "Fencer";
     public const int FencerSkillId = 11;
 
