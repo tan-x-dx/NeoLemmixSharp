@@ -1,8 +1,6 @@
-﻿using NeoLemmixSharp.Engine.Level.Terrain.Masks;
-using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+﻿using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoLemmixSharp;
@@ -15,10 +13,6 @@ public sealed partial class NeoLemmixGame
         var resourceNames = assembly.GetManifestResourceNames();
 
         LoadParticleResources();
-        LoadBasherMask();
-        LoadBomberMask();
-        LoadFencerMask();
-        LoadMinerMask();
 
         return;
 
@@ -30,46 +24,6 @@ public sealed partial class NeoLemmixGame
 
             if (byteCount < byteBuffer.Length)
                 throw new InvalidOperationException($"Read {byteCount} bytes from particles.dat - expected to read {byteBuffer.Length} bytes!");
-        }
-
-        [SkipLocalsInit]
-        void LoadBasherMask()
-        {
-            Span<byte> byteBuffer = stackalloc byte[64];
-
-            var byteCount = LoadByteData("basher_mask.dat", byteBuffer);
-
-            TerrainMasks.InitialiseBasherMask(byteBuffer[..byteCount]);
-        }
-
-        [SkipLocalsInit]
-        void LoadBomberMask()
-        {
-            Span<byte> byteBuffer = stackalloc byte[64];
-
-            var byteCount = LoadByteData("bomber_mask.dat", byteBuffer);
-
-            TerrainMasks.InitialiseBomberMask(byteBuffer[..byteCount]);
-        }
-
-        [SkipLocalsInit]
-        void LoadFencerMask()
-        {
-            Span<byte> byteBuffer = stackalloc byte[64];
-
-            var byteCount = LoadByteData("fencer_mask.dat", byteBuffer);
-
-            TerrainMasks.InitialiseFencerMask(byteBuffer[..byteCount]);
-        }
-
-        [SkipLocalsInit]
-        void LoadMinerMask()
-        {
-            Span<byte> byteBuffer = stackalloc byte[64];
-
-            var byteCount = LoadByteData("miner_mask.dat", byteBuffer);
-
-            TerrainMasks.InitialiseMinerMask(byteBuffer[..byteCount]);
         }
 
         int LoadByteData(string resourceName, Span<byte> byteBuffer)
