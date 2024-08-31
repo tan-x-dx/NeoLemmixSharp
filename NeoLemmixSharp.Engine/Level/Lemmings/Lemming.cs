@@ -9,7 +9,6 @@ using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -48,6 +47,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LevelPosition LaserHitLevelPosition = new(-1, -1);
     public LevelPosition LevelPosition = new(-1, -1);
     public LevelPosition PreviousLevelPosition = new(-1, -1);
+    public LevelPosition TopLeftPixel { get; private set; }
+    public LevelPosition BottomRightPixel { get; private set; }
+    public LevelPosition PreviousTopLeftPixel { get; private set; }
+    public LevelPosition PreviousBottomRightPixel { get; private set; }
 
     public LemmingState State { get; }
 
@@ -60,10 +63,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
     public LemmingAction CountDownAction { get; private set; } = NoneAction.Instance;
 
     public LemmingRenderer Renderer { get; }
-    public LevelPosition TopLeftPixel { get; private set; }
-    public LevelPosition BottomRightPixel { get; private set; }
-    public LevelPosition PreviousTopLeftPixel { get; private set; }
-    public LevelPosition PreviousBottomRightPixel { get; private set; }
 
     public bool IsSimulation => Id < 0;
     public bool IsFastForward => FastForwardTime > 0 || State.IsPermanentFastForwards;

@@ -149,16 +149,35 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
             numberOfGadgetBehaviours);
     }
 
+    /// <summary>
+    /// Validation to ensure there is enough space to write
+    /// lemming action text in the buffer in <see cref="ControlPanelTextualData"/>
+    /// </summary>
     private static void ValidateMaxActionNameLength()
     {
         var actualMaxActionNameLength = 0;
         foreach (var action in LemmingAction.AllItems)
         {
-            actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, action.LemmingActionName.Length);
+            LengthMax<char>(action.LemmingActionName);
         }
+
+        LengthMax(LevelConstants.NeutralStringNumericalSpan);
+        LengthMax(LevelConstants.ZombieStringNumericalSpan);
+        LengthMax(LevelConstants.NeutralZombieStringNumericalSpan);
+        LengthMax(LevelConstants.AthleteString2Skills);
+        LengthMax(LevelConstants.AthleteString3Skills);
+        LengthMax(LevelConstants.AthleteString4Skills);
+        LengthMax(LevelConstants.AthleteString5Skills);
 
         if (actualMaxActionNameLength != LevelConstants.LongestActionNameLength)
             throw new Exception($"Longest action name length is actually {actualMaxActionNameLength}! Update {nameof(LevelConstants.LongestActionNameLength)}!");
+
+        return;
+
+        void LengthMax<T>(ReadOnlySpan<T> span)
+        {
+            actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, span.Length);
+        }
     }
 
     public void SetScreen(IBaseScreen screen)

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Numerics;
+using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Engine.Level.Teams;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
@@ -18,6 +19,7 @@ public sealed class LemmingState
     public bool HasPermanentSkill => (_states & LevelConstants.PermanentSkillBitMask) != 0U;
     public bool HasLiquidAffinity => (_states & LevelConstants.LiquidAffinityBitMask) != 0U;
     public bool HasSpecialFallingBehaviour => (_states & LevelConstants.SpecialFallingBehaviourBitMask) != 0U;
+    public int NumberOfPermanentSkills => BitOperations.PopCount(_states & LevelConstants.PermanentSkillBitMask);
 
     /// <summary>
     /// Must be active and NOT zombie and NOT neutral
