@@ -130,6 +130,8 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         return result;
     }
 
+    string IDestructionMask.Name => LemmingActionName;
+
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {

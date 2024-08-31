@@ -313,6 +313,8 @@ procedure DoFencerContinueTests(L: TLemming; var SteelContinue: Boolean; var Mov
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
+    string IDestructionMask.Name => LemmingActionName;
+
     [Pure]
     public bool CanDestroyPixel(
         PixelType pixelType,

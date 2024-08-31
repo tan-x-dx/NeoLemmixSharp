@@ -7,7 +7,7 @@ public sealed class ReacherAction : LemmingAction
 {
     public static readonly ReacherAction Instance = new();
 
-    private readonly int[] _movementList =
+    private static ReadOnlySpan<int> MovementList =>
     [
         0, 3, 2, 2, 1, 1, 1, 0
     ];
@@ -56,7 +56,7 @@ public sealed class ReacherAction : LemmingAction
         }
 
         // Check whether we can reach the ceiling
-        if (emptyPixels <= _movementList[lemming.PhysicsFrame])
+        if (emptyPixels <= MovementList[lemming.PhysicsFrame])
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, emptyPixels + 1); // Shimmiers are a lot smaller than reachers
             ShimmierAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -65,7 +65,7 @@ public sealed class ReacherAction : LemmingAction
         }
 
         // Move upwards
-        lemmingPosition = orientation.MoveUp(lemmingPosition, _movementList[lemming.PhysicsFrame]);
+        lemmingPosition = orientation.MoveUp(lemmingPosition, MovementList[lemming.PhysicsFrame]);
         if (lemming.PhysicsFrame == 7)
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);

@@ -13,14 +13,11 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Teams;
-using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.Menu;
 using System;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace NeoLemmixSharp;
 
@@ -112,14 +109,9 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
     protected override void LoadContent()
     {
+        //Foo();
+
         LoadResources();
-
-        // create and init the UI manager
-        // UserInterface.Initialize(Content, BuiltinThemes.editor);
-        //UserInterface.Active.UseRenderTarget = true;
-
-        // draw cursor outside the render target
-        //UserInterface.Active.IncludeCursorInRenderTarget = false;
 
         RootDirectoryManager.Initialise();
         FontBank.Initialise(Content);
@@ -128,7 +120,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
+        // TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
         DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
 
         var menuScreen = new MenuScreen(
@@ -136,29 +128,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
             GraphicsDevice);
         SetScreen(menuScreen);
         menuScreen.Initialise();
-    }
-
-    private void LoadResources()
-    {
-        var assembly = GetType().Assembly;
-        var resourceNames = assembly.GetManifestResourceNames();
-
-        LoadParticleResources();
-
-        return;
-
-        void LoadParticleResources()
-        {
-            var particleResourceName = Array.Find(resourceNames, s => s.EndsWith("particles.dat"));
-
-            if (string.IsNullOrWhiteSpace(particleResourceName))
-                throw new InvalidOperationException("Could not load particles.dat!");
-
-            using var stream = assembly.GetManifestResourceStream(particleResourceName)!;
-            var byteBuffer = ParticleHelper.GetByteBuffer();
-            using var reader = new BinaryReader(stream, Encoding.UTF8, false);
-            _ = reader.Read(byteBuffer);
-        }
     }
 
     private static void InitialiseGameConstants()
@@ -303,4 +272,70 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
     {
         Exit();
     }
+
+/*
+    private void Foo()
+    {
+
+    WriteMaskData(
+        "basher",
+        4);
+
+    WriteMaskData(
+        "bomber",
+        1);
+
+    WriteMaskData(
+        "fencer",
+        4);
+
+    // _laserMasks = CreateTerrainMaskArray(
+    //     LasererAction.Instance,
+    //     "laser",
+    //     new LevelPosition(3, 10),
+    //     1);
+
+    WriteMaskData(
+        "miner",
+        2);
+}
+
+private void WriteMaskData(
+     string actionName,
+     int numberOfFrames)
+{
+    using var texture = Content.Load<Texture2D>($"mask/{actionName}");
+    var outputFile = $@"C:\Temp\{actionName}_mask.dat";
+
+    var spriteWidth = (byte)texture.Width;
+    var spriteHeight = (byte)(texture.Height / numberOfFrames);
+
+    var data = new uint[texture.Height * texture.Width];
+    texture.GetData(data);
+
+    using var fileStream = new FileStream(outputFile, FileMode.Create);
+    using var writer = new BinaryWriter(fileStream);
+
+    writer.Write(spriteWidth);
+    writer.Write(spriteHeight);
+    writer.Write((byte)numberOfFrames);
+
+    var byteLimit = data.Length / 8;
+
+    for (var i = 0; i < byteLimit; i++)
+    {
+        var byteData = 0;
+
+        for (var j = 0; j < 8; j++)
+        {
+            var index = (i * 8) + j;
+            var u = index < data.Length ? data[index] : 0;
+            var v = u == 0 ? 0 : 1;
+            byteData |= v << j;
+        }
+
+        writer.Write((byte)byteData);
+    }
+}
+*/
 }

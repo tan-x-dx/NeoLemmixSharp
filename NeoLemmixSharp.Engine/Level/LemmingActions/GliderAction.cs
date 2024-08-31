@@ -7,7 +7,7 @@ public sealed class GliderAction : LemmingAction
 {
     public static readonly GliderAction Instance = new();
 
-    private readonly int[] _gliderFallTable = [3, 3, 3, 3, -1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+    private static ReadOnlySpan<int> GliderFallTable => [3, 3, 3, 3, -1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
     private GliderAction()
         : base(
@@ -112,7 +112,7 @@ end;
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        var maxFallDistance = _gliderFallTable[lemming.PhysicsFrame];
+        var maxFallDistance = GliderFallTable[lemming.PhysicsFrame];
 
         var updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
 

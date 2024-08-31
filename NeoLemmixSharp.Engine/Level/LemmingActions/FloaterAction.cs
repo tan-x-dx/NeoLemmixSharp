@@ -6,7 +6,7 @@ public sealed class FloaterAction : LemmingAction
 {
     public static readonly FloaterAction Instance = new();
 
-    private readonly int[] _floaterFallTable = [3, 3, 3, 3, -1, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2];
+    private static ReadOnlySpan<int> FloaterFallTable => [3, 3, 3, 3, -1, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2];
 
     private FloaterAction()
         : base(
@@ -21,7 +21,7 @@ public sealed class FloaterAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var maxFallDistance = _floaterFallTable[lemming.PhysicsFrame - 1];
+        var maxFallDistance = FloaterFallTable[lemming.PhysicsFrame - 1];
 
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;

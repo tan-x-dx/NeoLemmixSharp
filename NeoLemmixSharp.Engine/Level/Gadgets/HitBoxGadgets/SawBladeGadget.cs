@@ -84,6 +84,8 @@ public sealed class SawBladeGadget : HitBoxGadget, IDestructionMask, IMoveableGa
         UpdatePosition(newPosition);
     }
 
+    string IDestructionMask.Name => "Saw blade";
+
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {

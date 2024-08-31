@@ -7,12 +7,12 @@ namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
 public static partial class TerrainMasks
 {
 #pragma warning disable CS8618
-    private static TerrainEraseMask[] _basherMasks;
-    private static TerrainEraseMask[] _bomberMasks;
-    private static TerrainEraseMask[] _fencerMasks;
-    private static TerrainEraseMask[] _laserMasks;
-    private static TerrainEraseMask[] _minerMasks;
-    private static TerrainAddMask[] _stonerMasks;
+    private static TerrainEraseMask[] _basherMasks = [];
+    private static TerrainEraseMask[] _bomberMasks = [];
+    private static TerrainEraseMask[] _fencerMasks = [];
+    private static TerrainEraseMask[] _laserMasks = [];
+    private static TerrainEraseMask[] _minerMasks = [];
+    private static TerrainAddMask[] _stonerMasks = [];
 #pragma warning restore CS8618
 
     public static void ApplyBasherMask(

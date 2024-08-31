@@ -38,6 +38,8 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
 
+    string IDestructionMask.Name => LemmingActionName;
+
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
