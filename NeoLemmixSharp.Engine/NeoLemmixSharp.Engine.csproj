@@ -15,4 +15,8 @@
     <ProjectReference Include="..\NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Level\Rewind\SnapshotData\" />
+  </ItemGroup>
+
 </Project>
