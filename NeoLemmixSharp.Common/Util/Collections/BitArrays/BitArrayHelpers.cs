@@ -77,7 +77,7 @@ public static class BitArrayHelpers
         arrayValue |= 1U << index;
         var delta = (arrayValue ^ oldValue) >> index;
         popCount += (int)delta;
-        return delta != 0U;
+        return (delta & 1U) != 0U;
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ public static class BitArrayHelpers
         arrayValue &= ~(1U << index);
         var delta = (arrayValue ^ oldValue) >> index;
         popCount -= (int)delta;
-        return delta != 0U;
+        return (delta & 1U) != 0U;
     }
 
     /// <summary>
