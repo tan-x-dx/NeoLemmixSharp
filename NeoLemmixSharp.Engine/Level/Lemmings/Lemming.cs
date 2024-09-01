@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
+public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapshotDataConvertible<LemmingSnapshotData>
 {
     public static Lemming SimulationLemming { get; } = new();
 
@@ -478,7 +478,12 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds
         FacingDirection = facingDirection;
     }
 
-    public void SetRawDataFromSnapshot(in LemmingSnapshotData lemmingSnapshotData)
+    public void ToSnapshotData(out LemmingSnapshotData lemmingSnapshotData)
+    {
+        lemmingSnapshotData = new LemmingSnapshotData(this);
+    }
+
+    public void SetFromSnapshotData(in LemmingSnapshotData lemmingSnapshotData)
     {
         if (Id != lemmingSnapshotData.Id)
             throw new InvalidOperationException("Mismatching IDs!");

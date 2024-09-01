@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
+public sealed class LemmingManager : IItemManager<Lemming>, IDisposable
 {
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
@@ -35,9 +35,9 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     public int LemmingsRemoved { get; private set; }
     public int LemmingsSaved { get; private set; }
 
-    public int TotalNumberOfLemmings => _lemmings.Length;
     public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
     public SimpleSetEnumerable<Lemming> AllBlockers => _allBlockers.AsSimpleEnumerable();
+    public ReadOnlySpan<Lemming> AllItems => new(_lemmings);
 
     public LemmingManager(
         HatchGroup[] hatchGroups,

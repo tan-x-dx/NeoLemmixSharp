@@ -12,13 +12,13 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
+public sealed class GadgetManager : IItemManager<GadgetBase>, IPerfectHasher<HitBoxGadget>, IDisposable
 {
     private readonly GadgetBase[] _allGadgets;
     private readonly SpacialHashGrid<HitBoxGadget> _gadgetPositionHelper;
 
-    public ReadOnlySpan<GadgetBase> AllGadgets => new(_allGadgets);
-    
+    public ReadOnlySpan<GadgetBase> AllItems => new(_allGadgets);
+
     public GadgetManager(
         GadgetBase[] allGadgets,
         BoundaryBehaviour horizontalBoundaryBehaviour,
@@ -54,7 +54,7 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
         if (updateState != UpdateState.FastForward && !isMajorTick)
             return;
 
-        foreach (var gadget in AllGadgets)
+        foreach (var gadget in _allGadgets)
         {
             gadget.Tick();
         }
@@ -146,7 +146,9 @@ public sealed class GadgetManager : IPerfectHasher<HitBoxGadget>, IDisposable
         _gadgetPositionHelper.UpdateItemPosition(gadget);
     }
 
-    int IPerfectHasher<HitBoxGadget>.NumberOfItems => _allGadgets.Length;
+    public int NumberOfItems => _allGadgets.Length;
+    int IPerfectHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
+    GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
     int IPerfectHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
     HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
 

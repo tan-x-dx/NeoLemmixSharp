@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
@@ -21,6 +22,7 @@ public sealed class UpdateScheduler
     private readonly GadgetManager _gadgetManager;
     private readonly SkillSetManager _skillSetManager;
     private readonly TerrainPainter _terrainPainter;
+    private readonly RewindManager _rewindManager;
 
     private LemmingSkill _queuedSkill = NoneSkill.Instance;
     private Lemming? _queuedSkillLemming;
@@ -44,7 +46,8 @@ public sealed class UpdateScheduler
         LemmingManager lemmingManager,
         GadgetManager gadgetManager,
         SkillSetManager skillSetManager,
-        TerrainPainter terrainPainter)
+        TerrainPainter terrainPainter,
+        RewindManager rewindManager)
     {
         _levelControlPanel = levelControlPanel;
         _levelCursor = levelCursor;
@@ -55,6 +58,7 @@ public sealed class UpdateScheduler
         _gadgetManager = gadgetManager;
         _skillSetManager = skillSetManager;
         _terrainPainter = terrainPainter;
+        _rewindManager = rewindManager;
     }
 
     public void Initialise()
@@ -174,6 +178,14 @@ end;
         UpdateControlPanelButtonStatus(ButtonType.FastForward, updateState == UpdateState.FastForward);
     }
 
+    private void UpdateControlPanelButtonStatus(ButtonType buttonType, bool isSelected)
+    {
+        var button = _levelControlPanel.GetControlPanelButtonOfType(buttonType);
+        if (button is null)
+            return;
+        button.IsSelected = isSelected;
+    }
+    
     private void TickLevel()
     {
         if (_updateState == UpdateState.Paused)
@@ -219,14 +231,6 @@ end;
         {
             _levelControlPanel.TextualData.ClearCursorData();
         }
-    }
-
-    private void UpdateControlPanelButtonStatus(ButtonType buttonType, bool isSelected)
-    {
-        var button = _levelControlPanel.GetControlPanelButtonOfType(buttonType);
-        if (button is null)
-            return;
-        button.IsSelected = isSelected;
     }
 
     private void HandleSkillAssignment()

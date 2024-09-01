@@ -5,11 +5,13 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -26,6 +28,7 @@ public sealed class LevelScreen : IBaseScreen
     private static LevelCursor _levelCursor = null!;
     private static LevelInputController _levelInputController = null!;
     private static Viewport _levelViewport = null!;
+    private static RewindManager _rewindManager = null!;
     private static LevelScreenRenderer _levelScreenRenderer = null!;
 
     public static LevelParameterSet LevelParameters => _levelParameters;
@@ -38,6 +41,7 @@ public sealed class LevelScreen : IBaseScreen
     public static UpdateScheduler UpdateScheduler => _updateScheduler;
     public static LevelCursor LevelCursor => _levelCursor;
     public static LevelInputController LevelInputController => _levelInputController;
+    public static RewindManager RewindManager => _rewindManager;
     public static Viewport LevelViewport => _levelViewport;
 
     public static void SetLevelParameters(LevelParameterSet levelParameters)
@@ -88,6 +92,11 @@ public sealed class LevelScreen : IBaseScreen
     public static void SetLevelInputController(LevelInputController levelInputController)
     {
         _levelInputController = levelInputController;
+    }
+
+    public static void SetRewindManager(RewindManager rewindManager)
+    {
+        _rewindManager = rewindManager;
     }
 
     public static void SetViewport(Viewport levelViewport)
@@ -154,11 +163,13 @@ public sealed class LevelScreen : IBaseScreen
         DisposeOf(ref _levelCursor);
         DisposeOf(ref _levelInputController);
         DisposeOf(ref _levelViewport);
+        DisposeOf(ref _rewindManager);
         DisposeOf(ref _levelScreenRenderer);
 
         IsDisposed = true;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void DisposeOf<T>(ref T obj)
         where T : class
     {

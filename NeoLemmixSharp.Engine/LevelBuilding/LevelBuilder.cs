@@ -6,6 +6,7 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Updates;
@@ -86,6 +87,11 @@ public sealed class LevelBuilder : IDisposable
         var levelViewport = new Viewport(horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetViewport(levelViewport);
 
+        var rewindManager = new RewindManager(
+            lemmingManager,
+            gadgetManager);
+        LevelScreen.SetRewindManager(rewindManager);
+
         var terrainTexture = terrainBuilder.GetTerrainTexture();
         var pixelData = terrainBuilder.GetPixelData();
         var terrainColorData = terrainBuilder.GetTerrainColors();
@@ -102,7 +108,8 @@ public sealed class LevelBuilder : IDisposable
             lemmingManager,
             gadgetManager,
             skillSetManager,
-            terrainPainter);
+            terrainPainter,
+            rewindManager);
         LevelScreen.SetUpdateScheduler(updateScheduler);
 
         var terrainManager = new TerrainManager(
