@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Timer;
 using System.Runtime.CompilerServices;
@@ -7,6 +8,7 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
 public sealed class ControlPanelTextualData
 {
+
     private const int CharLengthForLemmingActionAndCount = LevelConstants.LongestActionNameLength + // Enough space for the action part
                                                            1 + // Add a space
                                                            CharLengthForLemmingCount; // Lemmings under cursor
@@ -25,6 +27,7 @@ public sealed class ControlPanelTextualData
     private LemmingCountCharBuffer _lemmingsOutString;
     private GoalCountCharBuffer _goalCountString;
 
+    private readonly ControlPanelParameterSet _controlPanelParameters;
     public LevelTimer LevelTimer { get; }
 
     public ReadOnlySpan<int> LemmingActionAndCountSpan => _lemmingActionAndCountString;
@@ -32,8 +35,11 @@ public sealed class ControlPanelTextualData
     public ReadOnlySpan<int> LemmingsOutSpan => _lemmingsOutString;
     public ReadOnlySpan<int> GoalCountSpan => _goalCountString;
 
-    public ControlPanelTextualData(LevelTimer levelTimer)
+    public ControlPanelTextualData(
+        ControlPanelParameterSet controlPanelParameters,
+        LevelTimer levelTimer)
     {
+        _controlPanelParameters = controlPanelParameters;
         LevelTimer = levelTimer;
     }
 
@@ -59,7 +65,7 @@ public sealed class ControlPanelTextualData
         TextRenderingHelpers.WriteDigits(destSpan.Slice(textLength, spanLength), numberOfLemmingsUnderCursor);
     }
 
-    private static bool ShowAthleteInformation() => false;
+    private bool ShowAthleteInformation() => _controlPanelParameters.Contains(ControlPanelParameters.ShowAthleteInformation);
 
     private int WriteLemmingInfo(Lemming lemming)
     {
@@ -69,34 +75,42 @@ public sealed class ControlPanelTextualData
         var state = lemming.State;
 
         if (state.HasPermanentSkill && ShowAthleteInformation())
-        {
-            destSpan = destSpan[..7];
-            destSpan.Fill('-');
-
-            if (state.IsSlider) destSpan[0] = 'L';
-            if (state.IsClimber) destSpan[1] = 'C';
-            if (state.IsSwimmer) destSpan[2] = 'S';
-            else if (state.IsAcidLemming) destSpan[2] = 'A';
-            else if (state.IsWaterLemming) destSpan[2] = 'W';
-            if (state.IsFloater) destSpan[3] = 'F';
-            else if (state.IsGlider) destSpan[3] = 'G';
-            if (state.IsDisarmer) destSpan[4] = 'D';
-            if (state.IsZombie) destSpan[5] = 'Z';
-            if (state.IsNeutral) destSpan[6] = 'N';
-
-            return 7;
-        }
+            return WriteAthleteInformation(destSpan, state);
 
         var action = lemming.CurrentAction;
 
+        return action.CursorSelectionPriorityValue == LevelConstants.NonPermanentSkillPriority
+            ? WriteActionName(destSpan, action)
+            : WriteAthleteTypeInformation(destSpan, action, state);
+    }
+
+    private static int WriteAthleteInformation(Span<int> destSpan, LemmingState state)
+    {
+        destSpan = destSpan[..7];
+        destSpan.Fill('-');
+
+        if (state.IsSlider) destSpan[0] = 'L';
+        if (state.IsClimber) destSpan[1] = 'C';
+        if (state.IsSwimmer) destSpan[2] = 'S';
+        else if (state.IsAcidLemming) destSpan[2] = 'A';
+        else if (state.IsWaterLemming) destSpan[2] = 'W';
+        if (state.IsFloater) destSpan[3] = 'F';
+        else if (state.IsGlider) destSpan[3] = 'G';
+        if (state.IsDisarmer) destSpan[4] = 'D';
+        if (state.IsZombie) destSpan[5] = 'Z';
+        if (state.IsNeutral) destSpan[6] = 'N';
+
+        return 7;
+    }
+
+    private static int WriteAthleteTypeInformation(
+        Span<int> destSpan,
+        LemmingAction action,
+        LemmingState state)
+    {
+        ReadOnlySpan<int> sourceSpan;
         var isZombie = state.IsZombie;
         var isNeutral = state.IsNeutral;
-        if (action.CursorSelectionPriorityValue == LevelConstants.NonPermanentSkillPriority)
-        {
-            goto UseActionName;
-        }
-
-        ReadOnlySpan<int> sourceSpan;
 
         if (isZombie && isNeutral)
         {
@@ -120,16 +134,17 @@ public sealed class ControlPanelTextualData
                 case 3: sourceSpan = LevelConstants.AthleteString3Skills; break;
                 case 4: sourceSpan = LevelConstants.AthleteString4Skills; break;
                 case 5: sourceSpan = LevelConstants.AthleteString5Skills; break;
-                default: goto UseActionName;
+                default: return WriteActionName(destSpan, action);
             };
         }
 
         sourceSpan.CopyTo(destSpan);
 
         return sourceSpan.Length;
+    }
 
-        UseActionName:
-
+    private static int WriteActionName(Span<int> destSpan, LemmingAction action)
+    {
         for (var i = 0; i < action.LemmingActionName.Length; i++)
         {
             destSpan[i] = action.LemmingActionName[i];
@@ -137,56 +152,6 @@ public sealed class ControlPanelTextualData
 
         return action.LemmingActionName.Length;
     }
-
-    /*
-    function TBaseSkillPanel.GetSkillString(L: TLemming): String;
-    var
-    i: Integer;
-
-    procedure DoInc(aText: String);
-    begin
-    Inc(i);
-    case i of
-      1: Result := aText;
-      2: Result := SAthlete;
-      3: Result := STriathlete;
-      4: Result := SQuadathlete;
-      5: Result := SQuintathlete
-    end;
-    end;
-    begin
-    Result := '';
-    if L = nil then Exit;
-
-    Result := LemmingActionStrings[L.LemAction];
-
-    if L.HasPermanentSkills and GameParams.Hotkeys.CheckForKey(lka_ShowAthleteInfo) then
-    begin
-    Result := '-------';
-    if L.LemIsSlider then Result[1] := 'L';    
-    if L.LemIsClimber then Result[2] := 'C';
-    if L.LemIsSwimmer then Result[3] := 'S';
-    if L.LemIsFloater then Result[4] := 'F';
-    if L.LemIsGlider then Result[4] := 'G';
-    if L.LemIsDisarmer then Result[5] := 'D';
-    if L.LemIsZombie then Result[6] := 'Z';
-    if L.LemIsNeutral then Result[7] := 'N';
-    end
-    else if not (L.LemAction in [baBuilding, baPlatforming, baStacking, baLasering, baBashing, baMining, baDigging, baBlocking]) then
-    begin
-    i := 0;
-    if L.LemIsSlider then DoInc(SSlider);
-    if L.LemIsClimber then DoInc(SClimber);
-    if L.LemIsSwimmer then DoInc(SSwimmer);
-    if L.LemIsFloater then DoInc(SFloater);
-    if L.LemIsGlider then DoInc(SGlider);
-    if L.LemIsDisarmer then DoInc(SDisarmer);
-    if L.LemIsZombie then Result := SZombie;
-    if L.LemIsNeutral then Result := SNeutral;
-    if L.LemIsZombie and L.LemIsNeutral then Result := SNeutralZombie;
-    end;
-    end;
-    */
 
     public void ClearCursorData()
     {

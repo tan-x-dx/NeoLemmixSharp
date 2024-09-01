@@ -79,7 +79,7 @@ public sealed class LevelControlPanel
             _singularHatchGroup,
             controlPanelParameters);
 
-        _controlPanelTextualData = new ControlPanelTextualData(levelTimer);
+        _controlPanelTextualData = new ControlPanelTextualData(controlPanelParameters, levelTimer);
 
         _maxSkillPanelScroll = _skillAssignButtons.Length - MaxNumberOfSkillButtons;
 
