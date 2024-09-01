@@ -41,7 +41,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
 
     public LemmingManager(
         HatchGroup[] hatchGroups,
-        List<Lemming> lemmings,
+        Lemming[] lemmings,
         int totalNumberOfHatchLemmings,
         int numberOfPreplacedLemmings,
         BoundaryBehaviour horizontalBoundaryBehaviour,
@@ -54,7 +54,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
         }
         _hatchGroups = hatchGroups;
 
-        _lemmings = lemmings.ToArray();
+        _lemmings = lemmings;
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Lemming>(_lemmings));
         Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
 
@@ -125,7 +125,7 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
             !isMajorTick)
             return;
 
-        var hatchLemmingSpan = new ReadOnlySpan<Lemming>(_lemmings, 0, _totalNumberOfHatchLemmings);
+        var hatchLemmingSpan = new ReadOnlySpan<Lemming>(_lemmings, _numberOfPreplacedLemmings, _totalNumberOfHatchLemmings);
         foreach (var hatchGroup in AllHatchGroups)
         {
             var hatchGadget = hatchGroup.Tick();
@@ -348,12 +348,12 @@ public sealed class LemmingManager : IPerfectHasher<Lemming>, IDisposable
     {
         if (!CanCreateNewLemmingClone())
         {
-            clonedLemming = default;
+            clonedLemming = null;
             return false;
         }
 
-        var index = _totalNumberOfHatchLemmings +
-                    _numberOfPreplacedLemmings +
+        var index = _numberOfPreplacedLemmings +
+                    _totalNumberOfHatchLemmings +
                     _numberOfClonedLemmings;
 
         clonedLemming = _lemmings[index];

@@ -52,7 +52,7 @@ public sealed class LevelObjectAssembler : IDisposable
         return result;
     }
 
-    public List<Lemming> GetLevelLemmings(LevelData levelData)
+    public Lemming[] GetLevelLemmings(LevelData levelData)
     {
         var maxNumberOfClonedLemmings = levelData.MaxNumberOfClonedLemmings;
         var totalCapacity = maxNumberOfClonedLemmings +
@@ -61,10 +61,10 @@ public sealed class LevelObjectAssembler : IDisposable
 
         _lemmings.Capacity = totalCapacity;
 
-        var hatchLemmingData = CollectionsMarshal.AsSpan(levelData.HatchLemmingData);
-        AddLemmings(hatchLemmingData);
         var prePlacedLemmings = CollectionsMarshal.AsSpan(levelData.PrePlacedLemmingData);
         AddLemmings(prePlacedLemmings);
+        var hatchLemmingData = CollectionsMarshal.AsSpan(levelData.HatchLemmingData);
+        AddLemmings(hatchLemmingData);
 
         for (var i = 0; i < maxNumberOfClonedLemmings; i++)
         {
@@ -80,7 +80,7 @@ public sealed class LevelObjectAssembler : IDisposable
             _lemmings.Add(lemming);
         }
 
-        return _lemmings;
+        return _lemmings.ToArray();
 
         void AddLemmings(ReadOnlySpan<LemmingData> lemmingDataSpan)
         {
