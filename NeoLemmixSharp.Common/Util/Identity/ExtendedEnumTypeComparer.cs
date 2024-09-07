@@ -8,7 +8,7 @@ public sealed class ExtendedEnumTypeComparer<T> :
     IEqualityComparer<T>,
     IEquatable<ExtendedEnumTypeComparer<T>>,
     IComparer<T>,
-    IPerfectHasher<T>
+    IItemManager<T>
     where T : class, IExtendedEnumType<T>
 {
     private static readonly ExtendedEnumTypeComparer<T> Instance = new();
@@ -45,6 +45,9 @@ public sealed class ExtendedEnumTypeComparer<T> :
     public int Hash(T item) => item.Id;
     [Pure]
     public T UnHash(int index) => T.AllItems[index];
+
+    [Pure]
+    public ReadOnlySpan<T> AllItems => T.AllItems;
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
