@@ -1,11 +1,9 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.BoundaryBehaviours;
+﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Updates;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -111,20 +109,20 @@ public sealed class LemmingManager : IItemManager<Lemming>, IDisposable
         }
     }
 
-    public void Tick(UpdateState updateState, bool isMajorTick)
+    public void Tick(bool isMajorTick)
     {
-        UpdateHatchGroups(updateState, isMajorTick);
-        UpdateLemmings(updateState, isMajorTick);
+        if (isMajorTick)
+        {
+            UpdateHatchGroups();
+        }
+
+        UpdateLemmings(isMajorTick);
 
         ZombifyLemmings();
     }
 
-    private void UpdateHatchGroups(UpdateState updateState, bool isMajorTick)
+    private void UpdateHatchGroups()
     {
-        if (updateState != UpdateState.FastForward &&
-            !isMajorTick)
-            return;
-
         var hatchLemmingSpan = new ReadOnlySpan<Lemming>(_lemmings, _numberOfPreplacedLemmings, _totalNumberOfHatchLemmings);
         foreach (var hatchGroup in AllHatchGroups)
         {
@@ -142,37 +140,17 @@ public sealed class LemmingManager : IItemManager<Lemming>, IDisposable
         }
     }
 
-    private void UpdateLemmings(UpdateState updateState, bool isMajorTick)
+    private void UpdateLemmings(bool isMajorTick)
     {
         var lemmingSpan = new ReadOnlySpan<Lemming>(_lemmings);
         foreach (var lemming in lemmingSpan)
         {
-            var i = GetTickNumberForLemming(lemming, updateState, isMajorTick);
-
-            switch (i)
+            if (lemming.State.IsActive && (isMajorTick || lemming.IsFastForward))
             {
-                case 3: lemming.Tick(); UpdateLemmingPosition(lemming); goto case 2;
-                case 2: lemming.Tick(); UpdateLemmingPosition(lemming); goto case 1;
-                case 1: lemming.Tick(); UpdateLemmingPosition(lemming); break;
-                case 0: break;
+                lemming.Tick();
+                UpdateLemmingPosition(lemming);
             }
         }
-    }
-
-    private static int GetTickNumberForLemming(Lemming lemming, UpdateState updateState, bool isMajorTick)
-    {
-        var lemmingIsFastForward = lemming.IsFastForward;
-        var gameIsFastForward = updateState == UpdateState.FastForward;
-
-        if (lemming.State.IsActive &&
-            (lemmingIsFastForward ||
-             gameIsFastForward ||
-             isMajorTick))
-            return lemmingIsFastForward && gameIsFastForward
-                ? EngineConstants.FastForwardSpeedMultiplier
-                : 1;
-
-        return 0;
     }
 
     private void ZombifyLemmings()

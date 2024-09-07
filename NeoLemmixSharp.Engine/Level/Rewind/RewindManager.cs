@@ -21,4 +21,15 @@ public sealed class RewindManager
         _gadgetSnapshotManager = new SnapshotManager<GadgetManager, GadgetBase, int>(gadgetManager);
         _terrainPainter = terrainPainter;
     }
+
+    public void Tick(int elapsedTicks)
+    {
+        if (elapsedTicks % LevelConstants.RewindSnapshotInterval == 0)
+        {
+            _lemmingSnapshotManager.TakeSnapshot();
+            _gadgetSnapshotManager.TakeSnapshot();
+        }
+
+        _terrainPainter.RepaintTerrain();
+    }
 }

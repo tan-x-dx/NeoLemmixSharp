@@ -11,6 +11,7 @@ public abstract class LevelTimer
     private const int NumberOfTimerChars = 6;
 
     public readonly TimerType Type;
+    private int _previousElapsedSeconds;
     protected int ElapsedSeconds;
 
     private TimerCharBuffer _timerCharBuffer;
@@ -28,22 +29,15 @@ public abstract class LevelTimer
         _timerCharBuffer[5] = '0';
     }
 
-    public void Tick()
-    {
-        // ElapsedTicks++;
-        // if (ElapsedTicks % LevelConstants.FramesPerSecond != 0)
-        //     return;
-
-        ElapsedSeconds++;
-        UpdateAppearance();
-    }
-
     public void SetElapsedTicks(int elapsedTicks)
     {
-        //   ElapsedTicks = elapsedTicks;
+        _previousElapsedSeconds = ElapsedSeconds;
         ElapsedSeconds = elapsedTicks / EngineConstants.FramesPerSecond;
 
-        UpdateAppearance();
+        if (_previousElapsedSeconds != ElapsedSeconds)
+        {
+            UpdateAppearance();
+        }
     }
 
     protected abstract void UpdateAppearance();

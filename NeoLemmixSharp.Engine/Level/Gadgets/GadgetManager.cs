@@ -6,7 +6,6 @@ using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Updates;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -49,14 +48,14 @@ public sealed class GadgetManager : IItemManager<GadgetBase>, IPerfectHasher<Hit
         }
     }
 
-    public void Tick(UpdateState updateState, bool isMajorTick)
+    public void Tick(bool isMajorTick)
     {
-        if (updateState != UpdateState.FastForward && !isMajorTick)
-            return;
-
         foreach (var gadget in _allGadgets)
         {
-            gadget.Tick();
+            if (isMajorTick)
+            {
+                gadget.Tick();
+            }
         }
     }
 

@@ -32,7 +32,6 @@ public sealed class UpdateScheduler
 
     private int _elapsedTicks;
     private int _elapsedTicksModuloFastForwardSpeed;
-    private int _elapsedTicksModuloFramesPerSecond;
 
     public bool DoneAssignmentThisFrame { get; set; }
     public int ElapsedTicks => _elapsedTicks;
@@ -124,7 +123,6 @@ end;
         TickLevel();
         HandleCursor();
         HandleSkillAssignment();
-        _terrainPainter.RepaintTerrain();
     }
 
     private void HandleMouseInput()
@@ -188,28 +186,26 @@ end;
 
     private void TickLevel()
     {
-        if (_updateState == UpdateState.Paused)
-            return;
+        var numberOfTicksToPerform = (int)_updateState;
 
+        while (numberOfTicksToPerform-- > 0)
+        {
+            PerformOneTick();
+        }
+    }
+
+    private void PerformOneTick()
+    {
         var isMajorTick = _elapsedTicksModuloFastForwardSpeed == 0;
-        _lemmingManager.Tick(_updateState, isMajorTick);
-        _gadgetManager.Tick(_updateState, isMajorTick);
+        _lemmingManager.Tick(isMajorTick);
+        _gadgetManager.Tick(isMajorTick);
+        _levelTimer.SetElapsedTicks(_elapsedTicks);
+        _rewindManager.Tick(_elapsedTicks);
 
         _elapsedTicks++;
         var elapsedTicksModuloFastForwardSpeed = _elapsedTicksModuloFastForwardSpeed + 1;
-        if (elapsedTicksModuloFastForwardSpeed == EngineConstants.FastForwardSpeedMultiplier)
-        {
-            elapsedTicksModuloFastForwardSpeed = 0;
-        }
+        elapsedTicksModuloFastForwardSpeed %= EngineConstants.FastForwardSpeedMultiplier;
         _elapsedTicksModuloFastForwardSpeed = elapsedTicksModuloFastForwardSpeed;
-
-        var elapsedTicksModuloFramesPerSecond = _elapsedTicksModuloFramesPerSecond + 1;
-        if (elapsedTicksModuloFramesPerSecond == EngineConstants.FramesPerSecond)
-        {
-            _levelTimer.Tick();
-            elapsedTicksModuloFramesPerSecond = 0;
-        }
-        _elapsedTicksModuloFramesPerSecond = elapsedTicksModuloFramesPerSecond;
     }
 
     private void HandleCursor()
