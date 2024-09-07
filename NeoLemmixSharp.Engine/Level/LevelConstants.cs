@@ -75,19 +75,19 @@ public static class LevelConstants
 
     public const uint MinimumSubstantialAlphaValue = 0x80;
 
-    private static readonly Color[] ExplosionParticleColors =
+    private static ReadOnlySpan<uint> RawExplosionParticleColorsHexValues =>
     [
-        new Color(0x40, 0x40, 0xE0, 0xF0),
-        new Color(0x00, 0xB0, 0x00, 0xF0),
-        new Color(0xF0, 0xD0, 0xD0, 0xF0),
-        new Color(0xF0, 0x20, 0x20, 0xF0),
-        new Color(0x40, 0x40, 0xE0, 0xC0),
-        new Color(0x00, 0xB0, 0x00, 0xC0),
-        new Color(0xF0, 0xD0, 0xD0, 0xC0),
-        new Color(0xF0, 0x20, 0x20, 0xC0)
+        0xF0E04040,
+        0xF000B000,
+        0xF0D0D0F0,
+        0xF02020F0,
+        0xC0E04040,
+        0xC000B000,
+        0xC0D0D0F0,
+        0xC02020F0
     ];
 
-    public static ReadOnlySpan<Color> GetExplosionParticleColors() => new(ExplosionParticleColors);
+    public static ReadOnlySpan<Color> GetExplosionParticleColors() => MemoryMarshal.Cast<uint, Color>(RawExplosionParticleColorsHexValues);
     public const int NumberOfExplosionParticleColors = 8;
     public const int NumberOfExplosionParticleColorsMask = NumberOfExplosionParticleColors - 1;
 
