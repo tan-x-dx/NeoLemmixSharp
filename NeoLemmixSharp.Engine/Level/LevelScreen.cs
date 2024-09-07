@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
@@ -8,15 +9,21 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
+using System.Diagnostics.Contracts;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelScreen : IBaseScreen
 {
+    private static BoundaryBehaviour _horizontalBoundaryBehaviour = null!;
+    private static BoundaryBehaviour _verticalBoundaryBehaviour = null!;
+
     private static LevelParameterSet _levelParameters = null!;
     private static TerrainManager _terrainManager = null!;
     private static TerrainPainter _terrainPainter = null!;
@@ -26,10 +33,14 @@ public sealed class LevelScreen : IBaseScreen
     private static LevelControlPanel _levelControlPanel = null!;
     private static UpdateScheduler _updateScheduler = null!;
     private static LevelCursor _levelCursor = null!;
+    private static LevelTimer _levelTimer = null!;
     private static LevelInputController _levelInputController = null!;
     private static Viewport _levelViewport = null!;
     private static RewindManager _rewindManager = null!;
     private static LevelScreenRenderer _levelScreenRenderer = null!;
+
+    public static BoundaryBehaviour HorizontalBoundaryBehaviour => _horizontalBoundaryBehaviour;
+    public static BoundaryBehaviour VerticalBoundaryBehaviour => _verticalBoundaryBehaviour;
 
     public static LevelParameterSet LevelParameters => _levelParameters;
     public static TerrainManager TerrainManager => _terrainManager;
@@ -40,9 +51,20 @@ public sealed class LevelScreen : IBaseScreen
     public static LevelControlPanel LevelControlPanel => _levelControlPanel;
     public static UpdateScheduler UpdateScheduler => _updateScheduler;
     public static LevelCursor LevelCursor => _levelCursor;
+    public static LevelTimer LevelTimer => _levelTimer;
     public static LevelInputController LevelInputController => _levelInputController;
     public static RewindManager RewindManager => _rewindManager;
     public static Viewport LevelViewport => _levelViewport;
+
+    public static void SetHorizontalBoundaryBehaviour(BoundaryBehaviour horizontalBoundaryBehaviour)
+    {
+        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+    }
+
+    public static void SetVerticalBoundaryBehaviour(BoundaryBehaviour verticalBoundaryBehaviour)
+    {
+        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
+    }
 
     public static void SetLevelParameters(LevelParameterSet levelParameters)
     {
@@ -89,6 +111,11 @@ public sealed class LevelScreen : IBaseScreen
         _levelCursor = levelCursor;
     }
 
+    public static void SetLevelTimer(LevelTimer levelTimer)
+    {
+        _levelTimer = levelTimer;
+    }
+
     public static void SetLevelInputController(LevelInputController levelInputController)
     {
         _levelInputController = levelInputController;
@@ -109,13 +136,56 @@ public sealed class LevelScreen : IBaseScreen
         _levelScreenRenderer = levelScreenRenderer;
     }
 
-    IScreenRenderer IBaseScreen.ScreenRenderer => _levelScreenRenderer;
+    public static int LevelWidth => HorizontalBoundaryBehaviour.LevelLength;
+    public static int LevelHeight => VerticalBoundaryBehaviour.LevelLength;
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static LevelPosition NormalisePosition(LevelPosition levelPosition)
+    {
+        return new LevelPosition(
+            HorizontalBoundaryBehaviour.Normalise(levelPosition.X),
+            VerticalBoundaryBehaviour.Normalise(levelPosition.Y));
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool PositionOutOfBounds(LevelPosition levelPosition)
+    {
+        return levelPosition.X < 0 ||
+               levelPosition.X >= HorizontalBoundaryBehaviour.LevelLength ||
+               levelPosition.Y < 0 ||
+               levelPosition.Y >= VerticalBoundaryBehaviour.LevelLength;
+    }
+
+    public IScreenRenderer ScreenRenderer => _levelScreenRenderer;
     public string ScreenTitle { get; }
     public bool IsDisposed { get; private set; }
 
     public LevelScreen(LevelData levelData)
     {
         ScreenTitle = levelData.LevelTitle;
+
+        ValidateAndInitialise();
+    }
+
+    private static void ValidateAndInitialise()
+    {
+        var staticFields = typeof(LevelScreen)
+            .GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+
+        foreach (var staticField in staticFields)
+        {
+            var actualObject = staticField.GetValue(null);
+
+            if (actualObject is null)
+                throw new InvalidOperationException($"Static field has not been initialised: {staticField.Name}");
+
+            if (actualObject is IInitialisable objectToInitialise)
+            {
+                objectToInitialise.Initialise();
+            }
+        }
     }
 
     public void Tick(GameTime gameTime)
@@ -123,7 +193,7 @@ public sealed class LevelScreen : IBaseScreen
         if (!IGameWindow.Instance.IsActive)
             return;
 
-        _updateScheduler.Tick();
+        UpdateScheduler.Tick();
     }
 
     public void OnWindowSizeChanged()
@@ -131,9 +201,9 @@ public sealed class LevelScreen : IBaseScreen
         var windowWidth = IGameWindow.Instance.WindowWidth;
         var windowHeight = IGameWindow.Instance.WindowHeight;
 
-        _levelControlPanel.SetWindowDimensions(windowWidth, windowHeight);
-        _levelViewport.SetWindowDimensions(windowWidth, windowHeight, _levelControlPanel.ScreenHeight);
-        _levelScreenRenderer.OnWindowSizeChanged();
+        LevelControlPanel.SetWindowDimensions(windowWidth, windowHeight);
+        LevelViewport.SetWindowDimensions(windowWidth, windowHeight, LevelControlPanel.ScreenHeight);
+        ScreenRenderer.OnWindowSizeChanged();
 
         IGameWindow.Instance.CaptureCursor();
     }
@@ -153,31 +223,21 @@ public sealed class LevelScreen : IBaseScreen
         if (IsDisposed)
             return;
 
-        DisposeOf(ref _levelParameters);
-        DisposeOf(ref _terrainManager);
-        DisposeOf(ref _lemmingManager);
-        DisposeOf(ref _gadgetManager);
-        DisposeOf(ref _skillSetManager);
-        DisposeOf(ref _levelControlPanel);
-        DisposeOf(ref _updateScheduler);
-        DisposeOf(ref _levelCursor);
-        DisposeOf(ref _levelInputController);
-        DisposeOf(ref _levelViewport);
-        DisposeOf(ref _rewindManager);
-        DisposeOf(ref _levelScreenRenderer);
+        var staticFields = typeof(LevelScreen)
+            .GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
-        IsDisposed = true;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void DisposeOf<T>(ref T obj)
-        where T : class
-    {
-        if (obj is IDisposable disposable)
+        foreach (var staticField in staticFields)
         {
-            disposable.Dispose();
+            var actualObject = staticField.GetValue(null);
+
+            if (actualObject is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+
+            staticField.SetValue(null, null);
         }
 
-        obj = null!;
+        IsDisposed = true;
     }
 }

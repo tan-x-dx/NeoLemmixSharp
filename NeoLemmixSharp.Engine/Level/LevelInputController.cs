@@ -40,7 +40,7 @@ public sealed class LevelInputController
 
     public InputAction Space { get; }
 
-    public LevelInputController(LevelParameterSet levelParameters)
+    public LevelInputController()
     {
         Pause = _inputController.CreateInputAction("Pause");
         Quit = _inputController.CreateInputAction("Quit");
@@ -67,7 +67,7 @@ public sealed class LevelInputController
 
         SetUpBindings();
 
-        Initialise(levelParameters);
+        Initialise();
     }
 
     private void SetUpBindings()
@@ -97,7 +97,7 @@ public sealed class LevelInputController
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Tick() => _inputController.Tick();
 
-    private void Initialise(LevelParameterSet levelParameters)
+    private void Initialise()
     {
         SetEnabledWithFlag(Pause, LevelParameters.EnablePause);
         SetEnabledWithFlag(ToggleFastForwards, LevelParameters.EnableFastForward);
@@ -108,7 +108,7 @@ public sealed class LevelInputController
 
         void SetEnabledWithFlag(InputAction inputAction, LevelParameters testFlag)
         {
-            inputAction.SetEnabled(levelParameters.Contains(testFlag));
+            inputAction.SetEnabled(LevelScreen.LevelParameters.Contains(testFlag));
         }
     }
 }

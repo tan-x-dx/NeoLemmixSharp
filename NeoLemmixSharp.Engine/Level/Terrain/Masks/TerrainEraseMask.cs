@@ -30,7 +30,7 @@ public sealed class TerrainEraseMask
 
         foreach (var pixel in _mask)
         {
-            terrainManager.ErasePixel(orientation, _destructionMask, facingDirection, terrainManager.NormalisePosition(pixel + offset));
+            terrainManager.ErasePixel(orientation, _destructionMask, facingDirection, LevelScreen.NormalisePosition(pixel + offset));
         }
     }
 

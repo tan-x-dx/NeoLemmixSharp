@@ -131,7 +131,7 @@ public sealed class ControlPanelRenderer
         RenderText(currentTextSpan, x);
         x += (currentTextSpan.Length + 1) * PanelFont.GlyphWidth;
 
-        var levelTimer = textualData.LevelTimer;
+        var levelTimer = LevelScreen.LevelTimer;
         var timerIconX = levelTimer.Type == LevelTimer.TimerType.CountDown
             ? TimerDownPanelIconX
             : TimerUpPanelIconX;

@@ -18,48 +18,48 @@ public sealed class LeftOrientation : Orientation
     }
 
     [Pure]
-    public override LevelPosition TopLeftCornerOfLevel() => new(TerrainManager.LevelWidth, 0);
+    public override LevelPosition TopLeftCornerOfLevel() => new(LevelWidth, 0);
     [Pure]
-    public override LevelPosition TopRightCornerOfLevel() => new(TerrainManager.LevelWidth, TerrainManager.LevelHeight);
+    public override LevelPosition TopRightCornerOfLevel() => new(LevelWidth, LevelHeight);
     [Pure]
     public override LevelPosition BottomLeftCornerOfLevel() => new(0, 0);
     [Pure]
-    public override LevelPosition BottomRightCornerOfLevel() => new(0, TerrainManager.LevelHeight);
+    public override LevelPosition BottomRightCornerOfLevel() => new(0, LevelHeight);
 
     [Pure]
     public override LevelPosition MoveRight(LevelPosition position, int step)
     {
-        return TerrainManager.NormalisePosition(new LevelPosition(position.X, position.Y + step));
+        return NormalisePosition(new LevelPosition(position.X, position.Y + step));
     }
 
     [Pure]
     public override LevelPosition MoveUp(LevelPosition position, int step)
     {
-        return TerrainManager.NormalisePosition(new LevelPosition(position.X + step, position.Y));
+        return NormalisePosition(new LevelPosition(position.X + step, position.Y));
     }
 
     [Pure]
     public override LevelPosition MoveLeft(LevelPosition position, int step)
     {
-        return TerrainManager.NormalisePosition(new LevelPosition(position.X, position.Y - step));
+        return NormalisePosition(new LevelPosition(position.X, position.Y - step));
     }
 
     [Pure]
     public override LevelPosition MoveDown(LevelPosition position, int step)
     {
-        return TerrainManager.NormalisePosition(new LevelPosition(position.X - step, position.Y));
+        return NormalisePosition(new LevelPosition(position.X - step, position.Y));
     }
 
     [Pure]
     public override LevelPosition Move(LevelPosition position, LevelPosition relativeDirection)
     {
-        return TerrainManager.NormalisePosition(new LevelPosition(position.X + relativeDirection.Y, position.Y + relativeDirection.X));
+        return NormalisePosition(new LevelPosition(position.X + relativeDirection.Y, position.Y + relativeDirection.X));
     }
 
     [Pure]
     public override LevelPosition Move(LevelPosition position, int dx, int dy)
     {
-        return TerrainManager.NormalisePosition(new LevelPosition(position.X + dy, position.Y + dx));
+        return NormalisePosition(new LevelPosition(position.X + dy, position.Y + dx));
     }
 
     public override LevelPosition MoveWithoutNormalization(LevelPosition position, int dx, int dy)
@@ -86,7 +86,7 @@ public sealed class LeftOrientation : Orientation
         var a = fromPosition.Y;
         var b = toPosition.Y;
 
-        return TerrainManager.VerticalBoundaryBehaviour.GetDelta(a, b);
+        return VerticalBoundaryBehaviour.GetDelta(a, b);
     }
 
     [Pure]
@@ -95,6 +95,6 @@ public sealed class LeftOrientation : Orientation
         var a = fromPosition.X;
         var b = toPosition.X;
 
-        return TerrainManager.HorizontalBoundaryBehaviour.GetDelta(b, a);
+        return HorizontalBoundaryBehaviour.GetDelta(b, a);
     }
 }

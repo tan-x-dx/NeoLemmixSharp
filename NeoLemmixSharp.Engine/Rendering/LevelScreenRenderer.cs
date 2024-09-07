@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -14,7 +15,6 @@ public sealed class LevelScreenRenderer : IScreenRenderer
     public static LevelScreenRenderer Instance { get; private set; } = null!;
 
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly Level.Viewport _viewport;
 
     private readonly LemmingSpriteBank _lemmingSpriteBank;
     private readonly GadgetSpriteBank _gadgetSpriteBank;
@@ -32,7 +32,6 @@ public sealed class LevelScreenRenderer : IScreenRenderer
     public LevelScreenRenderer(
         GraphicsDevice graphicsDevice,
         LevelControlPanel levelControlPanel,
-        Level.Viewport viewport,
         LevelRenderer levelRenderer,
         LevelCursorSprite levelCursorSprite,
         LemmingSpriteBank lemmingSpriteBank,
@@ -40,7 +39,6 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         ControlPanelSpriteBank controlPanelSpriteBank)
     {
         _graphicsDevice = graphicsDevice;
-        _viewport = viewport;
 
         _lemmingSpriteBank = lemmingSpriteBank;
         _gadgetSpriteBank = gadgetSpriteBank;
@@ -75,9 +73,9 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         _controlPanelRenderer.DrawToScreen(spriteBatch);
         _levelCursorSprite.RenderAtPosition(
             spriteBatch,
-            _viewport.HorizontalBoundaryBehaviour.MouseScreenCoordinate,
-            _viewport.VerticalBoundaryBehaviour.MouseScreenCoordinate,
-            _viewport.ScaleMultiplier);
+            LevelScreen.HorizontalBoundaryBehaviour.MouseScreenCoordinate,
+            LevelScreen.VerticalBoundaryBehaviour.MouseScreenCoordinate,
+            LevelScreen.LevelViewport.ScaleMultiplier);
 
         spriteBatch.End();
     }

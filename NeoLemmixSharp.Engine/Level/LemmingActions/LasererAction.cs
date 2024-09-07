@@ -147,8 +147,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         LaserHitType CheckForHit(
             ReadOnlySpan<LevelPosition> offsetChecks)
         {
-            var terrainManager = LevelScreen.TerrainManager;
-            if (terrainManager.PositionOutOfBounds(target))
+            if (LevelScreen.PositionOutOfBounds(target))
                 return LaserHitType.OutOfBounds;
 
             var result = LaserHitType.None;

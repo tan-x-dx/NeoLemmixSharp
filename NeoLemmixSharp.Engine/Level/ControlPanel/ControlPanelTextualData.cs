@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Timer;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
@@ -28,7 +27,6 @@ public sealed class ControlPanelTextualData
     private GoalCountCharBuffer _goalCountString;
 
     private readonly ControlPanelParameterSet _controlPanelParameters;
-    public LevelTimer LevelTimer { get; }
 
     public ReadOnlySpan<int> LemmingActionAndCountSpan => _lemmingActionAndCountString;
     public ReadOnlySpan<int> HatchCountSpan => _hatchCountString;
@@ -36,11 +34,9 @@ public sealed class ControlPanelTextualData
     public ReadOnlySpan<int> GoalCountSpan => _goalCountString;
 
     public ControlPanelTextualData(
-        ControlPanelParameterSet controlPanelParameters,
-        LevelTimer levelTimer)
+        ControlPanelParameterSet controlPanelParameters)
     {
         _controlPanelParameters = controlPanelParameters;
-        LevelTimer = levelTimer;
     }
 
     public void SetCursorData(Lemming? lemmingUnderCursor, int numberOfLemmingsUnderCursor)

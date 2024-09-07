@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -17,20 +16,9 @@ public sealed class Viewport
     private int _scaleMultiplier = InitialScaleMultiplier;
     private int _scrollDelta = ScrollSpeedMultiplier * MaxScaleMultiplier / InitialScaleMultiplier;
 
-    public BoundaryBehaviour HorizontalBoundaryBehaviour { get; }
-    public BoundaryBehaviour VerticalBoundaryBehaviour { get; }
-
     public int ScaleMultiplier => _scaleMultiplier;
 
     public bool MouseIsInLevelViewPort { get; private set; }
-
-    public Viewport(
-        BoundaryBehaviour horizontalBoundaryBehaviour,
-        BoundaryBehaviour verticalBoundaryBehaviour)
-    {
-        HorizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
-        VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
-    }
 
     public void SetWindowDimensions(int gameWindowWidth, int gameWindowHeight, int controlPanelHeight)
     {
@@ -38,9 +26,8 @@ public sealed class Viewport
         _windowHeight = gameWindowHeight;
         _controlPanelHeight = controlPanelHeight;
 
-        HorizontalBoundaryBehaviour.UpdateScreenDimension(_windowWidth, _scaleMultiplier);
-
-        VerticalBoundaryBehaviour.UpdateScreenDimension(_windowHeight - _controlPanelHeight, _scaleMultiplier);
+        LevelScreen.HorizontalBoundaryBehaviour.UpdateScreenDimension(_windowWidth, _scaleMultiplier);
+        LevelScreen.VerticalBoundaryBehaviour.UpdateScreenDimension(_windowHeight - _controlPanelHeight, _scaleMultiplier);
     }
 
     public void HandleMouseInput(LevelInputController inputController)
@@ -57,24 +44,24 @@ public sealed class Viewport
 
         if (inputController.MouseX == 0)
         {
-            HorizontalBoundaryBehaviour.Scroll(-_scrollDelta);
+            LevelScreen.HorizontalBoundaryBehaviour.Scroll(-_scrollDelta);
         }
         else if (inputController.MouseX == _windowWidth - 1)
         {
-            HorizontalBoundaryBehaviour.Scroll(_scrollDelta);
+            LevelScreen.HorizontalBoundaryBehaviour.Scroll(_scrollDelta);
         }
 
         if (inputController.MouseY == 0)
         {
-            VerticalBoundaryBehaviour.Scroll(-_scrollDelta);
+            LevelScreen.VerticalBoundaryBehaviour.Scroll(-_scrollDelta);
         }
         else if (inputController.MouseY == _windowHeight - 1)
         {
-            VerticalBoundaryBehaviour.Scroll(_scrollDelta);
+            LevelScreen.VerticalBoundaryBehaviour.Scroll(_scrollDelta);
         }
 
-        HorizontalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseX);
-        VerticalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseY);
+        LevelScreen.HorizontalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseX);
+        LevelScreen.VerticalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseY);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -92,9 +79,8 @@ public sealed class Viewport
         if (_scaleMultiplier == previousValue)
             return;
 
-        HorizontalBoundaryBehaviour.UpdateScreenDimension(_windowWidth, _scaleMultiplier);
-
-        VerticalBoundaryBehaviour.UpdateScreenDimension(_windowHeight - _controlPanelHeight, _scaleMultiplier);
+        LevelScreen.HorizontalBoundaryBehaviour.UpdateScreenDimension(_windowWidth, _scaleMultiplier);
+        LevelScreen.VerticalBoundaryBehaviour.UpdateScreenDimension(_windowHeight - _controlPanelHeight, _scaleMultiplier);
 
         _scrollDelta = ScrollSpeedMultiplier * MaxScaleMultiplier / _scaleMultiplier;
     }

@@ -1,29 +1,13 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
-using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.Level.Terrain;
-using NeoLemmixSharp.Engine.Level.Timer;
 
 namespace NeoLemmixSharp.Engine.Level.Updates;
 
-public sealed class UpdateScheduler
+public sealed class UpdateScheduler : IInitialisable
 {
-    private readonly LevelControlPanel _levelControlPanel;
-    private readonly LevelInputController _inputController;
-    private readonly Viewport _viewport;
-    private readonly LevelCursor _levelCursor;
-    private readonly LevelTimer _levelTimer;
-    private readonly LemmingManager _lemmingManager;
-    private readonly GadgetManager _gadgetManager;
-    private readonly SkillSetManager _skillSetManager;
-    private readonly TerrainPainter _terrainPainter;
-    private readonly RewindManager _rewindManager;
-
     private LemmingSkill _queuedSkill = NoneSkill.Instance;
     private Lemming? _queuedSkillLemming;
 
@@ -35,30 +19,6 @@ public sealed class UpdateScheduler
 
     public bool DoneAssignmentThisFrame { get; set; }
     public int ElapsedTicks => _elapsedTicks;
-
-    public UpdateScheduler(
-        LevelControlPanel levelControlPanel,
-        Viewport viewport,
-        LevelCursor levelCursor,
-        LevelInputController inputController,
-        LevelTimer levelTimer,
-        LemmingManager lemmingManager,
-        GadgetManager gadgetManager,
-        SkillSetManager skillSetManager,
-        TerrainPainter terrainPainter,
-        RewindManager rewindManager)
-    {
-        _levelControlPanel = levelControlPanel;
-        _levelCursor = levelCursor;
-        _viewport = viewport;
-        _inputController = inputController;
-        _levelTimer = levelTimer;
-        _lemmingManager = lemmingManager;
-        _gadgetManager = gadgetManager;
-        _skillSetManager = skillSetManager;
-        _terrainPainter = terrainPainter;
-        _rewindManager = rewindManager;
-    }
 
     public void Initialise()
     {
@@ -115,8 +75,8 @@ end;
 
     public void Tick()
     {
-        _inputController.Tick();
-        _levelCursor.Tick();
+        LevelScreen.LevelInputController.Tick();
+        LevelScreen.LevelCursor.Tick();
 
         HandleMouseInput();
         EvaluateGameState();
@@ -127,43 +87,43 @@ end;
 
     private void HandleMouseInput()
     {
-        _viewport.HandleMouseInput(_inputController);
+        LevelScreen.LevelViewport.HandleMouseInput(LevelScreen.LevelInputController);
 
-        if (_viewport.MouseIsInLevelViewPort)
+        if (LevelScreen.LevelViewport.MouseIsInLevelViewPort)
         {
-            _levelCursor.CursorPosition = new LevelPosition(
-                _viewport.HorizontalBoundaryBehaviour.MouseViewPortCoordinate,
-                _viewport.VerticalBoundaryBehaviour.MouseViewPortCoordinate);
+            LevelScreen.LevelCursor.CursorPosition = new LevelPosition(
+                LevelScreen.HorizontalBoundaryBehaviour.MouseViewPortCoordinate,
+                LevelScreen.VerticalBoundaryBehaviour.MouseViewPortCoordinate);
         }
         else
         {
-            _levelCursor.CursorPosition = new LevelPosition(-4000, -4000);
-            _levelControlPanel.HandleMouseInput();
+            LevelScreen.LevelCursor.CursorPosition = new LevelPosition(-4000, -4000);
+            LevelScreen.LevelControlPanel.HandleMouseInput();
         }
     }
 
     private void EvaluateGameState()
     {
-        if (_inputController.ToggleFullScreen.IsPressed)
+        if (LevelScreen.LevelInputController.ToggleFullScreen.IsPressed)
         {
             IGameWindow.Instance.ToggleFullscreen();
         }
 
-        if (_inputController.Pause.IsPressed)
+        if (LevelScreen.LevelInputController.Pause.IsPressed)
         {
             SetUpdateState(_updateState == UpdateState.Paused ? UpdateState.Normal : UpdateState.Paused);
         }
-        else if (_inputController.ToggleFastForwards.IsPressed)
+        else if (LevelScreen.LevelInputController.ToggleFastForwards.IsPressed)
         {
             SetUpdateState(_updateState == UpdateState.FastForward ? UpdateState.Normal : UpdateState.FastForward);
         }
 
-        if (_inputController.Quit.IsPressed)
+        if (LevelScreen.LevelInputController.Quit.IsPressed)
         {
             IGameWindow.Instance.Escape();
         }
 
-        if (_inputController.ToggleFullScreen.IsPressed)
+        if (LevelScreen.LevelInputController.ToggleFullScreen.IsPressed)
         {
             IGameWindow.Instance.ToggleBorderless();
         }
@@ -178,7 +138,7 @@ end;
 
     private void UpdateControlPanelButtonStatus(ButtonType buttonType, bool isSelected)
     {
-        var button = _levelControlPanel.GetControlPanelButtonOfType(buttonType);
+        var button = LevelScreen.LevelControlPanel.GetControlPanelButtonOfType(buttonType);
         if (button is null)
             return;
         button.IsSelected = isSelected;
@@ -197,10 +157,10 @@ end;
     private void PerformOneTick()
     {
         var isMajorTick = _elapsedTicksModuloFastForwardSpeed == 0;
-        _lemmingManager.Tick(isMajorTick);
-        _gadgetManager.Tick(isMajorTick);
-        _levelTimer.SetElapsedTicks(_elapsedTicks);
-        _rewindManager.Tick(_elapsedTicks);
+        LevelScreen.LemmingManager.Tick(isMajorTick);
+        LevelScreen.GadgetManager.Tick(isMajorTick);
+        LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks);
+        LevelScreen.RewindManager.Tick(_elapsedTicks);
 
         _elapsedTicks++;
         var elapsedTicksModuloFastForwardSpeed = _elapsedTicksModuloFastForwardSpeed + 1;
@@ -210,36 +170,36 @@ end;
 
     private void HandleCursor()
     {
-        var mouseIsInLevelViewPort = _viewport.MouseIsInLevelViewPort;
+        var mouseIsInLevelViewPort = LevelScreen.LevelViewport.MouseIsInLevelViewPort;
         if (mouseIsInLevelViewPort)
         {
-            var lemmingsNearCursor = _levelCursor.LemmingsNearCursorPosition();
+            var lemmingsNearCursor = LevelScreen.LevelCursor.LemmingsNearCursorPosition();
             foreach (var lemming in lemmingsNearCursor)
             {
-                _levelCursor.CheckLemming(lemming);
+                LevelScreen.LevelCursor.CheckLemming(lemming);
             }
 
-            _levelControlPanel.TextualData.SetCursorData(
-                _levelCursor.CurrentlyHighlightedLemming,
-                _levelCursor.NumberOfLemmingsUnderCursor);
+            LevelScreen.LevelControlPanel.TextualData.SetCursorData(
+                LevelScreen.LevelCursor.CurrentlyHighlightedLemming,
+                LevelScreen.LevelCursor.NumberOfLemmingsUnderCursor);
         }
         else
         {
-            _levelControlPanel.TextualData.ClearCursorData();
+            LevelScreen.LevelControlPanel.TextualData.ClearCursorData();
         }
     }
 
     private void HandleSkillAssignment()
     {
-        if (!_inputController.LeftMouseButtonAction.IsPressed)
+        if (!LevelScreen.LevelInputController.LeftMouseButtonAction.IsPressed)
             return;
 
-        var lemming = _levelCursor.CurrentlyHighlightedLemming;
+        var lemming = LevelScreen.LevelCursor.CurrentlyHighlightedLemming;
         if (lemming is null)
             return;
 
-        var selectedSkillId = _levelControlPanel.SelectedSkillButtonId;
-        var skillTrackingData = _skillSetManager.GetSkillTrackingData(selectedSkillId);
+        var selectedSkillId = LevelScreen.LevelControlPanel.SelectedSkillButtonId;
+        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(selectedSkillId);
         if (skillTrackingData is null || skillTrackingData.SkillCount == 0)
             return;
 
@@ -247,12 +207,17 @@ end;
         {
             skillTrackingData.Skill.AssignToLemming(lemming);
             skillTrackingData.ChangeSkillCount(-1);
-            _levelControlPanel.UpdateSkillCount(_levelControlPanel.SelectedSkillAssignButton, skillTrackingData.SkillCount);
+            LevelScreen.LevelControlPanel.UpdateSkillCount(LevelScreen.LevelControlPanel.SelectedSkillAssignButton, skillTrackingData.SkillCount);
         }
         else
         {
             SetQueuedSkill(lemming, skillTrackingData.Skill);
         }
+    }
+
+    private void RecordSkillAssignment()
+    {
+
     }
 
     private void ClearQueuedSkill()

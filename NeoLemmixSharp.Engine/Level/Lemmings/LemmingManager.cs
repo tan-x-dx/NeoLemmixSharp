@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class LemmingManager : IItemManager<Lemming>, IDisposable
+public sealed class LemmingManager : IItemManager<Lemming>, IInitialisable, IDisposable
 {
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;

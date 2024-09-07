@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
@@ -11,10 +10,6 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelCursor
 {
-    private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
-    private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
-    private readonly LevelInputController _controller;
-
     private FacingDirection? _facingDirection;
     private bool _selectOnlyWalkers;
     private bool _selectOnlyUnassigned;
@@ -30,15 +25,8 @@ public sealed class LevelCursor
     public Color Color2 { get; private set; }
     public Color Color3 { get; private set; }
 
-    public LevelCursor(
-        BoundaryBehaviour horizontalBoundaryBehaviour,
-        BoundaryBehaviour verticalBoundaryBehaviour,
-        LevelInputController controller)
+    public LevelCursor()
     {
-        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
-        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
-        _controller = controller;
-
         SetSelectedTeam(null);
     }
 
@@ -48,14 +36,14 @@ public sealed class LevelCursor
         CurrentlyHighlightedLemming = null;
         _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre = int.MaxValue;
 
-        _selectOnlyWalkers = _controller.SelectOnlyWalkers.IsActionDown;
-        _selectOnlyUnassigned = _controller.SelectOnlyUnassignedLemmings.IsActionDown;
+        _selectOnlyWalkers = LevelScreen.LevelInputController.SelectOnlyWalkers.IsActionDown;
+        _selectOnlyUnassigned = LevelScreen.LevelInputController.SelectOnlyUnassignedLemmings.IsActionDown;
 
-        if (_controller.SelectLeftFacingLemmings.IsActionDown)
+        if (LevelScreen.LevelInputController.SelectLeftFacingLemmings.IsActionDown)
         {
             _facingDirection = FacingDirection.LeftInstance;
         }
-        else if (_controller.SelectRightFacingLemmings.IsActionDown)
+        else if (LevelScreen.LevelInputController.SelectRightFacingLemmings.IsActionDown)
         {
             _facingDirection = FacingDirection.RightInstance;
         }
@@ -108,8 +96,8 @@ public sealed class LevelCursor
     {
         var lemmingPosition = lemming.CenterPosition;
 
-        var dx = _horizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
-        var dy = _verticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
+        var dx = LevelScreen.HorizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
+        var dy = LevelScreen.VerticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
 
         return Math.Abs(dx) < 5 && Math.Abs(dy) < 5;
     }
@@ -194,8 +182,8 @@ public sealed class LevelCursor
     {
         var lemmingPosition = lemming.CenterPosition;
 
-        var dx = _horizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
-        var dy = _verticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
+        var dx = LevelScreen.HorizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
+        var dy = LevelScreen.VerticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
 
         return dx * dx + dy * dy;
     }

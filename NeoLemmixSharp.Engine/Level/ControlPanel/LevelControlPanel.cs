@@ -1,8 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Rendering;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
@@ -56,14 +54,11 @@ public sealed class LevelControlPanel
 
     public LevelControlPanel(
         ControlPanelParameterSet controlPanelParameters,
-        LevelInputController controller,
-        SkillSetManager skillSetManager,
-        LemmingManager lemmingManager,
-        LevelTimer levelTimer)
+        LevelInputController controller)
     {
         _controller = controller;
 
-        var allHatchGroups = lemmingManager.AllHatchGroups;
+        var allHatchGroups = LevelScreen.LemmingManager.AllHatchGroups;
         _singularHatchGroup = allHatchGroups.Length == 1
             ? allHatchGroups[0]
             : null;
@@ -71,15 +66,14 @@ public sealed class LevelControlPanel
         ControlPanelHelperMethods.ResetButtonIds();
         _skillAssignButtons = ControlPanelHelperMethods.SetUpSkillAssignButtons(
             this,
-            controlPanelParameters,
-            skillSetManager);
+            controlPanelParameters);
         _allButtons = ControlPanelHelperMethods.SetUpControlButtons(
             controller,
             _skillAssignButtons,
             _singularHatchGroup,
             controlPanelParameters);
 
-        _controlPanelTextualData = new ControlPanelTextualData(controlPanelParameters, levelTimer);
+        _controlPanelTextualData = new ControlPanelTextualData(controlPanelParameters);
 
         _maxSkillPanelScroll = _skillAssignButtons.Length - MaxNumberOfSkillButtons;
 

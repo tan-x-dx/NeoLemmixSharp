@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Rewind;
+using NeoLemmixSharp.Engine.Level.Terrain;
 
-namespace NeoLemmixSharp.Engine.Level.Terrain;
+namespace NeoLemmixSharp.Engine.Level.Rewind;
 
 public sealed class TerrainPainter
 {

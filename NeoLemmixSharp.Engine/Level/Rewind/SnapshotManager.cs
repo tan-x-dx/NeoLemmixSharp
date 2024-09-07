@@ -13,7 +13,7 @@ public sealed class SnapshotManager<TItemManager, TItemType, TSnapshotData>
     /// Allocate enough space initially for four minutes of gameplay.
     /// If gameplay lasts longer, then the list will double in capacity.
     /// </summary>
-    private const int SnapshotDataListSizeMultiplier = (4 * 60 * EngineConstants.FramesPerSecond) / LevelConstants.RewindSnapshotInterval;
+    private const int SnapshotDataListSizeMultiplier = LevelConstants.InitialSnapshotDataBufferMultiplier / LevelConstants.RewindSnapshotInterval;
 
     private readonly TItemManager _itemManager;
     private readonly SnapshotList _snapshotList;

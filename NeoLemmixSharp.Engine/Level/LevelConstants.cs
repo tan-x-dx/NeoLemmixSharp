@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.InteropServices;
+using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 
@@ -58,6 +59,8 @@ public static class LevelConstants
     public const int FloaterGliderStartCycleFrame = 9;
 
     public const int RewindSnapshotInterval = 2 * EngineConstants.FramesPerSecond;
+    public const int InitialNumberOfMinutesOfSnapshotData = 4;
+    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfMinutesOfSnapshotData * 60 * EngineConstants.FramesPerSecond;
 
     /// <summary>
     /// A lemming falls 3 pixels each frame
