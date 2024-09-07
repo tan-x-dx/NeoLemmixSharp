@@ -1,6 +1,6 @@
-﻿using System.Text;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using System.Text;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
@@ -10,7 +10,10 @@ public sealed class DefaultLevelReader : ILevelReader
     {
         using var dataReaderList = new DataReaderList(levelFilePath);
 
-        return dataReaderList.ReadFile();
+        var levelData = dataReaderList.ReadFile();
+        levelData.MaxNumberOfClonedLemmings = LevelReadingHelpers.CalculateMaxNumberOfClonedLemmings(levelData);
+
+        return levelData;
     }
 
     public string ScrapeLevelTitle(string levelFilePath)

@@ -1,14 +1,13 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
-
-namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 public enum GadgetProperty
 {
     HatchGroupId,
     TeamId,
+    SkillId,
     Width,
     Height,
     RawLemmingState,
-    LemmingCount,
+    Count,
     InitialAnimationFrame
 }

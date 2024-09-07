@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using System.Diagnostics.Contracts;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
@@ -87,6 +88,7 @@ public sealed class FallerAction : LemmingAction
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 2;
     protected override int BottomRightBoundsDeltaY(int animationFrame) => 0;
 
+    [Pure]
     private static bool IsFallFatal(in GadgetSet gadgetSet, Lemming lemming)
     {
         if (lemming.State.HasSpecialFallingBehaviour)
@@ -111,6 +113,7 @@ public sealed class FallerAction : LemmingAction
         return lemming.DistanceFallen > LevelConstants.MaxFallDistance;
     }
 
+    [Pure]
     private static bool CheckFloaterOrGliderTransition(
         Lemming lemming,
         int currentFallDistance)
@@ -145,6 +148,7 @@ public sealed class FallerAction : LemmingAction
         base.TransitionLemmingToAction(lemming, turnAround);
     }
 
+    [Pure]
     private static int GetStartingDistanceFallenFromAction(Lemming lemming)
     {
         // For Swimmers it's handled by the SwimmerAction as there is no single universal value
@@ -159,9 +163,13 @@ public sealed class FallerAction : LemmingAction
         };
     }
 
+    [Pure]
     [SkipLocalsInit]
     public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
     {
+        // Subroutine of other LevelAction methods.
+        // Use a dummy scratch space span to prevent data from being overridden.
+        // Prevents weird bugs!
         Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
         var gadgetsNearPosition = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(scratchSpace, lemming);
 
@@ -170,8 +178,8 @@ public sealed class FallerAction : LemmingAction
 
         var lemmingOrientation = lemming.Orientation;
 
-        Span<bool> draftDirections = stackalloc bool[4];
-        draftDirections.Clear();
+        Span<int> draftDirectionDeltas = stackalloc int[4];
+        draftDirectionDeltas.Clear();
 
         foreach (var gadget in gadgetsNearPosition)
         {
@@ -180,28 +188,14 @@ public sealed class FallerAction : LemmingAction
 
             var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientation.RotNum) & 3;
 
-            draftDirections[deltaRotNum] = true;
+            draftDirectionDeltas[deltaRotNum] = 1;
         }
 
-        var dx = 0;
-        if (draftDirections[LevelConstants.LeftOrientationRotNum])
-        {
-            dx--;
-        }
-        if (draftDirections[LevelConstants.RightOrientationRotNum])
-        {
-            dx++;
-        }
+        var dx = draftDirectionDeltas[LevelConstants.RightOrientationRotNum] -
+                 draftDirectionDeltas[LevelConstants.LeftOrientationRotNum];
 
-        var dy = 0;
-        if (draftDirections[LevelConstants.UpOrientationRotNum])
-        {
-            dy++;
-        }
-        if (draftDirections[LevelConstants.DownOrientationRotNum])
-        {
-            dy--;
-        }
+        var dy = draftDirectionDeltas[LevelConstants.UpOrientationRotNum] -
+                 draftDirectionDeltas[LevelConstants.DownOrientationRotNum];
 
         return new LevelPosition(dx, dy);
     }

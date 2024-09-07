@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Runtime.InteropServices;
+using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 
@@ -57,6 +58,10 @@ public static class LevelConstants
 
     public const int FloaterGliderStartCycleFrame = 9;
 
+    public const int RewindSnapshotInterval = 2 * EngineConstants.FramesPerSecond;
+    public const int InitialNumberOfMinutesOfSnapshotData = 4;
+    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfMinutesOfSnapshotData * 60 * EngineConstants.FramesPerSecond;
+
     /// <summary>
     /// A lemming falls 3 pixels each frame
     /// </summary>
@@ -73,19 +78,19 @@ public static class LevelConstants
 
     public const uint MinimumSubstantialAlphaValue = 0x80;
 
-    private static readonly Color[] ExplosionParticleColors =
+    private static ReadOnlySpan<uint> RawExplosionParticleColorsHexValues =>
     [
-        new Color(0x40, 0x40, 0xE0, 0xF0),
-        new Color(0x00, 0xB0, 0x00, 0xF0),
-        new Color(0xF0, 0xD0, 0xD0, 0xF0),
-        new Color(0xF0, 0x20, 0x20, 0xF0),
-        new Color(0x40, 0x40, 0xE0, 0xC0),
-        new Color(0x00, 0xB0, 0x00, 0xC0),
-        new Color(0xF0, 0xD0, 0xD0, 0xC0),
-        new Color(0xF0, 0x20, 0x20, 0xC0)
+        0xF0E04040,
+        0xF000B000,
+        0xF0D0D0F0,
+        0xF02020F0,
+        0xC0E04040,
+        0xC000B000,
+        0xC0D0D0F0,
+        0xC02020F0
     ];
 
-    public static ReadOnlySpan<Color> GetExplosionParticleColors() => new(ExplosionParticleColors);
+    public static ReadOnlySpan<Color> GetExplosionParticleColors() => MemoryMarshal.Cast<uint, Color>(RawExplosionParticleColorsHexValues);
     public const int NumberOfExplosionParticleColors = 8;
     public const int NumberOfExplosionParticleColorsMask = NumberOfExplosionParticleColors - 1;
 
@@ -99,6 +104,18 @@ public static class LevelConstants
     public static Color PanelRed => new(0xB0, 0x00, 0x00);
     public static Color PanelMagenta => new(0xB0, 0x00, 0xB0);
     public static Color PanelYellow => new(0xB0, 0xB0, 0x00);
+
+    #endregion
+
+    #region Control Panel Strings
+
+    public static ReadOnlySpan<int> NeutralStringNumericalSpan => ['N', 'E', 'U', 'T', 'R', 'A', 'L'];
+    public static ReadOnlySpan<int> ZombieStringNumericalSpan => ['Z', 'O', 'M', 'B', 'I', 'E'];
+    public static ReadOnlySpan<int> NeutralZombieStringNumericalSpan => ['N', '-', 'Z', 'O', 'M', 'B', 'I', 'E'];
+    public static ReadOnlySpan<int> AthleteString2Skills => ['A', 'T', 'H', 'L', 'E', 'T', 'E'];
+    public static ReadOnlySpan<int> AthleteString3Skills => ['T', 'R', 'I', 'A', 'T', 'H', 'L', 'E', 'T', 'E',];
+    public static ReadOnlySpan<int> AthleteString4Skills => ['T', 'E', 'T', 'R', 'A', 'T', 'H', 'L', 'E', 'T', 'E'];
+    public static ReadOnlySpan<int> AthleteString5Skills => ['P', 'E', 'N', 'T', 'A', 'T', 'H', 'L', 'E', 'T', 'E'];
 
     #endregion
 
@@ -168,7 +185,7 @@ public static class LevelConstants
 
     #region Lemming Action Constants
 
-    public const int LongestActionNameLength = 10;
+    public const int LongestActionNameLength = 11;
 
     public const string NoneActionName = "None";
 
@@ -408,6 +425,9 @@ public static class LevelConstants
 
     public const string DisarmerSkillName = "Disarmer";
     public const int DisarmerSkillId = 18;
+
+    public const string FastForwardSkillName = "Fast Forward";
+    public const int FastForwardSkillId = 30;
 
     public const string FencerSkillName = "Fencer";
     public const int FencerSkillId = 11;

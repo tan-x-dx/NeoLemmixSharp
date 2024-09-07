@@ -12,7 +12,7 @@ public enum LevelParameters
     EnableDirectionSelect,
     EnableClearPhysics,
     EnableSkillShadows,
-    EnableFrameControl,
+    EnableFrameControl
 }
 
 public static class LevelParameterHelpers

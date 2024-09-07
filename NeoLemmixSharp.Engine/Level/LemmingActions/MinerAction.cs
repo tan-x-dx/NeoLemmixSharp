@@ -158,6 +158,8 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         }
     }
 
+    string IDestructionMask.Name => LemmingActionName;
+
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {

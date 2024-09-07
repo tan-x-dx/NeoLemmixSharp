@@ -1,6 +1,6 @@
-﻿using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -99,7 +99,7 @@ public sealed class DehoisterAction : LemmingAction
             orientation.Move(nextPosition, -dx, -4));
         var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion);
 
-        if (LevelScreen.TerrainManager.PositionOutOfBounds(nextPosition) ||
+        if (LevelScreen.PositionOutOfBounds(nextPosition) ||
             !PositionIsSolidToLemming(gadgetsNearRegion, lemming, currentPosition) ||
             PositionIsSolidToLemming(gadgetsNearRegion, lemming, nextPosition))
             return false;

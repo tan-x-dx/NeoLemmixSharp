@@ -27,6 +27,7 @@ public sealed class LemmingStateChangerHelpers : IPerfectHasher<ILemmingStateCha
     public const int NeutralStateChangerId = 7;
     public const int AcidLemmingStateChangerId = 8;
     public const int WaterStateChangerId = 9;
+    public const int FastForwardStateChangerId = 10;
 
     private static readonly ILemmingStateChanger[] AllLemmingStateChangers =
     [
@@ -41,7 +42,9 @@ public sealed class LemmingStateChangerHelpers : IPerfectHasher<ILemmingStateCha
         NeutralStateChanger.Instance,
 
         AcidLemmingSkill.Instance,
-        WaterLemmingSkill.Instance
+        WaterLemmingSkill.Instance,
+
+        FastForwardSkill.Instance
     ];
 
     private static readonly LemmingStateChangerHelpers Instance = new();

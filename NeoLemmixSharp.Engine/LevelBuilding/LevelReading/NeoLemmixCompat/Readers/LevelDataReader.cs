@@ -10,6 +10,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
     private readonly LevelData _levelData;
 
     private bool _lockSpawnInterval;
+    private int _numberOfLemmings;
     private int _maxSpawnInterval;
     private int _saveRequirement;
     private int? _timeLimitInSeconds;
@@ -18,6 +19,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
     public string IdentifierToken => "TITLE";
     public int SaveRequirement => _saveRequirement;
     public int? TimeLimitInSeconds => _timeLimitInSeconds;
+    public int NumberOfLemmings => _numberOfLemmings;
 
     public LevelDataReader(LevelData levelData)
     {
@@ -28,7 +30,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
     {
         FinishedReading = false;
 
-        ReadingHelpers.GetTokenPair(line, out _, out _, out var secondTokenIndex);
+        NxlvReadingHelpers.GetTokenPair(line, out _, out _, out var secondTokenIndex);
 
         var levelTitle = line.TrimAfterIndex(secondTokenIndex).ToString();
         _levelData.LevelTitle = string.IsNullOrWhiteSpace(levelTitle) ? "Untitled" : levelTitle;
@@ -36,7 +38,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
         if (firstToken[0] == '$')
         {
@@ -53,11 +55,11 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "ID":
-                _levelData.LevelId = ReadingHelpers.ParseHex<ulong>(secondToken);
+                _levelData.LevelId = NxlvReadingHelpers.ParseHex<ulong>(secondToken);
                 break;
 
             case "VERSION":
-                _levelData.Version = ReadingHelpers.ParseHex<ulong>(secondToken);
+                _levelData.Version = NxlvReadingHelpers.ParseHex<ulong>(secondToken);
                 break;
 
             case "START_X":
@@ -89,7 +91,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "LEMMINGS":
-                _levelData.NumberOfLemmings = int.Parse(secondToken);
+                _numberOfLemmings = int.Parse(secondToken);
                 break;
 
             case "SAVE_REQUIREMENT":
@@ -98,14 +100,14 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             case "TIME_LIMIT":
-                var timeLimitInSecondsValue = int.Parse(secondToken);
+                var timeLimitInSeconds = int.Parse(secondToken);
 
-                if (timeLimitInSecondsValue <= 0)
-                    throw new ArgumentOutOfRangeException(nameof(timeLimitInSecondsValue), timeLimitInSecondsValue, "Time limit must be positive!");
-                if (timeLimitInSecondsValue > LevelConstants.MaxTimeLimitInSeconds)
-                    throw new ArgumentOutOfRangeException(nameof(timeLimitInSecondsValue), timeLimitInSecondsValue, "Time limit too big!");
+                if (timeLimitInSeconds <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(timeLimitInSeconds), timeLimitInSeconds, "Time limit must be positive!");
+                if (timeLimitInSeconds > LevelConstants.MaxTimeLimitInSeconds)
+                    throw new ArgumentOutOfRangeException(nameof(timeLimitInSeconds), timeLimitInSeconds, "Time limit too big!");
 
-                _timeLimitInSeconds = timeLimitInSecondsValue;
+                _timeLimitInSeconds = timeLimitInSeconds;
                 break;
 
             case "SPAWN_INTERVAL_LOCKED":
@@ -117,7 +119,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
                 break;
 
             default:
-                ReadingHelpers.ThrowUnknownTokenException("Level Data", firstToken, line);
+                NxlvReadingHelpers.ThrowUnknownTokenException("Level Data", firstToken, line);
                 break;
         }
 
@@ -145,7 +147,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
     public static bool TryReadLevelTitle(ReadOnlySpan<char> line, out string? levelTitle)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out var secondTokenIndex);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out _, out var secondTokenIndex);
 
         if (firstToken is "TITLE")
         {

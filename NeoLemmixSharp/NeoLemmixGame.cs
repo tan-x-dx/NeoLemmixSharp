@@ -6,6 +6,7 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -17,10 +18,7 @@ using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.Menu;
 using System;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
-using NeoLemmixSharp.Engine.Level;
 
 namespace NeoLemmixSharp;
 
@@ -114,13 +112,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
     {
         LoadResources();
 
-        // create and init the UI manager
-        // UserInterface.Initialize(Content, BuiltinThemes.editor);
-        //UserInterface.Active.UseRenderTarget = true;
-
-        // draw cursor outside the render target
-        //UserInterface.Active.IncludeCursorInRenderTarget = false;
-
         RootDirectoryManager.Initialise();
         FontBank.Initialise(Content);
         MenuSpriteBank.Initialise(Content);
@@ -136,29 +127,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
             GraphicsDevice);
         SetScreen(menuScreen);
         menuScreen.Initialise();
-    }
-
-    private void LoadResources()
-    {
-        var assembly = GetType().Assembly;
-        var resourceNames = assembly.GetManifestResourceNames();
-
-        LoadParticleResources();
-
-        return;
-
-        void LoadParticleResources()
-        {
-            var particleResourceName = Array.Find(resourceNames, s => s.EndsWith("particles.dat"));
-
-            if (string.IsNullOrWhiteSpace(particleResourceName))
-                throw new InvalidOperationException("Could not load particles.dat!");
-
-            using var stream = assembly.GetManifestResourceStream(particleResourceName)!;
-            var byteBuffer = ParticleHelper.GetByteBuffer();
-            using var reader = new BinaryReader(stream, Encoding.UTF8, false);
-            _ = reader.Read(byteBuffer);
-        }
     }
 
     private static void InitialiseGameConstants()
@@ -181,16 +149,35 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
             numberOfGadgetBehaviours);
     }
 
+    /// <summary>
+    /// Validation to ensure there is enough space to write
+    /// lemming action text in the buffer in <see cref="ControlPanelTextualData"/>
+    /// </summary>
     private static void ValidateMaxActionNameLength()
     {
         var actualMaxActionNameLength = 0;
         foreach (var action in LemmingAction.AllItems)
         {
-            actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, action.LemmingActionName.Length);
+            LengthMax<char>(action.LemmingActionName);
         }
+
+        LengthMax(LevelConstants.NeutralStringNumericalSpan);
+        LengthMax(LevelConstants.ZombieStringNumericalSpan);
+        LengthMax(LevelConstants.NeutralZombieStringNumericalSpan);
+        LengthMax(LevelConstants.AthleteString2Skills);
+        LengthMax(LevelConstants.AthleteString3Skills);
+        LengthMax(LevelConstants.AthleteString4Skills);
+        LengthMax(LevelConstants.AthleteString5Skills);
 
         if (actualMaxActionNameLength != LevelConstants.LongestActionNameLength)
             throw new Exception($"Longest action name length is actually {actualMaxActionNameLength}! Update {nameof(LevelConstants.LongestActionNameLength)}!");
+
+        return;
+
+        void LengthMax<T>(ReadOnlySpan<T> span)
+        {
+            actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, span.Length);
+        }
     }
 
     public void SetScreen(IBaseScreen screen)

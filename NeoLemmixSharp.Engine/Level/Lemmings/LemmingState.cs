@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Numerics;
+using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Level.Teams;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
@@ -18,6 +20,7 @@ public sealed class LemmingState
     public bool HasPermanentSkill => (_states & LevelConstants.PermanentSkillBitMask) != 0U;
     public bool HasLiquidAffinity => (_states & LevelConstants.LiquidAffinityBitMask) != 0U;
     public bool HasSpecialFallingBehaviour => (_states & LevelConstants.SpecialFallingBehaviourBitMask) != 0U;
+    public int NumberOfPermanentSkills => BitOperations.PopCount(_states & LevelConstants.PermanentSkillBitMask);
 
     /// <summary>
     /// Must be active and NOT zombie and NOT neutral
@@ -304,5 +307,18 @@ public sealed class LemmingState
         _states = rawData;
         UpdateHairAndBodyColors();
         UpdateSkinColor();
+    }
+
+    public void SetRawDataFromSnapshotData(in LemmingStateSnapshotData lemmingStateSnapshotData)
+    {
+        _team = Team.AllItems[lemmingStateSnapshotData.TeamId];
+        _states = lemmingStateSnapshotData.StateData;
+        UpdateHairAndBodyColors();
+        UpdateSkinColor();
+    }
+
+    public LemmingStateSnapshotData CreateSnapshot()
+    {
+        return new LemmingStateSnapshotData(TeamAffiliation.Id, _states);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
-using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
@@ -32,7 +31,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
         var currentGadgetData = _currentGadgetData!;
 
@@ -108,7 +107,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
                 break;
 
             case "SKILL":
-                if (!ReadingHelpers.GetSkillByName(secondToken, _charEqualityComparer, out var skill))
+                if (!NxlvReadingHelpers.GetSkillByName(secondToken, _charEqualityComparer, out var skill))
                     throw new Exception($"Unknown token: {secondToken}");
 
                 currentGadgetData.Skill = skill;
@@ -171,7 +170,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
                 break;
 
             default:
-                ReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
+                NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
                 break;
         }
 
@@ -190,7 +189,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     private NeoLemmixGadgetArchetypeData GetOrLoadGadgetArchetypeData(ReadOnlySpan<char> piece)
     {
-        ref var gadgetArchetypeData = ref ReadingHelpers.GetArchetypeDataRef(
+        ref var gadgetArchetypeData = ref NxlvReadingHelpers.GetArchetypeDataRef(
             _currentStyle!,
             piece,
             GadgetArchetypes,

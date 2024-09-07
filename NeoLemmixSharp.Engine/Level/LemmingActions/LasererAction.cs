@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -14,35 +15,40 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
     public static readonly LasererAction Instance = new();
 
-    private static readonly LevelPosition[] OffsetChecksRight =
+    private static ReadOnlySpan<int> RawOffsetChecksRight =>
     [
-        new LevelPosition(1, -1),
-        new LevelPosition(0, -1),
-        new LevelPosition(1, 0),
-        new LevelPosition(-1, -1),
-        new LevelPosition(-1, -2),
-        new LevelPosition(0, -2),
-        new LevelPosition(1, -2),
-        new LevelPosition(2, -1),
-        new LevelPosition(2, 0),
-        new LevelPosition(2, 2),
-        new LevelPosition(1, 1)
+        1, -1,
+        0, -1,
+        1, 0,
+        -1, -1,
+        -1, -2,
+        0, -2,
+        1, -2,
+        2, -1,
+        2, 0,
+        2, 2,
+        1, 1
     ];
 
-    private static readonly LevelPosition[] OffsetChecksLeft =
+    private static ReadOnlySpan<int> RawOffsetChecksLeft =>
     [
-        new LevelPosition(-1, -1),
-        new LevelPosition(0, -1),
-        new LevelPosition(-1, 0),
-        new LevelPosition(1, -1),
-        new LevelPosition(1, -2),
-        new LevelPosition(0, -2),
-        new LevelPosition(-1, -2),
-        new LevelPosition(-2, -1),
-        new LevelPosition(-2, 0),
-        new LevelPosition(-2, 2),
-        new LevelPosition(-1, 1)
+        -1, -1,
+        0, -1,
+        -1, 0,
+        1, -1,
+        1, -2,
+        0, -2,
+        -1, -2,
+        -2, -1,
+        -2, 0,
+        -2, 2,
+        -1, 1
     ];
+
+    private static ReadOnlySpan<LevelPosition> GetOffsetChecks(FacingDirection facingDirection) => MemoryMarshal
+        .Cast<int, LevelPosition>(facingDirection == FacingDirection.RightInstance
+            ? RawOffsetChecksRight
+            : RawOffsetChecksLeft);
 
     private enum LaserHitType
     {
@@ -83,9 +89,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         var hit = false;
         var hitUseful = false;
 
-        var offsetChecks = facingDirection == FacingDirection.RightInstance
-            ? new ReadOnlySpan<LevelPosition>(OffsetChecksRight)
-            : new ReadOnlySpan<LevelPosition>(OffsetChecksLeft);
+        var offsetChecks = GetOffsetChecks(facingDirection);
 
         var i = DistanceCap;
         while (i > 0)
@@ -143,8 +147,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         LaserHitType CheckForHit(
             ReadOnlySpan<LevelPosition> offsetChecks)
         {
-            var terrainManager = LevelScreen.TerrainManager;
-            if (terrainManager.PositionOutOfBounds(target))
+            if (LevelScreen.PositionOutOfBounds(target))
                 return LaserHitType.OutOfBounds;
 
             var result = LaserHitType.None;
@@ -179,6 +182,8 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
         lemming.LaserRemainTime = 10;
     }
+
+    string IDestructionMask.Name => LemmingActionName;
 
     [Pure]
     public bool CanDestroyPixel(

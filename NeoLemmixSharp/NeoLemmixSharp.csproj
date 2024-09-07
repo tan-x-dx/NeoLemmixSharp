@@ -21,13 +21,21 @@
     <None Remove="Util\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="basher_mask.dat" />
+    <None Remove="bomber_mask.dat" />
+    <None Remove="fencer_mask.dat" />
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />
+    <None Remove="miner_mask.dat" />
     <None Remove="particles.dat" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="basher_mask.dat" />
+    <EmbeddedResource Include="bomber_mask.dat" />
+    <EmbeddedResource Include="fencer_mask.dat" />
     <EmbeddedResource Include="Icon.ico" />
     <EmbeddedResource Include="Icon.bmp" />
+    <EmbeddedResource Include="miner_mask.dat" />
     <EmbeddedResource Include="particles.dat" />
   </ItemGroup>
   <ItemGroup>

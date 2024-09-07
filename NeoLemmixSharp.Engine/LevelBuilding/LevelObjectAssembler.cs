@@ -2,10 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Orientations;
+using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.Rendering.Ui;
@@ -48,24 +52,42 @@ public sealed class LevelObjectAssembler : IDisposable
         return result;
     }
 
-    public List<Lemming> GetLevelLemmings(LevelData levelData)
+    public Lemming[] GetLevelLemmings(LevelData levelData)
     {
-        var hatchLemmingData = CollectionsMarshal.AsSpan(levelData.HatchLemmingData);
-        AddLemmings(hatchLemmingData);
+        var maxNumberOfClonedLemmings = levelData.MaxNumberOfClonedLemmings;
+        var totalCapacity = maxNumberOfClonedLemmings +
+                            levelData.HatchLemmingData.Count +
+                            levelData.PrePlacedLemmingData.Count;
+
+        _lemmings.Capacity = totalCapacity;
+
         var prePlacedLemmings = CollectionsMarshal.AsSpan(levelData.PrePlacedLemmingData);
         AddLemmings(prePlacedLemmings);
+        var hatchLemmingData = CollectionsMarshal.AsSpan(levelData.HatchLemmingData);
+        AddLemmings(hatchLemmingData);
 
-        return _lemmings;
+        for (var i = 0; i < maxNumberOfClonedLemmings; i++)
+        {
+            var lemming = new Lemming(
+                _lemmings.Count,
+                DownOrientation.Instance,
+                FacingDirection.RightInstance,
+                NoneAction.Instance,
+                Team.AllItems[LevelConstants.ClassicTeamId])
+            {
+                LevelPosition = new LevelPosition()
+            };
+            _lemmings.Add(lemming);
+        }
+
+        return _lemmings.ToArray();
 
         void AddLemmings(ReadOnlySpan<LemmingData> lemmingDataSpan)
         {
-            _lemmings.Capacity += lemmingDataSpan.Length;
-
-            var i = _lemmings.Count;
             foreach (var prototype in lemmingDataSpan)
             {
                 var lemming = new Lemming(
-                    i++,
+                    _lemmings.Count,
                     prototype.Orientation,
                     prototype.FacingDirection,
                     prototype.InitialLemmingAction,
@@ -124,7 +146,7 @@ public sealed class LevelObjectAssembler : IDisposable
     {
         behindTerrainSprites = new List<IViewportObjectRenderer>(_gadgets.Count);
         inFrontOfTerrainSprites = new List<IViewportObjectRenderer>(_gadgets.Count);
-        lemmingSprites = new List<IViewportObjectRenderer>(BitArrayHelpers.ToNextLargestMultipleOf32(_lemmings.Count));
+        lemmingSprites = new List<IViewportObjectRenderer>(_lemmings.Count);
 
         var gadgetSpan = CollectionsMarshal.AsSpan(_gadgets);
         foreach (var gadget in gadgetSpan)

@@ -20,7 +20,7 @@ public sealed class NeoLemmixTextReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out var secondTokenIndex);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out _, out var secondTokenIndex);
 
         switch (firstToken)
         {

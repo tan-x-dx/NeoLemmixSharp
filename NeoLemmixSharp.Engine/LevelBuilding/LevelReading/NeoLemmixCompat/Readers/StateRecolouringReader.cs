@@ -19,7 +19,7 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         /*   if (firstToken[0] == '$')
            {
@@ -54,15 +54,15 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
            switch (firstToken)
            {
                case "FROM":
-                   _currentOriginalColor = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                   _currentOriginalColor = 0xff000000U | NxlvReadingHelpers.ParseHex<uint>(secondToken);
                    break;
 
                case "TO":
-                   _currentReplacementColor = 0xff000000U | ReadingHelpers.ParseHex<uint>(secondToken);
+                   _currentReplacementColor = 0xff000000U | NxlvReadingHelpers.ParseHex<uint>(secondToken);
                    break;
 
                default:
-                   ReadingHelpers.ThrowUnknownTokenException("Gadget Archetype Data", firstToken, line);
+                   NxlvReadingHelpers.ThrowUnknownTokenException("Gadget Archetype Data", firstToken, line);
                    break;
            }*/
 

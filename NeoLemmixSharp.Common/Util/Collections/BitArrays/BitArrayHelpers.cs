@@ -48,19 +48,6 @@ public static class BitArrayHelpers
         return result;
     }
 
-    public static void Resize(ref uint[] originalArray, int numberOfItems)
-    {
-        var newArrayLength = CalculateBitArrayBufferLength(numberOfItems);
-
-        if (newArrayLength <= originalArray.Length)
-            return;
-
-        var newArray = new uint[newArrayLength];
-        new ReadOnlySpan<uint>(originalArray).CopyTo(newArray);
-
-        originalArray = newArray;
-    }
-
     /// <summary>
     /// Tests if a specific bit is set
     /// </summary>
@@ -90,7 +77,7 @@ public static class BitArrayHelpers
         arrayValue |= 1U << index;
         var delta = (arrayValue ^ oldValue) >> index;
         popCount += (int)delta;
-        return delta != 0U;
+        return (delta & 1U) != 0U;
     }
 
     /// <summary>
@@ -118,7 +105,7 @@ public static class BitArrayHelpers
         arrayValue &= ~(1U << index);
         var delta = (arrayValue ^ oldValue) >> index;
         popCount -= (int)delta;
-        return delta != 0U;
+        return (delta & 1U) != 0U;
     }
 
     /// <summary>

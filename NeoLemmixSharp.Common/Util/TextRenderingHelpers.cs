@@ -23,30 +23,19 @@ public static class TextRenderingHelpers
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int DigitToChar(int digit) => digit + '0';
+    public static int DigitToChar(int digit) => digit | '0';
 
-    public static int GetNumberStringLength(int n)
+    public static int GetNumberStringLength(int n) => n switch
     {
-        int sign;
-
-        if (n < 0)
-        {
-            sign = 1;
-            n = -n;
-        }
-        else
-        {
-            sign = 0;
-        }
-
-        var numberOfDigits = n switch
-        {
-            < 10 => 1,
-            < 100 => 2,
-            < 1000 => 3,
-            _ => 4 // We're not going to be dealing with numbers above a few thousand
-        };
-
-        return numberOfDigits + sign;
-    }
+        < -9999 => 6,
+        < -999 => 5,
+        < -99 => 4,
+        < -9 => 3,
+        < 0 => 2,
+        < 10 => 1,
+        < 100 => 2,
+        < 1000 => 3,
+        < 10000 => 4,
+        _ => 5 // We're not going to be dealing with numbers above a few thousand
+    };
 }

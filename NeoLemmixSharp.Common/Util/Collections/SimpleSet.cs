@@ -6,13 +6,13 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
 
-public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
+public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>
     where T : notnull
 {
     private const int MaxStackAllocSize = 64;
 
     private readonly IPerfectHasher<T> _hasher;
-    private uint[] _bits;
+    private readonly uint[] _bits;
     private int _popCount;
 
     public SimpleSet(IPerfectHasher<T> hasher, bool fullSet)
@@ -57,11 +57,6 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
     {
         var hash = _hasher.Hash(item);
         return BitArrayHelpers.ClearBit(new Span<uint>(_bits), hash, ref _popCount);
-    }
-
-    public void OnNumberOfItemsChanged()
-    {
-        BitArrayHelpers.Resize(ref _bits, _hasher.NumberOfItems);
     }
 
     [Pure]
@@ -247,7 +242,7 @@ public sealed class SimpleSet<T> : ISet<T>, IReadOnlySet<T>, IItemCountListener
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
         Span<uint> otherBitBuffer = bufferLength > MaxStackAllocSize
             ? new uint[bufferLength]
-            : stackalloc uint[bufferLength];  
+            : stackalloc uint[bufferLength];
 
         GetBitsFromEnumerable(otherBitBuffer, other);
         return BitArrayHelpers.IsProperSubsetOf(new ReadOnlySpan<uint>(_bits), otherBitBuffer);

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
@@ -26,17 +25,16 @@ public static class LevelBuildingHelpers
     }
 
     public static IBackgroundRenderer GetBackgroundRenderer(
-        LevelData levelData,
-        Viewport viewport)
+        LevelData levelData)
     {
         var backgroundData = levelData.LevelBackground;
         if (backgroundData is null)
-            return new SolidColorBackgroundRenderer(viewport, new Color(24, 24, 60));
+            return new SolidColorBackgroundRenderer(new Color(24, 24, 60));
 
         if (backgroundData.IsSolidColor)
-            return new SolidColorBackgroundRenderer(viewport, backgroundData.Color);
+            return new SolidColorBackgroundRenderer(backgroundData.Color);
 
-        return new SolidColorBackgroundRenderer(viewport, new Color(24, 24, 60));
+        return new SolidColorBackgroundRenderer(new Color(24, 24, 60));
     }
 
     public static List<IViewportObjectRenderer> GetSortedRenderables(

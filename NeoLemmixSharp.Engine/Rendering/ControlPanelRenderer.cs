@@ -106,40 +106,40 @@ public sealed class ControlPanelRenderer
 
         var x = 0;
 
-        var lemmingActionAndCountSpan = textualData.LemmingActionAndCountSpan;
-        RenderText(lemmingActionAndCountSpan, x);
-        x += lemmingActionAndCountSpan.Length * PanelFont.GlyphWidth;
+        var currentTextSpan = textualData.LemmingActionAndCountSpan;
+        RenderText(currentTextSpan, x);
+        x += currentTextSpan.Length * PanelFont.GlyphWidth;
 
         RenderIcon(HatchPanelIconX, x);
         x += PanelIconWidth;
 
-        var hatchCountSpan = textualData.HatchCountSpan;
-        RenderText(hatchCountSpan, x);
-        x += (hatchCountSpan.Length + 1) * PanelFont.GlyphWidth;
+        currentTextSpan = textualData.HatchCountSpan;
+        RenderText(currentTextSpan, x);
+        x += (currentTextSpan.Length + 1) * PanelFont.GlyphWidth;
 
         RenderIcon(LemmingPanelIconX, x);
         x += PanelIconWidth;
 
-        var lemmingOutSpan = textualData.LemmingsOutSpan;
-        RenderText(lemmingOutSpan, x);
-        x += (lemmingOutSpan.Length + 1) * PanelFont.GlyphWidth;
+        currentTextSpan = textualData.LemmingsOutSpan;
+        RenderText(currentTextSpan, x);
+        x += (currentTextSpan.Length + 1) * PanelFont.GlyphWidth;
 
         RenderIcon(FlagPanelIconX, x);
         x += PanelIconWidth;
 
-        var goalCountSpan = textualData.GoalCountSpan;
-        RenderText(goalCountSpan, x);
-        x += (goalCountSpan.Length + 1) * PanelFont.GlyphWidth;
+        currentTextSpan = textualData.GoalCountSpan;
+        RenderText(currentTextSpan, x);
+        x += (currentTextSpan.Length + 1) * PanelFont.GlyphWidth;
 
-        var levelTimer = textualData.LevelTimer;
+        var levelTimer = LevelScreen.LevelTimer;
         var timerIconX = levelTimer.Type == LevelTimer.TimerType.CountDown
             ? TimerDownPanelIconX
             : TimerUpPanelIconX;
         RenderIcon(timerIconX, x);
         x += PanelIconWidth;
 
-        var timerSpan = levelTimer.AsSpan();
-        RenderText(timerSpan, x);
+        currentTextSpan = levelTimer.AsReadOnlySpan();
+        RenderText(currentTextSpan, x);
 
         return;
 

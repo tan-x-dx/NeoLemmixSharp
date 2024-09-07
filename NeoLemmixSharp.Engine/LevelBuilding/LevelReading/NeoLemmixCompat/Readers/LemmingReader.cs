@@ -31,7 +31,7 @@ public sealed class LemmingReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         var currentLemmingData = _currentLemmingData!;
 
@@ -98,7 +98,7 @@ public sealed class LemmingReader : INeoLemmixDataReader
                 break;
 
             default:
-                ReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
+                NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
                 break;
         }
 

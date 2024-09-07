@@ -53,7 +53,9 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
             RotateToLeftSkill.Instance,
 
             AcidLemmingSkill.Instance,
-            WaterLemmingSkill.Instance
+            WaterLemmingSkill.Instance,
+
+            FastForwardSkill.Instance
         };
 
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<LemmingSkill>(result));
@@ -89,10 +91,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
         _assignableActions = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
 
         // ReSharper disable once VirtualMemberCallInConstructor
-        foreach (var action in ActionsThatCanBeAssigned())
-        {
-            _assignableActions.Add(action);
-        }
+        _assignableActions.UnionWith(ActionsThatCanBeAssigned());
     }
 
     public bool IsClassicSkill() => ClassicSkills.Contains(this);

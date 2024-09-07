@@ -33,7 +33,7 @@ public sealed class SketchReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         var currentSketchData = _currentSketchData!;
 

@@ -10,7 +10,7 @@ public sealed class PerfectEnumHasher<TEnum> : IPerfectHasher<TEnum>
     public static SimpleSet<TEnum> CreateSimpleSet() => new(Instance, false);
     public static SimpleDictionary<TEnum, TValue> CreateSimpleDictionary<TValue>() => new(Instance);
 
-    public int NumberOfItems { get; } = Enum.GetValues<TEnum>().Length;
+    public int NumberOfItems { get; } = Enum.GetNames<TEnum>().Length;
 
     private PerfectEnumHasher()
     {

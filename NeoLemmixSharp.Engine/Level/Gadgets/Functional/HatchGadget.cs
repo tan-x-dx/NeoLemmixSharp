@@ -17,7 +17,7 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget, 
     public override GadgetBehaviour GadgetBehaviour => HatchGadgetBehaviour.Instance;
     public override Orientation Orientation => HatchSpawnData.Orientation;
 
-    public LevelPosition SpawnPosition => LevelScreen.TerrainManager.NormalisePosition(GadgetBounds.TopLeft + _spawnPositionTranslation);
+    public LevelPosition SpawnPosition => LevelScreen.NormalisePosition(GadgetBounds.TopLeft + _spawnPositionTranslation);
     public HatchSpawnData HatchSpawnData { get; }
     public GadgetStateAnimationController AnimationController { get; }
 
@@ -69,18 +69,16 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget, IReactiveGadget, 
 
     private void UpdatePosition(LevelPosition position)
     {
-        var terrainManager = LevelScreen.TerrainManager;
+        PreviousTopLeftPixel = LevelScreen.NormalisePosition(TopLeftPixel);
+        PreviousBottomRightPixel = LevelScreen.NormalisePosition(BottomRightPixel);
 
-        PreviousTopLeftPixel = terrainManager.NormalisePosition(TopLeftPixel);
-        PreviousBottomRightPixel = terrainManager.NormalisePosition(BottomRightPixel);
-
-        position = terrainManager.NormalisePosition(position);
+        position = LevelScreen.NormalisePosition(position);
 
         GadgetBounds.X = position.X;
         GadgetBounds.Y = position.Y;
 
-        TopLeftPixel = terrainManager.NormalisePosition(GadgetBounds.TopLeft);
-        BottomRightPixel = terrainManager.NormalisePosition(GadgetBounds.BottomRight);
+        TopLeftPixel = LevelScreen.NormalisePosition(GadgetBounds.TopLeft);
+        BottomRightPixel = LevelScreen.NormalisePosition(GadgetBounds.BottomRight);
 
         if (Renderer is not null)
         {

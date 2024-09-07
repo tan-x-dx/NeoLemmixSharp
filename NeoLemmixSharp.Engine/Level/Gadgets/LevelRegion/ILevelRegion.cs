@@ -27,10 +27,8 @@ public static class LevelRegionHelpers
 {
     public static LevelPosition GetRelativePosition(LevelPosition basePosition, LevelPosition testPosition)
     {
-        var terrainManager = LevelScreen.TerrainManager;
-
-        var dx = terrainManager.HorizontalBoundaryBehaviour.GetDelta(basePosition.X, testPosition.X);
-        var dy = terrainManager.VerticalBoundaryBehaviour.GetDelta(basePosition.Y, testPosition.Y);
+        var dx = LevelScreen.HorizontalBoundaryBehaviour.GetDelta(basePosition.X, testPosition.X);
+        var dy = LevelScreen.VerticalBoundaryBehaviour.GetDelta(basePosition.Y, testPosition.Y);
 
         return new LevelPosition(dx, dy);
     }
@@ -45,9 +43,8 @@ public static class LevelRegionHelpers
         var thisTestY1 = levelRegion.Y1;
         var levelPositionTestY = levelPosition.Y;
 
-        var terrainManager = LevelScreen.TerrainManager;
-        terrainManager.HorizontalBoundaryBehaviour.NormaliseCoords(ref thisTestX, ref thisTestX1, ref levelPositionTestX);
-        terrainManager.VerticalBoundaryBehaviour.NormaliseCoords(ref thisTestY, ref thisTestY1, ref levelPositionTestY);
+        LevelScreen.HorizontalBoundaryBehaviour.NormaliseCoords(ref thisTestX, ref thisTestX1, ref levelPositionTestX);
+        LevelScreen.VerticalBoundaryBehaviour.NormaliseCoords(ref thisTestY, ref thisTestY1, ref levelPositionTestY);
 
         return thisTestX <= levelPositionTestX &&
                thisTestY <= levelPositionTestY &&

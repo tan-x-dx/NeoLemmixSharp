@@ -15,7 +15,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
     public static readonly BasherAction Instance = new();
 
-    private readonly PixelType[] _simulationScratchSpace = new PixelType[BasherMaskWidth * BasherMaskHeight];
+    private static readonly PixelType[] _simulationScratchSpace = new PixelType[BasherMaskWidth * BasherMaskHeight];
 
     private BasherAction()
         : base(
@@ -377,6 +377,8 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
+
+    string IDestructionMask.Name => LemmingActionName;
 
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)

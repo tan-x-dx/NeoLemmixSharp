@@ -26,7 +26,7 @@ public sealed class TalismanReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
         if (firstToken.EndsWith("_LIMIT"))
         {
@@ -56,9 +56,9 @@ public sealed class TalismanReader : INeoLemmixDataReader
                 break;
 
             case "USE_ONLY_SKILL":
-                if (!ReadingHelpers.GetSkillByName(secondToken, _charEqualityComparer, out var onlySkill))
+                if (!NxlvReadingHelpers.GetSkillByName(secondToken, _charEqualityComparer, out var onlySkill))
                 {
-                    ReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
+                    NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
                     break;
                 }
 
@@ -77,7 +77,7 @@ public sealed class TalismanReader : INeoLemmixDataReader
                 break;
 
             default:
-                ReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
+                NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
                 break;
         }
 
@@ -98,7 +98,7 @@ public sealed class TalismanReader : INeoLemmixDataReader
         if (secondToken.SequenceEqual("GOLD", _charEqualityComparer))
             return TalismanColor.Gold;
 
-        return ReadingHelpers.ThrowUnknownTokenException<TalismanColor>(IdentifierToken, "COLOR", secondToken);
+        return NxlvReadingHelpers.ThrowUnknownTokenException<TalismanColor>(IdentifierToken, "COLOR", secondToken);
     }
 
     private void ParseLimitTokens(ReadOnlySpan<char> firstToken, ReadOnlySpan<char> secondToken)
@@ -117,12 +117,12 @@ public sealed class TalismanReader : INeoLemmixDataReader
             return;
         }
 
-        if (ReadingHelpers.GetSkillByName(firstToken[..^6], _charEqualityComparer, out var skill))
+        if (NxlvReadingHelpers.GetSkillByName(firstToken[..^6], _charEqualityComparer, out var skill))
         {
             currentTalismanData.SkillLimits.Add(skill, int.Parse(secondToken));
             return;
         }
 
-        ReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, secondToken);
+        NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, secondToken);
     }
 }

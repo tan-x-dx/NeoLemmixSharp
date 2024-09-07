@@ -33,18 +33,16 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>
 
     protected void UpdatePosition(LevelPosition position)
     {
-        var terrainManager = LevelScreen.TerrainManager;
+        PreviousTopLeftPixel = LevelScreen.NormalisePosition(TopLeftPixel);
+        PreviousBottomRightPixel = LevelScreen.NormalisePosition(BottomRightPixel);
 
-        PreviousTopLeftPixel = terrainManager.NormalisePosition(TopLeftPixel);
-        PreviousBottomRightPixel = terrainManager.NormalisePosition(BottomRightPixel);
-
-        position = terrainManager.NormalisePosition(position);
+        position = LevelScreen.NormalisePosition(position);
 
         GadgetBounds.X = position.X;
         GadgetBounds.Y = position.Y;
 
-        TopLeftPixel = terrainManager.NormalisePosition(GadgetBounds.TopLeft);
-        BottomRightPixel = terrainManager.NormalisePosition(GadgetBounds.BottomRight);
+        TopLeftPixel = LevelScreen.NormalisePosition(GadgetBounds.TopLeft);
+        BottomRightPixel = LevelScreen.NormalisePosition(GadgetBounds.BottomRight);
 
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
 
@@ -56,14 +54,12 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>
 
     protected void UpdateSize(LevelPosition size)
     {
-        var terrainManager = LevelScreen.TerrainManager;
-
-        PreviousBottomRightPixel = terrainManager.NormalisePosition(BottomRightPixel);
+        PreviousBottomRightPixel = LevelScreen.NormalisePosition(BottomRightPixel);
 
         GadgetBounds.W = size.X;
         GadgetBounds.H = size.Y;
 
-        BottomRightPixel = terrainManager.NormalisePosition(GadgetBounds.BottomRight);
+        BottomRightPixel = LevelScreen.NormalisePosition(GadgetBounds.BottomRight);
 
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }

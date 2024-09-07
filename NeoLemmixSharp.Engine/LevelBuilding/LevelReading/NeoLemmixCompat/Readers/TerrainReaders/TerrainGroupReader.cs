@@ -39,7 +39,7 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
             return result;
         }
 
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out _, out var secondTokenIndex);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out _, out var secondTokenIndex);
 
         var currentTerrainGroup = _currentTerrainGroup!;
 

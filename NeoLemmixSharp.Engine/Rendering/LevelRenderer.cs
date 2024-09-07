@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.PositionTracking;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
@@ -15,7 +16,6 @@ namespace NeoLemmixSharp.Engine.Rendering;
 public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectRenderer>
 {
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly Level.Viewport _viewport;
     private readonly SpacialHashGrid<IViewportObjectRenderer> _spriteSpacialHashGrid;
 
     private readonly List<IViewportObjectRenderer> _orderedSprites;
@@ -26,12 +26,10 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
 
     public LevelRenderer(
         GraphicsDevice graphicsDevice,
-        Level.Viewport viewport,
         List<IViewportObjectRenderer> orderedSprites,
         IBackgroundRenderer backgroundRenderer)
     {
         _graphicsDevice = graphicsDevice;
-        _viewport = viewport;
 
         _orderedSprites = orderedSprites;
         _backgroundRenderer = backgroundRenderer;
@@ -41,8 +39,8 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         _spriteSpacialHashGrid = new SpacialHashGrid<IViewportObjectRenderer>(
             this,
             ChunkSizeType.ChunkSize64,
-            viewport.HorizontalBoundaryBehaviour,
-            viewport.VerticalBoundaryBehaviour);
+            LevelScreen.HorizontalBoundaryBehaviour,
+            LevelScreen.VerticalBoundaryBehaviour);
 
         var rendererSpan = CollectionsMarshal.AsSpan(_orderedSprites);
         foreach (var renderer in rendererSpan)
@@ -96,8 +94,8 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     {
         Span<uint> scratchSpaceSpan = stackalloc uint[_spriteSpacialHashGrid.ScratchSpaceSize];
 
-        var horizontalBoundary = _viewport.HorizontalBoundaryBehaviour;
-        var verticalBoundary = _viewport.VerticalBoundaryBehaviour;
+        var horizontalBoundary = LevelScreen.HorizontalBoundaryBehaviour;
+        var verticalBoundary = LevelScreen.VerticalBoundaryBehaviour;
 
         var horizontalRenderIntervals = horizontalBoundary.GetRenderIntervals();
         var verticalRenderIntervals = verticalBoundary.GetRenderIntervals();
@@ -175,8 +173,8 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     [SkipLocalsInit]
     public void DrawToScreen(SpriteBatch spriteBatch)
     {
-        var horizontalRenderIntervals = _viewport.HorizontalBoundaryBehaviour.GetScreenRenderIntervals();
-        var verticalRenderIntervals = _viewport.VerticalBoundaryBehaviour.GetScreenRenderIntervals();
+        var horizontalRenderIntervals = LevelScreen.HorizontalBoundaryBehaviour.GetScreenRenderIntervals();
+        var verticalRenderIntervals = LevelScreen.VerticalBoundaryBehaviour.GetScreenRenderIntervals();
 
         foreach (var horizontalRenderInterval in horizontalRenderIntervals)
         {
@@ -219,8 +217,8 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     {
         return new RenderTarget2D(
             _graphicsDevice,
-            _viewport.HorizontalBoundaryBehaviour.LevelLength,
-            _viewport.VerticalBoundaryBehaviour.LevelLength,
+            LevelScreen.HorizontalBoundaryBehaviour.LevelLength,
+            LevelScreen.VerticalBoundaryBehaviour.LevelLength,
             false,
             _graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24);
@@ -236,7 +234,6 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     {
         lemmingRenderer.RendererId = _orderedSprites.Count;
         _orderedSprites.Add(lemmingRenderer);
-        _spriteSpacialHashGrid.OnNumberOfItemsChanged();
     }
 
     public void Dispose()

@@ -14,5 +14,6 @@ public enum ControlPanelParameters
     ShowReleaseRateButtonsIfPossible,
     EnableClassicModeSkillsIfPossible,
     RemoveSkillAssignPaddingButtons,
-    ShowSpawnInterval
+    ShowSpawnInterval,
+    ShowAthleteInformation
 }

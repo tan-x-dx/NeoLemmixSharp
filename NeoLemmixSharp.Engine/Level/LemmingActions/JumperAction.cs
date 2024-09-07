@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -10,18 +11,22 @@ public sealed class JumperAction : LemmingAction
 
     public static readonly JumperAction Instance = new();
 
-    private static readonly LevelPosition[] JumpPositions =
+    private static ReadOnlySpan<int> RawLevelPositions =>
     [
-        new LevelPosition(0, 1), new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(0, 1), new LevelPosition(1, 0), // occurs twice
-        new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(1, 0), // occurs twice
-        new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(0, 0),
-        new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(0, 1), new LevelPosition(1, 0), new LevelPosition(0, 0),
-        new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(0, 0), new LevelPosition(0, 0),
-        new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(0, 0),
-        new LevelPosition(1, 0), new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(0, 0),
-        new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(1, 0), new LevelPosition(0, -1), // occurs twice
-        new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(0, -1), new LevelPosition(1, 0), new LevelPosition(0, -1), new LevelPosition(0, -1) // occurs twice
+        0, 1,   0,  1,   1,  0,   0,  1,   0,  1,   1,  0,
+        0, 1,   1,  0,   0,  1,   1,  0,   0,  1,   1,  0,
+        0, 1,   1,  0,   0,  1,   1,  0,   1,  0,   0,  0,
+        0, 1,   1,  0,   1,  0,   0,  1,   1,  0,   0,  0,
+        1, 0,   1,  0,   1,  0,   1,  0,   0,  0,   0,  0,
+        1, 0,   0, -1,   1,  0,   1,  0,   0, -1,   0,  0,
+        1, 0,   1,  0,   0, -1,   1,  0,   0, -1,   0,  0,
+        1, 0,   0, -1,   1,  0,   0, -1,   1,  0,   0, -1,
+        1, 0,   0, -1,   0, -1,   1,  0,   0, -1,   0, -1
     ];
+
+    private static ReadOnlySpan<LevelPosition> JumpPositionsFor(int patternIndex) => MemoryMarshal
+        .Cast<int, LevelPosition>(RawLevelPositions)
+        .Slice(patternIndex * JumperPositionCount, JumperPositionCount);
 
     private JumperAction()
         : base(
@@ -75,7 +80,7 @@ public sealed class JumperAction : LemmingAction
         if (patternIndex < 0)
             return false;
 
-        var patternSpan = new ReadOnlySpan<LevelPosition>(JumpPositions, patternIndex * JumperPositionCount, JumperPositionCount);
+        var patternSpan = JumpPositionsFor(patternIndex);
         var lemmingJumpPatterns = lemming.GetJumperPositions();
 
         var orientation = lemming.Orientation;

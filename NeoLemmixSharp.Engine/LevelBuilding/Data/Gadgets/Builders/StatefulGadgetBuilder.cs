@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
@@ -37,7 +36,6 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         var gadgetStates = CreateStates(gadgetData);
         var gadgetRenderer = gadgetSpriteBuilder.BuildStatefulGadgetRenderer(this, gadgetData);
         var itemTracker = new ItemTracker<Lemming>(lemmingHasher);
-        LevelScreen.LemmingManager.RegisterItemForLemmingCountTracking(itemTracker);
 
         var result = new StatefulGadget(
             gadgetData.Id,

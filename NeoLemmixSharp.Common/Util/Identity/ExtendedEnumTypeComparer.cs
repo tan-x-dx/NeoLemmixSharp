@@ -8,7 +8,7 @@ public sealed class ExtendedEnumTypeComparer<T> :
     IEqualityComparer<T>,
     IEquatable<ExtendedEnumTypeComparer<T>>,
     IComparer<T>,
-    IPerfectHasher<T>
+    IItemManager<T>
     where T : class, IExtendedEnumType<T>
 {
     private static readonly ExtendedEnumTypeComparer<T> Instance = new();
@@ -47,6 +47,9 @@ public sealed class ExtendedEnumTypeComparer<T> :
     public T UnHash(int index) => T.AllItems[index];
 
     [Pure]
+    public ReadOnlySpan<T> AllItems => T.AllItems;
+
+    [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Dictionary<T, TValue> CreateDictionary<TValue>() => new(Instance);
 
@@ -56,5 +59,5 @@ public sealed class ExtendedEnumTypeComparer<T> :
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static SimpleSet<T> CreateSimpleSet() => new(Instance, false);
+    public static SimpleSet<T> CreateSimpleSet(bool fullSet = false) => new(Instance, fullSet);
 }

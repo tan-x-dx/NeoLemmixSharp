@@ -16,11 +16,10 @@ public static class ControlPanelHelperMethods
 
     public static SkillAssignButton[] SetUpSkillAssignButtons(
         LevelControlPanel controlPanel,
-        ControlPanelParameterSet controlPanelParameters,
-        SkillSetManager skillSetManager)
+        ControlPanelParameterSet controlPanelParameters)
     {
         return controlPanelParameters.Contains(ControlPanelParameters.EnableClassicModeSkillsIfPossible) &&
-               skillSetManager.HasClassicSkillsOnly()
+               LevelScreen.SkillSetManager.HasClassicSkillsOnly()
             ? CreateClassicModeSkillAssignButtons()
             : CreateSkillAssignButtons();
 
@@ -33,7 +32,7 @@ public static class ControlPanelHelperMethods
 
             foreach (var classicSkill in allClassicSkills)
             {
-                var skillTrackingData = skillSetManager.GetSkillTrackingData(classicSkill.Id, 0);
+                var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(classicSkill.Id, 0);
 
                 int skillTrackingDataId;
                 int skillCount;
@@ -66,7 +65,7 @@ public static class ControlPanelHelperMethods
         {
             var i = 0;
 
-            var allSkillTrackingData = skillSetManager.AllSkillTrackingData;
+            var allSkillTrackingData = LevelScreen.SkillSetManager.AllSkillTrackingData;
             var result = new SkillAssignButton[allSkillTrackingData.Length];
 
             foreach (var skillTrackingData in allSkillTrackingData)

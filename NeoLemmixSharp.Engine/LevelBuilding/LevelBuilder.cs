@@ -6,12 +6,12 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
-using Viewport = NeoLemmixSharp.Engine.Level.Viewport;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -47,9 +47,18 @@ public sealed class LevelBuilder : IDisposable
         var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelData.LevelWidth);
         var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelData.LevelHeight);
 
+        LevelScreen.SetHorizontalBoundaryBehaviour(horizontalBoundaryBehaviour);
+        LevelScreen.SetVerticalBoundaryBehaviour(verticalBoundaryBehaviour);
+
         var levelLemmings = _levelObjectAssembler.GetLevelLemmings(levelData);
         var hatchGroups = LevelObjectAssembler.GetHatchGroups(levelData);
-        var lemmingManager = new LemmingManager(hatchGroups, levelLemmings, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        var lemmingManager = new LemmingManager(
+            hatchGroups,
+            levelLemmings,
+            levelData.HatchLemmingData.Count,
+            levelData.PrePlacedLemmingData.Count,
+            horizontalBoundaryBehaviour,
+            verticalBoundaryBehaviour);
         LevelScreen.SetLemmingManager(lemmingManager);
         var levelGadgets = _levelObjectAssembler.GetLevelGadgets(levelData, lemmingManager);
 
@@ -58,7 +67,7 @@ public sealed class LevelBuilder : IDisposable
             _levelObjectAssembler.SetHatchesForHatchGroup(hatchGroup);
         }
 
-        var inputController = new LevelInputController(levelParameters);
+        var inputController = new LevelInputController();
         LevelScreen.SetLevelInputController(inputController);
 
         var primaryLevelObjective = levelData.LevelObjectives.Find(lo => lo.LevelObjectiveId == 0)!;
@@ -66,18 +75,21 @@ public sealed class LevelBuilder : IDisposable
         var skillSetManager = new SkillSetManager(primaryLevelObjective);
         LevelScreen.SetSkillSetManager(skillSetManager);
 
-        var levelCursor = new LevelCursor(horizontalBoundaryBehaviour, verticalBoundaryBehaviour, inputController);
+        var levelCursor = new LevelCursor();
         LevelScreen.SetLevelCursor(levelCursor);
 
         var levelTimer = LevelBuildingHelpers.GetLevelTimer(levelData);
-        var controlPanel = new LevelControlPanel(controlPanelParameters, inputController, skillSetManager, lemmingManager, levelTimer);
+        LevelScreen.SetLevelTimer(levelTimer);
+
+        var controlPanel = new LevelControlPanel(controlPanelParameters, inputController);
+        // Need to call this here instead of initialising in LevelScreen
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowWidth, IGameWindow.Instance.WindowHeight);
         LevelScreen.SetLevelControlPanel(controlPanel);
 
         var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetGadgetManager(gadgetManager);
 
-        var levelViewport = new Viewport(horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        var levelViewport = new Level.Viewport();
         LevelScreen.SetViewport(levelViewport);
 
         var terrainTexture = terrainBuilder.GetTerrainTexture();
@@ -87,30 +99,20 @@ public sealed class LevelBuilder : IDisposable
         var terrainRenderer = new TerrainRenderer(terrainTexture);
         LevelScreen.SetTerrainPainter(terrainPainter);
 
-        var updateScheduler = new UpdateScheduler(
-            controlPanel,
-            levelViewport,
-            levelCursor,
-            inputController,
-            levelTimer,
-            lemmingManager,
-            gadgetManager,
-            skillSetManager,
-            terrainPainter);
+        var rewindManager = new RewindManager();
+        LevelScreen.SetRewindManager(rewindManager);
+
+        var updateScheduler = new UpdateScheduler();
         LevelScreen.SetUpdateScheduler(updateScheduler);
 
-        var terrainManager = new TerrainManager(
-            pixelData,
-            terrainPainter,
-            horizontalBoundaryBehaviour,
-            verticalBoundaryBehaviour);
+        var terrainManager = new TerrainManager(pixelData);
         LevelScreen.SetTerrainManager(terrainManager);
 
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(_contentManager);
 
         var levelCursorSprite = CommonSprites.GetLevelCursorSprite(levelCursor);
-        var backgroundRenderer = LevelBuildingHelpers.GetBackgroundRenderer(levelData, levelViewport);
+        var backgroundRenderer = LevelBuildingHelpers.GetBackgroundRenderer(levelData);
 
         _levelObjectAssembler.GetLevelSprites(out var behindTerrainSprites, out var inFrontOfTerrainSprites, out var lemmingSprites);
         var orderedLevelSprites = LevelBuildingHelpers.GetSortedRenderables(
@@ -121,14 +123,12 @@ public sealed class LevelBuilder : IDisposable
 
         var levelRenderer = new LevelRenderer(
             _graphicsDevice,
-            levelViewport,
             orderedLevelSprites,
             backgroundRenderer);
 
         var levelScreenRenderer = new LevelScreenRenderer(
             _graphicsDevice,
             controlPanel,
-            levelViewport,
             levelRenderer,
             levelCursorSprite,
             lemmingSpriteBank,
@@ -136,10 +136,6 @@ public sealed class LevelBuilder : IDisposable
             controlPanelSpriteBank);
 
         LevelScreen.SetLevelScreenRenderer(levelScreenRenderer);
-
-        lemmingManager.Initialise();
-        gadgetManager.Initialise();
-        updateScheduler.Initialise();
 
         return new LevelScreen(levelData);
     }

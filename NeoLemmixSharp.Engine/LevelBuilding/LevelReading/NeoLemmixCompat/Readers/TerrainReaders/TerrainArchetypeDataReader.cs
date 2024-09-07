@@ -28,7 +28,7 @@ public sealed class TerrainArchetypeDataReader : INeoLemmixDataReader
 
     public bool ReadNextLine(ReadOnlySpan<char> line)
     {
-        ReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         switch (firstToken)
         {
@@ -77,7 +77,7 @@ public sealed class TerrainArchetypeDataReader : INeoLemmixDataReader
                 break;
 
             default:
-                ReadingHelpers.ThrowUnknownTokenException("Terrain Archetype Data", firstToken, line);
+                NxlvReadingHelpers.ThrowUnknownTokenException("Terrain Archetype Data", firstToken, line);
                 break;
         }
 

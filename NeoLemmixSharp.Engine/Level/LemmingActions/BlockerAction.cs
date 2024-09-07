@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using System.Diagnostics.Contracts;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -196,6 +197,7 @@ public sealed class BlockerAction : LemmingAction
         }
     }
 
+    [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static PixelType GetRightArmPixelType(Orientation orientation)
     {
@@ -203,6 +205,7 @@ public sealed class BlockerAction : LemmingAction
         return (PixelType)(1 << (PixelTypeHelpers.PixelTypeBlockerShiftOffset + orientation.RotNum));
     }
 
+    [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static PixelType GetLeftArmPixelType(Orientation orientation)
     {

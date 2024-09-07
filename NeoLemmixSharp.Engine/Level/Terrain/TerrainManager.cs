@@ -1,66 +1,30 @@
 ﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain;
 
 public sealed class TerrainManager
 {
     private readonly PixelType[] _pixels;
-    private readonly TerrainPainter _terrainPainter;
-
-    public BoundaryBehaviour HorizontalBoundaryBehaviour { get; }
-    public BoundaryBehaviour VerticalBoundaryBehaviour { get; }
-
-    public int LevelWidth => HorizontalBoundaryBehaviour.LevelLength;
-    public int LevelHeight => VerticalBoundaryBehaviour.LevelLength;
 
     public TerrainManager(
-        PixelType[] pixels,
-        TerrainPainter terrainPainter,
-        BoundaryBehaviour horizontalBoundaryBehaviour,
-        BoundaryBehaviour verticalBoundaryBehaviour)
+        PixelType[] pixels)
     {
         _pixels = pixels;
-
-        _terrainPainter = terrainPainter;
-
-        HorizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
-        VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
-    }
-
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LevelPosition NormalisePosition(LevelPosition levelPosition)
-    {
-        return new LevelPosition(
-            HorizontalBoundaryBehaviour.Normalise(levelPosition.X),
-            VerticalBoundaryBehaviour.Normalise(levelPosition.Y));
-    }
-
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool PositionOutOfBounds(LevelPosition levelPosition)
-    {
-        return levelPosition.X < 0 ||
-               levelPosition.X >= LevelWidth ||
-               levelPosition.Y < 0 ||
-               levelPosition.Y >= LevelHeight;
     }
 
     [Pure]
     public PixelType PixelTypeAtPosition(LevelPosition levelPosition)
     {
-        if (PositionOutOfBounds(levelPosition))
+        if (LevelScreen.PositionOutOfBounds(levelPosition))
             return PixelType.Void;
 
-        var index = LevelWidth * levelPosition.Y + levelPosition.X;
+        var index = LevelScreen.LevelWidth * levelPosition.Y + levelPosition.X;
         return _pixels[index];
     }
 
@@ -96,10 +60,10 @@ public sealed class TerrainManager
         FacingDirection facingDirection,
         LevelPosition pixelToErase)
     {
-        if (PositionOutOfBounds(pixelToErase))
+        if (LevelScreen.PositionOutOfBounds(pixelToErase))
             return;
 
-        var index = LevelWidth * pixelToErase.Y + pixelToErase.X;
+        var index = LevelScreen.LevelWidth * pixelToErase.Y + pixelToErase.X;
         ref var pixel = ref _pixels[index];
 
         if (!pixel.CanBeDestroyed() ||
@@ -111,7 +75,7 @@ public sealed class TerrainManager
         if (pixel == previousValue)
             return;
 
-        _terrainPainter.RecordPixelChange(
+        LevelScreen.TerrainPainter.RecordPixelChange(
             pixelToErase,
             Color.Transparent,
             previousValue & PixelType.TerrainDataMask,
@@ -120,10 +84,10 @@ public sealed class TerrainManager
 
     public void SetSolidPixel(LevelPosition pixelToSet, Color color)
     {
-        if (PositionOutOfBounds(pixelToSet))
+        if (LevelScreen.PositionOutOfBounds(pixelToSet))
             return;
 
-        var index = LevelWidth * pixelToSet.Y + pixelToSet.X;
+        var index = LevelScreen.LevelWidth * pixelToSet.Y + pixelToSet.X;
         ref var pixel = ref _pixels[index];
 
         if (pixel != PixelType.Empty)
@@ -134,7 +98,7 @@ public sealed class TerrainManager
         if (pixel == previousValue)
             return;
 
-        _terrainPainter.RecordPixelChange(
+        LevelScreen.TerrainPainter.RecordPixelChange(
             pixelToSet,
             color,
             previousValue & PixelType.TerrainDataMask,
@@ -143,10 +107,10 @@ public sealed class TerrainManager
 
     public void SetBlockerMaskPixel(LevelPosition pixelToSet, PixelType pixelTypeMask, bool set)
     {
-        if (PositionOutOfBounds(pixelToSet))
+        if (LevelScreen.PositionOutOfBounds(pixelToSet))
             return;
 
-        var index = LevelWidth * pixelToSet.Y + pixelToSet.X;
+        var index = LevelScreen.LevelWidth * pixelToSet.Y + pixelToSet.X;
         ref var pixel = ref _pixels[index];
 
         if (set)
@@ -162,10 +126,10 @@ public sealed class TerrainManager
     [Pure]
     public PixelType GetBlockerData(LevelPosition pixel)
     {
-        if (PositionOutOfBounds(pixel))
+        if (LevelScreen.PositionOutOfBounds(pixel))
             return PixelType.Empty;
 
-        var index = LevelWidth * pixel.Y + pixel.X;
+        var index = LevelScreen.LevelWidth * pixel.Y + pixel.X;
         var result = _pixels[index];
 
         return result & PixelType.BlockerMask;

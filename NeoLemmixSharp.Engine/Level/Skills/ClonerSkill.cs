@@ -17,23 +17,18 @@ public sealed class ClonerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return LevelScreen.LemmingManager.CanCreateNewLemming() &&
+        return LevelScreen.LemmingManager.CanCreateNewLemmingClone() &&
                ActionIsAssignable(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        if (!LevelScreen.LemmingManager.TryCreateNewLemming(
-                lemming.Orientation,
-                lemming.FacingDirection,
-                lemming.CurrentAction,
-                lemming.State.TeamAffiliation,
-                lemming.LevelPosition,
-                out var newLemming))
+        if (!LevelScreen.LemmingManager.TryGetNextClonedLemming(out var newLemming))
             return;
 
         newLemming.SetRawDataFromOther(lemming);
         newLemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
+        newLemming.Initialise();
 
         var newLemmingCurrentAction = newLemming.CurrentAction;
 
@@ -85,5 +80,4 @@ public sealed class ClonerSkill : LemmingSkill
         yield return ShruggerAction.Instance;
         yield return ReacherAction.Instance;
     }
-
 }

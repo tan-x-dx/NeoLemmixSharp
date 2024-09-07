@@ -1,10 +1,10 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Common.Util.Collections;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -108,6 +108,13 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         result.Add(VaporiserAction.Instance);
 
         return result;
+    }
+
+    public static LemmingAction GetActionFromId(int actionId)
+    {
+        return (uint)actionId >= (uint)LemmingActions.Length
+            ? NoneAction.Instance
+            : LemmingActions[actionId];
     }
 
     public readonly int Id;
