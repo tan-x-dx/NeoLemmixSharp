@@ -9,13 +9,13 @@ public sealed class TerrainPainter
 {
     private const int InitialPixelChangeListSize = 1 << 12;
 
-    private readonly Rewind.FrameOrderedList<PixelChangeData> _pixelChangeList = new(InitialPixelChangeListSize);
+    private readonly TickOrderedList<PixelChangeData> _pixelChangeList = new(InitialPixelChangeListSize);
     private readonly Texture2D _terrainTexture;
     private readonly PixelType[] _terrainPixelTypes;
     private readonly Color[] _terrainColors;
     private readonly int _terrainWidth;
 
-    private int _firstIndexOfFrameUpdates;
+    private int _firstIndexOfTickUpdates;
 
     public TerrainPainter(
         Texture2D terrainTexture,
@@ -31,19 +31,19 @@ public sealed class TerrainPainter
 
     public void RecordPixelChange(LevelPosition pixel, Color toColor, PixelType fromPixelType, PixelType toPixelType)
     {
-        var previousLatestFrameWithUpdate = _pixelChangeList.LatestFrameWithData();
-        var currentLatestFrameWithUpdate = LevelScreen.UpdateScheduler.ElapsedTicks;
+        var previousLatestTickWithUpdate = _pixelChangeList.LatestTickWithData();
+        var currentLatestTickWithUpdate = LevelScreen.UpdateScheduler.ElapsedTicks;
 
-        if (previousLatestFrameWithUpdate != currentLatestFrameWithUpdate)
+        if (previousLatestTickWithUpdate != currentLatestTickWithUpdate)
         {
-            _firstIndexOfFrameUpdates = _pixelChangeList.Count;
+            _firstIndexOfTickUpdates = _pixelChangeList.Count;
         }
 
         var fromColor = _terrainColors[pixel.Y * _terrainWidth + pixel.X];
 
         ref var pixelChangeData = ref _pixelChangeList.GetNewDataRef();
 
-        pixelChangeData = new PixelChangeData(currentLatestFrameWithUpdate, pixel.X, pixel.Y, fromColor, toColor, fromPixelType, toPixelType);
+        pixelChangeData = new PixelChangeData(currentLatestTickWithUpdate, pixel.X, pixel.Y, fromColor, toColor, fromPixelType, toPixelType);
     }
 
     public void RepaintTerrain()
@@ -62,14 +62,14 @@ public sealed class TerrainPainter
 
     private ReadOnlySpan<PixelChangeData> GetLatestPixelChanges()
     {
-        var startIndex = _firstIndexOfFrameUpdates;
-        _firstIndexOfFrameUpdates = _pixelChangeList.Count;
+        var startIndex = _firstIndexOfTickUpdates;
+        _firstIndexOfTickUpdates = _pixelChangeList.Count;
         return _pixelChangeList.SliceToEnd(startIndex);
     }
 
-    public void RewindBackTo(int frame)
+    public void RewindBackTo(int tick)
     {
-        var pixelChanges = _pixelChangeList.GetSliceBackTo(frame);
+        var pixelChanges = _pixelChangeList.GetSliceBackTo(tick);
         if (pixelChanges.Length == 0)
             return;
 
@@ -87,9 +87,9 @@ public sealed class TerrainPainter
         _terrainTexture.SetData(_terrainColors);
     }
 
-    private readonly struct PixelChangeData : IFrameOrderedData
+    private readonly struct PixelChangeData : ITickOrderedData
     {
-        public readonly int Frame;
+        public readonly int Tick;
         public readonly int X;
         public readonly int Y;
         public readonly Color FromColor;
@@ -97,11 +97,11 @@ public sealed class TerrainPainter
         public readonly PixelType FromPixelType;
         public readonly PixelType ToPixelType;
 
-        int IFrameOrderedData.Frame => Frame;
+        int ITickOrderedData.TickNumber => Tick;
 
-        public PixelChangeData(int frame, int x, int y, Color fromColor, Color toColor, PixelType fromPixelType, PixelType toPixelType)
+        public PixelChangeData(int tick, int x, int y, Color fromColor, Color toColor, PixelType fromPixelType, PixelType toPixelType)
         {
-            Frame = frame;
+            Tick = tick;
             X = x;
             Y = y;
             FromColor = fromColor;

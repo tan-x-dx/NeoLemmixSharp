@@ -85,7 +85,7 @@ end;
         HandleSkillAssignment();
     }
 
-    private void HandleMouseInput()
+    private static void HandleMouseInput()
     {
         LevelScreen.LevelViewport.HandleMouseInput(LevelScreen.LevelInputController);
 
@@ -136,7 +136,7 @@ end;
         UpdateControlPanelButtonStatus(ButtonType.FastForward, updateState == UpdateState.FastForward);
     }
 
-    private void UpdateControlPanelButtonStatus(ButtonType buttonType, bool isSelected)
+    private static void UpdateControlPanelButtonStatus(ButtonType buttonType, bool isSelected)
     {
         var button = LevelScreen.LevelControlPanel.GetControlPanelButtonOfType(buttonType);
         if (button is null)
@@ -168,7 +168,7 @@ end;
         _elapsedTicksModuloFastForwardSpeed = elapsedTicksModuloFastForwardSpeed;
     }
 
-    private void HandleCursor()
+    private static void HandleCursor()
     {
         var mouseIsInLevelViewPort = LevelScreen.LevelViewport.MouseIsInLevelViewPort;
         if (mouseIsInLevelViewPort)
