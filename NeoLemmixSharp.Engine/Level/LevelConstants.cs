@@ -1,7 +1,7 @@
-﻿using System.Runtime.InteropServices;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.PositionTracking;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -58,10 +58,6 @@ public static class LevelConstants
 
     public const int FloaterGliderStartCycleFrame = 9;
 
-    public const int RewindSnapshotInterval = 2 * EngineConstants.FramesPerSecond;
-    public const int InitialNumberOfMinutesOfSnapshotData = 4;
-    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfMinutesOfSnapshotData * 60 * EngineConstants.FramesPerSecond;
-
     /// <summary>
     /// A lemming falls 3 pixels each frame
     /// </summary>
@@ -71,6 +67,15 @@ public static class LevelConstants
     /// A lemming can step up a maximum of 6 pixels
     /// </summary>
     public const int MaxStepUp = 6;
+
+    #endregion
+
+    #region Replay Snapshot Constants
+
+    private const int NumberOfSecondsBetweenSnapshots = 2;
+    public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * EngineConstants.FramesPerSecond;
+    private const int InitialNumberOfMinutesOfSnapshotData = 4;
+    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfMinutesOfSnapshotData * 60 * EngineConstants.FramesPerSecond;
 
     #endregion
 
