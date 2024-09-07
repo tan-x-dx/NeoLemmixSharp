@@ -87,17 +87,18 @@ public sealed class LevelBuilder : IDisposable
         var levelViewport = new Viewport(horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
         LevelScreen.SetViewport(levelViewport);
 
-        var rewindManager = new RewindManager(
-            lemmingManager,
-            gadgetManager);
-        LevelScreen.SetRewindManager(rewindManager);
-
         var terrainTexture = terrainBuilder.GetTerrainTexture();
         var pixelData = terrainBuilder.GetPixelData();
         var terrainColorData = terrainBuilder.GetTerrainColors();
         var terrainPainter = new TerrainPainter(terrainTexture, pixelData, terrainColorData, levelData.LevelWidth);
         var terrainRenderer = new TerrainRenderer(terrainTexture);
         LevelScreen.SetTerrainPainter(terrainPainter);
+
+        var rewindManager = new RewindManager(
+            lemmingManager,
+            gadgetManager,
+            terrainPainter);
+        LevelScreen.SetRewindManager(rewindManager);
 
         var updateScheduler = new UpdateScheduler(
             controlPanel,

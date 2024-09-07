@@ -1,27 +1,32 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public sealed class SnapshotManager<TPerfectHasher, TItemType, TSnapshotData>
-    where TPerfectHasher : IItemManager<TItemType>
+public sealed class SnapshotManager<TItemManager, TItemType, TSnapshotData>
+    where TItemManager : IItemManager<TItemType>
     where TItemType : class, ISnapshotDataConvertible<TSnapshotData>
     where TSnapshotData : struct
 {
-    private const int InitialSnapshotDataListSize = 1 << 14;
+    /// <summary>
+    /// Allocate enough space initially for four minutes of gameplay.
+    /// If gameplay lasts longer, then the list will double in capacity.
+    /// </summary>
+    private const int SnapshotDataListSizeMultiplier = (4 * 60 * EngineConstants.FramesPerSecond) / LevelConstants.RewindSnapshotInterval;
 
-    private readonly TPerfectHasher _hasher;
+    private readonly TItemManager _itemManager;
     private readonly SnapshotList _snapshotList;
 
-    public SnapshotManager(TPerfectHasher hasher)
+    public SnapshotManager(TItemManager itemManager)
     {
-        _hasher = hasher;
-        _snapshotList = new SnapshotList(_hasher.NumberOfItems);
+        _itemManager = itemManager;
+        _snapshotList = new SnapshotList(_itemManager.NumberOfItems);
     }
 
     public void TakeSnapshot()
     {
-        var items = _hasher.AllItems;
+        var items = _itemManager.AllItems;
         var snapshotDataSpan = _snapshotList.GetNewSnapshotDataSpan();
 
         if (items.Length != snapshotDataSpan.Length)
@@ -47,7 +52,7 @@ public sealed class SnapshotManager<TPerfectHasher, TItemType, TSnapshotData>
         public SnapshotList(int numberOfItems)
         {
             _numberOfItems = numberOfItems;
-            _data = new TSnapshotData[numberOfItems * 16];
+            _data = new TSnapshotData[numberOfItems * SnapshotDataListSizeMultiplier];
         }
 
         public ReadOnlySpan<TSnapshotData> Slice(int start, int length)

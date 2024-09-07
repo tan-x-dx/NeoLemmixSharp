@@ -1,10 +1,11 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
-public readonly struct SkillAssignmentData
+public readonly struct SkillAssignmentData : IFrameOrderedData
 {
     public readonly int LemmingId;
     public readonly LevelPosition LemmingPosition;
@@ -14,6 +15,8 @@ public readonly struct SkillAssignmentData
 
     public readonly int SkillId;
     public readonly int Frame;
+
+    int IFrameOrderedData.Frame => Frame;
 
     public SkillAssignmentData(
         Lemming lemming,

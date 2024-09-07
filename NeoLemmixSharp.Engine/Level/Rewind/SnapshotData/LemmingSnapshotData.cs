@@ -54,6 +54,7 @@ public readonly struct LemmingSnapshotData
     public LemmingSnapshotData(Lemming lemming)
     {
         Id = lemming.Id;
+
         Span<LevelPosition> jumperPositionSource = lemming.GetJumperPositions();
         Span<LevelPosition> jumperPositionDest = JumperPositionBuffer;
         jumperPositionSource.CopyTo(jumperPositionDest);

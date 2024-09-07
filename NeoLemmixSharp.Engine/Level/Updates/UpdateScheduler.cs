@@ -185,7 +185,7 @@ end;
             return;
         button.IsSelected = isSelected;
     }
-    
+
     private void TickLevel()
     {
         if (_updateState == UpdateState.Paused)

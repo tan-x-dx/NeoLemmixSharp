@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Rewind;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain;
 
@@ -8,7 +9,7 @@ public sealed class TerrainPainter
 {
     private const int InitialPixelChangeListSize = 1 << 12;
 
-    private readonly PixelChangeList _pixelChangeList = new();
+    private readonly Rewind.FrameOrderedList<PixelChangeData> _pixelChangeList = new(InitialPixelChangeListSize);
     private readonly Texture2D _terrainTexture;
     private readonly PixelType[] _terrainPixelTypes;
     private readonly Color[] _terrainColors;
@@ -30,7 +31,7 @@ public sealed class TerrainPainter
 
     public void RecordPixelChange(LevelPosition pixel, Color toColor, PixelType fromPixelType, PixelType toPixelType)
     {
-        var previousLatestFrameWithUpdate = _pixelChangeList.LatestFrameWithChange();
+        var previousLatestFrameWithUpdate = _pixelChangeList.LatestFrameWithData();
         var currentLatestFrameWithUpdate = LevelScreen.UpdateScheduler.ElapsedTicks;
 
         if (previousLatestFrameWithUpdate != currentLatestFrameWithUpdate)
@@ -40,7 +41,7 @@ public sealed class TerrainPainter
 
         var fromColor = _terrainColors[pixel.Y * _terrainWidth + pixel.X];
 
-        ref var pixelChangeData = ref _pixelChangeList.GetNewPixelChangeDataRef();
+        ref var pixelChangeData = ref _pixelChangeList.GetNewDataRef();
 
         pixelChangeData = new PixelChangeData(currentLatestFrameWithUpdate, pixel.X, pixel.Y, fromColor, toColor, fromPixelType, toPixelType);
     }
@@ -86,103 +87,7 @@ public sealed class TerrainPainter
         _terrainTexture.SetData(_terrainColors);
     }
 
-    private sealed class PixelChangeList
-    {
-        private PixelChangeData[] _terrainChanges = new PixelChangeData[InitialPixelChangeListSize];
-        private int _count;
-
-        public int Count => _count;
-
-        public ref readonly PixelChangeData this[int index] => ref _terrainChanges[index];
-
-        public ReadOnlySpan<PixelChangeData> Slice(int start, int length)
-        {
-            if (start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Negative start index");
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Negative length");
-            if (_count - start < length)
-                throw new ArgumentOutOfRangeException(nameof(start), "Start index with length is out of bounds");
-
-            return new ReadOnlySpan<PixelChangeData>(_terrainChanges, start, length);
-        }
-
-        public ReadOnlySpan<PixelChangeData> SliceToEnd(int start)
-        {
-            if (start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Negative start index");
-
-            return new ReadOnlySpan<PixelChangeData>(_terrainChanges, start, Math.Max(0, _count - start));
-        }
-
-        public ReadOnlySpan<PixelChangeData> GetSliceBackTo(int frame)
-        {
-            var index = GetSmallestIndexOfFrame(frame);
-
-            return SliceToEnd(index);
-        }
-
-        /// <summary>
-        /// Returns the smallest index such that the data at that index has a frame equal to or exceeding the input parameter
-        /// <para>
-        /// Binary search algorithm - O(log n)
-        /// </para>
-        /// </summary>
-        private int GetSmallestIndexOfFrame(int frame)
-        {
-            if (_count == 0)
-                return 0;
-
-            var upperTestIndex = _count;
-            var lowerTestIndex = 0;
-
-            while (upperTestIndex - lowerTestIndex > 1)
-            {
-                var bestGuess = (lowerTestIndex + upperTestIndex) >> 1;
-                ref readonly var test = ref _terrainChanges[bestGuess];
-
-                if (test.Frame >= frame)
-                {
-                    upperTestIndex = bestGuess;
-                }
-                else
-                {
-                    lowerTestIndex = bestGuess;
-                }
-            }
-
-            ref readonly var test1 = ref _terrainChanges[lowerTestIndex];
-            return test1.Frame >= frame
-                ? lowerTestIndex
-                : upperTestIndex;
-        }
-
-        public ref PixelChangeData GetNewPixelChangeDataRef()
-        {
-            var arraySize = _terrainChanges.Length;
-            if (_count == arraySize)
-            {
-                var newArray = new PixelChangeData[arraySize * 2];
-                new ReadOnlySpan<PixelChangeData>(_terrainChanges).CopyTo(newArray);
-
-                _terrainChanges = newArray;
-            }
-
-            return ref _terrainChanges[_count++];
-        }
-
-        public int LatestFrameWithChange()
-        {
-            if (_count == 0)
-                return -1;
-
-            ref readonly var pixelChangeData = ref _terrainChanges[_count - 1];
-
-            return pixelChangeData.Frame;
-        }
-    }
-
-    private readonly struct PixelChangeData
+    private readonly struct PixelChangeData : IFrameOrderedData
     {
         public readonly int Frame;
         public readonly int X;
@@ -191,6 +96,8 @@ public sealed class TerrainPainter
         public readonly Color ToColor;
         public readonly PixelType FromPixelType;
         public readonly PixelType ToPixelType;
+
+        int IFrameOrderedData.Frame => Frame;
 
         public PixelChangeData(int frame, int x, int y, Color fromColor, Color toColor, PixelType fromPixelType, PixelType toPixelType)
         {

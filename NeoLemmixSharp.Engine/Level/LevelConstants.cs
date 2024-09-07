@@ -57,6 +57,8 @@ public static class LevelConstants
 
     public const int FloaterGliderStartCycleFrame = 9;
 
+    public const int RewindSnapshotInterval = 2 * EngineConstants.FramesPerSecond;
+
     /// <summary>
     /// A lemming falls 3 pixels each frame
     /// </summary>
