@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Rewind;
+﻿using System.Diagnostics.Contracts;
+
+namespace NeoLemmixSharp.Engine.Level.Rewind;
 
 public sealed class FrameOrderedList<TFrameOrderedData>
     where TFrameOrderedData : struct, IFrameOrderedData
@@ -13,8 +15,10 @@ public sealed class FrameOrderedList<TFrameOrderedData>
 
     public int Count => _count;
 
+    [Pure]
     public ref readonly TFrameOrderedData this[int index] => ref _items[index];
 
+    [Pure]
     public ReadOnlySpan<TFrameOrderedData> Slice(int start, int length)
     {
         if (start < 0)
@@ -27,6 +31,7 @@ public sealed class FrameOrderedList<TFrameOrderedData>
         return new ReadOnlySpan<TFrameOrderedData>(_items, start, length);
     }
 
+    [Pure]
     public ReadOnlySpan<TFrameOrderedData> SliceToEnd(int start)
     {
         if (start < 0)
@@ -35,6 +40,7 @@ public sealed class FrameOrderedList<TFrameOrderedData>
         return new ReadOnlySpan<TFrameOrderedData>(_items, start, Math.Max(0, _count - start));
     }
 
+    [Pure]
     public ReadOnlySpan<TFrameOrderedData> GetSliceBackTo(int frame)
     {
         var index = GetSmallestIndexOfFrame(frame);
@@ -48,6 +54,7 @@ public sealed class FrameOrderedList<TFrameOrderedData>
     /// Binary search algorithm - O(log n)
     /// </para>
     /// </summary>
+    [Pure]
     private int GetSmallestIndexOfFrame(int frame)
     {
         if (_count == 0)
@@ -91,6 +98,7 @@ public sealed class FrameOrderedList<TFrameOrderedData>
         return ref _items[_count++];
     }
 
+    [Pure]
     public int LatestFrameWithData()
     {
         if (_count == 0)
