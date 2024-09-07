@@ -146,7 +146,7 @@ public sealed class BoundaryBehaviour
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return a;
 
-        // Most likely case for wrap normalisation, is the input
+        // Most likely situation for wrap normalisation is the input
         // being just outside the bounds [0, _levelLength - 1].
         // Therefore, we can avoid a call to the modulo operator
         // by simply adding/subtracting the level length
@@ -319,9 +319,14 @@ public sealed class BoundaryBehaviour
         if (viewportClipInterval.Start < spriteClipInterval.Start + spriteClipInterval.Length &&
             spriteClipInterval.Start < viewportClipInterval.Start + viewportClipInterval.Length)
         {
-            var num1 = Math.Min(spriteClipInterval.Start + spriteClipInterval.Length,
+            var num1 = Math.Min(
+                spriteClipInterval.Start + spriteClipInterval.Length,
                 viewportClipInterval.Start + viewportClipInterval.Length);
-            var start = Math.Max(spriteClipInterval.Start, viewportClipInterval.Start);
+
+            var start = Math.Max(
+                spriteClipInterval.Start,
+                viewportClipInterval.Start);
+
             return new ClipInterval(start, num1 - start, offset);
         }
 
