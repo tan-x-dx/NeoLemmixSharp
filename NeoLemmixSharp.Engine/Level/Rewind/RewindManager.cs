@@ -6,8 +6,8 @@ namespace NeoLemmixSharp.Engine.Level.Rewind;
 
 public sealed class RewindManager
 {
-    private readonly SnapshotManager<LemmingManager, Lemming, LemmingSnapshotData> _lemmingSnapshotManager = new(LevelScreen.LemmingManager);
-    private readonly SnapshotManager<GadgetManager, GadgetBase, int> _gadgetSnapshotManager = new(LevelScreen.GadgetManager);
+    private readonly SnapshotRecorder<LemmingManager, Lemming, LemmingSnapshotData> _lemmingSnapshotRecorder = new(LevelScreen.LemmingManager);
+    private readonly SnapshotRecorder<GadgetManager, GadgetBase, int> _gadgetSnapshotRecorder = new(LevelScreen.GadgetManager);
 
     private int _maxElapsedTicks;
 
@@ -17,8 +17,8 @@ public sealed class RewindManager
 
         if (elapsedTicks % LevelConstants.RewindSnapshotInterval == 0)
         {
-            _lemmingSnapshotManager.TakeSnapshot();
-            _gadgetSnapshotManager.TakeSnapshot();
+            _lemmingSnapshotRecorder.TakeSnapshot();
+            _gadgetSnapshotRecorder.TakeSnapshot();
         }
 
         LevelScreen.TerrainPainter.RepaintTerrain();

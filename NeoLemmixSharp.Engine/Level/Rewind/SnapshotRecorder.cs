@@ -1,10 +1,9 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public sealed class SnapshotManager<TItemManager, TItemType, TSnapshotData>
+public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
     where TItemManager : IItemManager<TItemType>
     where TItemType : class, ISnapshotDataConvertible<TSnapshotData>
     where TSnapshotData : struct
@@ -18,7 +17,7 @@ public sealed class SnapshotManager<TItemManager, TItemType, TSnapshotData>
     private readonly TItemManager _itemManager;
     private readonly SnapshotList _snapshotList;
 
-    public SnapshotManager(TItemManager itemManager)
+    public SnapshotRecorder(TItemManager itemManager)
     {
         _itemManager = itemManager;
         _snapshotList = new SnapshotList(_itemManager.NumberOfItems);
