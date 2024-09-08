@@ -1,9 +1,9 @@
-﻿using System.Diagnostics;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.Level.Updates;
 
@@ -300,8 +300,6 @@ end;
 
             _elapsedTicks = actualElapsedTicks;
             _elapsedTicksModuloFastForwardSpeed = _elapsedTicks % EngineConstants.FastForwardSpeedMultiplier;
-
-            LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks);
         }
         else
         {

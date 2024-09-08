@@ -64,12 +64,12 @@ public sealed class TerrainPainter
     {
         var startIndex = _firstIndexOfTickUpdates;
         _firstIndexOfTickUpdates = _pixelChangeList.Count;
-        return _pixelChangeList.SliceToEnd(startIndex);
+        return _pixelChangeList.GetSliceToEnd(startIndex);
     }
 
     public void RewindBackTo(int tick)
     {
-        var pixelChanges = _pixelChangeList.GetSliceBackTo(tick);
+        var pixelChanges = _pixelChangeList.RewindBackTo(tick - 1);
         if (pixelChanges.Length == 0)
             return;
 

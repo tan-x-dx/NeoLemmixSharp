@@ -32,7 +32,7 @@ public sealed class TickOrderedList<TTickOrderedData>
     }
 
     [Pure]
-    public ReadOnlySpan<TTickOrderedData> SliceToEnd(int start)
+    public ReadOnlySpan<TTickOrderedData> GetSliceToEnd(int start)
     {
         if (start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), "Negative start index");
@@ -40,12 +40,15 @@ public sealed class TickOrderedList<TTickOrderedData>
         return new ReadOnlySpan<TTickOrderedData>(_items, start, Math.Max(0, _count - start));
     }
 
-    [Pure]
-    public ReadOnlySpan<TTickOrderedData> GetSliceBackTo(int tick)
+    public ReadOnlySpan<TTickOrderedData> RewindBackTo(int tick)
     {
         var index = GetSmallestIndexOfTick(tick);
 
-        return SliceToEnd(index);
+        var result = GetSliceToEnd(index);
+
+        _count = index;
+
+        return result;
     }
 
     /// <summary>

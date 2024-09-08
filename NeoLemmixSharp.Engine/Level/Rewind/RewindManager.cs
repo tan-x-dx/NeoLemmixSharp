@@ -36,9 +36,12 @@ public sealed class RewindManager
         _lemmingManagerSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
         _gadgetSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
 
-        LevelScreen.TerrainPainter.RewindBackTo(specifiedTick);
+        var actualElapsedTick = correspondingSnapshotNumber * LevelConstants.RewindSnapshotInterval;
+        
+        LevelScreen.TerrainPainter.RewindBackTo(actualElapsedTick);
+        LevelScreen.LevelTimer.SetElapsedTicks(actualElapsedTick);
 
-        return correspondingSnapshotNumber * LevelConstants.RewindSnapshotInterval;
+        return actualElapsedTick;
     }
 
     public void RewindBackToPreviousSkillAssignment()

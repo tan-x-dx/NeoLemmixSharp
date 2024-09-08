@@ -153,7 +153,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
     public void RewindBackTo(int tick)
     {
-        var skillCountChanges = _skillCountChanges.GetSliceBackTo(tick);
+        var skillCountChanges = _skillCountChanges.RewindBackTo(tick);
         if (skillCountChanges.Length == 0)
             return;
 
