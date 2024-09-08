@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 {
-    private readonly TickOrderedList<SkillAssignmentData> _skillAssignments;
+    private readonly TickOrderedList<SkillAssignmentData> _skillCountChanges;
     private readonly SkillTrackingData[] _skillTrackingDataList;
 
     public ReadOnlySpan<SkillTrackingData> AllSkillTrackingData => new(_skillTrackingDataList);
@@ -19,7 +19,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
         var baseNumberOfSkillAssignments = CalculateBaseNumberOfSkillAssignments();
 
-        _skillAssignments = new TickOrderedList<SkillAssignmentData>(baseNumberOfSkillAssignments);
+        _skillCountChanges = new TickOrderedList<SkillAssignmentData>(baseNumberOfSkillAssignments);
     }
 
     private SkillTrackingData[] CreateSkillDataList(ReadOnlySpan<SkillSetData> skillSetDataSpan)
@@ -44,13 +44,16 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
         return new SkillTrackingData(lemmingSkill, team, i, skillSetData.NumberOfSkills);
     }
-    
+
     private int CalculateBaseNumberOfSkillAssignments()
     {
         var result = 0;
 
         foreach (var skillTrackingDatum in _skillTrackingDataList)
         {
+            // Add one for each item
+            result++;
+
             if (skillTrackingDatum.IsInfinite)
             {
                 result += LevelConstants.AssumedSkillUsageForInfiniteSkillCounts;
@@ -107,6 +110,21 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         }
     }
 
+    /*  private void RecordSkillAssignment()
+      {
+          var previousLatestTickWithUpdate = _skillCountChanges.LatestTickWithData();
+          var currentLatestTickWithUpdate = LevelScreen.UpdateScheduler.ElapsedTicks;
+
+          if (previousLatestTickWithUpdate != currentLatestTickWithUpdate)
+          {
+              _firstIndexOfTickUpdates = _skillCountChanges.Count;
+          }
+
+          ref var pixelChangeData = ref _skillCountChanges.GetNewDataRef();
+
+          pixelChangeData = new SkillAssignmentData(currentLatestTickWithUpdate, pixel.X, pixel.Y, fromColor, toColor, fromPixelType, toPixelType);
+      }*/
+
     int IComparer<SkillTrackingData>.Compare(SkillTrackingData? x, SkillTrackingData? y)
     {
         if (ReferenceEquals(x, y)) return 0;
@@ -131,6 +149,20 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         }
 
         return result;
+    }
+
+    public void RewindBackTo(int tick)
+    {
+        var skillCountChanges = _skillCountChanges.GetSliceBackTo(tick);
+        if (skillCountChanges.Length == 0)
+            return;
+
+        for (var i = skillCountChanges.Length - 1; i >= 0; i--)
+        {
+            ref readonly var pixelChangeData = ref skillCountChanges[i];
+
+
+        }
     }
 
     public void Dispose()
