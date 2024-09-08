@@ -26,7 +26,7 @@ public sealed class RewindManager
         LevelScreen.TerrainPainter.RepaintTerrain();
     }
 
-    public void RewindBackTo(int specifiedTick)
+    public int RewindBackTo(int specifiedTick)
     {
         specifiedTick = Math.Max(specifiedTick, 0);
 
@@ -37,6 +37,8 @@ public sealed class RewindManager
         _gadgetSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
 
         LevelScreen.TerrainPainter.RewindBackTo(specifiedTick);
+
+        return correspondingSnapshotNumber * LevelConstants.RewindSnapshotInterval;
     }
 
     public void RewindBackToPreviousSkillAssignment()

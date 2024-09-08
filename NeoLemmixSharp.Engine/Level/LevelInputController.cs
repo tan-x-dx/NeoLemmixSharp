@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.GameInput;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;
 
-public sealed class LevelInputController
+public sealed class LevelInputController : IInitialisable
 {
     private readonly InputController _inputController = new();
 
@@ -27,6 +28,8 @@ public sealed class LevelInputController
     public InputAction SelectOnlyUnassignedLemmings { get; }
     public InputAction SelectLeftFacingLemmings { get; }
     public InputAction SelectRightFacingLemmings { get; }
+
+    public InputAction Rewind50Frames { get; }
 
     public InputAction RightArrow { get; }
     public InputAction UpArrow { get; }
@@ -51,6 +54,8 @@ public sealed class LevelInputController
         SelectLeftFacingLemmings = _inputController.CreateInputAction("Select Left Facing Lemmings");
         SelectRightFacingLemmings = _inputController.CreateInputAction("Select Right Facing Lemmings");
 
+        Rewind50Frames = _inputController.CreateInputAction("Rewind 10 frames");
+
         RightArrow = _inputController.CreateInputAction("ABC");
         UpArrow = _inputController.CreateInputAction("ABC");
         LeftArrow = _inputController.CreateInputAction("ABC");
@@ -66,8 +71,6 @@ public sealed class LevelInputController
         _inputController.ValidateInputActions();
 
         SetUpBindings();
-
-        Initialise();
     }
 
     private void SetUpBindings()
@@ -92,12 +95,14 @@ public sealed class LevelInputController
         _inputController.Bind(Keys.Down, DownArrow);
 
         _inputController.Bind(Keys.Space, Space);
+
+        _inputController.Bind(Keys.OemMinus, Rewind50Frames);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Tick() => _inputController.Tick();
 
-    private void Initialise()
+    public void Initialise()
     {
         SetEnabledWithFlag(Pause, LevelParameters.EnablePause);
         SetEnabledWithFlag(ToggleFastForwards, LevelParameters.EnableFastForward);

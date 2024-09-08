@@ -76,7 +76,9 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
             if (start < 0)
                 throw new ArgumentOutOfRangeException(nameof(start), "Negative start index");
 
-            return new ReadOnlySpan<TSnapshotData>(_data, start * _count, _count);
+            _count = _numberOfItems * (1 + start);
+
+            return new ReadOnlySpan<TSnapshotData>(_data, start * _numberOfItems, _numberOfItems);
         }
 
         public Span<TSnapshotData> GetNewSnapshotDataSpan()

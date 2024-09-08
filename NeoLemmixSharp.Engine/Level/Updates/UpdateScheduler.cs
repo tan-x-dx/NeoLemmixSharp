@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common;
+﻿using System.Diagnostics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -79,7 +80,7 @@ end;
         LevelScreen.LevelCursor.Tick();
 
         HandleMouseInput();
-        EvaluateGameState();
+        HandleKeyboardInput();
         TickLevel();
         HandleCursor();
         HandleSkillAssignment();
@@ -102,30 +103,37 @@ end;
         }
     }
 
-    private void EvaluateGameState()
+    private void HandleKeyboardInput()
     {
-        if (LevelScreen.LevelInputController.ToggleFullScreen.IsPressed)
+        var inputController = LevelScreen.LevelInputController;
+
+        if (inputController.ToggleFullScreen.IsPressed)
         {
             IGameWindow.Instance.ToggleFullscreen();
         }
 
-        if (LevelScreen.LevelInputController.Pause.IsPressed)
+        if (inputController.Pause.IsPressed)
         {
             SetUpdateState(_updateState == UpdateState.Paused ? UpdateState.Normal : UpdateState.Paused);
         }
-        else if (LevelScreen.LevelInputController.ToggleFastForwards.IsPressed)
+        else if (inputController.ToggleFastForwards.IsPressed)
         {
             SetUpdateState(_updateState == UpdateState.FastForward ? UpdateState.Normal : UpdateState.FastForward);
         }
 
-        if (LevelScreen.LevelInputController.Quit.IsPressed)
+        if (inputController.Quit.IsPressed)
         {
             IGameWindow.Instance.Escape();
         }
 
-        if (LevelScreen.LevelInputController.ToggleFullScreen.IsPressed)
+        if (inputController.ToggleFullScreen.IsPressed)
         {
             IGameWindow.Instance.ToggleBorderless();
+        }
+
+        if (inputController.Rewind50Frames.IsPressed)
+        {
+            HandleRewind(-50);
         }
     }
 
@@ -269,5 +277,42 @@ end;
                 ClearQueuedSkill();
             }
         }
+    }
+
+    private void HandleRewind(int tickDelta)
+    {
+        SetUpdateState(UpdateState.Paused);
+
+        if (tickDelta == 0)
+            return;
+
+        _queuedSkill = NoneSkill.Instance;
+        _queuedSkillLemming = null;
+        _queuedSkillFrame = 0;
+
+        var expectedElapsedTicks = Math.Max(_elapsedTicks + tickDelta, 0);
+        int remainingTicks;
+
+        if (tickDelta < 0)
+        {
+            var actualElapsedTicks = LevelScreen.RewindManager.RewindBackTo(expectedElapsedTicks);
+            remainingTicks = expectedElapsedTicks - actualElapsedTicks;
+
+            _elapsedTicks = actualElapsedTicks;
+            _elapsedTicksModuloFastForwardSpeed = _elapsedTicks % EngineConstants.FastForwardSpeedMultiplier;
+
+            LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks);
+        }
+        else
+        {
+            remainingTicks = tickDelta;
+        }
+
+        while (remainingTicks-- > 0)
+        {
+            PerformOneTick();
+        }
+
+        Debug.Assert(_elapsedTicks == expectedElapsedTicks);
     }
 }

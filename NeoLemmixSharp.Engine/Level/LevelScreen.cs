@@ -170,6 +170,8 @@ public sealed class LevelScreen :
     public LevelScreen(LevelData levelData)
     {
         ScreenTitle = levelData.LevelTitle;
+
+        Instance = this;
     }
 
     public void Initialise()
@@ -189,8 +191,6 @@ public sealed class LevelScreen :
                 objectToInitialise.Initialise();
             }
         }
-
-        Instance = this;
     }
 
     public void Tick(GameTime gameTime)
