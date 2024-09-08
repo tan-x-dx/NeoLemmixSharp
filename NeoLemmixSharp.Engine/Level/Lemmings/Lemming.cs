@@ -130,7 +130,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
         initialAction.TransitionLemmingToAction(this, false);
         Renderer.UpdateLemmingState(true);
-        Renderer.UpdatePosition();
     }
 
     public void Tick()
@@ -534,6 +533,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         SetCurrentAction(LemmingAction.GetActionFromId(lemmingSnapshotData.CurrentActionId));
         NextAction = LemmingAction.GetActionFromId(lemmingSnapshotData.NextActionId);
         CountDownAction = LemmingAction.GetActionFromId(lemmingSnapshotData.CountDownActionId);
+
+        Renderer.ResetPosition();
     }
 
     int IIdEquatable<Lemming>.Id => Id;

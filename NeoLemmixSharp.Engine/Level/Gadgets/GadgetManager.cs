@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public sealed class GadgetManager : IItemManager<GadgetBase>, IPerfectHasher<HitBoxGadget>, IInitialisable, IDisposable
+public sealed class GadgetManager : IPerfectHasher<GadgetBase>, IItemManager<GadgetBase>, IPerfectHasher<HitBoxGadget>, IInitialisable, IDisposable
 {
     private readonly GadgetBase[] _allGadgets;
     private readonly SpacialHashGrid<HitBoxGadget> _gadgetPositionHelper;

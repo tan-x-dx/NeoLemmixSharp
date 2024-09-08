@@ -55,7 +55,24 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             return;
         }
 
+        var spriteBank = _lemming.State.TeamAffiliation.SpriteBank;
+
+        _actionSprite = spriteBank.GetActionSprite(
+            _lemming.CurrentAction,
+            _lemming.Orientation,
+            _lemming.FacingDirection);
+
+        UpdatePosition();
+
         LevelScreenRenderer.Instance.LevelRenderer.RegisterSpriteForRendering(this);
+    }
+
+    public void ResetPosition()
+    {
+        LevelScreenRenderer.Instance.LevelRenderer.DeregisterSpriteForRendering(this);
+
+        if (!_lemming.State.IsActive)
+            return;
 
         var spriteBank = _lemming.State.TeamAffiliation.SpriteBank;
 
@@ -65,6 +82,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             _lemming.FacingDirection);
 
         UpdatePosition();
+
+        LevelScreenRenderer.Instance.LevelRenderer.RegisterSpriteForRendering(this);
     }
 
     public void SetDisplayTimer(bool displayTimer)

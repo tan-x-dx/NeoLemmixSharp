@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -19,9 +20,13 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;
 
-public sealed class LevelScreen : IBaseScreen, IInitialisable
+public sealed class LevelScreen :
+    IBaseScreen,
+    IInitialisable,
+    IItemManager<LemmingManager>,
+    IItemManager<GadgetManager>
 {
-    private static LevelScreen Instance { get; set; } = null!;
+    public static LevelScreen Instance { get; private set; } = null!;
 
     private BoundaryBehaviour _horizontalBoundaryBehaviour = null!;
     private BoundaryBehaviour _verticalBoundaryBehaviour = null!;
@@ -242,4 +247,10 @@ public sealed class LevelScreen : IBaseScreen, IInitialisable
 
         IsDisposed = true;
     }
+
+    int IItemManager<LemmingManager>.NumberOfItems => 1;
+    ReadOnlySpan<LemmingManager> IItemManager<LemmingManager>.AllItems => new(ref _lemmingManager);
+
+    int IItemManager<GadgetManager>.NumberOfItems => 1;
+    ReadOnlySpan<GadgetManager> IItemManager<GadgetManager>.AllItems => new(ref _gadgetManager);
 }

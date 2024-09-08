@@ -1,4 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.Objectives;
+using NeoLemmixSharp.Engine.Level.Rewind;
+using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
@@ -6,6 +8,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 {
+    private readonly TickOrderedList<SkillAssignmentData> _skillAssignments;
     private readonly SkillTrackingData[] _skillTrackingDataList;
 
     public ReadOnlySpan<SkillTrackingData> AllSkillTrackingData => new(_skillTrackingDataList);
@@ -13,6 +16,10 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
     public SkillSetManager(LevelObjective levelObjective)
     {
         _skillTrackingDataList = CreateSkillDataList(levelObjective.SkillSetData);
+
+        var baseNumberOfSkillAssignments = CalculateBaseNumberOfSkillAssignments();
+
+        _skillAssignments = new TickOrderedList<SkillAssignmentData>(baseNumberOfSkillAssignments);
     }
 
     private SkillTrackingData[] CreateSkillDataList(ReadOnlySpan<SkillSetData> skillSetDataSpan)
@@ -36,6 +43,29 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         var team = Team.AllItems[skillSetData.TeamId];
 
         return new SkillTrackingData(lemmingSkill, team, i, skillSetData.NumberOfSkills);
+    }
+    
+    private int CalculateBaseNumberOfSkillAssignments()
+    {
+        var result = 0;
+
+        foreach (var skillTrackingDatum in _skillTrackingDataList)
+        {
+            if (skillTrackingDatum.IsInfinite)
+            {
+                result += LevelConstants.AssumedSkillUsageForInfiniteSkillCounts;
+            }
+            else if (skillTrackingDatum.SkillCount == 0)
+            {
+                result += LevelConstants.AssumedSkillCountsFromPickups;
+            }
+            else
+            {
+                result += skillTrackingDatum.SkillCount;
+            }
+        }
+
+        return result;
     }
 
     public SkillTrackingData? GetSkillTrackingData(int skillDataId)

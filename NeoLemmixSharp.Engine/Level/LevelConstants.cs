@@ -34,6 +34,17 @@ public static class LevelConstants
 
     public const int InfiniteSkillCount = 100;
 
+    /// <summary>
+    /// Assumption: if there are infinite skills available of a certain type,
+    /// there'll probably be around this number of actual usages.
+    /// </summary>
+    public const int AssumedSkillUsageForInfiniteSkillCounts = 40;
+    /// <summary>
+    /// Assumption: if there are skill pickups in a level,
+    /// there'll probably be around this number of skills added.
+    /// </summary>
+    public const int AssumedSkillCountsFromPickups = 10;
+
     public const int InitialLemmingHatchReleaseCountDown = 20;
 
     public const int CursorSizeInPixels = 16;
