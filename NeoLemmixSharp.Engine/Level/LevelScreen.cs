@@ -154,10 +154,8 @@ public sealed class LevelScreen : IBaseScreen, IInitialisable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool PositionOutOfBounds(LevelPosition levelPosition)
     {
-        return levelPosition.X < 0 ||
-               levelPosition.X >= HorizontalBoundaryBehaviour.LevelLength ||
-               levelPosition.Y < 0 ||
-               levelPosition.Y >= VerticalBoundaryBehaviour.LevelLength;
+        return (uint)levelPosition.X >= (uint)HorizontalBoundaryBehaviour.LevelLength ||
+               (uint)levelPosition.Y >= (uint)VerticalBoundaryBehaviour.LevelLength;
     }
 
     public IScreenRenderer ScreenRenderer => _levelScreenRenderer;
@@ -179,7 +177,7 @@ public sealed class LevelScreen : IBaseScreen, IInitialisable
             var actualObject = field.GetValue(this);
 
             if (actualObject is null)
-                throw new InvalidOperationException($"Static field has not been initialised: {field.Name}");
+                throw new InvalidOperationException($"Field has not been initialised: {field.Name}");
 
             if (actualObject is IInitialisable objectToInitialise)
             {
