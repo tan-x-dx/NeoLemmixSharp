@@ -249,8 +249,8 @@ public sealed class LevelScreen :
     }
 
     int IItemManager<LemmingManager>.NumberOfItems => 1;
-    ReadOnlySpan<LemmingManager> IItemManager<LemmingManager>.AllItems => new(ref _lemmingManager);
+    ReadOnlySpan<LemmingManager> IItemManager<LemmingManager>.AllItems => new(in _lemmingManager);
 
     int IItemManager<GadgetManager>.NumberOfItems => 1;
-    ReadOnlySpan<GadgetManager> IItemManager<GadgetManager>.AllItems => new(ref _gadgetManager);
+    ReadOnlySpan<GadgetManager> IItemManager<GadgetManager>.AllItems => new(in _gadgetManager);
 }
