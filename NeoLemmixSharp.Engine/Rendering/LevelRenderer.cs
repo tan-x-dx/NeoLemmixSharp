@@ -16,31 +16,34 @@ namespace NeoLemmixSharp.Engine.Rendering;
 public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectRenderer>
 {
     private readonly GraphicsDevice _graphicsDevice;
+    private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
     private readonly SpacialHashGrid<IViewportObjectRenderer> _spriteSpacialHashGrid;
 
     private readonly List<IViewportObjectRenderer> _orderedSprites;
-    private IBackgroundRenderer _backgroundRenderer;
 
+    private IBackgroundRenderer _backgroundRenderer;
     private RenderTarget2D _levelRenderTarget;
     private bool _disposed;
 
-    public LevelRenderer(
-        GraphicsDevice graphicsDevice,
+    public LevelRenderer(GraphicsDevice graphicsDevice,
         List<IViewportObjectRenderer> orderedSprites,
-        IBackgroundRenderer backgroundRenderer)
+        IBackgroundRenderer backgroundRenderer,
+        BoundaryBehaviour horizontalBoundaryBehaviour,
+        BoundaryBehaviour verticalBoundaryBehaviour)
     {
         _graphicsDevice = graphicsDevice;
 
-        _orderedSprites = orderedSprites;
-        _backgroundRenderer = backgroundRenderer;
+        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
-        _levelRenderTarget = GetLevelRenderTarget2D();
+        _orderedSprites = orderedSprites;
 
         _spriteSpacialHashGrid = new SpacialHashGrid<IViewportObjectRenderer>(
             this,
             ChunkSizeType.ChunkSize64,
-            LevelScreen.HorizontalBoundaryBehaviour,
-            LevelScreen.VerticalBoundaryBehaviour);
+            horizontalBoundaryBehaviour,
+            verticalBoundaryBehaviour);
 
         var rendererSpan = CollectionsMarshal.AsSpan(_orderedSprites);
         foreach (var renderer in rendererSpan)
@@ -50,6 +53,9 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
 
             RegisterSpriteForRendering(renderer);
         }
+
+        _backgroundRenderer = backgroundRenderer;
+        _levelRenderTarget = GetLevelRenderTarget2D();
     }
 
     public bool IsRenderingSprite(IViewportObjectRenderer renderer) => _spriteSpacialHashGrid.IsTrackingItem(renderer);
@@ -217,8 +223,8 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     {
         return new RenderTarget2D(
             _graphicsDevice,
-            LevelScreen.HorizontalBoundaryBehaviour.LevelLength,
-            LevelScreen.VerticalBoundaryBehaviour.LevelLength,
+            _horizontalBoundaryBehaviour.LevelLength,
+            _verticalBoundaryBehaviour.LevelLength,
             false,
             _graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24);

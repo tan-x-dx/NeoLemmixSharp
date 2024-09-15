@@ -1,16 +1,33 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public sealed class RewindManager
+public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<GadgetManager>
 {
-    private readonly SnapshotRecorder<LemmingManager, Lemming, LemmingSnapshotData> _lemmingSnapshotRecorder = new(LevelScreen.LemmingManager);
-    private readonly SnapshotRecorder<LevelScreen, LemmingManager, LemmingManagerSnapshotData> _lemmingManagerSnapshotRecorder = new(LevelScreen.Instance);
-    private readonly SnapshotRecorder<GadgetManager, GadgetBase, int> _gadgetSnapshotRecorder = new(LevelScreen.GadgetManager);
+    private readonly SnapshotRecorder<LemmingManager, Lemming, LemmingSnapshotData> _lemmingSnapshotRecorder;
+
+    private readonly LemmingManager _lemmingManager;
+    private readonly GadgetManager _gadgetManager;
+
+    private readonly SnapshotRecorder<RewindManager, LemmingManager, LemmingManagerSnapshotData> _lemmingManagerSnapshotRecorder;
+    private readonly SnapshotRecorder<GadgetManager, GadgetBase, int> _gadgetSnapshotRecorder;
 
     private int _maxElapsedTicks;
+
+    public RewindManager(
+        LemmingManager lemmingManager,
+        GadgetManager gadgetManager)
+    {
+        _lemmingManager = lemmingManager;
+        _gadgetManager = gadgetManager;
+
+        _lemmingSnapshotRecorder = new SnapshotRecorder<LemmingManager, Lemming, LemmingSnapshotData>(lemmingManager);
+        _lemmingManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, LemmingManager, LemmingManagerSnapshotData>(this);
+        _gadgetSnapshotRecorder = new SnapshotRecorder<GadgetManager, GadgetBase, int>(gadgetManager);
+    }
 
     public void Tick(int elapsedTicks)
     {
@@ -37,7 +54,7 @@ public sealed class RewindManager
         _gadgetSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
 
         var actualElapsedTick = correspondingSnapshotNumber * LevelConstants.RewindSnapshotInterval;
-        
+
         LevelScreen.TerrainPainter.RewindBackTo(actualElapsedTick);
         LevelScreen.LevelTimer.SetElapsedTicks(actualElapsedTick);
 
@@ -48,4 +65,10 @@ public sealed class RewindManager
     {
 
     }
+
+    int IItemManager<LemmingManager>.NumberOfItems => 1;
+    ReadOnlySpan<LemmingManager> IItemManager<LemmingManager>.AllItems => new(in _lemmingManager);
+
+    int IItemManager<GadgetManager>.NumberOfItems => 1;
+    ReadOnlySpan<GadgetManager> IItemManager<GadgetManager>.AllItems => new(in _gadgetManager);
 }

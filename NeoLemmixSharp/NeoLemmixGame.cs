@@ -126,7 +126,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
             Content,
             GraphicsDevice);
         SetScreen(menuScreen);
-        menuScreen.Initialise();
     }
 
     private static void InitialiseGameConstants()
@@ -191,6 +190,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
         Window.Title = _screen.ScreenTitle;
         _screen.OnSetScreen();
+
+        _screen.Initialise();
     }
 
     protected override void Update(GameTime gameTime)

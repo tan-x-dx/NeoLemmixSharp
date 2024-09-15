@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -20,128 +19,44 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;
 
-public sealed class LevelScreen :
-    IBaseScreen,
-    IInitialisable,
-    IItemManager<LemmingManager>,
-    IItemManager<GadgetManager>
+public sealed class LevelScreen : IBaseScreen
 {
-    public static LevelScreen Instance { get; private set; } = null!;
+    private static LevelScreen _instance = null!;
 
-    private BoundaryBehaviour _horizontalBoundaryBehaviour = null!;
-    private BoundaryBehaviour _verticalBoundaryBehaviour = null!;
+    private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
+    private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
 
-    private LevelParameterSet _levelParameters = null!;
-    private TerrainManager _terrainManager = null!;
-    private TerrainPainter _terrainPainter = null!;
-    private LemmingManager _lemmingManager = null!;
-    private GadgetManager _gadgetManager = null!;
-    private SkillSetManager _skillSetManager = null!;
-    private LevelControlPanel _levelControlPanel = null!;
-    private UpdateScheduler _updateScheduler = null!;
-    private LevelCursor _levelCursor = null!;
-    private LevelTimer _levelTimer = null!;
-    private LevelInputController _levelInputController = null!;
-    private Viewport _levelViewport = null!;
-    private RewindManager _rewindManager = null!;
-    private LevelScreenRenderer _levelScreenRenderer = null!;
+    private readonly LevelParameterSet _levelParameters;
+    private readonly TerrainManager _terrainManager;
+    private readonly TerrainPainter _terrainPainter;
+    private readonly LemmingManager _lemmingManager;
+    private readonly GadgetManager _gadgetManager;
+    private readonly SkillSetManager _skillSetManager;
+    private readonly LevelControlPanel _levelControlPanel;
+    private readonly UpdateScheduler _updateScheduler;
+    private readonly LevelCursor _levelCursor;
+    private readonly LevelTimer _levelTimer;
+    private readonly LevelInputController _levelInputController;
+    private readonly Viewport _levelViewport;
+    private readonly RewindManager _rewindManager;
+    private readonly LevelScreenRenderer _levelScreenRenderer;
 
-    public static BoundaryBehaviour HorizontalBoundaryBehaviour => Instance._horizontalBoundaryBehaviour;
-    public static BoundaryBehaviour VerticalBoundaryBehaviour => Instance._verticalBoundaryBehaviour;
+    public static BoundaryBehaviour HorizontalBoundaryBehaviour => _instance._horizontalBoundaryBehaviour;
+    public static BoundaryBehaviour VerticalBoundaryBehaviour => _instance._verticalBoundaryBehaviour;
 
-    public static LevelParameterSet LevelParameters => Instance._levelParameters;
-    public static TerrainManager TerrainManager => Instance._terrainManager;
-    public static TerrainPainter TerrainPainter => Instance._terrainPainter;
-    public static LemmingManager LemmingManager => Instance._lemmingManager;
-    public static GadgetManager GadgetManager => Instance._gadgetManager;
-    public static SkillSetManager SkillSetManager => Instance._skillSetManager;
-    public static LevelControlPanel LevelControlPanel => Instance._levelControlPanel;
-    public static UpdateScheduler UpdateScheduler => Instance._updateScheduler;
-    public static LevelCursor LevelCursor => Instance._levelCursor;
-    public static LevelTimer LevelTimer => Instance._levelTimer;
-    public static LevelInputController LevelInputController => Instance._levelInputController;
-    public static RewindManager RewindManager => Instance._rewindManager;
-    public static Viewport LevelViewport => Instance._levelViewport;
-
-    public void SetHorizontalBoundaryBehaviour(BoundaryBehaviour horizontalBoundaryBehaviour)
-    {
-        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
-    }
-
-    public void SetVerticalBoundaryBehaviour(BoundaryBehaviour verticalBoundaryBehaviour)
-    {
-        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
-    }
-
-    public void SetLevelParameters(LevelParameterSet levelParameters)
-    {
-        _levelParameters = levelParameters;
-    }
-
-    public void SetTerrainManager(TerrainManager terrainManager)
-    {
-        _terrainManager = terrainManager;
-    }
-
-    public void SetTerrainPainter(TerrainPainter terrainPainter)
-    {
-        _terrainPainter = terrainPainter;
-    }
-
-    public void SetLemmingManager(LemmingManager lemmingManager)
-    {
-        _lemmingManager = lemmingManager;
-    }
-
-    public void SetGadgetManager(GadgetManager gadgetManager)
-    {
-        _gadgetManager = gadgetManager;
-    }
-
-    public void SetSkillSetManager(SkillSetManager skillSetManager)
-    {
-        _skillSetManager = skillSetManager;
-    }
-
-    public void SetLevelControlPanel(LevelControlPanel levelControlPanel)
-    {
-        _levelControlPanel = levelControlPanel;
-    }
-
-    public void SetUpdateScheduler(UpdateScheduler updateScheduler)
-    {
-        _updateScheduler = updateScheduler;
-    }
-
-    public void SetLevelCursor(LevelCursor levelCursor)
-    {
-        _levelCursor = levelCursor;
-    }
-
-    public void SetLevelTimer(LevelTimer levelTimer)
-    {
-        _levelTimer = levelTimer;
-    }
-
-    public void SetLevelInputController(LevelInputController levelInputController)
-    {
-        _levelInputController = levelInputController;
-    }
-
-    public void SetRewindManager(RewindManager rewindManager)
-    {
-        _rewindManager = rewindManager;
-    }
-
-    public void SetViewport(Viewport levelViewport)
-    {
-        _levelViewport = levelViewport;
-    }
-
-    public void SetLevelScreenRenderer(LevelScreenRenderer levelScreenRenderer)
-    {
-        _levelScreenRenderer = levelScreenRenderer;
-    }
+    public static LevelParameterSet LevelParameters => _instance._levelParameters;
+    public static TerrainManager TerrainManager => _instance._terrainManager;
+    public static TerrainPainter TerrainPainter => _instance._terrainPainter;
+    public static LemmingManager LemmingManager => _instance._lemmingManager;
+    public static GadgetManager GadgetManager => _instance._gadgetManager;
+    public static SkillSetManager SkillSetManager => _instance._skillSetManager;
+    public static LevelControlPanel LevelControlPanel => _instance._levelControlPanel;
+    public static UpdateScheduler UpdateScheduler => _instance._updateScheduler;
+    public static LevelCursor LevelCursor => _instance._levelCursor;
+    public static LevelTimer LevelTimer => _instance._levelTimer;
+    public static LevelInputController LevelInputController => _instance._levelInputController;
+    public static RewindManager RewindManager => _instance._rewindManager;
+    public static Viewport LevelViewport => _instance._levelViewport;
 
     public static int LevelWidth => HorizontalBoundaryBehaviour.LevelLength;
     public static int LevelHeight => VerticalBoundaryBehaviour.LevelLength;
@@ -167,11 +82,44 @@ public sealed class LevelScreen :
     public string ScreenTitle { get; }
     public bool IsDisposed { get; private set; }
 
-    public LevelScreen(LevelData levelData)
+    public LevelScreen(
+        LevelData levelData,
+        BoundaryBehaviour horizontalBoundaryBehaviour,
+        BoundaryBehaviour verticalBoundaryBehaviour,
+        LevelParameterSet levelParameters,
+        TerrainManager terrainManager,
+        TerrainPainter terrainPainter,
+        LemmingManager lemmingManager,
+        GadgetManager gadgetManager,
+        SkillSetManager skillSetManager,
+        LevelControlPanel levelControlPanel,
+        UpdateScheduler updateScheduler,
+        LevelCursor levelCursor,
+        LevelTimer levelTimer,
+        LevelInputController levelInputController,
+        Viewport levelViewport,
+        RewindManager rewindManager,
+        LevelScreenRenderer levelScreenRenderer)
     {
+        _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
+        _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
+        _levelParameters = levelParameters;
+        _terrainManager = terrainManager;
+        _terrainPainter = terrainPainter;
+        _lemmingManager = lemmingManager;
+        _gadgetManager = gadgetManager;
+        _skillSetManager = skillSetManager;
+        _levelControlPanel = levelControlPanel;
+        _updateScheduler = updateScheduler;
+        _levelCursor = levelCursor;
+        _levelTimer = levelTimer;
+        _levelInputController = levelInputController;
+        _levelViewport = levelViewport;
+        _rewindManager = rewindManager;
+        _levelScreenRenderer = levelScreenRenderer;
         ScreenTitle = levelData.LevelTitle;
 
-        Instance = this;
+        _instance = this;
     }
 
     public void Initialise()
@@ -182,9 +130,6 @@ public sealed class LevelScreen :
         foreach (var field in fields)
         {
             var actualObject = field.GetValue(this);
-
-            if (actualObject is null)
-                throw new InvalidOperationException($"Field has not been initialised: {field.Name}");
 
             if (actualObject is IInitialisable objectToInitialise)
             {
@@ -243,14 +188,8 @@ public sealed class LevelScreen :
             field.SetValue(this, null);
         }
 
-        Instance = null!;
+        _instance = null!;
 
         IsDisposed = true;
     }
-
-    int IItemManager<LemmingManager>.NumberOfItems => 1;
-    ReadOnlySpan<LemmingManager> IItemManager<LemmingManager>.AllItems => new(in _lemmingManager);
-
-    int IItemManager<GadgetManager>.NumberOfItems => 1;
-    ReadOnlySpan<GadgetManager> IItemManager<GadgetManager>.AllItems => new(in _gadgetManager);
 }

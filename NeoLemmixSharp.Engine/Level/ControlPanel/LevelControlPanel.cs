@@ -1,11 +1,13 @@
 ﻿using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Rendering;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
-public sealed class LevelControlPanel
+public sealed class LevelControlPanel : IInitialisable
 {
     public const int MaxNumberOfSkillButtons = 10;
     public const int NumberOfTechnicalButtons = 9;
@@ -17,8 +19,6 @@ public sealed class LevelControlPanel
     public const int MaxControlPanelScaleMultiplier = 6;
     public const int NumberOfReleaseRateButtons = 3;
     public const int MinimapWidth = 111;
-
-    private readonly LevelInputController _controller;
 
     /// <summary>
     /// Is only not-null if there is precisely ONE hatch group per level.
@@ -54,11 +54,11 @@ public sealed class LevelControlPanel
 
     public LevelControlPanel(
         ControlPanelParameterSet controlPanelParameters,
-        LevelInputController controller)
+        LevelInputController controller,
+        LemmingManager lemmingManager,
+        SkillSetManager skillSetManager)
     {
-        _controller = controller;
-
-        var allHatchGroups = LevelScreen.LemmingManager.AllHatchGroups;
+        var allHatchGroups = lemmingManager.AllHatchGroups;
         _singularHatchGroup = allHatchGroups.Length == 1
             ? allHatchGroups[0]
             : null;
@@ -66,7 +66,8 @@ public sealed class LevelControlPanel
         ControlPanelHelperMethods.ResetButtonIds();
         _skillAssignButtons = ControlPanelHelperMethods.SetUpSkillAssignButtons(
             this,
-            controlPanelParameters);
+            controlPanelParameters,
+            skillSetManager);
         _allButtons = ControlPanelHelperMethods.SetUpControlButtons(
             controller,
             _skillAssignButtons,
@@ -76,7 +77,10 @@ public sealed class LevelControlPanel
         _controlPanelTextualData = new ControlPanelTextualData(controlPanelParameters);
 
         _maxSkillPanelScroll = _skillAssignButtons.Length - MaxNumberOfSkillButtons;
+    }
 
+    public void Initialise()
+    {
         var firstSkillAssignButton = _skillAssignButtons.Length > 0
             ? _skillAssignButtons[0]
             : null;
@@ -269,11 +273,11 @@ public sealed class LevelControlPanel
             TrackScrollWheel();
         }
 
-        var leftMouseButton = _controller.LeftMouseButtonAction;
-        var rightMouseButton = _controller.RightMouseButtonAction;
+        var leftMouseButton = LevelScreen.LevelInputController.LeftMouseButtonAction;
+        var rightMouseButton = LevelScreen.LevelInputController.RightMouseButtonAction;
 
-        var mouseX = _controller.MouseX - ControlPanelX;
-        var mouseY = _controller.MouseY - ControlPanelY;
+        var mouseX = LevelScreen.LevelInputController.MouseX - ControlPanelX;
+        var mouseY = LevelScreen.LevelInputController.MouseY - ControlPanelY;
 
         mouseX /= ControlPanelScaleMultiplier;
         mouseY /= ControlPanelScaleMultiplier;
@@ -310,7 +314,7 @@ public sealed class LevelControlPanel
 
     private void TrackScrollWheel()
     {
-        ChangeSkillAssignButtonScroll(_controller.ScrollDelta);
+        ChangeSkillAssignButtonScroll(LevelScreen.LevelInputController.ScrollDelta);
     }
 
     public void ChangeSkillAssignButtonScroll(int delta)

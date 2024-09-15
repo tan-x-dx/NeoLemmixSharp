@@ -32,8 +32,6 @@ public sealed class LevelBuilder : IDisposable
 
     public LevelScreen BuildLevel(LevelData levelData)
     {
-        var result = new LevelScreen(levelData);
-
         var terrainBuilder = new TerrainBuilder(_graphicsDevice, levelData);
         terrainBuilder.BuildTerrain();
 
@@ -41,16 +39,14 @@ public sealed class LevelBuilder : IDisposable
 
         var levelParameters = levelData.LevelParameters;
         var controlPanelParameters = levelData.ControlParameters;
-        result.SetLevelParameters(levelParameters);
 
         levelData.HorizontalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
         levelData.VerticalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
 
-        var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelData.LevelWidth);
-        var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelData.LevelHeight);
-
-        result.SetHorizontalBoundaryBehaviour(horizontalBoundaryBehaviour);
-        result.SetVerticalBoundaryBehaviour(verticalBoundaryBehaviour);
+        var horizontalBoundaryBehaviour =
+            levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelData.LevelWidth);
+        var verticalBoundaryBehaviour =
+            levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelData.LevelHeight);
 
         var levelLemmings = _levelObjectAssembler.GetLevelLemmings(levelData);
         var hatchGroups = LevelObjectAssembler.GetHatchGroups(levelData);
@@ -61,7 +57,6 @@ public sealed class LevelBuilder : IDisposable
             levelData.PrePlacedLemmingData.Count,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
-        result.SetLemmingManager(lemmingManager);
         var levelGadgets = _levelObjectAssembler.GetLevelGadgets(levelData, lemmingManager);
 
         foreach (var hatchGroup in hatchGroups)
@@ -70,45 +65,34 @@ public sealed class LevelBuilder : IDisposable
         }
 
         var inputController = new LevelInputController();
-        result.SetLevelInputController(inputController);
 
         var primaryLevelObjective = levelData.LevelObjectives.Find(lo => lo.LevelObjectiveId == 0)!;
 
         var skillSetManager = new SkillSetManager(primaryLevelObjective);
-        result.SetSkillSetManager(skillSetManager);
 
         var levelCursor = new LevelCursor();
-        result.SetLevelCursor(levelCursor);
 
         var levelTimer = LevelBuildingHelpers.GetLevelTimer(levelData);
-        result.SetLevelTimer(levelTimer);
 
-        var controlPanel = new LevelControlPanel(controlPanelParameters, inputController);
+        var controlPanel = new LevelControlPanel(controlPanelParameters, inputController, lemmingManager, skillSetManager);
         // Need to call this here instead of initialising in LevelScreen
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowWidth, IGameWindow.Instance.WindowHeight);
-        result.SetLevelControlPanel(controlPanel);
 
         var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-        result.SetGadgetManager(gadgetManager);
 
         var levelViewport = new Level.Viewport();
-        result.SetViewport(levelViewport);
 
         var terrainTexture = terrainBuilder.GetTerrainTexture();
         var pixelData = terrainBuilder.GetPixelData();
         var terrainColorData = terrainBuilder.GetTerrainColors();
         var terrainPainter = new TerrainPainter(terrainTexture, pixelData, terrainColorData, levelData.LevelWidth);
         var terrainRenderer = new TerrainRenderer(terrainTexture);
-        result.SetTerrainPainter(terrainPainter);
 
-        var rewindManager = new RewindManager();
-        result.SetRewindManager(rewindManager);
+        var rewindManager = new RewindManager(lemmingManager, gadgetManager);
 
         var updateScheduler = new UpdateScheduler();
-        result.SetUpdateScheduler(updateScheduler);
 
         var terrainManager = new TerrainManager(pixelData);
-        result.SetTerrainManager(terrainManager);
 
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(_contentManager);
@@ -116,7 +100,10 @@ public sealed class LevelBuilder : IDisposable
         var levelCursorSprite = CommonSprites.GetLevelCursorSprite(levelCursor);
         var backgroundRenderer = LevelBuildingHelpers.GetBackgroundRenderer(levelData);
 
-        _levelObjectAssembler.GetLevelSprites(out var behindTerrainSprites, out var inFrontOfTerrainSprites, out var lemmingSprites);
+        _levelObjectAssembler.GetLevelSprites(
+            out var behindTerrainSprites,
+            out var inFrontOfTerrainSprites,
+            out var lemmingSprites);
         var orderedLevelSprites = LevelBuildingHelpers.GetSortedRenderables(
             behindTerrainSprites,
             inFrontOfTerrainSprites,
@@ -126,7 +113,9 @@ public sealed class LevelBuilder : IDisposable
         var levelRenderer = new LevelRenderer(
             _graphicsDevice,
             orderedLevelSprites,
-            backgroundRenderer);
+            backgroundRenderer,
+            horizontalBoundaryBehaviour,
+            verticalBoundaryBehaviour);
 
         var levelScreenRenderer = new LevelScreenRenderer(
             _graphicsDevice,
@@ -137,11 +126,24 @@ public sealed class LevelBuilder : IDisposable
             gadgetSpriteBank,
             controlPanelSpriteBank);
 
-        result.SetLevelScreenRenderer(levelScreenRenderer);
-
-        result.Initialise();
-
-        return result;
+        return new LevelScreen(
+            levelData,
+            horizontalBoundaryBehaviour,
+            verticalBoundaryBehaviour,
+            levelParameters,
+            terrainManager,
+            terrainPainter,
+            lemmingManager,
+            gadgetManager,
+            skillSetManager,
+            controlPanel,
+            updateScheduler,
+            levelCursor,
+            levelTimer,
+            inputController,
+            levelViewport,
+            rewindManager,
+            levelScreenRenderer);
     }
 
     public void Dispose()
