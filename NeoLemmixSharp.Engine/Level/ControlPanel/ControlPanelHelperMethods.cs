@@ -66,7 +66,7 @@ public static class ControlPanelHelperMethods
         {
             var i = 0;
 
-            var allSkillTrackingData = skillSetManager.AllSkillTrackingData;
+            var allSkillTrackingData = skillSetManager.AllItems;
             var result = new SkillAssignButton[allSkillTrackingData.Length];
 
             foreach (var skillTrackingData in allSkillTrackingData)

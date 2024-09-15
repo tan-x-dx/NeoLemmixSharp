@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Objectives;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Level.Teams;
@@ -6,12 +7,13 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
+public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer<SkillTrackingData>, IDisposable
 {
     private readonly TickOrderedList<SkillAssignmentData> _skillCountChanges;
     private readonly SkillTrackingData[] _skillTrackingDataList;
 
-    public ReadOnlySpan<SkillTrackingData> AllSkillTrackingData => new(_skillTrackingDataList);
+    int IItemManager<SkillTrackingData>.NumberOfItems => _skillTrackingDataList.Length;
+    public ReadOnlySpan<SkillTrackingData> AllItems => new(_skillTrackingDataList);
 
     public SkillSetManager(LevelObjective levelObjective)
     {
@@ -37,12 +39,12 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         return result;
     }
 
-    private static SkillTrackingData CreateFromSkillSetData(SkillSetData skillSetData, int i)
+    private static SkillTrackingData CreateFromSkillSetData(SkillSetData skillSetData, int id)
     {
         var lemmingSkill = skillSetData.Skill;
         var team = Team.AllItems[skillSetData.TeamId];
 
-        return new SkillTrackingData(lemmingSkill, team, i, skillSetData.NumberOfSkills);
+        return new SkillTrackingData(id, lemmingSkill, team, skillSetData.NumberOfSkills);
     }
 
     private int CalculateBaseNumberOfSkillAssignments()
@@ -93,7 +95,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
     public void SetSkillCount(LemmingSkill lemmingSkill, Team? team, int value, bool isDelta)
     {
-        foreach (var skillTrackingData in AllSkillTrackingData)
+        foreach (var skillTrackingData in AllItems)
         {
             if (skillTrackingData.Skill != lemmingSkill ||
                 (team is not null && skillTrackingData.Team != team))

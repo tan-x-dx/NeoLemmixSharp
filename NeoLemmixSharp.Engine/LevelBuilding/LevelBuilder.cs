@@ -88,7 +88,7 @@ public sealed class LevelBuilder : IDisposable
         var terrainPainter = new TerrainPainter(terrainTexture, pixelData, terrainColorData, levelData.LevelWidth);
         var terrainRenderer = new TerrainRenderer(terrainTexture);
 
-        var rewindManager = new RewindManager(lemmingManager, gadgetManager);
+        var rewindManager = new RewindManager(lemmingManager, gadgetManager, skillSetManager);
 
         var updateScheduler = new UpdateScheduler();
 
