@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Numerics;
+using System.Numerics.Tensors;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
