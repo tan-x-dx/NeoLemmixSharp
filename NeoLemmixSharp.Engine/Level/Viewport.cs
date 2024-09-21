@@ -64,8 +64,8 @@ public sealed class Viewport
 
     private bool MouseIsInLevelViewport(LevelInputController inputController)
     {
-        return (uint)inputController.MouseX < (uint)_windowWidth &&
-               (uint)inputController.MouseY < (uint)(_windowHeight - _controlPanelHeight);
+        return (uint)inputController.MouseX <= (uint)_windowWidth &&
+               (uint)inputController.MouseY <= (uint)(_windowHeight - _controlPanelHeight);
     }
 
     private void TrackScrollWheel(LevelInputController inputController)
