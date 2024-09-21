@@ -55,7 +55,7 @@ public static class ControlPanelHelperMethods
                     classicSkill.Id,
                     skillTrackingDataId);
 
-                controlPanel.UpdateSkillCount(skillAssignButton, skillCount);
+                skillAssignButton.UpdateSkillCount(skillCount);
                 result[i++] = skillAssignButton;
             }
 
@@ -78,7 +78,7 @@ public static class ControlPanelHelperMethods
                     skillTrackingData.Skill.Id,
                     skillTrackingData.SkillTrackingDataId);
                 result[i++] = skillAssignButton;
-                controlPanel.UpdateSkillCount(skillAssignButton, skillTrackingData.SkillCount);
+                skillAssignButton.UpdateSkillCount(skillTrackingData.SkillCount);
             }
 
             return result;

@@ -142,7 +142,7 @@ public sealed class LevelScreen : IBaseScreen
         if (!IGameWindow.Instance.IsActive)
             return;
 
-        UpdateScheduler.Tick();
+        _updateScheduler.Tick();
     }
 
     public void OnWindowSizeChanged()
@@ -150,9 +150,9 @@ public sealed class LevelScreen : IBaseScreen
         var windowWidth = IGameWindow.Instance.WindowWidth;
         var windowHeight = IGameWindow.Instance.WindowHeight;
 
-        LevelControlPanel.SetWindowDimensions(windowWidth, windowHeight);
-        LevelViewport.SetWindowDimensions(windowWidth, windowHeight, LevelControlPanel.ScreenHeight);
-        ScreenRenderer.OnWindowSizeChanged();
+        _levelControlPanel.SetWindowDimensions(windowWidth, windowHeight);
+        _levelViewport.SetWindowDimensions(windowWidth, windowHeight, _levelControlPanel.ScreenHeight);
+        _levelScreenRenderer.OnWindowSizeChanged();
 
         IGameWindow.Instance.CaptureCursor();
     }

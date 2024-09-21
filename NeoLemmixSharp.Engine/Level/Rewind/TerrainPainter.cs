@@ -15,7 +15,7 @@ public sealed class TerrainPainter
     private readonly Color[] _terrainColors;
     private readonly int _terrainWidth;
 
-    private int _firstIndexOfTickUpdates;
+    private int _latestIndexOfTickUpdates;
 
     public TerrainPainter(
         Texture2D terrainTexture,
@@ -36,7 +36,7 @@ public sealed class TerrainPainter
 
         if (previousLatestTickWithUpdate != currentLatestTickWithUpdate)
         {
-            _firstIndexOfTickUpdates = _pixelChangeList.Count;
+            _latestIndexOfTickUpdates = _pixelChangeList.Count;
         }
 
         var fromColor = _terrainColors[pixel.Y * _terrainWidth + pixel.X];
@@ -62,8 +62,8 @@ public sealed class TerrainPainter
 
     private ReadOnlySpan<PixelChangeData> GetLatestPixelChanges()
     {
-        var startIndex = _firstIndexOfTickUpdates;
-        _firstIndexOfTickUpdates = _pixelChangeList.Count;
+        var startIndex = _latestIndexOfTickUpdates;
+        _latestIndexOfTickUpdates = _pixelChangeList.Count;
         return _pixelChangeList.GetSliceToEnd(startIndex);
     }
 

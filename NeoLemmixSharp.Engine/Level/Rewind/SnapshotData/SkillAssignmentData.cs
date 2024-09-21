@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Skills;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
@@ -11,7 +12,7 @@ public readonly struct SkillAssignmentData : ITickOrderedData
 
     public readonly int LemmingId;
     public readonly LevelPosition LemmingPosition;
-    public readonly int LemmingOrientationId;
+    public readonly int LemmingOrientationRotNum;
     public readonly int LemmingFacingDirectionId;
 
     int ITickOrderedData.TickNumber => Tick;
@@ -19,15 +20,15 @@ public readonly struct SkillAssignmentData : ITickOrderedData
     public SkillAssignmentData(
         int tick,
         Lemming lemming,
-        int lemmingSkillId)
+        LemmingSkill lemmingSkill)
     {
         Tick = tick;
-        SkillId = lemmingSkillId;
+        SkillId = lemmingSkill.Id;
         TeamId = lemming.State.TeamAffiliation.Id;
 
         LemmingId = lemming.Id;
         LemmingPosition = lemming.LevelPosition;
-        LemmingOrientationId = lemming.Orientation.RotNum;
+        LemmingOrientationRotNum = lemming.Orientation.RotNum;
         LemmingFacingDirectionId = lemming.FacingDirection.Id;
     }
 }

@@ -18,7 +18,6 @@ public sealed class UpdateScheduler : IInitialisable
     private int _elapsedTicks;
     private int _elapsedTicksModuloFastForwardSpeed;
 
-    public bool DoneAssignmentThisFrame { get; set; }
     public int ElapsedTicks => _elapsedTicks;
 
     public void Initialise()
@@ -133,7 +132,12 @@ end;
 
         if (inputController.Rewind50Frames.IsPressed)
         {
-            HandleRewind(-50);
+            GoToTick(_elapsedTicks - 50);
+        }
+
+        if (inputController.Reset.IsPressed)
+        {
+            GoToTick(0);
         }
     }
 
@@ -169,6 +173,7 @@ end;
         LevelScreen.GadgetManager.Tick(isMajorTick);
         LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks);
         LevelScreen.RewindManager.Tick(_elapsedTicks);
+        LevelScreen.TerrainPainter.RepaintTerrain();
 
         _elapsedTicks++;
         var elapsedTicksModuloFastForwardSpeed = _elapsedTicksModuloFastForwardSpeed + 1;
@@ -199,6 +204,9 @@ end;
 
     private void HandleSkillAssignment()
     {
+        if (LevelScreen.RewindManager.DoneSkillAssignmentThisTick)
+            return;
+
         if (!LevelScreen.LevelInputController.LeftMouseButtonAction.IsPressed)
             return;
 
@@ -213,16 +221,26 @@ end;
 
         if (skillTrackingData.CanAssignToLemming(lemming))
         {
-            skillTrackingData.Skill.AssignToLemming(lemming);
-            LevelScreen.SkillSetManager.RecordSkillAssignment(
-                _elapsedTicks,
-                lemming,
-                skillTrackingData);
+            DoSkillAssignment(skillTrackingData, lemming);
         }
         else
         {
             SetQueuedSkill(lemming, skillTrackingData.Skill);
         }
+    }
+
+    public void DoSkillAssignment(
+        SkillTrackingData skillTrackingData,
+        Lemming lemming)
+    {
+        skillTrackingData.Skill.AssignToLemming(lemming);
+        skillTrackingData.ChangeSkillCount(-1);
+        LevelScreen.LevelControlPanel.UpdateSkillCount(skillTrackingData);
+
+        LevelScreen.RewindManager.RecordSkillAssignment(
+            _elapsedTicks,
+            lemming,
+            skillTrackingData);
     }
 
     private void ClearQueuedSkill()
@@ -276,24 +294,23 @@ end;
         }
     }
 
-    private void HandleRewind(int tickDelta)
+    private void GoToTick(int requiredTick)
     {
         SetUpdateState(UpdateState.Paused);
 
-        if (tickDelta == 0)
-            return;
+        requiredTick = Math.Max(requiredTick, 0);
 
         _queuedSkill = NoneSkill.Instance;
         _queuedSkillLemming = null;
         _queuedSkillFrame = 0;
 
-        var expectedElapsedTicks = Math.Max(_elapsedTicks + tickDelta, 0);
+        var tickDelta = requiredTick - _elapsedTicks;
         int remainingTicks;
 
         if (tickDelta < 0)
         {
-            var actualElapsedTicks = LevelScreen.RewindManager.RewindBackTo(expectedElapsedTicks);
-            remainingTicks = expectedElapsedTicks - actualElapsedTicks;
+            var actualElapsedTicks = LevelScreen.RewindManager.RewindBackTo(requiredTick);
+            remainingTicks = requiredTick - actualElapsedTicks;
 
             _elapsedTicks = actualElapsedTicks;
             _elapsedTicksModuloFastForwardSpeed = _elapsedTicks % EngineConstants.FastForwardSpeedMultiplier;
@@ -308,6 +325,6 @@ end;
             PerformOneTick();
         }
 
-        Debug.Assert(_elapsedTicks == expectedElapsedTicks);
+        Debug.Assert(_elapsedTicks == requiredTick);
     }
 }

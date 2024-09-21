@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
@@ -49,6 +50,30 @@ public sealed class TickOrderedList<TTickOrderedData>
         _count = index;
 
         return result;
+    }
+
+    public bool HasDataForTick(int tick)
+    {
+        var index = GetSmallestIndexOfTick(tick);
+
+        ref readonly var data = ref _items[index];
+
+        return data.TickNumber == tick;
+    }
+
+    public ref readonly TTickOrderedData TryGetDataForTick(int tick)
+    {
+        if (_count == 0)
+            return ref Unsafe.NullRef<TTickOrderedData>();
+
+        var index = GetSmallestIndexOfTick(tick);
+
+        ref readonly var data = ref _items[index];
+
+        if (data.TickNumber == tick)
+            return ref data;
+
+        return ref Unsafe.NullRef<TTickOrderedData>();
     }
 
     /// <summary>

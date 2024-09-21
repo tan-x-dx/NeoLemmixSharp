@@ -1,8 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Objectives;
-using NeoLemmixSharp.Engine.Level.Rewind;
-using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
@@ -10,7 +7,6 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer<SkillTrackingData>, IDisposable
 {
-    private readonly TickOrderedList<SkillAssignmentData> _skillCountChanges;
     private readonly SkillTrackingData[] _skillTrackingDataList;
 
     int IItemManager<SkillTrackingData>.NumberOfItems => _skillTrackingDataList.Length;
@@ -19,10 +15,6 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
     public SkillSetManager(LevelObjective levelObjective)
     {
         _skillTrackingDataList = CreateSkillDataList(levelObjective.SkillSetData);
-
-        var baseNumberOfSkillAssignments = CalculateBaseNumberOfSkillAssignments();
-
-        _skillCountChanges = new TickOrderedList<SkillAssignmentData>(baseNumberOfSkillAssignments);
     }
 
     private SkillTrackingData[] CreateSkillDataList(ReadOnlySpan<SkillSetData> skillSetDataSpan)
@@ -72,7 +64,7 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
     /// </para>
     /// </summary>
     /// <returns></returns>
-    private int CalculateBaseNumberOfSkillAssignments()
+    public int CalculateBaseNumberOfSkillAssignments()
     {
         var result = 0;
 
@@ -144,31 +136,6 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
                 skillTrackingData.SetSkillCount(value);
             }
         }
-    }
-
-    public void RecordSkillAssignment(
-        int tick,
-        Lemming lemming,
-        SkillTrackingData skillTrackingData)
-    {
-        skillTrackingData.ChangeSkillCount(-1);
-        LevelScreen.LevelControlPanel.UpdateSkillCount(
-            LevelScreen.LevelControlPanel.SelectedSkillAssignButton,
-            skillTrackingData.SkillCount);
-
-        ref var skillAssignmentData = ref _skillCountChanges.GetNewDataRef();
-
-        skillAssignmentData = new SkillAssignmentData(tick, lemming, skillAssignmentData.SkillId);
-    }
-
-    public int GetTickOfLastSkillAssignment()
-    {
-        return _skillCountChanges.LatestTickWithData();
-    }
-
-    public void RewindBackTo(int tick)
-    {
-        _skillCountChanges.RewindBackTo(tick);
     }
 
     int IComparer<SkillTrackingData>.Compare(SkillTrackingData? x, SkillTrackingData? y)

@@ -358,9 +358,11 @@ public sealed class LevelControlPanel : IInitialisable
 
     }
 
-    public void UpdateSkillCount(SkillAssignButton? selectedSkillAssignButton, int skillCount)
+    public void UpdateSkillCount(SkillTrackingData skillTrackingData)
     {
-        selectedSkillAssignButton?.UpdateSkillCount(skillCount);
+        var selectedSkillAssignButton = GetControlPanelButtonFor(skillTrackingData);
+
+        selectedSkillAssignButton?.UpdateSkillCount(skillTrackingData.SkillCount);
     }
 
     public void OnSpawnIntervalChanged()
@@ -393,6 +395,17 @@ public sealed class LevelControlPanel : IInitialisable
         {
             if (button.ButtonAction.ButtonType == buttonType)
                 return button;
+        }
+
+        return null;
+    }
+
+    private SkillAssignButton? GetControlPanelButtonFor(SkillTrackingData skillTrackingData)
+    {
+        foreach (var skillAssignButton in SkillAssignButtons)
+        {
+            if (skillAssignButton.SkillTrackingDataId == skillTrackingData.SkillTrackingDataId)
+                return skillAssignButton;
         }
 
         return null;

@@ -30,6 +30,7 @@ public sealed class LevelInputController : IInitialisable
     public InputAction SelectRightFacingLemmings { get; }
 
     public InputAction Rewind50Frames { get; }
+    public InputAction Reset { get; }
 
     public InputAction RightArrow { get; }
     public InputAction UpArrow { get; }
@@ -55,6 +56,7 @@ public sealed class LevelInputController : IInitialisable
         SelectRightFacingLemmings = _inputController.CreateInputAction("Select Right Facing Lemmings");
 
         Rewind50Frames = _inputController.CreateInputAction("Rewind 10 frames");
+        Reset = _inputController.CreateInputAction("Reset");
 
         RightArrow = _inputController.CreateInputAction("ABC");
         UpArrow = _inputController.CreateInputAction("ABC");
@@ -97,6 +99,7 @@ public sealed class LevelInputController : IInitialisable
         _inputController.Bind(Keys.Space, Space);
 
         _inputController.Bind(Keys.OemMinus, Rewind50Frames);
+        _inputController.Bind(Keys.R, Reset);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
