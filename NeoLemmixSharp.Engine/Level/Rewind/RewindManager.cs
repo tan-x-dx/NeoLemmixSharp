@@ -61,6 +61,7 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
         var actualElapsedTick = correspondingSnapshotNumber * LevelConstants.RewindSnapshotInterval;
 
         LevelScreen.TerrainPainter.RewindBackTo(actualElapsedTick);
+        LevelScreen.SkillSetManager.RewindBackTo(actualElapsedTick);
         LevelScreen.LevelTimer.SetElapsedTicks(actualElapsedTick);
 
         return actualElapsedTick;
@@ -68,7 +69,8 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
 
     public void RewindBackToPreviousSkillAssignment()
     {
-
+        var tick = LevelScreen.SkillSetManager.GetTickOfLastSkillAssignment();
+        RewindBackTo(tick);
     }
 
     int IItemManager<LemmingManager>.NumberOfItems => 1;

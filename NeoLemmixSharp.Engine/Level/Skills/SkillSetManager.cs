@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
@@ -47,15 +48,36 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         return new SkillTrackingData(id, lemmingSkill, team, skillSetData.NumberOfSkills);
     }
 
+    /// <summary>
+    /// <para>
+    /// Get a best-guess count for the possible number of skill assignments.
+    /// </para>
+    /// 
+    /// <para>
+    /// If it turns out a level has more skill assignments than the initial
+    /// guess, this will be fine - the buffer will simply resize as necessary.
+    /// This method is an attempt to minimize the number of reallocations of
+    /// the skill assign buffer during gameplay.
+    /// </para>
+    ///
+    /// <para>
+    /// In the case of levels with finite skills and no pickups, then the number
+    /// returned will be the maximum possible amount of skill assignments. This
+    /// is a hard upper limit that will be a perfect buffer size for the level.
+    /// </para>
+    ///
+    /// <para>
+    /// In other cases, this method will attempt to overestimate the total number
+    /// of skill assignments. 
+    /// </para>
+    /// </summary>
+    /// <returns></returns>
     private int CalculateBaseNumberOfSkillAssignments()
     {
         var result = 0;
 
         foreach (var skillTrackingDatum in _skillTrackingDataList)
         {
-            // Add one for each item
-            result++;
-
             if (skillTrackingDatum.IsInfinite)
             {
                 result += LevelConstants.AssumedSkillUsageForInfiniteSkillCounts;
@@ -68,6 +90,18 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
             {
                 result += skillTrackingDatum.SkillCount;
             }
+        }
+
+        return result;
+    }
+
+    public bool HasClassicSkillsOnly()
+    {
+        var result = true;
+        foreach (var skillTrackingData in _skillTrackingDataList)
+        {
+            result &= skillTrackingData.Skill.IsClassicSkill() && // only classic skills
+                      skillTrackingData.Team.Id == LevelConstants.ClassicTeamId; // only classic team
         }
 
         return result;
@@ -112,20 +146,30 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         }
     }
 
-    /*  private void RecordSkillAssignment()
-      {
-          var previousLatestTickWithUpdate = _skillCountChanges.LatestTickWithData();
-          var currentLatestTickWithUpdate = LevelScreen.UpdateScheduler.ElapsedTicks;
+    public void RecordSkillAssignment(
+        int tick,
+        Lemming lemming,
+        SkillTrackingData skillTrackingData)
+    {
+        skillTrackingData.ChangeSkillCount(-1);
+        LevelScreen.LevelControlPanel.UpdateSkillCount(
+            LevelScreen.LevelControlPanel.SelectedSkillAssignButton,
+            skillTrackingData.SkillCount);
 
-          if (previousLatestTickWithUpdate != currentLatestTickWithUpdate)
-          {
-              _firstIndexOfTickUpdates = _skillCountChanges.Count;
-          }
+        ref var skillAssignmentData = ref _skillCountChanges.GetNewDataRef();
 
-          ref var pixelChangeData = ref _skillCountChanges.GetNewDataRef();
+        skillAssignmentData = new SkillAssignmentData(tick, lemming, skillAssignmentData.SkillId);
+    }
 
-          pixelChangeData = new SkillAssignmentData(currentLatestTickWithUpdate, pixel.X, pixel.Y, fromColor, toColor, fromPixelType, toPixelType);
-      }*/
+    public int GetTickOfLastSkillAssignment()
+    {
+        return _skillCountChanges.LatestTickWithData();
+    }
+
+    public void RewindBackTo(int tick)
+    {
+        _skillCountChanges.RewindBackTo(tick);
+    }
 
     int IComparer<SkillTrackingData>.Compare(SkillTrackingData? x, SkillTrackingData? y)
     {
@@ -139,32 +183,6 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
 
         var skillComparison = x.Skill.Id.CompareTo(y.Skill.Id);
         return skillComparison;
-    }
-
-    public bool HasClassicSkillsOnly()
-    {
-        var result = true;
-        foreach (var skillTrackingData in _skillTrackingDataList)
-        {
-            result &= skillTrackingData.Skill.IsClassicSkill() && // only classic skills
-                      skillTrackingData.Team.Id == LevelConstants.ClassicTeamId; // only classic team
-        }
-
-        return result;
-    }
-
-    public void RewindBackTo(int tick)
-    {
-        var skillCountChanges = _skillCountChanges.RewindBackTo(tick);
-        if (skillCountChanges.Length == 0)
-            return;
-
-        for (var i = skillCountChanges.Length - 1; i >= 0; i--)
-        {
-            ref readonly var pixelChangeData = ref skillCountChanges[i];
-
-
-        }
     }
 
     public void Dispose()

@@ -214,18 +214,15 @@ end;
         if (skillTrackingData.CanAssignToLemming(lemming))
         {
             skillTrackingData.Skill.AssignToLemming(lemming);
-            skillTrackingData.ChangeSkillCount(-1);
-            LevelScreen.LevelControlPanel.UpdateSkillCount(LevelScreen.LevelControlPanel.SelectedSkillAssignButton, skillTrackingData.SkillCount);
+            LevelScreen.SkillSetManager.RecordSkillAssignment(
+                _elapsedTicks,
+                lemming,
+                skillTrackingData);
         }
         else
         {
             SetQueuedSkill(lemming, skillTrackingData.Skill);
         }
-    }
-
-    private void RecordSkillAssignment()
-    {
-
     }
 
     private void ClearQueuedSkill()
