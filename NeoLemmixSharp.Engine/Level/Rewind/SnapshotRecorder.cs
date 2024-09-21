@@ -71,16 +71,6 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
             _data = new TSnapshotData[numberOfItems * SnapshotDataListSizeMultiplier];
         }
 
-        public ReadOnlySpan<TSnapshotData> GetSnapshotDataSlice(int start)
-        {
-            if (start < 0)
-                throw new ArgumentOutOfRangeException(nameof(start), "Negative start index");
-
-            _count = _numberOfItems * (1 + start);
-
-            return new ReadOnlySpan<TSnapshotData>(_data, start * _numberOfItems, _numberOfItems);
-        }
-
         public Span<TSnapshotData> GetNewSnapshotDataSpan()
         {
             var arraySize = _data.Length;
@@ -96,6 +86,15 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
             _count += _numberOfItems;
 
             return new Span<TSnapshotData>(_data, count, _numberOfItems);
+        }
+
+        public ReadOnlySpan<TSnapshotData> GetSnapshotDataSlice(int sliceNumber)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(sliceNumber);
+
+            _count = _numberOfItems * (1 + sliceNumber);
+
+            return new ReadOnlySpan<TSnapshotData>(_data, sliceNumber * _numberOfItems, _numberOfItems);
         }
     }
 }

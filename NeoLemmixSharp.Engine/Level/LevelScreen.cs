@@ -80,7 +80,6 @@ public sealed class LevelScreen : IBaseScreen
 
     public IScreenRenderer ScreenRenderer => _levelScreenRenderer;
     public string ScreenTitle { get; }
-    public bool IsDisposed { get; private set; }
 
     public LevelScreen(
         LevelData levelData,
@@ -170,9 +169,6 @@ public sealed class LevelScreen : IBaseScreen
 
     public void Dispose()
     {
-        if (IsDisposed)
-            return;
-
         var fields = typeof(LevelScreen)
             .GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 
@@ -189,7 +185,5 @@ public sealed class LevelScreen : IBaseScreen
         }
 
         _instance = null!;
-
-        IsDisposed = true;
     }
 }

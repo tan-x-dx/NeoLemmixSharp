@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace NeoLemmixSharp.Engine.Level;
+﻿namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class Viewport
 {
@@ -64,11 +62,10 @@ public sealed class Viewport
         LevelScreen.VerticalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseY);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool MouseIsInLevelViewport(LevelInputController inputController)
     {
-        return inputController.MouseX >= 0 && inputController.MouseX <= _windowWidth &&
-               inputController.MouseY >= 0 && inputController.MouseY <= _windowHeight - _controlPanelHeight;
+        return (uint)inputController.MouseX < (uint)_windowWidth &&
+               (uint)inputController.MouseY < (uint)(_windowHeight - _controlPanelHeight);
     }
 
     private void TrackScrollWheel(LevelInputController inputController)

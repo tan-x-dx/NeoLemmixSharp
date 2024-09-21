@@ -7,7 +7,6 @@ namespace NeoLemmixSharp.Common.Screen;
 public interface IBaseScreen : IInitialisable, IDisposable
 {
     IScreenRenderer ScreenRenderer { get; }
-    bool IsDisposed { get; }
 
     string ScreenTitle { get; }
 
