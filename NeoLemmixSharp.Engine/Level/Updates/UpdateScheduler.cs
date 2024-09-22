@@ -10,6 +10,7 @@ namespace NeoLemmixSharp.Engine.Level.Updates;
 public sealed class UpdateScheduler : IInitialisable
 {
     private LemmingSkill _queuedSkill = NoneSkill.Instance;
+    private int _queuedSkillTeamId;
     private Lemming? _queuedSkillLemming;
 
     private UpdateState _updateState;
@@ -79,10 +80,14 @@ end;
         LevelScreen.LevelCursor.Tick();
 
         HandleMouseInput();
-        HandleKeyboardInput();
-        TickLevel();
+        var shouldContinue = HandleKeyboardInput();
+        if (!shouldContinue)
+            return;
         HandleCursor();
+        CheckForQueuedAction();
+        LevelScreen.RewindManager.CheckForReplayAction(_elapsedTicks);
         HandleSkillAssignment();
+        TickLevel();
     }
 
     private static void HandleMouseInput()
@@ -102,7 +107,7 @@ end;
         }
     }
 
-    private void HandleKeyboardInput()
+    private bool HandleKeyboardInput()
     {
         var inputController = LevelScreen.LevelInputController;
 
@@ -132,13 +137,17 @@ end;
 
         if (inputController.Rewind50Frames.IsPressed)
         {
-            GoToTick(_elapsedTicks - 50);
+            GoToTick(_elapsedTicks - 50, true);
+            return false;
         }
 
         if (inputController.Reset.IsPressed)
         {
-            GoToTick(0);
+            GoToTick(0, false);
+            return false;
         }
+
+        return true;
     }
 
     private void SetUpdateState(UpdateState updateState)
@@ -159,6 +168,11 @@ end;
     private void TickLevel()
     {
         var numberOfTicksToPerform = (int)_updateState;
+
+        if (LevelScreen.LevelInputController.LeftMouseButtonAction.IsPressed)
+        {
+            numberOfTicksToPerform++;
+        }
 
         while (numberOfTicksToPerform-- > 0)
         {
@@ -186,15 +200,7 @@ end;
         var mouseIsInLevelViewPort = LevelScreen.LevelViewport.MouseIsInLevelViewPort;
         if (mouseIsInLevelViewPort)
         {
-            var lemmingsNearCursor = LevelScreen.LevelCursor.LemmingsNearCursorPosition();
-            foreach (var lemming in lemmingsNearCursor)
-            {
-                LevelScreen.LevelCursor.CheckLemming(lemming);
-            }
-
-            LevelScreen.LevelControlPanel.TextualData.SetCursorData(
-                LevelScreen.LevelCursor.CurrentlyHighlightedLemming,
-                LevelScreen.LevelCursor.NumberOfLemmingsUnderCursor);
+            LevelScreen.LevelCursor.CheckLemmingsNearCursor();
         }
         else
         {
@@ -204,7 +210,7 @@ end;
 
     private void HandleSkillAssignment()
     {
-        if (LevelScreen.RewindManager.DoneSkillAssignmentThisTick)
+        if (LevelScreen.RewindManager.DoneSkillAssignmentForTick(_elapsedTicks))
             return;
 
         if (!LevelScreen.LevelInputController.LeftMouseButtonAction.IsPressed)
@@ -219,9 +225,10 @@ end;
         if (skillTrackingData is null || skillTrackingData.SkillCount == 0)
             return;
 
-        if (skillTrackingData.CanAssignToLemming(lemming))
+        if (LemmingCanBeTicked(lemming) &&
+            skillTrackingData.CanAssignToLemming(lemming))
         {
-            DoSkillAssignment(skillTrackingData, lemming);
+            DoSkillAssignment(skillTrackingData, lemming, false);
         }
         else
         {
@@ -231,11 +238,15 @@ end;
 
     public void DoSkillAssignment(
         SkillTrackingData skillTrackingData,
-        Lemming lemming)
+        Lemming lemming,
+        bool isReplay)
     {
         skillTrackingData.Skill.AssignToLemming(lemming);
         skillTrackingData.ChangeSkillCount(-1);
         LevelScreen.LevelControlPanel.UpdateSkillCount(skillTrackingData);
+
+        if (isReplay)
+            return;
 
         LevelScreen.RewindManager.RecordSkillAssignment(
             _elapsedTicks,
@@ -250,17 +261,19 @@ end;
         _queuedSkillFrame = 0;
     }
 
-    public void SetQueuedSkill(Lemming lemming, LemmingSkill lemmingSkill)
+    private void SetQueuedSkill(Lemming lemming, LemmingSkill lemmingSkill)
     {
         _queuedSkill = lemmingSkill;
         _queuedSkillLemming = lemming;
-        _queuedSkillFrame = 0;
+        _queuedSkillTeamId = lemming.State.TeamAffiliation.Id;
+        _queuedSkillFrame = EngineConstants.FramesPerSecond - 1;
     }
 
-    public void CheckForQueuedAction()
+    private void CheckForQueuedAction()
     {
         // First check whether there was already a skill assignment this frame
-        //    if Assigned(fReplayManager.Assignment[fCurrentIteration, 0]) then Exit;
+        if (LevelScreen.RewindManager.DoneSkillAssignmentForTick(_elapsedTicks))
+            return;
 
         if (_queuedSkill == NoneSkill.Instance || _queuedSkillLemming is null)
         {
@@ -277,26 +290,38 @@ end;
             return;
         }
 
-        //   if (QueuedSkill.CanAssignToLemming(QueuedSkillLemming) && _skillSetManager.NumberOfSkillsAvailable(QueuedSkill) > 0)
-        {
-            // Record skill assignment, so that we apply it in CheckForReplayAction
-            // RecordSkillAssignment(L, NewSkill)
-        }
-        //  else
-        {
-            _queuedSkillFrame++;
+        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(
+            _queuedSkill.Id,
+            _queuedSkillTeamId);
 
+        if (skillTrackingData is not null &&
+            LemmingCanBeTicked(_queuedSkillLemming) &&
+            skillTrackingData.CanAssignToLemming(_queuedSkillLemming))
+        {
+            DoSkillAssignment(skillTrackingData, _queuedSkillLemming, false);
+        }
+        else
+        {
             // Delete queued action after 16 frames
-            if (_queuedSkillFrame > 15)
-            {
-                ClearQueuedSkill();
-            }
+            if (_queuedSkillFrame-- > 0)
+                return;
+
+            ClearQueuedSkill();
         }
     }
 
-    private void GoToTick(int requiredTick)
+    private bool LemmingCanBeTicked(Lemming queuedSkillLemming)
     {
-        SetUpdateState(UpdateState.Paused);
+        return queuedSkillLemming.IsFastForward ||
+               _elapsedTicksModuloFastForwardSpeed == 0;
+    }
+
+    private void GoToTick(int requiredTick, bool pause)
+    {
+        if (pause)
+        {
+            SetUpdateState(UpdateState.Paused);
+        }
 
         requiredTick = Math.Max(requiredTick, 0);
 
@@ -305,22 +330,17 @@ end;
         _queuedSkillFrame = 0;
 
         var tickDelta = requiredTick - _elapsedTicks;
-        int remainingTicks;
 
         if (tickDelta < 0)
         {
             var actualElapsedTicks = LevelScreen.RewindManager.RewindBackTo(requiredTick);
-            remainingTicks = requiredTick - actualElapsedTicks;
+            tickDelta = requiredTick - actualElapsedTicks;
 
             _elapsedTicks = actualElapsedTicks;
             _elapsedTicksModuloFastForwardSpeed = _elapsedTicks % EngineConstants.FastForwardSpeedMultiplier;
         }
-        else
-        {
-            remainingTicks = tickDelta;
-        }
 
-        while (remainingTicks-- > 0)
+        while (tickDelta-- > 0)
         {
             PerformOneTick();
         }

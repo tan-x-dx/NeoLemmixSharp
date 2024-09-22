@@ -53,7 +53,20 @@ public sealed class LevelCursor
         }
     }
 
-    public SimpleSetEnumerable<Lemming> LemmingsNearCursorPosition()
+    public void CheckLemmingsNearCursor()
+    {
+        var lemmingsNearCursor = LemmingsNearCursorPosition();
+        foreach (var lemming in lemmingsNearCursor)
+        {
+            CheckLemming(lemming);
+        }
+
+        LevelScreen.LevelControlPanel.TextualData.SetCursorData(
+            CurrentlyHighlightedLemming,
+            NumberOfLemmingsUnderCursor);
+    }
+
+    private SimpleSetEnumerable<Lemming> LemmingsNearCursorPosition()
     {
         var c = CursorPosition;
 
@@ -80,7 +93,7 @@ public sealed class LevelCursor
         Color3 = team.SkinColor;
     }
 
-    public void CheckLemming(Lemming lemming)
+    private void CheckLemming(Lemming lemming)
     {
         if (!LemmingIsUnderCursor(lemming) || !LemmingIsAbleToBeSelected(lemming))
             return;
@@ -116,14 +129,7 @@ public sealed class LevelCursor
             return false;
 
         // Select only unassigned
-        if (_selectOnlyUnassigned && lemming.State.HasPermanentSkill)
-            return false;
-
-        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(LevelScreen.LevelControlPanel.SelectedSkillButtonId);
-        if (skillTrackingData is null || skillTrackingData.SkillCount == 0)
-            return false;
-
-        return skillTrackingData.Skill.CanAssignToLemming(lemming);
+        return !_selectOnlyUnassigned || !lemming.State.HasPermanentSkill;
     }
 
     private bool NewCandidateIsHigherPriority(Lemming? previousCandidate, Lemming newCandidate)

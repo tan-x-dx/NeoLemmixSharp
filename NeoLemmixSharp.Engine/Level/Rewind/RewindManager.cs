@@ -38,17 +38,10 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
         _skillCountChanges = new TickOrderedList<SkillAssignmentData>(baseNumberOfSkillAssignments);
     }
 
-    public bool IsReplay => LevelScreen.UpdateScheduler.ElapsedTicks < _maxElapsedTicks;
-
-    public bool DoneSkillAssignmentThisTick => _skillCountChanges.HasDataForTick(LevelScreen.UpdateScheduler.ElapsedTicks);
+    public bool DoneSkillAssignmentForTick(int tick) => _skillCountChanges.HasDataForTick(tick);
 
     public void Tick(int elapsedTicks)
     {
-        if (IsReplay)
-        {
-            TryAssignSkillFromReplay(elapsedTicks);
-        }
-
         _maxElapsedTicks = Math.Max(_maxElapsedTicks, elapsedTicks);
 
         if (elapsedTicks % LevelConstants.RewindSnapshotInterval != 0)
@@ -60,13 +53,17 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
         _skillSetSnapshotRecorder.TakeSnapshot();
     }
 
-    private void TryAssignSkillFromReplay(int elapsedTicks)
+    public void CheckForReplayAction(int elapsedTicks)
     {
         ref readonly var previouslyRecordedSkillAssignment = ref _skillCountChanges.TryGetDataForTick(elapsedTicks);
+        if (!Unsafe.IsNullRef(in previouslyRecordedSkillAssignment))
+        {
+            AssignSkillFromReplay(in previouslyRecordedSkillAssignment);
+        }
+    }
 
-        if (Unsafe.IsNullRef(in previouslyRecordedSkillAssignment))
-            return;
-
+    private void AssignSkillFromReplay(in SkillAssignmentData previouslyRecordedSkillAssignment)
+    {
         var lemming = _lemmingManager.AllItems[previouslyRecordedSkillAssignment.LemmingId];
 
         ValidateLemmingReplayAction(
@@ -80,7 +77,7 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
         if (skillTrackingData is null)
             throw new InvalidOperationException("Null skill tracking data in replay!");
 
-        LevelScreen.UpdateScheduler.DoSkillAssignment(skillTrackingData, lemming);
+        LevelScreen.UpdateScheduler.DoSkillAssignment(skillTrackingData, lemming, true);
     }
 
     private static void ValidateLemmingReplayAction(Lemming lemming, in SkillAssignmentData previouslyRecordedSkillAssignment)
@@ -99,14 +96,14 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
         Lemming lemming,
         SkillTrackingData skillTrackingData)
     {
-        if (IsReplay)
+        if (tick < _maxElapsedTicks)
         {
             _maxElapsedTicks = tick;
             _skillCountChanges.RewindBackTo(tick);
 
             return;
         }
-        
+
         ref var skillAssignmentData = ref _skillCountChanges.GetNewDataRef();
 
         skillAssignmentData = new SkillAssignmentData(tick, lemming, skillTrackingData.Skill);
@@ -126,8 +123,13 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
         var actualElapsedTick = correspondingSnapshotNumber * LevelConstants.RewindSnapshotInterval;
 
         LevelScreen.TerrainPainter.RewindBackTo(actualElapsedTick);
-       // _skillCountChanges.RewindBackTo(specifiedTick);
         LevelScreen.LevelTimer.SetElapsedTicks(actualElapsedTick);
+
+        ref readonly var previouslyRecordedSkillAssignment = ref _skillCountChanges.TryGetDataForTick(actualElapsedTick);
+        if (!Unsafe.IsNullRef(in previouslyRecordedSkillAssignment))
+        {
+            AssignSkillFromReplay(in previouslyRecordedSkillAssignment);
+        }
 
         return actualElapsedTick;
     }

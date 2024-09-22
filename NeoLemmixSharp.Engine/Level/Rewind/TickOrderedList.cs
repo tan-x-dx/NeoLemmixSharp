@@ -43,7 +43,9 @@ public sealed class TickOrderedList<TTickOrderedData>
 
     public ReadOnlySpan<TTickOrderedData> RewindBackTo(int tick)
     {
-        var index = GetSmallestIndexOfTick(tick);
+        var index = _count == 0
+            ? 0
+            : GetSmallestIndexOfTick(tick);
 
         var result = GetSliceToEnd(index);
 
@@ -52,8 +54,12 @@ public sealed class TickOrderedList<TTickOrderedData>
         return result;
     }
 
+    [Pure]
     public bool HasDataForTick(int tick)
     {
+        if (_count == 0)
+            return false;
+
         var index = GetSmallestIndexOfTick(tick);
 
         ref readonly var data = ref _items[index];
@@ -61,6 +67,7 @@ public sealed class TickOrderedList<TTickOrderedData>
         return data.TickNumber == tick;
     }
 
+    [Pure]
     public ref readonly TTickOrderedData TryGetDataForTick(int tick)
     {
         if (_count == 0)
@@ -85,9 +92,6 @@ public sealed class TickOrderedList<TTickOrderedData>
     [Pure]
     private int GetSmallestIndexOfTick(int tick)
     {
-        if (_count == 0)
-            return 0;
-
         var upperTestIndex = _count;
         var lowerTestIndex = 0;
 

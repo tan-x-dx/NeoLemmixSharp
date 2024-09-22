@@ -43,6 +43,8 @@ public sealed class LemmingManager :
     public SimpleSetEnumerable<Lemming> AllBlockers => _allBlockers.AsSimpleEnumerable();
     public ReadOnlySpan<Lemming> AllItems => new(_lemmings);
 
+    public int ScratchSpaceSize => _lemmingPositionHelper.ScratchSpaceSize;
+
     public LemmingManager(
         HatchGroup[] hatchGroups,
         Lemming[] lemmings,
