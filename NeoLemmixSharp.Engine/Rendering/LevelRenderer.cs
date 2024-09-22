@@ -19,6 +19,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
     private readonly SpacialHashGrid<IViewportObjectRenderer> _spriteSpacialHashGrid;
+    private readonly uint[] _spriteSetScratchSpace;
 
     private readonly List<IViewportObjectRenderer> _orderedSprites;
 
@@ -44,6 +45,8 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
             ChunkSizeType.ChunkSize64,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
+
+        _spriteSetScratchSpace = new uint[_spriteSpacialHashGrid.ScratchSpaceSize];
 
         var rendererSpan = CollectionsMarshal.AsSpan(_orderedSprites);
         foreach (var renderer in rendererSpan)
@@ -95,10 +98,9 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         spriteBatch.End();
     }
 
-    [SkipLocalsInit]
     private void RenderSprites(SpriteBatch spriteBatch)
     {
-        Span<uint> scratchSpaceSpan = stackalloc uint[_spriteSpacialHashGrid.ScratchSpaceSize];
+        var scratchSpaceSpan = new Span<uint>(_spriteSetScratchSpace);
 
         var horizontalBoundary = LevelScreen.HorizontalBoundaryBehaviour;
         var verticalBoundary = LevelScreen.VerticalBoundaryBehaviour;
