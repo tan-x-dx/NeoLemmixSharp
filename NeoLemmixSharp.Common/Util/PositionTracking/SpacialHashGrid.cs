@@ -82,23 +82,32 @@ public sealed class SpacialHashGrid<T>
     }
 
     [Pure]
-    public SimpleSetEnumerable<T> GetAllItemsNearPosition(LevelPosition levelPosition)
+    public void GetAllItemsNearPosition(LevelPosition levelPosition, out SimpleSetEnumerable<T> result)
     {
         if (IsEmpty)
-            return SimpleSetEnumerable<T>.Empty;
+        {
+            result = SimpleSetEnumerable<T>.Empty;
+            return;
+        }
 
         var chunkX = levelPosition.X >> _chunkSizeBitShift;
         var chunkY = levelPosition.Y >> _chunkSizeBitShift;
 
         if (chunkX < 0 || chunkX >= _numberOfHorizontalChunks ||
             chunkY < 0 || chunkY >= _numberOfVerticalChunks)
-            return SimpleSetEnumerable<T>.Empty;
+        {
+            result = SimpleSetEnumerable<T>.Empty;
+            return;
+        }
 
         var readonlyScratchSpaceSpan = new ReadOnlySpan<uint>(_cachedQueryScratchSpace);
         var chunk = new LevelPosition(chunkX, chunkY);
         if (chunk == _cachedTopLeftChunkQuery &&
             chunk == _cachedBottomRightChunkQuery)
-            return new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _cachedQueryCount);
+        {
+            result = new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _cachedQueryCount);
+            return;
+        }
 
         var sourceSpan = ReadOnlySpanForChunk(chunkX, chunkY);
         _cachedTopLeftChunkQuery = chunk;
@@ -106,19 +115,23 @@ public sealed class SpacialHashGrid<T>
         sourceSpan.CopyTo(new Span<uint>(_cachedQueryScratchSpace));
         _cachedQueryCount = BitArrayHelpers.GetPopCount(sourceSpan);
 
-        return new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _cachedQueryCount);
+        result = new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _cachedQueryCount);
     }
 
     /// <summary>
     /// Gets all items that overlap with the input region. Uses the backing scratch space to record data.
     /// </summary>
     /// <param name="levelRegion">The region to evaluate chunks from</param>
+    /// <param name="result">The enumerable</param>
     /// <returns>An enumerable for items within the region</returns>
     [Pure]
-    public SimpleSetEnumerable<T> GetAllItemsNearRegion(LevelPositionPair levelRegion)
+    public void GetAllItemsNearRegion(LevelPositionPair levelRegion, out SimpleSetEnumerable<T> result)
     {
         if (IsEmpty)
-            return SimpleSetEnumerable<T>.Empty;
+        {
+            result = SimpleSetEnumerable<T>.Empty;
+            return;
+        }
 
         var previousTopLeftChunkQuery = _cachedTopLeftChunkQuery;
         var previousBottomRightChunkQuery = _cachedBottomRightChunkQuery;
@@ -128,7 +141,10 @@ public sealed class SpacialHashGrid<T>
         var readonlyScratchSpaceSpan = new ReadOnlySpan<uint>(_cachedQueryScratchSpace);
         if (previousTopLeftChunkQuery == _cachedTopLeftChunkQuery &&
             previousBottomRightChunkQuery == _cachedBottomRightChunkQuery)
-            return new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _cachedQueryCount);
+        {
+            result = new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _cachedQueryCount);
+            return;
+        }
 
         var scratchSpaceSpan = new Span<uint>(_cachedQueryScratchSpace);
         if (_cachedTopLeftChunkQuery == _cachedBottomRightChunkQuery)
@@ -146,7 +162,7 @@ public sealed class SpacialHashGrid<T>
             _cachedQueryCount = BitArrayHelpers.GetPopCount(readonlyScratchSpaceSpan);
         }
 
-        return new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _cachedQueryCount);
+        result = new SimpleSetEnumerable<T>(_hasher, readonlyScratchSpaceSpan, _cachedQueryCount);
     }
 
     /// <summary>
@@ -154,11 +170,15 @@ public sealed class SpacialHashGrid<T>
     /// </summary>
     /// <param name="scratchSpaceSpan">The span used to record data</param>
     /// <param name="levelRegion">The region to evaluate chunks from</param>
+    /// <param name="result">The enumerable</param>
     /// <returns>An enumerable for items within the region</returns>
-    public SimpleSetEnumerable<T> GetAllItemsNearRegion(Span<uint> scratchSpaceSpan, LevelPositionPair levelRegion)
+    public void GetAllItemsNearRegion(Span<uint> scratchSpaceSpan, LevelPositionPair levelRegion, out SimpleSetEnumerable<T> result)
     {
         if (IsEmpty)
-            return SimpleSetEnumerable<T>.Empty;
+        {
+            result = SimpleSetEnumerable<T>.Empty;
+            return;
+        }
 
         var topLeftChunk = GetChunkForPoint(levelRegion.GetTopLeftPosition());
         var bottomRightChunk = GetChunkForPoint(levelRegion.GetBottomRightPosition());
@@ -169,7 +189,8 @@ public sealed class SpacialHashGrid<T>
             // If we've already got the data cached, just use it
             new ReadOnlySpan<uint>(_cachedQueryScratchSpace).CopyTo(scratchSpaceSpan);
 
-            return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _cachedQueryCount);
+            result = new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _cachedQueryCount);
+            return;
         }
 
         int queryCount;
@@ -189,7 +210,7 @@ public sealed class SpacialHashGrid<T>
             queryCount = BitArrayHelpers.GetPopCount(scratchSpaceSpan);
         }
 
-        return new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, queryCount);
+        result = new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, queryCount);
     }
 
     public void AddItem(T item)

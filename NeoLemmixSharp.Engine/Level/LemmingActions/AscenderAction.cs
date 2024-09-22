@@ -26,20 +26,20 @@ public sealed class AscenderAction : LemmingAction
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             orientation.MoveUp(lemmingPosition, 2));
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
         var dy = 0;
         while (dy < 2 &&
                lemming.AscenderProgress < 5 &&
-               PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 1)))
+               PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 1)))
         {
             dy++;
             lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
             lemming.AscenderProgress++;
         }
 
-        var pixel1IsSolid = PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 1));
-        var pixel2IsSolid = PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 2));
+        var pixel1IsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 1));
+        var pixel2IsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 2));
 
         if (dy < 2 &&
             !pixel1IsSolid)

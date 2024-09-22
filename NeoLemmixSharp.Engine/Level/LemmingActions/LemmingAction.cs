@@ -220,13 +220,13 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         var gadgetTestRegion = new LevelPositionPair(
             orientation.MoveUp(levelPosition, LevelConstants.MaxStepUp + 1),
             orientation.MoveDown(levelPosition, LevelConstants.DefaultFallStep + 1));
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);
 
         int result;
-        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, levelPosition))
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, levelPosition))
         {
             result = 0;
-            while (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(levelPosition, 1 + result)) &&
+            while (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(levelPosition, 1 + result)) &&
                    result < LevelConstants.MaxStepUp + 1)
             {
                 result++;
@@ -237,7 +237,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
         result = -1;
         // MoveUp, but step is negative, therefore moves down
-        while (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(levelPosition, result)) &&
+        while (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(levelPosition, result)) &&
                result > -(LevelConstants.DefaultFallStep + 1))
         {
             result--;
@@ -279,11 +279,11 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     [Pure]
     private static bool HasSolidGadgetAtPosition(
-        in GadgetSet enumerable,
+        in GadgetSet gadgets,
         Lemming lemming,
         LevelPosition levelPosition)
     {
-        foreach (var gadget in enumerable)
+        foreach (var gadget in gadgets)
         {
             if (gadget.IsSolidToLemmingAtPosition(lemming, levelPosition))
                 return true;
@@ -294,11 +294,11 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     [Pure]
     private static bool HasSteelGadgetAtPosition(
-        in GadgetSet enumerable,
+        in GadgetSet gadgets,
         Lemming lemming,
         LevelPosition levelPosition)
     {
-        foreach (var gadget in enumerable)
+        foreach (var gadget in gadgets)
         {
             if (gadget.IsSteelToLemmingAtPosition(lemming, levelPosition))
                 return true;

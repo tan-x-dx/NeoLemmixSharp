@@ -17,7 +17,9 @@ public sealed class StackerSkill : LemmingSkill
     public override void AssignToLemming(Lemming lemming)
     {
         // Get starting position for stacker
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX));
+        LevelScreen.GadgetManager.GetAllGadgetsForPosition(
+            lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX),
+            out var gadgetsNearRegion);
 
         lemming.StackLow = !LemmingAction.PositionIsSolidToLemming(
             in gadgetsNearRegion,

@@ -90,7 +90,7 @@ public sealed class JumperAction : LemmingAction
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx, 12));
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
         for (var i = 0; i < JumperPositionCount; i++)
         {
@@ -120,7 +120,7 @@ public sealed class JumperAction : LemmingAction
             DoJumperTriggerChecks(in gadgetsNearRegion);
 
             if (lemming.JumpProgress == 0 ||
-                !PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
+                !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
                 continue; // Foot check
 
             lemming.SetNextAction(WalkerAction.Instance);
@@ -156,13 +156,13 @@ public sealed class JumperAction : LemmingAction
         var dx = lemming.FacingDirection.DeltaX;
 
         var checkPosition = orientation.MoveRight(lemmingPosition, dx);
-        if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkPosition))
+        if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkPosition))
             return false;
 
         for (var n = 1; n < 9; n++)
         {
             var checkPosition2 = orientation.MoveUp(checkPosition, n);
-            if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkPosition2))
+            if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkPosition2))
             {
                 int deltaY;
                 LemmingAction nextAction;
@@ -232,7 +232,7 @@ public sealed class JumperAction : LemmingAction
         for (; n < 10; n++)
         {
             var checkPosition = orientation.MoveUp(lemmingPosition, n);
-            if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkPosition))
+            if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkPosition))
                 continue;
 
             lemming.SetNextAction(FallerAction.Instance);

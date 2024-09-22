@@ -305,7 +305,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
         var checkPositionsBounds = new LevelPositionPair(checkPositions[..4]);
 
-        var gadgetSet = LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds, out var gadgetSet);
 
         if (gadgetSet.Count == 0)
             return true;

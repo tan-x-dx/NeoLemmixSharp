@@ -24,7 +24,7 @@ public sealed class StackerAction : LemmingAction
         var gadgetTestRegion = new LevelPositionPair(
             lemming.Orientation.MoveDown(lemming.LevelPosition, 1),
             lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX * 3, 1 + LevelConstants.NumberOfStackerBricks));
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
         if (lemming.PhysicsFrame == LevelConstants.StackerAnimationFrames - 1)
         {
@@ -73,9 +73,9 @@ public sealed class StackerAction : LemmingAction
 
         var dx = lemming.FacingDirection.DeltaX;
 
-        return !(PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveRight(brickPosition, dx)) &&
-                 PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveRight(brickPosition, dx * 2)) &&
-                 PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveRight(brickPosition, dx * 3)));
+        return !(PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveRight(brickPosition, dx)) &&
+                 PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveRight(brickPosition, dx * 2)) &&
+                 PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveRight(brickPosition, dx * 3)));
     }
 
     private static bool LayStackBrick(
@@ -92,7 +92,7 @@ public sealed class StackerAction : LemmingAction
 
         for (var i = 0; i < 3; i++)
         {
-            if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, brickPosition))
+            if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, brickPosition))
             {
                 terrainManager.SetSolidPixel(brickPosition, Color.Magenta);
                 result = true;

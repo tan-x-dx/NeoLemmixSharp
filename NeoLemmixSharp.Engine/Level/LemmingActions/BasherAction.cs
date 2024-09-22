@@ -15,7 +15,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
     public static readonly BasherAction Instance = new();
 
-    private static readonly PixelType[] _simulationScratchSpace = new PixelType[BasherMaskWidth * BasherMaskHeight];
+    private static readonly PixelType[] SimulationScratchSpace = new PixelType[BasherMaskWidth * BasherMaskHeight];
 
     private BasherAction()
         : base(
@@ -44,7 +44,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemmingPosition, 0, LevelConstants.MaxStepUp + 1),
             orientation.Move(lemmingPosition, 2 * dx, -LevelConstants.DefaultFallStep - 1));
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
         // Check for enough terrain to continue working
         if (physicsFrame == 5)
@@ -61,10 +61,10 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
                 sixAbove = orientation.MoveRight(sixAbove, dx);
 
                 continueWork = continueWork ||
-                               (PositionIsSolidToLemming(gadgetsNearRegion, lemming, fiveAbove) &&
-                                !PositionIsIndestructibleToLemming(gadgetsNearRegion, lemming, this, fiveAbove)) ||
-                               (PositionIsSolidToLemming(gadgetsNearRegion, lemming, sixAbove) &&
-                                !PositionIsIndestructibleToLemming(gadgetsNearRegion, lemming, this, sixAbove));
+                               (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, fiveAbove) &&
+                                !PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, this, fiveAbove)) ||
+                               (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, sixAbove) &&
+                                !PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, this, sixAbove));
             }
 
             // Check whether we turn around within the next two basher strokes (only if we don't simulate)
@@ -76,7 +76,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             if (continueWork)
                 return true;
 
-            if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
+            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
             {
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             }
@@ -125,7 +125,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             // Move zero, one or two pixels down, if there is no steel
             if (BasherIndestructibleCheck(in gadgetsNearRegion, lemming, testPoint))
             {
-                BasherTurn(lemming, PositionIsSteelToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(testPoint, 4)));
+                BasherTurn(lemming, PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(testPoint, 4)));
             }
             else
             {
@@ -140,7 +140,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             // Move one or two pixels up, if there is no steel and not too much terrain
             if (BasherIndestructibleCheck(in gadgetsNearRegion, lemming, testPoint))
             {
-                BasherTurn(lemming, PositionIsSteelToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(testPoint, 4)));
+                BasherTurn(lemming, PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(testPoint, 4)));
                 return true;
             }
 
@@ -153,8 +153,8 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
             if (BasherIndestructibleCheck(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, -2)))
             {
-                var steelTest = PositionIsSteelToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, dy)) ||
-                                PositionIsSteelToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, dy - 1));
+                var steelTest = PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, dy)) ||
+                                PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, dy - 1));
 
                 BasherTurn(lemming, steelTest);
                 return true;
@@ -171,9 +171,9 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         // Either stall or turn if there is steel
         if (BasherIndestructibleCheck(in gadgetsNearRegion, lemming, lemmingPosition))
         {
-            var steelTest = PositionIsSteelToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 3)) ||
-                            PositionIsSteelToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 4)) ||
-                            PositionIsSteelToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 5));
+            var steelTest = PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 3)) ||
+                            PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 4)) ||
+                            PositionIsSteelToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 5));
 
             BasherTurn(lemming, steelTest);
             return true;
@@ -192,9 +192,9 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         var orientation = lemming.Orientation;
 
         // Check for indestructible terrain 3, 4 and 5 pixels above position
-        return PositionIsIndestructibleToLemming(gadgetsNearRegion, lemming, Instance, orientation.MoveUp(pos, 3)) ||
-               PositionIsIndestructibleToLemming(gadgetsNearRegion, lemming, Instance, orientation.MoveUp(pos, 4)) ||
-               PositionIsIndestructibleToLemming(gadgetsNearRegion, lemming, Instance, orientation.MoveUp(pos, 5));
+        return PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, Instance, orientation.MoveUp(pos, 3)) ||
+               PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, Instance, orientation.MoveUp(pos, 4)) ||
+               PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, Instance, orientation.MoveUp(pos, 5));
     }
 
     private static void BasherTurn(
@@ -220,13 +220,13 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         int dx,
         int dy)
     {
-        var p1X1Y = PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(pos, dx, 1));
-        var p1X2Y = PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(pos, dx, 2));
-        var p1X3Y = PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(pos, dx, 3));
+        var p1X1Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(pos, dx, 1));
+        var p1X2Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(pos, dx, 2));
+        var p1X3Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(pos, dx, 3));
 
-        var p2X1Y = PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(pos, dx * 2, 1));
-        var p2X2Y = PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(pos, dx * 2, 2));
-        var p2X3Y = PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(pos, dx * 2, 3));
+        var p2X1Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(pos, dx * 2, 1));
+        var p2X2Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(pos, dx * 2, 2));
+        var p2X3Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(pos, dx * 2, 3));
 
         if (dy == -1)
         {

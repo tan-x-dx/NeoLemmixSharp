@@ -16,7 +16,7 @@ public sealed class MinerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.LevelPosition);
+        LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.LevelPosition, out var gadgetsNearRegion);
 
         return ActionIsAssignable(lemming) &&
                !LemmingAction.PositionIsIndestructibleToLemming(

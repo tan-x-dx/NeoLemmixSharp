@@ -4,11 +4,11 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -239,8 +239,10 @@ public sealed class LemmingManager :
         return simulationLemming;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSetEnumerable<Lemming> GetAllLemmingsNearRegion(LevelPositionPair levelRegion) => _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion);
+    public void GetAllLemmingsNearRegion(LevelPositionPair levelRegion, out SimpleSetEnumerable<Lemming> result)
+    {
+        _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion, out result);
+    }
 
     public void RegisterBlocker(Lemming lemming)
     {
@@ -296,7 +298,7 @@ public sealed class LemmingManager :
         Debug.Assert(!lemming.State.IsZombie);
 
         var checkRegion = new LevelPositionPair(lemming.TopLeftPixel, lemming.BottomRightPixel);
-        var nearbyZombies = _zombieSpacialHashGrid.GetAllItemsNearRegion(checkRegion);
+        _zombieSpacialHashGrid.GetAllItemsNearRegion(checkRegion, out var nearbyZombies);
 
         if (nearbyZombies.Count == 0)
             return;
@@ -353,7 +355,7 @@ public sealed class LemmingManager :
     }
 
     public int NumberOfItems => _lemmings.Length;
-    
+
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
 

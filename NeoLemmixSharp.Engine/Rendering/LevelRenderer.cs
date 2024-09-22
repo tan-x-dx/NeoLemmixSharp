@@ -116,7 +116,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
                     horizontalRenderInterval.ViewPortStart + horizontalRenderInterval.ViewPortLength - 1,
                     verticalRenderInterval.ViewPortStart + verticalRenderInterval.ViewPortLength - 1);
 
-                var rendererSet = _spriteSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, region);
+                _spriteSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, region, out var rendererSet);
 
                 var viewportClip = new Rectangle(
                     horizontalRenderInterval.ViewPortStart,

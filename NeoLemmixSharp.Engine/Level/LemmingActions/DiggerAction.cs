@@ -32,7 +32,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemmingPosition, 4, 1),
             orientation.Move(lemmingPosition, -4, -1));
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
         if (lemming.IsStartingAction)
         {
@@ -61,9 +61,9 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
 
-        if (PositionIsIndestructibleToLemming(gadgetsNearRegion, lemming, this, lemmingPosition))
+        if (PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, this, lemmingPosition))
         {
-            if (PositionIsSteelToLemming(gadgetsNearRegion, lemming, lemmingPosition))
+            if (PositionIsSteelToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
             {
                 //CueSoundEffect(SFX_HITS_STEEL, L.Position);
             }
@@ -99,14 +99,14 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
         // Two most extreme pixels
         var checkLevelPosition = orientation.MoveLeft(lemmingPosition, 4);
-        var pixelIsSolid = PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkLevelPosition);
+        var pixelIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
             terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
         }
 
         checkLevelPosition = orientation.MoveRight(lemmingPosition, 4);
-        pixelIsSolid = PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkLevelPosition);
+        pixelIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
             terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
@@ -117,7 +117,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         for (var i = -3; i < 4; i++)
         {
             checkLevelPosition = orientation.MoveRight(lemmingPosition, i);
-            pixelIsSolid = PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkLevelPosition);
+            pixelIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkLevelPosition);
             if (pixelIsSolid)
             {
                 terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);

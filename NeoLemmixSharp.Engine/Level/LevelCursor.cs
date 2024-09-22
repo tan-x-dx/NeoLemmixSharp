@@ -55,7 +55,7 @@ public sealed class LevelCursor
 
     public void CheckLemmingsNearCursor()
     {
-        var lemmingsNearCursor = LemmingsNearCursorPosition();
+        LemmingsNearCursorPosition(out var lemmingsNearCursor);
         foreach (var lemming in lemmingsNearCursor)
         {
             CheckLemming(lemming);
@@ -66,7 +66,7 @@ public sealed class LevelCursor
             NumberOfLemmingsUnderCursor);
     }
 
-    private SimpleSetEnumerable<Lemming> LemmingsNearCursorPosition()
+    private void LemmingsNearCursorPosition(out SimpleSetEnumerable<Lemming> result)
     {
         var c = CursorPosition;
 
@@ -74,7 +74,7 @@ public sealed class LevelCursor
         var bottomRightCursorPixel = new LevelPosition(c.X + 6, c.Y + 6);
         var levelRegion = new LevelPositionPair(topLeftCursorPixel, bottomRightCursorPixel);
 
-        return LevelScreen.LemmingManager.GetAllLemmingsNearRegion(levelRegion);
+        LevelScreen.LemmingManager.GetAllLemmingsNearRegion(levelRegion, out result);
     }
 
     public void SetSelectedTeam(Team? team)
