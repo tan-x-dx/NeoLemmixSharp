@@ -96,7 +96,6 @@ public sealed class GadgetManager : IPerfectHasher<GadgetBase>, IItemManager<Gad
         _gadgetPositionHelper.GetAllItemsNearRegion(levelRegion, out result);
     }
 
-    [Pure]
     public void GetAllItemsNearRegion(
         Span<uint> scratchSpace,
         LevelPositionPair levelRegion,

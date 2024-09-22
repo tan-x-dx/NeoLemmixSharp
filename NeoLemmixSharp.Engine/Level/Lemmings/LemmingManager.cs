@@ -239,12 +239,6 @@ public sealed class LemmingManager :
         return simulationLemming;
     }
 
-    public void GetAllLemmingsNearRegion(LevelPositionPair levelRegion, out LemmingSet result)
-    {
-        _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion, out result);
-    }
-
-    [Pure]
     public void GetAllLemmingsNearRegion(
         Span<uint> scratchSpace,
         LevelPositionPair levelRegion,
