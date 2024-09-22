@@ -55,7 +55,8 @@ public sealed class LevelCursor
 
     public void CheckLemmingsNearCursor()
     {
-        LemmingsNearCursorPosition(out var lemmingsNearCursor);
+        Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.LemmingManager.ScratchSpaceSize];
+        LemmingsNearCursorPosition(scratchSpaceSpan, out var lemmingsNearCursor);
         foreach (var lemming in lemmingsNearCursor)
         {
             CheckLemming(lemming);
@@ -66,7 +67,7 @@ public sealed class LevelCursor
             NumberOfLemmingsUnderCursor);
     }
 
-    private void LemmingsNearCursorPosition(out SimpleSetEnumerable<Lemming> result)
+    private void LemmingsNearCursorPosition(Span<uint> scratchSpaceSpan, out LemmingSet result)
     {
         var c = CursorPosition;
 

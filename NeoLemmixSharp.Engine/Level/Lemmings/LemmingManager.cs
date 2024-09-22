@@ -40,7 +40,7 @@ public sealed class LemmingManager :
     public int LemmingsSaved { get; private set; }
 
     public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
-    public SimpleSetEnumerable<Lemming> AllBlockers => _allBlockers.AsSimpleEnumerable();
+    public LemmingSet AllBlockers => _allBlockers.AsSimpleEnumerable();
     public ReadOnlySpan<Lemming> AllItems => new(_lemmings);
 
     public int ScratchSpaceSize => _lemmingPositionHelper.ScratchSpaceSize;
@@ -239,9 +239,18 @@ public sealed class LemmingManager :
         return simulationLemming;
     }
 
-    public void GetAllLemmingsNearRegion(LevelPositionPair levelRegion, out SimpleSetEnumerable<Lemming> result)
+    public void GetAllLemmingsNearRegion(LevelPositionPair levelRegion, out LemmingSet result)
     {
         _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion, out result);
+    }
+
+    [Pure]
+    public void GetAllLemmingsNearRegion(
+        Span<uint> scratchSpace,
+        LevelPositionPair levelRegion,
+        out LemmingSet result)
+    {
+        _lemmingPositionHelper.GetAllItemsNearRegion(scratchSpace, levelRegion, out result);
     }
 
     public void RegisterBlocker(Lemming lemming)
