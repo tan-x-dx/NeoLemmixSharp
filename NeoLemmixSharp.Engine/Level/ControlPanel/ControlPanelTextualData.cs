@@ -7,13 +7,12 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
 public sealed class ControlPanelTextualData
 {
-
     private const int CharLengthForLemmingActionAndCount = LevelConstants.LongestActionNameLength + // Enough space for the action part
                                                            1 + // Add a space
                                                            CharLengthForLemmingCount; // Lemmings under cursor
 
     private const int CharLengthForHatchCount = 3;
-    private const int CharLengthForLemmingCount = 4;
+    private const int CharLengthForLemmingCount = 4; // Max number of lemmings is a number with 4 digits
     private const int CharLengthForGoalCount = 1 + CharLengthForLemmingCount; // Can have a minus sign so add 1
 
     public const int TotalControlPanelTextLength = CharLengthForLemmingActionAndCount +
