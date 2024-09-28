@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.InteropServices;
+using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -90,7 +91,7 @@ public sealed class JumperAction : LemmingAction
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx, 12));
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
         for (var i = 0; i < JumperPositionCount; i++)
         {
@@ -120,7 +121,7 @@ public sealed class JumperAction : LemmingAction
             DoJumperTriggerChecks(in gadgetsNearRegion);
 
             if (lemming.JumpProgress == 0 ||
-                !PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
+                !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
                 continue; // Foot check
 
             lemming.SetNextAction(WalkerAction.Instance);
@@ -134,17 +135,15 @@ public sealed class JumperAction : LemmingAction
     {
         var jumpProgress = lemming.JumpProgress;
 
-        if (jumpProgress is 0 or 1)
-            return 0;
-        if (jumpProgress is 2 or 3)
-            return 1;
-        if (jumpProgress is >= 4 and <= 8)
-            return jumpProgress - 2;
-        if (jumpProgress is 9 or 10)
-            return 7;
-        if (jumpProgress is 11 or 12)
-            return 8;
-        return -1;
+        return jumpProgress switch
+        {
+            0 or 1 => 0,
+            2 or 3 => 1,
+            >= 4 and <= 8 => jumpProgress - 2,
+            9 or 10 => 7,
+            11 or 12 => 8,
+            _ => -1
+        };
     }
 
     private static bool DoWallCheck(
@@ -156,13 +155,13 @@ public sealed class JumperAction : LemmingAction
         var dx = lemming.FacingDirection.DeltaX;
 
         var checkPosition = orientation.MoveRight(lemmingPosition, dx);
-        if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkPosition))
+        if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkPosition))
             return false;
 
         for (var n = 1; n < 9; n++)
         {
             var checkPosition2 = orientation.MoveUp(checkPosition, n);
-            if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkPosition2))
+            if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkPosition2))
             {
                 int deltaY;
                 LemmingAction nextAction;
@@ -232,7 +231,7 @@ public sealed class JumperAction : LemmingAction
         for (; n < 10; n++)
         {
             var checkPosition = orientation.MoveUp(lemmingPosition, n);
-            if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkPosition))
+            if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkPosition))
                 continue;
 
             lemming.SetNextAction(FallerAction.Instance);

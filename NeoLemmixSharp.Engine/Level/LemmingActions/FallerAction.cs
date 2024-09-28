@@ -1,8 +1,9 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -37,12 +38,12 @@ public sealed class FallerAction : LemmingAction
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             orientation.MoveDown(lemmingPosition, LevelConstants.DefaultFallStep + 1));
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
         ref var distanceFallen = ref lemming.DistanceFallen;
 
         while (currentFallDistanceStep < maxFallDistanceStep &&
-               !PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
+               !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
         {
             if (currentFallDistanceStep > 0 &&
                 CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
@@ -171,7 +172,7 @@ public sealed class FallerAction : LemmingAction
         // Use a dummy scratch space span to prevent data from being overridden.
         // Prevents weird bugs!
         Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
-        var gadgetsNearPosition = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(scratchSpace, lemming);
+        LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(scratchSpace, lemming, out var gadgetsNearPosition);
 
         if (gadgetsNearPosition.Count == 0)
             return new LevelPosition();

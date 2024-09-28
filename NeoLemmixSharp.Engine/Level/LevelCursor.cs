@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -53,7 +53,22 @@ public sealed class LevelCursor
         }
     }
 
-    public SimpleSetEnumerable<Lemming> LemmingsNearCursorPosition()
+    [SkipLocalsInit]
+    public void CheckLemmingsNearCursor()
+    {
+        Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.LemmingManager.ScratchSpaceSize];
+        GetLemmingsNearCursorPosition(scratchSpaceSpan, out var lemmingsNearCursor);
+        foreach (var lemming in lemmingsNearCursor)
+        {
+            CheckLemming(lemming);
+        }
+
+        LevelScreen.LevelControlPanel.TextualData.SetCursorData(
+            CurrentlyHighlightedLemming,
+            NumberOfLemmingsUnderCursor);
+    }
+
+    private void GetLemmingsNearCursorPosition(Span<uint> scratchSpaceSpan, out LemmingSet result)
     {
         var c = CursorPosition;
 
@@ -61,7 +76,7 @@ public sealed class LevelCursor
         var bottomRightCursorPixel = new LevelPosition(c.X + 6, c.Y + 6);
         var levelRegion = new LevelPositionPair(topLeftCursorPixel, bottomRightCursorPixel);
 
-        return LevelScreen.LemmingManager.GetAllLemmingsNearRegion(levelRegion);
+        LevelScreen.LemmingManager.GetAllLemmingsNearRegion(scratchSpaceSpan, levelRegion, out result);
     }
 
     public void SetSelectedTeam(Team? team)
@@ -80,7 +95,7 @@ public sealed class LevelCursor
         Color3 = team.SkinColor;
     }
 
-    public void CheckLemming(Lemming lemming)
+    private void CheckLemming(Lemming lemming)
     {
         if (!LemmingIsUnderCursor(lemming) || !LemmingIsAbleToBeSelected(lemming))
             return;
@@ -116,14 +131,7 @@ public sealed class LevelCursor
             return false;
 
         // Select only unassigned
-        if (_selectOnlyUnassigned && lemming.State.HasPermanentSkill)
-            return false;
-
-        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(LevelScreen.LevelControlPanel.SelectedSkillButtonId);
-        if (skillTrackingData is null || skillTrackingData.SkillCount == 0)
-            return false;
-
-        return skillTrackingData.Skill.CanAssignToLemming(lemming);
+        return !_selectOnlyUnassigned || !lemming.State.HasPermanentSkill;
     }
 
     private bool NewCandidateIsHigherPriority(Lemming? previousCandidate, Lemming newCandidate)

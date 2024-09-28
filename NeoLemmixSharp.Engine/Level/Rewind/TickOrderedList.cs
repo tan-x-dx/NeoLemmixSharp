@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
@@ -32,7 +33,7 @@ public sealed class TickOrderedList<TTickOrderedData>
     }
 
     [Pure]
-    public ReadOnlySpan<TTickOrderedData> SliceToEnd(int start)
+    public ReadOnlySpan<TTickOrderedData> GetSliceToEnd(int start)
     {
         if (start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), "Negative start index");
@@ -40,12 +41,46 @@ public sealed class TickOrderedList<TTickOrderedData>
         return new ReadOnlySpan<TTickOrderedData>(_items, start, Math.Max(0, _count - start));
     }
 
-    [Pure]
-    public ReadOnlySpan<TTickOrderedData> GetSliceBackTo(int tick)
+    public ReadOnlySpan<TTickOrderedData> RewindBackTo(int tick)
     {
+        var index = _count == 0
+            ? 0
+            : GetSmallestIndexOfTick(tick);
+
+        var result = GetSliceToEnd(index);
+
+        _count = index;
+
+        return result;
+    }
+
+    [Pure]
+    public bool HasDataForTick(int tick)
+    {
+        if (_count == 0)
+            return false;
+
         var index = GetSmallestIndexOfTick(tick);
 
-        return SliceToEnd(index);
+        ref readonly var data = ref _items[index];
+
+        return data.TickNumber == tick;
+    }
+
+    [Pure]
+    public ref readonly TTickOrderedData TryGetDataForTick(int tick)
+    {
+        if (_count == 0)
+            return ref Unsafe.NullRef<TTickOrderedData>();
+
+        var index = GetSmallestIndexOfTick(tick);
+
+        ref readonly var data = ref _items[index];
+
+        if (data.TickNumber == tick)
+            return ref data;
+
+        return ref Unsafe.NullRef<TTickOrderedData>();
     }
 
     /// <summary>
@@ -57,9 +92,6 @@ public sealed class TickOrderedList<TTickOrderedData>
     [Pure]
     private int GetSmallestIndexOfTick(int tick)
     {
-        if (_count == 0)
-            return 0;
-
         var upperTestIndex = _count;
         var lowerTestIndex = 0;
 

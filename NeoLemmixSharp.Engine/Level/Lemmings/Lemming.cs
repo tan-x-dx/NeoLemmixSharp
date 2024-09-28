@@ -130,7 +130,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
         initialAction.TransitionLemmingToAction(this, false);
         Renderer.UpdateLemmingState(true);
-        Renderer.UpdatePosition();
     }
 
     public void Tick()
@@ -306,7 +305,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
         var checkPositionsBounds = new LevelPositionPair(checkPositions[..4]);
 
-        var gadgetSet = LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds, out var gadgetSet);
 
         if (gadgetSet.Count == 0)
             return true;
@@ -527,13 +526,15 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
         State.SetRawDataFromSnapshotData(in lemmingSnapshotData.StateSnapshotData);
 
-        SetFacingDirection(FacingDirection.AllItems[lemmingSnapshotData.FacingDirectionId]);
-        SetOrientation(Orientation.AllItems[lemmingSnapshotData.OrientationId]);
+        FacingDirection = FacingDirection.AllItems[lemmingSnapshotData.FacingDirectionId];
+        Orientation = Orientation.AllItems[lemmingSnapshotData.OrientationId];
 
         PreviousAction = LemmingAction.GetActionFromId(lemmingSnapshotData.PreviousActionId);
-        SetCurrentAction(LemmingAction.GetActionFromId(lemmingSnapshotData.CurrentActionId));
+        CurrentAction = LemmingAction.GetActionFromId(lemmingSnapshotData.CurrentActionId);
         NextAction = LemmingAction.GetActionFromId(lemmingSnapshotData.NextActionId);
         CountDownAction = LemmingAction.GetActionFromId(lemmingSnapshotData.CountDownActionId);
+
+        Renderer.ResetPosition();
     }
 
     int IIdEquatable<Lemming>.Id => Id;

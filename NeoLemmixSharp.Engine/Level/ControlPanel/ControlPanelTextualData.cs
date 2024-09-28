@@ -1,19 +1,19 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
 public sealed class ControlPanelTextualData
 {
-
     private const int CharLengthForLemmingActionAndCount = LevelConstants.LongestActionNameLength + // Enough space for the action part
                                                            1 + // Add a space
                                                            CharLengthForLemmingCount; // Lemmings under cursor
 
     private const int CharLengthForHatchCount = 3;
-    private const int CharLengthForLemmingCount = 4;
+    private const int CharLengthForLemmingCount = 4; // Max number of lemmings is a number with 4 digits
     private const int CharLengthForGoalCount = 1 + CharLengthForLemmingCount; // Can have a minus sign so add 1
 
     public const int TotalControlPanelTextLength = CharLengthForLemmingActionAndCount +
@@ -28,10 +28,10 @@ public sealed class ControlPanelTextualData
 
     private readonly ControlPanelParameterSet _controlPanelParameters;
 
-    public ReadOnlySpan<int> LemmingActionAndCountSpan => _lemmingActionAndCountString;
-    public ReadOnlySpan<int> HatchCountSpan => _hatchCountString;
-    public ReadOnlySpan<int> LemmingsOutSpan => _lemmingsOutString;
-    public ReadOnlySpan<int> GoalCountSpan => _goalCountString;
+    public ReadOnlySpan<char> LemmingActionAndCountSpan => _lemmingActionAndCountString;
+    public ReadOnlySpan<char> HatchCountSpan => _hatchCountString;
+    public ReadOnlySpan<char> LemmingsOutSpan => _lemmingsOutString;
+    public ReadOnlySpan<char> GoalCountSpan => _goalCountString;
 
     public ControlPanelTextualData(
         ControlPanelParameterSet controlPanelParameters)
@@ -57,15 +57,16 @@ public sealed class ControlPanelTextualData
 
         textLength++; // Add a space. Can just increment index as value of zero will not be rendered
         var spanLength = TextRenderingHelpers.GetNumberStringLength(numberOfLemmingsUnderCursor);
-        Span<int> destSpan = _lemmingActionAndCountString;
+        Span<char> destSpan = _lemmingActionAndCountString;
         TextRenderingHelpers.WriteDigits(destSpan.Slice(textLength, spanLength), numberOfLemmingsUnderCursor);
     }
 
+    [Pure]
     private bool ShowAthleteInformation() => _controlPanelParameters.Contains(ControlPanelParameters.ShowAthleteInformation);
 
     private int WriteLemmingInfo(Lemming lemming)
     {
-        Span<int> destSpan = _lemmingActionAndCountString;
+        Span<char> destSpan = _lemmingActionAndCountString;
         destSpan.Clear();
 
         var state = lemming.State;
@@ -80,7 +81,7 @@ public sealed class ControlPanelTextualData
             : WriteAthleteTypeInformation(destSpan, action, state);
     }
 
-    private static int WriteAthleteInformation(Span<int> destSpan, LemmingState state)
+    private static int WriteAthleteInformation(Span<char> destSpan, LemmingState state)
     {
         destSpan = destSpan[..7];
         destSpan.Fill('-');
@@ -100,11 +101,11 @@ public sealed class ControlPanelTextualData
     }
 
     private static int WriteAthleteTypeInformation(
-        Span<int> destSpan,
+        Span<char> destSpan,
         LemmingAction action,
         LemmingState state)
     {
-        ReadOnlySpan<int> sourceSpan;
+        ReadOnlySpan<char> sourceSpan;
         var isZombie = state.IsZombie;
         var isNeutral = state.IsNeutral;
 
@@ -124,13 +125,13 @@ public sealed class ControlPanelTextualData
         {
             var numberOfPermanentSkills = state.NumberOfPermanentSkills;
 
-            switch (numberOfPermanentSkills)
+            sourceSpan = numberOfPermanentSkills switch
             {
-                case 2: sourceSpan = LevelConstants.AthleteString2Skills; break;
-                case 3: sourceSpan = LevelConstants.AthleteString3Skills; break;
-                case 4: sourceSpan = LevelConstants.AthleteString4Skills; break;
-                case 5: sourceSpan = LevelConstants.AthleteString5Skills; break;
-                default: return WriteActionName(destSpan, action);
+                2 => LevelConstants.AthleteString2Skills,
+                3 => LevelConstants.AthleteString3Skills,
+                4 => LevelConstants.AthleteString4Skills,
+                5 => LevelConstants.AthleteString5Skills,
+                _ => action.LemmingActionName
             };
         }
 
@@ -139,39 +140,36 @@ public sealed class ControlPanelTextualData
         return sourceSpan.Length;
     }
 
-    private static int WriteActionName(Span<int> destSpan, LemmingAction action)
+    private static int WriteActionName(Span<char> destSpan, LemmingAction action)
     {
-        for (var i = 0; i < action.LemmingActionName.Length; i++)
-        {
-            destSpan[i] = action.LemmingActionName[i];
-        }
-
-        return action.LemmingActionName.Length;
+        var sourceSpan = action.LemmingActionName.AsSpan();
+        sourceSpan.CopyTo(destSpan);
+        return sourceSpan.Length;
     }
 
     public void ClearCursorData()
     {
-        Span<int> span = _lemmingActionAndCountString;
+        Span<char> span = _lemmingActionAndCountString;
         span.Clear();
     }
 
     public void SetHatchData(int hatchCount)
     {
-        Span<int> span = _hatchCountString;
+        Span<char> span = _hatchCountString;
         span.Clear();
         TextRenderingHelpers.WriteDigits(span, hatchCount);
     }
 
     public void SetLemmingData(int lemmingCount)
     {
-        Span<int> span = _lemmingsOutString;
+        Span<char> span = _lemmingsOutString;
         span.Clear();
         TextRenderingHelpers.WriteDigits(span, lemmingCount);
     }
 
     public void SetGoalData(int goalNumber)
     {
-        Span<int> span = _goalCountString;
+        Span<char> span = _goalCountString;
         if (goalNumber < 0)
         {
             goalNumber = -goalNumber;
@@ -187,24 +185,24 @@ public sealed class ControlPanelTextualData
     [InlineArray(CharLengthForLemmingActionAndCount)]
     private struct LemmingActionAndCountCharBuffer
     {
-        private int _firstElement;
+        private char _firstElement;
     }
 
     [InlineArray(CharLengthForHatchCount)]
     private struct HatchCountCharBuffer
     {
-        private int _firstElement;
+        private char _firstElement;
     }
 
     [InlineArray(CharLengthForLemmingCount)]
     private struct LemmingCountCharBuffer
     {
-        private int _firstElement;
+        private char _firstElement;
     }
 
     [InlineArray(CharLengthForGoalCount)]
     private struct GoalCountCharBuffer
     {
-        private int _firstElement;
+        private char _firstElement;
     }
 }

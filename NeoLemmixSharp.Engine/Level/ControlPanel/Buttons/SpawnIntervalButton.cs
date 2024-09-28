@@ -98,7 +98,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
         TextRenderingHelpers.WriteDigits(_spawnIntervalCharBuffer, numericalValue);
     }
 
-    public override ReadOnlySpan<int> GetDigitsToRender() => _spawnIntervalCharBuffer;
+    public override ReadOnlySpan<char> GetDigitsToRender() => _spawnIntervalCharBuffer;
     public override int GetNumberOfDigitsToRender() => _numberOfDigitsToRender;
 
     private interface ISpawnIntervalValueGetter : IButtonAction
@@ -124,9 +124,10 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
         public void OnMouseDown()
         {
-            _hatchGroup.ChangeSpawnInterval(-1);
-
-            LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            if (_hatchGroup.ChangeSpawnInterval(-1))
+            {
+                LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            }
         }
 
         public void OnPress(bool isDoubleTap)
@@ -135,9 +136,10 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
         public void OnRightClick()
         {
-            _hatchGroup.ChangeSpawnInterval(-1000); // Set to extremal value - will be clamped appropriately
-
-            LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            if (_hatchGroup.ChangeSpawnInterval(-1000)) // Set to extremal value - will be clamped appropriately
+            {
+                LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            }
         }
     }
 
@@ -188,9 +190,10 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
         public void OnMouseDown()
         {
-            _hatchGroup.ChangeSpawnInterval(1);
-
-            LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            if (_hatchGroup.ChangeSpawnInterval(1))
+            {
+                LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            }
         }
 
         public void OnPress(bool isDoubleTap)
@@ -199,15 +202,16 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
         public void OnRightClick()
         {
-            _hatchGroup.ChangeSpawnInterval(1000); // Set to extremal value - will be clamped appropriately
-
-            LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            if (_hatchGroup.ChangeSpawnInterval(1000)) // Set to extremal value - will be clamped appropriately
+            {
+                LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            }
         }
     }
 
     [InlineArray(NumberOfSpawnIntervalChars)]
     private struct SpawnIntervalCharBuffer
     {
-        private int _firstElement;
+        private char _firstElement;
     }
 }

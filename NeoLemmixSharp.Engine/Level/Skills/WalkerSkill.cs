@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -28,11 +29,11 @@ public sealed class WalkerSkill : LemmingSkill
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             testRight);
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
         if (lemming.CurrentAction == BuilderAction.Instance &&
-            LemmingAction.PositionIsSolidToLemming(gadgetsNearRegion, lemming, testUp) &&
-            !LemmingAction.PositionIsSolidToLemming(gadgetsNearRegion, lemming, testRight))
+            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, testUp) &&
+            !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, testRight))
         {
             lemmingPosition = testUp;
 
@@ -55,7 +56,7 @@ public sealed class WalkerSkill : LemmingSkill
         {
             // Go one back to cancel the horizontal offset in WalkerAction's update method.
             // unless the Lem will fall down (which is handles already in Transition)
-            if (LemmingAction.PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
+            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
             {
                 lemmingPosition = testRight;
             }

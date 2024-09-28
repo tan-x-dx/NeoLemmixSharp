@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -60,18 +61,18 @@ public sealed class BuilderAction : LemmingAction
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx * 3, 10));
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
-        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 2)))
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 2)))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
             return;
         }
 
-        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 3)) ||
-            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx * 2, 2)) ||
-            (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx * 2, 10)) &&
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 3)) ||
+            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx * 2, 2)) ||
+            (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx * 2, 10)) &&
              lemming.NumberOfBricksLeft > 0))
         {
             lemmingPosition = orientation.Move(lemmingPosition, dx, 1);
@@ -85,10 +86,10 @@ public sealed class BuilderAction : LemmingAction
             lemmingPosition = orientation.Move(lemmingPosition, dx * 2, 1);
         }
 
-        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 2)) ||
-            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 3)) ||
-            PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 3)) ||
-            (PositionIsSolidToLemming(gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx * 2, 10)) &&
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 2)) ||
+            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 3)) ||
+            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx, 3)) ||
+            (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(lemmingPosition, dx * 2, 10)) &&
              lemming.NumberOfBricksLeft > 0))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);

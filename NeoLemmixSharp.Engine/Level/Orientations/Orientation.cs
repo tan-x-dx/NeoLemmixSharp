@@ -45,15 +45,6 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     }
 
     [Pure]
-    public abstract LevelPosition TopLeftCornerOfLevel();
-    [Pure]
-    public abstract LevelPosition TopRightCornerOfLevel();
-    [Pure]
-    public abstract LevelPosition BottomLeftCornerOfLevel();
-    [Pure]
-    public abstract LevelPosition BottomRightCornerOfLevel();
-
-    [Pure]
     public abstract LevelPosition MoveRight(LevelPosition position, int step);
     [Pure]
     public abstract LevelPosition MoveUp(LevelPosition position, int step);

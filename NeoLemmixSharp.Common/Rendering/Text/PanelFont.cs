@@ -11,8 +11,6 @@ public sealed class PanelFont
 
     private readonly Texture2D _texture;
 
-    public float RenderLayer { get; set; } = 1.0f;
-
     public PanelFont(ContentManager content)
     {
         _texture = content.Load<Texture2D>("fonts/panel_font");
@@ -26,16 +24,16 @@ public sealed class PanelFont
                 adjustedChar = 0;
                 return true;
             case >= '0' and <= '9':
-                adjustedChar = c - '0' + 1;
+                adjustedChar = c + (1 - '0');
                 return true;
             case '-':
                 adjustedChar = 11;
                 return true;
             case >= 'A' and <= 'Z':
-                adjustedChar = c - 'A' + 12;
+                adjustedChar = c + (12 - 'A');
                 return true;
             case >= 'a' and <= 'z':
-                adjustedChar = c - 'a' + 12;
+                adjustedChar = c + (12 - 'a');
                 return true;
             default:
                 adjustedChar = -1;
@@ -45,7 +43,7 @@ public sealed class PanelFont
 
     public void RenderTextSpan(
         SpriteBatch spriteBatch,
-        ReadOnlySpan<int> charactersToRender,
+        ReadOnlySpan<char> charactersToRender,
         int x,
         int y,
         int scaleMultiplier,
@@ -66,16 +64,14 @@ public sealed class PanelFont
                 _texture,
                 dest,
                 source,
-                Color.White,
-                RenderLayer);
+                Color.White);
 
             source.Y += GlyphHeight;
             spriteBatch.Draw(
                 _texture,
                 dest,
                 source,
-                color,
-                RenderLayer);
+                color);
 
             dest.X += dx;
         }

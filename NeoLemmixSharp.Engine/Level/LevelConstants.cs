@@ -1,7 +1,7 @@
-﻿using System.Runtime.InteropServices;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.PositionTracking;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -34,6 +34,17 @@ public static class LevelConstants
 
     public const int InfiniteSkillCount = 100;
 
+    /// <summary>
+    /// Assumption: if there are infinite skills available of a certain type,
+    /// there'll probably be around this number of actual usages.
+    /// </summary>
+    public const int AssumedSkillUsageForInfiniteSkillCounts = 40;
+    /// <summary>
+    /// Assumption: if there are skill pickups in a level,
+    /// there'll probably be around this number of skills added.
+    /// </summary>
+    public const int AssumedSkillCountsFromPickups = 10;
+
     public const int InitialLemmingHatchReleaseCountDown = 20;
 
     public const int CursorSizeInPixels = 16;
@@ -51,16 +62,12 @@ public static class LevelConstants
     public const int MinAllowedSpawnInterval = 4;
     public const int MaxAllowedSpawnInterval = 102;
 
-    public const int MaxNumberOfLemmings = 1 << 9;
+    public const int MaxNumberOfLemmings = 2000;
     public const int MaxTimeLimitInSeconds = 99 * 60 + 59; // 99 minutes, 59 seconds
     public const int MaxLevelWidth = 2400;
     public const int MaxLevelHeight = 2400;
 
     public const int FloaterGliderStartCycleFrame = 9;
-
-    public const int RewindSnapshotInterval = 2 * EngineConstants.FramesPerSecond;
-    public const int InitialNumberOfMinutesOfSnapshotData = 4;
-    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfMinutesOfSnapshotData * 60 * EngineConstants.FramesPerSecond;
 
     /// <summary>
     /// A lemming falls 3 pixels each frame
@@ -71,6 +78,15 @@ public static class LevelConstants
     /// A lemming can step up a maximum of 6 pixels
     /// </summary>
     public const int MaxStepUp = 6;
+
+    #endregion
+
+    #region Replay Snapshot Constants
+
+    private const int NumberOfSecondsBetweenSnapshots = 2;
+    public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * EngineConstants.FramesPerSecond;
+    private const int InitialNumberOfMinutesOfSnapshotData = 4;
+    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfMinutesOfSnapshotData * 60 * EngineConstants.FramesPerSecond;
 
     #endregion
 
@@ -109,13 +125,13 @@ public static class LevelConstants
 
     #region Control Panel Strings
 
-    public static ReadOnlySpan<int> NeutralStringNumericalSpan => ['N', 'E', 'U', 'T', 'R', 'A', 'L'];
-    public static ReadOnlySpan<int> ZombieStringNumericalSpan => ['Z', 'O', 'M', 'B', 'I', 'E'];
-    public static ReadOnlySpan<int> NeutralZombieStringNumericalSpan => ['N', '-', 'Z', 'O', 'M', 'B', 'I', 'E'];
-    public static ReadOnlySpan<int> AthleteString2Skills => ['A', 'T', 'H', 'L', 'E', 'T', 'E'];
-    public static ReadOnlySpan<int> AthleteString3Skills => ['T', 'R', 'I', 'A', 'T', 'H', 'L', 'E', 'T', 'E',];
-    public static ReadOnlySpan<int> AthleteString4Skills => ['T', 'E', 'T', 'R', 'A', 'T', 'H', 'L', 'E', 'T', 'E'];
-    public static ReadOnlySpan<int> AthleteString5Skills => ['P', 'E', 'N', 'T', 'A', 'T', 'H', 'L', 'E', 'T', 'E'];
+    public const string NeutralStringNumericalSpan = "NEUTRAL";
+    public const string ZombieStringNumericalSpan = "ZOMBIE";
+    public const string NeutralZombieStringNumericalSpan = "N-ZOMBIE";
+    public const string AthleteString2Skills = "ATHLETE";
+    public const string AthleteString3Skills = "TRIATHLETE";
+    public const string AthleteString4Skills = "TETRATHLETE";
+    public const string AthleteString5Skills = "PENTATHLETE";
 
     #endregion
 

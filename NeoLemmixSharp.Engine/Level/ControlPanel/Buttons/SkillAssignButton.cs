@@ -43,7 +43,7 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
         TextRenderingHelpers.WriteDigits(_skillCountChars, numberOfSkillsAvailable);
     }
 
-    public override ReadOnlySpan<int> GetDigitsToRender() => _skillCountChars;
+    public override ReadOnlySpan<char> GetDigitsToRender() => _skillCountChars;
 
     public override int GetNumberOfDigitsToRender() => NumberOfSkillChars;
 
@@ -70,6 +70,6 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
     [InlineArray(NumberOfSkillChars)]
     private struct SkillCharBuffer
     {
-        private int _firstElement;
+        private char _firstElement;
     }
 }

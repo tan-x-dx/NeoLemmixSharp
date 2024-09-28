@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 

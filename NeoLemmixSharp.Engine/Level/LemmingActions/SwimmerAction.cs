@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -35,18 +36,18 @@ public sealed class SwimmerAction : LemmingAction
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemmingPosition, dx, 2),
             orientation.MoveDown(lemmingPosition, 4));
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
         var dy = FindGroundPixel(lemming, lemmingPosition);
 
-        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition) ||
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition) ||
             WaterAt(gadgetsNearRegion, lemmingPosition))
         {
             // Rise if there is water above the lemming
             var pixelAbove = orientation.MoveUp(lemmingPosition, 1);
             if (dy <= 1 &&
                 WaterAt(gadgetsNearRegion, pixelAbove) &&
-                !PositionIsSolidToLemming(gadgetsNearRegion, lemming, pixelAbove))
+                !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, pixelAbove))
             {
                 lemmingPosition = pixelAbove;
 
@@ -148,7 +149,7 @@ public sealed class SwimmerAction : LemmingAction
     {
         var result = 1;
 
-        while (result <= 4 && PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
+        while (result <= 4 && PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
         {
             result++;
             lemming.DistanceFallen++;
@@ -181,11 +182,11 @@ public sealed class SwimmerAction : LemmingAction
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 2),
             orientation.MoveDown(lemming.LevelPosition, 4));
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
         while (i < 4 &&
                WaterAt(in gadgetsNearRegion, checkPosition) &&
-               !PositionIsSolidToLemming(gadgetsNearRegion, lemming, checkPosition))
+               !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkPosition))
         {
             i++;
             checkPosition = orientation.MoveUp(lemming.LevelPosition, 1 + i);

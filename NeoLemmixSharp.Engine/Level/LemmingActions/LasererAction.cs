@@ -6,6 +6,7 @@ using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
+using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -74,9 +75,9 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemmingPosition);
+        LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemmingPosition, out var gadgetsNearRegion);
 
-        if (!PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemmingPosition))
+        if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
@@ -144,8 +145,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
         return true;
 
-        LaserHitType CheckForHit(
-            ReadOnlySpan<LevelPosition> offsetChecks)
+        LaserHitType CheckForHit(ReadOnlySpan<LevelPosition> offsetChecks)
         {
             if (LevelScreen.PositionOutOfBounds(target))
                 return LaserHitType.OutOfBounds;
@@ -156,7 +156,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
             {
                 var checkLevelPosition = orientation.Move(target, offset);
 
-                var gadgetSet = LevelScreen.GadgetManager.GetAllGadgetsForPosition(checkLevelPosition);
+                LevelScreen.GadgetManager.GetAllGadgetsForPosition(checkLevelPosition, out var gadgetSet);
 
                 if (!PositionIsSolidToLemming(in gadgetSet, lemming, checkLevelPosition))
                     continue;

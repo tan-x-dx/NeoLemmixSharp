@@ -11,14 +11,12 @@ public sealed class SkillCountDigitFont
     private const int SpecialGlyphWidth = 8;
     private const int GlyphHeight = 8;
 
-    public const int InfinityGlyph = '∞';
+    public const char InfinityGlyph = '∞';
     private const int InfinityGlyphOffset = 40;
-    public const int LockGlyph = '∅';
+    public const char LockGlyph = '∅';
     private const int LockGlyphOffset = 48;
 
     private readonly Texture2D _texture;
-
-    public float RenderLayer { get; set; } = 1.0f;
 
     public SkillCountDigitFont(ContentManager content)
     {
@@ -50,7 +48,7 @@ public sealed class SkillCountDigitFont
 
     public void RenderTextSpan(
         SpriteBatch spriteBatch,
-        ReadOnlySpan<int> charactersToRender,
+        ReadOnlySpan<char> charactersToRender,
         int x,
         int y,
         int scaleMultiplier,
@@ -82,8 +80,7 @@ public sealed class SkillCountDigitFont
             _texture,
             dest,
             source,
-            color,
-            RenderLayer);
+            color);
 
         return glyphWidth;
     }

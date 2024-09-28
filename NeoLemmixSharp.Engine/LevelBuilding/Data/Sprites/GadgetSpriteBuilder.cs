@@ -11,7 +11,7 @@ using GadgetSpriteCreator = NeoLemmixSharp.Engine.Rendering.Viewport.SpriteRotat
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
-public sealed class GadgetSpriteBuilder : IDisposable
+public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetSpriteBuilder.TextureLookupKey>
 {
     private readonly GadgetSpriteCreator _gadgetSpriteCreator;
     private readonly Dictionary<TextureLookupKey, Texture2D> _gadgetTextures;
@@ -19,7 +19,7 @@ public sealed class GadgetSpriteBuilder : IDisposable
     public GadgetSpriteBuilder(GraphicsDevice graphicsDevice)
     {
         _gadgetSpriteCreator = new GadgetSpriteCreator(graphicsDevice);
-        _gadgetTextures = new Dictionary<TextureLookupKey, Texture2D>(new TextureLookupKeyEqualityComparer());
+        _gadgetTextures = new Dictionary<TextureLookupKey, Texture2D>(this);
     }
 
     public NineSliceRenderer? BuildResizeableGadgetRenderer(
@@ -136,7 +136,7 @@ public sealed class GadgetSpriteBuilder : IDisposable
         return new GadgetSpriteBank(textureArray);
     }
 
-    private readonly struct TextureLookupKey
+    public readonly struct TextureLookupKey
     {
         public readonly int GadgetBuilderId;
         public readonly Orientation Orientation;
@@ -153,22 +153,19 @@ public sealed class GadgetSpriteBuilder : IDisposable
         }
     }
 
-    private sealed class TextureLookupKeyEqualityComparer : IEqualityComparer<TextureLookupKey>
+    public bool Equals(TextureLookupKey x, TextureLookupKey y)
     {
-        public bool Equals(TextureLookupKey x, TextureLookupKey y)
-        {
-            return x.GadgetBuilderId == y.GadgetBuilderId &&
-                   x.Orientation == y.Orientation &&
-                   x.FacingDirection == y.FacingDirection;
-        }
+        return x.GadgetBuilderId == y.GadgetBuilderId &&
+               x.Orientation == y.Orientation &&
+               x.FacingDirection == y.FacingDirection;
+    }
 
-        public int GetHashCode(TextureLookupKey key)
-        {
-            return HashCode.Combine(
-                key.GadgetBuilderId,
-                key.Orientation,
-                key.FacingDirection);
-        }
+    public int GetHashCode(TextureLookupKey key)
+    {
+        return HashCode.Combine(
+            key.GadgetBuilderId,
+            key.Orientation,
+            key.FacingDirection);
     }
 
     public void Dispose()

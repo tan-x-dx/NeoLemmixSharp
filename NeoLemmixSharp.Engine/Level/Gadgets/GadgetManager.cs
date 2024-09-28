@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public sealed class GadgetManager : IItemManager<GadgetBase>, IPerfectHasher<HitBoxGadget>, IInitialisable, IDisposable
+public sealed class GadgetManager : IPerfectHasher<GadgetBase>, IItemManager<GadgetBase>, IPerfectHasher<HitBoxGadget>, IInitialisable, IDisposable
 {
     private readonly GadgetBase[] _allGadgets;
     private readonly SpacialHashGrid<HitBoxGadget> _gadgetPositionHelper;
@@ -60,56 +60,54 @@ public sealed class GadgetManager : IItemManager<GadgetBase>, IPerfectHasher<Hit
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public GadgetSet GetAllGadgetsForPosition(LevelPosition levelPosition)
+    public void GetAllGadgetsForPosition(LevelPosition levelPosition, out GadgetSet result)
     {
-        return _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
+        _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition, out result);
     }
 
     [Pure]
-    public GadgetSet GetAllGadgetsAtLemmingPosition(Lemming lemming)
+    public void GetAllGadgetsAtLemmingPosition(Lemming lemming, out GadgetSet result)
     {
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
 
         var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
 
-        return _gadgetPositionHelper.GetAllItemsNearRegion(levelPositionPair);
+        _gadgetPositionHelper.GetAllItemsNearRegion(levelPositionPair, out result);
     }
 
     [Pure]
-    public GadgetSet GetAllGadgetsAtLemmingPosition(
+    public void GetAllGadgetsAtLemmingPosition(
         Span<uint> scratchSpace,
-        Lemming lemming)
+        Lemming lemming,
+        out GadgetSet result)
     {
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
 
         var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
 
-        return _gadgetPositionHelper.GetAllItemsNearRegion(scratchSpace, levelPositionPair);
+        _gadgetPositionHelper.GetAllItemsNearRegion(scratchSpace, levelPositionPair, out result);
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public GadgetSet GetAllItemsNearRegion(LevelPositionPair levelRegion)
+    public void GetAllItemsNearRegion(LevelPositionPair levelRegion, out GadgetSet result)
     {
-        return _gadgetPositionHelper.GetAllItemsNearRegion(levelRegion);
+        _gadgetPositionHelper.GetAllItemsNearRegion(levelRegion, out result);
     }
 
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public GadgetSet GetAllItemsNearRegion(
+    public void GetAllItemsNearRegion(
         Span<uint> scratchSpace,
-        LevelPositionPair levelRegion)
+        LevelPositionPair levelRegion,
+        out GadgetSet result)
     {
-        return _gadgetPositionHelper.GetAllItemsNearRegion(scratchSpace, levelRegion);
+        _gadgetPositionHelper.GetAllItemsNearRegion(scratchSpace, levelRegion, out result);
     }
 
     [Pure]
     public bool HasGadgetWithBehaviourAtPosition(LevelPosition levelPosition, GadgetBehaviour gadgetBehaviour)
     {
-        var gadgetSet = _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition);
+        _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition, out var gadgetSet);
 
         foreach (var gadget in gadgetSet)
         {
@@ -128,7 +126,7 @@ public sealed class GadgetManager : IItemManager<GadgetBase>, IPerfectHasher<Hit
 
         var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
 
-        var gadgetSet = _gadgetPositionHelper.GetAllItemsNearRegion(levelPositionPair);
+        _gadgetPositionHelper.GetAllItemsNearRegion(levelPositionPair, out var gadgetSet);
 
         foreach (var gadget in gadgetSet)
         {

@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -49,7 +50,7 @@ public sealed class SliderAction : LemmingAction
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemmingPosition, -dx, -1),
             orientation.Move(lemmingPosition, dx, LevelConstants.MaxStepUp + 1));
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
         var hasPixelAtLemmingPosition = SliderHasPixelAt(in gadgetsNearRegion, lemmingPosition);
 
@@ -69,9 +70,7 @@ public sealed class SliderAction : LemmingAction
         if (!hasPixelAtLemmingPosition)
             return true;
 
-        var gadgetSet = LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(lemming);
-
-        foreach (var gadget in gadgetSet)
+        foreach (var gadget in gadgetsNearRegion)
         {
             if (gadget.GadgetBehaviour != WaterGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
                 continue;
@@ -104,10 +103,10 @@ public sealed class SliderAction : LemmingAction
             in GadgetSet gadgetsNearRegion1,
             LevelPosition testPosition)
         {
-            return PositionIsSolidToLemming(gadgetsNearRegion1, lemming, testPosition) ||
+            return PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, testPosition) ||
                    (orientation.MatchesHorizontally(testPosition, lemming.LevelPosition) &&
                     orientation.MatchesVertically(testPosition, lemmingDehoistPosition) &&
-                    PositionIsSolidToLemming(gadgetsNearRegion1, lemming, orientation.MoveDown(testPosition, 1)));
+                    PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveDown(testPosition, 1)));
         }
     }
 

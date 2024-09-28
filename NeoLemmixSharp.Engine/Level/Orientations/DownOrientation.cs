@@ -18,15 +18,6 @@ public sealed class DownOrientation : Orientation
     }
 
     [Pure]
-    public override LevelPosition TopLeftCornerOfLevel() => new(0, 0);
-    [Pure]
-    public override LevelPosition TopRightCornerOfLevel() => new(LevelWidth, 0);
-    [Pure]
-    public override LevelPosition BottomLeftCornerOfLevel() => new(0, LevelHeight);
-    [Pure]
-    public override LevelPosition BottomRightCornerOfLevel() => new(LevelWidth, LevelHeight);
-
-    [Pure]
     public override LevelPosition MoveRight(LevelPosition position, int step)
     {
         return NormalisePosition(new LevelPosition(position.X + step, position.Y));

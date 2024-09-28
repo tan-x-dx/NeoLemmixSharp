@@ -16,10 +16,11 @@ public static class ControlPanelHelperMethods
 
     public static SkillAssignButton[] SetUpSkillAssignButtons(
         LevelControlPanel controlPanel,
-        ControlPanelParameterSet controlPanelParameters)
+        ControlPanelParameterSet controlPanelParameters,
+        SkillSetManager skillSetManager)
     {
         return controlPanelParameters.Contains(ControlPanelParameters.EnableClassicModeSkillsIfPossible) &&
-               LevelScreen.SkillSetManager.HasClassicSkillsOnly()
+               skillSetManager.HasClassicSkillsOnly()
             ? CreateClassicModeSkillAssignButtons()
             : CreateSkillAssignButtons();
 
@@ -32,7 +33,7 @@ public static class ControlPanelHelperMethods
 
             foreach (var classicSkill in allClassicSkills)
             {
-                var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(classicSkill.Id, 0);
+                var skillTrackingData = skillSetManager.GetSkillTrackingData(classicSkill.Id, 0);
 
                 int skillTrackingDataId;
                 int skillCount;
@@ -54,7 +55,7 @@ public static class ControlPanelHelperMethods
                     classicSkill.Id,
                     skillTrackingDataId);
 
-                controlPanel.UpdateSkillCount(skillAssignButton, skillCount);
+                skillAssignButton.UpdateSkillCount(skillCount);
                 result[i++] = skillAssignButton;
             }
 
@@ -65,7 +66,7 @@ public static class ControlPanelHelperMethods
         {
             var i = 0;
 
-            var allSkillTrackingData = LevelScreen.SkillSetManager.AllSkillTrackingData;
+            var allSkillTrackingData = skillSetManager.AllItems;
             var result = new SkillAssignButton[allSkillTrackingData.Length];
 
             foreach (var skillTrackingData in allSkillTrackingData)
@@ -77,7 +78,7 @@ public static class ControlPanelHelperMethods
                     skillTrackingData.Skill.Id,
                     skillTrackingData.SkillTrackingDataId);
                 result[i++] = skillAssignButton;
-                controlPanel.UpdateSkillCount(skillAssignButton, skillTrackingData.SkillCount);
+                skillAssignButton.UpdateSkillCount(skillTrackingData.SkillCount);
             }
 
             return result;

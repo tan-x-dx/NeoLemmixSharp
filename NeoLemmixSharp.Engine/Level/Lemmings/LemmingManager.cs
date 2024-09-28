@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -11,7 +12,12 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class LemmingManager : IItemManager<Lemming>, IInitialisable, IDisposable
+public sealed class LemmingManager :
+    IPerfectHasher<Lemming>,
+    IItemManager<Lemming>,
+    ISnapshotDataConvertible<LemmingManagerSnapshotData>,
+    IInitialisable,
+    IDisposable
 {
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
@@ -34,8 +40,10 @@ public sealed class LemmingManager : IItemManager<Lemming>, IInitialisable, IDis
     public int LemmingsSaved { get; private set; }
 
     public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
-    public SimpleSetEnumerable<Lemming> AllBlockers => _allBlockers.AsSimpleEnumerable();
+    public LemmingSet AllBlockers => _allBlockers.AsSimpleEnumerable();
     public ReadOnlySpan<Lemming> AllItems => new(_lemmings);
+
+    public int ScratchSpaceSize => _lemmingPositionHelper.ScratchSpaceSize;
 
     public LemmingManager(
         HatchGroup[] hatchGroups,
@@ -231,8 +239,13 @@ public sealed class LemmingManager : IItemManager<Lemming>, IInitialisable, IDis
         return simulationLemming;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSetEnumerable<Lemming> GetAllLemmingsNearRegion(LevelPositionPair levelRegion) => _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion);
+    public void GetAllLemmingsNearRegion(
+        Span<uint> scratchSpace,
+        LevelPositionPair levelRegion,
+        out LemmingSet result)
+    {
+        _lemmingPositionHelper.GetAllItemsNearRegion(scratchSpace, levelRegion, out result);
+    }
 
     public void RegisterBlocker(Lemming lemming)
     {
@@ -246,7 +259,6 @@ public sealed class LemmingManager : IItemManager<Lemming>, IInitialisable, IDis
         _allBlockers.Remove(lemming);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool DoBlockerCheck(Lemming lemming)
     {
         BlockerAction.DoBlockerCheck(lemming);
@@ -254,7 +266,6 @@ public sealed class LemmingManager : IItemManager<Lemming>, IInitialisable, IDis
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool CanAssignBlocker(Lemming lemming)
     {
         var firstBounds = BlockerAction.Instance.GetLemmingBounds(lemming);
@@ -290,7 +301,7 @@ public sealed class LemmingManager : IItemManager<Lemming>, IInitialisable, IDis
         Debug.Assert(!lemming.State.IsZombie);
 
         var checkRegion = new LevelPositionPair(lemming.TopLeftPixel, lemming.BottomRightPixel);
-        var nearbyZombies = _zombieSpacialHashGrid.GetAllItemsNearRegion(checkRegion);
+        _zombieSpacialHashGrid.GetAllItemsNearRegion(checkRegion, out var nearbyZombies);
 
         if (nearbyZombies.Count == 0)
             return;
@@ -346,7 +357,8 @@ public sealed class LemmingManager : IItemManager<Lemming>, IInitialisable, IDis
         return true;
     }
 
-    int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Length;
+    public int NumberOfItems => _lemmings.Length;
+
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
 
@@ -357,5 +369,28 @@ public sealed class LemmingManager : IItemManager<Lemming>, IInitialisable, IDis
         _lemmingPositionHelper.Clear();
         _lemmingsToZombify.Clear();
         _allBlockers.Clear();
+    }
+
+    public void ToSnapshotData(out LemmingManagerSnapshotData snapshotData)
+    {
+    }
+
+    public void SetFromSnapshotData(in LemmingManagerSnapshotData snapshotData)
+    {
+        _lemmingPositionHelper.Clear();
+        _zombieSpacialHashGrid.Clear();
+
+        foreach (var lemming in _lemmings)
+        {
+            if (!lemming.State.IsActive)
+                continue;
+
+            _lemmingPositionHelper.AddItem(lemming);
+
+            if (lemming.State.IsZombie)
+            {
+                RegisterZombie(lemming);
+            }
+        }
     }
 }

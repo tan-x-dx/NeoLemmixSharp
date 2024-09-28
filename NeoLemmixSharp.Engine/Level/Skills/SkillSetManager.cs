@@ -1,14 +1,16 @@
-﻿using NeoLemmixSharp.Engine.Level.Objectives;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
+public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer<SkillTrackingData>, IDisposable
 {
     private readonly SkillTrackingData[] _skillTrackingDataList;
 
-    public ReadOnlySpan<SkillTrackingData> AllSkillTrackingData => new(_skillTrackingDataList);
+    int IItemManager<SkillTrackingData>.NumberOfItems => _skillTrackingDataList.Length;
+    public ReadOnlySpan<SkillTrackingData> AllItems => new(_skillTrackingDataList);
 
     public SkillSetManager(LevelObjective levelObjective)
     {
@@ -30,12 +32,71 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         return result;
     }
 
-    private static SkillTrackingData CreateFromSkillSetData(SkillSetData skillSetData, int i)
+    private static SkillTrackingData CreateFromSkillSetData(SkillSetData skillSetData, int id)
     {
         var lemmingSkill = skillSetData.Skill;
         var team = Team.AllItems[skillSetData.TeamId];
 
-        return new SkillTrackingData(lemmingSkill, team, i, skillSetData.NumberOfSkills);
+        return new SkillTrackingData(id, lemmingSkill, team, skillSetData.NumberOfSkills);
+    }
+
+    /// <summary>
+    /// <para>
+    /// Get a best-guess count for the possible number of skill assignments.
+    /// </para>
+    /// 
+    /// <para>
+    /// If it turns out a level has more skill assignments than the initial
+    /// guess, this will be fine - the buffer will simply resize as necessary.
+    /// This method is an attempt to minimize the number of reallocations of
+    /// the skill assign buffer during gameplay.
+    /// </para>
+    ///
+    /// <para>
+    /// In the case of levels with finite skills and no pickups, then the number
+    /// returned will be the maximum possible amount of skill assignments. This
+    /// is a hard upper limit that will be a perfect buffer size for the level.
+    /// </para>
+    ///
+    /// <para>
+    /// In other cases, this method will attempt to overestimate the total number
+    /// of skill assignments. 
+    /// </para>
+    /// </summary>
+    /// <returns></returns>
+    public int CalculateBaseNumberOfSkillAssignments()
+    {
+        var result = 0;
+
+        foreach (var skillTrackingDatum in _skillTrackingDataList)
+        {
+            if (skillTrackingDatum.IsInfinite)
+            {
+                result += LevelConstants.AssumedSkillUsageForInfiniteSkillCounts;
+            }
+            else if (skillTrackingDatum.SkillCount == 0)
+            {
+                result += LevelConstants.AssumedSkillCountsFromPickups;
+            }
+            else
+            {
+                result += skillTrackingDatum.SkillCount;
+            }
+        }
+
+        return result;
+    }
+
+    public bool HasClassicSkillsOnly()
+    {
+        var result = true;
+        foreach (var skillTrackingData in _skillTrackingDataList)
+        {
+            result &= skillTrackingData.Skill.IsClassicSkill() && // only classic skills
+                      skillTrackingData.Team.Id == LevelConstants.ClassicTeamId; // only classic team
+        }
+
+        return result;
     }
 
     public SkillTrackingData? GetSkillTrackingData(int skillDataId)
@@ -60,7 +121,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
     public void SetSkillCount(LemmingSkill lemmingSkill, Team? team, int value, bool isDelta)
     {
-        foreach (var skillTrackingData in AllSkillTrackingData)
+        foreach (var skillTrackingData in AllItems)
         {
             if (skillTrackingData.Skill != lemmingSkill ||
                 (team is not null && skillTrackingData.Team != team))
@@ -89,18 +150,6 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
         var skillComparison = x.Skill.Id.CompareTo(y.Skill.Id);
         return skillComparison;
-    }
-
-    public bool HasClassicSkillsOnly()
-    {
-        var result = true;
-        foreach (var skillTrackingData in _skillTrackingDataList)
-        {
-            result &= skillTrackingData.Skill.IsClassicSkill() && // only classic skills
-                      skillTrackingData.Team.Id == LevelConstants.ClassicTeamId; // only classic team
-        }
-
-        return result;
     }
 
     public void Dispose()

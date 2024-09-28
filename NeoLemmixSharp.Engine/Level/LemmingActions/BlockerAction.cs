@@ -1,11 +1,12 @@
-﻿using System.Diagnostics.Contracts;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -26,9 +27,9 @@ public sealed class BlockerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming)
     {
-        var gadgetsNearRegion = LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.LevelPosition);
+        LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.LevelPosition, out var gadgetsNearRegion);
 
-        if (PositionIsSolidToLemming(gadgetsNearRegion, lemming, lemming.LevelPosition))
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.LevelPosition))
             return true;
 
         LevelScreen.LemmingManager.DeregisterBlocker(lemming);
