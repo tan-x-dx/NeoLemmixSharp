@@ -185,7 +185,7 @@ end;
         var isMajorTick = _elapsedTicksModuloFastForwardSpeed == 0;
         LevelScreen.LemmingManager.Tick(isMajorTick);
         LevelScreen.GadgetManager.Tick(isMajorTick);
-        LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks);
+        LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks, true);
         LevelScreen.RewindManager.Tick(_elapsedTicks);
         LevelScreen.TerrainPainter.RepaintTerrain();
 

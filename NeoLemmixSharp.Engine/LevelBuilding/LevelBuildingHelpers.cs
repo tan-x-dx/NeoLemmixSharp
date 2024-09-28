@@ -18,10 +18,10 @@ public static class LevelBuildingHelpers
         foreach (var requirement in primaryObjective.Requirements)
         {
             if (requirement is TimeRequirement timeRequirement)
-                return new CountDownLevelTimer(timeRequirement.TimeLimitInSeconds);
+                return LevelTimer.CreateCountDownLevelTimer(timeRequirement.TimeLimitInSeconds);
         }
 
-        return new CountUpLevelTimer();
+        return LevelTimer.CreateCountUpLevelTimer();
     }
 
     public static IBackgroundRenderer GetBackgroundRenderer(

@@ -5,21 +5,36 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 
-public abstract class LevelTimer
+public sealed class LevelTimer
 {
     private const int NumberOfTimerChars = 6;
 
-    public readonly TimerType Type;
+    private readonly int _timeLimitInSeconds;
+
     private int _previousElapsedSeconds;
-    protected int ElapsedSeconds;
+    private int _elapsedSeconds;
+    private int _additionalSeconds;
 
     private TimerCharBuffer _timerCharBuffer;
 
-    public Color FontColor { get; protected set; }
+    public TimerType Type { get; }
+    public Color FontColor { get; private set; }
 
-    protected LevelTimer(TimerType type)
+    public static LevelTimer CreateCountUpLevelTimer()
     {
-        Type = type;
+        return new LevelTimer();
+    }
+
+    public static LevelTimer CreateCountDownLevelTimer(int timeLimitInSeconds)
+    {
+        return new LevelTimer(timeLimitInSeconds);
+    }
+
+    private LevelTimer()
+    {
+        Type = TimerType.CountUp;
+        _timeLimitInSeconds = -1;
+        FontColor = LevelConstants.PanelGreen;
         _timerCharBuffer[0] = ' ';
         _timerCharBuffer[1] = '0';
         _timerCharBuffer[2] = '0';
@@ -28,23 +43,78 @@ public abstract class LevelTimer
         _timerCharBuffer[5] = '0';
     }
 
-    public void SetElapsedTicks(int elapsedTicks)
+    private LevelTimer(int timeLimitInSeconds)
     {
-        _previousElapsedSeconds = ElapsedSeconds;
-        ElapsedSeconds = elapsedTicks / EngineConstants.FramesPerSecond;
+        Type = TimerType.CountDown;
+        _timeLimitInSeconds = timeLimitInSeconds;
+        FontColor = LevelConstants.PanelGreen;
+        _timerCharBuffer[0] = ' ';
+        _timerCharBuffer[1] = '0';
+        _timerCharBuffer[2] = '0';
+        _timerCharBuffer[3] = '-';
+        _timerCharBuffer[4] = '0';
+        _timerCharBuffer[5] = '0';
+        UpdateCountDownString(timeLimitInSeconds, false);
+        FontColor = GetColorForTime(timeLimitInSeconds);
+    }
 
-        if (_previousElapsedSeconds != ElapsedSeconds)
+    public void AddAdditionalSeconds(int additionalSeconds)
+    {
+        _additionalSeconds += additionalSeconds;
+
+        if (Type == TimerType.CountDown)
         {
-            UpdateAppearance();
+            UpdateCountDown(false);
+        }
+        else
+        {
+            UpdateCountUp(false);
         }
     }
 
-    protected abstract void UpdateAppearance();
+    public void SetElapsedTicks(int elapsedTicks, bool partialUpdate)
+    {
+        _previousElapsedSeconds = _elapsedSeconds;
+        _elapsedSeconds = elapsedTicks / EngineConstants.FramesPerSecond;
+
+        if (_previousElapsedSeconds == _elapsedSeconds)
+            return;
+
+        if (Type == TimerType.CountDown)
+        {
+            UpdateCountDown(partialUpdate);
+        }
+        else
+        {
+            UpdateCountUp(partialUpdate);
+        }
+    }
+
+    private void UpdateCountDown(bool partialUpdate)
+    {
+        var secondsLeft = _additionalSeconds + _timeLimitInSeconds - _elapsedSeconds;
+
+        FontColor = GetColorForTime(secondsLeft);
+
+        if (secondsLeft < 0)
+        {
+            UpdateCountUpString(-secondsLeft, partialUpdate);
+        }
+        else
+        {
+            UpdateCountDownString(secondsLeft, partialUpdate);
+        }
+    }
+
+    private void UpdateCountUp(bool partialUpdate)
+    {
+        UpdateCountUpString(_elapsedSeconds, partialUpdate);
+    }
 
     public ReadOnlySpan<char> AsReadOnlySpan() => _timerCharBuffer;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void UpdateCountUpString(
+    private void UpdateCountUpString(
         int elapsedSeconds,
         bool partialUpdate)
     {
@@ -52,7 +122,7 @@ public abstract class LevelTimer
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected void UpdateCountDownString(
+    private void UpdateCountDownString(
         int elapsedSeconds,
         bool partialUpdate)
     {
@@ -98,11 +168,13 @@ public abstract class LevelTimer
             : TextRenderingHelpers.DigitToChar(minutes / 100);
     }
 
-    public enum TimerType
+    private static Color GetColorForTime(int secondsLeft) => secondsLeft switch
     {
-        CountDown,
-        CountUp
-    }
+        <= 0 => LevelConstants.PanelMagenta,
+        <= 15 => LevelConstants.PanelRed,
+        <= 30 => LevelConstants.PanelYellow,
+        _ => LevelConstants.PanelGreen
+    };
 
     [InlineArray(NumberOfTimerChars)]
     private struct TimerCharBuffer
