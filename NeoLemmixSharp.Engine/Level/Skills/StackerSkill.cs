@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -21,7 +22,7 @@ public sealed class StackerSkill : LemmingSkill
             lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX),
             out var gadgetsNearRegion);
 
-        lemming.StackLow = !LemmingAction.PositionIsSolidToLemming(
+        lemming.StackLow = !PositionIsSolidToLemming(
             in gadgetsNearRegion,
             lemming,
             lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX));

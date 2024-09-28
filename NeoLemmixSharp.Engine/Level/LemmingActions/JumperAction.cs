@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.InteropServices;
+using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -134,17 +135,15 @@ public sealed class JumperAction : LemmingAction
     {
         var jumpProgress = lemming.JumpProgress;
 
-        if (jumpProgress is 0 or 1)
-            return 0;
-        if (jumpProgress is 2 or 3)
-            return 1;
-        if (jumpProgress is >= 4 and <= 8)
-            return jumpProgress - 2;
-        if (jumpProgress is 9 or 10)
-            return 7;
-        if (jumpProgress is 11 or 12)
-            return 8;
-        return -1;
+        return jumpProgress switch
+        {
+            0 or 1 => 0,
+            2 or 3 => 1,
+            >= 4 and <= 8 => jumpProgress - 2,
+            9 or 10 => 7,
+            11 or 12 => 8,
+            _ => -1
+        };
     }
 
     private static bool DoWallCheck(
