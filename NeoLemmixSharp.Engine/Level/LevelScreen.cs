@@ -186,4 +186,8 @@ public sealed class LevelScreen : IBaseScreen
 
         _instance = null!;
     }
+
+    public static ref readonly LemmingManager LemmingManagerRef => ref _instance._lemmingManager;
+    public static ref readonly GadgetManager GadgetManagerRef => ref _instance._gadgetManager;
+    public static ref readonly LevelTimer LevelTimerRef => ref _instance._levelTimer;
 }

@@ -1,17 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 
-public sealed class LevelTimer
+public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData>
 {
     private const int NumberOfTimerChars = 6;
 
     private readonly int _timeLimitInSeconds;
 
-    private int _previousElapsedSeconds;
     private int _elapsedSeconds;
     private int _additionalSeconds;
 
@@ -20,66 +20,48 @@ public sealed class LevelTimer
     public TimerType Type { get; }
     public Color FontColor { get; private set; }
 
-    public static LevelTimer CreateCountUpLevelTimer()
+    public LevelTimer()
     {
-        return new LevelTimer();
-    }
-
-    public static LevelTimer CreateCountDownLevelTimer(int timeLimitInSeconds)
-    {
-        return new LevelTimer(timeLimitInSeconds);
-    }
-
-    private LevelTimer()
-    {
-        Type = TimerType.CountUp;
         _timeLimitInSeconds = -1;
-        FontColor = LevelConstants.PanelGreen;
-        _timerCharBuffer[0] = ' ';
-        _timerCharBuffer[1] = '0';
-        _timerCharBuffer[2] = '0';
+
         _timerCharBuffer[3] = '-';
-        _timerCharBuffer[4] = '0';
-        _timerCharBuffer[5] = '0';
+
+        Type = TimerType.CountUp;
+        FontColor = LevelConstants.PanelGreen;
+        UpdateCountUpString(0, false);
     }
 
-    private LevelTimer(int timeLimitInSeconds)
+    public LevelTimer(int timeLimitInSeconds)
     {
-        Type = TimerType.CountDown;
         _timeLimitInSeconds = timeLimitInSeconds;
-        FontColor = LevelConstants.PanelGreen;
-        _timerCharBuffer[0] = ' ';
-        _timerCharBuffer[1] = '0';
-        _timerCharBuffer[2] = '0';
+
         _timerCharBuffer[3] = '-';
-        _timerCharBuffer[4] = '0';
-        _timerCharBuffer[5] = '0';
-        UpdateCountDownString(timeLimitInSeconds, false);
+
+        Type = TimerType.CountDown;
         FontColor = GetColorForTime(timeLimitInSeconds);
+        UpdateCountDownString(timeLimitInSeconds, false);
     }
 
     public void AddAdditionalSeconds(int additionalSeconds)
     {
         _additionalSeconds += additionalSeconds;
 
-        if (Type == TimerType.CountDown)
-        {
-            UpdateCountDown(false);
-        }
-        else
-        {
-            UpdateCountUp(false);
-        }
+        UpdateAppearance(false);
     }
 
     public void SetElapsedTicks(int elapsedTicks, bool partialUpdate)
     {
-        _previousElapsedSeconds = _elapsedSeconds;
+        var previousElapsedSeconds = _elapsedSeconds;
         _elapsedSeconds = elapsedTicks / EngineConstants.FramesPerSecond;
 
-        if (_previousElapsedSeconds == _elapsedSeconds)
+        if (previousElapsedSeconds == _elapsedSeconds)
             return;
 
+        UpdateAppearance(partialUpdate);
+    }
+
+    private void UpdateAppearance(bool partialUpdate)
+    {
         if (Type == TimerType.CountDown)
         {
             UpdateCountDown(partialUpdate);
@@ -166,6 +148,16 @@ public sealed class LevelTimer
         _timerCharBuffer[0] = minutes < 100
             ? ' '
             : TextRenderingHelpers.DigitToChar(minutes / 100);
+    }
+
+    public void ToSnapshotData(out LevelTimerSnapshotData snapshotData)
+    {
+        snapshotData = new LevelTimerSnapshotData(_additionalSeconds);
+    }
+
+    public void SetFromSnapshotData(in LevelTimerSnapshotData snapshotData)
+    {
+        _additionalSeconds = snapshotData.AdditionalSeconds;
     }
 
     private static Color GetColorForTime(int secondsLeft) => secondsLeft switch

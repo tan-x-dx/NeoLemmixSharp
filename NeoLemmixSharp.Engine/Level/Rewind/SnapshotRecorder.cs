@@ -59,16 +59,16 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
 
     private sealed class SnapshotList
     {
-        private readonly int _numberOfItems;
+        private readonly int _numberOfItemsPerSnapshot;
         private TSnapshotData[] _data;
         private int _count;
 
         public int Count => _count;
 
-        public SnapshotList(int numberOfItems)
+        public SnapshotList(int numberOfItemsPerSnapshot)
         {
-            _numberOfItems = numberOfItems;
-            _data = new TSnapshotData[numberOfItems * SnapshotDataListSizeMultiplier];
+            _numberOfItemsPerSnapshot = numberOfItemsPerSnapshot;
+            _data = new TSnapshotData[numberOfItemsPerSnapshot * SnapshotDataListSizeMultiplier];
         }
 
         public Span<TSnapshotData> GetNewSnapshotDataSpan()
@@ -83,18 +83,18 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
                 _data = newArray;
             }
 
-            _count += _numberOfItems;
+            _count += _numberOfItemsPerSnapshot;
 
-            return new Span<TSnapshotData>(_data, count, _numberOfItems);
+            return new Span<TSnapshotData>(_data, count, _numberOfItemsPerSnapshot);
         }
 
         public ReadOnlySpan<TSnapshotData> GetSnapshotDataSlice(int sliceNumber)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(sliceNumber);
 
-            _count = _numberOfItems * (1 + sliceNumber);
+            _count = _numberOfItemsPerSnapshot * (1 + sliceNumber);
 
-            return new ReadOnlySpan<TSnapshotData>(_data, sliceNumber * _numberOfItems, _numberOfItems);
+            return new ReadOnlySpan<TSnapshotData>(_data, sliceNumber * _numberOfItemsPerSnapshot, _numberOfItemsPerSnapshot);
         }
     }
 }
