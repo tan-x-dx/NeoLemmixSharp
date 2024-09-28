@@ -14,8 +14,6 @@ public sealed class MenuFont
 
     private readonly Texture2D _texture;
 
-    public float RenderLayer { get; set; } = 0.9f;
-
     public MenuFont(ContentManager content)
     {
         _texture = content.Load<Texture2D>("fonts/menu_font");
@@ -40,8 +38,7 @@ public sealed class MenuFont
                 _texture,
                 dest,
                 source,
-                color,
-                RenderLayer);
+                color);
             dest.X += GlyphWidth * scaleMultiplier;
         }
     }
@@ -65,8 +62,7 @@ public sealed class MenuFont
                 _texture,
                 dest,
                 source,
-                color,
-                RenderLayer);
+                color);
             dest.X += GlyphWidth * scaleMultiplier;
         }
     }

@@ -125,13 +125,13 @@ public static class LevelConstants
 
     #region Control Panel Strings
 
-    public static ReadOnlySpan<int> NeutralStringNumericalSpan => ['N', 'E', 'U', 'T', 'R', 'A', 'L'];
-    public static ReadOnlySpan<int> ZombieStringNumericalSpan => ['Z', 'O', 'M', 'B', 'I', 'E'];
-    public static ReadOnlySpan<int> NeutralZombieStringNumericalSpan => ['N', '-', 'Z', 'O', 'M', 'B', 'I', 'E'];
-    public static ReadOnlySpan<int> AthleteString2Skills => ['A', 'T', 'H', 'L', 'E', 'T', 'E'];
-    public static ReadOnlySpan<int> AthleteString3Skills => ['T', 'R', 'I', 'A', 'T', 'H', 'L', 'E', 'T', 'E',];
-    public static ReadOnlySpan<int> AthleteString4Skills => ['T', 'E', 'T', 'R', 'A', 'T', 'H', 'L', 'E', 'T', 'E'];
-    public static ReadOnlySpan<int> AthleteString5Skills => ['P', 'E', 'N', 'T', 'A', 'T', 'H', 'L', 'E', 'T', 'E'];
+    public const string NeutralStringNumericalSpan = "NEUTRAL";
+    public const string ZombieStringNumericalSpan = "ZOMBIE";
+    public const string NeutralZombieStringNumericalSpan = "N-ZOMBIE";
+    public const string AthleteString2Skills = "ATHLETE";
+    public const string AthleteString3Skills = "TRIATHLETE";
+    public const string AthleteString4Skills = "TETRATHLETE";
+    public const string AthleteString5Skills = "PENTATHLETE";
 
     #endregion
 

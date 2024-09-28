@@ -55,7 +55,7 @@ public class ControlPanelButton
                mouseY >= Y && mouseY < Y + Height;
     }
 
-    public virtual ReadOnlySpan<int> GetDigitsToRender() => ReadOnlySpan<int>.Empty;
+    public virtual ReadOnlySpan<char> GetDigitsToRender() => ReadOnlySpan<char>.Empty;
     public virtual int GetNumberOfDigitsToRender() => 0;
 
     public virtual ControlPanelButtonRenderer CreateButtonRenderer(ControlPanelSpriteBank spriteBank)

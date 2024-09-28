@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.Level.Timer;
 
 public abstract class LevelTimer
 {
-    private const int MinuteSecondSeparator = '-';
+    private const char MinuteSecondSeparator = '-';
     private const int NumberOfTimerChars = 6;
 
     public readonly TimerType Type;
@@ -42,7 +42,7 @@ public abstract class LevelTimer
 
     protected abstract void UpdateAppearance();
 
-    public ReadOnlySpan<int> AsReadOnlySpan() => _timerCharBuffer;
+    public ReadOnlySpan<char> AsReadOnlySpan() => _timerCharBuffer;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected void UpdateCountUpString(
@@ -108,6 +108,6 @@ public abstract class LevelTimer
     [InlineArray(NumberOfTimerChars)]
     private struct TimerCharBuffer
     {
-        private int _firstElement;
+        private char _firstElement;
     }
 }

@@ -160,13 +160,13 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
             LengthMax<char>(action.LemmingActionName);
         }
 
-        LengthMax(LevelConstants.NeutralStringNumericalSpan);
-        LengthMax(LevelConstants.ZombieStringNumericalSpan);
-        LengthMax(LevelConstants.NeutralZombieStringNumericalSpan);
-        LengthMax(LevelConstants.AthleteString2Skills);
-        LengthMax(LevelConstants.AthleteString3Skills);
-        LengthMax(LevelConstants.AthleteString4Skills);
-        LengthMax(LevelConstants.AthleteString5Skills);
+        LengthMax<char>(LevelConstants.NeutralStringNumericalSpan);
+        LengthMax<char>(LevelConstants.ZombieStringNumericalSpan);
+        LengthMax<char>(LevelConstants.NeutralZombieStringNumericalSpan);
+        LengthMax<char>(LevelConstants.AthleteString2Skills);
+        LengthMax<char>(LevelConstants.AthleteString3Skills);
+        LengthMax<char>(LevelConstants.AthleteString4Skills);
+        LengthMax<char>(LevelConstants.AthleteString5Skills);
 
         if (actualMaxActionNameLength != LevelConstants.LongestActionNameLength)
             throw new Exception($"Longest action name length is actually {actualMaxActionNameLength}! Update {nameof(LevelConstants.LongestActionNameLength)}!");

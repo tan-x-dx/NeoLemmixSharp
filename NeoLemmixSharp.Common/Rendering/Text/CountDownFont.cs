@@ -12,8 +12,6 @@ public sealed class CountDownFont
 
     private readonly Texture2D _texture;
 
-    public float RenderLayer { get; set; } = 0.9f;
-
     public CountDownFont(ContentManager content)
     {
         _texture = content.Load<Texture2D>("fonts/countdown");
@@ -35,7 +33,7 @@ public sealed class CountDownFont
 
     public void RenderTextSpan(
         SpriteBatch spriteBatch,
-        ReadOnlySpan<int> charactersToRender,
+        ReadOnlySpan<char> charactersToRender,
         int x,
         int y,
         int scaleMultiplier,
@@ -67,8 +65,7 @@ public sealed class CountDownFont
             _texture,
             dest,
             source,
-            color,
-            RenderLayer);
+            color);
 
         return glyphWidth;
     }

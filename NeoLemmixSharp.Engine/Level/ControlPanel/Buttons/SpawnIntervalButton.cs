@@ -98,7 +98,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
         TextRenderingHelpers.WriteDigits(_spawnIntervalCharBuffer, numericalValue);
     }
 
-    public override ReadOnlySpan<int> GetDigitsToRender() => _spawnIntervalCharBuffer;
+    public override ReadOnlySpan<char> GetDigitsToRender() => _spawnIntervalCharBuffer;
     public override int GetNumberOfDigitsToRender() => _numberOfDigitsToRender;
 
     private interface ISpawnIntervalValueGetter : IButtonAction
@@ -208,6 +208,6 @@ public sealed class SpawnIntervalButton : ControlPanelButton
     [InlineArray(NumberOfSpawnIntervalChars)]
     private struct SpawnIntervalCharBuffer
     {
-        private int _firstElement;
+        private char _firstElement;
     }
 }

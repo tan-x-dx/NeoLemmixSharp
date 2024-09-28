@@ -21,7 +21,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     private bool _shouldRenderCountDown;
 
-    public Span<int> CountDownCharsSpan => _countDownCharBuffer;
+    public Span<char> CountDownCharsSpan => _countDownCharBuffer;
 
     public int RendererId { get; set; }
     public int ItemId => _lemming.Id;
@@ -200,6 +200,6 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     [InlineArray(NumberOfCountDownChars)]
     private struct CountDownCharBuffer
     {
-        private int _firstElement;
+        private char _firstElement;
     }
 }

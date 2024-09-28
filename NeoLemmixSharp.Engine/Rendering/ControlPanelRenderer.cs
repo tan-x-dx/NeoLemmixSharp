@@ -143,7 +143,7 @@ public sealed class ControlPanelRenderer
 
         return;
 
-        void RenderText(ReadOnlySpan<int> span, int renderX)
+        void RenderText(ReadOnlySpan<char> span, int renderX)
         {
             FontBank.PanelFont.RenderTextSpan(
                 spriteBatch,
