@@ -124,9 +124,10 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
         public void OnMouseDown()
         {
-            _hatchGroup.ChangeSpawnInterval(-1);
-
-            LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            if (_hatchGroup.ChangeSpawnInterval(-1))
+            {
+                LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            }
         }
 
         public void OnPress(bool isDoubleTap)
@@ -135,9 +136,10 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
         public void OnRightClick()
         {
-            _hatchGroup.ChangeSpawnInterval(-1000); // Set to extremal value - will be clamped appropriately
-
-            LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            if (_hatchGroup.ChangeSpawnInterval(-1000)) // Set to extremal value - will be clamped appropriately
+            {
+                LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            }
         }
     }
 
@@ -188,9 +190,10 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
         public void OnMouseDown()
         {
-            _hatchGroup.ChangeSpawnInterval(1);
-
-            LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            if (_hatchGroup.ChangeSpawnInterval(1))
+            {
+                LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            }
         }
 
         public void OnPress(bool isDoubleTap)
@@ -199,9 +202,10 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
         public void OnRightClick()
         {
-            _hatchGroup.ChangeSpawnInterval(1000); // Set to extremal value - will be clamped appropriately
-
-            LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            if (_hatchGroup.ChangeSpawnInterval(1000)) // Set to extremal value - will be clamped appropriately
+            {
+                LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
+            }
         }
     }
 
