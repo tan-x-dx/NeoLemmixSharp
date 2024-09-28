@@ -18,15 +18,6 @@ public sealed class LeftOrientation : Orientation
     }
 
     [Pure]
-    public override LevelPosition TopLeftCornerOfLevel() => new(LevelWidth, 0);
-    [Pure]
-    public override LevelPosition TopRightCornerOfLevel() => new(LevelWidth, LevelHeight);
-    [Pure]
-    public override LevelPosition BottomLeftCornerOfLevel() => new(0, 0);
-    [Pure]
-    public override LevelPosition BottomRightCornerOfLevel() => new(0, LevelHeight);
-
-    [Pure]
     public override LevelPosition MoveRight(LevelPosition position, int step)
     {
         return NormalisePosition(new LevelPosition(position.X, position.Y + step));
