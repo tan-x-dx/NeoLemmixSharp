@@ -373,10 +373,26 @@ public sealed class LemmingManager :
 
     public void ToSnapshotData(out LemmingManagerSnapshotData snapshotData)
     {
+        snapshotData = new LemmingManagerSnapshotData(
+            _numberOfLemmingsReleasedFromHatch,
+            _numberOfClonedLemmings,
+            LemmingsToRelease,
+            LemmingsOut,
+            LemmingsRemoved,
+            LemmingsSaved);
     }
 
     public void SetFromSnapshotData(in LemmingManagerSnapshotData snapshotData)
     {
+        _numberOfLemmingsReleasedFromHatch = snapshotData.NumberOfLemmingsReleasedFromHatch;
+        _numberOfClonedLemmings = snapshotData.NumberOfClonedLemmings;
+        LemmingsToRelease = snapshotData.LemmingsToRelease;
+        LemmingsOut = snapshotData.LemmingsOut;
+        LemmingsRemoved = snapshotData.LemmingsRemoved;
+        LemmingsSaved = snapshotData.LemmingsSaved;
+
+        // Need to refresh all lemming positions
+
         _lemmingPositionHelper.Clear();
         _zombieSpacialHashGrid.Clear();
 
@@ -389,7 +405,7 @@ public sealed class LemmingManager :
 
             if (lemming.State.IsZombie)
             {
-                RegisterZombie(lemming);
+                _zombieSpacialHashGrid.AddItem(lemming);
             }
         }
     }

@@ -192,7 +192,7 @@ public sealed class BoundaryBehaviour
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return delta;
 
-        if (delta > 0)
+        if (delta >= 0)
         {
             if (delta * 2 > _levelLength)
                 return delta - _levelLength;

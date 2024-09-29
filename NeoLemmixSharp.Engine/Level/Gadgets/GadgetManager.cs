@@ -6,12 +6,19 @@ using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public sealed class GadgetManager : IPerfectHasher<GadgetBase>, IItemManager<GadgetBase>, IPerfectHasher<HitBoxGadget>, IInitialisable, IDisposable
+public sealed class GadgetManager :
+    IPerfectHasher<GadgetBase>,
+    IItemManager<GadgetBase>,
+    IPerfectHasher<HitBoxGadget>,
+    ISnapshotDataConvertible<int>,
+    IInitialisable,
+    IDisposable
 {
     private readonly GadgetBase[] _allGadgets;
     private readonly SpacialHashGrid<HitBoxGadget> _gadgetPositionHelper;
@@ -153,5 +160,25 @@ public sealed class GadgetManager : IPerfectHasher<GadgetBase>, IItemManager<Gad
     {
         Array.Clear(_allGadgets);
         _gadgetPositionHelper.Clear();
+    }
+
+    public void ToSnapshotData(out int snapshotData)
+    {
+        snapshotData = 0;
+    }
+
+    public void SetFromSnapshotData(in int snapshotData)
+    {
+        _gadgetPositionHelper.Clear();
+
+        var gadgets = AllItems;
+
+        foreach (var gadget in gadgets)
+        {
+            if (gadget is HitBoxGadget hitBoxGadget)
+            {
+                _gadgetPositionHelper.AddItem(hitBoxGadget);
+            }
+        }
     }
 }
