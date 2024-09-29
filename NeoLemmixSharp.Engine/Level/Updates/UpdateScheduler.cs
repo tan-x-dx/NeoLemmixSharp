@@ -189,10 +189,10 @@ end;
         LevelScreen.RewindManager.Tick(_elapsedTicks);
         LevelScreen.TerrainPainter.RepaintTerrain();
 
-        _elapsedTicks++;
-        var elapsedTicksModuloFastForwardSpeed = _elapsedTicksModuloFastForwardSpeed + 1;
-        elapsedTicksModuloFastForwardSpeed %= EngineConstants.FastForwardSpeedMultiplier;
-        _elapsedTicksModuloFastForwardSpeed = elapsedTicksModuloFastForwardSpeed;
+        var newElapsedTicks = _elapsedTicks + 1;
+        _elapsedTicks = newElapsedTicks;
+        newElapsedTicks %= EngineConstants.FastForwardSpeedMultiplier;
+        _elapsedTicksModuloFastForwardSpeed = newElapsedTicks;
     }
 
     private static void HandleCursor()
@@ -337,7 +337,7 @@ end;
             tickDelta = requiredTick - actualElapsedTicks;
 
             _elapsedTicks = actualElapsedTicks;
-            _elapsedTicksModuloFastForwardSpeed = _elapsedTicks % EngineConstants.FastForwardSpeedMultiplier;
+            _elapsedTicksModuloFastForwardSpeed = actualElapsedTicks % EngineConstants.FastForwardSpeedMultiplier;
         }
 
         while (tickDelta-- > 0)

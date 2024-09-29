@@ -425,7 +425,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
     public void SetRawDataFromOther(Lemming otherLemming)
     {
-        otherLemming.GetJumperPositions().CopyTo(GetJumperPositions());
+        _jumperPositionBuffer = otherLemming._jumperPositionBuffer;
 
         ConstructivePositionFreeze = otherLemming.ConstructivePositionFreeze;
         IsStartingAction = otherLemming.IsStartingAction;
@@ -487,9 +487,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         if (Id != lemmingSnapshotData.Id)
             throw new InvalidOperationException("Mismatching IDs!");
 
-        ReadOnlySpan<LevelPosition> jumperPositionSource = lemmingSnapshotData.JumperPositionBuffer;
-        Span<LevelPosition> jumperPositionDest = GetJumperPositions();
-        jumperPositionSource.CopyTo(jumperPositionDest);
+        _jumperPositionBuffer = lemmingSnapshotData.JumperPositionBuffer;
 
         ConstructivePositionFreeze = lemmingSnapshotData.ConstructivePositionFreeze;
         IsStartingAction = lemmingSnapshotData.IsStartingAction;
