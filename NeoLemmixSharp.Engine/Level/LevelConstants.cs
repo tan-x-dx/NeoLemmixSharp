@@ -84,9 +84,9 @@ public static class LevelConstants
     #region Replay Snapshot Constants
 
     private const int NumberOfSecondsBetweenSnapshots = 2;
-    public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * EngineConstants.FramesPerSecond;
+    public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * EngineConstants.TicksPerSecond;
     private const int InitialNumberOfMinutesOfSnapshotData = 4;
-    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfMinutesOfSnapshotData * 60 * EngineConstants.FramesPerSecond;
+    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfMinutesOfSnapshotData * 60 * EngineConstants.TicksPerSecond;
 
     #endregion
 
