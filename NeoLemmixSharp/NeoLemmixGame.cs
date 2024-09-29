@@ -1,6 +1,7 @@
-﻿using MGUI.Shared.Rendering;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MLEM.Ui;
+using MLEM.Ui.Style;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
@@ -22,10 +23,11 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp;
 
-public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
+public sealed partial class NeoLemmixGame : Game, IGameWindow
 {
     private readonly GraphicsDeviceManager _graphics;
 
+    private UiSystem _uiSystem;
     private SpriteBatch _spriteBatch;
     private IBaseScreen? _screen;
     private IScreenRenderer? _screenRenderer;
@@ -38,10 +40,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
     public int WindowWidth => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
     public int WindowHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-    public MainRenderer MguiRenderer { get; private set; }
 
-    public event EventHandler<TimeSpan>? PreviewUpdate;
-    public event EventHandler<EventArgs>? EndUpdate;
+    public UiSystem UiSystem => _uiSystem;
 
     public NeoLemmixGame()
     {
@@ -93,8 +93,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
     protected override void Initialize()
     {
-        MguiRenderer = new MainRenderer(new GameRenderHost<NeoLemmixGame>(this));
-
         // make the window fullscreen (but still with border and top control bar)
         var screenWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;
         var screenHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
@@ -110,6 +108,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
     protected override void LoadContent()
     {
+        _uiSystem = new UiSystem(this, new UntexturedStyle(_spriteBatch));
+
         LoadResources();
 
         RootDirectoryManager.Initialise();
@@ -196,9 +196,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
     protected override void Update(GameTime gameTime)
     {
-        PreviewUpdate?.Invoke(this, gameTime.TotalGameTime);
         _screen!.Tick(gameTime);
-        EndUpdate?.Invoke(this, EventArgs.Empty);
     }
 
     protected override void Draw(GameTime gameTime)
@@ -206,7 +204,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
         // if (gameTime.IsRunningSlowly)
         //     return;
 
-        _screenRenderer!.RenderScreen(_spriteBatch);
+        _screenRenderer!.RenderScreen(gameTime, _spriteBatch);
     }
 
     public void ToggleFullscreen()

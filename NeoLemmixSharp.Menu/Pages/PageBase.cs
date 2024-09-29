@@ -1,37 +1,17 @@
-﻿using MGUI.Core.UI;
-using MGUI.Core.UI.XAML;
-using MGUI.Shared.Helpers;
-using System.Reflection;
-using Thickness = MonoGame.Extended.Thickness;
+﻿using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
-public abstract class PageBase : ViewModelBase, IDisposable
+public abstract class PageBase : IInitialisable, IDisposable
 {
-    private readonly MGDesktop _desktop;
-    protected readonly MgWindow Window;
     protected readonly MenuInputController InputController;
 
     private bool _isInitialised;
 
-    protected MgResources Resources => _desktop.Resources;
-
     protected PageBase(
-        MGDesktop desktop,
         MenuInputController inputController)
     {
-        _desktop = desktop;
         InputController = inputController;
-        var resourceName = $"{nameof(NeoLemmixSharp)}.{nameof(Menu)}.{nameof(Pages)}.{GetType().Name}.xaml";
-        var xaml = GeneralUtils.ReadEmbeddedResourceAsString(Assembly.GetExecutingAssembly(), resourceName);
-
-        Window = XamlParser.LoadRootWindow(desktop, xaml);
-        Window.IsCloseButtonVisible = false;
-        Window.WindowStyle = WindowStyle.None;
-        Window.CanCloseWindow = false;
-        Window.Padding = new Thickness(0);
-        Window.IsUserResizable = false;
-        Window.WindowDataContext = this;
     }
 
     public void Initialise()
@@ -40,7 +20,6 @@ public abstract class PageBase : ViewModelBase, IDisposable
             return;
 
         OnInitialise();
-        _desktop.Windows.Add(Window);
         _isInitialised = true;
     }
 
@@ -48,9 +27,6 @@ public abstract class PageBase : ViewModelBase, IDisposable
 
     public void SetWindowDimensions(int windowWidth, int windowHeight)
     {
-        Window.WindowWidth = windowWidth;
-        Window.WindowHeight = windowHeight;
-
         OnWindowDimensionsChanged(windowWidth, windowHeight);
     }
 
@@ -61,8 +37,6 @@ public abstract class PageBase : ViewModelBase, IDisposable
     public void Dispose()
     {
         OnDispose();
-        Window.RemoveDataBindings(true);
-        _desktop.Windows.Remove(Window);
     }
 
     protected abstract void OnDispose();

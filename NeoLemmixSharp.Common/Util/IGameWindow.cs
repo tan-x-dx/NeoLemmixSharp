@@ -1,6 +1,6 @@
-﻿using MGUI.Shared.Rendering;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MLEM.Ui;
 using NeoLemmixSharp.Common.Screen;
 
 namespace NeoLemmixSharp.Common.Util;
@@ -24,5 +24,5 @@ public interface IGameWindow
     void ToggleBorderless();
     void Escape();
 
-    MainRenderer MguiRenderer { get; }
+    UiSystem UiSystem { get; }
 }

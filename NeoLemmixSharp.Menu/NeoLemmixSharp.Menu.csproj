@@ -7,39 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Pages\ExceptionViewer.xaml" />
-    <None Remove="Pages\LevelEndPage.xaml" />
-    <None Remove="Pages\LevelSelectPage.xaml" />
-    <None Remove="Pages\LevelStartPage.xaml" />
-    <None Remove="Pages\MainPage.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Pages\ExceptionViewer.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Pages\LevelEndPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Pages\LevelSelectPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Pages\MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Pages\LevelStartPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MGUI-master\MGUI.Core\MGUI.Core.csproj" />
-    <ProjectReference Include="..\MGUI-master\MGUI.Shared\MGUI.Shared.csproj" />
     <ProjectReference Include="..\NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj" />
     <ProjectReference Include="..\NeoLemmixSharp.Engine\NeoLemmixSharp.Engine.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MLEM.Ui" Version="7.1.1" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105" />
   </ItemGroup>
 
