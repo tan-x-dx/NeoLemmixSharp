@@ -43,9 +43,10 @@ public sealed class SimpleDictionary<TKey, TValue> : IDictionary<TKey, TValue>, 
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
-        foreach (var kvp in this)
+        var enumerator = new Enumerator(this);
+        while (enumerator.MoveNext())
         {
-            array[arrayIndex++] = kvp;
+            array[arrayIndex++] = enumerator.Current;
         }
     }
 
