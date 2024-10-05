@@ -1,8 +1,15 @@
-﻿namespace NeoLemmixSharp.Menu.Pages;
+﻿using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
+
+namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class LevelStartPage : PageBase
 {
-    public LevelStartPage(MenuInputController inputController) : base(inputController)
+    public LevelStartPage(
+        MenuInputController inputController,
+        LevelScreen levelScreen,
+        LevelData levelData)
+        : base(inputController)
     {
     }
 

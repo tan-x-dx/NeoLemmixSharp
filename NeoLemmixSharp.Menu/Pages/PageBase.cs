@@ -1,16 +1,23 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using MLEM.Ui;
+using MLEM.Ui.Elements;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
 public abstract class PageBase : IInitialisable, IDisposable
 {
+    private readonly UiSystem _uiSystem;
     protected readonly MenuInputController InputController;
+
+    protected Element UiRoot { get; }
 
     private bool _isInitialised;
 
     protected PageBase(
         MenuInputController inputController)
     {
+        _uiSystem = IGameWindow.Instance.UiSystem;
+        UiRoot = IGameWindow.Instance.UiRoot;
         InputController = inputController;
     }
 

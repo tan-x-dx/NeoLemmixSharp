@@ -20,11 +20,14 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.Menu;
 using System;
 using System.Runtime.InteropServices;
+using MLEM.Ui.Elements;
 
 namespace NeoLemmixSharp;
 
 public sealed partial class NeoLemmixGame : Game, IGameWindow
 {
+    private const string UiRootElementKey = nameof(UiRootElementKey);
+
     private readonly GraphicsDeviceManager _graphics;
 
     private UiSystem _uiSystem;
@@ -42,6 +45,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     public int WindowHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
     public UiSystem UiSystem => _uiSystem;
+    public Element UiRoot => _uiSystem.Get(UiRootElementKey).Element;
 
     public NeoLemmixGame()
     {
@@ -108,8 +112,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void LoadContent()
     {
-        _uiSystem = new UiSystem(this, new UntexturedStyle(_spriteBatch));
-
         LoadResources();
 
         RootDirectoryManager.Initialise();
@@ -118,6 +120,11 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         CommonSprites.Initialise(Content, GraphicsDevice);
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+        _uiSystem = new UiSystem(this, new UntexturedStyle(_spriteBatch));
+
+        var ui = new Group(Anchor.TopLeft, Vector2.One, false);
+        _uiSystem.Add(UiRootElementKey, ui);
 
         TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
         DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);

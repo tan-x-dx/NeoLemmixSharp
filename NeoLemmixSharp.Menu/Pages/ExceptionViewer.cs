@@ -2,8 +2,11 @@
 
 public sealed class ExceptionViewer : PageBase
 {
-    public ExceptionViewer(MenuInputController inputController) : base(inputController)
+    private readonly Exception _exception;
+
+    public ExceptionViewer(MenuInputController inputController, Exception exception) : base(inputController)
     {
+        _exception = exception;
     }
 
     protected override void OnInitialise()
