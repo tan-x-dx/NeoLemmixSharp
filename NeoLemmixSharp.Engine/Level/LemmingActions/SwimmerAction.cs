@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using System.Diagnostics.Contracts;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -127,6 +128,7 @@ public sealed class SwimmerAction : LemmingAction
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
 
+    [Pure]
     private static bool WaterAt(in GadgetSet gadgetSet, LevelPosition lemmingPosition)
     {
         foreach (var gadget in gadgetSet)

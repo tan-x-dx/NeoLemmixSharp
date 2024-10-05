@@ -25,7 +25,6 @@ public sealed class DehoisterAction : LemmingAction
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
-
         LevelScreen.GadgetManager.GetAllGadgetsForPosition(
             orientation.MoveUp(lemmingPosition, 7),
             out var gadgetsNearRegion);

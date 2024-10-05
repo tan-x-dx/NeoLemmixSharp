@@ -163,41 +163,4 @@ public sealed class FallerAction : LemmingAction
             _ => 1
         };
     }
-
-    [Pure]
-    [SkipLocalsInit]
-    public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
-    {
-        // Subroutine of other LevelAction methods.
-        // Use a dummy scratch space span to prevent data from being overridden.
-        // Prevents weird bugs!
-        Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
-        LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(scratchSpace, lemming, out var gadgetsNearPosition);
-
-        if (gadgetsNearPosition.Count == 0)
-            return new LevelPosition();
-
-        var lemmingOrientation = lemming.Orientation;
-
-        Span<int> draftDirectionDeltas = stackalloc int[4];
-        draftDirectionDeltas.Clear();
-
-        foreach (var gadget in gadgetsNearPosition)
-        {
-            if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
-                continue;
-
-            var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientation.RotNum) & 3;
-
-            draftDirectionDeltas[deltaRotNum] = 1;
-        }
-
-        var dx = draftDirectionDeltas[LevelConstants.RightOrientationRotNum] -
-                 draftDirectionDeltas[LevelConstants.LeftOrientationRotNum];
-
-        var dy = draftDirectionDeltas[LevelConstants.UpOrientationRotNum] -
-                 draftDirectionDeltas[LevelConstants.DownOrientationRotNum];
-
-        return new LevelPosition(dx, dy);
-    }
 }

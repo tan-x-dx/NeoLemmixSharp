@@ -38,7 +38,7 @@ public sealed class OhNoerAction : LemmingAction
 
         LevelScreen.LemmingManager.DeregisterBlocker(lemming);
 
-        var updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
+        var updraftFallDelta = GetUpdraftFallDelta(lemming);
 
         var lemmingOrientation = lemming.Orientation;
         lemmingPosition = lemmingOrientation.MoveDown(lemmingPosition, LevelConstants.DefaultFallStep + updraftFallDelta.Y);

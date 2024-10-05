@@ -115,7 +115,7 @@ end;
 
         var maxFallDistance = GliderFallTable[lemming.PhysicsFrame];
 
-        var updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
+        var updraftFallDelta = GetUpdraftFallDelta(lemming);
 
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemmingPosition, -1, -12),
@@ -198,7 +198,7 @@ end;
             return true;
         }
 
-        updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
+        updraftFallDelta = GetUpdraftFallDelta(lemming);
         if (updraftFallDelta.Y >= 0)
             return true; // Head check for pushing down in updraft
 
@@ -273,7 +273,7 @@ end;
             !HasConsecutivePixels(in gadgetsNearRegion))
             return;
 
-        var updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
+        var updraftFallDelta = GetUpdraftFallDelta(lemming);
         if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition) &&
             updraftFallDelta.Y >= 0)
         {

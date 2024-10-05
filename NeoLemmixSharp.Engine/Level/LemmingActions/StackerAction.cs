@@ -30,31 +30,35 @@ public sealed class StackerAction : LemmingAction
         if (lemming.PhysicsFrame == LevelConstants.StackerAnimationFrames - 1)
         {
             lemming.PlacedBrick = LayStackBrick(in gadgetsNearRegion, lemming);
+            return true;
         }
-        else if (lemming.PhysicsFrame == 0)
+
+        if (lemming.PhysicsFrame != 0)
+            return true;
+
+        lemming.NumberOfBricksLeft--;
+
+        if (lemming.NumberOfBricksLeft < LevelConstants.NumberOfRemainingBricksToPlaySound)
         {
-            lemming.NumberOfBricksLeft--;
-
-            if (lemming.NumberOfBricksLeft < LevelConstants.NumberOfRemainingBricksToPlaySound)
-            {
-                // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position); ??
-            }
-
-            if (!lemming.PlacedBrick)
-            {
-                // Relax the check on the first brick
-                // for details see http://www.lemmingsforums.net/index.php?topic=2862.0
-                if (lemming.NumberOfBricksLeft < LevelConstants.NumberOfStackerBricks - 1 ||
-                    !MayPlaceNextBrick(in gadgetsNearRegion, lemming))
-                {
-                    WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
-                }
-            }
-            else if (lemming.NumberOfBricksLeft == 0)
-            {
-                ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);
-            }
+            // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position); ??
         }
+
+        if (!lemming.PlacedBrick)
+        {
+            // Relax the check on the first brick
+            // for details see http://www.lemmingsforums.net/index.php?topic=2862.0
+            if (lemming.NumberOfBricksLeft < LevelConstants.NumberOfStackerBricks - 1 ||
+                !MayPlaceNextBrick(in gadgetsNearRegion, lemming))
+            {
+                WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
+            }
+            return true;
+        }
+
+        if (lemming.NumberOfBricksLeft != 0)
+            return true;
+
+        ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);
 
         return true;
     }

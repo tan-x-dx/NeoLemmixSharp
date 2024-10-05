@@ -199,7 +199,6 @@ public sealed class BlockerAction : LemmingAction
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static PixelType GetRightArmPixelType(Orientation orientation)
     {
         orientation = Orientation.RotateCounterClockwise(orientation);
@@ -207,7 +206,6 @@ public sealed class BlockerAction : LemmingAction
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static PixelType GetLeftArmPixelType(Orientation orientation)
     {
         orientation = Orientation.RotateClockwise(orientation);
