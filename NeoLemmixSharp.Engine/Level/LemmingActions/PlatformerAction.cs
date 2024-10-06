@@ -50,16 +50,19 @@ public sealed class PlatformerAction : LemmingAction
         _ => 3
     };
 
+    [SkipLocalsInit]
     private static void DoMainUpdate(Lemming lemming)
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx * 4, 2));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         if (lemming.PhysicsFrame == 9)
         {
@@ -159,15 +162,13 @@ public sealed class PlatformerAction : LemmingAction
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
 
-        // Subroutine of other LevelAction methods.
-        // Use a dummy scratch space span to prevent data from being overridden.
-        // Prevents weird bugs!
-        Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
 
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx * 4, 1));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);
 
         var result = !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition) ||
                      !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveRight(lemmingPosition, dx)) ||

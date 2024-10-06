@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -19,15 +20,18 @@ public sealed class AscenderAction : LemmingAction
     {
     }
 
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
         ref var lemmingPosition = ref lemming.LevelPosition;
         var orientation = lemming.Orientation;
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             orientation.MoveUp(lemmingPosition, 2));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         var dy = 0;
         while (dy < 2 &&

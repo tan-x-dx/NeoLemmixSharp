@@ -22,6 +22,7 @@ public sealed class FallerAction : LemmingAction
     {
     }
 
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
         var currentFallDistanceStep = 0;
@@ -35,10 +36,12 @@ public sealed class FallerAction : LemmingAction
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
             return true;
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             orientation.MoveDown(lemmingPosition, LevelConstants.DefaultFallStep + 1));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         ref var distanceFallen = ref lemming.DistanceFallen;
 

@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -18,9 +19,12 @@ public sealed class DrownerAction : LemmingAction
     {
     }
 
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
-        if (!LevelScreen.GadgetManager.HasGadgetWithBehaviourAtLemmingPosition(lemming, WaterGadgetBehaviour.Instance))
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
+        if (!gadgetManager.HasGadgetWithBehaviourAtLemmingPosition(scratchSpaceSpan, lemming, WaterGadgetBehaviour.Instance))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 

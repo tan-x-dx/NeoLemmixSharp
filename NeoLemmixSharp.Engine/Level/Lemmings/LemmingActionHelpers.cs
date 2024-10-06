@@ -21,15 +21,13 @@ public static class LemmingActionHelpers
     {
         var orientation = lemming.Orientation;
 
-        // Subroutine of other LevelAction methods.
-        // Use a dummy scratch space span to prevent data from being overridden.
-        // Prevents weird bugs!
-        Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
 
         var gadgetTestRegion = new LevelPositionPair(
             orientation.MoveUp(levelPosition, LevelConstants.MaxStepUp + 1),
             orientation.MoveDown(levelPosition, LevelConstants.DefaultFallStep + 1));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);
 
         int result;
         if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, levelPosition))
@@ -120,11 +118,9 @@ public static class LemmingActionHelpers
     [SkipLocalsInit]
     public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
     {
-        // Subroutine of other LevelAction methods.
-        // Use a dummy scratch space span to prevent data from being overridden.
-        // Prevents weird bugs!
-        Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
-        LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(scratchSpace, lemming, out var gadgetsNearPosition);
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
+        gadgetManager.GetAllGadgetsAtLemmingPosition(scratchSpace, lemming, out var gadgetsNearPosition);
 
         if (gadgetsNearPosition.Count == 0)
             return new LevelPosition();

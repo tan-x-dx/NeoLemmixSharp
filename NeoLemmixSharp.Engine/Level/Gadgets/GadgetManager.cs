@@ -7,7 +7,6 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
@@ -66,24 +65,17 @@ public sealed class GadgetManager :
         }
     }
 
-    [Pure]
-    public void GetAllGadgetsForPosition(LevelPosition levelPosition, out GadgetSet result)
+    public void GetAllGadgetsForPosition(
+        Span<uint> scratchSpaceSpan,
+        LevelPosition levelPosition,
+        out GadgetSet result)
     {
-        _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition, out result);
+        _gadgetPositionHelper.GetAllItemsNearPosition(
+            scratchSpaceSpan,
+            levelPosition,
+            out result);
     }
 
-    [Pure]
-    public void GetAllGadgetsAtLemmingPosition(Lemming lemming, out GadgetSet result)
-    {
-        var anchorPixel = lemming.LevelPosition;
-        var footPixel = lemming.FootPosition;
-
-        var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
-
-        _gadgetPositionHelper.GetAllItemsNearRegion(levelPositionPair, out result);
-    }
-
-    [Pure]
     public void GetAllGadgetsAtLemmingPosition(
         Span<uint> scratchSpace,
         Lemming lemming,
@@ -94,13 +86,10 @@ public sealed class GadgetManager :
 
         var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
 
-        _gadgetPositionHelper.GetAllItemsNearRegion(scratchSpace, levelPositionPair, out result);
-    }
-
-    [Pure]
-    public void GetAllItemsNearRegion(LevelPositionPair levelRegion, out GadgetSet result)
-    {
-        _gadgetPositionHelper.GetAllItemsNearRegion(levelRegion, out result);
+        _gadgetPositionHelper.GetAllItemsNearRegion(
+            scratchSpace,
+            levelPositionPair,
+            out result);
     }
 
     public void GetAllItemsNearRegion(
@@ -108,13 +97,21 @@ public sealed class GadgetManager :
         LevelPositionPair levelRegion,
         out GadgetSet result)
     {
-        _gadgetPositionHelper.GetAllItemsNearRegion(scratchSpace, levelRegion, out result);
+        _gadgetPositionHelper.GetAllItemsNearRegion(
+            scratchSpace,
+            levelRegion,
+            out result);
     }
 
-    [Pure]
-    public bool HasGadgetWithBehaviourAtPosition(LevelPosition levelPosition, GadgetBehaviour gadgetBehaviour)
+    public bool HasGadgetWithBehaviourAtPosition(
+        Span<uint> scratchSpaceSpan,
+        LevelPosition levelPosition,
+        GadgetBehaviour gadgetBehaviour)
     {
-        _gadgetPositionHelper.GetAllItemsNearPosition(levelPosition, out var gadgetSet);
+        _gadgetPositionHelper.GetAllItemsNearPosition(
+            scratchSpaceSpan,
+            levelPosition,
+            out var gadgetSet);
 
         foreach (var gadget in gadgetSet)
         {
@@ -125,15 +122,20 @@ public sealed class GadgetManager :
         return false;
     }
 
-    [Pure]
-    public bool HasGadgetWithBehaviourAtLemmingPosition(Lemming lemming, GadgetBehaviour gadgetBehaviour)
+    public bool HasGadgetWithBehaviourAtLemmingPosition(
+        Span<uint> scratchSpaceSpan,
+        Lemming lemming,
+        GadgetBehaviour gadgetBehaviour)
     {
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
 
         var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
 
-        _gadgetPositionHelper.GetAllItemsNearRegion(levelPositionPair, out var gadgetSet);
+        _gadgetPositionHelper.GetAllItemsNearRegion(
+            scratchSpaceSpan,
+            levelPositionPair,
+            out var gadgetSet);
 
         foreach (var gadget in gadgetSet)
         {

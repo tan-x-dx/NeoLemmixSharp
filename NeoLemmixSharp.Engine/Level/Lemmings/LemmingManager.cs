@@ -296,12 +296,14 @@ public sealed class LemmingManager :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool AnyZombies() => !_zombieSpacialHashGrid.IsEmpty;
 
+    [SkipLocalsInit]
     public void DoZombieCheck(Lemming lemming)
     {
         Debug.Assert(!lemming.State.IsZombie);
 
+        Span<uint> scratchSpaceSpan = stackalloc uint[_lemmingPositionHelper.ScratchSpaceSize];
         var checkRegion = new LevelPositionPair(lemming.TopLeftPixel, lemming.BottomRightPixel);
-        _zombieSpacialHashGrid.GetAllItemsNearRegion(checkRegion, out var nearbyZombies);
+        _zombieSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, checkRegion, out var nearbyZombies);
 
         if (nearbyZombies.Count == 0)
             return;

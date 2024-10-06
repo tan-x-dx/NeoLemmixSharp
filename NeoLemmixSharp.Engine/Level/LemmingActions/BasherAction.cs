@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -29,6 +30,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     {
     }
 
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
         // Remove terrain
@@ -42,10 +44,12 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemmingPosition, 0, LevelConstants.MaxStepUp + 1),
             orientation.Move(lemmingPosition, 2 * dx, -LevelConstants.DefaultFallStep - 1));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         // Check for enough terrain to continue working
         if (physicsFrame == 5)

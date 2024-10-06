@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -21,6 +22,7 @@ public sealed class ClimberAction : LemmingAction
 
     // Be very careful when changing the terrain/hoister checks for climbers!
     // See http://www.lemmingsforums.net/index.php?topic=2506.0 first!
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
         var dx = lemming.FacingDirection.DeltaX;
@@ -30,10 +32,12 @@ public sealed class ClimberAction : LemmingAction
 
         bool foundClip;
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemmingPosition, 2 * dx, -2),
             orientation.Move(lemmingPosition, -2 * dx, 10));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         if (physicsFrame <= 3)
         {

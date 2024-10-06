@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -15,10 +16,14 @@ public sealed class StackerSkill : LemmingSkill
     {
     }
 
+    [SkipLocalsInit]
     public override void AssignToLemming(Lemming lemming)
     {
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         // Get starting position for stacker
-        LevelScreen.GadgetManager.GetAllGadgetsForPosition(
+        gadgetManager.GetAllGadgetsForPosition(
+            scratchSpaceSpan,
             lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX),
             out var gadgetsNearRegion);
 

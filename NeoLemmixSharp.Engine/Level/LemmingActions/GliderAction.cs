@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -106,6 +107,8 @@ begin
 end;
 
     */
+
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
@@ -117,10 +120,12 @@ end;
 
         var updraftFallDelta = GetUpdraftFallDelta(lemming);
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemmingPosition, -1, -12),
             orientation.Move(lemmingPosition, 1, LevelConstants.MaxStepUp + 1));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         if (updraftFallDelta.Y < 0)
         {

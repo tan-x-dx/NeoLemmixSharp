@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -82,9 +83,12 @@ public sealed class WalkerAction : LemmingAction
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
+    [SkipLocalsInit]
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.LevelPosition, out var gadgetsNearRegion);
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
+        gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan, lemming.LevelPosition, out var gadgetsNearRegion);
 
         if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.LevelPosition))
         {

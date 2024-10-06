@@ -25,9 +25,12 @@ public sealed class BlockerAction : LemmingAction
     {
     }
 
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
-        LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemming.LevelPosition, out var gadgetsNearRegion);
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
+        gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan, lemming.LevelPosition, out var gadgetsNearRegion);
 
         if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.LevelPosition))
             return true;
