@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
@@ -58,7 +59,7 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         Instance = this;
     }
 
-    public void RenderScreen(SpriteBatch spriteBatch)
+    public void RenderScreen(GameTime gameTime, SpriteBatch spriteBatch)
     {
         _levelRenderer.RenderLevel(spriteBatch);
 

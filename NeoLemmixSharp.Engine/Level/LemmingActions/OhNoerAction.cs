@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -18,6 +19,7 @@ public sealed class OhNoerAction : LemmingAction
     {
     }
 
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
         ref var lemmingPosition = ref lemming.LevelPosition;
@@ -31,14 +33,16 @@ public sealed class OhNoerAction : LemmingAction
             return !nextAction.IsOneTimeAction();
         }
 
-        LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemmingPosition, out var gadgetsNearRegion);
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
+        gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan, lemmingPosition, out var gadgetsNearRegion);
 
         if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
             return true;
 
         LevelScreen.LemmingManager.DeregisterBlocker(lemming);
 
-        var updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
+        var updraftFallDelta = GetUpdraftFallDelta(lemming);
 
         var lemmingOrientation = lemming.Orientation;
         lemmingPosition = lemmingOrientation.MoveDown(lemmingPosition, LevelConstants.DefaultFallStep + updraftFallDelta.Y);

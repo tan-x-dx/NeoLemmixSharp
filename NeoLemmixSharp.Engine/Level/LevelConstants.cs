@@ -84,9 +84,9 @@ public static class LevelConstants
     #region Replay Snapshot Constants
 
     private const int NumberOfSecondsBetweenSnapshots = 2;
-    public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * EngineConstants.FramesPerSecond;
+    public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * EngineConstants.TicksPerSecond;
     private const int InitialNumberOfMinutesOfSnapshotData = 4;
-    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfMinutesOfSnapshotData * 60 * EngineConstants.FramesPerSecond;
+    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfMinutesOfSnapshotData * 60 * EngineConstants.TicksPerSecond;
 
     #endregion
 
@@ -125,13 +125,13 @@ public static class LevelConstants
 
     #region Control Panel Strings
 
-    public const string NeutralStringNumericalSpan = "NEUTRAL";
-    public const string ZombieStringNumericalSpan = "ZOMBIE";
-    public const string NeutralZombieStringNumericalSpan = "N-ZOMBIE";
-    public const string AthleteString2Skills = "ATHLETE";
-    public const string AthleteString3Skills = "TRIATHLETE";
-    public const string AthleteString4Skills = "TETRATHLETE";
-    public const string AthleteString5Skills = "PENTATHLETE";
+    public const string NeutralControlPanelString = "NEUTRAL";
+    public const string ZombieControlPanelString = "ZOMBIE";
+    public const string NeutralControlPanelZombie = "N-ZOMBIE";
+    public const string AthleteControlPanelString2Skills = "ATHLETE";
+    public const string AthleteControlPanelString3Skills = "TRIATHLETE";
+    public const string AthleteControlPanelString4Skills = "TETRATHLETE";
+    public const string AthleteControlPanelString5Skills = "PENTATHLETE";
 
     #endregion
 

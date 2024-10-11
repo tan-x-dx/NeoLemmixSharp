@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -106,6 +107,8 @@ begin
 end;
 
     */
+
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
@@ -115,12 +118,14 @@ end;
 
         var maxFallDistance = GliderFallTable[lemming.PhysicsFrame];
 
-        var updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
+        var updraftFallDelta = GetUpdraftFallDelta(lemming);
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemmingPosition, -1, -12),
             orientation.Move(lemmingPosition, 1, LevelConstants.MaxStepUp + 1));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         if (updraftFallDelta.Y < 0)
         {
@@ -198,7 +203,7 @@ end;
             return true;
         }
 
-        updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
+        updraftFallDelta = GetUpdraftFallDelta(lemming);
         if (updraftFallDelta.Y >= 0)
             return true; // Head check for pushing down in updraft
 
@@ -273,7 +278,7 @@ end;
             !HasConsecutivePixels(in gadgetsNearRegion))
             return;
 
-        var updraftFallDelta = FallerAction.GetUpdraftFallDelta(lemming);
+        var updraftFallDelta = GetUpdraftFallDelta(lemming);
         if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition) &&
             updraftFallDelta.Y >= 0)
         {

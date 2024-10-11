@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
@@ -74,6 +75,7 @@ public sealed class JumperAction : LemmingAction
         return true;
     }
 
+    [SkipLocalsInit]
     private bool MakeJumpMovement(
         Lemming lemming)
     {
@@ -88,10 +90,12 @@ public sealed class JumperAction : LemmingAction
         ref var lemmingPosition = ref lemming.LevelPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx, 12));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         for (var i = 0; i < JumperPositionCount; i++)
         {

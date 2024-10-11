@@ -15,7 +15,7 @@ public readonly struct SkillAssignmentData : ITickOrderedData
     public readonly int LemmingOrientationRotNum;
     public readonly int LemmingFacingDirectionId;
 
-    int ITickOrderedData.TickNumber => Tick;
+    public int TickNumber => Tick;
 
     public SkillAssignmentData(
         int tick,

@@ -22,6 +22,7 @@ public sealed class FallerAction : LemmingAction
     {
     }
 
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
         var currentFallDistanceStep = 0;
@@ -35,10 +36,12 @@ public sealed class FallerAction : LemmingAction
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
             return true;
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             orientation.MoveDown(lemmingPosition, LevelConstants.DefaultFallStep + 1));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         ref var distanceFallen = ref lemming.DistanceFallen;
 
@@ -162,42 +165,5 @@ public sealed class FallerAction : LemmingAction
             LevelConstants.BlockerActionId or LevelConstants.JumperActionId or LevelConstants.LasererActionId => -1,
             _ => 1
         };
-    }
-
-    [Pure]
-    [SkipLocalsInit]
-    public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
-    {
-        // Subroutine of other LevelAction methods.
-        // Use a dummy scratch space span to prevent data from being overridden.
-        // Prevents weird bugs!
-        Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
-        LevelScreen.GadgetManager.GetAllGadgetsAtLemmingPosition(scratchSpace, lemming, out var gadgetsNearPosition);
-
-        if (gadgetsNearPosition.Count == 0)
-            return new LevelPosition();
-
-        var lemmingOrientation = lemming.Orientation;
-
-        Span<int> draftDirectionDeltas = stackalloc int[4];
-        draftDirectionDeltas.Clear();
-
-        foreach (var gadget in gadgetsNearPosition)
-        {
-            if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
-                continue;
-
-            var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientation.RotNum) & 3;
-
-            draftDirectionDeltas[deltaRotNum] = 1;
-        }
-
-        var dx = draftDirectionDeltas[LevelConstants.RightOrientationRotNum] -
-                 draftDirectionDeltas[LevelConstants.LeftOrientationRotNum];
-
-        var dy = draftDirectionDeltas[LevelConstants.UpOrientationRotNum] -
-                 draftDirectionDeltas[LevelConstants.DownOrientationRotNum];
-
-        return new LevelPosition(dx, dy);
     }
 }

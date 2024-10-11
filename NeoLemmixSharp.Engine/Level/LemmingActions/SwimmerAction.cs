@@ -1,6 +1,8 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -20,6 +22,7 @@ public sealed class SwimmerAction : LemmingAction
     {
     }
 
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
@@ -33,10 +36,12 @@ public sealed class SwimmerAction : LemmingAction
 
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemmingPosition, dx, 2),
             orientation.MoveDown(lemmingPosition, 4));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         var dy = FindGroundPixel(lemming, lemmingPosition);
 
@@ -127,6 +132,7 @@ public sealed class SwimmerAction : LemmingAction
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
 
+    [Pure]
     private static bool WaterAt(in GadgetSet gadgetSet, LevelPosition lemmingPosition)
     {
         foreach (var gadget in gadgetSet)
@@ -167,6 +173,7 @@ public sealed class SwimmerAction : LemmingAction
             : result;
     }
 
+    [SkipLocalsInit]
     public override void TransitionLemmingToAction(
         Lemming lemming,
         bool turnAround)
@@ -179,10 +186,12 @@ public sealed class SwimmerAction : LemmingAction
 
         var i = 0;
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 2),
             orientation.MoveDown(lemming.LevelPosition, 4));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         while (i < 4 &&
                WaterAt(in gadgetsNearRegion, checkPosition) &&

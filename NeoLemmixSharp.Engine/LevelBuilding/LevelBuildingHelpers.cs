@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
@@ -18,10 +17,10 @@ public static class LevelBuildingHelpers
         foreach (var requirement in primaryObjective.Requirements)
         {
             if (requirement is TimeRequirement timeRequirement)
-                return new CountDownLevelTimer(timeRequirement.TimeLimitInSeconds);
+                return new LevelTimer(timeRequirement.TimeLimitInSeconds);
         }
 
-        return new CountUpLevelTimer();
+        return new LevelTimer();
     }
 
     public static IBackgroundRenderer GetBackgroundRenderer(
@@ -43,11 +42,10 @@ public static class LevelBuildingHelpers
         TerrainRenderer terrainRenderer,
         List<IViewportObjectRenderer> lemmingSprites)
     {
-        var listCapacity = BitArrayHelpers.ToNextLargestMultipleOf32(
-            behindTerrainSprites.Count +
-            inFrontOfTerrainSprites.Count +
-            1 + // Terrain renderer
-            lemmingSprites.Count);
+        var listCapacity = behindTerrainSprites.Count +
+                           1 + // Terrain renderer
+                           inFrontOfTerrainSprites.Count +
+                           lemmingSprites.Count;
         var result = new List<IViewportObjectRenderer>(listCapacity);
 
         var comparer = new ViewportObjectRendererComparer();

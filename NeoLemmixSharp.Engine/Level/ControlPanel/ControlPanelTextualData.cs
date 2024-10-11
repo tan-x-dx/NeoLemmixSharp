@@ -111,15 +111,15 @@ public sealed class ControlPanelTextualData
 
         if (isZombie && isNeutral)
         {
-            sourceSpan = LevelConstants.NeutralZombieStringNumericalSpan;
+            sourceSpan = LevelConstants.NeutralControlPanelZombie;
         }
         else if (isZombie)
         {
-            sourceSpan = LevelConstants.ZombieStringNumericalSpan;
+            sourceSpan = LevelConstants.ZombieControlPanelString;
         }
         else if (isNeutral)
         {
-            sourceSpan = LevelConstants.NeutralStringNumericalSpan;
+            sourceSpan = LevelConstants.NeutralControlPanelString;
         }
         else
         {
@@ -127,10 +127,10 @@ public sealed class ControlPanelTextualData
 
             sourceSpan = numberOfPermanentSkills switch
             {
-                2 => LevelConstants.AthleteString2Skills,
-                3 => LevelConstants.AthleteString3Skills,
-                4 => LevelConstants.AthleteString4Skills,
-                5 => LevelConstants.AthleteString5Skills,
+                2 => LevelConstants.AthleteControlPanelString2Skills,
+                3 => LevelConstants.AthleteControlPanelString3Skills,
+                4 => LevelConstants.AthleteControlPanelString4Skills,
+                5 => LevelConstants.AthleteControlPanelString5Skills,
                 _ => action.LemmingActionName
             };
         }

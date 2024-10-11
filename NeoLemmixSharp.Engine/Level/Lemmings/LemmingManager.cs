@@ -296,12 +296,14 @@ public sealed class LemmingManager :
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool AnyZombies() => !_zombieSpacialHashGrid.IsEmpty;
 
+    [SkipLocalsInit]
     public void DoZombieCheck(Lemming lemming)
     {
         Debug.Assert(!lemming.State.IsZombie);
 
+        Span<uint> scratchSpaceSpan = stackalloc uint[_lemmingPositionHelper.ScratchSpaceSize];
         var checkRegion = new LevelPositionPair(lemming.TopLeftPixel, lemming.BottomRightPixel);
-        _zombieSpacialHashGrid.GetAllItemsNearRegion(checkRegion, out var nearbyZombies);
+        _zombieSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, checkRegion, out var nearbyZombies);
 
         if (nearbyZombies.Count == 0)
             return;
@@ -373,10 +375,26 @@ public sealed class LemmingManager :
 
     public void ToSnapshotData(out LemmingManagerSnapshotData snapshotData)
     {
+        snapshotData = new LemmingManagerSnapshotData(
+            _numberOfLemmingsReleasedFromHatch,
+            _numberOfClonedLemmings,
+            LemmingsToRelease,
+            LemmingsOut,
+            LemmingsRemoved,
+            LemmingsSaved);
     }
 
     public void SetFromSnapshotData(in LemmingManagerSnapshotData snapshotData)
     {
+        _numberOfLemmingsReleasedFromHatch = snapshotData.NumberOfLemmingsReleasedFromHatch;
+        _numberOfClonedLemmings = snapshotData.NumberOfClonedLemmings;
+        LemmingsToRelease = snapshotData.LemmingsToRelease;
+        LemmingsOut = snapshotData.LemmingsOut;
+        LemmingsRemoved = snapshotData.LemmingsRemoved;
+        LemmingsSaved = snapshotData.LemmingsSaved;
+
+        // Need to refresh all lemming positions
+
         _lemmingPositionHelper.Clear();
         _zombieSpacialHashGrid.Clear();
 
@@ -389,7 +407,7 @@ public sealed class LemmingManager :
 
             if (lemming.State.IsZombie)
             {
-                RegisterZombie(lemming);
+                _zombieSpacialHashGrid.AddItem(lemming);
             }
         }
     }

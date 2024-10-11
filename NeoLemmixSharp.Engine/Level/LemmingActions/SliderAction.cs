@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -38,6 +39,7 @@ public sealed class SliderAction : LemmingAction
                lemming.CurrentAction != DrownerAction.Instance;
     }
 
+    [SkipLocalsInit]
     public static bool SliderTerrainChecks(
         Lemming lemming,
         Orientation orientation,
@@ -47,10 +49,12 @@ public sealed class SliderAction : LemmingAction
         var lemmingDehoistPosition = lemming.DehoistPin;
         var dx = lemming.FacingDirection.DeltaX;
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(lemmingPosition, -dx, -1),
             orientation.Move(lemmingPosition, dx, LevelConstants.MaxStepUp + 1));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         var hasPixelAtLemmingPosition = SliderHasPixelAt(in gadgetsNearRegion, lemmingPosition);
 

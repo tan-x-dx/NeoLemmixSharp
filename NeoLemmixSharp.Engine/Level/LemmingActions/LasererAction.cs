@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
@@ -70,12 +71,15 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
     {
     }
 
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        LevelScreen.GadgetManager.GetAllGadgetsForPosition(lemmingPosition, out var gadgetsNearRegion);
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
+        gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan, lemmingPosition, out var gadgetsNearRegion);
 
         if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
         {
@@ -95,7 +99,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         var i = DistanceCap;
         while (i > 0)
         {
-            switch (CheckForHit(offsetChecks))
+            switch (CheckForHit(scratchSpaceSpan, offsetChecks))
             {
                 case LaserHitType.None:
                     target = orientation.Move(target, dx, 1);
@@ -145,7 +149,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
         return true;
 
-        LaserHitType CheckForHit(ReadOnlySpan<LevelPosition> offsetChecks)
+        LaserHitType CheckForHit(Span<uint> scratchSpaceSpan1, ReadOnlySpan<LevelPosition> offsetChecks)
         {
             if (LevelScreen.PositionOutOfBounds(target))
                 return LaserHitType.OutOfBounds;
@@ -156,7 +160,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
             {
                 var checkLevelPosition = orientation.Move(target, offset);
 
-                LevelScreen.GadgetManager.GetAllGadgetsForPosition(checkLevelPosition, out var gadgetSet);
+                gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan1, checkLevelPosition, out var gadgetSet);
 
                 if (!PositionIsSolidToLemming(in gadgetSet, lemming, checkLevelPosition))
                     continue;

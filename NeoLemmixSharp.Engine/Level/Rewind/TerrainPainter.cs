@@ -97,7 +97,7 @@ public sealed class TerrainPainter
         public readonly PixelType FromPixelType;
         public readonly PixelType ToPixelType;
 
-        int ITickOrderedData.TickNumber => Tick;
+        public int TickNumber => Tick;
 
         public PixelChangeData(int tick, int x, int y, Color fromColor, Color toColor, PixelType fromPixelType, PixelType toPixelType)
         {

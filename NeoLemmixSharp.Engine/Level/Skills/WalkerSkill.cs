@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -16,6 +17,7 @@ public sealed class WalkerSkill : LemmingSkill
     {
     }
 
+    [SkipLocalsInit]
     public override void AssignToLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
@@ -26,10 +28,12 @@ public sealed class WalkerSkill : LemmingSkill
         var testUp = orientation.MoveUp(lemmingPosition, 1);
         var testRight = orientation.MoveRight(lemmingPosition, lemming.FacingDirection.DeltaX);
 
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelPositionPair(
             lemmingPosition,
             testRight);
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         if (lemming.CurrentAction == BuilderAction.Instance &&
             PositionIsSolidToLemming(in gadgetsNearRegion, lemming, testUp) &&

@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -20,15 +21,13 @@ public static class LemmingActionHelpers
     {
         var orientation = lemming.Orientation;
 
-        // Subroutine of other LevelAction methods.
-        // Use a dummy scratch space span to prevent data from being overridden.
-        // Prevents weird bugs!
-        Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
 
         var gadgetTestRegion = new LevelPositionPair(
             orientation.MoveUp(levelPosition, LevelConstants.MaxStepUp + 1),
             orientation.MoveDown(levelPosition, LevelConstants.DefaultFallStep + 1));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);
 
         int result;
         if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, levelPosition))
@@ -113,5 +112,45 @@ public static class LemmingActionHelpers
         }
 
         return false;
+    }
+
+    [Pure]
+    [SkipLocalsInit]
+    public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
+    {
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
+        gadgetManager.GetAllGadgetsAtLemmingPosition(scratchSpace, lemming, out var gadgetsNearPosition);
+
+        if (gadgetsNearPosition.Count == 0)
+            return new LevelPosition();
+
+        var lemmingOrientationRotNum = lemming.Orientation.RotNum;
+
+        var draftDirectionDeltas = new UpdraftBuffer();
+
+        foreach (var gadget in gadgetsNearPosition)
+        {
+            if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
+                continue;
+
+            var deltaRotNum = gadget.Orientation.RotNum - lemmingOrientationRotNum;
+
+            draftDirectionDeltas[deltaRotNum & 3] = 1;
+        }
+
+        var dx = draftDirectionDeltas[LevelConstants.RightOrientationRotNum] -
+                 draftDirectionDeltas[LevelConstants.LeftOrientationRotNum];
+
+        var dy = draftDirectionDeltas[LevelConstants.UpOrientationRotNum] -
+                 draftDirectionDeltas[LevelConstants.DownOrientationRotNum];
+
+        return new LevelPosition(dx, dy);
+    }
+
+    [InlineArray(4)]
+    private struct UpdraftBuffer
+    {
+        private int _firstElement;
     }
 }

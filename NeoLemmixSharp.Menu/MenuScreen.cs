@@ -1,7 +1,7 @@
-﻿using MGUI.Core.UI;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MLEM.Ui;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
@@ -16,7 +16,7 @@ public sealed class MenuScreen : IBaseScreen
     public static MenuScreen Current { get; private set; } = null!;
 
     private readonly PageTransition _pageTransition = new(EngineConstants.PageTransitionDurationInFrames);
-    private readonly MGDesktop _desktop;
+    private readonly UiSystem _uiSystem;
 
     private PageBase _currentPage;
     private PageBase? _nextPage;
@@ -33,19 +33,18 @@ public sealed class MenuScreen : IBaseScreen
         ContentManager contentManager,
         GraphicsDevice graphicsDevice)
     {
-        _desktop = new MGDesktop(IGameWindow.Instance.MguiRenderer);
+        _uiSystem = IGameWindow.Instance.UiSystem;
 
         var menuCursorRenderer = new MenuCursorRenderer(InputController);
         MenuScreenRenderer = new MenuScreenRenderer(
             menuCursorRenderer,
             _pageTransition,
-            _desktop);
+            _uiSystem);
 
         MenuPageCreator = new MenuPageCreator(
             contentManager,
             graphicsDevice,
-            InputController,
-            _desktop);
+            InputController);
         _currentPage = MenuPageCreator.CreateMainPage();
         Current = this;
     }
@@ -54,7 +53,6 @@ public sealed class MenuScreen : IBaseScreen
     {
         MenuScreenRenderer.Initialise();
 
-        _desktop.Windows.Clear();
         _currentPage.Initialise();
     }
 
@@ -76,7 +74,7 @@ public sealed class MenuScreen : IBaseScreen
 
         InputController.Tick();
         _currentPage.Tick();
-        _desktop.Update();
+        _uiSystem.Update(gameTime);
 
         if (InputController.ToggleFullScreen.IsPressed)
         {
@@ -106,14 +104,6 @@ public sealed class MenuScreen : IBaseScreen
 
     private void CloseExceptionViewers()
     {
-        for (var index = _desktop.Windows.Count - 1; index >= 0; index--)
-        {
-            var window = _desktop.Windows[index];
-            if (window.Metadata.ContainsKey(ExceptionViewer.ExceptionWindowProperty))
-            {
-                window.TryCloseWindow();
-            }
-        }
     }
 
     public void OnWindowSizeChanged()

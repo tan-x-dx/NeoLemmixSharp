@@ -20,13 +20,16 @@ public sealed class DehoisterAction : LemmingAction
     {
     }
 
+    [SkipLocalsInit]
     public override bool UpdateLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
-
-        LevelScreen.GadgetManager.GetAllGadgetsForPosition(
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
+        gadgetManager.GetAllGadgetsForPosition(
+            scratchSpaceSpan,
             orientation.MoveUp(lemmingPosition, 7),
             out var gadgetsNearRegion);
 
@@ -92,15 +95,13 @@ public sealed class DehoisterAction : LemmingAction
             nextPosition = orientation.MoveRight(currentPosition, dx);
         }
 
-        // Subroutine of other LevelAction methods.
-        // Use a dummy scratch space span to prevent data from being overridden.
-        // Prevents weird bugs!
-        Span<uint> scratchSpace = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
+        var gadgetManager = LevelScreen.GadgetManager;
+        Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
 
         var gadgetTestRegion = new LevelPositionPair(
             orientation.Move(nextPosition, dx, 1),
             orientation.Move(nextPosition, -dx, -4));
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);
+        gadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);
 
         if (LevelScreen.PositionOutOfBounds(nextPosition) ||
             !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, currentPosition) ||

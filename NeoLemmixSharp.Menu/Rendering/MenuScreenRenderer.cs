@@ -1,5 +1,6 @@
-﻿using MGUI.Core.UI;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MLEM.Ui;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
@@ -11,7 +12,7 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     private readonly BackgroundRenderer _backgroundRenderer;
     private readonly MenuCursorRenderer _menuCursorRenderer;
     private readonly PageTransitionRenderer _pageTransitionRenderer;
-    private readonly MGDesktop _desktop;
+    private readonly UiSystem _uiSystem;
 
     private bool _initialized;
 
@@ -20,12 +21,12 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     public MenuScreenRenderer(
         MenuCursorRenderer menuCursorRenderer,
         PageTransition pageTransition,
-        MGDesktop desktop)
+        UiSystem uiSystem)
     {
         _backgroundRenderer = new BackgroundRenderer(MenuSpriteBank.Background);
         _menuCursorRenderer = menuCursorRenderer;
         _pageTransitionRenderer = new PageTransitionRenderer(pageTransition);
-        _desktop = desktop;
+        _uiSystem = uiSystem;
     }
 
     public void Initialise()
@@ -39,7 +40,7 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         OnWindowSizeChanged();
     }
 
-    public void RenderScreen(SpriteBatch spriteBatch)
+    public void RenderScreen(GameTime gameTime, SpriteBatch spriteBatch)
     {
         // background
         spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
@@ -47,7 +48,7 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         spriteBatch.End();
 
         // draw ui
-        _desktop.Draw();
+        _uiSystem.Draw(gameTime, spriteBatch);
 
         spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
         _menuCursorRenderer.RenderCursor(spriteBatch);

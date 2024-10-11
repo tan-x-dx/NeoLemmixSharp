@@ -185,14 +185,14 @@ end;
         var isMajorTick = _elapsedTicksModuloFastForwardSpeed == 0;
         LevelScreen.LemmingManager.Tick(isMajorTick);
         LevelScreen.GadgetManager.Tick(isMajorTick);
-        LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks);
+        LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks, true);
         LevelScreen.RewindManager.Tick(_elapsedTicks);
         LevelScreen.TerrainPainter.RepaintTerrain();
 
-        _elapsedTicks++;
-        var elapsedTicksModuloFastForwardSpeed = _elapsedTicksModuloFastForwardSpeed + 1;
-        elapsedTicksModuloFastForwardSpeed %= EngineConstants.FastForwardSpeedMultiplier;
-        _elapsedTicksModuloFastForwardSpeed = elapsedTicksModuloFastForwardSpeed;
+        var newElapsedTicks = _elapsedTicks + 1;
+        _elapsedTicks = newElapsedTicks;
+        newElapsedTicks %= EngineConstants.FastForwardSpeedMultiplier;
+        _elapsedTicksModuloFastForwardSpeed = newElapsedTicks;
     }
 
     private static void HandleCursor()
@@ -266,7 +266,7 @@ end;
         _queuedSkill = lemmingSkill;
         _queuedSkillLemming = lemming;
         _queuedSkillTeamId = lemming.State.TeamAffiliation.Id;
-        _queuedSkillFrame = EngineConstants.FramesPerSecond - 1;
+        _queuedSkillFrame = EngineConstants.TicksPerSecond - 1;
     }
 
     private void CheckForQueuedAction()
@@ -337,7 +337,7 @@ end;
             tickDelta = requiredTick - actualElapsedTicks;
 
             _elapsedTicks = actualElapsedTicks;
-            _elapsedTicksModuloFastForwardSpeed = _elapsedTicks % EngineConstants.FastForwardSpeedMultiplier;
+            _elapsedTicksModuloFastForwardSpeed = actualElapsedTicks % EngineConstants.FastForwardSpeedMultiplier;
         }
 
         while (tickDelta-- > 0)

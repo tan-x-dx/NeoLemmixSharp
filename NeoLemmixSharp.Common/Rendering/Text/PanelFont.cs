@@ -50,7 +50,7 @@ public sealed class PanelFont
         Color color)
     {
         var dx = GlyphWidth * scaleMultiplier;
-        var dest = new Rectangle(x, y, GlyphWidth * scaleMultiplier, GlyphHeight * scaleMultiplier);
+        var dest = new Rectangle(x, y, dx, GlyphHeight * scaleMultiplier);
         foreach (var c in charactersToRender)
         {
             if (!CanRenderChar(c, out var adjustedChar))

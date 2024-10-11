@@ -1,12 +1,9 @@
-﻿using MGUI.Core.UI;
-using MGUI.Shared.Helpers;
-using NeoLemmixSharp.Common.Screen;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
-public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
+public sealed class LevelBrowserEntry : IDisposable
 {
     private const int IconSize = 16;
 
@@ -14,7 +11,6 @@ public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
     private readonly List<LevelBrowserEntry>? _subEntries;
 
     private IconType _iconType;
-    private MGTextureData _textureData;
     private string _displayName;
     private bool _isOpen;
 
@@ -22,12 +18,11 @@ public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
     public string DisplayName
     {
         get => _displayName;
-        private set => this.RaisePropertyChanged(ref _displayName, value);
+        private set => _displayName = value;
     }
 
     public bool IsFolder { get; }
     public int IndentationLevel { get; }
-    public MGTextureData TextureData => _textureData;
     public int Offset => IndentationLevel * IconSize;
 
     public bool IsOpen
@@ -40,14 +35,10 @@ public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
 
             _isOpen = value;
 
-            NotifyPropertyChanged(nameof(IsOpen));
-
             _iconType = _isOpen
                 ? IconType.ArrowOpened
                 : IconType.ArrowClosed;
 
-            _textureData = GetTextureData(_iconType);
-            NotifyPropertyChanged(nameof(TextureData));
 
             if (!_isOpen)
                 return;
@@ -112,8 +103,6 @@ public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
         IsFolder = true;
         _iconType = IconType.ArrowClosed;
 
-        _textureData = GetTextureData(_iconType);
-
         _subEntries = new List<LevelBrowserEntry>();
     }
 
@@ -138,8 +127,6 @@ public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
         IsFolder = false;
         _iconType = iconType;
 
-        _textureData = GetTextureData(_iconType);
-
         _subEntries = null;
     }
 
@@ -153,11 +140,6 @@ public sealed class LevelBrowserEntry : ViewModelBase, IDisposable
         ArrowClosed,
         ArrowOpened,
         LevelCompletedWithoutTalismans
-    }
-
-    private static MGTextureData GetTextureData(IconType iconType)
-    {
-        return new MGTextureData(MenuSpriteBank.MenuIcons, GetIconRectangle(iconType));
     }
 
     private static Rectangle GetIconRectangle(IconType iconType)

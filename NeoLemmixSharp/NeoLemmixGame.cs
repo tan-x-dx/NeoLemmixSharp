@@ -1,6 +1,7 @@
-﻿using MGUI.Shared.Rendering;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MLEM.Ui;
+using MLEM.Ui.Style;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
@@ -19,13 +20,17 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.Menu;
 using System;
 using System.Runtime.InteropServices;
+using MLEM.Ui.Elements;
 
 namespace NeoLemmixSharp;
 
-public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
+public sealed partial class NeoLemmixGame : Game, IGameWindow
 {
+    private const string UiRootElementKey = nameof(UiRootElementKey);
+
     private readonly GraphicsDeviceManager _graphics;
 
+    private UiSystem _uiSystem;
     private SpriteBatch _spriteBatch;
     private IBaseScreen? _screen;
     private IScreenRenderer? _screenRenderer;
@@ -38,10 +43,9 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
     public int WindowWidth => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
     public int WindowHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-    public MainRenderer MguiRenderer { get; private set; }
 
-    public event EventHandler<TimeSpan>? PreviewUpdate;
-    public event EventHandler<EventArgs>? EndUpdate;
+    public UiSystem UiSystem => _uiSystem;
+    public Element UiRoot => _uiSystem.Get(UiRootElementKey).Element;
 
     public NeoLemmixGame()
     {
@@ -93,8 +97,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
     protected override void Initialize()
     {
-        MguiRenderer = new MainRenderer(new GameRenderHost<NeoLemmixGame>(this));
-
         // make the window fullscreen (but still with border and top control bar)
         var screenWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;
         var screenHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
@@ -118,6 +120,11 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
         CommonSprites.Initialise(Content, GraphicsDevice);
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+        _uiSystem = new UiSystem(this, new UntexturedStyle(_spriteBatch));
+
+        var ui = new Group(Anchor.TopLeft, Vector2.One, false);
+        _uiSystem.Add(UiRootElementKey, ui);
 
         TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
         DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
@@ -160,13 +167,13 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
             LengthMax<char>(action.LemmingActionName);
         }
 
-        LengthMax<char>(LevelConstants.NeutralStringNumericalSpan);
-        LengthMax<char>(LevelConstants.ZombieStringNumericalSpan);
-        LengthMax<char>(LevelConstants.NeutralZombieStringNumericalSpan);
-        LengthMax<char>(LevelConstants.AthleteString2Skills);
-        LengthMax<char>(LevelConstants.AthleteString3Skills);
-        LengthMax<char>(LevelConstants.AthleteString4Skills);
-        LengthMax<char>(LevelConstants.AthleteString5Skills);
+        LengthMax<char>(LevelConstants.NeutralControlPanelString);
+        LengthMax<char>(LevelConstants.ZombieControlPanelString);
+        LengthMax<char>(LevelConstants.NeutralControlPanelZombie);
+        LengthMax<char>(LevelConstants.AthleteControlPanelString2Skills);
+        LengthMax<char>(LevelConstants.AthleteControlPanelString3Skills);
+        LengthMax<char>(LevelConstants.AthleteControlPanelString4Skills);
+        LengthMax<char>(LevelConstants.AthleteControlPanelString5Skills);
 
         if (actualMaxActionNameLength != LevelConstants.LongestActionNameLength)
             throw new Exception($"Longest action name length is actually {actualMaxActionNameLength}! Update {nameof(LevelConstants.LongestActionNameLength)}!");
@@ -196,9 +203,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
 
     protected override void Update(GameTime gameTime)
     {
-        PreviewUpdate?.Invoke(this, gameTime.TotalGameTime);
         _screen!.Tick(gameTime);
-        EndUpdate?.Invoke(this, EventArgs.Empty);
     }
 
     protected override void Draw(GameTime gameTime)
@@ -206,7 +211,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow, IObservableUpdate
         // if (gameTime.IsRunningSlowly)
         //     return;
 
-        _screenRenderer!.RenderScreen(_spriteBatch);
+        _screenRenderer!.RenderScreen(gameTime, _spriteBatch);
     }
 
     public void ToggleFullscreen()
