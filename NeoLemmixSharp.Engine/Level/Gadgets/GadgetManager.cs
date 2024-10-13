@@ -20,7 +20,7 @@ public sealed class GadgetManager :
     IDisposable
 {
     private readonly GadgetBase[] _allGadgets;
-    private readonly SpacialHashGrid<HitBoxGadget> _gadgetPositionHelper;
+    private readonly SpacialHashGrid<GadgetManager, HitBoxGadget> _gadgetPositionHelper;
 
     public ReadOnlySpan<GadgetBase> AllItems => new(_allGadgets);
 
@@ -33,7 +33,7 @@ public sealed class GadgetManager :
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
         Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
 
-        _gadgetPositionHelper = new SpacialHashGrid<HitBoxGadget>(
+        _gadgetPositionHelper = new SpacialHashGrid<GadgetManager, HitBoxGadget>(
             this,
             LevelConstants.GadgetPositionChunkSize,
             horizontalBoundaryBehaviour,

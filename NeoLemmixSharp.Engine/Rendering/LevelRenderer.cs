@@ -18,7 +18,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     private readonly GraphicsDevice _graphicsDevice;
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
-    private readonly SpacialHashGrid<IViewportObjectRenderer> _spriteSpacialHashGrid;
+    private readonly SpacialHashGrid<LevelRenderer, IViewportObjectRenderer> _spriteSpacialHashGrid;
     private readonly uint[] _spriteSetScratchSpace;
 
     private readonly List<IViewportObjectRenderer> _orderedSprites;
@@ -40,7 +40,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
 
         _orderedSprites = orderedSprites;
 
-        _spriteSpacialHashGrid = new SpacialHashGrid<IViewportObjectRenderer>(
+        _spriteSpacialHashGrid = new SpacialHashGrid<LevelRenderer, IViewportObjectRenderer>(
             this,
             ChunkSizeType.ChunkSize64,
             horizontalBoundaryBehaviour,

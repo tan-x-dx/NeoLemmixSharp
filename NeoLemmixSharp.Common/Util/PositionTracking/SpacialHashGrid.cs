@@ -6,10 +6,11 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
-public sealed class SpacialHashGrid<T>
+public sealed class SpacialHashGrid<TPerfectHasher, T>
+    where TPerfectHasher : class, IPerfectHasher<T>
     where T : class, IRectangularBounds
 {
-    private readonly IPerfectHasher<T> _hasher;
+    private readonly TPerfectHasher _hasher;
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
 
@@ -28,7 +29,7 @@ public sealed class SpacialHashGrid<T>
     private int _cachedQueryCount;
 
     public SpacialHashGrid(
-        IPerfectHasher<T> hasher,
+        TPerfectHasher hasher,
         ChunkSizeType chunkSizeType,
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
