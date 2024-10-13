@@ -118,7 +118,7 @@ public sealed class SpacialHashGrid<T>
     /// <returns>An enumerable for items within the region</returns>
     public void GetAllItemsNearRegion(
         Span<uint> scratchSpaceSpan,
-        LevelPositionPair levelRegion,
+        LevelRegion levelRegion,
         out SimpleSetEnumerable<T> result)
     {
         if (IsEmpty)
@@ -168,8 +168,8 @@ public sealed class SpacialHashGrid<T>
         var topLeftChunk = GetChunkForPoint(item.TopLeftPixel);
         var bottomRightChunk = GetChunkForPoint(item.BottomRightPixel);
 
-        var p1 = new LevelPositionPair(_cachedTopLeftChunkQuery, _cachedBottomRightChunkQuery);
-        var p2 = new LevelPositionPair(topLeftChunk, bottomRightChunk);
+        var p1 = new LevelRegion(_cachedTopLeftChunkQuery, _cachedBottomRightChunkQuery);
+        var p2 = new LevelRegion(topLeftChunk, bottomRightChunk);
         if (p1.Overlaps(p2))
         {
             ClearCachedData();
@@ -193,9 +193,9 @@ public sealed class SpacialHashGrid<T>
             bottomRightChunk == previousBottomRightChunk)
             return;
 
-        var p1 = new LevelPositionPair(_cachedTopLeftChunkQuery, _cachedBottomRightChunkQuery);
-        var p2 = new LevelPositionPair(topLeftChunk, bottomRightChunk);
-        var p3 = new LevelPositionPair(previousTopLeftChunk, previousBottomRightChunk);
+        var p1 = new LevelRegion(_cachedTopLeftChunkQuery, _cachedBottomRightChunkQuery);
+        var p2 = new LevelRegion(topLeftChunk, bottomRightChunk);
+        var p3 = new LevelRegion(previousTopLeftChunk, previousBottomRightChunk);
         if (p1.Overlaps(p2) ||
             p1.Overlaps(p3))
         {
@@ -234,9 +234,9 @@ public sealed class SpacialHashGrid<T>
         var previousTopLeftChunk = GetChunkForPoint(item.PreviousTopLeftPixel);
         var previousBottomRightChunk = GetChunkForPoint(item.PreviousBottomRightPixel);
 
-        var p1 = new LevelPositionPair(_cachedTopLeftChunkQuery, _cachedBottomRightChunkQuery);
-        var p2 = new LevelPositionPair(topLeftChunk, bottomRightChunk);
-        var p3 = new LevelPositionPair(previousTopLeftChunk, previousBottomRightChunk);
+        var p1 = new LevelRegion(_cachedTopLeftChunkQuery, _cachedBottomRightChunkQuery);
+        var p2 = new LevelRegion(topLeftChunk, bottomRightChunk);
+        var p3 = new LevelRegion(previousTopLeftChunk, previousBottomRightChunk);
         if (p1.Overlaps(p2) ||
             p1.Overlaps(p3))
         {

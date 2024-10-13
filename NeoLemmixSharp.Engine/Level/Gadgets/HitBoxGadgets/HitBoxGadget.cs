@@ -15,7 +15,7 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>
 
     protected HitBoxGadget(
         int id,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IGadgetRenderer? renderer,
         ItemTracker<Lemming> lemmingTracker)
         : base(id, gadgetBounds, renderer)

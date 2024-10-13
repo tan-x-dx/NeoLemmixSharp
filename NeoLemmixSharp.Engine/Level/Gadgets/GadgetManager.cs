@@ -84,17 +84,17 @@ public sealed class GadgetManager :
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
 
-        var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
+        var lemmingPositionRegion = new Common.Util.LevelRegion(anchorPixel, footPixel);
 
         _gadgetPositionHelper.GetAllItemsNearRegion(
             scratchSpace,
-            levelPositionPair,
+            lemmingPositionRegion,
             out result);
     }
 
     public void GetAllItemsNearRegion(
         Span<uint> scratchSpace,
-        LevelPositionPair levelRegion,
+        Common.Util.LevelRegion levelRegion,
         out GadgetSet result)
     {
         _gadgetPositionHelper.GetAllItemsNearRegion(
@@ -130,11 +130,11 @@ public sealed class GadgetManager :
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
 
-        var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
+        var lemmingPositionRegion = new Common.Util.LevelRegion(anchorPixel, footPixel);
 
         _gadgetPositionHelper.GetAllItemsNearRegion(
             scratchSpaceSpan,
-            levelPositionPair,
+            lemmingPositionRegion,
             out var gadgetSet);
 
         foreach (var gadget in gadgetSet)

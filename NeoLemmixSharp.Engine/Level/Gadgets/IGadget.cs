@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public interface IGadget : IRectangularBounds
 {
     int Id { get; }
-    RectangularLevelRegion GadgetBounds { get; }
+    RectangularHitBoxRegion GadgetBounds { get; }
 }
 
 public interface IControlledAnimationGadget : IGadget

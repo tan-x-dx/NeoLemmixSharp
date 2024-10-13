@@ -34,7 +34,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             orientation.Move(lemmingPosition, 4, 1),
             orientation.Move(lemmingPosition, -4, -1));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);

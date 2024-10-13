@@ -32,7 +32,7 @@ public sealed class ShimmierAction : LemmingAction
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx, 10));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
@@ -150,7 +150,7 @@ public sealed class ShimmierAction : LemmingAction
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx, 12));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);

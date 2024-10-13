@@ -74,7 +74,7 @@ public sealed class LevelCursor
 
         var topLeftCursorPixel = new LevelPosition(c.X - 7, c.Y - 7);
         var bottomRightCursorPixel = new LevelPosition(c.X + 6, c.Y + 6);
-        var levelRegion = new LevelPositionPair(topLeftCursorPixel, bottomRightCursorPixel);
+        var levelRegion = new LevelRegion(topLeftCursorPixel, bottomRightCursorPixel);
 
         LevelScreen.LemmingManager.GetAllLemmingsNearRegion(scratchSpaceSpan, levelRegion, out result);
     }

@@ -122,7 +122,7 @@ end;
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             orientation.Move(lemmingPosition, -1, -12),
             orientation.Move(lemmingPosition, 1, LevelConstants.MaxStepUp + 1));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);

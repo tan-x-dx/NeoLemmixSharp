@@ -27,7 +27,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         GadgetData gadgetData,
         IPerfectHasher<Lemming> lemmingHasher)
     {
-        var bounds = new RectangularLevelRegion(
+        var bounds = new RectangularHitBoxRegion(
             gadgetData.X,
             gadgetData.Y,
             SpriteData.SpriteWidth,
@@ -146,7 +146,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         return hitBox;
     }
 
-    private ILevelRegion CreateHitBoxLevelRegion(
+    private IHitBoxRegion CreateHitBoxLevelRegion(
         GadgetData gadgetData,
         TriggerType triggerType,
         ReadOnlySpan<LevelPosition> triggerData)
@@ -157,7 +157,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         return CreatePointSetHitBoxLevelRegion(gadgetData, triggerData);
     }
 
-    private RectangularLevelRegion CreateRectangularHitBoxLevelRegion(
+    private RectangularHitBoxRegion CreateRectangularHitBoxLevelRegion(
         GadgetData gadgetData,
         ReadOnlySpan<LevelPosition> triggerData)
     {
@@ -189,11 +189,11 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
 
         p1 = new LevelPosition(tX, tY);
 
-        return new RectangularLevelRegion(p0, p1);
+        return new RectangularHitBoxRegion(p0, p1);
     }
 
     [SkipLocalsInit]
-    private PointSetLevelRegion CreatePointSetHitBoxLevelRegion(
+    private PointSetHitBoxRegion CreatePointSetHitBoxLevelRegion(
         GadgetData gadgetData,
         ReadOnlySpan<LevelPosition> triggerData)
     {
@@ -218,6 +218,6 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
             transformedPoint = new LevelPosition(tX, tY);
         }
 
-        return new PointSetLevelRegion(adjustedPoints);
+        return new PointSetHitBoxRegion(adjustedPoints);
     }
 }

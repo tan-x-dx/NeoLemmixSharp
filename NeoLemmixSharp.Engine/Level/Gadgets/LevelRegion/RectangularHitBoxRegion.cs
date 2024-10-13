@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
-public sealed class RectangularLevelRegion : IRectangularLevelRegion
+public sealed class RectangularHitBoxRegion : IRectangularHitBoxRegion
 {
     private int _w;
     private int _h;
@@ -27,7 +27,7 @@ public sealed class RectangularLevelRegion : IRectangularLevelRegion
     public LevelPosition TopLeft => new(X, Y);
     public LevelPosition BottomRight => new(X1 - 1, Y1 - 1);
 
-    public RectangularLevelRegion(int x, int y, int w, int h)
+    public RectangularHitBoxRegion(int x, int y, int w, int h)
     {
         X = x;
         Y = y;
@@ -35,7 +35,7 @@ public sealed class RectangularLevelRegion : IRectangularLevelRegion
         H = h;
     }
 
-    public RectangularLevelRegion(LevelPosition p0, LevelPosition p1)
+    public RectangularHitBoxRegion(LevelPosition p0, LevelPosition p1)
     {
         if (p0.X < p1.X)
         {

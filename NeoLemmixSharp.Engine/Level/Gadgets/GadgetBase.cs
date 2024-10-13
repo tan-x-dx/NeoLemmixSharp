@@ -13,7 +13,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds,
     public int Id { get; }
     public abstract GadgetBehaviour GadgetBehaviour { get; }
     public abstract Orientation Orientation { get; }
-    public RectangularLevelRegion GadgetBounds { get; }
+    public RectangularHitBoxRegion GadgetBounds { get; }
     public IGadgetRenderer? Renderer { get; }
 
     public LevelPosition TopLeftPixel { get; set; }
@@ -23,7 +23,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds,
 
     protected GadgetBase(
         int id,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IGadgetRenderer? renderer)
     {
         Id = id;

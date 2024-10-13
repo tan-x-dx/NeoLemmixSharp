@@ -3,9 +3,9 @@ using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
-public sealed class RelativeRectangularLevelRegion : IRectangularLevelRegion
+public sealed class RelativeRectangularHitBoxRegion : IRectangularHitBoxRegion
 {
-    private readonly IRectangularLevelRegion _anchorRegion;
+    private readonly IRectangularHitBoxRegion _anchorRegion;
     private readonly int _dx;
     private readonly int _dx1;
     private readonly int _dy;
@@ -21,8 +21,8 @@ public sealed class RelativeRectangularLevelRegion : IRectangularLevelRegion
     public LevelPosition TopLeft => new(X, Y);
     public LevelPosition BottomRight => new(X1, Y1);
 
-    public RelativeRectangularLevelRegion(
-        IRectangularLevelRegion anchorRegion,
+    public RelativeRectangularHitBoxRegion(
+        IRectangularHitBoxRegion anchorRegion,
         int dx,
         int dy,
         int dx1,

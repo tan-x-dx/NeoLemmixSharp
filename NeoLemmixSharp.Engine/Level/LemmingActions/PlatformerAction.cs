@@ -59,7 +59,7 @@ public sealed class PlatformerAction : LemmingAction
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx * 4, 2));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
@@ -165,7 +165,7 @@ public sealed class PlatformerAction : LemmingAction
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
 
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx * 4, 1));
         gadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);

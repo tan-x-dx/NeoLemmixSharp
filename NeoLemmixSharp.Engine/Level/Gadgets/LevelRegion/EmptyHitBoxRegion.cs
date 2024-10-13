@@ -2,11 +2,11 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
-public sealed class EmptyLevelRegion : ILevelRegion
+public sealed class EmptyHitBoxRegion : IHitBoxRegion
 {
-    public static readonly EmptyLevelRegion Instance = new();
+    public static readonly EmptyHitBoxRegion Instance = new();
 
-    private EmptyLevelRegion()
+    private EmptyHitBoxRegion()
     {
     }
 

@@ -48,7 +48,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             orientation.MoveLeft(lemmingPosition, dx * 2),
             orientation.Move(lemmingPosition, dx * 2, -4));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);

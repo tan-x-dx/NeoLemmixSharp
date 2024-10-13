@@ -112,7 +112,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         {
             foreach (var verticalRenderInterval in verticalRenderIntervals)
             {
-                var region = new LevelPositionPair(
+                var region = new LevelRegion(
                     horizontalRenderInterval.ViewPortStart,
                     verticalRenderInterval.ViewPortStart,
                     horizontalRenderInterval.ViewPortStart + horizontalRenderInterval.ViewPortLength - 1,

@@ -24,7 +24,7 @@ public static class LemmingActionHelpers
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
 
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             orientation.MoveUp(levelPosition, LevelConstants.MaxStepUp + 1),
             orientation.MoveDown(levelPosition, LevelConstants.DefaultFallStep + 1));
         gadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);

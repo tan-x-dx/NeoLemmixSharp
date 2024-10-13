@@ -28,7 +28,7 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
         var gadgetWidth = gadgetData.GetProperty(GadgetProperty.Width);
         var gadgetHeight = gadgetData.GetProperty(GadgetProperty.Height);
 
-        var gadgetBounds = new RectangularLevelRegion(
+        var gadgetBounds = new RectangularHitBoxRegion(
             gadgetData.X,
             gadgetData.Y,
             gadgetWidth,
@@ -56,7 +56,7 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
 
     private HitBox CreateHitBox(
         GadgetData gadgetData,
-        RectangularLevelRegion gadgetBounds)
+        RectangularHitBoxRegion gadgetBounds)
     {
         var triggerData = ArchetypeData.TriggerData;
         if (triggerData.Length == 0)
@@ -114,10 +114,10 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
         return hitBox;
     }
 
-    private RelativeRectangularLevelRegion CreateRectangularHitBoxLevelRegion(
+    private RelativeRectangularHitBoxRegion CreateRectangularHitBoxLevelRegion(
         GadgetData gadgetData,
         ReadOnlySpan<LevelPosition> triggerData,
-        RectangularLevelRegion gadgetBounds)
+        RectangularHitBoxRegion gadgetBounds)
     {
         if (triggerData.Length != 2)
             throw new InvalidOperationException("Expected exactly two points of data");
@@ -147,6 +147,6 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
 
         p1 = new LevelPosition(tX, tY);
 
-        return new RelativeRectangularLevelRegion(gadgetBounds, p0.X, p0.Y, p1.X, p1.Y);
+        return new RelativeRectangularHitBoxRegion(gadgetBounds, p0.X, p0.Y, p1.X, p1.Y);
     }
 }

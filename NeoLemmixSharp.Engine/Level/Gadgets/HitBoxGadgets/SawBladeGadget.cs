@@ -19,7 +19,7 @@ public sealed class SawBladeGadget : HitBoxGadget, IDestructionMask, IMoveableGa
 
     public SawBladeGadget(
         int id,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IControlledAnimationGadgetRenderer? renderer,
         ItemTracker<Lemming> lemmingTracker)
         : base(id, gadgetBounds, renderer, lemmingTracker)

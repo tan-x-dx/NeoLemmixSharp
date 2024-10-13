@@ -241,7 +241,7 @@ public sealed class LemmingManager :
 
     public void GetAllLemmingsNearRegion(
         Span<uint> scratchSpace,
-        LevelPositionPair levelRegion,
+        LevelRegion levelRegion,
         out LemmingSet result)
     {
         _lemmingPositionHelper.GetAllItemsNearRegion(scratchSpace, levelRegion, out result);
@@ -275,7 +275,7 @@ public sealed class LemmingManager :
             var blockerTopLeft = blocker.TopLeftPixel;
             var blockerBottomRight = blocker.BottomRightPixel;
 
-            var secondBounds = new LevelPositionPair(blockerTopLeft, blockerBottomRight);
+            var secondBounds = new LevelRegion(blockerTopLeft, blockerBottomRight);
 
             if (firstBounds.Overlaps(secondBounds))
                 return false;
@@ -302,7 +302,7 @@ public sealed class LemmingManager :
         Debug.Assert(!lemming.State.IsZombie);
 
         Span<uint> scratchSpaceSpan = stackalloc uint[_lemmingPositionHelper.ScratchSpaceSize];
-        var checkRegion = new LevelPositionPair(lemming.TopLeftPixel, lemming.BottomRightPixel);
+        var checkRegion = new LevelRegion(lemming.TopLeftPixel, lemming.BottomRightPixel);
         _zombieSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, checkRegion, out var nearbyZombies);
 
         if (nearbyZombies.Count == 0)
@@ -312,7 +312,7 @@ public sealed class LemmingManager :
         {
             Debug.Assert(zombie.State.IsZombie);
 
-            var zombieRegion = new LevelPositionPair(zombie.TopLeftPixel, zombie.BottomRightPixel);
+            var zombieRegion = new LevelRegion(zombie.TopLeftPixel, zombie.BottomRightPixel);
 
             if (checkRegion.Overlaps(zombieRegion))
             {

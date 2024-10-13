@@ -139,7 +139,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     public abstract bool UpdateLemming(Lemming lemming);
 
-    public LevelPositionPair GetLemmingBounds(Lemming lemming)
+    public LevelRegion GetLemmingBounds(Lemming lemming)
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
@@ -156,7 +156,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         var p1 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * topLeftDx, topLeftDy);
         var p2 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * bottomRightDx, bottomRightDy);
 
-        return new LevelPositionPair(p1, p2);
+        return new LevelRegion(p1, p2);
     }
 
     protected abstract int TopLeftBoundsDeltaX(int animationFrame);

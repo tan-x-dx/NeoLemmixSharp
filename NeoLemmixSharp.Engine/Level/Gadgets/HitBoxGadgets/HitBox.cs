@@ -8,14 +8,14 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class HitBox
 {
-    public static readonly HitBox Empty = new(EmptyLevelRegion.Instance, Array.Empty<ILemmingFilter>());
+    public static readonly HitBox Empty = new(EmptyHitBoxRegion.Instance, Array.Empty<ILemmingFilter>());
 
-    private readonly ILevelRegion _levelRegion;
+    private readonly IHitBoxRegion _hitBoxRegion;
     private readonly ILemmingFilter[] _lemmingFilters;
 
-    public HitBox(ILevelRegion levelRegion, ILemmingFilter[] lemmingFilters)
+    public HitBox(IHitBoxRegion hitBoxRegion, ILemmingFilter[] lemmingFilters)
     {
-        _levelRegion = levelRegion;
+        _hitBoxRegion = hitBoxRegion;
         _lemmingFilters = lemmingFilters;
     }
 
@@ -31,6 +31,6 @@ public sealed class HitBox
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool MatchesPosition(LevelPosition levelPosition) => _levelRegion.ContainsPoint(levelPosition);
+    public bool MatchesPosition(LevelPosition levelPosition) => _hitBoxRegion.ContainsPoint(levelPosition);
 
 }

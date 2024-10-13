@@ -7,7 +7,7 @@ public sealed class OrGateGadget : BinaryLogicGateGadget
 {
     public OrGateGadget(
         int id,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IControlledAnimationGadgetRenderer? renderer,
         LogicGateGadgetInput inputA,
         LogicGateGadgetInput inputB)

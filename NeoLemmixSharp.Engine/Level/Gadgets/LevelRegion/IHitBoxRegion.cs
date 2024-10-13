@@ -3,12 +3,12 @@ using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
-public interface ILevelRegion
+public interface IHitBoxRegion
 {
     bool ContainsPoint(LevelPosition levelPosition);
 }
 
-public interface IRectangularLevelRegion : ILevelRegion
+public interface IRectangularHitBoxRegion : IHitBoxRegion
 {
     int X { get; }
     int Y { get; }
@@ -33,14 +33,14 @@ public static class LevelRegionHelpers
         return new LevelPosition(dx, dy);
     }
 
-    public static bool ContainsPoint(IRectangularLevelRegion levelRegion, LevelPosition levelPosition)
+    public static bool ContainsPoint(IRectangularHitBoxRegion hitBoxRegion, LevelPosition levelPosition)
     {
-        var thisTestX = levelRegion.X;
-        var thisTestX1 = levelRegion.X1;
+        var thisTestX = hitBoxRegion.X;
+        var thisTestX1 = hitBoxRegion.X1;
         var levelPositionTestX = levelPosition.X;
 
-        var thisTestY = levelRegion.Y;
-        var thisTestY1 = levelRegion.Y1;
+        var thisTestY = hitBoxRegion.Y;
+        var thisTestY1 = hitBoxRegion.Y1;
         var levelPositionTestY = levelPosition.Y;
 
         LevelScreen.HorizontalBoundaryBehaviour.NormaliseCoords(ref thisTestX, ref thisTestX1, ref levelPositionTestX);
