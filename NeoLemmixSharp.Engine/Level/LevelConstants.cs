@@ -129,7 +129,7 @@ public static class LevelConstants
 
     public const string NeutralControlPanelString = "NEUTRAL";
     public const string ZombieControlPanelString = "ZOMBIE";
-    public const string NeutralControlPanelZombie = "N-ZOMBIE";
+    public const string NeutralZombieControlPanelString = "N-ZOMBIE";
     public const string AthleteControlPanelString2Skills = "ATHLETE";
     public const string AthleteControlPanelString3Skills = "TRIATHLETE";
     public const string AthleteControlPanelString4Skills = "TETRATHLETE";

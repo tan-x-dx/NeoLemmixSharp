@@ -111,7 +111,7 @@ public sealed class ControlPanelTextualData
 
         if (isZombie && isNeutral)
         {
-            sourceSpan = LevelConstants.NeutralControlPanelZombie;
+            sourceSpan = LevelConstants.NeutralZombieControlPanelString;
         }
         else if (isZombie)
         {
