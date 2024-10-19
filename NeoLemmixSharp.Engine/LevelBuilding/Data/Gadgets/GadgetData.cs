@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 public sealed class GadgetData
 {
-    private readonly SimpleDictionary<GadgetProperty, int> _properties = PerfectEnumHasher<GadgetProperty>.CreateSimpleDictionary<int>();
+    private readonly SimpleDictionary<PerfectEnumHasher<GadgetProperty>, GadgetProperty, int> _properties = PerfectEnumHasher<GadgetProperty>.CreateSimpleDictionary<int>();
 
     public required int Id { get; init; }
     public required string Style { get; init; }
@@ -50,5 +50,5 @@ public sealed class GadgetData
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleDictionary<GadgetProperty, int>.Enumerator GetProperties() => _properties.GetEnumerator();
+    public SimpleDictionary<PerfectEnumHasher<GadgetProperty>, GadgetProperty, int>.Enumerator GetProperties() => _properties.GetEnumerator();
 }

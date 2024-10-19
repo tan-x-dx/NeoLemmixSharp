@@ -70,7 +70,7 @@ public sealed class WalkerSkill : LemmingSkill
     }
 
     private static bool LemmingIsForcedToChangeDirection(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming)
     {
         foreach (var blocker in LevelScreen.LemmingManager.AllBlockers)

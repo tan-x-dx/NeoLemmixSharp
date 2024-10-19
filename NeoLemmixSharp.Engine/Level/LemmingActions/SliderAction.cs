@@ -104,7 +104,7 @@ public sealed class SliderAction : LemmingAction
         return false;
 
         bool SliderHasPixelAt(
-            in GadgetSet gadgetsNearRegion1,
+            in GadgetEnumerable gadgetsNearRegion1,
             LevelPosition testPosition)
         {
             return PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, testPosition) ||

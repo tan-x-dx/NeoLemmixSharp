@@ -319,9 +319,9 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         return CheckGadgetHitBoxCollisions(in gadgetSet, checkPositions[..length]);
     }
 
-    private bool CheckGadgetHitBoxCollisions(in GadgetSet gadgetSet, ReadOnlySpan<LevelPosition> intermediatePositions)
+    private bool CheckGadgetHitBoxCollisions(in GadgetEnumerable gadgetEnumerable, ReadOnlySpan<LevelPosition> intermediatePositions)
     {
-        foreach (var gadget in gadgetSet)
+        foreach (var gadget in gadgetEnumerable)
         {
             foreach (var anchorPosition in intermediatePositions)
             {

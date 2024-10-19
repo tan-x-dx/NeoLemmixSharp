@@ -190,7 +190,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     }
 
     private static bool BasherIndestructibleCheck(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         LevelPosition pos)
     {
@@ -218,7 +218,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     }
 
     public static bool StepUpCheck(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         LevelPosition pos,
         Orientation orientation,

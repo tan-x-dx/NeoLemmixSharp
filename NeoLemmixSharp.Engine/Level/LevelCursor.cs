@@ -68,7 +68,7 @@ public sealed class LevelCursor
             NumberOfLemmingsUnderCursor);
     }
 
-    private void GetLemmingsNearCursorPosition(Span<uint> scratchSpaceSpan, out LemmingSet result)
+    private void GetLemmingsNearCursorPosition(Span<uint> scratchSpaceSpan, out LemmingEnumerable result)
     {
         var c = CursorPosition;
 

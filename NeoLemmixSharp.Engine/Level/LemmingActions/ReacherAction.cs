@@ -85,7 +85,7 @@ public sealed class ReacherAction : LemmingAction
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     private static int GetEmptyPixelCount(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         LevelPosition lemmingPosition)
     {

@@ -92,7 +92,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
 
     private bool DigOneRow(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         Orientation orientation,
         FacingDirection facingDirection,

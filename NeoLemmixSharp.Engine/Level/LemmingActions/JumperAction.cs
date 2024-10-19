@@ -151,7 +151,7 @@ public sealed class JumperAction : LemmingAction
     }
 
     private static bool DoWallCheck(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming)
     {
         var orientation = lemming.Orientation;
@@ -221,7 +221,7 @@ public sealed class JumperAction : LemmingAction
     }
 
     private static bool DoHeadCheck(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         bool firstStepSpecialHandling)
     {
@@ -246,7 +246,7 @@ public sealed class JumperAction : LemmingAction
     }
 
     private void DoJumperTriggerChecks(
-        in GadgetSet gadgetsNearRegion)
+        in GadgetEnumerable gadgetsNearRegion)
     {
         foreach (var gadget in gadgetsNearRegion)
         {

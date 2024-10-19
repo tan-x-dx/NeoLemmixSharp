@@ -139,7 +139,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
 
     private static void TurnMinerAround(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         LevelPosition checkPosition)
     {

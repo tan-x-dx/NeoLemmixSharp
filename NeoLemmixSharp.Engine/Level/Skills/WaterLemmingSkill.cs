@@ -34,7 +34,7 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingStateChanger
         return ActionsThatCanBeAssignedPermanentSkill();
     }
 
-    public int LemmingStateChangerId => LemmingStateChangerHelpers.WaterStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHelper.WaterStateChangerId;
     public void SetLemmingState(LemmingState lemmingState, bool status)
     {
         lemmingState.IsWaterLemming = status;

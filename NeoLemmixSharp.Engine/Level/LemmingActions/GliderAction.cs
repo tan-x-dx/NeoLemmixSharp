@@ -233,7 +233,7 @@ end;
     protected override int BottomRightBoundsDeltaY(int animationFrame) => 1;
 
     private static bool DoTurnAround(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         bool moveForwardFirst)
     {
@@ -264,7 +264,7 @@ end;
 
     // Special behavior in 1-pixel wide shafts: Move one pixel down even when turning
     private static void CheckOnePixelShaft(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming)
     {
         var orientation = lemming.Orientation;
@@ -298,7 +298,7 @@ end;
 
         return;
 
-        bool HasConsecutivePixels(in GadgetSet gadgetsNearRegion1)
+        bool HasConsecutivePixels(in GadgetEnumerable gadgetsNearRegion1)
         {
             // Check at LemY +1, +2, +3 for (a) solid terrain, or (b) a one-way field that will turn the lemming around
             var checkPosition = orientation.MoveRight(lemming.LevelPosition, dx);
@@ -314,7 +314,7 @@ end;
     }
 
     private static bool HeadCheck(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         LevelPosition checkPosition)
     {

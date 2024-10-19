@@ -14,7 +14,7 @@ public sealed class FloaterSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public int LemmingStateChangerId => LemmingStateChangerHelpers.FloaterStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHelper.FloaterStateChangerId;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

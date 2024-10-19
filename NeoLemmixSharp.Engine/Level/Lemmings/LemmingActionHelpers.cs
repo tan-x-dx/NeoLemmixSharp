@@ -55,7 +55,7 @@ public static class LemmingActionHelpers
 
     [Pure]
     public static bool PositionIsSolidToLemming(
-        in GadgetSet gadgets,
+        in GadgetEnumerable gadgets,
         Lemming lemming,
         LevelPosition levelPosition)
     {
@@ -65,7 +65,7 @@ public static class LemmingActionHelpers
 
     [Pure]
     public static bool PositionIsIndestructibleToLemming(
-        in GadgetSet gadgets,
+        in GadgetEnumerable gadgets,
         Lemming lemming,
         IDestructionMask destructionMask,
         LevelPosition levelPosition)
@@ -76,7 +76,7 @@ public static class LemmingActionHelpers
 
     [Pure]
     public static bool PositionIsSteelToLemming(
-        in GadgetSet gadgets,
+        in GadgetEnumerable gadgets,
         Lemming lemming,
         LevelPosition levelPosition)
     {
@@ -86,7 +86,7 @@ public static class LemmingActionHelpers
 
     [Pure]
     private static bool HasSolidGadgetAtPosition(
-        in GadgetSet gadgets,
+        in GadgetEnumerable gadgets,
         Lemming lemming,
         LevelPosition levelPosition)
     {
@@ -101,7 +101,7 @@ public static class LemmingActionHelpers
 
     [Pure]
     private static bool HasSteelGadgetAtPosition(
-        in GadgetSet gadgets,
+        in GadgetEnumerable gadgets,
         Lemming lemming,
         LevelPosition levelPosition)
     {

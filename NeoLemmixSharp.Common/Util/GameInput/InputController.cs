@@ -10,7 +10,7 @@ public sealed class InputController : IPerfectHasher<Keys>
     private const int NumberOfKeys = 256;
 
     private readonly List<(Keys, InputAction)> _keyMapping = new();
-    private readonly SimpleSet<Keys> _keys;
+    private readonly SimpleSet<InputController, Keys> _keys;
     private readonly List<InputAction> _inputActions = new();
 
     private int _previousScrollValue;
@@ -27,7 +27,7 @@ public sealed class InputController : IPerfectHasher<Keys>
 
     public InputController()
     {
-        _keys = new SimpleSet<Keys>(this, false);
+        _keys = new SimpleSet<InputController, Keys>(this, false);
 
         LeftMouseButtonAction = CreateInputAction("Left Mouse Button");
         RightMouseButtonAction = CreateInputAction("Right Mouse Button");

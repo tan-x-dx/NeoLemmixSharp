@@ -14,7 +14,7 @@ public interface ILemmingStateChanger
     bool IsApplied(LemmingState lemmingState);
 }
 
-public sealed class LemmingStateChangerHelpers : IPerfectHasher<ILemmingStateChanger>
+public sealed class LemmingStateChangerHelper : IPerfectHasher<ILemmingStateChanger>
 {
     public const int ClimberStateChangerId = 0;
     public const int FloaterStateChangerId = 1;
@@ -47,12 +47,12 @@ public sealed class LemmingStateChangerHelpers : IPerfectHasher<ILemmingStateCha
         FastForwardSkill.Instance
     ];
 
-    private static readonly LemmingStateChangerHelpers Instance = new();
+    private static readonly LemmingStateChangerHelper Instance = new();
 
     public int NumberOfItems => AllLemmingStateChangers.Length;
     public int Hash(ILemmingStateChanger item) => item.LemmingStateChangerId;
 
     public ILemmingStateChanger UnHash(int index) => AllLemmingStateChangers[index];
 
-    public static SimpleSet<ILemmingStateChanger> CreateSimpleSet() => new(Instance, false);
+    public static StateChangerSet CreateSimpleSet() => new(Instance, false);
 }

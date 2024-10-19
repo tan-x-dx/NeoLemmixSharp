@@ -24,8 +24,8 @@ public sealed class LemmingManager :
 
     private readonly SpacialHashGrid<LemmingManager, Lemming> _lemmingPositionHelper;
     private readonly SpacialHashGrid<LemmingManager, Lemming> _zombieSpacialHashGrid;
-    private readonly SimpleSet<Lemming> _lemmingsToZombify;
-    private readonly SimpleSet<Lemming> _allBlockers;
+    private readonly LemmingSet _lemmingsToZombify;
+    private readonly LemmingSet _allBlockers;
 
     private readonly int _totalNumberOfHatchLemmings;
     private readonly int _numberOfPreplacedLemmings;
@@ -40,7 +40,7 @@ public sealed class LemmingManager :
     public int LemmingsSaved { get; private set; }
 
     public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
-    public LemmingSet AllBlockers => _allBlockers.AsSimpleEnumerable();
+    public LemmingEnumerable AllBlockers => _allBlockers.AsSimpleEnumerable();
     public ReadOnlySpan<Lemming> AllItems => new(_lemmings);
 
     public int ScratchSpaceSize => _lemmingPositionHelper.ScratchSpaceSize;
@@ -75,8 +75,8 @@ public sealed class LemmingManager :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        _lemmingsToZombify = new SimpleSet<Lemming>(this, false);
-        _allBlockers = new SimpleSet<Lemming>(this, false);
+        _lemmingsToZombify = new LemmingSet(this, false);
+        _allBlockers = new LemmingSet(this, false);
 
         _totalNumberOfHatchLemmings = totalNumberOfHatchLemmings;
         _numberOfPreplacedLemmings = numberOfPreplacedLemmings;
@@ -242,7 +242,7 @@ public sealed class LemmingManager :
     public void GetAllLemmingsNearRegion(
         Span<uint> scratchSpace,
         LevelRegion levelRegion,
-        out LemmingSet result)
+        out LemmingEnumerable result)
     {
         _lemmingPositionHelper.GetAllItemsNearRegion(scratchSpace, levelRegion, out result);
     }

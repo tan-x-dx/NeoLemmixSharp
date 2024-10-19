@@ -68,7 +68,7 @@ public sealed class GadgetManager :
     public void GetAllGadgetsForPosition(
         Span<uint> scratchSpaceSpan,
         LevelPosition levelPosition,
-        out GadgetSet result)
+        out GadgetEnumerable result)
     {
         _gadgetPositionHelper.GetAllItemsNearPosition(
             scratchSpaceSpan,
@@ -79,7 +79,7 @@ public sealed class GadgetManager :
     public void GetAllGadgetsAtLemmingPosition(
         Span<uint> scratchSpace,
         Lemming lemming,
-        out GadgetSet result)
+        out GadgetEnumerable result)
     {
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
@@ -95,7 +95,7 @@ public sealed class GadgetManager :
     public void GetAllItemsNearRegion(
         Span<uint> scratchSpace,
         Common.Util.LevelRegion levelRegion,
-        out GadgetSet result)
+        out GadgetEnumerable result)
     {
         _gadgetPositionHelper.GetAllItemsNearRegion(
             scratchSpace,

@@ -73,7 +73,7 @@ public sealed class StackerAction : LemmingAction
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     private static bool MayPlaceNextBrick(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming)
     {
         var orientation = lemming.Orientation;
@@ -88,7 +88,7 @@ public sealed class StackerAction : LemmingAction
     }
 
     private static bool LayStackBrick(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming)
     {
         var terrainManager = LevelScreen.TerrainManager;

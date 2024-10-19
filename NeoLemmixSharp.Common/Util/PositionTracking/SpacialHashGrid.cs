@@ -14,7 +14,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
 
-    private readonly SimpleSet<T> _allTrackedItems;
+    private readonly SimpleSet<TPerfectHasher, T> _allTrackedItems;
 
     private readonly int _chunkSizeBitShift;
     private readonly int _numberOfHorizontalChunks;
@@ -38,7 +38,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
-        _allTrackedItems = new SimpleSet<T>(hasher, false);
+        _allTrackedItems = new SimpleSet<TPerfectHasher, T>(hasher, false);
 
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
         var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;

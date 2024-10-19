@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Identity;
+﻿using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -7,9 +6,9 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
 public sealed class LemmingActionFilter : ILemmingFilter
 {
-    private readonly SimpleSet<LemmingAction> _allowedActions = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
+    private readonly LemmingActionSet _allowedActions = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
 
-    public void RegisterActions(SimpleSet<LemmingAction> actions)
+    public void RegisterActions(LemmingActionSet actions)
     {
         _allowedActions.UnionWith(actions);
     }

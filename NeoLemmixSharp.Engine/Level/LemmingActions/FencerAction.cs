@@ -210,7 +210,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
     }
 
     private static bool FencerIndestructibleCheck(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         LevelPosition pos)
     {

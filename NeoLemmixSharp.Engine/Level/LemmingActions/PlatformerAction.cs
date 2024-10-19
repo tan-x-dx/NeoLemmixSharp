@@ -182,7 +182,7 @@ public sealed class PlatformerAction : LemmingAction
     }
 
     private static bool PlatformerTerrainCheck(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         LevelPosition pos)
     {
