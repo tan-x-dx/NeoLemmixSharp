@@ -110,6 +110,8 @@ public static class LevelConstants
     public const int NumberOfExplosionParticleColors = 8;
     public const int NumberOfExplosionParticleColorsMask = NumberOfExplosionParticleColors - 1;
 
+    public static Color ClassicLevelBackgroundColor => new(0x18, 0x18, 0x3C);
+
     public static Color CursorColor1 => new(0xB0, 0xB0, 0xB0);
     public static Color CursorColor2 => PanelRed;
     public static Color CursorColor3 => new(0x60, 0x60, 0x60);
