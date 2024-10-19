@@ -37,14 +37,6 @@ public static class IdEquatableItemHelperMethods
     }
 
     [Pure]
-    public static int GetHashCode<T>(T obj)
-        where T : class, IIdEquatable<T>
-    {
-        return 2965019 * obj.Id +
-               5477821;
-    }
-
-    [Pure]
     public static int Compare<T>(T? x, T? y)
         where T : class, IIdEquatable<T>
     {

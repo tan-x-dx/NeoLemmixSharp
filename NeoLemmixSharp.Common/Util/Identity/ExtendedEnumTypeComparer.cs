@@ -26,7 +26,8 @@ public sealed class ExtendedEnumTypeComparer<T> :
     }
 
     [Pure]
-    public int GetHashCode(T obj) => IdEquatableItemHelperMethods.GetHashCode(obj);
+    public int GetHashCode(T obj) => 2965019 * obj.Id +
+                                     5477821;
 
     [Pure]
     public int Compare(T? x, T? y) => IdEquatableItemHelperMethods.Compare(x, y);
