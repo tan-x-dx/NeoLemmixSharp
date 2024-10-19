@@ -55,10 +55,10 @@ public sealed class ControlPanelTextualData
     {
         var textLength = WriteLemmingInfo(lemming);
 
-        textLength++; // Add a space. Can just increment index as value of zero will not be rendered
-        var spanLength = TextRenderingHelpers.GetNumberStringLength(numberOfLemmingsUnderCursor);
-        Span<char> destSpan = _lemmingActionAndCountString;
-        TextRenderingHelpers.WriteDigits(destSpan.Slice(textLength, spanLength), numberOfLemmingsUnderCursor);
+        _lemmingActionAndCountString[textLength++] = ' '; // Add a space.
+        var numericPartSpanLength = TextRenderingHelpers.GetNumberStringLength(numberOfLemmingsUnderCursor);
+        Span<char> numericPartSpan = _lemmingActionAndCountString;
+        TextRenderingHelpers.WriteDigits(numericPartSpan.Slice(textLength, numericPartSpanLength), numberOfLemmingsUnderCursor);
     }
 
     [Pure]
@@ -66,50 +66,49 @@ public sealed class ControlPanelTextualData
 
     private int WriteLemmingInfo(Lemming lemming)
     {
-        Span<char> destSpan = _lemmingActionAndCountString;
-        destSpan.Clear();
-
         var state = lemming.State;
 
         if (state.HasPermanentSkill && ShowAthleteInformation())
-            return WriteAthleteInformation(destSpan, state);
-
+            return WriteAthleteInformation(state);
+        
         var action = lemming.CurrentAction;
 
-        return action.CursorSelectionPriorityValue == LevelConstants.NonPermanentSkillPriority
-            ? WriteActionName(destSpan, action)
-            : WriteAthleteTypeInformation(destSpan, action, state);
+        return WriteAthleteTypeInformation(action, state);
     }
 
-    private static int WriteAthleteInformation(Span<char> destSpan, LemmingState state)
+    private int WriteAthleteInformation(LemmingState state)
     {
-        destSpan = destSpan[..7];
+        Span<char> destSpan = _lemmingActionAndCountString;
         destSpan.Fill('-');
 
-        if (state.IsSlider) destSpan[0] = 'L';
-        if (state.IsClimber) destSpan[1] = 'C';
-        if (state.IsSwimmer) destSpan[2] = 'S';
-        else if (state.IsAcidLemming) destSpan[2] = 'A';
-        else if (state.IsWaterLemming) destSpan[2] = 'W';
-        if (state.IsFloater) destSpan[3] = 'F';
-        else if (state.IsGlider) destSpan[3] = 'G';
-        if (state.IsDisarmer) destSpan[4] = 'D';
-        if (state.IsZombie) destSpan[5] = 'Z';
-        if (state.IsNeutral) destSpan[6] = 'N';
+        if (state.IsSlider) _lemmingActionAndCountString[0] = 'L';
+        if (state.IsClimber) _lemmingActionAndCountString[1] = 'C';
+        if (state.IsSwimmer) _lemmingActionAndCountString[2] = 'S';
+        else if (state.IsAcidLemming) _lemmingActionAndCountString[2] = 'A';
+        else if (state.IsWaterLemming) _lemmingActionAndCountString[2] = 'W';
+        if (state.IsFloater) _lemmingActionAndCountString[3] = 'F';
+        else if (state.IsGlider) _lemmingActionAndCountString[3] = 'G';
+        if (state.IsDisarmer) _lemmingActionAndCountString[4] = 'D';
+        if (state.IsZombie) _lemmingActionAndCountString[5] = 'Z';
+        if (state.IsNeutral) _lemmingActionAndCountString[6] = 'N';
 
         return 7;
     }
 
-    private static int WriteAthleteTypeInformation(
-        Span<char> destSpan,
+    private int WriteAthleteTypeInformation(
         LemmingAction action,
         LemmingState state)
     {
         ReadOnlySpan<char> sourceSpan;
+        Span<char> destSpan = _lemmingActionAndCountString;
         var isZombie = state.IsZombie;
         var isNeutral = state.IsNeutral;
 
-        if (isZombie && isNeutral)
+        if (action.CursorSelectionPriorityValue == LevelConstants.NonPermanentSkillPriority)
+        {
+            sourceSpan = action.LemmingActionName;
+        }
+        else if (isZombie && isNeutral)
         {
             sourceSpan = LevelConstants.NeutralZombieControlPanelString;
         }
@@ -137,13 +136,6 @@ public sealed class ControlPanelTextualData
 
         sourceSpan.CopyTo(destSpan);
 
-        return sourceSpan.Length;
-    }
-
-    private static int WriteActionName(Span<char> destSpan, LemmingAction action)
-    {
-        var sourceSpan = action.LemmingActionName.AsSpan();
-        sourceSpan.CopyTo(destSpan);
         return sourceSpan.Length;
     }
 
