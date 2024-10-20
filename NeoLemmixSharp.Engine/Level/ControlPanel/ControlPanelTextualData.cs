@@ -62,21 +62,21 @@ public sealed class ControlPanelTextualData
     }
 
     [Pure]
-    private bool ShowAthleteInformation() => _controlPanelParameters.Contains(ControlPanelParameters.ShowAthleteInformation);
+    private bool ShowExpandedAthleteInformation() => _controlPanelParameters.Contains(ControlPanelParameters.ShowExpandedAthleteInformation);
 
     private int WriteLemmingInfo(Lemming lemming)
     {
         var state = lemming.State;
 
-        if (state.HasPermanentSkill && ShowAthleteInformation())
-            return WriteAthleteInformation(state);
+        if (state.HasPermanentSkill && ShowExpandedAthleteInformation())
+            return WriteExpandedAthleteInformation(state);
         
         var action = lemming.CurrentAction;
 
-        return WriteAthleteTypeInformation(action, state);
+        return WriteMinimalAthleteInformation(action, state);
     }
 
-    private int WriteAthleteInformation(LemmingState state)
+    private int WriteExpandedAthleteInformation(LemmingState state)
     {
         Span<char> destSpan = _lemmingActionAndCountString;
         destSpan.Fill('-');
@@ -95,7 +95,7 @@ public sealed class ControlPanelTextualData
         return 7;
     }
 
-    private int WriteAthleteTypeInformation(
+    private int WriteMinimalAthleteInformation(
         LemmingAction action,
         LemmingState state)
     {

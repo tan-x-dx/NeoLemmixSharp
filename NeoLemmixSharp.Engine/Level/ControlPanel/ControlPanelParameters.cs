@@ -13,5 +13,5 @@ public enum ControlPanelParameters
     EnableClassicModeSkillsIfPossible,
     RemoveSkillAssignPaddingButtons,
     ShowSpawnInterval,
-    ShowAthleteInformation
+    ShowExpandedAthleteInformation
 }
