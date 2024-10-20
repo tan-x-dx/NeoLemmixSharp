@@ -8,8 +8,7 @@ public abstract class PageBase : IInitialisable, IDisposable
 {
     private readonly UiSystem _uiSystem;
     protected readonly MenuInputController InputController;
-
-    protected Element UiRoot { get; }
+    protected readonly Element UiRoot;
 
     private bool _isInitialised;
 

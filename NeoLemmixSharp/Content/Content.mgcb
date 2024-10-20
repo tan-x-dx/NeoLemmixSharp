@@ -13,12 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin BuiltEffects/disabled.xnb
-/copy:BuiltEffects/disabled.xnb
-
-#begin BuiltEffects/silhouette.xnb
-/copy:BuiltEffects/silhouette.xnb
-
 #begin cursor/amiga_hr.png
 /importer:TextureImporter
 /processor:TextureProcessor
