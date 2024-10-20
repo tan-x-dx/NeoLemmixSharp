@@ -269,7 +269,7 @@ public sealed class NxlvLevelReader : ILevelReader
         controlPanelParameters.Add(ControlPanelParameters.ShowFrameNudgeButtons);
         controlPanelParameters.Add(ControlPanelParameters.ShowDirectionSelectButtons);
         controlPanelParameters.Add(ControlPanelParameters.ShowClearPhysicsAndReplayButton);
-        controlPanelParameters.Add(ControlPanelParameters.ShowReleaseRateButtonsIfPossible);
+        controlPanelParameters.Add(ControlPanelParameters.ShowSpawnIntervalButtonsIfPossible);
         controlPanelParameters.Add(ControlPanelParameters.EnableClassicModeSkillsIfPossible);
         controlPanelParameters.Add(ControlPanelParameters.RemoveSkillAssignPaddingButtons);
     }
