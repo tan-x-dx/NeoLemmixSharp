@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering.NineSliceRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
@@ -13,6 +14,8 @@ public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeabl
 
     public override GadgetBehaviour GadgetBehaviour { get; }
     public override Orientation Orientation { get; }
+
+    public NineSliceRenderer Renderer { get; set; }
 
     public ResizeableGadget(
         int id,
@@ -85,5 +88,18 @@ public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeabl
         var newSize = new LevelPosition(w, h);
 
         UpdateSize(newSize);
+    }
+
+    private void UpdateSize(LevelPosition size)
+    {
+        PreviousBottomRightPixel = LevelScreen.NormalisePosition(BottomRightPixel);
+
+        GadgetBounds.W = size.X;
+        GadgetBounds.H = size.Y;
+
+        BottomRightPixel = LevelScreen.NormalisePosition(GadgetBounds.BottomRight);
+
+        LevelScreen.GadgetManager.UpdateGadgetPosition(this);
+        Renderer.RecomputeNineSliceProportions();
     }
 }

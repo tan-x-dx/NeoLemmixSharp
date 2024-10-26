@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering.NineSliceRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
@@ -17,6 +18,7 @@ public sealed class MetalGrateGadget : HitBoxGadget, IReactiveGadget, IResizeabl
     public override Orientation Orientation => DownOrientation.Instance;
     public MetalGrateState CurrentState { get; private set; }
 
+    public NineSliceRenderer Renderer { private get; set; }
     public MetalGrateGadgetInput Input { get; }
 
     public MetalGrateGadget(
