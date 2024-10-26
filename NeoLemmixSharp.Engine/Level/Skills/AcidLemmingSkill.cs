@@ -34,7 +34,7 @@ public sealed class AcidLemmingSkill : LemmingSkill, ILemmingStateChanger
         return ActionsThatCanBeAssignedPermanentSkill();
     }
 
-    public int LemmingStateChangerId => LemmingStateChangerHelpers.AcidLemmingStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHelper.AcidLemmingStateChangerId;
     public void SetLemmingState(LemmingState lemmingState, bool status)
     {
         lemmingState.IsAcidLemming = status;

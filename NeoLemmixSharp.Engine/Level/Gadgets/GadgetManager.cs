@@ -20,7 +20,7 @@ public sealed class GadgetManager :
     IDisposable
 {
     private readonly GadgetBase[] _allGadgets;
-    private readonly SpacialHashGrid<HitBoxGadget> _gadgetPositionHelper;
+    private readonly SpacialHashGrid<GadgetManager, HitBoxGadget> _gadgetPositionHelper;
 
     public ReadOnlySpan<GadgetBase> AllItems => new(_allGadgets);
 
@@ -33,7 +33,7 @@ public sealed class GadgetManager :
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
         Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
 
-        _gadgetPositionHelper = new SpacialHashGrid<HitBoxGadget>(
+        _gadgetPositionHelper = new SpacialHashGrid<GadgetManager, HitBoxGadget>(
             this,
             LevelConstants.GadgetPositionChunkSize,
             horizontalBoundaryBehaviour,
@@ -68,7 +68,7 @@ public sealed class GadgetManager :
     public void GetAllGadgetsForPosition(
         Span<uint> scratchSpaceSpan,
         LevelPosition levelPosition,
-        out GadgetSet result)
+        out GadgetEnumerable result)
     {
         _gadgetPositionHelper.GetAllItemsNearPosition(
             scratchSpaceSpan,
@@ -79,23 +79,23 @@ public sealed class GadgetManager :
     public void GetAllGadgetsAtLemmingPosition(
         Span<uint> scratchSpace,
         Lemming lemming,
-        out GadgetSet result)
+        out GadgetEnumerable result)
     {
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
 
-        var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
+        var lemmingPositionRegion = new Common.Util.LevelRegion(anchorPixel, footPixel);
 
         _gadgetPositionHelper.GetAllItemsNearRegion(
             scratchSpace,
-            levelPositionPair,
+            lemmingPositionRegion,
             out result);
     }
 
     public void GetAllItemsNearRegion(
         Span<uint> scratchSpace,
-        LevelPositionPair levelRegion,
-        out GadgetSet result)
+        Common.Util.LevelRegion levelRegion,
+        out GadgetEnumerable result)
     {
         _gadgetPositionHelper.GetAllItemsNearRegion(
             scratchSpace,
@@ -130,11 +130,11 @@ public sealed class GadgetManager :
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
 
-        var levelPositionPair = new LevelPositionPair(anchorPixel, footPixel);
+        var lemmingPositionRegion = new Common.Util.LevelRegion(anchorPixel, footPixel);
 
         _gadgetPositionHelper.GetAllItemsNearRegion(
             scratchSpaceSpan,
-            levelPositionPair,
+            lemmingPositionRegion,
             out var gadgetSet);
 
         foreach (var gadget in gadgetSet)

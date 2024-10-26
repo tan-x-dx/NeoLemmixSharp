@@ -9,9 +9,9 @@ public enum ControlPanelParameters
     ShowFrameNudgeButtons,
     ShowDirectionSelectButtons,
     ShowClearPhysicsAndReplayButton,
-    ShowReleaseRateButtonsIfPossible,
+    ShowSpawnIntervalButtonsIfPossible,
+    ShowSpawnIntervalInsteadOfReleaseRate,
     EnableClassicModeSkillsIfPossible,
     RemoveSkillAssignPaddingButtons,
-    ShowSpawnInterval,
-    ShowAthleteInformation
+    ShowExpandedAthleteInformation
 }

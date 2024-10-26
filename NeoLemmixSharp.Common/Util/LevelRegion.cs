@@ -3,7 +3,13 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
-public readonly ref struct LevelPositionPair
+/// <summary>
+/// <para>Represents a rectangular region of points within a level.</para>
+/// <para>A well-formed <see cref="LevelRegion"/> has the P1 points less than or equal to the P2 points.
+/// The constructors will ensure a well-formed <see cref="LevelRegion"/> is created.</para>
+/// <para>Note that a <see cref="LevelRegion"/> can never be empty - the smallest region is 1x1.</para>
+/// </summary>
+public readonly ref struct LevelRegion
 {
     public readonly int P1X;
     public readonly int P1Y;
@@ -12,7 +18,7 @@ public readonly ref struct LevelPositionPair
     public readonly int P2Y;
 
     [DebuggerStepThrough]
-    public LevelPositionPair(int x1, int y1, int x2, int y2)
+    public LevelRegion(int x1, int y1, int x2, int y2)
     {
         if (x1 < x2)
         {
@@ -38,7 +44,7 @@ public readonly ref struct LevelPositionPair
     }
 
     [DebuggerStepThrough]
-    public LevelPositionPair(LevelPosition p1, LevelPosition p2)
+    public LevelRegion(LevelPosition p1, LevelPosition p2)
     {
         if (p1.X < p2.X)
         {
@@ -64,7 +70,7 @@ public readonly ref struct LevelPositionPair
     }
 
     [DebuggerStepThrough]
-    public LevelPositionPair(ReadOnlySpan<LevelPosition> positions)
+    public LevelRegion(ReadOnlySpan<LevelPosition> positions)
     {
         var minX = int.MaxValue;
         var minY = int.MaxValue;
@@ -93,7 +99,7 @@ public readonly ref struct LevelPositionPair
     public LevelPosition GetBottomRightPosition() => new(P2X, P2Y);
 
     [DebuggerStepThrough]
-    public bool Overlaps(LevelPositionPair other)
+    public bool Overlaps(LevelRegion other)
     {
         return other.P1X <= P2X &&
                P1X <= other.P2X &&

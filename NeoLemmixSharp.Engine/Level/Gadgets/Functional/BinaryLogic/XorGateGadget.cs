@@ -9,7 +9,7 @@ public sealed class XorGateGadget : BinaryLogicGateGadget
 
     public XorGateGadget(
         int id,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IControlledAnimationGadgetRenderer? renderer,
         LogicGateGadgetInput inputA,
         LogicGateGadgetInput inputB)

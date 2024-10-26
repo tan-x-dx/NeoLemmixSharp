@@ -19,7 +19,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
         ControlPanelParameterSet controlPanelParameters,
         HatchGroup hatchGroup)
     {
-        var showSpawnInterval = controlPanelParameters.Contains(ControlPanelParameters.ShowSpawnInterval);
+        var showSpawnInterval = controlPanelParameters.Contains(ControlPanelParameters.ShowSpawnIntervalInsteadOfReleaseRate);
 
         var spawnIntervalMinValueGetter = new SpawnIntervalMinValueGetter(
             hatchGroup,
@@ -45,7 +45,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
     {
         var spawnIntervalCurrentValueGetter = new SpawnIntervalCurrentValueGetter(
             hatchGroup,
-            controlPanelParameters.Contains(ControlPanelParameters.ShowSpawnInterval));
+            controlPanelParameters.Contains(ControlPanelParameters.ShowSpawnIntervalInsteadOfReleaseRate));
 
         return new SpawnIntervalButton(
             buttonId,
@@ -61,7 +61,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
         ControlPanelParameterSet controlPanelParameters,
         HatchGroup hatchGroup)
     {
-        var showSpawnInterval = controlPanelParameters.Contains(ControlPanelParameters.ShowSpawnInterval);
+        var showSpawnInterval = controlPanelParameters.Contains(ControlPanelParameters.ShowSpawnIntervalInsteadOfReleaseRate);
 
         var spawnIntervalMaxValueGetter = new SpawnIntervalMaxValueGetter(
             hatchGroup,

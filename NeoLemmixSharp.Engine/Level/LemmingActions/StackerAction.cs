@@ -26,7 +26,7 @@ public sealed class StackerAction : LemmingAction
     {
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             lemming.Orientation.MoveDown(lemming.LevelPosition, 1),
             lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX * 3, 1 + LevelConstants.NumberOfStackerBricks));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
@@ -73,7 +73,7 @@ public sealed class StackerAction : LemmingAction
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     private static bool MayPlaceNextBrick(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming)
     {
         var orientation = lemming.Orientation;
@@ -88,7 +88,7 @@ public sealed class StackerAction : LemmingAction
     }
 
     private static bool LayStackBrick(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming)
     {
         var terrainManager = LevelScreen.TerrainManager;

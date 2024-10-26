@@ -24,7 +24,7 @@ public sealed class GadgetMover : GadgetBase, IReactiveGadget
 
     public GadgetMover(
         int id,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IControlledAnimationGadgetRenderer? renderer,
         IMoveableGadget[] gadgets,
         int tickDelay,

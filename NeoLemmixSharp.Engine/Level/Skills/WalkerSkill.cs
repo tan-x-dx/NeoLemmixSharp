@@ -30,7 +30,7 @@ public sealed class WalkerSkill : LemmingSkill
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             lemmingPosition,
             testRight);
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
@@ -70,7 +70,7 @@ public sealed class WalkerSkill : LemmingSkill
     }
 
     private static bool LemmingIsForcedToChangeDirection(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming)
     {
         foreach (var blocker in LevelScreen.LemmingManager.AllBlockers)

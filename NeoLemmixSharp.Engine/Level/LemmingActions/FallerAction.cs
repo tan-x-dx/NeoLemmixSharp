@@ -38,7 +38,7 @@ public sealed class FallerAction : LemmingAction
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             lemmingPosition,
             orientation.MoveDown(lemmingPosition, LevelConstants.DefaultFallStep + 1));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
@@ -93,7 +93,7 @@ public sealed class FallerAction : LemmingAction
     protected override int BottomRightBoundsDeltaY(int animationFrame) => 0;
 
     [Pure]
-    private static bool IsFallFatal(in GadgetSet gadgetSet, Lemming lemming)
+    private static bool IsFallFatal(in GadgetEnumerable gadgetEnumerable, Lemming lemming)
     {
         if (lemming.State.HasSpecialFallingBehaviour)
             return false;
@@ -101,7 +101,7 @@ public sealed class FallerAction : LemmingAction
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
 
-        foreach (var gadget in gadgetSet)
+        foreach (var gadget in gadgetEnumerable)
         {
             if (!gadget.MatchesPosition(anchorPixel) &&
                 !gadget.MatchesPosition(footPixel))

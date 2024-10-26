@@ -46,7 +46,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             orientation.Move(lemmingPosition, 0, LevelConstants.MaxStepUp + 1),
             orientation.Move(lemmingPosition, 2 * dx, -LevelConstants.DefaultFallStep - 1));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
@@ -190,7 +190,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     }
 
     private static bool BasherIndestructibleCheck(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         LevelPosition pos)
     {
@@ -218,7 +218,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     }
 
     public static bool StepUpCheck(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         LevelPosition pos,
         Orientation orientation,

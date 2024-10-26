@@ -38,7 +38,7 @@ public sealed class SwimmerAction : LemmingAction
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             orientation.Move(lemmingPosition, dx, 2),
             orientation.MoveDown(lemmingPosition, 4));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
@@ -133,9 +133,9 @@ public sealed class SwimmerAction : LemmingAction
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
 
     [Pure]
-    private static bool WaterAt(in GadgetSet gadgetSet, LevelPosition lemmingPosition)
+    private static bool WaterAt(in GadgetEnumerable gadgetEnumerable, LevelPosition lemmingPosition)
     {
-        foreach (var gadget in gadgetSet)
+        foreach (var gadget in gadgetEnumerable)
         {
             if (gadget.GadgetBehaviour == WaterGadgetBehaviour.Instance &&
                 gadget.MatchesPosition(lemmingPosition))
@@ -149,7 +149,7 @@ public sealed class SwimmerAction : LemmingAction
     /// Returns 0 if the lemming may not dive down. Otherwise return the amount of pixels the lemming dives
     /// </summary>
     private static int LemDive(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         LevelPosition lemmingPosition)
     {
@@ -188,7 +188,7 @@ public sealed class SwimmerAction : LemmingAction
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 2),
             orientation.MoveDown(lemming.LevelPosition, 4));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);

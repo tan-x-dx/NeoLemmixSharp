@@ -24,7 +24,7 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget, IControlledA
     public StatefulGadget(
         int id,
         Orientation orientation,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IControlledAnimationGadgetRenderer? renderer,
         GadgetState[] states,
         ItemTracker<Lemming> lemmingTracker)

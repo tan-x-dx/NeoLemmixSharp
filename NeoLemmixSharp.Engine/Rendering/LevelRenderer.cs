@@ -5,8 +5,10 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering.NineSliceRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -18,7 +20,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     private readonly GraphicsDevice _graphicsDevice;
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
-    private readonly SpacialHashGrid<IViewportObjectRenderer> _spriteSpacialHashGrid;
+    private readonly SpacialHashGrid<LevelRenderer, IViewportObjectRenderer> _spriteSpacialHashGrid;
     private readonly uint[] _spriteSetScratchSpace;
 
     private readonly List<IViewportObjectRenderer> _orderedSprites;
@@ -40,7 +42,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
 
         _orderedSprites = orderedSprites;
 
-        _spriteSpacialHashGrid = new SpacialHashGrid<IViewportObjectRenderer>(
+        _spriteSpacialHashGrid = new SpacialHashGrid<LevelRenderer, IViewportObjectRenderer>(
             this,
             ChunkSizeType.ChunkSize64,
             horizontalBoundaryBehaviour,
@@ -112,7 +114,7 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         {
             foreach (var verticalRenderInterval in verticalRenderIntervals)
             {
-                var region = new LevelPositionPair(
+                var region = new LevelRegion(
                     horizontalRenderInterval.ViewPortStart,
                     verticalRenderInterval.ViewPortStart,
                     horizontalRenderInterval.ViewPortStart + horizontalRenderInterval.ViewPortLength - 1,

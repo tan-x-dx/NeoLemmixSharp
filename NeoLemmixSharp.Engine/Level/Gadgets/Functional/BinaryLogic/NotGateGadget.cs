@@ -18,7 +18,7 @@ public sealed class NotGateGadget : GadgetBase, ILogicGateGadget
 
     public NotGateGadget(
         int id,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IControlledAnimationGadgetRenderer? renderer,
         LogicGateGadgetInput input)
         : base(id, gadgetBounds, renderer)

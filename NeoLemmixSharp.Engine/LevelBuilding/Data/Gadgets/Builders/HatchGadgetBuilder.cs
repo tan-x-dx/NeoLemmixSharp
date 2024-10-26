@@ -51,7 +51,7 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
 
         var spawnPoint = new LevelPosition(transformedSpawnX, transformedSpawnY);
 
-        var gadgetBounds = new RectangularLevelRegion(
+        var gadgetBounds = new RectangularHitBoxRegion(
             gadgetData.X,
             gadgetData.Y,
             transformedWidth,

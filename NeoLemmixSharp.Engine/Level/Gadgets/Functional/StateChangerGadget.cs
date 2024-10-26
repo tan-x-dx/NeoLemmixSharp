@@ -23,7 +23,7 @@ public sealed class StateChangerGadget : GadgetBase, IReactiveGadget
 
     public StateChangerGadget(
         int id,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IControlledAnimationGadgetRenderer? renderer,
         StatefulGadget gadget,
         int newState)

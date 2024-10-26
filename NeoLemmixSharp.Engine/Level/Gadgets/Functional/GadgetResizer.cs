@@ -24,7 +24,7 @@ public sealed class GadgetResizer : GadgetBase, IReactiveGadget
 
     public GadgetResizer(
         int id,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IControlledAnimationGadgetRenderer? renderer,
         IResizeableGadget[] gadgets,
         int tickDelay,

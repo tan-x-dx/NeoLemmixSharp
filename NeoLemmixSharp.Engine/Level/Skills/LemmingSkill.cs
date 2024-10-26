@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 {
     private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
-    private static readonly SimpleSet<LemmingSkill> ClassicSkills = GetClassicSkills();
+    private static readonly LemmingSkillSet ClassicSkills = GetClassicSkills();
 
     public static int NumberOfItems => LemmingSkills.Length;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
@@ -64,7 +64,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
         return result;
     }
 
-    private static SimpleSet<LemmingSkill> GetClassicSkills()
+    private static LemmingSkillSet GetClassicSkills()
     {
         var result = ExtendedEnumTypeComparer<LemmingSkill>.CreateSimpleSet();
 
@@ -80,7 +80,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
         return result;
     }
 
-    private readonly SimpleSet<LemmingAction> _assignableActions;
+    private readonly LemmingActionSet _assignableActions;
     public readonly int Id;
     public readonly string LemmingSkillName;
 

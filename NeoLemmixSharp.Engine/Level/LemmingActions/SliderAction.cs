@@ -51,7 +51,7 @@ public sealed class SliderAction : LemmingAction
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             orientation.Move(lemmingPosition, -dx, -1),
             orientation.Move(lemmingPosition, dx, LevelConstants.MaxStepUp + 1));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
@@ -104,7 +104,7 @@ public sealed class SliderAction : LemmingAction
         return false;
 
         bool SliderHasPixelAt(
-            in GadgetSet gadgetsNearRegion1,
+            in GadgetEnumerable gadgetsNearRegion1,
             LevelPosition testPosition)
         {
             return PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, testPosition) ||

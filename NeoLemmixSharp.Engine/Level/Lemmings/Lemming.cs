@@ -114,9 +114,9 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     public void Initialise()
     {
         State.IsActive = true;
-        var levelPositionPair = CurrentAction.GetLemmingBounds(this);
-        TopLeftPixel = levelPositionPair.GetTopLeftPosition();
-        BottomRightPixel = levelPositionPair.GetBottomRightPosition();
+        var lemmingBounds = CurrentAction.GetLemmingBounds(this);
+        TopLeftPixel = lemmingBounds.GetTopLeftPosition();
+        BottomRightPixel = lemmingBounds.GetBottomRightPosition();
 
         PreviousLevelPosition = LevelPosition;
         PreviousTopLeftPixel = TopLeftPixel;
@@ -248,10 +248,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         PreviousBottomRightPixel = BottomRightPixel;
 
         var result = CurrentAction.UpdateLemming(this);
-        var levelPositionPair = CurrentAction.GetLemmingBounds(this);
+        var lemmingBounds = CurrentAction.GetLemmingBounds(this);
 
-        TopLeftPixel = levelPositionPair.GetTopLeftPosition();
-        BottomRightPixel = levelPositionPair.GetBottomRightPosition();
+        TopLeftPixel = lemmingBounds.GetTopLeftPosition();
+        BottomRightPixel = lemmingBounds.GetBottomRightPosition();
 
         return result;
     }
@@ -303,7 +303,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         p = PreviousAction.GetFootPosition(this, p);
         checkPositions[3] = p;
 
-        var checkPositionsBounds = new LevelPositionPair(checkPositions[..4]);
+        var checkPositionsBounds = new LevelRegion(checkPositions[..4]);
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
@@ -319,9 +319,9 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         return CheckGadgetHitBoxCollisions(in gadgetSet, checkPositions[..length]);
     }
 
-    private bool CheckGadgetHitBoxCollisions(in GadgetSet gadgetSet, ReadOnlySpan<LevelPosition> intermediatePositions)
+    private bool CheckGadgetHitBoxCollisions(in GadgetEnumerable gadgetEnumerable, ReadOnlySpan<LevelPosition> intermediatePositions)
     {
-        foreach (var gadget in gadgetSet)
+        foreach (var gadget in gadgetEnumerable)
         {
             foreach (var anchorPosition in intermediatePositions)
             {
@@ -339,10 +339,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
                 LevelPosition = anchorPosition;
 
-                var levelPositionPair = afterAction.GetLemmingBounds(this);
+                var lemmingBounds = afterAction.GetLemmingBounds(this);
 
-                TopLeftPixel = levelPositionPair.GetTopLeftPosition();
-                BottomRightPixel = levelPositionPair.GetBottomRightPosition();
+                TopLeftPixel = lemmingBounds.GetTopLeftPosition();
+                BottomRightPixel = lemmingBounds.GetBottomRightPosition();
                 return false;
             }
         }

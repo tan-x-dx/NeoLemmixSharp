@@ -15,7 +15,7 @@ public sealed class FastForwardSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public int LemmingStateChangerId => LemmingStateChangerHelpers.FastForwardStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHelper.FastForwardStateChangerId;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

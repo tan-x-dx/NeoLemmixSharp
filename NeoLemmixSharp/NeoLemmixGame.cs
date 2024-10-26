@@ -169,7 +169,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         LengthMax<char>(LevelConstants.NeutralControlPanelString);
         LengthMax<char>(LevelConstants.ZombieControlPanelString);
-        LengthMax<char>(LevelConstants.NeutralControlPanelZombie);
+        LengthMax<char>(LevelConstants.NeutralZombieControlPanelString);
         LengthMax<char>(LevelConstants.AthleteControlPanelString2Skills);
         LengthMax<char>(LevelConstants.AthleteControlPanelString3Skills);
         LengthMax<char>(LevelConstants.AthleteControlPanelString4Skills);

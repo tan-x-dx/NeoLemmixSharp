@@ -92,7 +92,7 @@ public sealed class JumperAction : LemmingAction
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx, 12));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
@@ -151,7 +151,7 @@ public sealed class JumperAction : LemmingAction
     }
 
     private static bool DoWallCheck(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming)
     {
         var orientation = lemming.Orientation;
@@ -221,7 +221,7 @@ public sealed class JumperAction : LemmingAction
     }
 
     private static bool DoHeadCheck(
-        in GadgetSet gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         bool firstStepSpecialHandling)
     {
@@ -246,7 +246,7 @@ public sealed class JumperAction : LemmingAction
     }
 
     private void DoJumperTriggerChecks(
-        in GadgetSet gadgetsNearRegion)
+        in GadgetEnumerable gadgetsNearRegion)
     {
         foreach (var gadget in gadgetsNearRegion)
         {

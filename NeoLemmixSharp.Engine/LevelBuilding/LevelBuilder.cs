@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
@@ -6,16 +7,21 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
+using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class LevelBuilder : IDisposable
+public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRenderer>
 {
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
@@ -72,7 +78,7 @@ public sealed class LevelBuilder : IDisposable
 
         var levelCursor = new LevelCursor();
 
-        var levelTimer = LevelBuildingHelpers.GetLevelTimer(levelData);
+        var levelTimer = GetLevelTimer(levelData);
 
         var controlPanel = new LevelControlPanel(controlPanelParameters, inputController, lemmingManager, skillSetManager);
         // Need to call this here instead of initialising in LevelScreen
@@ -98,13 +104,13 @@ public sealed class LevelBuilder : IDisposable
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(_contentManager);
 
         var levelCursorSprite = CommonSprites.GetLevelCursorSprite(levelCursor);
-        var backgroundRenderer = LevelBuildingHelpers.GetBackgroundRenderer(levelData);
+        var backgroundRenderer = GetBackgroundRenderer(levelData);
 
         _levelObjectAssembler.GetLevelSprites(
             out var behindTerrainSprites,
             out var inFrontOfTerrainSprites,
             out var lemmingSprites);
-        var orderedLevelSprites = LevelBuildingHelpers.GetSortedRenderables(
+        var orderedLevelSprites = GetSortedRenderables(
             behindTerrainSprites,
             inFrontOfTerrainSprites,
             terrainRenderer,
@@ -144,6 +150,71 @@ public sealed class LevelBuilder : IDisposable
             levelViewport,
             rewindManager,
             levelScreenRenderer);
+    }
+
+    private static LevelTimer GetLevelTimer(LevelData levelData)
+    {
+        var primaryObjective = levelData.LevelObjectives.Find(lo => lo.LevelObjectiveId == 0)!;
+        foreach (var requirement in primaryObjective.Requirements)
+        {
+            if (requirement is TimeRequirement timeRequirement)
+                return new LevelTimer(timeRequirement.TimeLimitInSeconds);
+        }
+
+        return new LevelTimer();
+    }
+
+    private static IBackgroundRenderer GetBackgroundRenderer(
+        LevelData levelData)
+    {
+        var backgroundData = levelData.LevelBackground;
+        if (backgroundData is null)
+            return new SolidColorBackgroundRenderer(LevelConstants.ClassicLevelBackgroundColor);
+
+        if (backgroundData.IsSolidColor)
+            return new SolidColorBackgroundRenderer(backgroundData.Color);
+
+        return new SolidColorBackgroundRenderer(new Color(24, 24, 60));
+    }
+
+    private List<IViewportObjectRenderer> GetSortedRenderables(
+        List<IViewportObjectRenderer> behindTerrainSprites,
+        List<IViewportObjectRenderer> inFrontOfTerrainSprites,
+        TerrainRenderer terrainRenderer,
+        List<IViewportObjectRenderer> lemmingSprites)
+    {
+        var listCapacity = behindTerrainSprites.Count +
+                           1 + // Terrain renderer
+                           inFrontOfTerrainSprites.Count +
+                           lemmingSprites.Count;
+        var result = new List<IViewportObjectRenderer>(listCapacity);
+
+        behindTerrainSprites.Sort(this);
+        inFrontOfTerrainSprites.Sort(this);
+        lemmingSprites.Sort(this);
+
+        result.AddRange(behindTerrainSprites);
+        result.Add(terrainRenderer);
+        result.AddRange(inFrontOfTerrainSprites);
+        result.AddRange(lemmingSprites);
+
+        var resultSpan = CollectionsMarshal.AsSpan(result);
+
+        var i = 0;
+        foreach (var renderer in resultSpan)
+        {
+            renderer.RendererId = i++;
+        }
+
+        return result;
+    }
+
+    int IComparer<IViewportObjectRenderer>.Compare(IViewportObjectRenderer? x, IViewportObjectRenderer? y)
+    {
+        if (ReferenceEquals(x, y)) return 0;
+        if (y is null) return 1;
+        if (x is null) return -1;
+        return x.ItemId.CompareTo(y.ItemId);
     }
 
     public void Dispose()

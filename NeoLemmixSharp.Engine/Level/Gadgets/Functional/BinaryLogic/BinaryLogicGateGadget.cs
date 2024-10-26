@@ -18,7 +18,7 @@ public abstract class BinaryLogicGateGadget : GadgetBase, ILogicGateGadget
 
     protected BinaryLogicGateGadget(
         int id,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IControlledAnimationGadgetRenderer? renderer,
         LogicGateGadgetInput inputA,
         LogicGateGadgetInput inputB)

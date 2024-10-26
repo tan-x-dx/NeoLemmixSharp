@@ -110,6 +110,8 @@ public static class LevelConstants
     public const int NumberOfExplosionParticleColors = 8;
     public const int NumberOfExplosionParticleColorsMask = NumberOfExplosionParticleColors - 1;
 
+    public static Color ClassicLevelBackgroundColor => new(0x18, 0x18, 0x3C);
+
     public static Color CursorColor1 => new(0xB0, 0xB0, 0xB0);
     public static Color CursorColor2 => PanelRed;
     public static Color CursorColor3 => new(0x60, 0x60, 0x60);
@@ -127,7 +129,7 @@ public static class LevelConstants
 
     public const string NeutralControlPanelString = "NEUTRAL";
     public const string ZombieControlPanelString = "ZOMBIE";
-    public const string NeutralControlPanelZombie = "N-ZOMBIE";
+    public const string NeutralZombieControlPanelString = "N-ZOMBIE";
     public const string AthleteControlPanelString2Skills = "ATHLETE";
     public const string AthleteControlPanelString3Skills = "TRIATHLETE";
     public const string AthleteControlPanelString4Skills = "TETRATHLETE";

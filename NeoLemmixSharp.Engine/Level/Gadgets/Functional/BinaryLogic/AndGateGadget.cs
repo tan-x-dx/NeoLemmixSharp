@@ -7,7 +7,7 @@ public sealed class AndGateGadget : BinaryLogicGateGadget
 {
     public AndGateGadget(
         int id,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IControlledAnimationGadgetRenderer? renderer,
         LogicGateGadgetInput inputA,
         LogicGateGadgetInput inputB)

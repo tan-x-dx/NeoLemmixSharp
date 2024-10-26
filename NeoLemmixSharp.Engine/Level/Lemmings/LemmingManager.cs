@@ -22,10 +22,10 @@ public sealed class LemmingManager :
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
 
-    private readonly SpacialHashGrid<Lemming> _lemmingPositionHelper;
-    private readonly SpacialHashGrid<Lemming> _zombieSpacialHashGrid;
-    private readonly SimpleSet<Lemming> _lemmingsToZombify;
-    private readonly SimpleSet<Lemming> _allBlockers;
+    private readonly SpacialHashGrid<LemmingManager, Lemming> _lemmingPositionHelper;
+    private readonly SpacialHashGrid<LemmingManager, Lemming> _zombieSpacialHashGrid;
+    private readonly LemmingSet _lemmingsToZombify;
+    private readonly LemmingSet _allBlockers;
 
     private readonly int _totalNumberOfHatchLemmings;
     private readonly int _numberOfPreplacedLemmings;
@@ -40,7 +40,7 @@ public sealed class LemmingManager :
     public int LemmingsSaved { get; private set; }
 
     public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
-    public LemmingSet AllBlockers => _allBlockers.AsSimpleEnumerable();
+    public LemmingEnumerable AllBlockers => _allBlockers.AsSimpleEnumerable();
     public ReadOnlySpan<Lemming> AllItems => new(_lemmings);
 
     public int ScratchSpaceSize => _lemmingPositionHelper.ScratchSpaceSize;
@@ -64,19 +64,19 @@ public sealed class LemmingManager :
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Lemming>(_lemmings));
         Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
 
-        _lemmingPositionHelper = new SpacialHashGrid<Lemming>(
+        _lemmingPositionHelper = new SpacialHashGrid<LemmingManager, Lemming>(
             this,
             LevelConstants.LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
-        _zombieSpacialHashGrid = new SpacialHashGrid<Lemming>(
+        _zombieSpacialHashGrid = new SpacialHashGrid<LemmingManager, Lemming>(
             this,
             LevelConstants.LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        _lemmingsToZombify = new SimpleSet<Lemming>(this, false);
-        _allBlockers = new SimpleSet<Lemming>(this, false);
+        _lemmingsToZombify = new LemmingSet(this, false);
+        _allBlockers = new LemmingSet(this, false);
 
         _totalNumberOfHatchLemmings = totalNumberOfHatchLemmings;
         _numberOfPreplacedLemmings = numberOfPreplacedLemmings;
@@ -241,8 +241,8 @@ public sealed class LemmingManager :
 
     public void GetAllLemmingsNearRegion(
         Span<uint> scratchSpace,
-        LevelPositionPair levelRegion,
-        out LemmingSet result)
+        LevelRegion levelRegion,
+        out LemmingEnumerable result)
     {
         _lemmingPositionHelper.GetAllItemsNearRegion(scratchSpace, levelRegion, out result);
     }
@@ -275,7 +275,7 @@ public sealed class LemmingManager :
             var blockerTopLeft = blocker.TopLeftPixel;
             var blockerBottomRight = blocker.BottomRightPixel;
 
-            var secondBounds = new LevelPositionPair(blockerTopLeft, blockerBottomRight);
+            var secondBounds = new LevelRegion(blockerTopLeft, blockerBottomRight);
 
             if (firstBounds.Overlaps(secondBounds))
                 return false;
@@ -302,7 +302,7 @@ public sealed class LemmingManager :
         Debug.Assert(!lemming.State.IsZombie);
 
         Span<uint> scratchSpaceSpan = stackalloc uint[_lemmingPositionHelper.ScratchSpaceSize];
-        var checkRegion = new LevelPositionPair(lemming.TopLeftPixel, lemming.BottomRightPixel);
+        var checkRegion = new LevelRegion(lemming.TopLeftPixel, lemming.BottomRightPixel);
         _zombieSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, checkRegion, out var nearbyZombies);
 
         if (nearbyZombies.Count == 0)
@@ -312,7 +312,7 @@ public sealed class LemmingManager :
         {
             Debug.Assert(zombie.State.IsZombie);
 
-            var zombieRegion = new LevelPositionPair(zombie.TopLeftPixel, zombie.BottomRightPixel);
+            var zombieRegion = new LevelRegion(zombie.TopLeftPixel, zombie.BottomRightPixel);
 
             if (checkRegion.Overlaps(zombieRegion))
             {

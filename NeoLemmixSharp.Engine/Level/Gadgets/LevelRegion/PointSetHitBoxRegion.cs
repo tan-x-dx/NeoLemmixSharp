@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
-public sealed class PointSetLevelRegion : ILevelRegion
+public sealed class PointSetHitBoxRegion : IHitBoxRegion
 {
     private const int DimensionCutoffSize = 128;
     private const int AreaCutoffSize = 128 * 128;
@@ -16,12 +16,12 @@ public sealed class PointSetLevelRegion : ILevelRegion
     private readonly int _minimumBoundingBoxWidth;
     private readonly int _minimumBoundingBoxHeight;
 
-    public PointSetLevelRegion(ReadOnlySpan<LevelPosition> points)
+    public PointSetHitBoxRegion(ReadOnlySpan<LevelPosition> points)
     {
         if (points.Length == 0)
-            throw new ArgumentException("Cannot create PointSetLevelRegion with zero points!");
+            throw new ArgumentException("Cannot create PointSetHitBoxRegion with zero points!");
 
-        var minimumBoundingBox = new LevelPositionPair(points);
+        var minimumBoundingBox = new Common.Util.LevelRegion(points);
 
         _minimumBoundingBoxWidth = 1 + minimumBoundingBox.P2X - minimumBoundingBox.P1X;
         _minimumBoundingBoxHeight = 1 + minimumBoundingBox.P2Y - minimumBoundingBox.P1Y;

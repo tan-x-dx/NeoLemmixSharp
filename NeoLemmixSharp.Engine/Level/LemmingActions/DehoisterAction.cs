@@ -98,7 +98,7 @@ public sealed class DehoisterAction : LemmingAction
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
 
-        var gadgetTestRegion = new LevelPositionPair(
+        var gadgetTestRegion = new LevelRegion(
             orientation.Move(nextPosition, dx, 1),
             orientation.Move(nextPosition, -dx, -4));
         gadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);

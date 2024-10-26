@@ -10,14 +10,14 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 public sealed class SawBladeHitMask
 {
     private readonly TerrainEraseMask _terrainEraseMask;
-    private readonly PointSetLevelRegion _hitBox;
+    private readonly PointSetHitBoxRegion _hitBox;
 
     public SawBladeHitMask(
         IDestructionMask destructionMask,
         LevelPosition[] mask)
     {
         _terrainEraseMask = new TerrainEraseMask(destructionMask, new LevelPosition(0, 0), mask);
-        _hitBox = new PointSetLevelRegion(mask);
+        _hitBox = new PointSetHitBoxRegion(mask);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

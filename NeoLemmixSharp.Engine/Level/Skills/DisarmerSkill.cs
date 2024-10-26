@@ -14,7 +14,7 @@ public sealed class DisarmerSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public int LemmingStateChangerId => LemmingStateChangerHelpers.DisarmerStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHelper.DisarmerStateChangerId;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

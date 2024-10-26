@@ -83,8 +83,5 @@ public static class RenderingHelpers
             renderLayer);
     }
 
-    public static Vector2 GetSize(this Texture2D texture)
-    {
-        return new Vector2(texture.Width, texture.Height);
-    }
+    public static Vector2 GetSize(this Texture2D texture) => new Vector2(texture.Width, texture.Height);
 }

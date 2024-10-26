@@ -7,8 +7,8 @@ public sealed class PerfectEnumHasher<TEnum> : IPerfectHasher<TEnum>
 {
     private static readonly PerfectEnumHasher<TEnum> Instance = new();
 
-    public static SimpleSet<TEnum> CreateSimpleSet() => new(Instance, false);
-    public static SimpleDictionary<TEnum, TValue> CreateSimpleDictionary<TValue>() => new(Instance);
+    public static SimpleSet<PerfectEnumHasher<TEnum>, TEnum> CreateSimpleSet() => new(Instance, false);
+    public static SimpleDictionary<PerfectEnumHasher<TEnum>, TEnum, TValue> CreateSimpleDictionary<TValue>() => new(Instance);
 
     public int NumberOfItems { get; } = Enum.GetNames<TEnum>().Length;
 

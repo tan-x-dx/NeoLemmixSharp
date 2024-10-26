@@ -247,7 +247,7 @@ public static class ControlPanelHelperMethods
 
         bool IncludeReleaseRateButtons()
         {
-            return hatchGroup is not null && controlPanelParameters.Contains(ControlPanelParameters.ShowReleaseRateButtonsIfPossible);
+            return hatchGroup is not null && controlPanelParameters.Contains(ControlPanelParameters.ShowSpawnIntervalButtonsIfPossible);
         }
     }
 }

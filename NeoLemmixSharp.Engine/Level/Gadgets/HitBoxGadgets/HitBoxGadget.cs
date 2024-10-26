@@ -15,7 +15,7 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>
 
     protected HitBoxGadget(
         int id,
-        RectangularLevelRegion gadgetBounds,
+        RectangularHitBoxRegion gadgetBounds,
         IGadgetRenderer? renderer,
         ItemTracker<Lemming> lemmingTracker)
         : base(id, gadgetBounds, renderer)
@@ -49,18 +49,6 @@ public abstract class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>
         {
             LevelScreenRenderer.Instance.LevelRenderer.UpdateSpritePosition(Renderer);
         }
-    }
-
-    protected void UpdateSize(LevelPosition size)
-    {
-        PreviousBottomRightPixel = LevelScreen.NormalisePosition(BottomRightPixel);
-
-        GadgetBounds.W = size.X;
-        GadgetBounds.H = size.Y;
-
-        BottomRightPixel = LevelScreen.NormalisePosition(GadgetBounds.BottomRight);
-
-        LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
     public bool MatchesLemming(Lemming lemming)
