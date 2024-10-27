@@ -121,74 +121,54 @@
 /processorParam:TextureFormat=Color
 /build:cursor/standard.png
 
-#begin Fonts/AnonymousPro-Bold.ttf
-/copy:Fonts/AnonymousPro-Bold.ttf
-
-#begin Fonts/AnonymousPro-Italic.ttf
-/copy:Fonts/AnonymousPro-Italic.ttf
-
-#begin Fonts/AnonymousPro-Regular.ttf
-/copy:Fonts/AnonymousPro-Regular.ttf
-
-#begin Fonts/Bitstream Vera Sans Mono Bold Oblique.ttf
-/copy:Fonts/Bitstream Vera Sans Mono Bold Oblique.ttf
-
-#begin Fonts/Bitstream Vera Sans Mono Bold.ttf
-/copy:Fonts/Bitstream Vera Sans Mono Bold.ttf
-
-#begin Fonts/Bitstream Vera Sans Mono Oblique.ttf
-/copy:Fonts/Bitstream Vera Sans Mono Oblique.ttf
-
-#begin Fonts/Bitstream Vera Sans Mono Roman.ttf
-/copy:Fonts/Bitstream Vera Sans Mono Roman.ttf
-
-#begin Fonts/countdown.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
+#begin Fonts/MonospacedFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Fonts/countdown.png
+/processorParam:TextureFormat=Compressed
+/build:Fonts/MonospacedFont.spritefont
 
-#begin Fonts/menu_font.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
+#begin Fonts/TestFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Fonts/menu_font.png
+/processorParam:TextureFormat=Compressed
+/build:Fonts/TestFont.spritefont
 
-#begin Fonts/panel_font.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
+#begin Fonts/TestFontBold.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Fonts/panel_font.png
+/processorParam:TextureFormat=Compressed
+/build:Fonts/TestFontBold.spritefont
 
-#begin Fonts/skill_count_digits.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
+#begin Fonts/TestFontItalic.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Fonts/skill_count_digits.png
+/processorParam:TextureFormat=Compressed
+/build:Fonts/TestFontItalic.spritefont
+
+#begin Fonts/Roboto.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto.spritefont
+
+#begin Fonts/RobotoBold.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/RobotoBold.spritefont
+
+#begin Fonts/RobotoItalic.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/RobotoItalic.spritefont
 
 #begin helpers/font compiled.png
 /importer:TextureImporter
@@ -538,6 +518,18 @@
 /processorParam:TextureFormat=Color
 /build:menu/talismans.png
 
+#begin menu/Test.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:menu/Test.png
+
 #begin menu/ui_button.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -562,6 +554,18 @@
 /processorParam:TextureFormat=Color
 /build:panel/minimap_region.png
 
+#begin panel/panel_font.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:panel/panel_font.png
+
 #begin panel/panel_icons.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -585,6 +589,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:panel/panels.png
+
+#begin panel/skill_count_digits.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:panel/skill_count_digits.png
 
 #begin panel/skill_selected.png
 /importer:TextureImporter
@@ -705,6 +721,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:sprites/lemming/climber.png
+
+#begin sprites/lemming/countdown.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/lemming/countdown.png
 
 #begin sprites/lemming/dehoister.png
 /importer:TextureImporter

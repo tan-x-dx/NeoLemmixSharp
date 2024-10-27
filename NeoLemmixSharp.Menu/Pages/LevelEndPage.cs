@@ -16,9 +16,12 @@ public sealed class LevelEndPage : PageBase
         throw new NotImplementedException();
     }
 
-    public override void Tick()
+    protected override void HandleUserInput()
     {
-        throw new NotImplementedException();
+        if (InputController.Quit.IsPressed)
+        {
+            NavigateToMainMenuPage();
+        }
     }
 
     protected override void OnDispose()

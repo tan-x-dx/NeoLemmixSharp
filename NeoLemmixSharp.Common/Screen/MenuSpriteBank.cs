@@ -1,5 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MLEM.Font;
+using MLEM.Textures;
+using MLEM.Ui.Style;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Common.Screen;
 
@@ -28,7 +32,9 @@ public static class MenuSpriteBank
     public static Texture2D CursorHiRes { get; private set; } = null!;
     public static Texture2D CursorLoadingHiRes { get; private set; } = null!;
 
-    public static void Initialise(ContentManager contentManager)
+    public static UntexturedStyle MenuStyle { get; private set; } = null!;
+
+    public static void Initialise(ContentManager contentManager, SpriteBatch spriteBatch)
     {
         Background = contentManager.Load<Texture2D>("menu/background");
         Logo = contentManager.Load<Texture2D>("menu/logo");
@@ -47,5 +53,28 @@ public static class MenuSpriteBank
         CursorLoading = contentManager.Load<Texture2D>("cursor/loading");
         CursorHiRes = contentManager.Load<Texture2D>("cursor/amiga_hr");
         CursorLoadingHiRes = contentManager.Load<Texture2D>("cursor/loading_hr");
+
+        var testTexture = contentManager.Load<Texture2D>("menu/Test");
+        var testPatch = new NinePatch(new TextureRegion(testTexture, 0, 8, 24, 24), 8);
+        MenuStyle = new UntexturedStyle(spriteBatch)
+        {
+            // when using a SpriteFont, use GenericSpriteFont. When using a MonoGame.Extended BitmapFont, use GenericBitmapFont.
+            // Wrapping fonts like this allows for both types to be usable within MLEM.Ui easily
+            // Supplying a bold and an italic version is optional
+            Font = new GenericSpriteFont(
+                    contentManager.Load<SpriteFont>("Fonts/TestFont"),
+                    contentManager.Load<SpriteFont>("Fonts/TestFontBold"),
+                    contentManager.Load<SpriteFont>("Fonts/TestFontItalic")),
+            TextScale = 0.1F,
+            PanelTexture = testPatch,
+            ButtonTexture = new NinePatch(new TextureRegion(testTexture, 24, 8, 16, 16), 4),
+            TextFieldTexture = new NinePatch(new TextureRegion(testTexture, 24, 8, 16, 16), 4),
+            ScrollBarBackground = new NinePatch(new TextureRegion(testTexture, 12, 0, 4, 8), 1, 1, 2, 2),
+            ScrollBarScrollerTexture = new NinePatch(new TextureRegion(testTexture, 8, 0, 4, 8), 1, 1, 2, 2),
+            CheckboxTexture = new NinePatch(new TextureRegion(testTexture, 24, 8, 16, 16), 4),
+            CheckboxCheckmark = new TextureRegion(testTexture, 24, 0, 8, 8),
+            RadioTexture = new NinePatch(new TextureRegion(testTexture, 16, 0, 8, 8), 3),
+            RadioCheckmark = new TextureRegion(testTexture, 32, 0, 8, 8)
+        };
     }
 }

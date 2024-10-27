@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
+﻿using MLEM.Ui;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
+using System.Numerics;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace NeoLemmixSharp.Menu.Pages;
@@ -14,7 +16,7 @@ public sealed class LevelBrowserEntry : IDisposable
     private string _displayName;
     private bool _isOpen;
 
-    public string Path { get; }
+    public string LevelFilePath { get; }
     public string DisplayName
     {
         get => _displayName;
@@ -93,12 +95,12 @@ public sealed class LevelBrowserEntry : IDisposable
     }
 
     private LevelBrowserEntry(
-        string path,
+        string levelFilePath,
         int indentationLevel)
     {
         _fileExtension = null;
-        Path = path;
-        _displayName = System.IO.Path.GetFileNameWithoutExtension(path);
+        LevelFilePath = levelFilePath;
+        _displayName = Path.GetFileNameWithoutExtension(levelFilePath);
         IndentationLevel = indentationLevel;
         IsFolder = true;
         _iconType = IconType.ArrowClosed;
@@ -107,12 +109,12 @@ public sealed class LevelBrowserEntry : IDisposable
     }
 
     private LevelBrowserEntry(
-        string path,
+        string levelFilePath,
         string fileExtension,
         int indentationLevel,
         IconType iconType)
     {
-        Path = path;
+        LevelFilePath = levelFilePath;
         _fileExtension = fileExtension;
         IndentationLevel = indentationLevel;
         if (indentationLevel == 0)
@@ -168,7 +170,7 @@ public sealed class LevelBrowserEntry : IDisposable
         try
         {
             levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(_fileExtension);
-            DisplayName = levelReader.ScrapeLevelTitle(Path);
+            DisplayName = levelReader.ScrapeLevelTitle(LevelFilePath);
         }
         catch (Exception e)
         {

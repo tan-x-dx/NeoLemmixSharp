@@ -24,8 +24,10 @@ public sealed class MainPage : PageBase
 
     public MainPage(MenuInputController inputController) : base(inputController)
     {
-        var mainPanel = new Panel(Anchor.Center, UiRoot.Size / 4);
-        mainPanel.Texture = null;
+        var mainPanel = new Panel(Anchor.Center, UiRoot.Size / 4)
+        {
+            Texture = null
+        };
 
         _playButton = new Button(Anchor.AutoCenter, MenuSpriteBank.SignPlay.GetSize() * 2);
         _playButton.Texture = new StyleProp<NinePatch>(new NinePatch(MenuSpriteBank.SignPlay, 0f));
@@ -56,6 +58,12 @@ public sealed class MainPage : PageBase
 
     private void LevelSelectButtonClick(Element element)
     {
+        var levelSelectPage = MenuScreen.Current.MenuPageCreator.CreateLevelSelectPage();
+
+        if (levelSelectPage is null)
+            return;
+
+        MenuScreen.Current.SetNextPage(levelSelectPage);
     }
 
     private void GroupUpButtonClick(Element element)
@@ -83,22 +91,12 @@ public sealed class MainPage : PageBase
     {
     }
 
-    public override void Tick()
-    {
-        HandleKeyboardInput();
-        HandleMouseInput();
-    }
-
-    private void HandleKeyboardInput()
+    protected override void HandleUserInput()
     {
         if (InputController.Quit.IsPressed)
         {
             IGameWindow.Instance.Escape();
         }
-    }
-
-    private void HandleMouseInput()
-    {
     }
 
     protected override void OnDispose()

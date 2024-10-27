@@ -11,21 +11,17 @@ public sealed class ExceptionViewer : PageBase
 
     protected override void OnInitialise()
     {
-        throw new NotImplementedException();
     }
 
     protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
     {
-        throw new NotImplementedException();
     }
 
-    public override void Tick()
+    protected override void HandleUserInput()
     {
-        throw new NotImplementedException();
     }
 
     protected override void OnDispose()
     {
-        throw new NotImplementedException();
     }
 }

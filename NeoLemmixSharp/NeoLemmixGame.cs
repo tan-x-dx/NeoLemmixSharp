@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MLEM.Ui;
-using MLEM.Ui.Style;
+using MLEM.Ui.Elements;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
@@ -20,7 +20,6 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.Menu;
 using System;
 using System.Runtime.InteropServices;
-using MLEM.Ui.Elements;
 
 namespace NeoLemmixSharp;
 
@@ -46,6 +45,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     public UiSystem UiSystem => _uiSystem;
     public Element UiRoot => _uiSystem.Get(UiRootElementKey).Element;
+    public SpriteBatch SpriteBatch => _spriteBatch;
 
     public NeoLemmixGame()
     {
@@ -114,14 +114,17 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     {
         LoadResources();
 
-        RootDirectoryManager.Initialise();
-        FontBank.Initialise(Content);
-        MenuSpriteBank.Initialise(Content);
-        CommonSprites.Initialise(Content, GraphicsDevice);
-
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        _uiSystem = new UiSystem(this, new UntexturedStyle(_spriteBatch));
+        RootDirectoryManager.Initialise();
+        FontBank.Initialise(Content);
+        MenuSpriteBank.Initialise(Content, SpriteBatch);
+        CommonSprites.Initialise(Content, GraphicsDevice);
+
+        _uiSystem = new UiSystem(this, MenuSpriteBank.MenuStyle)
+        {
+            //GlobalScale = 4
+        };
 
         var ui = new Group(Anchor.TopLeft, Vector2.One, false);
         _uiSystem.Add(UiRootElementKey, ui);

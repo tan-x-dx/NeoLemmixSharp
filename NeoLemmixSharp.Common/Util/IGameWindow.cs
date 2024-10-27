@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MLEM.Ui;
 using MLEM.Ui.Elements;
@@ -18,6 +19,7 @@ public interface IGameWindow
 
     GraphicsDevice GraphicsDevice { get; }
     ContentManager Content { get; }
+    SpriteBatch SpriteBatch { get; }
 
     void SetScreen(IBaseScreen screen);
     void CaptureCursor();
@@ -27,4 +29,6 @@ public interface IGameWindow
 
     UiSystem UiSystem { get; }
     Element UiRoot { get; }
+
+    Vector2 GetWindowSize() => new(WindowWidth, WindowHeight);
 }
