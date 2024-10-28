@@ -29,8 +29,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     private readonly GraphicsDeviceManager _graphics;
 
-    private UiSystem _uiSystem;
-    private SpriteBatch _spriteBatch;
+    private UiSystem _uiSystem = null!;
+    private SpriteBatch _spriteBatch = null!;
     private IBaseScreen? _screen;
     private IScreenRenderer? _screenRenderer;
 
