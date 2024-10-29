@@ -35,6 +35,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
             throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
 
         _levelPositionBits = BitArrayHelpers.CreateBitArray(totalNumberOfPoints, false);
+        var span = new Span<uint>(_levelPositionBits);
 
         foreach (var levelPosition in points)
         {
@@ -42,7 +43,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
             var y = levelPosition.Y - minimumBoundingBox.P1Y;
 
             var index = IndexFor(x, y);
-            BitArrayHelpers.SetBit(new Span<uint>(_levelPositionBits), index);
+            BitArrayHelpers.SetBit(span, index);
         }
 
         _offset = minimumBoundingBox.GetTopLeftPosition();
@@ -54,10 +55,8 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
         levelPosition -= _offset;
         var index = IndexFor(levelPosition.X, levelPosition.Y);
 
-        return levelPosition.X >= 0 &&
-               levelPosition.Y >= 0 &&
-               levelPosition.X < _minimumBoundingBoxWidth &&
-               levelPosition.Y < _minimumBoundingBoxHeight &&
+        return (uint)levelPosition.X < (uint)_minimumBoundingBoxWidth &&
+               (uint)levelPosition.Y < (uint)_minimumBoundingBoxHeight &&
                BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_levelPositionBits), index);
     }
 

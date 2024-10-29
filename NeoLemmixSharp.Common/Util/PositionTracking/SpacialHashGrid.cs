@@ -96,8 +96,8 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         var chunkX = levelPosition.X >> _chunkSizeBitShift;
         var chunkY = levelPosition.Y >> _chunkSizeBitShift;
 
-        if (chunkX < 0 || chunkX >= _numberOfHorizontalChunks ||
-            chunkY < 0 || chunkY >= _numberOfVerticalChunks)
+        if ((uint)chunkX >= (uint)_numberOfHorizontalChunks ||
+            (uint)chunkY >= (uint)_numberOfVerticalChunks)
         {
             result = SimpleSetEnumerable<T>.Empty;
             return;
