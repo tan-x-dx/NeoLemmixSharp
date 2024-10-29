@@ -12,12 +12,11 @@ public sealed class ControlPanelTextualData
                                                            1 + // Add a space
                                                            CharLengthForLemmingCount; // Lemmings under cursor
 
-    private const int CharLengthForHatchCount = 3;
     private const int CharLengthForLemmingCount = 4; // Max number of lemmings is a number with 4 digits
     private const int CharLengthForGoalCount = 1 + CharLengthForLemmingCount; // Can have a minus sign so add 1
 
     public const int TotalControlPanelTextLength = CharLengthForLemmingActionAndCount +
-                                                   CharLengthForHatchCount +
+                                                   CharLengthForLemmingCount +
                                                    CharLengthForLemmingCount +
                                                    CharLengthForGoalCount;
 
@@ -166,7 +165,7 @@ public sealed class ControlPanelTextualData
         {
             goalNumber = -goalNumber;
             span[0] = '-';
-            span = span.Slice(1, CharLengthForGoalCount - 1);
+            span = span[1..CharLengthForGoalCount];
         }
 
         span.Clear();
@@ -180,7 +179,7 @@ public sealed class ControlPanelTextualData
         private char _firstElement;
     }
 
-    [InlineArray(CharLengthForHatchCount)]
+    [InlineArray(CharLengthForLemmingCount)]
     private struct HatchCountCharBuffer
     {
         private char _firstElement;
