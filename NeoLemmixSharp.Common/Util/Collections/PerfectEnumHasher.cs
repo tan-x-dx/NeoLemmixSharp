@@ -3,7 +3,7 @@
 namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class PerfectEnumHasher<TEnum> : IPerfectHasher<TEnum>
-    where TEnum : struct, Enum
+    where TEnum : unmanaged, Enum
 {
     private static readonly PerfectEnumHasher<TEnum> Instance = new();
 

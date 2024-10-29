@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
 public sealed class TickOrderedList<TTickOrderedData>
-    where TTickOrderedData : struct, ITickOrderedData
+    where TTickOrderedData : unmanaged, ITickOrderedData
 {
     private TTickOrderedData[] _items;
     private int _count;

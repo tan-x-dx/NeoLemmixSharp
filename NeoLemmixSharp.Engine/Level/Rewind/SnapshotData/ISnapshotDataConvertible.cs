@@ -1,7 +1,7 @@
 ﻿namespace NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
 public interface ISnapshotDataConvertible<TSnapshotData>
-    where TSnapshotData : struct
+    where TSnapshotData : unmanaged
 {
     void ToSnapshotData(out TSnapshotData snapshotData);
     void SetFromSnapshotData(in TSnapshotData snapshotData);

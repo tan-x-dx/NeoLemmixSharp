@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine.Level.Rewind;
 public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
     where TItemManager : IItemManager<TItemType>
     where TItemType : class, ISnapshotDataConvertible<TSnapshotData>
-    where TSnapshotData : struct
+    where TSnapshotData : unmanaged
 {
     /// <summary>
     /// Allocate enough space initially for four minutes of gameplay.
