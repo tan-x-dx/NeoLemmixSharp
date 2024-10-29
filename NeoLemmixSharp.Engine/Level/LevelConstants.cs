@@ -85,8 +85,8 @@ public static class LevelConstants
 
     private const int NumberOfSecondsBetweenSnapshots = 2;
     public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * EngineConstants.TicksPerSecond;
-    private const int InitialNumberOfMinutesOfSnapshotData = 4;
-    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfMinutesOfSnapshotData * 60 * EngineConstants.TicksPerSecond;
+    private const int InitialNumberOfSecondsOfSnapshotData = 4 * 60;
+    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfSecondsOfSnapshotData * EngineConstants.TicksPerSecond;
 
     #endregion
 
