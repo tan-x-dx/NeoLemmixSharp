@@ -15,7 +15,7 @@ public sealed class MenuScreen : IBaseScreen
 {
     public static MenuScreen Current { get; private set; } = null!;
 
-    private readonly PageTransition _pageTransition = new(EngineConstants.PageTransitionDurationInFrames);
+    private readonly PageTransition _pageTransition = new();
     private readonly UiSystem _uiSystem;
 
     private PageBase _currentPage;
@@ -33,6 +33,8 @@ public sealed class MenuScreen : IBaseScreen
         ContentManager contentManager,
         GraphicsDevice graphicsDevice)
     {
+        Foo();
+
         _uiSystem = IGameWindow.Instance.UiSystem;
 
         var menuCursorRenderer = new MenuCursorRenderer(InputController);
@@ -47,6 +49,12 @@ public sealed class MenuScreen : IBaseScreen
             InputController);
         _currentPage = MenuPageCreator.CreateMainPage();
         Current = this;
+    }
+
+    unsafe void Foo()
+    {
+        var s1 = sizeof(uint);
+        var s2 = sizeof(Color);
     }
 
     public void Initialise()

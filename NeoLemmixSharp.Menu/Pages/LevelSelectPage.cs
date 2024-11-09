@@ -52,6 +52,7 @@ public sealed class LevelSelectPage : PageBase
 
     protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
     {
+        _levelListPanel.Size = new Vector2(windowWidth / 2, windowHeight);
     }
 
     protected override void HandleUserInput()
