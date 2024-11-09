@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MLEM.Ui;
-using MLEM.Ui.Elements;
+using MonoGameGum.Forms;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
@@ -18,6 +17,7 @@ using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.Menu;
+using RenderingLibrary;
 using System;
 using System.Runtime.InteropServices;
 
@@ -29,7 +29,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     private readonly GraphicsDeviceManager _graphics;
 
-    private UiSystem _uiSystem = null!;
     private SpriteBatch _spriteBatch = null!;
     private IBaseScreen? _screen;
     private IScreenRenderer? _screenRenderer;
@@ -43,8 +42,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     public int WindowWidth => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
     public int WindowHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
-    public UiSystem UiSystem => _uiSystem;
-    public Element UiRoot => _uiSystem.Get(UiRootElementKey).Element;
     public SpriteBatch SpriteBatch => _spriteBatch;
 
     public NeoLemmixGame()
@@ -97,6 +94,10 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Initialize()
     {
+        SystemManagers.Default = new SystemManagers();
+        SystemManagers.Default.Initialize(_graphics.GraphicsDevice, fullInstantiation: true);
+        FormsUtilities.InitializeDefaults();
+
         // make the window fullscreen (but still with border and top control bar)
         var screenWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;
         var screenHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
@@ -120,14 +121,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         FontBank.Initialise(Content);
         MenuSpriteBank.Initialise(Content, SpriteBatch);
         CommonSprites.Initialise(Content, GraphicsDevice);
-
-        _uiSystem = new UiSystem(this, MenuSpriteBank.MenuStyle)
-        {
-            //GlobalScale = 4
-        };
-
-        var ui = new Group(Anchor.TopLeft, Vector2.One, false);
-        _uiSystem.Add(UiRootElementKey, ui);
 
         TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
         DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
@@ -167,23 +160,23 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         var actualMaxActionNameLength = 0;
         foreach (var action in LemmingAction.AllItems)
         {
-            LengthMax<char>(action.LemmingActionName);
+            LengthMax(action.LemmingActionName);
         }
 
-        LengthMax<char>(LevelConstants.NeutralControlPanelString);
-        LengthMax<char>(LevelConstants.ZombieControlPanelString);
-        LengthMax<char>(LevelConstants.NeutralZombieControlPanelString);
-        LengthMax<char>(LevelConstants.AthleteControlPanelString2Skills);
-        LengthMax<char>(LevelConstants.AthleteControlPanelString3Skills);
-        LengthMax<char>(LevelConstants.AthleteControlPanelString4Skills);
-        LengthMax<char>(LevelConstants.AthleteControlPanelString5Skills);
+        LengthMax(LevelConstants.NeutralControlPanelString);
+        LengthMax(LevelConstants.ZombieControlPanelString);
+        LengthMax(LevelConstants.NeutralZombieControlPanelString);
+        LengthMax(LevelConstants.AthleteControlPanelString2Skills);
+        LengthMax(LevelConstants.AthleteControlPanelString3Skills);
+        LengthMax(LevelConstants.AthleteControlPanelString4Skills);
+        LengthMax(LevelConstants.AthleteControlPanelString5Skills);
 
         if (actualMaxActionNameLength != LevelConstants.LongestActionNameLength)
             throw new Exception($"Longest action name length is actually {actualMaxActionNameLength}! Update {nameof(LevelConstants.LongestActionNameLength)}!");
 
         return;
 
-        void LengthMax<T>(ReadOnlySpan<T> span)
+        void LengthMax(ReadOnlySpan<char> span)
         {
             actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, span.Length);
         }

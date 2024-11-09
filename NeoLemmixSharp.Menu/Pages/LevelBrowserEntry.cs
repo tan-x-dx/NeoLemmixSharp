@@ -1,7 +1,5 @@
-﻿using MLEM.Ui;
+﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
-using System.Numerics;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace NeoLemmixSharp.Menu.Pages;
 

@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using MLEM.Ui;
-using MLEM.Ui.Elements;
+﻿using MonoGameGum.GueDeriving;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 using System.Runtime.InteropServices;
@@ -9,27 +7,25 @@ namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class LevelSelectPage : PageBase
 {
-    private readonly Panel _levelListPanel;
     private readonly string _levelsRootPath;
     private readonly List<LevelBrowserEntry> _allLevelBrowserEntries = new();
     private readonly List<LevelBrowserEntry> _currentlyDisplayedLevelBrowserEntries = new();
 
     private LevelBrowserEntry _selectedLevelBrowserEntry;
 
-    public LevelSelectPage(MenuInputController inputController) : base(inputController)
+    public LevelSelectPage(
+        MenuInputController inputController,
+        ContainerRuntime root)
+        : base(inputController, root)
     {
         _levelsRootPath = Path.Combine(RootDirectoryManager.RootDirectory, NeoLemmixFileExtensions.LevelFolderName);
 
-        _levelListPanel = new Panel(Anchor.CenterLeft, new Vector2(80, 100), Vector2.Zero, false, true);
-
-        UiRoot.AddChild(_levelListPanel);
     }
 
-    protected override void OnInitialise()
+    protected override void OnInitialise(ContainerRuntime root)
     {
         var size = GetWindowSize();
         size.X /= 2f;
-        _levelListPanel.Size = size;
 
         _allLevelBrowserEntries.AddRange(LevelBrowserEntry.GetMenuItemsForFolder(_levelsRootPath));
         RepopulateMenu();
@@ -40,19 +36,10 @@ public sealed class LevelSelectPage : PageBase
         _currentlyDisplayedLevelBrowserEntries.Clear();
         _currentlyDisplayedLevelBrowserEntries.AddRange(_allLevelBrowserEntries.SelectMany(x => x.GetAllEntries()));
 
-        _levelListPanel.RemoveChildren();
-
-        var w = _levelListPanel.Size.X - 10f;
-        foreach (var entry in _currentlyDisplayedLevelBrowserEntries)
-        {
-            var x = new Button(Anchor.AutoInline, new Vector2(80, 24), entry.DisplayName);
-            _levelListPanel.AddChild(x);
-        }
     }
 
     protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
     {
-        _levelListPanel.Size = new Vector2(windowWidth / 2, windowHeight);
     }
 
     protected override void HandleUserInput()

@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MLEM.Ui;
-using MLEM.Ui.Elements;
 using NeoLemmixSharp.Common.Screen;
 
 namespace NeoLemmixSharp.Common.Util;
@@ -26,9 +24,6 @@ public interface IGameWindow
     void ToggleFullscreen();
     void ToggleBorderless();
     void Escape();
-
-    UiSystem UiSystem { get; }
-    Element UiRoot { get; }
 
     Vector2 GetWindowSize() => new(WindowWidth, WindowHeight);
 }

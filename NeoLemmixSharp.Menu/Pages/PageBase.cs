@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using MLEM.Ui;
-using MLEM.Ui.Elements;
+using MonoGameGum.GueDeriving;
 using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Menu.Pages;
@@ -8,18 +7,16 @@ namespace NeoLemmixSharp.Menu.Pages;
 public abstract class PageBase : IInitialisable, IDisposable
 {
     protected readonly MenuInputController InputController;
-    protected readonly Element UiRoot;
+    private readonly ContainerRuntime _root;
 
     private bool _isInitialised;
 
     protected PageBase(
-        MenuInputController inputController)
+        MenuInputController inputController,
+        ContainerRuntime root)
     {
-        UiRoot = new Panel(Anchor.Center, Vector2.One)
-        {
-            Texture = null
-        };
         InputController = inputController;
+        _root = root;
     }
 
     public void Initialise()
@@ -27,18 +24,14 @@ public abstract class PageBase : IInitialisable, IDisposable
         if (_isInitialised)
             return;
 
-        IGameWindow.Instance.UiRoot.AddChild(UiRoot);
-
-        OnInitialise();
+        OnInitialise(_root);
         _isInitialised = true;
     }
 
-    protected abstract void OnInitialise();
+    protected abstract void OnInitialise(ContainerRuntime root);
 
     public void SetWindowDimensions(int windowWidth, int windowHeight)
     {
-        UiRoot.Size = new Vector2(windowWidth, windowHeight);
-
         OnWindowDimensionsChanged(windowWidth, windowHeight);
     }
 
@@ -56,7 +49,7 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     public void Dispose()
     {
-        IGameWindow.Instance.UiRoot.RemoveChildren();
+        _root.Children.Clear();
 
         OnDispose();
     }

@@ -1,13 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Gum.DataTypes;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MLEM.Ui;
-using NeoLemmixSharp.Common;
+using MonoGameGum.Forms;
+using MonoGameGum.GueDeriving;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Menu.Rendering;
+using RenderingLibrary;
 
 namespace NeoLemmixSharp.Menu;
 
@@ -15,8 +17,8 @@ public sealed class MenuScreen : IBaseScreen
 {
     public static MenuScreen Current { get; private set; } = null!;
 
+    private readonly ContainerRuntime _root;
     private readonly PageTransition _pageTransition = new();
-    private readonly UiSystem _uiSystem;
 
     private PageBase _currentPage;
     private PageBase? _nextPage;
@@ -33,32 +35,30 @@ public sealed class MenuScreen : IBaseScreen
         ContentManager contentManager,
         GraphicsDevice graphicsDevice)
     {
-        Foo();
-
-        _uiSystem = IGameWindow.Instance.UiSystem;
+        _root = new ContainerRuntime();
 
         var menuCursorRenderer = new MenuCursorRenderer(InputController);
         MenuScreenRenderer = new MenuScreenRenderer(
             menuCursorRenderer,
-            _pageTransition,
-            _uiSystem);
+            _pageTransition);
 
         MenuPageCreator = new MenuPageCreator(
             contentManager,
             graphicsDevice,
-            InputController);
+            InputController,
+            _root);
         _currentPage = MenuPageCreator.CreateMainPage();
         Current = this;
     }
 
-    unsafe void Foo()
-    {
-        var s1 = sizeof(uint);
-        var s2 = sizeof(Color);
-    }
-
     public void Initialise()
     {
+        _root.Width = 0;
+        _root.Height = 0;
+        _root.WidthUnits = DimensionUnitType.RelativeToContainer;
+        _root.HeightUnits = DimensionUnitType.RelativeToContainer;
+        _root.AddToManagers();
+
         MenuScreenRenderer.Initialise();
 
         _currentPage.Initialise();
@@ -82,7 +82,10 @@ public sealed class MenuScreen : IBaseScreen
 
         InputController.Tick();
         _currentPage.Tick();
-        _uiSystem.Update(gameTime);
+
+        // Update UI
+        FormsUtilities.Update(null!, gameTime, _root);
+        SystemManagers.Default.Activity(gameTime.TotalGameTime.TotalSeconds);
 
         if (InputController.ToggleFullScreen.IsPressed)
         {
@@ -135,6 +138,10 @@ public sealed class MenuScreen : IBaseScreen
     {
         if (IsDisposed)
             return;
+
+        _currentPage.Dispose();
+        _root.Children.Clear();
+        _root.RemoveFromManagers();
 
         MenuScreenRenderer.Dispose();
 
