@@ -306,27 +306,27 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             by += _numberOfVerticalChunks;
         }
 
-        var x = 1 + bx - ax;
-        var x1 = ax;
-        var yCount = 1 + by - ay;
+        var y = 1 + by - ay;
+        var y1 = ay;
+        var xCount = 1 + bx - ax;
 
-        while (x-- > 0)
+        while (y-- > 0)
         {
-            var y1 = ay;
-            var y = yCount;
-            while (y-- > 0)
+            var x1 = ax;
+            var x = xCount;
+            while (x-- > 0)
             {
                 ModifyChunkPosition(chunkOperationType, item, x1, y1);
 
-                if (++y1 == _numberOfVerticalChunks)
+                if (++x1 == _numberOfHorizontalChunks)
                 {
-                    y1 = 0;
+                    x1 = 0;
                 }
             }
 
-            if (++x1 == _numberOfHorizontalChunks)
+            if (++y1 == _numberOfVerticalChunks)
             {
-                x1 = 0;
+                y1 = 0;
             }
         }
     }
@@ -373,27 +373,27 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             by += _numberOfVerticalChunks;
         }
 
-        var x = 1 + bx - ax;
-        var x1 = ax;
-        var yCount = 1 + by - ay;
+        var y = 1 + by - ay;
+        var y1 = ay;
+        var xCount = 1 + bx - ax;
 
-        while (x-- > 0)
+        while (y-- > 0)
         {
-            var y1 = ay;
-            var y = yCount;
-            while (y-- > 0)
+            var x1 = ax;
+            var x = xCount;
+            while (x-- > 0)
             {
                 BitArrayHelpers.UnionWith(span, ReadOnlySpanForChunk(x1, y1));
 
-                if (++y1 == _numberOfVerticalChunks)
+                if (++x1 == _numberOfHorizontalChunks)
                 {
-                    y1 = 0;
+                    x1 = 0;
                 }
             }
 
-            if (++x1 == _numberOfHorizontalChunks)
+            if (++y1 == _numberOfVerticalChunks)
             {
-                x1 = 0;
+                y1 = 0;
             }
         }
     }
