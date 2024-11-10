@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Screen;
-using NeoLemmixSharp.Engine.Level;
-using NeoLemmixSharp.Engine.Rendering.Viewport;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Rendering;
@@ -13,9 +10,21 @@ public static class CommonSprites
     private const string AnchorName = "LemmingAnchorTexture";
     private const string WhitePixelName = "WhitePixel";
 
+    public const int CursorHiResXOffset = -4;
+    public const int CursorHiResYOffset = -4;
+    public const int CursorHiResWidth = 25;
+    public const int CursorHiResHeight = 28;
+
     public static Texture2D AnchorSprite { get; private set; } = null!;
     public static Texture2D WhitePixelGradientSprite { get; private set; } = null!;
-    public static Texture2D CursorSprite { get; private set; } = null!;
+
+    public static Texture2D Background { get; private set; } = null!;
+    public static Texture2D CursorHand { get; private set; } = null!;
+    public static Texture2D CursorLoading { get; private set; } = null!;
+    public static Texture2D CursorHandHiRes { get; private set; } = null!;
+    public static Texture2D CursorLoadingHiRes { get; private set; } = null!;
+
+    public static Texture2D CursorCrossHair { get; private set; } = null!;
 
     public static void Initialise(
         ContentManager contentManager,
@@ -23,7 +32,14 @@ public static class CommonSprites
     {
         AnchorSprite = CreateAnchorTexture(graphicsDevice);
         WhitePixelGradientSprite = CreateWhitePixelTexture(graphicsDevice);
-        CursorSprite = LoadCursorSprites(contentManager);
+
+        Background = contentManager.Load<Texture2D>("menu/background");
+        CursorHand = contentManager.Load<Texture2D>("cursor/amiga");
+        CursorLoading = contentManager.Load<Texture2D>("cursor/loading");
+        CursorHandHiRes = contentManager.Load<Texture2D>("cursor/amiga_hr");
+        CursorLoadingHiRes = contentManager.Load<Texture2D>("cursor/loading_hr");
+
+        CursorCrossHair = contentManager.Load<Texture2D>("cursor/cursors");
     }
 
     private static Texture2D CreateAnchorTexture(GraphicsDevice graphicsDevice)
@@ -95,19 +111,6 @@ public static class CommonSprites
 
         whitePixelTexture.SetData(whiteColors);
         return whitePixelTexture;
-    }
-
-    private static Texture2D LoadCursorSprites(ContentManager contentManager)
-    {
-        return contentManager.Load<Texture2D>("cursor/cursors");
-    }
-
-    public static LevelCursorSprite GetLevelCursorSprite(LevelCursor levelCursor)
-    {
-        return new LevelCursorSprite(
-            levelCursor,
-            CursorSprite,
-            MenuSpriteBank.CursorHiRes);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

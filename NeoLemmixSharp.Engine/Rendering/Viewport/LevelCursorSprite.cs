@@ -77,16 +77,16 @@ public sealed class LevelCursorSprite
     private void RenderHand(SpriteBatch spriteBatch, int x, int y)
     {
         var destination = new Rectangle(
-            x + MenuSpriteBank.CursorHiResXOffset,
-            y + MenuSpriteBank.CursorHiResYOffset,
-            MenuSpriteBank.CursorHiResWidth * 2,
-            MenuSpriteBank.CursorHiResHeight * 2);
+            x + CommonSprites.CursorHiResXOffset,
+            y + CommonSprites.CursorHiResYOffset,
+            CommonSprites.CursorHiResWidth * 2,
+            CommonSprites.CursorHiResHeight * 2);
 
         var source = new Rectangle(
             0,
             0,
-            MenuSpriteBank.CursorHiResWidth,
-            MenuSpriteBank.CursorHiResHeight);
+            CommonSprites.CursorHiResWidth,
+            CommonSprites.CursorHiResHeight);
 
         spriteBatch.Draw(
             _handTexture,
@@ -94,7 +94,7 @@ public sealed class LevelCursorSprite
             source,
             Color.White);
 
-        source.X = MenuSpriteBank.CursorHiResWidth;
+        source.X = CommonSprites.CursorHiResWidth;
 
         spriteBatch.Draw(
             _handTexture,

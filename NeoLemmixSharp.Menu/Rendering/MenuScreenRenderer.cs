@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Rendering;
 using RenderingLibrary;
 
 namespace NeoLemmixSharp.Menu.Rendering;
@@ -21,7 +21,7 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         MenuCursorRenderer menuCursorRenderer,
         PageTransition pageTransition)
     {
-        _backgroundRenderer = new BackgroundRenderer(MenuSpriteBank.Background);
+        _backgroundRenderer = new BackgroundRenderer(CommonSprites.Background);
         _menuCursorRenderer = menuCursorRenderer;
         _pageTransitionRenderer = new PageTransitionRenderer(pageTransition);
     }

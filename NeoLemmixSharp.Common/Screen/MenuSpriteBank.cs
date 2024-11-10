@@ -5,12 +5,6 @@ namespace NeoLemmixSharp.Common.Screen;
 
 public static class MenuSpriteBank
 {
-    public const int CursorHiResXOffset = -4;
-    public const int CursorHiResYOffset = -4;
-    public const int CursorHiResWidth = 25;
-    public const int CursorHiResHeight = 28;
-
-    public static Texture2D Background { get; private set; } = null!;
     public static Texture2D Logo { get; private set; } = null!;
     public static Texture2D MenuIcons { get; private set; } = null!;
     public static Texture2D ScrollerLemmings { get; private set; } = null!;
@@ -23,14 +17,11 @@ public static class MenuSpriteBank
     public static Texture2D SignConfig { get; private set; } = null!;
     public static Texture2D SignQuit { get; private set; } = null!;
     public static Texture2D MenuButton { get; private set; } = null!;
-    public static Texture2D Cursor { get; private set; } = null!;
-    public static Texture2D CursorLoading { get; private set; } = null!;
-    public static Texture2D CursorHiRes { get; private set; } = null!;
-    public static Texture2D CursorLoadingHiRes { get; private set; } = null!;
 
     public static void Initialise(ContentManager contentManager, SpriteBatch spriteBatch)
     {
-        Background = contentManager.Load<Texture2D>("menu/background");
+        return;
+
         Logo = contentManager.Load<Texture2D>("menu/logo");
         MenuIcons = contentManager.Load<Texture2D>("menu/menu_icons");
         ScrollerLemmings = contentManager.Load<Texture2D>("menu/scroller_lemmings");
@@ -43,9 +34,5 @@ public static class MenuSpriteBank
         SignConfig = contentManager.Load<Texture2D>("menu/sign_config");
         SignQuit = contentManager.Load<Texture2D>("menu/sign_quit");
         MenuButton = contentManager.Load<Texture2D>("menu/ui_button");
-        Cursor = contentManager.Load<Texture2D>("cursor/amiga");
-        CursorLoading = contentManager.Load<Texture2D>("cursor/loading");
-        CursorHiRes = contentManager.Load<Texture2D>("cursor/amiga_hr");
-        CursorLoadingHiRes = contentManager.Load<Texture2D>("cursor/loading_hr");
     }
 }

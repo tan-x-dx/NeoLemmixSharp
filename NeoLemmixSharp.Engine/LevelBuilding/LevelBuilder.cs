@@ -103,7 +103,7 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(_contentManager);
 
-        var levelCursorSprite = CommonSprites.GetLevelCursorSprite(levelCursor);
+        var levelCursorSprite = GetLevelCursorSprite(levelCursor);
         var backgroundRenderer = GetBackgroundRenderer(levelData);
 
         _levelObjectAssembler.GetLevelSprites(
@@ -207,6 +207,14 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
         }
 
         return result;
+    }
+
+    private static LevelCursorSprite GetLevelCursorSprite(LevelCursor levelCursor)
+    {
+        return new LevelCursorSprite(
+            levelCursor,
+            CommonSprites.CursorCrossHair,
+            CommonSprites.CursorHandHiRes);
     }
 
     int IComparer<IViewportObjectRenderer>.Compare(IViewportObjectRenderer? x, IViewportObjectRenderer? y)
