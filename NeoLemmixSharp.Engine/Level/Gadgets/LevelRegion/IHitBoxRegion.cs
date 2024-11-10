@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.Util;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 
@@ -25,6 +26,7 @@ public interface IRectangularHitBoxRegion : IHitBoxRegion
 
 public static class LevelRegionHelpers
 {
+    [Pure]
     public static LevelPosition GetRelativePosition(LevelPosition basePosition, LevelPosition testPosition)
     {
         var dx = LevelScreen.HorizontalBoundaryBehaviour.GetDelta(basePosition.X, testPosition.X);
@@ -33,6 +35,7 @@ public static class LevelRegionHelpers
         return new LevelPosition(dx, dy);
     }
 
+    [Pure]
     public static bool ContainsPoint(IRectangularHitBoxRegion hitBoxRegion, LevelPosition levelPosition)
     {
         var thisTestX = hitBoxRegion.X;
