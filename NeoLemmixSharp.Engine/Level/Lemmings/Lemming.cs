@@ -530,10 +530,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         FacingDirection = FacingDirection.AllItems[lemmingSnapshotData.FacingDirectionId];
         Orientation = Orientation.AllItems[lemmingSnapshotData.OrientationId];
 
-        PreviousAction = LemmingAction.GetActionFromId(lemmingSnapshotData.PreviousActionId);
-        CurrentAction = LemmingAction.GetActionFromId(lemmingSnapshotData.CurrentActionId);
-        NextAction = LemmingAction.GetActionFromId(lemmingSnapshotData.NextActionId);
-        CountDownAction = LemmingAction.GetActionFromId(lemmingSnapshotData.CountDownActionId);
+        PreviousAction = LemmingAction.GetActionFromUnboundId(lemmingSnapshotData.PreviousActionId);
+        CurrentAction = LemmingAction.GetActionFromUnboundId(lemmingSnapshotData.CurrentActionId);
+        NextAction = LemmingAction.GetActionFromUnboundId(lemmingSnapshotData.NextActionId);
+        CountDownAction = LemmingAction.GetActionFromUnboundId(lemmingSnapshotData.CountDownActionId);
 
         Renderer.ResetPosition();
     }
