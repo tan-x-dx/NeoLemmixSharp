@@ -26,10 +26,6 @@ public sealed class SimpleSet<TPerfectHasher, T> : ISet<T>, IReadOnlySet<T>
             : 0;
     }
 
-    /// <summary>
-    /// The footprint of the underlying BitArray - how many uints it logically represents.
-    /// </summary>
-    public int Size => _bits.Length;
     public int Count => _popCount;
 
     public bool Add(T item)

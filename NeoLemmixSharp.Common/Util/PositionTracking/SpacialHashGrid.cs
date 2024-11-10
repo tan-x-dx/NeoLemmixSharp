@@ -46,7 +46,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift;
         _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift;
 
-        _bitArraySize = _allTrackedItems.Size;
+        _bitArraySize = BitArrayHelpers.CalculateBitArrayBufferLength(hasher.NumberOfItems);
 
         _cachedQueryScratchSpace = new uint[_bitArraySize];
         _allBits = new uint[_bitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];
