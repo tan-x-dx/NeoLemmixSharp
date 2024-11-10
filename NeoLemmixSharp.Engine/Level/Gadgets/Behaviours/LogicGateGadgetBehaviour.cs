@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public sealed class LogicGateGadgetBehaviour : GadgetBehaviour
 {
@@ -8,6 +10,6 @@ public sealed class LogicGateGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.LogicGateGadgetBehaviourId;
+    public override int Id => EngineConstants.LogicGateGadgetBehaviourId;
     public override string GadgetBehaviourName => "logic gate";
 }

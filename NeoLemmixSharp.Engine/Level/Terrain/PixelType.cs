@@ -1,21 +1,23 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Terrain;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Terrain;
 
 [Flags]
 public enum PixelType : ushort
 {
     Empty = 0,
 
-    DownSolid = 1 << (LevelConstants.DownOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
-    LeftSolid = 1 << (LevelConstants.LeftOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
-    UpSolid = 1 << (LevelConstants.UpOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
-    RightSolid = 1 << (LevelConstants.RightOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
+    DownSolid = 1 << (EngineConstants.DownOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
+    LeftSolid = 1 << (EngineConstants.LeftOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
+    UpSolid = 1 << (EngineConstants.UpOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
+    RightSolid = 1 << (EngineConstants.RightOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
 
     SolidToAllOrientations = DownSolid | LeftSolid | UpSolid | RightSolid,
 
-    DownArrow = 1 << (LevelConstants.DownOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
-    LeftArrow = 1 << (LevelConstants.LeftOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
-    UpArrow = 1 << (LevelConstants.UpOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
-    RightArrow = 1 << (LevelConstants.RightOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
+    DownArrow = 1 << (EngineConstants.DownOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
+    LeftArrow = 1 << (EngineConstants.LeftOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
+    UpArrow = 1 << (EngineConstants.UpOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
+    RightArrow = 1 << (EngineConstants.RightOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
 
     ArrowMask = DownArrow | LeftArrow | UpArrow | RightArrow,
     ArrowInverseMask = ushort.MaxValue ^ ArrowMask,
@@ -23,10 +25,10 @@ public enum PixelType : ushort
     TerrainDataMask = SolidToAllOrientations | ArrowMask,
     TerrainDataInverseMask = ushort.MaxValue ^ TerrainDataMask,
 
-    BlockerDown = 1 << (LevelConstants.DownOrientationRotNum + PixelTypeHelpers.PixelTypeBlockerShiftOffset),
-    BlockerLeft = 1 << (LevelConstants.LeftOrientationRotNum + PixelTypeHelpers.PixelTypeBlockerShiftOffset),
-    BlockerUp = 1 << (LevelConstants.UpOrientationRotNum + PixelTypeHelpers.PixelTypeBlockerShiftOffset),
-    BlockerRight = 1 << (LevelConstants.RightOrientationRotNum + PixelTypeHelpers.PixelTypeBlockerShiftOffset),
+    BlockerDown = 1 << (EngineConstants.DownOrientationRotNum + PixelTypeHelpers.PixelTypeBlockerShiftOffset),
+    BlockerLeft = 1 << (EngineConstants.LeftOrientationRotNum + PixelTypeHelpers.PixelTypeBlockerShiftOffset),
+    BlockerUp = 1 << (EngineConstants.UpOrientationRotNum + PixelTypeHelpers.PixelTypeBlockerShiftOffset),
+    BlockerRight = 1 << (EngineConstants.RightOrientationRotNum + PixelTypeHelpers.PixelTypeBlockerShiftOffset),
 
     BlockerMask = BlockerDown | BlockerLeft | BlockerRight | BlockerUp,
     BlockerInverseMask = ushort.MaxValue ^ BlockerMask,

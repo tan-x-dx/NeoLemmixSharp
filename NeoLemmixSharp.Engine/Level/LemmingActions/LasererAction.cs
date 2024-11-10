@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -62,12 +63,12 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
     private LasererAction()
         : base(
-            LevelConstants.LasererActionId,
-            LevelConstants.LasererActionName,
-            LevelConstants.LasererActionSpriteFileName,
-            LevelConstants.LasererAnimationFrames,
-            LevelConstants.MaxLasererPhysicsFrames,
-            LevelConstants.NonPermanentSkillPriority)
+            EngineConstants.LasererActionId,
+            EngineConstants.LasererActionName,
+            EngineConstants.LasererActionSpriteFileName,
+            EngineConstants.LasererAnimationFrames,
+            EngineConstants.MaxLasererPhysicsFrames,
+            EngineConstants.NonPermanentSkillPriority)
     {
     }
 

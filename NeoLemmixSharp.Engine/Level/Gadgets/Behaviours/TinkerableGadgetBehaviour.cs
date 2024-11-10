@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public sealed class TinkerableGadgetBehaviour : GadgetBehaviour
 {
@@ -8,6 +10,6 @@ public sealed class TinkerableGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.TinkerableGadgetBehaviourId;
+    public override int Id => EngineConstants.TinkerableGadgetBehaviourId;
     public override string GadgetBehaviourName => "tinkerable";
 }

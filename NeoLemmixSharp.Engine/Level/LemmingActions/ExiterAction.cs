@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -8,12 +9,12 @@ public sealed class ExiterAction : LemmingAction
 
     private ExiterAction()
         : base(
-            LevelConstants.ExiterActionId,
-            LevelConstants.ExiterActionName,
-            LevelConstants.ExiterActionSpriteFileName,
-            LevelConstants.ExiterAnimationFrames,
-            LevelConstants.MaxExiterPhysicsFrames,
-            LevelConstants.NoPriority)
+            EngineConstants.ExiterActionId,
+            EngineConstants.ExiterActionName,
+            EngineConstants.ExiterActionSpriteFileName,
+            EngineConstants.ExiterAnimationFrames,
+            EngineConstants.MaxExiterPhysicsFrames,
+            EngineConstants.NoPriority)
     {
     }
 

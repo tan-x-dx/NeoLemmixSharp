@@ -1,31 +1,33 @@
-﻿namespace NeoLemmixSharp.Menu.Pages;
+﻿using MonoGameGum.GueDeriving;
+
+namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class ExceptionViewer : PageBase
 {
     private readonly Exception _exception;
 
-    public ExceptionViewer(MenuInputController inputController, Exception exception) : base(inputController)
+    public ExceptionViewer(
+        MenuInputController inputController,
+        Exception exception,
+        ContainerRuntime root)
+        : base(inputController, root)
     {
         _exception = exception;
     }
 
-    protected override void OnInitialise()
+    protected override void OnInitialise(ContainerRuntime root)
     {
-        throw new NotImplementedException();
     }
 
     protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
     {
-        throw new NotImplementedException();
     }
 
-    public override void Tick()
+    protected override void HandleUserInput()
     {
-        throw new NotImplementedException();
     }
 
     protected override void OnDispose()
     {
-        throw new NotImplementedException();
     }
 }

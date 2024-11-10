@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -13,12 +14,12 @@ public sealed class GliderAction : LemmingAction
 
     private GliderAction()
         : base(
-            LevelConstants.GliderActionId,
-            LevelConstants.GliderActionName,
-            LevelConstants.GliderActionSpriteFileName,
-            LevelConstants.GliderAnimationFrames,
-            LevelConstants.MaxGliderPhysicsFrames,
-            LevelConstants.PermanentSkillPriority)
+            EngineConstants.GliderActionId,
+            EngineConstants.GliderActionName,
+            EngineConstants.GliderActionSpriteFileName,
+            EngineConstants.GliderAnimationFrames,
+            EngineConstants.MaxGliderPhysicsFrames,
+            EngineConstants.PermanentSkillPriority)
     {
     }
 
@@ -124,7 +125,7 @@ end;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelRegion(
             orientation.Move(lemmingPosition, -1, -12),
-            orientation.Move(lemmingPosition, 1, LevelConstants.MaxStepUp + 1));
+            orientation.Move(lemmingPosition, 1, EngineConstants.MaxStepUp + 1));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         if (updraftFallDelta.Y < 0)

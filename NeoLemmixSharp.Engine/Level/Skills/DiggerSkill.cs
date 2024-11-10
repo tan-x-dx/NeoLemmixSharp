@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -11,8 +12,8 @@ public sealed class DiggerSkill : LemmingSkill
 
     private DiggerSkill()
         : base(
-            LevelConstants.DiggerSkillId,
-            LevelConstants.DiggerSkillName)
+            EngineConstants.DiggerSkillId,
+            EngineConstants.DiggerSkillName)
     {
     }
 

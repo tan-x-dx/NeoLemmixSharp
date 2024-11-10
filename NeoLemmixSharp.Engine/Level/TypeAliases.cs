@@ -1,7 +1,7 @@
 ﻿global using ControlPanelParameterSet = NeoLemmixSharp.Common.Util.Collections.SimpleSet<NeoLemmixSharp.Common.Util.Collections.PerfectEnumHasher<NeoLemmixSharp.Engine.Level.ControlPanel.ControlPanelParameters>, NeoLemmixSharp.Engine.Level.ControlPanel.ControlPanelParameters>;
-global using GadgetEnumerable = NeoLemmixSharp.Common.Util.Collections.SimpleSetEnumerable<NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxGadget>;
+global using GadgetEnumerable = NeoLemmixSharp.Common.Util.Collections.SimpleSetEnumerable<NeoLemmixSharp.Engine.Level.Gadgets.GadgetManager, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxGadget>;
 global using LemmingActionSet = NeoLemmixSharp.Common.Util.Collections.SimpleSet<NeoLemmixSharp.Common.Util.Identity.ExtendedEnumTypeComparer<NeoLemmixSharp.Engine.Level.LemmingActions.LemmingAction>, NeoLemmixSharp.Engine.Level.LemmingActions.LemmingAction>;
-global using LemmingEnumerable = NeoLemmixSharp.Common.Util.Collections.SimpleSetEnumerable<NeoLemmixSharp.Engine.Level.Lemmings.Lemming>;
+global using LemmingEnumerable = NeoLemmixSharp.Common.Util.Collections.SimpleSetEnumerable<NeoLemmixSharp.Engine.Level.Lemmings.LemmingManager, NeoLemmixSharp.Engine.Level.Lemmings.Lemming>;
 global using LemmingSet = NeoLemmixSharp.Common.Util.Collections.SimpleSet<NeoLemmixSharp.Engine.Level.Lemmings.LemmingManager, NeoLemmixSharp.Engine.Level.Lemmings.Lemming>;
 global using LemmingSkillSet = NeoLemmixSharp.Common.Util.Collections.SimpleSet<NeoLemmixSharp.Common.Util.Identity.ExtendedEnumTypeComparer<NeoLemmixSharp.Engine.Level.Skills.LemmingSkill>, NeoLemmixSharp.Engine.Level.Skills.LemmingSkill>;
 global using LevelParameterSet = NeoLemmixSharp.Common.Util.Collections.SimpleSet<NeoLemmixSharp.Common.Util.Collections.PerfectEnumHasher<NeoLemmixSharp.Engine.Level.LevelParameters>, NeoLemmixSharp.Engine.Level.LevelParameters>;

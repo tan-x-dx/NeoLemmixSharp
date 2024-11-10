@@ -1,7 +1,6 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MLEM.Ui;
-using MLEM.Ui.Elements;
 using NeoLemmixSharp.Common.Screen;
 
 namespace NeoLemmixSharp.Common.Util;
@@ -15,9 +14,11 @@ public interface IGameWindow
 
     bool IsActive { get; }
     bool IsFullscreen { get; }
+    bool IsBorderless { get; }
 
     GraphicsDevice GraphicsDevice { get; }
     ContentManager Content { get; }
+    SpriteBatch SpriteBatch { get; }
 
     void SetScreen(IBaseScreen screen);
     void CaptureCursor();
@@ -25,6 +26,5 @@ public interface IGameWindow
     void ToggleBorderless();
     void Escape();
 
-    UiSystem UiSystem { get; }
-    Element UiRoot { get; }
+    Vector2 GetWindowSize() => new(WindowWidth, WindowHeight);
 }

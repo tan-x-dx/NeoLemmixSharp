@@ -1,17 +1,18 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class RotateToLeftSkill:LemmingSkill
+public sealed class RotateToLeftSkill : LemmingSkill
 {
     public static readonly RotateToLeftSkill Instance = new();
 
     private RotateToLeftSkill()
         : base(
-            LevelConstants.RotateToLeftSkillId,
-            LevelConstants.RotateToLeftSkillName)
+            EngineConstants.RotateToLeftSkillId,
+            EngineConstants.RotateToLeftSkillName)
     {
     }
 

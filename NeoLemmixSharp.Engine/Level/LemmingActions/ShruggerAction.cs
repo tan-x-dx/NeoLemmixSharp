@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -8,12 +9,12 @@ public sealed class ShruggerAction : LemmingAction
 
     private ShruggerAction()
         : base(
-            LevelConstants.ShruggerActionId,
-            LevelConstants.ShruggerActionName,
-            LevelConstants.ShruggerActionSpriteFileName,
-            LevelConstants.ShruggerAnimationFrames,
-            LevelConstants.MaxShruggerPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority)
+            EngineConstants.ShruggerActionId,
+            EngineConstants.ShruggerActionName,
+            EngineConstants.ShruggerActionSpriteFileName,
+            EngineConstants.ShruggerAnimationFrames,
+            EngineConstants.MaxShruggerPhysicsFrames,
+            EngineConstants.NonWalkerMovementPriority)
     {
     }
 

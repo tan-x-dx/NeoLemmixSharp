@@ -106,11 +106,16 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         return result;
     }
 
-    public static LemmingAction GetActionFromId(int actionId)
+    /// <summary>
+    /// Safe alternative to performing the array lookup - the input may be negative, or an invalid id. In such a case - the NoneAction is returned.
+    /// </summary>
+    /// <param name="unboundActionId">The (possibly invalid) id of the action to fetch.</param>
+    /// <returns>The LemmingAction with that id, or the NoneAction if the id is invalid.</returns>
+    public static LemmingAction GetActionFromUnboundId(int unboundActionId)
     {
-        return (uint)actionId >= (uint)LemmingActions.Length
+        return (uint)unboundActionId >= (uint)LemmingActions.Length
             ? NoneAction.Instance
-            : LemmingActions[actionId];
+            : LemmingActions[unboundActionId];
     }
 
     public readonly int Id;

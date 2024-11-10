@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -8,12 +9,12 @@ public sealed class HoisterAction : LemmingAction
 
     private HoisterAction()
         : base(
-            LevelConstants.HoisterActionId,
-            LevelConstants.HoisterActionName,
-            LevelConstants.HoisterActionSpriteFileName,
-            LevelConstants.HoisterAnimationFrames,
-            LevelConstants.MaxHoisterPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority)
+            EngineConstants.HoisterActionId,
+            EngineConstants.HoisterActionName,
+            EngineConstants.HoisterActionSpriteFileName,
+            EngineConstants.HoisterAnimationFrames,
+            EngineConstants.MaxHoisterPhysicsFrames,
+            EngineConstants.NonWalkerMovementPriority)
     {
     }
 

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -11,12 +12,12 @@ public sealed class AscenderAction : LemmingAction
 
     private AscenderAction()
         : base(
-            LevelConstants.AscenderActionId,
-            LevelConstants.AscenderActionName,
-            LevelConstants.AscenderActionSpriteFileName,
-            LevelConstants.AscenderAnimationFrames,
-            LevelConstants.MaxAscenderPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority)
+            EngineConstants.AscenderActionId,
+            EngineConstants.AscenderActionName,
+            EngineConstants.AscenderActionSpriteFileName,
+            EngineConstants.AscenderAnimationFrames,
+            EngineConstants.MaxAscenderPhysicsFrames,
+            EngineConstants.NonWalkerMovementPriority)
     {
     }
 

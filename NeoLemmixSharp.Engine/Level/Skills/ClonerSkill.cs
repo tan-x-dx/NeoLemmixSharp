@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
@@ -10,8 +11,8 @@ public sealed class ClonerSkill : LemmingSkill
 
     private ClonerSkill()
         : base(
-            LevelConstants.ClonerSkillId,
-            LevelConstants.ClonerSkillName)
+            EngineConstants.ClonerSkillId,
+            EngineConstants.ClonerSkillName)
     {
     }
 

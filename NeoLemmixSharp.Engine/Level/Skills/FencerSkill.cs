@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -9,8 +10,8 @@ public sealed class FencerSkill : LemmingSkill
 
     private FencerSkill()
         : base(
-            LevelConstants.FencerSkillId,
-            LevelConstants.FencerSkillName)
+            EngineConstants.FencerSkillId,
+            EngineConstants.FencerSkillName)
     {
     }
 

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public sealed class FunctionalGadgetBehaviour : GadgetBehaviour
 {
@@ -8,6 +10,6 @@ public sealed class FunctionalGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.FunctionalGadgetBehaviourId;
+    public override int Id => EngineConstants.FunctionalGadgetBehaviourId;
     public override string GadgetBehaviourName => "functional";
 }

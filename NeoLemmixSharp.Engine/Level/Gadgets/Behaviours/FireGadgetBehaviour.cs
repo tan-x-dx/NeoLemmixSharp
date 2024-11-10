@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public sealed class FireGadgetBehaviour : GadgetBehaviour
 {
@@ -8,6 +10,6 @@ public sealed class FireGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.FireGadgetBehaviourId;
+    public override int Id => EngineConstants.FireGadgetBehaviourId;
     public override string GadgetBehaviourName => "fire";
 }

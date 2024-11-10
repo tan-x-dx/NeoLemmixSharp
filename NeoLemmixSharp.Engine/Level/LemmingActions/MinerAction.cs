@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -16,12 +17,12 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
     private MinerAction()
         : base(
-            LevelConstants.MinerActionId,
-            LevelConstants.MinerActionName,
-            LevelConstants.MinerActionSpriteFileName,
-            LevelConstants.MinerAnimationFrames,
-            LevelConstants.MaxMinerPhysicsFrames,
-            LevelConstants.NonPermanentSkillPriority)
+            EngineConstants.MinerActionId,
+            EngineConstants.MinerActionName,
+            EngineConstants.MinerActionSpriteFileName,
+            EngineConstants.MinerAnimationFrames,
+            EngineConstants.MaxMinerPhysicsFrames,
+            EngineConstants.NonPermanentSkillPriority)
     {
     }
 

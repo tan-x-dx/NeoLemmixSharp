@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -16,12 +17,12 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
 
     private FencerAction()
         : base(
-            LevelConstants.FencerActionId,
-            LevelConstants.FencerActionName,
-            LevelConstants.FencerActionSpriteFileName,
-            LevelConstants.FencerAnimationFrames,
-            LevelConstants.MaxFencerPhysicsFrames,
-            LevelConstants.NonPermanentSkillPriority)
+            EngineConstants.FencerActionId,
+            EngineConstants.FencerActionName,
+            EngineConstants.FencerActionSpriteFileName,
+            EngineConstants.FencerAnimationFrames,
+            EngineConstants.MaxFencerPhysicsFrames,
+            EngineConstants.NonPermanentSkillPriority)
     {
     }
 
@@ -47,7 +48,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelRegion(
-            orientation.MoveDown(lemmingPosition, -LevelConstants.DefaultFallStep - 1),
+            orientation.MoveDown(lemmingPosition, -EngineConstants.DefaultFallStep - 1),
             orientation.Move(lemmingPosition, dx, 12));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -8,12 +9,12 @@ public sealed class DisarmerAction : LemmingAction
 
     private DisarmerAction()
         : base(
-            LevelConstants.DisarmerActionId,
-            LevelConstants.DisarmerActionName,
-            LevelConstants.DisarmerActionSpriteFileName,
-            LevelConstants.DisarmerAnimationFrames,
-            LevelConstants.MaxDisarmerPhysicsFrames,
-            LevelConstants.PermanentSkillPriority)
+            EngineConstants.DisarmerActionId,
+            EngineConstants.DisarmerActionName,
+            EngineConstants.DisarmerActionSpriteFileName,
+            EngineConstants.DisarmerAnimationFrames,
+            EngineConstants.MaxDisarmerPhysicsFrames,
+            EngineConstants.PermanentSkillPriority)
     {
     }
 

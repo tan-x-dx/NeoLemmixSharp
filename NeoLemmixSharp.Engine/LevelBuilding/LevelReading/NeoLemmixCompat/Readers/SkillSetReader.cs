@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
@@ -42,23 +42,23 @@ public sealed class SkillSetReader : INeoLemmixDataReader
             throw new InvalidOperationException($"Skill recorded multiple times! {skill.LemmingSkillName}");
 
         var amount = secondToken is "INFINITE"
-            ? LevelConstants.InfiniteSkillCount
+            ? EngineConstants.InfiniteSkillCount
             : int.Parse(secondToken);
 
         if (amount < 0 ||
-            amount > LevelConstants.InfiniteSkillCount)
+            amount > EngineConstants.InfiniteSkillCount)
             throw new InvalidOperationException($"Invalid skill count value! {amount}");
 
-        if (skill == ClonerSkill.Instance && amount == LevelConstants.InfiniteSkillCount)
+        if (skill == ClonerSkill.Instance && amount == EngineConstants.InfiniteSkillCount)
         {
-            amount = LevelConstants.InfiniteSkillCount - 1;
+            amount = EngineConstants.InfiniteSkillCount - 1;
         }
 
         var skillSetDatum = new SkillSetData
         {
             Skill = skill,
             NumberOfSkills = amount,
-            TeamId = LevelConstants.ClassicTeamId
+            TeamId = EngineConstants.ClassicTeamId
         };
 
         SkillSetData.Add(skillSetDatum);

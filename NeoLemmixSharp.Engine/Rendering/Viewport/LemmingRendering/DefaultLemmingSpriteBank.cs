@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -269,7 +269,7 @@ public static class DefaultLemmingSpriteBank
 
     private static TeamColorData[] GenerateDefaultTeamColorData()
     {
-        var result = new TeamColorData[LevelConstants.NumberOfTeams];
+        var result = new TeamColorData[EngineConstants.NumberOfTeams];
 
         var defaultSkinColor = new Color(0xF0, 0xD0, 0xD0);
         var defaultAcidLemmingFootColor = new Color(0x00, 0xF0, 0x00);

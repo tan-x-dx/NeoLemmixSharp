@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using System.Diagnostics.Contracts;
 using static NeoLemmixSharp.Engine.Level.LevelScreen;
 
@@ -10,8 +11,8 @@ public sealed class LeftOrientation : Orientation
 
     private LeftOrientation()
         : base(
-            LevelConstants.LeftOrientationRotNum,
-            LevelConstants.LeftOrientationName,
+            EngineConstants.LeftOrientationRotNum,
+            EngineConstants.LeftOrientationName,
             -1,
             0)
     {

@@ -46,33 +46,23 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift;
         _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift;
 
-        _bitArraySize = _allTrackedItems.Size;
+        _bitArraySize = BitArrayHelpers.CalculateBitArrayBufferLength(hasher.NumberOfItems);
 
         _cachedQueryScratchSpace = new uint[_bitArraySize];
         _allBits = new uint[_bitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];
     }
 
     [Pure]
-    public bool IsEmpty
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _allTrackedItems.Count == 0;
-    }
+    public bool IsEmpty => _allTrackedItems.Count == 0;
 
     [Pure]
-    public int ScratchSpaceSize
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _bitArraySize;
-    }
+    public int ScratchSpaceSize => _bitArraySize;
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSetEnumerable<T> GetAllTrackedItems() => _allTrackedItems.AsSimpleEnumerable();
+    public SimpleSetEnumerable<TPerfectHasher, T> GetAllTrackedItems() => _allTrackedItems.AsSimpleEnumerable();
 
     public void Clear()
     {
@@ -85,21 +75,21 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     public void GetAllItemsNearPosition(
         Span<uint> scratchSpaceSpan,
         LevelPosition levelPosition,
-        out SimpleSetEnumerable<T> result)
+        out SimpleSetEnumerable<TPerfectHasher, T> result)
     {
         if (IsEmpty)
         {
-            result = SimpleSetEnumerable<T>.Empty;
+            result = SimpleSetEnumerable<TPerfectHasher, T>.Empty;
             return;
         }
 
         var chunkX = levelPosition.X >> _chunkSizeBitShift;
         var chunkY = levelPosition.Y >> _chunkSizeBitShift;
 
-        if (chunkX < 0 || chunkX >= _numberOfHorizontalChunks ||
-            chunkY < 0 || chunkY >= _numberOfVerticalChunks)
+        if ((uint)chunkX >= (uint)_numberOfHorizontalChunks ||
+            (uint)chunkY >= (uint)_numberOfVerticalChunks)
         {
-            result = SimpleSetEnumerable<T>.Empty;
+            result = SimpleSetEnumerable<TPerfectHasher, T>.Empty;
             return;
         }
 
@@ -107,7 +97,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         var queryCount = BitArrayHelpers.GetPopCount(sourceSpan);
         sourceSpan.CopyTo(scratchSpaceSpan);
 
-        result = new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, queryCount);
+        result = new SimpleSetEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, queryCount);
     }
 
     /// <summary>
@@ -120,11 +110,11 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     public void GetAllItemsNearRegion(
         Span<uint> scratchSpaceSpan,
         LevelRegion levelRegion,
-        out SimpleSetEnumerable<T> result)
+        out SimpleSetEnumerable<TPerfectHasher, T> result)
     {
         if (IsEmpty)
         {
-            result = SimpleSetEnumerable<T>.Empty;
+            result = SimpleSetEnumerable<TPerfectHasher, T>.Empty;
             return;
         }
 
@@ -137,7 +127,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             // If we've already got the data cached, just use it
             new ReadOnlySpan<uint>(_cachedQueryScratchSpace).CopyTo(scratchSpaceSpan);
 
-            result = new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _cachedQueryCount);
+            result = new SimpleSetEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, _cachedQueryCount);
             return;
         }
 
@@ -158,7 +148,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         _cachedTopLeftChunkQuery = topLeftChunk;
         _cachedBottomRightChunkQuery = bottomRightChunk;
         _cachedQueryCount = BitArrayHelpers.GetPopCount(scratchSpaceSpan);
-        result = new SimpleSetEnumerable<T>(_hasher, scratchSpaceSpan, _cachedQueryCount);
+        result = new SimpleSetEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, _cachedQueryCount);
     }
 
     public void AddItem(T item)
@@ -306,27 +296,27 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             by += _numberOfVerticalChunks;
         }
 
-        var x = 1 + bx - ax;
-        var x1 = ax;
-        var yCount = 1 + by - ay;
+        var y = 1 + by - ay;
+        var y1 = ay;
+        var xCount = 1 + bx - ax;
 
-        while (x-- > 0)
+        while (y-- > 0)
         {
-            var y1 = ay;
-            var y = yCount;
-            while (y-- > 0)
+            var x1 = ax;
+            var x = xCount;
+            while (x-- > 0)
             {
                 ModifyChunkPosition(chunkOperationType, item, x1, y1);
 
-                if (++y1 == _numberOfVerticalChunks)
+                if (++x1 == _numberOfHorizontalChunks)
                 {
-                    y1 = 0;
+                    x1 = 0;
                 }
             }
 
-            if (++x1 == _numberOfHorizontalChunks)
+            if (++y1 == _numberOfVerticalChunks)
             {
-                x1 = 0;
+                y1 = 0;
             }
         }
     }
@@ -373,27 +363,27 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             by += _numberOfVerticalChunks;
         }
 
-        var x = 1 + bx - ax;
-        var x1 = ax;
-        var yCount = 1 + by - ay;
+        var y = 1 + by - ay;
+        var y1 = ay;
+        var xCount = 1 + bx - ax;
 
-        while (x-- > 0)
+        while (y-- > 0)
         {
-            var y1 = ay;
-            var y = yCount;
-            while (y-- > 0)
+            var x1 = ax;
+            var x = xCount;
+            while (x-- > 0)
             {
                 BitArrayHelpers.UnionWith(span, ReadOnlySpanForChunk(x1, y1));
 
-                if (++y1 == _numberOfVerticalChunks)
+                if (++x1 == _numberOfHorizontalChunks)
                 {
-                    y1 = 0;
+                    x1 = 0;
                 }
             }
 
-            if (++x1 == _numberOfHorizontalChunks)
+            if (++y1 == _numberOfVerticalChunks)
             {
-                x1 = 0;
+                y1 = 0;
             }
         }
     }

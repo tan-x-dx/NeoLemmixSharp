@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
@@ -73,7 +73,7 @@ public sealed class LevelObjectAssembler : IDisposable
                 DownOrientation.Instance,
                 FacingDirection.RightInstance,
                 NoneAction.Instance,
-                Team.AllItems[LevelConstants.ClassicTeamId])
+                Team.AllItems[EngineConstants.ClassicTeamId])
             {
                 LevelPosition = new LevelPosition()
             };

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level;
+﻿using MonoGameGum.GueDeriving;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Menu.Pages;
@@ -8,28 +9,29 @@ public sealed class LevelStartPage : PageBase
     public LevelStartPage(
         MenuInputController inputController,
         LevelScreen levelScreen,
-        LevelData levelData)
-        : base(inputController)
+        LevelData levelData,
+        ContainerRuntime root)
+        : base(inputController, root)
     {
     }
 
-    protected override void OnInitialise()
+    protected override void OnInitialise(ContainerRuntime root)
     {
-        throw new NotImplementedException();
     }
 
     protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
     {
-        throw new NotImplementedException();
     }
 
-    public override void Tick()
+    protected override void HandleUserInput()
     {
-        throw new NotImplementedException();
+        if (InputController.Quit.IsPressed)
+        {
+            NavigateToMainMenuPage();
+        }
     }
 
     protected override void OnDispose()
     {
-        throw new NotImplementedException();
     }
 }

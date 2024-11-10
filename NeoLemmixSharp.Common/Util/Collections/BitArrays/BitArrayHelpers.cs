@@ -136,52 +136,6 @@ public static class BitArrayHelpers
         return result;
     }
 
-    public sealed class ReferenceTypeBitEnumerator : IEnumerator<int>
-    {
-        private readonly uint[] _bits;
-
-        private uint _v;
-        private int _remaining;
-        private int _index;
-
-        public int Current { get; private set; }
-
-        public ReferenceTypeBitEnumerator(uint[] bits, int popCount)
-        {
-            _bits = bits;
-            _index = 0;
-            _v = _bits.Length == 0 ? 0U : _bits[0];
-            _remaining = popCount;
-            Current = 0;
-        }
-
-        public bool MoveNext()
-        {
-            if (_v == 0U)
-            {
-                if (_remaining == 0)
-                    return false;
-
-                do
-                {
-                    _v = _bits[++_index];
-                }
-                while (_v == 0U);
-            }
-
-            var m = BitOperations.TrailingZeroCount(_v);
-            _v &= _v - 1;
-
-            Current = (_index << Shift) | m;
-            _remaining--;
-            return true;
-        }
-
-        void IEnumerator.Reset() => throw new InvalidOperationException("Cannot reset");
-        object IEnumerator.Current => Current;
-        void IDisposable.Dispose() { }
-    }
-
     [Pure]
     internal static int GetPopCount(ReadOnlySpan<uint> bits)
     {
@@ -194,123 +148,100 @@ public static class BitArrayHelpers
         return result;
     }
 
-    internal static void UnionWith(Span<uint> span, ReadOnlySpan<uint> other, ref int popCount)
+    internal static void UnionWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
             throw new ArgumentException("Spans have different lengths!");
 
-        var newPopCount = 0;
         switch (span.Length)
         {
-            case 7: span[6] |= other[6]; newPopCount += BitOperations.PopCount(span[6]); goto case 6;
-            case 6: span[5] |= other[5]; newPopCount += BitOperations.PopCount(span[5]); goto case 5;
-            case 5: span[4] |= other[4]; newPopCount += BitOperations.PopCount(span[4]); goto case 4;
-            case 4: span[3] |= other[3]; newPopCount += BitOperations.PopCount(span[3]); goto case 3;
-            case 3: span[2] |= other[2]; newPopCount += BitOperations.PopCount(span[2]); goto case 2;
-            case 2: span[1] |= other[1]; newPopCount += BitOperations.PopCount(span[1]); goto case 1;
-            case 1: span[0] |= other[0]; newPopCount += BitOperations.PopCount(span[0]); goto Done;
-            case 0: goto Done;
+            case 8: span[7] |= other[7]; goto case 7;
+            case 7: span[6] |= other[6]; goto case 6;
+            case 6: span[5] |= other[5]; goto case 5;
+            case 5: span[4] |= other[4]; goto case 4;
+            case 4: span[3] |= other[3]; goto case 3;
+            case 3: span[2] |= other[2]; goto case 2;
+            case 2: span[1] |= other[1]; goto case 1;
+            case 1: span[0] |= other[0]; return;
+            case 0: return;
         }
 
         for (var i = span.Length - 1; i >= 0; i--)
         {
             span[i] |= other[i];
-            newPopCount += BitOperations.PopCount(span[i]);
         }
-
-        Done:
-        popCount = newPopCount;
     }
 
-    internal static void UnionWith(Span<uint> span, ReadOnlySpan<uint> other)
-    {
-        var dummy = 0;
-
-        UnionWith(span, other, ref dummy);
-    }
-
-    internal static void IntersectWith(Span<uint> span, ReadOnlySpan<uint> other, ref int popCount)
+    internal static void IntersectWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
             throw new ArgumentException("Spans have different lengths!");
 
-        var newPopCount = 0;
         switch (span.Length)
         {
-            case 7: span[6] &= other[6]; newPopCount += BitOperations.PopCount(span[6]); goto case 6;
-            case 6: span[5] &= other[5]; newPopCount += BitOperations.PopCount(span[5]); goto case 5;
-            case 5: span[4] &= other[4]; newPopCount += BitOperations.PopCount(span[4]); goto case 4;
-            case 4: span[3] &= other[3]; newPopCount += BitOperations.PopCount(span[3]); goto case 3;
-            case 3: span[2] &= other[2]; newPopCount += BitOperations.PopCount(span[2]); goto case 2;
-            case 2: span[1] &= other[1]; newPopCount += BitOperations.PopCount(span[1]); goto case 1;
-            case 1: span[0] &= other[0]; newPopCount += BitOperations.PopCount(span[0]); goto Done;
-            case 0: goto Done;
+            case 8: span[7] &= other[7]; goto case 7;
+            case 7: span[6] &= other[6]; goto case 6;
+            case 6: span[5] &= other[5]; goto case 5;
+            case 5: span[4] &= other[4]; goto case 4;
+            case 4: span[3] &= other[3]; goto case 3;
+            case 3: span[2] &= other[2]; goto case 2;
+            case 2: span[1] &= other[1]; goto case 1;
+            case 1: span[0] &= other[0]; return;
+            case 0: return;
         }
 
         for (var i = span.Length - 1; i >= 0; i--)
         {
             span[i] &= other[i];
-            newPopCount += BitOperations.PopCount(span[i]);
         }
-
-        Done:
-        popCount = newPopCount;
     }
 
-    internal static void ExceptWith(Span<uint> span, ReadOnlySpan<uint> other, ref int popCount)
+    internal static void ExceptWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
             throw new ArgumentException("Spans have different lengths!");
 
-        var newPopCount = 0;
         switch (span.Length)
         {
-            case 7: span[6] &= ~other[6]; newPopCount += BitOperations.PopCount(span[6]); goto case 6;
-            case 6: span[5] &= ~other[5]; newPopCount += BitOperations.PopCount(span[5]); goto case 5;
-            case 5: span[4] &= ~other[4]; newPopCount += BitOperations.PopCount(span[4]); goto case 4;
-            case 4: span[3] &= ~other[3]; newPopCount += BitOperations.PopCount(span[3]); goto case 3;
-            case 3: span[2] &= ~other[2]; newPopCount += BitOperations.PopCount(span[2]); goto case 2;
-            case 2: span[1] &= ~other[1]; newPopCount += BitOperations.PopCount(span[1]); goto case 1;
-            case 1: span[0] &= ~other[0]; newPopCount += BitOperations.PopCount(span[0]); goto Done;
-            case 0: goto Done;
+            case 8: span[7] &= ~other[7]; goto case 7;
+            case 7: span[6] &= ~other[6]; goto case 6;
+            case 6: span[5] &= ~other[5]; goto case 5;
+            case 5: span[4] &= ~other[4]; goto case 4;
+            case 4: span[3] &= ~other[3]; goto case 3;
+            case 3: span[2] &= ~other[2]; goto case 2;
+            case 2: span[1] &= ~other[1]; goto case 1;
+            case 1: span[0] &= ~other[0]; return;
+            case 0: return;
         }
 
         for (var i = span.Length - 1; i >= 0; i--)
         {
             span[i] &= ~other[i];
-            newPopCount += BitOperations.PopCount(span[i]);
         }
-
-        Done:
-        popCount = newPopCount;
     }
 
-    internal static void SymmetricExceptWith(Span<uint> span, ReadOnlySpan<uint> other, ref int popCount)
+    internal static void SymmetricExceptWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
             throw new ArgumentException("Spans have different lengths!");
 
-        var newPopCount = 0;
         switch (span.Length)
         {
-            case 7: span[6] ^= other[6]; newPopCount += BitOperations.PopCount(span[6]); goto case 6;
-            case 6: span[5] ^= other[5]; newPopCount += BitOperations.PopCount(span[5]); goto case 5;
-            case 5: span[4] ^= other[4]; newPopCount += BitOperations.PopCount(span[4]); goto case 4;
-            case 4: span[3] ^= other[3]; newPopCount += BitOperations.PopCount(span[3]); goto case 3;
-            case 3: span[2] ^= other[2]; newPopCount += BitOperations.PopCount(span[2]); goto case 2;
-            case 2: span[1] ^= other[1]; newPopCount += BitOperations.PopCount(span[1]); goto case 1;
-            case 1: span[0] ^= other[0]; newPopCount += BitOperations.PopCount(span[0]); goto Done;
-            case 0: goto Done;
+            case 8: span[7] ^= other[7]; goto case 7;
+            case 7: span[6] ^= other[6]; goto case 6;
+            case 6: span[5] ^= other[5]; goto case 5;
+            case 5: span[4] ^= other[4]; goto case 4;
+            case 4: span[3] ^= other[3]; goto case 3;
+            case 3: span[2] ^= other[2]; goto case 2;
+            case 2: span[1] ^= other[1]; goto case 1;
+            case 1: span[0] ^= other[0]; return;
+            case 0: return;
         }
 
         for (var i = span.Length - 1; i >= 0; i--)
         {
             span[i] ^= other[i];
-            newPopCount += BitOperations.PopCount(span[i]);
         }
-
-        Done:
-        popCount = newPopCount;
     }
 
     [Pure]
@@ -413,5 +344,51 @@ public static class BitArrayHelpers
         }
 
         return true;
+    }
+
+    public sealed class ReferenceTypeBitEnumerator : IEnumerator<int>
+    {
+        private readonly uint[] _bits;
+
+        private uint _v;
+        private int _remaining;
+        private int _index;
+
+        public int Current { get; private set; }
+
+        public ReferenceTypeBitEnumerator(uint[] bits, int popCount)
+        {
+            _bits = bits;
+            _index = 0;
+            _v = _bits.Length == 0 ? 0U : _bits[0];
+            _remaining = popCount;
+            Current = 0;
+        }
+
+        public bool MoveNext()
+        {
+            if (_v == 0U)
+            {
+                if (_remaining == 0)
+                    return false;
+
+                do
+                {
+                    _v = _bits[++_index];
+                }
+                while (_v == 0U);
+            }
+
+            var m = BitOperations.TrailingZeroCount(_v);
+            _v &= _v - 1;
+
+            Current = (_index << Shift) | m;
+            _remaining--;
+            return true;
+        }
+
+        void IEnumerator.Reset() => throw new InvalidOperationException("Cannot reset");
+        object IEnumerator.Current => Current;
+        void IDisposable.Dispose() { }
     }
 }

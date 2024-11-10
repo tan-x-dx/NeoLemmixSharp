@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Screen;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -35,8 +35,8 @@ public sealed class LevelCursorSprite
 
     private void RenderCursor(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
     {
-        var d = LevelConstants.HalfCursorSizeInPixels * scaleMultiplier;
-        var s = LevelConstants.CursorSizeInPixels * scaleMultiplier;
+        var d = EngineConstants.HalfCursorSizeInPixels * scaleMultiplier;
+        var s = EngineConstants.CursorSizeInPixels * scaleMultiplier;
 
         var destRectangle = new Rectangle(
             x - d,
@@ -44,9 +44,9 @@ public sealed class LevelCursorSprite
             s,
             s);
 
-        var sourceRect = new Rectangle(0, 0, LevelConstants.CursorSizeInPixels, LevelConstants.CursorSizeInPixels);
+        var sourceRect = new Rectangle(0, 0, EngineConstants.CursorSizeInPixels, EngineConstants.CursorSizeInPixels);
         var sourceY = _levelCursor.NumberOfLemmingsUnderCursor > 0
-            ? LevelConstants.CursorSizeInPixels
+            ? EngineConstants.CursorSizeInPixels
             : 0;
 
         sourceRect.Y = sourceY;
@@ -57,7 +57,7 @@ public sealed class LevelCursorSprite
             sourceRect,
             _levelCursor.Color1);
 
-        sourceRect.X += LevelConstants.CursorSizeInPixels;
+        sourceRect.X += EngineConstants.CursorSizeInPixels;
 
         spriteBatch.Draw(
             _cursorTexture,
@@ -65,7 +65,7 @@ public sealed class LevelCursorSprite
             sourceRect,
             _levelCursor.Color2);
 
-        sourceRect.X += LevelConstants.CursorSizeInPixels;
+        sourceRect.X += EngineConstants.CursorSizeInPixels;
 
         spriteBatch.Draw(
             _cursorTexture,
@@ -77,16 +77,16 @@ public sealed class LevelCursorSprite
     private void RenderHand(SpriteBatch spriteBatch, int x, int y)
     {
         var destination = new Rectangle(
-            x + MenuSpriteBank.CursorHiResXOffset,
-            y + MenuSpriteBank.CursorHiResYOffset,
-            MenuSpriteBank.CursorHiResWidth * 2,
-            MenuSpriteBank.CursorHiResHeight * 2);
+            x + CommonSprites.CursorHiResXOffset,
+            y + CommonSprites.CursorHiResYOffset,
+            CommonSprites.CursorHiResWidth * 2,
+            CommonSprites.CursorHiResHeight * 2);
 
         var source = new Rectangle(
             0,
             0,
-            MenuSpriteBank.CursorHiResWidth,
-            MenuSpriteBank.CursorHiResHeight);
+            CommonSprites.CursorHiResWidth,
+            CommonSprites.CursorHiResHeight);
 
         spriteBatch.Draw(
             _handTexture,
@@ -94,7 +94,7 @@ public sealed class LevelCursorSprite
             source,
             Color.White);
 
-        source.X = MenuSpriteBank.CursorHiResWidth;
+        source.X = CommonSprites.CursorHiResWidth;
 
         spriteBatch.Draw(
             _handTexture,

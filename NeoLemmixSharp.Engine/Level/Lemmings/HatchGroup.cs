@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -11,7 +12,7 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
 
     private int _hatchIndex;
 
-    private int _nextLemmingCountDown = LevelConstants.InitialLemmingHatchReleaseCountDown;
+    private int _nextLemmingCountDown = EngineConstants.InitialLemmingHatchReleaseCountDown;
     private int _lemmingsToRelease;
 
     public int Id { get; }
@@ -32,8 +33,8 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
     {
         Id = id;
 
-        MinSpawnInterval = Math.Clamp(minSpawnInterval, LevelConstants.MinAllowedSpawnInterval, LevelConstants.MaxAllowedSpawnInterval);
-        MaxSpawnInterval = Math.Clamp(maxSpawnInterval, minSpawnInterval, LevelConstants.MaxAllowedSpawnInterval);
+        MinSpawnInterval = Math.Clamp(minSpawnInterval, EngineConstants.MinAllowedSpawnInterval, EngineConstants.MaxAllowedSpawnInterval);
+        MaxSpawnInterval = Math.Clamp(maxSpawnInterval, minSpawnInterval, EngineConstants.MaxAllowedSpawnInterval);
         CurrentSpawnInterval = Math.Clamp(initialSpawnInterval, MinSpawnInterval, MaxSpawnInterval);
     }
 
@@ -107,7 +108,7 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
         // RR1 <=> SI102,
         // RR50 <=> SI53,
         // RR99 <=> SI4, etc
-        return 1 + LevelConstants.MaxAllowedSpawnInterval - spawnInterval;
+        return 1 + EngineConstants.MaxAllowedSpawnInterval - spawnInterval;
     }
 
     public bool Equals(HatchGroup? other) => Id == (other?.Id ?? -1);

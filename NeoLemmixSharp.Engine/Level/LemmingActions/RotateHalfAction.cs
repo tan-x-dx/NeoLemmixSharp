@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -9,12 +10,12 @@ public sealed class RotateHalfAction : LemmingAction
 
     private RotateHalfAction()
         : base(
-            LevelConstants.RotateHalfActionId,
-            LevelConstants.RotateHalfActionName,
-            LevelConstants.RotateHalfActionSpriteFileName,
-            LevelConstants.RotateHalfAnimationFrames,
-            LevelConstants.MaxRotateHalfPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority)
+            EngineConstants.RotateHalfActionId,
+            EngineConstants.RotateHalfActionName,
+            EngineConstants.RotateHalfActionSpriteFileName,
+            EngineConstants.RotateHalfAnimationFrames,
+            EngineConstants.MaxRotateHalfPhysicsFrames,
+            EngineConstants.NonWalkerMovementPriority)
     {
     }
 

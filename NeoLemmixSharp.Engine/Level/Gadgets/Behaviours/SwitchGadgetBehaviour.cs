@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public sealed class SwitchGadgetBehaviour : GadgetBehaviour
 {
@@ -8,6 +10,6 @@ public sealed class SwitchGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.SwitchGadgetBehaviourId;
+    public override int Id => EngineConstants.SwitchGadgetBehaviourId;
     public override string GadgetBehaviourName => "switch";
 }

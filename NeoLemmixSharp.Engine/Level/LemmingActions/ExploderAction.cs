@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
@@ -13,12 +14,12 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
 
     private ExploderAction()
         : base(
-            LevelConstants.ExploderActionId,
-            LevelConstants.ExploderActionName,
-            LevelConstants.ExploderActionSpriteFileName,
-            LevelConstants.ExploderAnimationFrames,
-            LevelConstants.MaxExploderPhysicsFrames,
-            LevelConstants.NoPriority)
+            EngineConstants.ExploderActionId,
+            EngineConstants.ExploderActionName,
+            EngineConstants.ExploderActionSpriteFileName,
+            EngineConstants.ExploderAnimationFrames,
+            EngineConstants.MaxExploderPhysicsFrames,
+            EngineConstants.NoPriority)
     {
     }
 
@@ -26,7 +27,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
     {
         TerrainMasks.ApplyBomberMask(lemming);
         //    LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExplode);
-        lemming.ParticleTimer = LevelConstants.ParticleFrameCount;
+        lemming.ParticleTimer = EngineConstants.ParticleFrameCount;
 
         WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 

@@ -1,23 +1,22 @@
-﻿using MLEM.Ui;
-using MLEM.Ui.Elements;
+﻿using Microsoft.Xna.Framework;
+using MonoGameGum.GueDeriving;
 using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
 public abstract class PageBase : IInitialisable, IDisposable
 {
-    private readonly UiSystem _uiSystem;
     protected readonly MenuInputController InputController;
-    protected readonly Element UiRoot;
+    private readonly ContainerRuntime _root;
 
     private bool _isInitialised;
 
     protected PageBase(
-        MenuInputController inputController)
+        MenuInputController inputController,
+        ContainerRuntime root)
     {
-        _uiSystem = IGameWindow.Instance.UiSystem;
-        UiRoot = IGameWindow.Instance.UiRoot;
         InputController = inputController;
+        _root = root;
     }
 
     public void Initialise()
@@ -25,11 +24,11 @@ public abstract class PageBase : IInitialisable, IDisposable
         if (_isInitialised)
             return;
 
-        OnInitialise();
+        OnInitialise(_root);
         _isInitialised = true;
     }
 
-    protected abstract void OnInitialise();
+    protected abstract void OnInitialise(ContainerRuntime root);
 
     public void SetWindowDimensions(int windowWidth, int windowHeight)
     {
@@ -38,12 +37,34 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     protected abstract void OnWindowDimensionsChanged(int windowWidth, int windowHeight);
 
-    public abstract void Tick();
+    public void Tick()
+    {
+        HandleUserInput();
+        OnTick();
+    }
+
+    protected abstract void HandleUserInput();
+
+    protected virtual void OnTick() { }
 
     public void Dispose()
     {
+        _root.Children.Clear();
+
         OnDispose();
     }
 
     protected abstract void OnDispose();
+
+    protected static void NavigateToMainMenuPage()
+    {
+        var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateMainPage();
+
+        if (levelStartPage is null)
+            return;
+
+        MenuScreen.Current.SetNextPage(levelStartPage);
+    }
+
+    protected static Vector2 GetWindowSize() => IGameWindow.Instance.GetWindowSize();
 }

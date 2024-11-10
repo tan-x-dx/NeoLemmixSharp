@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
@@ -12,8 +13,8 @@ public sealed class ShimmierSkill : LemmingSkill
 
     private ShimmierSkill()
         : base(
-            LevelConstants.ShimmierSkillId,
-            LevelConstants.ShimmierSkillName)
+            EngineConstants.ShimmierSkillId,
+            EngineConstants.ShimmierSkillName)
     {
     }
 

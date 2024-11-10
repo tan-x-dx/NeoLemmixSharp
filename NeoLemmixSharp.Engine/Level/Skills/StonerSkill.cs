@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -9,8 +10,8 @@ public sealed class StonerSkill : LemmingSkill
 
     private StonerSkill()
         : base(
-            LevelConstants.StonerSkillId,
-            LevelConstants.StonerSkillName)
+            EngineConstants.StonerSkillId,
+            EngineConstants.StonerSkillName)
     {
     }
 

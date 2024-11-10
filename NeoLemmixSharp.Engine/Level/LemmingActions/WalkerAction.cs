@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
@@ -10,12 +11,12 @@ public sealed class WalkerAction : LemmingAction
 
     private WalkerAction()
         : base(
-            LevelConstants.WalkerActionId,
-            LevelConstants.WalkerActionName,
-            LevelConstants.WalkerActionSpriteFileName,
-            LevelConstants.WalkerAnimationFrames,
-            LevelConstants.MaxWalkerPhysicsFrames,
-            LevelConstants.WalkerMovementPriority)
+            EngineConstants.WalkerActionId,
+            EngineConstants.WalkerActionName,
+            EngineConstants.WalkerActionSpriteFileName,
+            EngineConstants.WalkerAnimationFrames,
+            EngineConstants.MaxWalkerPhysicsFrames,
+            EngineConstants.WalkerMovementPriority)
     {
     }
 
@@ -37,7 +38,7 @@ public sealed class WalkerAction : LemmingAction
             return true;
         }
 
-        if (dy > LevelConstants.MaxStepUp)
+        if (dy > EngineConstants.MaxStepUp)
         {
             if (lemming.State.IsClimber)
             {

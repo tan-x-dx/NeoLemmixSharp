@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public sealed class WaterGadgetBehaviour : GadgetBehaviour
 {
@@ -8,6 +10,6 @@ public sealed class WaterGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.WaterGadgetBehaviourId;
+    public override int Id => EngineConstants.WaterGadgetBehaviourId;
     public override string GadgetBehaviourName => "water";
 }

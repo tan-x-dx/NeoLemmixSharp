@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public sealed class UpdraftGadgetBehaviour : GadgetBehaviour
 {
@@ -8,6 +10,6 @@ public sealed class UpdraftGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.UpdraftGadgetBehaviourId;
+    public override int Id => EngineConstants.UpdraftGadgetBehaviourId;
     public override string GadgetBehaviourName => "updraft";
 }

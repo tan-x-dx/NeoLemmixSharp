@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -9,12 +10,12 @@ public sealed class RotateCounterclockwiseAction : LemmingAction
 
     private RotateCounterclockwiseAction()
         : base(
-            LevelConstants.RotateCounterclockwiseActionId,
-            LevelConstants.RotateCounterclockwiseActionName,
-            LevelConstants.RotateCounterclockwiseActionSpriteFileName,
-            LevelConstants.RotateCounterclockwiseAnimationFrames,
-            LevelConstants.MaxRotateCounterclockwisePhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority)
+            EngineConstants.RotateCounterclockwiseActionId,
+            EngineConstants.RotateCounterclockwiseActionName,
+            EngineConstants.RotateCounterclockwiseActionSpriteFileName,
+            EngineConstants.RotateCounterclockwiseAnimationFrames,
+            EngineConstants.MaxRotateCounterclockwisePhysicsFrames,
+            EngineConstants.NonWalkerMovementPriority)
     {
     }
 

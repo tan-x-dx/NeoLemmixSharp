@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
@@ -35,7 +36,7 @@ public sealed class GadgetManager :
 
         _gadgetPositionHelper = new SpacialHashGrid<GadgetManager, HitBoxGadget>(
             this,
-            LevelConstants.GadgetPositionChunkSize,
+            EngineConstants.GadgetPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
     }

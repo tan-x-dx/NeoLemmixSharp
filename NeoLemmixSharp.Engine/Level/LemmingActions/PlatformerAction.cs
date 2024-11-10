@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -11,12 +12,12 @@ public sealed class PlatformerAction : LemmingAction
 
     private PlatformerAction()
         : base(
-            LevelConstants.PlatformerActionId,
-            LevelConstants.PlatformerActionName,
-            LevelConstants.PlatformerActionSpriteFileName,
-            LevelConstants.PlatformerAnimationFrames,
-            LevelConstants.MaxPlatformerPhysicsFrames,
-            LevelConstants.NonPermanentSkillPriority)
+            EngineConstants.PlatformerActionId,
+            EngineConstants.PlatformerActionName,
+            EngineConstants.PlatformerActionSpriteFileName,
+            EngineConstants.PlatformerAnimationFrames,
+            EngineConstants.MaxPlatformerPhysicsFrames,
+            EngineConstants.NonPermanentSkillPriority)
     {
     }
 
@@ -73,7 +74,7 @@ public sealed class PlatformerAction : LemmingAction
         }
 
         if (lemming.PhysicsFrame == 10 &&
-            lemming.NumberOfBricksLeft <= LevelConstants.NumberOfRemainingBricksToPlaySound)
+            lemming.NumberOfBricksLeft <= EngineConstants.NumberOfRemainingBricksToPlaySound)
         {
             // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position) ??
             return;
@@ -194,7 +195,7 @@ public sealed class PlatformerAction : LemmingAction
     {
         base.TransitionLemmingToAction(lemming, turnAround);
 
-        lemming.NumberOfBricksLeft = LevelConstants.NumberOfPlatformerBricks;
+        lemming.NumberOfBricksLeft = EngineConstants.NumberOfPlatformerBricks;
         lemming.ConstructivePositionFreeze = false;
     }
 }

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
@@ -46,7 +47,7 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
     {
         _maxElapsedTicks = Math.Max(_maxElapsedTicks, elapsedTicks);
 
-        if (elapsedTicks % LevelConstants.RewindSnapshotInterval != 0)
+        if (elapsedTicks % EngineConstants.RewindSnapshotInterval != 0)
             return;
 
         _lemmingSnapshotRecorder.TakeSnapshot();
@@ -118,7 +119,7 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
     {
         specifiedTick = Math.Max(specifiedTick, 0);
 
-        var correspondingSnapshotNumber = specifiedTick / LevelConstants.RewindSnapshotInterval;
+        var correspondingSnapshotNumber = specifiedTick / EngineConstants.RewindSnapshotInterval;
 
         _lemmingSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
         _gadgetSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
@@ -128,7 +129,7 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
         _gadgetManagerSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
         _levelTimerRecorder.ApplySnapshot(correspondingSnapshotNumber);
 
-        var actualElapsedTick = correspondingSnapshotNumber * LevelConstants.RewindSnapshotInterval;
+        var actualElapsedTick = correspondingSnapshotNumber * EngineConstants.RewindSnapshotInterval;
 
         LevelScreen.TerrainPainter.RewindBackTo(actualElapsedTick);
         LevelScreen.LevelTimer.SetElapsedTicks(actualElapsedTick, false);

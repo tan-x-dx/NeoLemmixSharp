@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
@@ -103,7 +104,7 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
         var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
         var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(_contentManager);
 
-        var levelCursorSprite = CommonSprites.GetLevelCursorSprite(levelCursor);
+        var levelCursorSprite = GetLevelCursorSprite(levelCursor);
         var backgroundRenderer = GetBackgroundRenderer(levelData);
 
         _levelObjectAssembler.GetLevelSprites(
@@ -169,7 +170,7 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
     {
         var backgroundData = levelData.LevelBackground;
         if (backgroundData is null)
-            return new SolidColorBackgroundRenderer(LevelConstants.ClassicLevelBackgroundColor);
+            return new SolidColorBackgroundRenderer(EngineConstants.ClassicLevelBackgroundColor);
 
         if (backgroundData.IsSolidColor)
             return new SolidColorBackgroundRenderer(backgroundData.Color);
@@ -207,6 +208,14 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
         }
 
         return result;
+    }
+
+    private static LevelCursorSprite GetLevelCursorSprite(LevelCursor levelCursor)
+    {
+        return new LevelCursorSprite(
+            levelCursor,
+            CommonSprites.CursorCrossHair,
+            CommonSprites.CursorHandHiRes);
     }
 
     int IComparer<IViewportObjectRenderer>.Compare(IViewportObjectRenderer? x, IViewportObjectRenderer? y)

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -22,8 +23,8 @@ public static class LevelParameterHelpers
 
         if (timedBombers)
             return lemming.IsFastForward
-                ? LevelConstants.DefaultFastForwardLemmingCountDownActionTicks
-                : LevelConstants.DefaultCountDownActionTicks;
+                ? EngineConstants.DefaultFastForwardLemmingCountDownActionTicks
+                : EngineConstants.DefaultCountDownActionTicks;
 
         return 1; // I.e. the next frame
     }

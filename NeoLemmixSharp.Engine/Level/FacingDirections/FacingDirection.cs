@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics.Contracts;
 
@@ -7,14 +8,14 @@ namespace NeoLemmixSharp.Engine.Level.FacingDirections;
 public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
 {
     public static readonly FacingDirection LeftInstance = new(
-        LevelConstants.LeftFacingDirectionId,
-        LevelConstants.LeftFacingDirectionDeltaX,
-        LevelConstants.LeftFacingDirectionName);
+        EngineConstants.LeftFacingDirectionId,
+        EngineConstants.LeftFacingDirectionDeltaX,
+        EngineConstants.LeftFacingDirectionName);
 
     public static readonly FacingDirection RightInstance = new(
-        LevelConstants.RightFacingDirectionId,
-        LevelConstants.RightFacingDirectionDeltaX,
-        LevelConstants.RightFacingDirectionName);
+        EngineConstants.RightFacingDirectionId,
+        EngineConstants.RightFacingDirectionDeltaX,
+        EngineConstants.RightFacingDirectionName);
 
     private static readonly FacingDirection[] FacingDirections = GenerateFacingDirectionCollection();
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Screen;
+using NeoLemmixSharp.Engine.Rendering;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
@@ -12,22 +12,22 @@ public sealed class MenuCursorRenderer
     public MenuCursorRenderer(MenuInputController menuInputController)
     {
         _menuInputController = menuInputController;
-        _cursorTexture = MenuSpriteBank.CursorHiRes;
+        _cursorTexture = CommonSprites.CursorHandHiRes;
     }
 
     public void RenderCursor(SpriteBatch spriteBatch)
     {
         var destination = new Rectangle(
-            _menuInputController.MouseX + MenuSpriteBank.CursorHiResXOffset,
-            _menuInputController.MouseY + MenuSpriteBank.CursorHiResYOffset,
-            MenuSpriteBank.CursorHiResWidth * 2,
-            MenuSpriteBank.CursorHiResHeight * 2);
+            _menuInputController.MouseX + CommonSprites.CursorHiResXOffset,
+            _menuInputController.MouseY + CommonSprites.CursorHiResYOffset,
+            CommonSprites.CursorHiResWidth * 2,
+            CommonSprites.CursorHiResHeight * 2);
 
         var source = new Rectangle(
             0,
             0,
-            MenuSpriteBank.CursorHiResWidth,
-            MenuSpriteBank.CursorHiResHeight);
+            CommonSprites.CursorHiResWidth,
+            CommonSprites.CursorHiResHeight);
 
         spriteBatch.Draw(
             _cursorTexture,
@@ -35,7 +35,7 @@ public sealed class MenuCursorRenderer
             source,
             Color.White);
 
-        source.X = MenuSpriteBank.CursorHiResWidth;
+        source.X = CommonSprites.CursorHiResWidth;
 
         spriteBatch.Draw(
             _cursorTexture,

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public sealed class MetalGrateGadgetBehaviour : GadgetBehaviour
 {
@@ -8,6 +10,6 @@ public sealed class MetalGrateGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.MetalGrateGadgetBehaviourId;
+    public override int Id => EngineConstants.MetalGrateGadgetBehaviourId;
     public override string GadgetBehaviourName => "metal grate";
 }

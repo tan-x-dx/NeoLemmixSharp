@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -21,12 +22,12 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
     private BasherAction()
         : base(
-            LevelConstants.BasherActionId,
-            LevelConstants.BasherActionName,
-            LevelConstants.BasherActionSpriteFileName,
-            LevelConstants.BasherAnimationFrames,
-            LevelConstants.MaxBasherPhysicsFrames,
-            LevelConstants.NonPermanentSkillPriority)
+            EngineConstants.BasherActionId,
+            EngineConstants.BasherActionName,
+            EngineConstants.BasherActionSpriteFileName,
+            EngineConstants.BasherAnimationFrames,
+            EngineConstants.MaxBasherPhysicsFrames,
+            EngineConstants.NonPermanentSkillPriority)
     {
     }
 
@@ -47,8 +48,8 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelRegion(
-            orientation.Move(lemmingPosition, 0, LevelConstants.MaxStepUp + 1),
-            orientation.Move(lemmingPosition, 2 * dx, -LevelConstants.DefaultFallStep - 1));
+            orientation.Move(lemmingPosition, 0, EngineConstants.MaxStepUp + 1),
+            orientation.Move(lemmingPosition, 2 * dx, -EngineConstants.DefaultFallStep - 1));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         // Check for enough terrain to continue working

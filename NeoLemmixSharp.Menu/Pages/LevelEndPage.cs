@@ -1,12 +1,17 @@
-﻿namespace NeoLemmixSharp.Menu.Pages;
+﻿using MonoGameGum.GueDeriving;
+
+namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class LevelEndPage : PageBase
 {
-    public LevelEndPage(MenuInputController inputController) : base(inputController)
+    public LevelEndPage(
+        MenuInputController inputController,
+        ContainerRuntime root)
+        : base(inputController, root)
     {
     }
 
-    protected override void OnInitialise()
+    protected override void OnInitialise(ContainerRuntime root)
     {
         throw new NotImplementedException();
     }
@@ -16,9 +21,12 @@ public sealed class LevelEndPage : PageBase
         throw new NotImplementedException();
     }
 
-    public override void Tick()
+    protected override void HandleUserInput()
     {
-        throw new NotImplementedException();
+        if (InputController.Quit.IsPressed)
+        {
+            NavigateToMainMenuPage();
+        }
     }
 
     protected override void OnDispose()

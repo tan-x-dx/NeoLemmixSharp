@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public sealed class SawBladeGadgetBehaviour : GadgetBehaviour
 {
@@ -8,6 +10,6 @@ public sealed class SawBladeGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.SawBladeGadgetBehaviourId;
+    public override int Id => EngineConstants.SawBladeGadgetBehaviourId;
     public override string GadgetBehaviourName => "saw blade";
 }

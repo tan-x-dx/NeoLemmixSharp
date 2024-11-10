@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public sealed class SplatGadgetBehaviour : GadgetBehaviour
 {
@@ -8,6 +10,6 @@ public sealed class SplatGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.SplatGadgetBehaviourId;
+    public override int Id => EngineConstants.SplatGadgetBehaviourId;
     public override string GadgetBehaviourName => "splat";
 }

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
@@ -13,12 +14,12 @@ public sealed class SwimmerAction : LemmingAction
 
     private SwimmerAction()
         : base(
-            LevelConstants.SwimmerActionId,
-            LevelConstants.SwimmerActionName,
-            LevelConstants.SwimmerActionSpriteFileName,
-            LevelConstants.SwimmerAnimationFrames,
-            LevelConstants.MaxSwimmerPhysicsFrames,
-            LevelConstants.PermanentSkillPriority)
+            EngineConstants.SwimmerActionId,
+            EngineConstants.SwimmerActionName,
+            EngineConstants.SwimmerActionSpriteFileName,
+            EngineConstants.SwimmerAnimationFrames,
+            EngineConstants.MaxSwimmerPhysicsFrames,
+            EngineConstants.PermanentSkillPriority)
     {
     }
 
