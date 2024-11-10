@@ -53,25 +53,15 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     }
 
     [Pure]
-    public bool IsEmpty
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _allTrackedItems.Count == 0;
-    }
+    public bool IsEmpty => _allTrackedItems.Count == 0;
 
     [Pure]
-    public int ScratchSpaceSize
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _bitArraySize;
-    }
+    public int ScratchSpaceSize => _bitArraySize;
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public SimpleSetEnumerable<TPerfectHasher, T> GetAllTrackedItems() => _allTrackedItems.AsSimpleEnumerable();
 
     public void Clear()
