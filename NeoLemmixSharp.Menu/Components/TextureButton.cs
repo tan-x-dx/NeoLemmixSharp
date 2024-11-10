@@ -7,37 +7,26 @@ namespace NeoLemmixSharp.Menu.Components;
 
 public sealed class TextureButton : ContainerRuntime
 {
-    public SpriteRuntime Texture { get; }
-    public TextRuntime Text { get; }
-
-    public TextureButton(TextureInfo textureInfo)
+    public TextureButton(TextureInfo textureInfo, int scale = 1)
     {
         ChildrenLayout = ChildrenLayout.Regular;
-        Width = textureInfo.TextureWidth;
-        Height = textureInfo.TextureHeight;
+        Width = textureInfo.TextureWidth * scale;
+        Height = textureInfo.TextureHeight * scale;
 
-        Texture = new SpriteRuntime
+        var texture = new SpriteRuntime
         {
-            Name = "Texture",
+            Name = textureInfo.TextureName,
             SourceFileName = textureInfo.TextureName,
             X = 0f,
             Y = 0f,
-            XOrigin = HorizontalAlignment.Left,
-            YOrigin = VerticalAlignment.Top,
-            Width = 100f,
-            Height = 100f,
-            WidthUnits = DimensionUnitType.PercentageOfSourceFile,
-            HeightUnits = DimensionUnitType.PercentageOfSourceFile
-        };
-        Text = new TextRuntime
-        {
-            Name = "Text",
-            Width = 64f,
-            X = 0f,
-            Y = 0f
+            XOrigin = HorizontalAlignment.Center,
+            YOrigin = VerticalAlignment.Center,
+            Width = textureInfo.TextureWidth * scale,
+            Height = textureInfo.TextureHeight * scale,
+            WidthUnits = DimensionUnitType.Absolute,
+            HeightUnits = DimensionUnitType.Absolute
         };
 
-        Children.Add(Texture);
-        Children.Add(Text);
+        Children.Add(texture);
     }
 }

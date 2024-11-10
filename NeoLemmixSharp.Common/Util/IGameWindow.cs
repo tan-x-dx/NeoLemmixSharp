@@ -14,6 +14,7 @@ public interface IGameWindow
 
     bool IsActive { get; }
     bool IsFullscreen { get; }
+    bool IsBorderless { get; }
 
     GraphicsDevice GraphicsDevice { get; }
     ContentManager Content { get; }

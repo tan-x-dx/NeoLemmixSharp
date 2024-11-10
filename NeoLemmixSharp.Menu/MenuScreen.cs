@@ -17,7 +17,13 @@ public sealed class MenuScreen : IBaseScreen
 {
     public static MenuScreen Current { get; private set; } = null!;
 
-    private readonly ContainerRuntime _root;
+    private readonly ContainerRuntime _root = new(true)
+    {
+        Width = 0,
+        Height = 0,
+        WidthUnits = DimensionUnitType.RelativeToContainer,
+        HeightUnits = DimensionUnitType.RelativeToContainer
+    };
     private readonly PageTransition _pageTransition = new();
 
     private PageBase _currentPage;
@@ -35,8 +41,6 @@ public sealed class MenuScreen : IBaseScreen
         ContentManager contentManager,
         GraphicsDevice graphicsDevice)
     {
-        _root = new ContainerRuntime();
-
         var menuCursorRenderer = new MenuCursorRenderer(InputController);
         MenuScreenRenderer = new MenuScreenRenderer(
             menuCursorRenderer,
@@ -53,10 +57,6 @@ public sealed class MenuScreen : IBaseScreen
 
     public void Initialise()
     {
-        _root.Width = 0;
-        _root.Height = 0;
-        _root.WidthUnits = DimensionUnitType.RelativeToContainer;
-        _root.HeightUnits = DimensionUnitType.RelativeToContainer;
         _root.AddToManagers();
 
         MenuScreenRenderer.Initialise();
@@ -73,6 +73,10 @@ public sealed class MenuScreen : IBaseScreen
 
     public void Tick(GameTime gameTime)
     {
+        // Update UI
+        FormsUtilities.Update(null!, gameTime, _root);
+        SystemManagers.Default.Activity(gameTime.TotalGameTime.TotalSeconds);
+
         if (_pageTransition.IsTransitioning)
         {
             HandlePageTransition();
@@ -82,10 +86,6 @@ public sealed class MenuScreen : IBaseScreen
 
         InputController.Tick();
         _currentPage.Tick();
-
-        // Update UI
-        FormsUtilities.Update(null!, gameTime, _root);
-        SystemManagers.Default.Activity(gameTime.TotalGameTime.TotalSeconds);
 
         if (InputController.ToggleFullScreen.IsPressed)
         {

@@ -1,5 +1,4 @@
-﻿using MonoGameGum.Forms.Controls;
-using MonoGameGum.GueDeriving;
+﻿using MonoGameGum.GueDeriving;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Menu.Components;
 
@@ -12,51 +11,36 @@ public sealed class MainPage : PageBase
 
     private readonly TextureButton _groupButton;
     private readonly TextureButton _groupUpButton;
-    private readonly TextureButton _groupDownButton;
-    //  private MenuFontText _groupName;
 
     private readonly TextureButton _configButton;
     private readonly TextureButton _quitButton;
-
-    Button button;
 
     public MainPage(
         MenuInputController inputController,
         ContainerRuntime root)
         : base(inputController, root)
     {
-        _playButton = new TextureButton(MainMenuButtonTextureInfo.PlayButtonTextureInfo);
+        _playButton = new TextureButton(MainMenuButtonTextureInfo.PlayButtonTextureInfo, 1);
         _playButton.Click += PlayButtonClick;
 
-        _playButton.X = 500;
-        _playButton.Y = 500;
-    }
+        _levelSelectButton = new TextureButton(MainMenuButtonTextureInfo.LevelSelectButtonTextureInfo, 1);
+        _levelSelectButton.Click += LevelSelectButtonClick;
 
-    private int _clickCount;
-    private int _clickCount2;
+        _configButton = new TextureButton(MainMenuButtonTextureInfo.ConfigButtonTextureInfo, 1);
+        _configButton.Click += ConfigButtonClick;
+
+        _quitButton = new TextureButton(MainMenuButtonTextureInfo.QuitButtonTextureInfo, 1);
+        _quitButton.Click += QuitButtonClick;
+    }
 
     protected override void OnInitialise(ContainerRuntime root)
     {
         root.Children.Add(_playButton);
+        root.Children.Add(_levelSelectButton);
+        root.Children.Add(_configButton);
+        root.Children.Add(_quitButton);
 
-        button = new Button();
-        button.X = 100;
-        button.Y = 100;
-        button.Width = 150;
-        button.Height = 150;
-        button.Text = "Aaaa";
-        button.Click += (_, _) =>
-        {
-            _clickCount++;
-            button.Text = $"Clicked {_clickCount} times";
-        };
-        button.Push += Button_Push;
-
-        root.Children.Add(button.Visual);
-    }
-
-    private static void Button_Push(object? sender, EventArgs e)
-    {
+        OnResize();
     }
 
     private static void PlayButtonClick(object? sender, EventArgs e)
@@ -79,11 +63,6 @@ public sealed class MainPage : PageBase
         MenuScreen.Current.SetNextPage(levelSelectPage);
     }
 
-    protected override void OnTick()
-    {
-        button.Text = $"Clicked {_clickCount} times - {_clickCount2++}";
-    }
-
     private static void GroupUpButtonClick(object? sender, EventArgs e)
     {
     }
@@ -103,6 +82,31 @@ public sealed class MainPage : PageBase
 
     protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
     {
+        OnResize();
+    }
+
+    private void OnResize()
+    {
+        var windowWidth = IGameWindow.Instance.WindowWidth;
+        var windowHeight = IGameWindow.Instance.WindowHeight;
+
+        var deltaX = windowWidth / 8;
+
+        _playButton.X = deltaX * 2;
+        _levelSelectButton.X = deltaX * 3;
+
+        deltaX = windowWidth / 6;
+
+        _configButton.X = deltaX * 2;
+        _quitButton.X = deltaX * 3;
+
+        var deltaY = windowHeight / 6;
+
+        _playButton.Y = deltaY * 3;
+        _levelSelectButton.Y = deltaY * 3;
+
+        _configButton.Y = deltaY * 4;
+        _quitButton.Y = deltaY * 4;
     }
 
     protected override void HandleUserInput()
@@ -116,5 +120,8 @@ public sealed class MainPage : PageBase
     protected override void OnDispose()
     {
         _playButton.Click -= PlayButtonClick;
+        _levelSelectButton.Click -= LevelSelectButtonClick;
+        _configButton.Click -= ConfigButtonClick;
+        _quitButton.Click -= QuitButtonClick;
     }
 }
