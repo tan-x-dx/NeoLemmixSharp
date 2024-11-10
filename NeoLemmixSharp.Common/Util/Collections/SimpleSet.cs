@@ -71,7 +71,7 @@ public sealed class SimpleSet<TPerfectHasher, T> : ISet<T>, IReadOnlySet<T>
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-        var iterator = new BitBasedEnumerator<T>(_hasher, new ReadOnlySpan<uint>(_bits), _popCount);
+        var iterator = new BitBasedEnumerator<TPerfectHasher, T>(_hasher, new ReadOnlySpan<uint>(_bits), _popCount);
         while (iterator.MoveNext())
         {
             array[arrayIndex++] = iterator.Current;
@@ -80,11 +80,11 @@ public sealed class SimpleSet<TPerfectHasher, T> : ISet<T>, IReadOnlySet<T>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSetEnumerable<T> AsSimpleEnumerable() => new(_hasher, new ReadOnlySpan<uint>(_bits), _popCount);
+    public SimpleSetEnumerable<TPerfectHasher, T> AsSimpleEnumerable() => new(_hasher, new ReadOnlySpan<uint>(_bits), _popCount);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitBasedEnumerator<T> GetEnumerator() => new(_hasher, new ReadOnlySpan<uint>(_bits), _popCount);
+    public BitBasedEnumerator<TPerfectHasher, T> GetEnumerator() => new(_hasher, new ReadOnlySpan<uint>(_bits), _popCount);
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);

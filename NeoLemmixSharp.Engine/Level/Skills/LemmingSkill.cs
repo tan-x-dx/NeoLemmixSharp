@@ -14,7 +14,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     public static int NumberOfItems => LemmingSkills.Length;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
-    public static SimpleSetEnumerable<LemmingSkill> AllClassicSkills => ClassicSkills.AsSimpleEnumerable();
+    public static SimpleSetEnumerable<ExtendedEnumTypeComparer<LemmingSkill>, LemmingSkill> AllClassicSkills => ClassicSkills.AsSimpleEnumerable();
 
     private static LemmingSkill[] RegisterAllLemmingSkills()
     {
