@@ -136,52 +136,6 @@ public static class BitArrayHelpers
         return result;
     }
 
-    public sealed class ReferenceTypeBitEnumerator : IEnumerator<int>
-    {
-        private readonly uint[] _bits;
-
-        private uint _v;
-        private int _remaining;
-        private int _index;
-
-        public int Current { get; private set; }
-
-        public ReferenceTypeBitEnumerator(uint[] bits, int popCount)
-        {
-            _bits = bits;
-            _index = 0;
-            _v = _bits.Length == 0 ? 0U : _bits[0];
-            _remaining = popCount;
-            Current = 0;
-        }
-
-        public bool MoveNext()
-        {
-            if (_v == 0U)
-            {
-                if (_remaining == 0)
-                    return false;
-
-                do
-                {
-                    _v = _bits[++_index];
-                }
-                while (_v == 0U);
-            }
-
-            var m = BitOperations.TrailingZeroCount(_v);
-            _v &= _v - 1;
-
-            Current = (_index << Shift) | m;
-            _remaining--;
-            return true;
-        }
-
-        void IEnumerator.Reset() => throw new InvalidOperationException("Cannot reset");
-        object IEnumerator.Current => Current;
-        void IDisposable.Dispose() { }
-    }
-
     [Pure]
     internal static int GetPopCount(ReadOnlySpan<uint> bits)
     {
@@ -394,5 +348,51 @@ public static class BitArrayHelpers
         }
 
         return true;
+    }
+
+    public sealed class ReferenceTypeBitEnumerator : IEnumerator<int>
+    {
+        private readonly uint[] _bits;
+
+        private uint _v;
+        private int _remaining;
+        private int _index;
+
+        public int Current { get; private set; }
+
+        public ReferenceTypeBitEnumerator(uint[] bits, int popCount)
+        {
+            _bits = bits;
+            _index = 0;
+            _v = _bits.Length == 0 ? 0U : _bits[0];
+            _remaining = popCount;
+            Current = 0;
+        }
+
+        public bool MoveNext()
+        {
+            if (_v == 0U)
+            {
+                if (_remaining == 0)
+                    return false;
+
+                do
+                {
+                    _v = _bits[++_index];
+                }
+                while (_v == 0U);
+            }
+
+            var m = BitOperations.TrailingZeroCount(_v);
+            _v &= _v - 1;
+
+            Current = (_index << Shift) | m;
+            _remaining--;
+            return true;
+        }
+
+        void IEnumerator.Reset() => throw new InvalidOperationException("Cannot reset");
+        object IEnumerator.Current => Current;
+        void IDisposable.Dispose() { }
     }
 }
