@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -11,12 +12,12 @@ public sealed class FloaterAction : LemmingAction
 
     private FloaterAction()
         : base(
-            LevelConstants.FloaterActionId,
-            LevelConstants.FloaterActionName,
-            LevelConstants.FloaterActionSpriteFileName,
-            LevelConstants.FloaterAnimationFrames,
-            LevelConstants.MaxFloaterPhysicsFrames,
-            LevelConstants.PermanentSkillPriority)
+            EngineConstants.FloaterActionId,
+            EngineConstants.FloaterActionName,
+            EngineConstants.FloaterActionSpriteFileName,
+            EngineConstants.FloaterAnimationFrames,
+            EngineConstants.MaxFloaterPhysicsFrames,
+            EngineConstants.PermanentSkillPriority)
     {
     }
 

@@ -158,16 +158,16 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
             LengthMax(action.LemmingActionName);
         }
 
-        LengthMax(LevelConstants.NeutralControlPanelString);
-        LengthMax(LevelConstants.ZombieControlPanelString);
-        LengthMax(LevelConstants.NeutralZombieControlPanelString);
-        LengthMax(LevelConstants.AthleteControlPanelString2Skills);
-        LengthMax(LevelConstants.AthleteControlPanelString3Skills);
-        LengthMax(LevelConstants.AthleteControlPanelString4Skills);
-        LengthMax(LevelConstants.AthleteControlPanelString5Skills);
+        LengthMax(EngineConstants.NeutralControlPanelString);
+        LengthMax(EngineConstants.ZombieControlPanelString);
+        LengthMax(EngineConstants.NeutralZombieControlPanelString);
+        LengthMax(EngineConstants.AthleteControlPanelString2Skills);
+        LengthMax(EngineConstants.AthleteControlPanelString3Skills);
+        LengthMax(EngineConstants.AthleteControlPanelString4Skills);
+        LengthMax(EngineConstants.AthleteControlPanelString5Skills);
 
-        if (actualMaxActionNameLength != LevelConstants.LongestActionNameLength)
-            throw new Exception($"Longest action name length is actually {actualMaxActionNameLength}! Update {nameof(LevelConstants.LongestActionNameLength)}!");
+        if (actualMaxActionNameLength != EngineConstants.LongestActionNameLength)
+            throw new Exception($"Longest action name length is actually {actualMaxActionNameLength}! Update {nameof(EngineConstants.LongestActionNameLength)}!");
 
         return;
 

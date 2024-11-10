@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
@@ -16,7 +16,7 @@ public static class LevelReadingHelpers
         {
             if (gadgetDatum.TryGetProperty(GadgetProperty.SkillId, out var skillId))
             {
-                if (skillId == LevelConstants.ClonerSkillId)
+                if (skillId == EngineConstants.ClonerSkillId)
                 {
                     numberOfClonerSkillPickups += gadgetDatum.GetProperty(GadgetProperty.Count);
                 }

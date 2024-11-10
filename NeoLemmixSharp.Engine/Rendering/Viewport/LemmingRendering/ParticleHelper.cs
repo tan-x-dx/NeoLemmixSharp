@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 public static class ParticleHelper
 {
     private const int NumberOfBytesPerCall = 2;
-    private const int ByteLength = NumberOfBytesPerCall * LevelConstants.NumberOfParticles * LevelConstants.ParticleFrameCount;
+    private const int ByteLength = NumberOfBytesPerCall * EngineConstants.NumberOfParticles * EngineConstants.ParticleFrameCount;
 
     private static readonly sbyte[] ParticleOffsets = new sbyte[ByteLength];
 
@@ -35,6 +35,6 @@ public static class ParticleHelper
         int particleId)
     {
         return NumberOfBytesPerCall *
-               (LevelConstants.NumberOfParticles * (LevelConstants.ParticleFrameCount - frame) + particleId);
+               (EngineConstants.NumberOfParticles * (EngineConstants.ParticleFrameCount - frame) + particleId);
     }
 }

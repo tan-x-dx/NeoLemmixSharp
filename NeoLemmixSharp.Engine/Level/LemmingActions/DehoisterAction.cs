@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -11,12 +12,12 @@ public sealed class DehoisterAction : LemmingAction
 
     private DehoisterAction()
         : base(
-            LevelConstants.DehoisterActionId,
-            LevelConstants.DehoisterActionName,
-            LevelConstants.DehoisterActionSpriteFileName,
-            LevelConstants.DehoisterAnimationFrames,
-            LevelConstants.MaxDehoisterPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority)
+            EngineConstants.DehoisterActionId,
+            EngineConstants.DehoisterActionName,
+            EngineConstants.DehoisterActionSpriteFileName,
+            EngineConstants.DehoisterAnimationFrames,
+            EngineConstants.MaxDehoisterPhysicsFrames,
+            EngineConstants.NonWalkerMovementPriority)
     {
     }
 

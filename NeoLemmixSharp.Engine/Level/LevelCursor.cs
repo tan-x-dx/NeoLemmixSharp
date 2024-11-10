@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -83,9 +84,9 @@ public sealed class LevelCursor
     {
         if (team is null)
         {
-            Color1 = LevelConstants.CursorColor1;
-            Color2 = LevelConstants.CursorColor2;
-            Color3 = LevelConstants.CursorColor3;
+            Color1 = EngineConstants.CursorColor1;
+            Color2 = EngineConstants.CursorColor2;
+            Color3 = EngineConstants.CursorColor3;
 
             return;
         }

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Level.Teams;
 
@@ -11,7 +12,7 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible<SkillSetSnapsho
     public Team Team { get; }
     public int SkillCount { get; private set; }
 
-    public bool IsInfinite => SkillCount == LevelConstants.InfiniteSkillCount;
+    public bool IsInfinite => SkillCount == EngineConstants.InfiniteSkillCount;
 
     public SkillTrackingData(int skillTrackingDataId, LemmingSkill skill, Team team, int skillCount)
     {
@@ -27,14 +28,14 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible<SkillSetSnapsho
             return;
 
         var newSkillCount = SkillCount + delta;
-        SkillCount = Math.Clamp(newSkillCount, 0, LevelConstants.InfiniteSkillCount - 1);
+        SkillCount = Math.Clamp(newSkillCount, 0, EngineConstants.InfiniteSkillCount - 1);
     }
 
     public void SetSkillCount(int skillCount)
     {
         var upperBound = Skill == ClonerSkill.Instance
-            ? LevelConstants.InfiniteSkillCount - 1
-            : LevelConstants.InfiniteSkillCount;
+            ? EngineConstants.InfiniteSkillCount - 1
+            : EngineConstants.InfiniteSkillCount;
 
         SkillCount = Math.Clamp(skillCount, 0, upperBound);
     }

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public sealed class GenericGadgetBehaviour : GadgetBehaviour
 {
@@ -8,6 +10,6 @@ public sealed class GenericGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.GenericGadgetBehaviourId;
+    public override int Id => EngineConstants.GenericGadgetBehaviourId;
     public override string GadgetBehaviourName => "generic";
 }

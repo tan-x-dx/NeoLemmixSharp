@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
@@ -66,12 +67,12 @@ public sealed class LemmingManager :
 
         _lemmingPositionHelper = new SpacialHashGrid<LemmingManager, Lemming>(
             this,
-            LevelConstants.LemmingPositionChunkSize,
+            EngineConstants.LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
         _zombieSpacialHashGrid = new SpacialHashGrid<LemmingManager, Lemming>(
             this,
-            LevelConstants.LemmingPositionChunkSize,
+            EngineConstants.LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 

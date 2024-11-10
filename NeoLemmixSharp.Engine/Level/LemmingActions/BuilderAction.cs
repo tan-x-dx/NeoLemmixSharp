@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
@@ -12,12 +13,12 @@ public sealed class BuilderAction : LemmingAction
 
     private BuilderAction()
         : base(
-            LevelConstants.BuilderActionId,
-            LevelConstants.BuilderActionName,
-            LevelConstants.BuilderActionSpriteFileName,
-            LevelConstants.BuilderAnimationFrames,
-            LevelConstants.MaxBuilderPhysicsFrames,
-            LevelConstants.NonPermanentSkillPriority)
+            EngineConstants.BuilderActionId,
+            EngineConstants.BuilderActionName,
+            EngineConstants.BuilderActionSpriteFileName,
+            EngineConstants.BuilderAnimationFrames,
+            EngineConstants.MaxBuilderPhysicsFrames,
+            EngineConstants.NonPermanentSkillPriority)
     {
     }
 
@@ -31,7 +32,7 @@ public sealed class BuilderAction : LemmingAction
         }
 
         if (lemming.PhysicsFrame == 10 &&
-            lemming.NumberOfBricksLeft <= LevelConstants.NumberOfRemainingBricksToPlaySound)
+            lemming.NumberOfBricksLeft <= EngineConstants.NumberOfRemainingBricksToPlaySound)
         {
             // play sound/make visual cue
             return true;
@@ -111,7 +112,7 @@ public sealed class BuilderAction : LemmingAction
     {
         base.TransitionLemmingToAction(lemming, turnAround);
 
-        lemming.NumberOfBricksLeft = LevelConstants.NumberOfBuilderBricks;
+        lemming.NumberOfBricksLeft = EngineConstants.NumberOfBuilderBricks;
         lemming.ConstructivePositionFreeze = false;
     }
 

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -32,12 +33,12 @@ public sealed class JumperAction : LemmingAction
 
     private JumperAction()
         : base(
-            LevelConstants.JumperActionId,
-            LevelConstants.JumperActionName,
-            LevelConstants.JumperActionSpriteFileName,
-            LevelConstants.JumperAnimationFrames,
-            LevelConstants.MaxJumperPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority)
+            EngineConstants.JumperActionId,
+            EngineConstants.JumperActionName,
+            EngineConstants.JumperActionSpriteFileName,
+            EngineConstants.JumperAnimationFrames,
+            EngineConstants.MaxJumperPhysicsFrames,
+            EngineConstants.NonWalkerMovementPriority)
     {
     }
 

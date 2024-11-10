@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -16,10 +17,10 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     {
         var orientations = new Orientation[4];
 
-        orientations[LevelConstants.DownOrientationRotNum] = DownOrientation.Instance;
-        orientations[LevelConstants.LeftOrientationRotNum] = LeftOrientation.Instance;
-        orientations[LevelConstants.UpOrientationRotNum] = UpOrientation.Instance;
-        orientations[LevelConstants.RightOrientationRotNum] = RightOrientation.Instance;
+        orientations[EngineConstants.DownOrientationRotNum] = DownOrientation.Instance;
+        orientations[EngineConstants.LeftOrientationRotNum] = LeftOrientation.Instance;
+        orientations[EngineConstants.UpOrientationRotNum] = UpOrientation.Instance;
+        orientations[EngineConstants.RightOrientationRotNum] = RightOrientation.Instance;
 
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Orientation>(orientations));
 

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -10,8 +11,8 @@ public sealed class RotateToDownSkill : LemmingSkill
 
     private RotateToDownSkill()
         : base(
-            LevelConstants.RotateToDownSkillId,
-            LevelConstants.RotateToDownSkillName)
+            EngineConstants.RotateToDownSkillId,
+            EngineConstants.RotateToDownSkillName)
     {
     }
 

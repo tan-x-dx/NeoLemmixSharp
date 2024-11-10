@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
@@ -72,11 +73,11 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         {
             if (skillTrackingDatum.IsInfinite)
             {
-                result += LevelConstants.AssumedSkillUsageForInfiniteSkillCounts;
+                result += EngineConstants.AssumedSkillUsageForInfiniteSkillCounts;
             }
             else if (skillTrackingDatum.SkillCount == 0)
             {
-                result += LevelConstants.AssumedSkillCountsFromPickups;
+                result += EngineConstants.AssumedSkillCountsFromPickups;
             }
             else
             {
@@ -93,7 +94,7 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
             result &= skillTrackingData.Skill.IsClassicSkill() && // only classic skills
-                      skillTrackingData.Team.Id == LevelConstants.ClassicTeamId; // only classic team
+                      skillTrackingData.Team.Id == EngineConstants.ClassicTeamId; // only classic team
         }
 
         return result;

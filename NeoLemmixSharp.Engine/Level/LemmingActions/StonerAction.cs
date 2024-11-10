@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -9,12 +10,12 @@ public sealed class StonerAction : LemmingAction
 
     private StonerAction()
         : base(
-            LevelConstants.StonerActionId,
-            LevelConstants.StonerActionName,
-            LevelConstants.StonerActionSpriteFileName,
-            LevelConstants.StonerAnimationFrames,
-            LevelConstants.MaxStonerPhysicsFrames,
-            LevelConstants.NoPriority)
+            EngineConstants.StonerActionId,
+            EngineConstants.StonerActionName,
+            EngineConstants.StonerActionSpriteFileName,
+            EngineConstants.StonerAnimationFrames,
+            EngineConstants.MaxStonerPhysicsFrames,
+            EngineConstants.NoPriority)
     {
     }
 
@@ -23,7 +24,7 @@ public sealed class StonerAction : LemmingAction
         TerrainMasks.ApplyStonerMask(lemming);
         NoneAction.Instance.TransitionLemmingToAction(lemming, false);
         LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExplode);
-        lemming.ParticleTimer = LevelConstants.ParticleFrameCount;
+        lemming.ParticleTimer = EngineConstants.ParticleFrameCount;
 
         return false;
     }

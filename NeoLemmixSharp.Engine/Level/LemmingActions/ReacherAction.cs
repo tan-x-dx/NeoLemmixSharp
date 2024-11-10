@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -16,12 +17,12 @@ public sealed class ReacherAction : LemmingAction
 
     private ReacherAction()
         : base(
-            LevelConstants.ReacherActionId,
-            LevelConstants.ReacherActionName,
-            LevelConstants.ReacherActionSpriteFileName,
-            LevelConstants.ReacherAnimationFrames,
-            LevelConstants.MaxReacherPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority)
+            EngineConstants.ReacherActionId,
+            EngineConstants.ReacherActionName,
+            EngineConstants.ReacherActionSpriteFileName,
+            EngineConstants.ReacherAnimationFrames,
+            EngineConstants.MaxReacherPhysicsFrames,
+            EngineConstants.NonWalkerMovementPriority)
     {
     }
 

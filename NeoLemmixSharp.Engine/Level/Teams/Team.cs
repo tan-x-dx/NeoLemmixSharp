@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
@@ -13,7 +14,7 @@ public sealed class Team : IExtendedEnumType<Team>
 
     private static Team[] GenerateTeamCollection()
     {
-        var teams = new Team[LevelConstants.NumberOfTeams];
+        var teams = new Team[EngineConstants.NumberOfTeams];
 
         for (var i = 0; i < teams.Length; i++)
         {

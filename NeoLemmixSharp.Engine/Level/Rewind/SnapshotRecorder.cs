@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
@@ -12,7 +13,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
     /// Allocate enough space initially for four minutes of gameplay.
     /// If gameplay lasts longer, then the list will double in capacity.
     /// </summary>
-    private const int SnapshotDataListSizeMultiplier = LevelConstants.InitialSnapshotDataBufferMultiplier / LevelConstants.RewindSnapshotInterval;
+    private const int SnapshotDataListSizeMultiplier = EngineConstants.InitialSnapshotDataBufferMultiplier / EngineConstants.RewindSnapshotInterval;
 
     private readonly TItemManager _itemManager;
     private readonly SnapshotList _snapshotList;

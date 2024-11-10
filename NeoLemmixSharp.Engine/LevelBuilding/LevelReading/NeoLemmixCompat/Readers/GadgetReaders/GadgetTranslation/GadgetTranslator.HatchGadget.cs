@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
@@ -33,7 +33,7 @@ public readonly ref partial struct GadgetTranslator
         };
 
         gadgetData.SetProperty(GadgetProperty.HatchGroupId, 0); // All NeoLemmix levels have precisely one hatch group
-        gadgetData.SetProperty(GadgetProperty.TeamId, LevelConstants.ClassicTeamId); // All NeoLemmix levels use the default team
+        gadgetData.SetProperty(GadgetProperty.TeamId, EngineConstants.ClassicTeamId); // All NeoLemmix levels use the default team
         gadgetData.SetProperty(GadgetProperty.RawLemmingState, (int)prototype.State);
         gadgetData.SetProperty(GadgetProperty.Count, prototype.LemmingCount!.Value);
 

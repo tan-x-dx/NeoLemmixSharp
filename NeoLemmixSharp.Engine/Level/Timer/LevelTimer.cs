@@ -27,7 +27,7 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
         _timerCharBuffer[3] = '-';
 
         Type = TimerType.CountUp;
-        FontColor = LevelConstants.PanelGreen;
+        FontColor = EngineConstants.PanelGreen;
         UpdateCountUpString(0, false);
     }
 
@@ -162,10 +162,10 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
 
     private static Color GetColorForTime(int secondsLeft) => secondsLeft switch
     {
-        <= 0 => LevelConstants.PanelMagenta,
-        <= 15 => LevelConstants.PanelRed,
-        <= 30 => LevelConstants.PanelYellow,
-        _ => LevelConstants.PanelGreen
+        <= 0 => EngineConstants.PanelMagenta,
+        <= 15 => EngineConstants.PanelRed,
+        <= 30 => EngineConstants.PanelYellow,
+        _ => EngineConstants.PanelGreen
     };
 
     [InlineArray(NumberOfTimerChars)]

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -15,12 +16,12 @@ public sealed class SliderAction : LemmingAction
 
     private SliderAction()
         : base(
-            LevelConstants.SliderActionId,
-            LevelConstants.SliderActionName,
-            LevelConstants.SliderActionSpriteFileName,
-            LevelConstants.SliderAnimationFrames,
-            LevelConstants.MaxSliderPhysicsFrames,
-            LevelConstants.PermanentSkillPriority)
+            EngineConstants.SliderActionId,
+            EngineConstants.SliderActionName,
+            EngineConstants.SliderActionSpriteFileName,
+            EngineConstants.SliderAnimationFrames,
+            EngineConstants.MaxSliderPhysicsFrames,
+            EngineConstants.PermanentSkillPriority)
     {
     }
 
@@ -53,7 +54,7 @@ public sealed class SliderAction : LemmingAction
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelRegion(
             orientation.Move(lemmingPosition, -dx, -1),
-            orientation.Move(lemmingPosition, dx, LevelConstants.MaxStepUp + 1));
+            orientation.Move(lemmingPosition, dx, EngineConstants.MaxStepUp + 1));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         var hasPixelAtLemmingPosition = SliderHasPixelAt(in gadgetsNearRegion, lemmingPosition);

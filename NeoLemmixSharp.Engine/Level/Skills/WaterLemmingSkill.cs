@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -9,8 +10,8 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingStateChanger
 
     private WaterLemmingSkill()
         : base(
-            LevelConstants.WaterLemmingSkillId,
-            LevelConstants.WaterLemmingSkillName)
+            EngineConstants.WaterLemmingSkillId,
+            EngineConstants.WaterLemmingSkillName)
     {
     }
 

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Rendering.Text;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
@@ -33,7 +34,7 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
 
     public void UpdateSkillCount(int numberOfSkillsAvailable)
     {
-        if (numberOfSkillsAvailable >= LevelConstants.InfiniteSkillCount)
+        if (numberOfSkillsAvailable >= EngineConstants.InfiniteSkillCount)
         {
             _skillCountChars[0] = SkillCountDigitFont.InfinityGlyph;
             _skillCountChars[1] = ' ';

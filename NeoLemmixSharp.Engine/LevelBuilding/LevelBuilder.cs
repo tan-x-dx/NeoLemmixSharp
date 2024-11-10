@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
@@ -169,7 +170,7 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
     {
         var backgroundData = levelData.LevelBackground;
         if (backgroundData is null)
-            return new SolidColorBackgroundRenderer(LevelConstants.ClassicLevelBackgroundColor);
+            return new SolidColorBackgroundRenderer(EngineConstants.ClassicLevelBackgroundColor);
 
         if (backgroundData.IsSolidColor)
             return new SolidColorBackgroundRenderer(backgroundData.Color);

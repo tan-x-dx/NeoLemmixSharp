@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
@@ -58,27 +58,27 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
 
     private static int GetSkillY(int skillId) => skillId switch
     {
-        LevelConstants.BasherSkillId => 16,
-        LevelConstants.BlockerSkillId => 11,
-        LevelConstants.BomberSkillId => 9,
-        LevelConstants.BuilderSkillId => 13,
-        LevelConstants.ClimberSkillId => 4,
-        LevelConstants.ClonerSkillId => 20,
-        LevelConstants.DiggerSkillId => 19,
-        LevelConstants.DisarmerSkillId => 8,
-        LevelConstants.FencerSkillId => 17,
-        LevelConstants.FloaterSkillId => 6,
-        LevelConstants.GliderSkillId => 7,
-        LevelConstants.JumperSkillId => 1,
-        LevelConstants.LasererSkillId => 15,
-        LevelConstants.MinerSkillId => 18,
-        LevelConstants.PlatformerSkillId => 12,
-        LevelConstants.ShimmierSkillId => 2,
-        LevelConstants.SliderSkillId => 3,
-        LevelConstants.StackerSkillId => 14,
-        LevelConstants.StonerSkillId => 10,
-        LevelConstants.SwimmerSkillId => 5,
-        LevelConstants.WalkerSkillId => 0,
+        EngineConstants.BasherSkillId => 16,
+        EngineConstants.BlockerSkillId => 11,
+        EngineConstants.BomberSkillId => 9,
+        EngineConstants.BuilderSkillId => 13,
+        EngineConstants.ClimberSkillId => 4,
+        EngineConstants.ClonerSkillId => 20,
+        EngineConstants.DiggerSkillId => 19,
+        EngineConstants.DisarmerSkillId => 8,
+        EngineConstants.FencerSkillId => 17,
+        EngineConstants.FloaterSkillId => 6,
+        EngineConstants.GliderSkillId => 7,
+        EngineConstants.JumperSkillId => 1,
+        EngineConstants.LasererSkillId => 15,
+        EngineConstants.MinerSkillId => 18,
+        EngineConstants.PlatformerSkillId => 12,
+        EngineConstants.ShimmierSkillId => 2,
+        EngineConstants.SliderSkillId => 3,
+        EngineConstants.StackerSkillId => 14,
+        EngineConstants.StonerSkillId => 10,
+        EngineConstants.SwimmerSkillId => 5,
+        EngineConstants.WalkerSkillId => 0,
 
         _ => throw new ArgumentOutOfRangeException(nameof(skillId), skillId, "Unknown skill id")
     };

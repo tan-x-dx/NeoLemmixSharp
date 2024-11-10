@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
@@ -262,7 +262,7 @@ public readonly ref struct TerrainBuilder
     private static bool PixelColorIsSubstantial(Color color)
     {
         uint alpha = color.A;
-        return alpha >= LevelConstants.MinimumSubstantialAlphaValue;
+        return alpha >= EngineConstants.MinimumSubstantialAlphaValue;
     }
 
     private void LoadPixelColorData(TerrainArchetypeData terrainArchetypeData)

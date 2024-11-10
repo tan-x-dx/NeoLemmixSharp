@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -11,8 +12,8 @@ public sealed class MinerSkill : LemmingSkill
 
     private MinerSkill()
         : base(
-            LevelConstants.MinerSkillId,
-            LevelConstants.MinerSkillName)
+            EngineConstants.MinerSkillId,
+            EngineConstants.MinerSkillName)
     {
     }
 

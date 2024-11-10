@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 
 public sealed class HatchGadgetBehaviour : GadgetBehaviour
 {
@@ -8,6 +10,6 @@ public sealed class HatchGadgetBehaviour : GadgetBehaviour
     {
     }
 
-    public override int Id => LevelConstants.HatchGadgetBehaviourId;
+    public override int Id => EngineConstants.HatchGadgetBehaviourId;
     public override string GadgetBehaviourName => "hatch";
 }

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
@@ -25,8 +26,8 @@ public static class LemmingActionHelpers
         Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
 
         var gadgetTestRegion = new LevelRegion(
-            orientation.MoveUp(levelPosition, LevelConstants.MaxStepUp + 1),
-            orientation.MoveDown(levelPosition, LevelConstants.DefaultFallStep + 1));
+            orientation.MoveUp(levelPosition, EngineConstants.MaxStepUp + 1),
+            orientation.MoveDown(levelPosition, EngineConstants.DefaultFallStep + 1));
         gadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);
 
         int result;
@@ -34,7 +35,7 @@ public static class LemmingActionHelpers
         {
             result = 0;
             while (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(levelPosition, 1 + result)) &&
-                   result < LevelConstants.MaxStepUp + 1)
+                   result < EngineConstants.MaxStepUp + 1)
             {
                 result++;
             }
@@ -45,7 +46,7 @@ public static class LemmingActionHelpers
         result = -1;
         // MoveUp, but step is negative, therefore moves down
         while (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(levelPosition, result)) &&
-               result > -(LevelConstants.DefaultFallStep + 1))
+               result > -(EngineConstants.DefaultFallStep + 1))
         {
             result--;
         }
@@ -139,11 +140,11 @@ public static class LemmingActionHelpers
             draftDirectionDeltas[deltaRotNum & 3] = 1;
         }
 
-        var dx = draftDirectionDeltas[LevelConstants.RightOrientationRotNum] -
-                 draftDirectionDeltas[LevelConstants.LeftOrientationRotNum];
+        var dx = draftDirectionDeltas[EngineConstants.RightOrientationRotNum] -
+                 draftDirectionDeltas[EngineConstants.LeftOrientationRotNum];
 
-        var dy = draftDirectionDeltas[LevelConstants.UpOrientationRotNum] -
-                 draftDirectionDeltas[LevelConstants.DownOrientationRotNum];
+        var dy = draftDirectionDeltas[EngineConstants.UpOrientationRotNum] -
+                 draftDirectionDeltas[EngineConstants.DownOrientationRotNum];
 
         return new LevelPosition(dx, dy);
     }

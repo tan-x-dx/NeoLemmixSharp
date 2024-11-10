@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
@@ -151,7 +152,7 @@ public sealed class ControlPanelRenderer
                 renderX,
                 0,
                 1,
-                LevelConstants.PanelGreen);
+                EngineConstants.PanelGreen);
         }
 
         void RenderIcon(int iconX, int renderX)

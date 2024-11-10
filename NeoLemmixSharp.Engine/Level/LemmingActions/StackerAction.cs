@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
@@ -12,12 +13,12 @@ public sealed class StackerAction : LemmingAction
 
     private StackerAction()
         : base(
-            LevelConstants.StackerActionId,
-            LevelConstants.StackerActionName,
-            LevelConstants.StackerActionSpriteFileName,
-            LevelConstants.StackerAnimationFrames,
-            LevelConstants.MaxStackerPhysicsFrames,
-            LevelConstants.NonPermanentSkillPriority)
+            EngineConstants.StackerActionId,
+            EngineConstants.StackerActionName,
+            EngineConstants.StackerActionSpriteFileName,
+            EngineConstants.StackerAnimationFrames,
+            EngineConstants.MaxStackerPhysicsFrames,
+            EngineConstants.NonPermanentSkillPriority)
     {
     }
 
@@ -28,10 +29,10 @@ public sealed class StackerAction : LemmingAction
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelRegion(
             lemming.Orientation.MoveDown(lemming.LevelPosition, 1),
-            lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX * 3, 1 + LevelConstants.NumberOfStackerBricks));
+            lemming.Orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX * 3, 1 + EngineConstants.NumberOfStackerBricks));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
-        if (lemming.PhysicsFrame == LevelConstants.StackerAnimationFrames - 1)
+        if (lemming.PhysicsFrame == EngineConstants.StackerAnimationFrames - 1)
         {
             lemming.PlacedBrick = LayStackBrick(in gadgetsNearRegion, lemming);
             return true;
@@ -42,7 +43,7 @@ public sealed class StackerAction : LemmingAction
 
         lemming.NumberOfBricksLeft--;
 
-        if (lemming.NumberOfBricksLeft < LevelConstants.NumberOfRemainingBricksToPlaySound)
+        if (lemming.NumberOfBricksLeft < EngineConstants.NumberOfRemainingBricksToPlaySound)
         {
             // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position); ??
         }
@@ -51,7 +52,7 @@ public sealed class StackerAction : LemmingAction
         {
             // Relax the check on the first brick
             // for details see http://www.lemmingsforums.net/index.php?topic=2862.0
-            if (lemming.NumberOfBricksLeft < LevelConstants.NumberOfStackerBricks - 1 ||
+            if (lemming.NumberOfBricksLeft < EngineConstants.NumberOfStackerBricks - 1 ||
                 !MayPlaceNextBrick(in gadgetsNearRegion, lemming))
             {
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -78,7 +79,7 @@ public sealed class StackerAction : LemmingAction
     {
         var orientation = lemming.Orientation;
         var brickPosition = lemming.LevelPosition;
-        brickPosition = orientation.MoveUp(brickPosition, 1 + LevelConstants.NumberOfStackerBricks - lemming.NumberOfBricksLeft);
+        brickPosition = orientation.MoveUp(brickPosition, 1 + EngineConstants.NumberOfStackerBricks - lemming.NumberOfBricksLeft);
 
         var dx = lemming.FacingDirection.DeltaX;
 
@@ -95,7 +96,7 @@ public sealed class StackerAction : LemmingAction
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dy = lemming.StackLow ? -1 : 0;
-        var brickPosition = orientation.Move(lemming.LevelPosition, dx, 1 + LevelConstants.NumberOfStackerBricks + dy - lemming.NumberOfBricksLeft);
+        var brickPosition = orientation.Move(lemming.LevelPosition, dx, 1 + EngineConstants.NumberOfStackerBricks + dy - lemming.NumberOfBricksLeft);
 
         var result = false;
 
@@ -117,6 +118,6 @@ public sealed class StackerAction : LemmingAction
     {
         base.TransitionLemmingToAction(lemming, turnAround);
 
-        lemming.NumberOfBricksLeft = LevelConstants.NumberOfStackerBricks;
+        lemming.NumberOfBricksLeft = EngineConstants.NumberOfStackerBricks;
     }
 }

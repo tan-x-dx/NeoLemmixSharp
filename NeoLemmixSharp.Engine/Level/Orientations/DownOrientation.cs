@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using System.Diagnostics.Contracts;
 using static NeoLemmixSharp.Engine.Level.LevelScreen;
 
@@ -10,8 +11,8 @@ public sealed class DownOrientation : Orientation
 
     private DownOrientation()
         : base(
-            LevelConstants.DownOrientationRotNum,
-            LevelConstants.DownOrientationName,
+            EngineConstants.DownOrientationRotNum,
+            EngineConstants.DownOrientationName,
             0,
             1)
     {

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -16,12 +17,12 @@ public sealed class BlockerAction : LemmingAction
 
     private BlockerAction()
         : base(
-            LevelConstants.BlockerActionId,
-            LevelConstants.BlockerActionName,
-            LevelConstants.BlockerActionSpriteFileName,
-            LevelConstants.BlockerAnimationFrames,
-            LevelConstants.MaxBlockerPhysicsFrames,
-            LevelConstants.NonPermanentSkillPriority)
+            EngineConstants.BlockerActionId,
+            EngineConstants.BlockerActionName,
+            EngineConstants.BlockerActionSpriteFileName,
+            EngineConstants.BlockerAnimationFrames,
+            EngineConstants.MaxBlockerPhysicsFrames,
+            EngineConstants.NonPermanentSkillPriority)
     {
     }
 

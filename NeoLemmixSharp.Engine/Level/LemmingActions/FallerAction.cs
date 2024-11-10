@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
@@ -13,12 +14,12 @@ public sealed class FallerAction : LemmingAction
 
     private FallerAction()
         : base(
-            LevelConstants.FallerActionId,
-            LevelConstants.FallerActionName,
-            LevelConstants.FallerActionSpriteFileName,
-            LevelConstants.FallerAnimationFrames,
-            LevelConstants.MaxFallerPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority)
+            EngineConstants.FallerActionId,
+            EngineConstants.FallerActionName,
+            EngineConstants.FallerActionSpriteFileName,
+            EngineConstants.FallerAnimationFrames,
+            EngineConstants.MaxFallerPhysicsFrames,
+            EngineConstants.NonWalkerMovementPriority)
     {
     }
 
@@ -31,7 +32,7 @@ public sealed class FallerAction : LemmingAction
         ref var lemmingPosition = ref lemming.LevelPosition;
 
         var updraftFallDelta = GetUpdraftFallDelta(lemming);
-        var maxFallDistanceStep = LevelConstants.DefaultFallStep + updraftFallDelta.Y;
+        var maxFallDistanceStep = EngineConstants.DefaultFallStep + updraftFallDelta.Y;
 
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
             return true;
@@ -40,7 +41,7 @@ public sealed class FallerAction : LemmingAction
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new LevelRegion(
             lemmingPosition,
-            orientation.MoveDown(lemmingPosition, LevelConstants.DefaultFallStep + 1));
+            orientation.MoveDown(lemmingPosition, EngineConstants.DefaultFallStep + 1));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
 
         ref var distanceFallen = ref lemming.DistanceFallen;
@@ -66,12 +67,12 @@ public sealed class FallerAction : LemmingAction
             }
             else if (updraftFallDelta.Y > 0)
             {
-                distanceFallen = Math.Min(distanceFallen, LevelConstants.MaxFallDistance / 2);
+                distanceFallen = Math.Min(distanceFallen, EngineConstants.MaxFallDistance / 2);
             }
         }
 
-        distanceFallen = Math.Min(distanceFallen, LevelConstants.MaxFallDistance + 1);
-        lemming.TrueDistanceFallen = Math.Min(lemming.TrueDistanceFallen, LevelConstants.MaxFallDistance + 1);
+        distanceFallen = Math.Min(distanceFallen, EngineConstants.MaxFallDistance + 1);
+        lemming.TrueDistanceFallen = Math.Min(lemming.TrueDistanceFallen, EngineConstants.MaxFallDistance + 1);
 
         if (currentFallDistanceStep >= maxFallDistanceStep)
             return true;
@@ -114,7 +115,7 @@ public sealed class FallerAction : LemmingAction
                 return true;
         }
 
-        return lemming.DistanceFallen > LevelConstants.MaxFallDistance;
+        return lemming.DistanceFallen > EngineConstants.MaxFallDistance;
     }
 
     [Pure]
@@ -160,9 +161,9 @@ public sealed class FallerAction : LemmingAction
 
         return currentActionId switch
         {
-            LevelConstants.WalkerActionId or LevelConstants.BasherActionId => 3,
-            LevelConstants.MinerActionId or LevelConstants.DiggerActionId => 0,
-            LevelConstants.BlockerActionId or LevelConstants.JumperActionId or LevelConstants.LasererActionId => -1,
+            EngineConstants.WalkerActionId or EngineConstants.BasherActionId => 3,
+            EngineConstants.MinerActionId or EngineConstants.DiggerActionId => 0,
+            EngineConstants.BlockerActionId or EngineConstants.JumperActionId or EngineConstants.LasererActionId => -1,
             _ => 1
         };
     }

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
@@ -28,7 +29,7 @@ public sealed class LevelData
         {
             if (value <= 0)
                 throw new ArgumentOutOfRangeException(nameof(value), value, "Level width must be positive!");
-            if (value > LevelConstants.MaxLevelWidth)
+            if (value > EngineConstants.MaxLevelWidth)
                 throw new ArgumentOutOfRangeException(nameof(value), value, "Level width too big!");
 
             _levelWidth = value;
@@ -42,7 +43,7 @@ public sealed class LevelData
         {
             if (value <= 0)
                 throw new ArgumentOutOfRangeException(nameof(value), value, "Level height must be positive!");
-            if (value > LevelConstants.MaxLevelHeight)
+            if (value > EngineConstants.MaxLevelHeight)
                 throw new ArgumentOutOfRangeException(nameof(value), value, "Level height too big!");
 
             _levelHeight = value;
@@ -101,7 +102,7 @@ public sealed class LevelData
                 value +
                 PrePlacedLemmingData.Count +
                 HatchLemmingData.Count;
-            if (totalNumberOfLemmings > LevelConstants.MaxNumberOfLemmings)
+            if (totalNumberOfLemmings > EngineConstants.MaxNumberOfLemmings)
                 throw new ArgumentOutOfRangeException(nameof(value), value, "Too many lemmings in level!");
 
             _maxNumberOfClonedLemmings = value;

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -10,8 +11,8 @@ public sealed class RotateToUpSkill : LemmingSkill
 
     private RotateToUpSkill()
         : base(
-            LevelConstants.RotateToUpSkillId,
-            LevelConstants.RotateToUpSkillName)
+            EngineConstants.RotateToUpSkillId,
+            EngineConstants.RotateToUpSkillName)
     {
     }
 

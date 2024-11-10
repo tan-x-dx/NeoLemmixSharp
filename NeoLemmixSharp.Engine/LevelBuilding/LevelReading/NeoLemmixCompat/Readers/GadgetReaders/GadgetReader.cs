@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
@@ -115,7 +115,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
             case "SKILL_COUNT":
                 var amount = secondToken is "INFINITE"
-                    ? LevelConstants.InfiniteSkillCount
+                    ? EngineConstants.InfiniteSkillCount
                     : int.Parse(secondToken);
 
                 currentGadgetData.SkillCount = amount;
@@ -128,37 +128,37 @@ public sealed class GadgetReader : INeoLemmixDataReader
             #region Window properties
 
             case "CLIMBER":
-                currentGadgetData.State |= 1U << LevelConstants.ClimberBitIndex;
+                currentGadgetData.State |= 1U << EngineConstants.ClimberBitIndex;
                 break;
 
             case "DISARMER":
-                currentGadgetData.State |= 1U << LevelConstants.DisarmerBitIndex;
+                currentGadgetData.State |= 1U << EngineConstants.DisarmerBitIndex;
                 break;
 
             case "FLOATER":
-                currentGadgetData.State |= 1U << LevelConstants.FloaterBitIndex;
-                currentGadgetData.State &= ~(1U << LevelConstants.GliderBitIndex); // Deliberately knock out the glider
+                currentGadgetData.State |= 1U << EngineConstants.FloaterBitIndex;
+                currentGadgetData.State &= ~(1U << EngineConstants.GliderBitIndex); // Deliberately knock out the glider
                 break;
 
             case "GLIDER":
-                currentGadgetData.State |= 1U << LevelConstants.GliderBitIndex;
-                currentGadgetData.State &= ~(1U << LevelConstants.FloaterBitIndex); // Deliberately knock out the floater
+                currentGadgetData.State |= 1U << EngineConstants.GliderBitIndex;
+                currentGadgetData.State &= ~(1U << EngineConstants.FloaterBitIndex); // Deliberately knock out the floater
                 break;
 
             case "NEUTRAL":
-                currentGadgetData.State |= 1U << LevelConstants.NeutralBitIndex;
+                currentGadgetData.State |= 1U << EngineConstants.NeutralBitIndex;
                 break;
 
             case "SLIDER":
-                currentGadgetData.State |= 1U << LevelConstants.SliderBitIndex;
+                currentGadgetData.State |= 1U << EngineConstants.SliderBitIndex;
                 break;
 
             case "SWIMMER":
-                currentGadgetData.State |= 1U << LevelConstants.SwimmerBitIndex;
+                currentGadgetData.State |= 1U << EngineConstants.SwimmerBitIndex;
                 break;
 
             case "ZOMBIE":
-                currentGadgetData.State |= 1U << LevelConstants.ZombieBitIndex;
+                currentGadgetData.State |= 1U << EngineConstants.ZombieBitIndex;
                 break;
 
             #endregion

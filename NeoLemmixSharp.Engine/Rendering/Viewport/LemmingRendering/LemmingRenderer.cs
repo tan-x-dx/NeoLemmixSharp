@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
@@ -164,19 +165,19 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         int screenY)
     {
         var destRectangle = new Rectangle(0, 0, 1, 1);
-        var explosionParticleColors = LevelConstants.GetExplosionParticleColors();
+        var explosionParticleColors = EngineConstants.GetExplosionParticleColors();
         var whitePixelTexture = CommonSprites.WhitePixelGradientSprite;
 
         var sourceRectangle = CommonSprites.RectangleForWhitePixelAlpha(0xff);
 
-        for (var i = 0; i < LevelConstants.NumberOfParticles; i++)
+        for (var i = 0; i < EngineConstants.NumberOfParticles; i++)
         {
             var offset = ParticleHelper.GetParticleOffsets(_lemming.ParticleTimer, i);
 
             if (offset.X == -128 || offset.Y == -128)
                 continue;
 
-            var color = explosionParticleColors[i & LevelConstants.NumberOfExplosionParticleColorsMask];
+            var color = explosionParticleColors[i & EngineConstants.NumberOfExplosionParticleColorsMask];
 
             offset += _actionSprite.AnchorPoint;
 

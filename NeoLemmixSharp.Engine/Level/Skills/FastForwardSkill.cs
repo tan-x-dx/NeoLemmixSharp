@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -10,8 +11,8 @@ public sealed class FastForwardSkill : LemmingSkill, ILemmingStateChanger
 
     private FastForwardSkill()
         : base(
-            LevelConstants.FastForwardSkillId,
-            LevelConstants.FastForwardSkillName)
+            EngineConstants.FastForwardSkillId,
+            EngineConstants.FastForwardSkillName)
     {
     }
 

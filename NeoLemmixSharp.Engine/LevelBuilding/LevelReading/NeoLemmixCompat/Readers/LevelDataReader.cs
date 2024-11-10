@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
@@ -104,7 +104,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
 
                 if (timeLimitInSeconds <= 0)
                     throw new ArgumentOutOfRangeException(nameof(timeLimitInSeconds), timeLimitInSeconds, "Time limit must be positive!");
-                if (timeLimitInSeconds > LevelConstants.MaxTimeLimitInSeconds)
+                if (timeLimitInSeconds > EngineConstants.MaxTimeLimitInSeconds)
                     throw new ArgumentOutOfRangeException(nameof(timeLimitInSeconds), timeLimitInSeconds, "Time limit too big!");
 
                 _timeLimitInSeconds = timeLimitInSeconds;
@@ -139,7 +139,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
             InitialSpawnInterval = _maxSpawnInterval,
             MinSpawnInterval = _lockSpawnInterval
                 ? _maxSpawnInterval
-                : LevelConstants.MinAllowedSpawnInterval
+                : EngineConstants.MinAllowedSpawnInterval
         };
 
         _levelData.AllHatchGroupData.Add(hatchGroupData);

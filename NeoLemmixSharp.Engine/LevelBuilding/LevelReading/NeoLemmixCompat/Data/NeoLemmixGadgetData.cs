@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level;
-using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Skills;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
@@ -24,7 +23,7 @@ public sealed class NeoLemmixGadgetData
     public int? SkillCount { get; set; }
     public int? LemmingCount { get; set; }
 
-    public uint State { get; set; } = 1U << LevelConstants.ActiveBitIndex;
+    public uint State { get; set; } = 1U << EngineConstants.ActiveBitIndex;
 
     public override string ToString()
     {

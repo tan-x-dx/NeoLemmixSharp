@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -11,12 +12,12 @@ public sealed class ClimberAction : LemmingAction
 
     private ClimberAction()
         : base(
-            LevelConstants.ClimberActionId,
-            LevelConstants.ClimberActionName,
-            LevelConstants.ClimberActionSpriteFileName,
-            LevelConstants.ClimberAnimationFrames,
-            LevelConstants.MaxClimberPhysicsFrames,
-            LevelConstants.PermanentSkillPriority)
+            EngineConstants.ClimberActionId,
+            EngineConstants.ClimberActionName,
+            EngineConstants.ClimberActionSpriteFileName,
+            EngineConstants.ClimberAnimationFrames,
+            EngineConstants.MaxClimberPhysicsFrames,
+            EngineConstants.PermanentSkillPriority)
     {
     }
 

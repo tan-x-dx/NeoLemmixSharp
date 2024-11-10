@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -11,12 +12,12 @@ public sealed class ShimmierAction : LemmingAction
 
     private ShimmierAction()
         : base(
-            LevelConstants.ShimmierActionId,
-            LevelConstants.ShimmierActionName,
-            LevelConstants.ShimmierActionSpriteFileName,
-            LevelConstants.ShimmierAnimationFrames,
-            LevelConstants.MaxShimmierPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority)
+            EngineConstants.ShimmierActionId,
+            EngineConstants.ShimmierActionName,
+            EngineConstants.ShimmierActionSpriteFileName,
+            EngineConstants.ShimmierAnimationFrames,
+            EngineConstants.MaxShimmierPhysicsFrames,
+            EngineConstants.NonWalkerMovementPriority)
     {
     }
 

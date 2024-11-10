@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
@@ -107,7 +108,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         Orientation = DownOrientation.Instance;
         FacingDirection = FacingDirection.RightInstance;
         CurrentAction = NoneAction.Instance;
-        State = new LemmingState(this, Team.AllItems[LevelConstants.ClassicTeamId]);
+        State = new LemmingState(this, Team.AllItems[EngineConstants.ClassicTeamId]);
         Renderer = new LemmingRenderer(this);
     }
 
@@ -216,7 +217,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
             if (CurrentAction == FloaterAction.Instance ||
                 CurrentAction == GliderAction.Instance)
             {
-                frame = LevelConstants.FloaterGliderStartCycleFrame;
+                frame = EngineConstants.FloaterGliderStartCycleFrame;
             }
             else
             {
@@ -232,7 +233,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
             if (CurrentAction == FloaterAction.Instance ||
                 CurrentAction == GliderAction.Instance)
             {
-                frame = LevelConstants.FloaterGliderStartCycleFrame;
+                frame = EngineConstants.FloaterGliderStartCycleFrame;
             }
             else
             {

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -12,7 +13,7 @@ public sealed class NoneAction : LemmingAction
     private NoneAction()
         : base(
             -1,
-            LevelConstants.NoneActionName,
+            EngineConstants.NoneActionName,
             string.Empty,
             1,
             1,

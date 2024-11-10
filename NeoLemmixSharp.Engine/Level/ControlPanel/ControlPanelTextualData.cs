@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
@@ -8,7 +9,7 @@ namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
 public sealed class ControlPanelTextualData
 {
-    private const int CharLengthForLemmingActionAndCount = LevelConstants.LongestActionNameLength + // Enough space for the action part
+    private const int CharLengthForLemmingActionAndCount = EngineConstants.LongestActionNameLength + // Enough space for the action part
                                                            1 + // Add a space
                                                            CharLengthForLemmingCount; // Lemmings under cursor
 
@@ -69,7 +70,7 @@ public sealed class ControlPanelTextualData
 
         if (state.HasPermanentSkill && ShowExpandedAthleteInformation())
             return WriteExpandedAthleteInformation(state);
-        
+
         var action = lemming.CurrentAction;
 
         return WriteMinimalAthleteInformation(action, state);
@@ -103,21 +104,21 @@ public sealed class ControlPanelTextualData
         var isZombie = state.IsZombie;
         var isNeutral = state.IsNeutral;
 
-        if (action.CursorSelectionPriorityValue == LevelConstants.NonPermanentSkillPriority)
+        if (action.CursorSelectionPriorityValue == EngineConstants.NonPermanentSkillPriority)
         {
             sourceSpan = action.LemmingActionName;
         }
         else if (isZombie && isNeutral)
         {
-            sourceSpan = LevelConstants.NeutralZombieControlPanelString;
+            sourceSpan = EngineConstants.NeutralZombieControlPanelString;
         }
         else if (isZombie)
         {
-            sourceSpan = LevelConstants.ZombieControlPanelString;
+            sourceSpan = EngineConstants.ZombieControlPanelString;
         }
         else if (isNeutral)
         {
-            sourceSpan = LevelConstants.NeutralControlPanelString;
+            sourceSpan = EngineConstants.NeutralControlPanelString;
         }
         else
         {
@@ -125,10 +126,10 @@ public sealed class ControlPanelTextualData
 
             sourceSpan = numberOfPermanentSkills switch
             {
-                2 => LevelConstants.AthleteControlPanelString2Skills,
-                3 => LevelConstants.AthleteControlPanelString3Skills,
-                4 => LevelConstants.AthleteControlPanelString4Skills,
-                5 => LevelConstants.AthleteControlPanelString5Skills,
+                2 => EngineConstants.AthleteControlPanelString2Skills,
+                3 => EngineConstants.AthleteControlPanelString3Skills,
+                4 => EngineConstants.AthleteControlPanelString4Skills,
+                5 => EngineConstants.AthleteControlPanelString5Skills,
                 _ => action.LemmingActionName
             };
         }

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 
@@ -10,12 +11,12 @@ public sealed class DrownerAction : LemmingAction
 
     private DrownerAction()
         : base(
-            LevelConstants.DrownerActionId,
-            LevelConstants.DrownerActionName,
-            LevelConstants.DrownerActionSpriteFileName,
-            LevelConstants.DrownerAnimationFrames,
-            LevelConstants.MaxDrownerPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority)
+            EngineConstants.DrownerActionId,
+            EngineConstants.DrownerActionName,
+            EngineConstants.DrownerActionSpriteFileName,
+            EngineConstants.DrownerAnimationFrames,
+            EngineConstants.MaxDrownerPhysicsFrames,
+            EngineConstants.NonWalkerMovementPriority)
     {
     }
 

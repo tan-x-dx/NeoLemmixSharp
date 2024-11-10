@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
@@ -10,12 +11,12 @@ public sealed class OhNoerAction : LemmingAction
 
     private OhNoerAction()
         : base(
-            LevelConstants.OhNoerActionId,
-            LevelConstants.OhNoerActionName,
-            LevelConstants.OhNoerActionSpriteFileName,
-            LevelConstants.OhNoerAnimationFrames,
-            LevelConstants.MaxOhNoerPhysicsFrames,
-            LevelConstants.NonWalkerMovementPriority)
+            EngineConstants.OhNoerActionId,
+            EngineConstants.OhNoerActionName,
+            EngineConstants.OhNoerActionSpriteFileName,
+            EngineConstants.OhNoerAnimationFrames,
+            EngineConstants.MaxOhNoerPhysicsFrames,
+            EngineConstants.NonWalkerMovementPriority)
     {
     }
 
@@ -45,7 +46,7 @@ public sealed class OhNoerAction : LemmingAction
         var updraftFallDelta = GetUpdraftFallDelta(lemming);
 
         var lemmingOrientation = lemming.Orientation;
-        lemmingPosition = lemmingOrientation.MoveDown(lemmingPosition, LevelConstants.DefaultFallStep + updraftFallDelta.Y);
+        lemmingPosition = lemmingOrientation.MoveDown(lemmingPosition, EngineConstants.DefaultFallStep + updraftFallDelta.Y);
 
         return true;
     }
