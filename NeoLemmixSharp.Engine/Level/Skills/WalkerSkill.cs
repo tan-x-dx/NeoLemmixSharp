@@ -91,20 +91,24 @@ public sealed class WalkerSkill : LemmingSkill
         return false;
     }
 
-    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
+    protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        yield return WalkerAction.Instance;
-        yield return BlockerAction.Instance;
-        yield return BasherAction.Instance;
-        yield return FencerAction.Instance;
-        yield return MinerAction.Instance;
-        yield return DiggerAction.Instance;
-        yield return BuilderAction.Instance;
-        yield return PlatformerAction.Instance;
-        yield return StackerAction.Instance;
-        yield return ShimmierAction.Instance;
-        yield return LasererAction.Instance;
-        yield return ReacherAction.Instance;
-        yield return ShruggerAction.Instance;
+        var result = LemmingAction.CreateEmptySimpleSet();
+
+        result.Add(WalkerAction.Instance);
+        result.Add(BlockerAction.Instance);
+        result.Add(BasherAction.Instance);
+        result.Add(FencerAction.Instance);
+        result.Add(MinerAction.Instance);
+        result.Add(DiggerAction.Instance);
+        result.Add(BuilderAction.Instance);
+        result.Add(PlatformerAction.Instance);
+        result.Add(StackerAction.Instance);
+        result.Add(ShimmierAction.Instance);
+        result.Add(LasererAction.Instance);
+        result.Add(ReacherAction.Instance);
+        result.Add(ShruggerAction.Instance);
+
+        return result;
     }
 }

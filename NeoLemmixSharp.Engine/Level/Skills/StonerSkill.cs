@@ -29,5 +29,5 @@ public sealed class StonerSkill : LemmingSkill
         lemming.SetCountDownAction(countDownTimer, StonerAction.Instance, displayTimer);
     }
 
-    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
+    protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 }

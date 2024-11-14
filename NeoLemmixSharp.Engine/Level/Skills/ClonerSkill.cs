@@ -59,26 +59,30 @@ public sealed class ClonerSkill : LemmingSkill
         }
     }
 
-    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
+    protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        yield return WalkerAction.Instance;
-        yield return BuilderAction.Instance;
-        yield return MinerAction.Instance;
-        yield return JumperAction.Instance;
-        yield return StackerAction.Instance;
-        yield return LasererAction.Instance;
-        yield return SwimmerAction.Instance;
-        yield return GliderAction.Instance;
-        yield return PlatformerAction.Instance;
-        yield return BasherAction.Instance;
-        yield return FencerAction.Instance;
-        yield return DiggerAction.Instance;
-        yield return AscenderAction.Instance;
-        yield return FallerAction.Instance;
-        yield return FloaterAction.Instance;
-        yield return DisarmerAction.Instance;
-        yield return ShimmierAction.Instance;
-        yield return ShruggerAction.Instance;
-        yield return ReacherAction.Instance;
+        var result = LemmingAction.CreateEmptySimpleSet();
+
+        result.Add(WalkerAction.Instance);
+        result.Add(BuilderAction.Instance);
+        result.Add(MinerAction.Instance);
+        result.Add(JumperAction.Instance);
+        result.Add(StackerAction.Instance);
+        result.Add(LasererAction.Instance);
+        result.Add(SwimmerAction.Instance);
+        result.Add(GliderAction.Instance);
+        result.Add(PlatformerAction.Instance);
+        result.Add(BasherAction.Instance);
+        result.Add(FencerAction.Instance);
+        result.Add(DiggerAction.Instance);
+        result.Add(AscenderAction.Instance);
+        result.Add(FallerAction.Instance);
+        result.Add(FloaterAction.Instance);
+        result.Add(DisarmerAction.Instance);
+        result.Add(ShimmierAction.Instance);
+        result.Add(ShruggerAction.Instance);
+        result.Add(ReacherAction.Instance);
+
+        return result;
     }
 }

@@ -29,5 +29,5 @@ public sealed class BomberSkill : LemmingSkill
         lemming.SetCountDownAction(countDownTimer, ExploderAction.Instance, displayTimer);
     }
 
-    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
+    protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 }

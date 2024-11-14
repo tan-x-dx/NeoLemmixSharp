@@ -27,8 +27,5 @@ public sealed class NoneSkill : LemmingSkill
     {
     }
 
-    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
-    {
-        yield break;
-    }
+    protected override LemmingActionSet ActionsThatCanBeAssigned() => LemmingAction.CreateEmptySimpleSet();
 }

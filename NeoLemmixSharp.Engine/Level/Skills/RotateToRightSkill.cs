@@ -43,17 +43,5 @@ public sealed class RotateToRightSkill : LemmingSkill
         }
     }
 
-    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
-    {
-        yield return WalkerAction.Instance;
-        yield return ShruggerAction.Instance;
-        yield return PlatformerAction.Instance;
-        yield return BuilderAction.Instance;
-        yield return StackerAction.Instance;
-        yield return BasherAction.Instance;
-        yield return FencerAction.Instance;
-        yield return MinerAction.Instance;
-        yield return DiggerAction.Instance;
-        yield return LasererAction.Instance;
-    }
+    protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedRotationSkill;
 }

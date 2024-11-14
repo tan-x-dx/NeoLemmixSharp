@@ -28,7 +28,7 @@ public sealed class FastForwardSkill : LemmingSkill, ILemmingStateChanger
         lemming.State.IsPermanentFastForwards = true;
     }
 
-    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet(true);
+    protected override LemmingActionSet ActionsThatCanBeAssigned() => ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet(true);
 
     public void SetLemmingState(LemmingState lemmingState, bool status)
     {

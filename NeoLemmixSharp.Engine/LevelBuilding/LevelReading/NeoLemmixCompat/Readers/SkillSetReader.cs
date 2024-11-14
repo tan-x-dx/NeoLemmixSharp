@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
@@ -8,7 +7,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 public sealed class SkillSetReader : INeoLemmixDataReader
 {
     private readonly CaseInvariantCharEqualityComparer _charEqualityComparer;
-    private readonly LemmingSkillSet _seenSkills = ExtendedEnumTypeComparer<LemmingSkill>.CreateSimpleSet();
+    private readonly LemmingSkillSet _seenSkills = LemmingSkill.CreateEmptySimpleSet();
 
     public List<SkillSetData> SkillSetData { get; } = new();
 

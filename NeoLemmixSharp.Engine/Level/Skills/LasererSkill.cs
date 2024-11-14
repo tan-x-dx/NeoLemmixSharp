@@ -20,16 +20,20 @@ public sealed class LasererSkill : LemmingSkill
         LasererAction.Instance.TransitionLemmingToAction(lemming, false);
     }
 
-    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
+    protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        yield return WalkerAction.Instance;
-        yield return ShruggerAction.Instance;
-        yield return PlatformerAction.Instance;
-        yield return BuilderAction.Instance;
-        yield return StackerAction.Instance;
-        yield return BasherAction.Instance;
-        yield return FencerAction.Instance;
-        yield return MinerAction.Instance;
-        yield return DiggerAction.Instance;
+        var result = LemmingAction.CreateEmptySimpleSet();
+
+        result.Add(WalkerAction.Instance);
+        result.Add(ShruggerAction.Instance);
+        result.Add(PlatformerAction.Instance);
+        result.Add(BuilderAction.Instance);
+        result.Add(StackerAction.Instance);
+        result.Add(BasherAction.Instance);
+        result.Add(FencerAction.Instance);
+        result.Add(MinerAction.Instance);
+        result.Add(DiggerAction.Instance);
+
+        return result;
     }
 }
