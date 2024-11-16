@@ -25,6 +25,8 @@ public sealed class InputController : IPerfectHasher<Keys>
     public InputAction MouseButton4Action { get; }
     public InputAction MouseButton5Action { get; }
 
+    public SimpleSetEnumerable<InputController, Keys> CurrentlyPressedKeys => _keys.AsSimpleEnumerable();
+
     public InputController()
     {
         _keys = new SimpleSet<InputController, Keys>(this, false);
@@ -92,6 +94,7 @@ public sealed class InputController : IPerfectHasher<Keys>
     private void UpdateKeyStates()
     {
         var currentlyPressedKeys = Keyboard.GetState().GetPressedKeys().AsSpan();
+
         _keys.Clear();
         foreach (var key in currentlyPressedKeys)
         {

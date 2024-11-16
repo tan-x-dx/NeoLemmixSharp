@@ -47,6 +47,7 @@
     <ProjectReference Include="..\NeoLemmixSharp.Common\NeoLemmixSharp.Common.csproj" />
     <ProjectReference Include="..\NeoLemmixSharp.Engine\NeoLemmixSharp.Engine.csproj" />
     <ProjectReference Include="..\NeoLemmixSharp.Menu\NeoLemmixSharp.Menu.csproj" />
+    <ProjectReference Include="..\NeoLemmixSharp.Ui\NeoLemmixSharp.Ui.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Content\menu\background.png">
