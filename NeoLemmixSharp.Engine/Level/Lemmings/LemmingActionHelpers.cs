@@ -61,7 +61,7 @@ public static class LemmingActionHelpers
         LevelPosition levelPosition)
     {
         return LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, levelPosition) ||
-               gadgets.Count > 0 && HasSolidGadgetAtPosition(in gadgets, lemming, levelPosition);
+               (gadgets.Count > 0 && HasSolidGadgetAtPosition(in gadgets, lemming, levelPosition));
     }
 
     [Pure]
@@ -72,7 +72,7 @@ public static class LemmingActionHelpers
         LevelPosition levelPosition)
     {
         return LevelScreen.TerrainManager.PixelIsIndestructibleToLemming(lemming, destructionMask, levelPosition) ||
-               gadgets.Count > 0 && HasSteelGadgetAtPosition(in gadgets, lemming, levelPosition);
+               (gadgets.Count > 0 && HasSteelGadgetAtPosition(in gadgets, lemming, levelPosition));
     }
 
     [Pure]
@@ -82,7 +82,7 @@ public static class LemmingActionHelpers
         LevelPosition levelPosition)
     {
         return LevelScreen.TerrainManager.PixelIsSteel(levelPosition) ||
-               gadgets.Count > 0 && HasSteelGadgetAtPosition(in gadgets, lemming, levelPosition);
+               (gadgets.Count > 0 && HasSteelGadgetAtPosition(in gadgets, lemming, levelPosition));
     }
 
     [Pure]
