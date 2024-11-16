@@ -4,19 +4,13 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Identity;
 
-public sealed class ExtendedEnumTypeComparer<T> :
+public readonly struct ExtendedEnumTypeComparer<T> :
     IEqualityComparer<T>,
     IEquatable<ExtendedEnumTypeComparer<T>>,
     IComparer<T>,
     IPerfectHasher<T>
     where T : class, IExtendedEnumType<T>
 {
-    private static readonly ExtendedEnumTypeComparer<T> Instance = new();
-
-    private ExtendedEnumTypeComparer()
-    {
-    }
-
     [Pure]
     public bool Equals(T? x, T? y)
     {
@@ -33,11 +27,16 @@ public sealed class ExtendedEnumTypeComparer<T> :
     public int Compare(T? x, T? y) => IdEquatableItemHelperMethods.Compare(x, y);
 
     [Pure]
-    public bool Equals(ExtendedEnumTypeComparer<T>? other) => other is not null;
+    public bool Equals(ExtendedEnumTypeComparer<T> other) => true;
     [Pure]
     public override bool Equals(object? obj) => obj is ExtendedEnumTypeComparer<T>;
     [Pure]
     public override int GetHashCode() => typeof(T).GetHashCode();
+
+    [Pure]
+    public static bool operator ==(ExtendedEnumTypeComparer<T> left, ExtendedEnumTypeComparer<T> right) => true;
+    [Pure]
+    public static bool operator !=(ExtendedEnumTypeComparer<T> left, ExtendedEnumTypeComparer<T> right) => false;
 
     [Pure]
     public int NumberOfItems => T.NumberOfItems;
@@ -49,13 +48,9 @@ public sealed class ExtendedEnumTypeComparer<T> :
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Dictionary<T, TValue> CreateDictionary<TValue>() => new(Instance);
+    public static SimpleDictionary<ExtendedEnumTypeComparer<T>, T, TValue> CreateSimpleDictionary<TValue>() => new(new ExtendedEnumTypeComparer<T>());
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static SimpleDictionary<ExtendedEnumTypeComparer<T>, T, TValue> CreateSimpleDictionary<TValue>() => new(Instance);
-
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static SimpleSet<ExtendedEnumTypeComparer<T>, T> CreateSimpleSet(bool fullSet = false) => new(Instance, fullSet);
+    public static SimpleSet<ExtendedEnumTypeComparer<T>, T> CreateSimpleSet(bool fullSet = false) => new(new ExtendedEnumTypeComparer<T>(), fullSet);
 }
