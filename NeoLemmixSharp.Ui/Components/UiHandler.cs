@@ -44,6 +44,12 @@ public sealed class UiHandler
         {
             HandleMouseUp(mousePosition);
         }
+
+        var currentlyPressedKeys = _inputController.CurrentlyPressedKeys;
+        var currentlyReleasedKeys = _inputController.CurrentlyReleasedKeys;
+
+        HandleKeyDown(in currentlyPressedKeys);
+        HandleKeyUp(in currentlyReleasedKeys);
     }
 
     private void HandleMouseMove(LevelPosition mousePosition) => LocateComponent(mousePosition);
@@ -76,14 +82,14 @@ public sealed class UiHandler
         }
     }
 
-    private void HandleKeyDown()
+    private void HandleKeyDown(in KeysEnumerable pressedKeys)
     {
-        _currentSelection?.InvokeKeyDown();
+        _currentSelection?.InvokeKeyDown(in pressedKeys);
     }
 
-    private void HandleKeyUp()
+    private void HandleKeyUp(in KeysEnumerable releasedKeys)
     {
-        _currentSelection?.InvokeKeyUp();
+        _currentSelection?.InvokeKeyUp(in releasedKeys);
     }
 
     private void LocateComponent(LevelPosition mousePosition)

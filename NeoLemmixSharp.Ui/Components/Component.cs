@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿global using KeysEnumerable = NeoLemmixSharp.Common.Util.Collections.SimpleSetEnumerable<NeoLemmixSharp.Common.Util.GameInput.InputController, Microsoft.Xna.Framework.Input.Keys>;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Data;
@@ -8,7 +9,6 @@ namespace NeoLemmixSharp.Ui.Components;
 public abstract class Component
 {
     public delegate void Action();
-
 
     private int _x, _y;
 
@@ -269,9 +269,7 @@ public abstract class Component
     }
 
     public void SetMoveAction(Action action) => _moveAction = action;
-
     public void SetRedrawAction(Action action) => _redrawAction = action;
-
     public void SetClickAction(Action action) => _clickAction = action;
 
     public void SetVisibilityChangeAction(Action action) => _visibilityChangeAction = action;
@@ -283,6 +281,6 @@ public abstract class Component
 
     public virtual void InvokeMouseMovement(LevelPosition mousePosition) { }
 
-    public virtual void InvokeKeyDown() { }
-    public virtual void InvokeKeyUp() { }
+    public virtual void InvokeKeyDown(in KeysEnumerable pressedKeys) { }
+    public virtual void InvokeKeyUp(in KeysEnumerable pressedKeys) { }
 }
