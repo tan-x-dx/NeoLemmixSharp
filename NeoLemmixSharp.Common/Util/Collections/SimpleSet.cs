@@ -95,7 +95,7 @@ public sealed class SimpleSet<TPerfectHasher, T> : ISet<T>, IReadOnlySet<T>
 
     public sealed class ReferenceTypeEnumerator : IEnumerator<T>
     {
-        private readonly IPerfectHasher<T> _hasher;
+        private readonly TPerfectHasher _hasher;
         private readonly BitArrayHelpers.ReferenceTypeBitEnumerator _bitEnumerator;
 
         public ReferenceTypeEnumerator(SimpleSet<TPerfectHasher, T> set)
