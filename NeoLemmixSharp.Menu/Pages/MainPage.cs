@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Components.Buttons;
 
-namespace NeoLemmixSharp.Menu.Pages.MainMenu;
+namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class MainPage : PageBase
 {

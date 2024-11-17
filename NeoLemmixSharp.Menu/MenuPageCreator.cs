@@ -4,7 +4,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 using NeoLemmixSharp.Menu.Pages;
-using NeoLemmixSharp.Menu.Pages.MainMenu;
 
 namespace NeoLemmixSharp.Menu;
 
