@@ -12,8 +12,8 @@ public static class UiSprites
 
     public static void Initialise(ContentManager contentManager)
     {
-        Font = contentManager.Load<SpriteFont>("MonospacedFont");
-        BevelTexture = contentManager.Load<Texture2D>("bevel");
+        Font = contentManager.Load<SpriteFont>("fonts/MonospacedFont");
+        BevelTexture = contentManager.Load<Texture2D>("menu/bevel");
     }
 
     internal static void DrawBeveledRectangle(

@@ -6,7 +6,7 @@ using NeoLemmixSharp.Ui.Data;
 
 namespace NeoLemmixSharp.Ui.Components;
 
-public abstract class Component
+public abstract class Component : IDisposable
 {
     public delegate void Action();
 
@@ -21,7 +21,6 @@ public abstract class Component
     private List<Component>? _children = null;
 
     private Action? _clickAction = null;
-    private Action? _redrawAction = null;
     private Action? _moveAction = null;
     private Action? _visibilityChangeAction = null;
 
@@ -44,7 +43,7 @@ public abstract class Component
         get => _x;
         set
         {
-            int oldX = _x;
+            var oldX = _x;
 
             _x = value;
 
@@ -67,7 +66,7 @@ public abstract class Component
         get => _y;
         set
         {
-            int oldY = _y;
+            var oldY = _y;
 
             _y = value;
 
@@ -99,8 +98,8 @@ public abstract class Component
 
     public void SetLocation(int x, int y)
     {
-        int oldX = _x;
-        int oldY = _y;
+        var oldX = _x;
+        var oldY = _y;
 
         _x = x;
         _y = y;
@@ -143,7 +142,7 @@ public abstract class Component
         get => _visible;
         set
         {
-            bool oldVisible = _visible;
+            var oldVisible = _visible;
             _visible = value;
 
             if (oldVisible != _visible)
@@ -175,20 +174,17 @@ public abstract class Component
 
     public void Render(SpriteBatch spriteBatch)
     {
-        RenderComponent(spriteBatch);
-        RenderLabel(spriteBatch);
-
-        _redrawAction?.Invoke();
+        if (_visible)
+        {
+            RenderComponent(spriteBatch);
+            RenderLabel(spriteBatch);
+        }
 
         if (_children != null)
         {
             for (int i = 0; i < _children.Count; i++)
             {
-                Component c = _children[i];
-                if (c.Visible)
-                {
-                    c.Render(spriteBatch);
-                }
+                _children[i].Render(spriteBatch);
             }
         }
     }
@@ -268,11 +264,9 @@ public abstract class Component
         return ContainsPoint(position) ? this : null;
     }
 
-    public void SetMoveAction(Action action) => _moveAction = action;
-    public void SetRedrawAction(Action action) => _redrawAction = action;
-    public void SetClickAction(Action action) => _clickAction = action;
-
-    public void SetVisibilityChangeAction(Action action) => _visibilityChangeAction = action;
+    public void SetMoveAction(Action? action) => _moveAction = action;
+    public void SetClickAction(Action? action) => _clickAction = action;
+    public void SetVisibilityChangeAction(Action? action) => _visibilityChangeAction = action;
 
     public virtual void InvokeMouseEnter(LevelPosition mousePosition) { }
     public virtual void InvokeMouseDown(LevelPosition mousePosition) => Click();
@@ -283,4 +277,32 @@ public abstract class Component
 
     public virtual void InvokeKeyDown(in KeysEnumerable pressedKeys) { }
     public virtual void InvokeKeyUp(in KeysEnumerable pressedKeys) { }
+
+    public void Dispose()
+    {
+        if (_children is not null)
+        {
+            foreach (Component child in _children)
+            {
+                child.Dispose();
+            }
+
+            _children.Clear();
+            _children = null;
+        }
+
+        _parent = null;
+
+        SetMoveAction(null);
+        SetClickAction(null);
+
+        SetVisibilityChangeAction(null);
+
+        OnDispose();
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void OnDispose()
+    {
+    }
 }

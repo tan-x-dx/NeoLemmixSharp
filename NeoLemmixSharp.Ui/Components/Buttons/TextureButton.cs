@@ -17,18 +17,18 @@ public sealed class TextureButton : Button
 
     public override int Width
     {
-        get => _texture.Width;
-        set => throw new InvalidOperationException("Button width is determined by the texture. Use ScaleMultiplier instead.");
+        get => ScaledWidth;
+        set { }
     }
 
     public override int Height
     {
-        get => _texture.Height;
-        set => throw new InvalidOperationException("Button height is determined by the texture. Use ScaleMultiplier instead.");
+        get => ScaledHeight;
+        set { }
     }
 
-    public int ScaledWidth => (int)(0.5f + Width * ScaleMulitplier);
-    public int ScaledHeight => (int)(0.5f + Height * ScaleMulitplier);
+    public int ScaledWidth => (int)(0.5f + _texture.Width * ScaleMulitplier);
+    public int ScaledHeight => (int)(0.5f + _texture.Height * ScaleMulitplier);
 
     protected override void RenderComponent(SpriteBatch spriteBatch)
     {

@@ -1,31 +1,23 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.GameInput;
 
 namespace NeoLemmixSharp.Ui.Components;
 
-public sealed class UiHandler
+public sealed class UiHandler : IDisposable
 {
     private readonly InputController _inputController;
 
     private Component? _currentSelection = null;
-    private bool _isInitialised = false;
 
     public Component RootComponent { get; set; }
 
     public UiHandler(
-        int x,
-        int y,
-        int width,
-        int height,
         InputController inputController)
     {
-        RootComponent = new Tab(x, y, width, height);
+        RootComponent = new Tab(0, 0, 0, 0);
         _inputController = inputController;
     }
-
-    public bool IsInitialised() => _isInitialised;
 
     public void Render(SpriteBatch spriteBatch) => RootComponent.Render(spriteBatch);
 
@@ -58,13 +50,13 @@ public sealed class UiHandler
     {
         LocateComponent(mousePosition);
 
-        if (_currentSelection!.Visible)
+        if (_currentSelection is null || !_currentSelection.Visible)
         {
-            _currentSelection.InvokeMouseDown(mousePosition);
+            _currentSelection = RootComponent;
         }
         else
         {
-            _currentSelection = RootComponent;
+            _currentSelection.InvokeMouseDown(mousePosition);
         }
     }
 
@@ -72,13 +64,13 @@ public sealed class UiHandler
     {
         LocateComponent(mousePosition);
 
-        if (_currentSelection!.Visible)
+        if (_currentSelection is null || !_currentSelection.Visible)
         {
-            _currentSelection.InvokeMouseUp(mousePosition);
+            _currentSelection = RootComponent;
         }
         else
         {
-            _currentSelection = RootComponent;
+            _currentSelection.InvokeMouseUp(mousePosition);
         }
     }
 
@@ -120,5 +112,10 @@ public sealed class UiHandler
         {
             _currentSelection = RootComponent;
         }
+    }
+
+    public void Dispose()
+    {
+        RootComponent.Dispose();
     }
 }

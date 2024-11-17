@@ -40,6 +40,7 @@ public sealed class MenuScreen : IBaseScreen
             graphicsDevice,
             InputController);
         _currentPage = MenuPageCreator.CreateMainPage();
+        MenuScreenRenderer.SetNextPage(_currentPage);
         Current = this;
     }
 
@@ -59,8 +60,6 @@ public sealed class MenuScreen : IBaseScreen
 
     public void Tick(GameTime gameTime)
     {
-        // Update UI
-
         if (_pageTransition.IsTransitioning)
         {
             HandlePageTransition();
@@ -84,10 +83,12 @@ public sealed class MenuScreen : IBaseScreen
         if (!_pageTransition.IsHalfWayDone)
             return;
 
+        CloseExceptionViewers();
+
         _currentPage.Dispose();
         _currentPage = _nextPage!;
 
-        CloseExceptionViewers();
+        MenuScreenRenderer.SetNextPage(_currentPage);
 
         _currentPage.Initialise();
 

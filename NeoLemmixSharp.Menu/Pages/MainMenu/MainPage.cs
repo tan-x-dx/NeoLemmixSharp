@@ -18,30 +18,48 @@ public sealed class MainPage : PageBase
         MenuInputController inputController)
         : base(inputController)
     {
-        // _playButton = new TextureButton(MainMenuButtonTextureInfo.PlayButtonTextureInfo, 1);
-        // _playButton.Click += PlayButtonClick;
+        const float menuScaleMultiplier = 2.0f;
 
-        //_levelSelectButton = new TextureButton(MainMenuButtonTextureInfo.LevelSelectButtonTextureInfo, 1);
-        //_levelSelectButton.Click += LevelSelectButtonClick;
+        _playButton = new TextureButton(0, 0, MenuSpriteBank.SignPlay)
+        {
+            ScaleMulitplier = menuScaleMultiplier,
+        };
+        _playButton.SetClickAction(PlayButtonClick);
 
-        //_configButton = new TextureButton(MainMenuButtonTextureInfo.ConfigButtonTextureInfo, 1);
-        //_configButton.Click += ConfigButtonClick;
+        _levelSelectButton = new TextureButton(0, 0, MenuSpriteBank.SignLevelSelect)
+        {
+            ScaleMulitplier = menuScaleMultiplier,
+        };
+        _levelSelectButton.SetClickAction(LevelSelectButtonClick);
 
-        //_quitButton = new TextureButton(MainMenuButtonTextureInfo.QuitButtonTextureInfo, 1);
-        //_quitButton.Click += QuitButtonClick;
+        _configButton = new TextureButton(0, 0, MenuSpriteBank.SignConfig)
+        {
+            ScaleMulitplier = menuScaleMultiplier,
+        };
+        _configButton.SetClickAction(ConfigButtonClick);
+
+        _quitButton = new TextureButton(0, 0, MenuSpriteBank.SignQuit)
+        {
+            ScaleMulitplier = menuScaleMultiplier,
+        };
+        _quitButton.SetClickAction(QuitButtonClick);
     }
 
     protected override void OnInitialise()
     {
-        //root.Children.Add(_playButton);
-        //root.Children.Add(_levelSelectButton);
-        //root.Children.Add(_configButton);
-        //root.Children.Add(_quitButton);
+        var root = UiHandler.RootComponent;
+        root.Visible = false;
+
+        root.AddComponent(_playButton);
+        root.AddComponent(_levelSelectButton);
+
+        root.AddComponent(_configButton);
+        root.AddComponent(_quitButton);
 
         OnResize();
     }
 
-    private static void PlayButtonClick(object? sender, EventArgs e)
+    private static void PlayButtonClick()
     {
         var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
 
@@ -51,7 +69,7 @@ public sealed class MainPage : PageBase
         MenuScreen.Current.SetNextPage(levelStartPage);
     }
 
-    private static void LevelSelectButtonClick(object? sender, EventArgs e)
+    private static void LevelSelectButtonClick()
     {
         var levelSelectPage = MenuScreen.Current.MenuPageCreator.CreateLevelSelectPage();
 
@@ -61,19 +79,19 @@ public sealed class MainPage : PageBase
         MenuScreen.Current.SetNextPage(levelSelectPage);
     }
 
-    private static void GroupUpButtonClick(object? sender, EventArgs e)
+    private static void GroupUpButtonClick()
     {
     }
 
-    private static void GroupDownButtonClick(object? sender, EventArgs e)
+    private static void GroupDownButtonClick()
     {
     }
 
-    private static void ConfigButtonClick(object? sender, EventArgs e)
+    private static void ConfigButtonClick()
     {
     }
 
-    private static void QuitButtonClick(object? sender, EventArgs e)
+    private static void QuitButtonClick()
     {
         IGameWindow.Instance.Escape();
     }
@@ -85,26 +103,29 @@ public sealed class MainPage : PageBase
 
     private void OnResize()
     {
-        //var windowWidth = IGameWindow.Instance.WindowWidth;
-        //var windowHeight = IGameWindow.Instance.WindowHeight;
+        var windowWidth = IGameWindow.Instance.WindowWidth;
+        var windowHeight = IGameWindow.Instance.WindowHeight;
 
-        //var deltaX = windowWidth / 8;
+        UiHandler.RootComponent.Width = windowWidth;
+        UiHandler.RootComponent.Height = windowHeight;
 
-        //_playButton.X = deltaX * 2;
-        //_levelSelectButton.X = deltaX * 3;
+        var deltaX = windowWidth / 8;
 
-        //deltaX = windowWidth / 6;
+        _playButton.Left = deltaX * 2;
+        _levelSelectButton.Left = deltaX * 3;
 
-        //_configButton.X = deltaX * 2;
-        //_quitButton.X = deltaX * 3;
+        deltaX = windowWidth / 6;
 
-        //var deltaY = windowHeight / 6;
+        _configButton.Left = deltaX * 2;
+        _quitButton.Left = deltaX * 3;
 
-        //_playButton.Y = deltaY * 3;
-        //_levelSelectButton.Y = deltaY * 3;
+        var deltaY = windowHeight / 6;
 
-        //_configButton.Y = deltaY * 4;
-        //_quitButton.Y = deltaY * 4;
+        _playButton.Top = deltaY * 2;
+        _levelSelectButton.Top = deltaY * 2;
+
+        _configButton.Top = deltaY * 3;
+        _quitButton.Top = deltaY * 3;
     }
 
     protected override void HandleUserInput()
@@ -117,9 +138,5 @@ public sealed class MainPage : PageBase
 
     protected override void OnDispose()
     {
-        //_playButton.Click -= PlayButtonClick;
-        //_levelSelectButton.Click -= LevelSelectButtonClick;
-        //_configButton.Click -= ConfigButtonClick;
-        //_quitButton.Click -= QuitButtonClick;
     }
 }

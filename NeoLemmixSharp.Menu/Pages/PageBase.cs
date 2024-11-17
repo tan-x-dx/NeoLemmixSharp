@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
@@ -9,10 +10,13 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     private bool _isInitialised;
 
+    public UiHandler UiHandler { get; }
+
     protected PageBase(
         MenuInputController inputController)
     {
         InputController = inputController;
+        UiHandler = new UiHandler(inputController.InputController);
     }
 
     public void Initialise()
@@ -35,6 +39,7 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     public void Tick()
     {
+        UiHandler.Tick();
         HandleUserInput();
         OnTick();
     }
@@ -45,8 +50,7 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     public void Dispose()
     {
-        //_root.Children.Clear();
-
+        UiHandler.Dispose();
         OnDispose();
     }
 
