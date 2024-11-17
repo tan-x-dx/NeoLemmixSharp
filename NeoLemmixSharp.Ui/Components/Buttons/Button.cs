@@ -6,24 +6,18 @@ namespace NeoLemmixSharp.Ui.Components.Buttons;
 
 public class Button : RectangularComponent, IModifyableState
 {
-    private ComponentState _state = ComponentState.Normal;
-
     protected bool _isActive = false;
 
-    public Button(int x, int y, int width, int height, string label)
+    public ComponentState State { get; set; } = ComponentState.Normal;
+
+    public Button(int x, int y, int width, int height, string? label)
         : base(x, y, width, height, label)
     {
     }
 
-    public Button(int x, int y, string label)
-        : base(x, y, UiConstants.TwiceStandardInset + (int)(0.5f + label.Length * UiConstants.FontGlyphWidthMultiplier), UiConstants.StandardButtonHeight, label)
+    public Button(int x, int y, string? label)
+        : base(x, y, UiConstants.TwiceStandardInset + (int)(0.5f + (label?.Length ?? 10) * UiConstants.FontGlyphWidthMultiplier), UiConstants.StandardButtonHeight, label)
     {
-    }
-
-    public ComponentState State
-    {
-        get => _state;
-        set => _state = value;
     }
 
     public virtual bool Active

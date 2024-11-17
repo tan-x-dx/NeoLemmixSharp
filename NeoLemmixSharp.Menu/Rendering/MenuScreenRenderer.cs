@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering;
-using RenderingLibrary;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
@@ -46,7 +45,6 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         spriteBatch.End();
 
         // draw ui
-        SystemManagers.Default.Draw();
 
         spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
         _menuCursorRenderer.RenderCursor(spriteBatch);

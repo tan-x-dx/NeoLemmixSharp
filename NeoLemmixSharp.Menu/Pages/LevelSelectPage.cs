@@ -1,6 +1,4 @@
-﻿using MonoGameGum.Forms.Controls;
-using MonoGameGum.GueDeriving;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 using System.Runtime.InteropServices;
 
@@ -8,8 +6,6 @@ namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class LevelSelectPage : PageBase
 {
-    private readonly ItemsControl _levelList;
-
     private readonly string _levelsRootPath;
     private readonly List<LevelBrowserEntry> _allLevelBrowserEntries = new();
     private readonly List<LevelBrowserEntry> _currentlyDisplayedLevelBrowserEntries = new();
@@ -17,18 +13,16 @@ public sealed class LevelSelectPage : PageBase
     private LevelBrowserEntry _selectedLevelBrowserEntry;
 
     public LevelSelectPage(
-        MenuInputController inputController,
-        ContainerRuntime root)
-        : base(inputController, root)
+        MenuInputController inputController)
+        : base(inputController)
     {
         _levelsRootPath = Path.Combine(RootDirectoryManager.RootDirectory, NeoLemmixFileExtensions.LevelFolderName);
 
-        _levelList = new ItemsControl();
     }
 
-    protected override void OnInitialise(ContainerRuntime root)
+    protected override void OnInitialise()
     {
-        root.Children.Add(_levelList.Visual);
+        //root.Children.Add(_levelList.Visual);
 
         _allLevelBrowserEntries.AddRange(LevelBrowserEntry.GetMenuItemsForFolder(_levelsRootPath));
         RepopulateMenu();
@@ -39,10 +33,10 @@ public sealed class LevelSelectPage : PageBase
         _currentlyDisplayedLevelBrowserEntries.Clear();
         _currentlyDisplayedLevelBrowserEntries.AddRange(_allLevelBrowserEntries.SelectMany(x => x.GetAllEntries()));
 
-        _levelList.Items.Clear();
+        //_levelList.Items.Clear();
         foreach (var entry in _currentlyDisplayedLevelBrowserEntries)
         {
-           // _levelList.AddChild(entry.Text.Text);
+            // _levelList.AddChild(entry.Text.Text);
             //entry.TextBox.cl
         }
     }

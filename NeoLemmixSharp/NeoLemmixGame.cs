@@ -1,12 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGameGum.Forms;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -17,7 +15,6 @@ using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.Menu;
-using RenderingLibrary;
 using System;
 using System.Runtime.InteropServices;
 
@@ -65,10 +62,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Initialize()
     {
-        SystemManagers.Default = new SystemManagers();
-        SystemManagers.Default.Initialize(_graphics.GraphicsDevice, fullInstantiation: true);
-        FormsUtilities.InitializeDefaults();
-
         // make the window fullscreen (but still with border and top control bar)
         var screenWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;
         var screenHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;

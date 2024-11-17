@@ -11,14 +11,16 @@ public abstract class RectangularComponent : Component, IColorable
 
     private Action? _resizeAction = null;
 
-    protected RectangularComponent(int x, int y, int width, int height) : base(x, y)
+    protected RectangularComponent(int x, int y, int width, int height)
+        : base(x, y)
     {
         Width = width;
         Height = height;
         _colourPacket = UiConstants.RectangularButtonDefaultColours;
     }
 
-    protected RectangularComponent(int x, int y, int width, int height, string label) : base(x, y, label)
+    protected RectangularComponent(int x, int y, int width, int height, string? label)
+        : base(x, y, label)
     {
         Width = width;
         Height = height;

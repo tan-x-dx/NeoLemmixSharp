@@ -1,6 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using MonoGameGum.Forms.Controls;
-using MonoGameGum.GueDeriving;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
 namespace NeoLemmixSharp.Menu.Pages;
@@ -16,7 +14,7 @@ public sealed class LevelBrowserEntry : IDisposable
     private string _displayName;
     private bool _isOpen;
 
-    public TextRuntime Text { get; }
+   // public TextRuntime Text { get; }
     public string LevelFilePath { get; }
     public string DisplayName
     {
@@ -108,10 +106,10 @@ public sealed class LevelBrowserEntry : IDisposable
 
         _subEntries = new List<LevelBrowserEntry>();
 
-        Text = new TextRuntime()
-        {
-            Text = _displayName
-        };
+        //Text = new TextRuntime()
+        //{
+        //    Text = _displayName
+        //};
     }
 
     private LevelBrowserEntry(
@@ -137,10 +135,10 @@ public sealed class LevelBrowserEntry : IDisposable
 
         _subEntries = null;
 
-        Text = new TextRuntime()
-        {
-            Text = DisplayName
-        };
+        //Text = new TextRuntime()
+        //{
+        //    Text = DisplayName
+        //};
     }
 
     public enum IconType

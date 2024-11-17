@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGameGum.GueDeriving;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
@@ -15,20 +14,17 @@ public sealed class MenuPageCreator
     private readonly GraphicsDevice _graphicsDevice;
 
     private readonly MenuInputController _inputController;
-    private readonly ContainerRuntime _root;
 
     public string LevelToLoadFilepath { get; set; }
 
     public MenuPageCreator(
         ContentManager contentManager,
         GraphicsDevice graphicsDevice,
-        MenuInputController inputController,
-        ContainerRuntime root)
+        MenuInputController inputController)
     {
         _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;
         _inputController = inputController;
-        _root = root;
         LevelToLoadFilepath = GetLevelFilePath();
     }
 
@@ -61,12 +57,12 @@ public sealed class MenuPageCreator
 
     public MainPage CreateMainPage()
     {
-        return new MainPage(_inputController, _root);
+        return new MainPage(_inputController);
     }
 
     public LevelSelectPage CreateLevelSelectPage()
     {
-        return new LevelSelectPage(_inputController, _root);
+        return new LevelSelectPage(_inputController);
     }
 
     public LevelStartPage? CreateLevelStartPage()
@@ -84,11 +80,11 @@ public sealed class MenuPageCreator
 
             levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
             var levelScreen = levelBuilder.BuildLevel(levelData);
-            result = new LevelStartPage(_inputController, levelScreen, levelData, _root);
+            result = new LevelStartPage(_inputController, levelScreen, levelData);
         }
         catch (Exception ex)
         {
-            var exceptionWindow = new ExceptionViewer(_inputController, ex, _root);
+            var exceptionWindow = new ExceptionViewer(_inputController, ex);
 
             exceptionWindow.Initialise();
         }

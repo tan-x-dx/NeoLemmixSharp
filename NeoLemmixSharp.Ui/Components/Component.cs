@@ -41,7 +41,7 @@ public abstract class Component
 
     public int Left
     {
-        get { return _x; }
+        get => _x;
         set
         {
             int oldX = _x;
@@ -64,7 +64,7 @@ public abstract class Component
 
     public int Top
     {
-        get { return _y; }
+        get => _y;
         set
         {
             int oldY = _y;
@@ -87,14 +87,14 @@ public abstract class Component
 
     public int Right
     {
-        get { return Left + Width; }
-        set { Left = value - Width; }
+        get => Left + Width;
+        set => Left = value - Width;
     }
 
     public int Bottom
     {
-        get { return Top + Height; }
-        set { Top = value - Height; }
+        get => Top + Height;
+        set => Top = value - Height;
     }
 
     public void SetLocation(int x, int y)

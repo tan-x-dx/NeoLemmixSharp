@@ -1,6 +1,5 @@
-﻿using MonoGameGum.GueDeriving;
-using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Menu.Components;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Ui.Components.Buttons;
 
 namespace NeoLemmixSharp.Menu.Pages.MainMenu;
 
@@ -16,29 +15,28 @@ public sealed class MainPage : PageBase
     private readonly TextureButton _quitButton;
 
     public MainPage(
-        MenuInputController inputController,
-        ContainerRuntime root)
-        : base(inputController, root)
+        MenuInputController inputController)
+        : base(inputController)
     {
-        _playButton = new TextureButton(MainMenuButtonTextureInfo.PlayButtonTextureInfo, 1);
-        _playButton.Click += PlayButtonClick;
+        // _playButton = new TextureButton(MainMenuButtonTextureInfo.PlayButtonTextureInfo, 1);
+        // _playButton.Click += PlayButtonClick;
 
-        _levelSelectButton = new TextureButton(MainMenuButtonTextureInfo.LevelSelectButtonTextureInfo, 1);
-        _levelSelectButton.Click += LevelSelectButtonClick;
+        //_levelSelectButton = new TextureButton(MainMenuButtonTextureInfo.LevelSelectButtonTextureInfo, 1);
+        //_levelSelectButton.Click += LevelSelectButtonClick;
 
-        _configButton = new TextureButton(MainMenuButtonTextureInfo.ConfigButtonTextureInfo, 1);
-        _configButton.Click += ConfigButtonClick;
+        //_configButton = new TextureButton(MainMenuButtonTextureInfo.ConfigButtonTextureInfo, 1);
+        //_configButton.Click += ConfigButtonClick;
 
-        _quitButton = new TextureButton(MainMenuButtonTextureInfo.QuitButtonTextureInfo, 1);
-        _quitButton.Click += QuitButtonClick;
+        //_quitButton = new TextureButton(MainMenuButtonTextureInfo.QuitButtonTextureInfo, 1);
+        //_quitButton.Click += QuitButtonClick;
     }
 
-    protected override void OnInitialise(ContainerRuntime root)
+    protected override void OnInitialise()
     {
-        root.Children.Add(_playButton);
-        root.Children.Add(_levelSelectButton);
-        root.Children.Add(_configButton);
-        root.Children.Add(_quitButton);
+        //root.Children.Add(_playButton);
+        //root.Children.Add(_levelSelectButton);
+        //root.Children.Add(_configButton);
+        //root.Children.Add(_quitButton);
 
         OnResize();
     }
@@ -87,26 +85,26 @@ public sealed class MainPage : PageBase
 
     private void OnResize()
     {
-        var windowWidth = IGameWindow.Instance.WindowWidth;
-        var windowHeight = IGameWindow.Instance.WindowHeight;
+        //var windowWidth = IGameWindow.Instance.WindowWidth;
+        //var windowHeight = IGameWindow.Instance.WindowHeight;
 
-        var deltaX = windowWidth / 8;
+        //var deltaX = windowWidth / 8;
 
-        _playButton.X = deltaX * 2;
-        _levelSelectButton.X = deltaX * 3;
+        //_playButton.X = deltaX * 2;
+        //_levelSelectButton.X = deltaX * 3;
 
-        deltaX = windowWidth / 6;
+        //deltaX = windowWidth / 6;
 
-        _configButton.X = deltaX * 2;
-        _quitButton.X = deltaX * 3;
+        //_configButton.X = deltaX * 2;
+        //_quitButton.X = deltaX * 3;
 
-        var deltaY = windowHeight / 6;
+        //var deltaY = windowHeight / 6;
 
-        _playButton.Y = deltaY * 3;
-        _levelSelectButton.Y = deltaY * 3;
+        //_playButton.Y = deltaY * 3;
+        //_levelSelectButton.Y = deltaY * 3;
 
-        _configButton.Y = deltaY * 4;
-        _quitButton.Y = deltaY * 4;
+        //_configButton.Y = deltaY * 4;
+        //_quitButton.Y = deltaY * 4;
     }
 
     protected override void HandleUserInput()
@@ -119,9 +117,9 @@ public sealed class MainPage : PageBase
 
     protected override void OnDispose()
     {
-        _playButton.Click -= PlayButtonClick;
-        _levelSelectButton.Click -= LevelSelectButtonClick;
-        _configButton.Click -= ConfigButtonClick;
-        _quitButton.Click -= QuitButtonClick;
+        //_playButton.Click -= PlayButtonClick;
+        //_levelSelectButton.Click -= LevelSelectButtonClick;
+        //_configButton.Click -= ConfigButtonClick;
+        //_quitButton.Click -= QuitButtonClick;
     }
 }

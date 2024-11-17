@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using MonoGameGum.GueDeriving;
 using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Menu.Pages;
@@ -7,16 +6,13 @@ namespace NeoLemmixSharp.Menu.Pages;
 public abstract class PageBase : IInitialisable, IDisposable
 {
     protected readonly MenuInputController InputController;
-    private readonly ContainerRuntime _root;
 
     private bool _isInitialised;
 
     protected PageBase(
-        MenuInputController inputController,
-        ContainerRuntime root)
+        MenuInputController inputController)
     {
         InputController = inputController;
-        _root = root;
     }
 
     public void Initialise()
@@ -24,11 +20,11 @@ public abstract class PageBase : IInitialisable, IDisposable
         if (_isInitialised)
             return;
 
-        OnInitialise(_root);
+        OnInitialise();
         _isInitialised = true;
     }
 
-    protected abstract void OnInitialise(ContainerRuntime root);
+    protected abstract void OnInitialise();
 
     public void SetWindowDimensions(int windowWidth, int windowHeight)
     {
@@ -49,7 +45,7 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     public void Dispose()
     {
-        _root.Children.Clear();
+        //_root.Children.Clear();
 
         OnDispose();
     }
