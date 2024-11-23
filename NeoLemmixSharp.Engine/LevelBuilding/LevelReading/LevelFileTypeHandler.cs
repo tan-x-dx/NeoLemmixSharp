@@ -11,52 +11,27 @@ public static class LevelFileTypeHandler
         { DefaultFileExtensions.LevelFileExtension, typeof(DefaultLevelReader) }
     };
 
-    public static bool FileExtensionIsValidLevelType(string? fileExtension)
+    public static bool FileExtensionIsValidLevelType(ReadOnlySpan<char> fileExtension)
     {
-        return !string.IsNullOrWhiteSpace(fileExtension) && FileTypeLookup.ContainsKey(fileExtension);
+        var spanLookup = FileTypeLookup.GetAlternateLookup<ReadOnlySpan<char>>();
+
+        return spanLookup.ContainsKey(fileExtension);
     }
 
     public static ILevelReader GetLevelReaderForFileExtension(
-        string? fileExtension)
+        ReadOnlySpan<char> fileExtension)
     {
-        if (string.IsNullOrWhiteSpace(fileExtension))
+        if (fileExtension.IsEmpty)
             throw new ArgumentException("Missing file extension");
 
-        if (FileTypeLookup.TryGetValue(fileExtension, out var levelReaderType))
+        var spanLookup = FileTypeLookup.GetAlternateLookup<ReadOnlySpan<char>>();
+
+        if (spanLookup.TryGetValue(fileExtension, out var levelReaderType))
         {
             var levelReader = Activator.CreateInstance(levelReaderType)!;
             return (ILevelReader)levelReader;
         }
 
         throw new ArgumentException("Unknown file extension", nameof(fileExtension));
-    }
-
-    public static string? MatchLevelFileExtension(string? filePath)
-    {
-        if (string.IsNullOrWhiteSpace(filePath))
-            return null;
-
-        var filePathSpan = filePath.AsSpan();
-
-        var i = filePathSpan.Length - 1;
-        while (i >= 0)
-        {
-            if (filePathSpan[i] == '.')
-            {
-                break;
-            }
-
-            i--;
-        }
-
-        var subSpan = filePathSpan[i..];
-
-        return subSpan switch
-        {
-            DefaultFileExtensions.LevelFileExtension => DefaultFileExtensions.LevelFileExtension,
-            NeoLemmixFileExtensions.LevelFileExtension => NeoLemmixFileExtensions.LevelFileExtension,
-
-            _ => null,
-        };
     }
 }

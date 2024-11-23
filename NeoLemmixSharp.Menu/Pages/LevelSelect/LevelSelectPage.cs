@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Menu.Pages;
+namespace NeoLemmixSharp.Menu.Pages.LevelSelect;
 
 public sealed class LevelSelectPage : PageBase
 {
@@ -57,8 +57,8 @@ public sealed class LevelSelectPage : PageBase
 
         UiHandler.RootComponent.Left = margin;
         UiHandler.RootComponent.Top = margin;
-        UiHandler.RootComponent.Width = windowWidth - (margin * 2);
-        UiHandler.RootComponent.Height = windowHeight - (margin * 2);
+        UiHandler.RootComponent.Width = windowWidth - margin * 2;
+        UiHandler.RootComponent.Height = windowHeight - margin * 2;
     }
 
     protected override void HandleUserInput()

@@ -82,11 +82,11 @@ public sealed class LevelBrowserEntry : IDisposable
         var files = Directory.GetFiles(folder);
         foreach (var file in files)
         {
-            var fileExtension = LevelFileTypeHandler.MatchLevelFileExtension(file);
+            var fileExtension = Path.GetExtension(file.AsSpan());
 
             if (LevelFileTypeHandler.FileExtensionIsValidLevelType(fileExtension))
             {
-                var levelEntry = new LevelBrowserEntry(file, fileExtension!, indentationLevel, IconType.LevelNotAttempted);
+                var levelEntry = new LevelBrowserEntry(file, fileExtension.ToString(), indentationLevel, IconType.LevelNotAttempted);
 
                 yield return levelEntry;
             }

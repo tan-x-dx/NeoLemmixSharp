@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 using NeoLemmixSharp.Menu.Pages;
+using NeoLemmixSharp.Menu.Pages.LevelSelect;
 
 namespace NeoLemmixSharp.Menu;
 
@@ -71,7 +72,7 @@ public sealed class MenuPageCreator
         ILevelReader? levelReader = null;
         try
         {
-            var fileExtension = Path.GetExtension(LevelToLoadFilepath);
+            var fileExtension = Path.GetExtension(LevelToLoadFilepath.AsSpan());
             levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
             var levelData = levelReader.ReadLevel(LevelToLoadFilepath, _graphicsDevice);
 
