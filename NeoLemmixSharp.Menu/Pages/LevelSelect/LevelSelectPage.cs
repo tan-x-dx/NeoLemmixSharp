@@ -1,46 +1,33 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Menu.Pages.LevelSelect;
 
-public sealed class LevelSelectPage : PageBase
+public sealed class LevelSelectPage : PageBase, IComparer<LevelBrowserEntry>
 {
-    private readonly string _levelsRootPath;
-    private readonly List<LevelBrowserEntry> _allLevelBrowserEntries = new();
-    private readonly List<LevelBrowserEntry> _currentlyDisplayedLevelBrowserEntries = new();
+    /// <summary>
+    /// Arbitrary threshold for calling GC for loading after loading levels
+    /// </summary>
+    private const int LevelLoadCountThreshold = 32;
 
-    private LevelBrowserEntry _selectedLevelBrowserEntry;
+    private static readonly string LevelsRootPath = Path.Combine(RootDirectoryManager.RootDirectory, NeoLemmixFileExtensions.LevelFolderName);
 
-    public LevelSelectPage(
-        MenuInputController inputController)
+    private readonly List<LevelBrowserEntry> _levelBrowserEntries = new();
+    private readonly LevelList _levelList = new();
+
+    private int _numberOfLevelsLoaded = 0;
+
+    public LevelSelectPage(MenuInputController inputController)
         : base(inputController)
     {
-        _levelsRootPath = Path.Combine(RootDirectoryManager.RootDirectory, NeoLemmixFileExtensions.LevelFolderName);
-
     }
 
     protected override void OnInitialise()
     {
-        //root.Children.Add(_levelList.Visual);
-
-        _allLevelBrowserEntries.AddRange(LevelBrowserEntry.GetMenuItemsForFolder(_levelsRootPath));
-        RepopulateMenu();
+        UiHandler.RootComponent.AddComponent(_levelList);
 
         OnResize();
-    }
-
-    private void RepopulateMenu()
-    {
-        _currentlyDisplayedLevelBrowserEntries.Clear();
-        _currentlyDisplayedLevelBrowserEntries.AddRange(_allLevelBrowserEntries.SelectMany(x => x.GetAllEntries()));
-
-        //_levelList.Items.Clear();
-        foreach (var entry in _currentlyDisplayedLevelBrowserEntries)
-        {
-            // _levelList.AddChild(entry.Text.Text);
-            //entry.TextBox.cl
-        }
+        RepopulateMenu();
     }
 
     protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
@@ -55,178 +42,80 @@ public sealed class LevelSelectPage : PageBase
         var windowWidth = IGameWindow.Instance.WindowWidth;
         var windowHeight = IGameWindow.Instance.WindowHeight;
 
-        UiHandler.RootComponent.Left = margin;
-        UiHandler.RootComponent.Top = margin;
-        UiHandler.RootComponent.Width = windowWidth - margin * 2;
-        UiHandler.RootComponent.Height = windowHeight - margin * 2;
+        var rootComponent = UiHandler.RootComponent;
+        rootComponent.Left = margin;
+        rootComponent.Top = margin;
+        rootComponent.Width = windowWidth - margin * 2;
+        rootComponent.Height = windowHeight - margin * 2;
+
+        _levelList.SetDimensions(
+            margin * 2,
+            margin * 2,
+            windowWidth / 2 - margin * 4,
+            windowHeight - margin * 4);
     }
 
     protected override void HandleUserInput()
     {
-        if (InputController.Quit.IsPressed)
-        {
-            NavigateToMainMenuPage();
-        }
     }
 
-    private void HandleInputsForSelection()
+    protected override void OnTick()
     {
-        if (_selectedLevelBrowserEntry is null)
-            return;
-
-        HandleListScroll();
-
-        if (_selectedLevelBrowserEntry.IsFolder)
+        for (var i = 0; i < _levelBrowserEntries.Count; i++)
         {
-            HandleInputsForFolder();
-            return;
-        }
-
-        HandleInputsForFile();
-    }
-
-    private void HandleListScroll()
-    {
-        if (_selectedLevelBrowserEntry is null)
-            return;
-
-        var pressUp = InputController.UpArrow.IsPressed;
-        var pressDown = InputController.DownArrow.IsPressed;
-
-        if (!(pressUp || pressDown))
-            return;
-
-        var scrollDelta = 0;
-        if (pressUp)
-        {
-            scrollDelta = -1;
-        }
-
-        if (pressDown)
-        {
-            scrollDelta = 1;
-        }
-
-        var index = GetIndexOfItem(_selectedLevelBrowserEntry);
-
-        TrySelectEntryWithIndex(index + scrollDelta);
-    }
-
-    private int GetIndexOfItem(LevelBrowserEntry levelBrowserEntry)
-    {
-        var span = CollectionsMarshal.AsSpan(_currentlyDisplayedLevelBrowserEntries);
-        var result = 0;
-        foreach (var candidate in span)
-        {
-            if (ReferenceEquals(candidate, levelBrowserEntry))
-                return result;
-            result++;
-        }
-
-        return 0;
-    }
-
-    private void TrySelectEntryWithIndex(int index)
-    {
-        index = Math.Clamp(index, 0, _currentlyDisplayedLevelBrowserEntries.Count - 1);
-
-        var entry = _currentlyDisplayedLevelBrowserEntries[index];
-    }
-
-    private void HandleInputsForFolder()
-    {
-        var selectedFolder = _selectedLevelBrowserEntry!;
-
-        if (InputController.LeftMouseButtonAction.IsDoubleTap || InputController.Enter.IsPressed || InputController.Space.IsPressed)
-        {
-            var index = GetIndexOfItem(selectedFolder);
-
-            selectedFolder.IsOpen = !selectedFolder.IsOpen;
-            RepopulateMenu();
-
-            TrySelectEntryWithIndex(index);
-            return;
-        }
-
-        if (InputController.RightArrow.IsPressed && !selectedFolder.IsOpen)
-        {
-            var index = GetIndexOfItem(selectedFolder);
-
-            selectedFolder.IsOpen = true;
-            RepopulateMenu();
-
-            TrySelectEntryWithIndex(index + 1);
-            return;
-        }
-
-        if (InputController.LeftArrow.IsPressed && selectedFolder.IsOpen)
-        {
-            var index = GetIndexOfParentFolder(selectedFolder);
-
-            selectedFolder.IsOpen = false;
-            RepopulateMenu();
-
-            TrySelectEntryWithIndex(index);
-        }
-    }
-
-    private void HandleInputsForFile()
-    {
-        var selectedLevel = _selectedLevelBrowserEntry!;
-        if (InputController.LeftMouseButtonAction.IsDoubleTap)
-        {
-            OnFileSelected(selectedLevel);
-        }
-
-        if (InputController.LeftArrow.IsPressed)
-        {
-            var index = GetIndexOfParentFolder(selectedLevel);
-            TrySelectEntryWithIndex(index);
-        }
-    }
-
-    private int GetIndexOfParentFolder(LevelBrowserEntry selectedEntry)
-    {
-        var index = GetIndexOfItem(selectedEntry);
-
-        var requiredIndentationLevel = selectedEntry.IndentationLevel - 1;
-        if (requiredIndentationLevel == -1)
-            return index;
-
-        var span = CollectionsMarshal.AsSpan(_currentlyDisplayedLevelBrowserEntries);
-        while (index > 0)
-        {
-            if (span[index].IndentationLevel <= requiredIndentationLevel)
+            if (_levelBrowserEntries[i] is LevelEntry levelEntry && levelEntry.IsLoading)
             {
-                return index;
+                levelEntry.LoadLevelData(IGameWindow.Instance.GraphicsDevice);
+                _numberOfLevelsLoaded++;
+                break;
             }
-
-            index--;
         }
 
-        return index;
+        if (_numberOfLevelsLoaded >= LevelLoadCountThreshold)
+        {
+            GC.Collect(3, GCCollectionMode.Forced);
+            _numberOfLevelsLoaded = 0;
+        }
     }
 
-    private static void OnFileSelected(LevelBrowserEntry? selectedLevelBrowserEntry)
+    private void RepopulateMenu()
     {
-        if (selectedLevelBrowserEntry is null || selectedLevelBrowserEntry.IsFolder)
-            return;
+        _levelBrowserEntries.Clear();
+        _levelBrowserEntries.AddRange(LevelBrowserEntry.GetMenuItems(LevelsRootPath));
+        _levelBrowserEntries.Sort(this);
 
-        MenuScreen.Current.MenuPageCreator.LevelToLoadFilepath = selectedLevelBrowserEntry.LevelFilePath;
-
-        var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
-
-        if (levelStartPage is null)
-            return;
-
-        MenuScreen.Current.SetNextPage(levelStartPage);
+        GC.Collect(3, GCCollectionMode.Forced);
     }
 
     protected override void OnDispose()
     {
-        foreach (var levelBrowserEntry in _allLevelBrowserEntries)
+        foreach (var entry in _levelBrowserEntries)
         {
-            levelBrowserEntry.Dispose();
+            entry.Dispose();
         }
+        _levelBrowserEntries.Clear();
+    }
+
+    int IComparer<LevelBrowserEntry>.Compare(LevelBrowserEntry? x, LevelBrowserEntry? y)
+    {
+        if (ReferenceEquals(x, y)) return 0;
+        if (x is null) return -1;
+        if (y is null) return 1;
+
+        if (x is LevelFolderEntry xFolder)
+        {
+            if (y is LevelFolderEntry yFolder)
+                return string.CompareOrdinal(xFolder.DisplayName, yFolder.DisplayName);
+
+            return -1;
+        }
+
+        if (y is LevelFolderEntry)
+            return 1;
+
+        var xFile = (LevelEntry)x;
+        var yFile = (LevelEntry)y;
+
+        return string.CompareOrdinal(xFile.DisplayName, yFile.DisplayName);
     }
 }

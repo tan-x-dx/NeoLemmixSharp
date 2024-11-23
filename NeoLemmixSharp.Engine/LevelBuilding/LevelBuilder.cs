@@ -133,7 +133,7 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
             gadgetSpriteBank,
             controlPanelSpriteBank);
 
-        return new LevelScreen(
+        var result = new LevelScreen(
             levelData,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour,
@@ -151,6 +151,10 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
             levelViewport,
             rewindManager,
             levelScreenRenderer);
+
+        GC.Collect(3, GCCollectionMode.Forced);
+
+        return result;
     }
 
     private static LevelTimer GetLevelTimer(LevelData levelData)

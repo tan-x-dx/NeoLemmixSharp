@@ -18,7 +18,7 @@ public abstract class Component : IDisposable
     private int _labelOffsetX, _labelOffsetY;
 
     private Component? _parent = null;
-    private List<Component>? _children = null;
+    protected List<Component>? _children = null;
 
     private Action? _clickAction = null;
     private Action? _moveAction = null;
@@ -26,8 +26,7 @@ public abstract class Component : IDisposable
     private Action? _resizeAction = null;
 
     private bool _visible = true;
-
-    protected Component() : this(0, 0, 0, 0, null) { }
+    private bool _isDisposed;
 
     protected Component(int x, int y, int width, int height) : this(x, y, width, height, null) { }
 
@@ -333,25 +332,29 @@ public abstract class Component : IDisposable
 
     public void Dispose()
     {
-        if (_children is not null)
+        if (!_isDisposed)
         {
-            foreach (Component child in _children)
+            if (_children is not null)
             {
-                child.Dispose();
+                foreach (Component child in _children)
+                {
+                    child.Dispose();
+                }
+
+                _children.Clear();
+                _children = null;
             }
 
-            _children.Clear();
-            _children = null;
+            _parent = null;
+
+            SetMoveAction(null);
+            SetClickAction(null);
+
+            SetVisibilityChangeAction(null);
+
+            OnDispose();
+            _isDisposed = true;
         }
-
-        _parent = null;
-
-        SetMoveAction(null);
-        SetClickAction(null);
-
-        SetVisibilityChangeAction(null);
-
-        OnDispose();
         GC.SuppressFinalize(this);
     }
 

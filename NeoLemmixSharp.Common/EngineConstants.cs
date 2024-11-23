@@ -546,4 +546,11 @@ public static class EngineConstants
     public const int WaterGadgetBehaviourId = 1;
 
     #endregion
+
+    #region Menu Constants
+
+    public const string LevelLoadingDisplayString = "Loading";
+    public const string LevelLoadingErrorOccurredDisplayString = "ERROR OCCURRED WHEN LOADING";
+
+    #endregion
 }

@@ -16,7 +16,7 @@ public static class UiSprites
         BevelTexture = contentManager.Load<Texture2D>("menu/bevel");
     }
 
-    internal static void DrawBeveledRectangle(
+    public static void DrawBeveledRectangle(
         SpriteBatch spriteBatch,
         Component c)
     {

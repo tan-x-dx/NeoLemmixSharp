@@ -1,20 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
-namespace NeoLemmixSharp.Menu.Pages;
+namespace NeoLemmixSharp.Menu.Pages.LevelSelect;
 
-public sealed class LevelBrowserEntry : IDisposable
+public sealed class LevelBrowserEntryAaa : IDisposable
 {
     private const int IconSize = 16;
 
     private readonly string? _fileExtension;
-    private readonly List<LevelBrowserEntry>? _subEntries;
+    private readonly List<LevelBrowserEntryAaa>? _subEntries;
 
     private IconType _iconType;
     private string _displayName;
     private bool _isOpen;
 
-   // public TextRuntime Text { get; }
+    // public TextRuntime Text { get; }
     public string LevelFilePath { get; }
     public string DisplayName
     {
@@ -54,7 +54,7 @@ public sealed class LevelBrowserEntry : IDisposable
         }
     }
 
-    public IEnumerable<LevelBrowserEntry> GetAllEntries()
+    public IEnumerable<LevelBrowserEntryAaa> GetAllEntries()
     {
         yield return this;
 
@@ -67,12 +67,12 @@ public sealed class LevelBrowserEntry : IDisposable
         }
     }
 
-    public static IEnumerable<LevelBrowserEntry> GetMenuItemsForFolder(string folder, int indentationLevel = 0)
+    public static IEnumerable<LevelBrowserEntryAaa> GetMenuItemsForFolder(string folder, int indentationLevel = 0)
     {
         var subFolders = Directory.GetDirectories(folder);
         foreach (var subFolder in subFolders)
         {
-            var folderEntry = new LevelBrowserEntry(subFolder, indentationLevel);
+            var folderEntry = new LevelBrowserEntryAaa(subFolder, indentationLevel);
 
             folderEntry._subEntries!.AddRange(GetMenuItemsForFolder(subFolder, indentationLevel + 1));
 
@@ -86,14 +86,14 @@ public sealed class LevelBrowserEntry : IDisposable
 
             if (LevelFileTypeHandler.FileExtensionIsValidLevelType(fileExtension))
             {
-                var levelEntry = new LevelBrowserEntry(file, fileExtension.ToString(), indentationLevel, IconType.LevelNotAttempted);
+                var levelEntry = new LevelBrowserEntryAaa(file, fileExtension.ToString(), indentationLevel, IconType.LevelNotAttempted);
 
                 yield return levelEntry;
             }
         }
     }
 
-    private LevelBrowserEntry(
+    private LevelBrowserEntryAaa(
         string levelFilePath,
         int indentationLevel)
     {
@@ -104,7 +104,7 @@ public sealed class LevelBrowserEntry : IDisposable
         IsFolder = true;
         _iconType = IconType.ArrowClosed;
 
-        _subEntries = new List<LevelBrowserEntry>();
+        _subEntries = new List<LevelBrowserEntryAaa>();
 
         //Text = new TextRuntime()
         //{
@@ -112,7 +112,7 @@ public sealed class LevelBrowserEntry : IDisposable
         //};
     }
 
-    private LevelBrowserEntry(
+    private LevelBrowserEntryAaa(
         string levelFilePath,
         string fileExtension,
         int indentationLevel,
