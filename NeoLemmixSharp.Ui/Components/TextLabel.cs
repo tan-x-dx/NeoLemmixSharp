@@ -4,7 +4,7 @@ using NeoLemmixSharp.Ui.Data;
 
 namespace NeoLemmixSharp.Ui.Components;
 
-public sealed class TextLabel : RectangularComponent
+public sealed class TextLabel : Component
 {
     public TextLabel(int x, int y, int w, string message)
         : base(x, y, w, UiConstants.StandardButtonHeight, message) { }

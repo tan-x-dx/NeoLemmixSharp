@@ -4,7 +4,7 @@ using NeoLemmixSharp.Ui.Data;
 
 namespace NeoLemmixSharp.Ui.Components.Buttons;
 
-public class Button : RectangularComponent, IModifyableState
+public class Button : Component, IModifyableState
 {
     protected bool _isActive = false;
 

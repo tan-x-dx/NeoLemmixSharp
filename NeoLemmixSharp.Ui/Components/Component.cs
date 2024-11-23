@@ -8,14 +8,14 @@ namespace NeoLemmixSharp.Ui.Components;
 
 public abstract class Component : IDisposable
 {
-    public delegate void Action();
-
     private int _x, _y;
+
+    private int _width, _height;
+
+    private ColorPacket _colourPacket;
 
     private string? _textLabel = null;
     private int _labelOffsetX, _labelOffsetY;
-
-    private bool _visible = true;
 
     private Component? _parent = null;
     private List<Component>? _children = null;
@@ -23,15 +23,22 @@ public abstract class Component : IDisposable
     private Action? _clickAction = null;
     private Action? _moveAction = null;
     private Action? _visibilityChangeAction = null;
+    private Action? _resizeAction = null;
 
-    protected Component() : this(0, 0, null) { }
+    private bool _visible = true;
 
-    protected Component(int x, int y) : this(x, y, null) { }
+    protected Component() : this(0, 0, 0, 0, null) { }
 
-    protected Component(int x, int y, string? label)
+    protected Component(int x, int y, int width, int height) : this(x, y, width, height, null) { }
+
+    protected Component(int x, int y, int width, int height, string? label)
     {
         Left = x;
         Top = y;
+
+        Width = width;
+        Height = height;
+        _colourPacket = UiConstants.RectangularButtonDefaultColours;
 
         Label = label;
         LabelOffsetX = UiConstants.StandardInset;
@@ -134,8 +141,55 @@ public abstract class Component : IDisposable
         _moveAction?.Invoke();
     }
 
-    public abstract int Width { get; set; }
-    public abstract int Height { get; set; }
+    public virtual int Width
+    {
+        get => _width;
+        set
+        {
+            _width = value;
+
+            _resizeAction?.Invoke();
+        }
+    }
+
+    public virtual int Height
+    {
+        get => _height;
+        set
+        {
+            _height = value;
+
+            _resizeAction?.Invoke();
+        }
+    }
+
+    public ColorPacket Colors
+    {
+        get => _colourPacket;
+        set => _colourPacket = value;
+    }
+
+    public void SetSize(int w, int h)
+    {
+        _width = w;
+        _height = h;
+
+        _resizeAction?.Invoke();
+    }
+
+    public void SetDimensions(int x, int y, int width, int height)
+    {
+        SetLocation(x, y);
+        SetSize(width, height);
+    }
+
+    public virtual bool ContainsPoint(LevelPosition position)
+    {
+        return position.X >= Left &&
+               position.Y >= Top &&
+               position.X < Right &&
+               position.Y < Bottom;
+    }
 
     public bool Visible
     {
@@ -209,9 +263,9 @@ public abstract class Component : IDisposable
         }
     }
 
-    public void AddComponent(Component c) => AddComponent(c, -1);
+    public void AddComponent(Component? c) => AddComponent(c, -1);
 
-    public void AddComponent(Component c, int index)
+    public void AddComponent(Component? c, int index)
     {
         if (this == c)
             throw new InvalidOperationException("Cannot add a component to itself [" + ToString() + "]");
@@ -237,8 +291,6 @@ public abstract class Component : IDisposable
 
         c.Translate(Left, Top);
     }
-
-    public abstract bool ContainsPoint(LevelPosition position);
 
     public bool IsChild() => _parent != null;
 
@@ -267,6 +319,7 @@ public abstract class Component : IDisposable
     public void SetMoveAction(Action? action) => _moveAction = action;
     public void SetClickAction(Action? action) => _clickAction = action;
     public void SetVisibilityChangeAction(Action? action) => _visibilityChangeAction = action;
+    public void SetResizeAction(Action action) => _resizeAction = action;
 
     public virtual void InvokeMouseEnter(LevelPosition mousePosition) { }
     public virtual void InvokeMouseDown(LevelPosition mousePosition) => Click();

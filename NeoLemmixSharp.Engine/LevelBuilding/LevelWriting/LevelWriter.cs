@@ -25,8 +25,8 @@ public readonly ref struct LevelWriter
 
         var terrainComponentWriter = new TerrainDataComponentWriter(stringIdLookup);
 
-        ReadOnlySpan<ILevelDataWriter> levelDataWriters = new ILevelDataWriter[]
-        {
+        ReadOnlySpan<ILevelDataWriter> levelDataWriters =
+        [
             // StringDataComponentWriter needs to be first as it will populate the stringIdLookup!
             new StringDataComponentWriter(stringIdLookup),
 
@@ -38,7 +38,7 @@ public readonly ref struct LevelWriter
             terrainComponentWriter,
             new TerrainGroupDataComponentWriter(stringIdLookup, terrainComponentWriter),
             new GadgetDataComponentWriter(stringIdLookup),
-        };
+        ];
 
         foreach (var levelDataWriter in levelDataWriters)
         {

@@ -18,7 +18,7 @@ public static class UiSprites
 
     internal static void DrawBeveledRectangle(
         SpriteBatch spriteBatch,
-        RectangularComponent c)
+        Component c)
     {
         var dest = new Rectangle(
             c.Left,

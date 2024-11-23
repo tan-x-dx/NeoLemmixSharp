@@ -26,6 +26,8 @@ public sealed class LevelSelectPage : PageBase
 
         _allLevelBrowserEntries.AddRange(LevelBrowserEntry.GetMenuItemsForFolder(_levelsRootPath));
         RepopulateMenu();
+
+        OnResize();
     }
 
     private void RepopulateMenu()
@@ -43,6 +45,20 @@ public sealed class LevelSelectPage : PageBase
 
     protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
     {
+        OnResize();
+    }
+
+    private void OnResize()
+    {
+        const int margin = 64;
+
+        var windowWidth = IGameWindow.Instance.WindowWidth;
+        var windowHeight = IGameWindow.Instance.WindowHeight;
+
+        UiHandler.RootComponent.Left = margin;
+        UiHandler.RootComponent.Top = margin;
+        UiHandler.RootComponent.Width = windowWidth - (margin * 2);
+        UiHandler.RootComponent.Height = windowHeight - (margin * 2);
     }
 
     protected override void HandleUserInput()
