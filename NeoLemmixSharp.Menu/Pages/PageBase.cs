@@ -9,6 +9,7 @@ public abstract class PageBase : IInitialisable, IDisposable
     protected readonly MenuInputController InputController;
 
     private bool _isInitialised;
+    private bool _isDisposed;
 
     public UiHandler UiHandler { get; }
 
@@ -50,8 +51,14 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     public void Dispose()
     {
-        UiHandler.Dispose();
-        OnDispose();
+        if (!_isDisposed)
+        {
+            UiHandler.Dispose();
+
+            OnDispose();
+            _isDisposed = true;
+        }
+        GC.SuppressFinalize(this);
     }
 
     protected abstract void OnDispose();

@@ -42,28 +42,4 @@ public sealed class MenuFont
             dest.X += GlyphWidth * scaleMultiplier;
         }
     }
-
-    public void RenderTextSpan(
-        SpriteBatch spriteBatch,
-        ReadOnlySpan<int> charactersToRender,
-        int x,
-        int y,
-        int scaleMultiplier,
-        Color color)
-    {
-        var dest = new Rectangle(x, y, GlyphWidth * scaleMultiplier, GlyphHeight * scaleMultiplier);
-        foreach (var c in charactersToRender)
-        {
-            if (c < LowerCharLimit || c > UpperCharLimit)
-                continue;
-
-            var source = new Rectangle(GlyphWidth * (c - (1 + LowerCharLimit)), 0, GlyphWidth, GlyphHeight);
-            spriteBatch.Draw(
-                _texture,
-                dest,
-                source,
-                color);
-            dest.X += GlyphWidth * scaleMultiplier;
-        }
-    }
 }

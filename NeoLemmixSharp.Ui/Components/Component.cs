@@ -25,7 +25,7 @@ public abstract class Component : IDisposable
     private Action? _visibilityChangeAction = null;
     private Action? _resizeAction = null;
 
-    private bool _visible = true;
+    private bool _isVisible = true;
     private bool _isDisposed;
 
     protected Component(int x, int y, int width, int height) : this(x, y, width, height, null) { }
@@ -190,15 +190,15 @@ public abstract class Component : IDisposable
                position.Y < Bottom;
     }
 
-    public bool Visible
+    public bool IsVisible
     {
-        get => _visible;
+        get => _isVisible;
         set
         {
-            var oldVisible = _visible;
-            _visible = value;
+            var oldVisible = _isVisible;
+            _isVisible = value;
 
-            if (oldVisible != _visible)
+            if (oldVisible != _isVisible)
             {
                 _visibilityChangeAction?.Invoke();
             }
@@ -227,7 +227,7 @@ public abstract class Component : IDisposable
 
     public void Render(SpriteBatch spriteBatch)
     {
-        if (_visible)
+        if (_isVisible)
         {
             RenderComponent(spriteBatch);
             RenderLabel(spriteBatch);
@@ -305,7 +305,7 @@ public abstract class Component : IDisposable
         {
             foreach (Component child in _children)
             {
-                if (child.Visible && child.ContainsPoint(position))
+                if (child.IsVisible && child.ContainsPoint(position))
                 {
                     return child.GetChildAt(position);
                 }
@@ -321,6 +321,7 @@ public abstract class Component : IDisposable
     public void SetResizeAction(Action action) => _resizeAction = action;
 
     public virtual void InvokeMouseEnter(LevelPosition mousePosition) { }
+    public virtual void InvokeMouseDoubleClick(LevelPosition mousePosition) { }
     public virtual void InvokeMouseDown(LevelPosition mousePosition) => Click();
     public virtual void InvokeMouseUp(LevelPosition mousePosition) { }
     public virtual void InvokeMouseExit(LevelPosition mousePosition) { }

@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Ui.Components;
 
-internal interface IModifyableState
+public interface IModifyableState
 {
     ComponentState State { get; }
 }

@@ -30,10 +30,10 @@ public static class UiSprites
         DrawNineSlicedBeveledRectangle(spriteBatch, dest, color);
     }
 
-    internal static void DrawBeveledRectangle<TComponent>(
+    public static void DrawStateColoredBeveledRectangle<TComponent>(
         SpriteBatch spriteBatch,
         TComponent c)
-        where TComponent : Component, IColorable, IModifyableState
+        where TComponent : Component, IModifyableState
     {
         var dest = new Rectangle(
             c.Left,

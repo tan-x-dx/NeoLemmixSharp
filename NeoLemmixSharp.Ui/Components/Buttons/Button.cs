@@ -44,6 +44,6 @@ public class Button : Component, IModifyableState
 
     protected override void RenderComponent(SpriteBatch spriteBatch)
     {
-        UiSprites.DrawBeveledRectangle(spriteBatch, this);
+        UiSprites.DrawStateColoredBeveledRectangle(spriteBatch, this);
     }
 }

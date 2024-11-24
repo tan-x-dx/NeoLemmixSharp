@@ -28,6 +28,10 @@ public sealed class UiHandler : IDisposable
 
         var leftMouseButton = _inputController.LeftMouseButtonAction;
 
+        if (leftMouseButton.IsDoubleTap)
+        {
+            HandleMouseDoubleClick(mousePosition);
+        }
         if (leftMouseButton.IsPressed)
         {
             HandleMouseDown(mousePosition);
@@ -46,11 +50,25 @@ public sealed class UiHandler : IDisposable
 
     private void HandleMouseMove(LevelPosition mousePosition) => LocateComponent(mousePosition);
 
+    private void HandleMouseDoubleClick(LevelPosition mousePosition)
+    {
+        LocateComponent(mousePosition);
+
+        if (_currentSelection is null || !_currentSelection.IsVisible)
+        {
+            _currentSelection = RootComponent;
+        }
+        else
+        {
+            _currentSelection.InvokeMouseDoubleClick(mousePosition);
+        }
+    }
+
     private void HandleMouseDown(LevelPosition mousePosition)
     {
         LocateComponent(mousePosition);
 
-        if (_currentSelection is null || !_currentSelection.Visible)
+        if (_currentSelection is null || !_currentSelection.IsVisible)
         {
             _currentSelection = RootComponent;
         }
@@ -64,7 +82,7 @@ public sealed class UiHandler : IDisposable
     {
         LocateComponent(mousePosition);
 
-        if (_currentSelection is null || !_currentSelection.Visible)
+        if (_currentSelection is null || !_currentSelection.IsVisible)
         {
             _currentSelection = RootComponent;
         }
@@ -108,7 +126,7 @@ public sealed class UiHandler : IDisposable
         _currentSelection = c;
         _currentSelection.InvokeMouseEnter(mousePosition);
 
-        if (!_currentSelection.Visible)
+        if (!_currentSelection.IsVisible)
         {
             _currentSelection = RootComponent;
         }
