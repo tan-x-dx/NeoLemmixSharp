@@ -54,7 +54,7 @@ public sealed class LevelEntry : LevelBrowserEntry
 
     protected override void RenderComponent(SpriteBatch spriteBatch)
     {
-        UiSprites.DrawStateColoredBeveledRectangle(spriteBatch, this);
+        UiSprites.DrawBeveledRectangle(spriteBatch, this);
         FontBank.MenuFont.RenderText(
             spriteBatch,
             DisplayName,

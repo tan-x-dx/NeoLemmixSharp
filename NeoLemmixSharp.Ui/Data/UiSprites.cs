@@ -26,21 +26,6 @@ public static class UiSprites
             c.Width,
             c.Height);
 
-        var color = c.Colors.NormalColor;
-        DrawNineSlicedBeveledRectangle(spriteBatch, dest, color);
-    }
-
-    public static void DrawStateColoredBeveledRectangle<TComponent>(
-        SpriteBatch spriteBatch,
-        TComponent c)
-        where TComponent : Component, IModifyableState
-    {
-        var dest = new Rectangle(
-            c.Left,
-            c.Top,
-            c.Width,
-            c.Height);
-
         var colors = c.Colors.AsSpan();
         var color = colors[(int)c.State];
 

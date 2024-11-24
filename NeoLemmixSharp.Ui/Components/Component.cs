@@ -15,6 +15,8 @@ public abstract class Component : IDisposable
 
     private int _width, _height;
 
+    private ComponentState _state = ComponentState.Normal;
+
     private ColorPacket _colourPacket;
 
     private string? _textLabel = null;
@@ -36,7 +38,15 @@ public abstract class Component : IDisposable
     public KeyboardEventHandler KeyDown { get; } = new();
     public KeyboardEventHandler KeyUp { get; } = new();
 
-    protected Component(int x, int y, int width, int height) : this(x, y, width, height, null) { }
+    protected Component(int x, int y, string? label)
+        : this(x, y, UiConstants.TwiceStandardInset + (int)(0.5f + (label?.Length ?? 10) * UiConstants.FontGlyphWidthMultiplier), UiConstants.StandardButtonHeight, label)
+    {
+    }
+
+    protected Component(int x, int y, int width, int height)
+        : this(x, y, width, height, null)
+    {
+    }
 
     protected Component(int x, int y, int width, int height, string? label)
     {
@@ -158,6 +168,12 @@ public abstract class Component : IDisposable
         set => _colourPacket = value;
     }
 
+    public virtual ComponentState State
+    {
+        get => _state;
+        set => _state = value;
+    }
+
     public void SetSize(int w, int h)
     {
         _width = w;
@@ -219,7 +235,10 @@ public abstract class Component : IDisposable
         }
     }
 
-    protected abstract void RenderComponent(SpriteBatch spriteBatch);
+    protected virtual void RenderComponent(SpriteBatch spriteBatch)
+    {
+        UiSprites.DrawBeveledRectangle(spriteBatch, this);
+    }
 
     private void RenderLabel(SpriteBatch spriteBatch)
     {
@@ -301,6 +320,10 @@ public abstract class Component : IDisposable
 
     public void InvokeKeyDown(in KeysEnumerable pressedKeys) => KeyDown?.Invoke(this, in pressedKeys);
     public void InvokeKeyUp(in KeysEnumerable pressedKeys) => KeyUp?.Invoke(this, in pressedKeys);
+
+    protected void SetMouseOver(Component _, LevelPosition mousePosition) => State = ComponentState.MouseOver;
+    protected void SetMousePress(Component _, LevelPosition mousePosition) => State = ComponentState.MousePress;
+    protected void SetMouseNormal(Component _, LevelPosition mousePosition) => State = ComponentState.Normal;
 
     public void Dispose()
     {

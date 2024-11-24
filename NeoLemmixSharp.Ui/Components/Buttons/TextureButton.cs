@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Ui.Components.Buttons;
 
-public sealed class TextureButton : Button
+public sealed class TextureButton : Component
 {
     private readonly Texture2D _texture;
 
