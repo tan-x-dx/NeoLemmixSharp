@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Data;
 
 namespace NeoLemmixSharp.Menu.Pages.LevelSelect;
@@ -34,11 +35,13 @@ public sealed class LevelFolderEntry : LevelBrowserEntry
         : base(indentationLevel)
     {
         _folderPath = folder;
+
+        MouseDoubleClick.RegisterMouseEvent(OnDoubleClick);
     }
 
-    public override void InvokeMouseDown(LevelPosition mousePosition)
+    private void OnDoubleClick(Component _, LevelPosition position)
     {
-        base.InvokeMouseDown(mousePosition);
+        IsOpen = !IsOpen;
     }
 
     public void LoadSubEntries()

@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Components.Buttons;
 
 namespace NeoLemmixSharp.Menu.Pages;
@@ -24,25 +25,25 @@ public sealed class MainPage : PageBase
         {
             ScaleMulitplier = menuScaleMultiplier,
         };
-        _playButton.SetClickAction(PlayButtonClick);
+        _playButton.MouseDown.RegisterMouseEvent(PlayButtonClick);
 
         _levelSelectButton = new TextureButton(0, 0, MenuSpriteBank.SignLevelSelect)
         {
             ScaleMulitplier = menuScaleMultiplier,
         };
-        _levelSelectButton.SetClickAction(LevelSelectButtonClick);
+        _levelSelectButton.MouseDown.RegisterMouseEvent(LevelSelectButtonClick);
 
         _configButton = new TextureButton(0, 0, MenuSpriteBank.SignConfig)
         {
             ScaleMulitplier = menuScaleMultiplier,
         };
-        _configButton.SetClickAction(ConfigButtonClick);
+        _configButton.MouseDown.RegisterMouseEvent(ConfigButtonClick);
 
         _quitButton = new TextureButton(0, 0, MenuSpriteBank.SignQuit)
         {
             ScaleMulitplier = menuScaleMultiplier,
         };
-        _quitButton.SetClickAction(QuitButtonClick);
+        _quitButton.MouseDown.RegisterMouseEvent(QuitButtonClick);
     }
 
     protected override void OnInitialise()
@@ -59,7 +60,7 @@ public sealed class MainPage : PageBase
         OnResize();
     }
 
-    private static void PlayButtonClick()
+    private static void PlayButtonClick(Component _, LevelPosition position)
     {
         var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
 
@@ -69,7 +70,7 @@ public sealed class MainPage : PageBase
         MenuScreen.Current.SetNextPage(levelStartPage);
     }
 
-    private static void LevelSelectButtonClick()
+    private static void LevelSelectButtonClick(Component _, LevelPosition position)
     {
         var levelSelectPage = MenuScreen.Current.MenuPageCreator.CreateLevelSelectPage();
 
@@ -79,19 +80,19 @@ public sealed class MainPage : PageBase
         MenuScreen.Current.SetNextPage(levelSelectPage);
     }
 
-    private static void GroupUpButtonClick()
+    private static void GroupUpButtonClick(Component _, LevelPosition position)
     {
     }
 
-    private static void GroupDownButtonClick()
+    private static void GroupDownButtonClick(Component _, LevelPosition position)
     {
     }
 
-    private static void ConfigButtonClick()
+    private static void ConfigButtonClick(Component _, LevelPosition position)
     {
     }
 
-    private static void QuitButtonClick()
+    private static void QuitButtonClick(Component _, LevelPosition position)
     {
         IGameWindow.Instance.Escape();
     }

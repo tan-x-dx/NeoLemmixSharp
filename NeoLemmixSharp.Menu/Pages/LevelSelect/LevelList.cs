@@ -31,14 +31,16 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
             new Color(0xff111111),
             new Color(0xff111111),
             new Color(0xff111111));
-
-        SetResizeAction(OnResize);
     }
 
     public int ScrollIndex
     {
         get => _scrollIndex;
-        set => _scrollIndex = Math.Clamp(value, 0, _children!.Count);
+        set
+        {
+            _scrollIndex = Math.Clamp(value, 0, _children!.Count);
+            OnResize();
+        }
     }
 
     public void RefreshLevels()
@@ -53,7 +55,8 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
         foreach (var levelBrowserEntry in _levelBrowserEntries.SelectMany(l => l.GetSubEntries()))
         {
             levelBrowserEntry.Index = children.Count;
-            levelBrowserEntry.SetClickAction(OnEntryClick);
+            levelBrowserEntry.MouseDown.RegisterMouseEvent(OnEntryClick);
+            levelBrowserEntry.MouseDoubleClick.RegisterMouseEvent(OnEntryDoubleClick);
 
             children.Add(levelBrowserEntry);
         }
@@ -71,7 +74,7 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
 
         const int itemHeight = MenuFont.GlyphHeight + (LevelBrowserEntry.ButtonPadding * 2);
 
-        var maxNumberOfItemsDisplayed = 1 + (verticalSpace / itemHeight);
+        var maxNumberOfItemsDisplayed = verticalSpace / itemHeight;
 
         var children = _children!;
         for (var i = 0; i < children.Count; i++)
@@ -83,7 +86,7 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
 
                 entry.SetDimensions(
                     Left + interiorMargin,
-                    Top + interiorMargin + (i * itemHeight),
+                    Top + interiorMargin + ((i - ScrollIndex) * itemHeight),
                     horizontalSpace,
                     itemHeight);
             }
@@ -94,8 +97,30 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
         }
     }
 
-    private void OnEntryClick()
+    private void OnEntryClick(Component c, LevelPosition position)
     {
+        _selectedEntry = c as LevelBrowserEntry;
+    }
+
+    private void OnEntryDoubleClick(Component c, LevelPosition position)
+    {
+        if (c is not LevelBrowserEntry)
+            return;
+
+        if (c is LevelFolderEntry folder)
+        {
+            folder.IsOpen = !folder.IsOpen;
+        }
+
+        if (c is LevelEntry level && level.LevelData is not null)
+        {
+            var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage(level.LevelData);
+
+            if (levelStartPage is null)
+                return;
+
+            MenuScreen.Current.SetNextPage(levelStartPage);
+        }
     }
 
     public void HandleUserInput(MenuInputController inputController)
@@ -107,9 +132,10 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
 
             folder.IsOpen = true;
 
-
             return;
         }
+
+        ScrollIndex -= inputController.ScrollDelta;
     }
 
     public void Tick()

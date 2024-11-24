@@ -8,6 +8,19 @@ public sealed class GroupedButton : Button
 
     private ButtonGroup? _group = null;
     private int _index = -1;
+    private bool _isActive = false;
+
+    public override ComponentState State
+    {
+        get => base.State;
+        set
+        {
+            if (IsActive)
+            {
+                base.State = value;
+            }
+        }
+    }
 
     public GroupedButton(int x, int y, string label) : base(x, y, label)
     {
@@ -18,56 +31,17 @@ public sealed class GroupedButton : Button
     {
     }
 
-    public override bool Active
+    public bool IsActive
     {
-        get => base.Active;
+        get => _isActive;
         set
         {
-            base.Active = value;
+            _isActive = value;
 
             if (value && _group != null)
             {
                 _group.SetActive(this, false);
             }
-        }
-    }
-
-    private void SetActive(bool value)
-    {
-        base.Active = value;
-    }
-
-    public override void InvokeMouseEnter(LevelPosition mousePosition)
-    {
-        if (!Active)
-        {
-            base.InvokeMouseEnter(mousePosition);
-        }
-    }
-
-    public override void InvokeMouseDown(LevelPosition mousePosition)
-    {
-        if (!Active)
-        {
-            Active = true;
-
-            Click();
-        }
-    }
-
-    public override void InvokeMouseUp(LevelPosition mousePosition)
-    {
-        if (!Active)
-        {
-            base.InvokeMouseUp(mousePosition);
-        }
-    }
-
-    public override void InvokeMouseExit(LevelPosition mousePosition)
-    {
-        if (!Active)
-        {
-            base.InvokeMouseExit(mousePosition);
         }
     }
 
@@ -97,7 +71,7 @@ public sealed class GroupedButton : Button
             {
                 if (_activeIndex != -1)
                 {
-                    _buttons[_activeIndex].Active = false;
+                    _buttons[_activeIndex].IsActive = false;
                     _buttons[_activeIndex].State = ComponentState.Normal;
                 }
 
@@ -110,14 +84,16 @@ public sealed class GroupedButton : Button
             {
                 if (_activeIndex != -1)
                 {
-                    _buttons[_activeIndex].Active = false;
+                    _buttons[_activeIndex].IsActive = false;
                     _buttons[_activeIndex].State = ComponentState.Normal;
                 }
 
-                button.SetActive(true);
+                button.IsActive = true;
                 _activeIndex = button._index;
                 if (performClick)
-                    button.Click();
+                {
+                    button.MouseDown.Invoke(button, new LevelPosition());
+                }
             }
         }
 

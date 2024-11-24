@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Menu.Pages.LevelSelect;
 
 public abstract class LevelBrowserEntry : Button
 {
-    public const int ButtonPadding = 2;
+    public const int ButtonPadding = 4;
 
     protected readonly int _indentationLevel;
 

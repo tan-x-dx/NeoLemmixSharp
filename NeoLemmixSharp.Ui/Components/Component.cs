@@ -3,11 +3,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Data;
+using NeoLemmixSharp.Ui.Events;
 
 namespace NeoLemmixSharp.Ui.Components;
 
 public abstract class Component : IDisposable
 {
+    public delegate void ComponentKeyboardAction(Component c, in KeysEnumerable keys);
+
     private int _x, _y;
 
     private int _width, _height;
@@ -17,16 +20,21 @@ public abstract class Component : IDisposable
     private string? _textLabel = null;
     private int _labelOffsetX, _labelOffsetY;
 
+    private bool _isVisible = true;
+    private bool _isDisposed;
+
     private Component? _parent = null;
     protected List<Component>? _children = null;
 
-    private Action? _clickAction = null;
-    private Action? _moveAction = null;
-    private Action? _visibilityChangeAction = null;
-    private Action? _resizeAction = null;
+    public MouseEventHandler MouseEnter { get; } = new();
+    public MouseEventHandler MouseMovement { get; } = new();
+    public MouseEventHandler MouseDown { get; } = new();
+    public MouseEventHandler MouseDoubleClick { get; } = new();
+    public MouseEventHandler MouseUp { get; } = new();
+    public MouseEventHandler MouseExit { get; } = new();
 
-    private bool _isVisible = true;
-    private bool _isDisposed;
+    public KeyboardEventHandler KeyDown { get; } = new();
+    public KeyboardEventHandler KeyUp { get; } = new();
 
     protected Component(int x, int y, int width, int height) : this(x, y, width, height, null) { }
 
@@ -62,8 +70,6 @@ public abstract class Component : IDisposable
                     c.Translate(oldX, 0);
                 }
             }
-
-            _moveAction?.Invoke();
         }
     }
 
@@ -85,8 +91,6 @@ public abstract class Component : IDisposable
                     c.Translate(0, oldY);
                 }
             }
-
-            _moveAction?.Invoke();
         }
     }
 
@@ -120,8 +124,6 @@ public abstract class Component : IDisposable
                 c.Translate(oldX, oldY);
             }
         }
-
-        _moveAction?.Invoke();
     }
 
     public void Translate(int dx, int dy)
@@ -136,30 +138,18 @@ public abstract class Component : IDisposable
                 c.Translate(dx, dy);
             }
         }
-
-        _moveAction?.Invoke();
     }
 
     public virtual int Width
     {
         get => _width;
-        set
-        {
-            _width = value;
-
-            _resizeAction?.Invoke();
-        }
+        set => _width = value;
     }
 
     public virtual int Height
     {
         get => _height;
-        set
-        {
-            _height = value;
-
-            _resizeAction?.Invoke();
-        }
+        set => _height = value;
     }
 
     public ColorPacket Colors
@@ -172,8 +162,6 @@ public abstract class Component : IDisposable
     {
         _width = w;
         _height = h;
-
-        _resizeAction?.Invoke();
     }
 
     public void SetDimensions(int x, int y, int width, int height)
@@ -193,16 +181,7 @@ public abstract class Component : IDisposable
     public bool IsVisible
     {
         get => _isVisible;
-        set
-        {
-            var oldVisible = _isVisible;
-            _isVisible = value;
-
-            if (oldVisible != _isVisible)
-            {
-                _visibilityChangeAction?.Invoke();
-            }
-        }
+        set => _isVisible = value;
     }
 
     public virtual string? Label
@@ -222,8 +201,6 @@ public abstract class Component : IDisposable
         get => _labelOffsetY;
         set => _labelOffsetY = value;
     }
-
-    public void Click() => _clickAction?.Invoke();
 
     public void Render(SpriteBatch spriteBatch)
     {
@@ -315,21 +292,15 @@ public abstract class Component : IDisposable
         return ContainsPoint(position) ? this : null;
     }
 
-    public void SetMoveAction(Action? action) => _moveAction = action;
-    public void SetClickAction(Action? action) => _clickAction = action;
-    public void SetVisibilityChangeAction(Action? action) => _visibilityChangeAction = action;
-    public void SetResizeAction(Action action) => _resizeAction = action;
+    public void InvokeMouseEnter(LevelPosition mousePosition) => MouseEnter?.Invoke(this, mousePosition);
+    public void InvokeMouseMovement(LevelPosition mousePosition) => MouseMovement?.Invoke(this, mousePosition);
+    public void InvokeMouseDown(LevelPosition mousePosition) => MouseDown?.Invoke(this, mousePosition);
+    public void InvokeMouseDoubleClick(LevelPosition mousePosition) => MouseDoubleClick?.Invoke(this, mousePosition);
+    public void InvokeMouseUp(LevelPosition mousePosition) => MouseUp?.Invoke(this, mousePosition);
+    public void InvokeMouseExit(LevelPosition mousePosition) => MouseExit?.Invoke(this, mousePosition);
 
-    public virtual void InvokeMouseEnter(LevelPosition mousePosition) { }
-    public virtual void InvokeMouseDoubleClick(LevelPosition mousePosition) { }
-    public virtual void InvokeMouseDown(LevelPosition mousePosition) => Click();
-    public virtual void InvokeMouseUp(LevelPosition mousePosition) { }
-    public virtual void InvokeMouseExit(LevelPosition mousePosition) { }
-
-    public virtual void InvokeMouseMovement(LevelPosition mousePosition) { }
-
-    public virtual void InvokeKeyDown(in KeysEnumerable pressedKeys) { }
-    public virtual void InvokeKeyUp(in KeysEnumerable pressedKeys) { }
+    public void InvokeKeyDown(in KeysEnumerable pressedKeys) => KeyDown?.Invoke(this, in pressedKeys);
+    public void InvokeKeyUp(in KeysEnumerable pressedKeys) => KeyUp?.Invoke(this, in pressedKeys);
 
     public void Dispose()
     {
@@ -348,10 +319,15 @@ public abstract class Component : IDisposable
 
             _parent = null;
 
-            SetMoveAction(null);
-            SetClickAction(null);
+            MouseEnter.Clear();
+            MouseMovement.Clear();
+            MouseDown.Clear();
+            MouseDoubleClick.Clear();
+            MouseUp.Clear();
+            MouseExit.Clear();
 
-            SetVisibilityChangeAction(null);
+            KeyDown.Clear();
+            KeyUp.Clear();
 
             OnDispose();
             _isDisposed = true;

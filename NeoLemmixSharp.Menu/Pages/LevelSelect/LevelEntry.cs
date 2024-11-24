@@ -12,10 +12,11 @@ public sealed class LevelEntry : LevelBrowserEntry
     private readonly string _filePath;
 
     private string _displayData = EngineConstants.LevelLoadingDisplayString;
-    private LevelData? _levelData;
+    private bool _hasErrored;
 
-    public override string DisplayName => _levelData?.LevelTitle ?? _displayData;
-    public bool IsLoading => _levelData is null;
+    public LevelData? LevelData { get; private set; }
+    public override string DisplayName => LevelData?.LevelTitle ?? _displayData;
+    public bool IsLoading => !_hasErrored && LevelData is null;
 
     public LevelEntry(
         string filePath,
@@ -32,12 +33,13 @@ public sealed class LevelEntry : LevelBrowserEntry
         {
             var fileExtension = Path.GetExtension(_filePath.AsSpan());
             levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
-            _levelData = levelReader.ReadLevel(_filePath, graphicsDevice);
+            LevelData = levelReader.ReadLevel(_filePath, graphicsDevice);
         }
         catch
         {
             _displayData = EngineConstants.LevelLoadingErrorOccurredDisplayString;
-            _levelData = null;
+            LevelData = null;
+            _hasErrored = true;
         }
         finally
         {
@@ -64,6 +66,6 @@ public sealed class LevelEntry : LevelBrowserEntry
 
     protected override void OnDispose()
     {
-        _levelData = null;
+        LevelData = null;
     }
 }

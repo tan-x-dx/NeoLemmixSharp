@@ -1,62 +1,61 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Ui.Events;
 
 namespace NeoLemmixSharp.Ui.Components.Buttons;
 
 public sealed class ToggleButton : Button
 {
-    private Action? _deactivateClick = null;
-    private string _alternateLabel;
+    private string? _alternateLabel;
+    private bool _isActive = false;
 
-    public ToggleButton(int x, int y, string label) : base(x, y, label) { _alternateLabel = label; }
+    public MouseEventHandler OnDeactivated { get; } = new();
 
-    public ToggleButton(int x, int y, int width, int height, string label) : base(x, y, width, height, label) { _alternateLabel = label; }
+    public override ComponentState State
+    {
+        get => base.State;
+        set
+        {
+            if (IsActive)
+            {
+                base.State = value;
+            }
+        }
+    }
 
-    public void SetDeactivationAction(Action action) => _deactivateClick = action;
+    public ToggleButton(int x, int y, string? label) : base(x, y, label)
+    {
+        _alternateLabel = label;
+
+        MouseDown.RegisterMouseEvent(OnMouseDown);
+    }
+
+    public ToggleButton(int x, int y, int width, int height, string? label) : base(x, y, width, height, label)
+    {
+        _alternateLabel = label;
+
+        MouseDown.RegisterMouseEvent(OnMouseDown);
+    }
 
     public void SetAlternateLabel(string message) => _alternateLabel = message;
 
     public override string? Label
     {
-        get => Active ? _alternateLabel : base.Label;
+        get => IsActive ? _alternateLabel : base.Label;
         set => base.Label = value;
     }
 
-    public override void InvokeMouseEnter(LevelPosition mousePosition)
+    public bool IsActive
     {
-        if (!Active)
+        get => _isActive;
+        set
         {
-            base.InvokeMouseEnter(mousePosition);
+            _isActive = value;
+            State = _isActive ? ComponentState.Active : ComponentState.Normal;
         }
     }
 
-    public override void InvokeMouseDown(LevelPosition mousePosition)
+    private void OnMouseDown(Component _, LevelPosition mousePosition)
     {
-        if (Active)
-        {
-            _deactivateClick?.Invoke();
-        }
-        else
-        {
-            State = ComponentState.Active;
-            Click();
-        }
-
-        Active = !Active;
-    }
-
-    public override void InvokeMouseUp(LevelPosition mousePosition)
-    {
-        if (!Active)
-        {
-            base.InvokeMouseUp(mousePosition);
-        }
-    }
-
-    public override void InvokeMouseExit(LevelPosition mousePosition)
-    {
-        if (!Active)
-        {
-            base.InvokeMouseExit(mousePosition);
-        }
+        IsActive = !IsActive;
     }
 }
