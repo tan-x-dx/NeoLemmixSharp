@@ -58,29 +58,6 @@ public sealed class NxlvLevelReader : ILevelReader
         return levelData;
     }
 
-    public string ScrapeLevelTitle(string levelFilePath)
-    {
-        using var stream = new FileStream(levelFilePath, FileMode.Open);
-        using var streamReader = new StreamReader(stream);
-
-        string? levelTitle = null;
-
-        while (streamReader.ReadLine() is { } line)
-        {
-            if (NxlvReadingHelpers.LineIsBlankOrComment(line))
-                continue;
-
-            if (LevelDataReader.TryReadLevelTitle(line, out levelTitle))
-            {
-                break;
-            }
-        }
-
-        return string.IsNullOrWhiteSpace(levelTitle)
-            ? "Untitled"
-            : levelTitle;
-    }
-
     private static void ProcessLevelData(
         LevelData levelData,
         LevelDataReader levelDataReader,
