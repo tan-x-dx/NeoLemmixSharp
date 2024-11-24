@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 
 public sealed class TalismanReader : INeoLemmixDataReader
 {
-    private readonly CaseInvariantCharEqualityComparer _charEqualityComparer;
+    private readonly IEqualityComparer<char> _charEqualityComparer;
     private TalismanData? _currentTalismanData;
 
     public bool FinishedReading { get; private set; }
@@ -13,7 +13,7 @@ public sealed class TalismanReader : INeoLemmixDataReader
 
     public List<TalismanData> TalismanData { get; } = new();
 
-    public TalismanReader(CaseInvariantCharEqualityComparer charEqualityComparer)
+    public TalismanReader(IEqualityComparer<char> charEqualityComparer)
     {
         _charEqualityComparer = charEqualityComparer;
     }

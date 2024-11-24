@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Ui.Components.Buttons;
 
 namespace NeoLemmixSharp.Ui.Components;
 
-public sealed class TextLabel : Button
+public sealed class TextLabel : Component
 {
     public TextLabel(int x, int y, string message, ColorPacket colors)
         : base(x, y, 0, 0, message)

@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 
 public sealed class SkillSetReader : INeoLemmixDataReader
 {
-    private readonly CaseInvariantCharEqualityComparer _charEqualityComparer;
+    private readonly IEqualityComparer<char> _charEqualityComparer;
     private readonly LemmingSkillSet _seenSkills = LemmingSkill.CreateEmptySimpleSet();
 
     public List<SkillSetData> SkillSetData { get; } = new();
@@ -14,7 +14,7 @@ public sealed class SkillSetReader : INeoLemmixDataReader
     public bool FinishedReading { get; private set; }
     public string IdentifierToken => "$SKILLSET";
 
-    public SkillSetReader(CaseInvariantCharEqualityComparer charEqualityComparer)
+    public SkillSetReader(IEqualityComparer<char> charEqualityComparer)
     {
         _charEqualityComparer = charEqualityComparer;
     }

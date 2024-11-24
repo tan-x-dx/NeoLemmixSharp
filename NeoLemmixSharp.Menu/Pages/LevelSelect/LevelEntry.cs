@@ -31,9 +31,8 @@ public sealed class LevelEntry : LevelBrowserEntry
         ILevelReader? levelReader = null;
         try
         {
-            var fileExtension = Path.GetExtension(_filePath.AsSpan());
-            levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
-            LevelData = levelReader.ReadLevel(_filePath, graphicsDevice);
+            levelReader = LevelFileTypeHandler.GetLevelReaderForFile(_filePath);
+            LevelData = levelReader.ReadLevel(graphicsDevice);
         }
         catch
         {
