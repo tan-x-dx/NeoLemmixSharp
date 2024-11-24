@@ -5,58 +5,33 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
 public static class LevelFileTypeHandler
 {
-    private static readonly Dictionary<string, Type> FileTypeLookup = new()
+    private static readonly Dictionary<string, Type> FileTypeLookup = new(StringComparer.OrdinalIgnoreCase)
     {
         { NeoLemmixFileExtensions.LevelFileExtension, typeof(NxlvLevelReader) },
         { DefaultFileExtensions.LevelFileExtension, typeof(DefaultLevelReader) }
     };
 
-    public static bool FileExtensionIsValidLevelType(string? fileExtension)
+    public static bool FileExtensionIsValidLevelType(ReadOnlySpan<char> fileExtension)
     {
-        return !string.IsNullOrWhiteSpace(fileExtension) && FileTypeLookup.ContainsKey(fileExtension);
+        var alternateLookup = FileTypeLookup.GetAlternateLookup<ReadOnlySpan<char>>();
+
+        return alternateLookup.ContainsKey(fileExtension);
     }
 
     public static ILevelReader GetLevelReaderForFileExtension(
-        string? fileExtension)
+        ReadOnlySpan<char> fileExtension)
     {
-        if (string.IsNullOrWhiteSpace(fileExtension))
-            throw new ArgumentException("Missing file extension");
+        if (fileExtension.IsEmpty)
+            throw new ArgumentException("No file extension specified!");
 
-        if (FileTypeLookup.TryGetValue(fileExtension, out var levelReaderType))
+        var alternateLookup = FileTypeLookup.GetAlternateLookup<ReadOnlySpan<char>>();
+
+        if (alternateLookup.TryGetValue(fileExtension, out var levelReaderType))
         {
             var levelReader = Activator.CreateInstance(levelReaderType)!;
             return (ILevelReader)levelReader;
         }
 
-        throw new ArgumentException("Unknown file extension", nameof(fileExtension));
-    }
-
-    public static string? MatchLevelFileExtension(string? filePath)
-    {
-        if (string.IsNullOrWhiteSpace(filePath))
-            return null;
-
-        var filePathSpan = filePath.AsSpan();
-
-        var i = filePathSpan.Length - 1;
-        while (i >= 0)
-        {
-            if (filePathSpan[i] == '.')
-            {
-                break;
-            }
-
-            i--;
-        }
-
-        var subSpan = filePathSpan[i..];
-
-        return subSpan switch
-        {
-            DefaultFileExtensions.LevelFileExtension => DefaultFileExtensions.LevelFileExtension,
-            NeoLemmixFileExtensions.LevelFileExtension => NeoLemmixFileExtensions.LevelFileExtension,
-
-            _ => null,
-        };
+        throw new ArgumentException($"File extension not recognised: {fileExtension}");
     }
 }

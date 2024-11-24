@@ -27,7 +27,7 @@ public sealed class GliderSkill : LemmingSkill, ILemmingStateChanger
         lemming.State.IsGlider = true;
     }
 
-    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill();
+    protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
     public void SetLemmingState(LemmingState lemmingState, bool status)
     {

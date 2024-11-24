@@ -1,6 +1,4 @@
-﻿using MonoGameGum.GueDeriving;
-
-namespace NeoLemmixSharp.Menu.Pages;
+﻿namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class ExceptionViewer : PageBase
 {
@@ -8,14 +6,13 @@ public sealed class ExceptionViewer : PageBase
 
     public ExceptionViewer(
         MenuInputController inputController,
-        Exception exception,
-        ContainerRuntime root)
-        : base(inputController, root)
+        Exception exception)
+        : base(inputController)
     {
         _exception = exception;
     }
 
-    protected override void OnInitialise(ContainerRuntime root)
+    protected override void OnInitialise()
     {
     }
 

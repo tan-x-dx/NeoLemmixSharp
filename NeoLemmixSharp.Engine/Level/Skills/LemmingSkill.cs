@@ -11,6 +11,8 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 {
     private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
     private static readonly LemmingSkillSet ClassicSkills = GetClassicSkills();
+    protected static readonly LemmingActionSet ActionsThatCanBeAssignedPermanentSkill = GetActionsThatCanBeAssignedPermanentSkill();
+    protected static readonly LemmingActionSet ActionsThatCanBeAssignedRotationSkill = GetActionsThatCanBeAssignedRotationSkill();
 
     public static int NumberOfItems => LemmingSkills.Length;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
@@ -66,7 +68,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingSkillSet GetClassicSkills()
     {
-        var result = ExtendedEnumTypeComparer<LemmingSkill>.CreateSimpleSet();
+        var result = CreateEmptySimpleSet();
 
         result.Add(ClimberSkill.Instance);
         result.Add(FloaterSkill.Instance);
@@ -80,6 +82,63 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
         return result;
     }
 
+    private static LemmingActionSet GetActionsThatCanBeAssignedPermanentSkill()
+    {
+        var result = LemmingAction.CreateEmptySimpleSet();
+
+        result.Add(AscenderAction.Instance);
+        result.Add(BasherAction.Instance);
+        result.Add(BlockerAction.Instance);
+        result.Add(BuilderAction.Instance);
+        result.Add(ClimberAction.Instance);
+        result.Add(DehoisterAction.Instance);
+        result.Add(DiggerAction.Instance);
+        result.Add(DisarmerAction.Instance);
+        result.Add(FallerAction.Instance);
+        result.Add(FencerAction.Instance);
+        result.Add(FloaterAction.Instance);
+        result.Add(GliderAction.Instance);
+        result.Add(HoisterAction.Instance);
+        result.Add(JumperAction.Instance);
+        result.Add(LasererAction.Instance);
+        result.Add(MinerAction.Instance);
+        result.Add(PlatformerAction.Instance);
+        result.Add(ReacherAction.Instance);
+        result.Add(ShimmierAction.Instance);
+        result.Add(ShruggerAction.Instance);
+        result.Add(SliderAction.Instance);
+        result.Add(StackerAction.Instance);
+        result.Add(SwimmerAction.Instance);
+        result.Add(WalkerAction.Instance);
+        result.Add(RotateClockwiseAction.Instance);
+        result.Add(RotateCounterclockwiseAction.Instance);
+        result.Add(RotateHalfAction.Instance);
+
+        return result;
+    }
+
+    private static LemmingActionSet GetActionsThatCanBeAssignedRotationSkill()
+    {
+        var result = LemmingAction.CreateEmptySimpleSet();
+
+        result.Add(WalkerAction.Instance);
+        result.Add(ShruggerAction.Instance);
+        result.Add(PlatformerAction.Instance);
+        result.Add(BuilderAction.Instance);
+        result.Add(StackerAction.Instance);
+        result.Add(BasherAction.Instance);
+        result.Add(FencerAction.Instance);
+        result.Add(MinerAction.Instance);
+        result.Add(DiggerAction.Instance);
+        result.Add(LasererAction.Instance);
+
+        return result;
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static LemmingSkillSet CreateEmptySimpleSet() => ExtendedEnumTypeComparer<LemmingSkill>.CreateSimpleSet();
+
     private readonly LemmingActionSet _assignableActions;
     public readonly int Id;
     public readonly string LemmingSkillName;
@@ -88,10 +147,8 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
     {
         Id = id;
         LemmingSkillName = lemmingSkillName;
-        _assignableActions = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
 
-        // ReSharper disable once VirtualMemberCallInConstructor
-        _assignableActions.UnionWith(ActionsThatCanBeAssigned());
+        _assignableActions = ActionsThatCanBeAssigned();
     }
 
     public bool IsClassicSkill() => ClassicSkills.Contains(this);
@@ -101,7 +158,8 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
         return ActionIsAssignable(lemming);
     }
 
-    protected abstract IEnumerable<LemmingAction> ActionsThatCanBeAssigned();
+    [Pure]
+    protected abstract LemmingActionSet ActionsThatCanBeAssigned();
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -111,38 +169,6 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
     }
 
     public abstract void AssignToLemming(Lemming lemming);
-
-    protected static IEnumerable<LemmingAction> ActionsThatCanBeAssignedPermanentSkill()
-    {
-        yield return AscenderAction.Instance;
-        yield return BasherAction.Instance;
-        yield return BlockerAction.Instance;
-        yield return BuilderAction.Instance;
-        yield return ClimberAction.Instance;
-        yield return DehoisterAction.Instance;
-        yield return DiggerAction.Instance;
-        yield return DisarmerAction.Instance;
-        yield return FallerAction.Instance;
-        yield return FencerAction.Instance;
-        yield return FloaterAction.Instance;
-        yield return GliderAction.Instance;
-        yield return HoisterAction.Instance;
-        yield return JumperAction.Instance;
-        yield return LasererAction.Instance;
-        yield return MinerAction.Instance;
-        yield return PlatformerAction.Instance;
-        yield return ReacherAction.Instance;
-        yield return ShimmierAction.Instance;
-        yield return ShruggerAction.Instance;
-        yield return SliderAction.Instance;
-        yield return StackerAction.Instance;
-        yield return SwimmerAction.Instance;
-        yield return WalkerAction.Instance;
-
-        yield return RotateClockwiseAction.Instance;
-        yield return RotateCounterclockwiseAction.Instance;
-        yield return RotateHalfAction.Instance;
-    }
 
     int IIdEquatable<LemmingSkill>.Id => Id;
     public bool Equals(LemmingSkill? other) => Id == (other?.Id ?? -1);

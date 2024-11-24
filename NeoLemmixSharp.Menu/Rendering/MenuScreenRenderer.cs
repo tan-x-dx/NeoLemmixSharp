@@ -3,7 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering;
-using RenderingLibrary;
+using NeoLemmixSharp.Menu.Pages;
+using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
@@ -12,6 +13,8 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     private readonly BackgroundRenderer _backgroundRenderer;
     private readonly MenuCursorRenderer _menuCursorRenderer;
     private readonly PageTransitionRenderer _pageTransitionRenderer;
+
+    private UiHandler _uiHandler;
 
     private bool _initialized;
 
@@ -39,16 +42,13 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     public void RenderScreen(GameTime gameTime, SpriteBatch spriteBatch)
     {
-        IGameWindow.Instance.GraphicsDevice.Clear(Color.CornflowerBlue);
         // background
-        spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
+        spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
         _backgroundRenderer.Render(spriteBatch);
-        spriteBatch.End();
 
         // draw ui
-        SystemManagers.Default.Draw();
+        _uiHandler.Render(spriteBatch);
 
-        spriteBatch.Begin(sortMode: SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
         _menuCursorRenderer.RenderCursor(spriteBatch);
 
         // fade transition where necessary
@@ -77,6 +77,13 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
         _pageTransitionRenderer.Dispose();
 
+        _uiHandler = null!;
+
         IsDisposed = true;
+    }
+
+    public void SetNextPage(PageBase currentPage)
+    {
+        _uiHandler = currentPage.UiHandler;
     }
 }

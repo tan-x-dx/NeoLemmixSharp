@@ -113,32 +113,32 @@ public static class EngineConstants
 
     private static ReadOnlySpan<uint> RawExplosionParticleColorsHexValues =>
     [
-        0xF0E04040,
-        0xF000B000,
-        0xF0D0D0F0,
-        0xF02020F0,
-        0xC0E04040,
-        0xC000B000,
-        0xC0D0D0F0,
-        0xC02020F0
+        0xf0e04040,
+        0xf000b000,
+        0xf0d0d0f0,
+        0xf02020f0,
+        0xc0e04040,
+        0xc000b000,
+        0xc0d0d0f0,
+        0xc02020f0
     ];
 
     public static ReadOnlySpan<Color> GetExplosionParticleColors() => MemoryMarshal.Cast<uint, Color>(RawExplosionParticleColorsHexValues);
     public const int NumberOfExplosionParticleColors = 8;
     public const int NumberOfExplosionParticleColorsMask = NumberOfExplosionParticleColors - 1;
 
-    public static Color ClassicLevelBackgroundColor => new(0x18, 0x18, 0x3C);
+    public static Color ClassicLevelBackgroundColor => new(0xff3c1818);
 
-    public static Color CursorColor1 => new(0xB0, 0xB0, 0xB0);
-    public static Color CursorColor2 => PanelRed;
-    public static Color CursorColor3 => new(0x60, 0x60, 0x60);
+    public static Color CursorColor1 => new(0xffb0b0b0);
+    public static Color CursorColor2 => new(0xff0000b0);
+    public static Color CursorColor3 => new(0xff606060);
 
-    public static Color PanelBlue => new(0x00, 0x00, 0xB0);
-    public static Color PanelGreen => new(0x00, 0xB0, 0x00);
-    public static Color PanelCyan => new(0x00, 0xB0, 0xB0);
-    public static Color PanelRed => new(0xB0, 0x00, 0x00);
-    public static Color PanelMagenta => new(0xB0, 0x00, 0xB0);
-    public static Color PanelYellow => new(0xB0, 0xB0, 0x00);
+    public static Color PanelBlue => new(0xffb00000);
+    public static Color PanelGreen => new(0xff00b000);
+    public static Color PanelCyan => new(0xffb0b000);
+    public static Color PanelRed => new(0xff0000b0);
+    public static Color PanelMagenta => new(0xffb000b0);
+    public static Color PanelYellow => new(0xff00b0b0);
 
     #endregion
 
@@ -544,6 +544,13 @@ public static class EngineConstants
     public const int TinkerableGadgetBehaviourId = 3;
     public const int UpdraftGadgetBehaviourId = 4;
     public const int WaterGadgetBehaviourId = 1;
+
+    #endregion
+
+    #region Menu Constants
+
+    public const string LevelLoadingDisplayString = "Loading";
+    public const string LevelLoadingErrorOccurredDisplayString = "ERROR OCCURRED WHEN LOADING";
 
     #endregion
 }

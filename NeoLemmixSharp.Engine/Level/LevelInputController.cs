@@ -114,7 +114,7 @@ public sealed class LevelInputController : IInitialisable
 
         return;
 
-        void SetEnabledWithFlag(InputAction inputAction, LevelParameters testFlag)
+        static void SetEnabledWithFlag(InputAction inputAction, LevelParameters testFlag)
         {
             inputAction.SetEnabled(LevelScreen.LevelParameters.Contains(testFlag));
         }

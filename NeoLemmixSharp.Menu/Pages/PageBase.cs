@@ -1,22 +1,23 @@
 ﻿using Microsoft.Xna.Framework;
-using MonoGameGum.GueDeriving;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
 public abstract class PageBase : IInitialisable, IDisposable
 {
     protected readonly MenuInputController InputController;
-    private readonly ContainerRuntime _root;
 
     private bool _isInitialised;
+    private bool _isDisposed;
+
+    public UiHandler UiHandler { get; }
 
     protected PageBase(
-        MenuInputController inputController,
-        ContainerRuntime root)
+        MenuInputController inputController)
     {
         InputController = inputController;
-        _root = root;
+        UiHandler = new UiHandler(inputController.InputController);
     }
 
     public void Initialise()
@@ -24,11 +25,11 @@ public abstract class PageBase : IInitialisable, IDisposable
         if (_isInitialised)
             return;
 
-        OnInitialise(_root);
+        OnInitialise();
         _isInitialised = true;
     }
 
-    protected abstract void OnInitialise(ContainerRuntime root);
+    protected abstract void OnInitialise();
 
     public void SetWindowDimensions(int windowWidth, int windowHeight)
     {
@@ -39,6 +40,7 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     public void Tick()
     {
+        UiHandler.Tick();
         HandleUserInput();
         OnTick();
     }
@@ -49,9 +51,14 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     public void Dispose()
     {
-        _root.Children.Clear();
+        if (!_isDisposed)
+        {
+            UiHandler.Dispose();
 
-        OnDispose();
+            OnDispose();
+            _isDisposed = true;
+        }
+        GC.SuppressFinalize(this);
     }
 
     protected abstract void OnDispose();

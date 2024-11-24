@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics.Contracts;
 using System.Numerics;
+using System.Numerics.Tensors;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
@@ -139,20 +140,25 @@ public static class BitArrayHelpers
     [Pure]
     internal static int GetPopCount(ReadOnlySpan<uint> bits)
     {
+        // Basic implementation is faster than using TensorPrimitives - benchmarks
+
         var result = 0;
-        foreach (var v in bits)
+        for (int i = 0; i < bits.Length; i++)
         {
-            result += BitOperations.PopCount(v);
+            result += BitOperations.PopCount(bits[i]);
         }
 
         return result;
     }
 
+    /*
+     * Use jump tables (switch/case) for small span lengths.
+     * This is a more common occurrence than not, and is faster - benchmarks.
+     * The TensorPrimitives library is best used for larger spans.
+     */
+
     internal static void UnionWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
-        if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
-
         switch (span.Length)
         {
             case 8: span[7] |= other[7]; goto case 7;
@@ -166,34 +172,25 @@ public static class BitArrayHelpers
             case 0: return;
         }
 
-        for (var i = span.Length - 1; i >= 0; i--)
-        {
-            span[i] |= other[i];
-        }
+        TensorPrimitives.BitwiseOr(span, other, span);
     }
 
     internal static void IntersectWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
-        if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
-
         switch (span.Length)
         {
-            case 8: span[7] &= other[7]; goto case 7;
-            case 7: span[6] &= other[6]; goto case 6;
-            case 6: span[5] &= other[5]; goto case 5;
-            case 5: span[4] &= other[4]; goto case 4;
-            case 4: span[3] &= other[3]; goto case 3;
-            case 3: span[2] &= other[2]; goto case 2;
-            case 2: span[1] &= other[1]; goto case 1;
-            case 1: span[0] &= other[0]; return;
+            case 8: span[7] |= other[7]; goto case 7;
+            case 7: span[6] |= other[6]; goto case 6;
+            case 6: span[5] |= other[5]; goto case 5;
+            case 5: span[4] |= other[4]; goto case 4;
+            case 4: span[3] |= other[3]; goto case 3;
+            case 3: span[2] |= other[2]; goto case 2;
+            case 2: span[1] |= other[1]; goto case 1;
+            case 1: span[0] |= other[0]; return;
             case 0: return;
         }
 
-        for (var i = span.Length - 1; i >= 0; i--)
-        {
-            span[i] &= other[i];
-        }
+        TensorPrimitives.BitwiseAnd(span, other, span);
     }
 
     internal static void ExceptWith(Span<uint> span, ReadOnlySpan<uint> other)
@@ -214,7 +211,7 @@ public static class BitArrayHelpers
             case 0: return;
         }
 
-        for (var i = span.Length - 1; i >= 0; i--)
+        for (var i = 0; i < span.Length; i++)
         {
             span[i] &= ~other[i];
         }
@@ -238,10 +235,7 @@ public static class BitArrayHelpers
             case 0: return;
         }
 
-        for (var i = span.Length - 1; i >= 0; i--)
-        {
-            span[i] ^= other[i];
-        }
+        TensorPrimitives.Xor(span, other, span);
     }
 
     [Pure]
@@ -250,7 +244,7 @@ public static class BitArrayHelpers
         if (span.Length != other.Length)
             throw new ArgumentException("Spans have different lengths!");
 
-        for (var i = span.Length - 1; i >= 0; i--)
+        for (var i = 0; i < span.Length; i++)
         {
             var otherBits = other[i];
             if ((span[i] | otherBits) != otherBits)
@@ -266,7 +260,7 @@ public static class BitArrayHelpers
         if (span.Length != other.Length)
             throw new ArgumentException("Spans have different lengths!");
 
-        for (var i = span.Length - 1; i >= 0; i--)
+        for (var i = 0; i < span.Length; i++)
         {
             var bits = span[i];
             if ((bits | other[i]) != bits)
@@ -283,7 +277,7 @@ public static class BitArrayHelpers
             throw new ArgumentException("Spans have different lengths!");
 
         var allEqual = true;
-        for (var i = span.Length - 1; i >= 0; i--)
+        for (var i = 0; i < span.Length; i++)
         {
             var bits = span[i];
             var otherBits = other[i];
@@ -303,7 +297,7 @@ public static class BitArrayHelpers
             throw new ArgumentException("Spans have different lengths!");
 
         var allEqual = true;
-        for (var i = span.Length - 1; i >= 0; i--)
+        for (var i = 0; i < span.Length; i++)
         {
             var bits = span[i];
             var otherBits = other[i];
@@ -322,7 +316,7 @@ public static class BitArrayHelpers
         if (span.Length != other.Length)
             throw new ArgumentException("Spans have different lengths!");
 
-        for (var i = span.Length - 1; i >= 0; i--)
+        for (var i = 0; i < span.Length; i++)
         {
             if ((span[i] & other[i]) != 0U)
                 return true;
@@ -337,7 +331,7 @@ public static class BitArrayHelpers
         if (span.Length != other.Length)
             throw new ArgumentException("Spans have different lengths!");
 
-        for (var i = span.Length - 1; i >= 0; i--)
+        for (int i = span.Length - 1; i >= 0; i--)
         {
             if (span[i] != other[i])
                 return false;

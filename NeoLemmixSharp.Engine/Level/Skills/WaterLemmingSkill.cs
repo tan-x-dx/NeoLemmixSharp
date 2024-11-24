@@ -30,10 +30,7 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingStateChanger
         }
     }
 
-    protected override IEnumerable<LemmingAction> ActionsThatCanBeAssigned()
-    {
-        return ActionsThatCanBeAssignedPermanentSkill();
-    }
+    protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
     public int LemmingStateChangerId => LemmingStateChangerHelper.WaterStateChangerId;
     public void SetLemmingState(LemmingState lemmingState, bool status)

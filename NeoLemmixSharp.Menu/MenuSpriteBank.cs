@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace NeoLemmixSharp.Common.Screen;
+namespace NeoLemmixSharp.Menu;
 
 public static class MenuSpriteBank
 {
@@ -18,10 +18,8 @@ public static class MenuSpriteBank
     public static Texture2D SignQuit { get; private set; } = null!;
     public static Texture2D MenuButton { get; private set; } = null!;
 
-    public static void Initialise(ContentManager contentManager, SpriteBatch spriteBatch)
+    public static void Initialise(ContentManager contentManager)
     {
-        return;
-
         Logo = contentManager.Load<Texture2D>("menu/logo");
         MenuIcons = contentManager.Load<Texture2D>("menu/menu_icons");
         ScrollerLemmings = contentManager.Load<Texture2D>("menu/scroller_lemmings");

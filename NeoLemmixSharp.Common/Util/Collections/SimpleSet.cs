@@ -36,7 +36,6 @@ public sealed class SimpleSet<TPerfectHasher, T> : ISet<T>, IReadOnlySet<T>
 
     void ICollection<T>.Add(T item) => Add(item);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear()
     {
         new Span<uint>(_bits).Clear();
@@ -54,6 +53,16 @@ public sealed class SimpleSet<TPerfectHasher, T> : ISet<T>, IReadOnlySet<T>
     {
         var hash = _hasher.Hash(item);
         return BitArrayHelpers.ClearBit(new Span<uint>(_bits), hash, ref _popCount);
+    }
+
+    /// <summary>
+    /// Updates the contents of this collection to be identical to the contents of the other collection.
+    /// </summary>
+    /// <param name="other">The set whose values will be copied into this one.</param>
+    public void SetFrom(SimpleSet<TPerfectHasher, T> other)
+    {
+        new ReadOnlySpan<uint>(other._bits).CopyTo(new Span<uint>(_bits));
+        _popCount = other._popCount;
     }
 
     [Pure]
@@ -95,7 +104,7 @@ public sealed class SimpleSet<TPerfectHasher, T> : ISet<T>, IReadOnlySet<T>
 
     public sealed class ReferenceTypeEnumerator : IEnumerator<T>
     {
-        private readonly IPerfectHasher<T> _hasher;
+        private readonly TPerfectHasher _hasher;
         private readonly BitArrayHelpers.ReferenceTypeBitEnumerator _bitEnumerator;
 
         public ReferenceTypeEnumerator(SimpleSet<TPerfectHasher, T> set)

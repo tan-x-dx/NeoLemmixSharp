@@ -1,6 +1,8 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -66,7 +68,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     private static LemmingActionSet GetAirborneActions()
     {
-        var result = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
+        var result = CreateEmptySimpleSet();
 
         result.Add(DrownerAction.Instance);
         result.Add(FallerAction.Instance);
@@ -86,7 +88,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     private static LemmingActionSet GetOneTimeActions()
     {
-        var result = ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
+        var result = CreateEmptySimpleSet();
 
         result.Add(DehoisterAction.Instance);
         result.Add(DrownerAction.Instance);
@@ -117,6 +119,10 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
             ? NoneAction.Instance
             : LemmingActions[unboundActionId];
     }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static LemmingActionSet CreateEmptySimpleSet() => ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
 
     public readonly int Id;
     public readonly string LemmingActionName;
