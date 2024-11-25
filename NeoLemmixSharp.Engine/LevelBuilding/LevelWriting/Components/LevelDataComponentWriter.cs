@@ -97,7 +97,7 @@ public sealed class LevelDataComponentWriter : ILevelDataWriter
 
         if (backgroundData.IsSolidColor)
         {
-            writer.Write(LevelReadWriteHelpers.SolidBackgroundColor);
+            writer.Write(LevelReadWriteHelpers.SolidColorBackground);
             var actualBackgroundColor = backgroundData.Color;
             writer.Write(actualBackgroundColor.R);
             writer.Write(actualBackgroundColor.G);
@@ -106,7 +106,7 @@ public sealed class LevelDataComponentWriter : ILevelDataWriter
             return;
         }
 
-        writer.Write(LevelReadWriteHelpers.BackgroundImageSpecified);
+        writer.Write(LevelReadWriteHelpers.TextureBackground);
         var backgroundStringId = _stringIdLookup[backgroundData.BackgroundImageName];
         writer.Write(backgroundStringId);
     }

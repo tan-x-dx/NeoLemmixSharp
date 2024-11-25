@@ -21,8 +21,8 @@ public static class LevelReadWriteHelpers
     public static ReadOnlySpan<byte> LevelDataSectionIdentifier => [0x79, 0xA6];
 
     public const byte NoBackgroundSpecified = 0x00;
-    public const byte SolidBackgroundColor = 0x01;
-    public const byte BackgroundImageSpecified = 0x02;
+    public const byte SolidColorBackground = 0x01;
+    public const byte TextureBackground = 0x02;
 
     public const int UnspecifiedLevelStartValue = 5000;
 
