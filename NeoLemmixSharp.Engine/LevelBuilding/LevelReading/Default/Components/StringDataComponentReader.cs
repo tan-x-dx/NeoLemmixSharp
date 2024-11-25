@@ -35,18 +35,20 @@ public sealed class StringDataComponentReader : ILevelDataReader
             var id = reader.Read16BitUnsignedInteger();
             LevelReadWriteHelpers.ReaderAssert(id == _stringIdLookup.Count, "Invalid string ids");
 
-            var stringLength = reader.Read16BitUnsignedInteger();
+            // The next 16bit int specifies how many bytes make up the next string
+            // Read them into the buffer, and then parse those bytes into a string
+            var stringLengthInBytes = reader.Read16BitUnsignedInteger();
 
-            if (stringLength > byteBuffer.Length)
+            if (stringLengthInBytes > byteBuffer.Length)
             {
-                var heapBuffer = new byte[stringLength];
+                var heapBuffer = new byte[stringLengthInBytes];
                 byteBuffer = new Span<byte>(heapBuffer);
             }
 
-            var stringBuffer = byteBuffer[..stringLength];
-            reader.ReadBytes(stringBuffer);
+            var stringBytes = byteBuffer[..stringLengthInBytes];
+            reader.ReadBytes(stringBytes);
 
-            var actualString = utf8Encoding.GetString(stringBuffer);
+            var actualString = utf8Encoding.GetString(stringBytes);
 
             _stringIdLookup.Add(id, actualString);
         }
