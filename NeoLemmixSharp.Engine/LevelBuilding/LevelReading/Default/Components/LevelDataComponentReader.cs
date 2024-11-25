@@ -78,7 +78,6 @@ public sealed class LevelDataComponentReader : ILevelDataReader
         levelData.VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
     }
 
-    [SkipLocalsInit]
     private void ReadBackgroundData(BinaryReaderWrapper reader, LevelData levelData)
     {
         var specifierByte = reader.Read8BitUnsignedInteger();
@@ -94,6 +93,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 
         return;
 
+        [SkipLocalsInit]
         BackgroundData ReadSolidColorBackgroundData()
         {
             Span<byte> buffer = stackalloc byte[3];
