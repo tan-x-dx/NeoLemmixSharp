@@ -1,67 +1,54 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-public sealed class BinaryReaderWrapper : IDisposable
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+
+public sealed class BinaryReaderWrapper
 {
-    private readonly FileStream _fileStream;
-    private readonly BinaryReader _reader;
+    private readonly byte[] _byteBuffer;
+    private int _position;
 
-    public long FileSizeInBytes => _fileStream.Length;
-    public long BytesRead => _fileStream.Position;
-    public bool MoreToRead => _fileStream.Position < _fileStream.Length;
+    public long FileSizeInBytes => _byteBuffer.Length;
+    public long BytesRead => _position;
+    public bool MoreToRead => BytesRead < FileSizeInBytes;
 
     public BinaryReaderWrapper(string filePath)
     {
-        _fileStream = new FileStream(filePath, FileMode.Open);
-        _reader = new BinaryReader(_fileStream);
+        using var fileStream = new FileStream(filePath, FileMode.Open);
+        _byteBuffer = new byte[fileStream.Length];
+
+        fileStream.ReadExactly(new Span<byte>(_byteBuffer));
     }
 
-    public byte Read8BitUnsignedInteger()
+    private T ReadWord<T>()
+        where T : unmanaged
     {
-        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - BytesRead >= 1, "Reached end of file!");
+        var typeSize = Unsafe.SizeOf<T>();
+        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - BytesRead >= typeSize, "Reached end of file!");
 
-        return _reader.ReadByte();
+        var span = MemoryMarshal.Cast<byte, T>(new ReadOnlySpan<byte>(_byteBuffer, _position, typeSize));
+        _position += typeSize;
+
+        return span[0];
     }
 
-    public ushort Read16BitUnsignedInteger()
-    {
-        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - BytesRead >= 2, "Reached end of file!");
+    public byte Read8BitUnsignedInteger() => ReadWord<byte>();
 
-        return _reader.ReadUInt16();
-    }
+    public ushort Read16BitUnsignedInteger() => ReadWord<ushort>();
 
-    public uint Read32BitUnsignedInteger()
-    {
-        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - BytesRead >= 4, "Reached end of file!");
+    public uint Read32BitUnsignedInteger() => ReadWord<uint>();
 
-        return _reader.ReadUInt32();
-    }
+    public int Read32BitSignedInteger() => ReadWord<int>();
 
-    public int Read32BitSignedInteger()
-    {
-        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - BytesRead >= 4, "Reached end of file!");
-
-        return _reader.ReadInt32();
-    }
-
-    public ulong Read64BitUnsignedInteger()
-    {
-        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - BytesRead >= 8, "Reached end of file!");
-
-        return _reader.ReadUInt64();
-    }
+    public ulong Read64BitUnsignedInteger() => ReadWord<ulong>();
 
     public void ReadBytes(Span<byte> buffer)
     {
         LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - BytesRead >= buffer.Length, "Reached end of file!");
 
-        var bytesRead = _reader.Read(buffer);
+        var sourceSpan = new ReadOnlySpan<byte>(_byteBuffer, _position, buffer.Length);
+        _position += buffer.Length;
 
-        LevelReadWriteHelpers.ReaderAssert(bytesRead == buffer.Length, "Reached end of file!");
-    }
-
-    public void Dispose()
-    {
-        _reader.Dispose();
-        _fileStream.Dispose();
+        sourceSpan.CopyTo(buffer);
     }
 }

@@ -98,6 +98,5 @@ public sealed class DefaultLevelReader : ILevelReader
 
     public void Dispose()
     {
-        _binaryReaderWrapper.Dispose();
     }
 }
