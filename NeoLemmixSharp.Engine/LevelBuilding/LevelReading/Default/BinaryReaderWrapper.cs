@@ -20,7 +20,7 @@ public sealed class BinaryReaderWrapper
         fileStream.ReadExactly(new Span<byte>(_byteBuffer));
     }
 
-    private T ReadWord<T>()
+    private T Read<T>()
         where T : unmanaged
     {
         var typeSize = Unsafe.SizeOf<T>();
@@ -32,15 +32,11 @@ public sealed class BinaryReaderWrapper
         return span[0];
     }
 
-    public byte Read8BitUnsignedInteger() => ReadWord<byte>();
-
-    public ushort Read16BitUnsignedInteger() => ReadWord<ushort>();
-
-    public uint Read32BitUnsignedInteger() => ReadWord<uint>();
-
-    public int Read32BitSignedInteger() => ReadWord<int>();
-
-    public ulong Read64BitUnsignedInteger() => ReadWord<ulong>();
+    public byte Read8BitUnsignedInteger() => Read<byte>();
+    public ushort Read16BitUnsignedInteger() => Read<ushort>();
+    public uint Read32BitUnsignedInteger() => Read<uint>();
+    public int Read32BitSignedInteger() => Read<int>();
+    public ulong Read64BitUnsignedInteger() => Read<ulong>();
 
     public void ReadBytes(Span<byte> buffer)
     {
