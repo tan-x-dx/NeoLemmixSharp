@@ -18,6 +18,11 @@ public abstract class LevelBrowserEntry : Component
         : base(0, 0, null)
     {
         _indentationLevel = indentationLevel;
+
+        MouseEnter.RegisterMouseEvent(SetMouseOver);
+        MouseDown.RegisterMouseEvent(SetMousePress);
+        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
     protected abstract override void OnDispose();
