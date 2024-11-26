@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
@@ -189,18 +190,41 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     private NeoLemmixGadgetArchetypeData GetOrLoadGadgetArchetypeData(ReadOnlySpan<char> piece)
     {
-        ref var gadgetArchetypeData = ref NxlvReadingHelpers.GetArchetypeDataRef(
-            _currentStyle!,
-            piece,
-            GadgetArchetypes,
+        var currentStyleLength = _currentStyle!.Length;
+
+        // Safeguard against potential stack overflow.
+        // Will almost certainly be a small buffer
+        // allocated on the stack, but still...
+        var bufferSize = currentStyleLength + piece.Length + 1;
+        Span<char> archetypeDataKeySpan = bufferSize > NxlvReadingHelpers.MaxStackallocSize
+            ? new char[bufferSize]
+            : stackalloc char[bufferSize];
+
+        _currentStyle.CopyTo(archetypeDataKeySpan);
+        archetypeDataKeySpan[currentStyleLength] = ':';
+        piece.CopyTo(archetypeDataKeySpan[(currentStyleLength + 1)..]);
+
+        var alternateLookup = GadgetArchetypes.GetAlternateLookup<ReadOnlySpan<char>>();
+
+        ref var dictionaryEntry = ref CollectionsMarshal.GetValueRefOrAddDefault(
+            alternateLookup,
+            archetypeDataKeySpan,
             out var exists);
 
-        if (exists)
-            return gadgetArchetypeData!;
+        if (!exists)
+        {
+            dictionaryEntry = CreateNewGadgetArchetypeData(piece);
+        }
 
+        return dictionaryEntry!;
+    }
+
+    private NeoLemmixGadgetArchetypeData CreateNewGadgetArchetypeData(
+        ReadOnlySpan<char> piece)
+    {
         var gadgetPiece = piece.ToString();
 
-        gadgetArchetypeData = new NeoLemmixGadgetArchetypeData
+        var gadgetArchetypeData = new NeoLemmixGadgetArchetypeData
         {
             GadgetArchetypeId = GadgetArchetypes.Count - 1,
             Style = _currentStyle!,

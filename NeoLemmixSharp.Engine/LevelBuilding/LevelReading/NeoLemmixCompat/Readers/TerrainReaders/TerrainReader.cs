@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
 
@@ -152,17 +153,39 @@ public sealed class TerrainReader : INeoLemmixDataReader
 
     private TerrainArchetypeData GetOrLoadTerrainArchetypeData(ReadOnlySpan<char> piece)
     {
-        ref var terrainArchetypeData = ref NxlvReadingHelpers.GetArchetypeDataRef(
-            _currentStyle!,
-            piece,
-            _terrainArchetypes,
+        var currentStyleLength = _currentStyle!.Length;
+
+        // Safeguard against potential stack overflow.
+        // Will almost certainly be a small buffer
+        // allocated on the stack, but still...
+        var bufferSize = currentStyleLength + piece.Length + 1;
+        Span<char> archetypeDataKeySpan = bufferSize > NxlvReadingHelpers.MaxStackallocSize
+            ? new char[bufferSize]
+            : stackalloc char[bufferSize];
+
+        _currentStyle.CopyTo(archetypeDataKeySpan);
+        archetypeDataKeySpan[currentStyleLength] = ':';
+        piece.CopyTo(archetypeDataKeySpan[(currentStyleLength + 1)..]);
+
+        var alternateLookup = _terrainArchetypes.GetAlternateLookup<ReadOnlySpan<char>>();
+
+        ref var dictionaryEntry = ref CollectionsMarshal.GetValueRefOrAddDefault(
+            alternateLookup,
+            archetypeDataKeySpan,
             out var exists);
 
-        if (exists)
-            return terrainArchetypeData!;
+        if (!exists)
+        {
+            dictionaryEntry = CreateNewTerrainArchetypeData(piece);
+        }
 
+        return dictionaryEntry!;
+    }
+
+    private TerrainArchetypeData CreateNewTerrainArchetypeData(ReadOnlySpan<char> piece)
+    {
         var terrainPiece = piece.ToString();
-        terrainArchetypeData = new TerrainArchetypeData
+        var terrainArchetypeData = new TerrainArchetypeData
         {
             TerrainArchetypeId = _terrainArchetypes.Count - 1,
             Style = _currentStyle,
