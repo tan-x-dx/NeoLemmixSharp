@@ -121,9 +121,9 @@ public sealed class LevelDataComponentReader : ILevelDataReader
     }
 
     private static void AssertLevelDataBytesMakeSense(
-        long bytesRead,
-        long initialBytesRead,
-        long numberOfBytesToRead)
+        int bytesRead,
+        int initialBytesRead,
+        int numberOfBytesToRead)
     {
         if (bytesRead - initialBytesRead == numberOfBytesToRead)
             return;

@@ -5,17 +5,24 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
 public sealed class BinaryReaderWrapper
 {
+    private const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
+
     private readonly byte[] _byteBuffer;
     private int _position;
 
-    public long FileSizeInBytes => _byteBuffer.Length;
-    public long BytesRead => _position;
+    public int FileSizeInBytes => _byteBuffer.Length;
+    public int BytesRead => _position;
     public bool MoreToRead => BytesRead < FileSizeInBytes;
 
     public BinaryReaderWrapper(string filePath)
     {
         using var fileStream = new FileStream(filePath, FileMode.Open);
-        _byteBuffer = new byte[fileStream.Length];
+        var fileSizeInBytes = fileStream.Length;
+
+        if (fileSizeInBytes > MaxAllowedFileSizeInBytes)
+            throw new InvalidOperationException("File too large! Max file size is 64Mb");
+
+        _byteBuffer = new byte[fileSizeInBytes];
 
         fileStream.ReadExactly(new Span<byte>(_byteBuffer));
     }

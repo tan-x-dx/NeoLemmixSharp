@@ -146,9 +146,9 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
     }
 
     private static void AssertTerrainDataBytesMakeSense(
-        long bytesRead,
-        long initialBytesRead,
-        long numberOfBytesToRead)
+        int bytesRead,
+        int initialBytesRead,
+        int numberOfBytesToRead)
     {
         if (bytesRead - initialBytesRead == numberOfBytesToRead)
             return;
