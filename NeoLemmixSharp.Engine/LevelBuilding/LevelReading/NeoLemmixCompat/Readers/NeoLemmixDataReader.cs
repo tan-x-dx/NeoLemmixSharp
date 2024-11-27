@@ -1,22 +1,6 @@
 ﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
-public interface INeoLemmixDataReader
-{
-    bool FinishedReading { get; }
-    string IdentifierToken { get; }
-
-    bool ShouldProcessSection(ReadOnlySpan<char> token)
-    {
-        var itemSpan = IdentifierToken.AsSpan();
-
-        return itemSpan.SequenceEqual(token);
-    }
-
-    void BeginReading(ReadOnlySpan<char> line);
-    bool ReadNextLine(ReadOnlySpan<char> line);
-}
-
-public abstract class NeoLemmixDataReader : INeoLemmixDataReader, IEqualityComparer<char>
+public abstract class NeoLemmixDataReader : IEqualityComparer<char>
 {
     protected static readonly StringComparer OrdinalIgnoreCaseComparer = StringComparer.OrdinalIgnoreCase;
 

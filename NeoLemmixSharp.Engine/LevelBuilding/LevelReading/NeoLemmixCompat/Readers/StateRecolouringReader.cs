@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
-public sealed class StateRecoloringReader : INeoLemmixDataReader
+public sealed class StateRecoloringReader : NeoLemmixDataReader
 {
     // private readonly ThemeData _themeData = new();
 
@@ -9,9 +9,13 @@ public sealed class StateRecoloringReader : INeoLemmixDataReader
     private uint? _currentOriginalColor;
     private uint? _currentReplacementColor;
 
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$STATE_RECOLORING";
-    public void BeginReading(ReadOnlySpan<char> line)
+    public StateRecoloringReader()
+        : base("$STATE_RECOLORING")
+    {
+
+    }
+
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         //  _currentLemmingStateRecoloring = null;
         FinishedReading = false;

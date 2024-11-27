@@ -1,13 +1,16 @@
 ﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
-public sealed class SpriteSetRecoloringReader : INeoLemmixDataReader
+public sealed class SpriteSetRecoloringReader : NeoLemmixDataReader
 {
     //private readonly LemmingSpriteSetRecoloring _lemmingSpriteSetRecoloring = new();
 
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$SPRITESET_RECOLORING";
+    public SpriteSetRecoloringReader()
+        : base("$SPRITESET_RECOLORING")
+    {
 
-    public void BeginReading(ReadOnlySpan<char> line)
+    }
+
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
     }

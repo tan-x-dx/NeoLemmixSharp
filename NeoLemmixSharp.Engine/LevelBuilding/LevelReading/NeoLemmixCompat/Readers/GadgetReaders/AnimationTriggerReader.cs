@@ -3,88 +3,84 @@ using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
-public sealed class AnimationTriggerReader : INeoLemmixDataReader
+public sealed class AnimationTriggerReader : NeoLemmixDataReader
 {
     private readonly List<AnimationTriggerData> _animationTriggerData;
+    private readonly Dictionary<string, NeoLemmixGadgetStateType> _gadgetStateTypeLookup = new(OrdinalIgnoreCaseComparer)
+    {
+        { "READY", NeoLemmixGadgetStateType.Idle },
+        { "BUSY", NeoLemmixGadgetStateType.Active },
+        { "DISABLED", NeoLemmixGadgetStateType.Disabled },
+        { "EXHAUSTED", NeoLemmixGadgetStateType.Disabled }
+    };
+
+    private readonly Dictionary<string, GadgetSecondaryAnimationAction> _gadgetSecondaryAnimationActionLookup = new(OrdinalIgnoreCaseComparer)
+    {
+        { "PLAY", GadgetSecondaryAnimationAction.Play },
+        { "PAUSE", GadgetSecondaryAnimationAction.Pause },
+        { "STOP", GadgetSecondaryAnimationAction.Stop },
+        { "LOOPTOZERO", GadgetSecondaryAnimationAction.LoopToZero },
+        { "MATCHPHYSICS", GadgetSecondaryAnimationAction.MatchPrimaryAnimationPhysics }
+    };
 
     private AnimationTriggerData? _currentAnimationTriggerData;
 
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$TRIGGER";
-
     public AnimationTriggerReader(List<AnimationTriggerData> animationTriggerData)
+        : base("$TRIGGER")
     {
         _animationTriggerData = animationTriggerData;
+
+        RegisterTokenAction("CONDITION", SetStateType);
+        RegisterTokenAction("STATE", SetAnimationAction);
+        RegisterTokenAction("HIDE", SetHidden);
+        RegisterTokenAction("$END", OnEnd);
     }
 
-    public void BeginReading(ReadOnlySpan<char> line)
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         _currentAnimationTriggerData = new AnimationTriggerData();
         FinishedReading = false;
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    private void SetStateType(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
-
-        var currentAnimationTriggerData = _currentAnimationTriggerData!;
-
-        switch (firstToken)
-        {
-            case "CONDITION":
-                currentAnimationTriggerData.StateType = GetNeoLemmixGadgetStateType(line, secondToken);
-                break;
-
-            case "STATE":
-                currentAnimationTriggerData.AnimationAction = GetNeoLemmixGadgetAnimationAction(line, secondToken);
-                break;
-
-            case "HIDE":
-                currentAnimationTriggerData.Hide = true;
-                break;
-
-            case "$END":
-                _animationTriggerData.Add(currentAnimationTriggerData);
-                _currentAnimationTriggerData = null;
-                FinishedReading = true;
-                break;
-
-            default:
-                NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
-                break;
-        }
-
-        return false;
+        _currentAnimationTriggerData!.StateType = GetNeoLemmixGadgetStateType(line, secondToken);
     }
 
-    private static NeoLemmixGadgetStateType GetNeoLemmixGadgetStateType(ReadOnlySpan<char> line, ReadOnlySpan<char> token)
+    private void SetAnimationAction(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var result = token switch
-        {
-            "READY" => NeoLemmixGadgetStateType.Idle,
-            "BUSY" => NeoLemmixGadgetStateType.Active,
-            "DISABLED" => NeoLemmixGadgetStateType.Disabled,
-            "EXHAUSTED" => NeoLemmixGadgetStateType.Disabled,
-
-            _ => NxlvReadingHelpers.ThrowUnknownTokenException<NeoLemmixGadgetStateType>("CONDITION", token, line)
-        };
-
-        return result;
+        _currentAnimationTriggerData!.AnimationAction = GetNeoLemmixGadgetAnimationAction(line, secondToken);
     }
 
-    private static GadgetSecondaryAnimationAction GetNeoLemmixGadgetAnimationAction(ReadOnlySpan<char> line, ReadOnlySpan<char> token)
+    private void SetHidden(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var result = token switch
-        {
-            "PLAY" => GadgetSecondaryAnimationAction.Play,
-            "PAUSE" => GadgetSecondaryAnimationAction.Pause,
-            "STOP" => GadgetSecondaryAnimationAction.Stop,
-            "LOOPTOZERO" => GadgetSecondaryAnimationAction.LoopToZero,
-            "MATCHPHYSICS" => GadgetSecondaryAnimationAction.MatchPrimaryAnimationPhysics,
+        _currentAnimationTriggerData!.Hide = true;
+    }
 
-            _ => NxlvReadingHelpers.ThrowUnknownTokenException<GadgetSecondaryAnimationAction>("STATE", token, line),
-        };
+    private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _animationTriggerData.Add(_currentAnimationTriggerData!);
+        _currentAnimationTriggerData = null;
+        FinishedReading = true;
+    }
 
-        return result;
+    private NeoLemmixGadgetStateType GetNeoLemmixGadgetStateType(ReadOnlySpan<char> line, ReadOnlySpan<char> token)
+    {
+        var alternateLookup = _gadgetStateTypeLookup.GetAlternateLookup<ReadOnlySpan<char>>();
+
+        if (alternateLookup.TryGetValue(token, out var result))
+            return result;
+
+        return NxlvReadingHelpers.ThrowUnknownTokenException<NeoLemmixGadgetStateType>("CONDITION", token, line);
+    }
+
+    private GadgetSecondaryAnimationAction GetNeoLemmixGadgetAnimationAction(ReadOnlySpan<char> line, ReadOnlySpan<char> token)
+    {
+        var alternateLookup = _gadgetSecondaryAnimationActionLookup.GetAlternateLookup<ReadOnlySpan<char>>();
+
+        if (alternateLookup.TryGetValue(token, out var result))
+            return result;
+
+        return NxlvReadingHelpers.ThrowUnknownTokenException<GadgetSecondaryAnimationAction>("STATE", token, line);
     }
 }
