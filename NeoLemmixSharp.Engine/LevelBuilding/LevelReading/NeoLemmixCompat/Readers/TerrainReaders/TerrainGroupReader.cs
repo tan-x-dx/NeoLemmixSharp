@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
 
-public sealed class TerrainGroupReader : INeoLemmixDataReader
+public sealed class TerrainGroupReader : NeoLemmixDataReader
 {
     private readonly Dictionary<string, TerrainArchetypeData> _terrainArchetypes;
 
@@ -11,21 +11,24 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
 
     public List<TerrainGroupData> AllTerrainGroups { get; } = new();
 
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$TERRAINGROUP";
-
-    public TerrainGroupReader(Dictionary<string, TerrainArchetypeData> terrainArchetypes)
+    public TerrainGroupReader(
+        Dictionary<string, TerrainArchetypeData> terrainArchetypes)
+        : base("$TERRAINGROUP")
     {
         _terrainArchetypes = terrainArchetypes;
+
+        RegisterTokenAction("NAME", SetName);
+        RegisterTokenAction("$TERRAIN", ReadTerrainData);
+        RegisterTokenAction("$END", OnEnd);
     }
 
-    public void BeginReading(ReadOnlySpan<char> line)
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         _currentTerrainGroup = new TerrainGroupData();
         FinishedReading = false;
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    public override bool ReadNextLine(ReadOnlySpan<char> line)
     {
         if (_terrainReader != null)
         {
@@ -39,28 +42,33 @@ public sealed class TerrainGroupReader : INeoLemmixDataReader
             return result;
         }
 
-        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out _, out var secondTokenIndex);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
-        var currentTerrainGroup = _currentTerrainGroup!;
+        var alternateLookup = _tokenActions.GetAlternateLookup<ReadOnlySpan<char>>();
 
-        switch (firstToken)
+        if (alternateLookup.TryGetValue(firstToken, out var tokenAction))
         {
-            case "NAME":
-                currentTerrainGroup.GroupName = line.TrimAfterIndex(secondTokenIndex).ToString();
-                break;
-
-            case "$TERRAIN":
-                _terrainReader = new TerrainReader(_terrainArchetypes, currentTerrainGroup.AllBasicTerrainData);
-                _terrainReader.BeginReading(firstToken);
-                break;
-
-            case "$END":
-                AllTerrainGroups.Add(currentTerrainGroup);
-                _currentTerrainGroup = null;
-                FinishedReading = true;
-                break;
+            tokenAction(line, secondToken, secondTokenIndex);
         }
 
         return false;
+    }
+
+    private void SetName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentTerrainGroup!.GroupName = line.TrimAfterIndex(secondTokenIndex).ToString();
+    }
+
+    private void ReadTerrainData(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _terrainReader = new TerrainReader(_terrainArchetypes, _currentTerrainGroup!.AllBasicTerrainData);
+        _terrainReader.BeginReading("$TERRAIN");
+    }
+
+    private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        AllTerrainGroups.Add(_currentTerrainGroup!);
+        _currentTerrainGroup = null;
+        FinishedReading = true;
     }
 }

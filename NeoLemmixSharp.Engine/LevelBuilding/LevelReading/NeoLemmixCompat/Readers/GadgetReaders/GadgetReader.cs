@@ -5,10 +5,8 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
-public sealed class GadgetReader : INeoLemmixDataReader
+public sealed class GadgetReader : NeoLemmixDataReader
 {
-    private readonly IEqualityComparer<char> _charEqualityComparer;
-
     private NeoLemmixGadgetData? _currentGadgetData;
     private string? _currentStyle;
     private string? _currentFolder;
@@ -16,166 +14,194 @@ public sealed class GadgetReader : INeoLemmixDataReader
     public Dictionary<string, NeoLemmixGadgetArchetypeData> GadgetArchetypes { get; } = new();
     public List<NeoLemmixGadgetData> AllGadgetData { get; } = new();
 
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$GADGET";
-
-    public GadgetReader(IEqualityComparer<char> charEqualityComparer)
+    public GadgetReader()
+        : base("$GADGET")
     {
-        _charEqualityComparer = charEqualityComparer;
+        RegisterTokenAction("STYLE", SetStyle);
+        RegisterTokenAction("PIECE", SetPiece);
+        RegisterTokenAction("X", SetX);
+        RegisterTokenAction("Y", SetY);
+        RegisterTokenAction("WIDTH", SetWidth);
+        RegisterTokenAction("HEIGHT", SetHeight);
+        RegisterTokenAction("SPEED", SetSpeed);
+        RegisterTokenAction("ANGLE", SetAngle);
+        RegisterTokenAction("NO_OVERWRITE", SetNoOverwrite);
+        RegisterTokenAction("ONLY_ON_TERRAIN", SetOnlyOnTerrain);
+        RegisterTokenAction("ONE_WAY", SetOneWay);
+        RegisterTokenAction("FLIP_VERTICAL", SetFlipVertical);
+        RegisterTokenAction("FLIP_HORIZONTAL", SetFlipHorizontal);
+        RegisterTokenAction("ROTATE", SetRotate);
+        RegisterTokenAction("SKILL", SetSkill);
+        RegisterTokenAction("SKILL_COUNT", SetSkillCount);
+        RegisterTokenAction("LEMMINGS", SetLemmingCount);
+        RegisterTokenAction("CLIMBER", SetClimber);
+        RegisterTokenAction("DISARMER", SetDisarmer);
+        RegisterTokenAction("FLOATER", SetFloater);
+        RegisterTokenAction("GLIDER", SetGlider);
+        RegisterTokenAction("NEUTRAL", SetNeutral);
+        RegisterTokenAction("SLIDER", SetSlider);
+        RegisterTokenAction("SWIMMER", SetSwimmer);
+        RegisterTokenAction("ZOMBIE", SetZombie);
+        RegisterTokenAction("$END", OnEnd);
     }
 
-    public void BeginReading(ReadOnlySpan<char> line)
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         _currentGadgetData = new NeoLemmixGadgetData();
         FinishedReading = false;
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    private void SetStyle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
-
-        var currentGadgetData = _currentGadgetData!;
-
-        switch (firstToken)
+        var rest = line.TrimAfterIndex(secondTokenIndex);
+        if (_currentStyle is null)
         {
-            case "STYLE":
-                var rest = line.TrimAfterIndex(secondTokenIndex);
-                if (_currentStyle is null)
-                {
-                    SetCurrentStyle(rest);
-                }
-                else
-                {
-                    var currentStyleSpan = _currentStyle.AsSpan();
-                    if (!currentStyleSpan.SequenceEqual(rest))
-                    {
-                        SetCurrentStyle(rest);
-                    }
-                }
-
-                break;
-
-            case "PIECE":
-                var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(line.TrimAfterIndex(secondTokenIndex));
-                currentGadgetData.GadgetArchetypeId = gadgetArchetypeData.GadgetArchetypeId;
-                break;
-
-            case "X":
-                currentGadgetData.X = int.Parse(secondToken);
-                break;
-
-            case "Y":
-                currentGadgetData.Y = int.Parse(secondToken);
-                break;
-
-            case "WIDTH":
-                currentGadgetData.Width = int.Parse(secondToken);
-                break;
-
-            case "HEIGHT":
-                currentGadgetData.Height = int.Parse(secondToken);
-                break;
-
-            case "SPEED":
-                currentGadgetData.Speed = int.Parse(secondToken);
-                break;
-
-            case "ANGLE":
-                currentGadgetData.Angle = int.Parse(secondToken);
-                break;
-
-            case "NO_OVERWRITE":
-                currentGadgetData.NoOverwrite = true;
-                break;
-
-            case "ONLY_ON_TERRAIN":
-                currentGadgetData.OnlyOnTerrain = true;
-                break;
-
-            case "ONE_WAY":
-                break;
-
-            case "FLIP_VERTICAL":
-                currentGadgetData.FlipVertical = true;
-                break;
-
-            case "FLIP_HORIZONTAL":
-                currentGadgetData.FlipHorizontal = true;
-                break;
-
-            case "ROTATE":
-                currentGadgetData.Rotate = true;
-                break;
-
-            case "SKILL":
-                if (!NxlvReadingHelpers.GetSkillByName(secondToken, _charEqualityComparer, out var skill))
-                    throw new Exception($"Unknown token: {secondToken}");
-
-                currentGadgetData.Skill = skill;
-                break;
-
-            case "SKILL_COUNT":
-                var amount = secondToken is "INFINITE"
-                    ? EngineConstants.InfiniteSkillCount
-                    : int.Parse(secondToken);
-
-                currentGadgetData.SkillCount = amount;
-                break;
-
-            case "LEMMINGS":
-                currentGadgetData.LemmingCount = int.Parse(secondToken);
-                break;
-
-            #region Window properties
-
-            case "CLIMBER":
-                currentGadgetData.State |= 1U << EngineConstants.ClimberBitIndex;
-                break;
-
-            case "DISARMER":
-                currentGadgetData.State |= 1U << EngineConstants.DisarmerBitIndex;
-                break;
-
-            case "FLOATER":
-                currentGadgetData.State |= 1U << EngineConstants.FloaterBitIndex;
-                currentGadgetData.State &= ~(1U << EngineConstants.GliderBitIndex); // Deliberately knock out the glider
-                break;
-
-            case "GLIDER":
-                currentGadgetData.State |= 1U << EngineConstants.GliderBitIndex;
-                currentGadgetData.State &= ~(1U << EngineConstants.FloaterBitIndex); // Deliberately knock out the floater
-                break;
-
-            case "NEUTRAL":
-                currentGadgetData.State |= 1U << EngineConstants.NeutralBitIndex;
-                break;
-
-            case "SLIDER":
-                currentGadgetData.State |= 1U << EngineConstants.SliderBitIndex;
-                break;
-
-            case "SWIMMER":
-                currentGadgetData.State |= 1U << EngineConstants.SwimmerBitIndex;
-                break;
-
-            case "ZOMBIE":
-                currentGadgetData.State |= 1U << EngineConstants.ZombieBitIndex;
-                break;
-
-            #endregion
-
-            case "$END":
-                AllGadgetData.Add(_currentGadgetData!);
-                _currentGadgetData = null;
-                FinishedReading = true;
-                break;
-
-            default:
-                NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
-                break;
+            SetCurrentStyle(rest);
         }
+        else
+        {
+            var currentStyleSpan = _currentStyle.AsSpan();
+            if (!currentStyleSpan.SequenceEqual(rest))
+            {
+                SetCurrentStyle(rest);
+            }
+        }
+    }
 
-        return false;
+    private void SetPiece(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(line.TrimAfterIndex(secondTokenIndex));
+        _currentGadgetData!.GadgetArchetypeId = gadgetArchetypeData.GadgetArchetypeId;
+    }
+
+    private void SetX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.X = int.Parse(secondToken);
+    }
+
+    private void SetY(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.Y = int.Parse(secondToken);
+    }
+
+    private void SetWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.Width = int.Parse(secondToken);
+    }
+
+    private void SetHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.Height = int.Parse(secondToken);
+    }
+
+    private void SetSpeed(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.Speed = int.Parse(secondToken);
+    }
+
+    private void SetAngle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.Angle = int.Parse(secondToken);
+    }
+
+    private void SetNoOverwrite(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.NoOverwrite = true;
+    }
+
+    private void SetOnlyOnTerrain(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.OnlyOnTerrain = true;
+    }
+
+    private void SetOneWay(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+    }
+
+    private void SetFlipVertical(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.FlipVertical = true;
+    }
+
+    private void SetFlipHorizontal(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.FlipHorizontal = true;
+    }
+
+    private void SetRotate(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.Rotate = true;
+    }
+
+    private void SetSkill(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        if (!NxlvReadingHelpers.TryGetSkillByName(secondToken, this, out var skill))
+            throw new Exception($"Unknown token: {secondToken}");
+
+        _currentGadgetData!.Skill = skill;
+    }
+
+    private void SetSkillCount(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        var amount = secondToken is "INFINITE"
+            ? EngineConstants.InfiniteSkillCount
+            : int.Parse(secondToken);
+
+        _currentGadgetData!.SkillCount = amount;
+    }
+
+    private void SetLemmingCount(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.LemmingCount = int.Parse(secondToken);
+    }
+
+    private void SetClimber(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.State |= 1U << EngineConstants.ClimberBitIndex;
+    }
+
+    private void SetDisarmer(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.State |= 1U << EngineConstants.DisarmerBitIndex;
+    }
+
+    private void SetFloater(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.State |= 1U << EngineConstants.FloaterBitIndex;
+        _currentGadgetData.State &= ~(1U << EngineConstants.GliderBitIndex); // Deliberately knock out the glider
+    }
+
+    private void SetGlider(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.State |= 1U << EngineConstants.GliderBitIndex;
+        _currentGadgetData.State &= ~(1U << EngineConstants.FloaterBitIndex); // Deliberately knock out the floater
+    }
+
+    private void SetNeutral(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.State |= 1U << EngineConstants.NeutralBitIndex;
+    }
+
+    private void SetSlider(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.State |= 1U << EngineConstants.SliderBitIndex;
+    }
+
+    private void SetSwimmer(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.State |= 1U << EngineConstants.SwimmerBitIndex;
+    }
+
+    private void SetZombie(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentGadgetData!.State |= 1U << EngineConstants.ZombieBitIndex;
+    }
+
+    private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        AllGadgetData.Add(_currentGadgetData!);
+        _currentGadgetData = null;
+        FinishedReading = true;
     }
 
     private void SetCurrentStyle(ReadOnlySpan<char> style)
@@ -238,7 +264,7 @@ public sealed class GadgetReader : INeoLemmixDataReader
 
     private void ProcessGadgetArchetypeData(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
     {
-        var dataReaders = new INeoLemmixDataReader[]
+        var dataReaders = new NeoLemmixDataReader[]
         {
             new GadgetArchetypeDataReader(gadgetArchetypeData),
             new PrimaryAnimationReader(gadgetArchetypeData),

@@ -4,15 +4,15 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 public sealed class DataReaderList : IDisposable
 {
-    private readonly INeoLemmixDataReader[] _dataReaders;
+    private readonly NeoLemmixDataReader[] _dataReaders;
     private readonly FileStream _fileStream;
     private readonly StreamReader _streamReader;
 
-    private INeoLemmixDataReader? _currentDataReader;
+    private NeoLemmixDataReader? _currentDataReader;
 
     public DataReaderList(
         string filePath,
-        INeoLemmixDataReader[] dataReaders)
+        NeoLemmixDataReader[] dataReaders)
     {
         _dataReaders = dataReaders;
 
@@ -64,12 +64,12 @@ public sealed class DataReaderList : IDisposable
         _currentDataReader.BeginReading(line);
     }
 
-    private INeoLemmixDataReader? TryGetWithSpan(ReadOnlySpan<char> token)
+    private NeoLemmixDataReader? TryGetWithSpan(ReadOnlySpan<char> token)
     {
-        foreach (var item in _dataReaders)
+        foreach (var reader in _dataReaders)
         {
-            if (item.MatchesToken(token))
-                return item;
+            if (reader.ShouldProcessSection(token))
+                return reader;
         }
 
         return null;

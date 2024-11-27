@@ -1,39 +1,33 @@
 ﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
-public sealed class NeoLemmixTextReader : INeoLemmixDataReader
+public sealed class NeoLemmixTextReader : NeoLemmixDataReader
 {
     private readonly List<string> _lines;
 
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken { get; }
-
-    public NeoLemmixTextReader(List<string> lines, string identifierToken)
+    public NeoLemmixTextReader(
+        List<string> lines,
+        string identifierToken)
+        : base(identifierToken)
     {
         _lines = lines;
-        IdentifierToken = identifierToken;
+
+        RegisterTokenAction("LINE", AddLine);
+        RegisterTokenAction("$END", OnEnd);
     }
 
-    public void BeginReading(ReadOnlySpan<char> line)
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    private void AddLine(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out _, out var secondTokenIndex);
+        var parsedLine = line.TrimAfterIndex(secondTokenIndex).ToString();
+        _lines.Add(parsedLine);
+    }
 
-        switch (firstToken)
-        {
-            case "LINE":
-                var parsedLine = line.TrimAfterIndex(secondTokenIndex).ToString();
-                _lines.Add(parsedLine);
-                break;
-
-            case "$END":
-                FinishedReading = true;
-                break;
-        }
-
-        return false;
+    private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        FinishedReading = true;
     }
 }

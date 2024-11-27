@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
-public sealed class LevelDataReader : INeoLemmixDataReader
+public sealed class LevelDataReader : NeoLemmixDataReader
 {
     private readonly LevelData _levelData;
 
@@ -15,18 +15,34 @@ public sealed class LevelDataReader : INeoLemmixDataReader
     private int _saveRequirement;
     private int? _timeLimitInSeconds;
 
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "TITLE";
     public int SaveRequirement => _saveRequirement;
     public int? TimeLimitInSeconds => _timeLimitInSeconds;
     public int NumberOfLemmings => _numberOfLemmings;
 
-    public LevelDataReader(LevelData levelData)
+    public LevelDataReader(
+        LevelData levelData)
+        : base("TITLE")
     {
         _levelData = levelData;
+
+        RegisterTokenAction("AUTHOR", SetAuthor);
+        RegisterTokenAction("ID", SetId);
+        RegisterTokenAction("VERSION", SetVersion);
+        RegisterTokenAction("START_X", SetStartX);
+        RegisterTokenAction("START_Y", SetStartY);
+        RegisterTokenAction("THEME", SetTheme);
+        RegisterTokenAction("BACKGROUND", SetBackground);
+        RegisterTokenAction("MUSIC", SetMusic);
+        RegisterTokenAction("WIDTH", SetWidth);
+        RegisterTokenAction("HEIGHT", SetHeight);
+        RegisterTokenAction("LEMMINGS", SetNumberOfLemmings);
+        RegisterTokenAction("SAVE_REQUIREMENT", SetSaveRequirement);
+        RegisterTokenAction("TIME_LIMIT", SetTimeLimit);
+        RegisterTokenAction("SPAWN_INTERVAL_LOCKED", SetLockedSpawnInterval);
+        RegisterTokenAction("MAX_SPAWN_INTERVAL", SetMaxSpawnInterval);
     }
 
-    public void BeginReading(ReadOnlySpan<char> line)
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
 
@@ -36,7 +52,7 @@ public sealed class LevelDataReader : INeoLemmixDataReader
         _levelData.LevelTitle = string.IsNullOrWhiteSpace(levelTitle) ? "Untitled" : levelTitle;
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    public override bool ReadNextLine(ReadOnlySpan<char> line)
     {
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
@@ -47,83 +63,100 @@ public sealed class LevelDataReader : INeoLemmixDataReader
             return true;
         }
 
-        switch (firstToken)
+        var alternateLookup = _tokenActions.GetAlternateLookup<ReadOnlySpan<char>>();
+
+        if (alternateLookup.TryGetValue(firstToken, out var tokenAction))
         {
-            case "AUTHOR":
-                var levelAuthor = line.TrimAfterIndex(secondTokenIndex).ToString();
-                _levelData.LevelAuthor = string.IsNullOrWhiteSpace(levelAuthor) ? "Unknown Author" : levelAuthor;
-                break;
-
-            case "ID":
-                _levelData.LevelId = NxlvReadingHelpers.ParseHex<ulong>(secondToken);
-                break;
-
-            case "VERSION":
-                _levelData.Version = NxlvReadingHelpers.ParseHex<ulong>(secondToken);
-                break;
-
-            case "START_X":
-                _levelData.LevelStartPositionX = int.Parse(secondToken);
-                break;
-
-            case "START_Y":
-                _levelData.LevelStartPositionY = int.Parse(secondToken);
-                break;
-
-            case "THEME":
-                _levelData.LevelTheme = line.TrimAfterIndex(secondTokenIndex).ToString();
-                break;
-
-            case "BACKGROUND":
-                _levelData.LevelBackground = ParseBackgroundData(line.TrimAfterIndex(secondTokenIndex));
-                break;
-
-            case "MUSIC":
-
-                break;
-
-            case "WIDTH":
-                _levelData.LevelWidth = int.Parse(secondToken);
-                break;
-
-            case "HEIGHT":
-                _levelData.LevelHeight = int.Parse(secondToken);
-                break;
-
-            case "LEMMINGS":
-                _numberOfLemmings = int.Parse(secondToken);
-                break;
-
-            case "SAVE_REQUIREMENT":
-
-                _saveRequirement = int.Parse(secondToken);
-                break;
-
-            case "TIME_LIMIT":
-                var timeLimitInSeconds = int.Parse(secondToken);
-
-                if (timeLimitInSeconds <= 0)
-                    throw new ArgumentOutOfRangeException(nameof(timeLimitInSeconds), timeLimitInSeconds, "Time limit must be positive!");
-                if (timeLimitInSeconds > EngineConstants.MaxTimeLimitInSeconds)
-                    throw new ArgumentOutOfRangeException(nameof(timeLimitInSeconds), timeLimitInSeconds, "Time limit too big!");
-
-                _timeLimitInSeconds = timeLimitInSeconds;
-                break;
-
-            case "SPAWN_INTERVAL_LOCKED":
-                _lockSpawnInterval = true;
-                break;
-
-            case "MAX_SPAWN_INTERVAL":
-                _maxSpawnInterval = int.Parse(secondToken);
-                break;
-
-            default:
-                NxlvReadingHelpers.ThrowUnknownTokenException("Level Data", firstToken, line);
-                break;
+            tokenAction(line, secondToken, secondTokenIndex);
+        }
+        else
+        {
+            NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
         }
 
         return false;
+    }
+
+    private void SetAuthor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        var levelAuthor = line.TrimAfterIndex(secondTokenIndex).ToString();
+        _levelData.LevelAuthor = string.IsNullOrWhiteSpace(levelAuthor) ? "Unknown Author" : levelAuthor;
+    }
+
+    private void SetId(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _levelData.LevelId = NxlvReadingHelpers.ParseHex<ulong>(secondToken);
+    }
+
+    private void SetVersion(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _levelData.Version = NxlvReadingHelpers.ParseHex<ulong>(secondToken);
+    }
+
+    private void SetStartX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _levelData.LevelStartPositionX = int.Parse(secondToken);
+    }
+
+    private void SetStartY(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _levelData.LevelStartPositionY = int.Parse(secondToken);
+    }
+
+    private void SetTheme(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _levelData.LevelTheme = line.TrimAfterIndex(secondTokenIndex).ToString();
+    }
+
+    private void SetBackground(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _levelData.LevelBackground = ParseBackgroundData(line.TrimAfterIndex(secondTokenIndex));
+    }
+
+    private void SetMusic(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+    }
+
+    private void SetWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _levelData.LevelWidth = int.Parse(secondToken);
+    }
+
+    private void SetHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _levelData.LevelHeight = int.Parse(secondToken);
+    }
+
+    private void SetNumberOfLemmings(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _numberOfLemmings = int.Parse(secondToken);
+    }
+
+    private void SetSaveRequirement(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _saveRequirement = int.Parse(secondToken);
+    }
+
+    private void SetTimeLimit(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        var timeLimitInSeconds = int.Parse(secondToken);
+
+        if (timeLimitInSeconds <= 0)
+            throw new ArgumentOutOfRangeException(nameof(timeLimitInSeconds), timeLimitInSeconds, "Time limit must be positive!");
+        if (timeLimitInSeconds > EngineConstants.MaxTimeLimitInSeconds)
+            throw new ArgumentOutOfRangeException(nameof(timeLimitInSeconds), timeLimitInSeconds, "Time limit too big!");
+
+        _timeLimitInSeconds = timeLimitInSeconds;
+    }
+
+    private void SetLockedSpawnInterval(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _lockSpawnInterval = true;
+    }
+
+    private void SetMaxSpawnInterval(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _maxSpawnInterval = int.Parse(secondToken);
     }
 
     private void OnFinishedReading()
@@ -143,20 +176,6 @@ public sealed class LevelDataReader : INeoLemmixDataReader
         };
 
         _levelData.AllHatchGroupData.Add(hatchGroupData);
-    }
-
-    public static bool TryReadLevelTitle(ReadOnlySpan<char> line, out string? levelTitle)
-    {
-        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out _, out var secondTokenIndex);
-
-        if (firstToken is "TITLE")
-        {
-            levelTitle = line.TrimAfterIndex(secondTokenIndex).ToString();
-            return true;
-        }
-
-        levelTitle = null;
-        return false;
     }
 
     private static BackgroundData ParseBackgroundData(ReadOnlySpan<char> backgroundToken)

@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
-public sealed class NxlvLevelReader : ILevelReader, IEqualityComparer<char>
+public sealed class NxlvLevelReader : ILevelReader
 {
     private readonly LevelData _levelData;
     private readonly Dictionary<string, TerrainArchetypeData> _terrainArchetypes;
@@ -33,12 +33,12 @@ public sealed class NxlvLevelReader : ILevelReader, IEqualityComparer<char>
         _terrainArchetypes = new Dictionary<string, TerrainArchetypeData>();
 
         _levelDataReader = new LevelDataReader(_levelData);
-        _skillSetReader = new SkillSetReader(this);
+        _skillSetReader = new SkillSetReader();
         _terrainGroupReader = new TerrainGroupReader(_terrainArchetypes);
-        _gadgetReader = new GadgetReader(this);
-        _talismanReader = new TalismanReader(this);
+        _gadgetReader = new GadgetReader();
+        _talismanReader = new TalismanReader();
 
-        var dataReaders = new INeoLemmixDataReader[]
+        var dataReaders = new NeoLemmixDataReader[]
         {
             _levelDataReader,
             _skillSetReader,
@@ -255,15 +255,5 @@ public sealed class NxlvLevelReader : ILevelReader, IEqualityComparer<char>
     {
         public int RunningCount;
         public int MaxCount;
-    }
-
-    bool IEqualityComparer<char>.Equals(char x, char y)
-    {
-        return char.ToUpperInvariant(x) == char.ToUpperInvariant(y);
-    }
-
-    int IEqualityComparer<char>.GetHashCode(char obj)
-    {
-        return char.ToUpperInvariant(obj).GetHashCode();
     }
 }

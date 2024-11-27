@@ -3,84 +3,90 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
 
-public sealed class TerrainArchetypeDataReader : INeoLemmixDataReader
+public sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 {
     private readonly TerrainArchetypeData _terrainArchetypeData;
 
-    public bool FinishedReading => false;
-    public string IdentifierToken => string.Empty;
-
-    public TerrainArchetypeDataReader(TerrainArchetypeData terrainArchetypeData)
+    public TerrainArchetypeDataReader(
+        TerrainArchetypeData terrainArchetypeData)
+        : base(string.Empty)
     {
         _terrainArchetypeData = terrainArchetypeData;
+
+        RegisterTokenAction("STEEL", SetSteel);
+        RegisterTokenAction("RESIZE_HORIZONTAL", SetResizeHorizontal);
+        RegisterTokenAction("RESIZE_VERTICAL", SetResizeVertical);
+        RegisterTokenAction("RESIZE_BOTH", SetResizeBoth);
+        RegisterTokenAction("NINE_SLICE_LEFT", SetNineSliceLeft);
+        RegisterTokenAction("NINE_SLICE_TOP", SetNineSliceTop);
+        RegisterTokenAction("NINE_SLICE_RIGHT", SetNineSliceRight);
+        RegisterTokenAction("NINE_SLICE_BOTTOM", SetNineSliceBottom);
+        RegisterTokenAction("DEFAULT_WIDTH", SetDefaultWidth);
+        RegisterTokenAction("DEFAULT_HEIGHT", SetDefaultHeight);
     }
 
-    public bool MatchesToken(ReadOnlySpan<char> token)
+    public override bool ShouldProcessSection(ReadOnlySpan<char> token)
     {
         // Always choose this reader when dealing with terrain archetype data
         return true;
     }
 
-    public void BeginReading(ReadOnlySpan<char> line)
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         ReadNextLine(line);
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    private void SetSteel(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
+        _terrainArchetypeData.IsSteel = true;
+    }
 
-        switch (firstToken)
-        {
-            case "STEEL":
-                _terrainArchetypeData.IsSteel = true;
-                break;
+    private void SetResizeHorizontal(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _terrainArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
+    }
 
-            case "RESIZE_HORIZONTAL":
-                _terrainArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
-                break;
+    private void SetResizeVertical(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _terrainArchetypeData.ResizeType |= ResizeType.ResizeVertical;
+    }
 
-            case "RESIZE_VERTICAL":
-                _terrainArchetypeData.ResizeType |= ResizeType.ResizeVertical;
-                break;
+    private void SetResizeBoth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _terrainArchetypeData.ResizeType = ResizeType.ResizeBoth;
+    }
 
-            case "RESIZE_BOTH":
-                _terrainArchetypeData.ResizeType = ResizeType.ResizeBoth;
-                break;
+    private void SetNineSliceLeft(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _terrainArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
+        _terrainArchetypeData.NineSliceLeft = int.Parse(secondToken);
+    }
 
-            case "NINE_SLICE_LEFT":
-                _terrainArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
-                _terrainArchetypeData.NineSliceLeft = int.Parse(secondToken);
-                break;
+    private void SetNineSliceTop(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _terrainArchetypeData.ResizeType |= ResizeType.ResizeVertical;
+        _terrainArchetypeData.NineSliceTop = int.Parse(secondToken);
+    }
 
-            case "NINE_SLICE_TOP":
-                _terrainArchetypeData.ResizeType |= ResizeType.ResizeVertical;
-                _terrainArchetypeData.NineSliceTop = int.Parse(secondToken);
-                break;
+    private void SetNineSliceRight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _terrainArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
+        _terrainArchetypeData.NineSliceRight = int.Parse(secondToken);
+    }
 
-            case "NINE_SLICE_RIGHT":
-                _terrainArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
-                _terrainArchetypeData.NineSliceRight = int.Parse(secondToken);
-                break;
+    private void SetNineSliceBottom(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _terrainArchetypeData.ResizeType |= ResizeType.ResizeVertical;
+        _terrainArchetypeData.NineSliceBottom = int.Parse(secondToken);
+    }
 
-            case "NINE_SLICE_BOTTOM":
-                _terrainArchetypeData.ResizeType |= ResizeType.ResizeVertical;
-                _terrainArchetypeData.NineSliceBottom = int.Parse(secondToken);
-                break;
+    private void SetDefaultWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _terrainArchetypeData.DefaultWidth = int.Parse(secondToken);
+    }
 
-            case "DEFAULT_WIDTH":
-                _terrainArchetypeData.DefaultWidth = int.Parse(secondToken);
-                break;
-
-            case "DEFAULT_HEIGHT":
-                _terrainArchetypeData.DefaultHeight = int.Parse(secondToken);
-                break;
-
-            default:
-                NxlvReadingHelpers.ThrowUnknownTokenException("Terrain Archetype Data", firstToken, line);
-                break;
-        }
-
-        return false;
+    private void SetDefaultHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _terrainArchetypeData.DefaultHeight = int.Parse(secondToken);
     }
 }

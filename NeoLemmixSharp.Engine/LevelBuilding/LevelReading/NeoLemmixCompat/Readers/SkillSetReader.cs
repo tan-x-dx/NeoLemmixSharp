@@ -4,43 +4,39 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
-public sealed class SkillSetReader : INeoLemmixDataReader
+public sealed class SkillSetReader : NeoLemmixDataReader
 {
-    private readonly IEqualityComparer<char> _charEqualityComparer;
     private readonly LemmingSkillSet _seenSkills = LemmingSkill.CreateEmptySimpleSet();
 
     public List<SkillSetData> SkillSetData { get; } = new();
 
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$SKILLSET";
-
-    public SkillSetReader(IEqualityComparer<char> charEqualityComparer)
+    public SkillSetReader()
+        : base("$SKILLSET")
     {
-        _charEqualityComparer = charEqualityComparer;
     }
 
-    public void BeginReading(ReadOnlySpan<char> line)
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    public override bool ReadNextLine(ReadOnlySpan<char> line)
     {
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
-        if (firstToken is "$END")
+        if (TokensMatch(firstToken, "$END"))
         {
             FinishedReading = true;
             return false;
         }
 
-        if (!NxlvReadingHelpers.GetSkillByName(firstToken, _charEqualityComparer, out var skill))
+        if (!NxlvReadingHelpers.TryGetSkillByName(firstToken, this, out var skill))
             throw new InvalidOperationException($"Unknown token: {firstToken}");
 
         if (!_seenSkills.Add(skill))
             throw new InvalidOperationException($"Skill recorded multiple times! {skill.LemmingSkillName}");
 
-        var amount = secondToken is "INFINITE"
+        var amount = TokensMatch(secondToken, "INFINITE")
             ? EngineConstants.InfiniteSkillCount
             : int.Parse(secondToken);
 

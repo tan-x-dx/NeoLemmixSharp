@@ -8,23 +8,25 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 
 public static class NxlvReadingHelpers
 {
+    public delegate void TokenAction(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex);
+
     public const int MaxStackallocSize = 64;
 
     /// <summary>
     /// Returns the first two tokens from the initial span, where a token is defined as being a contiguous section of non-whitespace characters.
     /// If no such tokens exists, empty spans are returned.
     /// </summary>
-    /// <param name="span">The source span</param>
+    /// <param name="line">The source span</param>
     /// <param name="firstToken">The first span of non-whitespace characters</param>
     /// <param name="secondToken">The second span of non-whitespace characters</param>
     /// <param name="secondTokenIndex">The index of the second span. If no second span exists, -1 is returned</param>
     public static void GetTokenPair(
-        ReadOnlySpan<char> span,
+        ReadOnlySpan<char> line,
         out ReadOnlySpan<char> firstToken,
         out ReadOnlySpan<char> secondToken,
         out int secondTokenIndex)
     {
-        var tokenIterator = new TokenEnumerator(span);
+        var tokenIterator = new TokenEnumerator(line);
 
         if (!tokenIterator.MoveNext())
         {
@@ -109,7 +111,7 @@ public static class NxlvReadingHelpers
         return TNumber.Parse(token[startIndex..], NumberStyles.AllowHexSpecifier, null);
     }
 
-    public static bool GetSkillByName(
+    public static bool TryGetSkillByName(
         ReadOnlySpan<char> token,
         IEqualityComparer<char> charEqualityComparer,
         [MaybeNullWhen(false)] out LemmingSkill lemmingSkill)
