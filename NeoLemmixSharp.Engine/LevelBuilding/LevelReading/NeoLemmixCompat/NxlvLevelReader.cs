@@ -5,12 +5,10 @@ using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
@@ -62,6 +60,9 @@ public sealed class NxlvLevelReader : ILevelReader
         ProcessLevelData();
         ProcessTalismans();
         ProcessTerrainData();
+
+        NxlvCountHelpers.CalculateHatchCounts(_levelData, _levelDataReader, _gadgetReader);
+
         ProcessGadgetData(graphicsDevice);
         ProcessConfigData();
 
@@ -109,114 +110,8 @@ public sealed class NxlvLevelReader : ILevelReader
     private void ProcessGadgetData(
         GraphicsDevice graphicsDevice)
     {
-        CalculateHatchCounts();
-
         new GadgetTranslator(_levelData, graphicsDevice)
             .TranslateNeoLemmixGadgets(_gadgetReader.GadgetArchetypes, _gadgetReader.AllGadgetData);
-    }
-
-    private void CalculateHatchCounts()
-    {
-        var gadgetDataSpan = CollectionsMarshal.AsSpan(_gadgetReader.AllGadgetData);
-        var hatchGadgets = new List<NeoLemmixGadgetData>();
-
-        foreach (var gadgetData in gadgetDataSpan)
-        {
-            if (GadgetDataIsHatch(_gadgetReader.GadgetArchetypes, gadgetData))
-            {
-                hatchGadgets.Add(gadgetData);
-            }
-        }
-
-        const int maxStackallocSize = 64;
-
-        var maxLemmingCountFromHatches = 0;
-        var hasInfiniteHatchCount = false;
-        var spanLength = hatchGadgets.Count;
-        Span<HatchCountData> countSpan = spanLength > maxStackallocSize
-            ? new HatchCountData[spanLength]
-            : stackalloc HatchCountData[spanLength];
-
-        var i = 0;
-        while (i < countSpan.Length)
-        {
-            var correspondingHatchGadget = hatchGadgets[i];
-            countSpan[i].RunningCount = 0;
-            countSpan[i].MaxCount = correspondingHatchGadget.LemmingCount ?? -1;
-            hasInfiniteHatchCount |= !correspondingHatchGadget.LemmingCount.HasValue;
-            maxLemmingCountFromHatches += correspondingHatchGadget.LemmingCount ?? 0;
-
-            i++;
-        }
-
-        var numberOfLemmingsFromHatches = CalculateTotalHatchLemmingCounts(
-            _levelData,
-            _levelDataReader,
-            hasInfiniteHatchCount ? null : maxLemmingCountFromHatches);
-
-        var numberOfLemmingsAssignedToHatches = 0;
-        i = 0;
-        while (numberOfLemmingsAssignedToHatches < numberOfLemmingsFromHatches)
-        {
-            ref var runningCount = ref countSpan[i].RunningCount;
-            var maxCount = countSpan[i].MaxCount;
-
-            if (maxCount == -1 || runningCount < maxCount)
-            {
-                runningCount++;
-                numberOfLemmingsAssignedToHatches++;
-            }
-
-            i++;
-            if (i == countSpan.Length)
-            {
-                i = 0;
-            }
-        }
-
-        i = 0;
-        while (i < countSpan.Length)
-        {
-            var hatchCount = countSpan[i].RunningCount;
-            var correspondingHatchGadget = hatchGadgets[i];
-            correspondingHatchGadget.LemmingCount = hatchCount;
-            i++;
-        }
-    }
-
-    private static bool GadgetDataIsHatch(
-        Dictionary<string, NeoLemmixGadgetArchetypeData> gadgetArchetypes,
-        NeoLemmixGadgetData gadgetData)
-    {
-        var gadgetArchetypeId = gadgetData.GadgetArchetypeId;
-
-        var gadgetArchetypeData = gadgetArchetypes
-            .Values
-            .First(a => a.GadgetArchetypeId == gadgetArchetypeId);
-
-        return gadgetArchetypeData.Behaviour == NeoLemmixGadgetBehaviour.Entrance;
-    }
-
-    private static int CalculateTotalHatchLemmingCounts(
-        LevelData levelData,
-        LevelDataReader levelDataReader,
-        int? maxLemmingCountFromHatches)
-    {
-        var hatchLemmingData = levelData.HatchLemmingData;
-        var hatchLemmingCount = levelDataReader.NumberOfLemmings - levelData.PrePlacedLemmingData.Count;
-
-        var totalNumberOfHatchLemmings = maxLemmingCountFromHatches.HasValue
-            ? Math.Min(hatchLemmingCount, maxLemmingCountFromHatches.Value)
-            : hatchLemmingCount;
-
-        hatchLemmingData.Capacity = totalNumberOfHatchLemmings;
-
-        while (hatchLemmingData.Count < hatchLemmingData.Capacity)
-        {
-            hatchLemmingData.Add(new LemmingData());
-        }
-
-        return totalNumberOfHatchLemmings;
     }
 
     private void ProcessConfigData()
@@ -249,11 +144,5 @@ public sealed class NxlvLevelReader : ILevelReader
     public void Dispose()
     {
         _dataReaderList.Dispose();
-    }
-
-    private struct HatchCountData
-    {
-        public int RunningCount;
-        public int MaxCount;
     }
 }
