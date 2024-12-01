@@ -11,7 +11,7 @@ public sealed class GadgetReader : NeoLemmixDataReader
     private string? _currentStyle;
     private string? _currentFolder;
 
-    public Dictionary<string, NeoLemmixGadgetArchetypeData> GadgetArchetypes { get; } = new();
+    public Dictionary<string, NeoLemmixGadgetArchetypeData> GadgetArchetypes { get; } = new(StringComparer.OrdinalIgnoreCase);
     public List<NeoLemmixGadgetData> AllGadgetData { get; } = new();
 
     public GadgetReader()

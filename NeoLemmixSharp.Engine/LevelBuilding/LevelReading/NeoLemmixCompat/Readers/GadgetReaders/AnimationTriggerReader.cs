@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 public sealed class AnimationTriggerReader : NeoLemmixDataReader
 {
     private readonly List<AnimationTriggerData> _animationTriggerData;
-    private readonly Dictionary<string, NeoLemmixGadgetStateType> _gadgetStateTypeLookup = new(OrdinalIgnoreCaseComparer)
+    private readonly Dictionary<string, NeoLemmixGadgetStateType> _gadgetStateTypeLookup = new(StringComparer.OrdinalIgnoreCase)
     {
         { "READY", NeoLemmixGadgetStateType.Idle },
         { "BUSY", NeoLemmixGadgetStateType.Active },
@@ -14,7 +14,7 @@ public sealed class AnimationTriggerReader : NeoLemmixDataReader
         { "EXHAUSTED", NeoLemmixGadgetStateType.Disabled }
     };
 
-    private readonly Dictionary<string, GadgetSecondaryAnimationAction> _gadgetSecondaryAnimationActionLookup = new(OrdinalIgnoreCaseComparer)
+    private readonly Dictionary<string, GadgetSecondaryAnimationAction> _gadgetSecondaryAnimationActionLookup = new(StringComparer.OrdinalIgnoreCase)
     {
         { "PLAY", GadgetSecondaryAnimationAction.Play },
         { "PAUSE", GadgetSecondaryAnimationAction.Pause },

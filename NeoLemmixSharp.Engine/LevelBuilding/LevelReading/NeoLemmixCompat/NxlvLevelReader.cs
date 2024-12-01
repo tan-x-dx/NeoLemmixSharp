@@ -30,7 +30,7 @@ public sealed class NxlvLevelReader : ILevelReader
     public NxlvLevelReader(string filePath)
     {
         _levelData = new LevelData();
-        _terrainArchetypes = new Dictionary<string, TerrainArchetypeData>();
+        _terrainArchetypes = new Dictionary<string, TerrainArchetypeData>(StringComparer.OrdinalIgnoreCase);
 
         _levelDataReader = new LevelDataReader(_levelData);
         _skillSetReader = new SkillSetReader();

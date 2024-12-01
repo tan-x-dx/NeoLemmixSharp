@@ -45,13 +45,13 @@ public sealed class BinaryReaderWrapper
     public int Read32BitSignedInteger() => Read<int>();
     public ulong Read64BitUnsignedInteger() => Read<ulong>();
 
-    public void ReadBytes(Span<byte> buffer)
+    public ReadOnlySpan<byte> ReadBytes(int bufferSize)
     {
-        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - BytesRead >= buffer.Length, "Reached end of file!");
+        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - BytesRead >= bufferSize, "Reached end of file!");
 
-        var sourceSpan = new ReadOnlySpan<byte>(_byteBuffer, _position, buffer.Length);
-        _position += buffer.Length;
+        var sourceSpan = new ReadOnlySpan<byte>(_byteBuffer, _position, bufferSize);
+        _position += bufferSize;
 
-        sourceSpan.CopyTo(buffer);
+        return sourceSpan;
     }
 }

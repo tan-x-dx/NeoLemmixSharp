@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
@@ -93,11 +92,9 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 
         return;
 
-        [SkipLocalsInit]
         BackgroundData ReadSolidColorBackgroundData()
         {
-            Span<byte> buffer = stackalloc byte[3];
-            reader.ReadBytes(buffer);
+            var buffer = reader.ReadBytes(3);
 
             return new BackgroundData
             {

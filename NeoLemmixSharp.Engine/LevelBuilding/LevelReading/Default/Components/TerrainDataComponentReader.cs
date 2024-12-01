@@ -101,10 +101,9 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
 
     private static Color ReadTerrainDataTintColor(BinaryReaderWrapper reader)
     {
-        Span<byte> byteBuffer = stackalloc byte[3];
-        reader.ReadBytes(byteBuffer);
+        var byteBuffer = reader.ReadBytes(3);
 
-        return new Color(byteBuffer[0], byteBuffer[1], byteBuffer[2]);
+        return new Color(r: byteBuffer[0], g: byteBuffer[1], b: byteBuffer[2], alpha: (byte)0xff);
     }
 
     private static int ReadTerrainDataDimension(BinaryReaderWrapper reader)

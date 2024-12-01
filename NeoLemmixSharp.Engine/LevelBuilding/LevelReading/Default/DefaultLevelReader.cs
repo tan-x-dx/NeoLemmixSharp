@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
@@ -74,11 +73,9 @@ public sealed class DefaultLevelReader : ILevelReader
         }
     }
 
-    [SkipLocalsInit]
     private ILevelDataReader GetNextDataReader()
     {
-        Span<byte> buffer = stackalloc byte[2];
-        _binaryReaderWrapper.ReadBytes(buffer);
+        var buffer = _binaryReaderWrapper.ReadBytes(2);
 
         foreach (var levelDataWriter in _dataReaders)
         {

@@ -2,9 +2,7 @@
 
 public abstract class NeoLemmixDataReader : IEqualityComparer<char>
 {
-    protected static readonly StringComparer OrdinalIgnoreCaseComparer = StringComparer.OrdinalIgnoreCase;
-
-    protected readonly Dictionary<string, NxlvReadingHelpers.TokenAction> _tokenActions = new(OrdinalIgnoreCaseComparer);
+    protected readonly Dictionary<string, NxlvReadingHelpers.TokenAction> _tokenActions = new(StringComparer.OrdinalIgnoreCase);
 
     public bool FinishedReading { get; protected set; }
     public string IdentifierToken { get; }

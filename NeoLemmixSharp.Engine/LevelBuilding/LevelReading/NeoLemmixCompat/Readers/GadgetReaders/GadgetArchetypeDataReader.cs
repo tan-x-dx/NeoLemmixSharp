@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 public sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
 {
     private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
-    private readonly Dictionary<string, NeoLemmixGadgetBehaviour> _gadgetBehaviourLookup = new(OrdinalIgnoreCaseComparer)
+    private readonly Dictionary<string, NeoLemmixGadgetBehaviour> _gadgetBehaviourLookup = new(StringComparer.OrdinalIgnoreCase)
     {
         { "ANTISPLATPAD", NeoLemmixGadgetBehaviour.AntiSplatPad },
         { "BACKGROUND", NeoLemmixGadgetBehaviour.Background },
