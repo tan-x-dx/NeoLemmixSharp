@@ -49,9 +49,9 @@ public static class CommonSprites
             Name = AnchorName
         };
 
-        var red = new Color((byte)200, (byte)0, (byte)0, (byte)255);
-        var yellow = new Color((byte)200, (byte)200, (byte)0, (byte)255);
-        var purple = new Color((byte)200, (byte)0, (byte)200, (byte)255);
+        var red = new Color(0xff0000c8);
+        var yellow = new Color(0xff00c8c8);
+        var purple = new Color(0xffc800c8);
 
         var x = new Color[4 * 4 * 4];
 
@@ -106,7 +106,8 @@ public static class CommonSprites
         var whiteColors = new Color[256];
         for (var i = 0; i < whiteColors.Length; i++)
         {
-            whiteColors[i] = new Color((byte)0xff, (byte)0xff, (byte)0xff, (byte)i);
+            var packedValue = (uint)((i << 24) | 0xffffff);
+            whiteColors[i] = new Color(packedValue);
         }
 
         whitePixelTexture.SetData(whiteColors);
