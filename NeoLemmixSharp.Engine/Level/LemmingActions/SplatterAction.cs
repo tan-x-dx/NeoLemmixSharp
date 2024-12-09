@@ -18,7 +18,7 @@ public sealed class SplatterAction : LemmingAction
     {
     }
 
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (lemming.EndOfAnimation)
         {

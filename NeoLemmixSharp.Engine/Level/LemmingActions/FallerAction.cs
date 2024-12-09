@@ -1,9 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -23,31 +21,23 @@ public sealed class FallerAction : LemmingAction
     {
     }
 
-    [SkipLocalsInit]
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var currentFallDistanceStep = 0;
 
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
-        var updraftFallDelta = GetUpdraftFallDelta(lemming);
+        var updraftFallDelta = GetUpdraftFallDelta(lemming, in gadgetsNearLemming);
         var maxFallDistanceStep = EngineConstants.DefaultFallStep + updraftFallDelta.Y;
 
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
             return true;
 
-        var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelRegion(
-            lemmingPosition,
-            orientation.MoveDown(lemmingPosition, EngineConstants.DefaultFallStep + 1));
-        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
-
         ref var distanceFallen = ref lemming.DistanceFallen;
 
         while (currentFallDistanceStep < maxFallDistanceStep &&
-               !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+               !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
         {
             if (currentFallDistanceStep > 0 &&
                 CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
@@ -59,7 +49,7 @@ public sealed class FallerAction : LemmingAction
             distanceFallen++;
             lemming.TrueDistanceFallen++;
 
-            updraftFallDelta = GetUpdraftFallDelta(lemming);
+            updraftFallDelta = GetUpdraftFallDelta(lemming, in gadgetsNearLemming);
 
             if (updraftFallDelta.Y < 0)
             {
@@ -78,7 +68,7 @@ public sealed class FallerAction : LemmingAction
             return true;
 
         LemmingAction nextAction = IsFallFatal(
-            in gadgetsNearRegion,
+            in gadgetsNearLemming,
             lemming)
             ? SplatterAction.Instance
             : WalkerAction.Instance;

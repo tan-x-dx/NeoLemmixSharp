@@ -21,7 +21,7 @@ public sealed class NoneAction : LemmingAction
     {
     }
 
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         return false;
     }

@@ -23,7 +23,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
     {
     }
 
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         TerrainMasks.ApplyBomberMask(lemming);
         //    LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExplode);

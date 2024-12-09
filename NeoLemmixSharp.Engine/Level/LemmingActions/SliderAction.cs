@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -25,48 +24,41 @@ public sealed class SliderAction : LemmingAction
     {
     }
 
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-        if (!SliderTerrainChecks(lemming, orientation, MaxYCheckOffset) &&
+        if (!SliderTerrainChecks(lemming, orientation, MaxYCheckOffset, in gadgetsNearLemming) &&
             lemming.CurrentAction == DrownerAction.Instance)
             return false;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-        return SliderTerrainChecks(lemming, orientation, MaxYCheckOffset) ||
+        return SliderTerrainChecks(lemming, orientation, MaxYCheckOffset, in gadgetsNearLemming) ||
                lemming.CurrentAction != DrownerAction.Instance;
     }
 
-    [SkipLocalsInit]
     public static bool SliderTerrainChecks(
         Lemming lemming,
         Orientation orientation,
-        int maxYOffset)
+        int maxYOffset,
+        in GadgetEnumerable gadgetsNearLemming)
     {
         ref var lemmingPosition = ref lemming.LevelPosition;
         var lemmingDehoistPosition = lemming.DehoistPin;
         var dx = lemming.FacingDirection.DeltaX;
 
-        var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelRegion(
-            orientation.Move(lemmingPosition, -dx, -1),
-            orientation.Move(lemmingPosition, dx, EngineConstants.MaxStepUp + 1));
-        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
-
-        var hasPixelAtLemmingPosition = SliderHasPixelAt(in gadgetsNearRegion, lemmingPosition);
+        var hasPixelAtLemmingPosition = SliderHasPixelAt(in gadgetsNearLemming, lemmingPosition);
 
         if (hasPixelAtLemmingPosition &&
-            !SliderHasPixelAt(in gadgetsNearRegion, orientation.MoveUp(lemmingPosition, 1)))
+            !SliderHasPixelAt(in gadgetsNearLemming, orientation.MoveUp(lemmingPosition, 1)))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             return false;
         }
 
-        if (!SliderHasPixelAt(in gadgetsNearRegion, orientation.MoveUp(lemmingPosition, Math.Min(maxYOffset, MaxYCheckOffset))))
+        if (!SliderHasPixelAt(in gadgetsNearLemming, orientation.MoveUp(lemmingPosition, Math.Min(maxYOffset, MaxYCheckOffset))))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return false;
@@ -75,7 +67,7 @@ public sealed class SliderAction : LemmingAction
         if (!hasPixelAtLemmingPosition)
             return true;
 
-        foreach (var gadget in gadgetsNearRegion)
+        foreach (var gadget in gadgetsNearLemming)
         {
             if (gadget.GadgetBehaviour != WaterGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
                 continue;
@@ -97,7 +89,7 @@ public sealed class SliderAction : LemmingAction
         }
 
         var leftPos = orientation.MoveLeft(lemmingPosition, dx);
-        if (!SliderHasPixelAt(in gadgetsNearRegion, leftPos))
+        if (!SliderHasPixelAt(in gadgetsNearLemming, leftPos))
             return true;
 
         lemmingPosition = leftPos;
@@ -105,13 +97,13 @@ public sealed class SliderAction : LemmingAction
         return false;
 
         bool SliderHasPixelAt(
-            in GadgetEnumerable gadgetsNearRegion1,
+            in GadgetEnumerable gadgetsNearLemming1,
             LevelPosition testPosition)
         {
-            return PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, testPosition) ||
+            return PositionIsSolidToLemming(in gadgetsNearLemming1, lemming, testPosition) ||
                    (orientation.MatchesHorizontally(testPosition, lemming.LevelPosition) &&
                     orientation.MatchesVertically(testPosition, lemmingDehoistPosition) &&
-                    PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveDown(testPosition, 1)));
+                    PositionIsSolidToLemming(in gadgetsNearLemming1, lemming, orientation.MoveDown(testPosition, 1)));
         }
     }
 

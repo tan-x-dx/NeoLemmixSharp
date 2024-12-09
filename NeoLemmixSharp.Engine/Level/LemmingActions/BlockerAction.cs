@@ -6,7 +6,6 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -26,14 +25,9 @@ public sealed class BlockerAction : LemmingAction
     {
     }
 
-    [SkipLocalsInit]
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan, lemming.LevelPosition, out var gadgetsNearRegion);
-
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.LevelPosition))
+        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.LevelPosition))
             return true;
 
         LevelScreen.LemmingManager.DeregisterBlocker(lemming);

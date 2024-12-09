@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -26,26 +25,18 @@ public sealed class ReacherAction : LemmingAction
     {
     }
 
-    [SkipLocalsInit]
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
-        var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelRegion(
-            lemmingPosition,
-            orientation.MoveUp(lemmingPosition, 14));
-        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
-
-        var emptyPixels = GetEmptyPixelCount(in gadgetsNearRegion, lemming, lemmingPosition);
+        var emptyPixels = GetEmptyPixelCount(in gadgetsNearLemming, lemming, lemmingPosition);
 
         // Check for terrain in the body to trigger falling down
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 5)) ||
-            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 6)) ||
-            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 7)) ||
-            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 8)))
+        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 5)) ||
+            PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 6)) ||
+            PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 7)) ||
+            PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 8)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -54,7 +45,7 @@ public sealed class ReacherAction : LemmingAction
 
         // On the first frame, check as well for height 9, as the shimmier may not continue in that case
         if (lemming.PhysicsFrame == 1 &&
-            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 9)))
+            PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 9)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -86,25 +77,25 @@ public sealed class ReacherAction : LemmingAction
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     private static int GetEmptyPixelCount(
-        in GadgetEnumerable gadgetsNearRegion,
+        in GadgetEnumerable gadgetsNearLemming,
         Lemming lemming,
         LevelPosition lemmingPosition)
     {
         var orientation = lemming.Orientation;
         lemmingPosition = orientation.MoveUp(lemmingPosition, 10);
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             return 0;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             return 1;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             return 2;
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             return 3;
 
         return 4;

@@ -21,22 +21,14 @@ public sealed class DehoisterAction : LemmingAction
     {
     }
 
-    [SkipLocalsInit]
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
-        var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        gadgetManager.GetAllGadgetsForPosition(
-            scratchSpaceSpan,
-            orientation.MoveUp(lemmingPosition, 7),
-            out var gadgetsNearRegion);
-
         if (lemming.EndOfAnimation)
         {
-            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(lemmingPosition, 7)))
+            if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 7)))
             {
                 SliderAction.Instance.TransitionLemmingToAction(lemming, false);
                 return true;
@@ -53,13 +45,13 @@ public sealed class DehoisterAction : LemmingAction
 
         var animFrameValue = lemming.PhysicsFrame * 2;
 
-        if (!SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 3) &&
+        if (!SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 3, in gadgetsNearLemming) &&
             lemming.CurrentAction == DrownerAction.Instance)
             return false;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
 
-        return SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 2) ||
+        return SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 2, in gadgetsNearLemming) ||
                lemming.CurrentAction != DrownerAction.Instance;
     }
 
@@ -76,10 +68,10 @@ public sealed class DehoisterAction : LemmingAction
         base.TransitionLemmingToAction(lemming, turnAround);
     }
 
-    [SkipLocalsInit]
     public static bool LemmingCanDehoist(
         Lemming lemming,
-        bool alreadyMoved)
+        bool alreadyMoved,
+        in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
@@ -96,24 +88,16 @@ public sealed class DehoisterAction : LemmingAction
             nextPosition = orientation.MoveRight(currentPosition, dx);
         }
 
-        var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
-
-        var gadgetTestRegion = new LevelRegion(
-            orientation.Move(nextPosition, dx, 1),
-            orientation.Move(nextPosition, -dx, -4));
-        gadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);
-
         if (LevelScreen.PositionOutOfBounds(nextPosition) ||
-            !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, currentPosition) ||
-            PositionIsSolidToLemming(in gadgetsNearRegion, lemming, nextPosition))
+            !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, currentPosition) ||
+            PositionIsSolidToLemming(in gadgetsNearLemming, lemming, nextPosition))
             return false;
 
         for (var i = 1; i < 4; i++)
         {
-            if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveDown(nextPosition, i)))
+            if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveDown(nextPosition, i)))
                 return false;
-            if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveDown(currentPosition, i)))
+            if (!PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveDown(currentPosition, i)))
                 return true;
         }
 

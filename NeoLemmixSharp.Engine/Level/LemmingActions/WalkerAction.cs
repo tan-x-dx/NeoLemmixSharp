@@ -20,18 +20,18 @@ public sealed class WalkerAction : LemmingAction
     {
     }
 
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
-        var dy = FindGroundPixel(lemming, lemmingPosition);
+        var dy = FindGroundPixel(lemming, lemmingPosition, in gadgetsNearLemming);
 
         if (dy < 0 &&
             lemming.State.IsSlider &&
-            DehoisterAction.LemmingCanDehoist(lemming, true))
+            DehoisterAction.LemmingCanDehoist(lemming, true, in gadgetsNearLemming))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -61,7 +61,7 @@ public sealed class WalkerAction : LemmingAction
         }
 
         // Get new ground pixel again in case the Lem has turned
-        dy = FindGroundPixel(lemming, lemmingPosition);
+        dy = FindGroundPixel(lemming, lemmingPosition, in gadgetsNearLemming);
 
         if (dy < -3)
         {
