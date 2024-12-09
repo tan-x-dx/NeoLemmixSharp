@@ -70,8 +70,8 @@ public static class EngineConstants
     public const int MaxFallDistance = 62;
 
     public const int DefaultCountDownTimer = 5;
-    public const int DefaultCountDownActionTicks = DefaultCountDownTimer * EngineConstants.StandardTicksPerSecond;
-    public const int DefaultFastForwardLemmingCountDownActionTicks = EngineConstants.FastForwardSpeedMultiplier * DefaultCountDownActionTicks;
+    public const int DefaultCountDownActionTicks = DefaultCountDownTimer * StandardTicksPerSecond;
+    public const int DefaultFastForwardLemmingCountDownActionTicks = FastForwardSpeedMultiplier * DefaultCountDownActionTicks;
 
     public const int ParticleFrameCount = 51;
     public const int NumberOfParticles = 80;
@@ -101,9 +101,9 @@ public static class EngineConstants
     #region Replay Snapshot Constants
 
     private const int NumberOfSecondsBetweenSnapshots = 2;
-    public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * EngineConstants.TicksPerSecond;
+    public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * TicksPerSecond;
     private const int InitialNumberOfSecondsOfSnapshotData = 4 * 60;
-    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfSecondsOfSnapshotData * EngineConstants.TicksPerSecond;
+    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfSecondsOfSnapshotData * TicksPerSecond;
 
     #endregion
 
@@ -129,6 +129,7 @@ public static class EngineConstants
 
     public static Color ClassicLevelBackgroundColor => new(0xff3c1818);
 
+    public const int CursorRadius = 6;
     public static Color CursorColor1 => new(0xffb0b0b0);
     public static Color CursorColor2 => new(0xff0000b0);
     public static Color CursorColor3 => new(0xff606060);
