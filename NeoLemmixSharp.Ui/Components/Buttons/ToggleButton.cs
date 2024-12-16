@@ -3,7 +3,7 @@ using NeoLemmixSharp.Ui.Events;
 
 namespace NeoLemmixSharp.Ui.Components.Buttons;
 
-public sealed class ToggleButton : Button
+public sealed class ToggleButton : Component
 {
     private string? _alternateLabel;
     private bool _isActive = false;
@@ -22,18 +22,26 @@ public sealed class ToggleButton : Button
         }
     }
 
-    public ToggleButton(int x, int y, string? label) : base(x, y, label)
+    public ToggleButton(int x, int y, string? label)
+        : base(x, y, label)
     {
         _alternateLabel = label;
 
         MouseDown.RegisterMouseEvent(OnMouseDown);
+        MouseEnter.RegisterMouseEvent(SetMouseOver);
+        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
-    public ToggleButton(int x, int y, int width, int height, string? label) : base(x, y, width, height, label)
+    public ToggleButton(int x, int y, int width, int height, string? label)
+        : base(x, y, width, height, label)
     {
         _alternateLabel = label;
 
         MouseDown.RegisterMouseEvent(OnMouseDown);
+        MouseEnter.RegisterMouseEvent(SetMouseOver);
+        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
     public void SetAlternateLabel(string message) => _alternateLabel = message;
@@ -54,8 +62,9 @@ public sealed class ToggleButton : Button
         }
     }
 
-    private void OnMouseDown(Component _, LevelPosition mousePosition)
+    private void OnMouseDown(Component c, LevelPosition mousePosition)
     {
         IsActive = !IsActive;
+        SetMousePress(c, mousePosition);
     }
 }

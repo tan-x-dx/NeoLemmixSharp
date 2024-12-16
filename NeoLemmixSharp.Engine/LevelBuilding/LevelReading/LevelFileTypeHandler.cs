@@ -18,9 +18,11 @@ public static class LevelFileTypeHandler
         return alternateLookup.ContainsKey(fileExtension);
     }
 
-    public static ILevelReader GetLevelReaderForFileExtension(
-        ReadOnlySpan<char> fileExtension)
+    public static ILevelReader GetLevelReaderForFile(
+        string filePath)
     {
+        var fileExtension = Path.GetExtension(filePath.AsSpan());
+
         if (fileExtension.IsEmpty)
             throw new ArgumentException("No file extension specified!");
 
@@ -28,7 +30,7 @@ public static class LevelFileTypeHandler
 
         if (alternateLookup.TryGetValue(fileExtension, out var levelReaderType))
         {
-            var levelReader = Activator.CreateInstance(levelReaderType)!;
+            var levelReader = Activator.CreateInstance(levelReaderType, filePath)!;
             return (ILevelReader)levelReader;
         }
 

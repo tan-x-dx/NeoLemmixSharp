@@ -2,23 +2,27 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
-public sealed class DataReaderList
+public sealed class DataReaderList : IDisposable
 {
-    private readonly INeoLemmixDataReader[] _dataReaders;
+    private readonly NeoLemmixDataReader[] _dataReaders;
+    private readonly FileStream _fileStream;
+    private readonly StreamReader _streamReader;
 
-    private INeoLemmixDataReader? _currentDataReader;
+    private NeoLemmixDataReader? _currentDataReader;
 
-    public DataReaderList(INeoLemmixDataReader[] dataReaders)
+    public DataReaderList(
+        string filePath,
+        NeoLemmixDataReader[] dataReaders)
     {
         _dataReaders = dataReaders;
+
+        _fileStream = new FileStream(filePath, FileMode.Open);
+        _streamReader = new StreamReader(_fileStream);
     }
 
-    public void ReadFile(string filePath)
+    public void ReadFile()
     {
-        using var stream = new FileStream(filePath, FileMode.Open);
-        using var streamReader = new StreamReader(stream);
-
-        while (streamReader.ReadLine() is { } line)
+        while (_streamReader.ReadLine() is { } line)
         {
             if (NxlvReadingHelpers.LineIsBlankOrComment(line))
                 continue;
@@ -60,14 +64,20 @@ public sealed class DataReaderList
         _currentDataReader.BeginReading(line);
     }
 
-    private INeoLemmixDataReader? TryGetWithSpan(ReadOnlySpan<char> token)
+    private NeoLemmixDataReader? TryGetWithSpan(ReadOnlySpan<char> token)
     {
-        foreach (var item in _dataReaders)
+        foreach (var reader in _dataReaders)
         {
-            if (item.MatchesToken(token))
-                return item;
+            if (reader.ShouldProcessSection(token))
+                return reader;
         }
 
         return null;
+    }
+
+    public void Dispose()
+    {
+        _streamReader.Dispose();
+        _fileStream.Dispose();
     }
 }

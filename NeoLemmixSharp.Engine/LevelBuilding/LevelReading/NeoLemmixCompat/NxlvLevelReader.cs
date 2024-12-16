@@ -5,251 +5,118 @@ using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 public sealed class NxlvLevelReader : ILevelReader
 {
-    public LevelData ReadLevel(string levelFilePath, GraphicsDevice graphicsDevice)
+    private readonly LevelData _levelData;
+    private readonly Dictionary<string, TerrainArchetypeData> _terrainArchetypes;
+
+    private readonly LevelDataReader _levelDataReader;
+    private readonly SkillSetReader _skillSetReader;
+    private readonly TerrainGroupReader _terrainGroupReader;
+    private readonly GadgetReader _gadgetReader;
+    private readonly TalismanReader _talismanReader;
+
+    private readonly DataReaderList _dataReaderList;
+
+    public NxlvLevelReader(string filePath)
     {
-        var levelData = new LevelData();
+        _levelData = new LevelData();
+        _terrainArchetypes = new Dictionary<string, TerrainArchetypeData>(StringComparer.OrdinalIgnoreCase);
 
-        var charEqualityComparer = new CaseInvariantCharEqualityComparer();
+        _levelDataReader = new LevelDataReader(_levelData);
+        _skillSetReader = new SkillSetReader();
+        _terrainGroupReader = new TerrainGroupReader(_terrainArchetypes);
+        _gadgetReader = new GadgetReader();
+        _talismanReader = new TalismanReader();
 
-        var terrainArchetypes = new Dictionary<string, TerrainArchetypeData>();
-
-        var levelDataReader = new LevelDataReader(levelData);
-        var skillSetReader = new SkillSetReader(charEqualityComparer);
-        var terrainGroupReader = new TerrainGroupReader(terrainArchetypes);
-        var gadgetReader = new GadgetReader(charEqualityComparer);
-        var talismanReader = new TalismanReader(charEqualityComparer);
-
-        var dataReaders = new INeoLemmixDataReader[]
+        var dataReaders = new NeoLemmixDataReader[]
         {
-            levelDataReader,
-            skillSetReader,
-            terrainGroupReader,
-            new TerrainReader(terrainArchetypes, levelData.AllTerrainData),
-            new LemmingReader(levelData.PrePlacedLemmingData),
-            gadgetReader,
-            talismanReader,
-            new NeoLemmixTextReader(levelData.PreTextLines, "$PRETEXT"),
-            new NeoLemmixTextReader(levelData.PostTextLines, "$POSTTEXT"),
-            new SketchReader(levelData.AllSketchData),
+            _levelDataReader,
+            _skillSetReader,
+            _terrainGroupReader,
+            new TerrainReader(_terrainArchetypes, _levelData.AllTerrainData),
+            new LemmingReader(_levelData.PrePlacedLemmingData),
+            _gadgetReader,
+            _talismanReader,
+            new NeoLemmixTextReader(_levelData.PreTextLines, "$PRETEXT"),
+            new NeoLemmixTextReader(_levelData.PostTextLines, "$POSTTEXT"),
+            new SketchReader(_levelData.AllSketchData),
         };
 
-        var dataReaderList = new DataReaderList(dataReaders);
-
-        dataReaderList.ReadFile(levelFilePath);
-
-        ProcessLevelData(levelData, levelDataReader, talismanReader, skillSetReader);
-        ProcessTerrainData(levelData, terrainGroupReader, terrainArchetypes);
-        ProcessGadgetData(levelData, graphicsDevice, levelDataReader, gadgetReader);
-        ProcessConfigData(levelData);
-
-        levelData.MaxNumberOfClonedLemmings = LevelReadingHelpers.CalculateMaxNumberOfClonedLemmings(levelData);
-
-        return levelData;
+        _dataReaderList = new DataReaderList(filePath, dataReaders);
     }
 
-    public string ScrapeLevelTitle(string levelFilePath)
+    public LevelData ReadLevel(GraphicsDevice graphicsDevice)
     {
-        using var stream = new FileStream(levelFilePath, FileMode.Open);
-        using var streamReader = new StreamReader(stream);
+        _dataReaderList.ReadFile();
 
-        string? levelTitle = null;
+        ProcessLevelData();
+        ProcessTalismans();
+        ProcessTerrainData();
 
-        while (streamReader.ReadLine() is { } line)
-        {
-            if (NxlvReadingHelpers.LineIsBlankOrComment(line))
-                continue;
+        NxlvCountHelpers.CalculateHatchCounts(_levelData, _levelDataReader, _gadgetReader);
 
-            if (LevelDataReader.TryReadLevelTitle(line, out levelTitle))
-            {
-                break;
-            }
-        }
+        ProcessGadgetData(graphicsDevice);
+        ProcessConfigData();
 
-        return string.IsNullOrWhiteSpace(levelTitle)
-            ? "Untitled"
-            : levelTitle;
+        _levelData.MaxNumberOfClonedLemmings = LevelReadingHelpers.CalculateMaxNumberOfClonedLemmings(_levelData);
+
+        return _levelData;
     }
 
-    private static void ProcessLevelData(
-        LevelData levelData,
-        LevelDataReader levelDataReader,
-        TalismanReader talismanReader,
-        SkillSetReader skillSetReader)
+    private void ProcessLevelData()
     {
         var objectiveRequirementsList = new List<IObjectiveRequirement>
         {
-            new BasicSkillSetRequirement(skillSetReader.SkillSetData.ToArray()),
-            new SaveRequirement(levelDataReader.SaveRequirement)
+            new BasicSkillSetRequirement(_skillSetReader.SkillSetData.ToArray()),
+            new SaveRequirement(_levelDataReader.SaveRequirement)
         };
 
-        if (levelDataReader.TimeLimitInSeconds.HasValue)
+        if (_levelDataReader.TimeLimitInSeconds.HasValue)
         {
-            objectiveRequirementsList.Add(new TimeRequirement(levelDataReader.TimeLimitInSeconds.Value));
+            objectiveRequirementsList.Add(new TimeRequirement(_levelDataReader.TimeLimitInSeconds.Value));
         }
 
-        levelData.LevelObjectives.Capacity = 1 + talismanReader.TalismanData.Count;
-        levelData.LevelObjectives.Add(new LevelObjective(
+        _levelData.LevelObjectives.Capacity = 1 + _talismanReader.TalismanData.Count;
+        _levelData.LevelObjectives.Add(new LevelObjective(
             0,
             "Save Lemmings",
             objectiveRequirementsList.ToArray()));
-
-        ProcessTalismans(levelData, talismanReader);
     }
 
-    private static void ProcessTalismans(
-        LevelData levelData,
-        TalismanReader talismanReader)
+    private void ProcessTalismans()
     {
-        foreach (var talismanDatum in talismanReader.TalismanData)
+        foreach (var talismanDatum in _talismanReader.TalismanData)
         {
-            levelData.LevelObjectives.Add(talismanDatum.ToLevelObjective(levelData));
+            _levelData.LevelObjectives.Add(talismanDatum.ToLevelObjective(_levelData));
         }
     }
 
-    private static void ProcessTerrainData(
-        LevelData levelData,
-        TerrainGroupReader terrainGroupReader,
-        Dictionary<string, TerrainArchetypeData> terrainArchetypes)
+    private void ProcessTerrainData()
     {
-        levelData.TerrainArchetypeData.Capacity = terrainArchetypes.Count;
-        levelData.TerrainArchetypeData.AddRange(terrainArchetypes.Values.OrderBy(d => d.TerrainArchetypeId));
+        _levelData.TerrainArchetypeData.Capacity = _terrainArchetypes.Count;
+        _levelData.TerrainArchetypeData.AddRange(_terrainArchetypes.Values.OrderBy(d => d.TerrainArchetypeId));
 
-        levelData.AllTerrainGroups.AddRange(terrainGroupReader.AllTerrainGroups);
+        _levelData.AllTerrainGroups.AddRange(_terrainGroupReader.AllTerrainGroups);
     }
 
-    private static void ProcessGadgetData(
-        LevelData levelData,
-        GraphicsDevice graphicsDevice,
-        LevelDataReader levelDataReader,
-        GadgetReader gadgetReader)
+    private void ProcessGadgetData(
+        GraphicsDevice graphicsDevice)
     {
-        CalculateHatchCounts(levelData, levelDataReader, gadgetReader);
-
-        new GadgetTranslator(levelData, graphicsDevice)
-            .TranslateNeoLemmixGadgets(gadgetReader.GadgetArchetypes, gadgetReader.AllGadgetData);
+        new GadgetTranslator(_levelData, graphicsDevice)
+            .TranslateNeoLemmixGadgets(_gadgetReader.GadgetArchetypes, _gadgetReader.AllGadgetData);
     }
 
-    private static void CalculateHatchCounts(
-        LevelData levelData,
-        LevelDataReader levelDataReader,
-        GadgetReader gadgetReader)
+    private void ProcessConfigData()
     {
-        var gadgetDataSpan = CollectionsMarshal.AsSpan(gadgetReader.AllGadgetData);
-        var hatchGadgets = new List<NeoLemmixGadgetData>();
-
-        foreach (var gadgetData in gadgetDataSpan)
-        {
-            if (GadgetDataIsHatch(gadgetReader.GadgetArchetypes, gadgetData))
-            {
-                hatchGadgets.Add(gadgetData);
-            }
-        }
-
-        const int maxStackallocSize = 64;
-
-        var maxLemmingCountFromHatches = 0;
-        var hasInfiniteHatchCount = false;
-        var spanLength = hatchGadgets.Count;
-        Span<HatchCountData> countSpan = spanLength > maxStackallocSize
-            ? new HatchCountData[spanLength]
-            : stackalloc HatchCountData[spanLength];
-
-        var i = 0;
-        while (i < countSpan.Length)
-        {
-            var correspondingHatchGadget = hatchGadgets[i];
-            countSpan[i].RunningCount = 0;
-            countSpan[i].MaxCount = correspondingHatchGadget.LemmingCount ?? -1;
-            hasInfiniteHatchCount |= !correspondingHatchGadget.LemmingCount.HasValue;
-            maxLemmingCountFromHatches += correspondingHatchGadget.LemmingCount ?? 0;
-
-            i++;
-        }
-
-        var numberOfLemmingsFromHatches = CalculateTotalHatchLemmingCounts(
-            levelData,
-            levelDataReader,
-            hasInfiniteHatchCount ? null : maxLemmingCountFromHatches);
-
-        var numberOfLemmingsAssignedToHatches = 0;
-        i = 0;
-        while (numberOfLemmingsAssignedToHatches < numberOfLemmingsFromHatches)
-        {
-            ref var runningCount = ref countSpan[i].RunningCount;
-            var maxCount = countSpan[i].MaxCount;
-
-            if (maxCount == -1 || runningCount < maxCount)
-            {
-                runningCount++;
-                numberOfLemmingsAssignedToHatches++;
-            }
-
-            i++;
-            if (i == countSpan.Length)
-            {
-                i = 0;
-            }
-        }
-
-        i = 0;
-        while (i < countSpan.Length)
-        {
-            var hatchCount = countSpan[i].RunningCount;
-            var correspondingHatchGadget = hatchGadgets[i];
-            correspondingHatchGadget.LemmingCount = hatchCount;
-            i++;
-        }
-    }
-
-    private static bool GadgetDataIsHatch(
-        Dictionary<string, NeoLemmixGadgetArchetypeData> gadgetArchetypes,
-        NeoLemmixGadgetData gadgetData)
-    {
-        var gadgetArchetypeId = gadgetData.GadgetArchetypeId;
-
-        var gadgetArchetypeData = gadgetArchetypes
-            .Values
-            .First(a => a.GadgetArchetypeId == gadgetArchetypeId);
-
-        return gadgetArchetypeData.Behaviour == NeoLemmixGadgetBehaviour.Entrance;
-    }
-
-    private static int CalculateTotalHatchLemmingCounts(
-        LevelData levelData,
-        LevelDataReader levelDataReader,
-        int? maxLemmingCountFromHatches)
-    {
-        var hatchLemmingData = levelData.HatchLemmingData;
-        var hatchLemmingCount = levelDataReader.NumberOfLemmings - levelData.PrePlacedLemmingData.Count;
-
-        var totalNumberOfHatchLemmings = maxLemmingCountFromHatches.HasValue
-            ? Math.Min(hatchLemmingCount, maxLemmingCountFromHatches.Value)
-            : hatchLemmingCount;
-
-        hatchLemmingData.Capacity = totalNumberOfHatchLemmings;
-
-        while (hatchLemmingData.Count < hatchLemmingData.Capacity)
-        {
-            hatchLemmingData.Add(new LemmingData());
-        }
-
-        return totalNumberOfHatchLemmings;
-    }
-
-    private static void ProcessConfigData(LevelData levelData)
-    {
-        var levelParameters = levelData.LevelParameters;
+        var levelParameters = _levelData.LevelParameters;
 
         // Add all default parameters for a NeoLemmix level
         levelParameters.Add(LevelParameters.EnablePause);
@@ -260,7 +127,7 @@ public sealed class NxlvLevelReader : ILevelReader
         levelParameters.Add(LevelParameters.EnableSkillShadows);
         levelParameters.Add(LevelParameters.EnableFrameControl);
 
-        var controlPanelParameters = levelData.ControlParameters;
+        var controlPanelParameters = _levelData.ControlParameters;
 
         controlPanelParameters.Add(ControlPanelParameters.ShowPauseButton);
         controlPanelParameters.Add(ControlPanelParameters.ShowNukeButton);
@@ -276,11 +143,6 @@ public sealed class NxlvLevelReader : ILevelReader
 
     public void Dispose()
     {
-    }
-
-    private struct HatchCountData
-    {
-        public int RunningCount;
-        public int MaxCount;
+        _dataReaderList.Dispose();
     }
 }

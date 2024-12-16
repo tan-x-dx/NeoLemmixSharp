@@ -4,13 +4,19 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Identity;
 
-public readonly struct ExtendedEnumTypeComparer<T> :
+public sealed class ExtendedEnumTypeComparer<T> :
     IEqualityComparer<T>,
     IEquatable<ExtendedEnumTypeComparer<T>>,
     IComparer<T>,
     IPerfectHasher<T>
     where T : class, IExtendedEnumType<T>
 {
+    private static readonly ExtendedEnumTypeComparer<T> Instance = new();
+
+    private ExtendedEnumTypeComparer()
+    {
+    }
+
     [Pure]
     public bool Equals(T? x, T? y)
     {
@@ -27,7 +33,7 @@ public readonly struct ExtendedEnumTypeComparer<T> :
     public int Compare(T? x, T? y) => IdEquatableItemHelperMethods.Compare(x, y);
 
     [Pure]
-    public bool Equals(ExtendedEnumTypeComparer<T> other) => true;
+    public bool Equals(ExtendedEnumTypeComparer<T>? other) => other is not null;
     [Pure]
     public override bool Equals(object? obj) => obj is ExtendedEnumTypeComparer<T>;
     [Pure]
@@ -48,9 +54,9 @@ public readonly struct ExtendedEnumTypeComparer<T> :
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static SimpleDictionary<ExtendedEnumTypeComparer<T>, T, TValue> CreateSimpleDictionary<TValue>() => new(new ExtendedEnumTypeComparer<T>());
+    public static SimpleDictionary<ExtendedEnumTypeComparer<T>, T, TValue> CreateSimpleDictionary<TValue>() => new(Instance);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static SimpleSet<ExtendedEnumTypeComparer<T>, T> CreateSimpleSet(bool fullSet = false) => new(new ExtendedEnumTypeComparer<T>(), fullSet);
+    public static SimpleSet<ExtendedEnumTypeComparer<T>, T> CreateSimpleSet(bool fullSet = false) => new(Instance, fullSet);
 }

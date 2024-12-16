@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
@@ -78,50 +77,50 @@ public sealed class LevelDataComponentReader : ILevelDataReader
         levelData.VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
     }
 
-    [SkipLocalsInit]
     private void ReadBackgroundData(BinaryReaderWrapper reader, LevelData levelData)
     {
         var specifierByte = reader.Read8BitUnsignedInteger();
 
-        switch (specifierByte)
+        levelData.LevelBackground = specifierByte switch
         {
-            case LevelReadWriteHelpers.NoBackgroundSpecified:
-                levelData.LevelBackground = null;
-                break;
+            LevelReadWriteHelpers.NoBackgroundSpecified => null,
+            LevelReadWriteHelpers.SolidColorBackground => ReadSolidColorBackgroundData(),
+            LevelReadWriteHelpers.TextureBackground => ReadTextureBackgroundData(),
 
-            case LevelReadWriteHelpers.SolidBackgroundColor:
-                Span<byte> buffer = stackalloc byte[3];
-                reader.ReadBytes(buffer);
+            _ => throw new LevelReadingException($"Unknown background specifier byte: {specifierByte:X}")
+        };
 
-                levelData.LevelBackground = new BackgroundData
-                {
-                    IsSolidColor = true,
-                    Color = new Color(buffer[0], buffer[1], buffer[2]),
-                    BackgroundImageName = string.Empty
-                };
-                break;
+        return;
 
+        BackgroundData ReadSolidColorBackgroundData()
+        {
+            var buffer = reader.ReadBytes(3);
 
-            case LevelReadWriteHelpers.BackgroundImageSpecified:
-                var backgroundStringId = reader.Read16BitUnsignedInteger();
+            return new BackgroundData
+            {
+                IsSolidColor = true,
+                Color = new Color(r: buffer[0], g: buffer[1], b: buffer[2], alpha: (byte)0xff),
+                BackgroundImageName = string.Empty
+            };
+        }
 
-                levelData.LevelBackground = new BackgroundData
-                {
-                    IsSolidColor = false,
-                    Color = Color.Black,
-                    BackgroundImageName = _stringIdLookup[backgroundStringId]
-                };
-                break;
+        BackgroundData ReadTextureBackgroundData()
+        {
+            var backgroundStringId = reader.Read16BitUnsignedInteger();
 
-            default:
-                throw new LevelReadingException($"Unknown background specifier byte: {specifierByte:X}");
+            return new BackgroundData
+            {
+                IsSolidColor = false,
+                Color = Color.Black,
+                BackgroundImageName = _stringIdLookup[backgroundStringId]
+            };
         }
     }
 
     private static void AssertLevelDataBytesMakeSense(
-        long bytesRead,
-        long initialBytesRead,
-        long numberOfBytesToRead)
+        int bytesRead,
+        int initialBytesRead,
+        int numberOfBytesToRead)
     {
         if (bytesRead - initialBytesRead == numberOfBytesToRead)
             return;

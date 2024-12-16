@@ -159,6 +159,9 @@ public static class BitArrayHelpers
 
     internal static void UnionWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
+        if (span.Length != other.Length)
+            throw new ArgumentException("Spans have different lengths!");
+
         switch (span.Length)
         {
             case 8: span[7] |= other[7]; goto case 7;
@@ -177,6 +180,9 @@ public static class BitArrayHelpers
 
     internal static void IntersectWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
+        if (span.Length != other.Length)
+            throw new ArgumentException("Spans have different lengths!");
+
         switch (span.Length)
         {
             case 8: span[7] |= other[7]; goto case 7;

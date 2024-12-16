@@ -74,9 +74,14 @@ public sealed class WalkerSkill : LemmingSkill
         in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming)
     {
-        foreach (var blocker in LevelScreen.LemmingManager.AllBlockers)
-        {
+        var allBlockers = LevelScreen.LemmingManager.AllBlockers;
 
+        if (allBlockers.Count > 0)
+        {
+            foreach (var blocker in allBlockers)
+            {
+
+            }
         }
 
         // Special treatment if in one-way-field facing the wrong direction

@@ -15,26 +15,18 @@ public static class LemmingActionHelpers
     /// If result = 7, then at least 7 pixels are terrain above levelPosition
     /// </summary>
     [Pure]
-    [SkipLocalsInit]
     public static int FindGroundPixel(
         Lemming lemming,
-        LevelPosition levelPosition)
+        LevelPosition levelPosition,
+        in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
 
-        var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
-
-        var gadgetTestRegion = new LevelRegion(
-            orientation.MoveUp(levelPosition, EngineConstants.MaxStepUp + 1),
-            orientation.MoveDown(levelPosition, EngineConstants.DefaultFallStep + 1));
-        gadgetManager.GetAllItemsNearRegion(scratchSpace, gadgetTestRegion, out var gadgetsNearRegion);
-
         int result;
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, levelPosition))
+        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, levelPosition))
         {
             result = 0;
-            while (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(levelPosition, 1 + result)) &&
+            while (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(levelPosition, 1 + result)) &&
                    result < EngineConstants.MaxStepUp + 1)
             {
                 result++;
@@ -45,7 +37,7 @@ public static class LemmingActionHelpers
 
         result = -1;
         // MoveUp, but step is negative, therefore moves down
-        while (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.MoveUp(levelPosition, result)) &&
+        while (!PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(levelPosition, result)) &&
                result > -(EngineConstants.DefaultFallStep + 1))
         {
             result--;
@@ -117,20 +109,16 @@ public static class LemmingActionHelpers
 
     [Pure]
     [SkipLocalsInit]
-    public static LevelPosition GetUpdraftFallDelta(Lemming lemming)
+    public static LevelPosition GetUpdraftFallDelta(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpace = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        gadgetManager.GetAllGadgetsAtLemmingPosition(scratchSpace, lemming, out var gadgetsNearPosition);
-
-        if (gadgetsNearPosition.Count == 0)
+        if (gadgetsNearLemming.Count == 0)
             return new LevelPosition();
 
         var lemmingOrientationRotNum = lemming.Orientation.RotNum;
 
         var draftDirectionDeltas = new UpdraftBuffer();
 
-        foreach (var gadget in gadgetsNearPosition)
+        foreach (var gadget in gadgetsNearLemming)
         {
             if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
                 continue;

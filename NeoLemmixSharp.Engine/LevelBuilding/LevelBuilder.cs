@@ -179,7 +179,7 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
         if (backgroundData.IsSolidColor)
             return new SolidColorBackgroundRenderer(backgroundData.Color);
 
-        return new SolidColorBackgroundRenderer(new Color(24, 24, 60));
+        return new SolidColorBackgroundRenderer(new Color((byte)24, (byte)24, (byte)60, (byte)0xff));
     }
 
     private List<IViewportObjectRenderer> GetSortedRenderables(

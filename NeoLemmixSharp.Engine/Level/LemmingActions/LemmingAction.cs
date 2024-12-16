@@ -147,7 +147,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         CursorSelectionPriorityValue = cursorSelectionPriorityValue;
     }
 
-    public abstract bool UpdateLemming(Lemming lemming);
+    public abstract bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming);
 
     public LevelRegion GetLemmingBounds(Lemming lemming)
     {

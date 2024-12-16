@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
-using NeoLemmixSharp.Ui.Components.Buttons;
+using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Menu.Pages.LevelSelect;
 
-public abstract class LevelBrowserEntry : Button
+public abstract class LevelBrowserEntry : Component
 {
     public const int ButtonPadding = 4;
 
@@ -18,6 +18,11 @@ public abstract class LevelBrowserEntry : Button
         : base(0, 0, null)
     {
         _indentationLevel = indentationLevel;
+
+        MouseEnter.RegisterMouseEvent(SetMouseOver);
+        MouseDown.RegisterMouseEvent(SetMousePress);
+        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
     protected abstract override void OnDispose();

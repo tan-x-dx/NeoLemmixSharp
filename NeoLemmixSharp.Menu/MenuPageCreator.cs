@@ -73,9 +73,8 @@ public sealed class MenuPageCreator
         ILevelReader? levelReader = null;
         try
         {
-            var fileExtension = Path.GetExtension(LevelToLoadFilepath.AsSpan());
-            levelReader = LevelFileTypeHandler.GetLevelReaderForFileExtension(fileExtension);
-            var levelData = levelReader.ReadLevel(LevelToLoadFilepath, _graphicsDevice);
+            levelReader = LevelFileTypeHandler.GetLevelReaderForFile(LevelToLoadFilepath);
+            var levelData = levelReader.ReadLevel(_graphicsDevice);
 
             levelData.Validate();
 

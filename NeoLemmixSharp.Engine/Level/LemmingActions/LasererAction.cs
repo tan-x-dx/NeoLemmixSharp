@@ -6,7 +6,6 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
@@ -72,17 +71,12 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
     {
     }
 
-    [SkipLocalsInit]
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.LevelPosition;
 
-        var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan, lemmingPosition, out var gadgetsNearRegion);
-
-        if (!PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+        if (!PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
@@ -100,7 +94,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         var i = DistanceCap;
         while (i > 0)
         {
-            switch (CheckForHit(scratchSpaceSpan, offsetChecks))
+            switch (CheckForHit(in gadgetsNearLemming, offsetChecks))
             {
                 case LaserHitType.None:
                     target = orientation.Move(target, dx, 1);
@@ -150,7 +144,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
         return true;
 
-        LaserHitType CheckForHit(Span<uint> scratchSpaceSpan1, ReadOnlySpan<LevelPosition> offsetChecks)
+        LaserHitType CheckForHit(in GadgetEnumerable gadgetsNearLemming1, ReadOnlySpan<LevelPosition> offsetChecks)
         {
             if (LevelScreen.PositionOutOfBounds(target))
                 return LaserHitType.OutOfBounds;
@@ -161,12 +155,12 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
             {
                 var checkLevelPosition = orientation.Move(target, offset);
 
-                gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan1, checkLevelPosition, out var gadgetSet);
+                //  gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan1, checkLevelPosition, out var gadgetSet);
 
-                if (!PositionIsSolidToLemming(in gadgetSet, lemming, checkLevelPosition))
+                if (!PositionIsSolidToLemming(in gadgetsNearLemming1, lemming, checkLevelPosition))
                     continue;
 
-                result = PositionIsIndestructibleToLemming(in gadgetSet, lemming, this, checkLevelPosition) &&
+                result = PositionIsIndestructibleToLemming(in gadgetsNearLemming1, lemming, this, checkLevelPosition) &&
                          result != LaserHitType.Solid
                     ? LaserHitType.Indestructible
                     : LaserHitType.Solid;

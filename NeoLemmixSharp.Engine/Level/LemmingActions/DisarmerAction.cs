@@ -18,7 +18,7 @@ public sealed class DisarmerAction : LemmingAction
     {
     }
 
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         lemming.DisarmingFrames--;
         if (lemming.DisarmingFrames <= 0)

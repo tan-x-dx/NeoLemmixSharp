@@ -1,13 +1,16 @@
 ﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
-public sealed class ShadesReader : INeoLemmixDataReader
+public sealed class ShadesReader : NeoLemmixDataReader
 {
     private bool _inBlock;
 
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$SHADES";
+    public ShadesReader()
+        : base("$SHADES")
+    {
 
-    public void BeginReading(ReadOnlySpan<char> line)
+    }
+
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         _inBlock = false;
         FinishedReading = false;

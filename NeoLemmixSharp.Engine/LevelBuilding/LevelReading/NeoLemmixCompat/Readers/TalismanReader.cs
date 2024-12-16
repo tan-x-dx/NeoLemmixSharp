@@ -3,28 +3,30 @@ using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
-public sealed class TalismanReader : INeoLemmixDataReader
+public sealed class TalismanReader : NeoLemmixDataReader
 {
-    private readonly CaseInvariantCharEqualityComparer _charEqualityComparer;
     private TalismanData? _currentTalismanData;
-
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$TALISMAN";
 
     public List<TalismanData> TalismanData { get; } = new();
 
-    public TalismanReader(CaseInvariantCharEqualityComparer charEqualityComparer)
+    public TalismanReader()
+        : base("$TALISMAN")
     {
-        _charEqualityComparer = charEqualityComparer;
+        RegisterTokenAction("TITLE", SetTitle);
+        RegisterTokenAction("ID", SetId);
+        RegisterTokenAction("COLOR", SetColor);
+        RegisterTokenAction("SAVE_REQUIREMENT", SetSaveRequirement);
+        RegisterTokenAction("USE_ONLY_SKILL", SetUseOnlySkill);
+        RegisterTokenAction("$END", OnEnd);
     }
 
-    public void BeginReading(ReadOnlySpan<char> line)
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         _currentTalismanData = new TalismanData();
         FinishedReading = false;
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    public override bool ReadNextLine(ReadOnlySpan<char> line)
     {
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
@@ -35,67 +37,70 @@ public sealed class TalismanReader : INeoLemmixDataReader
             return false;
         }
 
-        var currentTalismanData = _currentTalismanData!;
+        var alternateLookup = _tokenActions.GetAlternateLookup<ReadOnlySpan<char>>();
 
-        switch (firstToken)
+        if (alternateLookup.TryGetValue(firstToken, out var tokenAction))
         {
-            case "TITLE":
-                currentTalismanData.Title = line.TrimAfterIndex(secondTokenIndex).ToString();
-                break;
-
-            case "ID":
-                currentTalismanData.Id = int.Parse(secondToken);
-                break;
-
-            case "COLOR":
-                currentTalismanData.Color = GetTalismanColor(secondToken);
-                break;
-
-            case "SAVE_REQUIREMENT":
-                currentTalismanData.SaveRequirement = int.Parse(secondToken);
-                break;
-
-            case "USE_ONLY_SKILL":
-                if (!NxlvReadingHelpers.GetSkillByName(secondToken, _charEqualityComparer, out var onlySkill))
-                {
-                    NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
-                    break;
-                }
-
-                foreach (var item in LemmingSkill.AllItems)
-                {
-                    currentTalismanData.SkillLimits.Add(item, 0);
-                }
-
-                currentTalismanData.SkillLimits.Remove(onlySkill);
-                break;
-
-            case "$END":
-                TalismanData.Add(currentTalismanData);
-                _currentTalismanData = null;
-                FinishedReading = true;
-                break;
-
-            default:
-                NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
-                break;
+            tokenAction(line, secondToken, secondTokenIndex);
+        }
+        else
+        {
+            NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
         }
 
         return false;
     }
 
+    private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentTalismanData!.Title = line.TrimAfterIndex(secondTokenIndex).ToString();
+    }
+
+    private void SetId(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentTalismanData!.Id = int.Parse(secondToken);
+    }
+
+    private void SetColor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentTalismanData!.Color = GetTalismanColor(secondToken);
+    }
+
+    private void SetSaveRequirement(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentTalismanData!.SaveRequirement = int.Parse(secondToken);
+    }
+
+    private void SetUseOnlySkill(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        if (!NxlvReadingHelpers.TryGetSkillByName(secondToken, this, out var onlySkill))
+        {
+            NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, "USE_ONLY_SKILL", line);
+            return;
+        }
+
+        foreach (var item in LemmingSkill.AllItems)
+        {
+            _currentTalismanData!.SkillLimits.Add(item, 0);
+        }
+
+        _currentTalismanData!.SkillLimits.Remove(onlySkill);
+    }
+
+    private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        throw new NotImplementedException();
+    }
+
     private TalismanColor GetTalismanColor(ReadOnlySpan<char> secondToken)
     {
-        // Need to use case invariant comparer since different versions
-        // of the NeoLemmix engine saved the talisman colors with different
-        // character casing - "GOLD", "Gold", etc.
-        if (secondToken.SequenceEqual("BRONZE", _charEqualityComparer))
+        if (TokensMatch(secondToken, "BRONZE"))
             return TalismanColor.Bronze;
 
-        if (secondToken.SequenceEqual("SILVER", _charEqualityComparer))
+        if (TokensMatch(secondToken, "SILVER"))
             return TalismanColor.Silver;
 
-        if (secondToken.SequenceEqual("GOLD", _charEqualityComparer))
+        if (TokensMatch(secondToken, "GOLD"))
             return TalismanColor.Gold;
 
         return NxlvReadingHelpers.ThrowUnknownTokenException<TalismanColor>(IdentifierToken, "COLOR", secondToken);
@@ -105,19 +110,19 @@ public sealed class TalismanReader : INeoLemmixDataReader
     {
         var currentTalismanData = _currentTalismanData!;
 
-        if (firstToken is "TIME_LIMIT")
+        if (TokensMatch(firstToken, "TIME_LIMIT"))
         {
             currentTalismanData.TimeLimitInSeconds = int.Parse(secondToken);
             return;
         }
 
-        if (firstToken is "SKILL_LIMIT")
+        if (TokensMatch(firstToken, "SKILL_LIMIT"))
         {
             currentTalismanData.AllSkillLimit = int.Parse(secondToken);
             return;
         }
 
-        if (NxlvReadingHelpers.GetSkillByName(firstToken[..^6], _charEqualityComparer, out var skill))
+        if (NxlvReadingHelpers.TryGetSkillByName(firstToken[..^6], this, out var skill))
         {
             currentTalismanData.SkillLimits.Add(skill, int.Parse(secondToken));
             return;

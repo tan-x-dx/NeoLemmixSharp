@@ -131,10 +131,10 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
 
         var actualElapsedTick = correspondingSnapshotNumber * EngineConstants.RewindSnapshotInterval;
 
-        LevelScreen.TerrainPainter.RewindBackTo(actualElapsedTick);
-        LevelScreen.LevelTimer.SetElapsedTicks(actualElapsedTick, false);
+        LevelScreen.TerrainPainter.RewindBackTo(actualElapsedTick + 1);
+        LevelScreen.LevelTimer.SetElapsedTicks(actualElapsedTick + 1, false);
 
-        ref readonly var previouslyRecordedSkillAssignment = ref _skillCountChanges.TryGetDataForTick(actualElapsedTick);
+        ref readonly var previouslyRecordedSkillAssignment = ref _skillCountChanges.TryGetDataForTick(actualElapsedTick + 1);
         if (!Unsafe.IsNullRef(in previouslyRecordedSkillAssignment))
         {
             AssignSkillFromReplay(in previouslyRecordedSkillAssignment);

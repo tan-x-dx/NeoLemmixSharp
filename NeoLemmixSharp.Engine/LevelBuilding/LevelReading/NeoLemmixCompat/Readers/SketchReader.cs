@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
-public sealed class SketchReader : INeoLemmixDataReader
+public sealed class SketchReader : NeoLemmixDataReader
 {
     private readonly List<SketchData> _allSketchData;
 
@@ -13,15 +13,23 @@ public sealed class SketchReader : INeoLemmixDataReader
     private bool _flipHorizontally;
     private bool _flipVertically;
 
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$SKETCH";
-
-    public SketchReader(List<SketchData> allSketchData)
+    public SketchReader(
+        List<SketchData> allSketchData)
+        : base("$SKETCH")
     {
         _allSketchData = allSketchData;
+
+        RegisterTokenAction("INDEX", SetIndex);
+        RegisterTokenAction("PIECE", SetPiece);
+        RegisterTokenAction("X", SetX);
+        RegisterTokenAction("Y", SetY);
+        RegisterTokenAction("ROTATE", SetRotate);
+        RegisterTokenAction("FLIP_HORIZONTAL", SetFlipHorizonal);
+        RegisterTokenAction("FLIP_VERTICAL", SetFlipVertical);
+        RegisterTokenAction("$END", OnEnd);
     }
 
-    public void BeginReading(ReadOnlySpan<char> line)
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         _currentSketchData = new SketchData();
         _rotate = false;
@@ -31,52 +39,48 @@ public sealed class SketchReader : INeoLemmixDataReader
         FinishedReading = false;
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    private void SetIndex(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
+        _currentSketchData!.Index = int.Parse(secondToken);
+    }
 
-        var currentSketchData = _currentSketchData!;
+    private void SetPiece(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+    }
 
-        switch (firstToken)
-        {
-            case "INDEX":
-                currentSketchData.Index = int.Parse(secondToken);
-                break;
+    private void SetX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentSketchData!.X = int.Parse(secondToken);
+    }
 
-            case "PIECE":
-                break;
+    private void SetY(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentSketchData!.Y = int.Parse(secondToken);
+    }
 
-            case "X":
-                currentSketchData.X = int.Parse(secondToken);
-                break;
+    private void SetRotate(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _rotate = true;
+    }
 
-            case "Y":
-                currentSketchData.Y = int.Parse(secondToken);
-                break;
+    private void SetFlipHorizonal(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _flipHorizontally = true;
+    }
 
-            case "ROTATE":
-                _rotate = true;
-                break;
+    private void SetFlipVertical(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _flipVertically = true;
+    }
 
-            case "FLIP_HORIZONTAL":
-                _flipHorizontally = true;
-                break;
+    private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        var (rotNum, flip) = DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate);
+        _currentSketchData!.RotNum = rotNum;
+        _currentSketchData.Flip = flip;
 
-            case "FLIP_VERTICAL":
-                _flipVertically = true;
-                break;
-
-            case "$END":
-                var (rotNum, flip) = DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate);
-                currentSketchData.RotNum = rotNum;
-                currentSketchData.Flip = flip;
-
-                _allSketchData.Add(currentSketchData);
-                _currentSketchData = null;
-                FinishedReading = true;
-                break;
-        }
-
-        return false;
+        _allSketchData.Add(_currentSketchData!);
+        _currentSketchData = null;
+        FinishedReading = true;
     }
 }

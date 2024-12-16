@@ -18,7 +18,7 @@ public sealed class ExiterAction : LemmingAction
     {
     }
 
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         throw new NotImplementedException();
     }

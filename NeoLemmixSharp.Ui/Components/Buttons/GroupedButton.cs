@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Ui.Components.Buttons;
 
-public sealed class GroupedButton : Button
+public sealed class GroupedButton : Component
 {
     public static ButtonGroup GroupButtons(params GroupedButton[] buttons) => new ButtonGroup(buttons);
 
@@ -22,13 +22,22 @@ public sealed class GroupedButton : Button
         }
     }
 
-    public GroupedButton(int x, int y, string label) : base(x, y, label)
+    public GroupedButton(int x, int y, string? label)
+        : base(x, y, label)
     {
+        MouseEnter.RegisterMouseEvent(SetMouseOver);
+        MouseDown.RegisterMouseEvent(SetMousePress);
+        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
     public GroupedButton(int x, int y, int width, int height, string label)
         : base(x, y, width, height, label)
     {
+        MouseEnter.RegisterMouseEvent(SetMouseOver);
+        MouseDown.RegisterMouseEvent(SetMousePress);
+        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
     public bool IsActive

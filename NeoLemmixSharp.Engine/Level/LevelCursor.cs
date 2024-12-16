@@ -73,8 +73,10 @@ public sealed class LevelCursor
     {
         var c = CursorPosition;
 
-        var topLeftCursorPixel = new LevelPosition(c.X - 7, c.Y - 7);
-        var bottomRightCursorPixel = new LevelPosition(c.X + 6, c.Y + 6);
+        // Cursor position is the bottom right pixel of the middle square in the cursor sprite.
+        // Hence, for the top left position, add one extra pixel to fix offset.
+        var topLeftCursorPixel = new LevelPosition(c.X - (EngineConstants.CursorRadius + 1), c.Y - (EngineConstants.CursorRadius + 1));
+        var bottomRightCursorPixel = new LevelPosition(c.X + EngineConstants.CursorRadius, c.Y + EngineConstants.CursorRadius);
         var levelRegion = new LevelRegion(topLeftCursorPixel, bottomRightCursorPixel);
 
         LevelScreen.LemmingManager.GetAllLemmingsNearRegion(scratchSpaceSpan, levelRegion, out result);

@@ -5,20 +5,34 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
-public sealed class LemmingReader : INeoLemmixDataReader
+public sealed class LemmingReader : NeoLemmixDataReader
 {
     private readonly List<LemmingData> _prePlacedLemmingData;
     private LemmingData? _currentLemmingData;
 
-    public bool FinishedReading { get; private set; }
-    public string IdentifierToken => "$LEMMING";
-
-    public LemmingReader(List<LemmingData> prePlacedLemmingData)
+    public LemmingReader(
+        List<LemmingData> prePlacedLemmingData)
+        : base("$LEMMING")
     {
         _prePlacedLemmingData = prePlacedLemmingData;
+
+        RegisterTokenAction("X", SetLemmingX);
+        RegisterTokenAction("Y", SetLemmingY);
+        RegisterTokenAction("FLIP_HORIZONTAL", SetFlipHorizontal);
+        RegisterTokenAction("BLOCKER", SetBlocker);
+        RegisterTokenAction("CLIMBER", SetClimber);
+        RegisterTokenAction("DISARMER", SetDisarmer);
+        RegisterTokenAction("FLOATER", SetFloater);
+        RegisterTokenAction("GLIDER", SetGlider);
+        RegisterTokenAction("NEUTRAL", SetNeutral);
+        RegisterTokenAction("SHIMMIER", SetShimmier);
+        RegisterTokenAction("SLIDER", SetSlider);
+        RegisterTokenAction("SWIMMER", SetSwimmer);
+        RegisterTokenAction("ZOMBIE", SetZombie);
+        RegisterTokenAction("$END", OnEnd);
     }
 
-    public void BeginReading(ReadOnlySpan<char> line)
+    public override void BeginReading(ReadOnlySpan<char> line)
     {
         _currentLemmingData = new LemmingData
         {
@@ -28,79 +42,77 @@ public sealed class LemmingReader : INeoLemmixDataReader
         FinishedReading = false;
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    private void SetLemmingX(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
+        _currentLemmingData!.X = int.Parse(secondToken);
+    }
 
-        var currentLemmingData = _currentLemmingData!;
+    private void SetLemmingY(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentLemmingData!.Y = int.Parse(secondToken);
+    }
 
-        switch (firstToken)
-        {
-            case "X":
-                currentLemmingData.X = int.Parse(secondToken);
-                break;
+    private void SetFlipHorizontal(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentLemmingData!.FacingDirection = FacingDirection.LeftInstance;
+    }
 
-            case "Y":
-                currentLemmingData.Y = int.Parse(secondToken);
-                break;
+    private void SetBlocker(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentLemmingData!.InitialLemmingAction = BlockerAction.Instance;
+    }
 
-            case "FLIP_HORIZONTAL":
-                currentLemmingData.FacingDirection = FacingDirection.LeftInstance;
-                break;
+    private void SetClimber(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentLemmingData!.State |= 1U << EngineConstants.ClimberBitIndex;
+    }
 
-            case "BLOCKER":
-                currentLemmingData.InitialLemmingAction = BlockerAction.Instance;
-                break;
+    private void SetDisarmer(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentLemmingData!.State |= 1U << EngineConstants.DisarmerBitIndex;
+    }
 
-            case "CLIMBER":
-                currentLemmingData.State |= 1U << EngineConstants.ClimberBitIndex;
-                break;
+    private void SetFloater(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentLemmingData!.State |= 1U << EngineConstants.FloaterBitIndex;
+        _currentLemmingData!.State &= ~(1U << EngineConstants.GliderBitIndex); // Deliberately knock out the glider
+    }
 
-            case "DISARMER":
-                currentLemmingData.State |= 1U << EngineConstants.DisarmerBitIndex;
-                break;
+    private void SetGlider(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentLemmingData!.State |= 1U << EngineConstants.GliderBitIndex;
+        _currentLemmingData!.State &= ~(1U << EngineConstants.FloaterBitIndex); // Deliberately knock out the floater
+    }
 
-            case "FLOATER":
-                currentLemmingData.State |= 1U << EngineConstants.FloaterBitIndex;
-                currentLemmingData.State &= ~(1U << EngineConstants.GliderBitIndex); // Deliberately knock out the glider
-                break;
+    private void SetNeutral(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentLemmingData!.State |= 1U << EngineConstants.NeutralBitIndex;
+    }
 
-            case "GLIDER":
-                currentLemmingData.State |= 1U << EngineConstants.GliderBitIndex;
-                currentLemmingData.State &= ~(1U << EngineConstants.FloaterBitIndex); // Deliberately knock out the floater
-                break;
+    private void SetShimmier(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentLemmingData!.InitialLemmingAction = ShimmierAction.Instance;
+    }
 
-            case "NEUTRAL":
-                currentLemmingData.State |= 1U << EngineConstants.NeutralBitIndex;
-                break;
+    private void SetSlider(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentLemmingData!.State |= 1U << EngineConstants.SliderBitIndex;
+    }
 
-            case "SHIMMIER":
-                currentLemmingData.InitialLemmingAction = ShimmierAction.Instance;
-                break;
+    private void SetSwimmer(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentLemmingData!.State |= 1U << EngineConstants.SwimmerBitIndex;
+    }
 
-            case "SLIDER":
-                currentLemmingData.State |= 1U << EngineConstants.SliderBitIndex;
-                break;
+    private void SetZombie(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _currentLemmingData!.State |= 1U << EngineConstants.ZombieBitIndex;
+    }
 
-            case "SWIMMER":
-                currentLemmingData.State |= 1U << EngineConstants.SwimmerBitIndex;
-                break;
-
-            case "ZOMBIE":
-                currentLemmingData.State |= 1U << EngineConstants.ZombieBitIndex;
-                break;
-
-            case "$END":
-                _prePlacedLemmingData.Add(currentLemmingData);
-                _currentLemmingData = null;
-                FinishedReading = true;
-                break;
-
-            default:
-                NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
-                break;
-        }
-
-        return false;
+    private void OnEnd(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _prePlacedLemmingData.Add(_currentLemmingData!);
+        _currentLemmingData = null;
+        FinishedReading = true;
     }
 }

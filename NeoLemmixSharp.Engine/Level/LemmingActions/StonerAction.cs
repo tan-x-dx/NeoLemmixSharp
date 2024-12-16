@@ -19,7 +19,7 @@ public sealed class StonerAction : LemmingAction
     {
     }
 
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         TerrainMasks.ApplyStonerMask(lemming);
         NoneAction.Instance.TransitionLemmingToAction(lemming, false);

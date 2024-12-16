@@ -6,7 +6,6 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -26,25 +25,17 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
     {
     }
 
-    [SkipLocalsInit]
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
-        var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelRegion(
-            orientation.Move(lemmingPosition, 4, 1),
-            orientation.Move(lemmingPosition, -4, -1));
-        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
-
         if (lemming.IsStartingAction)
         {
             lemming.IsStartingAction = false;
             DigOneRow(
-                in gadgetsNearRegion,
+                in gadgetsNearLemming,
                 lemming,
                 orientation,
                 facingDirection,
@@ -59,7 +50,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
             return true;
 
         var continueDigging = DigOneRow(
-            in gadgetsNearRegion,
+            in gadgetsNearLemming,
             lemming,
             orientation,
             facingDirection,
@@ -67,9 +58,9 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
 
-        if (PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, this, lemmingPosition))
+        if (PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, lemmingPosition))
         {
-            if (PositionIsSteelToLemming(in gadgetsNearRegion, lemming, lemmingPosition))
+            if (PositionIsSteelToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             {
                 //CueSoundEffect(SFX_HITS_STEEL, L.Position);
             }

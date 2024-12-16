@@ -21,20 +21,20 @@ public sealed class FloaterAction : LemmingAction
     {
     }
 
-    public override bool UpdateLemming(Lemming lemming)
+    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var maxFallDistance = FloaterFallTable[lemming.PhysicsFrame - 1];
 
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.LevelPosition;
 
-        var updraftFallDelta = GetUpdraftFallDelta(lemming);
+        var updraftFallDelta = GetUpdraftFallDelta(lemming, in gadgetsNearLemming);
 
         maxFallDistance += updraftFallDelta.Y;
 
         lemmingPosition = orientation.MoveRight(lemmingPosition, updraftFallDelta.X);
 
-        var groundPixelDistance = Math.Min(FindGroundPixel(lemming, lemmingPosition), 0);
+        var groundPixelDistance = Math.Min(FindGroundPixel(lemming, lemmingPosition, in gadgetsNearLemming), 0);
         if (maxFallDistance > -groundPixelDistance)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, groundPixelDistance);

@@ -3,29 +3,30 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
 public static class NxlvReadingHelpers
 {
-    private const int MaxStackallocSize = 64;
+    public delegate void TokenAction(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex);
+
+    public const int MaxStackallocSize = 64;
 
     /// <summary>
     /// Returns the first two tokens from the initial span, where a token is defined as being a contiguous section of non-whitespace characters.
     /// If no such tokens exists, empty spans are returned.
     /// </summary>
-    /// <param name="span">The source span</param>
+    /// <param name="line">The source span</param>
     /// <param name="firstToken">The first span of non-whitespace characters</param>
     /// <param name="secondToken">The second span of non-whitespace characters</param>
     /// <param name="secondTokenIndex">The index of the second span. If no second span exists, -1 is returned</param>
     public static void GetTokenPair(
-        ReadOnlySpan<char> span,
+        ReadOnlySpan<char> line,
         out ReadOnlySpan<char> firstToken,
         out ReadOnlySpan<char> secondToken,
         out int secondTokenIndex)
     {
-        var tokenIterator = new TokenEnumerator(span);
+        var tokenIterator = new TokenEnumerator(line);
 
         if (!tokenIterator.MoveNext())
         {
@@ -110,7 +111,7 @@ public static class NxlvReadingHelpers
         return TNumber.Parse(token[startIndex..], NumberStyles.AllowHexSpecifier, null);
     }
 
-    public static bool GetSkillByName(
+    public static bool TryGetSkillByName(
         ReadOnlySpan<char> token,
         IEqualityComparer<char> charEqualityComparer,
         [MaybeNullWhen(false)] out LemmingSkill lemmingSkill)
@@ -127,42 +128,6 @@ public static class NxlvReadingHelpers
 
         lemmingSkill = null;
         return false;
-    }
-
-    /// <summary>
-    /// Returns a (possibly null) reference to a <typeparamref name="TValue" />. A key is constructed based on the <paramref name="currentStyle" /> and <paramref name="piece" /> parameters,
-    /// and either a new entry is created, or the existing entry is returned. NOTE: the returned reference may be null, and is expected to be initialised by the caller!
-    /// </summary>
-    /// <typeparam name="TValue">The type of value.</typeparam>
-    /// <param name="currentStyle">The style type</param>
-    /// <param name="piece">The piece type</param>
-    /// <param name="dictionary">The dictionary to look in</param>
-    /// <param name="exists">When this method returns, contains <see langword="true" /> if the constructed key already existed in the dictionary, and <see langword="false" /> if a new entry was added.</param>
-    /// <returns>A reference to a <typeparamref name="TValue" /> in the specified dictionary.</returns>
-    public static ref TValue? GetArchetypeDataRef<TValue>(
-        ReadOnlySpan<char> currentStyle,
-        ReadOnlySpan<char> piece,
-        Dictionary<string, TValue> dictionary,
-        out bool exists)
-        where TValue : class
-    {
-        var currentStyleLength = currentStyle.Length;
-
-        // Safeguard against potential stack overflow.
-        // Will almost certainly be a small buffer
-        // allocated on the stack, but still...
-        var bufferSize = currentStyleLength + piece.Length + 1;
-        Span<char> archetypeDataKeySpan = bufferSize > MaxStackallocSize
-            ? new char[bufferSize]
-            : stackalloc char[bufferSize];
-
-        currentStyle.CopyTo(archetypeDataKeySpan);
-        piece.CopyTo(archetypeDataKeySpan[(currentStyleLength + 1)..]);
-        archetypeDataKeySpan[currentStyleLength] = ':';
-
-        var archetypeDataKey = archetypeDataKeySpan.ToString();
-
-        return ref CollectionsMarshal.GetValueRefOrAddDefault(dictionary, archetypeDataKey, out exists);
     }
 
     /// <summary>
