@@ -36,6 +36,15 @@ public sealed class LevelObjective
         _requirements = requirements;
     }
 
+    public void RecheckCriteria()
+    {
+        for (var i = 0; i < _requirements.Length; i++)
+        {
+            var requirement = _requirements[i];
+            requirement.RecheckCriteria();
+        }
+    }
+
     public bool ObjectivesAreSatisfied()
     {
         var result = true;

@@ -222,6 +222,7 @@ public sealed class LemmingManager :
 
         LemmingsRemoved++;
         lemming.OnRemoval(removalReason);
+        LevelScreen.LevelObjectiveManager.RecheckCriteria();
         UpdateControlPanel();
     }
 

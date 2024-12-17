@@ -20,7 +20,12 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
     public TimerType Type { get; }
     public Color FontColor { get; private set; }
 
-    public LevelTimer()
+    public int TotalElapsedSeconds => _elapsedSeconds - _additionalSeconds;
+
+    public static LevelTimer CreateCountUpTimer() => new();
+    public static LevelTimer CreateCountDownTimer(int timeLimitInSeconds) => new(timeLimitInSeconds);
+
+    private LevelTimer()
     {
         _timeLimitInSeconds = -1;
 
@@ -31,7 +36,7 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
         UpdateCountUpString(0, false);
     }
 
-    public LevelTimer(int timeLimitInSeconds)
+    private LevelTimer(int timeLimitInSeconds)
     {
         _timeLimitInSeconds = timeLimitInSeconds;
 
@@ -74,7 +79,7 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
 
     private void UpdateCountDown(bool partialUpdate)
     {
-        var secondsLeft = _additionalSeconds + _timeLimitInSeconds - _elapsedSeconds;
+        var secondsLeft = _timeLimitInSeconds - TotalElapsedSeconds;
 
         FontColor = GetColorForTime(secondsLeft);
 

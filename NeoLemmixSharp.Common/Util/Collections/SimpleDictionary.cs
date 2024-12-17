@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Collections;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -59,7 +60,7 @@ public sealed class SimpleDictionary<TPerfectHasher, TKey, TValue> : IDictionary
     }
 
     [Pure]
-    public bool TryGetValue(TKey key, out TValue value)
+    public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
     {
         var index = _hasher.Hash(key);
         value = _values[index];

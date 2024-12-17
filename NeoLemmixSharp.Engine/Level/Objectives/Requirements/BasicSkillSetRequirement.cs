@@ -8,11 +8,16 @@ public sealed class BasicSkillSetRequirement : ISkillSetRequirement
 
     public ReadOnlySpan<SkillSetData> SkillSetData => new(_skillSetData);
 
-    public bool IsSatisfied { get; }
-    public bool IsFailed { get; }
+    public bool IsSatisfied { get; private set; }
+    public bool IsFailed { get; private set; }
 
     public BasicSkillSetRequirement(SkillSetData[] skillSetData)
     {
         _skillSetData = skillSetData;
+    }
+
+    public void RecheckCriteria()
+    {
+
     }
 }

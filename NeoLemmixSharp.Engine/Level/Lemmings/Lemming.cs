@@ -133,6 +133,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         Renderer.UpdateLemmingState(true);
     }
 
+    [SkipLocalsInit]
     public void Tick()
     {
         PreviousAction = CurrentAction;
