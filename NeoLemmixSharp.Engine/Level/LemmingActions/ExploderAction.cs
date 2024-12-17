@@ -26,7 +26,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         TerrainMasks.ApplyBomberMask(lemming);
-        //    LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExplode);
+        LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExplode);
         lemming.ParticleTimer = EngineConstants.ParticleFrameCount;
 
         WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
