@@ -135,7 +135,7 @@ public sealed class GadgetReader : NeoLemmixDataReader
 
     private void SetSkill(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        if (!NxlvReadingHelpers.TryGetSkillByName(secondToken, this, out var skill))
+        if (!NxlvReadingHelpers.TryGetSkillByName(secondToken, Helpers.CaseInvariantCharEqualityComparer, out var skill))
             throw new Exception($"Unknown token: {secondToken}");
 
         _currentGadgetData!.Skill = skill;

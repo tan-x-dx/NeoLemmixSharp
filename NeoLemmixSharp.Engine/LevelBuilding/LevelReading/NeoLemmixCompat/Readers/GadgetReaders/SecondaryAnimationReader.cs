@@ -33,7 +33,7 @@ public sealed class SecondaryAnimationReader : NeoLemmixDataReader
         _secondaryAnimationData = new AnimationData();
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    public override bool ReadNextLine(ReadOnlySpan<char> line)
     {
         if (_triggerReader != null)
         {

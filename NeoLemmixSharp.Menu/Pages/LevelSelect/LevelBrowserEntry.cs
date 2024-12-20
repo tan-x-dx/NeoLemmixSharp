@@ -40,11 +40,22 @@ public abstract class LevelBrowserEntry : Component
         {
             var fileExtension = Path.GetExtension(file.AsSpan());
 
-            if (LevelFileTypeHandler.FileExtensionIsValidLevelType(fileExtension))
+            if (LevelFileTypeHandler.FileExtensionIsRecognised(fileExtension, out var fileType, out _))
             {
-                yield return new LevelEntry(file, 0);
+                switch (fileType)
+                {
+                    case FileType.Level: yield return new LevelEntry(file, 0); break;
+
+                    case FileType.NeoLemmixConfig: Foo(file); break;
+                }
             }
         }
+    }
+
+    private static void Foo(string file)
+    {
+        var fileName = Path.GetFileName(file.AsSpan());
+
     }
 
     protected abstract override void RenderComponent(SpriteBatch spriteBatch);

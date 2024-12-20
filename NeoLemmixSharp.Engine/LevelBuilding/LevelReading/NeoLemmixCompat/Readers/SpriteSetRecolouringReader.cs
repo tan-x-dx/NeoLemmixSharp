@@ -15,7 +15,7 @@ public sealed class SpriteSetRecoloringReader : NeoLemmixDataReader
         FinishedReading = false;
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    public override bool ReadNextLine(ReadOnlySpan<char> line)
     {
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
