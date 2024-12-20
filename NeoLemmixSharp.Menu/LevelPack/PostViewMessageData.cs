@@ -2,13 +2,12 @@
 
 public sealed class PostViewMessageData
 {
-    private static readonly PostViewMessageData[] _defaultMessages = GenerateDefaultMessages();
-    public static ReadOnlySpan<PostViewMessageData> DefaultMessages => _defaultMessages;
+    public static List<PostViewMessageData> DefaultMessages { get; } = GenerateDefaultMessages();
 
-    private static PostViewMessageData[] GenerateDefaultMessages()
+    private static List<PostViewMessageData> GenerateDefaultMessages()
     {
-        var result = new PostViewMessageData[]
-        {
+        List<PostViewMessageData> result =
+        [
             new()
             {
                 AbsoluteOrPercentage = ResultType.Absolute,
@@ -89,7 +88,7 @@ public sealed class PostViewMessageData
                 Line1 = "Superb! You rescued every lemming",
                 Line2 = "on that one. Can you do it again?"
             },
-        };
+        ];
 
         return result;
     }

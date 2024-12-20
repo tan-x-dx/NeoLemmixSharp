@@ -5,19 +5,15 @@ public sealed class PackInfoData
     public required string Title { get; init; }
     public required string Author { get; init; }
 
-    public List<string> Messages { get; } = [];
+    public required List<string> Messages { get; init; }
 
-    public static PackInfoData Default { get; }
-
-    static PackInfoData()
+    public static PackInfoData Default { get; } = new()
     {
-        Default = new PackInfoData()
-        {
-            Title = string.Empty,
-            Author = string.Empty,
-        };
+        Title = string.Empty,
+        Author = string.Empty,
 
-        Default.Messages.AddRange(
+        Messages =
+        [
             string.Empty,
             string.Empty,
             string.Empty,
@@ -33,6 +29,7 @@ public sealed class PackInfoData
             "Volker Oth and Mindless for",
             "sharing sourcecode and information",
             "What are you waiting for?",
-            "Go play the game already!");
-    }
+            "Go play the game already!"
+        ]
+    };
 }

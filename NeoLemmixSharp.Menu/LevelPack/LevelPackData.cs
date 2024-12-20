@@ -8,7 +8,7 @@ public sealed class LevelPackData
 
     public required FileFormatType FileFormatType { get; init; }
     public required PackInfoData PackInfo { get; init; }
-    public required MusicData? Music { get; init; }
-    public List<PostViewMessageData> PostViewMessages { get; } = [];
-    public List<LevelPackGroupData> GroupData { get; } = [];
+    public required List<string> MusicData { get; init; }
+    public required List<PostViewMessageData> PostViewMessages { get; init; }
+    public required List<LevelPackGroupData> GroupData { get; init; }
 }

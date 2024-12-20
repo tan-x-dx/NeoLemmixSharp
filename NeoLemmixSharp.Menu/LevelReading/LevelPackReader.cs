@@ -46,24 +46,25 @@ public static class LevelPackReader
         }
     }
 
-    private static LevelPackData CreateLevelPackEntryForSingularLevel(string filePath, FileFormatType fileFormatType)
+    private static LevelPackData CreateLevelPackEntryForSingularLevel(string levelFilePath, FileFormatType fileFormatType)
     {
+        var groupDatum = new LevelPackGroupData
+        {
+            FolderPath = levelFilePath,
+            GroupName = string.Empty,
+
+            LevelFileNames = [levelFilePath]
+        };
+
         var result = new LevelPackData
         {
             FileFormatType = fileFormatType,
-            Music = new MusicData { },
             PackInfo = PackInfoData.Default,
-        };
 
-        var groupDatum = new LevelPackGroupData
-        {
-            FolderPath = filePath,
-            FolderName = string.Empty,
-            GroupName = string.Empty
+            MusicData = [],
+            GroupData = [groupDatum],
+            PostViewMessages = PostViewMessageData.DefaultMessages
         };
-
-        result.GroupData.Add(groupDatum);
-        result.PostViewMessages.AddRange(PostViewMessageData.DefaultMessages);
 
         return result;
     }
@@ -71,9 +72,7 @@ public static class LevelPackReader
     private static LevelPackData CreateLevelPackEntryForFolder(string folderPath, FileFormatType fileFormatType)
     {
         if (fileFormatType == FileFormatType.NeoLemmix)
-        {
             return NeoLemmixConfigReader.TryReadLevelPackData(folderPath);
-        }
 
         return null!;
     }

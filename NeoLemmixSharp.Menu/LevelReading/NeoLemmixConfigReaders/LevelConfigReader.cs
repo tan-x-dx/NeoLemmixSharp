@@ -4,12 +4,24 @@ namespace NeoLemmixSharp.Menu.LevelReading.NeoLemmixConfigReaders;
 
 public sealed class LevelConfigReader : NeoLemmixDataReader
 {
-    public LevelConfigReader(string identifierToken) : base(identifierToken)
+    private readonly List<string> _levelFileNames = [];
+
+    public LevelConfigReader() : base(string.Empty)
     {
+        RegisterTokenAction("LEVEL", ReadLevelFileName);
     }
+
+    public override bool ShouldProcessSection(ReadOnlySpan<char> token) => true;
 
     public override void BeginReading(ReadOnlySpan<char> line)
     {
-        throw new NotImplementedException();
+        // Do nothing
     }
+
+    private void ReadLevelFileName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _levelFileNames.Add(line.TrimAfterIndex(secondTokenIndex).ToString());
+    }
+
+    public List<string> GetLevelFileNames() => _levelFileNames;
 }
