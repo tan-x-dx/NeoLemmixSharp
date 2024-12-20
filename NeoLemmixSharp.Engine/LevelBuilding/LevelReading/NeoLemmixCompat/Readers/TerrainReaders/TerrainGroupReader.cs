@@ -22,10 +22,11 @@ public sealed class TerrainGroupReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         _currentTerrainGroup = new TerrainGroupData();
         FinishedReading = false;
+        return false;
     }
 
     public override bool ReadNextLine(ReadOnlySpan<char> line)

@@ -45,10 +45,11 @@ public sealed class GadgetReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         _currentGadgetData = new NeoLemmixGadgetData();
         FinishedReading = false;
+        return false;
     }
 
     private void SetStyle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

@@ -22,27 +22,18 @@ public sealed class InfoConfigReader : NeoLemmixDataReader
 
     public override bool ShouldProcessSection(ReadOnlySpan<char> token) => true;
 
-    public override void BeginReading(ReadOnlySpan<char> line)
-    {
-        // Do nothing
-    }
+    public override bool BeginReading(ReadOnlySpan<char> line) => true;
 
     private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         var levelTitle = line.TrimAfterIndex(secondTokenIndex).ToString();
-        if (!string.IsNullOrWhiteSpace(levelTitle))
-        {
-            _title = levelTitle;
-        }
+        _title = levelTitle;
     }
 
     private void SetAuthor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         var levelAuthor = line.TrimAfterIndex(secondTokenIndex).ToString();
-        if (!string.IsNullOrWhiteSpace(levelAuthor))
-        {
-            _author = levelAuthor;
-        }
+        _author = levelAuthor;
     }
 
     private void EnterScrollerSection(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

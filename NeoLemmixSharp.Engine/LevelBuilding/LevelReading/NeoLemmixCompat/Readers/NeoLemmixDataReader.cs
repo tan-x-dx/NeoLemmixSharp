@@ -31,7 +31,12 @@ public abstract class NeoLemmixDataReader
         return TokensMatch(token, IdentifierToken);
     }
 
-    public abstract void BeginReading(ReadOnlySpan<char> line);
+    /// <summary>
+    /// Initial processing. Return true if the first line should be reprocessed.
+    /// </summary>
+    /// <param name="line"></param>
+    /// <returns></returns>
+    public abstract bool BeginReading(ReadOnlySpan<char> line);
 
     public virtual bool ReadNextLine(ReadOnlySpan<char> line)
     {

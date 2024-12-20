@@ -74,11 +74,12 @@ public sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
                TokensMatch(token, "NO_EFFECT");
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
         NxlvReadingHelpers.GetTokenPair(line, out _, out var secondToken, out _);
         _gadgetArchetypeData.Behaviour = GetNeoLemmixGadgetType(secondToken);
+        return false;
     }
 
     public override bool ReadNextLine(ReadOnlySpan<char> line)

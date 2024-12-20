@@ -17,6 +17,7 @@ public sealed class GroupConfigReader : NeoLemmixDataReader
 
         RegisterTokenAction("BASE", DoNothing);
         RegisterTokenAction("$GROUP", OnEnterGroup);
+        RegisterTokenAction("$RANK", OnEnterGroup);
         RegisterTokenAction("NAME", ReadGroupName);
         RegisterTokenAction("FOLDER", ReadFolder);
         RegisterTokenAction("$END", OnExitGroup);
@@ -24,10 +25,7 @@ public sealed class GroupConfigReader : NeoLemmixDataReader
 
     public override bool ShouldProcessSection(ReadOnlySpan<char> token) => true;
 
-    public override void BeginReading(ReadOnlySpan<char> line)
-    {
-        // Do nothing
-    }
+    public override bool BeginReading(ReadOnlySpan<char> line) => true;
 
     private void DoNothing(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {

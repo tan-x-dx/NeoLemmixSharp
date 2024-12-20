@@ -42,7 +42,7 @@ public sealed class TerrainReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         _currentTerrainData = new TerrainData();
         _rotate = false;
@@ -50,6 +50,7 @@ public sealed class TerrainReader : NeoLemmixDataReader
         _flipVertically = false;
 
         FinishedReading = false;
+        return false;
     }
 
     private void SetStyle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

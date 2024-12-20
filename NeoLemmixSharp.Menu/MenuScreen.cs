@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Menu.LevelPack;
+using NeoLemmixSharp.Menu.LevelReading;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Menu.Rendering;
 
@@ -21,6 +23,8 @@ public sealed class MenuScreen : IBaseScreen
     public MenuInputController InputController { get; } = new();
     public MenuPageCreator MenuPageCreator { get; }
     public MenuScreenRenderer MenuScreenRenderer { get; }
+
+    public List<LevelPackData> LevelPackData { get; } = [];
 
     IScreenRenderer IBaseScreen.ScreenRenderer => MenuScreenRenderer;
     public string ScreenTitle => "NeoLemmixSharp";
@@ -49,6 +53,14 @@ public sealed class MenuScreen : IBaseScreen
         MenuScreenRenderer.Initialise();
 
         _currentPage.Initialise();
+
+        ReadLevelPacks();
+    }
+
+    private void ReadLevelPacks()
+    {
+        LevelPackData.Clear();
+        LevelPackData.AddRange(LevelPackReader.TryReadLevelEntryFromFolder(LevelPackReader.LevelsRootPath));
     }
 
     public void SetNextPage(PageBase page)

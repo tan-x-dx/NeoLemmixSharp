@@ -36,10 +36,11 @@ public sealed class AnimationTriggerReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         _currentAnimationTriggerData = new AnimationTriggerData();
         FinishedReading = false;
+        return false;
     }
 
     private void SetStateType(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

@@ -34,7 +34,7 @@ public static class NeoLemmixConfigReader
             return PackInfoData.Default;
 
         var infoConfigReader = new InfoConfigReader();
-        var dataReader = new DataReaderList(foundFilePath, [infoConfigReader]);
+        using var dataReader = new DataReaderList(foundFilePath, [infoConfigReader]);
 
         dataReader.ReadFile();
         return infoConfigReader.GetPackInfoData();
@@ -46,7 +46,7 @@ public static class NeoLemmixConfigReader
             return [];
 
         var musicConfigReader = new MusicConfigReader();
-        var dataReader = new DataReaderList(foundFilePath, [musicConfigReader]);
+        using var dataReader = new DataReaderList(foundFilePath, [musicConfigReader]);
 
         dataReader.ReadFile();
         return musicConfigReader.GetMusicData();
@@ -58,7 +58,7 @@ public static class NeoLemmixConfigReader
             return PostViewMessageData.DefaultMessages;
 
         var postViewConfigReader = new PostViewConfigReader();
-        var dataReader = new DataReaderList(foundFilePath, [postViewConfigReader]);
+        using var dataReader = new DataReaderList(foundFilePath, [postViewConfigReader]);
 
         dataReader.ReadFile();
         return postViewConfigReader.GetPostViewData();
@@ -70,7 +70,7 @@ public static class NeoLemmixConfigReader
             return TryReadRawLevels(folderPath);
 
         var groupConfigReader = new GroupConfigReader(folderPath);
-        var dataReader = new DataReaderList(foundFilePath, [groupConfigReader]);
+        using var dataReader = new DataReaderList(foundFilePath, [groupConfigReader]);
 
         dataReader.ReadFile();
         var groups = groupConfigReader.GetGroupData();
@@ -115,7 +115,7 @@ public static class NeoLemmixConfigReader
         if (TryFindNeoLemmixConfigFile(files, "levels.nxmi", out var foundFilePath))
         {
             var levelConfigReader = new LevelConfigReader();
-            var dataReader = new DataReaderList(foundFilePath, [levelConfigReader]);
+            using var dataReader = new DataReaderList(foundFilePath, [levelConfigReader]);
 
             dataReader.ReadFile();
             group.LevelFileNames.AddRange(levelConfigReader.GetLevelFileNames());

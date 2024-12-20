@@ -24,10 +24,7 @@ public sealed class PostViewConfigReader : NeoLemmixDataReader
 
     public override bool ShouldProcessSection(ReadOnlySpan<char> token) => true;
 
-    public override void BeginReading(ReadOnlySpan<char> line)
-    {
-        // Do nothing
-    }
+    public override bool BeginReading(ReadOnlySpan<char> line) => true;
 
     private void EnterResultGroup(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {

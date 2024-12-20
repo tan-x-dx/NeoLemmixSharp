@@ -30,7 +30,7 @@ public static class LevelPackReader
                     case FileType.NeoLemmixConfig:
                         shouldDoBasicSearchOnSubFolders = false;
                         yield return CreateLevelPackEntryForFolder(folderPath, FileFormatType.NeoLemmix);
-                        break;
+                        goto Quit;
                 }
             }
         }
@@ -39,11 +39,14 @@ public static class LevelPackReader
         {
             var subFolders = Directory.GetDirectories(folderPath);
 
-            foreach (var subFolderEntry in subFolders.SelectMany(TryReadLevelEntryFromFolder))
+            foreach (var subFolder in subFolders)
             {
-                yield return subFolderEntry;
+                foreach (var s in TryReadLevelEntryFromFolder(subFolder))
+                    yield return s;
             }
         }
+
+        Quit:;
     }
 
     private static LevelPackData CreateLevelPackEntryForSingularLevel(string levelFilePath, FileFormatType fileFormatType)

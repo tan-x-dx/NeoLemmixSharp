@@ -46,7 +46,7 @@ public sealed class LevelFolderEntry : LevelBrowserEntry
 
     public void LoadSubEntries()
     {
-        _entries ??= new List<LevelBrowserEntry>(GetMenuItems(_folderPath, _indentationLevel + 1));
+        _entries ??= new List<LevelBrowserEntry>();
     }
 
     public override IEnumerable<LevelBrowserEntry> GetSubEntries()

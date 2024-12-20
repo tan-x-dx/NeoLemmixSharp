@@ -13,10 +13,7 @@ public sealed class MusicConfigReader : NeoLemmixDataReader
 
     public override bool ShouldProcessSection(ReadOnlySpan<char> token) => true;
 
-    public override void BeginReading(ReadOnlySpan<char> line)
-    {
-        // Do nothing
-    }
+    public override bool BeginReading(ReadOnlySpan<char> line) => true;
 
     private void ReadTrack(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {

@@ -10,10 +10,11 @@ public sealed class ShadesReader : NeoLemmixDataReader
 
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         _inBlock = false;
         FinishedReading = false;
+        return false;
     }
 
     public override bool ReadNextLine(ReadOnlySpan<char> line)

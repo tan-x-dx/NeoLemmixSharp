@@ -21,10 +21,11 @@ public sealed class TalismanReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         _currentTalismanData = new TalismanData();
         FinishedReading = false;
+        return false;
     }
 
     public override bool ReadNextLine(ReadOnlySpan<char> line)

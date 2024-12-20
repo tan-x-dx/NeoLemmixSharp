@@ -42,7 +42,7 @@ public sealed class LevelDataReader : NeoLemmixDataReader
         RegisterTokenAction("MAX_SPAWN_INTERVAL", SetMaxSpawnInterval);
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
 
@@ -50,6 +50,7 @@ public sealed class LevelDataReader : NeoLemmixDataReader
 
         var levelTitle = line.TrimAfterIndex(secondTokenIndex).ToString();
         _levelData.LevelTitle = string.IsNullOrWhiteSpace(levelTitle) ? "Untitled" : levelTitle;
+        return false;
     }
 
     public override bool ReadNextLine(ReadOnlySpan<char> line)

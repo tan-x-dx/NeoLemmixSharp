@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Menu.Pages.LevelSelect;
@@ -26,37 +25,6 @@ public abstract class LevelBrowserEntry : Component
     }
 
     protected abstract override void OnDispose();
-
-    public static IEnumerable<LevelBrowserEntry> GetMenuItems(string folder, int indentationLevel = 0)
-    {
-        var subFolders = Directory.GetDirectories(folder);
-        foreach (var subFolder in subFolders)
-        {
-            yield return new LevelFolderEntry(subFolder, 0);
-        }
-
-        var files = Directory.GetFiles(folder);
-        foreach (var file in files)
-        {
-            var fileExtension = Path.GetExtension(file.AsSpan());
-
-            if (LevelFileTypeHandler.FileExtensionIsRecognised(fileExtension, out var fileType, out _))
-            {
-                switch (fileType)
-                {
-                    case FileType.Level: yield return new LevelEntry(file, 0); break;
-
-                    case FileType.NeoLemmixConfig: Foo(file); break;
-                }
-            }
-        }
-    }
-
-    private static void Foo(string file)
-    {
-        var fileName = Path.GetFileName(file.AsSpan());
-
-    }
 
     protected abstract override void RenderComponent(SpriteBatch spriteBatch);
 

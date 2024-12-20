@@ -10,9 +10,10 @@ public sealed class SpriteSetRecoloringReader : NeoLemmixDataReader
 
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
+        return false;
     }
 
     public override bool ReadNextLine(ReadOnlySpan<char> line)

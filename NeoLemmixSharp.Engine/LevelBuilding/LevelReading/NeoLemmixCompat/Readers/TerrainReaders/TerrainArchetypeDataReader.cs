@@ -31,10 +31,7 @@ public sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
         return true;
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
-    {
-        ReadNextLine(line);
-    }
+    public override bool BeginReading(ReadOnlySpan<char> line) => true;
 
     private void SetSteel(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
