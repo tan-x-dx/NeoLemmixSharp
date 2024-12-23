@@ -55,18 +55,26 @@ public static class LevelPackReader
         {
             FolderPath = levelFilePath,
             GroupName = string.Empty,
-
             LevelFileNames = [levelFilePath]
+        };
+
+        var rankDatum = new LevelPackRankData
+        {
+            RankName = string.Empty,
+            FolderPath = levelFilePath,
+
+            PackInfo = PackInfoData.Default,
+            MusicData = [],
+            GroupData = [groupDatum],
+            PostViewMessages = PostViewMessageData.DefaultMessages
         };
 
         var result = new LevelPackData
         {
+            Title = string.Empty,
+            Author = string.Empty,
             FileFormatType = fileFormatType,
-            PackInfo = PackInfoData.Default,
-
-            MusicData = [],
-            GroupData = [groupDatum],
-            PostViewMessages = PostViewMessageData.DefaultMessages
+            Ranks = [rankDatum],
         };
 
         return result;

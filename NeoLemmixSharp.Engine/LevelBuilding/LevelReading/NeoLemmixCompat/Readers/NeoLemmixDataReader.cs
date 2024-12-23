@@ -19,7 +19,7 @@ public abstract class NeoLemmixDataReader
         _tokenActions.Add(token, action);
     }
 
-    protected bool TokensMatch(
+    protected static bool TokensMatch(
         ReadOnlySpan<char> firstToken,
         ReadOnlySpan<char> secondToken)
     {

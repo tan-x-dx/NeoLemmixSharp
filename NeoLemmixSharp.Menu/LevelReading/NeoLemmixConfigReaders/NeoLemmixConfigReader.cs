@@ -12,56 +12,118 @@ public static class NeoLemmixConfigReader
     {
         var files = Directory.GetFiles(folderPath);
 
+        if (!TryFindNeoLemmixConfigFile(files, "levels.nxmi", out var foundFilePath))
+            return TryReadRawLevelPack(folderPath, files);
+
+        var groupConfigReader = new RankOrGroupConfigReader(folderPath);
+        using var dataReader = new DataReaderList(foundFilePath, [groupConfigReader]);
+
+        dataReader.ReadFile();
+
+        if (groupConfigReader.Type == RankOrGroupConfigReader.RankOrGroupType.Rank)
+        {
+            var ranks = groupConfigReader.GetRankData();
+
+            return TryReadMultipleRankLevelPack(files, ranks);
+        }
+
+        var groups = groupConfigReader.GetGroupData();
+
+        return TryReadSingleRankLevelPack(folderPath, files, groups);
+    }
+
+    private static LevelPackData TryReadMultipleRankLevelPack(
+        ReadOnlySpan<string> files,
+        List<LevelPackRankData> ranks)
+    {
         var packInfoData = TryReadPackInfoData(files);
-        var musicData = TryReadMusicData(files);
-        var postViewData = TryReadPostViewData(files);
-        var groupData = TryReadGroupData(folderPath, files);
+
+        foreach (var rank in ranks)
+        {
+            TryReadRankData(rank);
+        }
 
         return new LevelPackData
         {
+            Title = packInfoData.Title,
+            Author = packInfoData.Author,
             FileFormatType = FileFormatType.NeoLemmix,
 
+            Ranks = ranks
+        };
+    }
+
+    private static void TryReadRankData(LevelPackRankData rank)
+    {
+        var files = Directory.GetFiles(rank.FolderPath);
+
+        var packInfoData = TryReadPackInfoData(files);
+        var musicData = TryReadMusicData(files);
+        var postViewData = TryReadPostViewData(files);
+        var groupData = TryReadGroupData(rank.FolderPath, files);
+
+        rank.PackInfo = packInfoData;
+        rank.MusicData = musicData;
+        rank.PostViewMessages = postViewData;
+        rank.GroupData = groupData;
+    }
+
+    private static LevelPackData TryReadSingleRankLevelPack(
+        string folderPath,
+        ReadOnlySpan<string> files,
+        List<LevelPackGroupData> groups)
+    {
+        var packInfoData = TryReadPackInfoData(files);
+        var musicData = TryReadMusicData(files);
+        var postViewData = TryReadPostViewData(files);
+
+        var rank = new LevelPackRankData
+        {
+            RankName = packInfoData.Title,
+            FolderPath = folderPath,
+            PackInfo = packInfoData,
+            MusicData = musicData,
+            PostViewMessages = postViewData,
+            GroupData = groups
+        };
+
+        return new LevelPackData
+        {
+            Title = packInfoData.Title,
+            Author = packInfoData.Author,
+            FileFormatType = FileFormatType.NeoLemmix,
+
+            Ranks = [rank]
+        };
+    }
+
+    private static LevelPackData TryReadRawLevelPack(
+        string folderPath,
+        ReadOnlySpan<string> files)
+    {
+        var packInfoData = TryReadPackInfoData(files);
+        var musicData = TryReadMusicData(files);
+        var postViewData = TryReadPostViewData(files);
+        var groupData = TryReadRawLevels(folderPath);
+
+        var rank = new LevelPackRankData
+        {
+            RankName = packInfoData.Title,
+            FolderPath = folderPath,
             PackInfo = packInfoData,
             MusicData = musicData,
             PostViewMessages = postViewData,
             GroupData = groupData
         };
-    }
 
-    private static PackInfoData TryReadPackInfoData(ReadOnlySpan<string> files)
-    {
-        if (!TryFindNeoLemmixConfigFile(files, "info.nxmi", out var foundFilePath))
-            return PackInfoData.Default;
+        return new LevelPackData
+        {
+            Title = packInfoData.Title,
+            Author = packInfoData.Author,
+            FileFormatType = FileFormatType.NeoLemmix,
 
-        var infoConfigReader = new InfoConfigReader();
-        using var dataReader = new DataReaderList(foundFilePath, [infoConfigReader]);
-
-        dataReader.ReadFile();
-        return infoConfigReader.GetPackInfoData();
-    }
-
-    private static List<string> TryReadMusicData(ReadOnlySpan<string> files)
-    {
-        if (!TryFindNeoLemmixConfigFile(files, "music.nxmi", out var foundFilePath))
-            return [];
-
-        var musicConfigReader = new MusicConfigReader();
-        using var dataReader = new DataReaderList(foundFilePath, [musicConfigReader]);
-
-        dataReader.ReadFile();
-        return musicConfigReader.GetMusicData();
-    }
-
-    private static List<PostViewMessageData> TryReadPostViewData(ReadOnlySpan<string> files)
-    {
-        if (!TryFindNeoLemmixConfigFile(files, "postview.nxmi", out var foundFilePath))
-            return PostViewMessageData.DefaultMessages;
-
-        var postViewConfigReader = new PostViewConfigReader();
-        using var dataReader = new DataReaderList(foundFilePath, [postViewConfigReader]);
-
-        dataReader.ReadFile();
-        return postViewConfigReader.GetPostViewData();
+            Ranks = [rank]
+        };
     }
 
     private static List<LevelPackGroupData> TryReadGroupData(string folderPath, ReadOnlySpan<string> files)
@@ -69,12 +131,12 @@ public static class NeoLemmixConfigReader
         if (!TryFindNeoLemmixConfigFile(files, "levels.nxmi", out var foundFilePath))
             return TryReadRawLevels(folderPath);
 
-        var groupConfigReader = new GroupConfigReader(folderPath);
+        var groupConfigReader = new RankOrGroupConfigReader(folderPath);
         using var dataReader = new DataReaderList(foundFilePath, [groupConfigReader]);
 
         dataReader.ReadFile();
-        var groups = groupConfigReader.GetGroupData();
 
+        var groups = groupConfigReader.GetGroupData();
         foreach (var group in groups)
         {
             TryReadGroupLevelData(group);
@@ -133,6 +195,42 @@ public static class NeoLemmixConfigReader
             var fileNamePlusExtension = Path.GetFileName(file);
             group.LevelFileNames.Add(fileNamePlusExtension);
         }
+    }
+
+    private static PackInfoData TryReadPackInfoData(ReadOnlySpan<string> files)
+    {
+        if (!TryFindNeoLemmixConfigFile(files, "info.nxmi", out var foundFilePath))
+            return PackInfoData.Default;
+
+        var infoConfigReader = new InfoConfigReader();
+        using var dataReader = new DataReaderList(foundFilePath, [infoConfigReader]);
+
+        dataReader.ReadFile();
+        return infoConfigReader.GetPackInfoData();
+    }
+
+    private static List<string> TryReadMusicData(ReadOnlySpan<string> files)
+    {
+        if (!TryFindNeoLemmixConfigFile(files, "music.nxmi", out var foundFilePath))
+            return [];
+
+        var musicConfigReader = new MusicConfigReader();
+        using var dataReader = new DataReaderList(foundFilePath, [musicConfigReader]);
+
+        dataReader.ReadFile();
+        return musicConfigReader.GetMusicData();
+    }
+
+    private static List<PostViewMessageData> TryReadPostViewData(ReadOnlySpan<string> files)
+    {
+        if (!TryFindNeoLemmixConfigFile(files, "postview.nxmi", out var foundFilePath))
+            return PostViewMessageData.DefaultMessages;
+
+        var postViewConfigReader = new PostViewConfigReader();
+        using var dataReader = new DataReaderList(foundFilePath, [postViewConfigReader]);
+
+        dataReader.ReadFile();
+        return postViewConfigReader.GetPostViewData();
     }
 
     private static bool TryFindNeoLemmixConfigFile(ReadOnlySpan<string> files, ReadOnlySpan<char> fileNameToLocate, [MaybeNullWhen(false)] out string foundFilePath)
