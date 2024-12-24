@@ -4,6 +4,7 @@ public sealed class PackInfoData
 {
     public required string Title { get; init; }
     public required string Author { get; init; }
+    public required string Version { get; init; }
 
     public required List<string> Messages { get; init; }
 
@@ -11,6 +12,7 @@ public sealed class PackInfoData
     {
         Title = string.Empty,
         Author = string.Empty,
+        Version = string.Empty,
 
         Messages =
         [

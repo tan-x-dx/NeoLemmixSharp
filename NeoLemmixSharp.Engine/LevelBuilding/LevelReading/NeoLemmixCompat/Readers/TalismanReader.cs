@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Skills;
+﻿using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
@@ -75,7 +74,7 @@ public sealed class TalismanReader : NeoLemmixDataReader
 
     private void SetUseOnlySkill(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        if (!NxlvReadingHelpers.TryGetSkillByName(secondToken, Helpers.CaseInvariantCharEqualityComparer, out var onlySkill))
+        if (!NxlvReadingHelpers.TryGetSkillByName(secondToken, out var onlySkill))
         {
             NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, "USE_ONLY_SKILL", line);
             return;
@@ -124,7 +123,7 @@ public sealed class TalismanReader : NeoLemmixDataReader
             return;
         }
 
-        if (NxlvReadingHelpers.TryGetSkillByName(firstToken[..^6], Helpers.CaseInvariantCharEqualityComparer, out var skill))
+        if (NxlvReadingHelpers.TryGetSkillByName(firstToken[..^6], out var skill))
         {
             currentTalismanData.SkillLimits.Add(skill, int.Parse(secondToken));
             return;

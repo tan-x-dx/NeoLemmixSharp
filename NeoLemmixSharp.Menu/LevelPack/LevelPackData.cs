@@ -8,5 +8,5 @@ public sealed class LevelPackData
     public required string Author { get; init; }
     public required FileFormatType FileFormatType { get; init; }
 
-    public required List<LevelPackRankData> Ranks { get; init; }
+    public required List<LevelPackGroupData> Groups { get; init; }
 }

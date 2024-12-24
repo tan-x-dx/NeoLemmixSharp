@@ -9,12 +9,15 @@ public sealed class InfoConfigReader : NeoLemmixDataReader
 
     private string _title = string.Empty;
     private string _author = string.Empty;
+    private string _version = string.Empty;
     private int _scrollerReadState = 0;
 
     public InfoConfigReader() : base(string.Empty)
     {
         RegisterTokenAction("TITLE", SetTitle);
         RegisterTokenAction("AUTHOR", SetAuthor);
+        RegisterTokenAction("VERSION", SetVersion);
+        RegisterTokenAction("PANEL", DoNothing);
         RegisterTokenAction("$SCROLLER", EnterScrollerSection);
         RegisterTokenAction("LINE", ReadMessage);
         RegisterTokenAction("$END", OnEnd);
@@ -23,6 +26,10 @@ public sealed class InfoConfigReader : NeoLemmixDataReader
     public override bool ShouldProcessSection(ReadOnlySpan<char> token) => true;
 
     public override bool BeginReading(ReadOnlySpan<char> line) => true;
+
+    private void DoNothing(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+    }
 
     private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
@@ -34,6 +41,12 @@ public sealed class InfoConfigReader : NeoLemmixDataReader
     {
         var levelAuthor = line.TrimAfterIndex(secondTokenIndex).ToString();
         _author = levelAuthor;
+    }
+
+    private void SetVersion(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        var levelVersion = line.TrimAfterIndex(secondTokenIndex).ToString();
+        _version = levelVersion;
     }
 
     private void EnterScrollerSection(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -57,8 +70,6 @@ public sealed class InfoConfigReader : NeoLemmixDataReader
         {
             throw new InvalidOperationException("Invalid scroller state!");
         }
-
-        FinishedReading = true;
     }
 
     public PackInfoData GetPackInfoData()
@@ -67,6 +78,7 @@ public sealed class InfoConfigReader : NeoLemmixDataReader
         {
             Title = _title,
             Author = _author,
+            Version = _version,
 
             Messages = _messages,
         };

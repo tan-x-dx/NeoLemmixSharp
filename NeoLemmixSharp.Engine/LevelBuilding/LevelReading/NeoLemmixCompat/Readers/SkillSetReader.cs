@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
@@ -32,7 +31,7 @@ public sealed class SkillSetReader : NeoLemmixDataReader
             return false;
         }
 
-        if (!NxlvReadingHelpers.TryGetSkillByName(firstToken, Helpers.CaseInvariantCharEqualityComparer, out var skill))
+        if (!NxlvReadingHelpers.TryGetSkillByName(firstToken, out var skill))
             throw new InvalidOperationException($"Unknown token: {firstToken}");
 
         if (!_seenSkills.Add(skill))

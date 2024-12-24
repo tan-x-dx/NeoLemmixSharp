@@ -11,8 +11,7 @@ public sealed class PostViewConfigReader : NeoLemmixDataReader
     private ResultType? _absoluteOrPercentage;
     private ParityType? _aboveOrBelow;
     private int? _numericalValue;
-    private string? _line1;
-    private string? _line2;
+    private List<string>? _lines;
 
     public PostViewConfigReader() : base(string.Empty)
     {
@@ -31,8 +30,7 @@ public sealed class PostViewConfigReader : NeoLemmixDataReader
         _absoluteOrPercentage = null;
         _aboveOrBelow = null;
         _numericalValue = null;
-        _line1 = null;
-        _line2 = null;
+        _lines = [];
     }
 
     private void ParseCondition(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -78,17 +76,7 @@ public sealed class PostViewConfigReader : NeoLemmixDataReader
     {
         var messageLine = line.TrimAfterIndex(secondTokenIndex).ToString();
 
-        if (_line1 is null)
-        {
-            _line1 = messageLine;
-            return;
-        }
-        if (_line2 is null)
-        {
-            _line2 = messageLine;
-            return;
-        }
-        throw new InvalidOperationException("More than two lines read!");
+        _lines!.Add(messageLine);
     }
 
     private void ExitResultGroup(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -98,8 +86,7 @@ public sealed class PostViewConfigReader : NeoLemmixDataReader
             AbsoluteOrPercentage = _absoluteOrPercentage!.Value,
             AboveOrBelow = _aboveOrBelow!.Value,
             NumericalValue = _numericalValue!.Value,
-            Line1 = _line1 ?? string.Empty,
-            Line2 = _line2 ?? string.Empty,
+            Lines = _lines!
         };
 
         _messageData.Add(newMessage);

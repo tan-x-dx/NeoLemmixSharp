@@ -113,13 +113,12 @@ public static class NxlvReadingHelpers
 
     public static bool TryGetSkillByName(
         ReadOnlySpan<char> token,
-        IEqualityComparer<char> charEqualityComparer,
         [MaybeNullWhen(false)] out LemmingSkill lemmingSkill)
     {
         foreach (var item in LemmingSkill.AllItems)
         {
             var skillName = item.LemmingSkillName.AsSpan();
-            if (skillName.SequenceEqual(token, charEqualityComparer))
+            if (skillName.Equals(token, StringComparison.OrdinalIgnoreCase))
             {
                 lemmingSkill = item;
                 return true;

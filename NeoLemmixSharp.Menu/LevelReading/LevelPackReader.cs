@@ -3,6 +3,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 using NeoLemmixSharp.Menu.LevelPack;
 using NeoLemmixSharp.Menu.LevelReading.NeoLemmixConfigReaders;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Menu.LevelReading;
 
@@ -10,40 +11,50 @@ public static class LevelPackReader
 {
     public static readonly string LevelsRootPath = Path.Combine(RootDirectoryManager.RootDirectory, NeoLemmixFileExtensions.LevelFolderName);
 
-    public static IEnumerable<LevelPackData> TryReadLevelEntryFromFolder(string folderPath)
+    public static IEnumerable<LevelPackData?> TryReadLevelEntryFromFolder(string folderPath)
     {
         var files = Directory.GetFiles(folderPath);
-        var shouldDoBasicSearchOnSubFolders = true;
+
+        // Need to do one sweep to see if we're inside of a NeoLemmix level pack folder
+        // and then handle that separately
+        foreach (var filePath in files)
+        {
+            var fileExtension = Path.GetExtension(filePath.AsSpan());
+
+            if (!LevelFileTypeHandler.FileExtensionIsRecognised(fileExtension, out var fileType, out var fileFormatType) ||
+                fileType != FileType.NeoLemmixConfig ||
+                fileFormatType != FileFormatType.NeoLemmix)
+                continue;
+
+            // At this point we've found a .nxmi file
+            // Assume we're in a NeoLemmix level pack folder and deal with that separately
+            yield return NeoLemmixConfigReader.TryCreateLevelPackData(folderPath);
+
+            // This method is a recursive yield/return enumerable
+            // Use a goto to break out of all loops
+            goto Quit;
+        }
 
         foreach (var filePath in files)
         {
             var fileExtension = Path.GetExtension(filePath.AsSpan());
 
-            if (LevelFileTypeHandler.FileExtensionIsRecognised(fileExtension, out var fileType, out var fileFormatType))
-            {
-                switch (fileType)
-                {
-                    case FileType.Level:
-                        yield return CreateLevelPackEntryForSingularLevel(filePath, fileFormatType);
-                        break;
+            if (!LevelFileTypeHandler.FileExtensionIsRecognised(fileExtension, out var fileType, out var fileFormatType))
+                continue;
 
-                    case FileType.NeoLemmixConfig:
-                        shouldDoBasicSearchOnSubFolders = false;
-                        yield return CreateLevelPackEntryForFolder(folderPath, FileFormatType.NeoLemmix);
-                        goto Quit;
-                }
-            }
+            // At this point, there may still be NeoLemmix levels, but these will be
+            // standalone levels and will need to be processed as such
+
+            if (fileType == FileType.Level)
+                yield return CreateLevelPackEntryForSingularLevel(filePath, fileFormatType);
         }
 
-        if (shouldDoBasicSearchOnSubFolders)
-        {
-            var subFolders = Directory.GetDirectories(folderPath);
+        var subFolders = Directory.GetDirectories(folderPath);
 
-            foreach (var subFolder in subFolders)
-            {
-                foreach (var s in TryReadLevelEntryFromFolder(subFolder))
-                    yield return s;
-            }
+        foreach (var subFolder in subFolders)
+        {
+            foreach (var lpd in TryReadLevelEntryFromFolder(subFolder))
+                yield return lpd;
         }
 
         Quit:;
@@ -55,18 +66,11 @@ public static class LevelPackReader
         {
             FolderPath = levelFilePath,
             GroupName = string.Empty,
-            LevelFileNames = [levelFilePath]
-        };
-
-        var rankDatum = new LevelPackRankData
-        {
-            RankName = string.Empty,
-            FolderPath = levelFilePath,
-
             PackInfo = PackInfoData.Default,
             MusicData = [],
-            GroupData = [groupDatum],
-            PostViewMessages = PostViewMessageData.DefaultMessages
+            PostViewMessages = PostViewMessageData.DefaultMessages,
+            SubGroups = [],
+            LevelFileNames = [levelFilePath]
         };
 
         var result = new LevelPackData
@@ -74,17 +78,16 @@ public static class LevelPackReader
             Title = string.Empty,
             Author = string.Empty,
             FileFormatType = fileFormatType,
-            Ranks = [rankDatum],
+            Groups = [groupDatum],
         };
 
         return result;
     }
 
-    private static LevelPackData CreateLevelPackEntryForFolder(string folderPath, FileFormatType fileFormatType)
+    private static LevelPackData? TryCreateLevelPackEntryForFolder(string folderPath, FileFormatType fileFormatType)
     {
-        if (fileFormatType == FileFormatType.NeoLemmix)
-            return NeoLemmixConfigReader.TryReadLevelPackData(folderPath);
+        Debug.Assert(fileFormatType != FileFormatType.NeoLemmix);
 
-        return null!;
+        return null;
     }
 }

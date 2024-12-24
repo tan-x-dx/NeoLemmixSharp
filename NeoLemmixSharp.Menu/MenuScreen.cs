@@ -24,7 +24,7 @@ public sealed class MenuScreen : IBaseScreen
     public MenuPageCreator MenuPageCreator { get; }
     public MenuScreenRenderer MenuScreenRenderer { get; }
 
-    public List<LevelPackData> LevelPackData { get; } = [];
+    public List<LevelPackData> LevelPackData { get; } = new(256);
 
     IScreenRenderer IBaseScreen.ScreenRenderer => MenuScreenRenderer;
     public string ScreenTitle => "NeoLemmixSharp";
@@ -60,7 +60,14 @@ public sealed class MenuScreen : IBaseScreen
     private void ReadLevelPacks()
     {
         LevelPackData.Clear();
-        LevelPackData.AddRange(LevelPackReader.TryReadLevelEntryFromFolder(LevelPackReader.LevelsRootPath));
+
+        foreach (var levelPack in LevelPackReader.TryReadLevelEntryFromFolder(LevelPackReader.LevelsRootPath))
+        {
+            if (levelPack is not null)
+            {
+                LevelPackData.Add(levelPack);
+            }
+        }
     }
 
     public void SetNextPage(PageBase page)

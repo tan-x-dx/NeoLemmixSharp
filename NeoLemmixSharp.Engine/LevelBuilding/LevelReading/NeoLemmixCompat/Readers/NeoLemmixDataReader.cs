@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
@@ -19,11 +19,12 @@ public abstract class NeoLemmixDataReader
         _tokenActions.Add(token, action);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected static bool TokensMatch(
         ReadOnlySpan<char> firstToken,
         ReadOnlySpan<char> secondToken)
     {
-        return firstToken.SequenceEqual(secondToken, Helpers.CaseInvariantCharEqualityComparer);
+        return firstToken.Equals(secondToken, StringComparison.OrdinalIgnoreCase);
     }
 
     public virtual bool ShouldProcessSection(ReadOnlySpan<char> token)

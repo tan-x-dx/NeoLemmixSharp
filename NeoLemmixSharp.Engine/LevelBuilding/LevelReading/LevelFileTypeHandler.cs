@@ -5,28 +5,22 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
 
 public static class LevelFileTypeHandler
 {
-    private static readonly Dictionary<string, FileFormatType> FileFormatTypeLookup = new(StringComparer.OrdinalIgnoreCase)
+    private readonly struct FileTypeAndFormat(FileType type, FileFormatType format)
     {
-        { NeoLemmixFileExtensions.LevelFileExtension, FileFormatType.NeoLemmix },
-        { NeoLemmixFileExtensions.GadgetFileExtension, FileFormatType.NeoLemmix },
-        { NeoLemmixFileExtensions.TerrainFolderName, FileFormatType.NeoLemmix },
-        { NeoLemmixFileExtensions.ThemeFileExtension, FileFormatType.NeoLemmix },
-        { NeoLemmixFileExtensions.ConfigFileExtension, FileFormatType.NeoLemmix },
-        { NeoLemmixFileExtensions.ReplayFileExtension, FileFormatType.NeoLemmix },
+        public readonly FileType Type = type;
+        public readonly FileFormatType Format = format;
+    }
 
-        { DefaultFileExtensions.LevelFileExtension, FileFormatType.Default }
-    };
-
-    private static readonly Dictionary<string, FileType> LevelFileTypeLookup = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, FileTypeAndFormat> FileTypeAndFormatLookup = new(StringComparer.OrdinalIgnoreCase)
     {
-        { NeoLemmixFileExtensions.LevelFileExtension, FileType.Level },
-        { NeoLemmixFileExtensions.GadgetFileExtension, FileType.NeoLemmixGadget },
-        { NeoLemmixFileExtensions.TerrainFolderName, FileType.NeoLemmixTerrain },
-        { NeoLemmixFileExtensions.ThemeFileExtension, FileType.Style },
-        { NeoLemmixFileExtensions.ConfigFileExtension, FileType.NeoLemmixConfig },
-        { NeoLemmixFileExtensions.ReplayFileExtension, FileType.Replay },
+        { NeoLemmixFileExtensions.LevelFileExtension, new(FileType.Level,FileFormatType.NeoLemmix) },
+        { NeoLemmixFileExtensions.GadgetFileExtension, new(FileType.NeoLemmixGadget, FileFormatType.NeoLemmix) },
+        { NeoLemmixFileExtensions.TerrainFolderName, new(FileType.NeoLemmixTerrain, FileFormatType.NeoLemmix) },
+        { NeoLemmixFileExtensions.ThemeFileExtension, new(FileType.Style, FileFormatType.NeoLemmix) },
+        { NeoLemmixFileExtensions.ConfigFileExtension, new(FileType.NeoLemmixConfig, FileFormatType.NeoLemmix) },
+        { NeoLemmixFileExtensions.ReplayFileExtension, new(FileType.Replay, FileFormatType.NeoLemmix) },
 
-        { DefaultFileExtensions.LevelFileExtension, FileType.Level }
+        { DefaultFileExtensions.LevelFileExtension, new(FileType.Level, FileFormatType.Default) }
     };
 
     private static readonly Dictionary<string, Type> LevelFileExtensionLookup = new(StringComparer.OrdinalIgnoreCase)
@@ -40,11 +34,11 @@ public static class LevelFileTypeHandler
         out FileType fileType,
         out FileFormatType fileFormatType)
     {
-        var fileExtensionAlternateLookup = LevelFileTypeLookup.GetAlternateLookup<ReadOnlySpan<char>>();
-        var result = fileExtensionAlternateLookup.TryGetValue(fileExtension, out fileType);
+        var fileTypeAndFormatAlternateLookup = FileTypeAndFormatLookup.GetAlternateLookup<ReadOnlySpan<char>>();
+        var result = fileTypeAndFormatAlternateLookup.TryGetValue(fileExtension, out var typeAndFormat);
 
-        var fileFormatTypeAlternateLookup = FileFormatTypeLookup.GetAlternateLookup<ReadOnlySpan<char>>();
-        fileFormatTypeAlternateLookup.TryGetValue(fileExtension, out fileFormatType);
+        fileType = typeAndFormat.Type;
+        fileFormatType = typeAndFormat.Format;
 
         return result;
     }
