@@ -261,22 +261,6 @@ public static class BitArrayHelpers
     }
 
     [Pure]
-    internal static bool IsSupersetOf(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
-    {
-        if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
-
-        for (var i = 0; i < span.Length; i++)
-        {
-            var bits = span[i];
-            if ((bits | other[i]) != bits)
-                return false;
-        }
-
-        return true;
-    }
-
-    [Pure]
     internal static bool IsProperSubsetOf(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
@@ -290,26 +274,6 @@ public static class BitArrayHelpers
             allEqual &= bits == otherBits;
 
             if ((bits | otherBits) != otherBits)
-                return false;
-        }
-
-        return !allEqual;
-    }
-
-    [Pure]
-    internal static bool IsProperSupersetOf(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
-    {
-        if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
-
-        var allEqual = true;
-        for (var i = 0; i < span.Length; i++)
-        {
-            var bits = span[i];
-            var otherBits = other[i];
-            allEqual &= bits == otherBits;
-
-            if ((bits | otherBits) != bits)
                 return false;
         }
 

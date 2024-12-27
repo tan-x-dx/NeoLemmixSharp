@@ -240,14 +240,14 @@ public sealed class SimpleSet<TPerfectHasher, T> : ISet<T>, IReadOnlySet<T>
             : stackalloc uint[bufferLength];
 
         GetBitsFromEnumerable(otherBitBuffer, other);
-        return BitArrayHelpers.IsSupersetOf(new ReadOnlySpan<uint>(_bits), otherBitBuffer);
+        return BitArrayHelpers.IsSubsetOf(otherBitBuffer, new ReadOnlySpan<uint>(_bits));
     }
 
     [Pure]
     public bool IsSupersetOf(SimpleSet<TPerfectHasher, T> other)
     {
         var otherBits = other._bits;
-        return BitArrayHelpers.IsSupersetOf(new ReadOnlySpan<uint>(_bits), new ReadOnlySpan<uint>(otherBits));
+        return BitArrayHelpers.IsSubsetOf(new ReadOnlySpan<uint>(otherBits), new ReadOnlySpan<uint>(_bits));
     }
 
     [Pure]
@@ -278,14 +278,14 @@ public sealed class SimpleSet<TPerfectHasher, T> : ISet<T>, IReadOnlySet<T>
             : stackalloc uint[bufferLength];
 
         GetBitsFromEnumerable(otherBitBuffer, other);
-        return BitArrayHelpers.IsProperSupersetOf(new ReadOnlySpan<uint>(_bits), otherBitBuffer);
+        return BitArrayHelpers.IsProperSubsetOf(otherBitBuffer, new ReadOnlySpan<uint>(_bits));
     }
 
     [Pure]
     public bool IsProperSupersetOf(SimpleSet<TPerfectHasher, T> other)
     {
         var otherBits = other._bits;
-        return BitArrayHelpers.IsProperSupersetOf(new ReadOnlySpan<uint>(_bits), new ReadOnlySpan<uint>(otherBits));
+        return BitArrayHelpers.IsProperSubsetOf(new ReadOnlySpan<uint>(otherBits), new ReadOnlySpan<uint>(_bits));
     }
 
     [Pure]

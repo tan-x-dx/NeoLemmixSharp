@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -34,10 +36,23 @@ public readonly struct LevelPosition : IEquatable<LevelPosition>
 
     [DebuggerStepThrough]
     public bool Equals(LevelPosition other) => X == other.X && Y == other.Y;
-    public override bool Equals(object? obj) => obj is LevelPosition other && X == other.X && Y == other.Y;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is LevelPosition other && X == other.X && Y == other.Y;
     public override int GetHashCode() => 3790121 * X +
                                          2885497 * Y +
                                          1088251;
 
-    public override string ToString() => $"[{X},{Y}]";
+    [SkipLocalsInit]
+    public override string ToString()
+    {
+        Span<char> buffer = stackalloc char[1 + 11 + 1 + 11 + 1];
+        var i = 0;
+        buffer[i++] = '[';
+        X.TryFormat(buffer[i..], out var di);
+        i += di;
+        buffer[i++] = ',';
+        Y.TryFormat(buffer[i..], out di);
+        i += di;
+        buffer[i++] = ']';
+        return buffer[..i].ToString();
+    }
 }
