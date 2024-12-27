@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using System.Runtime.CompilerServices;
 
