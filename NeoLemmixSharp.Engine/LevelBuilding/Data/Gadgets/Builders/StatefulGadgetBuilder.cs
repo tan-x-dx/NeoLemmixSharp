@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
@@ -17,7 +16,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 public sealed class StatefulGadgetBuilder : IGadgetBuilder
 {
     public required int GadgetBuilderId { get; init; }
-    public required GadgetBehaviour GadgetBehaviour { get; init; }
     public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }
 
     public required SpriteData SpriteData { get; init; }
@@ -78,7 +76,6 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         var animationController = gadgetStateArchetypeData.GetAnimationController();
 
         return new GadgetState(
-            GadgetBehaviour,
             gadgetStateArchetypeData.OnLemmingEnterActions,
             gadgetStateArchetypeData.OnLemmingPresentActions,
             gadgetStateArchetypeData.OnLemmingExitActions,

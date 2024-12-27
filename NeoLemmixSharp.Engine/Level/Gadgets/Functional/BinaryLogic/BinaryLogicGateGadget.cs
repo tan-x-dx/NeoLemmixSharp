@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
@@ -14,7 +13,6 @@ public abstract class BinaryLogicGateGadget : GadgetBase, ILogicGateGadget
     public LogicGateGadgetInput InputA { get; }
     public LogicGateGadgetInput InputB { get; }
     public GadgetOutput Output { get; } = new();
-    public sealed override GadgetBehaviour GadgetBehaviour => LogicGateGadgetBehaviour.Instance;
 
     protected BinaryLogicGateGadget(
         int id,

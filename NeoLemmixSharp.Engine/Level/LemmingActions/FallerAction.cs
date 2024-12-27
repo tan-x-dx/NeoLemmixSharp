@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -98,11 +97,11 @@ public sealed class FallerAction : LemmingAction
                 !gadget.MatchesPosition(footPixel))
                 continue;
 
-            if (gadget.GadgetBehaviour == NoSplatGadgetBehaviour.Instance)
-                return false;
+            /*  if (gadget.GadgetBehaviour == NoSplatGadgetBehaviour.Instance)
+                  return false;
 
-            if (gadget.GadgetBehaviour == SplatGadgetBehaviour.Instance)
-                return true;
+              if (gadget.GadgetBehaviour == SplatGadgetBehaviour.Instance)
+                  return true;*/
         }
 
         return lemming.DistanceFallen > EngineConstants.MaxFallDistance;

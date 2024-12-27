@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
@@ -15,7 +14,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 public sealed class ResizeableGadgetBuilder : IGadgetBuilder
 {
     public required int GadgetBuilderId { get; init; }
-    public required GadgetBehaviour GadgetBehaviour { get; init; }
     public required GadgetStateArchetypeData ArchetypeData { get; init; }
 
     public required SpriteData SpriteData { get; init; }
@@ -42,7 +40,6 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
 
         var result = new ResizeableGadget(
             gadgetData.Id,
-            GadgetBehaviour,
             gadgetData.Orientation,
             gadgetBounds,
             gadgetRenderer,

@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
@@ -45,7 +44,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
             NeoLemmixGadgetBehaviour.OneWayLeft or
             NeoLemmixGadgetBehaviour.OneWayDown;
     }
-
+    /*
     public static GadgetBehaviour ToGadgetBehaviour(
         this NeoLemmixGadgetBehaviour neoLemmixGadgetBehaviour)
     {
@@ -76,7 +75,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
 
             _ => ThrowUnknownBehaviourException<GadgetBehaviour>(neoLemmixGadgetBehaviour)
         };
-    }
+    }*/
 
     public static GadgetStateArchetypeData[] GetGadgetStates(
         this NeoLemmixGadgetArchetypeData archetypeData,

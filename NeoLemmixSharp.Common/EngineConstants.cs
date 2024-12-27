@@ -530,24 +530,6 @@ public static class EngineConstants
 
     #endregion
 
-    #region Gadget Constants
-
-    public const int FireGadgetBehaviourId = 2;
-    public const int FunctionalGadgetBehaviourId = 10;
-    public const int GenericGadgetBehaviourId = 0;
-    public const int HatchGadgetBehaviourId = 12;
-    public const int LogicGateGadgetBehaviourId = 11;
-    public const int MetalGrateGadgetBehaviourId = 9;
-    public const int NoSplatGadgetBehaviourId = 6;
-    public const int SawBladeGadgetBehaviourId = 8;
-    public const int SplatGadgetBehaviourId = 5;
-    public const int SwitchGadgetBehaviourId = 7;
-    public const int TinkerableGadgetBehaviourId = 3;
-    public const int UpdraftGadgetBehaviourId = 4;
-    public const int WaterGadgetBehaviourId = 1;
-
-    #endregion
-
     #region Menu Constants
 
     public const string LevelLoadingDisplayString = "Loading";

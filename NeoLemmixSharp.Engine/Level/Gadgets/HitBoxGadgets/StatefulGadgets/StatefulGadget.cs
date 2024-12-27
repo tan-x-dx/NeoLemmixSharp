@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -16,7 +15,6 @@ public sealed class StatefulGadget : HitBoxGadget, IMoveableGadget, IControlledA
     private int _currentStateIndex;
     private int _nextStateIndex;
 
-    public override GadgetBehaviour GadgetBehaviour => _states[_currentStateIndex].GadgetBehaviour;
     public override Orientation Orientation { get; }
 
     public GadgetStateAnimationController AnimationController => _states[_currentStateIndex].AnimationController;

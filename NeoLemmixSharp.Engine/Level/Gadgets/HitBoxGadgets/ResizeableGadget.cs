@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -12,14 +11,12 @@ public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeabl
 {
     private readonly HitBox _hitBox;
 
-    public override GadgetBehaviour GadgetBehaviour { get; }
     public override Orientation Orientation { get; }
 
     public NineSliceRenderer Renderer { get; set; }
 
     public ResizeableGadget(
         int id,
-        GadgetBehaviour gadgetBehaviour,
         Orientation orientation,
         RectangularHitBoxRegion gadgetBounds,
         INineSliceGadgetRender? renderer,
@@ -27,7 +24,6 @@ public sealed class ResizeableGadget : HitBoxGadget, IMoveableGadget, IResizeabl
         HitBox hitBox)
         : base(id, gadgetBounds, renderer, lemmingTracker)
     {
-        GadgetBehaviour = gadgetBehaviour;
         Orientation = orientation;
         _hitBox = hitBox;
     }

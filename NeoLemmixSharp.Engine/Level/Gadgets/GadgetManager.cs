@@ -4,7 +4,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
@@ -102,49 +101,6 @@ public sealed class GadgetManager :
             scratchSpace,
             levelRegion,
             out result);
-    }
-
-    public bool HasGadgetWithBehaviourAtPosition(
-        Span<uint> scratchSpaceSpan,
-        LevelPosition levelPosition,
-        GadgetBehaviour gadgetBehaviour)
-    {
-        _gadgetPositionHelper.GetAllItemsNearPosition(
-            scratchSpaceSpan,
-            levelPosition,
-            out var gadgetSet);
-
-        foreach (var gadget in gadgetSet)
-        {
-            if (gadget.GadgetBehaviour == gadgetBehaviour && gadget.MatchesPosition(levelPosition))
-                return true;
-        }
-
-        return false;
-    }
-
-    public bool HasGadgetWithBehaviourAtLemmingPosition(
-        Span<uint> scratchSpaceSpan,
-        Lemming lemming,
-        GadgetBehaviour gadgetBehaviour)
-    {
-        var anchorPixel = lemming.LevelPosition;
-        var footPixel = lemming.FootPosition;
-
-        var lemmingPositionRegion = new Common.Util.LevelRegion(anchorPixel, footPixel);
-
-        _gadgetPositionHelper.GetAllItemsNearRegion(
-            scratchSpaceSpan,
-            lemmingPositionRegion,
-            out var gadgetSet);
-
-        foreach (var gadget in gadgetSet)
-        {
-            if (gadget.GadgetBehaviour == gadgetBehaviour && (gadget.MatchesPosition(anchorPixel) || gadget.MatchesPosition(footPixel)))
-                return true;
-        }
-
-        return false;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

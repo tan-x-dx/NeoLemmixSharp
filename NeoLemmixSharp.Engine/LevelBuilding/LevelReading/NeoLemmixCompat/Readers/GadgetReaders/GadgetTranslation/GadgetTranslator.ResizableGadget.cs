@@ -20,8 +20,6 @@ public readonly ref partial struct GadgetTranslator
         var prototypeWidth = prototype.Width.Value;
         var prototypeHeight = prototype.Height.Value;
 
-        var behaviour = archetypeData.Behaviour.ToGadgetBehaviour();
-
         GetOrientationData(prototype, out var orientation, out var facingDirection);
 
         var gadgetData = new GadgetData
@@ -57,7 +55,6 @@ public readonly ref partial struct GadgetTranslator
             gadgetBuilder = new ResizeableGadgetBuilder
             {
                 GadgetBuilderId = archetypeData.GadgetArchetypeId,
-                GadgetBehaviour = behaviour,
                 ArchetypeData = new GadgetStateArchetypeData
                 {
                     OnLemmingEnterActions = [],

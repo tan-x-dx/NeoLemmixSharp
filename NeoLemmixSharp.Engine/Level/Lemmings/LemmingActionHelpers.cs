@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -119,9 +118,9 @@ public static class LemmingActionHelpers
         var draftDirectionDeltas = new UpdraftBuffer();
 
         foreach (var gadget in gadgetsNearLemming)
-        {
+        {/*
             if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
-                continue;
+                continue;*/
 
             var deltaRotNum = gadget.Orientation.RotNum - lemmingOrientationRotNum;
 

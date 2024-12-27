@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -130,7 +129,7 @@ public sealed class SwimmerAction : LemmingAction
     {
         foreach (var gadget in gadgetEnumerable)
         {
-            if (gadget.GadgetBehaviour == WaterGadgetBehaviour.Instance &&
+            if (/*gadget.GadgetBehaviour == WaterGadgetBehaviour.Instance &&*/
                 gadget.MatchesPosition(lemmingPosition))
                 return true;
         }

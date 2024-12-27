@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
@@ -10,7 +9,6 @@ public sealed class NotGateGadget : GadgetBase, ILogicGateGadget
 {
     private bool _shouldTick;
 
-    public override GadgetBehaviour GadgetBehaviour => LogicGateGadgetBehaviour.Instance;
     public override Orientation Orientation => DownOrientation.Instance;
 
     public LogicGateGadgetInput Input { get; }

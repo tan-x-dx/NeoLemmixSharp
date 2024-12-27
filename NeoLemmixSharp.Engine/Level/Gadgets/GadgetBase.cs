@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
@@ -11,7 +10,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds, ISnapshotDataConvertible<int>
 {
     public int Id { get; }
-    public abstract GadgetBehaviour GadgetBehaviour { get; }
     public abstract Orientation Orientation { get; }
     public RectangularHitBoxRegion GadgetBounds { get; }
     public IGadgetRenderer? Renderer { get; }
