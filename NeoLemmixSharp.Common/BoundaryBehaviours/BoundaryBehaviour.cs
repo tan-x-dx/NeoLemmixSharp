@@ -82,8 +82,6 @@ public sealed class BoundaryBehaviour
         _levelLength = levelLength;
     }
 
-    public override string ToString() => $"{_dimensionType} - {_boundaryBehaviourType}";
-
     public void UpdateMouseCoordinate(int windowCoordinate)
     {
         _mouseViewPortCoordinate = (windowCoordinate + _scaleMultiplier - 1) / _scaleMultiplier;
@@ -371,5 +369,58 @@ public sealed class BoundaryBehaviour
     private struct ScreenRenderIntervalBuffer
     {
         private ScreenRenderInterval _firstElement;
+    }
+
+    public override string ToString()
+    {
+        Span<char> buffer = stackalloc char[10 + 3 + 4];
+
+        var i = 0;
+
+        if (_dimensionType == DimensionType.Horizontal)
+        {
+            buffer[i++] = 'H';
+            buffer[i++] = 'o';
+            buffer[i++] = 'r';
+            buffer[i++] = 'i';
+            buffer[i++] = 'z';
+            buffer[i++] = 'o';
+            buffer[i++] = 'n';
+            buffer[i++] = 't';
+            buffer[i++] = 'a';
+            buffer[i++] = 'l';
+        }
+        else
+        {
+            buffer[i++] = 'V';
+            buffer[i++] = 'e';
+            buffer[i++] = 'r';
+            buffer[i++] = 't';
+            buffer[i++] = 'i';
+            buffer[i++] = 'c';
+            buffer[i++] = 'a';
+            buffer[i++] = 'l';
+        }
+
+        buffer[i++] = ' ';
+        buffer[i++] = '-';
+        buffer[i++] = ' ';
+
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
+        {
+            buffer[i++] = 'V';
+            buffer[i++] = 'o';
+            buffer[i++] = 'i';
+            buffer[i++] = 'd';
+        }
+        else
+        {
+            buffer[i++] = 'W';
+            buffer[i++] = 'r';
+            buffer[i++] = 'a';
+            buffer[i++] = 'p';
+        }
+
+        return buffer[..i].ToString();
     }
 }

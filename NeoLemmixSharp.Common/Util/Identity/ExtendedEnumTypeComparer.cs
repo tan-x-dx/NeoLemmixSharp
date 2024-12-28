@@ -20,8 +20,8 @@ public sealed class ExtendedEnumTypeComparer<T> :
     [Pure]
     public bool Equals(T? x, T? y)
     {
-        if (x is null) return y is null;
-        if (y is null) return false;
+        if (ReferenceEquals(x, y)) return true;
+        if (x is null || y is null) return false;
         return x.Id == y.Id;
     }
 
