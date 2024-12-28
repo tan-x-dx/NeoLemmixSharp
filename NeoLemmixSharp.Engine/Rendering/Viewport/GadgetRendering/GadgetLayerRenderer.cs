@@ -8,16 +8,19 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 public sealed class GadgetLayerRenderer : IControlledAnimationGadgetRenderer
 {
     private readonly Texture2D _texture;
-    private IControlledAnimationGadget _gadget;
+    private HitBoxGadget _gadget;
 
     public GadgetRenderMode RenderMode { get; }
     public int RendererId { get; set; }
     public int ItemId => _gadget.Id;
 
-    public LevelPosition TopLeftPixel => _gadget.TopLeftPixel;
-    public LevelPosition BottomRightPixel => _gadget.BottomRightPixel;
-    public LevelPosition PreviousTopLeftPixel => _gadget.PreviousTopLeftPixel;
-    public LevelPosition PreviousBottomRightPixel => _gadget.PreviousBottomRightPixel;
+    private LevelPosition _currentPosition;
+    private LevelPosition _previousPosition;
+
+    public LevelPosition TopLeftPixel => _currentPosition;
+    public LevelPosition BottomRightPixel => _currentPosition + new LevelPosition(_texture.Width, _texture.Height);
+    public LevelPosition PreviousTopLeftPixel => _previousPosition;
+    public LevelPosition PreviousBottomRightPixel => _previousPosition + new LevelPosition(_texture.Width, _texture.Height);
 
     public GadgetLayerRenderer(
         Texture2D texture,
@@ -27,9 +30,9 @@ public sealed class GadgetLayerRenderer : IControlledAnimationGadgetRenderer
         RenderMode = renderMode;
     }
 
-    public void SetGadget(IControlledAnimationGadget gadget) => _gadget = gadget;
+    public void SetGadget(HitBoxGadget gadget) => _gadget = gadget;
 
-    public Rectangle GetSpriteBounds() => _gadget.GadgetBounds.ToRectangle();
+    public Rectangle GetSpriteBounds() => new(_currentPosition.X, _currentPosition.Y, _texture.Width, _texture.Height);
 
     public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY)
     {

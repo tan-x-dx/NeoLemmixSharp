@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
@@ -13,5 +12,5 @@ public interface IGadgetBuilder
     GadgetBase BuildGadget(
         GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
-        IPerfectHasher<Lemming> lemmingHasher);
+        LemmingManager lemmingManager);
 }

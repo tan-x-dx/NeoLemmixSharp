@@ -9,10 +9,10 @@ public interface IGadgetRenderer : IViewportObjectRenderer
 
 public interface INineSliceGadgetRender : IGadgetRenderer
 {
-    void SetGadget(IResizeableGadget gadget);
+    void SetGadget(HitBoxGadget gadget);
 }
 
 public interface IControlledAnimationGadgetRenderer : IGadgetRenderer
 {
-    void SetGadget(IControlledAnimationGadget gadget);
+    void SetGadget(HitBoxGadget gadget);
 }

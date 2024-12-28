@@ -9,18 +9,26 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering.NineSliceRend
 public sealed class NineSliceRenderer : INineSliceGadgetRender
 {
     private readonly Texture2D _texture;
-    private IResizeableGadget _gadget;
+    private HitBoxGadget _gadget;
 
     private NineSliceDataBuffer _nineSliceDataBuffer;
+
+    private LevelPosition _currentPosition;
+    private LevelPosition _previousPosition;
+
+    private int _currentWidth;
+    private int _currentHeight;
+    private int _previousWidth;
+    private int _previousHeight;
 
     public GadgetRenderMode RenderMode { get; }
     public int RendererId { get; set; }
     public int ItemId => _gadget.Id;
 
-    public LevelPosition TopLeftPixel => _gadget.TopLeftPixel;
-    public LevelPosition BottomRightPixel => _gadget.BottomRightPixel;
-    public LevelPosition PreviousTopLeftPixel => _gadget.PreviousTopLeftPixel;
-    public LevelPosition PreviousBottomRightPixel => _gadget.PreviousBottomRightPixel;
+    public LevelPosition TopLeftPixel => _currentPosition;
+    public LevelPosition BottomRightPixel => _currentPosition + new LevelPosition(_currentWidth, _currentHeight);
+    public LevelPosition PreviousTopLeftPixel => _previousPosition;
+    public LevelPosition PreviousBottomRightPixel => _previousPosition + new LevelPosition(_previousWidth, _previousHeight);
 
     public NineSliceRenderer(
         Texture2D texture,
@@ -36,13 +44,12 @@ public sealed class NineSliceRenderer : INineSliceGadgetRender
     {
     }
 
-    public void SetGadget(IResizeableGadget gadget)
+    public void SetGadget(HitBoxGadget gadget)
     {
         _gadget = gadget;
-        _gadget.Renderer = this;
     }
 
-    public Rectangle GetSpriteBounds() => _gadget.GadgetBounds.ToRectangle();
+    public Rectangle GetSpriteBounds() => new(_currentPosition.X, _currentPosition.Y, _currentWidth, _currentHeight);
 
     public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY)
     {
@@ -62,7 +69,6 @@ public sealed class NineSliceRenderer : INineSliceGadgetRender
 
     public void Dispose()
     {
-        _gadget.Renderer = null!;
         _gadget = null!;
     }
 

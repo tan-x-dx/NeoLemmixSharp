@@ -13,14 +13,14 @@ public static class BitArrayHelpers
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int CalculateBitArrayBufferLength(int length)
+    internal static int CalculateBitArrayBufferLength(int length)
     {
         return (length + Mask) >> Shift;
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int ToNextLargestMultipleOf32(int a)
+    internal static int ToNextLargestMultipleOf32(int a)
     {
         return ((a + Mask) >> Shift) << Shift;
     }
@@ -123,7 +123,7 @@ public static class BitArrayHelpers
     /// Toggles the value of a bit. Returns the new value after toggling
     /// </summary>
     /// <param name="bits">The span to modify</param>
-    /// <param name="index">The bit to clear</param>v
+    /// <param name="index">The bit to modify</param>v
     /// <param name="popCount">Will be modified accordingly if the operation changes the contents of the span</param>
     /// <returns>The bool equivalent of the binary value (0 or 1) of the bit after toggling</returns>
     public static bool ToggleBit(Span<uint> bits, int index, ref int popCount)

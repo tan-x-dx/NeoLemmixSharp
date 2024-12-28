@@ -1,41 +1,42 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
-using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
-using NeoLemmixSharp.Engine.Level.Orientations;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetResizer : GadgetBase, IReactiveGadget
+public sealed class GadgetResizer : GadgetBase, ISimpleGadget
 {
     private readonly int _tickDelay;
     private readonly int _dw;
     private readonly int _dh;
 
-    private readonly IResizeableGadget[] _gadgets;
+    private readonly HitBoxGadget[] _gadgets;
 
     private bool _active = true;
     private int _tickCount;
+    private SimpleGadgetRenderer _renderer;
 
-    public override Orientation Orientation => DownOrientation.Instance;
-
-    public GadgetResizerInput Input { get; }
+    public override SimpleGadgetRenderer Renderer => _renderer;
 
     public GadgetResizer(
         int id,
-        RectangularHitBoxRegion gadgetBounds,
-        IControlledAnimationGadgetRenderer? renderer,
-        IResizeableGadget[] gadgets,
+        HitBoxGadget[] gadgets,
         int tickDelay,
         int dw,
-        int dh)
-        : base(id, gadgetBounds, renderer)
+        int dh) : base(id)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;
         _dw = dw;
         _dh = dh;
 
-        Input = new GadgetResizerInput("Input", this);
+        for (var i = 0; i < _gadgets.Length; i++)
+        {
+            if (!_gadgets[i].ValidateAllHitBoxesAreResizable())
+                throw new InvalidOperationException("Gadget cannot be resized!");
+        }
+
+        RegisterInput(new GadgetResizerInput("Input", this));
     }
 
     public override void Tick()
@@ -51,20 +52,14 @@ public sealed class GadgetResizer : GadgetBase, IReactiveGadget
 
         _tickCount = 0;
 
-        foreach (var gadget in _gadgets.AsSpan())
+        for (var i = 0; i < _gadgets.Length; i++)
         {
-            gadget.SetSize(_dw, _dh);
+            var hitBoxRegion = (RectangularHitBoxRegion)_gadgets[i].HitBox.HitBoxRegion;
+            hitBoxRegion.SetSize(_dw, _dh);
         }
     }
 
-    public IGadgetInput? GetInputWithName(string inputName)
-    {
-        if (string.Equals(inputName, Input.InputName))
-            return Input;
-        return null;
-    }
-
-    public sealed class GadgetResizerInput : IGadgetInput
+    private sealed class GadgetResizerInput : IGadgetInput
     {
         private readonly GadgetResizer _resizer;
         public string InputName { get; }
@@ -84,5 +79,11 @@ public sealed class GadgetResizer : GadgetBase, IReactiveGadget
         {
             _resizer._active = signal;
         }
+    }
+
+    SimpleGadgetRenderer ISimpleGadget.Renderer
+    {
+        get => _renderer;
+        set => _renderer = value;
     }
 }

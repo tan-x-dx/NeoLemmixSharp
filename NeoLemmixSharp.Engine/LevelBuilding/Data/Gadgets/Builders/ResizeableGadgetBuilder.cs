@@ -1,9 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
-using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
@@ -21,7 +19,7 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
     public GadgetBase BuildGadget(
         GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
-        IPerfectHasher<Lemming> lemmingHasher)
+        LemmingManager lemmingHasher)
     {
         var gadgetWidth = gadgetData.GetProperty(GadgetProperty.Width);
         var gadgetHeight = gadgetData.GetProperty(GadgetProperty.Height);
@@ -32,7 +30,7 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
             gadgetWidth,
             gadgetHeight);
 
-        var itemTracker = new ItemTracker<Lemming>(lemmingHasher);
+        var itemTracker = new LemmingTracker(lemmingHasher);
 
         var gadgetRenderer = gadgetSpriteBuilder.BuildResizeableGadgetRenderer(this, gadgetData);
 

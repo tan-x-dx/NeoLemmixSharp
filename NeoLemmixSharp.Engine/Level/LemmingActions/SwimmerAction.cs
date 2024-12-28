@@ -38,12 +38,12 @@ public sealed class SwimmerAction : LemmingAction
         var dy = FindGroundPixel(lemming, lemmingPosition, in gadgetsNearLemming);
 
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition) ||
-            WaterAt(gadgetsNearLemming, lemmingPosition))
+            WaterAt(in gadgetsNearLemming, lemmingPosition))
         {
             // Rise if there is water above the lemming
             var pixelAbove = orientation.MoveUp(lemmingPosition, 1);
             if (dy <= 1 &&
-                WaterAt(gadgetsNearLemming, pixelAbove) &&
+                WaterAt(in gadgetsNearLemming, pixelAbove) &&
                 !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, pixelAbove))
             {
                 lemmingPosition = pixelAbove;
@@ -60,7 +60,7 @@ public sealed class SwimmerAction : LemmingAction
 
                 lemmingPosition = orientation.MoveDown(lemmingPosition, diveDistance); // Dive below the terrain
 
-                if (!WaterAt(gadgetsNearLemming, lemmingPosition))
+                if (!WaterAt(in gadgetsNearLemming, lemmingPosition))
                 {
                     WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -68,7 +68,7 @@ public sealed class SwimmerAction : LemmingAction
                 }
 
                 if (lemming.State.IsClimber &&
-                    !WaterAt(gadgetsNearLemming, orientation.MoveUp(lemmingPosition, 1)))
+                    !WaterAt(in gadgetsNearLemming, orientation.MoveUp(lemmingPosition, 1)))
                 {
                     // Only transition to climber, if the lemming is not under water
                     ClimberAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -91,7 +91,7 @@ public sealed class SwimmerAction : LemmingAction
                 return true;
             }
 
-            if (dy >= 1 || (dy == 0 && !WaterAt(gadgetsNearLemming, lemmingPosition)))
+            if (dy >= 1 || (dy == 0 && !WaterAt(in gadgetsNearLemming, lemmingPosition)))
             {
                 // see http://www.lemmingsforums.net/index.php?topic=3380.0
                 // And the swimmer should not yet stop if the water and terrain overlaps

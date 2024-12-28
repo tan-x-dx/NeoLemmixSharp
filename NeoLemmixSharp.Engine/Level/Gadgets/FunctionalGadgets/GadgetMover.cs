@@ -1,41 +1,36 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
-using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
-using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.Functional;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetMover : GadgetBase, IReactiveGadget
+public sealed class GadgetMover : GadgetBase, ISimpleGadget
 {
+    private SimpleGadgetRenderer _renderer;
+
+
     private readonly int _tickDelay;
     private readonly int _dx;
     private readonly int _dy;
 
-    private readonly IMoveableGadget[] _gadgets;
+    private readonly HitBoxGadget[] _gadgets;
 
     private bool _active = true;
     private int _tickCount;
-
-    public override Orientation Orientation => DownOrientation.Instance;
-
-    public GadgetMoverInput Input { get; }
+    public override SimpleGadgetRenderer Renderer => _renderer;
 
     public GadgetMover(
         int id,
-        RectangularHitBoxRegion gadgetBounds,
-        IControlledAnimationGadgetRenderer? renderer,
-        IMoveableGadget[] gadgets,
+        HitBoxGadget[] gadgets,
         int tickDelay,
         int dx,
-        int dy)
-        : base(id, gadgetBounds, renderer)
+        int dy) : base(id)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;
         _dx = dx;
         _dy = dy;
 
-        Input = new GadgetMoverInput("Input", this);
+        RegisterInput(new GadgetMoverInput("Input", this));
     }
 
     public override void Tick()
@@ -53,18 +48,11 @@ public sealed class GadgetMover : GadgetBase, IReactiveGadget
 
         foreach (var gadget in _gadgets.AsSpan())
         {
-            gadget.Move(_dx, _dy);
+            gadget.HitBox.HitBoxRegion.Move(_dx, _dy);
         }
     }
 
-    public IGadgetInput? GetInputWithName(string inputName)
-    {
-        if (string.Equals(inputName, Input.InputName))
-            return Input;
-        return null;
-    }
-
-    public sealed class GadgetMoverInput : IGadgetInput
+    private sealed class GadgetMoverInput : IGadgetInput
     {
         private readonly GadgetMover _mover;
         public string InputName { get; }
@@ -84,5 +72,11 @@ public sealed class GadgetMover : GadgetBase, IReactiveGadget
         {
             _mover._active = signal;
         }
+    }
+
+    SimpleGadgetRenderer ISimpleGadget.Renderer
+    {
+        get => _renderer;
+        set => _renderer = value;
     }
 }

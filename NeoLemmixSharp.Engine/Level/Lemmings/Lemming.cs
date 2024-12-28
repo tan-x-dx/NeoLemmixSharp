@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
@@ -379,7 +379,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         if (NextAction == NoneAction.Instance || checkPosition != LevelPosition ||
             (NextAction == SplatterAction.Instance /*&& gadget.GadgetBehaviour == WaterGadgetBehaviour.Instance*/))
         {
-            gadget.OnLemmingMatch(this);
+            gadget.OnLemmingHit(this);
 
             return;
         }

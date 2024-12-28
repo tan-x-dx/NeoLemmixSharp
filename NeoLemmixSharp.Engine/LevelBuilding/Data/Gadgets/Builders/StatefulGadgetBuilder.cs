@@ -1,10 +1,8 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
@@ -23,7 +21,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
     public GadgetBase BuildGadget(
         GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
-        IPerfectHasher<Lemming> lemmingHasher)
+        LemmingManager lemmingManager)
     {
         var bounds = new RectangularHitBoxRegion(
             gadgetData.X,
@@ -33,7 +31,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
 
         var gadgetStates = CreateStates(gadgetData);
         var gadgetRenderer = gadgetSpriteBuilder.BuildStatefulGadgetRenderer(this, gadgetData);
-        var itemTracker = new ItemTracker<Lemming>(lemmingHasher);
+        var itemTracker = new LemmingTracker(lemmingManager);
 
         var result = new StatefulGadget(
             gadgetData.Id,

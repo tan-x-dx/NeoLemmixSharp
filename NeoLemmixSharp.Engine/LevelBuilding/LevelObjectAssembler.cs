@@ -2,10 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
+using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -105,7 +104,7 @@ public sealed class LevelObjectAssembler : IDisposable
 
     public GadgetBase[] GetLevelGadgets(
         LevelData levelData,
-        IPerfectHasher<Lemming> lemmingHasher)
+        LemmingManager lemmingHasher)
     {
         var allGadgetData = CollectionsMarshal.AsSpan(levelData.AllGadgetData);
 

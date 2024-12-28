@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -24,10 +23,6 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingStateChanger
     public override void AssignToLemming(Lemming lemming)
     {
         lemming.State.IsWaterLemming = true;
-        if (lemming.CurrentAction == DrownerAction.Instance)
-        {
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
-        }
     }
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;

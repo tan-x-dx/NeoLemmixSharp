@@ -19,6 +19,9 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
     private readonly SpacialHashGrid<LevelRenderer, IViewportObjectRenderer> _spriteSpacialHashGrid;
+
+    // The number of renderers may exceed a safe threshold for stack based allocations
+    // Use a heap based array for the appropriate usages 
     private readonly uint[] _spriteSetScratchSpace;
 
     private readonly List<IViewportObjectRenderer> _orderedSprites;
