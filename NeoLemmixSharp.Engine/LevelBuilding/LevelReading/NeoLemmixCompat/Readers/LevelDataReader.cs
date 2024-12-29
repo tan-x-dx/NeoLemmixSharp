@@ -142,10 +142,8 @@ public sealed class LevelDataReader : NeoLemmixDataReader
     {
         var timeLimitInSeconds = int.Parse(secondToken);
 
-        if (timeLimitInSeconds <= 0)
-            throw new ArgumentOutOfRangeException(nameof(timeLimitInSeconds), timeLimitInSeconds, "Time limit must be positive!");
-        if (timeLimitInSeconds > EngineConstants.MaxTimeLimitInSeconds)
-            throw new ArgumentOutOfRangeException(nameof(timeLimitInSeconds), timeLimitInSeconds, "Time limit too big!");
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(timeLimitInSeconds);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(timeLimitInSeconds, EngineConstants.MaxTimeLimitInSeconds);
 
         _timeLimitInSeconds = timeLimitInSeconds;
     }

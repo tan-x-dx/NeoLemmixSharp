@@ -27,10 +27,8 @@ public sealed class LevelData
         get => _levelWidth;
         set
         {
-            if (value <= 0)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Level width must be positive!");
-            if (value > EngineConstants.MaxLevelWidth)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Level width too big!");
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, EngineConstants.MaxLevelWidth);
 
             _levelWidth = value;
         }
@@ -41,10 +39,8 @@ public sealed class LevelData
         get => _levelHeight;
         set
         {
-            if (value <= 0)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Level height must be positive!");
-            if (value > EngineConstants.MaxLevelHeight)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Level height too big!");
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, EngineConstants.MaxLevelHeight);
 
             _levelHeight = value;
         }

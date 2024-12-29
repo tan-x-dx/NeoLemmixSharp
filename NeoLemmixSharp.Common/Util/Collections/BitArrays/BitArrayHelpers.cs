@@ -28,8 +28,7 @@ public static class BitArrayHelpers
     [Pure]
     public static uint[] CreateBitArray(int length, bool setAllBits)
     {
-        if (length < 0)
-            throw new ArgumentOutOfRangeException(nameof(length), length, "length must be non-negative!");
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
 
         var arrayLength = CalculateBitArrayBufferLength(length);
         var result = CollectionsHelper.GetArrayForSize<uint>(arrayLength);
