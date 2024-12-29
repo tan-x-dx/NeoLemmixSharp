@@ -71,7 +71,7 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to set</param>
     /// <param name="popCount">Will be incremented if the operation changes the contents of the span</param>
     /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously set</returns>
-    public static bool SetBit(Span<uint> bits, int index, ref int popCount)
+    internal static bool SetBit(Span<uint> bits, int index, ref int popCount)
     {
         ref var arrayValue = ref bits[index >> Shift];
         var oldValue = arrayValue;
@@ -99,7 +99,7 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to clear</param>v
     /// <param name="popCount">Will be decremented if the operation changes the contents of the span</param>
     /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously clear</returns>
-    public static bool ClearBit(Span<uint> bits, int index, ref int popCount)
+    internal static bool ClearBit(Span<uint> bits, int index, ref int popCount)
     {
         ref var arrayValue = ref bits[index >> Shift];
         var oldValue = arrayValue;
@@ -126,7 +126,7 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to modify</param>v
     /// <param name="popCount">Will be modified accordingly if the operation changes the contents of the span</param>
     /// <returns>The bool equivalent of the binary value (0 or 1) of the bit after toggling</returns>
-    public static bool ToggleBit(Span<uint> bits, int index, ref int popCount)
+    internal static bool ToggleBit(Span<uint> bits, int index, ref int popCount)
     {
         ref var arrayValue = ref bits[index >> Shift];
         var oldValue = arrayValue;
@@ -164,7 +164,6 @@ public static class BitArrayHelpers
 
         switch (span.Length)
         {
-            case 8: span[7] |= other[7]; goto case 7;
             case 7: span[6] |= other[6]; goto case 6;
             case 6: span[5] |= other[5]; goto case 5;
             case 5: span[4] |= other[4]; goto case 4;
@@ -185,7 +184,6 @@ public static class BitArrayHelpers
 
         switch (span.Length)
         {
-            case 8: span[7] |= other[7]; goto case 7;
             case 7: span[6] |= other[6]; goto case 6;
             case 6: span[5] |= other[5]; goto case 5;
             case 5: span[4] |= other[4]; goto case 4;
@@ -206,7 +204,6 @@ public static class BitArrayHelpers
 
         switch (span.Length)
         {
-            case 8: span[7] &= ~other[7]; goto case 7;
             case 7: span[6] &= ~other[6]; goto case 6;
             case 6: span[5] &= ~other[5]; goto case 5;
             case 5: span[4] &= ~other[4]; goto case 4;
@@ -230,7 +227,6 @@ public static class BitArrayHelpers
 
         switch (span.Length)
         {
-            case 8: span[7] ^= other[7]; goto case 7;
             case 7: span[6] ^= other[6]; goto case 6;
             case 6: span[5] ^= other[5]; goto case 5;
             case 5: span[4] ^= other[4]; goto case 4;
