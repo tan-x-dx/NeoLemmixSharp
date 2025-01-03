@@ -33,19 +33,19 @@ public sealed class InfoConfigReader : NeoLemmixDataReader
 
     private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var levelTitle = line.TrimAfterIndex(secondTokenIndex).ToString();
+        var levelTitle = line[secondTokenIndex..].Trim().ToString();
         _title = levelTitle;
     }
 
     private void SetAuthor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var levelAuthor = line.TrimAfterIndex(secondTokenIndex).ToString();
+        var levelAuthor = line[secondTokenIndex..].Trim().ToString();
         _author = levelAuthor;
     }
 
     private void SetVersion(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var levelVersion = line.TrimAfterIndex(secondTokenIndex).ToString();
+        var levelVersion = line[secondTokenIndex..].Trim().ToString();
         _version = levelVersion;
     }
 
@@ -56,7 +56,7 @@ public sealed class InfoConfigReader : NeoLemmixDataReader
 
     private void ReadMessage(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var message = line.TrimAfterIndex(secondTokenIndex).ToString();
+        var message = line[secondTokenIndex..].Trim().ToString();
         _messages.Add(message);
     }
 

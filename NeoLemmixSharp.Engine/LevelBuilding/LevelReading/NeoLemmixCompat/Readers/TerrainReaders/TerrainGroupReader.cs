@@ -57,7 +57,7 @@ public sealed class TerrainGroupReader : NeoLemmixDataReader
 
     private void SetName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentTerrainGroup!.GroupName = line.TrimAfterIndex(secondTokenIndex).ToString();
+        _currentTerrainGroup!.GroupName = line[secondTokenIndex..].Trim().ToString();
     }
 
     private void ReadTerrainData(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

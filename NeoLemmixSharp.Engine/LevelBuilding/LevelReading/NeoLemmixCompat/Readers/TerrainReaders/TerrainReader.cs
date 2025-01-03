@@ -55,7 +55,7 @@ public sealed class TerrainReader : NeoLemmixDataReader
 
     private void SetStyle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var rest = line.TrimAfterIndex(secondTokenIndex);
+        var rest = line[secondTokenIndex..].Trim();
         if (secondToken[0] == '*')
         {
             _settingDataForGroup = true;
@@ -85,7 +85,7 @@ public sealed class TerrainReader : NeoLemmixDataReader
         }
         else
         {
-            var terrainArchetypeData = GetOrLoadTerrainArchetypeData(line.TrimAfterIndex(secondTokenIndex));
+            var terrainArchetypeData = GetOrLoadTerrainArchetypeData(line[secondTokenIndex..].Trim());
             _currentTerrainData!.TerrainArchetypeId = terrainArchetypeData.TerrainArchetypeId;
         }
     }

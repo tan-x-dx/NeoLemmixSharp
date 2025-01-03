@@ -54,7 +54,7 @@ public sealed class TalismanReader : NeoLemmixDataReader
 
     private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentTalismanData!.Title = line.TrimAfterIndex(secondTokenIndex).ToString();
+        _currentTalismanData!.Title = line[secondTokenIndex..].Trim().ToString();
     }
 
     private void SetId(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

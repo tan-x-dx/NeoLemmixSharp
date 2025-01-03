@@ -43,12 +43,12 @@ public sealed class GroupConfigReader : NeoLemmixDataReader
 
     private void ReadGroupName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _itemName = line.TrimAfterIndex(secondTokenIndex).ToString();
+        _itemName = line[secondTokenIndex..].Trim().ToString();
     }
 
     private void ReadFolder(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _folderName = line.TrimAfterIndex(secondTokenIndex).ToString();
+        _folderName = line[secondTokenIndex..].Trim().ToString();
     }
 
     private void OnExitGroup(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

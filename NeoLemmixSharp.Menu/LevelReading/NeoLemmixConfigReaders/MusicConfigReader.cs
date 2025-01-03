@@ -17,7 +17,7 @@ public sealed class MusicConfigReader : NeoLemmixDataReader
 
     private void ReadTrack(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var trackName = line.TrimAfterIndex(secondTokenIndex).ToString();
+        var trackName = line[secondTokenIndex..].Trim().ToString();
         _tracks.Add(trackName);
     }
 

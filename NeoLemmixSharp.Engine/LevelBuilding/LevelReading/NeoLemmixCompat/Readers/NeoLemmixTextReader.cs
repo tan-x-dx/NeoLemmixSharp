@@ -23,7 +23,7 @@ public sealed class NeoLemmixTextReader : NeoLemmixDataReader
 
     private void AddLine(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var parsedLine = line.TrimAfterIndex(secondTokenIndex).ToString();
+        var parsedLine = line[secondTokenIndex..].Trim().ToString();
         _lines.Add(parsedLine);
     }
 

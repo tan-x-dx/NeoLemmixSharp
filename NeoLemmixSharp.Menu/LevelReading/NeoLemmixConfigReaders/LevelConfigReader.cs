@@ -17,7 +17,7 @@ public sealed class LevelConfigReader : NeoLemmixDataReader
 
     private void ReadLevelFileName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _levelFileNames.Add(line.TrimAfterIndex(secondTokenIndex).ToString());
+        _levelFileNames.Add(line[secondTokenIndex..].Trim().ToString());
     }
 
     public List<string> GetLevelFileNames() => _levelFileNames;

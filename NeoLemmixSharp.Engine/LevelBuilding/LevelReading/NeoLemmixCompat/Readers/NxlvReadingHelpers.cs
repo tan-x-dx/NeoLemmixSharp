@@ -50,42 +50,6 @@ public static class NxlvReadingHelpers
     }
 
     /// <summary>
-    /// Returns a sub-span starting at the given index, and trimming all leading and trailing whitespace.
-    /// </summary>
-    /// <param name="span">The original span</param>
-    /// <param name="startIndex">The first index the result can start from</param>
-    /// <returns>A ReadOnlySpan of whitespace trimmed characters</returns>
-    public static ReadOnlySpan<char> TrimAfterIndex(this ReadOnlySpan<char> span, int startIndex)
-    {
-        if (startIndex < 0 || startIndex >= span.Length)
-            return ReadOnlySpan<char>.Empty;
-
-        var endIndex = span.Length - 1;
-        while (endIndex > startIndex)
-        {
-            var c = span[endIndex];
-            if (!char.IsWhiteSpace(c))
-                break;
-
-            endIndex--;
-        }
-
-        if (startIndex == endIndex)
-            return ReadOnlySpan<char>.Empty;
-
-        while (startIndex < endIndex)
-        {
-            var c = span[startIndex];
-            if (!char.IsWhiteSpace(c))
-                break;
-
-            startIndex++;
-        }
-
-        return span[startIndex..(1 + endIndex)];
-    }
-
-    /// <summary>
     /// Parses a span into an unsigned integral type. The input must be hexadecimal format, and the leading characters may be hex signifiers.
     /// Valid leading characters may be "0x...", "0X...", "x...", "X..."
     /// </summary>

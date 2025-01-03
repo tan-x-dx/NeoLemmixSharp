@@ -48,7 +48,7 @@ public sealed class LevelDataReader : NeoLemmixDataReader
 
         NxlvReadingHelpers.GetTokenPair(line, out _, out _, out var secondTokenIndex);
 
-        var levelTitle = line.TrimAfterIndex(secondTokenIndex).ToString();
+        var levelTitle = line[secondTokenIndex..].Trim().ToString();
         _levelData.LevelTitle = string.IsNullOrWhiteSpace(levelTitle) ? "Untitled" : levelTitle;
         return false;
     }
@@ -80,7 +80,7 @@ public sealed class LevelDataReader : NeoLemmixDataReader
 
     private void SetAuthor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var levelAuthor = line.TrimAfterIndex(secondTokenIndex).ToString();
+        var levelAuthor = line[secondTokenIndex..].Trim().ToString();
         _levelData.LevelAuthor = string.IsNullOrWhiteSpace(levelAuthor) ? "Unknown Author" : levelAuthor;
     }
 
@@ -106,12 +106,12 @@ public sealed class LevelDataReader : NeoLemmixDataReader
 
     private void SetTheme(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _levelData.LevelTheme = line.TrimAfterIndex(secondTokenIndex).ToString();
+        _levelData.LevelTheme = line[secondTokenIndex..].Trim().ToString();
     }
 
     private void SetBackground(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _levelData.LevelBackground = ParseBackgroundData(line.TrimAfterIndex(secondTokenIndex));
+        _levelData.LevelBackground = ParseBackgroundData(line[secondTokenIndex..].Trim());
     }
 
     private void SetMusic(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

@@ -74,7 +74,7 @@ public sealed class PostViewConfigReader : NeoLemmixDataReader
 
     private void ReadLine(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var messageLine = line.TrimAfterIndex(secondTokenIndex).ToString();
+        var messageLine = line[secondTokenIndex..].Trim().ToString();
 
         _lines!.Add(messageLine);
     }
