@@ -296,7 +296,7 @@ public static class BitArrayHelpers
         if (span.Length != other.Length)
             throw new ArgumentException("Spans have different lengths!");
 
-        for (int i = span.Length - 1; i >= 0; i--)
+        for (int i = 0; i < span.Length; i++)
         {
             if (span[i] != other[i])
                 return false;
