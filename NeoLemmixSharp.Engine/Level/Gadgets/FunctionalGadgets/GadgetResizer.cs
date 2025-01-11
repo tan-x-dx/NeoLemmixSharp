@@ -35,7 +35,7 @@ public sealed class GadgetResizer : GadgetBase, ISimpleRenderGadget
 
         for (var i = 0; i < _gadgets.Length; i++)
         {
-            if (!_gadgets[i].ValidateAllHitBoxesAreResizable())
+            if (!_gadgets[i].IsResizable)
                 throw new InvalidOperationException("Gadget cannot be resized!");
         }
 
@@ -57,8 +57,7 @@ public sealed class GadgetResizer : GadgetBase, ISimpleRenderGadget
 
         for (var i = 0; i < _gadgets.Length; i++)
         {
-            var hitBoxRegion = (RectangularHitBoxRegion)_gadgets[i].HitBox.HitBoxRegion;
-            hitBoxRegion.SetSize(_dw, _dh);
+            _gadgets[i].Resize(_dw, _dh);
         }
     }
 

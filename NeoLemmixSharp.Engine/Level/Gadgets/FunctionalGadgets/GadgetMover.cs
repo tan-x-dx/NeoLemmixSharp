@@ -49,9 +49,9 @@ public sealed class GadgetMover : GadgetBase, ISimpleRenderGadget
 
         _tickCount = 0;
 
-        foreach (var gadget in _gadgets.AsSpan())
+        for (var i = 0; i < _gadgets.Length; i++)
         {
-            gadget.HitBox.HitBoxRegion.Move(_dx, _dy);
+            _gadgets[i].Move(_dx, _dy);
         }
     }
 

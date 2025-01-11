@@ -346,13 +346,12 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         foreach (var gadget in gadgetEnumerable)
         {
             var currentState = gadget.CurrentState;
-            var hitBoxRegion = currentState.HitBoxRegion;
 
             foreach (var anchorPosition in intermediatePositions)
             {
                 var footPosition = CurrentAction.GetFootPosition(this, anchorPosition);
-                if (!hitBoxRegion.ContainsPoint(anchorPosition) ||
-                    !hitBoxRegion.ContainsPoint(footPosition))
+                if (!gadget.ContainsPoint(anchorPosition) ||
+                    !gadget.ContainsPoint(footPosition))
                     continue;
 
                 var filters = currentState.Filters;

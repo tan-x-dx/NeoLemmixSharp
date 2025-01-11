@@ -134,9 +134,8 @@ public sealed class SwimmerAction : LemmingAction
         foreach (var gadget in gadgetEnumerable)
         {
             var currentState = gadget.CurrentState;
-            var hitBoxRegion = currentState.HitBoxRegion;
 
-            if (!hitBoxRegion.ContainsPoint(lemmingPosition))
+            if (!gadget.ContainsPoint(lemmingPosition))
                 continue;
 
             var filters = currentState.Filters;

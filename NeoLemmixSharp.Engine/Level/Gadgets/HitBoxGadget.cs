@@ -19,6 +19,16 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
     private readonly LemmingTracker _lemmingTracker;
     private readonly GadgetState[] _states;
 
+    private int _currentX;
+    private int _currentY;
+    private int _currentWidth;
+    private int _currentHeight;
+
+    private int _previousX;
+    private int _previousY;
+    private int _previousWidth;
+    private int _previousHeight;
+
     private int _currentStateIndex;
     private int _nextStateIndex;
 
@@ -27,13 +37,15 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
 
     public override GadgetLayerRenderer Renderer => _renderer;
 
-    public LevelPosition TopLeftPixel => CurrentState.HitBoxRegion.TopLeftPixel;
-    public LevelPosition BottomRightPixel => CurrentState.HitBoxRegion.BottomRightPixel;
-    public LevelPosition PreviousTopLeftPixel => CurrentState.HitBoxRegion.PreviousTopLeftPixel;
-    public LevelPosition PreviousBottomRightPixel => CurrentState.HitBoxRegion.PreviousBottomRightPixel;
+    public LevelPosition TopLeftPixel => new(_currentX, _currentY);
+    public LevelPosition BottomRightPixel => new(_currentX + _currentWidth, _currentY + _currentHeight);
+    public LevelPosition PreviousTopLeftPixel => new(_previousX, _previousY);
+    public LevelPosition PreviousBottomRightPixel => new(_previousX + _previousWidth, _previousY + _previousHeight);
+    public bool IsResizable { get; }
 
     public HitBoxGadget(
         int id,
+        LevelRegion gadgetBounds,
         Orientation orientation,
         LemmingTracker lemmingTracker,
         GadgetState[] states)
@@ -41,19 +53,51 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
     {
         _lemmingTracker = lemmingTracker;
         _states = states;
+
+        var p0 = gadgetBounds.GetTopLeftPosition();
+        var p1 = gadgetBounds.GetBottomRightPosition();
+        _currentX = p0.X;
+        _currentY = p0.Y;
+        _currentWidth = 1 + p1.X - p0.X;
+        _currentHeight = 1 + p1.Y - p0.Y;
+
+        _previousX = p0.X;
+        _previousY = p0.Y;
+        _previousWidth = _currentWidth;
+        _previousHeight = _currentHeight;
+
+        IsResizable = ValidateAllHitBoxesAreResizable();
     }
 
-    public bool ValidateAllHitBoxesAreResizable()
+    private bool ValidateAllHitBoxesAreResizable()
     {
+        const int resizableType = 1;
+        const int nonResizableType = 2;
+
+        var type = 0;
+
         for (var i = 0; i < _states.Length; i++)
         {
             var hitBoxRegion = _states[i].HitBoxRegion;
 
-            if (hitBoxRegion is not RectangularHitBoxRegion)
-                return false;
+            if (hitBoxRegion is IResizableHitBoxRegion)
+            {
+                if (type == nonResizableType)
+                    throw new InvalidOperationException("Inconsistent resizability for gadget!");
+                type = resizableType;
+            }
+            else
+            {
+                if (type == resizableType)
+                    throw new InvalidOperationException("Inconsistent resizability for gadget!");
+                type = nonResizableType;
+            }
         }
 
-        return true;
+        if (type == 0)
+            throw new InvalidOperationException("Could not determine resizability for gadget!");
+
+        return type == resizableType;
     }
 
     public void SetNextState(int stateIndex)
@@ -87,6 +131,14 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
         CurrentState.OnTransitionTo();
     }
 
+    public bool ContainsPoint(LevelPosition levelPosition)
+    {
+        var currentState = CurrentState;
+        var p = levelPosition - TopLeftPixel - currentState.HitBoxOffset;
+
+        return currentState.HitBoxRegion.ContainsPoint(p);
+    }
+
     public void OnLemmingHit(
         LemmingHitBoxFilter activeFilter,
         Lemming lemming)
@@ -114,6 +166,62 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
 
             _ => ReadOnlySpan<IGadgetAction>.Empty
         };
+    }
+
+    public void Move(int dx, int dy)
+    {
+        _previousX = _currentX;
+        _previousY = _currentY;
+        _previousWidth = _currentWidth;
+        _previousHeight = _currentHeight;
+
+        _currentX = LevelScreen.HorizontalBoundaryBehaviour.Normalise(_currentX + dx);
+        _currentY = LevelScreen.VerticalBoundaryBehaviour.Normalise(_currentY + dy);
+    }
+
+    public void SetPosition(int x, int y)
+    {
+        _previousX = _currentX;
+        _previousY = _currentY;
+        _previousWidth = _currentWidth;
+        _previousHeight = _currentHeight;
+
+        _currentX = LevelScreen.HorizontalBoundaryBehaviour.Normalise(x);
+        _currentY = LevelScreen.VerticalBoundaryBehaviour.Normalise(y);
+    }
+
+    public void Resize(int dw, int dh)
+    {
+        for (var i = 0; i < _states.Length; i++)
+        {
+            var rectangularHitBox = (IResizableHitBoxRegion)_states[i].HitBoxRegion;
+            rectangularHitBox.Resize(dw, dh);
+        }
+
+        _previousX = _currentX;
+        _previousY = _currentY;
+        _previousWidth = _currentWidth;
+        _previousHeight = _currentHeight;
+
+        _currentWidth = Math.Max(0, _currentWidth + dw);
+        _currentHeight = Math.Max(0, _currentHeight + dh);
+    }
+
+    public void SetSize(int w, int h)
+    {
+        for (var i = 0; i < _states.Length; i++)
+        {
+            var rectangularHitBox = (IResizableHitBoxRegion)_states[i].HitBoxRegion;
+            rectangularHitBox.SetSize(w, h);
+        }
+
+        _previousX = _currentX;
+        _previousY = _currentY;
+        _previousWidth = _currentWidth;
+        _previousHeight = _currentHeight;
+
+        _currentWidth = Math.Max(0, w);
+        _currentHeight = Math.Max(0, h);
     }
 
     public bool Equals(HitBoxGadget? other) => Id == (other?.Id ?? -1);

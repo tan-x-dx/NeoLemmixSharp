@@ -7,16 +7,13 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
 public sealed class PointSetHitBoxRegion : IHitBoxRegion
 {
-    private const int DimensionCutoffSize = 128;
-    private const int AreaCutoffSize = 128 * 128;
+    private const int DimensionCutoffSize = 64;
+    private const int AreaCutoffSize = 64 * 64;
 
     private readonly uint[] _levelPositionBits;
 
     private readonly int _minimumBoundingBoxWidth;
     private readonly int _minimumBoundingBoxHeight;
-
-    private LevelPosition _currentOffset;
-    private LevelPosition _previousOffset;
 
     public PointSetHitBoxRegion(ReadOnlySpan<LevelPosition> points)
     {
@@ -47,15 +44,11 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
             var index = IndexFor(x, y);
             BitArrayHelpers.SetBit(span, index);
         }
-
-        _currentOffset = LevelScreen.NormalisePosition(minimumBoundingBox.GetTopLeftPosition());
-        _previousOffset = _currentOffset;
     }
 
     [Pure]
     public bool ContainsPoint(LevelPosition levelPosition)
     {
-        levelPosition -= _currentOffset;
         var index = IndexFor(levelPosition.X, levelPosition.Y);
 
         return (uint)levelPosition.X < (uint)_minimumBoundingBoxWidth &&
@@ -66,21 +59,4 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private int IndexFor(int x, int y) => _minimumBoundingBoxWidth * y + x;
-
-    public void Move(int dx, int dy)
-    {
-        _previousOffset = _currentOffset;
-        _currentOffset = LevelScreen.NormalisePosition(_currentOffset + new LevelPosition(dx, dy));
-    }
-
-    public void SetPosition(int x, int y)
-    {
-        _previousOffset = _currentOffset;
-        _currentOffset = LevelScreen.NormalisePosition(new LevelPosition(x, y));
-    }
-
-    public LevelPosition TopLeftPixel => _currentOffset;
-    public LevelPosition BottomRightPixel => new(_currentOffset.X + _minimumBoundingBoxWidth, _currentOffset.Y + _minimumBoundingBoxHeight);
-    public LevelPosition PreviousTopLeftPixel => _previousOffset;
-    public LevelPosition PreviousBottomRightPixel => new(_previousOffset.X + _minimumBoundingBoxWidth, _previousOffset.Y + _minimumBoundingBoxHeight);
 }

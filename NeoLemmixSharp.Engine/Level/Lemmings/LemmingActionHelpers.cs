@@ -87,9 +87,8 @@ public static class LemmingActionHelpers
         foreach (var gadget in gadgets)
         {
             var currentState = gadget.CurrentState;
-            var hitBoxRegion = currentState.HitBoxRegion;
 
-            if (!hitBoxRegion.ContainsPoint(levelPosition))
+            if (!gadget.ContainsPoint(levelPosition))
                 continue;
 
             var filters = currentState.Filters;
@@ -116,9 +115,8 @@ public static class LemmingActionHelpers
         foreach (var gadget in gadgets)
         {
             var currentState = gadget.CurrentState;
-            var hitBoxRegion = currentState.HitBoxRegion;
 
-            if (!hitBoxRegion.ContainsPoint(levelPosition))
+            if (!gadget.ContainsPoint(levelPosition))
                 continue;
 
             var filters = currentState.Filters;
@@ -155,10 +153,9 @@ public static class LemmingActionHelpers
             var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientationRotNum) & 3;
 
             var currentState = gadget.CurrentState;
-            var hitBoxRegion = currentState.HitBoxRegion;
 
-            if (!hitBoxRegion.ContainsPoint(anchorPosition) ||
-                !hitBoxRegion.ContainsPoint(footPosition))
+            if (!gadget.ContainsPoint(anchorPosition) ||
+                !gadget.ContainsPoint(footPosition))
                 continue;
 
             var filters = currentState.Filters;

@@ -2,33 +2,21 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
-public sealed class EmptyHitBoxRegion : IHitBoxRegion
+public sealed class EmptyHitBoxRegion : IResizableHitBoxRegion
 {
-    private LevelPosition _currentPosition;
-    private LevelPosition _previousPosition;
+    public static readonly EmptyHitBoxRegion Instance = new();
 
     public bool ContainsPoint(LevelPosition levelPosition) => false;
 
-    public LevelPosition TopLeftPixel => _currentPosition;
-    public LevelPosition BottomRightPixel => TopLeftPixel;
-    public LevelPosition PreviousTopLeftPixel => _previousPosition;
-    public LevelPosition PreviousBottomRightPixel => PreviousTopLeftPixel;
-
-    public EmptyHitBoxRegion(LevelPosition levelPosition)
+    private EmptyHitBoxRegion()
     {
-        _currentPosition = LevelScreen.NormalisePosition(levelPosition);
-        _previousPosition = _currentPosition;
     }
 
-    public void Move(int dx, int dy)
+    void IResizableHitBoxRegion.Resize(int dw, int dh)
     {
-        _previousPosition = _currentPosition;
-        _currentPosition = LevelScreen.NormalisePosition(_currentPosition + new LevelPosition(dx, dy));
     }
 
-    public void SetPosition(int x, int y)
+    void IResizableHitBoxRegion.SetSize(int w, int h)
     {
-        _previousPosition = _currentPosition;
-        _currentPosition = LevelScreen.NormalisePosition(new LevelPosition(x, y));
     }
 }

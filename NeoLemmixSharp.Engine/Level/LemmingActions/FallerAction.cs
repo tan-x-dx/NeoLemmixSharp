@@ -95,10 +95,9 @@ public sealed class FallerAction : LemmingAction
         foreach (var gadget in gadgetEnumerable)
         {
             var currentState = gadget.CurrentState;
-            var hitBoxRegion = currentState.HitBoxRegion;
 
-            if (!hitBoxRegion.ContainsPoint(anchorPixel) ||
-                !hitBoxRegion.ContainsPoint(footPixel))
+            if (!gadget.ContainsPoint(anchorPixel) ||
+                !gadget.ContainsPoint(footPixel))
                 continue;
 
             var filters = currentState.Filters;
