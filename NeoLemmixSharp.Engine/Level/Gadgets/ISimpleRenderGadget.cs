@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public interface ISimpleGadget
+public interface ISimpleRenderGadget
 {
     SimpleGadgetRenderer Renderer { get; set; }
 }

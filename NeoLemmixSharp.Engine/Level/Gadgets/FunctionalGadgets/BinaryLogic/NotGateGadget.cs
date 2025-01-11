@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
+﻿using NeoLemmixSharp.Engine.Level.Orientations;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
 public sealed class NotGateGadget : LogicGateGadget
 {
@@ -7,7 +9,8 @@ public sealed class NotGateGadget : LogicGateGadget
 
     public NotGateGadget(
         int id,
-        string inputName) : base(id)
+        Orientation orientation,
+        string inputName) : base(id, orientation)
     {
         _input = new LogicGateGadgetInput(inputName, this);
         RegisterInput(_input);

@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
-public sealed class LemmingActionFilter : ILemmingFilter
+public sealed class LemmingActionCriterion : ILemmingCriterion
 {
     private readonly LemmingActionSet _allowedActions = LemmingAction.CreateEmptySimpleSet();
 
@@ -12,5 +12,5 @@ public sealed class LemmingActionFilter : ILemmingFilter
         _allowedActions.UnionWith(actions);
     }
 
-    public bool MatchesLemming(Lemming lemming) => _allowedActions.Contains(lemming.CurrentAction);
+    public bool LemmingMatchesCriteria(Lemming lemming) => _allowedActions.Contains(lemming.CurrentAction);
 }

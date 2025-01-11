@@ -48,13 +48,13 @@ public readonly ref partial struct GadgetTranslator
         _levelData.AllGadgetData.Add(gadgetData);
     }
 
-    private StatefulGadgetBuilder CreateStatefulGadgetBuilder(NeoLemmixGadgetArchetypeData archetypeData)
+    private HitBoxGadgetBuilder CreateStatefulGadgetBuilder(NeoLemmixGadgetArchetypeData archetypeData)
     {
         var spriteData = GetStitchedSpriteData(archetypeData);
 
         var gadgetStateData = archetypeData.GetGadgetStates(spriteData);
 
-        return new StatefulGadgetBuilder
+        return new HitBoxGadgetBuilder
         {
             GadgetBuilderId = archetypeData.GadgetArchetypeId,
             AllGadgetStateData = gadgetStateData,

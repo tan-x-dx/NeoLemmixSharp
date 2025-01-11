@@ -1,9 +1,10 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetMover : GadgetBase, ISimpleGadget
+public sealed class GadgetMover : GadgetBase, ISimpleRenderGadget
 {
     private SimpleGadgetRenderer _renderer;
 
@@ -20,17 +21,19 @@ public sealed class GadgetMover : GadgetBase, ISimpleGadget
 
     public GadgetMover(
         int id,
+        Orientation orientation,
+        string inputName,
         HitBoxGadget[] gadgets,
         int tickDelay,
         int dx,
-        int dy) : base(id)
+        int dy) : base(id, orientation)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;
         _dx = dx;
         _dy = dy;
 
-        RegisterInput(new GadgetMoverInput("Input", this));
+        RegisterInput(new GadgetMoverInput(inputName, this));
     }
 
     public override void Tick()
@@ -74,7 +77,7 @@ public sealed class GadgetMover : GadgetBase, ISimpleGadget
         }
     }
 
-    SimpleGadgetRenderer ISimpleGadget.Renderer
+    SimpleGadgetRenderer ISimpleRenderGadget.Renderer
     {
         get => _renderer;
         set => _renderer = value;

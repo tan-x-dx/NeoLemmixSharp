@@ -395,8 +395,11 @@ public sealed class LemmingManager :
         LemmingsRemoved = snapshotData.LemmingsRemoved;
         LemmingsSaved = snapshotData.LemmingsSaved;
 
-        // Need to refresh all lemming positions
+        ResetLemmingPositions();
+    }
 
+    private void ResetLemmingPositions()
+    {
         _lemmingPositionHelper.Clear();
         _zombieSpacialHashGrid.Clear();
 

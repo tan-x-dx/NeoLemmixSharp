@@ -33,7 +33,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         var gadgetRenderer = gadgetSpriteBuilder.BuildStatefulGadgetRenderer(this, gadgetData);
         var itemTracker = new LemmingTracker(lemmingManager);
 
-        var result = new StatefulGadget(
+        var result = new HitBoxGadget(
             gadgetData.Id,
             gadgetData.Orientation,
             bounds,
@@ -69,7 +69,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         GadgetData gadgetData,
         GadgetStateArchetypeData gadgetStateArchetypeData)
     {
-        var hitBox = CreateHitBoxForState(gadgetData, gadgetStateArchetypeData);
+        var hitBoxRegion = CreateHitBoxRegionForState(gadgetData, gadgetStateArchetypeData);
 
         var animationController = gadgetStateArchetypeData.GetAnimationController();
 
@@ -78,24 +78,24 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
             gadgetStateArchetypeData.OnLemmingPresentActions,
             gadgetStateArchetypeData.OnLemmingExitActions,
             animationController,
-            hitBox);
+            hitBoxRegion);
     }
 
-    private HitBox CreateHitBoxForState(
+    private IHitBoxRegion CreateHitBoxRegionForState(
         GadgetData gadgetData,
         GadgetStateArchetypeData gadgetStateArchetypeData)
     {
         var triggerData = gadgetStateArchetypeData.TriggerData;
         if (triggerData.Length == 0)
-            return HitBox.Empty;
+            return new EmptyHitBoxRegion(new LevelPosition(gadgetData.X, gadgetData.Y));
 
         var hitBoxRegion = CreateHitBoxLevelRegion(gadgetData, gadgetStateArchetypeData.TriggerType, triggerData);
 
-        var lemmingFilters = new List<ILemmingFilter>();
+        var lemmingFilters = new List<ILemmingCriterion>();
 
         if (gadgetStateArchetypeData.AllowedActions is not null)
         {
-            var actionFilter = new LemmingActionFilter();
+            var actionFilter = new LemmingActionCriterion();
             actionFilter.RegisterActions(gadgetStateArchetypeData.AllowedActions);
             lemmingFilters.Add(actionFilter);
         }
@@ -103,7 +103,7 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
         if (gadgetStateArchetypeData.AllowedStates is not null)
         {
             var states = gadgetStateArchetypeData.AllowedStates.ToArray();
-            var stateFilter = new LemmingStateFilter(states);
+            var stateFilter = new LemmingStateCriterion(states);
             lemmingFilters.Add(stateFilter);
         }
 
@@ -123,14 +123,14 @@ public sealed class StatefulGadgetBuilder : IGadgetBuilder
 
         if (gadgetStateArchetypeData.AllowedFacingDirection is not null)
         {
-            var facingDirectionFilter = new LemmingFacingDirectionFilter(gadgetStateArchetypeData.AllowedFacingDirection);
+            var facingDirectionFilter = new LemmingFacingDirectionCriterion(gadgetStateArchetypeData.AllowedFacingDirection);
             lemmingFilters.Add(facingDirectionFilter);
         }
 
         if (gadgetData.TryGetProperty(GadgetProperty.TeamId, out var teamId))
         {
             var team = Team.AllItems[teamId];
-            var teamFilter = new LemmingTeamFilter(team);
+            var teamFilter = new LemmingTeamCriterion(team);
             lemmingFilters.Add(teamFilter);
         }
 

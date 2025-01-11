@@ -4,9 +4,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Common.Util.PositionTracking;
-using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -41,7 +39,6 @@ public sealed class GadgetManager :
 
     public int ScratchSpaceSize => _gadgetPositionHelper.ScratchSpaceSize;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Initialise()
     {
         foreach (var gadget in _allGadgets)
@@ -64,7 +61,7 @@ public sealed class GadgetManager :
         }
     }
 
-    public void GetAllGadgetsForPosition(
+    public void GetAllGadgetsNearPosition(
         Span<uint> scratchSpaceSpan,
         LevelPosition levelPosition,
         out GadgetEnumerable result)
@@ -75,25 +72,9 @@ public sealed class GadgetManager :
             out result);
     }
 
-    public void GetAllGadgetsAtLemmingPosition(
-        Span<uint> scratchSpace,
-        Lemming lemming,
-        out GadgetEnumerable result)
-    {
-        var anchorPixel = lemming.LevelPosition;
-        var footPixel = lemming.FootPosition;
-
-        var lemmingPositionRegion = new Common.Util.LevelRegion(anchorPixel, footPixel);
-
-        _gadgetPositionHelper.GetAllItemsNearRegion(
-            scratchSpace,
-            lemmingPositionRegion,
-            out result);
-    }
-
     public void GetAllItemsNearRegion(
         Span<uint> scratchSpace,
-        Common.Util.LevelRegion levelRegion,
+        LevelRegion levelRegion,
         out GadgetEnumerable result)
     {
         _gadgetPositionHelper.GetAllItemsNearRegion(
@@ -102,7 +83,6 @@ public sealed class GadgetManager :
             out result);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void UpdateGadgetPosition(HitBoxGadget gadget)
     {
         _gadgetPositionHelper.UpdateItemPosition(gadget);
@@ -127,13 +107,18 @@ public sealed class GadgetManager :
 
     public void SetFromSnapshotData(in int snapshotData)
     {
+        ResetGadgetPositions();
+    }
+
+    private void ResetGadgetPositions()
+    {
         _gadgetPositionHelper.Clear();
 
         var gadgets = AllItems;
 
-        foreach (var gadget in gadgets)
+        for (var i = 0; i < gadgets.Length; i++)
         {
-            if (gadget is HitBoxGadget hitBoxGadget)
+            if (gadgets[i] is HitBoxGadget hitBoxGadget)
             {
                 _gadgetPositionHelper.AddItem(hitBoxGadget);
             }

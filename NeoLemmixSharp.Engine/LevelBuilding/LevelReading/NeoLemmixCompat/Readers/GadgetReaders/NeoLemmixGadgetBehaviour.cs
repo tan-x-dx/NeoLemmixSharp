@@ -81,7 +81,8 @@ public static class NeoLemmixGadgetBehaviourExtensions
         this NeoLemmixGadgetArchetypeData archetypeData,
         SpriteData spriteData)
     {
-        if (archetypeData.Behaviour is NeoLemmixGadgetBehaviour.None or
+        if (archetypeData.Behaviour is
+            NeoLemmixGadgetBehaviour.None or
             NeoLemmixGadgetBehaviour.Entrance or
             NeoLemmixGadgetBehaviour.Exit or
             NeoLemmixGadgetBehaviour.Water or
@@ -94,12 +95,14 @@ public static class NeoLemmixGadgetBehaviourExtensions
             NeoLemmixGadgetBehaviour.Background)
             return GetSingleGadgetState(archetypeData, spriteData);
 
-        if (archetypeData.Behaviour is NeoLemmixGadgetBehaviour.PickupSkill or
+        if (archetypeData.Behaviour is
+            NeoLemmixGadgetBehaviour.PickupSkill or
             NeoLemmixGadgetBehaviour.UnlockButton or
             NeoLemmixGadgetBehaviour.Splitter)
             return GetGadgetStatesForTwoStateGadgets(archetypeData, spriteData);
 
-        if (archetypeData.Behaviour is NeoLemmixGadgetBehaviour.Trap or
+        if (archetypeData.Behaviour is
+            NeoLemmixGadgetBehaviour.Trap or
             NeoLemmixGadgetBehaviour.TrapOnce)
             return GetGadgetStatesForTraps(archetypeData, spriteData);
 

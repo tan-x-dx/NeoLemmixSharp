@@ -1,43 +1,27 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 
 public sealed class GadgetState
 {
-    private readonly IGadgetAction[] _onLemmingEnterActions;
-    private readonly IGadgetAction[] _onLemmingPresentActions;
-    private readonly IGadgetAction[] _onLemmingExitActions;
-
     private readonly GadgetOutput _stateSelectedOutput = new();
+    private readonly LemmingHitBoxFilter[] _lemmingHitBoxFilters;
 
-    private HitBoxGadget _gadget = null!;
+    public IHitBoxRegion HitBoxRegion { get; }
+    public ReadOnlySpan<LemmingHitBoxFilter> Filters => new(_lemmingHitBoxFilters);
 
     public GadgetStateAnimationController AnimationController { get; }
-    public HitBox HitBox { get; }
-
-    public ReadOnlySpan<IGadgetAction> OnLemmingEnterActions => new(_onLemmingEnterActions);
-    public ReadOnlySpan<IGadgetAction> OnLemmingPresentActions => new(_onLemmingPresentActions);
-    public ReadOnlySpan<IGadgetAction> OnLemmingExitActions => new(_onLemmingExitActions);
 
     public GadgetState(
-        IGadgetAction[] onLemmingEnterActions,
-        IGadgetAction[] onLemmingPresentActions,
-        IGadgetAction[] onLemmingExitActions,
         GadgetStateAnimationController animationController,
-        HitBox hitBox)
+        IHitBoxRegion hitBoxRegion,
+        LemmingHitBoxFilter[] lemmingHitBoxFilters)
     {
-        _onLemmingEnterActions = onLemmingEnterActions;
-        _onLemmingPresentActions = onLemmingPresentActions;
-        _onLemmingExitActions = onLemmingExitActions;
         AnimationController = animationController;
-        HitBox = hitBox;
-    }
-
-    public void SetGadget(HitBoxGadget gadget)
-    {
-        _gadget = gadget;
+        _lemmingHitBoxFilters = lemmingHitBoxFilters;
+        HitBoxRegion = hitBoxRegion;
     }
 
     public void OnTransitionTo()
@@ -46,13 +30,13 @@ public sealed class GadgetState
         _stateSelectedOutput.SetSignal(true);
     }
 
-    public void Tick()
+    public void Tick(HitBoxGadget parentGadget)
     {
         var gadgetStateTransitionIndex = AnimationController.Tick();
 
         if (gadgetStateTransitionIndex != GadgetStateAnimationController.NoGadgetStateTransition)
         {
-            _gadget.SetNextState(gadgetStateTransitionIndex);
+            parentGadget.SetNextState(gadgetStateTransitionIndex);
         }
     }
 

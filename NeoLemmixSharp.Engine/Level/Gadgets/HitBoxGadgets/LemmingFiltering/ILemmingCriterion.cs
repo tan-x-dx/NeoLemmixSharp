@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
-public interface ILemmingFilter
+public interface ILemmingCriterion
 {
-    bool MatchesLemming(Lemming lemming);
+    bool LemmingMatchesCriteria(Lemming lemming);
 }

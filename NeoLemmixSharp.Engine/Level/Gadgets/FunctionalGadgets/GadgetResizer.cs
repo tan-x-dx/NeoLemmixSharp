@@ -1,10 +1,11 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetResizer : GadgetBase, ISimpleGadget
+public sealed class GadgetResizer : GadgetBase, ISimpleRenderGadget
 {
     private readonly int _tickDelay;
     private readonly int _dw;
@@ -20,10 +21,12 @@ public sealed class GadgetResizer : GadgetBase, ISimpleGadget
 
     public GadgetResizer(
         int id,
+        Orientation orientation,
+        string inputName,
         HitBoxGadget[] gadgets,
         int tickDelay,
         int dw,
-        int dh) : base(id)
+        int dh) : base(id, orientation)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;
@@ -36,7 +39,7 @@ public sealed class GadgetResizer : GadgetBase, ISimpleGadget
                 throw new InvalidOperationException("Gadget cannot be resized!");
         }
 
-        RegisterInput(new GadgetResizerInput("Input", this));
+        RegisterInput(new GadgetResizerInput(inputName, this));
     }
 
     public override void Tick()
@@ -81,7 +84,7 @@ public sealed class GadgetResizer : GadgetBase, ISimpleGadget
         }
     }
 
-    SimpleGadgetRenderer ISimpleGadget.Renderer
+    SimpleGadgetRenderer ISimpleRenderGadget.Renderer
     {
         get => _renderer;
         set => _renderer = value;

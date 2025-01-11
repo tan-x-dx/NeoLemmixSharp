@@ -39,7 +39,7 @@ public sealed class GadgetStateArchetypeData
     {
         var result = CollectionsHelper.GetArrayForSize<GadgetStateAnimationBehaviour>(SecondaryAnimations.Length);
 
-        for (var i = SecondaryAnimations.Length - 1; i >= 0; i--)
+        for (var i = 0; i < SecondaryAnimations.Length; i++)
         {
             result[i] = SecondaryAnimations[i].GetAnimationBehaviour();
         }
@@ -57,32 +57,25 @@ public sealed class GadgetStateArchetypeData
     }
 }
 
-public sealed class GadgetAnimationArchetypeData
+public sealed class GadgetStateArchetypeDataAaa
 {
-    private GadgetStateAnimationBehaviour? _animationBehaviour;
+    // region data
+    // [hitbox filters]
+    // animation controller
+}
 
-    public required int SpriteWidth { get; init; }
-    public required int SpriteHeight { get; init; }
-    public required int Layer { get; init; }
-    public required int InitialFrame { get; init; }
-    public required int MinFrame { get; init; }
-    public required int MaxFrame { get; init; }
-    public required GadgetSecondaryAnimationAction SecondaryAnimationAction { get; init; }
+public sealed class GadgetStateRegionData
+{
+    // type - empty/rectangle/points
+    // [data]
+}
 
-    public GadgetStateAnimationBehaviour GetAnimationBehaviour()
-    {
-        return _animationBehaviour ??= new GadgetStateAnimationBehaviour(
-            SpriteWidth,
-            SpriteHeight,
-            Layer,
-            InitialFrame,
-            MinFrame,
-            MaxFrame,
-            SecondaryAnimationAction);
-    }
-
-    public void Clear()
-    {
-        _animationBehaviour = null;
-    }
+public sealed class HitBoxData
+{
+    // solidity
+    // hitbox hint
+    // [criteria]
+    // [on enter actions]
+    // [on present actions]
+    // [on leave actions]
 }

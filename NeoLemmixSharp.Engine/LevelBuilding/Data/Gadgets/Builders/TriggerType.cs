@@ -2,6 +2,7 @@
 
 public enum TriggerType
 {
+    Empty,
     Rectangular,
     PointSet
 }

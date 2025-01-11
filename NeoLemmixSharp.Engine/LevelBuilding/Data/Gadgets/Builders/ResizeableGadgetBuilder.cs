@@ -30,19 +30,17 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
             gadgetWidth,
             gadgetHeight);
 
-        var itemTracker = new LemmingTracker(lemmingHasher);
+        var lemmingTracker = new LemmingTracker(lemmingHasher);
 
         var gadgetRenderer = gadgetSpriteBuilder.BuildResizeableGadgetRenderer(this, gadgetData);
 
         var hitBox = CreateHitBox(gadgetData, gadgetBounds);
 
-        var result = new ResizeableGadget(
+        var result = new HitBoxGadget(
             gadgetData.Id,
             gadgetData.Orientation,
-            gadgetBounds,
-            gadgetRenderer,
-            itemTracker,
-            hitBox);
+            lemmingTracker,
+            []);
 
         gadgetRenderer?.SetGadget(result);
 
@@ -55,15 +53,15 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
     {
         var triggerData = ArchetypeData.TriggerData;
         if (triggerData.Length == 0)
-            return HitBox.Empty;
+            return HitBox.CreateEmptyHitBox(new LevelPosition(gadgetData.X, gadgetData.Y));
 
         var hitBoxRegion = CreateRectangularHitBoxLevelRegion(gadgetData, triggerData, gadgetBounds);
 
-        var lemmingFilters = new List<ILemmingFilter>();
+        var lemmingFilters = new List<ILemmingCriterion>();
 
         if (ArchetypeData.AllowedActions is not null)
         {
-            var actionFilter = new LemmingActionFilter();
+            var actionFilter = new LemmingActionCriterion();
             actionFilter.RegisterActions(ArchetypeData.AllowedActions);
             lemmingFilters.Add(actionFilter);
         }
@@ -71,7 +69,7 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
         if (ArchetypeData.AllowedStates is not null)
         {
             var states = ArchetypeData.AllowedStates.ToArray();
-            var stateFilter = new LemmingStateFilter(states);
+            var stateFilter = new LemmingStateCriterion(states);
             lemmingFilters.Add(stateFilter);
         }
 
@@ -91,14 +89,14 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
 
         if (ArchetypeData.AllowedFacingDirection is not null)
         {
-            var facingDirectionFilter = new LemmingFacingDirectionFilter(ArchetypeData.AllowedFacingDirection);
+            var facingDirectionFilter = new LemmingFacingDirectionCriterion(ArchetypeData.AllowedFacingDirection);
             lemmingFilters.Add(facingDirectionFilter);
         }
 
         if (gadgetData.TryGetProperty(GadgetProperty.TeamId, out var teamId))
         {
             var team = Team.AllItems[teamId];
-            var teamFilter = new LemmingTeamFilter(team);
+            var teamFilter = new LemmingTeamCriterion(team);
             lemmingFilters.Add(teamFilter);
         }
 
@@ -109,7 +107,7 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
         return hitBox;
     }
 
-    private RelativeRectangularHitBoxRegion CreateRectangularHitBoxLevelRegion(
+    private RectangularHitBoxRegion CreateRectangularHitBoxLevelRegion(
         GadgetData gadgetData,
         ReadOnlySpan<LevelPosition> triggerData,
         RectangularHitBoxRegion gadgetBounds)
@@ -142,6 +140,6 @@ public sealed class ResizeableGadgetBuilder : IGadgetBuilder
 
         p1 = new LevelPosition(tX, tY);
 
-        return new RelativeRectangularHitBoxRegion(gadgetBounds, p0.X, p0.Y, p1.X, p1.Y);
+        return new RectangularHitBoxRegion(p0.X, p0.Y, p1.X, p1.Y);
     }
 }

@@ -3,38 +3,41 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 #pragma warning disable CS0660, CS0661, CA1067
-public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRectangularBounds
+public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRectangularBounds, IAnimationControlledGadget
 #pragma warning restore CS0660, CS0661, CA1067
 {
-    private readonly IGadgetRenderer _renderer;
+    private readonly GadgetLayerRenderer _renderer;
     private readonly LemmingTracker _lemmingTracker;
     private readonly GadgetState[] _states;
 
     private int _currentStateIndex;
     private int _nextStateIndex;
 
-    public HitBox HitBox => _states[_currentStateIndex].HitBox;
-    public GadgetStateAnimationController AnimationController => _states[_currentStateIndex].AnimationController;
+    public GadgetState CurrentState { get; private set; }
+    public GadgetStateAnimationController AnimationController { get; private set; }
 
-    public override IGadgetRenderer Renderer => _renderer;
+    public override GadgetLayerRenderer Renderer => _renderer;
 
-    public LevelPosition TopLeftPixel => HitBox.TopLeftPixel;
-    public LevelPosition BottomRightPixel => HitBox.BottomRightPixel;
-    public LevelPosition PreviousTopLeftPixel => HitBox.PreviousTopLeftPixel;
-    public LevelPosition PreviousBottomRightPixel => HitBox.PreviousBottomRightPixel;
+    public LevelPosition TopLeftPixel => CurrentState.HitBoxRegion.TopLeftPixel;
+    public LevelPosition BottomRightPixel => CurrentState.HitBoxRegion.BottomRightPixel;
+    public LevelPosition PreviousTopLeftPixel => CurrentState.HitBoxRegion.PreviousTopLeftPixel;
+    public LevelPosition PreviousBottomRightPixel => CurrentState.HitBoxRegion.PreviousBottomRightPixel;
 
     public HitBoxGadget(
         int id,
+        Orientation orientation,
         LemmingTracker lemmingTracker,
         GadgetState[] states)
-        : base(id)
+        : base(id, orientation)
     {
         _lemmingTracker = lemmingTracker;
         _states = states;
@@ -44,7 +47,7 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
     {
         for (var i = 0; i < _states.Length; i++)
         {
-            var hitBoxRegion = _states[i].HitBox.HitBoxRegion;
+            var hitBoxRegion = _states[i].HitBoxRegion;
 
             if (hitBoxRegion is not RectangularHitBoxRegion)
                 return false;
@@ -68,7 +71,7 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
             return;
         }
 
-        _states[_currentStateIndex].Tick();
+        CurrentState.Tick(this);
     }
 
     private void ChangeStates()
@@ -77,15 +80,18 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
 
         _currentStateIndex = _nextStateIndex;
 
-        var currentState = _states[_currentStateIndex];
+        CurrentState = _states[_currentStateIndex];
+        AnimationController = CurrentState.AnimationController;
 
         previousState.OnTransitionFrom();
-        currentState.OnTransitionTo();
+        CurrentState.OnTransitionTo();
     }
 
-    public void OnLemmingHit(Lemming lemming)
+    public void OnLemmingHit(
+        LemmingHitBoxFilter activeFilter,
+        Lemming lemming)
     {
-        var actionsToPerform = GetActionsToPerformOnLemming(lemming);
+        var actionsToPerform = GetActionsToPerformOnLemming(activeFilter, lemming);
 
         for (var i = 0; i < actionsToPerform.Length; i++)
         {
@@ -93,17 +99,18 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
         }
     }
 
-    private ReadOnlySpan<IGadgetAction> GetActionsToPerformOnLemming(Lemming lemming)
+    private ReadOnlySpan<IGadgetAction> GetActionsToPerformOnLemming(
+        LemmingHitBoxFilter activeFilter,
+        Lemming lemming)
     {
-        var gadgetState = _states[_currentStateIndex];
         var trackingStatus = _lemmingTracker.TrackItem(lemming);
 
         return trackingStatus switch
         {
             TrackingStatus.Absent => ReadOnlySpan<IGadgetAction>.Empty,
-            TrackingStatus.JustAdded => gadgetState.OnLemmingEnterActions,
-            TrackingStatus.JustRemoved => gadgetState.OnLemmingExitActions,
-            TrackingStatus.StillPresent => gadgetState.OnLemmingPresentActions,
+            TrackingStatus.JustAdded => activeFilter.OnLemmingEnterActions,
+            TrackingStatus.JustRemoved => activeFilter.OnLemmingExitActions,
+            TrackingStatus.StillPresent => activeFilter.OnLemmingPresentActions,
 
             _ => ReadOnlySpan<IGadgetAction>.Empty
         };

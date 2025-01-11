@@ -1,9 +1,10 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
-public abstract class LogicGateGadget : GadgetBase, ISimpleGadget
+public abstract class LogicGateGadget : GadgetBase, ISimpleRenderGadget
 {
     private SimpleGadgetRenderer _renderer;
 
@@ -11,7 +12,10 @@ public abstract class LogicGateGadget : GadgetBase, ISimpleGadget
 
     public GadgetOutput Output { get; } = new();
 
-    public LogicGateGadget(int id) : base(id)
+    public LogicGateGadget(
+        int id,
+        Orientation orientation)
+        : base(id, orientation)
     {
     }
 
@@ -41,7 +45,7 @@ public abstract class LogicGateGadget : GadgetBase, ISimpleGadget
         }
     }
 
-    SimpleGadgetRenderer ISimpleGadget.Renderer
+    SimpleGadgetRenderer ISimpleRenderGadget.Renderer
     {
         get => _renderer;
         set => _renderer = value;

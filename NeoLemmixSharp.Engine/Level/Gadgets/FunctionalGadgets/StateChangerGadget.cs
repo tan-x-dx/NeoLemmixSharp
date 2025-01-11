@@ -1,9 +1,10 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class StateChangerGadget : GadgetBase, ISimpleGadget
+public sealed class StateChangerGadget : GadgetBase, ISimpleRenderGadget
 {
     private readonly HitBoxGadget _gadget;
     private readonly int _newState;
@@ -17,14 +18,16 @@ public sealed class StateChangerGadget : GadgetBase, ISimpleGadget
 
     public StateChangerGadget(
         int id,
+        Orientation orientation,
+        string inputName,
         HitBoxGadget gadget,
         int newState)
-        : base(id)
+        : base(id, orientation)
     {
         _gadget = gadget;
         _newState = newState;
 
-        RegisterInput(new StateChangerGadgetInput("Input", this));
+        RegisterInput(new StateChangerGadgetInput(inputName, this));
     }
 
     public override void Tick()
@@ -58,7 +61,7 @@ public sealed class StateChangerGadget : GadgetBase, ISimpleGadget
         }
     }
 
-    SimpleGadgetRenderer ISimpleGadget.Renderer
+    SimpleGadgetRenderer ISimpleRenderGadget.Renderer
     {
         get => _renderer;
         set => _renderer = value;

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
+﻿using NeoLemmixSharp.Engine.Level.Orientations;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
 public sealed class AndGateGadget : LogicGateGadget
 {
@@ -6,8 +8,9 @@ public sealed class AndGateGadget : LogicGateGadget
 
     public AndGateGadget(
         int id,
+        Orientation orientation,
         ReadOnlySpan<string> inputNames)
-        : base(id)
+        : base(id, orientation)
     {
         if (inputNames.Length < 2)
             throw new ArgumentException("Expected at least 2 inputs!");

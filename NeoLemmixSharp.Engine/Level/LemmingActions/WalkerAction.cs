@@ -89,7 +89,7 @@ public sealed class WalkerAction : LemmingAction
     {
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan, lemming.LevelPosition, out var gadgetsNearRegion);
+        gadgetManager.GetAllGadgetsNearPosition(scratchSpaceSpan, lemming.LevelPosition, out var gadgetsNearRegion);
 
         if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.LevelPosition))
         {

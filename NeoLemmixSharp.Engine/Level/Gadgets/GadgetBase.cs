@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Diagnostics.CodeAnalysis;
@@ -11,11 +12,15 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     private readonly Dictionary<string, IGadgetInput> _inputs = [];
 
     public int Id { get; }
+    public Orientation Orientation { get; }
     public abstract IGadgetRenderer Renderer { get; }
 
-    protected GadgetBase(int id)
+    protected GadgetBase(
+        int id,
+        Orientation orientation)
     {
         Id = id;
+        Orientation = orientation;
     }
 
     protected void RegisterInput(IGadgetInput gadgetInput) => _inputs.Add(gadgetInput.InputName, gadgetInput);

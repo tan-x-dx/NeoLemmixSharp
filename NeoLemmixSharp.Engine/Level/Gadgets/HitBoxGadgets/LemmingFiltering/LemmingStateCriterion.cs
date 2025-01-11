@@ -3,16 +3,16 @@ using NeoLemmixSharp.Engine.Level.Skills;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
-public sealed class LemmingStateFilter : ILemmingFilter
+public sealed class LemmingStateCriterion : ILemmingCriterion
 {
     private readonly ILemmingStateChanger[] _allowedLemmingStates;
 
-    public LemmingStateFilter(ILemmingStateChanger[] allowedLemmingStates)
+    public LemmingStateCriterion(ILemmingStateChanger[] allowedLemmingStates)
     {
         _allowedLemmingStates = allowedLemmingStates;
     }
 
-    public bool MatchesLemming(Lemming lemming)
+    public bool LemmingMatchesCriteria(Lemming lemming)
     {
         foreach (var lemmingState in _allowedLemmingStates)
         {
