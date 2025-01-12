@@ -14,6 +14,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
     private readonly int _minimumBoundingBoxWidth;
     private readonly int _minimumBoundingBoxHeight;
+    public LevelSize BoundingBoxDimensions => new(_minimumBoundingBoxWidth, _minimumBoundingBoxHeight);
 
     public PointSetHitBoxRegion(ReadOnlySpan<LevelPosition> points)
     {
@@ -21,9 +22,10 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
             throw new ArgumentException("Cannot create PointSetHitBoxRegion with zero points!");
 
         var minimumBoundingBox = new LevelRegion(points);
+        var minimumBoundingBoxSize = minimumBoundingBox.GetSize();
 
-        _minimumBoundingBoxWidth = 1 + minimumBoundingBox.P2X - minimumBoundingBox.P1X;
-        _minimumBoundingBoxHeight = 1 + minimumBoundingBox.P2Y - minimumBoundingBox.P1Y;
+        _minimumBoundingBoxWidth = minimumBoundingBoxSize.W;
+        _minimumBoundingBoxHeight = minimumBoundingBoxSize.H;
 
         if (_minimumBoundingBoxWidth > DimensionCutoffSize || _minimumBoundingBoxHeight > DimensionCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_minimumBoundingBoxWidth}, H:{_minimumBoundingBoxHeight}");

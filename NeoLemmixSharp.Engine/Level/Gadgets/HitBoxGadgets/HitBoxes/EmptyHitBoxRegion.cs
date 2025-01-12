@@ -6,6 +6,8 @@ public sealed class EmptyHitBoxRegion : IResizableHitBoxRegion
 {
     public static readonly EmptyHitBoxRegion Instance = new();
 
+    LevelSize IHitBoxRegion.BoundingBoxDimensions => default;
+
     public bool ContainsPoint(LevelPosition levelPosition) => false;
 
     private EmptyHitBoxRegion()

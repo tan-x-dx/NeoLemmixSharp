@@ -4,6 +4,8 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
 public interface IHitBoxRegion
 {
+    LevelSize BoundingBoxDimensions { get; }
+
     bool ContainsPoint(LevelPosition levelPosition);
 }
 

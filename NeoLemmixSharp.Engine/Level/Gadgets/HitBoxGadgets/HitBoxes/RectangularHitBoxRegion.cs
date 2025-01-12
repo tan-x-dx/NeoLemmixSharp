@@ -7,6 +7,8 @@ public sealed class RectangularHitBoxRegion : IResizableHitBoxRegion
     private int _width;
     private int _height;
 
+    public LevelSize BoundingBoxDimensions => new(Math.Max(0, _width), Math.Max(0, _height));
+
     public RectangularHitBoxRegion(int width, int height)
     {
         _width = width;
@@ -29,4 +31,5 @@ public sealed class RectangularHitBoxRegion : IResizableHitBoxRegion
         _width = w;
         _height = h;
     }
+
 }
