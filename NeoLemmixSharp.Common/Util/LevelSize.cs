@@ -27,14 +27,6 @@ public readonly struct LevelSize : IEquatable<LevelSize>
         left.H != right.H;
 
     [DebuggerStepThrough]
-    public static LevelSize operator +(LevelSize left, LevelSize right) =>
-        new(left.W + right.W, left.H + right.H);
-
-    [DebuggerStepThrough]
-    public static LevelSize operator -(LevelSize left, LevelSize right) =>
-        new(left.W - right.W, left.H - right.H);
-
-    [DebuggerStepThrough]
     public bool Equals(LevelSize other) => W == other.W && H == other.H;
     public override bool Equals([NotNullWhen(true)] object? obj) => (obj is LevelSize other) && W == other.W && H == other.H;
     public override int GetHashCode() => 8322929 * W +
