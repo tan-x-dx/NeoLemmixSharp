@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using System.Diagnostics;
@@ -23,8 +22,8 @@ public sealed class LemmingManager :
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
 
-    private readonly SpacialHashGrid<LemmingManager, Lemming> _lemmingPositionHelper;
-    private readonly SpacialHashGrid<LemmingManager, Lemming> _zombieSpacialHashGrid;
+    private readonly LemmingSpacialHashGrid _lemmingPositionHelper;
+    private readonly LemmingSpacialHashGrid _zombieSpacialHashGrid;
     private readonly LemmingSet _lemmingsToZombify;
     private readonly LemmingSet _allBlockers;
 
@@ -65,12 +64,12 @@ public sealed class LemmingManager :
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Lemming>(_lemmings));
         Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
 
-        _lemmingPositionHelper = new SpacialHashGrid<LemmingManager, Lemming>(
+        _lemmingPositionHelper = new LemmingSpacialHashGrid(
             this,
             EngineConstants.LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
-        _zombieSpacialHashGrid = new SpacialHashGrid<LemmingManager, Lemming>(
+        _zombieSpacialHashGrid = new LemmingSpacialHashGrid(
             this,
             EngineConstants.LemmingPositionChunkSize,
             horizontalBoundaryBehaviour,

@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Common.Util.PositionTracking;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
@@ -17,7 +16,7 @@ public sealed class GadgetManager :
     IDisposable
 {
     private readonly GadgetBase[] _allGadgets;
-    private readonly SpacialHashGrid<GadgetManager, HitBoxGadget> _gadgetPositionHelper;
+    private readonly GadgetSpacialHashGrid _gadgetPositionHelper;
 
     public ReadOnlySpan<GadgetBase> AllItems => new(_allGadgets);
 
@@ -30,7 +29,7 @@ public sealed class GadgetManager :
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
         Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
 
-        _gadgetPositionHelper = new SpacialHashGrid<GadgetManager, HitBoxGadget>(
+        _gadgetPositionHelper = new GadgetSpacialHashGrid(
             this,
             EngineConstants.GadgetPositionChunkSize,
             horizontalBoundaryBehaviour,
