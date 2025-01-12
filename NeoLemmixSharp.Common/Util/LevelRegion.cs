@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -9,13 +10,17 @@ namespace NeoLemmixSharp.Common.Util;
 /// The constructors will ensure a well-formed <see cref="LevelRegion"/> is created.</para>
 /// <para>Note that a <see cref="LevelRegion"/> can never be empty - the smallest region is 1x1.</para>
 /// </summary>
+[StructLayout(LayoutKind.Explicit, Size = 16)]
 public readonly ref struct LevelRegion
 {
-    public readonly int P1X;
-    public readonly int P1Y;
+    [FieldOffset(0)] public readonly LevelPosition P1;
+    [FieldOffset(8)] public readonly LevelPosition P2;
 
-    public readonly int P2X;
-    public readonly int P2Y;
+    [FieldOffset(0)] public readonly int P1X;
+    [FieldOffset(4)] public readonly int P1Y;
+
+    [FieldOffset(8)] public readonly int P2X;
+    [FieldOffset(12)] public readonly int P2Y;
 
     [DebuggerStepThrough]
     public LevelRegion(int x1, int y1, int x2, int y2)
@@ -77,12 +82,14 @@ public readonly ref struct LevelRegion
         var maxX = int.MinValue;
         var maxY = int.MinValue;
 
-        foreach (var position in positions)
+        for (var i = 0; i < positions.Length; i++)
         {
-            minX = Math.Min(minX, position.X);
-            minY = Math.Min(minY, position.Y);
-            maxX = Math.Max(maxX, position.X);
-            maxY = Math.Max(maxY, position.Y);
+            var p = positions[i];
+
+            minX = Math.Min(minX, p.X);
+            minY = Math.Min(minY, p.Y);
+            maxX = Math.Max(maxX, p.X);
+            maxY = Math.Max(maxY, p.Y);
         }
 
         P1X = minX;
@@ -93,10 +100,7 @@ public readonly ref struct LevelRegion
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [DebuggerStepThrough]
-    public LevelPosition GetTopLeftPosition() => new(P1X, P1Y);
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [DebuggerStepThrough]
-    public LevelPosition GetBottomRightPosition() => new(P2X, P2Y);
+    public LevelSize GetSize() => new(1 + P2X - P1X, 1 + P2Y - P1Y);
 
     [DebuggerStepThrough]
     public bool Overlaps(LevelRegion other)

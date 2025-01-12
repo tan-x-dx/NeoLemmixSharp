@@ -118,8 +118,8 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             return;
         }
 
-        var topLeftChunk = GetChunkForPoint(levelRegion.GetTopLeftPosition());
-        var bottomRightChunk = GetChunkForPoint(levelRegion.GetBottomRightPosition());
+        var topLeftChunk = GetChunkForPoint(levelRegion.P1);
+        var bottomRightChunk = GetChunkForPoint(levelRegion.P2);
 
         if (topLeftChunk == _cachedTopLeftChunkQuery &&
             bottomRightChunk == _cachedBottomRightChunkQuery)
