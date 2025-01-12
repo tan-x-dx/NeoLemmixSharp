@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 

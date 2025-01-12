@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
 {
-    private readonly Dictionary<string, IGadgetInput> _inputs = [];
+    private readonly List<IGadgetInput> _inputs = [];
 
     public int Id { get; }
     public Orientation Orientation { get; }
@@ -23,11 +23,22 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
         Orientation = orientation;
     }
 
-    protected void RegisterInput(IGadgetInput gadgetInput) => _inputs.Add(gadgetInput.InputName, gadgetInput);
+    protected void RegisterInput(IGadgetInput gadgetInput) => _inputs.Add(gadgetInput);
 
     public bool TryGetInputWithName(string inputName, [MaybeNullWhen(false)] out IGadgetInput gadgetInput)
     {
-        return _inputs.TryGetValue(inputName, out gadgetInput);
+        for (var i = 0; i < _inputs.Count; i++)
+        {
+            var input = _inputs[i];
+            if (string.Equals(input.InputName, inputName, StringComparison.Ordinal))
+            {
+                gadgetInput = input;
+                return true;
+            }
+        }
+
+        gadgetInput = null;
+        return false;
     }
 
     public virtual void Tick() { }

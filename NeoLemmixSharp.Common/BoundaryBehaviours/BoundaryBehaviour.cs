@@ -77,6 +77,8 @@ public sealed class BoundaryBehaviour
         BoundaryBehaviourType boundaryBehaviourType,
         int levelLength)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(levelLength);
+
         _dimensionType = dimensionType;
         _boundaryBehaviourType = boundaryBehaviourType;
         _levelLength = levelLength;
@@ -373,54 +375,39 @@ public sealed class BoundaryBehaviour
 
     public override string ToString()
     {
-        Span<char> buffer = stackalloc char[10 + 3 + 4];
+        Span<char> buffer = stackalloc char[10 + 3 + 4 + 3 + 10];
 
         var i = 0;
 
-        if (_dimensionType == DimensionType.Horizontal)
-        {
-            buffer[i++] = 'H';
-            buffer[i++] = 'o';
-            buffer[i++] = 'r';
-            buffer[i++] = 'i';
-            buffer[i++] = 'z';
-            buffer[i++] = 'o';
-            buffer[i++] = 'n';
-            buffer[i++] = 't';
-            buffer[i++] = 'a';
-            buffer[i++] = 'l';
-        }
-        else
-        {
-            buffer[i++] = 'V';
-            buffer[i++] = 'e';
-            buffer[i++] = 'r';
-            buffer[i++] = 't';
-            buffer[i++] = 'i';
-            buffer[i++] = 'c';
-            buffer[i++] = 'a';
-            buffer[i++] = 'l';
-        }
+        var source = _dimensionType == DimensionType.Horizontal
+            ? HorizontalString()
+            : VerticalString();
+        source.CopyTo(buffer);
+        i += source.Length;
 
         buffer[i++] = ' ';
         buffer[i++] = '-';
         buffer[i++] = ' ';
 
-        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
-        {
-            buffer[i++] = 'V';
-            buffer[i++] = 'o';
-            buffer[i++] = 'i';
-            buffer[i++] = 'd';
-        }
-        else
-        {
-            buffer[i++] = 'W';
-            buffer[i++] = 'r';
-            buffer[i++] = 'a';
-            buffer[i++] = 'p';
-        }
+        source = _boundaryBehaviourType == BoundaryBehaviourType.Void
+            ? VoidString()
+            : WrapString();
+        source.CopyTo(buffer[i..]);
+        i += source.Length;
+
+        buffer[i++] = ' ';
+        buffer[i++] = '-';
+        buffer[i++] = ' ';
+
+        _levelLength.TryFormat(buffer[i..], out var charsWritten);
+        i += charsWritten;
 
         return buffer[..i].ToString();
+
+        static ReadOnlySpan<char> HorizontalString() => "Horizontal";
+        static ReadOnlySpan<char> VerticalString() => "Vertical";
+
+        static ReadOnlySpan<char> VoidString() => "Void";
+        static ReadOnlySpan<char> WrapString() => "Wrap";
     }
 }
