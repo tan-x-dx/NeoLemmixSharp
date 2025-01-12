@@ -116,26 +116,28 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
     {
         _lemmingTracker.Tick();
 
-        if (_currentStateIndex != _nextStateIndex)
+        if (_currentStateIndex == _nextStateIndex)
+        {
+            CurrentState.Tick(this);
+        }
+        else
         {
             ChangeStates();
-            return;
         }
-
-        CurrentState.Tick(this);
     }
 
     private void ChangeStates()
     {
-        var previousState = _states[_currentStateIndex];
-
         _currentStateIndex = _nextStateIndex;
 
+        _previousPosition = _currentPosition;
+        _previousSize = _currentSize;
         _previousState = _currentState;
+
         _currentState = _states[_currentStateIndex];
         AnimationController = CurrentState.AnimationController;
 
-        previousState.OnTransitionFrom();
+        _previousState.OnTransitionFrom();
         CurrentState.OnTransitionTo();
 
         // Changing states may change hitbox positions 
@@ -183,6 +185,7 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
     {
         _previousPosition = _currentPosition;
         _previousSize = _currentSize;
+        _previousState = _currentState;
 
         _currentPosition = LevelScreen.NormalisePosition(_currentPosition + new LevelPosition(dx, dy));
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
@@ -192,6 +195,7 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
     {
         _previousPosition = _currentPosition;
         _previousSize = _currentSize;
+        _previousState = _currentState;
 
         _currentPosition = LevelScreen.NormalisePosition(new LevelPosition(x, y));
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
@@ -207,6 +211,7 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
 
         _previousPosition = _currentPosition;
         _previousSize = _currentSize;
+        _previousState = _currentState;
 
         _currentSize = new LevelSize(_currentSize.W + dw, _currentSize.H + dh);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
@@ -222,6 +227,7 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
 
         _previousPosition = _currentPosition;
         _previousSize = _currentSize;
+        _previousState = _currentState;
 
         _currentSize = new LevelSize(w, h);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
