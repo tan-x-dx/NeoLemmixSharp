@@ -8,7 +8,6 @@ public sealed class GadgetMover : GadgetBase, ISimpleRenderGadget
 {
     private SimpleGadgetRenderer _renderer;
 
-
     private readonly int _tickDelay;
     private readonly int _dx;
     private readonly int _dy;
@@ -17,6 +16,7 @@ public sealed class GadgetMover : GadgetBase, ISimpleRenderGadget
 
     private bool _active = true;
     private int _tickCount;
+
     public override SimpleGadgetRenderer Renderer => _renderer;
 
     public GadgetMover(

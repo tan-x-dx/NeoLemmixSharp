@@ -151,8 +151,6 @@ public sealed class LevelObjectAssembler : IDisposable
         foreach (var gadget in gadgetSpan)
         {
             var renderer = gadget.Renderer;
-            if (renderer is null)
-                continue;
 
             if (renderer.RenderMode == GadgetRenderMode.BehindTerrain)
             {

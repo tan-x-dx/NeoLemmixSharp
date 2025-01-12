@@ -6,6 +6,8 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
 public sealed class GadgetResizer : GadgetBase, ISimpleRenderGadget
 {
+    private SimpleGadgetRenderer _renderer;
+
     private readonly int _tickDelay;
     private readonly int _dw;
     private readonly int _dh;
@@ -14,7 +16,6 @@ public sealed class GadgetResizer : GadgetBase, ISimpleRenderGadget
 
     private bool _active = true;
     private int _tickCount;
-    private SimpleGadgetRenderer _renderer;
 
     public override SimpleGadgetRenderer Renderer => _renderer;
 
