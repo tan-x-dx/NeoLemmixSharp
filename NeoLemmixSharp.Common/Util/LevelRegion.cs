@@ -5,22 +5,21 @@ using System.Runtime.InteropServices;
 namespace NeoLemmixSharp.Common.Util;
 
 /// <summary>
-/// <para>Represents a rectangular region of points within a level.</para>
+/// <para>Represents a rectangular region of points within a level, from the top left coordinate (P1) down to AND INCLUDING the bottom right coordinate (P2).</para>
 /// <para>A well-formed <see cref="LevelRegion"/> has the P1 points less than or equal to the P2 points.
 /// The constructors will ensure a well-formed <see cref="LevelRegion"/> is created.</para>
 /// <para>Note that a <see cref="LevelRegion"/> can never be empty - the smallest region is 1x1.</para>
 /// </summary>
-[StructLayout(LayoutKind.Explicit, Size = 16)]
+[StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
 public readonly ref struct LevelRegion
 {
-    [FieldOffset(0)] public readonly LevelPosition P1;
-    [FieldOffset(8)] public readonly LevelPosition P2;
+    [FieldOffset(0 * sizeof(int))] public readonly LevelPosition P1;
+    [FieldOffset(0 * sizeof(int))] public readonly int P1X;
+    [FieldOffset(1 * sizeof(int))] public readonly int P1Y;
 
-    [FieldOffset(0)] public readonly int P1X;
-    [FieldOffset(4)] public readonly int P1Y;
-
-    [FieldOffset(8)] public readonly int P2X;
-    [FieldOffset(12)] public readonly int P2Y;
+    [FieldOffset(2 * sizeof(int))] public readonly LevelPosition P2;
+    [FieldOffset(2 * sizeof(int))] public readonly int P2X;
+    [FieldOffset(3 * sizeof(int))] public readonly int P2Y;
 
     [DebuggerStepThrough]
     public LevelRegion(int x1, int y1, int x2, int y2)
@@ -117,5 +116,14 @@ public readonly ref struct LevelRegion
     {
         return P1X <= anchorPosition.X && anchorPosition.X <= P2X &&
                P1Y <= anchorPosition.Y && anchorPosition.Y <= P2Y;
+    }
+
+    [SkipLocalsInit]
+    public override string ToString()
+    {
+        Span<char> buffer = stackalloc char[(1 + 11 + 1 + 11 + 1) * 2];
+        P1.TryFormat(buffer, out var charsWritten);
+        P2.TryFormat(buffer[charsWritten..], out var charsWritten2);
+        return buffer[..(charsWritten + charsWritten2)].ToString();
     }
 }
