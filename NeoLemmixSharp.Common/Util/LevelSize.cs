@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -41,32 +42,10 @@ public readonly struct LevelSize : IEquatable<LevelSize>
         return buffer[..charsWritten].ToString();
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryFormat(Span<char> destination, out int charsWritten)
     {
-        charsWritten = 0;
-
-        if (destination.Length < 5) // Need 5 chars min
-            return false;
-        destination[charsWritten++] = '(';
-
-        var couldWriteInt = W.TryFormat(destination[charsWritten..], out var di);
-        charsWritten += di;
-        if (!couldWriteInt)
-            return false;
-
-        if (charsWritten == destination.Length)
-            return false;
-        destination[charsWritten++] = ',';
-
-        couldWriteInt = H.TryFormat(destination[charsWritten..], out di);
-        charsWritten += di;
-        if (!couldWriteInt)
-            return false;
-
-        if (charsWritten == destination.Length)
-            return false;
-        destination[charsWritten++] = ')';
-
-        return true;
+        var source = MemoryMarshal.CreateReadOnlySpan(in W, 2);
+        return Helpers.TryFormatSpan(source, destination, out charsWritten);
     }
 }
