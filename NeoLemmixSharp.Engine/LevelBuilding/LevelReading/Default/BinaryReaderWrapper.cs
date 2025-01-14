@@ -27,10 +27,10 @@ public sealed class BinaryReaderWrapper
         fileStream.ReadExactly(new Span<byte>(_byteBuffer));
     }
 
-    private T Read<T>()
+    private unsafe T Read<T>()
         where T : unmanaged
     {
-        var typeSize = Unsafe.SizeOf<T>();
+        var typeSize = sizeof(T);
         LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - BytesRead >= typeSize, "Reached end of file!");
 
         var span = MemoryMarshal.Cast<byte, T>(new ReadOnlySpan<byte>(_byteBuffer, _position, typeSize));
