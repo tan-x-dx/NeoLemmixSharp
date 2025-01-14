@@ -29,22 +29,20 @@ public static class BitArrayHelpers
     public static uint[] CreateBitArray(int length, bool setAllBits)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(length);
-
         var arrayLength = CalculateBitArrayBufferLength(length);
-        var result = CollectionsHelper.GetArrayForSize<uint>(arrayLength);
+        if (arrayLength == 0)
+            return Array.Empty<uint>();
 
-        if (!setAllBits || arrayLength == 0)
+        var result = new uint[arrayLength];
+        if (!setAllBits)
             return result;
 
         new Span<uint>(result).Fill(uint.MaxValue);
-
         var lastIndexPopCount = length & Mask;
+        if (lastIndexPopCount == 0)
+            return result;
 
-        if (lastIndexPopCount != 0)
-        {
-            result[^1] = (1U << lastIndexPopCount) - 1U;
-        }
-
+        result[^1] = (1U << lastIndexPopCount) - 1U;
         return result;
     }
 
@@ -111,7 +109,7 @@ public static class BitArrayHelpers
     /// <summary>
     /// Sets a bit to 0. 
     /// </summary>
-    /// <param name="bits">The bit to clear</param>
+    /// <param name="bits">The span to modify</param>
     /// <param name="index">The bit to clear</param>
     public static void ClearBit(Span<uint> bits, int index)
     {
