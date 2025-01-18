@@ -41,7 +41,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
         return false;
     }
 
-    public virtual void Tick() { }
+    public abstract void Tick();
 
     public bool Equals(GadgetBase? other) => Id == (other?.Id ?? -1);
     public sealed override bool Equals(object? obj) => obj is GadgetBase other && Id == other.Id;

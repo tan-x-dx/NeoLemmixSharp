@@ -12,6 +12,8 @@ public sealed class HatchGadget : GadgetBase, IAnimationControlledGadget
     public HatchSpawnData HatchSpawnData { get; }
     public GadgetStateAnimationController AnimationController { get; }
 
+    public override GadgetLayerRenderer Renderer => _renderer;
+
     public HatchGadget(
         int id,
         Orientation orientation,
@@ -23,7 +25,7 @@ public sealed class HatchGadget : GadgetBase, IAnimationControlledGadget
         AnimationController = animationController;
     }
 
-    public override GadgetLayerRenderer Renderer => _renderer;
+    public override void Tick() { }
 
     public bool CanReleaseLemmings()
     {
