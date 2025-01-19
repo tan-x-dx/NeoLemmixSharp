@@ -26,6 +26,7 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
         LemmingManager lemmingManager)
     {
         var gadgetBounds = GetGadgetBounds(gadgetData);
+        var resizeType = GetResizeTypeForGadgetOrientation(gadgetData);
         var gadgetStates = GetGadgetStates(gadgetData, gadgetBounds);
         var initialStateIndex = gadgetData.InitialStateId;
 
@@ -35,10 +36,10 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
             gadgetData.Id,
             gadgetData.Orientation,
             gadgetBounds,
+            resizeType,
             lemmingTracker,
             gadgetStates,
-            initialStateIndex,
-            ResizeType);
+            initialStateIndex);
     }
 
     private GadgetBounds GetGadgetBounds(GadgetData gadgetData)
@@ -49,15 +50,34 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
             Y = gadgetData.Y
         };
 
-        result.Width = ResizeType.HasFlag(ResizeType.ResizeHorizontal)
-            ? gadgetData.GetProperty(GadgetProperty.Width)
-            : SpriteData.SpriteWidth;
-
-        result.Height = ResizeType.HasFlag(ResizeType.ResizeVertical)
-            ? gadgetData.GetProperty(GadgetProperty.Height)
-            : SpriteData.SpriteHeight;
+        if (gadgetData.Orientation.IsParallelTo(DownOrientation.Instance))
+        {
+            result.Width = ResizeType.HasFlag(ResizeType.ResizeHorizontal)
+                ? gadgetData.GetProperty(GadgetProperty.Width)
+                : SpriteData.SpriteWidth;
+            result.Height = ResizeType.HasFlag(ResizeType.ResizeVertical)
+                ? gadgetData.GetProperty(GadgetProperty.Height)
+                : SpriteData.SpriteHeight;
+        }
+        else
+        {
+            result.Width = ResizeType.HasFlag(ResizeType.ResizeVertical)
+                ? gadgetData.GetProperty(GadgetProperty.Height)
+                : SpriteData.SpriteHeight;
+            result.Height = ResizeType.HasFlag(ResizeType.ResizeHorizontal)
+                ? gadgetData.GetProperty(GadgetProperty.Width)
+                : SpriteData.SpriteWidth;
+        }
 
         return result;
+    }
+
+    private ResizeType GetResizeTypeForGadgetOrientation(GadgetData gadgetData)
+    {
+        if (gadgetData.Orientation.IsParallelTo(DownOrientation.Instance))
+            return ResizeType;
+
+        return ResizeType.SwapComponents();
     }
 
     private GadgetState[] GetGadgetStates(

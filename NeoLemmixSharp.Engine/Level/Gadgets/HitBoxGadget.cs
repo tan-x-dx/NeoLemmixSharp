@@ -47,10 +47,10 @@ public sealed class HitBoxGadget : GadgetBase,
         int id,
         Orientation orientation,
         GadgetBounds initialGadgetBounds,
+        ResizeType resizeType,
         LemmingTracker lemmingTracker,
         GadgetState[] states,
-        int initialStateIndex,
-        ResizeType resizeType)
+        int initialStateIndex)
         : base(id, orientation, initialGadgetBounds)
     {
         _lemmingTracker = lemmingTracker;
@@ -158,20 +158,39 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public void Resize(int dw, int dh)
     {
+        if (ResizeType == ResizeType.None)
+            return;
+
         _previousGadgetBounds.SetFrom(_currentGadgetBounds);
         _previousState = _currentState;
 
-        _currentGadgetBounds.ModifySize(new LevelSize(dw, dh));
+        if (ResizeType.HasFlag(ResizeType.ResizeHorizontal))
+        {
+            _currentGadgetBounds.Width += dw;
+        }
+        if (ResizeType.HasFlag(ResizeType.ResizeVertical))
+        {
+            _currentGadgetBounds.Height += dh;
+        }
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
     public void SetSize(int w, int h)
     {
+        if (ResizeType == ResizeType.None)
+            return;
+
         _previousGadgetBounds.SetFrom(_currentGadgetBounds);
         _previousState = _currentState;
 
-        _currentGadgetBounds.Width = w;
-        _currentGadgetBounds.Height = h;
+        if (ResizeType.HasFlag(ResizeType.ResizeHorizontal))
+        {
+            _currentGadgetBounds.Width = w;
+        }
+        if (ResizeType.HasFlag(ResizeType.ResizeVertical))
+        {
+            _currentGadgetBounds.Height = h;
+        }
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
