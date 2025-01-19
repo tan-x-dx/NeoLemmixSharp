@@ -4,12 +4,12 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
 public sealed class LevelTextDataComponentReader : ILevelDataReader
 {
-    private readonly Dictionary<ushort, string> _stringIdLookup;
+    private readonly List<string> _stringIdLookup;
 
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelTextDataSectionIdentifier;
 
-    public LevelTextDataComponentReader(Dictionary<ushort, string> stringIdLookup)
+    public LevelTextDataComponentReader(List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -17,22 +17,22 @@ public sealed class LevelTextDataComponentReader : ILevelDataReader
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
         AlreadyUsed = true;
-        var numberOfItemsInSection = reader.Read16BitUnsignedInteger();
-        var numberOfPreTextItems = reader.Read8BitUnsignedInteger();
-        var i = numberOfPreTextItems;
+        int numberOfItemsInSection = reader.Read16BitUnsignedInteger();
+        int numberOfPreTextItems = reader.Read8BitUnsignedInteger();
+        int i = numberOfPreTextItems;
 
         while (i-- > 0)
         {
-            var stringId = reader.Read16BitUnsignedInteger();
+            int stringId = reader.Read16BitUnsignedInteger();
             levelData.PreTextLines.Add(_stringIdLookup[stringId]);
         }
 
-        var numberOfPostTextItems = reader.Read8BitUnsignedInteger();
+        int numberOfPostTextItems = reader.Read8BitUnsignedInteger();
         i = numberOfPostTextItems;
 
         while (i-- > 0)
         {
-            var stringId = reader.Read16BitUnsignedInteger();
+            int stringId = reader.Read16BitUnsignedInteger();
             levelData.PostTextLines.Add(_stringIdLookup[stringId]);
         }
 

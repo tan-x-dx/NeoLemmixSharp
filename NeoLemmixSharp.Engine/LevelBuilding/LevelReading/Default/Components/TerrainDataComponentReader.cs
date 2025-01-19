@@ -9,12 +9,12 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<TerrainArchetypeData>
 {
     private readonly Dictionary<int, TerrainArchetypeData> _terrainArchetypeDataLookup = new();
-    private readonly Dictionary<ushort, string> _stringIdLookup;
+    private readonly List<string> _stringIdLookup;
 
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.TerrainDataSectionIdentifier;
 
-    public TerrainDataComponentReader(Dictionary<ushort, string> stringIdLookup)
+    public TerrainDataComponentReader(List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -22,7 +22,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
         AlreadyUsed = true;
-        var numberOfItemsInSection = reader.Read16BitUnsignedInteger();
+        int numberOfItemsInSection = reader.Read16BitUnsignedInteger();
 
         while (numberOfItemsInSection-- > 0)
         {
@@ -38,21 +38,21 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
 
     private TerrainData ReadTerrainData(BinaryReaderWrapper reader)
     {
-        var numberOfBytesToRead = reader.Read8BitUnsignedInteger();
-        var initialBytesRead = reader.BytesRead;
+        int numberOfBytesToRead = reader.Read8BitUnsignedInteger();
+        int initialBytesRead = reader.BytesRead;
 
-        var styleId = reader.Read16BitUnsignedInteger();
-        var pieceId = reader.Read16BitUnsignedInteger();
+        int styleId = reader.Read16BitUnsignedInteger();
+        int pieceId = reader.Read16BitUnsignedInteger();
 
         var terrainArchetypeData = GetOrAddTerrainArchetypeData(styleId, pieceId);
 
-        var x = reader.Read16BitUnsignedInteger();
-        var y = reader.Read16BitUnsignedInteger();
+        int x = reader.Read16BitUnsignedInteger();
+        int y = reader.Read16BitUnsignedInteger();
 
-        var orientationByte = reader.Read8BitUnsignedInteger();
+        byte orientationByte = reader.Read8BitUnsignedInteger();
         var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientationByte(orientationByte);
 
-        var terrainDataMiscByte = reader.Read8BitUnsignedInteger();
+        byte terrainDataMiscByte = reader.Read8BitUnsignedInteger();
         var decipheredTerrainDataMisc = LevelReadWriteHelpers.DecipherTerrainDataMiscByte(terrainDataMiscByte);
 
         Color? tintColor = null;
@@ -111,7 +111,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         return reader.Read16BitUnsignedInteger();
     }
 
-    private TerrainArchetypeData GetOrAddTerrainArchetypeData(ushort styleId, ushort pieceId)
+    private TerrainArchetypeData GetOrAddTerrainArchetypeData(int styleId, int pieceId)
     {
         var terrainArchetypeDataLookupKey = (styleId << 16) | pieceId;
 
