@@ -1,8 +1,9 @@
 ﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
-public enum TriggerType
+public enum HitBoxType
 {
     Empty,
+    ResizableRectangular,
     Rectangular,
     PointSet
 }

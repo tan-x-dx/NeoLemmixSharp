@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
@@ -19,10 +21,11 @@ public sealed class StateChangerGadget : GadgetBase, ISimpleRenderGadget
     public StateChangerGadget(
         int id,
         Orientation orientation,
+        GadgetBounds gadgetBounds,
         string inputName,
         HitBoxGadget gadget,
         int newState)
-        : base(id, orientation)
+        : base(id, orientation, gadgetBounds)
     {
         _gadget = gadget;
         _newState = newState;

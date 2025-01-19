@@ -48,6 +48,15 @@ public readonly ref struct LevelRegion
     }
 
     [DebuggerStepThrough]
+    public LevelRegion(LevelPosition position, LevelSize size)
+    {
+        var p2 = new LevelPosition(
+            position.X + size.W - 1,
+            position.Y + size.H - 1);
+        this = new LevelRegion(position, p2);
+    }
+
+    [DebuggerStepThrough]
     public LevelRegion(LevelPosition p1, LevelPosition p2)
     {
         if (p1.X < p2.X)

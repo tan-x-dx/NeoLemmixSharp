@@ -1,5 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
@@ -19,8 +21,9 @@ public abstract class AdditiveLogicGateGadget : GadgetBase, ISimpleRenderGadget
     public AdditiveLogicGateGadget(
         int id,
         Orientation orientation,
+        GadgetBounds gadgetBounds,
         ReadOnlySpan<string> inputNames)
-        : base(id, orientation)
+        : base(id, orientation, gadgetBounds)
     {
         if (inputNames.Length < 2)
             throw new ArgumentException("Expected at least 2 inputs!");
@@ -85,8 +88,9 @@ public sealed class AndGateGadget : AdditiveLogicGateGadget
     public AndGateGadget(
         int id,
         Orientation orientation,
+        GadgetBounds gadgetBounds,
         ReadOnlySpan<string> inputNames)
-        : base(id, orientation, inputNames)
+        : base(id, orientation, gadgetBounds, inputNames)
     {
     }
 
@@ -101,8 +105,9 @@ public sealed class OrGateGadget : AdditiveLogicGateGadget
     public OrGateGadget(
         int id,
         Orientation orientation,
+        GadgetBounds gadgetBounds,
         ReadOnlySpan<string> inputNames)
-        : base(id, orientation, inputNames)
+        : base(id, orientation, gadgetBounds, inputNames)
     {
     }
 

@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
@@ -12,7 +14,7 @@ public sealed class GadgetResizer : GadgetBase, ISimpleRenderGadget
     private readonly int _dw;
     private readonly int _dh;
 
-    private readonly HitBoxGadget[] _gadgets;
+    private readonly IResizeableGadget[] _gadgets;
 
     private bool _active = true;
     private int _tickCount;
@@ -22,22 +24,18 @@ public sealed class GadgetResizer : GadgetBase, ISimpleRenderGadget
     public GadgetResizer(
         int id,
         Orientation orientation,
+        GadgetBounds gadgetBounds,
         string inputName,
-        HitBoxGadget[] gadgets,
+        IResizeableGadget[] gadgets,
         int tickDelay,
         int dw,
-        int dh) : base(id, orientation)
+        int dh)
+        : base(id, orientation, gadgetBounds)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;
         _dw = dw;
         _dh = dh;
-
-        for (var i = 0; i < _gadgets.Length; i++)
-        {
-            if (!_gadgets[i].IsResizable)
-                throw new InvalidOperationException("Gadget cannot be resized!");
-        }
 
         RegisterInput(new GadgetResizerInput(inputName, this));
     }

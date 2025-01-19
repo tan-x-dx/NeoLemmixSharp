@@ -167,7 +167,10 @@ public sealed class SimpleDictionary<TPerfectHasher, TKey, TValue> : IDictionary
     {
         get
         {
-            var result = CollectionsHelper.GetArrayForSize<TKey>(_popCount);
+            if (_popCount == 0)
+                return [];
+
+            var result = new TKey[_popCount];
             var i = 0;
             var enumerator = new Enumerator(this);
 
@@ -186,7 +189,10 @@ public sealed class SimpleDictionary<TPerfectHasher, TKey, TValue> : IDictionary
     {
         get
         {
-            var result = CollectionsHelper.GetArrayForSize<TValue>(_popCount);
+            if (_popCount == 0)
+                return [];
+
+            var result = new TValue[_popCount];
             var i = 0;
             var enumerator = new Enumerator(this);
 

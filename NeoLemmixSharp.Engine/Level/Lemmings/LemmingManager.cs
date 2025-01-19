@@ -142,7 +142,7 @@ public sealed class LemmingManager :
             hatchGroup.OnSpawnLemming();
             var lemming = hatchLemmingSpan[_numberOfLemmingsReleasedFromHatch++];
 
-            lemming.LevelPosition = hatchGadget.SpawnPosition;
+            lemming.LevelPosition = hatchGadget.Position + hatchGadget.SpawnPointOffset;
             hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
             InitialiseLemming(lemming);
         }

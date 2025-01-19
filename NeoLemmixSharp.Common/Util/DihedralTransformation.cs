@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Rendering.Text;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
@@ -100,9 +99,6 @@ public readonly ref struct DihedralTransformation
 
         return buffer[..stringLength].ToString();
     }
-
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private string FlipString => _f == 0 ? string.Empty : "Flip";
 
     public void Transform(
         int x,

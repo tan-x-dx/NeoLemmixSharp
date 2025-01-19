@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
@@ -12,7 +14,7 @@ public sealed class GadgetMover : GadgetBase, ISimpleRenderGadget
     private readonly int _dx;
     private readonly int _dy;
 
-    private readonly HitBoxGadget[] _gadgets;
+    private readonly IMoveableGadget[] _gadgets;
 
     private bool _active = true;
     private int _tickCount;
@@ -22,11 +24,13 @@ public sealed class GadgetMover : GadgetBase, ISimpleRenderGadget
     public GadgetMover(
         int id,
         Orientation orientation,
+        GadgetBounds gadgetBounds,
         string inputName,
-        HitBoxGadget[] gadgets,
+        IMoveableGadget[] gadgets,
         int tickDelay,
         int dx,
-        int dy) : base(id, orientation)
+        int dy)
+        : base(id, orientation, gadgetBounds)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;

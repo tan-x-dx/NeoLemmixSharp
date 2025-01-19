@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
@@ -15,8 +17,9 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase, ISimpleRenderGadg
 
     public SubtractiveLogicGateGadget(
         int id,
-        Orientation orientation)
-        : base(id, orientation)
+        Orientation orientation,
+        GadgetBounds gadgetBounds)
+        : base(id, orientation, gadgetBounds)
     {
     }
 
@@ -69,7 +72,9 @@ public sealed class NotGateGadget : SubtractiveLogicGateGadget
     public NotGateGadget(
         int id,
         Orientation orientation,
-        string inputName) : base(id, orientation)
+        GadgetBounds gadgetBounds,
+        string inputName)
+        : base(id, orientation, gadgetBounds)
     {
         _input = new SubtractiveLogicGateGadgetInput(inputName, this);
         RegisterInput(_input);
@@ -89,9 +94,10 @@ public sealed class XorGateGadget : SubtractiveLogicGateGadget
     public XorGateGadget(
         int id,
         Orientation orientation,
+        GadgetBounds gadgetBounds,
         string input1Name,
         string input2Name)
-        : base(id, orientation)
+        : base(id, orientation, gadgetBounds)
     {
         _input1 = new SubtractiveLogicGateGadgetInput(input1Name, this);
         _input2 = new SubtractiveLogicGateGadgetInput(input2Name, this);

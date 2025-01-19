@@ -1,14 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 public sealed class GadgetLayerRenderer : IControlledAnimationGadgetRenderer
 {
     private readonly Texture2D _texture;
-    private HitBoxGadget _gadget;
+    private IAnimationControlledGadget _gadget;
 
     public GadgetRenderMode RenderMode { get; }
     public int RendererId { get; set; }
@@ -30,7 +30,7 @@ public sealed class GadgetLayerRenderer : IControlledAnimationGadgetRenderer
         RenderMode = renderMode;
     }
 
-    public void SetGadget(HitBoxGadget gadget) => _gadget = gadget;
+    public void SetGadget(IAnimationControlledGadget gadget) => _gadget = gadget;
 
     public Rectangle GetSpriteBounds() => new(_currentPosition.X, _currentPosition.Y, _texture.Width, _texture.Height);
 

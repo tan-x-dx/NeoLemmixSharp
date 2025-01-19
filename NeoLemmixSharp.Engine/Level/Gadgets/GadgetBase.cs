@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Identity;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
@@ -10,17 +12,26 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
 {
     private readonly List<IGadgetInput> _inputs = [];
+    protected readonly GadgetBounds _currentGadgetBounds;
+    protected readonly GadgetBounds _previousGadgetBounds;
 
     public int Id { get; }
     public Orientation Orientation { get; }
     public abstract IGadgetRenderer Renderer { get; }
 
+    public LevelPosition Position => _currentGadgetBounds.TopLeftPosition;
+    public LevelSize Size => _currentGadgetBounds.Size;
+
     protected GadgetBase(
         int id,
-        Orientation orientation)
+        Orientation orientation,
+        GadgetBounds hitBoxGadgetBounds)
     {
         Id = id;
         Orientation = orientation;
+        _currentGadgetBounds = hitBoxGadgetBounds;
+        _previousGadgetBounds = new GadgetBounds();
+        _previousGadgetBounds.SetFrom(hitBoxGadgetBounds);
     }
 
     protected void RegisterInput(IGadgetInput gadgetInput) => _inputs.Add(gadgetInput);

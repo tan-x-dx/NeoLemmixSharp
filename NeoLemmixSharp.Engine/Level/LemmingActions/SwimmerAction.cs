@@ -145,7 +145,7 @@ public sealed class SwimmerAction : LemmingAction
                 var filter = filters[i];
 
                 if (filter.MatchesLemming(lemming) &&
-                    filter.HitBoxHint == HitBoxBehaviour.Liquid)
+                    filter.HitBoxBehaviour == HitBoxBehaviour.Liquid)
                     return true;
             }
         }

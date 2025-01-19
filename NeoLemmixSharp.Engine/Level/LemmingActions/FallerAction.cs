@@ -109,9 +109,9 @@ public sealed class FallerAction : LemmingAction
                 if (!filter.MatchesLemming(lemming))
                     continue;
 
-                if (filter.HitBoxHint == HitBoxBehaviour.NoSplat)
+                if (filter.HitBoxBehaviour == HitBoxBehaviour.NoSplat)
                     return false;
-                if (filter.HitBoxHint == HitBoxBehaviour.Splat)
+                if (filter.HitBoxBehaviour == HitBoxBehaviour.Splat)
                     return true;
             }
         }

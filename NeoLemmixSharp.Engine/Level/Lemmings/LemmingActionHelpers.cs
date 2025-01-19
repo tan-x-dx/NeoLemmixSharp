@@ -166,7 +166,7 @@ public static class LemmingActionHelpers
                 var filter = filters[i];
 
                 if (filter.MatchesLemming(lemming) &&
-                    filter.HitBoxHint == HitBoxBehaviour.Updraft)
+                    filter.HitBoxBehaviour == HitBoxBehaviour.Updraft)
                 {
                     firstMatchingFilter = filter;
                     break;
@@ -176,7 +176,7 @@ public static class LemmingActionHelpers
             if (firstMatchingFilter is null)
                 continue;
 
-            if (firstMatchingFilter.HitBoxHint == HitBoxBehaviour.Updraft)
+            if (firstMatchingFilter.HitBoxBehaviour == HitBoxBehaviour.Updraft)
             {
                 draftDirectionDeltas[deltaRotNum] = 1;
                 continue;

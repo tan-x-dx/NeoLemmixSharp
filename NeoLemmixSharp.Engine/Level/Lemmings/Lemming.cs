@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -399,25 +400,21 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         // If we're at the end of the check positions and Next action is not None
         // then transition. However, if NextAction is SplatterAction and there's water
         // at the position, the water takes precedence over splatting
-        if (NextAction == NoneAction.Instance ||
-            checkPosition != LevelPosition ||
-            (NextAction == SplatterAction.Instance &&
-            filter.HitBoxHint == Gadgets.HitBoxGadgets.HitBoxes.HitBoxBehaviour.Liquid))
+        if (NextAction != NoneAction.Instance &&
+            checkPosition == LevelPosition &&
+            (NextAction != SplatterAction.Instance ||
+            filter.HitBoxBehaviour != HitBoxBehaviour.Liquid))
         {
-            gadget.OnLemmingHit(filter, this);
+            NextAction.TransitionLemmingToAction(this, false);
+            if (JumpToHoistAdvance)
+            {
+                AnimationFrame += 2;
+                PhysicsFrame += 2;
+                JumpToHoistAdvance = false;
+            }
 
-            return;
+            NextAction = NoneAction.Instance;
         }
-
-        NextAction.TransitionLemmingToAction(this, false);
-        if (JumpToHoistAdvance)
-        {
-            AnimationFrame += 2;
-            PhysicsFrame += 2;
-            JumpToHoistAdvance = false;
-        }
-
-        NextAction = NoneAction.Instance;
 
         gadget.OnLemmingHit(filter, this);
     }

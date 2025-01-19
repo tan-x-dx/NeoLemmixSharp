@@ -72,6 +72,7 @@ public readonly ref partial struct GadgetTranslator
             return;
         }
 
+        /*
         if (archetypeData.ResizeType == ResizeType.None)
         {
             ProcessStatefulGadgetBuilder(archetypeData, prototype, gadgetId);
@@ -79,7 +80,7 @@ public readonly ref partial struct GadgetTranslator
         else
         {
             ProcessResizeableGadgetBuilder(archetypeData, prototype, gadgetId);
-        }
+        }*/
     }
 
     private static void GetOrientationData(

@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 [Flags]
 public enum ResizeType

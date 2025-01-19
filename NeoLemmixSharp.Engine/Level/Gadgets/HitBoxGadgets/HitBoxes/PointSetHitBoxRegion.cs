@@ -12,9 +12,11 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
     private readonly uint[] _levelPositionBits;
 
-    private readonly int _minimumBoundingBoxWidth;
-    private readonly int _minimumBoundingBoxHeight;
-    public LevelSize BoundingBoxDimensions => new(_minimumBoundingBoxWidth, _minimumBoundingBoxHeight);
+    private readonly LevelPosition _offset;
+    private readonly LevelSize _minimumBoundingBoxDimensions;
+
+    public LevelPosition Offset => _offset;
+    public LevelSize BoundingBoxDimensions => _minimumBoundingBoxDimensions;
 
     public PointSetHitBoxRegion(ReadOnlySpan<LevelPosition> points)
     {
@@ -22,15 +24,16 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
             throw new ArgumentException("Cannot create PointSetHitBoxRegion with zero points!");
 
         var minimumBoundingBox = new LevelRegion(points);
-        var minimumBoundingBoxSize = minimumBoundingBox.GetSize();
+        _offset = minimumBoundingBox.P1;
+        _minimumBoundingBoxDimensions = minimumBoundingBox.GetSize();
 
-        _minimumBoundingBoxWidth = minimumBoundingBoxSize.W;
-        _minimumBoundingBoxHeight = minimumBoundingBoxSize.H;
+        var minimumBoundingBoxWidth = _minimumBoundingBoxDimensions.W;
+        var minimumBoundingBoxHeight = _minimumBoundingBoxDimensions.H;
 
-        if (_minimumBoundingBoxWidth > DimensionCutoffSize || _minimumBoundingBoxHeight > DimensionCutoffSize)
-            throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_minimumBoundingBoxWidth}, H:{_minimumBoundingBoxHeight}");
+        if (minimumBoundingBoxWidth > DimensionCutoffSize || minimumBoundingBoxHeight > DimensionCutoffSize)
+            throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{minimumBoundingBoxWidth}, H:{minimumBoundingBoxHeight}");
 
-        var totalNumberOfPoints = _minimumBoundingBoxWidth * _minimumBoundingBoxHeight;
+        var totalNumberOfPoints = minimumBoundingBoxWidth * minimumBoundingBoxHeight;
 
         if (totalNumberOfPoints > AreaCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
@@ -38,12 +41,11 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
         _levelPositionBits = BitArrayHelpers.CreateBitArray(totalNumberOfPoints, false);
         var span = new Span<uint>(_levelPositionBits);
 
-        foreach (var levelPosition in points)
+        for (var i = 0; i < points.Length; i++)
         {
-            var x = levelPosition.X - minimumBoundingBox.P1X;
-            var y = levelPosition.Y - minimumBoundingBox.P1Y;
+            var p = points[i] - _offset;
 
-            var index = IndexFor(x, y);
+            var index = IndexFor(p);
             BitArrayHelpers.SetBit(span, index);
         }
     }
@@ -51,14 +53,15 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
     [Pure]
     public bool ContainsPoint(LevelPosition levelPosition)
     {
-        var index = IndexFor(levelPosition.X, levelPosition.Y);
+        levelPosition -= _offset;
+        var index = IndexFor(levelPosition);
 
-        return (uint)levelPosition.X < (uint)_minimumBoundingBoxWidth &&
-               (uint)levelPosition.Y < (uint)_minimumBoundingBoxHeight &&
+        return (uint)levelPosition.X < (uint)_minimumBoundingBoxDimensions.W &&
+               (uint)levelPosition.Y < (uint)_minimumBoundingBoxDimensions.H &&
                BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_levelPositionBits), index);
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int IndexFor(int x, int y) => _minimumBoundingBoxWidth * y + x;
+    private int IndexFor(LevelPosition levelPosition) => _minimumBoundingBoxDimensions.W * levelPosition.Y + levelPosition.X;
 }

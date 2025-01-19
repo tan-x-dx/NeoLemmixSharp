@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
+namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 
 public sealed class GadgetStateArchetypeData
 {
@@ -12,8 +12,10 @@ public sealed class GadgetStateArchetypeData
     public required IGadgetAction[] OnLemmingPresentActions { get; init; }
     public required IGadgetAction[] OnLemmingExitActions { get; init; }
 
-    public required TriggerType TriggerType { get; init; }
+    public required HitBoxType TriggerType { get; init; }
     public required LevelPosition[] TriggerData { get; init; }
+
+    public required LevelPosition HitBoxOffset { get; init; }
 
     public required GadgetAnimationArchetypeData PrimaryAnimation { get; init; }
     public required int PrimaryAnimationStateTransitionIndex { get; init; }
@@ -46,36 +48,4 @@ public sealed class GadgetStateArchetypeData
 
         return result;
     }
-
-    public void Clear()
-    {
-        PrimaryAnimation.Clear();
-        foreach (var secondaryAnimation in SecondaryAnimations)
-        {
-            secondaryAnimation.Clear();
-        }
-    }
-}
-
-public sealed class GadgetStateArchetypeDataAaa
-{
-    // region data
-    // [hitbox filters]
-    // animation controller
-}
-
-public sealed class GadgetStateRegionData
-{
-    // type - empty/rectangle/points
-    // [data]
-}
-
-public sealed class HitBoxData
-{
-    // solidity
-    // hitbox hint
-    // [criteria]
-    // [on enter actions]
-    // [on present actions]
-    // [on leave actions]
 }

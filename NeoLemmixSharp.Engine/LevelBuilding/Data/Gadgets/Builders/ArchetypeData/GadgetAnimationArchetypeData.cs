@@ -1,11 +1,9 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
+namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 
 public sealed class GadgetAnimationArchetypeData
 {
-    private GadgetStateAnimationBehaviour? _animationBehaviour;
-
     public required int SpriteWidth { get; init; }
     public required int SpriteHeight { get; init; }
     public required int Layer { get; init; }
@@ -16,7 +14,7 @@ public sealed class GadgetAnimationArchetypeData
 
     public GadgetStateAnimationBehaviour GetAnimationBehaviour()
     {
-        return _animationBehaviour ??= new GadgetStateAnimationBehaviour(
+        return new GadgetStateAnimationBehaviour(
             SpriteWidth,
             SpriteHeight,
             Layer,
@@ -24,10 +22,5 @@ public sealed class GadgetAnimationArchetypeData
             MinFrame,
             MaxFrame,
             SecondaryAnimationAction);
-    }
-
-    public void Clear()
-    {
-        _animationBehaviour = null;
     }
 }

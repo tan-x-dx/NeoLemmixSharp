@@ -36,6 +36,11 @@ public sealed class GadgetData
         return _properties[property];
     }
 
+    public bool HasProperty(GadgetProperty property)
+    {
+        return _properties.ContainsKey(property);
+    }
+
     public bool TryGetProperty(GadgetProperty property, out int value)
     {
         return _properties.TryGetValue(property, out value);

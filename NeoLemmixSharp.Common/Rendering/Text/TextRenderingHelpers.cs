@@ -4,6 +4,8 @@ namespace NeoLemmixSharp.Common.Rendering.Text;
 
 public static class TextRenderingHelpers
 {
+    private const int ZeroCharAsInt = '0';
+
     public static void WriteDigits(Span<char> span, int value, char blankCharValue = ' ')
     {
         for (var i = span.Length - 1; i >= 0; i--)
@@ -23,7 +25,7 @@ public static class TextRenderingHelpers
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static char DigitToChar(int digit) => (char)(digit | '0');
+    public static char DigitToChar(int digit) => (char)(digit | ZeroCharAsInt);
 
     public static int GetNumberStringLength(int n) => n switch
     {

@@ -2,9 +2,10 @@
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
@@ -12,25 +13,19 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 #pragma warning disable CS0660, CS0661, CA1067
-public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRectangularBounds, IAnimationControlledGadget
+public sealed class HitBoxGadget : GadgetBase,
+    IIdEquatable<HitBoxGadget>,
+    IRectangularBounds,
+    IAnimationControlledGadget,
+    IMoveableGadget,
+    IResizeableGadget
 #pragma warning restore CS0660, CS0661, CA1067
 {
     private readonly GadgetLayerRenderer _renderer;
     private readonly LemmingTracker _lemmingTracker;
     private readonly GadgetState[] _states;
 
-    /// <summary>
-    /// The current top left pixel of the gadget
-    /// </summary>
-    private LevelPosition _currentPosition;
-    private LevelSize _currentSize;
     private GadgetState _currentState;
-
-    /// <summary>
-    /// The previous top left pixel of the gadget
-    /// </summary>
-    private LevelPosition _previousPosition;
-    private LevelSize _previousSize;
     private GadgetState _previousState;
 
     private int _currentStateIndex;
@@ -41,24 +36,22 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
 
     public override GadgetLayerRenderer Renderer => _renderer;
 
-    /*
-     * The below properties refer to the position of the hitbox, not the gadget itself
-     * This is needed in the gadget SpacialHashGrid
-     */
-    public LevelPosition TopLeftPixel => _currentPosition + _currentState.HitBoxOffset;
-    public LevelPosition BottomRightPixel => _currentPosition + _currentState.HitBoxOffset + _currentState.HitBoxRegion.BoundingBoxDimensions;
-    public LevelPosition PreviousTopLeftPixel => _previousPosition + _previousState.HitBoxOffset;
-    public LevelPosition PreviousBottomRightPixel => _previousPosition + _previousState.HitBoxOffset + _previousState.HitBoxRegion.BoundingBoxDimensions;
-    public bool IsResizable { get; }
+    // The below properties refer to the position of the hitbox, not the gadget itself    
+    public LevelPosition TopLeftPixel => _currentGadgetBounds.TopLeftPosition + _currentState.HitBoxRegion.Offset;
+    public LevelPosition BottomRightPixel => _currentGadgetBounds.BottomRightPosition + _currentState.HitBoxRegion.Offset + _currentState.HitBoxRegion.BoundingBoxDimensions;
+    public LevelPosition PreviousTopLeftPixel => _previousGadgetBounds.TopLeftPosition + _previousState.HitBoxRegion.Offset;
+    public LevelPosition PreviousBottomRightPixel => _previousGadgetBounds.BottomRightPosition + _previousState.HitBoxRegion.Offset + _previousState.HitBoxRegion.BoundingBoxDimensions;
+    public ResizeType ResizeType { get; }
 
     public HitBoxGadget(
         int id,
-        LevelRegion gadgetBounds,
         Orientation orientation,
+        GadgetBounds initialGadgetBounds,
         LemmingTracker lemmingTracker,
         GadgetState[] states,
-        int initialStateIndex)
-        : base(id, orientation)
+        int initialStateIndex,
+        ResizeType resizeType)
+        : base(id, orientation, initialGadgetBounds)
     {
         _lemmingTracker = lemmingTracker;
         _states = states;
@@ -67,44 +60,7 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
         _currentState = states[initialStateIndex];
         _previousState = _currentState;
 
-        _currentPosition = gadgetBounds.P1;
-        _currentSize = gadgetBounds.GetSize();
-
-        _previousPosition = _currentPosition;
-        _previousSize = _currentSize;
-
-        IsResizable = ValidateAllHitBoxesAreResizable();
-    }
-
-    private bool ValidateAllHitBoxesAreResizable()
-    {
-        const int resizableType = 1;
-        const int nonResizableType = 2;
-
-        var type = 0;
-
-        for (var i = 0; i < _states.Length; i++)
-        {
-            var hitBoxRegion = _states[i].HitBoxRegion;
-
-            if (hitBoxRegion is IResizableHitBoxRegion)
-            {
-                if (type == nonResizableType)
-                    throw new InvalidOperationException("Inconsistent resizability for gadget!");
-                type = resizableType;
-            }
-            else
-            {
-                if (type == resizableType)
-                    throw new InvalidOperationException("Inconsistent resizability for gadget!");
-                type = nonResizableType;
-            }
-        }
-
-        if (type == 0)
-            throw new InvalidOperationException("Could not determine resizability for gadget!");
-
-        return type == resizableType;
+        ResizeType = resizeType;
     }
 
     public void SetNextState(int stateIndex)
@@ -130,8 +86,7 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
     {
         _currentStateIndex = _nextStateIndex;
 
-        _previousPosition = _currentPosition;
-        _previousSize = _currentSize;
+        _previousGadgetBounds.SetFrom(_currentGadgetBounds);
         _previousState = _currentState;
 
         _currentState = _states[_currentStateIndex];
@@ -183,53 +138,40 @@ public sealed class HitBoxGadget : GadgetBase, IIdEquatable<HitBoxGadget>, IRect
 
     public void Move(int dx, int dy)
     {
-        _previousPosition = _currentPosition;
-        _previousSize = _currentSize;
+        _previousGadgetBounds.SetFrom(_currentGadgetBounds);
         _previousState = _currentState;
 
-        _currentPosition = LevelScreen.NormalisePosition(_currentPosition + new LevelPosition(dx, dy));
+        _currentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(_currentGadgetBounds.X + dx);
+        _currentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(_currentGadgetBounds.Y + dy);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
     public void SetPosition(int x, int y)
     {
-        _previousPosition = _currentPosition;
-        _previousSize = _currentSize;
+        _previousGadgetBounds.SetFrom(_currentGadgetBounds);
         _previousState = _currentState;
 
-        _currentPosition = LevelScreen.NormalisePosition(new LevelPosition(x, y));
+        _currentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(x);
+        _currentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(y);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
     public void Resize(int dw, int dh)
     {
-        for (var i = 0; i < _states.Length; i++)
-        {
-            var rectangularHitBox = (IResizableHitBoxRegion)_states[i].HitBoxRegion;
-            rectangularHitBox.Resize(dw, dh);
-        }
-
-        _previousPosition = _currentPosition;
-        _previousSize = _currentSize;
+        _previousGadgetBounds.SetFrom(_currentGadgetBounds);
         _previousState = _currentState;
 
-        _currentSize = new LevelSize(_currentSize.W + dw, _currentSize.H + dh);
+        _currentGadgetBounds.ModifySize(new LevelSize(dw, dh));
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
     public void SetSize(int w, int h)
     {
-        for (var i = 0; i < _states.Length; i++)
-        {
-            var rectangularHitBox = (IResizableHitBoxRegion)_states[i].HitBoxRegion;
-            rectangularHitBox.SetSize(w, h);
-        }
-
-        _previousPosition = _currentPosition;
-        _previousSize = _currentSize;
+        _previousGadgetBounds.SetFrom(_currentGadgetBounds);
         _previousState = _currentState;
 
-        _currentSize = new LevelSize(w, h);
+        _currentGadgetBounds.Width = w;
+        _currentGadgetBounds.Height = h;
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 

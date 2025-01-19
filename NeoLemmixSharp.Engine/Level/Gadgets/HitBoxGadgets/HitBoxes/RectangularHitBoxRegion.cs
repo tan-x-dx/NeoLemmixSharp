@@ -2,34 +2,41 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
-public sealed class RectangularHitBoxRegion : IResizableHitBoxRegion
+public sealed class RectangularHitBoxRegion : IHitBoxRegion
 {
-    private int _width;
-    private int _height;
+    private readonly LevelPosition _position;
+    private readonly LevelSize _size;
 
-    public LevelSize BoundingBoxDimensions => new(Math.Max(0, _width), Math.Max(0, _height));
+    public LevelPosition Offset => _position;
+    public LevelSize BoundingBoxDimensions => _size;
 
-    public RectangularHitBoxRegion(int width, int height)
+    public RectangularHitBoxRegion(
+        int x,
+        int y,
+        int w,
+        int h)
     {
-        _width = width;
-        _height = height;
+        _position = new LevelPosition(x, y);
+        _size = new LevelSize(w, h);
     }
 
-    public bool ContainsPoint(LevelPosition levelPosition) => _width > 0 &&
-                                                              _height > 0 &&
-                                                              (uint)levelPosition.X < (uint)_width &&
-                                                              (uint)levelPosition.Y < (uint)_height;
-
-    public void Resize(int dw, int dh)
+    public bool ContainsPoint(LevelPosition levelPosition)
     {
-        _width += dw;
-        _height += dh;
-    }
+        var x0 = _position.X;
+        var y0 = _position.Y;
 
-    public void SetSize(int w, int h)
-    {
-        _width = w;
-        _height = h;
-    }
+        var x = levelPosition.X;
+        var y = levelPosition.Y;
 
+        var x1 = _position.X + _size.W;
+        var y1 = _position.Y + _size.H;
+
+        LevelScreen.HorizontalBoundaryBehaviour.NormaliseCoords(ref x0, ref x1, ref x);
+        LevelScreen.VerticalBoundaryBehaviour.NormaliseCoords(ref y0, ref y1, ref y);
+
+        return x0 <= x &&
+               y0 <= y &&
+               x < x1 &&
+               y < y1;
+    }
 }

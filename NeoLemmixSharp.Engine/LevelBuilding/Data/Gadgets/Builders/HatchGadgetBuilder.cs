@@ -23,7 +23,9 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
         GadgetData gadgetData,
         LemmingManager lemmingManager)
     {
-        var hatchGadgetId = gadgetData.GetProperty(GadgetProperty.HatchGroupId);
+        return null!;
+
+        /*var hatchGadgetId = gadgetData.GetProperty(GadgetProperty.HatchGroupId);
         var teamId = gadgetData.GetProperty(GadgetProperty.TeamId);
         var rawLemmingState = (uint)gadgetData.GetProperty(GadgetProperty.RawLemmingState);
         var lemmingCount = gadgetData.GetProperty(GadgetProperty.Count);
@@ -74,13 +76,12 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
         var result = new HatchGadget(
             gadgetData.Id,
             gadgetBounds,
-            gadgetRenderer,
             spawnPoint,
             hatchSpawnData,
             gadgetAnimationController);
 
         gadgetRenderer?.SetGadget(result);
 
-        return result;
+        return result;*/
     }
 }

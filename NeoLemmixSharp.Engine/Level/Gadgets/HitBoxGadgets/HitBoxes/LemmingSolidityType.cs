@@ -2,7 +2,6 @@
 
 public enum LemmingSolidityType
 {
-    Indeterminate,
     NotSolid,
     Solid,
     Steel

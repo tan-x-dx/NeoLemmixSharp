@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 
 public readonly ref partial struct GadgetTranslator
 {
-    private void ProcessStatefulGadgetBuilder(
+   /* private void ProcessStatefulGadgetBuilder(
         NeoLemmixGadgetArchetypeData archetypeData,
         NeoLemmixGadgetData prototype,
         int gadgetId)
@@ -61,5 +61,5 @@ public readonly ref partial struct GadgetTranslator
 
             SpriteData = spriteData
         };
-    }
+    }*/
 }

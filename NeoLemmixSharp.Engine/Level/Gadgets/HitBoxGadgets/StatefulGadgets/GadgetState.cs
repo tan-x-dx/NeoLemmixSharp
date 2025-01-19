@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
@@ -11,7 +10,6 @@ public sealed class GadgetState
     private readonly LemmingHitBoxFilter[] _lemmingHitBoxFilters;
 
     public IHitBoxRegion HitBoxRegion { get; }
-    public LevelPosition HitBoxOffset { get; }
     public GadgetStateAnimationController AnimationController { get; }
 
     public ReadOnlySpan<LemmingHitBoxFilter> Filters => new(_lemmingHitBoxFilters);
@@ -19,13 +17,11 @@ public sealed class GadgetState
     public GadgetState(
         GadgetStateAnimationController animationController,
         IHitBoxRegion hitBoxRegion,
-        LevelPosition hitBoxOffset,
         LemmingHitBoxFilter[] lemmingHitBoxFilters)
     {
         AnimationController = animationController;
         _lemmingHitBoxFilters = lemmingHitBoxFilters;
         HitBoxRegion = hitBoxRegion;
-        HitBoxOffset = hitBoxOffset;
     }
 
     public void OnTransitionTo()
