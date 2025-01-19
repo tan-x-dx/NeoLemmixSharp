@@ -45,15 +45,16 @@ public sealed class GadgetReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         _currentGadgetData = new NeoLemmixGadgetData();
         FinishedReading = false;
+        return false;
     }
 
     private void SetStyle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var rest = line.TrimAfterIndex(secondTokenIndex);
+        var rest = line[secondTokenIndex..].Trim();
         if (_currentStyle is null)
         {
             SetCurrentStyle(rest);
@@ -61,7 +62,7 @@ public sealed class GadgetReader : NeoLemmixDataReader
         else
         {
             var currentStyleSpan = _currentStyle.AsSpan();
-            if (!currentStyleSpan.SequenceEqual(rest))
+            if (!currentStyleSpan.Equals(rest, StringComparison.OrdinalIgnoreCase))
             {
                 SetCurrentStyle(rest);
             }
@@ -70,7 +71,7 @@ public sealed class GadgetReader : NeoLemmixDataReader
 
     private void SetPiece(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(line.TrimAfterIndex(secondTokenIndex));
+        var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(line[secondTokenIndex..].Trim());
         _currentGadgetData!.GadgetArchetypeId = gadgetArchetypeData.GadgetArchetypeId;
     }
 
@@ -135,7 +136,7 @@ public sealed class GadgetReader : NeoLemmixDataReader
 
     private void SetSkill(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        if (!NxlvReadingHelpers.TryGetSkillByName(secondToken, this, out var skill))
+        if (!NxlvReadingHelpers.TryGetSkillByName(secondToken, out var skill))
             throw new Exception($"Unknown token: {secondToken}");
 
         _currentGadgetData!.Skill = skill;

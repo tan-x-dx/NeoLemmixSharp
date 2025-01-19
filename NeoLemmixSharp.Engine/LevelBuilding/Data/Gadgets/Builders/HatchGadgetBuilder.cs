@@ -1,9 +1,8 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
+using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
@@ -22,9 +21,11 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
     public GadgetBase BuildGadget(
         GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
-        IPerfectHasher<Lemming> lemmingHasher)
+        LemmingManager lemmingManager)
     {
-        var hatchGadgetId = gadgetData.GetProperty(GadgetProperty.HatchGroupId);
+        return null!;
+
+        /*var hatchGadgetId = gadgetData.GetProperty(GadgetProperty.HatchGroupId);
         var teamId = gadgetData.GetProperty(GadgetProperty.TeamId);
         var rawLemmingState = (uint)gadgetData.GetProperty(GadgetProperty.RawLemmingState);
         var lemmingCount = gadgetData.GetProperty(GadgetProperty.Count);
@@ -75,13 +76,12 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
         var result = new HatchGadget(
             gadgetData.Id,
             gadgetBounds,
-            gadgetRenderer,
             spawnPoint,
             hatchSpawnData,
             gadgetAnimationController);
 
         gadgetRenderer?.SetGadget(result);
 
-        return result;
+        return result;*/
     }
 }

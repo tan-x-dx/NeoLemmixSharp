@@ -38,11 +38,7 @@ public sealed class DataReaderList : IDisposable
     private bool ProcessLine(ReadOnlySpan<char> line)
     {
         if (_currentDataReader == null)
-        {
-            GetDataReaderForLine(line);
-
-            return false;
-        }
+            return GetDataReaderForLine(line);
 
         var result = _currentDataReader.ReadNextLine(line);
 
@@ -53,7 +49,7 @@ public sealed class DataReaderList : IDisposable
         return result;
     }
 
-    private void GetDataReaderForLine(ReadOnlySpan<char> line)
+    private bool GetDataReaderForLine(ReadOnlySpan<char> line)
     {
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
 
@@ -61,7 +57,7 @@ public sealed class DataReaderList : IDisposable
         if (_currentDataReader == null)
             throw new InvalidOperationException($"Could not find reader for line! [{firstToken}] line: \"{line}\"");
 
-        _currentDataReader.BeginReading(line);
+        return _currentDataReader.BeginReading(line);
     }
 
     private NeoLemmixDataReader? TryGetWithSpan(ReadOnlySpan<char> token)

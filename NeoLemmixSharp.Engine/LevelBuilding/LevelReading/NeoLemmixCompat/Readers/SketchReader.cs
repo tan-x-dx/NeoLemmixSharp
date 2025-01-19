@@ -29,7 +29,7 @@ public sealed class SketchReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         _currentSketchData = new SketchData();
         _rotate = false;
@@ -37,6 +37,7 @@ public sealed class SketchReader : NeoLemmixDataReader
         _flipVertically = false;
 
         FinishedReading = false;
+        return false;
     }
 
     private void SetIndex(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

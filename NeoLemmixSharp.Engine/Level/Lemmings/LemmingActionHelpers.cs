@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -85,8 +86,21 @@ public static class LemmingActionHelpers
     {
         foreach (var gadget in gadgets)
         {
-            if (gadget.IsSolidToLemmingAtPosition(lemming, levelPosition))
-                return true;
+            var currentState = gadget.CurrentState;
+
+            if (!gadget.ContainsPoint(levelPosition))
+                continue;
+
+            var filters = currentState.Filters;
+
+            for (var i = 0; i < filters.Length; i++)
+            {
+                var filter = filters[i];
+
+                if (filter.MatchesLemming(lemming) &&
+                    filter.LemmingSolidityType != LemmingSolidityType.NotSolid)
+                    return true;
+            }
         }
 
         return false;
@@ -100,8 +114,21 @@ public static class LemmingActionHelpers
     {
         foreach (var gadget in gadgets)
         {
-            if (gadget.IsSteelToLemmingAtPosition(lemming, levelPosition))
-                return true;
+            var currentState = gadget.CurrentState;
+
+            if (!gadget.ContainsPoint(levelPosition))
+                continue;
+
+            var filters = currentState.Filters;
+
+            for (var i = 0; i < filters.Length; i++)
+            {
+                var filter = filters[i];
+
+                if (filter.MatchesLemming(lemming) &&
+                    filter.LemmingSolidityType == LemmingSolidityType.Steel)
+                    return true;
+            }
         }
 
         return false;
@@ -118,14 +145,42 @@ public static class LemmingActionHelpers
 
         var draftDirectionDeltas = new UpdraftBuffer();
 
+        var anchorPosition = lemming.LevelPosition;
+        var footPosition = lemming.FootPosition;
+
         foreach (var gadget in gadgetsNearLemming)
         {
-            if (gadget.GadgetBehaviour != UpdraftGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
+            var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientationRotNum) & 3;
+
+            var currentState = gadget.CurrentState;
+
+            if (!gadget.ContainsPoint(anchorPosition) ||
+                !gadget.ContainsPoint(footPosition))
                 continue;
 
-            var deltaRotNum = gadget.Orientation.RotNum - lemmingOrientationRotNum;
+            var filters = currentState.Filters;
+            LemmingHitBoxFilter? firstMatchingFilter = null;
 
-            draftDirectionDeltas[deltaRotNum & 3] = 1;
+            for (var i = 0; i < filters.Length; i++)
+            {
+                var filter = filters[i];
+
+                if (filter.MatchesLemming(lemming) &&
+                    filter.HitBoxBehaviour == HitBoxBehaviour.Updraft)
+                {
+                    firstMatchingFilter = filter;
+                    break;
+                }
+            }
+
+            if (firstMatchingFilter is null)
+                continue;
+
+            if (firstMatchingFilter.HitBoxBehaviour == HitBoxBehaviour.Updraft)
+            {
+                draftDirectionDeltas[deltaRotNum] = 1;
+                continue;
+            }
         }
 
         var dx = draftDirectionDeltas[EngineConstants.RightOrientationRotNum] -

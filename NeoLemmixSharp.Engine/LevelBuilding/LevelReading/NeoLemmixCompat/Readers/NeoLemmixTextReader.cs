@@ -15,14 +15,15 @@ public sealed class NeoLemmixTextReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
+        return false;
     }
 
     private void AddLine(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var parsedLine = line.TrimAfterIndex(secondTokenIndex).ToString();
+        var parsedLine = line[secondTokenIndex..].Trim().ToString();
         _lines.Add(parsedLine);
     }
 

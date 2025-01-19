@@ -20,7 +20,23 @@ public sealed class ExiterAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        throw new NotImplementedException();
+        if (LevelScreen.LevelTimer.OutOfTime)
+        {
+            lemming.AnimationFrame--;
+            lemming.PhysicsFrame--;
+
+            //if UserSetNuking and (L.LemExplosionTimer <= 0) and (Index_LemmingToBeNuked > L.LemIndex) then
+            //  Transition(L, baOhnoing);
+
+            return false;
+        }
+
+        if (lemming.EndOfAnimation)
+        {
+            LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.Exit);
+        }
+
+        return false;
     }
 
     protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
@@ -34,22 +50,4 @@ public sealed class ExiterAction : LemmingAction
 
         lemming.CountDownTimer = 0;
     }
-
-    /*
-function TLemmingGame.HandleExiting(L: TLemming): Boolean;
-begin
-  Result := False;
-
-  if IsOutOfTime then
-  begin
-    Dec(L.LemFrame);
-    Dec(L.LemPhysicsFrame);
-
-    if UserSetNuking and (L.LemExplosionTimer <= 0) and (Index_LemmingToBeNuked > L.LemIndex) then
-      Transition(L, baOhnoing);
-  end else
-  if L.LemEndOfAnimation then RemoveLemming(L, RM_SAVE);
-end;
-    */
-
 }

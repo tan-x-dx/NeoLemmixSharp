@@ -1,34 +1,55 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
-using NeoLemmixSharp.Engine.Level.Gadgets.LevelRegion;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds, ISnapshotDataConvertible<int>
+public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
 {
-    public int Id { get; }
-    public abstract GadgetBehaviour GadgetBehaviour { get; }
-    public abstract Orientation Orientation { get; }
-    public RectangularHitBoxRegion GadgetBounds { get; }
-    public IGadgetRenderer? Renderer { get; }
+    private readonly List<IGadgetInput> _inputs = [];
+    protected readonly GadgetBounds _currentGadgetBounds;
+    protected readonly GadgetBounds _previousGadgetBounds;
 
-    public LevelPosition TopLeftPixel { get; set; }
-    public LevelPosition BottomRightPixel { get; set; }
-    public LevelPosition PreviousTopLeftPixel { get; set; }
-    public LevelPosition PreviousBottomRightPixel { get; set; }
+    public int Id { get; }
+    public Orientation Orientation { get; }
+    public abstract IGadgetRenderer Renderer { get; }
+
+    public LevelPosition Position => _currentGadgetBounds.TopLeftPosition;
+    public LevelSize Size => _currentGadgetBounds.Size;
 
     protected GadgetBase(
         int id,
-        RectangularHitBoxRegion gadgetBounds,
-        IGadgetRenderer? renderer)
+        Orientation orientation,
+        GadgetBounds hitBoxGadgetBounds)
     {
         Id = id;
-        GadgetBounds = gadgetBounds;
-        Renderer = renderer;
+        Orientation = orientation;
+        _currentGadgetBounds = hitBoxGadgetBounds;
+        _previousGadgetBounds = new GadgetBounds();
+        _previousGadgetBounds.SetFrom(hitBoxGadgetBounds);
+    }
+
+    protected void RegisterInput(IGadgetInput gadgetInput) => _inputs.Add(gadgetInput);
+
+    public bool TryGetInputWithName(string inputName, [MaybeNullWhen(false)] out IGadgetInput gadgetInput)
+    {
+        for (var i = 0; i < _inputs.Count; i++)
+        {
+            var input = _inputs[i];
+            if (string.Equals(input.InputName, inputName, StringComparison.Ordinal))
+            {
+                gadgetInput = input;
+                return true;
+            }
+        }
+
+        gadgetInput = null;
+        return false;
     }
 
     public abstract void Tick();
@@ -39,6 +60,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, IRectangularBounds,
 
     public static bool operator ==(GadgetBase left, GadgetBase right) => left.Id == right.Id;
     public static bool operator !=(GadgetBase left, GadgetBase right) => left.Id != right.Id;
+
     public void ToSnapshotData(out int snapshotData)
     {
         snapshotData = 0;

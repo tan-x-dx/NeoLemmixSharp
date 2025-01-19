@@ -22,10 +22,11 @@ public sealed class TerrainGroupReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         _currentTerrainGroup = new TerrainGroupData();
         FinishedReading = false;
+        return false;
     }
 
     public override bool ReadNextLine(ReadOnlySpan<char> line)
@@ -56,7 +57,7 @@ public sealed class TerrainGroupReader : NeoLemmixDataReader
 
     private void SetName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentTerrainGroup!.GroupName = line.TrimAfterIndex(secondTokenIndex).ToString();
+        _currentTerrainGroup!.GroupName = line[secondTokenIndex..].Trim().ToString();
     }
 
     private void ReadTerrainData(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

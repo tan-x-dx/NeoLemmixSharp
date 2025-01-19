@@ -262,11 +262,10 @@ public abstract class Component : IDisposable
 
     public void AddComponent(Component? c, int index)
     {
+        ArgumentNullException.ThrowIfNull(c);
+
         if (this == c)
             throw new InvalidOperationException("Cannot add a component to itself [" + ToString() + "]");
-
-        if (c is null)
-            throw new ArgumentNullException();
 
         if (c._parent is not null)
             throw new InvalidOperationException("Component is already a child [" + c.ToString() + "]");

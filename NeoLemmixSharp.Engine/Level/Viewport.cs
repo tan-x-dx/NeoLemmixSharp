@@ -40,26 +40,29 @@ public sealed class Viewport
             MouseIsInLevelViewPort = false;
         }
 
+        var horizontalBoundaryBehaviour = LevelScreen.HorizontalBoundaryBehaviour;
+        var verticalBoundaryBehaviour = LevelScreen.VerticalBoundaryBehaviour;
+
         if (inputController.MouseX == 0)
         {
-            LevelScreen.HorizontalBoundaryBehaviour.Scroll(-_scrollDelta);
+            horizontalBoundaryBehaviour.Scroll(-_scrollDelta);
         }
         else if (inputController.MouseX == _windowWidth - 1)
         {
-            LevelScreen.HorizontalBoundaryBehaviour.Scroll(_scrollDelta);
+            horizontalBoundaryBehaviour.Scroll(_scrollDelta);
         }
 
         if (inputController.MouseY == 0)
         {
-            LevelScreen.VerticalBoundaryBehaviour.Scroll(-_scrollDelta);
+            verticalBoundaryBehaviour.Scroll(-_scrollDelta);
         }
         else if (inputController.MouseY == _windowHeight - 1)
         {
-            LevelScreen.VerticalBoundaryBehaviour.Scroll(_scrollDelta);
+            verticalBoundaryBehaviour.Scroll(_scrollDelta);
         }
 
-        LevelScreen.HorizontalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseX);
-        LevelScreen.VerticalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseY);
+        horizontalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseX);
+        verticalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseY);
     }
 
     private bool MouseIsInLevelViewport(LevelInputController inputController)

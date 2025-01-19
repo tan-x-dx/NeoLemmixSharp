@@ -2,8 +2,9 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
@@ -116,8 +117,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     {
         State.IsActive = true;
         var lemmingBounds = CurrentAction.GetLemmingBounds(this);
-        TopLeftPixel = lemmingBounds.GetTopLeftPosition();
-        BottomRightPixel = lemmingBounds.GetBottomRightPosition();
+        TopLeftPixel = lemmingBounds.P1;
+        BottomRightPixel = lemmingBounds.P2;
 
         PreviousLevelPosition = LevelPosition;
         PreviousTopLeftPixel = TopLeftPixel;
@@ -133,6 +134,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         Renderer.UpdateLemmingState(true);
     }
 
+    [SkipLocalsInit]
     public void Tick()
     {
         PreviousAction = CurrentAction;
@@ -291,8 +293,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         var result = CurrentAction.UpdateLemming(this, in gadgetsNearLemming);
         var lemmingBounds = CurrentAction.GetLemmingBounds(this);
 
-        TopLeftPixel = lemmingBounds.GetTopLeftPosition();
-        BottomRightPixel = lemmingBounds.GetBottomRightPosition();
+        TopLeftPixel = lemmingBounds.P1;
+        BottomRightPixel = lemmingBounds.P2;
 
         return result;
     }
@@ -344,15 +346,34 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     {
         foreach (var gadget in gadgetEnumerable)
         {
+            var currentState = gadget.CurrentState;
+
             foreach (var anchorPosition in intermediatePositions)
             {
                 var footPosition = CurrentAction.GetFootPosition(this, anchorPosition);
-                if (!gadget.MatchesLemmingAtPosition(this, anchorPosition) &&
-                    !gadget.MatchesLemmingAtPosition(this, footPosition))
+                if (!gadget.ContainsPoint(anchorPosition) ||
+                    !gadget.ContainsPoint(footPosition))
+                    continue;
+
+                var filters = currentState.Filters;
+                LemmingHitBoxFilter? firstMatchingFilter = null;
+
+                for (var i = 0; i < filters.Length; i++)
+                {
+                    var filter = filters[i];
+
+                    if (filter.MatchesLemming(this))
+                    {
+                        firstMatchingFilter = filter;
+                        break;
+                    }
+                }
+
+                if (firstMatchingFilter is null)
                     continue;
 
                 var beforeAction = CurrentAction;
-                HandleGadgetInteraction(gadget, anchorPosition);
+                HandleGadgetInteraction(gadget, firstMatchingFilter, anchorPosition);
                 var afterAction = CurrentAction;
 
                 if (beforeAction == afterAction)
@@ -362,8 +383,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
                 var lemmingBounds = afterAction.GetLemmingBounds(this);
 
-                TopLeftPixel = lemmingBounds.GetTopLeftPosition();
-                BottomRightPixel = lemmingBounds.GetBottomRightPosition();
+                TopLeftPixel = lemmingBounds.P1;
+                BottomRightPixel = lemmingBounds.P2;
                 return false;
             }
         }
@@ -371,30 +392,31 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         return true;
     }
 
-    private void HandleGadgetInteraction(HitBoxGadget gadget, LevelPosition checkPosition)
+    private void HandleGadgetInteraction(
+        HitBoxGadget gadget,
+        LemmingHitBoxFilter filter,
+        LevelPosition checkPosition)
     {
         // If we're at the end of the check positions and Next action is not None
         // then transition. However, if NextAction is SplatterAction and there's water
         // at the position, the water takes precedence over splatting
-        if (NextAction == NoneAction.Instance || checkPosition != LevelPosition ||
-            (NextAction == SplatterAction.Instance && gadget.GadgetBehaviour == WaterGadgetBehaviour.Instance))
+        if (NextAction != NoneAction.Instance &&
+            checkPosition == LevelPosition &&
+            (NextAction != SplatterAction.Instance ||
+            filter.HitBoxBehaviour != HitBoxBehaviour.Liquid))
         {
-            gadget.OnLemmingMatch(this);
+            NextAction.TransitionLemmingToAction(this, false);
+            if (JumpToHoistAdvance)
+            {
+                AnimationFrame += 2;
+                PhysicsFrame += 2;
+                JumpToHoistAdvance = false;
+            }
 
-            return;
+            NextAction = NoneAction.Instance;
         }
 
-        NextAction.TransitionLemmingToAction(this, false);
-        if (JumpToHoistAdvance)
-        {
-            AnimationFrame += 2;
-            PhysicsFrame += 2;
-            JumpToHoistAdvance = false;
-        }
-
-        NextAction = NoneAction.Instance;
-
-        gadget.OnLemmingMatch(this);
+        gadget.OnLemmingHit(filter, this);
     }
 
     public void SetFacingDirection(FacingDirection newFacingDirection)

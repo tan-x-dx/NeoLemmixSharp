@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -11,6 +12,7 @@ public interface ILemmingStateChanger
     void SetLemmingState(LemmingState lemmingState, bool status);
     void ToggleLemmingState(LemmingState lemmingState);
 
+    [Pure]
     bool IsApplied(LemmingState lemmingState);
 }
 

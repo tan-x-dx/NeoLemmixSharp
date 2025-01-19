@@ -1,6 +1,8 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
+﻿using System.Runtime.CompilerServices;
 
-public abstract class NeoLemmixDataReader : IEqualityComparer<char>
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
+
+public abstract class NeoLemmixDataReader
 {
     protected readonly Dictionary<string, NxlvReadingHelpers.TokenAction> _tokenActions = new(StringComparer.OrdinalIgnoreCase);
 
@@ -17,11 +19,12 @@ public abstract class NeoLemmixDataReader : IEqualityComparer<char>
         _tokenActions.Add(token, action);
     }
 
-    protected bool TokensMatch(
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static bool TokensMatch(
         ReadOnlySpan<char> firstToken,
         ReadOnlySpan<char> secondToken)
     {
-        return firstToken.SequenceEqual(secondToken, this);
+        return firstToken.Equals(secondToken, StringComparison.OrdinalIgnoreCase);
     }
 
     public virtual bool ShouldProcessSection(ReadOnlySpan<char> token)
@@ -29,7 +32,12 @@ public abstract class NeoLemmixDataReader : IEqualityComparer<char>
         return TokensMatch(token, IdentifierToken);
     }
 
-    public abstract void BeginReading(ReadOnlySpan<char> line);
+    /// <summary>
+    /// Initial processing. Return true if the first line should be reprocessed.
+    /// </summary>
+    /// <param name="line"></param>
+    /// <returns></returns>
+    public abstract bool BeginReading(ReadOnlySpan<char> line);
 
     public virtual bool ReadNextLine(ReadOnlySpan<char> line)
     {
@@ -47,15 +55,5 @@ public abstract class NeoLemmixDataReader : IEqualityComparer<char>
         }
 
         return false;
-    }
-
-    bool IEqualityComparer<char>.Equals(char x, char y)
-    {
-        return char.ToUpperInvariant(x) == char.ToUpperInvariant(y);
-    }
-
-    int IEqualityComparer<char>.GetHashCode(char obj)
-    {
-        return char.ToUpperInvariant(obj).GetHashCode();
     }
 }

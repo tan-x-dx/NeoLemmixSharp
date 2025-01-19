@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Gadgets.Functional;
+using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 

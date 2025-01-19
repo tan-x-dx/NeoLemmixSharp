@@ -13,14 +13,14 @@ public static class BitArrayHelpers
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int CalculateBitArrayBufferLength(int length)
+    internal static int CalculateBitArrayBufferLength(int length)
     {
         return (length + Mask) >> Shift;
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int ToNextLargestMultipleOf32(int a)
+    internal static int ToNextLargestMultipleOf32(int a)
     {
         return ((a + Mask) >> Shift) << Shift;
     }
@@ -28,24 +28,21 @@ public static class BitArrayHelpers
     [Pure]
     public static uint[] CreateBitArray(int length, bool setAllBits)
     {
-        if (length < 0)
-            throw new ArgumentOutOfRangeException(nameof(length), length, "length must be non-negative!");
-
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
         var arrayLength = CalculateBitArrayBufferLength(length);
-        var result = CollectionsHelper.GetArrayForSize<uint>(arrayLength);
+        if (arrayLength == 0)
+            return Array.Empty<uint>();
 
-        if (!setAllBits || arrayLength == 0)
+        var result = new uint[arrayLength];
+        if (!setAllBits)
             return result;
 
         new Span<uint>(result).Fill(uint.MaxValue);
-
         var lastIndexPopCount = length & Mask;
+        if (lastIndexPopCount == 0)
+            return result;
 
-        if (lastIndexPopCount != 0)
-        {
-            result[^1] = (1U << lastIndexPopCount) - 1U;
-        }
-
+        result[^1] = (1U << lastIndexPopCount) - 1U;
         return result;
     }
 
@@ -112,7 +109,7 @@ public static class BitArrayHelpers
     /// <summary>
     /// Sets a bit to 0. 
     /// </summary>
-    /// <param name="bits">The bit to clear</param>
+    /// <param name="bits">The span to modify</param>
     /// <param name="index">The bit to clear</param>
     public static void ClearBit(Span<uint> bits, int index)
     {
@@ -123,10 +120,10 @@ public static class BitArrayHelpers
     /// Toggles the value of a bit. Returns the new value after toggling
     /// </summary>
     /// <param name="bits">The span to modify</param>
-    /// <param name="index">The bit to clear</param>v
+    /// <param name="index">The bit to modify</param>v
     /// <param name="popCount">Will be modified accordingly if the operation changes the contents of the span</param>
     /// <returns>The bool equivalent of the binary value (0 or 1) of the bit after toggling</returns>
-    public static bool ToggleBit(Span<uint> bits, int index, ref int popCount)
+    internal static bool ToggleBit(Span<uint> bits, int index, ref int popCount)
     {
         ref var arrayValue = ref bits[index >> Shift];
         var oldValue = arrayValue;
@@ -164,7 +161,6 @@ public static class BitArrayHelpers
 
         switch (span.Length)
         {
-            case 8: span[7] |= other[7]; goto case 7;
             case 7: span[6] |= other[6]; goto case 6;
             case 6: span[5] |= other[5]; goto case 5;
             case 5: span[4] |= other[4]; goto case 4;
@@ -185,7 +181,6 @@ public static class BitArrayHelpers
 
         switch (span.Length)
         {
-            case 8: span[7] |= other[7]; goto case 7;
             case 7: span[6] |= other[6]; goto case 6;
             case 6: span[5] |= other[5]; goto case 5;
             case 5: span[4] |= other[4]; goto case 4;
@@ -206,7 +201,6 @@ public static class BitArrayHelpers
 
         switch (span.Length)
         {
-            case 8: span[7] &= ~other[7]; goto case 7;
             case 7: span[6] &= ~other[6]; goto case 6;
             case 6: span[5] &= ~other[5]; goto case 5;
             case 5: span[4] &= ~other[4]; goto case 4;
@@ -230,7 +224,6 @@ public static class BitArrayHelpers
 
         switch (span.Length)
         {
-            case 8: span[7] ^= other[7]; goto case 7;
             case 7: span[6] ^= other[6]; goto case 6;
             case 6: span[5] ^= other[5]; goto case 5;
             case 5: span[4] ^= other[4]; goto case 4;
@@ -261,22 +254,6 @@ public static class BitArrayHelpers
     }
 
     [Pure]
-    internal static bool IsSupersetOf(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
-    {
-        if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
-
-        for (var i = 0; i < span.Length; i++)
-        {
-            var bits = span[i];
-            if ((bits | other[i]) != bits)
-                return false;
-        }
-
-        return true;
-    }
-
-    [Pure]
     internal static bool IsProperSubsetOf(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
@@ -290,26 +267,6 @@ public static class BitArrayHelpers
             allEqual &= bits == otherBits;
 
             if ((bits | otherBits) != otherBits)
-                return false;
-        }
-
-        return !allEqual;
-    }
-
-    [Pure]
-    internal static bool IsProperSupersetOf(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
-    {
-        if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
-
-        var allEqual = true;
-        for (var i = 0; i < span.Length; i++)
-        {
-            var bits = span[i];
-            var otherBits = other[i];
-            allEqual &= bits == otherBits;
-
-            if ((bits | otherBits) != bits)
                 return false;
         }
 
@@ -337,7 +294,7 @@ public static class BitArrayHelpers
         if (span.Length != other.Length)
             throw new ArgumentException("Spans have different lengths!");
 
-        for (int i = span.Length - 1; i >= 0; i--)
+        for (int i = 0; i < span.Length; i++)
         {
             if (span[i] != other[i])
                 return false;

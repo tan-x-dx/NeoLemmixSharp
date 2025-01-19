@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 
 public readonly ref partial struct GadgetTranslator
 {
-    private void ProcessStatefulGadgetBuilder(
+   /* private void ProcessStatefulGadgetBuilder(
         NeoLemmixGadgetArchetypeData archetypeData,
         NeoLemmixGadgetData prototype,
         int gadgetId)
@@ -48,20 +48,18 @@ public readonly ref partial struct GadgetTranslator
         _levelData.AllGadgetData.Add(gadgetData);
     }
 
-    private StatefulGadgetBuilder CreateStatefulGadgetBuilder(NeoLemmixGadgetArchetypeData archetypeData)
+    private HitBoxGadgetBuilder CreateStatefulGadgetBuilder(NeoLemmixGadgetArchetypeData archetypeData)
     {
         var spriteData = GetStitchedSpriteData(archetypeData);
 
         var gadgetStateData = archetypeData.GetGadgetStates(spriteData);
-        var gadgetBehaviour = archetypeData.Behaviour.ToGadgetBehaviour();
 
-        return new StatefulGadgetBuilder
+        return new HitBoxGadgetBuilder
         {
             GadgetBuilderId = archetypeData.GadgetArchetypeId,
-            GadgetBehaviour = gadgetBehaviour,
             AllGadgetStateData = gadgetStateData,
 
             SpriteData = spriteData
         };
-    }
+    }*/
 }

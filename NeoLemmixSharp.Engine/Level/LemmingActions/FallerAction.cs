@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -94,15 +94,26 @@ public sealed class FallerAction : LemmingAction
 
         foreach (var gadget in gadgetEnumerable)
         {
-            if (!gadget.MatchesPosition(anchorPixel) &&
-                !gadget.MatchesPosition(footPixel))
+            var currentState = gadget.CurrentState;
+
+            if (!gadget.ContainsPoint(anchorPixel) ||
+                !gadget.ContainsPoint(footPixel))
                 continue;
 
-            if (gadget.GadgetBehaviour == NoSplatGadgetBehaviour.Instance)
-                return false;
+            var filters = currentState.Filters;
 
-            if (gadget.GadgetBehaviour == SplatGadgetBehaviour.Instance)
-                return true;
+            for (var i = 0; i < filters.Length; i++)
+            {
+                var filter = filters[i];
+
+                if (!filter.MatchesLemming(lemming))
+                    continue;
+
+                if (filter.HitBoxBehaviour == HitBoxBehaviour.NoSplat)
+                    return false;
+                if (filter.HitBoxBehaviour == HitBoxBehaviour.Splat)
+                    return true;
+            }
         }
 
         return lemming.DistanceFallen > EngineConstants.MaxFallDistance;

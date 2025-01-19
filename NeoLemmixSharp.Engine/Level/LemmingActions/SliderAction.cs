@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -69,8 +68,8 @@ public sealed class SliderAction : LemmingAction
 
         foreach (var gadget in gadgetsNearLemming)
         {
-            if (gadget.GadgetBehaviour != WaterGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
-                continue;
+            /* if (gadget.GadgetBehaviour != WaterGadgetBehaviour.Instance || !gadget.MatchesLemming(lemming))
+                 continue;*/
 
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             if (lemming.State.IsSwimmer)

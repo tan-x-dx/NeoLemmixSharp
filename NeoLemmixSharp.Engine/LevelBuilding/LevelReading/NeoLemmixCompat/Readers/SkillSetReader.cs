@@ -15,9 +15,10 @@ public sealed class SkillSetReader : NeoLemmixDataReader
     {
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
+        return false;
     }
 
     public override bool ReadNextLine(ReadOnlySpan<char> line)
@@ -30,7 +31,7 @@ public sealed class SkillSetReader : NeoLemmixDataReader
             return false;
         }
 
-        if (!NxlvReadingHelpers.TryGetSkillByName(firstToken, this, out var skill))
+        if (!NxlvReadingHelpers.TryGetSkillByName(firstToken, out var skill))
             throw new InvalidOperationException($"Unknown token: {firstToken}");
 
         if (!_seenSkills.Add(skill))

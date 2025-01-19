@@ -46,7 +46,7 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
     public void RefreshLevels()
     {
         _levelBrowserEntries.Clear();
-        _levelBrowserEntries.AddRange(LevelBrowserEntry.GetMenuItems(LevelsRootPath));
+      //  _levelBrowserEntries.AddRange(LevelBrowserEntry.GetMenuItems(LevelsRootPath));
         _levelBrowserEntries.Sort(this);
 
         var children = _children!;

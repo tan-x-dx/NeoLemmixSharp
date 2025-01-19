@@ -32,7 +32,7 @@ public sealed class LemmingReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         _currentLemmingData = new LemmingData
         {
@@ -40,6 +40,7 @@ public sealed class LemmingReader : NeoLemmixDataReader
             State = 1U << EngineConstants.ActiveBitIndex
         };
         FinishedReading = false;
+        return false;
     }
 
     private void SetLemmingX(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)

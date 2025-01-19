@@ -22,10 +22,8 @@ public sealed class TickOrderedList<TTickOrderedData>
     [Pure]
     public ReadOnlySpan<TTickOrderedData> Slice(int start, int length)
     {
-        if (start < 0)
-            throw new ArgumentOutOfRangeException(nameof(start), "Negative start index");
-        if (length < 0)
-            throw new ArgumentOutOfRangeException(nameof(start), "Negative length");
+        ArgumentOutOfRangeException.ThrowIfNegative(start);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
         if (_count - start < length)
             throw new ArgumentOutOfRangeException(nameof(start), "Start index with length is out of bounds");
 
@@ -35,8 +33,7 @@ public sealed class TickOrderedList<TTickOrderedData>
     [Pure]
     public ReadOnlySpan<TTickOrderedData> GetSliceToEnd(int start)
     {
-        if (start < 0)
-            throw new ArgumentOutOfRangeException(nameof(start), "Negative start index");
+        ArgumentOutOfRangeException.ThrowIfNegative(start);
 
         return new ReadOnlySpan<TTickOrderedData>(_items, start, Math.Max(0, _count - start));
     }

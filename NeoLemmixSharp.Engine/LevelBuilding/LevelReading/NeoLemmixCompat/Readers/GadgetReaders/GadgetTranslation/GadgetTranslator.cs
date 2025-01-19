@@ -35,7 +35,7 @@ public readonly ref partial struct GadgetTranslator
         {
             var archetype = GetMatchingArchetypeData(neoLemmixGadgetArchetypeData, prototype);
 
-            ProcessBuilder(
+            ProcessGadgetBuilder(
                 archetype,
                 prototype,
                 id++);
@@ -55,20 +55,14 @@ public readonly ref partial struct GadgetTranslator
         throw new InvalidOperationException("No matching archetype data exists");
     }
 
-    private void ProcessBuilder(
+    private void ProcessGadgetBuilder(
         NeoLemmixGadgetArchetypeData archetypeData,
         NeoLemmixGadgetData prototype,
         int gadgetId)
     {
-        if (archetypeData.ResizeType != ResizeType.None)
+        if (archetypeData.Behaviour.IsOneWayArrows())
         {
-            if (archetypeData.Behaviour.IsOneWayArrows())
-            {
-                ProcessOneWayArrows(archetypeData, prototype, gadgetId);
-                return;
-            }
-
-            ProcessResizeableGadgetBuilder(archetypeData, prototype, gadgetId);
+            ProcessOneWayArrows(archetypeData, prototype, gadgetId);
             return;
         }
 
@@ -78,7 +72,15 @@ public readonly ref partial struct GadgetTranslator
             return;
         }
 
-        ProcessStatefulGadgetBuilder(archetypeData, prototype, gadgetId);
+        /*
+        if (archetypeData.ResizeType == ResizeType.None)
+        {
+            ProcessStatefulGadgetBuilder(archetypeData, prototype, gadgetId);
+        }
+        else
+        {
+            ProcessResizeableGadgetBuilder(archetypeData, prototype, gadgetId);
+        }*/
     }
 
     private static void GetOrientationData(

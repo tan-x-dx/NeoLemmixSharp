@@ -77,12 +77,12 @@ public sealed class BoundaryBehaviour
         BoundaryBehaviourType boundaryBehaviourType,
         int levelLength)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(levelLength);
+
         _dimensionType = dimensionType;
         _boundaryBehaviourType = boundaryBehaviourType;
         _levelLength = levelLength;
     }
-
-    public override string ToString() => $"{_dimensionType} - {_boundaryBehaviourType}";
 
     public void UpdateMouseCoordinate(int windowCoordinate)
     {
@@ -371,5 +371,43 @@ public sealed class BoundaryBehaviour
     private struct ScreenRenderIntervalBuffer
     {
         private ScreenRenderInterval _firstElement;
+    }
+
+    public override string ToString()
+    {
+        Span<char> buffer = stackalloc char[10 + 3 + 4 + 3 + 10];
+
+        var i = 0;
+
+        var source = _dimensionType == DimensionType.Horizontal
+            ? HorizontalString()
+            : VerticalString();
+        source.CopyTo(buffer);
+        i += source.Length;
+
+        buffer[i++] = ' ';
+        buffer[i++] = '-';
+        buffer[i++] = ' ';
+
+        source = _boundaryBehaviourType == BoundaryBehaviourType.Void
+            ? VoidString()
+            : WrapString();
+        source.CopyTo(buffer[i..]);
+        i += source.Length;
+
+        buffer[i++] = ' ';
+        buffer[i++] = '-';
+        buffer[i++] = ' ';
+
+        _levelLength.TryFormat(buffer[i..], out var charsWritten);
+        i += charsWritten;
+
+        return buffer[..i].ToString();
+
+        static ReadOnlySpan<char> HorizontalString() => "Horizontal";
+        static ReadOnlySpan<char> VerticalString() => "Vertical";
+
+        static ReadOnlySpan<char> VoidString() => "Void";
+        static ReadOnlySpan<char> WrapString() => "Wrap";
     }
 }

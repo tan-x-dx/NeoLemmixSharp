@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using System.Runtime.InteropServices;
 
@@ -8,7 +9,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 
 public readonly ref partial struct GadgetTranslator
 {
-    private void ProcessResizeableGadgetBuilder(
+   /* private void ProcessResizeableGadgetBuilder(
         NeoLemmixGadgetArchetypeData archetypeData,
         NeoLemmixGadgetData prototype,
         int gadgetId)
@@ -19,8 +20,6 @@ public readonly ref partial struct GadgetTranslator
 
         var prototypeWidth = prototype.Width.Value;
         var prototypeHeight = prototype.Height.Value;
-
-        var behaviour = archetypeData.Behaviour.ToGadgetBehaviour();
 
         GetOrientationData(prototype, out var orientation, out var facingDirection);
 
@@ -54,16 +53,15 @@ public readonly ref partial struct GadgetTranslator
         {
             var spriteData = GetStitchedSpriteData(archetypeData);
 
-            gadgetBuilder = new ResizeableGadgetBuilder
+            gadgetBuilder = new HitBoxGadgetBuilder
             {
                 GadgetBuilderId = archetypeData.GadgetArchetypeId,
-                GadgetBehaviour = behaviour,
-                ArchetypeData = new GadgetStateArchetypeData
+                ArchetypeData = new GadgetStateArchetypeDataAaa
                 {
                     OnLemmingEnterActions = [],
                     OnLemmingPresentActions = [],
                     OnLemmingExitActions = [],
-                    TriggerType = TriggerType.Rectangular,
+                    TriggerType = HitBoxType.Rectangular,
                     TriggerData =
                         GetTriggerData(archetypeData, spriteData.SpriteWidth, spriteData.SpriteHeight),
                     PrimaryAnimation = null,
@@ -94,5 +92,5 @@ public readonly ref partial struct GadgetTranslator
         };
 
         return result;
-    }
+    }*/
 }

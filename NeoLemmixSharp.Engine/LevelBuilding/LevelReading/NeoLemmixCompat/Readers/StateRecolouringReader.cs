@@ -15,13 +15,14 @@ public sealed class StateRecoloringReader : NeoLemmixDataReader
 
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         //  _currentLemmingStateRecoloring = null;
         FinishedReading = false;
+        return false;
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    public override bool ReadNextLine(ReadOnlySpan<char> line)
     {
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 

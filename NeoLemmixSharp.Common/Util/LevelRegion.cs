@@ -1,21 +1,25 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
 /// <summary>
-/// <para>Represents a rectangular region of points within a level.</para>
+/// <para>Represents a rectangular region of points within a level, from the top left coordinate (P1) down to AND INCLUDING the bottom right coordinate (P2).</para>
 /// <para>A well-formed <see cref="LevelRegion"/> has the P1 points less than or equal to the P2 points.
 /// The constructors will ensure a well-formed <see cref="LevelRegion"/> is created.</para>
 /// <para>Note that a <see cref="LevelRegion"/> can never be empty - the smallest region is 1x1.</para>
 /// </summary>
+[StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
 public readonly ref struct LevelRegion
 {
-    public readonly int P1X;
-    public readonly int P1Y;
+    [FieldOffset(0 * sizeof(int))] public readonly LevelPosition P1;
+    [FieldOffset(0 * sizeof(int))] public readonly int P1X;
+    [FieldOffset(1 * sizeof(int))] public readonly int P1Y;
 
-    public readonly int P2X;
-    public readonly int P2Y;
+    [FieldOffset(2 * sizeof(int))] public readonly LevelPosition P2;
+    [FieldOffset(2 * sizeof(int))] public readonly int P2X;
+    [FieldOffset(3 * sizeof(int))] public readonly int P2Y;
 
     [DebuggerStepThrough]
     public LevelRegion(int x1, int y1, int x2, int y2)
@@ -41,6 +45,15 @@ public readonly ref struct LevelRegion
             P1Y = y2;
             P2Y = y1;
         }
+    }
+
+    [DebuggerStepThrough]
+    public LevelRegion(LevelPosition position, LevelSize size)
+    {
+        var p2 = new LevelPosition(
+            position.X + size.W - 1,
+            position.Y + size.H - 1);
+        this = new LevelRegion(position, p2);
     }
 
     [DebuggerStepThrough]
@@ -77,12 +90,14 @@ public readonly ref struct LevelRegion
         var maxX = int.MinValue;
         var maxY = int.MinValue;
 
-        foreach (var position in positions)
+        for (var i = 0; i < positions.Length; i++)
         {
-            minX = Math.Min(minX, position.X);
-            minY = Math.Min(minY, position.Y);
-            maxX = Math.Max(maxX, position.X);
-            maxY = Math.Max(maxY, position.Y);
+            var p = positions[i];
+
+            minX = Math.Min(minX, p.X);
+            minY = Math.Min(minY, p.Y);
+            maxX = Math.Max(maxX, p.X);
+            maxY = Math.Max(maxY, p.Y);
         }
 
         P1X = minX;
@@ -93,10 +108,7 @@ public readonly ref struct LevelRegion
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [DebuggerStepThrough]
-    public LevelPosition GetTopLeftPosition() => new(P1X, P1Y);
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [DebuggerStepThrough]
-    public LevelPosition GetBottomRightPosition() => new(P2X, P2Y);
+    public LevelSize GetSize() => new(1 + P2X - P1X, 1 + P2Y - P1Y);
 
     [DebuggerStepThrough]
     public bool Overlaps(LevelRegion other)
@@ -113,5 +125,14 @@ public readonly ref struct LevelRegion
     {
         return P1X <= anchorPosition.X && anchorPosition.X <= P2X &&
                P1Y <= anchorPosition.Y && anchorPosition.Y <= P2Y;
+    }
+
+    [SkipLocalsInit]
+    public override string ToString()
+    {
+        Span<char> buffer = stackalloc char[(1 + 11 + 1 + 11 + 1) * 2];
+        P1.TryFormat(buffer, out var charsWritten);
+        P2.TryFormat(buffer[charsWritten..], out var charsWritten2);
+        return buffer[..(charsWritten + charsWritten2)].ToString();
     }
 }

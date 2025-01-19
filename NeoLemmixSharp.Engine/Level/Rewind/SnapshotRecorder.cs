@@ -16,18 +16,23 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
     private const int SnapshotDataListSizeMultiplier = EngineConstants.InitialSnapshotDataBufferMultiplier / EngineConstants.RewindSnapshotInterval;
 
     private readonly TItemManager _itemManager;
-    private readonly SnapshotList _snapshotList;
+    private readonly int _numberOfItemsPerSnapshot;
+    private TSnapshotData[] _data;
+    private int _count;
+
+    public int Count => _count;
 
     public SnapshotRecorder(TItemManager itemManager)
     {
         _itemManager = itemManager;
-        _snapshotList = new SnapshotList(_itemManager.NumberOfItems);
+        _numberOfItemsPerSnapshot = itemManager.NumberOfItems;
+        _data = new TSnapshotData[_numberOfItemsPerSnapshot * SnapshotDataListSizeMultiplier];
     }
 
     public void TakeSnapshot()
     {
         var items = _itemManager.AllItems;
-        var snapshotDataSpan = _snapshotList.GetNewSnapshotDataSpan();
+        var snapshotDataSpan = GetNewSnapshotDataSpan();
 
         if (items.Length != snapshotDataSpan.Length)
             throw new InvalidOperationException("Span length mismatch!");
@@ -44,7 +49,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
     public void ApplySnapshot(int snapshotNumber)
     {
         var items = _itemManager.AllItems;
-        var snapshotDataSpan = _snapshotList.GetSnapshotDataSlice(snapshotNumber);
+        var snapshotDataSpan = GetSnapshotDataSlice(snapshotNumber);
 
         if (items.Length != snapshotDataSpan.Length)
             throw new InvalidOperationException("Span length mismatch!");
@@ -58,44 +63,29 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
         }
     }
 
-    private sealed class SnapshotList
+    private Span<TSnapshotData> GetNewSnapshotDataSpan()
     {
-        private readonly int _numberOfItemsPerSnapshot;
-        private TSnapshotData[] _data;
-        private int _count;
-
-        public int Count => _count;
-
-        public SnapshotList(int numberOfItemsPerSnapshot)
+        var arraySize = _data.Length;
+        var count = _count;
+        if (count == arraySize)
         {
-            _numberOfItemsPerSnapshot = numberOfItemsPerSnapshot;
-            _data = new TSnapshotData[numberOfItemsPerSnapshot * SnapshotDataListSizeMultiplier];
+            var newArray = new TSnapshotData[arraySize * 2];
+            new ReadOnlySpan<TSnapshotData>(_data).CopyTo(new Span<TSnapshotData>(newArray));
+
+            _data = newArray;
         }
 
-        public Span<TSnapshotData> GetNewSnapshotDataSpan()
-        {
-            var arraySize = _data.Length;
-            var count = _count;
-            if (count == arraySize)
-            {
-                var newArray = new TSnapshotData[arraySize * 2];
-                new ReadOnlySpan<TSnapshotData>(_data).CopyTo(new Span<TSnapshotData>(newArray));
+        _count += _numberOfItemsPerSnapshot;
 
-                _data = newArray;
-            }
+        return new Span<TSnapshotData>(_data, count, _numberOfItemsPerSnapshot);
+    }
 
-            _count += _numberOfItemsPerSnapshot;
+    private ReadOnlySpan<TSnapshotData> GetSnapshotDataSlice(int sliceNumber)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(sliceNumber);
 
-            return new Span<TSnapshotData>(_data, count, _numberOfItemsPerSnapshot);
-        }
+        _count = _numberOfItemsPerSnapshot * (1 + sliceNumber);
 
-        public ReadOnlySpan<TSnapshotData> GetSnapshotDataSlice(int sliceNumber)
-        {
-            ArgumentOutOfRangeException.ThrowIfNegative(sliceNumber);
-
-            _count = _numberOfItemsPerSnapshot * (1 + sliceNumber);
-
-            return new ReadOnlySpan<TSnapshotData>(_data, sliceNumber * _numberOfItemsPerSnapshot, _numberOfItemsPerSnapshot);
-        }
+        return new ReadOnlySpan<TSnapshotData>(_data, sliceNumber * _numberOfItemsPerSnapshot, _numberOfItemsPerSnapshot);
     }
 }

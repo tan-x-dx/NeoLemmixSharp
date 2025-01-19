@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using System.Runtime.CompilerServices;
 
@@ -10,19 +10,24 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
 {
     private const int NumberOfTimerChars = 6;
 
-    private readonly int _timeLimitInSeconds;
-
     private int _elapsedSeconds;
     private int _additionalSeconds;
-
     private TimerCharBuffer _timerCharBuffer;
 
+    public int TimeLimitInSeconds { get; }
     public TimerType Type { get; }
     public Color FontColor { get; private set; }
 
-    public LevelTimer()
+    public int TotalElapsedSeconds => _elapsedSeconds - _additionalSeconds;
+    public bool OutOfTime => Type == TimerType.CountDown &&
+                             TotalElapsedSeconds >= TimeLimitInSeconds;
+
+    public static LevelTimer CreateCountUpTimer() => new();
+    public static LevelTimer CreateCountDownTimer(int timeLimitInSeconds) => new(timeLimitInSeconds);
+
+    private LevelTimer()
     {
-        _timeLimitInSeconds = -1;
+        TimeLimitInSeconds = -1;
 
         _timerCharBuffer[3] = '-';
 
@@ -31,9 +36,9 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
         UpdateCountUpString(0, false);
     }
 
-    public LevelTimer(int timeLimitInSeconds)
+    private LevelTimer(int timeLimitInSeconds)
     {
-        _timeLimitInSeconds = timeLimitInSeconds;
+        TimeLimitInSeconds = timeLimitInSeconds;
 
         _timerCharBuffer[3] = '-';
 
@@ -74,7 +79,7 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
 
     private void UpdateCountDown(bool partialUpdate)
     {
-        var secondsLeft = _additionalSeconds + _timeLimitInSeconds - _elapsedSeconds;
+        var secondsLeft = TimeLimitInSeconds - TotalElapsedSeconds;
 
         FontColor = GetColorForTime(secondsLeft);
 

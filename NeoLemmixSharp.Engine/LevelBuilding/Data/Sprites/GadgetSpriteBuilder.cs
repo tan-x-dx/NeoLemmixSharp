@@ -3,9 +3,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering.NineSliceRendering;
 using System.Runtime.InteropServices;
 using GadgetSpriteCreator = NeoLemmixSharp.Engine.Rendering.Viewport.SpriteRotationReflectionProcessor<Microsoft.Xna.Framework.Graphics.Texture2D>;
 
@@ -20,16 +18,6 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
     {
         _gadgetSpriteCreator = new GadgetSpriteCreator(graphicsDevice);
         _gadgetTextures = new Dictionary<TextureLookupKey, Texture2D>(this);
-    }
-
-    public NineSliceRenderer? BuildResizeableGadgetRenderer(
-        ResizeableGadgetBuilder resizeableGadgetBuilder,
-        GadgetData gadgetData)
-    {
-        var texture = GetTextureForGadget(resizeableGadgetBuilder, gadgetData);
-        return texture is null
-            ? null
-            : BuildNineSliceRenderer(resizeableGadgetBuilder, gadgetData, texture);
     }
 
     public GadgetLayerRenderer? BuildStatefulGadgetRenderer(
@@ -104,7 +92,7 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
         }
     }
 
-    private NineSliceRenderer BuildNineSliceRenderer(
+    /*private NineSliceRenderer BuildNineSliceRenderer(
         ResizeableGadgetBuilder resizeableGadgetBuilder,
         GadgetData gadgetData,
         Texture2D texture)
@@ -112,7 +100,7 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
 
 
         return new NineSliceRenderer(texture, gadgetData.GadgetRenderMode);
-    }
+    }*/
 
     private static Texture2D ItemCreator(
         Texture2D texture,

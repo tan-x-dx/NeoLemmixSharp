@@ -20,10 +20,11 @@ public sealed class TalismanReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         _currentTalismanData = new TalismanData();
         FinishedReading = false;
+        return false;
     }
 
     public override bool ReadNextLine(ReadOnlySpan<char> line)
@@ -53,7 +54,7 @@ public sealed class TalismanReader : NeoLemmixDataReader
 
     private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentTalismanData!.Title = line.TrimAfterIndex(secondTokenIndex).ToString();
+        _currentTalismanData!.Title = line[secondTokenIndex..].Trim().ToString();
     }
 
     private void SetId(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -73,7 +74,7 @@ public sealed class TalismanReader : NeoLemmixDataReader
 
     private void SetUseOnlySkill(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        if (!NxlvReadingHelpers.TryGetSkillByName(secondToken, this, out var onlySkill))
+        if (!NxlvReadingHelpers.TryGetSkillByName(secondToken, out var onlySkill))
         {
             NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, "USE_ONLY_SKILL", line);
             return;
@@ -122,7 +123,7 @@ public sealed class TalismanReader : NeoLemmixDataReader
             return;
         }
 
-        if (NxlvReadingHelpers.TryGetSkillByName(firstToken[..^6], this, out var skill))
+        if (NxlvReadingHelpers.TryGetSkillByName(firstToken[..^6], out var skill))
         {
             currentTalismanData.SkillLimits.Add(skill, int.Parse(secondToken));
             return;

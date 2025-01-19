@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
@@ -9,10 +10,10 @@ public interface IGadgetRenderer : IViewportObjectRenderer
 
 public interface INineSliceGadgetRender : IGadgetRenderer
 {
-    void SetGadget(IResizeableGadget gadget);
+    void SetGadget(HitBoxGadget gadget);
 }
 
 public interface IControlledAnimationGadgetRenderer : IGadgetRenderer
 {
-    void SetGadget(IControlledAnimationGadget gadget);
+    void SetGadget(IAnimationControlledGadget gadget);
 }

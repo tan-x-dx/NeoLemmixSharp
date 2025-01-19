@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
@@ -31,10 +31,7 @@ public sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
         return true;
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
-    {
-        ReadNextLine(line);
-    }
+    public override bool BeginReading(ReadOnlySpan<char> line) => true;
 
     private void SetSteel(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {

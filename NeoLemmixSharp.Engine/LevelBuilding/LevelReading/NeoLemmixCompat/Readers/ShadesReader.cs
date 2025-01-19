@@ -10,13 +10,14 @@ public sealed class ShadesReader : NeoLemmixDataReader
 
     }
 
-    public override void BeginReading(ReadOnlySpan<char> line)
+    public override bool BeginReading(ReadOnlySpan<char> line)
     {
         _inBlock = false;
         FinishedReading = false;
+        return false;
     }
 
-    public bool ReadNextLine(ReadOnlySpan<char> line)
+    public override bool ReadNextLine(ReadOnlySpan<char> line)
     {
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
 

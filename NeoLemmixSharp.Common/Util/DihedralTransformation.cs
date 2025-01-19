@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using NeoLemmixSharp.Common.Rendering.Text;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
@@ -71,10 +71,34 @@ public readonly ref struct DihedralTransformation
         }
     }
 
-    public override string ToString() => $"Rot {_r}|{FlipString}";
+    [SkipLocalsInit]
+    public override string ToString()
+    {
+        Span<char> buffer = stackalloc char[10];
 
-    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private string FlipString => _f == 0 ? string.Empty : "Flip";
+        buffer[0] = 'R';
+        buffer[1] = 'o';
+        buffer[2] = 't';
+        buffer[3] = ' ';
+        buffer[4] = TextRenderingHelpers.DigitToChar(_r);
+        buffer[5] = '|';
+
+        int stringLength;
+        if (_f == 0)
+        {
+            stringLength = 6;
+        }
+        else
+        {
+            stringLength = 10;
+            buffer[6] = 'F';
+            buffer[7] = 'l';
+            buffer[8] = 'i';
+            buffer[9] = 'p';
+        }
+
+        return buffer[..stringLength].ToString();
+    }
 
     public void Transform(
         int x,

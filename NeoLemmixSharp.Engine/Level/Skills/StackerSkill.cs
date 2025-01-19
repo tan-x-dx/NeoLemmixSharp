@@ -23,7 +23,7 @@ public sealed class StackerSkill : LemmingSkill
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         // Get starting position for stacker
-        gadgetManager.GetAllGadgetsForPosition(
+        gadgetManager.GetAllGadgetsNearPosition(
             scratchSpaceSpan,
             lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX),
             out var gadgetsNearRegion);
