@@ -14,7 +14,7 @@ public sealed class ViewPortRotationController
     private int _deltaT;
     private float _theta;
 
-    private Orientation _currentOrientation = DownOrientation.Instance;
+    private Orientation _currentOrientation = Orientation.Down;
     private Orientation? _transitionOrientation;
 
     public float Theta => _theta;

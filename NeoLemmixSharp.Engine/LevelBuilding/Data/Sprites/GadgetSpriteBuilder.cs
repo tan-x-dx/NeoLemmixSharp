@@ -37,7 +37,7 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
         // Need to ensure the base texture is placed into the resulting GadgetSpriteBank.
         // If not, the texture will not be disposed of - potentially leading to memory leaks!
         GetOrAddCachedTexture(
-            DownOrientation.Instance,
+            Orientation.Down,
             FacingDirection.RightInstance);
 
         if (gadgetData.GadgetRenderMode == GadgetRenderMode.NoRender)
@@ -63,7 +63,7 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
             if (exists)
                 return cachedTexture!;
 
-            cachedTexture = orientation == DownOrientation.Instance &&
+            cachedTexture = orientation == Orientation.Down &&
                             facingDirection == FacingDirection.RightInstance // Down orientation + Right facing is the default. No extra work is required, so just use the texture
                 ? gadgetBuilder.SpriteData.Texture
                 : GetOrientedTexture(orientation, facingDirection);

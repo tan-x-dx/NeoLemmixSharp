@@ -36,17 +36,17 @@ public sealed class SpriteRotationReflectionProcessor<T>
     {
         var result = new T[Orientation.NumberOfItems * FacingDirection.NumberOfItems];
 
-        CreateSpritesForDirections(DownOrientation.Instance, FacingDirection.RightInstance);
-        CreateSpritesForDirections(DownOrientation.Instance, FacingDirection.LeftInstance);
+        CreateSpritesForDirections(Orientation.Down, FacingDirection.RightInstance);
+        CreateSpritesForDirections(Orientation.Down, FacingDirection.LeftInstance);
 
-        CreateSpritesForDirections(RightOrientation.Instance, FacingDirection.RightInstance);
-        CreateSpritesForDirections(RightOrientation.Instance, FacingDirection.LeftInstance);
+        CreateSpritesForDirections(Orientation.Right, FacingDirection.RightInstance);
+        CreateSpritesForDirections(Orientation.Right, FacingDirection.LeftInstance);
 
-        CreateSpritesForDirections(UpOrientation.Instance, FacingDirection.RightInstance);
-        CreateSpritesForDirections(UpOrientation.Instance, FacingDirection.LeftInstance);
+        CreateSpritesForDirections(Orientation.Up, FacingDirection.RightInstance);
+        CreateSpritesForDirections(Orientation.Up, FacingDirection.LeftInstance);
 
-        CreateSpritesForDirections(LeftOrientation.Instance, FacingDirection.RightInstance);
-        CreateSpritesForDirections(LeftOrientation.Instance, FacingDirection.LeftInstance);
+        CreateSpritesForDirections(Orientation.Left, FacingDirection.RightInstance);
+        CreateSpritesForDirections(Orientation.Left, FacingDirection.LeftInstance);
 
         return result;
 

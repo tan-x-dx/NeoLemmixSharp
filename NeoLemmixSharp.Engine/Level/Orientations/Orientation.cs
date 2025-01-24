@@ -6,8 +6,13 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 
-public abstract class Orientation : IExtendedEnumType<Orientation>
+public sealed class Orientation : IExtendedEnumType<Orientation>
 {
+    public static readonly Orientation Down = new(EngineConstants.DownOrientationRotNum, EngineConstants.DownOrientationName, 0, 1);
+    public static readonly Orientation Left = new(EngineConstants.LeftOrientationRotNum, EngineConstants.LeftOrientationName, -1, 0);
+    public static readonly Orientation Up = new(EngineConstants.UpOrientationRotNum, EngineConstants.UpOrientationName, 0, -1);
+    public static readonly Orientation Right = new(EngineConstants.RightOrientationRotNum, EngineConstants.RightOrientationName, 1, 0);
+
     private static readonly Orientation[] Orientations = GenerateOrientationCollection();
 
     public static int NumberOfItems => Orientations.Length;
@@ -17,10 +22,10 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     {
         var orientations = new Orientation[4];
 
-        orientations[EngineConstants.DownOrientationRotNum] = DownOrientation.Instance;
-        orientations[EngineConstants.LeftOrientationRotNum] = LeftOrientation.Instance;
-        orientations[EngineConstants.UpOrientationRotNum] = UpOrientation.Instance;
-        orientations[EngineConstants.RightOrientationRotNum] = RightOrientation.Instance;
+        orientations[EngineConstants.DownOrientationRotNum] = Down;
+        orientations[EngineConstants.LeftOrientationRotNum] = Left;
+        orientations[EngineConstants.UpOrientationRotNum] = Up;
+        orientations[EngineConstants.RightOrientationRotNum] = Right;
 
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Orientation>(orientations));
 
@@ -28,12 +33,12 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     }
 
     int IIdEquatable<Orientation>.Id => RotNum;
+    private readonly string _orientationName;
     public readonly int RotNum;
     private readonly int _absoluteHorizontalComponent;
     private readonly int _absoluteVerticalComponent;
-    private readonly string _orientationName;
 
-    protected Orientation(
+    private Orientation(
         int rotNum,
         string orientationName,
         int absoluteHorizontalComponent,
@@ -46,13 +51,68 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     }
 
     [Pure]
-    public abstract LevelPosition MoveRight(LevelPosition position, int step);
+    public LevelPosition MoveDown(LevelPosition position, int step)
+    {
+        var newPosition = RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.MoveDown(position, step),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MoveDown(position, step),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveDown(position, step),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveDown(position, step),
+
+            _ => position
+        };
+
+        return LevelScreen.NormalisePosition(newPosition);
+    }
+
     [Pure]
-    public abstract LevelPosition MoveUp(LevelPosition position, int step);
+    public LevelPosition MoveLeft(LevelPosition position, int step)
+    {
+        var newPosition = RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.MoveLeft(position, step),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MoveLeft(position, step),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveLeft(position, step),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveLeft(position, step),
+
+            _ => position
+        };
+
+        return LevelScreen.NormalisePosition(newPosition);
+    }
+
     [Pure]
-    public abstract LevelPosition MoveLeft(LevelPosition position, int step);
+    public LevelPosition MoveUp(LevelPosition position, int step)
+    {
+        var newPosition = RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.MoveUp(position, step),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MoveUp(position, step),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveUp(position, step),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveUp(position, step),
+
+            _ => position
+        };
+
+        return LevelScreen.NormalisePosition(newPosition);
+    }
+
     [Pure]
-    public abstract LevelPosition MoveDown(LevelPosition position, int step);
+    public LevelPosition MoveRight(LevelPosition position, int step)
+    {
+        var newPosition = RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.MoveRight(position, step),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MoveRight(position, step),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveRight(position, step),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveRight(position, step),
+
+            _ => position
+        };
+
+        return LevelScreen.NormalisePosition(newPosition);
+    }
 
     /// <summary>
     /// Note: For the relativeDirection parameter - Positive x -> right, positive y -> up
@@ -61,7 +121,21 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     /// <param name="relativeDirection"></param>
     /// <returns></returns>
     [Pure]
-    public abstract LevelPosition Move(LevelPosition position, LevelPosition relativeDirection);
+    public LevelPosition Move(LevelPosition position, LevelPosition relativeDirection)
+    {
+        var newPosition = RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.Move(position, relativeDirection),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.Move(position, relativeDirection),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.Move(position, relativeDirection),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.Move(position, relativeDirection),
+
+            _ => position
+        };
+
+        return LevelScreen.NormalisePosition(newPosition);
+    }
+
     /// <summary>
     /// Note: Positive dx -> right, positive dy -> up
     /// </summary>
@@ -70,7 +144,21 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     /// <param name="dy"></param>
     /// <returns></returns>
     [Pure]
-    public abstract LevelPosition Move(LevelPosition position, int dx, int dy);
+    public LevelPosition Move(LevelPosition position, int dx, int dy)
+    {
+        var newPosition = RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.Move(position, dx, dy),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.Move(position, dx, dy),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.Move(position, dx, dy),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.Move(position, dx, dy),
+
+            _ => position
+        };
+
+        return LevelScreen.NormalisePosition(newPosition);
+    }
+
     /// <summary>
     /// Note: Positive dx -> right, positive dy -> up
     /// </summary>
@@ -79,24 +167,107 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     /// <param name="dy"></param>
     /// <returns></returns>
     [Pure]
-    public abstract LevelPosition MoveWithoutNormalization(LevelPosition position, int dx, int dy);
+    public LevelPosition MoveWithoutNormalization(LevelPosition position, int dx, int dy)
+    {
+        return RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.Move(position, dx, dy),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.Move(position, dx, dy),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.Move(position, dx, dy),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.Move(position, dx, dy),
+
+            _ => position
+        };
+    }
 
     [Pure]
-    public abstract bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition);
+    public bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition)
+    {
+        return RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.MatchesHorizontally(firstPosition, secondPosition),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MatchesHorizontally(firstPosition, secondPosition),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.MatchesHorizontally(firstPosition, secondPosition),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.MatchesHorizontally(firstPosition, secondPosition),
+
+            _ => false
+        };
+    }
+
     [Pure]
-    public abstract bool MatchesVertically(LevelPosition firstPosition, LevelPosition secondPosition);
+    public bool MatchesVertically(LevelPosition firstPosition, LevelPosition secondPosition)
+    {
+        return RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.MatchesVertically(firstPosition, secondPosition),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MatchesVertically(firstPosition, secondPosition),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.MatchesVertically(firstPosition, secondPosition),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.MatchesVertically(firstPosition, secondPosition),
+
+            _ => false
+        };
+    }
+
     [Pure]
-    public abstract bool FirstIsAboveSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+    public bool FirstIsAboveSecond(LevelPosition firstPosition, LevelPosition secondPosition)
+    {
+        return RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.FirstIsAboveSecond(firstPosition, secondPosition),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.FirstIsAboveSecond(firstPosition, secondPosition),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.FirstIsAboveSecond(firstPosition, secondPosition),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.FirstIsAboveSecond(firstPosition, secondPosition),
+
+            _ => false
+        };
+    }
+
     [Pure]
-    public abstract bool FirstIsBelowSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+    public bool FirstIsBelowSecond(LevelPosition firstPosition, LevelPosition secondPosition)
+    {
+        return RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.FirstIsBelowSecond(firstPosition, secondPosition),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.FirstIsBelowSecond(firstPosition, secondPosition),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.FirstIsBelowSecond(firstPosition, secondPosition),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.FirstIsBelowSecond(firstPosition, secondPosition),
+
+            _ => false
+        };
+    }
+
     [Pure]
-    public abstract bool FirstIsToLeftOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+    public bool FirstIsToLeftOfSecond(LevelPosition firstPosition, LevelPosition secondPosition)
+    {
+        return RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.FirstIsToLeftOfSecond(firstPosition, secondPosition),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.FirstIsToLeftOfSecond(firstPosition, secondPosition),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.FirstIsToLeftOfSecond(firstPosition, secondPosition),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.FirstIsToLeftOfSecond(firstPosition, secondPosition),
+
+            _ => false
+        };
+    }
+
     [Pure]
-    public abstract bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition);
+    public bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition)
+    {
+        return RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.FirstIsToRightOfSecond(firstPosition, secondPosition),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.FirstIsToRightOfSecond(firstPosition, secondPosition),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.FirstIsToRightOfSecond(firstPosition, secondPosition),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.FirstIsToRightOfSecond(firstPosition, secondPosition),
+
+            _ => false
+        };
+    }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsParallelTo(Orientation other) => (_absoluteVerticalComponent == 0) == (other._absoluteVerticalComponent == 0);
+
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsPerpendicularTo(Orientation other) => (_absoluteVerticalComponent == 0) == (other._absoluteHorizontalComponent == 0);
@@ -107,14 +278,37 @@ public abstract class Orientation : IExtendedEnumType<Orientation>
     /// <param name="fromPosition"></param>
     /// <param name="toPosition"></param>
     [Pure]
-    public abstract int GetHorizontalDelta(LevelPosition fromPosition, LevelPosition toPosition);
+    public int GetHorizontalDelta(LevelPosition fromPosition, LevelPosition toPosition)
+    {
+        return RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.GetHorizontalDelta(fromPosition, toPosition),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.GetHorizontalDelta(fromPosition, toPosition),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.GetHorizontalDelta(fromPosition, toPosition),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.GetHorizontalDelta(fromPosition, toPosition),
+
+            _ => 0
+        };
+    }
+
     /// <summary>
     /// If the first position were to move vertically to be in line with the second position, what is the dy it would require?
     /// </summary>
     /// <param name="fromPosition"></param>
     /// <param name="toPosition"></param>
     [Pure]
-    public abstract int GetVerticalDelta(LevelPosition fromPosition, LevelPosition toPosition);
+    public int GetVerticalDelta(LevelPosition fromPosition, LevelPosition toPosition)
+    {
+        return RotNum switch
+        {
+            EngineConstants.DownOrientationRotNum => DownOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
+            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
+            EngineConstants.UpOrientationRotNum => UpOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
+            EngineConstants.RightOrientationRotNum => RightOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
+
+            _ => 0
+        };
+    }
 
     [Pure]
     public static Orientation RotateClockwise(Orientation o) => Orientations[(o.RotNum + 1) & 3];

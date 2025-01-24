@@ -69,7 +69,7 @@ public sealed class LevelObjectAssembler : IDisposable
         {
             var lemming = new Lemming(
                 _lemmings.Count,
-                DownOrientation.Instance,
+                Orientation.Down,
                 FacingDirection.RightInstance,
                 NoneAction.Instance,
                 Team.AllItems[EngineConstants.ClassicTeamId])

@@ -50,7 +50,7 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
             Y = gadgetData.Y
         };
 
-        if (gadgetData.Orientation.IsParallelTo(DownOrientation.Instance))
+        if (gadgetData.Orientation.IsParallelTo(Orientation.Down))
         {
             result.Width = ResizeType.HasFlag(ResizeType.ResizeHorizontal)
                 ? gadgetData.GetProperty(GadgetProperty.Width)
@@ -74,7 +74,7 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
 
     private ResizeType GetResizeTypeForGadgetOrientation(GadgetData gadgetData)
     {
-        if (gadgetData.Orientation.IsParallelTo(DownOrientation.Instance))
+        if (gadgetData.Orientation.IsParallelTo(Orientation.Down))
             return ResizeType;
 
         return ResizeType.SwapComponents();
