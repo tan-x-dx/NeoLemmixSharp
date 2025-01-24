@@ -153,7 +153,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
             foreach (var offset in offsetChecks)
             {
-                var checkLevelPosition = orientation.Move(target, offset);
+                var checkLevelPosition = orientation.Move(target, offset.X, offset.Y);
 
                 //  gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan1, checkLevelPosition, out var gadgetSet);
 

@@ -18,9 +18,6 @@ public static class LeftOrientationMethods
     public static LevelPosition MoveDown(LevelPosition position, int step) => new(position.X - step, position.Y);
 
     [Pure]
-    public static LevelPosition Move(LevelPosition position, LevelPosition relativeDirection) => new(position.X + relativeDirection.Y, position.Y + relativeDirection.X);
-
-    [Pure]
     public static LevelPosition Move(LevelPosition position, int dx, int dy) => new(position.X + dy, position.Y + dx);
 
     [Pure]

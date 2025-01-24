@@ -18,9 +18,6 @@ public static class UpOrientationMethods
     public static LevelPosition MoveDown(LevelPosition position, int step) => new(position.X, position.Y - step);
 
     [Pure]
-    public static LevelPosition Move(LevelPosition position, LevelPosition relativeDirection) => new(position.X - relativeDirection.X, position.Y + relativeDirection.Y);
-
-    [Pure]
     public static LevelPosition Move(LevelPosition position, int dx, int dy) => new(position.X - dx, position.Y + dy);
 
     [Pure]

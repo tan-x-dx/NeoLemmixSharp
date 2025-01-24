@@ -115,28 +115,6 @@ public sealed class Orientation : IExtendedEnumType<Orientation>
     }
 
     /// <summary>
-    /// Note: For the relativeDirection parameter - Positive x -> right, positive y -> up
-    /// </summary>
-    /// <param name="position"></param>
-    /// <param name="relativeDirection"></param>
-    /// <returns></returns>
-    [Pure]
-    public LevelPosition Move(LevelPosition position, LevelPosition relativeDirection)
-    {
-        var newPosition = RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.Move(position, relativeDirection),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.Move(position, relativeDirection),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.Move(position, relativeDirection),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.Move(position, relativeDirection),
-
-            _ => position
-        };
-
-        return LevelScreen.NormalisePosition(newPosition);
-    }
-
-    /// <summary>
     /// Note: Positive dx -> right, positive dy -> up
     /// </summary>
     /// <param name="position"></param>
@@ -320,9 +298,9 @@ public sealed class Orientation : IExtendedEnumType<Orientation>
     public Orientation Rotate(int clockwiseRotationOffset) => Orientations[(RotNum + clockwiseRotationOffset) & 3];
 
     public bool Equals(Orientation? other) => RotNum == (other?.RotNum ?? -1);
-    public sealed override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;
-    public sealed override int GetHashCode() => RotNum;
-    public sealed override string ToString() => _orientationName;
+    public override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;
+    public override int GetHashCode() => RotNum;
+    public override string ToString() => _orientationName;
 
     public static bool operator ==(Orientation left, Orientation right) => left.RotNum == right.RotNum;
     public static bool operator !=(Orientation left, Orientation right) => left.RotNum != right.RotNum;
