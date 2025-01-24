@@ -1,46 +1,27 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using System.Diagnostics.Contracts;
-using static NeoLemmixSharp.Engine.Level.LevelScreen;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 
 public static class UpOrientationMethods
 {
     [Pure]
-    public static LevelPosition MoveRight(LevelPosition position, int step)
-    {
-        return new LevelPosition(position.X - step, position.Y);
-    }
+    public static LevelPosition MoveRight(LevelPosition position, int step) => new(position.X - step, position.Y);
 
     [Pure]
-    public static LevelPosition MoveUp(LevelPosition position, int step)
-    {
-        return new LevelPosition(position.X, position.Y + step);
-    }
+    public static LevelPosition MoveUp(LevelPosition position, int step) => new(position.X, position.Y + step);
 
     [Pure]
-    public static LevelPosition MoveLeft(LevelPosition position, int step)
-    {
-        return new LevelPosition(position.X + step, position.Y);
-    }
+    public static LevelPosition MoveLeft(LevelPosition position, int step) => new(position.X + step, position.Y);
 
     [Pure]
-    public static LevelPosition MoveDown(LevelPosition position, int step)
-    {
-        return new LevelPosition(position.X, position.Y - step);
-    }
+    public static LevelPosition MoveDown(LevelPosition position, int step) => new(position.X, position.Y - step);
 
     [Pure]
-    public static LevelPosition Move(LevelPosition position, LevelPosition relativeDirection)
-    {
-        return new LevelPosition(position.X - relativeDirection.X, position.Y + relativeDirection.Y);
-    }
+    public static LevelPosition Move(LevelPosition position, LevelPosition relativeDirection) => new(position.X - relativeDirection.X, position.Y + relativeDirection.Y);
 
     [Pure]
-    public static LevelPosition Move(LevelPosition position, int dx, int dy)
-    {
-        return new LevelPosition(position.X - dx, position.Y + dy);
-    }
+    public static LevelPosition Move(LevelPosition position, int dx, int dy) => new(position.X - dx, position.Y + dy);
 
     [Pure]
     public static bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X == secondPosition.X;
@@ -61,7 +42,7 @@ public static class UpOrientationMethods
         var a = fromPosition.X;
         var b = toPosition.X;
 
-        return HorizontalBoundaryBehaviour.GetDelta(b, a);
+        return LevelScreen.HorizontalBoundaryBehaviour.GetDelta(b, a);
     }
 
     [Pure]
@@ -70,6 +51,6 @@ public static class UpOrientationMethods
         var a = fromPosition.Y;
         var b = toPosition.Y;
 
-        return VerticalBoundaryBehaviour.GetDelta(b, a);
+        return LevelScreen.VerticalBoundaryBehaviour.GetDelta(b, a);
     }
 }
