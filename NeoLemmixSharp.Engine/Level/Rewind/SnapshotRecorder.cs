@@ -26,7 +26,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
     {
         _itemManager = itemManager;
         _numberOfItemsPerSnapshot = itemManager.NumberOfItems;
-        _data = new TSnapshotData[_numberOfItemsPerSnapshot * SnapshotDataListSizeMultiplier];
+        _data = GC.AllocateUninitializedArray<TSnapshotData>(_numberOfItemsPerSnapshot * SnapshotDataListSizeMultiplier);
     }
 
     public void TakeSnapshot()
@@ -69,7 +69,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
         var count = _count;
         if (count == arraySize)
         {
-            var newArray = new TSnapshotData[arraySize * 2];
+            var newArray = GC.AllocateUninitializedArray<TSnapshotData>(arraySize * 2);
             new ReadOnlySpan<TSnapshotData>(_data).CopyTo(new Span<TSnapshotData>(newArray));
 
             _data = newArray;
