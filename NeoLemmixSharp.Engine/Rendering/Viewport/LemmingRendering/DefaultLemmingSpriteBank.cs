@@ -255,13 +255,13 @@ public static class DefaultLemmingSpriteBank
     {
         foreach (var orientation in Orientation.AllItems)
         {
-            var k0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.RightInstance);
-            var k1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.RightInstance);
+            var k0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.Right);
+            var k1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.Right);
 
             actionSprites[k1] = spriteTypes[k0];
 
-            k0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.LeftInstance);
-            k1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.LeftInstance);
+            k0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.Left);
+            k1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.Left);
 
             actionSprites[k1] = spriteTypes[k0];
         }
@@ -411,10 +411,10 @@ public static class DefaultLemmingSpriteBank
 
         foreach (var orientation in Orientation.AllItems)
         {
-            var rotateCwK0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.RightInstance);
-            var rotateCwK1 = LemmingSpriteBank.GetKey(RotateClockwiseAction.Instance, orientation, FacingDirection.RightInstance);
-            var rotateCcwK1 = LemmingSpriteBank.GetKey(RotateCounterclockwiseAction.Instance, orientation, FacingDirection.RightInstance);
-            var rotateHalfK1 = LemmingSpriteBank.GetKey(RotateHalfAction.Instance, orientation, FacingDirection.RightInstance);
+            var rotateCwK0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.Right);
+            var rotateCwK1 = LemmingSpriteBank.GetKey(RotateClockwiseAction.Instance, orientation, FacingDirection.Right);
+            var rotateCcwK1 = LemmingSpriteBank.GetKey(RotateCounterclockwiseAction.Instance, orientation, FacingDirection.Right);
+            var rotateHalfK1 = LemmingSpriteBank.GetKey(RotateHalfAction.Instance, orientation, FacingDirection.Right);
 
             (rotateCwK1, rotateCcwK1) = (rotateCcwK1, rotateCwK1);
 
@@ -422,10 +422,10 @@ public static class DefaultLemmingSpriteBank
             actionSprites[rotateCcwK1] = rotateCounterclockwiseSprites[rotateCwK0];
             actionSprites[rotateHalfK1] = rotateHalfSprites[rotateCwK0];
 
-            rotateCwK0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.LeftInstance);
-            rotateCwK1 = LemmingSpriteBank.GetKey(RotateClockwiseAction.Instance, orientation, FacingDirection.LeftInstance);
-            rotateCcwK1 = LemmingSpriteBank.GetKey(RotateCounterclockwiseAction.Instance, orientation, FacingDirection.LeftInstance);
-            rotateHalfK1 = LemmingSpriteBank.GetKey(RotateHalfAction.Instance, orientation, FacingDirection.LeftInstance);
+            rotateCwK0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.Left);
+            rotateCwK1 = LemmingSpriteBank.GetKey(RotateClockwiseAction.Instance, orientation, FacingDirection.Left);
+            rotateCcwK1 = LemmingSpriteBank.GetKey(RotateCounterclockwiseAction.Instance, orientation, FacingDirection.Left);
+            rotateHalfK1 = LemmingSpriteBank.GetKey(RotateHalfAction.Instance, orientation, FacingDirection.Left);
 
             actionSprites[rotateCwK1] = rotateClockwiseSprites[rotateCwK0];
             actionSprites[rotateCcwK1] = rotateCounterclockwiseSprites[rotateCwK0];

@@ -48,7 +48,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
     ];
 
     private static ReadOnlySpan<LevelPosition> GetOffsetChecks(FacingDirection facingDirection) => MemoryMarshal
-        .Cast<int, LevelPosition>(facingDirection == FacingDirection.RightInstance
+        .Cast<int, LevelPosition>(facingDirection == FacingDirection.Right
             ? RawOffsetChecksRight
             : RawOffsetChecksLeft);
 

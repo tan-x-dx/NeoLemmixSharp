@@ -131,7 +131,7 @@ public static class LevelReadWriteHelpers
 
     public static byte GetOrientationByte(Orientation orientation, FacingDirection facingDirection)
     {
-        return GetOrientationByte(orientation.RotNum, facingDirection == FacingDirection.LeftInstance);
+        return GetOrientationByte(orientation.RotNum, facingDirection == FacingDirection.Left);
     }
 
     public static byte GetOrientationByte(int rotNum, bool flip)

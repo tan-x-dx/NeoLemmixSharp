@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -27,7 +26,7 @@ public sealed class RotateHalfAction : LemmingAction
             var orientation = lemming.Orientation;
             ref var lemmingPosition = ref lemming.LevelPosition;
             lemmingPosition = orientation.MoveUp(lemmingPosition, 8);
-            lemming.SetOrientation(Orientation.GetOpposite(orientation));
+            lemming.SetOrientation(orientation.GetOpposite());
         }
 
         return true;

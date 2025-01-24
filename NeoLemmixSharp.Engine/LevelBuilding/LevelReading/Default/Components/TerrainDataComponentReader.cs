@@ -87,7 +87,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
 
             NoOverwrite = decipheredTerrainDataMisc.NoOverwrite,
             RotNum = orientation.RotNum,
-            Flip = facingDirection == FacingDirection.LeftInstance,
+            Flip = facingDirection == FacingDirection.Left,
             Erase = decipheredTerrainDataMisc.Erase,
 
             Tint = tintColor,

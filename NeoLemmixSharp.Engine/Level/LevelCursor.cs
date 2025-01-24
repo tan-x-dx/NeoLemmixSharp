@@ -42,11 +42,11 @@ public sealed class LevelCursor
 
         if (LevelScreen.LevelInputController.SelectLeftFacingLemmings.IsActionDown)
         {
-            _facingDirection = FacingDirection.LeftInstance;
+            _facingDirection = FacingDirection.Left;
         }
         else if (LevelScreen.LevelInputController.SelectRightFacingLemmings.IsActionDown)
         {
-            _facingDirection = FacingDirection.RightInstance;
+            _facingDirection = FacingDirection.Right;
         }
         else
         {

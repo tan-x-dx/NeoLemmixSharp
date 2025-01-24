@@ -107,7 +107,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     {
         Id = -1;
         Orientation = Orientation.Down;
-        FacingDirection = FacingDirection.RightInstance;
+        FacingDirection = FacingDirection.Right;
         CurrentAction = NoneAction.Instance;
         State = new LemmingState(this, Team.AllItems[EngineConstants.ClassicTeamId]);
         Renderer = new LemmingRenderer(this);
