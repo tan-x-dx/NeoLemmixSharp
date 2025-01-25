@@ -36,11 +36,11 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public override GadgetLayerRenderer Renderer => _renderer;
 
-    // The below properties refer to the position of the hitbox, not the gadget itself    
-    public LevelPosition TopLeftPixel => _currentGadgetBounds.TopLeftPosition + _currentState.HitBoxRegion.Offset;
-    public LevelPosition BottomRightPixel => _currentGadgetBounds.BottomRightPosition + _currentState.HitBoxRegion.Offset + _currentState.HitBoxRegion.BoundingBoxDimensions;
-    public LevelPosition PreviousTopLeftPixel => _previousGadgetBounds.TopLeftPosition + _previousState.HitBoxRegion.Offset;
-    public LevelPosition PreviousBottomRightPixel => _previousGadgetBounds.BottomRightPosition + _previousState.HitBoxRegion.Offset + _previousState.HitBoxRegion.BoundingBoxDimensions;
+    // The below properties refer to the positions of the hitboxes, not the gadget itself    
+    public LevelPosition TopLeftPixel => _currentGadgetBounds.TopLeftPosition + _currentState.TopLeftHitBoxPosition();
+    public LevelPosition BottomRightPixel => _currentGadgetBounds.BottomRightPosition + _currentState.BottomRightHitBoxPosition();
+    public LevelPosition PreviousTopLeftPixel => _previousGadgetBounds.TopLeftPosition + _previousState.TopLeftHitBoxPosition();
+    public LevelPosition PreviousBottomRightPixel => _previousGadgetBounds.BottomRightPosition + _previousState.BottomRightHitBoxPosition();
     public ResizeType ResizeType { get; }
 
     public HitBoxGadget(
@@ -100,11 +100,11 @@ public sealed class HitBoxGadget : GadgetBase,
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
-    public bool ContainsPoint(LevelPosition levelPosition)
+    public bool ContainsPoint(Orientation orientation, LevelPosition levelPosition)
     {
         var p = levelPosition - TopLeftPixel;
 
-        return _currentState.HitBoxRegion.ContainsPoint(p);
+        return _currentState.HitBoxFor(orientation).ContainsPoint(p);
     }
 
     public void OnLemmingHit(

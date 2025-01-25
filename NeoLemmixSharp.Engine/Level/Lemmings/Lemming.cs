@@ -351,8 +351,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
             foreach (var anchorPosition in intermediatePositions)
             {
                 var footPosition = CurrentAction.GetFootPosition(this, anchorPosition);
-                if (!gadget.ContainsPoint(anchorPosition) ||
-                    !gadget.ContainsPoint(footPosition))
+                if (!gadget.ContainsPoint(Orientation, anchorPosition) ||
+                    !gadget.ContainsPoint(Orientation, footPosition))
                     continue;
 
                 var filters = currentState.Filters;
