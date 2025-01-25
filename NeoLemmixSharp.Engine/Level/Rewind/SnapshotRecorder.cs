@@ -42,7 +42,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData>
             var item = items[index];
             ref var snapshotData = ref snapshotDataSpan[index];
 
-            item.ToSnapshotData(out snapshotData);
+            item.WriteToSnapshotData(out snapshotData);
         }
     }
 

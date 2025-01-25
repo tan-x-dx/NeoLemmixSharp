@@ -155,7 +155,7 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
             : TextRenderingHelpers.DigitToChar(minutes / 100);
     }
 
-    public void ToSnapshotData(out LevelTimerSnapshotData snapshotData)
+    public void WriteToSnapshotData(out LevelTimerSnapshotData snapshotData)
     {
         snapshotData = new LevelTimerSnapshotData(_additionalSeconds);
     }

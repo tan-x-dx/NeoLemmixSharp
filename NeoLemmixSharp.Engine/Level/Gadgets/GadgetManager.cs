@@ -99,7 +99,7 @@ public sealed class GadgetManager :
         _gadgetPositionHelper.Clear();
     }
 
-    public void ToSnapshotData(out int snapshotData)
+    public void WriteToSnapshotData(out int snapshotData)
     {
         snapshotData = 0;
     }

@@ -522,7 +522,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         FacingDirection = facingDirection;
     }
 
-    public void ToSnapshotData(out LemmingSnapshotData lemmingSnapshotData)
+    public void WriteToSnapshotData(out LemmingSnapshotData lemmingSnapshotData)
     {
         lemmingSnapshotData = new LemmingSnapshotData(this);
     }

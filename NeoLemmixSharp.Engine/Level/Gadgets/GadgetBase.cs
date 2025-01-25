@@ -61,7 +61,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     public static bool operator ==(GadgetBase left, GadgetBase right) => left.Id == right.Id;
     public static bool operator !=(GadgetBase left, GadgetBase right) => left.Id != right.Id;
 
-    public void ToSnapshotData(out int snapshotData)
+    public void WriteToSnapshotData(out int snapshotData)
     {
         snapshotData = 0;
     }

@@ -374,7 +374,7 @@ public sealed class LemmingManager :
         _allBlockers.Clear();
     }
 
-    public void ToSnapshotData(out LemmingManagerSnapshotData snapshotData)
+    public void WriteToSnapshotData(out LemmingManagerSnapshotData snapshotData)
     {
         snapshotData = new LemmingManagerSnapshotData(
             _numberOfLemmingsReleasedFromHatch,
