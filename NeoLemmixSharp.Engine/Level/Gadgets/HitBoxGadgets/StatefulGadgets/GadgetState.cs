@@ -33,10 +33,10 @@ public sealed class GadgetState
         return EmptyHitBoxRegion.Instance;
     }
 
-    public LevelRegion GetBounds(GadgetBounds currentGadgetBounds)
+    public LevelRegion GetBounds(GadgetBounds gadgetBounds)
     {
         if (_hitBoxLookup.Count == 0)
-            return new LevelRegion(currentGadgetBounds.TopLeftPosition, new LevelSize(1, 1));
+            return new LevelRegion(gadgetBounds.Position, new LevelSize(1, 1));
 
         var minX = int.MaxValue;
         var minY = int.MaxValue;
@@ -54,10 +54,10 @@ public sealed class GadgetState
             maxY = Math.Max(maxY, bottomRight.Y);
         }
 
-        minX += currentGadgetBounds.X;
-        minY += currentGadgetBounds.Y;
-        maxX += currentGadgetBounds.X;
-        maxY += currentGadgetBounds.Y;
+        minX += gadgetBounds.X;
+        minY += gadgetBounds.Y;
+        maxX += gadgetBounds.X;
+        maxY += gadgetBounds.Y;
 
         return new LevelRegion(new LevelPosition(minX, minY), new LevelSize(1 + maxX - minX, 1 + maxY - minY));
     }

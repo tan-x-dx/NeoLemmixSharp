@@ -177,10 +177,8 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
         if (!P.TryFormat(destination, out charsWritten))
             return false;
 
-        if (!S.TryFormat(destination, out var c))
-            return false;
-
+        var result = S.TryFormat(destination, out var c);
         charsWritten += c;
-        return true;
+        return result;
     }
 }
