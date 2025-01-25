@@ -164,11 +164,11 @@ public sealed class HitBoxGadget : GadgetBase,
         _previousGadgetBounds.SetFrom(_currentGadgetBounds);
         _previousState = _currentState;
 
-        if (ResizeType.HasFlag(ResizeType.ResizeHorizontal))
+        if (ResizeType.CanResizeHorizontally())
         {
             _currentGadgetBounds.Width += dw;
         }
-        if (ResizeType.HasFlag(ResizeType.ResizeVertical))
+        if (ResizeType.CanResizeVertically())
         {
             _currentGadgetBounds.Height += dh;
         }
@@ -183,11 +183,11 @@ public sealed class HitBoxGadget : GadgetBase,
         _previousGadgetBounds.SetFrom(_currentGadgetBounds);
         _previousState = _currentState;
 
-        if (ResizeType.HasFlag(ResizeType.ResizeHorizontal))
+        if (ResizeType.CanResizeHorizontally())
         {
             _currentGadgetBounds.Width = w;
         }
-        if (ResizeType.HasFlag(ResizeType.ResizeVertical))
+        if (ResizeType.CanResizeVertically())
         {
             _currentGadgetBounds.Height = h;
         }

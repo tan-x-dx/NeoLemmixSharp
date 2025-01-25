@@ -52,19 +52,19 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
 
         if (gadgetData.Orientation.IsParallelTo(Orientation.Down))
         {
-            result.Width = ResizeType.HasFlag(ResizeType.ResizeHorizontal)
+            result.Width = ResizeType.CanResizeHorizontally()
                 ? gadgetData.GetProperty(GadgetProperty.Width)
                 : SpriteData.SpriteWidth;
-            result.Height = ResizeType.HasFlag(ResizeType.ResizeVertical)
+            result.Height = ResizeType.CanResizeVertically()
                 ? gadgetData.GetProperty(GadgetProperty.Height)
                 : SpriteData.SpriteHeight;
         }
         else
         {
-            result.Width = ResizeType.HasFlag(ResizeType.ResizeVertical)
+            result.Width = ResizeType.CanResizeVertically()
                 ? gadgetData.GetProperty(GadgetProperty.Height)
                 : SpriteData.SpriteHeight;
-            result.Height = ResizeType.HasFlag(ResizeType.ResizeHorizontal)
+            result.Height = ResizeType.CanResizeHorizontally()
                 ? gadgetData.GetProperty(GadgetProperty.Width)
                 : SpriteData.SpriteWidth;
         }
