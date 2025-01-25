@@ -7,8 +7,7 @@ public sealed class RectangularHitBoxRegion : IHitBoxRegion
     private readonly LevelPosition _position;
     private readonly LevelSize _size;
 
-    public LevelPosition Offset => _position;
-    public LevelSize BoundingBoxDimensions => _size;
+    public LevelRegion CurrentBounds => new(_position, _size);
 
     public RectangularHitBoxRegion(
         int x,

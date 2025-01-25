@@ -2,10 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
-public interface IHitBoxRegion
+public interface IHitBoxRegion : IRectangularBounds
 {
-    LevelPosition Offset { get; }
-    LevelSize BoundingBoxDimensions { get; }
-
     bool ContainsPoint(LevelPosition levelPosition);
 }

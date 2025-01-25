@@ -12,23 +12,19 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
     private readonly uint[] _levelPositionBits;
 
-    private readonly LevelPosition _offset;
-    private readonly LevelSize _minimumBoundingBoxDimensions;
+    private readonly LevelRegion _bounds;
 
-    public LevelPosition Offset => _offset;
-    public LevelSize BoundingBoxDimensions => _minimumBoundingBoxDimensions;
+    public LevelRegion CurrentBounds => _bounds;
 
     public PointSetHitBoxRegion(ReadOnlySpan<LevelPosition> points)
     {
         if (points.Length == 0)
             throw new ArgumentException("Cannot create PointSetHitBoxRegion with zero points!");
 
-        var minimumBoundingBox = new LevelRegion(points);
-        _offset = minimumBoundingBox.P1;
-        _minimumBoundingBoxDimensions = minimumBoundingBox.GetSize();
+        _bounds = new LevelRegion(points);
 
-        var minimumBoundingBoxWidth = _minimumBoundingBoxDimensions.W;
-        var minimumBoundingBoxHeight = _minimumBoundingBoxDimensions.H;
+        var minimumBoundingBoxWidth = _bounds.W;
+        var minimumBoundingBoxHeight = _bounds.H;
 
         if (minimumBoundingBoxWidth > DimensionCutoffSize || minimumBoundingBoxHeight > DimensionCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{minimumBoundingBoxWidth}, H:{minimumBoundingBoxHeight}");
@@ -43,7 +39,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
         for (var i = 0; i < points.Length; i++)
         {
-            var p = points[i] - _offset;
+            var p = points[i] - _bounds.P;
 
             var index = IndexFor(p);
             BitArrayHelpers.SetBit(span, index);
@@ -53,15 +49,15 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
     [Pure]
     public bool ContainsPoint(LevelPosition levelPosition)
     {
-        levelPosition -= _offset;
+        levelPosition -= _bounds.P;
         var index = IndexFor(levelPosition);
 
-        return (uint)levelPosition.X < (uint)_minimumBoundingBoxDimensions.W &&
-               (uint)levelPosition.Y < (uint)_minimumBoundingBoxDimensions.H &&
+        return (uint)levelPosition.X < (uint)_bounds.W &&
+               (uint)levelPosition.Y < (uint)_bounds.H &&
                BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_levelPositionBits), index);
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int IndexFor(LevelPosition levelPosition) => _minimumBoundingBoxDimensions.W * levelPosition.Y + levelPosition.X;
+    private int IndexFor(LevelPosition levelPosition) => _bounds.W * levelPosition.Y + levelPosition.X;
 }

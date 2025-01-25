@@ -17,10 +17,8 @@ public sealed class GadgetLayerRenderer : IControlledAnimationGadgetRenderer
     private LevelPosition _currentPosition;
     private LevelPosition _previousPosition;
 
-    public LevelPosition TopLeftPixel => _currentPosition;
-    public LevelPosition BottomRightPixel => _currentPosition + new LevelPosition(_texture.Width, _texture.Height);
-    public LevelPosition PreviousTopLeftPixel => _previousPosition;
-    public LevelPosition PreviousBottomRightPixel => _previousPosition + new LevelPosition(_texture.Width, _texture.Height);
+    public LevelRegion CurrentBounds => new(_currentPosition, new LevelSize(_texture.Width, _texture.Height));
+    public LevelRegion PreviousBounds => new(_previousPosition, new LevelSize(_texture.Width, _texture.Height));
 
     public GadgetLayerRenderer(
         Texture2D texture,

@@ -12,10 +12,8 @@ public sealed class EmptyRenderer : IGadgetRenderer
     int IViewportObjectRenderer.RendererId { get; set; }
     int IViewportObjectRenderer.ItemId => 0;
 
-    LevelPosition IRectangularBounds.TopLeftPixel => default;
-    LevelPosition IRectangularBounds.BottomRightPixel => default;
-    LevelPosition IRectangularBounds.PreviousTopLeftPixel => default;
-    LevelPosition IRectangularBounds.PreviousBottomRightPixel => default;
+    LevelRegion IRectangularBounds.CurrentBounds => default;
+    LevelRegion IPreviousRectangularBounds.PreviousBounds => default;
 
     private EmptyRenderer()
     {
@@ -29,4 +27,5 @@ public sealed class EmptyRenderer : IGadgetRenderer
     void IDisposable.Dispose()
     {
     }
+
 }

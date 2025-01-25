@@ -30,8 +30,9 @@ public sealed class ResizableRectangularHitBoxRegion : IHitBoxRegion
     private int Width => _gadgetBounds.Width + _dw - _dx;
     private int Height => _gadgetBounds.Height + _dh - _dy;
 
-    public LevelPosition Offset => new(X, Y);
-    public LevelSize BoundingBoxDimensions => new(Width, Height);
+    public LevelRegion CurrentBounds => new(
+        new LevelPosition(X, Y),
+        new LevelSize(Width, Height));
 
     public bool ContainsPoint(LevelPosition levelPosition)
     {
@@ -59,4 +60,5 @@ public sealed class ResizableRectangularHitBoxRegion : IHitBoxRegion
                x < x1 &&
                y < y1;
     }
+
 }

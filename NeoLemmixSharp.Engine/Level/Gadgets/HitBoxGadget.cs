@@ -15,7 +15,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 #pragma warning disable CS0660, CS0661, CA1067
 public sealed class HitBoxGadget : GadgetBase,
     IIdEquatable<HitBoxGadget>,
-    IRectangularBounds,
+    IPreviousRectangularBounds,
     IAnimationControlledGadget,
     IMoveableGadget,
     IResizeableGadget
@@ -36,11 +36,11 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public override GadgetLayerRenderer Renderer => _renderer;
 
-    // The below properties refer to the positions of the hitboxes, not the gadget itself    
-    public LevelPosition TopLeftPixel => _currentGadgetBounds.TopLeftPosition + _currentState.TopLeftHitBoxPosition();
-    public LevelPosition BottomRightPixel => _currentGadgetBounds.BottomRightPosition + _currentState.BottomRightHitBoxPosition();
-    public LevelPosition PreviousTopLeftPixel => _previousGadgetBounds.TopLeftPosition + _previousState.TopLeftHitBoxPosition();
-    public LevelPosition PreviousBottomRightPixel => _previousGadgetBounds.BottomRightPosition + _previousState.BottomRightHitBoxPosition();
+    // The below properties refer to the positions of the hitboxes, not the gadget itself   
+
+    public LevelRegion CurrentBounds => _currentState.GetBounds(_currentGadgetBounds);
+    public LevelRegion PreviousBounds => _previousState.GetBounds(_previousGadgetBounds);
+
     public ResizeType ResizeType { get; }
 
     public HitBoxGadget(
@@ -102,7 +102,7 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public bool ContainsPoint(Orientation orientation, LevelPosition levelPosition)
     {
-        var p = levelPosition - TopLeftPixel;
+        var p = levelPosition - _currentGadgetBounds.TopLeftPosition;
 
         return _currentState.HitBoxFor(orientation).ContainsPoint(p);
     }

@@ -36,10 +36,9 @@ public readonly struct LemmingSnapshotData
     public readonly LevelPosition LaserHitLevelPosition;
     public readonly LevelPosition LevelPosition;
     public readonly LevelPosition PreviousLevelPosition;
-    public readonly LevelPosition TopLeftPixel;
-    public readonly LevelPosition BottomRightPixel;
-    public readonly LevelPosition PreviousTopLeftPixel;
-    public readonly LevelPosition PreviousBottomRightPixel;
+
+    public readonly LevelRegion CurrentBounds;
+    public readonly LevelRegion PreviousBounds;
 
     public readonly LemmingStateSnapshotData StateSnapshotData;
 
@@ -87,10 +86,8 @@ public readonly struct LemmingSnapshotData
         LaserHitLevelPosition = lemming.LaserHitLevelPosition;
         LevelPosition = lemming.LevelPosition;
         PreviousLevelPosition = lemming.PreviousLevelPosition;
-        TopLeftPixel = lemming.TopLeftPixel;
-        BottomRightPixel = lemming.BottomRightPixel;
-        PreviousTopLeftPixel = lemming.PreviousTopLeftPixel;
-        PreviousBottomRightPixel = lemming.PreviousBottomRightPixel;
+        CurrentBounds = lemming.CurrentBounds;
+        PreviousBounds = lemming.PreviousBounds;
 
         StateSnapshotData = lemming.State.CreateSnapshot();
 

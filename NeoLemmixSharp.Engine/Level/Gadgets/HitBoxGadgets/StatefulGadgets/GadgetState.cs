@@ -33,36 +33,33 @@ public sealed class GadgetState
         return EmptyHitBoxRegion.Instance;
     }
 
-    public LevelPosition TopLeftHitBoxPosition()
+    public LevelRegion GetBounds(GadgetBounds currentGadgetBounds)
     {
+        if (_hitBoxLookup.Count == 0)
+            return new LevelRegion(currentGadgetBounds.TopLeftPosition, new LevelSize(1, 1));
+
         var minX = int.MaxValue;
         var minY = int.MaxValue;
-
-        foreach (var (_, hitBox) in _hitBoxLookup)
-        {
-            var topLeftPosition = hitBox.Offset;
-
-            minX = Math.Min(minX, topLeftPosition.X);
-            minY = Math.Min(minY, topLeftPosition.Y);
-        }
-
-        return new LevelPosition(minX, minY);
-    }
-
-    public LevelPosition BottomRightHitBoxPosition()
-    {
         var maxX = int.MinValue;
         var maxY = int.MinValue;
 
         foreach (var (_, hitBox) in _hitBoxLookup)
         {
-            var bottomRightPosition = hitBox.Offset + hitBox.BoundingBoxDimensions;
+            var hitBoxBounds = hitBox.CurrentBounds;
+            var bottomRight = hitBoxBounds.GetBottomRight();
 
-            maxX = Math.Max(maxX, bottomRightPosition.X);
-            maxY = Math.Max(maxY, bottomRightPosition.Y);
+            minX = Math.Min(minX, hitBoxBounds.X);
+            minY = Math.Min(minY, hitBoxBounds.Y);
+            maxX = Math.Max(maxX, bottomRight.X);
+            maxY = Math.Max(maxY, bottomRight.Y);
         }
 
-        return new LevelPosition(maxX, maxY);
+        minX += currentGadgetBounds.X;
+        minY += currentGadgetBounds.Y;
+        maxX += currentGadgetBounds.X;
+        maxY += currentGadgetBounds.Y;
+
+        return new LevelRegion(new LevelPosition(minX, minY), new LevelSize(1 + maxX - minX, 1 + maxY - minY));
     }
 
     public void OnTransitionTo()

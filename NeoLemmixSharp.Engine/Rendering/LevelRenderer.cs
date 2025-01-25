@@ -115,11 +115,9 @@ public sealed class LevelRenderer : IDisposable, IPerfectHasher<IViewportObjectR
         {
             foreach (var verticalRenderInterval in verticalRenderIntervals)
             {
-                var region = new LevelRegion(
-                    horizontalRenderInterval.ViewPortStart,
-                    verticalRenderInterval.ViewPortStart,
-                    horizontalRenderInterval.ViewPortStart + horizontalRenderInterval.ViewPortLength - 1,
-                    verticalRenderInterval.ViewPortStart + verticalRenderInterval.ViewPortLength - 1);
+                var p = new LevelPosition(horizontalRenderInterval.ViewPortStart, verticalRenderInterval.ViewPortStart);
+                var s = new LevelSize(horizontalRenderInterval.ViewPortLength, verticalRenderInterval.ViewPortLength);
+                var region = new LevelRegion(p, s);
 
                 _spriteSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, region, out var rendererSet);
 

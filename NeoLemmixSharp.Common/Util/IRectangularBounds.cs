@@ -2,9 +2,10 @@
 
 public interface IRectangularBounds
 {
-    LevelPosition TopLeftPixel { get; }
-    LevelPosition BottomRightPixel { get; }
+    LevelRegion CurrentBounds { get; }
+}
 
-    LevelPosition PreviousTopLeftPixel { get; }
-    LevelPosition PreviousBottomRightPixel { get; }
+public interface IPreviousRectangularBounds : IRectangularBounds
+{
+    LevelRegion PreviousBounds { get; }
 }
