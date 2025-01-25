@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.Level.Skills;
@@ -18,7 +17,7 @@ public sealed class TalismanData
     public int? TimeLimitInSeconds { get; set; }
     public int? AllSkillLimit { get; set; }
 
-    public SimpleDictionary<ExtendedEnumTypeComparer<LemmingSkill>, LemmingSkill, int> SkillLimits { get; } = ExtendedEnumTypeComparer<LemmingSkill>.CreateSimpleDictionary<int>();
+    public SimpleDictionary<LemmingSkillComparer, LemmingSkill, int> SkillLimits { get; } = LemmingSkillComparer.CreateSimpleDictionary<int>();
 
     public LevelObjective ToLevelObjective(LevelData levelData)
     {

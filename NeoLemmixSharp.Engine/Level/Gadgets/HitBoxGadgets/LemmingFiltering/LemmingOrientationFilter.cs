@@ -1,12 +1,11 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
 public sealed class LemmingOrientationFilter : ILemmingCriterion
 {
-    private readonly OrientationSet _allowedOrientations = ExtendedEnumTypeComparer<Orientation>.CreateSimpleSet();
+    private readonly OrientationSet _allowedOrientations = OrientationComparer.CreateSimpleSet();
 
     public void RegisterOrientation(Orientation orientation)
     {
