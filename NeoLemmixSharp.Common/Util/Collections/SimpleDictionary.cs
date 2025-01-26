@@ -59,7 +59,6 @@ public sealed class SimpleDictionary<TPerfectHasher, TKey, TValue> : IDictionary
         return BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_bits), index);
     }
 
-    [Pure]
     public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
     {
         var index = _hasher.Hash(key);
