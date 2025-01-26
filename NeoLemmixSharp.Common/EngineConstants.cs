@@ -26,6 +26,8 @@ public static class EngineConstants
 
     #region Engine Constants
 
+    public const int NumberOfFacingDirections = 2;
+
     public const int RightFacingDirectionId = 0;
     public const int RightFacingDirectionDeltaX = 1;
     public const string RightFacingDirectionName = "Right";
@@ -33,6 +35,8 @@ public static class EngineConstants
     public const int LeftFacingDirectionId = 1;
     public const int LeftFacingDirectionDeltaX = -1;
     public const string LeftFacingDirectionName = "Left";
+
+    public const int NumberOfOrientations = 4;
 
     public const int DownOrientationRotNum = 0;
     public const string DownOrientationName = "Down";

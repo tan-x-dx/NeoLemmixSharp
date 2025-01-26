@@ -9,21 +9,19 @@ public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
 {
     public static readonly FacingDirection Right = new(
         EngineConstants.RightFacingDirectionId,
-        EngineConstants.RightFacingDirectionDeltaX,
-        EngineConstants.RightFacingDirectionName);
+        EngineConstants.RightFacingDirectionDeltaX);
     public static readonly FacingDirection Left = new(
         EngineConstants.LeftFacingDirectionId,
-        EngineConstants.LeftFacingDirectionDeltaX,
-        EngineConstants.LeftFacingDirectionName);
+        EngineConstants.LeftFacingDirectionDeltaX);
 
     private static readonly FacingDirection[] FacingDirections = GenerateFacingDirectionCollection();
 
-    public static int NumberOfItems => FacingDirections.Length;
+    public static int NumberOfItems => EngineConstants.NumberOfFacingDirections;
     public static ReadOnlySpan<FacingDirection> AllItems => new(FacingDirections);
 
     private static FacingDirection[] GenerateFacingDirectionCollection()
     {
-        var facingDirections = new FacingDirection[2];
+        var facingDirections = new FacingDirection[EngineConstants.NumberOfFacingDirections];
 
         facingDirections[EngineConstants.RightFacingDirectionId] = Right;
         facingDirections[EngineConstants.LeftFacingDirectionId] = Left;
@@ -33,36 +31,29 @@ public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
         return facingDirections;
     }
 
-    private readonly string _name;
-
     public readonly int Id;
     public readonly int DeltaX;
 
-    private FacingDirection(int id, int deltaX, string name)
+    private FacingDirection(int id, int deltaX)
     {
         Id = id;
         DeltaX = deltaX;
-        _name = name;
     }
 
     [Pure]
-    public FacingDirection GetOpposite()
-    {
-        return FacingDirections[1 - Id];
-    }
+    public FacingDirection GetOpposite() => FacingDirections[1 - Id];
 
     [Pure]
-    public Orientation ConvertToRelativeOrientation(Orientation orientation)
-    {
-        return orientation.Rotate(-DeltaX);
-    }
+    public Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.Rotate(-DeltaX);
 
     int IIdEquatable<FacingDirection>.Id => Id;
 
     public bool Equals(FacingDirection? other) => Id == (other?.Id ?? -1);
     public override bool Equals(object? obj) => obj is FacingDirection other && Id == other.Id;
     public override int GetHashCode() => Id;
-    public override string ToString() => _name;
+    public override string ToString() => Id == EngineConstants.RightFacingDirectionId
+        ? EngineConstants.RightFacingDirectionName
+        : EngineConstants.LeftFacingDirectionName;
 
     public static bool operator ==(FacingDirection left, FacingDirection right) => left.Id == right.Id;
     public static bool operator !=(FacingDirection left, FacingDirection right) => left.Id != right.Id;
