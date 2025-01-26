@@ -8,13 +8,13 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class HatchGadget : GadgetBase, 
+public sealed class HatchGadget : GadgetBase,
     IAnimationControlledGadget,
     IMoveableGadget
 {
     private GadgetLayerRenderer _renderer;
 
-    public  LevelPosition SpawnPointOffset { get; }
+    public LevelPosition SpawnPointOffset { get; }
     public HatchSpawnData HatchSpawnData { get; }
     public GadgetStateAnimationController AnimationController { get; }
 
@@ -27,7 +27,7 @@ public sealed class HatchGadget : GadgetBase,
         HatchSpawnData hatchSpawnData,
         LevelPosition spawnPointOffset,
         GadgetStateAnimationController animationController)
-        : base(id, orientation, gadgetBounds)
+        : base(id, orientation, gadgetBounds, 0)
     {
         SpawnPointOffset = spawnPointOffset;
         HatchSpawnData = hatchSpawnData;

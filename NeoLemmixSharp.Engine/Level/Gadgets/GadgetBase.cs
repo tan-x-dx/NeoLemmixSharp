@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
@@ -11,7 +12,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
 {
-    private readonly List<IGadgetInput> _inputs = [];
+    private readonly SimpleList<GadgetInput> _inputs;
     protected readonly GadgetBounds _currentGadgetBounds;
     protected readonly GadgetBounds _previousGadgetBounds;
 
@@ -25,33 +26,29 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     protected GadgetBase(
         int id,
         Orientation orientation,
-        GadgetBounds gadgetBounds)
+        GadgetBounds gadgetBounds,
+        int expectedNumberOfInputs)
     {
         Id = id;
         Orientation = orientation;
         _currentGadgetBounds = gadgetBounds;
         _previousGadgetBounds = new GadgetBounds();
         _previousGadgetBounds.SetFrom(gadgetBounds);
+        _inputs = new SimpleList<GadgetInput>(expectedNumberOfInputs);
     }
 
-    protected void RegisterInput(IGadgetInput gadgetInput)
+    protected void RegisterInput(GadgetInput gadgetInput)
     {
-        for (var i = 0; i < _inputs.Count; i++)
-        {
-            var input = _inputs[i];
-            if (string.Equals(input.InputName, gadgetInput.InputName, StringComparison.Ordinal))
-                throw new ArgumentException($"An input with that name has already been registered! - {gadgetInput.InputName}");
-        }
-
         _inputs.Add(gadgetInput);
     }
 
-    public bool TryGetInputWithName(string inputName, [MaybeNullWhen(false)] out IGadgetInput gadgetInput)
+    public bool TryGetInputWithName(string inputName, [MaybeNullWhen(false)] out GadgetInput gadgetInput)
     {
+        var span = _inputs.AsReadOnlySpan();
         for (var i = 0; i < _inputs.Count; i++)
         {
-            var input = _inputs[i];
-            if (string.Equals(input.InputName, inputName, StringComparison.Ordinal))
+            var input = span[i];
+            if (string.Equals(input.InputName, inputName))
             {
                 gadgetInput = input;
                 return true;

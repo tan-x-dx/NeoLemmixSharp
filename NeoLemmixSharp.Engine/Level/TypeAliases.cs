@@ -1,6 +1,6 @@
 ﻿global using ControlPanelParameterSet = NeoLemmixSharp.Common.Util.Collections.SimpleSet<NeoLemmixSharp.Common.Util.Collections.PerfectEnumHasher<NeoLemmixSharp.Engine.Level.ControlPanel.ControlPanelParameters>, NeoLemmixSharp.Engine.Level.ControlPanel.ControlPanelParameters>;
-global using GadgetEnumerable = NeoLemmixSharp.Common.Util.Collections.SimpleSetEnumerable<NeoLemmixSharp.Engine.Level.Gadgets.GadgetManager, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadget>;
-global using GadgetSpacialHashGrid = NeoLemmixSharp.Common.Util.PositionTracking.SpacialHashGrid<NeoLemmixSharp.Engine.Level.Gadgets.GadgetManager, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadget>;
+global using GadgetEnumerable = NeoLemmixSharp.Common.Util.Collections.SimpleSetEnumerable<NeoLemmixSharp.Engine.Level.Gadgets.GadgetManager, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxGadget>;
+global using GadgetSpacialHashGrid = NeoLemmixSharp.Common.Util.PositionTracking.SpacialHashGrid<NeoLemmixSharp.Engine.Level.Gadgets.GadgetManager, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxGadget>;
 global using LemmingActionComparer = NeoLemmixSharp.Common.Util.Identity.ExtendedEnumTypeComparer<NeoLemmixSharp.Engine.Level.LemmingActions.LemmingAction>;
 global using LemmingActionSet = NeoLemmixSharp.Common.Util.Collections.SimpleSet<NeoLemmixSharp.Common.Util.Identity.ExtendedEnumTypeComparer<NeoLemmixSharp.Engine.Level.LemmingActions.LemmingAction>, NeoLemmixSharp.Engine.Level.LemmingActions.LemmingAction>;
 global using LemmingEnumerable = NeoLemmixSharp.Common.Util.Collections.SimpleSetEnumerable<NeoLemmixSharp.Engine.Level.Lemmings.LemmingManager, NeoLemmixSharp.Engine.Level.Lemmings.Lemming>;

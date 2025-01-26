@@ -9,5 +9,6 @@ public enum GadgetProperty
     Height,
     RawLemmingState,
     Count,
-    InitialAnimationFrame
+    InitialAnimationFrame,
+    LogicGateType
 }

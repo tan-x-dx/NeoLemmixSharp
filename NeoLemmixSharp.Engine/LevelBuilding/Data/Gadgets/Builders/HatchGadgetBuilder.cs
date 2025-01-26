@@ -48,7 +48,7 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
             out var transformedSpawnX,
             out var transformedSpawnY);
 
-        var spawnPoint = new LevelPosition(transformedSpawnX, transformedSpawnY);
+        var spawnPointOffset = new LevelPosition(transformedSpawnX, transformedSpawnY);
 
         var gadgetBounds = new GadgetBounds
         {
@@ -78,7 +78,7 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
             gadgetData.Orientation,
             gadgetBounds,
             hatchSpawnData,
-            spawnPoint,
+            spawnPointOffset,
             gadgetAnimationController);
 
         gadgetRenderer?.SetGadget(result);

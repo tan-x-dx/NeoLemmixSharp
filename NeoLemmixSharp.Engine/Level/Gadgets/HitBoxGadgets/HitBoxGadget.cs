@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
@@ -10,7 +9,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 #pragma warning disable CS0660, CS0661, CA1067
 public sealed class HitBoxGadget : GadgetBase,
@@ -51,7 +50,7 @@ public sealed class HitBoxGadget : GadgetBase,
         LemmingTracker lemmingTracker,
         GadgetState[] states,
         int initialStateIndex)
-        : base(id, orientation, initialGadgetBounds)
+        : base(id, orientation, initialGadgetBounds, 0)
     {
         _lemmingTracker = lemmingTracker;
         _states = states;

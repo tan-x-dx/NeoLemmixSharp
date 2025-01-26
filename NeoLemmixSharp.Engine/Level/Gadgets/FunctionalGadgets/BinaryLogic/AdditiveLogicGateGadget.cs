@@ -7,29 +7,35 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
-public abstract class AdditiveLogicGateGadget : GadgetBase, ISimpleRenderGadget
+public abstract class AdditiveLogicGateGadget : GadgetBase,
+    ILogicGateGadget,
+    ISimpleRenderGadget
 {
     private SimpleGadgetRenderer _renderer;
     private readonly uint[] _inputBits;
     private readonly int _numberOfInputs;
     private int _popCount;
 
-    public sealed override SimpleGadgetRenderer Renderer => _renderer;
+    public LogicGateType Type { get; }
 
     public GadgetOutput Output { get; } = new();
 
-    public AdditiveLogicGateGadget(
+    public sealed override SimpleGadgetRenderer Renderer => _renderer;
+
+    protected AdditiveLogicGateGadget(
         int id,
         Orientation orientation,
         GadgetBounds gadgetBounds,
+        LogicGateType type,
         ReadOnlySpan<string> inputNames)
-        : base(id, orientation, gadgetBounds)
+        : base(id, orientation, gadgetBounds, inputNames.Length)
     {
         if (inputNames.Length < 2)
             throw new ArgumentException("Expected at least 2 inputs!");
 
         _numberOfInputs = inputNames.Length;
         _inputBits = BitArrayHelpers.CreateBitArray(_numberOfInputs, false);
+        Type = type;
 
         for (var i = 0; i < inputNames.Length; i++)
         {
@@ -42,27 +48,22 @@ public abstract class AdditiveLogicGateGadget : GadgetBase, ISimpleRenderGadget
 
     protected abstract bool EvaluateInputCount(int numberOfTrueInputs, int numberOfInputs);
 
-    private sealed class AdditiveGateGadgetInput : IGadgetInput
+    private sealed class AdditiveGateGadgetInput : GadgetInput
     {
         private readonly int _id;
         private readonly AdditiveLogicGateGadget _gadget;
-        public string InputName { get; }
 
         public AdditiveGateGadgetInput(
             int id,
             string inputName,
             AdditiveLogicGateGadget gadget)
+            : base(inputName)
         {
             _id = id;
-            InputName = inputName;
             _gadget = gadget;
         }
 
-        public void OnRegistered()
-        {
-        }
-
-        public void ReactToSignal(bool signal)
+        public override void ReactToSignal(bool signal)
         {
             if (signal)
             {
@@ -90,7 +91,7 @@ public sealed class AndGateGadget : AdditiveLogicGateGadget
         Orientation orientation,
         GadgetBounds gadgetBounds,
         ReadOnlySpan<string> inputNames)
-        : base(id, orientation, gadgetBounds, inputNames)
+        : base(id, orientation, gadgetBounds, LogicGateType.AndGate, inputNames)
     {
     }
 
@@ -107,7 +108,7 @@ public sealed class OrGateGadget : AdditiveLogicGateGadget
         Orientation orientation,
         GadgetBounds gadgetBounds,
         ReadOnlySpan<string> inputNames)
-        : base(id, orientation, gadgetBounds, inputNames)
+        : base(id, orientation, gadgetBounds, LogicGateType.OrGate, inputNames)
     {
     }
 
