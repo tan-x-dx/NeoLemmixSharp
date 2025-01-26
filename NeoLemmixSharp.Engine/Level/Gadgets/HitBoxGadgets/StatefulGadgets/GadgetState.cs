@@ -33,7 +33,7 @@ public sealed class GadgetState
         return EmptyHitBoxRegion.Instance;
     }
 
-    public LevelRegion GetBounds(GadgetBounds gadgetBounds)
+    public LevelRegion GetEncompassingHitBoxBounds(GadgetBounds gadgetBounds)
     {
         if (_hitBoxLookup.Count == 0)
             return new LevelRegion(gadgetBounds.Position, new LevelSize(1, 1));
@@ -43,9 +43,9 @@ public sealed class GadgetState
         var maxX = int.MinValue;
         var maxY = int.MinValue;
 
-        foreach (var (_, hitBox) in _hitBoxLookup)
+        foreach (var kvp in _hitBoxLookup)
         {
-            var hitBoxBounds = hitBox.CurrentBounds;
+            var hitBoxBounds = kvp.Value.CurrentBounds;
             var bottomRight = hitBoxBounds.GetBottomRight();
 
             minX = Math.Min(minX, hitBoxBounds.X);
