@@ -9,12 +9,14 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.GadgetDataSectionIdentifier;
 
-    public GadgetDataComponentReader(List<string> stringIdLookup)
+    public GadgetDataComponentReader(
+        Version version, 
+        List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    public void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         throw new NotImplementedException();
     }

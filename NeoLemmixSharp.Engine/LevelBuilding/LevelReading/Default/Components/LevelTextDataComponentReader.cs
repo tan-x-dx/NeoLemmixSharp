@@ -9,30 +9,32 @@ public sealed class LevelTextDataComponentReader : ILevelDataReader
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelTextDataSectionIdentifier;
 
-    public LevelTextDataComponentReader(List<string> stringIdLookup)
+    public LevelTextDataComponentReader(
+        Version version, 
+        List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    public void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
-        int numberOfItemsInSection = reader.Read16BitUnsignedInteger();
-        int numberOfPreTextItems = reader.Read8BitUnsignedInteger();
+        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
+        int numberOfPreTextItems = rawFileData.Read8BitUnsignedInteger();
         int i = numberOfPreTextItems;
 
         while (i-- > 0)
         {
-            int stringId = reader.Read16BitUnsignedInteger();
+            int stringId = rawFileData.Read16BitUnsignedInteger();
             levelData.PreTextLines.Add(_stringIdLookup[stringId]);
         }
 
-        int numberOfPostTextItems = reader.Read8BitUnsignedInteger();
+        int numberOfPostTextItems = rawFileData.Read8BitUnsignedInteger();
         i = numberOfPostTextItems;
 
         while (i-- > 0)
         {
-            int stringId = reader.Read16BitUnsignedInteger();
+            int stringId = rawFileData.Read16BitUnsignedInteger();
             levelData.PostTextLines.Add(_stringIdLookup[stringId]);
         }
 

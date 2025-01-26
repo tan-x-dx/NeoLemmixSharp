@@ -6,5 +6,5 @@ public interface ILevelDataReader
 {
     bool AlreadyUsed { get; }
     ReadOnlySpan<byte> GetSectionIdentifier();
-    void ReadSection(BinaryReaderWrapper reader, LevelData levelData);
+    void ReadSection(RawFileData rawFileData, LevelData levelData);
 }

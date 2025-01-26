@@ -14,19 +14,21 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.TerrainDataSectionIdentifier;
 
-    public TerrainDataComponentReader(List<string> stringIdLookup)
+    public TerrainDataComponentReader(
+        Version version,
+        List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    public void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
-        int numberOfItemsInSection = reader.Read16BitUnsignedInteger();
+        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
 
         while (numberOfItemsInSection-- > 0)
         {
-            var newTerrainDatum = ReadTerrainData(reader);
+            var newTerrainDatum = ReadTerrainData(rawFileData);
             levelData.AllTerrainData.Add(newTerrainDatum);
         }
 
@@ -36,45 +38,45 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         levelData.TerrainArchetypeData.Sort(this);
     }
 
-    private TerrainData ReadTerrainData(BinaryReaderWrapper reader)
+    private TerrainData ReadTerrainData(RawFileData rawFileData)
     {
-        int numberOfBytesToRead = reader.Read8BitUnsignedInteger();
-        int initialBytesRead = reader.BytesRead;
+        int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
+        int initialBytesRead = rawFileData.BytesRead;
 
-        int styleId = reader.Read16BitUnsignedInteger();
-        int pieceId = reader.Read16BitUnsignedInteger();
+        int styleId = rawFileData.Read16BitUnsignedInteger();
+        int pieceId = rawFileData.Read16BitUnsignedInteger();
 
         var terrainArchetypeData = GetOrAddTerrainArchetypeData(styleId, pieceId);
 
-        int x = reader.Read16BitUnsignedInteger();
-        int y = reader.Read16BitUnsignedInteger();
+        int x = rawFileData.Read16BitUnsignedInteger();
+        int y = rawFileData.Read16BitUnsignedInteger();
 
-        byte orientationByte = reader.Read8BitUnsignedInteger();
+        byte orientationByte = rawFileData.Read8BitUnsignedInteger();
         var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientationByte(orientationByte);
 
-        byte terrainDataMiscByte = reader.Read8BitUnsignedInteger();
+        byte terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
         var decipheredTerrainDataMisc = LevelReadWriteHelpers.DecipherTerrainDataMiscByte(terrainDataMiscByte);
 
         Color? tintColor = null;
         if (decipheredTerrainDataMisc.HasTintSpecified)
         {
-            tintColor = ReadTerrainDataTintColor(reader);
+            tintColor = ReadTerrainDataTintColor(rawFileData);
         }
 
         int? width = null;
         if (decipheredTerrainDataMisc.HasWidthSpecified)
         {
-            width = ReadTerrainDataDimension(reader);
+            width = ReadTerrainDataDimension(rawFileData);
         }
 
         int? height = null;
         if (decipheredTerrainDataMisc.HasHeightSpecified)
         {
-            height = ReadTerrainDataDimension(reader);
+            height = ReadTerrainDataDimension(rawFileData);
         }
 
         AssertTerrainDataBytesMakeSense(
-            reader.BytesRead,
+            rawFileData.BytesRead,
             initialBytesRead,
             numberOfBytesToRead);
 
@@ -99,16 +101,16 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         };
     }
 
-    private static Color ReadTerrainDataTintColor(BinaryReaderWrapper reader)
+    private static Color ReadTerrainDataTintColor(RawFileData rawFileData)
     {
-        var byteBuffer = reader.ReadBytes(3);
+        var byteBuffer = rawFileData.ReadBytes(3);
 
         return new Color(r: byteBuffer[0], g: byteBuffer[1], b: byteBuffer[2], alpha: (byte)0xff);
     }
 
-    private static int ReadTerrainDataDimension(BinaryReaderWrapper reader)
+    private static int ReadTerrainDataDimension(RawFileData rawFileData)
     {
-        return reader.Read16BitUnsignedInteger();
+        return rawFileData.Read16BitUnsignedInteger();
     }
 
     private TerrainArchetypeData GetOrAddTerrainArchetypeData(int styleId, int pieceId)

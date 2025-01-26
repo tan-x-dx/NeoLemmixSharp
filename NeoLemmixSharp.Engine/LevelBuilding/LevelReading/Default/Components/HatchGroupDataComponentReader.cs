@@ -7,14 +7,19 @@ public sealed class HatchGroupDataComponentReader : ILevelDataReader
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.HatchGroupDataSectionIdentifier;
 
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    public HatchGroupDataComponentReader(
+        Version version)
+    {
+    }
+
+    public void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
-        int numberOfItemsInSection = reader.Read16BitUnsignedInteger();
+        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
 
         while (numberOfItemsInSection-- > 0)
         {
-            var byteBuffer = reader.ReadBytes(4);
+            var byteBuffer = rawFileData.ReadBytes(4);
 
             levelData.AllHatchGroupData.Add(new HatchGroupData
             {

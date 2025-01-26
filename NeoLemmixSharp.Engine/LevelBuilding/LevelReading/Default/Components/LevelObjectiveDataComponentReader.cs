@@ -9,12 +9,14 @@ public sealed class LevelObjectiveDataComponentReader : ILevelDataReader
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelObjectivesDataSectionIdentifier;
 
-    public LevelObjectiveDataComponentReader(List<string> stringIdLookup)
+    public LevelObjectiveDataComponentReader(
+        Version version,
+        List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    public void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         throw new NotImplementedException();
     }

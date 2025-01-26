@@ -11,59 +11,61 @@ public sealed class LevelDataComponentReader : ILevelDataReader
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelDataSectionIdentifier;
 
-    public LevelDataComponentReader(List<string> stringIdLookup)
+    public LevelDataComponentReader(
+        Version version,
+        List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    public void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
-        int numberOfItemsInSection = reader.Read16BitUnsignedInteger();
+        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         LevelReadWriteHelpers.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
 
-        int numberOfBytesToRead = reader.Read16BitUnsignedInteger();
-        int initialBytesRead = reader.BytesRead;
+        int numberOfBytesToRead = rawFileData.Read16BitUnsignedInteger();
+        int initialBytesRead = rawFileData.BytesRead;
 
-        int stringId = reader.Read16BitUnsignedInteger();
+        int stringId = rawFileData.Read16BitUnsignedInteger();
         levelData.LevelTitle = _stringIdLookup[stringId];
 
-        stringId = reader.Read16BitUnsignedInteger();
+        stringId = rawFileData.Read16BitUnsignedInteger();
         levelData.LevelAuthor = _stringIdLookup[stringId];
 
-        stringId = reader.Read16BitUnsignedInteger();
+        stringId = rawFileData.Read16BitUnsignedInteger();
         levelData.LevelTheme = _stringIdLookup[stringId];
 
-        levelData.LevelId = reader.Read64BitUnsignedInteger();
-        levelData.Version = reader.Read64BitUnsignedInteger();
+        levelData.LevelId = rawFileData.Read64BitUnsignedInteger();
+        levelData.Version = rawFileData.Read64BitUnsignedInteger();
 
-        ReadLevelDimensionData(reader, levelData);
-        ReadBackgroundData(reader, levelData);
+        ReadLevelDimensionData(rawFileData, levelData);
+        ReadBackgroundData(rawFileData, levelData);
 
         AssertLevelDataBytesMakeSense(
-            reader.BytesRead,
+            rawFileData.BytesRead,
             initialBytesRead,
             numberOfBytesToRead);
     }
 
-    private static void ReadLevelDimensionData(BinaryReaderWrapper reader, LevelData levelData)
+    private static void ReadLevelDimensionData(RawFileData rawFileData, LevelData levelData)
     {
-        levelData.LevelWidth = reader.Read16BitUnsignedInteger();
-        levelData.LevelHeight = reader.Read16BitUnsignedInteger();
+        levelData.LevelWidth = rawFileData.Read16BitUnsignedInteger();
+        levelData.LevelHeight = rawFileData.Read16BitUnsignedInteger();
 
-        int value = reader.Read16BitUnsignedInteger();
+        int value = rawFileData.Read16BitUnsignedInteger();
         if (value != LevelReadWriteHelpers.UnspecifiedLevelStartValue)
         {
             levelData.LevelStartPositionX = value;
         }
 
-        value = reader.Read16BitUnsignedInteger();
+        value = rawFileData.Read16BitUnsignedInteger();
         if (value != LevelReadWriteHelpers.UnspecifiedLevelStartValue)
         {
             levelData.LevelStartPositionY = value;
         }
 
-        var boundaryByte = reader.Read8BitUnsignedInteger();
+        var boundaryByte = rawFileData.Read8BitUnsignedInteger();
 
         DecipherBoundaryBehaviours(levelData, boundaryByte);
     }
@@ -78,9 +80,9 @@ public sealed class LevelDataComponentReader : ILevelDataReader
         levelData.VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
     }
 
-    private void ReadBackgroundData(BinaryReaderWrapper reader, LevelData levelData)
+    private void ReadBackgroundData(RawFileData rawFileData, LevelData levelData)
     {
-        var specifierByte = reader.Read8BitUnsignedInteger();
+        var specifierByte = rawFileData.Read8BitUnsignedInteger();
 
         levelData.LevelBackground = specifierByte switch
         {
@@ -95,7 +97,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 
         BackgroundData ReadSolidColorBackgroundData()
         {
-            var buffer = reader.ReadBytes(3);
+            var buffer = rawFileData.ReadBytes(3);
 
             return new BackgroundData
             {
@@ -107,7 +109,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 
         BackgroundData ReadTextureBackgroundData()
         {
-            var backgroundStringId = reader.Read16BitUnsignedInteger();
+            var backgroundStringId = rawFileData.Read16BitUnsignedInteger();
 
             return new BackgroundData
             {

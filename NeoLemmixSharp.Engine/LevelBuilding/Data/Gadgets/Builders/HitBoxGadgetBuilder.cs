@@ -10,6 +10,7 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
@@ -17,7 +18,7 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
 {
     public required ResizeType ResizeType { get; init; }
     public required int GadgetBuilderId { get; init; }
-    public required GadgetStateArchetypeDataAaa[] AllGadgetStateData { get; init; }
+    public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }
 
     public required SpriteData SpriteData { get; init; }
 
@@ -110,7 +111,7 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
 
     private static LemmingHitBoxFilter[] CreateHitBoxFilters(
         GadgetData gadgetData,
-        GadgetStateArchetypeDataAaa gadgetStateArchetypeData)
+        GadgetStateArchetypeData gadgetStateArchetypeData)
     {
         var result = new LemmingHitBoxFilter[gadgetStateArchetypeData.HitBoxData.Length];
 
@@ -190,29 +191,35 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
             result[numberOfCriteria++] = teamFilter;
         }
 
+        Debug.Assert(numberOfCriteria == result.Length);
+
         return result;
     }
 
     private static SimpleDictionary<OrientationComparer, Orientation, IHitBoxRegion> CreateHitBoxRegionLookup(
         GadgetBounds hitBoxGadgetBounds,
-        HitBoxRegionData hitBoxRegionData)
+        ReadOnlySpan<HitBoxRegionData> hitBoxRegionData)
     {
         var result = OrientationComparer.CreateSimpleDictionary<IHitBoxRegion>();
 
-        IHitBoxRegion hitBoxRegion = hitBoxRegionData.HitBoxType switch
+        foreach (var item in hitBoxRegionData)
         {
-            HitBoxType.Empty => EmptyHitBoxRegion.Instance,
-            HitBoxType.ResizableRectangular => CreateResizableRectangularHitBoxRegion(hitBoxGadgetBounds, hitBoxRegionData.HitBoxData),
-            HitBoxType.Rectangular => CreateRectangularHitBoxRegion(hitBoxRegionData.HitBoxData),
-            HitBoxType.PointSet => new PointSetHitBoxRegion(hitBoxRegionData.HitBoxData),
+            // Can skip this case since it doesn't do anything interesting anyway
+            if (item.HitBoxType == HitBoxType.Empty)
+                continue;
 
-            _ => throw new ArgumentOutOfRangeException(nameof(hitBoxRegionData.HitBoxType), hitBoxRegionData.HitBoxType, "Unknown HitBoxType")
-        };
+            IHitBoxRegion hitBoxRegion = item.HitBoxType switch
+            {
+                HitBoxType.Empty => EmptyHitBoxRegion.Instance,
+                HitBoxType.ResizableRectangular => CreateResizableRectangularHitBoxRegion(hitBoxGadgetBounds, item.HitBoxDefinitionData),
+                HitBoxType.Rectangular => CreateRectangularHitBoxRegion(item.HitBoxDefinitionData),
+                HitBoxType.PointSet => new PointSetHitBoxRegion(item.HitBoxDefinitionData),
 
-        result[Orientation.Down] = hitBoxRegion;
-        result[Orientation.Left] = hitBoxRegion;
-        result[Orientation.Up] = hitBoxRegion;
-        result[Orientation.Right] = hitBoxRegion;
+                _ => throw new ArgumentOutOfRangeException(nameof(item.HitBoxType), item.HitBoxType, "Unknown HitBoxType")
+            };
+
+            result.Add(item.Orientation, hitBoxRegion);
+        }
 
         return result;
 
