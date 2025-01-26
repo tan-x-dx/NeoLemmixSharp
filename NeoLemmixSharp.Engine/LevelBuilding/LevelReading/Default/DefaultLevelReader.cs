@@ -13,7 +13,7 @@ public sealed class DefaultLevelReader : ILevelReader
     {
         _binaryReaderWrapper = new BinaryReaderWrapper(filePath);
 
-        var stringIdLookup = new Dictionary<ushort, string>();
+        var stringIdLookup = new List<string>();
 
         var terrainComponentReader = new TerrainDataComponentReader(stringIdLookup);
         _dataReaders =
@@ -55,19 +55,19 @@ public sealed class DefaultLevelReader : ILevelReader
 
     private Version ReadVersion()
     {
-        var major = _binaryReaderWrapper.Read16BitUnsignedInteger();
+        int major = _binaryReaderWrapper.Read16BitUnsignedInteger();
         AssertNextByteIsPeriod();
-        var minor = _binaryReaderWrapper.Read16BitUnsignedInteger();
+        int minor = _binaryReaderWrapper.Read16BitUnsignedInteger();
         AssertNextByteIsPeriod();
-        var build = _binaryReaderWrapper.Read16BitUnsignedInteger();
+        int build = _binaryReaderWrapper.Read16BitUnsignedInteger();
         AssertNextByteIsPeriod();
-        var revision = _binaryReaderWrapper.Read16BitUnsignedInteger();
+        int revision = _binaryReaderWrapper.Read16BitUnsignedInteger();
 
         return new Version(major, minor, build, revision);
 
         void AssertNextByteIsPeriod()
         {
-            var nextByte = _binaryReaderWrapper.Read8BitUnsignedInteger();
+            int nextByte = _binaryReaderWrapper.Read8BitUnsignedInteger();
 
             LevelReadWriteHelpers.ReaderAssert(nextByte == '.', "Version not in correct format");
         }

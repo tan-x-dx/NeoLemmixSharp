@@ -7,12 +7,12 @@ namespace NeoLemmixSharp.Engine.Level.FacingDirections;
 
 public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
 {
-    public static readonly FacingDirection LeftInstance = new(
+    public static readonly FacingDirection Left = new(
         EngineConstants.LeftFacingDirectionId,
         EngineConstants.LeftFacingDirectionDeltaX,
         EngineConstants.LeftFacingDirectionName);
 
-    public static readonly FacingDirection RightInstance = new(
+    public static readonly FacingDirection Right = new(
         EngineConstants.RightFacingDirectionId,
         EngineConstants.RightFacingDirectionDeltaX,
         EngineConstants.RightFacingDirectionName);
@@ -26,18 +26,18 @@ public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
     {
         var facingDirections = new FacingDirection[2];
 
-        facingDirections[LeftInstance.Id] = LeftInstance;
-        facingDirections[RightInstance.Id] = RightInstance;
+        facingDirections[Left.Id] = Left;
+        facingDirections[Right.Id] = Right;
 
         // No need for id validation here. It's just that simple
 
         return facingDirections;
     }
 
+    private readonly string _name;
+
     public readonly int Id;
     public readonly int DeltaX;
-
-    private readonly string _name;
 
     private FacingDirection(int id, int deltaX, string name)
     {
@@ -55,7 +55,7 @@ public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
     [Pure]
     public Orientation ConvertToRelativeOrientation(Orientation orientation)
     {
-        return Orientation.Rotate(orientation, -DeltaX);
+        return orientation.Rotate(-DeltaX);
     }
 
     int IIdEquatable<FacingDirection>.Id => Id;

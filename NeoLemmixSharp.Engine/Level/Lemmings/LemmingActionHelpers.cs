@@ -86,12 +86,10 @@ public static class LemmingActionHelpers
     {
         foreach (var gadget in gadgets)
         {
-            var currentState = gadget.CurrentState;
-
-            if (!gadget.ContainsPoint(levelPosition))
+            if (!gadget.ContainsPoint(lemming.Orientation, levelPosition))
                 continue;
 
-            var filters = currentState.Filters;
+            var filters = gadget.CurrentState.Filters;
 
             for (var i = 0; i < filters.Length; i++)
             {
@@ -116,7 +114,7 @@ public static class LemmingActionHelpers
         {
             var currentState = gadget.CurrentState;
 
-            if (!gadget.ContainsPoint(levelPosition))
+            if (!gadget.ContainsPoint(lemming.Orientation, levelPosition))
                 continue;
 
             var filters = currentState.Filters;
@@ -141,7 +139,8 @@ public static class LemmingActionHelpers
         if (gadgetsNearLemming.Count == 0)
             return new LevelPosition();
 
-        var lemmingOrientationRotNum = lemming.Orientation.RotNum;
+        var lemmingOrientation = lemming.Orientation;
+        var lemmingOrientationRotNum = lemmingOrientation.RotNum;
 
         var draftDirectionDeltas = new UpdraftBuffer();
 
@@ -150,16 +149,13 @@ public static class LemmingActionHelpers
 
         foreach (var gadget in gadgetsNearLemming)
         {
-            var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientationRotNum) & 3;
-
-            var currentState = gadget.CurrentState;
-
-            if (!gadget.ContainsPoint(anchorPosition) ||
-                !gadget.ContainsPoint(footPosition))
+            if (!gadget.ContainsPoint(lemmingOrientation, anchorPosition) ||
+                !gadget.ContainsPoint(lemmingOrientation, footPosition))
                 continue;
 
-            var filters = currentState.Filters;
+            var filters = gadget.CurrentState.Filters;
             LemmingHitBoxFilter? firstMatchingFilter = null;
+            var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientationRotNum) & 3;
 
             for (var i = 0; i < filters.Length; i++)
             {

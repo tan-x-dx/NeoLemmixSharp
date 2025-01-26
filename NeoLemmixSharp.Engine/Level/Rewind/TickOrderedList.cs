@@ -11,7 +11,7 @@ public sealed class TickOrderedList<TTickOrderedData>
 
     public TickOrderedList(int initialCapacity)
     {
-        _items = new TTickOrderedData[initialCapacity];
+        _items = GC.AllocateUninitializedArray<TTickOrderedData>(initialCapacity);
     }
 
     public int Count => _count;
@@ -118,7 +118,7 @@ public sealed class TickOrderedList<TTickOrderedData>
         var arraySize = _items.Length;
         if (_count == arraySize)
         {
-            var newArray = new TTickOrderedData[arraySize * 2];
+            var newArray = GC.AllocateUninitializedArray<TTickOrderedData>(arraySize * 2);
             new ReadOnlySpan<TTickOrderedData>(_items).CopyTo(newArray);
 
             _items = newArray;

@@ -16,19 +16,15 @@ public sealed class NineSliceRenderer : INineSliceGadgetRender
     private LevelPosition _currentPosition;
     private LevelPosition _previousPosition;
 
-    private int _currentWidth;
-    private int _currentHeight;
-    private int _previousWidth;
-    private int _previousHeight;
+    private LevelSize _currentSize;
+    private LevelSize _previousSize;
 
     public GadgetRenderMode RenderMode { get; }
     public int RendererId { get; set; }
     public int ItemId => _gadget.Id;
 
-    public LevelPosition TopLeftPixel => _currentPosition;
-    public LevelPosition BottomRightPixel => _currentPosition + new LevelPosition(_currentWidth, _currentHeight);
-    public LevelPosition PreviousTopLeftPixel => _previousPosition;
-    public LevelPosition PreviousBottomRightPixel => _previousPosition + new LevelPosition(_previousWidth, _previousHeight);
+    public LevelRegion CurrentBounds => new(_currentPosition, _currentSize);
+    public LevelRegion PreviousBounds => new(_previousPosition, _previousSize);
 
     public NineSliceRenderer(
         Texture2D texture,
@@ -49,7 +45,7 @@ public sealed class NineSliceRenderer : INineSliceGadgetRender
         _gadget = gadget;
     }
 
-    public Rectangle GetSpriteBounds() => new(_currentPosition.X, _currentPosition.Y, _currentWidth, _currentHeight);
+    public Rectangle GetSpriteBounds() => new(_currentPosition.X, _currentPosition.Y, _currentSize.W, _currentSize.H);
 
     public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY)
     {

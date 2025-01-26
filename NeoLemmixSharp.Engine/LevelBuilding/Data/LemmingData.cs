@@ -12,8 +12,8 @@ public sealed class LemmingData
     public int Y { get; set; }
     public uint State { get; set; }
 
-    public Orientation Orientation { get; set; } = DownOrientation.Instance;
-    public FacingDirection FacingDirection { get; set; } = FacingDirection.RightInstance;
+    public Orientation Orientation { get; set; } = Orientation.Down;
+    public FacingDirection FacingDirection { get; set; } = FacingDirection.Right;
     public Team Team { get; set; } = Team.AllItems[EngineConstants.ClassicTeamId];
     public LemmingAction InitialLemmingAction { get; set; } = WalkerAction.Instance;
 }

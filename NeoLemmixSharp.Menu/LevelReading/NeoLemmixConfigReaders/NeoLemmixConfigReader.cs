@@ -16,6 +16,18 @@ public static class NeoLemmixConfigReader
 
     public static LevelPackData? TryCreateLevelPackData(string folderPath)
     {
+        try
+        {
+            return CreateLevelPackData(folderPath);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private static LevelPackData? CreateLevelPackData(string folderPath)
+    {
         var groupReadResult = TryReadGroupDataFromFolder(
             folderPath,
             out var packData,
@@ -59,46 +71,45 @@ public static class NeoLemmixConfigReader
             postViewData = PostViewMessageData.DefaultMessages;
         }
 
-        if (TryReadPackInfoData(files, out packData) &&
-            TryReadRawGroupData(folderPath, files, out var rawGroupData))
+        if (!TryReadPackInfoData(files, out packData) ||
+            !TryReadRawGroupData(folderPath, files, out var rawGroupData))
         {
-            // Nice case: This is an actual level group folder.
-            // The subfolders will either contain subgroups,
-            // or levels
+            var result = TryReadLevels(folderPath, files, out levelFilenames)
+                ? GroupReadResult.Levels
+                : GroupReadResult.Failure;
 
-            groupData = new List<LevelPackGroupData>(rawGroupData.Count);
-
-            foreach (var rawGroupDatum in rawGroupData)
-            {
-                var subFolder = rawGroupDatum.FolderPath;
-
-                var groupReadResult = TryReadGroupDataFromFolder(
-                    subFolder,
-                    out var subPackData,
-                    out var subGroupData,
-                    out var levelFileNames);
-
-                if (groupReadResult == GroupReadResult.Group)
-                {
-                    groupData.Add(CreateGroup(rawGroupDatum, subPackData!, postViewData, subGroupData!));
-                }
-                else if (groupReadResult == GroupReadResult.Levels)
-                {
-                    groupData.Add(CreateGroup(rawGroupDatum, packData, postViewData, levelFileNames));
-                }
-            }
-
-            levelFilenames = [];
-
-            return GroupReadResult.Group;
+            groupData = null;
+            return result;
         }
 
-        var result = TryReadLevels(folderPath, files, out levelFilenames)
-            ? GroupReadResult.Levels
-            : GroupReadResult.Failure;
+        // Nice case: This is an actual level group folder.
+        // The subfolders will either contain subgroups or levels
 
-        groupData = null;
-        return result;
+        groupData = new List<LevelPackGroupData>(rawGroupData.Count);
+
+        foreach (var rawGroupDatum in rawGroupData)
+        {
+            var subFolder = rawGroupDatum.FolderPath;
+
+            var groupReadResult = TryReadGroupDataFromFolder(
+                subFolder,
+                out var subPackData,
+                out var subGroupData,
+                out var levelFileNames);
+
+            if (groupReadResult == GroupReadResult.Group)
+            {
+                groupData.Add(CreateGroup(rawGroupDatum, subPackData!, postViewData, subGroupData!));
+            }
+            else if (groupReadResult == GroupReadResult.Levels)
+            {
+                groupData.Add(CreateGroup(rawGroupDatum, packData, postViewData, levelFileNames));
+            }
+        }
+
+        levelFilenames = [];
+
+        return GroupReadResult.Group;
     }
 
     private static LevelPackGroupData CreateGroup(

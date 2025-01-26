@@ -16,8 +16,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     private Lemming _lemming;
     private LemmingActionSprite _actionSprite;
-    private Rectangle _previousSpriteBounds;
     private Rectangle _spriteBounds;
+    private Rectangle _previousSpriteBounds;
 
     private bool _shouldRenderCountDown;
 
@@ -26,10 +26,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     public int RendererId { get; set; }
     public int ItemId => _lemming.Id;
 
-    public LevelPosition TopLeftPixel => _spriteBounds.TopLeftLevelPosition();
-    public LevelPosition BottomRightPixel => _spriteBounds.BottomRightLevelPosition();
-    public LevelPosition PreviousTopLeftPixel => _previousSpriteBounds.TopLeftLevelPosition();
-    public LevelPosition PreviousBottomRightPixel => _previousSpriteBounds.BottomRightLevelPosition();
+    public LevelRegion CurrentBounds => new(_spriteBounds);
+    public LevelRegion PreviousBounds => new(_previousSpriteBounds);
 
     public LemmingRenderer(Lemming lemming)
     {

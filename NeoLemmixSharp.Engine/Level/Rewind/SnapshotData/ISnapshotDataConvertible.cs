@@ -3,6 +3,6 @@
 public interface ISnapshotDataConvertible<TSnapshotData>
     where TSnapshotData : unmanaged
 {
-    void ToSnapshotData(out TSnapshotData snapshotData);
+    void WriteToSnapshotData(out TSnapshotData snapshotData);
     void SetFromSnapshotData(in TSnapshotData snapshotData);
 }

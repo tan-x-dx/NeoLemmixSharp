@@ -55,7 +55,7 @@ public sealed class LemmingReader : NeoLemmixDataReader
 
     private void SetFlipHorizontal(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.FacingDirection = FacingDirection.LeftInstance;
+        _currentLemmingData!.FacingDirection = FacingDirection.Left;
     }
 
     private void SetBlocker(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)

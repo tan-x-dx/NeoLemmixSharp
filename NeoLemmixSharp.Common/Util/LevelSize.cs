@@ -13,8 +13,10 @@ public readonly struct LevelSize : IEquatable<LevelSize>
     [DebuggerStepThrough]
     public LevelSize(int w, int h)
     {
-        W = Math.Max(0, w);
-        H = Math.Max(0, h);
+        W = w;
+        if (W < 0) W = 0;
+        H = h;
+        if (H < 0) H = 0;
     }
 
     [DebuggerStepThrough]
@@ -29,7 +31,7 @@ public readonly struct LevelSize : IEquatable<LevelSize>
 
     [DebuggerStepThrough]
     public bool Equals(LevelSize other) => W == other.W && H == other.H;
-    public override bool Equals([NotNullWhen(true)] object? obj) => (obj is LevelSize other) && W == other.W && H == other.H;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is LevelSize other && W == other.W && H == other.H;
     public override int GetHashCode() => 8322929 * W +
                                          5282777 * H +
                                          4685531;
@@ -42,7 +44,6 @@ public readonly struct LevelSize : IEquatable<LevelSize>
         return buffer[..charsWritten].ToString();
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryFormat(Span<char> destination, out int charsWritten)
     {
         var source = MemoryMarshal.CreateReadOnlySpan(in W, 2);

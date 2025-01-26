@@ -16,7 +16,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     public static int NumberOfItems => LemmingSkills.Length;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
-    public static SimpleSetEnumerable<ExtendedEnumTypeComparer<LemmingSkill>, LemmingSkill> AllClassicSkills => ClassicSkills.AsSimpleEnumerable();
+    public static SimpleSetEnumerable<LemmingSkillComparer, LemmingSkill> AllClassicSkills => ClassicSkills.AsSimpleEnumerable();
 
     private static LemmingSkill[] RegisterAllLemmingSkills()
     {
@@ -137,7 +137,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static LemmingSkillSet CreateEmptySimpleSet() => ExtendedEnumTypeComparer<LemmingSkill>.CreateSimpleSet();
+    public static LemmingSkillSet CreateEmptySimpleSet() => LemmingSkillComparer.CreateSimpleSet();
 
     private readonly LemmingActionSet _assignableActions;
     public readonly int Id;

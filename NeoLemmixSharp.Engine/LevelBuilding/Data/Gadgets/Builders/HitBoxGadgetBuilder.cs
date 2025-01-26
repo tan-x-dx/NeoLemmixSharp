@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
@@ -26,6 +27,7 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
         LemmingManager lemmingManager)
     {
         var gadgetBounds = GetGadgetBounds(gadgetData);
+        var resizeType = GetResizeTypeForGadgetOrientation(gadgetData);
         var gadgetStates = GetGadgetStates(gadgetData, gadgetBounds);
         var initialStateIndex = gadgetData.InitialStateId;
 
@@ -35,10 +37,10 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
             gadgetData.Id,
             gadgetData.Orientation,
             gadgetBounds,
+            resizeType,
             lemmingTracker,
             gadgetStates,
-            initialStateIndex,
-            ResizeType);
+            initialStateIndex);
     }
 
     private GadgetBounds GetGadgetBounds(GadgetData gadgetData)
@@ -49,15 +51,34 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
             Y = gadgetData.Y
         };
 
-        result.Width = ResizeType.HasFlag(ResizeType.ResizeHorizontal)
-            ? gadgetData.GetProperty(GadgetProperty.Width)
-            : SpriteData.SpriteWidth;
-
-        result.Height = ResizeType.HasFlag(ResizeType.ResizeVertical)
-            ? gadgetData.GetProperty(GadgetProperty.Height)
-            : SpriteData.SpriteHeight;
+        if (gadgetData.Orientation.IsParallelTo(Orientation.Down))
+        {
+            result.Width = ResizeType.CanResizeHorizontally()
+                ? gadgetData.GetProperty(GadgetProperty.Width)
+                : SpriteData.SpriteWidth;
+            result.Height = ResizeType.CanResizeVertically()
+                ? gadgetData.GetProperty(GadgetProperty.Height)
+                : SpriteData.SpriteHeight;
+        }
+        else
+        {
+            result.Width = ResizeType.CanResizeVertically()
+                ? gadgetData.GetProperty(GadgetProperty.Height)
+                : SpriteData.SpriteHeight;
+            result.Height = ResizeType.CanResizeHorizontally()
+                ? gadgetData.GetProperty(GadgetProperty.Width)
+                : SpriteData.SpriteWidth;
+        }
 
         return result;
+    }
+
+    private ResizeType GetResizeTypeForGadgetOrientation(GadgetData gadgetData)
+    {
+        if (gadgetData.Orientation.IsParallelTo(Orientation.Down))
+            return ResizeType;
+
+        return ResizeType.SwapComponents();
     }
 
     private GadgetState[] GetGadgetStates(
@@ -71,7 +92,7 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
             var gadgetStateArchetypeData = AllGadgetStateData[i];
 
             var animationController = gadgetStateArchetypeData.GetAnimationController();
-            var hitBoxRegion = CreateHitBoxRegion(
+            var hitBoxRegionLookup = CreateHitBoxRegionLookup(
                 hitBoxGadgetBounds,
                 gadgetStateArchetypeData.RegionData);
             var hitBoxFilters = CreateHitBoxFilters(
@@ -79,9 +100,9 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
                 gadgetStateArchetypeData);
 
             result[i] = new GadgetState(
-                animationController,
-                hitBoxRegion,
-                hitBoxFilters);
+                hitBoxFilters,
+                hitBoxRegionLookup,
+                animationController);
         }
 
         return result;
@@ -172,11 +193,13 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
         return result;
     }
 
-    private static IHitBoxRegion CreateHitBoxRegion(
+    private static SimpleDictionary<OrientationComparer, Orientation, IHitBoxRegion> CreateHitBoxRegionLookup(
         GadgetBounds hitBoxGadgetBounds,
         HitBoxRegionData hitBoxRegionData)
     {
-        return hitBoxRegionData.HitBoxType switch
+        var result = OrientationComparer.CreateSimpleDictionary<IHitBoxRegion>();
+
+        IHitBoxRegion hitBoxRegion = hitBoxRegionData.HitBoxType switch
         {
             HitBoxType.Empty => EmptyHitBoxRegion.Instance,
             HitBoxType.ResizableRectangular => CreateResizableRectangularHitBoxRegion(hitBoxGadgetBounds, hitBoxRegionData.HitBoxData),
@@ -185,6 +208,13 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
 
             _ => throw new ArgumentOutOfRangeException(nameof(hitBoxRegionData.HitBoxType), hitBoxRegionData.HitBoxType, "Unknown HitBoxType")
         };
+
+        result[Orientation.Down] = hitBoxRegion;
+        result[Orientation.Left] = hitBoxRegion;
+        result[Orientation.Up] = hitBoxRegion;
+        result[Orientation.Right] = hitBoxRegion;
+
+        return result;
 
         static RectangularHitBoxRegion CreateRectangularHitBoxRegion(
             ReadOnlySpan<LevelPosition> hitBoxRegionData)

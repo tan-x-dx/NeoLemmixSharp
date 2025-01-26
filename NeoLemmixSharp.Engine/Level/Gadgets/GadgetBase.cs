@@ -19,22 +19,32 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     public Orientation Orientation { get; }
     public abstract IGadgetRenderer Renderer { get; }
 
-    public LevelPosition Position => _currentGadgetBounds.TopLeftPosition;
+    public LevelPosition Position => _currentGadgetBounds.Position;
     public LevelSize Size => _currentGadgetBounds.Size;
 
     protected GadgetBase(
         int id,
         Orientation orientation,
-        GadgetBounds hitBoxGadgetBounds)
+        GadgetBounds gadgetBounds)
     {
         Id = id;
         Orientation = orientation;
-        _currentGadgetBounds = hitBoxGadgetBounds;
+        _currentGadgetBounds = gadgetBounds;
         _previousGadgetBounds = new GadgetBounds();
-        _previousGadgetBounds.SetFrom(hitBoxGadgetBounds);
+        _previousGadgetBounds.SetFrom(gadgetBounds);
     }
 
-    protected void RegisterInput(IGadgetInput gadgetInput) => _inputs.Add(gadgetInput);
+    protected void RegisterInput(IGadgetInput gadgetInput)
+    {
+        for (var i = 0; i < _inputs.Count; i++)
+        {
+            var input = _inputs[i];
+            if (string.Equals(input.InputName, gadgetInput.InputName, StringComparison.Ordinal))
+                throw new ArgumentException($"An input with that name has already been registered! - {gadgetInput.InputName}");
+        }
+
+        _inputs.Add(gadgetInput);
+    }
 
     public bool TryGetInputWithName(string inputName, [MaybeNullWhen(false)] out IGadgetInput gadgetInput)
     {
@@ -61,7 +71,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     public static bool operator ==(GadgetBase left, GadgetBase right) => left.Id == right.Id;
     public static bool operator !=(GadgetBase left, GadgetBase right) => left.Id != right.Id;
 
-    public void ToSnapshotData(out int snapshotData)
+    public void WriteToSnapshotData(out int snapshotData)
     {
         snapshotData = 0;
     }

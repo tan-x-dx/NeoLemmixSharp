@@ -75,7 +75,7 @@ public sealed class BlockerAction : LemmingAction
         var lemmingFacingDirection = lemming.FacingDirection;
         var lemmingFacingDirectionAsOrientation = lemmingFacingDirection.ConvertToRelativeOrientation(lemming.Orientation);
 
-        if (lemmingFacingDirectionAsOrientation != Orientation.GetOpposite(pixelBlockerOrientation))
+        if (lemmingFacingDirectionAsOrientation != pixelBlockerOrientation.GetOpposite())
             return false;
 
         ForceLemmingDirection(lemming, lemmingFacingDirection.GetOpposite());
@@ -199,14 +199,14 @@ public sealed class BlockerAction : LemmingAction
     [Pure]
     private static PixelType GetRightArmPixelType(Orientation orientation)
     {
-        orientation = Orientation.RotateCounterClockwise(orientation);
+        orientation = orientation.RotateCounterClockwise();
         return (PixelType)(1 << (PixelTypeHelpers.PixelTypeBlockerShiftOffset + orientation.RotNum));
     }
 
     [Pure]
     private static PixelType GetLeftArmPixelType(Orientation orientation)
     {
-        orientation = Orientation.RotateClockwise(orientation);
+        orientation = orientation.RotateClockwise();
         return (PixelType)(1 << (PixelTypeHelpers.PixelTypeBlockerShiftOffset + orientation.RotNum));
     }
 }

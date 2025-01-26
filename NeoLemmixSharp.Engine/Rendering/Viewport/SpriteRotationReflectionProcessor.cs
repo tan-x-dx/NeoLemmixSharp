@@ -36,17 +36,17 @@ public sealed class SpriteRotationReflectionProcessor<T>
     {
         var result = new T[Orientation.NumberOfItems * FacingDirection.NumberOfItems];
 
-        CreateSpritesForDirections(DownOrientation.Instance, FacingDirection.RightInstance);
-        CreateSpritesForDirections(DownOrientation.Instance, FacingDirection.LeftInstance);
+        CreateSpritesForDirections(Orientation.Down, FacingDirection.Right);
+        CreateSpritesForDirections(Orientation.Down, FacingDirection.Left);
 
-        CreateSpritesForDirections(RightOrientation.Instance, FacingDirection.RightInstance);
-        CreateSpritesForDirections(RightOrientation.Instance, FacingDirection.LeftInstance);
+        CreateSpritesForDirections(Orientation.Right, FacingDirection.Right);
+        CreateSpritesForDirections(Orientation.Right, FacingDirection.Left);
 
-        CreateSpritesForDirections(UpOrientation.Instance, FacingDirection.RightInstance);
-        CreateSpritesForDirections(UpOrientation.Instance, FacingDirection.LeftInstance);
+        CreateSpritesForDirections(Orientation.Up, FacingDirection.Right);
+        CreateSpritesForDirections(Orientation.Up, FacingDirection.Left);
 
-        CreateSpritesForDirections(LeftOrientation.Instance, FacingDirection.RightInstance);
-        CreateSpritesForDirections(LeftOrientation.Instance, FacingDirection.LeftInstance);
+        CreateSpritesForDirections(Orientation.Left, FacingDirection.Right);
+        CreateSpritesForDirections(Orientation.Left, FacingDirection.Left);
 
         return result;
 
@@ -144,7 +144,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
                 ThisSpriteWidth = _originalSpriteHeight;
                 ThisSpriteHeight = _originalSpriteWidth;
 
-                if (facingDirection == FacingDirection.LeftInstance)
+                if (facingDirection == FacingDirection.Left)
                 {
                     rotNum = (rotNum + 2) & 3;
                     flipHorizontally = true;
@@ -159,7 +159,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
                 ThisSpriteWidth = _originalSpriteWidth;
                 ThisSpriteHeight = _originalSpriteHeight;
 
-                flipHorizontally = facingDirection == FacingDirection.LeftInstance;
+                flipHorizontally = facingDirection == FacingDirection.Left;
             }
 
             var uints = new Color[originalSpriteWidth * originalSpriteHeight * numberOfFrames * numberOfLayers];

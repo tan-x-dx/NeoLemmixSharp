@@ -12,18 +12,18 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
         AlreadyUsed = true;
-        var numberOfItemsInSection = reader.Read16BitUnsignedInteger();
+        int numberOfItemsInSection = reader.Read16BitUnsignedInteger();
 
         while (numberOfItemsInSection-- > 0)
         {
-            var x = reader.Read16BitUnsignedInteger();
-            var y = reader.Read16BitUnsignedInteger();
-            var state = reader.Read32BitUnsignedInteger();
+            int x = reader.Read16BitUnsignedInteger();
+            int y = reader.Read16BitUnsignedInteger();
+            uint state = reader.Read32BitUnsignedInteger();
 
-            var orientationByte = reader.Read8BitUnsignedInteger();
+            byte orientationByte = reader.Read8BitUnsignedInteger();
             var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientationByte(orientationByte);
-            var teamId = reader.Read8BitUnsignedInteger();
-            var initialActionId = reader.Read8BitUnsignedInteger();
+            int teamId = reader.Read8BitUnsignedInteger();
+            int initialActionId = reader.Read8BitUnsignedInteger();
 
             levelData.PrePlacedLemmingData.Add(new LemmingData
             {

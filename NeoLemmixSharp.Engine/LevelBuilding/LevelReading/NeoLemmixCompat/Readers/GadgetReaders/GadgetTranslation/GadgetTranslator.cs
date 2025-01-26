@@ -95,8 +95,8 @@ public readonly ref partial struct GadgetTranslator
 
         orientation = Orientation.AllItems[rotNum];
         facingDirection = flip
-            ? FacingDirection.LeftInstance
-            : FacingDirection.RightInstance;
+            ? FacingDirection.Left
+            : FacingDirection.Right;
     }
 
     private static GadgetRenderMode GetGadgetRenderMode(NeoLemmixGadgetData prototype)

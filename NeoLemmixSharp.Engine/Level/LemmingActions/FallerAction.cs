@@ -91,16 +91,15 @@ public sealed class FallerAction : LemmingAction
 
         var anchorPixel = lemming.LevelPosition;
         var footPixel = lemming.FootPosition;
+        var orientation = lemming.Orientation;
 
         foreach (var gadget in gadgetEnumerable)
         {
-            var currentState = gadget.CurrentState;
-
-            if (!gadget.ContainsPoint(anchorPixel) ||
-                !gadget.ContainsPoint(footPixel))
+            if (!gadget.ContainsPoint(orientation, anchorPixel) ||
+                !gadget.ContainsPoint(orientation, footPixel))
                 continue;
 
-            var filters = currentState.Filters;
+            var filters = gadget.CurrentState.Filters;
 
             for (var i = 0; i < filters.Length; i++)
             {

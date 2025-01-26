@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
 public sealed class SpacialHashGrid<TPerfectHasher, T>
     where TPerfectHasher : class, IPerfectHasher<T>
-    where T : class, IRectangularBounds
+    where T : class, IPreviousRectangularBounds
 {
     private readonly TPerfectHasher _hasher;
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
@@ -24,8 +24,8 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     private readonly uint[] _cachedQueryScratchSpace;
     private readonly uint[] _allBits;
 
-    private LevelPosition _cachedTopLeftChunkQuery;
-    private LevelPosition _cachedBottomRightChunkQuery;
+    private LevelPosition _cachedTopLeftChunkQuery = new(-256, -256);
+    private LevelPosition _cachedBottomRightChunkQuery = new(-256, -256);
     private int _cachedQueryCount;
 
     public SpacialHashGrid(
@@ -118,11 +118,11 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             return;
         }
 
-        var topLeftChunk = GetChunkForPoint(levelRegion.P1);
-        var bottomRightChunk = GetChunkForPoint(levelRegion.P2);
+        var topLeftChunk = GetTopLeftChunkForRegion(levelRegion);
+        var bottomRightChunk = GetBottomRightChunkForRegion(levelRegion);
 
-        if (topLeftChunk == _cachedTopLeftChunkQuery &&
-            bottomRightChunk == _cachedBottomRightChunkQuery)
+        if (_cachedTopLeftChunkQuery == topLeftChunk &&
+            _cachedBottomRightChunkQuery == bottomRightChunk)
         {
             // If we've already got the data cached, just use it
             new ReadOnlySpan<uint>(_cachedQueryScratchSpace).CopyTo(scratchSpaceSpan);
@@ -156,15 +156,11 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         if (!_allTrackedItems.Add(item))
             throw new InvalidOperationException("Already tracking item!");
 
-        var topLeftChunk = GetChunkForPoint(item.TopLeftPixel);
-        var bottomRightChunk = GetChunkForPoint(item.BottomRightPixel);
+        var currentBounds = item.CurrentBounds;
+        var topLeftChunk = GetTopLeftChunkForRegion(currentBounds);
+        var bottomRightChunk = GetBottomRightChunkForRegion(currentBounds);
 
-        var p1 = new LevelRegion(_cachedTopLeftChunkQuery, _cachedBottomRightChunkQuery);
-        var p2 = new LevelRegion(topLeftChunk, bottomRightChunk);
-        if (p1.Overlaps(p2))
-        {
-            ClearCachedData();
-        }
+        ClearCachedData();
 
         RegisterItemPosition(item, topLeftChunk, bottomRightChunk);
     }
@@ -174,27 +170,22 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         if (!_allTrackedItems.Contains(item))
             throw new InvalidOperationException("Item not registered!");
 
-        var topLeftChunk = GetChunkForPoint(item.TopLeftPixel);
-        var bottomRightChunk = GetChunkForPoint(item.BottomRightPixel);
+        var currentBounds = item.CurrentBounds;
+        var currentTopLeftChunk = GetTopLeftChunkForRegion(currentBounds);
+        var currentBottomRightChunk = GetBottomRightChunkForRegion(currentBounds);
 
-        var previousTopLeftChunk = GetChunkForPoint(item.PreviousTopLeftPixel);
-        var previousBottomRightChunk = GetChunkForPoint(item.PreviousBottomRightPixel);
+        var previousBounds = item.PreviousBounds;
+        var previousTopLeftChunk = GetTopLeftChunkForRegion(previousBounds);
+        var previousBottomRightChunk = GetBottomRightChunkForRegion(previousBounds);
 
-        if (topLeftChunk == previousTopLeftChunk &&
-            bottomRightChunk == previousBottomRightChunk)
+        if (currentTopLeftChunk == previousTopLeftChunk &&
+            currentBottomRightChunk == previousBottomRightChunk)
             return;
 
-        var p1 = new LevelRegion(_cachedTopLeftChunkQuery, _cachedBottomRightChunkQuery);
-        var p2 = new LevelRegion(topLeftChunk, bottomRightChunk);
-        var p3 = new LevelRegion(previousTopLeftChunk, previousBottomRightChunk);
-        if (p1.Overlaps(p2) ||
-            p1.Overlaps(p3))
-        {
-            ClearCachedData();
-        }
+        ClearCachedData();
 
         DeregisterItemPosition(item, previousTopLeftChunk, previousBottomRightChunk);
-        RegisterItemPosition(item, topLeftChunk, bottomRightChunk);
+        RegisterItemPosition(item, currentTopLeftChunk, currentBottomRightChunk);
     }
 
     private void RegisterItemPosition(T item, LevelPosition topLeftChunk, LevelPosition bottomRightChunk)
@@ -217,25 +208,20 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         if (!_allTrackedItems.Remove(item))
             throw new InvalidOperationException("Not tracking item!");
 
-        var topLeftChunk = GetChunkForPoint(item.TopLeftPixel);
-        var bottomRightChunk = GetChunkForPoint(item.BottomRightPixel);
+        var currentBounds = item.CurrentBounds;
+        var currentTopLeftChunk = GetTopLeftChunkForRegion(currentBounds);
+        var currentBottomRightChunk = GetBottomRightChunkForRegion(currentBounds);
 
-        DeregisterItemPosition(item, topLeftChunk, bottomRightChunk);
+        DeregisterItemPosition(item, currentTopLeftChunk, currentBottomRightChunk);
 
-        var previousTopLeftChunk = GetChunkForPoint(item.PreviousTopLeftPixel);
-        var previousBottomRightChunk = GetChunkForPoint(item.PreviousBottomRightPixel);
+        var previousBounds = item.PreviousBounds;
+        var previousTopLeftChunk = GetTopLeftChunkForRegion(previousBounds);
+        var previousBottomRightChunk = GetBottomRightChunkForRegion(previousBounds);
 
-        var p1 = new LevelRegion(_cachedTopLeftChunkQuery, _cachedBottomRightChunkQuery);
-        var p2 = new LevelRegion(topLeftChunk, bottomRightChunk);
-        var p3 = new LevelRegion(previousTopLeftChunk, previousBottomRightChunk);
-        if (p1.Overlaps(p2) ||
-            p1.Overlaps(p3))
-        {
-            ClearCachedData();
-        }
+        ClearCachedData();
 
-        if (topLeftChunk == previousTopLeftChunk &&
-            bottomRightChunk == previousBottomRightChunk)
+        if (currentTopLeftChunk == previousTopLeftChunk &&
+            currentBottomRightChunk == previousBottomRightChunk)
             return;
 
         DeregisterItemPosition(item, previousTopLeftChunk, previousBottomRightChunk);
@@ -256,14 +242,22 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         ModifyChunks(ChunkOperationType.Remove, item, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
     }
 
-    private LevelPosition GetChunkForPoint(LevelPosition levelPosition)
+    private LevelPosition GetTopLeftChunkForRegion(LevelRegion levelRegion)
     {
-        var chunkX = _horizontalBoundaryBehaviour.Normalise(levelPosition.X) >> _chunkSizeBitShift;
-        var chunkY = _verticalBoundaryBehaviour.Normalise(levelPosition.Y) >> _chunkSizeBitShift;
-        chunkX = Math.Clamp(chunkX, 0, _numberOfHorizontalChunks - 1);
-        chunkY = Math.Clamp(chunkY, 0, _numberOfVerticalChunks - 1);
+        return ConvertToChunkPosition(levelRegion.P);
+    }
 
-        return new LevelPosition(chunkX, chunkY);
+    private LevelPosition GetBottomRightChunkForRegion(LevelRegion levelRegion)
+    {
+        return ConvertToChunkPosition(levelRegion.GetBottomRight());
+    }
+
+    private LevelPosition ConvertToChunkPosition(LevelPosition position)
+    {
+        var x = _horizontalBoundaryBehaviour.Normalise(position.X) >> _chunkSizeBitShift;
+        var y = _verticalBoundaryBehaviour.Normalise(position.Y) >> _chunkSizeBitShift;
+
+        return new LevelPosition(x, y);
     }
 
     /// <summary>
@@ -411,6 +405,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         return index;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void ClearCachedData()
     {
         _cachedTopLeftChunkQuery = new LevelPosition(-256, -256);

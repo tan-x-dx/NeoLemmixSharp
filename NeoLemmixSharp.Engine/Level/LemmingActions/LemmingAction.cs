@@ -122,7 +122,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static LemmingActionSet CreateEmptySimpleSet() => ExtendedEnumTypeComparer<LemmingAction>.CreateSimpleSet();
+    public static LemmingActionSet CreateEmptySimpleSet() => LemmingActionComparer.CreateSimpleSet();
 
     public readonly int Id;
     public readonly string LemmingActionName;

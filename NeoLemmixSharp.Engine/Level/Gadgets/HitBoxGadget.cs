@@ -15,7 +15,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 #pragma warning disable CS0660, CS0661, CA1067
 public sealed class HitBoxGadget : GadgetBase,
     IIdEquatable<HitBoxGadget>,
-    IRectangularBounds,
+    IPreviousRectangularBounds,
     IAnimationControlledGadget,
     IMoveableGadget,
     IResizeableGadget
@@ -36,21 +36,21 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public override GadgetLayerRenderer Renderer => _renderer;
 
-    // The below properties refer to the position of the hitbox, not the gadget itself    
-    public LevelPosition TopLeftPixel => _currentGadgetBounds.TopLeftPosition + _currentState.HitBoxRegion.Offset;
-    public LevelPosition BottomRightPixel => _currentGadgetBounds.BottomRightPosition + _currentState.HitBoxRegion.Offset + _currentState.HitBoxRegion.BoundingBoxDimensions;
-    public LevelPosition PreviousTopLeftPixel => _previousGadgetBounds.TopLeftPosition + _previousState.HitBoxRegion.Offset;
-    public LevelPosition PreviousBottomRightPixel => _previousGadgetBounds.BottomRightPosition + _previousState.HitBoxRegion.Offset + _previousState.HitBoxRegion.BoundingBoxDimensions;
+    // The below properties refer to the positions of the hitboxes, not the gadget itself   
+
+    public LevelRegion CurrentBounds => _currentState.GetBounds(_currentGadgetBounds);
+    public LevelRegion PreviousBounds => _previousState.GetBounds(_previousGadgetBounds);
+
     public ResizeType ResizeType { get; }
 
     public HitBoxGadget(
         int id,
         Orientation orientation,
         GadgetBounds initialGadgetBounds,
+        ResizeType resizeType,
         LemmingTracker lemmingTracker,
         GadgetState[] states,
-        int initialStateIndex,
-        ResizeType resizeType)
+        int initialStateIndex)
         : base(id, orientation, initialGadgetBounds)
     {
         _lemmingTracker = lemmingTracker;
@@ -100,11 +100,11 @@ public sealed class HitBoxGadget : GadgetBase,
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
-    public bool ContainsPoint(LevelPosition levelPosition)
+    public bool ContainsPoint(Orientation orientation, LevelPosition levelPosition)
     {
-        var p = levelPosition - TopLeftPixel;
+        var p = levelPosition - _currentGadgetBounds.Position;
 
-        return _currentState.HitBoxRegion.ContainsPoint(p);
+        return _currentState.HitBoxFor(orientation).ContainsPoint(p);
     }
 
     public void OnLemmingHit(
@@ -158,20 +158,39 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public void Resize(int dw, int dh)
     {
+        if (ResizeType == ResizeType.None)
+            return;
+
         _previousGadgetBounds.SetFrom(_currentGadgetBounds);
         _previousState = _currentState;
 
-        _currentGadgetBounds.ModifySize(new LevelSize(dw, dh));
+        if (ResizeType.CanResizeHorizontally())
+        {
+            _currentGadgetBounds.Width += dw;
+        }
+        if (ResizeType.CanResizeVertically())
+        {
+            _currentGadgetBounds.Height += dh;
+        }
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
     public void SetSize(int w, int h)
     {
+        if (ResizeType == ResizeType.None)
+            return;
+
         _previousGadgetBounds.SetFrom(_currentGadgetBounds);
         _previousState = _currentState;
 
-        _currentGadgetBounds.Width = w;
-        _currentGadgetBounds.Height = h;
+        if (ResizeType.CanResizeHorizontally())
+        {
+            _currentGadgetBounds.Width = w;
+        }
+        if (ResizeType.CanResizeVertically())
+        {
+            _currentGadgetBounds.Height = h;
+        }
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 

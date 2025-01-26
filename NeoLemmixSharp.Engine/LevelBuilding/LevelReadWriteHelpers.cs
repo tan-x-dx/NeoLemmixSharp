@@ -74,11 +74,12 @@ public static class LevelReadWriteHelpers
 
     public static DecipheredTerrainDataMisc DecipherTerrainDataMiscByte(byte b)
     {
-        var erase = ((b >> TerrainDataEraseBitShift) & 1) != 0;
-        var noOverwrite = ((b >> TerrainDataNoOverwriteBitShift) & 1) != 0;
-        var hasTintSpecified = ((b >> TerrainDataTintBitShift) & 1) != 0;
-        var hasWidthSpecified = ((b >> TerrainDataResizeWidthBitShift) & 1) != 0;
-        var hasHeightSpecified = ((b >> TerrainDataResizeHeightBitShift) & 1) != 0;
+        int intValue = b;
+        var erase = ((intValue >> TerrainDataEraseBitShift) & 1) != 0;
+        var noOverwrite = ((intValue >> TerrainDataNoOverwriteBitShift) & 1) != 0;
+        var hasTintSpecified = ((intValue >> TerrainDataTintBitShift) & 1) != 0;
+        var hasWidthSpecified = ((intValue >> TerrainDataResizeWidthBitShift) & 1) != 0;
+        var hasHeightSpecified = ((intValue >> TerrainDataResizeHeightBitShift) & 1) != 0;
 
         return new DecipheredTerrainDataMisc(
             erase,
@@ -130,7 +131,7 @@ public static class LevelReadWriteHelpers
 
     public static byte GetOrientationByte(Orientation orientation, FacingDirection facingDirection)
     {
-        return GetOrientationByte(orientation.RotNum, facingDirection == FacingDirection.LeftInstance);
+        return GetOrientationByte(orientation.RotNum, facingDirection == FacingDirection.Left);
     }
 
     public static byte GetOrientationByte(int rotNum, bool flip)
@@ -141,10 +142,11 @@ public static class LevelReadWriteHelpers
         return (byte)orientationBits;
     }
 
-    public static (Orientation, FacingDirection) DecipherOrientationByte(int b)
+    public static (Orientation, FacingDirection) DecipherOrientationByte(byte b)
     {
-        var orientation = Orientation.AllItems[b & 3];
-        var facingDirection = FacingDirection.AllItems[(b >> FlipBitShift) & 1];
+        int intValue = b;
+        var orientation = Orientation.AllItems[intValue & 3];
+        var facingDirection = FacingDirection.AllItems[(intValue >> FlipBitShift) & 1];
 
         return (orientation, facingDirection);
     }

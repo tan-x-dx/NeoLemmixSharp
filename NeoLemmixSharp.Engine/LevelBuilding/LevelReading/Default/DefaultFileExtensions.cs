@@ -3,4 +3,5 @@
 public static class DefaultFileExtensions
 {
     public const string LevelFileExtension = ".ullv";
+    public const string LevelStyleExtension = ".ulst";
 }

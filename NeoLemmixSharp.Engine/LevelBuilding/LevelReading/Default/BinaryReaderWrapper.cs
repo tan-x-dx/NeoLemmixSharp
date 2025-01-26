@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
@@ -22,7 +21,7 @@ public sealed class BinaryReaderWrapper
         if (fileSizeInBytes > MaxAllowedFileSizeInBytes)
             throw new InvalidOperationException("File too large! Max file size is 64Mb");
 
-        _byteBuffer = new byte[fileSizeInBytes];
+        _byteBuffer = GC.AllocateUninitializedArray<byte>((int)fileSizeInBytes);
 
         fileStream.ReadExactly(new Span<byte>(_byteBuffer));
     }

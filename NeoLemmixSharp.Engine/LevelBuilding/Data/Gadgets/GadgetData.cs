@@ -50,7 +50,7 @@ public sealed class GadgetData
     {
         dihedralTransformation = new DihedralTransformation(
             Orientation.RotNum,
-            FacingDirection == FacingDirection.LeftInstance);
+            FacingDirection == FacingDirection.Left);
     }
 
     [Pure]

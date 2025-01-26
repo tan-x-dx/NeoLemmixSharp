@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Identity;
 
@@ -53,10 +52,8 @@ public sealed class ExtendedEnumTypeComparer<T> :
     public T UnHash(int index) => T.AllItems[index];
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static SimpleDictionary<ExtendedEnumTypeComparer<T>, T, TValue> CreateSimpleDictionary<TValue>() => new(Instance);
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static SimpleSet<ExtendedEnumTypeComparer<T>, T> CreateSimpleSet(bool fullSet = false) => new(Instance, fullSet);
 }

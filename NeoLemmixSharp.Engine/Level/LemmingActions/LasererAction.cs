@@ -48,7 +48,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
     ];
 
     private static ReadOnlySpan<LevelPosition> GetOffsetChecks(FacingDirection facingDirection) => MemoryMarshal
-        .Cast<int, LevelPosition>(facingDirection == FacingDirection.RightInstance
+        .Cast<int, LevelPosition>(facingDirection == FacingDirection.Right
             ? RawOffsetChecksRight
             : RawOffsetChecksLeft);
 
@@ -153,7 +153,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
             foreach (var offset in offsetChecks)
             {
-                var checkLevelPosition = orientation.Move(target, offset);
+                var checkLevelPosition = orientation.Move(target, offset.X, offset.Y);
 
                 //  gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan1, checkLevelPosition, out var gadgetSet);
 

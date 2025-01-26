@@ -15,7 +15,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapshotDataConvertible<LemmingSnapshotData>
+public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds, ISnapshotDataConvertible<LemmingSnapshotData>
 {
     public static Lemming SimulationLemming { get; } = new();
 
@@ -50,10 +50,9 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     public LevelPosition LaserHitLevelPosition = new(-1, -1);
     public LevelPosition LevelPosition = new(-1, -1);
     public LevelPosition PreviousLevelPosition = new(-1, -1);
-    public LevelPosition TopLeftPixel { get; private set; }
-    public LevelPosition BottomRightPixel { get; private set; }
-    public LevelPosition PreviousTopLeftPixel { get; private set; }
-    public LevelPosition PreviousBottomRightPixel { get; private set; }
+
+    public LevelRegion CurrentBounds { get; private set; }
+    public LevelRegion PreviousBounds { get; private set; }
 
     public LemmingState State { get; }
 
@@ -106,8 +105,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     private Lemming()
     {
         Id = -1;
-        Orientation = DownOrientation.Instance;
-        FacingDirection = FacingDirection.RightInstance;
+        Orientation = Orientation.Down;
+        FacingDirection = FacingDirection.Right;
         CurrentAction = NoneAction.Instance;
         State = new LemmingState(this, Team.AllItems[EngineConstants.ClassicTeamId]);
         Renderer = new LemmingRenderer(this);
@@ -116,13 +115,9 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     public void Initialise()
     {
         State.IsActive = true;
-        var lemmingBounds = CurrentAction.GetLemmingBounds(this);
-        TopLeftPixel = lemmingBounds.P1;
-        BottomRightPixel = lemmingBounds.P2;
-
         PreviousLevelPosition = LevelPosition;
-        PreviousTopLeftPixel = TopLeftPixel;
-        PreviousBottomRightPixel = BottomRightPixel;
+        CurrentBounds = CurrentAction.GetLemmingBounds(this);
+        PreviousBounds = CurrentBounds;
 
         var initialAction = CurrentAction;
         if (initialAction == NoneAction.Instance)
@@ -287,14 +282,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         PhysicsFrame = frame;
 
         PreviousLevelPosition = LevelPosition;
-        PreviousTopLeftPixel = TopLeftPixel;
-        PreviousBottomRightPixel = BottomRightPixel;
+        PreviousBounds = CurrentBounds;
 
         var result = CurrentAction.UpdateLemming(this, in gadgetsNearLemming);
-        var lemmingBounds = CurrentAction.GetLemmingBounds(this);
-
-        TopLeftPixel = lemmingBounds.P1;
-        BottomRightPixel = lemmingBounds.P2;
+        CurrentBounds = CurrentAction.GetLemmingBounds(this);
 
         return result;
     }
@@ -351,8 +342,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
             foreach (var anchorPosition in intermediatePositions)
             {
                 var footPosition = CurrentAction.GetFootPosition(this, anchorPosition);
-                if (!gadget.ContainsPoint(anchorPosition) ||
-                    !gadget.ContainsPoint(footPosition))
+                if (!gadget.ContainsPoint(Orientation, anchorPosition) ||
+                    !gadget.ContainsPoint(Orientation, footPosition))
                     continue;
 
                 var filters = currentState.Filters;
@@ -381,10 +372,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
                 LevelPosition = anchorPosition;
 
-                var lemmingBounds = afterAction.GetLemmingBounds(this);
+                CurrentBounds = afterAction.GetLemmingBounds(this);
 
-                TopLeftPixel = lemmingBounds.P1;
-                BottomRightPixel = lemmingBounds.P2;
                 return false;
             }
         }
@@ -508,10 +497,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
         State.SetRawDataFromOther(otherLemming.State);
 
-        TopLeftPixel = otherLemming.TopLeftPixel;
-        BottomRightPixel = otherLemming.BottomRightPixel;
-        PreviousTopLeftPixel = otherLemming.PreviousTopLeftPixel;
-        PreviousBottomRightPixel = otherLemming.PreviousBottomRightPixel;
+        CurrentBounds = otherLemming.CurrentBounds;
+        PreviousBounds = otherLemming.PreviousBounds;
     }
 
     public void SetRawDataFromOther(Team team, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
@@ -522,7 +509,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         FacingDirection = facingDirection;
     }
 
-    public void ToSnapshotData(out LemmingSnapshotData lemmingSnapshotData)
+    public void WriteToSnapshotData(out LemmingSnapshotData lemmingSnapshotData)
     {
         lemmingSnapshotData = new LemmingSnapshotData(this);
     }
@@ -562,10 +549,9 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         LaserHitLevelPosition = lemmingSnapshotData.LaserHitLevelPosition;
         LevelPosition = lemmingSnapshotData.LevelPosition;
         PreviousLevelPosition = lemmingSnapshotData.PreviousLevelPosition;
-        TopLeftPixel = lemmingSnapshotData.TopLeftPixel;
-        BottomRightPixel = lemmingSnapshotData.BottomRightPixel;
-        PreviousTopLeftPixel = lemmingSnapshotData.PreviousTopLeftPixel;
-        PreviousBottomRightPixel = lemmingSnapshotData.PreviousBottomRightPixel;
+
+        CurrentBounds = lemmingSnapshotData.CurrentBounds;
+        PreviousBounds = lemmingSnapshotData.PreviousBounds;
 
         State.SetRawDataFromSnapshotData(in lemmingSnapshotData.StateSnapshotData);
 

@@ -19,9 +19,7 @@ public static class LevelPackReader
         // and then handle that separately
         foreach (var filePath in files)
         {
-            var fileExtension = Path.GetExtension(filePath.AsSpan());
-
-            if (!LevelFileTypeHandler.FileExtensionIsRecognised(fileExtension, out var fileType, out var fileFormatType) ||
+            if (!LevelFileTypeHandler.TryDetermineFileExtension(filePath, out var fileType, out var fileFormatType) ||
                 fileType != FileType.NeoLemmixConfig ||
                 fileFormatType != FileFormatType.NeoLemmix)
                 continue;
@@ -37,12 +35,10 @@ public static class LevelPackReader
 
         foreach (var filePath in files)
         {
-            var fileExtension = Path.GetExtension(filePath.AsSpan());
-
-            if (!LevelFileTypeHandler.FileExtensionIsRecognised(fileExtension, out var fileType, out var fileFormatType))
+            if (!LevelFileTypeHandler.TryDetermineFileExtension(filePath, out var fileType, out var fileFormatType))
                 continue;
 
-            // At this point, there may still be NeoLemmix levels, but these will be
+            // At this point, there may still be levels but these will be
             // standalone levels and will need to be processed as such
 
             if (fileType == FileType.Level)

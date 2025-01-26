@@ -6,12 +6,12 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
 public sealed class LevelDataComponentReader : ILevelDataReader
 {
-    private readonly Dictionary<ushort, string> _stringIdLookup;
+    private readonly List<string> _stringIdLookup;
 
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelDataSectionIdentifier;
 
-    public LevelDataComponentReader(Dictionary<ushort, string> stringIdLookup)
+    public LevelDataComponentReader(List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -19,13 +19,13 @@ public sealed class LevelDataComponentReader : ILevelDataReader
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
         AlreadyUsed = true;
-        var numberOfItemsInSection = reader.Read16BitUnsignedInteger();
+        int numberOfItemsInSection = reader.Read16BitUnsignedInteger();
         LevelReadWriteHelpers.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
 
-        var numberOfBytesToRead = reader.Read16BitUnsignedInteger();
-        var initialBytesRead = reader.BytesRead;
+        int numberOfBytesToRead = reader.Read16BitUnsignedInteger();
+        int initialBytesRead = reader.BytesRead;
 
-        var stringId = reader.Read16BitUnsignedInteger();
+        int stringId = reader.Read16BitUnsignedInteger();
         levelData.LevelTitle = _stringIdLookup[stringId];
 
         stringId = reader.Read16BitUnsignedInteger();
@@ -51,7 +51,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
         levelData.LevelWidth = reader.Read16BitUnsignedInteger();
         levelData.LevelHeight = reader.Read16BitUnsignedInteger();
 
-        var value = reader.Read16BitUnsignedInteger();
+        int value = reader.Read16BitUnsignedInteger();
         if (value != LevelReadWriteHelpers.UnspecifiedLevelStartValue)
         {
             levelData.LevelStartPositionX = value;
@@ -70,8 +70,9 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 
     private static void DecipherBoundaryBehaviours(LevelData levelData, byte boundaryByte)
     {
-        var horizontalBoundaryBehaviour = (BoundaryBehaviourType)(boundaryByte & 1);
-        var verticalBoundaryBehaviour = (BoundaryBehaviourType)((boundaryByte >> 1) & 1);
+        int intValue = boundaryByte;
+        var horizontalBoundaryBehaviour = (BoundaryBehaviourType)(intValue & 1);
+        var verticalBoundaryBehaviour = (BoundaryBehaviourType)((intValue >> 1) & 1);
 
         levelData.HorizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         levelData.VerticalBoundaryBehaviour = verticalBoundaryBehaviour;

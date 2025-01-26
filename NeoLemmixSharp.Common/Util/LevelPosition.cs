@@ -41,7 +41,7 @@ public readonly struct LevelPosition : IEquatable<LevelPosition>
 
     [DebuggerStepThrough]
     public bool Equals(LevelPosition other) => X == other.X && Y == other.Y;
-    public override bool Equals([NotNullWhen(true)] object? obj) => (obj is LevelPosition other) && X == other.X && Y == other.Y;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is LevelPosition other && X == other.X && Y == other.Y;
     public override int GetHashCode() => 3790121 * X +
                                          2885497 * Y +
                                          1088251;
@@ -54,7 +54,6 @@ public readonly struct LevelPosition : IEquatable<LevelPosition>
         return buffer[..charsWritten].ToString();
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryFormat(Span<char> destination, out int charsWritten)
     {
         var source = MemoryMarshal.CreateReadOnlySpan(in X, 2);

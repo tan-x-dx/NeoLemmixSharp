@@ -47,7 +47,7 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible<SkillSetSnapsho
                Skill.CanAssignToLemming(lemming);
     }
 
-    public void ToSnapshotData(out SkillSetSnapshotData snapshotData)
+    public void WriteToSnapshotData(out SkillSetSnapshotData snapshotData)
     {
         snapshotData = new SkillSetSnapshotData(SkillTrackingDataId, SkillCount);
     }

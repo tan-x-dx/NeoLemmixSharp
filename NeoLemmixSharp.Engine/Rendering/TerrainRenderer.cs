@@ -38,8 +38,6 @@ public sealed class TerrainRenderer : IViewportObjectRenderer
             sourceRectangle);
     }
 
-    public LevelPosition TopLeftPixel => new(0, 0);
-    public LevelPosition BottomRightPixel => new(_terrainTexture.Width - 1, _terrainTexture.Height - 1);
-    public LevelPosition PreviousTopLeftPixel => new(0, 0);
-    public LevelPosition PreviousBottomRightPixel => new(_terrainTexture.Width - 1, _terrainTexture.Height - 1);
+    public LevelRegion CurrentBounds => new(new LevelPosition(), new LevelSize(_terrainTexture.Width, _terrainTexture.Height));
+    public LevelRegion PreviousBounds => CurrentBounds;
 }

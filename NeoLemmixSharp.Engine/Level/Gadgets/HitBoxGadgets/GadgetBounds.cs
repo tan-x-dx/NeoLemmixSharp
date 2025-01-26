@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
-public sealed class GadgetBounds
+public sealed class GadgetBounds : IRectangularBounds
 {
     public int X { get; set; }
     public int Y { get; set; }
@@ -10,9 +10,9 @@ public sealed class GadgetBounds
     public int Width { get; set; }
     public int Height { get; set; }
 
-    public LevelPosition TopLeftPosition => new(X, Y);
-    public LevelPosition BottomRightPosition => new(X + Width, Y + Height);
+    public LevelPosition Position => new(X, Y);
     public LevelSize Size => new(Width, Height);
+    public LevelRegion CurrentBounds => new(Position, Size);
 
     public void SetFrom(GadgetBounds other)
     {

@@ -49,10 +49,10 @@ public static class PixelTypeHelpers
     {
         return pixelType switch
         {
-            PixelType.BlockerDown => DownOrientation.Instance,
-            PixelType.BlockerLeft => LeftOrientation.Instance,
-            PixelType.BlockerUp => UpOrientation.Instance,
-            PixelType.BlockerRight => RightOrientation.Instance,
+            PixelType.BlockerDown => Orientation.Down,
+            PixelType.BlockerLeft => Orientation.Left,
+            PixelType.BlockerUp => Orientation.Up,
+            PixelType.BlockerRight => Orientation.Right,
 
             _ => ExpectedBlockerMaskPixelType(pixelType)
         };

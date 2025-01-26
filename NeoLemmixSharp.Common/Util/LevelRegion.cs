@@ -1,59 +1,55 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Xna.Framework;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
 /// <summary>
-/// <para>Represents a rectangular region of points within a level, from the top left coordinate (P1) down to AND INCLUDING the bottom right coordinate (P2).</para>
-/// <para>A well-formed <see cref="LevelRegion"/> has the P1 points less than or equal to the P2 points.
-/// The constructors will ensure a well-formed <see cref="LevelRegion"/> is created.</para>
-/// <para>Note that a <see cref="LevelRegion"/> can never be empty - the smallest region is 1x1.</para>
+/// <para>Represents a rectangular region of points within a level, specified by a <see cref="LevelPosition"/> and a <see cref="LevelSize"/>.</para>
+/// <para>The constructors will ensure a well-formed <see cref="LevelRegion"/> is created.</para>
+/// <para>Note that a <see cref="LevelRegion"/> can never be empty - the smallest region size is 1x1.</para>
 /// </summary>
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
-public readonly ref struct LevelRegion
+public readonly struct LevelRegion : IEquatable<LevelRegion>
 {
-    [FieldOffset(0 * sizeof(int))] public readonly LevelPosition P1;
-    [FieldOffset(0 * sizeof(int))] public readonly int P1X;
-    [FieldOffset(1 * sizeof(int))] public readonly int P1Y;
+    [FieldOffset(0 * sizeof(int))] public readonly LevelPosition P;
+    [FieldOffset(0 * sizeof(int))] public readonly int X;
+    [FieldOffset(1 * sizeof(int))] public readonly int Y;
 
-    [FieldOffset(2 * sizeof(int))] public readonly LevelPosition P2;
-    [FieldOffset(2 * sizeof(int))] public readonly int P2X;
-    [FieldOffset(3 * sizeof(int))] public readonly int P2Y;
+    [FieldOffset(2 * sizeof(int))] public readonly LevelSize S;
+    [FieldOffset(2 * sizeof(int))] public readonly int W;
+    [FieldOffset(3 * sizeof(int))] public readonly int H;
 
     [DebuggerStepThrough]
-    public LevelRegion(int x1, int y1, int x2, int y2)
+    public LevelRegion()
     {
-        if (x1 < x2)
-        {
-            P1X = x1;
-            P2X = x2;
-        }
-        else
-        {
-            P1X = x2;
-            P2X = x1;
-        }
-
-        if (y1 < y2)
-        {
-            P1Y = y1;
-            P2Y = y2;
-        }
-        else
-        {
-            P1Y = y2;
-            P2Y = y1;
-        }
+        X = 0;
+        Y = 0;
+        W = 1;
+        H = 1;
     }
 
     [DebuggerStepThrough]
     public LevelRegion(LevelPosition position, LevelSize size)
     {
-        var p2 = new LevelPosition(
-            position.X + size.W - 1,
-            position.Y + size.H - 1);
-        this = new LevelRegion(position, p2);
+        P = position;
+        W = size.W;
+        if (W < 1) W = 1;
+        H = size.H;
+        if (H < 1) H = 1;
+    }
+
+    [DebuggerStepThrough]
+    public LevelRegion(Rectangle rect)
+    {
+        X = rect.X;
+        Y = rect.Y;
+        W = rect.Width;
+        if (W < 1) W = 1;
+        H = rect.Height;
+        if (H < 1) H = 1;
     }
 
     [DebuggerStepThrough]
@@ -61,25 +57,27 @@ public readonly ref struct LevelRegion
     {
         if (p1.X < p2.X)
         {
-            P1X = p1.X;
-            P2X = p2.X;
+            X = p1.X;
+            W = p2.X - p1.X;
         }
         else
         {
-            P1X = p2.X;
-            P2X = p1.X;
+            X = p2.X;
+            W = p1.X - p2.X;
         }
+        W++;
 
         if (p1.Y < p2.Y)
         {
-            P1Y = p1.Y;
-            P2Y = p2.Y;
+            Y = p1.Y;
+            H = p2.Y - p1.Y;
         }
         else
         {
-            P1Y = p2.Y;
-            P2Y = p1.Y;
+            Y = p2.Y;
+            H = p1.Y - p2.Y;
         }
+        H++;
     }
 
     [DebuggerStepThrough]
@@ -100,39 +98,87 @@ public readonly ref struct LevelRegion
             maxY = Math.Max(maxY, p.Y);
         }
 
-        P1X = minX;
-        P1Y = minY;
-        P2X = maxX;
-        P2Y = maxY;
+        X = minX;
+        Y = minY;
+        W = 1 + maxX - minX;
+        H = 1 + maxY - minY;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [DebuggerStepThrough]
-    public LevelSize GetSize() => new(1 + P2X - P1X, 1 + P2Y - P1Y);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public LevelPosition GetBottomRight() => new(X + W - 1, Y + H - 1);
+
+    [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Is1x1() => W == 1 && H == 1;
 
     [DebuggerStepThrough]
     public bool Overlaps(LevelRegion other)
     {
-        return other.P1X <= P2X &&
-               P1X <= other.P2X &&
-               other.P1Y <= P2Y &&
-               P1Y <= other.P2Y;
+        return other.X < X + W &&
+               X < other.X + other.W &&
+               other.Y < Y + H &&
+               Y < other.Y + other.H;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [DebuggerStepThrough]
-    public bool Contains(LevelPosition anchorPosition)
+    public bool Contains(LevelPosition position)
     {
-        return P1X <= anchorPosition.X && anchorPosition.X <= P2X &&
-               P1Y <= anchorPosition.Y && anchorPosition.Y <= P2Y;
+        return X <= position.X && position.X < X + W &&
+               Y <= position.Y && position.Y < Y + H;
     }
+
+    [DebuggerStepThrough]
+    public static bool operator ==(LevelRegion left, LevelRegion right) =>
+        left.X == right.X &&
+        left.Y == right.Y &&
+        left.W == right.W &&
+        left.H == right.H;
+
+    [DebuggerStepThrough]
+    public static bool operator !=(LevelRegion left, LevelRegion right) =>
+        left.X != right.X ||
+        left.Y != right.Y ||
+        left.W != right.W ||
+        left.H != right.H;
+
+    [DebuggerStepThrough]
+    public bool Equals(LevelRegion other) =>
+        X == other.X &&
+        Y == other.Y &&
+        W == other.W &&
+        H == other.H;
+
+    public override bool Equals([NotNullWhen(true)] object? obj) =>
+        obj is LevelRegion other &&
+        X == other.X &&
+        Y == other.Y &&
+        W == other.W &&
+        H == other.H;
+
+    public override int GetHashCode() =>
+        6208021 * X +
+        4149227 * Y +
+        2239063 * W +
+        8554379 * H +
+        1748359;
 
     [SkipLocalsInit]
     public override string ToString()
     {
         Span<char> buffer = stackalloc char[(1 + 11 + 1 + 11 + 1) * 2];
-        P1.TryFormat(buffer, out var charsWritten);
-        P2.TryFormat(buffer[charsWritten..], out var charsWritten2);
-        return buffer[..(charsWritten + charsWritten2)].ToString();
+        TryFormat(buffer, out var charsWritten);
+        return buffer[..charsWritten].ToString();
+    }
+
+    public bool TryFormat(Span<char> destination, out int charsWritten)
+    {
+        if (!P.TryFormat(destination, out charsWritten))
+            return false;
+
+        var result = S.TryFormat(destination, out var c);
+        charsWritten += c;
+        return result;
     }
 }

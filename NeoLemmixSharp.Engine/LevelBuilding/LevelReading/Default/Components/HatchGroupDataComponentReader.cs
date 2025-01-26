@@ -10,7 +10,7 @@ public sealed class HatchGroupDataComponentReader : ILevelDataReader
     public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
     {
         AlreadyUsed = true;
-        var numberOfItemsInSection = reader.Read16BitUnsignedInteger();
+        int numberOfItemsInSection = reader.Read16BitUnsignedInteger();
 
         while (numberOfItemsInSection-- > 0)
         {
