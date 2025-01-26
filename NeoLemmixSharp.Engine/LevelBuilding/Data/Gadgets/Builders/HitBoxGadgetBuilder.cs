@@ -179,7 +179,7 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
 
         if (hitBoxData.AllowedFacingDirection is not null)
         {
-            var facingDirectionFilter = new LemmingFacingDirectionCriterion(hitBoxData.AllowedFacingDirection);
+            var facingDirectionFilter = LemmingFacingDirectionCriterion.ForFacingDirection(hitBoxData.AllowedFacingDirection);
             result[numberOfCriteria++] = facingDirectionFilter;
         }
 

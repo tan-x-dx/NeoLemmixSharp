@@ -7,15 +7,14 @@ namespace NeoLemmixSharp.Engine.Level.FacingDirections;
 
 public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
 {
-    public static readonly FacingDirection Left = new(
-        EngineConstants.LeftFacingDirectionId,
-        EngineConstants.LeftFacingDirectionDeltaX,
-        EngineConstants.LeftFacingDirectionName);
-
     public static readonly FacingDirection Right = new(
         EngineConstants.RightFacingDirectionId,
         EngineConstants.RightFacingDirectionDeltaX,
         EngineConstants.RightFacingDirectionName);
+    public static readonly FacingDirection Left = new(
+        EngineConstants.LeftFacingDirectionId,
+        EngineConstants.LeftFacingDirectionDeltaX,
+        EngineConstants.LeftFacingDirectionName);
 
     private static readonly FacingDirection[] FacingDirections = GenerateFacingDirectionCollection();
 
@@ -26,8 +25,8 @@ public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
     {
         var facingDirections = new FacingDirection[2];
 
-        facingDirections[Left.Id] = Left;
-        facingDirections[Right.Id] = Right;
+        facingDirections[EngineConstants.RightFacingDirectionId] = Right;
+        facingDirections[EngineConstants.LeftFacingDirectionId] = Left;
 
         // No need for id validation here. It's just that simple
 
