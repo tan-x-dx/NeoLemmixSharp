@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using System.Runtime.CompilerServices;
+
+namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 [Flags]
 public enum ResizeType
@@ -14,17 +16,16 @@ public static class ResizeTypeHelpers
     public const int HorizontalShift = 0;
     public const int VerticalShift = 1;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CanResizeHorizontally(this ResizeType type)
     {
-        var intData = (int)type;
-        return (intData & 1) != 0;
+        return (type & ResizeType.ResizeHorizontal) == ResizeType.ResizeHorizontal;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CanResizeVertically(this ResizeType type)
     {
-        var intData = (int)type;
-        intData >>= VerticalShift;
-        return (intData & 1) != 0;
+        return (type & ResizeType.ResizeVertical) == ResizeType.ResizeVertical;
     }
 
     public static ResizeType SwapComponents(this ResizeType resizeType)
