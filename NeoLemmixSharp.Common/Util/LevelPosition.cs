@@ -5,10 +5,11 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
+[StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
 public readonly struct LevelPosition : IEquatable<LevelPosition>
 {
-    public readonly int X;
-    public readonly int Y;
+    [FieldOffset(0 * sizeof(int))] public readonly int X;
+    [FieldOffset(1 * sizeof(int))] public readonly int Y;
 
     [DebuggerStepThrough]
     public LevelPosition(int x, int y)
