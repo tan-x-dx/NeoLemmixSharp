@@ -555,8 +555,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
 
         State.SetRawDataFromSnapshotData(in lemmingSnapshotData.StateSnapshotData);
 
-        FacingDirection = FacingDirection.AllItems[lemmingSnapshotData.FacingDirectionId];
-        Orientation = Orientation.AllItems[lemmingSnapshotData.OrientationId];
+        FacingDirection = lemmingSnapshotData.FacingDirection;
+        Orientation = lemmingSnapshotData.Orientation;
 
         PreviousAction = LemmingAction.GetActionFromUnboundId(lemmingSnapshotData.PreviousActionId);
         CurrentAction = LemmingAction.GetActionFromUnboundId(lemmingSnapshotData.CurrentActionId);

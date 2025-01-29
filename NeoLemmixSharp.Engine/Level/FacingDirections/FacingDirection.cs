@@ -2,59 +2,54 @@
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics.Contracts;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.FacingDirections;
 
-public sealed class FacingDirection : IExtendedEnumType<FacingDirection>
+public readonly struct FacingDirection : IExtendedEnumType<FacingDirection>
 {
-    public static readonly FacingDirection Right = new(
-        EngineConstants.RightFacingDirectionId,
-        EngineConstants.RightFacingDirectionDeltaX);
-    public static readonly FacingDirection Left = new(
-        EngineConstants.LeftFacingDirectionId,
-        EngineConstants.LeftFacingDirectionDeltaX);
-
-    private static readonly FacingDirection[] FacingDirections = GenerateFacingDirectionCollection();
+    public static readonly FacingDirection Right = new(EngineConstants.RightFacingDirectionId);
+    public static readonly FacingDirection Left = new(EngineConstants.LeftFacingDirectionId);
 
     public static int NumberOfItems => EngineConstants.NumberOfFacingDirections;
-    public static ReadOnlySpan<FacingDirection> AllItems => new(FacingDirections);
-
-    private static FacingDirection[] GenerateFacingDirectionCollection()
-    {
-        var facingDirections = new FacingDirection[EngineConstants.NumberOfFacingDirections];
-
-        facingDirections[EngineConstants.RightFacingDirectionId] = Right;
-        facingDirections[EngineConstants.LeftFacingDirectionId] = Left;
-
-        // No need for id validation here. It's just that simple
-
-        return facingDirections;
-    }
+    private static ReadOnlySpan<int> RawInts =>
+    [
+        EngineConstants.RightFacingDirectionId,
+        EngineConstants.LeftFacingDirectionId
+    ];
+    public static ReadOnlySpan<FacingDirection> AllItems => MemoryMarshal.Cast<int, FacingDirection>(RawInts);
 
     public readonly int Id;
-    public readonly int DeltaX;
 
-    private FacingDirection(int id, int deltaX)
+    public int DeltaX => 1 - (Id << 1);
+
+    public FacingDirection(int id)
     {
-        Id = id;
-        DeltaX = deltaX;
+        Id = id & 1;
+    }
+
+    public FacingDirection(bool faceLeft)
+    {
+        Id = faceLeft
+            ? EngineConstants.LeftFacingDirectionId
+            : EngineConstants.RightFacingDirectionId;
     }
 
     [Pure]
-    public FacingDirection GetOpposite() => FacingDirections[1 - Id];
+    public FacingDirection GetOpposite() => new(Id + 1);
 
     [Pure]
-    public Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.Rotate(-DeltaX);
+    public Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.Rotate((Id << 1) - 1);
 
     int IIdEquatable<FacingDirection>.Id => Id;
 
-    public bool Equals(FacingDirection? other) => Id == (other?.Id ?? -1);
+    public bool Equals(FacingDirection other) => Id == other.Id;
     public override bool Equals(object? obj) => obj is FacingDirection other && Id == other.Id;
     public override int GetHashCode() => Id;
     public override string ToString() => Id == EngineConstants.RightFacingDirectionId
         ? EngineConstants.RightFacingDirectionName
         : EngineConstants.LeftFacingDirectionName;
 
-    public static bool operator ==(FacingDirection left, FacingDirection right) => left.Id == right.Id;
-    public static bool operator !=(FacingDirection left, FacingDirection right) => left.Id != right.Id;
+    public static bool operator ==(FacingDirection first, FacingDirection second) => first.Id == second.Id;
+    public static bool operator !=(FacingDirection first, FacingDirection second) => first.Id != second.Id;
 }

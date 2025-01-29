@@ -32,8 +32,8 @@ public static class DefaultLemmingSpriteBank
 #pragma warning restore IDE0039
 
         var numberOfActionSprites = LemmingAction.NumberOfItems *
-                                    Orientation.NumberOfItems *
-                                    FacingDirection.NumberOfItems;
+                                    EngineConstants.NumberOfOrientations *
+                                    EngineConstants.NumberOfFacingDirections;
 
         var actionSprites = new LemmingActionSprite[numberOfActionSprites];
 

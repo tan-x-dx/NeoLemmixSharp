@@ -3,40 +3,32 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 
-public sealed class Orientation : IExtendedEnumType<Orientation>
+public readonly struct Orientation : IExtendedEnumType<Orientation>
 {
     public static readonly Orientation Down = new(EngineConstants.DownOrientationRotNum);
     public static readonly Orientation Left = new(EngineConstants.LeftOrientationRotNum);
     public static readonly Orientation Up = new(EngineConstants.UpOrientationRotNum);
     public static readonly Orientation Right = new(EngineConstants.RightOrientationRotNum);
 
-    private static readonly Orientation[] Orientations = GenerateOrientationCollection();
-
     public static int NumberOfItems => EngineConstants.NumberOfOrientations;
-    public static ReadOnlySpan<Orientation> AllItems => new(Orientations);
-
-    private static Orientation[] GenerateOrientationCollection()
-    {
-        var orientations = new Orientation[EngineConstants.NumberOfOrientations];
-
-        orientations[EngineConstants.DownOrientationRotNum] = Down;
-        orientations[EngineConstants.LeftOrientationRotNum] = Left;
-        orientations[EngineConstants.UpOrientationRotNum] = Up;
-        orientations[EngineConstants.RightOrientationRotNum] = Right;
-
-        // No need for id validation here. It's just that simple
-
-        return orientations;
-    }
+    private static ReadOnlySpan<int> RawInts =>
+    [
+        EngineConstants.DownOrientationRotNum,
+        EngineConstants.LeftOrientationRotNum,
+        EngineConstants.UpOrientationRotNum,
+        EngineConstants.RightOrientationRotNum
+    ];
+    public static ReadOnlySpan<Orientation> AllItems => MemoryMarshal.Cast<int, Orientation>(RawInts);
 
     public readonly int RotNum;
 
-    private Orientation(int rotNum)
+    public Orientation(int rotNum)
     {
-        RotNum = rotNum;
+        RotNum = rotNum & 3;
     }
 
     [Pure]
@@ -254,17 +246,17 @@ public sealed class Orientation : IExtendedEnumType<Orientation>
     }
 
     [Pure]
-    public Orientation RotateClockwise() => Orientations[(RotNum + 1) & 3];
+    public Orientation RotateClockwise() => new(RotNum + 1);
     [Pure]
-    public Orientation RotateCounterClockwise() => Orientations[(RotNum + 3) & 3];
+    public Orientation GetOpposite() => new(RotNum + 2);
     [Pure]
-    public Orientation GetOpposite() => Orientations[(RotNum + 2) & 3];
+    public Orientation RotateCounterClockwise() => new(RotNum + 3);
     [Pure]
-    public Orientation Rotate(int clockwiseRotationOffset) => Orientations[(RotNum + clockwiseRotationOffset) & 3];
+    public Orientation Rotate(int clockwiseRotationOffset) => new(RotNum + clockwiseRotationOffset);
 
     int IIdEquatable<Orientation>.Id => RotNum;
 
-    public bool Equals(Orientation? other) => RotNum == (other?.RotNum ?? -1);
+    public bool Equals(Orientation other) => RotNum == other.RotNum;
     public override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;
     public override int GetHashCode() => RotNum;
     public override string ToString() => RotNum switch
@@ -277,6 +269,6 @@ public sealed class Orientation : IExtendedEnumType<Orientation>
         _ => string.Empty
     };
 
-    public static bool operator ==(Orientation left, Orientation right) => left.RotNum == right.RotNum;
-    public static bool operator !=(Orientation left, Orientation right) => left.RotNum != right.RotNum;
+    public static bool operator ==(Orientation first, Orientation second) => first.RotNum == second.RotNum;
+    public static bool operator !=(Orientation first, Orientation second) => first.RotNum != second.RotNum;
 }

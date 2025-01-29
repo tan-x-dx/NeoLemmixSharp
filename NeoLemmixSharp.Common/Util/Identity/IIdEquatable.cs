@@ -3,7 +3,7 @@
 namespace NeoLemmixSharp.Common.Util.Identity;
 
 public interface IIdEquatable<T> : IEquatable<T>
-    where T : class, IIdEquatable<T>
+    where T : IIdEquatable<T>
 {
     [Pure]
     int Id { get; }

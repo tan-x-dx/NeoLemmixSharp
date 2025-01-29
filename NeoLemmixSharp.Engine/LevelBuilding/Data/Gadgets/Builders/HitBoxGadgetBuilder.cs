@@ -175,16 +175,16 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
 
             foreach (var orientation in hitBoxData.AllowedOrientations)
             {
-                var rotatedOrientationId = (orientation.RotNum + gadgetOrientationId) & 3;
-                orientationFilter.RegisterOrientation(Orientation.AllItems[rotatedOrientationId]);
+                var rotatedOrientation = new Orientation(orientation.RotNum + gadgetOrientationId);
+                orientationFilter.RegisterOrientation(rotatedOrientation);
             }
 
             result[numberOfCriteria++] = orientationFilter;
         }
 
-        if (hitBoxData.AllowedFacingDirection is not null)
+        if (hitBoxData.AllowedFacingDirection.HasValue)
         {
-            var facingDirectionFilter = LemmingFacingDirectionCriterion.ForFacingDirection(hitBoxData.AllowedFacingDirection);
+            var facingDirectionFilter = LemmingFacingDirectionCriterion.ForFacingDirection(hitBoxData.AllowedFacingDirection.Value);
             result[numberOfCriteria++] = facingDirectionFilter;
         }
 

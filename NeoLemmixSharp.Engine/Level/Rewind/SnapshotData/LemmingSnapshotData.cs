@@ -1,5 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
@@ -42,8 +44,8 @@ public readonly struct LemmingSnapshotData
 
     public readonly LemmingStateSnapshotData StateSnapshotData;
 
-    public readonly int FacingDirectionId;
-    public readonly int OrientationId;
+    public readonly FacingDirection FacingDirection;
+    public readonly Orientation Orientation;
 
     public readonly int PreviousActionId;
     public readonly int CurrentActionId;
@@ -91,8 +93,8 @@ public readonly struct LemmingSnapshotData
 
         StateSnapshotData = lemming.State.CreateSnapshot();
 
-        FacingDirectionId = lemming.FacingDirection.Id;
-        OrientationId = lemming.Orientation.RotNum;
+        FacingDirection = lemming.FacingDirection;
+        Orientation = lemming.Orientation;
 
         PreviousActionId = lemming.PreviousAction.Id;
         CurrentActionId = lemming.CurrentAction.Id;
