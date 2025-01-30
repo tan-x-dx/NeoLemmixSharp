@@ -54,7 +54,7 @@ public readonly struct FacingDirection : IExtendedEnumType<FacingDirection>
     public FacingDirection GetOpposite() => new(Id + 1);
 
     [Pure]
-    public Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.Rotate((Id << 1) - 1);
+    public Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.Rotate(-DeltaX);
 
     int IIdEquatable<FacingDirection>.Id => Id;
 
