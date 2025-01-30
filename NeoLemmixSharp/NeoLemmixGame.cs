@@ -124,6 +124,12 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         var numberOfSkills = LemmingSkill.NumberOfItems;
         var numberOfTeams = Team.NumberOfItems;
 
+        if (numberOfActions != EngineConstants.NumberOfLemmingActions)
+            throw new Exception($"Number of LemmingActions is actually {numberOfActions}! Update {nameof(EngineConstants.NumberOfLemmingActions)}!");
+
+        if (numberOfSkills != EngineConstants.NumberOfLemmingSkills)
+            throw new Exception($"Number of LemmingSkills is actually {numberOfSkills}! Update {nameof(EngineConstants.NumberOfLemmingSkills)}!");
+
         Console.WriteLine(
             "Loaded {0} skills. Loaded {1} actions. Loaded {2} teams.",
             numberOfSkills,
