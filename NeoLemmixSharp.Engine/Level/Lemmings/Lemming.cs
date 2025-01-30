@@ -56,8 +56,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
 
     public LemmingState State { get; }
 
-    public FacingDirection FacingDirection { get; private set; }
-    public Orientation Orientation { get; private set; }
+    public FacingDirection FacingDirection { get; private set; } = FacingDirection.Right;
+    public Orientation Orientation { get; private set; } = Orientation.Down;
 
     public LemmingAction PreviousAction { get; private set; } = NoneAction.Instance;
     public LemmingAction CurrentAction { get; private set; }

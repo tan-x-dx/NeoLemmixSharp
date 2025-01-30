@@ -14,25 +14,40 @@ public readonly struct FacingDirection : IExtendedEnumType<FacingDirection>
     public static int NumberOfItems => EngineConstants.NumberOfFacingDirections;
     private static ReadOnlySpan<int> RawInts =>
     [
-        EngineConstants.RightFacingDirectionId,
-        EngineConstants.LeftFacingDirectionId
+        EngineConstants.RightFacingDirectionId, EngineConstants.RightFacingDirectionDeltaX,
+        EngineConstants.LeftFacingDirectionId, EngineConstants.LeftFacingDirectionDeltaX
     ];
     public static ReadOnlySpan<FacingDirection> AllItems => MemoryMarshal.Cast<int, FacingDirection>(RawInts);
 
     public readonly int Id;
+    public readonly int DeltaX;
 
-    public int DeltaX => 1 - (Id << 1);
+    public FacingDirection()
+    {
+        Id = EngineConstants.RightFacingDirectionId;
+        DeltaX = EngineConstants.RightFacingDirectionDeltaX;
+    }
 
     public FacingDirection(int id)
     {
         Id = id & 1;
+        DeltaX = EngineConstants.RightFacingDirectionDeltaX;
+        if (Id == EngineConstants.LeftFacingDirectionId)
+            DeltaX = EngineConstants.LeftFacingDirectionDeltaX;
     }
 
     public FacingDirection(bool faceLeft)
     {
-        Id = faceLeft
-            ? EngineConstants.LeftFacingDirectionId
-            : EngineConstants.RightFacingDirectionId;
+        if (faceLeft)
+        {
+            Id = EngineConstants.LeftFacingDirectionId;
+            DeltaX = EngineConstants.LeftFacingDirectionDeltaX;
+        }
+        else
+        {
+            Id = EngineConstants.RightFacingDirectionId;
+            DeltaX = EngineConstants.RightFacingDirectionDeltaX;
+        }
     }
 
     [Pure]

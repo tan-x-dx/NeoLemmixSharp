@@ -8,7 +8,7 @@ public sealed class DirectionalSelectButtonAction : IButtonAction
 
     public DirectionalSelectButtonAction(FacingDirection facingDirection)
     {
-        _facingDirection = facingDirection;
+        _facingDirection = new FacingDirection(facingDirection.Id);
     }
 
     public ButtonType ButtonType => _facingDirection == FacingDirection.Right

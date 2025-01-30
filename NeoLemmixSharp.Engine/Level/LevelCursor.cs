@@ -123,7 +123,7 @@ public sealed class LevelCursor
     private bool LemmingIsAbleToBeSelected(Lemming lemming)
     {
         // Directional select
-        if (_facingDirection is not null &&
+        if (_facingDirection.HasValue &&
             lemming.FacingDirection != _facingDirection &&
             !(false))//and(not(IsHighlight or IsReplay))
             return false;
