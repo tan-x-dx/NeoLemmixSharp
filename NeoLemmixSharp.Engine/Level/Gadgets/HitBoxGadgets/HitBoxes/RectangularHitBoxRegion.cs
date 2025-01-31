@@ -4,10 +4,9 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
 public sealed class RectangularHitBoxRegion : IHitBoxRegion
 {
-    private readonly LevelPosition _position;
-    private readonly LevelSize _size;
+    private readonly LevelRegion _region;
 
-    public LevelRegion CurrentBounds => new(_position, _size);
+    public LevelRegion CurrentBounds => _region;
 
     public RectangularHitBoxRegion(
         int x,
@@ -15,27 +14,21 @@ public sealed class RectangularHitBoxRegion : IHitBoxRegion
         int w,
         int h)
     {
-        _position = new LevelPosition(x, y);
-        _size = new LevelSize(w, h);
+        var position = new LevelPosition(x, y);
+        var size = new LevelSize(w, h);
+        _region = new LevelRegion(position, size);
+    }
+
+    public RectangularHitBoxRegion(
+        LevelPosition p0,
+        LevelPosition p1)
+    {
+        _region = new LevelRegion(p0, p1);
     }
 
     public bool ContainsPoint(LevelPosition levelPosition)
     {
-        var x0 = _position.X;
-        var y0 = _position.Y;
-
-        var x = levelPosition.X;
-        var y = levelPosition.Y;
-
-        var x1 = _position.X + _size.W;
-        var y1 = _position.Y + _size.H;
-
-        LevelScreen.HorizontalBoundaryBehaviour.NormaliseCoords(ref x0, ref x1, ref x);
-        LevelScreen.VerticalBoundaryBehaviour.NormaliseCoords(ref y0, ref y1, ref y);
-
-        return x0 <= x &&
-               y0 <= y &&
-               x < x1 &&
-               y < y1;
+        return LevelScreen.HorizontalBoundaryBehaviour.IsInRange(levelPosition.X, _region.X, _region.X + _region.W) &&
+               LevelScreen.VerticalBoundaryBehaviour.IsInRange(levelPosition.Y, _region.Y, _region.Y + _region.H);
     }
 }

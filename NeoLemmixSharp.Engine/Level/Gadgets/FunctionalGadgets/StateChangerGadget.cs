@@ -25,7 +25,7 @@ public sealed class StateChangerGadget : GadgetBase, ISimpleRenderGadget
         string inputName,
         HitBoxGadget gadget,
         int newState)
-        : base(id, orientation, gadgetBounds)
+        : base(id, orientation, gadgetBounds, 1)
     {
         _gadget = gadget;
         _newState = newState;
@@ -43,22 +43,17 @@ public sealed class StateChangerGadget : GadgetBase, ISimpleRenderGadget
         _previousSignal = _signal;
     }
 
-    private sealed class StateChangerGadgetInput : IGadgetInput
+    private sealed class StateChangerGadgetInput : GadgetInput
     {
         private readonly StateChangerGadget _gadget;
-        public string InputName { get; }
 
         public StateChangerGadgetInput(string inputName, StateChangerGadget gadget)
+            : base(inputName)
         {
-            InputName = inputName;
             _gadget = gadget;
         }
 
-        public void OnRegistered()
-        {
-        }
-
-        public void ReactToSignal(bool signal)
+        public override void ReactToSignal(bool signal)
         {
             _gadget._signal = signal;
         }

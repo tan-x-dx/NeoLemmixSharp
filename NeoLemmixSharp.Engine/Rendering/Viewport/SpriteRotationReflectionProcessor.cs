@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
@@ -34,7 +35,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
         LevelPosition anchorPoint,
         ItemCreator itemCreator)
     {
-        var result = new T[Orientation.NumberOfItems * FacingDirection.NumberOfItems];
+        var result = new T[EngineConstants.NumberOfOrientations * EngineConstants.NumberOfFacingDirections];
 
         CreateSpritesForDirections(Orientation.Down, FacingDirection.Right);
         CreateSpritesForDirections(Orientation.Down, FacingDirection.Left);

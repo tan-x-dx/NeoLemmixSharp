@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -56,8 +56,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
 
     public LemmingState State { get; }
 
-    public FacingDirection FacingDirection { get; private set; }
-    public Orientation Orientation { get; private set; }
+    public FacingDirection FacingDirection { get; private set; } = FacingDirection.Right;
+    public Orientation Orientation { get; private set; } = Orientation.Down;
 
     public LemmingAction PreviousAction { get; private set; } = NoneAction.Instance;
     public LemmingAction CurrentAction { get; private set; }
@@ -555,8 +555,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
 
         State.SetRawDataFromSnapshotData(in lemmingSnapshotData.StateSnapshotData);
 
-        FacingDirection = FacingDirection.AllItems[lemmingSnapshotData.FacingDirectionId];
-        Orientation = Orientation.AllItems[lemmingSnapshotData.OrientationId];
+        FacingDirection = lemmingSnapshotData.FacingDirection;
+        Orientation = lemmingSnapshotData.Orientation;
 
         PreviousAction = LemmingAction.GetActionFromUnboundId(lemmingSnapshotData.PreviousActionId);
         CurrentAction = LemmingAction.GetActionFromUnboundId(lemmingSnapshotData.CurrentActionId);

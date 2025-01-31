@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
@@ -23,9 +23,7 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
         GadgetData gadgetData,
         LemmingManager lemmingManager)
     {
-        return null!;
-
-        /*var hatchGadgetId = gadgetData.GetProperty(GadgetProperty.HatchGroupId);
+        var hatchGadgetId = gadgetData.GetProperty(GadgetProperty.HatchGroupId);
         var teamId = gadgetData.GetProperty(GadgetProperty.TeamId);
         var rawLemmingState = (uint)gadgetData.GetProperty(GadgetProperty.RawLemmingState);
         var lemmingCount = gadgetData.GetProperty(GadgetProperty.Count);
@@ -50,13 +48,15 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
             out var transformedSpawnX,
             out var transformedSpawnY);
 
-        var spawnPoint = new LevelPosition(transformedSpawnX, transformedSpawnY);
+        var spawnPointOffset = new LevelPosition(transformedSpawnX, transformedSpawnY);
 
-        var gadgetBounds = new RectangularHitBoxRegion(
-            gadgetData.X,
-            gadgetData.Y,
-            transformedWidth,
-            transformedHeight);
+        var gadgetBounds = new GadgetBounds
+        {
+            X = gadgetData.X,
+            Y = gadgetData.Y,
+            Width = transformedWidth,
+            Height = transformedHeight
+        };
 
         var gadgetRenderer = gadgetSpriteBuilder.BuildStatefulGadgetRenderer(this, gadgetData);
 
@@ -75,13 +75,14 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
 
         var result = new HatchGadget(
             gadgetData.Id,
+            gadgetData.Orientation,
             gadgetBounds,
-            spawnPoint,
             hatchSpawnData,
+            spawnPointOffset,
             gadgetAnimationController);
 
         gadgetRenderer?.SetGadget(result);
 
-        return result;*/
+        return result;
     }
 }

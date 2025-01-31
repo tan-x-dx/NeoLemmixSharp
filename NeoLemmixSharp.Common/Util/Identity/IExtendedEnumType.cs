@@ -3,7 +3,7 @@
 namespace NeoLemmixSharp.Common.Util.Identity;
 
 public interface IExtendedEnumType<T> : IIdEquatable<T>
-    where T : class, IExtendedEnumType<T>
+    where T : IExtendedEnumType<T>
 {
     [Pure]
     static abstract int NumberOfItems { get; }

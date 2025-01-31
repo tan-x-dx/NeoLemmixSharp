@@ -9,21 +9,26 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.PrePlacedLemmingDataSectionIdentifier;
 
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    public PrePlacedLemmingDataComponentReader(
+        Version version)
+    {
+    }
+
+    public void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
-        int numberOfItemsInSection = reader.Read16BitUnsignedInteger();
+        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
 
         while (numberOfItemsInSection-- > 0)
         {
-            int x = reader.Read16BitUnsignedInteger();
-            int y = reader.Read16BitUnsignedInteger();
-            uint state = reader.Read32BitUnsignedInteger();
+            int x = rawFileData.Read16BitUnsignedInteger();
+            int y = rawFileData.Read16BitUnsignedInteger();
+            uint state = rawFileData.Read32BitUnsignedInteger();
 
-            byte orientationByte = reader.Read8BitUnsignedInteger();
+            byte orientationByte = rawFileData.Read8BitUnsignedInteger();
             var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientationByte(orientationByte);
-            int teamId = reader.Read8BitUnsignedInteger();
-            int initialActionId = reader.Read8BitUnsignedInteger();
+            int teamId = rawFileData.Read8BitUnsignedInteger();
+            int initialActionId = rawFileData.Read8BitUnsignedInteger();
 
             levelData.PrePlacedLemmingData.Add(new LemmingData
             {

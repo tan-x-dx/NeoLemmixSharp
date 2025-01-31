@@ -10,7 +10,7 @@ public sealed class ForceFacingDirectionAction : IGadgetAction
 
     public ForceFacingDirectionAction(FacingDirection facingDirection)
     {
-        _facingDirection = facingDirection;
+        _facingDirection = new FacingDirection(facingDirection.Id);
     }
 
     public void PerformAction(Lemming lemming)

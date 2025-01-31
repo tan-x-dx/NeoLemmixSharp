@@ -10,6 +10,8 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
@@ -17,7 +19,7 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
 {
     public required ResizeType ResizeType { get; init; }
     public required int GadgetBuilderId { get; init; }
-    public required GadgetStateArchetypeDataAaa[] AllGadgetStateData { get; init; }
+    public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }
 
     public required SpriteData SpriteData { get; init; }
 
@@ -93,6 +95,7 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
 
             var animationController = gadgetStateArchetypeData.GetAnimationController();
             var hitBoxRegionLookup = CreateHitBoxRegionLookup(
+                gadgetData,
                 hitBoxGadgetBounds,
                 gadgetStateArchetypeData.RegionData);
             var hitBoxFilters = CreateHitBoxFilters(
@@ -110,7 +113,7 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
 
     private static LemmingHitBoxFilter[] CreateHitBoxFilters(
         GadgetData gadgetData,
-        GadgetStateArchetypeDataAaa gadgetStateArchetypeData)
+        GadgetStateArchetypeData gadgetStateArchetypeData)
     {
         var result = new LemmingHitBoxFilter[gadgetStateArchetypeData.HitBoxData.Length];
 
@@ -143,12 +146,14 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
             Helpers.CountIfNotNull(hitBoxData.AllowedOrientations) +
             Helpers.CountIfNotNull(hitBoxData.AllowedFacingDirection) +
             (gadgetData.HasProperty(GadgetProperty.TeamId) ? 1 : 0);
+
         if (numberOfCriteria == 0)
             return [];
 
         var result = new ILemmingCriterion[numberOfCriteria];
 
         numberOfCriteria = 0;
+
         if (hitBoxData.AllowedActions is not null)
         {
             var lemmingActionCriterion = new LemmingActionCriterion();
@@ -170,16 +175,16 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
 
             foreach (var orientation in hitBoxData.AllowedOrientations)
             {
-                var rotatedOrientationId = (orientation.RotNum + gadgetOrientationId) & 3;
-                orientationFilter.RegisterOrientation(Orientation.AllItems[rotatedOrientationId]);
+                var rotatedOrientation = new Orientation(orientation.RotNum + gadgetOrientationId);
+                orientationFilter.RegisterOrientation(rotatedOrientation);
             }
 
             result[numberOfCriteria++] = orientationFilter;
         }
 
-        if (hitBoxData.AllowedFacingDirection is not null)
+        if (hitBoxData.AllowedFacingDirection.HasValue)
         {
-            var facingDirectionFilter = new LemmingFacingDirectionCriterion(hitBoxData.AllowedFacingDirection);
+            var facingDirectionFilter = LemmingFacingDirectionCriterion.ForFacingDirection(hitBoxData.AllowedFacingDirection.Value);
             result[numberOfCriteria++] = facingDirectionFilter;
         }
 
@@ -190,41 +195,100 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
             result[numberOfCriteria++] = teamFilter;
         }
 
+        Debug.Assert(numberOfCriteria == result.Length);
+
         return result;
     }
 
-    private static SimpleDictionary<OrientationComparer, Orientation, IHitBoxRegion> CreateHitBoxRegionLookup(
+    private SimpleDictionary<OrientationComparer, Orientation, IHitBoxRegion> CreateHitBoxRegionLookup(
+        GadgetData gadgetData,
         GadgetBounds hitBoxGadgetBounds,
-        HitBoxRegionData hitBoxRegionData)
+        ReadOnlySpan<HitBoxRegionData> hitBoxRegionData)
     {
         var result = OrientationComparer.CreateSimpleDictionary<IHitBoxRegion>();
 
-        IHitBoxRegion hitBoxRegion = hitBoxRegionData.HitBoxType switch
+        foreach (var item in hitBoxRegionData)
         {
-            HitBoxType.Empty => EmptyHitBoxRegion.Instance,
-            HitBoxType.ResizableRectangular => CreateResizableRectangularHitBoxRegion(hitBoxGadgetBounds, hitBoxRegionData.HitBoxData),
-            HitBoxType.Rectangular => CreateRectangularHitBoxRegion(hitBoxRegionData.HitBoxData),
-            HitBoxType.PointSet => new PointSetHitBoxRegion(hitBoxRegionData.HitBoxData),
+            // Can skip this case since it doesn't do anything interesting anyway
+            if (item.HitBoxType == HitBoxType.Empty)
+                continue;
 
-            _ => throw new ArgumentOutOfRangeException(nameof(hitBoxRegionData.HitBoxType), hitBoxRegionData.HitBoxType, "Unknown HitBoxType")
-        };
+            IHitBoxRegion hitBoxRegion = item.HitBoxType switch
+            {
+                HitBoxType.Empty => EmptyHitBoxRegion.Instance,
+                HitBoxType.ResizableRectangular => CreateResizableRectangularHitBoxRegion(hitBoxGadgetBounds, item.HitBoxDefinitionData),
+                HitBoxType.Rectangular => CreateRectangularHitBoxRegion(gadgetData, item.HitBoxDefinitionData),
+                HitBoxType.PointSet => CreatePointSetHitBoxRegion(gadgetData, item.HitBoxDefinitionData),
 
-        result[Orientation.Down] = hitBoxRegion;
-        result[Orientation.Left] = hitBoxRegion;
-        result[Orientation.Up] = hitBoxRegion;
-        result[Orientation.Right] = hitBoxRegion;
+                _ => throw new ArgumentOutOfRangeException(nameof(item.HitBoxType), item.HitBoxType, "Unknown HitBoxType")
+            };
+
+            result.Add(item.Orientation, hitBoxRegion);
+        }
 
         return result;
 
-        static RectangularHitBoxRegion CreateRectangularHitBoxRegion(
+        RectangularHitBoxRegion CreateRectangularHitBoxRegion(
+            GadgetData gadgetData,
             ReadOnlySpan<LevelPosition> hitBoxRegionData)
         {
             if (hitBoxRegionData.Length != 2)
-                throw new InvalidOperationException("Expected data of length 2");
+                throw new InvalidOperationException("Expected exactly two points of data");
+
+            gadgetData.GetDihedralTransformation(out var dihedralTransformation);
 
             var p0 = hitBoxRegionData[0];
             var p1 = hitBoxRegionData[1];
-            return new RectangularHitBoxRegion(p0.X, p0.Y, p1.X, p1.Y);
+
+            dihedralTransformation.Transform(
+                p0.X,
+                p0.Y,
+                SpriteData.SpriteWidth,
+                SpriteData.SpriteHeight,
+                out var tX,
+                out var tY);
+
+            p0 = new LevelPosition(tX, tY);
+
+            dihedralTransformation.Transform(
+                p1.X,
+                p1.Y,
+                SpriteData.SpriteWidth,
+                SpriteData.SpriteHeight,
+                out tX,
+                out tY);
+
+            p1 = new LevelPosition(tX, tY);
+
+            return new RectangularHitBoxRegion(p0, p1);
+        }
+
+        [SkipLocalsInit]
+        PointSetHitBoxRegion CreatePointSetHitBoxRegion(
+            GadgetData gadgetData,
+            ReadOnlySpan<LevelPosition> triggerData)
+        {
+            gadgetData.GetDihedralTransformation(out var dihedralTransformation);
+
+            Span<LevelPosition> adjustedPoints = triggerData.Length > 32
+                ? new LevelPosition[triggerData.Length]
+                : stackalloc LevelPosition[triggerData.Length];
+
+            for (var i = 0; i < triggerData.Length; i++)
+            {
+                var originalPoint = triggerData[i];
+                dihedralTransformation.Transform(
+                    originalPoint.X,
+                    originalPoint.Y,
+                    SpriteData.SpriteWidth,
+                    SpriteData.SpriteHeight,
+                    out var tX,
+                    out var tY);
+
+                adjustedPoints[i] = new LevelPosition(tX, tY);
+            }
+
+            return new PointSetHitBoxRegion(adjustedPoints);
         }
 
         static ResizableRectangularHitBoxRegion CreateResizableRectangularHitBoxRegion(
@@ -240,120 +304,3 @@ public sealed class HitBoxGadgetBuilder : IGadgetBuilder
         }
     }
 }
-
-
-/*
-private IHitBoxRegion CreateHitBoxLevelRegion(
-    GadgetData gadgetData,
-    HitBoxType triggerType,
-    ReadOnlySpan<LevelPosition> triggerData)
-{
-    if (triggerType == HitBoxType.Rectangular)
-        return CreateRectangularHitBoxLevelRegion(gadgetData, triggerData);
-
-    return CreatePointSetHitBoxLevelRegion(gadgetData, triggerData);
-}
-
-private RectangularHitBoxRegion CreateRectangularHitBoxLevelRegion(
-    GadgetData gadgetData,
-    ReadOnlySpan<LevelPosition> triggerData)
-{
-    if (triggerData.Length != 2)
-        throw new InvalidOperationException("Expected exactly two points of data");
-
-    gadgetData.GetDihedralTransformation(out var dihedralTransformation);
-
-    var p0 = triggerData[0];
-    var p1 = triggerData[1];
-
-    dihedralTransformation.Transform(
-        p0.X,
-        p0.Y,
-        SpriteData.SpriteWidth,
-        SpriteData.SpriteHeight,
-        out var tX,
-        out var tY);
-
-    p0 = new LevelPosition(tX, tY);
-
-    dihedralTransformation.Transform(
-        p1.X,
-        p1.Y,
-        SpriteData.SpriteWidth,
-        SpriteData.SpriteHeight,
-        out tX,
-        out tY);
-
-    p1 = new LevelPosition(tX, tY);
-
-    return new RectangularHitBoxRegion(p0, p1);
-}
-
-[SkipLocalsInit]
-private PointSetHitBoxRegion CreatePointSetHitBoxLevelRegion(
-    GadgetData gadgetData,
-    ReadOnlySpan<LevelPosition> triggerData)
-{
-    gadgetData.GetDihedralTransformation(out var dihedralTransformation);
-
-    Span<LevelPosition> adjustedPoints = triggerData.Length > 64
-        ? new LevelPosition[triggerData.Length]
-        : stackalloc LevelPosition[triggerData.Length];
-
-    for (var i = 0; i < triggerData.Length; i++)
-    {
-        var originalPoint = triggerData[i];
-        ref var transformedPoint = ref adjustedPoints[i];
-        dihedralTransformation.Transform(
-            originalPoint.X,
-            originalPoint.Y,
-            SpriteData.SpriteWidth,
-            SpriteData.SpriteHeight,
-            out var tX,
-            out var tY);
-
-        transformedPoint = new LevelPosition(tX, tY);
-    }
-
-    return new PointSetHitBoxRegion(adjustedPoints);
-}
-
-
-
-
-private RectangularHitBoxRegion CreateRectangularHitBoxLevelRegion(
-    GadgetData gadgetData,
-    ReadOnlySpan<LevelPosition> triggerData,
-    RectangularHitBoxRegion gadgetBounds)
-{
-    if (triggerData.Length != 2)
-        throw new InvalidOperationException("Expected exactly two points of data");
-
-    gadgetData.GetDihedralTransformation(out var dihedralTransformation);
-
-    var p0 = triggerData[0];
-    var p1 = triggerData[1];
-
-    dihedralTransformation.Transform(
-        p0.X,
-        p0.Y,
-        SpriteData.SpriteWidth,
-        SpriteData.SpriteHeight,
-        out var tX,
-        out var tY);
-
-    p0 = new LevelPosition(tX, tY);
-
-    dihedralTransformation.Transform(
-        p1.X,
-        p1.Y,
-        SpriteData.SpriteWidth,
-        SpriteData.SpriteHeight,
-        out tX,
-        out tY);
-
-    p1 = new LevelPosition(tX, tY);
-
-    return new RectangularHitBoxRegion(p0.X, p0.Y, p1.X, p1.Y);
-}
-*/

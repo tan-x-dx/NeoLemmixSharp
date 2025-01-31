@@ -27,7 +27,7 @@ public sealed class ViewPortRotationController
         }
         else if (_transitionOrientation != orientation)
         {
-            _currentOrientation = _transitionOrientation;
+            _currentOrientation = _transitionOrientation.Value;
             _transitionOrientation = orientation;
         }
 
@@ -37,7 +37,7 @@ public sealed class ViewPortRotationController
     private void UpdateTValues()
     {
         var currentOrientationRotNum = _currentOrientation.RotNum;
-        var transitionOrientationRotNum = _transitionOrientation!.RotNum;
+        var transitionOrientationRotNum = _transitionOrientation!.Value.RotNum;
 
 
     }

@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -178,4 +180,10 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     public static bool operator ==(LemmingSkill left, LemmingSkill right) => left.Id == right.Id;
     public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.Id != right.Id;
+
+    [InlineArray((EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift)]
+    public struct LemmingSkillBitBuffer
+    {
+        public uint _x;
+    }
 }

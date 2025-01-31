@@ -61,8 +61,8 @@ public sealed class LevelObjectAssembler : IDisposable
         _lemmings.Capacity = totalCapacity;
 
         var prePlacedLemmings = CollectionsMarshal.AsSpan(levelData.PrePlacedLemmingData);
-        AddLemmings(prePlacedLemmings);
         var hatchLemmingData = CollectionsMarshal.AsSpan(levelData.HatchLemmingData);
+        AddLemmings(prePlacedLemmings);
         AddLemmings(hatchLemmingData);
 
         for (var i = 0; i < maxNumberOfClonedLemmings; i++)

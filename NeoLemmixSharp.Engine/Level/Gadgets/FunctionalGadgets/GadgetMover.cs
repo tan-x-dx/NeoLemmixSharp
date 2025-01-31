@@ -30,7 +30,7 @@ public sealed class GadgetMover : GadgetBase, ISimpleRenderGadget
         int tickDelay,
         int dx,
         int dy)
-        : base(id, orientation, gadgetBounds)
+        : base(id, orientation, gadgetBounds, 1)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;
@@ -59,23 +59,22 @@ public sealed class GadgetMover : GadgetBase, ISimpleRenderGadget
         }
     }
 
-    private sealed class GadgetMoverInput : IGadgetInput
+    private sealed class GadgetMoverInput : GadgetInput
     {
         private readonly GadgetMover _mover;
-        public string InputName { get; }
 
         public GadgetMoverInput(string inputName, GadgetMover mover)
+            : base(inputName)
         {
-            InputName = inputName;
             _mover = mover;
         }
 
-        public void OnRegistered()
+        public override void OnRegistered()
         {
             _mover._active = false;
         }
 
-        public void ReactToSignal(bool signal)
+        public override void ReactToSignal(bool signal)
         {
             _mover._active = signal;
         }

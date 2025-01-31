@@ -5,10 +5,11 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
+[StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
 public readonly struct LevelSize : IEquatable<LevelSize>
 {
-    public readonly int W;
-    public readonly int H;
+    [FieldOffset(0 * sizeof(int))] public readonly int W;
+    [FieldOffset(1 * sizeof(int))] public readonly int H;
 
     [DebuggerStepThrough]
     public LevelSize(int w, int h)

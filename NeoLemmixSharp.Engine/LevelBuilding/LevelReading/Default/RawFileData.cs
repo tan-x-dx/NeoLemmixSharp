@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
-public sealed class BinaryReaderWrapper
+public sealed class RawFileData
 {
     private const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
 
@@ -13,7 +13,7 @@ public sealed class BinaryReaderWrapper
     public int BytesRead => _position;
     public bool MoreToRead => BytesRead < FileSizeInBytes;
 
-    public BinaryReaderWrapper(string filePath)
+    public RawFileData(string filePath)
     {
         using var fileStream = new FileStream(filePath, FileMode.Open);
         var fileSizeInBytes = fileStream.Length;

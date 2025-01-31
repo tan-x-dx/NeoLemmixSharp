@@ -1,9 +1,7 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
-
-namespace NeoLemmixSharp.Common.Util.Collections;
+﻿namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class SimpleList<T>
-    where T : class, IIdEquatable<T>
+    where T : class, IEquatable<T>
 {
     private readonly T[] _items;
 
@@ -11,17 +9,17 @@ public sealed class SimpleList<T>
 
     public SimpleList(int capacity)
     {
-        _items = new T[capacity];
+        _items = CollectionsHelper.GetArrayForSize<T>(capacity);
     }
 
-    public ReadOnlySpan<T> AsSpan() => new(_items, 0, Count);
+    public ReadOnlySpan<T> AsReadOnlySpan() => new(_items, 0, Count);
 
     public void Add(T item)
     {
         if (Count == _items.Length)
             throw new InvalidOperationException("Already reached max capacity!");
 
-        if (Contains(item))
+        if (IndexOf(item) >= 0)
             throw new InvalidOperationException("Already contains item!");
 
         _items[Count++] = item;
@@ -34,7 +32,7 @@ public sealed class SimpleList<T>
         while (index < Count)
         {
             var testItem = _items[index];
-            if (testItem == item)
+            if (testItem.Equals(item))
                 return index;
             index++;
         }

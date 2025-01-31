@@ -30,7 +30,7 @@ public sealed class GadgetResizer : GadgetBase, ISimpleRenderGadget
         int tickDelay,
         int dw,
         int dh)
-        : base(id, orientation, gadgetBounds)
+        : base(id, orientation, gadgetBounds, 1)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;
@@ -59,23 +59,22 @@ public sealed class GadgetResizer : GadgetBase, ISimpleRenderGadget
         }
     }
 
-    private sealed class GadgetResizerInput : IGadgetInput
+    private sealed class GadgetResizerInput : GadgetInput
     {
         private readonly GadgetResizer _resizer;
-        public string InputName { get; }
 
         public GadgetResizerInput(string inputName, GadgetResizer resizer)
+            : base(inputName)
         {
-            InputName = inputName;
             _resizer = resizer;
         }
 
-        public void OnRegistered()
+        public override void OnRegistered()
         {
             _resizer._active = false;
         }
 
-        public void ReactToSignal(bool signal)
+        public override void ReactToSignal(bool signal)
         {
             _resizer._active = signal;
         }

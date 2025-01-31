@@ -7,28 +7,50 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 public sealed class DefaultLevelReader : ILevelReader
 {
     private readonly ILevelDataReader[] _dataReaders;
-    private readonly BinaryReaderWrapper _binaryReaderWrapper;
+    private readonly RawFileData _rawFileData;
 
     public DefaultLevelReader(string filePath)
     {
-        _binaryReaderWrapper = new BinaryReaderWrapper(filePath);
+        _rawFileData = new RawFileData(filePath);
+
+        var version = ReadVersion();
 
         var stringIdLookup = new List<string>();
 
-        var terrainComponentReader = new TerrainDataComponentReader(stringIdLookup);
+        var terrainComponentReader = new TerrainDataComponentReader(version, stringIdLookup);
         _dataReaders =
         [
-            new StringDataComponentReader(stringIdLookup),
+            new StringDataComponentReader(version, stringIdLookup),
 
-            new LevelDataComponentReader(stringIdLookup),
-            new LevelTextDataComponentReader(stringIdLookup),
-            new HatchGroupDataComponentReader(),
-            new LevelObjectiveDataComponentReader(stringIdLookup),
-            new PrePlacedLemmingDataComponentReader(),
+            new LevelDataComponentReader(version, stringIdLookup),
+            new LevelTextDataComponentReader(version, stringIdLookup),
+            new HatchGroupDataComponentReader(version),
+            new LevelObjectiveDataComponentReader(version, stringIdLookup),
+            new PrePlacedLemmingDataComponentReader(version),
             terrainComponentReader,
-            new TerrainGroupDataComponentReader(stringIdLookup, terrainComponentReader),
-            new GadgetDataComponentReader(stringIdLookup)
+            new TerrainGroupDataComponentReader(version, stringIdLookup, terrainComponentReader),
+            new GadgetDataComponentReader(version, stringIdLookup)
         ];
+    }
+
+    private Version ReadVersion()
+    {
+        int major = _rawFileData.Read16BitUnsignedInteger();
+        AssertNextByteIsPeriod();
+        int minor = _rawFileData.Read16BitUnsignedInteger();
+        AssertNextByteIsPeriod();
+        int build = _rawFileData.Read16BitUnsignedInteger();
+        AssertNextByteIsPeriod();
+        int revision = _rawFileData.Read16BitUnsignedInteger();
+
+        return new Version(major, minor, build, revision);
+
+        void AssertNextByteIsPeriod()
+        {
+            int nextByteValue = _rawFileData.Read8BitUnsignedInteger();
+
+            LevelReadWriteHelpers.ReaderAssert(nextByteValue == '.', "Version not in correct format");
+        }
     }
 
     public LevelData ReadLevel(GraphicsDevice graphicsDevice)
@@ -39,43 +61,21 @@ public sealed class DefaultLevelReader : ILevelReader
         return levelData;
     }
 
-    public LevelData ReadFile()
+    private LevelData ReadFile()
     {
-        var version = ReadVersion();
-
         var result = new LevelData();
 
-        while (_binaryReaderWrapper.MoreToRead)
+        while (_rawFileData.MoreToRead)
         {
-            GetNextDataReader().ReadSection(_binaryReaderWrapper, result);
+            GetNextDataReader().ReadSection(_rawFileData, result);
         }
 
         return result;
     }
 
-    private Version ReadVersion()
-    {
-        int major = _binaryReaderWrapper.Read16BitUnsignedInteger();
-        AssertNextByteIsPeriod();
-        int minor = _binaryReaderWrapper.Read16BitUnsignedInteger();
-        AssertNextByteIsPeriod();
-        int build = _binaryReaderWrapper.Read16BitUnsignedInteger();
-        AssertNextByteIsPeriod();
-        int revision = _binaryReaderWrapper.Read16BitUnsignedInteger();
-
-        return new Version(major, minor, build, revision);
-
-        void AssertNextByteIsPeriod()
-        {
-            int nextByte = _binaryReaderWrapper.Read8BitUnsignedInteger();
-
-            LevelReadWriteHelpers.ReaderAssert(nextByte == '.', "Version not in correct format");
-        }
-    }
-
     private ILevelDataReader GetNextDataReader()
     {
-        var buffer = _binaryReaderWrapper.ReadBytes(2);
+        var buffer = _rawFileData.ReadBytes(2);
 
         foreach (var levelDataWriter in _dataReaders)
         {

@@ -2,10 +2,10 @@
 
 public sealed class GadgetOutput
 {
-    private readonly List<IGadgetInput> _inputs = new();
+    private readonly List<GadgetInput> _inputs = new();
     private bool _currentSignal;
 
-    public void RegisterInput(IGadgetInput input)
+    public void RegisterInput(GadgetInput input)
     {
         _inputs.Add(input);
         input.OnRegistered();

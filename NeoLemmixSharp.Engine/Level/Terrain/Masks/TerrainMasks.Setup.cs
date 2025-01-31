@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -96,15 +97,17 @@ public static partial class TerrainMasks
             itemCreator);
 
         var numberOfTerrainMasks = numberOfFrames *
-                                   Orientation.AllItems.Length *
-                                   FacingDirection.AllItems.Length;
+                                   EngineConstants.NumberOfOrientations *
+                                   EngineConstants.NumberOfFacingDirections;
 
         var result = new TerrainEraseMask[numberOfTerrainMasks];
 
+        var allOrientations = Orientation.AllItems;
         for (var f = 0; f < numberOfFrames; f++)
         {
-            foreach (var orientation in Orientation.AllItems)
+            for (var i = 0; i < allOrientations.Length; i++)
             {
+                var orientation = allOrientations[i];
                 var k0 = GetKey(orientation, FacingDirection.Right);
                 var k1 = GetKey(orientation, FacingDirection.Right, f);
 

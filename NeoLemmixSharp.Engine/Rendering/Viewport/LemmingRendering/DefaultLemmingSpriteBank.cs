@@ -32,8 +32,8 @@ public static class DefaultLemmingSpriteBank
 #pragma warning restore IDE0039
 
         var numberOfActionSprites = LemmingAction.NumberOfItems *
-                                    Orientation.NumberOfItems *
-                                    FacingDirection.NumberOfItems;
+                                    EngineConstants.NumberOfOrientations *
+                                    EngineConstants.NumberOfFacingDirections;
 
         var actionSprites = new LemmingActionSprite[numberOfActionSprites];
 
@@ -253,8 +253,10 @@ public static class DefaultLemmingSpriteBank
         LemmingAction action,
         LemmingActionSprite[] spriteTypes)
     {
-        foreach (var orientation in Orientation.AllItems)
+        var allOrientations = Orientation.AllItems;
+        for (var i = 0; i < allOrientations.Length; i++)
         {
+            var orientation = allOrientations[i];
             var k0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.Right);
             var k1 = LemmingSpriteBank.GetKey(action, orientation, FacingDirection.Right);
 
@@ -409,8 +411,10 @@ public static class DefaultLemmingSpriteBank
             new LevelPosition(9, 13),
             ItemCreator);
 
-        foreach (var orientation in Orientation.AllItems)
+        var allOrientations = Orientation.AllItems;
+        for (var i = 0; i < allOrientations.Length; i++)
         {
+            var orientation = allOrientations[i];
             var rotateCwK0 = LemmingSpriteBank.GetKey(orientation, FacingDirection.Right);
             var rotateCwK1 = LemmingSpriteBank.GetKey(RotateClockwiseAction.Instance, orientation, FacingDirection.Right);
             var rotateCcwK1 = LemmingSpriteBank.GetKey(RotateCounterclockwiseAction.Instance, orientation, FacingDirection.Right);

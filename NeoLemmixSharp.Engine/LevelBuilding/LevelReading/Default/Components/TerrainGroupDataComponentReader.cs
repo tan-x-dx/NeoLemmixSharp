@@ -10,14 +10,17 @@ public sealed class TerrainGroupDataComponentReader : ILevelDataReader
     public bool AlreadyUsed { get; private set; }
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.TerrainGroupDataSectionIdentifier;
 
-    public TerrainGroupDataComponentReader(List<string> stringIdLookup, TerrainDataComponentReader terrainDataComponentReader)
+    public TerrainGroupDataComponentReader(
+        Version version, 
+        List<string> stringIdLookup,
+        TerrainDataComponentReader terrainDataComponentReader)
     {
         _stringIdLookup = stringIdLookup;
         _terrainDataComponentReader = terrainDataComponentReader;
     }
 
 
-    public void ReadSection(BinaryReaderWrapper reader, LevelData levelData)
+    public void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         throw new NotImplementedException();
     }
