@@ -101,9 +101,9 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public bool ContainsPoint(Orientation orientation, LevelPosition levelPosition)
     {
-        var p = levelPosition - _currentGadgetBounds.Position;
-
-        return _currentState.HitBoxFor(orientation).ContainsPoint(p);
+        return _currentState
+            .HitBoxFor(orientation)
+            .ContainsPoint(levelPosition - _currentGadgetBounds.Position);
     }
 
     public void OnLemmingHit(

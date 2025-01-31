@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -170,18 +171,25 @@ public sealed class BoundaryBehaviour
         return a;
     }
 
-    public void NormaliseCoords(ref int left, ref int right, ref int a)
+    [Pure]
+    public bool IsInRange(int a, int lower, int upper)
     {
-        // Do nothing - coords will already be fine
-        if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
-            (left > 0 &&
-             right < _levelLength))
-            return;
+        Debug.Assert(lower < upper);
 
-        var halfLevelWidth = _levelLength >> 1;
-        left -= halfLevelWidth;
-        right -= halfLevelWidth;
-        a -= halfLevelWidth;
+        // If it works, it always works
+        if (lower <= a && a < upper)
+            return true;
+
+        // If it doesn't work, it certainly doesn't work for void
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
+            return false;
+
+        a += _levelLength;
+        if (lower <= a && a < upper)
+            return true;
+
+        a -= _levelLength << 1;
+        return lower <= a && a < upper;
     }
 
     [Pure]

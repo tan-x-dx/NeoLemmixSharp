@@ -59,7 +59,9 @@ public sealed class GadgetState
         maxX += gadgetBounds.X;
         maxY += gadgetBounds.Y;
 
-        return new LevelRegion(new LevelPosition(minX, minY), new LevelSize(1 + maxX - minX, 1 + maxY - minY));
+        return new LevelRegion(
+            new LevelPosition(minX, minY),
+            new LevelSize(1 + maxX - minX, 1 + maxY - minY));
     }
 
     public void OnTransitionTo()

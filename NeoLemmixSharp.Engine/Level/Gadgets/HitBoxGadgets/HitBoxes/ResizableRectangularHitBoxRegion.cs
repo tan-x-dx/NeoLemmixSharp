@@ -25,40 +25,26 @@ public sealed class ResizableRectangularHitBoxRegion : IHitBoxRegion
         _dh = dh;
     }
 
-    private int X => _gadgetBounds.X + _dx;
-    private int Y => _gadgetBounds.Y + _dy;
-    private int Width => _gadgetBounds.Width + _dw - _dx;
-    private int Height => _gadgetBounds.Height + _dh - _dy;
+    private int GetX() => _gadgetBounds.X + _dx;
+    private int GetY() => _gadgetBounds.Y + _dy;
+    private int GetWidth() => _gadgetBounds.Width + _dw - _dx;
+    private int GetHeight() => _gadgetBounds.Height + _dh - _dy;
 
     public LevelRegion CurrentBounds => new(
-        new LevelPosition(X, Y),
-        new LevelSize(Width, Height));
+        new LevelPosition(GetX(), GetY()),
+        new LevelSize(GetWidth(), GetHeight()));
 
     public bool ContainsPoint(LevelPosition levelPosition)
     {
-        var w = Width;
-        var h = Height;
+        var x = GetX();
+        var y = GetY();
 
-        if (w <= 0 ||
-            h <= 0)
-            return false;
+        var w = GetWidth();
+        var h = GetHeight();
 
-        var x0 = X;
-        var y0 = Y;
-
-        var x1 = x0 + w;
-        var y1 = y0 + h;
-
-        var x = levelPosition.X;
-        var y = levelPosition.Y;
-
-        LevelScreen.HorizontalBoundaryBehaviour.NormaliseCoords(ref x0, ref x1, ref x);
-        LevelScreen.VerticalBoundaryBehaviour.NormaliseCoords(ref y0, ref y1, ref y);
-
-        return x0 <= x &&
-               y0 <= y &&
-               x < x1 &&
-               y < y1;
+        return w > 0 &&
+               h > 0 &&
+               LevelScreen.HorizontalBoundaryBehaviour.IsInRange(levelPosition.X, x, x + w) &&
+               LevelScreen.VerticalBoundaryBehaviour.IsInRange(levelPosition.Y, y, y + h);
     }
-
 }
