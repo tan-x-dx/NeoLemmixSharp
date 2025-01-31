@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
@@ -215,27 +216,28 @@ public sealed class GadgetReader : NeoLemmixDataReader
             NeoLemmixFileExtensions.GadgetFolderName);
     }
 
+    [SkipLocalsInit]
     private NeoLemmixGadgetArchetypeData GetOrLoadGadgetArchetypeData(ReadOnlySpan<char> piece)
     {
-        var currentStyleLength = _currentStyle!.Length;
-
         // Safeguard against potential stack overflow.
         // Will almost certainly be a small buffer
         // allocated on the stack, but still...
-        var bufferSize = currentStyleLength + piece.Length + 1;
+        var bufferSize = _currentStyle!.Length + piece.Length + 1;
         Span<char> archetypeDataKeySpan = bufferSize > NxlvReadingHelpers.MaxStackallocSize
             ? new char[bufferSize]
             : stackalloc char[bufferSize];
 
         _currentStyle.CopyTo(archetypeDataKeySpan);
-        archetypeDataKeySpan[currentStyleLength] = ':';
-        piece.CopyTo(archetypeDataKeySpan[(currentStyleLength + 1)..]);
+        var currentStyleLength = _currentStyle.Length;
+        archetypeDataKeySpan[currentStyleLength++] = ':';
+        piece.CopyTo(archetypeDataKeySpan[currentStyleLength..]);
+        currentStyleLength += piece.Length;
 
         var alternateLookup = GadgetArchetypes.GetAlternateLookup<ReadOnlySpan<char>>();
 
         ref var dictionaryEntry = ref CollectionsMarshal.GetValueRefOrAddDefault(
             alternateLookup,
-            archetypeDataKeySpan,
+            archetypeDataKeySpan[..currentStyleLength],
             out var exists);
 
         if (!exists)

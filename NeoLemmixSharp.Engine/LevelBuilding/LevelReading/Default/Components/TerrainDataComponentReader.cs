@@ -28,7 +28,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
 
         while (numberOfItemsInSection-- > 0)
         {
-            var newTerrainDatum = ReadTerrainData(rawFileData);
+            var newTerrainDatum = ReadNextTerrainData(rawFileData);
             levelData.AllTerrainData.Add(newTerrainDatum);
         }
 
@@ -38,7 +38,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         levelData.TerrainArchetypeData.Sort(this);
     }
 
-    private TerrainData ReadTerrainData(RawFileData rawFileData)
+    private TerrainData ReadNextTerrainData(RawFileData rawFileData)
     {
         int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
         int initialBytesRead = rawFileData.BytesRead;
