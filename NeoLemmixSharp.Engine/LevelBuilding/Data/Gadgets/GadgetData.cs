@@ -26,9 +26,9 @@ public sealed class GadgetData
 
     public int NumberOfGadgetProperties => _properties.Count;
 
-    public void SetProperty(GadgetProperty property, int value)
+    public void AddProperty(GadgetProperty property, int value)
     {
-        _properties[property] = value;
+        _properties.Add(property, value);
     }
 
     public int GetProperty(GadgetProperty property)

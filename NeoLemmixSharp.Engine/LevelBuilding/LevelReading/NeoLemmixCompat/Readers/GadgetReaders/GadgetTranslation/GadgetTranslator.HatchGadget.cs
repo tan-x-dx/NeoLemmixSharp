@@ -32,10 +32,10 @@ public readonly ref partial struct GadgetTranslator
             FacingDirection = facingDirection,
         };
 
-        gadgetData.SetProperty(GadgetProperty.HatchGroupId, 0); // All NeoLemmix levels have precisely one hatch group
-        gadgetData.SetProperty(GadgetProperty.TeamId, EngineConstants.ClassicTeamId); // All NeoLemmix levels use the default team
-        gadgetData.SetProperty(GadgetProperty.RawLemmingState, (int)prototype.State);
-        gadgetData.SetProperty(GadgetProperty.Count, prototype.LemmingCount!.Value);
+        gadgetData.AddProperty(GadgetProperty.HatchGroupId, 0); // All NeoLemmix levels have precisely one hatch group
+        gadgetData.AddProperty(GadgetProperty.TeamId, EngineConstants.ClassicTeamId); // All NeoLemmix levels use the default team
+        gadgetData.AddProperty(GadgetProperty.RawLemmingState, (int)prototype.State);
+        gadgetData.AddProperty(GadgetProperty.Count, prototype.LemmingCount!.Value);
 
         ref var gadgetBuilder = ref CollectionsMarshal.GetValueRefOrAddDefault(_levelData.AllGadgetBuilders, archetypeData.GadgetArchetypeId, out var exists);
 
