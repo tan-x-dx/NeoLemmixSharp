@@ -13,21 +13,21 @@ public static class LevelFileTypeHandler
 
     private static readonly Dictionary<string, FileTypeAndFormat> FileTypeAndFormatLookup = new(StringComparer.OrdinalIgnoreCase)
     {
+        { DefaultFileExtensions.LevelFileExtension, new(FileType.Level, FileFormatType.Default) },
+        { DefaultFileExtensions.LevelStyleExtension, new(FileType.Style, FileFormatType.Default) },
+
         { NeoLemmixFileExtensions.LevelFileExtension, new(FileType.Level,FileFormatType.NeoLemmix) },
         { NeoLemmixFileExtensions.GadgetFileExtension, new(FileType.NeoLemmixGadget, FileFormatType.NeoLemmix) },
         { NeoLemmixFileExtensions.TerrainFileExtension, new(FileType.NeoLemmixTerrain, FileFormatType.NeoLemmix) },
         { NeoLemmixFileExtensions.ThemeFileExtension, new(FileType.Style, FileFormatType.NeoLemmix) },
         { NeoLemmixFileExtensions.ConfigFileExtension, new(FileType.NeoLemmixConfig, FileFormatType.NeoLemmix) },
-        { NeoLemmixFileExtensions.ReplayFileExtension, new(FileType.Replay, FileFormatType.NeoLemmix) },
-
-        { DefaultFileExtensions.LevelFileExtension, new(FileType.Level, FileFormatType.Default) },
-        { DefaultFileExtensions.LevelStyleExtension, new(FileType.Style, FileFormatType.Default) }
+        { NeoLemmixFileExtensions.ReplayFileExtension, new(FileType.Replay, FileFormatType.NeoLemmix) }
     };
 
     private static readonly Dictionary<string, Type> LevelFileExtensionLookup = new(StringComparer.OrdinalIgnoreCase)
     {
-        { NeoLemmixFileExtensions.LevelFileExtension, typeof(NxlvLevelReader) },
-        { DefaultFileExtensions.LevelFileExtension, typeof(DefaultLevelReader) }
+        { DefaultFileExtensions.LevelFileExtension, typeof(DefaultLevelReader) },
+        { NeoLemmixFileExtensions.LevelFileExtension, typeof(NxlvLevelReader) }
     };
 
     public static bool TryDetermineFileExtension(
@@ -55,10 +55,7 @@ public static class LevelFileTypeHandler
         var alternateLookup = LevelFileExtensionLookup.GetAlternateLookup<ReadOnlySpan<char>>();
 
         if (alternateLookup.TryGetValue(fileExtension, out var levelReaderType))
-        {
-            var levelReader = Activator.CreateInstance(levelReaderType, filePath)!;
-            return (ILevelReader)levelReader;
-        }
+            return (ILevelReader)Activator.CreateInstance(levelReaderType, filePath)!;
 
         throw new ArgumentException($"File extension not recognised: {fileExtension}");
     }
