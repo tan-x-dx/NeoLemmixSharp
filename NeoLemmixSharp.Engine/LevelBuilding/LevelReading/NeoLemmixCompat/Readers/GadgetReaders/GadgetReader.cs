@@ -210,10 +210,9 @@ public sealed class GadgetReader : NeoLemmixDataReader
     {
         _currentStyle = style.ToString();
         _currentFolder = Path.Combine(
-            RootDirectoryManager.RootDirectory,
-            NeoLemmixFileExtensions.StyleFolderName,
+            RootDirectoryManager.StyleFolderDirectory,
             _currentStyle,
-            NeoLemmixFileExtensions.GadgetFolderName);
+            DefaultFileExtensions.GadgetFolderName);
     }
 
     [SkipLocalsInit]

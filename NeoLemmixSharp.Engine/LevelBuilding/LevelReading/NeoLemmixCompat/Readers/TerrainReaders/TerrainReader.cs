@@ -155,10 +155,9 @@ public sealed class TerrainReader : NeoLemmixDataReader
     {
         _currentStyle = style.ToString();
         _currentFolder = Path.Combine(
-            RootDirectoryManager.RootDirectory,
-            NeoLemmixFileExtensions.StyleFolderName,
+            RootDirectoryManager.StyleFolderDirectory,
             _currentStyle,
-            NeoLemmixFileExtensions.TerrainFolderName);
+            DefaultFileExtensions.TerrainFolderName);
     }
 
     private TerrainArchetypeData GetOrLoadTerrainArchetypeData(ReadOnlySpan<char> piece)

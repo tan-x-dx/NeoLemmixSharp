@@ -9,8 +9,6 @@ namespace NeoLemmixSharp.Menu.LevelReading;
 
 public static class LevelPackReader
 {
-    public static readonly string LevelsRootPath = Path.Combine(RootDirectoryManager.RootDirectory, NeoLemmixFileExtensions.LevelFolderName);
-
     public static IEnumerable<LevelPackData?> TryReadLevelEntryFromFolder(string folderPath)
     {
         var files = Directory.GetFiles(folderPath);

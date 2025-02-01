@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Data;
 
@@ -14,8 +13,6 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
     /// Arbitrary threshold for calling GC for loading after loading levels
     /// </summary>
     private const int LevelLoadCountThreshold = 32;
-
-    private static readonly string LevelsRootPath = Path.Combine(RootDirectoryManager.RootDirectory, NeoLemmixFileExtensions.LevelFolderName);
 
     private readonly List<LevelBrowserEntry> _levelBrowserEntries = new();
     private LevelBrowserEntry? _selectedEntry;
@@ -46,7 +43,7 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
     public void RefreshLevels()
     {
         _levelBrowserEntries.Clear();
-      //  _levelBrowserEntries.AddRange(LevelBrowserEntry.GetMenuItems(LevelsRootPath));
+        //  _levelBrowserEntries.AddRange(LevelBrowserEntry.GetMenuItems(LevelsRootPath));
         _levelBrowserEntries.Sort(this);
 
         var children = _children!;

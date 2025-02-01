@@ -61,7 +61,7 @@ public sealed class MenuScreen : IBaseScreen
     {
         LevelPackData.Clear();
 
-        foreach (var levelPack in LevelPackReader.TryReadLevelEntryFromFolder(LevelPackReader.LevelsRootPath))
+        foreach (var levelPack in LevelPackReader.TryReadLevelEntryFromFolder(RootDirectoryManager.LevelFolderDirectory))
         {
             if (levelPack is not null)
             {

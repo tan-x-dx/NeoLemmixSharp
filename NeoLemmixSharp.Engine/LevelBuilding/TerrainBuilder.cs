@@ -269,10 +269,9 @@ public readonly ref struct TerrainBuilder
     private void LoadPixelColorData(TerrainArchetypeData terrainArchetypeData)
     {
         var rootFilePath = Path.Combine(
-            RootDirectoryManager.RootDirectory,
-            NeoLemmixFileExtensions.StyleFolderName,
+            RootDirectoryManager.StyleFolderDirectory,
             terrainArchetypeData.Style!,
-            NeoLemmixFileExtensions.TerrainFolderName,
+            DefaultFileExtensions.TerrainFolderName,
             terrainArchetypeData.TerrainPiece!);
 
         var pngPath = Path.ChangeExtension(rootFilePath, "png");
