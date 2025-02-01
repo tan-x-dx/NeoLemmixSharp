@@ -12,6 +12,8 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 public sealed class HatchGadgetBuilder : IGadgetBuilder
 {
     public required int GadgetBuilderId { get; init; }
+    public required string Style { get; init; }
+    public required string GadgetPiece { get; init; }
 
     public required int SpawnX { get; init; }
     public required int SpawnY { get; init; }

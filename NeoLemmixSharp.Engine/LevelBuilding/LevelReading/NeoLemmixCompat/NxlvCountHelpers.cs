@@ -14,8 +14,9 @@ public static class NxlvCountHelpers
         LevelData levelData,
         LevelDataReader levelDataReader,
         GadgetReader gadgetReader)
-    {
-        var gadgetDataSpan = CollectionsMarshal.AsSpan(gadgetReader.AllGadgetData);
+    { 
+    }
+        /*var gadgetDataSpan = CollectionsMarshal.AsSpan(gadgetReader.AllGadgetData);
         var hatchGadgets = new List<NeoLemmixGadgetData>();
 
         foreach (var gadgetData in gadgetDataSpan)
@@ -113,7 +114,7 @@ public static class NxlvCountHelpers
         }
 
         return totalNumberOfHatchLemmings;
-    }
+    }*/
 
     private struct HatchCountData
     {

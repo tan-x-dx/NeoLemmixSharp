@@ -7,8 +7,8 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
 {
     public required int TerrainArchetypeId { get; init; }
 
-    public required string? Style { get; init; }
-    public required string? TerrainPiece { get; init; }
+    public required string Style { get; init; }
+    public required string TerrainPiece { get; init; }
 
     public bool IsSteel { get; set; }
     public ResizeType ResizeType { get; set; }

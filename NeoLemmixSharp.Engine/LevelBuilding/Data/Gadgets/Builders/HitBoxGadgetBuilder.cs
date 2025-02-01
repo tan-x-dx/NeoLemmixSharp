@@ -17,8 +17,11 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
 public sealed class HitBoxGadgetBuilder : IGadgetBuilder
 {
-    public required ResizeType ResizeType { get; init; }
     public required int GadgetBuilderId { get; init; }
+    public required string Style { get; init; }
+    public required string GadgetPiece { get; init; }
+
+    public required ResizeType ResizeType { get; init; }
     public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }
 
     public required SpriteData SpriteData { get; init; }

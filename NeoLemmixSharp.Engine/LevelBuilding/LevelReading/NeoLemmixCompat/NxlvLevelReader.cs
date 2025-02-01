@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
@@ -15,7 +14,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 public sealed class NxlvLevelReader : ILevelReader
 {
     private readonly LevelData _levelData;
-    private readonly Dictionary<string, TerrainArchetypeData> _terrainArchetypes;
 
     private readonly LevelDataReader _levelDataReader;
     private readonly SkillSetReader _skillSetReader;
@@ -28,25 +26,25 @@ public sealed class NxlvLevelReader : ILevelReader
     public NxlvLevelReader(string filePath)
     {
         _levelData = new LevelData();
-        _terrainArchetypes = new Dictionary<string, TerrainArchetypeData>(StringComparer.OrdinalIgnoreCase);
+        var uniqueStringSet = new UniqueStringSet();
 
-        _levelDataReader = new LevelDataReader(_levelData);
+        _levelDataReader = new LevelDataReader(uniqueStringSet, _levelData);
         _skillSetReader = new SkillSetReader();
-        _terrainGroupReader = new TerrainGroupReader(_terrainArchetypes);
-        _gadgetReader = new GadgetReader();
-        _talismanReader = new TalismanReader();
+        _terrainGroupReader = new TerrainGroupReader(uniqueStringSet);
+        _gadgetReader = new GadgetReader(uniqueStringSet);
+        _talismanReader = new TalismanReader(uniqueStringSet);
 
         var dataReaders = new NeoLemmixDataReader[]
         {
             _levelDataReader,
             _skillSetReader,
             _terrainGroupReader,
-            new TerrainReader(_terrainArchetypes, _levelData.AllTerrainData),
+            new TerrainReader(uniqueStringSet, _levelData.AllTerrainData),
             new LemmingReader(_levelData.PrePlacedLemmingData),
             _gadgetReader,
             _talismanReader,
-            new NeoLemmixTextReader(_levelData.PreTextLines, "$PRETEXT"),
-            new NeoLemmixTextReader(_levelData.PostTextLines, "$POSTTEXT"),
+            new NeoLemmixTextReader(uniqueStringSet,_levelData.PreTextLines, "$PRETEXT"),
+            new NeoLemmixTextReader(uniqueStringSet,_levelData.PostTextLines, "$POSTTEXT"),
             new SketchReader(_levelData.AllSketchData),
         };
 
@@ -101,8 +99,8 @@ public sealed class NxlvLevelReader : ILevelReader
 
     private void ProcessTerrainData()
     {
-        _levelData.TerrainArchetypeData.Capacity = _terrainArchetypes.Count;
-        _levelData.TerrainArchetypeData.AddRange(_terrainArchetypes.Values.OrderBy(d => d.TerrainArchetypeId));
+        //  _levelData.TerrainArchetypeData.Capacity = _terrainArchetypes.Count;
+        //  _levelData.TerrainArchetypeData.AddRange(_terrainArchetypes.Values.OrderBy(d => d.TerrainArchetypeId));
 
         _levelData.AllTerrainGroups.AddRange(_terrainGroupReader.AllTerrainGroups);
     }
@@ -110,8 +108,8 @@ public sealed class NxlvLevelReader : ILevelReader
     private void ProcessGadgetData(
         GraphicsDevice graphicsDevice)
     {
-        new GadgetTranslator(_levelData, graphicsDevice)
-            .TranslateNeoLemmixGadgets(_gadgetReader.GadgetArchetypes, _gadgetReader.AllGadgetData);
+        //  new GadgetTranslator(_levelData, graphicsDevice)
+        //      .TranslateNeoLemmixGadgets(_gadgetReader.GadgetArchetypes, _gadgetReader.AllGadgetData);
     }
 
     private void ProcessConfigData()

@@ -13,9 +13,10 @@ public sealed class GadgetData
     private readonly SimpleDictionary<PerfectEnumHasher<GadgetProperty>, GadgetProperty, int> _properties = PerfectEnumHasher<GadgetProperty>.CreateSimpleDictionary<int>();
 
     public required int Id { get; init; }
+
     public required string Style { get; init; }
     public required string GadgetPiece { get; init; }
-    public required int GadgetBuilderId { get; init; }
+
     public required int X { get; init; }
     public required int Y { get; init; }
     public required int InitialStateId { get; init; }
@@ -23,6 +24,8 @@ public sealed class GadgetData
 
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }
+
+    public LevelData.StylePiecePair GetStylePiecePair() => new(Style, GadgetPiece);
 
     public int NumberOfGadgetProperties => _properties.Count;
 

@@ -7,6 +7,9 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 public interface IGadgetBuilder
 {
     int GadgetBuilderId { get; }
+    string Style { get; }
+    string GadgetPiece { get; }
+
     SpriteData SpriteData { get; }
 
     GadgetBase BuildGadget(

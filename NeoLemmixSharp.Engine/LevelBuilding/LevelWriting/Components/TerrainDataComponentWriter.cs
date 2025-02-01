@@ -25,9 +25,7 @@ public sealed class TerrainDataComponentWriter : ILevelDataWriter
     {
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            var terrainArchetypeData = levelData.TerrainArchetypeData.Find(a => a.TerrainArchetypeId == terrainData.TerrainArchetypeId);
-            if (terrainArchetypeData is null)
-                throw new InvalidOperationException($"Could not locate TerrainArchetypeData with id {terrainData.TerrainArchetypeId}");
+            var terrainArchetypeData = levelData.TerrainArchetypeData[terrainData.GetStylePiecePair()];
 
             WriteTerrainData(writer, terrainArchetypeData, terrainData);
         }
@@ -40,8 +38,8 @@ public sealed class TerrainDataComponentWriter : ILevelDataWriter
     {
         writer.Write(GetNumberOfBytesWritten(terrainData));
 
-        writer.Write(_stringIdLookup[terrainArchetypeData.Style!]);
-        writer.Write(_stringIdLookup[terrainArchetypeData.TerrainPiece!]);
+        writer.Write(_stringIdLookup[terrainArchetypeData.Style]);
+        writer.Write(_stringIdLookup[terrainArchetypeData.TerrainPiece]);
 
         writer.Write((ushort)(terrainData.X + LevelReadWriteHelpers.PositionOffset));
         writer.Write((ushort)(terrainData.Y + LevelReadWriteHelpers.PositionOffset));

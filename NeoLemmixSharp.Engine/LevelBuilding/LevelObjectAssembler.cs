@@ -112,7 +112,7 @@ public sealed class LevelObjectAssembler : IDisposable
 
         foreach (var prototype in allGadgetData)
         {
-            var gadgetBuilder = levelData.AllGadgetBuilders[prototype.GadgetBuilderId];
+            var gadgetBuilder = levelData.AllGadgetBuilders[prototype.GetStylePiecePair()];
 
             var gadget = gadgetBuilder.BuildGadget(_gadgetSpriteBuilder, prototype, lemmingHasher);
             _gadgets.Add(gadget);

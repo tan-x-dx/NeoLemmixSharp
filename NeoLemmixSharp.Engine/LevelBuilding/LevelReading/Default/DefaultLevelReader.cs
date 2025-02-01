@@ -15,7 +15,7 @@ public sealed class DefaultLevelReader : ILevelReader
 
         var version = _rawFileData.Version;
 
-        var stringIdLookup = new List<string>();
+        var stringIdLookup = new List<string>(16);
 
         var terrainComponentReader = new TerrainDataComponentReader(version, stringIdLookup);
         _dataReaders =

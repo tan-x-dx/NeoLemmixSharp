@@ -1,30 +1,25 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
 
 public sealed class TerrainReader : NeoLemmixDataReader
 {
+    private readonly UniqueStringSet _uniqueStringSet;
     private readonly List<TerrainData> _allTerrainData;
-    private readonly Dictionary<string, TerrainArchetypeData> _terrainArchetypes;
 
-    private TerrainData? _currentTerrainData;
-    private string? _currentStyle;
-    private string? _currentFolder;
-
-    private bool _rotate;
-    private bool _flipHorizontally;
-    private bool _flipVertically;
+    private TempTerrainData _currentTerrainData;
 
     private bool _settingDataForGroup;
 
     public TerrainReader(
-        Dictionary<string, TerrainArchetypeData> terrainArchetypes,
+        UniqueStringSet uniqueStringSet,
         List<TerrainData> allTerrainData)
         : base("$TERRAIN")
     {
-        _terrainArchetypes = terrainArchetypes;
+        _uniqueStringSet = uniqueStringSet;
         _allTerrainData = allTerrainData;
 
         RegisterTokenAction("STYLE", SetStyle);
@@ -44,10 +39,7 @@ public sealed class TerrainReader : NeoLemmixDataReader
 
     public override bool BeginReading(ReadOnlySpan<char> line)
     {
-        _currentTerrainData = new TerrainData();
-        _rotate = false;
-        _flipHorizontally = false;
-        _flipVertically = false;
+        _currentTerrainData = new TempTerrainData();
 
         FinishedReading = false;
         return false;
@@ -55,38 +47,30 @@ public sealed class TerrainReader : NeoLemmixDataReader
 
     private void SetStyle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var rest = line[secondTokenIndex..].Trim();
         if (secondToken[0] == '*')
         {
             _settingDataForGroup = true;
+            _currentTerrainData.Style = string.Empty;
         }
         else
         {
-            if (_currentStyle is null)
-            {
-                SetCurrentStyle(rest);
-            }
-            else
-            {
-                var currentStyleSpan = _currentStyle.AsSpan();
-                if (!currentStyleSpan.SequenceEqual(rest))
-                {
-                    SetCurrentStyle(rest);
-                }
-            }
+            _currentTerrainData.Style = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
         }
     }
 
     private void SetPiece(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
+        var item = _uniqueStringSet.GetUniqueStringInstance(secondToken);
+
         if (_settingDataForGroup)
         {
-            _currentTerrainData!.GroupName = secondToken.ToString();
+            _currentTerrainData.GroupName = item;
+            _currentTerrainData.TerrainPiece = string.Empty;
         }
         else
         {
-            var terrainArchetypeData = GetOrLoadTerrainArchetypeData(line[secondTokenIndex..].Trim());
-            _currentTerrainData!.TerrainArchetypeId = terrainArchetypeData.TerrainArchetypeId;
+            _currentTerrainData.GroupName = null;
+            _currentTerrainData.TerrainPiece = item;
         }
     }
 
@@ -121,17 +105,17 @@ public sealed class TerrainReader : NeoLemmixDataReader
 
     private void SetRotate(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _rotate = true;
+        _currentTerrainData.Rotate = true;
     }
 
     private void SetFlipHorizontal(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _flipHorizontally = true;
+        _currentTerrainData.FlipHorizontally = true;
     }
 
     private void SetFlipVertical(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _flipVertically = true;
+        _currentTerrainData.FlipVertically = true;
     }
 
     private void SetErase(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -141,85 +125,52 @@ public sealed class TerrainReader : NeoLemmixDataReader
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var (rotNum, flip) = DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate);
-        _currentTerrainData!.RotNum = rotNum;
-        _currentTerrainData.Flip = flip;
+        var (rotNum, flip) = DihedralTransformation.Simplify(_currentTerrainData.FlipHorizontally, _currentTerrainData.FlipVertically, _currentTerrainData.Rotate);
 
-        _allTerrainData.Add(_currentTerrainData);
-        _currentTerrainData = null;
+        var newTerrainData = new TerrainData
+        {
+            GroupName = _currentTerrainData.GroupName,
+            Style = _currentTerrainData.Style ?? string.Empty,
+            TerrainPiece = _currentTerrainData.TerrainPiece,
+
+            X = _currentTerrainData.X,
+            Y = _currentTerrainData.Y,
+
+            NoOverwrite = _currentTerrainData.NoOverwrite,
+            RotNum = rotNum,
+            Flip = flip,
+            Erase = _currentTerrainData.Erase,
+
+            Tint = _currentTerrainData.Tint,
+
+            Width = _currentTerrainData.Width,
+            Height = _currentTerrainData.Height,
+        };
+
+        _allTerrainData.Add(newTerrainData);
         _settingDataForGroup = false;
         FinishedReading = true;
     }
 
-    private void SetCurrentStyle(ReadOnlySpan<char> style)
+    private struct TempTerrainData
     {
-        _currentStyle = style.ToString();
-        _currentFolder = Path.Combine(
-            RootDirectoryManager.StyleFolderDirectory,
-            _currentStyle,
-            DefaultFileExtensions.TerrainFolderName);
-    }
+        public string? GroupName;
+        public string? Style;
+        public string TerrainPiece;
 
-    private TerrainArchetypeData GetOrLoadTerrainArchetypeData(ReadOnlySpan<char> piece)
-    {
-        var currentStyleLength = _currentStyle!.Length;
+        public int X;
+        public int Y;
 
-        // Safeguard against potential stack overflow.
-        // Will almost certainly be a small buffer
-        // allocated on the stack, but still...
-        var bufferSize = currentStyleLength + piece.Length + 1;
-        Span<char> archetypeDataKeySpan = bufferSize > NxlvReadingHelpers.MaxStackallocSize
-            ? new char[bufferSize]
-            : stackalloc char[bufferSize];
+        public bool Rotate;
+        public bool FlipHorizontally;
+        public bool FlipVertically;
 
-        _currentStyle.CopyTo(archetypeDataKeySpan);
-        archetypeDataKeySpan[currentStyleLength] = ':';
-        piece.CopyTo(archetypeDataKeySpan[(currentStyleLength + 1)..]);
+        public bool NoOverwrite;
+        public bool Erase;
 
-        var alternateLookup = _terrainArchetypes.GetAlternateLookup<ReadOnlySpan<char>>();
+        public Color? Tint;
 
-        ref var dictionaryEntry = ref CollectionsMarshal.GetValueRefOrAddDefault(
-            alternateLookup,
-            archetypeDataKeySpan,
-            out var exists);
-
-        if (!exists)
-        {
-            dictionaryEntry = CreateNewTerrainArchetypeData(piece);
-        }
-
-        return dictionaryEntry!;
-    }
-
-    private TerrainArchetypeData CreateNewTerrainArchetypeData(ReadOnlySpan<char> piece)
-    {
-        var terrainPiece = piece.ToString();
-        var terrainArchetypeData = new TerrainArchetypeData
-        {
-            TerrainArchetypeId = _terrainArchetypes.Count - 1,
-            Style = _currentStyle,
-            TerrainPiece = terrainPiece
-        };
-
-        ProcessTerrainArchetypeData(terrainArchetypeData);
-
-        return terrainArchetypeData;
-    }
-
-    private void ProcessTerrainArchetypeData(TerrainArchetypeData terrainArchetypeData)
-    {
-        var rootFilePath = Path.Combine(_currentFolder!, terrainArchetypeData.TerrainPiece!);
-        rootFilePath = Path.ChangeExtension(rootFilePath, NeoLemmixFileExtensions.TerrainFileExtension);
-
-        if (!File.Exists(rootFilePath))
-            return;
-
-        var dataReaders = new NeoLemmixDataReader[]
-        {
-            new TerrainArchetypeDataReader(terrainArchetypeData)
-        };
-
-        using var dataReaderList = new DataReaderList(rootFilePath, dataReaders);
-        dataReaderList.ReadFile();
+        public int? Width;
+        public int? Height;
     }
 }

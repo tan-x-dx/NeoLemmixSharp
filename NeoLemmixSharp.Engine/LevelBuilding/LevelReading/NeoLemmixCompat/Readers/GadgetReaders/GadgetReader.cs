@@ -1,23 +1,22 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
 public sealed class GadgetReader : NeoLemmixDataReader
 {
-    private NeoLemmixGadgetData? _currentGadgetData;
-    private string? _currentStyle;
-    private string? _currentFolder;
+    private readonly UniqueStringSet _uniqueStringSet;
 
-    public Dictionary<string, NeoLemmixGadgetArchetypeData> GadgetArchetypes { get; } = new(StringComparer.OrdinalIgnoreCase);
+    private NeoLemmixGadgetData? _currentGadgetData;
+
     public List<NeoLemmixGadgetData> AllGadgetData { get; } = new();
 
-    public GadgetReader()
+    public GadgetReader(UniqueStringSet uniqueStringSet)
         : base("$GADGET")
     {
+        _uniqueStringSet = uniqueStringSet;
+
         RegisterTokenAction("STYLE", SetStyle);
         RegisterTokenAction("PIECE", SetPiece);
         RegisterTokenAction("X", SetX);
@@ -55,25 +54,12 @@ public sealed class GadgetReader : NeoLemmixDataReader
 
     private void SetStyle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var rest = line[secondTokenIndex..].Trim();
-        if (_currentStyle is null)
-        {
-            SetCurrentStyle(rest);
-        }
-        else
-        {
-            var currentStyleSpan = _currentStyle.AsSpan();
-            if (!currentStyleSpan.Equals(rest, StringComparison.OrdinalIgnoreCase))
-            {
-                SetCurrentStyle(rest);
-            }
-        }
+        _currentGadgetData!.Style = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
     }
 
     private void SetPiece(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var gadgetArchetypeData = GetOrLoadGadgetArchetypeData(line[secondTokenIndex..].Trim());
-        _currentGadgetData!.GadgetArchetypeId = gadgetArchetypeData.GadgetArchetypeId;
+        _currentGadgetData!.Piece = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
     }
 
     private void SetX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -204,79 +190,5 @@ public sealed class GadgetReader : NeoLemmixDataReader
         AllGadgetData.Add(_currentGadgetData!);
         _currentGadgetData = null;
         FinishedReading = true;
-    }
-
-    private void SetCurrentStyle(ReadOnlySpan<char> style)
-    {
-        _currentStyle = style.ToString();
-        _currentFolder = Path.Combine(
-            RootDirectoryManager.StyleFolderDirectory,
-            _currentStyle,
-            DefaultFileExtensions.GadgetFolderName);
-    }
-
-    [SkipLocalsInit]
-    private NeoLemmixGadgetArchetypeData GetOrLoadGadgetArchetypeData(ReadOnlySpan<char> piece)
-    {
-        // Safeguard against potential stack overflow.
-        // Will almost certainly be a small buffer
-        // allocated on the stack, but still...
-        var bufferSize = _currentStyle!.Length + piece.Length + 1;
-        Span<char> archetypeDataKeySpan = bufferSize > NxlvReadingHelpers.MaxStackallocSize
-            ? new char[bufferSize]
-            : stackalloc char[bufferSize];
-
-        _currentStyle.CopyTo(archetypeDataKeySpan);
-        var currentStyleLength = _currentStyle.Length;
-        archetypeDataKeySpan[currentStyleLength++] = ':';
-        piece.CopyTo(archetypeDataKeySpan[currentStyleLength..]);
-        currentStyleLength += piece.Length;
-
-        var alternateLookup = GadgetArchetypes.GetAlternateLookup<ReadOnlySpan<char>>();
-
-        ref var dictionaryEntry = ref CollectionsMarshal.GetValueRefOrAddDefault(
-            alternateLookup,
-            archetypeDataKeySpan[..currentStyleLength],
-            out var exists);
-
-        if (!exists)
-        {
-            dictionaryEntry = CreateNewGadgetArchetypeData(piece);
-        }
-
-        return dictionaryEntry!;
-    }
-
-    private NeoLemmixGadgetArchetypeData CreateNewGadgetArchetypeData(
-        ReadOnlySpan<char> piece)
-    {
-        var gadgetPiece = piece.ToString();
-
-        var gadgetArchetypeData = new NeoLemmixGadgetArchetypeData
-        {
-            GadgetArchetypeId = GadgetArchetypes.Count - 1,
-            Style = _currentStyle!,
-            GadgetPiece = gadgetPiece
-        };
-
-        ProcessGadgetArchetypeData(gadgetArchetypeData);
-
-        return gadgetArchetypeData;
-    }
-
-    private void ProcessGadgetArchetypeData(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
-    {
-        var dataReaders = new NeoLemmixDataReader[]
-        {
-            new GadgetArchetypeDataReader(gadgetArchetypeData),
-            new PrimaryAnimationReader(gadgetArchetypeData),
-            new SecondaryAnimationReader(gadgetArchetypeData)
-        };
-
-        var rootFilePath = Path.Combine(_currentFolder!, gadgetArchetypeData.GadgetPiece!);
-        rootFilePath = Path.ChangeExtension(rootFilePath, NeoLemmixFileExtensions.GadgetFileExtension);
-
-        using var dataReaderList = new DataReaderList(rootFilePath, dataReaders);
-        dataReaderList.ReadFile();
     }
 }

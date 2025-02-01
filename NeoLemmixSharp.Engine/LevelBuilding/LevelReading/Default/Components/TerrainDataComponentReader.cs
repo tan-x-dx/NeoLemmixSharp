@@ -2,13 +2,11 @@
 using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
 public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<TerrainArchetypeData>
 {
-    private readonly Dictionary<int, TerrainArchetypeData> _terrainArchetypeDataLookup = new();
     private readonly List<string> _stringIdLookup;
 
     public bool AlreadyUsed { get; private set; }
@@ -31,9 +29,6 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
             var newTerrainDatum = ReadNextTerrainData(rawFileData);
             levelData.AllTerrainData.Add(newTerrainDatum);
         }
-
-        levelData.TerrainArchetypeData.AddRange(_terrainArchetypeDataLookup.Values);
-        levelData.TerrainArchetypeData.Sort(this);
     }
 
     private TerrainData ReadNextTerrainData(RawFileData rawFileData)
@@ -43,8 +38,6 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
 
         int styleId = rawFileData.Read16BitUnsignedInteger();
         int pieceId = rawFileData.Read16BitUnsignedInteger();
-
-        var terrainArchetypeData = GetOrAddTerrainArchetypeData(styleId, pieceId);
 
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
@@ -80,7 +73,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
 
         return new TerrainData
         {
-            TerrainArchetypeId = terrainArchetypeData.TerrainArchetypeId,
+            GroupName = null,
             Style = _stringIdLookup[styleId],
             TerrainPiece = _stringIdLookup[pieceId],
 
@@ -93,8 +86,6 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
             Erase = decipheredTerrainDataMisc.Erase,
 
             Tint = tintColor,
-
-            GroupName = null,
 
             Width = width,
             Height = height,
@@ -111,26 +102,6 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
     private static int ReadTerrainDataDimension(RawFileData rawFileData)
     {
         return rawFileData.Read16BitUnsignedInteger();
-    }
-
-    private TerrainArchetypeData GetOrAddTerrainArchetypeData(int styleId, int pieceId)
-    {
-        var terrainArchetypeDataLookupKey = (styleId << 16) | pieceId;
-
-        ref var terrainArchetypeData = ref CollectionsMarshal.GetValueRefOrAddDefault(_terrainArchetypeDataLookup, terrainArchetypeDataLookupKey, out var exists);
-
-        if (exists)
-            return terrainArchetypeData!;
-
-        terrainArchetypeData = new TerrainArchetypeData
-        {
-            TerrainArchetypeId = _terrainArchetypeDataLookup.Count - 1,
-
-            Style = _stringIdLookup[styleId],
-            TerrainPiece = _stringIdLookup[pieceId]
-        };
-
-        return terrainArchetypeData;
     }
 
     int IComparer<TerrainArchetypeData>.Compare(TerrainArchetypeData? x, TerrainArchetypeData? y)

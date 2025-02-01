@@ -6,10 +6,11 @@ using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-public sealed class LevelData
+public sealed class LevelData : IEqualityComparer<LevelData.StylePiecePair>
 {
     private int _levelWidth = -1;
     private int _levelHeight = -1;
@@ -114,18 +115,24 @@ public sealed class LevelData
     public List<LevelObjective> LevelObjectives { get; } = [];
     public LevelParameterSet LevelParameters { get; } = PerfectEnumHasher<LevelParameters>.CreateSimpleSet();
     public ControlPanelParameterSet ControlParameters { get; } = PerfectEnumHasher<ControlPanelParameters>.CreateSimpleSet();
-    public List<TerrainArchetypeData> TerrainArchetypeData { get; } = [];
+    public Dictionary<StylePiecePair, TerrainArchetypeData> TerrainArchetypeData { get; }
     public List<TerrainData> AllTerrainData { get; } = [];
     public List<TerrainGroupData> AllTerrainGroups { get; } = [];
     public List<HatchGroupData> AllHatchGroupData { get; } = [];
     public List<LemmingData> PrePlacedLemmingData { get; } = [];
     public List<LemmingData> HatchLemmingData { get; } = [];
-    public Dictionary<int, IGadgetBuilder> AllGadgetBuilders { get; } = [];
+    public Dictionary<StylePiecePair, IGadgetBuilder> AllGadgetBuilders { get; }
     public List<GadgetData> AllGadgetData { get; } = [];
     public List<SketchData> AllSketchData { get; } = [];
 
     public List<string> PreTextLines { get; } = [];
     public List<string> PostTextLines { get; } = [];
+
+    public LevelData()
+    {
+        TerrainArchetypeData = new Dictionary<StylePiecePair, TerrainArchetypeData>(this);
+        AllGadgetBuilders = new Dictionary<StylePiecePair, IGadgetBuilder>(this);
+    }
 
     public void Validate()
     {
@@ -148,5 +155,28 @@ public sealed class LevelData
         if (LevelObjectives.Count == 0) return "Level objectives not set!";
 
         return null;
+    }
+
+    public readonly struct StylePiecePair
+    {
+        public readonly string StyleName;
+        public readonly string PieceName;
+
+        public StylePiecePair(string styleName, string pieceName)
+        {
+            StyleName = styleName;
+            PieceName = pieceName;
+        }
+    }
+
+    bool IEqualityComparer<StylePiecePair>.Equals(StylePiecePair x, StylePiecePair y)
+    {
+        return string.Equals(x.StyleName, y.StyleName) &&
+               string.Equals(x.PieceName, y.PieceName);
+    }
+
+    int IEqualityComparer<StylePiecePair>.GetHashCode([DisallowNull] StylePiecePair obj)
+    {
+        return HashCode.Combine(obj.StyleName, obj.PieceName);
     }
 }

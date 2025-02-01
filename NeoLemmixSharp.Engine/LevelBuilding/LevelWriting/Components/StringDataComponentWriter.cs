@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
@@ -82,7 +83,7 @@ public sealed class StringDataComponentWriter : ILevelDataWriter
             TryAdd(levelObjective.LevelObjectiveTitle);
         }
 
-        foreach (var terrainArchetypeData in levelData.TerrainArchetypeData)
+        foreach (var (_, terrainArchetypeData) in levelData.TerrainArchetypeData)
         {
             TryAdd(terrainArchetypeData.Style);
             TryAdd(terrainArchetypeData.TerrainPiece);
@@ -93,10 +94,10 @@ public sealed class StringDataComponentWriter : ILevelDataWriter
             TryAdd(terrainGroup.GroupName!);
         }
 
-        foreach (var gadgetData in levelData.AllGadgetData)
+        foreach (var (_, gadgetBuilder) in levelData.AllGadgetBuilders)
         {
-            TryAdd(gadgetData.Style);
-            TryAdd(gadgetData.GadgetPiece);
+            TryAdd(gadgetBuilder.Style);
+            TryAdd(gadgetBuilder.GadgetPiece);
         }
     }
 
@@ -106,7 +107,13 @@ public sealed class StringDataComponentWriter : ILevelDataWriter
             return;
 
         // Ids start at 1, therefore can use value of zero as "Not found"
-        _stringIdLookup.TryAdd(s, (ushort)(1 + _stringIdLookup.Count));
+        var value = (ushort)(1 + _stringIdLookup.Count);
+
+        ref var valueToAdd = ref CollectionsMarshal.GetValueRefOrAddDefault(_stringIdLookup, s, out var exists);
+        if (!exists)
+        {
+            valueToAdd = value;
+        }
     }
 
     private void HandleBackgroundString(LevelData levelData)

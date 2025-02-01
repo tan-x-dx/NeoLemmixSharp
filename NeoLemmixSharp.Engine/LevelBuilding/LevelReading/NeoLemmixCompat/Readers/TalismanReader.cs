@@ -1,17 +1,22 @@
-﻿using NeoLemmixSharp.Engine.Level.Skills;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
 public sealed class TalismanReader : NeoLemmixDataReader
 {
+    private readonly UniqueStringSet _uniqueStringSet;
     private TalismanData? _currentTalismanData;
 
     public List<TalismanData> TalismanData { get; } = new();
 
-    public TalismanReader()
+    public TalismanReader(
+        UniqueStringSet uniqueStringSet)
         : base("$TALISMAN")
     {
+        _uniqueStringSet = uniqueStringSet;
+
         RegisterTokenAction("TITLE", SetTitle);
         RegisterTokenAction("ID", SetId);
         RegisterTokenAction("COLOR", SetColor);
@@ -54,7 +59,7 @@ public sealed class TalismanReader : NeoLemmixDataReader
 
     private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentTalismanData!.Title = line[secondTokenIndex..].Trim().ToString();
+        _currentTalismanData!.Title = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
     }
 
     private void SetId(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

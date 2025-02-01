@@ -8,7 +8,8 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
 public static class StyleHelpers
 {
-    public static void ProcessStyleArchetypeData(LevelData levelData)
+    public static void ProcessStyleArchetypeData(
+        LevelData levelData)
     {
         var uniqueStyles = GetUniqueStyles(levelData);
 
@@ -24,18 +25,12 @@ public static class StyleHelpers
 
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            if (terrainData.Style.Length > 0)
-            {
-                uniqueStyles.Add(terrainData.Style, terrainData.TerrainPiece);
-            }
+            uniqueStyles.Add(terrainData.Style, terrainData.TerrainPiece);
         }
 
         foreach (var gadgetData in levelData.AllGadgetData)
         {
-            if (gadgetData.Style.Length > 0)
-            {
-                uniqueStyles.Add(gadgetData.Style, gadgetData.GadgetPiece);
-            }
+            uniqueStyles.Add(gadgetData.Style, gadgetData.GadgetPiece);
         }
 
         if (uniqueStyles.Count == 0)
@@ -88,25 +83,29 @@ public static class StyleHelpers
         Span<byte> utf8ByteBuffer = stackalloc byte[256];
         var utf8Encoding = Encoding.UTF8;
 
-        foreach (var piece in styleGroup)
+        foreach (var pieceName in styleGroup)
         {
-            var requiredByteBufferSize = utf8Encoding.GetByteCount(piece);
+            var requiredByteBufferSize = utf8Encoding.GetByteCount(pieceName);
 
             if (utf8ByteBuffer.Length < requiredByteBufferSize)
             {
                 utf8ByteBuffer = new byte[requiredByteBufferSize];
             }
 
-            utf8Encoding.GetBytes(piece, utf8ByteBuffer);
+            utf8Encoding.GetBytes(pieceName, utf8ByteBuffer);
 
             var pieceExists = rawFileData.TryLocateSpan(utf8ByteBuffer[..requiredByteBufferSize], out var index);
 
-            if (!pieceExists)
-                continue;
+            if (pieceExists)
+            {
+                rawFileData.SetReaderPosition(index + requiredByteBufferSize);
 
-            rawFileData.SetReaderPosition(index + requiredByteBufferSize);
-
-            ProcessPiece(levelData, rawFileData);
+                ProcessPiece(levelData, rawFileData);
+            }
+            else
+            {
+                // TODO trivial terrain archetype data
+            }
         }
     }
 

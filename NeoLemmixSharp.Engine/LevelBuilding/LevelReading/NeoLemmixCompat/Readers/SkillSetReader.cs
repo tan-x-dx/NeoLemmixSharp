@@ -41,8 +41,7 @@ public sealed class SkillSetReader : NeoLemmixDataReader
             ? EngineConstants.InfiniteSkillCount
             : int.Parse(secondToken);
 
-        if (amount < 0 ||
-            amount > EngineConstants.InfiniteSkillCount)
+        if ((uint)amount >= EngineConstants.InfiniteSkillCount)
             throw new InvalidOperationException($"Invalid skill count value! {amount}");
 
         if (skill == ClonerSkill.Instance && amount == EngineConstants.InfiniteSkillCount)
