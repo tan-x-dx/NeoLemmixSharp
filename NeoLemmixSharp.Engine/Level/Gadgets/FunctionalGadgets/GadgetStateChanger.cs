@@ -6,19 +6,18 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class StateChangerGadget : GadgetBase, ISimpleRenderGadget
+public sealed class GadgetStateChanger : GadgetBase, ISimpleRenderGadget
 {
+    private SimpleGadgetRenderer _renderer;
     private readonly HitBoxGadget _gadget;
     private readonly int _newState;
 
     private bool _previousSignal;
     private bool _signal;
 
-    private SimpleGadgetRenderer _renderer;
-
     public override SimpleGadgetRenderer Renderer => _renderer;
 
-    public StateChangerGadget(
+    public GadgetStateChanger(
         int id,
         Orientation orientation,
         GadgetBounds gadgetBounds,
@@ -45,9 +44,9 @@ public sealed class StateChangerGadget : GadgetBase, ISimpleRenderGadget
 
     private sealed class StateChangerGadgetInput : GadgetInput
     {
-        private readonly StateChangerGadget _gadget;
+        private readonly GadgetStateChanger _gadget;
 
-        public StateChangerGadgetInput(string inputName, StateChangerGadget gadget)
+        public StateChangerGadgetInput(string inputName, GadgetStateChanger gadget)
             : base(inputName)
         {
             _gadget = gadget;
