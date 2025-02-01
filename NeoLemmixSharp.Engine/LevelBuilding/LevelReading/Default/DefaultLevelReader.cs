@@ -13,7 +13,7 @@ public sealed class DefaultLevelReader : ILevelReader
     {
         _rawFileData = new RawFileData(filePath);
 
-        var version = ReadVersion();
+        var version = _rawFileData.Version;
 
         var stringIdLookup = new List<string>();
 
@@ -33,30 +33,12 @@ public sealed class DefaultLevelReader : ILevelReader
         ];
     }
 
-    private Version ReadVersion()
-    {
-        int major = _rawFileData.Read16BitUnsignedInteger();
-        AssertNextByteIsPeriod();
-        int minor = _rawFileData.Read16BitUnsignedInteger();
-        AssertNextByteIsPeriod();
-        int build = _rawFileData.Read16BitUnsignedInteger();
-        AssertNextByteIsPeriod();
-        int revision = _rawFileData.Read16BitUnsignedInteger();
-
-        return new Version(major, minor, build, revision);
-
-        void AssertNextByteIsPeriod()
-        {
-            int nextByteValue = _rawFileData.Read8BitUnsignedInteger();
-
-            LevelReadWriteHelpers.ReaderAssert(nextByteValue == '.', "Version not in correct format");
-        }
-    }
-
     public LevelData ReadLevel(GraphicsDevice graphicsDevice)
     {
         var levelData = ReadFile();
         levelData.MaxNumberOfClonedLemmings = LevelReadingHelpers.CalculateMaxNumberOfClonedLemmings(levelData);
+
+        StyleHelpers.ProcessStyleArchetypeData(levelData);
 
         return levelData;
     }

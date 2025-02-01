@@ -5,6 +5,8 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 public sealed class TerrainData
 {
     public int TerrainArchetypeId { get; set; }
+    public string Style { get; set; } = string.Empty;
+    public string TerrainPiece { get; set; } = string.Empty;
 
     public int X { get; set; }
     public int Y { get; set; }

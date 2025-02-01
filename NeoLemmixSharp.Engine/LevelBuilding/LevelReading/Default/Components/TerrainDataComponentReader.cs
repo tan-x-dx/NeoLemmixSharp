@@ -32,8 +32,6 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
             levelData.AllTerrainData.Add(newTerrainDatum);
         }
 
-        ProcessTerrainArchetypeData();
-
         levelData.TerrainArchetypeData.AddRange(_terrainArchetypeDataLookup.Values);
         levelData.TerrainArchetypeData.Sort(this);
     }
@@ -83,6 +81,8 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         return new TerrainData
         {
             TerrainArchetypeId = terrainArchetypeData.TerrainArchetypeId,
+            Style = _stringIdLookup[styleId],
+            TerrainPiece = _stringIdLookup[pieceId],
 
             X = x - LevelReadWriteHelpers.PositionOffset,
             Y = y - LevelReadWriteHelpers.PositionOffset,
@@ -131,11 +131,6 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         };
 
         return terrainArchetypeData;
-    }
-
-    private void ProcessTerrainArchetypeData()
-    {
-        throw new NotImplementedException();
     }
 
     int IComparer<TerrainArchetypeData>.Compare(TerrainArchetypeData? x, TerrainArchetypeData? y)

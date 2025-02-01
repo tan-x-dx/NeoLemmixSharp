@@ -31,7 +31,7 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
             levelData.AllGadgetData.Add(newGadgetDatum);
         }
 
-        ProcessGadgetBuilders(levelData);
+       // ProcessGadgetBuilders(levelData);
     }
 
     private GadgetData ReadNextGadgetData(RawFileData rawFileData, LevelData levelData)

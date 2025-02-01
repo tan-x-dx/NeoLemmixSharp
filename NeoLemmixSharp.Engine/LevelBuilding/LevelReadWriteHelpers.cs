@@ -121,6 +121,9 @@ public static class LevelReadWriteHelpers
 
     #endregion
 
+    public const byte StylePieceTerrainType = 0x00;
+    public const byte StylePieceGadgetType = 0x01;
+
     public static void ReaderAssert([DoesNotReturnIf(false)] bool condition, string details)
     {
         if (condition)
