@@ -45,20 +45,9 @@ public sealed class ZombieStateChanger : ILemmingStateChanger
     {
     }
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
-    {
-        lemmingState.IsZombie = status;
-    }
-
-    public void ToggleLemmingState(LemmingState lemmingState)
-    {
-        lemmingState.IsZombie = !lemmingState.IsZombie;
-    }
-
-    public bool IsApplied(LemmingState lemmingState)
-    {
-        return lemmingState.IsZombie;
-    }
+    public void SetLemmingState(LemmingState lemmingState, bool status) => lemmingState.IsZombie = status;
+    public void ToggleLemmingState(LemmingState lemmingState) => lemmingState.IsZombie = !lemmingState.IsZombie;
+    public bool IsApplied(LemmingState lemmingState) => lemmingState.IsZombie;
 }
 
 public sealed class NeutralStateChanger : ILemmingStateChanger
@@ -71,18 +60,7 @@ public sealed class NeutralStateChanger : ILemmingStateChanger
     {
     }
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
-    {
-        lemmingState.IsNeutral = status;
-    }
-
-    public void ToggleLemmingState(LemmingState lemmingState)
-    {
-        lemmingState.IsNeutral = !lemmingState.IsNeutral;
-    }
-
-    public bool IsApplied(LemmingState lemmingState)
-    {
-        return lemmingState.IsNeutral;
-    }
+    public void SetLemmingState(LemmingState lemmingState, bool status) => lemmingState.IsNeutral = status;
+    public void ToggleLemmingState(LemmingState lemmingState) => lemmingState.IsNeutral = !lemmingState.IsNeutral;
+    public bool IsApplied(LemmingState lemmingState) => lemmingState.IsNeutral;
 }
