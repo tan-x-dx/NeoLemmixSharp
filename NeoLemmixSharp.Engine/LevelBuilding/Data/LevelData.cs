@@ -157,16 +157,10 @@ public sealed class LevelData : IEqualityComparer<LevelData.StylePiecePair>
         return null;
     }
 
-    public readonly struct StylePiecePair
+    public readonly struct StylePiecePair(string styleName, string pieceName)
     {
-        public readonly string StyleName;
-        public readonly string PieceName;
-
-        public StylePiecePair(string styleName, string pieceName)
-        {
-            StyleName = styleName;
-            PieceName = pieceName;
-        }
+        public readonly string StyleName = styleName;
+        public readonly string PieceName = pieceName;
     }
 
     bool IEqualityComparer<StylePiecePair>.Equals(StylePiecePair x, StylePiecePair y)

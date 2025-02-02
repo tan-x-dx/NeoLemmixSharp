@@ -10,7 +10,22 @@ public sealed class HashSetLookup<TKey, TValue>
     private readonly IEqualityComparer<TValue>? _valueComparer;
     private readonly Dictionary<TKey, HashSet<TValue>> _dictionary;
 
-    public int Count => _dictionary.Values.Sum(c => c.Count);
+    public int KeyCount => _dictionary.Count;
+
+    public int ValueCount
+    {
+        get
+        {
+            var count = 0;
+
+            foreach (var (_, set) in _dictionary)
+            {
+                count += set.Count;
+            }
+
+            return count;
+        }
+    }
 
     public HashSetLookup(IEqualityComparer<TKey>? keyComparer = null, IEqualityComparer<TValue>? valueComparer = null)
     {
@@ -78,6 +93,8 @@ public sealed class HashSetLookup<TKey, TValue>
     {
         public readonly TKey Key;
         private readonly HashSet<TValue> _items;
+
+        public int Count => _items.Count;
 
         public Group(TKey key, HashSet<TValue> items)
         {

@@ -25,4 +25,23 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
     {
         return $"{Style}:{TerrainPiece}";
     }
+
+    public static TerrainArchetypeData CreateTrivialTerrainArchetypeData(
+       string styleName,
+       string pieceName) => new()
+       {
+           Style = styleName,
+           TerrainPiece = pieceName,
+
+           IsSteel = false,
+           ResizeType = ResizeType.None,
+
+           NineSliceRight = 0,
+           NineSliceTop = 0,
+           NineSliceLeft = 0,
+           NineSliceBottom = 0,
+
+           DefaultWidth = 0,
+           DefaultHeight = 0,
+       };
 }

@@ -33,7 +33,7 @@ public static class StyleHelpers
             uniqueStyles.Add(gadgetData.Style, gadgetData.GadgetPiece);
         }
 
-        if (uniqueStyles.Count == 0)
+        if (uniqueStyles.KeyCount == 0)
             throw new LevelReadingException("No styles specified");
 
         return uniqueStyles;

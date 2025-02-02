@@ -10,8 +10,6 @@ public static class NxlvReadingHelpers
 {
     public delegate void TokenAction(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex);
 
-    public const int MaxStackallocSize = 64;
-
     /// <summary>
     /// Returns the first two tokens from the initial span, where a token is defined as being a contiguous section of non-whitespace characters.
     /// If no such tokens exists, empty spans are returned.

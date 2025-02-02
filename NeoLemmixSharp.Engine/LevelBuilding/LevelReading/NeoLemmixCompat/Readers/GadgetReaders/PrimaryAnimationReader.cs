@@ -62,10 +62,12 @@ public sealed class PrimaryAnimationReader : NeoLemmixDataReader
 
     private void SetOffsetX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
+        _gadgetArchetypeData.PrimaryAnimationOffsetX = int.Parse(secondToken);
     }
 
     private void SetOffsetY(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
+        _gadgetArchetypeData.PrimaryAnimationOffsetY = int.Parse(secondToken);
     }
 
     private void SetNineSliceTop(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

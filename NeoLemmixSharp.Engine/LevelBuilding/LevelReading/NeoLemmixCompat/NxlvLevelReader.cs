@@ -14,6 +14,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 public sealed class NxlvLevelReader : ILevelReader
 {
     private readonly LevelData _levelData;
+    private readonly UniqueStringSet _uniqueStringSet = new();
 
     private readonly LevelDataReader _levelDataReader;
     private readonly SkillSetReader _skillSetReader;
@@ -26,25 +27,24 @@ public sealed class NxlvLevelReader : ILevelReader
     public NxlvLevelReader(string filePath)
     {
         _levelData = new LevelData();
-        var uniqueStringSet = new UniqueStringSet();
 
-        _levelDataReader = new LevelDataReader(uniqueStringSet, _levelData);
+        _levelDataReader = new LevelDataReader(_uniqueStringSet, _levelData);
         _skillSetReader = new SkillSetReader();
-        _terrainGroupReader = new TerrainGroupReader(uniqueStringSet);
-        _gadgetReader = new GadgetReader(uniqueStringSet);
-        _talismanReader = new TalismanReader(uniqueStringSet);
+        _terrainGroupReader = new TerrainGroupReader(_uniqueStringSet);
+        _gadgetReader = new GadgetReader(_uniqueStringSet);
+        _talismanReader = new TalismanReader(_uniqueStringSet);
 
         var dataReaders = new NeoLemmixDataReader[]
         {
             _levelDataReader,
             _skillSetReader,
             _terrainGroupReader,
-            new TerrainReader(uniqueStringSet, _levelData.AllTerrainData),
+            new TerrainReader(_uniqueStringSet, _levelData.AllTerrainData),
             new LemmingReader(_levelData.PrePlacedLemmingData),
             _gadgetReader,
             _talismanReader,
-            new NeoLemmixTextReader(uniqueStringSet,_levelData.PreTextLines, "$PRETEXT"),
-            new NeoLemmixTextReader(uniqueStringSet,_levelData.PostTextLines, "$POSTTEXT"),
+            new NeoLemmixTextReader(_uniqueStringSet, _levelData.PreTextLines, "$PRETEXT"),
+            new NeoLemmixTextReader(_uniqueStringSet, _levelData.PostTextLines, "$POSTTEXT"),
             new SketchReader(_levelData.AllSketchData),
         };
 
@@ -57,14 +57,14 @@ public sealed class NxlvLevelReader : ILevelReader
 
         ProcessLevelData();
         ProcessTalismans();
-        ProcessTerrainData();
+        StyleHelpers.ProcessStyleArchetypeData(_levelData, _uniqueStringSet);
 
         NxlvCountHelpers.CalculateHatchCounts(_levelData, _levelDataReader, _gadgetReader);
 
-        ProcessGadgetData(graphicsDevice);
         ProcessConfigData();
 
         _levelData.MaxNumberOfClonedLemmings = LevelReadingHelpers.CalculateMaxNumberOfClonedLemmings(_levelData);
+        _levelData.AllTerrainGroups.AddRange(_terrainGroupReader.AllTerrainGroups);
 
         return _levelData;
     }
@@ -95,21 +95,6 @@ public sealed class NxlvLevelReader : ILevelReader
         {
             _levelData.LevelObjectives.Add(talismanDatum.ToLevelObjective(_levelData));
         }
-    }
-
-    private void ProcessTerrainData()
-    {
-        //  _levelData.TerrainArchetypeData.Capacity = _terrainArchetypes.Count;
-        //  _levelData.TerrainArchetypeData.AddRange(_terrainArchetypes.Values.OrderBy(d => d.TerrainArchetypeId));
-
-        _levelData.AllTerrainGroups.AddRange(_terrainGroupReader.AllTerrainGroups);
-    }
-
-    private void ProcessGadgetData(
-        GraphicsDevice graphicsDevice)
-    {
-        //  new GadgetTranslator(_levelData, graphicsDevice)
-        //      .TranslateNeoLemmixGadgets(_gadgetReader.GadgetArchetypes, _gadgetReader.AllGadgetData);
     }
 
     private void ProcessConfigData()
