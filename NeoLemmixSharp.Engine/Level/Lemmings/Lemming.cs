@@ -553,7 +553,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         CurrentBounds = lemmingSnapshotData.CurrentBounds;
         PreviousBounds = lemmingSnapshotData.PreviousBounds;
 
-        State.SetRawDataFromSnapshotData(in lemmingSnapshotData.StateSnapshotData);
+        State.SetFromSnapshotData(in lemmingSnapshotData.StateSnapshotData);
 
         FacingDirection = lemmingSnapshotData.FacingDirection;
         Orientation = lemmingSnapshotData.Orientation;

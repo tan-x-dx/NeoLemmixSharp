@@ -6,7 +6,7 @@ using System.Numerics;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class LemmingState
+public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshotData>
 {
     private readonly Lemming _lemming;
     private int _teamId;
@@ -314,7 +314,7 @@ public sealed class LemmingState
         UpdateSkinColor();
     }
 
-    public void SetRawDataFromSnapshotData(in LemmingStateSnapshotData lemmingStateSnapshotData)
+    public void SetFromSnapshotData(in LemmingStateSnapshotData lemmingStateSnapshotData)
     {
         _teamId = lemmingStateSnapshotData.TeamId;
         _states = lemmingStateSnapshotData.StateData;
@@ -322,8 +322,8 @@ public sealed class LemmingState
         UpdateSkinColor();
     }
 
-    public LemmingStateSnapshotData CreateSnapshot()
+    public void WriteToSnapshotData(out LemmingStateSnapshotData data)
     {
-        return new LemmingStateSnapshotData(_teamId, _states);
+        data = new LemmingStateSnapshotData(_teamId, _states);
     }
 }
