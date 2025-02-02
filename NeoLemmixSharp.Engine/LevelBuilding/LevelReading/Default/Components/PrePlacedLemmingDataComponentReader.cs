@@ -39,7 +39,7 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
                 Orientation = orientation,
                 FacingDirection = facingDirection,
 
-                Team = Team.AllItems[teamId],
+                TeamId = teamId,
                 InitialLemmingAction = LemmingAction.AllItems[initialActionId]
             });
         }

@@ -7,7 +7,6 @@ using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
@@ -68,7 +67,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
-        InitialiseGameConstants();
+        ValidateGameConstants();
         ValidateMaxActionNameLength();
         LoadContent();
     }
@@ -118,23 +117,20 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         SetScreen(menuScreen);
     }
 
-    private static void InitialiseGameConstants()
+    /// <summary>
+    /// Validation to ensure the expected number of LemmingActions/LemmingSkills
+    /// is kept track of, in case new entries are created for these types.
+    /// </summary>
+    private static void ValidateGameConstants()
     {
         var numberOfActions = LemmingAction.NumberOfItems;
         var numberOfSkills = LemmingSkill.NumberOfItems;
-        var numberOfTeams = Team.NumberOfItems;
 
         if (numberOfActions != EngineConstants.NumberOfLemmingActions)
             throw new Exception($"Number of LemmingActions is actually {numberOfActions}! Update {nameof(EngineConstants.NumberOfLemmingActions)}!");
 
         if (numberOfSkills != EngineConstants.NumberOfLemmingSkills)
             throw new Exception($"Number of LemmingSkills is actually {numberOfSkills}! Update {nameof(EngineConstants.NumberOfLemmingSkills)}!");
-
-        Console.WriteLine(
-            "Loaded {0} skills. Loaded {1} actions. Loaded {2} teams.",
-            numberOfSkills,
-            numberOfActions,
-            numberOfTeams);
     }
 
     /// <summary>

@@ -29,11 +29,12 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     public GadgetBase BuildGadget(
         GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
-        LemmingManager lemmingManager)
+        LemmingManager lemmingManager,
+        TeamManager teamManager)
     {
         var gadgetBounds = GetGadgetBounds(gadgetData);
         var resizeType = GetResizeTypeForGadgetOrientation(gadgetData);
-        var gadgetStates = GetGadgetStates(gadgetData, gadgetBounds);
+        var gadgetStates = GetGadgetStates(gadgetData, gadgetBounds, teamManager);
         var initialStateIndex = gadgetData.InitialStateId;
 
         var lemmingTracker = new LemmingTracker(lemmingManager);
@@ -88,7 +89,8 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
     private GadgetState[] GetGadgetStates(
         GadgetData gadgetData,
-        GadgetBounds hitBoxGadgetBounds)
+        GadgetBounds hitBoxGadgetBounds,
+        TeamManager teamManager)
     {
         var result = new GadgetState[AllGadgetStateData.Length];
 
@@ -103,7 +105,8 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
                 gadgetStateArchetypeData.RegionData);
             var hitBoxFilters = CreateHitBoxFilters(
                 gadgetData,
-                gadgetStateArchetypeData);
+                gadgetStateArchetypeData,
+                teamManager);
 
             result[i] = new GadgetState(
                 hitBoxFilters,
@@ -116,7 +119,8 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
     private static LemmingHitBoxFilter[] CreateHitBoxFilters(
         GadgetData gadgetData,
-        GadgetStateArchetypeData gadgetStateArchetypeData)
+        GadgetStateArchetypeData gadgetStateArchetypeData,
+        TeamManager teamManager)
     {
         var result = new LemmingHitBoxFilter[gadgetStateArchetypeData.HitBoxData.Length];
 
@@ -125,7 +129,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             var hitBoxData = gadgetStateArchetypeData.HitBoxData[i];
             var solidityType = hitBoxData.SolidityType;
             var hitBoxBehaviour = hitBoxData.HitBoxBehaviour;
-            var criteria = GetLemmingCriteria(gadgetData, hitBoxData);
+            var criteria = GetLemmingCriteria(gadgetData, hitBoxData, teamManager);
 
             result[i] = new LemmingHitBoxFilter(
                 solidityType,
@@ -141,7 +145,8 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
     private static ILemmingCriterion[] GetLemmingCriteria(
         GadgetData gadgetData,
-        HitBoxData hitBoxData)
+        HitBoxData hitBoxData,
+        TeamManager teamManager)
     {
         var numberOfCriteria =
             Helpers.CountIfNotNull(hitBoxData.AllowedActions) +
@@ -193,7 +198,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
         if (gadgetData.TryGetProperty(GadgetProperty.TeamId, out var teamId))
         {
-            var team = Team.AllItems[teamId];
+            var team = teamManager.AllItems[teamId];
             var teamFilter = new LemmingTeamCriterion(team);
             result[numberOfCriteria++] = teamFilter;
         }

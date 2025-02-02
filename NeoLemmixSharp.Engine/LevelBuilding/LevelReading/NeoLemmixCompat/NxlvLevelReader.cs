@@ -71,6 +71,8 @@ public sealed class NxlvLevelReader : ILevelReader
 
     private void ProcessLevelData()
     {
+        _levelData.NumberOfTeams = 1;
+
         var objectiveRequirementsList = new List<IObjectiveRequirement>
         {
             new BasicSkillSetRequirement(_skillSetReader.SkillSetData.ToArray()),

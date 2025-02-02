@@ -17,6 +17,7 @@ public sealed class LevelData : IEqualityComparer<LevelData.StylePiecePair>
     private int? _levelStartPositionX;
     private int? _levelStartPositionY;
     private int _maxNumberOfClonedLemmings = -1;
+    private int _numberOfTeams = -1;
 
     public string LevelTitle { get; set; } = string.Empty;
     public string LevelAuthor { get; set; } = string.Empty;
@@ -106,6 +107,20 @@ public sealed class LevelData : IEqualityComparer<LevelData.StylePiecePair>
         }
     }
 
+    public int NumberOfTeams
+    {
+        get => _numberOfTeams;
+        set
+        {
+            if (value <= 0)
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Number of teams must be greater than zero!");
+            if (value > EngineConstants.MaxNumberOfTeams)
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Too many teams!");
+
+            _numberOfTeams = value;
+        }
+    }
+
     public string LevelTheme { get; set; } = null!;
     public BackgroundData? LevelBackground { get; set; }
 
@@ -149,6 +164,7 @@ public sealed class LevelData : IEqualityComparer<LevelData.StylePiecePair>
         if (_levelWidth < 0) return "Level width not set!";
         if (_levelHeight < 0) return "Level height not set!";
         if (_maxNumberOfClonedLemmings < 0) return "Cloner counts not evaluated!";
+        if (_numberOfTeams < 0) return "Number of teams not set!";
         if (PrePlacedLemmingData.Count == 0 && HatchLemmingData.Count == 0) return "Number of lemmings is invalid!";
         if (LevelTitle.Length == 0) return "Level title not set!";
         if (LevelAuthor.Length == 0) return "Level author not set!";

@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 public sealed class LemmingState
 {
     private readonly Lemming _lemming;
-    private Team _team;
+    private int _teamId;
 
     private uint _states;
 
@@ -242,52 +242,56 @@ public sealed class LemmingState
 
     public Team TeamAffiliation
     {
-        get => _team;
+        get => LevelScreen.TeamManager.AllItems[_teamId];
         set
         {
-            _team = value;
+            _teamId = value.Id;
             UpdateHairAndBodyColors();
             UpdateSkinColor();
         }
     }
 
-    public LemmingState(Lemming lemming, Team team)
+    public LemmingState(Lemming lemming, int teamId)
     {
         _lemming = lemming;
-        _team = team;
+        _teamId = teamId;
     }
 
     private void UpdateHairAndBodyColors()
     {
+        var team = LevelScreen.TeamManager.AllItems[_teamId];
+
         if (HasPermanentSkill)
         {
-            HairColor = _team.PermanentSkillHairColor;
+            HairColor = team.PermanentSkillHairColor;
             BodyColor = IsNeutral
-                ? _team.NeutralBodyColor
-                : _team.PermanentSkillBodyColor;
+                ? team.NeutralBodyColor
+                : team.PermanentSkillBodyColor;
         }
         else
         {
-            HairColor = _team.HairColor;
+            HairColor = team.HairColor;
             BodyColor = IsNeutral
-                ? _team.NeutralBodyColor
-                : _team.BodyColor;
+                ? team.NeutralBodyColor
+                : team.BodyColor;
         }
     }
 
     private void UpdateSkinColor()
     {
+        var team = LevelScreen.TeamManager.AllItems[_teamId];
+
         SkinColor = IsZombie
-            ? _team.ZombieSkinColor
-            : _team.SkinColor;
+            ? team.ZombieSkinColor
+            : team.SkinColor;
 
         if (IsAcidLemming)
         {
-            FootColor = _team.AcidLemmingFootColor;
+            FootColor = team.AcidLemmingFootColor;
         }
         else if (IsWaterLemming)
         {
-            FootColor = _team.WaterLemmingFootColor;
+            FootColor = team.WaterLemmingFootColor;
         }
         else
         {
@@ -297,7 +301,7 @@ public sealed class LemmingState
 
     public void SetRawDataFromOther(LemmingState otherLemmingState)
     {
-        _team = otherLemmingState._team;
+        _teamId = otherLemmingState._teamId;
         _states = otherLemmingState._states;
         UpdateHairAndBodyColors();
         UpdateSkinColor();
@@ -312,7 +316,7 @@ public sealed class LemmingState
 
     public void SetRawDataFromSnapshotData(in LemmingStateSnapshotData lemmingStateSnapshotData)
     {
-        _team = Team.AllItems[lemmingStateSnapshotData.TeamId];
+        _teamId = lemmingStateSnapshotData.TeamId;
         _states = lemmingStateSnapshotData.StateData;
         UpdateHairAndBodyColors();
         UpdateSkinColor();
@@ -320,6 +324,6 @@ public sealed class LemmingState
 
     public LemmingStateSnapshotData CreateSnapshot()
     {
-        return new LemmingStateSnapshotData(TeamAffiliation.Id, _states);
+        return new LemmingStateSnapshotData(_teamId, _states);
     }
 }

@@ -23,7 +23,8 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     public GadgetBase BuildGadget(
         GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
-        LemmingManager lemmingManager)
+        LemmingManager lemmingManager,
+        TeamManager teamManager)
     {
         var hatchGadgetId = gadgetData.GetProperty(GadgetProperty.HatchGroupId);
         var teamId = gadgetData.GetProperty(GadgetProperty.TeamId);
@@ -64,7 +65,7 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
         var hatchSpawnData = new HatchSpawnData(
             hatchGadgetId,
-            Team.AllItems[teamId],
+            teamManager.AllItems[teamId],
             rawLemmingState,
             gadgetData.Orientation,
             gadgetData.FacingDirection,

@@ -72,7 +72,7 @@ public sealed class LevelObjectAssembler : IDisposable
                 Orientation.Down,
                 FacingDirection.Right,
                 NoneAction.Instance,
-                Team.AllItems[EngineConstants.ClassicTeamId])
+                EngineConstants.ClassicTeamId)
             {
                 LevelPosition = new LevelPosition()
             };
@@ -90,7 +90,7 @@ public sealed class LevelObjectAssembler : IDisposable
                     prototype.Orientation,
                     prototype.FacingDirection,
                     prototype.InitialLemmingAction,
-                    prototype.Team)
+                    prototype.TeamId)
                 {
                     LevelPosition = new LevelPosition(prototype.X, prototype.Y)
                 };
@@ -104,7 +104,8 @@ public sealed class LevelObjectAssembler : IDisposable
 
     public GadgetBase[] GetLevelGadgets(
         LevelData levelData,
-        LemmingManager lemmingHasher)
+        LemmingManager lemmingHasher,
+        TeamManager teamManager)
     {
         var allGadgetData = CollectionsMarshal.AsSpan(levelData.AllGadgetData);
 
@@ -114,7 +115,7 @@ public sealed class LevelObjectAssembler : IDisposable
         {
             var gadgetBuilder = levelData.AllGadgetArchetypeBuilders[prototype.GetStylePiecePair()];
 
-            var gadget = gadgetBuilder.BuildGadget(_gadgetSpriteBuilder, prototype, lemmingHasher);
+            var gadget = gadgetBuilder.BuildGadget(_gadgetSpriteBuilder, prototype, lemmingHasher, teamManager);
             _gadgets.Add(gadget);
         }
 

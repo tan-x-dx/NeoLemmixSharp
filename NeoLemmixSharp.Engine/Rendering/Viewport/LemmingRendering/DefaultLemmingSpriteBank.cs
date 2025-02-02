@@ -85,12 +85,6 @@ public static class DefaultLemmingSpriteBank
 
         DefaultLemmingSprites = new LemmingSpriteBank(actionSprites, teamColorData);
 
-        foreach (var team in Team.AllItems)
-        {
-            team.SetSpriteBank(DefaultLemmingSprites);
-            DefaultLemmingSprites.SetTeamColors(team);
-        }
-
         return;
 
         void CreateOneLayerTrueColorSprite(LemmingAction action, LevelPosition levelPosition)
@@ -271,7 +265,7 @@ public static class DefaultLemmingSpriteBank
 
     private static TeamColorData[] GenerateDefaultTeamColorData()
     {
-        var result = new TeamColorData[EngineConstants.NumberOfTeams];
+        var result = new TeamColorData[EngineConstants.MaxNumberOfTeams];
 
         var defaultSkinColor = new Color(0xF0, 0xD0, 0xD0);
         var defaultAcidLemmingFootColor = new Color(0x00, 0xF0, 0x00);

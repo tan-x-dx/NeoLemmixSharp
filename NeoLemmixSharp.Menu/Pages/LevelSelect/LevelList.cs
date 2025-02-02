@@ -58,7 +58,7 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
             children.Add(levelBrowserEntry);
         }
 
-        GC.Collect(3, GCCollectionMode.Forced);
+        GC.Collect(2, GCCollectionMode.Forced);
         OnResize();
     }
 
@@ -152,7 +152,7 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
 
         if (_numberOfLevelsLoaded >= LevelLoadCountThreshold)
         {
-            GC.Collect(3, GCCollectionMode.Forced);
+            GC.Collect(2, GCCollectionMode.Forced);
             _numberOfLevelsLoaded = 0;
         }
     }

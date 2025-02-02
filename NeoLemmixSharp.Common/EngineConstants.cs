@@ -50,7 +50,7 @@ public static class EngineConstants
     public const int RightOrientationRotNum = 3;
     public const string RightOrientationName = "Right";
 
-    public const int NumberOfTeams = 6;
+    public const int MaxNumberOfTeams = 6;
     public const int ClassicTeamId = 0;
 
     public const int InfiniteSkillCount = 100;
