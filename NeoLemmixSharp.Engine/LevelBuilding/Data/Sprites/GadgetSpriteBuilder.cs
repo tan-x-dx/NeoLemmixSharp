@@ -21,17 +21,17 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
     }
 
     public GadgetLayerRenderer? BuildStatefulGadgetRenderer(
-        IGadgetBuilder gadgetBuilder,
+        IGadgetArchetypeBuilder gadgetArchetypeBuilder,
         GadgetData gadgetData)
     {
-        var texture = GetTextureForGadget(gadgetBuilder, gadgetData);
+        var texture = GetTextureForGadget(gadgetArchetypeBuilder, gadgetData);
         return texture is null
             ? null
             : new GadgetLayerRenderer(texture, gadgetData.GadgetRenderMode);
     }
 
     private Texture2D? GetTextureForGadget(
-        IGadgetBuilder gadgetBuilder,
+        IGadgetArchetypeBuilder gadgetArchetypeBuilder,
         GadgetData gadgetData)
     {
         // Need to ensure the base texture is placed into the resulting GadgetSpriteBank.
@@ -54,7 +54,7 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
             FacingDirection facingDirection)
         {
             var key = new TextureLookupKey(
-                gadgetBuilder.GadgetBuilderId,
+                gadgetArchetypeBuilder.GadgetBuilderId,
                 orientation,
                 facingDirection);
 
@@ -65,7 +65,7 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
 
             cachedTexture = orientation == Orientation.Down &&
                             facingDirection == FacingDirection.Right // Down orientation + Right facing is the default. No extra work is required, so just use the texture
-                ? gadgetBuilder.SpriteData.Texture
+                ? gadgetArchetypeBuilder.SpriteData.Texture
                 : GetOrientedTexture(orientation, facingDirection);
 
             return cachedTexture;
@@ -75,7 +75,7 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
             Orientation orientation,
             FacingDirection facingDirection)
         {
-            var spriteData = gadgetBuilder.SpriteData;
+            var spriteData = gadgetArchetypeBuilder.SpriteData;
 
             var numberOfFrames = spriteData.FrameCountsPerLayer.Max();
 

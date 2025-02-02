@@ -121,7 +121,7 @@ public sealed class LevelData : IEqualityComparer<LevelData.StylePiecePair>
     public List<HatchGroupData> AllHatchGroupData { get; } = [];
     public List<LemmingData> PrePlacedLemmingData { get; } = [];
     public List<LemmingData> HatchLemmingData { get; } = [];
-    public Dictionary<StylePiecePair, IGadgetBuilder> AllGadgetBuilders { get; }
+    public Dictionary<StylePiecePair, IGadgetArchetypeBuilder> AllGadgetArchetypeBuilders { get; }
     public List<GadgetData> AllGadgetData { get; } = [];
     public List<SketchData> AllSketchData { get; } = [];
 
@@ -131,7 +131,7 @@ public sealed class LevelData : IEqualityComparer<LevelData.StylePiecePair>
     public LevelData()
     {
         TerrainArchetypeData = new Dictionary<StylePiecePair, TerrainArchetypeData>(this);
-        AllGadgetBuilders = new Dictionary<StylePiecePair, IGadgetBuilder>(this);
+        AllGadgetArchetypeBuilders = new Dictionary<StylePiecePair, IGadgetArchetypeBuilder>(this);
     }
 
     public void Validate()

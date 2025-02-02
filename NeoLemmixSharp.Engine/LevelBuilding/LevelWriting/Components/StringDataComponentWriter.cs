@@ -94,7 +94,7 @@ public sealed class StringDataComponentWriter : ILevelDataWriter
             TryAdd(terrainGroup.GroupName!);
         }
 
-        foreach (var (_, gadgetBuilder) in levelData.AllGadgetBuilders)
+        foreach (var (_, gadgetBuilder) in levelData.AllGadgetArchetypeBuilders)
         {
             TryAdd(gadgetBuilder.Style);
             TryAdd(gadgetBuilder.GadgetPiece);

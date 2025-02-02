@@ -94,23 +94,42 @@ public static class StyleHelpers
 
             utf8Encoding.GetBytes(pieceName, utf8ByteBuffer);
 
-            var pieceExists = rawFileData.TryLocateSpan(utf8ByteBuffer[..requiredByteBufferSize], out var index);
-
-            if (pieceExists)
-            {
-                rawFileData.SetReaderPosition(index + requiredByteBufferSize);
-
-                ProcessPiece(levelData, rawFileData);
-            }
-            else
-            {
-                // TODO trivial terrain archetype data
-            }
+            ProcessPiece(
+                levelData,
+                rawFileData,
+                styleGroup.Key,
+                pieceName,
+                utf8ByteBuffer[..requiredByteBufferSize]);
         }
     }
 
-    private static void ProcessPiece(LevelData levelData, RawFileData rawFileData)
+    private static void ProcessPiece(
+        LevelData levelData,
+        RawFileData rawFileData,
+        string styleName,
+        string pieceName,
+        ReadOnlySpan<byte> pieceByteSpan)
     {
+        var pieceExists = rawFileData.TryLocateSpan(pieceByteSpan, out var index);
+
+        if (!pieceExists)
+        {
+            // If the piece cannot be located within the style file,
+            // assume it's a boring terrain piece, and treat it as such.
+            // This will ensure all terrain pieces receive archetype
+            // data. If it turns out that the piece is supposed to be a
+            // gadget, then it's a gadget that we know nothing about,
+            // and therefore cannot create a level featuring it. In such
+            // a case, an exception will be thrown when trying to build
+            // a level with this dud data.
+
+            TerrainArchetypeReadingHelpers.CreateTrivialTerrainArchetypeData(levelData, styleName, pieceName);
+
+            return;
+        }
+
+        rawFileData.SetReaderPosition(index + pieceByteSpan.Length);
+
         byte pieceType = rawFileData.Read8BitUnsignedInteger();
 
         switch (pieceType)

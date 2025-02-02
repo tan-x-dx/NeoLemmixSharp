@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
-public interface IGadgetBuilder
+public interface IGadgetArchetypeBuilder
 {
     int GadgetBuilderId { get; }
     string Style { get; }

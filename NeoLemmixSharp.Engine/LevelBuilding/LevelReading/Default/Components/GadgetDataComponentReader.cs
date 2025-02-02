@@ -45,7 +45,7 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
         var renderMode = GetGadgetRenderMode(rawFileData.Read8BitUnsignedInteger());
 
         byte orientationByte = rawFileData.Read8BitUnsignedInteger();
-        var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientationByte(orientationByte);
+        LevelReadWriteHelpers.DecipherOrientationByte(orientationByte, out var orientation, out var facingDirection);
 
         var result = new GadgetData
         {

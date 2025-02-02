@@ -145,12 +145,13 @@ public static class LevelReadWriteHelpers
         return (byte)orientationBits;
     }
 
-    public static (Orientation, FacingDirection) DecipherOrientationByte(byte b)
+    public static void DecipherOrientationByte(
+        byte b,
+        out Orientation orientation,
+        out FacingDirection facingDirection)
     {
         int intValue = b;
-        var orientation = new Orientation(intValue);
-        var facingDirection = new FacingDirection(intValue >> FlipBitShift);
-
-        return (orientation, facingDirection);
+        orientation = new Orientation(intValue);
+        facingDirection = new FacingDirection(intValue >> FlipBitShift);
     }
 }

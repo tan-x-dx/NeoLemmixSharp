@@ -5,13 +5,27 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 
 public sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 {
-    private readonly TerrainArchetypeData _terrainArchetypeData;
+    private readonly string _styleName;
+    private readonly string _terrainPieceName;
+
+    private bool _isSteel;
+    private ResizeType _resizeType = ResizeType.None;
+
+    private int _nineSliceRight;
+    private int _nineSliceTop;
+    private int _nineSliceLeft;
+    private int _nineSliceBottom;
+
+    private int _defaultWidth;
+    private int _defaultHeight;
 
     public TerrainArchetypeDataReader(
-        TerrainArchetypeData terrainArchetypeData)
+        string styleName,
+        string terrainPieceName)
         : base(string.Empty)
     {
-        _terrainArchetypeData = terrainArchetypeData;
+        _styleName = styleName;
+        _terrainPieceName = terrainPieceName;
 
         RegisterTokenAction("STEEL", SetSteel);
         RegisterTokenAction("RESIZE_HORIZONTAL", SetResizeHorizontal);
@@ -35,55 +49,72 @@ public sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 
     private void SetSteel(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _terrainArchetypeData.IsSteel = true;
+        _isSteel = true;
     }
 
     private void SetResizeHorizontal(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _terrainArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
+        _resizeType |= ResizeType.ResizeHorizontal;
     }
 
     private void SetResizeVertical(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _terrainArchetypeData.ResizeType |= ResizeType.ResizeVertical;
+        _resizeType |= ResizeType.ResizeVertical;
     }
 
     private void SetResizeBoth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _terrainArchetypeData.ResizeType = ResizeType.ResizeBoth;
+        _resizeType = ResizeType.ResizeBoth;
     }
 
     private void SetNineSliceLeft(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _terrainArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
-        _terrainArchetypeData.NineSliceLeft = int.Parse(secondToken);
+        _resizeType |= ResizeType.ResizeHorizontal;
+        _nineSliceLeft = int.Parse(secondToken);
     }
 
     private void SetNineSliceTop(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _terrainArchetypeData.ResizeType |= ResizeType.ResizeVertical;
-        _terrainArchetypeData.NineSliceTop = int.Parse(secondToken);
+        _resizeType |= ResizeType.ResizeVertical;
+        _nineSliceTop = int.Parse(secondToken);
     }
 
     private void SetNineSliceRight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _terrainArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
-        _terrainArchetypeData.NineSliceRight = int.Parse(secondToken);
+        _resizeType |= ResizeType.ResizeHorizontal;
+        _nineSliceRight = int.Parse(secondToken);
     }
 
     private void SetNineSliceBottom(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _terrainArchetypeData.ResizeType |= ResizeType.ResizeVertical;
-        _terrainArchetypeData.NineSliceBottom = int.Parse(secondToken);
+        _resizeType |= ResizeType.ResizeVertical;
+        _nineSliceBottom = int.Parse(secondToken);
     }
 
     private void SetDefaultWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _terrainArchetypeData.DefaultWidth = int.Parse(secondToken);
+        _defaultWidth = int.Parse(secondToken);
     }
 
     private void SetDefaultHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _terrainArchetypeData.DefaultHeight = int.Parse(secondToken);
+        _defaultHeight = int.Parse(secondToken);
     }
+
+    public TerrainArchetypeData CreateTerrainArchetypeData() => new()
+    {
+        Style = _styleName,
+        TerrainPiece = _terrainPieceName,
+
+        IsSteel = _isSteel,
+        ResizeType = _resizeType,
+
+        NineSliceRight = _nineSliceRight,
+        NineSliceTop = _nineSliceTop,
+        NineSliceLeft = _nineSliceLeft,
+        NineSliceBottom = _nineSliceBottom,
+
+        DefaultWidth = _defaultWidth,
+        DefaultHeight = _defaultHeight,
+    };
 }

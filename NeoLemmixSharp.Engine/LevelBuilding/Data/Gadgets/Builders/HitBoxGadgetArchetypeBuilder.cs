@@ -15,7 +15,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
-public sealed class HitBoxGadgetBuilder : IGadgetBuilder
+public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 {
     public required int GadgetBuilderId { get; init; }
     public required string Style { get; init; }

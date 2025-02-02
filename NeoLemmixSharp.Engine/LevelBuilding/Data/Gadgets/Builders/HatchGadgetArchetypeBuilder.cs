@@ -9,7 +9,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
-public sealed class HatchGadgetBuilder : IGadgetBuilder
+public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 {
     public required int GadgetBuilderId { get; init; }
     public required string Style { get; init; }

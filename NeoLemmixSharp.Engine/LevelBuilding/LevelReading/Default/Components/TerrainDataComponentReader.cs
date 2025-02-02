@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
-public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<TerrainArchetypeData>
+public sealed class TerrainDataComponentReader : ILevelDataReader
 {
     private readonly List<string> _stringIdLookup;
 
@@ -43,7 +43,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         int y = rawFileData.Read16BitUnsignedInteger();
 
         byte orientationByte = rawFileData.Read8BitUnsignedInteger();
-        var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientationByte(orientationByte);
+        LevelReadWriteHelpers.DecipherOrientationByte(orientationByte, out var orientation, out var facingDirection);
 
         byte terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
         var decipheredTerrainDataMisc = LevelReadWriteHelpers.DecipherTerrainDataMiscByte(terrainDataMiscByte);
@@ -57,13 +57,13 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         int? width = null;
         if (decipheredTerrainDataMisc.HasWidthSpecified)
         {
-            width = ReadTerrainDataDimension(rawFileData);
+            width = rawFileData.Read16BitUnsignedInteger();
         }
 
         int? height = null;
         if (decipheredTerrainDataMisc.HasHeightSpecified)
         {
-            height = ReadTerrainDataDimension(rawFileData);
+            height = rawFileData.Read16BitUnsignedInteger();
         }
 
         AssertTerrainDataBytesMakeSense(
@@ -97,19 +97,6 @@ public sealed class TerrainDataComponentReader : ILevelDataReader, IComparer<Ter
         var byteBuffer = rawFileData.ReadBytes(3);
 
         return new Color(r: byteBuffer[0], g: byteBuffer[1], b: byteBuffer[2], alpha: (byte)0xff);
-    }
-
-    private static int ReadTerrainDataDimension(RawFileData rawFileData)
-    {
-        return rawFileData.Read16BitUnsignedInteger();
-    }
-
-    int IComparer<TerrainArchetypeData>.Compare(TerrainArchetypeData? x, TerrainArchetypeData? y)
-    {
-        if (ReferenceEquals(x, y)) return 0;
-        if (y is null) return 1;
-        if (x is null) return -1;
-        return x.TerrainArchetypeId.CompareTo(y.TerrainArchetypeId);
     }
 
     private static void AssertTerrainDataBytesMakeSense(
