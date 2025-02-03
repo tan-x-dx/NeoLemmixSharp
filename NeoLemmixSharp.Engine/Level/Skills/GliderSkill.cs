@@ -14,7 +14,7 @@ public sealed class GliderSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public int LemmingStateChangerId => LemmingStateChangerHelper.GliderStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHasher.GliderStateChangerId;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

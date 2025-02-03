@@ -39,7 +39,7 @@ public sealed class MinerSkill : LemmingSkill
 
     protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        var result = LemmingActionComparer.CreateSimpleSet();
+        var result = LemmingActionHasher.CreateSimpleSet();
 
         result.Add(WalkerAction.Instance);
         result.Add(ShruggerAction.Instance);

@@ -74,7 +74,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     private static LemmingActionSet GetAirborneActions()
     {
-        var result = LemmingActionComparer.CreateSimpleSet();
+        var result = LemmingActionHasher.CreateSimpleSet();
 
         result.Add(DrownerAction.Instance);
         result.Add(FallerAction.Instance);
@@ -94,7 +94,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     private static LemmingActionSet GetOneTimeActions()
     {
-        var result = LemmingActionComparer.CreateSimpleSet();
+        var result = LemmingActionHasher.CreateSimpleSet();
 
         result.Add(DehoisterAction.Instance);
         result.Add(DrownerAction.Instance);
@@ -218,7 +218,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
     public static bool operator !=(LemmingAction left, LemmingAction right) => left.Id != right.Id;
 }
 
-public readonly struct LemmingActionComparer : IPerfectHasher<LemmingAction>
+public readonly struct LemmingActionHasher : IPerfectHasher<LemmingAction>
 {
     [Pure]
     public int NumberOfItems => EngineConstants.NumberOfLemmingActions;
@@ -228,9 +228,9 @@ public readonly struct LemmingActionComparer : IPerfectHasher<LemmingAction>
     public LemmingAction UnHash(int index) => AllItems[index];
 
     [Pure]
-    public static LemmingActionSet CreateSimpleSet(bool fullSet = false) => new(new LemmingActionComparer(), new LemmingActionBitBuffer(), fullSet);
+    public static LemmingActionSet CreateSimpleSet(bool fullSet = false) => new(new LemmingActionHasher(), new LemmingActionBitBuffer(), fullSet);
     [Pure]
-    public static SimpleDictionary<LemmingActionComparer, LemmingActionBitBuffer, LemmingAction, TValue> CreateSimpleDictionary<TValue>() => new(new LemmingActionComparer(), new LemmingActionBitBuffer());
+    public static SimpleDictionary<LemmingActionHasher, LemmingActionBitBuffer, LemmingAction, TValue> CreateSimpleDictionary<TValue>() => new(new LemmingActionHasher(), new LemmingActionBitBuffer());
 }
 
 [InlineArray(Length)]

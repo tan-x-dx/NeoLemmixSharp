@@ -16,7 +16,7 @@ public sealed class LemmingActionCriterion : ILemmingCriterion
     public bool LemmingMatchesCriteria(Lemming lemming)
     {
         ReadOnlySpan<uint> bits = _lemmingActionBits;
-        var actionComparer = new LemmingActionComparer();
+        var actionComparer = new LemmingActionHasher();
         return BitArrayHelpers.GetBit(bits, actionComparer.Hash(lemming.CurrentAction));
     }
 }

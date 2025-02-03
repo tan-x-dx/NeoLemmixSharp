@@ -275,7 +275,7 @@ public readonly struct Orientation : IExtendedEnumType<Orientation>
     public static bool operator !=(Orientation first, Orientation second) => first.RotNum != second.RotNum;
 }
 
-public readonly struct OrientationComparer : IPerfectHasher<Orientation>
+public readonly struct OrientationHasher : IPerfectHasher<Orientation>
 {
     public int NumberOfItems => EngineConstants.NumberOfOrientations;
 
@@ -285,7 +285,7 @@ public readonly struct OrientationComparer : IPerfectHasher<Orientation>
     public Orientation UnHash(int index) => new(index);
 
     [Pure]
-    public static OrientationSet CreateSimpleSet(bool fullSet = false) => new(new OrientationComparer(), new BitBuffer32(), fullSet);
+    public static OrientationSet CreateSimpleSet(bool fullSet = false) => new(new OrientationHasher(), new BitBuffer32(), fullSet);
     [Pure]
-    public static SimpleDictionary<OrientationComparer, BitBuffer32, Orientation, TValue> CreateSimpleDictionary<TValue>() => new(new OrientationComparer(), new BitBuffer32());
+    public static SimpleDictionary<OrientationHasher, BitBuffer32, Orientation, TValue> CreateSimpleDictionary<TValue>() => new(new OrientationHasher(), new BitBuffer32());
 }

@@ -39,7 +39,7 @@ public sealed class ZombieStateChanger : ILemmingStateChanger
 {
     public static readonly ZombieStateChanger Instance = new();
 
-    public int LemmingStateChangerId => LemmingStateChangerHelper.ZombieStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHasher.ZombieStateChangerId;
 
     private ZombieStateChanger()
     {
@@ -54,7 +54,7 @@ public sealed class NeutralStateChanger : ILemmingStateChanger
 {
     public static readonly NeutralStateChanger Instance = new();
 
-    public int LemmingStateChangerId => LemmingStateChangerHelper.NeutralStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHasher.NeutralStateChangerId;
 
     private NeutralStateChanger()
     {

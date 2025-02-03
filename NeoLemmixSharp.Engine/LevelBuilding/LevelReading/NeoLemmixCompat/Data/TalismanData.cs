@@ -17,7 +17,7 @@ public sealed class TalismanData
     public int? TimeLimitInSeconds { get; set; }
     public int? AllSkillLimit { get; set; }
 
-    public SimpleDictionary<LemmingSkillComparer, LemmingSkillBitBuffer, LemmingSkill, int> SkillLimits { get; } = LemmingSkillComparer.CreateSimpleDictionary<int>();
+    public SimpleDictionary<LemmingSkillHasher, LemmingSkillBitBuffer, LemmingSkill, int> SkillLimits { get; } = LemmingSkillHasher.CreateSimpleDictionary<int>();
 
     public LevelObjective ToLevelObjective(LevelData levelData)
     {

@@ -20,7 +20,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     public static int NumberOfItems => EngineConstants.NumberOfLemmingSkills;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
-    public static SimpleSetEnumerable<LemmingSkillComparer, LemmingSkill> AllClassicSkills => ClassicSkills.AsSimpleEnumerable();
+    public static SimpleSetEnumerable<LemmingSkillHasher, LemmingSkill> AllClassicSkills => ClassicSkills.AsSimpleEnumerable();
 
     private static LemmingSkill[] RegisterAllLemmingSkills()
     {
@@ -72,7 +72,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingSkillSet GetClassicSkills()
     {
-        var result = LemmingSkillComparer.CreateSimpleSet();
+        var result = LemmingSkillHasher.CreateSimpleSet();
 
         result.Add(ClimberSkill.Instance);
         result.Add(FloaterSkill.Instance);
@@ -88,7 +88,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingActionSet GetActionsThatCanBeAssignedPermanentSkill()
     {
-        var result = LemmingActionComparer.CreateSimpleSet();
+        var result = LemmingActionHasher.CreateSimpleSet();
 
         result.Add(AscenderAction.Instance);
         result.Add(BasherAction.Instance);
@@ -123,7 +123,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingActionSet GetActionsThatCanBeAssignedRotationSkill()
     {
-        var result = LemmingActionComparer.CreateSimpleSet();
+        var result = LemmingActionHasher.CreateSimpleSet();
 
         result.Add(WalkerAction.Instance);
         result.Add(ShruggerAction.Instance);
@@ -180,7 +180,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
     public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.Id != right.Id;
 }
 
-public readonly struct LemmingSkillComparer : IPerfectHasher<LemmingSkill>
+public readonly struct LemmingSkillHasher : IPerfectHasher<LemmingSkill>
 {
     [Pure]
     public int NumberOfItems => EngineConstants.NumberOfLemmingSkills;
@@ -190,9 +190,9 @@ public readonly struct LemmingSkillComparer : IPerfectHasher<LemmingSkill>
     public LemmingSkill UnHash(int index) => LemmingSkill.AllItems[index];
 
     [Pure]
-    public static LemmingSkillSet CreateSimpleSet(bool fullSet = false) => new(new LemmingSkillComparer(), new LemmingSkillBitBuffer(), fullSet);
+    public static LemmingSkillSet CreateSimpleSet(bool fullSet = false) => new(new LemmingSkillHasher(), new LemmingSkillBitBuffer(), fullSet);
     [Pure]
-    public static SimpleDictionary<LemmingSkillComparer, LemmingSkillBitBuffer, LemmingSkill, TValue> CreateSimpleDictionary<TValue>() => new(new LemmingSkillComparer(), new LemmingSkillBitBuffer());
+    public static SimpleDictionary<LemmingSkillHasher, LemmingSkillBitBuffer, LemmingSkill, TValue> CreateSimpleDictionary<TValue>() => new(new LemmingSkillHasher(), new LemmingSkillBitBuffer());
 }
 
 [InlineArray(Length)]

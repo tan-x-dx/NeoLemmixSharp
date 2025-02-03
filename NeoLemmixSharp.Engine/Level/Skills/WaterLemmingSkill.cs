@@ -27,7 +27,7 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingStateChanger
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public int LemmingStateChangerId => LemmingStateChangerHelper.WaterStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHasher.WaterStateChangerId;
     public void SetLemmingState(LemmingState lemmingState, bool status)
     {
         lemmingState.IsWaterLemming = status;
