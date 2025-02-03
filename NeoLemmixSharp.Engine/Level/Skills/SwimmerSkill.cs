@@ -34,7 +34,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
 
     protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        var result = LemmingAction.CreateEmptySimpleSet();
+        var result = LemmingActionComparer.CreateSimpleSet();
 
         result.Add(AscenderAction.Instance);
         result.Add(BasherAction.Instance);

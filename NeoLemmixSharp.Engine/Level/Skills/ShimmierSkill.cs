@@ -91,7 +91,7 @@ public sealed class ShimmierSkill : LemmingSkill
 
     protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        var result = LemmingAction.CreateEmptySimpleSet();
+        var result = LemmingActionComparer.CreateSimpleSet();
 
         result.Add(WalkerAction.Instance);
         result.Add(ShruggerAction.Instance);

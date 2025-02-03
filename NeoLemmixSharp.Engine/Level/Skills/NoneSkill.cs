@@ -27,5 +27,5 @@ public sealed class NoneSkill : LemmingSkill
     {
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned() => LemmingAction.CreateEmptySimpleSet();
+    protected override LemmingActionSet ActionsThatCanBeAssigned() => LemmingActionComparer.CreateSimpleSet();
 }

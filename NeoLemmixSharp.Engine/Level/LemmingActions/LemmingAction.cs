@@ -74,7 +74,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     private static LemmingActionSet GetAirborneActions()
     {
-        var result = CreateEmptySimpleSet();
+        var result = LemmingActionComparer.CreateSimpleSet();
 
         result.Add(DrownerAction.Instance);
         result.Add(FallerAction.Instance);
@@ -94,7 +94,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     private static LemmingActionSet GetOneTimeActions()
     {
-        var result = CreateEmptySimpleSet();
+        var result = LemmingActionComparer.CreateSimpleSet();
 
         result.Add(DehoisterAction.Instance);
         result.Add(DrownerAction.Instance);
@@ -125,10 +125,6 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
             ? NoneAction.Instance
             : LemmingActions[unboundActionId];
     }
-
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static LemmingActionSet CreateEmptySimpleSet() => LemmingActionComparer.CreateSimpleSet();
 
     public readonly int Id;
     public readonly string LemmingActionName;

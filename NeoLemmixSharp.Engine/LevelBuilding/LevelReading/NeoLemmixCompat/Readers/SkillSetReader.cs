@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 
 public sealed class SkillSetReader : NeoLemmixDataReader
 {
-    private readonly LemmingSkillSet _seenSkills = LemmingSkill.CreateEmptySimpleSet();
+    private readonly LemmingSkillSet _seenSkills = LemmingSkillComparer.CreateSimpleSet();
 
     public List<SkillSetData> SkillSetData { get; } = new();
 

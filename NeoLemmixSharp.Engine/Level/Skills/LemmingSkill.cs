@@ -72,7 +72,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingSkillSet GetClassicSkills()
     {
-        var result = CreateEmptySimpleSet();
+        var result = LemmingSkillComparer.CreateSimpleSet();
 
         result.Add(ClimberSkill.Instance);
         result.Add(FloaterSkill.Instance);
@@ -88,7 +88,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingActionSet GetActionsThatCanBeAssignedPermanentSkill()
     {
-        var result = LemmingAction.CreateEmptySimpleSet();
+        var result = LemmingActionComparer.CreateSimpleSet();
 
         result.Add(AscenderAction.Instance);
         result.Add(BasherAction.Instance);
@@ -123,7 +123,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingActionSet GetActionsThatCanBeAssignedRotationSkill()
     {
-        var result = LemmingAction.CreateEmptySimpleSet();
+        var result = LemmingActionComparer.CreateSimpleSet();
 
         result.Add(WalkerAction.Instance);
         result.Add(ShruggerAction.Instance);
@@ -138,10 +138,6 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
         return result;
     }
-
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static LemmingSkillSet CreateEmptySimpleSet() => LemmingSkillComparer.CreateSimpleSet();
 
     private readonly LemmingActionSet _assignableActions;
     public readonly int Id;
