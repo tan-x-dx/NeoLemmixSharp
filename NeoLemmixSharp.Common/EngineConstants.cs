@@ -225,7 +225,7 @@ public static class EngineConstants
 
     #region Lemming Action Constants
 
-    public const int NumberOfLemmingActions = 33;
+    public const int NumberOfLemmingActions = 34;
     public const int LongestActionNameLength = 11;
 
     public const string NoneActionName = "None";
@@ -438,7 +438,7 @@ public static class EngineConstants
 
     #region Lemming Skill Constants
 
-    public const int NumberOfLemmingSkills = 30;
+    public const int NumberOfLemmingSkills = 31;
     public const string NoneSkillName = "None";
 
     public const string AcidLemmingSkillName = "Acid Lemming";

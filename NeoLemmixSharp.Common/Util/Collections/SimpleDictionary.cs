@@ -26,7 +26,7 @@ public sealed class SimpleDictionary<TPerfectHasher, TBuffer, TKey, TValue> : ID
     {
         _hasher = hasher;
         _bits = buffer;
-        Debug.Assert((_hasher.NumberOfItems << BitArrayHelpers.Shift) <= _bits.Size);
+        Debug.Assert(_hasher.NumberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
         var numberOfItems = hasher.NumberOfItems;
         //_bits = BitArrayHelpers.CreateBitArray(numberOfItems, false);
         _popCount = 0;

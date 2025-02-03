@@ -123,8 +123,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     /// </summary>
     private static void ValidateGameConstants()
     {
-        var numberOfActions = LemmingAction.NumberOfItems;
-        var numberOfSkills = LemmingSkill.NumberOfItems;
+        var numberOfActions = LemmingAction.AllItems.Length;
+        var numberOfSkills = LemmingSkill.AllItems.Length;
 
         if (numberOfActions != EngineConstants.NumberOfLemmingActions)
             throw new Exception($"Number of LemmingActions is actually {numberOfActions}! Update {nameof(EngineConstants.NumberOfLemmingActions)}!");

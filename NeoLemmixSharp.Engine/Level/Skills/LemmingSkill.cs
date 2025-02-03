@@ -18,7 +18,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
     protected static readonly LemmingActionSet ActionsThatCanBeAssignedPermanentSkill = GetActionsThatCanBeAssignedPermanentSkill();
     protected static readonly LemmingActionSet ActionsThatCanBeAssignedRotationSkill = GetActionsThatCanBeAssignedRotationSkill();
 
-    public static int NumberOfItems => LemmingSkills.Length;
+    public static int NumberOfItems => EngineConstants.NumberOfLemmingSkills;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
     public static SimpleSetEnumerable<LemmingSkillComparer, LemmingSkill> AllClassicSkills => ClassicSkills.AsSimpleEnumerable();
 

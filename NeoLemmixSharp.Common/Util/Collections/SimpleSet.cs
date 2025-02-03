@@ -25,7 +25,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
         _hasher = hasher;
         _bits = buffer;
         var numberOfItems = _hasher.NumberOfItems;
-        Debug.Assert((numberOfItems << BitArrayHelpers.Shift) <= _bits.Size);
+        Debug.Assert(numberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
 
         if (fullSet)
         {
