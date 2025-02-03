@@ -26,9 +26,8 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
     {
         _hasher = hasher;
         _bits = buffer;
-        Debug.Assert(_hasher.NumberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
         var numberOfItems = hasher.NumberOfItems;
-        //_bits = BitArrayHelpers.CreateBitArray(numberOfItems, false);
+        Debug.Assert(numberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
         _popCount = 0;
         _values = new TValue[numberOfItems];
     }
