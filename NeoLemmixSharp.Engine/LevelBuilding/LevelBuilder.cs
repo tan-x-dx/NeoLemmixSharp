@@ -12,6 +12,7 @@ using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
@@ -19,6 +20,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
+using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
@@ -48,13 +50,15 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
         var levelParameters = levelData.LevelParameters;
         var controlPanelParameters = levelData.ControlParameters;
 
+        var teamManager = GetTeamManager(
+            levelData,
+            lemmingSpriteBank);
+
         levelData.HorizontalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
         levelData.VerticalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
 
-        var horizontalBoundaryBehaviour =
-            levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelData.LevelWidth);
-        var verticalBoundaryBehaviour =
-            levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelData.LevelHeight);
+        var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelData.LevelWidth);
+        var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelData.LevelHeight);
 
         var levelLemmings = _levelObjectAssembler.GetLevelLemmings(levelData);
         var hatchGroups = LevelObjectAssembler.GetHatchGroups(levelData);
@@ -65,7 +69,7 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
             levelData.PrePlacedLemmingData.Count,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
-        var levelGadgets = _levelObjectAssembler.GetLevelGadgets(levelData, lemmingManager);
+        var levelGadgets = _levelObjectAssembler.GetLevelGadgets(levelData, lemmingManager, teamManager);
 
         foreach (var hatchGroup in hatchGroups)
         {
@@ -141,6 +145,7 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
             terrainPainter,
             lemmingManager,
             gadgetManager,
+            teamManager,
             skillSetManager,
             levelObjectiveManager,
             controlPanel,
@@ -152,9 +157,22 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
             rewindManager,
             levelScreenRenderer);
 
-        GC.Collect(3, GCCollectionMode.Forced);
+        GC.Collect(2, GCCollectionMode.Forced);
 
         return result;
+    }
+
+    private static TeamManager GetTeamManager(LevelData levelData, LemmingSpriteBank lemmingSpriteBank)
+    {
+        var numberOfTeams = levelData.NumberOfTeams;
+
+        var teams = new Team[numberOfTeams];
+        for (var i = 0; i < teams.Length; i++)
+        {
+            teams[i] = new Team(i, lemmingSpriteBank);
+        }
+
+        return new TeamManager(teams);
     }
 
     private static LevelTimer CreateLevelTimer(LevelObjectiveManager levelObjectiveManager)

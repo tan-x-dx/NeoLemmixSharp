@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
 public sealed class LevelDataReader : NeoLemmixDataReader
 {
+    private readonly UniqueStringSet _uniqueStringSet;
     private readonly LevelData _levelData;
 
     private bool _lockSpawnInterval;
@@ -20,11 +22,14 @@ public sealed class LevelDataReader : NeoLemmixDataReader
     public int NumberOfLemmings => _numberOfLemmings;
 
     public LevelDataReader(
+        UniqueStringSet uniqueStringSet,
         LevelData levelData)
         : base("TITLE")
     {
+        _uniqueStringSet = uniqueStringSet;
         _levelData = levelData;
 
+        RegisterTokenAction("TITLE", SetTitle);
         RegisterTokenAction("AUTHOR", SetAuthor);
         RegisterTokenAction("ID", SetId);
         RegisterTokenAction("VERSION", SetVersion);
@@ -46,11 +51,7 @@ public sealed class LevelDataReader : NeoLemmixDataReader
     {
         FinishedReading = false;
 
-        NxlvReadingHelpers.GetTokenPair(line, out _, out _, out var secondTokenIndex);
-
-        var levelTitle = line[secondTokenIndex..].Trim().ToString();
-        _levelData.LevelTitle = string.IsNullOrWhiteSpace(levelTitle) ? "Untitled" : levelTitle;
-        return false;
+        return true;
     }
 
     public override bool ReadNextLine(ReadOnlySpan<char> line)
@@ -78,9 +79,15 @@ public sealed class LevelDataReader : NeoLemmixDataReader
         return false;
     }
 
+    private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        var levelTitle = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
+        _levelData.LevelAuthor = string.IsNullOrWhiteSpace(levelTitle) ? "Untitled" : levelTitle;
+    }
+
     private void SetAuthor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var levelAuthor = line[secondTokenIndex..].Trim().ToString();
+        var levelAuthor = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
         _levelData.LevelAuthor = string.IsNullOrWhiteSpace(levelAuthor) ? "Unknown Author" : levelAuthor;
     }
 
@@ -106,12 +113,12 @@ public sealed class LevelDataReader : NeoLemmixDataReader
 
     private void SetTheme(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _levelData.LevelTheme = line[secondTokenIndex..].Trim().ToString();
+        _levelData.LevelTheme = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
     }
 
     private void SetBackground(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _levelData.LevelBackground = ParseBackgroundData(line[secondTokenIndex..].Trim());
+        _levelData.LevelBackground = ParseBackgroundData(line[secondTokenIndex..]);
     }
 
     private void SetMusic(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -177,13 +184,13 @@ public sealed class LevelDataReader : NeoLemmixDataReader
         _levelData.AllHatchGroupData.Add(hatchGroupData);
     }
 
-    private static BackgroundData ParseBackgroundData(ReadOnlySpan<char> backgroundToken)
+    private BackgroundData ParseBackgroundData(ReadOnlySpan<char> backgroundToken)
     {
         return new BackgroundData
         {
             IsSolidColor = false,
             Color = Color.Black,
-            BackgroundImageName = backgroundToken.ToString()
+            BackgroundImageName = _uniqueStringSet.GetUniqueStringInstance(backgroundToken)
         };
     }
 }

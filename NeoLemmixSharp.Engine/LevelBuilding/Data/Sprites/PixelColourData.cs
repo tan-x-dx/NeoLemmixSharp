@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 

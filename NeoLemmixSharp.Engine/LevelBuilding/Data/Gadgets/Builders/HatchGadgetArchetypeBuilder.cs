@@ -9,9 +9,11 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
-public sealed class HatchGadgetBuilder : IGadgetBuilder
+public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 {
     public required int GadgetBuilderId { get; init; }
+    public required string Style { get; init; }
+    public required string GadgetPiece { get; init; }
 
     public required int SpawnX { get; init; }
     public required int SpawnY { get; init; }
@@ -21,7 +23,8 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
     public GadgetBase BuildGadget(
         GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
-        LemmingManager lemmingManager)
+        LemmingManager lemmingManager,
+        TeamManager teamManager)
     {
         var hatchGadgetId = gadgetData.GetProperty(GadgetProperty.HatchGroupId);
         var teamId = gadgetData.GetProperty(GadgetProperty.TeamId);
@@ -62,7 +65,7 @@ public sealed class HatchGadgetBuilder : IGadgetBuilder
 
         var hatchSpawnData = new HatchSpawnData(
             hatchGadgetId,
-            Team.AllItems[teamId],
+            teamManager.AllItems[teamId],
             rawLemmingState,
             gadgetData.Orientation,
             gadgetData.FacingDirection,

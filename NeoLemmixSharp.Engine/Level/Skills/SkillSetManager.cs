@@ -36,7 +36,7 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
     private static SkillTrackingData CreateFromSkillSetData(SkillSetData skillSetData, int id)
     {
         var lemmingSkill = skillSetData.Skill;
-        var team = Team.AllItems[skillSetData.TeamId];
+        var team = LevelScreen.TeamManager.AllItems[skillSetData.TeamId];
 
         return new SkillTrackingData(id, lemmingSkill, team, skillSetData.NumberOfSkills);
     }

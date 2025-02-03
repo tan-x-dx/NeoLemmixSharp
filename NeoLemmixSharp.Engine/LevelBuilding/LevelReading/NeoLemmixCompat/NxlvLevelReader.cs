@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
@@ -15,7 +14,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 public sealed class NxlvLevelReader : ILevelReader
 {
     private readonly LevelData _levelData;
-    private readonly Dictionary<string, TerrainArchetypeData> _terrainArchetypes;
+    private readonly UniqueStringSet _uniqueStringSet = new();
 
     private readonly LevelDataReader _levelDataReader;
     private readonly SkillSetReader _skillSetReader;
@@ -28,25 +27,24 @@ public sealed class NxlvLevelReader : ILevelReader
     public NxlvLevelReader(string filePath)
     {
         _levelData = new LevelData();
-        _terrainArchetypes = new Dictionary<string, TerrainArchetypeData>(StringComparer.OrdinalIgnoreCase);
 
-        _levelDataReader = new LevelDataReader(_levelData);
+        _levelDataReader = new LevelDataReader(_uniqueStringSet, _levelData);
         _skillSetReader = new SkillSetReader();
-        _terrainGroupReader = new TerrainGroupReader(_terrainArchetypes);
-        _gadgetReader = new GadgetReader();
-        _talismanReader = new TalismanReader();
+        _terrainGroupReader = new TerrainGroupReader(_uniqueStringSet);
+        _gadgetReader = new GadgetReader(_uniqueStringSet);
+        _talismanReader = new TalismanReader(_uniqueStringSet);
 
         var dataReaders = new NeoLemmixDataReader[]
         {
             _levelDataReader,
             _skillSetReader,
             _terrainGroupReader,
-            new TerrainReader(_terrainArchetypes, _levelData.AllTerrainData),
+            new TerrainReader(_uniqueStringSet, _levelData.AllTerrainData),
             new LemmingReader(_levelData.PrePlacedLemmingData),
             _gadgetReader,
             _talismanReader,
-            new NeoLemmixTextReader(_levelData.PreTextLines, "$PRETEXT"),
-            new NeoLemmixTextReader(_levelData.PostTextLines, "$POSTTEXT"),
+            new NeoLemmixTextReader(_uniqueStringSet, _levelData.PreTextLines, "$PRETEXT"),
+            new NeoLemmixTextReader(_uniqueStringSet, _levelData.PostTextLines, "$POSTTEXT"),
             new SketchReader(_levelData.AllSketchData),
         };
 
@@ -59,20 +57,22 @@ public sealed class NxlvLevelReader : ILevelReader
 
         ProcessLevelData();
         ProcessTalismans();
-        ProcessTerrainData();
+        StyleHelpers.ProcessStyleArchetypeData(_levelData, _uniqueStringSet);
 
         NxlvCountHelpers.CalculateHatchCounts(_levelData, _levelDataReader, _gadgetReader);
 
-        ProcessGadgetData(graphicsDevice);
         ProcessConfigData();
 
         _levelData.MaxNumberOfClonedLemmings = LevelReadingHelpers.CalculateMaxNumberOfClonedLemmings(_levelData);
+        _levelData.AllTerrainGroups.AddRange(_terrainGroupReader.AllTerrainGroups);
 
         return _levelData;
     }
 
     private void ProcessLevelData()
     {
+        _levelData.NumberOfTeams = 1;
+
         var objectiveRequirementsList = new List<IObjectiveRequirement>
         {
             new BasicSkillSetRequirement(_skillSetReader.SkillSetData.ToArray()),
@@ -97,21 +97,6 @@ public sealed class NxlvLevelReader : ILevelReader
         {
             _levelData.LevelObjectives.Add(talismanDatum.ToLevelObjective(_levelData));
         }
-    }
-
-    private void ProcessTerrainData()
-    {
-        _levelData.TerrainArchetypeData.Capacity = _terrainArchetypes.Count;
-        _levelData.TerrainArchetypeData.AddRange(_terrainArchetypes.Values.OrderBy(d => d.TerrainArchetypeId));
-
-        _levelData.AllTerrainGroups.AddRange(_terrainGroupReader.AllTerrainGroups);
-    }
-
-    private void ProcessGadgetData(
-        GraphicsDevice graphicsDevice)
-    {
-        new GadgetTranslator(_levelData, graphicsDevice)
-            .TranslateNeoLemmixGadgets(_gadgetReader.GadgetArchetypes, _gadgetReader.AllGadgetData);
     }
 
     private void ProcessConfigData()

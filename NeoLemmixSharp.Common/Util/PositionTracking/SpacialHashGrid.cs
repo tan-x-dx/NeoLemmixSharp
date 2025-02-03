@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -14,7 +15,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
 
-    private readonly SimpleSet<TPerfectHasher, T> _allTrackedItems;
+    private readonly SimpleSet<TPerfectHasher, ArrayWrapper, T> _allTrackedItems;
 
     private readonly int _chunkSizeBitShift;
     private readonly int _numberOfHorizontalChunks;
@@ -38,15 +39,16 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
-        _allTrackedItems = new SimpleSet<TPerfectHasher, T>(hasher, false);
+        _bitArraySize = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
+
+        var bitBuffer = new uint[_bitArraySize];
+        _allTrackedItems = new SimpleSet<TPerfectHasher, ArrayWrapper, T>(_hasher, new ArrayWrapper(bitBuffer), false);
 
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
         var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;
 
         _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift;
         _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift;
-
-        _bitArraySize = BitArrayHelpers.CalculateBitArrayBufferLength(hasher.NumberOfItems);
 
         _cachedQueryScratchSpace = new uint[_bitArraySize];
         _allBits = new uint[_bitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];

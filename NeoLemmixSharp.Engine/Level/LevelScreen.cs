@@ -9,6 +9,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
@@ -32,6 +33,7 @@ public sealed class LevelScreen : IBaseScreen
     private readonly TerrainPainter _terrainPainter;
     private readonly LemmingManager _lemmingManager;
     private readonly GadgetManager _gadgetManager;
+    private readonly TeamManager _teamManager;
     private readonly SkillSetManager _skillSetManager;
     private readonly LevelObjectiveManager _levelObjectiveManager;
     private readonly LevelControlPanel _levelControlPanel;
@@ -51,6 +53,7 @@ public sealed class LevelScreen : IBaseScreen
     public static TerrainPainter TerrainPainter => _instance._terrainPainter;
     public static LemmingManager LemmingManager => _instance._lemmingManager;
     public static GadgetManager GadgetManager => _instance._gadgetManager;
+    public static TeamManager TeamManager => _instance._teamManager;
     public static SkillSetManager SkillSetManager => _instance._skillSetManager;
     public static LevelObjectiveManager LevelObjectiveManager => _instance._levelObjectiveManager;
     public static LevelControlPanel LevelControlPanel => _instance._levelControlPanel;
@@ -93,6 +96,7 @@ public sealed class LevelScreen : IBaseScreen
         TerrainPainter terrainPainter,
         LemmingManager lemmingManager,
         GadgetManager gadgetManager,
+        TeamManager teamManager,
         SkillSetManager skillSetManager,
         LevelObjectiveManager levelObjectiveManager,
         LevelControlPanel levelControlPanel,
@@ -111,6 +115,7 @@ public sealed class LevelScreen : IBaseScreen
         _terrainPainter = terrainPainter;
         _lemmingManager = lemmingManager;
         _gadgetManager = gadgetManager;
+        _teamManager = teamManager;
         _skillSetManager = skillSetManager;
         _levelObjectiveManager = levelObjectiveManager;
         _levelControlPanel = levelControlPanel;

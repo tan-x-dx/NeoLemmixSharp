@@ -4,28 +4,30 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 public sealed class TerrainData
 {
-    public int TerrainArchetypeId { get; set; }
+    public required string? GroupName { get; init; }
+    public required string Style { get; init; }
+    public required string TerrainPiece { get; init; }
 
-    public int X { get; set; }
-    public int Y { get; set; }
+    public required int X { get; init; }
+    public required int Y { get; init; }
 
-    public bool NoOverwrite { get; set; }
-    public int RotNum { get; set; }
-    public bool Flip { get; set; }
-    public bool Erase { get; set; }
+    public required bool NoOverwrite { get; init; }
+    public required int RotNum { get; init; }
+    public required bool Flip { get; init; }
+    public required bool Erase { get; init; }
 
-    public Color? Tint { get; set; }
+    public required Color? Tint { get; init; }
 
-    public string? GroupName { get; set; }
+    public required int? Width { get; init; }
+    public required int? Height { get; init; }
 
-    public int? Width { get; set; }
-    public int? Height { get; set; }
+    public LevelData.StylePiecePair GetStylePiecePair() => new(Style, TerrainPiece);
 
     public override string ToString()
     {
         var flipString = Flip ? "F" : string.Empty;
         var rotString = $"R{RotNum}";
 
-        return $"X:{X},Y:{Y} - {rotString}{flipString}{rotString} - TerrainArchetypeId {TerrainArchetypeId}";
+        return $"X:{X},Y:{Y} - {rotString}{flipString}{rotString}";
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders.GadgetTranslation;
+namespace NeoLemmixSharp.Common.Util;
 
 public readonly ref struct SpanWrapper2D<T>
 {

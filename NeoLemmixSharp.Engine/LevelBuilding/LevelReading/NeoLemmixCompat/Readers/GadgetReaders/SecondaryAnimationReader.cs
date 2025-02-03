@@ -1,18 +1,22 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
 public sealed class SecondaryAnimationReader : NeoLemmixDataReader
 {
+    private readonly UniqueStringSet _uniqueStringSet;
     private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
 
     private AnimationData? _secondaryAnimationData;
     private AnimationTriggerReader? _triggerReader;
 
     public SecondaryAnimationReader(
+        UniqueStringSet uniqueStringSet,
         NeoLemmixGadgetArchetypeData gadgetArchetypeData)
         : base("$ANIMATION")
     {
+        _uniqueStringSet = uniqueStringSet;
         _gadgetArchetypeData = gadgetArchetypeData;
 
         RegisterTokenAction("INITIAL_FRAME", SetInitialFrame);
@@ -80,7 +84,7 @@ public sealed class SecondaryAnimationReader : NeoLemmixDataReader
 
     private void SetName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _secondaryAnimationData!.Name = secondToken.ToString();
+        _secondaryAnimationData!.Name = _uniqueStringSet.GetUniqueStringInstance(secondToken);
     }
 
     private void SetHidden(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

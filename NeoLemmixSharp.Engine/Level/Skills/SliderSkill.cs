@@ -14,7 +14,7 @@ public sealed class SliderSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public int LemmingStateChangerId => LemmingStateChangerHelper.SliderStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHasher.SliderStateChangerId;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

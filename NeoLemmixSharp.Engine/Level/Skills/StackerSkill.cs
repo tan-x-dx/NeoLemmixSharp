@@ -38,7 +38,7 @@ public sealed class StackerSkill : LemmingSkill
 
     protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        var result = LemmingAction.CreateEmptySimpleSet();
+        var result = LemmingActionHasher.CreateSimpleSet();
 
         result.Add(WalkerAction.Instance);
         result.Add(ShruggerAction.Instance);

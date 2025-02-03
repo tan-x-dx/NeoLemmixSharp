@@ -1,5 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -13,6 +16,21 @@ public enum LevelParameters
     EnableClearPhysics,
     EnableSkillShadows,
     EnableFrameControl
+}
+
+public readonly struct LevelParameterHasher : IPerfectHasher<LevelParameters>
+{
+    public int NumberOfItems => 8;
+
+    [Pure]
+    public int Hash(LevelParameters item) => (int)item;
+    [Pure]
+    public LevelParameters UnHash(int index) => (LevelParameters)index;
+
+    [Pure]
+    public static LevelParameterSet CreateSimpleSet(bool fullSet = false) => new(new LevelParameterHasher(), new BitBuffer32(), fullSet);
+    [Pure]
+    public static SimpleDictionary<LevelParameterHasher, BitBuffer32, LevelParameters, TValue> CreateSimpleDictionary<TValue>() => new(new LevelParameterHasher(), new BitBuffer32());
 }
 
 public static class LevelParameterHelpers

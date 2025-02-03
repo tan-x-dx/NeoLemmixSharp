@@ -29,7 +29,7 @@ public sealed class PrePlacedLemmingDataComponentWriter : ILevelDataWriter
         writer.Write(lemmingData.State);
 
         writer.Write(LevelReadWriteHelpers.GetOrientationByte(lemmingData.Orientation, lemmingData.FacingDirection));
-        writer.Write((byte)lemmingData.Team.Id);
+        writer.Write((byte)lemmingData.TeamId);
         writer.Write((byte)lemmingData.InitialLemmingAction.Id);
     }
 }

@@ -17,6 +17,8 @@ public sealed class LemmingSpriteBank : IDisposable
         _teamColorData = teamColorData;
     }
 
+    public TeamColorData GetColorData(int id) => _teamColorData[id];
+
     public LemmingActionSprite GetActionSprite(
         LemmingAction lemmingAction,
         Orientation orientation,
@@ -53,10 +55,5 @@ public sealed class LemmingSpriteBank : IDisposable
     public void Dispose()
     {
         DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<LemmingActionSprite>(_actionSprites));
-    }
-
-    public void SetTeamColors(Team team)
-    {
-        team.SetColorData(_teamColorData[team.Id]);
     }
 }

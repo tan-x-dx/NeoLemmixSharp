@@ -39,50 +39,28 @@ public sealed class ZombieStateChanger : ILemmingStateChanger
 {
     public static readonly ZombieStateChanger Instance = new();
 
-    public int LemmingStateChangerId => LemmingStateChangerHelper.ZombieStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHasher.ZombieStateChangerId;
 
     private ZombieStateChanger()
     {
     }
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
-    {
-        lemmingState.IsZombie = status;
-    }
-
-    public void ToggleLemmingState(LemmingState lemmingState)
-    {
-        lemmingState.IsZombie = !lemmingState.IsZombie;
-    }
-
-    public bool IsApplied(LemmingState lemmingState)
-    {
-        return lemmingState.IsZombie;
-    }
+    public void SetLemmingState(LemmingState lemmingState, bool status) => lemmingState.IsZombie = status;
+    public void ToggleLemmingState(LemmingState lemmingState) => lemmingState.IsZombie = !lemmingState.IsZombie;
+    public bool IsApplied(LemmingState lemmingState) => lemmingState.IsZombie;
 }
 
 public sealed class NeutralStateChanger : ILemmingStateChanger
 {
     public static readonly NeutralStateChanger Instance = new();
 
-    public int LemmingStateChangerId => LemmingStateChangerHelper.NeutralStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHasher.NeutralStateChangerId;
 
     private NeutralStateChanger()
     {
     }
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
-    {
-        lemmingState.IsNeutral = status;
-    }
-
-    public void ToggleLemmingState(LemmingState lemmingState)
-    {
-        lemmingState.IsNeutral = !lemmingState.IsNeutral;
-    }
-
-    public bool IsApplied(LemmingState lemmingState)
-    {
-        return lemmingState.IsNeutral;
-    }
+    public void SetLemmingState(LemmingState lemmingState, bool status) => lemmingState.IsNeutral = status;
+    public void ToggleLemmingState(LemmingState lemmingState) => lemmingState.IsNeutral = !lemmingState.IsNeutral;
+    public bool IsApplied(LemmingState lemmingState) => lemmingState.IsNeutral;
 }

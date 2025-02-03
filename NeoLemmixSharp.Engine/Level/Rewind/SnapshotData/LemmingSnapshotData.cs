@@ -91,7 +91,7 @@ public readonly struct LemmingSnapshotData
         CurrentBounds = lemming.CurrentBounds;
         PreviousBounds = lemming.PreviousBounds;
 
-        StateSnapshotData = lemming.State.CreateSnapshot();
+        lemming.State.WriteToSnapshotData(out StateSnapshotData);
 
         FacingDirection = lemming.FacingDirection;
         Orientation = lemming.Orientation;

@@ -26,7 +26,7 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
             uint state = rawFileData.Read32BitUnsignedInteger();
 
             byte orientationByte = rawFileData.Read8BitUnsignedInteger();
-            var (orientation, facingDirection) = LevelReadWriteHelpers.DecipherOrientationByte(orientationByte);
+            LevelReadWriteHelpers.DecipherOrientationByte(orientationByte, out var orientation, out var facingDirection);
             int teamId = rawFileData.Read8BitUnsignedInteger();
             int initialActionId = rawFileData.Read8BitUnsignedInteger();
 
@@ -39,7 +39,7 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
                 Orientation = orientation,
                 FacingDirection = facingDirection,
 
-                Team = Team.AllItems[teamId],
+                TeamId = teamId,
                 InitialLemmingAction = LemmingAction.AllItems[initialActionId]
             });
         }

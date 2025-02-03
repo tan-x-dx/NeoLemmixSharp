@@ -24,8 +24,6 @@ public sealed class StringDataComponentReader : ILevelDataReader
         AlreadyUsed = true;
         var numberOfItems = rawFileData.Read16BitUnsignedInteger();
 
-        var utf8Encoding = Encoding.UTF8;
-
         while (numberOfItems-- > 0)
         {
             int id = rawFileData.Read16BitUnsignedInteger();
@@ -34,7 +32,7 @@ public sealed class StringDataComponentReader : ILevelDataReader
             // The next 16bit int specifies how many bytes make up the next string
             int stringLengthInBytes = rawFileData.Read16BitUnsignedInteger();
             var stringBytes = rawFileData.ReadBytes(stringLengthInBytes);
-            var actualString = utf8Encoding.GetString(stringBytes);
+            var actualString = Encoding.UTF8.GetString(stringBytes);
 
             _stringIdLookup.Add(actualString);
         }

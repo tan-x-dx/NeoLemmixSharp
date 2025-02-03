@@ -1,10 +1,11 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
 
 public sealed class TerrainGroupReader : NeoLemmixDataReader
 {
-    private readonly Dictionary<string, TerrainArchetypeData> _terrainArchetypes;
+    private readonly UniqueStringSet _uniqueStringSet;
 
     private TerrainReader? _terrainReader;
     private TerrainGroupData? _currentTerrainGroup;
@@ -12,10 +13,10 @@ public sealed class TerrainGroupReader : NeoLemmixDataReader
     public List<TerrainGroupData> AllTerrainGroups { get; } = new();
 
     public TerrainGroupReader(
-        Dictionary<string, TerrainArchetypeData> terrainArchetypes)
+        UniqueStringSet uniqueStringSet)
         : base("$TERRAINGROUP")
     {
-        _terrainArchetypes = terrainArchetypes;
+        _uniqueStringSet = uniqueStringSet;
 
         RegisterTokenAction("NAME", SetName);
         RegisterTokenAction("$TERRAIN", ReadTerrainData);
@@ -57,12 +58,12 @@ public sealed class TerrainGroupReader : NeoLemmixDataReader
 
     private void SetName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentTerrainGroup!.GroupName = line[secondTokenIndex..].Trim().ToString();
+        _currentTerrainGroup!.GroupName = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
     }
 
     private void ReadTerrainData(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _terrainReader = new TerrainReader(_terrainArchetypes, _currentTerrainGroup!.AllBasicTerrainData);
+        _terrainReader = new TerrainReader(_uniqueStringSet, _currentTerrainGroup!.AllBasicTerrainData);
         _terrainReader.BeginReading("$TERRAIN");
     }
 

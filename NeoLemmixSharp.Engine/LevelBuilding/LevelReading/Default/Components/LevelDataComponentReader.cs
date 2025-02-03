@@ -65,7 +65,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
             levelData.LevelStartPositionY = value;
         }
 
-        var boundaryByte = rawFileData.Read8BitUnsignedInteger();
+        byte boundaryByte = rawFileData.Read8BitUnsignedInteger();
 
         DecipherBoundaryBehaviours(levelData, boundaryByte);
     }
@@ -82,7 +82,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 
     private void ReadBackgroundData(RawFileData rawFileData, LevelData levelData)
     {
-        var specifierByte = rawFileData.Read8BitUnsignedInteger();
+        byte specifierByte = rawFileData.Read8BitUnsignedInteger();
 
         levelData.LevelBackground = specifierByte switch
         {
@@ -109,7 +109,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 
         BackgroundData ReadTextureBackgroundData()
         {
-            var backgroundStringId = rawFileData.Read16BitUnsignedInteger();
+            int backgroundStringId = rawFileData.Read16BitUnsignedInteger();
 
             return new BackgroundData
             {

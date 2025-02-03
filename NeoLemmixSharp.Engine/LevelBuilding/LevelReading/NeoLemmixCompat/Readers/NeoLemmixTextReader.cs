@@ -1,14 +1,19 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 
 public sealed class NeoLemmixTextReader : NeoLemmixDataReader
 {
+    private readonly UniqueStringSet _uniqueStringSet;
     private readonly List<string> _lines;
 
     public NeoLemmixTextReader(
+        UniqueStringSet uniqueStringSet,
         List<string> lines,
         string identifierToken)
         : base(identifierToken)
     {
+        _uniqueStringSet = uniqueStringSet;
         _lines = lines;
 
         RegisterTokenAction("LINE", AddLine);
@@ -23,7 +28,7 @@ public sealed class NeoLemmixTextReader : NeoLemmixDataReader
 
     private void AddLine(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var parsedLine = line[secondTokenIndex..].Trim().ToString();
+        var parsedLine = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
         _lines.Add(parsedLine);
     }
 

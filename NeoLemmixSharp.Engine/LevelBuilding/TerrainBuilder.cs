@@ -7,7 +7,6 @@ using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -41,7 +40,7 @@ public readonly ref struct TerrainBuilder
 
     public void BuildTerrain()
     {
-        foreach (var terrainArchetypeData in _levelData.TerrainArchetypeData)
+        foreach (var (_, terrainArchetypeData) in _levelData.TerrainArchetypeData)
         {
             LoadPixelColorData(terrainArchetypeData);
         }
@@ -85,19 +84,19 @@ public readonly ref struct TerrainBuilder
             minX = Math.Min(minX, terrainData.X);
             minY = Math.Min(minY, terrainData.Y);
         }
-
+        /*
         foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
         {
             terrainData.X -= minX;
             terrainData.Y -= minY;
-        }
+        }*/
 
         var maxX = int.MinValue;
         var maxY = int.MinValue;
 
         foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
         {
-            var terrainArchetypeData = _levelData.TerrainArchetypeData[terrainData.TerrainArchetypeId];
+            var terrainArchetypeData = _levelData.TerrainArchetypeData[terrainData.GetStylePiecePair()];
 
             var w = terrainData.Width ?? terrainArchetypeData.TerrainPixelColorData.Width;
             var h = terrainData.Height ?? terrainArchetypeData.TerrainPixelColorData.Height;
@@ -124,7 +123,7 @@ public readonly ref struct TerrainBuilder
         {
             if (terrainData.GroupName is null)
             {
-                var terrainArchetypeData = _levelData.TerrainArchetypeData[terrainData.TerrainArchetypeId];
+                var terrainArchetypeData = _levelData.TerrainArchetypeData[terrainData.GetStylePiecePair()];
 
                 if (terrainArchetypeData.ResizeType == ResizeType.None)
                 {
@@ -269,10 +268,9 @@ public readonly ref struct TerrainBuilder
     private void LoadPixelColorData(TerrainArchetypeData terrainArchetypeData)
     {
         var rootFilePath = Path.Combine(
-            RootDirectoryManager.RootDirectory,
-            NeoLemmixFileExtensions.StyleFolderName,
-            terrainArchetypeData.Style!,
-            NeoLemmixFileExtensions.TerrainFolderName,
+            RootDirectoryManager.StyleFolderDirectory,
+            terrainArchetypeData.Style,
+            DefaultFileExtensions.TerrainFolderName,
             terrainArchetypeData.TerrainPiece!);
 
         var pngPath = Path.ChangeExtension(rootFilePath, "png");

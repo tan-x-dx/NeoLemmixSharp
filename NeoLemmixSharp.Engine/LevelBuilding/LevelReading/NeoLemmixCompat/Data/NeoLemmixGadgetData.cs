@@ -5,7 +5,8 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 public sealed class NeoLemmixGadgetData
 {
-    public int GadgetArchetypeId { get; set; }
+    public string Style { get; set; } = string.Empty;
+    public string Piece { get; set; } = string.Empty;
 
     public int X { get; set; }
     public int Y { get; set; }

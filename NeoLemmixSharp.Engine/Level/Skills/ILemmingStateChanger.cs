@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
@@ -16,7 +17,7 @@ public interface ILemmingStateChanger
     bool IsApplied(LemmingState lemmingState);
 }
 
-public sealed class LemmingStateChangerHelper : IPerfectHasher<ILemmingStateChanger>
+public sealed class LemmingStateChangerHasher : IPerfectHasher<ILemmingStateChanger>
 {
     public const int ClimberStateChangerId = 0;
     public const int FloaterStateChangerId = 1;
@@ -49,12 +50,12 @@ public sealed class LemmingStateChangerHelper : IPerfectHasher<ILemmingStateChan
         FastForwardSkill.Instance
     ];
 
-    private static readonly LemmingStateChangerHelper Instance = new();
+    private static readonly LemmingStateChangerHasher Instance = new();
 
     public int NumberOfItems => AllLemmingStateChangers.Length;
     public int Hash(ILemmingStateChanger item) => item.LemmingStateChangerId;
 
     public ILemmingStateChanger UnHash(int index) => AllLemmingStateChangers[index];
 
-    public static StateChangerSet CreateSimpleSet() => new(Instance, false);
+    public static StateChangerSet CreateSimpleSet() => new(Instance, new BitBuffer32(), false);
 }

@@ -40,7 +40,7 @@ public sealed class PlatformerSkill : LemmingSkill
 
     protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        var result = LemmingAction.CreateEmptySimpleSet();
+        var result = LemmingActionHasher.CreateSimpleSet();
 
         result.Add(WalkerAction.Instance);
         result.Add(ShruggerAction.Instance);

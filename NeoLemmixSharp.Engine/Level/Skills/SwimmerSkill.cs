@@ -15,7 +15,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public int LemmingStateChangerId => LemmingStateChangerHelper.SwimmerStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHasher.SwimmerStateChangerId;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
@@ -34,7 +34,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
 
     protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        var result = LemmingAction.CreateEmptySimpleSet();
+        var result = LemmingActionHasher.CreateSimpleSet();
 
         result.Add(AscenderAction.Instance);
         result.Add(BasherAction.Instance);

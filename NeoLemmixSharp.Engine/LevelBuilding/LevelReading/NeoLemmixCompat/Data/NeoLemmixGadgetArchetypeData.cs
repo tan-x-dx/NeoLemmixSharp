@@ -6,8 +6,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
 public sealed class NeoLemmixGadgetArchetypeData
 {
-    public required int GadgetArchetypeId { get; init; }
-
     public required string Style { get; init; }
     public required string GadgetPiece { get; init; }
 
@@ -25,6 +23,8 @@ public sealed class NeoLemmixGadgetArchetypeData
     public ResizeType ResizeType { get; set; }
 
     public int PrimaryAnimationFrameCount { get; set; }
+    public int PrimaryAnimationOffsetX { get; set; }
+    public int PrimaryAnimationOffsetY { get; set; }
     public bool IsSkillPickup { get; set; }
 
     public List<AnimationData> AnimationData { get; } = new();

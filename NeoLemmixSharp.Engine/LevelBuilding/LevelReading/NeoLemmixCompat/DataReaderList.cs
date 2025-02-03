@@ -37,7 +37,7 @@ public sealed class DataReaderList : IDisposable
 
     private bool ProcessLine(ReadOnlySpan<char> line)
     {
-        if (_currentDataReader == null)
+        if (_currentDataReader is null)
             return GetDataReaderForLine(line);
 
         var result = _currentDataReader.ReadNextLine(line);
@@ -54,7 +54,7 @@ public sealed class DataReaderList : IDisposable
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out _, out _);
 
         _currentDataReader = TryGetWithSpan(firstToken);
-        if (_currentDataReader == null)
+        if (_currentDataReader is null)
             throw new InvalidOperationException($"Could not find reader for line! [{firstToken}] line: \"{line}\"");
 
         return _currentDataReader.BeginReading(line);

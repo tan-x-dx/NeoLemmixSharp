@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
@@ -11,14 +10,14 @@ public sealed class GadgetState
 {
     private readonly GadgetOutput _stateSelectedOutput = new();
     private readonly LemmingHitBoxFilter[] _lemmingHitBoxFilters;
-    private readonly SimpleDictionary<OrientationComparer, Orientation, IHitBoxRegion> _hitBoxLookup;
+    private readonly OrientationToHitBoxRegionLookup _hitBoxLookup;
 
     public GadgetStateAnimationController AnimationController { get; }
     public ReadOnlySpan<LemmingHitBoxFilter> Filters => new(_lemmingHitBoxFilters);
 
     public GadgetState(
         LemmingHitBoxFilter[] lemmingHitBoxFilters,
-        SimpleDictionary<OrientationComparer, Orientation, IHitBoxRegion> hitBoxLookup,
+        OrientationToHitBoxRegionLookup hitBoxLookup,
         GadgetStateAnimationController animationController)
     {
         _lemmingHitBoxFilters = lemmingHitBoxFilters;

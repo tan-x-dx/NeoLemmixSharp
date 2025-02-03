@@ -8,9 +8,4 @@ public static class NeoLemmixFileExtensions
     public const string ConfigFileExtension = ".nxmi";
     public const string ReplayFileExtension = ".nxrp";
     public const string ThemeFileExtension = ".nxtm";
-
-    public const string LevelFolderName = "levels";
-    public const string StyleFolderName = "styles";
-    public const string GadgetFolderName = "objects";
-    public const string TerrainFolderName = "terrain";
 }

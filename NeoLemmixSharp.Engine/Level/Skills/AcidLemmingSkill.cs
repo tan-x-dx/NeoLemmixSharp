@@ -27,7 +27,7 @@ public sealed class AcidLemmingSkill : LemmingSkill, ILemmingStateChanger
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public int LemmingStateChangerId => LemmingStateChangerHelper.AcidLemmingStateChangerId;
+    public int LemmingStateChangerId => LemmingStateChangerHasher.AcidLemmingStateChangerId;
     public void SetLemmingState(LemmingState lemmingState, bool status)
     {
         lemmingState.IsAcidLemming = status;

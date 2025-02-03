@@ -1,16 +1,21 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
-public interface IGadgetBuilder
+public interface IGadgetArchetypeBuilder
 {
     int GadgetBuilderId { get; }
+    string Style { get; }
+    string GadgetPiece { get; }
+
     SpriteData SpriteData { get; }
 
     GadgetBase BuildGadget(
         GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
-        LemmingManager lemmingManager);
+        LemmingManager lemmingManager,
+        TeamManager teamManager);
 }

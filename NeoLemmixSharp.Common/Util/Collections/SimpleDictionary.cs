@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -7,22 +8,27 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
 
-public sealed class SimpleDictionary<TPerfectHasher, TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
+public sealed class SimpleDictionary<TPerfectHasher, TBuffer, TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
     where TPerfectHasher : IPerfectHasher<TKey>
+    where TBuffer : struct, ISpannable
     where TKey : notnull
 {
-    private readonly TPerfectHasher _hasher;
-    private readonly uint[] _bits;
-    private readonly TValue[] _values;
+#pragma warning disable IDE0044 // Add readonly modifier
+    private TBuffer _bits;
+#pragma warning restore IDE0044 // Add readonly modifier
     private int _popCount;
+    private readonly TValue[] _values;
+    private readonly TPerfectHasher _hasher;
 
     public int Count => _popCount;
 
-    public SimpleDictionary(TPerfectHasher hasher)
+    public SimpleDictionary(TPerfectHasher hasher, TBuffer buffer)
     {
         _hasher = hasher;
+        _bits = buffer;
+        Debug.Assert(_hasher.NumberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
         var numberOfItems = hasher.NumberOfItems;
-        _bits = BitArrayHelpers.CreateBitArray(numberOfItems, false);
+        //_bits = BitArrayHelpers.CreateBitArray(numberOfItems, false);
         _popCount = 0;
         _values = new TValue[numberOfItems];
     }
@@ -30,7 +36,7 @@ public sealed class SimpleDictionary<TPerfectHasher, TKey, TValue> : IDictionary
     public void Add(TKey key, TValue value)
     {
         var index = _hasher.Hash(key);
-        if (!BitArrayHelpers.SetBit(new Span<uint>(_bits), index, ref _popCount))
+        if (!BitArrayHelpers.SetBit(_bits.AsSpan(), index, ref _popCount))
             throw new ArgumentException("Key already added!", nameof(key));
 
         _values[index] = value;
@@ -38,7 +44,7 @@ public sealed class SimpleDictionary<TPerfectHasher, TKey, TValue> : IDictionary
 
     public void Clear()
     {
-        new Span<uint>(_bits).Clear();
+        _bits.AsSpan().Clear();
         new Span<TValue>(_values).Clear();
         _popCount = 0;
     }
@@ -56,21 +62,21 @@ public sealed class SimpleDictionary<TPerfectHasher, TKey, TValue> : IDictionary
     public bool ContainsKey(TKey key)
     {
         var index = _hasher.Hash(key);
-        return BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_bits), index);
+        return BitArrayHelpers.GetBit(_bits.AsReadOnlySpan(), index);
     }
 
     public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
     {
         var index = _hasher.Hash(key);
         value = _values[index];
-        return BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_bits), index);
+        return BitArrayHelpers.GetBit(_bits.AsReadOnlySpan(), index);
     }
 
     public bool Remove(TKey key)
     {
         var index = _hasher.Hash(key);
         _values[index] = default!;
-        return BitArrayHelpers.ClearBit(new Span<uint>(_bits), index, ref _popCount);
+        return BitArrayHelpers.ClearBit(_bits.AsSpan(), index, ref _popCount);
     }
 
     public TValue this[TKey key]
@@ -79,7 +85,7 @@ public sealed class SimpleDictionary<TPerfectHasher, TKey, TValue> : IDictionary
         get
         {
             var index = _hasher.Hash(key);
-            if (!BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_bits), index))
+            if (!BitArrayHelpers.GetBit(_bits.AsReadOnlySpan(), index))
                 throw new KeyNotFoundException();
 
             return _values[index];
@@ -87,7 +93,7 @@ public sealed class SimpleDictionary<TPerfectHasher, TKey, TValue> : IDictionary
         set
         {
             var index = _hasher.Hash(key);
-            BitArrayHelpers.SetBit(new Span<uint>(_bits), index, ref _popCount);
+            BitArrayHelpers.SetBit(_bits.AsSpan(), index, ref _popCount);
             _values[index] = value;
         }
     }
@@ -102,11 +108,11 @@ public sealed class SimpleDictionary<TPerfectHasher, TKey, TValue> : IDictionary
         private readonly ReadOnlySpan<TValue> _values;
         private BitBasedEnumerator _bitEnumerator;
 
-        public Enumerator(SimpleDictionary<TPerfectHasher, TKey, TValue> dictionary)
+        public Enumerator(SimpleDictionary<TPerfectHasher, TBuffer, TKey, TValue> dictionary)
         {
             _hasher = dictionary._hasher;
             _values = new ReadOnlySpan<TValue>(dictionary._values);
-            _bitEnumerator = new BitBasedEnumerator(dictionary._bits, dictionary._popCount);
+            _bitEnumerator = new BitBasedEnumerator(dictionary._bits.AsReadOnlySpan(), dictionary._popCount);
         }
 
         [DebuggerStepThrough]
@@ -135,10 +141,10 @@ public sealed class SimpleDictionary<TPerfectHasher, TKey, TValue> : IDictionary
         private readonly BitArrayHelpers.ReferenceTypeBitEnumerator _enumerator;
         private readonly TValue[] _values;
 
-        public ReferenceTypeEnumerator(SimpleDictionary<TPerfectHasher, TKey, TValue> dictionary)
+        public ReferenceTypeEnumerator(SimpleDictionary<TPerfectHasher, TBuffer, TKey, TValue> dictionary)
         {
             _hasher = dictionary._hasher;
-            _enumerator = new BitArrayHelpers.ReferenceTypeBitEnumerator(dictionary._bits, dictionary._popCount);
+            _enumerator = new BitArrayHelpers.ReferenceTypeBitEnumerator(dictionary._bits.AsReadOnlySpan().ToArray(), dictionary._popCount);
             _values = dictionary._values;
         }
 

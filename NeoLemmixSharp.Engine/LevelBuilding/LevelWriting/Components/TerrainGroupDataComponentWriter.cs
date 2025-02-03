@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+using static NeoLemmixSharp.Engine.LevelBuilding.Data.LevelData;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
@@ -33,7 +34,7 @@ public sealed class TerrainGroupDataComponentWriter : ILevelDataWriter
 
     private void WriteTerrainGroupData(
         BinaryWriter writer,
-        List<TerrainArchetypeData> allTerrainArchetypeData,
+        Dictionary<StylePiecePair, TerrainArchetypeData> terrainArchetypeDataLookup,
         TerrainGroupData terrainGroupData)
     {
         writer.Write(_stringIdLookup[terrainGroupData.GroupName!]);
@@ -41,9 +42,7 @@ public sealed class TerrainGroupDataComponentWriter : ILevelDataWriter
 
         foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
         {
-            var terrainArchetypeData = allTerrainArchetypeData.Find(a => a.TerrainArchetypeId == terrainData.TerrainArchetypeId);
-            if (terrainArchetypeData is null)
-                throw new InvalidOperationException($"Could not locate TerrainArchetypeData with id {terrainData.TerrainArchetypeId}");
+            var terrainArchetypeData = terrainArchetypeDataLookup[terrainData.GetStylePiecePair()];
 
             _terrainDataComponentWriter.WriteTerrainData(writer, terrainArchetypeData, terrainData);
         }

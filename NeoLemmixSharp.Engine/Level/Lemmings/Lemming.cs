@@ -92,13 +92,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         Orientation orientation,
         FacingDirection facingDirection,
         LemmingAction currentAction,
-        Team team)
+        int teamId)
     {
         Id = id;
         Orientation = orientation;
         FacingDirection = facingDirection;
         CurrentAction = currentAction;
-        State = new LemmingState(this, team);
+        State = new LemmingState(this, teamId);
         Renderer = new LemmingRenderer(this);
     }
 
@@ -108,7 +108,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         Orientation = Orientation.Down;
         FacingDirection = FacingDirection.Right;
         CurrentAction = NoneAction.Instance;
-        State = new LemmingState(this, Team.AllItems[EngineConstants.ClassicTeamId]);
+        State = new LemmingState(this, EngineConstants.ClassicTeamId);
         Renderer = new LemmingRenderer(this);
     }
 
@@ -553,7 +553,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         CurrentBounds = lemmingSnapshotData.CurrentBounds;
         PreviousBounds = lemmingSnapshotData.PreviousBounds;
 
-        State.SetRawDataFromSnapshotData(in lemmingSnapshotData.StateSnapshotData);
+        State.SetFromSnapshotData(in lemmingSnapshotData.StateSnapshotData);
 
         FacingDirection = lemmingSnapshotData.FacingDirection;
         Orientation = lemmingSnapshotData.Orientation;
