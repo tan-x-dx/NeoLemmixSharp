@@ -1,11 +1,13 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -180,10 +182,32 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     public static bool operator ==(LemmingSkill left, LemmingSkill right) => left.Id == right.Id;
     public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.Id != right.Id;
+}
 
-    [InlineArray((EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift)]
-    public struct LemmingSkillBitBuffer
-    {
-        public uint _x;
-    }
+public readonly struct LemmingSkillComparer : IPerfectHasher<LemmingSkill>
+{
+    [Pure]
+    public int NumberOfItems => EngineConstants.NumberOfLemmingSkills;
+    [Pure]
+    public int Hash(LemmingSkill item) => item.Id;
+    [Pure]
+    public LemmingSkill UnHash(int index) => LemmingSkill.AllItems[index];
+
+    [Pure]
+    public static LemmingSkillSet CreateSimpleSet(bool fullSet = false) => new(new LemmingSkillComparer(), new LemmingSkillBitBuffer(), fullSet);
+    [Pure]
+    public static SimpleDictionary<LemmingSkillComparer, LemmingSkillBitBuffer, LemmingSkill, TValue> CreateSimpleDictionary<TValue>() => new(new LemmingSkillComparer(), new LemmingSkillBitBuffer());
+}
+
+[InlineArray(Length)]
+public struct LemmingSkillBitBuffer : ISpannable
+{
+    private const int Length = (EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
+
+    private uint _0;
+
+    public readonly int Size => Length;
+
+    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, Length);
+    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, Length);
 }

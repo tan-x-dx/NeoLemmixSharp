@@ -1,5 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -271,4 +273,19 @@ public readonly struct Orientation : IExtendedEnumType<Orientation>
 
     public static bool operator ==(Orientation first, Orientation second) => first.RotNum == second.RotNum;
     public static bool operator !=(Orientation first, Orientation second) => first.RotNum != second.RotNum;
+}
+
+public readonly struct OrientationComparer : IPerfectHasher<Orientation>
+{
+    public int NumberOfItems => EngineConstants.NumberOfOrientations;
+
+    [Pure]
+    public int Hash(Orientation item) => item.RotNum;
+    [Pure]
+    public Orientation UnHash(int index) => new(index);
+
+    [Pure]
+    public static OrientationSet CreateSimpleSet(bool fullSet = false) => new(new OrientationComparer(), new BitBuffer32(), fullSet);
+    [Pure]
+    public static SimpleDictionary<OrientationComparer, BitBuffer32, Orientation, TValue> CreateSimpleDictionary<TValue>() => new(new OrientationComparer(), new BitBuffer32());
 }

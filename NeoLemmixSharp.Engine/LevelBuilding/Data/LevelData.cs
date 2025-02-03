@@ -128,8 +128,8 @@ public sealed class LevelData : IEqualityComparer<LevelData.StylePiecePair>
     public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; }
 
     public List<LevelObjective> LevelObjectives { get; } = [];
-    public LevelParameterSet LevelParameters { get; } = PerfectEnumHasher<LevelParameters>.CreateSimpleSet();
-    public ControlPanelParameterSet ControlParameters { get; } = PerfectEnumHasher<ControlPanelParameters>.CreateSimpleSet();
+    public LevelParameterSet LevelParameters { get; } = LevelParameterHasher.CreateSimpleSet();
+    public ControlPanelParameterSet ControlParameters { get; } = ControlPanelParameterHasher.CreateSimpleSet();
     public Dictionary<StylePiecePair, TerrainArchetypeData> TerrainArchetypeData { get; }
     public List<TerrainData> AllTerrainData { get; } = [];
     public List<TerrainGroupData> AllTerrainGroups { get; } = [];

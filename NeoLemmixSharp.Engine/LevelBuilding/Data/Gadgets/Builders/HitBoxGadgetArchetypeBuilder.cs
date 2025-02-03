@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
@@ -208,7 +207,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         return result;
     }
 
-    private SimpleDictionary<OrientationComparer, Orientation, IHitBoxRegion> CreateHitBoxRegionLookup(
+    private OrientationToHitBoxRegionLookup CreateHitBoxRegionLookup(
         GadgetData gadgetData,
         GadgetBounds hitBoxGadgetBounds,
         ReadOnlySpan<HitBoxRegionData> hitBoxRegionData)

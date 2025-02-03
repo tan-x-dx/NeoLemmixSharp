@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Common.Util.Identity;
 using System.Runtime.InteropServices;
 
@@ -10,8 +11,8 @@ public sealed class InputController : IPerfectHasher<Keys>
     private const int NumberOfKeys = 256;
 
     private readonly List<(Keys, InputAction)> _keyMapping = new();
-    private readonly SimpleSet<InputController, Keys> _pressedKeys;
-    private readonly SimpleSet<InputController, Keys> _releasedKeys;
+    private readonly SimpleSet<InputController, BitBuffer256, Keys> _pressedKeys;
+    private readonly SimpleSet<InputController, BitBuffer256, Keys> _releasedKeys;
     private readonly List<InputAction> _inputActions = new();
 
     private int _previousScrollValue;
@@ -31,8 +32,8 @@ public sealed class InputController : IPerfectHasher<Keys>
 
     public InputController()
     {
-        _pressedKeys = new SimpleSet<InputController, Keys>(this, false);
-        _releasedKeys = new SimpleSet<InputController, Keys>(this, false);
+        _pressedKeys = new SimpleSet<InputController, BitBuffer256, Keys>(this, new BitBuffer256(), false);
+        _releasedKeys = new SimpleSet<InputController, BitBuffer256, Keys>(this, new BitBuffer256(), false);
 
         LeftMouseButtonAction = CreateInputAction("Left Mouse Button");
         RightMouseButtonAction = CreateInputAction("Right Mouse Button");

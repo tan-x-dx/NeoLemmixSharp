@@ -2,6 +2,8 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
@@ -64,6 +66,9 @@ public sealed class LemmingManager :
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Lemming>(_lemmings));
         Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
 
+        var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
+        var combinedLemmingBitBuffer = new uint[bitBufferLength * 2];
+
         _lemmingPositionHelper = new LemmingSpacialHashGrid(
             this,
             EngineConstants.LemmingPositionChunkSize,
@@ -75,8 +80,14 @@ public sealed class LemmingManager :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        _lemmingsToZombify = new LemmingSet(this, false);
-        _allBlockers = new LemmingSet(this, false);
+        _lemmingsToZombify = new LemmingSet(
+            this,
+            new ArrayWrapper(combinedLemmingBitBuffer, bitBufferLength * 0, bitBufferLength),
+            false);
+        _allBlockers = new LemmingSet(
+            this,
+            new ArrayWrapper(combinedLemmingBitBuffer, bitBufferLength * 1, bitBufferLength),
+            false);
 
         _totalNumberOfHatchLemmings = totalNumberOfHatchLemmings;
         _numberOfPreplacedLemmings = numberOfPreplacedLemmings;

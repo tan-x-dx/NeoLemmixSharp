@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
@@ -56,5 +57,5 @@ public sealed class LemmingStateChangerHelper : IPerfectHasher<ILemmingStateChan
 
     public ILemmingStateChanger UnHash(int index) => AllLemmingStateChangers[index];
 
-    public static StateChangerSet CreateSimpleSet() => new(Instance, false);
+    public static StateChangerSet CreateSimpleSet() => new(Instance, new BitBuffer32(), false);
 }

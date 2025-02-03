@@ -13,7 +13,7 @@ public static class BitArrayHelpers
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static int CalculateBitArrayBufferLength(int length)
+    public static int CalculateBitArrayBufferLength(int length)
     {
         return (length + Mask) >> Shift;
     }
@@ -37,13 +37,27 @@ public static class BitArrayHelpers
         if (!setAllBits)
             return result;
 
-        new Span<uint>(result).Fill(uint.MaxValue);
-        var lastIndexPopCount = length & Mask;
-        if (lastIndexPopCount == 0)
-            return result;
-
-        result[^1] = (1U << lastIndexPopCount) - 1U;
+        PopulateBitArray(result, length);
         return result;
+    }
+
+    public static void PopulateBitArray(Span<uint> bitArray, int requiredPopCount)
+    {
+        var requiredSpanLength = CalculateBitArrayBufferLength(requiredPopCount);
+
+        if (requiredSpanLength > bitArray.Length)
+            throw new ArgumentException("Input array too short!");
+
+        var subSpan = bitArray[requiredSpanLength..];
+        subSpan.Clear();
+        subSpan = bitArray[..requiredSpanLength];
+        subSpan.Fill(uint.MaxValue);
+
+        var lastIndexPopCount = requiredPopCount & Mask;
+        if (lastIndexPopCount == 0)
+            return;
+
+        subSpan[^1] = (1U << lastIndexPopCount) - 1U;
     }
 
     /// <summary>
