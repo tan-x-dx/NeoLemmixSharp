@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Common.Util.Identity;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
@@ -10,10 +11,10 @@ public sealed class InputController : IPerfectHasher<Keys>
 {
     private const int NumberOfKeys = 256;
 
-    private readonly List<(Keys, InputAction)> _keyMapping = new();
+    private readonly List<KeyToInputMapping> _keyMapping = [];
     private readonly SimpleSet<InputController, BitBuffer256, Keys> _pressedKeys;
     private readonly SimpleSet<InputController, BitBuffer256, Keys> _releasedKeys;
-    private readonly List<InputAction> _inputActions = new();
+    private readonly List<InputAction> _inputActions = [];
 
     private int _previousScrollValue;
 
@@ -51,7 +52,7 @@ public sealed class InputController : IPerfectHasher<Keys>
 
     public void Bind(Keys keyCode, InputAction inputAction)
     {
-        _keyMapping.Add((keyCode, inputAction));
+        _keyMapping.Add(new KeyToInputMapping(keyCode, inputAction));
     }
 
     public void ValidateInputActions()
@@ -131,4 +132,17 @@ public sealed class InputController : IPerfectHasher<Keys>
     int IPerfectHasher<Keys>.NumberOfItems => NumberOfKeys;
     int IPerfectHasher<Keys>.Hash(Keys item) => (int)item;
     Keys IPerfectHasher<Keys>.UnHash(int index) => (Keys)index;
+
+    private readonly struct KeyToInputMapping(Keys key, InputAction inputAction)
+    {
+        public readonly Keys Key = key;
+        public readonly InputAction InputAction = inputAction;
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public void Deconstruct(out Keys key, out InputAction inputAction)
+        {
+            key = Key;
+            inputAction = InputAction;
+        }
+    }
 }
