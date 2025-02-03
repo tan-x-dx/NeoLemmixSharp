@@ -57,5 +57,5 @@ public sealed class LemmingStateChangerHasher : IPerfectHasher<ILemmingStateChan
 
     public ILemmingStateChanger UnHash(int index) => AllLemmingStateChangers[index];
 
-    public static StateChangerSet CreateSimpleSet() => new(Instance, new BitBuffer32(), false);
+    public static StateChangerSet CreateBitArraySet() => new(Instance, new BitBuffer32(), false);
 }

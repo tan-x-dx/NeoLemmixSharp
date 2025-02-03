@@ -28,9 +28,9 @@ public readonly struct LevelParameterHasher : IPerfectHasher<LevelParameters>
     public LevelParameters UnHash(int index) => (LevelParameters)index;
 
     [Pure]
-    public static LevelParameterSet CreateSimpleSet(bool fullSet = false) => new(new LevelParameterHasher(), new BitBuffer32(), fullSet);
+    public static LevelParameterSet CreateBitArraySet(bool fullSet = false) => new(new LevelParameterHasher(), new BitBuffer32(), fullSet);
     [Pure]
-    public static SimpleDictionary<LevelParameterHasher, BitBuffer32, LevelParameters, TValue> CreateSimpleDictionary<TValue>() => new(new LevelParameterHasher(), new BitBuffer32());
+    public static BitArrayDictionary<LevelParameterHasher, BitBuffer32, LevelParameters, TValue> CreateBitArrayDictionary<TValue>() => new(new LevelParameterHasher(), new BitBuffer32());
 }
 
 public static class LevelParameterHelpers

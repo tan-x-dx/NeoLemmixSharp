@@ -285,7 +285,7 @@ public readonly struct OrientationHasher : IPerfectHasher<Orientation>
     public Orientation UnHash(int index) => new(index);
 
     [Pure]
-    public static OrientationSet CreateSimpleSet(bool fullSet = false) => new(new OrientationHasher(), new BitBuffer32(), fullSet);
+    public static OrientationSet CreateBitArraySet(bool fullSet = false) => new(new OrientationHasher(), new BitBuffer32(), fullSet);
     [Pure]
-    public static SimpleDictionary<OrientationHasher, BitBuffer32, Orientation, TValue> CreateSimpleDictionary<TValue>() => new(new OrientationHasher(), new BitBuffer32());
+    public static BitArrayDictionary<OrientationHasher, BitBuffer32, Orientation, TValue> CreateBitArrayDictionary<TValue>() => new(new OrientationHasher(), new BitBuffer32());
 }

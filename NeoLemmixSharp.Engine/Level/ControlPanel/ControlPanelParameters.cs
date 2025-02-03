@@ -30,7 +30,7 @@ public readonly struct ControlPanelParameterHasher : IPerfectHasher<ControlPanel
     public ControlPanelParameters UnHash(int index) => (ControlPanelParameters)index;
 
     [Pure]
-    public static ControlPanelParameterSet CreateSimpleSet(bool fullSet = false) => new(new ControlPanelParameterHasher(), new BitBuffer32(), fullSet);
+    public static ControlPanelParameterSet CreateBitArraySet(bool fullSet = false) => new(new ControlPanelParameterHasher(), new BitBuffer32(), fullSet);
     [Pure]
-    public static SimpleDictionary<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters, TValue> CreateSimpleDictionary<TValue>() => new(new ControlPanelParameterHasher(), new BitBuffer32());
+    public static BitArrayDictionary<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters, TValue> CreateBitArrayDictionary<TValue>() => new(new ControlPanelParameterHasher(), new BitBuffer32());
 }

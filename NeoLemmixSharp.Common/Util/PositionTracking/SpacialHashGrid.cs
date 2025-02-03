@@ -15,7 +15,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
 
-    private readonly SimpleSet<TPerfectHasher, ArrayWrapper, T> _allTrackedItems;
+    private readonly BitArraySet<TPerfectHasher, ArrayWrapper, T> _allTrackedItems;
 
     private readonly int _chunkSizeBitShift;
     private readonly int _numberOfHorizontalChunks;
@@ -42,7 +42,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         _bitArraySize = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
 
         var bitBuffer = new uint[_bitArraySize];
-        _allTrackedItems = new SimpleSet<TPerfectHasher, ArrayWrapper, T>(_hasher, new ArrayWrapper(bitBuffer), false);
+        _allTrackedItems = new BitArraySet<TPerfectHasher, ArrayWrapper, T>(_hasher, new ArrayWrapper(bitBuffer), false);
 
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
         var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;
@@ -64,7 +64,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     public bool IsTrackingItem(T item) => _allTrackedItems.Contains(item);
 
     [Pure]
-    public SimpleSetEnumerable<TPerfectHasher, T> GetAllTrackedItems() => _allTrackedItems.AsSimpleEnumerable();
+    public BitArrayEnumerable<TPerfectHasher, T> GetAllTrackedItems() => _allTrackedItems.AsEnumerable();
 
     public void Clear()
     {
@@ -77,11 +77,11 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     public void GetAllItemsNearPosition(
         Span<uint> scratchSpaceSpan,
         LevelPosition levelPosition,
-        out SimpleSetEnumerable<TPerfectHasher, T> result)
+        out BitArrayEnumerable<TPerfectHasher, T> result)
     {
         if (IsEmpty)
         {
-            result = SimpleSetEnumerable<TPerfectHasher, T>.Empty;
+            result = BitArrayEnumerable<TPerfectHasher, T>.Empty;
             return;
         }
 
@@ -91,7 +91,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         if ((uint)chunkX >= (uint)_numberOfHorizontalChunks ||
             (uint)chunkY >= (uint)_numberOfVerticalChunks)
         {
-            result = SimpleSetEnumerable<TPerfectHasher, T>.Empty;
+            result = BitArrayEnumerable<TPerfectHasher, T>.Empty;
             return;
         }
 
@@ -99,7 +99,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         var queryCount = BitArrayHelpers.GetPopCount(sourceSpan);
         sourceSpan.CopyTo(scratchSpaceSpan);
 
-        result = new SimpleSetEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, queryCount);
+        result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, queryCount);
     }
 
     /// <summary>
@@ -112,11 +112,11 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     public void GetAllItemsNearRegion(
         Span<uint> scratchSpaceSpan,
         LevelRegion levelRegion,
-        out SimpleSetEnumerable<TPerfectHasher, T> result)
+        out BitArrayEnumerable<TPerfectHasher, T> result)
     {
         if (IsEmpty)
         {
-            result = SimpleSetEnumerable<TPerfectHasher, T>.Empty;
+            result = BitArrayEnumerable<TPerfectHasher, T>.Empty;
             return;
         }
 
@@ -129,7 +129,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             // If we've already got the data cached, just use it
             new ReadOnlySpan<uint>(_cachedQueryScratchSpace).CopyTo(scratchSpaceSpan);
 
-            result = new SimpleSetEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, _cachedQueryCount);
+            result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, _cachedQueryCount);
             return;
         }
 
@@ -150,7 +150,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         _cachedTopLeftChunkQuery = topLeftChunk;
         _cachedBottomRightChunkQuery = bottomRightChunk;
         _cachedQueryCount = BitArrayHelpers.GetPopCount(scratchSpaceSpan);
-        result = new SimpleSetEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, _cachedQueryCount);
+        result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, _cachedQueryCount);
     }
 
     public void AddItem(T item)

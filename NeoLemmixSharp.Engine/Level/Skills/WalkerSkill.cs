@@ -98,7 +98,7 @@ public sealed class WalkerSkill : LemmingSkill
 
     protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        var result = LemmingActionHasher.CreateSimpleSet();
+        var result = LemmingActionHasher.CreateBitArraySet();
 
         result.Add(WalkerAction.Instance);
         result.Add(BlockerAction.Instance);

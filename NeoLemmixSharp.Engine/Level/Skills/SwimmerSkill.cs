@@ -34,7 +34,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
 
     protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        var result = LemmingActionHasher.CreateSimpleSet();
+        var result = LemmingActionHasher.CreateBitArraySet();
 
         result.Add(AscenderAction.Instance);
         result.Add(BasherAction.Instance);

@@ -61,7 +61,7 @@ public sealed class ClonerSkill : LemmingSkill
 
     protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        var result = LemmingActionHasher.CreateSimpleSet();
+        var result = LemmingActionHasher.CreateBitArraySet();
 
         result.Add(WalkerAction.Instance);
         result.Add(BuilderAction.Instance);
