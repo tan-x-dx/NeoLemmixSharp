@@ -27,7 +27,7 @@ public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>
     public GadgetProperty UnHash(int index) => (GadgetProperty)index;
 
     [Pure]
-    public static SimpleSet<GadgetPropertyHasher, BitBuffer32, GadgetProperty> CreateSimpleSet(bool fullSet = false) => new(new GadgetPropertyHasher(), new BitBuffer32(), fullSet);
+    public static BitArraySet<GadgetPropertyHasher, BitBuffer32, GadgetProperty> CreateBitArraySet(bool fullSet = false) => new(new GadgetPropertyHasher(), new BitBuffer32(), fullSet);
     [Pure]
-    public static SimpleDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, TValue> CreateSimpleDictionary<TValue>() => new(new GadgetPropertyHasher(), new BitBuffer32());
+    public static BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, TValue> CreateBitArrayDictionary<TValue>() => new(new GadgetPropertyHasher(), new BitBuffer32());
 }

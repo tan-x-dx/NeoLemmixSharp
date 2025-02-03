@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
-public ref struct BitBasedEnumerator<TPerfectHasher, T>
+public ref struct BitArrayEnumerator<TPerfectHasher, T>
     where TPerfectHasher : IPerfectHasher<T>
     where T : notnull
 {
@@ -16,7 +16,7 @@ public ref struct BitBasedEnumerator<TPerfectHasher, T>
     private uint _v;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal BitBasedEnumerator(
+    internal BitArrayEnumerator(
         TPerfectHasher hasher,
         ReadOnlySpan<uint> bits,
         int count)
@@ -52,7 +52,7 @@ public ref struct BitBasedEnumerator<TPerfectHasher, T>
     public readonly T Current => _hasher.UnHash(_current);
 }
 
-public ref struct BitBasedEnumerator
+public ref struct BitArrayEnumerator
 {
     private readonly ReadOnlySpan<uint> _bits;
 
@@ -62,7 +62,7 @@ public ref struct BitBasedEnumerator
     private uint _v;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal BitBasedEnumerator(
+    internal BitArrayEnumerator(
         ReadOnlySpan<uint> bits,
         int count)
     {

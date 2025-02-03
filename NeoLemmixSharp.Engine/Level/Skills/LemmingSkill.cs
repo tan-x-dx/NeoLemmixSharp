@@ -20,7 +20,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     public static int NumberOfItems => EngineConstants.NumberOfLemmingSkills;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
-    public static SimpleSetEnumerable<LemmingSkillHasher, LemmingSkill> AllClassicSkills => ClassicSkills.AsSimpleEnumerable();
+    public static BitArrayEnumerable<LemmingSkillHasher, LemmingSkill> AllClassicSkills => ClassicSkills.AsEnumerable();
 
     private static LemmingSkill[] RegisterAllLemmingSkills()
     {
@@ -72,7 +72,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingSkillSet GetClassicSkills()
     {
-        var result = LemmingSkillHasher.CreateSimpleSet();
+        var result = LemmingSkillHasher.CreateBitArraySet();
 
         result.Add(ClimberSkill.Instance);
         result.Add(FloaterSkill.Instance);
@@ -88,7 +88,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingActionSet GetActionsThatCanBeAssignedPermanentSkill()
     {
-        var result = LemmingActionHasher.CreateSimpleSet();
+        var result = LemmingActionHasher.CreateBitArraySet();
 
         result.Add(AscenderAction.Instance);
         result.Add(BasherAction.Instance);
@@ -123,7 +123,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingActionSet GetActionsThatCanBeAssignedRotationSkill()
     {
-        var result = LemmingActionHasher.CreateSimpleSet();
+        var result = LemmingActionHasher.CreateBitArraySet();
 
         result.Add(WalkerAction.Instance);
         result.Add(ShruggerAction.Instance);
@@ -190,9 +190,9 @@ public readonly struct LemmingSkillHasher : IPerfectHasher<LemmingSkill>
     public LemmingSkill UnHash(int index) => LemmingSkill.AllItems[index];
 
     [Pure]
-    public static LemmingSkillSet CreateSimpleSet(bool fullSet = false) => new(new LemmingSkillHasher(), new LemmingSkillBitBuffer(), fullSet);
+    public static LemmingSkillSet CreateBitArraySet(bool fullSet = false) => new(new LemmingSkillHasher(), new LemmingSkillBitBuffer(), fullSet);
     [Pure]
-    public static SimpleDictionary<LemmingSkillHasher, LemmingSkillBitBuffer, LemmingSkill, TValue> CreateSimpleDictionary<TValue>() => new(new LemmingSkillHasher(), new LemmingSkillBitBuffer());
+    public static BitArrayDictionary<LemmingSkillHasher, LemmingSkillBitBuffer, LemmingSkill, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingSkillHasher(), new LemmingSkillBitBuffer());
 }
 
 [InlineArray(Length)]

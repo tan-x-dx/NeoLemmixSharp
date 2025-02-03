@@ -11,7 +11,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 public sealed class GadgetData
 {
-    private readonly SimpleDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, int> _properties = GadgetPropertyHasher.CreateSimpleDictionary<int>();
+    private readonly BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, int> _properties = GadgetPropertyHasher.CreateBitArrayDictionary<int>();
 
     public required int Id { get; init; }
 
@@ -59,5 +59,5 @@ public sealed class GadgetData
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, int>.Enumerator GetProperties() => _properties.GetEnumerator();
+    public BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, int>.Enumerator GetProperties() => _properties.GetEnumerator();
 }

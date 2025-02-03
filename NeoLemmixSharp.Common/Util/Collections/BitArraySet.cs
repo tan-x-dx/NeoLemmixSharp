@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
 
-public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySet<T>
+public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySet<T>
     where TPerfectHasher : IPerfectHasher<T>
     where TBuffer : struct, ISpannable
     where T : notnull
@@ -20,7 +20,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
     private int _popCount;
     private readonly TPerfectHasher _hasher;
 
-    public SimpleSet(TPerfectHasher hasher, TBuffer buffer, bool fullSet)
+    public BitArraySet(TPerfectHasher hasher, TBuffer buffer, bool fullSet)
     {
         _hasher = hasher;
         _bits = buffer;
@@ -72,7 +72,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
     /// Updates the contents of this collection to be identical to the contents of the other collection.
     /// </summary>
     /// <param name="other">The set whose values will be copied into this one.</param>
-    public void SetFrom(SimpleSet<TPerfectHasher, TBuffer, T> other)
+    public void SetFrom(BitArraySet<TPerfectHasher, TBuffer, T> other)
     {
         other._bits.AsReadOnlySpan().CopyTo(_bits.AsSpan());
         _popCount = other._popCount;
@@ -120,7 +120,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-        var iterator = new BitBasedEnumerator<TPerfectHasher, T>(_hasher, _bits.AsReadOnlySpan(), _popCount);
+        var iterator = new BitArrayEnumerator<TPerfectHasher, T>(_hasher, _bits.AsReadOnlySpan(), _popCount);
         while (iterator.MoveNext())
         {
             array[arrayIndex++] = iterator.Current;
@@ -129,11 +129,11 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SimpleSetEnumerable<TPerfectHasher, T> AsSimpleEnumerable() => new(_hasher, _bits.AsReadOnlySpan(), _popCount);
+    public BitArrayEnumerable<TPerfectHasher, T> AsEnumerable() => new(_hasher, _bits.AsReadOnlySpan(), _popCount);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitBasedEnumerator<TPerfectHasher, T> GetEnumerator() => new(_hasher, _bits.AsReadOnlySpan(), _popCount);
+    public BitArrayEnumerator<TPerfectHasher, T> GetEnumerator() => new(_hasher, _bits.AsReadOnlySpan(), _popCount);
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);
@@ -147,7 +147,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
         private readonly TPerfectHasher _hasher;
         private readonly BitArrayHelpers.ReferenceTypeBitEnumerator _bitEnumerator;
 
-        public ReferenceTypeEnumerator(SimpleSet<TPerfectHasher, TBuffer, T> set)
+        public ReferenceTypeEnumerator(BitArraySet<TPerfectHasher, TBuffer, T> set)
         {
             _hasher = set._hasher;
             // _bitEnumerator = new BitArrayHelpers.ReferenceTypeBitEnumerator(set._bits, set._popCount);
@@ -163,7 +163,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
 
     private void GetBitsFromEnumerable(Span<uint> buffer, IEnumerable<T> other)
     {
-        if (other is SimpleSet<TPerfectHasher, TBuffer, T> set)
+        if (other is BitArraySet<TPerfectHasher, TBuffer, T> set)
         {
             set._bits.AsReadOnlySpan().CopyTo(buffer);
             return;
@@ -188,7 +188,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
     }
 
-    public void UnionWith(SimpleSet<TPerfectHasher, TBuffer, T> other)
+    public void UnionWith(BitArraySet<TPerfectHasher, TBuffer, T> other)
     {
         var otherBits = other._bits.AsReadOnlySpan();
         BitArrayHelpers.UnionWith(_bits.AsSpan(), otherBits);
@@ -207,7 +207,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
     }
 
-    public void IntersectWith(SimpleSet<TPerfectHasher, TBuffer, T> other)
+    public void IntersectWith(BitArraySet<TPerfectHasher, TBuffer, T> other)
     {
         var otherBits = other._bits.AsReadOnlySpan();
         BitArrayHelpers.IntersectWith(_bits.AsSpan(), otherBits);
@@ -226,7 +226,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
     }
 
-    public void ExceptWith(SimpleSet<TPerfectHasher, TBuffer, T> other)
+    public void ExceptWith(BitArraySet<TPerfectHasher, TBuffer, T> other)
     {
         var otherBits = other._bits.AsReadOnlySpan();
         BitArrayHelpers.ExceptWith(_bits.AsSpan(), otherBits);
@@ -245,7 +245,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
     }
 
-    public void SymmetricExceptWith(SimpleSet<TPerfectHasher, TBuffer, T> other)
+    public void SymmetricExceptWith(BitArraySet<TPerfectHasher, TBuffer, T> other)
     {
         var otherBits = other._bits.AsReadOnlySpan();
         BitArrayHelpers.SymmetricExceptWith(_bits.AsSpan(), otherBits);
@@ -265,7 +265,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
     }
 
     [Pure]
-    public bool IsSubsetOf(SimpleSet<TPerfectHasher, TBuffer, T> other)
+    public bool IsSubsetOf(BitArraySet<TPerfectHasher, TBuffer, T> other)
     {
         var otherBits = other._bits.AsReadOnlySpan();
         return BitArrayHelpers.IsSubsetOf(_bits.AsReadOnlySpan(), otherBits);
@@ -284,7 +284,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
     }
 
     [Pure]
-    public bool IsSupersetOf(SimpleSet<TPerfectHasher, TBuffer, T> other)
+    public bool IsSupersetOf(BitArraySet<TPerfectHasher, TBuffer, T> other)
     {
         var otherBits = other._bits.AsReadOnlySpan();
         return BitArrayHelpers.IsSubsetOf(otherBits, _bits.AsReadOnlySpan());
@@ -303,7 +303,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
     }
 
     [Pure]
-    public bool IsProperSubsetOf(SimpleSet<TPerfectHasher, TBuffer, T> other)
+    public bool IsProperSubsetOf(BitArraySet<TPerfectHasher, TBuffer, T> other)
     {
         var otherBits = other._bits.AsReadOnlySpan();
         return BitArrayHelpers.IsProperSubsetOf(_bits.AsReadOnlySpan(), otherBits);
@@ -322,7 +322,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
     }
 
     [Pure]
-    public bool IsProperSupersetOf(SimpleSet<TPerfectHasher, TBuffer, T> other)
+    public bool IsProperSupersetOf(BitArraySet<TPerfectHasher, TBuffer, T> other)
     {
         var otherBits = other._bits.AsReadOnlySpan();
         return BitArrayHelpers.IsProperSubsetOf(otherBits, _bits.AsReadOnlySpan());
@@ -341,7 +341,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
     }
 
     [Pure]
-    public bool Overlaps(SimpleSet<TPerfectHasher, TBuffer, T> other)
+    public bool Overlaps(BitArraySet<TPerfectHasher, TBuffer, T> other)
     {
         var otherBits = other._bits.AsReadOnlySpan();
         return BitArrayHelpers.Overlaps(_bits.AsReadOnlySpan(), otherBits);
@@ -360,7 +360,7 @@ public sealed class SimpleSet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySe
     }
 
     [Pure]
-    public bool SetEquals(SimpleSet<TPerfectHasher, TBuffer, T> other)
+    public bool SetEquals(BitArraySet<TPerfectHasher, TBuffer, T> other)
     {
         var otherBits = other._bits.AsReadOnlySpan();
         return BitArrayHelpers.SetEquals(_bits.AsReadOnlySpan(), otherBits);

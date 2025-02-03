@@ -12,8 +12,8 @@ public sealed class InputController : IPerfectHasher<Keys>
     private const int NumberOfKeys = 256;
 
     private readonly List<KeyToInputMapping> _keyMapping = [];
-    private readonly SimpleSet<InputController, BitBuffer256, Keys> _pressedKeys;
-    private readonly SimpleSet<InputController, BitBuffer256, Keys> _releasedKeys;
+    private readonly BitArraySet<InputController, BitBuffer256, Keys> _pressedKeys;
+    private readonly BitArraySet<InputController, BitBuffer256, Keys> _releasedKeys;
     private readonly List<InputAction> _inputActions = [];
 
     private int _previousScrollValue;
@@ -28,13 +28,13 @@ public sealed class InputController : IPerfectHasher<Keys>
     public InputAction MouseButton4Action { get; }
     public InputAction MouseButton5Action { get; }
 
-    public SimpleSetEnumerable<InputController, Keys> CurrentlyPressedKeys => _pressedKeys.AsSimpleEnumerable();
-    public SimpleSetEnumerable<InputController, Keys> CurrentlyReleasedKeys => _releasedKeys.AsSimpleEnumerable();
+    public BitArrayEnumerable<InputController, Keys> CurrentlyPressedKeys => _pressedKeys.AsEnumerable();
+    public BitArrayEnumerable<InputController, Keys> CurrentlyReleasedKeys => _releasedKeys.AsEnumerable();
 
     public InputController()
     {
-        _pressedKeys = new SimpleSet<InputController, BitBuffer256, Keys>(this, new BitBuffer256(), false);
-        _releasedKeys = new SimpleSet<InputController, BitBuffer256, Keys>(this, new BitBuffer256(), false);
+        _pressedKeys = new BitArraySet<InputController, BitBuffer256, Keys>(this, new BitBuffer256(), false);
+        _releasedKeys = new BitArraySet<InputController, BitBuffer256, Keys>(this, new BitBuffer256(), false);
 
         LeftMouseButtonAction = CreateInputAction("Left Mouse Button");
         RightMouseButtonAction = CreateInputAction("Right Mouse Button");

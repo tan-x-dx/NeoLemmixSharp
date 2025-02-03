@@ -74,7 +74,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     private static LemmingActionSet GetAirborneActions()
     {
-        var result = LemmingActionHasher.CreateSimpleSet();
+        var result = LemmingActionHasher.CreateBitArraySet();
 
         result.Add(DrownerAction.Instance);
         result.Add(FallerAction.Instance);
@@ -94,7 +94,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     private static LemmingActionSet GetOneTimeActions()
     {
-        var result = LemmingActionHasher.CreateSimpleSet();
+        var result = LemmingActionHasher.CreateBitArraySet();
 
         result.Add(DehoisterAction.Instance);
         result.Add(DrownerAction.Instance);
@@ -228,9 +228,9 @@ public readonly struct LemmingActionHasher : IPerfectHasher<LemmingAction>
     public LemmingAction UnHash(int index) => AllItems[index];
 
     [Pure]
-    public static LemmingActionSet CreateSimpleSet(bool fullSet = false) => new(new LemmingActionHasher(), new LemmingActionBitBuffer(), fullSet);
+    public static LemmingActionSet CreateBitArraySet(bool fullSet = false) => new(new LemmingActionHasher(), new LemmingActionBitBuffer(), fullSet);
     [Pure]
-    public static SimpleDictionary<LemmingActionHasher, LemmingActionBitBuffer, LemmingAction, TValue> CreateSimpleDictionary<TValue>() => new(new LemmingActionHasher(), new LemmingActionBitBuffer());
+    public static BitArrayDictionary<LemmingActionHasher, LemmingActionBitBuffer, LemmingAction, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingActionHasher(), new LemmingActionBitBuffer());
 }
 
 [InlineArray(Length)]
