@@ -133,7 +133,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
     [Pure]
     IEnumerator IEnumerable.GetEnumerator() => new ReferenceTypeEnumerator(this);
 
-    public sealed class ReferenceTypeEnumerator : IEnumerator<KeyValuePair<TKey, TValue>>
+    private sealed class ReferenceTypeEnumerator : IEnumerator<KeyValuePair<TKey, TValue>>
     {
         private readonly TPerfectHasher _hasher;
         private readonly BitArrayHelpers.ReferenceTypeBitEnumerator _enumerator;

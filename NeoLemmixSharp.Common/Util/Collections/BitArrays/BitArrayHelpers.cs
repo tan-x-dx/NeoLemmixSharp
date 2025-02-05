@@ -317,7 +317,7 @@ public static class BitArrayHelpers
         return true;
     }
 
-    public sealed class ReferenceTypeBitEnumerator : IEnumerator<int>
+    internal sealed class ReferenceTypeBitEnumerator : IEnumerator<int>
     {
         private readonly uint[] _bits;
 
