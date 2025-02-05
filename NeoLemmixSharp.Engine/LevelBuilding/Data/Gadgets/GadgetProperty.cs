@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;

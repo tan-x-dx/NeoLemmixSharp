@@ -1,0 +1,113 @@
+﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+namespace NeoLemmixSharp.Common.Util.Collections;
+
+public interface IBitBuffer
+{
+    [Pure]
+    int Length { get; }
+
+    [Pure]
+    Span<uint> AsSpan();
+    [Pure]
+    ReadOnlySpan<uint> AsReadOnlySpan();
+}
+
+public interface IBitBufferCreator<TBuffer>
+    where TBuffer : struct, IBitBuffer
+{
+    void CreateBitBuffer(out TBuffer buffer);
+}
+
+[InlineArray(BitBuffer32Length)]
+public struct BitBuffer32 : IBitBuffer
+{
+    private const int BitBuffer32Length = 1;
+
+    private uint _0;
+
+    public readonly int Length => BitBuffer32Length;
+
+    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, BitBuffer32Length);
+    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, BitBuffer32Length);
+}
+
+[InlineArray(BitBuffer64Length)]
+public struct BitBuffer64 : IBitBuffer
+{
+    private const int BitBuffer64Length = 2;
+
+    private uint _0;
+
+    public readonly int Length => BitBuffer64Length;
+
+    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, BitBuffer64Length);
+    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, BitBuffer64Length);
+}
+
+[InlineArray(BitBuffer96Length)]
+public struct BitBuffer96 : IBitBuffer
+{
+    private const int BitBuffer96Length = 3;
+
+    private uint _0;
+
+    public readonly int Length => BitBuffer96Length;
+
+    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, BitBuffer96Length);
+    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, BitBuffer96Length);
+}
+
+[InlineArray(BitBuffer128Length)]
+public struct BitBuffer128 : IBitBuffer
+{
+    private const int BitBuffer128Length = 4;
+
+    private uint _0;
+
+    public readonly int Length => BitBuffer128Length;
+
+    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, BitBuffer128Length);
+    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, BitBuffer128Length);
+}
+
+[InlineArray(BitBuffer256Length)]
+public struct BitBuffer256 : IBitBuffer
+{
+    private const int BitBuffer256Length = 8;
+
+    private uint _0;
+
+    public readonly int Length => BitBuffer256Length;
+
+    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, BitBuffer256Length);
+    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, BitBuffer256Length);
+}
+
+public readonly struct ArrayBitBuffer : IBitBuffer
+{
+    private readonly uint[] _array;
+    private readonly int _start;
+    private readonly int _length;
+
+    public int Length => _length;
+
+    public ArrayBitBuffer(uint[] array)
+    {
+        _array = array;
+        _start = 0;
+        _length = _array.Length;
+    }
+
+    public ArrayBitBuffer(uint[] array, int start, int length)
+    {
+        _array = array;
+        _start = start;
+        _length = length;
+    }
+
+    public Span<uint> AsSpan() => new(_array, _start, _length);
+    public ReadOnlySpan<uint> AsReadOnlySpan() => new(_array, _start, _length);
+}

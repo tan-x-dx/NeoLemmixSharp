@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
@@ -25,7 +24,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         _hasher = hasher;
         _hasher.CreateBitBuffer(out _bits);
         var numberOfItems = _hasher.NumberOfItems;
-        Debug.Assert(numberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
+        Debug.Assert(numberOfItems <= (_bits.Length << BitArrayHelpers.Shift));
 
         if (fullSet)
         {
@@ -43,12 +42,12 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         _hasher = hasher;
         _bits = buffer;
         var numberOfItems = _hasher.NumberOfItems;
-        Debug.Assert(numberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
+        Debug.Assert(numberOfItems <= (_bits.Length << BitArrayHelpers.Shift));
 
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
     }
 
-    public int Size => _bits.Size;
+    public int Length => _bits.Length;
     public int Count => _popCount;
 
     public bool Add(T item)
@@ -90,14 +89,14 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
 
     public void WriteTo(Span<uint> destination)
     {
-        if (destination.Length != _bits.Size)
+        if (destination.Length != _bits.Length)
             throw new ArgumentException("Destination buffer wrong size!");
         _bits.AsReadOnlySpan().CopyTo(destination);
     }
 
     public void ReadFrom(ReadOnlySpan<uint> source)
     {
-        if (source.Length != _bits.Size)
+        if (source.Length != _bits.Length)
             throw new ArgumentException("Source buffer wrong size!");
 
         var upperIntNumberOfItems = _hasher.NumberOfItems & BitArrayHelpers.Mask;

@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -27,7 +26,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         _hasher = hasher;
         _hasher.CreateBitBuffer(out _bits);
         var numberOfItems = hasher.NumberOfItems;
-        Debug.Assert(numberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
+        Debug.Assert(numberOfItems <= (_bits.Length << BitArrayHelpers.Shift));
         _popCount = 0;
         _values = new TValue[numberOfItems];
     }

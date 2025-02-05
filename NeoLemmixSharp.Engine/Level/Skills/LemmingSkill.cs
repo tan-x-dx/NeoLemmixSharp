@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -197,15 +196,15 @@ public readonly struct LemmingSkillHasher : IPerfectHasher<LemmingSkill>, IBitBu
     public void CreateBitBuffer(out LemmingSkillBitBuffer buffer) => buffer = new();
 }
 
-[InlineArray(Length)]
+[InlineArray(LemmingSkillBitBufferLength)]
 public struct LemmingSkillBitBuffer : IBitBuffer
 {
-    private const int Length = (EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
+    private const int LemmingSkillBitBufferLength = (EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
 
     private uint _0;
 
-    public readonly int Size => Length;
+    public readonly int Length => LemmingSkillBitBufferLength;
 
-    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, Length);
-    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, Length);
+    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, LemmingSkillBitBufferLength);
+    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, LemmingSkillBitBufferLength);
 }
