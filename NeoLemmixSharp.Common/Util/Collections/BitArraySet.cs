@@ -36,6 +36,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         }
 
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
+        Debug.Assert(_popCount == 0 || _popCount == numberOfItems);
     }
 
     public BitArraySet(TPerfectHasher hasher, TBuffer buffer)

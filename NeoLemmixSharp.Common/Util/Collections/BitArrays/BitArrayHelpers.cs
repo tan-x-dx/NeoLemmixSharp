@@ -41,7 +41,7 @@ public static class BitArrayHelpers
         return result;
     }
 
-    public static void PopulateBitArray(Span<uint> bitArray, int requiredPopCount)
+    internal static void PopulateBitArray(Span<uint> bitArray, int requiredPopCount)
     {
         var requiredSpanLength = CalculateBitArrayBufferLength(requiredPopCount);
 
