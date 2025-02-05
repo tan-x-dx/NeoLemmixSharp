@@ -75,7 +75,7 @@ public sealed class InputController : IPerfectHasher<Keys>, IBitBufferCreator<Bi
         {
             if (_pressedKeys.Contains(keyValue))
             {
-                inputActionsSpan[action.Id].DoPress();
+                action.DoPress();
             }
         }
 
