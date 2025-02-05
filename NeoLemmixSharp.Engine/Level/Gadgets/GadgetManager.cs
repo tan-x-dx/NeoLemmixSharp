@@ -2,6 +2,8 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
@@ -12,6 +14,7 @@ public sealed class GadgetManager :
     IPerfectHasher<GadgetBase>,
     IItemManager<GadgetBase>,
     IPerfectHasher<HitBoxGadget>,
+    IBitBufferCreator<ArrayBitBuffer>,
     ISnapshotDataConvertible<int>,
     IInitialisable,
     IDisposable
@@ -93,6 +96,7 @@ public sealed class GadgetManager :
     GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
     int IPerfectHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
     HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
+    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(BitArrayHelpers.CreateBitArray(NumberOfItems, false));
 
     public void Dispose()
     {

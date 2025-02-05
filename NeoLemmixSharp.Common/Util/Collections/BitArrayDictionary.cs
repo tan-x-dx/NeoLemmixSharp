@@ -9,8 +9,8 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
-    where TPerfectHasher : IPerfectHasher<TKey>
-    where TBuffer : struct, ISpannable
+    where TPerfectHasher : IPerfectHasher<TKey>, IBitBufferCreator<TBuffer>
+    where TBuffer : struct, IBitBuffer
     where TKey : notnull
 {
 #pragma warning disable IDE0044 // Add readonly modifier
@@ -22,10 +22,10 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
 
     public int Count => _popCount;
 
-    public BitArrayDictionary(TPerfectHasher hasher, TBuffer buffer)
+    public BitArrayDictionary(TPerfectHasher hasher)
     {
         _hasher = hasher;
-        _bits = buffer;
+        _hasher.CreateBitBuffer(out _bits);
         var numberOfItems = hasher.NumberOfItems;
         Debug.Assert(numberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
         _popCount = 0;

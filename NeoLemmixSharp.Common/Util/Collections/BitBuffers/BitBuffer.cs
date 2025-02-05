@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 
 [InlineArray(Length)]
-public struct BitBuffer32 : ISpannable
+public struct BitBuffer32 : IBitBuffer
 {
     private const int Length = 1;
 
@@ -17,7 +17,7 @@ public struct BitBuffer32 : ISpannable
 }
 
 [InlineArray(Length)]
-public struct BitBuffer64 : ISpannable
+public struct BitBuffer64 : IBitBuffer
 {
     private const int Length = 2;
 
@@ -30,7 +30,7 @@ public struct BitBuffer64 : ISpannable
 }
 
 [InlineArray(Length)]
-public struct BitBuffer96 : ISpannable
+public struct BitBuffer96 : IBitBuffer
 {
     private const int Length = 3;
 
@@ -43,7 +43,7 @@ public struct BitBuffer96 : ISpannable
 }
 
 [InlineArray(Length)]
-public struct BitBuffer128 : ISpannable
+public struct BitBuffer128 : IBitBuffer
 {
     private const int Length = 4;
 
@@ -56,7 +56,7 @@ public struct BitBuffer128 : ISpannable
 }
 
 [InlineArray(Length)]
-public struct BitBuffer256 : ISpannable
+public struct BitBuffer256 : IBitBuffer
 {
     private const int Length = 8;
 
@@ -68,7 +68,7 @@ public struct BitBuffer256 : ISpannable
     public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, Length);
 }
 
-public readonly struct ArrayWrapper : ISpannable
+public readonly struct ArrayBitBuffer : IBitBuffer
 {
     private readonly uint[] _array;
     private readonly int _start;
@@ -76,14 +76,14 @@ public readonly struct ArrayWrapper : ISpannable
 
     public int Size => _length;
 
-    public ArrayWrapper(uint[] array)
+    public ArrayBitBuffer(uint[] array)
     {
         _array = array;
         _start = 0;
         _length = _array.Length;
     }
 
-    public ArrayWrapper(uint[] array, int start, int length)
+    public ArrayBitBuffer(uint[] array, int start, int length)
     {
         _array = array;
         _start = start;

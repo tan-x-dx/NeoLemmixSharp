@@ -18,7 +18,7 @@ public enum LevelParameters
     EnableFrameControl
 }
 
-public readonly struct LevelParameterHasher : IPerfectHasher<LevelParameters>
+public readonly struct LevelParameterHasher : IPerfectHasher<LevelParameters>, IBitBufferCreator<BitBuffer32>
 {
     public int NumberOfItems => 8;
 
@@ -28,9 +28,11 @@ public readonly struct LevelParameterHasher : IPerfectHasher<LevelParameters>
     public LevelParameters UnHash(int index) => (LevelParameters)index;
 
     [Pure]
-    public static LevelParameterSet CreateBitArraySet(bool fullSet = false) => new(new LevelParameterHasher(), new BitBuffer32(), fullSet);
+    public static LevelParameterSet CreateBitArraySet(bool fullSet = false) => new(new LevelParameterHasher(), fullSet);
     [Pure]
-    public static BitArrayDictionary<LevelParameterHasher, BitBuffer32, LevelParameters, TValue> CreateBitArrayDictionary<TValue>() => new(new LevelParameterHasher(), new BitBuffer32());
+    public static BitArrayDictionary<LevelParameterHasher, BitBuffer32, LevelParameters, TValue> CreateBitArrayDictionary<TValue>() => new(new LevelParameterHasher());
+
+    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 }
 
 public static class LevelParameterHelpers

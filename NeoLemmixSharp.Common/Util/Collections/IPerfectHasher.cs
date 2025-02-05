@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
 

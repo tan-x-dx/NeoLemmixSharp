@@ -180,7 +180,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
     public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.Id != right.Id;
 }
 
-public readonly struct LemmingSkillHasher : IPerfectHasher<LemmingSkill>
+public readonly struct LemmingSkillHasher : IPerfectHasher<LemmingSkill>, IBitBufferCreator<LemmingSkillBitBuffer>
 {
     [Pure]
     public int NumberOfItems => EngineConstants.NumberOfLemmingSkills;
@@ -190,13 +190,15 @@ public readonly struct LemmingSkillHasher : IPerfectHasher<LemmingSkill>
     public LemmingSkill UnHash(int index) => LemmingSkill.AllItems[index];
 
     [Pure]
-    public static LemmingSkillSet CreateBitArraySet(bool fullSet = false) => new(new LemmingSkillHasher(), new LemmingSkillBitBuffer(), fullSet);
+    public static LemmingSkillSet CreateBitArraySet(bool fullSet = false) => new(new LemmingSkillHasher(), fullSet);
     [Pure]
-    public static BitArrayDictionary<LemmingSkillHasher, LemmingSkillBitBuffer, LemmingSkill, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingSkillHasher(), new LemmingSkillBitBuffer());
+    public static BitArrayDictionary<LemmingSkillHasher, LemmingSkillBitBuffer, LemmingSkill, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingSkillHasher());
+
+    public void CreateBitBuffer(out LemmingSkillBitBuffer buffer) => buffer = new();
 }
 
 [InlineArray(Length)]
-public struct LemmingSkillBitBuffer : ISpannable
+public struct LemmingSkillBitBuffer : IBitBuffer
 {
     private const int Length = (EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
 

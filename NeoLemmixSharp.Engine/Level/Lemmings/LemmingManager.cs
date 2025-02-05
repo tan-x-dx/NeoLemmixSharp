@@ -16,6 +16,7 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class LemmingManager :
     IPerfectHasher<Lemming>,
+    IBitBufferCreator<ArrayBitBuffer>,
     IItemManager<Lemming>,
     ISnapshotDataConvertible<LemmingManagerSnapshotData>,
     IInitialisable,
@@ -66,9 +67,6 @@ public sealed class LemmingManager :
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Lemming>(_lemmings));
         Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
 
-        var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
-        var combinedLemmingBitBuffer = new uint[bitBufferLength * 2];
-
         _lemmingPositionHelper = new LemmingSpacialHashGrid(
             this,
             EngineConstants.LemmingPositionChunkSize,
@@ -80,14 +78,14 @@ public sealed class LemmingManager :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
+        var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
+        var combinedLemmingBitBuffer = new uint[bitBufferLength * 2];
         _lemmingsToZombify = new LemmingSet(
             this,
-            new ArrayWrapper(combinedLemmingBitBuffer, bitBufferLength * 0, bitBufferLength),
-            false);
+            new ArrayBitBuffer(combinedLemmingBitBuffer, bitBufferLength * 0, bitBufferLength));
         _allBlockers = new LemmingSet(
             this,
-            new ArrayWrapper(combinedLemmingBitBuffer, bitBufferLength * 1, bitBufferLength),
-            false);
+            new ArrayBitBuffer(combinedLemmingBitBuffer, bitBufferLength * 1, bitBufferLength));
 
         _totalNumberOfHatchLemmings = totalNumberOfHatchLemmings;
         _numberOfPreplacedLemmings = numberOfPreplacedLemmings;
@@ -372,6 +370,7 @@ public sealed class LemmingManager :
 
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
+    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(BitArrayHelpers.CreateBitArray(NumberOfItems, false));
 
     public void Dispose()
     {

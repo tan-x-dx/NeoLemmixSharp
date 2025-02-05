@@ -17,7 +17,7 @@ public enum GadgetProperty
     LogicGateType
 }
 
-public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>
+public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>, IBitBufferCreator<BitBuffer32>
 {
     public int NumberOfItems => 9;
 
@@ -27,7 +27,9 @@ public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>
     public GadgetProperty UnHash(int index) => (GadgetProperty)index;
 
     [Pure]
-    public static BitArraySet<GadgetPropertyHasher, BitBuffer32, GadgetProperty> CreateBitArraySet(bool fullSet = false) => new(new GadgetPropertyHasher(), new BitBuffer32(), fullSet);
+    public static BitArraySet<GadgetPropertyHasher, BitBuffer32, GadgetProperty> CreateBitArraySet(bool fullSet = false) => new(new GadgetPropertyHasher(), fullSet);
     [Pure]
-    public static BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, TValue> CreateBitArrayDictionary<TValue>() => new(new GadgetPropertyHasher(), new BitBuffer32());
+    public static BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, TValue> CreateBitArrayDictionary<TValue>() => new(new GadgetPropertyHasher());
+
+    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 }

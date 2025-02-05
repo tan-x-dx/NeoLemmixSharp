@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 
-public interface ISpannable
+public interface IBitBuffer
 {
     [Pure]
     int Size { get; }
@@ -11,4 +11,10 @@ public interface ISpannable
     Span<uint> AsSpan();
     [Pure]
     ReadOnlySpan<uint> AsReadOnlySpan();
+}
+
+public interface IBitBufferCreator<TBuffer>
+    where TBuffer : struct, IBitBuffer
+{
+    void CreateBitBuffer(out TBuffer buffer);
 }

@@ -8,8 +8,8 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySet<T>
-    where TPerfectHasher : IPerfectHasher<T>
-    where TBuffer : struct, ISpannable
+    where TPerfectHasher : IPerfectHasher<T>, IBitBufferCreator<TBuffer>
+    where TBuffer : struct, IBitBuffer
     where T : notnull
 {
     private const int MaxStackAllocSize = 64;
@@ -20,10 +20,10 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     private int _popCount;
     private readonly TPerfectHasher _hasher;
 
-    public BitArraySet(TPerfectHasher hasher, TBuffer buffer, bool fullSet)
+    public BitArraySet(TPerfectHasher hasher, bool fullSet)
     {
         _hasher = hasher;
-        _bits = buffer;
+        _hasher.CreateBitBuffer(out _bits);
         var numberOfItems = _hasher.NumberOfItems;
         Debug.Assert(numberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
 
@@ -38,7 +38,17 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         }
     }
 
-    public int FootprintSize => _bits.Size;
+    public BitArraySet(TPerfectHasher hasher, TBuffer buffer)
+    {
+        _hasher = hasher;
+        _bits = buffer;
+        var numberOfItems = _hasher.NumberOfItems;
+        Debug.Assert(numberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
+
+        _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
+    }
+
+    public int Size => _bits.Size;
     public int Count => _popCount;
 
     public bool Add(T item)
