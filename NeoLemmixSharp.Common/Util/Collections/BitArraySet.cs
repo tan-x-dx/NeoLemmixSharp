@@ -29,12 +29,13 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         if (fullSet)
         {
             BitArrayHelpers.PopulateBitArray(_bits.AsSpan(), numberOfItems);
-            _popCount = numberOfItems;
         }
         else
         {
-            _popCount = 0;
+            _bits.AsSpan().Clear();
         }
+
+        _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
     }
 
     public BitArraySet(TPerfectHasher hasher, TBuffer buffer)

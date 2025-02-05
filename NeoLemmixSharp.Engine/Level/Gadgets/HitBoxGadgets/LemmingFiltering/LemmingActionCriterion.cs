@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
 public sealed class LemmingActionCriterion : ILemmingCriterion
 {
-    private LemmingActionBitBuffer _lemmingActionBits;
+    private LemmingAction.LemmingActionBitBuffer _lemmingActionBits;
 
     public void RegisterActions(LemmingActionSet actions)
     {
@@ -16,7 +16,7 @@ public sealed class LemmingActionCriterion : ILemmingCriterion
     public bool LemmingMatchesCriteria(Lemming lemming)
     {
         ReadOnlySpan<uint> bits = _lemmingActionBits;
-        var actionComparer = new LemmingActionHasher();
+        var actionComparer = new LemmingAction.LemmingActionHasher();
         return BitArrayHelpers.GetBit(bits, actionComparer.Hash(lemming.CurrentAction));
     }
 }

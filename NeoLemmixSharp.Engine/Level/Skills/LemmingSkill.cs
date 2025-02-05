@@ -71,7 +71,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingSkillSet GetClassicSkills()
     {
-        var result = LemmingSkillHasher.CreateBitArraySet();
+        var result = LemmingSkill.CreateBitArraySet();
 
         result.Add(ClimberSkill.Instance);
         result.Add(FloaterSkill.Instance);
@@ -87,7 +87,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingActionSet GetActionsThatCanBeAssignedPermanentSkill()
     {
-        var result = LemmingActionHasher.CreateBitArraySet();
+        var result = LemmingAction.CreateBitArraySet();
 
         result.Add(AscenderAction.Instance);
         result.Add(BasherAction.Instance);
@@ -122,7 +122,7 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     private static LemmingActionSet GetActionsThatCanBeAssignedRotationSkill()
     {
-        var result = LemmingActionHasher.CreateBitArraySet();
+        var result = LemmingAction.CreateBitArraySet();
 
         result.Add(WalkerAction.Instance);
         result.Add(ShruggerAction.Instance);
@@ -177,34 +177,36 @@ public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
 
     public static bool operator ==(LemmingSkill left, LemmingSkill right) => left.Id == right.Id;
     public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.Id != right.Id;
-}
-
-public readonly struct LemmingSkillHasher : IPerfectHasher<LemmingSkill>, IBitBufferCreator<LemmingSkillBitBuffer>
-{
-    [Pure]
-    public int NumberOfItems => EngineConstants.NumberOfLemmingSkills;
-    [Pure]
-    public int Hash(LemmingSkill item) => item.Id;
-    [Pure]
-    public LemmingSkill UnHash(int index) => LemmingSkill.AllItems[index];
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static LemmingSkillSet CreateBitArraySet(bool fullSet = false) => new(new LemmingSkillHasher(), fullSet);
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<LemmingSkillHasher, LemmingSkillBitBuffer, LemmingSkill, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingSkillHasher());
 
-    public void CreateBitBuffer(out LemmingSkillBitBuffer buffer) => buffer = new();
-}
+    public readonly struct LemmingSkillHasher : IPerfectHasher<LemmingSkill>, IBitBufferCreator<LemmingSkillBitBuffer>
+    {
+        [Pure]
+        public int NumberOfItems => EngineConstants.NumberOfLemmingSkills;
+        [Pure]
+        public int Hash(LemmingSkill item) => item.Id;
+        [Pure]
+        public LemmingSkill UnHash(int index) => LemmingSkills[index];
 
-[InlineArray(LemmingSkillBitBufferLength)]
-public struct LemmingSkillBitBuffer : IBitBuffer
-{
-    private const int LemmingSkillBitBufferLength = (EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
+        public void CreateBitBuffer(out LemmingSkillBitBuffer buffer) => buffer = new();
+    }
 
-    private uint _0;
+    [InlineArray(LemmingSkillBitBufferLength)]
+    public struct LemmingSkillBitBuffer : IBitBuffer
+    {
+        private const int LemmingSkillBitBufferLength = (EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
 
-    public readonly int Length => LemmingSkillBitBufferLength;
+        private uint _0;
 
-    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, LemmingSkillBitBufferLength);
-    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, LemmingSkillBitBufferLength);
+        public readonly int Length => LemmingSkillBitBufferLength;
+
+        public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, LemmingSkillBitBufferLength);
+        public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, LemmingSkillBitBufferLength);
+    }
 }

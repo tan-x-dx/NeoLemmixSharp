@@ -22,7 +22,7 @@ public sealed class BuilderSkill : LemmingSkill
 
     protected override LemmingActionSet ActionsThatCanBeAssigned()
     {
-        var result = LemmingActionHasher.CreateBitArraySet();
+        var result = LemmingAction.CreateBitArraySet();
 
         result.Add(WalkerAction.Instance);
         result.Add(ShruggerAction.Instance);
