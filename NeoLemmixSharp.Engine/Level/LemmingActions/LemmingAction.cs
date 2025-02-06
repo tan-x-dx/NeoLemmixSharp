@@ -153,7 +153,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
-        var dxCorrection = 1 - lemming.FacingDirection.Id; // Fixes off-by-one errors with left/right positions
+        var dxCorrection = lemming.FacingDirection.Id ^ 1; // Fixes off-by-one errors with left/right positions
         var lemmingPosition = lemming.LevelPosition;
         var physicsFrame = lemming.PhysicsFrame;
 
