@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Numerics;
 using System.Numerics.Tensors;
 using System.Runtime.CompilerServices;
@@ -58,6 +57,12 @@ public static class BitArrayHelpers
             return;
 
         subSpan[^1] = (1U << lastIndexPopCount) - 1U;
+    }
+
+    internal static void ThrowIfInvalidCapacity(int requiredNumberOfItems, int bufferLength)
+    {
+        if (requiredNumberOfItems > (bufferLength << Shift))
+            throw new ArgumentException($"Number of items for Hasher exceeds max capacity of bit buffer! Requires: {requiredNumberOfItems} bits, buffer has {bufferLength << Shift} bits");
     }
 
     /// <summary>
@@ -317,7 +322,7 @@ public static class BitArrayHelpers
         return true;
     }
 
-    internal struct SimpleBitEnumerator 
+    internal struct SimpleBitEnumerator
     {
         private readonly uint[] _bits;
 

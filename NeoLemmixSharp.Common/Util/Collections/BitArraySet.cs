@@ -24,8 +24,8 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         _hasher = hasher;
         _hasher.CreateBitBuffer(out _bits);
         var numberOfItems = _hasher.NumberOfItems;
-        if (numberOfItems > (_bits.Length << BitArrayHelpers.Shift))
-            throw new ArgumentException($"Number of items for Hasher exceeds max capacity of bit buffer! Requires: {numberOfItems} bits, buffer has {_bits.Length << BitArrayHelpers.Shift} bits");
+
+        BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 
         if (fullSet)
         {
@@ -45,8 +45,8 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         _hasher = hasher;
         _bits = buffer;
         var numberOfItems = _hasher.NumberOfItems;
-        if (numberOfItems > (_bits.Length << BitArrayHelpers.Shift))
-            throw new ArgumentException($"Number of items for Hasher exceeds max capacity of bit buffer! Requires: {numberOfItems} bits, buffer has {_bits.Length << BitArrayHelpers.Shift} bits");
+
+        BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
     }
