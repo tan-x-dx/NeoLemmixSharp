@@ -24,7 +24,7 @@ public interface IBitBufferCreator<TBuffer>
 [InlineArray(BitBuffer32Length)]
 public struct BitBuffer32 : IBitBuffer
 {
-    private const int BitBuffer32Length = 1;
+    private const int BitBuffer32Length = 32 / 32;
 
     private uint _0;
 
@@ -39,7 +39,7 @@ public struct BitBuffer32 : IBitBuffer
 [InlineArray(BitBuffer64Length)]
 public struct BitBuffer64 : IBitBuffer
 {
-    private const int BitBuffer64Length = 2;
+    private const int BitBuffer64Length = 64 / 32;
 
     private uint _0;
 
@@ -54,7 +54,7 @@ public struct BitBuffer64 : IBitBuffer
 [InlineArray(BitBuffer96Length)]
 public struct BitBuffer96 : IBitBuffer
 {
-    private const int BitBuffer96Length = 3;
+    private const int BitBuffer96Length = 96 / 32;
 
     private uint _0;
 
@@ -69,7 +69,7 @@ public struct BitBuffer96 : IBitBuffer
 [InlineArray(BitBuffer128Length)]
 public struct BitBuffer128 : IBitBuffer
 {
-    private const int BitBuffer128Length = 4;
+    private const int BitBuffer128Length = 128 / 32;
 
     private uint _0;
 
@@ -84,7 +84,7 @@ public struct BitBuffer128 : IBitBuffer
 [InlineArray(BitBuffer256Length)]
 public struct BitBuffer256 : IBitBuffer
 {
-    private const int BitBuffer256Length = 8;
+    private const int BitBuffer256Length = 256 / 32;
 
     private uint _0;
 
