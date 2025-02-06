@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
@@ -15,7 +14,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class LemmingManager :
-    IPerfectHasher<Lemming>,
+    IBitBufferCreator<ArrayBitBuffer, Lemming>,
     IItemManager<Lemming>,
     ISnapshotDataConvertible<LemmingManagerSnapshotData>,
     IInitialisable,
@@ -23,6 +22,7 @@ public sealed class LemmingManager :
 {
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
+    private readonly uint[] _bitBuffer;
 
     private readonly LemmingSpacialHashGrid _lemmingPositionHelper;
     private readonly LemmingSpacialHashGrid _zombieSpacialHashGrid;
@@ -32,6 +32,8 @@ public sealed class LemmingManager :
     private readonly int _totalNumberOfHatchLemmings;
     private readonly int _numberOfPreplacedLemmings;
     private readonly int _maxNumberOfClonedLemmings;
+
+    private int _bitArrayBufferUsageCount;
 
     private int _numberOfLemmingsReleasedFromHatch;
     private int _numberOfClonedLemmings;
@@ -66,9 +68,6 @@ public sealed class LemmingManager :
         IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Lemming>(_lemmings));
         Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
 
-        var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
-        var combinedLemmingBitBuffer = new uint[bitBufferLength * 2];
-
         _lemmingPositionHelper = new LemmingSpacialHashGrid(
             this,
             EngineConstants.LemmingPositionChunkSize,
@@ -80,14 +79,14 @@ public sealed class LemmingManager :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        _lemmingsToZombify = new LemmingSet(
-            this,
-            new ArrayWrapper(combinedLemmingBitBuffer, bitBufferLength * 0, bitBufferLength),
-            false);
-        _allBlockers = new LemmingSet(
-            this,
-            new ArrayWrapper(combinedLemmingBitBuffer, bitBufferLength * 1, bitBufferLength),
-            false);
+        // 2 spacial hash grids + 2 lemming sets
+        const int ExpectedNumberOfLemmingBitSets = 4;
+
+        var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
+        _bitBuffer = new uint[bitBufferLength * ExpectedNumberOfLemmingBitSets];
+
+        _lemmingsToZombify = new LemmingSet(this, false);
+        _allBlockers = new LemmingSet(this, false);
 
         _totalNumberOfHatchLemmings = totalNumberOfHatchLemmings;
         _numberOfPreplacedLemmings = numberOfPreplacedLemmings;
@@ -372,6 +371,12 @@ public sealed class LemmingManager :
 
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
+    void IBitBufferCreator<ArrayBitBuffer, Lemming>.CreateBitBuffer(out ArrayBitBuffer buffer)
+    {
+        var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
+        buffer = new(_bitBuffer, bitBufferLength * _bitArrayBufferUsageCount, bitBufferLength);
+        _bitArrayBufferUsageCount++;
+    }
 
     public void Dispose()
     {

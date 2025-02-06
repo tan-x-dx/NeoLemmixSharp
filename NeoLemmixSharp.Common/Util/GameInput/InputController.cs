@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Common.Util.Identity;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public sealed class InputController : IPerfectHasher<Keys>
+public sealed class InputController : IBitBufferCreator<BitBuffer256, Keys>
 {
     private const int NumberOfKeys = 256;
 
@@ -33,8 +32,8 @@ public sealed class InputController : IPerfectHasher<Keys>
 
     public InputController()
     {
-        _pressedKeys = new BitArraySet<InputController, BitBuffer256, Keys>(this, new BitBuffer256(), false);
-        _releasedKeys = new BitArraySet<InputController, BitBuffer256, Keys>(this, new BitBuffer256(), false);
+        _pressedKeys = new BitArraySet<InputController, BitBuffer256, Keys>(this, false);
+        _releasedKeys = new BitArraySet<InputController, BitBuffer256, Keys>(this, false);
 
         LeftMouseButtonAction = CreateInputAction("Left Mouse Button");
         RightMouseButtonAction = CreateInputAction("Right Mouse Button");
@@ -76,7 +75,7 @@ public sealed class InputController : IPerfectHasher<Keys>
         {
             if (_pressedKeys.Contains(keyValue))
             {
-                inputActionsSpan[action.Id].DoPress();
+                action.DoPress();
             }
         }
 
@@ -132,6 +131,7 @@ public sealed class InputController : IPerfectHasher<Keys>
     int IPerfectHasher<Keys>.NumberOfItems => NumberOfKeys;
     int IPerfectHasher<Keys>.Hash(Keys item) => (int)item;
     Keys IPerfectHasher<Keys>.UnHash(int index) => (Keys)index;
+    void IBitBufferCreator<BitBuffer256, Keys>.CreateBitBuffer(out BitBuffer256 buffer) => buffer = new();
 
     private readonly struct KeyToInputMapping(Keys key, InputAction inputAction)
     {

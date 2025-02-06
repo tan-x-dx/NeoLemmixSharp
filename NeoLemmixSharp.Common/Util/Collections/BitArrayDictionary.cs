@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -9,8 +8,8 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
-    where TPerfectHasher : IPerfectHasher<TKey>
-    where TBuffer : struct, ISpannable
+    where TPerfectHasher : IBitBufferCreator<TBuffer, TKey>
+    where TBuffer : struct, IBitBuffer
     where TKey : notnull
 {
 #pragma warning disable IDE0044 // Add readonly modifier
@@ -22,12 +21,14 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
 
     public int Count => _popCount;
 
-    public BitArrayDictionary(TPerfectHasher hasher, TBuffer buffer)
+    public BitArrayDictionary(TPerfectHasher hasher)
     {
         _hasher = hasher;
-        _bits = buffer;
+        _hasher.CreateBitBuffer(out _bits);
         var numberOfItems = hasher.NumberOfItems;
-        Debug.Assert(numberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
+
+        BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
+
         _popCount = 0;
         _values = new TValue[numberOfItems];
     }
@@ -134,16 +135,16 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
     [Pure]
     IEnumerator IEnumerable.GetEnumerator() => new ReferenceTypeEnumerator(this);
 
-    public sealed class ReferenceTypeEnumerator : IEnumerator<KeyValuePair<TKey, TValue>>
+    private sealed class ReferenceTypeEnumerator : IEnumerator<KeyValuePair<TKey, TValue>>
     {
         private readonly TPerfectHasher _hasher;
-        private readonly BitArrayHelpers.ReferenceTypeBitEnumerator _enumerator;
         private readonly TValue[] _values;
+        private BitArrayHelpers.SimpleBitEnumerator _enumerator;
 
         public ReferenceTypeEnumerator(BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> dictionary)
         {
             _hasher = dictionary._hasher;
-            _enumerator = new BitArrayHelpers.ReferenceTypeBitEnumerator(dictionary._bits.AsReadOnlySpan().ToArray(), dictionary._popCount);
+            _enumerator = new BitArrayHelpers.SimpleBitEnumerator(dictionary._bits.AsReadOnlySpan().ToArray(), dictionary._popCount);
             _values = dictionary._values;
         }
 

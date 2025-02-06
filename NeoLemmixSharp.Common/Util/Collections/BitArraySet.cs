@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
@@ -8,8 +7,8 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySet<T>
-    where TPerfectHasher : IPerfectHasher<T>
-    where TBuffer : struct, ISpannable
+    where TPerfectHasher : IBitBufferCreator<TBuffer, T>
+    where TBuffer : struct, IBitBuffer
     where T : notnull
 {
     private const int MaxStackAllocSize = 64;
@@ -20,25 +19,39 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     private int _popCount;
     private readonly TPerfectHasher _hasher;
 
-    public BitArraySet(TPerfectHasher hasher, TBuffer buffer, bool fullSet)
+    public BitArraySet(TPerfectHasher hasher, bool fullSet)
     {
         _hasher = hasher;
-        _bits = buffer;
+        _hasher.CreateBitBuffer(out _bits);
         var numberOfItems = _hasher.NumberOfItems;
-        Debug.Assert(numberOfItems <= (_bits.Size << BitArrayHelpers.Shift));
+
+        BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 
         if (fullSet)
         {
             BitArrayHelpers.PopulateBitArray(_bits.AsSpan(), numberOfItems);
-            _popCount = numberOfItems;
         }
         else
         {
-            _popCount = 0;
+            _bits.AsSpan().Clear();
         }
+
+        _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
+        Debug.Assert(_popCount == 0 || _popCount == numberOfItems);
     }
 
-    public int FootprintSize => _bits.Size;
+    public BitArraySet(TPerfectHasher hasher, TBuffer buffer)
+    {
+        _hasher = hasher;
+        _bits = buffer;
+        var numberOfItems = _hasher.NumberOfItems;
+
+        BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
+
+        _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
+    }
+
+    public int Length => _bits.Length;
     public int Count => _popCount;
 
     public bool Add(T item)
@@ -80,14 +93,14 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
 
     public void WriteTo(Span<uint> destination)
     {
-        if (destination.Length != _bits.Size)
+        if (destination.Length != _bits.Length)
             throw new ArgumentException("Destination buffer wrong size!");
         _bits.AsReadOnlySpan().CopyTo(destination);
     }
 
     public void ReadFrom(ReadOnlySpan<uint> source)
     {
-        if (source.Length != _bits.Size)
+        if (source.Length != _bits.Length)
             throw new ArgumentException("Source buffer wrong size!");
 
         var upperIntNumberOfItems = _hasher.NumberOfItems & BitArrayHelpers.Mask;
@@ -135,22 +148,19 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public BitArrayEnumerator<TPerfectHasher, T> GetEnumerator() => new(_hasher, _bits.AsReadOnlySpan(), _popCount);
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReferenceTypeEnumerator GetReferenceTypeEnumerator() => new(this);
-    [Pure]
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => new ReferenceTypeEnumerator(this);
     [Pure]
     IEnumerator IEnumerable.GetEnumerator() => new ReferenceTypeEnumerator(this);
 
-    public sealed class ReferenceTypeEnumerator : IEnumerator<T>
+    private sealed class ReferenceTypeEnumerator : IEnumerator<T>
     {
         private readonly TPerfectHasher _hasher;
-        private readonly BitArrayHelpers.ReferenceTypeBitEnumerator _bitEnumerator;
+        private BitArrayHelpers.SimpleBitEnumerator _bitEnumerator;
 
         public ReferenceTypeEnumerator(BitArraySet<TPerfectHasher, TBuffer, T> set)
         {
             _hasher = set._hasher;
-            _bitEnumerator = new BitArrayHelpers.ReferenceTypeBitEnumerator(set._bits.AsReadOnlySpan().ToArray(), set._popCount);
+            _bitEnumerator = new BitArrayHelpers.SimpleBitEnumerator(set._bits.AsReadOnlySpan().ToArray(), set._popCount);
         }
 
         public bool MoveNext() => _bitEnumerator.MoveNext();

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using System.Runtime.CompilerServices;
@@ -39,7 +40,7 @@ public sealed class GadgetStateArchetypeData
     }
 }
 
-[InlineArray(4)]
+[InlineArray(EngineConstants.NumberOfOrientations)]
 public struct HitBoxRegionDataArray
 {
     public HitBoxRegionData _x;

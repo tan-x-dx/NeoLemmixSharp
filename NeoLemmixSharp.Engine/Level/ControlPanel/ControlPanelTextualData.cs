@@ -55,9 +55,10 @@ public sealed class ControlPanelTextualData
     {
         var textLength = WriteLemmingInfo(lemming);
 
-        _lemmingActionAndCountString[textLength++] = ' '; // Add a space.
-        var numericPartSpanLength = TextRenderingHelpers.GetNumberStringLength(numberOfLemmingsUnderCursor);
         Span<char> numericPartSpan = _lemmingActionAndCountString;
+        numericPartSpan[textLength++] = ' '; // Add a space.
+        var numericPartSpanLength = TextRenderingHelpers.GetNumberStringLength(numberOfLemmingsUnderCursor);
+
         TextRenderingHelpers.WriteDigits(numericPartSpan.Slice(textLength, numericPartSpanLength), numberOfLemmingsUnderCursor);
     }
 
@@ -81,16 +82,16 @@ public sealed class ControlPanelTextualData
         Span<char> destSpan = _lemmingActionAndCountString;
         destSpan.Fill('-');
 
-        if (state.IsSlider) _lemmingActionAndCountString[0] = 'L';
-        if (state.IsClimber) _lemmingActionAndCountString[1] = 'C';
-        if (state.IsSwimmer) _lemmingActionAndCountString[2] = 'S';
-        else if (state.IsAcidLemming) _lemmingActionAndCountString[2] = 'A';
-        else if (state.IsWaterLemming) _lemmingActionAndCountString[2] = 'W';
-        if (state.IsFloater) _lemmingActionAndCountString[3] = 'F';
-        else if (state.IsGlider) _lemmingActionAndCountString[3] = 'G';
-        if (state.IsDisarmer) _lemmingActionAndCountString[4] = 'D';
-        if (state.IsZombie) _lemmingActionAndCountString[5] = 'Z';
-        if (state.IsNeutral) _lemmingActionAndCountString[6] = 'N';
+        if (state.IsSlider) destSpan[0] = 'L';
+        if (state.IsClimber) destSpan[1] = 'C';
+        if (state.IsSwimmer) destSpan[2] = 'S';
+        else if (state.IsAcidLemming) destSpan[2] = 'A';
+        else if (state.IsWaterLemming) destSpan[2] = 'W';
+        if (state.IsFloater) destSpan[3] = 'F';
+        else if (state.IsGlider) destSpan[3] = 'G';
+        if (state.IsDisarmer) destSpan[4] = 'D';
+        if (state.IsZombie) destSpan[5] = 'Z';
+        if (state.IsNeutral) destSpan[6] = 'N';
 
         return 7;
     }
@@ -177,24 +178,24 @@ public sealed class ControlPanelTextualData
     [InlineArray(CharLengthForLemmingActionAndCount)]
     private struct LemmingActionAndCountCharBuffer
     {
-        private char _firstElement;
+        private char _0;
     }
 
     [InlineArray(CharLengthForLemmingCount)]
     private struct HatchCountCharBuffer
     {
-        private char _firstElement;
+        private char _0;
     }
 
     [InlineArray(CharLengthForLemmingCount)]
     private struct LemmingCountCharBuffer
     {
-        private char _firstElement;
+        private char _0;
     }
 
     [InlineArray(CharLengthForGoalCount)]
     private struct GoalCountCharBuffer
     {
-        private char _firstElement;
+        private char _0;
     }
 }

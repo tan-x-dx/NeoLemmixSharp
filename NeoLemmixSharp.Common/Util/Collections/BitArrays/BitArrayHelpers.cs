@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Numerics;
 using System.Numerics.Tensors;
 using System.Runtime.CompilerServices;
@@ -41,7 +40,7 @@ public static class BitArrayHelpers
         return result;
     }
 
-    public static void PopulateBitArray(Span<uint> bitArray, int requiredPopCount)
+    internal static void PopulateBitArray(Span<uint> bitArray, int requiredPopCount)
     {
         var requiredSpanLength = CalculateBitArrayBufferLength(requiredPopCount);
 
@@ -58,6 +57,12 @@ public static class BitArrayHelpers
             return;
 
         subSpan[^1] = (1U << lastIndexPopCount) - 1U;
+    }
+
+    internal static void ThrowIfInvalidCapacity(int requiredNumberOfItems, int bufferLength)
+    {
+        if (requiredNumberOfItems > (bufferLength << Shift))
+            throw new ArgumentException($"Number of items for Hasher exceeds max capacity of bit buffer! Requires: {requiredNumberOfItems} bits, buffer has {bufferLength << Shift} bits");
     }
 
     /// <summary>
@@ -317,7 +322,7 @@ public static class BitArrayHelpers
         return true;
     }
 
-    public sealed class ReferenceTypeBitEnumerator : IEnumerator<int>
+    internal struct SimpleBitEnumerator
     {
         private readonly uint[] _bits;
 
@@ -327,7 +332,7 @@ public static class BitArrayHelpers
 
         public int Current { get; private set; }
 
-        public ReferenceTypeBitEnumerator(uint[] bits, int popCount)
+        public SimpleBitEnumerator(uint[] bits, int popCount)
         {
             _bits = bits;
             _index = 0;
@@ -357,9 +362,5 @@ public static class BitArrayHelpers
             _remaining--;
             return true;
         }
-
-        void IEnumerator.Reset() => throw new InvalidOperationException("Cannot reset");
-        object IEnumerator.Current => Current;
-        void IDisposable.Dispose() { }
     }
 }

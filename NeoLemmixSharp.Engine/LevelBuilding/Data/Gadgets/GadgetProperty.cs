@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
@@ -17,7 +17,7 @@ public enum GadgetProperty
     LogicGateType
 }
 
-public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>
+public readonly struct GadgetPropertyHasher : IBitBufferCreator<BitBuffer32, GadgetProperty>
 {
     public int NumberOfItems => 9;
 
@@ -27,7 +27,11 @@ public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>
     public GadgetProperty UnHash(int index) => (GadgetProperty)index;
 
     [Pure]
-    public static BitArraySet<GadgetPropertyHasher, BitBuffer32, GadgetProperty> CreateBitArraySet(bool fullSet = false) => new(new GadgetPropertyHasher(), new BitBuffer32(), fullSet);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static BitArraySet<GadgetPropertyHasher, BitBuffer32, GadgetProperty> CreateBitArraySet(bool fullSet = false) => new(new GadgetPropertyHasher(), fullSet);
     [Pure]
-    public static BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, TValue> CreateBitArrayDictionary<TValue>() => new(new GadgetPropertyHasher(), new BitBuffer32());
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, TValue> CreateBitArrayDictionary<TValue>() => new(new GadgetPropertyHasher());
+
+    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 }

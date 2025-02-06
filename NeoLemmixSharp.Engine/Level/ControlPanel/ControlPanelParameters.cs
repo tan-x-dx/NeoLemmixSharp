@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
@@ -20,7 +20,7 @@ public enum ControlPanelParameters
     ShowExpandedAthleteInformation
 }
 
-public readonly struct ControlPanelParameterHasher : IPerfectHasher<ControlPanelParameters>
+public readonly struct ControlPanelParameterHasher : IBitBufferCreator<BitBuffer32, ControlPanelParameters>
 {
     public int NumberOfItems => 12;
 
@@ -30,7 +30,11 @@ public readonly struct ControlPanelParameterHasher : IPerfectHasher<ControlPanel
     public ControlPanelParameters UnHash(int index) => (ControlPanelParameters)index;
 
     [Pure]
-    public static ControlPanelParameterSet CreateBitArraySet(bool fullSet = false) => new(new ControlPanelParameterHasher(), new BitBuffer32(), fullSet);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ControlPanelParameterSet CreateBitArraySet(bool fullSet = false) => new(new ControlPanelParameterHasher(), fullSet);
     [Pure]
-    public static BitArrayDictionary<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters, TValue> CreateBitArrayDictionary<TValue>() => new(new ControlPanelParameterHasher(), new BitBuffer32());
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static BitArrayDictionary<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters, TValue> CreateBitArrayDictionary<TValue>() => new(new ControlPanelParameterHasher());
+
+    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 }

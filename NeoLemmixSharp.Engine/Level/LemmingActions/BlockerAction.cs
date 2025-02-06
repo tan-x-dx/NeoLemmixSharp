@@ -30,7 +30,6 @@ public sealed class BlockerAction : LemmingAction
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.LevelPosition))
             return true;
 
-        LevelScreen.LemmingManager.DeregisterBlocker(lemming);
         FallerAction.Instance.TransitionLemmingToAction(lemming, false);
 
         return true;

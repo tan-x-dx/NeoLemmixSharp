@@ -2,17 +2,15 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using static NeoLemmixSharp.Engine.Level.LemmingActions.LemmingAction;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
+public abstract class LemmingAction : IIdEquatable<LemmingAction>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
     private static readonly LemmingActionSet AirborneActions = GetAirborneActions();
@@ -74,7 +72,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     private static LemmingActionSet GetAirborneActions()
     {
-        var result = LemmingActionHasher.CreateBitArraySet();
+        var result = CreateBitArraySet();
 
         result.Add(DrownerAction.Instance);
         result.Add(FallerAction.Instance);
@@ -94,7 +92,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     private static LemmingActionSet GetOneTimeActions()
     {
-        var result = LemmingActionHasher.CreateBitArraySet();
+        var result = CreateBitArraySet();
 
         result.Add(DehoisterAction.Instance);
         result.Add(DrownerAction.Instance);
@@ -155,7 +153,7 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
-        var dxCorrection = 1 - lemming.FacingDirection.Id; // Fixes off-by-one errors with left/right positions
+        var dxCorrection = lemming.FacingDirection.Id ^ 1; // Fixes off-by-one errors with left/right positions
         var lemmingPosition = lemming.LevelPosition;
         var physicsFrame = lemming.PhysicsFrame;
 
@@ -188,6 +186,17 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
         Lemming lemming,
         bool turnAround)
     {
+        if (lemming.CurrentAction.Id == EngineConstants.BlockerActionId &&
+            Id != EngineConstants.BlockerActionId &&
+            Id != EngineConstants.OhNoerActionId)
+        {
+            // Need to de-register blocker from LemmingManager
+            // when transitioning from a blocker. Exceptions are for
+            // transitions to blocker or ohNoer
+
+            LevelScreen.LemmingManager.DeregisterBlocker(lemming);
+        }
+
         if (turnAround)
         {
             lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
@@ -216,32 +225,36 @@ public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
 
     public static bool operator ==(LemmingAction left, LemmingAction right) => left.Id == right.Id;
     public static bool operator !=(LemmingAction left, LemmingAction right) => left.Id != right.Id;
-}
-
-public readonly struct LemmingActionHasher : IPerfectHasher<LemmingAction>
-{
-    [Pure]
-    public int NumberOfItems => EngineConstants.NumberOfLemmingActions;
-    [Pure]
-    public int Hash(LemmingAction item) => item.Id;
-    [Pure]
-    public LemmingAction UnHash(int index) => AllItems[index];
 
     [Pure]
-    public static LemmingActionSet CreateBitArraySet(bool fullSet = false) => new(new LemmingActionHasher(), new LemmingActionBitBuffer(), fullSet);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static LemmingActionSet CreateBitArraySet(bool fullSet = false) => new(new LemmingActionHasher(), fullSet);
     [Pure]
-    public static BitArrayDictionary<LemmingActionHasher, LemmingActionBitBuffer, LemmingAction, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingActionHasher(), new LemmingActionBitBuffer());
-}
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static BitArrayDictionary<LemmingActionHasher, LemmingActionBitBuffer, LemmingAction, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingActionHasher());
 
-[InlineArray(Length)]
-public struct LemmingActionBitBuffer : ISpannable
-{
-    private const int Length = (EngineConstants.NumberOfLemmingActions + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
+    public readonly struct LemmingActionHasher : IBitBufferCreator<LemmingActionBitBuffer, LemmingAction>
+    {
+        [Pure]
+        public int NumberOfItems => EngineConstants.NumberOfLemmingActions;
+        [Pure]
+        public int Hash(LemmingAction item) => item.Id;
+        [Pure]
+        public LemmingAction UnHash(int index) => LemmingActions[index];
 
-    private uint _0;
+        public void CreateBitBuffer(out LemmingActionBitBuffer buffer) => buffer = new LemmingActionBitBuffer();
+    }
 
-    public readonly int Size => Length;
+    [InlineArray(LemmingActionBitBufferLength)]
+    public struct LemmingActionBitBuffer : IBitBuffer
+    {
+        private const int LemmingActionBitBufferLength = (EngineConstants.NumberOfLemmingActions + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
 
-    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, Length);
-    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, Length);
+        private uint _0;
+
+        public readonly int Length => LemmingActionBitBufferLength;
+
+        public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, LemmingActionBitBufferLength);
+        public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, LemmingActionBitBufferLength);
+    }
 }

@@ -212,7 +212,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         GadgetBounds hitBoxGadgetBounds,
         ReadOnlySpan<HitBoxRegionData> hitBoxRegionData)
     {
-        var result = OrientationHasher.CreateBitArrayDictionary<IHitBoxRegion>();
+        var result = Orientation.CreateBitArrayDictionary<IHitBoxRegion>();
 
         foreach (var item in hitBoxRegionData)
         {

@@ -31,9 +31,9 @@ public static class DefaultLemmingSpriteBank
         LemmingActionLayerRenderer.GetLemmingColor getLemmingMiscColor = _ => Color.Magenta;
 #pragma warning restore IDE0039
 
-        var numberOfActionSprites = LemmingAction.NumberOfItems *
-                                    EngineConstants.NumberOfOrientations *
-                                    EngineConstants.NumberOfFacingDirections;
+        const int numberOfActionSprites = EngineConstants.NumberOfLemmingActions *
+                                          EngineConstants.NumberOfOrientations *
+                                          EngineConstants.NumberOfFacingDirections;
 
         var actionSprites = new LemmingActionSprite[numberOfActionSprites];
 

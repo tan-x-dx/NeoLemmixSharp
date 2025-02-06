@@ -198,6 +198,6 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     [InlineArray(NumberOfCountDownChars)]
     private struct CountDownCharBuffer
     {
-        private char _firstElement;
+        private char _0;
     }
 }

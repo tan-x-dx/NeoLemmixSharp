@@ -216,10 +216,12 @@ public sealed class BoundaryBehaviour
 
     private void UpdateViewPortRenderIntervals()
     {
+        Span<ViewPortRenderInterval> viewPortRenderIntervalSpan = _viewPortRenderIntervals;
+
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
             _viewPortStart + _viewPortLength < _levelLength)
         {
-            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(_viewPortStart, _viewPortLength, -_viewPortStart);
+            viewPortRenderIntervalSpan[0] = new ViewPortRenderInterval(_viewPortStart, _viewPortLength, -_viewPortStart);
             _viewPortSpanLength = 1;
             return;
         }
@@ -229,26 +231,28 @@ public sealed class BoundaryBehaviour
         if (_viewPortLength < _levelLength)
         {
             l1 = _levelLength - _viewPortStart;
-            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(_viewPortStart, l1, -_viewPortStart);
-            _viewPortRenderIntervals[1] = new ViewPortRenderInterval(0, _viewPortLength - l1, _levelLength - _viewPortStart);
+            viewPortRenderIntervalSpan[0] = new ViewPortRenderInterval(_viewPortStart, l1, -_viewPortStart);
+            viewPortRenderIntervalSpan[1] = new ViewPortRenderInterval(0, _viewPortLength - l1, _levelLength - _viewPortStart);
         }
         else
         {
             l1 = _levelLength >> 1;
-            _viewPortRenderIntervals[0] = new ViewPortRenderInterval(0, l1, 0);
-            _viewPortRenderIntervals[1] = new ViewPortRenderInterval(l1, _levelLength - l1, 0);
+            viewPortRenderIntervalSpan[0] = new ViewPortRenderInterval(0, l1, 0);
+            viewPortRenderIntervalSpan[1] = new ViewPortRenderInterval(l1, _levelLength - l1, 0);
         }
     }
 
     private void UpdateScreenRenderIntervals()
     {
+        Span<ScreenRenderInterval> screenRenderIntervalSpan = _screenRenderIntervals;
+
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
             _viewPortStart + _viewPortLength < _levelLength)
         {
             var viewPortDimensionOnScreen = _viewPortLength * _scaleMultiplier;
             _screenStart = (_screenLength - viewPortDimensionOnScreen) >> 1;
 
-            _screenRenderIntervals[0] = new ScreenRenderInterval(0, _viewPortLength, _screenStart, viewPortDimensionOnScreen);
+            screenRenderIntervalSpan[0] = new ScreenRenderInterval(0, _viewPortLength, _screenStart, viewPortDimensionOnScreen);
             _screenSpanLength = 1;
 
             return;
@@ -258,7 +262,7 @@ public sealed class BoundaryBehaviour
 
         if (_viewPortLength < _levelLength)
         {
-            _screenRenderIntervals[0] = new ScreenRenderInterval(0, _viewPortLength, 0, _screenLength);
+            screenRenderIntervalSpan[0] = new ScreenRenderInterval(0, _viewPortLength, 0, _screenLength);
             _screenSpanLength = 1;
 
             return;
@@ -372,13 +376,13 @@ public sealed class BoundaryBehaviour
     [InlineArray(MaxNumberOfRenderIntervals)]
     private struct ViewPortRenderIntervalBuffer
     {
-        private ViewPortRenderInterval _firstElement;
+        private ViewPortRenderInterval _0;
     }
 
     [InlineArray(MaxNumberOfRenderCopiesForWrappedLevels)]
     private struct ScreenRenderIntervalBuffer
     {
-        private ScreenRenderInterval _firstElement;
+        private ScreenRenderInterval _0;
     }
 
     public override string ToString()

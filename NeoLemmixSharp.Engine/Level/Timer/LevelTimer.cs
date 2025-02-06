@@ -126,31 +126,32 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
     {
         var seconds = elapsedSeconds % 60;
         var secondsUnits = seconds % 10;
-        _timerCharBuffer[5] = TextRenderingHelpers.DigitToChar(secondsUnits);
+        Span<char> timerCharBufferSpan = _timerCharBuffer;
+        timerCharBufferSpan[5] = TextRenderingHelpers.DigitToChar(secondsUnits);
 
         if (partialUpdate && secondsUnits != secondUnitsTest)
             return;
 
         var secondsTens = seconds / 10;
-        _timerCharBuffer[4] = TextRenderingHelpers.DigitToChar(secondsTens);
+        timerCharBufferSpan[4] = TextRenderingHelpers.DigitToChar(secondsTens);
 
         if (partialUpdate && secondsTens != secondTensTest)
             return;
 
         var minutes = elapsedSeconds / 60;
         var minutesUnits = minutes % 10;
-        _timerCharBuffer[2] = TextRenderingHelpers.DigitToChar(minutesUnits);
+        timerCharBufferSpan[2] = TextRenderingHelpers.DigitToChar(minutesUnits);
 
         if (partialUpdate && minutesUnits != minutesUnitsTest)
             return;
 
         var minutesTens = (minutes / 10) % 10;
-        _timerCharBuffer[1] = TextRenderingHelpers.DigitToChar(minutesTens);
+        timerCharBufferSpan[1] = TextRenderingHelpers.DigitToChar(minutesTens);
 
         if (partialUpdate && minutesTens != minutesTensTest)
             return;
 
-        _timerCharBuffer[0] = minutes < 100
+        timerCharBufferSpan[0] = minutes < 100
             ? ' '
             : TextRenderingHelpers.DigitToChar(minutes / 100);
     }
@@ -176,6 +177,6 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
     [InlineArray(NumberOfTimerChars)]
     private struct TimerCharBuffer
     {
-        private char _firstElement;
+        private char _0;
     }
 }

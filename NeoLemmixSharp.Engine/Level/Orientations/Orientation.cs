@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitBuffers;
 using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -9,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 
-public readonly struct Orientation : IExtendedEnumType<Orientation>
+public readonly struct Orientation : IIdEquatable<Orientation>
 {
     public static readonly Orientation Down = new(EngineConstants.DownOrientationRotNum);
     public static readonly Orientation Left = new(EngineConstants.LeftOrientationRotNum);
@@ -248,12 +247,16 @@ public readonly struct Orientation : IExtendedEnumType<Orientation>
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Orientation RotateClockwise() => new(RotNum + 1);
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Orientation GetOpposite() => new(RotNum + 2);
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Orientation RotateCounterClockwise() => new(RotNum + 3);
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Orientation Rotate(int clockwiseRotationOffset) => new(RotNum + clockwiseRotationOffset);
 
     int IIdEquatable<Orientation>.Id => RotNum;
@@ -273,19 +276,23 @@ public readonly struct Orientation : IExtendedEnumType<Orientation>
 
     public static bool operator ==(Orientation first, Orientation second) => first.RotNum == second.RotNum;
     public static bool operator !=(Orientation first, Orientation second) => first.RotNum != second.RotNum;
-}
-
-public readonly struct OrientationHasher : IPerfectHasher<Orientation>
-{
-    public int NumberOfItems => EngineConstants.NumberOfOrientations;
 
     [Pure]
-    public int Hash(Orientation item) => item.RotNum;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static OrientationSet CreateBitArraySet(bool fullSet = false) => new(new OrientationHasher(), fullSet);
     [Pure]
-    public Orientation UnHash(int index) => new(index);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static BitArrayDictionary<OrientationHasher, BitBuffer32, Orientation, TValue> CreateBitArrayDictionary<TValue>() => new(new OrientationHasher());
 
-    [Pure]
-    public static OrientationSet CreateBitArraySet(bool fullSet = false) => new(new OrientationHasher(), new BitBuffer32(), fullSet);
-    [Pure]
-    public static BitArrayDictionary<OrientationHasher, BitBuffer32, Orientation, TValue> CreateBitArrayDictionary<TValue>() => new(new OrientationHasher(), new BitBuffer32());
+    public readonly struct OrientationHasher : IBitBufferCreator<BitBuffer32, Orientation>
+    {
+        public int NumberOfItems => EngineConstants.NumberOfOrientations;
+
+        [Pure]
+        public int Hash(Orientation item) => item.RotNum;
+        [Pure]
+        public Orientation UnHash(int index) => new(index);
+
+        public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
+    }
 }

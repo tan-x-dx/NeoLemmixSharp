@@ -13,3 +13,10 @@ public interface IPerfectHasher<T>
     [Pure]
     T UnHash(int index);
 }
+
+public interface IBitBufferCreator<TBuffer, T> : IPerfectHasher<T>
+    where TBuffer : struct, IBitBuffer
+    where T : notnull
+{
+    void CreateBitBuffer(out TBuffer buffer);
+}
