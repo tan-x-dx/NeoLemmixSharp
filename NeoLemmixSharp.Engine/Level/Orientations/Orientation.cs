@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 
-public readonly struct Orientation : IExtendedEnumType<Orientation>
+public readonly struct Orientation : IIdEquatable<Orientation>
 {
     public static readonly Orientation Down = new(EngineConstants.DownOrientationRotNum);
     public static readonly Orientation Left = new(EngineConstants.LeftOrientationRotNum);

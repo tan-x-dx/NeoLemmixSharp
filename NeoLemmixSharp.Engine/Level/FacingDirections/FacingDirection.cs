@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.FacingDirections;
 
-public readonly struct FacingDirection : IExtendedEnumType<FacingDirection>
+public readonly struct FacingDirection : IIdEquatable<FacingDirection>
 {
     public static readonly FacingDirection Right = new(EngineConstants.RightFacingDirectionId);
     public static readonly FacingDirection Left = new(EngineConstants.LeftFacingDirectionId);

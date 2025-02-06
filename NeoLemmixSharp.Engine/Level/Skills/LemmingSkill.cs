@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public abstract class LemmingSkill : IExtendedEnumType<LemmingSkill>
+public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
 {
     private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
     private static readonly LemmingSkillSet ClassicSkills = GetClassicSkills();

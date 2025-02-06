@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public abstract class LemmingAction : IExtendedEnumType<LemmingAction>
+public abstract class LemmingAction : IIdEquatable<LemmingAction>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
     private static readonly LemmingActionSet AirborneActions = GetAirborneActions();
