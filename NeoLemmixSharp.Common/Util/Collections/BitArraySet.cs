@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.Collections;
 
 public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySet<T>
-    where TPerfectHasher : IPerfectHasher<T>, IBitBufferCreator<TBuffer>
+    where TPerfectHasher : IBitBufferCreator<TBuffer, T>
     where TBuffer : struct, IBitBuffer
     where T : notnull
 {

@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -17,7 +18,7 @@ public enum LevelParameters
     EnableFrameControl
 }
 
-public readonly struct LevelParameterHasher : IPerfectHasher<LevelParameters>, IBitBufferCreator<BitBuffer32>
+public readonly struct LevelParameterHasher : IBitBufferCreator<BitBuffer32, LevelParameters>
 {
     public int NumberOfItems => 8;
 
@@ -27,8 +28,10 @@ public readonly struct LevelParameterHasher : IPerfectHasher<LevelParameters>, I
     public LevelParameters UnHash(int index) => (LevelParameters)index;
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static LevelParameterSet CreateBitArraySet(bool fullSet = false) => new(new LevelParameterHasher(), fullSet);
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<LevelParameterHasher, BitBuffer32, LevelParameters, TValue> CreateBitArrayDictionary<TValue>() => new(new LevelParameterHasher());
 
     public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();

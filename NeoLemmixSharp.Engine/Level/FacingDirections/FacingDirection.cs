@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.FacingDirections;
@@ -51,9 +52,11 @@ public readonly struct FacingDirection : IIdEquatable<FacingDirection>
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public FacingDirection GetOpposite() => new(Id + 1);
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.Rotate(-DeltaX);
 
     int IIdEquatable<FacingDirection>.Id => Id;

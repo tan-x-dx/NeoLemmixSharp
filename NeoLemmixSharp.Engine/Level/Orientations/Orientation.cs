@@ -247,12 +247,16 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Orientation RotateClockwise() => new(RotNum + 1);
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Orientation GetOpposite() => new(RotNum + 2);
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Orientation RotateCounterClockwise() => new(RotNum + 3);
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Orientation Rotate(int clockwiseRotationOffset) => new(RotNum + clockwiseRotationOffset);
 
     int IIdEquatable<Orientation>.Id => RotNum;
@@ -280,7 +284,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<OrientationHasher, BitBuffer32, Orientation, TValue> CreateBitArrayDictionary<TValue>() => new(new OrientationHasher());
 
-    public readonly struct OrientationHasher : IPerfectHasher<Orientation>, IBitBufferCreator<BitBuffer32>
+    public readonly struct OrientationHasher : IBitBufferCreator<BitBuffer32, Orientation>
     {
         public int NumberOfItems => EngineConstants.NumberOfOrientations;
 

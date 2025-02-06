@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public sealed class InputController : IPerfectHasher<Keys>, IBitBufferCreator<BitBuffer256>
+public sealed class InputController : IBitBufferCreator<BitBuffer256, Keys>
 {
     private const int NumberOfKeys = 256;
 
@@ -131,7 +131,7 @@ public sealed class InputController : IPerfectHasher<Keys>, IBitBufferCreator<Bi
     int IPerfectHasher<Keys>.NumberOfItems => NumberOfKeys;
     int IPerfectHasher<Keys>.Hash(Keys item) => (int)item;
     Keys IPerfectHasher<Keys>.UnHash(int index) => (Keys)index;
-    void IBitBufferCreator<BitBuffer256>.CreateBitBuffer(out BitBuffer256 buffer) => buffer = new();
+    void IBitBufferCreator<BitBuffer256, Keys>.CreateBitBuffer(out BitBuffer256 buffer) => buffer = new();
 
     private readonly struct KeyToInputMapping(Keys key, InputAction inputAction)
     {

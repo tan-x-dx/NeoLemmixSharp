@@ -12,8 +12,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public sealed class GadgetManager :
     IPerfectHasher<GadgetBase>,
     IItemManager<GadgetBase>,
-    IPerfectHasher<HitBoxGadget>,
-    IBitBufferCreator<ArrayBitBuffer>,
+    IBitBufferCreator<ArrayBitBuffer, HitBoxGadget>,
     ISnapshotDataConvertible<int>,
     IInitialisable,
     IDisposable
@@ -95,7 +94,7 @@ public sealed class GadgetManager :
     GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
     int IPerfectHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
     HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(BitArrayHelpers.CreateBitArray(NumberOfItems, false));
+    void IBitBufferCreator<ArrayBitBuffer, HitBoxGadget>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(BitArrayHelpers.CreateBitArray(NumberOfItems, false));
 
     public void Dispose()
     {

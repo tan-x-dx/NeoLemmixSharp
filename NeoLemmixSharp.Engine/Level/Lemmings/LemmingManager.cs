@@ -14,8 +14,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class LemmingManager :
-    IPerfectHasher<Lemming>,
-    IBitBufferCreator<ArrayBitBuffer>,
+    IBitBufferCreator<ArrayBitBuffer, Lemming>,
     IItemManager<Lemming>,
     ISnapshotDataConvertible<LemmingManagerSnapshotData>,
     IInitialisable,
@@ -369,7 +368,7 @@ public sealed class LemmingManager :
 
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(BitArrayHelpers.CreateBitArray(NumberOfItems, false));
+    void IBitBufferCreator<ArrayBitBuffer, Lemming>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(BitArrayHelpers.CreateBitArray(NumberOfItems, false));
 
     public void Dispose()
     {

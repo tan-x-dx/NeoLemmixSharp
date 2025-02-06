@@ -71,7 +71,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
 
     private static LemmingSkillSet GetClassicSkills()
     {
-        var result = LemmingSkill.CreateBitArraySet();
+        var result = CreateBitArraySet();
 
         result.Add(ClimberSkill.Instance);
         result.Add(FloaterSkill.Instance);
@@ -185,7 +185,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<LemmingSkillHasher, LemmingSkillBitBuffer, LemmingSkill, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingSkillHasher());
 
-    public readonly struct LemmingSkillHasher : IPerfectHasher<LemmingSkill>, IBitBufferCreator<LemmingSkillBitBuffer>
+    public readonly struct LemmingSkillHasher : IBitBufferCreator<LemmingSkillBitBuffer, LemmingSkill>
     {
         [Pure]
         public int NumberOfItems => EngineConstants.NumberOfLemmingSkills;

@@ -16,7 +16,7 @@ public interface ILemmingStateChanger
     bool IsApplied(LemmingState lemmingState);
 }
 
-public sealed class LemmingStateChangerHasher : IPerfectHasher<ILemmingStateChanger>, IBitBufferCreator<BitBuffer32>
+public readonly struct LemmingStateChangerHasher : IBitBufferCreator<BitBuffer32, ILemmingStateChanger>
 {
     public const int ClimberStateChangerId = 0;
     public const int FloaterStateChangerId = 1;
@@ -49,14 +49,12 @@ public sealed class LemmingStateChangerHasher : IPerfectHasher<ILemmingStateChan
         FastForwardSkill.Instance
     ];
 
-    private static readonly LemmingStateChangerHasher Instance = new();
-
     public int NumberOfItems => AllLemmingStateChangers.Length;
     public int Hash(ILemmingStateChanger item) => item.LemmingStateChangerId;
 
     public ILemmingStateChanger UnHash(int index) => AllLemmingStateChangers[index];
 
-    public static StateChangerSet CreateBitArraySet() => new(Instance, false);
+    public static StateChangerSet CreateBitArraySet() => new(new LemmingStateChangerHasher(), false);
 
     public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 }

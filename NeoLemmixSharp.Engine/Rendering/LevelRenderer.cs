@@ -16,8 +16,7 @@ namespace NeoLemmixSharp.Engine.Rendering;
 
 public sealed class LevelRenderer :
     IDisposable,
-    IPerfectHasher<IViewportObjectRenderer>,
-    IBitBufferCreator<ArrayBitBuffer>
+    IBitBufferCreator<ArrayBitBuffer, IViewportObjectRenderer>
 {
     private readonly GraphicsDevice _graphicsDevice;
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
@@ -263,5 +262,5 @@ public sealed class LevelRenderer :
     int IPerfectHasher<IViewportObjectRenderer>.NumberOfItems => _orderedSprites.Count;
     int IPerfectHasher<IViewportObjectRenderer>.Hash(IViewportObjectRenderer item) => item.RendererId;
     IViewportObjectRenderer IPerfectHasher<IViewportObjectRenderer>.UnHash(int index) => _orderedSprites[index];
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(BitArrayHelpers.CreateBitArray(_orderedSprites.Count, false));
+    void IBitBufferCreator<ArrayBitBuffer, IViewportObjectRenderer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(BitArrayHelpers.CreateBitArray(_orderedSprites.Count, false));
 }
