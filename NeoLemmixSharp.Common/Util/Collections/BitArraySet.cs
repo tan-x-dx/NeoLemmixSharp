@@ -155,12 +155,12 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     private sealed class ReferenceTypeEnumerator : IEnumerator<T>
     {
         private readonly TPerfectHasher _hasher;
-        private readonly BitArrayHelpers.ReferenceTypeBitEnumerator _bitEnumerator;
+        private BitArrayHelpers.SimpleBitEnumerator _bitEnumerator;
 
         public ReferenceTypeEnumerator(BitArraySet<TPerfectHasher, TBuffer, T> set)
         {
             _hasher = set._hasher;
-            _bitEnumerator = new BitArrayHelpers.ReferenceTypeBitEnumerator(set._bits.AsReadOnlySpan().ToArray(), set._popCount);
+            _bitEnumerator = new BitArrayHelpers.SimpleBitEnumerator(set._bits.AsReadOnlySpan().ToArray(), set._popCount);
         }
 
         public bool MoveNext() => _bitEnumerator.MoveNext();

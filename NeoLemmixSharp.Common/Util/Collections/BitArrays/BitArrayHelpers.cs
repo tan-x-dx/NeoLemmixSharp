@@ -317,7 +317,7 @@ public static class BitArrayHelpers
         return true;
     }
 
-    internal sealed class ReferenceTypeBitEnumerator : IEnumerator<int>
+    internal struct SimpleBitEnumerator 
     {
         private readonly uint[] _bits;
 
@@ -327,7 +327,7 @@ public static class BitArrayHelpers
 
         public int Current { get; private set; }
 
-        public ReferenceTypeBitEnumerator(uint[] bits, int popCount)
+        public SimpleBitEnumerator(uint[] bits, int popCount)
         {
             _bits = bits;
             _index = 0;
@@ -357,9 +357,5 @@ public static class BitArrayHelpers
             _remaining--;
             return true;
         }
-
-        void IEnumerator.Reset() => throw new InvalidOperationException("Cannot reset");
-        object IEnumerator.Current => Current;
-        void IDisposable.Dispose() { }
     }
 }
