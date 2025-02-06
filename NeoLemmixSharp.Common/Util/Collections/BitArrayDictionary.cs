@@ -26,7 +26,8 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         _hasher = hasher;
         _hasher.CreateBitBuffer(out _bits);
         var numberOfItems = hasher.NumberOfItems;
-        Debug.Assert(numberOfItems <= (_bits.Length << BitArrayHelpers.Shift));
+        if (numberOfItems > (_bits.Length << BitArrayHelpers.Shift))
+            throw new ArgumentException($"Number of items for Hasher exceeds max capacity of bit buffer! Requires: {numberOfItems} bits, buffer has {_bits.Length << BitArrayHelpers.Shift} bits");
         _popCount = 0;
         _values = new TValue[numberOfItems];
     }
