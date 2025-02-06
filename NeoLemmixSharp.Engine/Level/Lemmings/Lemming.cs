@@ -578,6 +578,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
     [InlineArray(JumperAction.JumperPositionCount)]
     public struct JumperPositionBuffer
     {
-        private LevelPosition _firstElement;
+        private LevelPosition _0;
     }
 }

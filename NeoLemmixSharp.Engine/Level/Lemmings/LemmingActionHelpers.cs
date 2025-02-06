@@ -143,6 +143,7 @@ public static class LemmingActionHelpers
         var lemmingOrientationRotNum = lemmingOrientation.RotNum;
 
         var draftDirectionDeltas = new UpdraftBuffer();
+        Span<int> draftDirectionDeltaSpan = draftDirectionDeltas;
 
         var anchorPosition = lemming.LevelPosition;
         var footPosition = lemming.FootPosition;
@@ -174,16 +175,16 @@ public static class LemmingActionHelpers
 
             if (firstMatchingFilter.HitBoxBehaviour == HitBoxBehaviour.Updraft)
             {
-                draftDirectionDeltas[deltaRotNum] = 1;
+                draftDirectionDeltaSpan[deltaRotNum] = 1;
                 continue;
             }
         }
 
-        var dx = draftDirectionDeltas[EngineConstants.RightOrientationRotNum] -
-                 draftDirectionDeltas[EngineConstants.LeftOrientationRotNum];
+        var dx = draftDirectionDeltaSpan[EngineConstants.RightOrientationRotNum] -
+                 draftDirectionDeltaSpan[EngineConstants.LeftOrientationRotNum];
 
-        var dy = draftDirectionDeltas[EngineConstants.UpOrientationRotNum] -
-                 draftDirectionDeltas[EngineConstants.DownOrientationRotNum];
+        var dy = draftDirectionDeltaSpan[EngineConstants.UpOrientationRotNum] -
+                 draftDirectionDeltaSpan[EngineConstants.DownOrientationRotNum];
 
         return new LevelPosition(dx, dy);
     }
@@ -191,6 +192,6 @@ public static class LemmingActionHelpers
     [InlineArray(4)]
     private struct UpdraftBuffer
     {
-        private int _firstElement;
+        private int _0;
     }
 }

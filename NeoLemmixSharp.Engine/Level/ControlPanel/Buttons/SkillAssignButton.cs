@@ -33,14 +33,16 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
 
     public void UpdateSkillCount(int numberOfSkillsAvailable)
     {
+        Span<char> skillCountCharSpan = _skillCountChars;
+
         if (numberOfSkillsAvailable >= EngineConstants.InfiniteSkillCount)
         {
-            _skillCountChars[0] = SkillCountDigitFont.InfinityGlyph;
-            _skillCountChars[1] = ' ';
+            skillCountCharSpan[0] = SkillCountDigitFont.InfinityGlyph;
+            skillCountCharSpan[1] = ' ';
             return;
         }
 
-        TextRenderingHelpers.WriteDigits(_skillCountChars, numberOfSkillsAvailable);
+        TextRenderingHelpers.WriteDigits(skillCountCharSpan, numberOfSkillsAvailable);
     }
 
     public override ReadOnlySpan<char> GetDigitsToRender() => _skillCountChars;
@@ -70,6 +72,6 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
     [InlineArray(NumberOfSkillChars)]
     private struct SkillCharBuffer
     {
-        private char _firstElement;
+        private char _0;
     }
 }

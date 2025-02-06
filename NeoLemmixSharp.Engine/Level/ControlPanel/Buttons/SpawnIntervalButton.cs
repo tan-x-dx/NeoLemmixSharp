@@ -212,6 +212,6 @@ public sealed class SpawnIntervalButton : ControlPanelButton
     [InlineArray(NumberOfSpawnIntervalChars)]
     private struct SpawnIntervalCharBuffer
     {
-        private char _firstElement;
+        private char _0;
     }
 }
