@@ -186,6 +186,17 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
         Lemming lemming,
         bool turnAround)
     {
+        if (lemming.CurrentAction.Id == EngineConstants.BlockerActionId &&
+            Id != EngineConstants.BlockerActionId &&
+            Id != EngineConstants.OhNoerActionId)
+        {
+            // Need to de-register blocker from LemmingManager
+            // when transitioning from a blocker. Exceptions are for
+            // transitions to blocker or ohNoer
+
+            LevelScreen.LemmingManager.DeregisterBlocker(lemming);
+        }
+
         if (turnAround)
         {
             lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());

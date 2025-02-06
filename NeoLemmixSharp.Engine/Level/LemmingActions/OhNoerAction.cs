@@ -35,8 +35,6 @@ public sealed class OhNoerAction : LemmingAction
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             return true;
 
-        LevelScreen.LemmingManager.DeregisterBlocker(lemming);
-
         var updraftFallDelta = GetUpdraftFallDelta(lemming, in gadgetsNearLemming);
 
         var lemmingOrientation = lemming.Orientation;

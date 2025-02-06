@@ -22,6 +22,7 @@ public sealed class LemmingManager :
 {
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
+    private readonly uint[] _bitBuffer;
 
     private readonly LemmingSpacialHashGrid _lemmingPositionHelper;
     private readonly LemmingSpacialHashGrid _zombieSpacialHashGrid;
@@ -31,6 +32,8 @@ public sealed class LemmingManager :
     private readonly int _totalNumberOfHatchLemmings;
     private readonly int _numberOfPreplacedLemmings;
     private readonly int _maxNumberOfClonedLemmings;
+
+    private int _bitArrayBufferUsageCount;
 
     private int _numberOfLemmingsReleasedFromHatch;
     private int _numberOfClonedLemmings;
@@ -76,14 +79,14 @@ public sealed class LemmingManager :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
+        // 2 spacial hash grids + 2 lemming sets
+        const int ExpectedNumberOfLemmingBitSets = 4;
+
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
-        var combinedLemmingBitBuffer = new uint[bitBufferLength * 2];
-        _lemmingsToZombify = new LemmingSet(
-            this,
-            new ArrayBitBuffer(combinedLemmingBitBuffer, bitBufferLength * 0, bitBufferLength));
-        _allBlockers = new LemmingSet(
-            this,
-            new ArrayBitBuffer(combinedLemmingBitBuffer, bitBufferLength * 1, bitBufferLength));
+        _bitBuffer = new uint[bitBufferLength * ExpectedNumberOfLemmingBitSets];
+
+        _lemmingsToZombify = new LemmingSet(this, false);
+        _allBlockers = new LemmingSet(this, false);
 
         _totalNumberOfHatchLemmings = totalNumberOfHatchLemmings;
         _numberOfPreplacedLemmings = numberOfPreplacedLemmings;
@@ -368,7 +371,12 @@ public sealed class LemmingManager :
 
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
-    void IBitBufferCreator<ArrayBitBuffer, Lemming>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(BitArrayHelpers.CreateBitArray(NumberOfItems, false));
+    void IBitBufferCreator<ArrayBitBuffer, Lemming>.CreateBitBuffer(out ArrayBitBuffer buffer)
+    {
+        var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
+        buffer = new(_bitBuffer, bitBufferLength * _bitArrayBufferUsageCount, bitBufferLength);
+        _bitArrayBufferUsageCount++;
+    }
 
     public void Dispose()
     {
