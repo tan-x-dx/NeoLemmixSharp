@@ -33,19 +33,17 @@ public static class BitArrayHelpers
             return Array.Empty<uint>();
 
         var result = new uint[arrayLength];
-        if (!setAllBits)
-            return result;
+        if (setAllBits)
+            PopulateBitArray(result, length);
 
-        PopulateBitArray(result, length);
         return result;
     }
 
     internal static void PopulateBitArray(Span<uint> bitArray, int requiredPopCount)
     {
-        var requiredSpanLength = CalculateBitArrayBufferLength(requiredPopCount);
+        ThrowIfInvalidCapacity(requiredPopCount, bitArray.Length);
 
-        if (requiredSpanLength > bitArray.Length)
-            throw new ArgumentException("Input array too short!");
+        var requiredSpanLength = CalculateBitArrayBufferLength(requiredPopCount);
 
         var subSpan = bitArray[requiredSpanLength..];
         subSpan.Clear();
@@ -53,10 +51,8 @@ public static class BitArrayHelpers
         subSpan.Fill(uint.MaxValue);
 
         var lastIndexPopCount = requiredPopCount & Mask;
-        if (lastIndexPopCount == 0)
-            return;
-
-        subSpan[^1] = (1U << lastIndexPopCount) - 1U;
+        if (lastIndexPopCount != 0)
+            subSpan[^1] = (1U << lastIndexPopCount) - 1U;
     }
 
     internal static void ThrowIfInvalidCapacity(int requiredNumberOfItems, int bufferLength)
