@@ -29,6 +29,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
 
         BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 
+        _bits.AsSpan().Clear();
         _popCount = 0;
         _values = new TValue[numberOfItems];
     }
