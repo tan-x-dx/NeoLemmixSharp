@@ -1,8 +1,7 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Common.Util.Collections;
+namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public sealed class ItemTracker<TPerfectHasher, T>
     where TPerfectHasher : IPerfectHasher<T>
@@ -26,7 +25,7 @@ public sealed class ItemTracker<TPerfectHasher, T>
         for (var i = 0; i < _bits.Length; i++)
         {
             ref var value = ref _bits[i];
-            value = (value << 1) & BigMask;
+            value = value << 1 & BigMask;
         }
     }
 

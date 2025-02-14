@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using System.ComponentModel;
 using System.Runtime.InteropServices;

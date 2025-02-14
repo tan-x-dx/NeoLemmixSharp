@@ -3,7 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Common.Util.Collections;
+namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public interface IBitBuffer
 {

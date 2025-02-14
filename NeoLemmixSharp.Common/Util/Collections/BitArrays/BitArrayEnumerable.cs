@@ -1,8 +1,7 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Common.Util.Collections;
+namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public readonly ref struct BitArrayEnumerable<TPerfectHasher, T>
     where TPerfectHasher : IPerfectHasher<T>
