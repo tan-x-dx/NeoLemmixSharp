@@ -100,6 +100,15 @@ public readonly ref struct DihedralTransformation
         return buffer[..stringLength].ToString();
     }
 
+    public LevelPosition Transform(
+        LevelPosition position,
+        int width,
+        int height)
+    {
+        Transform(position.X, position.Y, width, height, out var x0, out var y0);
+        return new LevelPosition(x0, y0);
+    }
+
     public void Transform(
         int x,
         int y,

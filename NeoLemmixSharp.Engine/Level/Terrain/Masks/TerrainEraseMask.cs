@@ -6,52 +6,55 @@ namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
 public sealed class TerrainEraseMask
 {
-    private readonly IDestructionMask _destructionMask;
+    private readonly int _maskWidth;
+    private readonly int _maskHeight;
+
     private readonly LevelPosition _anchorPoint;
-    private readonly LevelPosition[] _mask;
+    private readonly Range[] _spanRanges;
+    private readonly LevelPosition[] _maskPositions;
+    private readonly IDestructionMask _destructionMask;
 
     public TerrainEraseMask(
-        IDestructionMask destructionMask,
+        int maskWidth,
+        int maskHeight,
         LevelPosition anchorPoint,
-        LevelPosition[] mask)
+        Range[] spanRanges,
+        LevelPosition[] maskPositions,
+        IDestructionMask destructionMask)
     {
-        _destructionMask = destructionMask;
+        _maskWidth = maskWidth;
+        _maskHeight = maskHeight;
         _anchorPoint = anchorPoint;
-        _mask = mask;
+        _spanRanges = spanRanges;
+        _maskPositions = maskPositions;
+        _destructionMask = destructionMask;
     }
 
     public void ApplyEraseMask(
         Orientation orientation,
         FacingDirection facingDirection,
-        LevelPosition position)
+        LevelPosition position,
+        int frame)
     {
-        var offset = position - _anchorPoint;
-        var terrainManager = LevelScreen.TerrainManager;
+        var transformation = new DihedralTransformation(orientation.RotNum, facingDirection == FacingDirection.Left);
 
-        foreach (var pixel in _mask)
+        var offset = position - transformation.Transform(_anchorPoint, _maskWidth, _maskHeight);
+        var terrainManager = LevelScreen.TerrainManager;
+        var maskPositions = GetMaskPositionsForFrame(frame);
+
+        for (var i = 0; i < maskPositions.Length; i++)
         {
+            var pixel = maskPositions[i];
+            pixel = transformation.Transform(pixel, _maskWidth, _maskHeight);
+
             terrainManager.ErasePixel(orientation, _destructionMask, facingDirection, LevelScreen.NormalisePosition(pixel + offset));
         }
     }
 
-    public void Foo(
-        Orientation orientation,
-        FacingDirection facingDirection,
-        Span<PixelType> pixelSpan,
-        int spanWidth,
-        int spanHeight,
-        LevelPosition position)
+    private ReadOnlySpan<LevelPosition> GetMaskPositionsForFrame(int frame)
     {
-        var terrainManager = LevelScreen.TerrainManager;
-        terrainManager.PopulateSpanWithTerrainData(pixelSpan, spanWidth, spanHeight, position.X, position.Y);
-
-        foreach (ref var pixelToErase in pixelSpan)
-        {
-            if (pixelToErase.CanBeDestroyed() &&
-                _destructionMask.CanDestroyPixel(pixelToErase, orientation, facingDirection))
-            {
-                pixelToErase = PixelType.Empty;
-            }
-        }
+        var range = _spanRanges[frame];
+        var span = new ReadOnlySpan<LevelPosition>(_maskPositions);
+        return span[range];
     }
 }

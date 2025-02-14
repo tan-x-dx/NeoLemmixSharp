@@ -150,7 +150,7 @@ public static class BitArrayHelpers
     }
 
     [Pure]
-    internal static int GetPopCount(ReadOnlySpan<uint> bits)
+    public static int GetPopCount(ReadOnlySpan<uint> bits)
     {
         // Basic implementation is faster than using TensorPrimitives - benchmarks
 
