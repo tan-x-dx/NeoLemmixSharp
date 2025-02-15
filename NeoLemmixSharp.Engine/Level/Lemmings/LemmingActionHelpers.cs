@@ -133,8 +133,7 @@ public static class LemmingActionHelpers
     }
 
     [Pure]
-    [SkipLocalsInit]
-    public static LevelPosition GetUpdraftFallDelta(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static unsafe LevelPosition GetUpdraftFallDelta(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (gadgetsNearLemming.Count == 0)
             return new LevelPosition();
@@ -142,8 +141,8 @@ public static class LemmingActionHelpers
         var lemmingOrientation = lemming.Orientation;
         var lemmingOrientationRotNum = lemmingOrientation.RotNum;
 
-        var draftDirectionDeltas = new UpdraftBuffer();
-        Span<int> draftDirectionDeltaSpan = draftDirectionDeltas;
+        // Use raw stack pointers to eliminate bounds checks
+        int* p = stackalloc int[EngineConstants.NumberOfOrientations];
 
         var anchorPosition = lemming.LevelPosition;
         var footPosition = lemming.FootPosition;
@@ -175,23 +174,17 @@ public static class LemmingActionHelpers
 
             if (firstMatchingFilter.HitBoxBehaviour == HitBoxBehaviour.Updraft)
             {
-                draftDirectionDeltaSpan[deltaRotNum] = 1;
+                p[deltaRotNum] = 1;
                 continue;
             }
         }
 
-        var dx = draftDirectionDeltaSpan[EngineConstants.RightOrientationRotNum] -
-                 draftDirectionDeltaSpan[EngineConstants.LeftOrientationRotNum];
+        var dx = p[EngineConstants.RightOrientationRotNum] -
+                 p[EngineConstants.LeftOrientationRotNum];
 
-        var dy = draftDirectionDeltaSpan[EngineConstants.UpOrientationRotNum] -
-                 draftDirectionDeltaSpan[EngineConstants.DownOrientationRotNum];
+        var dy = p[EngineConstants.UpOrientationRotNum] -
+                 p[EngineConstants.DownOrientationRotNum];
 
         return new LevelPosition(dx, dy);
-    }
-
-    [InlineArray(4)]
-    private struct UpdraftBuffer
-    {
-        private int _0;
     }
 }
