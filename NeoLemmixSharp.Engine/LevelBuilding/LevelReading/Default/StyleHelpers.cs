@@ -147,11 +147,11 @@ public static class StyleHelpers
         switch (pieceType)
         {
             case StylePieceType.Terrain:
-                TerrainArchetypeReadingHelpers.ReadTerrainArchetypeData(levelData, rawFileData);
+                TerrainArchetypeReadingHelpers.ReadTerrainArchetypeData(levelData, styleName, pieceName, rawFileData);
                 break;
 
             case StylePieceType.Gadget:
-                GadgetBuilderReadingHelpers.ReadGadgetBuilderData(levelData, rawFileData);
+                GadgetBuilderReadingHelpers.ReadGadgetBuilderData(levelData, styleName, pieceName, rawFileData);
                 break;
 
             default:

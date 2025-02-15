@@ -6,6 +6,8 @@ public static class GadgetBuilderReadingHelpers
 {
     public static void ReadGadgetBuilderData(
         LevelData levelData,
+        string styleName,
+        string pieceName,
         RawFileData rawFileData)
     {
 
