@@ -57,7 +57,9 @@ public sealed class NxlvLevelReader : ILevelReader
 
         ProcessLevelData();
         ProcessTalismans();
-        StyleHelpers.ProcessStyleArchetypeData(_levelData, _uniqueStringSet);
+
+        StyleHelpers.ProcessTerrainArchetypeData(_levelData);
+        StyleHelpers.ProcessGadgetArchetypeData(_levelData, _uniqueStringSet);
 
         NxlvCountHelpers.CalculateHatchCounts(_levelData, _levelDataReader, _gadgetReader);
 

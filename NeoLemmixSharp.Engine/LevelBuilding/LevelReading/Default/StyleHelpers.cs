@@ -1,45 +1,39 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
 public static class StyleHelpers
 {
-    public static void ProcessStyleArchetypeData(
+    public static void ProcessTerrainArchetypeData(
         LevelData levelData)
     {
-        var uniqueStyles = GetUniqueStyles(levelData);
+        var uniqueTerrainDataStyles = CommonHelpers.GetUniqueStyles(levelData, StylePieceType.Terrain);
+        levelData.TerrainArchetypeData.EnsureCapacity(uniqueTerrainDataStyles.ValueCount);
+
+        foreach (var styleGroup in uniqueTerrainDataStyles)
+        {
+            ProcessTerrainStyleData(levelData, styleGroup);
+        }
+    }
+
+    public static void ProcessGadgetArchetypeData(
+        LevelData levelData)
+    {
+        var uniqueStyles = CommonHelpers.GetUniqueStyles(levelData, StylePieceType.Gadget);
 
         foreach (var styleGroup in uniqueStyles)
         {
-            ProcessStyleData(levelData, styleGroup);
+            ProcessGadgetStyleData(levelData, styleGroup);
         }
     }
 
-    private static HashSetLookup<string, string> GetUniqueStyles(LevelData levelData)
-    {
-        var uniqueStyles = new HashSetLookup<string, string>();
-
-        foreach (var terrainData in levelData.AllTerrainData)
-        {
-            uniqueStyles.Add(terrainData.Style, terrainData.TerrainPiece);
-        }
-
-        foreach (var gadgetData in levelData.AllGadgetData)
-        {
-            uniqueStyles.Add(gadgetData.Style, gadgetData.GadgetPiece);
-        }
-
-        if (uniqueStyles.KeyCount == 0)
-            throw new LevelReadingException("No styles specified");
-
-        return uniqueStyles;
-    }
-
-    private static void ProcessStyleData(
+    private static void ProcessTerrainStyleData(
         LevelData levelData,
         HashSetLookup<string, string>.Group styleGroup)
     {
@@ -53,7 +47,24 @@ public static class StyleHelpers
 
         var rawFileData = new RawFileData(styleFilePath);
 
-        ReadLevelDataFromStyle(levelData, rawFileData, styleGroup);
+        ReadLevelDataFromStyle(levelData, rawFileData, styleGroup, StylePieceType.Terrain);
+    }
+
+    private static void ProcessGadgetStyleData(
+        LevelData levelData,
+        HashSetLookup<string, string>.Group styleGroup)
+    {
+        var styleFolderPath = Path.Combine(
+            RootDirectoryManager.StyleFolderDirectory,
+            styleGroup.Key);
+
+        var files = Directory.GetFiles(styleFolderPath);
+        if (!TryLocateStyleFile(files, out var styleFilePath))
+            throw new LevelReadingException($"Could not locate style file in folder: {styleFolderPath}");
+
+        var rawFileData = new RawFileData(styleFilePath);
+
+        ReadLevelDataFromStyle(levelData, rawFileData, styleGroup, StylePieceType.Gadget);
     }
 
     private static bool TryLocateStyleFile(
@@ -75,17 +86,19 @@ public static class StyleHelpers
         return false;
     }
 
+    [SkipLocalsInit]
     private static void ReadLevelDataFromStyle(
         LevelData levelData,
         RawFileData rawFileData,
-        HashSetLookup<string, string>.Group styleGroup)
+        HashSetLookup<string, string>.Group styleGroup,
+        StylePieceType typeIdentifier)
     {
         Span<byte> utf8ByteBuffer = stackalloc byte[256];
         var utf8Encoding = Encoding.UTF8;
 
         foreach (var pieceName in styleGroup)
         {
-            var requiredByteBufferSize = utf8Encoding.GetByteCount(pieceName);
+            var requiredByteBufferSize = 1 + utf8Encoding.GetByteCount(pieceName);
 
             if (utf8ByteBuffer.Length < requiredByteBufferSize)
             {
@@ -93,13 +106,15 @@ public static class StyleHelpers
             }
 
             utf8Encoding.GetBytes(pieceName, utf8ByteBuffer);
+            utf8ByteBuffer[requiredByteBufferSize - 1] = (byte)typeIdentifier;
 
             ProcessPiece(
                 levelData,
                 rawFileData,
                 styleGroup.Key,
                 pieceName,
-                utf8ByteBuffer[..requiredByteBufferSize]);
+                utf8ByteBuffer[..requiredByteBufferSize],
+                typeIdentifier);
         }
     }
 
@@ -108,7 +123,8 @@ public static class StyleHelpers
         RawFileData rawFileData,
         string styleName,
         string pieceName,
-        ReadOnlySpan<byte> pieceByteSpan)
+        ReadOnlySpan<byte> pieceByteSpan,
+        StylePieceType typeIdentifier)
     {
         var pieceExists = rawFileData.TryLocateSpan(pieceByteSpan, out var index);
 
@@ -116,12 +132,7 @@ public static class StyleHelpers
         {
             // If the piece cannot be located within the style file,
             // assume it's a boring terrain piece, and treat it as such.
-            // This will ensure all terrain pieces receive archetype
-            // data. If it turns out that the piece is supposed to be a
-            // gadget, then it's a gadget that we know nothing about,
-            // and therefore cannot create a level featuring it. In such
-            // a case, an exception will be thrown when trying to build
-            // a level with this dud data.
+            // This will ensure all terrain pieces receive archetype data
 
             TerrainArchetypeReadingHelpers.CreateTrivialTerrainArchetypeData(levelData, styleName, pieceName);
 
@@ -130,15 +141,16 @@ public static class StyleHelpers
 
         rawFileData.SetReaderPosition(index + pieceByteSpan.Length);
 
-        byte pieceType = rawFileData.Read8BitUnsignedInteger();
+        var pieceType = (StylePieceType)rawFileData.Read8BitUnsignedInteger();
+        Debug.Assert(pieceType == typeIdentifier);
 
         switch (pieceType)
         {
-            case LevelReadWriteHelpers.StylePieceTerrainType:
+            case StylePieceType.Terrain:
                 TerrainArchetypeReadingHelpers.ReadTerrainArchetypeData(levelData, rawFileData);
                 break;
 
-            case LevelReadWriteHelpers.StylePieceGadgetType:
+            case StylePieceType.Gadget:
                 GadgetBuilderReadingHelpers.ReadGadgetBuilderData(levelData, rawFileData);
                 break;
 

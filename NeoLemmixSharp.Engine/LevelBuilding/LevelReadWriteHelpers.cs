@@ -50,7 +50,7 @@ public static class LevelReadWriteHelpers
 
     public const byte SaveRequirementId = 0x01;
     public const byte TimeRequirementId = 0x02;
-    public const byte BasicSkillSetRequirementId = 0x02;
+    public const byte BasicSkillSetRequirementId = 0x03;
 
     #endregion
 
@@ -120,9 +120,6 @@ public static class LevelReadWriteHelpers
     public static ReadOnlySpan<byte> GadgetDataSectionIdentifier => [0x3D, 0x98];
 
     #endregion
-
-    public const byte StylePieceTerrainType = 0x00;
-    public const byte StylePieceGadgetType = 0x01;
 
     public static void ReaderAssert([DoesNotReturnIf(false)] bool condition, string details)
     {

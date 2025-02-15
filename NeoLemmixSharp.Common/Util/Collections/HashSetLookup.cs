@@ -79,14 +79,7 @@ public sealed class HashSetLookup<TKey, TValue>
 
         public bool MoveNext() => _dictionaryEnumerator.MoveNext();
 
-        public Group Current
-        {
-            get
-            {
-                var (key, set) = _dictionaryEnumerator.Current;
-                return new Group(key, set);
-            }
-        }
+        public Group Current => new(_dictionaryEnumerator.Current);
     }
 
     public readonly struct Group
@@ -100,6 +93,12 @@ public sealed class HashSetLookup<TKey, TValue>
         {
             Key = key;
             _items = items;
+        }
+
+        public Group(KeyValuePair<TKey, HashSet<TValue>> kvp)
+        {
+            Key = kvp.Key;
+            _items = kvp.Value;
         }
 
         public HashSet<TValue>.Enumerator GetEnumerator() => _items.GetEnumerator();

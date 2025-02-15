@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
@@ -12,101 +11,134 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
 public static class StyleHelpers
 {
-    private enum DataType
-    {
-        TerrainData,
-        GadgetData
-    }
-
     private readonly struct PieceAndFileLink(string pieceName, string? correspondingDataFile)
     {
         public readonly string PieceName = pieceName;
         public readonly string? CorrespondingDataFile = correspondingDataFile;
     }
 
-    public static void ProcessStyleArchetypeData(
-        LevelData levelData,
-        UniqueStringSet uniqueStringSet)
+    public static void ProcessTerrainArchetypeData(
+        LevelData levelData)
     {
-        var uniqueTerrainDataStyles = GetUniqueStyles(levelData, DataType.TerrainData);
+        var uniqueTerrainDataStyles = CommonHelpers.GetUniqueStyles(levelData, StylePieceType.Terrain);
         levelData.TerrainArchetypeData.EnsureCapacity(uniqueTerrainDataStyles.ValueCount);
+
+        // Reuse this array to help minimize allocations
+        var singletonArray = new NeoLemmixDataReader[1];
 
         foreach (var styleGroup in uniqueTerrainDataStyles)
         {
-            ProcessStyleData(levelData, uniqueStringSet, styleGroup, DataType.TerrainData);
-        }
-
-        var uniqueGadgetDataStyles = GetUniqueStyles(levelData, DataType.GadgetData);
-        levelData.AllGadgetArchetypeBuilders.EnsureCapacity(uniqueGadgetDataStyles.ValueCount);
-
-        foreach (var styleGroup in uniqueGadgetDataStyles)
-        {
-            ProcessStyleData(levelData, uniqueStringSet, styleGroup, DataType.GadgetData);
+            ProcessTerrainStyleData(levelData, styleGroup, singletonArray);
         }
     }
 
-    private static HashSetLookup<string, string> GetUniqueStyles(
+    private static void ProcessTerrainStyleData(
         LevelData levelData,
-        DataType dataType)
-    {
-        var uniqueStyles = new HashSetLookup<string, string>();
-
-        if (dataType == DataType.TerrainData)
-        {
-            foreach (var terrainData in levelData.AllTerrainData)
-            {
-                uniqueStyles.Add(terrainData.Style, terrainData.TerrainPiece);
-            }
-        }
-        else
-        {
-            foreach (var gadgetData in levelData.AllGadgetData)
-            {
-                uniqueStyles.Add(gadgetData.Style, gadgetData.GadgetPiece);
-            }
-        }
-
-        if (uniqueStyles.KeyCount == 0)
-            throw new LevelReadingException("No styles specified");
-
-        return uniqueStyles;
-    }
-
-    private static void ProcessStyleData(
-        LevelData levelData,
-        UniqueStringSet uniqueStringSet,
         HashSetLookup<string, string>.Group styleGroup,
-        DataType dataType)
+        NeoLemmixDataReader[] singletonArray)
     {
-        string subFolderName;
-        string fileExtension;
-
-        if (dataType == DataType.TerrainData)
-        {
-            subFolderName = DefaultFileExtensions.TerrainFolderName;
-            fileExtension = NeoLemmixFileExtensions.TerrainFileExtension;
-        }
-        else
-        {
-            subFolderName = DefaultFileExtensions.GadgetFolderName;
-            fileExtension = NeoLemmixFileExtensions.GadgetFileExtension;
-        }
-
         var styleFolderPath = Path.Combine(
             RootDirectoryManager.StyleFolderDirectory,
             styleGroup.Key,
-            subFolderName);
+            DefaultFileExtensions.TerrainFolderName);
 
         var files = Directory.GetFiles(styleFolderPath);
-        var neoLemmixDataFileLinks = FindNeoLemmixDataFiles(styleGroup, files, fileExtension);
+        var neoLemmixDataFileLinks = FindNeoLemmixDataFiles(styleGroup, files, NeoLemmixFileExtensions.TerrainFileExtension);
 
-        if (dataType == DataType.TerrainData)
+        ProcessTerrainArchetypeData(levelData, styleGroup.Key, neoLemmixDataFileLinks, singletonArray);
+    }
+
+    private static void ProcessTerrainArchetypeData(
+        LevelData levelData,
+        string styleName,
+        PieceAndFileLink[] neoLemmixDataFileLinks,
+        NeoLemmixDataReader[] singletonArray)
+    {
+        foreach (var pieceAndFileLink in neoLemmixDataFileLinks)
         {
-            ProcessTerrainArchetypeData(levelData, styleGroup.Key, neoLemmixDataFileLinks);
+            TerrainArchetypeData newTerrainArchetypeData;
+            if (pieceAndFileLink.CorrespondingDataFile is null)
+            {
+                newTerrainArchetypeData = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(
+                    styleName,
+                    pieceAndFileLink.PieceName);
+            }
+            else
+            {
+                var terrainArchetypeDataReader = new TerrainArchetypeDataReader(styleName, pieceAndFileLink.PieceName);
+                singletonArray[0] = terrainArchetypeDataReader;
+
+                new DataReaderList(
+                    pieceAndFileLink.CorrespondingDataFile,
+                    singletonArray)
+                    .ReadFile();
+                newTerrainArchetypeData = terrainArchetypeDataReader.CreateTerrainArchetypeData();
+            }
+
+            levelData.TerrainArchetypeData.Add(
+                new LevelData.StylePiecePair(styleName, pieceAndFileLink.PieceName),
+                newTerrainArchetypeData);
         }
-        else
+    }
+
+    public static void ProcessGadgetArchetypeData(
+        LevelData levelData,
+        UniqueStringSet uniqueStringSet)
+    {
+        var uniqueGadgetDataStyles = CommonHelpers.GetUniqueStyles(levelData, StylePieceType.Gadget);
+        levelData.AllGadgetArchetypeBuilders.EnsureCapacity(uniqueGadgetDataStyles.ValueCount);
+
+        // Reuse this array to help minimize allocations
+        var dataReaders = new NeoLemmixDataReader[3];
+
+        foreach (var styleGroup in uniqueGadgetDataStyles)
         {
-            ProcessGadgetArchetypeData(levelData, uniqueStringSet, styleGroup.Key, neoLemmixDataFileLinks);
+            ProcessGadgetStyleData(levelData, uniqueStringSet, styleGroup, dataReaders);
+        }
+    }
+
+    private static void ProcessGadgetStyleData(
+        LevelData levelData,
+        UniqueStringSet uniqueStringSet,
+        HashSetLookup<string, string>.Group styleGroup,
+        NeoLemmixDataReader[] dataReaders)
+    {
+        var styleFolderPath = Path.Combine(
+            RootDirectoryManager.StyleFolderDirectory,
+            styleGroup.Key,
+            DefaultFileExtensions.GadgetFolderName);
+
+        var files = Directory.GetFiles(styleFolderPath);
+        var neoLemmixDataFileLinks = FindNeoLemmixDataFiles(styleGroup, files, NeoLemmixFileExtensions.GadgetFileExtension);
+
+        ProcessGadgetArchetypeData(levelData, uniqueStringSet, styleGroup.Key, neoLemmixDataFileLinks, dataReaders);
+    }
+
+    private static void ProcessGadgetArchetypeData(
+        LevelData levelData,
+        UniqueStringSet uniqueStringSet,
+        string styleName,
+        PieceAndFileLink[] neoLemmixDataFileLinks,
+        NeoLemmixDataReader[] dataReaders)
+    {
+        foreach (var pieceAndFileLink in neoLemmixDataFileLinks)
+        {
+            if (pieceAndFileLink.CorrespondingDataFile is null)
+                throw new InvalidOperationException($"Could not locate NeoLemmix gadget data for gadget: {pieceAndFileLink.PieceName}");
+
+            var gadgetArchetypeData = new NeoLemmixGadgetArchetypeData()
+            {
+                Style = styleName,
+                GadgetPiece = pieceAndFileLink.PieceName
+            };
+            dataReaders[0] = new GadgetArchetypeDataReader(gadgetArchetypeData);
+            dataReaders[1] = new PrimaryAnimationReader(gadgetArchetypeData);
+            dataReaders[2] = new SecondaryAnimationReader(uniqueStringSet, gadgetArchetypeData);
+
+            new DataReaderList(
+                pieceAndFileLink.CorrespondingDataFile,
+                dataReaders)
+                .ReadFile();
         }
     }
 
@@ -141,71 +173,6 @@ public static class StyleHelpers
             }
 
             return null;
-        }
-    }
-
-    private static void ProcessTerrainArchetypeData(
-        LevelData levelData,
-        string styleName,
-        PieceAndFileLink[] neoLemmixDataFileLinks)
-    {
-        // Reuse this array to help minimize allocations
-        var singletonArray = new NeoLemmixDataReader[1];
-
-        foreach (var pieceAndFileLink in neoLemmixDataFileLinks)
-        {
-            TerrainArchetypeData newTerrainArchetypeData;
-            if (pieceAndFileLink.CorrespondingDataFile is null)
-            {
-                newTerrainArchetypeData = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(
-                    styleName,
-                    pieceAndFileLink.PieceName);
-            }
-            else
-            {
-                var terrainArchetypeDataReader = new TerrainArchetypeDataReader(styleName, pieceAndFileLink.PieceName);
-                singletonArray[0] = terrainArchetypeDataReader;
-
-                new DataReaderList(
-                    pieceAndFileLink.CorrespondingDataFile,
-                    singletonArray)
-                    .ReadFile();
-                newTerrainArchetypeData = terrainArchetypeDataReader.CreateTerrainArchetypeData();
-            }
-
-            levelData.TerrainArchetypeData.Add(
-                new LevelData.StylePiecePair(styleName, pieceAndFileLink.PieceName),
-                newTerrainArchetypeData);
-        }
-    }
-
-    private static void ProcessGadgetArchetypeData(
-        LevelData levelData,
-        UniqueStringSet uniqueStringSet,
-        string styleName,
-        PieceAndFileLink[] neoLemmixDataFileLinks)
-    {
-        // Reuse this array to help minimize allocations
-        var dataReaders = new NeoLemmixDataReader[3];
-
-        foreach (var pieceAndFileLink in neoLemmixDataFileLinks)
-        {
-            if (pieceAndFileLink.CorrespondingDataFile is null)
-                throw new InvalidOperationException($"Could not locate NeoLemmix gadget data for gadget: {pieceAndFileLink.PieceName}");
-
-            var gadgetArchetypeData = new NeoLemmixGadgetArchetypeData()
-            {
-                Style = styleName,
-                GadgetPiece = pieceAndFileLink.PieceName
-            };
-            dataReaders[0] = new GadgetArchetypeDataReader(gadgetArchetypeData);
-            dataReaders[1] = new PrimaryAnimationReader(gadgetArchetypeData);
-            dataReaders[2] = new SecondaryAnimationReader(uniqueStringSet, gadgetArchetypeData);
-
-            new DataReaderList(
-                pieceAndFileLink.CorrespondingDataFile,
-                dataReaders)
-                .ReadFile();
         }
     }
 }
