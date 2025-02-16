@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
@@ -9,7 +10,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.T
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat;
 
-public static class StyleHelpers
+public static class NeoLemmixStyleHelpers
 {
     private readonly struct PieceAndFileLink(string pieceName, string? correspondingDataFile)
     {
@@ -20,7 +21,7 @@ public static class StyleHelpers
     public static void ProcessTerrainArchetypeData(
         LevelData levelData)
     {
-        var uniqueTerrainDataStyles = CommonHelpers.GetUniqueStyles(levelData, StylePieceType.Terrain);
+        var uniqueTerrainDataStyles = GetUniqueStyles(levelData, StylePieceType.Terrain);
         levelData.TerrainArchetypeData.EnsureCapacity(uniqueTerrainDataStyles.ValueCount);
 
         // Reuse this array to help minimize allocations
@@ -85,7 +86,7 @@ public static class StyleHelpers
         LevelData levelData,
         UniqueStringSet uniqueStringSet)
     {
-        var uniqueGadgetDataStyles = CommonHelpers.GetUniqueStyles(levelData, StylePieceType.Gadget);
+        var uniqueGadgetDataStyles = GetUniqueStyles(levelData, StylePieceType.Gadget);
         levelData.AllGadgetArchetypeBuilders.EnsureCapacity(uniqueGadgetDataStyles.ValueCount);
 
         // Reuse this array to help minimize allocations
@@ -174,5 +175,32 @@ public static class StyleHelpers
 
             return null;
         }
+    }
+
+    private static HashSetLookup<string, string> GetUniqueStyles(
+        LevelData levelData,
+        StylePieceType dataType)
+    {
+        var uniqueStyles = new HashSetLookup<string, string>();
+
+        if (dataType == StylePieceType.Terrain)
+        {
+            foreach (var terrainData in levelData.AllTerrainData)
+            {
+                uniqueStyles.Add(terrainData.Style, terrainData.TerrainPiece);
+            }
+        }
+        else
+        {
+            foreach (var gadgetData in levelData.AllGadgetData)
+            {
+                uniqueStyles.Add(gadgetData.Style, gadgetData.GadgetPiece);
+            }
+        }
+
+        if (uniqueStyles.KeyCount == 0)
+            throw new LevelReadingException("No styles specified");
+
+        return uniqueStyles;
     }
 }

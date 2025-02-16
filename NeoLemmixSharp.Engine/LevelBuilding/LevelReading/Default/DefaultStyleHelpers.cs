@@ -1,41 +1,90 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
-public static class StyleHelpers
+public static class DefaultStyleHelpers
 {
-    public static void ProcessTerrainArchetypeData(
-        LevelData levelData)
+    private readonly struct PieceAndTypePair(string pieceName, StylePieceType pieceType)
     {
-        var uniqueTerrainDataStyles = CommonHelpers.GetUniqueStyles(levelData, StylePieceType.Terrain);
-        levelData.TerrainArchetypeData.EnsureCapacity(uniqueTerrainDataStyles.ValueCount);
+        public readonly string PieceName = pieceName;
+        public readonly StylePieceType PieceType = pieceType;
+    }
 
-        foreach (var styleGroup in uniqueTerrainDataStyles)
+    private sealed class PieceAndTypePairComparer : IEqualityComparer<PieceAndTypePair>
+    {
+        public bool Equals(PieceAndTypePair x, PieceAndTypePair y)
         {
-            ProcessTerrainStyleData(levelData, styleGroup);
+            return x.PieceType == y.PieceType &&
+                   string.Equals(x.PieceName, y.PieceName);
+        }
+
+        public int GetHashCode([DisallowNull] PieceAndTypePair obj)
+        {
+            return HashCode.Combine(obj.PieceName, obj.PieceType);
         }
     }
 
-    public static void ProcessGadgetArchetypeData(
+    public static void ProcessStyleArchetypeData(
         LevelData levelData)
     {
-        var uniqueStyles = CommonHelpers.GetUniqueStyles(levelData, StylePieceType.Gadget);
+        var uniqueDataStyles = GetUniqueStyles(levelData);
 
-        foreach (var styleGroup in uniqueStyles)
+        var numberOfUniqueTerrainArchetypes = 0;
+        var numberOfUniqueGadgetArchetypes = 0;
+        foreach (var group in uniqueDataStyles)
         {
-            ProcessGadgetStyleData(levelData, styleGroup);
+            foreach (var pair in group)
+            {
+                var pieceType = pair.PieceType;
+                if (pieceType == StylePieceType.Terrain)
+                {
+                    numberOfUniqueTerrainArchetypes++;
+                }
+                else
+                {
+                    numberOfUniqueGadgetArchetypes++;
+                }
+            }
+        }
+
+        levelData.TerrainArchetypeData.EnsureCapacity(numberOfUniqueTerrainArchetypes);
+        levelData.AllGadgetArchetypeBuilders.EnsureCapacity(numberOfUniqueGadgetArchetypes);
+
+        foreach (var styleGroup in uniqueDataStyles)
+        {
+            ProcessStyleData(levelData, styleGroup);
         }
     }
 
-    private static void ProcessTerrainStyleData(
+    private static HashSetLookup<string, PieceAndTypePair> GetUniqueStyles(
+        LevelData levelData)
+    {
+        var uniqueStyles = new HashSetLookup<string, PieceAndTypePair>(valueComparer: new PieceAndTypePairComparer());
+
+        foreach (var terrainData in levelData.AllTerrainData)
+        {
+            uniqueStyles.Add(terrainData.Style, new PieceAndTypePair(terrainData.TerrainPiece, StylePieceType.Terrain));
+        }
+
+        foreach (var gadgetData in levelData.AllGadgetData)
+        {
+            uniqueStyles.Add(gadgetData.Style, new PieceAndTypePair(gadgetData.GadgetPiece, StylePieceType.Gadget));
+        }
+
+        if (uniqueStyles.KeyCount == 0)
+            throw new LevelReadingException("No styles specified");
+
+        return uniqueStyles;
+    }
+
+    private static void ProcessStyleData(
         LevelData levelData,
-        HashSetLookup<string, string>.Group styleGroup)
+        HashSetLookup<string, PieceAndTypePair>.Group styleGroup)
     {
         var styleFolderPath = Path.Combine(
             RootDirectoryManager.StyleFolderDirectory,
@@ -47,24 +96,7 @@ public static class StyleHelpers
 
         var rawFileData = new RawFileData(styleFilePath);
 
-        ReadLevelDataFromStyle(levelData, rawFileData, styleGroup, StylePieceType.Terrain);
-    }
-
-    private static void ProcessGadgetStyleData(
-        LevelData levelData,
-        HashSetLookup<string, string>.Group styleGroup)
-    {
-        var styleFolderPath = Path.Combine(
-            RootDirectoryManager.StyleFolderDirectory,
-            styleGroup.Key);
-
-        var files = Directory.GetFiles(styleFolderPath);
-        if (!TryLocateStyleFile(files, out var styleFilePath))
-            throw new LevelReadingException($"Could not locate style file in folder: {styleFolderPath}");
-
-        var rawFileData = new RawFileData(styleFilePath);
-
-        ReadLevelDataFromStyle(levelData, rawFileData, styleGroup, StylePieceType.Gadget);
+        ReadLevelDataFromStyle(levelData, rawFileData, styleGroup);
     }
 
     private static bool TryLocateStyleFile(
@@ -90,31 +122,29 @@ public static class StyleHelpers
     private static void ReadLevelDataFromStyle(
         LevelData levelData,
         RawFileData rawFileData,
-        HashSetLookup<string, string>.Group styleGroup,
-        StylePieceType typeIdentifier)
+        HashSetLookup<string, PieceAndTypePair>.Group styleGroup)
     {
         Span<byte> utf8ByteBuffer = stackalloc byte[256];
         var utf8Encoding = Encoding.UTF8;
 
-        foreach (var pieceName in styleGroup)
+        foreach (var pair in styleGroup)
         {
-            var requiredByteBufferSize = 1 + utf8Encoding.GetByteCount(pieceName);
+            var requiredByteBufferSize = 1 + utf8Encoding.GetByteCount(pair.PieceName);
 
             if (utf8ByteBuffer.Length < requiredByteBufferSize)
             {
                 utf8ByteBuffer = new byte[requiredByteBufferSize];
             }
 
-            utf8Encoding.GetBytes(pieceName, utf8ByteBuffer);
-            utf8ByteBuffer[requiredByteBufferSize - 1] = (byte)typeIdentifier;
+            utf8Encoding.GetBytes(pair.PieceName, utf8ByteBuffer);
+            utf8ByteBuffer[requiredByteBufferSize - 1] = (byte)pair.PieceType;
 
             ProcessPiece(
                 levelData,
                 rawFileData,
                 styleGroup.Key,
-                pieceName,
-                utf8ByteBuffer[..requiredByteBufferSize],
-                typeIdentifier);
+                pair.PieceName,
+                utf8ByteBuffer[..requiredByteBufferSize]);
         }
     }
 
@@ -123,8 +153,7 @@ public static class StyleHelpers
         RawFileData rawFileData,
         string styleName,
         string pieceName,
-        ReadOnlySpan<byte> pieceByteSpan,
-        StylePieceType typeIdentifier)
+        ReadOnlySpan<byte> pieceByteSpan)
     {
         var pieceExists = rawFileData.TryLocateSpan(pieceByteSpan, out var index);
 
@@ -142,7 +171,6 @@ public static class StyleHelpers
         rawFileData.SetReaderPosition(index + pieceByteSpan.Length);
 
         var pieceType = (StylePieceType)rawFileData.Read8BitUnsignedInteger();
-        Debug.Assert(pieceType == typeIdentifier);
 
         switch (pieceType)
         {
