@@ -1,11 +1,12 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Styles.Gadgets;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Styles;
 
 public static class DefaultStyleHelpers
 {
@@ -32,25 +33,10 @@ public static class DefaultStyleHelpers
     public static void ProcessStyleArchetypeData(
         LevelData levelData)
     {
-        var uniqueDataStyles = GetUniqueStyles(levelData);
-
-        var numberOfUniqueTerrainArchetypes = 0;
-        var numberOfUniqueGadgetArchetypes = 0;
-        foreach (var group in uniqueDataStyles)
-        {
-            foreach (var pair in group)
-            {
-                var pieceType = pair.PieceType;
-                if (pieceType == StylePieceType.Terrain)
-                {
-                    numberOfUniqueTerrainArchetypes++;
-                }
-                else
-                {
-                    numberOfUniqueGadgetArchetypes++;
-                }
-            }
-        }
+        var uniqueDataStyles = GetUniqueStyles(
+            levelData,
+            out var numberOfUniqueTerrainArchetypes,
+            out var numberOfUniqueGadgetArchetypes);
 
         levelData.TerrainArchetypeData.EnsureCapacity(numberOfUniqueTerrainArchetypes);
         levelData.AllGadgetArchetypeBuilders.EnsureCapacity(numberOfUniqueGadgetArchetypes);
@@ -62,19 +48,33 @@ public static class DefaultStyleHelpers
     }
 
     private static HashSetLookup<string, PieceAndTypePair> GetUniqueStyles(
-        LevelData levelData)
+        LevelData levelData,
+        out int numberOfUniqueTerrainArchetypes,
+        out int numberOfUniqueGadgetArchetypes)
     {
         var uniqueStyles = new HashSetLookup<string, PieceAndTypePair>(valueComparer: new PieceAndTypePairComparer());
 
+        var count = 0;
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            uniqueStyles.Add(terrainData.Style, new PieceAndTypePair(terrainData.TerrainPiece, StylePieceType.Terrain));
+            if (uniqueStyles.Add(terrainData.Style, new PieceAndTypePair(terrainData.TerrainPiece, StylePieceType.Terrain)))
+            {
+                count++;
+            }
         }
+
+        numberOfUniqueTerrainArchetypes = count;
+        count = 0;
 
         foreach (var gadgetData in levelData.AllGadgetData)
         {
-            uniqueStyles.Add(gadgetData.Style, new PieceAndTypePair(gadgetData.GadgetPiece, StylePieceType.Gadget));
+            if (uniqueStyles.Add(gadgetData.Style, new PieceAndTypePair(gadgetData.GadgetPiece, StylePieceType.Gadget)))
+            {
+                count++;
+            }
         }
+
+        numberOfUniqueGadgetArchetypes = count;
 
         if (uniqueStyles.KeyCount == 0)
             throw new LevelReadingException("No styles specified");
@@ -129,6 +129,7 @@ public static class DefaultStyleHelpers
 
         foreach (var pair in styleGroup)
         {
+            // Add one for the type identifier byte at the end
             var requiredByteBufferSize = 1 + utf8Encoding.GetByteCount(pair.PieceName);
 
             if (utf8ByteBuffer.Length < requiredByteBufferSize)
@@ -144,7 +145,8 @@ public static class DefaultStyleHelpers
                 rawFileData,
                 styleGroup.Key,
                 pair.PieceName,
-                utf8ByteBuffer[..requiredByteBufferSize]);
+                utf8ByteBuffer[..requiredByteBufferSize],
+                pair.PieceType);
         }
     }
 
@@ -153,33 +155,30 @@ public static class DefaultStyleHelpers
         RawFileData rawFileData,
         string styleName,
         string pieceName,
-        ReadOnlySpan<byte> pieceByteSpan)
+        ReadOnlySpan<byte> pieceByteSpan,
+        StylePieceType pieceType)
     {
         var pieceExists = rawFileData.TryLocateSpan(pieceByteSpan, out var index);
 
-        if (!pieceExists)
-        {
-            // If the piece cannot be located within the style file,
-            // assume it's a boring terrain piece, and treat it as such.
-            // This will ensure all terrain pieces receive archetype data
-
-            TerrainArchetypeReadingHelpers.CreateTrivialTerrainArchetypeData(levelData, styleName, pieceName);
-
-            return;
-        }
-
         rawFileData.SetReaderPosition(index + pieceByteSpan.Length);
-
-        var pieceType = (StylePieceType)rawFileData.Read8BitUnsignedInteger();
 
         switch (pieceType)
         {
             case StylePieceType.Terrain:
-                TerrainArchetypeReadingHelpers.ReadTerrainArchetypeData(levelData, styleName, pieceName, rawFileData);
+
+                var newTerrainArchetypeData = TerrainArchetypeReadingHelpers.GetTerrainArchetypeData(styleName, pieceName, rawFileData, pieceExists);
+
+                levelData.TerrainArchetypeData.Add(
+                    new LevelData.StylePiecePair(styleName, pieceName),
+                    newTerrainArchetypeData);
                 break;
 
             case StylePieceType.Gadget:
-                GadgetBuilderReadingHelpers.ReadGadgetBuilderData(levelData, styleName, pieceName, rawFileData);
+                var newGadgetArchetypeBuilder = GadgetBuilderReadingHelpers.GetGadgetBuilderData(styleName, pieceName, rawFileData, pieceExists);
+
+                levelData.AllGadgetArchetypeBuilders.Add(
+                    new LevelData.StylePiecePair(styleName, pieceName),
+                    newGadgetArchetypeBuilder);
                 break;
 
             default:

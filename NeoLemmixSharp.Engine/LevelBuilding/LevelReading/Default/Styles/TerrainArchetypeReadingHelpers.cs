@@ -1,13 +1,28 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Styles;
 
 public static class TerrainArchetypeReadingHelpers
 {
-    public static void ReadTerrainArchetypeData(
-        LevelData levelData,
+    public static TerrainArchetypeData GetTerrainArchetypeData(
+        string styleName,
+        string pieceName,
+        RawFileData rawFileData,
+        bool pieceExists)
+    {
+        if (pieceExists)
+            return ReadTerrainArchetypeData(
+                styleName,
+                pieceName,
+                rawFileData);
+
+        return TerrainArchetypeData.CreateTrivialTerrainArchetypeData(
+            styleName,
+            pieceName);
+    }
+
+    private static TerrainArchetypeData ReadTerrainArchetypeData(
         string styleName,
         string pieceName,
         RawFileData rawFileData)
@@ -73,9 +88,7 @@ public static class TerrainArchetypeReadingHelpers
             NineSliceRight = nineSliceRight
         };
 
-        levelData.TerrainArchetypeData.Add(
-            new LevelData.StylePiecePair(styleName, pieceName),
-            newTerrainArchetypeData);
+        return newTerrainArchetypeData;
     }
 
     private static void AssertTerrainArchetypeBytesMakeSense(
@@ -87,21 +100,7 @@ public static class TerrainArchetypeReadingHelpers
             return;
 
         throw new LevelReadingException(
-            "Wrong number of bytes read for level data section! " +
+            "Wrong number of bytes read for terrain archetype data section! " +
             $"Expected: {numberOfBytesToRead}, Actual: {bytesRead - initialBytesRead}");
-    }
-
-    public static void CreateTrivialTerrainArchetypeData(
-        LevelData levelData,
-        string styleName,
-        string pieceName)
-    {
-        var newTerrainArchetypeData = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(
-            styleName,
-            pieceName);
-
-        levelData.TerrainArchetypeData.Add(
-            new LevelData.StylePiecePair(styleName, pieceName),
-            newTerrainArchetypeData);
     }
 }

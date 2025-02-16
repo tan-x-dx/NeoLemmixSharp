@@ -21,8 +21,8 @@ public static class NeoLemmixStyleHelpers
     public static void ProcessTerrainArchetypeData(
         LevelData levelData)
     {
-        var uniqueTerrainDataStyles = GetUniqueStyles(levelData, StylePieceType.Terrain);
-        levelData.TerrainArchetypeData.EnsureCapacity(uniqueTerrainDataStyles.ValueCount);
+        var uniqueTerrainDataStyles = GetUniqueStyles(levelData, StylePieceType.Terrain, out var requiredCapacity);
+        levelData.TerrainArchetypeData.EnsureCapacity(requiredCapacity);
 
         // Reuse this array to help minimize allocations
         var singletonArray = new NeoLemmixDataReader[1];
@@ -86,8 +86,8 @@ public static class NeoLemmixStyleHelpers
         LevelData levelData,
         UniqueStringSet uniqueStringSet)
     {
-        var uniqueGadgetDataStyles = GetUniqueStyles(levelData, StylePieceType.Gadget);
-        levelData.AllGadgetArchetypeBuilders.EnsureCapacity(uniqueGadgetDataStyles.ValueCount);
+        var uniqueGadgetDataStyles = GetUniqueStyles(levelData, StylePieceType.Gadget, out var requiredCapacity);
+        levelData.AllGadgetArchetypeBuilders.EnsureCapacity(requiredCapacity);
 
         // Reuse this array to help minimize allocations
         var dataReaders = new NeoLemmixDataReader[3];
@@ -179,24 +179,34 @@ public static class NeoLemmixStyleHelpers
 
     private static HashSetLookup<string, string> GetUniqueStyles(
         LevelData levelData,
-        StylePieceType dataType)
+        StylePieceType dataType,
+        out int numberOfUniqueItems)
     {
         var uniqueStyles = new HashSetLookup<string, string>();
 
+        var count = 0;
         if (dataType == StylePieceType.Terrain)
         {
             foreach (var terrainData in levelData.AllTerrainData)
             {
-                uniqueStyles.Add(terrainData.Style, terrainData.TerrainPiece);
+                if (uniqueStyles.Add(terrainData.Style, terrainData.TerrainPiece))
+                {
+                    count++;
+                }
             }
         }
         else
         {
             foreach (var gadgetData in levelData.AllGadgetData)
             {
-                uniqueStyles.Add(gadgetData.Style, gadgetData.GadgetPiece);
+                if (uniqueStyles.Add(gadgetData.Style, gadgetData.GadgetPiece))
+                {
+                    count++;
+                }
             }
         }
+
+        numberOfUniqueItems = count;
 
         if (uniqueStyles.KeyCount == 0)
             throw new LevelReadingException("No styles specified");

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Styles;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 

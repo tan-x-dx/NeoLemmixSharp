@@ -7,9 +7,8 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
 public sealed class AndGateArchetypeBuilder : IGadgetArchetypeBuilder
 {
-    public int GadgetBuilderId { get; }
-    public required string Style { get; init; }
-    public required string GadgetPiece { get; init; }
+    public required string StyleName { get; init; }
+    public required string PieceName { get; init; }
 
     public required SpriteData SpriteData { get; init; }
 
