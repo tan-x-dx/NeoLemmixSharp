@@ -33,7 +33,7 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
     private GadgetData ReadNextGadgetData(RawFileData rawFileData, LevelData levelData)
     {
         int numberOfBytesToRead = rawFileData.Read16BitUnsignedInteger();
-        int initialBytesRead = rawFileData.BytesRead;
+        int initialPosition = rawFileData.Position;
 
         int styleId = rawFileData.Read16BitUnsignedInteger();
         int pieceId = rawFileData.Read16BitUnsignedInteger();
@@ -73,8 +73,8 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
         }
 
         AssertGadgetDataBytesMakeSense(
-            rawFileData.BytesRead,
-            initialBytesRead,
+            rawFileData.Position,
+            initialPosition,
             numberOfBytesToRead);
 
         return result;
@@ -118,15 +118,15 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
     }
 
     private static void AssertGadgetDataBytesMakeSense(
-        int bytesRead,
-        int initialBytesRead,
-        int numberOfBytesToRead)
+        int currentPosition,
+        int initialPosition,
+        int expectedByteCount)
     {
-        if (bytesRead - initialBytesRead == numberOfBytesToRead)
+        if (currentPosition - initialPosition == expectedByteCount)
             return;
 
         throw new LevelReadingException(
             "Wrong number of bytes read for gadget data! " +
-            $"Expected: {numberOfBytesToRead}, Actual: {bytesRead - initialBytesRead}");
+            $"Expected: {expectedByteCount}, Actual: {currentPosition - initialPosition}");
     }
 }

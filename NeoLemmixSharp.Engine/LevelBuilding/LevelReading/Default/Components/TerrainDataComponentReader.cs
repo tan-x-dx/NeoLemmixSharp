@@ -34,7 +34,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
     private TerrainData ReadNextTerrainData(RawFileData rawFileData)
     {
         int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
-        int initialBytesRead = rawFileData.BytesRead;
+        int initialPosition = rawFileData.Position;
 
         int styleId = rawFileData.Read16BitUnsignedInteger();
         int pieceId = rawFileData.Read16BitUnsignedInteger();
@@ -67,8 +67,8 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
         }
 
         AssertTerrainDataBytesMakeSense(
-            rawFileData.BytesRead,
-            initialBytesRead,
+            rawFileData.Position,
+            initialPosition,
             numberOfBytesToRead);
 
         return new TerrainData
@@ -100,15 +100,15 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
     }
 
     private static void AssertTerrainDataBytesMakeSense(
-        int bytesRead,
-        int initialBytesRead,
-        int numberOfBytesToRead)
+        int currentPosition,
+        int initialPosition,
+        int expectedByteCount)
     {
-        if (bytesRead - initialBytesRead == numberOfBytesToRead)
+        if (currentPosition - initialPosition == expectedByteCount)
             return;
 
         throw new LevelReadingException(
             "Wrong number of bytes read for terrain data! " +
-            $"Expected: {numberOfBytesToRead}, Actual: {bytesRead - initialBytesRead}");
+            $"Expected: {expectedByteCount}, Actual: {currentPosition - initialPosition}");
     }
 }

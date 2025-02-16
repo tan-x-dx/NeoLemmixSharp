@@ -28,7 +28,7 @@ public static class TerrainArchetypeReadingHelpers
         RawFileData rawFileData)
     {
         int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
-        int initialBytesRead = rawFileData.BytesRead;
+        int initialPosition = rawFileData.Position;
 
         byte terrainArchetypeDataByte = rawFileData.Read8BitUnsignedInteger();
         LevelReadWriteHelpers.DecipherTerrainArchetypeDataByte(
@@ -67,8 +67,8 @@ public static class TerrainArchetypeReadingHelpers
         }
 
         AssertTerrainArchetypeBytesMakeSense(
-            rawFileData.BytesRead,
-            initialBytesRead,
+            rawFileData.Position,
+            initialPosition,
             numberOfBytesToRead);
 
         var newTerrainArchetypeData = new TerrainArchetypeData
@@ -92,15 +92,15 @@ public static class TerrainArchetypeReadingHelpers
     }
 
     private static void AssertTerrainArchetypeBytesMakeSense(
-        int bytesRead,
-        int initialBytesRead,
-        int numberOfBytesToRead)
+        int currentPosition,
+        int initialPosition,
+        int expectedByteCount)
     {
-        if (bytesRead - initialBytesRead == numberOfBytesToRead)
+        if (currentPosition - initialPosition == expectedByteCount)
             return;
 
         throw new LevelReadingException(
             "Wrong number of bytes read for terrain archetype data section! " +
-            $"Expected: {numberOfBytesToRead}, Actual: {bytesRead - initialBytesRead}");
+            $"Expected: {expectedByteCount}, Actual: {currentPosition - initialPosition}");
     }
 }

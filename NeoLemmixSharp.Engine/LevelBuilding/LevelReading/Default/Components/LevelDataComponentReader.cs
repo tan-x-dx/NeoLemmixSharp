@@ -25,7 +25,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
         LevelReadWriteHelpers.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
 
         int numberOfBytesToRead = rawFileData.Read16BitUnsignedInteger();
-        int initialBytesRead = rawFileData.BytesRead;
+        int initialPosition = rawFileData.Position;
 
         int stringId = rawFileData.Read16BitUnsignedInteger();
         levelData.LevelTitle = _stringIdLookup[stringId];
@@ -43,8 +43,8 @@ public sealed class LevelDataComponentReader : ILevelDataReader
         ReadBackgroundData(rawFileData, levelData);
 
         AssertLevelDataBytesMakeSense(
-            rawFileData.BytesRead,
-            initialBytesRead,
+            rawFileData.Position,
+            initialPosition,
             numberOfBytesToRead);
     }
 
@@ -121,15 +121,15 @@ public sealed class LevelDataComponentReader : ILevelDataReader
     }
 
     private static void AssertLevelDataBytesMakeSense(
-        int bytesRead,
-        int initialBytesRead,
-        int numberOfBytesToRead)
+        int currentPosition,
+        int initialPosition,
+        int expectedByteCount)
     {
-        if (bytesRead - initialBytesRead == numberOfBytesToRead)
+        if (currentPosition - initialPosition == expectedByteCount)
             return;
 
         throw new LevelReadingException(
             "Wrong number of bytes read for level data section! " +
-            $"Expected: {numberOfBytesToRead}, Actual: {bytesRead - initialBytesRead}");
+            $"Expected: {expectedByteCount}, Actual: {currentPosition - initialPosition}");
     }
 }

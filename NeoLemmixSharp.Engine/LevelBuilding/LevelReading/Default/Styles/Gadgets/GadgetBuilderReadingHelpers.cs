@@ -27,7 +27,7 @@ public static class GadgetBuilderReadingHelpers
         RawFileData rawFileData)
     {
         int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
-        int initialBytesRead = rawFileData.BytesRead;
+        int initialPosition = rawFileData.Position;
 
         var basicGadgetType = (GadgetType)rawFileData.Read8BitUnsignedInteger();
 
@@ -47,8 +47,8 @@ public static class GadgetBuilderReadingHelpers
         };
 
         AssertGadgetArchetypeBytesMakeSense(
-            rawFileData.BytesRead,
-            initialBytesRead,
+            rawFileData.Position,
+            initialPosition,
             numberOfBytesToRead);
 
         return result;
@@ -61,15 +61,15 @@ public static class GadgetBuilderReadingHelpers
     }
 
     private static void AssertGadgetArchetypeBytesMakeSense(
-        int bytesRead,
-        int initialBytesRead,
-        int numberOfBytesToRead)
+        int currentPosition,
+        int initialPosition,
+        int expectedByteCount)
     {
-        if (bytesRead - initialBytesRead == numberOfBytesToRead)
+        if (currentPosition - initialPosition == expectedByteCount)
             return;
 
         throw new LevelReadingException(
             "Wrong number of bytes read for gadget archetype data section! " +
-            $"Expected: {numberOfBytesToRead}, Actual: {bytesRead - initialBytesRead}");
+            $"Expected: {expectedByteCount}, Actual: {currentPosition - initialPosition}");
     }
 }
