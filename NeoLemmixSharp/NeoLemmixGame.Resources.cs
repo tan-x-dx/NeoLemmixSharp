@@ -5,7 +5,6 @@ using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -96,24 +95,16 @@ public sealed partial class NeoLemmixGame
             if (string.IsNullOrWhiteSpace(particleResourceName))
                 throw new InvalidOperationException($"Could not load {resourceName}!");
 
-            Stream? stream = null;
-
             var byteLength = 0;
 
-            try
-            {
-                stream = assembly.GetManifestResourceStream(particleResourceName)!;
-                byteLength = (int)stream.Length;
+            using var stream = assembly.GetManifestResourceStream(particleResourceName)!;
 
-                if (byteBuffer.Length < byteLength)
-                    throw new InvalidOperationException($"Byte buffer size mismatch! Buffer size: {byteBuffer.Length}, file length: {byteLength}");
+            byteLength = (int)stream.Length;
 
-                stream.ReadExactly(byteBuffer[..byteLength]);
-            }
-            finally
-            {
-                stream?.Dispose();
-            }
+            if (byteBuffer.Length < byteLength)
+                throw new InvalidOperationException($"Byte buffer size mismatch! Buffer size: {byteBuffer.Length}, file length: {byteLength}");
+
+            stream.ReadExactly(byteBuffer[..byteLength]);
 
             return byteLength;
         }

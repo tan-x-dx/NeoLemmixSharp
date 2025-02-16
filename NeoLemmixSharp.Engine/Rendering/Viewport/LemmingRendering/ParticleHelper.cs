@@ -14,7 +14,7 @@ public static class ParticleHelper
     private static readonly sbyte[] ParticleOffsets = new sbyte[ByteLength];
 
     [Pure]
-    public static Span<byte> GetByteBuffer() => MemoryMarshal.Cast<sbyte, byte>(new Span<sbyte>(ParticleOffsets));
+    public static Span<byte> GetByteBuffer() => MemoryMarshal.Cast<sbyte, byte>(ParticleOffsets);
 
     [Pure]
     public static LevelPosition GetParticleOffsets(
@@ -22,10 +22,7 @@ public static class ParticleHelper
         int particleId)
     {
         var index = GetParticleIndex(frame, particleId);
-
-        var span = new ReadOnlySpan<sbyte>(ParticleOffsets, index, NumberOfBytesPerCall);
-
-        return new LevelPosition(span[0], span[1]);
+        return new LevelPosition(ParticleOffsets[index], ParticleOffsets[index + 1]);
     }
 
     [Pure]

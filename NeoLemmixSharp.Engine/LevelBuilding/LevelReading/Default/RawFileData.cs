@@ -26,7 +26,7 @@ public sealed class RawFileData
 
             _byteBuffer = GC.AllocateUninitializedArray<byte>((int)fileSizeInBytes);
 
-            fileStream.ReadExactly(new Span<byte>(_byteBuffer));
+            fileStream.ReadExactly(_byteBuffer);
         }
 
         Version = ReadVersion();
