@@ -32,6 +32,14 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     }
 
     [DebuggerStepThrough]
+    public LevelRegion(LevelPosition position)
+    {
+        P = position;
+        W = 1;
+        H = 1;
+    }
+
+    [DebuggerStepThrough]
     public LevelRegion(LevelPosition position, LevelSize size)
     {
         P = position;
@@ -167,7 +175,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     [SkipLocalsInit]
     public override string ToString()
     {
-        Span<char> buffer = stackalloc char[(1 + 11 + 1 + 11 + 1) * 2];
+        Span<char> buffer = stackalloc char[(1 + 11 + 1 + 10 + 1) * 2];
         TryFormat(buffer, out var charsWritten);
         return buffer[..charsWritten].ToString();
     }

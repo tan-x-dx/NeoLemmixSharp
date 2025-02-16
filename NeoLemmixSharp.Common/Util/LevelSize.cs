@@ -40,7 +40,7 @@ public readonly struct LevelSize : IEquatable<LevelSize>
     [SkipLocalsInit]
     public override string ToString()
     {
-        Span<char> buffer = stackalloc char[1 + 11 + 1 + 11 + 1];
+        Span<char> buffer = stackalloc char[1 + 10 + 1 + 10 + 1];
         TryFormat(buffer, out var charsWritten);
         return buffer[..charsWritten].ToString();
     }
