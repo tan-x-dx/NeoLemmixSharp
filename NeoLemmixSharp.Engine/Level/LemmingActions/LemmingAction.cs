@@ -15,7 +15,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     private static readonly LemmingActionSet AirborneActions = GetAirborneActions();
     private static readonly LemmingActionSet OneTimeActions = GetOneTimeActions();
 
-    public static int NumberOfItems => EngineConstants.NumberOfLemmingActions;
+    public const int NumberOfItems = EngineConstants.NumberOfLemmingActions;
     public static ReadOnlySpan<LemmingAction> AllItems => new(LemmingActions);
 
     private static LemmingAction[] RegisterAllLemmingActions()
