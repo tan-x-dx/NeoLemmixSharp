@@ -232,7 +232,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<LemmingActionHasher, LemmingActionBitBuffer, LemmingAction, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingActionHasher());
 
-    public readonly struct LemmingActionHasher : IBitBufferCreator<LemmingActionBitBuffer, LemmingAction>
+    public readonly struct LemmingActionHasher : IPerfectHasher<LemmingAction>, IBitBufferCreator<LemmingActionBitBuffer>
     {
         [Pure]
         public int NumberOfItems => EngineConstants.NumberOfLemmingActions;

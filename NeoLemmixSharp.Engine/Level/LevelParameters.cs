@@ -18,7 +18,7 @@ public enum LevelParameters
     EnableFrameControl
 }
 
-public readonly struct LevelParameterHasher : IBitBufferCreator<BitBuffer32, LevelParameters>
+public readonly struct LevelParameterHasher : IPerfectHasher<LevelParameters>, IBitBufferCreator<BitBuffer32>
 {
     public int NumberOfItems => 8;
 

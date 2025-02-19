@@ -16,7 +16,7 @@ public interface ILemmingStateChanger
     bool IsApplied(LemmingState lemmingState);
 }
 
-public readonly struct LemmingStateChangerHasher : IBitBufferCreator<BitBuffer32, ILemmingStateChanger>
+public readonly struct LemmingStateChangerHasher : IPerfectHasher<ILemmingStateChanger>, IBitBufferCreator<BitBuffer32>
 {
     public const int ClimberStateChangerId = 0;
     public const int FloaterStateChangerId = 1;

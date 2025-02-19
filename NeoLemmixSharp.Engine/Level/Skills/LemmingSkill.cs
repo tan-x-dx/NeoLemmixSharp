@@ -184,7 +184,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<LemmingSkillHasher, LemmingSkillBitBuffer, LemmingSkill, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingSkillHasher());
 
-    public readonly struct LemmingSkillHasher : IBitBufferCreator<LemmingSkillBitBuffer, LemmingSkill>
+    public readonly struct LemmingSkillHasher : IPerfectHasher<LemmingSkill>, IBitBufferCreator<LemmingSkillBitBuffer>
     {
         [Pure]
         public int NumberOfItems => EngineConstants.NumberOfLemmingSkills;

@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
 public sealed class SpacialHashGrid<TPerfectHasher, T>
-    where TPerfectHasher : class, IBitBufferCreator<ArrayBitBuffer, T>
+    where TPerfectHasher : class, IPerfectHasher<T>, IBitBufferCreator<ArrayBitBuffer>
     where T : class, IPreviousRectangularBounds
 {
     private readonly TPerfectHasher _hasher;

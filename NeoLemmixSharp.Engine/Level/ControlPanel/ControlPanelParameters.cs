@@ -20,7 +20,7 @@ public enum ControlPanelParameters
     ShowExpandedAthleteInformation
 }
 
-public readonly struct ControlPanelParameterHasher : IBitBufferCreator<BitBuffer32, ControlPanelParameters>
+public readonly struct ControlPanelParameterHasher : IPerfectHasher<ControlPanelParameters>, IBitBufferCreator<BitBuffer32>
 {
     public int NumberOfItems => 12;
 
