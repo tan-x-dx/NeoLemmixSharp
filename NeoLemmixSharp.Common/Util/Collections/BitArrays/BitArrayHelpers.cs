@@ -83,7 +83,7 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to set</param>
     /// <param name="popCount">Will be incremented if the operation changes the contents of the span</param>
     /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously set</returns>
-    public static bool SetBit(Span<uint> bits, int index, ref int popCount)
+    internal static bool SetBit(Span<uint> bits, int index, ref int popCount)
     {
         ref var arrayValue = ref bits[index >> Shift];
         var oldValue = arrayValue;
@@ -111,7 +111,7 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to clear</param>v
     /// <param name="popCount">Will be decremented if the operation changes the contents of the span</param>
     /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously clear</returns>
-    public static bool ClearBit(Span<uint> bits, int index, ref int popCount)
+    internal static bool ClearBit(Span<uint> bits, int index, ref int popCount)
     {
         ref var arrayValue = ref bits[index >> Shift];
         var oldValue = arrayValue;
