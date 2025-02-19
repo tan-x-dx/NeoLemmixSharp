@@ -184,7 +184,7 @@ public sealed class LemmingManager :
         _lemmingsToZombify.Clear();
     }
 
-    private void UpdateLemmingPosition(Lemming lemming)
+    public void UpdateLemmingPosition(Lemming lemming)
     {
         if (!lemming.State.IsActive)
             return;

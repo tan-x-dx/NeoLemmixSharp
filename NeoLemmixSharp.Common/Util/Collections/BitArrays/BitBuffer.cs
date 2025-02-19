@@ -93,9 +93,9 @@ public struct BitBuffer256 : IBitBuffer
 
 public readonly struct ArrayBitBuffer : IBitBuffer
 {
-    private readonly uint[] _array;
     private readonly int _start;
     private readonly int _length;
+    private readonly uint[] _array;
 
     public int Length => _length;
 

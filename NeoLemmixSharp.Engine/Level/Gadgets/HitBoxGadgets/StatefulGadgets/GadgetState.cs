@@ -35,7 +35,7 @@ public sealed class GadgetState
     public LevelRegion GetEncompassingHitBoxBounds(GadgetBounds gadgetBounds)
     {
         if (_hitBoxLookup.Count == 0)
-            return new LevelRegion(gadgetBounds.Position, new LevelSize(1, 1));
+            return new LevelRegion(gadgetBounds.Position);
 
         var minX = int.MaxValue;
         var minY = int.MaxValue;

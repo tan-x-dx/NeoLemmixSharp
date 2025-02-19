@@ -23,8 +23,8 @@ public sealed class Team : IIdEquatable<Team>
         LemmingSpriteBank spriteBank)
     {
         Id = id;
-        var colorData = spriteBank.GetColorData(id);
 
+        var colorData = spriteBank.GetColorData(id);
         HairColor = colorData.HairColor;
         PermanentSkillHairColor = colorData.PermanentSkillHairColor;
         SkinColor = colorData.SkinColor;
@@ -39,6 +39,8 @@ public sealed class Team : IIdEquatable<Team>
 
     int IIdEquatable<Team>.Id => Id;
     public bool Equals(Team? other) => Id == (other?.Id ?? -1);
+    public override bool Equals(object? obj) => obj is Team other && Id == other.Id;
+    public override int GetHashCode() => Id;
     public static bool operator ==(Team left, Team right) => left.Id == right.Id;
     public static bool operator !=(Team left, Team right) => left.Id != right.Id;
 }
