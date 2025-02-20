@@ -131,7 +131,7 @@ public static class EngineConstants
     public const int NumberOfExplosionParticleColors = 8;
     public const int NumberOfExplosionParticleColorsMask = NumberOfExplosionParticleColors - 1;
 
-    public static Color ClassicLevelBackgroundColor => new(0xff3c1818);
+    public static Color ClassicLevelBackgroundColor => new(0xff000032);
 
     public const int CursorRadius = 6;
     public static Color CursorColor1 => new(0xffb0b0b0);
