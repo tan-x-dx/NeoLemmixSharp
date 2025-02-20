@@ -16,5 +16,7 @@ public sealed class LemmingMoverAction : IGadgetAction
     {
         ref var lemmingPosition = ref lemming.LevelPosition;
         lemmingPosition += _deltaPosition;
+
+        LevelScreen.LemmingManager.UpdateLemmingPosition(lemming);
     }
 }

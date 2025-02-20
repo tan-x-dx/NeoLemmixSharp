@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -27,7 +26,7 @@ public sealed class FastForwardSkill : LemmingSkill, ILemmingStateChanger
         lemming.State.IsPermanentFastForwards = true;
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned() => LemmingAction.CreateBitArraySet(true);
+    protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
     public void SetLemmingState(LemmingState lemmingState, bool status)
     {

@@ -100,32 +100,30 @@ public sealed class ControlPanelTextualData
         LemmingAction action,
         LemmingState state)
     {
-        ReadOnlySpan<char> sourceSpan;
+        ReadOnlySpan<char> sourceSpan = GetSourceSpan();
         Span<char> destSpan = _lemmingActionAndCountString;
-        var isZombie = state.IsZombie;
-        var isNeutral = state.IsNeutral;
 
-        if (action.CursorSelectionPriorityValue == EngineConstants.NonPermanentSkillPriority)
+        sourceSpan.CopyTo(destSpan);
+
+        return sourceSpan.Length;
+
+        ReadOnlySpan<char> GetSourceSpan()
         {
-            sourceSpan = action.LemmingActionName;
-        }
-        else if (isZombie && isNeutral)
-        {
-            sourceSpan = EngineConstants.NeutralZombieControlPanelString;
-        }
-        else if (isZombie)
-        {
-            sourceSpan = EngineConstants.ZombieControlPanelString;
-        }
-        else if (isNeutral)
-        {
-            sourceSpan = EngineConstants.NeutralControlPanelString;
-        }
-        else
-        {
+            if (action.CursorSelectionPriorityValue == EngineConstants.NonPermanentSkillPriority)
+                return action.LemmingActionName;
+
+            if (state.IsZombie && state.IsNeutral)
+                return EngineConstants.NeutralZombieControlPanelString;
+
+            if (state.IsZombie)
+                return EngineConstants.ZombieControlPanelString;
+
+            if (state.IsNeutral)
+                return EngineConstants.NeutralControlPanelString;
+
             var numberOfPermanentSkills = state.NumberOfPermanentSkills;
 
-            sourceSpan = numberOfPermanentSkills switch
+            return numberOfPermanentSkills switch
             {
                 2 => EngineConstants.AthleteControlPanelString2Skills,
                 3 => EngineConstants.AthleteControlPanelString3Skills,
@@ -134,10 +132,6 @@ public sealed class ControlPanelTextualData
                 _ => action.LemmingActionName
             };
         }
-
-        sourceSpan.CopyTo(destSpan);
-
-        return sourceSpan.Length;
     }
 
     public void ClearCursorData()

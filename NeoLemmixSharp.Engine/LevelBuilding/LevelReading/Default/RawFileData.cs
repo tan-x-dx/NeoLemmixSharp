@@ -12,8 +12,8 @@ public sealed class RawFileData
     public Version Version { get; }
 
     public int FileSizeInBytes => _byteBuffer.Length;
-    public int BytesRead => _position;
-    public bool MoreToRead => BytesRead < FileSizeInBytes;
+    public int Position => _position;
+    public bool MoreToRead => Position < FileSizeInBytes;
 
     public RawFileData(string filePath)
     {
@@ -26,7 +26,7 @@ public sealed class RawFileData
 
             _byteBuffer = GC.AllocateUninitializedArray<byte>((int)fileSizeInBytes);
 
-            fileStream.ReadExactly(new Span<byte>(_byteBuffer));
+            fileStream.ReadExactly(_byteBuffer);
         }
 
         Version = ReadVersion();
@@ -56,7 +56,7 @@ public sealed class RawFileData
         where T : unmanaged
     {
         var typeSize = sizeof(T);
-        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - BytesRead >= typeSize, "Reached end of file!");
+        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - Position >= typeSize, "Reached end of file!");
 
         var span = MemoryMarshal.Cast<byte, T>(new ReadOnlySpan<byte>(_byteBuffer, _position, typeSize));
         _position += typeSize;
@@ -72,7 +72,7 @@ public sealed class RawFileData
 
     public ReadOnlySpan<byte> ReadBytes(int bufferSize)
     {
-        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - BytesRead >= bufferSize, "Reached end of file!");
+        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - Position >= bufferSize, "Reached end of file!");
 
         var sourceSpan = new ReadOnlySpan<byte>(_byteBuffer, _position, bufferSize);
         _position += bufferSize;

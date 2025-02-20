@@ -3,7 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Common.Util.Collections;
+namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public interface IBitBuffer
 {
@@ -14,6 +14,12 @@ public interface IBitBuffer
     Span<uint> AsSpan();
     [Pure]
     ReadOnlySpan<uint> AsReadOnlySpan();
+}
+
+public interface IBitBufferCreator<TBuffer>
+    where TBuffer : struct, IBitBuffer
+{
+    void CreateBitBuffer(out TBuffer buffer);
 }
 
 [InlineArray(BitBuffer32Length)]
@@ -93,15 +99,22 @@ public struct BitBuffer256 : IBitBuffer
 
 public readonly struct ArrayBitBuffer : IBitBuffer
 {
-    private readonly uint[] _array;
     private readonly int _start;
     private readonly int _length;
+    private readonly uint[] _array;
 
     public int Length => _length;
 
     public ArrayBitBuffer(uint[] array)
     {
         _array = array;
+        _start = 0;
+        _length = _array.Length;
+    }
+
+    public ArrayBitBuffer(int numberOfItems)
+    {
+        _array = BitArrayHelpers.CreateBitArray(numberOfItems, false);
         _start = 0;
         _length = _array.Length;
     }

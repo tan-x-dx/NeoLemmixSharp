@@ -12,17 +12,7 @@ public static class BitArrayHelpers
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int CalculateBitArrayBufferLength(int length)
-    {
-        return (length + Mask) >> Shift;
-    }
-
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static int ToNextLargestMultipleOf32(int a)
-    {
-        return ((a + Mask) >> Shift) << Shift;
-    }
+    public static int CalculateBitArrayBufferLength(int length) => (length + Mask) >> Shift;
 
     [Pure]
     public static uint[] CreateBitArray(int length, bool setAllBits)
@@ -33,19 +23,17 @@ public static class BitArrayHelpers
             return Array.Empty<uint>();
 
         var result = new uint[arrayLength];
-        if (!setAllBits)
-            return result;
+        if (setAllBits)
+            PopulateBitArray(result, length);
 
-        PopulateBitArray(result, length);
         return result;
     }
 
     internal static void PopulateBitArray(Span<uint> bitArray, int requiredPopCount)
     {
-        var requiredSpanLength = CalculateBitArrayBufferLength(requiredPopCount);
+        ThrowIfInvalidCapacity(requiredPopCount, bitArray.Length);
 
-        if (requiredSpanLength > bitArray.Length)
-            throw new ArgumentException("Input array too short!");
+        var requiredSpanLength = CalculateBitArrayBufferLength(requiredPopCount);
 
         var subSpan = bitArray[requiredSpanLength..];
         subSpan.Clear();
@@ -53,10 +41,8 @@ public static class BitArrayHelpers
         subSpan.Fill(uint.MaxValue);
 
         var lastIndexPopCount = requiredPopCount & Mask;
-        if (lastIndexPopCount == 0)
-            return;
-
-        subSpan[^1] = (1U << lastIndexPopCount) - 1U;
+        if (lastIndexPopCount != 0)
+            subSpan[^1] = (1U << lastIndexPopCount) - 1U;
     }
 
     internal static void ThrowIfInvalidCapacity(int requiredNumberOfItems, int bufferLength)
@@ -87,7 +73,7 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to set</param>
     /// <param name="popCount">Will be incremented if the operation changes the contents of the span</param>
     /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously set</returns>
-    public static bool SetBit(Span<uint> bits, int index, ref int popCount)
+    internal static bool SetBit(Span<uint> bits, int index, ref int popCount)
     {
         ref var arrayValue = ref bits[index >> Shift];
         var oldValue = arrayValue;
@@ -115,7 +101,7 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to clear</param>v
     /// <param name="popCount">Will be decremented if the operation changes the contents of the span</param>
     /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously clear</returns>
-    public static bool ClearBit(Span<uint> bits, int index, ref int popCount)
+    internal static bool ClearBit(Span<uint> bits, int index, ref int popCount)
     {
         ref var arrayValue = ref bits[index >> Shift];
         var oldValue = arrayValue;
@@ -154,7 +140,7 @@ public static class BitArrayHelpers
     }
 
     [Pure]
-    internal static int GetPopCount(ReadOnlySpan<uint> bits)
+    public static int GetPopCount(ReadOnlySpan<uint> bits)
     {
         // Basic implementation is faster than using TensorPrimitives - benchmarks
 

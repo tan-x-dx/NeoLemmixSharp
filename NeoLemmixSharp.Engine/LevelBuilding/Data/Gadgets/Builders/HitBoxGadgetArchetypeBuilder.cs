@@ -11,14 +11,14 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Engine.Level.Orientations.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Engine.Level.Orientations.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
 public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 {
-    public required int GadgetBuilderId { get; init; }
-    public required string Style { get; init; }
-    public required string GadgetPiece { get; init; }
+    public required string StyleName { get; init; }
+    public required string PieceName { get; init; }
 
     public required ResizeType ResizeType { get; init; }
     public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }

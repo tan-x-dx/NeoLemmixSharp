@@ -62,7 +62,7 @@ public ref struct BitArrayEnumerator
     private uint _v;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal BitArrayEnumerator(
+    public BitArrayEnumerator(
         ReadOnlySpan<uint> bits,
         int count)
     {

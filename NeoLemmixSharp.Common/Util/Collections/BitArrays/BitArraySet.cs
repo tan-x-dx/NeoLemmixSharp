@@ -1,13 +1,12 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Common.Util.Collections;
+namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySet<T>
-    where TPerfectHasher : IBitBufferCreator<TBuffer, T>
+    where TPerfectHasher : IPerfectHasher<T>, IBitBufferCreator<TBuffer>
     where TBuffer : struct, IBitBuffer
     where T : notnull
 {
@@ -133,10 +132,10 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-        var iterator = new BitArrayEnumerator<TPerfectHasher, T>(_hasher, _bits.AsReadOnlySpan(), _popCount);
+        var iterator = new BitArrayEnumerator(_bits.AsReadOnlySpan(), _popCount);
         while (iterator.MoveNext())
         {
-            array[arrayIndex++] = iterator.Current;
+            array[arrayIndex++] = _hasher.UnHash(iterator.Current);
         }
     }
 

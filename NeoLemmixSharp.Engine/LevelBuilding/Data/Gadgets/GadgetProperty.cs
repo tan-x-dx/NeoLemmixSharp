@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -17,7 +17,7 @@ public enum GadgetProperty
     LogicGateType
 }
 
-public readonly struct GadgetPropertyHasher : IBitBufferCreator<BitBuffer32, GadgetProperty>
+public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>, IBitBufferCreator<BitBuffer32>
 {
     public int NumberOfItems => 9;
 

@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -20,7 +20,7 @@ public enum ControlPanelParameters
     ShowExpandedAthleteInformation
 }
 
-public readonly struct ControlPanelParameterHasher : IBitBufferCreator<BitBuffer32, ControlPanelParameters>
+public readonly struct ControlPanelParameterHasher : IPerfectHasher<ControlPanelParameters>, IBitBufferCreator<BitBuffer32>
 {
     public int NumberOfItems => 12;
 

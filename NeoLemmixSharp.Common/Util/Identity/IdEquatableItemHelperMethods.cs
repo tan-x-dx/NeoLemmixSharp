@@ -13,6 +13,7 @@ public static class IdEquatableItemHelperMethods
         var minId = int.MaxValue;
         var maxId = int.MinValue;
         var allItemIds = new HashSet<int>(items.Length);
+        string? typeName;
 
         foreach (var item in items)
         {
@@ -23,15 +24,14 @@ public static class IdEquatableItemHelperMethods
 
             if (!allItemIds.Add(id))
             {
-                var typeName = typeof(T).Name;
-
+                typeName = typeof(T).Name;
                 throw new Exception($"Duplicated {typeName} ID: {id}");
             }
         }
 
         if (minId != 0 || maxId != items.Length - 1)
         {
-            var typeName = typeof(T).Name;
+            typeName = typeof(T).Name;
             throw new Exception($"{typeName} ids do not span a full set of values from 0 - {items.Length - 1}");
         }
     }

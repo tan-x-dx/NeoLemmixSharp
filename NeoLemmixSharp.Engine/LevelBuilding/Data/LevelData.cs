@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Objectives;

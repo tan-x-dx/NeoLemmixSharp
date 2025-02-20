@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -16,7 +15,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     private static readonly LemmingActionSet AirborneActions = GetAirborneActions();
     private static readonly LemmingActionSet OneTimeActions = GetOneTimeActions();
 
-    public static int NumberOfItems => EngineConstants.NumberOfLemmingActions;
+    public const int NumberOfItems = EngineConstants.NumberOfLemmingActions;
     public static ReadOnlySpan<LemmingAction> AllItems => new(LemmingActions);
 
     private static LemmingAction[] RegisterAllLemmingActions()
@@ -233,7 +232,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<LemmingActionHasher, LemmingActionBitBuffer, LemmingAction, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingActionHasher());
 
-    public readonly struct LemmingActionHasher : IBitBufferCreator<LemmingActionBitBuffer, LemmingAction>
+    public readonly struct LemmingActionHasher : IPerfectHasher<LemmingAction>, IBitBufferCreator<LemmingActionBitBuffer>
     {
         [Pure]
         public int NumberOfItems => EngineConstants.NumberOfLemmingActions;

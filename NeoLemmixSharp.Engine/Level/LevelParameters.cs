@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -18,7 +18,7 @@ public enum LevelParameters
     EnableFrameControl
 }
 
-public readonly struct LevelParameterHasher : IBitBufferCreator<BitBuffer32, LevelParameters>
+public readonly struct LevelParameterHasher : IPerfectHasher<LevelParameters>, IBitBufferCreator<BitBuffer32>
 {
     public int NumberOfItems => 8;
 

@@ -1,14 +1,13 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Common.Util.Collections;
+namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
-    where TPerfectHasher : IBitBufferCreator<TBuffer, TKey>
+    where TPerfectHasher : IPerfectHasher<TKey>, IBitBufferCreator<TBuffer>
     where TBuffer : struct, IBitBuffer
     where TKey : notnull
 {
@@ -29,6 +28,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
 
         BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 
+        _bits.AsSpan().Clear();
         _popCount = 0;
         _values = new TValue[numberOfItems];
     }

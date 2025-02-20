@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 using System.Diagnostics.CodeAnalysis;
@@ -50,7 +51,7 @@ public static class LevelReadWriteHelpers
 
     public const byte SaveRequirementId = 0x01;
     public const byte TimeRequirementId = 0x02;
-    public const byte BasicSkillSetRequirementId = 0x02;
+    public const byte BasicSkillSetRequirementId = 0x03;
 
     #endregion
 
@@ -121,9 +122,6 @@ public static class LevelReadWriteHelpers
 
     #endregion
 
-    public const byte StylePieceTerrainType = 0x00;
-    public const byte StylePieceGadgetType = 0x01;
-
     public static void ReaderAssert([DoesNotReturnIf(false)] bool condition, string details)
     {
         if (condition)
@@ -153,5 +151,28 @@ public static class LevelReadWriteHelpers
         int intValue = b;
         orientation = new Orientation(intValue);
         facingDirection = new FacingDirection(intValue >> FlipBitShift);
+    }
+
+    public static byte GetTerrainArchetypeDataByte(
+        bool isSteel,
+        ResizeType resizeType)
+    {
+        var result = (int)resizeType;
+        result &= 3;
+        if (isSteel)
+        {
+            result |= 1 << 2;
+        }
+        return (byte)result;
+    }
+
+    public static void DecipherTerrainArchetypeDataByte(
+        byte b,
+        out bool isSteel,
+        out ResizeType resizeType)
+    {
+        int intValue = b;
+        isSteel = ((intValue >> 2) & 1) != 0;
+        resizeType = (ResizeType)(intValue & 3);
     }
 }

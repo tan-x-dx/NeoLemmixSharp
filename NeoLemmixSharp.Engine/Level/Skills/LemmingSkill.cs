@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -17,7 +16,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     protected static readonly LemmingActionSet ActionsThatCanBeAssignedPermanentSkill = GetActionsThatCanBeAssignedPermanentSkill();
     protected static readonly LemmingActionSet ActionsThatCanBeAssignedRotationSkill = GetActionsThatCanBeAssignedRotationSkill();
 
-    public static int NumberOfItems => EngineConstants.NumberOfLemmingSkills;
+    public const int NumberOfItems = EngineConstants.NumberOfLemmingSkills;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
     public static BitArrayEnumerable<LemmingSkillHasher, LemmingSkill> AllClassicSkills => ClassicSkills.AsEnumerable();
 
@@ -185,7 +184,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<LemmingSkillHasher, LemmingSkillBitBuffer, LemmingSkill, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingSkillHasher());
 
-    public readonly struct LemmingSkillHasher : IBitBufferCreator<LemmingSkillBitBuffer, LemmingSkill>
+    public readonly struct LemmingSkillHasher : IPerfectHasher<LemmingSkill>, IBitBufferCreator<LemmingSkillBitBuffer>
     {
         [Pure]
         public int NumberOfItems => EngineConstants.NumberOfLemmingSkills;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
+using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Styles;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
@@ -38,7 +39,7 @@ public sealed class DefaultLevelReader : ILevelReader
         var levelData = ReadFile();
         levelData.MaxNumberOfClonedLemmings = LevelReadingHelpers.CalculateMaxNumberOfClonedLemmings(levelData);
 
-        StyleHelpers.ProcessStyleArchetypeData(levelData);
+        DefaultStyleHelpers.ProcessStyleArchetypeData(levelData);
 
         return levelData;
     }

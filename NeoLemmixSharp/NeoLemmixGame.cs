@@ -7,7 +7,6 @@ using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.Menu;
@@ -108,7 +107,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         CommonSprites.Initialise(Content, GraphicsDevice);
         UiSprites.Initialise(Content);
 
-        TerrainMasks.InitialiseTerrainMasks(Content, GraphicsDevice);
         DefaultLemmingSpriteBank.CreateDefaultLemmingSpriteBank(Content, GraphicsDevice);
 
         var menuScreen = new MenuScreen(

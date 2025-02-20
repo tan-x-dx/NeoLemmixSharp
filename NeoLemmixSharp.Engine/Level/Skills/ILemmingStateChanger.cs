@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
@@ -16,7 +16,7 @@ public interface ILemmingStateChanger
     bool IsApplied(LemmingState lemmingState);
 }
 
-public readonly struct LemmingStateChangerHasher : IBitBufferCreator<BitBuffer32, ILemmingStateChanger>
+public readonly struct LemmingStateChangerHasher : IPerfectHasher<ILemmingStateChanger>, IBitBufferCreator<BitBuffer32>
 {
     public const int ClimberStateChangerId = 0;
     public const int FloaterStateChangerId = 1;

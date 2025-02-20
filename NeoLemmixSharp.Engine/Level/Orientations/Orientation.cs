@@ -1,7 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -42,7 +43,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
             EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveDown(position, step),
             EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveDown(position, step),
 
-            _ => position
+            _ => ThrowOrientationOutOfRangeException<LevelPosition>(RotNum)
         };
 
         return LevelScreen.NormalisePosition(newPosition);
@@ -58,7 +59,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
             EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveLeft(position, step),
             EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveLeft(position, step),
 
-            _ => position
+            _ => ThrowOrientationOutOfRangeException<LevelPosition>(RotNum)
         };
 
         return LevelScreen.NormalisePosition(newPosition);
@@ -74,7 +75,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
             EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveUp(position, step),
             EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveUp(position, step),
 
-            _ => position
+            _ => ThrowOrientationOutOfRangeException<LevelPosition>(RotNum)
         };
 
         return LevelScreen.NormalisePosition(newPosition);
@@ -90,7 +91,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
             EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveRight(position, step),
             EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveRight(position, step),
 
-            _ => position
+            _ => ThrowOrientationOutOfRangeException<LevelPosition>(RotNum)
         };
 
         return LevelScreen.NormalisePosition(newPosition);
@@ -113,7 +114,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
             EngineConstants.UpOrientationRotNum => UpOrientationMethods.Move(position, dx, dy),
             EngineConstants.RightOrientationRotNum => RightOrientationMethods.Move(position, dx, dy),
 
-            _ => position
+            _ => ThrowOrientationOutOfRangeException<LevelPosition>(RotNum)
         };
 
         return LevelScreen.NormalisePosition(newPosition);
@@ -134,7 +135,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         EngineConstants.UpOrientationRotNum => UpOrientationMethods.Move(position, dx, dy),
         EngineConstants.RightOrientationRotNum => RightOrientationMethods.Move(position, dx, dy),
 
-        _ => position
+        _ => ThrowOrientationOutOfRangeException<LevelPosition>(RotNum)
     };
 
     [Pure]
@@ -145,7 +146,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         EngineConstants.UpOrientationRotNum => UpOrientationMethods.MatchesHorizontally(firstPosition, secondPosition),
         EngineConstants.RightOrientationRotNum => RightOrientationMethods.MatchesHorizontally(firstPosition, secondPosition),
 
-        _ => false
+        _ => ThrowOrientationOutOfRangeException<bool>(RotNum)
     };
 
     [Pure]
@@ -156,7 +157,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         EngineConstants.UpOrientationRotNum => UpOrientationMethods.MatchesVertically(firstPosition, secondPosition),
         EngineConstants.RightOrientationRotNum => RightOrientationMethods.MatchesVertically(firstPosition, secondPosition),
 
-        _ => false
+        _ => ThrowOrientationOutOfRangeException<bool>(RotNum)
     };
 
     [Pure]
@@ -167,7 +168,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         EngineConstants.UpOrientationRotNum => UpOrientationMethods.FirstIsAboveSecond(firstPosition, secondPosition),
         EngineConstants.RightOrientationRotNum => RightOrientationMethods.FirstIsAboveSecond(firstPosition, secondPosition),
 
-        _ => false
+        _ => ThrowOrientationOutOfRangeException<bool>(RotNum)
     };
 
     [Pure]
@@ -178,7 +179,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         EngineConstants.UpOrientationRotNum => UpOrientationMethods.FirstIsBelowSecond(firstPosition, secondPosition),
         EngineConstants.RightOrientationRotNum => RightOrientationMethods.FirstIsBelowSecond(firstPosition, secondPosition),
 
-        _ => false
+        _ => ThrowOrientationOutOfRangeException<bool>(RotNum)
     };
 
     [Pure]
@@ -189,7 +190,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         EngineConstants.UpOrientationRotNum => UpOrientationMethods.FirstIsToLeftOfSecond(firstPosition, secondPosition),
         EngineConstants.RightOrientationRotNum => RightOrientationMethods.FirstIsToLeftOfSecond(firstPosition, secondPosition),
 
-        _ => false
+        _ => ThrowOrientationOutOfRangeException<bool>(RotNum)
     };
 
     [Pure]
@@ -200,7 +201,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         EngineConstants.UpOrientationRotNum => UpOrientationMethods.FirstIsToRightOfSecond(firstPosition, secondPosition),
         EngineConstants.RightOrientationRotNum => RightOrientationMethods.FirstIsToRightOfSecond(firstPosition, secondPosition),
 
-        _ => false
+        _ => ThrowOrientationOutOfRangeException<bool>(RotNum)
     };
 
     [Pure]
@@ -224,7 +225,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         EngineConstants.UpOrientationRotNum => UpOrientationMethods.GetHorizontalDelta(fromPosition, toPosition),
         EngineConstants.RightOrientationRotNum => RightOrientationMethods.GetHorizontalDelta(fromPosition, toPosition),
 
-        _ => 0
+        _ => ThrowOrientationOutOfRangeException<int>(RotNum)
     };
 
     /// <summary>
@@ -233,17 +234,20 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     /// <param name="fromPosition"></param>
     /// <param name="toPosition"></param>
     [Pure]
-    public int GetVerticalDelta(LevelPosition fromPosition, LevelPosition toPosition)
+    public int GetVerticalDelta(LevelPosition fromPosition, LevelPosition toPosition) => RotNum switch
     {
-        return RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
+        EngineConstants.DownOrientationRotNum => DownOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
+        EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
+        EngineConstants.UpOrientationRotNum => UpOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
+        EngineConstants.RightOrientationRotNum => RightOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
 
-            _ => 0
-        };
+        _ => ThrowOrientationOutOfRangeException<int>(RotNum)
+    };
+
+    [DoesNotReturn]
+    private static T ThrowOrientationOutOfRangeException<T>(int rotNum)
+    {
+        throw new ArgumentOutOfRangeException(nameof(RotNum), rotNum, "Invalid Orientation value!");
     }
 
     [Pure]
@@ -271,7 +275,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         EngineConstants.UpOrientationRotNum => EngineConstants.UpOrientationName,
         EngineConstants.RightOrientationRotNum => EngineConstants.RightOrientationName,
 
-        _ => string.Empty
+        _ => ThrowOrientationOutOfRangeException<string>(RotNum)
     };
 
     public static bool operator ==(Orientation first, Orientation second) => first.RotNum == second.RotNum;
@@ -284,7 +288,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<OrientationHasher, BitBuffer32, Orientation, TValue> CreateBitArrayDictionary<TValue>() => new(new OrientationHasher());
 
-    public readonly struct OrientationHasher : IBitBufferCreator<BitBuffer32, Orientation>
+    public readonly struct OrientationHasher : IPerfectHasher<Orientation>, IBitBufferCreator<BitBuffer32>
     {
         public int NumberOfItems => EngineConstants.NumberOfOrientations;
 

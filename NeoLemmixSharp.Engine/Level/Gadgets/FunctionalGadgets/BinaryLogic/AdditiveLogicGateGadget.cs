@@ -8,13 +8,14 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
 public abstract class AdditiveLogicGateGadget : GadgetBase,
+    IPerfectHasher<AdditiveLogicGateGadget.AdditiveGateGadgetInput>,
+    IBitBufferCreator<ArrayBitBuffer>,
     ILogicGateGadget,
     ISimpleRenderGadget
 {
     private SimpleGadgetRenderer _renderer;
-    private readonly uint[] _inputBits;
+    private readonly BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput> _set;
     private readonly int _numberOfInputs;
-    private int _popCount;
 
     public LogicGateType Type { get; }
 
@@ -34,7 +35,8 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
             throw new ArgumentException("Expected at least 2 inputs!");
 
         _numberOfInputs = inputNames.Length;
-        _inputBits = BitArrayHelpers.CreateBitArray(_numberOfInputs, false);
+        _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput>(this, false);
+
         Type = type;
 
         for (var i = 0; i < inputNames.Length; i++)
@@ -50,7 +52,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
 
     private sealed class AdditiveGateGadgetInput : GadgetInput
     {
-        private readonly int _id;
+        public readonly int Id;
         private readonly AdditiveLogicGateGadget _gadget;
 
         public AdditiveGateGadgetInput(
@@ -59,7 +61,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
             AdditiveLogicGateGadget gadget)
             : base(inputName)
         {
-            _id = id;
+            Id = id;
             _gadget = gadget;
         }
 
@@ -67,13 +69,13 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         {
             if (signal)
             {
-                BitArrayHelpers.SetBit(_gadget._inputBits, _id, ref _gadget._popCount);
+                _gadget._set.Add(this);
             }
             else
             {
-                BitArrayHelpers.ClearBit(_gadget._inputBits, _id, ref _gadget._popCount);
+                _gadget._set.Remove(this);
             }
-            _gadget.Output.SetSignal(_gadget.EvaluateInputCount(_gadget._popCount, _gadget._numberOfInputs));
+            _gadget.Output.SetSignal(_gadget.EvaluateInputCount(_gadget._set.Count, _gadget._numberOfInputs));
         }
     }
 
@@ -82,6 +84,11 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         get => _renderer;
         set => _renderer = value;
     }
+
+    int IPerfectHasher<AdditiveGateGadgetInput>.NumberOfItems => _numberOfInputs;
+    int IPerfectHasher<AdditiveGateGadgetInput>.Hash(AdditiveGateGadgetInput item) => item.Id;
+    AdditiveGateGadgetInput IPerfectHasher<AdditiveGateGadgetInput>.UnHash(int index) => throw new InvalidOperationException("Why are you doing this? Stop it.");
+    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_numberOfInputs);
 }
 
 public sealed class AndGateGadget : AdditiveLogicGateGadget

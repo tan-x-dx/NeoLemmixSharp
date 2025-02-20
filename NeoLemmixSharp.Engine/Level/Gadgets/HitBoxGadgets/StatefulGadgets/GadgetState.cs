@@ -3,6 +3,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Engine.Level.Orientations.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Engine.Level.Orientations.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 
@@ -35,7 +36,7 @@ public sealed class GadgetState
     public LevelRegion GetEncompassingHitBoxBounds(GadgetBounds gadgetBounds)
     {
         if (_hitBoxLookup.Count == 0)
-            return new LevelRegion(gadgetBounds.Position, new LevelSize(1, 1));
+            return new LevelRegion(gadgetBounds.Position);
 
         var minX = int.MaxValue;
         var minY = int.MaxValue;

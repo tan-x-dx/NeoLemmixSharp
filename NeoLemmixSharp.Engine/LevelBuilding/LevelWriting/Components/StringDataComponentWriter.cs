@@ -96,8 +96,8 @@ public sealed class StringDataComponentWriter : ILevelDataWriter
 
         foreach (var (_, gadgetBuilder) in levelData.AllGadgetArchetypeBuilders)
         {
-            TryAdd(gadgetBuilder.Style);
-            TryAdd(gadgetBuilder.GadgetPiece);
+            TryAdd(gadgetBuilder.StyleName);
+            TryAdd(gadgetBuilder.PieceName);
         }
     }
 

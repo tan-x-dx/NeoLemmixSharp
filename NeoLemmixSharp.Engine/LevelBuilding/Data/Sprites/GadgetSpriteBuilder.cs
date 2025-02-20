@@ -54,7 +54,8 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
             FacingDirection facingDirection)
         {
             var key = new TextureLookupKey(
-                gadgetArchetypeBuilder.GadgetBuilderId,
+                gadgetArchetypeBuilder.StyleName,
+                gadgetArchetypeBuilder.PieceName,
                 orientation,
                 facingDirection);
 
@@ -124,34 +125,27 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
         return new GadgetSpriteBank(textureArray);
     }
 
-    public readonly struct TextureLookupKey
+    public readonly struct TextureLookupKey(string styleName, string pieceName, Orientation orientation, FacingDirection facingDirection)
     {
-        public readonly int GadgetBuilderId;
-        public readonly Orientation Orientation;
-        public readonly FacingDirection FacingDirection;
-
-        public TextureLookupKey(
-            int gadgetBuilderId,
-            Orientation orientation,
-            FacingDirection facingDirection)
-        {
-            GadgetBuilderId = gadgetBuilderId;
-            Orientation = orientation;
-            FacingDirection = facingDirection;
-        }
+        public readonly string StyleName = styleName;
+        public readonly string PieceName = pieceName;
+        public readonly Orientation Orientation = orientation;
+        public readonly FacingDirection FacingDirection = facingDirection;
     }
 
     public bool Equals(TextureLookupKey x, TextureLookupKey y)
     {
-        return x.GadgetBuilderId == y.GadgetBuilderId &&
-               x.Orientation == y.Orientation &&
-               x.FacingDirection == y.FacingDirection;
+        return x.Orientation == y.Orientation &&
+               x.FacingDirection == y.FacingDirection &&
+               string.Equals(x.StyleName, y.StyleName) &&
+               string.Equals(x.PieceName, y.PieceName);
     }
 
     public int GetHashCode(TextureLookupKey key)
     {
         return HashCode.Combine(
-            key.GadgetBuilderId,
+            key.StyleName,
+            key.PieceName,
             key.Orientation,
             key.FacingDirection);
     }
