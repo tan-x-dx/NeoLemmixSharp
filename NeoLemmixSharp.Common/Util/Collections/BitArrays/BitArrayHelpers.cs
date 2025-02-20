@@ -12,17 +12,7 @@ public static class BitArrayHelpers
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int CalculateBitArrayBufferLength(int length)
-    {
-        return (length + Mask) >> Shift;
-    }
-
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static int ToNextLargestMultipleOf32(int a)
-    {
-        return ((a + Mask) >> Shift) << Shift;
-    }
+    public static int CalculateBitArrayBufferLength(int length) => (length + Mask) >> Shift;
 
     [Pure]
     public static uint[] CreateBitArray(int length, bool setAllBits)

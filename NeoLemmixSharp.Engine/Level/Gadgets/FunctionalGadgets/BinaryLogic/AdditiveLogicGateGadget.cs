@@ -87,8 +87,8 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
 
     int IPerfectHasher<AdditiveGateGadgetInput>.NumberOfItems => _numberOfInputs;
     int IPerfectHasher<AdditiveGateGadgetInput>.Hash(AdditiveGateGadgetInput item) => item.Id;
-    AdditiveGateGadgetInput IPerfectHasher<AdditiveGateGadgetInput>.UnHash(int index) => throw new InvalidOperationException("Why are you doing this? Stop it.");
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(BitArrayHelpers.CreateBitArray(_numberOfInputs, false));
+    AdditiveGateGadgetInput IPerfectHasher<AdditiveGateGadgetInput>.UnHash(int index) => throw new NotSupportedException("Why are you doing this? Stop it.");
+    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_numberOfInputs);
 }
 
 public sealed class AndGateGadget : AdditiveLogicGateGadget

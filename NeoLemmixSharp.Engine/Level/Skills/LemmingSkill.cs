@@ -106,15 +106,15 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
         result.Add(MinerAction.Instance);
         result.Add(PlatformerAction.Instance);
         result.Add(ReacherAction.Instance);
+        result.Add(RotateHalfAction.Instance);
+        result.Add(RotateClockwiseAction.Instance);
+        result.Add(RotateCounterclockwiseAction.Instance);
         result.Add(ShimmierAction.Instance);
         result.Add(ShruggerAction.Instance);
         result.Add(SliderAction.Instance);
         result.Add(StackerAction.Instance);
         result.Add(SwimmerAction.Instance);
         result.Add(WalkerAction.Instance);
-        result.Add(RotateClockwiseAction.Instance);
-        result.Add(RotateCounterclockwiseAction.Instance);
-        result.Add(RotateHalfAction.Instance);
 
         return result;
     }
