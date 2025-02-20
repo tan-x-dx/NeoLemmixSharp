@@ -112,6 +112,13 @@ public readonly struct ArrayBitBuffer : IBitBuffer
         _length = _array.Length;
     }
 
+    public ArrayBitBuffer(int numberOfItems)
+    {
+        _array = BitArrayHelpers.CreateBitArray(numberOfItems, false);
+        _start = 0;
+        _length = _array.Length;
+    }
+
     public ArrayBitBuffer(uint[] array, int start, int length)
     {
         _array = array;
