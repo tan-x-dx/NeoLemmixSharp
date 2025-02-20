@@ -1,9 +1,9 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
+using SkillLimitDictionary = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Engine.Level.Skills.LemmingSkill.LemmingSkillHasher, NeoLemmixSharp.Engine.Level.Skills.LemmingSkill.LemmingSkillBitBuffer, NeoLemmixSharp.Engine.Level.Skills.LemmingSkill, int>;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 
@@ -17,7 +17,7 @@ public sealed class TalismanData
     public int? TimeLimitInSeconds { get; set; }
     public int? AllSkillLimit { get; set; }
 
-    public BitArrayDictionary<LemmingSkill.LemmingSkillHasher, LemmingSkill.LemmingSkillBitBuffer, LemmingSkill, int> SkillLimits { get; } = LemmingSkill.CreateBitArrayDictionary<int>();
+    public SkillLimitDictionary SkillLimits { get; } = LemmingSkill.CreateBitArrayDictionary<int>();
 
     public LevelObjective ToLevelObjective(LevelData levelData)
     {
