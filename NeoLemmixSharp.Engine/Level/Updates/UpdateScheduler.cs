@@ -169,14 +169,17 @@ end;
     {
         var numberOfTicksToPerform = (int)_updateState;
 
-        if (LevelScreen.LevelInputController.LeftMouseButtonAction.IsPressed)
+        if (_updateState == UpdateState.Paused && LevelScreen.LevelInputController.LeftMouseButtonAction.IsPressed)
         {
-            numberOfTicksToPerform++;
+            numberOfTicksToPerform = 1;
         }
 
-        while (numberOfTicksToPerform-- > 0)
+        switch (numberOfTicksToPerform)
         {
-            PerformOneTick();
+            case 3: PerformOneTick(); goto case 2;
+            case 2: PerformOneTick(); goto case 1;
+            case 1: PerformOneTick(); break;
+            case 0: break;
         }
     }
 
