@@ -217,13 +217,19 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         int dx,
         int dy)
     {
-        var p1X1Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(pos, dx, 1));
-        var p1X2Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(pos, dx, 2));
-        var p1X3Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(pos, dx, 3));
+        var workPos = orientation.Move(pos, dx, 1);
+        var p1X1Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
+        workPos = orientation.MoveUp(workPos, 1);
+        var p1X2Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
+        workPos = orientation.MoveUp(workPos, 1);
+        var p1X3Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
 
-        var p2X1Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(pos, dx * 2, 1));
-        var p2X2Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(pos, dx * 2, 2));
-        var p2X3Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, orientation.Move(pos, dx * 2, 3));
+        workPos = orientation.Move(pos, dx * 2, 1);
+        var p2X1Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
+        workPos = orientation.MoveUp(workPos, 1);
+        var p2X2Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
+        workPos = orientation.MoveUp(workPos, 1);
+        var p2X3Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
 
         if (dy == -1)
         {
