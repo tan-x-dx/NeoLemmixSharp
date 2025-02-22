@@ -36,34 +36,8 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
     {
         var result = LemmingAction.CreateBitArraySet();
 
-        result.Add(AscenderAction.Instance);
-        result.Add(BasherAction.Instance);
-        result.Add(BlockerAction.Instance);
-        result.Add(BuilderAction.Instance);
-        result.Add(ClimberAction.Instance);
-        result.Add(DehoisterAction.Instance);
-        result.Add(DiggerAction.Instance);
-        result.Add(DisarmerAction.Instance);
         result.Add(DrownerAction.Instance);
-        result.Add(FallerAction.Instance);
-        result.Add(FencerAction.Instance);
-        result.Add(FloaterAction.Instance);
-        result.Add(GliderAction.Instance);
-        result.Add(HoisterAction.Instance);
-        result.Add(JumperAction.Instance);
-        result.Add(LasererAction.Instance);
-        result.Add(MinerAction.Instance);
-        result.Add(PlatformerAction.Instance);
-        result.Add(ReacherAction.Instance);
-        result.Add(ShimmierAction.Instance);
-        result.Add(ShruggerAction.Instance);
-        result.Add(SliderAction.Instance);
-        result.Add(StackerAction.Instance);
-        result.Add(SwimmerAction.Instance);
-        result.Add(WalkerAction.Instance);
-        result.Add(RotateClockwiseAction.Instance);
-        result.Add(RotateCounterclockwiseAction.Instance);
-        result.Add(RotateHalfAction.Instance);
+        result.UnionWith(ActionsThatCanBeAssignedPermanentSkill);
 
         return result;
     }
