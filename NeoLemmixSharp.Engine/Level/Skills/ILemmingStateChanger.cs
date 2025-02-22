@@ -7,6 +7,7 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public interface ILemmingStateChanger
 {
+    [Pure]
     int LemmingStateChangerId { get; }
 
     void SetLemmingState(LemmingState lemmingState, bool status);
@@ -18,6 +19,8 @@ public interface ILemmingStateChanger
 
 public readonly struct LemmingStateChangerHasher : IPerfectHasher<ILemmingStateChanger>, IBitBufferCreator<BitBuffer32>
 {
+    private const int NumberOfStateChangers = 11;
+
     public const int ClimberStateChangerId = 0;
     public const int FloaterStateChangerId = 1;
     public const int GliderStateChangerId = 2;
@@ -53,6 +56,9 @@ public readonly struct LemmingStateChangerHasher : IPerfectHasher<ILemmingStateC
             FastForwardSkill.Instance
         };
 
+        if (result.Length != NumberOfStateChangers)
+            throw new Exception($"Number of ILemmingStateChanger is actually {result.Length}! Update {nameof(NumberOfStateChangers)}!");
+
         var hasher = new LemmingStateChangerHasher();
         hasher.ValidateUniqueIds(new ReadOnlySpan<ILemmingStateChanger>(result));
         Array.Sort(result, hasher);
@@ -60,7 +66,7 @@ public readonly struct LemmingStateChangerHasher : IPerfectHasher<ILemmingStateC
         return result;
     }
 
-    public int NumberOfItems => AllLemmingStateChangers.Length;
+    public int NumberOfItems => NumberOfStateChangers;
     public int Hash(ILemmingStateChanger item) => item.LemmingStateChangerId;
     public ILemmingStateChanger UnHash(int index) => AllLemmingStateChangers[index];
 
