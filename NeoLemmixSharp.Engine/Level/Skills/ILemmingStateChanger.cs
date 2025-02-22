@@ -31,27 +31,37 @@ public readonly struct LemmingStateChangerHasher : IPerfectHasher<ILemmingStateC
     public const int WaterStateChangerId = 9;
     public const int FastForwardStateChangerId = 10;
 
-    private static readonly ILemmingStateChanger[] AllLemmingStateChangers =
-    [
-        ClimberSkill.Instance,
-        FloaterSkill.Instance,
-        GliderSkill.Instance,
-        SwimmerSkill.Instance,
-        DisarmerSkill.Instance,
-        SliderSkill.Instance,
+    private static readonly ILemmingStateChanger[] AllLemmingStateChangers = GetLemmingStateChangers();
 
-        ZombieStateChanger.Instance,
-        NeutralStateChanger.Instance,
+    private static ILemmingStateChanger[] GetLemmingStateChangers()
+    {
+        var result = new ILemmingStateChanger[]
+        {
+            ClimberSkill.Instance,
+            FloaterSkill.Instance,
+            GliderSkill.Instance,
+            SwimmerSkill.Instance,
+            DisarmerSkill.Instance,
+            SliderSkill.Instance,
 
-        AcidLemmingSkill.Instance,
-        WaterLemmingSkill.Instance,
+            ZombieStateChanger.Instance,
+            NeutralStateChanger.Instance,
 
-        FastForwardSkill.Instance
-    ];
+            AcidLemmingSkill.Instance,
+            WaterLemmingSkill.Instance,
+
+            FastForwardSkill.Instance
+        };
+
+        var hasher = new LemmingStateChangerHasher();
+        hasher.ValidateUniqueIds(new ReadOnlySpan<ILemmingStateChanger>(result));
+        Array.Sort(result, hasher);
+
+        return result;
+    }
 
     public int NumberOfItems => AllLemmingStateChangers.Length;
     public int Hash(ILemmingStateChanger item) => item.LemmingStateChangerId;
-
     public ILemmingStateChanger UnHash(int index) => AllLemmingStateChangers[index];
 
     public static StateChangerSet CreateBitArraySet() => new(new LemmingStateChangerHasher(), false);

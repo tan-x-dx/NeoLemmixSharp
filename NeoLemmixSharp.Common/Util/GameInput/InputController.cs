@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Identity;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public sealed class InputController : IPerfectHasher<Keys>, IBitBufferCreator<BitBuffer256>
+public sealed class InputController :
+    IPerfectHasher<Keys>,
+    IPerfectHasher<InputAction>,
+    IBitBufferCreator<BitBuffer256>
 {
     private const int NumberOfKeys = 256;
 
@@ -56,8 +58,8 @@ public sealed class InputController : IPerfectHasher<Keys>, IBitBufferCreator<Bi
 
     public void ValidateInputActions()
     {
-        IdEquatableItemHelperMethods.ValidateUniqueIds<InputAction>(CollectionsMarshal.AsSpan(_inputActions));
-        _inputActions.Sort(IdEquatableItemHelperMethods.Compare);
+        this.ValidateUniqueIds<InputController, InputAction>(CollectionsMarshal.AsSpan(_inputActions));
+        _inputActions.Sort(this);
     }
 
     public void Tick()
@@ -131,6 +133,9 @@ public sealed class InputController : IPerfectHasher<Keys>, IBitBufferCreator<Bi
     int IPerfectHasher<Keys>.NumberOfItems => NumberOfKeys;
     int IPerfectHasher<Keys>.Hash(Keys item) => (int)item;
     Keys IPerfectHasher<Keys>.UnHash(int index) => (Keys)index;
+    int IPerfectHasher<InputAction>.NumberOfItems => _inputActions.Count;
+    int IPerfectHasher<InputAction>.Hash(InputAction item) => item.Id;
+    InputAction IPerfectHasher<InputAction>.UnHash(int index) => _inputActions[index];
     void IBitBufferCreator<BitBuffer256>.CreateBitBuffer(out BitBuffer256 buffer) => buffer = new();
 
     private readonly struct KeyToInputMapping(Keys key, InputAction inputAction)

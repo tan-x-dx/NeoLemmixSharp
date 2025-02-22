@@ -62,8 +62,9 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
             FastForwardSkill.Instance
         };
 
-        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<LemmingSkill>(result));
-        Array.Sort(result, IdEquatableItemHelperMethods.Compare);
+        var hasher = new LemmingSkillHasher();
+        hasher.ValidateUniqueIds(new ReadOnlySpan<LemmingSkill>(result));
+        Array.Sort(result, hasher);
 
         return result;
     }
