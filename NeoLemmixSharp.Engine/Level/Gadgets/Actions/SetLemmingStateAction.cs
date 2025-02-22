@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
+using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
@@ -39,7 +40,7 @@ public sealed class ZombieStateChanger : ILemmingStateChanger
 {
     public static readonly ZombieStateChanger Instance = new();
 
-    public int LemmingStateChangerId => LemmingStateChangerHasher.ZombieStateChangerId;
+    public StateChangerType LemmingStateChangerType => StateChangerType.ZombieStateChanger;
 
     private ZombieStateChanger()
     {
@@ -54,7 +55,7 @@ public sealed class NeutralStateChanger : ILemmingStateChanger
 {
     public static readonly NeutralStateChanger Instance = new();
 
-    public int LemmingStateChangerId => LemmingStateChangerHasher.NeutralStateChangerId;
+    public StateChangerType LemmingStateChangerType => StateChangerType.NeutralStateChanger;
 
     private NeutralStateChanger()
     {
