@@ -78,6 +78,14 @@ public sealed class LevelScreen : IBaseScreen
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool RegionContainsPoint(LevelRegion region, LevelPosition point)
+    {
+        return HorizontalBoundaryBehaviour.IsInRange(point.X, region.X, region.X + region.W) &&
+               VerticalBoundaryBehaviour.IsInRange(point.Y, region.Y, region.Y + region.H);
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool PositionOutOfBounds(LevelPosition levelPosition)
     {
         return (uint)levelPosition.X >= (uint)HorizontalBoundaryBehaviour.LevelLength ||

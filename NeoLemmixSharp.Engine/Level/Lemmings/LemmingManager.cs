@@ -193,11 +193,6 @@ public sealed class LemmingManager :
         _lemmingPositionHelper.UpdateItemPosition(lemming);
         lemming.OnUpdatePosition();
 
-        if (lemming.CurrentAction == BlockerAction.Instance)
-        {
-            BlockerAction.SetBlockerField(lemming, true);
-        }
-
         // If not relevant for this lemming, nothing will happen
         UpdateZombiePosition(lemming);
     }
@@ -261,13 +256,11 @@ public sealed class LemmingManager :
 
     public void RegisterBlocker(Lemming lemming)
     {
-        BlockerAction.SetBlockerField(lemming, true);
         _allBlockers.Add(lemming);
     }
 
     public void DeregisterBlocker(Lemming lemming)
     {
-        BlockerAction.SetBlockerField(lemming, false);
         _allBlockers.Remove(lemming);
     }
 

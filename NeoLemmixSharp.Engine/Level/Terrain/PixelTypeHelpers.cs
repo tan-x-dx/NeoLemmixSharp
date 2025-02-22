@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Engine.Level.Orientations;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -9,7 +8,6 @@ public static class PixelTypeHelpers
 {
     public const int PixelTypeSolidShiftOffset = 0;
     public const int PixelTypeArrowShiftOffset = 4;
-    public const int PixelTypeBlockerShiftOffset = 8;
     public const int PixelTypeSteelShift = 14;
     public const int PixelTypeVoidShift = 15;
 
@@ -42,25 +40,5 @@ public static class PixelTypeHelpers
     public static bool IsVoid(this PixelType pixelType)
     {
         return (pixelType & PixelType.Void) == PixelType.Void;
-    }
-
-    [Pure]
-    public static Orientation GetOrientationFromBlockerMask(PixelType pixelType)
-    {
-        return pixelType switch
-        {
-            PixelType.BlockerDown => Orientation.Down,
-            PixelType.BlockerLeft => Orientation.Left,
-            PixelType.BlockerUp => Orientation.Up,
-            PixelType.BlockerRight => Orientation.Right,
-
-            _ => ExpectedBlockerMaskPixelType(pixelType)
-        };
-    }
-
-    [DoesNotReturn]
-    private static Orientation ExpectedBlockerMaskPixelType(PixelType pixelType)
-    {
-        throw new ArgumentOutOfRangeException(nameof(pixelType), pixelType, "Expected single bit set to match blocker masks");
     }
 }

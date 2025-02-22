@@ -123,18 +123,6 @@ public sealed class TerrainManager
         }
     }
 
-    [Pure]
-    public PixelType GetBlockerData(LevelPosition pixel)
-    {
-        if (LevelScreen.PositionOutOfBounds(pixel))
-            return PixelType.Empty;
-
-        var index = LevelScreen.LevelWidth * pixel.Y + pixel.X;
-        var result = _pixels[index];
-
-        return result & PixelType.BlockerMask;
-    }
-
     public void PopulateSpanWithTerrainData(
         Span<PixelType> pixelSpan,
         int spanWidth,

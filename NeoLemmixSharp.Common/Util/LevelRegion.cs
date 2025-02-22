@@ -117,24 +117,12 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     public LevelPosition GetBottomRight() => new(X + W - 1, Y + H - 1);
 
     [DebuggerStepThrough]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool Is1x1() => W == 1 && H == 1;
-
-    [DebuggerStepThrough]
     public bool Overlaps(LevelRegion other)
     {
         return other.X < X + W &&
                X < other.X + other.W &&
                other.Y < Y + H &&
                Y < other.Y + other.H;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [DebuggerStepThrough]
-    public bool Contains(LevelPosition position)
-    {
-        return X <= position.X && position.X < X + W &&
-               Y <= position.Y && position.Y < Y + H;
     }
 
     [DebuggerStepThrough]

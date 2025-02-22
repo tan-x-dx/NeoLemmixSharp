@@ -37,8 +37,8 @@ public sealed class HitBoxGadget : GadgetBase,
 
     // The below properties refer to the positions of the hitboxes, not the gadget itself   
 
-    public LevelRegion CurrentBounds => _currentState.GetEncompassingHitBoxBounds(_currentGadgetBounds);
-    public LevelRegion PreviousBounds => _previousState.GetEncompassingHitBoxBounds(_previousGadgetBounds);
+    public LevelRegion CurrentBounds => _currentState.GetEncompassingHitBoxBounds(_currentGadgetBounds.Position);
+    public LevelRegion PreviousBounds => _previousState.GetEncompassingHitBoxBounds(_previousGadgetBounds.Position);
 
     public ResizeType ResizeType { get; }
 
