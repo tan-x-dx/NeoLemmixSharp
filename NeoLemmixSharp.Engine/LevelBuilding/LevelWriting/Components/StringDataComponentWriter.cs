@@ -99,6 +99,14 @@ public sealed class StringDataComponentWriter : ILevelDataWriter
             TryAdd(gadgetBuilder.StyleName);
             TryAdd(gadgetBuilder.PieceName);
         }
+
+        foreach (var gadgetData in levelData.AllGadgetData)
+        {
+            foreach (var gadgetInputName in gadgetData.InputNames)
+            {
+                TryAdd(gadgetInputName);
+            }
+        }
     }
 
     private void TryAdd(string? s)

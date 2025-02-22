@@ -77,7 +77,7 @@ public static class NeoLemmixStyleHelpers
             }
 
             levelData.TerrainArchetypeData.Add(
-                new LevelData.StylePiecePair(styleName, pieceAndFileLink.PieceName),
+                new StylePiecePair(styleName, pieceAndFileLink.PieceName),
                 newTerrainArchetypeData);
         }
     }

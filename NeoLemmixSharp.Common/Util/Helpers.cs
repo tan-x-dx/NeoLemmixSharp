@@ -9,13 +9,13 @@ public static class Helpers
     public static LevelPosition TopRightLevelPosition(this Rectangle rectangle) => new(rectangle.X + rectangle.Width - 1, rectangle.Y);
     public static LevelPosition BottomRightLevelPosition(this Rectangle rectangle) => new(rectangle.X + rectangle.Width - 1, rectangle.Y + rectangle.Height - 1);
 
-    public static int CountIfNotNull<T>(T? item)
+    public static int CountIfNotNull<T>(this T? item)
         where T : class
     {
         return item is not null ? 1 : 0;
     }
 
-    public static int CountIfNotNull<T>(T? item)
+    public static int CountIfNotNull<T>(this T? item)
         where T : struct
     {
         return item.HasValue ? 1 : 0;

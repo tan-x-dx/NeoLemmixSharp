@@ -10,8 +10,8 @@ public static class HitBoxGadgetReader
 
         /*return new HitBoxGadgetArchetypeBuilder
         {
-            StyleName = _styleName,
-            PieceName = _pieceName,
+            StyleName = styleName,
+            PieceName = pieceName,
 
 
         };*/

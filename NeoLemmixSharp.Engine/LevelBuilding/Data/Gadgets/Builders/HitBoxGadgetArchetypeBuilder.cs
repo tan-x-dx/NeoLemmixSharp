@@ -148,10 +148,10 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         TeamManager teamManager)
     {
         var numberOfCriteria =
-            Helpers.CountIfNotNull(hitBoxData.AllowedActions) +
-            Helpers.CountIfNotNull(hitBoxData.AllowedStates) +
-            Helpers.CountIfNotNull(hitBoxData.AllowedOrientations) +
-            Helpers.CountIfNotNull(hitBoxData.AllowedFacingDirection) +
+            hitBoxData.AllowedActions.CountIfNotNull() +
+            hitBoxData.AllowedStates.CountIfNotNull() +
+            hitBoxData.AllowedOrientations.CountIfNotNull() +
+            hitBoxData.AllowedFacingDirection.CountIfNotNull() +
             (gadgetData.HasProperty(GadgetProperty.TeamId) ? 1 : 0);
 
         if (numberOfCriteria == 0)
@@ -170,9 +170,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
         if (hitBoxData.AllowedStates is not null)
         {
-            var states = hitBoxData.AllowedStates.ToArray();
-            var stateFilter = new LemmingStateCriterion(states);
-            result[numberOfCriteria++] = stateFilter;
+            result[numberOfCriteria++] = new LemmingStateCriterion(hitBoxData.AllowedStates);
         }
 
         if (hitBoxData.AllowedOrientations is not null)

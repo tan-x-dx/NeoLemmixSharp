@@ -25,7 +25,9 @@ public sealed class GadgetData
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }
 
-    public LevelData.StylePiecePair GetStylePiecePair() => new(Style, GadgetPiece);
+    public required string[] InputNames { get; init; }
+
+    public StylePiecePair GetStylePiecePair() => new(Style, GadgetPiece);
 
     public int NumberOfGadgetProperties => _properties.Count;
 

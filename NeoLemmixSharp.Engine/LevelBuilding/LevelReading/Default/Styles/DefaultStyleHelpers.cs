@@ -169,7 +169,7 @@ public static class DefaultStyleHelpers
                 var newTerrainArchetypeData = TerrainArchetypeReadingHelpers.GetTerrainArchetypeData(styleName, pieceName, rawFileData, pieceExists);
 
                 levelData.TerrainArchetypeData.Add(
-                    new LevelData.StylePiecePair(styleName, pieceName),
+                    new StylePiecePair(styleName, pieceName),
                     newTerrainArchetypeData);
                 break;
 
@@ -177,7 +177,7 @@ public static class DefaultStyleHelpers
                 var newGadgetArchetypeBuilder = GadgetBuilderReadingHelpers.GetGadgetBuilderData(styleName, pieceName, rawFileData, pieceExists);
 
                 levelData.AllGadgetArchetypeBuilders.Add(
-                    new LevelData.StylePiecePair(styleName, pieceName),
+                    new StylePiecePair(styleName, pieceName),
                     newGadgetArchetypeBuilder);
                 break;
 

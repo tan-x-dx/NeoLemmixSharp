@@ -21,7 +21,7 @@ public sealed class TerrainData
     public required int? Width { get; init; }
     public required int? Height { get; init; }
 
-    public LevelData.StylePiecePair GetStylePiecePair() => new(Style, TerrainPiece);
+    public StylePiecePair GetStylePiecePair() => new(Style, TerrainPiece);
 
     public override string ToString()
     {
