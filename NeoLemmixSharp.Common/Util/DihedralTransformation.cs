@@ -109,6 +109,12 @@ public readonly ref struct DihedralTransformation
         return new LevelPosition(x0, y0);
     }
 
+    public LevelSize Transform(LevelSize levelSize)
+    {
+        Transform(levelSize.W, levelSize.H, levelSize.W, levelSize.H, out var x0, out var y0);
+        return new LevelSize(x0, y0);
+    }
+
     public void Transform(
         int x,
         int y,
