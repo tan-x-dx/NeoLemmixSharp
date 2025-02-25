@@ -279,7 +279,7 @@ public sealed class LemmingManager :
         {
             var secondBounds = blocker.CurrentBounds;
 
-            if (firstBounds.Overlaps(secondBounds))
+            if (LevelScreen.RegionsOverlap(firstBounds, secondBounds))
                 return false;
         }
 
@@ -316,7 +316,7 @@ public sealed class LemmingManager :
 
             var zombieRegion = zombie.CurrentBounds;
 
-            if (checkRegion.Overlaps(zombieRegion))
+            if (LevelScreen.RegionsOverlap(checkRegion, zombieRegion))
             {
                 RegisterLemmingForZombification(lemming);
 

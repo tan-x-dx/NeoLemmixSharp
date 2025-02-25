@@ -28,7 +28,6 @@ public sealed class RectangularHitBoxRegion : IHitBoxRegion
 
     public bool ContainsPoint(LevelPosition levelPosition)
     {
-        return LevelScreen.HorizontalBoundaryBehaviour.IsInRange(levelPosition.X, _region.X, _region.X + _region.W) &&
-               LevelScreen.VerticalBoundaryBehaviour.IsInRange(levelPosition.Y, _region.Y, _region.Y + _region.H);
+        return LevelScreen.RegionContainsPoint(_region, levelPosition);
     }
 }
