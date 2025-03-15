@@ -86,7 +86,6 @@ public sealed class LevelScreen : IBaseScreen
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool RegionContainsPoints(LevelRegion region, LevelPosition p1, LevelPosition p2)
     {
         var horizontalInterval = region.GetHorizontalInterval();

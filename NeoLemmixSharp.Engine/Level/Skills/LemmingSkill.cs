@@ -139,8 +139,8 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     }
 
     private readonly LemmingActionSet _assignableActions;
-    public readonly int Id;
     public readonly string LemmingSkillName;
+    public readonly int Id;
 
     protected LemmingSkill(int id, string lemmingSkillName)
     {
