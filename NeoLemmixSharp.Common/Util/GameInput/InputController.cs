@@ -100,7 +100,7 @@ public sealed class InputController :
 
     private void UpdateKeyStates()
     {
-        var currentlyPressedKeys = Keyboard.GetState().GetPressedKeys().AsSpan();
+        ReadOnlySpan<Keys> currentlyPressedKeys = Keyboard.GetState().GetPressedKeys();
 
         _releasedKeys.SetFrom(_pressedKeys);
         _pressedKeys.Clear();
