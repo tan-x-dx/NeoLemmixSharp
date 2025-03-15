@@ -29,11 +29,9 @@ public static class EngineConstants
     public const int NumberOfFacingDirections = 2;
 
     public const int RightFacingDirectionId = 0;
-    public const int RightFacingDirectionDeltaX = 1;
     public const string RightFacingDirectionName = "Right";
 
     public const int LeftFacingDirectionId = 1;
-    public const int LeftFacingDirectionDeltaX = -1;
     public const string LeftFacingDirectionName = "Left";
 
     public const int NumberOfOrientations = 4;

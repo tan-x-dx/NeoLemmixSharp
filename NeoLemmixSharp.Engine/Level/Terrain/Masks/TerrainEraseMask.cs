@@ -35,7 +35,7 @@ public sealed class TerrainEraseMask
         LevelPosition position,
         int frame)
     {
-        var transformation = new DihedralTransformation(orientation.RotNum, facingDirection == FacingDirection.Left);
+        var transformation = new DihedralTransformation(orientation, facingDirection);
 
         var offset = position - transformation.Transform(_anchorPoint, _maskWidth, _maskHeight);
         var terrainManager = LevelScreen.TerrainManager;

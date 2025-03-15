@@ -5,70 +5,38 @@ namespace NeoLemmixSharp.Common;
 
 public readonly ref struct DihedralTransformation
 {
-    public static (int RotNum, bool Flip) Simplify(
+    public static void Simplify(
         bool flipHorizontally,
         bool flipVertically,
-        bool rotate)
+        bool rotate,
+        out int rotNum,
+        out bool flip)
     {
-        var rotNum = rotate
-              ? 1
-              : 0;
+        rotNum = rotate
+            ? 1
+            : 0;
 
+        flip = flipHorizontally;
         if (flipVertically)
         {
-            flipHorizontally = !flipHorizontally;
+            flip = !flip;
             rotNum += 2;
         }
-
-        return (rotNum, flipHorizontally);
     }
 
-    private readonly int _r;
-    private readonly int _a;
-    private readonly int _b;
+    private readonly Orientation _o;
+    private readonly FacingDirection _f;
 
-    private readonly int _f;
-    private readonly int _m;
-
-    public DihedralTransformation()
-        : this(0, false)
+    public DihedralTransformation(Orientation orientation, FacingDirection facingDirection)
     {
+        _o = new Orientation(orientation.RotNum);
+        _f = new FacingDirection(facingDirection.Id);
     }
 
     public DihedralTransformation(int r, bool flip)
     {
-        _r = r & 3;
-
-        switch (_r)
-        {
-            case 0:
-                _a = 1;
-                _b = 0;
-                break;
-            case 1:
-                _a = 0;
-                _b = 1;
-                break;
-            case 2:
-                _a = -1;
-                _b = 0;
-                break;
-            case 3:
-                _a = 0;
-                _b = -1;
-                break;
-        }
-
-        if (flip)
-        {
-            _f = 1;
-            _m = -1;
-        }
-        else
-        {
-            _f = 0;
-            _m = 1;
-        }
+        _o = new Orientation(r);
+        _f = new FacingDirection(flip);
     }
 
     [SkipLocalsInit]
@@ -80,11 +48,11 @@ public readonly ref struct DihedralTransformation
         buffer[1] = 'o';
         buffer[2] = 't';
         buffer[3] = ' ';
-        buffer[4] = TextRenderingHelpers.DigitToChar(_r);
+        buffer[4] = TextRenderingHelpers.DigitToChar(_o.RotNum);
         buffer[5] = '|';
 
         int stringLength;
-        if (_f == 0)
+        if (_f == FacingDirection.Right)
         {
             stringLength = 6;
         }
@@ -118,37 +86,54 @@ public readonly ref struct DihedralTransformation
     public void Transform(
         int x,
         int y,
-        int width,
-        int height,
+        int w,
+        int h,
         out int x0,
         out int y0)
     {
-        var w = W(width, height);
-        var h = H(width, height);
-        var s = _f * Choose(width, height);
+        var s = GetRotationCoefficients(out var a, out var b, ref w, ref h);
+        s *= _f.Id;
 
-        x0 = s + _m * (_a * x - _b * y + w);
-        y0 = _b * x + _a * y + h;
+        x0 = s + _f.DeltaX * (a * x - b * y + w);
+        y0 = b * x + a * y + h;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int W(int w, int h) => _r switch
+    private int GetRotationCoefficients(out int a, out int b, ref int w, ref int h)
     {
-        1 => h,
-        2 => w,
-        _ => 0
-    };
+        var wTemp = w;
+        var hTemp = h;
+        switch (_o.RotNum)
+        {
+            case EngineConstants.DownOrientationRotNum:
+                a = 1;
+                b = 0;
+                w = 0;
+                h = 0;
+                return wTemp;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int H(int w, int h) => _r switch
-    {
-        2 => h,
-        3 => w,
-        _ => 0
-    };
+            case EngineConstants.LeftOrientationRotNum:
+                a = 0;
+                b = 1;
+                w = hTemp;
+                h = 0;
+                return hTemp;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int Choose(int w, int h) => (_r & 1) != 0
-        ? h
-        : w;
+            case EngineConstants.UpOrientationRotNum:
+                a = -1;
+                b = 0;
+                return wTemp;
+
+            case EngineConstants.RightOrientationRotNum:
+                a = 0;
+                b = -1;
+                w = 0;
+                h = wTemp;
+                return hTemp;
+
+            default:
+                a = 0;
+                b = 0;
+                return Orientation.ThrowOrientationOutOfRangeException<int>(_o);
+        }
+    }
 }

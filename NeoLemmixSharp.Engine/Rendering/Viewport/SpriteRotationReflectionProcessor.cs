@@ -144,7 +144,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
 
                 if (facingDirection == FacingDirection.Left)
                 {
-                    rotNum = (rotNum + 2) & 3;
+                    rotNum += 2;
                     flipHorizontally = true;
                 }
                 else

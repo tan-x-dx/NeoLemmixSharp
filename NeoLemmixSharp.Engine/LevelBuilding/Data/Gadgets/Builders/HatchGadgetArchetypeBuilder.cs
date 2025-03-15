@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
@@ -30,8 +29,8 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         var lemmingCount = gadgetData.GetProperty(GadgetProperty.Count);
 
         var dihedralTransformation = new DihedralTransformation(
-            gadgetData.Orientation.RotNum,
-            false); // Hatches do not flip according to facing direction
+            gadgetData.Orientation,
+            FacingDirection.Right); // Hatches do not flip according to facing direction
 
         dihedralTransformation.Transform(
             SpriteData.SpriteWidth,
@@ -65,10 +64,10 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             gadgetData.FacingDirection,
             lemmingCount);
 
-     /*   var gadgetAnimationController = new GadgetStateAnimationController(
-            new GadgetStateAnimationBehaviour(SpriteData.SpriteWidth, SpriteData.SpriteHeight, 0, 0, 0, SpriteData.FrameCountsPerLayer[0], GadgetSecondaryAnimationAction.Play),
-            -1,
-            Array.Empty<GadgetStateAnimationBehaviour>());*/
+        /*   var gadgetAnimationController = new GadgetStateAnimationController(
+               new GadgetStateAnimationBehaviour(SpriteData.SpriteWidth, SpriteData.SpriteHeight, 0, 0, 0, SpriteData.FrameCountsPerLayer[0], GadgetSecondaryAnimationAction.Play),
+               -1,
+               Array.Empty<GadgetStateAnimationBehaviour>());*/
 
         var result = new HatchGadget(
             hatchSpawnData,

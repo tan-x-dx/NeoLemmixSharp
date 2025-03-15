@@ -38,10 +38,6 @@ public readonly struct LevelPosition : IEquatable<LevelPosition>
         new(left.X - right.X, left.Y - right.Y);
 
     [DebuggerStepThrough]
-    public static LevelPosition operator +(LevelPosition position, LevelSize size) =>
-        new(position.X + size.W, position.Y + size.H);
-
-    [DebuggerStepThrough]
     public bool Equals(LevelPosition other) => X == other.X && Y == other.Y;
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is LevelPosition other && X == other.X && Y == other.Y;
     public override int GetHashCode() => 3790121 * X +

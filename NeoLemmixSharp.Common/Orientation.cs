@@ -14,7 +14,6 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     public static readonly Orientation Up = new(EngineConstants.UpOrientationRotNum);
     public static readonly Orientation Right = new(EngineConstants.RightOrientationRotNum);
 
-    public static int NumberOfItems => EngineConstants.NumberOfOrientations;
     private static ReadOnlySpan<int> RawInts =>
     [
         EngineConstants.DownOrientationRotNum,
