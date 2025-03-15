@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
@@ -30,5 +29,10 @@ public sealed class RectangularHitBoxRegion : IHitBoxRegion
     public bool ContainsPoint(LevelPosition levelPosition)
     {
         return LevelScreen.RegionContainsPoint(_region, levelPosition);
+    }
+
+    public bool ContainsPoints(LevelPosition p1, LevelPosition p2)
+    {
+        return LevelScreen.RegionContainsPoints(_region, p1, p2);
     }
 }

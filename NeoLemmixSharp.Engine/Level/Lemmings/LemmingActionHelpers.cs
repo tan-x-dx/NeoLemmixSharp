@@ -154,7 +154,6 @@ public static class LemmingActionHelpers
 
             var filters = gadget.CurrentState.Filters;
             LemmingHitBoxFilter? firstMatchingFilter = null;
-            var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientationRotNum) & 3;
 
             for (var i = 0; i < filters.Length; i++)
             {
@@ -168,14 +167,11 @@ public static class LemmingActionHelpers
                 }
             }
 
-            if (firstMatchingFilter is null)
+            if (firstMatchingFilter is null || firstMatchingFilter.HitBoxBehaviour != HitBoxBehaviour.Updraft)
                 continue;
 
-            if (firstMatchingFilter.HitBoxBehaviour == HitBoxBehaviour.Updraft)
-            {
-                p[deltaRotNum] = 1;
-                continue;
-            }
+            var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientationRotNum) & 3;
+            p[deltaRotNum] = 1;
         }
 
         var dx = p[EngineConstants.RightOrientationRotNum] -

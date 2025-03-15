@@ -8,6 +8,7 @@ public sealed class EmptyHitBoxRegion : IHitBoxRegion
     public LevelRegion CurrentBounds => default;
 
     public bool ContainsPoint(LevelPosition levelPosition) => false;
+    public bool ContainsPoints(LevelPosition p1, LevelPosition p2) => false;
 
     private EmptyHitBoxRegion()
     {
