@@ -29,6 +29,7 @@ public sealed class LemmingManager :
     private readonly LemmingSpacialHashGrid _zombieSpacialHashGrid;
     private readonly LemmingSet _lemmingsToZombify;
     private readonly LemmingSet _allBlockers;
+    private readonly LemmingSet _fastForwardLemmings;
 
     private readonly int _totalNumberOfHatchLemmings;
     private readonly int _numberOfPreplacedLemmings;
@@ -80,14 +81,16 @@ public sealed class LemmingManager :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        // 2 spacial hash grids + 2 lemming sets
-        const int ExpectedNumberOfLemmingBitSets = 4;
+        // 2 spacial hash grids + 3 lemming sets
+        const int ExpectedNumberOfLemmingBitSets = 5;
+        _bitArrayBufferUsageCount = ExpectedNumberOfLemmingBitSets;
 
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
         _bitBuffer = new uint[bitBufferLength * ExpectedNumberOfLemmingBitSets];
 
         _lemmingsToZombify = new LemmingSet(this, false);
         _allBlockers = new LemmingSet(this, false);
+        _fastForwardLemmings = new LemmingSet(this, false);
 
         _totalNumberOfHatchLemmings = totalNumberOfHatchLemmings;
         _numberOfPreplacedLemmings = numberOfPreplacedLemmings;
@@ -116,6 +119,7 @@ public sealed class LemmingManager :
         lemming.Initialise();
 
         _lemmingPositionHelper.AddItem(lemming);
+        UpdateLemmingFastForwardState(lemming);
 
         if (lemming.State.IsZombie)
         {
@@ -133,9 +137,28 @@ public sealed class LemmingManager :
         if (isMajorTick)
         {
             UpdateHatchGroups();
-        }
 
-        UpdateLemmings(isMajorTick);
+            var lemmingSpan = new ReadOnlySpan<Lemming>(_lemmings);
+            foreach (var lemming in lemmingSpan)
+            {
+                if (lemming.State.IsActive)
+                {
+                    lemming.Tick();
+                    UpdateLemmingPosition(lemming);
+                }
+            }
+        }
+        else
+        {
+            foreach (var lemming in _fastForwardLemmings)
+            {
+                if (lemming.State.IsActive)
+                {
+                    lemming.Tick();
+                    UpdateLemmingPosition(lemming);
+                }
+            }
+        }
 
         ZombifyLemmings();
     }
@@ -156,19 +179,6 @@ public sealed class LemmingManager :
             lemming.LevelPosition = hatchGadget.Position + hatchGadget.SpawnPointOffset;
             hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
             InitialiseLemming(lemming);
-        }
-    }
-
-    private void UpdateLemmings(bool isMajorTick)
-    {
-        var lemmingSpan = new ReadOnlySpan<Lemming>(_lemmings);
-        foreach (var lemming in lemmingSpan)
-        {
-            if (lemming.State.IsActive && (isMajorTick || lemming.IsFastForward))
-            {
-                lemming.Tick();
-                UpdateLemmingPosition(lemming);
-            }
         }
     }
 
@@ -203,6 +213,18 @@ public sealed class LemmingManager :
             return;
 
         _zombieSpacialHashGrid.UpdateItemPosition(lemming);
+    }
+
+    public void UpdateLemmingFastForwardState(Lemming lemming)
+    {
+        if (lemming.IsFastForward)
+        {
+            _fastForwardLemmings.Add(lemming);
+        }
+        else
+        {
+            _fastForwardLemmings.Remove(lemming);
+        }
     }
 
     public void RemoveLemming(Lemming lemming, LemmingRemovalReason removalReason)
@@ -373,9 +395,11 @@ public sealed class LemmingManager :
     HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
     void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer)
     {
+        if (_bitArrayBufferUsageCount == 0)
+            throw new InvalidOperationException("Insufficient space for bit buffers!");
+        _bitArrayBufferUsageCount--;
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
         buffer = new(_bitBuffer, bitBufferLength * _bitArrayBufferUsageCount, bitBufferLength);
-        _bitArrayBufferUsageCount++;
     }
 
     public void Dispose()

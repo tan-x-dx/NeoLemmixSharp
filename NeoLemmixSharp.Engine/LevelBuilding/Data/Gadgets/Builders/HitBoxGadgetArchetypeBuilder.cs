@@ -48,7 +48,9 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = currentGadgetBounds,
-            PreviousGadgetBounds = previousGadgetBounds
+            PreviousGadgetBounds = previousGadgetBounds,
+
+            IsFastForward = false
         };
     }
 

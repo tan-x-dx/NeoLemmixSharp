@@ -146,6 +146,8 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
             {
                 _states &= ~(1U << EngineConstants.PermanentFastForwardBitIndex);
             }
+
+            LevelScreen.LemmingManager.UpdateLemmingFastForwardState(_lemming);
         }
     }
 

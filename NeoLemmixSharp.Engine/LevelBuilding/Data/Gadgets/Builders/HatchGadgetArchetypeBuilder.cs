@@ -78,7 +78,9 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = currentGadgetBounds,
-            PreviousGadgetBounds = previousGadgetBounds
+            PreviousGadgetBounds = previousGadgetBounds,
+
+            IsFastForward = false
         };
 
         //  gadgetRenderer?.SetGadget(result);
