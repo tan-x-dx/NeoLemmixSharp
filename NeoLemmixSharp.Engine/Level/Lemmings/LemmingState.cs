@@ -133,23 +133,6 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
         }
     }
 
-    public bool IsNeutral
-    {
-        get => ((_states >> EngineConstants.NeutralBitIndex) & 1U) != 0U;
-        set
-        {
-            if (value)
-            {
-                _states |= 1U << EngineConstants.NeutralBitIndex;
-            }
-            else
-            {
-                _states &= ~(1U << EngineConstants.NeutralBitIndex);
-            }
-            UpdateHairAndBodyColors();
-        }
-    }
-
     public bool IsPermanentFastForwards
     {
         get => ((_states >> EngineConstants.PermanentFastForwardBitIndex) & 1U) != 0U;
@@ -215,6 +198,23 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
             {
                 _states &= ~(1U << EngineConstants.ActiveBitIndex);
             }
+        }
+    }
+
+    public bool IsNeutral
+    {
+        get => ((_states >> EngineConstants.NeutralBitIndex) & 1U) != 0U;
+        set
+        {
+            if (value)
+            {
+                _states |= 1U << EngineConstants.NeutralBitIndex;
+            }
+            else
+            {
+                _states &= ~(1U << EngineConstants.NeutralBitIndex);
+            }
+            UpdateHairAndBodyColors();
         }
     }
 

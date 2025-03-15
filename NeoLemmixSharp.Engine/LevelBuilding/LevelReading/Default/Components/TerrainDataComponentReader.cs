@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 

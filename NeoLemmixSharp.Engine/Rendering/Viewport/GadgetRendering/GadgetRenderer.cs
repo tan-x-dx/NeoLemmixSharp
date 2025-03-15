@@ -1,30 +1,34 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
-public sealed class SimpleGadgetRenderer : IGadgetRenderer
+public sealed class GadgetRenderer : IGadgetRenderer
 {
+    private readonly GadgetBase _gadget;
     private readonly Texture2D _texture;
-    private readonly LevelRegion _bounds;
 
     public GadgetRenderMode RenderMode { get; }
     public int RendererId { get; set; }
     public int ItemId { get; }
 
-    public LevelRegion PreviousBounds => _bounds;
-    public LevelRegion CurrentBounds => _bounds;
+    public LevelRegion CurrentBounds => _gadget.CurrentAnimationController.CurrentBounds;
+    public LevelRegion PreviousBounds => _gadget.CurrentAnimationController.PreviousBounds;
 
-    public SimpleGadgetRenderer(
+    public GadgetRenderer(
+        GadgetBase gadget,
         Texture2D texture,
-        LevelPosition position)
+        GadgetRenderMode renderMode)
     {
+        _gadget = gadget;
         _texture = texture;
-        _bounds = new LevelRegion(position, new LevelSize(texture.Width, texture.Height));
+
+        RenderMode = renderMode;
     }
 
-    public Rectangle GetSpriteBounds() => new(_bounds.X, _bounds.Y, _texture.Width, _texture.Height);
+    public Rectangle GetSpriteBounds() => CurrentBounds.ToRectangle();
 
     public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY)
     {

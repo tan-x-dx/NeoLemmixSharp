@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.FacingDirections;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
@@ -342,8 +341,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
             foreach (var anchorPosition in intermediatePositions)
             {
                 var footPosition = CurrentAction.GetFootPosition(this, anchorPosition);
-                if (!gadget.ContainsPoint(Orientation, anchorPosition) ||
-                    !gadget.ContainsPoint(Orientation, footPosition))
+                if (!gadget.ContainsPoints(Orientation, anchorPosition, footPosition))
                     continue;
 
                 var filters = currentState.Filters;

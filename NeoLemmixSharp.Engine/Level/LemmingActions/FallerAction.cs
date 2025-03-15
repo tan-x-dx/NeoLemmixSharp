@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics.Contracts;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
@@ -95,8 +96,7 @@ public sealed class FallerAction : LemmingAction
 
         foreach (var gadget in gadgetEnumerable)
         {
-            if (!gadget.ContainsPoint(orientation, anchorPixel) ||
-                !gadget.ContainsPoint(orientation, footPixel))
+            if (!gadget.ContainsPoints(orientation, anchorPixel, footPixel))
                 continue;
 
             var filters = gadget.CurrentState.Filters;

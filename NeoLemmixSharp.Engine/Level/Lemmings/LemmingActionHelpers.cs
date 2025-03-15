@@ -1,10 +1,9 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
+using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -133,6 +132,7 @@ public static class LemmingActionHelpers
     }
 
     [Pure]
+    // Do not SkipLocalsInit
     public static unsafe LevelPosition GetUpdraftFallDelta(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (gadgetsNearLemming.Count == 0)
@@ -149,13 +149,11 @@ public static class LemmingActionHelpers
 
         foreach (var gadget in gadgetsNearLemming)
         {
-            if (!gadget.ContainsPoint(lemmingOrientation, anchorPosition) ||
-                !gadget.ContainsPoint(lemmingOrientation, footPosition))
+            if (!gadget.ContainsPoints(lemmingOrientation, anchorPosition, footPosition))
                 continue;
 
             var filters = gadget.CurrentState.Filters;
             LemmingHitBoxFilter? firstMatchingFilter = null;
-            var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientationRotNum) & 3;
 
             for (var i = 0; i < filters.Length; i++)
             {
@@ -169,14 +167,11 @@ public static class LemmingActionHelpers
                 }
             }
 
-            if (firstMatchingFilter is null)
+            if (firstMatchingFilter is null || firstMatchingFilter.HitBoxBehaviour != HitBoxBehaviour.Updraft)
                 continue;
 
-            if (firstMatchingFilter.HitBoxBehaviour == HitBoxBehaviour.Updraft)
-            {
-                p[deltaRotNum] = 1;
-                continue;
-            }
+            var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientationRotNum) & 3;
+            p[deltaRotNum] = 1;
         }
 
         var dx = p[EngineConstants.RightOrientationRotNum] -

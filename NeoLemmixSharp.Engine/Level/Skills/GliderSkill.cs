@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -14,7 +15,7 @@ public sealed class GliderSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public int LemmingStateChangerId => LemmingStateChangerHasher.GliderStateChangerId;
+    public StateChangerType LemmingStateChangerType => StateChangerType.GliderStateChanger;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

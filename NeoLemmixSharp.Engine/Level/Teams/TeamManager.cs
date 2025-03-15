@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Identity;
 
 namespace NeoLemmixSharp.Engine.Level.Teams;
 
@@ -15,8 +14,8 @@ public sealed class TeamManager :
     public TeamManager(Team[] teams)
     {
         _teams = teams;
-        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Team>(_teams));
-        Array.Sort(_teams, IdEquatableItemHelperMethods.Compare);
+        this.ValidateUniqueIds(new ReadOnlySpan<Team>(_teams));
+        Array.Sort(_teams, this);
     }
 
     public int NumberOfItems => _teams.Length;

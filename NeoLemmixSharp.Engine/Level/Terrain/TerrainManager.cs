@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.FacingDirections;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
 
@@ -121,18 +119,6 @@ public sealed class TerrainManager
         {
             pixel &= pixelTypeMask;
         }
-    }
-
-    [Pure]
-    public PixelType GetBlockerData(LevelPosition pixel)
-    {
-        if (LevelScreen.PositionOutOfBounds(pixel))
-            return PixelType.Empty;
-
-        var index = LevelScreen.LevelWidth * pixel.Y + pixel.X;
-        var result = _pixels[index];
-
-        return result & PixelType.BlockerMask;
     }
 
     public void PopulateSpanWithTerrainData(

@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
@@ -36,15 +36,25 @@ public sealed class ResizableRectangularHitBoxRegion : IHitBoxRegion
 
     public bool ContainsPoint(LevelPosition levelPosition)
     {
-        var x = GetX();
-        var y = GetY();
-
         var w = GetWidth();
         var h = GetHeight();
 
         return w > 0 &&
                h > 0 &&
-               LevelScreen.HorizontalBoundaryBehaviour.IsInRange(levelPosition.X, x, x + w) &&
-               LevelScreen.VerticalBoundaryBehaviour.IsInRange(levelPosition.Y, y, y + h);
+               LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new LevelInterval(GetX(), w), levelPosition.X) &&
+               LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new LevelInterval(GetY(), h), levelPosition.Y);
+    }
+
+    public bool ContainsPoints(LevelPosition p1, LevelPosition p2)
+    {
+        var w = GetWidth();
+        var h = GetHeight();
+
+        return w > 0 &&
+               h > 0 &&
+               ((LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new LevelInterval(GetX(), w), p1.X) &&
+                 LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new LevelInterval(GetY(), h), p1.Y)) ||
+                (LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new LevelInterval(GetX(), w), p1.X) &&
+                 LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new LevelInterval(GetY(), h), p1.Y)));
     }
 }

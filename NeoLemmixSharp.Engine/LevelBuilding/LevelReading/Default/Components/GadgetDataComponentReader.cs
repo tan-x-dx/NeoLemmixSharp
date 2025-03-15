@@ -1,6 +1,8 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
@@ -41,11 +43,14 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
+        byte orientationByte = rawFileData.Read8BitUnsignedInteger();
+        LevelReadWriteHelpers.DecipherOrientationByte(orientationByte, out var orientation, out var facingDirection);
+
         int initialStateId = rawFileData.Read8BitUnsignedInteger();
         var renderMode = GetGadgetRenderMode(rawFileData.Read8BitUnsignedInteger());
 
-        byte orientationByte = rawFileData.Read8BitUnsignedInteger();
-        LevelReadWriteHelpers.DecipherOrientationByte(orientationByte, out var orientation, out var facingDirection);
+        int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
+        var inputNames = CollectionsHelper.GetArrayForSize<string>(numberOfInputNames);
 
         var result = new GadgetData
         {
@@ -62,7 +67,18 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
 
             Orientation = orientation,
             FacingDirection = facingDirection,
+
+            InputNames = inputNames
         };
+
+        var i = 0;
+        while (i < numberOfInputNames)
+        {
+            int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
+            inputNames[i++] = _stringIdLookup[inputNameStringId];
+        }
+
+        Debug.Assert(i == inputNames.Length);
 
         int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
         while (numberOfProperties-- > 0)

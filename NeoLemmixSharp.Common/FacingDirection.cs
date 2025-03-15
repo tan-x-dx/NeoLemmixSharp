@@ -1,40 +1,20 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Orientations;
+﻿using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Engine.Level.FacingDirections;
+namespace NeoLemmixSharp.Common;
 
 public readonly struct FacingDirection : IIdEquatable<FacingDirection>
 {
     public static readonly FacingDirection Right = new(EngineConstants.RightFacingDirectionId);
     public static readonly FacingDirection Left = new(EngineConstants.LeftFacingDirectionId);
 
-    public static int NumberOfItems => EngineConstants.NumberOfFacingDirections;
-    private static ReadOnlySpan<int> RawInts =>
-    [
-        EngineConstants.RightFacingDirectionId, EngineConstants.RightFacingDirectionDeltaX,
-        EngineConstants.LeftFacingDirectionId, EngineConstants.LeftFacingDirectionDeltaX
-    ];
-    public static ReadOnlySpan<FacingDirection> AllItems => MemoryMarshal.Cast<int, FacingDirection>(RawInts);
-
     public readonly int Id;
-    public readonly int DeltaX;
-
-    public FacingDirection()
-    {
-        Id = EngineConstants.RightFacingDirectionId;
-        DeltaX = EngineConstants.RightFacingDirectionDeltaX;
-    }
+    public int DeltaX => 1 - (Id << 1);
 
     public FacingDirection(int id)
     {
         Id = id & 1;
-        DeltaX = EngineConstants.RightFacingDirectionDeltaX;
-        if (Id == EngineConstants.LeftFacingDirectionId)
-            DeltaX = EngineConstants.LeftFacingDirectionDeltaX;
     }
 
     public FacingDirection(bool faceLeft)
@@ -42,12 +22,10 @@ public readonly struct FacingDirection : IIdEquatable<FacingDirection>
         if (faceLeft)
         {
             Id = EngineConstants.LeftFacingDirectionId;
-            DeltaX = EngineConstants.LeftFacingDirectionDeltaX;
         }
         else
         {
             Id = EngineConstants.RightFacingDirectionId;
-            DeltaX = EngineConstants.RightFacingDirectionDeltaX;
         }
     }
 
@@ -57,7 +35,7 @@ public readonly struct FacingDirection : IIdEquatable<FacingDirection>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.Rotate(-DeltaX);
+    public Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.Rotate((Id << 1) - 1);
 
     int IIdEquatable<FacingDirection>.Id => Id;
 

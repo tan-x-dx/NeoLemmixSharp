@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -172,12 +171,13 @@ public sealed class BoundaryBehaviour
     }
 
     [Pure]
-    public bool IsInRange(int a, int lower, int upper)
+    public unsafe bool IntervalContainsPoint(LevelInterval interval, int a)
     {
-        Debug.Assert(lower < upper);
+        int* p1 = (int*)&interval;
+        p1[0] = Normalise(p1[0]);
 
         // If it works, it always works
-        if (lower <= a && a < upper)
+        if (interval.Start <= a && a < interval.Start + interval.Length)
             return true;
 
         // If it doesn't work, it certainly doesn't work for void
@@ -185,11 +185,39 @@ public sealed class BoundaryBehaviour
             return false;
 
         a += _levelLength;
-        if (lower <= a && a < upper)
+        if (interval.Start <= a && a < interval.Start + interval.Length)
             return true;
 
-        a -= _levelLength << 1;
-        return lower <= a && a < upper;
+        a -= (_levelLength << 1);
+        return interval.Start <= a && a < interval.Start + interval.Length;
+    }
+
+    [Pure]
+    public unsafe bool IntervalsOverlap(LevelInterval l1, LevelInterval l2)
+    {
+        int* startPointer = (int*)&l1;
+        startPointer[0] = Normalise(startPointer[0]);
+
+        startPointer = (int*)&l2;
+        startPointer[0] = Normalise(startPointer[0]);
+
+        // If it works, it always works
+        if (l1.Start < l1.Start + l1.Length &&
+            l1.Start < l2.Start + l2.Length)
+            return true;
+
+        // If it doesn't work, it certainly doesn't work for void
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
+            return false;
+
+        startPointer[0] += _levelLength;
+        if (l1.Start < l1.Start + l1.Length &&
+            l1.Start < l2.Start + l2.Length)
+            return true;
+
+        startPointer[0] -= (_levelLength << 1);
+        return l1.Start < l1.Start + l1.Length &&
+               l1.Start < l2.Start + l2.Length;
     }
 
     [Pure]

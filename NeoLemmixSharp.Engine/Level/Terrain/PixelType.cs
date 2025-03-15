@@ -25,14 +25,6 @@ public enum PixelType : ushort
     TerrainDataMask = SolidToAllOrientations | ArrowMask,
     TerrainDataInverseMask = ushort.MaxValue ^ TerrainDataMask,
 
-    BlockerDown = 1 << (EngineConstants.DownOrientationRotNum + PixelTypeHelpers.PixelTypeBlockerShiftOffset),
-    BlockerLeft = 1 << (EngineConstants.LeftOrientationRotNum + PixelTypeHelpers.PixelTypeBlockerShiftOffset),
-    BlockerUp = 1 << (EngineConstants.UpOrientationRotNum + PixelTypeHelpers.PixelTypeBlockerShiftOffset),
-    BlockerRight = 1 << (EngineConstants.RightOrientationRotNum + PixelTypeHelpers.PixelTypeBlockerShiftOffset),
-
-    BlockerMask = BlockerDown | BlockerLeft | BlockerRight | BlockerUp,
-    BlockerInverseMask = ushort.MaxValue ^ BlockerMask,
-
     Steel = 1 << PixelTypeHelpers.PixelTypeSteelShift,
     Void = 1 << PixelTypeHelpers.PixelTypeVoidShift
 }

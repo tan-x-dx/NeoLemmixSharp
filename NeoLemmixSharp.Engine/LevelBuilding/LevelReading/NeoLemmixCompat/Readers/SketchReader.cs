@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
@@ -76,7 +76,7 @@ public sealed class SketchReader : NeoLemmixDataReader
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var (rotNum, flip) = DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate);
+        DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate, out var rotNum, out var flip);
         _currentSketchData!.RotNum = rotNum;
         _currentSketchData.Flip = flip;
 

@@ -1,37 +1,36 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
-using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetResizer : GadgetBase, ISimpleRenderGadget
+public sealed class GadgetResizer : GadgetBase
 {
-    private SimpleGadgetRenderer _renderer;
+    private readonly AnimationController _inactiveAnimationController;
+    private readonly AnimationController _activeAnimationController;
+    private readonly HitBoxGadget[] _gadgets;
 
     private readonly int _tickDelay;
     private readonly int _dw;
     private readonly int _dh;
 
-    private readonly IResizeableGadget[] _gadgets;
-
     private bool _active = true;
     private int _tickCount;
 
-    public override SimpleGadgetRenderer Renderer => _renderer;
-
     public GadgetResizer(
-        int id,
-        Orientation orientation,
-        GadgetBounds gadgetBounds,
+        AnimationController inactiveAnimationController,
+        AnimationController activeAnimationController,
         string inputName,
-        IResizeableGadget[] gadgets,
+        HitBoxGadget[] gadgets,
         int tickDelay,
         int dw,
         int dh)
-        : base(id, orientation, gadgetBounds, 1)
+        : base(1)
     {
+        _inactiveAnimationController = inactiveAnimationController;
+        _activeAnimationController = activeAnimationController;
+        CurrentAnimationController = _inactiveAnimationController;
+
         _tickDelay = tickDelay;
         _gadgets = gadgets;
         _dw = dw;
@@ -42,6 +41,8 @@ public sealed class GadgetResizer : GadgetBase, ISimpleRenderGadget
 
     public override void Tick()
     {
+        CurrentAnimationController.Tick();
+
         if (!_active)
             return;
 
@@ -61,28 +62,27 @@ public sealed class GadgetResizer : GadgetBase, ISimpleRenderGadget
 
     private sealed class GadgetResizerInput : GadgetInput
     {
-        private readonly GadgetResizer _resizer;
+        private readonly GadgetResizer _gadget;
 
-        public GadgetResizerInput(string inputName, GadgetResizer resizer)
+        public GadgetResizerInput(string inputName, GadgetResizer gadget)
             : base(inputName)
         {
-            _resizer = resizer;
+            _gadget = gadget;
         }
 
         public override void OnRegistered()
         {
-            _resizer._active = false;
+            _gadget._active = false;
+            _gadget.CurrentAnimationController = _gadget._inactiveAnimationController;
         }
 
         public override void ReactToSignal(bool signal)
         {
-            _resizer._active = signal;
-        }
-    }
+            _gadget._active = signal;
 
-    SimpleGadgetRenderer ISimpleRenderGadget.Renderer
-    {
-        get => _renderer;
-        set => _renderer = value;
+            _gadget.CurrentAnimationController = signal
+                ? _gadget._activeAnimationController
+                : _gadget._inactiveAnimationController;
+        }
     }
 }

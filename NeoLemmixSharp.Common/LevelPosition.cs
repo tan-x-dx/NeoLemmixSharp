@@ -1,9 +1,10 @@
-﻿using System.Diagnostics;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.Common;
 
 [StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
 public readonly struct LevelPosition : IEquatable<LevelPosition>
@@ -35,10 +36,6 @@ public readonly struct LevelPosition : IEquatable<LevelPosition>
     [DebuggerStepThrough]
     public static LevelPosition operator -(LevelPosition left, LevelPosition right) =>
         new(left.X - right.X, left.Y - right.Y);
-
-    [DebuggerStepThrough]
-    public static LevelPosition operator +(LevelPosition position, LevelSize size) =>
-        new(position.X + size.W, position.Y + size.H);
 
     [DebuggerStepThrough]
     public bool Equals(LevelPosition other) => X == other.X && Y == other.Y;

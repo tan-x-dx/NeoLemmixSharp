@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using System.Diagnostics;
@@ -15,8 +14,9 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class LemmingManager :
     IPerfectHasher<Lemming>,
-    IBitBufferCreator<ArrayBitBuffer>,
     IItemManager<Lemming>,
+    IPerfectHasher<HatchGroup>,
+    IBitBufferCreator<ArrayBitBuffer>,
     ISnapshotDataConvertible<LemmingManagerSnapshotData>,
     IInitialisable,
     IDisposable
@@ -45,8 +45,8 @@ public sealed class LemmingManager :
     public int LemmingsSaved { get; private set; }
 
     public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
+    public ReadOnlySpan<Lemming> AllLemmings => new(_lemmings);
     public LemmingEnumerable AllBlockers => _allBlockers.AsEnumerable();
-    public ReadOnlySpan<Lemming> AllItems => new(_lemmings);
 
     public int ScratchSpaceSize => _lemmingPositionHelper.ScratchSpaceSize;
 
@@ -60,14 +60,14 @@ public sealed class LemmingManager :
     {
         if (hatchGroups.Length > 0)
         {
-            IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<HatchGroup>(hatchGroups));
-            Array.Sort(hatchGroups, IdEquatableItemHelperMethods.Compare);
+            this.ValidateUniqueIds(new ReadOnlySpan<HatchGroup>(hatchGroups));
+            Array.Sort(hatchGroups, this);
         }
         _hatchGroups = hatchGroups;
 
         _lemmings = lemmings;
-        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<Lemming>(_lemmings));
-        Array.Sort(_lemmings, IdEquatableItemHelperMethods.Compare);
+        this.ValidateUniqueIds(new ReadOnlySpan<Lemming>(_lemmings));
+        Array.Sort(_lemmings, this);
 
         _lemmingPositionHelper = new LemmingSpacialHashGrid(
             this,
@@ -193,11 +193,6 @@ public sealed class LemmingManager :
         _lemmingPositionHelper.UpdateItemPosition(lemming);
         lemming.OnUpdatePosition();
 
-        if (lemming.CurrentAction == BlockerAction.Instance)
-        {
-            BlockerAction.SetBlockerField(lemming, true);
-        }
-
         // If not relevant for this lemming, nothing will happen
         UpdateZombiePosition(lemming);
     }
@@ -261,13 +256,11 @@ public sealed class LemmingManager :
 
     public void RegisterBlocker(Lemming lemming)
     {
-        BlockerAction.SetBlockerField(lemming, true);
         _allBlockers.Add(lemming);
     }
 
     public void DeregisterBlocker(Lemming lemming)
     {
-        BlockerAction.SetBlockerField(lemming, false);
         _allBlockers.Remove(lemming);
     }
 
@@ -286,7 +279,7 @@ public sealed class LemmingManager :
         {
             var secondBounds = blocker.CurrentBounds;
 
-            if (firstBounds.Overlaps(secondBounds))
+            if (LevelScreen.RegionsOverlap(firstBounds, secondBounds))
                 return false;
         }
 
@@ -323,7 +316,7 @@ public sealed class LemmingManager :
 
             var zombieRegion = zombie.CurrentBounds;
 
-            if (checkRegion.Overlaps(zombieRegion))
+            if (LevelScreen.RegionsOverlap(checkRegion, zombieRegion))
             {
                 RegisterLemmingForZombification(lemming);
 
@@ -368,10 +361,16 @@ public sealed class LemmingManager :
         return true;
     }
 
-    public int NumberOfItems => _lemmings.Length;
+    public int NumberOfLemmings => _lemmings.Length;
+    ReadOnlySpan<Lemming> IItemManager<Lemming>.AllItems => new(_lemmings);
+    int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Length;
+    int IItemManager<Lemming>.NumberOfItems => _lemmings.Length;
+    int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
 
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
+    int IPerfectHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
+    HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
     void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer)
     {
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);

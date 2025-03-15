@@ -5,11 +5,10 @@ using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
-using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 
-public sealed class LevelData : IEqualityComparer<LevelData.StylePiecePair>
+public sealed class LevelData
 {
     private int _levelWidth = -1;
     private int _levelHeight = -1;
@@ -144,8 +143,9 @@ public sealed class LevelData : IEqualityComparer<LevelData.StylePiecePair>
 
     public LevelData()
     {
-        TerrainArchetypeData = new Dictionary<StylePiecePair, TerrainArchetypeData>(this);
-        AllGadgetArchetypeBuilders = new Dictionary<StylePiecePair, IGadgetArchetypeBuilder>(this);
+        var comparer = new StylePiecePairEqualityComparer();
+        TerrainArchetypeData = new Dictionary<StylePiecePair, TerrainArchetypeData>(comparer);
+        AllGadgetArchetypeBuilders = new Dictionary<StylePiecePair, IGadgetArchetypeBuilder>(comparer);
     }
 
     public void Validate()
@@ -170,22 +170,5 @@ public sealed class LevelData : IEqualityComparer<LevelData.StylePiecePair>
         if (LevelObjectives.Count == 0) return "Level objectives not set!";
 
         return null;
-    }
-
-    public readonly struct StylePiecePair(string styleName, string pieceName)
-    {
-        public readonly string StyleName = styleName;
-        public readonly string PieceName = pieceName;
-    }
-
-    bool IEqualityComparer<StylePiecePair>.Equals(StylePiecePair x, StylePiecePair y)
-    {
-        return string.Equals(x.StyleName, y.StyleName) &&
-               string.Equals(x.PieceName, y.PieceName);
-    }
-
-    int IEqualityComparer<StylePiecePair>.GetHashCode([DisallowNull] StylePiecePair obj)
-    {
-        return HashCode.Combine(obj.StyleName, obj.PieceName);
     }
 }

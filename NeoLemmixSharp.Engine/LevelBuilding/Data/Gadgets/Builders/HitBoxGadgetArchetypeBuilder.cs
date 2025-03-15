@@ -1,17 +1,16 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Engine.Level.Orientations.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Engine.Level.Orientations.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
+using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Common.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Common.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
@@ -31,21 +30,26 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         LemmingManager lemmingManager,
         TeamManager teamManager)
     {
-        var gadgetBounds = GetGadgetBounds(gadgetData);
+        var currentGadgetBounds = GetGadgetBounds(gadgetData);
+        var previousGadgetBounds = new GadgetBounds(currentGadgetBounds);
         var resizeType = GetResizeTypeForGadgetOrientation(gadgetData);
-        var gadgetStates = GetGadgetStates(gadgetData, gadgetBounds, teamManager);
+        var gadgetStates = GetGadgetStates(gadgetData, currentGadgetBounds, teamManager);
         var initialStateIndex = gadgetData.InitialStateId;
 
         var lemmingTracker = new LemmingTracker(lemmingManager);
 
         return new HitBoxGadget(
-            gadgetData.Id,
-            gadgetData.Orientation,
-            gadgetBounds,
             resizeType,
             lemmingTracker,
             gadgetStates,
-            initialStateIndex);
+            initialStateIndex)
+        {
+            Id = gadgetData.Id,
+            Orientation = gadgetData.Orientation,
+
+            CurrentGadgetBounds = currentGadgetBounds,
+            PreviousGadgetBounds = previousGadgetBounds
+        };
     }
 
     private GadgetBounds GetGadgetBounds(GadgetData gadgetData)
@@ -97,7 +101,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         {
             var gadgetStateArchetypeData = AllGadgetStateData[i];
 
-            var animationController = gadgetStateArchetypeData.GetAnimationController();
+            //   var animationController = gadgetStateArchetypeData.GetAnimationController();
             var hitBoxRegionLookup = CreateHitBoxRegionLookup(
                 gadgetData,
                 hitBoxGadgetBounds,
@@ -110,7 +114,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             result[i] = new GadgetState(
                 hitBoxFilters,
                 hitBoxRegionLookup,
-                animationController);
+                null!);
         }
 
         return result;
@@ -148,10 +152,10 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         TeamManager teamManager)
     {
         var numberOfCriteria =
-            Helpers.CountIfNotNull(hitBoxData.AllowedActions) +
-            Helpers.CountIfNotNull(hitBoxData.AllowedStates) +
-            Helpers.CountIfNotNull(hitBoxData.AllowedOrientations) +
-            Helpers.CountIfNotNull(hitBoxData.AllowedFacingDirection) +
+            hitBoxData.AllowedActions.CountIfNotNull() +
+            hitBoxData.AllowedStates.CountIfNotNull() +
+            hitBoxData.AllowedOrientations.CountIfNotNull() +
+            hitBoxData.AllowedFacingDirection.CountIfNotNull() +
             (gadgetData.HasProperty(GadgetProperty.TeamId) ? 1 : 0);
 
         if (numberOfCriteria == 0)
@@ -170,9 +174,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
         if (hitBoxData.AllowedStates is not null)
         {
-            var states = hitBoxData.AllowedStates.ToArray();
-            var stateFilter = new LemmingStateCriterion(states);
-            result[numberOfCriteria++] = stateFilter;
+            result[numberOfCriteria++] = new LemmingStateCriterion(hitBoxData.AllowedStates);
         }
 
         if (hitBoxData.AllowedOrientations is not null)

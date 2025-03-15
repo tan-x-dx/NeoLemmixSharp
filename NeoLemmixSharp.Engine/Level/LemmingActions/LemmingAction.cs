@@ -1,8 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -63,8 +63,9 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
             RotateHalfAction.Instance
         };
 
-        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<LemmingAction>(result));
-        Array.Sort(result, IdEquatableItemHelperMethods.Compare);
+        var hasher = new LemmingActionHasher();
+        hasher.ValidateUniqueIds(new ReadOnlySpan<LemmingAction>(result));
+        Array.Sort(result, hasher);
 
         return result;
     }

@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -14,10 +15,11 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
+    public StateChangerType LemmingStateChangerType => StateChangerType.WaterStateChanger;
+
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.HasLiquidAffinity &&
-               ActionIsAssignable(lemming);
+        return !lemming.State.HasLiquidAffinity && ActionIsAssignable(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
@@ -27,7 +29,6 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingStateChanger
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public int LemmingStateChangerId => LemmingStateChangerHasher.WaterStateChangerId;
     public void SetLemmingState(LemmingState lemmingState, bool status)
     {
         lemmingState.IsWaterLemming = status;

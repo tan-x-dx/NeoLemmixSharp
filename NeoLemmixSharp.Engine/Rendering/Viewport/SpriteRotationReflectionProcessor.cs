@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.CompilerServices;
@@ -147,7 +144,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
 
                 if (facingDirection == FacingDirection.Left)
                 {
-                    rotNum = (rotNum + 2) & 3;
+                    rotNum += 2;
                     flipHorizontally = true;
                 }
                 else

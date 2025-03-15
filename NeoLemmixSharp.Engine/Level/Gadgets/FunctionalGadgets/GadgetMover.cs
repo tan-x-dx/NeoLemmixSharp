@@ -1,37 +1,36 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
-using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetMover : GadgetBase, ISimpleRenderGadget
+public sealed class GadgetMover : GadgetBase
 {
-    private SimpleGadgetRenderer _renderer;
+    private readonly AnimationController _inactiveAnimationController;
+    private readonly AnimationController _activeAnimationController;
+    private readonly IMoveableGadget[] _gadgets;
 
     private readonly int _tickDelay;
     private readonly int _dx;
     private readonly int _dy;
 
-    private readonly IMoveableGadget[] _gadgets;
-
     private bool _active = true;
     private int _tickCount;
 
-    public override SimpleGadgetRenderer Renderer => _renderer;
-
     public GadgetMover(
-        int id,
-        Orientation orientation,
-        GadgetBounds gadgetBounds,
+        AnimationController inactiveAnimationController,
+        AnimationController activeAnimationController,
         string inputName,
         IMoveableGadget[] gadgets,
         int tickDelay,
         int dx,
         int dy)
-        : base(id, orientation, gadgetBounds, 1)
+        : base(1)
     {
+        _inactiveAnimationController = inactiveAnimationController;
+        _activeAnimationController = activeAnimationController;
+        CurrentAnimationController = _inactiveAnimationController;
+
         _tickDelay = tickDelay;
         _gadgets = gadgets;
         _dx = dx;
@@ -42,6 +41,8 @@ public sealed class GadgetMover : GadgetBase, ISimpleRenderGadget
 
     public override void Tick()
     {
+        CurrentAnimationController.Tick();
+
         if (!_active)
             return;
 
@@ -61,28 +62,27 @@ public sealed class GadgetMover : GadgetBase, ISimpleRenderGadget
 
     private sealed class GadgetMoverInput : GadgetInput
     {
-        private readonly GadgetMover _mover;
+        private readonly GadgetMover _gadget;
 
-        public GadgetMoverInput(string inputName, GadgetMover mover)
+        public GadgetMoverInput(string inputName, GadgetMover gadget)
             : base(inputName)
         {
-            _mover = mover;
+            _gadget = gadget;
         }
 
         public override void OnRegistered()
         {
-            _mover._active = false;
+            _gadget._active = false;
+            _gadget.CurrentAnimationController = _gadget._inactiveAnimationController;
         }
 
         public override void ReactToSignal(bool signal)
         {
-            _mover._active = signal;
-        }
-    }
+            _gadget._active = signal;
 
-    SimpleGadgetRenderer ISimpleRenderGadget.Renderer
-    {
-        get => _renderer;
-        set => _renderer = value;
+            _gadget.CurrentAnimationController = signal
+                ? _gadget._activeAnimationController
+                : _gadget._inactiveAnimationController;
+        }
     }
 }

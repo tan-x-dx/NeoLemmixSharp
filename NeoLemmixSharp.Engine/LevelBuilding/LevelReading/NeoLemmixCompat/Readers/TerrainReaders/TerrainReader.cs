@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
@@ -125,7 +125,7 @@ public sealed class TerrainReader : NeoLemmixDataReader
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var (rotNum, flip) = DihedralTransformation.Simplify(_currentTerrainData.FlipHorizontally, _currentTerrainData.FlipVertically, _currentTerrainData.Rotate);
+        DihedralTransformation.Simplify(_currentTerrainData.FlipHorizontally, _currentTerrainData.FlipVertically, _currentTerrainData.Rotate, out var rotNum, out var flip);
 
         var newTerrainData = new TerrainData
         {

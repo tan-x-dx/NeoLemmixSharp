@@ -1,7 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -25,7 +23,9 @@ public sealed class GadgetData
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }
 
-    public LevelData.StylePiecePair GetStylePiecePair() => new(Style, GadgetPiece);
+    public required string[] InputNames { get; init; }
+
+    public StylePiecePair GetStylePiecePair() => new(Style, GadgetPiece);
 
     public int NumberOfGadgetProperties => _properties.Count;
 
@@ -52,8 +52,8 @@ public sealed class GadgetData
     public void GetDihedralTransformation(out DihedralTransformation dihedralTransformation)
     {
         dihedralTransformation = new DihedralTransformation(
-            Orientation.RotNum,
-            FacingDirection == FacingDirection.Left);
+            Orientation,
+            FacingDirection);
     }
 
     [Pure]

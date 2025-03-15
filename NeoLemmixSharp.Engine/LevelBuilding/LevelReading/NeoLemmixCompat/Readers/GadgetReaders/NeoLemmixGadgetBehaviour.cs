@@ -1,7 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using System.Diagnostics.CodeAnalysis;
@@ -82,34 +79,34 @@ public static class NeoLemmixGadgetBehaviourExtensions
         this NeoLemmixGadgetArchetypeData archetypeData,
         SpriteData spriteData)
     {
-        if (archetypeData.Behaviour is
-            NeoLemmixGadgetBehaviour.None or
-            NeoLemmixGadgetBehaviour.Entrance or
-            NeoLemmixGadgetBehaviour.Exit or
-            NeoLemmixGadgetBehaviour.Water or
-            NeoLemmixGadgetBehaviour.Fire or
-            NeoLemmixGadgetBehaviour.ForceLeft or
-            NeoLemmixGadgetBehaviour.ForceRight or
-            NeoLemmixGadgetBehaviour.Updraft or
-            NeoLemmixGadgetBehaviour.AntiSplatPad or
-            NeoLemmixGadgetBehaviour.SplatPad or
-            NeoLemmixGadgetBehaviour.Background)
-            return GetSingleGadgetState(archetypeData, spriteData);
+        /*  if (archetypeData.Behaviour is
+              NeoLemmixGadgetBehaviour.None or
+              NeoLemmixGadgetBehaviour.Entrance or
+              NeoLemmixGadgetBehaviour.Exit or
+              NeoLemmixGadgetBehaviour.Water or
+              NeoLemmixGadgetBehaviour.Fire or
+              NeoLemmixGadgetBehaviour.ForceLeft or
+              NeoLemmixGadgetBehaviour.ForceRight or
+              NeoLemmixGadgetBehaviour.Updraft or
+              NeoLemmixGadgetBehaviour.AntiSplatPad or
+              NeoLemmixGadgetBehaviour.SplatPad or
+              NeoLemmixGadgetBehaviour.Background)
+              return GetSingleGadgetState(archetypeData, spriteData);
 
-        if (archetypeData.Behaviour is
-            NeoLemmixGadgetBehaviour.PickupSkill or
-            NeoLemmixGadgetBehaviour.UnlockButton or
-            NeoLemmixGadgetBehaviour.Splitter)
-            return GetGadgetStatesForTwoStateGadgets(archetypeData, spriteData);
+          if (archetypeData.Behaviour is
+              NeoLemmixGadgetBehaviour.PickupSkill or
+              NeoLemmixGadgetBehaviour.UnlockButton or
+              NeoLemmixGadgetBehaviour.Splitter)
+              return GetGadgetStatesForTwoStateGadgets(archetypeData, spriteData);
 
-        if (archetypeData.Behaviour is
-            NeoLemmixGadgetBehaviour.Trap or
-            NeoLemmixGadgetBehaviour.TrapOnce)
-            return GetGadgetStatesForTraps(archetypeData, spriteData);
-
+          if (archetypeData.Behaviour is
+              NeoLemmixGadgetBehaviour.Trap or
+              NeoLemmixGadgetBehaviour.TrapOnce)
+              return GetGadgetStatesForTraps(archetypeData, spriteData);
+          */
         return ToBeImplemented(archetypeData.Behaviour);
     }
-
+    /*
     private static GadgetStateArchetypeData[] GetSingleGadgetState(
         NeoLemmixGadgetArchetypeData archetypeData,
         SpriteData spriteData)
@@ -140,7 +137,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
 
         var result = new GadgetStateArchetypeData[]
         {
-          /*  new()
+            new()
             {
                 OnLemmingEnterActions = emptyActions,
                 OnLemmingPresentActions = emptyActions,
@@ -160,8 +157,8 @@ public static class NeoLemmixGadgetBehaviourExtensions
                 },
                 PrimaryAnimationStateTransitionIndex = GadgetStateAnimationController.NoGadgetStateTransition,
                 SecondaryAnimations = secondaryAnimations
-            }*/
-        };
+            }
+    };
 
         return result;
     }
@@ -197,72 +194,72 @@ public static class NeoLemmixGadgetBehaviourExtensions
             secondaryAnimationData = archetypeData.AnimationData[0];
         }
 
-    /*    var idleState = new GadgetStateArchetypeData
-        {
-            OnLemmingEnterActions = emptyActions,
-            OnLemmingPresentActions = emptyActions,
-            OnLemmingExitActions = emptyActions,
-
-            TriggerType = HitBoxType.Rectangular,
-            TriggerData = archetypeData.ToRectangularTriggerData(),
-            PrimaryAnimation = new GadgetAnimationArchetypeData
+            var idleState = new GadgetStateArchetypeData
             {
-                SpriteWidth = spriteData.SpriteWidth,
-                SpriteHeight = spriteData.SpriteHeight,
-                Layer = 0,
-                InitialFrame = 0,
-                MinFrame = 0,
-                MaxFrame = 1,
-                SecondaryAnimationAction = GadgetSecondaryAnimationAction.Play
-            },
-            PrimaryAnimationStateTransitionIndex = GadgetStateAnimationController.NoGadgetStateTransition, // Idle loops to Idle
-            SecondaryAnimations = GetSecondaryAnimationArchetypeDataForState(NeoLemmixGadgetStateType.Idle)
-        };
+                OnLemmingEnterActions = emptyActions,
+                OnLemmingPresentActions = emptyActions,
+                OnLemmingExitActions = emptyActions,
 
-        var activeState = new GadgetStateArchetypeData
-        {
-            OnLemmingEnterActions = emptyActions,
-            OnLemmingPresentActions = emptyActions,
-            OnLemmingExitActions = emptyActions,
+                TriggerType = HitBoxType.Rectangular,
+                TriggerData = archetypeData.ToRectangularTriggerData(),
+                PrimaryAnimation = new GadgetAnimationArchetypeData
+                {
+                    SpriteWidth = spriteData.SpriteWidth,
+                    SpriteHeight = spriteData.SpriteHeight,
+                    Layer = 0,
+                    InitialFrame = 0,
+                    MinFrame = 0,
+                    MaxFrame = 1,
+                    SecondaryAnimationAction = GadgetSecondaryAnimationAction.Play
+                },
+                PrimaryAnimationStateTransitionIndex = GadgetStateAnimationController.NoGadgetStateTransition, // Idle loops to Idle
+                SecondaryAnimations = GetSecondaryAnimationArchetypeDataForState(NeoLemmixGadgetStateType.Idle)
+            };
 
-            TriggerType = HitBoxType.Rectangular,
-            TriggerData = [],
-            PrimaryAnimation = new GadgetAnimationArchetypeData
+            var activeState = new GadgetStateArchetypeData
             {
-                SpriteWidth = spriteData.SpriteWidth,
-                SpriteHeight = spriteData.SpriteHeight,
-                Layer = 0,
-                InitialFrame = 0,
-                MinFrame = 0,
-                MaxFrame = spriteData.FrameCountsPerLayer[0],
-                SecondaryAnimationAction = GadgetSecondaryAnimationAction.Play
-            },
-            PrimaryAnimationStateTransitionIndex = 0, // Transition to Idle
-            SecondaryAnimations = GetSecondaryAnimationArchetypeDataForState(NeoLemmixGadgetStateType.Active),
-        };
+                OnLemmingEnterActions = emptyActions,
+                OnLemmingPresentActions = emptyActions,
+                OnLemmingExitActions = emptyActions,
 
-        var disabledState = new GadgetStateArchetypeData
-        {
-            OnLemmingEnterActions = emptyActions,
-            OnLemmingPresentActions = emptyActions,
-            OnLemmingExitActions = emptyActions,
+                TriggerType = HitBoxType.Rectangular,
+                TriggerData = [],
+                PrimaryAnimation = new GadgetAnimationArchetypeData
+                {
+                    SpriteWidth = spriteData.SpriteWidth,
+                    SpriteHeight = spriteData.SpriteHeight,
+                    Layer = 0,
+                    InitialFrame = 0,
+                    MinFrame = 0,
+                    MaxFrame = spriteData.FrameCountsPerLayer[0],
+                    SecondaryAnimationAction = GadgetSecondaryAnimationAction.Play
+                },
+                PrimaryAnimationStateTransitionIndex = 0, // Transition to Idle
+                SecondaryAnimations = GetSecondaryAnimationArchetypeDataForState(NeoLemmixGadgetStateType.Active),
+            };
 
-            TriggerType = HitBoxType.Rectangular,
-            TriggerData = [],
-            PrimaryAnimation = new GadgetAnimationArchetypeData
+            var disabledState = new GadgetStateArchetypeData
             {
-                SpriteWidth = spriteData.SpriteWidth,
-                SpriteHeight = spriteData.SpriteHeight,
-                Layer = 0,
-                InitialFrame = 0,
-                MinFrame = 0,
-                MaxFrame = 1,
-                SecondaryAnimationAction = GadgetSecondaryAnimationAction.Play
-            },
-            PrimaryAnimationStateTransitionIndex = GadgetStateAnimationController.NoGadgetStateTransition, // Stay Disabled
-            SecondaryAnimations = GetSecondaryAnimationArchetypeDataForState(NeoLemmixGadgetStateType.Disabled),
+                OnLemmingEnterActions = emptyActions,
+                OnLemmingPresentActions = emptyActions,
+                OnLemmingExitActions = emptyActions,
 
-        };*/
+                TriggerType = HitBoxType.Rectangular,
+                TriggerData = [],
+                PrimaryAnimation = new GadgetAnimationArchetypeData
+                {
+                    SpriteWidth = spriteData.SpriteWidth,
+                    SpriteHeight = spriteData.SpriteHeight,
+                    Layer = 0,
+                    InitialFrame = 0,
+                    MinFrame = 0,
+                    MaxFrame = 1,
+                    SecondaryAnimationAction = GadgetSecondaryAnimationAction.Play
+                },
+                PrimaryAnimationStateTransitionIndex = GadgetStateAnimationController.NoGadgetStateTransition, // Stay Disabled
+                SecondaryAnimations = GetSecondaryAnimationArchetypeDataForState(NeoLemmixGadgetStateType.Disabled),
+
+            };
 
         var result = new GadgetStateArchetypeData[]
         {
@@ -308,7 +305,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
 
         var result = new GadgetStateArchetypeData[]
         {
-          /*  new()
+            new()
             {
                 OnLemmingEnterActions = emptyActions,
                 OnLemmingPresentActions = emptyActions,
@@ -352,12 +349,12 @@ public static class NeoLemmixGadgetBehaviourExtensions
                 },
                 PrimaryAnimationStateTransitionIndex = 0,
                 SecondaryAnimations = []
-            }*/
+            }
         };
 
         return result;
     }
-
+*/
     [DoesNotReturn]
     private static GadgetStateArchetypeData[] ToBeImplemented(NeoLemmixGadgetBehaviour behaviour)
     {

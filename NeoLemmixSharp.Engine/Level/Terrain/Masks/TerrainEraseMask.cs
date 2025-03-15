@@ -1,6 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Orientations;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
@@ -36,7 +35,7 @@ public sealed class TerrainEraseMask
         LevelPosition position,
         int frame)
     {
-        var transformation = new DihedralTransformation(orientation.RotNum, facingDirection == FacingDirection.Left);
+        var transformation = new DihedralTransformation(orientation, facingDirection);
 
         var offset = position - transformation.Transform(_anchorPoint, _maskWidth, _maskHeight);
         var terrainManager = LevelScreen.TerrainManager;

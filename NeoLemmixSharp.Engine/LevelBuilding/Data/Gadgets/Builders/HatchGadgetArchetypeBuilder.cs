@@ -1,8 +1,7 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
@@ -14,8 +13,7 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     public required string StyleName { get; init; }
     public required string PieceName { get; init; }
 
-    public required int SpawnX { get; init; }
-    public required int SpawnY { get; init; }
+    public required LevelPosition SpawnPosition { get; init; }
 
     public required SpriteData SpriteData { get; init; }
 
@@ -31,8 +29,8 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         var lemmingCount = gadgetData.GetProperty(GadgetProperty.Count);
 
         var dihedralTransformation = new DihedralTransformation(
-            gadgetData.Orientation.RotNum,
-            false); // Hatches do not flip according to facing direction
+            gadgetData.Orientation,
+            FacingDirection.Right); // Hatches do not flip according to facing direction
 
         dihedralTransformation.Transform(
             SpriteData.SpriteWidth,
@@ -42,23 +40,19 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             out var transformedWidth,
             out var transformedHeight);
 
-        dihedralTransformation.Transform(
-            SpawnX,
-            SpawnY,
+        var spawnPointOffset = dihedralTransformation.Transform(
+            SpawnPosition,
             SpriteData.SpriteWidth,
-            SpriteData.SpriteHeight,
-            out var transformedSpawnX,
-            out var transformedSpawnY);
+            SpriteData.SpriteHeight);
 
-        var spawnPointOffset = new LevelPosition(transformedSpawnX, transformedSpawnY);
-
-        var gadgetBounds = new GadgetBounds
+        var currentGadgetBounds = new GadgetBounds
         {
             X = gadgetData.X,
             Y = gadgetData.Y,
             Width = transformedWidth,
             Height = transformedHeight
         };
+        var previousGadgetBounds = new GadgetBounds(currentGadgetBounds);
 
         var gadgetRenderer = gadgetSpriteBuilder.BuildStatefulGadgetRenderer(this, gadgetData);
 
@@ -70,20 +64,24 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             gadgetData.FacingDirection,
             lemmingCount);
 
-        var gadgetAnimationController = new GadgetStateAnimationController(
-            new GadgetStateAnimationBehaviour(SpriteData.SpriteWidth, SpriteData.SpriteHeight, 0, 0, 0, SpriteData.FrameCountsPerLayer[0], GadgetSecondaryAnimationAction.Play),
-            -1,
-            Array.Empty<GadgetStateAnimationBehaviour>());
+        /*   var gadgetAnimationController = new GadgetStateAnimationController(
+               new GadgetStateAnimationBehaviour(SpriteData.SpriteWidth, SpriteData.SpriteHeight, 0, 0, 0, SpriteData.FrameCountsPerLayer[0], GadgetSecondaryAnimationAction.Play),
+               -1,
+               Array.Empty<GadgetStateAnimationBehaviour>());*/
 
         var result = new HatchGadget(
-            gadgetData.Id,
-            gadgetData.Orientation,
-            gadgetBounds,
             hatchSpawnData,
             spawnPointOffset,
-            gadgetAnimationController);
+            null!)
+        {
+            Id = gadgetData.Id,
+            Orientation = gadgetData.Orientation,
 
-        gadgetRenderer?.SetGadget(result);
+            CurrentGadgetBounds = currentGadgetBounds,
+            PreviousGadgetBounds = previousGadgetBounds
+        };
+
+        //  gadgetRenderer?.SetGadget(result);
 
         return result;
     }

@@ -1,40 +1,28 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class HatchGadget : GadgetBase,
-    IAnimationControlledGadget,
-    IMoveableGadget
+public sealed class HatchGadget : GadgetBase, IMoveableGadget
 {
-    private GadgetLayerRenderer _renderer;
-
-    public LevelPosition SpawnPointOffset { get; }
     public HatchSpawnData HatchSpawnData { get; }
-    public GadgetStateAnimationController AnimationController { get; }
-
-    public override GadgetLayerRenderer Renderer => _renderer;
+    public LevelPosition SpawnPointOffset { get; }
 
     public HatchGadget(
-        int id,
-        Orientation orientation,
-        GadgetBounds gadgetBounds,
         HatchSpawnData hatchSpawnData,
         LevelPosition spawnPointOffset,
-        GadgetStateAnimationController animationController)
-        : base(id, orientation, gadgetBounds, 0)
+        AnimationController animationController)
+        : base(0)
     {
         SpawnPointOffset = spawnPointOffset;
         HatchSpawnData = hatchSpawnData;
-        AnimationController = animationController;
+
+        CurrentAnimationController = animationController;
     }
 
-    public override void Tick() { }
+    public override void Tick() => CurrentAnimationController.Tick();
 
     public bool CanReleaseLemmings()
     {
@@ -43,17 +31,17 @@ public sealed class HatchGadget : GadgetBase,
 
     public void Move(int dx, int dy)
     {
-        _previousGadgetBounds.SetFrom(_currentGadgetBounds);
+        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
 
-        _currentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(_currentGadgetBounds.X + dx);
-        _currentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(_currentGadgetBounds.Y + dy);
+        CurrentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(CurrentGadgetBounds.X + dx);
+        CurrentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(CurrentGadgetBounds.Y + dy);
     }
 
     public void SetPosition(int x, int y)
     {
-        _previousGadgetBounds.SetFrom(_currentGadgetBounds);
+        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
 
-        _currentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(x);
-        _currentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(y);
+        CurrentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(x);
+        CurrentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(y);
     }
 }

@@ -1,8 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
-
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
-
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
+/*
 public sealed class SecondaryAnimationReader : NeoLemmixDataReader
 {
     private readonly UniqueStringSet _uniqueStringSet;
@@ -118,4 +115,4 @@ public sealed class SecondaryAnimationReader : NeoLemmixDataReader
         _gadgetArchetypeData.AnimationData.Add(_secondaryAnimationData!);
         FinishedReading = true;
     }
-}
+}*/

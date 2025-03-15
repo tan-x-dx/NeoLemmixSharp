@@ -145,6 +145,18 @@ public static class BitArrayHelpers
         // Basic implementation is faster than using TensorPrimitives - benchmarks
 
         var result = 0;
+        switch (bits.Length)
+        {
+            case 7: result += BitOperations.PopCount(bits[6]); goto case 6;
+            case 6: result += BitOperations.PopCount(bits[5]); goto case 5;
+            case 5: result += BitOperations.PopCount(bits[4]); goto case 4;
+            case 4: result += BitOperations.PopCount(bits[3]); goto case 3;
+            case 3: result += BitOperations.PopCount(bits[2]); goto case 2;
+            case 2: result += BitOperations.PopCount(bits[1]); goto case 1;
+            case 1: result += BitOperations.PopCount(bits[0]); return result;
+            case 0: return 0;
+        }
+
         for (int i = 0; i < bits.Length; i++)
         {
             result += BitOperations.PopCount(bits[i]);

@@ -1,7 +1,7 @@
 ﻿global using KeysEnumerable = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayEnumerable<NeoLemmixSharp.Common.Util.GameInput.InputController, Microsoft.Xna.Framework.Input.Keys>;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Ui.Data;
 using NeoLemmixSharp.Ui.Events;
 

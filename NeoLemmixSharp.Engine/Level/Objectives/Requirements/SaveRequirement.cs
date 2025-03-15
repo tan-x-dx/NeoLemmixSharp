@@ -16,6 +16,6 @@ public sealed class SaveRequirement : IObjectiveRequirement
     {
         var lemmingManager = LevelScreen.LemmingManager;
         IsSatisfied = lemmingManager.LemmingsSaved >= _saveRequirement;
-        IsFailed = lemmingManager.NumberOfItems - lemmingManager.LemmingsRemoved < _saveRequirement - lemmingManager.LemmingsSaved;
+        IsFailed = lemmingManager.NumberOfLemmings - lemmingManager.LemmingsRemoved < _saveRequirement - lemmingManager.LemmingsSaved;
     }
 }

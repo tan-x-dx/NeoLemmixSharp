@@ -1,10 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.Common;
 
 /// <summary>
 /// <para>Represents a rectangular region of points within a level, specified by a <see cref="LevelPosition"/> and a <see cref="LevelSize"/>.</para>
@@ -112,31 +113,22 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
         H = 1 + maxY - minY;
     }
 
+    [Pure]
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public LevelPosition GetBottomRight() => new(X + W - 1, Y + H - 1);
 
+    [Pure]
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool Is1x1() => W == 1 && H == 1;
+    public LevelInterval GetHorizontalInterval() => new(X, W);
 
+    [Pure]
     [DebuggerStepThrough]
-    public bool Overlaps(LevelRegion other)
-    {
-        return other.X < X + W &&
-               X < other.X + other.W &&
-               other.Y < Y + H &&
-               Y < other.Y + other.H;
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [DebuggerStepThrough]
-    public bool Contains(LevelPosition position)
-    {
-        return X <= position.X && position.X < X + W &&
-               Y <= position.Y && position.Y < Y + H;
-    }
+    public LevelInterval GetVerticalInterval() => new(Y, H);
 
+    [Pure]
     [DebuggerStepThrough]
     public static bool operator ==(LevelRegion left, LevelRegion right) =>
         left.X == right.X &&
@@ -144,6 +136,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
         left.W == right.W &&
         left.H == right.H;
 
+    [Pure]
     [DebuggerStepThrough]
     public static bool operator !=(LevelRegion left, LevelRegion right) =>
         left.X != right.X ||
@@ -151,6 +144,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
         left.W != right.W ||
         left.H != right.H;
 
+    [Pure]
     [DebuggerStepThrough]
     public bool Equals(LevelRegion other) =>
         X == other.X &&
@@ -158,6 +152,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
         W == other.W &&
         H == other.H;
 
+    [Pure]
     public override bool Equals([NotNullWhen(true)] object? obj) =>
         obj is LevelRegion other &&
         X == other.X &&
@@ -165,6 +160,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
         W == other.W &&
         H == other.H;
 
+    [Pure]
     public override int GetHashCode() =>
         6208021 * X +
         4149227 * Y +
@@ -172,6 +168,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
         8554379 * H +
         1748359;
 
+    [Pure]
     [SkipLocalsInit]
     public override string ToString()
     {
@@ -185,8 +182,10 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
         if (!P.TryFormat(destination, out charsWritten))
             return false;
 
-        var result = S.TryFormat(destination, out var c);
+        var result = S.TryFormat(destination[charsWritten..], out var c);
         charsWritten += c;
         return result;
     }
+
+    public Rectangle ToRectangle() => new(X, Y, W, H);
 }

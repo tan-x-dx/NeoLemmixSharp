@@ -77,7 +77,7 @@ public static class NeoLemmixStyleHelpers
             }
 
             levelData.TerrainArchetypeData.Add(
-                new LevelData.StylePiecePair(styleName, pieceAndFileLink.PieceName),
+                new StylePiecePair(styleName, pieceAndFileLink.PieceName),
                 newTerrainArchetypeData);
         }
     }
@@ -134,7 +134,7 @@ public static class NeoLemmixStyleHelpers
             };
             dataReaders[0] = new GadgetArchetypeDataReader(gadgetArchetypeData);
             dataReaders[1] = new PrimaryAnimationReader(gadgetArchetypeData);
-            dataReaders[2] = new SecondaryAnimationReader(uniqueStringSet, gadgetArchetypeData);
+            //dataReaders[2] = new SecondaryAnimationReader(uniqueStringSet, gadgetArchetypeData);
 
             new DataReaderList(
                 pieceAndFileLink.CorrespondingDataFile,

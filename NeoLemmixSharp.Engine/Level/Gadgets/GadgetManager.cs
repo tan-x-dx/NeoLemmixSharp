@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
@@ -29,8 +28,8 @@ public sealed class GadgetManager :
         BoundaryBehaviour verticalBoundaryBehaviour)
     {
         _allGadgets = allGadgets;
-        IdEquatableItemHelperMethods.ValidateUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
-        Array.Sort(_allGadgets, IdEquatableItemHelperMethods.Compare);
+        this.ValidateUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
+        Array.Sort(_allGadgets, this);
 
         _gadgetPositionHelper = new GadgetSpacialHashGrid(
             this,

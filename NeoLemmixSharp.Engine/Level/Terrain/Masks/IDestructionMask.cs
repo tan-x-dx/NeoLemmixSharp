@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
-using NeoLemmixSharp.Engine.Level.Orientations;
+﻿using NeoLemmixSharp.Common;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;

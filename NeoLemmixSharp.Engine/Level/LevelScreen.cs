@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
@@ -74,6 +75,37 @@ public sealed class LevelScreen : IBaseScreen
         return new LevelPosition(
             HorizontalBoundaryBehaviour.Normalise(levelPosition.X),
             VerticalBoundaryBehaviour.Normalise(levelPosition.Y));
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool RegionContainsPoint(LevelRegion region, LevelPosition point)
+    {
+        return HorizontalBoundaryBehaviour.IntervalContainsPoint(region.GetHorizontalInterval(), point.X) &&
+               VerticalBoundaryBehaviour.IntervalContainsPoint(region.GetVerticalInterval(), point.Y);
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool RegionContainsPoints(LevelRegion region, LevelPosition p1, LevelPosition p2)
+    {
+        var horizontalInterval = region.GetHorizontalInterval();
+        var verticalInterval = region.GetVerticalInterval();
+        var horizontalBoundaryBehaviour = HorizontalBoundaryBehaviour;
+        var verticalBoundaryBehaviour = VerticalBoundaryBehaviour;
+
+        return (horizontalBoundaryBehaviour.IntervalContainsPoint(horizontalInterval, p1.X) &&
+                verticalBoundaryBehaviour.IntervalContainsPoint(verticalInterval, p1.Y)) ||
+               (horizontalBoundaryBehaviour.IntervalContainsPoint(horizontalInterval, p2.X) &&
+                verticalBoundaryBehaviour.IntervalContainsPoint(verticalInterval, p2.Y));
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool RegionsOverlap(LevelRegion r1, LevelRegion r2)
+    {
+        return HorizontalBoundaryBehaviour.IntervalsOverlap(r1.GetHorizontalInterval(), r2.GetHorizontalInterval()) &&
+               VerticalBoundaryBehaviour.IntervalsOverlap(r1.GetVerticalInterval(), r2.GetVerticalInterval());
     }
 
     [Pure]

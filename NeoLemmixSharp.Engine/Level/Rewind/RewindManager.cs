@@ -70,7 +70,7 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
 
     private static void AssignSkillFromReplay(in SkillAssignmentData previouslyRecordedSkillAssignment)
     {
-        var lemming = LevelScreen.LemmingManager.AllItems[previouslyRecordedSkillAssignment.LemmingId];
+        var lemming = LevelScreen.LemmingManager.AllLemmings[previouslyRecordedSkillAssignment.LemmingId];
 
         ValidateLemmingReplayAction(
             lemming,

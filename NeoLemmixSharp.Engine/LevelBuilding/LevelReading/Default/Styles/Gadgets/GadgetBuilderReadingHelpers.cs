@@ -18,6 +18,12 @@ public static class GadgetBuilderReadingHelpers
                 pieceName,
                 rawFileData);
 
+        return ThrowGadgetNotFoundException();
+    }
+
+    [DoesNotReturn]
+    private static IGadgetArchetypeBuilder ThrowGadgetNotFoundException()
+    {
         throw new LevelReadingException("Could not locate gadget data within style file!");
     }
 
@@ -38,10 +44,10 @@ public static class GadgetBuilderReadingHelpers
             GadgetType.GadgetMover => throw new NotImplementedException(),
             GadgetType.GadgetResizer => throw new NotImplementedException(),
             GadgetType.GadgetStateChanger => throw new NotImplementedException(),
-            GadgetType.AndGate => AndGateGadgetReader.ReadGadget(styleName, pieceName, rawFileData),
-            GadgetType.OrGate => throw new NotImplementedException(),
-            GadgetType.NotGate => throw new NotImplementedException(),
-            GadgetType.XorGate => throw new NotImplementedException(),
+            GadgetType.AndGate => LogicGateGadgetReader.ReadGadget(styleName, pieceName, LogicGateType.AndGate, rawFileData),
+            GadgetType.OrGate => LogicGateGadgetReader.ReadGadget(styleName, pieceName, LogicGateType.OrGate, rawFileData),
+            GadgetType.NotGate => LogicGateGadgetReader.ReadGadget(styleName, pieceName, LogicGateType.NotGate, rawFileData),
+            GadgetType.XorGate => LogicGateGadgetReader.ReadGadget(styleName, pieceName, LogicGateType.XorGate, rawFileData),
 
             _ => ThrowUnknownGadgetTypeException(basicGadgetType)
         };

@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 

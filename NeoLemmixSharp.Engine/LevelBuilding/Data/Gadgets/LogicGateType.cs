@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 public enum LogicGateType
 {

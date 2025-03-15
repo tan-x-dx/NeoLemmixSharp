@@ -1,13 +1,11 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
@@ -15,12 +13,9 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 public sealed class HitBoxGadget : GadgetBase,
     IIdEquatable<HitBoxGadget>,
     IPreviousRectangularBounds,
-    IAnimationControlledGadget,
-    IMoveableGadget,
-    IResizeableGadget
+    IMoveableGadget
 #pragma warning restore CS0660, CS0661, CA1067
 {
-    private readonly GadgetLayerRenderer _renderer;
     private readonly LemmingTracker _lemmingTracker;
     private readonly GadgetState[] _states;
 
@@ -31,32 +26,26 @@ public sealed class HitBoxGadget : GadgetBase,
     private int _nextStateIndex;
 
     public GadgetState CurrentState => _currentState;
-    public GadgetStateAnimationController AnimationController { get; private set; }
 
-    public override GadgetLayerRenderer Renderer => _renderer;
-
-    // The below properties refer to the positions of the hitboxes, not the gadget itself   
-
-    public LevelRegion CurrentBounds => _currentState.GetEncompassingHitBoxBounds(_currentGadgetBounds);
-    public LevelRegion PreviousBounds => _previousState.GetEncompassingHitBoxBounds(_previousGadgetBounds);
+    // The below properties refer to the positions of the hitboxes, not the gadget itself
+    public LevelRegion CurrentBounds => _currentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
+    public LevelRegion PreviousBounds => _previousState.GetMininmumBoundingBoxForAllHitBoxes(PreviousGadgetBounds.Position);
 
     public ResizeType ResizeType { get; }
 
     public HitBoxGadget(
-        int id,
-        Orientation orientation,
-        GadgetBounds initialGadgetBounds,
         ResizeType resizeType,
         LemmingTracker lemmingTracker,
         GadgetState[] states,
         int initialStateIndex)
-        : base(id, orientation, initialGadgetBounds, 0)
+        : base(0)
     {
         _lemmingTracker = lemmingTracker;
         _states = states;
 
         _currentStateIndex = initialStateIndex;
-        _currentState = states[initialStateIndex];
+        _currentState = _states[initialStateIndex];
+        CurrentAnimationController = _currentState.AnimationController;
         _previousState = _currentState;
 
         ResizeType = resizeType;
@@ -85,14 +74,14 @@ public sealed class HitBoxGadget : GadgetBase,
     {
         _currentStateIndex = _nextStateIndex;
 
-        _previousGadgetBounds.SetFrom(_currentGadgetBounds);
+        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
         _currentState = _states[_currentStateIndex];
-        AnimationController = CurrentState.AnimationController;
 
         _previousState.OnTransitionFrom();
-        CurrentState.OnTransitionTo();
+        _currentState.OnTransitionTo();
+        CurrentAnimationController = _currentState.AnimationController;
 
         // Changing states may change hitbox positions 
         // Force a position update to accommodate this
@@ -103,7 +92,13 @@ public sealed class HitBoxGadget : GadgetBase,
     {
         return _currentState
             .HitBoxFor(orientation)
-            .ContainsPoint(levelPosition - _currentGadgetBounds.Position);
+            .ContainsPoint(levelPosition - CurrentGadgetBounds.Position);
+    }
+
+    public bool ContainsPoints(Orientation orientation, LevelPosition p1, LevelPosition p2)
+    {
+        var hitBox = _currentState.HitBoxFor(orientation);
+        return hitBox.ContainsPoints(p1 - CurrentGadgetBounds.Position, p2 - CurrentGadgetBounds.Position);
     }
 
     public void OnLemmingHit(
@@ -137,21 +132,21 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public void Move(int dx, int dy)
     {
-        _previousGadgetBounds.SetFrom(_currentGadgetBounds);
+        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
-        _currentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(_currentGadgetBounds.X + dx);
-        _currentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(_currentGadgetBounds.Y + dy);
+        CurrentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(CurrentGadgetBounds.X + dx);
+        CurrentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(CurrentGadgetBounds.Y + dy);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
     public void SetPosition(int x, int y)
     {
-        _previousGadgetBounds.SetFrom(_currentGadgetBounds);
+        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
-        _currentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(x);
-        _currentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(y);
+        CurrentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(x);
+        CurrentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(y);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
@@ -160,17 +155,15 @@ public sealed class HitBoxGadget : GadgetBase,
         if (ResizeType == ResizeType.None)
             return;
 
-        _previousGadgetBounds.SetFrom(_currentGadgetBounds);
+        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
         if (ResizeType.CanResizeHorizontally())
-        {
-            _currentGadgetBounds.Width += dw;
-        }
+            CurrentGadgetBounds.Width += dw;
+
         if (ResizeType.CanResizeVertically())
-        {
-            _currentGadgetBounds.Height += dh;
-        }
+            CurrentGadgetBounds.Height += dh;
+
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
@@ -179,17 +172,15 @@ public sealed class HitBoxGadget : GadgetBase,
         if (ResizeType == ResizeType.None)
             return;
 
-        _previousGadgetBounds.SetFrom(_currentGadgetBounds);
+        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
         if (ResizeType.CanResizeHorizontally())
-        {
-            _currentGadgetBounds.Width = w;
-        }
+            CurrentGadgetBounds.Width = w;
+
         if (ResizeType.CanResizeVertically())
-        {
-            _currentGadgetBounds.Height = h;
-        }
+            CurrentGadgetBounds.Height = h;
+
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 

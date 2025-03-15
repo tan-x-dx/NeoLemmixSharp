@@ -6,6 +6,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 public sealed class GadgetDataComponentWriter : ILevelDataWriter
 {
     private const int NumberOfBytesForMainGadgetData = 13;
+    private const int NumberOfBytesPerInputName = 2;
     private const int NumberOfBytesPerGadgetProperty = 5;
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
@@ -49,6 +50,12 @@ public sealed class GadgetDataComponentWriter : ILevelDataWriter
         writer.Write((byte)gadgetData.InitialStateId);
         writer.Write((byte)gadgetData.GadgetRenderMode);
 
+        writer.Write((byte)gadgetData.InputNames.Length);
+        foreach(var inputName in gadgetData.InputNames)
+        {
+            writer.Write(_stringIdLookup[inputName]);
+        }
+
         var gadgetPropertyEnumerator = gadgetData.GetProperties();
         while (gadgetPropertyEnumerator.MoveNext())
         {
@@ -61,6 +68,10 @@ public sealed class GadgetDataComponentWriter : ILevelDataWriter
 
     private static ushort GetNumberOfBytesWritten(GadgetData gadgetData)
     {
-        return (ushort)(NumberOfBytesForMainGadgetData + (NumberOfBytesPerGadgetProperty * gadgetData.NumberOfGadgetProperties));
+        var result = NumberOfBytesForMainGadgetData;
+        result += 1 + NumberOfBytesPerInputName * gadgetData.InputNames.Length;
+        result += NumberOfBytesPerGadgetProperty * gadgetData.NumberOfGadgetProperties;
+
+        return (ushort)result;
     }
 }

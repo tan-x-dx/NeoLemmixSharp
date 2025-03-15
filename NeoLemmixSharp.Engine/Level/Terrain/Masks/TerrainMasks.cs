@@ -1,6 +1,6 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.FacingDirections;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
@@ -104,7 +104,7 @@ public static class TerrainMasks
             position = orientation.MoveRight(position, 1);
         }
 
-       // var key = GetKey(orientation, facingDirection, 0);
-       // _stonerMasks[key].ApplyAddMask(position);
+        // var key = GetKey(orientation, facingDirection, 0);
+        // _stonerMasks[key].ApplyAddMask(position);
     }
 }
