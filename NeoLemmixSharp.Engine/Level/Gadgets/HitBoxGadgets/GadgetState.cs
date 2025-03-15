@@ -1,11 +1,13 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using System.Runtime.CompilerServices;
 using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Engine.Level.Orientations.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Engine.Level.Orientations.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class GadgetState
 {
@@ -13,13 +15,13 @@ public sealed class GadgetState
     private readonly LemmingHitBoxFilter[] _lemmingHitBoxFilters;
     private readonly OrientationToHitBoxRegionLookup _hitBoxLookup;
 
-    public GadgetStateAnimationController AnimationController { get; }
+    public AnimationController AnimationController { get; }
     public ReadOnlySpan<LemmingHitBoxFilter> Filters => new(_lemmingHitBoxFilters);
 
     public GadgetState(
         LemmingHitBoxFilter[] lemmingHitBoxFilters,
         OrientationToHitBoxRegionLookup hitBoxLookup,
-        GadgetStateAnimationController animationController)
+        AnimationController animationController)
     {
         _lemmingHitBoxFilters = lemmingHitBoxFilters;
         _hitBoxLookup = hitBoxLookup;
@@ -33,35 +35,36 @@ public sealed class GadgetState
         return EmptyHitBoxRegion.Instance;
     }
 
-    public LevelRegion GetEncompassingHitBoxBounds(LevelPosition offset)
+    [SkipLocalsInit]
+    public unsafe LevelRegion GetMininmumBoundingBoxForAllHitBoxes(LevelPosition offset)
     {
         if (_hitBoxLookup.Count == 0)
             return new LevelRegion(offset);
 
-        var minX = int.MaxValue;
-        var minY = int.MaxValue;
-        var maxX = int.MinValue;
-        var maxY = int.MinValue;
+        int* p = stackalloc int[4];
+        p[0] = int.MaxValue;
+        p[1] = int.MaxValue;
+        p[2] = int.MinValue;
+        p[3] = int.MinValue;
 
         foreach (var kvp in _hitBoxLookup)
         {
             var hitBoxBounds = kvp.Value.CurrentBounds;
             var bottomRight = hitBoxBounds.GetBottomRight();
 
-            minX = Math.Min(minX, hitBoxBounds.X);
-            minY = Math.Min(minY, hitBoxBounds.Y);
-            maxX = Math.Max(maxX, bottomRight.X);
-            maxY = Math.Max(maxY, bottomRight.Y);
+            p[0] = Math.Min(p[0], hitBoxBounds.X);
+            p[1] = Math.Min(p[1], hitBoxBounds.Y);
+            p[2] = Math.Max(p[2], bottomRight.X);
+            p[3] = Math.Max(p[3], bottomRight.Y);
         }
 
-        minX += offset.X;
-        minY += offset.Y;
-        maxX += offset.X;
-        maxY += offset.Y;
+        p[2] += 1 - p[0];
+        p[3] += 1 - p[1];
 
-        return new LevelRegion(
-            new LevelPosition(minX, minY),
-            new LevelSize(1 + maxX - minX, 1 + maxY - minY));
+        p[0] += offset.X;
+        p[1] += offset.Y;
+
+        return *(LevelRegion*)p;
     }
 
     public void OnTransitionTo()
@@ -72,11 +75,12 @@ public sealed class GadgetState
 
     public void Tick(HitBoxGadget parentGadget)
     {
-        var gadgetStateTransitionIndex = AnimationController.Tick();
+        AnimationController.Tick();
 
-        if (gadgetStateTransitionIndex != GadgetStateAnimationController.NoGadgetStateTransition)
+        var nextStateIndex = AnimationController.GetNextStateIndex();
+        if (nextStateIndex >= 0)
         {
-            parentGadget.SetNextState(gadgetStateTransitionIndex);
+            parentGadget.SetNextState(nextStateIndex);
         }
     }
 

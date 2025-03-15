@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
+using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -13,27 +14,34 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
 {
     private readonly SimpleList<GadgetInput> _inputs;
-    protected readonly GadgetBounds _currentGadgetBounds;
-    protected readonly GadgetBounds _previousGadgetBounds;
+    private AnimationController _currentAnimationController;
 
-    public int Id { get; }
-    public Orientation Orientation { get; }
-    public abstract IGadgetRenderer Renderer { get; }
+    public required GadgetBounds CurrentGadgetBounds { protected get; init; }
+    public required GadgetBounds PreviousGadgetBounds { protected get; init; }
 
-    public LevelPosition Position => _currentGadgetBounds.Position;
-    public LevelSize Size => _currentGadgetBounds.Size;
+    public required int Id { get; init; }
+    public required Orientation Orientation { get; init; }
 
-    protected GadgetBase(
-        int id,
-        Orientation orientation,
-        GadgetBounds gadgetBounds,
-        int expectedNumberOfInputs)
+    public AnimationController CurrentAnimationController
     {
-        Id = id;
-        Orientation = orientation;
-        _currentGadgetBounds = gadgetBounds;
-        _previousGadgetBounds = new GadgetBounds();
-        _previousGadgetBounds.SetFrom(gadgetBounds);
+        get => _currentAnimationController;
+        protected set
+        {
+            if (_currentAnimationController == value)
+                return;
+
+            _currentAnimationController = value;
+            value.OnTransitionTo();
+        }
+    }
+
+    public LevelPosition Position => CurrentGadgetBounds.Position;
+    public LevelSize Size => CurrentGadgetBounds.Size;
+
+    public GadgetRenderer Renderer { get; internal set; }
+
+    protected GadgetBase(int expectedNumberOfInputs)
+    {
         _inputs = new SimpleList<GadgetInput>(expectedNumberOfInputs);
     }
 

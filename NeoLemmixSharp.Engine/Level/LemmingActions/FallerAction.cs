@@ -95,8 +95,7 @@ public sealed class FallerAction : LemmingAction
 
         foreach (var gadget in gadgetEnumerable)
         {
-            if (!gadget.ContainsPoint(orientation, anchorPixel) ||
-                !gadget.ContainsPoint(orientation, footPixel))
+            if (!gadget.ContainsPoints(orientation, anchorPixel, footPixel))
                 continue;
 
             var filters = gadget.CurrentState.Filters;

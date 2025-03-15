@@ -4,7 +4,6 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -133,6 +132,7 @@ public static class LemmingActionHelpers
     }
 
     [Pure]
+    // Do not SkipLocalsInit
     public static unsafe LevelPosition GetUpdraftFallDelta(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (gadgetsNearLemming.Count == 0)
@@ -149,8 +149,7 @@ public static class LemmingActionHelpers
 
         foreach (var gadget in gadgetsNearLemming)
         {
-            if (!gadget.ContainsPoint(lemmingOrientation, anchorPosition) ||
-                !gadget.ContainsPoint(lemmingOrientation, footPosition))
+            if (!gadget.ContainsPoints(lemmingOrientation, anchorPosition, footPosition))
                 continue;
 
             var filters = gadget.CurrentState.Filters;

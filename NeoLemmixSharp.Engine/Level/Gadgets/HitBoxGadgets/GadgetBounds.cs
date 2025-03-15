@@ -14,6 +14,12 @@ public sealed class GadgetBounds : IRectangularBounds
     public LevelSize Size => new(Width, Height);
     public LevelRegion CurrentBounds => new(Position, Size);
 
+    public GadgetBounds()
+    {
+    }
+
+    public GadgetBounds(GadgetBounds other) => SetFrom(other);
+
     public void SetFrom(GadgetBounds other)
     {
         X = other.X;

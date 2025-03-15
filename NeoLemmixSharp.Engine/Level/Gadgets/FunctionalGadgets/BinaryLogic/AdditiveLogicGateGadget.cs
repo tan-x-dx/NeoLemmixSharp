@@ -1,43 +1,32 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
-using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
 public abstract class AdditiveLogicGateGadget : GadgetBase,
     IPerfectHasher<AdditiveLogicGateGadget.AdditiveGateGadgetInput>,
-    IBitBufferCreator<ArrayBitBuffer>,
-    ILogicGateGadget,
-    ISimpleRenderGadget
+    IBitBufferCreator<ArrayBitBuffer>
 {
-    private SimpleGadgetRenderer _renderer;
+    private readonly AnimationController _inactiveAnimationController;
+    private readonly AnimationController _activeAnimationController;
     private readonly BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput> _set;
     private readonly int _numberOfInputs;
 
-    public LogicGateType Type { get; }
-
     public GadgetOutput Output { get; } = new();
 
-    public sealed override SimpleGadgetRenderer Renderer => _renderer;
-
     protected AdditiveLogicGateGadget(
-        int id,
-        Orientation orientation,
-        GadgetBounds gadgetBounds,
-        LogicGateType type,
+        AnimationController inactiveAnimationController,
+        AnimationController activeAnimationController,
         ReadOnlySpan<string> inputNames)
-        : base(id, orientation, gadgetBounds, inputNames.Length)
+        : base(inputNames.Length)
     {
-        if (inputNames.Length < 2)
-            throw new ArgumentException("Expected at least 2 inputs!");
+        _inactiveAnimationController = inactiveAnimationController;
+        _activeAnimationController = activeAnimationController;
+        CurrentAnimationController = inactiveAnimationController;
 
         _numberOfInputs = inputNames.Length;
         _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput>(this, false);
-
-        Type = type;
 
         for (var i = 0; i < inputNames.Length; i++)
         {
@@ -46,7 +35,23 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         }
     }
 
-    public sealed override void Tick() { }
+    public sealed override void Tick() => CurrentAnimationController.Tick();
+
+    private void ReactToSignal(AdditiveGateGadgetInput input, bool signal)
+    {
+        var hasChanged = signal
+            ? _set.Add(input)
+            : _set.Remove(input);
+        if (!hasChanged)
+            return;
+
+        var isActive = EvaluateInputCount(_set.Count, _numberOfInputs);
+        Output.SetSignal(isActive);
+
+        CurrentAnimationController = isActive
+            ? _activeAnimationController
+            : _inactiveAnimationController;
+    }
 
     protected abstract bool EvaluateInputCount(int numberOfTrueInputs, int numberOfInputs);
 
@@ -65,24 +70,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
             _gadget = gadget;
         }
 
-        public override void ReactToSignal(bool signal)
-        {
-            if (signal)
-            {
-                _gadget._set.Add(this);
-            }
-            else
-            {
-                _gadget._set.Remove(this);
-            }
-            _gadget.Output.SetSignal(_gadget.EvaluateInputCount(_gadget._set.Count, _gadget._numberOfInputs));
-        }
-    }
-
-    SimpleGadgetRenderer ISimpleRenderGadget.Renderer
-    {
-        get => _renderer;
-        set => _renderer = value;
+        public override void ReactToSignal(bool signal) => _gadget.ReactToSignal(this, signal);
     }
 
     int IPerfectHasher<AdditiveGateGadgetInput>.NumberOfItems => _numberOfInputs;
@@ -94,11 +82,10 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
 public sealed class AndGateGadget : AdditiveLogicGateGadget
 {
     public AndGateGadget(
-        int id,
-        Orientation orientation,
-        GadgetBounds gadgetBounds,
+        AnimationController inactiveAnimationController,
+        AnimationController activeAnimationController,
         ReadOnlySpan<string> inputNames)
-        : base(id, orientation, gadgetBounds, LogicGateType.AndGate, inputNames)
+        : base(inactiveAnimationController, activeAnimationController, inputNames)
     {
     }
 
@@ -111,11 +98,10 @@ public sealed class AndGateGadget : AdditiveLogicGateGadget
 public sealed class OrGateGadget : AdditiveLogicGateGadget
 {
     public OrGateGadget(
-        int id,
-        Orientation orientation,
-        GadgetBounds gadgetBounds,
+        AnimationController inactiveAnimationController,
+        AnimationController activeAnimationController,
         ReadOnlySpan<string> inputNames)
-        : base(id, orientation, gadgetBounds, LogicGateType.OrGate, inputNames)
+        : base(inactiveAnimationController, activeAnimationController, inputNames)
     {
     }
 

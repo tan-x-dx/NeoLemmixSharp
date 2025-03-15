@@ -27,5 +27,4 @@ public sealed class EmptyRenderer : IGadgetRenderer
     void IDisposable.Dispose()
     {
     }
-
 }

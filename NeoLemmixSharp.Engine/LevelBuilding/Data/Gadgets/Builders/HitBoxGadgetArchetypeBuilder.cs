@@ -3,7 +3,6 @@ using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Teams;
@@ -31,21 +30,26 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         LemmingManager lemmingManager,
         TeamManager teamManager)
     {
-        var gadgetBounds = GetGadgetBounds(gadgetData);
+        var currentGadgetBounds = GetGadgetBounds(gadgetData);
+        var previousGadgetBounds = new GadgetBounds(currentGadgetBounds);
         var resizeType = GetResizeTypeForGadgetOrientation(gadgetData);
-        var gadgetStates = GetGadgetStates(gadgetData, gadgetBounds, teamManager);
+        var gadgetStates = GetGadgetStates(gadgetData, currentGadgetBounds, teamManager);
         var initialStateIndex = gadgetData.InitialStateId;
 
         var lemmingTracker = new LemmingTracker(lemmingManager);
 
         return new HitBoxGadget(
-            gadgetData.Id,
-            gadgetData.Orientation,
-            gadgetBounds,
             resizeType,
             lemmingTracker,
             gadgetStates,
-            initialStateIndex);
+            initialStateIndex)
+        {
+            Id = gadgetData.Id,
+            Orientation = gadgetData.Orientation,
+
+            CurrentGadgetBounds = currentGadgetBounds,
+            PreviousGadgetBounds = previousGadgetBounds
+        };
     }
 
     private GadgetBounds GetGadgetBounds(GadgetData gadgetData)
@@ -97,7 +101,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         {
             var gadgetStateArchetypeData = AllGadgetStateData[i];
 
-            var animationController = gadgetStateArchetypeData.GetAnimationController();
+         //   var animationController = gadgetStateArchetypeData.GetAnimationController();
             var hitBoxRegionLookup = CreateHitBoxRegionLookup(
                 gadgetData,
                 hitBoxGadgetBounds,
@@ -110,7 +114,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             result[i] = new GadgetState(
                 hitBoxFilters,
                 hitBoxRegionLookup,
-                animationController);
+                null!);
         }
 
         return result;

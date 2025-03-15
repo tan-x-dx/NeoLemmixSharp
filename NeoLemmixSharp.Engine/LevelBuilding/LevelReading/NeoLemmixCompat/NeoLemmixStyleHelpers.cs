@@ -134,7 +134,7 @@ public static class NeoLemmixStyleHelpers
             };
             dataReaders[0] = new GadgetArchetypeDataReader(gadgetArchetypeData);
             dataReaders[1] = new PrimaryAnimationReader(gadgetArchetypeData);
-            dataReaders[2] = new SecondaryAnimationReader(uniqueStringSet, gadgetArchetypeData);
+            //dataReaders[2] = new SecondaryAnimationReader(uniqueStringSet, gadgetArchetypeData);
 
             new DataReaderList(
                 pieceAndFileLink.CorrespondingDataFile,

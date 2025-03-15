@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using System.Diagnostics.CodeAnalysis;
 

@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Styles.Gadgets;

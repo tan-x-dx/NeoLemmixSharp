@@ -27,7 +27,7 @@ public sealed class NeoLemmixGadgetArchetypeData
     public int PrimaryAnimationOffsetY { get; set; }
     public bool IsSkillPickup { get; set; }
 
-    public List<AnimationData> AnimationData { get; } = new();
+    // public List<AnimationData> AnimationData { get; } = new();
 
     public LevelPosition[] ToRectangularTriggerData() =>
     [

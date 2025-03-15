@@ -1,9 +1,6 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.StatefulGadgets;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
+﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;
-
-public sealed class AnimationTriggerReader : NeoLemmixDataReader
+/*public sealed class AnimationTriggerReader : NeoLemmixDataReader
 {
     private readonly List<AnimationTriggerData> _animationTriggerData;
     private readonly Dictionary<string, NeoLemmixGadgetStateType> _gadgetStateTypeLookup = new(StringComparer.OrdinalIgnoreCase)
@@ -84,4 +81,4 @@ public sealed class AnimationTriggerReader : NeoLemmixDataReader
 
         return NxlvReadingHelpers.ThrowUnknownTokenException<GadgetSecondaryAnimationAction>("STATE", token, line);
     }
-}
+}*/

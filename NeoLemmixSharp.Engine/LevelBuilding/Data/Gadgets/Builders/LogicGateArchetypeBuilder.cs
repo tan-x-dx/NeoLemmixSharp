@@ -36,14 +36,34 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
         GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
-        return new AndGateGadget(gadgetData.Id, gadgetData.Orientation, new GadgetBounds(), gadgetData.InputNames);
+        if (gadgetData.InputNames.Length < 2)
+            throw new ArgumentException("Expected at least 2 inputs!");
+
+        return new AndGateGadget(null, null, gadgetData.InputNames)
+        {
+            Id = gadgetData.Id,
+            Orientation = gadgetData.Orientation,
+
+            CurrentGadgetBounds = new GadgetBounds(),
+            PreviousGadgetBounds = new GadgetBounds()
+        };
     }
 
     private static OrGateGadget CreateOrGateGadget(
         GadgetSpriteBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
-        return new OrGateGadget(gadgetData.Id, gadgetData.Orientation, new GadgetBounds(), gadgetData.InputNames);
+        if (gadgetData.InputNames.Length < 2)
+            throw new ArgumentException("Expected at least 2 inputs!");
+
+        return new OrGateGadget(null, null, gadgetData.InputNames)
+        {
+            Id = gadgetData.Id,
+            Orientation = gadgetData.Orientation,
+
+            CurrentGadgetBounds = new GadgetBounds(),
+            PreviousGadgetBounds = new GadgetBounds()
+        };
     }
 
     private static NotGateGadget CreateNotGateGadget(
@@ -53,8 +73,15 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
         if (gadgetData.InputNames.Length != 1)
             throw new InvalidOperationException("Expected precisely ONE input name!");
 
-        var input = gadgetData.InputNames[0];
-        return new NotGateGadget(gadgetData.Id, gadgetData.Orientation, new GadgetBounds(), input);
+        var inputName = gadgetData.InputNames[0];
+        return new NotGateGadget(null, null, inputName)
+        {
+            Id = gadgetData.Id,
+            Orientation = gadgetData.Orientation,
+
+            CurrentGadgetBounds = new GadgetBounds(),
+            PreviousGadgetBounds = new GadgetBounds()
+        };
     }
 
     private static XorGateGadget CreateXorGateGadget(
@@ -64,8 +91,15 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
         if (gadgetData.InputNames.Length != 2)
             throw new InvalidOperationException("Expected precisely TWO input names!");
 
-        var input1 = gadgetData.InputNames[0];
-        var input2 = gadgetData.InputNames[1];
-        return new XorGateGadget(gadgetData.Id, gadgetData.Orientation, new GadgetBounds(), input1, input2);
+        var inputName1 = gadgetData.InputNames[0];
+        var inputName2 = gadgetData.InputNames[1];
+        return new XorGateGadget(null, null, inputName1, inputName2)
+        {
+            Id = gadgetData.Id,
+            Orientation = gadgetData.Orientation,
+
+            CurrentGadgetBounds = new GadgetBounds(),
+            PreviousGadgetBounds = new GadgetBounds()
+        };
     }
 }

@@ -1,31 +1,32 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
-using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetStateChanger : GadgetBase, ISimpleRenderGadget
+public sealed class GadgetStateChanger : GadgetBase
 {
-    private SimpleGadgetRenderer _renderer;
+    private readonly AnimationController _inactiveAnimationController;
+    private readonly AnimationController _activeAnimationController;
     private readonly HitBoxGadget _gadget;
+
     private readonly int _newState;
 
     private bool _previousSignal;
     private bool _signal;
 
-    public override SimpleGadgetRenderer Renderer => _renderer;
-
     public GadgetStateChanger(
-        int id,
-        Orientation orientation,
-        GadgetBounds gadgetBounds,
+        AnimationController inactiveAnimationController,
+        AnimationController activeAnimationController,
         string inputName,
         HitBoxGadget gadget,
         int newState)
-        : base(id, orientation, gadgetBounds, 1)
+        : base(1)
     {
+        _inactiveAnimationController = inactiveAnimationController;
+        _activeAnimationController = activeAnimationController;
+        CurrentAnimationController = _inactiveAnimationController;
+
         _gadget = gadget;
         _newState = newState;
 
@@ -34,6 +35,8 @@ public sealed class GadgetStateChanger : GadgetBase, ISimpleRenderGadget
 
     public override void Tick()
     {
+        CurrentAnimationController.Tick();
+
         if (_signal && !_previousSignal)
         {
             _gadget.SetNextState(_newState);
@@ -55,12 +58,10 @@ public sealed class GadgetStateChanger : GadgetBase, ISimpleRenderGadget
         public override void ReactToSignal(bool signal)
         {
             _gadget._signal = signal;
-        }
-    }
 
-    SimpleGadgetRenderer ISimpleRenderGadget.Renderer
-    {
-        get => _renderer;
-        set => _renderer = value;
+            _gadget.CurrentAnimationController = signal
+                ? _gadget._activeAnimationController
+                : _gadget._inactiveAnimationController;
+        }
     }
 }

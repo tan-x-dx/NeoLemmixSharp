@@ -20,14 +20,14 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
         _gadgetTextures = new Dictionary<TextureLookupKey, Texture2D>(this);
     }
 
-    public GadgetLayerRenderer? BuildStatefulGadgetRenderer(
+    public GadgetRenderer? BuildStatefulGadgetRenderer(
         IGadgetArchetypeBuilder gadgetArchetypeBuilder,
         GadgetData gadgetData)
     {
         var texture = GetTextureForGadget(gadgetArchetypeBuilder, gadgetData);
         return texture is null
             ? null
-            : new GadgetLayerRenderer(texture, gadgetData.GadgetRenderMode);
+            : new GadgetRenderer(null, texture, gadgetData.GadgetRenderMode);
     }
 
     private Texture2D? GetTextureForGadget(
