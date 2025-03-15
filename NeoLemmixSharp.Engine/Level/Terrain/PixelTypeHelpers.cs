@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Orientations;
+﻿using NeoLemmixSharp.Common;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 

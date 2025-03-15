@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.FacingDirections;
+﻿using NeoLemmixSharp.Common;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 

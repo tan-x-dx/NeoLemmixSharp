@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -159,14 +160,15 @@ public sealed class SwimmerAction : LemmingAction
         Lemming lemming,
         LevelPosition lemmingPosition)
     {
+        var orientation = lemming.Orientation;
         var result = 1;
 
-        while (result <= 4 && PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
+        while (result <= 4 && PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveDown(lemmingPosition, result)))
         {
             result++;
             lemming.DistanceFallen++;
 
-            if (WaterAt(in gadgetsNearLemming, lemming, lemming.Orientation.MoveDown(lemmingPosition, result)))
+            if (WaterAt(in gadgetsNearLemming, lemming, orientation.MoveDown(lemmingPosition, result)))
             {
                 lemming.DistanceFallen = 0;
             }

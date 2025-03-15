@@ -1,11 +1,9 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Orientations;
+﻿using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Engine.Level.FacingDirections;
+namespace NeoLemmixSharp.Common;
 
 public readonly struct FacingDirection : IIdEquatable<FacingDirection>
 {
