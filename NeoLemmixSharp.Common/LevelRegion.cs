@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.Common;
 
 /// <summary>
 /// <para>Represents a rectangular region of points within a level, specified by a <see cref="LevelPosition"/> and a <see cref="LevelSize"/>.</para>

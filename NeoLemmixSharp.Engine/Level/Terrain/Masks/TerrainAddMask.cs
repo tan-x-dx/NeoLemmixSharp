@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
 

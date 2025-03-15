@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.GameInput;
 
 namespace NeoLemmixSharp.Ui.Components;

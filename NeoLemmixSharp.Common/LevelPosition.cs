@@ -1,9 +1,10 @@
-﻿using System.Diagnostics;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.Common;
 
 [StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
 public readonly struct LevelPosition : IEquatable<LevelPosition>

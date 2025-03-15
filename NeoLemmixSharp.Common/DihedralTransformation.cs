@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Rendering.Text;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.Common;
 
 public readonly ref struct DihedralTransformation
 {
