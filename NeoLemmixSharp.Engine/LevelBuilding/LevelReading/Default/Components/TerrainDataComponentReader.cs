@@ -94,9 +94,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
 
     private static Color ReadTerrainDataTintColor(RawFileData rawFileData)
     {
-        var byteBuffer = rawFileData.ReadBytes(3);
-
-        return new Color(r: byteBuffer[0], g: byteBuffer[1], b: byteBuffer[2], alpha: (byte)0xff);
+        return rawFileData.ReadRgbColor();
     }
 
     private static void AssertTerrainDataBytesMakeSense(

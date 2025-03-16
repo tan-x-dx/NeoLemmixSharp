@@ -18,9 +18,9 @@ public static class LevelReadWriteHelpers
 
     public static ReadOnlySpan<byte> LevelDataSectionIdentifier => [0x79, 0xA6];
 
-    public const byte NoBackgroundSpecified = 0x00;
-    public const byte SolidColorBackground = 0x01;
-    public const byte TextureBackground = 0x02;
+    public const uint NoBackgroundSpecified = 0x00;
+    public const uint SolidColorBackground = 0x01;
+    public const uint TextureBackground = 0x02;
 
     public const int UnspecifiedLevelStartValue = 5000;
 
@@ -127,26 +127,23 @@ public static class LevelReadWriteHelpers
         throw new LevelReadingException($"Error occurred when reading level file. Details: [{details}]");
     }
 
-    public static byte GetTerrainArchetypeDataByte(
+    public static uint GetTerrainArchetypeDataByte(
         bool isSteel,
         ResizeType resizeType)
     {
-        var result = (int)resizeType;
-        result &= 3;
-        if (isSteel)
-        {
-            result |= 1 << 2;
-        }
-        return (byte)result;
+        var result = (uint)resizeType;
+        result &= 3U;
+        var steelValue = isSteel ? 1U : 0U;
+        result |= steelValue << 2;
+        return result;
     }
 
     public static void DecipherTerrainArchetypeDataByte(
-        byte b,
+        uint byteValue,
         out bool isSteel,
         out ResizeType resizeType)
     {
-        int intValue = b;
-        isSteel = ((intValue >> 2) & 1) != 0;
-        resizeType = (ResizeType)(intValue & 3);
+        isSteel = ((byteValue >> 2) & 1U) != 0U;
+        resizeType = (ResizeType)(byteValue & 3U);
     }
 }

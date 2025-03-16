@@ -188,7 +188,6 @@ public sealed class LevelDataReader : NeoLemmixDataReader
     {
         return new BackgroundData
         {
-            IsSolidColor = false,
             Color = Color.Black,
             BackgroundImageName = _uniqueStringSet.GetUniqueStringInstance(backgroundToken)
         };

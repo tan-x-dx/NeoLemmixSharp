@@ -65,16 +65,15 @@ public sealed class LevelDataComponentReader : ILevelDataReader
             levelData.LevelStartPositionY = value;
         }
 
-        byte boundaryByte = rawFileData.Read8BitUnsignedInteger();
+        uint boundaryByte = rawFileData.Read8BitUnsignedInteger();
 
         DecipherBoundaryBehaviours(levelData, boundaryByte);
     }
 
-    private static void DecipherBoundaryBehaviours(LevelData levelData, byte boundaryByte)
+    private static void DecipherBoundaryBehaviours(LevelData levelData, uint boundaryByteValue)
     {
-        int intValue = boundaryByte;
-        var horizontalBoundaryBehaviour = (BoundaryBehaviourType)(intValue & 1);
-        var verticalBoundaryBehaviour = (BoundaryBehaviourType)((intValue >> 1) & 1);
+        var horizontalBoundaryBehaviour = (BoundaryBehaviourType)(boundaryByteValue & 1U);
+        var verticalBoundaryBehaviour = (BoundaryBehaviourType)((boundaryByteValue >> 1) & 1U);
 
         levelData.HorizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         levelData.VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
@@ -82,7 +81,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 
     private void ReadBackgroundData(RawFileData rawFileData, LevelData levelData)
     {
-        byte specifierByte = rawFileData.Read8BitUnsignedInteger();
+        uint specifierByte = rawFileData.Read8BitUnsignedInteger();
 
         levelData.LevelBackground = specifierByte switch
         {
@@ -97,12 +96,9 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 
         BackgroundData ReadSolidColorBackgroundData()
         {
-            var buffer = rawFileData.ReadBytes(3);
-
             return new BackgroundData
             {
-                IsSolidColor = true,
-                Color = new Color(r: buffer[0], g: buffer[1], b: buffer[2], alpha: (byte)0xff),
+                Color = rawFileData.ReadRgbColor(),
                 BackgroundImageName = string.Empty
             };
         }
@@ -113,7 +109,6 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 
             return new BackgroundData
             {
-                IsSolidColor = false,
                 Color = Color.Black,
                 BackgroundImageName = _stringIdLookup[backgroundStringId]
             };

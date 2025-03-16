@@ -58,11 +58,11 @@ public sealed class DefaultLevelReader : ILevelReader
 
     private ILevelDataReader GetNextDataReader()
     {
-        var buffer = _rawFileData.ReadBytes(2);
+        var sectionIdentifierBytes = _rawFileData.ReadBytes(2);
 
         foreach (var levelDataWriter in _dataReaders)
         {
-            if (buffer.SequenceEqual(levelDataWriter.GetSectionIdentifier()))
+            if (sectionIdentifierBytes.SequenceEqual(levelDataWriter.GetSectionIdentifier()))
             {
                 if (levelDataWriter.AlreadyUsed)
                     throw new LevelReadingException(
@@ -73,7 +73,7 @@ public sealed class DefaultLevelReader : ILevelReader
             }
         }
 
-        throw new LevelReadingException($"Unknown section identifier: {buffer[0]:X} {buffer[1]:X}");
+        throw new LevelReadingException($"Unknown section identifier: {sectionIdentifierBytes[0]:X} {sectionIdentifierBytes[1]:X}");
     }
 
     public void Dispose()

@@ -30,7 +30,7 @@ public static class TerrainArchetypeReadingHelpers
         int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
         int initialPosition = rawFileData.Position;
 
-        byte terrainArchetypeDataByte = rawFileData.Read8BitUnsignedInteger();
+        uint terrainArchetypeDataByte = rawFileData.Read8BitUnsignedInteger();
         LevelReadWriteHelpers.DecipherTerrainArchetypeDataByte(
             terrainArchetypeDataByte,
             out var isSteel,
@@ -44,7 +44,7 @@ public static class TerrainArchetypeReadingHelpers
         int nineSliceTop = 0;
         int nineSliceRight = 0;
 
-        if ((resizeType & ResizeType.ResizeHorizontal) != ResizeType.None)
+        if (resizeType.CanResizeHorizontally())
         {
             defaultWidth = rawFileData.Read8BitUnsignedInteger();
 
@@ -55,7 +55,7 @@ public static class TerrainArchetypeReadingHelpers
             }
         }
 
-        if ((resizeType & ResizeType.ResizeVertical) != ResizeType.None)
+        if (resizeType.CanResizeVertically())
         {
             defaultHeight = rawFileData.Read8BitUnsignedInteger();
 

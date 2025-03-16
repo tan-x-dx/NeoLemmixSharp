@@ -10,7 +10,7 @@ public static class GadgetBuilderReadingHelpers
         string styleName,
         string pieceName,
         RawFileData rawFileData,
-        bool pieceExists)
+        [DoesNotReturnIf(false)] bool pieceExists)
     {
         if (pieceExists)
             return ReadGadgetArchetypeData(

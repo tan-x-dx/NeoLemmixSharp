@@ -19,13 +19,13 @@ public static class ResizeTypeHelpers
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CanResizeHorizontally(this ResizeType type)
     {
-        return (type & ResizeType.ResizeHorizontal) == ResizeType.ResizeHorizontal;
+        return (type & ResizeType.ResizeHorizontal) != ResizeType.None;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CanResizeVertically(this ResizeType type)
     {
-        return (type & ResizeType.ResizeVertical) == ResizeType.ResizeVertical;
+        return (type & ResizeType.ResizeVertical) != ResizeType.None;
     }
 
     public static ResizeType SwapComponents(this ResizeType resizeType)
