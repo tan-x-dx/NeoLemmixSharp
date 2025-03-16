@@ -10,9 +10,9 @@ public sealed class LemmingFacingDirectionCriterion : ILemmingCriterion
 
     public static LemmingFacingDirectionCriterion ForFacingDirection(FacingDirection facingDirection)
     {
-        if (facingDirection == FacingDirection.Right)
-            return MustFaceRight;
-        return MustFaceLeft;
+        return facingDirection == FacingDirection.Right
+            ? MustFaceRight
+            : MustFaceLeft;
     }
 
     // Only have one facing direction to check against, since that's the only interesting case

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
@@ -43,7 +44,7 @@ public sealed class TerrainDataComponentWriter : ILevelDataWriter
 
         writer.Write((ushort)(terrainData.X + LevelReadWriteHelpers.PositionOffset));
         writer.Write((ushort)(terrainData.Y + LevelReadWriteHelpers.PositionOffset));
-        writer.Write(LevelReadWriteHelpers.GetOrientationByte(terrainData.RotNum, terrainData.Flip));
+        writer.Write((byte)DihedralTransformation.EncodeToUint(terrainData.Orientation, terrainData.FacingDirection));
 
         WriteTerrainDataMisc(writer, terrainData);
     }

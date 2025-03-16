@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 using System.Diagnostics.CodeAnalysis;
 
@@ -8,7 +7,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding;
 public static class LevelReadWriteHelpers
 {
     public const int PositionOffset = 512;
-    private const int FlipBitShift = 2;
 
     #region String Data Read/Write Bits
 
@@ -127,29 +125,6 @@ public static class LevelReadWriteHelpers
             return;
 
         throw new LevelReadingException($"Error occurred when reading level file. Details: [{details}]");
-    }
-
-    public static byte GetOrientationByte(Orientation orientation, FacingDirection facingDirection)
-    {
-        return GetOrientationByte(orientation.RotNum, facingDirection == FacingDirection.Left);
-    }
-
-    public static byte GetOrientationByte(int rotNum, bool flip)
-    {
-        var orientationBits = (rotNum & 3) |
-                              (flip ? 1 << FlipBitShift : 0);
-
-        return (byte)orientationBits;
-    }
-
-    public static void DecipherOrientationByte(
-        byte b,
-        out Orientation orientation,
-        out FacingDirection facingDirection)
-    {
-        int intValue = b;
-        orientation = new Orientation(intValue);
-        facingDirection = new FacingDirection(intValue >> FlipBitShift);
     }
 
     public static byte GetTerrainArchetypeDataByte(

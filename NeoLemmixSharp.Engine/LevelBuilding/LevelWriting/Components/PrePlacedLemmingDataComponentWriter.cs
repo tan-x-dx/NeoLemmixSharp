@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
@@ -28,7 +28,7 @@ public sealed class PrePlacedLemmingDataComponentWriter : ILevelDataWriter
         writer.Write((ushort)(lemmingData.Y + LevelReadWriteHelpers.PositionOffset));
         writer.Write(lemmingData.State);
 
-        writer.Write(LevelReadWriteHelpers.GetOrientationByte(lemmingData.Orientation, lemmingData.FacingDirection));
+        writer.Write((byte)DihedralTransformation.EncodeToUint(lemmingData.Orientation, lemmingData.FacingDirection));
         writer.Write((byte)lemmingData.TeamId);
         writer.Write((byte)lemmingData.InitialLemmingAction.Id);
     }

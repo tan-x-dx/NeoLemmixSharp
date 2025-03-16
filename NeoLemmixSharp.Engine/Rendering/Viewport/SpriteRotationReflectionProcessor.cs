@@ -134,35 +134,20 @@ public sealed class SpriteRotationReflectionProcessor<T>
             _originalSpriteWidth = originalSpriteWidth;
             _originalSpriteHeight = originalSpriteHeight;
 
-            var rotNum = orientation.RotNum;
-            bool flipHorizontally;
-
-            if ((rotNum & 1) != 0)
+            if (orientation.IsPerpendicularTo(Orientation.Down))
             {
                 ThisSpriteWidth = _originalSpriteHeight;
                 ThisSpriteHeight = _originalSpriteWidth;
-
-                if (facingDirection == FacingDirection.Left)
-                {
-                    rotNum += 2;
-                    flipHorizontally = true;
-                }
-                else
-                {
-                    flipHorizontally = false;
-                }
             }
             else
             {
                 ThisSpriteWidth = _originalSpriteWidth;
                 ThisSpriteHeight = _originalSpriteHeight;
-
-                flipHorizontally = facingDirection == FacingDirection.Left;
             }
 
             var uints = new Color[originalSpriteWidth * originalSpriteHeight * numberOfFrames * numberOfLayers];
             _colorData = new PixelColorData(ThisSpriteWidth * numberOfLayers, ThisSpriteHeight * numberOfFrames, uints);
-            DihedralTransformation = new DihedralTransformation(rotNum, flipHorizontally);
+            DihedralTransformation = new DihedralTransformation(orientation, facingDirection);
         }
 
         public void Set(Color pixel, int x0, int y0, int layer, int frame)

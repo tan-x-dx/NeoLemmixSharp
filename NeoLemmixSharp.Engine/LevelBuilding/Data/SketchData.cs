@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 public sealed class SketchData
 {
@@ -7,6 +9,6 @@ public sealed class SketchData
     public int X { get; set; }
     public int Y { get; set; }
 
-    public int RotNum { get; set; }
-    public bool Flip { get; set; }
+    public Orientation Orientation { get; set; }
+    public FacingDirection FacingDirection { get; set; }
 }

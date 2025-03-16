@@ -159,8 +159,8 @@ public readonly ref struct TerrainBuilder
         var sourcePixelColorData = terrainArchetypeData.TerrainPixelColorData;
 
         var dihedralTransformation = new DihedralTransformation(
-            terrainData.RotNum,
-            terrainData.Flip);
+            terrainData.Orientation,
+            terrainData.FacingDirection);
 
         for (var x = 0; x < sourcePixelColorData.Width; x++)
         {

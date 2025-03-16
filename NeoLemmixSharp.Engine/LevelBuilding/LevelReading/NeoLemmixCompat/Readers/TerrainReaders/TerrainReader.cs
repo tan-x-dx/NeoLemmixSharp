@@ -125,7 +125,10 @@ public sealed class TerrainReader : NeoLemmixDataReader
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        DihedralTransformation.Simplify(_currentTerrainData.FlipHorizontally, _currentTerrainData.FlipVertically, _currentTerrainData.Rotate, out var rotNum, out var flip);
+        var dht = DihedralTransformation.Simplify(
+            _currentTerrainData.FlipHorizontally,
+            _currentTerrainData.FlipVertically,
+            _currentTerrainData.Rotate);
 
         var newTerrainData = new TerrainData
         {
@@ -137,8 +140,8 @@ public sealed class TerrainReader : NeoLemmixDataReader
             Y = _currentTerrainData.Y,
 
             NoOverwrite = _currentTerrainData.NoOverwrite,
-            RotNum = rotNum,
-            Flip = flip,
+            Orientation = dht.Orientation,
+            FacingDirection = dht.FacingDirection,
             Erase = _currentTerrainData.Erase,
 
             Tint = _currentTerrainData.Tint,

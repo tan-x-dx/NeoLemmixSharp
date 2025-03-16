@@ -49,9 +49,9 @@ public sealed class GadgetData
         return _properties.TryGetValue(property, out value);
     }
 
-    public void GetDihedralTransformation(out DihedralTransformation dihedralTransformation)
+    public DihedralTransformation GetDihedralTransformation()
     {
-        dihedralTransformation = new DihedralTransformation(
+        return new DihedralTransformation(
             Orientation,
             FacingDirection);
     }

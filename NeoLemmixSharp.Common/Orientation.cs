@@ -57,11 +57,16 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         throw new ArgumentOutOfRangeException(nameof(RotNum), orientation.RotNum, "Invalid Orientation value!");
     }
 
+    [Pure]
     int IIdEquatable<Orientation>.Id => RotNum;
 
+    [Pure]
     public bool Equals(Orientation other) => RotNum == other.RotNum;
+    [Pure]
     public override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;
+    [Pure]
     public override int GetHashCode() => RotNum;
+    [Pure]
     public override string ToString() => RotNum switch
     {
         EngineConstants.DownOrientationRotNum => EngineConstants.DownOrientationName,
@@ -72,7 +77,9 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         _ => ThrowOrientationOutOfRangeException<string>(this)
     };
 
+    [Pure]
     public static bool operator ==(Orientation first, Orientation second) => first.RotNum == second.RotNum;
+    [Pure]
     public static bool operator !=(Orientation first, Orientation second) => first.RotNum != second.RotNum;
 
     [Pure]
