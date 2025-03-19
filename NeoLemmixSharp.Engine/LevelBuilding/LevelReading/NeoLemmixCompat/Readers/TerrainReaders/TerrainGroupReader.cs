@@ -18,6 +18,8 @@ public sealed class TerrainGroupReader : NeoLemmixDataReader
     {
         _uniqueStringSet = uniqueStringSet;
 
+        SetNumberOfTokens(3);
+
         RegisterTokenAction("NAME", SetName);
         RegisterTokenAction("$TERRAIN", ReadTerrainData);
         RegisterTokenAction("$END", OnEnd);

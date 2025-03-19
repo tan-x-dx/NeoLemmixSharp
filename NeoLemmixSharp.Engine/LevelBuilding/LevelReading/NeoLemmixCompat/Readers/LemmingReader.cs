@@ -15,6 +15,8 @@ public sealed class LemmingReader : NeoLemmixDataReader
     {
         _prePlacedLemmingData = prePlacedLemmingData;
 
+        SetNumberOfTokens(14);
+
         RegisterTokenAction("X", SetLemmingX);
         RegisterTokenAction("Y", SetLemmingY);
         RegisterTokenAction("FLIP_HORIZONTAL", SetFlipHorizontal);

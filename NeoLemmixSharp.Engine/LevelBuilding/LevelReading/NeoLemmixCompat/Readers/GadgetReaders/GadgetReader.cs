@@ -17,6 +17,8 @@ public sealed class GadgetReader : NeoLemmixDataReader
     {
         _uniqueStringSet = uniqueStringSet;
 
+        SetNumberOfTokens(26);
+
         RegisterTokenAction("STYLE", SetStyle);
         RegisterTokenAction("PIECE", SetPiece);
         RegisterTokenAction("X", SetX);

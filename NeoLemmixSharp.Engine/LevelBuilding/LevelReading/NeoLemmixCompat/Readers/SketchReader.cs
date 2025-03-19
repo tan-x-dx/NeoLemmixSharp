@@ -19,6 +19,8 @@ public sealed class SketchReader : NeoLemmixDataReader
     {
         _allSketchData = allSketchData;
 
+        SetNumberOfTokens(8);
+
         RegisterTokenAction("INDEX", SetIndex);
         RegisterTokenAction("PIECE", SetPiece);
         RegisterTokenAction("X", SetX);

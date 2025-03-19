@@ -13,6 +13,8 @@ public sealed class PrimaryAnimationReader : NeoLemmixDataReader
     {
         _gadgetArchetypeData = gadgetArchetypeData;
 
+        SetNumberOfTokens(9);
+
         RegisterTokenAction("FRAMES", SetFrameCount);
         RegisterTokenAction("OFFSET_X", SetOffsetX);
         RegisterTokenAction("OFFSET_Y", SetOffsetY);

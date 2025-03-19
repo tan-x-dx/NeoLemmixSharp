@@ -14,10 +14,9 @@ public abstract class NeoLemmixDataReader
         IdentifierToken = identifierToken;
     }
 
-    protected void RegisterTokenAction(string token, NxlvReadingHelpers.TokenAction action)
-    {
-        _tokenActions.Add(token, action);
-    }
+    protected void SetNumberOfTokens(int numberOfTokens) => _tokenActions.EnsureCapacity(numberOfTokens);
+
+    protected void RegisterTokenAction(string token, NxlvReadingHelpers.TokenAction action) => _tokenActions.Add(token, action);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected static bool TokensMatch(

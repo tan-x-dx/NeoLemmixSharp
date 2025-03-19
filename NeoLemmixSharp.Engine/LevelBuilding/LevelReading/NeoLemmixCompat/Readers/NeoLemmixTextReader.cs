@@ -16,6 +16,8 @@ public sealed class NeoLemmixTextReader : NeoLemmixDataReader
         _uniqueStringSet = uniqueStringSet;
         _lines = lines;
 
+        SetNumberOfTokens(2);
+
         RegisterTokenAction("LINE", AddLine);
         RegisterTokenAction("$END", OnEnd);
     }

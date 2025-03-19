@@ -27,6 +27,8 @@ public sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
         _styleName = styleName;
         _terrainPieceName = terrainPieceName;
 
+        SetNumberOfTokens(10);
+
         RegisterTokenAction("STEEL", SetSteel);
         RegisterTokenAction("RESIZE_HORIZONTAL", SetResizeHorizontal);
         RegisterTokenAction("RESIZE_VERTICAL", SetResizeVertical);

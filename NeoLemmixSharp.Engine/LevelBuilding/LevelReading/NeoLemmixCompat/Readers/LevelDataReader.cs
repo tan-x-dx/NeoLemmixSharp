@@ -29,6 +29,8 @@ public sealed class LevelDataReader : NeoLemmixDataReader
         _uniqueStringSet = uniqueStringSet;
         _levelData = levelData;
 
+        SetNumberOfTokens(16);
+
         RegisterTokenAction("TITLE", SetTitle);
         RegisterTokenAction("AUTHOR", SetAuthor);
         RegisterTokenAction("ID", SetId);

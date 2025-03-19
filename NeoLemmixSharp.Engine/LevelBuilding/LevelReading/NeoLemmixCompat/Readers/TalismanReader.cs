@@ -17,6 +17,8 @@ public sealed class TalismanReader : NeoLemmixDataReader
     {
         _uniqueStringSet = uniqueStringSet;
 
+        SetNumberOfTokens(6);
+
         RegisterTokenAction("TITLE", SetTitle);
         RegisterTokenAction("ID", SetId);
         RegisterTokenAction("COLOR", SetColor);

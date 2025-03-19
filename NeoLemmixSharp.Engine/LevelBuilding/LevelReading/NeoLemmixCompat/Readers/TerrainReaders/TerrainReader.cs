@@ -22,6 +22,8 @@ public sealed class TerrainReader : NeoLemmixDataReader
         _uniqueStringSet = uniqueStringSet;
         _allTerrainData = allTerrainData;
 
+        SetNumberOfTokens(13);
+
         RegisterTokenAction("STYLE", SetStyle);
         RegisterTokenAction("PIECE", SetPiece);
         RegisterTokenAction("X", SetX);

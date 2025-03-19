@@ -15,6 +15,8 @@ public sealed class PostViewConfigReader : NeoLemmixDataReader
 
     public PostViewConfigReader() : base(string.Empty)
     {
+        SetNumberOfTokens(4);
+
         RegisterTokenAction("$RESULT", EnterResultGroup);
         RegisterTokenAction("CONDITION", ParseCondition);
         RegisterTokenAction("LINE", ReadLine);
