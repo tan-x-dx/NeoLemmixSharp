@@ -46,7 +46,7 @@ public sealed class GadgetDataComponentWriter : ILevelDataWriter
 
         writer.Write((ushort)(gadgetData.X + LevelReadWriteHelpers.PositionOffset));
         writer.Write((ushort)(gadgetData.Y + LevelReadWriteHelpers.PositionOffset));
-        writer.Write((byte)DihedralTransformation.EncodeToUint(gadgetData.Orientation, gadgetData.FacingDirection));
+        writer.Write(DihedralTransformation.EncodeToByte(gadgetData.Orientation, gadgetData.FacingDirection));
 
         writer.Write((byte)gadgetData.InitialStateId);
         writer.Write((byte)gadgetData.GadgetRenderMode);

@@ -1,13 +1,11 @@
-﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
 [StructLayout(LayoutKind.Explicit, Size = NumberOf32BitInts * sizeof(int))]
-public readonly ref struct DihedralTransformation : IEquatable<DihedralTransformation>
+public readonly struct DihedralTransformation : IEquatable<DihedralTransformation>
 {
     private const int NumberOf32BitInts = 2;
     private const int FlipBitShift = 2;
@@ -95,13 +93,10 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
-    public static uint EncodeToUint(Orientation o, FacingDirection f)
-    {
-        return (uint)((o.RotNum & 3) | ((f.Id & 1) << FlipBitShift));
-    }
+    private static int Encode(Orientation o, FacingDirection f) => ((f.Id & 1) << FlipBitShift) | (o.RotNum & 3);
 
     [Pure]
-    public uint EncodeToUint() => EncodeToUint(Orientation, FacingDirection);
+    public static byte EncodeToByte(Orientation o, FacingDirection f) => (byte)Encode(o, f);
 
     [Pure]
     [SkipLocalsInit]
@@ -128,9 +123,7 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         if (flipVertically)
         {
             p[0] += 2U;
-            p[0] &= 3U;
-            p[1] += 1U;
-            p[1] &= 1U;
+            p[1] ^= 1U;
         }
 
         return *(DihedralTransformation*)p;
@@ -159,20 +152,24 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
-    public bool Equals(DihedralTransformation other) => Orientation == other.Orientation && FacingDirection == other.FacingDirection;
-    [Obsolete($"Equals() on {nameof(DihedralTransformation)} will always throw an exception. Use the equality operator instead.")]
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [DoesNotReturn]
-    public override bool Equals(object? obj) => throw new NotSupportedException("It's a ref struct");
-    [Obsolete($"GetHashCode() on {nameof(DihedralTransformation)} will always throw an exception.")]
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [DoesNotReturn]
-    public override int GetHashCode() => throw new NotSupportedException("It's a ref struct");
+    public bool Equals(DihedralTransformation other) =>
+        Orientation == other.Orientation &&
+        FacingDirection == other.FacingDirection;
+
+    [Pure]
+    public override bool Equals(object? obj) =>
+        obj is DihedralTransformation other &&
+        Orientation == other.Orientation &&
+        FacingDirection == other.FacingDirection;
+
+    [Pure]
+    public override int GetHashCode() => Encode(Orientation, FacingDirection);
 
     [Pure]
     public static bool operator ==(DihedralTransformation left, DihedralTransformation right) =>
         left.Orientation == right.Orientation &&
         left.FacingDirection == right.FacingDirection;
+
     [Pure]
     public static bool operator !=(DihedralTransformation left, DihedralTransformation right) =>
         left.Orientation != right.Orientation ||
