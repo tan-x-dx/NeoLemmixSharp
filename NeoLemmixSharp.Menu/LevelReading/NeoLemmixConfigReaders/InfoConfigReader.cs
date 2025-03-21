@@ -14,6 +14,8 @@ public sealed class InfoConfigReader : NeoLemmixDataReader
 
     public InfoConfigReader() : base(string.Empty)
     {
+        SetNumberOfTokens(7);
+
         RegisterTokenAction("TITLE", SetTitle);
         RegisterTokenAction("AUTHOR", SetAuthor);
         RegisterTokenAction("VERSION", SetVersion);

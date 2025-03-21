@@ -1,73 +1,27 @@
-﻿using NeoLemmixSharp.Common.Rendering.Text;
+﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
-public readonly ref struct DihedralTransformation
+[StructLayout(LayoutKind.Explicit, Size = NumberOf32BitInts * sizeof(int))]
+public readonly ref struct DihedralTransformation : IEquatable<DihedralTransformation>
 {
-    public static void Simplify(
-        bool flipHorizontally,
-        bool flipVertically,
-        bool rotate,
-        out int rotNum,
-        out bool flip)
-    {
-        rotNum = rotate
-            ? 1
-            : 0;
+    private const int NumberOf32BitInts = 2;
+    private const int FlipBitShift = 2;
 
-        flip = flipHorizontally;
-        if (flipVertically)
-        {
-            flip = !flip;
-            rotNum += 2;
-        }
-    }
-
-    private readonly Orientation _o;
-    private readonly FacingDirection _f;
+    [FieldOffset(0 * sizeof(int))] public readonly Orientation Orientation;
+    [FieldOffset(1 * sizeof(int))] public readonly FacingDirection FacingDirection;
 
     public DihedralTransformation(Orientation orientation, FacingDirection facingDirection)
     {
-        _o = new Orientation(orientation.RotNum);
-        _f = new FacingDirection(facingDirection.Id);
+        Orientation = new Orientation(orientation.RotNum);
+        FacingDirection = new FacingDirection(facingDirection.Id);
     }
 
-    public DihedralTransformation(int r, bool flip)
-    {
-        _o = new Orientation(r);
-        _f = new FacingDirection(flip);
-    }
-
-    [SkipLocalsInit]
-    public override string ToString()
-    {
-        Span<char> buffer = stackalloc char[10];
-
-        buffer[0] = 'R';
-        buffer[1] = 'o';
-        buffer[2] = 't';
-        buffer[3] = ' ';
-        buffer[4] = TextRenderingHelpers.DigitToChar(_o.RotNum);
-        buffer[5] = '|';
-
-        int stringLength;
-        if (_f == FacingDirection.Right)
-        {
-            stringLength = 6;
-        }
-        else
-        {
-            stringLength = 10;
-            buffer[6] = 'F';
-            buffer[7] = 'l';
-            buffer[8] = 'i';
-            buffer[9] = 'p';
-        }
-
-        return buffer[..stringLength].ToString();
-    }
-
+    [Pure]
     public LevelPosition Transform(
         LevelPosition position,
         int width,
@@ -77,6 +31,7 @@ public readonly ref struct DihedralTransformation
         return new LevelPosition(x0, y0);
     }
 
+    [Pure]
     public LevelSize Transform(LevelSize levelSize)
     {
         Transform(levelSize.W, levelSize.H, levelSize.W, levelSize.H, out var x0, out var y0);
@@ -92,9 +47,9 @@ public readonly ref struct DihedralTransformation
         out int y0)
     {
         var s = GetRotationCoefficients(out var a, out var b, ref w, ref h);
-        s *= _f.Id;
+        s *= FacingDirection.Id;
 
-        x0 = s + _f.DeltaX * (a * x - b * y + w);
+        x0 = s + FacingDirection.DeltaX * (a * x - b * y + w);
         y0 = b * x + a * y + h;
     }
 
@@ -102,7 +57,7 @@ public readonly ref struct DihedralTransformation
     {
         var wTemp = w;
         var hTemp = h;
-        switch (_o.RotNum)
+        switch (Orientation.RotNum)
         {
             case EngineConstants.DownOrientationRotNum:
                 a = 1;
@@ -121,6 +76,8 @@ public readonly ref struct DihedralTransformation
             case EngineConstants.UpOrientationRotNum:
                 a = -1;
                 b = 0;
+                // w unchanged
+                // h unchanged
                 return wTemp;
 
             case EngineConstants.RightOrientationRotNum:
@@ -133,7 +90,91 @@ public readonly ref struct DihedralTransformation
             default:
                 a = 0;
                 b = 0;
-                return Orientation.ThrowOrientationOutOfRangeException<int>(_o);
+                return Orientation.ThrowOrientationOutOfRangeException<int>(Orientation);
         }
     }
+
+    [Pure]
+    public static uint EncodeToUint(Orientation o, FacingDirection f)
+    {
+        return (uint)((o.RotNum & 3) | ((f.Id & 1) << FlipBitShift));
+    }
+
+    [Pure]
+    public uint EncodeToUint() => EncodeToUint(Orientation, FacingDirection);
+
+    [Pure]
+    [SkipLocalsInit]
+    public static unsafe DihedralTransformation DecodeFromUint(uint encodedData)
+    {
+        uint* p = stackalloc uint[NumberOf32BitInts];
+        p[0] = encodedData & 3U;
+        p[1] = (encodedData >> FlipBitShift) & 1U;
+
+        return *(DihedralTransformation*)p;
+    }
+
+    [Pure]
+    [SkipLocalsInit]
+    public static unsafe DihedralTransformation Simplify(
+        bool flipHorizontally,
+        bool flipVertically,
+        bool rotate)
+    {
+        uint* p = stackalloc uint[NumberOf32BitInts];
+        p[0] = rotate ? 1U : 0U;
+        p[1] = flipHorizontally ? 1U : 0U;
+
+        if (flipVertically)
+        {
+            p[0] += 2U;
+            p[0] &= 3U;
+            p[1] += 1U;
+            p[1] &= 1U;
+        }
+
+        return *(DihedralTransformation*)p;
+    }
+
+    [Pure]
+    [SkipLocalsInit]
+    public override string ToString()
+    {
+        Span<char> buffer = stackalloc char[5 + 1 + 5];
+        var charsWritten = 0;
+
+        // The following usages of ToString() will return string consts
+        // Therefore this will not incur any extra allocations
+        var sourceSpan = Orientation.ToString().AsSpan();
+        sourceSpan.CopyTo(buffer);
+        charsWritten += sourceSpan.Length;
+
+        buffer[charsWritten++] = '|';
+
+        sourceSpan = FacingDirection.ToString().AsSpan();
+        sourceSpan.CopyTo(buffer[charsWritten..]);
+        charsWritten += sourceSpan.Length;
+
+        return buffer[..charsWritten].ToString();
+    }
+
+    [Pure]
+    public bool Equals(DihedralTransformation other) => Orientation == other.Orientation && FacingDirection == other.FacingDirection;
+    [Obsolete($"Equals() on {nameof(DihedralTransformation)} will always throw an exception. Use the equality operator instead.")]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [DoesNotReturn]
+    public override bool Equals(object? obj) => throw new NotSupportedException("It's a ref struct");
+    [Obsolete($"GetHashCode() on {nameof(DihedralTransformation)} will always throw an exception.")]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [DoesNotReturn]
+    public override int GetHashCode() => throw new NotSupportedException("It's a ref struct");
+
+    [Pure]
+    public static bool operator ==(DihedralTransformation left, DihedralTransformation right) =>
+        left.Orientation == right.Orientation &&
+        left.FacingDirection == right.FacingDirection;
+    [Pure]
+    public static bool operator !=(DihedralTransformation left, DihedralTransformation right) =>
+        left.Orientation != right.Orientation ||
+        left.FacingDirection != right.FacingDirection;
 }

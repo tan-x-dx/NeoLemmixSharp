@@ -42,8 +42,8 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
-        byte orientationByte = rawFileData.Read8BitUnsignedInteger();
-        LevelReadWriteHelpers.DecipherOrientationByte(orientationByte, out var orientation, out var facingDirection);
+        uint orientationByte = rawFileData.Read8BitUnsignedInteger();
+        var dht = DihedralTransformation.DecodeFromUint(orientationByte);
 
         byte terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
         var decipheredTerrainDataMisc = LevelReadWriteHelpers.DecipherTerrainDataMiscByte(terrainDataMiscByte);
@@ -81,8 +81,8 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
             Y = y - LevelReadWriteHelpers.PositionOffset,
 
             NoOverwrite = decipheredTerrainDataMisc.NoOverwrite,
-            RotNum = orientation.RotNum,
-            Flip = facingDirection == FacingDirection.Left,
+            Orientation = dht.Orientation,
+            FacingDirection = dht.FacingDirection,
             Erase = decipheredTerrainDataMisc.Erase,
 
             Tint = tintColor,
@@ -94,9 +94,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
 
     private static Color ReadTerrainDataTintColor(RawFileData rawFileData)
     {
-        var byteBuffer = rawFileData.ReadBytes(3);
-
-        return new Color(r: byteBuffer[0], g: byteBuffer[1], b: byteBuffer[2], alpha: (byte)0xff);
+        return rawFileData.ReadRgbColor();
     }
 
     private static void AssertTerrainDataBytesMakeSense(

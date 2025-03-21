@@ -159,12 +159,12 @@ public readonly ref struct TerrainBuilder
         var sourcePixelColorData = terrainArchetypeData.TerrainPixelColorData;
 
         var dihedralTransformation = new DihedralTransformation(
-            terrainData.RotNum,
-            terrainData.Flip);
+            terrainData.Orientation,
+            terrainData.FacingDirection);
 
-        for (var x = 0; x < sourcePixelColorData.Width; x++)
+        for (var y = 0; y < sourcePixelColorData.Height; y++)
         {
-            for (var y = 0; y < sourcePixelColorData.Height; y++)
+            for (var x = 0; x < sourcePixelColorData.Width; x++)
             {
                 var sourcePixelColor = sourcePixelColorData[x, y];
                 if (sourcePixelColor == Color.Transparent)
@@ -181,8 +181,8 @@ public readonly ref struct TerrainBuilder
                 x0 += terrainData.X;
                 y0 += terrainData.Y;
 
-                if (x0 < 0 || x0 >= targetPixelColorData.Width ||
-                    y0 < 0 || y0 >= targetPixelColorData.Height)
+                if ((uint)x0 >= (uint)targetPixelColorData.Width ||
+                    (uint)y0 >= (uint)targetPixelColorData.Height)
                     continue;
 
                 if (terrainData.Tint.HasValue)
@@ -276,7 +276,6 @@ public readonly ref struct TerrainBuilder
         var pngPath = Path.ChangeExtension(rootFilePath, "png");
 
         using var mainTexture = Texture2D.FromFile(_graphicsDevice, pngPath);
-        var pixelColorData = PixelColorData.GetPixelColorDataFromTexture(mainTexture);
-        terrainArchetypeData.TerrainPixelColorData = pixelColorData;
+        terrainArchetypeData.TerrainPixelColorData = PixelColorData.GetPixelColorDataFromTexture(mainTexture);
     }
 }

@@ -48,7 +48,9 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = currentGadgetBounds,
-            PreviousGadgetBounds = previousGadgetBounds
+            PreviousGadgetBounds = previousGadgetBounds,
+
+            IsFastForward = false
         };
     }
 
@@ -180,11 +182,11 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         if (hitBoxData.AllowedOrientations is not null)
         {
             var orientationFilter = new LemmingOrientationFilter();
-            var gadgetOrientationId = gadgetData.Orientation.RotNum;
+            var gadgetRotNum = gadgetData.Orientation.RotNum;
 
             foreach (var orientation in hitBoxData.AllowedOrientations)
             {
-                var rotatedOrientation = new Orientation(orientation.RotNum + gadgetOrientationId);
+                var rotatedOrientation = new Orientation(orientation.RotNum + gadgetRotNum);
                 orientationFilter.RegisterOrientation(rotatedOrientation);
             }
 
@@ -244,7 +246,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             if (hitBoxRegionData.Length != 2)
                 throw new InvalidOperationException("Expected exactly two points of data");
 
-            gadgetData.GetDihedralTransformation(out var dihedralTransformation);
+            var dihedralTransformation = gadgetData.GetDihedralTransformation();
 
             var p0 = hitBoxRegionData[0];
             var p1 = hitBoxRegionData[1];
@@ -277,7 +279,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             GadgetData gadgetData,
             ReadOnlySpan<LevelPosition> triggerData)
         {
-            gadgetData.GetDihedralTransformation(out var dihedralTransformation);
+            var dihedralTransformation = gadgetData.GetDihedralTransformation();
 
             Span<LevelPosition> adjustedPoints = triggerData.Length > 32
                 ? new LevelPosition[triggerData.Length]

@@ -65,6 +65,7 @@ public sealed class HashSetLookup<TKey, TValue>
     public Dictionary<TKey, HashSet<TValue>>.KeyCollection Keys => _dictionary.Keys;
     public bool TryGetValues(TKey key, [MaybeNullWhen(false)] out HashSet<TValue> values) => _dictionary.TryGetValue(key, out values);
     public bool Contains(TKey key) => _dictionary.ContainsKey(key);
+    public bool Contains(TKey key, TValue value) => _dictionary.TryGetValue(key, out var collection) && collection.Contains(value);
 
     public HashSetLookupEnumerator GetEnumerator() => new(this);
 
@@ -82,7 +83,7 @@ public sealed class HashSetLookup<TKey, TValue>
         public Group Current => new(_dictionaryEnumerator.Current);
     }
 
-    public readonly struct Group
+    public readonly ref struct Group
     {
         public readonly TKey Key;
         private readonly HashSet<TValue> _items;

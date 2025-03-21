@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
@@ -43,8 +44,8 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
-        byte orientationByte = rawFileData.Read8BitUnsignedInteger();
-        LevelReadWriteHelpers.DecipherOrientationByte(orientationByte, out var orientation, out var facingDirection);
+        uint orientationByte = rawFileData.Read8BitUnsignedInteger();
+        var dht = DihedralTransformation.DecodeFromUint(orientationByte);
 
         int initialStateId = rawFileData.Read8BitUnsignedInteger();
         var renderMode = GetGadgetRenderMode(rawFileData.Read8BitUnsignedInteger());
@@ -65,8 +66,8 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
             InitialStateId = initialStateId,
             GadgetRenderMode = renderMode,
 
-            Orientation = orientation,
-            FacingDirection = facingDirection,
+            Orientation = dht.Orientation,
+            FacingDirection = dht.FacingDirection,
 
             InputNames = inputNames
         };

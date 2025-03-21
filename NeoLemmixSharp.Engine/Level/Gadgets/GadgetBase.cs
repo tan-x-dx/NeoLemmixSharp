@@ -20,6 +20,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
 
     public required int Id { get; init; }
     public required Orientation Orientation { get; init; }
+    public required bool IsFastForward { get; init; }
 
     public AnimationController CurrentAnimationController
     {

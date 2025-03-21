@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Teams;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
@@ -25,8 +25,8 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
             int y = rawFileData.Read16BitUnsignedInteger();
             uint state = rawFileData.Read32BitUnsignedInteger();
 
-            byte orientationByte = rawFileData.Read8BitUnsignedInteger();
-            LevelReadWriteHelpers.DecipherOrientationByte(orientationByte, out var orientation, out var facingDirection);
+            uint orientationByte = rawFileData.Read8BitUnsignedInteger();
+            var dht = DihedralTransformation.DecodeFromUint(orientationByte);
             int teamId = rawFileData.Read8BitUnsignedInteger();
             int initialActionId = rawFileData.Read8BitUnsignedInteger();
 
@@ -36,8 +36,8 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
                 Y = y - LevelReadWriteHelpers.PositionOffset,
                 State = state,
 
-                Orientation = orientation,
-                FacingDirection = facingDirection,
+                Orientation = dht.Orientation,
+                FacingDirection = dht.FacingDirection,
 
                 TeamId = teamId,
                 InitialLemmingAction = LemmingAction.AllItems[initialActionId]

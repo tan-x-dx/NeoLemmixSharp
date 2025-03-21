@@ -9,11 +9,6 @@ public sealed class BoundaryBehaviour
     private const int MaxNumberOfRenderIntervals = 2;
     private const int MaxNumberOfRenderCopiesForWrappedLevels = 6;
 
-    public enum DimensionType
-    {
-        Horizontal,
-        Vertical
-    }
 
     private readonly DimensionType _dimensionType;
     private readonly BoundaryBehaviourType _boundaryBehaviourType;
@@ -413,6 +408,7 @@ public sealed class BoundaryBehaviour
         private ScreenRenderInterval _0;
     }
 
+    [SkipLocalsInit]
     public override string ToString()
     {
         Span<char> buffer = stackalloc char[10 + 3 + 4 + 3 + 10];

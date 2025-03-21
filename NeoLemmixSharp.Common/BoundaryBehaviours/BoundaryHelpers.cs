@@ -7,7 +7,9 @@ public static class BoundaryHelpers
     [DoesNotReturn]
     private static BoundaryBehaviour ThrowUnknownBoundaryBehaviourException(BoundaryBehaviourType boundaryBehaviourType)
     {
-        throw new ArgumentOutOfRangeException(nameof(boundaryBehaviourType), boundaryBehaviourType,
+        throw new ArgumentOutOfRangeException(
+            nameof(boundaryBehaviourType),
+            boundaryBehaviourType,
             "Unknown boundary behaviour type");
     }
 
@@ -17,7 +19,7 @@ public static class BoundaryHelpers
     {
         if (boundaryBehaviourType is BoundaryBehaviourType.Void or BoundaryBehaviourType.Wrap)
             return new BoundaryBehaviour(
-                BoundaryBehaviour.DimensionType.Horizontal,
+                DimensionType.Horizontal,
                 boundaryBehaviourType,
                 levelWidth);
 
@@ -30,7 +32,7 @@ public static class BoundaryHelpers
     {
         if (boundaryBehaviourType is BoundaryBehaviourType.Void or BoundaryBehaviourType.Wrap)
             return new BoundaryBehaviour(
-                BoundaryBehaviour.DimensionType.Vertical,
+                DimensionType.Vertical,
                 boundaryBehaviourType,
                 levelHeight);
 

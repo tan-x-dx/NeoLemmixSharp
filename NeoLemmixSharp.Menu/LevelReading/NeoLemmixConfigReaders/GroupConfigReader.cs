@@ -16,6 +16,8 @@ public sealed class GroupConfigReader : NeoLemmixDataReader
     {
         _baseFolderPath = baseFolderPath;
 
+        SetNumberOfTokens(7);
+
         RegisterTokenAction("BASE", DoNothing);
         RegisterTokenAction("$GROUP", OnEnterGroup);
         RegisterTokenAction("$RANK", OnEnterGroup);

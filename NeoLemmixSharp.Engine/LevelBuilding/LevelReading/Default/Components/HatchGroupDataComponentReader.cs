@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
@@ -19,14 +20,21 @@ public sealed class HatchGroupDataComponentReader : ILevelDataReader
 
         while (numberOfItemsInSection-- > 0)
         {
-            var byteBuffer = rawFileData.ReadBytes(4);
+            int hatchGroupId = rawFileData.Read8BitUnsignedInteger();
+            int minSpawnInterval = rawFileData.Read8BitUnsignedInteger();
+            int maxSpawnInterval = rawFileData.Read8BitUnsignedInteger();
+            int initialSpawnInterval = rawFileData.Read8BitUnsignedInteger();
+
+            LevelReadWriteHelpers.ReaderAssert(minSpawnInterval >= EngineConstants.MinAllowedSpawnInterval, "Invalid MinSpawnInterval");
+            LevelReadWriteHelpers.ReaderAssert(maxSpawnInterval <= EngineConstants.MaxAllowedSpawnInterval, "Invalid MaxSpawnInterval");
+            LevelReadWriteHelpers.ReaderAssert(minSpawnInterval <= initialSpawnInterval && initialSpawnInterval <= maxSpawnInterval, "Invalid Spawn Interval Limits");
 
             levelData.AllHatchGroupData.Add(new HatchGroupData
             {
-                HatchGroupId = byteBuffer[0],
-                MinSpawnInterval = byteBuffer[1],
-                MaxSpawnInterval = byteBuffer[2],
-                InitialSpawnInterval = byteBuffer[3]
+                HatchGroupId = hatchGroupId,
+                MinSpawnInterval = minSpawnInterval,
+                MaxSpawnInterval = maxSpawnInterval,
+                InitialSpawnInterval = initialSpawnInterval
             });
         }
     }

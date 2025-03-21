@@ -17,6 +17,8 @@ public sealed class GadgetReader : NeoLemmixDataReader
     {
         _uniqueStringSet = uniqueStringSet;
 
+        SetNumberOfTokens(26);
+
         RegisterTokenAction("STYLE", SetStyle);
         RegisterTokenAction("PIECE", SetPiece);
         RegisterTokenAction("X", SetX);
@@ -131,7 +133,7 @@ public sealed class GadgetReader : NeoLemmixDataReader
 
     private void SetSkillCount(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var amount = secondToken is "INFINITE"
+        var amount = TokensMatch(secondToken, "INFINITE")
             ? EngineConstants.InfiniteSkillCount
             : int.Parse(secondToken);
 

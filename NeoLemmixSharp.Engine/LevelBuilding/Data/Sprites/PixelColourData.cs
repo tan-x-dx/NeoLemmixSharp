@@ -36,8 +36,8 @@ public readonly struct PixelColorData
     {
         get
         {
-            if (x < 0 || x >= Width ||
-                y < 0 || y >= Height)
+            if ((uint)x >= (uint)Width ||
+                (uint)y >= (uint)Height)
                 throw new ArgumentException("Invalid dimensions");
 
             var i = Width * y + x;
@@ -46,8 +46,8 @@ public readonly struct PixelColorData
         }
         set
         {
-            if (x < 0 || x >= Width ||
-                y < 0 || y >= Height)
+            if ((uint)x >= (uint)Width ||
+                (uint)y >= (uint)Height)
                 throw new ArgumentException("Invalid dimensions");
 
             var i = Width * y + x;
@@ -82,9 +82,9 @@ public readonly struct PixelColorData
         var sourceTextureWrapper = new SpanWrapper2D<Color>(_colorData, Width, Height, minX, minY, newWidth, newHeight);
         var resultTextureWrapper = new SpanWrapper2D<Color>(newColors, newWidth, newHeight, 0, 0, newWidth, newHeight);
 
-        for (var x = 0; x < sourceTextureWrapper.Width; x++)
+        for (var y = 0; y < sourceTextureWrapper.Height; y++)
         {
-            for (var y = 0; y < sourceTextureWrapper.Height; y++)
+            for (var x = 0; x < sourceTextureWrapper.Width; x++)
             {
                 resultTextureWrapper[x, y] = sourceTextureWrapper[x, y];
             }

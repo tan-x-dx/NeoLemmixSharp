@@ -19,6 +19,8 @@ public sealed class SketchReader : NeoLemmixDataReader
     {
         _allSketchData = allSketchData;
 
+        SetNumberOfTokens(8);
+
         RegisterTokenAction("INDEX", SetIndex);
         RegisterTokenAction("PIECE", SetPiece);
         RegisterTokenAction("X", SetX);
@@ -76,9 +78,9 @@ public sealed class SketchReader : NeoLemmixDataReader
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate, out var rotNum, out var flip);
-        _currentSketchData!.RotNum = rotNum;
-        _currentSketchData.Flip = flip;
+        var dht = DihedralTransformation.Simplify(_flipHorizontally, _flipVertically, _rotate);
+        _currentSketchData!.Orientation = dht.Orientation;
+        _currentSketchData.FacingDirection = dht.FacingDirection;
 
         _allSketchData.Add(_currentSketchData!);
         _currentSketchData = null;

@@ -7,7 +7,7 @@ public sealed class GadgetStateArchetypeData
 {
     public required LevelPosition HitBoxOffset { get; init; }
     public required HitBoxData[] HitBoxData { get; init; }
-    public HitBoxRegionDataArray RegionData;
+    public HitBoxRegionDataArray RegionData = new();
 
     //    public required GadgetAnimationArchetypeData PrimaryAnimation { get; init; }
     //   public required int PrimaryAnimationStateTransitionIndex { get; init; }

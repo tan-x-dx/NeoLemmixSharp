@@ -236,6 +236,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         {
             FastForwardTime--;
         }
+        else
+        {
+            LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
+        }
     }
 
     /// <summary>
@@ -497,6 +501,9 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
 
         CurrentBounds = otherLemming.CurrentBounds;
         PreviousBounds = otherLemming.PreviousBounds;
+
+        Renderer.ResetPosition();
+        LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
     }
 
     public void SetRawDataFromOther(Team team, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
@@ -562,6 +569,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         CountDownAction = LemmingAction.GetActionFromUnboundId(lemmingSnapshotData.CountDownActionId);
 
         Renderer.ResetPosition();
+        LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
     }
 
     int IIdEquatable<Lemming>.Id => Id;

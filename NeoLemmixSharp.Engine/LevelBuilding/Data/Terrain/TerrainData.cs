@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
@@ -12,8 +13,8 @@ public sealed class TerrainData
     public required int Y { get; init; }
 
     public required bool NoOverwrite { get; init; }
-    public required int RotNum { get; init; }
-    public required bool Flip { get; init; }
+    public required Orientation Orientation { get; init; }
+    public required FacingDirection FacingDirection { get; init; }
     public required bool Erase { get; init; }
 
     public required Color? Tint { get; init; }
@@ -25,8 +26,8 @@ public sealed class TerrainData
 
     public override string ToString()
     {
-        var flipString = Flip ? "F" : string.Empty;
-        var rotString = $"R{RotNum}";
+        var flipString = FacingDirection == FacingDirection.Left ? "F" : string.Empty;
+        var rotString = $"R{Orientation}";
 
         return $"X:{X},Y:{Y} - {rotString}{flipString}{rotString}";
     }

@@ -129,16 +129,23 @@ public static class DefaultStyleHelpers
 
         foreach (var pair in styleGroup)
         {
-            // Add one for the type identifier byte at the end
-            var requiredByteBufferSize = 1 + utf8Encoding.GetByteCount(pair.PieceName);
+            // Search pattern of bytes looks like:
+            // 0xAB, [UTF8 encoded string bytes], [Type identifier byte], 0xBA
+            // This differentiates piece names from other strings in the file that might match.
+
+            var requiredByteBufferSize = utf8Encoding.GetByteCount(pair.PieceName)
+                + 1 // Type identifier byte after string
+                + 2; // String marker bytes before and after main bytes
 
             if (utf8ByteBuffer.Length < requiredByteBufferSize)
             {
                 utf8ByteBuffer = new byte[requiredByteBufferSize];
             }
 
-            utf8Encoding.GetBytes(pair.PieceName, utf8ByteBuffer);
-            utf8ByteBuffer[requiredByteBufferSize - 1] = (byte)pair.PieceType;
+            utf8ByteBuffer[0] = 0xAB;
+            utf8Encoding.GetBytes(pair.PieceName, utf8ByteBuffer[1..]);
+            utf8ByteBuffer[requiredByteBufferSize - 2] = (byte)pair.PieceType;
+            utf8ByteBuffer[requiredByteBufferSize - 1] = 0xBA;
 
             ProcessPiece(
                 levelData,
@@ -161,6 +168,7 @@ public static class DefaultStyleHelpers
         var pieceExists = rawFileData.TryLocateSpan(pieceByteSpan, out var index);
 
         rawFileData.SetReaderPosition(index + pieceByteSpan.Length);
+        var key = new StylePiecePair(styleName, pieceName);
 
         switch (pieceType)
         {
@@ -169,7 +177,7 @@ public static class DefaultStyleHelpers
                 var newTerrainArchetypeData = TerrainArchetypeReadingHelpers.GetTerrainArchetypeData(styleName, pieceName, rawFileData, pieceExists);
 
                 levelData.TerrainArchetypeData.Add(
-                    new StylePiecePair(styleName, pieceName),
+                    key,
                     newTerrainArchetypeData);
                 break;
 
@@ -177,7 +185,7 @@ public static class DefaultStyleHelpers
                 var newGadgetArchetypeBuilder = GadgetBuilderReadingHelpers.GetGadgetBuilderData(styleName, pieceName, rawFileData, pieceExists);
 
                 levelData.AllGadgetArchetypeBuilders.Add(
-                    new StylePiecePair(styleName, pieceName),
+                    key,
                     newGadgetArchetypeBuilder);
                 break;
 

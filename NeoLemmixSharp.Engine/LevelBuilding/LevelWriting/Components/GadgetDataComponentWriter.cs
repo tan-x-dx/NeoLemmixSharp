@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
@@ -45,13 +46,13 @@ public sealed class GadgetDataComponentWriter : ILevelDataWriter
 
         writer.Write((ushort)(gadgetData.X + LevelReadWriteHelpers.PositionOffset));
         writer.Write((ushort)(gadgetData.Y + LevelReadWriteHelpers.PositionOffset));
-        writer.Write(LevelReadWriteHelpers.GetOrientationByte(gadgetData.Orientation, gadgetData.FacingDirection));
+        writer.Write((byte)DihedralTransformation.EncodeToUint(gadgetData.Orientation, gadgetData.FacingDirection));
 
         writer.Write((byte)gadgetData.InitialStateId);
         writer.Write((byte)gadgetData.GadgetRenderMode);
 
         writer.Write((byte)gadgetData.InputNames.Length);
-        foreach(var inputName in gadgetData.InputNames)
+        foreach (var inputName in gadgetData.InputNames)
         {
             writer.Write(_stringIdLookup[inputName]);
         }

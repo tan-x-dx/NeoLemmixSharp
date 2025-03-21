@@ -1,4 +1,5 @@
-﻿using System.Buffers;
+﻿using Microsoft.Xna.Framework;
+using System.Buffers;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
@@ -52,10 +53,9 @@ public sealed class RawFileData
         }
     }
 
-    private unsafe T Read<T>()
+    private T Read<T>(int typeSize)
         where T : unmanaged
     {
-        var typeSize = sizeof(T);
         LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - Position >= typeSize, "Reached end of file!");
 
         var span = MemoryMarshal.Cast<byte, T>(new ReadOnlySpan<byte>(_byteBuffer, _position, typeSize));
@@ -64,11 +64,11 @@ public sealed class RawFileData
         return span[0];
     }
 
-    public byte Read8BitUnsignedInteger() => Read<byte>();
-    public ushort Read16BitUnsignedInteger() => Read<ushort>();
-    public uint Read32BitUnsignedInteger() => Read<uint>();
-    public int Read32BitSignedInteger() => Read<int>();
-    public ulong Read64BitUnsignedInteger() => Read<ulong>();
+    public byte Read8BitUnsignedInteger() => Read<byte>(sizeof(byte));
+    public ushort Read16BitUnsignedInteger() => Read<ushort>(sizeof(ushort));
+    public uint Read32BitUnsignedInteger() => Read<uint>(sizeof(uint));
+    public int Read32BitSignedInteger() => Read<int>(sizeof(int));
+    public ulong Read64BitUnsignedInteger() => Read<ulong>(sizeof(ulong));
 
     public ReadOnlySpan<byte> ReadBytes(int bufferSize)
     {
@@ -78,6 +78,25 @@ public sealed class RawFileData
         _position += bufferSize;
 
         return sourceSpan;
+    }
+
+    public Color ReadArgbColor()
+    {
+        byte alpha = Read8BitUnsignedInteger();
+        byte red = Read8BitUnsignedInteger();
+        byte green = Read8BitUnsignedInteger();
+        byte blue = Read8BitUnsignedInteger();
+
+        return new Color(red, green, blue, alpha);
+    }
+
+    public Color ReadRgbColor()
+    {
+        byte red = Read8BitUnsignedInteger();
+        byte green = Read8BitUnsignedInteger();
+        byte blue = Read8BitUnsignedInteger();
+
+        return new Color(red, green, blue, (byte)0xff);
     }
 
     public bool TryLocateSpan(ReadOnlySpan<byte> bytesToLocate, out int index)
