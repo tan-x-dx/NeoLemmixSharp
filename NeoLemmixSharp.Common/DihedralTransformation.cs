@@ -93,9 +93,11 @@ public readonly struct DihedralTransformation : IEquatable<DihedralTransformatio
     }
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int Encode(Orientation o, FacingDirection f) => ((f.Id & 1) << FlipBitShift) | (o.RotNum & 3);
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte EncodeToByte(Orientation o, FacingDirection f) => (byte)Encode(o, f);
 
     [Pure]
@@ -116,15 +118,13 @@ public readonly struct DihedralTransformation : IEquatable<DihedralTransformatio
         bool flipVertically,
         bool rotate)
     {
-        uint* p = stackalloc uint[NumberOf32BitInts];
+        uint* p = stackalloc uint[1 + NumberOf32BitInts];
         p[0] = rotate ? 1U : 0U;
         p[1] = flipHorizontally ? 1U : 0U;
+        p[2] = flipVertically ? 1U : 0U;
 
-        if (flipVertically)
-        {
-            p[0] += 2U;
-            p[1] ^= 1U;
-        }
+        p[0] |= p[2] << 1;
+        p[1] ^= p[2];
 
         return *(DihedralTransformation*)p;
     }
