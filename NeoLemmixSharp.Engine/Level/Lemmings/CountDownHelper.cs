@@ -20,7 +20,7 @@ public static class CountDownHelper
         var countDownTimer = lemming.CountDownTimer;
 
         return lemming.IsFastForward
-            ? (countDownTimer + EngineConstants.TicksPerSecond - 1) / EngineConstants.TicksPerSecond
-            : (countDownTimer + EngineConstants.StandardTicksPerSecond - 1) / EngineConstants.StandardTicksPerSecond;
+            ? (countDownTimer + EngineConstants.EngineTicksPerSecond - 1) / EngineConstants.EngineTicksPerSecond
+            : (countDownTimer + EngineConstants.GameplayTicksPerSecond - 1) / EngineConstants.GameplayTicksPerSecond;
     }
 }

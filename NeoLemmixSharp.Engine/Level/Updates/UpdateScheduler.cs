@@ -269,7 +269,7 @@ end;
         _queuedSkill = lemmingSkill;
         _queuedSkillLemming = lemming;
         _queuedSkillTeamId = lemming.State.TeamAffiliation.Id;
-        _queuedSkillFrame = EngineConstants.TicksPerSecond - 1;
+        _queuedSkillFrame = EngineConstants.EngineTicksPerSecond - 1;
     }
 
     private void CheckForQueuedAction()
