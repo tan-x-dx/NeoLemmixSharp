@@ -25,7 +25,7 @@ public sealed class ItemTracker<TPerfectHasher, T>
         for (var i = 0; i < _bits.Length; i++)
         {
             ref var value = ref _bits[i];
-            value = value << 1 & BigMask;
+            value = (value << 1) & BigMask;
         }
     }
 

@@ -9,11 +9,11 @@ public static class EngineConstants
 {
     #region Engine Specifications
 
-    public const int StandardTicksPerSecond = 17;
+    public const int GameplayTicksPerSecond = 17;
     public const int FastForwardSpeedMultiplier = 3;
-    public const int TicksPerSecond = StandardTicksPerSecond * FastForwardSpeedMultiplier;
+    public const int EngineTicksPerSecond = GameplayTicksPerSecond * FastForwardSpeedMultiplier;
 
-    private const long FramesPerSecondInTicks = (long)(TimeSpan.TicksPerMillisecond * (1000d / (double)TicksPerSecond));
+    private const long FramesPerSecondInTicks = (long)(TimeSpan.TicksPerMillisecond * (1000d / (double)EngineTicksPerSecond));
     public static TimeSpan FramesPerSecondTimeSpan => TimeSpan.FromTicks(FramesPerSecondInTicks);
 
     public const int DoubleTapFrameCountMax = 17;
@@ -72,7 +72,7 @@ public static class EngineConstants
     public const int MaxFallDistance = 62;
 
     public const int DefaultCountDownTimer = 5;
-    public const int DefaultCountDownActionTicks = DefaultCountDownTimer * StandardTicksPerSecond;
+    public const int DefaultCountDownActionTicks = DefaultCountDownTimer * GameplayTicksPerSecond;
     public const int DefaultFastForwardLemmingCountDownActionTicks = FastForwardSpeedMultiplier * DefaultCountDownActionTicks;
 
     public const int ParticleFrameCount = 51;
@@ -103,9 +103,9 @@ public static class EngineConstants
     #region Replay Snapshot Constants
 
     private const int NumberOfSecondsBetweenSnapshots = 2;
-    public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * TicksPerSecond;
+    public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * EngineTicksPerSecond;
     private const int InitialNumberOfSecondsOfSnapshotData = 4 * 60;
-    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfSecondsOfSnapshotData * TicksPerSecond;
+    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfSecondsOfSnapshotData * EngineTicksPerSecond;
 
     #endregion
 

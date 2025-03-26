@@ -57,7 +57,7 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
     public void SetElapsedTicks(int elapsedTicks, bool partialUpdate)
     {
         var previousElapsedSeconds = _elapsedSeconds;
-        _elapsedSeconds = elapsedTicks / EngineConstants.TicksPerSecond;
+        _elapsedSeconds = elapsedTicks / EngineConstants.EngineTicksPerSecond;
 
         if (previousElapsedSeconds == _elapsedSeconds)
             return;
