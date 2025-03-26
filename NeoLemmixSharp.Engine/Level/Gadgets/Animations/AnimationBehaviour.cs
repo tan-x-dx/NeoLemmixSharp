@@ -8,8 +8,8 @@ public sealed class AnimationBehaviour
     private readonly AnimationParameters _animationParameters;
     private readonly NineSliceDataThing[] _nineSliceData;
 
+    private readonly int _nextGadgetState;
     private int _currentFrame;
-    private int _nextGadgetState;
     private bool _isEndOfAnimation;
 
     public int NextGadgetState => _nextGadgetState;
