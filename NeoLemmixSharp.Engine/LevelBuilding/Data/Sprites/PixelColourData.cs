@@ -63,12 +63,19 @@ public readonly struct PixelColorData
             minY < 0 || maxY < 0)
             return new PixelColorData(new LevelSize(), []);
 
-        var subRegion = new LevelRegion(new LevelPosition(minX, minY), new LevelPosition(maxX, maxY));
+        var subRegion = new LevelRegion(
+            new LevelPosition(minX, minY),
+            new LevelPosition(maxX, maxY));
 
-        var newColors = new Color[subRegion.Size.Area()];
+        // Don't need to trim at all in this case
+        if (subRegion.Size == Size)
+            return this;
 
+        var newColorBuffer = new Color[subRegion.Size.Area()];
+
+        // Transfer the actual color data into a brand new item
         var sourceTextureWrapper = new SpanWrapper2D<Color>(_colorData, Size, subRegion.Position, subRegion.Size);
-        var resultTextureWrapper = new SpanWrapper2D<Color>(newColors, subRegion.Size, new LevelPosition(), subRegion.Size);
+        var resultTextureWrapper = new SpanWrapper2D<Color>(newColorBuffer, subRegion.Size, new LevelPosition(), subRegion.Size);
 
         for (var y = 0; y < sourceTextureWrapper.Size.H; y++)
         {
@@ -81,7 +88,7 @@ public readonly struct PixelColorData
 
         return new PixelColorData(
             subRegion.Size,
-            newColors);
+            newColorBuffer);
     }
 
     private int GetMinXTrim()

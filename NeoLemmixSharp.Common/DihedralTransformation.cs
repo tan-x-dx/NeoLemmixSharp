@@ -109,7 +109,8 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
-    public static DihedralTransformation Decode(
+    [SkipLocalsInit]
+    public static unsafe DihedralTransformation Decode(
         bool flipHorizontally,
         bool flipVertically,
         bool rotate)
@@ -121,7 +122,8 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         o |= v << 1;
         f ^= v;
 
-        return new DihedralTransformation(new Orientation(o), new FacingDirection(f));
+        int* p = stackalloc int[2] { o, f };
+        return *(DihedralTransformation*)p;
     }
 
     [Pure]
