@@ -240,7 +240,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
 
     private LevelPosition GetTopLeftChunkForRegion(LevelRegion levelRegion)
     {
-        return ConvertToChunkPosition(levelRegion.P);
+        return ConvertToChunkPosition(levelRegion.Position);
     }
 
     private LevelPosition GetBottomRightChunkForRegion(LevelRegion levelRegion)

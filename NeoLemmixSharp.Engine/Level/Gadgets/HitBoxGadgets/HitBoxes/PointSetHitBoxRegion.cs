@@ -26,7 +26,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
         if (_bounds.W > DimensionCutoffSize || _bounds.H > DimensionCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_bounds.W}, H:{_bounds.H}");
 
-        var totalNumberOfPoints = _bounds.S.Area();
+        var totalNumberOfPoints = _bounds.Size.Area();
 
         if (totalNumberOfPoints > AreaCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
@@ -36,7 +36,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
         for (var i = 0; i < points.Length; i++)
         {
-            var p = points[i] - _bounds.P;
+            var p = points[i] - _bounds.Position;
 
             var index = IndexFor(p);
             BitArrayHelpers.SetBit(span, index);
@@ -46,7 +46,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
     [Pure]
     public bool ContainsPoint(LevelPosition levelPosition)
     {
-        levelPosition -= _bounds.P;
+        levelPosition -= _bounds.Position;
         var index = IndexFor(levelPosition);
 
         return (uint)levelPosition.X < (uint)_bounds.W &&
@@ -57,8 +57,8 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
     [Pure]
     public bool ContainsPoints(LevelPosition p1, LevelPosition p2)
     {
-        p1 -= _bounds.P;
-        p2 -= _bounds.P;
+        p1 -= _bounds.Position;
+        p2 -= _bounds.Position;
         var index1 = IndexFor(p1);
         var index2 = IndexFor(p2);
         var span = new ReadOnlySpan<uint>(_levelPositionBits);
@@ -76,5 +76,5 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int IndexFor(LevelPosition levelPosition) => _bounds.S.GetIndexOfPoint(levelPosition);
+    private int IndexFor(LevelPosition levelPosition) => _bounds.Size.GetIndexOfPoint(levelPosition);
 }

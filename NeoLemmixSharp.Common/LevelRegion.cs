@@ -16,11 +16,11 @@ namespace NeoLemmixSharp.Common;
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
 public readonly struct LevelRegion : IEquatable<LevelRegion>
 {
-    [FieldOffset(0 * sizeof(int))] public readonly LevelPosition P;
+    [FieldOffset(0 * sizeof(int))] public readonly LevelPosition Position;
     [FieldOffset(0 * sizeof(int))] public readonly int X;
     [FieldOffset(1 * sizeof(int))] public readonly int Y;
 
-    [FieldOffset(2 * sizeof(int))] public readonly LevelSize S;
+    [FieldOffset(2 * sizeof(int))] public readonly LevelSize Size;
     [FieldOffset(2 * sizeof(int))] public readonly int W;
     [FieldOffset(3 * sizeof(int))] public readonly int H;
 
@@ -36,7 +36,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     [DebuggerStepThrough]
     public LevelRegion(LevelPosition position)
     {
-        P = position;
+        Position = position;
         W = 1;
         H = 1;
     }
@@ -44,7 +44,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     [DebuggerStepThrough]
     public LevelRegion(LevelPosition position, LevelSize size)
     {
-        P = position;
+        Position = position;
         W = size.W;
         if (W < 1) W = 1;
         H = size.H;
@@ -189,10 +189,10 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
 
     public bool TryFormat(Span<char> destination, out int charsWritten)
     {
-        if (!P.TryFormat(destination, out charsWritten))
+        if (!Position.TryFormat(destination, out charsWritten))
             return false;
 
-        var result = S.TryFormat(destination[charsWritten..], out var c);
+        var result = Size.TryFormat(destination[charsWritten..], out var c);
         charsWritten += c;
         return result;
     }
