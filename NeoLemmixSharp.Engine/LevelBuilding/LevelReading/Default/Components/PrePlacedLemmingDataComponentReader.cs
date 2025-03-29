@@ -32,8 +32,7 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
 
             levelData.PrePlacedLemmingData.Add(new LemmingData
             {
-                X = x - LevelReadWriteHelpers.PositionOffset,
-                Y = y - LevelReadWriteHelpers.PositionOffset,
+                Position = new LevelPosition(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
                 State = state,
 
                 Orientation = dht.Orientation,

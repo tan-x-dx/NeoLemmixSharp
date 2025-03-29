@@ -31,10 +31,7 @@ public readonly struct LevelSize : IEquatable<LevelSize>
     }
 
     [Pure]
-    public LevelSize Transpose()
-    {
-        return new LevelSize(H, W);
-    }
+    public LevelSize Transpose() => new(H, W);
 
     [Pure]
     public int Area() => W * H;
@@ -55,10 +52,7 @@ public readonly struct LevelSize : IEquatable<LevelSize>
     }
 
     [Pure]
-    public int GetIndexOfPoint(LevelPosition p)
-    {
-        return W * p.Y + p.X;
-    }
+    public int GetIndexOfPoint(LevelPosition p) => W * p.Y + p.X;
 
     [DebuggerStepThrough]
     public static bool operator ==(LevelSize left, LevelSize right) =>
