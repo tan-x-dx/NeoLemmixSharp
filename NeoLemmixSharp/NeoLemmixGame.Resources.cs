@@ -80,9 +80,8 @@ public sealed partial class NeoLemmixGame
                 out var levelPositions);
 
             return new TerrainEraseMask(
-                maskWidth,
-                maskHeight,
                 new LevelPosition(anchorPointX, anchorPointY),
+                new LevelSize(maskWidth, maskHeight),
                 ranges,
                 levelPositions,
                 BasherAction.Instance);

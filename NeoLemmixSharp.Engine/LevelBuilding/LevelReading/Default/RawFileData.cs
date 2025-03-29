@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
@@ -58,10 +59,10 @@ public sealed class RawFileData
     {
         LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - Position >= typeSize, "Reached end of file!");
 
-        var span = MemoryMarshal.Cast<byte, T>(new ReadOnlySpan<byte>(_byteBuffer, _position, typeSize));
+        var result = Unsafe.ReadUnaligned<T>(ref _byteBuffer[_position]);
         _position += typeSize;
 
-        return span[0];
+        return result;
     }
 
     public byte Read8BitUnsignedInteger() => Read<byte>(sizeof(byte));
