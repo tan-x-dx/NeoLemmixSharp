@@ -60,8 +60,7 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
             Style = _stringIdLookup[styleId],
             GadgetPiece = _stringIdLookup[pieceId],
 
-            X = x - LevelReadWriteHelpers.PositionOffset,
-            Y = y - LevelReadWriteHelpers.PositionOffset,
+            Position = new LevelPosition(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
 
             InitialStateId = initialStateId,
             GadgetRenderMode = renderMode,

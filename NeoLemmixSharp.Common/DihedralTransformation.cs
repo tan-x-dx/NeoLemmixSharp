@@ -28,6 +28,14 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
+    public ResizeType Transform(ResizeType resizeType)
+    {
+        return Orientation.IsPerpendicularTo(Orientation.Down)
+            ? resizeType.SwapComponents()
+            : resizeType;
+    }
+
+    [Pure]
     public LevelPosition Transform(
         LevelPosition position,
         LevelSize size)

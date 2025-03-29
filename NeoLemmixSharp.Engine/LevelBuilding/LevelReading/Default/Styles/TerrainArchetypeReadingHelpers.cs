@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Styles;
