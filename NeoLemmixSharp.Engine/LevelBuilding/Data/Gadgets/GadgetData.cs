@@ -49,13 +49,6 @@ public sealed class GadgetData
         return _properties.TryGetValue(property, out value);
     }
 
-    public DihedralTransformation GetDihedralTransformation()
-    {
-        return new DihedralTransformation(
-            Orientation,
-            FacingDirection);
-    }
-
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, int>.Enumerator GetProperties() => _properties.GetEnumerator();

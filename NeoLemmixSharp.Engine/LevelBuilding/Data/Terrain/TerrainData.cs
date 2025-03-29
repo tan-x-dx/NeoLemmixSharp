@@ -9,8 +9,7 @@ public sealed class TerrainData
     public required string Style { get; init; }
     public required string TerrainPiece { get; init; }
 
-    public required int X { get; init; }
-    public required int Y { get; init; }
+    public required LevelPosition Position { get; init; }
 
     public required bool NoOverwrite { get; init; }
     public required Orientation Orientation { get; init; }
@@ -23,12 +22,4 @@ public sealed class TerrainData
     public required int? Height { get; init; }
 
     public StylePiecePair GetStylePiecePair() => new(Style, TerrainPiece);
-
-    public override string ToString()
-    {
-        var flipString = FacingDirection == FacingDirection.Left ? "F" : string.Empty;
-        var rotString = $"R{Orientation}";
-
-        return $"X:{X},Y:{Y} - {rotString}{flipString}{rotString}";
-    }
 }

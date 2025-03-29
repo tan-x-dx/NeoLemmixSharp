@@ -32,25 +32,15 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             gadgetData.Orientation,
             FacingDirection.Right); // Hatches do not flip according to facing direction
 
-        dihedralTransformation.Transform(
-            SpriteData.SpriteWidth,
-            SpriteData.SpriteHeight,
-            SpriteData.SpriteWidth,
-            SpriteData.SpriteHeight,
-            out var transformedWidth,
-            out var transformedHeight);
-
-        var spawnPointOffset = dihedralTransformation.Transform(
-            SpawnPosition,
-            SpriteData.SpriteWidth,
-            SpriteData.SpriteHeight);
+        var transformedSize = dihedralTransformation.Transform(SpriteData.SpriteSize);
+        var spawnPointOffset = dihedralTransformation.Transform(SpawnPosition, SpriteData.SpriteSize);
 
         var currentGadgetBounds = new GadgetBounds
         {
             X = gadgetData.X,
             Y = gadgetData.Y,
-            Width = transformedWidth,
-            Height = transformedHeight
+            Width = transformedSize.W,
+            Height = transformedSize.H
         };
         var previousGadgetBounds = new GadgetBounds(currentGadgetBounds);
 

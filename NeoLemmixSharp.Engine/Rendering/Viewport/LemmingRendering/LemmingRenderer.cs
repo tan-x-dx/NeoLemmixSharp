@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 
@@ -38,7 +39,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         var p = _lemming.LevelPosition - _actionSprite.AnchorPoint;
 
         _previousSpriteBounds = _spriteBounds;
-        _spriteBounds = new Rectangle(p.X, p.Y, _actionSprite.SpriteWidth, _actionSprite.SpriteHeight);
+        _spriteBounds = Helpers.CreateRectangle(p, _actionSprite.SpriteSize);
 
         LevelScreenRenderer.Instance.LevelRenderer.UpdateSpritePosition(this);
     }
@@ -98,7 +99,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             sourceRectangle.Width,
             sourceRectangle.Height);
 
-        sourceRectangle.Y += _lemming.AnimationFrame * _actionSprite.SpriteHeight;
+        sourceRectangle.Y += _lemming.AnimationFrame * _actionSprite.SpriteSize.H;
 
         _actionSprite.RenderLemming(spriteBatch, _lemming, sourceRectangle, renderDestination);
 

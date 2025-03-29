@@ -19,44 +19,29 @@ public readonly struct DihedralTransformation : IEquatable<DihedralTransformatio
     }
 
     [Pure]
-    public LevelPosition Transform(
-        LevelPosition position,
-        int width,
-        int height)
-    {
-        Transform(position.X, position.Y, width, height, out var x0, out var y0);
-        return new LevelPosition(x0, y0);
-    }
-
-    [Pure]
-    public LevelPosition Transform(
-        LevelPosition position,
-        LevelSize levelSize)
-    {
-        Transform(position.X, position.Y, levelSize.W, levelSize.H, out var x0, out var y0);
-        return new LevelPosition(x0, y0);
-    }
-
-    [Pure]
     public LevelSize Transform(LevelSize levelSize)
     {
-        Transform(levelSize.W, levelSize.H, levelSize.W, levelSize.H, out var x0, out var y0);
-        return new LevelSize(x0, y0);
+        return Orientation.IsPerpendicularTo(Orientation.Down)
+            ? LevelSize.Transpose(levelSize)
+            : levelSize;
     }
 
-    public void Transform(
-        int x,
-        int y,
-        int w,
-        int h,
-        out int x0,
-        out int y0)
+    [Pure]
+    public LevelPosition Transform(
+        LevelPosition position,
+        LevelSize size)
     {
+        var x = position.X;
+        var y = position.Y;
+        var w = size.W - 1;
+        var h = size.H - 1;
+
         var s = GetRotationCoefficients(out var a, out var b, ref w, ref h);
         s *= FacingDirection.Id;
 
-        x0 = s + FacingDirection.DeltaX * (a * x - b * y + w);
-        y0 = b * x + a * y + h;
+        var x0 = s + FacingDirection.DeltaX * (a * x - b * y + w);
+        var y0 = b * x + a * y + h;
+        return new LevelPosition(x0, y0);
     }
 
     private int GetRotationCoefficients(out int a, out int b, ref int w, ref int h)

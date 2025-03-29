@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
@@ -30,6 +31,12 @@ public readonly struct PixelColorData
         Width = width;
         Height = height;
         _colorData = colorData;
+    }
+
+    public Color this[LevelPosition p]
+    {
+        get => this[p.X, p.Y];
+        set => this[p.X, p.Y] = value;
     }
 
     public Color this[int x, int y]

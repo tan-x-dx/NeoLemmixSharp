@@ -81,8 +81,8 @@ public readonly ref struct TerrainBuilder
 
         foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
         {
-            minX = Math.Min(minX, terrainData.X);
-            minY = Math.Min(minY, terrainData.Y);
+            minX = Math.Min(minX, terrainData.Position.X);
+            minY = Math.Min(minY, terrainData.Position.Y);
         }
         /*
         foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
@@ -101,8 +101,8 @@ public readonly ref struct TerrainBuilder
             var w = terrainData.Width ?? terrainArchetypeData.TerrainPixelColorData.Width;
             var h = terrainData.Height ?? terrainArchetypeData.TerrainPixelColorData.Height;
 
-            maxX = Math.Max(maxX, terrainData.X + w);
-            maxY = Math.Max(maxY, terrainData.Y + h);
+            maxX = Math.Max(maxX, terrainData.Position.X + w);
+            maxY = Math.Max(maxY, terrainData.Position.Y + h);
         }
 
         var colors = new Color[maxX * maxY];
@@ -162,74 +162,80 @@ public readonly ref struct TerrainBuilder
             terrainData.Orientation,
             terrainData.FacingDirection);
 
-        for (var y = 0; y < sourcePixelColorData.Height; y++)
+        var sourceSize = new LevelSize(sourcePixelColorData.Width, sourcePixelColorData.Height);
+        var targetSize = new LevelSize(targetPixelColorData.Width, targetPixelColorData.Height);
+
+        for (var y = 0; y < sourceSize.H; y++)
         {
-            for (var x = 0; x < sourcePixelColorData.Width; x++)
+            for (var x = 0; x < sourceSize.W; x++)
             {
-                var sourcePixelColor = sourcePixelColorData[x, y];
+                var p = new LevelPosition(x, y);
+                var sourcePixelColor = sourcePixelColorData[p];
                 if (sourcePixelColor == Color.Transparent)
                     continue;
 
-                dihedralTransformation.Transform(
-                    x,
-                    y,
-                    sourcePixelColorData.Width - 1,
-                    sourcePixelColorData.Height - 1,
-                    out var x0,
-                    out var y0);
+                var p0 = dihedralTransformation.Transform(p, sourceSize);
 
-                x0 += terrainData.X;
-                y0 += terrainData.Y;
+                p0 += terrainData.Position;
 
-                if ((uint)x0 >= (uint)targetPixelColorData.Width ||
-                    (uint)y0 >= (uint)targetPixelColorData.Height)
-                    continue;
-
-                if (terrainData.Tint.HasValue)
+                if (targetSize.EncompassesPoint(p0))
                 {
-                    sourcePixelColor = BlendColors(terrainData.Tint.Value, sourcePixelColor);
-                }
-
-                var targetPixelColor = targetPixelColorData[x0, y0];
-
-                if (terrainData.Erase)
-                {
-                    if (sourcePixelColor != Color.Transparent)
-                    {
-                        targetPixelColor = Color.Transparent;
-                    }
-                }
-                else if (terrainData.NoOverwrite)
-                {
-                    targetPixelColor = BlendColors(targetPixelColor, sourcePixelColor);
-                }
-                else
-                {
-                    targetPixelColor = BlendColors(sourcePixelColor, targetPixelColor);
-                }
-
-                targetPixelColorData[x0, y0] = targetPixelColor;
-                var pixelIndex = targetPixelColorData.Width * y0 + x0;
-                ref var targetPixelData = ref _terrainPixels[pixelIndex];
-
-                if (PixelColorIsSubstantial(targetPixelColor))
-                {
-                    if (terrainArchetypeData.IsSteel)
-                    {
-                        targetPixelData |= PixelType.Steel;
-                    }
-                    else
-                    {
-                        targetPixelData &= ~PixelType.Steel;
-                    }
-
-                    targetPixelData |= PixelType.SolidToAllOrientations;
-                }
-                else
-                {
-                    targetPixelData = PixelType.Empty;
+                    ChangePixel(terrainData, terrainArchetypeData, targetPixelColorData, sourcePixelColor, p0);
                 }
             }
+        }
+    }
+
+    private void ChangePixel(
+        TerrainData terrainData,
+        ITerrainArchetypeData terrainArchetypeData,
+        PixelColorData targetPixelColorData,
+        Color sourcePixelColor,
+        LevelPosition p0)
+    {
+        if (terrainData.Tint.HasValue)
+        {
+            sourcePixelColor = BlendColors(terrainData.Tint.Value, sourcePixelColor);
+        }
+
+        var targetPixelColor = targetPixelColorData[p0];
+
+        if (terrainData.Erase)
+        {
+            if (sourcePixelColor != Color.Transparent)
+            {
+                targetPixelColor = Color.Transparent;
+            }
+        }
+        else if (terrainData.NoOverwrite)
+        {
+            targetPixelColor = BlendColors(targetPixelColor, sourcePixelColor);
+        }
+        else
+        {
+            targetPixelColor = BlendColors(sourcePixelColor, targetPixelColor);
+        }
+
+        targetPixelColorData[p0] = targetPixelColor;
+        var pixelIndex = targetPixelColorData.Width * p0.Y + p0.X;
+        ref var targetPixelData = ref _terrainPixels[pixelIndex];
+
+        if (PixelColorIsSubstantial(targetPixelColor))
+        {
+            if (terrainArchetypeData.IsSteel)
+            {
+                targetPixelData |= PixelType.Steel;
+            }
+            else
+            {
+                targetPixelData &= ~PixelType.Steel;
+            }
+
+            targetPixelData |= PixelType.SolidToAllOrientations;
+        }
+        else
+        {
+            targetPixelData = PixelType.Empty;
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -21,6 +22,16 @@ public readonly struct LevelSize : IEquatable<LevelSize>
         if (H < 0) H = 0;
     }
 
+    [Pure]
+    public int Area() => W * H;
+
+    [Pure]
+    public bool EncompassesPoint(LevelPosition p)
+    {
+        return (uint)p.X < (uint)W &&
+               (uint)p.Y < (uint)H;
+    }
+
     [DebuggerStepThrough]
     public static bool operator ==(LevelSize left, LevelSize right) =>
         left.W == right.W &&
@@ -30,6 +41,12 @@ public readonly struct LevelSize : IEquatable<LevelSize>
     public static bool operator !=(LevelSize left, LevelSize right) =>
         left.W != right.W ||
         left.H != right.H;
+
+    [Pure]
+    public static LevelSize Transpose(LevelSize size)
+    {
+        return new LevelSize(size.H, size.W);
+    }
 
     [DebuggerStepThrough]
     public bool Equals(LevelSize other) => W == other.W && H == other.H;
