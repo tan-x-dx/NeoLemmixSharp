@@ -1,11 +1,12 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.ComponentModel;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
 [StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
-public readonly struct DihedralTransformation : IEquatable<DihedralTransformation>
+public readonly ref struct DihedralTransformation : IEquatable<DihedralTransformation>
 {
     private const int FlipBitShift = 2;
 
@@ -14,8 +15,8 @@ public readonly struct DihedralTransformation : IEquatable<DihedralTransformatio
 
     public DihedralTransformation(Orientation orientation, FacingDirection facingDirection)
     {
-        Orientation = new Orientation(orientation.RotNum);
-        FacingDirection = new FacingDirection(facingDirection.Id);
+        Orientation = orientation;
+        FacingDirection = facingDirection;
     }
 
     [Pure]
@@ -143,13 +144,14 @@ public readonly struct DihedralTransformation : IEquatable<DihedralTransformatio
         FacingDirection == other.FacingDirection;
 
     [Pure]
-    public override bool Equals(object? obj) =>
-        obj is DihedralTransformation other &&
-        Orientation == other.Orientation &&
-        FacingDirection == other.FacingDirection;
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete($"Equals() on {nameof(DihedralTransformation)} will always throw an exception. Use the equality operator instead.")]
+    public override bool Equals(object? obj) => throw new NotSupportedException("It's a ref struct");
 
     [Pure]
-    public override int GetHashCode() => Encode(Orientation, FacingDirection);
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete($"GetHashCode() on {nameof(DihedralTransformation)} will always throw an exception.")]
+    public override int GetHashCode() => throw new NotSupportedException("It's a ref struct");
 
     [Pure]
     public static bool operator ==(DihedralTransformation left, DihedralTransformation right) =>

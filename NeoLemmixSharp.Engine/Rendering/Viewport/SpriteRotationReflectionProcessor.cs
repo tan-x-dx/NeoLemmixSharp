@@ -71,7 +71,6 @@ public sealed class SpriteRotationReflectionProcessor<T>
         var pixelColorData = new PixelColorData(texture.Width, texture.Height, pixels);
         var spriteDrawingData = new SpriteDrawingData(orientation, facingDirection, spriteSize, numberOfFrames, numberOfLayers);
 
-        
         for (var l = 0; l < numberOfLayers; l++)
         {
             var l0 = l * spriteSize.W;
