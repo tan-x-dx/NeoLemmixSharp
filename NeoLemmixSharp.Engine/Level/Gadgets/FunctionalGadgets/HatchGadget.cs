@@ -33,15 +33,15 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
     {
         PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
 
-        CurrentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(CurrentGadgetBounds.X + dx);
-        CurrentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(CurrentGadgetBounds.Y + dy);
+        var delta = new LevelPosition(dx, dy);
+        CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(CurrentGadgetBounds.Position + delta);
     }
 
     public void SetPosition(int x, int y)
     {
         PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
 
-        CurrentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(x);
-        CurrentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(y);
+        var newPosition = new LevelPosition(x, y);
+        CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(newPosition);
     }
 }

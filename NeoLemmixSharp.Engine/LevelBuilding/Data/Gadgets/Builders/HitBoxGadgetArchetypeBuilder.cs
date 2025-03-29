@@ -58,8 +58,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     {
         var result = new GadgetBounds
         {
-            X = gadgetData.X,
-            Y = gadgetData.Y
+            Position = gadgetData.Position
         };
 
         var size = new LevelSize(
@@ -76,10 +75,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
     private ResizeType GetResizeTypeForGadgetOrientation(GadgetData gadgetData)
     {
-        if (gadgetData.Orientation.IsPerpendicularTo(Orientation.Down))
-            return ResizeType.SwapComponents();
-
-        return ResizeType;
+        return new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(ResizeType);
     }
 
     private GadgetState[] GetGadgetStates(

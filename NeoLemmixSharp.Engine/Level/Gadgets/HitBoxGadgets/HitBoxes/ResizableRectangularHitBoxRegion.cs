@@ -25,8 +25,8 @@ public sealed class ResizableRectangularHitBoxRegion : IHitBoxRegion
         _dh = dh;
     }
 
-    private int GetX() => _gadgetBounds.X + _dx;
-    private int GetY() => _gadgetBounds.Y + _dy;
+    private int GetX() => _gadgetBounds.Position.X + _dx;
+    private int GetY() => _gadgetBounds.Position.Y + _dy;
     private int GetWidth() => _gadgetBounds.Width + _dw - _dx;
     private int GetHeight() => _gadgetBounds.Height + _dh - _dy;
 

@@ -37,8 +37,7 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
         var currentGadgetBounds = new GadgetBounds
         {
-            X = gadgetData.X,
-            Y = gadgetData.Y,
+            Position = gadgetData.Position,
             Width = transformedSize.W,
             Height = transformedSize.H
         };

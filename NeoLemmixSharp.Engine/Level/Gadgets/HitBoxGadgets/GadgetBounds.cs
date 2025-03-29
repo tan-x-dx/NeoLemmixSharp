@@ -7,6 +7,8 @@ public sealed class GadgetBounds : IRectangularBounds
 {
     public LevelPosition Position { get; set; }
 
+    // Size data is raw ints, since it can technically be negative or zero
+    // The LevelSize type will deal with this, giving us the behaviour we want
     public int Width { get; set; }
     public int Height { get; set; }
 
