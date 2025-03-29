@@ -51,8 +51,7 @@ public readonly ref struct TerrainBuilder
         }
 
         var textureData = new PixelColorData(
-            _levelData.LevelWidth,
-            _levelData.LevelHeight,
+            new LevelSize(_levelData.LevelWidth, _levelData.LevelHeight),
             _terrainColors);
 
         DrawTerrainPieces(_levelData.AllTerrainData, textureData);
@@ -98,15 +97,16 @@ public readonly ref struct TerrainBuilder
         {
             var terrainArchetypeData = _levelData.TerrainArchetypeData[terrainData.GetStylePiecePair()];
 
-            var w = terrainData.Width ?? terrainArchetypeData.TerrainPixelColorData.Width;
-            var h = terrainData.Height ?? terrainArchetypeData.TerrainPixelColorData.Height;
+            var w = terrainData.Width ?? terrainArchetypeData.TerrainPixelColorData.Size.W;
+            var h = terrainData.Height ?? terrainArchetypeData.TerrainPixelColorData.Size.H;
 
             maxX = Math.Max(maxX, terrainData.Position.X + w);
             maxY = Math.Max(maxY, terrainData.Position.Y + h);
         }
 
-        var colors = new Color[maxX * maxY];
-        var terrainPixelColorData = new PixelColorData(maxX, maxY, colors);
+        var size = new LevelSize(maxX, maxY);
+        var colors = new Color[size.Area()];
+        var terrainPixelColorData = new PixelColorData(size, colors);
 
         DrawTerrainPieces(
             terrainGroupData.AllBasicTerrainData,
@@ -162,8 +162,8 @@ public readonly ref struct TerrainBuilder
             terrainData.Orientation,
             terrainData.FacingDirection);
 
-        var sourceSize = new LevelSize(sourcePixelColorData.Width, sourcePixelColorData.Height);
-        var targetSize = new LevelSize(targetPixelColorData.Width, targetPixelColorData.Height);
+        var sourceSize = sourcePixelColorData.Size;
+        var targetSize = targetPixelColorData.Size;
 
         for (var y = 0; y < sourceSize.H; y++)
         {
@@ -217,7 +217,8 @@ public readonly ref struct TerrainBuilder
         }
 
         targetPixelColorData[p0] = targetPixelColor;
-        var pixelIndex = targetPixelColorData.Width * p0.Y + p0.X;
+
+        var pixelIndex = targetPixelColorData.Size.GetIndexOfPoint(p0);
         ref var targetPixelData = ref _terrainPixels[pixelIndex];
 
         if (PixelColorIsSubstantial(targetPixelColor))

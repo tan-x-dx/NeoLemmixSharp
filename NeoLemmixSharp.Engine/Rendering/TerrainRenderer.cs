@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 
 namespace NeoLemmixSharp.Engine.Rendering;
@@ -39,6 +38,6 @@ public sealed class TerrainRenderer : IViewportObjectRenderer
             sourceRectangle);
     }
 
-    public LevelRegion CurrentBounds => new(new LevelPosition(), new LevelSize(_terrainTexture.Width, _terrainTexture.Height));
+    public LevelRegion CurrentBounds => new(_terrainTexture);
     public LevelRegion PreviousBounds => CurrentBounds;
 }

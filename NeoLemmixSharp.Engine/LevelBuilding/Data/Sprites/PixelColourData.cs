@@ -7,65 +7,47 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 public readonly struct PixelColorData
 {
-    public readonly int Width;
-    public readonly int Height;
+    public readonly LevelSize Size;
 
     private readonly Color[] _colorData;
 
     public static PixelColorData GetPixelColorDataFromTexture(Texture2D texture)
     {
-        var width = texture.Width;
-        var height = texture.Height;
-        var data = new Color[width * height];
+        var size = new LevelSize(texture);
+        var data = new Color[size.Area()];
 
         texture.GetData(data);
 
-        return new PixelColorData(width, height, data);
+        return new PixelColorData(size, data);
     }
 
     public PixelColorData(
-        int width,
-        int height,
+        LevelSize size,
         Color[] colorData)
     {
-        Width = width;
-        Height = height;
+        Size = size;
         _colorData = colorData;
     }
 
     public Color this[LevelPosition p]
     {
-        get => this[p.X, p.Y];
-        set => this[p.X, p.Y] = value;
-    }
-
-    public Color this[int x, int y]
-    {
         get
         {
-            if ((uint)x >= (uint)Width ||
-                (uint)y >= (uint)Height)
-                throw new ArgumentException("Invalid dimensions");
-
-            var i = Width * y + x;
-
-            return _colorData[i];
+            Size.AssertEncompassesPoint(p);
+            var index = Size.GetIndexOfPoint(p);
+            return _colorData[index];
         }
         set
         {
-            if ((uint)x >= (uint)Width ||
-                (uint)y >= (uint)Height)
-                throw new ArgumentException("Invalid dimensions");
-
-            var i = Width * y + x;
-
-            _colorData[i] = value;
+            Size.AssertEncompassesPoint(p);
+            var index = Size.GetIndexOfPoint(p);
+            _colorData[index] = value;
         }
     }
 
     public Texture2D CreateTexture(GraphicsDevice graphicsDevice)
     {
-        var result = new Texture2D(graphicsDevice, Width, Height);
+        var result = new Texture2D(graphicsDevice, Size.W, Size.H);
         result.SetData(_colorData);
         return result;
     }
@@ -79,37 +61,38 @@ public readonly struct PixelColorData
 
         if (minX < 0 || maxX < 0 ||
             minY < 0 || maxY < 0)
-            return new PixelColorData(0, 0, []);
+            return new PixelColorData(new LevelSize(), []);
 
-        var newWidth = 1 + maxX - minX;
-        var newHeight = 1 + maxY - minY;
+        var newSize = new LevelSize(1 + maxX - minX, 1 + maxY - minY);
+        var sourcePosition = new LevelPosition(minX, minY);
 
-        var newColors = new Color[newWidth * newHeight];
+        var newColors = new Color[newSize.Area()];
 
-        var sourceTextureWrapper = new SpanWrapper2D<Color>(_colorData, Width, Height, minX, minY, newWidth, newHeight);
-        var resultTextureWrapper = new SpanWrapper2D<Color>(newColors, newWidth, newHeight, 0, 0, newWidth, newHeight);
+        var sourceTextureWrapper = new SpanWrapper2D<Color>(_colorData, Size, sourcePosition, newSize);
+        var resultTextureWrapper = new SpanWrapper2D<Color>(newColors, newSize, new LevelPosition(), newSize);
 
-        for (var y = 0; y < sourceTextureWrapper.Height; y++)
+        for (var y = 0; y < sourceTextureWrapper.Size.H; y++)
         {
-            for (var x = 0; x < sourceTextureWrapper.Width; x++)
+            for (var x = 0; x < sourceTextureWrapper.Size.W; x++)
             {
-                resultTextureWrapper[x, y] = sourceTextureWrapper[x, y];
+                var pos = new LevelPosition(x, y);
+                resultTextureWrapper[pos] = sourceTextureWrapper[pos];
             }
         }
 
         return new PixelColorData(
-            newWidth,
-            newHeight,
+            newSize,
             newColors);
     }
 
     private int GetMinXTrim()
     {
-        for (var x = 0; x < Width; x++)
+        for (var x = 0; x < Size.W; x++)
         {
-            for (var y = 0; y < Height; y++)
+            for (var y = 0; y < Size.H; y++)
             {
-                if (this[x, y] != Color.Transparent)
+                var pos = new LevelPosition(x, y);
+                if (this[pos] != Color.Transparent)
                 {
                     return x;
                 }
@@ -121,11 +104,12 @@ public readonly struct PixelColorData
 
     private int GetMinYTrim()
     {
-        for (var y = 0; y < Height; y++)
+        for (var y = 0; y < Size.H; y++)
         {
-            for (var x = 0; x < Width; x++)
+            for (var x = 0; x < Size.W; x++)
             {
-                if (this[x, y] != Color.Transparent)
+                var pos = new LevelPosition(x, y);
+                if (this[pos] != Color.Transparent)
                 {
                     return y;
                 }
@@ -137,11 +121,12 @@ public readonly struct PixelColorData
 
     private int GetMaxXTrim()
     {
-        for (var x = Width - 1; x >= 0; x--)
+        for (var x = Size.W - 1; x >= 0; x--)
         {
-            for (var y = 0; y < Height; y++)
+            for (var y = 0; y < Size.H; y++)
             {
-                if (this[x, y] != Color.Transparent)
+                var pos = new LevelPosition(x, y);
+                if (this[pos] != Color.Transparent)
                 {
                     return x;
                 }
@@ -153,11 +138,12 @@ public readonly struct PixelColorData
 
     private int GetMaxYTrim()
     {
-        for (var y = Height - 1; y >= 0; y--)
+        for (var y = Size.H - 1; y >= 0; y--)
         {
-            for (var x = 0; x < Width; x++)
+            for (var x = 0; x < Size.W; x++)
             {
-                if (this[x, y] != Color.Transparent)
+                var pos = new LevelPosition(x, y);
+                if (this[pos] != Color.Transparent)
                 {
                     return y;
                 }

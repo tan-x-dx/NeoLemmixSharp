@@ -65,10 +65,11 @@ public sealed class SpriteRotationReflectionProcessor<T>
         int numberOfLayers,
         ItemCreator itemCreator)
     {
-        var pixels = new Color[texture.Width * texture.Height];
+        var textureSize = new LevelSize(texture);
+        var pixels = new Color[textureSize.Area()];
         texture.GetData(pixels);
 
-        var pixelColorData = new PixelColorData(texture.Width, texture.Height, pixels);
+        var pixelColorData = new PixelColorData(textureSize, pixels);
         var spriteDrawingData = new SpriteDrawingData(orientation, facingDirection, spriteSize, numberOfFrames, numberOfLayers);
 
         for (var l = 0; l < numberOfLayers; l++)
@@ -83,23 +84,24 @@ public sealed class SpriteRotationReflectionProcessor<T>
                 {
                     for (var y0 = 0; y0 < spriteSize.H; y0++)
                     {
-                        var pixel = pixelColorData[x0 + l0, y0 + f0];
-                        var p0 = new LevelPosition(x0, y0);
+                        var p0 = new LevelPosition(x0 + l0, y0 + f0);
+                        var pixel = pixelColorData[p0];
+                        var p1 = new LevelPosition(x0, y0);
 
-                        spriteDrawingData.Set(pixel, p0, l, f);
+                        spriteDrawingData.Set(pixel, p1, l, f);
                     }
                 }
             }
         }
 
-        var p1 = spriteDrawingData.DihedralTransformation.Transform(
+        var p2 = spriteDrawingData.DihedralTransformation.Transform(
             anchorPoint,
             spriteSize);
 
         var texture0 = spriteDrawingData.ToTexture(_graphicsDevice);
         var actionSprite = itemCreator(
             texture0,
-            p1,
+            p2,
             spriteDrawingData.ThisSpriteSize,
             numberOfFrames);
 
@@ -126,7 +128,8 @@ public sealed class SpriteRotationReflectionProcessor<T>
             ThisSpriteSize = DihedralTransformation.Transform(originalSpriteSize);
 
             var uints = new Color[originalSpriteSize.Area() * numberOfFrames * numberOfLayers];
-            _colorData = new PixelColorData(ThisSpriteSize.W * numberOfLayers, ThisSpriteSize.H * numberOfFrames, uints);
+            var colorDataSize = new LevelSize(ThisSpriteSize.W * numberOfLayers, ThisSpriteSize.H * numberOfFrames);
+            _colorData = new PixelColorData(colorDataSize, uints);
         }
 
         public void Set(Color pixel, LevelPosition p0, int layer, int frame)

@@ -23,7 +23,7 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     public LevelSize Transform(LevelSize levelSize)
     {
         return Orientation.IsPerpendicularTo(Orientation.Down)
-            ? LevelSize.Transpose(levelSize)
+            ? levelSize.Transpose()
             : levelSize;
     }
 

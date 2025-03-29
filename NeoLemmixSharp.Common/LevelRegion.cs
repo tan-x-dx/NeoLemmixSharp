@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -59,6 +60,15 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
         if (W < 1) W = 1;
         H = rect.Height;
         if (H < 1) H = 1;
+    }
+
+    [DebuggerStepThrough]
+    public LevelRegion(Texture2D texture)
+    {
+        X = 0;
+        Y = 0;
+        W = texture.Width;
+        H = texture.Height;
     }
 
     [DebuggerStepThrough]
