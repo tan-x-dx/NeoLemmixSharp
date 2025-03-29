@@ -11,9 +11,9 @@ public sealed class SpriteRotationReflectionProcessor<T>
 {
     public delegate T ItemCreator(
         Texture2D texture,
+        LevelPosition anchorPoint,
         LevelSize spriteSize,
-        int numberOfFrames,
-        LevelPosition anchorPoint);
+        int numberOfFrames);
 
     private readonly GraphicsDevice _graphicsDevice;
 
@@ -24,10 +24,10 @@ public sealed class SpriteRotationReflectionProcessor<T>
 
     public T[] CreateAllSpriteTypes(
         Texture2D texture,
+        LevelPosition anchorPoint,
         LevelSize spriteSize,
         int numberOfFrames,
         int numberOfLayers,
-        LevelPosition anchorPoint,
         ItemCreator itemCreator)
     {
         var result = new T[EngineConstants.NumberOfOrientations * EngineConstants.NumberOfFacingDirections];
@@ -51,7 +51,7 @@ public sealed class SpriteRotationReflectionProcessor<T>
         {
             var key = LemmingSpriteBank.GetKey(orientation, facingDirection);
 
-            result[key] = CreateSpriteType(texture, orientation, facingDirection, spriteSize, numberOfFrames, numberOfLayers, anchorPoint, itemCreator);
+            result[key] = CreateSpriteType(texture, orientation, facingDirection, anchorPoint, spriteSize, numberOfFrames, numberOfLayers, itemCreator);
         }
     }
 
@@ -59,10 +59,10 @@ public sealed class SpriteRotationReflectionProcessor<T>
         Texture2D texture,
         Orientation orientation,
         FacingDirection facingDirection,
+        LevelPosition anchorPoint,
         LevelSize spriteSize,
         int numberOfFrames,
         int numberOfLayers,
-        LevelPosition anchorPoint,
         ItemCreator itemCreator)
     {
         var pixels = new Color[texture.Width * texture.Height];
@@ -99,9 +99,9 @@ public sealed class SpriteRotationReflectionProcessor<T>
         var texture0 = spriteDrawingData.ToTexture(_graphicsDevice);
         var actionSprite = itemCreator(
             texture0,
+            p1,
             spriteDrawingData.ThisSpriteSize,
-            numberOfFrames,
-            p1);
+            numberOfFrames);
 
         return actionSprite;
     }

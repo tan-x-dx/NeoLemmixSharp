@@ -48,7 +48,7 @@ public sealed class LemmingSpriteBank : IDisposable
         Orientation orientation,
         FacingDirection facingDirection)
     {
-        return (orientation.RotNum << 1) | facingDirection.Id;
+        return DihedralTransformation.Encode(orientation, facingDirection);
     }
 
     public void Dispose()

@@ -87,7 +87,7 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
-    public static int Encode(Orientation o, FacingDirection f) => o.RotNum | (f.Id << FlipBitShift);
+    public static int Encode(Orientation orientation, FacingDirection facingDirection) => orientation.RotNum | (facingDirection.Id << FlipBitShift);
 
     [Pure]
     [SkipLocalsInit]

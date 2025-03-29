@@ -90,7 +90,7 @@ public static class DefaultLemmingSpriteBank
                 action,
                 1,
                 levelPosition,
-                (t, s, _, p) =>
+                (t, p, s, _) =>
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
@@ -107,7 +107,7 @@ public static class DefaultLemmingSpriteBank
                 action,
                 4,
                 levelPosition,
-                (t, s, _, p) =>
+                (t, p, s, _) =>
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
@@ -127,7 +127,7 @@ public static class DefaultLemmingSpriteBank
                 action,
                 5,
                 levelPosition,
-                (t, s, _, p) =>
+                (t, p, s, _) =>
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
@@ -148,7 +148,7 @@ public static class DefaultLemmingSpriteBank
                 action,
                 5,
                 levelPosition,
-                (t, s, _, p) =>
+                (t, p, s, _) =>
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
@@ -169,7 +169,7 @@ public static class DefaultLemmingSpriteBank
                 action,
                 6,
                 levelPosition,
-                (t, s, _, p) =>
+                (t, p, s, _) =>
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
@@ -232,10 +232,10 @@ public static class DefaultLemmingSpriteBank
 
         return spriteRotationReflectionProcessor.CreateAllSpriteTypes(
             texture,
+            levelPosition,
             spriteSize,
             action.NumberOfAnimationFrames,
             numberOfLayers,
-            levelPosition,
             itemCreator);
     }
 
@@ -429,7 +429,7 @@ public static class DefaultLemmingSpriteBank
 
         return;
 
-        LemmingActionSprite ItemCreator(Texture2D t, LevelSize s, int _, LevelPosition p)
+        LemmingActionSprite ItemCreator(Texture2D t, LevelPosition p, LevelSize s, int _)
         {
             var layerRenderers = new LemmingActionLayerRenderer[]
             {

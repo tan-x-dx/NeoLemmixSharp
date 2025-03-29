@@ -82,10 +82,10 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
                 spriteData.Texture,
                 orientation,
                 facingDirection,
+                new LevelPosition(0, 0),
                 spriteData.SpriteSize,
                 numberOfFrames,
                 spriteData.NumberOfLayers,
-                new LevelPosition(0, 0),
                 ItemCreator);
         }
     }
@@ -102,9 +102,9 @@ public sealed class GadgetSpriteBuilder : IDisposable, IEqualityComparer<GadgetS
 
     private static Texture2D ItemCreator(
         Texture2D texture,
+        LevelPosition anchorpoint,
         LevelSize s,
-        int numberOfFrames,
-        LevelPosition anchorpoint)
+        int numberOfFrames)
     {
         return texture;
     }
