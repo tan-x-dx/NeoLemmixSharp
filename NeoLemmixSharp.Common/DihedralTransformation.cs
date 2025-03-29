@@ -4,10 +4,9 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
-[StructLayout(LayoutKind.Explicit, Size = NumberOf32BitInts * sizeof(int))]
+[StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
 public readonly struct DihedralTransformation : IEquatable<DihedralTransformation>
 {
-    private const int NumberOf32BitInts = 2;
     private const int FlipBitShift = 2;
 
     [FieldOffset(0 * sizeof(int))] public readonly Orientation Orientation;
@@ -93,40 +92,33 @@ public readonly struct DihedralTransformation : IEquatable<DihedralTransformatio
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int Encode(Orientation o, FacingDirection f) => ((f.Id & 1) << FlipBitShift) | (o.RotNum & 3);
-
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static byte EncodeToByte(Orientation o, FacingDirection f) => (byte)Encode(o, f);
+    public static int Encode(Orientation o, FacingDirection f) => o.RotNum | (f.Id << FlipBitShift);
 
     [Pure]
     [SkipLocalsInit]
-    public static unsafe DihedralTransformation DecodeFromUint(uint encodedData)
+    public static unsafe DihedralTransformation Decode(int encodedData)
     {
-        uint* p = stackalloc uint[NumberOf32BitInts];
-        p[0] = encodedData & 3U;
-        p[1] = (encodedData >> FlipBitShift) & 1U;
+        int* p = stackalloc int[2];
+        p[0] = encodedData & 3;
+        p[1] = (encodedData >> FlipBitShift) & 1;
 
         return *(DihedralTransformation*)p;
     }
 
     [Pure]
-    [SkipLocalsInit]
-    public static unsafe DihedralTransformation Simplify(
+    public static DihedralTransformation Decode(
         bool flipHorizontally,
         bool flipVertically,
         bool rotate)
     {
-        uint* p = stackalloc uint[1 + NumberOf32BitInts];
-        p[0] = rotate ? 1U : 0U;
-        p[1] = flipHorizontally ? 1U : 0U;
-        p[2] = flipVertically ? 1U : 0U;
+        var o = rotate ? 1 : 0;
+        var f = flipHorizontally ? 1 : 0;
+        var v = flipVertically ? 1 : 0;
 
-        p[0] |= p[2] << 1;
-        p[1] ^= p[2];
+        o |= v << 1;
+        f ^= v;
 
-        return *(DihedralTransformation*)p;
+        return new DihedralTransformation(new Orientation(o), new FacingDirection(f));
     }
 
     [Pure]
