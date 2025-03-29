@@ -63,13 +63,12 @@ public readonly struct PixelColorData
             minY < 0 || maxY < 0)
             return new PixelColorData(new LevelSize(), []);
 
-        var newSize = new LevelSize(1 + maxX - minX, 1 + maxY - minY);
-        var sourcePosition = new LevelPosition(minX, minY);
+        var subRegion = new LevelRegion(new LevelPosition(minX, minY), new LevelPosition(maxX, maxY));
 
-        var newColors = new Color[newSize.Area()];
+        var newColors = new Color[subRegion.S.Area()];
 
-        var sourceTextureWrapper = new SpanWrapper2D<Color>(_colorData, Size, sourcePosition, newSize);
-        var resultTextureWrapper = new SpanWrapper2D<Color>(newColors, newSize, new LevelPosition(), newSize);
+        var sourceTextureWrapper = new SpanWrapper2D<Color>(_colorData, Size, subRegion.P, subRegion.S);
+        var resultTextureWrapper = new SpanWrapper2D<Color>(newColors, subRegion.S, new LevelPosition(), subRegion.S);
 
         for (var y = 0; y < sourceTextureWrapper.Size.H; y++)
         {
@@ -81,7 +80,7 @@ public readonly struct PixelColorData
         }
 
         return new PixelColorData(
-            newSize,
+            subRegion.S,
             newColors);
     }
 
