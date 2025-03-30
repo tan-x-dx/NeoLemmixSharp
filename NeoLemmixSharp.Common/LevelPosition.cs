@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -19,24 +20,34 @@ public readonly struct LevelPosition : IEquatable<LevelPosition>
         Y = y;
     }
 
+    [Pure]
     [DebuggerStepThrough]
     public static bool operator ==(LevelPosition left, LevelPosition right) =>
         left.X == right.X &&
         left.Y == right.Y;
 
+    [Pure]
     [DebuggerStepThrough]
     public static bool operator !=(LevelPosition left, LevelPosition right) =>
         left.X != right.X ||
         left.Y != right.Y;
 
+    [Pure]
     [DebuggerStepThrough]
     public static LevelPosition operator +(LevelPosition left, LevelPosition right) =>
         new(left.X + right.X, left.Y + right.Y);
 
+    [Pure]
     [DebuggerStepThrough]
     public static LevelPosition operator -(LevelPosition left, LevelPosition right) =>
         new(left.X - right.X, left.Y - right.Y);
 
+    [Pure]
+    [DebuggerStepThrough]
+    public static LevelPosition operator +(LevelPosition position, LevelSize offset) =>
+        new(position.X + offset.W, position.Y + offset.H);
+
+    [Pure]
     [DebuggerStepThrough]
     public bool Equals(LevelPosition other) => X == other.X && Y == other.Y;
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is LevelPosition other && X == other.X && Y == other.Y;

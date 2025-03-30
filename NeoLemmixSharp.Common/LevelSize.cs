@@ -34,6 +34,9 @@ public readonly struct LevelSize : IEquatable<LevelSize>
     public LevelSize Transpose() => new(H, W);
 
     [Pure]
+    public LevelSize Scale(int widthScaleFactor, int heightScaleFactor) => new(W * widthScaleFactor, H * heightScaleFactor);
+
+    [Pure]
     public int Area() => W * H;
 
     [Pure]

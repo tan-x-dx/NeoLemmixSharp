@@ -127,9 +127,9 @@ public sealed class SpriteRotationReflectionProcessor<T>
             _originalSpriteSize = originalSpriteSize;
             ThisSpriteSize = DihedralTransformation.Transform(originalSpriteSize);
 
-            var uints = new Color[originalSpriteSize.Area() * numberOfFrames * numberOfLayers];
-            var colorDataSize = new LevelSize(ThisSpriteSize.W * numberOfLayers, ThisSpriteSize.H * numberOfFrames);
-            _colorData = new PixelColorData(colorDataSize, uints);
+            var colorDataSize = ThisSpriteSize.Scale(numberOfLayers, numberOfFrames);
+            var colorBuffer = new Color[colorDataSize.Area()];
+            _colorData = new PixelColorData(colorDataSize, colorBuffer);
         }
 
         public void Set(Color pixel, LevelPosition p0, int layer, int frame)
@@ -137,9 +137,8 @@ public sealed class SpriteRotationReflectionProcessor<T>
             var p1 = DihedralTransformation.Transform(
                 p0,
                 _originalSpriteSize);
-            var offset = new LevelPosition(ThisSpriteSize.W * layer, ThisSpriteSize.H * frame);
 
-            p1 += offset;
+            p1 += ThisSpriteSize.Scale(layer, frame);
             _colorData[p1] = pixel;
         }
 

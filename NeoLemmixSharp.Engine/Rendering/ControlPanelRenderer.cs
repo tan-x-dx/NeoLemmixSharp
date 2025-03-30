@@ -169,19 +169,17 @@ public sealed class ControlPanelRenderer
 
     public void DrawToScreen(SpriteBatch spriteBatch)
     {
-        var controlPanelScreenHeight = _levelControlPanel.ControlPanelScreenHeight;
+        var controlPanelScreenSize = _levelControlPanel.ControlPanelScreenSize;
         spriteBatch.Draw(
             _whitePixel,
-            new Rectangle(0, _windowSize.H - controlPanelScreenHeight, _windowSize.W, controlPanelScreenHeight),
+            new Rectangle(0, _windowSize.H - controlPanelScreenSize.H, _windowSize.W, controlPanelScreenSize.H),
             CommonSprites.RectangleForWhitePixelAlpha(0xff),
             Color.DarkGray);
 
         var controlPanelPosition = _levelControlPanel.ControlPanelPosition;
-        var destinationRectangle = new Rectangle(
-            controlPanelPosition.X,
-            controlPanelPosition.Y,
-            _levelControlPanel.ControlPanelScreenWidth,
-            controlPanelScreenHeight);
+        var destinationRectangle = Helpers.CreateRectangle(
+            controlPanelPosition,
+            controlPanelScreenSize);
 
         spriteBatch.Draw(_controlPanelRenderTarget, destinationRectangle, Color.White);
     }

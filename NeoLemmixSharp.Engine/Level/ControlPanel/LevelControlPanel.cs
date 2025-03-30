@@ -36,8 +36,7 @@ public sealed class LevelControlPanel : IInitialisable
 
     public LevelPosition ControlPanelPosition { get; private set; }
     public LevelSize ControlPanelSize { get; private set; }
-    public int ControlPanelScreenWidth => ControlPanelSize.W * ControlPanelScaleMultiplier;
-    public int ControlPanelScreenHeight => ControlPanelSize.H * ControlPanelScaleMultiplier;
+    public LevelSize ControlPanelScreenSize => ControlPanelSize.Scale(ControlPanelScaleMultiplier, ControlPanelScaleMultiplier);
 
     public int SkillPanelScroll { get; private set; }
 
@@ -96,10 +95,11 @@ public sealed class LevelControlPanel : IInitialisable
         RecalculateButtonDimensions();
 
         ControlPanelSize = new LevelSize(CalculateControlPanelWidth(), ControlPanelTotalPixelHeight);
+        var controlPanelScreenSize = ControlPanelScreenSize;
 
         ControlPanelPosition = new LevelPosition(
-            (_windowSize.W - ControlPanelScreenWidth) / 2,
-            _windowSize.H - ControlPanelScreenHeight);
+            (_windowSize.W - controlPanelScreenSize.W) / 2,
+            _windowSize.H - controlPanelScreenSize.H);
     }
 
     public void SetPanelScale(int scale)

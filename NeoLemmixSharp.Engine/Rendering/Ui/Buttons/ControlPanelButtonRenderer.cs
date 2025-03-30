@@ -95,6 +95,6 @@ public class ControlPanelButtonRenderer
         spriteBatch.Draw(
             SelectedTexture,
             destRectangle,
-            new Rectangle(0, 0, SelectedTexture.Width, SelectedTexture.Height));
+            SelectedTexture.Bounds);
     }
 }
