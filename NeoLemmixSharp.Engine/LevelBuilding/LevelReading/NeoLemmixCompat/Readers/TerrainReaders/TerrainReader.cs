@@ -127,7 +127,7 @@ public sealed class TerrainReader : NeoLemmixDataReader
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var dht = DihedralTransformation.Simplify(
+        var dht = DihedralTransformation.Decode(
             _currentTerrainData.FlipHorizontally,
             _currentTerrainData.FlipVertically,
             _currentTerrainData.Rotate);
@@ -138,8 +138,7 @@ public sealed class TerrainReader : NeoLemmixDataReader
             Style = _currentTerrainData.Style ?? string.Empty,
             TerrainPiece = _currentTerrainData.TerrainPiece,
 
-            X = _currentTerrainData.X,
-            Y = _currentTerrainData.Y,
+            Position = new LevelPosition(_currentTerrainData.X, _currentTerrainData.Y),
 
             NoOverwrite = _currentTerrainData.NoOverwrite,
             Orientation = dht.Orientation,

@@ -10,7 +10,7 @@ public sealed class LevelTextDataComponentReader : ILevelDataReader
     public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelTextDataSectionIdentifier;
 
     public LevelTextDataComponentReader(
-        Version version, 
+        Version version,
         List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
@@ -21,6 +21,7 @@ public sealed class LevelTextDataComponentReader : ILevelDataReader
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         int numberOfPreTextItems = rawFileData.Read8BitUnsignedInteger();
+        levelData.PreTextLines.Capacity = numberOfPreTextItems;
         int i = numberOfPreTextItems;
 
         while (i-- > 0)
@@ -30,6 +31,7 @@ public sealed class LevelTextDataComponentReader : ILevelDataReader
         }
 
         int numberOfPostTextItems = rawFileData.Read8BitUnsignedInteger();
+        levelData.PostTextLines.Capacity = numberOfPostTextItems;
         i = numberOfPostTextItems;
 
         while (i-- > 0)

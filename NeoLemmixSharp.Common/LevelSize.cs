@@ -1,6 +1,8 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -20,6 +22,40 @@ public readonly struct LevelSize : IEquatable<LevelSize>
         H = h;
         if (H < 0) H = 0;
     }
+
+    [DebuggerStepThrough]
+    public LevelSize(Texture2D texture)
+    {
+        W = texture.Width;
+        H = texture.Height;
+    }
+
+    [Pure]
+    public LevelSize Transpose() => new(H, W);
+
+    [Pure]
+    public LevelSize Scale(int widthScaleFactor, int heightScaleFactor) => new(W * widthScaleFactor, H * heightScaleFactor);
+
+    [Pure]
+    public int Area() => W * H;
+
+    [Pure]
+    public bool EncompassesPoint(LevelPosition p)
+    {
+        return (uint)p.X < (uint)W &&
+               (uint)p.Y < (uint)H;
+    }
+
+    public void AssertEncompassesPoint(LevelPosition p)
+    {
+        if (EncompassesPoint(p))
+            return;
+
+        throw new ArgumentOutOfRangeException(nameof(p), p, "Invalid position");
+    }
+
+    [Pure]
+    public int GetIndexOfPoint(LevelPosition p) => W * p.Y + p.X;
 
     [DebuggerStepThrough]
     public static bool operator ==(LevelSize left, LevelSize right) =>

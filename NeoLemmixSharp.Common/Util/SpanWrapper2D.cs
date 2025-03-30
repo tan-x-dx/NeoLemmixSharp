@@ -1,28 +1,27 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace NeoLemmixSharp.Common.Util;
+﻿namespace NeoLemmixSharp.Common.Util;
 
 public readonly ref struct SpanWrapper2D<T>
 {
     private readonly Span<T> _data;
 
-    private readonly int _spanWidth;
+    private readonly LevelSize _spanSize;
 
-    private readonly int _x;
-    private readonly int _y;
-
-    public readonly int Width;
-    public readonly int Height;
+    private readonly LevelPosition _position;
+    public readonly LevelSize Size;
 
     public SpanWrapper2D(
         Span<T> data,
-        int spanWidth,
-        int spanHeight,
-        int x,
-        int y,
-        int width,
-        int height)
+        LevelSize spanSize,
+        LevelPosition position,
+        LevelSize size)
     {
+        var spanWidth = spanSize.W;
+        var spanHeight = spanSize.H;
+        var x = position.X;
+        var y = position.Y;
+        var width = size.W;
+        var height = size.H;
+
         if (spanWidth <= 0 || spanHeight <= 0 ||
             spanWidth * spanHeight != data.Length ||
             x < 0 || y < 0 ||
@@ -32,39 +31,24 @@ public readonly ref struct SpanWrapper2D<T>
             throw new ArgumentException("Invalid dimensions");
 
         _data = data;
-        _spanWidth = spanWidth;
-        _x = x;
-        _y = y;
-        Width = width;
-        Height = height;
+        _spanSize = spanSize;
+        _position = position;
+        Size = size;
     }
 
-    public T this[int x0, int y0]
+    public T this[LevelPosition pos]
     {
         get
         {
-            var index = GetIndex(x0, y0);
-
+            Size.AssertEncompassesPoint(pos);
+            var index = _spanSize.GetIndexOfPoint(pos + _position);
             return _data[index];
         }
         set
         {
-            var index = GetIndex(x0, y0);
-
+            Size.AssertEncompassesPoint(pos);
+            var index = _spanSize.GetIndexOfPoint(pos + _position);
             _data[index] = value;
         }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int GetIndex(int x0, int y0)
-    {
-        if (x0 < 0 ||
-            x0 >= Width)
-            throw new ArgumentOutOfRangeException(nameof(x0), x0, "Invalid X");
-        if (y0 < 0 ||
-            y0 >= Height)
-            throw new ArgumentOutOfRangeException(nameof(y0), y0, "Invalid Y");
-
-        return _spanWidth * (_y + y0) + _x + x0;
     }
 }

@@ -1,12 +1,25 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
 public static class Helpers
 {
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Rectangle CreateRectangle(LevelPosition pos, LevelSize size) => new(pos.X, pos.Y, size.W, size.H);
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static LevelPosition TopLeftLevelPosition(this Rectangle rectangle) => new(rectangle.X, rectangle.Y);
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static LevelPosition BottomLeftLevelPosition(this Rectangle rectangle) => new(rectangle.X, rectangle.Y + rectangle.Height - 1);
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static LevelPosition TopRightLevelPosition(this Rectangle rectangle) => new(rectangle.X + rectangle.Width - 1, rectangle.Y);
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static LevelPosition BottomRightLevelPosition(this Rectangle rectangle) => new(rectangle.X + rectangle.Width - 1, rectangle.Y + rectangle.Height - 1);
 
     public static int CountIfNotNull<T>(this T? item)

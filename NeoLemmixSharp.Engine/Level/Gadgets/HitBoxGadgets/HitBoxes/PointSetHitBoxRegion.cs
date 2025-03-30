@@ -23,13 +23,10 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
         _bounds = new LevelRegion(points);
 
-        var minimumBoundingBoxWidth = _bounds.W;
-        var minimumBoundingBoxHeight = _bounds.H;
+        if (_bounds.W > DimensionCutoffSize || _bounds.H > DimensionCutoffSize)
+            throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_bounds.W}, H:{_bounds.H}");
 
-        if (minimumBoundingBoxWidth > DimensionCutoffSize || minimumBoundingBoxHeight > DimensionCutoffSize)
-            throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{minimumBoundingBoxWidth}, H:{minimumBoundingBoxHeight}");
-
-        var totalNumberOfPoints = minimumBoundingBoxWidth * minimumBoundingBoxHeight;
+        var totalNumberOfPoints = _bounds.Size.Area();
 
         if (totalNumberOfPoints > AreaCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
@@ -39,7 +36,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
         for (var i = 0; i < points.Length; i++)
         {
-            var p = points[i] - _bounds.P;
+            var p = points[i] - _bounds.Position;
 
             var index = IndexFor(p);
             BitArrayHelpers.SetBit(span, index);
@@ -49,7 +46,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
     [Pure]
     public bool ContainsPoint(LevelPosition levelPosition)
     {
-        levelPosition -= _bounds.P;
+        levelPosition -= _bounds.Position;
         var index = IndexFor(levelPosition);
 
         return (uint)levelPosition.X < (uint)_bounds.W &&
@@ -60,14 +57,14 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
     [Pure]
     public bool ContainsPoints(LevelPosition p1, LevelPosition p2)
     {
-        p1 -= _bounds.P;
-        p2 -= _bounds.P;
+        p1 -= _bounds.Position;
+        p2 -= _bounds.Position;
         var index1 = IndexFor(p1);
         var index2 = IndexFor(p2);
         var span = new ReadOnlySpan<uint>(_levelPositionBits);
 
-        var boundsUw = (uint) _bounds.W;
-        var boundsUh = (uint) _bounds.H;
+        var boundsUw = (uint)_bounds.W;
+        var boundsUh = (uint)_bounds.H;
 
         return ((uint)p1.X < boundsUw &&
                 (uint)p1.Y < boundsUh &&
@@ -79,5 +76,5 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int IndexFor(LevelPosition levelPosition) => _bounds.W * levelPosition.Y + levelPosition.X;
+    private int IndexFor(LevelPosition levelPosition) => _bounds.Size.GetIndexOfPoint(levelPosition);
 }

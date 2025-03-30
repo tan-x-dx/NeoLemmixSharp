@@ -43,32 +43,34 @@ public sealed class Viewport
         var horizontalBoundaryBehaviour = LevelScreen.HorizontalBoundaryBehaviour;
         var verticalBoundaryBehaviour = LevelScreen.VerticalBoundaryBehaviour;
 
-        if (inputController.MouseX == 0)
+        var mousePosition = inputController.MousePosition;
+        if (mousePosition.X == 0)
         {
             horizontalBoundaryBehaviour.Scroll(-_scrollDelta);
         }
-        else if (inputController.MouseX == _windowWidth - 1)
+        else if (mousePosition.X == _windowWidth - 1)
         {
             horizontalBoundaryBehaviour.Scroll(_scrollDelta);
         }
 
-        if (inputController.MouseY == 0)
+        if (mousePosition.Y == 0)
         {
             verticalBoundaryBehaviour.Scroll(-_scrollDelta);
         }
-        else if (inputController.MouseY == _windowHeight - 1)
+        else if (mousePosition.Y == _windowHeight - 1)
         {
             verticalBoundaryBehaviour.Scroll(_scrollDelta);
         }
 
-        horizontalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseX);
-        verticalBoundaryBehaviour.UpdateMouseCoordinate(inputController.MouseY);
+        horizontalBoundaryBehaviour.UpdateMouseCoordinate(mousePosition.X);
+        verticalBoundaryBehaviour.UpdateMouseCoordinate(mousePosition.Y);
     }
 
     private bool MouseIsInLevelViewport(LevelInputController inputController)
     {
-        return (uint)inputController.MouseX <= (uint)_windowWidth &&
-               (uint)inputController.MouseY <= (uint)(_windowHeight - _controlPanelHeight);
+        var mousePosition = inputController.MousePosition;
+        return (uint)mousePosition.X <= (uint)_windowWidth &&
+               (uint)mousePosition.Y <= (uint)(_windowHeight - _controlPanelHeight);
     }
 
     private void TrackScrollWheel(LevelInputController inputController)

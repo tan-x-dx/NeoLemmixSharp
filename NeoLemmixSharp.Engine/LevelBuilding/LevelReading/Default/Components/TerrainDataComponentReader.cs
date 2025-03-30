@@ -23,6 +23,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
+        levelData.AllTerrainData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {
@@ -42,8 +43,8 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
-        uint orientationByte = rawFileData.Read8BitUnsignedInteger();
-        var dht = DihedralTransformation.DecodeFromUint(orientationByte);
+        int orientationByte = rawFileData.Read8BitUnsignedInteger();
+        var dht = DihedralTransformation.Decode(orientationByte);
 
         byte terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
         var decipheredTerrainDataMisc = LevelReadWriteHelpers.DecipherTerrainDataMiscByte(terrainDataMiscByte);
@@ -77,8 +78,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
             Style = _stringIdLookup[styleId],
             TerrainPiece = _stringIdLookup[pieceId],
 
-            X = x - LevelReadWriteHelpers.PositionOffset,
-            Y = y - LevelReadWriteHelpers.PositionOffset,
+            Position = new LevelPosition(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
 
             NoOverwrite = decipheredTerrainDataMisc.NoOverwrite,
             Orientation = dht.Orientation,

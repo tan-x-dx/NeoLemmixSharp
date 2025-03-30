@@ -15,8 +15,7 @@ public sealed class GadgetData
     public required string Style { get; init; }
     public required string GadgetPiece { get; init; }
 
-    public required int X { get; init; }
-    public required int Y { get; init; }
+    public required LevelPosition Position { get; init; }
     public required int InitialStateId { get; init; }
     public required GadgetRenderMode GadgetRenderMode { get; init; }
 
@@ -47,13 +46,6 @@ public sealed class GadgetData
     public bool TryGetProperty(GadgetProperty property, out int value)
     {
         return _properties.TryGetValue(property, out value);
-    }
-
-    public DihedralTransformation GetDihedralTransformation()
-    {
-        return new DihedralTransformation(
-            Orientation,
-            FacingDirection);
     }
 
     [Pure]

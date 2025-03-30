@@ -56,12 +56,11 @@ public sealed partial class NeoLemmixGame
             var bytesRead = LoadByteData(maskName, byteBuffer);
 
             int i = 0;
-            int maskWidth = byteBuffer[i++];
-            int maskHeight = byteBuffer[i++];
+            var maskSize = new LevelSize(byteBuffer[i++], byteBuffer[i++]);
+
             int numberOfFrames = byteBuffer[i++];
 
-            int anchorPointX = byteBuffer[i++];
-            int anchorPointY = byteBuffer[i++];
+            var anchorPosition = new LevelPosition(byteBuffer[i++], byteBuffer[i++]);
 
             byteBuffer = byteBuffer[i..];
 
@@ -72,17 +71,15 @@ public sealed partial class NeoLemmixGame
             byteBuffer = byteBuffer[..bytesRead];
 
             GenerateLevelPositionData(
-                maskWidth,
-                maskHeight,
+                maskSize,
                 numberOfFrames,
                 MemoryMarshal.Cast<byte, uint>(byteBuffer),
                 out var ranges,
                 out var levelPositions);
 
             return new TerrainEraseMask(
-                maskWidth,
-                maskHeight,
-                new LevelPosition(anchorPointX, anchorPointY),
+                anchorPosition,
+                maskSize,
                 ranges,
                 levelPositions,
                 BasherAction.Instance);
@@ -110,8 +107,7 @@ public sealed partial class NeoLemmixGame
         }
 
         static void GenerateLevelPositionData(
-            int maskWidth,
-            int maskHeight,
+            LevelSize maskSize,
             int numberOfFrames,
             ReadOnlySpan<uint> byteBuffer,
             out Range[] ranges,
@@ -121,7 +117,7 @@ public sealed partial class NeoLemmixGame
             ranges = new Range[numberOfFrames];
             levelPositions = new LevelPosition[numberOfPixels];
 
-            var area = maskWidth * maskHeight;
+            var area = maskSize.Area();
             var bitEnumerator = new BitArrayEnumerator(byteBuffer, numberOfPixels);
             var r = 0;
             var p = 0;
@@ -152,8 +148,8 @@ public sealed partial class NeoLemmixGame
 
             LevelPosition ConvertToPosition(int index)
             {
-                var y = index / maskWidth;
-                var x = index - (y * maskWidth);
+                var y = index / maskSize.W;
+                var x = index - (y * maskSize.W);
 
                 return new LevelPosition(x, y);
             }

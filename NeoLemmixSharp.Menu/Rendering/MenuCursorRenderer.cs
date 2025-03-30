@@ -17,9 +17,10 @@ public sealed class MenuCursorRenderer
 
     public void RenderCursor(SpriteBatch spriteBatch)
     {
+        var mousePosition = _menuInputController.MousePosition;
         var destination = new Rectangle(
-            _menuInputController.MouseX + CommonSprites.CursorHiResXOffset,
-            _menuInputController.MouseY + CommonSprites.CursorHiResYOffset,
+            mousePosition.X + CommonSprites.CursorHiResXOffset,
+            mousePosition.Y + CommonSprites.CursorHiResYOffset,
             CommonSprites.CursorHiResWidth * 2,
             CommonSprites.CursorHiResHeight * 2);
 

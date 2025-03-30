@@ -58,38 +58,24 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     {
         var result = new GadgetBounds
         {
-            X = gadgetData.X,
-            Y = gadgetData.Y
+            Position = gadgetData.Position
         };
 
-        if (gadgetData.Orientation.IsParallelTo(Orientation.Down))
-        {
-            result.Width = ResizeType.CanResizeHorizontally()
-                ? gadgetData.GetProperty(GadgetProperty.Width)
-                : SpriteData.SpriteWidth;
-            result.Height = ResizeType.CanResizeVertically()
-                ? gadgetData.GetProperty(GadgetProperty.Height)
-                : SpriteData.SpriteHeight;
-        }
-        else
-        {
-            result.Width = ResizeType.CanResizeVertically()
-                ? gadgetData.GetProperty(GadgetProperty.Height)
-                : SpriteData.SpriteHeight;
-            result.Height = ResizeType.CanResizeHorizontally()
-                ? gadgetData.GetProperty(GadgetProperty.Width)
-                : SpriteData.SpriteWidth;
-        }
+        var size = new LevelSize(
+            ResizeType.CanResizeHorizontally() ? gadgetData.GetProperty(GadgetProperty.Width) : SpriteData.SpriteSize.W,
+            ResizeType.CanResizeVertically() ? gadgetData.GetProperty(GadgetProperty.Height) : SpriteData.SpriteSize.H);
+
+        size = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(size);
+
+        result.Width = size.W;
+        result.Height = size.H;
 
         return result;
     }
 
     private ResizeType GetResizeTypeForGadgetOrientation(GadgetData gadgetData)
     {
-        if (gadgetData.Orientation.IsParallelTo(Orientation.Down))
-            return ResizeType;
-
-        return ResizeType.SwapComponents();
+        return new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(ResizeType);
     }
 
     private GadgetState[] GetGadgetStates(
@@ -246,30 +232,10 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             if (hitBoxRegionData.Length != 2)
                 throw new InvalidOperationException("Expected exactly two points of data");
 
-            var dihedralTransformation = gadgetData.GetDihedralTransformation();
+            var dihedralTransformation = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection);
 
-            var p0 = hitBoxRegionData[0];
-            var p1 = hitBoxRegionData[1];
-
-            dihedralTransformation.Transform(
-                p0.X,
-                p0.Y,
-                SpriteData.SpriteWidth,
-                SpriteData.SpriteHeight,
-                out var tX,
-                out var tY);
-
-            p0 = new LevelPosition(tX, tY);
-
-            dihedralTransformation.Transform(
-                p1.X,
-                p1.Y,
-                SpriteData.SpriteWidth,
-                SpriteData.SpriteHeight,
-                out tX,
-                out tY);
-
-            p1 = new LevelPosition(tX, tY);
+            var p0 = dihedralTransformation.Transform(hitBoxRegionData[0], SpriteData.SpriteSize);
+            var p1 = dihedralTransformation.Transform(hitBoxRegionData[1], SpriteData.SpriteSize);
 
             return new RectangularHitBoxRegion(p0, p1);
         }
@@ -279,7 +245,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             GadgetData gadgetData,
             ReadOnlySpan<LevelPosition> triggerData)
         {
-            var dihedralTransformation = gadgetData.GetDihedralTransformation();
+            var dihedralTransformation = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection);
 
             Span<LevelPosition> adjustedPoints = triggerData.Length > 32
                 ? new LevelPosition[triggerData.Length]
@@ -287,16 +253,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
             for (var i = 0; i < triggerData.Length; i++)
             {
-                var originalPoint = triggerData[i];
-                dihedralTransformation.Transform(
-                    originalPoint.X,
-                    originalPoint.Y,
-                    SpriteData.SpriteWidth,
-                    SpriteData.SpriteHeight,
-                    out var tX,
-                    out var tY);
-
-                adjustedPoints[i] = new LevelPosition(tX, tY);
+                adjustedPoints[i] = dihedralTransformation.Transform(triggerData[i], SpriteData.SpriteSize);
             }
 
             return new PointSetHitBoxRegion(adjustedPoints);

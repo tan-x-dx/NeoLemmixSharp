@@ -136,8 +136,8 @@ public sealed class HitBoxGadget : GadgetBase,
         PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
-        CurrentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(CurrentGadgetBounds.X + dx);
-        CurrentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(CurrentGadgetBounds.Y + dy);
+        var delta = new LevelPosition(dx, dy);
+        CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(CurrentGadgetBounds.Position + delta);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
@@ -146,8 +146,8 @@ public sealed class HitBoxGadget : GadgetBase,
         PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
-        CurrentGadgetBounds.X = LevelScreen.HorizontalBoundaryBehaviour.Normalise(x);
-        CurrentGadgetBounds.Y = LevelScreen.VerticalBoundaryBehaviour.Normalise(y);
+        var newPosition = new LevelPosition(x, y);
+        CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(newPosition);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 

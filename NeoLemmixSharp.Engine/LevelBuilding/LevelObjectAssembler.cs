@@ -90,7 +90,7 @@ public sealed class LevelObjectAssembler : IDisposable
                     prototype.InitialLemmingAction,
                     prototype.TeamId)
                 {
-                    LevelPosition = new LevelPosition(prototype.X, prototype.Y)
+                    LevelPosition = prototype.Position
                 };
 
                 lemming.State.SetRawDataFromOther(prototype.State);

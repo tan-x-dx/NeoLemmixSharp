@@ -25,6 +25,7 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
+        levelData.AllGadgetData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {
@@ -44,8 +45,8 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
-        uint orientationByte = rawFileData.Read8BitUnsignedInteger();
-        var dht = DihedralTransformation.DecodeFromUint(orientationByte);
+        int orientationByte = rawFileData.Read8BitUnsignedInteger();
+        var dht = DihedralTransformation.Decode(orientationByte);
 
         int initialStateId = rawFileData.Read8BitUnsignedInteger();
         var renderMode = GetGadgetRenderMode(rawFileData.Read8BitUnsignedInteger());
@@ -60,8 +61,7 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
             Style = _stringIdLookup[styleId],
             GadgetPiece = _stringIdLookup[pieceId],
 
-            X = x - LevelReadWriteHelpers.PositionOffset,
-            Y = y - LevelReadWriteHelpers.PositionOffset,
+            Position = new LevelPosition(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
 
             InitialStateId = initialStateId,
             GadgetRenderMode = renderMode,

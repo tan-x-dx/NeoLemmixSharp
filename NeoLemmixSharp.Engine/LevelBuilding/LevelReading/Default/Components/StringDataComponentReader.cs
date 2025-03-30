@@ -15,14 +15,14 @@ public sealed class StringDataComponentReader : ILevelDataReader
         List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
-
-        _stringIdLookup.Add(string.Empty);
     }
 
     public void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         var numberOfItems = rawFileData.Read16BitUnsignedInteger();
+        _stringIdLookup.Capacity = numberOfItems + 1;
+        _stringIdLookup.Add(string.Empty);
 
         while (numberOfItems-- > 0)
         {

@@ -16,8 +16,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     private readonly BitArraySet<TPerfectHasher, ArrayBitBuffer, T> _allTrackedItems;
 
     private readonly int _chunkSizeBitShift;
-    private readonly int _numberOfHorizontalChunks;
-    private readonly int _numberOfVerticalChunks;
+    private readonly LevelSize _sizeInChunks;
 
     private readonly int _bitArraySize;
     private readonly uint[] _cachedQueryScratchSpace;
@@ -43,11 +42,12 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         _chunkSizeBitShift = chunkSizeType.ChunkSizeBitShiftFromType();
         var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;
 
-        _numberOfHorizontalChunks = (horizontalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift;
-        _numberOfVerticalChunks = (verticalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift;
+        _sizeInChunks = new LevelSize(
+            (horizontalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift,
+            (verticalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift);
 
         _cachedQueryScratchSpace = new uint[_bitArraySize];
-        _allBits = new uint[_bitArraySize * _numberOfHorizontalChunks * _numberOfVerticalChunks];
+        _allBits = new uint[_bitArraySize * _sizeInChunks.Area()];
     }
 
     [Pure]
@@ -81,17 +81,15 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             return;
         }
 
-        var chunkX = levelPosition.X >> _chunkSizeBitShift;
-        var chunkY = levelPosition.Y >> _chunkSizeBitShift;
+        var chunkPosition = new LevelPosition(levelPosition.X >> _chunkSizeBitShift, levelPosition.Y >> _chunkSizeBitShift);
 
-        if ((uint)chunkX >= (uint)_numberOfHorizontalChunks ||
-            (uint)chunkY >= (uint)_numberOfVerticalChunks)
+        if (!_sizeInChunks.EncompassesPoint(chunkPosition))
         {
             result = BitArrayEnumerable<TPerfectHasher, T>.Empty;
             return;
         }
 
-        var sourceSpan = ReadOnlySpanForChunk(chunkX, chunkY);
+        var sourceSpan = ReadOnlySpanForChunk(chunkPosition);
         var queryCount = BitArrayHelpers.GetPopCount(sourceSpan);
         sourceSpan.CopyTo(scratchSpaceSpan);
 
@@ -133,13 +131,13 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         {
             // Only one chunk -> skip some extra work
 
-            var sourceSpan = ReadOnlySpanForChunk(topLeftChunk.X, topLeftChunk.Y);
+            var sourceSpan = ReadOnlySpanForChunk(topLeftChunk);
             sourceSpan.CopyTo(scratchSpaceSpan);
         }
         else
         {
             scratchSpaceSpan.Clear();
-            EvaluateChunkUnions(scratchSpaceSpan, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
+            EvaluateChunkUnions(scratchSpaceSpan, topLeftChunk, bottomRightChunk);
         }
 
         scratchSpaceSpan.CopyTo(_cachedQueryScratchSpace);
@@ -192,13 +190,13 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         {
             // Only one chunk -> skip some extra work
 
-            var span = SpanForChunk(topLeftChunk.X, topLeftChunk.Y);
+            var span = SpanForChunk(topLeftChunk);
             BitArrayHelpers.SetBit(span, _hasher.Hash(item));
 
             return;
         }
 
-        ModifyChunks(ChunkOperationType.Add, item, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
+        ModifyChunks(ChunkOperationType.Add, item, topLeftChunk, bottomRightChunk);
     }
 
     public void RemoveItem(T item)
@@ -231,18 +229,18 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         {
             // Only one chunk -> skip some extra work
 
-            var span = SpanForChunk(topLeftChunk.X, topLeftChunk.Y);
+            var span = SpanForChunk(topLeftChunk);
             BitArrayHelpers.ClearBit(span, _hasher.Hash(item));
 
             return;
         }
 
-        ModifyChunks(ChunkOperationType.Remove, item, topLeftChunk.X, topLeftChunk.Y, bottomRightChunk.X, bottomRightChunk.Y);
+        ModifyChunks(ChunkOperationType.Remove, item, topLeftChunk, bottomRightChunk);
     }
 
     private LevelPosition GetTopLeftChunkForRegion(LevelRegion levelRegion)
     {
-        return ConvertToChunkPosition(levelRegion.P);
+        return ConvertToChunkPosition(levelRegion.Position);
     }
 
     private LevelPosition GetBottomRightChunkForRegion(LevelRegion levelRegion)
@@ -261,61 +259,59 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     /// <summary>
     /// Performs a chunk operation over a rectangle of chunks.
     ///
-    /// <para>The rectangle of chunks begins with the top left coordinates of (<paramref name="ax" />, <paramref name="ay" />)
-    /// down to the bottom right coordinates of (<paramref name="bx" />, <paramref name="by" />) inclusive.
+    /// <para>The rectangle of chunks begins with the top left coordinates of <paramref name="chunkA" />
+    /// down to the bottom right coordinates of <paramref name="chunkB" /> inclusive.
     ///</para>
     /// 
-    /// <para>If the b coordinates are less than their respective a coordinates, then this method wraps around and continues evaluating from zero.
+    /// <para>If the <paramref name="chunkB" /> coordinates are less than their respective <paramref name="chunkA" /> coordinates, then this method wraps around and continues evaluating from zero.
     ///</para>
     /// </summary>
     /// <param name="chunkOperationType">The chunk operation to perform</param>
     /// <param name="item">An item to use in part of these chunk operations.
     /// Note: if performing the <see cref="ChunkOperationType.Add"/> or <see cref="ChunkOperationType.Remove"/> operations and this parameter is null,
     /// then an exception will be thrown.</param>
-    /// <param name="ax">The top left x-coordinate.</param>
-    /// <param name="ay">The top left y-coordinate.</param>
-    /// <param name="bx">The bottom right x-coordinate.</param>
-    /// <param name="by">The bottom right y-coordinate.</param>
-    private void ModifyChunks(ChunkOperationType chunkOperationType, T item, int ax, int ay, int bx, int by)
+    /// <param name="chunkA">The top left position.</param>
+    /// <param name="chunkB">The bottom right position.</param>
+    private void ModifyChunks(ChunkOperationType chunkOperationType, T item, LevelPosition chunkA, LevelPosition chunkB)
     {
-        if (bx < ax)
+        if (chunkB.X < chunkA.X)
         {
-            bx += _numberOfHorizontalChunks;
+            chunkB = new LevelPosition(chunkB.X + _sizeInChunks.W, chunkB.Y);
         }
 
-        if (by < ay)
+        if (chunkB.Y < chunkA.Y)
         {
-            by += _numberOfVerticalChunks;
+            chunkB = new LevelPosition(chunkB.X, chunkB.Y + _sizeInChunks.H);
         }
 
-        var y = 1 + by - ay;
-        var y1 = ay;
-        var xCount = 1 + bx - ax;
+        var y = 1 + chunkB.Y - chunkA.Y;
+        var y1 = chunkA.Y;
+        var xCount = 1 + chunkB.X - chunkA.X;
 
         while (y-- > 0)
         {
-            var x1 = ax;
+            var x1 = chunkA.X;
             var x = xCount;
             while (x-- > 0)
             {
-                ModifyChunkPosition(chunkOperationType, item, x1, y1);
+                ModifyChunkPosition(chunkOperationType, item, new LevelPosition(x1, y1));
 
-                if (++x1 == _numberOfHorizontalChunks)
+                if (++x1 == _sizeInChunks.W)
                 {
                     x1 = 0;
                 }
             }
 
-            if (++y1 == _numberOfVerticalChunks)
+            if (++y1 == _sizeInChunks.H)
             {
                 y1 = 0;
             }
         }
     }
 
-    private void ModifyChunkPosition(ChunkOperationType chunkOperationType, T item, int x, int y)
+    private void ModifyChunkPosition(ChunkOperationType chunkOperationType, T item, LevelPosition chunkPosition)
     {
-        var span = SpanForChunk(x, y);
+        var span = SpanForChunk(chunkPosition);
         var hash = _hasher.Hash(item);
         if (chunkOperationType == ChunkOperationType.Add)
         {
@@ -330,50 +326,48 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     /// <summary>
     /// Performs a chunk union operation over a rectangle of chunks, placing the results into the span parameter.
     ///
-    /// <para>The rectangle of chunks begins with the top left coordinates of (<paramref name="ax" />, <paramref name="ay" />)
-    /// down to the bottom right coordinates of (<paramref name="bx" />, <paramref name="by" />) inclusive.
+    /// <para>The rectangle of chunks begins with the top left coordinates of <paramref name="chunkA" />
+    /// down to the bottom right coordinates of <paramref name="chunkB" /> inclusive.
     ///</para>
     /// 
-    /// <para>If the b coordinates are less than their respective a coordinates, then this method wraps around and continues evaluating from zero.
+    /// <para>If the <paramref name="chunkB" /> coordinates are less than their respective <paramref name="chunkA" /> coordinates, then this method wraps around and continues evaluating from zero.
     ///</para>
     /// </summary>
     /// 
     /// <param name="span">The span used to record data.</param>
-    /// <param name="ax">The top left x-coordinate.</param>
-    /// <param name="ay">The top left y-coordinate.</param>
-    /// <param name="bx">The bottom right x-coordinate.</param>
-    /// <param name="by">The bottom right y-coordinate.</param>
-    private void EvaluateChunkUnions(Span<uint> span, int ax, int ay, int bx, int by)
+    /// <param name="chunkA">The top left position.</param>
+    /// <param name="chunkB">The bottom right position.</param>
+    private void EvaluateChunkUnions(Span<uint> span, LevelPosition chunkA, LevelPosition chunkB)
     {
-        if (bx < ax)
+        if (chunkB.X < chunkA.X)
         {
-            bx += _numberOfHorizontalChunks;
+            chunkB = new LevelPosition(chunkB.X + _sizeInChunks.W, chunkB.Y);
         }
 
-        if (by < ay)
+        if (chunkB.Y < chunkA.Y)
         {
-            by += _numberOfVerticalChunks;
+            chunkB = new LevelPosition(chunkB.X, chunkB.Y + _sizeInChunks.H);
         }
 
-        var y = 1 + by - ay;
-        var y1 = ay;
-        var xCount = 1 + bx - ax;
+        var y = 1 + chunkB.Y - chunkA.Y;
+        var y1 = chunkA.Y;
+        var xCount = 1 + chunkB.X - chunkA.X;
 
         while (y-- > 0)
         {
-            var x1 = ax;
+            var x1 = chunkA.X;
             var x = xCount;
             while (x-- > 0)
             {
-                BitArrayHelpers.UnionWith(span, ReadOnlySpanForChunk(x1, y1));
+                BitArrayHelpers.UnionWith(span, ReadOnlySpanForChunk(new LevelPosition(x1, y1)));
 
-                if (++x1 == _numberOfHorizontalChunks)
+                if (++x1 == _sizeInChunks.W)
                 {
                     x1 = 0;
                 }
             }
 
-            if (++y1 == _numberOfVerticalChunks)
+            if (++y1 == _sizeInChunks.H)
             {
                 y1 = 0;
             }
@@ -381,24 +375,24 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     }
 
     [Pure]
-    private Span<uint> SpanForChunk(int x, int y)
+    private Span<uint> SpanForChunk(LevelPosition pos)
     {
-        var index = IndexForChunk(x, y);
+        var index = IndexForChunk(pos);
         return new Span<uint>(_allBits, index, _bitArraySize);
     }
 
     [Pure]
-    private ReadOnlySpan<uint> ReadOnlySpanForChunk(int x, int y)
+    private ReadOnlySpan<uint> ReadOnlySpanForChunk(LevelPosition pos)
     {
-        var index = IndexForChunk(x, y);
+        var index = IndexForChunk(pos);
         return new ReadOnlySpan<uint>(_allBits, index, _bitArraySize);
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int IndexForChunk(int x, int y)
+    private int IndexForChunk(LevelPosition pos)
     {
-        var index = _numberOfHorizontalChunks * y + x;
+        var index = _sizeInChunks.GetIndexOfPoint(pos);
         index *= _bitArraySize;
         return index;
     }

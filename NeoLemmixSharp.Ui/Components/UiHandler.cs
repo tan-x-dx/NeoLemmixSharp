@@ -23,7 +23,7 @@ public sealed class UiHandler : IDisposable
 
     public void Tick()
     {
-        var mousePosition = new LevelPosition(_inputController.MouseX, _inputController.MouseY);
+        var mousePosition = _inputController.MousePosition;
         HandleMouseMove(mousePosition);
 
         var leftMouseButton = _inputController.LeftMouseButtonAction;

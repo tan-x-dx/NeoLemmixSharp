@@ -24,11 +24,11 @@ public sealed class PrePlacedLemmingDataComponentWriter : ILevelDataWriter
 
     private static void WriteLemmingData(BinaryWriter writer, LemmingData lemmingData)
     {
-        writer.Write((ushort)(lemmingData.X + LevelReadWriteHelpers.PositionOffset));
-        writer.Write((ushort)(lemmingData.Y + LevelReadWriteHelpers.PositionOffset));
+        writer.Write((ushort)(lemmingData.Position.X + LevelReadWriteHelpers.PositionOffset));
+        writer.Write((ushort)(lemmingData.Position.Y + LevelReadWriteHelpers.PositionOffset));
         writer.Write(lemmingData.State);
 
-        writer.Write(DihedralTransformation.EncodeToByte(lemmingData.Orientation, lemmingData.FacingDirection));
+        writer.Write((byte)DihedralTransformation.Encode(lemmingData.Orientation, lemmingData.FacingDirection));
         writer.Write((byte)lemmingData.TeamId);
         writer.Write((byte)lemmingData.InitialLemmingAction.Id);
     }

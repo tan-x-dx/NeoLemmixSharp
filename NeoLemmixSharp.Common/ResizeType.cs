@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets;
+namespace NeoLemmixSharp.Common;
 
 [Flags]
 public enum ResizeType
@@ -31,8 +31,8 @@ public static class ResizeTypeHelpers
     public static ResizeType SwapComponents(this ResizeType resizeType)
     {
         var intData = (int)resizeType;
-        var b0 = intData & (1 << HorizontalShift);
-        var b1 = intData & (1 << VerticalShift);
+        var b0 = intData & 1 << HorizontalShift;
+        var b1 = intData & 1 << VerticalShift;
 
         b0 <<= 1;
         b1 >>= 1;

@@ -25,13 +25,4 @@ public sealed class NeoLemmixGadgetData
     public int? LemmingCount { get; set; }
 
     public uint State { get; set; } = 1U << EngineConstants.ActiveBitIndex;
-
-    public override string ToString()
-    {
-        var horzString = FlipHorizontal ? "H" : string.Empty;
-        var vertString = FlipVertical ? "V" : string.Empty;
-        var rotString = Rotate ? "R" : string.Empty;
-
-        return $"X:{X},Y:{Y}{horzString}{vertString}{rotString}";
-    }
 }

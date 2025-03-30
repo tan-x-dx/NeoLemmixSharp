@@ -42,9 +42,9 @@ public sealed class TerrainDataComponentWriter : ILevelDataWriter
         writer.Write(_stringIdLookup[terrainArchetypeData.Style]);
         writer.Write(_stringIdLookup[terrainArchetypeData.TerrainPiece]);
 
-        writer.Write((ushort)(terrainData.X + LevelReadWriteHelpers.PositionOffset));
-        writer.Write((ushort)(terrainData.Y + LevelReadWriteHelpers.PositionOffset));
-        writer.Write(DihedralTransformation.EncodeToByte(terrainData.Orientation, terrainData.FacingDirection));
+        writer.Write((ushort)(terrainData.Position.X + LevelReadWriteHelpers.PositionOffset));
+        writer.Write((ushort)(terrainData.Position.Y + LevelReadWriteHelpers.PositionOffset));
+        writer.Write((byte)DihedralTransformation.Encode(terrainData.Orientation, terrainData.FacingDirection));
 
         WriteTerrainDataMisc(writer, terrainData);
     }

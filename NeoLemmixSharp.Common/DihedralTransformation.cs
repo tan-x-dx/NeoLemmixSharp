@@ -1,54 +1,54 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.ComponentModel;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
-[StructLayout(LayoutKind.Explicit, Size = NumberOf32BitInts * sizeof(int))]
-public readonly struct DihedralTransformation : IEquatable<DihedralTransformation>
+public readonly ref struct DihedralTransformation : IEquatable<DihedralTransformation>
 {
-    private const int NumberOf32BitInts = 2;
     private const int FlipBitShift = 2;
 
-    [FieldOffset(0 * sizeof(int))] public readonly Orientation Orientation;
-    [FieldOffset(1 * sizeof(int))] public readonly FacingDirection FacingDirection;
+    public readonly Orientation Orientation;
+    public readonly FacingDirection FacingDirection;
 
     public DihedralTransformation(Orientation orientation, FacingDirection facingDirection)
     {
-        Orientation = new Orientation(orientation.RotNum);
-        FacingDirection = new FacingDirection(facingDirection.Id);
-    }
-
-    [Pure]
-    public LevelPosition Transform(
-        LevelPosition position,
-        int width,
-        int height)
-    {
-        Transform(position.X, position.Y, width, height, out var x0, out var y0);
-        return new LevelPosition(x0, y0);
+        Orientation = orientation;
+        FacingDirection = facingDirection;
     }
 
     [Pure]
     public LevelSize Transform(LevelSize levelSize)
     {
-        Transform(levelSize.W, levelSize.H, levelSize.W, levelSize.H, out var x0, out var y0);
-        return new LevelSize(x0, y0);
+        return Orientation.IsHorizontal()
+            ? levelSize.Transpose()
+            : levelSize;
     }
 
-    public void Transform(
-        int x,
-        int y,
-        int w,
-        int h,
-        out int x0,
-        out int y0)
+    [Pure]
+    public ResizeType Transform(ResizeType resizeType)
     {
+        return Orientation.IsHorizontal()
+            ? resizeType.SwapComponents()
+            : resizeType;
+    }
+
+    [Pure]
+    public LevelPosition Transform(
+        LevelPosition position,
+        LevelSize size)
+    {
+        var x = position.X;
+        var y = position.Y;
+        var w = size.W - 1;
+        var h = size.H - 1;
+
         var s = GetRotationCoefficients(out var a, out var b, ref w, ref h);
         s *= FacingDirection.Id;
 
-        x0 = s + FacingDirection.DeltaX * (a * x - b * y + w);
-        y0 = b * x + a * y + h;
+        var x0 = s + FacingDirection.DeltaX * (a * x - b * y + w);
+        var y0 = b * x + a * y + h;
+        return new LevelPosition(x0, y0);
     }
 
     private int GetRotationCoefficients(out int a, out int b, ref int w, ref int h)
@@ -93,40 +93,25 @@ public readonly struct DihedralTransformation : IEquatable<DihedralTransformatio
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int Encode(Orientation o, FacingDirection f) => ((f.Id & 1) << FlipBitShift) | (o.RotNum & 3);
+    public static int Encode(Orientation orientation, FacingDirection facingDirection) => orientation.RotNum | (facingDirection.Id << FlipBitShift);
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static byte EncodeToByte(Orientation o, FacingDirection f) => (byte)Encode(o, f);
+    public static DihedralTransformation Decode(int encodedData) => new(new Orientation(encodedData), new FacingDirection(encodedData >>> FlipBitShift));
 
     [Pure]
-    [SkipLocalsInit]
-    public static unsafe DihedralTransformation DecodeFromUint(uint encodedData)
-    {
-        uint* p = stackalloc uint[NumberOf32BitInts];
-        p[0] = encodedData & 3U;
-        p[1] = (encodedData >> FlipBitShift) & 1U;
-
-        return *(DihedralTransformation*)p;
-    }
-
-    [Pure]
-    [SkipLocalsInit]
-    public static unsafe DihedralTransformation Simplify(
+    public static DihedralTransformation Decode(
         bool flipHorizontally,
         bool flipVertically,
         bool rotate)
     {
-        uint* p = stackalloc uint[1 + NumberOf32BitInts];
-        p[0] = rotate ? 1U : 0U;
-        p[1] = flipHorizontally ? 1U : 0U;
-        p[2] = flipVertically ? 1U : 0U;
+        var o = rotate ? 1 : 0;
+        var f = flipHorizontally ? 1 : 0;
+        var v = flipVertically ? 1 : 0;
 
-        p[0] |= p[2] << 1;
-        p[1] ^= p[2];
+        o |= v << 1;
+        f ^= v;
 
-        return *(DihedralTransformation*)p;
+        return new DihedralTransformation(new Orientation(o), new FacingDirection(f));
     }
 
     [Pure]
@@ -157,13 +142,14 @@ public readonly struct DihedralTransformation : IEquatable<DihedralTransformatio
         FacingDirection == other.FacingDirection;
 
     [Pure]
-    public override bool Equals(object? obj) =>
-        obj is DihedralTransformation other &&
-        Orientation == other.Orientation &&
-        FacingDirection == other.FacingDirection;
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete($"Equals() on {nameof(DihedralTransformation)} will always throw an exception. Use the equality operator instead.")]
+    public override bool Equals(object? obj) => throw new NotSupportedException("It's a ref struct");
 
     [Pure]
-    public override int GetHashCode() => Encode(Orientation, FacingDirection);
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete($"GetHashCode() on {nameof(DihedralTransformation)} will always throw an exception.")]
+    public override int GetHashCode() => throw new NotSupportedException("It's a ref struct");
 
     [Pure]
     public static bool operator ==(DihedralTransformation left, DihedralTransformation right) =>

@@ -65,7 +65,7 @@ public sealed class BlockerAction : LemmingAction
     }
 
     // We iterate through the blocker collection instead of using a SpacialHashGrid
-    // because it is generally the case that the number of blockers in a level is small,
+    // because it is generally the case that the number of blockers in a level is small, (0 <= N < 5, etc)
     // especially compared with the number of lemmings total.
 
     private static Lemming? GetInfluentialBlocker(

@@ -44,9 +44,9 @@ public sealed class GadgetDataComponentWriter : ILevelDataWriter
         writer.Write(_stringIdLookup[gadgetData.Style]);
         writer.Write(_stringIdLookup[gadgetData.GadgetPiece]);
 
-        writer.Write((ushort)(gadgetData.X + LevelReadWriteHelpers.PositionOffset));
-        writer.Write((ushort)(gadgetData.Y + LevelReadWriteHelpers.PositionOffset));
-        writer.Write(DihedralTransformation.EncodeToByte(gadgetData.Orientation, gadgetData.FacingDirection));
+        writer.Write((ushort)(gadgetData.Position.X + LevelReadWriteHelpers.PositionOffset));
+        writer.Write((ushort)(gadgetData.Position.Y + LevelReadWriteHelpers.PositionOffset));
+        writer.Write((byte)DihedralTransformation.Encode(gadgetData.Orientation, gadgetData.FacingDirection));
 
         writer.Write((byte)gadgetData.InitialStateId);
         writer.Write((byte)gadgetData.GadgetRenderMode);

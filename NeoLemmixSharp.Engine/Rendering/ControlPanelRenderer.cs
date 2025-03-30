@@ -36,8 +36,7 @@ public sealed class ControlPanelRenderer
 
     private RenderTarget2D _controlPanelRenderTarget;
 
-    private int _windowWidth;
-    private int _windowHeight;
+    private LevelSize _windowSize;
 
     private bool _disposed;
 
@@ -170,28 +169,28 @@ public sealed class ControlPanelRenderer
 
     public void DrawToScreen(SpriteBatch spriteBatch)
     {
-        var controlPanelScreenHeight = _levelControlPanel.ScreenHeight;
+        var controlPanelScreenSize = _levelControlPanel.ControlPanelScreenSize;
         spriteBatch.Draw(
             _whitePixel,
-            new Rectangle(0, _windowHeight - controlPanelScreenHeight, _windowWidth, controlPanelScreenHeight),
+            new Rectangle(0, _windowSize.H - controlPanelScreenSize.H, _windowSize.W, controlPanelScreenSize.H),
             CommonSprites.RectangleForWhitePixelAlpha(0xff),
             Color.DarkGray);
 
-        var destinationRectangle = new Rectangle(
-            _levelControlPanel.ControlPanelX,
-            _levelControlPanel.ControlPanelY,
-            _levelControlPanel.ScreenWidth,
-            controlPanelScreenHeight);
+        var controlPanelPosition = _levelControlPanel.ControlPanelPosition;
+        var destinationRectangle = Helpers.CreateRectangle(
+            controlPanelPosition,
+            controlPanelScreenSize);
 
         spriteBatch.Draw(_controlPanelRenderTarget, destinationRectangle, Color.White);
     }
 
     private RenderTarget2D GetControlPanelRenderTarget2D()
     {
+        var controlPanelSize = _levelControlPanel.ControlPanelSize;
         return new RenderTarget2D(
             _graphicsDevice,
-            _levelControlPanel.Width,
-            _levelControlPanel.Height,
+            controlPanelSize.W,
+            controlPanelSize.H,
             false,
             _graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24);
@@ -200,8 +199,7 @@ public sealed class ControlPanelRenderer
     public void OnWindowSizeChanged()
     {
         var gameWindow = IGameWindow.Instance;
-        _windowWidth = gameWindow.WindowWidth;
-        _windowHeight = gameWindow.WindowHeight;
+        _windowSize = new LevelSize(gameWindow.WindowWidth, gameWindow.WindowHeight);
 
         DisposableHelperMethods.DisposeOf(ref _controlPanelRenderTarget);
         _controlPanelRenderTarget = GetControlPanelRenderTarget2D();

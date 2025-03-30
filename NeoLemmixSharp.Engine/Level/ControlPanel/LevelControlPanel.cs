@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Rendering.Text;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -31,15 +32,11 @@ public sealed class LevelControlPanel : IInitialisable
 
     private readonly int _maxSkillPanelScroll;
 
-    private int _windowWidth;
-    private int _windowHeight;
+    private LevelSize _windowSize;
 
-    public int Width { get; private set; }
-    public int Height { get; private set; }
-    public int ScreenWidth => Width * ControlPanelScaleMultiplier;
-    public int ScreenHeight => Height * ControlPanelScaleMultiplier;
-    public int ControlPanelX { get; private set; }
-    public int ControlPanelY { get; private set; }
+    public LevelPosition ControlPanelPosition { get; private set; }
+    public LevelSize ControlPanelSize { get; private set; }
+    public LevelSize ControlPanelScreenSize => ControlPanelSize.Scale(ControlPanelScaleMultiplier, ControlPanelScaleMultiplier);
 
     public int SkillPanelScroll { get; private set; }
 
@@ -89,21 +86,20 @@ public sealed class LevelControlPanel : IInitialisable
 
     public void SetWindowDimensions(int screenWidth, int screenHeight)
     {
-        var previousWidth = _windowWidth;
-        var previousHeight = _windowHeight;
-        _windowWidth = screenWidth;
-        _windowHeight = screenHeight;
+        var previousWindowSize = _windowSize;
+        _windowSize = new LevelSize(screenWidth, screenHeight);
 
-        if (_windowWidth == previousWidth && _windowHeight == previousHeight)
+        if (_windowSize == previousWindowSize)
             return;
 
         RecalculateButtonDimensions();
 
-        Width = CalculateControlPanelWidth();
-        Height = ControlPanelTotalPixelHeight;
+        ControlPanelSize = new LevelSize(CalculateControlPanelWidth(), ControlPanelTotalPixelHeight);
+        var controlPanelScreenSize = ControlPanelScreenSize;
 
-        ControlPanelX = (_windowWidth - ScreenWidth) / 2;
-        ControlPanelY = _windowHeight - ScreenHeight;
+        ControlPanelPosition = new LevelPosition(
+            (_windowSize.W - controlPanelScreenSize.W) / 2,
+            _windowSize.H - controlPanelScreenSize.H);
     }
 
     public void SetPanelScale(int scale)
@@ -276,18 +272,17 @@ public sealed class LevelControlPanel : IInitialisable
         var leftMouseButton = LevelScreen.LevelInputController.LeftMouseButtonAction;
         var rightMouseButton = LevelScreen.LevelInputController.RightMouseButtonAction;
 
-        var mouseX = LevelScreen.LevelInputController.MouseX - ControlPanelX;
-        var mouseY = LevelScreen.LevelInputController.MouseY - ControlPanelY;
+        var localMousePosition = LevelScreen.LevelInputController.MousePosition - ControlPanelPosition;
 
-        mouseX /= ControlPanelScaleMultiplier;
-        mouseY /= ControlPanelScaleMultiplier;
+        var localMouseX = localMousePosition.X / ControlPanelScaleMultiplier;
+        var localMouseY = localMousePosition.Y / ControlPanelScaleMultiplier;
 
         foreach (var controlPanelButton in AllButtons)
         {
             if (controlPanelButton is null)
                 continue;
 
-            if (!controlPanelButton.MouseIsOverButton(mouseX, mouseY))
+            if (!controlPanelButton.MouseIsOverButton(localMouseX, localMouseY))
                 continue;
 
             var buttonAction = controlPanelButton.ButtonAction;
@@ -355,7 +350,6 @@ public sealed class LevelControlPanel : IInitialisable
         var skillTrackingData = skillSetManager.GetSkillTrackingData(skillTrackingDataId);
 
         LevelScreen.LevelCursor.SetSelectedTeam(skillTrackingData?.Team);
-
     }
 
     public void UpdateSkillCount(SkillTrackingData skillTrackingData)

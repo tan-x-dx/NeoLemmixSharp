@@ -18,6 +18,7 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
+        levelData.PrePlacedLemmingData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {
@@ -25,15 +26,14 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
             int y = rawFileData.Read16BitUnsignedInteger();
             uint state = rawFileData.Read32BitUnsignedInteger();
 
-            uint orientationByte = rawFileData.Read8BitUnsignedInteger();
-            var dht = DihedralTransformation.DecodeFromUint(orientationByte);
+            int orientationByte = rawFileData.Read8BitUnsignedInteger();
+            var dht = DihedralTransformation.Decode(orientationByte);
             int teamId = rawFileData.Read8BitUnsignedInteger();
             int initialActionId = rawFileData.Read8BitUnsignedInteger();
 
             levelData.PrePlacedLemmingData.Add(new LemmingData
             {
-                X = x - LevelReadWriteHelpers.PositionOffset,
-                Y = y - LevelReadWriteHelpers.PositionOffset,
+                Position = new LevelPosition(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
                 State = state,
 
                 Orientation = dht.Orientation,

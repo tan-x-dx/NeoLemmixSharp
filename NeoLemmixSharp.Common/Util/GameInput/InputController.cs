@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
@@ -8,19 +9,18 @@ namespace NeoLemmixSharp.Common.Util.GameInput;
 public sealed class InputController :
     IPerfectHasher<Keys>,
     IPerfectHasher<InputAction>,
-    IBitBufferCreator<BitBuffer256>
+    IBitBufferCreator<InputController.KeysBitBuffer>
 {
     private const int NumberOfKeys = 256;
 
-    private readonly List<KeyToInputMapping> _keyMapping = [];
-    private readonly BitArraySet<InputController, BitBuffer256, Keys> _pressedKeys;
-    private readonly BitArraySet<InputController, BitBuffer256, Keys> _releasedKeys;
-    private readonly List<InputAction> _inputActions = [];
+    private readonly List<KeyToInputMapping> _keyMapping = new(16);
+    private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _pressedKeys;
+    private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _releasedKeys;
+    private readonly List<InputAction> _inputActions = new(16);
 
     private int _previousScrollValue;
 
-    public int MouseX { get; private set; }
-    public int MouseY { get; private set; }
+    public LevelPosition MousePosition { get; private set; }
     public int ScrollDelta { get; private set; }
 
     public InputAction LeftMouseButtonAction { get; }
@@ -34,8 +34,8 @@ public sealed class InputController :
 
     public InputController()
     {
-        _pressedKeys = new BitArraySet<InputController, BitBuffer256, Keys>(this, false);
-        _releasedKeys = new BitArraySet<InputController, BitBuffer256, Keys>(this, false);
+        _pressedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this, false);
+        _releasedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this, false);
 
         LeftMouseButtonAction = CreateInputAction("Left Mouse Button");
         RightMouseButtonAction = CreateInputAction("Right Mouse Button");
@@ -115,8 +115,7 @@ public sealed class InputController :
     private void UpdateMouseButtonStates()
     {
         var mouseState = Mouse.GetState();
-        MouseX = mouseState.X;
-        MouseY = mouseState.Y;
+        MousePosition = new LevelPosition(mouseState.X, mouseState.Y);
 
         var currentScrollValue = mouseState.ScrollWheelValue;
         ScrollDelta = Math.Sign(currentScrollValue - _previousScrollValue);
@@ -136,7 +135,7 @@ public sealed class InputController :
     int IPerfectHasher<InputAction>.NumberOfItems => _inputActions.Count;
     int IPerfectHasher<InputAction>.Hash(InputAction item) => item.Id;
     InputAction IPerfectHasher<InputAction>.UnHash(int index) => _inputActions[index];
-    void IBitBufferCreator<BitBuffer256>.CreateBitBuffer(out BitBuffer256 buffer) => buffer = new();
+    void IBitBufferCreator<KeysBitBuffer>.CreateBitBuffer(out KeysBitBuffer buffer) => buffer = new();
 
     private readonly struct KeyToInputMapping(Keys key, InputAction inputAction)
     {
@@ -149,5 +148,20 @@ public sealed class InputController :
             key = Key;
             inputAction = InputAction;
         }
+    }
+
+    [InlineArray(KeysBitBufferLength)]
+    private struct KeysBitBuffer : IBitBuffer
+    {
+        private const int KeysBitBufferLength = NumberOfKeys / 32;
+
+        private uint _0;
+
+        public readonly int Length => KeysBitBufferLength;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, KeysBitBufferLength);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, KeysBitBufferLength);
     }
 }
