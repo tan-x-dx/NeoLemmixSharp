@@ -11,9 +11,9 @@ public sealed class TerrainData
 
     public required LevelPosition Position { get; init; }
 
-    public required bool NoOverwrite { get; init; }
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }
+    public required bool NoOverwrite { get; init; }
     public required bool Erase { get; init; }
 
     public required Color? Tint { get; init; }

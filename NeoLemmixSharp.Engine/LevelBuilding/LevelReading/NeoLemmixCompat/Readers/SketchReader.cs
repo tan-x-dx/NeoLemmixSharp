@@ -53,12 +53,14 @@ public sealed class SketchReader : NeoLemmixDataReader
 
     private void SetX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentSketchData!.X = int.Parse(secondToken);
+        var x = int.Parse(secondToken);
+        _currentSketchData!.Position = new LevelPosition(x, _currentSketchData.Position.Y);
     }
 
     private void SetY(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentSketchData!.Y = int.Parse(secondToken);
+        var y = int.Parse(secondToken);
+        _currentSketchData!.Position = new LevelPosition(_currentSketchData.Position.X, y);
     }
 
     private void SetRotate(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
