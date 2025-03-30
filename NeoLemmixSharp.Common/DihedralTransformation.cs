@@ -1,17 +1,15 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
-[StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
 public readonly ref struct DihedralTransformation : IEquatable<DihedralTransformation>
 {
     private const int FlipBitShift = 2;
 
-    [FieldOffset(0 * sizeof(int))] public readonly Orientation Orientation;
-    [FieldOffset(1 * sizeof(int))] public readonly FacingDirection FacingDirection;
+    public readonly Orientation Orientation;
+    public readonly FacingDirection FacingDirection;
 
     public DihedralTransformation(Orientation orientation, FacingDirection facingDirection)
     {
@@ -22,7 +20,7 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     [Pure]
     public LevelSize Transform(LevelSize levelSize)
     {
-        return Orientation.IsPerpendicularTo(Orientation.Down)
+        return Orientation.IsHorizontal()
             ? levelSize.Transpose()
             : levelSize;
     }
@@ -30,7 +28,7 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     [Pure]
     public ResizeType Transform(ResizeType resizeType)
     {
-        return Orientation.IsPerpendicularTo(Orientation.Down)
+        return Orientation.IsHorizontal()
             ? resizeType.SwapComponents()
             : resizeType;
     }
@@ -98,19 +96,10 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     public static int Encode(Orientation orientation, FacingDirection facingDirection) => orientation.RotNum | (facingDirection.Id << FlipBitShift);
 
     [Pure]
-    [SkipLocalsInit]
-    public static unsafe DihedralTransformation Decode(int encodedData)
-    {
-        int* p = stackalloc int[2];
-        p[0] = encodedData & 3;
-        p[1] = (encodedData >> FlipBitShift) & 1;
-
-        return *(DihedralTransformation*)p;
-    }
+    public static DihedralTransformation Decode(int encodedData) => new(new Orientation(encodedData), new FacingDirection(encodedData >>> FlipBitShift));
 
     [Pure]
-    [SkipLocalsInit]
-    public static unsafe DihedralTransformation Decode(
+    public static DihedralTransformation Decode(
         bool flipHorizontally,
         bool flipVertically,
         bool rotate)
@@ -122,8 +111,7 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         o |= v << 1;
         f ^= v;
 
-        int* p = stackalloc int[2] { o, f };
-        return *(DihedralTransformation*)p;
+        return new DihedralTransformation(new Orientation(o), new FacingDirection(f));
     }
 
     [Pure]

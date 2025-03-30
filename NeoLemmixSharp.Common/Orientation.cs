@@ -33,10 +33,12 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsParallelTo(Orientation other) => ((RotNum ^ other.RotNum ^ 1) & 1) != 0;
-
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsPerpendicularTo(Orientation other) => ((RotNum ^ other.RotNum) & 1) != 0;
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool IsHorizontal() => (RotNum & 1) != 0;
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
