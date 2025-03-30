@@ -17,6 +17,7 @@ public sealed class HatchGroupDataComponentReader : ILevelDataReader
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
+        levelData.AllHatchGroupData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {

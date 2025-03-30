@@ -18,6 +18,7 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
+        levelData.PrePlacedLemmingData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {

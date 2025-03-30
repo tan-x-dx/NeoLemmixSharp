@@ -23,6 +23,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
+        levelData.AllTerrainData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {

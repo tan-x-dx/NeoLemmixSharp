@@ -25,6 +25,7 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
+        levelData.AllGadgetData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {
