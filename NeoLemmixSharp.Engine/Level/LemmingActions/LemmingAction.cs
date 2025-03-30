@@ -242,7 +242,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
         [Pure]
         public LemmingAction UnHash(int index) => LemmingActions[index];
 
-        public void CreateBitBuffer(out LemmingActionBitBuffer buffer) => buffer = new LemmingActionBitBuffer();
+        public void CreateBitBuffer(out LemmingActionBitBuffer buffer) => buffer = new();
     }
 
     [InlineArray(LemmingActionBitBufferLength)]
