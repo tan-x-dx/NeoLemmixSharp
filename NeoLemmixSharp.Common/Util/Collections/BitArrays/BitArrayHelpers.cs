@@ -61,7 +61,7 @@ public static class BitArrayHelpers
     public static bool GetBit(ReadOnlySpan<uint> bits, int index)
     {
         var value = bits[index >> Shift];
-        value >>= index;
+        value >>>= index;
         return (value & 1U) != 0U;
     }
 
