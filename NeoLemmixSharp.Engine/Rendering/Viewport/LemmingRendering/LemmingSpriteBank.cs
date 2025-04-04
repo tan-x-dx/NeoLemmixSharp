@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Teams;
 
@@ -18,37 +17,13 @@ public sealed class LemmingSpriteBank : IDisposable
 
     public TeamColorData GetColorData(int id) => _teamColorData[id];
 
-    public LemmingActionSprite GetActionSprite(
-        LemmingAction lemmingAction,
-        Orientation orientation,
-        FacingDirection facingDirection)
+    public LemmingActionSprite GetActionSprite(LemmingAction lemmingAction)
     {
-        if (lemmingAction == NoneAction.Instance)
-            return LemmingActionSprite.Empty;
+        var id = lemmingAction.Id;
+        if ((uint)id < (uint)_actionSprites.Length)
+            return _actionSprites[id];
 
-        var key = GetKey(lemmingAction, orientation, facingDirection);
-
-        return _actionSprites[key];
-    }
-
-    public static int GetKey(
-        LemmingAction lemmingAction,
-        Orientation orientation,
-        FacingDirection facingDirection)
-    {
-        if (lemmingAction == NoneAction.Instance)
-            throw new InvalidOperationException("Cannot render \"None\" action");
-
-        var lowerBits = GetKey(orientation, facingDirection);
-
-        return (lemmingAction.Id << 3) | lowerBits;
-    }
-
-    public static int GetKey(
-        Orientation orientation,
-        FacingDirection facingDirection)
-    {
-        return DihedralTransformation.Encode(orientation, facingDirection);
+        return LemmingActionSprite.Empty;
     }
 
     public void Dispose()

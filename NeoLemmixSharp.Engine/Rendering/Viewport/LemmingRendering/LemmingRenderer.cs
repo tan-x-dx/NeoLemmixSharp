@@ -36,7 +36,9 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     public void UpdatePosition()
     {
-        var p = _lemming.LevelPosition - _actionSprite.AnchorPoint;
+        var dht = new DihedralTransformation(_lemming.Orientation, _lemming.FacingDirection);
+        var spriteOffset = dht.Transform(_actionSprite.AnchorPoint, _actionSprite.SpriteSize);
+        var p = _lemming.LevelPosition - spriteOffset;
 
         _previousSpriteBounds = _spriteBounds;
         _spriteBounds = Helpers.CreateRectangle(p, _actionSprite.SpriteSize);
@@ -55,10 +57,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
         var spriteBank = _lemming.State.TeamAffiliation.SpriteBank;
 
-        _actionSprite = spriteBank.GetActionSprite(
-            _lemming.CurrentAction,
-            _lemming.Orientation,
-            _lemming.FacingDirection);
+        _actionSprite = spriteBank.GetActionSprite(_lemming.CurrentAction);
 
         UpdatePosition();
 
@@ -74,10 +73,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
         var spriteBank = _lemming.State.TeamAffiliation.SpriteBank;
 
-        _actionSprite = spriteBank.GetActionSprite(
-            _lemming.CurrentAction,
-            _lemming.Orientation,
-            _lemming.FacingDirection);
+        _actionSprite = spriteBank.GetActionSprite(_lemming.CurrentAction);
 
         UpdatePosition();
 
