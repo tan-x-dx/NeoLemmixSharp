@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
@@ -13,15 +12,6 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     public static readonly Orientation Left = new(EngineConstants.LeftOrientationRotNum);
     public static readonly Orientation Up = new(EngineConstants.UpOrientationRotNum);
     public static readonly Orientation Right = new(EngineConstants.RightOrientationRotNum);
-
-    private static ReadOnlySpan<int> RawInts =>
-    [
-        EngineConstants.DownOrientationRotNum,
-        EngineConstants.LeftOrientationRotNum,
-        EngineConstants.UpOrientationRotNum,
-        EngineConstants.RightOrientationRotNum
-    ];
-    public static ReadOnlySpan<Orientation> AllItems => MemoryMarshal.Cast<int, Orientation>(RawInts);
 
     public readonly int RotNum;
 
