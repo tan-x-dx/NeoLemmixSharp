@@ -34,12 +34,12 @@ public sealed class ItemTracker<TPerfectHasher, T>
         var id = _hasher.Hash(item);
 
         var bitIndex = (id & BitArrayHelpers.Mask) << 1;
-        var longIndex = id >> BitArrayHelpers.Shift;
+        var longIndex = id >>> BitArrayHelpers.Shift;
 
         ref var longValue = ref _bits[longIndex];
         longValue |= 1UL << bitIndex;
 
-        var result = (int)(longValue >> bitIndex);
+        var result = (int)(longValue >>> bitIndex);
         return (TrackingStatus)(result & 3);
     }
 
@@ -49,11 +49,11 @@ public sealed class ItemTracker<TPerfectHasher, T>
         var id = _hasher.Hash(item);
 
         var bitIndex = (id & BitArrayHelpers.Mask) << 1;
-        var longIndex = id >> BitArrayHelpers.Shift;
+        var longIndex = id >>> BitArrayHelpers.Shift;
 
         var longValue = _bits[longIndex];
 
-        var result = (int)(longValue >> bitIndex);
+        var result = (int)(longValue >>> bitIndex);
         return (TrackingStatus)(result & 3);
     }
 

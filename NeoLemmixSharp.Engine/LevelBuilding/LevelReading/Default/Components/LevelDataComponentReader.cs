@@ -73,7 +73,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
     private static void DecipherBoundaryBehaviours(LevelData levelData, uint boundaryByteValue)
     {
         var horizontalBoundaryBehaviour = (BoundaryBehaviourType)(boundaryByteValue & 1U);
-        var verticalBoundaryBehaviour = (BoundaryBehaviourType)((boundaryByteValue >> 1) & 1U);
+        var verticalBoundaryBehaviour = (BoundaryBehaviourType)((boundaryByteValue >>> 1) & 1U);
 
         levelData.HorizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         levelData.VerticalBoundaryBehaviour = verticalBoundaryBehaviour;

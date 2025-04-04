@@ -30,7 +30,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public bool IsClimber
     {
-        get => ((_states >> EngineConstants.ClimberBitIndex) & 1U) != 0U;
+        get => ((_states >>> EngineConstants.ClimberBitIndex) & 1U) != 0U;
         set
         {
             if (value)
@@ -47,7 +47,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public bool IsFloater
     {
-        get => ((_states >> EngineConstants.FloaterBitIndex) & 1U) != 0U;
+        get => ((_states >>> EngineConstants.FloaterBitIndex) & 1U) != 0U;
         set
         {
             if (value)
@@ -65,7 +65,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public bool IsGlider
     {
-        get => ((_states >> EngineConstants.GliderBitIndex) & 1U) != 0U;
+        get => ((_states >>> EngineConstants.GliderBitIndex) & 1U) != 0U;
         set
         {
             if (value)
@@ -83,7 +83,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public bool IsSlider
     {
-        get => ((_states >> EngineConstants.SliderBitIndex) & 1U) != 0U;
+        get => ((_states >>> EngineConstants.SliderBitIndex) & 1U) != 0U;
         set
         {
             if (value)
@@ -100,7 +100,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public bool IsSwimmer
     {
-        get => ((_states >> EngineConstants.SwimmerBitIndex) & 1U) != 0U;
+        get => ((_states >>> EngineConstants.SwimmerBitIndex) & 1U) != 0U;
         set
         {
             if (value)
@@ -118,7 +118,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public bool IsDisarmer
     {
-        get => ((_states >> EngineConstants.DisarmerBitIndex) & 1U) != 0U;
+        get => ((_states >>> EngineConstants.DisarmerBitIndex) & 1U) != 0U;
         set
         {
             if (value)
@@ -135,7 +135,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public bool IsPermanentFastForwards
     {
-        get => ((_states >> EngineConstants.PermanentFastForwardBitIndex) & 1U) != 0U;
+        get => ((_states >>> EngineConstants.PermanentFastForwardBitIndex) & 1U) != 0U;
         set
         {
             if (value)
@@ -153,7 +153,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public bool IsAcidLemming
     {
-        get => ((_states >> EngineConstants.AcidLemmingBitIndex) & 1U) != 0U;
+        get => ((_states >>> EngineConstants.AcidLemmingBitIndex) & 1U) != 0U;
         set
         {
             if (value)
@@ -171,7 +171,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public bool IsWaterLemming
     {
-        get => ((_states >> EngineConstants.WaterLemmingBitIndex) & 1U) != 0U;
+        get => ((_states >>> EngineConstants.WaterLemmingBitIndex) & 1U) != 0U;
         set
         {
             if (value)
@@ -189,7 +189,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public bool IsActive
     {
-        get => ((_states >> EngineConstants.ActiveBitIndex) & 1U) != 0U;
+        get => ((_states >>> EngineConstants.ActiveBitIndex) & 1U) != 0U;
         set
         {
             if (value)
@@ -205,7 +205,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public bool IsNeutral
     {
-        get => ((_states >> EngineConstants.NeutralBitIndex) & 1U) != 0U;
+        get => ((_states >>> EngineConstants.NeutralBitIndex) & 1U) != 0U;
         set
         {
             if (value)
@@ -222,7 +222,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public bool IsZombie
     {
-        get => ((_states >> EngineConstants.ZombieBitIndex) & 1U) != 0U;
+        get => ((_states >>> EngineConstants.ZombieBitIndex) & 1U) != 0U;
         set
         {
             if (IsZombie == value)

@@ -73,11 +73,11 @@ public static class LevelReadWriteHelpers
     public static DecipheredTerrainDataMisc DecipherTerrainDataMiscByte(byte b)
     {
         int intValue = b;
-        var erase = ((intValue >> TerrainDataEraseBitShift) & 1) != 0;
-        var noOverwrite = ((intValue >> TerrainDataNoOverwriteBitShift) & 1) != 0;
-        var hasTintSpecified = ((intValue >> TerrainDataTintBitShift) & 1) != 0;
-        var hasWidthSpecified = ((intValue >> TerrainDataResizeWidthBitShift) & 1) != 0;
-        var hasHeightSpecified = ((intValue >> TerrainDataResizeHeightBitShift) & 1) != 0;
+        var erase = ((intValue >>> TerrainDataEraseBitShift) & 1) != 0;
+        var noOverwrite = ((intValue >>> TerrainDataNoOverwriteBitShift) & 1) != 0;
+        var hasTintSpecified = ((intValue >>> TerrainDataTintBitShift) & 1) != 0;
+        var hasWidthSpecified = ((intValue >>> TerrainDataResizeWidthBitShift) & 1) != 0;
+        var hasHeightSpecified = ((intValue >>> TerrainDataResizeHeightBitShift) & 1) != 0;
 
         return new DecipheredTerrainDataMisc(
             erase,
@@ -143,7 +143,7 @@ public static class LevelReadWriteHelpers
         out bool isSteel,
         out ResizeType resizeType)
     {
-        isSteel = ((byteValue >> 2) & 1U) != 0U;
+        isSteel = ((byteValue >>> 2) & 1U) != 0U;
         resizeType = (ResizeType)(byteValue & 3U);
     }
 }

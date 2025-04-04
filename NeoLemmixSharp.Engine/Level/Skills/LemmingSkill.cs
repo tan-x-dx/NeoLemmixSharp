@@ -200,7 +200,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     [InlineArray(LemmingSkillBitBufferLength)]
     public struct LemmingSkillBitBuffer : IBitBuffer
     {
-        private const int LemmingSkillBitBufferLength = (EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
+        private const int LemmingSkillBitBufferLength = (EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >>> BitArrayHelpers.Shift;
 
         private uint _0;
 

@@ -43,8 +43,8 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;
 
         _sizeInChunks = new LevelSize(
-            (horizontalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift,
-            (verticalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >> _chunkSizeBitShift);
+            (horizontalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >>> _chunkSizeBitShift,
+            (verticalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >>> _chunkSizeBitShift);
 
         _cachedQueryScratchSpace = new uint[_bitArraySize];
         _allBits = new uint[_bitArraySize * _sizeInChunks.Area()];
