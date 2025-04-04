@@ -22,7 +22,6 @@ public sealed class LemmingActionSprite : IDisposable
 
     public Texture2D Texture { get; }
     public LevelPosition AnchorPoint { get; }
-
     public LevelSize SpriteSize { get; }
 
     public LemmingActionSprite(
@@ -43,9 +42,24 @@ public sealed class LemmingActionSprite : IDisposable
         Rectangle sourceRectangle,
         Rectangle destinationRectangle)
     {
+        var dht = new DihedralTransformation(lemming.Orientation, lemming.FacingDirection);
+        var offset = dht.Transform(AnchorPoint, SpriteSize);
+
+        destinationRectangle.X += offset.X;
+        destinationRectangle.Y += offset.Y;
+
+        var rotationAngle = lemming.Orientation.GetRotationAngle();
+        var spriteEffects = lemming.FacingDirection.AsSpriteEffects();
+
         foreach (var layerRenderer in _renderers)
         {
-            layerRenderer.RenderLayer(spriteBatch, lemming, sourceRectangle, destinationRectangle);
+            layerRenderer.RenderLayer(
+                spriteBatch,
+                lemming,
+                sourceRectangle,
+                destinationRectangle,
+                rotationAngle,
+                spriteEffects);
         }
     }
 

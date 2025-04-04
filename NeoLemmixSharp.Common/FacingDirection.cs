@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
+﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -12,6 +13,10 @@ public readonly struct FacingDirection : IIdEquatable<FacingDirection>
     public readonly int Id;
     [Pure]
     public int DeltaX => 1 - (Id << 1);
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public SpriteEffects AsSpriteEffects() => (SpriteEffects)Id;
 
     public FacingDirection(int id)
     {

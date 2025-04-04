@@ -38,15 +38,19 @@ public static class EngineConstants
 
     public const int DownOrientationRotNum = 0;
     public const string DownOrientationName = "Down";
+    public const float DownOrientationRotationAngle = 0.0f;
 
     public const int LeftOrientationRotNum = 1;
     public const string LeftOrientationName = "Left";
+    public const float LeftOrientationRotationAngle = MathF.PI * 1.5f;
 
     public const int UpOrientationRotNum = 2;
     public const string UpOrientationName = "Up";
+    public const float UpOrientationRotationAngle = MathF.PI;
 
     public const int RightOrientationRotNum = 3;
     public const string RightOrientationName = "Right";
+    public const float RightOrientationRotationAngle = MathF.PI * 0.5f;
 
     public const int MaxNumberOfTeams = 6;
     public const int ClassicTeamId = 0;

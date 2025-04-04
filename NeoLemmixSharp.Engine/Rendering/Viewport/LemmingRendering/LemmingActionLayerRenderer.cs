@@ -1,23 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public sealed class LemmingActionLayerRenderer
 {
-    private static readonly GetLemmingColor GetWhite = _ => Color.White;
+    private static readonly GetLayerColor GetWhite = _ => Color.White;
 
-    public delegate Color GetLemmingColor(Lemming item);
+    public delegate Color GetLayerColor(Lemming lemming);
 
     private readonly Texture2D _texture;
 
     private readonly int _layerOffsetX;
-    private readonly GetLemmingColor _getLemmingColor;
+    private readonly GetLayerColor _getLayerColor;
 
-    public LemmingActionLayerRenderer(
-        Texture2D texture)
+    public LemmingActionLayerRenderer(Texture2D texture)
         : this(texture, 0, GetWhite)
     {
     }
@@ -25,20 +23,22 @@ public sealed class LemmingActionLayerRenderer
     public LemmingActionLayerRenderer(
         Texture2D texture,
         int layerOffsetX,
-        GetLemmingColor getLemmingColor)
+        GetLayerColor getLemmingColor)
     {
         _texture = texture;
         _layerOffsetX = layerOffsetX;
-        _getLemmingColor = getLemmingColor;
+        _getLayerColor = getLemmingColor;
     }
 
     public void RenderLayer(
         SpriteBatch spriteBatch,
-        Lemming item,
+        Lemming lemming,
         Rectangle sourceRectangle,
-        Rectangle destinationRectangle)
+        Rectangle destinationRectangle,
+        float rotationAngle,
+        SpriteEffects spriteEffects)
     {
-        var color = _getLemmingColor(item);
+        var color = _getLayerColor(lemming);
         sourceRectangle.X += _layerOffsetX;
 
         spriteBatch.Draw(
@@ -46,6 +46,9 @@ public sealed class LemmingActionLayerRenderer
             destinationRectangle,
             sourceRectangle,
             color,
+            rotationAngle,
+            Vector2.Zero,
+            spriteEffects,
             1.0f);
     }
 }

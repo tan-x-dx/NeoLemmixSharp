@@ -43,6 +43,17 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Orientation Rotate(int clockwiseRotationOffset) => new(RotNum + clockwiseRotationOffset);
 
+    [Pure]
+    public float GetRotationAngle() => RotNum switch
+    {
+        EngineConstants.DownOrientationRotNum => EngineConstants.DownOrientationRotationAngle,
+        EngineConstants.LeftOrientationRotNum => EngineConstants.LeftOrientationRotationAngle,
+        EngineConstants.UpOrientationRotNum => EngineConstants.UpOrientationRotationAngle,
+        EngineConstants.RightOrientationRotNum => EngineConstants.RightOrientationRotationAngle,
+
+        _ => ThrowOrientationOutOfRangeException<float>(this)
+    };
+
     [DoesNotReturn]
     public static T ThrowOrientationOutOfRangeException<T>(Orientation orientation)
     {

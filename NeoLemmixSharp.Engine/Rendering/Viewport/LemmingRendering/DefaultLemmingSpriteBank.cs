@@ -20,11 +20,11 @@ public static class DefaultLemmingSpriteBank
         LemmingActionSprite.Initialise(graphicsDevice);
 
 #pragma warning disable IDE0039
-        LemmingActionLayerRenderer.GetLemmingColor getLemmingHairColor = l => l.State.HairColor;
-        LemmingActionLayerRenderer.GetLemmingColor getLemmingSkinColor = l => l.State.SkinColor;
-        LemmingActionLayerRenderer.GetLemmingColor getLemmingFootColor = l => l.State.FootColor;
-        LemmingActionLayerRenderer.GetLemmingColor getLemmingBodyColor = l => l.State.BodyColor;
-        LemmingActionLayerRenderer.GetLemmingColor getLemmingMiscColor = _ => Color.Magenta;
+        LemmingActionLayerRenderer.GetLayerColor getLemmingHairColor = l => l.State.HairColor;
+        LemmingActionLayerRenderer.GetLayerColor getLemmingSkinColor = l => l.State.SkinColor;
+        LemmingActionLayerRenderer.GetLayerColor getLemmingFootColor = l => l.State.FootColor;
+        LemmingActionLayerRenderer.GetLayerColor getLemmingBodyColor = l => l.State.BodyColor;
+        LemmingActionLayerRenderer.GetLayerColor getLemmingMiscColor = _ => Color.Magenta;
 #pragma warning restore IDE0039
 
         var actionSprites = new LemmingActionSprite[EngineConstants.NumberOfLemmingActions];
