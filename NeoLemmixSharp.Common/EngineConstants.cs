@@ -163,8 +163,8 @@ public static class EngineConstants
 
     #region Position Tracking Data
 
-    public const ChunkSizeType LemmingPositionChunkSize = ChunkSizeType.ChunkSize16;
-    public const ChunkSizeType GadgetPositionChunkSize = ChunkSizeType.ChunkSize64;
+    public const ChunkSize LemmingPositionChunkSize = ChunkSize.ChunkSize16;
+    public const ChunkSize GadgetPositionChunkSize = ChunkSize.ChunkSize64;
 
     #endregion
 
