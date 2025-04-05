@@ -46,15 +46,18 @@ public readonly struct LevelSize : IEquatable<LevelSize>
     public LevelSize Scale(int widthScaleFactor, int heightScaleFactor) => new(W * widthScaleFactor, H * heightScaleFactor, 0);
 
     [Pure]
+    [DebuggerStepThrough]
     public int Area() => W * H;
 
     [Pure]
+    [DebuggerStepThrough]
     public bool EncompassesPoint(LevelPosition p)
     {
         return (uint)p.X < (uint)W &&
                (uint)p.Y < (uint)H;
     }
 
+    [DebuggerStepThrough]
     public void AssertEncompassesPoint(LevelPosition p)
     {
         if (EncompassesPoint(p))
@@ -64,6 +67,7 @@ public readonly struct LevelSize : IEquatable<LevelSize>
     }
 
     [Pure]
+    [DebuggerStepThrough]
     public int GetIndexOfPoint(LevelPosition p) => W * p.Y + p.X;
 
     [DebuggerStepThrough]
@@ -78,7 +82,9 @@ public readonly struct LevelSize : IEquatable<LevelSize>
 
     [DebuggerStepThrough]
     public bool Equals(LevelSize other) => W == other.W && H == other.H;
+    [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is LevelSize other && W == other.W && H == other.H;
+    [DebuggerStepThrough]
     public override int GetHashCode() => 8322929 * W +
                                          5282777 * H +
                                          4685531;

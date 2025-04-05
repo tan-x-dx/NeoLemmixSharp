@@ -70,7 +70,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     public abstract void Tick();
 
     public bool Equals(GadgetBase? other) => Id == (other?.Id ?? -1);
-    public sealed override bool Equals(object? obj) => obj is GadgetBase other && Id == other.Id;
+    public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetBase other && Id == other.Id;
     public sealed override int GetHashCode() => Id;
 
     public static bool operator ==(GadgetBase left, GadgetBase right) => left.Id == right.Id;

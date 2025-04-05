@@ -3,6 +3,8 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -218,12 +220,18 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     public bool IsOneTimeAction() => OneTimeActions.Contains(this);
 
     int IIdEquatable<LemmingAction>.Id => Id;
+    [DebuggerStepThrough]
     public bool Equals(LemmingAction? other) => Id == (other?.Id ?? -1);
-    public sealed override bool Equals(object? obj) => obj is LemmingAction other && Id == other.Id;
+    [DebuggerStepThrough]
+    public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingAction other && Id == other.Id;
+    [DebuggerStepThrough]
     public sealed override int GetHashCode() => Id;
+    [DebuggerStepThrough]
     public sealed override string ToString() => LemmingActionName;
 
+    [DebuggerStepThrough]
     public static bool operator ==(LemmingAction left, LemmingAction right) => left.Id == right.Id;
+    [DebuggerStepThrough]
     public static bool operator !=(LemmingAction left, LemmingAction right) => left.Id != right.Id;
 
     [Pure]

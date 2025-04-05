@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using NeoLemmixSharp.Common.Util.Identity;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
@@ -84,12 +86,18 @@ public sealed class InputAction : IIdEquatable<InputAction>
 
     int IIdEquatable<InputAction>.Id => Id;
 
+    [DebuggerStepThrough]
     public bool Equals(InputAction? other) => Id == (other?.Id ?? -1);
-    public override bool Equals(object? obj) => obj is InputAction other && Id == other.Id;
+    [DebuggerStepThrough]
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is InputAction other && Id == other.Id;
+    [DebuggerStepThrough]
     public override int GetHashCode() => Id;
 
+    [DebuggerStepThrough]
     public override string ToString() => _actionName;
 
+    [DebuggerStepThrough]
     public static bool operator ==(InputAction left, InputAction right) => left.Id == right.Id;
+    [DebuggerStepThrough]
     public static bool operator !=(InputAction left, InputAction right) => left.Id != right.Id;
 }

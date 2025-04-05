@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -112,7 +113,7 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
     }
 
     public bool Equals(HatchGroup? other) => Id == (other?.Id ?? -1);
-    public override bool Equals(object? obj) => obj is HatchGroup other && Id == other.Id;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is HatchGroup other && Id == other.Id;
     public override int GetHashCode() => Id;
 
     public static bool operator ==(HatchGroup left, HatchGroup right) => left.Id == right.Id;

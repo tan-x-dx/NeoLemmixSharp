@@ -50,7 +50,9 @@ public readonly struct LevelPosition : IEquatable<LevelPosition>
     [Pure]
     [DebuggerStepThrough]
     public bool Equals(LevelPosition other) => X == other.X && Y == other.Y;
+    [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is LevelPosition other && X == other.X && Y == other.Y;
+    [DebuggerStepThrough]
     public override int GetHashCode() => 3790121 * X +
                                          2885497 * Y +
                                          1088251;
