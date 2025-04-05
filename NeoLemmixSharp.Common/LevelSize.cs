@@ -30,11 +30,20 @@ public readonly struct LevelSize : IEquatable<LevelSize>
         H = texture.Height;
     }
 
-    [Pure]
-    public LevelSize Transpose() => new(H, W);
+    [DebuggerStepThrough]
+    private LevelSize(int w, int h, byte _)
+    {
+        W = w;
+        H = h;
+    }
 
     [Pure]
-    public LevelSize Scale(int widthScaleFactor, int heightScaleFactor) => new(W * widthScaleFactor, H * heightScaleFactor);
+    [DebuggerStepThrough]
+    public LevelSize Transpose() => new(H, W, 0);
+
+    [Pure]
+    [DebuggerStepThrough]
+    public LevelSize Scale(int widthScaleFactor, int heightScaleFactor) => new(W * widthScaleFactor, H * heightScaleFactor, 0);
 
     [Pure]
     public int Area() => W * H;
