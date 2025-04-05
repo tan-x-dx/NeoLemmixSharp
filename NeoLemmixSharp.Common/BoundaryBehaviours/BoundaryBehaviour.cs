@@ -9,7 +9,6 @@ public sealed class BoundaryBehaviour
     private const int MaxNumberOfRenderIntervals = 2;
     private const int MaxNumberOfRenderCopiesForWrappedLevels = 6;
 
-
     private readonly DimensionType _dimensionType;
     private readonly BoundaryBehaviourType _boundaryBehaviourType;
     private readonly int _levelLength;

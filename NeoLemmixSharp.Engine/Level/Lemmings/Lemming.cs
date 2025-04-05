@@ -448,6 +448,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         CountDownTimer = 0;
         CountDownAction = NoneAction.Instance;
     }
+
     public void OnUpdatePosition()
     {
         Renderer.UpdatePosition();

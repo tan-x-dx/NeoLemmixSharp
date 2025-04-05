@@ -203,16 +203,8 @@ public sealed class LemmingManager :
         _lemmingPositionHelper.UpdateItemPosition(lemming);
         lemming.OnUpdatePosition();
 
-        // If not relevant for this lemming, nothing will happen
-        UpdateZombiePosition(lemming);
-    }
-
-    private void UpdateZombiePosition(Lemming lemming)
-    {
-        if (!lemming.State.IsZombie)
-            return;
-
-        _zombieSpacialHashGrid.UpdateItemPosition(lemming);
+        if (lemming.State.IsZombie)
+            _zombieSpacialHashGrid.UpdateItemPosition(lemming);
     }
 
     public void UpdateLemmingFastForwardState(Lemming lemming)
@@ -386,11 +378,12 @@ public sealed class LemmingManager :
     public int NumberOfLemmings => _lemmings.Length;
     ReadOnlySpan<Lemming> IItemManager<Lemming>.AllItems => new(_lemmings);
     int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Length;
-    int IItemManager<Lemming>.NumberOfItems => _lemmings.Length;
-    int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
-
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
+
+    int IItemManager<Lemming>.NumberOfItems => _lemmings.Length;
+
+    int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
     int IPerfectHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
     HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
     void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer)

@@ -3,17 +3,10 @@
 namespace NeoLemmixSharp.Common.BoundaryBehaviours;
 
 [DebuggerDisplay("S: {Start}, L: {Length}, O: {Offset}")]
-public readonly ref struct ClipInterval
+[method: DebuggerStepThrough]
+public readonly ref struct ClipInterval(int start, int length, int offset)
 {
-    public readonly int Start;
-    public readonly int Length;
-    public readonly int Offset;
-
-    [DebuggerStepThrough]
-    public ClipInterval(int start, int length, int offset)
-    {
-        Start = start;
-        Length = length;
-        Offset = offset;
-    }
+    public readonly int Start = start;
+    public readonly int Length = length;
+    public readonly int Offset = offset;
 }

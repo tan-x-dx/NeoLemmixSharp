@@ -26,13 +26,14 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
 
         BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 
+        var span = _bits.AsSpan();
         if (fullSet)
         {
-            BitArrayHelpers.PopulateBitArray(_bits.AsSpan(), numberOfItems);
+            BitArrayHelpers.PopulateBitArray(span, numberOfItems);
         }
         else
         {
-            _bits.AsSpan().Clear();
+            span.Clear();
         }
 
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());

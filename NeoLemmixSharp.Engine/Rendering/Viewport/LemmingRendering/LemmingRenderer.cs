@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 
@@ -16,8 +15,9 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     private Lemming _lemming;
     private LemmingActionSprite _actionSprite;
-    private Rectangle _spriteBounds;
-    private Rectangle _previousSpriteBounds;
+
+    private LevelRegion _spriteBounds;
+    private LevelRegion _previousSpriteBounds;
 
     private bool _shouldRenderCountDown;
 
@@ -26,8 +26,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     public int RendererId { get; set; }
     public int ItemId => _lemming.Id;
 
-    public LevelRegion CurrentBounds => new(_spriteBounds);
-    public LevelRegion PreviousBounds => new(_previousSpriteBounds);
+    public LevelRegion CurrentBounds => _spriteBounds;
+    public LevelRegion PreviousBounds => _previousSpriteBounds;
 
     public LemmingRenderer(Lemming lemming)
     {
@@ -41,7 +41,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         var p = _lemming.LevelPosition - spriteOffset;
 
         _previousSpriteBounds = _spriteBounds;
-        _spriteBounds = Helpers.CreateRectangle(p, dht.Transform(_actionSprite.SpriteSize));
+        _spriteBounds = new LevelRegion(p, dht.Transform(_actionSprite.SpriteSize));
 
         LevelScreenRenderer.Instance.LevelRenderer.UpdateSpritePosition(this);
     }
@@ -85,7 +85,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         _shouldRenderCountDown = displayTimer;
     }
 
-    public Rectangle GetSpriteBounds() => _spriteBounds;
+    public Rectangle GetSpriteBounds() => _spriteBounds.ToRectangle();
 
     public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY)
     {
@@ -163,6 +163,12 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
         var sourceRectangle = CommonSprites.RectangleForWhitePixelAlpha(0xff);
 
+        var dht = new DihedralTransformation(_lemming.Orientation, _lemming.FacingDirection);
+        var anchorPoint = dht.Transform(_actionSprite.AnchorPoint, _actionSprite.SpriteSize);
+
+        screenX += anchorPoint.X;
+        screenY += anchorPoint.Y;
+
         for (var i = 0; i < EngineConstants.NumberOfParticles; i++)
         {
             var offset = ParticleHelper.GetParticleOffsets(_lemming.ParticleTimer, i);
@@ -171,8 +177,6 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
                 continue;
 
             var color = explosionParticleColors[i & EngineConstants.NumberOfExplosionParticleColorsMask];
-
-            offset += _actionSprite.AnchorPoint;
 
             destRectangle.X = screenX + offset.X;
             destRectangle.Y = screenY + offset.Y;
