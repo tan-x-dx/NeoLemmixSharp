@@ -41,7 +41,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         var p = _lemming.LevelPosition - spriteOffset;
 
         _previousSpriteBounds = _spriteBounds;
-        _spriteBounds = Helpers.CreateRectangle(p, _actionSprite.SpriteSize);
+        _spriteBounds = Helpers.CreateRectangle(p, dht.Transform(_actionSprite.SpriteSize));
 
         LevelScreenRenderer.Instance.LevelRenderer.UpdateSpritePosition(this);
     }
