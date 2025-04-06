@@ -7,7 +7,7 @@ public sealed class TextureButton : Component
 {
     private readonly Texture2D _texture;
 
-    public float ScaleMulitplier { get; set; } = 1f;
+    public float ScaleMultiplier { get; set; } = 1f;
 
     public TextureButton(int x, int y, Texture2D texture)
         : base(x, y, texture.Width, texture.Height, null)
@@ -27,8 +27,8 @@ public sealed class TextureButton : Component
         set { }
     }
 
-    public int ScaledWidth => (int)(0.5f + _texture.Width * ScaleMulitplier);
-    public int ScaledHeight => (int)(0.5f + _texture.Height * ScaleMulitplier);
+    public int ScaledWidth => (int)(0.5f + _texture.Width * ScaleMultiplier);
+    public int ScaledHeight => (int)(0.5f + _texture.Height * ScaleMultiplier);
 
     protected override void RenderComponent(SpriteBatch spriteBatch)
     {

@@ -24,25 +24,25 @@ public sealed class MainPage : PageBase
 
         _playButton = new TextureButton(0, 0, MenuSpriteBank.SignPlay)
         {
-            ScaleMulitplier = menuScaleMultiplier,
+            ScaleMultiplier = menuScaleMultiplier,
         };
         _playButton.MouseDown.RegisterMouseEvent(PlayButtonClick);
 
         _levelSelectButton = new TextureButton(0, 0, MenuSpriteBank.SignLevelSelect)
         {
-            ScaleMulitplier = menuScaleMultiplier,
+            ScaleMultiplier = menuScaleMultiplier,
         };
         _levelSelectButton.MouseDown.RegisterMouseEvent(LevelSelectButtonClick);
 
         _configButton = new TextureButton(0, 0, MenuSpriteBank.SignConfig)
         {
-            ScaleMulitplier = menuScaleMultiplier,
+            ScaleMultiplier = menuScaleMultiplier,
         };
         _configButton.MouseDown.RegisterMouseEvent(ConfigButtonClick);
 
         _quitButton = new TextureButton(0, 0, MenuSpriteBank.SignQuit)
         {
-            ScaleMulitplier = menuScaleMultiplier,
+            ScaleMultiplier = menuScaleMultiplier,
         };
         _quitButton.MouseDown.RegisterMouseEvent(QuitButtonClick);
     }
