@@ -13,9 +13,7 @@ public readonly struct Interval : IEquatable<Interval>
     public Interval(int start, int length)
     {
         Start = start;
-        Length = length;
-        if (length < 0)
-            Length = 0;
+        Length = length < 0 ? 0 : length;
     }
 
     public bool Equals(Interval other) => Start == other.Start && Length == other.Length;

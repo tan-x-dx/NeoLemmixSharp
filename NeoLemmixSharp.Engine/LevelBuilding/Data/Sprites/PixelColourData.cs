@@ -29,27 +29,14 @@ public readonly struct PixelColorData
         _colorData = colorData;
     }
 
-    public Color this[Point p]
+    public ref Color this[Point p]
     {
         get
         {
             Size.AssertEncompassesPoint(p);
             var index = Size.GetIndexOfPoint(p);
-            return _colorData[index];
+            return ref _colorData[index];
         }
-        set
-        {
-            Size.AssertEncompassesPoint(p);
-            var index = Size.GetIndexOfPoint(p);
-            _colorData[index] = value;
-        }
-    }
-
-    public Texture2D CreateTexture(GraphicsDevice graphicsDevice)
-    {
-        var result = new Texture2D(graphicsDevice, Size.W, Size.H);
-        result.SetData(_colorData);
-        return result;
     }
 
     public PixelColorData Trim()

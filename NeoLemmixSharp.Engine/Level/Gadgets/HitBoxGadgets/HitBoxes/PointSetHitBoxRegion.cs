@@ -49,8 +49,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
         levelPosition -= _bounds.Position;
         var index = IndexFor(levelPosition);
 
-        return (uint)levelPosition.X < (uint)_bounds.W &&
-               (uint)levelPosition.Y < (uint)_bounds.H &&
+        return _bounds.Size.EncompassesPoint(levelPosition) &&
                BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_levelPositionBits), index);
     }
 
@@ -63,14 +62,9 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
         var index2 = IndexFor(p2);
         var span = new ReadOnlySpan<uint>(_levelPositionBits);
 
-        var boundsUw = (uint)_bounds.W;
-        var boundsUh = (uint)_bounds.H;
-
-        return ((uint)p1.X < boundsUw &&
-                (uint)p1.Y < boundsUh &&
+        return (_bounds.Size.EncompassesPoint(p1) &&
                 BitArrayHelpers.GetBit(span, index1)) ||
-               ((uint)p2.X < boundsUw &&
-                (uint)p2.Y < boundsUh &&
+               (_bounds.Size.EncompassesPoint(p2) &&
                 BitArrayHelpers.GetBit(span, index2));
     }
 

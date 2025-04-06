@@ -199,7 +199,7 @@ public readonly ref struct TerrainBuilder
             sourcePixelColor = BlendColors(terrainData.Tint.Value, sourcePixelColor);
         }
 
-        var targetPixelColor = targetPixelColorData[p0];
+        ref var targetPixelColor = ref targetPixelColorData[p0];
 
         if (terrainData.Erase)
         {
@@ -216,8 +216,6 @@ public readonly ref struct TerrainBuilder
         {
             targetPixelColor = BlendColors(sourcePixelColor, targetPixelColor);
         }
-
-        targetPixelColorData[p0] = targetPixelColor;
 
         ref var targetPixelData = ref _terrainPixels[p0];
 

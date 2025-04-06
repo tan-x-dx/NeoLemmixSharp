@@ -18,11 +18,11 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
-    public Size Transform(Size levelSize)
+    public Size Transform(Size size)
     {
         return Orientation.IsHorizontal()
-            ? levelSize.Transpose()
-            : levelSize;
+            ? size.Transpose()
+            : size;
     }
 
     [Pure]
