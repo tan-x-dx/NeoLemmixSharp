@@ -46,16 +46,7 @@ public sealed class TerrainGroupReader : NeoLemmixDataReader
             return result;
         }
 
-        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
-
-        var alternateLookup = _tokenActions.GetAlternateLookup<ReadOnlySpan<char>>();
-
-        if (alternateLookup.TryGetValue(firstToken, out var tokenAction))
-        {
-            tokenAction(line, secondToken, secondTokenIndex);
-        }
-
-        return false;
+        return ProcessLineTokens(line);
     }
 
     private void SetName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

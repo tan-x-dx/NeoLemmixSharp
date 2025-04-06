@@ -4,7 +4,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Reade
 
 public abstract class NeoLemmixDataReader
 {
-    protected readonly Dictionary<string, NxlvReadingHelpers.TokenAction> _tokenActions = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, NxlvReadingHelpers.TokenAction> _tokenActions = new(StringComparer.OrdinalIgnoreCase);
 
     public bool FinishedReading { get; protected set; }
     public string IdentifierToken { get; }
@@ -39,6 +39,11 @@ public abstract class NeoLemmixDataReader
     public abstract bool BeginReading(ReadOnlySpan<char> line);
 
     public virtual bool ReadNextLine(ReadOnlySpan<char> line)
+    {
+        return ProcessLineTokens(line);
+    }
+
+    protected bool ProcessLineTokens(ReadOnlySpan<char> line)
     {
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 

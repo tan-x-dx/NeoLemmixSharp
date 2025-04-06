@@ -278,7 +278,7 @@ public readonly ref struct TerrainBuilder
             RootDirectoryManager.StyleFolderDirectory,
             terrainArchetypeData.Style,
             DefaultFileExtensions.TerrainFolderName,
-            terrainArchetypeData.TerrainPiece!);
+            terrainArchetypeData.TerrainPiece);
 
         var pngPath = Path.ChangeExtension(rootFilePath, "png");
 
