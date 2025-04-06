@@ -19,7 +19,7 @@ public sealed class TerrainManager
     [Pure]
     public PixelType PixelTypeAtPosition(Point levelPosition)
     {
-        if (_pixels.EncompasesPoint(levelPosition))
+        if (_pixels.Size.EncompassesPoint(levelPosition))
             return _pixels[levelPosition];
 
         return PixelType.Void;
@@ -57,7 +57,7 @@ public sealed class TerrainManager
         FacingDirection facingDirection,
         Point pixelToErase)
     {
-        if (!_pixels.EncompasesPoint(pixelToErase))
+        if (!_pixels.Size.EncompassesPoint(pixelToErase))
             return;
 
         ref var pixel = ref _pixels[pixelToErase];
@@ -80,7 +80,7 @@ public sealed class TerrainManager
 
     public void SetSolidPixel(Point pixelToSet, Color color)
     {
-        if (!_pixels.EncompasesPoint(pixelToSet))
+        if (!_pixels.Size.EncompassesPoint(pixelToSet))
             return;
 
         ref var pixel = ref _pixels[pixelToSet];
@@ -102,7 +102,7 @@ public sealed class TerrainManager
 
     public void SetBlockerMaskPixel(Point pixelToSet, PixelType pixelTypeMask, bool set)
     {
-        if (!_pixels.EncompasesPoint(pixelToSet))
+        if (!_pixels.Size.EncompassesPoint(pixelToSet))
             return;
 
         ref var pixel = ref _pixels[pixelToSet];

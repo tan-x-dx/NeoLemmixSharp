@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -22,13 +21,6 @@ public readonly struct Size : IEquatable<Size>
     }
 
     [DebuggerStepThrough]
-    public Size(Texture2D texture)
-    {
-        W = texture.Width;
-        H = texture.Height;
-    }
-
-    [DebuggerStepThrough]
     private Size(int w, int h, byte _)
     {
         W = w;
@@ -41,7 +33,13 @@ public readonly struct Size : IEquatable<Size>
 
     [Pure]
     [DebuggerStepThrough]
-    public Size Scale(int widthScaleFactor, int heightScaleFactor) => new(W * widthScaleFactor, H * heightScaleFactor, 0);
+    public Size Scale(int widthScaleFactor, int heightScaleFactor)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(widthScaleFactor, nameof(widthScaleFactor));
+        ArgumentOutOfRangeException.ThrowIfNegative(heightScaleFactor, nameof(heightScaleFactor));
+
+        return new(W * widthScaleFactor, H * heightScaleFactor, 0);
+    }
 
     [Pure]
     [DebuggerStepThrough]
@@ -56,7 +54,7 @@ public readonly struct Size : IEquatable<Size>
     }
 
     [DebuggerStepThrough]
-    public void AssertEncompassesPoint(Point p)
+    internal void AssertEncompassesPoint(Point p)
     {
         if (EncompassesPoint(p))
             return;

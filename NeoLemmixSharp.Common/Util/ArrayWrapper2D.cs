@@ -30,19 +30,19 @@ public readonly struct ArrayWrapper2D<T>
         Size arrayDimensions,
         Region region)
     {
-        var spanWidth = arrayDimensions.W;
-        var spanHeight = arrayDimensions.H;
+        var arrayWidth = arrayDimensions.W;
+        var arrayHeight = arrayDimensions.H;
         var x = region.X;
         var y = region.Y;
         var width = region.W;
         var height = region.H;
 
-        if (spanWidth <= 0 || spanHeight <= 0 ||
-            spanWidth * spanHeight != data.Length ||
+        if (arrayWidth < 0 || arrayHeight < 0 ||
+            arrayWidth * arrayHeight != data.Length ||
             x < 0 || y < 0 ||
-            width <= 0 || height <= 0 ||
-            x + width > spanWidth ||
-            y + height > spanHeight)
+            width < 0 || height < 0 ||
+            x + width > arrayWidth ||
+            y + height > arrayHeight)
             throw new ArgumentException("Invalid dimensions");
 
         _data = data;
@@ -50,13 +50,11 @@ public readonly struct ArrayWrapper2D<T>
         _subRegion = region;
     }
 
-    public bool EncompasesPoint(Point pos) => _subRegion.Size.EncompassesPoint(pos);
-
     public ref T this[Point pos]
     {
         get
         {
-            _subRegion.Size.AssertEncompassesPoint(pos);
+            Size.AssertEncompassesPoint(pos);
             var index = _arrayDimensions.GetIndexOfPoint(pos + _subRegion.Position);
             return ref _data[index];
         }
