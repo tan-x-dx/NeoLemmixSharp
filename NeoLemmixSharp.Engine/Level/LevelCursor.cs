@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
@@ -16,13 +15,13 @@ public sealed class LevelCursor
     private int _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre;
 
     public int NumberOfLemmingsUnderCursor { get; private set; }
-    public Common.Point CursorPosition { private get; set; }
+    public Point CursorPosition { private get; set; }
 
     public Lemming? CurrentlyHighlightedLemming { get; private set; }
 
-    public Color Color1 { get; private set; }
-    public Color Color2 { get; private set; }
-    public Color Color3 { get; private set; }
+    public Microsoft.Xna.Framework.Color Color1 { get; private set; }
+    public Microsoft.Xna.Framework.Color Color2 { get; private set; }
+    public Microsoft.Xna.Framework.Color Color3 { get; private set; }
 
     public LevelCursor()
     {
@@ -73,8 +72,8 @@ public sealed class LevelCursor
 
         // Cursor position is the bottom right pixel of the middle square in the cursor sprite.
         // Hence, for the top left position, add one extra pixel to fix offset.
-        var topLeftCursorPixel = new Common.Point(c.X - (EngineConstants.CursorRadius + 1), c.Y - (EngineConstants.CursorRadius + 1));
-        var bottomRightCursorPixel = new Common.Point(c.X + EngineConstants.CursorRadius, c.Y + EngineConstants.CursorRadius);
+        var topLeftCursorPixel = new Point(c.X - (EngineConstants.CursorRadius + 1), c.Y - (EngineConstants.CursorRadius + 1));
+        var bottomRightCursorPixel = new Point(c.X + EngineConstants.CursorRadius, c.Y + EngineConstants.CursorRadius);
         var levelRegion = new Region(topLeftCursorPixel, bottomRightCursorPixel);
 
         LevelScreen.LemmingManager.GetAllLemmingsNearRegion(scratchSpaceSpan, levelRegion, out result);

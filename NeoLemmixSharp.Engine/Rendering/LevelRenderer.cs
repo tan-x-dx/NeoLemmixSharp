@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
@@ -11,6 +10,8 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Color = Microsoft.Xna.Framework.Color;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace NeoLemmixSharp.Engine.Rendering;
 
@@ -119,7 +120,7 @@ public sealed class LevelRenderer :
         {
             foreach (var verticalRenderInterval in verticalRenderIntervals)
             {
-                var p = new Common.Point(horizontalRenderInterval.ViewPortStart, verticalRenderInterval.ViewPortStart);
+                var p = new Point(horizontalRenderInterval.ViewPortStart, verticalRenderInterval.ViewPortStart);
                 var s = new Size(horizontalRenderInterval.ViewPortLength, verticalRenderInterval.ViewPortLength);
                 var region = new Region(p, s);
 

@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain;
 
@@ -17,7 +17,7 @@ public sealed class TerrainManager
     }
 
     [Pure]
-    public PixelType PixelTypeAtPosition(Common.Point levelPosition)
+    public PixelType PixelTypeAtPosition(Point levelPosition)
     {
         if (_pixels.EncompasesPoint(levelPosition))
             return _pixels[levelPosition];
@@ -28,7 +28,7 @@ public sealed class TerrainManager
     [Pure]
     public bool PixelIsSolidToLemming(
         Lemming lemming,
-        Common.Point levelPosition)
+        Point levelPosition)
     {
         return PixelTypeAtPosition(levelPosition).IsSolidToOrientation(lemming.Orientation);
     }
@@ -37,7 +37,7 @@ public sealed class TerrainManager
     public bool PixelIsIndestructibleToLemming(
         Lemming lemming,
         IDestructionMask destructionMask,
-        Common.Point levelPosition)
+        Point levelPosition)
     {
         var pixel = PixelTypeAtPosition(levelPosition);
 
@@ -46,7 +46,7 @@ public sealed class TerrainManager
     }
 
     [Pure]
-    public bool PixelIsSteel(Common.Point levelPosition)
+    public bool PixelIsSteel(Point levelPosition)
     {
         return PixelTypeAtPosition(levelPosition).IsSteel();
     }
@@ -55,7 +55,7 @@ public sealed class TerrainManager
         Orientation orientation,
         IDestructionMask destructionMask,
         FacingDirection facingDirection,
-        Common.Point pixelToErase)
+        Point pixelToErase)
     {
         if (!_pixels.EncompasesPoint(pixelToErase))
             return;
@@ -78,7 +78,7 @@ public sealed class TerrainManager
             0);
     }
 
-    public void SetSolidPixel(Common.Point pixelToSet, Color color)
+    public void SetSolidPixel(Point pixelToSet, Color color)
     {
         if (!_pixels.EncompasesPoint(pixelToSet))
             return;
@@ -100,7 +100,7 @@ public sealed class TerrainManager
             PixelType.SolidToAllOrientations);
     }
 
-    public void SetBlockerMaskPixel(Common.Point pixelToSet, PixelType pixelTypeMask, bool set)
+    public void SetBlockerMaskPixel(Point pixelToSet, PixelType pixelTypeMask, bool set)
     {
         if (!_pixels.EncompasesPoint(pixelToSet))
             return;
@@ -130,7 +130,7 @@ public sealed class TerrainManager
             var y2 = y0 * spanWidth;
             for (var x0 = spanWidth - 1; x0 >= 0; x0--)
             {
-                pixelSpan[y2 + x0] = PixelTypeAtPosition(new Common.Point(x0 + xOffset, y1));
+                pixelSpan[y2 + x0] = PixelTypeAtPosition(new Point(x0 + xOffset, y1));
             }
         }
     }

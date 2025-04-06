@@ -1,15 +1,15 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Teams;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public static class DefaultLemmingSpriteBank
 {
-    private delegate LemmingActionSprite GenerateLayers(Texture2D texture, Common.Point anchorPoint, Size spriteSize);
+    private delegate LemmingActionSprite GenerateLayers(Texture2D texture, Point anchorPoint, Size spriteSize);
 
     public static LemmingSpriteBank DefaultLemmingSprites { get; private set; } = null!;
 
@@ -70,7 +70,7 @@ public static class DefaultLemmingSpriteBank
 
         return;
 
-        void CreateOneLayerTrueColorSprite(LemmingAction action, Common.Point anchorPoint)
+        void CreateOneLayerTrueColorSprite(LemmingAction action, Point anchorPoint)
         {
             CreateSprite(
                 action,
@@ -87,7 +87,7 @@ public static class DefaultLemmingSpriteBank
                 });
         }
 
-        void CreateFourLayerSprite(LemmingAction action, Common.Point anchorPoint)
+        void CreateFourLayerSprite(LemmingAction action, Point anchorPoint)
         {
             CreateSprite(
                 action,
@@ -107,7 +107,7 @@ public static class DefaultLemmingSpriteBank
                 });
         }
 
-        void CreateFiveLayerSprite(LemmingAction action, Common.Point anchorPoint)
+        void CreateFiveLayerSprite(LemmingAction action, Point anchorPoint)
         {
             CreateSprite(
                 action,
@@ -128,7 +128,7 @@ public static class DefaultLemmingSpriteBank
                 });
         }
 
-        void CreateFiveLayerTrueColorSprite(LemmingAction action, Common.Point anchorPoint)
+        void CreateFiveLayerTrueColorSprite(LemmingAction action, Point anchorPoint)
         {
             CreateSprite(
                 action,
@@ -149,7 +149,7 @@ public static class DefaultLemmingSpriteBank
                 });
         }
 
-        void CreateSixLayerTrueColorSprite(LemmingAction action, Common.Point anchorPoint)
+        void CreateSixLayerTrueColorSprite(LemmingAction action, Point anchorPoint)
         {
             CreateSprite(
                 action,
@@ -174,7 +174,7 @@ public static class DefaultLemmingSpriteBank
         void CreateSprite(
             LemmingAction action,
             int numberOfLayers,
-            Common.Point anchorPoint,
+            Point anchorPoint,
             GenerateLayers spriteLayerGenerator)
         {
             CreateActionSprites(
@@ -192,7 +192,7 @@ public static class DefaultLemmingSpriteBank
         Span<LemmingActionSprite> actionSprites,
         LemmingAction action,
         int numberOfLayers,
-        Common.Point anchorPoint,
+        Point anchorPoint,
         GenerateLayers spriteLayerGenerator)
     {
         var texture = contentManager.Load<Texture2D>($"sprites/lemming/{action.LemmingActionSpriteFileName}");

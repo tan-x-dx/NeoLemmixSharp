@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -52,7 +52,6 @@ public readonly ref struct TerrainBuilder
         {
             ProcessTerrainGroup(terrainGroup);
         }
-
 
         var textureData = new PixelColorData(_levelData.LevelDimensions, _terrainColors.Array);
 
@@ -171,7 +170,7 @@ public readonly ref struct TerrainBuilder
         {
             for (var x = 0; x < sourceSize.W; x++)
             {
-                var p = new Common.Point(x, y);
+                var p = new Point(x, y);
                 var sourcePixelColor = sourcePixelColorData[p];
                 if (sourcePixelColor == Color.Transparent)
                     continue;
@@ -193,7 +192,7 @@ public readonly ref struct TerrainBuilder
         ITerrainArchetypeData terrainArchetypeData,
         PixelColorData targetPixelColorData,
         Color sourcePixelColor,
-        Common.Point p0)
+        Point p0)
     {
         if (terrainData.Tint.HasValue)
         {

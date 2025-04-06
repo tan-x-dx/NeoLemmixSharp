@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
@@ -31,7 +31,7 @@ public sealed class PageTransitionRenderer : IDisposable
 
         spriteBatch.Draw(
             _fadeTexture,
-            Helpers.CreateRectangle(new Common.Point(), _windowSize),
+            Helpers.CreateRectangle(new Point(), _windowSize),
             CommonSprites.RectangleForWhitePixelAlpha(_pageTransition.TransitionAlpha),
             Color.Black);
     }

@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
 
@@ -138,7 +138,7 @@ public sealed class TerrainReader : NeoLemmixDataReader
             Style = _currentTerrainData.Style ?? string.Empty,
             TerrainPiece = _currentTerrainData.TerrainPiece,
 
-            Position = new Common.Point(_currentTerrainData.X, _currentTerrainData.Y),
+            Position = new Point(_currentTerrainData.X, _currentTerrainData.Y),
 
             NoOverwrite = _currentTerrainData.NoOverwrite,
             Orientation = dht.Orientation,
