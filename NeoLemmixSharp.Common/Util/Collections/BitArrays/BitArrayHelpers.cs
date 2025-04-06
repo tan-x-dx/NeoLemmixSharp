@@ -60,8 +60,8 @@ public static class BitArrayHelpers
     [Pure]
     public static bool GetBit(ReadOnlySpan<uint> bits, int index)
     {
-        var value = bits[index >> Shift];
-        value >>= index;
+        var value = bits[index >>> Shift];
+        value >>>= index;
         return (value & 1U) != 0U;
     }
 
@@ -75,10 +75,10 @@ public static class BitArrayHelpers
     /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously set</returns>
     internal static bool SetBit(Span<uint> bits, int index, ref int popCount)
     {
-        ref var arrayValue = ref bits[index >> Shift];
+        ref var arrayValue = ref bits[index >>> Shift];
         var oldValue = arrayValue;
         arrayValue |= 1U << index;
-        var delta = (arrayValue ^ oldValue) >> index;
+        var delta = (arrayValue ^ oldValue) >>> index;
         popCount += (int)delta;
         return (delta & 1U) != 0U;
     }
@@ -90,7 +90,7 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to set</param>
     public static void SetBit(Span<uint> bits, int index)
     {
-        bits[index >> Shift] |= (1U << index);
+        bits[index >>> Shift] |= (1U << index);
     }
 
     /// <summary>
@@ -103,10 +103,10 @@ public static class BitArrayHelpers
     /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously clear</returns>
     internal static bool ClearBit(Span<uint> bits, int index, ref int popCount)
     {
-        ref var arrayValue = ref bits[index >> Shift];
+        ref var arrayValue = ref bits[index >>> Shift];
         var oldValue = arrayValue;
         arrayValue &= ~(1U << index);
-        var delta = (arrayValue ^ oldValue) >> index;
+        var delta = (arrayValue ^ oldValue) >>> index;
         popCount -= (int)delta;
         return (delta & 1U) != 0U;
     }
@@ -118,7 +118,7 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to clear</param>
     public static void ClearBit(Span<uint> bits, int index)
     {
-        bits[index >> Shift] &= ~(1U << index);
+        bits[index >>> Shift] &= ~(1U << index);
     }
 
     /// <summary>
@@ -130,7 +130,7 @@ public static class BitArrayHelpers
     /// <returns>The bool equivalent of the binary value (0 or 1) of the bit after toggling</returns>
     internal static bool ToggleBit(Span<uint> bits, int index, ref int popCount)
     {
-        ref var arrayValue = ref bits[index >> Shift];
+        ref var arrayValue = ref bits[index >>> Shift];
         var oldValue = arrayValue;
         arrayValue ^= 1U << index;
         var result = arrayValue > oldValue;

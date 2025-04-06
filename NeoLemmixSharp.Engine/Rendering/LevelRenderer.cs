@@ -49,7 +49,7 @@ public sealed class LevelRenderer :
 
         _spriteSpacialHashGrid = new SpriteSpacialHashGrid(
             this,
-            ChunkSizeType.ChunkSize64,
+            ChunkSize.ChunkSize64,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 

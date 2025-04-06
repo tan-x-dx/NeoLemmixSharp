@@ -130,9 +130,10 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
+        var pixelTypeInt = (uint)pixelType;
         var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
-                                 ((2 + orientation.RotNum) & 3);
-        var oppositeArrowMask = (PixelType)(1 << oppositeArrowShift);
-        return (pixelType & oppositeArrowMask) == PixelType.Empty;
+                                 orientation.GetOpposite().RotNum;
+
+        return ((pixelTypeInt >>> oppositeArrowShift) & 1U) == 0U;
     }
 }

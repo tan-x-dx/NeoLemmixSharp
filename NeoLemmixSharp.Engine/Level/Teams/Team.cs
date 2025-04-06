@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Teams;
 
@@ -38,9 +40,14 @@ public sealed class Team : IIdEquatable<Team>
     }
 
     int IIdEquatable<Team>.Id => Id;
+    [DebuggerStepThrough]
     public bool Equals(Team? other) => Id == (other?.Id ?? -1);
-    public override bool Equals(object? obj) => obj is Team other && Id == other.Id;
+    [DebuggerStepThrough]
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Team other && Id == other.Id;
+    [DebuggerStepThrough]
     public override int GetHashCode() => Id;
+    [DebuggerStepThrough]
     public static bool operator ==(Team left, Team right) => left.Id == right.Id;
+    [DebuggerStepThrough]
     public static bool operator !=(Team left, Team right) => left.Id != right.Id;
 }

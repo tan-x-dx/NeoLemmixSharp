@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
@@ -116,7 +115,7 @@ public sealed class LevelCursor
         var dx = LevelScreen.HorizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
         var dy = LevelScreen.VerticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
 
-        return Math.Abs(dx) < 5 && Math.Abs(dy) < 5;
+        return Math.Abs(dx) < EngineConstants.CursorRadius && Math.Abs(dy) < EngineConstants.CursorRadius;
     }
 
     private bool LemmingIsAbleToBeSelected(Lemming lemming)

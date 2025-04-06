@@ -3,17 +3,10 @@
 namespace NeoLemmixSharp.Common.BoundaryBehaviours;
 
 [DebuggerDisplay("S: {ViewPortStart}, L: {ViewPortLength}, O: {Offset}")]
-public readonly struct ViewPortRenderInterval
+[method: DebuggerStepThrough]
+public readonly struct ViewPortRenderInterval(int viewPortStart, int viewPortLength, int offset)
 {
-    public readonly int ViewPortStart;
-    public readonly int ViewPortLength;
-    public readonly int Offset;
-
-    [DebuggerStepThrough]
-    public ViewPortRenderInterval(int viewPortStart, int viewPortLength, int offset)
-    {
-        ViewPortStart = viewPortStart;
-        ViewPortLength = viewPortLength;
-        Offset = offset;
-    }
+    public readonly int ViewPortStart = viewPortStart;
+    public readonly int ViewPortLength = viewPortLength;
+    public readonly int Offset = offset;
 }

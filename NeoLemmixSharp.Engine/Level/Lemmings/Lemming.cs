@@ -10,6 +10,8 @@ using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
@@ -446,6 +448,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         CountDownTimer = 0;
         CountDownAction = NoneAction.Instance;
     }
+
     public void OnUpdatePosition()
     {
         Renderer.UpdatePosition();
@@ -574,11 +577,16 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
 
     int IIdEquatable<Lemming>.Id => Id;
 
+    [DebuggerStepThrough]
     public bool Equals(Lemming? other) => Id == (other?.Id ?? -1);
-    public override bool Equals(object? obj) => obj is Lemming other && Id == other.Id;
+    [DebuggerStepThrough]
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Lemming other && Id == other.Id;
+    [DebuggerStepThrough]
     public override int GetHashCode() => Id;
 
+    [DebuggerStepThrough]
     public static bool operator ==(Lemming left, Lemming right) => left.Id == right.Id;
+    [DebuggerStepThrough]
     public static bool operator !=(Lemming left, Lemming right) => left.Id != right.Id;
 
     [InlineArray(JumperAction.JumperPositionCount)]

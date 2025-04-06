@@ -6,14 +6,22 @@ public static class HitBoxGadgetReader
 {
     public static HitBoxGadgetArchetypeBuilder ReadGadget(string styleName, string pieceName, RawFileData rawFileData)
     {
-        throw new NotImplementedException();
 
-        /*return new HitBoxGadgetArchetypeBuilder
+
+
+        /*
+
+        var result = new HitBoxGadgetArchetypeBuilder
         {
             StyleName = styleName,
             PieceName = pieceName,
 
 
         };*/
+
+
+
+
+        throw new NotImplementedException();
     }
 }

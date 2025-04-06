@@ -3,6 +3,8 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -170,12 +172,18 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     public abstract void AssignToLemming(Lemming lemming);
 
     int IIdEquatable<LemmingSkill>.Id => Id;
+    [DebuggerStepThrough]
     public bool Equals(LemmingSkill? other) => Id == (other?.Id ?? -1);
-    public sealed override bool Equals(object? obj) => obj is LemmingSkill other && Id == other.Id;
+    [DebuggerStepThrough]
+    public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingSkill other && Id == other.Id;
+    [DebuggerStepThrough]
     public sealed override int GetHashCode() => Id;
+    [DebuggerStepThrough]
     public sealed override string ToString() => LemmingSkillName;
 
+    [DebuggerStepThrough]
     public static bool operator ==(LemmingSkill left, LemmingSkill right) => left.Id == right.Id;
+    [DebuggerStepThrough]
     public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.Id != right.Id;
 
     [Pure]
@@ -200,7 +208,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     [InlineArray(LemmingSkillBitBufferLength)]
     public struct LemmingSkillBitBuffer : IBitBuffer
     {
-        private const int LemmingSkillBitBufferLength = (EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >> BitArrayHelpers.Shift;
+        private const int LemmingSkillBitBufferLength = (EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >>> BitArrayHelpers.Shift;
 
         private uint _0;
 

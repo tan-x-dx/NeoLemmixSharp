@@ -1,9 +1,9 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
@@ -14,15 +14,6 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     public static readonly Orientation Up = new(EngineConstants.UpOrientationRotNum);
     public static readonly Orientation Right = new(EngineConstants.RightOrientationRotNum);
 
-    private static ReadOnlySpan<int> RawInts =>
-    [
-        EngineConstants.DownOrientationRotNum,
-        EngineConstants.LeftOrientationRotNum,
-        EngineConstants.UpOrientationRotNum,
-        EngineConstants.RightOrientationRotNum
-    ];
-    public static ReadOnlySpan<Orientation> AllItems => MemoryMarshal.Cast<int, Orientation>(RawInts);
-
     public readonly int RotNum;
 
     public Orientation(int rotNum)
@@ -31,27 +22,39 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public bool IsParallelTo(Orientation other) => ((RotNum ^ other.RotNum ^ 1) & 1) != 0;
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public bool IsPerpendicularTo(Orientation other) => ((RotNum ^ other.RotNum) & 1) != 0;
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public bool IsHorizontal() => (RotNum & 1) != 0;
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public Orientation RotateClockwise() => new(RotNum + 1);
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public Orientation GetOpposite() => new(RotNum + 2);
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public Orientation RotateCounterClockwise() => new(RotNum + 3);
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public Orientation Rotate(int clockwiseRotationOffset) => new(RotNum + clockwiseRotationOffset);
+
+    [Pure]
+    [DebuggerStepThrough]
+    public float GetRotationAngle() => RotNum switch
+    {
+        EngineConstants.DownOrientationRotNum => EngineConstants.DownOrientationRotationAngle,
+        EngineConstants.LeftOrientationRotNum => EngineConstants.LeftOrientationRotationAngle,
+        EngineConstants.UpOrientationRotNum => EngineConstants.UpOrientationRotationAngle,
+        EngineConstants.RightOrientationRotNum => EngineConstants.RightOrientationRotationAngle,
+
+        _ => ThrowOrientationOutOfRangeException<float>(this)
+    };
 
     [DoesNotReturn]
     public static T ThrowOrientationOutOfRangeException<T>(Orientation orientation)
@@ -63,12 +66,16 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     int IIdEquatable<Orientation>.Id => RotNum;
 
     [Pure]
+    [DebuggerStepThrough]
     public bool Equals(Orientation other) => RotNum == other.RotNum;
     [Pure]
-    public override bool Equals(object? obj) => obj is Orientation other && RotNum == other.RotNum;
+    [DebuggerStepThrough]
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Orientation other && RotNum == other.RotNum;
     [Pure]
+    [DebuggerStepThrough]
     public override int GetHashCode() => RotNum;
     [Pure]
+    [DebuggerStepThrough]
     public override string ToString() => RotNum switch
     {
         EngineConstants.DownOrientationRotNum => EngineConstants.DownOrientationName,
@@ -80,15 +87,19 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     };
 
     [Pure]
+    [DebuggerStepThrough]
     public static bool operator ==(Orientation first, Orientation second) => first.RotNum == second.RotNum;
     [Pure]
+    [DebuggerStepThrough]
     public static bool operator !=(Orientation first, Orientation second) => first.RotNum != second.RotNum;
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public static BitArraySet<OrientationHasher, BitBuffer32, Orientation> CreateBitArraySet(bool fullSet = false) => new(new OrientationHasher(), fullSet);
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
     public static BitArrayDictionary<OrientationHasher, BitBuffer32, Orientation, TValue> CreateBitArrayDictionary<TValue>() => new(new OrientationHasher());
 
     public readonly struct OrientationHasher : IPerfectHasher<Orientation>, IBitBufferCreator<BitBuffer32>

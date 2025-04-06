@@ -94,7 +94,7 @@ public sealed class TickOrderedList<TTickOrderedData>
 
         while (upperTestIndex - lowerTestIndex > 1)
         {
-            var bestGuess = (lowerTestIndex + upperTestIndex) >> 1;
+            var bestGuess = (lowerTestIndex + upperTestIndex) >>> 1;
             ref readonly var test = ref _items[bestGuess];
 
             if (test.TickNumber >= tick)

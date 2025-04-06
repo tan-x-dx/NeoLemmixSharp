@@ -140,26 +140,19 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         var actualMaxActionNameLength = 0;
         foreach (var action in LemmingAction.AllItems)
         {
-            LengthMax(action.LemmingActionName);
+            actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, action.LemmingActionName.Length);
         }
 
-        LengthMax(EngineConstants.NeutralControlPanelString);
-        LengthMax(EngineConstants.ZombieControlPanelString);
-        LengthMax(EngineConstants.NeutralZombieControlPanelString);
-        LengthMax(EngineConstants.AthleteControlPanelString2Skills);
-        LengthMax(EngineConstants.AthleteControlPanelString3Skills);
-        LengthMax(EngineConstants.AthleteControlPanelString4Skills);
-        LengthMax(EngineConstants.AthleteControlPanelString5Skills);
+        actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.NeutralControlPanelString.Length);
+        actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.ZombieControlPanelString.Length);
+        actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.NeutralZombieControlPanelString.Length);
+        actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.AthleteControlPanelString2Skills.Length);
+        actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.AthleteControlPanelString3Skills.Length);
+        actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.AthleteControlPanelString4Skills.Length);
+        actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.AthleteControlPanelString5Skills.Length);
 
         if (actualMaxActionNameLength != EngineConstants.LongestActionNameLength)
             throw new Exception($"Longest action name length is actually {actualMaxActionNameLength}! Update {nameof(EngineConstants.LongestActionNameLength)}!");
-
-        return;
-
-        void LengthMax(ReadOnlySpan<char> span)
-        {
-            actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, span.Length);
-        }
     }
 
     public void SetScreen(IBaseScreen screen)

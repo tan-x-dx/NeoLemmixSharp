@@ -9,7 +9,6 @@ public sealed class BoundaryBehaviour
     private const int MaxNumberOfRenderIntervals = 2;
     private const int MaxNumberOfRenderCopiesForWrappedLevels = 6;
 
-
     private readonly DimensionType _dimensionType;
     private readonly BoundaryBehaviourType _boundaryBehaviourType;
     private readonly int _levelLength;
@@ -259,7 +258,7 @@ public sealed class BoundaryBehaviour
         }
         else
         {
-            l1 = _levelLength >> 1;
+            l1 = _levelLength >>> 1;
             viewPortRenderIntervalSpan[0] = new ViewPortRenderInterval(0, l1, 0);
             viewPortRenderIntervalSpan[1] = new ViewPortRenderInterval(l1, _levelLength - l1, 0);
         }
@@ -273,7 +272,7 @@ public sealed class BoundaryBehaviour
             _viewPortStart + _viewPortLength < _levelLength)
         {
             var viewPortDimensionOnScreen = _viewPortLength * _scaleMultiplier;
-            _screenStart = (_screenLength - viewPortDimensionOnScreen) >> 1;
+            _screenStart = (_screenLength - viewPortDimensionOnScreen) >>> 1;
 
             screenRenderIntervalSpan[0] = new ScreenRenderInterval(0, _viewPortLength, _screenStart, viewPortDimensionOnScreen);
             _screenSpanLength = 1;
@@ -304,7 +303,7 @@ public sealed class BoundaryBehaviour
 
         if (maxScreenDimension < _screenLength)
         {
-            screenCoordinate = (_screenLength - maxScreenDimension) >> 1;
+            screenCoordinate = (_screenLength - maxScreenDimension) >>> 1;
         }
         else
         {

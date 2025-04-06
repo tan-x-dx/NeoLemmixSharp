@@ -22,27 +22,30 @@ public sealed class LevelData
     public ulong LevelId { get; set; }
     public ulong Version { get; set; }
 
-    public int LevelWidth
+    public void SetLevelWidth(int value)
     {
-        get => _levelWidth;
-        set
-        {
-            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
-            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, EngineConstants.MaxLevelWidth);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(value, EngineConstants.MaxLevelWidth);
 
-            _levelWidth = value;
-        }
+        _levelWidth = value;
     }
 
-    public int LevelHeight
+    public void SetLevelHeight(int value)
     {
-        get => _levelHeight;
-        set
-        {
-            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
-            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, EngineConstants.MaxLevelHeight);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(value, EngineConstants.MaxLevelHeight);
 
-            _levelHeight = value;
+        _levelHeight = value;
+    }
+
+    public LevelSize LevelDimensions
+    {
+        get
+        {
+            if (_levelWidth < 0) throw new InvalidOperationException("Level width not set!");
+            if (_levelHeight < 0) throw new InvalidOperationException("Level height not set!");
+
+            return new LevelSize(_levelWidth, _levelHeight);
         }
     }
 
@@ -59,7 +62,7 @@ public sealed class LevelData
 
             if (value <= 0)
                 throw new ArgumentOutOfRangeException(nameof(value), value, "Level start position X must be non-negative!");
-            if (value >= LevelWidth)
+            if (value >= _levelWidth)
                 throw new ArgumentOutOfRangeException(nameof(value), value, "Level start position X too big!");
 
             _levelStartPositionX = value;
@@ -79,7 +82,7 @@ public sealed class LevelData
 
             if (value < 0)
                 throw new ArgumentOutOfRangeException(nameof(value), value, "Level start position Y must be non-negative!");
-            if (value > LevelHeight)
+            if (value > _levelHeight)
                 throw new ArgumentOutOfRangeException(nameof(value), value, "Level start position Y too big!");
 
             _levelStartPositionY = value;

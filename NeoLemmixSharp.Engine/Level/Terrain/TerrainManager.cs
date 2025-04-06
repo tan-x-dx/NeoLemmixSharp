@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
@@ -8,10 +9,9 @@ namespace NeoLemmixSharp.Engine.Level.Terrain;
 
 public sealed class TerrainManager
 {
-    private readonly PixelType[] _pixels;
+    private readonly ArrayWrapper2D<PixelType> _pixels;
 
-    public TerrainManager(
-        PixelType[] pixels)
+    public TerrainManager(ArrayWrapper2D<PixelType> pixels)
     {
         _pixels = pixels;
     }
@@ -19,11 +19,10 @@ public sealed class TerrainManager
     [Pure]
     public PixelType PixelTypeAtPosition(LevelPosition levelPosition)
     {
-        if (LevelScreen.PositionOutOfBounds(levelPosition))
-            return PixelType.Void;
+        if (_pixels.EncompasesPoint(levelPosition))
+            return _pixels[levelPosition];
 
-        var index = LevelScreen.LevelWidth * levelPosition.Y + levelPosition.X;
-        return _pixels[index];
+        return PixelType.Void;
     }
 
     [Pure]
@@ -58,11 +57,10 @@ public sealed class TerrainManager
         FacingDirection facingDirection,
         LevelPosition pixelToErase)
     {
-        if (LevelScreen.PositionOutOfBounds(pixelToErase))
+        if (!_pixels.EncompasesPoint(pixelToErase))
             return;
 
-        var index = LevelScreen.LevelWidth * pixelToErase.Y + pixelToErase.X;
-        ref var pixel = ref _pixels[index];
+        ref var pixel = ref _pixels[pixelToErase];
 
         if (!pixel.CanBeDestroyed() ||
             !destructionMask.CanDestroyPixel(pixel, orientation, facingDirection))
@@ -82,11 +80,10 @@ public sealed class TerrainManager
 
     public void SetSolidPixel(LevelPosition pixelToSet, Color color)
     {
-        if (LevelScreen.PositionOutOfBounds(pixelToSet))
+        if (!_pixels.EncompasesPoint(pixelToSet))
             return;
 
-        var index = LevelScreen.LevelWidth * pixelToSet.Y + pixelToSet.X;
-        ref var pixel = ref _pixels[index];
+        ref var pixel = ref _pixels[pixelToSet];
 
         if (pixel != PixelType.Empty)
             return;
@@ -105,11 +102,10 @@ public sealed class TerrainManager
 
     public void SetBlockerMaskPixel(LevelPosition pixelToSet, PixelType pixelTypeMask, bool set)
     {
-        if (LevelScreen.PositionOutOfBounds(pixelToSet))
+        if (!_pixels.EncompasesPoint(pixelToSet))
             return;
 
-        var index = LevelScreen.LevelWidth * pixelToSet.Y + pixelToSet.X;
-        ref var pixel = ref _pixels[index];
+        ref var pixel = ref _pixels[pixelToSet];
 
         if (set)
         {

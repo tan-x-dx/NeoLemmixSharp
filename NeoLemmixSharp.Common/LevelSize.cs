@@ -17,10 +17,8 @@ public readonly struct LevelSize : IEquatable<LevelSize>
     [DebuggerStepThrough]
     public LevelSize(int w, int h)
     {
-        W = w;
-        if (W < 0) W = 0;
-        H = h;
-        if (H < 0) H = 0;
+        W = w < 0 ? 0 : w;
+        H = h < 0 ? 0 : h;
     }
 
     [DebuggerStepThrough]
@@ -30,22 +28,34 @@ public readonly struct LevelSize : IEquatable<LevelSize>
         H = texture.Height;
     }
 
-    [Pure]
-    public LevelSize Transpose() => new(H, W);
+    [DebuggerStepThrough]
+    private LevelSize(int w, int h, byte _)
+    {
+        W = w;
+        H = h;
+    }
 
     [Pure]
-    public LevelSize Scale(int widthScaleFactor, int heightScaleFactor) => new(W * widthScaleFactor, H * heightScaleFactor);
+    [DebuggerStepThrough]
+    public LevelSize Transpose() => new(H, W, 0);
 
     [Pure]
+    [DebuggerStepThrough]
+    public LevelSize Scale(int widthScaleFactor, int heightScaleFactor) => new(W * widthScaleFactor, H * heightScaleFactor, 0);
+
+    [Pure]
+    [DebuggerStepThrough]
     public int Area() => W * H;
 
     [Pure]
+    [DebuggerStepThrough]
     public bool EncompassesPoint(LevelPosition p)
     {
         return (uint)p.X < (uint)W &&
                (uint)p.Y < (uint)H;
     }
 
+    [DebuggerStepThrough]
     public void AssertEncompassesPoint(LevelPosition p)
     {
         if (EncompassesPoint(p))
@@ -55,6 +65,7 @@ public readonly struct LevelSize : IEquatable<LevelSize>
     }
 
     [Pure]
+    [DebuggerStepThrough]
     public int GetIndexOfPoint(LevelPosition p) => W * p.Y + p.X;
 
     [DebuggerStepThrough]
@@ -69,7 +80,9 @@ public readonly struct LevelSize : IEquatable<LevelSize>
 
     [DebuggerStepThrough]
     public bool Equals(LevelSize other) => W == other.W && H == other.H;
+    [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is LevelSize other && W == other.W && H == other.H;
+    [DebuggerStepThrough]
     public override int GetHashCode() => 8322929 * W +
                                          5282777 * H +
                                          4685531;

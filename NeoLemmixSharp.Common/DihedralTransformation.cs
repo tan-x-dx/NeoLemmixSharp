@@ -144,12 +144,14 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     [Pure]
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete($"Equals() on {nameof(DihedralTransformation)} will always throw an exception. Use the equality operator instead.")]
+#pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
     public override bool Equals(object? obj) => throw new NotSupportedException("It's a ref struct");
 
     [Pure]
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete($"GetHashCode() on {nameof(DihedralTransformation)} will always throw an exception.")]
     public override int GetHashCode() => throw new NotSupportedException("It's a ref struct");
+#pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
     [Pure]
     public static bool operator ==(DihedralTransformation left, DihedralTransformation right) =>

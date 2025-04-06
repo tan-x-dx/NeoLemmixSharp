@@ -311,20 +311,16 @@ procedure DoFencerContinueTests(L: TLemming; var SteelContinue: Boolean; var Mov
     string IDestructionMask.Name => LemmingActionName;
 
     [Pure]
-    public bool CanDestroyPixel(
-        PixelType pixelType,
-        Orientation orientation,
-        FacingDirection facingDirection)
+    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
+        var pixelTypeInt = (uint)pixelType;
         var orientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
                                     orientation.RotNum;
-        var orientationArrowMask = (PixelType)(1 << orientationArrowShift);
-        if ((pixelType & orientationArrowMask) != PixelType.Empty)
+        if (((pixelTypeInt >>> orientationArrowShift) & 1U) != 0U)
             return false;
 
         var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
-                                                ((2 + orientation.RotNum - facingDirection.DeltaX) & 3);
-        var oppositeFacingDirectionArrowMask = (PixelType)(1 << oppositeFacingDirectionArrowShift);
-        return (pixelType & oppositeFacingDirectionArrowMask) == PixelType.Empty;
+                                                ((1 + orientation.RotNum + (facingDirection.Id << 1)) & 3);
+        return ((pixelTypeInt >>> oppositeFacingDirectionArrowShift) & 1U) == 0U;
     }
 }
