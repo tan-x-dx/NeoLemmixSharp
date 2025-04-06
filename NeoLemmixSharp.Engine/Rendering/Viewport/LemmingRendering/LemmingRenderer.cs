@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
+using Color = Microsoft.Xna.Framework.Color;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
@@ -124,7 +125,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
         if (_shouldRenderCountDown)
         {
-            var countDownPositionOffset = new Common.Point();
+            var countDownPositionOffset = new Point();
 
             FontBank.CountDownFont.RenderTextSpan(
                 spriteBatch,

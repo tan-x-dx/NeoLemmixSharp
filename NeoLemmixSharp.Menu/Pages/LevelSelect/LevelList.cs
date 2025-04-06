@@ -1,10 +1,10 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Data;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Menu.Pages.LevelSelect;
 
@@ -95,12 +95,12 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
         }
     }
 
-    private void OnEntryClick(Component c, Common.Point position)
+    private void OnEntryClick(Component c, Point position)
     {
         _selectedEntry = c as LevelBrowserEntry;
     }
 
-    private void OnEntryDoubleClick(Component c, Common.Point position)
+    private void OnEntryDoubleClick(Component c, Point position)
     {
         if (c is not LevelBrowserEntry)
             return;

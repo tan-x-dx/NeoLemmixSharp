@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
@@ -70,23 +69,23 @@ public sealed class LevelScreen : IBaseScreen
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Common.Point NormalisePosition(Common.Point levelPosition)
+    public static Point NormalisePosition(Point levelPosition)
     {
-        return new Common.Point(
+        return new Point(
             HorizontalBoundaryBehaviour.Normalise(levelPosition.X),
             VerticalBoundaryBehaviour.Normalise(levelPosition.Y));
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool RegionContainsPoint(Region region, Common.Point point)
+    public static bool RegionContainsPoint(Region region, Point point)
     {
         return HorizontalBoundaryBehaviour.IntervalContainsPoint(region.GetHorizontalInterval(), point.X) &&
                VerticalBoundaryBehaviour.IntervalContainsPoint(region.GetVerticalInterval(), point.Y);
     }
 
     [Pure]
-    public static bool RegionContainsPoints(Region region, Common.Point p1, Common.Point p2)
+    public static bool RegionContainsPoints(Region region, Point p1, Point p2)
     {
         var horizontalInterval = region.GetHorizontalInterval();
         var verticalInterval = region.GetVerticalInterval();
@@ -109,7 +108,7 @@ public sealed class LevelScreen : IBaseScreen
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool PositionOutOfBounds(Common.Point levelPosition)
+    public static bool PositionOutOfBounds(Point levelPosition)
     {
         return (uint)levelPosition.X >= (uint)HorizontalBoundaryBehaviour.LevelLength ||
                (uint)levelPosition.Y >= (uint)VerticalBoundaryBehaviour.LevelLength;
@@ -178,7 +177,7 @@ public sealed class LevelScreen : IBaseScreen
         }
     }
 
-    public void Tick(GameTime gameTime)
+    public void Tick(Microsoft.Xna.Framework.GameTime gameTime)
     {
         if (!IGameWindow.Instance.IsActive)
             return;

@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
@@ -9,7 +9,7 @@ public sealed class TerrainData
     public required string Style { get; init; }
     public required string TerrainPiece { get; init; }
 
-    public required Common.Point Position { get; init; }
+    public required Point Position { get; init; }
 
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }

@@ -1,17 +1,17 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
 public sealed class TerrainAddMask
 {
-    private readonly Common.Point _anchorPoint;
-    private readonly Common.Point[] _mask;
+    private readonly Point _anchorPoint;
+    private readonly Point[] _mask;
     private readonly Color[] _colorMask;
 
     public TerrainAddMask(
-        Common.Point anchorPoint,
-        Common.Point[] mask,
+        Point anchorPoint,
+        Point[] mask,
         Color[] colorMask)
     {
         _anchorPoint = anchorPoint;
@@ -19,7 +19,7 @@ public sealed class TerrainAddMask
         _colorMask = colorMask;
     }
 
-    public void ApplyAddMask(Common.Point position)
+    public void ApplyAddMask(Point position)
     {
         var offset = position - _anchorPoint;
         var terrainManager = LevelScreen.TerrainManager;

@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
@@ -15,18 +15,18 @@ public sealed class LemmingActionSprite : IDisposable
         var data = new[] { 0U };
         texture.SetData(data);
 
-        Empty = new LemmingActionSprite(texture, new Common.Point(), new Size(), Array.Empty<LemmingActionLayerRenderer>());
+        Empty = new LemmingActionSprite(texture, new Point(), new Size(), Array.Empty<LemmingActionLayerRenderer>());
     }
 
     private readonly LemmingActionLayerRenderer[] _renderers;
 
     public Texture2D Texture { get; }
-    public Common.Point AnchorPoint { get; }
+    public Point AnchorPoint { get; }
     public Size SpriteSize { get; }
 
     public LemmingActionSprite(
         Texture2D texture,
-        Common.Point anchorPoint,
+        Point anchorPoint,
         Size spriteSize,
         LemmingActionLayerRenderer[] renderers)
     {

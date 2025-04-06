@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
@@ -29,7 +29,7 @@ public readonly struct PixelColorData
         _colorData = colorData;
     }
 
-    public Color this[Common.Point p]
+    public Color this[Point p]
     {
         get
         {
@@ -64,8 +64,8 @@ public readonly struct PixelColorData
             return new PixelColorData(new Size(), []);
 
         var subRegion = new Region(
-            new Common.Point(minX, minY),
-            new Common.Point(maxX, maxY));
+            new Point(minX, minY),
+            new Point(maxX, maxY));
 
         // Don't need to trim at all in this case
         if (subRegion.Size == Size)
@@ -81,7 +81,7 @@ public readonly struct PixelColorData
         {
             for (var x = 0; x < subRegion.W; x++)
             {
-                var pos = new Common.Point(x, y);
+                var pos = new Point(x, y);
                 resultTextureWrapper[pos] = sourceTextureWrapper[pos];
             }
         }
@@ -97,7 +97,7 @@ public readonly struct PixelColorData
         {
             for (var y = 0; y < Size.H; y++)
             {
-                var pos = new Common.Point(x, y);
+                var pos = new Point(x, y);
                 if (this[pos] != Color.Transparent)
                 {
                     return x;
@@ -114,7 +114,7 @@ public readonly struct PixelColorData
         {
             for (var x = 0; x < Size.W; x++)
             {
-                var pos = new Common.Point(x, y);
+                var pos = new Point(x, y);
                 if (this[pos] != Color.Transparent)
                 {
                     return y;
@@ -131,7 +131,7 @@ public readonly struct PixelColorData
         {
             for (var y = 0; y < Size.H; y++)
             {
-                var pos = new Common.Point(x, y);
+                var pos = new Point(x, y);
                 if (this[pos] != Color.Transparent)
                 {
                     return x;
@@ -148,7 +148,7 @@ public readonly struct PixelColorData
         {
             for (var x = 0; x < Size.W; x++)
             {
-                var pos = new Common.Point(x, y);
+                var pos = new Point(x, y);
                 if (this[pos] != Color.Transparent)
                 {
                     return y;

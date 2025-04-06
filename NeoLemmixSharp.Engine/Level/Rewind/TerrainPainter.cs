@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
@@ -27,7 +27,7 @@ public sealed class TerrainPainter
         _terrainColors = terrainColors;
     }
 
-    public void RecordPixelChange(Common.Point pixel, Color toColor, PixelType fromPixelType, PixelType toPixelType)
+    public void RecordPixelChange(Point pixel, Color toColor, PixelType fromPixelType, PixelType toPixelType)
     {
         var previousLatestTickWithUpdate = _pixelChangeList.LatestTickWithData();
         var currentLatestTickWithUpdate = LevelScreen.UpdateScheduler.ElapsedTicks;
@@ -52,7 +52,7 @@ public sealed class TerrainPainter
 
         foreach (ref readonly var pixelChangeData in pixelChanges)
         {
-            var position = new Common.Point(pixelChangeData.X, pixelChangeData.Y);
+            var position = new Point(pixelChangeData.X, pixelChangeData.Y);
             _terrainColors[position] = pixelChangeData.ToColor;
         }
 
@@ -75,7 +75,7 @@ public sealed class TerrainPainter
         for (var i = pixelChanges.Length - 1; i >= 0; i--)
         {
             ref readonly var pixelChangeData = ref pixelChanges[i];
-            var position = new Common.Point(pixelChangeData.X, pixelChangeData.Y);
+            var position = new Point(pixelChangeData.X, pixelChangeData.Y);
             _terrainColors[position] = pixelChangeData.FromColor;
             ref var pixelType = ref _terrainPixelTypes[position];
 
