@@ -91,7 +91,7 @@ public sealed class GadgetManager :
 
     public void GetAllGadgetsNearPosition(
         Span<uint> scratchSpaceSpan,
-        LevelPosition levelPosition,
+        Point levelPosition,
         out GadgetEnumerable result)
     {
         _gadgetPositionHelper.GetAllItemsNearPosition(
@@ -102,7 +102,7 @@ public sealed class GadgetManager :
 
     public void GetAllItemsNearRegion(
         Span<uint> scratchSpace,
-        LevelRegion levelRegion,
+        Region levelRegion,
         out GadgetEnumerable result)
     {
         _gadgetPositionHelper.GetAllItemsNearRegion(

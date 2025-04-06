@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Menu.Pages;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class LevelEndPage : PageBase
 {
@@ -13,7 +15,7 @@ public sealed class LevelEndPage : PageBase
         throw new NotImplementedException();
     }
 
-    protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
+    protected override void OnWindowDimensionsChanged(Size windowSize)
     {
         throw new NotImplementedException();
     }

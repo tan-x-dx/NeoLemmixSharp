@@ -32,13 +32,13 @@ public readonly struct LemmingSnapshotData
     public readonly int CountDownTimer;
     public readonly int ParticleTimer;
 
-    public readonly LevelPosition DehoistPin;
-    public readonly LevelPosition LaserHitLevelPosition;
-    public readonly LevelPosition LevelPosition;
-    public readonly LevelPosition PreviousLevelPosition;
+    public readonly Point DehoistPin;
+    public readonly Point LaserHitLevelPosition;
+    public readonly Point LevelPosition;
+    public readonly Point PreviousLevelPosition;
 
-    public readonly LevelRegion CurrentBounds;
-    public readonly LevelRegion PreviousBounds;
+    public readonly Region CurrentBounds;
+    public readonly Region PreviousBounds;
 
     public readonly LemmingStateSnapshotData StateSnapshotData;
 
@@ -54,8 +54,8 @@ public readonly struct LemmingSnapshotData
     {
         Id = lemming.Id;
 
-        Span<LevelPosition> jumperPositionSource = lemming.GetJumperPositions();
-        Span<LevelPosition> jumperPositionDest = JumperPositionBuffer;
+        Span<Point> jumperPositionSource = lemming.GetJumperPositions();
+        Span<Point> jumperPositionDest = JumperPositionBuffer;
         jumperPositionSource.CopyTo(jumperPositionDest);
 
         ConstructivePositionFreeze = lemming.ConstructivePositionFreeze;
@@ -84,7 +84,7 @@ public readonly struct LemmingSnapshotData
 
         DehoistPin = lemming.DehoistPin;
         LaserHitLevelPosition = lemming.LaserHitLevelPosition;
-        LevelPosition = lemming.LevelPosition;
+        LevelPosition = lemming.AnchorPosition;
         PreviousLevelPosition = lemming.PreviousLevelPosition;
         CurrentBounds = lemming.CurrentBounds;
         PreviousBounds = lemming.PreviousBounds;

@@ -26,7 +26,7 @@ public sealed class ClimberAction : LemmingAction
     {
         var dx = lemming.FacingDirection.DeltaX;
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         var physicsFrame = lemming.PhysicsFrame;
 
         bool foundClip;
@@ -116,7 +116,7 @@ public sealed class ClimberAction : LemmingAction
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 0;
 
-    public override LevelPosition GetFootPosition(Lemming lemming, LevelPosition anchorPosition)
+    public override Point GetFootPosition(Lemming lemming, Point anchorPosition)
     {
         return lemming.Orientation.MoveLeft(anchorPosition, lemming.FacingDirection.DeltaX);
     }

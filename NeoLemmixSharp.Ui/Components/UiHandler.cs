@@ -48,9 +48,9 @@ public sealed class UiHandler : IDisposable
         HandleKeyUp(in currentlyReleasedKeys);
     }
 
-    private void HandleMouseMove(LevelPosition mousePosition) => LocateComponent(mousePosition);
+    private void HandleMouseMove(Point mousePosition) => LocateComponent(mousePosition);
 
-    private void HandleMouseDoubleClick(LevelPosition mousePosition)
+    private void HandleMouseDoubleClick(Point mousePosition)
     {
         LocateComponent(mousePosition);
 
@@ -64,7 +64,7 @@ public sealed class UiHandler : IDisposable
         }
     }
 
-    private void HandleMouseDown(LevelPosition mousePosition)
+    private void HandleMouseDown(Point mousePosition)
     {
         LocateComponent(mousePosition);
 
@@ -78,7 +78,7 @@ public sealed class UiHandler : IDisposable
         }
     }
 
-    private void HandleMouseUp(LevelPosition mousePosition)
+    private void HandleMouseUp(Point mousePosition)
     {
         LocateComponent(mousePosition);
 
@@ -102,7 +102,7 @@ public sealed class UiHandler : IDisposable
         _currentSelection?.InvokeKeyUp(in releasedKeys);
     }
 
-    private void LocateComponent(LevelPosition mousePosition)
+    private void LocateComponent(Point mousePosition)
     {
         var c = RootComponent.GetChildAt(mousePosition);
 

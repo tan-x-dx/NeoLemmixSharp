@@ -14,8 +14,8 @@ public sealed class GadgetRenderer : IGadgetRenderer
     public int RendererId { get; set; }
     public int ItemId { get; }
 
-    public LevelRegion CurrentBounds => _gadget.CurrentAnimationController.CurrentBounds;
-    public LevelRegion PreviousBounds => _gadget.CurrentAnimationController.PreviousBounds;
+    public Region CurrentBounds => _gadget.CurrentAnimationController.CurrentBounds;
+    public Region PreviousBounds => _gadget.CurrentAnimationController.PreviousBounds;
 
     public GadgetRenderer(
         GadgetBase gadget,

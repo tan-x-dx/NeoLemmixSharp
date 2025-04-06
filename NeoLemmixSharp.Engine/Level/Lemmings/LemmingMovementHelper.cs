@@ -9,9 +9,9 @@ public readonly ref struct LemmingMovementHelper
     public const int MaxIntermediateCheckPositions = 11;
 
     private readonly Lemming _lemming;
-    private readonly Span<LevelPosition> _checkPositions;
+    private readonly Span<Point> _checkPositions;
 
-    public LemmingMovementHelper(Lemming lemming, Span<LevelPosition> checkPositions)
+    public LemmingMovementHelper(Lemming lemming, Span<Point> checkPositions)
     {
         _lemming = lemming;
         _checkPositions = checkPositions;
@@ -24,7 +24,7 @@ public readonly ref struct LemmingMovementHelper
     public int EvaluateCheckPositions()
     {
         var previousLemmingPosition = _lemming.PreviousLevelPosition;
-        var currentLemmingPosition = _lemming.LevelPosition;
+        var currentLemmingPosition = _lemming.AnchorPosition;
 
         var orientation = _lemming.Orientation;
         var previousAction = _lemming.PreviousAction;
@@ -82,15 +82,15 @@ public readonly ref struct LemmingMovementHelper
         return length;
     }
 
-    private void AddPosition(LevelPosition levelPosition, ref int length)
+    private void AddPosition(Point levelPosition, ref int length)
     {
         _checkPositions[length++] = levelPosition;
     }
 
     private void MoveHorizontally(
         Orientation orientation,
-        ref LevelPosition workPosition,
-        LevelPosition referencePosition,
+        ref Point workPosition,
+        Point referencePosition,
         ref int length)
     {
         var dx = Math.Sign(orientation.GetHorizontalDelta(workPosition, referencePosition));
@@ -104,8 +104,8 @@ public readonly ref struct LemmingMovementHelper
 
     private void MoveVertically(
         Orientation orientation,
-        ref LevelPosition workPosition,
-        LevelPosition referencePosition,
+        ref Point workPosition,
+        Point referencePosition,
         ref int length)
     {
         var dy = Math.Sign(orientation.GetVerticalDelta(workPosition, referencePosition));
@@ -118,7 +118,7 @@ public readonly ref struct LemmingMovementHelper
     }
 
     private void HandleJumping(
-        ref LevelPosition workPosition,
+        ref Point workPosition,
         ref int length)
     {
         var jumpPositions = _lemming.GetJumperPositions();

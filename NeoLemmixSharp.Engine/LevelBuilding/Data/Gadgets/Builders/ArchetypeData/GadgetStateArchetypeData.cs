@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeDat
 
 public sealed class GadgetStateArchetypeData
 {
-    public required LevelPosition HitBoxOffset { get; init; }
+    public required Point HitBoxOffset { get; init; }
     public required HitBoxData[] HitBoxData { get; init; }
     public HitBoxRegionDataArray RegionData = new();
 

@@ -58,7 +58,7 @@ public sealed class BuilderAction : LemmingAction
         lemming.NumberOfBricksLeft--;
 
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 2)))
@@ -118,7 +118,7 @@ public sealed class BuilderAction : LemmingAction
             ? 1
             : 0;
 
-        var brickPosition = lemming.LevelPosition;
+        var brickPosition = lemming.AnchorPosition;
         brickPosition = orientation.MoveUp(brickPosition, dy);
         terrainManager.SetSolidPixel(brickPosition, Color.Magenta);
 

@@ -5,6 +5,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
 public interface IHitBoxRegion : IRectangularBounds
 {
-    bool ContainsPoint(LevelPosition levelPosition);
-    bool ContainsPoints(LevelPosition p1, LevelPosition p2);
+    bool ContainsPoint(Point levelPosition);
+    bool ContainsPoints(Point p1, Point p2);
 }

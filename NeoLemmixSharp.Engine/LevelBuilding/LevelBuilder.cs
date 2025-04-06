@@ -87,7 +87,7 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
 
         var controlPanel = new LevelControlPanel(controlPanelParameters, inputController, lemmingManager, skillSetManager);
         // Need to call this here instead of initialising in LevelScreen
-        controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowWidth, IGameWindow.Instance.WindowHeight);
+        controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowSize);
 
         var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 

@@ -7,30 +7,30 @@
 public readonly struct ArrayWrapper2D<T>
 {
     private readonly T[] _data;
-    private readonly LevelSize _spanSize;
-    private readonly LevelRegion _region;
+    private readonly Size _arrayDimensions;
+    private readonly Region _subRegion;
 
     public T[] Array => _data;
 
     public ArrayWrapper2D(
         T[] data,
-        LevelSize dimensions)
+        Size dimensions)
     {
         if (data.Length != dimensions.Area())
             throw new ArgumentException("Invalid dimensions");
 
         _data = data;
-        _spanSize = dimensions;
-        _region = new LevelRegion(dimensions);
+        _arrayDimensions = dimensions;
+        _subRegion = new Region(dimensions);
     }
 
     public ArrayWrapper2D(
         T[] data,
-        LevelSize spanSize,
-        LevelRegion region)
+        Size arrayDimensions,
+        Region region)
     {
-        var spanWidth = spanSize.W;
-        var spanHeight = spanSize.H;
+        var spanWidth = arrayDimensions.W;
+        var spanHeight = arrayDimensions.H;
         var x = region.X;
         var y = region.Y;
         var width = region.W;
@@ -45,18 +45,18 @@ public readonly struct ArrayWrapper2D<T>
             throw new ArgumentException("Invalid dimensions");
 
         _data = data;
-        _spanSize = spanSize;
-        _region = region;
+        _arrayDimensions = arrayDimensions;
+        _subRegion = region;
     }
 
-    public bool EncompasesPoint(LevelPosition pos) => _region.Size.EncompassesPoint(pos);
+    public bool EncompasesPoint(Point pos) => _subRegion.Size.EncompassesPoint(pos);
 
-    public ref T this[LevelPosition pos]
+    public ref T this[Point pos]
     {
         get
         {
-            _region.Size.AssertEncompassesPoint(pos);
-            var index = _spanSize.GetIndexOfPoint(pos + _region.Position);
+            _subRegion.Size.AssertEncompassesPoint(pos);
+            var index = _arrayDimensions.GetIndexOfPoint(pos + _subRegion.Position);
             return ref _data[index];
         }
     }

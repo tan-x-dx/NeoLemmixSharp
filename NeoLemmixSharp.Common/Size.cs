@@ -9,27 +9,27 @@ using System.Runtime.InteropServices;
 namespace NeoLemmixSharp.Common;
 
 [StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
-public readonly struct LevelSize : IEquatable<LevelSize>
+public readonly struct Size : IEquatable<Size>
 {
     [FieldOffset(0 * sizeof(int))] public readonly int W;
     [FieldOffset(1 * sizeof(int))] public readonly int H;
 
     [DebuggerStepThrough]
-    public LevelSize(int w, int h)
+    public Size(int w, int h)
     {
         W = w < 0 ? 0 : w;
         H = h < 0 ? 0 : h;
     }
 
     [DebuggerStepThrough]
-    public LevelSize(Texture2D texture)
+    public Size(Texture2D texture)
     {
         W = texture.Width;
         H = texture.Height;
     }
 
     [DebuggerStepThrough]
-    private LevelSize(int w, int h, byte _)
+    private Size(int w, int h, byte _)
     {
         W = w;
         H = h;
@@ -37,11 +37,11 @@ public readonly struct LevelSize : IEquatable<LevelSize>
 
     [Pure]
     [DebuggerStepThrough]
-    public LevelSize Transpose() => new(H, W, 0);
+    public Size Transpose() => new(H, W, 0);
 
     [Pure]
     [DebuggerStepThrough]
-    public LevelSize Scale(int widthScaleFactor, int heightScaleFactor) => new(W * widthScaleFactor, H * heightScaleFactor, 0);
+    public Size Scale(int widthScaleFactor, int heightScaleFactor) => new(W * widthScaleFactor, H * heightScaleFactor, 0);
 
     [Pure]
     [DebuggerStepThrough]
@@ -49,14 +49,14 @@ public readonly struct LevelSize : IEquatable<LevelSize>
 
     [Pure]
     [DebuggerStepThrough]
-    public bool EncompassesPoint(LevelPosition p)
+    public bool EncompassesPoint(Point p)
     {
         return (uint)p.X < (uint)W &&
                (uint)p.Y < (uint)H;
     }
 
     [DebuggerStepThrough]
-    public void AssertEncompassesPoint(LevelPosition p)
+    public void AssertEncompassesPoint(Point p)
     {
         if (EncompassesPoint(p))
             return;
@@ -66,22 +66,22 @@ public readonly struct LevelSize : IEquatable<LevelSize>
 
     [Pure]
     [DebuggerStepThrough]
-    public int GetIndexOfPoint(LevelPosition p) => W * p.Y + p.X;
+    public int GetIndexOfPoint(Point p) => W * p.Y + p.X;
 
     [DebuggerStepThrough]
-    public static bool operator ==(LevelSize left, LevelSize right) =>
+    public static bool operator ==(Size left, Size right) =>
         left.W == right.W &&
         left.H == right.H;
 
     [DebuggerStepThrough]
-    public static bool operator !=(LevelSize left, LevelSize right) =>
+    public static bool operator !=(Size left, Size right) =>
         left.W != right.W ||
         left.H != right.H;
 
     [DebuggerStepThrough]
-    public bool Equals(LevelSize other) => W == other.W && H == other.H;
+    public bool Equals(Size other) => W == other.W && H == other.H;
     [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is LevelSize other && W == other.W && H == other.H;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Size other && W == other.W && H == other.H;
     [DebuggerStepThrough]
     public override int GetHashCode() => 8322929 * W +
                                          5282777 * H +

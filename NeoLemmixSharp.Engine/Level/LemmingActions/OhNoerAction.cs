@@ -22,7 +22,7 @@ public sealed class OhNoerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         if (lemming.EndOfAnimation)
         {

@@ -15,19 +15,19 @@ public sealed class LemmingActionSprite : IDisposable
         var data = new[] { 0U };
         texture.SetData(data);
 
-        Empty = new LemmingActionSprite(texture, new LevelPosition(), new LevelSize(), Array.Empty<LemmingActionLayerRenderer>());
+        Empty = new LemmingActionSprite(texture, new Common.Point(), new Size(), Array.Empty<LemmingActionLayerRenderer>());
     }
 
     private readonly LemmingActionLayerRenderer[] _renderers;
 
     public Texture2D Texture { get; }
-    public LevelPosition AnchorPoint { get; }
-    public LevelSize SpriteSize { get; }
+    public Common.Point AnchorPoint { get; }
+    public Size SpriteSize { get; }
 
     public LemmingActionSprite(
         Texture2D texture,
-        LevelPosition anchorPoint,
-        LevelSize spriteSize,
+        Common.Point anchorPoint,
+        Size spriteSize,
         LemmingActionLayerRenderer[] renderers)
     {
         Texture = texture;

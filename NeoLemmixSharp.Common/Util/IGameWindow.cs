@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Screen;
 
@@ -9,8 +8,7 @@ public interface IGameWindow
 {
     static IGameWindow Instance { get; set; } = null!;
 
-    int WindowWidth { get; }
-    int WindowHeight { get; }
+    Size WindowSize { get; }
 
     bool IsActive { get; }
     bool IsFullscreen { get; }
@@ -25,6 +23,4 @@ public interface IGameWindow
     void ToggleFullscreen();
     void ToggleBorderless();
     void Escape();
-
-    Vector2 GetWindowSize() => new(WindowWidth, WindowHeight);
 }

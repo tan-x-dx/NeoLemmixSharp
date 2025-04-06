@@ -71,7 +71,7 @@ public sealed class LevelObjectAssembler : IDisposable
                 NoneAction.Instance,
                 EngineConstants.ClassicTeamId)
             {
-                LevelPosition = new LevelPosition()
+                AnchorPosition = new Point()
             };
             _lemmings.Add(lemming);
         }
@@ -89,7 +89,7 @@ public sealed class LevelObjectAssembler : IDisposable
                     prototype.InitialLemmingAction,
                     prototype.TeamId)
                 {
-                    LevelPosition = prototype.Position
+                    AnchorPosition = prototype.Position
                 };
 
                 lemming.State.SetRawDataFromOther(prototype.State);

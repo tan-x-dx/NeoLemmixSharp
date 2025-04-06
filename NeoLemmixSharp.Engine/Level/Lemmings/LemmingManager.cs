@@ -176,7 +176,7 @@ public sealed class LemmingManager :
             hatchGroup.OnSpawnLemming();
             var lemming = hatchLemmingSpan[_numberOfLemmingsReleasedFromHatch++];
 
-            lemming.LevelPosition = hatchGadget.Position + hatchGadget.SpawnPointOffset;
+            lemming.AnchorPosition = hatchGadget.Position + hatchGadget.SpawnPointOffset;
             hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
             InitialiseLemming(lemming);
         }
@@ -262,7 +262,7 @@ public sealed class LemmingManager :
 
     public void GetAllLemmingsNearRegion(
         Span<uint> scratchSpace,
-        LevelRegion levelRegion,
+        Region levelRegion,
         out LemmingEnumerable result)
     {
         _lemmingPositionHelper.GetAllItemsNearRegion(scratchSpace, levelRegion, out result);

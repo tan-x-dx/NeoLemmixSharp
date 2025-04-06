@@ -16,8 +16,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     private Lemming _lemming;
     private LemmingActionSprite _actionSprite;
 
-    private LevelRegion _spriteBounds;
-    private LevelRegion _previousSpriteBounds;
+    private Region _spriteBounds;
+    private Region _previousSpriteBounds;
 
     private bool _shouldRenderCountDown;
 
@@ -26,8 +26,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     public int RendererId { get; set; }
     public int ItemId => _lemming.Id;
 
-    public LevelRegion CurrentBounds => _spriteBounds;
-    public LevelRegion PreviousBounds => _previousSpriteBounds;
+    public Region CurrentBounds => _spriteBounds;
+    public Region PreviousBounds => _previousSpriteBounds;
 
     public LemmingRenderer(Lemming lemming)
     {
@@ -38,10 +38,10 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     {
         var dht = new DihedralTransformation(_lemming.Orientation, _lemming.FacingDirection);
         var spriteOffset = dht.Transform(_actionSprite.AnchorPoint, _actionSprite.SpriteSize);
-        var p = _lemming.LevelPosition - spriteOffset;
+        var p = _lemming.AnchorPosition - spriteOffset;
 
         _previousSpriteBounds = _spriteBounds;
-        _spriteBounds = new LevelRegion(p, dht.Transform(_actionSprite.SpriteSize));
+        _spriteBounds = new Region(p, dht.Transform(_actionSprite.SpriteSize));
 
         LevelScreenRenderer.Instance.LevelRenderer.UpdateSpritePosition(this);
     }
@@ -124,7 +124,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
         if (_shouldRenderCountDown)
         {
-            var countDownPositionOffset = new LevelPosition();
+            var countDownPositionOffset = new Common.Point();
 
             FontBank.CountDownFont.RenderTextSpan(
                 spriteBatch,

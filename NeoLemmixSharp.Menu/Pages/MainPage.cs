@@ -24,25 +24,25 @@ public sealed class MainPage : PageBase
 
         _playButton = new TextureButton(0, 0, MenuSpriteBank.SignPlay)
         {
-            ScaleMulitplier = menuScaleMultiplier,
+            ScaleMultiplier = menuScaleMultiplier,
         };
         _playButton.MouseDown.RegisterMouseEvent(PlayButtonClick);
 
         _levelSelectButton = new TextureButton(0, 0, MenuSpriteBank.SignLevelSelect)
         {
-            ScaleMulitplier = menuScaleMultiplier,
+            ScaleMultiplier = menuScaleMultiplier,
         };
         _levelSelectButton.MouseDown.RegisterMouseEvent(LevelSelectButtonClick);
 
         _configButton = new TextureButton(0, 0, MenuSpriteBank.SignConfig)
         {
-            ScaleMulitplier = menuScaleMultiplier,
+            ScaleMultiplier = menuScaleMultiplier,
         };
         _configButton.MouseDown.RegisterMouseEvent(ConfigButtonClick);
 
         _quitButton = new TextureButton(0, 0, MenuSpriteBank.SignQuit)
         {
-            ScaleMulitplier = menuScaleMultiplier,
+            ScaleMultiplier = menuScaleMultiplier,
         };
         _quitButton.MouseDown.RegisterMouseEvent(QuitButtonClick);
     }
@@ -61,7 +61,7 @@ public sealed class MainPage : PageBase
         OnResize();
     }
 
-    private static void PlayButtonClick(Component _, LevelPosition position)
+    private static void PlayButtonClick(Component _, Point position)
     {
         var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
 
@@ -71,7 +71,7 @@ public sealed class MainPage : PageBase
         MenuScreen.Current.SetNextPage(levelStartPage);
     }
 
-    private static void LevelSelectButtonClick(Component _, LevelPosition position)
+    private static void LevelSelectButtonClick(Component _, Point position)
     {
         var levelSelectPage = MenuScreen.Current.MenuPageCreator.CreateLevelSelectPage();
 
@@ -81,47 +81,46 @@ public sealed class MainPage : PageBase
         MenuScreen.Current.SetNextPage(levelSelectPage);
     }
 
-    private static void GroupUpButtonClick(Component _, LevelPosition position)
+    private static void GroupUpButtonClick(Component _, Point position)
     {
     }
 
-    private static void GroupDownButtonClick(Component _, LevelPosition position)
+    private static void GroupDownButtonClick(Component _, Point position)
     {
     }
 
-    private static void ConfigButtonClick(Component _, LevelPosition position)
+    private static void ConfigButtonClick(Component _, Point position)
     {
     }
 
-    private static void QuitButtonClick(Component _, LevelPosition position)
+    private static void QuitButtonClick(Component _, Point position)
     {
         IGameWindow.Instance.Escape();
     }
 
-    protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
+    protected override void OnWindowDimensionsChanged(Size windowSize)
     {
         OnResize();
     }
 
     private void OnResize()
     {
-        var windowWidth = IGameWindow.Instance.WindowWidth;
-        var windowHeight = IGameWindow.Instance.WindowHeight;
+        var windowSize = IGameWindow.Instance.WindowSize;
 
-        UiHandler.RootComponent.Width = windowWidth;
-        UiHandler.RootComponent.Height = windowHeight;
+        UiHandler.RootComponent.Width = windowSize.W;
+        UiHandler.RootComponent.Height = windowSize.H;
 
-        var deltaX = windowWidth / 8;
+        var deltaX = windowSize.W / 8;
 
         _playButton.Left = deltaX * 2;
         _levelSelectButton.Left = deltaX * 3;
 
-        deltaX = windowWidth / 6;
+        deltaX = windowSize.W / 6;
 
         _configButton.Left = deltaX * 2;
         _quitButton.Left = deltaX * 3;
 
-        var deltaY = windowHeight / 6;
+        var deltaY = windowSize.H / 6;
 
         _playButton.Top = deltaY * 2;
         _levelSelectButton.Top = deltaY * 2;

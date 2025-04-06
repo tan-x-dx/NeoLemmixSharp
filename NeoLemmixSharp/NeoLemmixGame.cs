@@ -30,8 +30,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     public bool IsFullscreen => _windowMode == WindowMode.Fullscreen;
     public bool IsBorderless => _windowMode == WindowMode.Borderless;
 
-    public int WindowWidth => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-    public int WindowHeight => GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+    public Size WindowSize => new(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
 
     public SpriteBatch SpriteBatch => _spriteBatch;
 

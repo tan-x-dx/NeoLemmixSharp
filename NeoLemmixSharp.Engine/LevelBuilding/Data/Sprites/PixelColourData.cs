@@ -7,13 +7,13 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 public readonly struct PixelColorData
 {
-    public readonly LevelSize Size;
+    public readonly Size Size;
 
     private readonly Color[] _colorData;
 
     public static PixelColorData GetPixelColorDataFromTexture(Texture2D texture)
     {
-        var size = new LevelSize(texture);
+        var size = new Size(texture);
         var data = new Color[size.Area()];
 
         texture.GetData(data);
@@ -22,14 +22,14 @@ public readonly struct PixelColorData
     }
 
     public PixelColorData(
-        LevelSize size,
+        Size size,
         Color[] colorData)
     {
         Size = size;
         _colorData = colorData;
     }
 
-    public Color this[LevelPosition p]
+    public Color this[Common.Point p]
     {
         get
         {
@@ -61,11 +61,11 @@ public readonly struct PixelColorData
 
         if (minX < 0 || maxX < 0 ||
             minY < 0 || maxY < 0)
-            return new PixelColorData(new LevelSize(), []);
+            return new PixelColorData(new Size(), []);
 
-        var subRegion = new LevelRegion(
-            new LevelPosition(minX, minY),
-            new LevelPosition(maxX, maxY));
+        var subRegion = new Region(
+            new Common.Point(minX, minY),
+            new Common.Point(maxX, maxY));
 
         // Don't need to trim at all in this case
         if (subRegion.Size == Size)
@@ -81,7 +81,7 @@ public readonly struct PixelColorData
         {
             for (var x = 0; x < subRegion.W; x++)
             {
-                var pos = new LevelPosition(x, y);
+                var pos = new Common.Point(x, y);
                 resultTextureWrapper[pos] = sourceTextureWrapper[pos];
             }
         }
@@ -97,7 +97,7 @@ public readonly struct PixelColorData
         {
             for (var y = 0; y < Size.H; y++)
             {
-                var pos = new LevelPosition(x, y);
+                var pos = new Common.Point(x, y);
                 if (this[pos] != Color.Transparent)
                 {
                     return x;
@@ -114,7 +114,7 @@ public readonly struct PixelColorData
         {
             for (var x = 0; x < Size.W; x++)
             {
-                var pos = new LevelPosition(x, y);
+                var pos = new Common.Point(x, y);
                 if (this[pos] != Color.Transparent)
                 {
                     return y;
@@ -131,7 +131,7 @@ public readonly struct PixelColorData
         {
             for (var y = 0; y < Size.H; y++)
             {
-                var pos = new LevelPosition(x, y);
+                var pos = new Common.Point(x, y);
                 if (this[pos] != Color.Transparent)
                 {
                     return x;
@@ -148,7 +148,7 @@ public readonly struct PixelColorData
         {
             for (var x = 0; x < Size.W; x++)
             {
-                var pos = new LevelPosition(x, y);
+                var pos = new Common.Point(x, y);
                 if (this[pos] != Color.Transparent)
                 {
                     return y;

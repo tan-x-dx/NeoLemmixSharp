@@ -5,16 +5,16 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
 public sealed class LemmingMoverAction : IGadgetAction
 {
-    private readonly LevelPosition _deltaPosition;
+    private readonly Point _deltaPosition;
 
-    public LemmingMoverAction(LevelPosition deltaPosition)
+    public LemmingMoverAction(Point deltaPosition)
     {
         _deltaPosition = deltaPosition;
     }
 
     public void PerformAction(Lemming lemming)
     {
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         lemmingPosition += _deltaPosition;
 
         LevelScreen.LemmingManager.UpdateLemmingPosition(lemming);

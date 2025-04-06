@@ -18,7 +18,7 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
-    public LevelSize Transform(LevelSize levelSize)
+    public Size Transform(Size levelSize)
     {
         return Orientation.IsHorizontal()
             ? levelSize.Transpose()
@@ -34,9 +34,9 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
-    public LevelPosition Transform(
-        LevelPosition position,
-        LevelSize size)
+    public Point Transform(
+        Point position,
+        Size size)
     {
         var x = position.X;
         var y = position.Y;
@@ -48,7 +48,7 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
 
         var x0 = s + FacingDirection.DeltaX * (a * x - b * y + w);
         var y0 = b * x + a * y + h;
-        return new LevelPosition(x0, y0);
+        return new Point(x0, y0);
     }
 
     private int GetRotationCoefficients(out int a, out int b, ref int w, ref int h)

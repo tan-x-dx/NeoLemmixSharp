@@ -26,8 +26,8 @@ public sealed class JumperAction : LemmingAction
         1, 0,   0, -1,   0, -1,   1,  0,   0, -1,   0, -1
     ];
 
-    private static ReadOnlySpan<LevelPosition> JumpPositionsFor(int patternIndex) => MemoryMarshal
-        .Cast<int, LevelPosition>(RawLevelPositions)
+    private static ReadOnlySpan<Point> JumpPositionsFor(int patternIndex) => MemoryMarshal
+        .Cast<int, Point>(RawLevelPositions)
         .Slice(patternIndex * JumperPositionCount, JumperPositionCount);
 
     private JumperAction()
@@ -87,7 +87,7 @@ public sealed class JumperAction : LemmingAction
         var lemmingJumpPatterns = lemming.GetJumperPositions();
 
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         for (var i = 0; i < JumperPositionCount; i++)
@@ -148,7 +148,7 @@ public sealed class JumperAction : LemmingAction
         Lemming lemming)
     {
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         var checkPosition = orientation.MoveRight(lemmingPosition, dx);
@@ -219,7 +219,7 @@ public sealed class JumperAction : LemmingAction
         bool firstStepSpecialHandling)
     {
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        var lemmingPosition = lemming.AnchorPosition;
 
         var n = firstStepSpecialHandling
             ? 2
@@ -276,7 +276,7 @@ public sealed class JumperAction : LemmingAction
             lemming.CurrentAction == SliderAction.Instance)
         {
             lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
-            lemming.LevelPosition = lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX);
+            lemming.AnchorPosition = lemming.Orientation.MoveRight(lemming.AnchorPosition, lemming.FacingDirection.DeltaX);
         }
 
         base.TransitionLemmingToAction(lemming, turnAround);

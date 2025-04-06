@@ -22,9 +22,9 @@ public sealed class PlatformerSkill : LemmingSkill
     public override bool CanAssignToLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
-        var lemmingPostion = lemming.LevelPosition;
+        var lemmingPostion = lemming.AnchorPosition;
 
-        var levelRegion = new LevelRegion(
+        var levelRegion = new Region(
             orientation.Move(lemmingPostion, 5, 2),
             orientation.Move(lemmingPostion, -5, -2));
         Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];

@@ -8,11 +8,11 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 public sealed class HatchGadget : GadgetBase, IMoveableGadget
 {
     public HatchSpawnData HatchSpawnData { get; }
-    public LevelPosition SpawnPointOffset { get; }
+    public Point SpawnPointOffset { get; }
 
     public HatchGadget(
         HatchSpawnData hatchSpawnData,
-        LevelPosition spawnPointOffset,
+        Point spawnPointOffset,
         AnimationController animationController)
         : base(0)
     {
@@ -33,7 +33,7 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
     {
         PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
 
-        var delta = new LevelPosition(dx, dy);
+        var delta = new Point(dx, dy);
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(CurrentGadgetBounds.Position + delta);
     }
 
@@ -41,7 +41,7 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
     {
         PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
 
-        var newPosition = new LevelPosition(x, y);
+        var newPosition = new Point(x, y);
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(newPosition);
     }
 }

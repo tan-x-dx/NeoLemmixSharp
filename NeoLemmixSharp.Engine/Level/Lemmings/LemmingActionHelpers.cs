@@ -17,7 +17,7 @@ public static class LemmingActionHelpers
     [Pure]
     public static int FindGroundPixel(
         Lemming lemming,
-        LevelPosition levelPosition,
+        Point levelPosition,
         in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
@@ -50,7 +50,7 @@ public static class LemmingActionHelpers
     public static bool PositionIsSolidToLemming(
         in GadgetEnumerable gadgets,
         Lemming lemming,
-        LevelPosition levelPosition)
+        Point levelPosition)
     {
         return LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, levelPosition) ||
                (gadgets.Count > 0 && HasSolidGadgetAtPosition(in gadgets, lemming, levelPosition));
@@ -61,7 +61,7 @@ public static class LemmingActionHelpers
         in GadgetEnumerable gadgets,
         Lemming lemming,
         IDestructionMask destructionMask,
-        LevelPosition levelPosition)
+        Point levelPosition)
     {
         return LevelScreen.TerrainManager.PixelIsIndestructibleToLemming(lemming, destructionMask, levelPosition) ||
                (gadgets.Count > 0 && HasSteelGadgetAtPosition(in gadgets, lemming, levelPosition));
@@ -71,7 +71,7 @@ public static class LemmingActionHelpers
     public static bool PositionIsSteelToLemming(
         in GadgetEnumerable gadgets,
         Lemming lemming,
-        LevelPosition levelPosition)
+        Point levelPosition)
     {
         return LevelScreen.TerrainManager.PixelIsSteel(levelPosition) ||
                (gadgets.Count > 0 && HasSteelGadgetAtPosition(in gadgets, lemming, levelPosition));
@@ -81,7 +81,7 @@ public static class LemmingActionHelpers
     private static bool HasSolidGadgetAtPosition(
         in GadgetEnumerable gadgets,
         Lemming lemming,
-        LevelPosition levelPosition)
+        Point levelPosition)
     {
         foreach (var gadget in gadgets)
         {
@@ -107,7 +107,7 @@ public static class LemmingActionHelpers
     private static bool HasSteelGadgetAtPosition(
         in GadgetEnumerable gadgets,
         Lemming lemming,
-        LevelPosition levelPosition)
+        Point levelPosition)
     {
         foreach (var gadget in gadgets)
         {
@@ -133,10 +133,10 @@ public static class LemmingActionHelpers
 
     [Pure]
     // Do not SkipLocalsInit
-    public static unsafe LevelPosition GetUpdraftFallDelta(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static unsafe Point GetUpdraftFallDelta(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (gadgetsNearLemming.Count == 0)
-            return new LevelPosition();
+            return new Point();
 
         var lemmingOrientation = lemming.Orientation;
         var lemmingOrientationRotNum = lemmingOrientation.RotNum;
@@ -144,7 +144,7 @@ public static class LemmingActionHelpers
         // Use raw stack pointers to eliminate bounds checks
         int* p = stackalloc int[EngineConstants.NumberOfOrientations];
 
-        var anchorPosition = lemming.LevelPosition;
+        var anchorPosition = lemming.AnchorPosition;
         var footPosition = lemming.FootPosition;
 
         foreach (var gadget in gadgetsNearLemming)
@@ -180,6 +180,6 @@ public static class LemmingActionHelpers
         var dy = p[EngineConstants.UpOrientationRotNum] -
                  p[EngineConstants.DownOrientationRotNum];
 
-        return new LevelPosition(dx, dy);
+        return new Point(dx, dy);
     }
 }

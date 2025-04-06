@@ -15,7 +15,7 @@ public sealed class GadgetData
     public required string Style { get; init; }
     public required string GadgetPiece { get; init; }
 
-    public required LevelPosition Position { get; init; }
+    public required Point Position { get; init; }
     public required int InitialStateId { get; init; }
     public required GadgetRenderMode GadgetRenderMode { get; init; }
 

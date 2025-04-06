@@ -38,14 +38,14 @@ public sealed class LevelData
         _levelHeight = value;
     }
 
-    public LevelSize LevelDimensions
+    public Size LevelDimensions
     {
         get
         {
             if (_levelWidth < 0) throw new InvalidOperationException("Level width not set!");
             if (_levelHeight < 0) throw new InvalidOperationException("Level height not set!");
 
-            return new LevelSize(_levelWidth, _levelHeight);
+            return new Size(_levelWidth, _levelHeight);
         }
     }
 

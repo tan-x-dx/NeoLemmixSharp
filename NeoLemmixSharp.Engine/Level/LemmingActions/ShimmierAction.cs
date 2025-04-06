@@ -25,7 +25,7 @@ public sealed class ShimmierAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         if ((lemming.PhysicsFrame & 1) != 0)
@@ -139,12 +139,12 @@ public sealed class ShimmierAction : LemmingAction
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelRegion(
+        var gadgetTestRegion = new Region(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx, 12));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearLemming);

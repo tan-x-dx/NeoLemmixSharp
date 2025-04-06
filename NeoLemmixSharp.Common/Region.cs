@@ -9,23 +9,23 @@ using System.Runtime.InteropServices;
 namespace NeoLemmixSharp.Common;
 
 /// <summary>
-/// <para>Represents a rectangular region of points within a level, specified by a <see cref="LevelPosition"/> and a <see cref="LevelSize"/>.</para>
-/// <para>The constructors will ensure a well-formed <see cref="LevelRegion"/> is created.</para>
-/// <para>Note that a <see cref="LevelRegion"/> can never be empty - the smallest region size is 1x1.</para>
+/// <para>Represents a rectangular region of points within a level, specified by a <see cref="Point"/> and a <see cref="Common.Size"/>.</para>
+/// <para>The constructors will ensure a well-formed <see cref="Region"/> is created.</para>
+/// <para>Note that a <see cref="Region"/> can never be empty - the smallest region size is 1x1.</para>
 /// </summary>
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
-public readonly struct LevelRegion : IEquatable<LevelRegion>
+public readonly struct Region : IEquatable<Region>
 {
-    [FieldOffset(0 * sizeof(int))] public readonly LevelPosition Position;
+    [FieldOffset(0 * sizeof(int))] public readonly Point Position;
     [FieldOffset(0 * sizeof(int))] public readonly int X;
     [FieldOffset(1 * sizeof(int))] public readonly int Y;
 
-    [FieldOffset(2 * sizeof(int))] public readonly LevelSize Size;
+    [FieldOffset(2 * sizeof(int))] public readonly Size Size;
     [FieldOffset(2 * sizeof(int))] public readonly int W;
     [FieldOffset(3 * sizeof(int))] public readonly int H;
 
     [DebuggerStepThrough]
-    public LevelRegion()
+    public Region()
     {
         X = 0;
         Y = 0;
@@ -34,7 +34,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     }
 
     [DebuggerStepThrough]
-    public LevelRegion(LevelPosition position)
+    public Region(Point position)
     {
         Position = position;
         W = 1;
@@ -42,7 +42,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     }
 
     [DebuggerStepThrough]
-    public LevelRegion(LevelSize size)
+    public Region(Size size)
     {
         X = 0;
         Y = 0;
@@ -51,7 +51,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     }
 
     [DebuggerStepThrough]
-    public LevelRegion(LevelPosition position, LevelSize size)
+    public Region(Point position, Size size)
     {
         Position = position;
         W = size.W < 1 ? 1 : size.W;
@@ -59,7 +59,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     }
 
     [DebuggerStepThrough]
-    public LevelRegion(Rectangle rect)
+    public Region(Rectangle rect)
     {
         X = rect.X;
         Y = rect.Y;
@@ -68,7 +68,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     }
 
     [DebuggerStepThrough]
-    public LevelRegion(Texture2D texture)
+    public Region(Texture2D texture)
     {
         X = 0;
         Y = 0;
@@ -77,7 +77,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     }
 
     [DebuggerStepThrough]
-    public LevelRegion(LevelPosition p1, LevelPosition p2)
+    public Region(Point p1, Point p2)
     {
         if (p1.X < p2.X)
         {
@@ -105,7 +105,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     }
 
     [DebuggerStepThrough]
-    public LevelRegion(ReadOnlySpan<LevelPosition> positions)
+    public Region(ReadOnlySpan<Point> positions)
     {
         var minX = int.MaxValue;
         var minY = int.MaxValue;
@@ -131,21 +131,21 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     [Pure]
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LevelPosition GetBottomRight() => new(X + W - 1, Y + H - 1);
+    public Point GetBottomRight() => new(X + W - 1, Y + H - 1);
 
     [Pure]
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LevelInterval GetHorizontalInterval() => new(X, W);
+    public Interval GetHorizontalInterval() => new(X, W);
 
     [Pure]
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public LevelInterval GetVerticalInterval() => new(Y, H);
+    public Interval GetVerticalInterval() => new(Y, H);
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(LevelRegion left, LevelRegion right) =>
+    public static bool operator ==(Region left, Region right) =>
         left.X == right.X &&
         left.Y == right.Y &&
         left.W == right.W &&
@@ -153,7 +153,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(LevelRegion left, LevelRegion right) =>
+    public static bool operator !=(Region left, Region right) =>
         left.X != right.X ||
         left.Y != right.Y ||
         left.W != right.W ||
@@ -161,7 +161,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(LevelRegion other) =>
+    public bool Equals(Region other) =>
         X == other.X &&
         Y == other.Y &&
         W == other.W &&
@@ -169,7 +169,7 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
 
     [Pure]
     public override bool Equals([NotNullWhen(true)] object? obj) =>
-        obj is LevelRegion other &&
+        obj is Region other &&
         X == other.X &&
         Y == other.Y &&
         W == other.W &&

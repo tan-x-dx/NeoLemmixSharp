@@ -38,7 +38,7 @@ public sealed class LevelFolderEntry : LevelBrowserEntry
         MouseDoubleClick.RegisterMouseEvent(OnDoubleClick);
     }
 
-    private void OnDoubleClick(Component _, LevelPosition position)
+    private void OnDoubleClick(Component _, Point position)
     {
         IsOpen = !IsOpen;
     }

@@ -78,7 +78,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
             Style = _stringIdLookup[styleId],
             TerrainPiece = _stringIdLookup[pieceId],
 
-            Position = new LevelPosition(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
+            Position = new Common.Point(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
 
             NoOverwrite = decipheredTerrainDataMisc.NoOverwrite,
             Orientation = dht.Orientation,

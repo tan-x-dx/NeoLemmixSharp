@@ -36,7 +36,7 @@ public static class TerrainMasks
     {
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
-        var position = lemming.LevelPosition;
+        var position = lemming.AnchorPosition;
 
         _basherMask.ApplyEraseMask(orientation, facingDirection, position, frame);
     }
@@ -45,7 +45,7 @@ public static class TerrainMasks
     {
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
-        var position = orientation.MoveRight(lemming.LevelPosition, facingDirection.DeltaX);
+        var position = orientation.MoveRight(lemming.AnchorPosition, facingDirection.DeltaX);
 
         _bomberMask.ApplyEraseMask(orientation, facingDirection, position, 0);
     }
@@ -56,18 +56,18 @@ public static class TerrainMasks
     {
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
-        var position = lemming.LevelPosition;
+        var position = lemming.AnchorPosition;
 
         _fencerMask.ApplyEraseMask(orientation, facingDirection, position, frame);
     }
 
     public static void ApplyLasererMask(
         Lemming lemming,
-        LevelPosition target)
+        Point target)
     {
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
-        var position = lemming.LevelPosition;
+        var position = lemming.AnchorPosition;
 
         //  var key = GetKey(orientation, facingDirection, frame);
         //  _laserMasks[key].ApplyEraseMask(orientation, facingDirection, position);
@@ -86,7 +86,7 @@ public static class TerrainMasks
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
         var dx = facingDirection.DeltaX;
-        var position = lemming.LevelPosition;
+        var position = lemming.AnchorPosition;
         position = orientation.Move(position, offsetX + dx, offsetY - frame);
 
         _minerMask.ApplyEraseMask(orientation, facingDirection, position, frame);
@@ -97,7 +97,7 @@ public static class TerrainMasks
     {
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
-        var position = lemming.LevelPosition;
+        var position = lemming.AnchorPosition;
 
         if (facingDirection == FacingDirection.Right)
         {

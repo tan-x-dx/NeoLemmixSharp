@@ -22,7 +22,7 @@ public sealed class AscenderAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         var orientation = lemming.Orientation;
 
         var dy = 0;
@@ -52,7 +52,7 @@ public sealed class AscenderAction : LemmingAction
              pixel1IsSolid))
         {
             var dx = lemming.FacingDirection.DeltaX;
-            lemming.LevelPosition = orientation.MoveLeft(lemmingPosition, dx);
+            lemming.AnchorPosition = orientation.MoveLeft(lemmingPosition, dx);
             FallerAction.Instance.TransitionLemmingToAction(lemming, true);
         }
 

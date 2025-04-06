@@ -16,14 +16,14 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     private readonly BitArraySet<TPerfectHasher, ArrayBitBuffer, T> _allTrackedItems;
 
     private readonly int _chunkSizeBitShift;
-    private readonly LevelSize _sizeInChunks;
+    private readonly Size _sizeInChunks;
 
     private readonly int _bitArraySize;
     private readonly uint[] _cachedQueryScratchSpace;
     private readonly uint[] _allBits;
 
-    private LevelPosition _cachedTopLeftChunkQuery = new(-256, -256);
-    private LevelPosition _cachedBottomRightChunkQuery = new(-256, -256);
+    private Point _cachedTopLeftChunkQuery = new(-256, -256);
+    private Point _cachedBottomRightChunkQuery = new(-256, -256);
     private int _cachedQueryCount;
 
     public SpacialHashGrid(
@@ -42,7 +42,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         _chunkSizeBitShift = chunkSize.GetChunkSizeBitShift();
         var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;
 
-        _sizeInChunks = new LevelSize(
+        _sizeInChunks = new Size(
             (horizontalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >>> _chunkSizeBitShift,
             (verticalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >>> _chunkSizeBitShift);
 
@@ -72,7 +72,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
 
     public void GetAllItemsNearPosition(
         Span<uint> scratchSpaceSpan,
-        LevelPosition levelPosition,
+        Point levelPosition,
         out BitArrayEnumerable<TPerfectHasher, T> result)
     {
         if (IsEmpty)
@@ -81,7 +81,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             return;
         }
 
-        var chunkPosition = new LevelPosition(levelPosition.X >> _chunkSizeBitShift, levelPosition.Y >> _chunkSizeBitShift);
+        var chunkPosition = new Point(levelPosition.X >> _chunkSizeBitShift, levelPosition.Y >> _chunkSizeBitShift);
 
         if (!_sizeInChunks.EncompassesPoint(chunkPosition))
         {
@@ -105,7 +105,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     /// <returns>An enumerable for items within the region</returns>
     public void GetAllItemsNearRegion(
         Span<uint> scratchSpaceSpan,
-        LevelRegion levelRegion,
+        Region levelRegion,
         out BitArrayEnumerable<TPerfectHasher, T> result)
     {
         if (IsEmpty)
@@ -184,7 +184,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         RegisterItemPosition(item, currentTopLeftChunk, currentBottomRightChunk);
     }
 
-    private void RegisterItemPosition(T item, LevelPosition topLeftChunk, LevelPosition bottomRightChunk)
+    private void RegisterItemPosition(T item, Point topLeftChunk, Point bottomRightChunk)
     {
         if (topLeftChunk == bottomRightChunk)
         {
@@ -223,7 +223,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         DeregisterItemPosition(item, previousTopLeftChunk, previousBottomRightChunk);
     }
 
-    private void DeregisterItemPosition(T item, LevelPosition topLeftChunk, LevelPosition bottomRightChunk)
+    private void DeregisterItemPosition(T item, Point topLeftChunk, Point bottomRightChunk)
     {
         if (topLeftChunk == bottomRightChunk)
         {
@@ -238,22 +238,22 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         ModifyChunks(ChunkOperationType.Remove, item, topLeftChunk, bottomRightChunk);
     }
 
-    private LevelPosition GetTopLeftChunkForRegion(LevelRegion levelRegion)
+    private Point GetTopLeftChunkForRegion(Region levelRegion)
     {
         return ConvertToChunkPosition(levelRegion.Position);
     }
 
-    private LevelPosition GetBottomRightChunkForRegion(LevelRegion levelRegion)
+    private Point GetBottomRightChunkForRegion(Region levelRegion)
     {
         return ConvertToChunkPosition(levelRegion.GetBottomRight());
     }
 
-    private LevelPosition ConvertToChunkPosition(LevelPosition position)
+    private Point ConvertToChunkPosition(Point position)
     {
         var x = _horizontalBoundaryBehaviour.Normalise(position.X) >> _chunkSizeBitShift;
         var y = _verticalBoundaryBehaviour.Normalise(position.Y) >> _chunkSizeBitShift;
 
-        return new LevelPosition(x, y);
+        return new Point(x, y);
     }
 
     /// <summary>
@@ -272,16 +272,16 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     /// then an exception will be thrown.</param>
     /// <param name="chunkA">The top left position.</param>
     /// <param name="chunkB">The bottom right position.</param>
-    private void ModifyChunks(ChunkOperationType chunkOperationType, T item, LevelPosition chunkA, LevelPosition chunkB)
+    private void ModifyChunks(ChunkOperationType chunkOperationType, T item, Point chunkA, Point chunkB)
     {
         if (chunkB.X < chunkA.X)
         {
-            chunkB = new LevelPosition(chunkB.X + _sizeInChunks.W, chunkB.Y);
+            chunkB = new Point(chunkB.X + _sizeInChunks.W, chunkB.Y);
         }
 
         if (chunkB.Y < chunkA.Y)
         {
-            chunkB = new LevelPosition(chunkB.X, chunkB.Y + _sizeInChunks.H);
+            chunkB = new Point(chunkB.X, chunkB.Y + _sizeInChunks.H);
         }
 
         var y = 1 + chunkB.Y - chunkA.Y;
@@ -294,7 +294,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             var x = xCount;
             while (x-- > 0)
             {
-                ModifyChunkPosition(chunkOperationType, item, new LevelPosition(x1, y1));
+                ModifyChunkPosition(chunkOperationType, item, new Point(x1, y1));
 
                 if (++x1 == _sizeInChunks.W)
                 {
@@ -309,7 +309,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         }
     }
 
-    private void ModifyChunkPosition(ChunkOperationType chunkOperationType, T item, LevelPosition chunkPosition)
+    private void ModifyChunkPosition(ChunkOperationType chunkOperationType, T item, Point chunkPosition)
     {
         var span = SpanForChunk(chunkPosition);
         var hash = _hasher.Hash(item);
@@ -337,16 +337,16 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     /// <param name="span">The span used to record data.</param>
     /// <param name="chunkA">The top left position.</param>
     /// <param name="chunkB">The bottom right position.</param>
-    private void EvaluateChunkUnions(Span<uint> span, LevelPosition chunkA, LevelPosition chunkB)
+    private void EvaluateChunkUnions(Span<uint> span, Point chunkA, Point chunkB)
     {
         if (chunkB.X < chunkA.X)
         {
-            chunkB = new LevelPosition(chunkB.X + _sizeInChunks.W, chunkB.Y);
+            chunkB = new Point(chunkB.X + _sizeInChunks.W, chunkB.Y);
         }
 
         if (chunkB.Y < chunkA.Y)
         {
-            chunkB = new LevelPosition(chunkB.X, chunkB.Y + _sizeInChunks.H);
+            chunkB = new Point(chunkB.X, chunkB.Y + _sizeInChunks.H);
         }
 
         var y = 1 + chunkB.Y - chunkA.Y;
@@ -359,7 +359,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             var x = xCount;
             while (x-- > 0)
             {
-                BitArrayHelpers.UnionWith(span, ReadOnlySpanForChunk(new LevelPosition(x1, y1)));
+                BitArrayHelpers.UnionWith(span, ReadOnlySpanForChunk(new Point(x1, y1)));
 
                 if (++x1 == _sizeInChunks.W)
                 {
@@ -375,14 +375,14 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     }
 
     [Pure]
-    private Span<uint> SpanForChunk(LevelPosition pos)
+    private Span<uint> SpanForChunk(Point pos)
     {
         var index = IndexForChunk(pos);
         return new Span<uint>(_allBits, index, _bitArraySize);
     }
 
     [Pure]
-    private ReadOnlySpan<uint> ReadOnlySpanForChunk(LevelPosition pos)
+    private ReadOnlySpan<uint> ReadOnlySpanForChunk(Point pos)
     {
         var index = IndexForChunk(pos);
         return new ReadOnlySpan<uint>(_allBits, index, _bitArraySize);
@@ -390,7 +390,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int IndexForChunk(LevelPosition pos)
+    private int IndexForChunk(Point pos)
     {
         var index = _sizeInChunks.GetIndexOfPoint(pos);
         index *= _bitArraySize;
@@ -400,8 +400,8 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void ClearCachedData()
     {
-        _cachedTopLeftChunkQuery = new LevelPosition(-256, -256);
-        _cachedBottomRightChunkQuery = new LevelPosition(-256, -256);
+        _cachedTopLeftChunkQuery = new Point(-256, -256);
+        _cachedBottomRightChunkQuery = new Point(-256, -256);
     }
 
     private enum ChunkOperationType

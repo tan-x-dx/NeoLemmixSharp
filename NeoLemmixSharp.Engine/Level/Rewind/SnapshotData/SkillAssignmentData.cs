@@ -11,7 +11,7 @@ public readonly struct SkillAssignmentData : ITickOrderedData
     public readonly int TeamId;
 
     public readonly int LemmingId;
-    public readonly LevelPosition LemmingPosition;
+    public readonly Point LemmingPosition;
     public readonly int LemmingOrientationRotNum;
     public readonly int LemmingFacingDirectionId;
 
@@ -27,7 +27,7 @@ public readonly struct SkillAssignmentData : ITickOrderedData
         TeamId = lemming.State.TeamAffiliation.Id;
 
         LemmingId = lemming.Id;
-        LemmingPosition = lemming.LevelPosition;
+        LemmingPosition = lemming.AnchorPosition;
         LemmingOrientationRotNum = lemming.Orientation.RotNum;
         LemmingFacingDirectionId = lemming.FacingDirection.Id;
     }

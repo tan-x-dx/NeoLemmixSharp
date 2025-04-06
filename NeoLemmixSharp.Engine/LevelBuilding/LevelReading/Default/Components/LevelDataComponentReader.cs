@@ -50,8 +50,11 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 
     private static void ReadLevelDimensionData(RawFileData rawFileData, LevelData levelData)
     {
-        levelData.LevelWidth = rawFileData.Read16BitUnsignedInteger();
-        levelData.LevelHeight = rawFileData.Read16BitUnsignedInteger();
+        int levelWidth = rawFileData.Read16BitUnsignedInteger();
+        int levelHeight = rawFileData.Read16BitUnsignedInteger();
+
+        levelData.SetLevelWidth(levelWidth);
+        levelData.SetLevelHeight(levelHeight);
 
         int value = rawFileData.Read16BitUnsignedInteger();
         if (value != LevelReadWriteHelpers.UnspecifiedLevelStartValue)

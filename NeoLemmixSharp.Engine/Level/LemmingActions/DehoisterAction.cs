@@ -23,7 +23,7 @@ public sealed class DehoisterAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         if (lemming.EndOfAnimation)
         {
@@ -62,7 +62,7 @@ public sealed class DehoisterAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        lemming.DehoistPin = lemming.LevelPosition;
+        lemming.DehoistPin = lemming.AnchorPosition;
 
         base.TransitionLemmingToAction(lemming, turnAround);
     }
@@ -74,16 +74,16 @@ public sealed class DehoisterAction : LemmingAction
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
-        LevelPosition currentPosition;
-        LevelPosition nextPosition;
+        Point currentPosition;
+        Point nextPosition;
         if (alreadyMoved)
         {
-            nextPosition = lemming.LevelPosition;
+            nextPosition = lemming.AnchorPosition;
             currentPosition = orientation.MoveLeft(nextPosition, dx);
         }
         else
         {
-            currentPosition = lemming.LevelPosition;
+            currentPosition = lemming.AnchorPosition;
             nextPosition = orientation.MoveRight(currentPosition, dx);
         }
 

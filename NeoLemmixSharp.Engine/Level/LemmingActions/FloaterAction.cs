@@ -27,7 +27,7 @@ public sealed class FloaterAction : LemmingAction
         var maxFallDistance = FloaterFallTable[lemming.PhysicsFrame - 1];
 
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         var updraftFallDelta = GetUpdraftFallDelta(lemming, in gadgetsNearLemming);
 

@@ -70,23 +70,23 @@ public sealed class LevelScreen : IBaseScreen
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static LevelPosition NormalisePosition(LevelPosition levelPosition)
+    public static Common.Point NormalisePosition(Common.Point levelPosition)
     {
-        return new LevelPosition(
+        return new Common.Point(
             HorizontalBoundaryBehaviour.Normalise(levelPosition.X),
             VerticalBoundaryBehaviour.Normalise(levelPosition.Y));
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool RegionContainsPoint(LevelRegion region, LevelPosition point)
+    public static bool RegionContainsPoint(Region region, Common.Point point)
     {
         return HorizontalBoundaryBehaviour.IntervalContainsPoint(region.GetHorizontalInterval(), point.X) &&
                VerticalBoundaryBehaviour.IntervalContainsPoint(region.GetVerticalInterval(), point.Y);
     }
 
     [Pure]
-    public static bool RegionContainsPoints(LevelRegion region, LevelPosition p1, LevelPosition p2)
+    public static bool RegionContainsPoints(Region region, Common.Point p1, Common.Point p2)
     {
         var horizontalInterval = region.GetHorizontalInterval();
         var verticalInterval = region.GetVerticalInterval();
@@ -101,7 +101,7 @@ public sealed class LevelScreen : IBaseScreen
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool RegionsOverlap(LevelRegion r1, LevelRegion r2)
+    public static bool RegionsOverlap(Region r1, Region r2)
     {
         return HorizontalBoundaryBehaviour.IntervalsOverlap(r1.GetHorizontalInterval(), r2.GetHorizontalInterval()) &&
                VerticalBoundaryBehaviour.IntervalsOverlap(r1.GetVerticalInterval(), r2.GetVerticalInterval());
@@ -109,7 +109,7 @@ public sealed class LevelScreen : IBaseScreen
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool PositionOutOfBounds(LevelPosition levelPosition)
+    public static bool PositionOutOfBounds(Common.Point levelPosition)
     {
         return (uint)levelPosition.X >= (uint)HorizontalBoundaryBehaviour.LevelLength ||
                (uint)levelPosition.Y >= (uint)VerticalBoundaryBehaviour.LevelLength;
@@ -188,11 +188,10 @@ public sealed class LevelScreen : IBaseScreen
 
     public void OnWindowSizeChanged()
     {
-        var windowWidth = IGameWindow.Instance.WindowWidth;
-        var windowHeight = IGameWindow.Instance.WindowHeight;
+        var windowSize = IGameWindow.Instance.WindowSize;
 
-        _levelControlPanel.SetWindowDimensions(windowWidth, windowHeight);
-        _levelViewport.SetWindowDimensions(windowWidth, windowHeight, _levelControlPanel.ControlPanelScreenSize.H);
+        _levelControlPanel.SetWindowDimensions(windowSize);
+        _levelViewport.SetWindowDimensions(windowSize, _levelControlPanel.ControlPanelScreenSize.H);
         _levelScreenRenderer.OnWindowSizeChanged();
 
         IGameWindow.Instance.CaptureCursor();

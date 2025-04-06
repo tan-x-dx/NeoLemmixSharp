@@ -12,16 +12,16 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
     private readonly uint[] _levelPositionBits;
 
-    private readonly LevelRegion _bounds;
+    private readonly Region _bounds;
 
-    public LevelRegion CurrentBounds => _bounds;
+    public Region CurrentBounds => _bounds;
 
-    public PointSetHitBoxRegion(ReadOnlySpan<LevelPosition> points)
+    public PointSetHitBoxRegion(ReadOnlySpan<Point> points)
     {
         if (points.Length == 0)
             throw new ArgumentException("Cannot create PointSetHitBoxRegion with zero points!");
 
-        _bounds = new LevelRegion(points);
+        _bounds = new Region(points);
 
         if (_bounds.W > DimensionCutoffSize || _bounds.H > DimensionCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_bounds.W}, H:{_bounds.H}");
@@ -44,7 +44,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
     }
 
     [Pure]
-    public bool ContainsPoint(LevelPosition levelPosition)
+    public bool ContainsPoint(Point levelPosition)
     {
         levelPosition -= _bounds.Position;
         var index = IndexFor(levelPosition);
@@ -55,7 +55,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
     }
 
     [Pure]
-    public bool ContainsPoints(LevelPosition p1, LevelPosition p2)
+    public bool ContainsPoints(Point p1, Point p2)
     {
         p1 -= _bounds.Position;
         p2 -= _bounds.Position;
@@ -76,5 +76,5 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int IndexFor(LevelPosition levelPosition) => _bounds.Size.GetIndexOfPoint(levelPosition);
+    private int IndexFor(Point levelPosition) => _bounds.Size.GetIndexOfPoint(levelPosition);
 }

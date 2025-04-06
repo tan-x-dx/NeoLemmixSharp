@@ -151,12 +151,12 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
 
     public abstract bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming);
 
-    public LevelRegion GetLemmingBounds(Lemming lemming)
+    public Region GetLemmingBounds(Lemming lemming)
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dxCorrection = lemming.FacingDirection.Id ^ 1; // Fixes off-by-one errors with left/right positions
-        var lemmingPosition = lemming.LevelPosition;
+        var lemmingPosition = lemming.AnchorPosition;
         var physicsFrame = lemming.PhysicsFrame;
 
         var topLeftDx = TopLeftBoundsDeltaX(physicsFrame);
@@ -168,7 +168,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
         var p1 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * topLeftDx, topLeftDy);
         var p2 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * bottomRightDx, bottomRightDy);
 
-        return new LevelRegion(p1, p2);
+        return new Region(p1, p2);
     }
 
     protected abstract int TopLeftBoundsDeltaX(int animationFrame);
@@ -177,9 +177,9 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     protected abstract int BottomRightBoundsDeltaX(int animationFrame);
     protected virtual int BottomRightBoundsDeltaY(int animationFrame) => -1;
 
-    public virtual LevelPosition GetFootPosition(
+    public virtual Point GetFootPosition(
         Lemming lemming,
-        LevelPosition anchorPosition)
+        Point anchorPosition)
     {
         return lemming.Orientation.MoveUp(anchorPosition, 1);
     }

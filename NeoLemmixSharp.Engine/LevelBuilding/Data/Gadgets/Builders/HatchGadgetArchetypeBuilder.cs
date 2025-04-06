@@ -13,7 +13,7 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     public required string StyleName { get; init; }
     public required string PieceName { get; init; }
 
-    public required LevelPosition SpawnPosition { get; init; }
+    public required Point SpawnPosition { get; init; }
 
     public required SpriteData SpriteData { get; init; }
 

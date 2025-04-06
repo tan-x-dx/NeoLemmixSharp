@@ -28,8 +28,8 @@ public sealed class HitBoxGadget : GadgetBase,
     public GadgetState CurrentState => _currentState;
 
     // The below properties refer to the positions of the hitboxes, not the gadget itself
-    public LevelRegion CurrentBounds => _currentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
-    public LevelRegion PreviousBounds => _previousState.GetMininmumBoundingBoxForAllHitBoxes(PreviousGadgetBounds.Position);
+    public Region CurrentBounds => _currentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
+    public Region PreviousBounds => _previousState.GetMininmumBoundingBoxForAllHitBoxes(PreviousGadgetBounds.Position);
 
     public ResizeType ResizeType { get; }
 
@@ -88,14 +88,14 @@ public sealed class HitBoxGadget : GadgetBase,
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
-    public bool ContainsPoint(Orientation orientation, LevelPosition levelPosition)
+    public bool ContainsPoint(Orientation orientation, Point levelPosition)
     {
         return _currentState
             .HitBoxFor(orientation)
             .ContainsPoint(levelPosition - CurrentGadgetBounds.Position);
     }
 
-    public bool ContainsPoints(Orientation orientation, LevelPosition p1, LevelPosition p2)
+    public bool ContainsPoints(Orientation orientation, Point p1, Point p2)
     {
         var offset = CurrentGadgetBounds.Position;
         var hitBox = _currentState.HitBoxFor(orientation);
@@ -136,7 +136,7 @@ public sealed class HitBoxGadget : GadgetBase,
         PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
-        var delta = new LevelPosition(dx, dy);
+        var delta = new Point(dx, dy);
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(CurrentGadgetBounds.Position + delta);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
@@ -146,7 +146,7 @@ public sealed class HitBoxGadget : GadgetBase,
         PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
-        var newPosition = new LevelPosition(x, y);
+        var newPosition = new Point(x, y);
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(newPosition);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }

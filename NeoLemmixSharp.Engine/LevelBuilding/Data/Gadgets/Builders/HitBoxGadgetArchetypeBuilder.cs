@@ -61,7 +61,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             Position = gadgetData.Position
         };
 
-        var size = new LevelSize(
+        var size = new Size(
             ResizeType.CanResizeHorizontally() ? gadgetData.GetProperty(GadgetProperty.Width) : SpriteData.SpriteSize.W,
             ResizeType.CanResizeVertically() ? gadgetData.GetProperty(GadgetProperty.Height) : SpriteData.SpriteSize.H);
 
@@ -227,7 +227,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
         RectangularHitBoxRegion CreateRectangularHitBoxRegion(
             GadgetData gadgetData,
-            ReadOnlySpan<LevelPosition> hitBoxRegionData)
+            ReadOnlySpan<Point> hitBoxRegionData)
         {
             if (hitBoxRegionData.Length != 2)
                 throw new InvalidOperationException("Expected exactly two points of data");
@@ -243,13 +243,13 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         [SkipLocalsInit]
         PointSetHitBoxRegion CreatePointSetHitBoxRegion(
             GadgetData gadgetData,
-            ReadOnlySpan<LevelPosition> triggerData)
+            ReadOnlySpan<Point> triggerData)
         {
             var dihedralTransformation = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection);
 
-            Span<LevelPosition> adjustedPoints = triggerData.Length > 32
-                ? new LevelPosition[triggerData.Length]
-                : stackalloc LevelPosition[triggerData.Length];
+            Span<Point> adjustedPoints = triggerData.Length > 32
+                ? new Point[triggerData.Length]
+                : stackalloc Point[triggerData.Length];
 
             for (var i = 0; i < triggerData.Length; i++)
             {
@@ -261,7 +261,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
         static ResizableRectangularHitBoxRegion CreateResizableRectangularHitBoxRegion(
             GadgetBounds hitBoxGadgetBounds,
-            ReadOnlySpan<LevelPosition> hitBoxRegionData)
+            ReadOnlySpan<Point> hitBoxRegionData)
         {
             if (hitBoxRegionData.Length != 2)
                 throw new InvalidOperationException("Expected data of length 2");

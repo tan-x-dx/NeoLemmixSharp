@@ -9,7 +9,7 @@ public sealed class TerrainData
     public required string Style { get; init; }
     public required string TerrainPiece { get; init; }
 
-    public required LevelPosition Position { get; init; }
+    public required Common.Point Position { get; init; }
 
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }

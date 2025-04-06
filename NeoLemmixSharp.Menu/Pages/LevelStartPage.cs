@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 
 namespace NeoLemmixSharp.Menu.Pages;
@@ -19,7 +20,7 @@ public sealed class LevelStartPage : PageBase
     {
     }
 
-    protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
+    protected override void OnWindowDimensionsChanged(Size windowSize)
     {
     }
 

@@ -88,7 +88,7 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
 
     private static void ValidateLemmingReplayAction(Lemming lemming, in SkillAssignmentData previouslyRecordedSkillAssignment)
     {
-        if (lemming.LevelPosition == previouslyRecordedSkillAssignment.LemmingPosition &&
+        if (lemming.AnchorPosition == previouslyRecordedSkillAssignment.LemmingPosition &&
             lemming.State.TeamAffiliation.Id == previouslyRecordedSkillAssignment.TeamId &&
             lemming.Orientation.RotNum == previouslyRecordedSkillAssignment.LemmingOrientationRotNum &&
             lemming.FacingDirection.Id == previouslyRecordedSkillAssignment.LemmingFacingDirectionId)

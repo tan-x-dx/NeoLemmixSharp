@@ -26,7 +26,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         var facingDirection = lemming.FacingDirection;
         var dx = facingDirection.DeltaX;
 
@@ -131,10 +131,10 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
     private static void TurnMinerAround(
         in GadgetEnumerable gadgetsNearLemming,
         Lemming lemming,
-        LevelPosition checkPosition)
+        Point checkPosition)
     {
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        var lemmingPosition = lemming.AnchorPosition;
 
         if (PositionIsSteelToLemming(in gadgetsNearLemming, lemming, checkPosition))
         {
@@ -148,7 +148,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
         {
-            lemming.LevelPosition = lemmingPosition;
+            lemming.AnchorPosition = lemmingPosition;
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true); // turn around as well
         }
     }

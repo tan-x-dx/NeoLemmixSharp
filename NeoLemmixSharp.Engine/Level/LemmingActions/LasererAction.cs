@@ -45,8 +45,8 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         -1, 1
     ];
 
-    private static ReadOnlySpan<LevelPosition> GetOffsetChecks(FacingDirection facingDirection) => MemoryMarshal
-        .Cast<int, LevelPosition>(facingDirection == FacingDirection.Right
+    private static ReadOnlySpan<Point> GetOffsetChecks(FacingDirection facingDirection) => MemoryMarshal
+        .Cast<int, Point>(facingDirection == FacingDirection.Right
             ? RawOffsetChecksRight
             : RawOffsetChecksLeft);
 
@@ -72,7 +72,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.LevelPosition;
+        var lemmingPosition = lemming.AnchorPosition;
 
         if (!PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
         {
@@ -142,7 +142,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
         return true;
 
-        LaserHitType CheckForHit(in GadgetEnumerable gadgetsNearLemming1, ReadOnlySpan<LevelPosition> offsetChecks)
+        LaserHitType CheckForHit(in GadgetEnumerable gadgetsNearLemming1, ReadOnlySpan<Point> offsetChecks)
         {
             if (LevelScreen.PositionOutOfBounds(target))
                 return LaserHitType.OutOfBounds;

@@ -62,7 +62,7 @@ public sealed class ToggleButton : Component
         }
     }
 
-    private void OnMouseDown(Component c, LevelPosition mousePosition)
+    private void OnMouseDown(Component c, Point mousePosition)
     {
         IsActive = !IsActive;
         SetMousePress(c, mousePosition);

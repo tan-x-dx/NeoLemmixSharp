@@ -56,11 +56,11 @@ public sealed partial class NeoLemmixGame
             var bytesRead = LoadByteData(maskName, byteBuffer);
 
             int i = 0;
-            var maskSize = new LevelSize(byteBuffer[i++], byteBuffer[i++]);
+            var maskSize = new Size(byteBuffer[i++], byteBuffer[i++]);
 
             int numberOfFrames = byteBuffer[i++];
 
-            var anchorPosition = new LevelPosition(byteBuffer[i++], byteBuffer[i++]);
+            var anchorPosition = new Point(byteBuffer[i++], byteBuffer[i++]);
 
             byteBuffer = byteBuffer[i..];
 
@@ -70,18 +70,18 @@ public sealed partial class NeoLemmixGame
 
             byteBuffer = byteBuffer[..bytesRead];
 
-            GenerateLevelPositionData(
+            GeneratePositionData(
                 maskSize,
                 numberOfFrames,
                 MemoryMarshal.Cast<byte, uint>(byteBuffer),
                 out var ranges,
-                out var levelPositions);
+                out var positions);
 
             return new TerrainEraseMask(
                 anchorPosition,
                 maskSize,
                 ranges,
-                levelPositions,
+                positions,
                 BasherAction.Instance);
         }
 
@@ -106,16 +106,16 @@ public sealed partial class NeoLemmixGame
             return byteLength;
         }
 
-        static void GenerateLevelPositionData(
-            LevelSize maskSize,
+        static void GeneratePositionData(
+            Size maskSize,
             int numberOfFrames,
             ReadOnlySpan<uint> byteBuffer,
             out Range[] ranges,
-            out LevelPosition[] levelPositions)
+            out Point[] positions)
         {
             var numberOfPixels = BitArrayHelpers.GetPopCount(byteBuffer);
             ranges = new Range[numberOfFrames];
-            levelPositions = new LevelPosition[numberOfPixels];
+            positions = new Point[numberOfPixels];
 
             var area = maskSize.Area();
             var bitEnumerator = new BitArrayEnumerator(byteBuffer, numberOfPixels);
@@ -130,7 +130,7 @@ public sealed partial class NeoLemmixGame
                 previousIndex = currentIndex;
                 currentIndex = bitEnumerator.Current;
 
-                levelPositions[p++] = ConvertToPosition(currentIndex % area);
+                positions[p++] = ConvertToPosition(currentIndex % area);
 
                 if (previousIndex / area != currentIndex / area)
                 {
@@ -142,16 +142,16 @@ public sealed partial class NeoLemmixGame
             ranges[r++] = new Range(startIndex, numberOfPixels);
 
             Debug.Assert(r == ranges.Length);
-            Debug.Assert(p == levelPositions.Length);
+            Debug.Assert(p == positions.Length);
 
             return;
 
-            LevelPosition ConvertToPosition(int index)
+            Point ConvertToPosition(int index)
             {
                 var y = index / maskSize.W;
                 var x = index - (y * maskSize.W);
 
-                return new LevelPosition(x, y);
+                return new Point(x, y);
             }
         }
     }
