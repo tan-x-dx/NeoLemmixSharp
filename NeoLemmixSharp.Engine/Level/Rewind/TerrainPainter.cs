@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Terrain;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
@@ -11,22 +12,19 @@ public sealed class TerrainPainter
 
     private readonly TickOrderedList<PixelChangeData> _pixelChangeList = new(InitialPixelChangeListSize);
     private readonly Texture2D _terrainTexture;
-    private readonly PixelType[] _terrainPixelTypes;
-    private readonly Color[] _terrainColors;
-    private readonly int _terrainWidth;
+    private readonly ArrayWrapper2D<PixelType> _terrainPixelTypes;
+    private readonly ArrayWrapper2D<Color> _terrainColors;
 
     private int _latestIndexOfTickUpdates;
 
     public TerrainPainter(
         Texture2D terrainTexture,
-        PixelType[] terrainPixelTypes,
-        Color[] terrainColors,
-        int terrainWidth)
+        ArrayWrapper2D<PixelType> terrainPixelTypes,
+        ArrayWrapper2D<Color> terrainColors)
     {
         _terrainTexture = terrainTexture;
         _terrainPixelTypes = terrainPixelTypes;
         _terrainColors = terrainColors;
-        _terrainWidth = terrainWidth;
     }
 
     public void RecordPixelChange(LevelPosition pixel, Color toColor, PixelType fromPixelType, PixelType toPixelType)
@@ -39,7 +37,7 @@ public sealed class TerrainPainter
             _latestIndexOfTickUpdates = _pixelChangeList.Count;
         }
 
-        var fromColor = _terrainColors[pixel.Y * _terrainWidth + pixel.X];
+        var fromColor = _terrainColors[pixel];
 
         ref var pixelChangeData = ref _pixelChangeList.GetNewDataRef();
 
@@ -54,10 +52,11 @@ public sealed class TerrainPainter
 
         foreach (ref readonly var pixelChangeData in pixelChanges)
         {
-            _terrainColors[pixelChangeData.Y * _terrainWidth + pixelChangeData.X] = pixelChangeData.ToColor;
+            var position = new LevelPosition(pixelChangeData.X, pixelChangeData.Y);
+            _terrainColors[position] = pixelChangeData.ToColor;
         }
 
-        _terrainTexture.SetData(_terrainColors);
+        _terrainTexture.SetData(_terrainColors.Array);
     }
 
     private ReadOnlySpan<PixelChangeData> GetLatestPixelChanges()
@@ -76,15 +75,15 @@ public sealed class TerrainPainter
         for (var i = pixelChanges.Length - 1; i >= 0; i--)
         {
             ref readonly var pixelChangeData = ref pixelChanges[i];
-            var index = pixelChangeData.Y * _terrainWidth + pixelChangeData.X;
-            _terrainColors[index] = pixelChangeData.FromColor;
-            ref var pixelType = ref _terrainPixelTypes[index];
+            var position = new LevelPosition(pixelChangeData.X, pixelChangeData.Y);
+            _terrainColors[position] = pixelChangeData.FromColor;
+            ref var pixelType = ref _terrainPixelTypes[position];
 
             pixelType &= PixelType.TerrainDataInverseMask; // Clear out existing terrain data
             pixelType |= (PixelType.TerrainDataMask & pixelChangeData.FromPixelType); // Add in the original terrain data
         }
 
-        _terrainTexture.SetData(_terrainColors);
+        _terrainTexture.SetData(_terrainColors.Array);
     }
 
     private readonly struct PixelChangeData : ITickOrderedData

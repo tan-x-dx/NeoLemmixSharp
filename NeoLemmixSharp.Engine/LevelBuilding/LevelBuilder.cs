@@ -57,8 +57,9 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
         levelData.HorizontalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
         levelData.VerticalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
 
-        var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelData.LevelWidth);
-        var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelData.LevelHeight);
+        var levelDimensions = levelData.LevelDimensions;
+        var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelDimensions.W);
+        var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelDimensions.H);
 
         var levelLemmings = _levelObjectAssembler.GetLevelLemmings(levelData);
         var hatchGroups = LevelObjectAssembler.GetHatchGroups(levelData);
@@ -95,7 +96,7 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
         var terrainTexture = terrainBuilder.GetTerrainTexture();
         var pixelData = terrainBuilder.GetPixelData();
         var terrainColorData = terrainBuilder.GetTerrainColors();
-        var terrainPainter = new TerrainPainter(terrainTexture, pixelData, terrainColorData, levelData.LevelWidth);
+        var terrainPainter = new TerrainPainter(terrainTexture, pixelData, terrainColorData);
         var terrainRenderer = new TerrainRenderer(terrainTexture);
 
         var rewindManager = new RewindManager(lemmingManager, gadgetManager, skillSetManager);
@@ -187,8 +188,7 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
         return LevelTimer.CreateCountUpTimer();
     }
 
-    private static IBackgroundRenderer GetBackgroundRenderer(
-        LevelData levelData)
+    private static IBackgroundRenderer GetBackgroundRenderer(LevelData levelData)
     {
         var backgroundData = levelData.LevelBackground;
         if (backgroundData is null)

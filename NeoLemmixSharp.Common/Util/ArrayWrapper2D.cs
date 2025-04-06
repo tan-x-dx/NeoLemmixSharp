@@ -1,16 +1,31 @@
 ﻿namespace NeoLemmixSharp.Common.Util;
 
-public readonly ref struct SpanWrapper2D<T>
+/// <summary>
+/// Represents a wrapper over a portion of a 2D array.
+/// </summary>
+/// <typeparam name="T">The array type</typeparam>
+public readonly struct ArrayWrapper2D<T>
 {
-    private readonly Span<T> _data;
+    private readonly T[] _data;
     private readonly LevelSize _spanSize;
     private readonly LevelRegion _region;
 
-    public int Width => _region.W;
-    public int Height => _region.H;
+    public T[] Array => _data;
 
-    public SpanWrapper2D(
-        Span<T> data,
+    public ArrayWrapper2D(
+        T[] data,
+        LevelSize dimensions)
+    {
+        if (data.Length != dimensions.Area())
+            throw new ArgumentException("Invalid dimensions");
+
+        _data = data;
+        _spanSize = dimensions;
+        _region = new LevelRegion(dimensions);
+    }
+
+    public ArrayWrapper2D(
+        T[] data,
         LevelSize spanSize,
         LevelRegion region)
     {
@@ -34,19 +49,15 @@ public readonly ref struct SpanWrapper2D<T>
         _region = region;
     }
 
-    public T this[LevelPosition pos]
+    public bool EncompasesPoint(LevelPosition pos) => _region.Size.EncompassesPoint(pos);
+
+    public ref T this[LevelPosition pos]
     {
         get
         {
             _region.Size.AssertEncompassesPoint(pos);
             var index = _spanSize.GetIndexOfPoint(pos + _region.Position);
-            return _data[index];
-        }
-        set
-        {
-            _region.Size.AssertEncompassesPoint(pos);
-            var index = _spanSize.GetIndexOfPoint(pos + _region.Position);
-            _data[index] = value;
+            return ref _data[index];
         }
     }
 }

@@ -65,8 +65,9 @@ public sealed class LevelDataComponentWriter : ILevelDataWriter
 
     private static void WriteLevelDimensionData(BinaryWriter writer, LevelData levelData)
     {
-        writer.Write((ushort)levelData.LevelWidth);
-        writer.Write((ushort)levelData.LevelHeight);
+        var levelDimensions = levelData.LevelDimensions;
+        writer.Write((ushort)levelDimensions.W);
+        writer.Write((ushort)levelDimensions.H);
         writer.Write((ushort)(levelData.LevelStartPositionX ?? LevelReadWriteHelpers.UnspecifiedLevelStartValue));
         writer.Write((ushort)(levelData.LevelStartPositionY ?? LevelReadWriteHelpers.UnspecifiedLevelStartValue));
 
