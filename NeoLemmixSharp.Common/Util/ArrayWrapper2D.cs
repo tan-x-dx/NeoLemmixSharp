@@ -11,6 +11,7 @@ public readonly struct ArrayWrapper2D<T>
     private readonly Region _subRegion;
 
     public T[] Array => _data;
+    public Size Size => _subRegion.Size;
 
     public ArrayWrapper2D(
         T[] data,

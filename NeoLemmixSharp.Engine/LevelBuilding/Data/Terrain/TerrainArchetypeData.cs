@@ -1,5 +1,6 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
@@ -19,7 +20,7 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
     public required int NineSliceTop { get; init; }
     public required int NineSliceRight { get; init; }
 
-    public PixelColorData TerrainPixelColorData { get; set; }
+    public ArrayWrapper2D<Color> TerrainPixelColorData { get; set; }
 
     public override string ToString()
     {
