@@ -129,12 +129,12 @@ public sealed class LevelDataReader : NeoLemmixDataReader
 
     private void SetWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _levelData.LevelWidth = int.Parse(secondToken);
+        _levelData.SetLevelWidth(int.Parse(secondToken));
     }
 
     private void SetHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _levelData.LevelHeight = int.Parse(secondToken);
+        _levelData.SetLevelHeight(int.Parse(secondToken));
     }
 
     private void SetNumberOfLemmings(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

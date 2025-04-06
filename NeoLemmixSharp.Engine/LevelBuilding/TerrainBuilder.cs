@@ -15,26 +15,30 @@ public readonly ref struct TerrainBuilder
     private readonly LevelData _levelData;
 
     private readonly RenderTarget2D _terrainTexture;
-    private readonly Color[] _terrainColors;
-    private readonly PixelType[] _terrainPixels;
+    private readonly ArrayWrapper2D<Color> _terrainColors;
+    private readonly ArrayWrapper2D<PixelType> _terrainPixels;
 
     public TerrainBuilder(GraphicsDevice graphicsDevice, LevelData levelData)
     {
         _graphicsDevice = graphicsDevice;
         _levelData = levelData;
 
+        var terrainDimensions = levelData.LevelDimensions;
+
         _terrainTexture = new RenderTarget2D(
             _graphicsDevice,
-            _levelData.LevelWidth,
-            _levelData.LevelHeight,
+            terrainDimensions.W,
+            terrainDimensions.H,
             false,
             _graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24,
             8,
             RenderTargetUsage.DiscardContents);
 
-        _terrainPixels = new PixelType[_levelData.LevelWidth * _levelData.LevelHeight];
-        _terrainColors = new Color[_levelData.LevelWidth * _levelData.LevelHeight];
+        var rawPixels = new PixelType[terrainDimensions.Area()];
+        _terrainPixels = new ArrayWrapper2D<PixelType>(rawPixels, terrainDimensions);
+        var rawColors = new Color[terrainDimensions.Area()];
+        _terrainColors = new ArrayWrapper2D<Color>(rawColors, terrainDimensions);
     }
 
     public void BuildTerrain()
@@ -49,20 +53,19 @@ public readonly ref struct TerrainBuilder
             ProcessTerrainGroup(terrainGroup);
         }
 
-        var textureData = new PixelColorData(
-            new LevelSize(_levelData.LevelWidth, _levelData.LevelHeight),
-            _terrainColors);
+
+        var textureData = new PixelColorData(_levelData.LevelDimensions, _terrainColors.Array);
 
         DrawTerrainPieces(_levelData.AllTerrainData, textureData);
-        _terrainTexture.SetData(_terrainColors);
+        _terrainTexture.SetData(_terrainColors.Array);
     }
 
-    public Color[] GetTerrainColors()
+    public ArrayWrapper2D<Color> GetTerrainColors()
     {
         return _terrainColors;
     }
 
-    public PixelType[] GetPixelData()
+    public ArrayWrapper2D<PixelType> GetPixelData()
     {
         return _terrainPixels;
     }
@@ -217,8 +220,7 @@ public readonly ref struct TerrainBuilder
 
         targetPixelColorData[p0] = targetPixelColor;
 
-        var pixelIndex = targetPixelColorData.Size.GetIndexOfPoint(p0);
-        ref var targetPixelData = ref _terrainPixels[pixelIndex];
+        ref var targetPixelData = ref _terrainPixels[p0];
 
         if (PixelColorIsSubstantial(targetPixelColor))
         {
