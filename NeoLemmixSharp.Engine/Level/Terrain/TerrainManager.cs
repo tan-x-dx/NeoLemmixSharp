@@ -17,7 +17,7 @@ public sealed class TerrainManager
     }
 
     [Pure]
-    public PixelType PixelTypeAtPosition(LevelPosition levelPosition)
+    public PixelType PixelTypeAtPosition(Common.Point levelPosition)
     {
         if (_pixels.EncompasesPoint(levelPosition))
             return _pixels[levelPosition];
@@ -28,7 +28,7 @@ public sealed class TerrainManager
     [Pure]
     public bool PixelIsSolidToLemming(
         Lemming lemming,
-        LevelPosition levelPosition)
+        Common.Point levelPosition)
     {
         return PixelTypeAtPosition(levelPosition).IsSolidToOrientation(lemming.Orientation);
     }
@@ -37,7 +37,7 @@ public sealed class TerrainManager
     public bool PixelIsIndestructibleToLemming(
         Lemming lemming,
         IDestructionMask destructionMask,
-        LevelPosition levelPosition)
+        Common.Point levelPosition)
     {
         var pixel = PixelTypeAtPosition(levelPosition);
 
@@ -46,7 +46,7 @@ public sealed class TerrainManager
     }
 
     [Pure]
-    public bool PixelIsSteel(LevelPosition levelPosition)
+    public bool PixelIsSteel(Common.Point levelPosition)
     {
         return PixelTypeAtPosition(levelPosition).IsSteel();
     }
@@ -55,7 +55,7 @@ public sealed class TerrainManager
         Orientation orientation,
         IDestructionMask destructionMask,
         FacingDirection facingDirection,
-        LevelPosition pixelToErase)
+        Common.Point pixelToErase)
     {
         if (!_pixels.EncompasesPoint(pixelToErase))
             return;
@@ -78,7 +78,7 @@ public sealed class TerrainManager
             0);
     }
 
-    public void SetSolidPixel(LevelPosition pixelToSet, Color color)
+    public void SetSolidPixel(Common.Point pixelToSet, Color color)
     {
         if (!_pixels.EncompasesPoint(pixelToSet))
             return;
@@ -100,7 +100,7 @@ public sealed class TerrainManager
             PixelType.SolidToAllOrientations);
     }
 
-    public void SetBlockerMaskPixel(LevelPosition pixelToSet, PixelType pixelTypeMask, bool set)
+    public void SetBlockerMaskPixel(Common.Point pixelToSet, PixelType pixelTypeMask, bool set)
     {
         if (!_pixels.EncompasesPoint(pixelToSet))
             return;
@@ -130,7 +130,7 @@ public sealed class TerrainManager
             var y2 = y0 * spanWidth;
             for (var x0 = spanWidth - 1; x0 >= 0; x0--)
             {
-                pixelSpan[y2 + x0] = PixelTypeAtPosition(new LevelPosition(x0 + xOffset, y1));
+                pixelSpan[y2 + x0] = PixelTypeAtPosition(new Common.Point(x0 + xOffset, y1));
             }
         }
     }

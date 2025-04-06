@@ -111,7 +111,7 @@ end;
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         var dx = lemming.FacingDirection.DeltaX;
 
@@ -157,7 +157,7 @@ end;
             }
 
             dy = 0;
-            LevelPosition checkPosition;
+            Point checkPosition;
             do
             {
                 dy++;
@@ -230,7 +230,7 @@ end;
         bool moveForwardFirst)
     {
         var orientation = lemming.Orientation;
-        var checkPosition = lemming.LevelPosition;
+        var checkPosition = lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         if (moveForwardFirst)
@@ -260,7 +260,7 @@ end;
         Lemming lemming)
     {
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         var dx = lemming.FacingDirection.DeltaX;
         var groundPixelDelta = FindGroundPixel(lemming, orientation.MoveRight(lemmingPosition, dx), in gadgetsNearLemming);
@@ -293,7 +293,7 @@ end;
         bool HasConsecutivePixels(in GadgetEnumerable gadgetsNearLemming1)
         {
             // Check at LemY +1, +2, +3 for (a) solid terrain, or (b) a one-way field that will turn the lemming around
-            var checkPosition = orientation.MoveRight(lemming.LevelPosition, dx);
+            var checkPosition = orientation.MoveRight(lemming.AnchorPosition, dx);
 
             for (var i = 1; i < 4; i++)
             {
@@ -308,7 +308,7 @@ end;
     private static bool HeadCheck(
         in GadgetEnumerable gadgetsNearLemming,
         Lemming lemming,
-        LevelPosition checkPosition)
+        Point checkPosition)
     {
         var orientation = lemming.Orientation;
 

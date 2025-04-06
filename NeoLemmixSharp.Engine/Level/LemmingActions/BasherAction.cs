@@ -38,7 +38,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         }
 
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         // Check for enough terrain to continue working
@@ -182,7 +182,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     private static bool BasherIndestructibleCheck(
         in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
-        LevelPosition pos)
+        Point pos)
     {
         var orientation = lemming.Orientation;
 
@@ -197,7 +197,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         bool playSound)
     {
         var dx = lemming.FacingDirection.DeltaX;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         lemmingPosition = lemming.Orientation.MoveLeft(lemmingPosition, dx);
         WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
@@ -210,7 +210,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     public static bool StepUpCheck(
         in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
-        LevelPosition pos,
+        Point pos,
         Orientation orientation,
         int dx,
         int dy)

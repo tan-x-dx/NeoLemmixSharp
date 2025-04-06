@@ -6,9 +6,9 @@ namespace NeoLemmixSharp.Engine.Level.Orientations;
 public static class OrientationMethods
 {
     [Pure]
-    public static LevelPosition MoveDown(
+    public static Point MoveDown(
         this Orientation orientation,
-        LevelPosition position,
+        Point position,
         int step)
     {
         var newPosition = orientation.RotNum switch
@@ -18,16 +18,16 @@ public static class OrientationMethods
             EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveDown(position, step),
             EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveDown(position, step),
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<LevelPosition>(orientation)
+            _ => Orientation.ThrowOrientationOutOfRangeException<Point>(orientation)
         };
 
         return LevelScreen.NormalisePosition(newPosition);
     }
 
     [Pure]
-    public static LevelPosition MoveLeft(
+    public static Point MoveLeft(
         this Orientation orientation,
-        LevelPosition position,
+        Point position,
         int step)
     {
         var newPosition = orientation.RotNum switch
@@ -37,16 +37,16 @@ public static class OrientationMethods
             EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveLeft(position, step),
             EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveLeft(position, step),
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<LevelPosition>(orientation)
+            _ => Orientation.ThrowOrientationOutOfRangeException<Point>(orientation)
         };
 
         return LevelScreen.NormalisePosition(newPosition);
     }
 
     [Pure]
-    public static LevelPosition MoveUp(
+    public static Point MoveUp(
         this Orientation orientation,
-        LevelPosition position,
+        Point position,
         int step)
     {
         var newPosition = orientation.RotNum switch
@@ -56,16 +56,16 @@ public static class OrientationMethods
             EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveUp(position, step),
             EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveUp(position, step),
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<LevelPosition>(orientation)
+            _ => Orientation.ThrowOrientationOutOfRangeException<Point>(orientation)
         };
 
         return LevelScreen.NormalisePosition(newPosition);
     }
 
     [Pure]
-    public static LevelPosition MoveRight(
+    public static Point MoveRight(
         this Orientation orientation,
-        LevelPosition position,
+        Point position,
         int step)
     {
         var newPosition = orientation.RotNum switch
@@ -75,7 +75,7 @@ public static class OrientationMethods
             EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveRight(position, step),
             EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveRight(position, step),
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<LevelPosition>(orientation)
+            _ => Orientation.ThrowOrientationOutOfRangeException<Point>(orientation)
         };
 
         return LevelScreen.NormalisePosition(newPosition);
@@ -89,9 +89,9 @@ public static class OrientationMethods
     /// <param name="dy"></param>
     /// <returns></returns>
     [Pure]
-    public static LevelPosition Move(
+    public static Point Move(
         this Orientation orientation,
-        LevelPosition position,
+        Point position,
         int dx,
         int dy)
     {
@@ -102,7 +102,7 @@ public static class OrientationMethods
             EngineConstants.UpOrientationRotNum => UpOrientationMethods.Move(position, dx, dy),
             EngineConstants.RightOrientationRotNum => RightOrientationMethods.Move(position, dx, dy),
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<LevelPosition>(orientation)
+            _ => Orientation.ThrowOrientationOutOfRangeException<Point>(orientation)
         };
 
         return LevelScreen.NormalisePosition(newPosition);
@@ -116,9 +116,9 @@ public static class OrientationMethods
     /// <param name="dy"></param>
     /// <returns></returns>
     [Pure]
-    public static LevelPosition MoveWithoutNormalization(
+    public static Point MoveWithoutNormalization(
         this Orientation orientation,
-        LevelPosition position,
+        Point position,
         int dx,
         int dy) => orientation.RotNum switch
         {
@@ -127,14 +127,14 @@ public static class OrientationMethods
             EngineConstants.UpOrientationRotNum => UpOrientationMethods.Move(position, dx, dy),
             EngineConstants.RightOrientationRotNum => RightOrientationMethods.Move(position, dx, dy),
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<LevelPosition>(orientation)
+            _ => Orientation.ThrowOrientationOutOfRangeException<Point>(orientation)
         };
 
     [Pure]
     public static bool MatchesHorizontally(
         this Orientation orientation,
-        LevelPosition firstPosition,
-        LevelPosition secondPosition) => orientation.RotNum switch
+        Point firstPosition,
+        Point secondPosition) => orientation.RotNum switch
         {
             EngineConstants.DownOrientationRotNum => DownOrientationMethods.MatchesHorizontally(firstPosition, secondPosition),
             EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MatchesHorizontally(firstPosition, secondPosition),
@@ -147,8 +147,8 @@ public static class OrientationMethods
     [Pure]
     public static bool MatchesVertically(
         this Orientation orientation,
-        LevelPosition firstPosition,
-        LevelPosition secondPosition) => orientation.RotNum switch
+        Point firstPosition,
+        Point secondPosition) => orientation.RotNum switch
         {
             EngineConstants.DownOrientationRotNum => DownOrientationMethods.MatchesVertically(firstPosition, secondPosition),
             EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MatchesVertically(firstPosition, secondPosition),
@@ -161,8 +161,8 @@ public static class OrientationMethods
     [Pure]
     public static bool FirstIsAboveSecond(
         this Orientation orientation,
-        LevelPosition firstPosition,
-        LevelPosition secondPosition) => orientation.RotNum switch
+        Point firstPosition,
+        Point secondPosition) => orientation.RotNum switch
         {
             EngineConstants.DownOrientationRotNum => DownOrientationMethods.FirstIsAboveSecond(firstPosition, secondPosition),
             EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.FirstIsAboveSecond(firstPosition, secondPosition),
@@ -175,8 +175,8 @@ public static class OrientationMethods
     [Pure]
     public static bool FirstIsBelowSecond(
         this Orientation orientation,
-        LevelPosition firstPosition,
-        LevelPosition secondPosition) => orientation.RotNum switch
+        Point firstPosition,
+        Point secondPosition) => orientation.RotNum switch
         {
             EngineConstants.DownOrientationRotNum => DownOrientationMethods.FirstIsBelowSecond(firstPosition, secondPosition),
             EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.FirstIsBelowSecond(firstPosition, secondPosition),
@@ -189,8 +189,8 @@ public static class OrientationMethods
     [Pure]
     public static bool FirstIsToLeftOfSecond(
         this Orientation orientation,
-        LevelPosition firstPosition,
-        LevelPosition secondPosition) => orientation.RotNum switch
+        Point firstPosition,
+        Point secondPosition) => orientation.RotNum switch
         {
             EngineConstants.DownOrientationRotNum => DownOrientationMethods.FirstIsToLeftOfSecond(firstPosition, secondPosition),
             EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.FirstIsToLeftOfSecond(firstPosition, secondPosition),
@@ -203,8 +203,8 @@ public static class OrientationMethods
     [Pure]
     public static bool FirstIsToRightOfSecond(
         this Orientation orientation,
-        LevelPosition firstPosition,
-        LevelPosition secondPosition) => orientation.RotNum switch
+        Point firstPosition,
+        Point secondPosition) => orientation.RotNum switch
         {
             EngineConstants.DownOrientationRotNum => DownOrientationMethods.FirstIsToRightOfSecond(firstPosition, secondPosition),
             EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.FirstIsToRightOfSecond(firstPosition, secondPosition),
@@ -222,8 +222,8 @@ public static class OrientationMethods
     [Pure]
     public static int GetHorizontalDelta(
         this Orientation orientation,
-        LevelPosition fromPosition,
-        LevelPosition toPosition) => orientation.RotNum switch
+        Point fromPosition,
+        Point toPosition) => orientation.RotNum switch
         {
             EngineConstants.DownOrientationRotNum => DownOrientationMethods.GetHorizontalDelta(fromPosition, toPosition),
             EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.GetHorizontalDelta(fromPosition, toPosition),
@@ -241,8 +241,8 @@ public static class OrientationMethods
     [Pure]
     public static int GetVerticalDelta(
         this Orientation orientation,
-        LevelPosition fromPosition,
-        LevelPosition toPosition) => orientation.RotNum switch
+        Point fromPosition,
+        Point toPosition) => orientation.RotNum switch
         {
             EngineConstants.DownOrientationRotNum => DownOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
             EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.GetVerticalDelta(fromPosition, toPosition),

@@ -8,7 +8,7 @@ public sealed class MenuInputController
 {
     public InputController InputController { get; } = new();
 
-    public LevelPosition MousePosition => InputController.MousePosition;
+    public Point MousePosition => InputController.MousePosition;
     public int ScrollDelta => InputController.ScrollDelta;
 
     public InputAction LeftMouseButtonAction => InputController.LeftMouseButtonAction;

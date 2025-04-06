@@ -6,35 +6,35 @@ namespace NeoLemmixSharp.Engine.Level.Orientations;
 public static class LeftOrientationMethods
 {
     [Pure]
-    public static LevelPosition MoveRight(LevelPosition position, int step) => new(position.X, position.Y + step);
+    public static Point MoveRight(Point position, int step) => new(position.X, position.Y + step);
 
     [Pure]
-    public static LevelPosition MoveUp(LevelPosition position, int step) => new(position.X + step, position.Y);
+    public static Point MoveUp(Point position, int step) => new(position.X + step, position.Y);
 
     [Pure]
-    public static LevelPosition MoveLeft(LevelPosition position, int step) => new(position.X, position.Y - step);
+    public static Point MoveLeft(Point position, int step) => new(position.X, position.Y - step);
 
     [Pure]
-    public static LevelPosition MoveDown(LevelPosition position, int step) => new(position.X - step, position.Y);
+    public static Point MoveDown(Point position, int step) => new(position.X - step, position.Y);
 
     [Pure]
-    public static LevelPosition Move(LevelPosition position, int dx, int dy) => new(position.X + dy, position.Y + dx);
+    public static Point Move(Point position, int dx, int dy) => new(position.X + dy, position.Y + dx);
 
     [Pure]
-    public static bool MatchesHorizontally(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y == secondPosition.Y;
+    public static bool MatchesHorizontally(Point firstPosition, Point secondPosition) => firstPosition.Y == secondPosition.Y;
     [Pure]
-    public static bool MatchesVertically(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X == secondPosition.X;
+    public static bool MatchesVertically(Point firstPosition, Point secondPosition) => firstPosition.X == secondPosition.X;
     [Pure]
-    public static bool FirstIsAboveSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X > secondPosition.X;
+    public static bool FirstIsAboveSecond(Point firstPosition, Point secondPosition) => firstPosition.X > secondPosition.X;
     [Pure]
-    public static bool FirstIsBelowSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.X < secondPosition.X;
+    public static bool FirstIsBelowSecond(Point firstPosition, Point secondPosition) => firstPosition.X < secondPosition.X;
     [Pure]
-    public static bool FirstIsToLeftOfSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y < secondPosition.Y;
+    public static bool FirstIsToLeftOfSecond(Point firstPosition, Point secondPosition) => firstPosition.Y < secondPosition.Y;
     [Pure]
-    public static bool FirstIsToRightOfSecond(LevelPosition firstPosition, LevelPosition secondPosition) => firstPosition.Y > secondPosition.Y;
+    public static bool FirstIsToRightOfSecond(Point firstPosition, Point secondPosition) => firstPosition.Y > secondPosition.Y;
 
     [Pure]
-    public static int GetHorizontalDelta(LevelPosition fromPosition, LevelPosition toPosition)
+    public static int GetHorizontalDelta(Point fromPosition, Point toPosition)
     {
         var a = fromPosition.Y;
         var b = toPosition.Y;
@@ -43,7 +43,7 @@ public static class LeftOrientationMethods
     }
 
     [Pure]
-    public static int GetVerticalDelta(LevelPosition fromPosition, LevelPosition toPosition)
+    public static int GetVerticalDelta(Point fromPosition, Point toPosition)
     {
         var a = fromPosition.X;
         var b = toPosition.X;

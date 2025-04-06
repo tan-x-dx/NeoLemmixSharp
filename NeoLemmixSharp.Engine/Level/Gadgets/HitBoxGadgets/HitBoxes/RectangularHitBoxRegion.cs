@@ -4,9 +4,9 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
 public sealed class RectangularHitBoxRegion : IHitBoxRegion
 {
-    private readonly LevelRegion _region;
+    private readonly Region _region;
 
-    public LevelRegion CurrentBounds => _region;
+    public Region CurrentBounds => _region;
 
     public RectangularHitBoxRegion(
         int x,
@@ -14,24 +14,24 @@ public sealed class RectangularHitBoxRegion : IHitBoxRegion
         int w,
         int h)
     {
-        var position = new LevelPosition(x, y);
-        var size = new LevelSize(w, h);
-        _region = new LevelRegion(position, size);
+        var position = new Point(x, y);
+        var size = new Size(w, h);
+        _region = new Region(position, size);
     }
 
     public RectangularHitBoxRegion(
-        LevelPosition p0,
-        LevelPosition p1)
+        Point p0,
+        Point p1)
     {
-        _region = new LevelRegion(p0, p1);
+        _region = new Region(p0, p1);
     }
 
-    public bool ContainsPoint(LevelPosition levelPosition)
+    public bool ContainsPoint(Point levelPosition)
     {
         return LevelScreen.RegionContainsPoint(_region, levelPosition);
     }
 
-    public bool ContainsPoints(LevelPosition p1, LevelPosition p2)
+    public bool ContainsPoints(Point p1, Point p2)
     {
         return LevelScreen.RegionContainsPoints(_region, p1, p2);
     }

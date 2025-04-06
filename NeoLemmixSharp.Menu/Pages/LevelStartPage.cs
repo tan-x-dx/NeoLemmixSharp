@@ -20,7 +20,7 @@ public sealed class LevelStartPage : PageBase
     {
     }
 
-    protected override void OnWindowDimensionsChanged(LevelSize windowSize)
+    protected override void OnWindowDimensionsChanged(Size windowSize)
     {
     }
 

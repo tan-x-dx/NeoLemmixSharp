@@ -23,7 +23,7 @@ public sealed class WalkerSkill : LemmingSkill
     public override void AssignToLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         // Important! If a builder just placed a brick and part of the previous brick
         // got removed, he should not fall if turned into a walker!
@@ -32,7 +32,7 @@ public sealed class WalkerSkill : LemmingSkill
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelRegion(
+        var gadgetTestRegion = new Region(
             lemmingPosition,
             testRight);
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);

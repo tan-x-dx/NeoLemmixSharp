@@ -11,8 +11,8 @@ public abstract class Component : IDisposable
 {
     public delegate void ComponentKeyboardAction(Component c, in KeysEnumerable keys);
 
-    private LevelPosition _position;
-    private LevelSize _dimensions;
+    private Common.Point _position;
+    private Size _dimensions;
 
     private ComponentState _state = ComponentState.Normal;
 
@@ -68,7 +68,7 @@ public abstract class Component : IDisposable
         {
             var oldX = _position.X;
 
-            _position = new LevelPosition(value, _position.Y);
+            _position = new Common.Point(value, _position.Y);
 
             if (_children != null)
             {
@@ -89,7 +89,7 @@ public abstract class Component : IDisposable
         {
             var oldY = _position.Y;
 
-            _position = new LevelPosition(_position.X, value);
+            _position = new Common.Point(_position.X, value);
 
             if (_children != null)
             {
@@ -120,7 +120,7 @@ public abstract class Component : IDisposable
         var oldX = _position.X;
         var oldY = _position.Y;
 
-        _position = new LevelPosition(x, y);
+        _position = new Common.Point(x, y);
 
         if (_children != null)
         {
@@ -136,7 +136,7 @@ public abstract class Component : IDisposable
 
     public void Translate(int dx, int dy)
     {
-        var delta = new LevelPosition(dx, dy);
+        var delta = new Common.Point(dx, dy);
         _position += delta;
 
         if (_children != null)
@@ -151,13 +151,13 @@ public abstract class Component : IDisposable
     public virtual int Width
     {
         get => _dimensions.W;
-        set => _dimensions = new LevelSize(value, _dimensions.H);
+        set => _dimensions = new Size(value, _dimensions.H);
     }
 
     public virtual int Height
     {
         get => _dimensions.H;
-        set => _dimensions = new LevelSize(_dimensions.W, value);
+        set => _dimensions = new Size(_dimensions.W, value);
     }
 
     public ColorPacket Colors
@@ -174,7 +174,7 @@ public abstract class Component : IDisposable
 
     public void SetSize(int w, int h)
     {
-        _dimensions = new LevelSize(w, h);
+        _dimensions = new Size(w, h);
     }
 
     public void SetDimensions(int x, int y, int width, int height)
@@ -183,7 +183,7 @@ public abstract class Component : IDisposable
         SetSize(width, height);
     }
 
-    public virtual bool ContainsPoint(LevelPosition position)
+    public virtual bool ContainsPoint(Common.Point position)
     {
         return position.X >= Left &&
                position.Y >= Top &&
@@ -291,7 +291,7 @@ public abstract class Component : IDisposable
 
     public Component GetTopParent() => _parent == null ? this : _parent.GetTopParent();
 
-    public Component? GetChildAt(LevelPosition position)
+    public Component? GetChildAt(Common.Point position)
     {
         if (_children != null)
         {
@@ -307,19 +307,19 @@ public abstract class Component : IDisposable
         return ContainsPoint(position) ? this : null;
     }
 
-    public void InvokeMouseEnter(LevelPosition mousePosition) => MouseEnter?.Invoke(this, mousePosition);
-    public void InvokeMouseMovement(LevelPosition mousePosition) => MouseMovement?.Invoke(this, mousePosition);
-    public void InvokeMouseDown(LevelPosition mousePosition) => MouseDown?.Invoke(this, mousePosition);
-    public void InvokeMouseDoubleClick(LevelPosition mousePosition) => MouseDoubleClick?.Invoke(this, mousePosition);
-    public void InvokeMouseUp(LevelPosition mousePosition) => MouseUp?.Invoke(this, mousePosition);
-    public void InvokeMouseExit(LevelPosition mousePosition) => MouseExit?.Invoke(this, mousePosition);
+    public void InvokeMouseEnter(Common.Point mousePosition) => MouseEnter?.Invoke(this, mousePosition);
+    public void InvokeMouseMovement(Common.Point mousePosition) => MouseMovement?.Invoke(this, mousePosition);
+    public void InvokeMouseDown(Common.Point mousePosition) => MouseDown?.Invoke(this, mousePosition);
+    public void InvokeMouseDoubleClick(Common.Point mousePosition) => MouseDoubleClick?.Invoke(this, mousePosition);
+    public void InvokeMouseUp(Common.Point mousePosition) => MouseUp?.Invoke(this, mousePosition);
+    public void InvokeMouseExit(Common.Point mousePosition) => MouseExit?.Invoke(this, mousePosition);
 
     public void InvokeKeyDown(in KeysEnumerable pressedKeys) => KeyDown?.Invoke(this, in pressedKeys);
     public void InvokeKeyUp(in KeysEnumerable pressedKeys) => KeyUp?.Invoke(this, in pressedKeys);
 
-    protected void SetMouseOver(Component _, LevelPosition mousePosition) => State = ComponentState.MouseOver;
-    protected void SetMousePress(Component _, LevelPosition mousePosition) => State = ComponentState.MousePress;
-    protected void SetMouseNormal(Component _, LevelPosition mousePosition) => State = ComponentState.Normal;
+    protected void SetMouseOver(Component _, Common.Point mousePosition) => State = ComponentState.MouseOver;
+    protected void SetMousePress(Component _, Common.Point mousePosition) => State = ComponentState.MousePress;
+    protected void SetMouseNormal(Component _, Common.Point mousePosition) => State = ComponentState.Normal;
 
     public void Dispose()
     {

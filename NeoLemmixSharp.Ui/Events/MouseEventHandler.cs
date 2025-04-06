@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Ui.Events;
 
 public sealed class MouseEventHandler
 {
-    public delegate void ComponentMouseAction(Component c, LevelPosition position);
+    public delegate void ComponentMouseAction(Component c, Point position);
 
     private readonly List<ComponentMouseAction> _actions = new();
 
@@ -17,7 +17,7 @@ public sealed class MouseEventHandler
         }
     }
 
-    public void Invoke(Component c, LevelPosition position)
+    public void Invoke(Component c, Point position)
     {
         foreach (ComponentMouseAction action in _actions)
         {

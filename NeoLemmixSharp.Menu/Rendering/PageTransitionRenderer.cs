@@ -11,7 +11,7 @@ public sealed class PageTransitionRenderer : IDisposable
     private readonly PageTransition _pageTransition;
     private readonly Texture2D _fadeTexture;
 
-    private LevelSize _windowSize;
+    private Size _windowSize;
 
     public PageTransitionRenderer(PageTransition pageTransition)
     {
@@ -19,7 +19,7 @@ public sealed class PageTransitionRenderer : IDisposable
         _fadeTexture = CommonSprites.WhitePixelGradientSprite;
     }
 
-    public void SetWindowDimensions(LevelSize windowSize)
+    public void SetWindowDimensions(Size windowSize)
     {
         _windowSize = windowSize;
     }
@@ -31,7 +31,7 @@ public sealed class PageTransitionRenderer : IDisposable
 
         spriteBatch.Draw(
             _fadeTexture,
-            Helpers.CreateRectangle(new LevelPosition(), _windowSize),
+            Helpers.CreateRectangle(new Common.Point(), _windowSize),
             CommonSprites.RectangleForWhitePixelAlpha(_pageTransition.TransitionAlpha),
             Color.Black);
     }

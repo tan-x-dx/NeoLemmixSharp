@@ -32,11 +32,11 @@ public sealed class LevelControlPanel : IInitialisable
 
     private readonly int _maxSkillPanelScroll;
 
-    private LevelSize _windowSize;
+    private Size _windowSize;
 
-    public LevelPosition ControlPanelPosition { get; private set; }
-    public LevelSize ControlPanelSize { get; private set; }
-    public LevelSize ControlPanelScreenSize => ControlPanelSize.Scale(ControlPanelScaleMultiplier, ControlPanelScaleMultiplier);
+    public Point ControlPanelPosition { get; private set; }
+    public Size ControlPanelSize { get; private set; }
+    public Size ControlPanelScreenSize => ControlPanelSize.Scale(ControlPanelScaleMultiplier, ControlPanelScaleMultiplier);
 
     public int SkillPanelScroll { get; private set; }
 
@@ -84,7 +84,7 @@ public sealed class LevelControlPanel : IInitialisable
         SetSelectedSkillAssignmentButton(firstSkillAssignButton);
     }
 
-    public void SetWindowDimensions(LevelSize windowSize)
+    public void SetWindowDimensions(Size windowSize)
     {
         var previousWindowSize = _windowSize;
         _windowSize = windowSize;
@@ -94,10 +94,10 @@ public sealed class LevelControlPanel : IInitialisable
 
         RecalculateButtonDimensions();
 
-        ControlPanelSize = new LevelSize(CalculateControlPanelWidth(), ControlPanelTotalPixelHeight);
+        ControlPanelSize = new Size(CalculateControlPanelWidth(), ControlPanelTotalPixelHeight);
         var controlPanelScreenSize = ControlPanelScreenSize;
 
-        ControlPanelPosition = new LevelPosition(
+        ControlPanelPosition = new Point(
             (_windowSize.W - controlPanelScreenSize.W) / 2,
             _windowSize.H - controlPanelScreenSize.H);
     }

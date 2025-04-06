@@ -5,13 +5,13 @@ namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
 public sealed class TerrainAddMask
 {
-    private readonly LevelPosition _anchorPoint;
-    private readonly LevelPosition[] _mask;
+    private readonly Common.Point _anchorPoint;
+    private readonly Common.Point[] _mask;
     private readonly Color[] _colorMask;
 
     public TerrainAddMask(
-        LevelPosition anchorPoint,
-        LevelPosition[] mask,
+        Common.Point anchorPoint,
+        Common.Point[] mask,
         Color[] colorMask)
     {
         _anchorPoint = anchorPoint;
@@ -19,7 +19,7 @@ public sealed class TerrainAddMask
         _colorMask = colorMask;
     }
 
-    public void ApplyAddMask(LevelPosition position)
+    public void ApplyAddMask(Common.Point position)
     {
         var offset = position - _anchorPoint;
         var terrainManager = LevelScreen.TerrainManager;

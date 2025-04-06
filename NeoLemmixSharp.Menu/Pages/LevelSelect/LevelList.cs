@@ -95,12 +95,12 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
         }
     }
 
-    private void OnEntryClick(Component c, LevelPosition position)
+    private void OnEntryClick(Component c, Common.Point position)
     {
         _selectedEntry = c as LevelBrowserEntry;
     }
 
-    private void OnEntryDoubleClick(Component c, LevelPosition position)
+    private void OnEntryDoubleClick(Component c, Common.Point position)
     {
         if (c is not LevelBrowserEntry)
             return;

@@ -28,9 +28,9 @@ public sealed class NeoLemmixGadgetArchetypeData
 
     // public List<AnimationData> AnimationData { get; } = new();
 
-    public LevelPosition[] ToRectangularTriggerData() =>
+    public Point[] ToRectangularTriggerData() =>
     [
-        new LevelPosition(TriggerX, TriggerY),
-        new LevelPosition(TriggerX + TriggerWidth - 1, TriggerY + TriggerHeight - 1)
+        new Point(TriggerX, TriggerY),
+        new Point(TriggerX + TriggerWidth - 1, TriggerY + TriggerHeight - 1)
     ];
 }

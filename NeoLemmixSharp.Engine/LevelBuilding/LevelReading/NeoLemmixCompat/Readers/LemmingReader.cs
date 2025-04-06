@@ -47,13 +47,13 @@ public sealed class LemmingReader : NeoLemmixDataReader
     private void SetLemmingX(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         var x = int.Parse(secondToken);
-        _currentLemmingData!.Position = new LevelPosition(x, _currentLemmingData.Position.Y);
+        _currentLemmingData!.Position = new Point(x, _currentLemmingData.Position.Y);
     }
 
     private void SetLemmingY(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         var y = int.Parse(secondToken);
-        _currentLemmingData!.Position = new LevelPosition(_currentLemmingData.Position.X, y);
+        _currentLemmingData!.Position = new Point(_currentLemmingData.Position.X, y);
     }
 
     private void SetFlipHorizontal(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)

@@ -14,7 +14,7 @@ public sealed class TextLabel : Component
         Colors = colors;
     }
 
-    public override bool ContainsPoint(LevelPosition pos) => false;
+    public override bool ContainsPoint(Point pos) => false;
 
     protected override void RenderComponent(SpriteBatch spriteBatch)
     {

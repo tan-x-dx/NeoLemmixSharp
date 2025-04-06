@@ -25,7 +25,7 @@ public sealed class SliderAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         if (!SliderTerrainChecks(lemming, orientation, MaxYCheckOffset, in gadgetsNearLemming) &&
@@ -43,7 +43,7 @@ public sealed class SliderAction : LemmingAction
         int maxYOffset,
         in GadgetEnumerable gadgetsNearLemming)
     {
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         var lemmingDehoistPosition = lemming.DehoistPin;
         var dx = lemming.FacingDirection.DeltaX;
 
@@ -96,10 +96,10 @@ public sealed class SliderAction : LemmingAction
 
         bool SliderHasPixelAt(
             in GadgetEnumerable gadgetsNearLemming1,
-            LevelPosition testPosition)
+            Point testPosition)
         {
             return PositionIsSolidToLemming(in gadgetsNearLemming1, lemming, testPosition) ||
-                   (orientation.MatchesHorizontally(testPosition, lemming.LevelPosition) &&
+                   (orientation.MatchesHorizontally(testPosition, lemming.AnchorPosition) &&
                     orientation.MatchesVertically(testPosition, lemmingDehoistPosition) &&
                     PositionIsSolidToLemming(in gadgetsNearLemming1, lemming, orientation.MoveDown(testPosition, 1)));
         }
@@ -110,14 +110,14 @@ public sealed class SliderAction : LemmingAction
 
     protected override int BottomRightBoundsDeltaX(int animationFrame) => 0;
 
-    public override LevelPosition GetFootPosition(Lemming lemming, LevelPosition anchorPosition)
+    public override Point GetFootPosition(Lemming lemming, Point anchorPosition)
     {
         return lemming.Orientation.MoveLeft(anchorPosition, lemming.FacingDirection.DeltaX);
     }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        lemming.DehoistPin = new LevelPosition(-1, -1);
+        lemming.DehoistPin = new Point(-1, -1);
 
         base.TransitionLemmingToAction(lemming, turnAround);
     }

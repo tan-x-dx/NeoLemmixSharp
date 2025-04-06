@@ -35,8 +35,8 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
         }
     }
 
-    public LevelPosition Position => CurrentGadgetBounds.Position;
-    public LevelSize Size => CurrentGadgetBounds.Size;
+    public Point Position => CurrentGadgetBounds.Position;
+    public Size Size => CurrentGadgetBounds.Size;
 
     public GadgetRenderer Renderer { get; internal set; }
 

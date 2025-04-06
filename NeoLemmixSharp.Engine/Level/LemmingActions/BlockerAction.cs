@@ -23,7 +23,7 @@ public sealed class BlockerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.LevelPosition))
+        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.AnchorPosition))
             return true;
 
         FallerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -46,7 +46,7 @@ public sealed class BlockerAction : LemmingAction
 
     public static void DoBlockerCheck(Lemming lemming)
     {
-        var anchorPosition = lemming.LevelPosition;
+        var anchorPosition = lemming.AnchorPosition;
         var footPosition = lemming.FootPosition;
 
         var allBlockers = LevelScreen.LemmingManager.AllBlockers;
@@ -70,8 +70,8 @@ public sealed class BlockerAction : LemmingAction
 
     private static Lemming? GetInfluentialBlocker(
         in LemmingEnumerable allBlockers,
-        LevelPosition anchorPosition,
-        LevelPosition footPosition,
+        Point anchorPosition,
+        Point footPosition,
         Orientation requiredOrientation,
         out FacingDirection forcedFacingDirection)
     {
@@ -104,14 +104,14 @@ public sealed class BlockerAction : LemmingAction
         return null;
     }
 
-    private static LevelRegion GetArmHitBox(Lemming blocker, int offsetX0, int offsetX1)
+    private static Region GetArmHitBox(Lemming blocker, int offsetX0, int offsetX1)
     {
         var moveDelta = blocker.FacingDirection.Id ^ 1; // Fixes off-by-one errors between left/right
         var orientation = blocker.Orientation;
-        var p0 = orientation.Move(blocker.LevelPosition, moveDelta + offsetX0, 6);
-        var p1 = orientation.Move(blocker.LevelPosition, moveDelta + offsetX1, -4);
+        var p0 = orientation.Move(blocker.AnchorPosition, moveDelta + offsetX0, 6);
+        var p1 = orientation.Move(blocker.AnchorPosition, moveDelta + offsetX1, -4);
 
-        return new LevelRegion(p0, p1);
+        return new Region(p0, p1);
     }
 
     public static void ForceLemmingDirection(Lemming lemming, FacingDirection forcedFacingDirection)
@@ -172,7 +172,7 @@ public sealed class BlockerAction : LemmingAction
             : 1;
 
         // Move out of the wall
-        lemming.LevelPosition = lemming.Orientation.Move(lemming.LevelPosition, dx, dy);
+        lemming.AnchorPosition = lemming.Orientation.Move(lemming.AnchorPosition, dx, dy);
 
         WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
     }

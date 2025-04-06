@@ -67,8 +67,8 @@ public sealed class GadgetSpriteBuilder : IDisposable
 
     private static Texture2D ItemCreator(
         Texture2D texture,
-        LevelPosition anchorpoint,
-        LevelSize s,
+        Point anchorpoint,
+        Size s,
         int numberOfFrames)
     {
         return texture;

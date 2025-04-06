@@ -38,6 +38,6 @@ public sealed class TerrainRenderer : IViewportObjectRenderer
             sourceRectangle);
     }
 
-    public LevelRegion CurrentBounds => new(_terrainTexture);
-    public LevelRegion PreviousBounds => CurrentBounds;
+    public Region CurrentBounds => new(_terrainTexture);
+    public Region PreviousBounds => CurrentBounds;
 }

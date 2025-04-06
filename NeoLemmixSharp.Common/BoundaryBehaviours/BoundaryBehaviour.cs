@@ -165,7 +165,7 @@ public sealed class BoundaryBehaviour
     }
 
     [Pure]
-    public unsafe bool IntervalContainsPoint(LevelInterval interval, int a)
+    public unsafe bool IntervalContainsPoint(Interval interval, int a)
     {
         int* p1 = (int*)&interval;
         p1[0] = Normalise(p1[0]);
@@ -187,7 +187,7 @@ public sealed class BoundaryBehaviour
     }
 
     [Pure]
-    public unsafe bool IntervalsOverlap(LevelInterval l1, LevelInterval l2)
+    public unsafe bool IntervalsOverlap(Interval l1, Interval l2)
     {
         int* startPointer = (int*)&l1;
         startPointer[0] = Normalise(startPointer[0]);

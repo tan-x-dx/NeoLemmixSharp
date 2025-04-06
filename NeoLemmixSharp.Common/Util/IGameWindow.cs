@@ -8,7 +8,7 @@ public interface IGameWindow
 {
     static IGameWindow Instance { get; set; } = null!;
 
-    LevelSize WindowSize { get; }
+    Size WindowSize { get; }
 
     bool IsActive { get; }
     bool IsFullscreen { get; }

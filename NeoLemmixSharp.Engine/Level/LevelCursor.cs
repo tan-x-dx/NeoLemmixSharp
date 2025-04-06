@@ -16,7 +16,7 @@ public sealed class LevelCursor
     private int _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre;
 
     public int NumberOfLemmingsUnderCursor { get; private set; }
-    public LevelPosition CursorPosition { private get; set; }
+    public Common.Point CursorPosition { private get; set; }
 
     public Lemming? CurrentlyHighlightedLemming { get; private set; }
 
@@ -73,9 +73,9 @@ public sealed class LevelCursor
 
         // Cursor position is the bottom right pixel of the middle square in the cursor sprite.
         // Hence, for the top left position, add one extra pixel to fix offset.
-        var topLeftCursorPixel = new LevelPosition(c.X - (EngineConstants.CursorRadius + 1), c.Y - (EngineConstants.CursorRadius + 1));
-        var bottomRightCursorPixel = new LevelPosition(c.X + EngineConstants.CursorRadius, c.Y + EngineConstants.CursorRadius);
-        var levelRegion = new LevelRegion(topLeftCursorPixel, bottomRightCursorPixel);
+        var topLeftCursorPixel = new Common.Point(c.X - (EngineConstants.CursorRadius + 1), c.Y - (EngineConstants.CursorRadius + 1));
+        var bottomRightCursorPixel = new Common.Point(c.X + EngineConstants.CursorRadius, c.Y + EngineConstants.CursorRadius);
+        var levelRegion = new Region(topLeftCursorPixel, bottomRightCursorPixel);
 
         LevelScreen.LemmingManager.GetAllLemmingsNearRegion(scratchSpaceSpan, levelRegion, out result);
     }

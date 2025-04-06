@@ -10,7 +10,7 @@ public sealed class LevelInputController : IInitialisable
 {
     private readonly InputController _inputController = new();
 
-    public LevelPosition MousePosition => _inputController.MousePosition;
+    public Point MousePosition => _inputController.MousePosition;
     public int ScrollDelta => _inputController.ScrollDelta;
 
     public InputAction LeftMouseButtonAction => _inputController.LeftMouseButtonAction;

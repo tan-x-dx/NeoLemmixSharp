@@ -7,27 +7,27 @@
 public readonly struct ArrayWrapper2D<T>
 {
     private readonly T[] _data;
-    private readonly LevelSize _arrayDimensions;
-    private readonly LevelRegion _subRegion;
+    private readonly Size _arrayDimensions;
+    private readonly Region _subRegion;
 
     public T[] Array => _data;
 
     public ArrayWrapper2D(
         T[] data,
-        LevelSize dimensions)
+        Size dimensions)
     {
         if (data.Length != dimensions.Area())
             throw new ArgumentException("Invalid dimensions");
 
         _data = data;
         _arrayDimensions = dimensions;
-        _subRegion = new LevelRegion(dimensions);
+        _subRegion = new Region(dimensions);
     }
 
     public ArrayWrapper2D(
         T[] data,
-        LevelSize arrayDimensions,
-        LevelRegion region)
+        Size arrayDimensions,
+        Region region)
     {
         var spanWidth = arrayDimensions.W;
         var spanHeight = arrayDimensions.H;
@@ -49,9 +49,9 @@ public readonly struct ArrayWrapper2D<T>
         _subRegion = region;
     }
 
-    public bool EncompasesPoint(LevelPosition pos) => _subRegion.Size.EncompassesPoint(pos);
+    public bool EncompasesPoint(Point pos) => _subRegion.Size.EncompassesPoint(pos);
 
-    public ref T this[LevelPosition pos]
+    public ref T this[Point pos]
     {
         get
         {

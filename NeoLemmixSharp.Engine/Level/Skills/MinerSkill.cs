@@ -23,14 +23,14 @@ public sealed class MinerSkill : LemmingSkill
     {
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        gadgetManager.GetAllGadgetsNearPosition(scratchSpaceSpan, lemming.LevelPosition, out var gadgetsNearRegion);
+        gadgetManager.GetAllGadgetsNearPosition(scratchSpaceSpan, lemming.AnchorPosition, out var gadgetsNearRegion);
 
         return ActionIsAssignable(lemming) &&
                !PositionIsIndestructibleToLemming(
                    in gadgetsNearRegion,
                    lemming,
                    MinerAction.Instance,
-                   lemming.Orientation.MoveRight(lemming.LevelPosition, lemming.FacingDirection.DeltaX));
+                   lemming.Orientation.MoveRight(lemming.AnchorPosition, lemming.FacingDirection.DeltaX));
     }
 
     public override void AssignToLemming(Lemming lemming)

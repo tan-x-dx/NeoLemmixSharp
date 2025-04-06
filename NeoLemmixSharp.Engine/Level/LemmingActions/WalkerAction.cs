@@ -25,7 +25,7 @@ public sealed class WalkerAction : LemmingAction
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
         var dy = FindGroundPixel(lemming, lemmingPosition, in gadgetsNearLemming);
@@ -90,9 +90,9 @@ public sealed class WalkerAction : LemmingAction
     {
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        gadgetManager.GetAllGadgetsNearPosition(scratchSpaceSpan, lemming.LevelPosition, out var gadgetsNearRegion);
+        gadgetManager.GetAllGadgetsNearPosition(scratchSpaceSpan, lemming.AnchorPosition, out var gadgetsNearRegion);
 
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.LevelPosition))
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.AnchorPosition))
         {
             base.TransitionLemmingToAction(lemming, turnAround);
             return;

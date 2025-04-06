@@ -8,13 +8,13 @@ using System.Runtime.InteropServices;
 namespace NeoLemmixSharp.Common;
 
 [StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
-public readonly struct LevelPosition : IEquatable<LevelPosition>
+public readonly struct Point : IEquatable<Point>
 {
     [FieldOffset(0 * sizeof(int))] public readonly int X;
     [FieldOffset(1 * sizeof(int))] public readonly int Y;
 
     [DebuggerStepThrough]
-    public LevelPosition(int x, int y)
+    public Point(int x, int y)
     {
         X = x;
         Y = y;
@@ -22,36 +22,31 @@ public readonly struct LevelPosition : IEquatable<LevelPosition>
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(LevelPosition left, LevelPosition right) =>
+    public static bool operator ==(Point left, Point right) =>
         left.X == right.X &&
         left.Y == right.Y;
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(LevelPosition left, LevelPosition right) =>
+    public static bool operator !=(Point left, Point right) =>
         left.X != right.X ||
         left.Y != right.Y;
 
     [Pure]
     [DebuggerStepThrough]
-    public static LevelPosition operator +(LevelPosition left, LevelPosition right) =>
+    public static Point operator +(Point left, Point right) =>
         new(left.X + right.X, left.Y + right.Y);
 
     [Pure]
     [DebuggerStepThrough]
-    public static LevelPosition operator -(LevelPosition left, LevelPosition right) =>
+    public static Point operator -(Point left, Point right) =>
         new(left.X - right.X, left.Y - right.Y);
 
     [Pure]
     [DebuggerStepThrough]
-    public static LevelPosition operator +(LevelPosition position, LevelSize offset) =>
-        new(position.X + offset.W, position.Y + offset.H);
-
-    [Pure]
+    public bool Equals(Point other) => X == other.X && Y == other.Y;
     [DebuggerStepThrough]
-    public bool Equals(LevelPosition other) => X == other.X && Y == other.Y;
-    [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is LevelPosition other && X == other.X && Y == other.Y;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Point other && X == other.X && Y == other.Y;
     [DebuggerStepThrough]
     public override int GetHashCode() => 3790121 * X +
                                          2885497 * Y +

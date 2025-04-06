@@ -47,13 +47,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
     public int CountDownTimer;
     public int ParticleTimer;
 
-    public LevelPosition DehoistPin = new(-1, -1);
-    public LevelPosition LaserHitLevelPosition = new(-1, -1);
-    public LevelPosition LevelPosition = new(-1, -1);
-    public LevelPosition PreviousLevelPosition = new(-1, -1);
+    public Point DehoistPin = new(-1, -1);
+    public Point LaserHitLevelPosition = new(-1, -1);
+    public Point AnchorPosition = new(-1, -1);
+    public Point PreviousLevelPosition = new(-1, -1);
 
-    public LevelRegion CurrentBounds { get; private set; }
-    public LevelRegion PreviousBounds { get; private set; }
+    public Region CurrentBounds { get; private set; }
+    public Region PreviousBounds { get; private set; }
 
     public LemmingState State { get; }
 
@@ -70,22 +70,22 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
     public bool IsSimulation => Id < 0;
     public bool IsFastForward => FastForwardTime > 0 || State.IsPermanentFastForwards;
 
-    public LevelPosition HeadPosition
+    public Point HeadPosition
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Orientation.MoveUp(LevelPosition, 6);
+        get => Orientation.MoveUp(AnchorPosition, 6);
     }
 
-    public LevelPosition FootPosition
+    public Point FootPosition
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => CurrentAction.GetFootPosition(this, LevelPosition);
+        get => CurrentAction.GetFootPosition(this, AnchorPosition);
     }
 
-    public LevelPosition CenterPosition
+    public Point CenterPosition
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => Orientation.MoveUp(LevelPosition, 4);
+        get => Orientation.MoveUp(AnchorPosition, 4);
     }
 
     public Lemming(
@@ -116,7 +116,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
     public void Initialise()
     {
         State.IsActive = true;
-        PreviousLevelPosition = LevelPosition;
+        PreviousLevelPosition = AnchorPosition;
         CurrentBounds = CurrentAction.GetLemmingBounds(this);
         PreviousBounds = CurrentBounds;
 
@@ -141,23 +141,23 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         HandleCountDownTimer();
         HandleFastForwardTimer();
 
-        Span<LevelPosition> gadgetCheckPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
+        Span<Point> gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
 
         // Use first four entries of span to hold level positions.
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the minimum bounding box of four level positions:
         // the anchor and foot positions of the previous frame, and a large box around the current position.
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
-        var p = Orientation.Move(LevelPosition, -5, -12);
+        var p = Orientation.Move(AnchorPosition, -5, -12);
         gadgetCheckPositions[0] = p;
-        p = Orientation.Move(LevelPosition, 5, 12);
+        p = Orientation.Move(AnchorPosition, 5, 12);
         gadgetCheckPositions[1] = p;
         p = PreviousLevelPosition;
         gadgetCheckPositions[2] = p;
         p = PreviousAction.GetFootPosition(this, p);
         gadgetCheckPositions[3] = p;
 
-        var checkPositionsBounds = new LevelRegion(gadgetCheckPositions[..4]);
+        var checkPositionsBounds = new Region(gadgetCheckPositions[..4]);
 
         Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
         LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, checkPositionsBounds, out var gadgetsNearLemming);
@@ -185,19 +185,19 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         HandleCountDownTimer();
         HandleFastForwardTimer();
 
-        Span<LevelPosition> gadgetCheckPositions = stackalloc LevelPosition[LemmingMovementHelper.MaxIntermediateCheckPositions];
+        Span<Point> gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
 
         // Use first four entries of span to hold level positions.
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the minimum bounding box of four level positions:
         // the anchor and foot positions of the previous frame, and a large box around the current position.
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
-        gadgetCheckPositions[0] = Orientation.Move(LevelPosition, -8, -16);
-        gadgetCheckPositions[1] = Orientation.Move(LevelPosition, 8, 16);
+        gadgetCheckPositions[0] = Orientation.Move(AnchorPosition, -8, -16);
+        gadgetCheckPositions[1] = Orientation.Move(AnchorPosition, 8, 16);
         gadgetCheckPositions[2] = PreviousLevelPosition;
         gadgetCheckPositions[3] = PreviousAction.GetFootPosition(this, gadgetCheckPositions[2]);
 
-        var checkPositionsBounds = new LevelRegion(gadgetCheckPositions[..4]);
+        var checkPositionsBounds = new Region(gadgetCheckPositions[..4]);
 
         Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
         LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, checkPositionsBounds, out var gadgetsNearLemming);
@@ -286,7 +286,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         }
         PhysicsFrame = frame;
 
-        PreviousLevelPosition = LevelPosition;
+        PreviousLevelPosition = AnchorPosition;
         PreviousBounds = CurrentBounds;
 
         var result = CurrentAction.UpdateLemming(this, in gadgetsNearLemming);
@@ -310,12 +310,12 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
 
     private bool CheckTriggerAreas(
         bool isPostTeleportCheck,
-        Span<LevelPosition> gadgetCheckPositions,
+        Span<Point> gadgetCheckPositions,
         in GadgetEnumerable gadgetsNearLemming)
     {
         if (isPostTeleportCheck)
         {
-            PreviousLevelPosition = LevelPosition;
+            PreviousLevelPosition = AnchorPosition;
         }
 
         var result = CheckGadgets(gadgetCheckPositions, in gadgetsNearLemming) && LemmingManager.DoBlockerCheck(this);
@@ -326,7 +326,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
     }
 
     private bool CheckGadgets(
-        Span<LevelPosition> gadgetCheckPositions,
+        Span<Point> gadgetCheckPositions,
         in GadgetEnumerable gadgetsNearLemming)
     {
         if (gadgetsNearLemming.Count == 0)
@@ -338,7 +338,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         return CheckGadgetHitBoxCollisions(in gadgetsNearLemming, gadgetCheckPositions[..length]);
     }
 
-    private bool CheckGadgetHitBoxCollisions(in GadgetEnumerable gadgetEnumerable, ReadOnlySpan<LevelPosition> intermediatePositions)
+    private bool CheckGadgetHitBoxCollisions(in GadgetEnumerable gadgetEnumerable, ReadOnlySpan<Point> intermediatePositions)
     {
         foreach (var gadget in gadgetEnumerable)
         {
@@ -374,7 +374,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
                 if (beforeAction == afterAction)
                     continue;
 
-                LevelPosition = anchorPosition;
+                AnchorPosition = anchorPosition;
 
                 CurrentBounds = afterAction.GetLemmingBounds(this);
 
@@ -388,13 +388,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
     private void HandleGadgetInteraction(
         HitBoxGadget gadget,
         LemmingHitBoxFilter filter,
-        LevelPosition checkPosition)
+        Point checkPosition)
     {
         // If we're at the end of the check positions and Next action is not None
         // then transition. However, if NextAction is SplatterAction and there's water
         // at the position, the water takes precedence over splatting
         if (NextAction != NoneAction.Instance &&
-            checkPosition == LevelPosition &&
+            checkPosition == AnchorPosition &&
             (NextAction != SplatterAction.Instance ||
             filter.HitBoxBehaviour != HitBoxBehaviour.Liquid))
         {
@@ -460,7 +460,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         Renderer.UpdateLemmingState(removalReason == LemmingRemovalReason.DeathExplode);
     }
 
-    public Span<LevelPosition> GetJumperPositions() => _jumperPositionBuffer;
+    public Span<Point> GetJumperPositions() => _jumperPositionBuffer;
 
     public void SetRawDataFromOther(Lemming otherLemming)
     {
@@ -490,7 +490,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
 
         DehoistPin = otherLemming.DehoistPin;
         LaserHitLevelPosition = otherLemming.LaserHitLevelPosition;
-        LevelPosition = otherLemming.LevelPosition;
+        AnchorPosition = otherLemming.AnchorPosition;
         PreviousLevelPosition = otherLemming.PreviousLevelPosition;
 
         FacingDirection = otherLemming.FacingDirection;
@@ -555,7 +555,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
 
         DehoistPin = lemmingSnapshotData.DehoistPin;
         LaserHitLevelPosition = lemmingSnapshotData.LaserHitLevelPosition;
-        LevelPosition = lemmingSnapshotData.LevelPosition;
+        AnchorPosition = lemmingSnapshotData.LevelPosition;
         PreviousLevelPosition = lemmingSnapshotData.PreviousLevelPosition;
 
         CurrentBounds = lemmingSnapshotData.CurrentBounds;
@@ -592,6 +592,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
     [InlineArray(JumperAction.JumperPositionCount)]
     public struct JumperPositionBuffer
     {
-        private LevelPosition _0;
+        private Point _0;
     }
 }

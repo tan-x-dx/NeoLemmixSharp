@@ -25,7 +25,7 @@ public sealed class RotateHalfAction : LemmingAction
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             var orientation = lemming.Orientation;
-            ref var lemmingPosition = ref lemming.LevelPosition;
+            ref var lemmingPosition = ref lemming.AnchorPosition;
             lemmingPosition = orientation.MoveUp(lemmingPosition, 8);
             lemming.SetOrientation(orientation.GetOpposite());
         }

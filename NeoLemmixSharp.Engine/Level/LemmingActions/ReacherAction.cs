@@ -28,7 +28,7 @@ public sealed class ReacherAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         var emptyPixels = GetEmptyPixelCount(in gadgetsNearLemming, lemming, lemmingPosition);
 
@@ -81,7 +81,7 @@ public sealed class ReacherAction : LemmingAction
     private static int GetEmptyPixelCount(
         in GadgetEnumerable gadgetsNearLemming,
         Lemming lemming,
-        LevelPosition lemmingPosition)
+        Point lemmingPosition)
     {
         var orientation = lemming.Orientation;
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 10)))

@@ -38,7 +38,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
         }
 
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         if (physicsFrame == 5)
@@ -202,7 +202,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
     private static bool FencerIndestructibleCheck(
         in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
-        LevelPosition pos)
+        Point pos)
     {
         // Check for indestructible terrain 3 pixels above position
         return PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, Instance, lemming.Orientation.MoveUp(pos, 3));
@@ -219,7 +219,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
         var dy = needToUndoUp
             ? -1
             : 0;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         lemmingPosition = lemming.Orientation.Move(lemmingPosition, dx, dy);
 
         WalkerAction.Instance.TransitionLemmingToAction(lemming, true);

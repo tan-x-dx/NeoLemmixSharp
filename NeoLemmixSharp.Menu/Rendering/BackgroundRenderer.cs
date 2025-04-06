@@ -16,7 +16,7 @@ public sealed class BackgroundRenderer
         _texture = texture;
     }
 
-    public void SetWindowDimensions(LevelSize windowSize)
+    public void SetWindowDimensions(Size windowSize)
     {
         _tileX = 1 + windowSize.W / _texture.Width;
         _tileY = 1 + windowSize.H / _texture.Height;

@@ -32,12 +32,12 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     protected abstract void OnInitialise();
 
-    public void SetWindowDimensions(LevelSize windowSize)
+    public void SetWindowDimensions(Size windowSize)
     {
         OnWindowDimensionsChanged(windowSize);
     }
 
-    protected abstract void OnWindowDimensionsChanged(LevelSize windowSize);
+    protected abstract void OnWindowDimensionsChanged(Size windowSize);
 
     public void Tick()
     {

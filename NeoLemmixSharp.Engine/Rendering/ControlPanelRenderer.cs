@@ -36,7 +36,7 @@ public sealed class ControlPanelRenderer
 
     private RenderTarget2D _controlPanelRenderTarget;
 
-    private LevelSize _windowSize;
+    private Size _windowSize;
 
     private bool _disposed;
 

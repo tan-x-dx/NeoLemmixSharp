@@ -54,7 +54,7 @@ public sealed class PlatformerAction : LemmingAction
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         if (lemming.PhysicsFrame == 9)
         {
@@ -150,7 +150,7 @@ public sealed class PlatformerAction : LemmingAction
         Lemming lemming,
         in GadgetEnumerable gadgetsNearLemming)
     {
-        var lemmingPosition = lemming.LevelPosition;
+        var lemmingPosition = lemming.AnchorPosition;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
 
@@ -168,7 +168,7 @@ public sealed class PlatformerAction : LemmingAction
     private static bool PlatformerTerrainCheck(
         in GadgetEnumerable gadgetsNearLemming,
         Lemming lemming,
-        LevelPosition pos)
+        Point pos)
     {
         return PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.Orientation.MoveUp(pos, 1)) ||
                PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.Orientation.MoveUp(pos, 2));

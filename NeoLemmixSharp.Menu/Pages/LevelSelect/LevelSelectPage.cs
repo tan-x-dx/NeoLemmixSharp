@@ -23,7 +23,7 @@ public sealed class LevelSelectPage : PageBase
         _levelList.RefreshLevels();
     }
 
-    protected override void OnWindowDimensionsChanged(LevelSize windowSize)
+    protected override void OnWindowDimensionsChanged(Size windowSize)
     {
         OnResize();
     }

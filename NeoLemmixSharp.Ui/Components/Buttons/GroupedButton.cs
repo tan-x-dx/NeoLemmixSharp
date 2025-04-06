@@ -102,7 +102,7 @@ public sealed class GroupedButton : Component
                 _activeIndex = button._index;
                 if (performClick)
                 {
-                    button.MouseDown.Invoke(button, new LevelPosition());
+                    button.MouseDown.Invoke(button, new Point());
                 }
             }
         }

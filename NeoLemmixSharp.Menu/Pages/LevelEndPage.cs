@@ -15,7 +15,7 @@ public sealed class LevelEndPage : PageBase
         throw new NotImplementedException();
     }
 
-    protected override void OnWindowDimensionsChanged(LevelSize windowSize)
+    protected override void OnWindowDimensionsChanged(Size windowSize)
     {
         throw new NotImplementedException();
     }

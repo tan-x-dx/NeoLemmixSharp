@@ -18,7 +18,7 @@ public sealed class ExceptionViewer : PageBase
     {
     }
 
-    protected override void OnWindowDimensionsChanged(LevelSize windowSize)
+    protected override void OnWindowDimensionsChanged(Size windowSize)
     {
     }
 

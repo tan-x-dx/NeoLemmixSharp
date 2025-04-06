@@ -61,7 +61,7 @@ public sealed class MainPage : PageBase
         OnResize();
     }
 
-    private static void PlayButtonClick(Component _, LevelPosition position)
+    private static void PlayButtonClick(Component _, Point position)
     {
         var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
 
@@ -71,7 +71,7 @@ public sealed class MainPage : PageBase
         MenuScreen.Current.SetNextPage(levelStartPage);
     }
 
-    private static void LevelSelectButtonClick(Component _, LevelPosition position)
+    private static void LevelSelectButtonClick(Component _, Point position)
     {
         var levelSelectPage = MenuScreen.Current.MenuPageCreator.CreateLevelSelectPage();
 
@@ -81,24 +81,24 @@ public sealed class MainPage : PageBase
         MenuScreen.Current.SetNextPage(levelSelectPage);
     }
 
-    private static void GroupUpButtonClick(Component _, LevelPosition position)
+    private static void GroupUpButtonClick(Component _, Point position)
     {
     }
 
-    private static void GroupDownButtonClick(Component _, LevelPosition position)
+    private static void GroupDownButtonClick(Component _, Point position)
     {
     }
 
-    private static void ConfigButtonClick(Component _, LevelPosition position)
+    private static void ConfigButtonClick(Component _, Point position)
     {
     }
 
-    private static void QuitButtonClick(Component _, LevelPosition position)
+    private static void QuitButtonClick(Component _, Point position)
     {
         IGameWindow.Instance.Escape();
     }
 
-    protected override void OnWindowDimensionsChanged(LevelSize windowSize)
+    protected override void OnWindowDimensionsChanged(Size windowSize)
     {
         OnResize();
     }

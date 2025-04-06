@@ -119,9 +119,9 @@ public sealed class LevelRenderer :
         {
             foreach (var verticalRenderInterval in verticalRenderIntervals)
             {
-                var p = new LevelPosition(horizontalRenderInterval.ViewPortStart, verticalRenderInterval.ViewPortStart);
-                var s = new LevelSize(horizontalRenderInterval.ViewPortLength, verticalRenderInterval.ViewPortLength);
-                var region = new LevelRegion(p, s);
+                var p = new Common.Point(horizontalRenderInterval.ViewPortStart, verticalRenderInterval.ViewPortStart);
+                var s = new Size(horizontalRenderInterval.ViewPortLength, verticalRenderInterval.ViewPortLength);
+                var region = new Region(p, s);
 
                 _spriteSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, region, out var rendererSet);
 

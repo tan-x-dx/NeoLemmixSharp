@@ -20,7 +20,7 @@ public sealed class InputController :
 
     private int _previousScrollValue;
 
-    public LevelPosition MousePosition { get; private set; }
+    public Point MousePosition { get; private set; }
     public int ScrollDelta { get; private set; }
 
     public InputAction LeftMouseButtonAction { get; }
@@ -115,7 +115,7 @@ public sealed class InputController :
     private void UpdateMouseButtonStates()
     {
         var mouseState = Mouse.GetState();
-        MousePosition = new LevelPosition(mouseState.X, mouseState.Y);
+        MousePosition = new Point(mouseState.X, mouseState.Y);
 
         var currentScrollValue = mouseState.ScrollWheelValue;
         ScrollDelta = Math.Sign(currentScrollValue - _previousScrollValue);

@@ -16,12 +16,12 @@ public static class ParticleHelper
     public static Span<byte> GetByteBuffer() => MemoryMarshal.Cast<sbyte, byte>(ParticleOffsets);
 
     [Pure]
-    public static LevelPosition GetParticleOffsets(
+    public static Point GetParticleOffsets(
         int frame,
         int particleId)
     {
         var index = GetParticleIndex(frame, particleId);
-        return new LevelPosition(ParticleOffsets[index], ParticleOffsets[index + 1]);
+        return new Point(ParticleOffsets[index], ParticleOffsets[index + 1]);
     }
 
     [Pure]

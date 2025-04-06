@@ -9,8 +9,8 @@ public sealed class Viewport
     private const int MaxScaleMultiplier = 12;
     private const int ScrollSpeedMultiplier = 2;
 
-    private LevelSize _windowDimensions;
-    private LevelSize _viewportDimensions;
+    private Size _windowDimensions;
+    private Size _viewportDimensions;
 
     private int _scaleMultiplier = InitialScaleMultiplier;
     private int _scrollDelta = ScrollSpeedMultiplier * MaxScaleMultiplier / InitialScaleMultiplier;
@@ -19,10 +19,10 @@ public sealed class Viewport
 
     public bool MouseIsInLevelViewPort { get; private set; }
 
-    public void SetWindowDimensions(LevelSize gameWindowSize, int controlPanelHeight)
+    public void SetWindowDimensions(Size gameWindowSize, int controlPanelHeight)
     {
         _windowDimensions = gameWindowSize;
-        _viewportDimensions = new LevelSize(gameWindowSize.W, gameWindowSize.H - controlPanelHeight);
+        _viewportDimensions = new Size(gameWindowSize.W, gameWindowSize.H - controlPanelHeight);
 
         LevelScreen.HorizontalBoundaryBehaviour.UpdateScreenDimension(_viewportDimensions.W, _scaleMultiplier);
         LevelScreen.VerticalBoundaryBehaviour.UpdateScreenDimension(_viewportDimensions.H, _scaleMultiplier);

@@ -27,7 +27,7 @@ public sealed class SwimmerAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
         lemming.DistanceFallen = 0;
@@ -130,7 +130,7 @@ public sealed class SwimmerAction : LemmingAction
     private static bool WaterAt(
         in GadgetEnumerable gadgetEnumerable,
         Lemming lemming,
-        LevelPosition lemmingPosition)
+        Point lemmingPosition)
     {
         foreach (var gadget in gadgetEnumerable)
         {
@@ -158,7 +158,7 @@ public sealed class SwimmerAction : LemmingAction
     private static int LemDive(
         in GadgetEnumerable gadgetsNearLemming,
         Lemming lemming,
-        LevelPosition lemmingPosition)
+        Point lemmingPosition)
     {
         var orientation = lemming.Orientation;
         var result = 1;
@@ -188,15 +188,15 @@ public sealed class SwimmerAction : LemmingAction
 
         // If possible, float up 4 pixels when starting
         var orientation = lemming.Orientation;
-        var checkPosition = orientation.MoveUp(lemming.LevelPosition, 1);
+        var checkPosition = orientation.MoveUp(lemming.AnchorPosition, 1);
 
         var i = 0;
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new LevelRegion(
-            orientation.Move(lemming.LevelPosition, lemming.FacingDirection.DeltaX, 2),
-            orientation.MoveDown(lemming.LevelPosition, 4));
+        var gadgetTestRegion = new Region(
+            orientation.Move(lemming.AnchorPosition, lemming.FacingDirection.DeltaX, 2),
+            orientation.MoveDown(lemming.AnchorPosition, 4));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearLemming);
 
         while (i < 4 &&
@@ -204,9 +204,9 @@ public sealed class SwimmerAction : LemmingAction
                !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, checkPosition))
         {
             i++;
-            checkPosition = orientation.MoveUp(lemming.LevelPosition, 1 + i);
+            checkPosition = orientation.MoveUp(lemming.AnchorPosition, 1 + i);
         }
 
-        lemming.LevelPosition = orientation.MoveUp(lemming.LevelPosition, i);
+        lemming.AnchorPosition = orientation.MoveUp(lemming.AnchorPosition, i);
     }
 }

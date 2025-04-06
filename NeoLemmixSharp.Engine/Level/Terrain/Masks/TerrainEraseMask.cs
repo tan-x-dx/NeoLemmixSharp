@@ -4,17 +4,17 @@ namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
 public sealed class TerrainEraseMask
 {
-    private readonly LevelPosition _anchorPoint;
-    private readonly LevelSize _maskSize;
+    private readonly Point _anchorPoint;
+    private readonly Size _maskSize;
     private readonly Range[] _spanRanges;
-    private readonly LevelPosition[] _maskPositions;
+    private readonly Point[] _maskPositions;
     private readonly IDestructionMask _destructionMask;
 
     public TerrainEraseMask(
-        LevelPosition anchorPoint,
-        LevelSize maskSize,
+        Point anchorPoint,
+        Size maskSize,
         Range[] spanRanges,
-        LevelPosition[] maskPositions,
+        Point[] maskPositions,
         IDestructionMask destructionMask)
     {
         _anchorPoint = anchorPoint;
@@ -27,7 +27,7 @@ public sealed class TerrainEraseMask
     public void ApplyEraseMask(
         Orientation orientation,
         FacingDirection facingDirection,
-        LevelPosition position,
+        Point position,
         int frame)
     {
         var transformation = new DihedralTransformation(orientation, facingDirection);
@@ -45,9 +45,9 @@ public sealed class TerrainEraseMask
         }
     }
 
-    private ReadOnlySpan<LevelPosition> GetMaskPositionsForFrame(int frame)
+    private ReadOnlySpan<Point> GetMaskPositionsForFrame(int frame)
     {
-        var span = new ReadOnlySpan<LevelPosition>(_maskPositions);
+        var span = new ReadOnlySpan<Point>(_maskPositions);
         var range = _spanRanges[frame];
         return span[range];
     }

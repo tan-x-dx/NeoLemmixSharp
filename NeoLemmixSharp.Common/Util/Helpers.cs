@@ -8,7 +8,7 @@ public static class Helpers
 {
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Rectangle CreateRectangle(LevelPosition pos, LevelSize size) => new(pos.X, pos.Y, size.W, size.H);
+    public static Rectangle CreateRectangle(Point pos, Size size) => new(pos.X, pos.Y, size.W, size.H);
 
     [Pure]
     public static int CountIfNotNull<T>(this T? item)

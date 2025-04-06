@@ -27,7 +27,7 @@ public sealed class FallerAction : LemmingAction
         var currentFallDistanceStep = 0;
 
         var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.LevelPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         var updraftFallDelta = GetUpdraftFallDelta(lemming, in gadgetsNearLemming);
         var maxFallDistanceStep = EngineConstants.DefaultFallStep + updraftFallDelta.Y;
@@ -90,7 +90,7 @@ public sealed class FallerAction : LemmingAction
         if (lemming.State.HasSpecialFallingBehaviour)
             return false;
 
-        var anchorPixel = lemming.LevelPosition;
+        var anchorPixel = lemming.AnchorPosition;
         var footPixel = lemming.FootPosition;
         var orientation = lemming.Orientation;
 

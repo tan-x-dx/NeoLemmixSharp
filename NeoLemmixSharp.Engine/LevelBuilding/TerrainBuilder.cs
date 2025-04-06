@@ -106,7 +106,7 @@ public readonly ref struct TerrainBuilder
             maxY = Math.Max(maxY, terrainData.Position.Y + h);
         }
 
-        var size = new LevelSize(maxX, maxY);
+        var size = new Size(maxX, maxY);
         var colors = new Color[size.Area()];
         var terrainPixelColorData = new PixelColorData(size, colors);
 
@@ -171,7 +171,7 @@ public readonly ref struct TerrainBuilder
         {
             for (var x = 0; x < sourceSize.W; x++)
             {
-                var p = new LevelPosition(x, y);
+                var p = new Common.Point(x, y);
                 var sourcePixelColor = sourcePixelColorData[p];
                 if (sourcePixelColor == Color.Transparent)
                     continue;
@@ -193,7 +193,7 @@ public readonly ref struct TerrainBuilder
         ITerrainArchetypeData terrainArchetypeData,
         PixelColorData targetPixelColorData,
         Color sourcePixelColor,
-        LevelPosition p0)
+        Common.Point p0)
     {
         if (terrainData.Tint.HasValue)
         {

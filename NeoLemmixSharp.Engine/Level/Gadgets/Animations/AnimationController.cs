@@ -25,8 +25,8 @@ public sealed class AnimationController
         _previousBounds = previousBounds;
     }
 
-    public LevelRegion CurrentBounds => _currentBounds.CurrentBounds;
-    public LevelRegion PreviousBounds => _previousBounds.CurrentBounds;
+    public Region CurrentBounds => _currentBounds.CurrentBounds;
+    public Region PreviousBounds => _previousBounds.CurrentBounds;
 
     public int GetNextStateIndex()
     {
