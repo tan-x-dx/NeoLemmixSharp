@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
@@ -15,10 +16,10 @@ public sealed class BackgroundRenderer
         _texture = texture;
     }
 
-    public void SetWindowDimensions(int windowWidth, int windowHeight)
+    public void SetWindowDimensions(LevelSize windowSize)
     {
-        _tileX = 1 + windowWidth / _texture.Width;
-        _tileY = 1 + windowHeight / _texture.Height;
+        _tileX = 1 + windowSize.W / _texture.Width;
+        _tileY = 1 + windowSize.H / _texture.Height;
     }
 
     public void Render(SpriteBatch spriteBatch)

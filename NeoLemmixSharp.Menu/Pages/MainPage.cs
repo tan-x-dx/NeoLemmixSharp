@@ -98,30 +98,29 @@ public sealed class MainPage : PageBase
         IGameWindow.Instance.Escape();
     }
 
-    protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
+    protected override void OnWindowDimensionsChanged(LevelSize windowSize)
     {
         OnResize();
     }
 
     private void OnResize()
     {
-        var windowWidth = IGameWindow.Instance.WindowWidth;
-        var windowHeight = IGameWindow.Instance.WindowHeight;
+        var windowSize = IGameWindow.Instance.WindowSize;
 
-        UiHandler.RootComponent.Width = windowWidth;
-        UiHandler.RootComponent.Height = windowHeight;
+        UiHandler.RootComponent.Width = windowSize.W;
+        UiHandler.RootComponent.Height = windowSize.H;
 
-        var deltaX = windowWidth / 8;
+        var deltaX = windowSize.W / 8;
 
         _playButton.Left = deltaX * 2;
         _levelSelectButton.Left = deltaX * 3;
 
-        deltaX = windowWidth / 6;
+        deltaX = windowSize.W / 6;
 
         _configButton.Left = deltaX * 2;
         _quitButton.Left = deltaX * 3;
 
-        var deltaY = windowHeight / 6;
+        var deltaY = windowSize.H / 6;
 
         _playButton.Top = deltaY * 2;
         _levelSelectButton.Top = deltaY * 2;

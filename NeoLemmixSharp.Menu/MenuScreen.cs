@@ -111,10 +111,9 @@ public sealed class MenuScreen : IBaseScreen
 
         _currentPage.Initialise();
 
-        var windowWidth = IGameWindow.Instance.WindowWidth;
-        var windowHeight = IGameWindow.Instance.WindowHeight;
+        var windowSize = IGameWindow.Instance.WindowSize;
 
-        _currentPage.SetWindowDimensions(windowWidth, windowHeight);
+        _currentPage.SetWindowDimensions(windowSize);
     }
 
     private void CloseExceptionViewers()
@@ -123,10 +122,9 @@ public sealed class MenuScreen : IBaseScreen
 
     public void OnWindowSizeChanged()
     {
-        var windowWidth = IGameWindow.Instance.WindowWidth;
-        var windowHeight = IGameWindow.Instance.WindowHeight;
+        var windowSize = IGameWindow.Instance.WindowSize;
 
-        _currentPage.SetWindowDimensions(windowWidth, windowHeight);
+        _currentPage.SetWindowDimensions(windowSize);
         MenuScreenRenderer.OnWindowSizeChanged();
     }
 

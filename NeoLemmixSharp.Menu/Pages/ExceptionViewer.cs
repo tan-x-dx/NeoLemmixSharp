@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Menu.Pages;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class ExceptionViewer : PageBase
 {
@@ -16,7 +18,7 @@ public sealed class ExceptionViewer : PageBase
     {
     }
 
-    protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
+    protected override void OnWindowDimensionsChanged(LevelSize windowSize)
     {
     }
 

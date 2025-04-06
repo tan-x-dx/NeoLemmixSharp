@@ -198,8 +198,7 @@ public sealed class ControlPanelRenderer
 
     public void OnWindowSizeChanged()
     {
-        var gameWindow = IGameWindow.Instance;
-        _windowSize = new LevelSize(gameWindow.WindowWidth, gameWindow.WindowHeight);
+        _windowSize = IGameWindow.Instance.WindowSize;
 
         DisposableHelperMethods.DisposeOf(ref _controlPanelRenderTarget);
         _controlPanelRenderTarget = GetControlPanelRenderTarget2D();

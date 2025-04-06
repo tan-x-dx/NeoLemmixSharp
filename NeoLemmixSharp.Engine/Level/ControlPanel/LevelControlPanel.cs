@@ -84,10 +84,10 @@ public sealed class LevelControlPanel : IInitialisable
         SetSelectedSkillAssignmentButton(firstSkillAssignButton);
     }
 
-    public void SetWindowDimensions(int screenWidth, int screenHeight)
+    public void SetWindowDimensions(LevelSize windowSize)
     {
         var previousWindowSize = _windowSize;
-        _windowSize = new LevelSize(screenWidth, screenHeight);
+        _windowSize = windowSize;
 
         if (_windowSize == previousWindowSize)
             return;

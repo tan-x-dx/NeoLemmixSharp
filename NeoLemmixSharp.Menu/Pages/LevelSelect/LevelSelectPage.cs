@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Components.Buttons;
 
 namespace NeoLemmixSharp.Menu.Pages.LevelSelect;
@@ -22,7 +23,7 @@ public sealed class LevelSelectPage : PageBase
         _levelList.RefreshLevels();
     }
 
-    protected override void OnWindowDimensionsChanged(int windowWidth, int windowHeight)
+    protected override void OnWindowDimensionsChanged(LevelSize windowSize)
     {
         OnResize();
     }
@@ -31,20 +32,19 @@ public sealed class LevelSelectPage : PageBase
     {
         const int margin = 64;
 
-        var windowWidth = IGameWindow.Instance.WindowWidth;
-        var windowHeight = IGameWindow.Instance.WindowHeight;
+        var windowSize = IGameWindow.Instance.WindowSize;
 
         var rootComponent = UiHandler.RootComponent;
         rootComponent.Left = margin;
         rootComponent.Top = margin;
-        rootComponent.Width = windowWidth - margin * 2;
-        rootComponent.Height = windowHeight - margin * 2;
+        rootComponent.Width = windowSize.W - margin * 2;
+        rootComponent.Height = windowSize.H - margin * 2;
 
         _levelList.SetDimensions(
             margin * 2,
             margin * 2,
-            windowWidth / 2 - margin * 4,
-            windowHeight - margin * 4);
+            windowSize.W / 2 - margin * 4,
+            windowSize.H - margin * 4);
     }
 
     protected override void HandleUserInput()

@@ -61,11 +61,10 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         if (!_initialized)
             return;
 
-        var windowWidth = IGameWindow.Instance.WindowWidth;
-        var windowHeight = IGameWindow.Instance.WindowHeight;
+        var windowSize = IGameWindow.Instance.WindowSize;
 
-        _backgroundRenderer.SetWindowDimensions(windowWidth, windowHeight);
-        _pageTransitionRenderer.SetWindowDimensions(windowWidth, windowHeight);
+        _backgroundRenderer.SetWindowDimensions(windowSize);
+        _pageTransitionRenderer.SetWindowDimensions(windowSize);
     }
 
     public void Dispose()

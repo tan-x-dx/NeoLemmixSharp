@@ -11,9 +11,8 @@ public abstract class Component : IDisposable
 {
     public delegate void ComponentKeyboardAction(Component c, in KeysEnumerable keys);
 
-    private int _x, _y;
-
-    private int _width, _height;
+    private LevelPosition _position;
+    private LevelSize _dimensions;
 
     private ComponentState _state = ComponentState.Normal;
 
@@ -64,16 +63,16 @@ public abstract class Component : IDisposable
 
     public int Left
     {
-        get => _x;
+        get => _position.X;
         set
         {
-            var oldX = _x;
+            var oldX = _position.X;
 
-            _x = value;
+            _position = new LevelPosition(value, _position.Y);
 
             if (_children != null)
             {
-                oldX = _x - oldX;
+                oldX = _position.X - oldX;
 
                 foreach (Component c in _children)
                 {
@@ -85,16 +84,16 @@ public abstract class Component : IDisposable
 
     public int Top
     {
-        get => _y;
+        get => _position.Y;
         set
         {
-            var oldY = _y;
+            var oldY = _position.Y;
 
-            _y = value;
+            _position = new LevelPosition(_position.X, value);
 
             if (_children != null)
             {
-                oldY = _y - oldY;
+                oldY = _position.Y - oldY;
 
                 foreach (Component c in _children)
                 {
@@ -118,11 +117,10 @@ public abstract class Component : IDisposable
 
     public void SetLocation(int x, int y)
     {
-        var oldX = _x;
-        var oldY = _y;
+        var oldX = _position.X;
+        var oldY = _position.Y;
 
-        _x = x;
-        _y = y;
+        _position = new LevelPosition(x, y);
 
         if (_children != null)
         {
@@ -138,8 +136,8 @@ public abstract class Component : IDisposable
 
     public void Translate(int dx, int dy)
     {
-        _x += dx;
-        _y += dy;
+        var delta = new LevelPosition(dx, dy);
+        _position += delta;
 
         if (_children != null)
         {
@@ -152,14 +150,14 @@ public abstract class Component : IDisposable
 
     public virtual int Width
     {
-        get => _width;
-        set => _width = value;
+        get => _dimensions.W;
+        set => _dimensions = new LevelSize(value, _dimensions.H);
     }
 
     public virtual int Height
     {
-        get => _height;
-        set => _height = value;
+        get => _dimensions.H;
+        set => _dimensions = new LevelSize(_dimensions.W, value);
     }
 
     public ColorPacket Colors
@@ -176,8 +174,7 @@ public abstract class Component : IDisposable
 
     public void SetSize(int w, int h)
     {
-        _width = w;
-        _height = h;
+        _dimensions = new LevelSize(w, h);
     }
 
     public void SetDimensions(int x, int y, int width, int height)

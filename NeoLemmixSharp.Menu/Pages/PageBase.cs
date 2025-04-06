@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Components;
 
@@ -31,12 +32,12 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     protected abstract void OnInitialise();
 
-    public void SetWindowDimensions(int windowWidth, int windowHeight)
+    public void SetWindowDimensions(LevelSize windowSize)
     {
-        OnWindowDimensionsChanged(windowWidth, windowHeight);
+        OnWindowDimensionsChanged(windowSize);
     }
 
-    protected abstract void OnWindowDimensionsChanged(int windowWidth, int windowHeight);
+    protected abstract void OnWindowDimensionsChanged(LevelSize windowSize);
 
     public void Tick()
     {
@@ -72,6 +73,4 @@ public abstract class PageBase : IInitialisable, IDisposable
 
         MenuScreen.Current.SetNextPage(levelStartPage);
     }
-
-    protected static Vector2 GetWindowSize() => IGameWindow.Instance.GetWindowSize();
 }
