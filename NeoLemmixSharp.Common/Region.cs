@@ -46,16 +46,16 @@ public readonly struct Region : IEquatable<Region>
     {
         X = 0;
         Y = 0;
-        W = size.W < 1 ? 1 : size.W;
-        H = size.H < 1 ? 1 : size.H;
+        W = Math.Max(size.W, 1);
+        H = Math.Max(size.H, 1);
     }
 
     [DebuggerStepThrough]
     public Region(Point position, Size size)
     {
         Position = position;
-        W = size.W < 1 ? 1 : size.W;
-        H = size.H < 1 ? 1 : size.H;
+        W = Math.Max(size.W, 1);
+        H = Math.Max(size.H, 1);
     }
 
     [DebuggerStepThrough]
@@ -63,8 +63,8 @@ public readonly struct Region : IEquatable<Region>
     {
         X = rect.X;
         Y = rect.Y;
-        W = rect.Width < 1 ? 1 : rect.Width;
-        H = rect.Height < 1 ? 1 : rect.Height;
+        W = Math.Max(rect.Width, 1);
+        H = Math.Max(rect.Height, 1);
     }
 
     [DebuggerStepThrough]
@@ -161,19 +161,10 @@ public readonly struct Region : IEquatable<Region>
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(Region other) =>
-        X == other.X &&
-        Y == other.Y &&
-        W == other.W &&
-        H == other.H;
+    public bool Equals(Region other) => this == other;
 
     [Pure]
-    public override bool Equals([NotNullWhen(true)] object? obj) =>
-        obj is Region other &&
-        X == other.X &&
-        Y == other.Y &&
-        W == other.W &&
-        H == other.H;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Region other && this == other;
 
     [Pure]
     public override int GetHashCode() =>

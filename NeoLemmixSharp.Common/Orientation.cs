@@ -67,10 +67,10 @@ public readonly struct Orientation : IIdEquatable<Orientation>
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(Orientation other) => RotNum == other.RotNum;
+    public bool Equals(Orientation other) => this == other;
     [Pure]
     [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Orientation other && RotNum == other.RotNum;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Orientation other && this == other;
     [Pure]
     [DebuggerStepThrough]
     public override int GetHashCode() => RotNum;

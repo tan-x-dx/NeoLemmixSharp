@@ -16,8 +16,8 @@ public readonly struct Size : IEquatable<Size>
     [DebuggerStepThrough]
     public Size(int w, int h)
     {
-        W = w < 0 ? 0 : w;
-        H = h < 0 ? 0 : h;
+        W = Math.Max(w, 0);
+        H = Math.Max(h, 0);
     }
 
     [DebuggerStepThrough]
@@ -77,9 +77,9 @@ public readonly struct Size : IEquatable<Size>
         left.H != right.H;
 
     [DebuggerStepThrough]
-    public bool Equals(Size other) => W == other.W && H == other.H;
+    public bool Equals(Size other) => this == other;
     [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Size other && W == other.W && H == other.H;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Size other && this == other;
     [DebuggerStepThrough]
     public override int GetHashCode() => 8322929 * W +
                                          5282777 * H +

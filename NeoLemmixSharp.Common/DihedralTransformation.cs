@@ -137,9 +137,7 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
-    public bool Equals(DihedralTransformation other) =>
-        Orientation == other.Orientation &&
-        FacingDirection == other.FacingDirection;
+    public bool Equals(DihedralTransformation other) => this == other;
 
     [Pure]
     [EditorBrowsable(EditorBrowsableState.Never)]

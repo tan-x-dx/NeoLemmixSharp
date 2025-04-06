@@ -41,10 +41,10 @@ public readonly struct FacingDirection : IIdEquatable<FacingDirection>
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(FacingDirection other) => Id == other.Id;
+    public bool Equals(FacingDirection other) => this == other;
     [Pure]
     [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is FacingDirection other && Id == other.Id;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is FacingDirection other && this == other;
     [Pure]
     [DebuggerStepThrough]
     public override int GetHashCode() => Id;
