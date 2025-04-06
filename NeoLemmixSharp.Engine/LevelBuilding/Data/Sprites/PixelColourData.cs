@@ -74,12 +74,12 @@ public readonly struct PixelColorData
         var newColorBuffer = new Color[subRegion.Size.Area()];
 
         // Transfer the actual color data into a brand new item
-        var sourceTextureWrapper = new SpanWrapper2D<Color>(_colorData, Size, subRegion.Position, subRegion.Size);
-        var resultTextureWrapper = new SpanWrapper2D<Color>(newColorBuffer, subRegion.Size, new LevelPosition(), subRegion.Size);
+        var sourceTextureWrapper = new SpanWrapper2D<Color>(_colorData, Size, subRegion);
+        var resultTextureWrapper = new SpanWrapper2D<Color>(newColorBuffer, subRegion.Size, new LevelRegion(subRegion.Size));
 
-        for (var y = 0; y < sourceTextureWrapper.Size.H; y++)
+        for (var y = 0; y < sourceTextureWrapper.Height; y++)
         {
-            for (var x = 0; x < sourceTextureWrapper.Size.W; x++)
+            for (var x = 0; x < sourceTextureWrapper.Width; x++)
             {
                 var pos = new LevelPosition(x, y);
                 resultTextureWrapper[pos] = sourceTextureWrapper[pos];

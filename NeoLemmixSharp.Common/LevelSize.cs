@@ -17,10 +17,8 @@ public readonly struct LevelSize : IEquatable<LevelSize>
     [DebuggerStepThrough]
     public LevelSize(int w, int h)
     {
-        W = w;
-        if (W < 0) W = 0;
-        H = h;
-        if (H < 0) H = 0;
+        W = w < 0 ? 0 : w;
+        H = h < 0 ? 0 : h;
     }
 
     [DebuggerStepThrough]

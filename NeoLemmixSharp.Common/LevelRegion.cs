@@ -42,13 +42,20 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     }
 
     [DebuggerStepThrough]
+    public LevelRegion(LevelSize size)
+    {
+        X = 0;
+        Y = 0;
+        W = size.W < 1 ? 1 : size.W;
+        H = size.H < 1 ? 1 : size.H;
+    }
+
+    [DebuggerStepThrough]
     public LevelRegion(LevelPosition position, LevelSize size)
     {
         Position = position;
-        W = size.W;
-        if (W < 1) W = 1;
-        H = size.H;
-        if (H < 1) H = 1;
+        W = size.W < 1 ? 1 : size.W;
+        H = size.H < 1 ? 1 : size.H;
     }
 
     [DebuggerStepThrough]
@@ -56,10 +63,8 @@ public readonly struct LevelRegion : IEquatable<LevelRegion>
     {
         X = rect.X;
         Y = rect.Y;
-        W = rect.Width;
-        if (W < 1) W = 1;
-        H = rect.Height;
-        if (H < 1) H = 1;
+        W = rect.Width < 1 ? 1 : rect.Width;
+        H = rect.Height < 1 ? 1 : rect.Height;
     }
 
     [DebuggerStepThrough]

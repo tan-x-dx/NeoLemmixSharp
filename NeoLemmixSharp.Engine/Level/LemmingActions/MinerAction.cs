@@ -158,15 +158,14 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
+        var pixelTypeInt = (uint)pixelType;
         var oppositeOrientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
-                                            ((2 + orientation.RotNum) & 3);
-        var oppositeOrientationArrowMask = (PixelType)(1 << oppositeOrientationArrowShift);
-        if ((pixelType & oppositeOrientationArrowMask) != PixelType.Empty)
+                                            orientation.GetOpposite().RotNum;
+        if (((pixelTypeInt >>> oppositeOrientationArrowShift) & 1U) != 0U)
             return false;
 
         var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
-                                                ((2 + orientation.RotNum - facingDirection.DeltaX) & 3);
-        var oppositeFacingDirectionArrowMask = (PixelType)(1 << oppositeFacingDirectionArrowShift);
-        return (pixelType & oppositeFacingDirectionArrowMask) == PixelType.Empty;
+                                                ((1 + orientation.RotNum + (facingDirection.Id << 1)) & 3);
+        return ((pixelTypeInt >>> oppositeFacingDirectionArrowShift) & 1U) == 0U;
     }
 }

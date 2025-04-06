@@ -3,24 +3,23 @@
 public readonly ref struct SpanWrapper2D<T>
 {
     private readonly Span<T> _data;
-
     private readonly LevelSize _spanSize;
+    private readonly LevelRegion _region;
 
-    private readonly LevelPosition _position;
-    public readonly LevelSize Size;
+    public int Width => _region.W;
+    public int Height => _region.H;
 
     public SpanWrapper2D(
         Span<T> data,
         LevelSize spanSize,
-        LevelPosition position,
-        LevelSize size)
+        LevelRegion region)
     {
         var spanWidth = spanSize.W;
         var spanHeight = spanSize.H;
-        var x = position.X;
-        var y = position.Y;
-        var width = size.W;
-        var height = size.H;
+        var x = region.X;
+        var y = region.Y;
+        var width = region.W;
+        var height = region.H;
 
         if (spanWidth <= 0 || spanHeight <= 0 ||
             spanWidth * spanHeight != data.Length ||
@@ -32,22 +31,21 @@ public readonly ref struct SpanWrapper2D<T>
 
         _data = data;
         _spanSize = spanSize;
-        _position = position;
-        Size = size;
+        _region = region;
     }
 
     public T this[LevelPosition pos]
     {
         get
         {
-            Size.AssertEncompassesPoint(pos);
-            var index = _spanSize.GetIndexOfPoint(pos + _position);
+            _region.Size.AssertEncompassesPoint(pos);
+            var index = _spanSize.GetIndexOfPoint(pos + _region.Position);
             return _data[index];
         }
         set
         {
-            Size.AssertEncompassesPoint(pos);
-            var index = _spanSize.GetIndexOfPoint(pos + _position);
+            _region.Size.AssertEncompassesPoint(pos);
+            var index = _spanSize.GetIndexOfPoint(pos + _region.Position);
             _data[index] = value;
         }
     }

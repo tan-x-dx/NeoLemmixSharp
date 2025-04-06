@@ -15,30 +15,34 @@ public static class PixelTypeHelpers
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CanBeDestroyed(this PixelType pixelType)
     {
-        const PixelType mask = PixelType.Void | PixelType.Steel;
+        const uint mask = (1U << PixelTypeSteelShift) |
+                          (1U << PixelTypeVoidShift);
 
-        return (pixelType & mask) == PixelType.Empty;
+        var pixelTypeInt = (uint)pixelType;
+        return (pixelTypeInt & mask) == 0U;
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsSolidToOrientation(this PixelType pixelType, Orientation orientation)
     {
-        var flag = (PixelType)(1 << orientation.RotNum);
-        return (pixelType & flag) == flag;
+        var pixelTypeInt = (uint)pixelType;
+        return ((pixelTypeInt >>> (PixelTypeSolidShiftOffset + orientation.RotNum)) & 1U) != 0U;
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsSteel(this PixelType pixelType)
     {
-        return (pixelType & PixelType.Steel) == PixelType.Steel;
+        var pixelTypeInt = (uint)pixelType;
+        return ((pixelTypeInt >>> PixelTypeSteelShift) & 1U) != 0U;
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsVoid(this PixelType pixelType)
     {
-        return (pixelType & PixelType.Void) == PixelType.Void;
+        var pixelTypeInt = (uint)pixelType;
+        return ((pixelTypeInt >>> PixelTypeVoidShift) & 1U) != 0U;
     }
 }
