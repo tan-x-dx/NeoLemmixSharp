@@ -126,7 +126,7 @@ public sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
     private void SetTriggerHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         // Subtract 1 from height because of differences in physics between engines
-        _gadgetArchetypeData.TriggerHeight = int.Parse(secondToken) - 1;
+        _gadgetArchetypeData.TriggerHeight = Math.Max(int.Parse(secondToken) - 1, 1);
     }
 
     private void SetSound(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
