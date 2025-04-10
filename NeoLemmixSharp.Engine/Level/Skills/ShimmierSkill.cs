@@ -30,7 +30,7 @@ public sealed class ShimmierSkill : LemmingSkill
 
             if (simulationLemming.CurrentAction != SliderAction.Instance &&
                 (simulationLemming.CurrentAction != FallerAction.Instance ||
-                 simulationLemming.FacingDirection != lemming.FacingDirection.GetOpposite()))
+                 simulationLemming.FacingDirection == lemming.FacingDirection))
                 return false;
 
             var simulationOrientation = simulationLemming.Orientation;

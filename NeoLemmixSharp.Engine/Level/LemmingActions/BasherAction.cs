@@ -385,8 +385,8 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
         var pixelTypeInt = (uint)pixelType;
-        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
-                                 ((1 + orientation.RotNum + (facingDirection.Id << 1)) & 3);
+        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
+                                 (1 + orientation.RotNum + (facingDirection.Id << 1));
 
         return ((pixelTypeInt >>> oppositeArrowShift) & 1U) == 0U;
     }

@@ -100,23 +100,6 @@ public sealed class TerrainManager
             PixelType.SolidToAllOrientations);
     }
 
-    public void SetBlockerMaskPixel(Point pixelToSet, PixelType pixelTypeMask, bool set)
-    {
-        if (!_pixels.Size.EncompassesPoint(pixelToSet))
-            return;
-
-        ref var pixel = ref _pixels[pixelToSet];
-
-        if (set)
-        {
-            pixel |= pixelTypeMask;
-        }
-        else
-        {
-            pixel &= pixelTypeMask;
-        }
-    }
-
     public void PopulateSpanWithTerrainData(
         Span<PixelType> pixelSpan,
         int spanWidth,

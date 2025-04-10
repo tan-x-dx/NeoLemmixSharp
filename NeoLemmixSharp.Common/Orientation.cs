@@ -86,6 +86,20 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         _ => ThrowOrientationOutOfRangeException<string>(this)
     };
 
+    public bool TryFormat(Span<char> destination, out int charsWritten)
+    {
+        var constString = ToString();
+        if (destination.Length < constString.Length)
+        {
+            charsWritten = 0;
+            return false;
+        }
+
+        constString.AsSpan().CopyTo(destination);
+        charsWritten = constString.Length;
+        return true;
+    }
+
     [Pure]
     [DebuggerStepThrough]
     public static bool operator ==(Orientation first, Orientation second) => first.RotNum == second.RotNum;

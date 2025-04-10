@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
@@ -37,7 +38,6 @@ public static class PerfectHasherHelperMethods
         var minId = int.MaxValue;
         var maxId = int.MinValue;
         var allItemIds = new HashSet<int>(items.Length);
-        string? typeName;
 
         foreach (var item in items)
         {
@@ -48,15 +48,27 @@ public static class PerfectHasherHelperMethods
 
             if (!allItemIds.Add(id))
             {
-                typeName = typeof(T).Name;
-                throw new Exception($"Duplicated {typeName} ID: {id}");
+                ThrowDuplicatedIdsException<T>(id);
             }
         }
 
         if (minId != 0 || maxId != items.Length - 1)
         {
-            typeName = typeof(T).Name;
-            throw new Exception($"{typeName} ids do not span a full set of values from 0 - {items.Length - 1}");
+            ThrowInvalidIdsException<T>(items.Length - 1);
         }
+    }
+
+    [DoesNotReturn]
+    private static void ThrowDuplicatedIdsException<T>(int id)
+    {
+        var typeName = typeof(T).Name;
+        throw new Exception($"Duplicated {typeName} ID: {id}");
+    }
+
+    [DoesNotReturn]
+    private static void ThrowInvalidIdsException<T>(int expectedMaxId)
+    {
+        var typeName = typeof(T).Name;
+        throw new Exception($"{typeName} ids do not span a full set of values from 0 - {expectedMaxId}");
     }
 }

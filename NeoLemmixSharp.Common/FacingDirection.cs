@@ -54,6 +54,20 @@ public readonly struct FacingDirection : IIdEquatable<FacingDirection>
         ? EngineConstants.RightFacingDirectionName
         : EngineConstants.LeftFacingDirectionName;
 
+    public bool TryFormat(Span<char> destination, out int charsWritten)
+    {
+        var constString = ToString();
+        if (destination.Length < constString.Length)
+        {
+            charsWritten = 0;
+            return false;
+        }
+
+        constString.AsSpan().CopyTo(destination);
+        charsWritten = constString.Length;
+        return true;
+    }
+
     [Pure]
     [DebuggerStepThrough]
     public static bool operator ==(FacingDirection first, FacingDirection second) => first.Id == second.Id;

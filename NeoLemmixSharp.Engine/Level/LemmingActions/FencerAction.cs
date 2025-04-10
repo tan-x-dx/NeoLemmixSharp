@@ -314,13 +314,13 @@ procedure DoFencerContinueTests(L: TLemming; var SteelContinue: Boolean; var Mov
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
         var pixelTypeInt = (uint)pixelType;
-        var orientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
+        var orientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
                                     orientation.RotNum;
         if (((pixelTypeInt >>> orientationArrowShift) & 1U) != 0U)
             return false;
 
-        var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
-                                                ((1 + orientation.RotNum + (facingDirection.Id << 1)) & 3);
+        var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
+                                                (1 + orientation.RotNum + (facingDirection.Id << 1));
         return ((pixelTypeInt >>> oppositeFacingDirectionArrowShift) & 1U) == 0U;
     }
 }

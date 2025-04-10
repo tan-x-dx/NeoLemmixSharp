@@ -122,19 +122,12 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     public override string ToString()
     {
         Span<char> buffer = stackalloc char[5 + 1 + 5];
-        var charsWritten = 0;
 
-        // The following usages of ToString() will return string consts
-        // Therefore this will not incur any extra allocations
-        var sourceSpan = Orientation.ToString().AsSpan();
-        sourceSpan.CopyTo(buffer);
-        charsWritten += sourceSpan.Length;
-
+        Orientation.TryFormat(buffer, out var charsWritten);
         buffer[charsWritten++] = '|';
 
-        sourceSpan = FacingDirection.ToString().AsSpan();
-        sourceSpan.CopyTo(buffer[charsWritten..]);
-        charsWritten += sourceSpan.Length;
+        FacingDirection.TryFormat(buffer[charsWritten..], out var c);
+        charsWritten += c;
 
         return buffer[..charsWritten].ToString();
     }

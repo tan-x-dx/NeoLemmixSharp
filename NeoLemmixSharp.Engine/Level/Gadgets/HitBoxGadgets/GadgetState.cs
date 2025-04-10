@@ -40,29 +40,29 @@ public sealed class GadgetState
         if (_hitBoxLookup.Count == 0)
             return new RectangularRegion(offset);
 
-        int* p = stackalloc int[4];
-        p[0] = int.MaxValue;
-        p[1] = int.MaxValue;
-        p[2] = int.MinValue;
-        p[3] = int.MinValue;
+        var p0 = int.MaxValue;
+        var p1 = int.MaxValue;
+        var p2 = int.MinValue;
+        var p3 = int.MinValue;
 
         foreach (var kvp in _hitBoxLookup)
         {
             var hitBoxBounds = kvp.Value.CurrentBounds;
             var bottomRight = hitBoxBounds.GetBottomRight();
 
-            p[0] = Math.Min(p[0], hitBoxBounds.X);
-            p[1] = Math.Min(p[1], hitBoxBounds.Y);
-            p[2] = Math.Max(p[2], bottomRight.X);
-            p[3] = Math.Max(p[3], bottomRight.Y);
+            p0 = Math.Min(p0, hitBoxBounds.X);
+            p1 = Math.Min(p1, hitBoxBounds.Y);
+            p2 = Math.Max(p2, bottomRight.X);
+            p3 = Math.Max(p3, bottomRight.Y);
         }
 
-        p[2] += 1 - p[0];
-        p[3] += 1 - p[1];
+        p2 += 1 - p0;
+        p3 += 1 - p1;
 
-        p[0] += offset.X;
-        p[1] += offset.Y;
+        p0 += offset.X;
+        p1 += offset.Y;
 
+        int* p = stackalloc int[4] { p0, p1, p2, p3 };
         return *(RectangularRegion*)p;
     }
 

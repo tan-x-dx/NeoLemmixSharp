@@ -20,13 +20,14 @@ public static class PixelColorDataHelpers
     public static ArrayWrapper2D<Color> Trim(this ArrayWrapper2D<Color> data)
     {
         var minX = GetMinXTrim(data);
+
+        // If first value is negative, then the data is completely blank
+        if (minX < 0)
+            return new ArrayWrapper2D<Color>([], new Size());        
+
         var minY = GetMinYTrim(data);
         var maxX = GetMaxXTrim(data);
         var maxY = GetMaxYTrim(data);
-
-        if (minX < 0 || maxX < 0 ||
-            minY < 0 || maxY < 0)
-            return new ArrayWrapper2D<Color>([], new Size());
 
         var subRegion = new RectangularRegion(
             new Point(minX, minY),
