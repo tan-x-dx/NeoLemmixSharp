@@ -2,10 +2,10 @@
 
 public interface IRectangularBounds
 {
-    Region CurrentBounds { get; }
+    RectangularRegion CurrentBounds { get; }
 }
 
 public interface IPreviousRectangularBounds : IRectangularBounds
 {
-    Region PreviousBounds { get; }
+    RectangularRegion PreviousBounds { get; }
 }

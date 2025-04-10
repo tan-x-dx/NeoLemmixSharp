@@ -52,8 +52,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
     public Point AnchorPosition = new(-1, -1);
     public Point PreviousLevelPosition = new(-1, -1);
 
-    public Region CurrentBounds { get; private set; }
-    public Region PreviousBounds { get; private set; }
+    public RectangularRegion CurrentBounds { get; private set; }
+    public RectangularRegion PreviousBounds { get; private set; }
 
     public LemmingState State { get; }
 
@@ -157,7 +157,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         p = PreviousAction.GetFootPosition(this, p);
         gadgetCheckPositions[3] = p;
 
-        var checkPositionsBounds = new Region(gadgetCheckPositions[..4]);
+        var checkPositionsBounds = new RectangularRegion(gadgetCheckPositions[..4]);
 
         Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
         LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, checkPositionsBounds, out var gadgetsNearLemming);
@@ -197,7 +197,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         gadgetCheckPositions[2] = PreviousLevelPosition;
         gadgetCheckPositions[3] = PreviousAction.GetFootPosition(this, gadgetCheckPositions[2]);
 
-        var checkPositionsBounds = new Region(gadgetCheckPositions[..4]);
+        var checkPositionsBounds = new RectangularRegion(gadgetCheckPositions[..4]);
 
         Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
         LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, checkPositionsBounds, out var gadgetsNearLemming);

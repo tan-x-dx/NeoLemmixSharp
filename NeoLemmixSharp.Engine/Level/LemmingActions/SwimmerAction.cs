@@ -194,7 +194,7 @@ public sealed class SwimmerAction : LemmingAction
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new Region(
+        var gadgetTestRegion = new RectangularRegion(
             orientation.Move(lemming.AnchorPosition, lemming.FacingDirection.DeltaX, 2),
             orientation.MoveDown(lemming.AnchorPosition, 4));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearLemming);

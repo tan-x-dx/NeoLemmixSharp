@@ -12,7 +12,7 @@ public sealed class GadgetBounds : IRectangularBounds
     public int Height { get; set; }
 
     public Size Size => new(Width, Height);
-    public Region CurrentBounds => new(Position, Size);
+    public RectangularRegion CurrentBounds => new(Position, Size);
 
     public GadgetBounds()
     {

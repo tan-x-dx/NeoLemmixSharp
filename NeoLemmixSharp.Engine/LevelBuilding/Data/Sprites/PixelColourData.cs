@@ -28,7 +28,7 @@ public static class PixelColorDataHelpers
             minY < 0 || maxY < 0)
             return new ArrayWrapper2D<Color>([], new Size());
 
-        var subRegion = new Region(
+        var subRegion = new RectangularRegion(
             new Point(minX, minY),
             new Point(maxX, maxY));
 

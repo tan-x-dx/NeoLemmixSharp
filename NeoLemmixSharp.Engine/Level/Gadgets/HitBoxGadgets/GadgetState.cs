@@ -35,10 +35,10 @@ public sealed class GadgetState
     }
 
     [SkipLocalsInit]
-    public unsafe Region GetMininmumBoundingBoxForAllHitBoxes(Point offset)
+    public unsafe RectangularRegion GetMininmumBoundingBoxForAllHitBoxes(Point offset)
     {
         if (_hitBoxLookup.Count == 0)
-            return new Region(offset);
+            return new RectangularRegion(offset);
 
         int* p = stackalloc int[4];
         p[0] = int.MaxValue;
@@ -63,7 +63,7 @@ public sealed class GadgetState
         p[0] += offset.X;
         p[1] += offset.Y;
 
-        return *(Region*)p;
+        return *(RectangularRegion*)p;
     }
 
     public void OnTransitionTo()

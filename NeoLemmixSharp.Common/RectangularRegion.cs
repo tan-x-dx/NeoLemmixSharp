@@ -9,12 +9,12 @@ using System.Runtime.InteropServices;
 namespace NeoLemmixSharp.Common;
 
 /// <summary>
-/// <para>Represents a rectangular region of points within a level, specified by a <see cref="Point"/> and a <see cref="Common.Size"/>.</para>
-/// <para>The constructors will ensure a well-formed <see cref="Region"/> is created.</para>
-/// <para>Note that a <see cref="Region"/> can never be empty - the smallest region size is 1x1.</para>
+/// <para>Represents a rectangular region of points, specified by a <see cref="Point"/> and a <see cref="Common.Size"/>.</para>
+/// <para>The constructors will ensure a well-formed <see cref="RectangularRegion"/> is created.</para>
+/// <para>Note that a <see cref="RectangularRegion"/> can never be empty - the smallest region size is 1x1.</para>
 /// </summary>
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
-public readonly struct Region : IEquatable<Region>
+public readonly struct RectangularRegion : IEquatable<RectangularRegion>
 {
     [FieldOffset(0 * sizeof(int))] public readonly Point Position;
     [FieldOffset(0 * sizeof(int))] public readonly int X;
@@ -25,7 +25,7 @@ public readonly struct Region : IEquatable<Region>
     [FieldOffset(3 * sizeof(int))] public readonly int H;
 
     [DebuggerStepThrough]
-    public Region()
+    public RectangularRegion()
     {
         X = 0;
         Y = 0;
@@ -34,7 +34,7 @@ public readonly struct Region : IEquatable<Region>
     }
 
     [DebuggerStepThrough]
-    public Region(Point position)
+    public RectangularRegion(Point position)
     {
         Position = position;
         W = 1;
@@ -42,7 +42,7 @@ public readonly struct Region : IEquatable<Region>
     }
 
     [DebuggerStepThrough]
-    public Region(Size size)
+    public RectangularRegion(Size size)
     {
         X = 0;
         Y = 0;
@@ -51,7 +51,7 @@ public readonly struct Region : IEquatable<Region>
     }
 
     [DebuggerStepThrough]
-    public Region(Point position, Size size)
+    public RectangularRegion(Point position, Size size)
     {
         Position = position;
         W = Math.Max(size.W, 1);
@@ -59,7 +59,7 @@ public readonly struct Region : IEquatable<Region>
     }
 
     [DebuggerStepThrough]
-    public Region(Rectangle rect)
+    public RectangularRegion(Rectangle rect)
     {
         X = rect.X;
         Y = rect.Y;
@@ -68,7 +68,7 @@ public readonly struct Region : IEquatable<Region>
     }
 
     [DebuggerStepThrough]
-    public Region(Texture2D texture)
+    public RectangularRegion(Texture2D texture)
     {
         X = 0;
         Y = 0;
@@ -77,7 +77,7 @@ public readonly struct Region : IEquatable<Region>
     }
 
     [DebuggerStepThrough]
-    public Region(Point p1, Point p2)
+    public RectangularRegion(Point p1, Point p2)
     {
         if (p1.X < p2.X)
         {
@@ -105,7 +105,7 @@ public readonly struct Region : IEquatable<Region>
     }
 
     [DebuggerStepThrough]
-    public Region(ReadOnlySpan<Point> positions)
+    public RectangularRegion(ReadOnlySpan<Point> positions)
     {
         var minX = int.MaxValue;
         var minY = int.MaxValue;
@@ -145,7 +145,7 @@ public readonly struct Region : IEquatable<Region>
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(Region left, Region right) =>
+    public static bool operator ==(RectangularRegion left, RectangularRegion right) =>
         left.X == right.X &&
         left.Y == right.Y &&
         left.W == right.W &&
@@ -153,7 +153,7 @@ public readonly struct Region : IEquatable<Region>
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(Region left, Region right) =>
+    public static bool operator !=(RectangularRegion left, RectangularRegion right) =>
         left.X != right.X ||
         left.Y != right.Y ||
         left.W != right.W ||
@@ -161,10 +161,10 @@ public readonly struct Region : IEquatable<Region>
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(Region other) => this == other;
+    public bool Equals(RectangularRegion other) => this == other;
 
     [Pure]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Region other && this == other;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is RectangularRegion other && this == other;
 
     [Pure]
     public override int GetHashCode() =>

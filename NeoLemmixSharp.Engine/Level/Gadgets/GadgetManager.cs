@@ -102,7 +102,7 @@ public sealed class GadgetManager :
 
     public void GetAllItemsNearRegion(
         Span<uint> scratchSpace,
-        Region levelRegion,
+        RectangularRegion levelRegion,
         out GadgetEnumerable result)
     {
         _gadgetPositionHelper.GetAllItemsNearRegion(

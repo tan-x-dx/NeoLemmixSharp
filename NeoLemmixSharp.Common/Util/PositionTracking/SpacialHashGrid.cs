@@ -105,7 +105,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     /// <returns>An enumerable for items within the region</returns>
     public void GetAllItemsNearRegion(
         Span<uint> scratchSpaceSpan,
-        Region levelRegion,
+        RectangularRegion levelRegion,
         out BitArrayEnumerable<TPerfectHasher, T> result)
     {
         if (IsEmpty)
@@ -238,12 +238,12 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         ModifyChunks(ChunkOperationType.Remove, item, topLeftChunk, bottomRightChunk);
     }
 
-    private Point GetTopLeftChunkForRegion(Region levelRegion)
+    private Point GetTopLeftChunkForRegion(RectangularRegion levelRegion)
     {
         return ConvertToChunkPosition(levelRegion.Position);
     }
 
-    private Point GetBottomRightChunkForRegion(Region levelRegion)
+    private Point GetBottomRightChunkForRegion(RectangularRegion levelRegion)
     {
         return ConvertToChunkPosition(levelRegion.GetBottomRight());
     }

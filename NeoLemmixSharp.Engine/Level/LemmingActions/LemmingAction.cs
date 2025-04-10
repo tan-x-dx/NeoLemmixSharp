@@ -151,7 +151,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
 
     public abstract bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming);
 
-    public Region GetLemmingBounds(Lemming lemming)
+    public RectangularRegion GetLemmingBounds(Lemming lemming)
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
@@ -168,7 +168,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
         var p1 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * topLeftDx, topLeftDy);
         var p2 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * bottomRightDx, bottomRightDy);
 
-        return new Region(p1, p2);
+        return new RectangularRegion(p1, p2);
     }
 
     protected abstract int TopLeftBoundsDeltaX(int animationFrame);

@@ -24,7 +24,7 @@ public sealed class PlatformerSkill : LemmingSkill
         var orientation = lemming.Orientation;
         var lemmingPostion = lemming.AnchorPosition;
 
-        var levelRegion = new Region(
+        var levelRegion = new RectangularRegion(
             orientation.Move(lemmingPostion, 5, 2),
             orientation.Move(lemmingPostion, -5, -2));
         Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];

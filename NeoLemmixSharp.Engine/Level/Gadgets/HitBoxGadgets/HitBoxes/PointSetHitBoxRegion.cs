@@ -12,16 +12,16 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
     private readonly uint[] _levelPositionBits;
 
-    private readonly Region _bounds;
+    private readonly RectangularRegion _bounds;
 
-    public Region CurrentBounds => _bounds;
+    public RectangularRegion CurrentBounds => _bounds;
 
     public PointSetHitBoxRegion(ReadOnlySpan<Point> points)
     {
         if (points.Length == 0)
             throw new ArgumentException("Cannot create PointSetHitBoxRegion with zero points!");
 
-        _bounds = new Region(points);
+        _bounds = new RectangularRegion(points);
 
         if (_bounds.W > DimensionCutoffSize || _bounds.H > DimensionCutoffSize)
             throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_bounds.W}, H:{_bounds.H}");

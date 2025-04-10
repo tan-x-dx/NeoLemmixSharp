@@ -30,7 +30,7 @@ public sealed class ResizableRectangularHitBoxRegion : IHitBoxRegion
     private int GetWidth() => _gadgetBounds.Width + _dw - _dx;
     private int GetHeight() => _gadgetBounds.Height + _dh - _dy;
 
-    public Region CurrentBounds => new(
+    public RectangularRegion CurrentBounds => new(
         new Point(GetX(), GetY()),
         new Size(GetWidth(), GetHeight()));
 

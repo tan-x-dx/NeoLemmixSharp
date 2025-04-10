@@ -17,8 +17,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     private Lemming _lemming;
     private LemmingActionSprite _actionSprite;
 
-    private Region _spriteBounds;
-    private Region _previousSpriteBounds;
+    private RectangularRegion _spriteBounds;
+    private RectangularRegion _previousSpriteBounds;
 
     private bool _shouldRenderCountDown;
 
@@ -27,8 +27,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     public int RendererId { get; set; }
     public int ItemId => _lemming.Id;
 
-    public Region CurrentBounds => _spriteBounds;
-    public Region PreviousBounds => _previousSpriteBounds;
+    public RectangularRegion CurrentBounds => _spriteBounds;
+    public RectangularRegion PreviousBounds => _previousSpriteBounds;
 
     public LemmingRenderer(Lemming lemming)
     {
@@ -42,7 +42,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         var p = _lemming.AnchorPosition - spriteOffset;
 
         _previousSpriteBounds = _spriteBounds;
-        _spriteBounds = new Region(p, dht.Transform(_actionSprite.SpriteSize));
+        _spriteBounds = new RectangularRegion(p, dht.Transform(_actionSprite.SpriteSize));
 
         LevelScreenRenderer.Instance.LevelRenderer.UpdateSpritePosition(this);
     }

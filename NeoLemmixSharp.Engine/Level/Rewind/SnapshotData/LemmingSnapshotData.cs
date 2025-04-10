@@ -37,8 +37,8 @@ public readonly struct LemmingSnapshotData
     public readonly Point LevelPosition;
     public readonly Point PreviousLevelPosition;
 
-    public readonly Region CurrentBounds;
-    public readonly Region PreviousBounds;
+    public readonly RectangularRegion CurrentBounds;
+    public readonly RectangularRegion PreviousBounds;
 
     public readonly LemmingStateSnapshotData StateSnapshotData;
 

@@ -13,8 +13,8 @@ public sealed class EmptyRenderer : IGadgetRenderer
     int IViewportObjectRenderer.RendererId { get; set; }
     int IViewportObjectRenderer.ItemId => 0;
 
-    Region IRectangularBounds.CurrentBounds => default;
-    Region IPreviousRectangularBounds.PreviousBounds => default;
+    RectangularRegion IRectangularBounds.CurrentBounds => default;
+    RectangularRegion IPreviousRectangularBounds.PreviousBounds => default;
 
     private EmptyRenderer()
     {

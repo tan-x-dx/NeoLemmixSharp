@@ -78,14 +78,14 @@ public sealed class LevelScreen : IBaseScreen
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool RegionContainsPoint(Region region, Point point)
+    public static bool RegionContainsPoint(RectangularRegion region, Point point)
     {
         return HorizontalBoundaryBehaviour.IntervalContainsPoint(region.GetHorizontalInterval(), point.X) &&
                VerticalBoundaryBehaviour.IntervalContainsPoint(region.GetVerticalInterval(), point.Y);
     }
 
     [Pure]
-    public static bool RegionContainsPoints(Region region, Point p1, Point p2)
+    public static bool RegionContainsPoints(RectangularRegion region, Point p1, Point p2)
     {
         var horizontalInterval = region.GetHorizontalInterval();
         var verticalInterval = region.GetVerticalInterval();
@@ -100,7 +100,7 @@ public sealed class LevelScreen : IBaseScreen
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool RegionsOverlap(Region r1, Region r2)
+    public static bool RegionsOverlap(RectangularRegion r1, RectangularRegion r2)
     {
         return HorizontalBoundaryBehaviour.IntervalsOverlap(r1.GetHorizontalInterval(), r2.GetHorizontalInterval()) &&
                VerticalBoundaryBehaviour.IntervalsOverlap(r1.GetVerticalInterval(), r2.GetVerticalInterval());

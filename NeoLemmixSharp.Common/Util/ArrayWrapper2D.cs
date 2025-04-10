@@ -10,7 +10,7 @@ public readonly struct ArrayWrapper2D<T>
 {
     private readonly T[] _data;
     private readonly Size _arrayDimensions;
-    private readonly Region _subRegion;
+    private readonly RectangularRegion _subRegion;
 
     public T[] Array => _data;
     public Size Size => _subRegion.Size;
@@ -27,13 +27,13 @@ public readonly struct ArrayWrapper2D<T>
 
         _data = data;
         _arrayDimensions = dimensions;
-        _subRegion = new Region(dimensions);
+        _subRegion = new RectangularRegion(dimensions);
     }
 
     public ArrayWrapper2D(
         T[] data,
         Size arrayDimensions,
-        Region region)
+        RectangularRegion region)
     {
         Debug.Assert(arrayDimensions.W >= 0);
         Debug.Assert(arrayDimensions.H >= 0);

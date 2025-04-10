@@ -28,8 +28,8 @@ public sealed class HitBoxGadget : GadgetBase,
     public GadgetState CurrentState => _currentState;
 
     // The below properties refer to the positions of the hitboxes, not the gadget itself
-    public Region CurrentBounds => _currentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
-    public Region PreviousBounds => _previousState.GetMininmumBoundingBoxForAllHitBoxes(PreviousGadgetBounds.Position);
+    public RectangularRegion CurrentBounds => _currentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
+    public RectangularRegion PreviousBounds => _previousState.GetMininmumBoundingBoxForAllHitBoxes(PreviousGadgetBounds.Position);
 
     public ResizeType ResizeType { get; }
 
