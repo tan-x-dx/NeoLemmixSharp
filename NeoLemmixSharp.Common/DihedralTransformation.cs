@@ -17,6 +17,28 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         FacingDirection = facingDirection;
     }
 
+    public DihedralTransformation(int encodedBits)
+    {
+        Orientation = new Orientation(encodedBits);
+        FacingDirection = new FacingDirection(encodedBits >>> FlipBitShift);
+    }
+
+    public DihedralTransformation(
+        bool flipHorizontally,
+        bool flipVertically,
+        bool rotate)
+    {
+        var o = rotate ? 1 : 0;
+        var f = flipHorizontally ? 1 : 0;
+        var v = flipVertically ? 1 : 0;
+
+        o |= v << 1;
+        f ^= v;
+
+        Orientation = new Orientation(o);
+        FacingDirection = new FacingDirection(f);
+    }
+
     [Pure]
     public Size Transform(Size size)
     {
@@ -94,25 +116,6 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
 
     [Pure]
     public static int Encode(Orientation orientation, FacingDirection facingDirection) => orientation.RotNum | (facingDirection.Id << FlipBitShift);
-
-    [Pure]
-    public static DihedralTransformation Decode(int encodedData) => new(new Orientation(encodedData), new FacingDirection(encodedData >>> FlipBitShift));
-
-    [Pure]
-    public static DihedralTransformation Decode(
-        bool flipHorizontally,
-        bool flipVertically,
-        bool rotate)
-    {
-        var o = rotate ? 1 : 0;
-        var f = flipHorizontally ? 1 : 0;
-        var v = flipVertically ? 1 : 0;
-
-        o |= v << 1;
-        f ^= v;
-
-        return new DihedralTransformation(new Orientation(o), new FacingDirection(f));
-    }
 
     [Pure]
     [SkipLocalsInit]

@@ -32,28 +32,7 @@ public static class PixelColorDataHelpers
             new Point(minX, minY),
             new Point(maxX, maxY));
 
-        // Don't need to trim at all in this case
-        if (subRegion.Size == data.Size)
-            return data;
-
-        var newColorBuffer = new Color[subRegion.Size.Area()];
-
-        // Transfer the actual color data into a brand new item
-        var sourceTextureWrapper = new ArrayWrapper2D<Color>(data.Array, data.Size, subRegion);
-        var resultTextureWrapper = new ArrayWrapper2D<Color>(newColorBuffer, subRegion.Size);
-
-        for (var y = 0; y < subRegion.H; y++)
-        {
-            for (var x = 0; x < subRegion.W; x++)
-            {
-                var pos = new Point(x, y);
-                resultTextureWrapper[pos] = sourceTextureWrapper[pos];
-            }
-        }
-
-        return new ArrayWrapper2D<Color>(
-            newColorBuffer,
-            subRegion.Size);
+        return new ArrayWrapper2D<Color>(data.Array, data.Size, subRegion);
     }
 
     private static int GetMinXTrim(ArrayWrapper2D<Color> data)

@@ -46,7 +46,7 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
         int y = rawFileData.Read16BitUnsignedInteger();
 
         int orientationByte = rawFileData.Read8BitUnsignedInteger();
-        var dht = DihedralTransformation.Decode(orientationByte);
+        var dht = new DihedralTransformation(orientationByte);
 
         int initialStateId = rawFileData.Read8BitUnsignedInteger();
         var renderMode = GetGadgetRenderMode(rawFileData.Read8BitUnsignedInteger());
