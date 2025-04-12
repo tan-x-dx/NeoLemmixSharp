@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Data;
 using System.Diagnostics.CodeAnalysis;
 
@@ -77,7 +76,7 @@ public static class NeoLemmixGadgetBehaviourExtensions
 
     public static GadgetStateArchetypeData[] GetGadgetStates(
         this NeoLemmixGadgetArchetypeData archetypeData,
-        SpriteData spriteData)
+        SpriteArchetypeData spriteData)
     {
         /*  if (archetypeData.Behaviour is
               NeoLemmixGadgetBehaviour.None or

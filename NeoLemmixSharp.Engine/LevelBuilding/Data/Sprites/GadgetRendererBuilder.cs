@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Runtime.InteropServices;
@@ -8,10 +9,12 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 public sealed class GadgetRendererBuilder : IDisposable
 {
+    private readonly GraphicsDevice _graphicsDevice;
     private readonly Dictionary<StylePiecePair, Texture2D> _gadgetTextures;
 
     public GadgetRendererBuilder(GraphicsDevice graphicsDevice)
     {
+        _graphicsDevice = graphicsDevice;
         _gadgetTextures = new Dictionary<StylePiecePair, Texture2D>(new StylePiecePairEqualityComparer());
     }
 
@@ -45,29 +48,37 @@ public sealed class GadgetRendererBuilder : IDisposable
             if (exists)
                 return cachedTexture!;
 
-            cachedTexture = gadgetArchetypeBuilder.SpriteData.Texture;
+            cachedTexture = LoadSprite(gadgetArchetypeBuilder);
+
+            AssertSpriteDimensionsMakeSense(gadgetArchetypeBuilder, new Size(cachedTexture.Width, cachedTexture.Height));
 
             return cachedTexture;
         }
     }
 
-    /*private NineSliceRenderer BuildNineSliceRenderer(
-        ResizeableGadgetBuilder resizeableGadgetBuilder,
-        GadgetData gadgetData,
-        Texture2D texture)
+    private Texture2D LoadSprite(IGadgetArchetypeBuilder gadgetArchetypeBuilder)
     {
+        var rootFilePath = Path.Combine(
+            RootDirectoryManager.StyleFolderDirectory,
+            gadgetArchetypeBuilder.StyleName,
+            DefaultFileExtensions.GadgetFolderName,
+            gadgetArchetypeBuilder.PieceName);
 
+        var pngPath = Path.ChangeExtension(rootFilePath, "png");
 
-        return new NineSliceRenderer(texture, gadgetData.GadgetRenderMode);
-    }*/
+        return Texture2D.FromFile(_graphicsDevice, pngPath);
+    }
 
-    private static Texture2D ItemCreator(
-        Texture2D texture,
-        Point anchorpoint,
-        Size s,
-        int numberOfFrames)
+    private static void AssertSpriteDimensionsMakeSense(IGadgetArchetypeBuilder gadgetArchetypeBuilder, Size textureDimensions)
     {
-        return texture;
+        var spriteData = gadgetArchetypeBuilder.SpriteData;
+
+        var expectedTextureDimensions = new Size(
+            spriteData.BaseSpriteSize.W * spriteData.NumberOfLayers,
+            spriteData.BaseSpriteSize.H * spriteData.MaxNumberOfFrames);
+
+        if (textureDimensions != expectedTextureDimensions)
+            throw new InvalidOperationException("Sprite dimensions are invalid!");
     }
 
     public GadgetSpriteBank BuildGadgetSpriteBank()

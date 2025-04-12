@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
@@ -15,7 +16,7 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
     public required Point SpawnPosition { get; init; }
 
-    public required SpriteData SpriteData { get; init; }
+    public required SpriteArchetypeData SpriteData { get; init; }
 
     public GadgetBase BuildGadget(
         GadgetRendererBuilder gadgetSpriteBuilder,
@@ -32,8 +33,8 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             gadgetData.Orientation,
             FacingDirection.Right); // Hatches do not flip according to facing direction
 
-        var transformedSize = dihedralTransformation.Transform(SpriteData.SpriteSize);
-        var spawnPointOffset = dihedralTransformation.Transform(SpawnPosition, SpriteData.SpriteSize);
+        var transformedSize = dihedralTransformation.Transform(SpriteData.BaseSpriteSize);
+        var spawnPointOffset = dihedralTransformation.Transform(SpawnPosition, SpriteData.BaseSpriteSize);
 
         var currentGadgetBounds = new GadgetBounds
         {

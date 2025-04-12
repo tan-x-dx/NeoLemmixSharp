@@ -137,6 +137,24 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
     }
 
     [Pure]
+    public static RectangularRegion Combine(RectangularRegion first, RectangularRegion second)
+    {
+        var minX = Math.Min(first.X, second.X);
+        var minY = Math.Max(first.Y, second.Y);
+
+        var firstBottomRight = first.GetBottomRight();
+        var secondBottomRight = second.GetBottomRight();
+
+        var maxX = Math.Max(firstBottomRight.X, secondBottomRight.X);
+        var maxY = Math.Max(firstBottomRight.Y, secondBottomRight.Y);
+
+        var w = 1 + maxX - minX;
+        var h = 1 + maxY - minY;
+
+        return new RectangularRegion(new Point(minX, minY), w, h);
+    }
+
+    [Pure]
     [DebuggerStepThrough]
     public RectangularRegion Translate(Point offset) => new(Position + offset, W, H);
 
