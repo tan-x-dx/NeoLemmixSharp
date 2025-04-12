@@ -31,16 +31,12 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
 
     public void Move(int dx, int dy)
     {
-        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
-
         var delta = new Point(dx, dy);
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(CurrentGadgetBounds.Position + delta);
     }
 
     public void SetPosition(int x, int y)
     {
-        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
-
         var newPosition = new Point(x, y);
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(newPosition);
     }

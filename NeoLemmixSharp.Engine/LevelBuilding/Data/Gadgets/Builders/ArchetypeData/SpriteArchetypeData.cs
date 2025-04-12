@@ -14,15 +14,13 @@ public sealed class SpriteArchetypeData
 
     public AnimationController CreateAnimationController(
         int stateIndex,
-        GadgetBounds currentGadgetBounds,
-        GadgetBounds previousGadgetBounds)
+        GadgetBounds currentGadgetBounds)
     {
         var animationBehaviours = SpriteArchetypeDataForStates[stateIndex].CreateAnimationBehaviours();
 
         return new AnimationController(
             animationBehaviours,
-            currentGadgetBounds,
-            previousGadgetBounds);
+            currentGadgetBounds);
     }
 }
 

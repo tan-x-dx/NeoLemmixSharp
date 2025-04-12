@@ -15,7 +15,6 @@ public sealed class GadgetRenderer : IGadgetRenderer
     public int ItemId { get; }
 
     public RectangularRegion CurrentBounds => _gadget.CurrentAnimationController.CurrentBounds;
-    public RectangularRegion PreviousBounds => _gadget.CurrentAnimationController.PreviousBounds;
 
     public GadgetRenderer(
         GadgetBase gadget,

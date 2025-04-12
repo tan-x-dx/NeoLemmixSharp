@@ -38,7 +38,6 @@ public readonly struct LemmingSnapshotData
     public readonly Point PreviousLevelPosition;
 
     public readonly RectangularRegion CurrentBounds;
-    public readonly RectangularRegion PreviousBounds;
 
     public readonly LemmingStateSnapshotData StateSnapshotData;
 
@@ -87,7 +86,6 @@ public readonly struct LemmingSnapshotData
         LevelPosition = lemming.AnchorPosition;
         PreviousLevelPosition = lemming.PreviousLevelPosition;
         CurrentBounds = lemming.CurrentBounds;
-        PreviousBounds = lemming.PreviousBounds;
 
         lemming.State.WriteToSnapshotData(out StateSnapshotData);
 

@@ -31,9 +31,8 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         TeamManager teamManager)
     {
         var currentGadgetBounds = GetGadgetBounds(gadgetData);
-        var previousGadgetBounds = new GadgetBounds(currentGadgetBounds);
         var resizeType = GetResizeTypeForGadgetOrientation(gadgetData);
-        var gadgetStates = GetGadgetStates(gadgetData, currentGadgetBounds, previousGadgetBounds, teamManager);
+        var gadgetStates = GetGadgetStates(gadgetData, currentGadgetBounds, teamManager);
         var initialStateIndex = gadgetData.InitialStateId;
 
         var lemmingTracker = new LemmingTracker(lemmingManager);
@@ -58,7 +57,6 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = currentGadgetBounds,
-            PreviousGadgetBounds = previousGadgetBounds,
 
             IsFastForward = isFastForward
         };
@@ -91,7 +89,6 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     private GadgetState[] GetGadgetStates(
         GadgetData gadgetData,
         GadgetBounds currentGadgetBounds,
-        GadgetBounds previousGadgetBounds,
         TeamManager teamManager)
     {
         var result = new GadgetState[AllGadgetStateData.Length];
@@ -109,7 +106,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
                 gadgetData,
                 gadgetStateArchetypeData,
                 teamManager);
-            var animationController = SpriteData.CreateAnimationController(i, currentGadgetBounds, previousGadgetBounds);
+            var animationController = SpriteData.CreateAnimationController(i, currentGadgetBounds);
 
             result[i] = new GadgetState(
                 hitBoxFilters,

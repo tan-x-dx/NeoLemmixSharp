@@ -12,7 +12,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 #pragma warning disable CS0660, CS0661, CA1067
 public sealed class HitBoxGadget : GadgetBase,
     IIdEquatable<HitBoxGadget>,
-    IPreviousRectangularBounds,
+    IRectangularBounds,
     IMoveableGadget
 #pragma warning restore CS0660, CS0661, CA1067
 {
@@ -29,7 +29,6 @@ public sealed class HitBoxGadget : GadgetBase,
 
     // The below properties refer to the positions of the hitboxes, not the gadget itself
     public RectangularRegion CurrentBounds => _currentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
-    public RectangularRegion PreviousBounds => _previousState.GetMininmumBoundingBoxForAllHitBoxes(PreviousGadgetBounds.Position);
 
     public ResizeType ResizeType { get; }
 
@@ -74,7 +73,6 @@ public sealed class HitBoxGadget : GadgetBase,
     {
         _currentStateIndex = _nextStateIndex;
 
-        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
         _currentState = _states[_currentStateIndex];
@@ -133,7 +131,6 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public void Move(int dx, int dy)
     {
-        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
         var delta = new Point(dx, dy);
@@ -143,7 +140,6 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public void SetPosition(int x, int y)
     {
-        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
         var newPosition = new Point(x, y);
@@ -156,7 +152,6 @@ public sealed class HitBoxGadget : GadgetBase,
         if (ResizeType == ResizeType.None)
             return;
 
-        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
         if (ResizeType.CanResizeHorizontally())
@@ -173,7 +168,6 @@ public sealed class HitBoxGadget : GadgetBase,
         if (ResizeType == ResizeType.None)
             return;
 
-        PreviousGadgetBounds.SetFrom(CurrentGadgetBounds);
         _previousState = _currentState;
 
         if (ResizeType.CanResizeHorizontally())

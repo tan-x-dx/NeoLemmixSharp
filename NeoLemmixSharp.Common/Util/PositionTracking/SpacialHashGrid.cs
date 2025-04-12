@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
 public sealed class SpacialHashGrid<TPerfectHasher, T>
     where TPerfectHasher : class, IPerfectHasher<T>, IBitBufferCreator<ArrayBitBuffer>
-    where T : class, IPreviousRectangularBounds
+    where T : class, IRectangularBounds
 {
     private readonly TPerfectHasher _hasher;
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
@@ -21,6 +21,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     private readonly int _bitArraySize;
     private readonly uint[] _cachedQueryScratchSpace;
     private readonly uint[] _allBits;
+    private readonly RectangularRegion[] _previousItemPositions;
 
     private Point _cachedTopLeftChunkQuery = new(-256, -256);
     private Point _cachedBottomRightChunkQuery = new(-256, -256);
@@ -48,6 +49,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
 
         _cachedQueryScratchSpace = new uint[_bitArraySize];
         _allBits = new uint[_bitArraySize * _sizeInChunks.Area()];
+        _previousItemPositions = new RectangularRegion[_hasher.NumberOfItems];
     }
 
     [Pure]
@@ -67,6 +69,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         _allTrackedItems.Clear();
         new Span<uint>(_cachedQueryScratchSpace).Clear();
         new Span<uint>(_allBits).Clear();
+        new Span<RectangularRegion>(_previousItemPositions).Clear();
         ClearCachedData();
     }
 
@@ -158,7 +161,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
 
         ClearCachedData();
 
-        RegisterItemPosition(item, topLeftChunk, bottomRightChunk);
+        RegisterItemPosition(item, topLeftChunk, bottomRightChunk, ref GetPreviousBoundsForItem(item));
     }
 
     public void UpdateItemPosition(T item)
@@ -170,7 +173,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         var currentTopLeftChunk = GetTopLeftChunkForRegion(currentBounds);
         var currentBottomRightChunk = GetBottomRightChunkForRegion(currentBounds);
 
-        var previousBounds = item.PreviousBounds;
+        ref var previousBounds = ref GetPreviousBoundsForItem(item);
         var previousTopLeftChunk = GetTopLeftChunkForRegion(previousBounds);
         var previousBottomRightChunk = GetBottomRightChunkForRegion(previousBounds);
 
@@ -181,21 +184,22 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         ClearCachedData();
 
         DeregisterItemPosition(item, previousTopLeftChunk, previousBottomRightChunk);
-        RegisterItemPosition(item, currentTopLeftChunk, currentBottomRightChunk);
+        RegisterItemPosition(item, currentTopLeftChunk, currentBottomRightChunk, ref previousBounds);
     }
 
-    private void RegisterItemPosition(T item, Point topLeftChunk, Point bottomRightChunk)
+    private void RegisterItemPosition(T item, Point topLeftChunk, Point bottomRightChunk, ref RectangularRegion previousBounds)
     {
         if (topLeftChunk == bottomRightChunk)
         {
             // Only one chunk -> skip some extra work
-
+            previousBounds = new RectangularRegion(topLeftChunk);
             var span = SpanForChunk(topLeftChunk);
             BitArrayHelpers.SetBit(span, _hasher.Hash(item));
 
             return;
         }
 
+        previousBounds = new RectangularRegion(topLeftChunk, bottomRightChunk);
         ModifyChunks(ChunkOperationType.Add, item, topLeftChunk, bottomRightChunk);
     }
 
@@ -210,7 +214,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
 
         DeregisterItemPosition(item, currentTopLeftChunk, currentBottomRightChunk);
 
-        var previousBounds = item.PreviousBounds;
+        ref var previousBounds = ref GetPreviousBoundsForItem(item);
         var previousTopLeftChunk = GetTopLeftChunkForRegion(previousBounds);
         var previousBottomRightChunk = GetBottomRightChunkForRegion(previousBounds);
 
@@ -221,6 +225,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
             return;
 
         DeregisterItemPosition(item, previousTopLeftChunk, previousBottomRightChunk);
+        previousBounds = new RectangularRegion();
     }
 
     private void DeregisterItemPosition(T item, Point topLeftChunk, Point bottomRightChunk)
@@ -372,6 +377,12 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
                 y1 = 0;
             }
         }
+    }
+
+    private ref RectangularRegion GetPreviousBoundsForItem(T item)
+    {
+        var index = _hasher.Hash(item);
+        return ref _previousItemPositions[index];
     }
 
     [Pure]

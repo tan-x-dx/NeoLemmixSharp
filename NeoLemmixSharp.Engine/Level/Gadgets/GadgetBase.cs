@@ -16,7 +16,6 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     private AnimationController _currentAnimationController;
 
     public required GadgetBounds CurrentGadgetBounds { protected get; init; }
-    public required GadgetBounds PreviousGadgetBounds { protected get; init; }
 
     public required int Id { get; init; }
     public required Orientation Orientation { get; init; }

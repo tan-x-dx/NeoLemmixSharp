@@ -46,7 +46,6 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = new GadgetBounds(),
-            PreviousGadgetBounds = new GadgetBounds(),
 
             IsFastForward = true
         };
@@ -65,7 +64,6 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = new GadgetBounds(),
-            PreviousGadgetBounds = new GadgetBounds(),
 
             IsFastForward = true
         };
@@ -85,7 +83,6 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = new GadgetBounds(),
-            PreviousGadgetBounds = new GadgetBounds(),
 
             IsFastForward = true
         };
@@ -106,7 +103,6 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = new GadgetBounds(),
-            PreviousGadgetBounds = new GadgetBounds(),
 
             IsFastForward = true
         };

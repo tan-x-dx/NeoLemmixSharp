@@ -42,7 +42,6 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             Width = transformedSize.W,
             Height = transformedSize.H
         };
-        var previousGadgetBounds = new GadgetBounds(currentGadgetBounds);
 
         var gadgetRenderer = gadgetSpriteBuilder.BuildStatefulGadgetRenderer(this, gadgetData);
 
@@ -68,7 +67,6 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = currentGadgetBounds,
-            PreviousGadgetBounds = previousGadgetBounds,
 
             IsFastForward = false
         };

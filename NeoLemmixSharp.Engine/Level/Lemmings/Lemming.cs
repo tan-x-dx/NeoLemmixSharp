@@ -16,7 +16,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds, ISnapshotDataConvertible<LemmingSnapshotData>
+public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapshotDataConvertible<LemmingSnapshotData>
 {
     public static Lemming SimulationLemming { get; } = new();
 
@@ -53,7 +53,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
     public Point PreviousLevelPosition = new(-1, -1);
 
     public RectangularRegion CurrentBounds { get; private set; }
-    public RectangularRegion PreviousBounds { get; private set; }
 
     public LemmingState State { get; }
 
@@ -118,7 +117,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         State.IsActive = true;
         PreviousLevelPosition = AnchorPosition;
         CurrentBounds = CurrentAction.GetLemmingBounds(this);
-        PreviousBounds = CurrentBounds;
 
         var initialAction = CurrentAction;
         if (initialAction == NoneAction.Instance)
@@ -287,7 +285,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         PhysicsFrame = frame;
 
         PreviousLevelPosition = AnchorPosition;
-        PreviousBounds = CurrentBounds;
 
         var result = CurrentAction.UpdateLemming(this, in gadgetsNearLemming);
         CurrentBounds = CurrentAction.GetLemmingBounds(this);
@@ -503,7 +500,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         State.SetRawDataFromOther(otherLemming.State);
 
         CurrentBounds = otherLemming.CurrentBounds;
-        PreviousBounds = otherLemming.PreviousBounds;
 
         Renderer.ResetPosition();
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
@@ -559,7 +555,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
         PreviousLevelPosition = lemmingSnapshotData.PreviousLevelPosition;
 
         CurrentBounds = lemmingSnapshotData.CurrentBounds;
-        PreviousBounds = lemmingSnapshotData.PreviousBounds;
 
         State.SetFromSnapshotData(in lemmingSnapshotData.StateSnapshotData);
 
