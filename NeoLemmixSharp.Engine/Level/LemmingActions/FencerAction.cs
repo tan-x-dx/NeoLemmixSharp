@@ -303,11 +303,6 @@ procedure DoFencerContinueTests(L: TLemming; var SteelContinue: Boolean; var Mov
         moveUpContinue = false;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
-
     string IDestructionMask.Name => LemmingActionName;
 
     [Pure]

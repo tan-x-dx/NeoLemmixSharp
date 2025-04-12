@@ -32,11 +32,6 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
         return false;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -5;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
-
     string IDestructionMask.Name => LemmingActionName;
 
     [Pure]

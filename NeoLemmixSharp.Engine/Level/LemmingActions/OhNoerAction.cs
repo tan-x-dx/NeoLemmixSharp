@@ -44,11 +44,6 @@ public sealed class OhNoerAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => animationFrame < 7 ? 10 : 9;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
-
     public static void HandleCountDownTransition(Lemming lemming)
     {
         var currentAction = lemming.CurrentAction;

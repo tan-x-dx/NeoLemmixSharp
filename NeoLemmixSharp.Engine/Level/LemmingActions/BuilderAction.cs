@@ -46,11 +46,6 @@ public sealed class BuilderAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -2;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
-
     private static void BuilderFrame0(
         Lemming lemming,
         in GadgetEnumerable gadgetsNearLemming)

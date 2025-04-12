@@ -54,11 +54,7 @@ public sealed class DehoisterAction : LemmingAction
                lemming.CurrentAction != DrownerAction.Instance;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -5;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 11;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 1;
-    protected override int BottomRightBoundsDeltaY(int animationFrame) => 0;
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.HoisterActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

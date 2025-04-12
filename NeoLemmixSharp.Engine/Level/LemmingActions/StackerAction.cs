@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
@@ -58,11 +58,6 @@ public sealed class StackerAction : LemmingAction
 
         return true;
     }
-
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -2;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 
     private static bool MayPlaceNextBrick(
         in GadgetEnumerable gadgetsNearLemming,

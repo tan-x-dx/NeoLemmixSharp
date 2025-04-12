@@ -168,11 +168,6 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         }
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
-
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         base.TransitionLemmingToAction(lemming, turnAround);

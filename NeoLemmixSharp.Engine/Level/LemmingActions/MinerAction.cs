@@ -123,11 +123,6 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -2;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
-
     private static void TurnMinerAround(
         in GadgetEnumerable gadgetsNearLemming,
         Lemming lemming,
@@ -152,6 +147,8 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true); // turn around as well
         }
     }
+
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.MinerActionBounds;
 
     string IDestructionMask.Name => LemmingActionName;
 

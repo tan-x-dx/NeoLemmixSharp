@@ -78,12 +78,6 @@ public sealed class FallerAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 2;
-    protected override int BottomRightBoundsDeltaY(int animationFrame) => 0;
-
     [Pure]
     private static bool IsFallFatal(in GadgetEnumerable gadgetEnumerable, Lemming lemming)
     {

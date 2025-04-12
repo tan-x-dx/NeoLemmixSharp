@@ -128,6 +128,18 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
         H = 1 + maxY - minY;
     }
 
+    [DebuggerStepThrough]
+    private RectangularRegion(Point position, int w, int h)
+    {
+        Position = position;
+        W = w;
+        H = h;
+    }
+
+    [Pure]
+    [DebuggerStepThrough]
+    public RectangularRegion Translate(Point offset) => new(Position + offset, W, H);
+
     [Pure]
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

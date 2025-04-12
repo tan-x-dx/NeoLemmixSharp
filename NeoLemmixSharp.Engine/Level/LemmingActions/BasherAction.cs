@@ -374,11 +374,6 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         return result;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
-
     string IDestructionMask.Name => LemmingActionName;
 
     [Pure]

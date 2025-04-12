@@ -265,10 +265,7 @@ public sealed class JumperAction : LemmingAction
       end;
     */
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -1;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 9;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.JumperActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

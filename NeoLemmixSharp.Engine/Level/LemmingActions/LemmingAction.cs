@@ -121,9 +121,9 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     /// <returns>The LemmingAction with that id, or the NoneAction if the id is invalid.</returns>
     public static LemmingAction GetActionFromUnboundId(int unboundActionId)
     {
-        return (uint)unboundActionId >= (uint)LemmingActions.Length
-            ? NoneAction.Instance
-            : LemmingActions[unboundActionId];
+        return (uint)unboundActionId < (uint)LemmingActions.Length
+            ? LemmingActions[unboundActionId]
+            : NoneAction.Instance;
     }
 
     public readonly int Id;
@@ -153,29 +153,16 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
 
     public RectangularRegion GetLemmingBounds(Lemming lemming)
     {
-        var orientation = lemming.Orientation;
-        var dx = lemming.FacingDirection.DeltaX;
-        var dxCorrection = lemming.FacingDirection.Id ^ 1; // Fixes off-by-one errors with left/right positions
-        var lemmingPosition = lemming.AnchorPosition;
-        var physicsFrame = lemming.PhysicsFrame;
+        var dht = new DihedralTransformation(lemming.Orientation, lemming.FacingDirection);
+        var actionBounds = ActionBounds();
 
-        var topLeftDx = TopLeftBoundsDeltaX(physicsFrame);
-        var topLeftDy = TopLeftBoundsDeltaY(physicsFrame);
+        actionBounds = dht.Transform(actionBounds);
+        actionBounds = actionBounds.Translate(lemming.AnchorPosition);
 
-        var bottomRightDx = BottomRightBoundsDeltaX(physicsFrame);
-        var bottomRightDy = BottomRightBoundsDeltaY(physicsFrame);
-
-        var p1 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * topLeftDx, topLeftDy);
-        var p2 = orientation.MoveWithoutNormalization(lemmingPosition, dxCorrection + dx * bottomRightDx, bottomRightDy);
-
-        return new RectangularRegion(p1, p2);
+        return actionBounds;
     }
 
-    protected abstract int TopLeftBoundsDeltaX(int animationFrame);
-    protected abstract int TopLeftBoundsDeltaY(int animationFrame);
-
-    protected abstract int BottomRightBoundsDeltaX(int animationFrame);
-    protected virtual int BottomRightBoundsDeltaY(int animationFrame) => -1;
+    protected virtual RectangularRegion ActionBounds() => LemmingActionBounds.StandardLemmingBounds;
 
     public virtual Point GetFootPosition(
         Lemming lemming,

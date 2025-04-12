@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -121,11 +120,6 @@ public sealed class SwimmerAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -7;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 4;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
-
     [Pure]
     private static bool WaterAt(
         in GadgetEnumerable gadgetEnumerable,
@@ -178,6 +172,8 @@ public sealed class SwimmerAction : LemmingAction
             ? 0
             : result;
     }
+
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.SwimmerActionBounds;
 
     [SkipLocalsInit]
     public override void TransitionLemmingToAction(

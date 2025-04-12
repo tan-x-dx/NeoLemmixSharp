@@ -32,24 +32,6 @@ public sealed class PlatformerAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => animationFrame switch
-    {
-        13 => -2,
-        14 => -1,
-        15 => -1,
-        _ => -3
-    };
-
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 8;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => animationFrame switch
-    {
-        13 => 4,
-        14 => 5,
-        15 => 5,
-        _ => 3
-    };
-
     private static void DoMainUpdate(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
@@ -173,6 +155,8 @@ public sealed class PlatformerAction : LemmingAction
         return PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.Orientation.MoveUp(pos, 1)) ||
                PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.Orientation.MoveUp(pos, 2));
     }
+
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.PlatformerActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
