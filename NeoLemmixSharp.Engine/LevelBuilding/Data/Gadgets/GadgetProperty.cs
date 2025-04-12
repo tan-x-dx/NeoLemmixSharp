@@ -14,12 +14,13 @@ public enum GadgetProperty
     RawLemmingState,
     Count,
     InitialAnimationFrame,
-    LogicGateType
+    LogicGateType,
+    IsFastForwards
 }
 
 public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>, IBitBufferCreator<BitBuffer32>
 {
-    public int NumberOfItems => 9;
+    public int NumberOfItems => 10;
 
     [Pure]
     public int Hash(GadgetProperty item) => (int)item;

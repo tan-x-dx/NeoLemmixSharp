@@ -54,7 +54,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
     }
 
     [Pure]
-    public bool ContainsPoints(Point p1, Point p2)
+    public bool ContainsEitherPoint(Point p1, Point p2)
     {
         p1 -= _bounds.Position;
         p2 -= _bounds.Position;

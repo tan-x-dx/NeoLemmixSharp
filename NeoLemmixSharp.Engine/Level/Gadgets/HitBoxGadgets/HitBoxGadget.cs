@@ -95,11 +95,11 @@ public sealed class HitBoxGadget : GadgetBase,
             .ContainsPoint(levelPosition - CurrentGadgetBounds.Position);
     }
 
-    public bool ContainsPoints(Orientation orientation, Point p1, Point p2)
+    public bool ContainsEitherPoint(Orientation orientation, Point p1, Point p2)
     {
         var offset = CurrentGadgetBounds.Position;
         var hitBox = _currentState.HitBoxFor(orientation);
-        return hitBox.ContainsPoints(p1 - offset, p2 - offset);
+        return hitBox.ContainsEitherPoint(p1 - offset, p2 - offset);
     }
 
     public void OnLemmingHit(

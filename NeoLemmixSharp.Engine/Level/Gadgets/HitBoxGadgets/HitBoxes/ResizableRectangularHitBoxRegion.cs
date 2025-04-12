@@ -45,7 +45,7 @@ public sealed class ResizableRectangularHitBoxRegion : IHitBoxRegion
                LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetY(), h), levelPosition.Y);
     }
 
-    public bool ContainsPoints(Point p1, Point p2)
+    public bool ContainsEitherPoint(Point p1, Point p2)
     {
         var w = GetWidth();
         var h = GetHeight();

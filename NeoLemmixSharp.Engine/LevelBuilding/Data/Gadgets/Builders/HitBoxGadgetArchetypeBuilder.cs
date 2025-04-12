@@ -38,6 +38,16 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
         var lemmingTracker = new LemmingTracker(lemmingManager);
 
+        bool isFastForward;
+        if (gadgetData.TryGetProperty(GadgetProperty.IsFastForwards, out var fastForwardValue))
+        {
+            isFastForward = fastForwardValue != 0;
+        }
+        else
+        {
+            isFastForward = false;
+        }
+
         return new HitBoxGadget(
             resizeType,
             lemmingTracker,
@@ -50,7 +60,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             CurrentGadgetBounds = currentGadgetBounds,
             PreviousGadgetBounds = previousGadgetBounds,
 
-            IsFastForward = false
+            IsFastForward = isFastForward
         };
     }
 

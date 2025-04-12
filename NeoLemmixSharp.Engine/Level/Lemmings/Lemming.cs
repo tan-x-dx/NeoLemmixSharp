@@ -347,7 +347,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IPreviousRectangularBounds,
             foreach (var anchorPosition in intermediatePositions)
             {
                 var footPosition = CurrentAction.GetFootPosition(this, anchorPosition);
-                if (!gadget.ContainsPoints(Orientation, anchorPosition, footPosition))
+                if (!gadget.ContainsEitherPoint(Orientation, anchorPosition, footPosition))
                     continue;
 
                 var filters = currentState.Filters;

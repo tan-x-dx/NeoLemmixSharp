@@ -149,7 +149,7 @@ public static class LemmingActionHelpers
 
         foreach (var gadget in gadgetsNearLemming)
         {
-            if (!gadget.ContainsPoints(lemmingOrientation, anchorPosition, footPosition))
+            if (!gadget.ContainsEitherPoint(lemmingOrientation, anchorPosition, footPosition))
                 continue;
 
             var filters = gadget.CurrentState.Filters;

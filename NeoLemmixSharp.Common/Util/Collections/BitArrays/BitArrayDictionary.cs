@@ -81,7 +81,6 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
 
     public TValue this[TKey key]
     {
-        [Pure]
         get
         {
             var index = _hasher.Hash(key);

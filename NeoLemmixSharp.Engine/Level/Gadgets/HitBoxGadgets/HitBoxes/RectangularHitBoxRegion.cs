@@ -31,7 +31,7 @@ public sealed class RectangularHitBoxRegion : IHitBoxRegion
         return LevelScreen.RegionContainsPoint(_region, levelPosition);
     }
 
-    public bool ContainsPoints(Point p1, Point p2)
+    public bool ContainsEitherPoint(Point p1, Point p2)
     {
         return LevelScreen.RegionContainsPoints(_region, p1, p2);
     }
