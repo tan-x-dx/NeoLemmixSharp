@@ -13,7 +13,7 @@ public interface IGadgetArchetypeBuilder
     SpriteData SpriteData { get; }
 
     GadgetBase BuildGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         LemmingManager lemmingManager,
         TeamManager teamManager);

@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
-public sealed class GadgetSpriteBuilder : IDisposable
+public sealed class GadgetRendererBuilder : IDisposable
 {
     private readonly Dictionary<StylePiecePair, Texture2D> _gadgetTextures;
 
-    public GadgetSpriteBuilder(GraphicsDevice graphicsDevice)
+    public GadgetRendererBuilder(GraphicsDevice graphicsDevice)
     {
         _gadgetTextures = new Dictionary<StylePiecePair, Texture2D>(new StylePiecePairEqualityComparer());
     }
@@ -32,15 +32,11 @@ public sealed class GadgetSpriteBuilder : IDisposable
         if (gadgetData.GadgetRenderMode == GadgetRenderMode.NoRender)
             return null;
 
-        var texture = GetOrAddCachedTexture(
-            gadgetData.Orientation,
-            gadgetData.FacingDirection);
+        var texture = GetOrAddCachedTexture();
 
         return texture;
 
-        Texture2D GetOrAddCachedTexture(
-            Orientation orientation,
-            FacingDirection facingDirection)
+        Texture2D GetOrAddCachedTexture()
         {
             var key = new StylePiecePair(gadgetArchetypeBuilder.StyleName, gadgetArchetypeBuilder.PieceName);
 

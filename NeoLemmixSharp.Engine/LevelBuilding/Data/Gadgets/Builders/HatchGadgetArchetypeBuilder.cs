@@ -18,7 +18,7 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     public required SpriteData SpriteData { get; init; }
 
     public GadgetBase BuildGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         LemmingManager lemmingManager,
         TeamManager teamManager)

@@ -16,7 +16,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
     public required SpriteData SpriteData { get; init; }
 
     public GadgetBase BuildGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         LemmingManager lemmingManager,
         TeamManager teamManager)
@@ -33,7 +33,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
     }
 
     private static AndGateGadget CreateAndGateGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
         if (gadgetData.InputNames.Length < 2)
@@ -52,7 +52,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
     }
 
     private static OrGateGadget CreateOrGateGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
         if (gadgetData.InputNames.Length < 2)
@@ -71,7 +71,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
     }
 
     private static NotGateGadget CreateNotGateGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
         if (gadgetData.InputNames.Length != 1)
@@ -91,7 +91,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
     }
 
     private static XorGateGadget CreateXorGateGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
         if (gadgetData.InputNames.Length != 2)
