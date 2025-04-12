@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -6,7 +7,7 @@ namespace NeoLemmixSharp.Common.Util;
 /// Represents a wrapper over a portion of a 2D array.
 /// </summary>
 /// <typeparam name="T">The array type</typeparam>
-public readonly struct ArrayWrapper2D<T>
+public readonly struct ArrayWrapper2D<T> : IEquatable<ArrayWrapper2D<T>>
 {
     private readonly T[] _data;
     private readonly Size _arrayDimensions;
@@ -71,4 +72,26 @@ public readonly struct ArrayWrapper2D<T>
             return ref _data[index];
         }
     }
+
+    [Pure]
+    [DebuggerStepThrough]
+    public bool Equals(ArrayWrapper2D<T> other) => this == other;
+    [Pure]
+    [DebuggerStepThrough]
+    public override bool Equals(object? obj) => obj is ArrayWrapper2D<T> other && this == other;
+    [Pure]
+    [DebuggerStepThrough]
+    public override int GetHashCode() => HashCode.Combine(_arrayDimensions, _subRegion);
+    [Pure]
+    [DebuggerStepThrough]
+    public static bool operator ==(ArrayWrapper2D<T> left, ArrayWrapper2D<T> right) =>
+        ReferenceEquals(left._data, right._data) &&
+        left._arrayDimensions == right._arrayDimensions &&
+        left._subRegion == right._subRegion;
+    [Pure]
+    [DebuggerStepThrough]
+    public static bool operator !=(ArrayWrapper2D<T> left, ArrayWrapper2D<T> right) =>
+        !ReferenceEquals(left._data, right._data) ||
+        left._arrayDimensions != right._arrayDimensions ||
+        left._subRegion != right._subRegion;
 }
