@@ -56,6 +56,31 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
+    public RectangularRegion Transform(RectangularRegion region)
+    {
+        var w = region.W - 1;
+        var h = region.H - 1;
+
+        var s = GetRotationCoefficients(out var a, out var b, ref w, ref h);
+        s *= FacingDirection.Id;
+
+        var p1 = region.GetBottomRight() - region.Position;
+        var p1x = p1.X;
+        var p1y = p1.Y;
+
+        var q0x = s + (FacingDirection.DeltaX * w) + region.X;
+        var q0y = h + region.Y;
+
+        var q1x = s + (FacingDirection.DeltaX * ((a * p1x) - (b * p1y) + w)) + region.X;
+        var q1y = (b * p1x) + (a * p1y) + h + region.Y;
+
+        var q0 = new Point(q0x, q0y);
+        var q1 = new Point(q1x, q1y);
+
+        return new RectangularRegion(q0, q1);
+    }
+
+    [Pure]
     public Point Transform(
         Point position,
         Size size)
@@ -68,8 +93,8 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         var s = GetRotationCoefficients(out var a, out var b, ref w, ref h);
         s *= FacingDirection.Id;
 
-        var x0 = s + FacingDirection.DeltaX * (a * x - b * y + w);
-        var y0 = b * x + a * y + h;
+        var x0 = s + (FacingDirection.DeltaX * ((a * x) - (b * y) + w));
+        var y0 = (b * x) + (a * y) + h;
         return new Point(x0, y0);
     }
 
