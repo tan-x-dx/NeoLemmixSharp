@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -67,5 +68,21 @@ public static class Helpers
         destination[charsWritten++] = ')';
 
         return true;
+    }
+
+    [DoesNotReturn]
+    public static T ThrowUnknownEnumValueException<T>(int rawValue)
+        where T : unmanaged, Enum
+    {
+        var typeName = typeof(T).Name;
+        throw new ArgumentOutOfRangeException(nameof(rawValue), rawValue, $"Unknown {typeName} value!");
+    }
+
+    [DoesNotReturn]
+    public static TReturn ThrowUnknownEnumValueException<T, TReturn>(int rawValue)
+        where T : unmanaged, Enum
+    {
+        var typeName = typeof(T).Name;
+        throw new ArgumentOutOfRangeException(nameof(rawValue), rawValue, $"Unknown {typeName} value!");
     }
 }

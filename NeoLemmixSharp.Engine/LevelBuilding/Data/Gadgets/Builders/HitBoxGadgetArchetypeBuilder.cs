@@ -226,7 +226,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
                 HitBoxType.Rectangular => CreateRectangularHitBoxRegion(gadgetData, item.HitBoxDefinitionData),
                 HitBoxType.PointSet => CreatePointSetHitBoxRegion(gadgetData, item.HitBoxDefinitionData),
 
-                _ => throw new ArgumentOutOfRangeException(nameof(item.HitBoxType), item.HitBoxType, "Unknown HitBoxType")
+                _ => Helpers.ThrowUnknownEnumValueException<HitBoxType, IHitBoxRegion>((int)item.HitBoxType)
             };
 
             result.Add(item.Orientation, hitBoxRegion);

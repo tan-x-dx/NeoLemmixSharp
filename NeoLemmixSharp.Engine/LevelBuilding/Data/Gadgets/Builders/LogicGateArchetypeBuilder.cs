@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -29,7 +30,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             LogicGateType.NotGate => CreateNotGateGadget(gadgetSpriteBuilder, gadgetData),
             LogicGateType.XorGate => CreateXorGateGadget(gadgetSpriteBuilder, gadgetData),
 
-            _ => throw new ArgumentOutOfRangeException(nameof(LogicGateType), LogicGateType, "Unknown logic gate type")
+            _ => Helpers.ThrowUnknownEnumValueException<LogicGateType, GadgetBase>((int)LogicGateType)
         };
     }
 

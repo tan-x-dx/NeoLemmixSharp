@@ -49,7 +49,7 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
         var dht = new DihedralTransformation(orientationByte);
 
         int initialStateId = rawFileData.Read8BitUnsignedInteger();
-        var renderMode = GetGadgetRenderMode(rawFileData.Read8BitUnsignedInteger());
+        var renderMode = GadgetRenderModeHelpers.GetGadgetRenderMode(rawFileData.Read8BitUnsignedInteger());
 
         int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
         var inputNames = CollectionsHelper.GetArrayForSize<string>(numberOfInputNames);
@@ -84,7 +84,7 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
         int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
         while (numberOfProperties-- > 0)
         {
-            var gadgetProperty = GetGadgetProperty(rawFileData.Read8BitUnsignedInteger());
+            var gadgetProperty = GadgetPropertyHelpers.GetGadgetProperty(rawFileData.Read8BitUnsignedInteger());
             int propertyValue = rawFileData.Read32BitSignedInteger();
             result.AddProperty(gadgetProperty, propertyValue);
         }
@@ -95,43 +95,6 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
             numberOfBytesToRead);
 
         return result;
-    }
-
-    private static GadgetRenderMode GetGadgetRenderMode(int rawValue)
-    {
-        var enumValue = (GadgetRenderMode)rawValue;
-
-        return enumValue switch
-        {
-            GadgetRenderMode.NoRender => GadgetRenderMode.NoRender,
-            GadgetRenderMode.BehindTerrain => GadgetRenderMode.BehindTerrain,
-            GadgetRenderMode.InFrontOfTerrain => GadgetRenderMode.InFrontOfTerrain,
-            GadgetRenderMode.OnlyOnTerrain => GadgetRenderMode.OnlyOnTerrain,
-
-            _ => throw new LevelReadingException(
-                $"Invalid GadgetRenderMode! Value: {rawValue}")
-        };
-    }
-
-    private static GadgetProperty GetGadgetProperty(int rawValue)
-    {
-        var enumValue = (GadgetProperty)rawValue;
-
-        return enumValue switch
-        {
-            GadgetProperty.HatchGroupId => GadgetProperty.HatchGroupId,
-            GadgetProperty.TeamId => GadgetProperty.TeamId,
-            GadgetProperty.SkillId => GadgetProperty.SkillId,
-            GadgetProperty.Width => GadgetProperty.Width,
-            GadgetProperty.Height => GadgetProperty.Height,
-            GadgetProperty.RawLemmingState => GadgetProperty.RawLemmingState,
-            GadgetProperty.Count => GadgetProperty.Count,
-            GadgetProperty.InitialAnimationFrame => GadgetProperty.InitialAnimationFrame,
-            GadgetProperty.LogicGateType => GadgetProperty.LogicGateType,
-
-            _ => throw new LevelReadingException(
-                $"Invalid GadgetProperty! Value: {rawValue}")
-        };
     }
 
     private static void AssertGadgetDataBytesMakeSense(

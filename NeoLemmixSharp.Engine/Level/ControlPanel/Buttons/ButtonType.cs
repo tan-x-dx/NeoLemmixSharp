@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
+﻿using NeoLemmixSharp.Common.Util;
+
+namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 public enum ButtonType
 {
@@ -50,6 +52,6 @@ public static class ButtonTypeHelpers
         ButtonType.ClearPhysics => ButtonTypeSizePosition.TopHalf,
         ButtonType.Replay => ButtonTypeSizePosition.BottomHalf,
 
-        _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        _ => Helpers.ThrowUnknownEnumValueException<ButtonType, ButtonTypeSizePosition>((int)type)
     };
 }

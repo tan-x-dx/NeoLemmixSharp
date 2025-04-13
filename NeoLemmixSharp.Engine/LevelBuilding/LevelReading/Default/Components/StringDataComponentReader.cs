@@ -27,7 +27,7 @@ public sealed class StringDataComponentReader : ILevelDataReader
         while (numberOfItems-- > 0)
         {
             int id = rawFileData.Read16BitUnsignedInteger();
-            LevelReadWriteHelpers.ReaderAssert(id == _stringIdLookup.Count, "Invalid string ids");
+            LevelReadingException.ReaderAssert(id == _stringIdLookup.Count, "Invalid string ids");
 
             // The next 16bit int specifies how many bytes make up the next string
             int stringLengthInBytes = rawFileData.Read16BitUnsignedInteger();

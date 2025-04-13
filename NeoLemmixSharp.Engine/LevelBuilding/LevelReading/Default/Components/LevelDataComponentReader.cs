@@ -22,7 +22,7 @@ public sealed class LevelDataComponentReader : ILevelDataReader
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
-        LevelReadWriteHelpers.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
+        LevelReadingException.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
 
         int numberOfBytesToRead = rawFileData.Read16BitUnsignedInteger();
         int initialPosition = rawFileData.Position;
