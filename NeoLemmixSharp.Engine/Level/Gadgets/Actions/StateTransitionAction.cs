@@ -5,19 +5,21 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
 public sealed class StateTransitionAction : IGadgetAction
 {
-    private readonly HitBoxGadget _gadget;
+    private readonly int _gadgetId;
     private readonly int _stateIndex;
+    public GadgetActionType ActionType => GadgetActionType.SetGadgetState;
 
     public StateTransitionAction(
-        HitBoxGadget gadget,
+        int gadgetId,
         int stateIndex)
     {
-        _gadget = gadget;
+        _gadgetId = gadgetId;
         _stateIndex = stateIndex;
     }
 
     public void PerformAction(Lemming lemming)
     {
-        _gadget.SetNextState(_stateIndex);
+        var gadget = LevelScreen.GadgetManager.AllItems[_gadgetId] as HitBoxGadget ?? throw new Exception("Cannot change state of gadget!");
+        gadget.SetNextState(_stateIndex);
     }
 }

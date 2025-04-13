@@ -10,6 +10,7 @@ public sealed class SkillCountModifierAction : IGadgetAction
     private readonly Team? _team;
     private readonly int _value;
     private readonly bool _isDelta;
+    public GadgetActionType ActionType => GadgetActionType.ChangeSkillCount;
 
     public SkillCountModifierAction(LemmingSkill skill, Team? team, int value, bool isDelta)
     {

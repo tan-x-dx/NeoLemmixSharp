@@ -8,6 +8,7 @@ public sealed class SetLemmingStateAction : IGadgetAction
 {
     private readonly ILemmingStateChanger _lemmingStateChanger;
     private readonly SetStateType _type;
+    public GadgetActionType ActionType => GadgetActionType.SetLemmingState;
 
     public SetLemmingStateAction(ILemmingStateChanger lemmingStateChanger, SetStateType type)
     {
