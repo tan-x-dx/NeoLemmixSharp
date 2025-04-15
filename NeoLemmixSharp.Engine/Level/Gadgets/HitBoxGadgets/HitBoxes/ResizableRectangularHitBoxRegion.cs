@@ -30,7 +30,7 @@ public sealed class ResizableRectangularHitBoxRegion : IHitBoxRegion
     private int GetWidth() => _gadgetBounds.Width + _dw - _dx;
     private int GetHeight() => _gadgetBounds.Height + _dh - _dy;
 
-    public Region CurrentBounds => new(
+    public RectangularRegion CurrentBounds => new(
         new Point(GetX(), GetY()),
         new Size(GetWidth(), GetHeight()));
 
@@ -45,7 +45,7 @@ public sealed class ResizableRectangularHitBoxRegion : IHitBoxRegion
                LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetY(), h), levelPosition.Y);
     }
 
-    public bool ContainsPoints(Point p1, Point p2)
+    public bool ContainsEitherPoint(Point p1, Point p2)
     {
         var w = GetWidth();
         var h = GetHeight();

@@ -74,7 +74,7 @@ public sealed class LevelCursor
         // Hence, for the top left position, add one extra pixel to fix offset.
         var topLeftCursorPixel = new Point(c.X - (EngineConstants.CursorRadius + 1), c.Y - (EngineConstants.CursorRadius + 1));
         var bottomRightCursorPixel = new Point(c.X + EngineConstants.CursorRadius, c.Y + EngineConstants.CursorRadius);
-        var levelRegion = new Region(topLeftCursorPixel, bottomRightCursorPixel);
+        var levelRegion = new RectangularRegion(topLeftCursorPixel, bottomRightCursorPixel);
 
         LevelScreen.LemmingManager.GetAllLemmingsNearRegion(scratchSpaceSpan, levelRegion, out result);
     }

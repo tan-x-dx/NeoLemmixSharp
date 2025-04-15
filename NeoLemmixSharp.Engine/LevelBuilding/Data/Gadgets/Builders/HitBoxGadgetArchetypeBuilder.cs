@@ -22,21 +22,30 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     public required ResizeType ResizeType { get; init; }
     public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }
 
-    public required SpriteData SpriteData { get; init; }
+    public required SpriteArchetypeData SpriteData { get; init; }
 
     public GadgetBase BuildGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         LemmingManager lemmingManager,
         TeamManager teamManager)
     {
         var currentGadgetBounds = GetGadgetBounds(gadgetData);
-        var previousGadgetBounds = new GadgetBounds(currentGadgetBounds);
         var resizeType = GetResizeTypeForGadgetOrientation(gadgetData);
         var gadgetStates = GetGadgetStates(gadgetData, currentGadgetBounds, teamManager);
         var initialStateIndex = gadgetData.InitialStateId;
 
         var lemmingTracker = new LemmingTracker(lemmingManager);
+
+        bool isFastForward;
+        if (gadgetData.TryGetProperty(GadgetProperty.IsFastForwards, out var fastForwardValue))
+        {
+            isFastForward = fastForwardValue != 0;
+        }
+        else
+        {
+            isFastForward = false;
+        }
 
         return new HitBoxGadget(
             resizeType,
@@ -48,9 +57,8 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = currentGadgetBounds,
-            PreviousGadgetBounds = previousGadgetBounds,
 
-            IsFastForward = false
+            IsFastForward = isFastForward
         };
     }
 
@@ -62,8 +70,8 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         };
 
         var size = new Size(
-            ResizeType.CanResizeHorizontally() ? gadgetData.GetProperty(GadgetProperty.Width) : SpriteData.SpriteSize.W,
-            ResizeType.CanResizeVertically() ? gadgetData.GetProperty(GadgetProperty.Height) : SpriteData.SpriteSize.H);
+            ResizeType.CanResizeHorizontally() ? gadgetData.GetProperty(GadgetProperty.Width) : SpriteData.BaseSpriteSize.W,
+            ResizeType.CanResizeVertically() ? gadgetData.GetProperty(GadgetProperty.Height) : SpriteData.BaseSpriteSize.H);
 
         size = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(size);
 
@@ -80,7 +88,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
     private GadgetState[] GetGadgetStates(
         GadgetData gadgetData,
-        GadgetBounds hitBoxGadgetBounds,
+        GadgetBounds currentGadgetBounds,
         TeamManager teamManager)
     {
         var result = new GadgetState[AllGadgetStateData.Length];
@@ -92,17 +100,18 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             //   var animationController = gadgetStateArchetypeData.GetAnimationController();
             var hitBoxRegionLookup = CreateHitBoxRegionLookup(
                 gadgetData,
-                hitBoxGadgetBounds,
+                currentGadgetBounds,
                 gadgetStateArchetypeData.RegionData);
             var hitBoxFilters = CreateHitBoxFilters(
                 gadgetData,
                 gadgetStateArchetypeData,
                 teamManager);
+            var animationController = SpriteData.CreateAnimationController(i, currentGadgetBounds);
 
             result[i] = new GadgetState(
                 hitBoxFilters,
                 hitBoxRegionLookup,
-                null!);
+                animationController);
         }
 
         return result;
@@ -217,7 +226,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
                 HitBoxType.Rectangular => CreateRectangularHitBoxRegion(gadgetData, item.HitBoxDefinitionData),
                 HitBoxType.PointSet => CreatePointSetHitBoxRegion(gadgetData, item.HitBoxDefinitionData),
 
-                _ => throw new ArgumentOutOfRangeException(nameof(item.HitBoxType), item.HitBoxType, "Unknown HitBoxType")
+                _ => Helpers.ThrowUnknownEnumValueException<HitBoxType, IHitBoxRegion>((int)item.HitBoxType)
             };
 
             result.Add(item.Orientation, hitBoxRegion);
@@ -234,8 +243,8 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
             var dihedralTransformation = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection);
 
-            var p0 = dihedralTransformation.Transform(hitBoxRegionData[0], SpriteData.SpriteSize);
-            var p1 = dihedralTransformation.Transform(hitBoxRegionData[1], SpriteData.SpriteSize);
+            var p0 = dihedralTransformation.Transform(hitBoxRegionData[0], SpriteData.BaseSpriteSize);
+            var p1 = dihedralTransformation.Transform(hitBoxRegionData[1], SpriteData.BaseSpriteSize);
 
             return new RectangularHitBoxRegion(p0, p1);
         }
@@ -253,21 +262,24 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
             for (var i = 0; i < triggerData.Length; i++)
             {
-                adjustedPoints[i] = dihedralTransformation.Transform(triggerData[i], SpriteData.SpriteSize);
+                adjustedPoints[i] = dihedralTransformation.Transform(triggerData[i], SpriteData.BaseSpriteSize);
             }
 
             return new PointSetHitBoxRegion(adjustedPoints);
         }
 
-        static ResizableRectangularHitBoxRegion CreateResizableRectangularHitBoxRegion(
+        ResizableRectangularHitBoxRegion CreateResizableRectangularHitBoxRegion(
             GadgetBounds hitBoxGadgetBounds,
             ReadOnlySpan<Point> hitBoxRegionData)
         {
             if (hitBoxRegionData.Length != 2)
                 throw new InvalidOperationException("Expected data of length 2");
 
-            var p0 = hitBoxRegionData[0];
-            var p1 = hitBoxRegionData[1];
+            var dihedralTransformation = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection);
+
+            var p0 = dihedralTransformation.Transform(hitBoxRegionData[0], SpriteData.BaseSpriteSize);
+            var p1 = dihedralTransformation.Transform(hitBoxRegionData[1], SpriteData.BaseSpriteSize);
+
             return new ResizableRectangularHitBoxRegion(hitBoxGadgetBounds, p0.X, p0.Y, p1.X, p1.Y);
         }
     }

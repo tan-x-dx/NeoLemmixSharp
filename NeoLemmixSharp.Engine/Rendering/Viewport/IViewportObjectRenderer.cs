@@ -4,7 +4,7 @@ using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport;
 
-public interface IViewportObjectRenderer : IPreviousRectangularBounds, IDisposable
+public interface IViewportObjectRenderer : IRectangularBounds, IDisposable
 {
     int RendererId { get; set; }
     int ItemId { get; }

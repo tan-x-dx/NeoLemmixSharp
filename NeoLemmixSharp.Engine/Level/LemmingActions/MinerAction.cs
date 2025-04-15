@@ -123,11 +123,6 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -2;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
-
     private static void TurnMinerAround(
         in GadgetEnumerable gadgetsNearLemming,
         Lemming lemming,
@@ -153,19 +148,21 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         }
     }
 
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.MinerActionBounds;
+
     string IDestructionMask.Name => LemmingActionName;
 
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
         var pixelTypeInt = (uint)pixelType;
-        var oppositeOrientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
+        var oppositeOrientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
                                             orientation.GetOpposite().RotNum;
         if (((pixelTypeInt >>> oppositeOrientationArrowShift) & 1U) != 0U)
             return false;
 
-        var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
-                                                ((1 + orientation.RotNum + (facingDirection.Id << 1)) & 3);
+        var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
+                                                (1 + orientation.RotNum + (facingDirection.Id << 1));
         return ((pixelTypeInt >>> oppositeFacingDirectionArrowShift) & 1U) == 0U;
     }
 }

@@ -28,11 +28,7 @@ public sealed class VaporiserAction : LemmingAction
         return false;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 12;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
-    protected override int BottomRightBoundsDeltaY(int animationFrame) => 2;
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.VaporiserActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

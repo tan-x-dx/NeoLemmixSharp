@@ -5,10 +5,10 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 public sealed class EmptyHitBoxRegion : IHitBoxRegion
 {
     public static readonly EmptyHitBoxRegion Instance = new();
-    public Region CurrentBounds => default;
+    public RectangularRegion CurrentBounds => new();
 
     public bool ContainsPoint(Point levelPosition) => false;
-    public bool ContainsPoints(Point p1, Point p2) => false;
+    public bool ContainsEitherPoint(Point p1, Point p2) => false;
 
     private EmptyHitBoxRegion()
     {

@@ -9,24 +9,20 @@ public sealed class AnimationController
 {
     private readonly AnimationBehaviour[] _animations;
 
-    private readonly GadgetBounds _currentBounds;
-    private readonly GadgetBounds _previousBounds;
+    private readonly GadgetBounds _currentGadgetBounds;
 
     public AnimationController(
         AnimationBehaviour[] animations,
-        GadgetBounds currentBounds,
-        GadgetBounds previousBounds)
+        GadgetBounds currentGadgetBounds)
     {
         if (animations.Length < 1)
             throw new ArgumentException("Requires at least ONE animation behaviour");
 
         _animations = animations;
-        _currentBounds = currentBounds;
-        _previousBounds = previousBounds;
+        _currentGadgetBounds = currentGadgetBounds;
     }
 
-    public Region CurrentBounds => _currentBounds.CurrentBounds;
-    public Region PreviousBounds => _previousBounds.CurrentBounds;
+    public RectangularRegion CurrentBounds => _currentGadgetBounds.CurrentBounds;
 
     public int GetNextStateIndex()
     {

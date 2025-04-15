@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -121,11 +120,6 @@ public sealed class SwimmerAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -7;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 4;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
-
     [Pure]
     private static bool WaterAt(
         in GadgetEnumerable gadgetEnumerable,
@@ -179,6 +173,8 @@ public sealed class SwimmerAction : LemmingAction
             : result;
     }
 
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.SwimmerActionBounds;
+
     [SkipLocalsInit]
     public override void TransitionLemmingToAction(
         Lemming lemming,
@@ -194,7 +190,7 @@ public sealed class SwimmerAction : LemmingAction
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new Region(
+        var gadgetTestRegion = new RectangularRegion(
             orientation.Move(lemming.AnchorPosition, lemming.FacingDirection.DeltaX, 2),
             orientation.MoveDown(lemming.AnchorPosition, 4));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearLemming);

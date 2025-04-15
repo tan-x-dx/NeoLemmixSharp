@@ -27,7 +27,7 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
             uint state = rawFileData.Read32BitUnsignedInteger();
 
             int orientationByte = rawFileData.Read8BitUnsignedInteger();
-            var dht = DihedralTransformation.Decode(orientationByte);
+            var dht = new DihedralTransformation(orientationByte);
             int teamId = rawFileData.Read8BitUnsignedInteger();
             int initialActionId = rawFileData.Read8BitUnsignedInteger();
 

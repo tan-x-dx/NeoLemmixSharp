@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -14,12 +15,36 @@ public enum GadgetProperty
     RawLemmingState,
     Count,
     InitialAnimationFrame,
-    LogicGateType
+    LogicGateType,
+    IsFastForwards
+}
+
+public static class GadgetPropertyHelpers
+{
+    public static GadgetProperty GetGadgetProperty(int rawValue)
+    {
+        var enumValue = (GadgetProperty)rawValue;
+
+        return enumValue switch
+        {
+            GadgetProperty.HatchGroupId => GadgetProperty.HatchGroupId,
+            GadgetProperty.TeamId => GadgetProperty.TeamId,
+            GadgetProperty.SkillId => GadgetProperty.SkillId,
+            GadgetProperty.Width => GadgetProperty.Width,
+            GadgetProperty.Height => GadgetProperty.Height,
+            GadgetProperty.RawLemmingState => GadgetProperty.RawLemmingState,
+            GadgetProperty.Count => GadgetProperty.Count,
+            GadgetProperty.InitialAnimationFrame => GadgetProperty.InitialAnimationFrame,
+            GadgetProperty.LogicGateType => GadgetProperty.LogicGateType,
+
+            _ => Helpers.ThrowUnknownEnumValueException<GadgetProperty>(rawValue)
+        };
+    }
 }
 
 public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>, IBitBufferCreator<BitBuffer32>
 {
-    public int NumberOfItems => 9;
+    public int NumberOfItems => 10;
 
     [Pure]
     public int Hash(GadgetProperty item) => (int)item;

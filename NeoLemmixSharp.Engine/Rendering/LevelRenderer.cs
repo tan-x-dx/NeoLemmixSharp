@@ -122,7 +122,7 @@ public sealed class LevelRenderer :
             {
                 var p = new Point(horizontalRenderInterval.ViewPortStart, verticalRenderInterval.ViewPortStart);
                 var s = new Size(horizontalRenderInterval.ViewPortLength, verticalRenderInterval.ViewPortLength);
-                var region = new Region(p, s);
+                var region = new RectangularRegion(p, s);
 
                 _spriteSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, region, out var rendererSet);
 

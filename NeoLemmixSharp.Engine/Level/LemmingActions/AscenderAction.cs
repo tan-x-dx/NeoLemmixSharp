@@ -59,12 +59,6 @@ public sealed class AscenderAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 2;
-    protected override int BottomRightBoundsDeltaY(int animationFrame) => 0;
-
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         base.TransitionLemmingToAction(lemming, turnAround);

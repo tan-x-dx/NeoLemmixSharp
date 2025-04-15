@@ -30,13 +30,13 @@ public sealed class ShimmierSkill : LemmingSkill
 
             if (simulationLemming.CurrentAction != SliderAction.Instance &&
                 (simulationLemming.CurrentAction != FallerAction.Instance ||
-                 simulationLemming.FacingDirection != lemming.FacingDirection.GetOpposite()))
+                 simulationLemming.FacingDirection == lemming.FacingDirection))
                 return false;
 
             var simulationOrientation = simulationLemming.Orientation;
             var simulationPosition = simulationLemming.AnchorPosition;
 
-            var gadgetTestRegion = new Region(
+            var gadgetTestRegion = new RectangularRegion(
                 simulationPosition,
                 simulationOrientation.MoveUp(simulationPosition, 9));
             gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
@@ -63,7 +63,7 @@ public sealed class ShimmierSkill : LemmingSkill
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.AnchorPosition;
 
-        var gadgetTestRegion1 = new Region(
+        var gadgetTestRegion1 = new RectangularRegion(
             lemmingPosition,
             orientation.MoveUp(lemmingPosition, 12));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion1, out var gadgetsNearRegion1);

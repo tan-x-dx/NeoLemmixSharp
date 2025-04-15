@@ -105,10 +105,7 @@ public sealed class SliderAction : LemmingAction
         }
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -6;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 0;
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.ClimberActionBounds;
 
     public override Point GetFootPosition(Lemming lemming, Point anchorPosition)
     {

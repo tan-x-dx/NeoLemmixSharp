@@ -262,7 +262,7 @@ public sealed class LemmingManager :
 
     public void GetAllLemmingsNearRegion(
         Span<uint> scratchSpace,
-        Region levelRegion,
+        RectangularRegion levelRegion,
         out LemmingEnumerable result)
     {
         _lemmingPositionHelper.GetAllItemsNearRegion(scratchSpace, levelRegion, out result);

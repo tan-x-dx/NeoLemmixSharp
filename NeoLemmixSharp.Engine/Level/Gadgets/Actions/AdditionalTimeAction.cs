@@ -5,6 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 public sealed class AdditionalTimeAction : IGadgetAction
 {
     private readonly int _additionalSeconds;
+    public GadgetActionType ActionType => GadgetActionType.AddLevelTime;
 
     public AdditionalTimeAction(int additionalSeconds)
     {

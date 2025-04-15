@@ -49,14 +49,14 @@ public sealed class RawFileData
         {
             int nextByteValue = Read8BitUnsignedInteger();
 
-            LevelReadWriteHelpers.ReaderAssert(nextByteValue == '.', "Version not in correct format");
+            LevelReadingException.ReaderAssert(nextByteValue == '.', "Version not in correct format");
         }
     }
 
     private T Read<T>(int typeSize)
         where T : unmanaged
     {
-        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - Position >= typeSize, "Reached end of file!");
+        LevelReadingException.ReaderAssert(FileSizeInBytes - Position >= typeSize, "Reached end of file!");
 
         var result = Unsafe.ReadUnaligned<T>(ref _byteBuffer[_position]);
         _position += typeSize;
@@ -72,7 +72,7 @@ public sealed class RawFileData
 
     public ReadOnlySpan<byte> ReadBytes(int bufferSize)
     {
-        LevelReadWriteHelpers.ReaderAssert(FileSizeInBytes - Position >= bufferSize, "Reached end of file!");
+        LevelReadingException.ReaderAssert(FileSizeInBytes - Position >= bufferSize, "Reached end of file!");
 
         var sourceSpan = new ReadOnlySpan<byte>(_byteBuffer, _position, bufferSize);
         _position += bufferSize;

@@ -36,9 +36,4 @@ public sealed class DrownerAction : LemmingAction
 
         return false;
     }
-
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => Math.Max(4, 9 - animationFrame);
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
 }

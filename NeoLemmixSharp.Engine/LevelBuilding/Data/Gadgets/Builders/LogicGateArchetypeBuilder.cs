@@ -1,8 +1,10 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
@@ -13,10 +15,10 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
     public required string PieceName { get; init; }
     public required LogicGateType LogicGateType { get; init; }
 
-    public required SpriteData SpriteData { get; init; }
+    public required SpriteArchetypeData SpriteData { get; init; }
 
     public GadgetBase BuildGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         LemmingManager lemmingManager,
         TeamManager teamManager)
@@ -28,12 +30,12 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             LogicGateType.NotGate => CreateNotGateGadget(gadgetSpriteBuilder, gadgetData),
             LogicGateType.XorGate => CreateXorGateGadget(gadgetSpriteBuilder, gadgetData),
 
-            _ => throw new ArgumentOutOfRangeException(nameof(LogicGateType), LogicGateType, "Unknown logic gate type")
+            _ => Helpers.ThrowUnknownEnumValueException<LogicGateType, GadgetBase>((int)LogicGateType)
         };
     }
 
     private static AndGateGadget CreateAndGateGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
         if (gadgetData.InputNames.Length < 2)
@@ -45,14 +47,13 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = new GadgetBounds(),
-            PreviousGadgetBounds = new GadgetBounds(),
 
             IsFastForward = true
         };
     }
 
     private static OrGateGadget CreateOrGateGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
         if (gadgetData.InputNames.Length < 2)
@@ -64,14 +65,13 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = new GadgetBounds(),
-            PreviousGadgetBounds = new GadgetBounds(),
 
             IsFastForward = true
         };
     }
 
     private static NotGateGadget CreateNotGateGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
         if (gadgetData.InputNames.Length != 1)
@@ -84,14 +84,13 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = new GadgetBounds(),
-            PreviousGadgetBounds = new GadgetBounds(),
 
             IsFastForward = true
         };
     }
 
     private static XorGateGadget CreateXorGateGadget(
-        GadgetSpriteBuilder gadgetSpriteBuilder,
+        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
         if (gadgetData.InputNames.Length != 2)
@@ -105,7 +104,6 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             Orientation = gadgetData.Orientation,
 
             CurrentGadgetBounds = new GadgetBounds(),
-            PreviousGadgetBounds = new GadgetBounds(),
 
             IsFastForward = true
         };

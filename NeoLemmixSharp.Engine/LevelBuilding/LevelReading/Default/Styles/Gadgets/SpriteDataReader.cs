@@ -1,11 +1,11 @@
-﻿namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Styles.Gadgets;
+﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
+
+namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Styles.Gadgets;
 
 public ref struct SpriteDataReader
 {
-    private readonly RawFileData _rawFileData;
-
-    public SpriteDataReader(RawFileData rawFileData)
+    public SpriteArchetypeData ReadSpriteData(RawFileData rawFileData)
     {
-        _rawFileData = rawFileData;
+        throw new NotImplementedException();
     }
 }

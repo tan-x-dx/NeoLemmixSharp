@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Runtime.CompilerServices;
@@ -129,11 +128,7 @@ public sealed class ShimmierAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 9;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
-    protected override int BottomRightBoundsDeltaY(int animationFrame) => -2;
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.ShimmierActionBounds;
 
     [SkipLocalsInit]
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
@@ -144,7 +139,7 @@ public sealed class ShimmierAction : LemmingAction
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new Region(
+        var gadgetTestRegion = new RectangularRegion(
             lemmingPosition,
             orientation.Move(lemmingPosition, dx, 12));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearLemming);

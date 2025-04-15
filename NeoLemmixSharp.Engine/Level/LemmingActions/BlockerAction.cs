@@ -31,18 +31,14 @@ public sealed class BlockerAction : LemmingAction
         return true;
     }
 
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.BlockerActionBounds;
+
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         base.TransitionLemmingToAction(lemming, turnAround);
 
         LevelScreen.LemmingManager.RegisterBlocker(lemming);
     }
-
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -7;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 11;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
-    protected override int BottomRightBoundsDeltaY(int animationFrame) => -3;
 
     public static void DoBlockerCheck(Lemming lemming)
     {
@@ -104,14 +100,14 @@ public sealed class BlockerAction : LemmingAction
         return null;
     }
 
-    private static Region GetArmHitBox(Lemming blocker, int offsetX0, int offsetX1)
+    private static RectangularRegion GetArmHitBox(Lemming blocker, int offsetX0, int offsetX1)
     {
         var moveDelta = blocker.FacingDirection.Id ^ 1; // Fixes off-by-one errors between left/right
         var orientation = blocker.Orientation;
         var p0 = orientation.Move(blocker.AnchorPosition, moveDelta + offsetX0, 6);
         var p1 = orientation.Move(blocker.AnchorPosition, moveDelta + offsetX1, -4);
 
-        return new Region(p0, p1);
+        return new RectangularRegion(p0, p1);
     }
 
     public static void ForceLemmingDirection(Lemming lemming, FacingDirection forcedFacingDirection)

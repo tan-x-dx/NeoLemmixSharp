@@ -45,18 +45,7 @@ public sealed class TalismanReader : NeoLemmixDataReader
             return false;
         }
 
-        var alternateLookup = _tokenActions.GetAlternateLookup<ReadOnlySpan<char>>();
-
-        if (alternateLookup.TryGetValue(firstToken, out var tokenAction))
-        {
-            tokenAction(line, secondToken, secondTokenIndex);
-        }
-        else
-        {
-            NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
-        }
-
-        return false;
+        return ProcessLineTokens(line);
     }
 
     private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

@@ -20,11 +20,11 @@ public sealed class LevelObjectAssembler : IDisposable
 {
     private readonly List<Lemming> _lemmings = new();
     private readonly List<GadgetBase> _gadgets = new();
-    private readonly GadgetSpriteBuilder _gadgetSpriteBuilder;
+    private readonly GadgetRendererBuilder _gadgetSpriteBuilder;
 
     public LevelObjectAssembler(GraphicsDevice graphicsDevice)
     {
-        _gadgetSpriteBuilder = new GadgetSpriteBuilder(graphicsDevice);
+        _gadgetSpriteBuilder = new GadgetRendererBuilder(graphicsDevice);
     }
 
     public static HatchGroup[] GetHatchGroups(LevelData levelData)

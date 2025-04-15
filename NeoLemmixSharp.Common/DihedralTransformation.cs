@@ -17,12 +17,34 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         FacingDirection = facingDirection;
     }
 
+    public DihedralTransformation(int encodedBits)
+    {
+        Orientation = new Orientation(encodedBits);
+        FacingDirection = new FacingDirection(encodedBits >>> FlipBitShift);
+    }
+
+    public DihedralTransformation(
+        bool flipHorizontally,
+        bool flipVertically,
+        bool rotate)
+    {
+        var o = rotate ? 1 : 0;
+        var f = flipHorizontally ? 1 : 0;
+        var v = flipVertically ? 1 : 0;
+
+        o |= v << 1;
+        f ^= v;
+
+        Orientation = new Orientation(o);
+        FacingDirection = new FacingDirection(f);
+    }
+
     [Pure]
-    public Size Transform(Size levelSize)
+    public Size Transform(Size size)
     {
         return Orientation.IsHorizontal()
-            ? levelSize.Transpose()
-            : levelSize;
+            ? size.Transpose()
+            : size;
     }
 
     [Pure]
@@ -31,6 +53,31 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         return Orientation.IsHorizontal()
             ? resizeType.SwapComponents()
             : resizeType;
+    }
+
+    [Pure]
+    public RectangularRegion Transform(RectangularRegion region)
+    {
+        var w = region.W - 1;
+        var h = region.H - 1;
+
+        var s = GetRotationCoefficients(out var a, out var b, ref w, ref h);
+        s *= FacingDirection.Id;
+
+        var p1 = region.GetBottomRight() - region.Position;
+        var p1x = p1.X;
+        var p1y = p1.Y;
+
+        var q0x = s + (FacingDirection.DeltaX * w) + region.X;
+        var q0y = h + region.Y;
+
+        var q1x = s + (FacingDirection.DeltaX * ((a * p1x) - (b * p1y) + w)) + region.X;
+        var q1y = (b * p1x) + (a * p1y) + h + region.Y;
+
+        var q0 = new Point(q0x, q0y);
+        var q1 = new Point(q1x, q1y);
+
+        return new RectangularRegion(q0, q1);
     }
 
     [Pure]
@@ -46,8 +93,8 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         var s = GetRotationCoefficients(out var a, out var b, ref w, ref h);
         s *= FacingDirection.Id;
 
-        var x0 = s + FacingDirection.DeltaX * (a * x - b * y + w);
-        var y0 = b * x + a * y + h;
+        var x0 = s + (FacingDirection.DeltaX * ((a * x) - (b * y) + w));
+        var y0 = (b * x) + (a * y) + h;
         return new Point(x0, y0);
     }
 
@@ -96,50 +143,22 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     public static int Encode(Orientation orientation, FacingDirection facingDirection) => orientation.RotNum | (facingDirection.Id << FlipBitShift);
 
     [Pure]
-    public static DihedralTransformation Decode(int encodedData) => new(new Orientation(encodedData), new FacingDirection(encodedData >>> FlipBitShift));
-
-    [Pure]
-    public static DihedralTransformation Decode(
-        bool flipHorizontally,
-        bool flipVertically,
-        bool rotate)
-    {
-        var o = rotate ? 1 : 0;
-        var f = flipHorizontally ? 1 : 0;
-        var v = flipVertically ? 1 : 0;
-
-        o |= v << 1;
-        f ^= v;
-
-        return new DihedralTransformation(new Orientation(o), new FacingDirection(f));
-    }
-
-    [Pure]
     [SkipLocalsInit]
     public override string ToString()
     {
         Span<char> buffer = stackalloc char[5 + 1 + 5];
-        var charsWritten = 0;
 
-        // The following usages of ToString() will return string consts
-        // Therefore this will not incur any extra allocations
-        var sourceSpan = Orientation.ToString().AsSpan();
-        sourceSpan.CopyTo(buffer);
-        charsWritten += sourceSpan.Length;
-
+        Orientation.TryFormat(buffer, out var charsWritten);
         buffer[charsWritten++] = '|';
 
-        sourceSpan = FacingDirection.ToString().AsSpan();
-        sourceSpan.CopyTo(buffer[charsWritten..]);
-        charsWritten += sourceSpan.Length;
+        FacingDirection.TryFormat(buffer[charsWritten..], out var c);
+        charsWritten += c;
 
         return buffer[..charsWritten].ToString();
     }
 
     [Pure]
-    public bool Equals(DihedralTransformation other) =>
-        Orientation == other.Orientation &&
-        FacingDirection == other.FacingDirection;
+    public bool Equals(DihedralTransformation other) => this == other;
 
     [Pure]
     [EditorBrowsable(EditorBrowsableState.Never)]

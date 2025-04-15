@@ -13,13 +13,11 @@ public readonly struct Interval : IEquatable<Interval>
     public Interval(int start, int length)
     {
         Start = start;
-        Length = length;
-        if (length < 0)
-            Length = 0;
+        Length = Math.Max(length, 0);
     }
 
-    public bool Equals(Interval other) => Start == other.Start && Length == other.Length;
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Interval other && Start == other.Start && Length == other.Length;
+    public bool Equals(Interval other) => this == other;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Interval other && this == other;
     public override int GetHashCode() =>
         5120813 * Start +
         1646497 * Length +

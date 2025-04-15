@@ -6,6 +6,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 public sealed class LemmingMoverAction : IGadgetAction
 {
     private readonly Point _deltaPosition;
+    public GadgetActionType ActionType => GadgetActionType.LemmingMover;
 
     public LemmingMoverAction(Point deltaPosition)
     {

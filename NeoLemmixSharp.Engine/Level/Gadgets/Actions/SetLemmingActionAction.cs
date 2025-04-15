@@ -6,6 +6,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 public sealed class SetLemmingActionAction : IGadgetAction
 {
     private readonly LemmingAction _action;
+    public GadgetActionType ActionType => GadgetActionType.SetLemmingAction;
 
     public SetLemmingActionAction(LemmingAction action)
     {

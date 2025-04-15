@@ -374,19 +374,14 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         return result;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 5;
-
     string IDestructionMask.Name => LemmingActionName;
 
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
         var pixelTypeInt = (uint)pixelType;
-        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
-                                 ((1 + orientation.RotNum + (facingDirection.Id << 1)) & 3);
+        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
+                                 (1 + orientation.RotNum + (facingDirection.Id << 1));
 
         return ((pixelTypeInt >>> oppositeArrowShift) & 1U) == 0U;
     }

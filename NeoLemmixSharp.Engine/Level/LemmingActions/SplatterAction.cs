@@ -28,10 +28,7 @@ public sealed class SplatterAction : LemmingAction
         return false;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 6;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 4;
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.SplatterActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

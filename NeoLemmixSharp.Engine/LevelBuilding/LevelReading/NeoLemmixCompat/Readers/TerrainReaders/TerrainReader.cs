@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers.TerrainReaders;
 
@@ -127,7 +126,7 @@ public sealed class TerrainReader : NeoLemmixDataReader
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var dht = DihedralTransformation.Decode(
+        var dht = new DihedralTransformation(
             _currentTerrainData.FlipHorizontally,
             _currentTerrainData.FlipVertically,
             _currentTerrainData.Rotate);
@@ -145,7 +144,7 @@ public sealed class TerrainReader : NeoLemmixDataReader
             FacingDirection = dht.FacingDirection,
             Erase = _currentTerrainData.Erase,
 
-            Tint = _currentTerrainData.Tint,
+            Tint = null,
 
             Width = _currentTerrainData.Width,
             Height = _currentTerrainData.Height,
@@ -171,8 +170,6 @@ public sealed class TerrainReader : NeoLemmixDataReader
 
         public bool NoOverwrite;
         public bool Erase;
-
-        public Color? Tint;
 
         public int? Width;
         public int? Height;

@@ -303,24 +303,19 @@ procedure DoFencerContinueTests(L: TLemming; var SteelContinue: Boolean; var Mov
         moveUpContinue = false;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -4;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 10;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
-
     string IDestructionMask.Name => LemmingActionName;
 
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {
         var pixelTypeInt = (uint)pixelType;
-        var orientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
+        var orientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
                                     orientation.RotNum;
         if (((pixelTypeInt >>> orientationArrowShift) & 1U) != 0U)
             return false;
 
-        var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
-                                                ((1 + orientation.RotNum + (facingDirection.Id << 1)) & 3);
+        var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
+                                                (1 + orientation.RotNum + (facingDirection.Id << 1));
         return ((pixelTypeInt >>> oppositeFacingDirectionArrowShift) & 1U) == 0U;
     }
 }

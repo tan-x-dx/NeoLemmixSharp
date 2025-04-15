@@ -18,6 +18,18 @@ public sealed class TeamManager :
         Array.Sort(_teams, this);
     }
 
+    public Team? GetTeamForId(int? id)
+    {
+        if (!id.HasValue)
+            return null;
+
+        var actualId = id.Value;
+        if ((uint)actualId < (uint)_teams.Length)
+            return _teams[actualId];
+
+        return null;
+    }
+
     public int NumberOfItems => _teams.Length;
 
     int IPerfectHasher<Team>.Hash(Team item) => item.Id;

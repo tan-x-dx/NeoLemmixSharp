@@ -26,9 +26,9 @@ public sealed class HatchGroupDataComponentReader : ILevelDataReader
             int maxSpawnInterval = rawFileData.Read8BitUnsignedInteger();
             int initialSpawnInterval = rawFileData.Read8BitUnsignedInteger();
 
-            LevelReadWriteHelpers.ReaderAssert(minSpawnInterval >= EngineConstants.MinAllowedSpawnInterval, "Invalid MinSpawnInterval");
-            LevelReadWriteHelpers.ReaderAssert(maxSpawnInterval <= EngineConstants.MaxAllowedSpawnInterval, "Invalid MaxSpawnInterval");
-            LevelReadWriteHelpers.ReaderAssert(minSpawnInterval <= initialSpawnInterval && initialSpawnInterval <= maxSpawnInterval, "Invalid Spawn Interval Limits");
+            LevelReadingException.ReaderAssert(minSpawnInterval >= EngineConstants.MinAllowedSpawnInterval, "Invalid MinSpawnInterval");
+            LevelReadingException.ReaderAssert(maxSpawnInterval <= EngineConstants.MaxAllowedSpawnInterval, "Invalid MaxSpawnInterval");
+            LevelReadingException.ReaderAssert(minSpawnInterval <= initialSpawnInterval && initialSpawnInterval <= maxSpawnInterval, "Invalid Spawn Interval Limits");
 
             levelData.AllHatchGroupData.Add(new HatchGroupData
             {

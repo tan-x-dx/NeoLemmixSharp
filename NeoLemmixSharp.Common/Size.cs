@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -17,15 +16,8 @@ public readonly struct Size : IEquatable<Size>
     [DebuggerStepThrough]
     public Size(int w, int h)
     {
-        W = w < 0 ? 0 : w;
-        H = h < 0 ? 0 : h;
-    }
-
-    [DebuggerStepThrough]
-    public Size(Texture2D texture)
-    {
-        W = texture.Width;
-        H = texture.Height;
+        W = Math.Max(w, 0);
+        H = Math.Max(h, 0);
     }
 
     [DebuggerStepThrough]
@@ -41,7 +33,13 @@ public readonly struct Size : IEquatable<Size>
 
     [Pure]
     [DebuggerStepThrough]
-    public Size Scale(int widthScaleFactor, int heightScaleFactor) => new(W * widthScaleFactor, H * heightScaleFactor, 0);
+    public Size Scale(int widthScaleFactor, int heightScaleFactor)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(widthScaleFactor, nameof(widthScaleFactor));
+        ArgumentOutOfRangeException.ThrowIfNegative(heightScaleFactor, nameof(heightScaleFactor));
+
+        return new(W * widthScaleFactor, H * heightScaleFactor, 0);
+    }
 
     [Pure]
     [DebuggerStepThrough]
@@ -56,7 +54,7 @@ public readonly struct Size : IEquatable<Size>
     }
 
     [DebuggerStepThrough]
-    public void AssertEncompassesPoint(Point p)
+    internal void AssertEncompassesPoint(Point p)
     {
         if (EncompassesPoint(p))
             return;
@@ -79,9 +77,9 @@ public readonly struct Size : IEquatable<Size>
         left.H != right.H;
 
     [DebuggerStepThrough]
-    public bool Equals(Size other) => W == other.W && H == other.H;
+    public bool Equals(Size other) => this == other;
     [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Size other && W == other.W && H == other.H;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Size other && this == other;
     [DebuggerStepThrough]
     public override int GetHashCode() => 8322929 * W +
                                          5282777 * H +

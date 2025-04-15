@@ -119,14 +119,6 @@ public static class LevelReadWriteHelpers
 
     #endregion
 
-    public static void ReaderAssert([DoesNotReturnIf(false)] bool condition, string details)
-    {
-        if (condition)
-            return;
-
-        throw new LevelReadingException($"Error occurred when reading level file. Details: [{details}]");
-    }
-
     public static uint GetTerrainArchetypeDataByte(
         bool isSteel,
         ResizeType resizeType)

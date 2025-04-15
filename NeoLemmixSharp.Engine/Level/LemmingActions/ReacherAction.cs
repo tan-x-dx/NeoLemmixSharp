@@ -73,11 +73,6 @@ public sealed class ReacherAction : LemmingAction
         return true;
     }
 
-    protected override int TopLeftBoundsDeltaX(int animationFrame) => -3;
-    protected override int TopLeftBoundsDeltaY(int animationFrame) => 9;
-
-    protected override int BottomRightBoundsDeltaX(int animationFrame) => 3;
-
     private static int GetEmptyPixelCount(
         in GadgetEnumerable gadgetsNearLemming,
         Lemming lemming,
@@ -98,4 +93,6 @@ public sealed class ReacherAction : LemmingAction
 
         return 4;
     }
+
+    protected override RectangularRegion ActionBounds() => LemmingActionBounds.ReacherActionBounds;
 }
