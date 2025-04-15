@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
 using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
 
@@ -34,6 +35,20 @@ public sealed class SetLemmingStateAction : IGadgetAction
         Clear,
         Set,
         Toggle
+    }
+
+    public static SetStateType GetSetStateType(int rawValue)
+    {
+        var enumValue = (SetStateType)rawValue;
+
+        return enumValue switch
+        {
+            SetStateType.Clear => SetStateType.Clear,
+            SetStateType.Set => SetStateType.Set,
+            SetStateType.Toggle => SetStateType.Toggle,
+
+            _ => Helpers.ThrowUnknownEnumValueException<SetStateType>(rawValue)
+        };
     }
 }
 

@@ -64,6 +64,8 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
             FastForwardSkill.Instance
         };
 
+        Debug.Assert(result.Length == EngineConstants.NumberOfLemmingSkills);
+
         var hasher = new LemmingSkillHasher();
         hasher.ValidateUniqueIds(new ReadOnlySpan<LemmingSkill>(result));
         Array.Sort(result, hasher);
