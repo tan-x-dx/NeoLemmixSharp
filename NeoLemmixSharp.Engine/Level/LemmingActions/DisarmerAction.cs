@@ -42,4 +42,6 @@ public sealed class DisarmerAction : LemmingAction
     }
 
     protected override RectangularRegion ActionBounds() => LemmingActionBounds.DisarmerLemmingBounds;
+
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 }

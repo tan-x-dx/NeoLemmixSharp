@@ -35,7 +35,7 @@ public sealed class BlockerAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        base.TransitionLemmingToAction(lemming, turnAround);
+        DoMainTransitionActions(lemming, turnAround);
 
         LevelScreen.LemmingManager.RegisterBlocker(lemming);
     }

@@ -89,7 +89,7 @@ public sealed class WalkerAction : LemmingAction
 
         if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.AnchorPosition))
         {
-            base.TransitionLemmingToAction(lemming, turnAround);
+            DoMainTransitionActions(lemming, turnAround);
             return;
         }
 

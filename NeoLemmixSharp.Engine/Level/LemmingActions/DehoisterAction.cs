@@ -60,7 +60,7 @@ public sealed class DehoisterAction : LemmingAction
     {
         lemming.DehoistPin = lemming.AnchorPosition;
 
-        base.TransitionLemmingToAction(lemming, turnAround);
+        DoMainTransitionActions(lemming, turnAround);
     }
 
     public static bool LemmingCanDehoist(

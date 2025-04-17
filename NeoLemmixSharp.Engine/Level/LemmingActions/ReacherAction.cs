@@ -95,4 +95,6 @@ public sealed class ReacherAction : LemmingAction
     }
 
     protected override RectangularRegion ActionBounds() => LemmingActionBounds.ReacherActionBounds;
+
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 }

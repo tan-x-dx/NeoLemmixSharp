@@ -173,7 +173,11 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
         return lemming.Orientation.MoveUp(anchorPosition, 1);
     }
 
-    public virtual void TransitionLemmingToAction(
+    public abstract void TransitionLemmingToAction(
+        Lemming lemming,
+        bool turnAround);
+
+    protected void DoMainTransitionActions(
         Lemming lemming,
         bool turnAround)
     {

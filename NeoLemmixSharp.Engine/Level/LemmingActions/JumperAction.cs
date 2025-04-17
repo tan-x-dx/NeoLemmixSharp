@@ -276,7 +276,7 @@ public sealed class JumperAction : LemmingAction
             lemming.AnchorPosition = lemming.Orientation.MoveRight(lemming.AnchorPosition, lemming.FacingDirection.DeltaX);
         }
 
-        base.TransitionLemmingToAction(lemming, turnAround);
+        DoMainTransitionActions(lemming, turnAround);
 
         lemming.JumpProgress = 0;
     }

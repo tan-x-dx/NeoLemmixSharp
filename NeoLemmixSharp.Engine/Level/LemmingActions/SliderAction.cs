@@ -116,6 +116,6 @@ public sealed class SliderAction : LemmingAction
     {
         lemming.DehoistPin = new Point(-1, -1);
 
-        base.TransitionLemmingToAction(lemming, turnAround);
+        DoMainTransitionActions(lemming, turnAround);
     }
 }

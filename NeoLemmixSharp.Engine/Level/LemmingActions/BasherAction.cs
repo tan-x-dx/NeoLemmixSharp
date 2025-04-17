@@ -374,6 +374,8 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         return result;
     }
 
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
+
     string IDestructionMask.Name => LemmingActionName;
 
     [Pure]

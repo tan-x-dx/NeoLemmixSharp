@@ -312,4 +312,6 @@ end;
                  PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, 0, 12)) ||
                  PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, 1, 12)));
     }
+
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 }

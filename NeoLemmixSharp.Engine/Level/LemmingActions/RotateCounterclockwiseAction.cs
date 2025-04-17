@@ -33,4 +33,6 @@ public sealed class RotateCounterclockwiseAction : LemmingAction
 
         return true;
     }
+
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 }

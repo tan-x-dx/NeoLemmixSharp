@@ -98,7 +98,7 @@ public sealed class BuilderAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        base.TransitionLemmingToAction(lemming, turnAround);
+        DoMainTransitionActions(lemming, turnAround);
 
         lemming.NumberOfBricksLeft = EngineConstants.NumberOfBuilderBricks;
         lemming.ConstructivePositionFreeze = false;

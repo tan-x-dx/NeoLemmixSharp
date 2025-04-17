@@ -32,6 +32,8 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
         return false;
     }
 
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
+
     string IDestructionMask.Name => LemmingActionName;
 
     [Pure]
