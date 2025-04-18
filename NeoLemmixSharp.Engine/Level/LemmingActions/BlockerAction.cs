@@ -78,7 +78,7 @@ public sealed class BlockerAction : LemmingAction
                 continue;
 
             var testHitBox = GetArmHitBox(blocker, -6, -3);
-            if (LevelScreen.RegionContainsPoints(testHitBox, anchorPosition, footPosition))
+            if (LevelScreen.RegionContainsEitherPoint(testHitBox, anchorPosition, footPosition))
             {
                 forcedFacingDirection = requiredOrientation == blockerOrientation
                     ? FacingDirection.Left
@@ -87,7 +87,7 @@ public sealed class BlockerAction : LemmingAction
             }
 
             testHitBox = GetArmHitBox(blocker, 2, 5);
-            if (LevelScreen.RegionContainsPoints(testHitBox, anchorPosition, footPosition))
+            if (LevelScreen.RegionContainsEitherPoint(testHitBox, anchorPosition, footPosition))
             {
                 forcedFacingDirection = requiredOrientation == blockerOrientation
                     ? FacingDirection.Right

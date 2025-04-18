@@ -20,6 +20,9 @@ public static class MenuSpriteBank
 
     public static void Initialise(ContentManager contentManager)
     {
+        if (Logo is not null)
+            throw new InvalidOperationException($"Cannot initialise {nameof(MenuSpriteBank)} more than once!");
+
         Logo = contentManager.Load<Texture2D>("menu/logo");
         MenuIcons = contentManager.Load<Texture2D>("menu/menu_icons");
         ScrollerLemmings = contentManager.Load<Texture2D>("menu/scroller_lemmings");

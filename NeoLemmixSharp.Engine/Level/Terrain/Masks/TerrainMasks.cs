@@ -6,12 +6,14 @@ namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
 public static class TerrainMasks
 {
-    private static TerrainEraseMask _basherMask = null!;
-    private static TerrainEraseMask _bomberMask = null!;
-    private static TerrainEraseMask _fencerMask = null!;
-    private static TerrainEraseMask _laserMask = null!;
-    private static TerrainEraseMask _minerMask = null!;
-    private static TerrainAddMask[] _stonerMasks = [];
+    public static TerrainEraseMask BasherMask { get; private set; } = null!;
+    public static TerrainEraseMask BomberMask { get; private set; } = null!;
+    public static TerrainEraseMask FencerMask { get; private set; } = null!;
+    public static TerrainEraseMask LaserMask { get; private set; } = null!;
+    public static TerrainEraseMask MinerMask { get; private set; } = null!;
+    public static TerrainAddMask[] StonerMask { get; private set; } = null!;
+
+    private static PixelType[] BasherSimulationScratchSpace = null!;
 
     public static void InitialiseTerrainMasks(
         TerrainEraseMask basherMask,
@@ -20,14 +22,16 @@ public static class TerrainMasks
         TerrainEraseMask laserMask,
         TerrainEraseMask minerMask)
     {
-        if (_basherMask is not null)
-            throw new InvalidOperationException("Masks have already been initialised!");
+        if (BasherMask is not null)
+            throw new InvalidOperationException($"Cannot initialise {nameof(TerrainMasks)} more than once!");
 
-        _basherMask = basherMask;
-        _bomberMask = bomberMask;
-        _fencerMask = fencerMask;
-        _laserMask = laserMask;
-        _minerMask = minerMask;
+        BasherMask = basherMask;
+        BomberMask = bomberMask;
+        FencerMask = fencerMask;
+        LaserMask = laserMask;
+        MinerMask = minerMask;
+
+        BasherSimulationScratchSpace = new PixelType[basherMask.Dimensions.Size.Area()];
     }
 
     public static void ApplyBasherMask(
@@ -38,7 +42,17 @@ public static class TerrainMasks
         var facingDirection = lemming.FacingDirection;
         var position = lemming.AnchorPosition;
 
-        _basherMask.ApplyEraseMask(orientation, facingDirection, position, frame);
+        BasherMask.ApplyEraseMask(orientation, facingDirection, position, frame);
+    }
+
+    public static ReadOnlySpan<PixelType> GetBasherSimulationScratchSpace(
+        Lemming lemming,
+        int frame)
+    {
+        var terrainManager = LevelScreen.TerrainManager;
+
+
+        return new ReadOnlySpan<PixelType>(BasherSimulationScratchSpace);
     }
 
     public static void ApplyBomberMask(Lemming lemming)
@@ -47,7 +61,7 @@ public static class TerrainMasks
         var facingDirection = lemming.FacingDirection;
         var position = orientation.MoveRight(lemming.AnchorPosition, facingDirection.DeltaX);
 
-        _bomberMask.ApplyEraseMask(orientation, facingDirection, position, 0);
+        BomberMask.ApplyEraseMask(orientation, facingDirection, position, 0);
     }
 
     public static void ApplyFencerMask(
@@ -58,7 +72,7 @@ public static class TerrainMasks
         var facingDirection = lemming.FacingDirection;
         var position = lemming.AnchorPosition;
 
-        _fencerMask.ApplyEraseMask(orientation, facingDirection, position, frame);
+        FencerMask.ApplyEraseMask(orientation, facingDirection, position, frame);
     }
 
     public static void ApplyLasererMask(
@@ -89,7 +103,7 @@ public static class TerrainMasks
         var position = lemming.AnchorPosition;
         position = orientation.Move(position, offsetX + dx, offsetY - frame);
 
-        _minerMask.ApplyEraseMask(orientation, facingDirection, position, frame);
+        MinerMask.ApplyEraseMask(orientation, facingDirection, position, frame);
     }
 
     public static void ApplyStonerMask(

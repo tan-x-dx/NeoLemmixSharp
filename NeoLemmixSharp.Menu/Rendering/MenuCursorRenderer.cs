@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine.Rendering;
+using NeoLemmixSharp.Common.Rendering;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 

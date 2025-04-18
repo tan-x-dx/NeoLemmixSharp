@@ -305,8 +305,6 @@ procedure DoFencerContinueTests(L: TLemming; var SteelContinue: Boolean; var Mov
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 
-    string IDestructionMask.Name => LemmingActionName;
-
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
     {

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Engine.Rendering;
+namespace NeoLemmixSharp.Common.Rendering;
 
 public static class CommonSprites
 {
@@ -30,6 +30,9 @@ public static class CommonSprites
         ContentManager contentManager,
         GraphicsDevice graphicsDevice)
     {
+        if (AnchorSprite is not null)
+            throw new InvalidOperationException($"Cannot initialise {nameof(CommonSprites)} more than once!");
+
         AnchorSprite = CreateAnchorTexture(graphicsDevice);
         WhitePixelGradientSprite = CreateWhitePixelTexture(graphicsDevice);
 
@@ -106,7 +109,7 @@ public static class CommonSprites
         var whiteColors = new Color[256];
         for (var i = 0; i < whiteColors.Length; i++)
         {
-            var packedValue = (uint)((i << 24) | 0xffffff);
+            var packedValue = (uint)(i << 24 | 0xffffff);
             whiteColors[i] = new Color(packedValue);
         }
 

@@ -144,7 +144,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
         LaserHitType CheckForHit(in GadgetEnumerable gadgetsNearLemming1, ReadOnlySpan<Point> offsetChecks)
         {
-            if (LevelScreen.PositionOutOfBounds(target))
+            if (LevelScreen.TerrainManager.PositionOutOfBounds(target))
                 return LaserHitType.OutOfBounds;
 
             var result = LaserHitType.None;
@@ -174,8 +174,6 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
         lemming.LaserRemainTime = 10;
     }
-
-    string IDestructionMask.Name => LemmingActionName;
 
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection) => FencerAction.Instance.CanDestroyPixel(pixelType, orientation, facingDirection); // Defer to whatever the fencer does, since the logic is the same!

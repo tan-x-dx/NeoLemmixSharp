@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Level.Terrain;
@@ -14,6 +15,13 @@ public sealed class TerrainManager
     public TerrainManager(ArrayWrapper2D<PixelType> pixels)
     {
         _pixels = pixels;
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool PositionOutOfBounds(Point levelPosition)
+    {
+        return !_pixels.Size.EncompassesPoint(levelPosition);
     }
 
     [Pure]

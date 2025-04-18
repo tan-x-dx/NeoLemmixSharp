@@ -6,6 +6,9 @@ public static class FontBank
 {
     public static void Initialise(ContentManager contentManager)
     {
+        if (MenuFont is not null)
+            throw new InvalidOperationException($"Cannot initialise {nameof(FontBank)} more than once!");
+
         MenuFont = new MenuFont(contentManager);
         PanelFont = new PanelFont(contentManager);
         SkillCountDigitFont = new SkillCountDigitFont(contentManager);

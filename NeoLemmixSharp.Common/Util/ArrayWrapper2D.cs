@@ -94,4 +94,31 @@ public readonly struct ArrayWrapper2D<T> : IEquatable<ArrayWrapper2D<T>>
         !ReferenceEquals(left._data, right._data) ||
         left._arrayDimensions != right._arrayDimensions ||
         left._subRegion != right._subRegion;
+
+    public static void CopyTo(
+        in ArrayWrapper2D<T> source,
+        in ArrayWrapper2D<T> destination,
+        DihedralTransformation dht)
+    {
+        var sourceSize = source.Size;
+
+        if (dht.Transform(sourceSize) != destination._subRegion.Size)
+            throw new ArgumentException("Cannot compare different regions!");
+
+        var w = sourceSize.W;
+        var h = sourceSize.H;
+        for (var y = 0; y < w; y++)
+        {
+            for (var x = 0; x < h; x++)
+            {
+                var p0 = new Point(x, y);
+                var p1 = dht.Transform(p0, sourceSize);
+
+                var sourceIndex = source._arrayDimensions.GetIndexOfPoint(p0 + source._subRegion.Position);
+                var destinationIndex = destination._arrayDimensions.GetIndexOfPoint(p1 + destination._subRegion.Position);
+
+                destination._data[destinationIndex] = source._data[sourceIndex];
+            }
+        }
+    }
 }

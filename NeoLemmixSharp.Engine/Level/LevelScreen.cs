@@ -85,7 +85,7 @@ public sealed class LevelScreen : IBaseScreen
     }
 
     [Pure]
-    public static bool RegionContainsPoints(RectangularRegion region, Point p1, Point p2)
+    public static bool RegionContainsEitherPoint(RectangularRegion region, Point p1, Point p2)
     {
         var horizontalInterval = region.GetHorizontalInterval();
         var verticalInterval = region.GetVerticalInterval();
@@ -104,14 +104,6 @@ public sealed class LevelScreen : IBaseScreen
     {
         return HorizontalBoundaryBehaviour.IntervalsOverlap(r1.GetHorizontalInterval(), r2.GetHorizontalInterval()) &&
                VerticalBoundaryBehaviour.IntervalsOverlap(r1.GetVerticalInterval(), r2.GetVerticalInterval());
-    }
-
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool PositionOutOfBounds(Point levelPosition)
-    {
-        return (uint)levelPosition.X >= (uint)HorizontalBoundaryBehaviour.LevelLength ||
-               (uint)levelPosition.Y >= (uint)VerticalBoundaryBehaviour.LevelLength;
     }
 
     public IScreenRenderer ScreenRenderer => _levelScreenRenderer;

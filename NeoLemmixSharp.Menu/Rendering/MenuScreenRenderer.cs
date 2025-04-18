@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Ui.Components;
 
