@@ -28,16 +28,16 @@ public sealed class TerrainEraseMask
         Point position,
         int frame)
     {
-        var transformation = new DihedralTransformation(orientation, facingDirection);
+        var transformationData = new DihedralTransformation.TransformationData(orientation, facingDirection, Dimensions.Size);
 
-        var offset = position - transformation.Transform(Dimensions.Position, Dimensions.Size);
+        var offset = position - transformationData.Transform(Dimensions.Position);
         var terrainManager = LevelScreen.TerrainManager;
         var maskPositions = GetMaskPositionsForFrame(frame);
 
         for (var i = 0; i < maskPositions.Length; i++)
         {
             var pixel = maskPositions[i];
-            pixel = transformation.Transform(pixel, Dimensions.Size);
+            pixel = transformationData.Transform(pixel);
 
             terrainManager.ErasePixel(orientation, _destructionMask, facingDirection, LevelScreen.NormalisePosition(pixel + offset));
         }

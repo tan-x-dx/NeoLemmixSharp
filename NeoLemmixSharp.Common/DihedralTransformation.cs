@@ -58,24 +58,13 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     [Pure]
     public RectangularRegion Transform(RectangularRegion region)
     {
-        var w = region.W - 1;
-        var h = region.H - 1;
+        var transformationData = new TransformationData(Orientation, FacingDirection, region.Size);
 
-        var s = GetRotationCoefficients(out var a, out var b, ref w, ref h);
-        s *= FacingDirection.Id;
+        var q0 = transformationData.Transform(new Point());
+        var q1 = transformationData.Transform(region.GetBottomRight() - region.Position);
 
-        var p1 = region.GetBottomRight() - region.Position;
-        var p1x = p1.X;
-        var p1y = p1.Y;
-
-        var q0x = s + (FacingDirection.DeltaX * w) + region.X;
-        var q0y = h + region.Y;
-
-        var q1x = s + (FacingDirection.DeltaX * ((a * p1x) - (b * p1y) + w)) + region.X;
-        var q1y = (b * p1x) + (a * p1y) + h + region.Y;
-
-        var q0 = new Point(q0x, q0y);
-        var q1 = new Point(q1x, q1y);
+        q0 += region.Position;
+        q1 += region.Position;
 
         return new RectangularRegion(q0, q1);
     }
@@ -85,62 +74,88 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         Point position,
         Size size)
     {
-        var x = position.X;
-        var y = position.Y;
-        var w = size.W - 1;
-        var h = size.H - 1;
-
-        var s = GetRotationCoefficients(out var a, out var b, ref w, ref h);
-        s *= FacingDirection.Id;
-
-        var x0 = s + (FacingDirection.DeltaX * ((a * x) - (b * y) + w));
-        var y0 = (b * x) + (a * y) + h;
-        return new Point(x0, y0);
-    }
-
-    private int GetRotationCoefficients(out int a, out int b, ref int w, ref int h)
-    {
-        var wTemp = w;
-        var hTemp = h;
-        switch (Orientation.RotNum)
-        {
-            case EngineConstants.DownOrientationRotNum:
-                a = 1;
-                b = 0;
-                w = 0;
-                h = 0;
-                return wTemp;
-
-            case EngineConstants.LeftOrientationRotNum:
-                a = 0;
-                b = 1;
-                w = hTemp;
-                h = 0;
-                return hTemp;
-
-            case EngineConstants.UpOrientationRotNum:
-                a = -1;
-                b = 0;
-                // w unchanged
-                // h unchanged
-                return wTemp;
-
-            case EngineConstants.RightOrientationRotNum:
-                a = 0;
-                b = -1;
-                w = 0;
-                h = wTemp;
-                return hTemp;
-
-            default:
-                a = 0;
-                b = 0;
-                return Orientation.ThrowOrientationOutOfRangeException<int>(Orientation);
-        }
+        var transformationData = new TransformationData(Orientation, FacingDirection, size);
+        return transformationData.Transform(position);
     }
 
     [Pure]
     public static int Encode(Orientation orientation, FacingDirection facingDirection) => orientation.RotNum | (facingDirection.Id << FlipBitShift);
+
+    public readonly ref struct TransformationData
+    {
+        private readonly int _a;
+        private readonly int _b;
+        private readonly int _w;
+        private readonly int _h;
+        private readonly int _s;
+        private readonly int _d;
+
+        public TransformationData(
+            Orientation orientation,
+            FacingDirection facingDirection,
+            Size size)
+        {
+            _w = size.W - 1;
+            _h = size.H - 1;
+
+            _s = GetRotationCoefficients(orientation, out _a, out _b, ref _w, ref _h);
+            _s *= facingDirection.Id;
+            _d = facingDirection.DeltaX;
+        }
+
+        private static int GetRotationCoefficients(
+            Orientation orientation,
+            out int a,
+            out int b,
+            ref int w,
+            ref int h)
+        {
+            var wTemp = w;
+            var hTemp = h;
+            switch (orientation.RotNum)
+            {
+                case EngineConstants.DownOrientationRotNum:
+                    a = 1;
+                    b = 0;
+                    w = 0;
+                    h = 0;
+                    return wTemp;
+
+                case EngineConstants.LeftOrientationRotNum:
+                    a = 0;
+                    b = 1;
+                    w = hTemp;
+                    h = 0;
+                    return hTemp;
+
+                case EngineConstants.UpOrientationRotNum:
+                    a = -1;
+                    b = 0;
+                    // w unchanged
+                    // h unchanged
+                    return wTemp;
+
+                case EngineConstants.RightOrientationRotNum:
+                    a = 0;
+                    b = -1;
+                    w = 0;
+                    h = wTemp;
+                    return hTemp;
+
+                default:
+                    a = 0;
+                    b = 0;
+                    return Orientation.ThrowOrientationOutOfRangeException<int>(orientation);
+            }
+        }
+
+        public Point Transform(Point p)
+        {
+            var x0 = _s + (_d * ((_a * p.X) - (_b * p.Y) + _w));
+            var y0 = (_b * p.X) + (_a * p.Y) + _h;
+            return new Point(x0, y0);
+        }
+    }
 
     [Pure]
     [SkipLocalsInit]

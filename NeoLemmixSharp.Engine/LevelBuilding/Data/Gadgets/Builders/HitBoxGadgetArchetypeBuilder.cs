@@ -241,10 +241,10 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             if (hitBoxRegionData.Length != 2)
                 throw new InvalidOperationException("Expected exactly two points of data");
 
-            var dihedralTransformation = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection);
+            var transformationData = new DihedralTransformation.TransformationData(gadgetData.Orientation, gadgetData.FacingDirection, SpriteData.BaseSpriteSize);
 
-            var p0 = dihedralTransformation.Transform(hitBoxRegionData[0], SpriteData.BaseSpriteSize);
-            var p1 = dihedralTransformation.Transform(hitBoxRegionData[1], SpriteData.BaseSpriteSize);
+            var p0 = transformationData.Transform(hitBoxRegionData[0]);
+            var p1 = transformationData.Transform(hitBoxRegionData[1]);
 
             return new RectangularHitBoxRegion(p0, p1);
         }
@@ -254,7 +254,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             GadgetData gadgetData,
             ReadOnlySpan<Point> triggerData)
         {
-            var dihedralTransformation = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection);
+            var transformationData = new DihedralTransformation.TransformationData(gadgetData.Orientation, gadgetData.FacingDirection, SpriteData.BaseSpriteSize);
 
             Span<Point> adjustedPoints = triggerData.Length > 32
                 ? new Point[triggerData.Length]
@@ -262,7 +262,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
             for (var i = 0; i < triggerData.Length; i++)
             {
-                adjustedPoints[i] = dihedralTransformation.Transform(triggerData[i], SpriteData.BaseSpriteSize);
+                adjustedPoints[i] = transformationData.Transform(triggerData[i]);
             }
 
             return new PointSetHitBoxRegion(adjustedPoints);
@@ -275,10 +275,10 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             if (hitBoxRegionData.Length != 2)
                 throw new InvalidOperationException("Expected data of length 2");
 
-            var dihedralTransformation = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection);
+            var transformationData = new DihedralTransformation.TransformationData(gadgetData.Orientation, gadgetData.FacingDirection, SpriteData.BaseSpriteSize);
 
-            var p0 = dihedralTransformation.Transform(hitBoxRegionData[0], SpriteData.BaseSpriteSize);
-            var p1 = dihedralTransformation.Transform(hitBoxRegionData[1], SpriteData.BaseSpriteSize);
+            var p0 = transformationData.Transform(hitBoxRegionData[0]);
+            var p1 = transformationData.Transform(hitBoxRegionData[1]);
 
             return new ResizableRectangularHitBoxRegion(hitBoxGadgetBounds, p0.X, p0.Y, p1.X, p1.Y);
         }

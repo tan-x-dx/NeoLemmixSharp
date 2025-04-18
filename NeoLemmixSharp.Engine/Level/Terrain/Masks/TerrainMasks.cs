@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 
@@ -45,14 +46,19 @@ public static class TerrainMasks
         BasherMask.ApplyEraseMask(orientation, facingDirection, position, frame);
     }
 
-    public static ReadOnlySpan<PixelType> GetBasherSimulationScratchSpace(
+    public static void GetBasherSimulationScratchSpace(
         Lemming lemming,
-        int frame)
+        out ArrayWrapper2D<PixelType> scratchSpaceData)
     {
+        var dht = new DihedralTransformation(lemming.Orientation, lemming.FacingDirection);
         var terrainManager = LevelScreen.TerrainManager;
 
+        var sourceRegion = BasherMask.Dimensions.Translate(lemming.AnchorPosition);
 
-        return new ReadOnlySpan<PixelType>(BasherSimulationScratchSpace);
+        var source = new ArrayWrapper2D<PixelType>(terrainManager.RawPixels, terrainManager.LevelDimensions, sourceRegion);
+        scratchSpaceData = new ArrayWrapper2D<PixelType>(BasherSimulationScratchSpace, BasherMask.Dimensions.Size);
+
+        ArrayWrapper2D<PixelType>.CopyTo(in source, in scratchSpaceData, dht);
     }
 
     public static void ApplyBomberMask(Lemming lemming)
