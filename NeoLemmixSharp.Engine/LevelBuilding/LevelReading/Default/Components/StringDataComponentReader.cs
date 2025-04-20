@@ -21,8 +21,12 @@ public sealed class StringDataComponentReader : ILevelDataReader
     {
         AlreadyUsed = true;
         var numberOfItems = rawFileData.Read16BitUnsignedInteger();
+
+        LevelReadingException.ReaderAssert(_stringIdLookup.Count == 0, "Expected string list to be empty!");
         _stringIdLookup.Capacity = numberOfItems + 1;
         _stringIdLookup.Add(string.Empty);
+
+        var utf8Encoding = Encoding.UTF8;
 
         while (numberOfItems-- > 0)
         {
@@ -32,7 +36,7 @@ public sealed class StringDataComponentReader : ILevelDataReader
             // The next 16bit int specifies how many bytes make up the next string
             int stringLengthInBytes = rawFileData.Read16BitUnsignedInteger();
             var stringBytes = rawFileData.ReadBytes(stringLengthInBytes);
-            var actualString = Encoding.UTF8.GetString(stringBytes);
+            var actualString = utf8Encoding.GetString(stringBytes);
 
             _stringIdLookup.Add(actualString);
         }

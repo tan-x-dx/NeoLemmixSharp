@@ -117,11 +117,11 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     }
 
     /// <summary>
-    /// Safe alternative to performing the array lookup - the input may be negative, or an invalid id. In such a case - the NoneAction is returned.
+    /// Safe alternative to performing the array lookup - the input may be negative, or an invalid id. In such a case the <see cref="NoneAction"/> is returned
     /// </summary>
     /// <param name="unboundActionId">The (possibly invalid) id of the action to fetch.</param>
-    /// <returns>The LemmingAction with that id, or the NoneAction if the id is invalid.</returns>
-    public static LemmingAction GetActionFromUnboundId(int unboundActionId)
+    /// <returns>The LemmingAction with that id, or the <see cref="NoneAction"/> if the id is invalid.</returns>
+    public static LemmingAction GetActionOrDefault(int unboundActionId)
     {
         return (uint)unboundActionId < (uint)LemmingActions.Length
             ? LemmingActions[unboundActionId]

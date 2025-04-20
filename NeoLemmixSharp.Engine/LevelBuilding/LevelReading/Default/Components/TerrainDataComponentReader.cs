@@ -43,10 +43,11 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
-        int orientationByte = rawFileData.Read8BitUnsignedInteger();
-        var dht = new DihedralTransformation(orientationByte);
+        int dhtByte = rawFileData.Read8BitUnsignedInteger();
+        LevelReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
+        var dht = new DihedralTransformation(dhtByte);
 
-        byte terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
+        int terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
         var decipheredTerrainDataMisc = LevelReadWriteHelpers.DecipherTerrainDataMiscByte(terrainDataMiscByte);
 
         Color? tintColor = null;

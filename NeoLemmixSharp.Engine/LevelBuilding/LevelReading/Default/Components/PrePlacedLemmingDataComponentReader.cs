@@ -22,26 +22,36 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
 
         while (numberOfItemsInSection-- > 0)
         {
-            int x = rawFileData.Read16BitUnsignedInteger();
-            int y = rawFileData.Read16BitUnsignedInteger();
-            uint state = rawFileData.Read32BitUnsignedInteger();
-
-            int orientationByte = rawFileData.Read8BitUnsignedInteger();
-            var dht = new DihedralTransformation(orientationByte);
-            int teamId = rawFileData.Read8BitUnsignedInteger();
-            int initialActionId = rawFileData.Read8BitUnsignedInteger();
-
-            levelData.PrePlacedLemmingData.Add(new LemmingData
-            {
-                Position = new Point(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
-                State = state,
-
-                Orientation = dht.Orientation,
-                FacingDirection = dht.FacingDirection,
-
-                TeamId = teamId,
-                InitialLemmingAction = LemmingAction.AllItems[initialActionId]
-            });
+            levelData.PrePlacedLemmingData.Add(ReadLemmingData(rawFileData));
         }
+    }
+
+    private static LemmingData ReadLemmingData(RawFileData rawFileData)
+    {
+        int x = rawFileData.Read16BitUnsignedInteger();
+        int y = rawFileData.Read16BitUnsignedInteger();
+        uint state = rawFileData.Read32BitUnsignedInteger();
+
+        int dhtByte = rawFileData.Read8BitUnsignedInteger();
+        LevelReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
+        var dht = new DihedralTransformation(dhtByte);
+
+        int teamId = rawFileData.Read8BitUnsignedInteger();
+        int initialActionId = rawFileData.Read8BitUnsignedInteger();
+
+        var initialLemmingAction = LemmingAction.GetActionOrDefault(initialActionId);
+        LevelReadingException.ReaderAssert(initialLemmingAction != NoneAction.Instance, "Invalid initial action for lemming!");
+
+        return new LemmingData
+        {
+            Position = new Point(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
+            State = state,
+
+            Orientation = dht.Orientation,
+            FacingDirection = dht.FacingDirection,
+
+            TeamId = teamId,
+            InitialLemmingAction = initialLemmingAction
+        };
     }
 }

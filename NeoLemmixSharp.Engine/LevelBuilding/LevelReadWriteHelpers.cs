@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
-using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -70,14 +69,13 @@ public static class LevelReadWriteHelpers
 
     public const int NumberOfBytesForMainTerrainData = 9;
 
-    public static DecipheredTerrainDataMisc DecipherTerrainDataMiscByte(byte b)
+    public static DecipheredTerrainDataMisc DecipherTerrainDataMiscByte(int terrainDataMiscByte)
     {
-        int intValue = b;
-        var erase = ((intValue >>> TerrainDataEraseBitShift) & 1) != 0;
-        var noOverwrite = ((intValue >>> TerrainDataNoOverwriteBitShift) & 1) != 0;
-        var hasTintSpecified = ((intValue >>> TerrainDataTintBitShift) & 1) != 0;
-        var hasWidthSpecified = ((intValue >>> TerrainDataResizeWidthBitShift) & 1) != 0;
-        var hasHeightSpecified = ((intValue >>> TerrainDataResizeHeightBitShift) & 1) != 0;
+        var erase = ((terrainDataMiscByte >>> TerrainDataEraseBitShift) & 1) != 0;
+        var noOverwrite = ((terrainDataMiscByte >>> TerrainDataNoOverwriteBitShift) & 1) != 0;
+        var hasTintSpecified = ((terrainDataMiscByte >>> TerrainDataTintBitShift) & 1) != 0;
+        var hasWidthSpecified = ((terrainDataMiscByte >>> TerrainDataResizeWidthBitShift) & 1) != 0;
+        var hasHeightSpecified = ((terrainDataMiscByte >>> TerrainDataResizeHeightBitShift) & 1) != 0;
 
         return new DecipheredTerrainDataMisc(
             erase,
@@ -137,5 +135,15 @@ public static class LevelReadWriteHelpers
     {
         isSteel = ((byteValue >>> 2) & 1U) != 0U;
         resizeType = (ResizeType)(byteValue & 3U);
+    }
+
+    public static void AssertDihedralTransformationByteMakesSense(int dhtByte)
+    {
+        const int upperBitsMask = ~7;
+
+        if ((dhtByte & upperBitsMask) == 0)
+            return;
+
+        throw new LevelReadingException("Read suspicious dihedral transformation byte!");
     }
 }

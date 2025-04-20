@@ -45,8 +45,9 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
-        int orientationByte = rawFileData.Read8BitUnsignedInteger();
-        var dht = new DihedralTransformation(orientationByte);
+        int dhtByte = rawFileData.Read8BitUnsignedInteger();
+        LevelReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
+        var dht = new DihedralTransformation(dhtByte);
 
         int initialStateId = rawFileData.Read8BitUnsignedInteger();
         var renderMode = GadgetRenderModeHelpers.GetGadgetRenderMode(rawFileData.Read8BitUnsignedInteger());
@@ -72,22 +73,8 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
             InputNames = inputNames
         };
 
-        var i = 0;
-        while (i < numberOfInputNames)
-        {
-            int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
-            inputNames[i++] = _stringIdLookup[inputNameStringId];
-        }
-
-        Debug.Assert(i == inputNames.Length);
-
-        int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
-        while (numberOfProperties-- > 0)
-        {
-            var gadgetProperty = GadgetPropertyHelpers.GetGadgetProperty(rawFileData.Read8BitUnsignedInteger());
-            int propertyValue = rawFileData.Read32BitSignedInteger();
-            result.AddProperty(gadgetProperty, propertyValue);
-        }
+        ReadInputNames(rawFileData, inputNames, numberOfInputNames);
+        ReadProperties(rawFileData, result);
 
         AssertGadgetDataBytesMakeSense(
             rawFileData.Position,
@@ -95,6 +82,27 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
             numberOfBytesToRead);
 
         return result;
+    }
+
+    private void ReadInputNames(RawFileData rawFileData, string[] inputNames, int numberOfInputNames)
+    {
+        var i = 0;
+        while (i < numberOfInputNames)
+        {
+            int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
+            inputNames[i++] = _stringIdLookup[inputNameStringId];
+        }
+    }
+
+    private static void ReadProperties(RawFileData rawFileData, GadgetData result)
+    {
+        int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
+        while (numberOfProperties-- > 0)
+        {
+            var gadgetProperty = GadgetPropertyHelpers.GetGadgetProperty(rawFileData.Read8BitUnsignedInteger());
+            int propertyValue = rawFileData.Read32BitSignedInteger();
+            result.AddProperty(gadgetProperty, propertyValue);
+        }
     }
 
     private static void AssertGadgetDataBytesMakeSense(
