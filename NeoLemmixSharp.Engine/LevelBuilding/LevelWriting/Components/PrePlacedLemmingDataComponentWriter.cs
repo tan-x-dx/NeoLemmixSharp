@@ -3,16 +3,19 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
-public sealed class PrePlacedLemmingDataComponentWriter : ILevelDataWriter
+public sealed class PrePlacedLemmingDataComponentWriter : LevelDataComponentWriter
 {
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.PrePlacedLemmingDataSectionIdentifier;
+    public PrePlacedLemmingDataComponentWriter()
+        : base(LevelReadWriteHelpers.PrePlacedLemmingDataSectionIdentifierIndex)
+    {
+    }
 
-    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return (ushort)levelData.PrePlacedLemmingData.Count;
     }
 
-    public void WriteSection(
+    public override void WriteSection(
         BinaryWriter writer,
         LevelData levelData)
     {

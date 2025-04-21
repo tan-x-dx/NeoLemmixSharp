@@ -2,16 +2,19 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
-public sealed class HatchGroupDataComponentWriter : ILevelDataWriter
+public sealed class HatchGroupDataComponentWriter : LevelDataComponentWriter
 {
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.HatchGroupDataSectionIdentifier;
+    public HatchGroupDataComponentWriter()
+        : base(LevelReadWriteHelpers.HatchGroupDataSectionIdentifierIndex)
+    {
+    }
 
-    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return (ushort)levelData.AllHatchGroupData.Count;
     }
 
-    public void WriteSection(
+    public override void WriteSection(
         BinaryWriter writer,
         LevelData levelData)
     {

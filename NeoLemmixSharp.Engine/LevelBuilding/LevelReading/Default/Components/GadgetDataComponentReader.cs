@@ -3,25 +3,22 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
-using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
-public sealed class GadgetDataComponentReader : ILevelDataReader
+public sealed class GadgetDataComponentReader : LevelDataComponentReader
 {
     private readonly List<string> _stringIdLookup;
-
-    public bool AlreadyUsed { get; private set; }
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.GadgetDataSectionIdentifier;
 
     public GadgetDataComponentReader(
         Version version,
         List<string> stringIdLookup)
+        : base(LevelReadWriteHelpers.GadgetDataSectionIdentifierIndex)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
@@ -45,6 +42,9 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
+        x -= LevelReadWriteHelpers.PositionOffset;
+        y -= LevelReadWriteHelpers.PositionOffset;
+
         int dhtByte = rawFileData.Read8BitUnsignedInteger();
         LevelReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
         var dht = new DihedralTransformation(dhtByte);
@@ -62,7 +62,7 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
             Style = _stringIdLookup[styleId],
             GadgetPiece = _stringIdLookup[pieceId],
 
-            Position = new Point(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
+            Position = new Point(x, y),
 
             InitialStateId = initialStateId,
             GadgetRenderMode = renderMode,
@@ -99,7 +99,8 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
         int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
         while (numberOfProperties-- > 0)
         {
-            var gadgetProperty = GadgetPropertyHelpers.GetGadgetProperty(rawFileData.Read8BitUnsignedInteger());
+            var rawGadgetProperty = rawFileData.Read8BitUnsignedInteger();
+            var gadgetProperty = GadgetPropertyHelpers.GetGadgetProperty(rawGadgetProperty);
             int propertyValue = rawFileData.Read32BitSignedInteger();
             result.AddProperty(gadgetProperty, propertyValue);
         }

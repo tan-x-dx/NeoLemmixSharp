@@ -4,23 +4,22 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
-public sealed class TerrainDataComponentWriter : ILevelDataWriter
+public sealed class TerrainDataComponentWriter : LevelDataComponentWriter
 {
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
     public TerrainDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
+        : base(LevelReadWriteHelpers.TerrainDataSectionIdentifierIndex)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.TerrainDataSectionIdentifier;
-
-    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return (ushort)levelData.AllTerrainData.Count;
     }
 
-    public void WriteSection(
+    public override void WriteSection(
         BinaryWriter writer,
         LevelData levelData)
     {
@@ -60,13 +59,9 @@ public sealed class TerrainDataComponentWriter : ILevelDataWriter
 
     private static void WriteTerrainDataMisc(BinaryWriter writer, TerrainData terrainData)
     {
-        var miscDataBits = (terrainData.Erase ? 1 << LevelReadWriteHelpers.TerrainDataEraseBitShift : 0) |
-                           (terrainData.NoOverwrite ? 1 << LevelReadWriteHelpers.TerrainDataNoOverwriteBitShift : 0) |
-                           (terrainData.Tint.HasValue ? 1 << LevelReadWriteHelpers.TerrainDataTintBitShift : 0) |
-                           (terrainData.Width.HasValue ? 1 << LevelReadWriteHelpers.TerrainDataResizeWidthBitShift : 0) |
-                           (terrainData.Height.HasValue ? 1 << LevelReadWriteHelpers.TerrainDataResizeHeightBitShift : 0);
+        var miscDataBits = LevelReadWriteHelpers.EncodeTerrainArchetypeDataByte(terrainData);
 
-        writer.Write((byte)miscDataBits);
+        writer.Write(miscDataBits);
 
         if (terrainData.Tint.HasValue)
         {

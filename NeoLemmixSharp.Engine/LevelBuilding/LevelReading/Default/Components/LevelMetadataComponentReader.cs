@@ -1,24 +1,23 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
-public sealed class LevelDataComponentReader : ILevelDataReader
+public sealed class LevelMetadataComponentReader : LevelDataComponentReader
 {
     private readonly List<string> _stringIdLookup;
 
-    public bool AlreadyUsed { get; private set; }
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelDataSectionIdentifier;
-
-    public LevelDataComponentReader(
+    public LevelMetadataComponentReader(
         Version version,
         List<string> stringIdLookup)
+        : base(LevelReadWriteHelpers.LevelMetadataSectionIdentifierIndex)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
@@ -84,15 +83,16 @@ public sealed class LevelDataComponentReader : ILevelDataReader
 
     private void ReadBackgroundData(RawFileData rawFileData, LevelData levelData)
     {
-        uint specifierByte = rawFileData.Read8BitUnsignedInteger();
+        int rawBackgroundType = rawFileData.Read8BitUnsignedInteger();
+        var backgroundType = BackgroundTypeHelpers.GetBackgroundType(rawBackgroundType);
 
-        levelData.LevelBackground = specifierByte switch
+        levelData.LevelBackground = backgroundType switch
         {
-            LevelReadWriteHelpers.NoBackgroundSpecified => null,
-            LevelReadWriteHelpers.SolidColorBackground => ReadSolidColorBackgroundData(),
-            LevelReadWriteHelpers.TextureBackground => ReadTextureBackgroundData(),
+            BackgroundType.NoBackgroundSpecified => null,
+            BackgroundType.SolidColorBackground => ReadSolidColorBackgroundData(),
+            BackgroundType.TextureBackground => ReadTextureBackgroundData(),
 
-            _ => throw new LevelReadingException($"Unknown background specifier byte: {specifierByte:X}")
+            _ => Helpers.ThrowUnknownEnumValueException<BackgroundType, BackgroundData>(rawBackgroundType)
         };
 
         return;

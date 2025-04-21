@@ -2,48 +2,44 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
-public sealed class LevelTextDataComponentReader : ILevelDataReader
+public sealed class LevelTextDataComponentReader : LevelDataComponentReader
 {
     private readonly List<string> _stringIdLookup;
-
-    public bool AlreadyUsed { get; private set; }
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelTextDataSectionIdentifier;
 
     public LevelTextDataComponentReader(
         Version version,
         List<string> stringIdLookup)
+        : base(LevelReadWriteHelpers.LevelTextDataSectionIdentifierIndex)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
-        int numberOfPreTextItems = rawFileData.Read8BitUnsignedInteger();
-        levelData.PreTextLines.Capacity = numberOfPreTextItems;
-        int i = numberOfPreTextItems;
 
-        while (i-- > 0)
-        {
-            int stringId = rawFileData.Read16BitUnsignedInteger();
-            levelData.PreTextLines.Add(_stringIdLookup[stringId]);
-        }
+        ReadTextLines(rawFileData, levelData.PreTextLines);
 
-        int numberOfPostTextItems = rawFileData.Read8BitUnsignedInteger();
-        levelData.PostTextLines.Capacity = numberOfPostTextItems;
-        i = numberOfPostTextItems;
-
-        while (i-- > 0)
-        {
-            int stringId = rawFileData.Read16BitUnsignedInteger();
-            levelData.PostTextLines.Add(_stringIdLookup[stringId]);
-        }
+        ReadTextLines(rawFileData, levelData.PostTextLines);
 
         AssertLevelTextDataBytesMakeSense(
             numberOfItemsInSection,
-            numberOfPreTextItems,
-            numberOfPostTextItems);
+            levelData.PreTextLines.Count,
+            levelData.PostTextLines.Count);
+    }
+
+    private void ReadTextLines(RawFileData rawFileData, List<string> collection)
+    {
+        int numberOfTextItems = rawFileData.Read8BitUnsignedInteger();
+        collection.Capacity = numberOfTextItems;
+        int i = numberOfTextItems;
+
+        while (i-- > 0)
+        {
+            int stringId = rawFileData.Read16BitUnsignedInteger();
+            collection.Add(_stringIdLookup[stringId]);
+        }
     }
 
     private static void AssertLevelTextDataBytesMakeSense(

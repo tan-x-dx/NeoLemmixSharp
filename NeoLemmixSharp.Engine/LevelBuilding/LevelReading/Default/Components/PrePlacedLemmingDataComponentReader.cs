@@ -4,17 +4,16 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
-public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
+public sealed class PrePlacedLemmingDataComponentReader : LevelDataComponentReader
 {
-    public bool AlreadyUsed { get; private set; }
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.PrePlacedLemmingDataSectionIdentifier;
 
     public PrePlacedLemmingDataComponentReader(
         Version version)
+        : base(LevelReadWriteHelpers.PrePlacedLemmingDataSectionIdentifierIndex)
     {
     }
 
-    public void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
@@ -22,7 +21,9 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
 
         while (numberOfItemsInSection-- > 0)
         {
-            levelData.PrePlacedLemmingData.Add(ReadLemmingData(rawFileData));
+            var lemmingData = ReadLemmingData(rawFileData);
+
+            levelData.PrePlacedLemmingData.Add(lemmingData);
         }
     }
 
@@ -30,6 +31,10 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
     {
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
+
+        x -= LevelReadWriteHelpers.PositionOffset;
+        y -= LevelReadWriteHelpers.PositionOffset;
+
         uint state = rawFileData.Read32BitUnsignedInteger();
 
         int dhtByte = rawFileData.Read8BitUnsignedInteger();
@@ -44,7 +49,7 @@ public sealed class PrePlacedLemmingDataComponentReader : ILevelDataReader
 
         return new LemmingData
         {
-            Position = new Point(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
+            Position = new Point(x, y),
             State = state,
 
             Orientation = dht.Orientation,

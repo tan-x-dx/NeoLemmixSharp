@@ -2,25 +2,24 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
-public sealed class LevelDataComponentWriter : ILevelDataWriter
+public sealed class LevelMetadataComponentWriter : LevelDataComponentWriter
 {
     private const int NumberOfBytesForMainLevelData = 31;
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public LevelDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
+    public LevelMetadataComponentWriter(Dictionary<string, ushort> stringIdLookup)
+        : base(LevelReadWriteHelpers.LevelMetadataSectionIdentifierIndex)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelDataSectionIdentifier;
-
-    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return 1;
     }
 
-    public void WriteSection(
+    public override void WriteSection(
         BinaryWriter writer,
         LevelData levelData)
     {
@@ -91,14 +90,14 @@ public sealed class LevelDataComponentWriter : ILevelDataWriter
         var backgroundData = levelData.LevelBackground;
         if (backgroundData is null)
         {
-            writer.Write((byte)LevelReadWriteHelpers.NoBackgroundSpecified);
+            writer.Write((byte)BackgroundType.NoBackgroundSpecified);
 
             return;
         }
 
         if (backgroundData.IsSolidColor)
         {
-            writer.Write((byte)LevelReadWriteHelpers.SolidColorBackground);
+            writer.Write((byte)BackgroundType.SolidColorBackground);
             var actualBackgroundColor = backgroundData.Color;
             writer.Write(actualBackgroundColor.R);
             writer.Write(actualBackgroundColor.G);
@@ -107,7 +106,7 @@ public sealed class LevelDataComponentWriter : ILevelDataWriter
             return;
         }
 
-        writer.Write((byte)LevelReadWriteHelpers.TextureBackground);
+        writer.Write((byte)BackgroundType.TextureBackground);
         var backgroundStringId = _stringIdLookup[backgroundData.BackgroundImageName];
         writer.Write(backgroundStringId);
     }

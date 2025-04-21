@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default;
 
 public sealed class DefaultLevelReader : ILevelReader
 {
-    private readonly ILevelDataReader[] _dataReaders;
+    private readonly LevelDataComponentReader[] _dataReaders;
     private readonly RawFileData _rawFileData;
 
     public DefaultLevelReader(string filePath)
@@ -23,7 +23,7 @@ public sealed class DefaultLevelReader : ILevelReader
         [
             new StringDataComponentReader(version, stringIdLookup),
 
-            new LevelDataComponentReader(version, stringIdLookup),
+            new LevelMetadataComponentReader(version, stringIdLookup),
             new LevelTextDataComponentReader(version, stringIdLookup),
             new HatchGroupDataComponentReader(version),
             new LevelObjectiveDataComponentReader(version, stringIdLookup),
@@ -56,9 +56,9 @@ public sealed class DefaultLevelReader : ILevelReader
         return result;
     }
 
-    private ILevelDataReader GetNextDataReader()
+    private LevelDataComponentReader GetNextDataReader()
     {
-        var sectionIdentifierBytes = _rawFileData.ReadBytes(2);
+        var sectionIdentifierBytes = _rawFileData.ReadBytes(LevelReadWriteHelpers.NumberOfBytesForSectionIdentifier);
 
         foreach (var levelDataWriter in _dataReaders)
         {
@@ -66,8 +66,8 @@ public sealed class DefaultLevelReader : ILevelReader
             {
                 if (levelDataWriter.AlreadyUsed)
                     throw new LevelReadingException(
-                        "Attempted to read the same section multiple times!" +
-                        $"{levelDataWriter.GetType().Name}");
+                        "Attempted to read the same section multiple times! " +
+                        levelDataWriter.GetType().Name);
 
                 return levelDataWriter;
             }

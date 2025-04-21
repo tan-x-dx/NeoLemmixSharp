@@ -3,21 +3,19 @@ using System.Text;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
-public sealed class StringDataComponentReader : ILevelDataReader
+public sealed class StringDataComponentReader : LevelDataComponentReader
 {
     private readonly List<string> _stringIdLookup;
-
-    public bool AlreadyUsed { get; private set; }
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.StringDataSectionIdentifier;
 
     public StringDataComponentReader(
         Version version,
         List<string> stringIdLookup)
+        : base(LevelReadWriteHelpers.StringDataSectionIdentifierIndex)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         var numberOfItems = rawFileData.Read16BitUnsignedInteger();
@@ -26,19 +24,24 @@ public sealed class StringDataComponentReader : ILevelDataReader
         _stringIdLookup.Capacity = numberOfItems + 1;
         _stringIdLookup.Add(string.Empty);
 
-        var utf8Encoding = Encoding.UTF8;
-
         while (numberOfItems-- > 0)
         {
-            int id = rawFileData.Read16BitUnsignedInteger();
-            LevelReadingException.ReaderAssert(id == _stringIdLookup.Count, "Invalid string ids");
-
-            // The next 16bit int specifies how many bytes make up the next string
-            int stringLengthInBytes = rawFileData.Read16BitUnsignedInteger();
-            var stringBytes = rawFileData.ReadBytes(stringLengthInBytes);
-            var actualString = utf8Encoding.GetString(stringBytes);
+            var actualString = ReadString(rawFileData);
 
             _stringIdLookup.Add(actualString);
         }
+    }
+
+    private string ReadString(RawFileData rawFileData)
+    {
+        int id = rawFileData.Read16BitUnsignedInteger();
+        LevelReadingException.ReaderAssert(id == _stringIdLookup.Count, "Invalid string ids");
+
+        // The next 16bit int specifies how many bytes make up the next string
+        int stringLengthInBytes = rawFileData.Read16BitUnsignedInteger();
+        var stringBytes = rawFileData.ReadBytes(stringLengthInBytes);
+        var actualString = Encoding.UTF8.GetString(stringBytes);
+
+        return actualString;
     }
 }

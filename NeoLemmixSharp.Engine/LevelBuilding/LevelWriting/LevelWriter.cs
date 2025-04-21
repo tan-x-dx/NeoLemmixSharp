@@ -25,12 +25,12 @@ public readonly ref struct LevelWriter
 
         var terrainComponentWriter = new TerrainDataComponentWriter(stringIdLookup);
 
-        ReadOnlySpan<ILevelDataWriter> levelDataWriters =
+        ReadOnlySpan<LevelDataComponentWriter> levelDataWriters =
         [
             // StringDataComponentWriter needs to be first as it will populate the stringIdLookup!
             new StringDataComponentWriter(stringIdLookup),
 
-            new LevelDataComponentWriter(stringIdLookup),
+            new LevelMetadataComponentWriter(stringIdLookup),
             new LevelTextDataComponentWriter(stringIdLookup),
             new HatchGroupDataComponentWriter(),
             new LevelObjectiveDataComponentWriter(stringIdLookup),

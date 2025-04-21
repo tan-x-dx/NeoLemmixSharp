@@ -103,15 +103,15 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
 
     public ref struct Enumerator
     {
-        private readonly TPerfectHasher _hasher;
         private readonly ReadOnlySpan<TValue> _values;
         private BitArrayEnumerator _bitEnumerator;
+        private readonly TPerfectHasher _hasher;
 
         public Enumerator(BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> dictionary)
         {
-            _hasher = dictionary._hasher;
             _values = new ReadOnlySpan<TValue>(dictionary._values);
             _bitEnumerator = new BitArrayEnumerator(dictionary._bits.AsReadOnlySpan(), dictionary._popCount);
+            _hasher = dictionary._hasher;
         }
 
         [DebuggerStepThrough]
