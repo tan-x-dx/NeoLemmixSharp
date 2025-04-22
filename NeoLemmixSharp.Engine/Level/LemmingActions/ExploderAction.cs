@@ -32,7 +32,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
         return false;
     }
 
-    string IDestructionMask.Name => LemmingActionName;
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)

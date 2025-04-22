@@ -10,6 +10,9 @@ public static class HitBoxGadgetReader
 {
     public static HitBoxGadgetArchetypeBuilder ReadGadget(string styleName, string pieceName, RawFileData rawFileData)
     {
+        int resizeTypeByte = rawFileData.Read8BitUnsignedInteger();
+        var resizeType = (ResizeType)(resizeTypeByte & 3);
+
         var gadgetStateData = ReadStateData(rawFileData);
 
         var spriteData = new SpriteDataReader().ReadSpriteData(rawFileData);
@@ -19,7 +22,7 @@ public static class HitBoxGadgetReader
             StyleName = styleName,
             PieceName = pieceName,
 
-            ResizeType = ResizeType.None,
+            ResizeType = resizeType,
 
             AllGadgetStateData = gadgetStateData,
             SpriteData = spriteData

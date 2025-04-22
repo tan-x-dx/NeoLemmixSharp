@@ -5,21 +5,19 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
-public sealed class TerrainDataComponentReader : ILevelDataReader
+public sealed class TerrainDataComponentReader : LevelDataComponentReader
 {
     private readonly List<string> _stringIdLookup;
-
-    public bool AlreadyUsed { get; private set; }
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.TerrainDataSectionIdentifier;
 
     public TerrainDataComponentReader(
         Version version,
         List<string> stringIdLookup)
+        : base(LevelReadWriteHelpers.TerrainDataSectionIdentifierIndex)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
@@ -43,11 +41,15 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
-        int orientationByte = rawFileData.Read8BitUnsignedInteger();
-        var dht = new DihedralTransformation(orientationByte);
+        x -= LevelReadWriteHelpers.PositionOffset;
+        y -= LevelReadWriteHelpers.PositionOffset;
 
-        byte terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
-        var decipheredTerrainDataMisc = LevelReadWriteHelpers.DecipherTerrainDataMiscByte(terrainDataMiscByte);
+        int dhtByte = rawFileData.Read8BitUnsignedInteger();
+        LevelReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
+        var dht = new DihedralTransformation(dhtByte);
+
+        int terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
+        var decipheredTerrainDataMisc = LevelReadWriteHelpers.DecodeTerrainDataMiscByte(terrainDataMiscByte);
 
         Color? tintColor = null;
         if (decipheredTerrainDataMisc.HasTintSpecified)
@@ -78,7 +80,7 @@ public sealed class TerrainDataComponentReader : ILevelDataReader
             Style = _stringIdLookup[styleId],
             TerrainPiece = _stringIdLookup[pieceId],
 
-            Position = new Point(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
+            Position = new Point(x, y),
 
             NoOverwrite = decipheredTerrainDataMisc.NoOverwrite,
             Orientation = dht.Orientation,

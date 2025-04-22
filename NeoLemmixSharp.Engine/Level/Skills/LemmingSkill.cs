@@ -13,10 +13,10 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
 {
-    private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
-    private static readonly LemmingSkillSet ClassicSkills = GetClassicSkills();
     protected static readonly LemmingActionSet ActionsThatCanBeAssignedPermanentSkill = GetActionsThatCanBeAssignedPermanentSkill();
     protected static readonly LemmingActionSet ActionsThatCanBeAssignedRotationSkill = GetActionsThatCanBeAssignedRotationSkill();
+    private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
+    private static readonly LemmingSkillSet ClassicSkills = GetClassicSkills();
 
     public const int NumberOfItems = EngineConstants.NumberOfLemmingSkills;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);

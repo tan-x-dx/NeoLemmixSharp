@@ -4,8 +4,7 @@ namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
 public sealed class TerrainEraseMask
 {
-    private readonly Point _anchorPoint;
-    private readonly Size _maskSize;
+    public readonly RectangularRegion Dimensions;
     private readonly Range[] _spanRanges;
     private readonly Point[] _maskPositions;
     private readonly IDestructionMask _destructionMask;
@@ -17,8 +16,7 @@ public sealed class TerrainEraseMask
         Point[] maskPositions,
         IDestructionMask destructionMask)
     {
-        _anchorPoint = anchorPoint;
-        _maskSize = maskSize;
+        Dimensions = new RectangularRegion(anchorPoint, maskSize);
         _spanRanges = spanRanges;
         _maskPositions = maskPositions;
         _destructionMask = destructionMask;
@@ -30,16 +28,16 @@ public sealed class TerrainEraseMask
         Point position,
         int frame)
     {
-        var transformation = new DihedralTransformation(orientation, facingDirection);
+        var transformationData = new DihedralTransformation.TransformationData(orientation, facingDirection, Dimensions.Size);
 
-        var offset = position - transformation.Transform(_anchorPoint, _maskSize);
+        var offset = position - transformationData.Transform(Dimensions.Position);
         var terrainManager = LevelScreen.TerrainManager;
         var maskPositions = GetMaskPositionsForFrame(frame);
 
         for (var i = 0; i < maskPositions.Length; i++)
         {
             var pixel = maskPositions[i];
-            pixel = transformation.Transform(pixel, _maskSize);
+            pixel = transformationData.Transform(pixel);
 
             terrainManager.ErasePixel(orientation, _destructionMask, facingDirection, LevelScreen.NormalisePosition(pixel + offset));
         }

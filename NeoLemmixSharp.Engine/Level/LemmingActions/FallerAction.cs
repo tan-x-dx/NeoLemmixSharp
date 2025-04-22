@@ -144,7 +144,7 @@ public sealed class FallerAction : LemmingAction
         lemming.DistanceFallen = distanceFallen;
         lemming.TrueDistanceFallen = distanceFallen;
 
-        base.TransitionLemmingToAction(lemming, turnAround);
+        DoMainTransitionActions(lemming, turnAround);
     }
 
     [Pure]

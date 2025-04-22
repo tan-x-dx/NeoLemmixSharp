@@ -412,7 +412,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
     private void ClearCachedData()
     {
         _cachedTopLeftChunkQuery = new Point(-256, -256);
-        _cachedBottomRightChunkQuery = new Point(-256, -256);
+        _cachedBottomRightChunkQuery = _cachedTopLeftChunkQuery;
     }
 
     private enum ChunkOperationType

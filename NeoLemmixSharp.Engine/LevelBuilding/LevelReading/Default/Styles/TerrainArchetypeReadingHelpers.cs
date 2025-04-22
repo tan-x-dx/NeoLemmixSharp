@@ -31,7 +31,7 @@ public static class TerrainArchetypeReadingHelpers
         int initialPosition = rawFileData.Position;
 
         uint terrainArchetypeDataByte = rawFileData.Read8BitUnsignedInteger();
-        LevelReadWriteHelpers.DecipherTerrainArchetypeDataByte(
+        LevelReadWriteHelpers.DecodeTerrainArchetypeDataByte(
             terrainArchetypeDataByte,
             out var isSteel,
             out var resizeType);

@@ -175,13 +175,20 @@ public sealed class SwimmerAction : LemmingAction
 
     protected override RectangularRegion ActionBounds() => LemmingActionBounds.SwimmerActionBounds;
 
-    [SkipLocalsInit]
     public override void TransitionLemmingToAction(
         Lemming lemming,
         bool turnAround)
     {
-        base.TransitionLemmingToAction(lemming, turnAround);
+        DoMainTransitionActions(lemming, turnAround);
 
+        DoSwimmerTransitionActions(lemming, turnAround);
+    }
+
+    [SkipLocalsInit]
+    private static void DoSwimmerTransitionActions(
+        Lemming lemming,
+        bool turnAround)
+    {
         // If possible, float up 4 pixels when starting
         var orientation = lemming.Orientation;
         var checkPosition = orientation.MoveUp(lemming.AnchorPosition, 1);

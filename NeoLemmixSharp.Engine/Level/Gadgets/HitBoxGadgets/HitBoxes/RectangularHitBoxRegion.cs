@@ -33,6 +33,6 @@ public sealed class RectangularHitBoxRegion : IHitBoxRegion
 
     public bool ContainsEitherPoint(Point p1, Point p2)
     {
-        return LevelScreen.RegionContainsPoints(_region, p1, p2);
+        return LevelScreen.RegionContainsEitherPoint(_region, p1, p2);
     }
 }

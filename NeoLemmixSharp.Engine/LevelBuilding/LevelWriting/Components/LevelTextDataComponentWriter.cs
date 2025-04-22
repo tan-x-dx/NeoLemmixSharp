@@ -2,23 +2,22 @@
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
-public sealed class LevelTextDataComponentWriter : ILevelDataWriter
+public sealed class LevelTextDataComponentWriter : LevelDataComponentWriter
 {
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelTextDataSectionIdentifier;
-
     public LevelTextDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
+        : base(LevelReadWriteHelpers.LevelTextDataSectionIdentifierIndex)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return (ushort)(levelData.PreTextLines.Count + levelData.PostTextLines.Count);
     }
 
-    public void WriteSection(BinaryWriter writer, LevelData levelData)
+    public override void WriteSection(BinaryWriter writer, LevelData levelData)
     {
         WriteStrings(writer, levelData.PreTextLines);
 

@@ -32,7 +32,7 @@ public sealed class VaporiserAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        base.TransitionLemmingToAction(lemming, turnAround);
+        DoMainTransitionActions(lemming, turnAround);
 
         lemming.CountDownTimer = 0;
     }

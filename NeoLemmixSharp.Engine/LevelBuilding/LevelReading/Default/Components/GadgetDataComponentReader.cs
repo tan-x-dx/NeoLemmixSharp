@@ -3,25 +3,22 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
-using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
-public sealed class GadgetDataComponentReader : ILevelDataReader
+public sealed class GadgetDataComponentReader : LevelDataComponentReader
 {
     private readonly List<string> _stringIdLookup;
-
-    public bool AlreadyUsed { get; private set; }
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.GadgetDataSectionIdentifier;
 
     public GadgetDataComponentReader(
         Version version,
         List<string> stringIdLookup)
+        : base(LevelReadWriteHelpers.GadgetDataSectionIdentifierIndex)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
@@ -45,8 +42,12 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
-        int orientationByte = rawFileData.Read8BitUnsignedInteger();
-        var dht = new DihedralTransformation(orientationByte);
+        x -= LevelReadWriteHelpers.PositionOffset;
+        y -= LevelReadWriteHelpers.PositionOffset;
+
+        int dhtByte = rawFileData.Read8BitUnsignedInteger();
+        LevelReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
+        var dht = new DihedralTransformation(dhtByte);
 
         int initialStateId = rawFileData.Read8BitUnsignedInteger();
         var renderMode = GadgetRenderModeHelpers.GetGadgetRenderMode(rawFileData.Read8BitUnsignedInteger());
@@ -61,7 +62,7 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
             Style = _stringIdLookup[styleId],
             GadgetPiece = _stringIdLookup[pieceId],
 
-            Position = new Point(x - LevelReadWriteHelpers.PositionOffset, y - LevelReadWriteHelpers.PositionOffset),
+            Position = new Point(x, y),
 
             InitialStateId = initialStateId,
             GadgetRenderMode = renderMode,
@@ -72,22 +73,8 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
             InputNames = inputNames
         };
 
-        var i = 0;
-        while (i < numberOfInputNames)
-        {
-            int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
-            inputNames[i++] = _stringIdLookup[inputNameStringId];
-        }
-
-        Debug.Assert(i == inputNames.Length);
-
-        int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
-        while (numberOfProperties-- > 0)
-        {
-            var gadgetProperty = GadgetPropertyHelpers.GetGadgetProperty(rawFileData.Read8BitUnsignedInteger());
-            int propertyValue = rawFileData.Read32BitSignedInteger();
-            result.AddProperty(gadgetProperty, propertyValue);
-        }
+        ReadInputNames(rawFileData, inputNames, numberOfInputNames);
+        ReadProperties(rawFileData, result);
 
         AssertGadgetDataBytesMakeSense(
             rawFileData.Position,
@@ -95,6 +82,28 @@ public sealed class GadgetDataComponentReader : ILevelDataReader
             numberOfBytesToRead);
 
         return result;
+    }
+
+    private void ReadInputNames(RawFileData rawFileData, string[] inputNames, int numberOfInputNames)
+    {
+        var i = 0;
+        while (i < numberOfInputNames)
+        {
+            int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
+            inputNames[i++] = _stringIdLookup[inputNameStringId];
+        }
+    }
+
+    private static void ReadProperties(RawFileData rawFileData, GadgetData result)
+    {
+        int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
+        while (numberOfProperties-- > 0)
+        {
+            var rawGadgetProperty = rawFileData.Read8BitUnsignedInteger();
+            var gadgetProperty = GadgetPropertyHelpers.GetGadgetProperty(rawGadgetProperty);
+            int propertyValue = rawFileData.Read32BitSignedInteger();
+            result.AddProperty(gadgetProperty, propertyValue);
+        }
     }
 
     private static void AssertGadgetDataBytesMakeSense(

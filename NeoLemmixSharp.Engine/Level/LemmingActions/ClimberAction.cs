@@ -117,4 +117,6 @@ public sealed class ClimberAction : LemmingAction
     {
         return lemming.Orientation.MoveLeft(anchorPosition, lemming.FacingDirection.DeltaX);
     }
+
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 }

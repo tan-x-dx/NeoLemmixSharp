@@ -10,12 +10,7 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public sealed class BasherAction : LemmingAction, IDestructionMask
 {
-    private const int BasherMaskWidth = 16;
-    private const int BasherMaskHeight = 10;
-
     public static readonly BasherAction Instance = new();
-
-    private static readonly PixelType[] SimulationScratchSpace = new PixelType[BasherMaskWidth * BasherMaskHeight];
 
     private BasherAction()
         : base(
@@ -374,7 +369,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         return result;
     }
 
-    string IDestructionMask.Name => LemmingActionName;
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 
     [Pure]
     public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)

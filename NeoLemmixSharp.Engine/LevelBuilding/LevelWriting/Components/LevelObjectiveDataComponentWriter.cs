@@ -4,23 +4,22 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
-public sealed class LevelObjectiveDataComponentWriter : ILevelDataWriter
+public sealed class LevelObjectiveDataComponentWriter : LevelDataComponentWriter
 {
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
     public LevelObjectiveDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
+        : base(LevelReadWriteHelpers.LevelObjectivesDataSectionIdentifierIndex)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.LevelObjectivesDataSectionIdentifier;
-
-    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return (ushort)levelData.LevelObjectives.Count;
     }
 
-    public void WriteSection(
+    public override void WriteSection(
         BinaryWriter writer,
         LevelData levelData)
     {

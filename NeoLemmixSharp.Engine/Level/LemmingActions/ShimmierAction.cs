@@ -106,7 +106,7 @@ public sealed class ShimmierAction : LemmingAction
                 return true;
             }
 
-            if (LevelScreen.PositionOutOfBounds(lemmingPosition))
+            if (LevelScreen.TerrainManager.PositionOutOfBounds(lemmingPosition))
             {
                 LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathVoid);
                 return true;
@@ -130,8 +130,15 @@ public sealed class ShimmierAction : LemmingAction
 
     protected override RectangularRegion ActionBounds() => LemmingActionBounds.ShimmierActionBounds;
 
-    [SkipLocalsInit]
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    {
+        DoShimmierTransitionActions(lemming, turnAround);
+
+        DoMainTransitionActions(lemming, turnAround);
+    }
+
+    [SkipLocalsInit]
+    private static void DoShimmierTransitionActions(Lemming lemming, bool turnAround)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
@@ -174,7 +181,5 @@ public sealed class ShimmierAction : LemmingAction
                 }
             }
         }
-
-        base.TransitionLemmingToAction(lemming, turnAround);
     }
 }

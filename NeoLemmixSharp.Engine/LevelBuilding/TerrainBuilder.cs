@@ -159,12 +159,13 @@ public readonly ref struct TerrainBuilder
     {
         var sourcePixelColorData = terrainArchetypeData.TerrainPixelColorData;
 
-        var dihedralTransformation = new DihedralTransformation(
-            terrainData.Orientation,
-            terrainData.FacingDirection);
-
         var sourceSize = sourcePixelColorData.Size;
         var targetSize = targetPixelColorData.Size;
+
+        var transformationData = new DihedralTransformation.TransformationData(
+            terrainData.Orientation,
+            terrainData.FacingDirection,
+            sourceSize);
 
         for (var y = 0; y < sourceSize.H; y++)
         {
@@ -175,7 +176,7 @@ public readonly ref struct TerrainBuilder
                 if (sourcePixelColor == Color.Transparent)
                     continue;
 
-                var p0 = dihedralTransformation.Transform(p, sourceSize);
+                var p0 = transformationData.Transform(p);
 
                 p0 += terrainData.Position;
 

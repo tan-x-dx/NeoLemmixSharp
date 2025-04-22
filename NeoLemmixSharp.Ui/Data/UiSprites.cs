@@ -12,6 +12,9 @@ public static class UiSprites
 
     public static void Initialise(ContentManager contentManager)
     {
+        if (Font is not null)
+            throw new InvalidOperationException($"Cannot initialise {nameof(UiSprites)} more than once!");
+
         Font = contentManager.Load<SpriteFont>("fonts/MonospacedFont");
         BevelTexture = contentManager.Load<Texture2D>("menu/bevel");
     }

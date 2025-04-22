@@ -61,4 +61,6 @@ public sealed class OhNoerAction : LemmingAction
 
         Instance.TransitionLemmingToAction(lemming, false); // Otherwise start oh-noing!
     }
+
+    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 }

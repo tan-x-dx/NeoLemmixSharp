@@ -60,7 +60,7 @@ public sealed class DehoisterAction : LemmingAction
     {
         lemming.DehoistPin = lemming.AnchorPosition;
 
-        base.TransitionLemmingToAction(lemming, turnAround);
+        DoMainTransitionActions(lemming, turnAround);
     }
 
     public static bool LemmingCanDehoist(
@@ -83,7 +83,7 @@ public sealed class DehoisterAction : LemmingAction
             nextPosition = orientation.MoveRight(currentPosition, dx);
         }
 
-        if (LevelScreen.PositionOutOfBounds(nextPosition) ||
+        if (LevelScreen.TerrainManager.PositionOutOfBounds(nextPosition) ||
             !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, currentPosition) ||
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, nextPosition))
             return false;

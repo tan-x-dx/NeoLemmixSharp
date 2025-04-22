@@ -1,28 +1,26 @@
 ﻿using NeoLemmixSharp.Engine.LevelBuilding.Data;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
-using static NeoLemmixSharp.Engine.LevelBuilding.Data.LevelData;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
-public sealed class TerrainGroupDataComponentWriter : ILevelDataWriter
+public sealed class TerrainGroupDataComponentWriter : LevelDataComponentWriter
 {
     private readonly Dictionary<string, ushort> _stringIdLookup;
     private readonly TerrainDataComponentWriter _terrainDataComponentWriter;
 
     public TerrainGroupDataComponentWriter(Dictionary<string, ushort> stringIdLookup, TerrainDataComponentWriter terrainDataComponentWriter)
+        : base(LevelReadWriteHelpers.TerrainGroupDataSectionIdentifierIndex)
     {
         _stringIdLookup = stringIdLookup;
         _terrainDataComponentWriter = terrainDataComponentWriter;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.TerrainGroupDataSectionIdentifier;
-
-    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return (ushort)levelData.AllTerrainGroups.Count;
     }
 
-    public void WriteSection(
+    public override void WriteSection(
         BinaryWriter writer,
         LevelData levelData)
     {

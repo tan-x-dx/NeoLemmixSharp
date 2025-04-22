@@ -5,20 +5,19 @@ using System.Text;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelWriting.Components;
 
-public sealed class StringDataComponentWriter : ILevelDataWriter
+public sealed class StringDataComponentWriter : LevelDataComponentWriter
 {
     private const int MaxStackByteBufferSize = 256;
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
     public StringDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
+        : base(LevelReadWriteHelpers.StringDataSectionIdentifierIndex)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.StringDataSectionIdentifier;
-
-    public ushort CalculateNumberOfItemsInSection(LevelData levelData)
+    public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         GenerateStringIdLookup(levelData);
 
@@ -26,7 +25,7 @@ public sealed class StringDataComponentWriter : ILevelDataWriter
     }
 
     [SkipLocalsInit]
-    public void WriteSection(
+    public override void WriteSection(
         BinaryWriter writer,
         LevelData levelData)
     {

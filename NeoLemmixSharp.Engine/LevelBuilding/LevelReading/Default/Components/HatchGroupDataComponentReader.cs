@@ -3,17 +3,15 @@ using NeoLemmixSharp.Engine.LevelBuilding.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Components;
 
-public sealed class HatchGroupDataComponentReader : ILevelDataReader
+public sealed class HatchGroupDataComponentReader : LevelDataComponentReader
 {
-    public bool AlreadyUsed { get; private set; }
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers.HatchGroupDataSectionIdentifier;
-
     public HatchGroupDataComponentReader(
         Version version)
+        : base(LevelReadWriteHelpers.HatchGroupDataSectionIdentifierIndex)
     {
     }
 
-    public void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
@@ -21,22 +19,29 @@ public sealed class HatchGroupDataComponentReader : ILevelDataReader
 
         while (numberOfItemsInSection-- > 0)
         {
-            int hatchGroupId = rawFileData.Read8BitUnsignedInteger();
-            int minSpawnInterval = rawFileData.Read8BitUnsignedInteger();
-            int maxSpawnInterval = rawFileData.Read8BitUnsignedInteger();
-            int initialSpawnInterval = rawFileData.Read8BitUnsignedInteger();
+            var hatchGroupData = ReadHatchGroupData(rawFileData);
 
-            LevelReadingException.ReaderAssert(minSpawnInterval >= EngineConstants.MinAllowedSpawnInterval, "Invalid MinSpawnInterval");
-            LevelReadingException.ReaderAssert(maxSpawnInterval <= EngineConstants.MaxAllowedSpawnInterval, "Invalid MaxSpawnInterval");
-            LevelReadingException.ReaderAssert(minSpawnInterval <= initialSpawnInterval && initialSpawnInterval <= maxSpawnInterval, "Invalid Spawn Interval Limits");
-
-            levelData.AllHatchGroupData.Add(new HatchGroupData
-            {
-                HatchGroupId = hatchGroupId,
-                MinSpawnInterval = minSpawnInterval,
-                MaxSpawnInterval = maxSpawnInterval,
-                InitialSpawnInterval = initialSpawnInterval
-            });
+            levelData.AllHatchGroupData.Add(hatchGroupData);
         }
+    }
+
+    private static HatchGroupData ReadHatchGroupData(RawFileData rawFileData)
+    {
+        int hatchGroupId = rawFileData.Read8BitUnsignedInteger();
+        int minSpawnInterval = rawFileData.Read8BitUnsignedInteger();
+        int maxSpawnInterval = rawFileData.Read8BitUnsignedInteger();
+        int initialSpawnInterval = rawFileData.Read8BitUnsignedInteger();
+
+        LevelReadingException.ReaderAssert(minSpawnInterval >= EngineConstants.MinAllowedSpawnInterval, "Invalid MinSpawnInterval");
+        LevelReadingException.ReaderAssert(maxSpawnInterval <= EngineConstants.MaxAllowedSpawnInterval, "Invalid MaxSpawnInterval");
+        LevelReadingException.ReaderAssert(minSpawnInterval <= initialSpawnInterval && initialSpawnInterval <= maxSpawnInterval, "Invalid Spawn Interval Limits");
+
+        return new HatchGroupData
+        {
+            HatchGroupId = hatchGroupId,
+            MinSpawnInterval = minSpawnInterval,
+            MaxSpawnInterval = maxSpawnInterval,
+            InitialSpawnInterval = initialSpawnInterval
+        };
     }
 }
