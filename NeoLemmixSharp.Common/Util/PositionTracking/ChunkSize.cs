@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace NeoLemmixSharp.Common.Util.PositionTracking;
+﻿namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
 public enum ChunkSize
 {
@@ -17,12 +15,6 @@ internal static class ChunkSizeHelpers
         ChunkSize.ChunkSize32 => (int)ChunkSize.ChunkSize32,
         ChunkSize.ChunkSize64 => (int)ChunkSize.ChunkSize64,
 
-        _ => ThrowUnknownChunkSizeException(chunkSize)
+        _ => Helpers.ThrowUnknownEnumValueException<ChunkSize, int>((int)chunkSize)
     };
-
-    [DoesNotReturn]
-    private static int ThrowUnknownChunkSizeException(ChunkSize chunkSize)
-    {
-        throw new ArgumentOutOfRangeException(nameof(chunkSize), chunkSize, "Unknown chunk size");
-    }
 }

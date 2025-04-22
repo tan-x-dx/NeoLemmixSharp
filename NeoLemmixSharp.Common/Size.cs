@@ -43,6 +43,7 @@ public readonly struct Size : IEquatable<Size>
 
     [Pure]
     [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int Area() => W * H;
 
     [Pure]
@@ -64,6 +65,7 @@ public readonly struct Size : IEquatable<Size>
 
     [Pure]
     [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int GetIndexOfPoint(Point p) => W * p.Y + p.X;
 
     [DebuggerStepThrough]
