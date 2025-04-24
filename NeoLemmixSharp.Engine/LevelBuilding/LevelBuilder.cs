@@ -224,10 +224,9 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
 
         var resultSpan = CollectionsMarshal.AsSpan(result);
 
-        var i = 0;
-        foreach (var renderer in resultSpan)
+        for (var i = 0; i < resultSpan.Length; i++)
         {
-            renderer.RendererId = i++;
+            resultSpan[i].RendererId = i;
         }
 
         return result;
