@@ -11,8 +11,7 @@ public sealed class LemmingStateCriterion : ILemmingCriterion
     public LemmingStateCriterion(StateChangerSet allowedStates)
     {
         Debug.Assert(allowedStates.Count > 0);
-        _allowedLemmingStates = new ILemmingStateChanger[allowedStates.Count];
-        allowedStates.CopyTo(_allowedLemmingStates, 0);
+        _allowedLemmingStates = allowedStates.ToArray();
     }
 
     public bool LemmingMatchesCriteria(Lemming lemming)

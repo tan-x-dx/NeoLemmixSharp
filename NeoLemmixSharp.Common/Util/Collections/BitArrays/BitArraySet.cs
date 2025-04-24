@@ -40,17 +40,6 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         Debug.Assert(_popCount == 0 || _popCount == numberOfItems);
     }
 
-    public BitArraySet(TPerfectHasher hasher, TBuffer buffer)
-    {
-        _hasher = hasher;
-        _bits = buffer;
-        var numberOfItems = _hasher.NumberOfItems;
-
-        BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
-
-        _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
-    }
-
     public int Length => _bits.Length;
     public int Count => _popCount;
 
@@ -113,8 +102,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
                 throw new ArgumentException("Upper bits set outside of valid range");
         }
 
-        var bits = _bits.AsSpan();
-        source.CopyTo(bits);
+        source.CopyTo(_bits.AsSpan());
         _popCount = BitArrayHelpers.GetPopCount(source);
     }
 
