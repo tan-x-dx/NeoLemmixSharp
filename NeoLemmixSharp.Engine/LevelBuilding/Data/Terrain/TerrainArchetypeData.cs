@@ -27,6 +27,16 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
         return $"{Style}:{TerrainPiece}";
     }
 
+    public bool IsTrivial()
+    {
+        return !(
+            IsSteel ||
+            ResizeType != ResizeType.None ||
+            DefaultWidth > 0 ||
+            DefaultHeight > 0);
+
+    }
+
     public static TerrainArchetypeData CreateTrivialTerrainArchetypeData(
        string styleName,
        string pieceName) => new()

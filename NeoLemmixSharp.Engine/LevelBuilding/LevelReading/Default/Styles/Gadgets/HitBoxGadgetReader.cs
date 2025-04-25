@@ -1,8 +1,12 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Styles.Gadgets;
 
@@ -15,7 +19,7 @@ public static class HitBoxGadgetReader
 
         var gadgetStateData = ReadStateData(rawFileData);
 
-        var spriteData = new SpriteDataReader().ReadSpriteData(rawFileData);
+        var spriteData = new SpriteDataReader().ReadSpriteData(rawFileData, gadgetStateData.Length);
 
         var result = new HitBoxGadgetArchetypeBuilder
         {
@@ -33,11 +37,11 @@ public static class HitBoxGadgetReader
 
     private static GadgetStateArchetypeData[] ReadStateData(RawFileData rawFileData)
     {
-        int numberOfItemsInSection = rawFileData.Read8BitUnsignedInteger();
+        int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
 
-        LevelReadingException.ReaderAssert(numberOfItemsInSection > 0, "Zero state data defined!");
+        LevelReadingException.ReaderAssert(numberOfGadgetStates > 0, "Zero state data defined!");
 
-        var result = new GadgetStateArchetypeData[numberOfItemsInSection];
+        var result = new GadgetStateArchetypeData[numberOfGadgetStates];
         var i = 0;
 
         while (i < result.Length)
@@ -86,6 +90,8 @@ public static class HitBoxGadgetReader
 
         GadgetActionReader.ReadGadgetActions(rawFileData, out var onLemmingEnterActions, out var onLemmingPresentActions, out var onLemmingExitActions);
 
+        ReadFilterData(rawFileData, out var allowedActions, out var allowedStates, out var allowedOrientations, out var allowedFacingDirection);
+
         return new HitBoxData
         {
             SolidityType = actualLemmingSolidityType,
@@ -95,10 +101,10 @@ public static class HitBoxGadgetReader
             OnLemmingPresentActions = onLemmingPresentActions,
             OnLemmingExitActions = onLemmingExitActions,
 
-            AllowedActions = null,
-            AllowedStates = null,
-            AllowedOrientations = null,
-            AllowedFacingDirection = null
+            AllowedActions = allowedActions,
+            AllowedStates = allowedStates,
+            AllowedOrientations = allowedOrientations,
+            AllowedFacingDirection = allowedFacingDirection
         };
     }
 
@@ -139,5 +145,72 @@ public static class HitBoxGadgetReader
             HitBoxType = actualHitBoxType,
             HitBoxDefinitionData = hitBoxPoints
         };
+    }
+
+    private static void ReadFilterData(
+        RawFileData rawFileData,
+        out LemmingActionSet? allowedActions,
+        out StateChangerSet? allowedStates,
+        out OrientationSet? allowedOrientations,
+        out FacingDirection? allowedFacingDirection)
+    {
+        uint hitBoxFilterByte = rawFileData.Read8BitUnsignedInteger();
+
+        var filterData = LevelReadWriteHelpers.DecodeGadgetArchetypeDataFilterByte(hitBoxFilterByte);
+
+        if (filterData.HasAllowedActions)
+        {
+            allowedActions = ReadBitArraySet<LemmingAction.LemmingActionHasher, LemmingAction.LemmingActionBitBuffer, LemmingAction>(rawFileData);
+        }
+        else
+        {
+            allowedActions = null;
+        }
+
+        if (filterData.HasAllowedStates)
+        {
+            allowedStates = ReadBitArraySet<ILemmingStateChanger.LemmingStateChangerHasher, BitBuffer32, ILemmingStateChanger>(rawFileData);
+        }
+        else
+        {
+            allowedStates = null;
+        }
+
+        if (filterData.HasAllowedOrientations)
+        {
+            allowedOrientations = ReadBitArraySet<Orientation.OrientationHasher, BitBuffer32, Orientation>(rawFileData);
+        }
+        else
+        {
+            allowedOrientations = null;
+        }
+
+        if (filterData.HasAllowedFacingDirection)
+        {
+            allowedFacingDirection = new FacingDirection(rawFileData.Read8BitUnsignedInteger());
+        }
+        else
+        {
+            allowedFacingDirection = null;
+        }
+    }
+
+    private static BitArraySet<THasher, TBuffer, T> ReadBitArraySet<THasher, TBuffer, T>(RawFileData rawFileData)
+        where THasher : struct, IPerfectHasher<T>, IBitBufferCreator<TBuffer>
+        where TBuffer : struct, IBitBuffer
+        where T : notnull
+    {
+        var hasher = new THasher();
+
+        var expectedNumberOfItems = hasher.NumberOfItems;
+        var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(expectedNumberOfItems);
+
+        var result = new BitArraySet<THasher, TBuffer, T>(hasher, false);
+
+        var bytes = rawFileData.ReadBytes(bufferLength * sizeof(uint));
+        var uints = MemoryMarshal.Cast<byte, uint>(bytes);
+        result.ReadFrom(uints);
+
+        return result;
     }
 }

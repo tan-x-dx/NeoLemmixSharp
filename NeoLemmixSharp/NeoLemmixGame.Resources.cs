@@ -92,11 +92,9 @@ public sealed partial class NeoLemmixGame
             if (string.IsNullOrWhiteSpace(particleResourceName))
                 throw new InvalidOperationException($"Could not load {resourceName}!");
 
-            var byteLength = 0;
-
             using var stream = assembly.GetManifestResourceStream(particleResourceName)!;
 
-            byteLength = (int)stream.Length;
+            var byteLength = (int)stream.Length;
 
             if (byteBuffer.Length < byteLength)
                 throw new InvalidOperationException($"Byte buffer size mismatch! Buffer size: {byteBuffer.Length}, file length: {byteLength}");

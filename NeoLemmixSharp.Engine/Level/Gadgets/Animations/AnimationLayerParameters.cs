@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 
-public readonly struct AnimationParameters(int frameStart, int frameEnd, int frameDelta, int transitionToFrame)
+public readonly struct AnimationLayerParameters(int frameStart, int frameEnd, int frameDelta, int transitionToFrame)
 {
     private readonly int _frameStart = frameStart;
     private readonly int _frameEnd = frameEnd;

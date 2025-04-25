@@ -33,21 +33,21 @@ public static class LevelReadWriteHelpers
         0x3D, 0x98
     ];
 
-    #region Level Data Read/Write Bits
+    #region Level Data Read/Write Stuff
 
     public const int UnspecifiedLevelStartValue = 5000;
 
     #endregion
 
-    #region Level Text Data Read/Write Bits
+    #region Level Text Data Read/Write Stuff
 
     #endregion
 
-    #region Hatch Group Data Read/Write Bits
+    #region Hatch Group Data Read/Write Stuff
 
     #endregion
 
-    #region Level Objectives Data Read/Write Bits
+    #region Level Objectives Data Read/Write Stuff
 
     public const int NumberOfBytesForMainLevelObjectiveData = 7;
     public const int NumberOfBytesPerSkillSetDatum = 3;
@@ -59,11 +59,11 @@ public static class LevelReadWriteHelpers
 
     #endregion
 
-    #region Pre-placed Lemming Data Read/Write Bits
+    #region Pre-placed Lemming Data Read/Write Stuff
 
     #endregion
 
-    #region Terrain Data Read/Write Bits
+    #region Terrain Data Read/Write Stuff
 
     private const int TerrainDataEraseBitShift = 0;
     private const int TerrainDataNoOverwriteBitShift = 1;
@@ -111,13 +111,15 @@ public static class LevelReadWriteHelpers
 
     #endregion
 
-    #region Terrain Group Data Read/Write Bits
+    #region Terrain Group Data Read/Write Stuff
 
     #endregion
 
-    #region Gadget Data Read/Write Bits
+    #region Gadget Data Read/Write Stuff
 
     #endregion
+
+    #region Terrain Archetype Data Read/Write Stuff
 
     public static uint EncodeTerrainArchetypeDataByte(
         bool isSteel,
@@ -138,6 +140,47 @@ public static class LevelReadWriteHelpers
         isSteel = ((byteValue >>> 2) & 1U) != 0U;
         resizeType = (ResizeType)(byteValue & 3U);
     }
+
+    #endregion
+
+    #region Gadget Archetype Data Read/Write Stuff
+
+    private const int GadgetArchetypeDataAllowedActionsBitShift = 0;
+    private const int GadgetArchetypeDataAllowedStatesBitShift = 1;
+    private const int GadgetArchetypeDataAllowedOrientationsBitShift = 2;
+    private const int GadgetArchetypeDataAllowedFacingDirectionBitShift = 3;
+
+    public static uint EncodeGadgetArchetypeDataFilterByte(
+        DecodedGadgetArchetypeDataHitBoxFilter hitBoxFilter)
+    {
+        var filterByte = (hitBoxFilter.HasAllowedActions ? 1 << GadgetArchetypeDataAllowedActionsBitShift : 0) |
+                         (hitBoxFilter.HasAllowedStates ? 1 << GadgetArchetypeDataAllowedStatesBitShift : 0) |
+                         (hitBoxFilter.HasAllowedOrientations ? 1 << GadgetArchetypeDataAllowedOrientationsBitShift : 0) |
+                         (hitBoxFilter.HasAllowedFacingDirection ? 1 << GadgetArchetypeDataAllowedFacingDirectionBitShift : 0);
+
+        return (byte)filterByte;
+    }
+
+    public static DecodedGadgetArchetypeDataHitBoxFilter DecodeGadgetArchetypeDataFilterByte(
+        uint byteValue)
+    {
+        var hasAllowedActions = ((byteValue >>> GadgetArchetypeDataAllowedActionsBitShift) & 1) != 0;
+        var hasAllowedStates = ((byteValue >>> GadgetArchetypeDataAllowedStatesBitShift) & 1) != 0;
+        var hasAllowedOrientations = ((byteValue >>> GadgetArchetypeDataAllowedOrientationsBitShift) & 1) != 0;
+        var hasAllowedFacingDirection = ((byteValue >>> GadgetArchetypeDataAllowedFacingDirectionBitShift) & 1) != 0;
+
+        return new DecodedGadgetArchetypeDataHitBoxFilter(hasAllowedActions, hasAllowedStates, hasAllowedOrientations, hasAllowedFacingDirection);
+    }
+
+    public readonly ref struct DecodedGadgetArchetypeDataHitBoxFilter(bool hasAllowedActions, bool hasAllowedStates, bool hasAllowedOrientations, bool hasAllowedFacingDirection)
+    {
+        public readonly bool HasAllowedActions = hasAllowedActions;
+        public readonly bool HasAllowedStates = hasAllowedStates;
+        public readonly bool HasAllowedOrientations = hasAllowedOrientations;
+        public readonly bool HasAllowedFacingDirection = hasAllowedFacingDirection;
+    }
+
+    #endregion
 
     public static void AssertDihedralTransformationByteMakesSense(int dhtByte)
     {

@@ -171,10 +171,12 @@ public static class BitArrayHelpers
      * The TensorPrimitives library is best used for larger spans.
      */
 
+    private static ArgumentException InvalidSpanLengths => new ArgumentException("Spans have different lengths!");
+
     internal static void UnionWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
+            throw InvalidSpanLengths;
 
         switch (span.Length)
         {
@@ -194,7 +196,7 @@ public static class BitArrayHelpers
     internal static void IntersectWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
+            throw InvalidSpanLengths;
 
         switch (span.Length)
         {
@@ -214,7 +216,7 @@ public static class BitArrayHelpers
     internal static void ExceptWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
+            throw InvalidSpanLengths;
 
         switch (span.Length)
         {
@@ -237,7 +239,7 @@ public static class BitArrayHelpers
     internal static void SymmetricExceptWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
+            throw InvalidSpanLengths;
 
         switch (span.Length)
         {
@@ -258,7 +260,7 @@ public static class BitArrayHelpers
     internal static bool IsSubsetOf(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
+            throw InvalidSpanLengths;
 
         for (var i = 0; i < span.Length; i++)
         {
@@ -274,7 +276,7 @@ public static class BitArrayHelpers
     internal static bool IsProperSubsetOf(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
+            throw InvalidSpanLengths;
 
         var allEqual = true;
         for (var i = 0; i < span.Length; i++)
@@ -294,7 +296,7 @@ public static class BitArrayHelpers
     internal static bool Overlaps(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
+            throw InvalidSpanLengths;
 
         for (var i = 0; i < span.Length; i++)
         {
@@ -309,7 +311,7 @@ public static class BitArrayHelpers
     internal static bool SetEquals(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
-            throw new ArgumentException("Spans have different lengths!");
+            throw InvalidSpanLengths;
 
         for (int i = 0; i < span.Length; i++)
         {

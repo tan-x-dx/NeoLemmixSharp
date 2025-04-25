@@ -5,8 +5,8 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
 public sealed class LemmingFacingDirectionCriterion : ILemmingCriterion
 {
-    private static readonly LemmingFacingDirectionCriterion MustFaceRight = new(EngineConstants.RightFacingDirectionId);
-    private static readonly LemmingFacingDirectionCriterion MustFaceLeft = new(EngineConstants.LeftFacingDirectionId);
+    private static readonly LemmingFacingDirectionCriterion MustFaceRight = new(FacingDirection.Right);
+    private static readonly LemmingFacingDirectionCriterion MustFaceLeft = new(FacingDirection.Left);
 
     public static LemmingFacingDirectionCriterion ForFacingDirection(FacingDirection facingDirection)
     {
@@ -16,12 +16,12 @@ public sealed class LemmingFacingDirectionCriterion : ILemmingCriterion
     }
 
     // Only have one facing direction to check against, since that's the only interesting case
-    private readonly int _requiredFacingDirectionId;
+    private readonly FacingDirection _requiredFacingDirection;
 
-    private LemmingFacingDirectionCriterion(int requiredFacingDirectionId)
+    private LemmingFacingDirectionCriterion(FacingDirection requiredFacingDirection)
     {
-        _requiredFacingDirectionId = requiredFacingDirectionId;
+        _requiredFacingDirection = requiredFacingDirection;
     }
 
-    public bool LemmingMatchesCriteria(Lemming lemming) => lemming.FacingDirection.Id == _requiredFacingDirectionId;
+    public bool LemmingMatchesCriteria(Lemming lemming) => lemming.FacingDirection == _requiredFacingDirection;
 }

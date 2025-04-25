@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using static NeoLemmixSharp.Engine.Level.Gadgets.Animations.TeamColors;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 
-public sealed class AnimationBehaviour
+public sealed class AnimationLayer
 {
-    private readonly AnimationParameters _animationParameters;
+    private readonly AnimationLayerParameters _animationLayerParameters;
+    private readonly TeamColorChooser _colorChooser;
     private readonly NineSliceDataThing[] _nineSliceData;
 
     private readonly int _nextGadgetState;
@@ -15,13 +17,15 @@ public sealed class AnimationBehaviour
     public int NextGadgetState => _nextGadgetState;
     public bool IsEndOfAnimation => _isEndOfAnimation;
 
-    public AnimationBehaviour(
-        AnimationParameters animationParameters,
+    public AnimationLayer(
+        AnimationLayerParameters animationLayerParameters,
+        TeamColorChooser colorChooser,
         NineSliceDataThing[] nineSliceData,
         int initialFrame,
         int nextGadgetState)
     {
-        _animationParameters = animationParameters;
+        _animationLayerParameters = animationLayerParameters;
+        _colorChooser = colorChooser;
         _nineSliceData = nineSliceData;
         _currentFrame = initialFrame;
         _nextGadgetState = nextGadgetState;
@@ -29,12 +33,12 @@ public sealed class AnimationBehaviour
 
     public void OnTransitionTo()
     {
-        _currentFrame = _animationParameters.GetTransitionToFrame();
+        _currentFrame = _animationLayerParameters.GetTransitionToFrame();
     }
 
     public void Tick()
     {
-        _currentFrame = _animationParameters.GetNextFame(_currentFrame, out _isEndOfAnimation);
+        _currentFrame = _animationLayerParameters.GetNextFame(_currentFrame, out _isEndOfAnimation);
     }
 
     public void RenderLayer(
@@ -45,7 +49,7 @@ public sealed class AnimationBehaviour
     {
         for (var i = 0; i < _nineSliceData.Length; i++)
         {
-            _nineSliceData[i].Render(_currentFrame, spriteBatch, texture, sourceRectangle, destinationRectangle);
+            _nineSliceData[i].Render(_currentFrame, spriteBatch, texture, _colorChooser, null, sourceRectangle, destinationRectangle);
         }
     }
 }

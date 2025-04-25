@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using static NeoLemmixSharp.Engine.Level.Gadgets.Animations.TeamColors;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 
@@ -16,21 +17,21 @@ public sealed class SpriteArchetypeData
         int stateIndex,
         GadgetBounds currentGadgetBounds)
     {
-        var animationBehaviours = SpriteArchetypeDataForStates[stateIndex].CreateAnimationBehaviours();
+        var animationLayers = SpriteArchetypeDataForStates[stateIndex].CreateAnimationLayers();
 
         return new AnimationController(
-            animationBehaviours,
+            animationLayers,
             currentGadgetBounds);
     }
 }
 
 public readonly struct StateSpriteArchetypeData
 {
-    public required AnimationBehaviourArchetypeData[] AnimationData { get; init; }
+    public required AnimationLayerArchetypeData[] AnimationData { get; init; }
 
-    public AnimationBehaviour[] CreateAnimationBehaviours()
+    public AnimationLayer[] CreateAnimationLayers()
     {
-        var result = new AnimationBehaviour[AnimationData.Length];
+        var result = new AnimationLayer[AnimationData.Length];
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -41,15 +42,16 @@ public readonly struct StateSpriteArchetypeData
     }
 }
 
-public readonly struct AnimationBehaviourArchetypeData
+public readonly struct AnimationLayerArchetypeData
 {
-    public required AnimationParameters AnimationParameters { get; init; }
-    public required NineSliceDataThing[] NineSliceData { get; init; }
+    public required AnimationLayerParameters AnimationLayerParameters { get; init; }
     public required int InitialFrame { get; init; }
     public required int NextGadgetState { get; init; }
+    public required TeamColorChooser ColorChooser { get; init; }
+    public required NineSliceDataThing[] NineSliceData { get; init; }
 
-    public AnimationBehaviour CreateAnimationBehaviour()
+    public AnimationLayer CreateAnimationBehaviour()
     {
-        return new AnimationBehaviour(AnimationParameters, NineSliceData, InitialFrame, NextGadgetState);
+        return new AnimationLayer(AnimationLayerParameters, ColorChooser, NineSliceData, InitialFrame, NextGadgetState);
     }
 }

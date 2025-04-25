@@ -9,8 +9,9 @@ public sealed class RawFileData
     private const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
 
     private readonly byte[] _byteBuffer;
-    private int _position;
     public Version Version { get; }
+
+    private int _position;
 
     public int FileSizeInBytes => _byteBuffer.Length;
     public int Position => _position;
@@ -53,9 +54,10 @@ public sealed class RawFileData
         }
     }
 
-    private T Read<T>(int typeSize)
+    private unsafe T Read<T>()
         where T : unmanaged
     {
+        var typeSize = sizeof(T);
         LevelReadingException.ReaderAssert(FileSizeInBytes - Position >= typeSize, "Reached end of file!");
 
         var result = Unsafe.ReadUnaligned<T>(ref _byteBuffer[_position]);
@@ -64,11 +66,11 @@ public sealed class RawFileData
         return result;
     }
 
-    public byte Read8BitUnsignedInteger() => Read<byte>(sizeof(byte));
-    public ushort Read16BitUnsignedInteger() => Read<ushort>(sizeof(ushort));
-    public uint Read32BitUnsignedInteger() => Read<uint>(sizeof(uint));
-    public int Read32BitSignedInteger() => Read<int>(sizeof(int));
-    public ulong Read64BitUnsignedInteger() => Read<ulong>(sizeof(ulong));
+    public byte Read8BitUnsignedInteger() => Read<byte>();
+    public ushort Read16BitUnsignedInteger() => Read<ushort>();
+    public uint Read32BitUnsignedInteger() => Read<uint>();
+    public int Read32BitSignedInteger() => Read<int>();
+    public ulong Read64BitUnsignedInteger() => Read<ulong>();
 
     public ReadOnlySpan<byte> ReadBytes(int bufferSize)
     {
