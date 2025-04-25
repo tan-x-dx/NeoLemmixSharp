@@ -48,7 +48,11 @@ public sealed class AnimationController
         }
     }
 
-    public void RenderLayers(SpriteBatch spriteBatch, Texture2D texture, Rectangle sourceRectangle, Rectangle destinationRectangle)
+    public void RenderLayers(
+        SpriteBatch spriteBatch,
+        Texture2D texture,
+        Rectangle sourceRectangle,
+        Rectangle destinationRectangle)
     {
         for (var i = 0; i < _layers.Length; i++)
         {

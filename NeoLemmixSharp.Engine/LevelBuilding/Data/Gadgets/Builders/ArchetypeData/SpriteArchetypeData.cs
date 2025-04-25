@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using static NeoLemmixSharp.Engine.Level.Gadgets.Animations.TeamColors;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 
@@ -46,10 +47,11 @@ public readonly struct AnimationLayerArchetypeData
     public required AnimationLayerParameters AnimationLayerParameters { get; init; }
     public required int InitialFrame { get; init; }
     public required int NextGadgetState { get; init; }
+    public required TeamColorChooser ColorChooser { get; init; }
     public required NineSliceDataThing[] NineSliceData { get; init; }
 
     public AnimationLayer CreateAnimationBehaviour()
     {
-        return new AnimationLayer(AnimationLayerParameters, NineSliceData, InitialFrame, NextGadgetState);
+        return new AnimationLayer(AnimationLayerParameters, ColorChooser, NineSliceData, InitialFrame, NextGadgetState);
     }
 }

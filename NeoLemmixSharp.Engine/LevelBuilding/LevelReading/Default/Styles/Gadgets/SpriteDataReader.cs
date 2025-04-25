@@ -65,6 +65,8 @@ public readonly ref struct SpriteDataReader
     private AnimationLayerArchetypeData ReadAnimationBehaviourArchetypData(RawFileData rawFileData)
     {
         var animationLayerParameters = ReadAnimationLayerParameters(rawFileData);
+        int rawColorChooser = rawFileData.Read8BitUnsignedInteger();
+        var teamColorChooser = TeamColors.GetTeamColorChooser(rawColorChooser);
 
         int initialFrame = rawFileData.Read8BitUnsignedInteger();
         int nextGadgetState = rawFileData.Read8BitUnsignedInteger();
@@ -75,6 +77,8 @@ public readonly ref struct SpriteDataReader
 
             InitialFrame = initialFrame,
             NextGadgetState = nextGadgetState - 1,
+
+            ColorChooser = teamColorChooser,
 
             NineSliceData = null!
         };
