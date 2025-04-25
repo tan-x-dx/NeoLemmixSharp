@@ -16,10 +16,10 @@ public sealed class SpriteArchetypeData
         int stateIndex,
         GadgetBounds currentGadgetBounds)
     {
-        var animationBehaviours = SpriteArchetypeDataForStates[stateIndex].CreateAnimationBehaviours();
+        var animationLayers = SpriteArchetypeDataForStates[stateIndex].CreateAnimationLayers();
 
         return new AnimationController(
-            animationBehaviours,
+            animationLayers,
             currentGadgetBounds);
     }
 }
@@ -28,7 +28,7 @@ public readonly struct StateSpriteArchetypeData
 {
     public required AnimationLayerArchetypeData[] AnimationData { get; init; }
 
-    public AnimationLayer[] CreateAnimationBehaviours()
+    public AnimationLayer[] CreateAnimationLayers()
     {
         var result = new AnimationLayer[AnimationData.Length];
 
@@ -43,13 +43,13 @@ public readonly struct StateSpriteArchetypeData
 
 public readonly struct AnimationLayerArchetypeData
 {
-    public required AnimationParameters AnimationParameters { get; init; }
+    public required AnimationLayerParameters AnimationLayerParameters { get; init; }
     public required int InitialFrame { get; init; }
     public required int NextGadgetState { get; init; }
     public required NineSliceDataThing[] NineSliceData { get; init; }
 
     public AnimationLayer CreateAnimationBehaviour()
     {
-        return new AnimationLayer(AnimationParameters, NineSliceData, InitialFrame, NextGadgetState);
+        return new AnimationLayer(AnimationLayerParameters, NineSliceData, InitialFrame, NextGadgetState);
     }
 }

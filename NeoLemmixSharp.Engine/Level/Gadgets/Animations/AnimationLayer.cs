@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 
 public sealed class AnimationLayer
 {
-    private readonly AnimationParameters _animationParameters;
+    private readonly AnimationLayerParameters _animationLayerParameters;
     private readonly NineSliceDataThing[] _nineSliceData;
 
     private readonly int _nextGadgetState;
@@ -16,12 +16,12 @@ public sealed class AnimationLayer
     public bool IsEndOfAnimation => _isEndOfAnimation;
 
     public AnimationLayer(
-        AnimationParameters animationParameters,
+        AnimationLayerParameters animationLayerParameters,
         NineSliceDataThing[] nineSliceData,
         int initialFrame,
         int nextGadgetState)
     {
-        _animationParameters = animationParameters;
+        _animationLayerParameters = animationLayerParameters;
         _nineSliceData = nineSliceData;
         _currentFrame = initialFrame;
         _nextGadgetState = nextGadgetState;
@@ -29,12 +29,12 @@ public sealed class AnimationLayer
 
     public void OnTransitionTo()
     {
-        _currentFrame = _animationParameters.GetTransitionToFrame();
+        _currentFrame = _animationLayerParameters.GetTransitionToFrame();
     }
 
     public void Tick()
     {
-        _currentFrame = _animationParameters.GetNextFame(_currentFrame, out _isEndOfAnimation);
+        _currentFrame = _animationLayerParameters.GetNextFame(_currentFrame, out _isEndOfAnimation);
     }
 
     public void RenderLayer(

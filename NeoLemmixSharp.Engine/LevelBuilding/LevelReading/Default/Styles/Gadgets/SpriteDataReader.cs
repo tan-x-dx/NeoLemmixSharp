@@ -64,14 +64,14 @@ public readonly ref struct SpriteDataReader
 
     private AnimationLayerArchetypeData ReadAnimationBehaviourArchetypData(RawFileData rawFileData)
     {
-        var animationParameters = ReadAnimationParameters(rawFileData);
+        var animationLayerParameters = ReadAnimationLayerParameters(rawFileData);
 
         int initialFrame = rawFileData.Read8BitUnsignedInteger();
         int nextGadgetState = rawFileData.Read8BitUnsignedInteger();
 
         return new AnimationLayerArchetypeData
         {
-            AnimationParameters = animationParameters,
+            AnimationLayerParameters = animationLayerParameters,
 
             InitialFrame = initialFrame,
             NextGadgetState = nextGadgetState - 1,
@@ -80,13 +80,13 @@ public readonly ref struct SpriteDataReader
         };
     }
 
-    private AnimationParameters ReadAnimationParameters(RawFileData rawFileData)
+    private AnimationLayerParameters ReadAnimationLayerParameters(RawFileData rawFileData)
     {
         int frameStart = rawFileData.Read8BitUnsignedInteger();
         int frameEnd = rawFileData.Read8BitUnsignedInteger();
         int frameDelta = rawFileData.Read8BitUnsignedInteger();
         int transitionToFrame = rawFileData.Read8BitUnsignedInteger();
 
-        return new AnimationParameters(frameStart, frameEnd, frameDelta, transitionToFrame);
+        return new AnimationLayerParameters(frameStart, frameEnd, frameDelta, transitionToFrame);
     }
 }
