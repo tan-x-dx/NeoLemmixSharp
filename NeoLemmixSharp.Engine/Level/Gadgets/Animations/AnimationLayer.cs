@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 
-public sealed class AnimationBehaviour
+public sealed class AnimationLayer
 {
     private readonly AnimationParameters _animationParameters;
     private readonly NineSliceDataThing[] _nineSliceData;
@@ -15,7 +15,7 @@ public sealed class AnimationBehaviour
     public int NextGadgetState => _nextGadgetState;
     public bool IsEndOfAnimation => _isEndOfAnimation;
 
-    public AnimationBehaviour(
+    public AnimationLayer(
         AnimationParameters animationParameters,
         NineSliceDataThing[] nineSliceData,
         int initialFrame,

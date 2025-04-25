@@ -26,11 +26,11 @@ public sealed class SpriteArchetypeData
 
 public readonly struct StateSpriteArchetypeData
 {
-    public required AnimationBehaviourArchetypeData[] AnimationData { get; init; }
+    public required AnimationLayerArchetypeData[] AnimationData { get; init; }
 
-    public AnimationBehaviour[] CreateAnimationBehaviours()
+    public AnimationLayer[] CreateAnimationBehaviours()
     {
-        var result = new AnimationBehaviour[AnimationData.Length];
+        var result = new AnimationLayer[AnimationData.Length];
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -41,15 +41,15 @@ public readonly struct StateSpriteArchetypeData
     }
 }
 
-public readonly struct AnimationBehaviourArchetypeData
+public readonly struct AnimationLayerArchetypeData
 {
     public required AnimationParameters AnimationParameters { get; init; }
     public required int InitialFrame { get; init; }
     public required int NextGadgetState { get; init; }
     public required NineSliceDataThing[] NineSliceData { get; init; }
 
-    public AnimationBehaviour CreateAnimationBehaviour()
+    public AnimationLayer CreateAnimationBehaviour()
     {
-        return new AnimationBehaviour(AnimationParameters, NineSliceData, InitialFrame, NextGadgetState);
+        return new AnimationLayer(AnimationParameters, NineSliceData, InitialFrame, NextGadgetState);
     }
 }

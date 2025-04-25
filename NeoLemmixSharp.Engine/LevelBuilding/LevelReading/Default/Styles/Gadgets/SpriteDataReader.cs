@@ -46,13 +46,13 @@ public readonly ref struct SpriteDataReader
         return result;
     }
 
-    private AnimationBehaviourArchetypeData[] ReadAnimationData(RawFileData rawFileData)
+    private AnimationLayerArchetypeData[] ReadAnimationData(RawFileData rawFileData)
     {
         int numberOfAnimationBehaviours = rawFileData.Read8BitUnsignedInteger();
 
         LevelReadingException.ReaderAssert(numberOfAnimationBehaviours > 0, "Zero animation data defined!");
 
-        var result = new AnimationBehaviourArchetypeData[numberOfAnimationBehaviours];
+        var result = new AnimationLayerArchetypeData[numberOfAnimationBehaviours];
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -62,14 +62,14 @@ public readonly ref struct SpriteDataReader
         return result;
     }
 
-    private AnimationBehaviourArchetypeData ReadAnimationBehaviourArchetypData(RawFileData rawFileData)
+    private AnimationLayerArchetypeData ReadAnimationBehaviourArchetypData(RawFileData rawFileData)
     {
         var animationParameters = ReadAnimationParameters(rawFileData);
 
         int initialFrame = rawFileData.Read8BitUnsignedInteger();
         int nextGadgetState = rawFileData.Read8BitUnsignedInteger();
 
-        return new AnimationBehaviourArchetypeData
+        return new AnimationLayerArchetypeData
         {
             AnimationParameters = animationParameters,
 
