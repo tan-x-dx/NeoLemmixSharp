@@ -19,7 +19,7 @@ public static class HitBoxGadgetReader
 
         var gadgetStateData = ReadStateData(rawFileData);
 
-        var spriteData = new SpriteDataReader().ReadSpriteData(rawFileData);
+        var spriteData = new SpriteDataReader().ReadSpriteData(rawFileData, gadgetStateData.Length);
 
         var result = new HitBoxGadgetArchetypeBuilder
         {
@@ -37,11 +37,11 @@ public static class HitBoxGadgetReader
 
     private static GadgetStateArchetypeData[] ReadStateData(RawFileData rawFileData)
     {
-        int numberOfItemsInSection = rawFileData.Read8BitUnsignedInteger();
+        int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
 
-        LevelReadingException.ReaderAssert(numberOfItemsInSection > 0, "Zero state data defined!");
+        LevelReadingException.ReaderAssert(numberOfGadgetStates > 0, "Zero state data defined!");
 
-        var result = new GadgetStateArchetypeData[numberOfItemsInSection];
+        var result = new GadgetStateArchetypeData[numberOfGadgetStates];
         var i = 0;
 
         while (i < result.Length)

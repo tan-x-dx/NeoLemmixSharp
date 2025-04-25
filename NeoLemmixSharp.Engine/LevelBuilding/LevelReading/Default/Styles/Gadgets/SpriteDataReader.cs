@@ -1,11 +1,92 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
+using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Styles.Gadgets;
 
-public ref struct SpriteDataReader
+public readonly ref struct SpriteDataReader
 {
-    public SpriteArchetypeData ReadSpriteData(RawFileData rawFileData)
+    public SpriteArchetypeData ReadSpriteData(RawFileData rawFileData, int expectedNumberOfGadgetStates)
     {
-        throw new NotImplementedException();
+        int baseWidth = rawFileData.Read16BitUnsignedInteger();
+        int baseHeight = rawFileData.Read16BitUnsignedInteger();
+
+        int numberOfLayers = rawFileData.Read8BitUnsignedInteger();
+        int numberOfFrames = rawFileData.Read8BitUnsignedInteger();
+
+        int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
+
+        LevelReadingException.ReaderAssert(numberOfGadgetStates == expectedNumberOfGadgetStates, "Wrong number of states in animation data");
+
+        var spriteArchetypeDataForStates = ReadGadgetStateSpriteArchetypeData(rawFileData, numberOfGadgetStates);
+
+        return new SpriteArchetypeData
+        {
+            BaseSpriteSize = new Size(baseWidth, baseHeight),
+
+            MaxNumberOfFrames = numberOfFrames,
+            NumberOfLayers = numberOfLayers,
+
+            SpriteArchetypeDataForStates = spriteArchetypeDataForStates
+        };
+    }
+
+    private StateSpriteArchetypeData[] ReadGadgetStateSpriteArchetypeData(RawFileData rawFileData, int numberOfGadgetStates)
+    {
+        var result = new StateSpriteArchetypeData[numberOfGadgetStates];
+
+        for (var i = 0; i < result.Length; i++)
+        {
+            result[i] = new StateSpriteArchetypeData
+            {
+                AnimationData = ReadAnimationData(rawFileData)
+            };
+        }
+
+        return result;
+    }
+
+    private AnimationBehaviourArchetypeData[] ReadAnimationData(RawFileData rawFileData)
+    {
+        int numberOfAnimationBehaviours = rawFileData.Read8BitUnsignedInteger();
+
+        LevelReadingException.ReaderAssert(numberOfAnimationBehaviours > 0, "Zero animation data defined!");
+
+        var result = new AnimationBehaviourArchetypeData[numberOfAnimationBehaviours];
+
+        for (var i = 0; i < result.Length; i++)
+        {
+            result[i] = ReadAnimationBehaviourArchetypData(rawFileData);
+        }
+
+        return result;
+    }
+
+    private AnimationBehaviourArchetypeData ReadAnimationBehaviourArchetypData(RawFileData rawFileData)
+    {
+        var animationParameters = ReadAnimationParameters(rawFileData);
+
+        int initialFrame = rawFileData.Read8BitUnsignedInteger();
+        int nextGadgetState = rawFileData.Read8BitUnsignedInteger();
+
+        return new AnimationBehaviourArchetypeData
+        {
+            AnimationParameters = animationParameters,
+
+            InitialFrame = initialFrame,
+            NextGadgetState = nextGadgetState - 1,
+
+            NineSliceData = null!
+        };
+    }
+
+    private AnimationParameters ReadAnimationParameters(RawFileData rawFileData)
+    {
+        int frameStart = rawFileData.Read8BitUnsignedInteger();
+        int frameEnd = rawFileData.Read8BitUnsignedInteger();
+        int frameDelta = rawFileData.Read8BitUnsignedInteger();
+        int transitionToFrame = rawFileData.Read8BitUnsignedInteger();
+
+        return new AnimationParameters(frameStart, frameEnd, frameDelta, transitionToFrame);
     }
 }

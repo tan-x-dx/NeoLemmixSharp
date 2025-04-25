@@ -44,9 +44,9 @@ public readonly struct StateSpriteArchetypeData
 public readonly struct AnimationBehaviourArchetypeData
 {
     public required AnimationParameters AnimationParameters { get; init; }
-    public required NineSliceDataThing[] NineSliceData { get; init; }
     public required int InitialFrame { get; init; }
     public required int NextGadgetState { get; init; }
+    public required NineSliceDataThing[] NineSliceData { get; init; }
 
     public AnimationBehaviour CreateAnimationBehaviour()
     {
