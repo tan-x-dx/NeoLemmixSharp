@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.LevelBuilding.Data.Gadgets.Builders.ArchetypeData;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.LevelReading.Default.Styles.Gadgets;
 
@@ -66,7 +67,7 @@ public readonly ref struct SpriteDataReader
     {
         var animationLayerParameters = ReadAnimationLayerParameters(rawFileData);
         int rawColorChooser = rawFileData.Read8BitUnsignedInteger();
-        var teamColorChooser = TeamColors.GetTeamColorChooser(rawColorChooser);
+        var teamColorChooser = TeamColorChooser.GetTeamColorChooser(rawColorChooser);
 
         int initialFrame = rawFileData.Read8BitUnsignedInteger();
         int nextGadgetState = rawFileData.Read8BitUnsignedInteger();

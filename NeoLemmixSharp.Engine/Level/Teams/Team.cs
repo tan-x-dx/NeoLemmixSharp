@@ -18,6 +18,7 @@ public sealed class Team : IIdEquatable<Team>
     public readonly Color BodyColor;
     public readonly Color PermanentSkillBodyColor;
     public readonly Color NeutralBodyColor;
+    public readonly Color PaintColor;
     public readonly LemmingSpriteBank SpriteBank;
 
     public Team(
@@ -36,6 +37,7 @@ public sealed class Team : IIdEquatable<Team>
         BodyColor = colorData.BodyColor;
         PermanentSkillBodyColor = colorData.PermanentSkillBodyColor;
         NeutralBodyColor = colorData.NeutralBodyColor;
+        PaintColor = colorData.PaintColor;
         SpriteBank = spriteBank;
     }
 

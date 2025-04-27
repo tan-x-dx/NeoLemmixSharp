@@ -17,6 +17,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
     public Color SkinColor { get; private set; }
     public Color FootColor { get; private set; }
     public Color BodyColor { get; private set; }
+    public Color PaintColor { get; private set; }
 
     public bool HasPermanentSkill => (_states & EngineConstants.PermanentSkillBitMask) != 0U;
     public bool HasLiquidAffinity => (_states & EngineConstants.LiquidAffinityBitMask) != 0U;
@@ -250,6 +251,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
             _teamId = value.Id;
             UpdateHairAndBodyColors();
             UpdateSkinColor();
+            PaintColor = LevelScreen.TeamManager.AllItems[_teamId].PaintColor;
         }
     }
 

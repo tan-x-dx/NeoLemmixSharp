@@ -6,28 +6,24 @@ namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public sealed class LemmingActionLayerRenderer
 {
-    private static readonly GetLayerColor GetWhite = _ => Color.White;
-
-    public delegate Color GetLayerColor(Lemming lemming);
-
     private readonly Texture2D _texture;
 
     private readonly int _layerOffsetX;
-    private readonly GetLayerColor _getLayerColor;
+    private readonly TeamColorChooser _colorChooser;
 
     public LemmingActionLayerRenderer(Texture2D texture)
-        : this(texture, 0, GetWhite)
+        : this(texture, 0, TeamColorChooser.JustWhite)
     {
     }
 
     public LemmingActionLayerRenderer(
         Texture2D texture,
         int layerOffsetX,
-        GetLayerColor getLemmingColor)
+        TeamColorChooser colorChooser)
     {
         _texture = texture;
         _layerOffsetX = layerOffsetX;
-        _getLayerColor = getLemmingColor;
+        _colorChooser = colorChooser;
     }
 
     public void RenderLayer(
@@ -38,7 +34,7 @@ public sealed class LemmingActionLayerRenderer
         float rotationAngle,
         SpriteEffects spriteEffects)
     {
-        var color = _getLayerColor(lemming);
+        var color = _colorChooser.ChooseColor(lemming);
         sourceRectangle.X += _layerOffsetX;
 
         spriteBatch.Draw(
