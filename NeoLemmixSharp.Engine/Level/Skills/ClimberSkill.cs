@@ -19,7 +19,7 @@ public sealed class ClimberSkill : LemmingSkill, ILemmingStateChanger
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.IsClimber && ActionIsAssignable(lemming);
+        return !lemming.State.IsClimber && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)

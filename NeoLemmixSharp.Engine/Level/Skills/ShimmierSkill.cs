@@ -58,7 +58,7 @@ public sealed class ShimmierSkill : LemmingSkill
         }
 
         if (lemming.CurrentAction != JumperAction.Instance)
-            return ActionIsAssignable(lemming);
+            return SkillIsAssignableToCurrentAction(lemming);
 
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.AnchorPosition;
@@ -75,7 +75,7 @@ public sealed class ShimmierSkill : LemmingSkill
                 return true;
         }
 
-        return ActionIsAssignable(lemming);
+        return SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)

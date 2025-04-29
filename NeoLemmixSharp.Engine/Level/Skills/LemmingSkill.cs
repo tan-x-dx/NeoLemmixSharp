@@ -17,6 +17,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     protected static readonly LemmingActionSet ActionsThatCanBeAssignedRotationSkill = GetActionsThatCanBeAssignedRotationSkill();
     private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
     private static readonly LemmingSkillSet ClassicSkills = GetClassicSkills();
+    private static readonly LemmingSkillSet PermanentSkills = GetPermanentSkills();
 
     public const int NumberOfItems = EngineConstants.NumberOfLemmingSkills;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
@@ -89,6 +90,23 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
         return result;
     }
 
+    private static LemmingSkillSet GetPermanentSkills()
+    {
+        var result = CreateBitArraySet();
+
+        result.Add(ClimberSkill.Instance);
+        result.Add(FloaterSkill.Instance);
+        result.Add(GliderSkill.Instance);
+        result.Add(SliderSkill.Instance);
+        result.Add(SwimmerSkill.Instance);
+        result.Add(DisarmerSkill.Instance);
+        result.Add(AcidLemmingSkill.Instance);
+        result.Add(WaterLemmingSkill.Instance);
+        result.Add(FastForwardSkill.Instance);
+
+        return result;
+    }
+
     private static LemmingActionSet GetActionsThatCanBeAssignedPermanentSkill()
     {
         var result = LemmingAction.CreateBitArraySet();
@@ -155,10 +173,11 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     }
 
     public bool IsClassicSkill() => ClassicSkills.Contains(this);
+    public bool IsPermanentSkill() => PermanentSkills.Contains(this);
 
     public virtual bool CanAssignToLemming(Lemming lemming)
     {
-        return ActionIsAssignable(lemming);
+        return SkillIsAssignableToCurrentAction(lemming);
     }
 
     [Pure]
@@ -166,7 +185,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected bool ActionIsAssignable(Lemming lemming)
+    protected bool SkillIsAssignableToCurrentAction(Lemming lemming)
     {
         return _assignableActions.Contains(lemming.CurrentAction);
     }

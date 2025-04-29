@@ -25,7 +25,7 @@ public sealed class MinerSkill : LemmingSkill
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         gadgetManager.GetAllGadgetsNearPosition(scratchSpaceSpan, lemming.AnchorPosition, out var gadgetsNearRegion);
 
-        return ActionIsAssignable(lemming) &&
+        return SkillIsAssignableToCurrentAction(lemming) &&
                !PositionIsIndestructibleToLemming(
                    in gadgetsNearRegion,
                    lemming,
