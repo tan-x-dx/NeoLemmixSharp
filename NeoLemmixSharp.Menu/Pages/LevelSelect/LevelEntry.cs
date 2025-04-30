@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
+using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Ui.Data;
+using NeoLemmixSharp.Engine.LevelIo.LevelReading;
 
 namespace NeoLemmixSharp.Menu.Pages.LevelSelect;
 

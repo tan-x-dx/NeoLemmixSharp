@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelBuilding;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
+using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Menu.Pages.LevelSelect;
+using NeoLemmixSharp.Engine.LevelBuilding;
+using NeoLemmixSharp.Engine.LevelIo.LevelReading;
 
 namespace NeoLemmixSharp.Menu;
 

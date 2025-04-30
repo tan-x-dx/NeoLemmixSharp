@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.LevelReading.NeoLemmixCompat.Readers;
+﻿using NeoLemmixSharp.Engine.LevelIo.LevelReading.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.Menu.LevelPack;
 
 namespace NeoLemmixSharp.Menu.LevelReading.NeoLemmixConfigReaders;

@@ -2,9 +2,8 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Terrain;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Sprites;
-using NeoLemmixSharp.Engine.LevelBuilding.Data.Terrain;
+using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
@@ -281,6 +280,6 @@ public readonly ref struct TerrainBuilder
         var pngPath = Path.ChangeExtension(rootFilePath, "png");
 
         using var mainTexture = Texture2D.FromFile(_graphicsDevice, pngPath);
-        terrainArchetypeData.TerrainPixelColorData = PixelColorDataHelpers.GetPixelColorDataFromTexture(mainTexture);
+        terrainArchetypeData.TerrainPixelColorData = ArrayWrapperHelpers.GetPixelColorDataFromTexture(mainTexture);
     }
 }
