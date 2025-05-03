@@ -12,6 +12,7 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
     where TBuffer : struct, IBitBuffer
     where TEnum : unmanaged, Enum
 {
+    private const byte Period = (byte)'.';
     private const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
 
     private readonly byte[] _byteBuffer;
@@ -58,20 +59,20 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
         {
             int nextByteValue = Read8BitUnsignedInteger();
 
-            LevelReadingException.ReaderAssert(nextByteValue == '.', "Version not in correct format");
+            LevelReadingException.ReaderAssert(nextByteValue == Period, "Version not in correct format");
         }
     }
 
     private BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval> ReadSectionIndices()
     {
         var hasher = new TPerfectHasher();
-        var result = new BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval>(hasher);
 
         int numberOfSections = Read8BitUnsignedInteger();
-        LevelReadingException.ReaderAssert(result.Count > 0, "No sections defined in file!");
-        LevelReadingException.ReaderAssert(result.Count <= hasher.NumberOfItems, "Too many sections defined in file!");
+        LevelReadingException.ReaderAssert(numberOfSections > 0, "No sections defined in file!");
+        LevelReadingException.ReaderAssert(numberOfSections <= hasher.NumberOfItems, "Too many sections defined in file!");
 
         int i = numberOfSections;
+        var result = new BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval>(hasher);
 
         while (i-- > 0)
         {
@@ -104,6 +105,11 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
 
             LevelReadingException.ReaderAssert(firstInterval.Start + firstInterval.Length == secondInterval.Start, "Sections are not contiguous!");
         }
+    }
+
+    int IComparer<Interval>.Compare(Interval x, Interval y)
+    {
+        return x.Start.CompareTo(y.Start);
     }
 
     private unsafe T Read<T>()
@@ -182,9 +188,4 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
     }
 
     public bool TryGetSectionInterval(TEnum section, out Interval interval) => _sectionIndices.TryGetValue(section, out interval);
-
-    int IComparer<Interval>.Compare(Interval x, Interval y)
-    {
-        return x.Start.CompareTo(y.Start);
-    }
 }

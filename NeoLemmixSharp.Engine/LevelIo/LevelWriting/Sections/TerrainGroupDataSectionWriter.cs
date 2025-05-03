@@ -1,15 +1,19 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Sections;
 
-public sealed class TerrainGroupDataComponentWriter : LevelDataComponentWriter
+public sealed class TerrainGroupDataSectionWriter : LevelDataSectionWriter
 {
-    private readonly Dictionary<string, ushort> _stringIdLookup;
-    private readonly TerrainDataComponentWriter _terrainDataComponentWriter;
+    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.TerrainGroupDataSection;
+    public override bool IsNecessary => false;
 
-    public TerrainGroupDataComponentWriter(Dictionary<string, ushort> stringIdLookup, TerrainDataComponentWriter terrainDataComponentWriter)
-        : base(LevelFileSectionIdentifier.TerrainGroupDataSection)
+    private readonly Dictionary<string, ushort> _stringIdLookup;
+    private readonly TerrainDataSectionWriter _terrainDataComponentWriter;
+
+    public TerrainGroupDataSectionWriter(
+        Dictionary<string, ushort> stringIdLookup,
+        TerrainDataSectionWriter terrainDataComponentWriter)
     {
         _stringIdLookup = stringIdLookup;
         _terrainDataComponentWriter = terrainDataComponentWriter;
@@ -21,7 +25,7 @@ public sealed class TerrainGroupDataComponentWriter : LevelDataComponentWriter
     }
 
     public override void WriteSection(
-        BinaryWriter writer,
+        RawFileData writer,
         LevelData levelData)
     {
         foreach (var terrainGroup in levelData.AllTerrainGroups)
@@ -31,12 +35,12 @@ public sealed class TerrainGroupDataComponentWriter : LevelDataComponentWriter
     }
 
     private void WriteTerrainGroupData(
-        BinaryWriter writer,
+        RawFileData writer,
         Dictionary<StylePiecePair, TerrainArchetypeData> terrainArchetypeDataLookup,
         TerrainGroupData terrainGroupData)
     {
         writer.Write(_stringIdLookup[terrainGroupData.GroupName!]);
-        writer.Write(terrainGroupData.AllBasicTerrainData.Count);
+        writer.Write((ushort)terrainGroupData.AllBasicTerrainData.Count);
 
         foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
         {

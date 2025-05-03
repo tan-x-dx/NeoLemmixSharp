@@ -8,9 +8,11 @@ public static class LevelReadWriteHelpers
 {
     public const int PositionOffset = 512;
 
+    #region Section Identifier Stuff
+
     public const int NumberOfBytesForLevelSectionIdentifier = 2;
 
-    public static ReadOnlySpan<byte> LevelDataSectionIdentifierBytes =>
+    private static ReadOnlySpan<byte> LevelDataSectionIdentifierBytes =>
     [
         0x26, 0x44,
         0x79, 0xA6,
@@ -22,6 +24,17 @@ public static class LevelReadWriteHelpers
         0x7C, 0x5C,
         0x3D, 0x98
     ];
+
+    public static ReadOnlySpan<byte> GetSectionIdentifierBytes(this LevelFileSectionIdentifier sectionIdentifier)
+    {
+        var index = (int)sectionIdentifier;
+        index <<= 1;
+
+        return LevelDataSectionIdentifierBytes
+            .Slice(index, NumberOfBytesForLevelSectionIdentifier);
+    }
+
+    #endregion
 
     #region Level Data Read/Write Stuff
 

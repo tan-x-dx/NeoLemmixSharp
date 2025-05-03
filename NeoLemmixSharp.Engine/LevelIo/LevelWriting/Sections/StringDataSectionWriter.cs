@@ -3,16 +3,18 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Sections;
 
-public sealed class StringDataComponentWriter : LevelDataComponentWriter
+public sealed class StringDataSectionWriter : LevelDataSectionWriter
 {
     private const int MaxStackByteBufferSize = 256;
 
+    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.StringDataSection;
+    public override bool IsNecessary => true;
+
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public StringDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
-        : base(LevelFileSectionIdentifier.StringDataSection)
+    public StringDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -26,7 +28,7 @@ public sealed class StringDataComponentWriter : LevelDataComponentWriter
 
     [SkipLocalsInit]
     public override void WriteSection(
-        BinaryWriter writer,
+        RawFileData writer,
         LevelData levelData)
     {
         var utf8Encoding = Encoding.UTF8;

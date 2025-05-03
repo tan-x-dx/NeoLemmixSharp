@@ -7,15 +7,7 @@ public abstract class LevelDataSectionReader
     public abstract LevelFileSectionIdentifier SectionIdentifier { get; }
     public abstract bool IsNecessary { get; }
 
-    public ReadOnlySpan<byte> GetSectionIdentifierBytes()
-    {
-        var index = (int)SectionIdentifier;
-        index <<= 1;
-
-        return LevelReadWriteHelpers
-            .LevelDataSectionIdentifierBytes
-            .Slice(index, LevelReadWriteHelpers.NumberOfBytesForLevelSectionIdentifier);
-    }
+    public ReadOnlySpan<byte> GetSectionIdentifierBytes() => SectionIdentifier.GetSectionIdentifierBytes();
 
     public abstract void ReadSection(RawLevelFileData rawFileData, LevelData levelData);
 }

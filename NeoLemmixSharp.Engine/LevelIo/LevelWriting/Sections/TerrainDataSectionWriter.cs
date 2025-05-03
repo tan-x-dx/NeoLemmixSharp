@@ -2,14 +2,16 @@
 using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Sections;
 
-public sealed class TerrainDataComponentWriter : LevelDataComponentWriter
+public sealed class TerrainDataSectionWriter : LevelDataSectionWriter
 {
+    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.TerrainDataSection;
+    public override bool IsNecessary => false;
+
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public TerrainDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
-        : base(LevelFileSectionIdentifier.TerrainDataSection)
+    public TerrainDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -20,7 +22,7 @@ public sealed class TerrainDataComponentWriter : LevelDataComponentWriter
     }
 
     public override void WriteSection(
-        BinaryWriter writer,
+        RawFileData writer,
         LevelData levelData)
     {
         foreach (var terrainData in levelData.AllTerrainData)
@@ -32,7 +34,7 @@ public sealed class TerrainDataComponentWriter : LevelDataComponentWriter
     }
 
     public void WriteTerrainData(
-        BinaryWriter writer,
+        RawFileData writer,
         TerrainArchetypeData terrainArchetypeData,
         TerrainData terrainData)
     {
@@ -48,7 +50,8 @@ public sealed class TerrainDataComponentWriter : LevelDataComponentWriter
         WriteTerrainDataMisc(writer, terrainData);
     }
 
-    private static byte GetNumberOfBytesWritten(TerrainData terrainData)
+    private static byte GetNumberOfBytesWritten(
+        TerrainData terrainData)
     {
         var tintBytes = terrainData.Tint.HasValue ? 3 : 0;
         var resizeBytes = terrainData.Width.HasValue ||
@@ -57,7 +60,9 @@ public sealed class TerrainDataComponentWriter : LevelDataComponentWriter
         return (byte)(LevelReadWriteHelpers.NumberOfBytesForMainTerrainData + tintBytes + resizeBytes);
     }
 
-    private static void WriteTerrainDataMisc(BinaryWriter writer, TerrainData terrainData)
+    private static void WriteTerrainDataMisc(
+        RawFileData writer,
+        TerrainData terrainData)
     {
         var miscDataBits = LevelReadWriteHelpers.EncodeTerrainArchetypeDataByte(terrainData);
 

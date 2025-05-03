@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.LevelWriting.Components;
+using NeoLemmixSharp.Engine.LevelIo.LevelWriting.Sections;
 
 namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting;
 
@@ -16,51 +16,51 @@ public readonly ref struct LevelWriter
 
     public void WriteToFile(string filePath)
     {
-        using var fileStream = new FileStream(filePath, FileMode.Create);
-        using var writer = new BinaryWriter(fileStream);
-
-        WriteVersion(writer);
+        var writer = new RawFileData();
 
         var stringIdLookup = new Dictionary<string, ushort>();
 
-        var terrainComponentWriter = new TerrainDataComponentWriter(stringIdLookup);
+        var terrainSectionWriter = new TerrainDataSectionWriter(stringIdLookup);
 
-        ReadOnlySpan<LevelDataComponentWriter> levelDataWriters =
+        ReadOnlySpan<LevelDataSectionWriter> sectionWriters =
         [
-            // StringDataComponentWriter needs to be first as it will populate the stringIdLookup!
-            new StringDataComponentWriter(stringIdLookup),
+            // StringDataSectionWriter needs to be first as it will populate the stringIdLookup!
+            new StringDataSectionWriter(stringIdLookup),
 
-            new LevelMetadataComponentWriter(stringIdLookup),
-            new LevelTextDataComponentWriter(stringIdLookup),
-            new HatchGroupDataComponentWriter(),
-            new LevelObjectiveDataComponentWriter(stringIdLookup),
-            new PrePlacedLemmingDataComponentWriter(),
-            terrainComponentWriter,
-            new TerrainGroupDataComponentWriter(stringIdLookup, terrainComponentWriter),
-            new GadgetDataComponentWriter(stringIdLookup),
+            new LevelMetadataSectionWriter(stringIdLookup),
+            new LevelTextDataSectionWriter(stringIdLookup),
+            new HatchGroupDataSectionWriter(),
+            new LevelObjectiveDataSectionWriter(stringIdLookup),
+            new PrePlacedLemmingDataSectionWriter(),
+            terrainSectionWriter,
+            new TerrainGroupDataSectionWriter(stringIdLookup, terrainSectionWriter),
+            new GadgetDataSectionWriter(stringIdLookup),
         ];
 
-        foreach (var levelDataWriter in levelDataWriters)
-        {
-            var numberOfItemsInSection = levelDataWriter.CalculateNumberOfItemsInSection(_levelData);
-            if (numberOfItemsInSection == 0)
-                continue;
+        WriteSections(writer, sectionWriters);
 
-            writer.Write(levelDataWriter.GetSectionIdentifier());
-            writer.Write(numberOfItemsInSection);
-
-            levelDataWriter.WriteSection(writer, _levelData);
-        }
+        writer.WriteToFile(filePath, _version);
     }
 
-    private void WriteVersion(BinaryWriter writer)
+    private void WriteSections(
+        RawFileData writer,
+        ReadOnlySpan<LevelDataSectionWriter> sectionWriters)
     {
-        writer.Write((ushort)_version.Major);
-        writer.Write('.');
-        writer.Write((ushort)_version.Minor);
-        writer.Write('.');
-        writer.Write((ushort)_version.Build);
-        writer.Write('.');
-        writer.Write((ushort)_version.Revision);
+        foreach (var sectionWriter in sectionWriters)
+        {
+            var numberOfItemsInSection = sectionWriter.CalculateNumberOfItemsInSection(_levelData);
+            if (numberOfItemsInSection == 0)
+            {
+                LevelWritingException.WriterAssert(!sectionWriter.IsNecessary, "No data for necessary section!");
+                continue;
+            }
+
+            writer.BeginWritingSection(sectionWriter.SectionIdentifier);
+            writer.Write(sectionWriter.GetSectionIdentifierBytes());
+            writer.Write(numberOfItemsInSection);
+
+            sectionWriter.WriteSection(writer, _levelData);
+            writer.EndWritingSection(sectionWriter.SectionIdentifier);
+        }
     }
 }

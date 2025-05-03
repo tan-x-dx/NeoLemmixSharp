@@ -2,9 +2,9 @@
 using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Sections;
 
-public sealed class GadgetDataComponentWriter : LevelDataComponentWriter
+public sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 {
     private const int NumberOfBytesForMainGadgetData = 13;
     private const int NumberOfBytesPerInputName = 2;
@@ -12,8 +12,10 @@ public sealed class GadgetDataComponentWriter : LevelDataComponentWriter
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public GadgetDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
-        : base(LevelFileSectionIdentifier.GadgetDataSection)
+    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.GadgetDataSection;
+    public override bool IsNecessary => false;
+
+    public GadgetDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -24,7 +26,7 @@ public sealed class GadgetDataComponentWriter : LevelDataComponentWriter
     }
 
     public override void WriteSection(
-        BinaryWriter writer,
+        RawFileData writer,
         LevelData levelData)
     {
         foreach (var gadgetData in levelData.AllGadgetData)
@@ -34,7 +36,7 @@ public sealed class GadgetDataComponentWriter : LevelDataComponentWriter
     }
 
     private void WriteGadgetData(
-        BinaryWriter writer,
+        RawFileData writer,
         GadgetData gadgetData)
     {
         writer.Write(GetNumberOfBytesWritten(gadgetData));

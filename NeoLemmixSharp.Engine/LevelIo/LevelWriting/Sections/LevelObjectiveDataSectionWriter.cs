@@ -2,14 +2,16 @@
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Sections;
 
-public sealed class LevelObjectiveDataComponentWriter : LevelDataComponentWriter
+public sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 {
+    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.LevelObjectivesDataSection;
+    public override bool IsNecessary => true;
+
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public LevelObjectiveDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
-        : base(LevelFileSectionIdentifier.LevelObjectivesDataSection)
+    public LevelObjectiveDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -20,7 +22,7 @@ public sealed class LevelObjectiveDataComponentWriter : LevelDataComponentWriter
     }
 
     public override void WriteSection(
-        BinaryWriter writer,
+        RawFileData writer,
         LevelData levelData)
     {
         foreach (var levelObjective in levelData.LevelObjectives)
@@ -30,7 +32,7 @@ public sealed class LevelObjectiveDataComponentWriter : LevelDataComponentWriter
     }
 
     private void WriteLevelObjective(
-        BinaryWriter writer,
+        RawFileData writer,
         LevelObjective levelObjective)
     {
         writer.Write(GetNumberOfBytesForLevelObjective(levelObjective));
@@ -52,21 +54,26 @@ public sealed class LevelObjectiveDataComponentWriter : LevelDataComponentWriter
         }
     }
 
-    private static ushort GetNumberOfBytesForLevelObjective(LevelObjective levelObjective)
+    private static ushort GetNumberOfBytesForLevelObjective(
+        LevelObjective levelObjective)
     {
         return (ushort)(LevelReadWriteHelpers.NumberOfBytesForMainLevelObjectiveData +
                         LevelReadWriteHelpers.NumberOfBytesPerSkillSetDatum * levelObjective.SkillSetData.Length +
                         LevelReadWriteHelpers.NumberOfBytesPerRequirementsDatum * levelObjective.Requirements.Length);
     }
 
-    private static void WriteSkillSetDatum(BinaryWriter writer, SkillSetData skillSetData)
+    private static void WriteSkillSetDatum(
+        RawFileData writer,
+        SkillSetData skillSetData)
     {
         writer.Write((byte)skillSetData.Skill.Id);
         writer.Write((byte)skillSetData.NumberOfSkills);
         writer.Write((byte)skillSetData.TeamId);
     }
 
-    private static void WriteRequirements(BinaryWriter writer, IObjectiveRequirement objectiveRequirement)
+    private static void WriteRequirements(
+        RawFileData writer,
+        IObjectiveRequirement objectiveRequirement)
     {
         // TODO
     }

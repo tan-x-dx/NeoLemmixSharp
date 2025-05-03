@@ -1,15 +1,17 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Sections;
 
-public sealed class LevelMetadataComponentWriter : LevelDataComponentWriter
+public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
 {
     private const int NumberOfBytesForMainLevelData = 31;
 
+    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.LevelMetadataSection;
+    public override bool IsNecessary => true;
+
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public LevelMetadataComponentWriter(Dictionary<string, ushort> stringIdLookup)
-        : base(LevelFileSectionIdentifier.LevelMetadataSection)
+    public LevelMetadataSectionWriter(Dictionary<string, ushort> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -20,7 +22,7 @@ public sealed class LevelMetadataComponentWriter : LevelDataComponentWriter
     }
 
     public override void WriteSection(
-        BinaryWriter writer,
+        RawFileData writer,
         LevelData levelData)
     {
         writer.Write(GetNumberOfBytesWrittenForLevelData(levelData));
@@ -54,7 +56,7 @@ public sealed class LevelMetadataComponentWriter : LevelDataComponentWriter
     }
 
     private void WriteLevelStringData(
-        BinaryWriter writer,
+        RawFileData writer,
         LevelData levelData)
     {
         writer.Write(_stringIdLookup.GetValueOrDefault(levelData.LevelTitle));
@@ -62,7 +64,9 @@ public sealed class LevelMetadataComponentWriter : LevelDataComponentWriter
         writer.Write(_stringIdLookup.GetValueOrDefault(levelData.LevelTheme));
     }
 
-    private static void WriteLevelDimensionData(BinaryWriter writer, LevelData levelData)
+    private static void WriteLevelDimensionData(
+        RawFileData writer,
+        LevelData levelData)
     {
         var levelDimensions = levelData.LevelDimensions;
         writer.Write((ushort)levelDimensions.W);
@@ -84,7 +88,7 @@ public sealed class LevelMetadataComponentWriter : LevelDataComponentWriter
     }
 
     private void WriteLevelBackgroundData(
-        BinaryWriter writer,
+        RawFileData writer,
         LevelData levelData)
     {
         var backgroundData = levelData.LevelBackground;

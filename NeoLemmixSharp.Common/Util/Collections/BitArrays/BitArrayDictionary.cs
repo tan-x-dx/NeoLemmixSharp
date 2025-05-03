@@ -210,6 +210,18 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         }
     }
 
+    public void GetKeys(Span<TKey> values)
+    {
+        var i = 0;
+        var enumerator = new Enumerator(this);
+
+        while (enumerator.MoveNext())
+        {
+            var key = enumerator.Current.Key;
+            values[i++] = key;
+        }
+    }
+
     public void GetValues(Span<TValue> values)
     {
         var i = 0;

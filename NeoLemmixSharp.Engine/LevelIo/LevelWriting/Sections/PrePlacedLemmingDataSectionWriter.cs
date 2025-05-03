@@ -1,14 +1,12 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Sections;
 
-public sealed class PrePlacedLemmingDataComponentWriter : LevelDataComponentWriter
+public sealed class PrePlacedLemmingDataSectionWriter : LevelDataSectionWriter
 {
-    public PrePlacedLemmingDataComponentWriter()
-        : base(LevelFileSectionIdentifier.PrePlacedLemmingDataSection)
-    {
-    }
+    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.PrePlacedLemmingDataSection;
+    public override bool IsNecessary => false;
 
     public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
@@ -16,7 +14,7 @@ public sealed class PrePlacedLemmingDataComponentWriter : LevelDataComponentWrit
     }
 
     public override void WriteSection(
-        BinaryWriter writer,
+        RawFileData writer,
         LevelData levelData)
     {
         foreach (var lemmingData in levelData.PrePlacedLemmingData)
@@ -25,7 +23,9 @@ public sealed class PrePlacedLemmingDataComponentWriter : LevelDataComponentWrit
         }
     }
 
-    private static void WriteLemmingData(BinaryWriter writer, LemmingData lemmingData)
+    private static void WriteLemmingData(
+        RawFileData writer,
+        LemmingData lemmingData)
     {
         writer.Write((ushort)(lemmingData.Position.X + LevelReadWriteHelpers.PositionOffset));
         writer.Write((ushort)(lemmingData.Position.Y + LevelReadWriteHelpers.PositionOffset));
