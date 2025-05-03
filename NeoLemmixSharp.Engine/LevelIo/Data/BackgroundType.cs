@@ -11,17 +11,7 @@ public enum BackgroundType : uint
 
 public static class BackgroundTypeHelpers
 {
-    public static BackgroundType GetEnumValue(int rawValue)
-    {
-        var enumValue = (BackgroundType)rawValue;
+    private const int NumberOfEnumValues = 3;
 
-        return enumValue switch
-        {
-            BackgroundType.NoBackgroundSpecified => BackgroundType.NoBackgroundSpecified,
-            BackgroundType.SolidColorBackground => BackgroundType.SolidColorBackground,
-            BackgroundType.TextureBackground => BackgroundType.TextureBackground,
-
-            _ => Helpers.ThrowUnknownEnumValueException<BackgroundType>(rawValue)
-        };
-    }
+    public static BackgroundType GetEnumValue(int rawValue) => Helpers.GetEnumValue<BackgroundType>(rawValue, NumberOfEnumValues);
 }

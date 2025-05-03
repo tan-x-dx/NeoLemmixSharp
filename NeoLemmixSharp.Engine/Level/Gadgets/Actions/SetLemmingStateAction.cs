@@ -1,12 +1,11 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
-using static NeoLemmixSharp.Engine.Level.Gadgets.Actions.SetLemmingStateAction;
 using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
-public sealed class SetLemmingStateAction : IGadgetAction, IEnumVerifier<SetStateType>
+public sealed class SetLemmingStateAction : IGadgetAction
 {
     private readonly ILemmingStateChanger _lemmingStateChanger;
     private readonly SetStateType _type;
@@ -38,19 +37,9 @@ public sealed class SetLemmingStateAction : IGadgetAction, IEnumVerifier<SetStat
         Toggle
     }
 
-    public static SetStateType GetEnumValue(int rawValue)
-    {
-        var enumValue = (SetStateType)rawValue;
+    private const int NumberOfEnumValues = 3;
 
-        return enumValue switch
-        {
-            SetStateType.Clear => SetStateType.Clear,
-            SetStateType.Set => SetStateType.Set,
-            SetStateType.Toggle => SetStateType.Toggle,
-
-            _ => Helpers.ThrowUnknownEnumValueException<SetStateType>(rawValue)
-        };
-    }
+    public static SetStateType GetEnumValue(int rawValue) => Helpers.GetEnumValue<SetStateType>(rawValue, NumberOfEnumValues);
 }
 
 public sealed class ZombieStateChanger : ILemmingStateChanger

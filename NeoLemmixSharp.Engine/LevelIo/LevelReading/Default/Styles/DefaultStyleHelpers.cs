@@ -165,7 +165,9 @@ public static class DefaultStyleHelpers
         ReadOnlySpan<byte> pieceByteSpan,
         StylePieceType pieceType)
     {
-        var pieceExists = rawFileData.TryLocateSpan(pieceByteSpan, out var index);
+        var sectionForPiece = pieceType.ToSectionIdentifier();
+
+        var pieceExists = rawFileData.TryLocateSpanWithinSection(sectionForPiece, pieceByteSpan, out var index);
 
         rawFileData.SetReaderPosition(index + pieceByteSpan.Length);
         var key = new StylePiecePair(styleName, pieceName);

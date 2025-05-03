@@ -15,7 +15,9 @@ public readonly struct StyleFileSectionIdentifierHasher :
     IBitBufferCreator<BitBuffer32>,
     IEnumVerifier<StyleFileSectionIdentifier>
 {
-    public int NumberOfItems => 2;
+    private const int NumberOfEnumValues = 2;
+
+    public int NumberOfItems => NumberOfEnumValues;
 
     [Pure]
     public int Hash(StyleFileSectionIdentifier item) => (int)item;
@@ -24,16 +26,5 @@ public readonly struct StyleFileSectionIdentifierHasher :
 
     public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 
-    public static StyleFileSectionIdentifier GetEnumValue(int rawValue)
-    {
-        var enumValue = (StyleFileSectionIdentifier)rawValue;
-
-        return enumValue switch
-        {
-            StyleFileSectionIdentifier.TerrainArchetypeDataSection => StyleFileSectionIdentifier.TerrainArchetypeDataSection,
-            StyleFileSectionIdentifier.GadgetArchetypeDataSection => StyleFileSectionIdentifier.GadgetArchetypeDataSection,
-
-            _ => Helpers.ThrowUnknownEnumValueException<StyleFileSectionIdentifier>(rawValue)
-        };
-    }
+    public StyleFileSectionIdentifier GetEnumValue(int rawValue) => Helpers.GetEnumValue<StyleFileSectionIdentifier>(rawValue, NumberOfEnumValues);
 }

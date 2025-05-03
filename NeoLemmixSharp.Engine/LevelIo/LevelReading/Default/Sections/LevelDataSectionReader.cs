@@ -4,12 +4,8 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Sections;
 
 public abstract class LevelDataSectionReader
 {
-    public LevelFileSectionIdentifier SectionIdentifier { get; }
-
-    protected LevelDataSectionReader(LevelFileSectionIdentifier sectionIdentifier)
-    {
-        SectionIdentifier = sectionIdentifier;
-    }
+    public abstract LevelFileSectionIdentifier SectionIdentifier { get; }
+    public abstract bool IsNecessary { get; }
 
     public ReadOnlySpan<byte> GetSectionIdentifierBytes()
     {

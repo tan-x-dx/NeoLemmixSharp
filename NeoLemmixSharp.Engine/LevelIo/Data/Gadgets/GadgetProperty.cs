@@ -21,25 +21,9 @@ public enum GadgetProperty
 
 public static class GadgetPropertyHelpers
 {
-    public static GadgetProperty GetEnumValue(int rawValue)
-    {
-        var enumValue = (GadgetProperty)rawValue;
+    private const int NumberOfEnumValues = 9;
 
-        return enumValue switch
-        {
-            GadgetProperty.HatchGroupId => GadgetProperty.HatchGroupId,
-            GadgetProperty.TeamId => GadgetProperty.TeamId,
-            GadgetProperty.SkillId => GadgetProperty.SkillId,
-            GadgetProperty.Width => GadgetProperty.Width,
-            GadgetProperty.Height => GadgetProperty.Height,
-            GadgetProperty.RawLemmingState => GadgetProperty.RawLemmingState,
-            GadgetProperty.Count => GadgetProperty.Count,
-            GadgetProperty.InitialAnimationFrame => GadgetProperty.InitialAnimationFrame,
-            GadgetProperty.LogicGateType => GadgetProperty.LogicGateType,
-
-            _ => Helpers.ThrowUnknownEnumValueException<GadgetProperty>(rawValue)
-        };
-    }
+    public static GadgetProperty GetEnumValue(int rawValue) => Helpers.GetEnumValue<GadgetProperty>(rawValue, NumberOfEnumValues);
 }
 
 public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>, IBitBufferCreator<BitBuffer32>

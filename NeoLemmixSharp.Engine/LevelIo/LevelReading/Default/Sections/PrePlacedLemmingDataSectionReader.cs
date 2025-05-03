@@ -6,9 +6,11 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Sections;
 
 public sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
 {
+    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.PrePlacedLemmingDataSection;
+    public override bool IsNecessary => false;
+
     public PrePlacedLemmingDataSectionReader(
         Version version)
-        : base(LevelFileSectionIdentifier.PrePlacedLemmingDataSection)
     {
     }
 

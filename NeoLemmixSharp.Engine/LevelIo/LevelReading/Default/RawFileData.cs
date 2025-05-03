@@ -64,17 +64,19 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
 
     private BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval> ReadSectionIndices()
     {
-        var result = new BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval>(new TPerfectHasher());
+        var hasher = new TPerfectHasher();
+        var result = new BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval>(hasher);
 
         int numberOfSections = Read8BitUnsignedInteger();
-        LevelReadingException.ReaderAssert(result.Count > 0, "No sections declared in file!");
+        LevelReadingException.ReaderAssert(result.Count > 0, "No sections defined in file!");
+        LevelReadingException.ReaderAssert(result.Count <= hasher.NumberOfItems, "Too many sections defined in file!");
 
         int i = numberOfSections;
 
         while (i-- > 0)
         {
             int rawIdentifier = Read8BitUnsignedInteger();
-            TEnum enumValue = TPerfectHasher.GetEnumValue(rawIdentifier);
+            TEnum enumValue = hasher.GetEnumValue(rawIdentifier);
             int sectionStart = Read16BitUnsignedInteger();
             int sectionLength = Read16BitUnsignedInteger();
             var interval = new Interval(sectionStart, sectionLength);
@@ -87,6 +89,7 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
         return result;
     }
 
+    [SkipLocalsInit]
     private void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval> result)
     {
         Span<Interval> intervals = stackalloc Interval[result.Count];
@@ -153,6 +156,19 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
     public bool TryLocateSpan(ReadOnlySpan<byte> bytesToLocate, out int index)
     {
         var bytesToSearch = new ReadOnlySpan<byte>(_byteBuffer);
+        index = bytesToSearch.IndexOfAny(SearchValues.Create(bytesToLocate));
+        return index >= 0;
+    }
+
+    public bool TryLocateSpanWithinSection(
+        TEnum sectionIdentifier,
+        ReadOnlySpan<byte> bytesToLocate,
+        out int index)
+    {
+        if (!_sectionIndices.TryGetValue(sectionIdentifier, out var interval))
+            throw new InvalidOperationException("Section not present!");
+
+        var bytesToSearch = new ReadOnlySpan<byte>(_byteBuffer, interval.Start, interval.Length);
         index = bytesToSearch.IndexOfAny(SearchValues.Create(bytesToLocate));
         return index >= 0;
     }

@@ -12,18 +12,7 @@ public enum HitBoxType
 
 public static class HitBoxTypeHelpers
 {
-    public static HitBoxType GetEnumValue(int rawValue)
-    {
-        var enumValue = (HitBoxType)rawValue;
+    private const int NumberOfEnumValues = 4;
 
-        return enumValue switch
-        {
-            HitBoxType.Empty => HitBoxType.Empty,
-            HitBoxType.ResizableRectangular => HitBoxType.ResizableRectangular,
-            HitBoxType.Rectangular => HitBoxType.Rectangular,
-            HitBoxType.PointSet => HitBoxType.PointSet,
-
-            _ => Helpers.ThrowUnknownEnumValueException<HitBoxType>(rawValue)
-        };
-    }
+    public static HitBoxType GetEnumValue(int rawValue) => Helpers.GetEnumValue<HitBoxType>(rawValue, NumberOfEnumValues);
 }

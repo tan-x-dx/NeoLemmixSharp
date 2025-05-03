@@ -2,6 +2,14 @@
 
 public enum StylePieceType
 {
-    Terrain = 0x00,
-    Gadget = 0x01
+    Terrain = StyleFileSectionIdentifier.TerrainArchetypeDataSection,
+    Gadget = StyleFileSectionIdentifier.GadgetArchetypeDataSection
+}
+
+public static class StylePieceTypeHelpers
+{
+    public static StyleFileSectionIdentifier ToSectionIdentifier(this StylePieceType stylePieceType)
+    {
+        return (StyleFileSectionIdentifier)stylePieceType;
+    }
 }

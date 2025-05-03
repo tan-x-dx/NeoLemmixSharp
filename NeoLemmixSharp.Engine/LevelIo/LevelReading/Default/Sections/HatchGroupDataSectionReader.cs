@@ -5,9 +5,11 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Sections;
 
 public sealed class HatchGroupDataSectionReader : LevelDataSectionReader
 {
+    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.HatchGroupDataSection;
+    public override bool IsNecessary => false;
+
     public HatchGroupDataSectionReader(
         Version version)
-        : base(LevelFileSectionIdentifier.HatchGroupDataSection)
     {
     }
 
@@ -43,4 +45,5 @@ public sealed class HatchGroupDataSectionReader : LevelDataSectionReader
             InitialSpawnInterval = initialSpawnInterval
         };
     }
+
 }

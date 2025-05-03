@@ -3,5 +3,5 @@
 public interface IEnumVerifier<TEnum>
     where TEnum : unmanaged, Enum
 {
-    static abstract TEnum GetEnumValue(int rawValue);
+    TEnum GetEnumValue(int rawValue);
 }

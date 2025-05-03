@@ -28,14 +28,43 @@ public sealed class DefaultLevelReader : ILevelReader
     {
         var result = new LevelData();
 
-        var sectionReaders = GetSectionReaders(_rawFileData.Version);
+        var version = _rawFileData.Version;
+        var stringIdLookup = new List<string>(16);
 
+        var terrainComponentReader = new TerrainDataSectionReader(version, stringIdLookup);
+        ReadOnlySpan<LevelDataSectionReader> sectionReaders =
+        [
+            // Always process string data first
+            new StringDataSectionReader(version, stringIdLookup),
+
+            new LevelMetadataSectionReader(version, stringIdLookup),
+            new LevelTextDataSectionReader(version, stringIdLookup),
+            new HatchGroupDataSectionReader(version),
+            new LevelObjectiveDataSectionReader(version, stringIdLookup),
+            new PrePlacedLemmingDataSectionReader(version),
+            terrainComponentReader,
+            new TerrainGroupDataSectionReader(version, stringIdLookup, terrainComponentReader),
+            new GadgetDataSectionReader(version, stringIdLookup)
+        ];
+
+        ReadSections(result, sectionReaders);
+
+        return result;
+    }
+
+    private void ReadSections(LevelData result, ReadOnlySpan<LevelDataSectionReader> sectionReaders)
+    {
         foreach (var sectionReader in sectionReaders)
         {
             var sectionIdentifier = sectionReader.SectionIdentifier;
 
             if (!_rawFileData.TryGetSectionInterval(sectionIdentifier, out var interval))
+            {
+                LevelReadingException.ReaderAssert(
+                    !sectionReader.IsNecessary,
+                    "Necessary section missing!");
                 continue;
+            }
 
             _rawFileData.SetReaderPosition(interval.Start);
 
@@ -51,28 +80,6 @@ public sealed class DefaultLevelReader : ILevelReader
                 interval.Start + interval.Length == _rawFileData.Position,
                 "Byte reading mismatch!");
         }
-
-        return result;
-    }
-
-    private static LevelDataSectionReader[] GetSectionReaders(Version version)
-    {
-        var stringIdLookup = new List<string>(16);
-
-        var terrainComponentReader = new TerrainDataSectionReader(version, stringIdLookup);
-        return
-        [
-            new StringDataSectionReader(version, stringIdLookup),
-
-            new LevelMetadataSectionReader(version, stringIdLookup),
-            new LevelTextDataSectionReader(version, stringIdLookup),
-            new HatchGroupDataSectionReader(version),
-            new LevelObjectiveDataSectionReader(version, stringIdLookup),
-            new PrePlacedLemmingDataSectionReader(version),
-            terrainComponentReader,
-            new TerrainGroupDataSectionReader(version, stringIdLookup, terrainComponentReader),
-            new GadgetDataSectionReader(version, stringIdLookup)
-        ];
     }
 
     public void Dispose()
