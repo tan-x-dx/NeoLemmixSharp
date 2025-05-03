@@ -12,7 +12,7 @@ public sealed class LevelMetadataComponentReader : LevelDataComponentReader
     public LevelMetadataComponentReader(
         Version version,
         List<string> stringIdLookup)
-        : base(LevelReadWriteHelpers.LevelMetadataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.LevelMetadataSection)
     {
         _stringIdLookup = stringIdLookup;
     }

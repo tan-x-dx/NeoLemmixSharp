@@ -13,7 +13,7 @@ public sealed class GadgetDataComponentWriter : LevelDataComponentWriter
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
     public GadgetDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
-        : base(LevelReadWriteHelpers.GadgetDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.GadgetDataSection)
     {
         _stringIdLookup = stringIdLookup;
     }

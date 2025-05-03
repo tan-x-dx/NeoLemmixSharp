@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Components;
 public sealed class PrePlacedLemmingDataComponentWriter : LevelDataComponentWriter
 {
     public PrePlacedLemmingDataComponentWriter()
-        : base(LevelReadWriteHelpers.PrePlacedLemmingDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.PrePlacedLemmingDataSection)
     {
     }
 

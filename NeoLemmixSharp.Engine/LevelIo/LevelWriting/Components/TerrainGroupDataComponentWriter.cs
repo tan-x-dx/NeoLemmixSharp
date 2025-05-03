@@ -9,7 +9,7 @@ public sealed class TerrainGroupDataComponentWriter : LevelDataComponentWriter
     private readonly TerrainDataComponentWriter _terrainDataComponentWriter;
 
     public TerrainGroupDataComponentWriter(Dictionary<string, ushort> stringIdLookup, TerrainDataComponentWriter terrainDataComponentWriter)
-        : base(LevelReadWriteHelpers.TerrainGroupDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.TerrainGroupDataSection)
     {
         _stringIdLookup = stringIdLookup;
         _terrainDataComponentWriter = terrainDataComponentWriter;

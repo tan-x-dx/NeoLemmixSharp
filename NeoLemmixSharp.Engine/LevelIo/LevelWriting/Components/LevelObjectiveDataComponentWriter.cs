@@ -9,7 +9,7 @@ public sealed class LevelObjectiveDataComponentWriter : LevelDataComponentWriter
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
     public LevelObjectiveDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
-        : base(LevelReadWriteHelpers.LevelObjectivesDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.LevelObjectivesDataSection)
     {
         _stringIdLookup = stringIdLookup;
     }

@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Components;
 public sealed class HatchGroupDataComponentWriter : LevelDataComponentWriter
 {
     public HatchGroupDataComponentWriter()
-        : base(LevelReadWriteHelpers.HatchGroupDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.HatchGroupDataSection)
     {
     }
 

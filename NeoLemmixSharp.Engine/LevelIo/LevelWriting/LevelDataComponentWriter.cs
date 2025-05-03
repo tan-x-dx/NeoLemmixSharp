@@ -4,16 +4,22 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting;
 
 public abstract class LevelDataComponentWriter
 {
-    private readonly int _sectionIdentifierIndex;
+    private readonly LevelFileSectionIdentifier _sectionIdentifier;
 
-    protected LevelDataComponentWriter(int sectionIdentifierIndex)
+    protected LevelDataComponentWriter(LevelFileSectionIdentifier sectionIdentifier)
     {
-        _sectionIdentifierIndex = sectionIdentifierIndex;
+        _sectionIdentifier = sectionIdentifier;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifier() => LevelReadWriteHelpers
+    public ReadOnlySpan<byte> GetSectionIdentifier()
+    {
+        var index = (int)_sectionIdentifier;
+        index <<= 1;
+
+        return LevelReadWriteHelpers
         .LevelDataSectionIdentifierBytes
-        .Slice(_sectionIdentifierIndex, LevelReadWriteHelpers.NumberOfBytesForSectionIdentifier);
+        .Slice(index, LevelReadWriteHelpers.NumberOfBytesForLevelSectionIdentifier);
+    }
 
     public abstract ushort CalculateNumberOfItemsInSection(LevelData levelData);
 

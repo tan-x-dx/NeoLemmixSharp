@@ -8,17 +8,7 @@ public static class LevelReadWriteHelpers
 {
     public const int PositionOffset = 512;
 
-    public const int NumberOfBytesForSectionIdentifier = 2;
-
-    public const int StringDataSectionIdentifierIndex = 0;
-    public const int LevelMetadataSectionIdentifierIndex = 2;
-    public const int LevelTextDataSectionIdentifierIndex = 4;
-    public const int HatchGroupDataSectionIdentifierIndex = 6;
-    public const int LevelObjectivesDataSectionIdentifierIndex = 8;
-    public const int PrePlacedLemmingDataSectionIdentifierIndex = 10;
-    public const int TerrainDataSectionIdentifierIndex = 12;
-    public const int TerrainGroupDataSectionIdentifierIndex = 14;
-    public const int GadgetDataSectionIdentifierIndex = 16;
+    public const int NumberOfBytesForLevelSectionIdentifier = 2;
 
     public static ReadOnlySpan<byte> LevelDataSectionIdentifierBytes =>
     [

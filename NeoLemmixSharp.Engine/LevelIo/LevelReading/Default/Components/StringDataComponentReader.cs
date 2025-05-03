@@ -10,7 +10,7 @@ public sealed class StringDataComponentReader : LevelDataComponentReader
     public StringDataComponentReader(
         Version version,
         List<string> stringIdLookup)
-        : base(LevelReadWriteHelpers.StringDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.StringDataSection)
     {
         _stringIdLookup = stringIdLookup;
     }

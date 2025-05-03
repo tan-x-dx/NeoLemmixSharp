@@ -13,7 +13,7 @@ public sealed class GadgetDataComponentReader : LevelDataComponentReader
     public GadgetDataComponentReader(
         Version version,
         List<string> stringIdLookup)
-        : base(LevelReadWriteHelpers.GadgetDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.GadgetDataSection)
     {
         _stringIdLookup = stringIdLookup;
     }

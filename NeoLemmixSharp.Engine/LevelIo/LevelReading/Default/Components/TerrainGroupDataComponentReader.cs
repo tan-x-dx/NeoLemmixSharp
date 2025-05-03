@@ -11,7 +11,7 @@ public sealed class TerrainGroupDataComponentReader : LevelDataComponentReader
         Version version,
         List<string> stringIdLookup,
         TerrainDataComponentReader terrainDataComponentReader)
-        : base(LevelReadWriteHelpers.TerrainGroupDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.TerrainGroupDataSection)
     {
         _stringIdLookup = stringIdLookup;
         _terrainDataComponentReader = terrainDataComponentReader;

@@ -9,7 +9,7 @@ public sealed class PrePlacedLemmingDataComponentReader : LevelDataComponentRead
 
     public PrePlacedLemmingDataComponentReader(
         Version version)
-        : base(LevelReadWriteHelpers.PrePlacedLemmingDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.PrePlacedLemmingDataSection)
     {
     }
 

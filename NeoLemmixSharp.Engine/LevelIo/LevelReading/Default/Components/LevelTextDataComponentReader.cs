@@ -9,7 +9,7 @@ public sealed class LevelTextDataComponentReader : LevelDataComponentReader
     public LevelTextDataComponentReader(
         Version version,
         List<string> stringIdLookup)
-        : base(LevelReadWriteHelpers.LevelTextDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.LevelTextDataSection)
     {
         _stringIdLookup = stringIdLookup;
     }

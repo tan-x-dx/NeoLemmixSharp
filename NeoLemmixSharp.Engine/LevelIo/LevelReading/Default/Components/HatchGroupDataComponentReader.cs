@@ -7,7 +7,7 @@ public sealed class HatchGroupDataComponentReader : LevelDataComponentReader
 {
     public HatchGroupDataComponentReader(
         Version version)
-        : base(LevelReadWriteHelpers.HatchGroupDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.HatchGroupDataSection)
     {
     }
 

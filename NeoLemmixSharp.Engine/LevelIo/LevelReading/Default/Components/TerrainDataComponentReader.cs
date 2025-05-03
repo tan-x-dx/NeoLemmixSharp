@@ -12,7 +12,7 @@ public sealed class TerrainDataComponentReader : LevelDataComponentReader
     public TerrainDataComponentReader(
         Version version,
         List<string> stringIdLookup)
-        : base(LevelReadWriteHelpers.TerrainDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.TerrainDataSection)
     {
         _stringIdLookup = stringIdLookup;
     }

@@ -12,7 +12,7 @@ public sealed class StringDataComponentWriter : LevelDataComponentWriter
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
     public StringDataComponentWriter(Dictionary<string, ushort> stringIdLookup)
-        : base(LevelReadWriteHelpers.StringDataSectionIdentifierIndex)
+        : base(LevelFileSectionIdentifier.StringDataSection)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -93,7 +93,7 @@ public sealed class StringDataComponentWriter : LevelDataComponentWriter
             TryAdd(terrainGroup.GroupName!);
         }
 
-        foreach (var (_, gadgetBuilder) in levelData.AllGadgetArchetypeBuilders)
+        foreach (var (_, gadgetBuilder) in levelData.GadgetArchetypeData)
         {
             TryAdd(gadgetBuilder.StyleName);
             TryAdd(gadgetBuilder.PieceName);
