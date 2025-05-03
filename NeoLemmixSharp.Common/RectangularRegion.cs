@@ -79,28 +79,13 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
     [DebuggerStepThrough]
     public RectangularRegion(Point p1, Point p2)
     {
-        if (p1.X < p2.X)
-        {
-            X = p1.X;
-            W = p2.X - p1.X;
-        }
-        else
-        {
-            X = p2.X;
-            W = p1.X - p2.X;
-        }
+        X = Math.Min(p1.X, p2.X);
+        Y = Math.Min(p1.Y, p2.Y);
+        var w0 = p1.X - p2.X;
+        var h0 = p1.Y - p2.Y;
+        W = w0 > 0 ? w0 : -w0;
+        H = h0 > 0 ? h0 : -h0;
         W++;
-
-        if (p1.Y < p2.Y)
-        {
-            Y = p1.Y;
-            H = p2.Y - p1.Y;
-        }
-        else
-        {
-            Y = p2.Y;
-            H = p1.Y - p2.Y;
-        }
         H++;
     }
 
@@ -112,13 +97,11 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
         var maxX = int.MinValue;
         var maxY = int.MinValue;
 
-        for (var i = 0; i < positions.Length; i++)
+        foreach (var p in positions)
         {
-            var p = positions[i];
-
             minX = Math.Min(minX, p.X);
-            minY = Math.Min(minY, p.Y);
             maxX = Math.Max(maxX, p.X);
+            minY = Math.Min(minY, p.Y);
             maxY = Math.Max(maxY, p.Y);
         }
 
