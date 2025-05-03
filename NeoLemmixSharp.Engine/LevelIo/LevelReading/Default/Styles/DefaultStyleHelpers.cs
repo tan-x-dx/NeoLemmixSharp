@@ -39,7 +39,7 @@ public static class DefaultStyleHelpers
             out var numberOfUniqueGadgetArchetypes);
 
         levelData.TerrainArchetypeData.EnsureCapacity(numberOfUniqueTerrainArchetypes);
-        levelData.AllGadgetArchetypeBuilders.EnsureCapacity(numberOfUniqueGadgetArchetypes);
+        levelData.GadgetArchetypeData.EnsureCapacity(numberOfUniqueGadgetArchetypes);
 
         foreach (var styleGroup in uniqueDataStyles)
         {
@@ -182,11 +182,11 @@ public static class DefaultStyleHelpers
                 break;
 
             case StylePieceType.Gadget:
-                var newGadgetArchetypeBuilder = GadgetBuilderReadingHelpers.GetGadgetBuilderData(styleName, pieceName, rawFileData, pieceExists);
+                var newGadgetArchetypeData = GadgetArchetypeDataReadingHelpers.GetGadgetArchetypeData(styleName, pieceName, rawFileData, pieceExists);
 
-                levelData.AllGadgetArchetypeBuilders.Add(
+                levelData.GadgetArchetypeData.Add(
                     key,
-                    newGadgetArchetypeBuilder);
+                    newGadgetArchetypeData);
                 break;
 
             default:

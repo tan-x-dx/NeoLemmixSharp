@@ -1,22 +1,26 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
 
 namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Styles.Gadgets;
 
 public static class LogicGateGadgetReader
 {
-    public static LogicGateArchetypeBuilder ReadGadget(
+    public static GadgetArchetypeData ReadGadgetArchetypeData(
         string styleName,
         string pieceName,
+        GadgetType gadgetType,
         LogicGateType logicGateType,
         RawFileData rawFileData)
     {
-        return new LogicGateArchetypeBuilder
+        return new GadgetArchetypeData
         {
             StyleName = styleName,
             PieceName = pieceName,
-            LogicGateType = logicGateType,
+            GadgetType = gadgetType,
+            ResizeType = Common.ResizeType.None,
 
+            AllGadgetStateData = [],
             SpriteData = null!
         };
     }

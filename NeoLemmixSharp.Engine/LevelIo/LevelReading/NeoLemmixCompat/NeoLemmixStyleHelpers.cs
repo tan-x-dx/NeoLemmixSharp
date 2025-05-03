@@ -87,7 +87,7 @@ public static class NeoLemmixStyleHelpers
         UniqueStringSet uniqueStringSet)
     {
         var uniqueGadgetDataStyles = GetUniqueStyles(levelData, StylePieceType.Gadget, out var requiredCapacity);
-        levelData.AllGadgetArchetypeBuilders.EnsureCapacity(requiredCapacity);
+        levelData.GadgetArchetypeData.EnsureCapacity(requiredCapacity);
 
         // Reuse this array to help minimize allocations
         var dataReaders = new NeoLemmixDataReader[3];

@@ -3,8 +3,8 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Objectives;
-using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
 using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Data;
@@ -132,13 +132,16 @@ public sealed class LevelData
     public List<LevelObjective> LevelObjectives { get; } = [];
     public LevelParameterSet LevelParameters { get; } = LevelParameterHasher.CreateBitArraySet();
     public ControlPanelParameterSet ControlParameters { get; } = ControlPanelParameterHasher.CreateBitArraySet();
+
+    public List<LemmingData> PrePlacedLemmingData { get; } = [];
+    public List<LemmingData> HatchLemmingData { get; } = [];
+
     public Dictionary<StylePiecePair, TerrainArchetypeData> TerrainArchetypeData { get; }
     public List<TerrainData> AllTerrainData { get; } = [];
     public List<TerrainGroupData> AllTerrainGroups { get; } = [];
     public List<HatchGroupData> AllHatchGroupData { get; } = [];
-    public List<LemmingData> PrePlacedLemmingData { get; } = [];
-    public List<LemmingData> HatchLemmingData { get; } = [];
-    public Dictionary<StylePiecePair, IGadgetArchetypeBuilder> AllGadgetArchetypeBuilders { get; }
+
+    public Dictionary<StylePiecePair, GadgetArchetypeData> GadgetArchetypeData { get; }
     public List<GadgetData> AllGadgetData { get; } = [];
     public List<SketchData> AllSketchData { get; } = [];
 
@@ -149,7 +152,7 @@ public sealed class LevelData
     {
         var comparer = new StylePiecePairEqualityComparer();
         TerrainArchetypeData = new Dictionary<StylePiecePair, TerrainArchetypeData>(comparer);
-        AllGadgetArchetypeBuilders = new Dictionary<StylePiecePair, IGadgetArchetypeBuilder>(comparer);
+        GadgetArchetypeData = new Dictionary<StylePiecePair, GadgetArchetypeData>(comparer);
     }
 
     public void AssertLevelDataIsValid()

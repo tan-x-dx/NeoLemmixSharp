@@ -1,10 +1,11 @@
-﻿using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
 
 namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Styles.Gadgets;
 
 public static class HatchGadgetReader
 {
-    public static HatchGadgetArchetypeBuilder ReadGadget(string styleName, string pieceName, RawFileData rawFileData)
+    public static GadgetArchetypeData ReadGadgetArchetypeData(string styleName, string pieceName, GadgetType gadgetType, RawFileData rawFileData)
     {
         throw new NotImplementedException();
     }

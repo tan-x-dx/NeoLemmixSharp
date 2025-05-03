@@ -58,7 +58,7 @@ public sealed class DefaultLevelReader : ILevelReader
 
     private LevelDataComponentReader GetNextDataReader()
     {
-        var sectionIdentifierBytes = _rawFileData.ReadBytes(LevelReadWriteHelpers.NumberOfBytesForSectionIdentifier);
+        var sectionIdentifierBytes = _rawFileData.ReadBytes(LevelReadWriteHelpers.NumberOfBytesForLevelSectionIdentifier);
 
         foreach (var levelDataWriter in _dataReaders)
         {

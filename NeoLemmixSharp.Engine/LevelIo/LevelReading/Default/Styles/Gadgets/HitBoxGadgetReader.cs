@@ -1,10 +1,10 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
 using System.Runtime.InteropServices;
@@ -13,7 +13,11 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Styles.Gadgets;
 
 public static class HitBoxGadgetReader
 {
-    public static HitBoxGadgetArchetypeBuilder ReadGadget(string styleName, string pieceName, RawFileData rawFileData)
+    public static GadgetArchetypeData ReadGadgetArchetypeData(
+        string styleName,
+        string pieceName,
+        GadgetType gadgetType,
+        RawFileData rawFileData)
     {
         int resizeTypeByte = rawFileData.Read8BitUnsignedInteger();
         var resizeType = (ResizeType)(resizeTypeByte & 3);
@@ -22,11 +26,12 @@ public static class HitBoxGadgetReader
 
         var spriteData = new SpriteDataReader().ReadSpriteData(rawFileData, gadgetStateData.Length);
 
-        var result = new HitBoxGadgetArchetypeBuilder
+        var result = new GadgetArchetypeData
         {
             StyleName = styleName,
             PieceName = pieceName,
 
+            GadgetType = gadgetType,
             ResizeType = resizeType,
 
             AllGadgetStateData = gadgetStateData,

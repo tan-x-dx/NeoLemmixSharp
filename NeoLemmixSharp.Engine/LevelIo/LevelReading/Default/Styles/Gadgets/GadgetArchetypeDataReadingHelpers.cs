@@ -1,13 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Styles.Gadgets;
 
-public static class GadgetBuilderReadingHelpers
+public static class GadgetArchetypeDataReadingHelpers
 {
-    public static IGadgetArchetypeBuilder GetGadgetBuilderData(
+    public static GadgetArchetypeData GetGadgetArchetypeData(
         string styleName,
         string pieceName,
         RawFileData rawFileData,
@@ -23,12 +23,12 @@ public static class GadgetBuilderReadingHelpers
     }
 
     [DoesNotReturn]
-    private static IGadgetArchetypeBuilder ThrowGadgetNotFoundException()
+    private static GadgetArchetypeData ThrowGadgetNotFoundException()
     {
         throw new LevelReadingException("Could not locate gadget data within style file!");
     }
 
-    private static IGadgetArchetypeBuilder ReadGadgetArchetypeData(
+    private static GadgetArchetypeData ReadGadgetArchetypeData(
         string styleName,
         string pieceName,
         RawFileData rawFileData)
@@ -40,15 +40,15 @@ public static class GadgetBuilderReadingHelpers
 
         var result = basicGadgetType switch
         {
-            GadgetType.HitBoxGadget => HitBoxGadgetReader.ReadGadget(styleName, pieceName, rawFileData),
-            GadgetType.HatchGadget => HatchGadgetReader.ReadGadget(styleName, pieceName, rawFileData),
+            GadgetType.HitBoxGadget => HitBoxGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, basicGadgetType, rawFileData),
+            GadgetType.HatchGadget => HatchGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, basicGadgetType, rawFileData),
             GadgetType.GadgetMover => throw new NotImplementedException(),
             GadgetType.GadgetResizer => throw new NotImplementedException(),
             GadgetType.GadgetStateChanger => throw new NotImplementedException(),
-            GadgetType.AndGate => LogicGateGadgetReader.ReadGadget(styleName, pieceName, LogicGateType.AndGate, rawFileData),
-            GadgetType.OrGate => LogicGateGadgetReader.ReadGadget(styleName, pieceName, LogicGateType.OrGate, rawFileData),
-            GadgetType.NotGate => LogicGateGadgetReader.ReadGadget(styleName, pieceName, LogicGateType.NotGate, rawFileData),
-            GadgetType.XorGate => LogicGateGadgetReader.ReadGadget(styleName, pieceName, LogicGateType.XorGate, rawFileData),
+            GadgetType.AndGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, basicGadgetType, LogicGateType.AndGate, rawFileData),
+            GadgetType.OrGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, basicGadgetType, LogicGateType.OrGate, rawFileData),
+            GadgetType.NotGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, basicGadgetType, LogicGateType.NotGate, rawFileData),
+            GadgetType.XorGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, basicGadgetType, LogicGateType.XorGate, rawFileData),
 
             _ => ThrowUnknownGadgetTypeException(basicGadgetType)
         };
@@ -62,7 +62,7 @@ public static class GadgetBuilderReadingHelpers
     }
 
     [DoesNotReturn]
-    private static IGadgetArchetypeBuilder ThrowUnknownGadgetTypeException(GadgetType basicGadgetType)
+    private static GadgetArchetypeData ThrowUnknownGadgetTypeException(GadgetType basicGadgetType)
     {
         throw new ArgumentOutOfRangeException(nameof(basicGadgetType), basicGadgetType, "Unknown gadget type");
     }
