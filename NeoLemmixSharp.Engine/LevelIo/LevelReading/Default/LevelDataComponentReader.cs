@@ -22,5 +22,5 @@ public abstract class LevelDataComponentReader
         .Slice(index, LevelReadWriteHelpers.NumberOfBytesForLevelSectionIdentifier);
     }
 
-    public abstract void ReadSection(RawFileData rawFileData, LevelData levelData);
+    public abstract void ReadSection(RawLevelFileData rawFileData, LevelData levelData);
 }

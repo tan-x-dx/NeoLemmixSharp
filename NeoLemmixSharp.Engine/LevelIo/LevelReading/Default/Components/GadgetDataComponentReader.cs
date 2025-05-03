@@ -18,7 +18,7 @@ public sealed class GadgetDataComponentReader : LevelDataComponentReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
@@ -31,7 +31,7 @@ public sealed class GadgetDataComponentReader : LevelDataComponentReader
         }
     }
 
-    private GadgetData ReadNextGadgetData(RawFileData rawFileData, LevelData levelData)
+    private GadgetData ReadNextGadgetData(RawLevelFileData rawFileData, LevelData levelData)
     {
         int numberOfBytesToRead = rawFileData.Read16BitUnsignedInteger();
         int initialPosition = rawFileData.Position;
@@ -84,7 +84,7 @@ public sealed class GadgetDataComponentReader : LevelDataComponentReader
         return result;
     }
 
-    private void ReadInputNames(RawFileData rawFileData, string[] inputNames, int numberOfInputNames)
+    private void ReadInputNames(RawLevelFileData rawFileData, string[] inputNames, int numberOfInputNames)
     {
         var i = 0;
         while (i < numberOfInputNames)
@@ -94,7 +94,7 @@ public sealed class GadgetDataComponentReader : LevelDataComponentReader
         }
     }
 
-    private static void ReadProperties(RawFileData rawFileData, GadgetData result)
+    private static void ReadProperties(RawLevelFileData rawFileData, GadgetData result)
     {
         int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
         while (numberOfProperties-- > 0)

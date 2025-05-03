@@ -8,11 +8,11 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default;
 public sealed class DefaultLevelReader : ILevelReader
 {
     private readonly LevelDataComponentReader[] _dataReaders;
-    private readonly RawFileData _rawFileData;
+    private readonly RawLevelFileData _rawFileData;
 
     public DefaultLevelReader(string filePath)
     {
-        _rawFileData = new RawFileData(filePath);
+        _rawFileData = new RawLevelFileData(filePath);
 
         var version = _rawFileData.Version;
 

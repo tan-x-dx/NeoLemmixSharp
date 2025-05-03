@@ -4,12 +4,14 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default;
 
-public sealed class RawFileData
+public sealed class RawFileData<T>
+    where T : unmanaged, Enum
 {
     private const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
 
     private readonly byte[] _byteBuffer;
     public Version Version { get; }
+    private readonly Dictionary<T, int> _sectionIndices;
 
     private int _position;
 
@@ -32,6 +34,7 @@ public sealed class RawFileData
         }
 
         Version = ReadVersion();
+        _sectionIndices = ReadSectionIndices();
     }
 
     private Version ReadVersion()
@@ -52,6 +55,11 @@ public sealed class RawFileData
 
             LevelReadingException.ReaderAssert(nextByteValue == '.', "Version not in correct format");
         }
+    }
+
+    private Dictionary<T, int>? ReadSectionIndices()
+    {
+        throw new NotImplementedException();
     }
 
     private unsafe T Read<T>()

@@ -17,7 +17,7 @@ public sealed class LevelMetadataComponentReader : LevelDataComponentReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
@@ -47,7 +47,7 @@ public sealed class LevelMetadataComponentReader : LevelDataComponentReader
             numberOfBytesToRead);
     }
 
-    private static void ReadLevelDimensionData(RawFileData rawFileData, LevelData levelData)
+    private static void ReadLevelDimensionData(RawLevelFileData rawFileData, LevelData levelData)
     {
         int levelWidth = rawFileData.Read16BitUnsignedInteger();
         int levelHeight = rawFileData.Read16BitUnsignedInteger();
@@ -81,7 +81,7 @@ public sealed class LevelMetadataComponentReader : LevelDataComponentReader
         levelData.VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
     }
 
-    private void ReadBackgroundData(RawFileData rawFileData, LevelData levelData)
+    private void ReadBackgroundData(RawLevelFileData rawFileData, LevelData levelData)
     {
         int rawBackgroundType = rawFileData.Read8BitUnsignedInteger();
         var backgroundType = BackgroundTypeHelpers.GetBackgroundType(rawBackgroundType);

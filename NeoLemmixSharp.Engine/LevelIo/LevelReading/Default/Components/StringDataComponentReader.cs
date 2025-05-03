@@ -15,7 +15,7 @@ public sealed class StringDataComponentReader : LevelDataComponentReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         var numberOfItems = rawFileData.Read16BitUnsignedInteger();
@@ -32,7 +32,7 @@ public sealed class StringDataComponentReader : LevelDataComponentReader
         }
     }
 
-    private string ReadString(RawFileData rawFileData)
+    private string ReadString(RawLevelFileData rawFileData)
     {
         int id = rawFileData.Read16BitUnsignedInteger();
         LevelReadingException.ReaderAssert(id == _stringIdLookup.Count, "Invalid string ids");

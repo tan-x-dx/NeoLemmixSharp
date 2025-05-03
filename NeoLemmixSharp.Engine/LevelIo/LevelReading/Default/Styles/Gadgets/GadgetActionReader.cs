@@ -11,7 +11,7 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Styles.Gadgets;
 public static class GadgetActionReader
 {
     public static void ReadGadgetActions(
-        RawFileData rawFileData,
+        RawStyleFileData rawFileData,
         out IGadgetAction[] onLemmingEnterActions,
         out IGadgetAction[] onLemmingPresentActions,
         out IGadgetAction[] onLemmingExitActions)
@@ -21,7 +21,7 @@ public static class GadgetActionReader
         onLemmingExitActions = ReadGadgetActionSection(rawFileData, 2);
     }
 
-    private static IGadgetAction[] ReadGadgetActionSection(RawFileData rawFileData, int expectedIdentifierByte)
+    private static IGadgetAction[] ReadGadgetActionSection(RawStyleFileData rawFileData, int expectedIdentifierByte)
     {
         int identifierByte = rawFileData.Read8BitUnsignedInteger();
         LevelReadingException.ReaderAssert(identifierByte == expectedIdentifierByte, "Invalid gadget action byte");

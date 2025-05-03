@@ -11,7 +11,7 @@ public sealed class HatchGroupDataComponentReader : LevelDataComponentReader
     {
     }
 
-    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
@@ -25,7 +25,7 @@ public sealed class HatchGroupDataComponentReader : LevelDataComponentReader
         }
     }
 
-    private static HatchGroupData ReadHatchGroupData(RawFileData rawFileData)
+    private static HatchGroupData ReadHatchGroupData(RawLevelFileData rawFileData)
     {
         int hatchGroupId = rawFileData.Read8BitUnsignedInteger();
         int minSpawnInterval = rawFileData.Read8BitUnsignedInteger();

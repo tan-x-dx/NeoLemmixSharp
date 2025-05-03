@@ -17,7 +17,7 @@ public sealed class TerrainDataComponentReader : LevelDataComponentReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
     {
         AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
@@ -30,7 +30,7 @@ public sealed class TerrainDataComponentReader : LevelDataComponentReader
         }
     }
 
-    private TerrainData ReadNextTerrainData(RawFileData rawFileData)
+    private TerrainData ReadNextTerrainData(RawLevelFileData rawFileData)
     {
         int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
         int initialPosition = rawFileData.Position;
@@ -94,7 +94,7 @@ public sealed class TerrainDataComponentReader : LevelDataComponentReader
         };
     }
 
-    private static Color ReadTerrainDataTintColor(RawFileData rawFileData)
+    private static Color ReadTerrainDataTintColor(RawLevelFileData rawFileData)
     {
         return rawFileData.ReadRgbColor();
     }

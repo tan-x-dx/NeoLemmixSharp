@@ -8,7 +8,7 @@ public static class TerrainArchetypeReadingHelpers
     public static TerrainArchetypeData GetTerrainArchetypeData(
         string styleName,
         string pieceName,
-        RawFileData rawFileData,
+        RawStyleFileData rawFileData,
         bool pieceExists)
     {
         if (pieceExists)
@@ -25,7 +25,7 @@ public static class TerrainArchetypeReadingHelpers
     private static TerrainArchetypeData ReadTerrainArchetypeData(
         string styleName,
         string pieceName,
-        RawFileData rawFileData)
+        RawStyleFileData rawFileData)
     {
         int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
         int initialPosition = rawFileData.Position;

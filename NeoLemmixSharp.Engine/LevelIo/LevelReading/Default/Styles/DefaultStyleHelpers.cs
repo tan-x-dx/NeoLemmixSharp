@@ -94,7 +94,7 @@ public static class DefaultStyleHelpers
         if (!TryLocateStyleFile(files, out var styleFilePath))
             throw new LevelReadingException($"Could not locate style file in folder: {styleFolderPath}");
 
-        var rawFileData = new RawFileData(styleFilePath);
+        var rawFileData = new RawStyleFileData(styleFilePath);
 
         ReadLevelDataFromStyle(levelData, rawFileData, styleGroup);
     }
@@ -121,7 +121,7 @@ public static class DefaultStyleHelpers
     [SkipLocalsInit]
     private static void ReadLevelDataFromStyle(
         LevelData levelData,
-        RawFileData rawFileData,
+        RawStyleFileData rawFileData,
         HashSetLookup<string, PieceAndTypePair>.Group styleGroup)
     {
         Span<byte> utf8ByteBuffer = stackalloc byte[256];
@@ -159,7 +159,7 @@ public static class DefaultStyleHelpers
 
     private static void ProcessPiece(
         LevelData levelData,
-        RawFileData rawFileData,
+        RawStyleFileData rawFileData,
         string styleName,
         string pieceName,
         ReadOnlySpan<byte> pieceByteSpan,

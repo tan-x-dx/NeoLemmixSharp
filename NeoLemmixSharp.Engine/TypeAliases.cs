@@ -12,3 +12,5 @@ global using LevelParameterSet = NeoLemmixSharp.Common.Util.Collections.BitArray
 global using OrientationSet = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArraySet<NeoLemmixSharp.Common.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Common.Orientation>;
 global using SpriteSpacialHashGrid = NeoLemmixSharp.Common.Util.PositionTracking.SpacialHashGrid<NeoLemmixSharp.Engine.Rendering.LevelRenderer, NeoLemmixSharp.Engine.Rendering.Viewport.IViewportObjectRenderer>;
 global using StateChangerSet = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArraySet<NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger.LemmingStateChangerHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger>;
+global using RawLevelFileData = NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.RawFileData<NeoLemmixSharp.Engine.LevelIo.LevelFileSectionIdentifier>;
+global using RawStyleFileData = NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.RawFileData<NeoLemmixSharp.Engine.LevelIo.StyleFileSectionIdentifier>;
