@@ -16,7 +16,7 @@ public enum GadgetActionType
 
 public static class GadgetActionTypeHelpers
 {
-    public static GadgetActionType GetGadgetActionType(int rawValue)
+    public static GadgetActionType GetEnumValue(int rawValue)
     {
         var enumValue = (GadgetActionType)rawValue;
 

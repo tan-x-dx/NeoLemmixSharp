@@ -1,17 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default;
 
-public sealed class RawFileData<T>
-    where T : unmanaged, Enum
+public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Interval>
+    where TPerfectHasher : struct, IPerfectHasher<TEnum>, IBitBufferCreator<TBuffer>, IEnumVerifier<TEnum>
+    where TBuffer : struct, IBitBuffer
+    where TEnum : unmanaged, Enum
 {
     private const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
 
     private readonly byte[] _byteBuffer;
     public Version Version { get; }
-    private readonly Dictionary<T, int> _sectionIndices;
+    private readonly BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval> _sectionIndices;
 
     private int _position;
 
@@ -57,9 +62,45 @@ public sealed class RawFileData<T>
         }
     }
 
-    private Dictionary<T, int>? ReadSectionIndices()
+    private BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval> ReadSectionIndices()
     {
-        throw new NotImplementedException();
+        var result = new BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval>(new TPerfectHasher());
+
+        int numberOfSections = Read8BitUnsignedInteger();
+        LevelReadingException.ReaderAssert(result.Count > 0, "No sections declared in file!");
+
+        int i = numberOfSections;
+
+        while (i-- > 0)
+        {
+            int rawIdentifier = Read8BitUnsignedInteger();
+            TEnum enumValue = TPerfectHasher.GetEnumValue(rawIdentifier);
+            int sectionStart = Read16BitUnsignedInteger();
+            int sectionLength = Read16BitUnsignedInteger();
+            var interval = new Interval(sectionStart, sectionLength);
+
+            result.Add(enumValue, interval);
+        }
+
+        AssertSectionsAreContiguous(result);
+
+        return result;
+    }
+
+    private void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval> result)
+    {
+        Span<Interval> intervals = stackalloc Interval[result.Count];
+        result.GetValues(intervals);
+
+        intervals.Sort(this);
+
+        for (var i = 0; i < intervals.Length - 1; i++)
+        {
+            var firstInterval = intervals[i];
+            var secondInterval = intervals[i + 1];
+
+            LevelReadingException.ReaderAssert(firstInterval.Start + firstInterval.Length == secondInterval.Start, "Sections are not contiguous!");
+        }
     }
 
     private unsafe T Read<T>()
@@ -122,5 +163,12 @@ public sealed class RawFileData<T>
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(position, FileSizeInBytes);
 
         _position = position;
+    }
+
+    public bool TryGetSectionInterval(TEnum section, out Interval interval) => _sectionIndices.TryGetValue(section, out interval);
+
+    int IComparer<Interval>.Compare(Interval x, Interval y)
+    {
+        return x.Start.CompareTo(y.Start);
     }
 }

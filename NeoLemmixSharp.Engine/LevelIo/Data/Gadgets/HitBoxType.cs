@@ -12,7 +12,7 @@ public enum HitBoxType
 
 public static class HitBoxTypeHelpers
 {
-    public static HitBoxType GetGadgetHitBoxType(int rawValue)
+    public static HitBoxType GetEnumValue(int rawValue)
     {
         var enumValue = (HitBoxType)rawValue;
 

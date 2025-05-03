@@ -180,7 +180,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
 
             while (enumerator.MoveNext())
             {
-                var (key, _) = enumerator.Current;
+                var key = enumerator.Current.Key;
                 result[i++] = key;
             }
 
@@ -202,11 +202,23 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
 
             while (enumerator.MoveNext())
             {
-                var (_, value) = enumerator.Current;
+                var value = enumerator.Current.Value;
                 result[i++] = value;
             }
 
             return result;
+        }
+    }
+
+    public void GetValues(Span<TValue> values)
+    {
+        var i = 0;
+        var enumerator = new Enumerator(this);
+
+        while (enumerator.MoveNext())
+        {
+            var value = enumerator.Current.Value;
+            values[i++] = value;
         }
     }
 

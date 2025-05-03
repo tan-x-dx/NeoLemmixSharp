@@ -1,12 +1,12 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Sections;
 
-public sealed class LevelTextDataComponentReader : LevelDataComponentReader
+public sealed class LevelTextDataSectionReader : LevelDataSectionReader
 {
     private readonly List<string> _stringIdLookup;
 
-    public LevelTextDataComponentReader(
+    public LevelTextDataSectionReader(
         Version version,
         List<string> stringIdLookup)
         : base(LevelFileSectionIdentifier.LevelTextDataSection)
@@ -16,7 +16,6 @@ public sealed class LevelTextDataComponentReader : LevelDataComponentReader
 
     public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
     {
-        AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
 
         ReadTextLines(rawFileData, levelData.PreTextLines);

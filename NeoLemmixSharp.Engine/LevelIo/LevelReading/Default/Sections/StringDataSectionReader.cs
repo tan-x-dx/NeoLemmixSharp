@@ -1,13 +1,13 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
 using System.Text;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Sections;
 
-public sealed class StringDataComponentReader : LevelDataComponentReader
+public sealed class StringDataSectionReader : LevelDataSectionReader
 {
     private readonly List<string> _stringIdLookup;
 
-    public StringDataComponentReader(
+    public StringDataSectionReader(
         Version version,
         List<string> stringIdLookup)
         : base(LevelFileSectionIdentifier.StringDataSection)
@@ -17,7 +17,6 @@ public sealed class StringDataComponentReader : LevelDataComponentReader
 
     public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
     {
-        AlreadyUsed = true;
         var numberOfItems = rawFileData.Read16BitUnsignedInteger();
 
         LevelReadingException.ReaderAssert(_stringIdLookup.Count == 0, "Expected string list to be empty!");

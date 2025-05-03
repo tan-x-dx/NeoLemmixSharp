@@ -33,7 +33,7 @@ public static class GadgetActionReader
         while (i < result.Length)
         {
             int rawGadgetActionType = rawFileData.Read8BitUnsignedInteger();
-            var gadgetActionType = GadgetActionTypeHelpers.GetGadgetActionType(rawGadgetActionType);
+            var gadgetActionType = GadgetActionTypeHelpers.GetEnumValue(rawGadgetActionType);
 
             int miscData = rawFileData.Read32BitSignedInteger();
 
@@ -62,7 +62,7 @@ public static class GadgetActionReader
         var stateChanger = new LemmingStateChangerHasher().UnHash(stateChangerId);
 
         var rawSetStateType = miscData >>> 16;
-        var setStateType = SetLemmingStateAction.GetSetStateType(rawSetStateType);
+        var setStateType = SetLemmingStateAction.GetEnumValue(rawSetStateType);
 
         return new SetLemmingStateAction(stateChanger, setStateType);
     }

@@ -11,7 +11,7 @@ public enum BackgroundType : uint
 
 public static class BackgroundTypeHelpers
 {
-    public static BackgroundType GetBackgroundType(int rawValue)
+    public static BackgroundType GetEnumValue(int rawValue)
     {
         var enumValue = (BackgroundType)rawValue;
 

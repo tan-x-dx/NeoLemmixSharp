@@ -11,7 +11,7 @@ public enum LemmingSolidityType
 
 public static class LemmingSolidityTypeHelpers
 {
-    public static LemmingSolidityType GetLemmingSolidityType(int rawValue)
+    public static LemmingSolidityType GetEnumValue(int rawValue)
     {
         var enumValue = (LemmingSolidityType)rawValue;
 

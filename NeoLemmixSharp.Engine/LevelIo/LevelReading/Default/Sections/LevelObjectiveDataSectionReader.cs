@@ -1,12 +1,12 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Sections;
 
-public sealed class LevelObjectiveDataComponentReader : LevelDataComponentReader
+public sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
 {
     private readonly List<string> _stringIdLookup;
 
-    public LevelObjectiveDataComponentReader(
+    public LevelObjectiveDataSectionReader(
         Version version,
         List<string> stringIdLookup)
         : base(LevelFileSectionIdentifier.LevelObjectivesDataSection)

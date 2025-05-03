@@ -4,13 +4,13 @@ using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Sections;
 
-public sealed class GadgetDataComponentReader : LevelDataComponentReader
+public sealed class GadgetDataSectionReader : LevelDataSectionReader
 {
     private readonly List<string> _stringIdLookup;
 
-    public GadgetDataComponentReader(
+    public GadgetDataSectionReader(
         Version version,
         List<string> stringIdLookup)
         : base(LevelFileSectionIdentifier.GadgetDataSection)
@@ -20,7 +20,6 @@ public sealed class GadgetDataComponentReader : LevelDataComponentReader
 
     public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
     {
-        AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         levelData.AllGadgetData.Capacity = numberOfItemsInSection;
 
@@ -50,7 +49,7 @@ public sealed class GadgetDataComponentReader : LevelDataComponentReader
         var dht = new DihedralTransformation(dhtByte);
 
         int initialStateId = rawFileData.Read8BitUnsignedInteger();
-        var renderMode = GadgetRenderModeHelpers.GetGadgetRenderMode(rawFileData.Read8BitUnsignedInteger());
+        var renderMode = GadgetRenderModeHelpers.GetEnumValue(rawFileData.Read8BitUnsignedInteger());
 
         int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
         var inputNames = CollectionsHelper.GetArrayForSize<string>(numberOfInputNames);
@@ -100,7 +99,7 @@ public sealed class GadgetDataComponentReader : LevelDataComponentReader
         while (numberOfProperties-- > 0)
         {
             var rawGadgetProperty = rawFileData.Read8BitUnsignedInteger();
-            var gadgetProperty = GadgetPropertyHelpers.GetGadgetProperty(rawGadgetProperty);
+            var gadgetProperty = GadgetPropertyHelpers.GetEnumValue(rawGadgetProperty);
             int propertyValue = rawFileData.Read32BitSignedInteger();
             result.AddProperty(gadgetProperty, propertyValue);
         }

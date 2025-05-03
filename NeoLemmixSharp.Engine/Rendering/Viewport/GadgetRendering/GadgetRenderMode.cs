@@ -12,7 +12,7 @@ public enum GadgetRenderMode
 
 public static class GadgetRenderModeHelpers
 {
-    public static GadgetRenderMode GetGadgetRenderMode(int rawValue)
+    public static GadgetRenderMode GetEnumValue(int rawValue)
     {
         var enumValue = (GadgetRenderMode)rawValue;
 

@@ -17,8 +17,8 @@ public abstract class LevelDataComponentWriter
         index <<= 1;
 
         return LevelReadWriteHelpers
-        .LevelDataSectionIdentifierBytes
-        .Slice(index, LevelReadWriteHelpers.NumberOfBytesForLevelSectionIdentifier);
+            .LevelDataSectionIdentifierBytes
+            .Slice(index, LevelReadWriteHelpers.NumberOfBytesForLevelSectionIdentifier);
     }
 
     public abstract ushort CalculateNumberOfItemsInSection(LevelData levelData);

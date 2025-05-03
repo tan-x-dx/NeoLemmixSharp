@@ -3,13 +3,13 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Sections;
 
-public sealed class LevelMetadataComponentReader : LevelDataComponentReader
+public sealed class LevelMetadataSectionReader : LevelDataSectionReader
 {
     private readonly List<string> _stringIdLookup;
 
-    public LevelMetadataComponentReader(
+    public LevelMetadataSectionReader(
         Version version,
         List<string> stringIdLookup)
         : base(LevelFileSectionIdentifier.LevelMetadataSection)
@@ -19,7 +19,6 @@ public sealed class LevelMetadataComponentReader : LevelDataComponentReader
 
     public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
     {
-        AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         LevelReadingException.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
 
@@ -84,7 +83,7 @@ public sealed class LevelMetadataComponentReader : LevelDataComponentReader
     private void ReadBackgroundData(RawLevelFileData rawFileData, LevelData levelData)
     {
         int rawBackgroundType = rawFileData.Read8BitUnsignedInteger();
-        var backgroundType = BackgroundTypeHelpers.GetBackgroundType(rawBackgroundType);
+        var backgroundType = BackgroundTypeHelpers.GetEnumValue(rawBackgroundType);
 
         levelData.LevelBackground = backgroundType switch
         {

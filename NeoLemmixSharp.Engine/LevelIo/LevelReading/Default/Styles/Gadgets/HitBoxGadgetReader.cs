@@ -91,8 +91,8 @@ public static class HitBoxGadgetReader
         int rawLemmingSolidityType = rawFileData.Read8BitUnsignedInteger();
         int rawHitBoxBehaviour = rawFileData.Read8BitUnsignedInteger();
 
-        var actualLemmingSolidityType = LemmingSolidityTypeHelpers.GetLemmingSolidityType(rawLemmingSolidityType);
-        var actualHitBoxBehaviour = HitBoxBehaviourHelpers.GetGadgetHitBoxBehaviour(rawHitBoxBehaviour);
+        var actualLemmingSolidityType = LemmingSolidityTypeHelpers.GetEnumValue(rawLemmingSolidityType);
+        var actualHitBoxBehaviour = HitBoxBehaviourHelpers.GetEnumValue(rawHitBoxBehaviour);
 
         GadgetActionReader.ReadGadgetActions(rawFileData, out var onLemmingEnterActions, out var onLemmingPresentActions, out var onLemmingExitActions);
 
@@ -132,7 +132,7 @@ public static class HitBoxGadgetReader
         LevelReadingException.ReaderAssert(rotNum == orientation.RotNum, "Hit box region data does not match expected orientation");
 
         int rawHitBoxType = rawFileData.Read8BitUnsignedInteger();
-        var actualHitBoxType = HitBoxTypeHelpers.GetGadgetHitBoxType(rawHitBoxType);
+        var actualHitBoxType = HitBoxTypeHelpers.GetEnumValue(rawHitBoxType);
 
         int numberOfPoints = rawFileData.Read16BitUnsignedInteger();
         var hitBoxPoints = CollectionsHelper.GetArrayForSize<Point>(numberOfPoints);

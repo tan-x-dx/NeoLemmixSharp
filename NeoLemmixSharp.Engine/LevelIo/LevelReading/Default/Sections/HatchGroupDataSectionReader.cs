@@ -1,11 +1,11 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Sections;
 
-public sealed class HatchGroupDataComponentReader : LevelDataComponentReader
+public sealed class HatchGroupDataSectionReader : LevelDataSectionReader
 {
-    public HatchGroupDataComponentReader(
+    public HatchGroupDataSectionReader(
         Version version)
         : base(LevelFileSectionIdentifier.HatchGroupDataSection)
     {
@@ -13,7 +13,6 @@ public sealed class HatchGroupDataComponentReader : LevelDataComponentReader
 
     public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
     {
-        AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         levelData.AllHatchGroupData.Capacity = numberOfItemsInSection;
 

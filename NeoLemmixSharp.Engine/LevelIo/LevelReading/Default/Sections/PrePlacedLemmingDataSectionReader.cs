@@ -2,12 +2,11 @@
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Components;
+namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Sections;
 
-public sealed class PrePlacedLemmingDataComponentReader : LevelDataComponentReader
+public sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
 {
-
-    public PrePlacedLemmingDataComponentReader(
+    public PrePlacedLemmingDataSectionReader(
         Version version)
         : base(LevelFileSectionIdentifier.PrePlacedLemmingDataSection)
     {
@@ -15,7 +14,6 @@ public sealed class PrePlacedLemmingDataComponentReader : LevelDataComponentRead
 
     public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
     {
-        AlreadyUsed = true;
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         levelData.PrePlacedLemmingData.Capacity = numberOfItemsInSection;
 

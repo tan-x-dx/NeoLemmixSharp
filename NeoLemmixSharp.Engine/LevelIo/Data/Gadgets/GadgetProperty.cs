@@ -21,7 +21,7 @@ public enum GadgetProperty
 
 public static class GadgetPropertyHelpers
 {
-    public static GadgetProperty GetGadgetProperty(int rawValue)
+    public static GadgetProperty GetEnumValue(int rawValue)
     {
         var enumValue = (GadgetProperty)rawValue;
 
