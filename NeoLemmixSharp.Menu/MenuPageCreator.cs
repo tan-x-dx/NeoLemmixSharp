@@ -76,7 +76,7 @@ public sealed class MenuPageCreator
             levelReader = LevelFileTypeHandler.GetLevelReaderForFile(LevelToLoadFilepath);
             var levelData = levelReader.ReadLevel(_graphicsDevice);
 
-            levelData.Validate();
+            levelData.AssertLevelDataIsValid();
 
             levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
             var levelScreen = levelBuilder.BuildLevel(levelData);
@@ -103,7 +103,7 @@ public sealed class MenuPageCreator
         LevelBuilder? levelBuilder = null;
         try
         {
-            levelData.Validate();
+            levelData.AssertLevelDataIsValid();
 
             levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
             var levelScreen = levelBuilder.BuildLevel(levelData);

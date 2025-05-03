@@ -152,7 +152,7 @@ public sealed class LevelData
         AllGadgetArchetypeBuilders = new Dictionary<StylePiecePair, IGadgetArchetypeBuilder>(comparer);
     }
 
-    public void Validate()
+    public void AssertLevelDataIsValid()
     {
         var error = TryGetError();
 
