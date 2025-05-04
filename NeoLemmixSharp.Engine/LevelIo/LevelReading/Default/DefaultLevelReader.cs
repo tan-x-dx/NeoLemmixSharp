@@ -7,11 +7,11 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default;
 
 public sealed class DefaultLevelReader : ILevelReader
 {
-    private readonly RawLevelFileData _rawFileData;
+    private readonly RawLevelFileDataReader _rawFileData;
 
     public DefaultLevelReader(string filePath)
     {
-        _rawFileData = new RawLevelFileData(filePath);
+        _rawFileData = new RawLevelFileDataReader(filePath);
     }
 
     public LevelData ReadLevel(GraphicsDevice graphicsDevice)
@@ -29,7 +29,7 @@ public sealed class DefaultLevelReader : ILevelReader
         var result = new LevelData();
 
         var version = _rawFileData.Version;
-        var stringIdLookup = new List<string>(16);
+        var stringIdLookup = new List<string>(LevelReadWriteHelpers.InitialStringListCapacity);
 
         var terrainComponentReader = new TerrainDataSectionReader(version, stringIdLookup);
         ReadOnlySpan<LevelDataSectionReader> sectionReaders =

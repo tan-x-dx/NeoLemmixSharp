@@ -22,7 +22,7 @@ public sealed class TerrainDataSectionWriter : LevelDataSectionWriter
     }
 
     public override void WriteSection(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelData levelData)
     {
         foreach (var terrainData in levelData.AllTerrainData)
@@ -34,7 +34,7 @@ public sealed class TerrainDataSectionWriter : LevelDataSectionWriter
     }
 
     public void WriteTerrainData(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         TerrainArchetypeData terrainArchetypeData,
         TerrainData terrainData)
     {
@@ -61,7 +61,7 @@ public sealed class TerrainDataSectionWriter : LevelDataSectionWriter
     }
 
     private static void WriteTerrainDataMisc(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         TerrainData terrainData)
     {
         var miscDataBits = LevelReadWriteHelpers.EncodeTerrainArchetypeDataByte(terrainData);

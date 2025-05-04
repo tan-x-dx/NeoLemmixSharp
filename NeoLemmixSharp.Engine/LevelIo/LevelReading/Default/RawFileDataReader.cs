@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default;
 
-public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Interval>
+public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : IComparer<Interval>
     where TPerfectHasher : struct, IPerfectHasher<TEnum>, IBitBufferCreator<TBuffer>, IEnumVerifier<TEnum>
     where TBuffer : struct, IBitBuffer
     where TEnum : unmanaged, Enum
@@ -24,7 +24,7 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
     public int Position => _position;
     public bool MoreToRead => Position < FileSizeInBytes;
 
-    public RawFileData(string filePath)
+    public RawFileDataReader(string filePath)
     {
         using (var fileStream = new FileStream(filePath, FileMode.Open))
         {

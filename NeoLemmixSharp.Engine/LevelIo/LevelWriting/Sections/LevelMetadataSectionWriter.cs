@@ -25,7 +25,7 @@ public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
     }
 
     public override void WriteSection(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelData levelData)
     {
         writer.Write(GetNumberOfBytesWrittenForLevelData(levelData));
@@ -44,7 +44,7 @@ public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
     }
 
     private void WriteLevelStringData(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelData levelData)
     {
         writer.Write(_stringIdLookup.GetValueOrDefault(levelData.LevelTitle));
@@ -53,7 +53,7 @@ public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
     }
 
     private static void WriteLevelDimensionData(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelData levelData)
     {
         var levelDimensions = levelData.LevelDimensions;
@@ -76,7 +76,7 @@ public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
     }
 
     private void WriteLevelBackgroundData(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelData levelData)
     {
         var backgroundData = levelData.LevelBackground;

@@ -28,7 +28,7 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
 
     [SkipLocalsInit]
     public override void WriteSection(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelData levelData)
     {
         var utf8Encoding = Encoding.UTF8;

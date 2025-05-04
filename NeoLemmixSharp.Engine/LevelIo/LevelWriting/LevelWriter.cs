@@ -16,9 +16,9 @@ public readonly ref struct LevelWriter
 
     public void WriteToFile(string filePath)
     {
-        var writer = new RawFileData();
+        var writer = new RawLevelFileDataWriter();
 
-        var stringIdLookup = new Dictionary<string, ushort>(32);
+        var stringIdLookup = new Dictionary<string, ushort>(LevelReadWriteHelpers.InitialStringListCapacity);
 
         var terrainSectionWriter = new TerrainDataSectionWriter(stringIdLookup);
 
@@ -43,7 +43,7 @@ public readonly ref struct LevelWriter
     }
 
     private void WriteSections(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         ReadOnlySpan<LevelDataSectionWriter> sectionWriters)
     {
         foreach (var sectionWriter in sectionWriters)

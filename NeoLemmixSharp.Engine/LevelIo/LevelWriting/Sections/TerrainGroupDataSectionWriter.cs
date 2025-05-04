@@ -25,7 +25,7 @@ public sealed class TerrainGroupDataSectionWriter : LevelDataSectionWriter
     }
 
     public override void WriteSection(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelData levelData)
     {
         foreach (var terrainGroup in levelData.AllTerrainGroups)
@@ -35,7 +35,7 @@ public sealed class TerrainGroupDataSectionWriter : LevelDataSectionWriter
     }
 
     private void WriteTerrainGroupData(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         Dictionary<StylePiecePair, TerrainArchetypeData> terrainArchetypeDataLookup,
         TerrainGroupData terrainGroupData)
     {

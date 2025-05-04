@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Styles.Gadgets;
 
 public static class HatchGadgetReader
 {
-    public static GadgetArchetypeData ReadGadgetArchetypeData(string styleName, string pieceName, GadgetType gadgetType, RawStyleFileData rawFileData)
+    public static GadgetArchetypeData ReadGadgetArchetypeData(string styleName, string pieceName, GadgetType gadgetType, RawStyleFileDataReader rawFileData)
     {
         throw new NotImplementedException();
     }

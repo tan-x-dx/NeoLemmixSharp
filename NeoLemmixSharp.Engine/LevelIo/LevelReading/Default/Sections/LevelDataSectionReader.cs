@@ -9,5 +9,5 @@ public abstract class LevelDataSectionReader
 
     public ReadOnlySpan<byte> GetSectionIdentifierBytes() => SectionIdentifier.GetSectionIdentifierBytes();
 
-    public abstract void ReadSection(RawLevelFileData rawFileData, LevelData levelData);
+    public abstract void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData);
 }

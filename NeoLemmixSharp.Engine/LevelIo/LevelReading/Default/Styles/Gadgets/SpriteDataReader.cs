@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default.Styles.Gadgets;
 
 public readonly ref struct SpriteDataReader
 {
-    public SpriteArchetypeData ReadSpriteData(RawStyleFileData rawFileData, int expectedNumberOfGadgetStates)
+    public SpriteArchetypeData ReadSpriteData(RawStyleFileDataReader rawFileData, int expectedNumberOfGadgetStates)
     {
         int baseWidth = rawFileData.Read16BitUnsignedInteger();
         int baseHeight = rawFileData.Read16BitUnsignedInteger();
@@ -32,7 +32,7 @@ public readonly ref struct SpriteDataReader
         };
     }
 
-    private StateSpriteArchetypeData[] ReadGadgetStateSpriteArchetypeData(RawStyleFileData rawFileData, int numberOfGadgetStates)
+    private StateSpriteArchetypeData[] ReadGadgetStateSpriteArchetypeData(RawStyleFileDataReader rawFileData, int numberOfGadgetStates)
     {
         var result = new StateSpriteArchetypeData[numberOfGadgetStates];
 
@@ -47,7 +47,7 @@ public readonly ref struct SpriteDataReader
         return result;
     }
 
-    private AnimationLayerArchetypeData[] ReadAnimationData(RawStyleFileData rawFileData)
+    private AnimationLayerArchetypeData[] ReadAnimationData(RawStyleFileDataReader rawFileData)
     {
         int numberOfAnimationBehaviours = rawFileData.Read8BitUnsignedInteger();
 
@@ -63,7 +63,7 @@ public readonly ref struct SpriteDataReader
         return result;
     }
 
-    private AnimationLayerArchetypeData ReadAnimationBehaviourArchetypData(RawStyleFileData rawFileData)
+    private AnimationLayerArchetypeData ReadAnimationBehaviourArchetypData(RawStyleFileDataReader rawFileData)
     {
         var animationLayerParameters = ReadAnimationLayerParameters(rawFileData);
         int rawColorChooser = rawFileData.Read8BitUnsignedInteger();
@@ -85,7 +85,7 @@ public readonly ref struct SpriteDataReader
         };
     }
 
-    private AnimationLayerParameters ReadAnimationLayerParameters(RawStyleFileData rawFileData)
+    private AnimationLayerParameters ReadAnimationLayerParameters(RawStyleFileDataReader rawFileData)
     {
         int frameStart = rawFileData.Read8BitUnsignedInteger();
         int frameEnd = rawFileData.Read8BitUnsignedInteger();

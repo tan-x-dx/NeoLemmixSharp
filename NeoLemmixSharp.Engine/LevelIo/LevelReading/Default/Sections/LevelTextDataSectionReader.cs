@@ -16,7 +16,7 @@ public sealed class LevelTextDataSectionReader : LevelDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
 
@@ -30,7 +30,7 @@ public sealed class LevelTextDataSectionReader : LevelDataSectionReader
             levelData.PostTextLines.Count);
     }
 
-    private void ReadTextLines(RawLevelFileData rawFileData, List<string> collection)
+    private void ReadTextLines(RawLevelFileDataReader rawFileData, List<string> collection)
     {
         int numberOfTextItems = rawFileData.Read8BitUnsignedInteger();
         collection.Capacity = numberOfTextItems;

@@ -17,7 +17,7 @@ public static class HitBoxGadgetReader
         string styleName,
         string pieceName,
         GadgetType gadgetType,
-        RawStyleFileData rawFileData)
+        RawStyleFileDataReader rawFileData)
     {
         int resizeTypeByte = rawFileData.Read8BitUnsignedInteger();
         var resizeType = (ResizeType)(resizeTypeByte & 3);
@@ -41,7 +41,7 @@ public static class HitBoxGadgetReader
         return result;
     }
 
-    private static GadgetStateArchetypeData[] ReadStateData(RawStyleFileData rawFileData)
+    private static GadgetStateArchetypeData[] ReadStateData(RawStyleFileDataReader rawFileData)
     {
         int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
 
@@ -69,7 +69,7 @@ public static class HitBoxGadgetReader
         return result;
     }
 
-    private static HitBoxData[] ReadHitBoxData(RawStyleFileData rawFileData)
+    private static HitBoxData[] ReadHitBoxData(RawStyleFileDataReader rawFileData)
     {
         int numberOfHitBoxData = rawFileData.Read8BitUnsignedInteger();
 
@@ -86,7 +86,7 @@ public static class HitBoxGadgetReader
         return result;
     }
 
-    private static HitBoxData ReadHitBoxDatum(RawStyleFileData rawFileData)
+    private static HitBoxData ReadHitBoxDatum(RawStyleFileDataReader rawFileData)
     {
         int rawLemmingSolidityType = rawFileData.Read8BitUnsignedInteger();
         int rawHitBoxBehaviour = rawFileData.Read8BitUnsignedInteger();
@@ -114,7 +114,7 @@ public static class HitBoxGadgetReader
         };
     }
 
-    private static HitBoxRegionData[] ReadHitBoxRegionData(RawStyleFileData rawFileData)
+    private static HitBoxRegionData[] ReadHitBoxRegionData(RawStyleFileDataReader rawFileData)
     {
         var regionData = new HitBoxRegionData[EngineConstants.NumberOfOrientations];
         regionData[EngineConstants.DownOrientationRotNum] = ReadHitBoxRegionDataForOrientation(rawFileData, Orientation.Down);
@@ -125,7 +125,7 @@ public static class HitBoxGadgetReader
         return regionData;
     }
 
-    private static HitBoxRegionData ReadHitBoxRegionDataForOrientation(RawStyleFileData rawFileData, Orientation orientation)
+    private static HitBoxRegionData ReadHitBoxRegionDataForOrientation(RawStyleFileDataReader rawFileData, Orientation orientation)
     {
         int rotNum = rawFileData.Read8BitUnsignedInteger();
 
@@ -154,7 +154,7 @@ public static class HitBoxGadgetReader
     }
 
     private static void ReadFilterData(
-        RawStyleFileData rawFileData,
+        RawStyleFileDataReader rawFileData,
         out LemmingActionSet? allowedActions,
         out StateChangerSet? allowedStates,
         out OrientationSet? allowedOrientations,
@@ -201,7 +201,7 @@ public static class HitBoxGadgetReader
         }
     }
 
-    private static BitArraySet<THasher, TBuffer, T> ReadBitArraySet<THasher, TBuffer, T>(RawStyleFileData rawFileData)
+    private static BitArraySet<THasher, TBuffer, T> ReadBitArraySet<THasher, TBuffer, T>(RawStyleFileDataReader rawFileData)
         where THasher : struct, IPerfectHasher<T>, IBitBufferCreator<TBuffer>
         where TBuffer : struct, IBitBuffer
         where T : notnull

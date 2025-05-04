@@ -1,21 +1,25 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting;
 
-public sealed class RawFileData
+public sealed class RawFileDataWriter<TPerfectHasher, TBuffer, TEnum>
+    where TPerfectHasher : struct, IPerfectHasher<TEnum>, IBitBufferCreator<TBuffer>, IEnumVerifier<TEnum>
+    where TBuffer : struct, IBitBuffer
+    where TEnum : unmanaged, Enum
 {
     private const byte Period = (byte)'.';
     private const int InitialDataCapacity = 1 << 11;
 
-    private readonly BitArrayDictionary<LevelFileSectionIdentifierHasher, BitBuffer32, LevelFileSectionIdentifier, Interval> _sectionIntervals = new(new LevelFileSectionIdentifierHasher());
+    private readonly BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval> _sectionIntervals = new(new TPerfectHasher());
     private byte[] _mainDataByteBuffer = new byte[InitialDataCapacity];
     private int _mainDataPosition;
 
     private int _currentSectionStartPosition = -1;
-    private LevelFileSectionIdentifier? _currentSectionIdentifier;
+    private TEnum? _currentSectionIdentifier;
 
     public void WriteToFile(
         string filePath,
@@ -63,9 +67,13 @@ public sealed class RawFileData
 
         var intervalOffset = preamblePosition + _sectionIntervals.Count * numberOfBytesPerSectionIdentiferChunk;
 
-        foreach (var (sectionIdentifier, interval) in _sectionIntervals)
+        foreach (var kvp in _sectionIntervals)
         {
-            WriteToByteBuffer((byte)sectionIdentifier, ref preambleDataByteBuffer, ref preamblePosition);
+            var sectionIdentifier = kvp.Key;
+            var interval = kvp.Value;
+
+            byte sectionIdentifierByte = (byte)Unsafe.As<TEnum, int>(ref sectionIdentifier);
+            WriteToByteBuffer(sectionIdentifierByte, ref preambleDataByteBuffer, ref preamblePosition);
             WriteToByteBuffer(interval.Start + intervalOffset, ref preambleDataByteBuffer, ref preamblePosition);
             WriteToByteBuffer(interval.Length, ref preambleDataByteBuffer, ref preamblePosition);
         }
@@ -91,7 +99,7 @@ public sealed class RawFileData
         byteBuffer = newBytes;
     }
 
-    public void BeginWritingSection(LevelFileSectionIdentifier sectionIdentifier)
+    public void BeginWritingSection(TEnum sectionIdentifier)
     {
         AssertCanStartNewSection(sectionIdentifier);
 
@@ -144,7 +152,7 @@ public sealed class RawFileData
         _mainDataPosition += data.Length;
     }
 
-    public void EndWritingSection(LevelFileSectionIdentifier sectionIdentifier)
+    public void EndWritingSection(TEnum sectionIdentifier)
     {
         AssertCanEndSection(sectionIdentifier);
 
@@ -157,7 +165,7 @@ public sealed class RawFileData
         _currentSectionStartPosition = -1;
     }
 
-    private void AssertCanStartNewSection(LevelFileSectionIdentifier sectionIdentifier)
+    private void AssertCanStartNewSection(TEnum sectionIdentifier)
     {
         LevelWritingException.WriterAssert(!_currentSectionIdentifier.HasValue, "Cannot begin new section while in middle of other section!");
         LevelWritingException.WriterAssert(!_sectionIntervals.ContainsKey(sectionIdentifier), "Section has already been written!");
@@ -169,10 +177,15 @@ public sealed class RawFileData
         LevelWritingException.WriterAssert(_currentSectionIdentifier.HasValue, "Cannot write - Not in section!");
     }
 
-    private void AssertCanEndSection(LevelFileSectionIdentifier sectionIdentifier)
+    private void AssertCanEndSection(TEnum sectionIdentifier)
     {
         LevelWritingException.WriterAssert(_currentSectionIdentifier.HasValue, "Cannot end section - Not in section at all!");
-        LevelWritingException.WriterAssert(_currentSectionIdentifier == sectionIdentifier, "Mismatching section start/end!");
+
+        var v = _currentSectionIdentifier.Value;
+        var currentSectionIdentifierValue = Unsafe.As<TEnum, int>(ref v);
+        var sectionIdentifierValue = Unsafe.As<TEnum, int>(ref sectionIdentifier);
+
+        LevelWritingException.WriterAssert(currentSectionIdentifierValue == sectionIdentifierValue, "Mismatching section start/end!");
         LevelWritingException.WriterAssert(_currentSectionStartPosition >= 0, "Invalid section writing state!");
     }
 

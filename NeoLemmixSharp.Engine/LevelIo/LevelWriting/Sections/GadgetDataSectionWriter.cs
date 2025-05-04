@@ -26,7 +26,7 @@ public sealed class GadgetDataSectionWriter : LevelDataSectionWriter
     }
 
     public override void WriteSection(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelData levelData)
     {
         foreach (var gadgetData in levelData.AllGadgetData)
@@ -36,7 +36,7 @@ public sealed class GadgetDataSectionWriter : LevelDataSectionWriter
     }
 
     private void WriteGadgetData(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         GadgetData gadgetData)
     {
         writer.Write(GetNumberOfBytesWritten(gadgetData));

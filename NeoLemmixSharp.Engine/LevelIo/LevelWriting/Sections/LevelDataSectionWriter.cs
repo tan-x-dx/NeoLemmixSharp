@@ -12,6 +12,6 @@ public abstract class LevelDataSectionWriter
     public abstract ushort CalculateNumberOfItemsInSection(LevelData levelData);
 
     public abstract void WriteSection(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelData levelData);
 }

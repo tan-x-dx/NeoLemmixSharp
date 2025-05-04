@@ -13,7 +13,7 @@ public sealed class HatchGroupDataSectionReader : LevelDataSectionReader
     {
     }
 
-    public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         levelData.AllHatchGroupData.Capacity = numberOfItemsInSection;
@@ -26,7 +26,7 @@ public sealed class HatchGroupDataSectionReader : LevelDataSectionReader
         }
     }
 
-    private static HatchGroupData ReadHatchGroupData(RawLevelFileData rawFileData)
+    private static HatchGroupData ReadHatchGroupData(RawLevelFileDataReader rawFileData)
     {
         int hatchGroupId = rawFileData.Read8BitUnsignedInteger();
         int minSpawnInterval = rawFileData.Read8BitUnsignedInteger();

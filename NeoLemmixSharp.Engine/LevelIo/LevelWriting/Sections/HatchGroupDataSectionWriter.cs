@@ -13,7 +13,7 @@ public sealed class HatchGroupDataSectionWriter : LevelDataSectionWriter
     }
 
     public override void WriteSection(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelData levelData)
     {
         foreach (var hatchGroupData in levelData.AllHatchGroupData)
@@ -23,7 +23,7 @@ public sealed class HatchGroupDataSectionWriter : LevelDataSectionWriter
     }
 
     private static void WriteHatchGroupData(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         HatchGroupData hatchGroupData)
     {
         writer.Write((byte)hatchGroupData.HatchGroupId);

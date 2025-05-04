@@ -19,14 +19,14 @@ public sealed class LevelTextDataSectionWriter : LevelDataSectionWriter
         return (ushort)(levelData.PreTextLines.Count + levelData.PostTextLines.Count);
     }
 
-    public override void WriteSection(RawFileData writer, LevelData levelData)
+    public override void WriteSection(RawLevelFileDataWriter writer, LevelData levelData)
     {
         WriteStrings(writer, levelData.PreTextLines);
 
         WriteStrings(writer, levelData.PostTextLines);
     }
 
-    private void WriteStrings(RawFileData writer, List<string> stringList)
+    private void WriteStrings(RawLevelFileDataWriter writer, List<string> stringList)
     {
         writer.Write((byte)stringList.Count);
 

@@ -14,7 +14,7 @@ public sealed class PrePlacedLemmingDataSectionWriter : LevelDataSectionWriter
     }
 
     public override void WriteSection(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelData levelData)
     {
         foreach (var lemmingData in levelData.PrePlacedLemmingData)
@@ -24,7 +24,7 @@ public sealed class PrePlacedLemmingDataSectionWriter : LevelDataSectionWriter
     }
 
     private static void WriteLemmingData(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LemmingData lemmingData)
     {
         writer.Write((ushort)(lemmingData.Position.X + LevelReadWriteHelpers.PositionOffset));

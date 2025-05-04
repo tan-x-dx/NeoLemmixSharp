@@ -11,7 +11,7 @@ public static class LogicGateGadgetReader
         string pieceName,
         GadgetType gadgetType,
         LogicGateType logicGateType,
-        RawStyleFileData rawFileData)
+        RawStyleFileDataReader rawFileData)
     {
         return new GadgetArchetypeData
         {

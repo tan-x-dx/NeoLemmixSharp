@@ -19,7 +19,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         LevelReadingException.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
@@ -48,7 +48,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
             numberOfBytesToRead);
     }
 
-    private static void ReadLevelDimensionData(RawLevelFileData rawFileData, LevelData levelData)
+    private static void ReadLevelDimensionData(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
         int levelWidth = rawFileData.Read16BitUnsignedInteger();
         int levelHeight = rawFileData.Read16BitUnsignedInteger();
@@ -82,7 +82,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
         levelData.VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
     }
 
-    private void ReadBackgroundData(RawLevelFileData rawFileData, LevelData levelData)
+    private void ReadBackgroundData(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
         int rawBackgroundType = rawFileData.Read8BitUnsignedInteger();
         var backgroundType = BackgroundTypeHelpers.GetEnumValue(rawBackgroundType);

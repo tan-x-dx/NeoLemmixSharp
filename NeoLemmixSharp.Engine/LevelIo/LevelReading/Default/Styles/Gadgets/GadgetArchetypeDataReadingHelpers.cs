@@ -10,7 +10,7 @@ public static class GadgetArchetypeDataReadingHelpers
     public static GadgetArchetypeData GetGadgetArchetypeData(
         string styleName,
         string pieceName,
-        RawStyleFileData rawFileData,
+        RawStyleFileDataReader rawFileData,
         [DoesNotReturnIf(false)] bool pieceExists)
     {
         if (pieceExists)
@@ -31,7 +31,7 @@ public static class GadgetArchetypeDataReadingHelpers
     private static GadgetArchetypeData ReadGadgetArchetypeData(
         string styleName,
         string pieceName,
-        RawStyleFileData rawFileData)
+        RawStyleFileDataReader rawFileData)
     {
         int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
         int initialPosition = rawFileData.Position;

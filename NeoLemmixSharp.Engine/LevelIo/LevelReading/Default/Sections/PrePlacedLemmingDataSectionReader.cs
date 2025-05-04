@@ -14,7 +14,7 @@ public sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
     {
     }
 
-    public override void ReadSection(RawLevelFileData rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         levelData.PrePlacedLemmingData.Capacity = numberOfItemsInSection;
@@ -27,7 +27,7 @@ public sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
         }
     }
 
-    private static LemmingData ReadLemmingData(RawLevelFileData rawFileData)
+    private static LemmingData ReadLemmingData(RawLevelFileDataReader rawFileData)
     {
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();

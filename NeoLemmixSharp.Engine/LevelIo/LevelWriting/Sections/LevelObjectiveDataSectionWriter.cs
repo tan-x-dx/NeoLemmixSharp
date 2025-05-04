@@ -22,7 +22,7 @@ public sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
     }
 
     public override void WriteSection(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelData levelData)
     {
         foreach (var levelObjective in levelData.LevelObjectives)
@@ -32,7 +32,7 @@ public sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
     }
 
     private void WriteLevelObjective(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         LevelObjective levelObjective)
     {
         writer.Write(GetNumberOfBytesForLevelObjective(levelObjective));
@@ -63,7 +63,7 @@ public sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
     }
 
     private static void WriteSkillSetDatum(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         SkillSetData skillSetData)
     {
         writer.Write((byte)skillSetData.Skill.Id);
@@ -72,7 +72,7 @@ public sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
     }
 
     private static void WriteRequirements(
-        RawFileData writer,
+        RawLevelFileDataWriter writer,
         IObjectiveRequirement objectiveRequirement)
     {
         // TODO
