@@ -18,7 +18,7 @@ public readonly ref struct LevelWriter
     {
         var writer = new RawFileData();
 
-        var stringIdLookup = new Dictionary<string, ushort>();
+        var stringIdLookup = new Dictionary<string, ushort>(32);
 
         var terrainSectionWriter = new TerrainDataSectionWriter(stringIdLookup);
 

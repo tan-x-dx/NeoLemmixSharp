@@ -13,7 +13,6 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
     where TEnum : unmanaged, Enum
 {
     private const byte Period = (byte)'.';
-    private const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
 
     private readonly byte[] _byteBuffer;
     public Version Version { get; }
@@ -31,8 +30,9 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
         {
             var fileSizeInBytes = fileStream.Length;
 
-            if (fileSizeInBytes > MaxAllowedFileSizeInBytes)
-                throw new InvalidOperationException("File too large! Max file size is 64Mb");
+            LevelReadingException.ReaderAssert(
+                fileSizeInBytes <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
+                LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
 
             _byteBuffer = GC.AllocateUninitializedArray<byte>((int)fileSizeInBytes);
 
@@ -107,7 +107,9 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
             var firstInterval = intervals[i];
             var secondInterval = intervals[i + 1];
 
-            LevelReadingException.ReaderAssert(firstInterval.Start + firstInterval.Length == secondInterval.Start, "Sections are not contiguous!");
+            LevelReadingException.ReaderAssert(
+                firstInterval.Start + firstInterval.Length == secondInterval.Start,
+                "Sections are not contiguous!");
         }
     }
 
@@ -146,21 +148,16 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
 
     public Color ReadArgbColor()
     {
-        byte alpha = Read8BitUnsignedInteger();
-        byte red = Read8BitUnsignedInteger();
-        byte green = Read8BitUnsignedInteger();
-        byte blue = Read8BitUnsignedInteger();
+        var bytes = ReadBytes(4);
 
-        return new Color(red, green, blue, alpha);
+        return new Color(bytes[1], bytes[2], bytes[3], bytes[0]);
     }
 
     public Color ReadRgbColor()
     {
-        byte red = Read8BitUnsignedInteger();
-        byte green = Read8BitUnsignedInteger();
-        byte blue = Read8BitUnsignedInteger();
+        var bytes = ReadBytes(3);
 
-        return new Color(red, green, blue, (byte)0xff);
+        return new Color(bytes[0], bytes[1], bytes[2], (byte)0xff);
     }
 
     public bool TryLocateSpan(ReadOnlySpan<byte> bytesToLocate, out int index)

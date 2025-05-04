@@ -8,6 +8,9 @@ public static class LevelReadWriteHelpers
 {
     public const int PositionOffset = 512;
 
+    public const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
+    public const string FileSizeTooLargeExceptionMessage = "File too large! Max file size is 64Mb";
+
     #region Section Identifier Stuff
 
     public const int NumberOfBytesForLevelSectionIdentifier = 2;

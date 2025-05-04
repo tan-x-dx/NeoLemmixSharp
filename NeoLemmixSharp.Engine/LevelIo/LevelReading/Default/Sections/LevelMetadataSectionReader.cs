@@ -89,7 +89,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
         levelData.LevelBackground = backgroundType switch
         {
-            BackgroundType.NoBackgroundSpecified => null,
+            BackgroundType.NoBackgroundSpecified => ReadNoBackgroundData(),
             BackgroundType.SolidColorBackground => ReadSolidColorBackgroundData(),
             BackgroundType.TextureBackground => ReadTextureBackgroundData(),
 
@@ -98,11 +98,20 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
         return;
 
+        BackgroundData? ReadNoBackgroundData()
+        {
+            _ = rawFileData.Read32BitSignedInteger();
+            return null;
+        }
+
         BackgroundData ReadSolidColorBackgroundData()
         {
+            var color = rawFileData.ReadRgbColor();
+            _ = rawFileData.Read8BitUnsignedInteger();
+
             return new BackgroundData
             {
-                Color = rawFileData.ReadRgbColor(),
+                Color = color,
                 BackgroundImageName = string.Empty
             };
         }
@@ -110,6 +119,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
         BackgroundData ReadTextureBackgroundData()
         {
             int backgroundStringId = rawFileData.Read16BitUnsignedInteger();
+            _ = rawFileData.Read16BitUnsignedInteger();
 
             return new BackgroundData
             {

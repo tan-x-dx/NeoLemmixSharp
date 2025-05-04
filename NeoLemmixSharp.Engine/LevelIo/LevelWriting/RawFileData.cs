@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Runtime.CompilerServices;
 
@@ -27,6 +28,10 @@ public sealed class RawFileData
 
         WriteVersion(version, ref preambleDataByteBuffer, ref preamblePosition);
         WriteSectionIntervals(ref preambleDataByteBuffer, ref preamblePosition);
+
+        LevelWritingException.WriterAssert(
+            (_mainDataPosition + preamblePosition) <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
+            LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
 
         using var fileStream = new FileStream(filePath, FileMode.Create);
         fileStream.Write(new ReadOnlySpan<byte>(preambleDataByteBuffer, 0, preamblePosition));
@@ -104,13 +109,31 @@ public sealed class RawFileData
     private void WriteSectionData<T>(T value)
         where T : unmanaged
     {
-        LevelWritingException.WriterAssert(_currentSectionIdentifier.HasValue, "Cannot write - Not in section!");
+        AssertWithinSection();
 
         WriteToByteBuffer(value, ref _mainDataByteBuffer, ref _mainDataPosition);
     }
 
+    [SkipLocalsInit]
+    public void WriteArgbColor(Color color)
+    {
+        ReadOnlySpan<byte> colorBytes = [color.A, color.R, color.G, color.B];
+
+        Write(colorBytes);
+    }
+
+    [SkipLocalsInit]
+    public void WriteRgbColor(Color color)
+    {
+        ReadOnlySpan<byte> colorBytes = [color.R, color.G, color.B];
+
+        Write(colorBytes);
+    }
+
     public void Write(ReadOnlySpan<byte> data)
     {
+        AssertWithinSection();
+
         if (_mainDataPosition + data.Length >= _mainDataByteBuffer.Length)
         {
             DoubleByteBufferLength(ref _mainDataByteBuffer);
@@ -139,6 +162,11 @@ public sealed class RawFileData
         LevelWritingException.WriterAssert(!_currentSectionIdentifier.HasValue, "Cannot begin new section while in middle of other section!");
         LevelWritingException.WriterAssert(!_sectionIntervals.ContainsKey(sectionIdentifier), "Section has already been written!");
         LevelWritingException.WriterAssert(_currentSectionStartPosition < 0, "Invalid section writing state!");
+    }
+
+    private void AssertWithinSection()
+    {
+        LevelWritingException.WriterAssert(_currentSectionIdentifier.HasValue, "Cannot write - Not in section!");
     }
 
     private void AssertCanEndSection(LevelFileSectionIdentifier sectionIdentifier)

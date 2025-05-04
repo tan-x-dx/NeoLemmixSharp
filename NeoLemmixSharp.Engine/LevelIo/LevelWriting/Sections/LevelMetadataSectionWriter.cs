@@ -5,6 +5,9 @@ namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting.Sections;
 public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
 {
     private const int NumberOfBytesForMainLevelData = 31;
+    private const int NumberOfBytesWrittenForBackgroundData =
+        1 + // Enum specifier
+        4; // Four bytes for actual data, padding with zeros where necessary
 
     public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.LevelMetadataSection;
     public override bool IsNecessary => true;
@@ -37,22 +40,7 @@ public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
 
     private static ushort GetNumberOfBytesWrittenForLevelData(LevelData levelData)
     {
-        int numberOfBytesWrittenForBackgroundData;
-        var backgroundData = levelData.LevelBackground;
-        if (backgroundData is null)
-        {
-            numberOfBytesWrittenForBackgroundData = 1;
-        }
-        else if (backgroundData.IsSolidColor)
-        {
-            numberOfBytesWrittenForBackgroundData = 4;
-        }
-        else
-        {
-            numberOfBytesWrittenForBackgroundData = 3;
-        }
-
-        return (ushort)(NumberOfBytesForMainLevelData + numberOfBytesWrittenForBackgroundData);
+        return NumberOfBytesForMainLevelData + NumberOfBytesWrittenForBackgroundData;
     }
 
     private void WriteLevelStringData(
@@ -95,6 +83,7 @@ public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         if (backgroundData is null)
         {
             writer.Write((byte)BackgroundType.NoBackgroundSpecified);
+            writer.Write((int)0);
 
             return;
         }
@@ -102,10 +91,7 @@ public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         if (backgroundData.IsSolidColor)
         {
             writer.Write((byte)BackgroundType.SolidColorBackground);
-            var actualBackgroundColor = backgroundData.Color;
-            writer.Write(actualBackgroundColor.R);
-            writer.Write(actualBackgroundColor.G);
-            writer.Write(actualBackgroundColor.B);
+            writer.WriteArgbColor(backgroundData.Color);
 
             return;
         }
@@ -113,5 +99,6 @@ public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         writer.Write((byte)BackgroundType.TextureBackground);
         var backgroundStringId = _stringIdLookup[backgroundData.BackgroundImageName];
         writer.Write(backgroundStringId);
+        writer.Write((ushort)0);
     }
 }
