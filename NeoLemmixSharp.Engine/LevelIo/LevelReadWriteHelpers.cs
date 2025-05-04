@@ -194,9 +194,6 @@ public static class LevelReadWriteHelpers
     {
         const int upperBitsMask = ~7;
 
-        if ((dhtByte & upperBitsMask) == 0)
-            return;
-
-        throw new LevelReadingException("Read suspicious dihedral transformation byte!");
+        LevelReadingException.ReaderAssert((dhtByte & upperBitsMask) == 0, "Read suspicious dihedral transformation byte!");
     }
 }
