@@ -173,11 +173,18 @@ public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : ICompare
         out int index)
     {
         if (!_sectionIndices.TryGetValue(sectionIdentifier, out var interval))
-            throw new InvalidOperationException("Section not present!");
+        {
+            index = -1;
+            return false;
+        }
 
         var bytesToSearch = new ReadOnlySpan<byte>(_byteBuffer, interval.Start, interval.Length);
         index = bytesToSearch.IndexOfAny(SearchValues.Create(bytesToLocate));
-        return index >= 0;
+        if (index < 0)
+            return false;
+
+        index += interval.Start;
+        return true;
     }
 
     public void SetReaderPosition(int position)
