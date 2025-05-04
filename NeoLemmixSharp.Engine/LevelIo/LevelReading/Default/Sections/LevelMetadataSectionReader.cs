@@ -106,8 +106,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
         BackgroundData ReadSolidColorBackgroundData()
         {
-            var color = rawFileData.ReadRgbColor();
-            _ = rawFileData.Read8BitUnsignedInteger();
+            var color = rawFileData.ReadArgbColor();
 
             return new BackgroundData
             {
