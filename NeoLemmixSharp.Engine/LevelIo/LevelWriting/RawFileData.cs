@@ -38,20 +38,20 @@ public sealed class RawFileData
         ref byte[] preambleDataByteBuffer,
         ref int preamblePosition)
     {
-        Write((ushort)version.Major, ref preambleDataByteBuffer, ref preamblePosition);
-        Write(Period, ref preambleDataByteBuffer, ref preamblePosition);
-        Write((ushort)version.Minor, ref preambleDataByteBuffer, ref preamblePosition);
-        Write(Period, ref preambleDataByteBuffer, ref preamblePosition);
-        Write((ushort)version.Build, ref preambleDataByteBuffer, ref preamblePosition);
-        Write(Period, ref preambleDataByteBuffer, ref preamblePosition);
-        Write((ushort)version.Revision, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer((ushort)version.Major, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer((ushort)version.Minor, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer((ushort)version.Build, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer((ushort)version.Revision, ref preambleDataByteBuffer, ref preamblePosition);
     }
 
     private unsafe void WriteSectionIntervals(
         ref byte[] preambleDataByteBuffer,
         ref int preamblePosition)
     {
-        Write((byte)_sectionIntervals.Count, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer((byte)_sectionIntervals.Count, ref preambleDataByteBuffer, ref preamblePosition);
 
         // One byte for the section identifier, plus the size of the Interval type
         var numberOfBytesPerSectionIdentiferChunk = 1 + sizeof(Interval);
@@ -60,30 +60,30 @@ public sealed class RawFileData
 
         foreach (var (sectionIdentifier, interval) in _sectionIntervals)
         {
-            Write((byte)sectionIdentifier, ref preambleDataByteBuffer, ref preamblePosition);
-            Write(interval.Start + intervalOffset, ref preambleDataByteBuffer, ref preamblePosition);
-            Write(interval.Length, ref preambleDataByteBuffer, ref preamblePosition);
+            WriteToByteBuffer((byte)sectionIdentifier, ref preambleDataByteBuffer, ref preamblePosition);
+            WriteToByteBuffer(interval.Start + intervalOffset, ref preambleDataByteBuffer, ref preamblePosition);
+            WriteToByteBuffer(interval.Length, ref preambleDataByteBuffer, ref preamblePosition);
         }
     }
 
-    private static unsafe void Write<T>(T value, ref byte[] array, ref int position)
+    private static unsafe void WriteToByteBuffer<T>(T value, ref byte[] byteBuffer, ref int position)
         where T : unmanaged
     {
         var typeSize = sizeof(T);
-        if (position + typeSize >= array.Length)
+        if (position + typeSize >= byteBuffer.Length)
         {
-            DoubleArrayLength(ref array);
+            DoubleByteBufferLength(ref byteBuffer);
         }
 
-        Unsafe.WriteUnaligned(ref array[position], value);
+        Unsafe.WriteUnaligned(ref byteBuffer[position], value);
         position += typeSize;
     }
 
-    private static void DoubleArrayLength(ref byte[] array)
+    private static void DoubleByteBufferLength(ref byte[] byteBuffer)
     {
-        var newBytes = new byte[array.Length << 1];
-        new ReadOnlySpan<byte>(array).CopyTo(newBytes);
-        array = newBytes;
+        var newBytes = new byte[byteBuffer.Length << 1];
+        new ReadOnlySpan<byte>(byteBuffer).CopyTo(newBytes);
+        byteBuffer = newBytes;
     }
 
     public void BeginWritingSection(LevelFileSectionIdentifier sectionIdentifier)
@@ -106,14 +106,14 @@ public sealed class RawFileData
     {
         LevelWritingException.WriterAssert(_currentSectionIdentifier.HasValue, "Cannot write - Not in section!");
 
-        Write(value, ref _mainDataByteBuffer, ref _mainDataPosition);
+        WriteToByteBuffer(value, ref _mainDataByteBuffer, ref _mainDataPosition);
     }
 
     public void Write(ReadOnlySpan<byte> data)
     {
         if (_mainDataPosition + data.Length >= _mainDataByteBuffer.Length)
         {
-            DoubleArrayLength(ref _mainDataByteBuffer);
+            DoubleByteBufferLength(ref _mainDataByteBuffer);
         }
 
         var destinationSpan = new Span<byte>(_mainDataByteBuffer, _mainDataPosition, data.Length);
