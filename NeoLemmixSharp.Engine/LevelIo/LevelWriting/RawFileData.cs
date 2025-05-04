@@ -47,32 +47,23 @@ public sealed class RawFileData
         Write((ushort)version.Revision, ref preambleDataByteBuffer, ref preamblePosition);
     }
 
-    [SkipLocalsInit]
-    private void WriteSectionIntervals(
+    private unsafe void WriteSectionIntervals(
         ref byte[] preambleDataByteBuffer,
         ref int preamblePosition)
     {
-        const int NumberOfBytesPerSectionIdentiferChunk = 1 + 2 * sizeof(ushort);
-
-        var intervalOffset = _sectionIntervals.Count * NumberOfBytesPerSectionIdentiferChunk;
-
         Write((byte)_sectionIntervals.Count, ref preambleDataByteBuffer, ref preamblePosition);
-        intervalOffset++; // Add an extra byte because of the count
+
+        // One byte for the section identifier, plus the size of the Interval type
+        var numberOfBytesPerSectionIdentiferChunk = 1 + sizeof(Interval);
+
+        var intervalOffset = preamblePosition + _sectionIntervals.Count * numberOfBytesPerSectionIdentiferChunk;
 
         foreach (var (sectionIdentifier, interval) in _sectionIntervals)
         {
             Write((byte)sectionIdentifier, ref preambleDataByteBuffer, ref preamblePosition);
-            Write((ushort)(interval.Start + intervalOffset), ref preambleDataByteBuffer, ref preamblePosition);
-            Write((ushort)interval.Length, ref preambleDataByteBuffer, ref preamblePosition);
+            Write(interval.Start + intervalOffset, ref preambleDataByteBuffer, ref preamblePosition);
+            Write(interval.Length, ref preambleDataByteBuffer, ref preamblePosition);
         }
-    }
-
-    public void SetReaderPosition(int position)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegative(position);
-        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(position, _mainDataByteBuffer.Length);
-
-        _mainDataPosition = position;
     }
 
     private static unsafe void Write<T>(T value, ref byte[] array, ref int position)
@@ -153,7 +144,7 @@ public sealed class RawFileData
     private void AssertCanEndSection(LevelFileSectionIdentifier sectionIdentifier)
     {
         LevelWritingException.WriterAssert(_currentSectionIdentifier.HasValue, "Cannot end section - Not in section at all!");
-        LevelWritingException.WriterAssert(_currentSectionIdentifier == sectionIdentifier, "Mismatching section data!");
+        LevelWritingException.WriterAssert(_currentSectionIdentifier == sectionIdentifier, "Mismatching section start/end!");
         LevelWritingException.WriterAssert(_currentSectionStartPosition >= 0, "Invalid section writing state!");
     }
 

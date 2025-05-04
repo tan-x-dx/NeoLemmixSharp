@@ -78,8 +78,12 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
         {
             int rawIdentifier = Read8BitUnsignedInteger();
             TEnum enumValue = hasher.GetEnumValue(rawIdentifier);
-            int sectionStart = Read16BitUnsignedInteger();
-            int sectionLength = Read16BitUnsignedInteger();
+            int sectionStart = Read32BitSignedInteger();
+            int sectionLength = Read32BitSignedInteger();
+
+            LevelReadingException.ReaderAssert(sectionStart > 0, "Invalid interval start!");
+            LevelReadingException.ReaderAssert(sectionLength > 0, "Invalid interval length!");
+
             var interval = new Interval(sectionStart, sectionLength);
 
             result.Add(enumValue, interval);
