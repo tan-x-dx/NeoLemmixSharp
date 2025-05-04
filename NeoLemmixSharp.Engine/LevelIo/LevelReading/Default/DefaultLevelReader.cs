@@ -62,7 +62,7 @@ public sealed class DefaultLevelReader : ILevelReader
             {
                 LevelReadingException.ReaderAssert(
                     !sectionReader.IsNecessary,
-                    "Necessary section missing!");
+                    "No data for necessary section!");
                 continue;
             }
 
