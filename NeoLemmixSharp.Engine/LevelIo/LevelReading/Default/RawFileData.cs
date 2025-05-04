@@ -98,7 +98,7 @@ public sealed class RawFileData<TPerfectHasher, TBuffer, TEnum> : IComparer<Inte
     private void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval> result)
     {
         Span<Interval> intervals = stackalloc Interval[result.Count];
-        result.GetValues(intervals);
+        result.CopyValuesTo(intervals);
 
         intervals.Sort(this);
 
