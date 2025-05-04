@@ -66,10 +66,11 @@ public static class TerrainArchetypeReadingHelpers
             }
         }
 
-        AssertTerrainArchetypeBytesMakeSense(
+        LevelReadingException.AssertBytesMakeSense(
             rawFileData.Position,
             initialPosition,
-            numberOfBytesToRead);
+            numberOfBytesToRead,
+            "terrain archetype data section");
 
         var newTerrainArchetypeData = new TerrainArchetypeData
         {
@@ -89,18 +90,5 @@ public static class TerrainArchetypeReadingHelpers
         };
 
         return newTerrainArchetypeData;
-    }
-
-    private static void AssertTerrainArchetypeBytesMakeSense(
-        int currentPosition,
-        int initialPosition,
-        int expectedByteCount)
-    {
-        if (currentPosition - initialPosition == expectedByteCount)
-            return;
-
-        throw new LevelReadingException(
-            "Wrong number of bytes read for terrain archetype data section! " +
-            $"Expected: {expectedByteCount}, Actual: {currentPosition - initialPosition}");
     }
 }

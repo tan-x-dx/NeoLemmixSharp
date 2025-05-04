@@ -77,10 +77,11 @@ public sealed class GadgetDataSectionReader : LevelDataSectionReader
         ReadInputNames(rawFileData, inputNames, numberOfInputNames);
         ReadProperties(rawFileData, result);
 
-        AssertGadgetDataBytesMakeSense(
+        LevelReadingException.AssertBytesMakeSense(
             rawFileData.Position,
             initialPosition,
-            numberOfBytesToRead);
+            numberOfBytesToRead,
+            "gadget data");
 
         return result;
     }
@@ -105,18 +106,5 @@ public sealed class GadgetDataSectionReader : LevelDataSectionReader
             int propertyValue = rawFileData.Read32BitSignedInteger();
             result.AddProperty(gadgetProperty, propertyValue);
         }
-    }
-
-    private static void AssertGadgetDataBytesMakeSense(
-        int currentPosition,
-        int initialPosition,
-        int expectedByteCount)
-    {
-        if (currentPosition - initialPosition == expectedByteCount)
-            return;
-
-        throw new LevelReadingException(
-            "Wrong number of bytes read for gadget data! " +
-            $"Expected: {expectedByteCount}, Actual: {currentPosition - initialPosition}");
     }
 }

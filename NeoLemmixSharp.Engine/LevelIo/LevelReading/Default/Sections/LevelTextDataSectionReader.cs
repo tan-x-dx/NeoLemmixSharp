@@ -24,7 +24,7 @@ public sealed class LevelTextDataSectionReader : LevelDataSectionReader
 
         ReadTextLines(rawFileData, levelData.PostTextLines);
 
-        AssertLevelTextDataBytesMakeSense(
+        AssertLevelTextDataCountsMakeSense(
             numberOfItemsInSection,
             levelData.PreTextLines.Count,
             levelData.PostTextLines.Count);
@@ -43,7 +43,7 @@ public sealed class LevelTextDataSectionReader : LevelDataSectionReader
         }
     }
 
-    private static void AssertLevelTextDataBytesMakeSense(
+    private static void AssertLevelTextDataCountsMakeSense(
         int numberOfItemsInSection,
         int numberOfPreTextItems,
         int numberOfPostTextItems)

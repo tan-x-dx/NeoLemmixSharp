@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
 using System.Diagnostics.CodeAnalysis;
@@ -36,47 +37,30 @@ public static class GadgetArchetypeDataReadingHelpers
         int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
         int initialPosition = rawFileData.Position;
 
-        var basicGadgetType = (GadgetType)rawFileData.Read8BitUnsignedInteger();
+        var rawGadgetType = rawFileData.Read8BitUnsignedInteger();
+        var gadgetType = (GadgetType)rawGadgetType;
 
-        var result = basicGadgetType switch
+        var result = gadgetType switch
         {
-            GadgetType.HitBoxGadget => HitBoxGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, basicGadgetType, rawFileData),
-            GadgetType.HatchGadget => HatchGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, basicGadgetType, rawFileData),
+            GadgetType.HitBoxGadget => HitBoxGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, gadgetType, rawFileData),
+            GadgetType.HatchGadget => HatchGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, gadgetType, rawFileData),
             GadgetType.GadgetMover => throw new NotImplementedException(),
             GadgetType.GadgetResizer => throw new NotImplementedException(),
             GadgetType.GadgetStateChanger => throw new NotImplementedException(),
-            GadgetType.AndGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, basicGadgetType, LogicGateType.AndGate, rawFileData),
-            GadgetType.OrGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, basicGadgetType, LogicGateType.OrGate, rawFileData),
-            GadgetType.NotGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, basicGadgetType, LogicGateType.NotGate, rawFileData),
-            GadgetType.XorGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, basicGadgetType, LogicGateType.XorGate, rawFileData),
+            GadgetType.AndGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, gadgetType, LogicGateType.AndGate, rawFileData),
+            GadgetType.OrGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, gadgetType, LogicGateType.OrGate, rawFileData),
+            GadgetType.NotGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, gadgetType, LogicGateType.NotGate, rawFileData),
+            GadgetType.XorGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, gadgetType, LogicGateType.XorGate, rawFileData),
 
-            _ => ThrowUnknownGadgetTypeException(basicGadgetType)
+            _ => Helpers.ThrowUnknownEnumValueException<GadgetType, GadgetArchetypeData>(rawGadgetType)
         };
 
-        AssertGadgetArchetypeBytesMakeSense(
+        LevelReadingException.AssertBytesMakeSense(
             rawFileData.Position,
             initialPosition,
-            numberOfBytesToRead);
+            numberOfBytesToRead,
+            "gadget archetype data section");
 
         return result;
-    }
-
-    [DoesNotReturn]
-    private static GadgetArchetypeData ThrowUnknownGadgetTypeException(GadgetType basicGadgetType)
-    {
-        throw new ArgumentOutOfRangeException(nameof(basicGadgetType), basicGadgetType, "Unknown gadget type");
-    }
-
-    private static void AssertGadgetArchetypeBytesMakeSense(
-        int currentPosition,
-        int initialPosition,
-        int expectedByteCount)
-    {
-        if (currentPosition - initialPosition == expectedByteCount)
-            return;
-
-        throw new LevelReadingException(
-            "Wrong number of bytes read for gadget archetype data section! " +
-            $"Expected: {expectedByteCount}, Actual: {currentPosition - initialPosition}");
     }
 }

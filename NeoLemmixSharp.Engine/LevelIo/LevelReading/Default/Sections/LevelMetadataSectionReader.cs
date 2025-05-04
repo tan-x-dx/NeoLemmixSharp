@@ -42,10 +42,11 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
         ReadLevelDimensionData(rawFileData, levelData);
         ReadBackgroundData(rawFileData, levelData);
 
-        AssertLevelDataBytesMakeSense(
+        LevelReadingException.AssertBytesMakeSense(
             rawFileData.Position,
             initialPosition,
-            numberOfBytesToRead);
+            numberOfBytesToRead,
+            "level data section");
     }
 
     private static void ReadLevelDimensionData(RawLevelFileDataReader rawFileData, LevelData levelData)
@@ -126,18 +127,5 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
                 BackgroundImageName = _stringIdLookup[backgroundStringId]
             };
         }
-    }
-
-    private static void AssertLevelDataBytesMakeSense(
-        int currentPosition,
-        int initialPosition,
-        int expectedByteCount)
-    {
-        if (currentPosition - initialPosition == expectedByteCount)
-            return;
-
-        throw new LevelReadingException(
-            "Wrong number of bytes read for level data section! " +
-            $"Expected: {expectedByteCount}, Actual: {currentPosition - initialPosition}");
     }
 }

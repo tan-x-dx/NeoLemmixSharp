@@ -70,10 +70,11 @@ public sealed class TerrainDataSectionReader : LevelDataSectionReader
             height = rawFileData.Read16BitUnsignedInteger();
         }
 
-        AssertTerrainDataBytesMakeSense(
+        LevelReadingException.AssertBytesMakeSense(
             rawFileData.Position,
             initialPosition,
-            numberOfBytesToRead);
+            numberOfBytesToRead,
+            "terrain data");
 
         return new TerrainData
         {
@@ -98,18 +99,5 @@ public sealed class TerrainDataSectionReader : LevelDataSectionReader
     private static Color ReadTerrainDataTintColor(RawLevelFileDataReader rawFileData)
     {
         return rawFileData.ReadRgbColor();
-    }
-
-    private static void AssertTerrainDataBytesMakeSense(
-        int currentPosition,
-        int initialPosition,
-        int expectedByteCount)
-    {
-        if (currentPosition - initialPosition == expectedByteCount)
-            return;
-
-        throw new LevelReadingException(
-            "Wrong number of bytes read for terrain data! " +
-            $"Expected: {expectedByteCount}, Actual: {currentPosition - initialPosition}");
     }
 }

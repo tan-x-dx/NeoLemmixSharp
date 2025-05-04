@@ -208,8 +208,7 @@ public static class NeoLemmixStyleHelpers
 
         numberOfUniqueItems = count;
 
-        if (uniqueStyles.KeyCount == 0)
-            throw new LevelReadingException("No styles specified");
+        LevelReadingException.ReaderAssert(uniqueStyles.KeyCount > 0, "No styles specified");
 
         return uniqueStyles;
     }
