@@ -19,7 +19,7 @@ public sealed class FloaterSkill : LemmingSkill, ILemmingStateChanger
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.HasSpecialFallingBehaviour && ActionIsAssignable(lemming);
+        return !lemming.State.HasSpecialFallingBehaviour && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)

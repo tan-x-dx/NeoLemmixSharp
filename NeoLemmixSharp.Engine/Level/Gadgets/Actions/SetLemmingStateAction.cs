@@ -37,19 +37,9 @@ public sealed class SetLemmingStateAction : IGadgetAction
         Toggle
     }
 
-    public static SetStateType GetSetStateType(int rawValue)
-    {
-        var enumValue = (SetStateType)rawValue;
+    private const int NumberOfEnumValues = 3;
 
-        return enumValue switch
-        {
-            SetStateType.Clear => SetStateType.Clear,
-            SetStateType.Set => SetStateType.Set,
-            SetStateType.Toggle => SetStateType.Toggle,
-
-            _ => Helpers.ThrowUnknownEnumValueException<SetStateType>(rawValue)
-        };
-    }
+    public static SetStateType GetEnumValue(int rawValue) => Helpers.GetEnumValue<SetStateType>(rawValue, NumberOfEnumValues);
 }
 
 public sealed class ZombieStateChanger : ILemmingStateChanger

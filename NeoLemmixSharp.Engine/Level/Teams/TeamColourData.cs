@@ -13,4 +13,5 @@ public sealed class TeamColorData
     public required Color BodyColor { get; init; }
     public required Color PermanentSkillBodyColor { get; init; }
     public required Color NeutralBodyColor { get; init; }
+    public required Color PaintColor { get; init; }
 }

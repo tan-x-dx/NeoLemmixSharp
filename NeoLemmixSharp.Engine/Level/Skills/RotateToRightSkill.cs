@@ -18,7 +18,7 @@ public sealed class RotateToRightSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return lemming.Orientation != Orientation.Right && ActionIsAssignable(lemming);
+        return lemming.Orientation != Orientation.Right && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)

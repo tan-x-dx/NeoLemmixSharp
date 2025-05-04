@@ -58,6 +58,30 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         }
     }
 
+    public void CopyKeysTo(Span<TKey> values)
+    {
+        var i = 0;
+        var enumerator = new Enumerator(this);
+
+        while (enumerator.MoveNext())
+        {
+            var key = enumerator.Current.Key;
+            values[i++] = key;
+        }
+    }
+
+    public void CopyValuesTo(Span<TValue> values)
+    {
+        var i = 0;
+        var enumerator = new Enumerator(this);
+
+        while (enumerator.MoveNext())
+        {
+            var value = enumerator.Current.Value;
+            values[i++] = value;
+        }
+    }
+
     [Pure]
     public bool ContainsKey(TKey key)
     {
@@ -175,15 +199,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
                 return [];
 
             var result = new TKey[_popCount];
-            var i = 0;
-            var enumerator = new Enumerator(this);
-
-            while (enumerator.MoveNext())
-            {
-                var (key, _) = enumerator.Current;
-                result[i++] = key;
-            }
-
+            CopyKeysTo(result);
             return result;
         }
     }
@@ -197,15 +213,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
                 return [];
 
             var result = new TValue[_popCount];
-            var i = 0;
-            var enumerator = new Enumerator(this);
-
-            while (enumerator.MoveNext())
-            {
-                var (_, value) = enumerator.Current;
-                result[i++] = value;
-            }
-
+            CopyValuesTo(result);
             return result;
         }
     }

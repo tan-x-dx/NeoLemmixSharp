@@ -19,7 +19,7 @@ public sealed class ClonerSkill : LemmingSkill
     public override bool CanAssignToLemming(Lemming lemming)
     {
         return LevelScreen.LemmingManager.CanCreateNewLemmingClone() &&
-               ActionIsAssignable(lemming);
+               SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)

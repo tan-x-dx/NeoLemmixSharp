@@ -13,19 +13,7 @@ public enum HitBoxBehaviour
 
 public static class HitBoxBehaviourHelpers
 {
-    public static HitBoxBehaviour GetGadgetHitBoxBehaviour(int rawValue)
-    {
-        var enumValue = (HitBoxBehaviour)rawValue;
+    private const int NumberOfEnumValues = 5;
 
-        return enumValue switch
-        {
-            HitBoxBehaviour.None => HitBoxBehaviour.None,
-            HitBoxBehaviour.Liquid => HitBoxBehaviour.Liquid,
-            HitBoxBehaviour.Updraft => HitBoxBehaviour.Updraft,
-            HitBoxBehaviour.Splat => HitBoxBehaviour.Splat,
-            HitBoxBehaviour.NoSplat => HitBoxBehaviour.NoSplat,
-
-            _ => Helpers.ThrowUnknownEnumValueException<HitBoxBehaviour>(rawValue)
-        };
-    }
+    public static HitBoxBehaviour GetEnumValue(int rawValue) => Helpers.GetEnumValue<HitBoxBehaviour>(rawValue, NumberOfEnumValues);
 }

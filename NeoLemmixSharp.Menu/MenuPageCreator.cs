@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelBuilding;
-using NeoLemmixSharp.Engine.LevelBuilding.Data;
-using NeoLemmixSharp.Engine.LevelBuilding.LevelReading;
+using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Menu.Pages.LevelSelect;
+using NeoLemmixSharp.Engine.LevelBuilding;
+using NeoLemmixSharp.Engine.LevelIo.LevelReading;
 
 namespace NeoLemmixSharp.Menu;
 
@@ -76,7 +76,7 @@ public sealed class MenuPageCreator
             levelReader = LevelFileTypeHandler.GetLevelReaderForFile(LevelToLoadFilepath);
             var levelData = levelReader.ReadLevel(_graphicsDevice);
 
-            levelData.Validate();
+            levelData.AssertLevelDataIsValid();
 
             levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
             var levelScreen = levelBuilder.BuildLevel(levelData);
@@ -103,7 +103,7 @@ public sealed class MenuPageCreator
         LevelBuilder? levelBuilder = null;
         try
         {
-            levelData.Validate();
+            levelData.AssertLevelDataIsValid();
 
             levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
             var levelScreen = levelBuilder.BuildLevel(levelData);

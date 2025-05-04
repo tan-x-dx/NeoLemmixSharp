@@ -17,7 +17,7 @@ public sealed class BlockerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return ActionIsAssignable(lemming) && LevelScreen.LemmingManager.CanAssignBlocker(lemming);
+        return SkillIsAssignableToCurrentAction(lemming) && LevelScreen.LemmingManager.CanAssignBlocker(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)

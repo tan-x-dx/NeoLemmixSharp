@@ -18,7 +18,7 @@ public sealed class RotateToDownSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return lemming.Orientation != Orientation.Down && ActionIsAssignable(lemming);
+        return lemming.Orientation != Orientation.Down && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)

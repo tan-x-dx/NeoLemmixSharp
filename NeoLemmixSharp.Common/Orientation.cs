@@ -27,6 +27,10 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     [Pure]
     [DebuggerStepThrough]
     public bool IsPerpendicularTo(Orientation other) => ((RotNum ^ other.RotNum) & 1) != 0;
+
+    [Pure]
+    [DebuggerStepThrough]
+    public bool IsVertical() => ((RotNum ^ 1) & 1) != 0;
     [Pure]
     [DebuggerStepThrough]
     public bool IsHorizontal() => (RotNum & 1) != 0;
@@ -46,15 +50,18 @@ public readonly struct Orientation : IIdEquatable<Orientation>
 
     [Pure]
     [DebuggerStepThrough]
-    public float GetRotationAngle() => RotNum switch
+    public float GetRotationAngle()
     {
-        EngineConstants.DownOrientationRotNum => EngineConstants.DownOrientationRotationAngle,
-        EngineConstants.LeftOrientationRotNum => EngineConstants.LeftOrientationRotationAngle,
-        EngineConstants.UpOrientationRotNum => EngineConstants.UpOrientationRotationAngle,
-        EngineConstants.RightOrientationRotNum => EngineConstants.RightOrientationRotationAngle,
+        ReadOnlySpan<float> RotationAngles =
+        [
+            EngineConstants.DownOrientationRotationAngle,
+            EngineConstants.LeftOrientationRotationAngle,
+            EngineConstants.UpOrientationRotationAngle,
+            EngineConstants.RightOrientationRotationAngle,
+        ];
 
-        _ => ThrowOrientationOutOfRangeException<float>(this)
-    };
+        return RotationAngles[RotNum & 3];
+    }
 
     [DoesNotReturn]
     public static T ThrowOrientationOutOfRangeException<T>(Orientation orientation)
@@ -76,15 +83,18 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     public override int GetHashCode() => RotNum;
     [Pure]
     [DebuggerStepThrough]
-    public override string ToString() => RotNum switch
+    public override string ToString()
     {
-        EngineConstants.DownOrientationRotNum => EngineConstants.DownOrientationName,
-        EngineConstants.LeftOrientationRotNum => EngineConstants.LeftOrientationName,
-        EngineConstants.UpOrientationRotNum => EngineConstants.UpOrientationName,
-        EngineConstants.RightOrientationRotNum => EngineConstants.RightOrientationName,
+        ReadOnlySpan<string> OrientationNames =
+        [
+            EngineConstants.DownOrientationName,
+            EngineConstants.LeftOrientationName,
+            EngineConstants.UpOrientationName,
+            EngineConstants.RightOrientationName,
+        ];
 
-        _ => ThrowOrientationOutOfRangeException<string>(this)
-    };
+        return OrientationNames[RotNum & 3];
+    }
 
     public bool TryFormat(Span<char> destination, out int charsWritten)
     {

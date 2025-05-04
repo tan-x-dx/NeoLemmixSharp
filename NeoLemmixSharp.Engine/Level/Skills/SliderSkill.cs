@@ -19,7 +19,7 @@ public sealed class SliderSkill : LemmingSkill, ILemmingStateChanger
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.IsSlider && ActionIsAssignable(lemming);
+        return !lemming.State.IsSlider && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)

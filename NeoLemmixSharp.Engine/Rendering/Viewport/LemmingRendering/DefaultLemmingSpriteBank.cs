@@ -19,14 +19,6 @@ public static class DefaultLemmingSpriteBank
     {
         LemmingActionSprite.Initialise(graphicsDevice);
 
-#pragma warning disable IDE0039
-        LemmingActionLayerRenderer.GetLayerColor getLemmingHairColor = l => l.State.HairColor;
-        LemmingActionLayerRenderer.GetLayerColor getLemmingSkinColor = l => l.State.SkinColor;
-        LemmingActionLayerRenderer.GetLayerColor getLemmingFootColor = l => l.State.FootColor;
-        LemmingActionLayerRenderer.GetLayerColor getLemmingBodyColor = l => l.State.BodyColor;
-        LemmingActionLayerRenderer.GetLayerColor getLemmingMiscColor = _ => Color.Magenta;
-#pragma warning restore IDE0039
-
         var actionSprites = new LemmingActionSprite[EngineConstants.NumberOfLemmingActions];
 
         CreateFourLayerSprite(AscenderAction.Instance, new Point(2, 10));
@@ -97,10 +89,10 @@ public static class DefaultLemmingSpriteBank
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0, getLemmingHairColor),
-                        new(t, s.W, getLemmingSkinColor),
-                        new(t, s.W * 2, getLemmingFootColor),
-                        new(t, s.W * 3, getLemmingBodyColor)
+                        new(t, 0, TeamColorChooser.GetHairColor),
+                        new(t, s.W, TeamColorChooser.GetSkinColor),
+                        new(t, s.W * 2, TeamColorChooser.GetFootColor),
+                        new(t, s.W * 3, TeamColorChooser.GetBodyColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
@@ -117,11 +109,11 @@ public static class DefaultLemmingSpriteBank
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0, getLemmingHairColor),
-                        new(t, s.W, getLemmingSkinColor),
-                        new(t, s.W * 2, getLemmingFootColor),
-                        new(t, s.W * 3, getLemmingBodyColor),
-                        new(t, s.W * 4, getLemmingMiscColor)
+                        new(t, 0, TeamColorChooser.GetHairColor),
+                        new(t, s.W, TeamColorChooser.GetSkinColor),
+                        new(t, s.W * 2, TeamColorChooser.GetFootColor),
+                        new(t, s.W * 3, TeamColorChooser.GetBodyColor),
+                        new(t, s.W * 4, TeamColorChooser.GetPaintColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
@@ -139,10 +131,10 @@ public static class DefaultLemmingSpriteBank
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
                         new(t),
-                        new(t, s.W, getLemmingHairColor),
-                        new(t, s.W * 2, getLemmingSkinColor),
-                        new(t, s.W * 3, getLemmingFootColor),
-                        new(t, s.W * 4, getLemmingBodyColor)
+                        new(t, s.W, TeamColorChooser.GetHairColor),
+                        new(t, s.W * 2, TeamColorChooser.GetSkinColor),
+                        new(t, s.W * 3, TeamColorChooser.GetFootColor),
+                        new(t, s.W * 4, TeamColorChooser.GetBodyColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
@@ -160,11 +152,11 @@ public static class DefaultLemmingSpriteBank
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
                         new(t),
-                        new(t, s.W, getLemmingHairColor),
-                        new(t, s.W * 2, getLemmingSkinColor),
-                        new(t, s.W * 3, getLemmingFootColor),
-                        new(t, s.W * 4, getLemmingBodyColor),
-                        new(t, s.W * 5, getLemmingMiscColor)
+                        new(t, s.W, TeamColorChooser.GetHairColor),
+                        new(t, s.W * 2, TeamColorChooser.GetSkinColor),
+                        new(t, s.W * 3, TeamColorChooser.GetFootColor),
+                        new(t, s.W * 4, TeamColorChooser.GetBodyColor),
+                        new(t, s.W * 5, TeamColorChooser.GetPaintColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
@@ -214,6 +206,8 @@ public static class DefaultLemmingSpriteBank
         var defaultZombieSkinColor = new Color(0x77, 0x77, 0x77);
         var defaultNeutralBodyColor = new Color(0x99, 0x99, 0x99);
 
+        var defaultPaintColor = new Color(0xff, 0x00, 0xff);
+
         var team0HairColor = new Color(0x04, 0xB0, 0x00);
         var team0BodyColor = new Color(0x40, 0x44, 0xDF);
 
@@ -243,6 +237,8 @@ public static class DefaultLemmingSpriteBank
             BodyColor = team0BodyColor,
             PermanentSkillBodyColor = team0HairColor,
             NeutralBodyColor = defaultNeutralBodyColor,
+
+            PaintColor = defaultPaintColor
         };
 
         result[1] = new TeamColorData
@@ -256,6 +252,8 @@ public static class DefaultLemmingSpriteBank
             BodyColor = team1BodyColor,
             PermanentSkillBodyColor = team1HairColor,
             NeutralBodyColor = defaultNeutralBodyColor,
+
+            PaintColor = defaultPaintColor
         };
 
         result[2] = new TeamColorData
@@ -269,6 +267,8 @@ public static class DefaultLemmingSpriteBank
             BodyColor = team2BodyColor,
             PermanentSkillBodyColor = team2HairColor,
             NeutralBodyColor = defaultNeutralBodyColor,
+
+            PaintColor = defaultPaintColor
         };
 
         result[3] = new TeamColorData
@@ -282,6 +282,8 @@ public static class DefaultLemmingSpriteBank
             BodyColor = team3BodyColor,
             PermanentSkillBodyColor = team3HairColor,
             NeutralBodyColor = defaultNeutralBodyColor,
+
+            PaintColor = defaultPaintColor
         };
 
         result[4] = new TeamColorData
@@ -295,6 +297,8 @@ public static class DefaultLemmingSpriteBank
             BodyColor = team4BodyColor,
             PermanentSkillBodyColor = team4HairColor,
             NeutralBodyColor = defaultNeutralBodyColor,
+
+            PaintColor = defaultPaintColor
         };
 
         result[5] = new TeamColorData
@@ -308,6 +312,8 @@ public static class DefaultLemmingSpriteBank
             BodyColor = team5BodyColor,
             PermanentSkillBodyColor = team5HairColor,
             NeutralBodyColor = defaultNeutralBodyColor,
+
+            PaintColor = defaultPaintColor
         };
 
         return result;

@@ -70,19 +70,21 @@ public static class Helpers
         return true;
     }
 
-    [DoesNotReturn]
-    public static T ThrowUnknownEnumValueException<T>(int rawValue)
-        where T : unmanaged, Enum
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static TEnum GetEnumValue<TEnum>(int rawValue, uint numberOfEnumValues)
+        where TEnum : unmanaged, Enum
     {
-        var typeName = typeof(T).Name;
-        throw new ArgumentOutOfRangeException(nameof(rawValue), rawValue, $"Unknown {typeName} value!");
+        if ((uint)rawValue < numberOfEnumValues)
+            return Unsafe.As<int, TEnum>(ref rawValue);
+
+        return ThrowUnknownEnumValueException<TEnum, TEnum>(rawValue);
     }
 
     [DoesNotReturn]
-    public static TReturn ThrowUnknownEnumValueException<T, TReturn>(int rawValue)
-        where T : unmanaged, Enum
+    public static TReturn ThrowUnknownEnumValueException<TEnum, TReturn>(int rawValue)
+        where TEnum : unmanaged, Enum
     {
-        var typeName = typeof(T).Name;
+        var typeName = typeof(TEnum).Name;
         throw new ArgumentOutOfRangeException(nameof(rawValue), rawValue, $"Unknown {typeName} value!");
     }
 }

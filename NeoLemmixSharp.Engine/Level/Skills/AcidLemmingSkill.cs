@@ -19,7 +19,7 @@ public sealed class AcidLemmingSkill : LemmingSkill, ILemmingStateChanger
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.HasLiquidAffinity && ActionIsAssignable(lemming);
+        return !lemming.State.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)

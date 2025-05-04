@@ -11,17 +11,7 @@ public enum LemmingSolidityType
 
 public static class LemmingSolidityTypeHelpers
 {
-    public static LemmingSolidityType GetLemmingSolidityType(int rawValue)
-    {
-        var enumValue = (LemmingSolidityType)rawValue;
+    private const int NumberOfEnumValues = 3;
 
-        return enumValue switch
-        {
-            LemmingSolidityType.NotSolid => LemmingSolidityType.NotSolid,
-            LemmingSolidityType.Solid => LemmingSolidityType.Solid,
-            LemmingSolidityType.Steel => LemmingSolidityType.Steel,
-
-            _ => Helpers.ThrowUnknownEnumValueException<LemmingSolidityType>(rawValue)
-        };
-    }
+    public static LemmingSolidityType GetEnumValue(int rawValue) => Helpers.GetEnumValue<LemmingSolidityType>(rawValue, NumberOfEnumValues);
 }

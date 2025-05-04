@@ -30,7 +30,7 @@ public sealed class PlatformerSkill : LemmingSkill
         Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
         LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, levelRegion, out var gadgetsNearLemming);
 
-        return ActionIsAssignable(lemming) &&
+        return SkillIsAssignableToCurrentAction(lemming) &&
                PlatformerAction.LemmingCanPlatform(lemming, in gadgetsNearLemming);
     }
 

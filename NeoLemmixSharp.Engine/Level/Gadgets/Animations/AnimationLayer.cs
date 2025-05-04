@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using static NeoLemmixSharp.Engine.Level.Gadgets.Animations.TeamColors;
+using NeoLemmixSharp.Engine.Rendering.Viewport;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 

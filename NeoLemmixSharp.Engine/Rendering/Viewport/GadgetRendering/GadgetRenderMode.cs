@@ -12,18 +12,7 @@ public enum GadgetRenderMode
 
 public static class GadgetRenderModeHelpers
 {
-    public static GadgetRenderMode GetGadgetRenderMode(int rawValue)
-    {
-        var enumValue = (GadgetRenderMode)rawValue;
+    private const int NumberOfEnumValues = 4;
 
-        return enumValue switch
-        {
-            GadgetRenderMode.NoRender => GadgetRenderMode.NoRender,
-            GadgetRenderMode.BehindTerrain => GadgetRenderMode.BehindTerrain,
-            GadgetRenderMode.InFrontOfTerrain => GadgetRenderMode.InFrontOfTerrain,
-            GadgetRenderMode.OnlyOnTerrain => GadgetRenderMode.OnlyOnTerrain,
-
-            _ => Helpers.ThrowUnknownEnumValueException<GadgetRenderMode>(rawValue)
-        };
-    }
+    public static GadgetRenderMode GetEnumValue(int rawValue) => Helpers.GetEnumValue<GadgetRenderMode>(rawValue, NumberOfEnumValues);
 }

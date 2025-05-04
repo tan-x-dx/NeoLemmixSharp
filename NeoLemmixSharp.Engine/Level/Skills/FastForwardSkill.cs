@@ -19,7 +19,7 @@ public sealed class FastForwardSkill : LemmingSkill, ILemmingStateChanger
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.IsPermanentFastForwards && ActionIsAssignable(lemming);
+        return !lemming.State.IsPermanentFastForwards && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
