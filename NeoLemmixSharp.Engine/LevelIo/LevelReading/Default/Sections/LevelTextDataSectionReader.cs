@@ -51,7 +51,7 @@ public sealed class LevelTextDataSectionReader : LevelDataSectionReader
         if (numberOfItemsInSection == numberOfPreTextItems + numberOfPostTextItems)
             return;
 
-        throw new LevelReadingException(
+        throw new FileReadingException(
             "Wrong number of items for level text data section! " +
             $"Expected {numberOfItemsInSection} items total. Read: {numberOfPreTextItems} pre text items, {numberOfPostTextItems} post text items");
     }

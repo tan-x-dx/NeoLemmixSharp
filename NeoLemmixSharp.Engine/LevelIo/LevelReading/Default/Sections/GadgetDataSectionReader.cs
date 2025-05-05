@@ -77,7 +77,7 @@ public sealed class GadgetDataSectionReader : LevelDataSectionReader
         ReadInputNames(rawFileData, inputNames, numberOfInputNames);
         ReadProperties(rawFileData, result);
 
-        LevelReadingException.AssertBytesMakeSense(
+        FileReadingException.AssertBytesMakeSense(
             rawFileData.Position,
             initialPosition,
             numberOfBytesToRead,

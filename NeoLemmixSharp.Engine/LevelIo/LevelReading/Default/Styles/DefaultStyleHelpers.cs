@@ -76,7 +76,7 @@ public static class DefaultStyleHelpers
 
         numberOfUniqueGadgetArchetypes = count;
 
-        LevelReadingException.ReaderAssert(uniqueStyles.KeyCount > 0, "No styles specified");
+        FileReadingException.ReaderAssert(uniqueStyles.KeyCount > 0, "No styles specified");
 
         return uniqueStyles;
     }
@@ -91,7 +91,7 @@ public static class DefaultStyleHelpers
 
         var files = Directory.GetFiles(styleFolderPath);
         if (!TryLocateStyleFile(files, out var styleFilePath))
-            throw new LevelReadingException($"Could not locate style file in folder: {styleFolderPath}");
+            throw new FileReadingException($"Could not locate style file in folder: {styleFolderPath}");
 
         var rawFileData = new RawStyleFileDataReader(styleFilePath);
 
@@ -191,7 +191,7 @@ public static class DefaultStyleHelpers
                 break;
 
             default:
-                throw new LevelReadingException($"Unknown piece type byte: {pieceType:X}");
+                throw new FileReadingException($"Unknown piece type byte: {pieceType:X}");
         }
     }
 }

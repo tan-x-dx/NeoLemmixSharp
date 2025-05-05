@@ -66,7 +66,7 @@ public static class TerrainArchetypeReadingHelpers
             }
         }
 
-        LevelReadingException.AssertBytesMakeSense(
+        FileReadingException.AssertBytesMakeSense(
             rawFileData.Position,
             initialPosition,
             numberOfBytesToRead,

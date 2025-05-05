@@ -30,7 +30,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : ICompare
         {
             var fileSizeInBytes = fileStream.Length;
 
-            LevelReadingException.ReaderAssert(
+            FileReadingException.ReaderAssert(
                 fileSizeInBytes <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
                 LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
 
@@ -59,7 +59,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : ICompare
         {
             int nextByteValue = Read8BitUnsignedInteger();
 
-            LevelReadingException.ReaderAssert(nextByteValue == Period, "Version not in correct format");
+            FileReadingException.ReaderAssert(nextByteValue == Period, "Version not in correct format");
         }
     }
 
@@ -68,8 +68,8 @@ public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : ICompare
         var hasher = new TPerfectHasher();
 
         int numberOfSections = Read8BitUnsignedInteger();
-        LevelReadingException.ReaderAssert(numberOfSections > 0, "No sections defined in file!");
-        LevelReadingException.ReaderAssert(numberOfSections <= hasher.NumberOfItems, "Too many sections defined in file!");
+        FileReadingException.ReaderAssert(numberOfSections > 0, "No sections defined in file!");
+        FileReadingException.ReaderAssert(numberOfSections <= hasher.NumberOfItems, "Too many sections defined in file!");
 
         int i = numberOfSections;
         var result = new BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval>(hasher);
@@ -81,8 +81,8 @@ public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : ICompare
             int sectionStart = Read32BitSignedInteger();
             int sectionLength = Read32BitSignedInteger();
 
-            LevelReadingException.ReaderAssert(sectionStart > 0, "Invalid interval start!");
-            LevelReadingException.ReaderAssert(sectionLength > 0, "Invalid interval length!");
+            FileReadingException.ReaderAssert(sectionStart > 0, "Invalid interval start!");
+            FileReadingException.ReaderAssert(sectionLength > 0, "Invalid interval length!");
 
             var interval = new Interval(sectionStart, sectionLength);
 
@@ -107,7 +107,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : ICompare
             var firstInterval = intervals[i];
             var secondInterval = intervals[i + 1];
 
-            LevelReadingException.ReaderAssert(
+            FileReadingException.ReaderAssert(
                 firstInterval.Start + firstInterval.Length == secondInterval.Start,
                 "Sections are not contiguous!");
         }
@@ -122,7 +122,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : ICompare
         where T : unmanaged
     {
         var typeSize = sizeof(T);
-        LevelReadingException.ReaderAssert(FileSizeInBytes - Position >= typeSize, "Reached end of file!");
+        FileReadingException.ReaderAssert(FileSizeInBytes - Position >= typeSize, "Reached end of file!");
 
         var result = Unsafe.ReadUnaligned<T>(ref _byteBuffer[_position]);
         _position += typeSize;
@@ -138,7 +138,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : ICompare
 
     public ReadOnlySpan<byte> ReadBytes(int bufferSize)
     {
-        LevelReadingException.ReaderAssert(FileSizeInBytes - Position >= bufferSize, "Reached end of file!");
+        FileReadingException.ReaderAssert(FileSizeInBytes - Position >= bufferSize, "Reached end of file!");
 
         var sourceSpan = new ReadOnlySpan<byte>(_byteBuffer, _position, bufferSize);
         _position += bufferSize;

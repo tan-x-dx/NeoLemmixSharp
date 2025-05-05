@@ -22,7 +22,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
     public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
-        LevelReadingException.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
+        FileReadingException.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
 
         int numberOfBytesToRead = rawFileData.Read16BitUnsignedInteger();
         int initialPosition = rawFileData.Position;
@@ -42,7 +42,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
         ReadLevelDimensionData(rawFileData, levelData);
         ReadBackgroundData(rawFileData, levelData);
 
-        LevelReadingException.AssertBytesMakeSense(
+        FileReadingException.AssertBytesMakeSense(
             rawFileData.Position,
             initialPosition,
             numberOfBytesToRead,

@@ -51,7 +51,7 @@ public readonly ref struct LevelWriter
             var numberOfItemsInSection = sectionWriter.CalculateNumberOfItemsInSection(_levelData);
             if (numberOfItemsInSection == 0)
             {
-                LevelWritingException.WriterAssert(
+                FileWritingException.WriterAssert(
                     !sectionWriter.IsNecessary,
                     "No data for necessary section!");
                 continue;

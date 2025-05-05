@@ -26,7 +26,7 @@ public static class GadgetArchetypeDataReadingHelpers
     [DoesNotReturn]
     private static GadgetArchetypeData ThrowGadgetNotFoundException()
     {
-        throw new LevelReadingException("Could not locate gadget data within style file!");
+        throw new FileReadingException("Could not locate gadget data within style file!");
     }
 
     private static GadgetArchetypeData ReadGadgetArchetypeData(
@@ -55,7 +55,7 @@ public static class GadgetArchetypeDataReadingHelpers
             _ => Helpers.ThrowUnknownEnumValueException<GadgetType, GadgetArchetypeData>(rawGadgetType)
         };
 
-        LevelReadingException.AssertBytesMakeSense(
+        FileReadingException.AssertBytesMakeSense(
             rawFileData.Position,
             initialPosition,
             numberOfBytesToRead,

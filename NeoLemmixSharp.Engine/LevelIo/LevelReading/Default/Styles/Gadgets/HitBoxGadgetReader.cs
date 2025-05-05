@@ -45,7 +45,7 @@ public static class HitBoxGadgetReader
     {
         int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
 
-        LevelReadingException.ReaderAssert(numberOfGadgetStates > 0, "Zero state data defined!");
+        FileReadingException.ReaderAssert(numberOfGadgetStates > 0, "Zero state data defined!");
 
         var result = new GadgetStateArchetypeData[numberOfGadgetStates];
         var i = 0;
@@ -73,7 +73,7 @@ public static class HitBoxGadgetReader
     {
         int numberOfHitBoxData = rawFileData.Read8BitUnsignedInteger();
 
-        LevelReadingException.ReaderAssert(numberOfHitBoxData > 0, "Zero hit box data defined!");
+        FileReadingException.ReaderAssert(numberOfHitBoxData > 0, "Zero hit box data defined!");
 
         var result = new HitBoxData[numberOfHitBoxData];
 
@@ -129,7 +129,7 @@ public static class HitBoxGadgetReader
     {
         int rotNum = rawFileData.Read8BitUnsignedInteger();
 
-        LevelReadingException.ReaderAssert(rotNum == orientation.RotNum, "Hit box region data does not match expected orientation");
+        FileReadingException.ReaderAssert(rotNum == orientation.RotNum, "Hit box region data does not match expected orientation");
 
         int rawHitBoxType = rawFileData.Read8BitUnsignedInteger();
         var actualHitBoxType = HitBoxTypeHelpers.GetEnumValue(rawHitBoxType);

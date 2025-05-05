@@ -21,7 +21,7 @@ public sealed class StringDataSectionReader : LevelDataSectionReader
     {
         var numberOfItems = rawFileData.Read16BitUnsignedInteger();
 
-        LevelReadingException.ReaderAssert(_stringIdLookup.Count == 0, "Expected string list to be empty!");
+        FileReadingException.ReaderAssert(_stringIdLookup.Count == 0, "Expected string list to be empty!");
         _stringIdLookup.Capacity = numberOfItems + 1;
         _stringIdLookup.Add(string.Empty);
 
@@ -36,7 +36,7 @@ public sealed class StringDataSectionReader : LevelDataSectionReader
     private string ReadString(RawLevelFileDataReader rawFileData)
     {
         int id = rawFileData.Read16BitUnsignedInteger();
-        LevelReadingException.ReaderAssert(id == _stringIdLookup.Count, "Invalid string ids");
+        FileReadingException.ReaderAssert(id == _stringIdLookup.Count, "Invalid string ids");
 
         // The next 16bit int specifies how many bytes make up the next string
         int stringLengthInBytes = rawFileData.Read16BitUnsignedInteger();

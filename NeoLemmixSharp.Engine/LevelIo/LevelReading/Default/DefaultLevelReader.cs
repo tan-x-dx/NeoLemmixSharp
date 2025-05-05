@@ -60,7 +60,7 @@ public sealed class DefaultLevelReader : ILevelReader
 
             if (!_rawFileData.TryGetSectionInterval(sectionIdentifier, out var interval))
             {
-                LevelReadingException.ReaderAssert(
+                FileReadingException.ReaderAssert(
                     !sectionReader.IsNecessary,
                     "No data for necessary section!");
                 continue;
@@ -70,13 +70,13 @@ public sealed class DefaultLevelReader : ILevelReader
 
             var sectionIdentifierBytes = _rawFileData.ReadBytes(LevelReadWriteHelpers.NumberOfBytesForLevelSectionIdentifier);
 
-            LevelReadingException.ReaderAssert(
+            FileReadingException.ReaderAssert(
                 sectionIdentifierBytes.SequenceEqual(sectionReader.GetSectionIdentifierBytes()),
                 "Section Identifier mismatch!");
 
             sectionReader.ReadSection(_rawFileData, result);
 
-            LevelReadingException.ReaderAssert(
+            FileReadingException.ReaderAssert(
                 interval.Start + interval.Length == _rawFileData.Position,
                 "Byte reading mismatch!");
         }

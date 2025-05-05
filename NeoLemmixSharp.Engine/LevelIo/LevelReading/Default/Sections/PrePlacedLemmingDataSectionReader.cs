@@ -45,7 +45,7 @@ public sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
         int initialActionId = rawFileData.Read8BitUnsignedInteger();
 
         var initialLemmingAction = LemmingAction.GetActionOrDefault(initialActionId);
-        LevelReadingException.ReaderAssert(initialLemmingAction != NoneAction.Instance, "Invalid initial action for lemming!");
+        FileReadingException.ReaderAssert(initialLemmingAction != NoneAction.Instance, "Invalid initial action for lemming!");
 
         return new LemmingData
         {

@@ -70,7 +70,7 @@ public sealed class TerrainDataSectionReader : LevelDataSectionReader
             height = rawFileData.Read16BitUnsignedInteger();
         }
 
-        LevelReadingException.AssertBytesMakeSense(
+        FileReadingException.AssertBytesMakeSense(
             rawFileData.Position,
             initialPosition,
             numberOfBytesToRead,

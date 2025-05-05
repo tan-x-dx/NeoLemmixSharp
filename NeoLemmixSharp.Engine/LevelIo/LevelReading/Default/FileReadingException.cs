@@ -2,9 +2,9 @@
 
 namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default;
 
-public sealed class LevelReadingException : Exception
+public sealed class FileReadingException : Exception
 {
-    public LevelReadingException(string message)
+    public FileReadingException(string message)
         : base(message)
     {
     }
@@ -14,7 +14,7 @@ public sealed class LevelReadingException : Exception
         if (condition)
             return;
 
-        throw new LevelReadingException($"Assertion failure occurred when reading level file. Details: [{details}]");
+        throw new FileReadingException($"Assertion failure occurred when reading level file. Details: [{details}]");
     }
 
     public static void AssertBytesMakeSense(
@@ -26,7 +26,7 @@ public sealed class LevelReadingException : Exception
         if (currentPosition - initialPosition == expectedByteCount)
             return;
 
-        throw new LevelReadingException(
+        throw new FileReadingException(
             $"Wrong number of bytes read for {context}! " +
             $"Expected to read {expectedByteCount} bytes, actually read {currentPosition - initialPosition} bytes");
     }

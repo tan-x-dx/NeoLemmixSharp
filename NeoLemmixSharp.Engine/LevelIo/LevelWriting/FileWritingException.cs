@@ -2,9 +2,9 @@
 
 namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting;
 
-public sealed class LevelWritingException : Exception
+public sealed class FileWritingException : Exception
 {
-    public LevelWritingException(string message)
+    public FileWritingException(string message)
         : base(message)
     {
     }
@@ -14,6 +14,6 @@ public sealed class LevelWritingException : Exception
         if (condition)
             return;
 
-        throw new LevelWritingException($"Error occurred when writing level file. Details: [{details}]");
+        throw new FileWritingException($"Error occurred when writing level file. Details: [{details}]");
     }
 }

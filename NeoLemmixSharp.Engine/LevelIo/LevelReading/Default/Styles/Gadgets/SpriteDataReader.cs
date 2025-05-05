@@ -17,7 +17,7 @@ public readonly ref struct SpriteDataReader
 
         int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
 
-        LevelReadingException.ReaderAssert(numberOfGadgetStates == expectedNumberOfGadgetStates, "Wrong number of states in animation data");
+        FileReadingException.ReaderAssert(numberOfGadgetStates == expectedNumberOfGadgetStates, "Wrong number of states in animation data");
 
         var spriteArchetypeDataForStates = ReadGadgetStateSpriteArchetypeData(rawFileData, numberOfGadgetStates);
 
@@ -51,7 +51,7 @@ public readonly ref struct SpriteDataReader
     {
         int numberOfAnimationBehaviours = rawFileData.Read8BitUnsignedInteger();
 
-        LevelReadingException.ReaderAssert(numberOfAnimationBehaviours > 0, "Zero animation data defined!");
+        FileReadingException.ReaderAssert(numberOfAnimationBehaviours > 0, "Zero animation data defined!");
 
         var result = new AnimationLayerArchetypeData[numberOfAnimationBehaviours];
 

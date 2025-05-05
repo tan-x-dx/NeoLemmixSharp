@@ -33,7 +33,7 @@ public sealed class RawFileDataWriter<TPerfectHasher, TBuffer, TEnum>
         WriteVersion(version, ref preambleDataByteBuffer, ref preamblePosition);
         WriteSectionIntervals(ref preambleDataByteBuffer, ref preamblePosition);
 
-        LevelWritingException.WriterAssert(
+        FileWritingException.WriterAssert(
             (_mainDataPosition + preamblePosition) <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
             LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
 
@@ -179,31 +179,31 @@ public sealed class RawFileDataWriter<TPerfectHasher, TBuffer, TEnum>
 
     private void AssertCanStartNewSection(TEnum sectionIdentifier)
     {
-        LevelWritingException.WriterAssert(!_currentSectionIdentifier.HasValue, "Cannot begin new section while in middle of other section!");
-        LevelWritingException.WriterAssert(!_sectionIntervals.ContainsKey(sectionIdentifier), "Section has already been written!");
-        LevelWritingException.WriterAssert(_currentSectionStartPosition < 0, "Invalid section writing state!");
+        FileWritingException.WriterAssert(!_currentSectionIdentifier.HasValue, "Cannot begin new section while in middle of other section!");
+        FileWritingException.WriterAssert(!_sectionIntervals.ContainsKey(sectionIdentifier), "Section has already been written!");
+        FileWritingException.WriterAssert(_currentSectionStartPosition < 0, "Invalid section writing state!");
     }
 
     private void AssertWithinSection()
     {
-        LevelWritingException.WriterAssert(_currentSectionIdentifier.HasValue, "Cannot write - Not in section!");
+        FileWritingException.WriterAssert(_currentSectionIdentifier.HasValue, "Cannot write - Not in section!");
     }
 
     private void AssertCanEndSection(TEnum sectionIdentifier)
     {
-        LevelWritingException.WriterAssert(_currentSectionIdentifier.HasValue, "Cannot end section - Not in section at all!");
+        FileWritingException.WriterAssert(_currentSectionIdentifier.HasValue, "Cannot end section - Not in section at all!");
 
         var v = _currentSectionIdentifier.Value;
         var currentSectionIdentifierValue = Unsafe.As<TEnum, int>(ref v);
         var sectionIdentifierValue = Unsafe.As<TEnum, int>(ref sectionIdentifier);
 
-        LevelWritingException.WriterAssert(currentSectionIdentifierValue == sectionIdentifierValue, "Mismatching section start/end!");
-        LevelWritingException.WriterAssert(_currentSectionStartPosition >= 0, "Invalid section writing state!");
+        FileWritingException.WriterAssert(currentSectionIdentifierValue == sectionIdentifierValue, "Mismatching section start/end!");
+        FileWritingException.WriterAssert(_currentSectionStartPosition >= 0, "Invalid section writing state!");
     }
 
     private void AssertCanWriteToFile()
     {
-        LevelWritingException.WriterAssert(!_currentSectionIdentifier.HasValue, "Cannot write to file - In middle of a section!");
-        LevelWritingException.WriterAssert(_sectionIntervals.Count > 0, "No sections written!");
+        FileWritingException.WriterAssert(!_currentSectionIdentifier.HasValue, "Cannot write to file - In middle of a section!");
+        FileWritingException.WriterAssert(_sectionIntervals.Count > 0, "No sections written!");
     }
 }

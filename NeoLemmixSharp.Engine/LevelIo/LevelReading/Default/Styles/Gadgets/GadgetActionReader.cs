@@ -24,7 +24,7 @@ public static class GadgetActionReader
     private static IGadgetAction[] ReadGadgetActionSection(RawStyleFileDataReader rawFileData, int expectedIdentifierByte)
     {
         int identifierByte = rawFileData.Read8BitUnsignedInteger();
-        LevelReadingException.ReaderAssert(identifierByte == expectedIdentifierByte, "Invalid gadget action byte");
+        FileReadingException.ReaderAssert(identifierByte == expectedIdentifierByte, "Invalid gadget action byte");
 
         int numberOfItemsInSection = rawFileData.Read8BitUnsignedInteger();
         var result = CollectionsHelper.GetArrayForSize<IGadgetAction>(numberOfItemsInSection);
