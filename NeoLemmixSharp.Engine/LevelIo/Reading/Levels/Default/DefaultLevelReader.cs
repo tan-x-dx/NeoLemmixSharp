@@ -68,7 +68,7 @@ public sealed class DefaultLevelReader : ILevelReader
 
             _rawFileData.SetReaderPosition(interval.Start);
 
-            var sectionIdentifierBytes = _rawFileData.ReadBytes(LevelReadWriteHelpers.NumberOfBytesForLevelSectionIdentifier);
+            var sectionIdentifierBytes = _rawFileData.ReadBytes(LevelFileSectionIdentifierHasher.NumberOfBytesForLevelSectionIdentifier);
 
             FileReadingException.ReaderAssert(
                 sectionIdentifierBytes.SequenceEqual(sectionReader.GetSectionIdentifierBytes()),

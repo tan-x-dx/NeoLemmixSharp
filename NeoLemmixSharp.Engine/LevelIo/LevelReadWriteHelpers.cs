@@ -13,50 +13,6 @@ public static class LevelReadWriteHelpers
     public const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
     public const string FileSizeTooLargeExceptionMessage = "File too large! Max file size is 64Mb";
 
-    #region Section Identifier Stuff
-
-    public const int NumberOfBytesForLevelSectionIdentifier = 2;
-
-    private static ReadOnlySpan<byte> LevelDataSectionIdentifierBytes =>
-    [
-        0x26, 0x44,
-        0x79, 0xA6,
-        0x43, 0xAA,
-        0x90, 0xD2,
-        0xBE, 0xF4,
-        0xFE, 0x77,
-        0x60, 0xBB,
-        0x7C, 0x5C,
-        0x3D, 0x98
-    ];
-
-    private static ReadOnlySpan<byte> StyleDataSectionIdentifierBytes =>
-    [
-        0x35, 0xBF,
-        0x1A, 0x47,
-        0x8C, 0x92
-    ];
-
-    public static ReadOnlySpan<byte> GetSectionIdentifierBytes(this LevelFileSectionIdentifier sectionIdentifier)
-    {
-        var index = (int)sectionIdentifier;
-        index <<= 1;
-
-        return LevelDataSectionIdentifierBytes
-            .Slice(index, NumberOfBytesForLevelSectionIdentifier);
-    }
-
-    public static ReadOnlySpan<byte> GetSectionIdentifierBytes(this StyleFileSectionIdentifier sectionIdentifier)
-    {
-        var index = (int)sectionIdentifier;
-        index <<= 1;
-
-        return StyleDataSectionIdentifierBytes
-            .Slice(index, NumberOfBytesForLevelSectionIdentifier);
-    }
-
-    #endregion
-
     #region Level Data Read/Write Stuff
 
     public const int UnspecifiedLevelStartValue = 5000;

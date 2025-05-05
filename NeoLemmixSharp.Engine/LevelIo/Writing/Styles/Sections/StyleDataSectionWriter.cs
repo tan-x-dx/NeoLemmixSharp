@@ -7,7 +7,7 @@ public abstract class StyleDataSectionWriter
     public abstract StyleFileSectionIdentifier SectionIdentifier { get; }
     public abstract bool IsNecessary { get; }
 
-    public ReadOnlySpan<byte> GetSectionIdentifierBytes() => SectionIdentifier.GetSectionIdentifierBytes();
+    public ReadOnlySpan<byte> GetSectionIdentifierBytes() => StyleFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
 
     public abstract ushort CalculateNumberOfItemsInSection(LevelData levelData);
 

@@ -7,7 +7,7 @@ public abstract class LevelDataSectionWriter
     public abstract LevelFileSectionIdentifier SectionIdentifier { get; }
     public abstract bool IsNecessary { get; }
 
-    public ReadOnlySpan<byte> GetSectionIdentifierBytes() => SectionIdentifier.GetSectionIdentifierBytes();
+    public ReadOnlySpan<byte> GetSectionIdentifierBytes() => LevelFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
 
     public abstract ushort CalculateNumberOfItemsInSection(LevelData levelData);
 

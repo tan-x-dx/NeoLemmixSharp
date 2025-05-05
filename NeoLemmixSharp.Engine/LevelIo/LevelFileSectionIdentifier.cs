@@ -21,6 +21,8 @@ public enum LevelFileSectionIdentifier
 public readonly struct LevelFileSectionIdentifierHasher :
     ISectionIdentifierHelper<LevelFileSectionIdentifier>
 {
+    public const int NumberOfBytesForLevelSectionIdentifier = 2;
+
     private const int NumberOfEnumValues = 9;
 
     public int NumberOfItems => NumberOfEnumValues;
@@ -33,4 +35,26 @@ public readonly struct LevelFileSectionIdentifierHasher :
     public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 
     public static LevelFileSectionIdentifier GetEnumValue(int rawValue) => Helpers.GetEnumValue<LevelFileSectionIdentifier>(rawValue, NumberOfEnumValues);
+
+    public static ReadOnlySpan<byte> GetSectionIdentifierBytes(LevelFileSectionIdentifier sectionIdentifier)
+    {
+        var index = (int)sectionIdentifier;
+        index <<= 1;
+
+        return LevelDataSectionIdentifierBytes
+            .Slice(index, NumberOfBytesForLevelSectionIdentifier);
+    }
+
+    private static ReadOnlySpan<byte> LevelDataSectionIdentifierBytes =>
+    [
+        0x26, 0x44,
+        0x79, 0xA6,
+        0x43, 0xAA,
+        0x90, 0xD2,
+        0xBE, 0xF4,
+        0xFE, 0x77,
+        0x60, 0xBB,
+        0x7C, 0x5C,
+        0x3D, 0x98
+    ];
 }
