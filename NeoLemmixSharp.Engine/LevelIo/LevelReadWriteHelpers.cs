@@ -30,12 +30,28 @@ public static class LevelReadWriteHelpers
         0x3D, 0x98
     ];
 
+    private static ReadOnlySpan<byte> StyleDataSectionIdentifierBytes =>
+    [
+        0x35, 0xBF,
+        0x1A, 0x47,
+        0x8C, 0x92
+    ];
+
     public static ReadOnlySpan<byte> GetSectionIdentifierBytes(this LevelFileSectionIdentifier sectionIdentifier)
     {
         var index = (int)sectionIdentifier;
         index <<= 1;
 
         return LevelDataSectionIdentifierBytes
+            .Slice(index, NumberOfBytesForLevelSectionIdentifier);
+    }
+
+    public static ReadOnlySpan<byte> GetSectionIdentifierBytes(this StyleFileSectionIdentifier sectionIdentifier)
+    {
+        var index = (int)sectionIdentifier;
+        index <<= 1;
+
+        return StyleDataSectionIdentifierBytes
             .Slice(index, NumberOfBytesForLevelSectionIdentifier);
     }
 

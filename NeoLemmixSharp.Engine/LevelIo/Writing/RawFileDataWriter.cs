@@ -1,20 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Writing;
 
-public sealed class RawFileDataWriter<TPerfectHasher, TBuffer, TEnum>
-    where TPerfectHasher : struct, IPerfectHasher<TEnum>, IBitBufferCreator<TBuffer>, IEnumVerifier<TEnum>
-    where TBuffer : struct, IBitBuffer
+public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
+    where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {
     private const byte Period = (byte)'.';
     private const int InitialDataCapacity = 1 << 11;
 
-    private readonly BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval> _sectionIntervals = new(new TPerfectHasher());
+    private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIntervals = new(new TPerfectHasher());
     private byte[] _mainDataByteBuffer = new byte[InitialDataCapacity];
     private int _mainDataPosition;
 

@@ -1,22 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.LevelIo.Writing;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading;
 
-public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : IComparer<Interval>
-    where TPerfectHasher : struct, IPerfectHasher<TEnum>, IBitBufferCreator<TBuffer>, IEnumVerifier<TEnum>
-    where TBuffer : struct, IBitBuffer
+public sealed class RawFileDataReader<TPerfectHasher, TEnum> : IComparer<Interval>
+    where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {
     private const byte Period = (byte)'.';
 
     private readonly byte[] _byteBuffer;
     public Version Version { get; }
-    private readonly BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval> _sectionIndices;
+    private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIndices;
 
     private int _position;
 
@@ -63,7 +62,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : ICompare
         }
     }
 
-    private BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval> ReadSectionIndices()
+    private BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> ReadSectionIndices()
     {
         var hasher = new TPerfectHasher();
 
@@ -72,12 +71,12 @@ public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : ICompare
         FileReadingException.ReaderAssert(numberOfSections <= hasher.NumberOfItems, "Too many sections defined in file!");
 
         int i = numberOfSections;
-        var result = new BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval>(hasher);
+        var result = new BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval>(hasher);
 
         while (i-- > 0)
         {
             int rawIdentifier = Read8BitUnsignedInteger();
-            TEnum enumValue = hasher.GetEnumValue(rawIdentifier);
+            TEnum enumValue = TPerfectHasher.GetEnumValue(rawIdentifier);
             int sectionStart = Read32BitSignedInteger();
             int sectionLength = Read32BitSignedInteger();
 
@@ -95,7 +94,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : ICompare
     }
 
     [SkipLocalsInit]
-    private void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, TBuffer, TEnum, Interval> result)
+    private void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> result)
     {
         Span<Interval> intervals = stackalloc Interval[result.Count];
         result.CopyValuesTo(intervals);

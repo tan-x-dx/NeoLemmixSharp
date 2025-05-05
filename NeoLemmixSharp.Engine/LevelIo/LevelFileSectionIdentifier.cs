@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.LevelIo.Writing;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.LevelIo;
@@ -18,9 +19,7 @@ public enum LevelFileSectionIdentifier
 }
 
 public readonly struct LevelFileSectionIdentifierHasher :
-    IPerfectHasher<LevelFileSectionIdentifier>,
-    IBitBufferCreator<BitBuffer32>,
-    IEnumVerifier<LevelFileSectionIdentifier>
+    ISectionIdentifierHelper<LevelFileSectionIdentifier>
 {
     private const int NumberOfEnumValues = 9;
 
@@ -33,5 +32,5 @@ public readonly struct LevelFileSectionIdentifierHasher :
 
     public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 
-    public LevelFileSectionIdentifier GetEnumValue(int rawValue) => Helpers.GetEnumValue<LevelFileSectionIdentifier>(rawValue, NumberOfEnumValues);
+    public static LevelFileSectionIdentifier GetEnumValue(int rawValue) => Helpers.GetEnumValue<LevelFileSectionIdentifier>(rawValue, NumberOfEnumValues);
 }
