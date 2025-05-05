@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default;
+namespace NeoLemmixSharp.Engine.LevelIo;
 
 public sealed class FileReadingException : Exception
 {

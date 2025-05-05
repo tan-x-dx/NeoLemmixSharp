@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
-using NeoLemmixSharp.Engine.LevelIo.LevelReading.Default;
 
 namespace NeoLemmixSharp.Engine.LevelIo;
 

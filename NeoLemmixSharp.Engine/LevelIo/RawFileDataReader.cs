@@ -5,7 +5,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelReading.Default;
+namespace NeoLemmixSharp.Engine.LevelIo;
 
 public sealed class RawFileDataReader<TPerfectHasher, TBuffer, TEnum> : IComparer<Interval>
     where TPerfectHasher : struct, IPerfectHasher<TEnum>, IBitBufferCreator<TBuffer>, IEnumVerifier<TEnum>

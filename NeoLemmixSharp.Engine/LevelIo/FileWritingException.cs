@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting;
+namespace NeoLemmixSharp.Engine.LevelIo;
 
 public sealed class FileWritingException : Exception
 {

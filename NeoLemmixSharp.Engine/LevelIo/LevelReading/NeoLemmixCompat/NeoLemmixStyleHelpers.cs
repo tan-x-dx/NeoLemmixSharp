@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
-using NeoLemmixSharp.Engine.LevelIo.LevelReading.Default;
 using NeoLemmixSharp.Engine.LevelIo.LevelReading.NeoLemmixCompat.Data;
 using NeoLemmixSharp.Engine.LevelIo.LevelReading.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.Engine.LevelIo.LevelReading.NeoLemmixCompat.Readers.GadgetReaders;

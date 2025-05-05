@@ -4,7 +4,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Engine.LevelIo.LevelWriting;
+namespace NeoLemmixSharp.Engine.LevelIo;
 
 public sealed class RawFileDataWriter<TPerfectHasher, TBuffer, TEnum>
     where TPerfectHasher : struct, IPerfectHasher<TEnum>, IBitBufferCreator<TBuffer>, IEnumVerifier<TEnum>
@@ -34,7 +34,7 @@ public sealed class RawFileDataWriter<TPerfectHasher, TBuffer, TEnum>
         WriteSectionIntervals(ref preambleDataByteBuffer, ref preamblePosition);
 
         FileWritingException.WriterAssert(
-            (_mainDataPosition + preamblePosition) <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
+            _mainDataPosition + preamblePosition <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
             LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
 
         using var fileStream = new FileStream(filePath, FileMode.Create);
