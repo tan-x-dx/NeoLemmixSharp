@@ -39,47 +39,47 @@ public sealed class DefaultLevelReader : ILevelReader
 
             new LevelMetadataSectionReader(version, stringIdLookup),
             new LevelTextDataSectionReader(version, stringIdLookup),
-            new HatchGroupDataSectionReader(version),
             new LevelObjectiveDataSectionReader(version, stringIdLookup),
+            new HatchGroupDataSectionReader(version),
             new PrePlacedLemmingDataSectionReader(version),
             terrainComponentReader,
             new TerrainGroupDataSectionReader(version, stringIdLookup, terrainComponentReader),
             new GadgetDataSectionReader(version, stringIdLookup)
         ];
 
-        ReadSections(result, sectionReaders);
+        foreach (var sectionReader in sectionReaders)
+        {
+            ReadSection(result, sectionReader);
+        }
 
         return result;
     }
 
-    private void ReadSections(LevelData result, ReadOnlySpan<LevelDataSectionReader> sectionReaders)
+    private void ReadSection(LevelData result, LevelDataSectionReader sectionReader)
     {
-        foreach (var sectionReader in sectionReaders)
+        var sectionIdentifier = sectionReader.SectionIdentifier;
+
+        if (!_rawFileData.TryGetSectionInterval(sectionIdentifier, out var interval))
         {
-            var sectionIdentifier = sectionReader.SectionIdentifier;
-
-            if (!_rawFileData.TryGetSectionInterval(sectionIdentifier, out var interval))
-            {
-                FileReadingException.ReaderAssert(
-                    !sectionReader.IsNecessary,
-                    "No data for necessary section!");
-                continue;
-            }
-
-            _rawFileData.SetReaderPosition(interval.Start);
-
-            var sectionIdentifierBytes = _rawFileData.ReadBytes(LevelFileSectionIdentifierHasher.NumberOfBytesForLevelSectionIdentifier);
-
             FileReadingException.ReaderAssert(
-                sectionIdentifierBytes.SequenceEqual(sectionReader.GetSectionIdentifierBytes()),
-                "Section Identifier mismatch!");
-
-            sectionReader.ReadSection(_rawFileData, result);
-
-            FileReadingException.ReaderAssert(
-                interval.Start + interval.Length == _rawFileData.Position,
-                "Byte reading mismatch!");
+                !sectionReader.IsNecessary,
+                "No data for necessary section!");
+            return;
         }
+
+        _rawFileData.SetReaderPosition(interval.Start);
+
+        var sectionIdentifierBytes = _rawFileData.ReadBytes(LevelFileSectionIdentifierHasher.NumberOfBytesForLevelSectionIdentifier);
+
+        FileReadingException.ReaderAssert(
+            sectionIdentifierBytes.SequenceEqual(sectionReader.GetSectionIdentifierBytes()),
+            "Section Identifier mismatch!");
+
+        sectionReader.ReadSection(_rawFileData, result);
+
+        FileReadingException.ReaderAssert(
+            interval.Start + interval.Length == _rawFileData.Position,
+            "Byte reading mismatch!");
     }
 
     public void Dispose()

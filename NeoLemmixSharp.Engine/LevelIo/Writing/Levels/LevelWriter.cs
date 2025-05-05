@@ -19,9 +19,7 @@ public readonly ref struct LevelWriter
         var writer = new RawLevelFileDataWriter();
 
         var stringIdLookup = new Dictionary<string, ushort>(LevelReadWriteHelpers.InitialStringListCapacity);
-
         var terrainSectionWriter = new TerrainDataSectionWriter(stringIdLookup);
-
         ReadOnlySpan<LevelDataSectionWriter> sectionWriters =
         [
             // StringDataSectionWriter needs to be first as it will populate the stringIdLookup!
@@ -29,40 +27,40 @@ public readonly ref struct LevelWriter
 
             new LevelMetadataSectionWriter(stringIdLookup),
             new LevelTextDataSectionWriter(stringIdLookup),
-            new HatchGroupDataSectionWriter(),
             new LevelObjectiveDataSectionWriter(stringIdLookup),
+            new HatchGroupDataSectionWriter(),
             new PrePlacedLemmingDataSectionWriter(),
             terrainSectionWriter,
             new TerrainGroupDataSectionWriter(stringIdLookup, terrainSectionWriter),
             new GadgetDataSectionWriter(stringIdLookup),
         ];
 
-        WriteSections(writer, sectionWriters);
+        foreach (var sectionWriter in sectionWriters)
+        {
+            WriteSection(writer, sectionWriter);
+        }
 
         writer.WriteToFile(filePath, _version);
     }
 
-    private void WriteSections(
+    private void WriteSection(
         RawLevelFileDataWriter writer,
-        ReadOnlySpan<LevelDataSectionWriter> sectionWriters)
+        LevelDataSectionWriter sectionWriter)
     {
-        foreach (var sectionWriter in sectionWriters)
+        var numberOfItemsInSection = sectionWriter.CalculateNumberOfItemsInSection(_levelData);
+        if (numberOfItemsInSection == 0)
         {
-            var numberOfItemsInSection = sectionWriter.CalculateNumberOfItemsInSection(_levelData);
-            if (numberOfItemsInSection == 0)
-            {
-                FileWritingException.WriterAssert(
-                    !sectionWriter.IsNecessary,
-                    "No data for necessary section!");
-                continue;
-            }
-
-            writer.BeginWritingSection(sectionWriter.SectionIdentifier);
-            writer.Write(sectionWriter.GetSectionIdentifierBytes());
-            writer.Write(numberOfItemsInSection);
-
-            sectionWriter.WriteSection(writer, _levelData);
-            writer.EndWritingSection(sectionWriter.SectionIdentifier);
+            FileWritingException.WriterAssert(
+                !sectionWriter.IsNecessary,
+                "No data for necessary section!");
+            return;
         }
+
+        writer.BeginWritingSection(sectionWriter.SectionIdentifier);
+        writer.Write(sectionWriter.GetSectionIdentifierBytes());
+        writer.Write(numberOfItemsInSection);
+
+        sectionWriter.WriteSection(writer, _levelData);
+        writer.EndWritingSection(sectionWriter.SectionIdentifier);
     }
 }

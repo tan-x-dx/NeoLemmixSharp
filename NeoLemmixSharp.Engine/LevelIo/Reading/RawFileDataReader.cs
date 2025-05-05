@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading;
 
-public sealed class RawFileDataReader<TPerfectHasher, TEnum> : IComparer<Interval>
+public sealed class RawFileDataReader<TPerfectHasher, TEnum>
     where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {
@@ -15,7 +15,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum> : IComparer<Interva
 
     private readonly byte[] _byteBuffer;
     public Version Version { get; }
-    private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIndices;
+    private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIdentifiers;
 
     private int _position;
 
@@ -39,7 +39,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum> : IComparer<Interva
         }
 
         Version = ReadVersion();
-        _sectionIndices = ReadSectionIndices();
+        _sectionIdentifiers = ReadSectionIdentifiers();
     }
 
     private Version ReadVersion()
@@ -62,7 +62,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum> : IComparer<Interva
         }
     }
 
-    private BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> ReadSectionIndices()
+    private BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> ReadSectionIdentifiers()
     {
         var hasher = new TPerfectHasher();
 
@@ -88,33 +88,10 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum> : IComparer<Interva
             result.Add(enumValue, interval);
         }
 
-        AssertSectionsAreContiguous(result);
+        new LevelReadWriteHelpers.SectionIdentifierComparer<TPerfectHasher, TEnum>()
+            .AssertSectionsAreContiguous(result);
 
         return result;
-    }
-
-    [SkipLocalsInit]
-    private void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> result)
-    {
-        Span<Interval> intervals = stackalloc Interval[result.Count];
-        result.CopyValuesTo(intervals);
-
-        intervals.Sort(this);
-
-        for (var i = 0; i < intervals.Length - 1; i++)
-        {
-            var firstInterval = intervals[i];
-            var secondInterval = intervals[i + 1];
-
-            FileReadingException.ReaderAssert(
-                firstInterval.Start + firstInterval.Length == secondInterval.Start,
-                "Sections are not contiguous!");
-        }
-    }
-
-    int IComparer<Interval>.Compare(Interval x, Interval y)
-    {
-        return x.Start.CompareTo(y.Start);
     }
 
     private unsafe T Read<T>()
@@ -171,7 +148,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum> : IComparer<Interva
         ReadOnlySpan<byte> bytesToLocate,
         out int index)
     {
-        if (!_sectionIndices.TryGetValue(sectionIdentifier, out var interval))
+        if (!_sectionIdentifiers.TryGetValue(sectionIdentifier, out var interval))
         {
             index = -1;
             return false;
@@ -194,5 +171,5 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum> : IComparer<Interva
         _position = position;
     }
 
-    public bool TryGetSectionInterval(TEnum section, out Interval interval) => _sectionIndices.TryGetValue(section, out interval);
+    public bool TryGetSectionInterval(TEnum section, out Interval interval) => _sectionIdentifiers.TryGetValue(section, out interval);
 }

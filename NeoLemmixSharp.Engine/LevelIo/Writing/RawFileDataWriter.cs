@@ -132,7 +132,6 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         WriteToByteBuffer(value, ref _mainDataByteBuffer, ref _mainDataPosition);
     }
 
-    [SkipLocalsInit]
     public void WriteArgbColor(Color color)
     {
         ReadOnlySpan<byte> colorBytes = [color.A, color.R, color.G, color.B];
@@ -140,7 +139,6 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         Write(colorBytes);
     }
 
-    [SkipLocalsInit]
     public void WriteRgbColor(Color color)
     {
         ReadOnlySpan<byte> colorBytes = [color.R, color.G, color.B];
@@ -203,5 +201,8 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
     {
         FileWritingException.WriterAssert(!_currentSectionIdentifier.HasValue, "Cannot write to file - In middle of a section!");
         FileWritingException.WriterAssert(_sectionIntervals.Count > 0, "No sections written!");
+
+        new LevelReadWriteHelpers.SectionIdentifierComparer<TPerfectHasher, TEnum>()
+            .AssertSectionsAreContiguous(_sectionIntervals);
     }
 }

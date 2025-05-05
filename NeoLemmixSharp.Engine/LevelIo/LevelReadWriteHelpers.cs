@@ -1,6 +1,9 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
 using NeoLemmixSharp.Engine.LevelIo.Reading;
+using NeoLemmixSharp.Engine.LevelIo.Writing;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelIo;
 
@@ -12,6 +15,34 @@ public static class LevelReadWriteHelpers
 
     public const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
     public const string FileSizeTooLargeExceptionMessage = "File too large! Max file size is 64Mb";
+
+    public sealed class SectionIdentifierComparer<TPerfectHasher, TEnum> : IComparer<Interval>
+        where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
+        where TEnum : unmanaged, Enum
+    {
+        [SkipLocalsInit]
+        public void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> result)
+        {
+            Span<Interval> intervals = stackalloc Interval[result.Count];
+            result.CopyValuesTo(intervals);
+
+            intervals.Sort(this);
+
+            for (var i = 0; i < intervals.Length - 1; i++)
+            {
+                var firstInterval = intervals[i];
+                var secondInterval = intervals[i + 1];
+
+                if (firstInterval.Start + firstInterval.Length != secondInterval.Start)
+                    throw new InvalidOperationException("Sections are not contiguous!");
+            }
+        }
+
+        int IComparer<Interval>.Compare(Interval x, Interval y)
+        {
+            return x.Start.CompareTo(y.Start);
+        }
+    }
 
     #region Level Data Read/Write Stuff
 
