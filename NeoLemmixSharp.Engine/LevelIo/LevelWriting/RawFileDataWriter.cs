@@ -56,27 +56,39 @@ public sealed class RawFileDataWriter<TPerfectHasher, TBuffer, TEnum>
         WriteToByteBuffer((ushort)version.Revision, ref preambleDataByteBuffer, ref preamblePosition);
     }
 
-    private unsafe void WriteSectionIntervals(
+    private void WriteSectionIntervals(
         ref byte[] preambleDataByteBuffer,
         ref int preamblePosition)
     {
         WriteToByteBuffer((byte)_sectionIntervals.Count, ref preambleDataByteBuffer, ref preamblePosition);
 
         // One byte for the section identifier, plus the size of the Interval type
-        var numberOfBytesPerSectionIdentiferChunk = 1 + sizeof(Interval);
+        const int NumberOfBytesPerSectionIdentiferChunk = 1 + 2 * sizeof(int);
 
-        var intervalOffset = preamblePosition + _sectionIntervals.Count * numberOfBytesPerSectionIdentiferChunk;
+        var intervalOffset = preamblePosition + _sectionIntervals.Count * NumberOfBytesPerSectionIdentiferChunk;
 
         foreach (var kvp in _sectionIntervals)
         {
-            var sectionIdentifier = kvp.Key;
-            var interval = kvp.Value;
-
-            byte sectionIdentifierByte = (byte)Unsafe.As<TEnum, int>(ref sectionIdentifier);
-            WriteToByteBuffer(sectionIdentifierByte, ref preambleDataByteBuffer, ref preamblePosition);
-            WriteToByteBuffer(interval.Start + intervalOffset, ref preambleDataByteBuffer, ref preamblePosition);
-            WriteToByteBuffer(interval.Length, ref preambleDataByteBuffer, ref preamblePosition);
+            WriteSectionIntervalData(
+                ref preambleDataByteBuffer,
+                ref preamblePosition,
+                intervalOffset,
+                kvp.Key,
+                kvp.Value);
         }
+    }
+
+    private static void WriteSectionIntervalData(
+        ref byte[] preambleDataByteBuffer,
+        ref int preamblePosition,
+        int intervalOffset,
+        TEnum sectionIdentifier,
+        Interval interval)
+    {
+        var sectionIdentifierByte = (byte)Unsafe.As<TEnum, int>(ref sectionIdentifier);
+        WriteToByteBuffer(sectionIdentifierByte, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(interval.Start + intervalOffset, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(interval.Length, ref preambleDataByteBuffer, ref preamblePosition);
     }
 
     private static unsafe void WriteToByteBuffer<T>(T value, ref byte[] byteBuffer, ref int position)

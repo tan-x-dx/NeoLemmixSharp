@@ -77,27 +77,27 @@ public sealed class TerrainReader : NeoLemmixDataReader
 
     private void SetX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentTerrainData!.X = int.Parse(secondToken);
+        _currentTerrainData.X = int.Parse(secondToken);
     }
 
     private void SetY(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentTerrainData!.Y = int.Parse(secondToken);
+        _currentTerrainData.Y = int.Parse(secondToken);
     }
 
     private void SetWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentTerrainData!.Width = int.Parse(secondToken);
+        _currentTerrainData.Width = int.Parse(secondToken);
     }
 
     private void SetHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentTerrainData!.Height = int.Parse(secondToken);
+        _currentTerrainData.Height = int.Parse(secondToken);
     }
 
     private void SetNoOverwrite(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentTerrainData!.NoOverwrite = true;
+        _currentTerrainData.NoOverwrite = true;
     }
 
     private void SetOneWay(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -121,7 +121,7 @@ public sealed class TerrainReader : NeoLemmixDataReader
 
     private void SetErase(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentTerrainData!.Erase = true;
+        _currentTerrainData.Erase = true;
     }
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

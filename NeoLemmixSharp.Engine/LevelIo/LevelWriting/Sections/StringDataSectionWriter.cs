@@ -53,9 +53,9 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         var maxBufferSize = 0;
 
-        foreach (var (stringToWrite, _) in _stringIdLookup)
+        foreach (var kvp in _stringIdLookup)
         {
-            maxBufferSize = Math.Max(maxBufferSize, utf8Encoding.GetByteCount(stringToWrite));
+            maxBufferSize = Math.Max(maxBufferSize, utf8Encoding.GetByteCount(kvp.Key));
         }
 
         return maxBufferSize;

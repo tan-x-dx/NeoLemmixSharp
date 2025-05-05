@@ -136,10 +136,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     private static void ValidateMaxActionNameLength()
     {
         var actualMaxActionNameLength = 0;
-        foreach (var action in LemmingAction.AllItems)
-        {
-            actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, action.LemmingActionName.Length);
-        }
 
         actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.NeutralControlPanelString.Length);
         actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.ZombieControlPanelString.Length);
@@ -148,6 +144,11 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.AthleteControlPanelString3Skills.Length);
         actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.AthleteControlPanelString4Skills.Length);
         actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.AthleteControlPanelString5Skills.Length);
+
+        foreach (var action in LemmingAction.AllItems)
+        {
+            actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, action.LemmingActionName.Length);
+        }
 
         if (actualMaxActionNameLength != EngineConstants.LongestActionNameLength)
             throw new Exception($"Longest action name length is actually {actualMaxActionNameLength}! Update {nameof(EngineConstants.LongestActionNameLength)}!");
