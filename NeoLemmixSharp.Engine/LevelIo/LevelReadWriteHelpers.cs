@@ -1,6 +1,9 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
-using NeoLemmixSharp.Engine.LevelIo.LevelReading.Default;
+using NeoLemmixSharp.Engine.LevelIo.Reading;
+using NeoLemmixSharp.Engine.LevelIo.Writing;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelIo;
 
@@ -13,33 +16,33 @@ public static class LevelReadWriteHelpers
     public const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
     public const string FileSizeTooLargeExceptionMessage = "File too large! Max file size is 64Mb";
 
-    #region Section Identifier Stuff
-
-    public const int NumberOfBytesForLevelSectionIdentifier = 2;
-
-    private static ReadOnlySpan<byte> LevelDataSectionIdentifierBytes =>
-    [
-        0x26, 0x44,
-        0x79, 0xA6,
-        0x43, 0xAA,
-        0x90, 0xD2,
-        0xBE, 0xF4,
-        0xFE, 0x77,
-        0x60, 0xBB,
-        0x7C, 0x5C,
-        0x3D, 0x98
-    ];
-
-    public static ReadOnlySpan<byte> GetSectionIdentifierBytes(this LevelFileSectionIdentifier sectionIdentifier)
+    public sealed class SectionIdentifierComparer<TPerfectHasher, TEnum> : IComparer<Interval>
+        where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
+        where TEnum : unmanaged, Enum
     {
-        var index = (int)sectionIdentifier;
-        index <<= 1;
+        [SkipLocalsInit]
+        public void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> result)
+        {
+            Span<Interval> intervals = stackalloc Interval[result.Count];
+            result.CopyValuesTo(intervals);
 
-        return LevelDataSectionIdentifierBytes
-            .Slice(index, NumberOfBytesForLevelSectionIdentifier);
+            intervals.Sort(this);
+
+            for (var i = 0; i < intervals.Length - 1; i++)
+            {
+                var firstInterval = intervals[i];
+                var secondInterval = intervals[i + 1];
+
+                if (firstInterval.Start + firstInterval.Length != secondInterval.Start)
+                    throw new InvalidOperationException("Sections are not contiguous!");
+            }
+        }
+
+        int IComparer<Interval>.Compare(Interval x, Interval y)
+        {
+            return x.Start.CompareTo(y.Start);
+        }
     }
-
-    #endregion
 
     #region Level Data Read/Write Stuff
 
@@ -194,9 +197,6 @@ public static class LevelReadWriteHelpers
     {
         const int upperBitsMask = ~7;
 
-        if ((dhtByte & upperBitsMask) == 0)
-            return;
-
-        throw new LevelReadingException("Read suspicious dihedral transformation byte!");
+        FileReadingException.ReaderAssert((dhtByte & upperBitsMask) == 0, "Read suspicious dihedral transformation byte!");
     }
 }

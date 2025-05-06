@@ -2,11 +2,11 @@
 
 namespace NeoLemmixSharp.Engine.LevelIo.Data;
 
-public enum BackgroundType : uint
+public enum BackgroundType
 {
-    NoBackgroundSpecified = 0x00,
-    SolidColorBackground = 0x01,
-    TextureBackground = 0x02
+    NoBackgroundSpecified,
+    SolidColorBackground,
+    TextureBackground,
 }
 
 public static class BackgroundTypeHelpers

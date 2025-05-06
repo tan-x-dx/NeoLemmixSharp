@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Menu.Pages.LevelSelect;
 using NeoLemmixSharp.Engine.LevelBuilding;
-using NeoLemmixSharp.Engine.LevelIo.LevelReading;
+using NeoLemmixSharp.Engine.LevelIo.Reading.Levels;
 
 namespace NeoLemmixSharp.Menu;
 

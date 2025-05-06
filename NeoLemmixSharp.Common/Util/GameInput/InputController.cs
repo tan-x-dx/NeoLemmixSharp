@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -73,11 +72,11 @@ public sealed class InputController :
 
         var keyMappingSpan = CollectionsMarshal.AsSpan(_keyMapping);
 
-        foreach (var (keyValue, action) in keyMappingSpan)
+        foreach (var keyToInputMapping in keyMappingSpan)
         {
-            if (_pressedKeys.Contains(keyValue))
+            if (_pressedKeys.Contains(keyToInputMapping.Key))
             {
-                action.DoPress();
+                keyToInputMapping.InputAction.DoPress();
             }
         }
 
@@ -141,13 +140,6 @@ public sealed class InputController :
     {
         public readonly Keys Key = key;
         public readonly InputAction InputAction = inputAction;
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public void Deconstruct(out Keys key, out InputAction inputAction)
-        {
-            key = Key;
-            inputAction = InputAction;
-        }
     }
 
     [InlineArray(KeysBitBufferLength)]

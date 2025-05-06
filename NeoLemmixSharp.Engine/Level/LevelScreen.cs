@@ -64,9 +64,6 @@ public sealed class LevelScreen : IBaseScreen
     public static RewindManager RewindManager => _instance._rewindManager;
     public static Viewport LevelViewport => _instance._levelViewport;
 
-    public static int LevelWidth => HorizontalBoundaryBehaviour.LevelLength;
-    public static int LevelHeight => VerticalBoundaryBehaviour.LevelLength;
-
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Point NormalisePosition(Point levelPosition)
@@ -211,8 +208,6 @@ public sealed class LevelScreen : IBaseScreen
             {
                 disposable.Dispose();
             }
-
-            field.SetValue(this, null);
         }
 
         _instance = null!;
