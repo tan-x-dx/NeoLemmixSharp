@@ -7,6 +7,9 @@ namespace NeoLemmixSharp.Common.Util;
 
 public static class Helpers
 {
+    public const int Uint32NumberBufferLength = 10;
+    public const int Int32NumberBufferLength = Uint32NumberBufferLength + 1;
+
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Rectangle CreateRectangle(Point pos, Size size) => new(pos.X, pos.Y, size.W, size.H);

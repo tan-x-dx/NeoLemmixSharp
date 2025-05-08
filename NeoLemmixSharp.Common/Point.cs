@@ -55,7 +55,7 @@ public readonly struct Point : IEquatable<Point>
     [SkipLocalsInit]
     public override string ToString()
     {
-        Span<char> buffer = stackalloc char[1 + 11 + 1 + 11 + 1];
+        Span<char> buffer = stackalloc char[1 + Helpers.Int32NumberBufferLength + 1 + Helpers.Int32NumberBufferLength + 1];
         TryFormat(buffer, out var charsWritten);
         return buffer[..charsWritten].ToString();
     }
