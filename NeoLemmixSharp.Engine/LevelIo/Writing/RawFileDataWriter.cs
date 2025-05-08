@@ -10,7 +10,7 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
     where TEnum : unmanaged, Enum
 {
     private const byte Period = (byte)'.';
-    private const int InitialDataCapacity = 1 << 11;
+    private const int InitialDataCapacity = 1 << 12;
 
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIntervals = new(new TPerfectHasher());
     private byte[] _mainDataByteBuffer = new byte[InitialDataCapacity];
