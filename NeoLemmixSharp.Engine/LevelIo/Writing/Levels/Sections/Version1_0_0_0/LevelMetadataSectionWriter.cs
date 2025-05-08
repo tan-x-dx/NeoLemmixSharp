@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
 
@@ -80,25 +81,26 @@ public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         LevelData levelData)
     {
         var backgroundData = levelData.LevelBackground;
+
+        // Ensure that 5 bytes are always written, even if fewer bytes are utilized
+        Span<byte> rawBytes = [0, 0, 0, 0, 0];
+
         if (backgroundData is null)
         {
-            writer.Write((byte)BackgroundType.NoBackgroundSpecified);
-            writer.Write(0);
-
-            return;
+            rawBytes[0] = (byte)BackgroundType.NoBackgroundSpecified;
         }
-
-        if (backgroundData.IsSolidColor)
+        else if (backgroundData.IsSolidColor)
         {
-            writer.Write((byte)BackgroundType.SolidColorBackground);
-            writer.WriteArgbColor(backgroundData.Color);
-
-            return;
+            rawBytes[0] = (byte)BackgroundType.SolidColorBackground;
+            LevelReadWriteHelpers.WriteArgbBytes(backgroundData.Color, rawBytes[1..]);
+        }
+        else
+        {
+            rawBytes[0] = (byte)BackgroundType.TextureBackground;
+            var backgroundStringId = _stringIdLookup[backgroundData.BackgroundImageName];
+            Unsafe.WriteUnaligned(ref rawBytes[1], backgroundStringId);
         }
 
-        writer.Write((byte)BackgroundType.TextureBackground);
-        var backgroundStringId = _stringIdLookup[backgroundData.BackgroundImageName];
-        writer.Write(backgroundStringId);
-        writer.Write((ushort)0);
+        writer.Write(rawBytes);
     }
 }

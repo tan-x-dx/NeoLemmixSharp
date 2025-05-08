@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Runtime.CompilerServices;
@@ -131,20 +130,6 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         AssertWithinSection();
 
         WriteToByteBuffer(value, ref _mainDataByteBuffer, ref _mainDataPosition);
-    }
-
-    public void WriteArgbColor(Color color)
-    {
-        ReadOnlySpan<byte> colorBytes = [color.A, color.R, color.G, color.B];
-
-        Write(colorBytes);
-    }
-
-    public void WriteRgbColor(Color color)
-    {
-        ReadOnlySpan<byte> colorBytes = [color.R, color.G, color.B];
-
-        Write(colorBytes);
     }
 
     public void Write(ReadOnlySpan<byte> data)
