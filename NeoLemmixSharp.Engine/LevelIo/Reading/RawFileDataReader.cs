@@ -25,21 +25,26 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
 
     public RawFileDataReader(string filePath)
     {
-        using (var fileStream = new FileStream(filePath, FileMode.Open))
-        {
-            var fileSizeInBytes = fileStream.Length;
-
-            FileReadingException.ReaderAssert(
-                fileSizeInBytes <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
-                LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
-
-            _byteBuffer = GC.AllocateUninitializedArray<byte>((int)fileSizeInBytes);
-
-            fileStream.ReadExactly(_byteBuffer);
-        }
+        _byteBuffer = ReadDataFromFile(filePath);
 
         Version = ReadVersion();
         _sectionIdentifiers = ReadSectionIdentifiers();
+    }
+
+    private static byte[] ReadDataFromFile(string filePath)
+    {
+        using var fileStream = new FileStream(filePath, FileMode.Open);
+        var fileSizeInBytes = fileStream.Length;
+
+        FileReadingException.ReaderAssert(
+            fileSizeInBytes <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
+            LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
+
+        var byteBuffer = new byte[(int)fileSizeInBytes];
+
+        fileStream.ReadExactly(byteBuffer);
+
+        return byteBuffer;
     }
 
     private FileVersion ReadVersion()
