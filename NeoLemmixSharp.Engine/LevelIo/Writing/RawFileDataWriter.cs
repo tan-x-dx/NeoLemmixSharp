@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Runtime.CompilerServices;
 
@@ -21,7 +22,7 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
 
     public void WriteToFile(
         string filePath,
-        Version version)
+        FileVersion version)
     {
         AssertCanWriteToFile();
 
@@ -41,7 +42,7 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
     }
 
     private static void WriteVersion(
-        Version version,
+        FileVersion version,
         ref byte[] preambleDataByteBuffer,
         ref int preamblePosition)
     {

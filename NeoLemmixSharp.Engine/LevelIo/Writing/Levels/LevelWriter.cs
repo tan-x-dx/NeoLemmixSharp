@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Data;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Engine.LevelIo.Versions;
 using NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections;
 
@@ -7,9 +8,9 @@ namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels;
 public readonly ref struct LevelWriter
 {
     private readonly LevelData _levelData;
-    private readonly Version _version;
+    private readonly FileVersion _version;
 
-    public LevelWriter(LevelData levelData, Version version)
+    public LevelWriter(LevelData levelData, FileVersion version)
     {
         _levelData = levelData;
         _version = version;

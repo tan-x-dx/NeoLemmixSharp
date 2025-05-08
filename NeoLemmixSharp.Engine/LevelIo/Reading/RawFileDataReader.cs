@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.LevelIo.Writing;
 using System.Buffers;
@@ -14,7 +15,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
     private const byte Period = (byte)'.';
 
     private readonly byte[] _byteBuffer;
-    public Version Version { get; }
+    public FileVersion Version { get; }
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIdentifiers;
 
     private int _position;
@@ -42,17 +43,17 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
         _sectionIdentifiers = ReadSectionIdentifiers();
     }
 
-    private Version ReadVersion()
+    private FileVersion ReadVersion()
     {
-        int major = Read16BitUnsignedInteger();
+        ushort major = Read16BitUnsignedInteger();
         AssertNextByteIsPeriod();
-        int minor = Read16BitUnsignedInteger();
+        ushort minor = Read16BitUnsignedInteger();
         AssertNextByteIsPeriod();
-        int build = Read16BitUnsignedInteger();
+        ushort build = Read16BitUnsignedInteger();
         AssertNextByteIsPeriod();
-        int revision = Read16BitUnsignedInteger();
+        ushort revision = Read16BitUnsignedInteger();
 
-        return new Version(major, minor, build, revision);
+        return new FileVersion(major, minor, build, revision);
 
         void AssertNextByteIsPeriod()
         {
