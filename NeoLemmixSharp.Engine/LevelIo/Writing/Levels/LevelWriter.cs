@@ -20,7 +20,7 @@ public readonly ref struct LevelWriter
     {
         var writer = new RawLevelFileDataWriter();
 
-        var sectionWriters = VersionHelper.Instance.GetLevelDataSectionWritersForVersion(_version);
+        var sectionWriters = VersionHelper.GetLevelDataSectionWritersForVersion(_version);
 
         foreach (var sectionWriter in sectionWriters)
         {

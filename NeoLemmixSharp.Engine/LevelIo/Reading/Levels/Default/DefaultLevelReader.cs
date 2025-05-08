@@ -31,7 +31,7 @@ public sealed class DefaultLevelReader : ILevelReader
 
         var version = _rawFileData.Version;
 
-        var sectionReaders = VersionHelper.Instance.GetLevelDataSectionReadersForVersion(version);
+        var sectionReaders = VersionHelper.GetLevelDataSectionReadersForVersion(version);
 
         foreach (var sectionReader in sectionReaders)
         {

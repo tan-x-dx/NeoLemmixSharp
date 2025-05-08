@@ -7,22 +7,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Versions;
 
-public sealed class VersionHelper
+public static class VersionHelper
 {
-    public static readonly VersionHelper Instance = new();
-
-    private readonly Dictionary<FileVersion, ILevelDataSectionWriterVersionHelper> _levelWriterVersionHelpers;
-    private readonly Dictionary<FileVersion, ILevelDataSectionReaderVersionHelper> _levelReaderVersionHelpers;
-    private readonly Dictionary<FileVersion, IStyleDataSectionWriterVersionHelper> _styleWriterVersionHelpers;
-    private readonly Dictionary<FileVersion, IStyleDataSectionReaderVersionHelper> _styleReaderVersionHelpers;
-
-    private VersionHelper()
-    {
-        _levelWriterVersionHelpers = GetLevelWriterLookup();
-        _levelReaderVersionHelpers = GetLevelReaderLookup();
-        _styleWriterVersionHelpers = GetStyleWriterLookup();
-        _styleReaderVersionHelpers = GetStyleReaderLookup();
-    }
+    private static readonly Dictionary<FileVersion, ILevelDataSectionWriterVersionHelper> _levelWriterVersionHelpers = GetLevelWriterLookup();
+    private static readonly Dictionary<FileVersion, ILevelDataSectionReaderVersionHelper> _levelReaderVersionHelpers = GetLevelReaderLookup();
+    private static readonly Dictionary<FileVersion, IStyleDataSectionWriterVersionHelper> _styleWriterVersionHelpers = GetStyleWriterLookup();
+    private static readonly Dictionary<FileVersion, IStyleDataSectionReaderVersionHelper> _styleReaderVersionHelpers = GetStyleReaderLookup();
 
     private static Dictionary<FileVersion, ILevelDataSectionWriterVersionHelper> GetLevelWriterLookup()
     {
@@ -64,7 +54,7 @@ public sealed class VersionHelper
         return result;
     }
 
-    public LevelDataSectionWriter[] GetLevelDataSectionWritersForVersion(FileVersion version)
+    public static LevelDataSectionWriter[] GetLevelDataSectionWritersForVersion(FileVersion version)
     {
         if (_levelWriterVersionHelpers.TryGetValue(version, out var helper))
             return helper.GetLevelDataSectionWriters();
@@ -72,7 +62,7 @@ public sealed class VersionHelper
         return ThrowUnknownVersionException<LevelDataSectionWriter>(version);
     }
 
-    public LevelDataSectionReader[] GetLevelDataSectionReadersForVersion(FileVersion version)
+    public static LevelDataSectionReader[] GetLevelDataSectionReadersForVersion(FileVersion version)
     {
         if (_levelReaderVersionHelpers.TryGetValue(version, out var helper))
             return helper.GetLevelDataSectionReaders();
@@ -80,7 +70,7 @@ public sealed class VersionHelper
         return ThrowUnknownVersionException<LevelDataSectionReader>(version);
     }
 
-    public StyleDataSectionWriter[] GetStyleDataSectionWritersForVersion(FileVersion version)
+    public static StyleDataSectionWriter[] GetStyleDataSectionWritersForVersion(FileVersion version)
     {
         if (_styleWriterVersionHelpers.TryGetValue(version, out var helper))
             return helper.GetStyleDataSectionWriters();
@@ -88,7 +78,7 @@ public sealed class VersionHelper
         return ThrowUnknownVersionException<StyleDataSectionWriter>(version);
     }
 
-    public StyleDataSectionReader[] GetStyleDataSectionReadersForVersion(FileVersion version)
+    public static StyleDataSectionReader[] GetStyleDataSectionReadersForVersion(FileVersion version)
     {
         if (_styleReaderVersionHelpers.TryGetValue(version, out var helper))
             return helper.GetStyleDataSectionReaders();
