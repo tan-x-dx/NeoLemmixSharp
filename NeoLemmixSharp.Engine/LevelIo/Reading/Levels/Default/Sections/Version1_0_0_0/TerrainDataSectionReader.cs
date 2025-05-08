@@ -97,6 +97,8 @@ public sealed class TerrainDataSectionReader : LevelDataSectionReader
 
     private static Color ReadTerrainDataTintColor(RawLevelFileDataReader rawFileData)
     {
-        return rawFileData.ReadRgbColor();
+        var bytes = rawFileData.ReadBytes(3);
+        
+        return LevelReadWriteHelpers.ReadRgbBytes(bytes);
     }
 }
