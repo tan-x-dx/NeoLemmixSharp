@@ -45,13 +45,13 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         ref byte[] preambleDataByteBuffer,
         ref int preamblePosition)
     {
-        WriteToByteBuffer((ushort)version.Major, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(version.Major, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
-        WriteToByteBuffer((ushort)version.Minor, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(version.Minor, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
-        WriteToByteBuffer((ushort)version.Build, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(version.Build, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
-        WriteToByteBuffer((ushort)version.Revision, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(version.Revision, ref preambleDataByteBuffer, ref preamblePosition);
     }
 
     private void WriteSectionIntervals(
