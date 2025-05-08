@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace NeoLemmixSharp.Common.Util;
 
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(ushort))]
-public readonly struct FileVersion : IComparable<FileVersion>, IEquatable<FileVersion>
+public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEquatable<FileFormatVersion>
 {
     [FieldOffset(0 * sizeof(ushort))] private readonly uint _lowerBits;
     [FieldOffset(2 * sizeof(ushort))] private readonly uint _upperBits;
@@ -17,7 +17,7 @@ public readonly struct FileVersion : IComparable<FileVersion>, IEquatable<FileVe
     [FieldOffset(2 * sizeof(ushort))] public readonly ushort Minor;
     [FieldOffset(3 * sizeof(ushort))] public readonly ushort Major;
 
-    public FileVersion(ushort major, ushort minor, ushort build, ushort revision)
+    public FileFormatVersion(ushort major, ushort minor, ushort build, ushort revision)
     {
         Major = major;
         Minor = minor;
@@ -27,11 +27,11 @@ public readonly struct FileVersion : IComparable<FileVersion>, IEquatable<FileVe
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(FileVersion other) => _upperBits == other._upperBits &&
+    public bool Equals(FileFormatVersion other) => _upperBits == other._upperBits &&
                                              _lowerBits == other._lowerBits;
     [Pure]
     [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is FileVersion other && Equals(other);
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is FileFormatVersion other && Equals(other);
 
     [Pure]
     [DebuggerStepThrough]
@@ -45,7 +45,7 @@ public readonly struct FileVersion : IComparable<FileVersion>, IEquatable<FileVe
 
     [Pure]
     [DebuggerStepThrough]
-    public int CompareTo(FileVersion value)
+    public int CompareTo(FileFormatVersion value)
     {
         return _upperBits != value._upperBits ? (_upperBits > value._upperBits ? 1 : -1) :
                _lowerBits != value._lowerBits ? (_lowerBits > value._lowerBits ? 1 : -1) :
@@ -69,20 +69,20 @@ public readonly struct FileVersion : IComparable<FileVersion>, IEquatable<FileVe
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(FileVersion left, FileVersion right) => left.Equals(right);
+    public static bool operator ==(FileFormatVersion left, FileFormatVersion right) => left.Equals(right);
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(FileVersion left, FileVersion right) => !left.Equals(right);
+    public static bool operator !=(FileFormatVersion left, FileFormatVersion right) => !left.Equals(right);
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator <(FileVersion v1, FileVersion v2) => v1.CompareTo(v2) < 0;
+    public static bool operator <(FileFormatVersion v1, FileFormatVersion v2) => v1.CompareTo(v2) < 0;
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator <=(FileVersion v1, FileVersion v2) => v1.CompareTo(v2) <= 0;
+    public static bool operator <=(FileFormatVersion v1, FileFormatVersion v2) => v1.CompareTo(v2) <= 0;
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator >(FileVersion v1, FileVersion v2) => v1.CompareTo(v2) > 0;
+    public static bool operator >(FileFormatVersion v1, FileFormatVersion v2) => v1.CompareTo(v2) > 0;
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator >=(FileVersion v1, FileVersion v2) => v1.CompareTo(v2) >= 0;
+    public static bool operator >=(FileFormatVersion v1, FileFormatVersion v2) => v1.CompareTo(v2) >= 0;
 }

@@ -14,7 +14,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
     private const byte Period = (byte)'.';
 
     private readonly byte[] _byteBuffer;
-    public FileVersion Version { get; }
+    public FileFormatVersion Version { get; }
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIdentifiers;
 
     private int _position;
@@ -47,7 +47,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
         return byteBuffer;
     }
 
-    private FileVersion ReadVersion()
+    private FileFormatVersion ReadVersion()
     {
         ushort major = Read16BitUnsignedInteger();
         AssertNextByteIsPeriod();
@@ -57,7 +57,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
         AssertNextByteIsPeriod();
         ushort revision = Read16BitUnsignedInteger();
 
-        return new FileVersion(major, minor, build, revision);
+        return new FileFormatVersion(major, minor, build, revision);
 
         void AssertNextByteIsPeriod()
         {

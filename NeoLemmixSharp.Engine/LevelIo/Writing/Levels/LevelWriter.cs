@@ -8,9 +8,9 @@ namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels;
 public readonly ref struct LevelWriter
 {
     private readonly LevelData _levelData;
-    private readonly FileVersion _version;
+    private readonly FileFormatVersion _version;
 
-    public LevelWriter(LevelData levelData, FileVersion version)
+    public LevelWriter(LevelData levelData, FileFormatVersion version)
     {
         _levelData = levelData;
         _version = version;

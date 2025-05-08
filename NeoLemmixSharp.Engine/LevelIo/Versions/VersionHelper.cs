@@ -9,52 +9,52 @@ namespace NeoLemmixSharp.Engine.LevelIo.Versions;
 
 public static class VersionHelper
 {
-    private static readonly Dictionary<FileVersion, ILevelDataSectionWriterVersionHelper> _levelWriterVersionHelpers = GetLevelWriterLookup();
-    private static readonly Dictionary<FileVersion, ILevelDataSectionReaderVersionHelper> _levelReaderVersionHelpers = GetLevelReaderLookup();
-    private static readonly Dictionary<FileVersion, IStyleDataSectionWriterVersionHelper> _styleWriterVersionHelpers = GetStyleWriterLookup();
-    private static readonly Dictionary<FileVersion, IStyleDataSectionReaderVersionHelper> _styleReaderVersionHelpers = GetStyleReaderLookup();
+    private static readonly Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper> _levelWriterVersionHelpers = GetLevelWriterLookup();
+    private static readonly Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper> _levelReaderVersionHelpers = GetLevelReaderLookup();
+    private static readonly Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper> _styleWriterVersionHelpers = GetStyleWriterLookup();
+    private static readonly Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper> _styleReaderVersionHelpers = GetStyleReaderLookup();
 
-    private static Dictionary<FileVersion, ILevelDataSectionWriterVersionHelper> GetLevelWriterLookup()
+    private static Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper> GetLevelWriterLookup()
     {
-        var result = new Dictionary<FileVersion, ILevelDataSectionWriterVersionHelper>()
+        var result = new Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper>()
         {
-            { new FileVersion(1,0,0,0), new Writing.Levels.Sections.Version1_0_0_0.VersionHelper() }
+            { new FileFormatVersion(1,0,0,0), new Writing.Levels.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
     }
 
-    private static Dictionary<FileVersion, ILevelDataSectionReaderVersionHelper> GetLevelReaderLookup()
+    private static Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper> GetLevelReaderLookup()
     {
-        var result = new Dictionary<FileVersion, ILevelDataSectionReaderVersionHelper>()
+        var result = new Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper>()
         {
-            { new FileVersion(1,0,0,0), new Reading.Levels.Default.Sections.Version1_0_0_0.VersionHelper() }
+            { new FileFormatVersion(1,0,0,0), new Reading.Levels.Default.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
     }
 
-    private static Dictionary<FileVersion, IStyleDataSectionWriterVersionHelper> GetStyleWriterLookup()
+    private static Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper> GetStyleWriterLookup()
     {
-        var result = new Dictionary<FileVersion, IStyleDataSectionWriterVersionHelper>()
+        var result = new Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper>()
         {
-            { new FileVersion(1,0,0,0), new Writing.Styles.Sections.Version1_0_0_0.VersionHelper() }
+            { new FileFormatVersion(1,0,0,0), new Writing.Styles.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
     }
 
-    private static Dictionary<FileVersion, IStyleDataSectionReaderVersionHelper> GetStyleReaderLookup()
+    private static Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper> GetStyleReaderLookup()
     {
-        var result = new Dictionary<FileVersion, IStyleDataSectionReaderVersionHelper>()
+        var result = new Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper>()
         {
-            { new FileVersion(1,0,0,0), new Reading.Styles.Sections.Version1_0_0_0.VersionHelper() }
+            { new FileFormatVersion(1,0,0,0), new Reading.Styles.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
     }
 
-    public static LevelDataSectionWriter[] GetLevelDataSectionWritersForVersion(FileVersion version)
+    public static LevelDataSectionWriter[] GetLevelDataSectionWritersForVersion(FileFormatVersion version)
     {
         if (_levelWriterVersionHelpers.TryGetValue(version, out var helper))
             return helper.GetLevelDataSectionWriters();
@@ -62,7 +62,7 @@ public static class VersionHelper
         return ThrowUnknownVersionException<LevelDataSectionWriter>(version);
     }
 
-    public static LevelDataSectionReader[] GetLevelDataSectionReadersForVersion(FileVersion version)
+    public static LevelDataSectionReader[] GetLevelDataSectionReadersForVersion(FileFormatVersion version)
     {
         if (_levelReaderVersionHelpers.TryGetValue(version, out var helper))
             return helper.GetLevelDataSectionReaders();
@@ -70,7 +70,7 @@ public static class VersionHelper
         return ThrowUnknownVersionException<LevelDataSectionReader>(version);
     }
 
-    public static StyleDataSectionWriter[] GetStyleDataSectionWritersForVersion(FileVersion version)
+    public static StyleDataSectionWriter[] GetStyleDataSectionWritersForVersion(FileFormatVersion version)
     {
         if (_styleWriterVersionHelpers.TryGetValue(version, out var helper))
             return helper.GetStyleDataSectionWriters();
@@ -78,7 +78,7 @@ public static class VersionHelper
         return ThrowUnknownVersionException<StyleDataSectionWriter>(version);
     }
 
-    public static StyleDataSectionReader[] GetStyleDataSectionReadersForVersion(FileVersion version)
+    public static StyleDataSectionReader[] GetStyleDataSectionReadersForVersion(FileFormatVersion version)
     {
         if (_styleReaderVersionHelpers.TryGetValue(version, out var helper))
             return helper.GetStyleDataSectionReaders();
@@ -88,22 +88,22 @@ public static class VersionHelper
 
     private sealed class UnknownVersionException : Exception
     {
-        public FileVersion FileVersion { get; }
+        public FileFormatVersion FileVersion { get; }
 
-        public UnknownVersionException(FileVersion version)
+        public UnknownVersionException(FileFormatVersion version)
             : base(GetExceptionMessage(version))
         {
             FileVersion = version;
         }
 
-        private static string GetExceptionMessage(FileVersion version)
+        private static string GetExceptionMessage(FileFormatVersion version)
         {
             return $"Unknown version number: {version}";
         }
     }
 
     [DoesNotReturn]
-    private static T[] ThrowUnknownVersionException<T>(FileVersion version) => throw new UnknownVersionException(version);
+    private static T[] ThrowUnknownVersionException<T>(FileFormatVersion version) => throw new UnknownVersionException(version);
 }
 
 public interface ILevelDataSectionWriterVersionHelper

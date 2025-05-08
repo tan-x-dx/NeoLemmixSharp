@@ -21,7 +21,7 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
 
     public void WriteToFile(
         string filePath,
-        FileVersion version)
+        FileFormatVersion version)
     {
         AssertCanWriteToFile();
 
@@ -41,7 +41,7 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
     }
 
     private static void WriteVersion(
-        FileVersion version,
+        FileFormatVersion version,
         ref byte[] preambleDataByteBuffer,
         ref int preamblePosition)
     {
