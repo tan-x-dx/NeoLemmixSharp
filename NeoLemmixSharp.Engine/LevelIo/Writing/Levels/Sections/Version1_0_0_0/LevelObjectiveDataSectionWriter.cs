@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections;
+namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
 
 public sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 {

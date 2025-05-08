@@ -1,0 +1,29 @@
+﻿using NeoLemmixSharp.Engine.LevelIo.Versions;
+
+namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
+
+public sealed class VersionHelper : ILevelDataSectionWriterVersionHelper
+{
+    public LevelDataSectionWriter[] GetLevelDataSectionWriters()
+    {
+        var stringIdLookup = new Dictionary<string, ushort>(LevelReadWriteHelpers.InitialStringListCapacity);
+        var terrainSectionWriter = new TerrainDataSectionWriter(stringIdLookup);
+
+        LevelDataSectionWriter[] sectionWriters =
+        [
+            // StringDataSectionWriter needs to be first as it will populate the stringIdLookup!
+            new StringDataSectionWriter(stringIdLookup),
+
+            new LevelMetadataSectionWriter(stringIdLookup),
+            new LevelTextDataSectionWriter(stringIdLookup),
+            new LevelObjectiveDataSectionWriter(stringIdLookup),
+            new HatchGroupDataSectionWriter(),
+            new PrePlacedLemmingDataSectionWriter(),
+            terrainSectionWriter,
+            new TerrainGroupDataSectionWriter(stringIdLookup, terrainSectionWriter),
+            new GadgetDataSectionWriter(stringIdLookup),
+        ];
+
+        return sectionWriters;
+    }
+}

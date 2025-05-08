@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
 using System.Text;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections.Version1_0_0_0;
 
 public sealed class StringDataSectionReader : LevelDataSectionReader
 {
@@ -11,7 +11,6 @@ public sealed class StringDataSectionReader : LevelDataSectionReader
     private readonly List<string> _stringIdLookup;
 
     public StringDataSectionReader(
-        Version version,
         List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;

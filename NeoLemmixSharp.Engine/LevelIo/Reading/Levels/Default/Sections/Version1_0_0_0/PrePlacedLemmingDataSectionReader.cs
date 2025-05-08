@@ -2,15 +2,14 @@
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections.Version1_0_0_0;
 
 public sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
 {
     public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.PrePlacedLemmingDataSection;
     public override bool IsNecessary => false;
 
-    public PrePlacedLemmingDataSectionReader(
-        Version version)
+    public PrePlacedLemmingDataSectionReader()
     {
     }
 

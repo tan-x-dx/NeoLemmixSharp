@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Styles.Sections;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Styles.Sections.Version1_0_0_0;
 
 public sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 {

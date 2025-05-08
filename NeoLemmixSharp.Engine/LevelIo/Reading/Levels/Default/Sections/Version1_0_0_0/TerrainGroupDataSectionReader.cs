@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections.Version1_0_0_0;
 
 public sealed class TerrainGroupDataSectionReader : LevelDataSectionReader
 {
@@ -11,7 +11,6 @@ public sealed class TerrainGroupDataSectionReader : LevelDataSectionReader
     private readonly TerrainDataSectionReader _terrainDataComponentReader;
 
     public TerrainGroupDataSectionReader(
-        Version version,
         List<string> stringIdLookup,
         TerrainDataSectionReader terrainDataComponentReader)
     {

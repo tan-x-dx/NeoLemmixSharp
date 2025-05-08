@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Styles;
+using NeoLemmixSharp.Engine.LevelIo.Versions;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default;
 
@@ -29,23 +30,8 @@ public sealed class DefaultLevelReader : ILevelReader
         var result = new LevelData();
 
         var version = _rawFileData.Version;
-        var stringIdLookup = new List<string>(LevelReadWriteHelpers.InitialStringListCapacity);
 
-        var terrainComponentReader = new TerrainDataSectionReader(version, stringIdLookup);
-        ReadOnlySpan<LevelDataSectionReader> sectionReaders =
-        [
-            // Always process string data first
-            new StringDataSectionReader(version, stringIdLookup),
-
-            new LevelMetadataSectionReader(version, stringIdLookup),
-            new LevelTextDataSectionReader(version, stringIdLookup),
-            new LevelObjectiveDataSectionReader(version, stringIdLookup),
-            new HatchGroupDataSectionReader(version),
-            new PrePlacedLemmingDataSectionReader(version),
-            terrainComponentReader,
-            new TerrainGroupDataSectionReader(version, stringIdLookup, terrainComponentReader),
-            new GadgetDataSectionReader(version, stringIdLookup)
-        ];
+        var sectionReaders = VersionHelper.Instance.GetLevelDataSectionReadersForVersion(version);
 
         foreach (var sectionReader in sectionReaders)
         {

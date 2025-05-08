@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections.Version1_0_0_0;
 
 public sealed class TerrainDataSectionReader : LevelDataSectionReader
 {
@@ -13,7 +13,6 @@ public sealed class TerrainDataSectionReader : LevelDataSectionReader
     private readonly List<string> _stringIdLookup;
 
     public TerrainDataSectionReader(
-        Version version,
         List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;

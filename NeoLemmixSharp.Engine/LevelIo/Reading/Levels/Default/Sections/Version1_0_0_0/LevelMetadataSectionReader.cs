@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections.Version1_0_0_0;
 
 public sealed class LevelMetadataSectionReader : LevelDataSectionReader
 {
@@ -13,7 +13,6 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
     private readonly List<string> _stringIdLookup;
 
     public LevelMetadataSectionReader(
-        Version version,
         List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;

@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections;
+namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
 
 public sealed class StringDataSectionWriter : LevelDataSectionWriter
 {

@@ -1,8 +1,8 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Writing.Styles.Sections;
+namespace NeoLemmixSharp.Engine.LevelIo.Writing.Styles.Sections.Version1_0_0_0;
 
-public sealed class ThemeDataSectionReader : StyleDataSectionWriter
+public sealed class GadgetArchetypeDataSectionWriter : StyleDataSectionWriter
 {
     public override StyleFileSectionIdentifier SectionIdentifier { get; }
     public override bool IsNecessary { get; }

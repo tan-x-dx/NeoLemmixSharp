@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections.Version1_0_0_0;
 
 public sealed class GadgetDataSectionReader : LevelDataSectionReader
 {
@@ -14,7 +14,6 @@ public sealed class GadgetDataSectionReader : LevelDataSectionReader
     private readonly List<string> _stringIdLookup;
 
     public GadgetDataSectionReader(
-        Version version,
         List<string> stringIdLookup)
     {
         _stringIdLookup = stringIdLookup;
