@@ -17,7 +17,7 @@ public readonly struct StyleFileSectionIdentifierHasher :
 {
     public const int NumberOfBytesForLevelSectionIdentifier = 2;
 
-    private const int NumberOfEnumValues = 2;
+    private const int NumberOfEnumValues = 3;
 
     public int NumberOfItems => NumberOfEnumValues;
 
