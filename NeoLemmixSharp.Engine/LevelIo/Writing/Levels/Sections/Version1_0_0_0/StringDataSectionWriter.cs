@@ -64,64 +64,93 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
     private void GenerateStringIdLookup(
         LevelData levelData)
     {
-        TryAdd(levelData.LevelTitle);
-        TryAdd(levelData.LevelAuthor);
+        RecordLevelMetadataStrings(levelData);
+        RecordLevelTextMessageStrings(levelData);
+        RecordLevelObjectiveStrings(levelData);
+        RecordTerrainArchetypeDataStrings(levelData);
+        RecordTerrainGroupStrings(levelData);
+        RecordGadgetArchetypeDataStrings(levelData);
+        RecordGadgetStrings(levelData);
+    }
+
+    private void RecordLevelMetadataStrings(LevelData levelData)
+    {
+        RecordString(levelData.LevelTitle);
+        RecordString(levelData.LevelAuthor);
 
         HandleBackgroundString(levelData);
+    }
 
+    private void RecordLevelTextMessageStrings(LevelData levelData)
+    {
         foreach (var text in levelData.PreTextLines)
         {
-            TryAdd(text);
+            RecordString(text);
         }
 
         foreach (var text in levelData.PostTextLines)
         {
-            TryAdd(text);
+            RecordString(text);
         }
+    }
 
+    private void RecordLevelObjectiveStrings(LevelData levelData)
+    {
         foreach (var levelObjective in levelData.LevelObjectives)
         {
-            TryAdd(levelObjective.LevelObjectiveTitle);
+            RecordString(levelObjective.LevelObjectiveTitle);
         }
+    }
 
+    private void RecordTerrainArchetypeDataStrings(LevelData levelData)
+    {
         foreach (var (_, terrainArchetypeData) in levelData.TerrainArchetypeData)
         {
-            TryAdd(terrainArchetypeData.Style);
-            TryAdd(terrainArchetypeData.TerrainPiece);
+            RecordString(terrainArchetypeData.Style);
+            RecordString(terrainArchetypeData.TerrainPiece);
         }
+    }
 
+    private void RecordTerrainGroupStrings(LevelData levelData)
+    {
         foreach (var terrainGroup in levelData.AllTerrainGroups)
         {
-            TryAdd(terrainGroup.GroupName!);
+            RecordString(terrainGroup.GroupName!);
         }
+    }
 
+    private void RecordGadgetArchetypeDataStrings(LevelData levelData)
+    {
         foreach (var (_, gadgetBuilder) in levelData.GadgetArchetypeData)
         {
-            TryAdd(gadgetBuilder.StyleName);
-            TryAdd(gadgetBuilder.PieceName);
+            RecordString(gadgetBuilder.StyleName);
+            RecordString(gadgetBuilder.PieceName);
         }
+    }
 
+    private void RecordGadgetStrings(LevelData levelData)
+    {
         foreach (var gadgetData in levelData.AllGadgetData)
         {
             foreach (var gadgetInputName in gadgetData.InputNames)
             {
-                TryAdd(gadgetInputName);
+                RecordString(gadgetInputName);
             }
         }
     }
 
-    private void TryAdd(string? s)
+    private void RecordString(string? s)
     {
         if (string.IsNullOrEmpty(s))
             return;
 
         // Ids start at 1, therefore can use value of zero as "Not found"
-        var value = (ushort)(1 + _stringIdLookup.Count);
+        var nextStringId = (ushort)(1 + _stringIdLookup.Count);
 
-        ref var valueToAdd = ref CollectionsMarshal.GetValueRefOrAddDefault(_stringIdLookup, s, out var exists);
+        ref var correspondingStringId = ref CollectionsMarshal.GetValueRefOrAddDefault(_stringIdLookup, s, out var exists);
         if (!exists)
         {
-            valueToAdd = value;
+            correspondingStringId = nextStringId;
         }
     }
 
@@ -132,6 +161,6 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
         if (backgroundData is null || backgroundData.IsSolidColor)
             return;
 
-        TryAdd(backgroundData.BackgroundImageName);
+        RecordString(backgroundData.BackgroundImageName);
     }
 }

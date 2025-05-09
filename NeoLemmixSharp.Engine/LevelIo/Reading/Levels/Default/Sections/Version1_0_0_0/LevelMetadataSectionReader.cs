@@ -93,9 +93,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
         var rawBytes = rawFileData.ReadBytes(NumberOfBytesWrittenForBackgroundData);
 
         int rawBackgroundType = rawBytes[0];
-        var backgroundType = BackgroundTypeHelpers.GetEnumValue(rawBackgroundType);
-
-        rawBytes = rawBytes[1..];
+        var backgroundType = (BackgroundType)rawBackgroundType;
 
         levelData.LevelBackground = backgroundType switch
         {
@@ -110,26 +108,26 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
         static BackgroundData? ReadNoBackgroundData(ReadOnlySpan<byte> rawBytes)
         {
-            Debug.Assert(rawBytes.Length == 4);
+            Debug.Assert(rawBytes.Length == 5);
 
             return null;
         }
 
         static BackgroundData ReadSolidColorBackgroundData(ReadOnlySpan<byte> rawBytes)
         {
-            Debug.Assert(rawBytes.Length == 4);
+            Debug.Assert(rawBytes.Length == 5);
 
             return new BackgroundData
             {
-                Color = LevelReadWriteHelpers.ReadArgbBytes(rawBytes),
+                Color = LevelReadWriteHelpers.ReadArgbBytes(rawBytes[1..]),
                 BackgroundImageName = string.Empty
             };
         }
 
         BackgroundData ReadTextureBackgroundData(ReadOnlySpan<byte> rawBytes)
         {
-            Debug.Assert(rawBytes.Length == 4);
-            ushort backgroundStringId = Unsafe.ReadUnaligned<ushort>(in rawBytes[0]);
+            Debug.Assert(rawBytes.Length == 5);
+            ushort backgroundStringId = Unsafe.ReadUnaligned<ushort>(in rawBytes[1]);
 
             return new BackgroundData
             {

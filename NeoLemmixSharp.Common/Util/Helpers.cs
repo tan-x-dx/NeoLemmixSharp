@@ -109,6 +109,6 @@ public static class Helpers
         where TEnum : unmanaged, Enum
     {
         var typeName = typeof(TEnum).Name;
-        throw new ArgumentOutOfRangeException(nameof(rawValue), rawValue, $"Unknown {typeName} value!");
+        throw new ArgumentOutOfRangeException(nameof(rawValue), rawValue, $"Unknown {typeName} enum value!");
     }
 }

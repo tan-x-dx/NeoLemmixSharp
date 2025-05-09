@@ -204,7 +204,7 @@ public static class LevelReadWriteHelpers
 
     public static void WriteArgbBytes(Color color, Span<byte> bytes)
     {
-        Debug.Assert(bytes.Length >= 4);
+        Debug.Assert(bytes.Length == 4);
         bytes[0] = color.A;
         bytes[1] = color.R;
         bytes[2] = color.G;
@@ -213,7 +213,7 @@ public static class LevelReadWriteHelpers
 
     public static void WriteRgbBytes(Color color, Span<byte> bytes)
     {
-        Debug.Assert(bytes.Length >= 3);
+        Debug.Assert(bytes.Length == 3);
         bytes[0] = color.R;
         bytes[1] = color.G;
         bytes[2] = color.B;
@@ -221,14 +221,14 @@ public static class LevelReadWriteHelpers
 
     public static Color ReadArgbBytes(ReadOnlySpan<byte> bytes)
     {
-        Debug.Assert(bytes.Length >= 4);
+        Debug.Assert(bytes.Length == 4);
         return new Color(alpha: bytes[0], r: bytes[1], g: bytes[2], b: bytes[3]);
     }
 
     public static Color ReadRgbBytes(ReadOnlySpan<byte> bytes)
     {
         const byte alphaByte = 0xff;
-        Debug.Assert(bytes.Length >= 3);
+        Debug.Assert(bytes.Length == 3);
         return new Color(alpha: alphaByte, r: bytes[0], g: bytes[1], b: bytes[2]);
     }
 }

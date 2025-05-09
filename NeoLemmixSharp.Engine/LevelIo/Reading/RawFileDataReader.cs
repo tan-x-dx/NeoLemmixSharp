@@ -101,7 +101,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
         where T : unmanaged
     {
         var typeSize = sizeof(T);
-        FileReadingException.ReaderAssert(FileSizeInBytes - Position >= typeSize, "Reached end of file!");
+        FileReadingException.ReaderAssert(FileSizeInBytes - _position >= typeSize, "Reached end of file!");
 
         var result = Unsafe.ReadUnaligned<T>(ref _byteBuffer[_position]);
         _position += typeSize;
@@ -117,7 +117,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
 
     public ReadOnlySpan<byte> ReadBytes(int bufferSize)
     {
-        FileReadingException.ReaderAssert(FileSizeInBytes - Position >= bufferSize, "Reached end of file!");
+        FileReadingException.ReaderAssert(FileSizeInBytes - _position >= bufferSize, "Reached end of file!");
 
         var sourceSpan = new ReadOnlySpan<byte>(_byteBuffer, _position, bufferSize);
         _position += bufferSize;

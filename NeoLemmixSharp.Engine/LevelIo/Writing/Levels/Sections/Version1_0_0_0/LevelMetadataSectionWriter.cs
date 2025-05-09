@@ -97,7 +97,7 @@ public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         else
         {
             rawBytes[0] = (byte)BackgroundType.TextureBackground;
-            var backgroundStringId = _stringIdLookup[backgroundData.BackgroundImageName];
+            ushort backgroundStringId = _stringIdLookup[backgroundData.BackgroundImageName];
             Unsafe.WriteUnaligned(ref rawBytes[1], backgroundStringId);
         }
 

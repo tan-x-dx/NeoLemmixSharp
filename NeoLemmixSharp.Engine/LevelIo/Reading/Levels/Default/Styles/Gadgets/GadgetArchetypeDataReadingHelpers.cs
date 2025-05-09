@@ -37,7 +37,7 @@ public static class GadgetArchetypeDataReadingHelpers
         int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
         int initialPosition = rawFileData.Position;
 
-        var rawGadgetType = rawFileData.Read8BitUnsignedInteger();
+        int rawGadgetType = rawFileData.Read8BitUnsignedInteger();
         var gadgetType = (GadgetType)rawGadgetType;
 
         var result = gadgetType switch

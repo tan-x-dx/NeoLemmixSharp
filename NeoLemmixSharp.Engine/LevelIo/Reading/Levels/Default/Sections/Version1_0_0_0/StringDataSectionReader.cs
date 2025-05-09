@@ -18,7 +18,7 @@ public sealed class StringDataSectionReader : LevelDataSectionReader
 
     public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
-        var numberOfItems = rawFileData.Read16BitUnsignedInteger();
+        int numberOfItems = rawFileData.Read16BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(_stringIdLookup.Count == 0, "Expected string list to be empty!");
         _stringIdLookup.Capacity = numberOfItems + 1;

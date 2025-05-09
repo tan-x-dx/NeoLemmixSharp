@@ -32,17 +32,17 @@ public sealed class SkillSetReader : NeoLemmixDataReader
         }
 
         if (!NxlvReadingHelpers.TryGetSkillByName(firstToken, out var skill))
-            throw new InvalidOperationException($"Unknown token: {firstToken}");
+            throw new FileReadingException($"Unknown token: {firstToken}");
 
         if (!_seenSkills.Add(skill))
-            throw new InvalidOperationException($"Skill recorded multiple times! {skill.LemmingSkillName}");
+            throw new FileReadingException($"Skill recorded multiple times! {skill.LemmingSkillName}");
 
         var amount = TokensMatch(secondToken, "INFINITE")
             ? EngineConstants.InfiniteSkillCount
             : int.Parse(secondToken);
 
         if ((uint)amount >= EngineConstants.InfiniteSkillCount)
-            throw new InvalidOperationException($"Invalid skill count value! {amount}");
+            throw new FileReadingException($"Invalid skill count value! {amount}");
 
         if (skill == ClonerSkill.Instance && amount == EngineConstants.InfiniteSkillCount)
         {
