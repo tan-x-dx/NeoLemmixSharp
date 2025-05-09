@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelIo.Data;
+﻿using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Engine.LevelIo.Versions;
 using NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections;
 

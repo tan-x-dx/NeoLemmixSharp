@@ -7,9 +7,9 @@ namespace NeoLemmixSharp.Common.Util;
 
 public static class Helpers
 {
-    internal const int Uint16NumberBufferLength = 5;
-    internal const int Uint32NumberBufferLength = 10;
-    internal const int Int32NumberBufferLength = Uint32NumberBufferLength + 1;
+    public const int Uint16NumberBufferLength = 5;
+    public const int Uint32NumberBufferLength = 10;
+    public const int Int32NumberBufferLength = Uint32NumberBufferLength + 1;
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -29,14 +29,14 @@ public static class Helpers
         return item.HasValue ? 1 : 0;
     }
 
-    internal readonly ref struct FormatParameters(char openBracket, char separator, char closeBracket)
+    public readonly ref struct FormatParameters(char openBracket, char separator, char closeBracket)
     {
         public readonly char OpenBracket = openBracket;
         public readonly char Separator = separator;
         public readonly char CloseBracket = closeBracket;
     }
 
-    internal static bool TryFormatSpan(
+    public static bool TryFormatSpan(
         ReadOnlySpan<int> source,
         Span<char> destination,
         out int charsWritten)
@@ -45,7 +45,7 @@ public static class Helpers
         return TryFormatSpan(source, destination, formatParameters, out charsWritten);
     }
 
-    internal static bool TryFormatSpan(
+    public static bool TryFormatSpan(
         ReadOnlySpan<int> source,
         Span<char> destination,
         FormatParameters formatParameters,

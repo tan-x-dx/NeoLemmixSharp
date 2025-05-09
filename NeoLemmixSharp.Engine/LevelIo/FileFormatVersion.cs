@@ -1,10 +1,11 @@
-﻿using System.Diagnostics;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.Engine.LevelIo;
 
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(ushort))]
 public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEquatable<FileFormatVersion>
@@ -47,15 +48,15 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
     [DebuggerStepThrough]
     public int CompareTo(FileFormatVersion value)
     {
-        return _upperBits != value._upperBits ? (_upperBits > value._upperBits ? 1 : -1) :
-               _lowerBits != value._lowerBits ? (_lowerBits > value._lowerBits ? 1 : -1) :
+        return _upperBits != value._upperBits ? _upperBits > value._upperBits ? 1 : -1 :
+               _lowerBits != value._lowerBits ? _lowerBits > value._lowerBits ? 1 : -1 :
                0;
     }
 
     [SkipLocalsInit]
     public override string ToString()
     {
-        Span<char> charBuffer = stackalloc char[1 + (Helpers.Uint16NumberBufferLength * 4) + 3 + 1];
+        Span<char> charBuffer = stackalloc char[1 + Helpers.Uint16NumberBufferLength * 4 + 3 + 1];
         TryFormat(charBuffer, out var charsWritten);
         return charBuffer[..charsWritten].ToString();
     }
